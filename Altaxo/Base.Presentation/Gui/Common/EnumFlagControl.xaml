@@ -6,27 +6,27 @@
 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-	<Grid>
-		<!---WrapPanel x:Name="_panel" Orientation="Vertical"></WrapPanel-->
+    <Grid>
+        <!---WrapPanel x:Name="_panel" Orientation="Vertical"></WrapPanel-->
 
-		<ItemsControl x:Name="_listView" ScrollViewer.VerticalScrollBarVisibility="Disabled" Focusable="False">
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<WrapPanel Orientation="Vertical"
+        <ItemsControl x:Name="_listView" ScrollViewer.VerticalScrollBarVisibility="Disabled" Focusable="False">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical"
 						Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
 						ItemWidth="{Binding (ListView.View).ItemWidth, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
 						MinWidth="{Binding ItemWidth, RelativeSource={RelativeSource Self}}"
 						ItemHeight="{Binding (ListView.View).ItemHeight, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
-			<ItemsControl.Resources>
-				<DataTemplate DataType="{x:Type axocoll:SelectableListNode}">
-					<StackPanel Orientation="Horizontal">
-						<CheckBox Width="16" Height="16" Margin="3,0" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
-						<TextBlock Text="{Binding Text}" />
-					</StackPanel>
-				</DataTemplate>
-			</ItemsControl.Resources>
-		</ItemsControl>
-	</Grid>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.Resources>
+                <DataTemplate DataType="{x:Type axocoll:SelectableListNode}">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Width="16" Height="16" Margin="3,0" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                        <TextBlock Text="{Binding Text}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.Resources>
+        </ItemsControl>
+    </Grid>
 </UserControl>

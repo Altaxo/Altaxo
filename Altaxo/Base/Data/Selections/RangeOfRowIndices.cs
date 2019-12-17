@@ -66,11 +66,11 @@ namespace Altaxo.Data.Selections
       {
         throw new InvalidOperationException("Serialization of old versions");
         /*
-				var s = (RangeOfRows)obj;
+                var s = (RangeOfRows)obj;
 
-				info.AddValue("Start", s.Start);
-				info.AddValue("Count", s.Count);
-				*/
+                info.AddValue("Start", s.Start);
+                info.AddValue("Count", s.Count);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

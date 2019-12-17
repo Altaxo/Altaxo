@@ -311,86 +311,86 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     }
 
     /*
-		/// <summary>Paints the plot items.</summary>
-		/// <param name="g">Graphics context used for drawing.</param>
-		/// <param name="layer">Plot layer.</param>
-		/// <param name="coll">Collection of plot items to draw.</param>
-		public void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
-		{
-			Dictionary<G2DPlotItem, Processed2DPlotData> plotDataDict;
-			if (!CanUseStyle(layer, coll, out plotDataDict))
-			{
-				CoordinateTransformingStyleBase.Paint(g, layer, coll);
-				return;
-			}
+        /// <summary>Paints the plot items.</summary>
+        /// <param name="g">Graphics context used for drawing.</param>
+        /// <param name="layer">Plot layer.</param>
+        /// <param name="coll">Collection of plot items to draw.</param>
+        public void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
+        {
+            Dictionary<G2DPlotItem, Processed2DPlotData> plotDataDict;
+            if (!CanUseStyle(layer, coll, out plotDataDict))
+            {
+                CoordinateTransformingStyleBase.Paint(g, layer, coll);
+                return;
+            }
 
-			AltaxoVariant[] yArray = null;
-			// First, add up all items since we start always with the last item
-			int idx = -1;
-			Processed2DPlotData previousItemData = null;
-			foreach (IGPlotItem pi in coll)
-			{
-				if (pi is G2DPlotItem)
-				{
-					idx++;
+            AltaxoVariant[] yArray = null;
+            // First, add up all items since we start always with the last item
+            int idx = -1;
+            Processed2DPlotData previousItemData = null;
+            foreach (IGPlotItem pi in coll)
+            {
+                if (pi is G2DPlotItem)
+                {
+                    idx++;
 
-					G2DPlotItem gpi = pi as G2DPlotItem;
-					Processed2DPlotData pdata = plotDataDict[gpi];
-					yArray = AddUp(yArray, pdata);
+                    G2DPlotItem gpi = pi as G2DPlotItem;
+                    Processed2DPlotData pdata = plotDataDict[gpi];
+                    yArray = AddUp(yArray, pdata);
 
-					if (idx > 0) // this is not the first item
-					{
-						int j = -1;
-						foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
-						{
-							j++;
-							Logical3D rel = new Logical3D(
-							layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex)),
-							layer.YAxis.PhysicalVariantToNormal(yArray[j]));
+                    if (idx > 0) // this is not the first item
+                    {
+                        int j = -1;
+                        foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+                        {
+                            j++;
+                            Logical3D rel = new Logical3D(
+                            layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex)),
+                            layer.YAxis.PhysicalVariantToNormal(yArray[j]));
 
-							double xabs, yabs;
-							layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
-							pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
-						}
-					}
+                            double xabs, yabs;
+                            layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
+                            pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
+                        }
+                    }
 
-					// we have also to exchange the accessor for the physical y value and replace it by our own one
-					AltaxoVariant[] localArray = (AltaxoVariant[])yArray.Clone();
-					LocalArrayHolder localArrayHolder = new LocalArrayHolder(localArray, pdata);
-					pdata.YPhysicalAccessor = localArrayHolder.GetPhysical;
-					pdata.PreviousItemData = previousItemData;
-					previousItemData = pdata;
-				}
-			}
+                    // we have also to exchange the accessor for the physical y value and replace it by our own one
+                    AltaxoVariant[] localArray = (AltaxoVariant[])yArray.Clone();
+                    LocalArrayHolder localArrayHolder = new LocalArrayHolder(localArray, pdata);
+                    pdata.YPhysicalAccessor = localArrayHolder.GetPhysical;
+                    pdata.PreviousItemData = previousItemData;
+                    previousItemData = pdata;
+                }
+            }
 
-			Processed2DPlotData prevPlotData = null;
-			Processed2DPlotData nextPlotData = null;
-			Processed2DPlotData currPlotData = null;
-			for (int i = coll.Count - 1; i >= 0; --i)
-			{
-				if (i > 0 && (coll[i - 1] is G2DPlotItem))
-					nextPlotData = plotDataDict[coll[i - 1] as G2DPlotItem];
-				else
-					nextPlotData = null;
+            Processed2DPlotData prevPlotData = null;
+            Processed2DPlotData nextPlotData = null;
+            Processed2DPlotData currPlotData = null;
+            for (int i = coll.Count - 1; i >= 0; --i)
+            {
+                if (i > 0 && (coll[i - 1] is G2DPlotItem))
+                    nextPlotData = plotDataDict[coll[i - 1] as G2DPlotItem];
+                else
+                    nextPlotData = null;
 
-				if (coll[i] is G2DPlotItem)
-				{
-					var gpi = coll[i] as G2DPlotItem;
-					currPlotData = plotDataDict[gpi];
-					gpi.Paint(g, layer, currPlotData, prevPlotData, nextPlotData);
-				}
-				else
-				{
-					currPlotData = null;
-					coll[i].Paint(g, layer, null, null);
-				}
+                if (coll[i] is G2DPlotItem)
+                {
+                    var gpi = coll[i] as G2DPlotItem;
+                    currPlotData = plotDataDict[gpi];
+                    gpi.Paint(g, layer, currPlotData, prevPlotData, nextPlotData);
+                }
+                else
+                {
+                    currPlotData = null;
+                    coll[i].Paint(g, layer, null, null);
+                }
 
-				prevPlotData = currPlotData;
-				currPlotData = nextPlotData;
-				nextPlotData = null;
-			}
-		}
-		*/
+                prevPlotData = currPlotData;
+                currPlotData = nextPlotData;
+                nextPlotData = null;
+            }
+        }
+        */
 
     /// <summary>
     /// Private class to hold the transformed physical y values. The problem is that <see cref="GetPhysical"/> is called with the original row index (and not the plot index),

@@ -1077,51 +1077,51 @@ namespace Altaxo.Main.PegParser
     }
 
     /*     public class BytesetData
-				 {
-						 public struct Range
-						 {
-								 public Range(byte low, byte high) { this.low = low; this.high = high; }
-								 public byte low;
-								 public byte high;
-						 }
-						 protected System.Collections.BitArray charSet_;
-						 bool bNegated_;
-						 public BytesetData(System.Collections.BitArray b, bool bNegated)
-						 {
-								 charSet_ = new System.Collections.BitArray(b);
-								 bNegated_ = bNegated;
-						 }
-						 public BytesetData(byte[] c, bool bNegated)
-						 {
-								 int max = 0;
-								 foreach (int val in c) if (val > max) max = val;
-								 charSet_ = new System.Collections.BitArray(max + 1, false);
-								 foreach (int val in c) charSet_[val] = true;
-								 bNegated_ = bNegated;
-						 }
-						 public BytesetData(Range[] r, byte[] c, bool bNegated)
-						 {
-								 int max = 0;
-								 foreach (Range val in r) if (val.high > max) max = val.high;
-								 foreach (int val in c) if (val > max) max = val;
-								 charSet_ = new System.Collections.BitArray(max + 1, false);
-								 foreach (Range val in r)
-								 {
-										 for (int i = val.low; i <= val.high; ++i)
-										 {
-												 charSet_[i] = true;
-										 }
-								 }
-								 foreach (int val in c) charSet_[val] = true;
-						 }
+                 {
+                         public struct Range
+                         {
+                                 public Range(byte low, byte high) { this.low = low; this.high = high; }
+                                 public byte low;
+                                 public byte high;
+                         }
+                         protected System.Collections.BitArray charSet_;
+                         bool bNegated_;
+                         public BytesetData(System.Collections.BitArray b, bool bNegated)
+                         {
+                                 charSet_ = new System.Collections.BitArray(b);
+                                 bNegated_ = bNegated;
+                         }
+                         public BytesetData(byte[] c, bool bNegated)
+                         {
+                                 int max = 0;
+                                 foreach (int val in c) if (val > max) max = val;
+                                 charSet_ = new System.Collections.BitArray(max + 1, false);
+                                 foreach (int val in c) charSet_[val] = true;
+                                 bNegated_ = bNegated;
+                         }
+                         public BytesetData(Range[] r, byte[] c, bool bNegated)
+                         {
+                                 int max = 0;
+                                 foreach (Range val in r) if (val.high > max) max = val.high;
+                                 foreach (int val in c) if (val > max) max = val;
+                                 charSet_ = new System.Collections.BitArray(max + 1, false);
+                                 foreach (Range val in r)
+                                 {
+                                         for (int i = val.low; i <= val.high; ++i)
+                                         {
+                                                 charSet_[i] = true;
+                                         }
+                                 }
+                                 foreach (int val in c) charSet_[val] = true;
+                         }
 
-						 public bool Matches(byte c)
-						 {
-								 bool bMatches = c < charSet_.Length && charSet_[(int)c];
-								 if (bNegated_) return !bMatches;
-								 else return bMatches;
-						 }
-				 }*/
+                         public bool Matches(byte c)
+                         {
+                                 bool bMatches = c < charSet_.Length && charSet_[(int)c];
+                                 if (bNegated_) return !bMatches;
+                                 else return bMatches;
+                         }
+                 }*/
 
     #endregion PEG optimizations
 

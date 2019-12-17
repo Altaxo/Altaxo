@@ -79,20 +79,20 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         throw new InvalidOperationException("Serialization of old version now allowed");
         /*
-				FitElement s = (FitElement)obj;
+                FitElement s = (FitElement)obj;
 
-				s.InternalCheckAndCorrectArraySize(true, false); // make sure the fit function has not changed unnoticed
+                s.InternalCheckAndCorrectArraySize(true, false); // make sure the fit function has not changed unnoticed
 
-				info.AddValue("FitFunction", s._fitFunction);
-				info.AddValue("NumberOfRows", s._rangeOfRows.Count);
-				info.AddValue("FirstRow", s._rangeOfRows.Start);
+                info.AddValue("FitFunction", s._fitFunction);
+                info.AddValue("NumberOfRows", s._rangeOfRows.Count);
+                info.AddValue("FirstRow", s._rangeOfRows.Start);
 
-				info.AddArray("IndependentVariables", s._independentVariables, s._independentVariables.Length);
-				info.AddArray("DependentVariables", s._dependentVariables, s._dependentVariables.Length);
-				info.AddArray("VarianceEvaluation", s._errorEvaluation, s._errorEvaluation.Length);
-				info.AddArray("ParameterNames", s._parameterNames, s._parameterNames.Length);
-				info.AddValue("ParameterNameStart", s._parameterNameStart);
-				*/
+                info.AddArray("IndependentVariables", s._independentVariables, s._independentVariables.Length);
+                info.AddArray("DependentVariables", s._dependentVariables, s._dependentVariables.Length);
+                info.AddArray("VarianceEvaluation", s._errorEvaluation, s._errorEvaluation.Length);
+                info.AddArray("ParameterNames", s._parameterNames, s._parameterNames.Length);
+                info.AddValue("ParameterNameStart", s._parameterNameStart);
+                */
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

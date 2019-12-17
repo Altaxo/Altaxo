@@ -124,21 +124,21 @@ namespace Altaxo.Graph.Gdi
       {
         throw new NotSupportedException("Serialization of old versions is not supported");
         /*
-				BrushX s = (BrushX)obj;
-				info.AddValue("Type", s._brushType);
-				switch (s._brushType)
-				{
-					case BrushType.SolidBrush:
-						info.AddValue("ForeColor", s._foreColor);
-						break;
+                BrushX s = (BrushX)obj;
+                info.AddValue("Type", s._brushType);
+                switch (s._brushType)
+                {
+                    case BrushType.SolidBrush:
+                        info.AddValue("ForeColor", s._foreColor);
+                        break;
 
-					case BrushType.HatchBrush:
-						info.AddValue("ForeColor", s._foreColor);
-						info.AddValue("BackColor", s._backColor);
-						info.AddEnum("HatchStyle", s._hatchStyle);
-						break;
-				} // end of switch
-				*/
+                    case BrushType.HatchBrush:
+                        info.AddValue("ForeColor", s._foreColor);
+                        info.AddValue("BackColor", s._backColor);
+                        info.AddEnum("HatchStyle", s._hatchStyle);
+                        break;
+                } // end of switch
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -175,43 +175,43 @@ namespace Altaxo.Graph.Gdi
       {
         throw new NotSupportedException("Serialization of old versions is not supported");
         /*
-				BrushX s = (BrushX)obj;
-				info.AddValue("Type", s._brushType);
-				switch (s._brushType)
-				{
-					case BrushType.SolidBrush:
-						info.AddValue("ForeColor", s._foreColor);
-						break;
+                BrushX s = (BrushX)obj;
+                info.AddValue("Type", s._brushType);
+                switch (s._brushType)
+                {
+                    case BrushType.SolidBrush:
+                        info.AddValue("ForeColor", s._foreColor);
+                        break;
 
-					case BrushType.HatchBrush:
-						info.AddValue("ForeColor", s._foreColor);
-						info.AddValue("BackColor", s._backColor);
-						info.AddEnum("HatchStyle", s._hatchStyle);
-						break;
+                    case BrushType.HatchBrush:
+                        info.AddValue("ForeColor", s._foreColor);
+                        info.AddValue("BackColor", s._backColor);
+                        info.AddEnum("HatchStyle", s._hatchStyle);
+                        break;
 
-					case BrushType.LinearGradientBrush:
-						info.AddValue("ForeColor", s._foreColor);
-						info.AddValue("BackColor", s._backColor);
-						info.AddEnum("WrapMode", s._wrapMode);
-						info.AddEnum("GradientMode", s._gradientMode);
-						info.AddEnum("GradientShape", s._gradientShape);
-						info.AddValue("Scale", s._gradientColorScale);
-						info.AddValue("Focus", s._gradientFocus);
-						break;
+                    case BrushType.LinearGradientBrush:
+                        info.AddValue("ForeColor", s._foreColor);
+                        info.AddValue("BackColor", s._backColor);
+                        info.AddEnum("WrapMode", s._wrapMode);
+                        info.AddEnum("GradientMode", s._gradientMode);
+                        info.AddEnum("GradientShape", s._gradientShape);
+                        info.AddValue("Scale", s._gradientColorScale);
+                        info.AddValue("Focus", s._gradientFocus);
+                        break;
 
-					case BrushType.PathGradientBrush:
-						info.AddValue("ForeColor", s._foreColor);
-						info.AddValue("BackColor", s._backColor);
-						info.AddEnum("WrapMode", s._wrapMode);
-						break;
+                    case BrushType.PathGradientBrush:
+                        info.AddValue("ForeColor", s._foreColor);
+                        info.AddValue("BackColor", s._backColor);
+                        info.AddEnum("WrapMode", s._wrapMode);
+                        break;
 
-					case BrushType.TextureBrush:
-						info.AddValue("Texture", s._textureImage);
-						info.AddEnum("WrapMode", s._wrapMode);
-						info.AddValue("Scale", s._gradientColorScale);
-						break;
-				} // end of switch
-				*/
+                    case BrushType.TextureBrush:
+                        info.AddValue("Texture", s._textureImage);
+                        info.AddEnum("WrapMode", s._wrapMode);
+                        info.AddValue("Scale", s._gradientColorScale);
+                        break;
+                } // end of switch
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -288,46 +288,46 @@ namespace Altaxo.Graph.Gdi
       {
         throw new NotSupportedException("Serialization of old versions is not supported");
         /*
-				BrushX s = (BrushX)obj;
-				info.AddValue("Type", s._brushType);
-				switch (s._brushType)
-				{
-					case BrushType.SolidBrush:
-						info.AddValue("ForeColor", s._foreColor);
-						break;
+                BrushX s = (BrushX)obj;
+                info.AddValue("Type", s._brushType);
+                switch (s._brushType)
+                {
+                    case BrushType.SolidBrush:
+                        info.AddValue("ForeColor", s._foreColor);
+                        break;
 
-					case BrushType.HatchBrush:
-						info.AddValue("ForeColor", s._foreColor);
-						info.AddValue("BackColor", s._backColor);
-						info.AddValue("ExchangeColors", s._exchangeColors);
-						info.AddEnum("HatchStyle", s._hatchStyle);
-						break;
+                    case BrushType.HatchBrush:
+                        info.AddValue("ForeColor", s._foreColor);
+                        info.AddValue("BackColor", s._backColor);
+                        info.AddValue("ExchangeColors", s._exchangeColors);
+                        info.AddEnum("HatchStyle", s._hatchStyle);
+                        break;
 
-					case BrushType.LinearGradientBrush:
-						info.AddValue("ForeColor", s._foreColor);
-						info.AddValue("BackColor", s._backColor);
-						info.AddValue("ExchangeColors", s._exchangeColors);
-						info.AddEnum("WrapMode", s._wrapMode);
-						info.AddEnum("GradientMode", s._gradientMode);
-						info.AddEnum("GradientShape", s._gradientShape);
-						info.AddValue("Scale", s._gradientColorScale);
-						info.AddValue("Focus", s._gradientFocus);
-						break;
+                    case BrushType.LinearGradientBrush:
+                        info.AddValue("ForeColor", s._foreColor);
+                        info.AddValue("BackColor", s._backColor);
+                        info.AddValue("ExchangeColors", s._exchangeColors);
+                        info.AddEnum("WrapMode", s._wrapMode);
+                        info.AddEnum("GradientMode", s._gradientMode);
+                        info.AddEnum("GradientShape", s._gradientShape);
+                        info.AddValue("Scale", s._gradientColorScale);
+                        info.AddValue("Focus", s._gradientFocus);
+                        break;
 
-					case BrushType.PathGradientBrush:
-						info.AddValue("ForeColor", s._foreColor);
-						info.AddValue("BackColor", s._backColor);
-						info.AddValue("ExchangeColors", s._exchangeColors);
-						info.AddEnum("WrapMode", s._wrapMode);
-						break;
+                    case BrushType.PathGradientBrush:
+                        info.AddValue("ForeColor", s._foreColor);
+                        info.AddValue("BackColor", s._backColor);
+                        info.AddValue("ExchangeColors", s._exchangeColors);
+                        info.AddEnum("WrapMode", s._wrapMode);
+                        break;
 
-					case BrushType.TextureBrush:
-						info.AddValue("Texture", s._textureImage);
-						info.AddEnum("WrapMode", s._wrapMode);
-						info.AddValue("Scale", s._gradientColorScale);
-						break;
-				} // end of switch
-				*/
+                    case BrushType.TextureBrush:
+                        info.AddValue("Texture", s._textureImage);
+                        info.AddEnum("WrapMode", s._wrapMode);
+                        info.AddValue("Scale", s._gradientColorScale);
+                        break;
+                } // end of switch
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

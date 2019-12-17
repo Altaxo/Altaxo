@@ -92,11 +92,11 @@ namespace Altaxo.Gui.Pads.FileBrowser
       foreach (var name in names)
       {
         /*
-				var gvc = new GridViewColumn() { Header = name };
-				gvc.DisplayMemberBinding = new Binding(i == 0 ? "Text " : "Text" + i.ToString());
+                var gvc = new GridViewColumn() { Header = name };
+                gvc.DisplayMemberBinding = new Binding(i == 0 ? "Text " : "Text" + i.ToString());
 
-				grid.Columns.Add(gvc);
-				*/
+                grid.Columns.Add(gvc);
+                */
         ++i;
       }
     }

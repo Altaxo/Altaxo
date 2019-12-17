@@ -152,23 +152,23 @@ namespace Altaxo.Main
     }
 
     /*
-		[DllImport("kernel32.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		[System.Security.SuppressUnmanagedCodeSecurity]
-		private static extern bool SetFileTime(SafeFileHandle hFile, FILETIME* creationTime, FILETIME* lastAccessTime, FILETIME* lastWriteTime);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [System.Security.SuppressUnmanagedCodeSecurity]
+        private static extern bool SetFileTime(SafeFileHandle hFile, FILETIME* creationTime, FILETIME* lastAccessTime, FILETIME* lastWriteTime);
 
-		/// <summary>
-		/// Update the file times on the given file handle.
-		/// </summary>
-		public unsafe static void SetFileCreationTime(SafeFileHandle hFile, DateTime creationTime)
-		{
-			FILETIME fileCreationTime = new FILETIME(creationTime.ToFileTimeUtc());
-			if (!SetFileTime(hFile, &fileCreationTime, null, null))
-			{
-				throw new Win32Exception(Marshal.GetLastWin32Error());
-			}
-		}
-		*/
+        /// <summary>
+        /// Update the file times on the given file handle.
+        /// </summary>
+        public unsafe static void SetFileCreationTime(SafeFileHandle hFile, DateTime creationTime)
+        {
+            FILETIME fileCreationTime = new FILETIME(creationTime.ToFileTimeUtc());
+            if (!SetFileTime(hFile, &fileCreationTime, null, null))
+            {
+                throw new Win32Exception(Marshal.GetLastWin32Error());
+            }
+        }
+        */
 
     #endregion SetFileTime
 

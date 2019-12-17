@@ -58,9 +58,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       {
         throw new InvalidOperationException("Serialization of old versions not allowed.");
         /*
-				SymbolShapeStyleGroupStyle s = (SymbolShapeStyleGroupStyle)obj;
-				info.AddValue("StepEnabled", s._isStepEnabled);
-				*/
+                SymbolShapeStyleGroupStyle s = (SymbolShapeStyleGroupStyle)obj;
+                info.AddValue("StepEnabled", s._isStepEnabled);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

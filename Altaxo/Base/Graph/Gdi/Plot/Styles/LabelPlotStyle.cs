@@ -204,20 +204,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         throw new NotSupportedException("Serialization of old versions not supported, probably a programming error");
         /*
-				XYPlotLabelStyle s = (XYPlotLabelStyle)obj;
-				info.AddValue("Font", s.m_Font);
-				info.AddValue("IndependentColor", s.m_IndependentColor);
-				info.AddValue("Brush", s.m_Brush);
-				info.AddValue("XOffset", s.m_XOffset);
-				info.AddValue("YOffset", s.m_YOffset);
-				info.AddValue("Rotation", s.m_Rotation);
-				info.AddEnum("HorizontalAlignment", s.HorizontalAlignment);
-				info.AddEnum("VerticalAlignment", s.VerticalAlignment);
-				info.AddValue("AttachToAxis", s.m_AttachToAxis);
-				info.AddValue("AttachedAxis", s.m_AttachedAxis);
-				//info.AddValue("WhiteOut",s.m_WhiteOut);
-				//info.AddValue("BackgroundBrush",s.m_BackgroundBrush);
-				 */
+                XYPlotLabelStyle s = (XYPlotLabelStyle)obj;
+                info.AddValue("Font", s.m_Font);
+                info.AddValue("IndependentColor", s.m_IndependentColor);
+                info.AddValue("Brush", s.m_Brush);
+                info.AddValue("XOffset", s.m_XOffset);
+                info.AddValue("YOffset", s.m_YOffset);
+                info.AddValue("Rotation", s.m_Rotation);
+                info.AddEnum("HorizontalAlignment", s.HorizontalAlignment);
+                info.AddEnum("VerticalAlignment", s.VerticalAlignment);
+                info.AddValue("AttachToAxis", s.m_AttachToAxis);
+                info.AddValue("AttachedAxis", s.m_AttachedAxis);
+                //info.AddValue("WhiteOut",s.m_WhiteOut);
+                //info.AddValue("BackgroundBrush",s.m_BackgroundBrush);
+                 */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -268,10 +268,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         throw new NotSupportedException("Serialization of old versions not supported, probably a programming error");
 
         /*
-				XYPlotLabelStyle s = (XYPlotLabelStyle)obj;
-				XmlSerializationSurrogate0.SSerialize(obj, info);
-				info.AddValue("LabelColumn", s.m_LabelColumn);
-				*/
+                XYPlotLabelStyle s = (XYPlotLabelStyle)obj;
+                XmlSerializationSurrogate0.SSerialize(obj, info);
+                info.AddValue("LabelColumn", s.m_LabelColumn);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -299,20 +299,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         throw new NotSupportedException("Serialization of old versions not supported, probably a programming error");
         /*
-				XYPlotLabelStyle s = (XYPlotLabelStyle)obj;
-				info.AddValue("Font", s.m_Font);
-				info.AddValue("IndependentColor", s.m_IndependentColor);
-				info.AddValue("Brush", s.m_Brush);
-				info.AddValue("XOffset", s.m_XOffset);
-				info.AddValue("YOffset", s.m_YOffset);
-				info.AddValue("Rotation", s.m_Rotation);
-				info.AddEnum("HorizontalAlignment", s.HorizontalAlignment);
-				info.AddEnum("VerticalAlignment", s.VerticalAlignment);
-				info.AddValue("AttachToAxis", s.m_AttachToAxis);
-				info.AddValue("AttachedAxis", s.m_AttachedAxis);
-				info.AddValue("Background", s._backgroundStyle);
-				info.AddValue("LabelColumn", s.m_LabelColumn);
-				*/
+                XYPlotLabelStyle s = (XYPlotLabelStyle)obj;
+                info.AddValue("Font", s.m_Font);
+                info.AddValue("IndependentColor", s.m_IndependentColor);
+                info.AddValue("Brush", s.m_Brush);
+                info.AddValue("XOffset", s.m_XOffset);
+                info.AddValue("YOffset", s.m_YOffset);
+                info.AddValue("Rotation", s.m_Rotation);
+                info.AddEnum("HorizontalAlignment", s.HorizontalAlignment);
+                info.AddEnum("VerticalAlignment", s.VerticalAlignment);
+                info.AddValue("AttachToAxis", s.m_AttachToAxis);
+                info.AddValue("AttachedAxis", s.m_AttachedAxis);
+                info.AddValue("Background", s._backgroundStyle);
+                info.AddValue("LabelColumn", s.m_LabelColumn);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -368,19 +368,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         throw new InvalidOperationException("Serialization of old version not allowed!");
         /*
-				LabelPlotStyle s = (LabelPlotStyle)obj;
-				info.AddValue("Font", s._font);
-				info.AddValue("IndependentColor", s._independentColor);
-				info.AddValue("Brush", s._brush);
-				info.AddValue("XOffset", s._xOffset);
-				info.AddValue("YOffset", s._yOffset);
-				info.AddValue("Rotation", s._rotation);
-				info.AddEnum("HorizontalAlignment", s.HorizontalAlignment);
-				info.AddEnum("VerticalAlignment", s.VerticalAlignment);
-				info.AddValue("AttachedAxis", s._attachedPlane);
-				info.AddValue("Background", s._backgroundStyle);
-				info.AddValue("LabelColumn", s._labelColumnProxy);
-				*/
+                LabelPlotStyle s = (LabelPlotStyle)obj;
+                info.AddValue("Font", s._font);
+                info.AddValue("IndependentColor", s._independentColor);
+                info.AddValue("Brush", s._brush);
+                info.AddValue("XOffset", s._xOffset);
+                info.AddValue("YOffset", s._yOffset);
+                info.AddValue("Rotation", s._rotation);
+                info.AddEnum("HorizontalAlignment", s.HorizontalAlignment);
+                info.AddEnum("VerticalAlignment", s.VerticalAlignment);
+                info.AddValue("AttachedAxis", s._attachedPlane);
+                info.AddValue("Background", s._backgroundStyle);
+                info.AddValue("LabelColumn", s._labelColumnProxy);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -434,20 +434,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         throw new InvalidOperationException("Serialization of old version not allowed!");
 
         /*
-				LabelPlotStyle s = (LabelPlotStyle)obj;
-				info.AddValue("Font", s._font);
-				info.AddValue("IndependentColor", s._independentColor);
-				info.AddValue("Brush", s._brush);
-				info.AddValue("XOffset", s._xOffset);
-				info.AddValue("YOffset", s._yOffset);
-				info.AddValue("Rotation", s._rotation);
-				info.AddEnum("HorizontalAlignment", s.HorizontalAlignment);
-				info.AddEnum("VerticalAlignment", s.VerticalAlignment);
-				info.AddValue("AttachedAxis", s._attachedPlane);
-				info.AddEnum("BackgroundColorLinkage", s._backgroundColorLinkage);
-				info.AddValue("Background", s._backgroundStyle);
-				info.AddValue("LabelColumn", s._labelColumnProxy);
-				*/
+                LabelPlotStyle s = (LabelPlotStyle)obj;
+                info.AddValue("Font", s._font);
+                info.AddValue("IndependentColor", s._independentColor);
+                info.AddValue("Brush", s._brush);
+                info.AddValue("XOffset", s._xOffset);
+                info.AddValue("YOffset", s._yOffset);
+                info.AddValue("Rotation", s._rotation);
+                info.AddEnum("HorizontalAlignment", s.HorizontalAlignment);
+                info.AddEnum("VerticalAlignment", s.VerticalAlignment);
+                info.AddValue("AttachedAxis", s._attachedPlane);
+                info.AddEnum("BackgroundColorLinkage", s._backgroundColorLinkage);
+                info.AddValue("Background", s._backgroundStyle);
+                info.AddValue("LabelColumn", s._labelColumnProxy);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

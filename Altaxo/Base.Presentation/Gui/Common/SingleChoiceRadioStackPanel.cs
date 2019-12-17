@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Common
     protected void OnItemsSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       var list = args.NewValue as SelectableListNodeList;
-      if(null!=list)
+      if (null != list)
       {
         SelectedItem = list.FirstSelectedNode;
         Initialize(list);
@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Common
         list.ClearSelectionsAll();
         if (null != args.NewValue)
           list.SetSelection((node) => object.ReferenceEquals(node, args.NewValue));
-        }
+      }
     }
 
     #endregion
@@ -111,7 +111,7 @@ namespace Altaxo.Gui.Common
 
     public void Initialize(SelectableListNodeList choices)
     {
-      if(!object.ReferenceEquals(choices, ItemsSource))
+      if (!object.ReferenceEquals(choices, ItemsSource))
       {
         ItemsSource = choices;
       }

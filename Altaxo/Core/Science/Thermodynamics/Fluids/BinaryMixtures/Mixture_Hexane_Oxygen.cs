@@ -31,46 +31,46 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-  /// <summary>
-  /// State equations and constants of mixtures of Hexane and Oxygen.
-  /// </summary>
-  /// <remarks>
-  /// <para>References:</para>
-  /// <para>The source code was created automatically using the mixture file 'hexane-oxygen.mix' from the following software:</para>
-  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-  /// <para>Further references (extracted from the mixture file):</para>
-  /// <para>Info: Kunz and Wagner (2007)</para>
-  /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
-  /// </remarks>
-  [CASRegistryNumber("110-54-3")]
-  [CASRegistryNumber("7782-44-7")]
-  public class Mixture_Hexane_Oxygen : BinaryMixtureDefinitionBase
-  {
-
-    /// <summary>Gets the (only) instance of this class.</summary>
-    public static Mixture_Hexane_Oxygen Instance { get; } = new Mixture_Hexane_Oxygen();
-
-    #region Constants for the binary mixture of Hexane and Oxygen
-
-    /// <summary>Gets the CAS registry number of component 1 (Hexane).</summary>
-    public override string CASRegistryNumber1 { get; } = "110-54-3";
-
-    /// <summary>Gets the CAS registry number of component 2 (Oxygen).</summary>
-    public override string CASRegistryNumber2 { get; } = "7782-44-7";
-
-    #endregion Constants for the binary mixture of Hexane and Oxygen
-
-    private Mixture_Hexane_Oxygen()
+    /// <summary>
+    /// State equations and constants of mixtures of Hexane and Oxygen.
+    /// </summary>
+    /// <remarks>
+    /// <para>References:</para>
+    /// <para>The source code was created automatically using the mixture file 'hexane-oxygen.mix' from the following software:</para>
+    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+    /// <para>Further references (extracted from the mixture file):</para>
+    /// <para>Info: Kunz and Wagner (2007)</para>
+    /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
+    /// </remarks>
+    [CASRegistryNumber("110-54-3")]
+    [CASRegistryNumber("7782-44-7")]
+    public class Mixture_Hexane_Oxygen : BinaryMixtureDefinitionBase
     {
-      #region  Mixture parameter
 
-      _beta_T = 1;
-      _gamma_T = 1;
-      _beta_v = 1;
-      _gamma_v = 1;
-      _F = 0;
-      #endregion
+        /// <summary>Gets the (only) instance of this class.</summary>
+        public static Mixture_Hexane_Oxygen Instance { get; } = new Mixture_Hexane_Oxygen();
 
+        #region Constants for the binary mixture of Hexane and Oxygen
+
+        /// <summary>Gets the CAS registry number of component 1 (Hexane).</summary>
+        public override string CASRegistryNumber1 { get; } = "110-54-3";
+
+        /// <summary>Gets the CAS registry number of component 2 (Oxygen).</summary>
+        public override string CASRegistryNumber2 { get; } = "7782-44-7";
+
+        #endregion Constants for the binary mixture of Hexane and Oxygen
+
+        private Mixture_Hexane_Oxygen()
+        {
+            #region  Mixture parameter
+
+            _beta_T = 1;
+            _gamma_T = 1;
+            _beta_v = 1;
+            _gamma_v = 1;
+            _F = 0;
+            #endregion
+
+        }
     }
-  }
 }

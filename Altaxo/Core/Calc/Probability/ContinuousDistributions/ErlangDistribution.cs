@@ -36,290 +36,290 @@ using System;
 
 namespace Altaxo.Calc.Probability
 {
-  /// <summary>
-  /// Generates Erlang distributed random numbers.
-  /// </summary>
-  /// <remarks><code>
-  ///
-  /// Return Erlang distributed random deviates according to:
-  ///
-  ///                      a-1  -bx
-  ///                b (bx)    e
-  ///  p   (x) dx = ---------------- dx   for x > 0
-  ///   a,b             Gamma(a)
-  ///
-  ///             =  0                    otherwise
-  ///
-  /// The Erlang distribution is a special case of the Gamma distribution
-  /// with integer valued order a.
-  ///
-  /// References:
-  /// see references in:
-  /// W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,
-  /// Numerical Recipies in C, Cambridge Univ. Press, 1988.
-  /// </code></remarks>
+    /// <summary>
+    /// Generates Erlang distributed random numbers.
+    /// </summary>
+    /// <remarks><code>
+    ///
+    /// Return Erlang distributed random deviates according to:
+    ///
+    ///                      a-1  -bx
+    ///                b (bx)    e
+    ///  p   (x) dx = ---------------- dx   for x > 0
+    ///   a,b             Gamma(a)
+    ///
+    ///             =  0                    otherwise
+    ///
+    /// The Erlang distribution is a special case of the Gamma distribution
+    /// with integer valued order a.
+    ///
+    /// References:
+    /// see references in:
+    /// W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,
+    /// Numerical Recipies in C, Cambridge Univ. Press, 1988.
+    /// </code></remarks>
 
-  public class ErlangDistribution : ContinuousDistribution
-  {
-    protected int A;
-    protected double B, a1, sq, scale, scale2, lambda;
-
-    public void Initialize(int order, double lambda)
+    public class ErlangDistribution : ContinuousDistribution
     {
-      if (order < 1)
-        throw new ArgumentException("order must be greater or equal than 1");
-      else if (lambda == 0)
-        throw new ArgumentException("location parameter must be non-zero");
-      else
-      {
-        scale = 1.0 / generator.Maximum;   // scale long to [0,1]
-        scale2 = 2.0 / generator.Maximum;   // auxilliary
-        A = order;      // order of Erlang distribution
-        a1 = A - 1.0;     // auxilliary
-        sq = Math.Sqrt(2 * a1 + 1); // auxilliary
-        B = 1 / lambda;      // location parmeter
-        this.lambda = lambda;
-      }
-    }
+        protected int A;
+        protected double B, a1, sq, scale, scale2, lambda;
 
-    public ErlangDistribution()
-      : this(DefaultGenerator)
-    {
-    }
-
-    public ErlangDistribution(Generator gen)
-      : this(1, 1, gen)
-    {
-    }
-
-    public ErlangDistribution(int order, double lambda)
-      : this(order, lambda, DefaultGenerator)
-    {
-    }
-
-    public ErlangDistribution(int order, double lambda, Generator ran)
-      : base(ran)
-    {
-      Initialize(order, lambda);
-    }
-
-    public override double NextDouble()
-    {
-      if (A < 6)
-      { // direct method
-        double x;
-        do
+        public void Initialize(int order, double lambda)
         {
-          x = generator.Next() * scale;
-          for (int i = 1; i < A; i++)
-            x *= generator.Next() * scale;
-        } while (x <= 0.0);
-        return (-Math.Log(x) / B);
-      }
-      else
-      {   // rejection method
-        double x, y, b;
-        do
-        {
-          do
-          {
-            double v1, v2;
-            do
+            if (order < 1)
+                throw new ArgumentException("order must be greater or equal than 1");
+            else if (lambda == 0)
+                throw new ArgumentException("location parameter must be non-zero");
+            else
             {
-              v1 = scale2 * generator.Next() - 1;
-              v2 = scale2 * generator.Next() - 1;
-            } while ((v1 == 0.0) || (v1 * v1 + v2 * v2 > 1.0));
-            y = v2 / v1;
-            x = sq * y + a1;
-          } while (x <= 0.0);
-          b = (1.0 + y * y) * Math.Exp(a1 * Math.Log(x / a1) - sq * y);
-        } while ((scale * generator.Next()) > b);
-        return x / B;
-      }
-    }
+                scale = 1.0 / generator.Maximum;   // scale long to [0,1]
+                scale2 = 2.0 / generator.Maximum;   // auxilliary
+                A = order;      // order of Erlang distribution
+                a1 = A - 1.0;     // auxilliary
+                sq = Math.Sqrt(2 * a1 + 1); // auxilliary
+                B = 1 / lambda;      // location parmeter
+                this.lambda = lambda;
+            }
+        }
 
-    public int Order { get { return A; } }
+        public ErlangDistribution()
+          : this(DefaultGenerator)
+        {
+        }
 
-    public double Location { get { return B; } }
+        public ErlangDistribution(Generator gen)
+          : this(1, 1, gen)
+        {
+        }
 
-    /// <summary>
-    /// Gets or sets the parameter alpha which is used for generation of erlang distributed random numbers.
-    /// </summary>
-    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
-    public int Alpha
-    {
-      get
+        public ErlangDistribution(int order, double lambda)
+          : this(order, lambda, DefaultGenerator)
+        {
+        }
+
+        public ErlangDistribution(int order, double lambda, Generator ran)
+          : base(ran)
+        {
+            Initialize(order, lambda);
+        }
+
+        public override double NextDouble()
+        {
+            if (A < 6)
+            { // direct method
+                double x;
+                do
+                {
+                    x = generator.Next() * scale;
+                    for (int i = 1; i < A; i++)
+                        x *= generator.Next() * scale;
+                } while (x <= 0.0);
+                return (-Math.Log(x) / B);
+            }
+            else
+            {   // rejection method
+                double x, y, b;
+                do
+                {
+                    do
+                    {
+                        double v1, v2;
+                        do
+                        {
+                            v1 = scale2 * generator.Next() - 1;
+                            v2 = scale2 * generator.Next() - 1;
+                        } while ((v1 == 0.0) || (v1 * v1 + v2 * v2 > 1.0));
+                        y = v2 / v1;
+                        x = sq * y + a1;
+                    } while (x <= 0.0);
+                    b = (1.0 + y * y) * Math.Exp(a1 * Math.Log(x / a1) - sq * y);
+                } while ((scale * generator.Next()) > b);
+                return x / B;
+            }
+        }
+
+        public int Order { get { return A; } }
+
+        public double Location { get { return B; } }
+
+        /// <summary>
+        /// Gets or sets the parameter alpha which is used for generation of erlang distributed random numbers.
+        /// </summary>
+        /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
+        public int Alpha
+        {
+            get
+            {
+                return A;
+            }
+            set
+            {
+                Initialize(value, lambda);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the parameter lambda which is used for generation of erlang distributed random numbers.
+        /// </summary>
+        /// <remarks>Call <see cref="IsValidLambda"/> to determine whether a value is valid and therefor assignable.</remarks>
+        public double Lambda
+        {
+            get
+            {
+                return lambda;
+            }
+            set
+            {
+                Initialize(Order, value);
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
+        /// </summary>
+        /// <param name="value">The value to check.</param>
+        /// <returns>
+        /// <see langword="true"/> if value is greater than 0; otherwise, <see langword="false"/>.
+        /// </returns>
+        public bool IsValidAlpha(int value)
+        {
+            return value > 0;
+        }
+
+        /// <summary>
+        /// Determines whether the specified value is valid for parameter <see cref="Lambda"/>.
+        /// </summary>
+        /// <param name="value">The value to check.</param>
+        /// <returns>
+        /// <see langword="true"/> if value is greater than 0.0; otherwise, <see langword="false"/>.
+        /// </returns>
+        public bool IsValidLambda(double value)
+        {
+            return value > 0.0;
+        }
+
+        #region overridden Distribution members
+
+        /// <summary>
+        /// Gets the minimum possible value of erlang distributed random numbers.
+        /// </summary>
+        public override double Minimum
+        {
+            get
+            {
+                return 0.0;
+            }
+        }
+
+        /// <summary>
+        /// Gets the maximum possible value of erlang distributed random numbers.
+        /// </summary>
+        public override double Maximum
+        {
+            get
+            {
+                return double.MaxValue;
+            }
+        }
+
+        /// <summary>
+        /// Gets the mean value of erlang distributed random numbers.
+        /// </summary>
+        public override double Mean
+        {
+            get
+            {
+                return A / lambda;
+            }
+        }
+
+        /// <summary>
+        /// Gets the median of erlang distributed random numbers.
+        /// </summary>
+        public override double Median
+        {
+            get
+            {
+                return double.NaN;
+            }
+        }
+
+        /// <summary>
+        /// Gets the variance of erlang distributed random numbers.
+        /// </summary>
+        public override double Variance
+        {
+            get
+            {
+                return A / Math.Pow(lambda, 2.0);
+            }
+        }
+
+        /// <summary>
+        /// Gets the mode of erlang distributed random numbers.
+        /// </summary>
+        public override double[] Mode
+        {
+            get
+            {
+                return new double[] { (A - 1) / lambda };
+            }
+        }
+
+        #endregion overridden Distribution members
+
+        /*
+      public override double PDF(double x)
       {
-        return A;
+        return Math.Exp(-B * x) * Math.Pow(B * x, A - 1) * B / Calc.GammaRelated.Gamma(A);
       }
-      set
+
+      public override double CDF(double x)
       {
-        Initialize(value, lambda);
+        return GammaRelated.GammaRegularized(A, 0, B * x);
       }
-    }
 
-    /// <summary>
-    /// Gets or sets the parameter lambda which is used for generation of erlang distributed random numbers.
-    /// </summary>
-    /// <remarks>Call <see cref="IsValidLambda"/> to determine whether a value is valid and therefor assignable.</remarks>
-    public double Lambda
-    {
-      get
+      public override double Quantile(double p)
       {
-        return lambda;
+        return GammaRelated.InverseGammaRegularized(A, 1 - p) / B;
       }
-      set
-      {
-        Initialize(Order, value);
-      }
+      */
+
+        #region CdfPdfQuantile
+
+        public override double CDF(double x)
+        {
+            return CDF(x, A, lambda);
+        }
+
+        public static double CDF(double x, double A, double B)
+        {
+            return GammaRelated.GammaRegularized(A, 0, x / B);
+        }
+
+        public override double PDF(double x)
+        {
+            return PDF(x, A, lambda);
+        }
+
+        public static double PDF(double x, double A, double B)
+        {
+            return Math.Exp(-x / B) * Math.Pow(x / B, A) / (x * Calc.GammaRelated.Gamma(A));
+        }
+
+        public override double Quantile(double p)
+        {
+            return Quantile(p, A, lambda);
+        }
+
+        public static double Quantile(double x, double A, double B)
+        {
+            //return GammaRelated.InverseGammaRegularized(A, 1 - p) / B;
+            return GammaRelated.InverseGammaRegularized(A, 1 - x) * B;
+        }
+
+        #endregion CdfPdfQuantile
     }
-
-    /// <summary>
-    /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
-    /// </summary>
-    /// <param name="value">The value to check.</param>
-    /// <returns>
-    /// <see langword="true"/> if value is greater than 0; otherwise, <see langword="false"/>.
-    /// </returns>
-    public bool IsValidAlpha(int value)
-    {
-      return value > 0;
-    }
-
-    /// <summary>
-    /// Determines whether the specified value is valid for parameter <see cref="Lambda"/>.
-    /// </summary>
-    /// <param name="value">The value to check.</param>
-    /// <returns>
-    /// <see langword="true"/> if value is greater than 0.0; otherwise, <see langword="false"/>.
-    /// </returns>
-    public bool IsValidLambda(double value)
-    {
-      return value > 0.0;
-    }
-
-    #region overridden Distribution members
-
-    /// <summary>
-    /// Gets the minimum possible value of erlang distributed random numbers.
-    /// </summary>
-    public override double Minimum
-    {
-      get
-      {
-        return 0.0;
-      }
-    }
-
-    /// <summary>
-    /// Gets the maximum possible value of erlang distributed random numbers.
-    /// </summary>
-    public override double Maximum
-    {
-      get
-      {
-        return double.MaxValue;
-      }
-    }
-
-    /// <summary>
-    /// Gets the mean value of erlang distributed random numbers.
-    /// </summary>
-    public override double Mean
-    {
-      get
-      {
-        return A / lambda;
-      }
-    }
-
-    /// <summary>
-    /// Gets the median of erlang distributed random numbers.
-    /// </summary>
-    public override double Median
-    {
-      get
-      {
-        return double.NaN;
-      }
-    }
-
-    /// <summary>
-    /// Gets the variance of erlang distributed random numbers.
-    /// </summary>
-    public override double Variance
-    {
-      get
-      {
-        return A / Math.Pow(lambda, 2.0);
-      }
-    }
-
-    /// <summary>
-    /// Gets the mode of erlang distributed random numbers.
-    /// </summary>
-    public override double[] Mode
-    {
-      get
-      {
-        return new double[] { (A - 1) / lambda };
-      }
-    }
-
-    #endregion overridden Distribution members
-
-    /*
-  public override double PDF(double x)
-  {
-    return Math.Exp(-B * x) * Math.Pow(B * x, A - 1) * B / Calc.GammaRelated.Gamma(A);
-  }
-
-  public override double CDF(double x)
-  {
-    return GammaRelated.GammaRegularized(A, 0, B * x);
-  }
-
-  public override double Quantile(double p)
-  {
-    return GammaRelated.InverseGammaRegularized(A, 1 - p) / B;
-  }
-  */
-
-    #region CdfPdfQuantile
-
-    public override double CDF(double x)
-    {
-      return CDF(x, A, lambda);
-    }
-
-    public static double CDF(double x, double A, double B)
-    {
-      return GammaRelated.GammaRegularized(A, 0, x / B);
-    }
-
-    public override double PDF(double x)
-    {
-      return PDF(x, A, lambda);
-    }
-
-    public static double PDF(double x, double A, double B)
-    {
-      return Math.Exp(-x / B) * Math.Pow(x / B, A) / (x * Calc.GammaRelated.Gamma(A));
-    }
-
-    public override double Quantile(double p)
-    {
-      return Quantile(p, A, lambda);
-    }
-
-    public static double Quantile(double x, double A, double B)
-    {
-      //return GammaRelated.InverseGammaRegularized(A, 1 - p) / B;
-      return GammaRelated.InverseGammaRegularized(A, 1 - x) * B;
-    }
-
-    #endregion CdfPdfQuantile
-  }
 }
 
 #if false

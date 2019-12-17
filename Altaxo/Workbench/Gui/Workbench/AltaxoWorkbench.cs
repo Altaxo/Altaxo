@@ -975,25 +975,25 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     private void LoadViewContentMemento(IViewContent viewContent)
     {
       /*
-	IMementoCapable mementoCapable = viewContent.GetService<IMementoCapable>();
-	if (mementoCapable != null && LoadDocumentProperties)
-	{
-	if (viewContent.PrimaryFileName == null)
-		return;
+    IMementoCapable mementoCapable = viewContent.GetService<IMementoCapable>();
+    if (mementoCapable != null && LoadDocumentProperties)
+    {
+    if (viewContent.PrimaryFileName == null)
+        return;
 
-	try
-	{
-		string key = GetMementoKeyName(viewContent);
-		Current.Log.Debug("Trying to restore memento of '" + viewContent.ToString() + "' from key '" + key + "'");
+    try
+    {
+        string key = GetMementoKeyName(viewContent);
+        Current.Log.Debug("Trying to restore memento of '" + viewContent.ToString() + "' from key '" + key + "'");
 
-		mementoCapable.SetMemento(this.LoadOrCreateViewContentMementos().NestedProperties(key));
-	}
-	catch (Exception e)
-	{
-		MessageService.ShowException(e, "Can't get/set memento");
-	}
-	}
-	*/
+        mementoCapable.SetMemento(this.LoadOrCreateViewContentMementos().NestedProperties(key));
+    }
+    catch (Exception e)
+    {
+        MessageService.ShowException(e, "Can't get/set memento");
+    }
+    }
+    */
     }
 
     #endregion Loading/storing of content mementos

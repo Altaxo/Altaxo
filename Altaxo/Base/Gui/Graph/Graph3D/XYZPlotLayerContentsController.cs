@@ -383,54 +383,54 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       /*
 
-			if (string.IsNullOrEmpty(tablename) || string.IsNullOrEmpty(columnname))
-				return null;
+            if (string.IsNullOrEmpty(tablename) || string.IsNullOrEmpty(columnname))
+                return null;
 
-			// create a new plotassociation from the column
-			// first, get the y column from table and name
-			DataTable tab = Current.Project.DataTableCollection[tablename];
-			if (null != tab)
-			{
-				DataColumn ycol = tab[columnname];
-				if (null != ycol)
-				{
-					DataColumn xcol = tab.DataColumns.FindXColumnOf(ycol);
+            // create a new plotassociation from the column
+            // first, get the y column from table and name
+            DataTable tab = Current.Project.DataTableCollection[tablename];
+            if (null != tab)
+            {
+                DataColumn ycol = tab[columnname];
+                if (null != ycol)
+                {
+                    DataColumn xcol = tab.DataColumns.FindXColumnOf(ycol);
 
-					// search in our document for the first plot item that is an XYColumnPlotItem,
-					// we need this as template style
-					XYColumnPlotItem templatePlotItem = FindFirstXYColumnPlotItem(_doc);
-					G2DPlotStyleCollection templatePlotStyle;
-					if (null != templatePlotItem)
-					{
-						templatePlotStyle = templatePlotItem.Style.Clone();
-					}
-					else // there is no item that can be used as template
-					{
-						int numRows = ycol.Count;
-						if (null != xcol)
-							numRows = Math.Min(numRows, xcol.Count);
-						if (numRows < 100)
-						{
-							templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter, _doc.GetPropertyContext());
-						}
-						else
-						{
-							templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, _doc.GetPropertyContext());
-						}
-					}
+                    // search in our document for the first plot item that is an XYColumnPlotItem,
+                    // we need this as template style
+                    XYColumnPlotItem templatePlotItem = FindFirstXYColumnPlotItem(_doc);
+                    G2DPlotStyleCollection templatePlotStyle;
+                    if (null != templatePlotItem)
+                    {
+                        templatePlotStyle = templatePlotItem.Style.Clone();
+                    }
+                    else // there is no item that can be used as template
+                    {
+                        int numRows = ycol.Count;
+                        if (null != xcol)
+                            numRows = Math.Min(numRows, xcol.Count);
+                        if (numRows < 100)
+                        {
+                            templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter, _doc.GetPropertyContext());
+                        }
+                        else
+                        {
+                            templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, _doc.GetPropertyContext());
+                        }
+                    }
 
-					XYColumnPlotItem result;
-					if (null == xcol)
-						result = new XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(), ycol), templatePlotStyle);
-					else
-						result = new XYColumnPlotItem(new XYColumnPlotData(xcol, ycol), templatePlotStyle);
+                    XYColumnPlotItem result;
+                    if (null == xcol)
+                        result = new XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(), ycol), templatePlotStyle);
+                    else
+                        result = new XYColumnPlotItem(new XYColumnPlotData(xcol, ycol), templatePlotStyle);
 
-					return result;
-				}
-			}
-			return null;
+                    return result;
+                }
+            }
+            return null;
 
-	*/
+    */
     }
 
     private IGPlotItem CreatePlotItem(Altaxo.Data.DataColumn zcol)
@@ -1065,10 +1065,10 @@ namespace Altaxo.Gui.Graph.Graph3D
           AddNodeToTree = node =>
           {
             parentNodeCollectionOfTargetNode.Insert(actualInsertIndex, node); // the incrementation is to support dropping of multiple items, they must be dropped at increasing indices
-            ((ITreeListNode<IGPlotItem>)targetNode.ParentNode.Tag).ChildNodes.Insert(actualInsertIndex, (IGPlotItem)node.Tag);
+                      ((ITreeListNode<IGPlotItem>)targetNode.ParentNode.Tag).ChildNodes.Insert(actualInsertIndex, (IGPlotItem)node.Tag);
             ((IGPlotItem)node.Tag).ParentObject = (Altaxo.Main.IDocumentNode)(targetNode.ParentNode.Tag); // fix parent child relation
 
-            ++actualInsertIndex;
+                      ++actualInsertIndex;
           };
         }
       }

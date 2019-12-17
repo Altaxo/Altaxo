@@ -31,45 +31,45 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-  /// <summary>
-  /// State equations and constants of mixtures of DEA and HCl.
-  /// </summary>
-  /// <remarks>
-  /// <para>References:</para>
-  /// <para>The source code was created automatically using the mixture file 'dea-hcl.mix' from the following software:</para>
-  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-  /// <para>Further references (extracted from the mixture file):</para>
-  /// <para>Info: Herrig (2015)</para>
-  /// </remarks>
-  [CASRegistryNumber("111-42-2")]
-  [CASRegistryNumber("7647-01-0")]
-  public class Mixture_DEA_HCl : BinaryMixtureDefinitionBase
-  {
-
-    /// <summary>Gets the (only) instance of this class.</summary>
-    public static Mixture_DEA_HCl Instance { get; } = new Mixture_DEA_HCl();
-
-    #region Constants for the binary mixture of DEA and HCl
-
-    /// <summary>Gets the CAS registry number of component 1 (DEA).</summary>
-    public override string CASRegistryNumber1 { get; } = "111-42-2";
-
-    /// <summary>Gets the CAS registry number of component 2 (HCl).</summary>
-    public override string CASRegistryNumber2 { get; } = "7647-01-0";
-
-    #endregion Constants for the binary mixture of DEA and HCl
-
-    private Mixture_DEA_HCl()
+    /// <summary>
+    /// State equations and constants of mixtures of DEA and HCl.
+    /// </summary>
+    /// <remarks>
+    /// <para>References:</para>
+    /// <para>The source code was created automatically using the mixture file 'dea-hcl.mix' from the following software:</para>
+    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+    /// <para>Further references (extracted from the mixture file):</para>
+    /// <para>Info: Herrig (2015)</para>
+    /// </remarks>
+    [CASRegistryNumber("111-42-2")]
+    [CASRegistryNumber("7647-01-0")]
+    public class Mixture_DEA_HCl : BinaryMixtureDefinitionBase
     {
-      #region  Mixture parameter
 
-      _beta_T = 1;
-      _gamma_T = 1.085122258;
-      _beta_v = 1;
-      _gamma_v = 1.131327839;
-      _F = 0;
-      #endregion
+        /// <summary>Gets the (only) instance of this class.</summary>
+        public static Mixture_DEA_HCl Instance { get; } = new Mixture_DEA_HCl();
 
+        #region Constants for the binary mixture of DEA and HCl
+
+        /// <summary>Gets the CAS registry number of component 1 (DEA).</summary>
+        public override string CASRegistryNumber1 { get; } = "111-42-2";
+
+        /// <summary>Gets the CAS registry number of component 2 (HCl).</summary>
+        public override string CASRegistryNumber2 { get; } = "7647-01-0";
+
+        #endregion Constants for the binary mixture of DEA and HCl
+
+        private Mixture_DEA_HCl()
+        {
+            #region  Mixture parameter
+
+            _beta_T = 1;
+            _gamma_T = 1.085122258;
+            _beta_v = 1;
+            _gamma_v = 1.131327839;
+            _F = 0;
+            #endregion
+
+        }
     }
-  }
 }

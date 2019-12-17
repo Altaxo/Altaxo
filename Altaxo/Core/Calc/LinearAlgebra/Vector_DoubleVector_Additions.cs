@@ -37,85 +37,85 @@ using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  ///<summary>
-  /// Defines a Vector of doubles.
-  ///</summary>
-  /// <remarks>
-  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
-  /// </remarks>
-  [Serializable]
-  public partial class DoubleVector : Vector<double>
-  {
-    /// <summary>
-    /// Returns a wrapper object, so that the returned vector is read only. Please note, that changes to the elements
-    /// of the underlying array in DoubleVector are reflected in the wrapper object, whereas when the array itself is changing,
-    /// the wrapper object will not reflect the changed.
-    /// </summary>
-    /// <returns></returns>
-    public IROVector<double> ToROVector()
+    ///<summary>
+    /// Defines a Vector of doubles.
+    ///</summary>
+    /// <remarks>
+    /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+    /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+    /// </remarks>
+    [Serializable]
+    public partial class DoubleVector : Vector<double>
     {
-      return VectorMath.ToROVector(_array, _array.Length);
-    }
+        /// <summary>
+        /// Returns a wrapper object, so that the returned vector is read only. Please note, that changes to the elements
+        /// of the underlying array in DoubleVector are reflected in the wrapper object, whereas when the array itself is changing,
+        /// the wrapper object will not reflect the changed.
+        /// </summary>
+        /// <returns></returns>
+        public IROVector<double> ToROVector()
+        {
+            return VectorMath.ToROVector(_array, _array.Length);
+        }
 
-    ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>FloatVector</c></summary>
-    public static explicit operator DoubleVector(FloatVector src)
-    {
-      if (src == null)
-      {
-        return null;
-      }
-      var ret = new DoubleVector(src.Count);
-      Array.Copy(src.GetInternalData(), ret._array, src.Length);
-      return ret;
-    }
+        ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>FloatVector</c></summary>
+        public static explicit operator DoubleVector(FloatVector src)
+        {
+            if (src == null)
+            {
+                return null;
+            }
+            var ret = new DoubleVector(src.Count);
+            Array.Copy(src.GetInternalData(), ret._array, src.Length);
+            return ret;
+        }
 
-    ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>FloatVector</c></summary>
-    public static DoubleVector ToDoubleVector(FloatVector src)
-    {
-      if (src == null)
-      {
-        return null;
-      }
-      var ret = new DoubleVector(src.Length);
-      Array.Copy(src.GetInternalData(), ret._array, src.Length);
-      return ret;
-    }
+        ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>FloatVector</c></summary>
+        public static DoubleVector ToDoubleVector(FloatVector src)
+        {
+            if (src == null)
+            {
+                return null;
+            }
+            var ret = new DoubleVector(src.Length);
+            Array.Copy(src.GetInternalData(), ret._array, src.Length);
+            return ret;
+        }
 
-    ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>float</c> array</summary>
-    public static explicit operator DoubleVector(double[] src)
-    {
-      if (src == null)
-      {
-        return null;
-      }
-      var ret = new DoubleVector(src.Length);
-      Array.Copy(src, ret._array, src.Length);
-      return ret;
-    }
+        ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>float</c> array</summary>
+        public static explicit operator DoubleVector(double[] src)
+        {
+            if (src == null)
+            {
+                return null;
+            }
+            var ret = new DoubleVector(src.Length);
+            Array.Copy(src, ret._array, src.Length);
+            return ret;
+        }
 
-    ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>float</c> array</summary>
-    public static explicit operator DoubleVector(float[] src)
-    {
-      if (src == null)
-      {
-        return null;
-      }
-      var ret = new DoubleVector(src.Length);
-      Array.Copy(src, ret._array, src.Length);
-      return ret;
-    }
+        ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>float</c> array</summary>
+        public static explicit operator DoubleVector(float[] src)
+        {
+            if (src == null)
+            {
+                return null;
+            }
+            var ret = new DoubleVector(src.Length);
+            Array.Copy(src, ret._array, src.Length);
+            return ret;
+        }
 
-    ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>float</c> array</summary>
-    public static DoubleVector ToDoubleVector(float[] src)
-    {
-      if (src == null)
-      {
-        return null;
-      }
-      var ret = new DoubleVector(src.Length);
-      Array.Copy(src, ret._array, src.Length);
-      return ret;
+        ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>float</c> array</summary>
+        public static DoubleVector ToDoubleVector(float[] src)
+        {
+            if (src == null)
+            {
+                return null;
+            }
+            var ret = new DoubleVector(src.Length);
+            Array.Copy(src, ret._array, src.Length);
+            return ret;
+        }
     }
-  }
 }

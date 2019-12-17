@@ -29,53 +29,53 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Fourier.Windows
 {
-  public class HammingWindow : AbstractWindow
-  {
-    public HammingWindow(int count, bool periodic)
-      : base(count, periodic)
+    public class HammingWindow : AbstractWindow
     {
-    }
+        public HammingWindow(int count, bool periodic)
+          : base(count, periodic)
+        {
+        }
 
-    protected override void InternalCompute(IVector<double> array, bool periodic)
-    {
-      int len = array.Length;
-      int N = periodic ? len : len - 1;
-      double scale = 2 * Math.PI / N;
-      for (int i = 0; i < len; ++i)
-        array[i] = 0.54 - 0.46 * Math.Cos(i * scale);
-    }
+        protected override void InternalCompute(IVector<double> array, bool periodic)
+        {
+            int len = array.Length;
+            int N = periodic ? len : len - 1;
+            double scale = 2 * Math.PI / N;
+            for (int i = 0; i < len; ++i)
+                array[i] = 0.54 - 0.46 * Math.Cos(i * scale);
+        }
 
-    /// <summary>
-    /// Returns the window as an array of doubles.
-    /// </summary>
-    /// <param name="count">Length of the window.</param>
-    /// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
-    /// <returns>The window as array of doubles.</returns>
-    public static double[] AsDoubleArray(int count, bool periodic)
-    {
-      return new HammingWindow(count, periodic).AsDoubleArray();
-    }
+        /// <summary>
+        /// Returns the window as an array of doubles.
+        /// </summary>
+        /// <param name="count">Length of the window.</param>
+        /// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
+        /// <returns>The window as array of doubles.</returns>
+        public static double[] AsDoubleArray(int count, bool periodic)
+        {
+            return new HammingWindow(count, periodic).AsDoubleArray();
+        }
 
-    /// <summary>
-    /// Returns the window as an read only vector.
-    /// </summary>
-    /// <param name="count">Length of the window.</param>
-    /// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
-    /// <returns>The window as read only vector.</returns>
-    public static IROVector<double> AsROVector(int count, bool periodic)
-    {
-      return new HammingWindow(count, periodic).AsROVector();
-    }
+        /// <summary>
+        /// Returns the window as an read only vector.
+        /// </summary>
+        /// <param name="count">Length of the window.</param>
+        /// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
+        /// <returns>The window as read only vector.</returns>
+        public static IROVector<double> AsROVector(int count, bool periodic)
+        {
+            return new HammingWindow(count, periodic).AsROVector();
+        }
 
-    /// <summary>
-    /// Returns the window as writeable vector.
-    /// </summary>
-    /// <param name="count">Length of the window.</param>
-    /// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
-    /// <returns>The window as writeable vector.</returns>
-    public static IVector<double> AsVector(int count, bool periodic)
-    {
-      return new HammingWindow(count, periodic).AsVector();
+        /// <summary>
+        /// Returns the window as writeable vector.
+        /// </summary>
+        /// <param name="count">Length of the window.</param>
+        /// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
+        /// <returns>The window as writeable vector.</returns>
+        public static IVector<double> AsVector(int count, bool periodic)
+        {
+            return new HammingWindow(count, periodic).AsVector();
+        }
     }
-  }
 }

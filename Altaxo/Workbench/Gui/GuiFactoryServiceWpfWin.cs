@@ -398,27 +398,27 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
 
 private class ClipDataWrapper : System.Windows.Forms.DataObject, IClipboardSetDataObject
 {
-	public void SetCommaSeparatedValues(string text) { this.SetData(System.Windows.Forms.DataFormats.CommaSeparatedValue, text); }
+    public void SetCommaSeparatedValues(string text) { this.SetData(System.Windows.Forms.DataFormats.CommaSeparatedValue, text); }
 }
 
 private class ClipGetDataWrapper : IClipboardGetDataObject
 {
-	System.Windows.Forms.DataObject _dao;
+    System.Windows.Forms.DataObject _dao;
 
-	public ClipGetDataWrapper(System.Windows.Forms.DataObject value)
-	{
-		_dao = value;
-	}
+    public ClipGetDataWrapper(System.Windows.Forms.DataObject value)
+    {
+        _dao = value;
+    }
 
-	public string[] GetFormats() { return _dao.GetFormats(); }
-	public bool GetDataPresent(string format) { return _dao.GetDataPresent(format); }
-	public bool GetDataPresent(System.Type type) { return _dao.GetDataPresent(type); }
-	public object GetData(string format) { return _dao.GetData(format); }
-	public object GetData(System.Type type) { return _dao.GetData(type); }
-	public bool ContainsFileDropList() { return _dao.ContainsFileDropList(); }
-	public System.Collections.Specialized.StringCollection GetFileDropList() { return _dao.GetFileDropList(); }
-	public bool ContainsImage() { return _dao.ContainsImage(); }
-	public System.Drawing.Image GetImage() { return _dao.GetImage(); }
+    public string[] GetFormats() { return _dao.GetFormats(); }
+    public bool GetDataPresent(string format) { return _dao.GetDataPresent(format); }
+    public bool GetDataPresent(System.Type type) { return _dao.GetDataPresent(type); }
+    public object GetData(string format) { return _dao.GetData(format); }
+    public object GetData(System.Type type) { return _dao.GetData(type); }
+    public bool ContainsFileDropList() { return _dao.ContainsFileDropList(); }
+    public System.Collections.Specialized.StringCollection GetFileDropList() { return _dao.GetFileDropList(); }
+    public bool ContainsImage() { return _dao.ContainsImage(); }
+    public System.Drawing.Image GetImage() { return _dao.GetImage(); }
 }
 */
 

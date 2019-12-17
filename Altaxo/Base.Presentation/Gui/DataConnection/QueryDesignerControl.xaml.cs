@@ -142,41 +142,41 @@ namespace Altaxo.Gui.DataConnection
     {
       /*
 
-			for (int i = 0; i < _grid.Columns.Count; i++)
-			{
-				var col = _grid.Columns[i];
-				if (col.ValueType.IsEnum)
-				{
-					// create combo column for enum types
-					var cmb = new DataGridViewComboBoxColumn();
-					cmb.ValueType = col.ValueType;
-					cmb.Name = col.Name;
-					cmb.DataPropertyName = col.DataPropertyName;
-					cmb.HeaderText = col.HeaderText;
-					cmb.DisplayStyleForCurrentCellOnly = true;
-					cmb.DataSource = Enum.GetValues(col.ValueType);
-					cmb.Width = col.Width;
+            for (int i = 0; i < _grid.Columns.Count; i++)
+            {
+                var col = _grid.Columns[i];
+                if (col.ValueType.IsEnum)
+                {
+                    // create combo column for enum types
+                    var cmb = new DataGridViewComboBoxColumn();
+                    cmb.ValueType = col.ValueType;
+                    cmb.Name = col.Name;
+                    cmb.DataPropertyName = col.DataPropertyName;
+                    cmb.HeaderText = col.HeaderText;
+                    cmb.DisplayStyleForCurrentCellOnly = true;
+                    cmb.DataSource = Enum.GetValues(col.ValueType);
+                    cmb.Width = col.Width;
 
-					// replace original column with new combo column
-					_grid.Columns.RemoveAt(i);
-					_grid.Columns.Insert(i, cmb);
-				}
-				else if (col.Name == "Filter")
-				{
-					var btn = new DataGridViewButtonColumn();
-					btn.ValueType = col.ValueType;
-					btn.Name = col.Name;
-					btn.DataPropertyName = col.DataPropertyName;
-					btn.HeaderText = col.HeaderText;
-					btn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-					btn.Width = col.Width;
+                    // replace original column with new combo column
+                    _grid.Columns.RemoveAt(i);
+                    _grid.Columns.Insert(i, cmb);
+                }
+                else if (col.Name == "Filter")
+                {
+                    var btn = new DataGridViewButtonColumn();
+                    btn.ValueType = col.ValueType;
+                    btn.Name = col.Name;
+                    btn.DataPropertyName = col.DataPropertyName;
+                    btn.HeaderText = col.HeaderText;
+                    btn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                    btn.Width = col.Width;
 
-					// replace original column with new combo column
-					_grid.Columns.RemoveAt(i);
-					_grid.Columns.Insert(i, btn);
-				}
-			}
-			 */
+                    // replace original column with new combo column
+                    _grid.Columns.RemoveAt(i);
+                    _grid.Columns.Insert(i, btn);
+                }
+            }
+             */
     }
 
     private void _btnConnString_Click(object sender, RoutedEventArgs e)

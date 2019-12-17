@@ -159,23 +159,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         throw new InvalidOperationException("Serialization of old version");
 
         /*
-				ErrorBarPlotStyle s = (ErrorBarPlotStyle)obj;
+                ErrorBarPlotStyle s = (ErrorBarPlotStyle)obj;
 
-				info.AddValue("PositiveError", s._positiveErrorColumn);
-				info.AddValue("NegativeError", s._negativeErrorColumn);
+                info.AddValue("PositiveError", s._positiveErrorColumn);
+                info.AddValue("NegativeError", s._negativeErrorColumn);
 
-				info.AddValue("IndependentColor", s._independentColor);
-				info.AddValue("Pen", s._pen);
+                info.AddValue("IndependentColor", s._independentColor);
+                info.AddValue("Pen", s._pen);
 
-				info.AddValue("Axis", s._isHorizontalStyle ? 0 : 1);
-				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
-				info.AddValue("SymbolSize", s._symbolSize);
-				info.AddValue("SymbolGap", s._symbolGap);
-				info.AddValue("SkipFreq", s._skipFrequency);
+                info.AddValue("Axis", s._isHorizontalStyle ? 0 : 1);
+                info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
+                info.AddValue("SymbolSize", s._symbolSize);
+                info.AddValue("SymbolGap", s._symbolGap);
+                info.AddValue("SkipFreq", s._skipFrequency);
 
-				info.AddValue("ShowEndBars", s._showEndBars);
-				info.AddValue("NotShiftHorzPos", s._doNotShiftHorizontalPosition);
-				*/
+                info.AddValue("ShowEndBars", s._showEndBars);
+                info.AddValue("NotShiftHorzPos", s._doNotShiftHorizontalPosition);
+                */
       }
 
       protected virtual ErrorBarPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

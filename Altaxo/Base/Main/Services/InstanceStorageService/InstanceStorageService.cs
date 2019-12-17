@@ -36,13 +36,13 @@ namespace Altaxo.Main.Services
   /// </summary>
   public class InstanceStorageService : IInstanceStorageService
   {
-    const string LockFileName = "instlock.txt";
-    string _localAppDataPath;
-    Guid _instance;
-    string _localInstancePath;
-    string _lockFilePath;
-    Stream _lockFile;
-    bool _isDisposed;
+    private const string LockFileName = "instlock.txt";
+    private string _localAppDataPath;
+    private Guid _instance;
+    private string _localInstancePath;
+    private string _lockFilePath;
+    private Stream _lockFile;
+    private bool _isDisposed;
 
     /// <inheritdoc/>
     public string InstanceStoragePath => _localInstancePath;

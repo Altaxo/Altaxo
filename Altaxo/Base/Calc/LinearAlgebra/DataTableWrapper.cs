@@ -196,11 +196,11 @@ namespace Altaxo.Calc.LinearAlgebra
         : base(collection, selectedColumns, selectedRows)
       {
         /*
-				// check the writeability
-				for(int i=selectedColumns.Count-1;i>=0;i--)
-					if(!(collection[selectedColumns[i]] is IWriteableColumn))
-						throw new ArgumentException(string.Format("Column not writeable! Index in matrix: {0}, index in data column collection: {1}, column name: {2}",i,selectedColumns[i],collection[selectedColumns[i]].Name));
-				*/
+                // check the writeability
+                for(int i=selectedColumns.Count-1;i>=0;i--)
+                    if(!(collection[selectedColumns[i]] is IWriteableColumn))
+                        throw new ArgumentException(string.Format("Column not writeable! Index in matrix: {0}, index in data column collection: {1}, column name: {2}",i,selectedColumns[i],collection[selectedColumns[i]].Name));
+                */
       }
 
       #region IMatrix Members

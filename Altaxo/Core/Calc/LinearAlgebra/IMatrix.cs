@@ -27,109 +27,109 @@ using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  /// <summary>
-  /// IROMatrix represents a read-only matrix of values.
-  /// </summary>
-  public interface IROMatrix<T>
-  {
-    /// <summary>Gets an element of the matrix at (row, col).</summary>
-    T this[int row, int col] { get; }
-
-    /// <summary>The number of rows of the matrix.</summary>
-    int RowCount { get; }
-
-    /// <summary>The number of columns of the matrix.</summary>
-    int ColumnCount { get; }
-  }
-
-  /// <summary>
-  /// IMatrix represents the simplest form of a 2D matrix, which is readable and writeable.
-  /// </summary>
-  public interface IMatrix<T> : IROMatrix<T>
-  {
-    /// <summary>Get / sets an element of the matrix at (row, col).</summary>
-    new T this[int row, int col] { get; set; }
-  }
-
-  /// <summary>
-  /// IRightExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
-  /// can be appended to the right of the matrix.
-  /// </summary>
-  public interface IRightExtensibleMatrix<T> : IMatrix<T>
-  {
     /// <summary>
-    /// Append matrix a to the right edge of this matrix. Matrix a must have the same number of rows than this matrix, except this matrix
-    /// is still empty, in which case the right dimension of this matrix is set.
+    /// IROMatrix represents a read-only matrix of values.
     /// </summary>
-    /// <param name="a">The matrix to append.</param>
-    void AppendRight(IROMatrix<T> a);
-  }
+    public interface IROMatrix<T>
+    {
+        /// <summary>Gets an element of the matrix at (row, col).</summary>
+        T this[int row, int col] { get; }
 
-  /// <summary>
-  /// IBottomExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
-  /// can be appended to the bottom of the matrix.
-  /// </summary>
-  public interface IBottomExtensibleMatrix<T> : IMatrix<T>
-  {
-    /// <summary>
-    /// Append matrix a to the bottom of this matrix. Matrix a must have the same number of columns than this matrix, except this matrix
-    /// is still empty, in which case the right dimension of this matrix is set.
-    /// </summary>
-    /// <param name="a">The matrix to append.</param>
-    void AppendBottom(IROMatrix<T> a);
-  }
+        /// <summary>The number of rows of the matrix.</summary>
+        int RowCount { get; }
 
-  /// <summary>
-  /// IExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
-  /// can be appended either to the right or to the bottom of the matrix.
-  /// </summary>
-  public interface IExtensibleMatrix<T> : IRightExtensibleMatrix<T>, IBottomExtensibleMatrix<T>
-  {
-  }
-
-  public interface IROBandMatrix<T> : IROMatrix<T>
-  {
-    int LowerBandwidth { get; }
-    int UpperBandwidth { get; }
-
-    IEnumerable<(int row, int column, T value)> EnumerateElementsIndexed(Zeros zeros = Zeros.AllowSkip);
-  }
-
-  public interface IROSparseMatrix<T> : IROMatrix<T>
-  {
-  }
-
-  /// <summary>
-  /// Operations on matrices which do not change the matrix instance.
-  /// </summary>
-  /// <typeparam name="T"></typeparam>
-  public interface IROMatrixLevel1<T> : IROMatrix<T>
-  {
-    IEnumerable<(int row, int column, T value)> EnumerateElementsIndexed(Zeros zeros = Zeros.AllowSkip);
+        /// <summary>The number of columns of the matrix.</summary>
+        int ColumnCount { get; }
+    }
 
     /// <summary>
-    /// Elementwise mapping of a function to the elements of a matrix, and storing the result in another matrix.
+    /// IMatrix represents the simplest form of a 2D matrix, which is readable and writeable.
     /// </summary>
-    /// <param name="function">The function to apply. First arg in the row index, 2nd arg the column index, and 3rd arg the matrix element.</param>
-    /// <param name="result">The matrix where to store the result.</param>
-    /// <param name="zeros">Designates if zero elements (i.e. banded or sparse matrices) are allowed to omit in the mapping.</param>
-    void MapIndexed(Func<int, int, T, T> function, IMatrix<T> result, Zeros zeros = Zeros.AllowSkip);
+    public interface IMatrix<T> : IROMatrix<T>
+    {
+        /// <summary>Get / sets an element of the matrix at (row, col).</summary>
+        new T this[int row, int col] { get; set; }
+    }
 
     /// <summary>
-    /// Elementwise mapping of a function to the elements of a matrix, and storing the result in another matrix.
+    /// IRightExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
+    /// can be appended to the right of the matrix.
     /// </summary>
-    /// <param name="sourceParameter1">Additional auxilary parameter to be passed to the function.</param>
-    /// <param name="function">The function to apply. First arg in the row index, 2nd arg the column index, 3rd arg the matrix element, and 4th arg the parameter given in <paramref name="sourceParameter1"/>.</param>
-    /// <param name="result">The matrix where to store the result.</param>
-    /// <param name="zeros">Designates if zero elements (i.e. banded or sparse matrices) are allowed to omit in the mapping.</param>
-    void MapIndexed<T1>(T1 sourceParameter1, Func<int, int, T, T1, T> function, IMatrix<T> result, Zeros zeros = Zeros.AllowSkip);
-  }
+    public interface IRightExtensibleMatrix<T> : IMatrix<T>
+    {
+        /// <summary>
+        /// Append matrix a to the right edge of this matrix. Matrix a must have the same number of rows than this matrix, except this matrix
+        /// is still empty, in which case the right dimension of this matrix is set.
+        /// </summary>
+        /// <param name="a">The matrix to append.</param>
+        void AppendRight(IROMatrix<T> a);
+    }
 
-  public interface IMatrixLevel1<T> : IROMatrixLevel1<T>
-  {
     /// <summary>
-    /// Sets all elements of the matrix to the default value (i.e. zero for numerical values).
+    /// IBottomExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
+    /// can be appended to the bottom of the matrix.
     /// </summary>
-    void Clear();
-  }
+    public interface IBottomExtensibleMatrix<T> : IMatrix<T>
+    {
+        /// <summary>
+        /// Append matrix a to the bottom of this matrix. Matrix a must have the same number of columns than this matrix, except this matrix
+        /// is still empty, in which case the right dimension of this matrix is set.
+        /// </summary>
+        /// <param name="a">The matrix to append.</param>
+        void AppendBottom(IROMatrix<T> a);
+    }
+
+    /// <summary>
+    /// IExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
+    /// can be appended either to the right or to the bottom of the matrix.
+    /// </summary>
+    public interface IExtensibleMatrix<T> : IRightExtensibleMatrix<T>, IBottomExtensibleMatrix<T>
+    {
+    }
+
+    public interface IROBandMatrix<T> : IROMatrix<T>
+    {
+        int LowerBandwidth { get; }
+        int UpperBandwidth { get; }
+
+        IEnumerable<(int row, int column, T value)> EnumerateElementsIndexed(Zeros zeros = Zeros.AllowSkip);
+    }
+
+    public interface IROSparseMatrix<T> : IROMatrix<T>
+    {
+    }
+
+    /// <summary>
+    /// Operations on matrices which do not change the matrix instance.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public interface IROMatrixLevel1<T> : IROMatrix<T>
+    {
+        IEnumerable<(int row, int column, T value)> EnumerateElementsIndexed(Zeros zeros = Zeros.AllowSkip);
+
+        /// <summary>
+        /// Elementwise mapping of a function to the elements of a matrix, and storing the result in another matrix.
+        /// </summary>
+        /// <param name="function">The function to apply. First arg in the row index, 2nd arg the column index, and 3rd arg the matrix element.</param>
+        /// <param name="result">The matrix where to store the result.</param>
+        /// <param name="zeros">Designates if zero elements (i.e. banded or sparse matrices) are allowed to omit in the mapping.</param>
+        void MapIndexed(Func<int, int, T, T> function, IMatrix<T> result, Zeros zeros = Zeros.AllowSkip);
+
+        /// <summary>
+        /// Elementwise mapping of a function to the elements of a matrix, and storing the result in another matrix.
+        /// </summary>
+        /// <param name="sourceParameter1">Additional auxilary parameter to be passed to the function.</param>
+        /// <param name="function">The function to apply. First arg in the row index, 2nd arg the column index, 3rd arg the matrix element, and 4th arg the parameter given in <paramref name="sourceParameter1"/>.</param>
+        /// <param name="result">The matrix where to store the result.</param>
+        /// <param name="zeros">Designates if zero elements (i.e. banded or sparse matrices) are allowed to omit in the mapping.</param>
+        void MapIndexed<T1>(T1 sourceParameter1, Func<int, int, T, T1, T> function, IMatrix<T> result, Zeros zeros = Zeros.AllowSkip);
+    }
+
+    public interface IMatrixLevel1<T> : IROMatrixLevel1<T>
+    {
+        /// <summary>
+        /// Sets all elements of the matrix to the default value (i.e. zero for numerical values).
+        /// </summary>
+        void Clear();
+    }
 }

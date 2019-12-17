@@ -31,46 +31,46 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-  /// <summary>
-  /// State equations and constants of mixtures of Isobutane and Octane.
-  /// </summary>
-  /// <remarks>
-  /// <para>References:</para>
-  /// <para>The source code was created automatically using the mixture file 'isobutan-octane.mix' from the following software:</para>
-  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-  /// <para>Further references (extracted from the mixture file):</para>
-  /// <para>Info: Kunz and Wagner (2007)</para>
-  /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
-  /// </remarks>
-  [CASRegistryNumber("75-28-5")]
-  [CASRegistryNumber("111-65-9")]
-  public class Mixture_Isobutane_Octane : BinaryMixtureDefinitionBase
-  {
-
-    /// <summary>Gets the (only) instance of this class.</summary>
-    public static Mixture_Isobutane_Octane Instance { get; } = new Mixture_Isobutane_Octane();
-
-    #region Constants for the binary mixture of Isobutane and Octane
-
-    /// <summary>Gets the CAS registry number of component 1 (Isobutane).</summary>
-    public override string CASRegistryNumber1 { get; } = "75-28-5";
-
-    /// <summary>Gets the CAS registry number of component 2 (Octane).</summary>
-    public override string CASRegistryNumber2 { get; } = "111-65-9";
-
-    #endregion Constants for the binary mixture of Isobutane and Octane
-
-    private Mixture_Isobutane_Octane()
+    /// <summary>
+    /// State equations and constants of mixtures of Isobutane and Octane.
+    /// </summary>
+    /// <remarks>
+    /// <para>References:</para>
+    /// <para>The source code was created automatically using the mixture file 'isobutan-octane.mix' from the following software:</para>
+    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+    /// <para>Further references (extracted from the mixture file):</para>
+    /// <para>Info: Kunz and Wagner (2007)</para>
+    /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
+    /// </remarks>
+    [CASRegistryNumber("75-28-5")]
+    [CASRegistryNumber("111-65-9")]
+    public class Mixture_Isobutane_Octane : BinaryMixtureDefinitionBase
     {
-      #region  Mixture parameter
 
-      _beta_T = 1;
-      _gamma_T = 1.013945424;
-      _beta_v = 1;
-      _gamma_v = 1.032807063;
-      _F = 0;
-      #endregion
+        /// <summary>Gets the (only) instance of this class.</summary>
+        public static Mixture_Isobutane_Octane Instance { get; } = new Mixture_Isobutane_Octane();
 
+        #region Constants for the binary mixture of Isobutane and Octane
+
+        /// <summary>Gets the CAS registry number of component 1 (Isobutane).</summary>
+        public override string CASRegistryNumber1 { get; } = "75-28-5";
+
+        /// <summary>Gets the CAS registry number of component 2 (Octane).</summary>
+        public override string CASRegistryNumber2 { get; } = "111-65-9";
+
+        #endregion Constants for the binary mixture of Isobutane and Octane
+
+        private Mixture_Isobutane_Octane()
+        {
+            #region  Mixture parameter
+
+            _beta_T = 1;
+            _gamma_T = 1.013945424;
+            _beta_v = 1;
+            _gamma_v = 1.032807063;
+            _F = 0;
+            #endregion
+
+        }
     }
-  }
 }

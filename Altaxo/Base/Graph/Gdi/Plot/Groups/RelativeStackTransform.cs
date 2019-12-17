@@ -180,87 +180,87 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     }
 
     /*
-		public void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
-		{
-			Dictionary<G2DPlotItem, Processed2DPlotData> plotDataDict;
-			if (!CanUseStyle(layer, coll, out plotDataDict))
-			{
-				CoordinateTransformingStyleBase.Paint(g, layer, coll);
-				return;
-			}
+        public void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
+        {
+            Dictionary<G2DPlotItem, Processed2DPlotData> plotDataDict;
+            if (!CanUseStyle(layer, coll, out plotDataDict))
+            {
+                CoordinateTransformingStyleBase.Paint(g, layer, coll);
+                return;
+            }
 
-			AltaxoVariant[] ysumArray = null;
-			foreach (IGPlotItem pi in coll)
-			{
-				if (pi is G2DPlotItem)
-				{
-					G2DPlotItem gpi = pi as G2DPlotItem;
-					Processed2DPlotData pdata = plotDataDict[gpi];
-					ysumArray = AbsoluteStackTransform.AddUp(ysumArray, pdata);
-				}
-			}
+            AltaxoVariant[] ysumArray = null;
+            foreach (IGPlotItem pi in coll)
+            {
+                if (pi is G2DPlotItem)
+                {
+                    G2DPlotItem gpi = pi as G2DPlotItem;
+                    Processed2DPlotData pdata = plotDataDict[gpi];
+                    ysumArray = AbsoluteStackTransform.AddUp(ysumArray, pdata);
+                }
+            }
 
-			// now plot the data - the summed up y is in yArray
-			AltaxoVariant[] yArray = null;
-			Processed2DPlotData previousItemData = null;
-			foreach (IGPlotItem pi in coll)
-			{
-				if (pi is G2DPlotItem)
-				{
-					G2DPlotItem gpi = pi as G2DPlotItem;
-					Processed2DPlotData pdata = plotDataDict[gpi];
-					yArray = AbsoluteStackTransform.AddUp(yArray, pdata);
-					AltaxoVariant[] localArray = new AltaxoVariant[yArray.Length];
+            // now plot the data - the summed up y is in yArray
+            AltaxoVariant[] yArray = null;
+            Processed2DPlotData previousItemData = null;
+            foreach (IGPlotItem pi in coll)
+            {
+                if (pi is G2DPlotItem)
+                {
+                    G2DPlotItem gpi = pi as G2DPlotItem;
+                    Processed2DPlotData pdata = plotDataDict[gpi];
+                    yArray = AbsoluteStackTransform.AddUp(yArray, pdata);
+                    AltaxoVariant[] localArray = new AltaxoVariant[yArray.Length];
 
-					int j = -1;
-					foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
-					{
-						j++;
-						AltaxoVariant y = 100 * yArray[j] / ysumArray[j];
-						localArray[j] = y;
+                    int j = -1;
+                    foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+                    {
+                        j++;
+                        AltaxoVariant y = 100 * yArray[j] / ysumArray[j];
+                        localArray[j] = y;
 
-						Logical3D rel = new Logical3D(
-						layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex)),
-						layer.YAxis.PhysicalVariantToNormal(y));
+                        Logical3D rel = new Logical3D(
+                        layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex)),
+                        layer.YAxis.PhysicalVariantToNormal(y));
 
-						double xabs, yabs;
-						layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
-						pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
-					}
-					// we have also to exchange the accessor for the physical y value and replace it by our own one
-					pdata.YPhysicalAccessor = new IndexedPhysicalValueAccessor(delegate(int i) { return localArray[i]; });
-					pdata.PreviousItemData = previousItemData;
-					previousItemData = pdata;
-				}
-			}
-			Processed2DPlotData prevPlotData = null;
-			Processed2DPlotData nextPlotData = null;
-			Processed2DPlotData currPlotData = null;
-			for (int i = coll.Count - 1; i >= 0; --i)
-			{
-				if (i > 0 && (coll[i - 1] is G2DPlotItem))
-					nextPlotData = plotDataDict[coll[i - 1] as G2DPlotItem];
-				else
-					nextPlotData = null;
+                        double xabs, yabs;
+                        layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
+                        pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
+                    }
+                    // we have also to exchange the accessor for the physical y value and replace it by our own one
+                    pdata.YPhysicalAccessor = new IndexedPhysicalValueAccessor(delegate(int i) { return localArray[i]; });
+                    pdata.PreviousItemData = previousItemData;
+                    previousItemData = pdata;
+                }
+            }
+            Processed2DPlotData prevPlotData = null;
+            Processed2DPlotData nextPlotData = null;
+            Processed2DPlotData currPlotData = null;
+            for (int i = coll.Count - 1; i >= 0; --i)
+            {
+                if (i > 0 && (coll[i - 1] is G2DPlotItem))
+                    nextPlotData = plotDataDict[coll[i - 1] as G2DPlotItem];
+                else
+                    nextPlotData = null;
 
-				if (coll[i] is G2DPlotItem)
-				{
-					var gpi = coll[i] as G2DPlotItem;
-					currPlotData = plotDataDict[gpi];
-					gpi.Paint(g, layer, currPlotData, prevPlotData, nextPlotData);
-				}
-				else
-				{
-					currPlotData = null;
-					coll[i].Paint(g, layer, null, null);
-				}
+                if (coll[i] is G2DPlotItem)
+                {
+                    var gpi = coll[i] as G2DPlotItem;
+                    currPlotData = plotDataDict[gpi];
+                    gpi.Paint(g, layer, currPlotData, prevPlotData, nextPlotData);
+                }
+                else
+                {
+                    currPlotData = null;
+                    coll[i].Paint(g, layer, null, null);
+                }
 
-				prevPlotData = currPlotData;
-				currPlotData = nextPlotData;
-				nextPlotData = null;
-			}
-		}
-		*/
+                prevPlotData = currPlotData;
+                currPlotData = nextPlotData;
+                nextPlotData = null;
+            }
+        }
+        */
 
     #endregion ICoordinateTransformingGroupStyle Members
 

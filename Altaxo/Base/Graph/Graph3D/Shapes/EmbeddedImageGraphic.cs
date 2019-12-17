@@ -202,20 +202,20 @@ namespace Altaxo.Graph.Graph3D.Shapes
       throw new NotImplementedException();
 
       /*
-			GraphicsState gs = g.Save();
-			TransformGraphics(g);
+            GraphicsState gs = g.Save();
+            TransformGraphics(g);
 
-			Image img = _imageProxy == null ? null : _imageProxy.GetImage();
+            Image img = _imageProxy == null ? null : _imageProxy.GetImage();
 
-			if (null != img)
-			{
-				var bounds = this.Bounds;
+            if (null != img)
+            {
+                var bounds = this.Bounds;
 
-				g.DrawImage(img, (float)bounds.X, (float)bounds.Y, (float)bounds.Width, (float)bounds.Height);
-			}
+                g.DrawImage(img, (float)bounds.X, (float)bounds.Y, (float)bounds.Width, (float)bounds.Height);
+            }
 
-			g.Restore(gs);
-			*/
+            g.Restore(gs);
+            */
     }
   } // End Class
 }

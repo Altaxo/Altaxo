@@ -7,9 +7,9 @@
 							xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 mc:Ignorable="d"
 						 d:DesignHeight="300" d:DesignWidth="300">
-	<ItemsControl.ItemContainerStyle>
-		<Style TargetType="{x:Type TreeViewItem}">
-		<Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}" />
-	</Style>
-	</ItemsControl.ItemContainerStyle>
+    <ItemsControl.ItemContainerStyle>
+        <Style TargetType="{x:Type TreeViewItem}">
+            <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}" />
+        </Style>
+    </ItemsControl.ItemContainerStyle>
 </ItemsControl>

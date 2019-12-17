@@ -41,24 +41,23 @@ namespace Altaxo.Main.Services
   /// <seealso cref="Altaxo.Main.Services.IFileBasedProjectArchiveManager" />
   public class ZipFileProjectArchiveManager : IFileBasedProjectArchiveManager
   {
-    const string ClonedProjectRelativePath = "CurrProj";
-    const string ClonedProjectFileName = "CurrProj";
-
-    bool _isDisposed;
+    private const string ClonedProjectRelativePath = "CurrProj";
+    private const string ClonedProjectFileName = "CurrProj";
+    private bool _isDisposed;
 
     public event EventHandler<NameChangedEventArgs> FileOrFolderNameChanged;
 
     /// <summary>
     /// The stream of the original project file that is kept open in order to prevent modifications.
     /// </summary>
-    FileStream _originalFileStream;
+    private FileStream _originalFileStream;
 
     /// <summary>
     /// The stream of a copy of the original project file. Is also kept open to prevent modifications.
     /// </summary>
-    FileStream _clonedFileStream;
-    Task _cloneTask;
-    CancellationTokenSource _cloneTaskCancel;
+    private FileStream _clonedFileStream;
+    private Task _cloneTask;
+    private CancellationTokenSource _cloneTaskCancel;
 
     /// <summary>
     /// Gets the name of the file or folder. Can be null if no file or folder is set (up to now).
@@ -328,7 +327,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Starts a task to clone the original file into a file located in the local app data folder.
     /// </summary>
-    void StartCloneTask()
+    private void StartCloneTask()
     {
       _clonedFileStream?.Dispose(); // Close/dispose old cloned stream
       _clonedFileStream = null;
@@ -370,7 +369,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// If the clone task is still active, cancels the clone task and invalidates the clone stream.
     /// </summary>
-    void CloneTask_CancelAndClearAll()
+    private void CloneTask_CancelAndClearAll()
     {
       try
       {
@@ -402,7 +401,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Tests the state of the clone task. If it is finished, the call returns. If it is yet not finished, the task is cancelled, and the cloned stream is disposed.
     /// </summary>
-    void TryFinishCloneTask()
+    private void TryFinishCloneTask()
     {
       if (null != _cloneTask)
       {

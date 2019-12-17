@@ -74,19 +74,19 @@ namespace Altaxo.Main
       {
         throw new InvalidOperationException("Serialization of old version not supported");
         /*
-				RelDocNodeProxy s = (RelDocNodeProxy)obj;
-				Main.DocumentPath path;
-				var docNode = s.InternalDocNode;
-				if (null != docNode)
-				{
-					path = Main.DocumentPath.GetRelativePathFromTo(s._parent, (Main.IDocumentLeafNode)docNode);
-				}
-				else
-				{
-					path = s._docNodePath;
-				}
-				info.AddValue("Node", path);
-				*/
+                RelDocNodeProxy s = (RelDocNodeProxy)obj;
+                Main.DocumentPath path;
+                var docNode = s.InternalDocNode;
+                if (null != docNode)
+                {
+                    path = Main.DocumentPath.GetRelativePathFromTo(s._parent, (Main.IDocumentLeafNode)docNode);
+                }
+                else
+                {
+                    path = s._docNodePath;
+                }
+                info.AddValue("Node", path);
+                */
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

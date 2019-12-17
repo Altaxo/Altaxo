@@ -289,42 +289,42 @@ namespace Altaxo.Gui
     protected void AmendMissingFamilyNamesToGdiFontFamilies()
     {
       /*
-			foreach (var entry in _dictWin32FamilyNameToWpfTypefaces)
-			{
-				if (!_dictWin32FamilyNameToGdiFontFamilyAndPresence.ContainsKey(entry.Key))
-				{
-					// try to create a private font collection
-					System.Drawing.Text.PrivateFontCollection pfc = new System.Drawing.Text.PrivateFontCollection();
-					foreach (var typeface in entry.Value)
-					{
-						var uri = _dictTypefaceToUri[typeface];
+            foreach (var entry in _dictWin32FamilyNameToWpfTypefaces)
+            {
+                if (!_dictWin32FamilyNameToGdiFontFamilyAndPresence.ContainsKey(entry.Key))
+                {
+                    // try to create a private font collection
+                    System.Drawing.Text.PrivateFontCollection pfc = new System.Drawing.Text.PrivateFontCollection();
+                    foreach (var typeface in entry.Value)
+                    {
+                        var uri = _dictTypefaceToUri[typeface];
 
-						if (uri.IsFile)
-						{
-							try
-							{
-								pfc.AddFontFile(uri.LocalPath);
-							}
-							catch (Exception ex)
-							{
-								Current.Console?.WriteLine("Warning: Font file {0} for font family {1}, typeface {2} could not be added to a System.Drawing.Text.PrivateFontFamily. The message is: {3}", uri.LocalPath, entry.Key, typeface?.FaceNames?.FirstOrDefault(), ex.Message);
-							}
-						}
-					}
+                        if (uri.IsFile)
+                        {
+                            try
+                            {
+                                pfc.AddFontFile(uri.LocalPath);
+                            }
+                            catch (Exception ex)
+                            {
+                                Current.Console?.WriteLine("Warning: Font file {0} for font family {1}, typeface {2} could not be added to a System.Drawing.Text.PrivateFontFamily. The message is: {3}", uri.LocalPath, entry.Key, typeface?.FaceNames?.FirstOrDefault(), ex.Message);
+                            }
+                        }
+                    }
 
-					var gdiFontFamily = pfc.Families.FirstOrDefault();
+                    var gdiFontFamily = pfc.Families.FirstOrDefault();
 
-					if (null != gdiFontFamily)
-					{
-						if (GetFontStylePresence(gdiFontFamily, out var fontFamilyArray))
-						{
-							_gdiMissingFontFamilies.Add(entry.Key, pfc);
-							_dictWin32FamilyNameToGdiFontFamilyAndPresence.TryAdd(gdiFontFamily.Name, fontFamilyArray);
-						}
-					}
-				}
-			}
-			*/
+                    if (null != gdiFontFamily)
+                    {
+                        if (GetFontStylePresence(gdiFontFamily, out var fontFamilyArray))
+                        {
+                            _gdiMissingFontFamilies.Add(entry.Key, pfc);
+                            _dictWin32FamilyNameToGdiFontFamilyAndPresence.TryAdd(gdiFontFamily.Name, fontFamilyArray);
+                        }
+                    }
+                }
+            }
+            */
     }
 
     /// <summary>

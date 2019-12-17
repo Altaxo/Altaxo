@@ -29,31 +29,31 @@ using System.Text;
 
 namespace Altaxo.Units.Temperature
 {
-  [UnitDescription("Temperature", 0, 0, 0, 0, 1, 0, 0)]
-  public class Kelvin : SIUnit
-  {
-    private static readonly Kelvin _instance = new Kelvin();
-
-    public static Kelvin Instance { get { return _instance; } }
-
-    private Kelvin()
-        : base(0, 0, 0, 0, 1, 0, 0)
+    [UnitDescription("Temperature", 0, 0, 0, 0, 1, 0, 0)]
+    public class Kelvin : SIUnit
     {
-    }
+        private static readonly Kelvin _instance = new Kelvin();
 
-    public override string Name
-    {
-      get { return "Kelvin"; }
-    }
+        public static Kelvin Instance { get { return _instance; } }
 
-    public override string ShortCut
-    {
-      get { return "K"; }
-    }
+        private Kelvin()
+            : base(0, 0, 0, 0, 1, 0, 0)
+        {
+        }
 
-    public override ISIPrefixList Prefixes
-    {
-      get { return SIPrefix.ListWithAllKnownPrefixes; }
+        public override string Name
+        {
+            get { return "Kelvin"; }
+        }
+
+        public override string ShortCut
+        {
+            get { return "K"; }
+        }
+
+        public override ISIPrefixList Prefixes
+        {
+            get { return SIPrefix.ListWithAllKnownPrefixes; }
+        }
     }
-  }
 }

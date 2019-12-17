@@ -32,8 +32,8 @@
 namespace Poly2Tri
 {
   /**
-	 * @author Thomas Åhlén, thahlen@gmail.com
-	 */
+     * @author Thomas Åhlén, thahlen@gmail.com
+     */
 
   public class TriangulationUtil
   {

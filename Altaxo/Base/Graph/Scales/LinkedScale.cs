@@ -86,12 +86,12 @@ namespace Altaxo.Graph.Scales
       {
         throw new InvalidOperationException("Serialization of old versions not supported.");
         /*
-				LinkedScale s = (LinkedScale)obj;
+                LinkedScale s = (LinkedScale)obj;
 
-				info.AddValue("ScaleWrapped", s._scaleWrapped);
-				info.AddValue("LinkParameters", s._linkParameters);
-				info.AddValue("LinkedScaleIndex", s._linkedScaleIndex);
-				*/
+                info.AddValue("ScaleWrapped", s._scaleWrapped);
+                info.AddValue("LinkParameters", s._linkParameters);
+                info.AddValue("LinkedScaleIndex", s._linkedScaleIndex);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -178,13 +178,13 @@ namespace Altaxo.Graph.Scales
 
         /*
 
-				LinkedScale s = (LinkedScale)obj;
+                LinkedScale s = (LinkedScale)obj;
 
-				info.AddValue("ScaleWrapped", s._scaleWrapped);
-				info.AddValue("LinkParameters", s._linkParameters);
-				info.AddValue("LinkedScaleIndex", s._linkedScaleIndex);
-				info.AddValue("LinkedLayerIndex", s._linkedLayerIndex);
-				*/
+                info.AddValue("ScaleWrapped", s._scaleWrapped);
+                info.AddValue("LinkParameters", s._linkParameters);
+                info.AddValue("LinkedScaleIndex", s._linkedScaleIndex);
+                info.AddValue("LinkedLayerIndex", s._linkedLayerIndex);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

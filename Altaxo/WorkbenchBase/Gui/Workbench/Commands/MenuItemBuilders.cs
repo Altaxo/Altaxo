@@ -35,23 +35,23 @@ namespace Altaxo.Gui.Workbench.Commands
 
     /*ToolStripItem[] BuildMenuFlat(ICollection<INavigationPoint> points, int additionalItems)
 {
-	ToolStripItem[] items = new ToolStripItem[points.Count+additionalItems];
-	MenuCommand cmd = null;
-	INavigationPoint p = null;
-	List<INavigationPoint> list = new List<INavigationPoint>(points);
+    ToolStripItem[] items = new ToolStripItem[points.Count+additionalItems];
+    MenuCommand cmd = null;
+    INavigationPoint p = null;
+    List<INavigationPoint> list = new List<INavigationPoint>(points);
 
-	int n = points.Count-1; // the last point
-	int i = 0;
-	while (i<points.Count) {
-		p = list[n-i];
-		cmd = new MenuCommand(p.Description, new EventHandler(NavigateTo));
-		cmd.Tag = p;
+    int n = points.Count-1; // the last point
+    int i = 0;
+    while (i<points.Count) {
+        p = list[n-i];
+        cmd = new MenuCommand(p.Description, new EventHandler(NavigateTo));
+        cmd.Tag = p;
 //					if (p == NavigationService.CurrentPosition) {
 //						cmd.Text = "*** "+cmd.Text;
 //					}
-		items[i++] = cmd;
-	}
-	return items;
+        items[i++] = cmd;
+    }
+    return items;
 }*/
 
     private List<FrameworkElement> BuildMenuByFile(ICollection<INavigationPoint> points)

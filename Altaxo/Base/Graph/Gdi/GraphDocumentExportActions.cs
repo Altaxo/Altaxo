@@ -578,7 +578,7 @@ namespace Altaxo.Graph.Gdi
 				}
 #endif
 
-            doc.Paint(grfxMetafile, true);
+                  doc.Paint(grfxMetafile, true);
           });
 
       return RenderAsEnhancedMetafileToStream(renderingProc, stream, doc.Size, sourceDpiResolution, outputScalingFactor, pixelFormat);

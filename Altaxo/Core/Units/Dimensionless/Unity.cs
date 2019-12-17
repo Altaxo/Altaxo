@@ -29,31 +29,31 @@ using System.Text;
 
 namespace Altaxo.Units.Dimensionless
 {
-  [UnitDescription("Relation", 0, 0, 0, 0, 0, 0, 0)]
-  public class Unity : SIUnit
-  {
-    private static readonly Unity _instance = new Unity();
-
-    public static Unity Instance { get { return _instance; } }
-
-    private Unity()
-        : base(0, 0, 0, 0, 0, 0, 0)
+    [UnitDescription("Relation", 0, 0, 0, 0, 0, 0, 0)]
+    public class Unity : SIUnit
     {
-    }
+        private static readonly Unity _instance = new Unity();
 
-    public override string Name
-    {
-      get { return "Unity"; }
-    }
+        public static Unity Instance { get { return _instance; } }
 
-    public override string ShortCut
-    {
-      get { return string.Empty; }
-    }
+        private Unity()
+            : base(0, 0, 0, 0, 0, 0, 0)
+        {
+        }
 
-    public override ISIPrefixList Prefixes
-    {
-      get { return SIPrefix.ListWithNonePrefixOnly; }
+        public override string Name
+        {
+            get { return "Unity"; }
+        }
+
+        public override string ShortCut
+        {
+            get { return string.Empty; }
+        }
+
+        public override ISIPrefixList Prefixes
+        {
+            get { return SIPrefix.ListWithNonePrefixOnly; }
+        }
     }
-  }
 }

@@ -24,24 +24,24 @@
 
 namespace Altaxo.Calc
 {
-  /// <summary>
-  /// The direction of the fourier transform.
-  /// </summary>
-  public enum OperationDirection
-  {
     /// <summary>
-    /// Forward direction.
+    /// The direction of the fourier transform.
     /// </summary>
-    Forward = 1,
+    public enum OperationDirection
+    {
+        /// <summary>
+        /// Forward direction.
+        /// </summary>
+        Forward = 1,
 
-    /// <summary>
-    /// Backward direction.
-    /// </summary>
-    Inverse = -1,
+        /// <summary>
+        /// Backward direction.
+        /// </summary>
+        Inverse = -1,
 
-    /// <summary>
-    /// Backward direction. (equivalent to <see cref="Inverse"/>).
-    /// </summary>
-    Backward = -1
-  }
+        /// <summary>
+        /// Backward direction. (equivalent to <see cref="Inverse"/>).
+        /// </summary>
+        Backward = -1
+    }
 }

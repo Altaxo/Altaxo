@@ -40,10 +40,10 @@ namespace Altaxo.Collections
       {
         throw new NotImplementedException("Should not serialize deprecated type");
         /*
-				IntegerRangeAsCollection s = (IntegerRangeAsCollection)obj;
-				info.AddValue("Start", s._start);
-				info.AddValue("Count", s._count);
-				*/
+                IntegerRangeAsCollection s = (IntegerRangeAsCollection)obj;
+                info.AddValue("Start", s._start);
+                info.AddValue("Count", s._count);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

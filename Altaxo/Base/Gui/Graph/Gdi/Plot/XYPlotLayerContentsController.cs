@@ -1098,10 +1098,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
           AddNodeToTree = node =>
           {
             parentNodeCollectionOfTargetNode.Insert(actualInsertIndex, node); // the incrementation is to support dropping of multiple items, they must be dropped at increasing indices
-            ((ITreeListNode<IGPlotItem>)targetNode.ParentNode.Tag).ChildNodes.Insert(actualInsertIndex, (IGPlotItem)node.Tag);
+                      ((ITreeListNode<IGPlotItem>)targetNode.ParentNode.Tag).ChildNodes.Insert(actualInsertIndex, (IGPlotItem)node.Tag);
             ((IGPlotItem)node.Tag).ParentObject = (Altaxo.Main.IDocumentNode)(targetNode.ParentNode.Tag); // fix parent child relation
 
-            ++actualInsertIndex;
+                      ++actualInsertIndex;
           };
         }
       }

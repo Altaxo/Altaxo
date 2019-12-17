@@ -31,47 +31,47 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-  /// <summary>
-  /// State equations and constants of mixtures of Ethane and Isobutane.
-  /// </summary>
-  /// <remarks>
-  /// <para>References:</para>
-  /// <para>The source code was created automatically using the mixture file 'ethane-isobutan.mix' from the following software:</para>
-  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-  /// <para>Further references (extracted from the mixture file):</para>
-  /// <para>Info: Kunz and Wagner (2007)</para>
-  /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
-  /// </remarks>
-  [CASRegistryNumber("74-84-0")]
-  [CASRegistryNumber("75-28-5")]
-  public class Mixture_Ethane_Isobutane : BinaryMixtureDefinitionBase
-  {
-
-    /// <summary>Gets the (only) instance of this class.</summary>
-    public static Mixture_Ethane_Isobutane Instance { get; } = new Mixture_Ethane_Isobutane();
-
-    #region Constants for the binary mixture of Ethane and Isobutane
-
-    /// <summary>Gets the CAS registry number of component 1 (Ethane).</summary>
-    public override string CASRegistryNumber1 { get; } = "74-84-0";
-
-    /// <summary>Gets the CAS registry number of component 2 (Isobutane).</summary>
-    public override string CASRegistryNumber2 { get; } = "75-28-5";
-
-    #endregion Constants for the binary mixture of Ethane and Isobutane
-
-    private Mixture_Ethane_Isobutane()
+    /// <summary>
+    /// State equations and constants of mixtures of Ethane and Isobutane.
+    /// </summary>
+    /// <remarks>
+    /// <para>References:</para>
+    /// <para>The source code was created automatically using the mixture file 'ethane-isobutan.mix' from the following software:</para>
+    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+    /// <para>Further references (extracted from the mixture file):</para>
+    /// <para>Info: Kunz and Wagner (2007)</para>
+    /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
+    /// </remarks>
+    [CASRegistryNumber("74-84-0")]
+    [CASRegistryNumber("75-28-5")]
+    public class Mixture_Ethane_Isobutane : BinaryMixtureDefinitionBase
     {
-      #region  Mixture parameter
 
-      _beta_T = 1;
-      _gamma_T = 1.033283811;
-      _beta_v = 1;
-      _gamma_v = 1.006616886;
-      _F = 0.260632376098;
+        /// <summary>Gets the (only) instance of this class.</summary>
+        public static Mixture_Ethane_Isobutane Instance { get; } = new Mixture_Ethane_Isobutane();
 
-      _departureCoefficients_Polynomial = new (double ai, double ti, double di)[]
-       {
+        #region Constants for the binary mixture of Ethane and Isobutane
+
+        /// <summary>Gets the CAS registry number of component 1 (Ethane).</summary>
+        public override string CASRegistryNumber1 { get; } = "74-84-0";
+
+        /// <summary>Gets the CAS registry number of component 2 (Isobutane).</summary>
+        public override string CASRegistryNumber2 { get; } = "75-28-5";
+
+        #endregion Constants for the binary mixture of Ethane and Isobutane
+
+        private Mixture_Ethane_Isobutane()
+        {
+            #region  Mixture parameter
+
+            _beta_T = 1;
+            _gamma_T = 1.033283811;
+            _beta_v = 1;
+            _gamma_v = 1.006616886;
+            _F = 0.260632376098;
+
+            _departureCoefficients_Polynomial = new (double ai, double ti, double di)[]
+             {
         (     2.5574776844118,                    1,                    1),
         (    -7.9846357136353,                 1.55,                    1),
         (     4.7859131465806,                  1.7,                    1),
@@ -82,9 +82,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
         (   -0.10291888921447,                    0,                    4),
         (    0.11836314681968,                  0.7,                    4),
         ( 5.5527385721943E-05,                  5.4,                    4),
-       };
-      #endregion
+             };
+            #endregion
 
+        }
     }
-  }
 }

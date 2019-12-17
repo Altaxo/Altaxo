@@ -259,15 +259,15 @@ namespace Altaxo.Graph.Graph3D.Camera
         return (PerspectiveCamera)WithLookAtRHMatrix(newLookAt, Distance * distanceFactor);
 
         /* the code that will setup the camera manually:
-				var newEyeVec = new VectorD3D(newLookAt.M13, newLookAt.M23, newLookAt.M33);
-				var newUpVec = new VectorD3D(newLookAt.M12, newLookAt.M22, newLookAt.M32);
-				var newDistance = this.DistanceToTarget * distanceFactor;
-				var newEyePosition = this.TargetPosition + this.EyeVector * distanceFactor; // we move the camera straigt in target direction, but then turn it
-				var newTargetPosition = newEyePosition - newEyeVec * newDistance;
-				var newCam = (PerspectiveCamera)this.WithUpEyeTargetZNearZFar(newUpVec, newEyePosition, newTargetPosition, this.ZNear, this.ZFar);
-				var controlLookAt = newCam.LookAtRHMatrix;
-				return newCam;
-				*/
+                var newEyeVec = new VectorD3D(newLookAt.M13, newLookAt.M23, newLookAt.M33);
+                var newUpVec = new VectorD3D(newLookAt.M12, newLookAt.M22, newLookAt.M32);
+                var newDistance = this.DistanceToTarget * distanceFactor;
+                var newEyePosition = this.TargetPosition + this.EyeVector * distanceFactor; // we move the camera straigt in target direction, but then turn it
+                var newTargetPosition = newEyePosition - newEyeVec * newDistance;
+                var newCam = (PerspectiveCamera)this.WithUpEyeTargetZNearZFar(newUpVec, newEyePosition, newTargetPosition, this.ZNear, this.ZFar);
+                var controlLookAt = newCam.LookAtRHMatrix;
+                return newCam;
+                */
       }
     }
 

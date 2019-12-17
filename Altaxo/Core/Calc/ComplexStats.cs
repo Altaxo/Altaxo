@@ -58,351 +58,351 @@ using System.Diagnostics;
 
 namespace Altaxo.Calc
 {
-  // Comments? Questions? Bugs? Tell Ben Houston at ben@exocortex.org
-  // Version: May 4, 2002
-
-  /// <summary>
-  /// <p>A set of statistical utilities for complex number arrays</p>
-  /// </summary>
-  public class ComplexStats
-  {
-    //---------------------------------------------------------------------------------------------
-
-    private ComplexStats()
-    {
-    }
-
-    //---------------------------------------------------------------------------------------------
-    //--------------------------------------------------------------------------------------------
+    // Comments? Questions? Bugs? Tell Ben Houston at ben@exocortex.org
+    // Version: May 4, 2002
 
     /// <summary>
-    /// Calculate the sum
+    /// <p>A set of statistical utilities for complex number arrays</p>
     /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public static ComplexFloat Sum(ComplexFloat[] data)
+    public class ComplexStats
     {
-      if (!(data != null))
-        throw new ArgumentNullException(nameof(data));
-      return SumRecursion(data, 0, data.Length);
-    }
+        //---------------------------------------------------------------------------------------------
 
-    private static ComplexFloat SumRecursion(ComplexFloat[] data, int start, int end)
-    {
-      if (!(start >= 0))
-        throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
-      if (!(start < end))
-        throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
-      if (!(end <= data.Length))
-        throw new ArgumentOutOfRangeException(nameof(end) + " should be <= data.Length");
-      if ((end - start) <= 1000)
-      {
-        ComplexFloat sum = ComplexFloat.Zero;
-        for (int i = start; i < end; i++)
+        private ComplexStats()
         {
-          sum += data[i];
         }
-        return sum;
-      }
-      else
-      {
-        int middle = (start + end) >> 1;
-        return SumRecursion(data, start, middle) + SumRecursion(data, middle, end);
-      }
-    }
 
-    /// <summary>
-    /// Calculate the sum
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public static Complex Sum(Complex[] data)
-    {
-      if (!(data != null))
-        throw new ArgumentNullException(nameof(data));
-      return SumRecursion(data, 0, data.Length);
-    }
+        //---------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------
 
-    private static Complex SumRecursion(Complex[] data, int start, int end)
-    {
-      if (!(start >= 0))
-        throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
-      if (!(start < end))
-        throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
-      if (!(end <= data.Length))
-        throw new ArgumentOutOfRangeException(nameof(end) + " should be <= data.Length");
-
-      if ((end - start) <= 1000)
-      {
-        Complex sum = Complex.Zero;
-        for (int i = start; i < end; i++)
+        /// <summary>
+        /// Calculate the sum
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static ComplexFloat Sum(ComplexFloat[] data)
         {
-          sum += data[i];
+            if (!(data != null))
+                throw new ArgumentNullException(nameof(data));
+            return SumRecursion(data, 0, data.Length);
         }
-        return sum;
-      }
-      else
-      {
-        int middle = (start + end) >> 1;
-        return SumRecursion(data, start, middle) + SumRecursion(data, middle, end);
-      }
-    }
 
-    //--------------------------------------------------------------------------------------------
-    //--------------------------------------------------------------------------------------------
-
-    /// <summary>
-    /// Calculate the sum of squares
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public static ComplexFloat SumOfSquares(ComplexFloat[] data)
-    {
-      if (!(data != null))
-        throw new ArgumentNullException(nameof(data));
-      return SumOfSquaresRecursion(data, 0, data.Length);
-    }
-
-    private static ComplexFloat SumOfSquaresRecursion(ComplexFloat[] data, int start, int end)
-    {
-      if (!(start >= 0))
-        throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
-      if (!(start < end))
-        throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
-      if (!(end <= data.Length))
-        throw new ArgumentOutOfRangeException(nameof(end) + " should be <= data.Length");
-
-      if ((end - start) <= 1000)
-      {
-        ComplexFloat sumOfSquares = ComplexFloat.Zero;
-        for (int i = start; i < end; i++)
+        private static ComplexFloat SumRecursion(ComplexFloat[] data, int start, int end)
         {
-          sumOfSquares += data[i] * data[i];
+            if (!(start >= 0))
+                throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+            if (!(start < end))
+                throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
+            if (!(end <= data.Length))
+                throw new ArgumentOutOfRangeException(nameof(end) + " should be <= data.Length");
+            if ((end - start) <= 1000)
+            {
+                ComplexFloat sum = ComplexFloat.Zero;
+                for (int i = start; i < end; i++)
+                {
+                    sum += data[i];
+                }
+                return sum;
+            }
+            else
+            {
+                int middle = (start + end) >> 1;
+                return SumRecursion(data, start, middle) + SumRecursion(data, middle, end);
+            }
         }
-        return sumOfSquares;
-      }
-      else
-      {
-        int middle = (start + end) >> 1;
-        return SumOfSquaresRecursion(data, start, middle) + SumOfSquaresRecursion(data, middle, end);
-      }
-    }
 
-    /// <summary>
-    /// Calculate the sum of squares
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public static Complex SumOfSquares(Complex[] data)
-    {
-      if (!(data != null))
-        throw new ArgumentNullException(nameof(data));
-      return SumOfSquaresRecursion(data, 0, data.Length);
-    }
-
-    private static Complex SumOfSquaresRecursion(Complex[] data, int start, int end)
-    {
-      if (!(start >= 0))
-        throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
-      if (!(start < end))
-        throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
-      if (!(end <= data.Length))
-        throw new ArgumentOutOfRangeException(nameof(end) + " should be <= data.Length");
-
-      if ((end - start) <= 1000)
-      {
-        Complex sumOfSquares = Complex.Zero;
-        for (int i = start; i < end; i++)
+        /// <summary>
+        /// Calculate the sum
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static Complex Sum(Complex[] data)
         {
-          sumOfSquares += data[i] * data[i];
+            if (!(data != null))
+                throw new ArgumentNullException(nameof(data));
+            return SumRecursion(data, 0, data.Length);
         }
-        return sumOfSquares;
-      }
-      else
-      {
-        int middle = (start + end) >> 1;
-        return SumOfSquaresRecursion(data, start, middle) + SumOfSquaresRecursion(data, middle, end);
-      }
-    }
 
-    //--------------------------------------------------------------------------------------------
-    //--------------------------------------------------------------------------------------------
-
-    /// <summary>
-    /// Calculate the mean (average)
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public static ComplexFloat Mean(ComplexFloat[] data)
-    {
-      return ComplexStats.Sum(data) / data.Length;
-    }
-
-    /// <summary>
-    /// Calculate the mean (average)
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public static Complex Mean(Complex[] data)
-    {
-      return ComplexStats.Sum(data) / data.Length;
-    }
-
-    /// <summary>
-    /// Calculate the variance
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public static ComplexFloat Variance(ComplexFloat[] data)
-    {
-      if (!(data != null))
-        throw new ArgumentNullException(nameof(data));
-      if (data.Length == 0)
-      {
-        throw new DivideByZeroException("length of data is zero");
-      }
-      return ComplexStats.SumOfSquares(data) / data.Length - ComplexStats.Sum(data);
-    }
-
-    /// <summary>
-    /// Calculate the variance
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public static Complex Variance(Complex[] data)
-    {
-      if (!(data != null))
-        throw new ArgumentNullException(nameof(data));
-      if (data.Length == 0)
-      {
-        throw new DivideByZeroException("length of data is zero");
-      }
-      return ComplexStats.SumOfSquares(data) / data.Length - ComplexStats.Sum(data);
-    }
-
-    /// <summary>
-    /// Calculate the standard deviation
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public static ComplexFloat StdDev(ComplexFloat[] data)
-    {
-      if (!(data != null))
-        throw new ArgumentNullException(nameof(data));
-      if (data.Length == 0)
-      {
-        throw new DivideByZeroException("length of data is zero");
-      }
-      return ComplexMath.Sqrt(ComplexStats.Variance(data));
-    }
-
-    /// <summary>
-    /// Calculate the standard deviation
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public static Complex StdDev(Complex[] data)
-    {
-      if (!(data != null))
-        throw new ArgumentNullException(nameof(data));
-      if (data.Length == 0)
-      {
-        throw new DivideByZeroException("length of data is zero");
-      }
-      return ComplexMath.Sqrt(ComplexStats.Variance(data));
-    }
-
-    //--------------------------------------------------------------------------------------------
-    //--------------------------------------------------------------------------------------------
-
-    /// <summary>
-    /// Calculate the root mean squared (RMS) error between two sets of data.
-    /// </summary>
-    /// <param name="alpha"></param>
-    /// <param name="beta"></param>
-    /// <returns></returns>
-    public static float RMSError(ComplexFloat[] alpha, ComplexFloat[] beta)
-    {
-      if (!(alpha != null))
-        throw new ArgumentNullException(nameof(alpha));
-      if (!(beta != null))
-        throw new ArgumentNullException(nameof(beta));
-      if (!(beta.Length == alpha.Length))
-        throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " should be equal");
-
-      return (float)Math.Sqrt(SumOfSquaredErrorRecursion(alpha, beta, 0, alpha.Length));
-    }
-
-    private static float SumOfSquaredErrorRecursion(ComplexFloat[] alpha, ComplexFloat[] beta, int start, int end)
-    {
-      if (!(start >= 0))
-        throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
-      if (!(start < end))
-        throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
-      if (!(end <= alpha.Length))
-        throw new ArgumentOutOfRangeException(nameof(end) + " should be <= alpha.Length");
-      if (!(alpha.Length == beta.Length))
-        throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " are different");
-
-      if ((end - start) <= 1000)
-      {
-        float sumOfSquaredError = 0;
-        for (int i = start; i < end; i++)
+        private static Complex SumRecursion(Complex[] data, int start, int end)
         {
-          ComplexFloat delta = beta[i] - alpha[i];
-          sumOfSquaredError += (delta.Re * delta.Re) + (delta.Im * delta.Im);
+            if (!(start >= 0))
+                throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+            if (!(start < end))
+                throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
+            if (!(end <= data.Length))
+                throw new ArgumentOutOfRangeException(nameof(end) + " should be <= data.Length");
+
+            if ((end - start) <= 1000)
+            {
+                Complex sum = Complex.Zero;
+                for (int i = start; i < end; i++)
+                {
+                    sum += data[i];
+                }
+                return sum;
+            }
+            else
+            {
+                int middle = (start + end) >> 1;
+                return SumRecursion(data, start, middle) + SumRecursion(data, middle, end);
+            }
         }
-        return sumOfSquaredError;
-      }
-      else
-      {
-        int middle = (start + end) >> 1;
-        return SumOfSquaredErrorRecursion(alpha, beta, start, middle) + SumOfSquaredErrorRecursion(alpha, beta, middle, end);
-      }
-    }
 
-    /// <summary>
-    /// Calculate the root mean squared (RMS) error between two sets of data.
-    /// </summary>
-    /// <param name="alpha"></param>
-    /// <param name="beta"></param>
-    /// <returns></returns>
-    public static double RMSError(Complex[] alpha, Complex[] beta)
-    {
-      if (!(alpha != null))
-        throw new ArgumentNullException(nameof(alpha));
-      if (!(beta != null))
-        throw new ArgumentNullException(nameof(beta));
-      if (!(alpha.Length == beta.Length))
-        throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " are different");
+        //--------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------
 
-      return Math.Sqrt(SumOfSquaredErrorRecursion(alpha, beta, 0, alpha.Length));
-    }
-
-    private static double SumOfSquaredErrorRecursion(Complex[] alpha, Complex[] beta, int start, int end)
-    {
-      if (!(start >= 0))
-        throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
-      if (!(start < end))
-        throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
-      if (!(alpha.Length == beta.Length))
-        throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " are different");
-
-      if ((end - start) <= 1000)
-      {
-        double sumOfSquaredError = 0;
-        for (int i = start; i < end; i++)
+        /// <summary>
+        /// Calculate the sum of squares
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static ComplexFloat SumOfSquares(ComplexFloat[] data)
         {
-          Complex delta = beta[i] - alpha[i];
-          sumOfSquaredError += (delta.Re * delta.Re) + (delta.Im * delta.Im);
+            if (!(data != null))
+                throw new ArgumentNullException(nameof(data));
+            return SumOfSquaresRecursion(data, 0, data.Length);
         }
-        return sumOfSquaredError;
-      }
-      else
-      {
-        int middle = (start + end) >> 1;
-        return SumOfSquaredErrorRecursion(alpha, beta, start, middle) + SumOfSquaredErrorRecursion(alpha, beta, middle, end);
-      }
+
+        private static ComplexFloat SumOfSquaresRecursion(ComplexFloat[] data, int start, int end)
+        {
+            if (!(start >= 0))
+                throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+            if (!(start < end))
+                throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
+            if (!(end <= data.Length))
+                throw new ArgumentOutOfRangeException(nameof(end) + " should be <= data.Length");
+
+            if ((end - start) <= 1000)
+            {
+                ComplexFloat sumOfSquares = ComplexFloat.Zero;
+                for (int i = start; i < end; i++)
+                {
+                    sumOfSquares += data[i] * data[i];
+                }
+                return sumOfSquares;
+            }
+            else
+            {
+                int middle = (start + end) >> 1;
+                return SumOfSquaresRecursion(data, start, middle) + SumOfSquaresRecursion(data, middle, end);
+            }
+        }
+
+        /// <summary>
+        /// Calculate the sum of squares
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static Complex SumOfSquares(Complex[] data)
+        {
+            if (!(data != null))
+                throw new ArgumentNullException(nameof(data));
+            return SumOfSquaresRecursion(data, 0, data.Length);
+        }
+
+        private static Complex SumOfSquaresRecursion(Complex[] data, int start, int end)
+        {
+            if (!(start >= 0))
+                throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+            if (!(start < end))
+                throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
+            if (!(end <= data.Length))
+                throw new ArgumentOutOfRangeException(nameof(end) + " should be <= data.Length");
+
+            if ((end - start) <= 1000)
+            {
+                Complex sumOfSquares = Complex.Zero;
+                for (int i = start; i < end; i++)
+                {
+                    sumOfSquares += data[i] * data[i];
+                }
+                return sumOfSquares;
+            }
+            else
+            {
+                int middle = (start + end) >> 1;
+                return SumOfSquaresRecursion(data, start, middle) + SumOfSquaresRecursion(data, middle, end);
+            }
+        }
+
+        //--------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// Calculate the mean (average)
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static ComplexFloat Mean(ComplexFloat[] data)
+        {
+            return ComplexStats.Sum(data) / data.Length;
+        }
+
+        /// <summary>
+        /// Calculate the mean (average)
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static Complex Mean(Complex[] data)
+        {
+            return ComplexStats.Sum(data) / data.Length;
+        }
+
+        /// <summary>
+        /// Calculate the variance
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static ComplexFloat Variance(ComplexFloat[] data)
+        {
+            if (!(data != null))
+                throw new ArgumentNullException(nameof(data));
+            if (data.Length == 0)
+            {
+                throw new DivideByZeroException("length of data is zero");
+            }
+            return ComplexStats.SumOfSquares(data) / data.Length - ComplexStats.Sum(data);
+        }
+
+        /// <summary>
+        /// Calculate the variance
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static Complex Variance(Complex[] data)
+        {
+            if (!(data != null))
+                throw new ArgumentNullException(nameof(data));
+            if (data.Length == 0)
+            {
+                throw new DivideByZeroException("length of data is zero");
+            }
+            return ComplexStats.SumOfSquares(data) / data.Length - ComplexStats.Sum(data);
+        }
+
+        /// <summary>
+        /// Calculate the standard deviation
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static ComplexFloat StdDev(ComplexFloat[] data)
+        {
+            if (!(data != null))
+                throw new ArgumentNullException(nameof(data));
+            if (data.Length == 0)
+            {
+                throw new DivideByZeroException("length of data is zero");
+            }
+            return ComplexMath.Sqrt(ComplexStats.Variance(data));
+        }
+
+        /// <summary>
+        /// Calculate the standard deviation
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static Complex StdDev(Complex[] data)
+        {
+            if (!(data != null))
+                throw new ArgumentNullException(nameof(data));
+            if (data.Length == 0)
+            {
+                throw new DivideByZeroException("length of data is zero");
+            }
+            return ComplexMath.Sqrt(ComplexStats.Variance(data));
+        }
+
+        //--------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// Calculate the root mean squared (RMS) error between two sets of data.
+        /// </summary>
+        /// <param name="alpha"></param>
+        /// <param name="beta"></param>
+        /// <returns></returns>
+        public static float RMSError(ComplexFloat[] alpha, ComplexFloat[] beta)
+        {
+            if (!(alpha != null))
+                throw new ArgumentNullException(nameof(alpha));
+            if (!(beta != null))
+                throw new ArgumentNullException(nameof(beta));
+            if (!(beta.Length == alpha.Length))
+                throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " should be equal");
+
+            return (float)Math.Sqrt(SumOfSquaredErrorRecursion(alpha, beta, 0, alpha.Length));
+        }
+
+        private static float SumOfSquaredErrorRecursion(ComplexFloat[] alpha, ComplexFloat[] beta, int start, int end)
+        {
+            if (!(start >= 0))
+                throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+            if (!(start < end))
+                throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
+            if (!(end <= alpha.Length))
+                throw new ArgumentOutOfRangeException(nameof(end) + " should be <= alpha.Length");
+            if (!(alpha.Length == beta.Length))
+                throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " are different");
+
+            if ((end - start) <= 1000)
+            {
+                float sumOfSquaredError = 0;
+                for (int i = start; i < end; i++)
+                {
+                    ComplexFloat delta = beta[i] - alpha[i];
+                    sumOfSquaredError += (delta.Re * delta.Re) + (delta.Im * delta.Im);
+                }
+                return sumOfSquaredError;
+            }
+            else
+            {
+                int middle = (start + end) >> 1;
+                return SumOfSquaredErrorRecursion(alpha, beta, start, middle) + SumOfSquaredErrorRecursion(alpha, beta, middle, end);
+            }
+        }
+
+        /// <summary>
+        /// Calculate the root mean squared (RMS) error between two sets of data.
+        /// </summary>
+        /// <param name="alpha"></param>
+        /// <param name="beta"></param>
+        /// <returns></returns>
+        public static double RMSError(Complex[] alpha, Complex[] beta)
+        {
+            if (!(alpha != null))
+                throw new ArgumentNullException(nameof(alpha));
+            if (!(beta != null))
+                throw new ArgumentNullException(nameof(beta));
+            if (!(alpha.Length == beta.Length))
+                throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " are different");
+
+            return Math.Sqrt(SumOfSquaredErrorRecursion(alpha, beta, 0, alpha.Length));
+        }
+
+        private static double SumOfSquaredErrorRecursion(Complex[] alpha, Complex[] beta, int start, int end)
+        {
+            if (!(start >= 0))
+                throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+            if (!(start < end))
+                throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
+            if (!(alpha.Length == beta.Length))
+                throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " are different");
+
+            if ((end - start) <= 1000)
+            {
+                double sumOfSquaredError = 0;
+                for (int i = start; i < end; i++)
+                {
+                    Complex delta = beta[i] - alpha[i];
+                    sumOfSquaredError += (delta.Re * delta.Re) + (delta.Im * delta.Im);
+                }
+                return sumOfSquaredError;
+            }
+            else
+            {
+                int middle = (start + end) >> 1;
+                return SumOfSquaredErrorRecursion(alpha, beta, start, middle) + SumOfSquaredErrorRecursion(alpha, beta, middle, end);
+            }
+        }
     }
-  }
 }

@@ -780,79 +780,79 @@ namespace Altaxo.Graph.Graph3D.Shapes
       /*
 
 const double gripNominalSize = 10; // 10 Points nominal size on the screen
-			if ((GripKind.Resize & gripKind) != 0)
-			{
-				double gripSize = gripNominalSize / pageScale; // 10 Points, but we have to consider the current pageScale
-				for (int i = 1; i < _gripRelPositions.Length; i++)
-				{
-					PointD2D outVec, pos;
-					if (1 == i % 2)
-						GetCornerOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
-					else
-						GetMiddleRayOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
+            if ((GripKind.Resize & gripKind) != 0)
+            {
+                double gripSize = gripNominalSize / pageScale; // 10 Points, but we have to consider the current pageScale
+                for (int i = 1; i < _gripRelPositions.Length; i++)
+                {
+                    PointD2D outVec, pos;
+                    if (1 == i % 2)
+                        GetCornerOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
+                    else
+                        GetMiddleRayOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
 
-					outVec *= (gripSize / outVec.VectorLength);
-					PointD2D altVec = outVec.Get90DegreeRotated();
-					PointD2D ptStart = pos;
-					list.Add(new ResizeGripHandle(hitTest, _gripRelPositions[i], new MatrixD2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
-				}
-			}
-			*/
-
-      /*
-			if ((GripKind.Rotate & gripKind) != 0)
-			{
-				double gripSize = 10 / pageScale;
-				// Rotation grips
-				for (int i = 1; i < _gripRelPositions.Length; i += 2)
-				{
-					PointD2D outVec, pos;
-					GetCornerOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
-
-					outVec *= (gripSize / outVec.VectorLength);
-					PointD2D altVec = outVec.Get90DegreeRotated();
-					PointD2D ptStart = pos;
-					list.Add(new RotationGripHandle(hitTest, _gripRelPositions[i], new MatrixD2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
-				}
-			}
-			*/
+                    outVec *= (gripSize / outVec.VectorLength);
+                    PointD2D altVec = outVec.Get90DegreeRotated();
+                    PointD2D ptStart = pos;
+                    list.Add(new ResizeGripHandle(hitTest, _gripRelPositions[i], new MatrixD2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
+                }
+            }
+            */
 
       /*
-			if ((GripKind.Rescale & gripKind) != 0)
-			{
-				double gripSize = 10 / pageScale; // 10 Points, but we have to consider the current pageScale
-				for (int i = 1; i < _gripRelPositions.Length; i++)
-				{
-					PointD2D outVec, pos;
-					if (1 == i % 2)
-						GetCornerOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
-					else
-						GetMiddleRayOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
+            if ((GripKind.Rotate & gripKind) != 0)
+            {
+                double gripSize = 10 / pageScale;
+                // Rotation grips
+                for (int i = 1; i < _gripRelPositions.Length; i += 2)
+                {
+                    PointD2D outVec, pos;
+                    GetCornerOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
 
-					outVec *= (gripSize / outVec.VectorLength);
-					PointD2D altVec = outVec.Get90DegreeRotated();
-					PointD2D ptStart = pos;
-					list.Add(new RescaleGripHandle(hitTest, _gripRelPositions[i], new MatrixD2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
-				}
-			}
-			*/
+                    outVec *= (gripSize / outVec.VectorLength);
+                    PointD2D altVec = outVec.Get90DegreeRotated();
+                    PointD2D ptStart = pos;
+                    list.Add(new RotationGripHandle(hitTest, _gripRelPositions[i], new MatrixD2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
+                }
+            }
+            */
 
       /*
-			if ((GripKind.Shear & gripKind) != 0)
-			{
-				double gripSize = 10 / pageScale; // 10 Points, but we have to consider the current pageScale
-				for (int i = 2; i < _gripRelPositions.Length; i += 2)
-				{
-					PointD2D outVec, pos;
-					GetEdgeOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
+            if ((GripKind.Rescale & gripKind) != 0)
+            {
+                double gripSize = 10 / pageScale; // 10 Points, but we have to consider the current pageScale
+                for (int i = 1; i < _gripRelPositions.Length; i++)
+                {
+                    PointD2D outVec, pos;
+                    if (1 == i % 2)
+                        GetCornerOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
+                    else
+                        GetMiddleRayOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
 
-					outVec *= (gripSize / outVec.VectorLength);
-					PointD2D altVec = outVec.Get90DegreeRotated();
-					PointD2D ptStart = pos;
-					list.Add(new ShearGripHandle(hitTest, _gripRelPositions[i], new MatrixD2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
-				}
-			}
-			*/
+                    outVec *= (gripSize / outVec.VectorLength);
+                    PointD2D altVec = outVec.Get90DegreeRotated();
+                    PointD2D ptStart = pos;
+                    list.Add(new RescaleGripHandle(hitTest, _gripRelPositions[i], new MatrixD2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
+                }
+            }
+            */
+
+      /*
+            if ((GripKind.Shear & gripKind) != 0)
+            {
+                double gripSize = 10 / pageScale; // 10 Points, but we have to consider the current pageScale
+                for (int i = 2; i < _gripRelPositions.Length; i += 2)
+                {
+                    PointD2D outVec, pos;
+                    GetEdgeOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
+
+                    outVec *= (gripSize / outVec.VectorLength);
+                    PointD2D altVec = outVec.Get90DegreeRotated();
+                    PointD2D ptStart = pos;
+                    list.Add(new ShearGripHandle(hitTest, _gripRelPositions[i], new MatrixD2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
+                }
+            }
+            */
 
       if ((GripKind.Move & gripKind) != 0)
       {

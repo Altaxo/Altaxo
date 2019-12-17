@@ -365,109 +365,109 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     }
 
     /*
-		public void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
-		{
-			System.Drawing.Region[] clippingColl = new System.Drawing.Region[coll.Count];
-			Processed2DPlotData[] plotDataColl = new Processed2DPlotData[coll.Count];
-			double[] xincColl = new double[coll.Count];
-			double[] yincColl = new double[coll.Count];
+        public void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
+        {
+            System.Drawing.Region[] clippingColl = new System.Drawing.Region[coll.Count];
+            Processed2DPlotData[] plotDataColl = new Processed2DPlotData[coll.Count];
+            double[] xincColl = new double[coll.Count];
+            double[] yincColl = new double[coll.Count];
 
-			// First prepare
-			int idx = -1;
-			Processed2DPlotData previousPlotData = null;
-			for (int i = 0; i < coll.Count; i++)
-			{
-				if (coll[i] is G2DPlotItem)
-				{
-					idx++;
-					double currxinc = xincColl[i] = idx * _xinc * _scaleXInc;
-					double curryinc = yincColl[i] = idx * _yinc * _scaleYInc;
+            // First prepare
+            int idx = -1;
+            Processed2DPlotData previousPlotData = null;
+            for (int i = 0; i < coll.Count; i++)
+            {
+                if (coll[i] is G2DPlotItem)
+                {
+                    idx++;
+                    double currxinc = xincColl[i] = idx * _xinc * _scaleXInc;
+                    double curryinc = yincColl[i] = idx * _yinc * _scaleYInc;
 
-					G2DPlotItem gpi = coll[i] as G2DPlotItem;
-					Processed2DPlotData plotdata = plotDataColl[i] = gpi.GetRangesAndPoints(layer);
-					plotdata.PreviousItemData = previousPlotData;
-					previousPlotData = plotdata;
+                    G2DPlotItem gpi = coll[i] as G2DPlotItem;
+                    Processed2DPlotData plotdata = plotDataColl[i] = gpi.GetRangesAndPoints(layer);
+                    plotdata.PreviousItemData = previousPlotData;
+                    previousPlotData = plotdata;
 
-					int j = -1;
-					foreach (int rowIndex in plotdata.RangeList.OriginalRowIndices())
-					{
-						j++;
+                    int j = -1;
+                    foreach (int rowIndex in plotdata.RangeList.OriginalRowIndices())
+                    {
+                        j++;
 
-						AltaxoVariant xx = plotdata.GetXPhysical(rowIndex) + currxinc;
-						AltaxoVariant yy = plotdata.GetYPhysical(rowIndex) + curryinc;
+                        AltaxoVariant xx = plotdata.GetXPhysical(rowIndex) + currxinc;
+                        AltaxoVariant yy = plotdata.GetYPhysical(rowIndex) + curryinc;
 
-						Logical3D rel = new Logical3D(layer.XAxis.PhysicalVariantToNormal(xx), layer.YAxis.PhysicalVariantToNormal(yy));
-						double xabs, yabs;
-						layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
-						plotdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
-					}
+                        Logical3D rel = new Logical3D(layer.XAxis.PhysicalVariantToNormal(xx), layer.YAxis.PhysicalVariantToNormal(yy));
+                        double xabs, yabs;
+                        layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
+                        plotdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
+                    }
 
-					// if clipping is used, we must get a clipping region for every plot item
-					// and combine the regions from
-					if (_useClipping)
-					{
-						if (i == 0)
-							clippingColl[i] = g.Clip;
+                    // if clipping is used, we must get a clipping region for every plot item
+                    // and combine the regions from
+                    if (_useClipping)
+                    {
+                        if (i == 0)
+                            clippingColl[i] = g.Clip;
 
-						Plot.Styles.LinePlotStyle linestyle = null;
-						foreach (Plot.Styles.IG2DPlotStyle st in gpi.Style)
-						{
-							if (st is Plot.Styles.LinePlotStyle)
-							{
-								linestyle = st as Plot.Styles.LinePlotStyle;
-								break;
-							}
-						}
+                        Plot.Styles.LinePlotStyle linestyle = null;
+                        foreach (Plot.Styles.IG2DPlotStyle st in gpi.Style)
+                        {
+                            if (st is Plot.Styles.LinePlotStyle)
+                            {
+                                linestyle = st as Plot.Styles.LinePlotStyle;
+                                break;
+                            }
+                        }
 
-						if (null != linestyle)
-						{
-							GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
-							linestyle.GetFillPath(path, layer, plotdata, CSPlaneID.Bottom);
-							if ((i + 1) < clippingColl.Length)
-							{
-								clippingColl[i + 1] = (Region)clippingColl[i].Clone();
-								clippingColl[i + 1].Exclude(path);
-							}
-						}
-						else
-						{
-							if ((i + 1) < clippingColl.Length)
-								clippingColl[i + 1] = clippingColl[i];
-						}
-					}
-				}
-			}
+                        if (null != linestyle)
+                        {
+                            GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
+                            linestyle.GetFillPath(path, layer, plotdata, CSPlaneID.Bottom);
+                            if ((i + 1) < clippingColl.Length)
+                            {
+                                clippingColl[i + 1] = (Region)clippingColl[i].Clone();
+                                clippingColl[i + 1].Exclude(path);
+                            }
+                        }
+                        else
+                        {
+                            if ((i + 1) < clippingColl.Length)
+                                clippingColl[i + 1] = clippingColl[i];
+                        }
+                    }
+                }
+            }
 
-			// now paint
-			for (int i = coll.Count - 1; i >= 0; i--)
-			{
-				if (_useClipping)
-				{
-					//g.SetClip(clippingColl[i], CombineMode.Replace);
-					g.Clip = clippingColl[i];
-				}
+            // now paint
+            for (int i = coll.Count - 1; i >= 0; i--)
+            {
+                if (_useClipping)
+                {
+                    //g.SetClip(clippingColl[i], CombineMode.Replace);
+                    g.Clip = clippingColl[i];
+                }
 
-				if (null == plotDataColl[i])
-				{
-					coll[i].Paint(g, layer, i == coll.Count - 1 ? null : coll[i - 1], i == 0 ? null : coll[i - 1]);
-				}
-				else
-				{
-					TransformedLayerWrapper layerwrapper = new TransformedLayerWrapper(layer, xincColl[i], yincColl[i]);
-					((G2DPlotItem)coll[i]).Paint(g, layerwrapper, plotDataColl[i], i == coll.Count - 1 ? null : plotDataColl[i + 1], i == 0 ? null : plotDataColl[i - 1]);
-				}
+                if (null == plotDataColl[i])
+                {
+                    coll[i].Paint(g, layer, i == coll.Count - 1 ? null : coll[i - 1], i == 0 ? null : coll[i - 1]);
+                }
+                else
+                {
+                    TransformedLayerWrapper layerwrapper = new TransformedLayerWrapper(layer, xincColl[i], yincColl[i]);
+                    ((G2DPlotItem)coll[i]).Paint(g, layerwrapper, plotDataColl[i], i == coll.Count - 1 ? null : plotDataColl[i + 1], i == 0 ? null : plotDataColl[i - 1]);
+                }
 
-				// The clipping region is no longer needed, so we can dispose it
-				if (_useClipping)
-				{
-					if (i == 0)
-						g.Clip = clippingColl[0]; // restore the original clipping region
-					else
-						clippingColl[i].Dispose(); // for i!=0 dispose the clipping region
-				}
-			}
-		}
-		*/
+                // The clipping region is no longer needed, so we can dispose it
+                if (_useClipping)
+                {
+                    if (i == 0)
+                        g.Clip = clippingColl[0]; // restore the original clipping region
+                    else
+                        clippingColl[i].Dispose(); // for i!=0 dispose the clipping region
+                }
+            }
+        }
+        */
 
     #endregion ICoordinateTransformingGroupStyle Members
 

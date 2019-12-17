@@ -42,18 +42,18 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     /*
-		public double SelectedQuantityAsValueInPoints
-		{
-			get { return SelectedQuantity.AsValueIn(AUL.Point.Instance); }
-			set
-			{
-				var quant = new DimensionfulQuantity(value, AUL.Point.Instance);
-				if (null != UnitEnvironment)
-					quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
-				SelectedQuantity = quant;
-			}
-		}
-		*/
+        public double SelectedQuantityAsValueInPoints
+        {
+            get { return SelectedQuantity.AsValueIn(AUL.Point.Instance); }
+            set
+            {
+                var quant = new DimensionfulQuantity(value, AUL.Point.Instance);
+                if (null != UnitEnvironment)
+                    quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
+                SelectedQuantity = quant;
+            }
+        }
+        */
 
     #region Dependency property
 

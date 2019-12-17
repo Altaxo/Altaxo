@@ -31,46 +31,46 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-  /// <summary>
-  /// State equations and constants of mixtures of Propane and Isopentane.
-  /// </summary>
-  /// <remarks>
-  /// <para>References:</para>
-  /// <para>The source code was created automatically using the mixture file 'propane-ipentane.mix' from the following software:</para>
-  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-  /// <para>Further references (extracted from the mixture file):</para>
-  /// <para>Info: Kunz and Wagner (2007)</para>
-  /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
-  /// </remarks>
-  [CASRegistryNumber("74-98-6")]
-  [CASRegistryNumber("78-78-4")]
-  public class Mixture_Propane_Isopentane : BinaryMixtureDefinitionBase
-  {
-
-    /// <summary>Gets the (only) instance of this class.</summary>
-    public static Mixture_Propane_Isopentane Instance { get; } = new Mixture_Propane_Isopentane();
-
-    #region Constants for the binary mixture of Propane and Isopentane
-
-    /// <summary>Gets the CAS registry number of component 1 (Propane).</summary>
-    public override string CASRegistryNumber1 { get; } = "74-98-6";
-
-    /// <summary>Gets the CAS registry number of component 2 (Isopentane).</summary>
-    public override string CASRegistryNumber2 { get; } = "78-78-4";
-
-    #endregion Constants for the binary mixture of Propane and Isopentane
-
-    private Mixture_Propane_Isopentane()
+    /// <summary>
+    /// State equations and constants of mixtures of Propane and Isopentane.
+    /// </summary>
+    /// <remarks>
+    /// <para>References:</para>
+    /// <para>The source code was created automatically using the mixture file 'propane-ipentane.mix' from the following software:</para>
+    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+    /// <para>Further references (extracted from the mixture file):</para>
+    /// <para>Info: Kunz and Wagner (2007)</para>
+    /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
+    /// </remarks>
+    [CASRegistryNumber("74-98-6")]
+    [CASRegistryNumber("78-78-4")]
+    public class Mixture_Propane_Isopentane : BinaryMixtureDefinitionBase
     {
-      #region  Mixture parameter
 
-      _beta_T = 0.994364425;
-      _gamma_T = 1.0032695;
-      _beta_v = 1.040459289;
-      _gamma_v = 0.999432118;
-      _F = 0;
-      #endregion
+        /// <summary>Gets the (only) instance of this class.</summary>
+        public static Mixture_Propane_Isopentane Instance { get; } = new Mixture_Propane_Isopentane();
 
+        #region Constants for the binary mixture of Propane and Isopentane
+
+        /// <summary>Gets the CAS registry number of component 1 (Propane).</summary>
+        public override string CASRegistryNumber1 { get; } = "74-98-6";
+
+        /// <summary>Gets the CAS registry number of component 2 (Isopentane).</summary>
+        public override string CASRegistryNumber2 { get; } = "78-78-4";
+
+        #endregion Constants for the binary mixture of Propane and Isopentane
+
+        private Mixture_Propane_Isopentane()
+        {
+            #region  Mixture parameter
+
+            _beta_T = 0.994364425;
+            _gamma_T = 1.0032695;
+            _beta_v = 1.040459289;
+            _gamma_v = 0.999432118;
+            _F = 0;
+            #endregion
+
+        }
     }
-  }
 }

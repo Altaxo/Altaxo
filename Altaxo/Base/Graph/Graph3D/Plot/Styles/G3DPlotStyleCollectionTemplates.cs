@@ -167,37 +167,37 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     /*
 
-		private static G3DPlotStyleCollection CreateLineStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
-		{
-			var coll = new G3DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
-			coll.Add(new LinePlotStyle(context));
-			return coll;
-		}
+        private static G3DPlotStyleCollection CreateLineStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+        {
+            var coll = new G3DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
+            coll.Add(new LinePlotStyle(context));
+            return coll;
+        }
 
-		private static G3DPlotStyleCollection CreateScatterAndLineStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
-		{
-			var coll = new G3DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
-			coll.Add(new ScatterPlotStyle(context));
-			coll.Add(new LinePlotStyle(context));
-			return coll;
-		}
+        private static G3DPlotStyleCollection CreateScatterAndLineStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+        {
+            var coll = new G3DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
+            coll.Add(new ScatterPlotStyle(context));
+            coll.Add(new LinePlotStyle(context));
+            return coll;
+        }
 
-		private static G3DPlotStyleCollection CreateLabelAndScatterAndLineStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
-		{
-			var coll = new G3DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
-			coll.Add(new LabelPlotStyle(context));
-			coll.Add(new ScatterPlotStyle(context));
-			coll.Add(new LinePlotStyle(context));
-			return coll;
-		}
+        private static G3DPlotStyleCollection CreateLabelAndScatterAndLineStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+        {
+            var coll = new G3DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
+            coll.Add(new LabelPlotStyle(context));
+            coll.Add(new ScatterPlotStyle(context));
+            coll.Add(new LinePlotStyle(context));
+            return coll;
+        }
 
-		private static G3DPlotStyleCollection CreateLabelStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
-		{
-			var coll = new G3DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
-			coll.Add(new LabelPlotStyle(context));
-			return coll;
-		}
+        private static G3DPlotStyleCollection CreateLabelStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+        {
+            var coll = new G3DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
+            coll.Add(new LabelPlotStyle(context));
+            return coll;
+        }
 
-	*/
+    */
   }
 }

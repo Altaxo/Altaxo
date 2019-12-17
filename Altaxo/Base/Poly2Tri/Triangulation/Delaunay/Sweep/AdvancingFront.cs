@@ -41,8 +41,8 @@ using System.Text;
 namespace Poly2Tri
 {
   /**
-	 * @author Thomas Åhlen (thahlen@gmail.com)
-	 */
+     * @author Thomas Åhlen (thahlen@gmail.com)
+     */
 
   public class AdvancingFront
   {

@@ -352,39 +352,39 @@ namespace Altaxo.Gui.Drawing.D3D
 
     /*
 
-		private DashCapComboBox _cbDashCap;
+        private DashCapComboBox _cbDashCap;
 
-		public DashCapComboBox CbDashCap
-		{
-			get { return _cbDashCap; }
-			set
-			{
-				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(DashCapComboBox.SelectedDashCapProperty, typeof(DashCapComboBox));
+        public DashCapComboBox CbDashCap
+        {
+            get { return _cbDashCap; }
+            set
+            {
+                var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(DashCapComboBox.SelectedDashCapProperty, typeof(DashCapComboBox));
 
-				if (_cbDashCap != null)
-					dpd.RemoveValueChanged(_cbDashCap, EhDashCap_SelectionChangeCommitted);
+                if (_cbDashCap != null)
+                    dpd.RemoveValueChanged(_cbDashCap, EhDashCap_SelectionChangeCommitted);
 
-				_cbDashCap = value;
-				if (_pen != null && _cbDashCap != null)
-					_cbDashCap.SelectedDashCap = _pen.DashCap;
+                _cbDashCap = value;
+                if (_pen != null && _cbDashCap != null)
+                    _cbDashCap.SelectedDashCap = _pen.DashCap;
 
-				if (_cbDashCap != null)
-					dpd.AddValueChanged(_cbDashCap, EhDashCap_SelectionChangeCommitted);
-			}
-		}
+                if (_cbDashCap != null)
+                    dpd.AddValueChanged(_cbDashCap, EhDashCap_SelectionChangeCommitted);
+            }
+        }
 
-		private void EhDashCap_SelectionChangeCommitted(object sender, EventArgs e)
-		{
-			if (_pen != null)
-			{
-				_pen.DashCap = _cbDashCap.SelectedDashCap;
-				OnPenChanged();
-			}
-		}
+        private void EhDashCap_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (_pen != null)
+            {
+                _pen.DashCap = _cbDashCap.SelectedDashCap;
+                OnPenChanged();
+            }
+        }
 
-		#endregion Dash
+        #endregion Dash
 
-	*/
+    */
 
     #region Thickness1
 

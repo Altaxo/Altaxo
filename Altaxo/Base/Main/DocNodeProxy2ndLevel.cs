@@ -50,7 +50,7 @@ namespace Altaxo.Main
     /// If this is set (not null), which happens after deserialization, then the parent node is tracked instead of the proxy's document node.
     /// Only when explicitly calling <see cref="DocumentObject"/>, then it is tried to resolve the proxy's document node. 
     /// </summary>
-    string _childName;
+    private string _childName;
 
     #region Serialization
 

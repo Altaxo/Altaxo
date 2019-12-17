@@ -911,13 +911,13 @@ namespace Poly2Tri
       // XXX: do we really need a signed angle for holeAngle?
       //      could possible save some cycles here
       /* Complex plane
-			 * ab = cosA +i*sinA
-			 * ab = (ax + ay*i)(bx + by*i) = (ax*bx + ay*by) + i(ax*by-ay*bx)
-			 * atan2(y,x) computes the principal value of the argument function
-			 * applied to the complex number x+iy
-			 * Where x = ax*bx + ay*by
-			 *       y = ax*by - ay*bx
-			 */
+             * ab = cosA +i*sinA
+             * ab = (ax + ay*i)(bx + by*i) = (ax*bx + ay*by) + i(ax*by-ay*bx)
+             * atan2(y,x) computes the principal value of the argument function
+             * applied to the complex number x+iy
+             * Where x = ax*bx + ay*by
+             *       y = ax*by - ay*bx
+             */
       double px = node.Point.X;
       double py = node.Point.Y;
       double ax = node.Next.Point.X - px;

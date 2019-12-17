@@ -102,25 +102,25 @@ namespace Altaxo.Graph.Gdi
     }
 
     /*
-		public const int Configured.NotNull         = 0x00001;
-		public const int Configured.InCachedMode    = 0x00002;
-		public const int Configured.PenType         = 0x00004;
-		public const int Configured.Alignment       = 0x00008;
-		public const int Configured.Brush           = 0x00010;
-		public const int Configured.Color           = 0x00020;
-		public const int Configured.CompoundArray   = 0x00040;
-		public const int Configured.DashStyle       = 0x00080;
-		public const int Configured.DashCap         = 0x00100;
-		public const int Configured.DashOffset      = 0x00200;
-		public const int Configured.DashPattern     = 0x00400;
-		public const int Configured.EndCap          = 0x00800;
-		public const int Configured.StartCap        = 0x01000;
-		public const int Configured.CustomEndCap    = 0x02000;
-		public const int Configured.CustomStartCap  = 0x04000;
-		public const int Configured.LineJoin        = 0x08000;
-		public const int Configured.MiterLimit      = 0x10000;
-		public const int Configured.Transform       = 0x20000;
-		public const int Configured.Width           = 0x40000;
+        public const int Configured.NotNull         = 0x00001;
+        public const int Configured.InCachedMode    = 0x00002;
+        public const int Configured.PenType         = 0x00004;
+        public const int Configured.Alignment       = 0x00008;
+        public const int Configured.Brush           = 0x00010;
+        public const int Configured.Color           = 0x00020;
+        public const int Configured.CompoundArray   = 0x00040;
+        public const int Configured.DashStyle       = 0x00080;
+        public const int Configured.DashCap         = 0x00100;
+        public const int Configured.DashOffset      = 0x00200;
+        public const int Configured.DashPattern     = 0x00400;
+        public const int Configured.EndCap          = 0x00800;
+        public const int Configured.StartCap        = 0x01000;
+        public const int Configured.CustomEndCap    = 0x02000;
+        public const int Configured.CustomStartCap  = 0x04000;
+        public const int Configured.LineJoin        = 0x08000;
+        public const int Configured.MiterLimit      = 0x10000;
+        public const int Configured.Transform       = 0x20000;
+        public const int Configured.Width           = 0x40000;
 */
 
     protected static Configured _GetConfiguredPropertiesVariable(Pen pen)
@@ -226,35 +226,35 @@ if (s.Cached) cp |= PenHolder.Configured.InCachedMode;
 
 info.AddValue("Configured", (int)cp);
 if (0 != (cp & PenHolder.Configured.PenType))
-	info.AddEnum("Type", s.PenType);
+    info.AddEnum("Type", s.PenType);
 if (0 != (cp & PenHolder.Configured.Alignment))
-	info.AddEnum("Alignment", s.Alignment);
+    info.AddEnum("Alignment", s.Alignment);
 if (0 != (cp & PenHolder.Configured.Brush))
-	info.AddValue("Brush", s.BrushHolder);
+    info.AddValue("Brush", s.BrushHolder);
 if (0 != (cp & PenHolder.Configured.Color))
-	info.AddValue("Color", s.Color);
+    info.AddValue("Color", s.Color);
 if (0 != (cp & PenHolder.Configured.CompoundArray))
-	info.AddArray("CompoundArray", s.CompoundArray, s.CompoundArray.Length);
+    info.AddArray("CompoundArray", s.CompoundArray, s.CompoundArray.Length);
 if (0 != (cp & PenHolder.Configured.DashStyle))
-	info.AddEnum("DashStyle", s.DashStyle);
+    info.AddEnum("DashStyle", s.DashStyle);
 if (0 != (cp & PenHolder.Configured.DashCap))
-	info.AddEnum("DashCap", s.DashCap);
+    info.AddEnum("DashCap", s.DashCap);
 if (0 != (cp & PenHolder.Configured.DashOffset))
-	info.AddValue("DashOffset", s.DashOffset);
+    info.AddValue("DashOffset", s.DashOffset);
 if (0 != (cp & PenHolder.Configured.DashPattern))
-	info.AddArray("DashPattern", s.DashPattern, s.DashPattern.Length);
+    info.AddArray("DashPattern", s.DashPattern, s.DashPattern.Length);
 if (0 != (cp & PenHolder.Configured.EndCap))
-	info.AddEnum("EndCap", s.EndCap);
+    info.AddEnum("EndCap", s.EndCap);
 if (0 != (cp & PenHolder.Configured.LineJoin))
-	info.AddEnum("LineJoin", s.LineJoin);
+    info.AddEnum("LineJoin", s.LineJoin);
 if (0 != (cp & PenHolder.Configured.MiterLimit))
-	info.AddValue("MiterLimit", s.MiterLimit);
+    info.AddValue("MiterLimit", s.MiterLimit);
 if (0 != (cp & PenHolder.Configured.StartCap))
-	info.AddEnum("StartCap", s.StartCap);
+    info.AddEnum("StartCap", s.StartCap);
 if (0 != (cp & PenHolder.Configured.Transform))
-	info.AddArray("Transform", s.Transform.Elements, s.Transform.Elements.Length);
+    info.AddArray("Transform", s.Transform.Elements, s.Transform.Elements.Length);
 if (0 != (cp & PenHolder.Configured.Width))
-	info.AddValue("Width", s.Width);
+    info.AddValue("Width", s.Width);
  */
       }
 
@@ -372,41 +372,41 @@ if (s.Cached) cp |= PenX.Configured.InCachedMode;
 
 info.AddValue("Configured", (int)cp);
 if (0 != (cp & PenX.Configured.PenType))
-	info.AddEnum("Type", s.PenType);
+    info.AddEnum("Type", s.PenType);
 if (0 != (cp & PenX.Configured.Alignment))
-	info.AddEnum("Alignment", s.Alignment);
+    info.AddEnum("Alignment", s.Alignment);
 if (0 != (cp & PenX.Configured.Brush))
-	info.AddValue("Brush", s.BrushHolder);
+    info.AddValue("Brush", s.BrushHolder);
 if (0 != (cp & PenX.Configured.Color))
-	info.AddValue("Color", s.Color);
+    info.AddValue("Color", s.Color);
 if (0 != (cp & PenX.Configured.CompoundArray))
-	info.AddArray("CompoundArray", s.CompoundArray, s.CompoundArray.Length);
+    info.AddArray("CompoundArray", s.CompoundArray, s.CompoundArray.Length);
 if (0 != (cp & PenX.Configured.DashStyle))
-	info.AddEnum("DashStyle", s.DashStyle);
+    info.AddEnum("DashStyle", s.DashStyle);
 if (0 != (cp & PenX.Configured.DashCap))
-	info.AddEnum("DashCap", s.DashCap);
+    info.AddEnum("DashCap", s.DashCap);
 if (0 != (cp & PenX.Configured.DashOffset))
-	info.AddValue("DashOffset", s.DashOffset);
+    info.AddValue("DashOffset", s.DashOffset);
 if (0 != (cp & PenX.Configured.DashPattern))
-	info.AddArray("DashPattern", s.DashPattern, s.DashPattern.Length);
+    info.AddArray("DashPattern", s.DashPattern, s.DashPattern.Length);
 if (0 != (cp & PenX.Configured.EndCap))
 {
-	info.AddValue("EndCap", s.EndCap.Name);
-	info.AddValue("EndCapSize", s.m_EndCap.MinimumAbsoluteSizePt);
+    info.AddValue("EndCap", s.EndCap.Name);
+    info.AddValue("EndCapSize", s.m_EndCap.MinimumAbsoluteSizePt);
 }
 if (0 != (cp & PenX.Configured.LineJoin))
-	info.AddEnum("LineJoin", s.LineJoin);
+    info.AddEnum("LineJoin", s.LineJoin);
 if (0 != (cp & PenX.Configured.MiterLimit))
-	info.AddValue("MiterLimit", s.MiterLimit);
+    info.AddValue("MiterLimit", s.MiterLimit);
 if (0 != (cp & PenX.Configured.StartCap))
 {
-	info.AddValue("StartCap", s.StartCap.Name);
-	info.AddValue("StartCapSize", s.m_StartCap.MinimumAbsoluteSizePt);
+    info.AddValue("StartCap", s.StartCap.Name);
+    info.AddValue("StartCapSize", s.m_StartCap.MinimumAbsoluteSizePt);
 }
 if (0 != (cp & PenX.Configured.Transform))
-	info.AddArray("Transform", s.Transform.Elements, s.Transform.Elements.Length);
+    info.AddArray("Transform", s.Transform.Elements, s.Transform.Elements.Length);
 if (0 != (cp & PenX.Configured.Width))
-	info.AddValue("Width", s.Width);
+    info.AddValue("Width", s.Width);
 */
       }
 
@@ -528,43 +528,43 @@ if (s.Cached) cp |= PenX.Configured.InCachedMode;
 
 info.AddValue("Configured", (int)cp);
 if (0 != (cp & PenX.Configured.PenType))
-	info.AddEnum("Type", s.PenType);
+    info.AddEnum("Type", s.PenType);
 if (0 != (cp & PenX.Configured.Alignment))
-	info.AddEnum("Alignment", s.Alignment);
+    info.AddEnum("Alignment", s.Alignment);
 if (0 != (cp & PenX.Configured.Brush))
-	info.AddValue("Brush", s.BrushHolder);
+    info.AddValue("Brush", s.BrushHolder);
 if (0 != (cp & PenX.Configured.Color))
-	info.AddValue("Color", s.Color);
+    info.AddValue("Color", s.Color);
 if (0 != (cp & PenX.Configured.CompoundArray))
-	info.AddArray("CompoundArray", s.CompoundArray, s.CompoundArray.Length);
+    info.AddArray("CompoundArray", s.CompoundArray, s.CompoundArray.Length);
 if (0 != (cp & PenX.Configured.DashStyle))
-	info.AddEnum("DashStyle", s.DashStyle);
+    info.AddEnum("DashStyle", s.DashStyle);
 if (0 != (cp & PenX.Configured.DashCap))
-	info.AddEnum("DashCap", s.DashCap);
+    info.AddEnum("DashCap", s.DashCap);
 if (0 != (cp & PenX.Configured.DashOffset))
-	info.AddValue("DashOffset", s.DashOffset);
+    info.AddValue("DashOffset", s.DashOffset);
 if (0 != (cp & PenX.Configured.DashPattern))
-	info.AddArray("DashPattern", s.DashPattern, s.DashPattern.Length);
+    info.AddArray("DashPattern", s.DashPattern, s.DashPattern.Length);
 if (0 != (cp & PenX.Configured.EndCap))
 {
-	info.AddValue("EndCap", s.EndCap.Name);
-	info.AddValue("EndCapAbsSize", s._endCap.MinimumAbsoluteSizePt);
-	info.AddValue("EndCapRelSize", s._endCap.MinimumRelativeSize);
+    info.AddValue("EndCap", s.EndCap.Name);
+    info.AddValue("EndCapAbsSize", s._endCap.MinimumAbsoluteSizePt);
+    info.AddValue("EndCapRelSize", s._endCap.MinimumRelativeSize);
 }
 if (0 != (cp & PenX.Configured.LineJoin))
-	info.AddEnum("LineJoin", s.LineJoin);
+    info.AddEnum("LineJoin", s.LineJoin);
 if (0 != (cp & PenX.Configured.MiterLimit))
-	info.AddValue("MiterLimit", s.MiterLimit);
+    info.AddValue("MiterLimit", s.MiterLimit);
 if (0 != (cp & PenX.Configured.StartCap))
 {
-	info.AddValue("StartCap", s.StartCap.Name);
-	info.AddValue("StartCapAbsSize", s._startCap.MinimumAbsoluteSizePt);
-	info.AddValue("StartCapRelSize", s._startCap.MinimumRelativeSize);
+    info.AddValue("StartCap", s.StartCap.Name);
+    info.AddValue("StartCapAbsSize", s._startCap.MinimumAbsoluteSizePt);
+    info.AddValue("StartCapRelSize", s._startCap.MinimumRelativeSize);
 }
 if (0 != (cp & PenX.Configured.Transform))
-	info.AddArray("Transform", s.Transform.Elements, s.Transform.Elements.Length);
+    info.AddArray("Transform", s.Transform.Elements, s.Transform.Elements.Length);
 if (0 != (cp & PenX.Configured.Width))
-	info.AddValue("Width", s.Width);
+    info.AddValue("Width", s.Width);
 */
       }
 
@@ -930,17 +930,17 @@ if (0 != (cp & PenX.Configured.Width))
 
     /*
 public PenHolder(Pen pen)
-	: this(pen, true)
+    : this(pen, true)
 {
 }
 
 public PenHolder(Pen pen, bool bCached)
 {
-	this.m_CachedMode = bCached;
-	_SetPropertiesFromPen(pen);
-	this.m_ConfiguredProperties = _GetConfiguredPropertiesVariable(pen);
-	if (bCached)
-		_SetPenVariable(_GetPenFromProperties()); // do not clone the pen because there is a problem with pen cloning with known colors (see above)
+    this.m_CachedMode = bCached;
+    _SetPropertiesFromPen(pen);
+    this.m_ConfiguredProperties = _GetConfiguredPropertiesVariable(pen);
+    if (bCached)
+        _SetPenVariable(_GetPenFromProperties()); // do not clone the pen because there is a problem with pen cloning with known colors (see above)
 }
 */
 
@@ -979,22 +979,22 @@ public PenHolder(Pen pen, bool bCached)
     /*
 protected void _SetPropertiesFromPen(Pen pen)
 {
-	this.m_ConfiguredProperties = _GetConfiguredPropertiesVariable(pen);
-	this.m_PenType = pen.PenType;
-	this.m_Alignment = pen.Alignment;
-	this.m_Brush = new BrushHolder(pen.Brush, false);
-	this.m_Color = pen.Color;
-	this.m_CompoundArray = (float[])pen.CompoundArray.Clone();
-	this.m_DashCap = pen.DashCap;
-	this.m_DashOffset = pen.DashOffset;
-	this.m_DashPattern = (float[])pen.DashPattern.Clone();
-	this.m_DashStyle = pen.DashStyle;
-	this.m_EndCap = pen.EndCap;
-	this.m_LineJoin = pen.LineJoin;
-	this.m_MiterLimit = pen.MiterLimit;
-	this.m_StartCap = pen.StartCap;
-	this.m_Transform = (Matrix)pen.Transform.Clone();
-	this.m_Width = pen.Width;
+    this.m_ConfiguredProperties = _GetConfiguredPropertiesVariable(pen);
+    this.m_PenType = pen.PenType;
+    this.m_Alignment = pen.Alignment;
+    this.m_Brush = new BrushHolder(pen.Brush, false);
+    this.m_Color = pen.Color;
+    this.m_CompoundArray = (float[])pen.CompoundArray.Clone();
+    this.m_DashCap = pen.DashCap;
+    this.m_DashOffset = pen.DashOffset;
+    this.m_DashPattern = (float[])pen.DashPattern.Clone();
+    this.m_DashStyle = pen.DashStyle;
+    this.m_EndCap = pen.EndCap;
+    this.m_LineJoin = pen.LineJoin;
+    this.m_MiterLimit = pen.MiterLimit;
+    this.m_StartCap = pen.StartCap;
+    this.m_Transform = (Matrix)pen.Transform.Clone();
+    this.m_Width = pen.Width;
 }
 */
 

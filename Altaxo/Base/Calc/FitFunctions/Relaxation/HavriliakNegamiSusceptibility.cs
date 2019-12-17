@@ -69,11 +69,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       {
         throw new NotImplementedException();
         /*
-				HavriliakNegamiComplex s = (HavriliakNegamiComplex)obj;
-				info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
-				info.AddValue("NegImSign", s._negativeImaginarySign);
-				info.AddValue("ExcludeConductivity", s._excludeConductivity);
-				*/
+                HavriliakNegamiComplex s = (HavriliakNegamiComplex)obj;
+                info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
+                info.AddValue("NegImSign", s._negativeImaginarySign);
+                info.AddValue("ExcludeConductivity", s._excludeConductivity);
+                */
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -94,11 +94,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       {
         throw new InvalidOperationException("Trying to serialize old version");
         /*
-				HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility)obj;
-				info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
-				info.AddValue("FlowTerm", s._useFlowTerm);
-				info.AddValue("IsDielectric", s._isDielectricData);
-				*/
+                HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility)obj;
+                info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
+                info.AddValue("FlowTerm", s._useFlowTerm);
+                info.AddValue("IsDielectric", s._isDielectricData);
+                */
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -501,34 +501,34 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       throw new NotImplementedException();
       /*
-			double x = X[0];
-			if (_useFrequencyInsteadOmega)
-				x *= (2 * Math.PI);
+            double x = X[0];
+            if (_useFrequencyInsteadOmega)
+                x *= (2 * Math.PI);
 
-			DY[0][0] = 1;
-			DY[1][0] = 0;
+            DY[0][0] = 1;
+            DY[1][0] = 0;
 
-			Complex OneByDenom = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex.I * x * P[2], P[3]), P[4]);
-			DY[0][1] = OneByDenom.Re;
-			DY[1][1] = -OneByDenom.Im;
-			Complex IXP2 = Complex.I * x * P[2];
-			Complex IXP2PowP3 = ComplexMath.Pow(IXP2, P[3]);
-			Complex der2 = OneByDenom * -P[1] * P[2] * P[4] * IXP2PowP3 / (P[2] * (1 + IXP2PowP3));
-			DY[0][2] = der2.Re;
-			DY[1][2] = -der2.Im;
-			Complex der3 = OneByDenom * -P[1] * P[4] * IXP2PowP3 * ComplexMath.Log(IXP2) / (1 + IXP2PowP3);
-			DY[0][3] = der3.Re;
-			DY[1][3] = -der3.Im;
-			Complex der4 = OneByDenom * -P[1] * ComplexMath.Log(1 + IXP2PowP3);
-			DY[0][4] = der4.Re;
-			DY[1][4] = -der4.Im;
+            Complex OneByDenom = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex.I * x * P[2], P[3]), P[4]);
+            DY[0][1] = OneByDenom.Re;
+            DY[1][1] = -OneByDenom.Im;
+            Complex IXP2 = Complex.I * x * P[2];
+            Complex IXP2PowP3 = ComplexMath.Pow(IXP2, P[3]);
+            Complex der2 = OneByDenom * -P[1] * P[2] * P[4] * IXP2PowP3 / (P[2] * (1 + IXP2PowP3));
+            DY[0][2] = der2.Re;
+            DY[1][2] = -der2.Im;
+            Complex der3 = OneByDenom * -P[1] * P[4] * IXP2PowP3 * ComplexMath.Log(IXP2) / (1 + IXP2PowP3);
+            DY[0][3] = der3.Re;
+            DY[1][3] = -der3.Im;
+            Complex der4 = OneByDenom * -P[1] * ComplexMath.Log(1 + IXP2PowP3);
+            DY[0][4] = der4.Re;
+            DY[1][4] = -der4.Im;
 
-			if (_useFlowTerm)
-			{
-				DY[0][5] = 0;
-				DY[1][5] = _isDielectricData ? 1 / (x * 8.854187817e-12) : 1 / x;
-			}
-			*/
+            if (_useFlowTerm)
+            {
+                DY[0][5] = 0;
+                DY[1][5] = _isDielectricData ? 1 / (x * 8.854187817e-12) : 1 / x;
+            }
+            */
     }
 
     #endregion IFitFunction Members

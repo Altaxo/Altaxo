@@ -433,11 +433,11 @@ namespace Altaxo.Gui.Drawing
           if ((node.Tag is Altaxo.Main.ItemDefinitionLevel) && (Altaxo.Main.ItemDefinitionLevel)node.Tag == level)
           {
             node.IsExpanded = true; // expand the node the current item list belongs to (like "Builtin", "Application" etc.)
-          }
+                  }
           else if (node.Tag is IColorSet && object.ReferenceEquals(node.Tag, colorSet))
           {
             node.IsSelected = true; // select the node of the current item list
-          }
+                  }
         });
       };
       GuiTreeView.ItemsSource = _treeRootNode.Nodes;

@@ -103,17 +103,17 @@ namespace Altaxo.Gui.Pads.LightingPad
 
       // uncomment the following if we want to activate the lighting pad each time a Graph3D window is activated
       /*
-			if (enable && _view.Lighting != null)
-			{
-				ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+            if (enable && _view.Lighting != null)
+            {
+                ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 
-				var pad = WorkbenchSingleton.Workbench.GetPad(this.GetType());
-				WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(pad);
+                var pad = WorkbenchSingleton.Workbench.GetPad(this.GetType());
+                WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(pad);
 
-				// now focus back to the formerly active workbench window.
-				ww.SelectWindow();
-			}
-			*/
+                // now focus back to the formerly active workbench window.
+                ww.SelectWindow();
+            }
+            */
     }
 
     /// <summary>

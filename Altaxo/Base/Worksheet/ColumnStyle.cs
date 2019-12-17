@@ -78,16 +78,16 @@ namespace Altaxo.Worksheet
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         /*
-				ColumnStyle s = (ColumnStyle)obj;
-				info.AddValue("Size",(float)s.m_Size);
-				info.AddValue("Pen",s.m_CellPen);
-				info.AddValue("TextBrush",s.m_TextBrush);
-				info.AddValue("SelTextBrush",s.m_SelectedTextBrush);
-				info.AddValue("BkgBrush",s.m_BackgroundBrush);
-				info.AddValue("SelBkgBrush",s.m_SelectedBackgroundBrush);
-				info.AddValue("Alignment",Enum.GetName(typeof(System.Drawing.StringAlignment),s.m_TextFormat.Alignment));
-				info.AddValue("Font",s.m_TextFont);
-				*/
+                ColumnStyle s = (ColumnStyle)obj;
+                info.AddValue("Size",(float)s.m_Size);
+                info.AddValue("Pen",s.m_CellPen);
+                info.AddValue("TextBrush",s.m_TextBrush);
+                info.AddValue("SelTextBrush",s.m_SelectedTextBrush);
+                info.AddValue("BkgBrush",s.m_BackgroundBrush);
+                info.AddValue("SelBkgBrush",s.m_SelectedBackgroundBrush);
+                info.AddValue("Alignment",Enum.GetName(typeof(System.Drawing.StringAlignment),s.m_TextFormat.Alignment));
+                info.AddValue("Font",s.m_TextFont);
+                */
         throw new ApplicationException("Programming error, please contact the programmer");
       }
 

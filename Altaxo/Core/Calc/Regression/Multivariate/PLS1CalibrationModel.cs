@@ -27,49 +27,49 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-  public class PLS1CalibrationModel : MultivariateCalibrationModel
-  {
-    private IROMatrix<double>[] _xWeights;
-    private IROMatrix<double>[] _xLoads;
-    private IROMatrix<double>[] _yLoads;
-    private IROMatrix<double>[] _crossProduct;
-
-    public override int NumberOfY
+    public class PLS1CalibrationModel : MultivariateCalibrationModel
     {
-      get { return _numberOfY; }
-      set
-      {
-        _numberOfY = value;
-        Allocate(value);
-      }
-    }
+        private IROMatrix<double>[] _xWeights;
+        private IROMatrix<double>[] _xLoads;
+        private IROMatrix<double>[] _yLoads;
+        private IROMatrix<double>[] _crossProduct;
 
-    protected void Allocate(int numberOfY)
-    {
-      _xWeights = new IROMatrix<double>[numberOfY];
-      _xLoads = new IROMatrix<double>[numberOfY];
-      _yLoads = new IROMatrix<double>[numberOfY];
-      _crossProduct = new IROMatrix<double>[numberOfY];
-    }
+        public override int NumberOfY
+        {
+            get { return _numberOfY; }
+            set
+            {
+                _numberOfY = value;
+                Allocate(value);
+            }
+        }
 
-    public IROMatrix<double>[] XWeights
-    {
-      get { return _xWeights; }
-    }
+        protected void Allocate(int numberOfY)
+        {
+            _xWeights = new IROMatrix<double>[numberOfY];
+            _xLoads = new IROMatrix<double>[numberOfY];
+            _yLoads = new IROMatrix<double>[numberOfY];
+            _crossProduct = new IROMatrix<double>[numberOfY];
+        }
 
-    public IROMatrix<double>[] XLoads
-    {
-      get { return _xLoads; }
-    }
+        public IROMatrix<double>[] XWeights
+        {
+            get { return _xWeights; }
+        }
 
-    public IROMatrix<double>[] YLoads
-    {
-      get { return _yLoads; }
-    }
+        public IROMatrix<double>[] XLoads
+        {
+            get { return _xLoads; }
+        }
 
-    public IROMatrix<double>[] CrossProduct
-    {
-      get { return _crossProduct; }
+        public IROMatrix<double>[] YLoads
+        {
+            get { return _yLoads; }
+        }
+
+        public IROMatrix<double>[] CrossProduct
+        {
+            get { return _crossProduct; }
+        }
     }
-  }
 }

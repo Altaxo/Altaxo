@@ -194,15 +194,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         throw new InvalidOperationException("Serialization of old version not allowed");
         /*
-				LinePlotStyle s = (LinePlotStyle)obj;
-				info.AddValue("Pen", s._linePen);
-				info.AddValue("Connection", s._connectionStyle);
-				info.AddValue("LineSymbolGap", s._useSymbolGap);
-				info.AddValue("IgnoreMissingPoints", s._ignoreMissingDataPoints);
-				info.AddValue("FillArea", s._fillArea);
-				info.AddValue("FillBrush", s._fillBrush);
-				info.AddValue("FillDirection", s._fillDirection);
-				*/
+                LinePlotStyle s = (LinePlotStyle)obj;
+                info.AddValue("Pen", s._linePen);
+                info.AddValue("Connection", s._connectionStyle);
+                info.AddValue("LineSymbolGap", s._useSymbolGap);
+                info.AddValue("IgnoreMissingPoints", s._ignoreMissingDataPoints);
+                info.AddValue("FillArea", s._fillArea);
+                info.AddValue("FillBrush", s._fillBrush);
+                info.AddValue("FillDirection", s._fillDirection);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -264,10 +264,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         throw new InvalidOperationException("Try to serialize old version");
         /*
-				base.Serialize(obj, info);
-				LinePlotStyle s = (LinePlotStyle)obj;
-				info.AddValue("IndependentColor", s._independentColor);
-				*/
+                base.Serialize(obj, info);
+                LinePlotStyle s = (LinePlotStyle)obj;
+                info.AddValue("IndependentColor", s._independentColor);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -305,12 +305,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         throw new InvalidOperationException("Try to serialize old version");
         /*
-				base.Serialize(obj, info);
-				LinePlotStyle s = (LinePlotStyle)obj;
-				info.AddValue("IndependentColor", s._independentColor);
-				info.AddValue("IndependentFillColor", s._independentFillColor);
-				info.AddValue("ConnectCircular", s._connectCircular);
-				*/
+                base.Serialize(obj, info);
+                LinePlotStyle s = (LinePlotStyle)obj;
+                info.AddValue("IndependentColor", s._independentColor);
+                info.AddValue("IndependentFillColor", s._independentFillColor);
+                info.AddValue("ConnectCircular", s._connectCircular);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -354,12 +354,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         throw new InvalidOperationException("Serialization of old version not allowed");
         /*
-				base.Serialize(obj, info);
-				LinePlotStyle s = (LinePlotStyle)obj;
-				info.AddValue("IndependentColor", s._independentColor);
-				info.AddEnum("FillColorLinkage", s._fillColorLinkage);
-				info.AddValue("ConnectCircular", s._connectCircular);
-				*/
+                base.Serialize(obj, info);
+                LinePlotStyle s = (LinePlotStyle)obj;
+                info.AddValue("IndependentColor", s._independentColor);
+                info.AddEnum("FillColorLinkage", s._fillColorLinkage);
+                info.AddValue("ConnectCircular", s._connectCircular);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

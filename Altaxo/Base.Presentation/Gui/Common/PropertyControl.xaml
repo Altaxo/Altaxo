@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:wpg="clr-namespace:WPG;assembly=WPG"
              mc:Ignorable="d">
-	<Grid>
-		<wpg:PropertyGrid x:Name="_propertyGrid" />
-	</Grid>
+    <Grid>
+        <wpg:PropertyGrid x:Name="_propertyGrid" />
+    </Grid>
 </UserControl>

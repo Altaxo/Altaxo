@@ -57,10 +57,10 @@ namespace Altaxo.Graph.Scales
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				AngularScale s = (AngularScale)obj;
+                AngularScale s = (AngularScale)obj;
 
-				info.AddValue("Rescaling", s._rescaling);
-				*/
+                info.AddValue("Rescaling", s._rescaling);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -296,14 +296,14 @@ namespace Altaxo.Graph.Scales
     {
       // ignore all this stuff, org and end are fixed here!
       /*
-			double o = org.ToDouble();
-			double e = end.ToDouble();
+            double o = org.ToDouble();
+            double e = end.ToDouble();
 
-			if (!(o < e))
-				return "org is not less than end";
+            if (!(o < e))
+                return "org is not less than end";
 
-			InternalSetOrgEnd(o, e, false, false);
-			*/
+            InternalSetOrgEnd(o, e, false, false);
+            */
       return null;
     }
 

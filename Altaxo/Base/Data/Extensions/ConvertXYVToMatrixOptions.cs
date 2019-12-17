@@ -67,15 +67,15 @@ namespace Altaxo.Data
 
     /// <summary>If set, the destination x-columns will be sorted according to the first averaged column (if there is any).</summary>
     protected SortDirection _destinationXColumnSorting = SortDirection.Ascending;
-    bool _useClusteringForX;
-    int? _numberOfClustersX;
-    bool _createStdDevX;
+    private bool _useClusteringForX;
+    private int? _numberOfClustersX;
+    private bool _createStdDevX;
 
     /// <summary>If set, the destination y-columns will be sorted according to the first averaged column (if there is any).</summary>
     protected SortDirection _destinationYColumnSorting = SortDirection.Ascending;
-    bool _useClusteringForY;
-    int? _numberOfClustersY;
-    bool _createStdDevY;
+    private bool _useClusteringForY;
+    private int? _numberOfClustersY;
+    private bool _createStdDevY;
 
 
     #endregion Members

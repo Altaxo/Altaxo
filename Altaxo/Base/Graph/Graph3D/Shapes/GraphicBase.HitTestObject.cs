@@ -71,26 +71,26 @@ namespace Altaxo.Graph.Graph3D.Shapes
         }
 
         /*
-				var currentSizeRootCoord = this.ObjectOutlineForArrangements.GetBounds().Size;
-				var destinationSizeRootCoord = currentSizeRootCoord;
-				if (x.HasValue)
-					destinationSizeRootCoord = destinationSizeRootCoord.WithX(x.Value);
-				if (y.HasValue)
-					destinationSizeRootCoord = destinationSizeRootCoord.WithY(y.Value);
-				if (z.HasValue)
-					destinationSizeRootCoord = destinationSizeRootCoord.WithZ(z.Value);
+                var currentSizeRootCoord = this.ObjectOutlineForArrangements.GetBounds().Size;
+                var destinationSizeRootCoord = currentSizeRootCoord;
+                if (x.HasValue)
+                    destinationSizeRootCoord = destinationSizeRootCoord.WithX(x.Value);
+                if (y.HasValue)
+                    destinationSizeRootCoord = destinationSizeRootCoord.WithY(y.Value);
+                if (z.HasValue)
+                    destinationSizeRootCoord = destinationSizeRootCoord.WithZ(z.Value);
 
-				if (null != hit)
-				{
-					if (!hit.AutoSize)
-					{
-						var t = _matrix.WithAppendedTransformation(hit._transformation);
-						// this is the original to be implemented : var innerRect = RectangleD3DExtensions.GetIncludedTransformedRectangle(new RectangleD3D(PointD3D.Empty, destinationSizeRootCoord), t.SX, t.RX, t.RY, t.SY);
-						var innerRect = new RectangleD3D(PointD3D.Empty, destinationSizeRootCoord);
-						hit.Size = innerRect.Size;
-					}
-				}
-				*/
+                if (null != hit)
+                {
+                    if (!hit.AutoSize)
+                    {
+                        var t = _matrix.WithAppendedTransformation(hit._transformation);
+                        // this is the original to be implemented : var innerRect = RectangleD3DExtensions.GetIncludedTransformedRectangle(new RectangleD3D(PointD3D.Empty, destinationSizeRootCoord), t.SX, t.RX, t.RY, t.SY);
+                        var innerRect = new RectangleD3D(PointD3D.Empty, destinationSizeRootCoord);
+                        hit.Size = innerRect.Size;
+                    }
+                }
+                */
       }
 
       public override IObjectOutlineForArrangements ObjectOutlineForArrangements

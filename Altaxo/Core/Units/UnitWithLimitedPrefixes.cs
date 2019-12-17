@@ -29,74 +29,74 @@ using System.Text;
 
 namespace Altaxo.Units
 {
-  /// <summary>
-  /// Encapsulates an existing unit, but limits the set of possible prefixes.
-  /// </summary>
-  public class UnitWithLimitedPrefixes : IUnit
-  {
-    private SIPrefixList _prefixes;
-    private IUnit _unit;
-
-    public UnitWithLimitedPrefixes(IUnit unit, IEnumerable<SIPrefix> allowedPrefixes)
-    {
-      if (null == unit)
-        throw new ArgumentNullException(nameof(unit));
-
-      _unit = unit;
-
-      if (null != allowedPrefixes)
-      {
-        var l = new HashSet<SIPrefix>(_unit.Prefixes);
-        l.IntersectWith(allowedPrefixes);
-        _prefixes = new SIPrefixList(l);
-      }
-    }
-
-    public string Name
-    {
-      get { return _unit.Name; }
-    }
-
-    public string ShortCut
-    {
-      get { return _unit.ShortCut; }
-    }
-
-    public double ToSIUnit(double x)
-    {
-      return _unit.ToSIUnit(x);
-    }
-
-    public double FromSIUnit(double x)
-    {
-      return _unit.FromSIUnit(x);
-    }
-
     /// <summary>
-    /// Returns a list of possible prefixes for this unit (like µ, m, k, M, G..).
+    /// Encapsulates an existing unit, but limits the set of possible prefixes.
     /// </summary>
-    public ISIPrefixList Prefixes
+    public class UnitWithLimitedPrefixes : IUnit
     {
-      get { return _prefixes; }
-    }
+        private SIPrefixList _prefixes;
+        private IUnit _unit;
 
-    /// <summary>
-    /// Gets the underlying unit.
-    /// </summary>
-    /// <value>
-    /// The underlying unit.
-    /// </value>
-    public IUnit Unit
-    {
-      get { return _unit; }
-    }
+        public UnitWithLimitedPrefixes(IUnit unit, IEnumerable<SIPrefix> allowedPrefixes)
+        {
+            if (null == unit)
+                throw new ArgumentNullException(nameof(unit));
 
-    /// <summary>
-    /// Returns the underlying unit, transformed to the corresponding SI unit.
-    /// </summary>
-    public SIUnit SIUnit
-    {
-      get { return _unit.SIUnit; }
+            _unit = unit;
+
+            if (null != allowedPrefixes)
+            {
+                var l = new HashSet<SIPrefix>(_unit.Prefixes);
+                l.IntersectWith(allowedPrefixes);
+                _prefixes = new SIPrefixList(l);
+            }
+        }
+
+        public string Name
+        {
+            get { return _unit.Name; }
+        }
+
+        public string ShortCut
+        {
+            get { return _unit.ShortCut; }
+        }
+
+        public double ToSIUnit(double x)
+        {
+            return _unit.ToSIUnit(x);
+        }
+
+        public double FromSIUnit(double x)
+        {
+            return _unit.FromSIUnit(x);
+        }
+
+        /// <summary>
+        /// Returns a list of possible prefixes for this unit (like µ, m, k, M, G..).
+        /// </summary>
+        public ISIPrefixList Prefixes
+        {
+            get { return _prefixes; }
+        }
+
+        /// <summary>
+        /// Gets the underlying unit.
+        /// </summary>
+        /// <value>
+        /// The underlying unit.
+        /// </value>
+        public IUnit Unit
+        {
+            get { return _unit; }
+        }
+
+        /// <summary>
+        /// Returns the underlying unit, transformed to the corresponding SI unit.
+        /// </summary>
+        public SIUnit SIUnit
+        {
+            get { return _unit.SIUnit; }
+        }
     }
-  }
 }

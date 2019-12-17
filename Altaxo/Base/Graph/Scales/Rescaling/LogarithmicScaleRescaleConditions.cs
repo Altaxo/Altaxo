@@ -44,10 +44,10 @@ namespace Altaxo.Graph.Scales.Rescaling
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				LogarithmicScaleRescaleConditions s = (LogarithmicScaleRescaleConditions)obj;
+                LogarithmicScaleRescaleConditions s = (LogarithmicScaleRescaleConditions)obj;
 
-				info.AddBaseValueEmbedded(s, s.GetType().BaseType);
-				*/
+                info.AddBaseValueEmbedded(s, s.GetType().BaseType);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

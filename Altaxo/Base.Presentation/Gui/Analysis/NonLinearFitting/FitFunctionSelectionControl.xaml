@@ -6,46 +6,46 @@
 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
              mc:Ignorable="d">
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="4" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
-		<TreeView x:Name="_guiFitFunctions" Grid.Column="0" MinWidth="120" SelectedItemChanged="EhFitFunctions_AfterSelect" MouseDoubleClick="EhMouseDoubleClick">
-			<ItemsControl.ItemContainerStyle>
-				<Style TargetType="{x:Type TreeViewItem}">
-					<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-					<Setter Property="FontWeight" Value="Normal" />
-					<Style.Triggers>
-						<DataTrigger Binding="{Binding IsSelected}" Value="True">
-							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-						</DataTrigger>
-					</Style.Triggers>
-				</Style>
-			</ItemsControl.ItemContainerStyle>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="4" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <TreeView x:Name="_guiFitFunctions" Grid.Column="0" MinWidth="120" SelectedItemChanged="EhFitFunctions_AfterSelect" MouseDoubleClick="EhMouseDoubleClick">
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                    <Setter Property="FontWeight" Value="Normal" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
 
-			<ItemsControl.Resources>
-				<HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
-					<!--Image Width="16" Height="16" Margin="3,0"/ -->
-					<TextBlock Text="{Binding Text}" Tag="{Binding}">
-						<TextBlock.ContextMenu>
-							<ContextMenu>
-								<MenuItem Header="Edit" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuEditEnabled}" Click="EhEditItem" />
-								<MenuItem Header="Edit copy of this" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuEditCopyEnabled}" Click="EhEditCopyOfThisItem" />
-								<MenuItem Header="Remove" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuRemoveEnabled}" Click="EhRemoveItem" />
-							</ContextMenu>
-						</TextBlock.ContextMenu>
-					</TextBlock>
-				</HierarchicalDataTemplate>
-			</ItemsControl.Resources>
-		</TreeView>
-		<GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ResizeDirection="Columns" />
+            <ItemsControl.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
+                    <!--Image Width="16" Height="16" Margin="3,0"/ -->
+                    <TextBlock Text="{Binding Text}" Tag="{Binding}">
+                        <TextBlock.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Edit" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuEditEnabled}" Click="EhEditItem" />
+                                <MenuItem Header="Edit copy of this" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuEditCopyEnabled}" Click="EhEditCopyOfThisItem" />
+                                <MenuItem Header="Remove" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuRemoveEnabled}" Click="EhRemoveItem" />
+                            </ContextMenu>
+                        </TextBlock.ContextMenu>
+                    </TextBlock>
+                </HierarchicalDataTemplate>
+            </ItemsControl.Resources>
+        </TreeView>
+        <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ResizeDirection="Columns" />
         <axogc:FlowDocumentScrollViewerWithDefaultSize x:Name="_rtfDescription" Grid.Column="2" MinWidth="60"  DefaultWidth="300" DefaultHeigth="270">
-			<FlowDocument>
-				<Paragraph>Description of the fit function details:</Paragraph>
-			</FlowDocument>
-		</axogc:FlowDocumentScrollViewerWithDefaultSize>
-	</Grid>
+            <FlowDocument>
+                <Paragraph>Description of the fit function details:</Paragraph>
+            </FlowDocument>
+        </axogc:FlowDocumentScrollViewerWithDefaultSize>
+    </Grid>
 </UserControl>

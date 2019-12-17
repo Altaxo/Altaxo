@@ -29,46 +29,46 @@ using System.Text;
 
 namespace Altaxo.Units
 {
-  public interface IPrefixedUnit
-  {
-    SIPrefix Prefix { get; }
-
-    IUnit Unit { get; }
-  }
-
-  public struct PrefixedUnit : IPrefixedUnit
-  {
-    private IUnit _unit;
-    private SIPrefix _prefix;
-
-    public PrefixedUnit(SIPrefix prefix, IUnit unit)
+    public interface IPrefixedUnit
     {
-      if (unit is IPrefixedUnit punit)
-      {
-        if (punit.Unit is IPrefixedUnit)
-          throw new ArgumentException("Multiple nesting of IPrefixedUnit is not supported", nameof(unit));
+        SIPrefix Prefix { get; }
 
-        (var newPrefix, var factor) = SIPrefix.FromMultiplication(prefix, punit.Prefix);
-        if (1 != factor)
-          throw new ArgumentException(string.Format("Can not combine prefix {0} with prefix {1} to a new prefix without additional factor", prefix.Name, punit.Prefix.Name));
-
-        _unit = punit.Unit;
-        _prefix = newPrefix;
-      }
-      else
-      {
-        _prefix = prefix;
-        _unit = unit;
-      }
+        IUnit Unit { get; }
     }
 
-    public IUnit Unit { get { return _unit ?? Units.Dimensionless.Unity.Instance; } }
-
-    public SIPrefix Prefix { get { return _prefix ?? SIPrefix.None; } }
-
-    public override string ToString()
+    public struct PrefixedUnit : IPrefixedUnit
     {
-      return Prefix.ShortCut + Unit.ShortCut;
+        private IUnit _unit;
+        private SIPrefix _prefix;
+
+        public PrefixedUnit(SIPrefix prefix, IUnit unit)
+        {
+            if (unit is IPrefixedUnit punit)
+            {
+                if (punit.Unit is IPrefixedUnit)
+                    throw new ArgumentException("Multiple nesting of IPrefixedUnit is not supported", nameof(unit));
+
+                (var newPrefix, var factor) = SIPrefix.FromMultiplication(prefix, punit.Prefix);
+                if (1 != factor)
+                    throw new ArgumentException(string.Format("Can not combine prefix {0} with prefix {1} to a new prefix without additional factor", prefix.Name, punit.Prefix.Name));
+
+                _unit = punit.Unit;
+                _prefix = newPrefix;
+            }
+            else
+            {
+                _prefix = prefix;
+                _unit = unit;
+            }
+        }
+
+        public IUnit Unit { get { return _unit ?? Units.Dimensionless.Unity.Instance; } }
+
+        public SIPrefix Prefix { get { return _prefix ?? SIPrefix.None; } }
+
+        public override string ToString()
+        {
+            return Prefix.ShortCut + Unit.ShortCut;
+        }
     }
-  }
 }

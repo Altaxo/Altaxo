@@ -27,58 +27,58 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-  public interface IPLS2CalibrationModel : IMultivariateCalibrationModel
-  {
-    IROMatrix<double> XWeights
+    public interface IPLS2CalibrationModel : IMultivariateCalibrationModel
     {
-      get;
+        IROMatrix<double> XWeights
+        {
+            get;
+        }
+
+        IROMatrix<double> XLoads
+        {
+            get;
+        }
+
+        IROMatrix<double> YLoads
+        {
+            get;
+        }
+
+        IROMatrix<double> CrossProduct
+        {
+            get;
+        }
     }
 
-    IROMatrix<double> XLoads
+    public class PLS2CalibrationModel : MultivariateCalibrationModel, IPLS2CalibrationModel
     {
-      get;
-    }
+        private IROMatrix<double> _xWeights;
+        private IROMatrix<double> _xLoads;
+        private IROMatrix<double> _yLoads;
+        private IROMatrix<double> _crossProduct;
 
-    IROMatrix<double> YLoads
-    {
-      get;
-    }
+        public IROMatrix<double> XWeights
+        {
+            get { return _xWeights; }
+            set { _xWeights = value; }
+        }
 
-    IROMatrix<double> CrossProduct
-    {
-      get;
-    }
-  }
+        public IROMatrix<double> XLoads
+        {
+            get { return _xLoads; }
+            set { _xLoads = value; }
+        }
 
-  public class PLS2CalibrationModel : MultivariateCalibrationModel, IPLS2CalibrationModel
-  {
-    private IROMatrix<double> _xWeights;
-    private IROMatrix<double> _xLoads;
-    private IROMatrix<double> _yLoads;
-    private IROMatrix<double> _crossProduct;
+        public IROMatrix<double> YLoads
+        {
+            get { return _yLoads; }
+            set { _yLoads = value; }
+        }
 
-    public IROMatrix<double> XWeights
-    {
-      get { return _xWeights; }
-      set { _xWeights = value; }
+        public IROMatrix<double> CrossProduct
+        {
+            get { return _crossProduct; }
+            set { _crossProduct = value; }
+        }
     }
-
-    public IROMatrix<double> XLoads
-    {
-      get { return _xLoads; }
-      set { _xLoads = value; }
-    }
-
-    public IROMatrix<double> YLoads
-    {
-      get { return _yLoads; }
-      set { _yLoads = value; }
-    }
-
-    public IROMatrix<double> CrossProduct
-    {
-      get { return _crossProduct; }
-      set { _crossProduct = value; }
-    }
-  }
 }

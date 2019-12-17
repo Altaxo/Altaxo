@@ -54,17 +54,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         throw new InvalidOperationException("Serialization of old versions not allowed.");
         /*
-				FitFunctionToScalarFunctionDDWrapper s = (FitFunctionToScalarFunctionDDWrapper)obj;
+                FitFunctionToScalarFunctionDDWrapper s = (FitFunctionToScalarFunctionDDWrapper)obj;
 
-				info.AddValue("IndependentVariable", s._independentVariable);
-				info.AddValue("DependentVariable", s._dependentVariable);
-				info.AddArray("ParameterValues", s._parameter, s._parameter.Length);
+                info.AddValue("IndependentVariable", s._independentVariable);
+                info.AddValue("DependentVariable", s._dependentVariable);
+                info.AddArray("ParameterValues", s._parameter, s._parameter.Length);
 
-				if (s._fitFunction == null || info.IsSerializable(s._fitFunction))
-					info.AddValue("FitFunction", s._fitFunction);
-				else
-					info.AddValue("FitFunction", new Altaxo.Serialization.Xml.AssemblyAndTypeSurrogate(s._fitFunction));
-					*/
+                if (s._fitFunction == null || info.IsSerializable(s._fitFunction))
+                    info.AddValue("FitFunction", s._fitFunction);
+                else
+                    info.AddValue("FitFunction", new Altaxo.Serialization.Xml.AssemblyAndTypeSurrogate(s._fitFunction));
+                    */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

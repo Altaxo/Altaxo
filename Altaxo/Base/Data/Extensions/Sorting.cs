@@ -79,7 +79,7 @@ namespace Altaxo.Data
       }
 
       /* We have n_data elements, last element is at 'n_data-1', first at
-				 '0' Set N to the last element number. */
+                 '0' Set N to the last element number. */
 
       N = count - 1;
 

@@ -26,41 +26,41 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  public interface IComplexFloatSequence
-  {
-    /// <summary>Gets the element of the sequence at index i.</summary>
-    /// <value>The element at index i.</value>
-    ComplexFloat this[int i] { get; }
-  }
+    public interface IComplexFloatSequence
+    {
+        /// <summary>Gets the element of the sequence at index i.</summary>
+        /// <value>The element at index i.</value>
+        ComplexFloat this[int i] { get; }
+    }
 
-  /// <summary>
-  /// Interface for a read-only vector of Complex values.
-  /// </summary>
-  public interface IROComplexFloatVector : IComplexFloatSequence
-  {
-    /// <summary>The number of elements of this vector.</summary>
-    int Length { get; }  // change this later to length property
-  }
-
-  /// <summary>
-  /// Interface for a readable and writeable vector of Complex values.
-  /// </summary>
-  public interface IComplexFloatVector : IROComplexFloatVector
-  {
-    /// <summary>Read/write Accessor for the element at index i.</summary>
-    /// <value>The element at index i.</value>
-    new ComplexFloat this[int i] { get; set; }
-  }
-
-  /// <summary>
-  /// Special vector to which another vector can be appended to.
-  /// </summary>
-  public interface IExtensibleComplexFloatVector : IComplexFloatVector
-  {
     /// <summary>
-    /// Append vector a to the end of this vector.
+    /// Interface for a read-only vector of Complex values.
     /// </summary>
-    /// <param name="a">The vector to append.</param>
-    void Append(IROComplexFloatVector a);
-  }
+    public interface IROComplexFloatVector : IComplexFloatSequence
+    {
+        /// <summary>The number of elements of this vector.</summary>
+        int Length { get; }  // change this later to length property
+    }
+
+    /// <summary>
+    /// Interface for a readable and writeable vector of Complex values.
+    /// </summary>
+    public interface IComplexFloatVector : IROComplexFloatVector
+    {
+        /// <summary>Read/write Accessor for the element at index i.</summary>
+        /// <value>The element at index i.</value>
+        new ComplexFloat this[int i] { get; set; }
+    }
+
+    /// <summary>
+    /// Special vector to which another vector can be appended to.
+    /// </summary>
+    public interface IExtensibleComplexFloatVector : IComplexFloatVector
+    {
+        /// <summary>
+        /// Append vector a to the end of this vector.
+        /// </summary>
+        /// <param name="a">The vector to append.</param>
+        void Append(IROComplexFloatVector a);
+    }
 }

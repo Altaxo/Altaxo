@@ -62,7 +62,7 @@ G2DPlotStyleCollection s = (G2DPlotStyleCollection)obj;
 
 info.CreateArray("Styles", s._innerList.Count);
 for (int i = 0; i < s._innerList.Count; i++)
-	info.AddValue("e", s._innerList[i]);
+    info.AddValue("e", s._innerList[i]);
 info.CommitArray();
 */
       }

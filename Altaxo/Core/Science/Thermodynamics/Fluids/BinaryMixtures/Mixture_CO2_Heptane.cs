@@ -31,46 +31,46 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-  /// <summary>
-  /// State equations and constants of mixtures of CO2 and Heptane.
-  /// </summary>
-  /// <remarks>
-  /// <para>References:</para>
-  /// <para>The source code was created automatically using the mixture file 'co2-heptane.mix' from the following software:</para>
-  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-  /// <para>Further references (extracted from the mixture file):</para>
-  /// <para>Info: Kunz and Wagner (2007)</para>
-  /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
-  /// </remarks>
-  [CASRegistryNumber("124-38-9")]
-  [CASRegistryNumber("142-82-5")]
-  public class Mixture_CO2_Heptane : BinaryMixtureDefinitionBase
-  {
-
-    /// <summary>Gets the (only) instance of this class.</summary>
-    public static Mixture_CO2_Heptane Instance { get; } = new Mixture_CO2_Heptane();
-
-    #region Constants for the binary mixture of CO2 and Heptane
-
-    /// <summary>Gets the CAS registry number of component 1 (CO2).</summary>
-    public override string CASRegistryNumber1 { get; } = "124-38-9";
-
-    /// <summary>Gets the CAS registry number of component 2 (Heptane).</summary>
-    public override string CASRegistryNumber2 { get; } = "142-82-5";
-
-    #endregion Constants for the binary mixture of CO2 and Heptane
-
-    private Mixture_CO2_Heptane()
+    /// <summary>
+    /// State equations and constants of mixtures of CO2 and Heptane.
+    /// </summary>
+    /// <remarks>
+    /// <para>References:</para>
+    /// <para>The source code was created automatically using the mixture file 'co2-heptane.mix' from the following software:</para>
+    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+    /// <para>Further references (extracted from the mixture file):</para>
+    /// <para>Info: Kunz and Wagner (2007)</para>
+    /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
+    /// </remarks>
+    [CASRegistryNumber("124-38-9")]
+    [CASRegistryNumber("142-82-5")]
+    public class Mixture_CO2_Heptane : BinaryMixtureDefinitionBase
     {
-      #region  Mixture parameter
 
-      _beta_T = 1.011806317;
-      _gamma_T = 1.046169823;
-      _beta_v = 1.205469976;
-      _gamma_v = 1.164585914;
-      _F = 0;
-      #endregion
+        /// <summary>Gets the (only) instance of this class.</summary>
+        public static Mixture_CO2_Heptane Instance { get; } = new Mixture_CO2_Heptane();
 
+        #region Constants for the binary mixture of CO2 and Heptane
+
+        /// <summary>Gets the CAS registry number of component 1 (CO2).</summary>
+        public override string CASRegistryNumber1 { get; } = "124-38-9";
+
+        /// <summary>Gets the CAS registry number of component 2 (Heptane).</summary>
+        public override string CASRegistryNumber2 { get; } = "142-82-5";
+
+        #endregion Constants for the binary mixture of CO2 and Heptane
+
+        private Mixture_CO2_Heptane()
+        {
+            #region  Mixture parameter
+
+            _beta_T = 1.011806317;
+            _gamma_T = 1.046169823;
+            _beta_v = 1.205469976;
+            _gamma_v = 1.164585914;
+            _F = 0;
+            #endregion
+
+        }
     }
-  }
 }

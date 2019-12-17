@@ -37,12 +37,12 @@ namespace Altaxo.Main.Services.Files
   public class ProjectArchiveEntryMemento : IProjectArchiveEntryMemento, IDisposable
   {
     // fixed data
-    readonly string _fileName;
-    readonly string _entryName;
-    readonly IProjectArchiveManager _archiveManager;
+    private readonly string _fileName;
+    private readonly string _entryName;
+    private readonly IProjectArchiveManager _archiveManager;
 
     // operational data
-    IProjectArchive _archive;
+    private IProjectArchive _archive;
 
 
     /// <summary>

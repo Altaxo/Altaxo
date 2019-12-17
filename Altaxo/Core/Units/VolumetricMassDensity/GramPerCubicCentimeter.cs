@@ -30,45 +30,45 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units.VolumetricMassDensity
 {
-  [UnitDescription("Volumetric mass density", -3, 1, 0, 0, 0, 0, 0)]
-  public class GramPerCubicCentimeter : UnitBase, IUnit
-  {
-    private static readonly GramPerCubicCentimeter _instance = new GramPerCubicCentimeter();
-
-    public static GramPerCubicCentimeter Instance { get { return _instance; } }
-
-    private GramPerCubicCentimeter()
+    [UnitDescription("Volumetric mass density", -3, 1, 0, 0, 0, 0, 0)]
+    public class GramPerCubicCentimeter : UnitBase, IUnit
     {
-    }
+        private static readonly GramPerCubicCentimeter _instance = new GramPerCubicCentimeter();
 
-    public string Name
-    {
-      get { return "GramPerCubicCentimeter"; }
-    }
+        public static GramPerCubicCentimeter Instance { get { return _instance; } }
 
-    public string ShortCut
-    {
-      get { return "g/cm³"; }
-    }
+        private GramPerCubicCentimeter()
+        {
+        }
 
-    public double ToSIUnit(double x)
-    {
-      return x * 1000;
-    }
+        public string Name
+        {
+            get { return "GramPerCubicCentimeter"; }
+        }
 
-    public double FromSIUnit(double x)
-    {
-      return x / 1000;
-    }
+        public string ShortCut
+        {
+            get { return "g/cm³"; }
+        }
 
-    public ISIPrefixList Prefixes
-    {
-      get { return SIPrefix.ListWithNonePrefixOnly; }
-    }
+        public double ToSIUnit(double x)
+        {
+            return x * 1000;
+        }
 
-    public SIUnit SIUnit
-    {
-      get { return KilogramPerCubicMeter.Instance; }
+        public double FromSIUnit(double x)
+        {
+            return x / 1000;
+        }
+
+        public ISIPrefixList Prefixes
+        {
+            get { return SIPrefix.ListWithNonePrefixOnly; }
+        }
+
+        public SIUnit SIUnit
+        {
+            get { return KilogramPerCubicMeter.Instance; }
+        }
     }
-  }
 }

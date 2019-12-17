@@ -34,10 +34,10 @@ namespace Altaxo.Main.Services
   public class RtfComposerService
   {
     /*
-		static readonly string textheader =
-	@"{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}{\f1\froman\fprq2\fcharset0 Times New Roman;}{\f2\froman\fprq2\fcharset2 Symbol;}}" +
-	@"\viewkind4\uc1\pard\f0 ";
-		*/
+        static readonly string textheader =
+    @"{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}{\f1\froman\fprq2\fcharset0 Times New Roman;}{\f2\froman\fprq2\fcharset2 Symbol;}}" +
+    @"\viewkind4\uc1\pard\f0 ";
+        */
 
     private static readonly string textheader =
   @"{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\froman\fprq2\fcharset0 Times New Roman;}{\f1\fswiss\fcharset0 Arial;}{\f2\froman\fprq2\fcharset2 Symbol;}}" +

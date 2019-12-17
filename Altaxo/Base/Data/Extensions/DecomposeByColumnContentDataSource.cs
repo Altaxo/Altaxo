@@ -245,7 +245,7 @@ namespace Altaxo.Data
       }
       set
       {
-        if(ChildSetMember(ref _importOptions, value ?? throw new ArgumentNullException(nameof(value))))
+        if (ChildSetMember(ref _importOptions, value ?? throw new ArgumentNullException(nameof(value))))
         {
           EhChildChanged(_importOptions, EventArgs.Empty);
         }
@@ -267,7 +267,7 @@ namespace Altaxo.Data
       }
       set
       {
-        if(ChildSetMember(ref _processOptions, value ?? throw new ArgumentNullException(nameof(value))))
+        if (ChildSetMember(ref _processOptions, value ?? throw new ArgumentNullException(nameof(value))))
         {
           EhChildChanged(_processOptions, EventArgs.Empty);
         }

@@ -115,14 +115,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         throw new NotSupportedException("Serialization of old versions is not supported, probably a programming error");
         /*
-				XYPlotScatterStyle s = (XYPlotScatterStyle)obj;
-				info.AddValue("Shape", s._shape);
-				info.AddValue("Style", s._style);
-				info.AddValue("DropLine", s._dropLine);
-				info.AddValue("Pen", s._pen);
-				info.AddValue("SymbolSize", s._symbolSize);
-				info.AddValue("RelativePenWidth", s._relativePenWidth);
-				*/
+                XYPlotScatterStyle s = (XYPlotScatterStyle)obj;
+                info.AddValue("Shape", s._shape);
+                info.AddValue("Style", s._style);
+                info.AddValue("DropLine", s._dropLine);
+                info.AddValue("Pen", s._pen);
+                info.AddValue("SymbolSize", s._symbolSize);
+                info.AddValue("RelativePenWidth", s._relativePenWidth);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -159,12 +159,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         throw new NotSupportedException("Serialization of old versions is not supported, probably a programming error");
         /*
-				base.Serialize(obj, info); // Base was formerly Surrogate0
-				XYPlotScatterStyle s = (XYPlotScatterStyle)obj;
-				info.AddValue("IndependentColor", s._independentColor);
-				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
-				info.AddValue("SkipFreq", s._skipFreq);
-				*/
+                base.Serialize(obj, info); // Base was formerly Surrogate0
+                XYPlotScatterStyle s = (XYPlotScatterStyle)obj;
+                info.AddValue("IndependentColor", s._independentColor);
+                info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
+                info.AddValue("SkipFreq", s._skipFreq);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -206,18 +206,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         throw new NotSupportedException("Serialization of old versions is not supported, probably a programming error");
         /*
-				ScatterPlotStyle s = (ScatterPlotStyle)obj;
-				info.AddValue("Shape", s._shape);
-				info.AddValue("Style", s._style);
-				info.AddValue("DropLine", s._dropLine);
-				info.AddValue("Pen", s._pen);
-				info.AddValue("SymbolSize", s._symbolSize);
-				info.AddValue("RelativePenWidth", s._relativePenWidth);
+                ScatterPlotStyle s = (ScatterPlotStyle)obj;
+                info.AddValue("Shape", s._shape);
+                info.AddValue("Style", s._style);
+                info.AddValue("DropLine", s._dropLine);
+                info.AddValue("Pen", s._pen);
+                info.AddValue("SymbolSize", s._symbolSize);
+                info.AddValue("RelativePenWidth", s._relativePenWidth);
 
-				info.AddValue("IndependentColor", s._independentColor);
-				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
-				info.AddValue("SkipFreq", s._skipFreq);
-				*/
+                info.AddValue("IndependentColor", s._independentColor);
+                info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
+                info.AddValue("SkipFreq", s._skipFreq);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

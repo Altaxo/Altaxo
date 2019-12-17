@@ -114,7 +114,7 @@ namespace Altaxo.Data
     {
       var (xCol, yCol) = columnTuple;
       var len = Math.Min(xCol.Count, yCol.Count);
-      for(int i=0;i<len;++i)
+      for (int i = 0; i < len; ++i)
       {
         yield return (xCol[i], yCol[i]);
       }
@@ -137,7 +137,7 @@ namespace Altaxo.Data
       var len = Math.Min(xCol.Count, yCol.Count);
       for (int i = 0; i < len; ++i)
       {
-        if(filterInvalidPairs && !(xCol.IsElementEmpty(i) || yCol.IsElementEmpty(i)))
+        if (filterInvalidPairs && !(xCol.IsElementEmpty(i) || yCol.IsElementEmpty(i)))
           yield return (xCol[i], yCol[i]);
       }
     }

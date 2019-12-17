@@ -376,13 +376,13 @@ namespace Altaxo.Graph.Gdi
         {
           throw new InvalidOperationException();
           /*
-					XYPlotLayerCollection s = (XYPlotLayerCollection)obj;
+                    XYPlotLayerCollection s = (XYPlotLayerCollection)obj;
 
-					info.CreateArray("LayerArray",s.Count);
-					for(int i=0;i<s.Count;i++)
-						info.AddValue("XYPlotLayer",s[i]);
-					info.CommitArray();
-					*/
+                    info.CreateArray("LayerArray",s.Count);
+                    for(int i=0;i<s.Count;i++)
+                        info.AddValue("XYPlotLayer",s[i]);
+                    info.CommitArray();
+                    */
         }
 
         public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -408,15 +408,15 @@ namespace Altaxo.Graph.Gdi
         {
           throw new InvalidOperationException();
           /*
-					XYPlotLayerCollection s = (XYPlotLayerCollection)obj;
+                    XYPlotLayerCollection s = (XYPlotLayerCollection)obj;
 
-					info.AddValue("Size", s._graphSize);
+                    info.AddValue("Size", s._graphSize);
 
-					info.CreateArray("LayerArray", s.Count);
-					for (int i = 0; i < s.Count; i++)
-						info.AddValue("XYPlotLayer", s[i]);
-					info.CommitArray();
-					*/
+                    info.CreateArray("LayerArray", s.Count);
+                    for (int i = 0; i < s.Count; i++)
+                        info.AddValue("XYPlotLayer", s[i]);
+                    info.CommitArray();
+                    */
         }
 
         public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

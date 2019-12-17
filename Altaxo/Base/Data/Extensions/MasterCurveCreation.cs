@@ -487,8 +487,8 @@ namespace Altaxo.Data
                   Func<double, double> optFunc = delegate (double shift)
                   {
                     double res = GetMeanSquaredPenalty(interpolations, currentColumns, shift, options);
-                    //Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
-                    return res;
+                                      //Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
+                                      return res;
                   };
 
                   var optimizationMethod = new StupidLineSearch(new Simple1DCostFunction(optFunc));
@@ -512,8 +512,8 @@ namespace Altaxo.Data
                   Func<double, double> optFunc = delegate (double shift)
                   {
                     double res = GetMeanSquaredPenalty(interpolations, currentColumns, shift, options);
-                    //Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
-                    return res;
+                                      //Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
+                                      return res;
                   };
                   var optimizationMethod = new BruteForceLineSearch(new Simple1DCostFunction(optFunc));
                   var vec = new Calc.LinearAlgebra.DoubleVector(1)

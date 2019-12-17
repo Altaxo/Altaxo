@@ -33,86 +33,86 @@ using System.Text;
 
 namespace Altaxo.Calc.Probability
 {
-  /// <summary>
-  /// Vector of three random numbers distributed uniformly on the unit sphere.
-  /// </summary>
-  /// <remarks><code>
-  /// Uses the algorithm of Marsaglia, Ann. Math. Stat 43, 645 (1972).
-  /// On average requires 2.25 deviates per vector and a square root calculation
-  /// Vector of three random numbers (x,y,z) which are distributed uniformly
-  /// on the unit sphere.
-  ///
-  /// Uses the algorithm of Marsaglia, Ann. Math. Stat 43, 645 (1972).
-  /// On average requires 2.25 deviates per vector and a square root calculation
-  /// </code></remarks>
+    /// <summary>
+    /// Vector of three random numbers distributed uniformly on the unit sphere.
+    /// </summary>
+    /// <remarks><code>
+    /// Uses the algorithm of Marsaglia, Ann. Math. Stat 43, 645 (1972).
+    /// On average requires 2.25 deviates per vector and a square root calculation
+    /// Vector of three random numbers (x,y,z) which are distributed uniformly
+    /// on the unit sphere.
+    ///
+    /// Uses the algorithm of Marsaglia, Ann. Math. Stat 43, 645 (1972).
+    /// On average requires 2.25 deviates per vector and a square root calculation
+    /// </code></remarks>
 
-  public class UnitSphereDistribution : Distribution
-  {
-    protected double scale;
-
-    public UnitSphereDistribution()
-      :
-      this(new StandardGenerator())
-    { }
-
-    public UnitSphereDistribution(Generator generator)
-      : base(generator)
+    public class UnitSphereDistribution : Distribution
     {
-      scale = 2.0 / (int.MaxValue - 1);
-      ;
-    }
+        protected double scale;
 
-    public override double NextDouble()
-    {
-      throw new NotSupportedException("Use NextDoubles(out double x, out double y, out double z) instead of this method");
-    }
+        public UnitSphereDistribution()
+          :
+          this(new StandardGenerator())
+        { }
 
-    public void NextDoubles(out double x, out double y, out double z)
-    {
-      for (; ; )
-      {
-        double d1 = 1.0 - scale * Generator.Next(),
-          d2 = 1.0 - scale * Generator.Next(),
-          dd = d1 * d1 + d2 * d2;
-        if (dd < 1.0)
+        public UnitSphereDistribution(Generator generator)
+          : base(generator)
         {
-          z = 1 - 2 * dd;
-          dd = 2 * Math.Sqrt(1.0 - dd);
-          x = d1 * dd;
-          y = d2 * dd;
-          return;
+            scale = 2.0 / (int.MaxValue - 1);
+            ;
         }
-      }
-    }
 
-    public override double Minimum
-    {
-      get { throw new Exception("The method or operation is not implemented."); }
-    }
+        public override double NextDouble()
+        {
+            throw new NotSupportedException("Use NextDoubles(out double x, out double y, out double z) instead of this method");
+        }
 
-    public override double Maximum
-    {
-      get { throw new Exception("The method or operation is not implemented."); }
-    }
+        public void NextDoubles(out double x, out double y, out double z)
+        {
+            for (; ; )
+            {
+                double d1 = 1.0 - scale * Generator.Next(),
+                  d2 = 1.0 - scale * Generator.Next(),
+                  dd = d1 * d1 + d2 * d2;
+                if (dd < 1.0)
+                {
+                    z = 1 - 2 * dd;
+                    dd = 2 * Math.Sqrt(1.0 - dd);
+                    x = d1 * dd;
+                    y = d2 * dd;
+                    return;
+                }
+            }
+        }
 
-    public override double Mean
-    {
-      get { throw new Exception("The method or operation is not implemented."); }
-    }
+        public override double Minimum
+        {
+            get { throw new Exception("The method or operation is not implemented."); }
+        }
 
-    public override double Median
-    {
-      get { throw new Exception("The method or operation is not implemented."); }
-    }
+        public override double Maximum
+        {
+            get { throw new Exception("The method or operation is not implemented."); }
+        }
 
-    public override double Variance
-    {
-      get { throw new Exception("The method or operation is not implemented."); }
-    }
+        public override double Mean
+        {
+            get { throw new Exception("The method or operation is not implemented."); }
+        }
 
-    public override double[] Mode
-    {
-      get { throw new Exception("The method or operation is not implemented."); }
+        public override double Median
+        {
+            get { throw new Exception("The method or operation is not implemented."); }
+        }
+
+        public override double Variance
+        {
+            get { throw new Exception("The method or operation is not implemented."); }
+        }
+
+        public override double[] Mode
+        {
+            get { throw new Exception("The method or operation is not implemented."); }
+        }
     }
-  }
 }

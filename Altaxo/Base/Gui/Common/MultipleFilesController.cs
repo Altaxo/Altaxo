@@ -133,8 +133,7 @@ namespace Altaxo.Gui.Common
       _view.FileNames = _fileNames;
     }
 
-
-    (string Filter, string Description)[] _fileFilters = new[] { ("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)"), ("*.*", "All files (*.*)") };
+    private (string Filter, string Description)[] _fileFilters = new[] { ("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)"), ("*.*", "All files (*.*)") };
 
     /// <summary>
     /// Set the file filters.

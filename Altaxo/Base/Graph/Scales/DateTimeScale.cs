@@ -59,13 +59,13 @@ namespace Altaxo.Graph.Scales
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				DateTimeScale s = (DateTimeScale)obj;
+                DateTimeScale s = (DateTimeScale)obj;
 
-				info.AddValue("Org", s._axisOrg);
-				info.AddValue("End", s._axisEnd);
-				info.AddValue("Rescaling", s._rescaling);
-				info.AddValue("Bounds", s._dataBounds);
-				*/
+                info.AddValue("Org", s._axisOrg);
+                info.AddValue("End", s._axisEnd);
+                info.AddValue("Rescaling", s._rescaling);
+                info.AddValue("Bounds", s._dataBounds);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

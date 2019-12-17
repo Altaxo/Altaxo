@@ -52,11 +52,11 @@ namespace Altaxo.Gui.Workbench
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				var s = (WorkbenchState)obj;
+                var s = (WorkbenchState)obj;
 
-				info.AddValue("Bounds", s.Bounds);
-				info.AddValue("WindowState", (int)s.WindowState);
-				*/
+                info.AddValue("Bounds", s.Bounds);
+                info.AddValue("WindowState", (int)s.WindowState);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

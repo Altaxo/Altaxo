@@ -31,45 +31,45 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-  /// <summary>
-  /// State equations and constants of mixtures of Oxygen and CO.
-  /// </summary>
-  /// <remarks>
-  /// <para>References:</para>
-  /// <para>The source code was created automatically using the mixture file 'oxygen-co.mix' from the following software:</para>
-  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-  /// <para>Further references (extracted from the mixture file):</para>
-  /// <para>Info: Gernert (2013) - no adjusted parameters</para>
-  /// </remarks>
-  [CASRegistryNumber("7782-44-7")]
-  [CASRegistryNumber("630-08-0")]
-  public class Mixture_Oxygen_CO : BinaryMixtureDefinitionBase
-  {
-
-    /// <summary>Gets the (only) instance of this class.</summary>
-    public static Mixture_Oxygen_CO Instance { get; } = new Mixture_Oxygen_CO();
-
-    #region Constants for the binary mixture of Oxygen and CO
-
-    /// <summary>Gets the CAS registry number of component 1 (Oxygen).</summary>
-    public override string CASRegistryNumber1 { get; } = "7782-44-7";
-
-    /// <summary>Gets the CAS registry number of component 2 (CO).</summary>
-    public override string CASRegistryNumber2 { get; } = "630-08-0";
-
-    #endregion Constants for the binary mixture of Oxygen and CO
-
-    private Mixture_Oxygen_CO()
+    /// <summary>
+    /// State equations and constants of mixtures of Oxygen and CO.
+    /// </summary>
+    /// <remarks>
+    /// <para>References:</para>
+    /// <para>The source code was created automatically using the mixture file 'oxygen-co.mix' from the following software:</para>
+    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+    /// <para>Further references (extracted from the mixture file):</para>
+    /// <para>Info: Gernert (2013) - no adjusted parameters</para>
+    /// </remarks>
+    [CASRegistryNumber("7782-44-7")]
+    [CASRegistryNumber("630-08-0")]
+    public class Mixture_Oxygen_CO : BinaryMixtureDefinitionBase
     {
-      #region  Mixture parameter
 
-      _beta_T = 1;
-      _gamma_T = 1;
-      _beta_v = 1;
-      _gamma_v = 1;
-      _F = 0;
-      #endregion
+        /// <summary>Gets the (only) instance of this class.</summary>
+        public static Mixture_Oxygen_CO Instance { get; } = new Mixture_Oxygen_CO();
 
+        #region Constants for the binary mixture of Oxygen and CO
+
+        /// <summary>Gets the CAS registry number of component 1 (Oxygen).</summary>
+        public override string CASRegistryNumber1 { get; } = "7782-44-7";
+
+        /// <summary>Gets the CAS registry number of component 2 (CO).</summary>
+        public override string CASRegistryNumber2 { get; } = "630-08-0";
+
+        #endregion Constants for the binary mixture of Oxygen and CO
+
+        private Mixture_Oxygen_CO()
+        {
+            #region  Mixture parameter
+
+            _beta_T = 1;
+            _gamma_T = 1;
+            _beta_v = 1;
+            _gamma_v = 1;
+            _F = 0;
+            #endregion
+
+        }
     }
-  }
 }

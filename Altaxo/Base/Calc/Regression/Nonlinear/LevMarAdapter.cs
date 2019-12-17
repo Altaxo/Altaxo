@@ -572,7 +572,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       /* Up to new Fit2 is very slow, so we not use it until it is clear what causes this slow convergence
 if (CanUseJacobianVersion())
-	Fit2Jac();
+    Fit2Jac();
 else
 */
       Fit1();

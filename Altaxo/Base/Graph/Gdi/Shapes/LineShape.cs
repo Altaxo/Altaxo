@@ -70,9 +70,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
         /*
-				LineShape s = (LineShape)obj;
-				info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType);
-				*/
+                LineShape s = (LineShape)obj;
+                info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

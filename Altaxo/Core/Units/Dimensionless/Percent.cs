@@ -29,45 +29,45 @@ using System.Text;
 
 namespace Altaxo.Units.Dimensionless
 {
-  [UnitDescription("Relation", 0, 0, 0, 0, 0, 0, 0)]
-  public class Percent : UnitBase, IUnit
-  {
-    private static readonly Percent _instance = new Percent();
-
-    public static Percent Instance { get { return _instance; } }
-
-    protected Percent()
+    [UnitDescription("Relation", 0, 0, 0, 0, 0, 0, 0)]
+    public class Percent : UnitBase, IUnit
     {
-    }
+        private static readonly Percent _instance = new Percent();
 
-    public string Name
-    {
-      get { return "Percent"; }
-    }
+        public static Percent Instance { get { return _instance; } }
 
-    public string ShortCut
-    {
-      get { return "%"; }
-    }
+        protected Percent()
+        {
+        }
 
-    public double ToSIUnit(double x)
-    {
-      return x / 100;
-    }
+        public string Name
+        {
+            get { return "Percent"; }
+        }
 
-    public double FromSIUnit(double x)
-    {
-      return x * 100;
-    }
+        public string ShortCut
+        {
+            get { return "%"; }
+        }
 
-    public ISIPrefixList Prefixes
-    {
-      get { return SIPrefix.ListWithNonePrefixOnly; }
-    }
+        public double ToSIUnit(double x)
+        {
+            return x / 100;
+        }
 
-    public SIUnit SIUnit
-    {
-      get { return Unity.Instance; }
+        public double FromSIUnit(double x)
+        {
+            return x * 100;
+        }
+
+        public ISIPrefixList Prefixes
+        {
+            get { return SIPrefix.ListWithNonePrefixOnly; }
+        }
+
+        public SIUnit SIUnit
+        {
+            get { return Unity.Instance; }
+        }
     }
-  }
 }

@@ -31,46 +31,46 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-  /// <summary>
-  /// State equations and constants of mixtures of Octane and Water.
-  /// </summary>
-  /// <remarks>
-  /// <para>References:</para>
-  /// <para>The source code was created automatically using the mixture file 'octane-water.mix' from the following software:</para>
-  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-  /// <para>Further references (extracted from the mixture file):</para>
-  /// <para>Info: Kunz and Wagner (2007)</para>
-  /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
-  /// </remarks>
-  [CASRegistryNumber("111-65-9")]
-  [CASRegistryNumber("7732-18-5")]
-  public class Mixture_Octane_Water : BinaryMixtureDefinitionBase
-  {
-
-    /// <summary>Gets the (only) instance of this class.</summary>
-    public static Mixture_Octane_Water Instance { get; } = new Mixture_Octane_Water();
-
-    #region Constants for the binary mixture of Octane and Water
-
-    /// <summary>Gets the CAS registry number of component 1 (Octane).</summary>
-    public override string CASRegistryNumber1 { get; } = "111-65-9";
-
-    /// <summary>Gets the CAS registry number of component 2 (Water).</summary>
-    public override string CASRegistryNumber2 { get; } = "7732-18-5";
-
-    #endregion Constants for the binary mixture of Octane and Water
-
-    private Mixture_Octane_Water()
+    /// <summary>
+    /// State equations and constants of mixtures of Octane and Water.
+    /// </summary>
+    /// <remarks>
+    /// <para>References:</para>
+    /// <para>The source code was created automatically using the mixture file 'octane-water.mix' from the following software:</para>
+    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+    /// <para>Further references (extracted from the mixture file):</para>
+    /// <para>Info: Kunz and Wagner (2007)</para>
+    /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
+    /// </remarks>
+    [CASRegistryNumber("111-65-9")]
+    [CASRegistryNumber("7732-18-5")]
+    public class Mixture_Octane_Water : BinaryMixtureDefinitionBase
     {
-      #region  Mixture parameter
 
-      _beta_T = 1;
-      _gamma_T = 0.662072469;
-      _beta_v = 1;
-      _gamma_v = 0.599484191;
-      _F = 0;
-      #endregion
+        /// <summary>Gets the (only) instance of this class.</summary>
+        public static Mixture_Octane_Water Instance { get; } = new Mixture_Octane_Water();
 
+        #region Constants for the binary mixture of Octane and Water
+
+        /// <summary>Gets the CAS registry number of component 1 (Octane).</summary>
+        public override string CASRegistryNumber1 { get; } = "111-65-9";
+
+        /// <summary>Gets the CAS registry number of component 2 (Water).</summary>
+        public override string CASRegistryNumber2 { get; } = "7732-18-5";
+
+        #endregion Constants for the binary mixture of Octane and Water
+
+        private Mixture_Octane_Water()
+        {
+            #region  Mixture parameter
+
+            _beta_T = 1;
+            _gamma_T = 0.662072469;
+            _beta_v = 1;
+            _gamma_v = 0.599484191;
+            _F = 0;
+            #endregion
+
+        }
     }
-  }
 }

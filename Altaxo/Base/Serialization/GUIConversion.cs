@@ -280,17 +280,17 @@ namespace Altaxo.Serialization
     }
 
     /*
-		public static string ToString(double[] vals)
-		{
-			StringBuilder stb = new StringBuilder();
-			foreach (int v in vals)
-			{
-				stb.Append(ToString(v));
-				stb.Append(" ");
-			}
-			return stb.ToString().TrimEnd();
-		}
-		*/
+        public static string ToString(double[] vals)
+        {
+            StringBuilder stb = new StringBuilder();
+            foreach (int v in vals)
+            {
+                stb.Append(ToString(v));
+                stb.Append(" ");
+            }
+            return stb.ToString().TrimEnd();
+        }
+        */
 
     public static string ToString(ICollection<double> vals)
     {

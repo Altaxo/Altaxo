@@ -75,45 +75,45 @@ namespace Altaxo.Graph.Plot.Data
       {
         throw new ApplicationException("Calling a deprecated serialization handler for XYZMeshedColumnPlotData");
         /*
-				XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
+                XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
 
-				if(s.m_XColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_XColumn).ParentObject))
-				{
-					info.AddValue("XColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_XColumn));
-				}
-				else
-				{
-					info.AddValue("XColumn",s.m_XColumn);
-				}
+                if(s.m_XColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_XColumn).ParentObject))
+                {
+                    info.AddValue("XColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_XColumn));
+                }
+                else
+                {
+                    info.AddValue("XColumn",s.m_XColumn);
+                }
 
-				if(s.m_YColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_YColumn).ParentObject))
-				{
-					info.AddValue("YColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_YColumn));
-				}
-				else
-				{
-					info.AddValue("YColumn",s.m_YColumn);
-				}
+                if(s.m_YColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_YColumn).ParentObject))
+                {
+                    info.AddValue("YColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_YColumn));
+                }
+                else
+                {
+                    info.AddValue("YColumn",s.m_YColumn);
+                }
 
-				info.CreateArray("DataColumns",s.m_DataColumns.Length);
-				for(int i=0;i<s.m_DataColumns.Length;i++)
-				{
-					Altaxo.Data.IReadableColumn col = s.m_DataColumns[i];
-					if(col is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)col).ParentObject))
-					{
-						info.AddValue("e",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)col));
-					}
-					else
-					{
-						info.AddValue("e",col);
-					}
-				}
-				info.CommitArray();
+                info.CreateArray("DataColumns",s.m_DataColumns.Length);
+                for(int i=0;i<s.m_DataColumns.Length;i++)
+                {
+                    Altaxo.Data.IReadableColumn col = s.m_DataColumns[i];
+                    if(col is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)col).ParentObject))
+                    {
+                        info.AddValue("e",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)col));
+                    }
+                    else
+                    {
+                        info.AddValue("e",col);
+                    }
+                }
+                info.CommitArray();
 
-				info.AddValue("XBoundaries",s.m_xBoundaries);
-				info.AddValue("YBoundaries",s.m_yBoundaries);
-				info.AddValue("VBoundaries",s.m_vBoundaries);
-				*/
+                info.AddValue("XBoundaries",s.m_xBoundaries);
+                info.AddValue("YBoundaries",s.m_yBoundaries);
+                info.AddValue("VBoundaries",s.m_vBoundaries);
+                */
       }
 
       private Main.AbsoluteDocumentPath _xColumnPath = null;
@@ -254,22 +254,22 @@ namespace Altaxo.Graph.Plot.Data
         throw new InvalidOperationException("Serialization of old versions not supported.");
         /*
 
-				XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
+                XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
 
-				info.AddValue("XColumn", s._xColumn);
-				info.AddValue("YColumn", s._yColumn);
+                info.AddValue("XColumn", s._xColumn);
+                info.AddValue("YColumn", s._yColumn);
 
-				info.CreateArray("DataColumns", s._dataColumns.Length);
-				for (int i = 0; i < s._dataColumns.Length; i++)
-				{
-					info.AddValue("e", s._dataColumns[i]);
-				}
-				info.CommitArray();
+                info.CreateArray("DataColumns", s._dataColumns.Length);
+                for (int i = 0; i < s._dataColumns.Length; i++)
+                {
+                    info.AddValue("e", s._dataColumns[i]);
+                }
+                info.CommitArray();
 
-				info.AddValue("XBoundaries", s._xBoundaries);
-				info.AddValue("YBoundaries", s._yBoundaries);
-				info.AddValue("VBoundaries", s._vBoundaries);
-				*/
+                info.AddValue("XBoundaries", s._xBoundaries);
+                info.AddValue("YBoundaries", s._yBoundaries);
+                info.AddValue("VBoundaries", s._vBoundaries);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

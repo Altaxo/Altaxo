@@ -84,19 +84,19 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         throw new NotSupportedException("Serialization of old versions not supported - probably a programming error");
         /*
-				XYAxisStyle s = (XYAxisStyle)obj;
-				info.AddValue("Edge",s.m_Edge);
-				info.AddValue("AxisPen",s.m_AxisPen);
-				info.AddValue("MajorPen",s.m_MajorTickPen);
-				info.AddValue("MinorPen",s.m_MinorTickPen);
-				info.AddValue("MajorLength",s.m_MajorTickLength);
-				info.AddValue("MinorLength",s.m_MinorTickLength);
-				info.AddValue("MajorOuter",s.m_bOuterMajorTicks);
-				info.AddValue("MajorInner",s.m_bInnerMajorTicks);
-				info.AddValue("MinorOuter",s.m_bOuterMinorTicks);
-				info.AddValue("MinorInner",s.m_bInnerMinorTicks);
-				info.AddValue("AxisPosition",s.m_AxisPosition);
-				*/
+                XYAxisStyle s = (XYAxisStyle)obj;
+                info.AddValue("Edge",s.m_Edge);
+                info.AddValue("AxisPen",s.m_AxisPen);
+                info.AddValue("MajorPen",s.m_MajorTickPen);
+                info.AddValue("MinorPen",s.m_MinorTickPen);
+                info.AddValue("MajorLength",s.m_MajorTickLength);
+                info.AddValue("MinorLength",s.m_MinorTickLength);
+                info.AddValue("MajorOuter",s.m_bOuterMajorTicks);
+                info.AddValue("MajorInner",s.m_bInnerMajorTicks);
+                info.AddValue("MinorOuter",s.m_bOuterMinorTicks);
+                info.AddValue("MinorInner",s.m_bInnerMinorTicks);
+                info.AddValue("AxisPosition",s.m_AxisPosition);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

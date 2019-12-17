@@ -81,23 +81,23 @@ namespace Altaxo.Drawing
       {
         throw new InvalidOperationException("Serialization of an old version is not permitted");
         /*
-				NamedColor s = (NamedColor)obj;
-				info.AddValue("Color", s.Color.ToInvariantString());
-				info.AddValue("Name", s.Name);
+                NamedColor s = (NamedColor)obj;
+                info.AddValue("Color", s.Color.ToInvariantString());
+                info.AddValue("Name", s.Name);
 
-				if (null != s._parent)
-				{
-					if (s._parent.Level == ColorManagement.ColorSetLevel.Builtin && !object.ReferenceEquals(s._parent, ColorManagement.ColorSetManager.Instance.BuiltinKnownColors))
-					{
-						info.AddValue("Set", s._parent);
-					}
-					else
-					{
-						info.AddValue("SetName", s._parent.Name);
-						info.AddEnum("SetLevel", s._parent.Level);
-					}
-				}
-				*/
+                if (null != s._parent)
+                {
+                    if (s._parent.Level == ColorManagement.ColorSetLevel.Builtin && !object.ReferenceEquals(s._parent, ColorManagement.ColorSetManager.Instance.BuiltinKnownColors))
+                    {
+                        info.AddValue("Set", s._parent);
+                    }
+                    else
+                    {
+                        info.AddValue("SetName", s._parent.Name);
+                        info.AddEnum("SetLevel", s._parent.Level);
+                    }
+                }
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

@@ -26,24 +26,24 @@ using System;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-  /// <summary>
-  /// Determines how to do a Partial Least Squares Analysis.
-  /// </summary>
-  public struct MultivariateAnalysisOptions
-  {
     /// <summary>
-    /// Get/sets the maximum number of factors to calculate
+    /// Determines how to do a Partial Least Squares Analysis.
     /// </summary>
-    public int MaxNumberOfFactors;
+    public struct MultivariateAnalysisOptions
+    {
+        /// <summary>
+        /// Get/sets the maximum number of factors to calculate
+        /// </summary>
+        public int MaxNumberOfFactors;
 
-    /// <summary>
-    /// How to do the calculation of Cross PRESS values.
-    /// </summary>
-    public CrossPRESSCalculationType CrossPRESSCalculation;
+        /// <summary>
+        /// How to do the calculation of Cross PRESS values.
+        /// </summary>
+        public CrossPRESSCalculationType CrossPRESSCalculation;
 
-    /// <summary>
-    /// Get/sets the class that will handles the analysis.
-    /// </summary>
-    public System.Type AnalysisMethod;
-  }
+        /// <summary>
+        /// Get/sets the class that will handles the analysis.
+        /// </summary>
+        public System.Type AnalysisMethod;
+    }
 }

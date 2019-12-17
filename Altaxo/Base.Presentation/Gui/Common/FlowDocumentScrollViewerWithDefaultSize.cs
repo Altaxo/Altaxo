@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Common
       if (!IsLoaded)
         return new Size(DefaultWidth, DefaultHeigth);
       else
-        return new Size(Math.Min(ActualWidth,constraint.Width), Math.Min(ActualHeight, constraint.Height));
+        return new Size(Math.Min(ActualWidth, constraint.Width), Math.Min(ActualHeight, constraint.Height));
     }
 
     protected override Size ArrangeOverride(Size arrangeBounds)

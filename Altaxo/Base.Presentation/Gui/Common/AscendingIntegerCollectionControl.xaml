@@ -5,96 +5,96 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
              mc:Ignorable="d">
-	<Grid>
-		<Grid x:Name="_guiSimpleGrid">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" MinWidth="32" />
-				<ColumnDefinition Width="Auto" MinWidth="8" />
-				<ColumnDefinition Width="Auto" MinWidth="32" />
-				<ColumnDefinition Width="Auto" MinWidth="32" />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition />
-				<RowDefinition />
-			</Grid.RowDefinitions>
-			<Label Grid.Column="0" Content="From:" VerticalAlignment="Bottom" />
-			<Label Grid.Column="2" Content="To:" VerticalAlignment="Bottom" />
-			<axogc:Int32UpDown x:Name="_guiSimpleFrom" Grid.Column="0" Grid.Row="1" Minimum="0" Maximum="2000000000" ValueChanged="EhSimpleFrom_ValueChanged" />
-			<axogc:Int32UpDown x:Name="_guiSimpleTo" Grid.Column="2" Grid.Row="2" IsGotoMinimumAndMaximumVisible="True" MaximumReplacementText="Maximum" Minimum="0" Maximum="2000000000" ValueChanged="EhSimpleTo_ValueChanged" />
+    <Grid>
+        <Grid x:Name="_guiSimpleGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="32" />
+                <ColumnDefinition Width="Auto" MinWidth="8" />
+                <ColumnDefinition Width="Auto" MinWidth="32" />
+                <ColumnDefinition Width="Auto" MinWidth="32" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Label Grid.Column="0" Content="From:" VerticalAlignment="Bottom" />
+            <Label Grid.Column="2" Content="To:" VerticalAlignment="Bottom" />
+            <axogc:Int32UpDown x:Name="_guiSimpleFrom" Grid.Column="0" Grid.Row="1" Minimum="0" Maximum="2000000000" ValueChanged="EhSimpleFrom_ValueChanged" />
+            <axogc:Int32UpDown x:Name="_guiSimpleTo" Grid.Column="2" Grid.Row="2" IsGotoMinimumAndMaximumVisible="True" MaximumReplacementText="Maximum" Minimum="0" Maximum="2000000000" ValueChanged="EhSimpleTo_ValueChanged" />
 
-			<Button Grid.Column="3" Grid.Row="1" Content="Advanced.." Margin="16,0,4,0" Click="EhSwitchToAdvanced" />
-		</Grid>
+            <Button Grid.Column="3" Grid.Row="1" Content="Advanced.." Margin="16,0,4,0" Click="EhSwitchToAdvanced" />
+        </Grid>
 
-		<Grid x:Name="_guiAdvancedGrid" Visibility="Collapsed">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" MinWidth="32" />
-				<ColumnDefinition Width="Auto" MinWidth="32" />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition />
-			</Grid.RowDefinitions>
+        <Grid x:Name="_guiAdvancedGrid" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="32" />
+                <ColumnDefinition Width="Auto" MinWidth="32" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-			<DataGrid x:Name="_guiDataGrid" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" RowHeaderWidth="16" InitializingNewItem="EhInitializingNewItem">
-				<DataGrid.Columns>
-					<DataGridTemplateColumn Header="From" MinWidth="48">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding From}" />
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-						<DataGridTemplateColumn.CellEditingTemplate>
-							<DataTemplate>
-								<axogc:Int32UpDown Value="{Binding From, Mode=TwoWay}" Minimum="0" Maximum="2000000000" />
-							</DataTemplate>
-						</DataGridTemplateColumn.CellEditingTemplate>
-					</DataGridTemplateColumn>
-					<DataGridTemplateColumn Header="To" MinWidth="48">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding To}" />
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-						<DataGridTemplateColumn.CellEditingTemplate>
-							<DataTemplate>
-								<axogc:Int32UpDown Value="{Binding To, Mode=TwoWay}" Minimum="0" Maximum="2000000000" IsGotoMinimumAndMaximumVisible="True" MaximumReplacementText="Maximum" />
-							</DataTemplate>
-						</DataGridTemplateColumn.CellEditingTemplate>
-					</DataGridTemplateColumn>
-				</DataGrid.Columns>
-			</DataGrid>
+            <DataGrid x:Name="_guiDataGrid" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" RowHeaderWidth="16" InitializingNewItem="EhInitializingNewItem">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="From" MinWidth="48">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding From}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <axogc:Int32UpDown Value="{Binding From, Mode=TwoWay}" Minimum="0" Maximum="2000000000" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="To" MinWidth="48">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding To}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <axogc:Int32UpDown Value="{Binding To, Mode=TwoWay}" Minimum="0" Maximum="2000000000" IsGotoMinimumAndMaximumVisible="True" MaximumReplacementText="Maximum" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
 
-			<GroupBox Grid.Column="1" Grid.Row="0" Header="Add/remove range" Margin="6,0,0,0">
-				<Grid>
-					<Grid.Resources>
-						<ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
-					</Grid.Resources>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" MinWidth="32" />
-						<ColumnDefinition Width="Auto" MinWidth="32" />
-						<ColumnDefinition Width="Auto" MinWidth="32" />
-					</Grid.ColumnDefinitions>
-					<Grid.RowDefinitions>
-						<RowDefinition />
-						<RowDefinition />
-					</Grid.RowDefinitions>
-					<Label Grid.Column="0" Content="From:" VerticalAlignment="Bottom" />
-					<Label Grid.Column="1" Content="To:" VerticalAlignment="Bottom" />
-					<axogc:Int32UpDown x:Name="_guiAddRemoveFrom" Grid.Column="0" Grid.Row="1" Minimum="0" Maximum="2000000000" Margin="4" ValueChanged="EhAddRemoveFrom_ValueChanged" />
-					<axogc:Int32UpDown x:Name="_guiAddRemoveTo" Grid.Column="1" Grid.Row="1" Minimum="0" Maximum="2000000000" IsGotoMinimumAndMaximumVisible="True" MaximumReplacementText="Maximum" Margin="4" ValueChanged="EhAddRemoveTo_ValueChanged" />
+            <GroupBox Grid.Column="1" Grid.Row="0" Header="Add/remove range" Margin="6,0,0,0">
+                <Grid>
+                    <Grid.Resources>
+                        <ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" MinWidth="32" />
+                        <ColumnDefinition Width="Auto" MinWidth="32" />
+                        <ColumnDefinition Width="Auto" MinWidth="32" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Label Grid.Column="0" Content="From:" VerticalAlignment="Bottom" />
+                    <Label Grid.Column="1" Content="To:" VerticalAlignment="Bottom" />
+                    <axogc:Int32UpDown x:Name="_guiAddRemoveFrom" Grid.Column="0" Grid.Row="1" Minimum="0" Maximum="2000000000" Margin="4" ValueChanged="EhAddRemoveFrom_ValueChanged" />
+                    <axogc:Int32UpDown x:Name="_guiAddRemoveTo" Grid.Column="1" Grid.Row="1" Minimum="0" Maximum="2000000000" IsGotoMinimumAndMaximumVisible="True" MaximumReplacementText="Maximum" Margin="4" ValueChanged="EhAddRemoveTo_ValueChanged" />
 
-					<Button Grid.Column="2" Grid.Row="0" Margin="4" Click="EhAdvancedRangeAdd" ToolTip="Include this range in the range list.">
-						<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
-							<Path Style="{StaticResource AddCrossPathStyle}" />
-						</Viewbox>
-					</Button>
+                    <Button Grid.Column="2" Grid.Row="0" Margin="4" Click="EhAdvancedRangeAdd" ToolTip="Include this range in the range list.">
+                        <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+                            <Path Style="{StaticResource AddCrossPathStyle}" />
+                        </Viewbox>
+                    </Button>
 
-					<Button Grid.Column="2" Grid.Row="1" Margin="4" Click="EhAdvancedRangeRemove" ToolTip="Exclude this range from the range list.">
-						<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
-							<Path Style="{StaticResource RemoveCrossPathStyle}" />
-						</Viewbox>
-					</Button>
-				</Grid>
-			</GroupBox>
-		</Grid>
-	</Grid>
+                    <Button Grid.Column="2" Grid.Row="1" Margin="4" Click="EhAdvancedRangeRemove" ToolTip="Exclude this range from the range list.">
+                        <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+                            <Path Style="{StaticResource RemoveCrossPathStyle}" />
+                        </Viewbox>
+                    </Button>
+                </Grid>
+            </GroupBox>
+        </Grid>
+    </Grid>
 </UserControl>

@@ -1209,9 +1209,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
         bool bWasSelectedBefore = SelectedDataColumns.IsSelected(clickedCell.ColumnNumber);
 
         /*
-		if(m_LastSelectionType==SelectionType.DataRowSelection && !bControlKey)
-			m_SelectedRows.Clear(); // if we click a column, we remove row selections
-		*/
+        if(m_LastSelectionType==SelectionType.DataRowSelection && !bControlKey)
+            m_SelectedRows.Clear(); // if we click a column, we remove row selections
+        */
 
         if ((!bControlKey && !bShiftKey) || (_lastSelectionType != SelectionType.DataColumnSelection && _lastSelectionType != SelectionType.PropertyRowSelection && !bControlKey))
         {
@@ -1251,9 +1251,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
       bool bWasSelectedBefore = SelectedDataRows.IsSelected(clickedCell.RowNumber);
 
       /*
-		if(m_LastSelectionType==SelectionType.DataColumnSelection && !bControlKey)
-			m_SelectedColumns.Clear(); // if we click a column, we remove row selections
-		*/
+        if(m_LastSelectionType==SelectionType.DataColumnSelection && !bControlKey)
+            m_SelectedColumns.Clear(); // if we click a column, we remove row selections
+        */
       if ((!bControlKey && !bShiftKey) || (_lastSelectionType != SelectionType.DataRowSelection && !bControlKey))
       {
         _selectedDataColumns.Clear(); // if we click a column, we remove row selections

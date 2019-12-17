@@ -1110,17 +1110,17 @@ namespace Altaxo.Graph.Graph3D
           var gridRect = newRect = gps.GetAbsolute(ParentLayer._grid, _cachedParentLayerSize);
 
           /*
-					if (gps.ForceFitIntoCell)
-					{
-						var t = MatrixD3D.FromTranslationRotationShearScale(
-						0, 0, 0,
-						-this.RotationX, -this.RotationY, -this.RotationZ,
-						this.ShearX, this.ShearY, this.ShearZ,
-						this.ScaleX, this.ScaleY, this.ScaleZ);
-						var ele = t.Elements;
-						newRect = RectangleExtensions.GetIncludedTransformedRectangle(gridRect, t.SX, t.RX, t.RY, t.SY);
-					}
-					*/
+                    if (gps.ForceFitIntoCell)
+                    {
+                        var t = MatrixD3D.FromTranslationRotationShearScale(
+                        0, 0, 0,
+                        -this.RotationX, -this.RotationY, -this.RotationZ,
+                        this.ShearX, this.ShearY, this.ShearZ,
+                        this.ScaleX, this.ScaleY, this.ScaleZ);
+                        var ele = t.Elements;
+                        newRect = RectangleExtensions.GetIncludedTransformedRectangle(gridRect, t.SX, t.RX, t.RY, t.SY);
+                    }
+                    */
         }
         else // ParentLayer is null, this is probably the root layer, thus use the _cachedParentLayersSize
         {

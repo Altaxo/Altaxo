@@ -931,21 +931,21 @@ namespace Altaxo.Graph.Gdi
         return hit;
 
       /*
-				if (plotItemsOnly)
-				{
-					HitTestPointData layerHitTestData = parentHitTestData.NewFromAdditionalTransformation(_transformation);
-					var layerCoord = layerHitTestData.GetHittedPointInWorldCoord();
-					if (null != (hit = _plotItems.HitTest(this, layerCoord)))
-					{
-						if (hit.ParentLayer == null)
-							hit.ParentLayer = this;
+                if (plotItemsOnly)
+                {
+                    HitTestPointData layerHitTestData = parentHitTestData.NewFromAdditionalTransformation(_transformation);
+                    var layerCoord = layerHitTestData.GetHittedPointInWorldCoord();
+                    if (null != (hit = _plotItems.HitTest(this, layerCoord)))
+                    {
+                        if (hit.ParentLayer == null)
+                            hit.ParentLayer = this;
 
-						if (hit.DoubleClick == null)
-							hit.DoubleClick = PlotItemEditorMethod;
-						return ForwardTransform(hit);
-					}
-				}
-			 */
+                        if (hit.DoubleClick == null)
+                            hit.DoubleClick = PlotItemEditorMethod;
+                        return ForwardTransform(hit);
+                    }
+                }
+             */
 
       if (plotItemsOnly)
       {
@@ -1358,19 +1358,19 @@ namespace Altaxo.Graph.Gdi
         {
           throw new NotSupportedException("Serialization of old versions not supported - probably a programming error");
           /*
-					XYPlotLayerAxisStylesSummary s = (XYPlotLayerAxisStylesSummary)obj;
-					info.AddValue("Grid", s._gridStyle);
+                    XYPlotLayerAxisStylesSummary s = (XYPlotLayerAxisStylesSummary)obj;
+                    info.AddValue("Grid", s._gridStyle);
 
-					info.CreateArray("Edges", s._edges.Length);
-					for (int i = 0; i < s._edges.Length; ++i)
-						info.AddEnum("e", s._edges[i]);
-					info.CommitArray();
+                    info.CreateArray("Edges", s._edges.Length);
+                    for (int i = 0; i < s._edges.Length; ++i)
+                        info.AddEnum("e", s._edges[i]);
+                    info.CommitArray();
 
-					info.CreateArray("AxisStyles",s._axisStyles.Length);
-					for(int i=0;i<s._axisStyles.Length;++i)
-						info.AddValue("e",s._axisStyles[i]);
-					info.CommitArray();
-					*/
+                    info.CreateArray("AxisStyles",s._axisStyles.Length);
+                    for(int i=0;i<s._axisStyles.Length;++i)
+                        info.AddValue("e",s._axisStyles[i]);
+                    info.CommitArray();
+                    */
         }
 
         public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -1409,15 +1409,15 @@ namespace Altaxo.Graph.Gdi
         {
           throw new NotImplementedException("Serialization of old versions is not supported");
           /*
-					ScaleStyle s = (ScaleStyle)obj;
+                    ScaleStyle s = (ScaleStyle)obj;
 
-					info.AddValue("Grid", s._gridStyle);
+                    info.AddValue("Grid", s._gridStyle);
 
-					info.CreateArray("AxisStyles", s._axisStyles.Count);
-					for (int i = 0; i < s._axisStyles.Count; ++i)
-						info.AddValue("e", s._axisStyles[i]);
-					info.CommitArray();
-					*/
+                    info.CreateArray("AxisStyles", s._axisStyles.Count);
+                    for (int i = 0; i < s._axisStyles.Count; ++i)
+                        info.AddValue("e", s._axisStyles[i]);
+                    info.CommitArray();
+                    */
         }
 
         public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -1553,13 +1553,13 @@ namespace Altaxo.Graph.Gdi
         {
           throw new NotImplementedException("Serialization of old versions is not supported");
           /*
-					G2DScaleStyleCollection s = (G2DScaleStyleCollection)obj;
+                    G2DScaleStyleCollection s = (G2DScaleStyleCollection)obj;
 
-					info.CreateArray("Styles", s._styles.Length);
-					for (int i = 0; i < s._styles.Length; ++i)
-						info.AddValue("e", s._styles[i]);
-					info.CommitArray();
-					*/
+                    info.CreateArray("Styles", s._styles.Length);
+                    for (int i = 0; i < s._styles.Length; ++i)
+                        info.AddValue("e", s._styles[i]);
+                    info.CommitArray();
+                    */
         }
 
         public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

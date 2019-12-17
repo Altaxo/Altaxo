@@ -29,31 +29,31 @@ using System.Text;
 
 namespace Altaxo.Units.Length
 {
-  [UnitDescription("Length", 1, 0, 0, 0, 0, 0, 0)]
-  public class Meter : SIUnit
-  {
-    private static readonly Meter _instance = new Meter();
-
-    public static Meter Instance { get { return _instance; } }
-
-    private Meter()
-        : base(1, 0, 0, 0, 0, 0, 0)
+    [UnitDescription("Length", 1, 0, 0, 0, 0, 0, 0)]
+    public class Meter : SIUnit
     {
-    }
+        private static readonly Meter _instance = new Meter();
 
-    public override string Name
-    {
-      get { return "Meter"; }
-    }
+        public static Meter Instance { get { return _instance; } }
 
-    public override string ShortCut
-    {
-      get { return "m"; }
-    }
+        private Meter()
+            : base(1, 0, 0, 0, 0, 0, 0)
+        {
+        }
 
-    public override ISIPrefixList Prefixes
-    {
-      get { return SIPrefix.ListWithAllKnownPrefixes; }
+        public override string Name
+        {
+            get { return "Meter"; }
+        }
+
+        public override string ShortCut
+        {
+            get { return "m"; }
+        }
+
+        public override ISIPrefixList Prefixes
+        {
+            get { return SIPrefix.ListWithAllKnownPrefixes; }
+        }
     }
-  }
 }

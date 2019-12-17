@@ -66,9 +66,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
         /*
-				CurlyBraceShape s = (CurlyBraceShape)obj;
-				info.AddBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType);
-				*/
+                CurlyBraceShape s = (CurlyBraceShape)obj;
+                info.AddBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

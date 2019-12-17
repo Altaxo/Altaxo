@@ -69,12 +69,12 @@ namespace Altaxo.Graph.Gdi
       {
         EditingControllerCreation = (doc) =>
         {
-          var ctrl = new ItemLocationDirectController() { UseDocumentCopy = Gui.UseDocument.Copy };
-          ctrl.ShowPositionElements(false, false);
-          ctrl.ShowAnchorElements(false, false);
-          ctrl.InitializeDocument(doc);
-          return ctrl;
-        }
+        var ctrl = new ItemLocationDirectController() { UseDocumentCopy = Gui.UseDocument.Copy };
+        ctrl.ShowPositionElements(false, false);
+        ctrl.ShowAnchorElements(false, false);
+        ctrl.InitializeDocument(doc);
+        return ctrl;
+      }
       };
 
     public static readonly Main.Properties.PropertyKey<FontX> PropertyKeyDefaultFont =
@@ -87,10 +87,10 @@ namespace Altaxo.Graph.Gdi
         {
           EditingControllerCreation = (doc) =>
           {
-            var ctrl = new Gui.Common.Drawing.FontXController { UseDocumentCopy = Gui.UseDocument.Copy };
-            ctrl.InitializeDocument(doc);
-            return ctrl;
-          }
+          var ctrl = new Gui.Common.Drawing.FontXController { UseDocumentCopy = Gui.UseDocument.Copy };
+          ctrl.InitializeDocument(doc);
+          return ctrl;
+        }
         };
 
     public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultForeColor =
@@ -104,10 +104,10 @@ typeof(GraphDocument),
       {
         EditingControllerCreation = (doc) =>
         {
-          var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
-          ctrl.InitializeDocument(doc);
-          return ctrl;
-        }
+        var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
+        ctrl.InitializeDocument(doc);
+        return ctrl;
+      }
       };
 
     public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultBackColor =
@@ -121,10 +121,10 @@ typeof(GraphDocument),
   {
     EditingControllerCreation = (doc) =>
     {
-      var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
-      ctrl.InitializeDocument(doc);
-      return ctrl;
-    }
+    var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
+    ctrl.InitializeDocument(doc);
+    return ctrl;
+  }
   };
 
     public static readonly Main.Properties.PropertyKey<NamedColor> PropertyKeyDefaultPlotColor =
@@ -141,10 +141,10 @@ typeof(GraphDocument),
 {
   EditingControllerCreation = (doc) =>
   {
-    var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy, ShowPlotColorsOnly = true };
-    ctrl.InitializeDocument(doc);
-    return ctrl;
-  }
+  var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy, ShowPlotColorsOnly = true };
+  ctrl.InitializeDocument(doc);
+  return ctrl;
+}
 };
 
     #endregion Property keys
@@ -164,15 +164,15 @@ typeof(GraphDocument),
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				GraphDocument s = (GraphDocument)obj;
+                GraphDocument s = (GraphDocument)obj;
 
-				// info.AddBaseValueEmbedded(s,typeof(GraphDocument).BaseType);
-				// now the data of our class
-				info.AddValue("Name", s._name);
-				info.AddValue("PageBounds", s._pageBounds);
-				info.AddValue("PrintableBounds", s._printableBounds);
-				info.AddValue("Layers", s._rootLayer);
-				*/
+                // info.AddBaseValueEmbedded(s,typeof(GraphDocument).BaseType);
+                // now the data of our class
+                info.AddValue("Name", s._name);
+                info.AddValue("PageBounds", s._pageBounds);
+                info.AddValue("PrintableBounds", s._printableBounds);
+                info.AddValue("Layers", s._rootLayer);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -200,33 +200,33 @@ typeof(GraphDocument),
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				GraphDocument s = (GraphDocument)obj;
+                GraphDocument s = (GraphDocument)obj;
 
-				// info.AddBaseValueEmbedded(s,typeof(GraphDocument).BaseType);
-				// now the data of our class
-				info.AddValue("Name", s._name);
-				info.AddValue("PageBounds", s._pageBounds);
-				info.AddValue("PrintableBounds", s._printableBounds);
-				info.AddValue("Layers", s._rootLayer);
+                // info.AddBaseValueEmbedded(s,typeof(GraphDocument).BaseType);
+                // now the data of our class
+                info.AddValue("Name", s._name);
+                info.AddValue("PageBounds", s._pageBounds);
+                info.AddValue("PrintableBounds", s._printableBounds);
+                info.AddValue("Layers", s._rootLayer);
 
-				// new in version 1 - Add graph properties
-				int numberproperties = s._graphProperties == null ? 0 : s._graphProperties.Keys.Count;
-				info.CreateArray("TableProperties", numberproperties);
-				if (s._graphProperties != null)
-				{
-					foreach (string propkey in s._graphProperties.Keys)
-					{
-						if (propkey.StartsWith("tmp/"))
-							continue;
-						info.CreateElement("e");
-						info.AddValue("Key", propkey);
-						object val = s._graphProperties[propkey];
-						info.AddValue("Value", info.IsSerializable(val) ? val : null);
-						info.CommitElement();
-					}
-				}
-				info.CommitArray();
-				*/
+                // new in version 1 - Add graph properties
+                int numberproperties = s._graphProperties == null ? 0 : s._graphProperties.Keys.Count;
+                info.CreateArray("TableProperties", numberproperties);
+                if (s._graphProperties != null)
+                {
+                    foreach (string propkey in s._graphProperties.Keys)
+                    {
+                        if (propkey.StartsWith("tmp/"))
+                            continue;
+                        info.CreateElement("e");
+                        info.AddValue("Key", propkey);
+                        object val = s._graphProperties[propkey];
+                        info.AddValue("Value", info.IsSerializable(val) ? val : null);
+                        info.CommitElement();
+                    }
+                }
+                info.CommitArray();
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -276,13 +276,13 @@ typeof(GraphDocument),
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				base.Serialize(obj, info);
-				GraphDocument s = (GraphDocument)obj;
-				info.AddValue("GraphIdentifier", s._graphIdentifier);
-				info.AddValue("Notes", s._notes.Text);
-				info.AddValue("CreationTime", s._creationTime.ToLocalTime());
-				info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
-				*/
+                base.Serialize(obj, info);
+                GraphDocument s = (GraphDocument)obj;
+                info.AddValue("GraphIdentifier", s._graphIdentifier);
+                info.AddValue("Notes", s._notes.Text);
+                info.AddValue("CreationTime", s._creationTime.ToLocalTime());
+                info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
+                */
       }
 
       public override void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

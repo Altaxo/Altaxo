@@ -65,22 +65,22 @@ namespace Altaxo.Graph.Gdi.Plot
       {
         throw new NotImplementedException("Programming error - trying to serialize an old version of PlotItemCollection");
         /*
-				PlotItemCollection s = (PlotItemCollection)obj;
+                PlotItemCollection s = (PlotItemCollection)obj;
 
-				info.CreateArray("PlotItems", s.Count);
-				for (int i = 0; i < s.Count; i++)
-					info.AddValue("PlotItem", s[i]);
-				info.CommitArray();
+                info.CreateArray("PlotItems", s.Count);
+                for (int i = 0; i < s.Count; i++)
+                    info.AddValue("PlotItem", s[i]);
+                info.CommitArray();
 
-				// now serialize the PlotGroups
-				info.CreateArray("PlotGroups", s.m_PlotGroups.Count);
-				for (int i = 0; i < s.m_PlotGroups.Count; i++)
-				{
-					PlotGroup pg = (PlotGroup)s.m_PlotGroups[i];
-					info.AddValue("PlotGroup", new PlotGroup.Memento(pg, s));
-				}
-				info.CommitArray(); // PlotGroups
-				*/
+                // now serialize the PlotGroups
+                info.CreateArray("PlotGroups", s.m_PlotGroups.Count);
+                for (int i = 0; i < s.m_PlotGroups.Count; i++)
+                {
+                    PlotGroup pg = (PlotGroup)s.m_PlotGroups[i];
+                    info.AddValue("PlotGroup", new PlotGroup.Memento(pg, s));
+                }
+                info.CommitArray(); // PlotGroups
+                */
       }
 
       private struct PGTrans
@@ -173,15 +173,15 @@ namespace Altaxo.Graph.Gdi.Plot
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				PlotItemCollection s = (PlotItemCollection)obj;
+                PlotItemCollection s = (PlotItemCollection)obj;
 
-				info.CreateArray("PlotItems", s.Count);
-				for (int i = 0; i < s.Count; i++)
-					info.AddValue("PlotItem", s[i]);
-				info.CommitArray();
+                info.CreateArray("PlotItems", s.Count);
+                for (int i = 0; i < s.Count; i++)
+                    info.AddValue("PlotItem", s[i]);
+                info.CommitArray();
 
-				info.AddValue("GroupStyles", s._plotGroupStyles);
-				*/
+                info.AddValue("GroupStyles", s._plotGroupStyles);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -1249,25 +1249,25 @@ namespace Altaxo.Graph.Gdi.Plot
       }
 
       /*
-			public PlotGroupMemento(PlotGroup pg, PlotItemCollection plotlist)
-			{
-				m_Style = pg.Style;
-				_concurrently = pg.ChangeStylesConcurrently;
-				_strict = pg.ChangeStylesStrictly;
+            public PlotGroupMemento(PlotGroup pg, PlotItemCollection plotlist)
+            {
+                m_Style = pg.Style;
+                _concurrently = pg.ChangeStylesConcurrently;
+                _strict = pg.ChangeStylesStrictly;
 
-				_plotItemIndices = new int[pg.Count];
-				for (int i = 0; i < _plotItemIndices.Length; i++)
-					_plotItemIndices[i] = plotlist.IndexOf(pg[i]);
-			}
+                _plotItemIndices = new int[pg.Count];
+                for (int i = 0; i < _plotItemIndices.Length; i++)
+                    _plotItemIndices[i] = plotlist.IndexOf(pg[i]);
+            }
 
-			public PlotGroup GetPlotGroup(PlotItemCollection plotlist)
-			{
-				PlotGroup pg = new PlotGroup(m_Style, _concurrently, _strict);
-				for (int i = 0; i < _plotItemIndices.Length; i++)
-					pg.Add(plotlist[i]);
-				return pg;
-			}
-			*/
+            public PlotGroup GetPlotGroup(PlotItemCollection plotlist)
+            {
+                PlotGroup pg = new PlotGroup(m_Style, _concurrently, _strict);
+                for (int i = 0; i < _plotItemIndices.Length; i++)
+                    pg.Add(plotlist[i]);
+                return pg;
+            }
+            */
 
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PlotGroup+Memento", 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -1276,13 +1276,13 @@ namespace Altaxo.Graph.Gdi.Plot
         {
           throw new NotImplementedException("This is deprecated stuff");
           /*
-					PlotGroup.Memento s = (PlotGroup.Memento)obj;
-					info.AddValue("Style", s.m_Style);
-					info.CreateArray("PlotItems", s._plotItemIndices.Length);
-					for (int i = 0; i < s._plotItemIndices.Length; i++)
-						info.AddValue("PlotItem", s._plotItemIndices[i]);
-					info.CommitArray();
-					*/
+                    PlotGroup.Memento s = (PlotGroup.Memento)obj;
+                    info.AddValue("Style", s.m_Style);
+                    info.CreateArray("PlotItems", s._plotItemIndices.Length);
+                    for (int i = 0; i < s._plotItemIndices.Length; i++)
+                        info.AddValue("PlotItem", s._plotItemIndices[i]);
+                    info.CommitArray();
+                    */
         }
 
         public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -1315,11 +1315,11 @@ namespace Altaxo.Graph.Gdi.Plot
         {
           throw new NotImplementedException("This is deprecated stuff");
           /*
-					base.Serialize(obj, info);
-					PlotGroup.Memento s = (PlotGroup.Memento)obj;
-					info.AddValue("Concurrently", s._concurrently);
-					info.AddEnum("Strict", s._strict);
-					*/
+                    base.Serialize(obj, info);
+                    PlotGroup.Memento s = (PlotGroup.Memento)obj;
+                    info.AddValue("Concurrently", s._concurrently);
+                    info.AddEnum("Strict", s._strict);
+                    */
         }
 
         public override PlotGroupMemento SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

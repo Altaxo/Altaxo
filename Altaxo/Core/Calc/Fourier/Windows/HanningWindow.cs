@@ -29,54 +29,54 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Fourier.Windows
 {
-  public class HanningWindow : AbstractWindow
-  {
-    public HanningWindow(int count, bool periodic)
-      : base(count, periodic)
+    public class HanningWindow : AbstractWindow
     {
-    }
+        public HanningWindow(int count, bool periodic)
+          : base(count, periodic)
+        {
+        }
 
-    protected override void InternalCompute(IVector<double> array, bool periodic)
-    {
-      int len = array.Length;
-      int N = periodic ? len : len - 1;
-      double scale = 2 * Math.PI / N;
-      double N2 = N / 2.0;
-      for (int i = 0; i < len; ++i)
-        array[i] = 0.62 - 0.48 * Math.Abs(i / (double)N - 0.5) + 0.38 * Math.Cos((i - N2) * scale);
-    }
+        protected override void InternalCompute(IVector<double> array, bool periodic)
+        {
+            int len = array.Length;
+            int N = periodic ? len : len - 1;
+            double scale = 2 * Math.PI / N;
+            double N2 = N / 2.0;
+            for (int i = 0; i < len; ++i)
+                array[i] = 0.62 - 0.48 * Math.Abs(i / (double)N - 0.5) + 0.38 * Math.Cos((i - N2) * scale);
+        }
 
-    /// <summary>
-    /// Returns the window as an array of doubles.
-    /// </summary>
-    /// <param name="count">Length of the window.</param>
-    /// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
-    /// <returns>The window as array of doubles.</returns>
-    public static double[] AsDoubleArray(int count, bool periodic)
-    {
-      return new HanningWindow(count, periodic).AsDoubleArray();
-    }
+        /// <summary>
+        /// Returns the window as an array of doubles.
+        /// </summary>
+        /// <param name="count">Length of the window.</param>
+        /// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
+        /// <returns>The window as array of doubles.</returns>
+        public static double[] AsDoubleArray(int count, bool periodic)
+        {
+            return new HanningWindow(count, periodic).AsDoubleArray();
+        }
 
-    /// <summary>
-    /// Returns the window as an read only vector.
-    /// </summary>
-    /// <param name="count">Length of the window.</param>
-    /// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
-    /// <returns>The window as read only vector.</returns>
-    public static IROVector<double> AsROVector(int count, bool periodic)
-    {
-      return new HanningWindow(count, periodic).AsROVector();
-    }
+        /// <summary>
+        /// Returns the window as an read only vector.
+        /// </summary>
+        /// <param name="count">Length of the window.</param>
+        /// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
+        /// <returns>The window as read only vector.</returns>
+        public static IROVector<double> AsROVector(int count, bool periodic)
+        {
+            return new HanningWindow(count, periodic).AsROVector();
+        }
 
-    /// <summary>
-    /// Returns the window as writeable vector.
-    /// </summary>
-    /// <param name="count">Length of the window.</param>
-    /// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
-    /// <returns>The window as writeable vector.</returns>
-    public static IVector<double> AsVector(int count, bool periodic)
-    {
-      return new HanningWindow(count, periodic).AsVector();
+        /// <summary>
+        /// Returns the window as writeable vector.
+        /// </summary>
+        /// <param name="count">Length of the window.</param>
+        /// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
+        /// <returns>The window as writeable vector.</returns>
+        public static IVector<double> AsVector(int count, bool periodic)
+        {
+            return new HanningWindow(count, periodic).AsVector();
+        }
     }
-  }
 }

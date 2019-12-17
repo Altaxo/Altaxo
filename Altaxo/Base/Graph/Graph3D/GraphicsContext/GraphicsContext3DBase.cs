@@ -45,9 +45,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
       {
         var buf = buffers.PositionNormalIndexedTriangleBuffer;
         /*
-				if (pen.Color.Name == "Beige")
-				{
-				*/
+                if (pen.Color.Name == "Beige")
+                {
+                */
         var solid = new SolidStraightLine();
         solid.AddGeometry(
           (position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z),
@@ -57,18 +57,18 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
           new LineD3D(p0, p1));
 
         /*
-			}
-			else
-			{
-						var polylinePoints = new[] { p0, p1 };
-				SolidPolyline.AddWithNormals(
-				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z),
-				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
-				ref vertexIndexOffset,
-				pen,
-				polylinePoints);
-			}
-			*/
+            }
+            else
+            {
+                        var polylinePoints = new[] { p0, p1 };
+                SolidPolyline.AddWithNormals(
+                (position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z),
+                (i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
+                ref vertexIndexOffset,
+                pen,
+                polylinePoints);
+            }
+            */
       }
       else if (null != buffers.PositionNormalColorIndexedTriangleBuffer)
       {
@@ -306,62 +306,62 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
       var txt = new SolidText(text, font);
 
       /*
-			VectorD3D stringSize = new VectorD3D(0, 0, font.Depth);
+            VectorD3D stringSize = new VectorD3D(0, 0, font.Depth);
 
-			if (stringAlignment.AlignmentX != Alignment.Near || stringAlignment.AlignmentY != Alignment.Near)
-				stringSize = FontManager3D.Instance.MeasureString(text, font);
+            if (stringAlignment.AlignmentX != Alignment.Near || stringAlignment.AlignmentY != Alignment.Near)
+                stringSize = FontManager3D.Instance.MeasureString(text, font);
 
-			switch (stringAlignment.AlignmentX)
-			{
-				case Alignment.Near:
-					break;
+            switch (stringAlignment.AlignmentX)
+            {
+                case Alignment.Near:
+                    break;
 
-				case Alignment.Center:
-					point = point.WithXPlus(-0.5 * stringSize.X);
-					break;
+                case Alignment.Center:
+                    point = point.WithXPlus(-0.5 * stringSize.X);
+                    break;
 
-				case Alignment.Far:
-					point = point.WithXPlus(-stringSize.X);
-					break;
+                case Alignment.Far:
+                    point = point.WithXPlus(-stringSize.X);
+                    break;
 
-				default:
-					break;
-			}
+                default:
+                    break;
+            }
 
-			switch (stringAlignment.AlignmentY)
-			{
-				case Alignment.Near:
-					break;
+            switch (stringAlignment.AlignmentY)
+            {
+                case Alignment.Near:
+                    break;
 
-				case Alignment.Center:
-					point = point.WithYPlus(-0.5 * stringSize.Y);
-					break;
+                case Alignment.Center:
+                    point = point.WithYPlus(-0.5 * stringSize.Y);
+                    break;
 
-				case Alignment.Far:
-					point = point.WithYPlus(-stringSize.Y);
-					break;
+                case Alignment.Far:
+                    point = point.WithYPlus(-stringSize.Y);
+                    break;
 
-				default:
-					break;
-			}
+                default:
+                    break;
+            }
 
-			switch (stringAlignment.AlignmentZ)
-			{
-				case Alignment.Near:
-					break;
+            switch (stringAlignment.AlignmentZ)
+            {
+                case Alignment.Near:
+                    break;
 
-				case Alignment.Center:
-					point = point.WithZPlus(-0.5 * stringSize.Z);
-					break;
+                case Alignment.Center:
+                    point = point.WithZPlus(-0.5 * stringSize.Z);
+                    break;
 
-				case Alignment.Far:
-					point = point.WithZPlus(-stringSize.Z);
-					break;
+                case Alignment.Far:
+                    point = point.WithZPlus(-stringSize.Z);
+                    break;
 
-				default:
-					break;
-			}
-			*/
+                default:
+                    break;
+            }
+            */
 
       var buffers = GetPositionNormalIndexedTriangleBuffer(brush);
       var offset = buffers.IndexedTriangleBuffer.VertexCount;

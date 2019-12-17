@@ -51,15 +51,15 @@ namespace Altaxo.Main
       {
         throw new InvalidOperationException("Serialization of old version not supported");
         /*
-				AbsoluteDocumentPath s = (AbsoluteDocumentPath)obj;
+                AbsoluteDocumentPath s = (AbsoluteDocumentPath)obj;
 
-				info.AddValue("IsAbsolute", s._IsAbsolutePath);
+                info.AddValue("IsAbsolute", s._IsAbsolutePath);
 
-				info.CreateArray("Path", s.Count);
-				for (int i = 0; i < s.Count; i++)
-					info.AddValue("e", s[i]);
-				info.CommitArray();
-				 */
+                info.CreateArray("Path", s.Count);
+                for (int i = 0; i < s.Count; i++)
+                    info.AddValue("e", s[i]);
+                info.CommitArray();
+                 */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

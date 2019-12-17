@@ -168,10 +168,10 @@ namespace Altaxo.Serialization.Origin
     }
 
     /* File Structure :
-		filepre +
-			+ pre + head + data	col A
-			+ pre + head + data	col B
-		*/
+        filepre +
+            + pre + head + data	col A
+            + pre + head + data	col B
+        */
 
     /* parse file filename complete and save values */
 
@@ -495,26 +495,26 @@ namespace Altaxo.Serialization.Origin
 
           // TODO : GRAPHS
           /*	int graph = 0x2fc1;
-						int pre_graph = 0x12;
-						fseek(f,graph + pre_graph,SEEK_SET);
-						fread(&name,25,1,f);
-						printf("GRAPH : %s\n",name);
+                        int pre_graph = 0x12;
+                        fseek(f,graph + pre_graph,SEEK_SET);
+                        fread(&name,25,1,f);
+                        printf("GRAPH : %s\n",name);
 
-						fseek(f,graph + pre_graph + 0x43, SEEK_SET);
-						fread(&name,25,1,f);
-						printf("TYPE : %s\n",name);
+                        fseek(f,graph + pre_graph + 0x43, SEEK_SET);
+                        fread(&name,25,1,f);
+                        printf("TYPE : %s\n",name);
 
-						fseek(f,graph + pre_graph + 0x2b3, SEEK_SET);
-						fread(&name,25,1,f);
-						printf("Y AXIS TITLE : %s\n",name);
-						fseek(f,graph + pre_graph + 0x38d, SEEK_SET);
-						fread(&name,25,1,f);
-						printf("X AXIS TITLE : %s\n",name);
+                        fseek(f,graph + pre_graph + 0x2b3, SEEK_SET);
+                        fread(&name,25,1,f);
+                        printf("Y AXIS TITLE : %s\n",name);
+                        fseek(f,graph + pre_graph + 0x38d, SEEK_SET);
+                        fread(&name,25,1,f);
+                        printf("X AXIS TITLE : %s\n",name);
 
-						fseek(f,graph + pre_graph + 0xadb, SEEK_SET);
-						fread(&name,25,1,f);
-						printf("LEGEND : %s\n",name);
-					*/
+                        fseek(f,graph + pre_graph + 0xadb, SEEK_SET);
+                        fread(&name,25,1,f);
+                        printf("LEGEND : %s\n",name);
+                    */
           //fclose(debug);
 
           f.Close();

@@ -149,52 +149,52 @@ namespace Altaxo.Gui.Common.Drawing
 
       /*
 
-			if (_editBox.Parent is Grid) // most Windows version have the TextBox located inside a Grid
-			{
-				var grid = _editBox.Parent as Grid;
-				_imgColumnDefinition = new ColumnDefinition();
-				_imgColumnDefinition.Width = new GridLength(1, GridUnitType.Auto);
-				grid.ColumnDefinitions.Insert(0, _imgColumnDefinition);
-				foreach (UIElement ele in grid.Children)
-				{
-					if (ele is TextBox || ele is System.Windows.Controls.Primitives.ToggleButton)
-					{
-						ele.SetValue(Grid.ColumnProperty, 1 + (int)ele.GetValue(Grid.ColumnProperty));
-					}
-					else
-					{
-						ele.SetValue(Grid.ColumnSpanProperty, 1 + (int)ele.GetValue(Grid.ColumnSpanProperty));
-					}
-				}
-				grid.Children.Add(_img);
-			}
-			else if (_editBox.Parent is DockPanel) // Some Windows XP versions have the TextBox sitting in a DockPanel instead of a Grid
-			{
-				var dockp = _editBox.Parent as DockPanel;
-				var list = new List<UIElement>();
-				foreach (UIElement child in dockp.Children) // collect the original children temporary in a list
-					list.Add(child);
+            if (_editBox.Parent is Grid) // most Windows version have the TextBox located inside a Grid
+            {
+                var grid = _editBox.Parent as Grid;
+                _imgColumnDefinition = new ColumnDefinition();
+                _imgColumnDefinition.Width = new GridLength(1, GridUnitType.Auto);
+                grid.ColumnDefinitions.Insert(0, _imgColumnDefinition);
+                foreach (UIElement ele in grid.Children)
+                {
+                    if (ele is TextBox || ele is System.Windows.Controls.Primitives.ToggleButton)
+                    {
+                        ele.SetValue(Grid.ColumnProperty, 1 + (int)ele.GetValue(Grid.ColumnProperty));
+                    }
+                    else
+                    {
+                        ele.SetValue(Grid.ColumnSpanProperty, 1 + (int)ele.GetValue(Grid.ColumnSpanProperty));
+                    }
+                }
+                grid.Children.Add(_img);
+            }
+            else if (_editBox.Parent is DockPanel) // Some Windows XP versions have the TextBox sitting in a DockPanel instead of a Grid
+            {
+                var dockp = _editBox.Parent as DockPanel;
+                var list = new List<UIElement>();
+                foreach (UIElement child in dockp.Children) // collect the original children temporary in a list
+                    list.Add(child);
 
-				dockp.Children.Clear(); // clear the children, because we need to dock them again
+                dockp.Children.Clear(); // clear the children, because we need to dock them again
 
-				_img.SetValue(DockPanel.DockProperty, Dock.Left);
-				dockp.Children.Add(_img); // add the image to the left side
-				foreach (UIElement child in list) // now dock the original children again
-					dockp.Children.Add(child);
-			}
-			else
-			{
-				var stb = new StringBuilder();
-				stb.AppendFormat("Unexpected location of grid within {0}", this.ToString());
-				stb.AppendLine();
-				stb.AppendFormat("The parent of the editbox is {0}", _editBox.Parent.ToString());
-				stb.AppendLine();
-				stb.AppendLine("The hierarchy of childs is as follows:");
-				PrintVisualChilds(this, 0, stb);
-				throw new ApplicationException(stb.ToString());
-			}
+                _img.SetValue(DockPanel.DockProperty, Dock.Left);
+                dockp.Children.Add(_img); // add the image to the left side
+                foreach (UIElement child in list) // now dock the original children again
+                    dockp.Children.Add(child);
+            }
+            else
+            {
+                var stb = new StringBuilder();
+                stb.AppendFormat("Unexpected location of grid within {0}", this.ToString());
+                stb.AppendLine();
+                stb.AppendFormat("The parent of the editbox is {0}", _editBox.Parent.ToString());
+                stb.AppendLine();
+                stb.AppendLine("The hierarchy of childs is as follows:");
+                PrintVisualChilds(this, 0, stb);
+                throw new ApplicationException(stb.ToString());
+            }
 
-			*/
+            */
     }
 
     /// <summary>Prints the visual childs recursively (intended only for debugging).</summary>

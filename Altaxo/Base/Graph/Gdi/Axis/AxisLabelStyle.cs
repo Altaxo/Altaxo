@@ -91,10 +91,10 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         throw new NotSupportedException("Serialization of old versions is not supported - probably a programming error");
         /*
-				XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
-				info.AddValue("Edge",s._edge);
-				info.AddValue("Font",s._font);
-				*/
+                XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
+                info.AddValue("Edge",s._edge);
+                info.AddValue("Font",s._font);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -120,22 +120,22 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         throw new NotSupportedException("Serialization of old versions is not supported - probably a programming error");
         /*
-				XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
-				info.AddValue("Edge",s._edge);
-				info.AddValue("Font",s._font);
-				info.AddValue("Brush",s._brush);
-				info.AddValue("Background",s._backgroundStyle);
+                XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
+                info.AddValue("Edge",s._edge);
+                info.AddValue("Font",s._font);
+                info.AddValue("Brush",s._brush);
+                info.AddValue("Background",s._backgroundStyle);
 
-				info.AddValue("AutoAlignment",s._automaticRotationShift);
-				info.AddEnum("HorzAlignment",s._horizontalAlignment);
-				info.AddEnum("VertAlignment",s._verticalAlignment);
+                info.AddValue("AutoAlignment",s._automaticRotationShift);
+                info.AddEnum("HorzAlignment",s._horizontalAlignment);
+                info.AddEnum("VertAlignment",s._verticalAlignment);
 
-				info.AddValue("Rotation",s._rotation);
-				info.AddValue("XOffset",s._xOffset);
-				info.AddValue("YOffset",s._yOffset);
+                info.AddValue("Rotation",s._rotation);
+                info.AddValue("XOffset",s._xOffset);
+                info.AddValue("YOffset",s._yOffset);
 
-				info.AddValue("LabelFormat",s._labelFormatting);
-				*/
+                info.AddValue("LabelFormat",s._labelFormatting);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -230,26 +230,26 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         throw new InvalidOperationException("Trying to serialize old version");
         /*
-				AxisLabelStyle s = (AxisLabelStyle)obj;
-				info.AddValue("Font", s._font);
-				info.AddValue("Brush", s._brush);
-				info.AddValue("Background", s._backgroundStyle);
+                AxisLabelStyle s = (AxisLabelStyle)obj;
+                info.AddValue("Font", s._font);
+                info.AddValue("Brush", s._brush);
+                info.AddValue("Background", s._backgroundStyle);
 
-				info.AddValue("AutoAlignment", s._automaticRotationShift);
-				info.AddEnum("HorzAlignment", s._horizontalAlignment);
-				info.AddEnum("VertAlignment", s._verticalAlignment);
+                info.AddValue("AutoAlignment", s._automaticRotationShift);
+                info.AddEnum("HorzAlignment", s._horizontalAlignment);
+                info.AddEnum("VertAlignment", s._verticalAlignment);
 
-				info.AddValue("Rotation", s._rotation);
-				info.AddValue("XOffset", s._xOffset);
-				info.AddValue("YOffset", s._yOffset);
+                info.AddValue("Rotation", s._rotation);
+                info.AddValue("XOffset", s._xOffset);
+                info.AddValue("YOffset", s._yOffset);
 
-				if (s._suppressedLabels.IsEmpty)
-					info.AddValue("SuppressedLabels", (object)null);
-				else
-					info.AddValue("SuppressedLabels", s._suppressedLabels);
+                if (s._suppressedLabels.IsEmpty)
+                    info.AddValue("SuppressedLabels", (object)null);
+                else
+                    info.AddValue("SuppressedLabels", s._suppressedLabels);
 
-				info.AddValue("LabelFormat", s._labelFormatting);
-				*/
+                info.AddValue("LabelFormat", s._labelFormatting);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -293,30 +293,30 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         throw new InvalidOperationException("Try to serialize outdated version");
         /*
-				AxisLabelStyle s = (AxisLabelStyle)obj;
-				info.AddValue("Font", s._font);
-				info.AddValue("Brush", s._brush);
-				info.AddValue("Background", s._backgroundStyle);
+                AxisLabelStyle s = (AxisLabelStyle)obj;
+                info.AddValue("Font", s._font);
+                info.AddValue("Brush", s._brush);
+                info.AddValue("Background", s._backgroundStyle);
 
-				info.AddValue("AutoAlignment", s._automaticRotationShift);
-				info.AddEnum("HorzAlignment", s._horizontalAlignment);
-				info.AddEnum("VertAlignment", s._verticalAlignment);
+                info.AddValue("AutoAlignment", s._automaticRotationShift);
+                info.AddEnum("HorzAlignment", s._horizontalAlignment);
+                info.AddEnum("VertAlignment", s._verticalAlignment);
 
-				info.AddValue("Rotation", s._rotation);
-				info.AddValue("XOffset", s._xOffset);
-				info.AddValue("YOffset", s._yOffset);
+                info.AddValue("Rotation", s._rotation);
+                info.AddValue("XOffset", s._xOffset);
+                info.AddValue("YOffset", s._yOffset);
 
-				if (s._suppressedLabels.IsEmpty)
-					info.AddValue("SuppressedLabels", (object)null);
-				else
-					info.AddValue("SuppressedLabels", s._suppressedLabels);
+                if (s._suppressedLabels.IsEmpty)
+                    info.AddValue("SuppressedLabels", (object)null);
+                else
+                    info.AddValue("SuppressedLabels", s._suppressedLabels);
 
-				info.AddValue("LabelFormat", s._labelFormatting);
+                info.AddValue("LabelFormat", s._labelFormatting);
 
-				info.AddNullableEnum("LabelSide", s._labelSide);
-				info.AddValue("PrefixText", s._prefixText);
-				info.AddValue("PostfixText", s._postfixText);
-				*/
+                info.AddNullableEnum("LabelSide", s._labelSide);
+                info.AddValue("PrefixText", s._prefixText);
+                info.AddValue("PostfixText", s._postfixText);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -521,30 +521,30 @@ namespace Altaxo.Graph.Gdi.Axis
       _stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
       /*
-			// set the alignment and line alignment of the strings
-			switch(this._edge.TypeOfEdge)
-			{
-				case EdgeType.Bottom:
-					_verticalAlignment = StringAlignment.Near;
-					_horizontalAlignment = StringAlignment.Center;
-					break;
+            // set the alignment and line alignment of the strings
+            switch(this._edge.TypeOfEdge)
+            {
+                case EdgeType.Bottom:
+                    _verticalAlignment = StringAlignment.Near;
+                    _horizontalAlignment = StringAlignment.Center;
+                    break;
 
-				case EdgeType.Top:
-					_verticalAlignment = StringAlignment.Far;
-					_horizontalAlignment = StringAlignment.Center;
-					break;
+                case EdgeType.Top:
+                    _verticalAlignment = StringAlignment.Far;
+                    _horizontalAlignment = StringAlignment.Center;
+                    break;
 
-				case EdgeType.Left:
-					_verticalAlignment = StringAlignment.Center;
-					_horizontalAlignment = StringAlignment.Far;
-					break;
+                case EdgeType.Left:
+                    _verticalAlignment = StringAlignment.Center;
+                    _horizontalAlignment = StringAlignment.Far;
+                    break;
 
-				case EdgeType.Right:
-					_verticalAlignment = StringAlignment.Center;
-					_horizontalAlignment = StringAlignment.Near;
-					break;
-			}
-			 */
+                case EdgeType.Right:
+                    _verticalAlignment = StringAlignment.Center;
+                    _horizontalAlignment = StringAlignment.Near;
+                    break;
+            }
+             */
     }
 
     #region Properties

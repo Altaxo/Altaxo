@@ -27,20 +27,20 @@ using System.Collections.Generic;
 
 namespace Altaxo.Collections
 {
-  /// <summary>
-  /// Sorted collection of integers, sorted so that the smallest integers come first.
-  /// </summary>
-  public interface IAscendingIntegerCollection : ICloneable, IReadOnlyList<int>
-  {
     /// <summary>
-    /// Returns true if the integer <code>nValue</code> is contained in this collection.
+    /// Sorted collection of integers, sorted so that the smallest integers come first.
     /// </summary>
-    /// <param name="nValue">The integer value to test for membership.</param>
-    /// <returns>True if the integer value is member of the collection.</returns>
-    bool Contains(int nValue);
+    public interface IAscendingIntegerCollection : ICloneable, IReadOnlyList<int>
+    {
+        /// <summary>
+        /// Returns true if the integer <code>nValue</code> is contained in this collection.
+        /// </summary>
+        /// <param name="nValue">The integer value to test for membership.</param>
+        /// <returns>True if the integer value is member of the collection.</returns>
+        bool Contains(int nValue);
 
-    IEnumerable<ContiguousIntegerRange> RangesAscending { get; }
+        IEnumerable<ContiguousIntegerRange> RangesAscending { get; }
 
-    IEnumerable<ContiguousIntegerRange> RangesDescending { get; }
-  }
+        IEnumerable<ContiguousIntegerRange> RangesDescending { get; }
+    }
 }

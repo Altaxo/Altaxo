@@ -46,10 +46,10 @@ namespace Altaxo.Gui.Data
     private SelectableListNodeList _averaging;
     private SelectableListNodeList _columnNaming;
     private string _columnNameFormatString;
-    bool _useClusteringForX;
-    bool _useClusteringForY;
-    int? _numberOfClustersX;
-    int? _numberOfClustersY;
+    private bool _useClusteringForX;
+    private bool _useClusteringForY;
+    private int? _numberOfClustersX;
+    private int? _numberOfClustersY;
     private bool _createStdDevX;
     private bool _createStdDevY;
 

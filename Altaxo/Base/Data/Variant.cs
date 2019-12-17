@@ -484,14 +484,14 @@ namespace Altaxo.Data
     }
 
     /*
-		public static explicit operator double(AltaxoVariant f)
-		{
-			if(f.m_Content==Content.VDouble)
-				return f.m_Double;
-			else
-				return f.ToDouble();
-		}
-		*/
+        public static explicit operator double(AltaxoVariant f)
+        {
+            if(f.m_Content==Content.VDouble)
+                return f.m_Double;
+            else
+                return f.ToDouble();
+        }
+        */
 
     public static implicit operator double(AltaxoVariant f)
     {

@@ -30,49 +30,49 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units
 {
-  /// <summary>
-  /// Base class for classes that implement <see cref="IUnit"/> and are not a <see cref="SIUnit"/>. Classes that are SI units should derive from
-  /// <see cref="SIUnit"/>.
-  /// </summary>
-  public abstract class UnitBase
-  {
-    public bool Equals(SIUnit obj)
+    /// <summary>
+    /// Base class for classes that implement <see cref="IUnit"/> and are not a <see cref="SIUnit"/>. Classes that are SI units should derive from
+    /// <see cref="SIUnit"/>.
+    /// </summary>
+    public abstract class UnitBase
     {
-      if (null == obj)
-        return false;
+        public bool Equals(SIUnit obj)
+        {
+            if (null == obj)
+                return false;
 
-      return obj.Equals(this);
+            return obj.Equals(this);
+        }
+
+        public bool Equals(IUnit obj)
+        {
+            if (null == obj)
+                return false;
+
+            return GetType() == obj.GetType();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is IUnit other))
+                return false;
+
+            return GetType() == obj.GetType();
+        }
+
+        public override int GetHashCode()
+        {
+            return GetType().GetHashCode();
+        }
+
+        public static bool operator ==(UnitBase a, IUnit b)
+        {
+            return a?.Equals(b) ?? false;
+        }
+
+        public static bool operator !=(UnitBase a, IUnit b)
+        {
+            return !(a == b);
+        }
     }
-
-    public bool Equals(IUnit obj)
-    {
-      if (null == obj)
-        return false;
-
-      return GetType() == obj.GetType();
-    }
-
-    public override bool Equals(object obj)
-    {
-      if (!(obj is IUnit other))
-        return false;
-
-      return GetType() == obj.GetType();
-    }
-
-    public override int GetHashCode()
-    {
-      return GetType().GetHashCode();
-    }
-
-    public static bool operator ==(UnitBase a, IUnit b)
-    {
-      return a?.Equals(b) ?? false;
-    }
-
-    public static bool operator !=(UnitBase a, IUnit b)
-    {
-      return !(a == b);
-    }
-  }
 }

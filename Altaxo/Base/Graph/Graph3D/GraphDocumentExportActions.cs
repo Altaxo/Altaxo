@@ -130,39 +130,39 @@ namespace Altaxo.Graph.Graph3D
       int bmpWidth = bitmap.Width;
       int bmpHeight = bitmap.Height;
       /*
-			double outputScaling = sourceDpiResolution / destinationDpiResolution;
-			bitmap.SetResolution((float)(bmpWidth / (outputScaling * doc.Size.X / 72)), (float)(bmpHeight / (outputScaling * doc.Size.Y / 72)));
+            double outputScaling = sourceDpiResolution / destinationDpiResolution;
+            bitmap.SetResolution((float)(bmpWidth / (outputScaling * doc.Size.X / 72)), (float)(bmpHeight / (outputScaling * doc.Size.Y / 72)));
 
-			using (Graphics grfx = Graphics.FromImage(bitmap))
-			{
-				// Set everything to high quality
-				grfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-				grfx.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+            using (Graphics grfx = Graphics.FromImage(bitmap))
+            {
+                // Set everything to high quality
+                grfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                grfx.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
 
-				// 2014-10-10 Setting InterpolationMode to HighQualityBicubic and PixelOffsetMode to HighQuality
-				// causes problems when rendering small bitmaps (at a large magnification, for instance the density image legend):
-				// the resulting image seems a litte soft, the colors somehow distorted, so I decided not to use them here any more
+                // 2014-10-10 Setting InterpolationMode to HighQualityBicubic and PixelOffsetMode to HighQuality
+                // causes problems when rendering small bitmaps (at a large magnification, for instance the density image legend):
+                // the resulting image seems a litte soft, the colors somehow distorted, so I decided not to use them here any more
 
-				//		grfx.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-				//		grfx.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                //		grfx.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                //		grfx.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 
-				grfx.PageUnit = GraphicsUnit.Point;
-				grfx.ScaleTransform((float)outputScaling, (float)outputScaling);
-				grfx.SetClip(new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
+                grfx.PageUnit = GraphicsUnit.Point;
+                grfx.ScaleTransform((float)outputScaling, (float)outputScaling);
+                grfx.SetClip(new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
 
-				if (null != backbrush1)
-				{
-					backbrush1.SetEnvironment(new RectangleD2D(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution);
-					grfx.FillRectangle(backbrush1, new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
-				}
+                if (null != backbrush1)
+                {
+                    backbrush1.SetEnvironment(new RectangleD2D(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution);
+                    grfx.FillRectangle(backbrush1, new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
+                }
 
-				if (null != backbrush2)
-				{
-					backbrush2.SetEnvironment(new RectangleD2D(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution);
-					grfx.FillRectangle(backbrush2, new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
-				}
-			}
-			*/
+                if (null != backbrush2)
+                {
+                    backbrush2.SetEnvironment(new RectangleD2D(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution);
+                    grfx.FillRectangle(backbrush2, new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
+                }
+            }
+            */
 
       bitmap.SetResolution((float)destinationDpiResolution, (float)destinationDpiResolution);
 

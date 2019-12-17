@@ -85,12 +85,12 @@ namespace Altaxo.Graph.Graph3D
     {
       EditingControllerCreation = (doc) =>
       {
-        var ctrl = new ItemLocationDirectController() { UseDocumentCopy = Gui.UseDocument.Copy };
-        ctrl.ShowPositionElements(false, false);
-        ctrl.ShowAnchorElements(false, false);
-        ctrl.InitializeDocument(doc);
-        return ctrl;
-      }
+      var ctrl = new ItemLocationDirectController() { UseDocumentCopy = Gui.UseDocument.Copy };
+      ctrl.ShowPositionElements(false, false);
+      ctrl.ShowAnchorElements(false, false);
+      ctrl.InitializeDocument(doc);
+      return ctrl;
+    }
     };
 
     public static readonly Main.Properties.PropertyKey<FontX3D> PropertyKeyDefaultFont =
@@ -103,10 +103,10 @@ namespace Altaxo.Graph.Graph3D
       {
         EditingControllerCreation = (doc) =>
         {
-          var ctrl = new Gui.Common.Drawing.D3D.FontX3DController { UseDocumentCopy = Gui.UseDocument.Copy };
-          ctrl.InitializeDocument(doc);
-          return ctrl;
-        }
+        var ctrl = new Gui.Common.Drawing.D3D.FontX3DController { UseDocumentCopy = Gui.UseDocument.Copy };
+        ctrl.InitializeDocument(doc);
+        return ctrl;
+      }
       };
 
     public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultForeColor =
@@ -120,10 +120,10 @@ namespace Altaxo.Graph.Graph3D
       {
         EditingControllerCreation = (doc) =>
         {
-          var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
-          ctrl.InitializeDocument(doc);
-          return ctrl;
-        }
+        var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
+        ctrl.InitializeDocument(doc);
+        return ctrl;
+      }
       };
 
     public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultSceneBackColor =
@@ -137,10 +137,10 @@ namespace Altaxo.Graph.Graph3D
     {
       EditingControllerCreation = (doc) =>
       {
-        var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
-        ctrl.InitializeDocument(doc);
-        return ctrl;
-      }
+      var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
+      ctrl.InitializeDocument(doc);
+      return ctrl;
+    }
     };
 
     public static readonly Main.Properties.PropertyKey<GuiModels.RootLayerMarkersVisibility> PropertyKeyRootLayerMarkersVisibility =
@@ -153,10 +153,10 @@ namespace Altaxo.Graph.Graph3D
     {
       EditingControllerCreation = (doc) =>
       {
-        var ctrl = new Gui.Common.EnumFlagController() { UseDocumentCopy = Gui.UseDocument.Copy };
-        ctrl.InitializeDocument(doc);
-        return ctrl;
-      }
+      var ctrl = new Gui.Common.EnumFlagController() { UseDocumentCopy = Gui.UseDocument.Copy };
+      ctrl.InitializeDocument(doc);
+      return ctrl;
+    }
     };
 
     public static FontX3D GetDefaultFont(IReadOnlyPropertyBag context)

@@ -64,12 +64,12 @@ namespace Altaxo.Graph.Scales
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				LinearScale s = (LinearScale)obj;
-				info.AddValue("Org", s._cachedAxisOrg);
-				info.AddValue("End", s._cachedAxisEnd);
-				info.AddValue("Rescaling", s._rescaling);
-				info.AddValue("Bounds", s._dataBounds);
-				 */
+                LinearScale s = (LinearScale)obj;
+                info.AddValue("Org", s._cachedAxisOrg);
+                info.AddValue("End", s._cachedAxisEnd);
+                info.AddValue("Rescaling", s._rescaling);
+                info.AddValue("Bounds", s._dataBounds);
+                 */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

@@ -29,47 +29,47 @@ using System.Text;
 
 namespace Altaxo.Units.Time
 {
-  [UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
-  public class Week : UnitBase, IUnit
-  {
-    public const double OneWeekInSeconds = 7 * 24 * 3600;
-
-    private static readonly Week _instance = new Week();
-
-    public static Week Instance { get { return _instance; } }
-
-    protected Week()
+    [UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
+    public class Week : UnitBase, IUnit
     {
-    }
+        public const double OneWeekInSeconds = 7 * 24 * 3600;
 
-    public string Name
-    {
-      get { return "Week"; }
-    }
+        private static readonly Week _instance = new Week();
 
-    public string ShortCut
-    {
-      get { return "week"; }
-    }
+        public static Week Instance { get { return _instance; } }
 
-    public double ToSIUnit(double x)
-    {
-      return x * OneWeekInSeconds;
-    }
+        protected Week()
+        {
+        }
 
-    public double FromSIUnit(double x)
-    {
-      return x / OneWeekInSeconds;
-    }
+        public string Name
+        {
+            get { return "Week"; }
+        }
 
-    public ISIPrefixList Prefixes
-    {
-      get { return SIPrefix.ListWithNonePrefixOnly; }
-    }
+        public string ShortCut
+        {
+            get { return "week"; }
+        }
 
-    public SIUnit SIUnit
-    {
-      get { return Second.Instance; }
+        public double ToSIUnit(double x)
+        {
+            return x * OneWeekInSeconds;
+        }
+
+        public double FromSIUnit(double x)
+        {
+            return x / OneWeekInSeconds;
+        }
+
+        public ISIPrefixList Prefixes
+        {
+            get { return SIPrefix.ListWithNonePrefixOnly; }
+        }
+
+        public SIUnit SIUnit
+        {
+            get { return Second.Instance; }
+        }
     }
-  }
 }

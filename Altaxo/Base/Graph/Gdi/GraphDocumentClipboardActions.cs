@@ -181,12 +181,12 @@ namespace Altaxo.Graph.Gdi
     public static void PasteFromClipboardAsTemplateForLayer(this GraphDocument doc, IEnumerable<int> layerNumber)
     {
       /*
-			object options = new PasteLayerOptions() { PastePlotStyles = true, PastePlotItems = true };
-			if (false == Current.Gui.ShowDialog(ref options, "Choose what to paste"))
-				return;
-				PasteFromClipboardAsTemplateForLayer(doc, layerNumber, (options as PasteLayerOptions).GetCopyOptions());
-			 *
-			*/
+            object options = new PasteLayerOptions() { PastePlotStyles = true, PastePlotItems = true };
+            if (false == Current.Gui.ShowDialog(ref options, "Choose what to paste"))
+                return;
+                PasteFromClipboardAsTemplateForLayer(doc, layerNumber, (options as PasteLayerOptions).GetCopyOptions());
+             *
+            */
 
       GraphCopyOptions options = _lastChoosenGraphLayerPasteOptions;
       System.Enum options1 = options;

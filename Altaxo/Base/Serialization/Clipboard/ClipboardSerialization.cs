@@ -57,7 +57,7 @@ namespace Altaxo.Serialization.Clipboard
         throw new ArgumentNullException(nameof(dataObject));
 
       var stb = SerializeToStringBuilder(toSerialize).ToString();
-      foreach(var clipboardFormat in clipBoardFormats)
+      foreach (var clipboardFormat in clipBoardFormats)
         dataObject.SetData(clipboardFormat, stb);
     }
 

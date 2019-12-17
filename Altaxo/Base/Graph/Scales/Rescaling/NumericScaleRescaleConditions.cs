@@ -122,14 +122,14 @@ namespace Altaxo.Graph.Scales.Rescaling
         throw new InvalidOperationException("Serialization of old version");
 
         /*
-				NumericAxisRescaleConditions s = (NumericAxisRescaleConditions)obj;
-				info.AddEnum("OrgRescaling", s._orgRescaling);
-				info.AddValue("Org", s._org);
-				info.AddEnum("EndRescaling", s._endRescaling);
-				info.AddValue("End", s._end);
-				info.AddEnum("SpanRescaling", s._spanRescaling);
-				info.AddValue("Span", s._span);
-				*/
+                NumericAxisRescaleConditions s = (NumericAxisRescaleConditions)obj;
+                info.AddEnum("OrgRescaling", s._orgRescaling);
+                info.AddValue("Org", s._org);
+                info.AddEnum("EndRescaling", s._endRescaling);
+                info.AddValue("End", s._end);
+                info.AddEnum("SpanRescaling", s._spanRescaling);
+                info.AddValue("Span", s._span);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

@@ -7,34 +7,34 @@
  						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
 >
 
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
-		<GroupBox Header="Update when:" Grid.Row="0" Grid.ColumnSpan="2" Padding="0,4,0,0" Margin="0,0,0,4">
-			<axogc:SingleChoiceRadioStackPanel x:Name="_guiTrigger"  Orientation="Horizontal" />
-		</GroupBox>
-		<CheckBox x:Name="_guiExecuteWksScriptAfterImport"  Grid.Row="1" Content="Execute worksheet script after import" ToolTip="If choosing this option, the worksheet script will be executed every time data is imported from the data source." Margin="0,0,8,0" />
-		<CheckBox x:Name="_guiDoNotSaveTableData"  Grid.Row="1" Grid.Column="1" Content="Do not save table data" ToolTip="If choosing this option, table data will not be saved in the Altaxo project file! Use this option carefully and only if you can always restore the data from the data source!" />
-		<Label Content="Minimum time between updates:" Grid.Row="2" HorizontalAlignment="Right" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiMinTimeAfterUpdate" Grid.Row="2" Grid.Column="1" AllowInfiniteValues="False" AllowNaNValues="False" Margin="0,2,0,2" UnitEnvironment="{x:Static axog:TimeEnvironment.Instance}" />
-		<Label Content="Maximum time between updates:" Grid.Row="3"  HorizontalAlignment="Right" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiMaxTimeAfterUpdate" Grid.Row="3" Grid.Column="1" AllowInfiniteValues="False" AllowNaNValues="False" Margin="0,2,0,2" UnitEnvironment="{x:Static axog:TimeEnvironment.Instance}" />
-		<Label Content="Minimum time after first trigger:" Grid.Row="4"  HorizontalAlignment="Right" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiMinimumTimeAfterFirstTrigger" Grid.Row="4" Grid.Column="1" AllowInfiniteValues="False" AllowNaNValues="False" Margin="0,2,0,2" UnitEnvironment="{x:Static axog:TimeEnvironment.Instance}" />
-		<Label Content="Maximum time after first trigger:" Grid.Row="5"  HorizontalAlignment="Right" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiMaximumTimeAfterFirstTrigger" Grid.Row="5" Grid.Column="1" AllowInfiniteValues="False" AllowNaNValues="False" Margin="0,2,0,2" UnitEnvironment="{x:Static axog:TimeEnvironment.Instance}" />
-		<Label Content="Minimum time after last trigger:" Grid.Row="6"  HorizontalAlignment="Right" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiMinimumTimeAfterLastTrigger" Grid.Row="6" Grid.Column="1" AllowInfiniteValues="False" AllowNaNValues="False" Margin="0,2,0,2" UnitEnvironment="{x:Static axog:TimeEnvironment.Instance}" />
-	</Grid>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <GroupBox Header="Update when:" Grid.Row="0" Grid.ColumnSpan="2" Padding="0,4,0,0" Margin="0,0,0,4">
+            <axogc:SingleChoiceRadioStackPanel x:Name="_guiTrigger"  Orientation="Horizontal" />
+        </GroupBox>
+        <CheckBox x:Name="_guiExecuteWksScriptAfterImport"  Grid.Row="1" Content="Execute worksheet script after import" ToolTip="If choosing this option, the worksheet script will be executed every time data is imported from the data source." Margin="0,0,8,0" />
+        <CheckBox x:Name="_guiDoNotSaveTableData"  Grid.Row="1" Grid.Column="1" Content="Do not save table data" ToolTip="If choosing this option, table data will not be saved in the Altaxo project file! Use this option carefully and only if you can always restore the data from the data source!" />
+        <Label Content="Minimum time between updates:" Grid.Row="2" HorizontalAlignment="Right" />
+        <axogc:QuantityWithUnitTextBox x:Name="_guiMinTimeAfterUpdate" Grid.Row="2" Grid.Column="1" AllowInfiniteValues="False" AllowNaNValues="False" Margin="0,2,0,2" UnitEnvironment="{x:Static axog:TimeEnvironment.Instance}" />
+        <Label Content="Maximum time between updates:" Grid.Row="3"  HorizontalAlignment="Right" />
+        <axogc:QuantityWithUnitTextBox x:Name="_guiMaxTimeAfterUpdate" Grid.Row="3" Grid.Column="1" AllowInfiniteValues="False" AllowNaNValues="False" Margin="0,2,0,2" UnitEnvironment="{x:Static axog:TimeEnvironment.Instance}" />
+        <Label Content="Minimum time after first trigger:" Grid.Row="4"  HorizontalAlignment="Right" />
+        <axogc:QuantityWithUnitTextBox x:Name="_guiMinimumTimeAfterFirstTrigger" Grid.Row="4" Grid.Column="1" AllowInfiniteValues="False" AllowNaNValues="False" Margin="0,2,0,2" UnitEnvironment="{x:Static axog:TimeEnvironment.Instance}" />
+        <Label Content="Maximum time after first trigger:" Grid.Row="5"  HorizontalAlignment="Right" />
+        <axogc:QuantityWithUnitTextBox x:Name="_guiMaximumTimeAfterFirstTrigger" Grid.Row="5" Grid.Column="1" AllowInfiniteValues="False" AllowNaNValues="False" Margin="0,2,0,2" UnitEnvironment="{x:Static axog:TimeEnvironment.Instance}" />
+        <Label Content="Minimum time after last trigger:" Grid.Row="6"  HorizontalAlignment="Right" />
+        <axogc:QuantityWithUnitTextBox x:Name="_guiMinimumTimeAfterLastTrigger" Grid.Row="6" Grid.Column="1" AllowInfiniteValues="False" AllowNaNValues="False" Margin="0,2,0,2" UnitEnvironment="{x:Static axog:TimeEnvironment.Instance}" />
+    </Grid>
 </UserControl>

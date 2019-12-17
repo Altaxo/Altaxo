@@ -45,10 +45,10 @@ typeof(object),
 {
   EditingControllerCreation = (doc) =>
   {
-    var ctrl = new DefaultLineScatterGraphDocumentController { UseDocumentCopy = Gui.UseDocument.Copy };
-    ctrl.InitializeDocument(doc);
-    return ctrl;
-  }
+  var ctrl = new DefaultLineScatterGraphDocumentController { UseDocumentCopy = Gui.UseDocument.Copy };
+  ctrl.InitializeDocument(doc);
+  return ctrl;
+}
 };
 
     /// <summary>

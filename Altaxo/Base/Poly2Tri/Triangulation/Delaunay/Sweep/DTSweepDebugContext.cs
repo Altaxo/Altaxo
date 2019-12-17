@@ -34,8 +34,8 @@ namespace Poly2Tri
   public class DTSweepDebugContext : TriangulationDebugContext
   {
     /*
-		 * Fields used for visual representation of current triangulation
-		 */
+         * Fields used for visual representation of current triangulation
+         */
 
     public DelaunayTriangle PrimaryTriangle { get { return _primaryTriangle; } set { _primaryTriangle = value; _tcx.Update("set PrimaryTriangle"); } }
     public DelaunayTriangle SecondaryTriangle { get { return _secondaryTriangle; } set { _secondaryTriangle = value; _tcx.Update("set SecondaryTriangle"); } }

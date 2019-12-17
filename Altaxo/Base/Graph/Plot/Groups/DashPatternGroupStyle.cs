@@ -59,9 +59,9 @@ namespace Altaxo.Graph.Plot.Groups
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				LineStyleGroupStyle s = (LineStyleGroupStyle)obj;
-				info.AddValue("StepEnabled", s._isStepEnabled);
-				*/
+                LineStyleGroupStyle s = (LineStyleGroupStyle)obj;
+                info.AddValue("StepEnabled", s._isStepEnabled);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

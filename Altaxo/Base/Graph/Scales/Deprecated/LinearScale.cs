@@ -438,43 +438,43 @@ namespace Altaxo.Graph.Scales.Deprecated
       _axisEndByMajor = xend / _majorSpan;
 
       /*
-			if (xend == xorg)
-			{
-				if(xorgfixed)
-					_axisOrgByMajor = xorg / _majorSpan;
-				else
-					_axisOrgByMajor = System.Math.Floor(_minorTicks * xorg / _majorSpan) / _minorTicks - 3 ;
+            if (xend == xorg)
+            {
+                if(xorgfixed)
+                    _axisOrgByMajor = xorg / _majorSpan;
+                else
+                    _axisOrgByMajor = System.Math.Floor(_minorTicks * xorg / _majorSpan) / _minorTicks - 3 ;
 
-				if(xendfixed)
-					_axisEndByMajor = xend / _majorSpan;
-				else
-					_axisEndByMajor = System.Math.Ceiling(_minorTicks * xend / _majorSpan) / _minorTicks +3;
-			}
-			else if(xend>xorg)
-			{
-				if(xorgfixed)
-					_axisOrgByMajor = xorg/_majorSpan;
-				else
-					_axisOrgByMajor = System.Math.Floor(_minorTicks * xorg/_majorSpan)/_minorTicks;
+                if(xendfixed)
+                    _axisEndByMajor = xend / _majorSpan;
+                else
+                    _axisEndByMajor = System.Math.Ceiling(_minorTicks * xend / _majorSpan) / _minorTicks +3;
+            }
+            else if(xend>xorg)
+            {
+                if(xorgfixed)
+                    _axisOrgByMajor = xorg/_majorSpan;
+                else
+                    _axisOrgByMajor = System.Math.Floor(_minorTicks * xorg/_majorSpan)/_minorTicks;
 
-				if(xendfixed)
-					_axisEndByMajor = xend/_majorSpan;
-				else
-					_axisEndByMajor = System.Math.Ceiling(_minorTicks * xend /_majorSpan)/_minorTicks;
-			}
-			else // org is greater than end !
-			{
-				if(xorgfixed)
-					_axisOrgByMajor = xorg/_majorSpan;
-				else
-					_axisOrgByMajor = System.Math.Ceiling(_minorTicks * xorg/_majorSpan)/_minorTicks;
+                if(xendfixed)
+                    _axisEndByMajor = xend/_majorSpan;
+                else
+                    _axisEndByMajor = System.Math.Ceiling(_minorTicks * xend /_majorSpan)/_minorTicks;
+            }
+            else // org is greater than end !
+            {
+                if(xorgfixed)
+                    _axisOrgByMajor = xorg/_majorSpan;
+                else
+                    _axisOrgByMajor = System.Math.Ceiling(_minorTicks * xorg/_majorSpan)/_minorTicks;
 
-				if(xendfixed)
-					_axisEndByMajor = xend/_majorSpan;
-				else
-					_axisEndByMajor = System.Math.Floor(_minorTicks * xend /_majorSpan)/_minorTicks;
-			}
-			*/
+                if(xendfixed)
+                    _axisEndByMajor = xend/_majorSpan;
+                else
+                    _axisEndByMajor = System.Math.Floor(_minorTicks * xend /_majorSpan)/_minorTicks;
+            }
+            */
 
       SetCachedValues();
 

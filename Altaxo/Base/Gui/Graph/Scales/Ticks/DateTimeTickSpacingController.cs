@@ -234,7 +234,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         e.Cancel = true;
     }
 
-    static bool IsTimeSpanExOrNull(string txt, out DateTimeTickSpacing.TimeSpanEx? span)
+    private static bool IsTimeSpanExOrNull(string txt, out DateTimeTickSpacing.TimeSpanEx? span)
     {
       txt = txt?.Trim();
 
@@ -322,7 +322,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
     }
 
-    static string ToString(DateTimeTickSpacing.TimeSpanEx? span)
+    private static string ToString(DateTimeTickSpacing.TimeSpanEx? span)
     {
       var culture = Altaxo.Serialization.GUIConversion.CultureSettings;
 

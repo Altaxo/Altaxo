@@ -177,8 +177,8 @@ namespace Altaxo.Workbench
 
     /*		static void Log(IWorkbenchWindow window)
 {
-	if (window==null) return;
-	Log(window.ActiveViewContent);
+    if (window==null) return;
+    Log(window.ActiveViewContent);
 }
  */
 

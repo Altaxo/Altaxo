@@ -62,14 +62,14 @@ namespace Altaxo.Graph.Scales
       {
         throw new ArgumentOutOfRangeException("Serialization of old version");
         /*
-				Log10Scale s = (Log10Scale)obj;
-				info.AddValue("Log10Org", s._log10Org);
-				info.AddValue("Log10End", s._log10End);
+                Log10Scale s = (Log10Scale)obj;
+                info.AddValue("Log10Org", s._log10Org);
+                info.AddValue("Log10End", s._log10End);
 
-				info.AddValue("Rescaling", s._rescaling);
+                info.AddValue("Rescaling", s._rescaling);
 
-				info.AddValue("Bounds", s._dataBounds);
-				*/
+                info.AddValue("Bounds", s._dataBounds);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

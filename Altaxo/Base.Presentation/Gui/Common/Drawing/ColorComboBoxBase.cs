@@ -446,11 +446,11 @@ namespace Altaxo.Gui.Common.Drawing
           if ((node.Tag is Altaxo.Main.ItemDefinitionLevel) && (Altaxo.Main.ItemDefinitionLevel)node.Tag == level)
           {
             node.IsExpanded = true; // expand the node the current color set belongs to (like "Builtin", "Application" etc.)
-          }
+                  }
           else if (node.Tag is IColorSet && object.ReferenceEquals(node.Tag, colorSet))
           {
             node.IsSelected = true; // select the node of the current color set
-          }
+                  }
         });
       };
       GuiTreeView.ItemsSource = _treeRootNode.Nodes;
@@ -529,10 +529,10 @@ namespace Altaxo.Gui.Common.Drawing
         return false;
       }
       /*
-			var SelectedWpfColor = GuiHelper.ToWpf(InternalSelectedColor);
-			ColorController ctrl = new ColorController(SelectedWpfColor);
-			ctrl.ViewObject = new ColorPickerControl(SelectedWpfColor);
-			*/
+            var SelectedWpfColor = GuiHelper.ToWpf(InternalSelectedColor);
+            ColorController ctrl = new ColorController(SelectedWpfColor);
+            ctrl.ViewObject = new ColorPickerControl(SelectedWpfColor);
+            */
       var ctrl = new Gui.Drawing.ColorManagement.NamedColorController();
       ctrl.InitializeDocument(InternalSelectedColor);
       Current.Gui.FindAndAttachControlTo(ctrl);

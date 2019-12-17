@@ -31,144 +31,144 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-  /// <summary>
-  /// State equations and constants of water.
-  /// Short name: water.
-  /// Synomym: R-718.
-  /// Chemical formula: H2O.
-  /// </summary>
-  /// <remarks>
-  /// <para>References:</para>
-  /// <para>The source code was created automatically using the fluid file 'water.fld' from the following software:</para>
-  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-  /// <para>Further references (extracted from the fluid file):</para>
-  /// <para>EquationOfState (EOS): Wagner, W. and Pruss, A., "The IAPWS Formulation 1995 for the Thermodynamic Properties of Ordinary Water Substance for General and Scientific Use," J. Phys. Chem. Ref. Data, 31(2):387-535, 2002.</para>
-  /// <para>HeatCapacity (CPP): Wagner, W. and Pruss, A., "The IAPWS Formulation 1995 for the Thermodynamic Properties of Ordinary Water Substance for General and Scientific Use," J. Phys. Chem. Ref. Data, 31(2):387-535, 2002.</para>
-  /// <para>Melting pressure: Wagner, W., Saul, A., and Pruss, A., "International Equations for the Pressure Along the Melting and Along the Sublimation Curve of Ordinary Water Substance," J. Phys. Chem. Ref. Data, 23(3):515-527, 1994.</para>
-  /// <para>Sublimation pressure:  Wagner, W., Riethmann, T., Feistel, R., and Harvey, A.H., "New Equations for the Sublimation Pressure and Melting Pressure of H2O Ice Ih," J. Phys. Chem. Ref. Data, 40(4), 2011.</para>
-  /// <para>Saturated vapor pressure: See EOS</para>
-  /// <para>Saturated liquid density: See EOS</para>
-  /// <para>Saturated vapor density: See EOS</para>
-  /// </remarks>
-  [CASRegistryNumber("7732-18-5")]
-  public class Water : HelmholtzEquationOfStateOfPureFluidsBySpanEtAl
-  {
-
-    /// <summary>Gets the (only) instance of this class.</summary>
-    public static Water Instance { get; } = new Water();
-
-    #region Constants for water
-
-    /// <summary>The full name of the fluid.</summary>
-    public override string FullName => "water";
-
-    /// <summary>The short name of the fluid.</summary>
-    public override string ShortName => "water";
-
-    /// <summary>The synonym of the name of the fluid.</summary>
-    public override string Synonym => "R-718";
-
-    /// <summary>The chemical formula of the fluid.</summary>
-    public override string ChemicalFormula => "H2O";
-
-    /// <summary>The chemical formula of the fluid.</summary>
-    public override string FluidFamily => "other";
-
-    /// <summary>Gets the CAS registry number.</summary>
-    public override string CASRegistryNumber { get; } = "7732-18-5";
-
-    private int[] _unNumbers = new int[] { };
-    /// <summary>The UN number of the fluid.</summary>
-    public override IReadOnlyList<int> UN_Numbers => _unNumbers;
-
-    /// <summary>The Universal Gas Constant R at the time the model was developed.</summary>
-    public override double WorkingUniversalGasConstant => 8.314371357587;
-
-    /// <summary>Gets the molecular weight in kg/mol.</summary>
-    public override double MolecularWeight { get; } = 0.018015268; // kg/mol
-
-    /// <summary>Gets the temperature at the critical point in K.</summary>
-    public override double CriticalPointTemperature { get; } = 647.096;
-
-    /// <summary>Gets the pressure at the critical point in Pa.</summary>);
-    public override double CriticalPointPressure { get; } = 22064000;
-
-    /// <summary>Gets the mole density at the critical point in mol/m³.</summary>
-    public override double CriticalPointMoleDensity { get; } = 17873.7279956;
-
-    /// <summary>Gets the triple point temperature in K.</summary>
-    public override double TriplePointTemperature { get; } = 273.16;
-
-    /// <summary>Gets the triple point pressure in Pa.</summary>
-    public override double TriplePointPressure { get; } = 612.48;
-
-    /// <summary>Gets the triple point liquid mole density in mol/m³.</summary>
-    public override double TriplePointSaturatedLiquidMoleDensity { get; } = 55496.9551400019;
-
-    /// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-    public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.269470080865637;
-
-    /// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
-    public override double? NormalBoilingPointTemperature { get; } = 373.124295864882;
-
-    /// <summary>Gets the sublimation temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
-    public override double? NormalSublimationPointTemperature { get; } = null;
-
-    /// <summary>Gets the acentric factor.</summary>
-    public override double AcentricFactor { get; } = 0.3443;
-
-    /// <summary>Gets the dipole moment in Debye.</summary>
-    public override double DipoleMoment { get; } = 1.855;
-
-    /// <summary>Gets the lower temperature limit of this model in K.</summary>
-    public override double LowerTemperatureLimit { get; } = 273.16;
-
-    /// <summary>Gets the upper temperature limit of this model in K.</summary>
-    public override double UpperTemperatureLimit { get; } = 2000;
-
-    /// <summary>Gets the upper density limit of this model in mol/m³.</summary>
-    public override double UpperMoleDensityLimit { get; } = 73960;
-
-    /// <summary>Gets the upper pressure limit of this model in Pa.</summary>
-    public override double UpperPressureLimit { get; } = 1000000000;
-
-    #endregion Constants for water
-
-    private Water()
+    /// <summary>
+    /// State equations and constants of water.
+    /// Short name: water.
+    /// Synomym: R-718.
+    /// Chemical formula: H2O.
+    /// </summary>
+    /// <remarks>
+    /// <para>References:</para>
+    /// <para>The source code was created automatically using the fluid file 'water.fld' from the following software:</para>
+    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+    /// <para>Further references (extracted from the fluid file):</para>
+    /// <para>EquationOfState (EOS): Wagner, W. and Pruss, A., "The IAPWS Formulation 1995 for the Thermodynamic Properties of Ordinary Water Substance for General and Scientific Use," J. Phys. Chem. Ref. Data, 31(2):387-535, 2002.</para>
+    /// <para>HeatCapacity (CPP): Wagner, W. and Pruss, A., "The IAPWS Formulation 1995 for the Thermodynamic Properties of Ordinary Water Substance for General and Scientific Use," J. Phys. Chem. Ref. Data, 31(2):387-535, 2002.</para>
+    /// <para>Melting pressure: Wagner, W., Saul, A., and Pruss, A., "International Equations for the Pressure Along the Melting and Along the Sublimation Curve of Ordinary Water Substance," J. Phys. Chem. Ref. Data, 23(3):515-527, 1994.</para>
+    /// <para>Sublimation pressure:  Wagner, W., Riethmann, T., Feistel, R., and Harvey, A.H., "New Equations for the Sublimation Pressure and Melting Pressure of H2O Ice Ih," J. Phys. Chem. Ref. Data, 40(4), 2011.</para>
+    /// <para>Saturated vapor pressure: See EOS</para>
+    /// <para>Saturated liquid density: See EOS</para>
+    /// <para>Saturated vapor density: See EOS</para>
+    /// </remarks>
+    [CASRegistryNumber("7732-18-5")]
+    public class Water : HelmholtzEquationOfStateOfPureFluidsBySpanEtAl
     {
-      #region Ideal part of dimensionless Helmholtz energy and derivatives
 
-      _alpha0_n_const = -8.32044648376779;
-      _alpha0_n_tau = 6.68321052759772;
-      _alpha0_n_lntau = 3.00632;
-      _alpha0_n_taulntau = 0;
+        /// <summary>Gets the (only) instance of this class.</summary>
+        public static Water Instance { get; } = new Water();
 
-      _alpha0_Poly = new (double ni, double thetai)[]
-      {
-      };
+        #region Constants for water
 
-      _alpha0_Exp = new (double ni, double thetai)[]
-      {
+        /// <summary>The full name of the fluid.</summary>
+        public override string FullName => "water";
+
+        /// <summary>The short name of the fluid.</summary>
+        public override string ShortName => "water";
+
+        /// <summary>The synonym of the name of the fluid.</summary>
+        public override string Synonym => "R-718";
+
+        /// <summary>The chemical formula of the fluid.</summary>
+        public override string ChemicalFormula => "H2O";
+
+        /// <summary>The chemical formula of the fluid.</summary>
+        public override string FluidFamily => "other";
+
+        /// <summary>Gets the CAS registry number.</summary>
+        public override string CASRegistryNumber { get; } = "7732-18-5";
+
+        private int[] _unNumbers = new int[] { };
+        /// <summary>The UN number of the fluid.</summary>
+        public override IReadOnlyList<int> UN_Numbers => _unNumbers;
+
+        /// <summary>The Universal Gas Constant R at the time the model was developed.</summary>
+        public override double WorkingUniversalGasConstant => 8.314371357587;
+
+        /// <summary>Gets the molecular weight in kg/mol.</summary>
+        public override double MolecularWeight { get; } = 0.018015268; // kg/mol
+
+        /// <summary>Gets the temperature at the critical point in K.</summary>
+        public override double CriticalPointTemperature { get; } = 647.096;
+
+        /// <summary>Gets the pressure at the critical point in Pa.</summary>);
+        public override double CriticalPointPressure { get; } = 22064000;
+
+        /// <summary>Gets the mole density at the critical point in mol/m³.</summary>
+        public override double CriticalPointMoleDensity { get; } = 17873.7279956;
+
+        /// <summary>Gets the triple point temperature in K.</summary>
+        public override double TriplePointTemperature { get; } = 273.16;
+
+        /// <summary>Gets the triple point pressure in Pa.</summary>
+        public override double TriplePointPressure { get; } = 612.48;
+
+        /// <summary>Gets the triple point liquid mole density in mol/m³.</summary>
+        public override double TriplePointSaturatedLiquidMoleDensity { get; } = 55496.9551400019;
+
+        /// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
+        public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.269470080865637;
+
+        /// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
+        public override double? NormalBoilingPointTemperature { get; } = 373.124295864882;
+
+        /// <summary>Gets the sublimation temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
+        public override double? NormalSublimationPointTemperature { get; } = null;
+
+        /// <summary>Gets the acentric factor.</summary>
+        public override double AcentricFactor { get; } = 0.3443;
+
+        /// <summary>Gets the dipole moment in Debye.</summary>
+        public override double DipoleMoment { get; } = 1.855;
+
+        /// <summary>Gets the lower temperature limit of this model in K.</summary>
+        public override double LowerTemperatureLimit { get; } = 273.16;
+
+        /// <summary>Gets the upper temperature limit of this model in K.</summary>
+        public override double UpperTemperatureLimit { get; } = 2000;
+
+        /// <summary>Gets the upper density limit of this model in mol/m³.</summary>
+        public override double UpperMoleDensityLimit { get; } = 73960;
+
+        /// <summary>Gets the upper pressure limit of this model in Pa.</summary>
+        public override double UpperPressureLimit { get; } = 1000000000;
+
+        #endregion Constants for water
+
+        private Water()
+        {
+            #region Ideal part of dimensionless Helmholtz energy and derivatives
+
+            _alpha0_n_const = -8.32044648376779;
+            _alpha0_n_tau = 6.68321052759772;
+            _alpha0_n_lntau = 3.00632;
+            _alpha0_n_taulntau = 0;
+
+            _alpha0_Poly = new (double ni, double thetai)[]
+            {
+            };
+
+            _alpha0_Exp = new (double ni, double thetai)[]
+            {
           (            0.012436,     1.28728967572045),
           (             0.97315,     3.53734221815619),
           (              1.2795,     7.74073707765154),
           (             0.96956,     9.24437795937543),
           (             0.24873,     27.5075104775798),
-      };
+            };
 
-      _alpha0_Cosh = new (double ni, double thetai)[]
-      {
-      };
+            _alpha0_Cosh = new (double ni, double thetai)[]
+            {
+            };
 
-      _alpha0_Sinh = new (double ni, double thetai)[]
-      {
-      };
-      #endregion Ideal part of dimensionless Helmholtz energy and derivatives
+            _alpha0_Sinh = new (double ni, double thetai)[]
+            {
+            };
+            #endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
-      #region Residual part(s) of dimensionless Helmholtz energy and derivatives
+            #region Residual part(s) of dimensionless Helmholtz energy and derivatives
 
-      _alphaR_Poly = new (double ni, double ti, int di)[]
-      {
+            _alphaR_Poly = new (double ni, double ti, int di)[]
+            {
           (   0.012533547935523,                 -0.5,                    1),
           (     7.8957634722828,                0.875,                    1),
           (    -8.7803203303561,                    1,                    1),
@@ -176,10 +176,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
           (   -0.26145533859358,                 0.75,                    2),
           ( -0.0078199751687981,                0.375,                    3),
           (  0.0088089493102134,                    1,                    4),
-      };
+            };
 
-      _alphaR_Exp = new (double ni, double ti, int di, double gi, int li)[]
-      {
+            _alphaR_Exp = new (double ni, double ti, int di, double gi, int li)[]
+            {
           (   -0.66856572307965,                    4,                    1,                   -1,                    1),
           (    0.20433810950965,                    6,                    1,                   -1,                    1),
           (-6.6212605039687E-05,                   12,                    1,                   -1,                    1),
@@ -224,81 +224,81 @@ namespace Altaxo.Science.Thermodynamics.Fluids
           (   -0.19905718354408,                   44,                    6,                   -1,                    6),
           (    0.31777497330738,                   46,                    6,                   -1,                    6),
           (   -0.11841182425981,                   50,                    6,                   -1,                    6),
-      };
+            };
 
-      _alphaR_Gauss = new (double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
-      {
+            _alphaR_Gauss = new (double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
+            {
           (    -31.306260323435,                    0,                    3,                  -20,                 -150,                 1.21,                    1),
           (     31.546140237781,                    1,                    3,                  -20,                 -150,                 1.21,                    1),
           (    -2521.3154341695,                    4,                    3,                  -20,                 -250,                 1.25,                    1),
-      };
+            };
 
-      _alphaR_Nonanalytical = new (double ni, double b, double beta, double A, double C, double D, double B, double a)[]
-      {
+            _alphaR_Nonanalytical = new (double ni, double b, double beta, double A, double C, double D, double B, double a)[]
+            {
           (   -0.14874640856724,                 0.85,                  0.3,                 0.32,                   28,                  700,                  0.2,                  3.5),
           (    0.31806110878444,                 0.95,                  0.3,                 0.32,                   32,                  800,                  0.2,                  3.5),
-      };
+            };
 
-      #endregion
+            #endregion
 
-      #region Saturated densities and pressure
+            #region Saturated densities and pressure
 
-      _saturatedLiquidDensity_Type = 2;
-      _saturatedLiquidDensity_Coefficients = new (double factor, double exponent)[]
-      {
+            _saturatedLiquidDensity_Type = 2;
+            _saturatedLiquidDensity_Coefficients = new (double factor, double exponent)[]
+            {
           (          1.99274064,                    1),
           (          1.09965342,                    2),
           (        -0.510839303,                    5),
           (         -1.75493479,                   16),
           (         -45.5170352,                   43),
           (          -674694.45,                  110),
-      };
+            };
 
-      _saturatedVaporDensity_Type = 4;
-      _saturatedVaporDensity_Coefficients = new (double factor, double exponent)[]
-      {
+            _saturatedVaporDensity_Type = 4;
+            _saturatedVaporDensity_Coefficients = new (double factor, double exponent)[]
+            {
           (          -2.0315024,                    1),
           (          -2.6830294,                    2),
           (         -5.38626492,                    4),
           (         -17.2991605,                    9),
           (         -44.7586581,                 18.5),
           (         -63.9201063,                 35.5),
-      };
+            };
 
-      _saturatedVaporPressure_Type = 6;
-      _saturatedVaporPressure_Coefficients = new (double factor, double exponent)[]
-      {
+            _saturatedVaporPressure_Type = 6;
+            _saturatedVaporPressure_Coefficients = new (double factor, double exponent)[]
+            {
           (         -7.85951783,                    2),
           (          1.84408259,                    3),
           (         -11.7866497,                    6),
           (          22.6807411,                    7),
           (         -15.9618719,                    8),
           (          1.80122502,                   15),
-      };
+            };
 
-      #endregion Saturated densities and pressure
+            #endregion Saturated densities and pressure
 
-      #region Sublimation pressure
+            #region Sublimation pressure
 
-      _sublimationPressure_Type = 2;
-      _sublimationPressure_ReducingTemperature = 273.16;
-      _sublimationPressure_ReducingPressure = 611.657;
-      _sublimationPressure_PolynomialCoefficients1 = new (double factor, double exponent)[]
-      {
+            _sublimationPressure_Type = 2;
+            _sublimationPressure_ReducingTemperature = 273.16;
+            _sublimationPressure_ReducingPressure = 611.657;
+            _sublimationPressure_PolynomialCoefficients1 = new (double factor, double exponent)[]
+            {
           (         -21.2144006,       -0.99666666667),
           (          27.3203819,           0.20666667),
           (          -6.1059813,           0.70333333),
-      };
+            };
 
-      #endregion Sublimation pressure
+            #endregion Sublimation pressure
 
-      #region Melting pressure
+            #region Melting pressure
 
-      _meltingPressure_Type = 'H';
-      _meltingPressure_ReducingTemperature = 273.16;
-      _meltingPressure_ReducingPressure = 611657;
-      _meltingPressure_Coefficients = new (double factor, double exponent)[][]
-      {
+            _meltingPressure_Type = 'H';
+            _meltingPressure_ReducingTemperature = 273.16;
+            _meltingPressure_ReducingPressure = 611657;
+            _meltingPressure_Coefficients = new (double factor, double exponent)[][]
+            {
       new (double factor, double exponent)[]
         {
             (          1195393.37,                    3),
@@ -328,10 +328,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
             (         8.06106E-08,                   22),
         },
 
-      };
+            };
 
-      #endregion Melting pressure
+            #endregion Melting pressure
 
+        }
     }
-  }
 }

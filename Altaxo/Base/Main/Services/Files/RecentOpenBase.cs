@@ -46,13 +46,11 @@ namespace Altaxo.Main.Services
             "E89CEABA-079C-4523-A594-CCDB67023BA7",
             "App\\RecentFiles",
             Altaxo.Main.Properties.PropertyLevel.Application);
-
-
-    static readonly Altaxo.Main.Properties.PropertyKey<IList<FileName>> PropertyKeyRecentProjects =
-    new Altaxo.Main.Properties.PropertyKey<IList<FileName>>(
-        "0C3B80BC-BE6B-4270-B59A-AAF5BA9CF00C",
-        "App\\RecentProjects",
-        Altaxo.Main.Properties.PropertyLevel.Application);
+    private static readonly Altaxo.Main.Properties.PropertyKey<IList<FileName>> PropertyKeyRecentProjects =
+        new Altaxo.Main.Properties.PropertyKey<IList<FileName>>(
+            "0C3B80BC-BE6B-4270-B59A-AAF5BA9CF00C",
+            "App\\RecentProjects",
+            Altaxo.Main.Properties.PropertyLevel.Application);
 
     #region Serialization
 

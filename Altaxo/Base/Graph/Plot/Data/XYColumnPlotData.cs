@@ -92,29 +92,29 @@ namespace Altaxo.Graph.Plot.Data
       {
         throw new ApplicationException("Calling a deprecated serialization handler for XYColumnPlotData");
         /*
-				XYColumnPlotData s = (XYColumnPlotData)obj;
+                XYColumnPlotData s = (XYColumnPlotData)obj;
 
-				if(s.m_xColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_xColumn).ParentObject))
-				{
-					info.AddValue("XColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_xColumn));
-				}
-				else
-				{
-					info.AddValue("XColumn",s.m_xColumn);
-				}
+                if(s.m_xColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_xColumn).ParentObject))
+                {
+                    info.AddValue("XColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_xColumn));
+                }
+                else
+                {
+                    info.AddValue("XColumn",s.m_xColumn);
+                }
 
-				if(s.m_yColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_yColumn).ParentObject))
-				{
-					info.AddValue("YColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_yColumn));
-				}
-				else
-				{
-					info.AddValue("YColumn",s.m_yColumn);
-				}
+                if(s.m_yColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_yColumn).ParentObject))
+                {
+                    info.AddValue("YColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_yColumn));
+                }
+                else
+                {
+                    info.AddValue("YColumn",s.m_yColumn);
+                }
 
-				info.AddValue("XBoundaries",s.m_xBoundaries);
-				info.AddValue("YBoundaries",s.m_yBoundaries);
-				*/
+                info.AddValue("XBoundaries",s.m_xBoundaries);
+                info.AddValue("YBoundaries",s.m_yBoundaries);
+                */
       }
 
       protected Main.AbsoluteDocumentPath _xColumn = null;
@@ -198,25 +198,25 @@ namespace Altaxo.Graph.Plot.Data
       {
         throw new ApplicationException("Calling a deprecated serialization handler for XYColumnPlotData");
         /*
-				XYColumnPlotData s = (XYColumnPlotData)obj;
-				base.Serialize(obj,info);
+                XYColumnPlotData s = (XYColumnPlotData)obj;
+                base.Serialize(obj,info);
 
-				// -----------------------Added in version 2 ------------------------
+                // -----------------------Added in version 2 ------------------------
 
-				// the rest of the plot data is stored in kind of a array
-				// so it should be easy to add more data here, and only data that are valid
-				// are been serialized
-				int nElements = s.LabelColumn==null ? 0 : 1;
-				info.CreateArray("OptionalData",nElements);
-				if(null!=s.LabelColumn)
-				{
-					if(s.m_LabelColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_LabelColumn).ParentObject))
-						info.AddValue("LabelColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_LabelColumn));
-					else
-						info.AddValue("LabelColumn",s.m_LabelColumn);
-				}
-				info.CommitArray(); // end of array OptionalData
-			*/
+                // the rest of the plot data is stored in kind of a array
+                // so it should be easy to add more data here, and only data that are valid
+                // are been serialized
+                int nElements = s.LabelColumn==null ? 0 : 1;
+                info.CreateArray("OptionalData",nElements);
+                if(null!=s.LabelColumn)
+                {
+                    if(s.m_LabelColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_LabelColumn).ParentObject))
+                        info.AddValue("LabelColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_LabelColumn));
+                    else
+                        info.AddValue("LabelColumn",s.m_LabelColumn);
+                }
+                info.CommitArray(); // end of array OptionalData
+            */
       }
 
       public override object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -288,15 +288,15 @@ namespace Altaxo.Graph.Plot.Data
         throw new InvalidOperationException("Serialization of old version is not allowed");
         /*
 
-				XYColumnPlotData s = (XYColumnPlotData)obj;
+                XYColumnPlotData s = (XYColumnPlotData)obj;
 
-				info.AddValue("XColumn", s._xColumn);
-				info.AddValue("YColumn", s._yColumn);
+                info.AddValue("XColumn", s._xColumn);
+                info.AddValue("YColumn", s._yColumn);
 
-				info.AddValue("XBoundaries", s._xBoundaries);
-				info.AddValue("YBoundaries", s._yBoundaries);
+                info.AddValue("XBoundaries", s._xBoundaries);
+                info.AddValue("YBoundaries", s._yBoundaries);
 
-				*/
+                */
       }
 
       public virtual XYColumnPlotData SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -347,17 +347,17 @@ namespace Altaxo.Graph.Plot.Data
         throw new InvalidOperationException("Serialization of old version is not allowed");
 
         /*
-				XYColumnPlotData s = (XYColumnPlotData)obj;
+                XYColumnPlotData s = (XYColumnPlotData)obj;
 
-				info.AddValue("XColumn", s._xColumn);
-				info.AddValue("YColumn", s._yColumn);
+                info.AddValue("XColumn", s._xColumn);
+                info.AddValue("YColumn", s._yColumn);
 
-				info.AddValue("XBoundaries", s._xBoundaries);
-				info.AddValue("YBoundaries", s._yBoundaries);
+                info.AddValue("XBoundaries", s._xBoundaries);
+                info.AddValue("YBoundaries", s._yBoundaries);
 
-				info.AddValue("RangeStart", s._plotRangeStart);
-				info.AddValue("RangeLength", s._plotRangeLength);
-				*/
+                info.AddValue("RangeStart", s._plotRangeStart);
+                info.AddValue("RangeLength", s._plotRangeLength);
+                */
       }
 
       public virtual XYColumnPlotData SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -1142,20 +1142,20 @@ namespace Altaxo.Graph.Plot.Data
     #region Change event handling
 
     /*
-		/// <summary>
-		/// Used by the data proxies to report changes
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-		private void EhColumnDataChangedEventHandler(object sender, EventArgs e)
-		{
-			// !!!todo!!! : special case if only data added to a column should
-			// be handeld separately to save computing time
-			this._isCachedDataValid = false;
+        /// <summary>
+        /// Used by the data proxies to report changes
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void EhColumnDataChangedEventHandler(object sender, EventArgs e)
+        {
+            // !!!todo!!! : special case if only data added to a column should
+            // be handeld separately to save computing time
+            this._isCachedDataValid = false;
 
-			EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
-		}
-		*/
+            EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
+        }
+        */
 
     protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
     {
@@ -1180,26 +1180,26 @@ namespace Altaxo.Graph.Plot.Data
     }
 
     /*
-		/// <summary>
-		/// Looks whether one of data data columns have changed their data. If this is the case, we must recalculate the boundaries,
-		/// and trigger the boundary changed event if one of the boundaries have changed.
-		/// </summary>
-		/// <param name="sender">The sender of the event args, usually a child of this object.</param>
-		/// <param name="e">The <see cref="EventArgs" /> instance containing the event data. On return, you can provided transformed event args by this parameter.</param>
-		/// <returns>
-		/// The return value of the base handling function
-		/// </returns>
-		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
-		{
-			if (object.ReferenceEquals(sender, _xColumn) || object.ReferenceEquals(sender, _yColumn))
-				_isCachedDataValid = false;
+        /// <summary>
+        /// Looks whether one of data data columns have changed their data. If this is the case, we must recalculate the boundaries,
+        /// and trigger the boundary changed event if one of the boundaries have changed.
+        /// </summary>
+        /// <param name="sender">The sender of the event args, usually a child of this object.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data. On return, you can provided transformed event args by this parameter.</param>
+        /// <returns>
+        /// The return value of the base handling function
+        /// </returns>
+        protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
+        {
+            if (object.ReferenceEquals(sender, _xColumn) || object.ReferenceEquals(sender, _yColumn))
+                _isCachedDataValid = false;
 
-			if (!_isCachedDataValid)
-				CalculateCachedData(); // Calculates cached data -> If boundaries changed, this will trigger a boundary changed event
+            if (!_isCachedDataValid)
+                CalculateCachedData(); // Calculates cached data -> If boundaries changed, this will trigger a boundary changed event
 
-			return base.HandleLowPriorityChildChangeCases(sender, ref e);
-		}
-		*/
+            return base.HandleLowPriorityChildChangeCases(sender, ref e);
+        }
+        */
 
     /// <summary>
     /// Looks whether one of data data columns have changed their data. If this is the case, we must recalculate the boundaries,

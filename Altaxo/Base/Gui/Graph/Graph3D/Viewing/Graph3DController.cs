@@ -1231,16 +1231,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     public virtual void EhView_GraphPanelSizeChanged()
     {
       /*
-			if (_isAutoZoomActive)
-			{
-				RefreshAutoZoom(false);
-			}
-			else
-			{
-				if (null != _view && 0 != _view.ViewportSizeInPoints.X && 0 != _view.ViewportSizeInPoints.Y)
-					SetViewsScrollbarParameter();
-			}
-			*/
+            if (_isAutoZoomActive)
+            {
+                RefreshAutoZoom(false);
+            }
+            else
+            {
+                if (null != _view && 0 != _view.ViewportSizeInPoints.X && 0 != _view.ViewportSizeInPoints.Y)
+                    SetViewsScrollbarParameter();
+            }
+            */
 
       _view?.TriggerRendering();
     }

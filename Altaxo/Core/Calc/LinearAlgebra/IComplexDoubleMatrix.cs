@@ -26,63 +26,63 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  /// <summary>
-  /// IROMatrix represents a read-only matrix of <see cref="Complex" /> values.
-  /// </summary>
-  public interface IROComplexDoubleMatrix
-  {
-    /// <summary>Gets an element of the matrix at (row, col).</summary>
-    Complex this[int row, int col] { get; }
-
-    /// <summary>The number of rows of the matrix.</summary>
-    int Rows { get; }
-
-    /// <summary>The number of columns of the matrix.</summary>
-    int Columns { get; }
-  }
-
-  /// <summary>
-  /// Represents the simplest form of a 2D matrix of <see cref="Complex" /> values, which is readable and writeable.
-  /// </summary>
-  public interface IComplexDoubleMatrix : IROComplexDoubleMatrix
-  {
-    /// <summary>Get / sets an element of the matrix at (row, col).</summary>
-    new Complex this[int row, int col] { get; set; }
-  }
-
-  /// <summary>
-  /// Extends <see cref="IComplexDoubleMatrix" /> in a way that another matrix of appropriate dimensions
-  /// can be appended to the right of the matrix.
-  /// </summary>
-  public interface IRightExtensibleComplexDoubleMatrix : IComplexDoubleMatrix
-  {
     /// <summary>
-    /// Append matrix a to the right edge of this matrix. Matrix a must have the same number of rows than this matrix, except this matrix
-    /// is still empty, in which case the right dimension of this matrix is set.
+    /// IROMatrix represents a read-only matrix of <see cref="Complex" /> values.
     /// </summary>
-    /// <param name="a">The matrix to append.</param>
-    void AppendRight(IROComplexDoubleMatrix a);
-  }
+    public interface IROComplexDoubleMatrix
+    {
+        /// <summary>Gets an element of the matrix at (row, col).</summary>
+        Complex this[int row, int col] { get; }
 
-  /// <summary>
-  /// Extends <see cref="IComplexDoubleMatrix" /> in a way that another matrix of appropriate dimensions
-  /// can be appended to the bottom of the matrix.
-  /// </summary>
-  public interface IBottomExtensibleComplexDoubleMatrix : IComplexDoubleMatrix
-  {
+        /// <summary>The number of rows of the matrix.</summary>
+        int Rows { get; }
+
+        /// <summary>The number of columns of the matrix.</summary>
+        int Columns { get; }
+    }
+
     /// <summary>
-    /// Append matrix a to the bottom of this matrix. Matrix a must have the same number of columns than this matrix, except this matrix
-    /// is still empty, in which case the right dimension of this matrix is set.
+    /// Represents the simplest form of a 2D matrix of <see cref="Complex" /> values, which is readable and writeable.
     /// </summary>
-    /// <param name="a">The matrix to append.</param>
-    void AppendBottom(IROComplexDoubleMatrix a);
-  }
+    public interface IComplexDoubleMatrix : IROComplexDoubleMatrix
+    {
+        /// <summary>Get / sets an element of the matrix at (row, col).</summary>
+        new Complex this[int row, int col] { get; set; }
+    }
 
-  /// <summary>
-  /// Extends <see cref="IComplexDoubleMatrix" /> in a way that another matrix of appropriate dimensions
-  /// can be appended either to the right or to the bottom of the matrix.
-  /// </summary>
-  public interface IExtensibleComplexDoubleMatrix : IRightExtensibleComplexDoubleMatrix, IBottomExtensibleComplexDoubleMatrix
-  {
-  }
+    /// <summary>
+    /// Extends <see cref="IComplexDoubleMatrix" /> in a way that another matrix of appropriate dimensions
+    /// can be appended to the right of the matrix.
+    /// </summary>
+    public interface IRightExtensibleComplexDoubleMatrix : IComplexDoubleMatrix
+    {
+        /// <summary>
+        /// Append matrix a to the right edge of this matrix. Matrix a must have the same number of rows than this matrix, except this matrix
+        /// is still empty, in which case the right dimension of this matrix is set.
+        /// </summary>
+        /// <param name="a">The matrix to append.</param>
+        void AppendRight(IROComplexDoubleMatrix a);
+    }
+
+    /// <summary>
+    /// Extends <see cref="IComplexDoubleMatrix" /> in a way that another matrix of appropriate dimensions
+    /// can be appended to the bottom of the matrix.
+    /// </summary>
+    public interface IBottomExtensibleComplexDoubleMatrix : IComplexDoubleMatrix
+    {
+        /// <summary>
+        /// Append matrix a to the bottom of this matrix. Matrix a must have the same number of columns than this matrix, except this matrix
+        /// is still empty, in which case the right dimension of this matrix is set.
+        /// </summary>
+        /// <param name="a">The matrix to append.</param>
+        void AppendBottom(IROComplexDoubleMatrix a);
+    }
+
+    /// <summary>
+    /// Extends <see cref="IComplexDoubleMatrix" /> in a way that another matrix of appropriate dimensions
+    /// can be appended either to the right or to the bottom of the matrix.
+    /// </summary>
+    public interface IExtensibleComplexDoubleMatrix : IRightExtensibleComplexDoubleMatrix, IBottomExtensibleComplexDoubleMatrix
+    {
+    }
 }

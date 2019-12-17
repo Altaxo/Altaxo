@@ -62,8 +62,8 @@ namespace Altaxo.Worksheet
     /// Stores the default property column Styles in a Hashtable
     /// the key for the hash table is the Type of the ColumnStyle
     /// </summary>
-		protected Dictionary<System.Type, ColumnStyle> _defaultPropertyColumnStyles;
-		*/
+        protected Dictionary<System.Type, ColumnStyle> _defaultPropertyColumnStyles;
+        */
 
     /// <summary>
     /// m_ColumnStyles stores the column styles for each data column individually,
@@ -245,70 +245,70 @@ namespace Altaxo.Worksheet
     // TODO (Wpf) Uncomment the next serialization if this is also implemented in Altaxo3
     /*
 
-		// New in version 2 (2010-08): the key of the default styles is now the type of the column (before it was the type of default style)
-		// both data columns and property columns have their own default styles
-		// ColumnDictionary now has its own serialization code
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetLayout), 2)]
-		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			protected WorksheetLayout _deserializedInstance;
-			protected Main.DocumentPath _unresolvedPathToTable;
+        // New in version 2 (2010-08): the key of the default styles is now the type of the column (before it was the type of default style)
+        // both data columns and property columns have their own default styles
+        // ColumnDictionary now has its own serialization code
+        [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetLayout), 2)]
+        class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+        {
+            protected WorksheetLayout _deserializedInstance;
+            protected Main.DocumentPath _unresolvedPathToTable;
 
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				WorksheetLayout s = (WorksheetLayout)obj;
+            public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+            {
+                WorksheetLayout s = (WorksheetLayout)obj;
 
-				info.AddValue("Guid", System.Xml.XmlConvert.ToString(s._guid));
-				info.AddValue("Table", Main.DocumentPath.GetAbsolutePath(s._dataTable));
-				info.AddValue("RowHeaderStyle", s._rowHeaderStyle);
-				info.AddValue("ColumnHeaderStyle", s._columnHeaderStyle);
-				info.AddValue("PropertyColumnHeaderStyle", s._propertyColumnHeaderStyle);
+                info.AddValue("Guid", System.Xml.XmlConvert.ToString(s._guid));
+                info.AddValue("Table", Main.DocumentPath.GetAbsolutePath(s._dataTable));
+                info.AddValue("RowHeaderStyle", s._rowHeaderStyle);
+                info.AddValue("ColumnHeaderStyle", s._columnHeaderStyle);
+                info.AddValue("PropertyColumnHeaderStyle", s._propertyColumnHeaderStyle);
 
-				info.AddValue("DataColumnStyles", s._dataColumnStyles);
-				info.AddValue("PropertyColumnStyles", s._propertyColumnStyles);
-			}
+                info.AddValue("DataColumnStyles", s._dataColumnStyles);
+                info.AddValue("PropertyColumnStyles", s._propertyColumnStyles);
+            }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				WorksheetLayout s = null != o ? (WorksheetLayout)o : new WorksheetLayout();
-				Deserialize(s, info, parent);
-				return s;
-			}
+            public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+            {
+                WorksheetLayout s = null != o ? (WorksheetLayout)o : new WorksheetLayout();
+                Deserialize(s, info, parent);
+                return s;
+            }
 
-			protected virtual void Deserialize(WorksheetLayout s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XmlSerializationSurrogate2 surr = new XmlSerializationSurrogate2();
-				surr._deserializedInstance = s;
-				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+            protected virtual void Deserialize(WorksheetLayout s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+            {
+                XmlSerializationSurrogate2 surr = new XmlSerializationSurrogate2();
+                surr._deserializedInstance = s;
+                info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
-				s._guid = System.Xml.XmlConvert.ToGuid(info.GetString("Guid"));
-				surr._unresolvedPathToTable = (Main.DocumentPath)info.GetValue("Table", s);
-				s._rowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle", s);
-				s._columnHeaderStyle = (ColumnHeaderStyle)info.GetValue("ColumnHeaderStyle", s);
-				s._propertyColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("PropertyColumnHeaderStyle", s);
+                s._guid = System.Xml.XmlConvert.ToGuid(info.GetString("Guid"));
+                surr._unresolvedPathToTable = (Main.DocumentPath)info.GetValue("Table", s);
+                s._rowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle", s);
+                s._columnHeaderStyle = (ColumnHeaderStyle)info.GetValue("ColumnHeaderStyle", s);
+                s._propertyColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("PropertyColumnHeaderStyle", s);
 
-				s._dataColumnStyles = (ColumnStyleDictionary)info.GetValue("DataColumnStypes", s);
-				s._propertyColumnStyles = (ColumnStyleDictionary)info.GetValue("PropertyColumnStyles", s);
-			}
+                s._dataColumnStyles = (ColumnStyleDictionary)info.GetValue("DataColumnStypes", s);
+                s._propertyColumnStyles = (ColumnStyleDictionary)info.GetValue("PropertyColumnStyles", s);
+            }
 
-			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
-			{
-				if (this._unresolvedPathToTable != null)
-				{
-					object table = Main.DocumentPath.GetObject(this._unresolvedPathToTable, this._deserializedInstance, documentRoot);
-					if (table is Altaxo.Data.DataTable)
-					{
-						this._deserializedInstance._dataTable = (Altaxo.Data.DataTable)table;
-						this._unresolvedPathToTable = null;
-					}
-				}
+            public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+            {
+                if (this._unresolvedPathToTable != null)
+                {
+                    object table = Main.DocumentPath.GetObject(this._unresolvedPathToTable, this._deserializedInstance, documentRoot);
+                    if (table is Altaxo.Data.DataTable)
+                    {
+                        this._deserializedInstance._dataTable = (Altaxo.Data.DataTable)table;
+                        this._unresolvedPathToTable = null;
+                    }
+                }
 
-				// if the table path has been resolved, we can finish deserialization
-				if (this._unresolvedPathToTable == null)
-					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
-			}
-		}
-		*/
+                // if the table path has been resolved, we can finish deserialization
+                if (this._unresolvedPathToTable == null)
+                    info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+            }
+        }
+        */
 
     #endregion Serialization
 

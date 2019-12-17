@@ -96,72 +96,72 @@ namespace Altaxo.Graph.Gdi
       {
         throw new ApplicationException("Calling of an outdated serialization routine");
         /*
-				XYPlotLayer s = (XYPlotLayer)obj;
-				// XYPlotLayer style
-				info.AddValue("FillLayerArea",s._fillLayerArea);
-				info.AddValue("LayerAreaFillBrush",s.m_LayerAreaFillBrush);
+                XYPlotLayer s = (XYPlotLayer)obj;
+                // XYPlotLayer style
+                info.AddValue("FillLayerArea",s._fillLayerArea);
+                info.AddValue("LayerAreaFillBrush",s.m_LayerAreaFillBrush);
 
-				// size, position, rotation and scale
+                // size, position, rotation and scale
 
-				info.AddValue("WidthType",s._location.WidthType);
-				info.AddValue("HeightType",s._location.HeightType);
-				info.AddValue("Width",s._location.Width);
-				info.AddValue("Height",s._location.Height);
-				info.AddValue("CachedSize",s._cachedLayerSize);
+                info.AddValue("WidthType",s._location.WidthType);
+                info.AddValue("HeightType",s._location.HeightType);
+                info.AddValue("Width",s._location.Width);
+                info.AddValue("Height",s._location.Height);
+                info.AddValue("CachedSize",s._cachedLayerSize);
 
-				info.AddValue("XPositionType",s._location.XPositionType);
-				info.AddValue("YPositionType",s._location.YPositionType);
-				info.AddValue("XPosition",s._location.XPosition);
-				info.AddValue("YPosition",s._location.YPosition);
-				info.AddValue("CachedPosition",s._cachedLayerPosition);
+                info.AddValue("XPositionType",s._location.XPositionType);
+                info.AddValue("YPositionType",s._location.YPositionType);
+                info.AddValue("XPosition",s._location.XPosition);
+                info.AddValue("YPosition",s._location.YPosition);
+                info.AddValue("CachedPosition",s._cachedLayerPosition);
 
-				info.AddValue("Rotation",s._location.Angle);
-				info.AddValue("Scale",s._location.Scale);
+                info.AddValue("Rotation",s._location.Angle);
+                info.AddValue("Scale",s._location.Scale);
 
-				// axis related
+                // axis related
 
-				info.AddValue("XAxis",s._axisProperties.X.Axis);
-				info.AddValue("YAxis",s._axisProperties.Y.Axis);
-				info.AddValue("LinkXAxis",s._axisProperties.X.IsLinked);
-				info.AddValue("LinkYAxis", s._axisProperties.Y.IsLinked);
-				info.AddValue("LinkXAxisOrgA", s._axisProperties.X.LinkAxisOrgA);
-				info.AddValue("LinkXAxisOrgB", s._axisProperties.X.LinkAxisOrgB);
-				info.AddValue("LinkXAxisEndA", s._axisProperties.X.LinkAxisEndA);
-				info.AddValue("LinkXAxisEndB", s._axisProperties.X.LinkAxisEndB);
-				info.AddValue("LinkYAxisOrgA", s._axisProperties.Y.LinkAxisOrgA);
-				info.AddValue("LinkYAxisOrgB", s._axisProperties.Y.LinkAxisOrgB);
-				info.AddValue("LinkYAxisEndA", s._axisProperties.Y.LinkAxisEndA);
-				info.AddValue("LinkYAxisEndB", s._axisProperties.Y.LinkAxisEndB);
+                info.AddValue("XAxis",s._axisProperties.X.Axis);
+                info.AddValue("YAxis",s._axisProperties.Y.Axis);
+                info.AddValue("LinkXAxis",s._axisProperties.X.IsLinked);
+                info.AddValue("LinkYAxis", s._axisProperties.Y.IsLinked);
+                info.AddValue("LinkXAxisOrgA", s._axisProperties.X.LinkAxisOrgA);
+                info.AddValue("LinkXAxisOrgB", s._axisProperties.X.LinkAxisOrgB);
+                info.AddValue("LinkXAxisEndA", s._axisProperties.X.LinkAxisEndA);
+                info.AddValue("LinkXAxisEndB", s._axisProperties.X.LinkAxisEndB);
+                info.AddValue("LinkYAxisOrgA", s._axisProperties.Y.LinkAxisOrgA);
+                info.AddValue("LinkYAxisOrgB", s._axisProperties.Y.LinkAxisOrgB);
+                info.AddValue("LinkYAxisEndA", s._axisProperties.Y.LinkAxisEndA);
+                info.AddValue("LinkYAxisEndB", s._axisProperties.Y.LinkAxisEndB);
 
-				// Styles
-				info.AddValue("ShowLeftAxis", s._axisStyles[EdgeType.Left].ShowAxis);
-				info.AddValue("ShowBottomAxis", s._axisStyles[EdgeType.Bottom].ShowAxis);
-				info.AddValue("ShowRightAxis", s._axisStyles[EdgeType.Right].ShowAxis);
-				info.AddValue("ShowTopAxis", s._axisStyles[EdgeType.Top].ShowAxis);
+                // Styles
+                info.AddValue("ShowLeftAxis", s._axisStyles[EdgeType.Left].ShowAxis);
+                info.AddValue("ShowBottomAxis", s._axisStyles[EdgeType.Bottom].ShowAxis);
+                info.AddValue("ShowRightAxis", s._axisStyles[EdgeType.Right].ShowAxis);
+                info.AddValue("ShowTopAxis", s._axisStyles[EdgeType.Top].ShowAxis);
 
-				info.AddValue("LeftAxisStyle", s._axisStyles[EdgeType.Left].AxisStyle);
-				info.AddValue("BottomAxisStyle", s._axisStyles[EdgeType.Bottom].AxisStyle);
-				info.AddValue("RightAxisStyle", s._axisStyles[EdgeType.Right].AxisStyle);
-				info.AddValue("TopAxisStyle", s._axisStyles[EdgeType.Top].AxisStyle);
+                info.AddValue("LeftAxisStyle", s._axisStyles[EdgeType.Left].AxisStyle);
+                info.AddValue("BottomAxisStyle", s._axisStyles[EdgeType.Bottom].AxisStyle);
+                info.AddValue("RightAxisStyle", s._axisStyles[EdgeType.Right].AxisStyle);
+                info.AddValue("TopAxisStyle", s._axisStyles[EdgeType.Top].AxisStyle);
 
-				info.AddValue("LeftLabelStyle",s._axisStyles[EdgeType.Left].MajorLabelStyle);
-				info.AddValue("BottomLabelStyle", s._axisStyles[EdgeType.Bottom].MajorLabelStyle);
-				info.AddValue("RightLabelStyle", s._axisStyles[EdgeType.Right].MajorLabelStyle);
-				info.AddValue("TopLabelStyle", s._axisStyles[EdgeType.Top].MajorLabelStyle);
+                info.AddValue("LeftLabelStyle",s._axisStyles[EdgeType.Left].MajorLabelStyle);
+                info.AddValue("BottomLabelStyle", s._axisStyles[EdgeType.Bottom].MajorLabelStyle);
+                info.AddValue("RightLabelStyle", s._axisStyles[EdgeType.Right].MajorLabelStyle);
+                info.AddValue("TopLabelStyle", s._axisStyles[EdgeType.Top].MajorLabelStyle);
 
-				// Titles and legend
-				info.AddValue("LeftAxisTitle", s._axisStyles[EdgeType.Left].Title);
-				info.AddValue("BottomAxisTitle", s._axisStyles[EdgeType.Bottom].Title);
-				info.AddValue("RightAxisTitle", s._axisStyles[EdgeType.Right].Title);
-				info.AddValue("TopAxisTitle", s._axisStyles[EdgeType.Top].Title);
-				info.AddValue("Legend",s._legend);
+                // Titles and legend
+                info.AddValue("LeftAxisTitle", s._axisStyles[EdgeType.Left].Title);
+                info.AddValue("BottomAxisTitle", s._axisStyles[EdgeType.Bottom].Title);
+                info.AddValue("RightAxisTitle", s._axisStyles[EdgeType.Right].Title);
+                info.AddValue("TopAxisTitle", s._axisStyles[EdgeType.Top].Title);
+                info.AddValue("Legend",s._legend);
 
-				// XYPlotLayer specific
-				info.AddValue("LinkedLayer", null!=s._linkedLayer ? Main.DocumentPath.GetRelativePathFromTo(s,s._linkedLayer) : null);
+                // XYPlotLayer specific
+                info.AddValue("LinkedLayer", null!=s._linkedLayer ? Main.DocumentPath.GetRelativePathFromTo(s,s._linkedLayer) : null);
 
-				info.AddValue("GraphicsObjectCollection",s._graphObjects);
-				info.AddValue("Plots",s._plotItems);
-				*/
+                info.AddValue("GraphicsObjectCollection",s._graphObjects);
+                info.AddValue("Plots",s._plotItems);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -291,12 +291,12 @@ namespace Altaxo.Graph.Gdi
       {
         throw new NotSupportedException("Serialization of old versions not supported, maybe a programming error");
         /*
-				base.Serialize(obj, info);
+                base.Serialize(obj, info);
 
-				XYPlotLayer s = (XYPlotLayer)obj;
-				// XYPlotLayer style
-				info.AddValue("ClipDataToFrame", s._dataClipping);
-				*/
+                XYPlotLayer s = (XYPlotLayer)obj;
+                // XYPlotLayer style
+                info.AddValue("ClipDataToFrame", s._dataClipping);
+                */
       }
 
       protected override XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -320,39 +320,39 @@ namespace Altaxo.Graph.Gdi
       {
         throw new NotSupportedException("Serialization of old versions is not supported");
         /*
-				XYPlotLayer s = (XYPlotLayer)obj;
+                XYPlotLayer s = (XYPlotLayer)obj;
 
-				// Background
-				info.AddValue("Background",s._layerBackground);
+                // Background
+                info.AddValue("Background",s._layerBackground);
 
-				// size, position, rotation and scale
-				info.AddValue("LocationAndSize", s._location);
-				info.AddValue("CachedSize", s._cachedLayerSize);
-				info.AddValue("CachedPosition", s._cachedLayerPosition);
+                // size, position, rotation and scale
+                info.AddValue("LocationAndSize", s._location);
+                info.AddValue("CachedSize", s._cachedLayerSize);
+                info.AddValue("CachedPosition", s._cachedLayerPosition);
 
-				// LayerProperties
-				info.AddValue("ClipDataToFrame",s._clipDataToFrame);
+                // LayerProperties
+                info.AddValue("ClipDataToFrame",s._clipDataToFrame);
 
-				// axis related
-				info.AddValue("AxisProperties", s._axisProperties);
+                // axis related
+                info.AddValue("AxisProperties", s._axisProperties);
 
-				// Styles
-				info.AddValue("AxisStyles", s._scaleStyles);
+                // Styles
+                info.AddValue("AxisStyles", s._scaleStyles);
 
-				// Legends
-				info.CreateArray("Legends",1);
-				info.AddValue("e", s._legend);
-				info.CommitArray();
+                // Legends
+                info.CreateArray("Legends",1);
+                info.AddValue("e", s._legend);
+                info.CommitArray();
 
-				// XYPlotLayer specific
-				info.CreateArray("LinkedLayers",1);
-				info.AddValue("e", s._linkedLayer);
-				info.CommitArray();
+                // XYPlotLayer specific
+                info.CreateArray("LinkedLayers",1);
+                info.AddValue("e", s._linkedLayer);
+                info.CommitArray();
 
-				info.AddValue("GraphicGlyphs", s._graphObjects);
+                info.AddValue("GraphicGlyphs", s._graphObjects);
 
-				info.AddValue("Plots", s._plotItems);
-				*/
+                info.AddValue("Plots", s._plotItems);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -435,42 +435,42 @@ namespace Altaxo.Graph.Gdi
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				XYPlotLayer s = (XYPlotLayer)obj;
+                XYPlotLayer s = (XYPlotLayer)obj;
 
-				// size, position, rotation and scale
-				info.AddValue("LocationAndSize", s._location);
-				info.AddValue("CachedSize", s._cachedLayerSize);
-				info.AddValue("CachedPosition", s._cachedLayerPosition);
+                // size, position, rotation and scale
+                info.AddValue("LocationAndSize", s._location);
+                info.AddValue("CachedSize", s._cachedLayerSize);
+                info.AddValue("CachedPosition", s._cachedLayerPosition);
 
-				// CoordinateSystem
-				info.AddValue("CoordinateSystem", s._coordinateSystem);
+                // CoordinateSystem
+                info.AddValue("CoordinateSystem", s._coordinateSystem);
 
-				// Linked layers
-				info.CreateArray("LinkedLayers", 1);
-				info.AddValue("e", s._linkedLayerProxy);
-				info.CommitArray();
+                // Linked layers
+                info.CreateArray("LinkedLayers", 1);
+                info.AddValue("e", s._linkedLayerProxy);
+                info.CommitArray();
 
-				// Scales
-				info.AddValue("Scales", s._scales);
+                // Scales
+                info.AddValue("Scales", s._scales);
 
-				// Grid planes
-				info.AddValue("GridPlanes", s._gridPlanes);
+                // Grid planes
+                info.AddValue("GridPlanes", s._gridPlanes);
 
-				// Axis styles
-				info.AddValue("AxisStyles", s._axisStyles);
+                // Axis styles
+                info.AddValue("AxisStyles", s._axisStyles);
 
-				// Legends
-				info.AddValue("Legends", s._legends);
+                // Legends
+                info.AddValue("Legends", s._legends);
 
-				// Graphic objects
-				info.AddValue("GraphObjects", s._graphObjects);
+                // Graphic objects
+                info.AddValue("GraphObjects", s._graphObjects);
 
-				// Data clipping
-				info.AddValue("DataClipping", s._dataClipping);
+                // Data clipping
+                info.AddValue("DataClipping", s._dataClipping);
 
-				// Plots
-				info.AddValue("Plots", s._plotItems);
-				*/
+                // Plots
+                info.AddValue("Plots", s._plotItems);
+                */
       }
 
       protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -551,42 +551,42 @@ namespace Altaxo.Graph.Gdi
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				XYPlotLayer s = (XYPlotLayer)obj;
+                XYPlotLayer s = (XYPlotLayer)obj;
 
-				// size, position, rotation and scale
-				info.AddValue("LocationAndSize", s._location);
-				info.AddValue("CachedSize", s._cachedLayerSize);
-				info.AddValue("CachedPosition", s._cachedLayerPosition);
+                // size, position, rotation and scale
+                info.AddValue("LocationAndSize", s._location);
+                info.AddValue("CachedSize", s._cachedLayerSize);
+                info.AddValue("CachedPosition", s._cachedLayerPosition);
 
-				// CoordinateSystem
-				info.AddValue("CoordinateSystem", s._coordinateSystem);
+                // CoordinateSystem
+                info.AddValue("CoordinateSystem", s._coordinateSystem);
 
-				// Linked layers
-				info.CreateArray("LinkedLayers", 1);
-				info.AddValue("e", s._linkedLayerProxy);
-				info.CommitArray();
+                // Linked layers
+                info.CreateArray("LinkedLayers", 1);
+                info.AddValue("e", s._linkedLayerProxy);
+                info.CommitArray();
 
-				// Scales
-				info.AddValue("Scales", s._scales);
+                // Scales
+                info.AddValue("Scales", s._scales);
 
-				// Grid planes
-				info.AddValue("GridPlanes", s._gridPlanes);
+                // Grid planes
+                info.AddValue("GridPlanes", s._gridPlanes);
 
-				// Axis styles
-				info.AddValue("AxisStyles", s._axisStyles);
+                // Axis styles
+                info.AddValue("AxisStyles", s._axisStyles);
 
-				// Legends
-				info.AddValue("Legends", s._legends);
+                // Legends
+                info.AddValue("Legends", s._legends);
 
-				// Graphic objects
-				info.AddValue("GraphObjects", s._graphObjects);
+                // Graphic objects
+                info.AddValue("GraphObjects", s._graphObjects);
 
-				// Data clipping
-				info.AddValue("DataClipping", s._dataClipping);
+                // Data clipping
+                info.AddValue("DataClipping", s._dataClipping);
 
-				// Plots
-				info.AddValue("Plots", s._plotItems);
-				*/
+                // Plots
+                info.AddValue("Plots", s._plotItems);
+                */
       }
 
       protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

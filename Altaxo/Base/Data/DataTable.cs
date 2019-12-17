@@ -181,32 +181,32 @@ namespace Altaxo.Data
       {
         throw new InvalidOperationException("Try to serialize old version");
         /*
-				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
-				info.AddValue("Name", s._tableName); // name of the Table
-				info.AddValue("DataCols", s._dataColumns);
-				info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
+                Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
+                info.AddValue("Name", s._tableName); // name of the Table
+                info.AddValue("DataCols", s._dataColumns);
+                info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
 
-				// new in version 1
-				info.AddValue("TableScript", s._tableScript);
+                // new in version 1
+                info.AddValue("TableScript", s._tableScript);
 
-				// new in version 2 - Add table properties
-				int numberproperties = s._tableProperties == null ? 0 : s._tableProperties.Count;
-				info.CreateArray("TableProperties", numberproperties);
-				if (s._tableProperties != null)
-				{
-					foreach (string propkey in s._tableProperties.Keys)
-					{
-						if (propkey.StartsWith("tmp/"))
-							continue;
-						info.CreateElement("e");
-						info.AddValue("Key", propkey);
-						object val = s._tableProperties[propkey];
-						info.AddValue("Value", info.IsSerializable(val) ? val : null);
-						info.CommitElement();
-					}
-				}
-				info.CommitArray();
-				*/
+                // new in version 2 - Add table properties
+                int numberproperties = s._tableProperties == null ? 0 : s._tableProperties.Count;
+                info.CreateArray("TableProperties", numberproperties);
+                if (s._tableProperties != null)
+                {
+                    foreach (string propkey in s._tableProperties.Keys)
+                    {
+                        if (propkey.StartsWith("tmp/"))
+                            continue;
+                        info.CreateElement("e");
+                        info.AddValue("Key", propkey);
+                        object val = s._tableProperties[propkey];
+                        info.AddValue("Value", info.IsSerializable(val) ? val : null);
+                        info.CommitElement();
+                    }
+                }
+                info.CommitArray();
+                */
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

@@ -263,11 +263,11 @@ namespace Altaxo.Graph.Graph3D
       {
         throw new NotImplementedException("We need here two angles instead of one");
         /*
-				double phi = Math.PI * angle / 180;
-				double hdx = adx * Math.Cos(phi) + ady * Math.Sin(phi);
-				ady = -adx * Math.Sin(phi) + ady * Math.Cos(phi);
-				adx = hdx;
-				*/
+                double phi = Math.PI * angle / 180;
+                double hdx = adx * Math.Cos(phi) + ady * Math.Sin(phi);
+                ady = -adx * Math.Sin(phi) + ady * Math.Cos(phi);
+                adx = hdx;
+                */
       }
 
       normalizeddirection = direction.Normalized;

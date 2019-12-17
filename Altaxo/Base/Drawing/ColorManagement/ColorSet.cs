@@ -56,24 +56,24 @@ namespace Altaxo.Drawing.ColorManagement
       {
         throw new InvalidOperationException("Serialization of old version is not supported");
         /*
-				var s = (ColorSet)obj;
-				info.AddValue("Name", s._originalName);
-				info.AddEnum("Level", s._originalColorSetLevel);
-				info.AddValue("CreationDate", s._creationDate);
-				info.AddValue("IsPlotColorSet", s._isPlotColorSet);
+                var s = (ColorSet)obj;
+                info.AddValue("Name", s._originalName);
+                info.AddEnum("Level", s._originalColorSetLevel);
+                info.AddValue("CreationDate", s._creationDate);
+                info.AddValue("IsPlotColorSet", s._isPlotColorSet);
 
-				info.CreateArray("Colors", s.Count);
+                info.CreateArray("Colors", s.Count);
 
-				foreach (NamedColor c in s)
-				{
-					info.CreateElement("e");
-					info.AddAttributeValue("Name", c.Name);
-					info.SetNodeContent(c.Color.ToInvariantString());
-					info.CommitElement();
-				}
+                foreach (NamedColor c in s)
+                {
+                    info.CreateElement("e");
+                    info.AddAttributeValue("Name", c.Name);
+                    info.SetNodeContent(c.Color.ToInvariantString());
+                    info.CommitElement();
+                }
 
-				info.CommitArray();
-				*/
+                info.CommitArray();
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

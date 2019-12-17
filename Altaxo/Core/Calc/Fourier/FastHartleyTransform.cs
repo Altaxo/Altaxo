@@ -28,63 +28,63 @@ using System;
 
 namespace Altaxo.Calc.Fourier
 {
-  /// <summary>
-  /// Fast Fourier Transform class based on the Fast Hartley Transform.
-  /// </summary>
-  public class FastHartleyTransform
-  {
-    /*-----------------------------------------------------------------------------*\
-		| Fast Fourier Transform, Fast Hartley Transform                   fhttrigtbl.h |
-		|                                                                               |
-		| trigonometric tables for the associated FHT routines in the file fft.cc       |
-		| This algorithm is apparently patented(!) and the code copyrighted.            |
-		| See the comment with the fht routine for more info.                           |
-		|                                                                               |
-		| Matpack Library Release 1.0                                                   |
-		| Copyright (C) 1991-1997 by Berndt M. Gammel                                   |
-		|                                                                               |
-		| Permission to  use, copy, and  distribute  Matpack  in  its entirety  and its |
-		| documentation  for non-commercial purpose and  without fee is hereby granted, |
-		| provided that this license information and copyright notice appear unmodified |
-		| in all copies.  This software is provided 'as is'  without express or implied |
-		| warranty.  In no event will the author be held liable for any damages arising |
-		| from the use of this software.            |
-		| Note that distributing Matpack 'bundled' in with any product is considered to |
-		| be a 'commercial purpose'.              |
-		| The software may be modified for your own purposes, but modified versions may |
-		| not be distributed without prior consent of the author.     |
-		|                                                                               |
-		| Read the  COPYRIGHT and  README files in this distribution about registration |
-		| and installation of Matpack.              |
-		|                                                                               |
-		\*-----------------------------------------------------------------------------*/
+    /// <summary>
+    /// Fast Fourier Transform class based on the Fast Hartley Transform.
+    /// </summary>
+    public class FastHartleyTransform
+    {
+        /*-----------------------------------------------------------------------------*\
+            | Fast Fourier Transform, Fast Hartley Transform                   fhttrigtbl.h |
+            |                                                                               |
+            | trigonometric tables for the associated FHT routines in the file fft.cc       |
+            | This algorithm is apparently patented(!) and the code copyrighted.            |
+            | See the comment with the fht routine for more info.                           |
+            |                                                                               |
+            | Matpack Library Release 1.0                                                   |
+            | Copyright (C) 1991-1997 by Berndt M. Gammel                                   |
+            |                                                                               |
+            | Permission to  use, copy, and  distribute  Matpack  in  its entirety  and its |
+            | documentation  for non-commercial purpose and  without fee is hereby granted, |
+            | provided that this license information and copyright notice appear unmodified |
+            | in all copies.  This software is provided 'as is'  without express or implied |
+            | warranty.  In no event will the author be held liable for any damages arising |
+            | from the use of this software.            |
+            | Note that distributing Matpack 'bundled' in with any product is considered to |
+            | be a 'commercial purpose'.              |
+            | The software may be modified for your own purposes, but modified versions may |
+            | not be distributed without prior consent of the author.     |
+            |                                                                               |
+            | Read the  COPYRIGHT and  README files in this distribution about registration |
+            | and installation of Matpack.              |
+            |                                                                               |
+            \*-----------------------------------------------------------------------------*/
 
-    //----------------------------------------------------------------------------//
-    //
-    // Due to the finite tables in the original code (n=20) the fft routines failed
-    // if the size of the vector to be transformed exceeded N = 2^17.
-    //
-    // I extended the tables to 60 entries with 50 digits precision and added
-    // several changes.
-    // Berndt M. Gammel 1994.
-    //
-    //----------------------------------------------------------------------------//
+        //----------------------------------------------------------------------------//
+        //
+        // Due to the finite tables in the original code (n=20) the fft routines failed
+        // if the size of the vector to be transformed exceeded N = 2^17.
+        //
+        // I extended the tables to 60 entries with 50 digits precision and added
+        // several changes.
+        // Berndt M. Gammel 1994.
+        //
+        //----------------------------------------------------------------------------//
 
-    //----------------------------------------------------------------------------//
-    // Since the original fht routine contained pointer variables
-    // I had to change the code for fht and I included the original #defines
-    // for TRIG_GOOD
-    // Dirk Lellinger 2002
-    //----------------------------------------------------------------------------//
+        //----------------------------------------------------------------------------//
+        // Since the original fht routine contained pointer variables
+        // I had to change the code for fht and I included the original #defines
+        // for TRIG_GOOD
+        // Dirk Lellinger 2002
+        //----------------------------------------------------------------------------//
 
-    //----------------------------------------------------------------------------//
-    // table containing sec[pi/(2^n)]/2, n=3,4,5,...
-    // with 50 digits precision generated with Mathematica
-    // CForm[Table[N[Sec[Pi/(2^n)]/2,50],{n,3,60}]]
-    //----------------------------------------------------------------------------//
+        //----------------------------------------------------------------------------//
+        // table containing sec[pi/(2^n)]/2, n=3,4,5,...
+        // with 50 digits precision generated with Mathematica
+        // CForm[Table[N[Sec[Pi/(2^n)]/2,50],{n,3,60}]]
+        //----------------------------------------------------------------------------//
 
-    private static readonly double[] halsec =
-  {
+        private static readonly double[] halsec =
+      {
     0.0,
     0.0,
     0.54119610014619698439972320536638942006107206337802,
@@ -147,14 +147,14 @@ namespace Altaxo.Calc.Fourier
     0.50000000000000000000000000000000000185626627493301
   };
 
-    //----------------------------------------------------------------------------//
-    // table containing cos[pi/(2^n)], n=0,1,2,...
-    // with 50 digits precision generated with Mathematica
-    // CForm[Table[N[Cos[Pi/(2^n)],50],{n,1,60}]]
-    //----------------------------------------------------------------------------//
+        //----------------------------------------------------------------------------//
+        // table containing cos[pi/(2^n)], n=0,1,2,...
+        // with 50 digits precision generated with Mathematica
+        // CForm[Table[N[Cos[Pi/(2^n)],50],{n,1,60}]]
+        //----------------------------------------------------------------------------//
 
-    private static readonly double[] costab =
-  {
+        private static readonly double[] costab =
+      {
     0.0,
     0.70710678118654752440084436210484903928483593768847,
     0.92387953251128675612818318939678828682241662586364,
@@ -217,14 +217,14 @@ namespace Altaxo.Calc.Fourier
     0.99999999999999999999999999999999999628746745013398
   };
 
-    //----------------------------------------------------------------------------//
-    // table containing sin[pi/(2^n)], n=0,1,2,...
-    // with 50 digits precision generated with Mathematica
-    // CForm[Table[N[Sin[Pi/(2^n)],50],{n,1,60}]]
-    //----------------------------------------------------------------------------//
+        //----------------------------------------------------------------------------//
+        // table containing sin[pi/(2^n)], n=0,1,2,...
+        // with 50 digits precision generated with Mathematica
+        // CForm[Table[N[Sin[Pi/(2^n)],50],{n,1,60}]]
+        //----------------------------------------------------------------------------//
 
-    private static readonly double[] sintab =
-  {
+        private static readonly double[] sintab =
+      {
     1.0,
     0.70710678118654752440084436210484903928483593768847,
     0.38268343236508977172845998403039886676134456248563,
@@ -287,14 +287,14 @@ namespace Altaxo.Calc.Fourier
     2.7248972640692436714681569567132597700550911173371e-18
   };
 
-    //----------------------------------------------------------------------------//
-    // table containing cos[pi/(2^n)], n=0,1,2,...
-    // with 50 digits precision generated with Mathematica
-    // CForm[Table[N[Cos[Pi/(2^n)],50],{n,1,60}]]
-    //----------------------------------------------------------------------------//
+        //----------------------------------------------------------------------------//
+        // table containing cos[pi/(2^n)], n=0,1,2,...
+        // with 50 digits precision generated with Mathematica
+        // CForm[Table[N[Cos[Pi/(2^n)],50],{n,1,60}]]
+        //----------------------------------------------------------------------------//
 
-    private static readonly double[] coswrk =
-  {
+        private static readonly double[] coswrk =
+      {
     0.0,
     0.70710678118654752440084436210484903928483593768847,
     0.92387953251128675612818318939678828682241662586364,
@@ -357,14 +357,14 @@ namespace Altaxo.Calc.Fourier
     0.99999999999999999999999999999999999628746745013398
   };
 
-    //----------------------------------------------------------------------------//
-    // table containing sin[pi/(2^n)], n=0,1,2,...[
-    // with 50 digits precision generated with Mathematica
-    // CForm[Table[N[Sin[Pi/(2^n)],50],{n,1,60}]]
-    //----------------------------------------------------------------------------//
+        //----------------------------------------------------------------------------//
+        // table containing sin[pi/(2^n)], n=0,1,2,...[
+        // with 50 digits precision generated with Mathematica
+        // CForm[Table[N[Sin[Pi/(2^n)],50],{n,1,60}]]
+        //----------------------------------------------------------------------------//
 
-    private static readonly double[] sinwrk =
-  {
+        private static readonly double[] sinwrk =
+      {
     1.0,
     0.70710678118654752440084436210484903928483593768847,
     0.38268343236508977172845998403039886676134456248563,
@@ -427,958 +427,958 @@ namespace Altaxo.Calc.Fourier
     2.7248972640692436714681569567132597700550911173371e-18
   };
 
-    /*-----------------------------------------------------------------------------*\
-		| Fast Fourier Transform based on Fast Hartley Transform              fhtfft.cc |
-		|                                                                               |
-		| Last change: Jun 22, 2001             |
-		|                                                                               |
-		| Matpack Library Release 1.6.2                                                 |
-		| Copyright (C) 1991-2001 by Berndt M. Gammel. All rights reserved.             |
-		|                                                                               |
-		| Permission to  use, copy, and  distribute  Matpack  in  its entirety  and its |
-		| documentation  for non-commercial purpose and  without fee is hereby granted, |
-		| provided that this license information and copyright notice appear unmodified |
-		| in all copies.  This software is provided 'as is'  without express or implied |
-		| warranty.  In no event will the author be held liable for any damages arising |
-		| from the use of this software.            |
-		| Note that distributing Matpack 'bundled' in with any product is considered to |
-		| be a 'commercial purpose'.              |
-		| The software may be modified for your own purposes, but modified versions may |
-		| not be distributed without prior consent of the author.     |
-		|                                                                               |
-		| Read the  COPYRIGHT and  README files in this distribution about registration |
-		| and installation of Matpack.              |
-		|                                                                               |
-		\*-----------------------------------------------------------------------------*/
+        /*-----------------------------------------------------------------------------*\
+            | Fast Fourier Transform based on Fast Hartley Transform              fhtfft.cc |
+            |                                                                               |
+            | Last change: Jun 22, 2001             |
+            |                                                                               |
+            | Matpack Library Release 1.6.2                                                 |
+            | Copyright (C) 1991-2001 by Berndt M. Gammel. All rights reserved.             |
+            |                                                                               |
+            | Permission to  use, copy, and  distribute  Matpack  in  its entirety  and its |
+            | documentation  for non-commercial purpose and  without fee is hereby granted, |
+            | provided that this license information and copyright notice appear unmodified |
+            | in all copies.  This software is provided 'as is'  without express or implied |
+            | warranty.  In no event will the author be held liable for any damages arising |
+            | from the use of this software.            |
+            | Note that distributing Matpack 'bundled' in with any product is considered to |
+            | be a 'commercial purpose'.              |
+            | The software may be modified for your own purposes, but modified versions may |
+            | not be distributed without prior consent of the author.     |
+            |                                                                               |
+            | Read the  COPYRIGHT and  README files in this distribution about registration |
+            | and installation of Matpack.              |
+            |                                                                               |
+            \*-----------------------------------------------------------------------------*/
 
-    // #include "fht.h"
+        // #include "fht.h"
 
-    //-----------------------------------------------------------------------------//
-    //
-    // The following algorithms for the 'best and fastest implementation' of the
-    // FFT in C are due to a public posting in the newsgroups
-    //
-    //    sci.math.num-analysis,sci.math,comp.lang.c,comp.lang.c++,comp.dsp
-    // by
-    //    Ron Mayer, 19 Mar 1993, from  ACUSON, Mountain View, CA
-    //    mayer@acuson.com
-    //
-    // This seems to be a piece of really smart code for doing the fast Fourier
-    // transform FFT by means of a fast Hartley transform FHT. It is superior to
-    // the code published in the Numerical Recipies and some other published code.
-    // That is the reason why I decided to include it into the MatPack C++ library.
-    // I left the original code unchanged exept for introducing prototypes for all
-    // functions according to the ANSI standard. All functions now compile with
-    // ANSI C and C++. Note that the file "trigtbl.h" is included.
-    //
-    // Improvements:
-    // -------------
-    // The FFT routines in their original version competely failed if the vector
-    // exceeded a certain size. This was due to the limited size of the trig tables
-    // in "fhttrigtbl.h". I (B. Gammel) extended the tables to 60 entries with 50 digits
-    // precision (plus some other changes) which should be sufficient also for the
-    // next three computer generations.
-    //
-    // Important Note:
-    // ---------------
-    // Ron Mayer notes (below) that the Fast Hartley Trasform code below is
-    // restricted by patents (U.S. Patent No. 4,646,256 (1987)).
-    // As noted in Computer in Pysics, Vol. 9, No. 4,
-    // Jul/Aug 1995 pp 373-379 it was placed in the public domain by the
-    // Board of Trustees of Stanford University in 1994 and is now freely available.
-    //
-    // Berndt M. Gammel, 1994.
-    //
-    //
-    // FFT and FHT routines  Copyright 1988, 1993 by Ron Mayer
-    // -------------------------------------------------------
-    //
-    //  void fht (double* fz, int n);
-    //      Does a hartley transform of 'n' points in the array 'fz'.
-    //
-    //  void fht_fft (int n, double* real, double* imag);
-    //      Does a fourier transform of 'n' points of the 'real' and
-    //      'imag' arrays.
-    //
-    //  void fht_ifft (int n, double* real, double* imag);
-    //      Does an inverse fourier transform of 'n' points of the 'real'
-    //      and 'imag' arrays.
-    //
-    //  void fht_realfft (int n, double* real);
-    //      Does a real-valued fourier transform of 'n' points of the
-    //      'real' array.  The real part of the transform ends
-    //      up in the first half of the array and the imaginary part of the
-    //      transform ends up in the second half of the array.
+        //-----------------------------------------------------------------------------//
+        //
+        // The following algorithms for the 'best and fastest implementation' of the
+        // FFT in C are due to a public posting in the newsgroups
+        //
+        //    sci.math.num-analysis,sci.math,comp.lang.c,comp.lang.c++,comp.dsp
+        // by
+        //    Ron Mayer, 19 Mar 1993, from  ACUSON, Mountain View, CA
+        //    mayer@acuson.com
+        //
+        // This seems to be a piece of really smart code for doing the fast Fourier
+        // transform FFT by means of a fast Hartley transform FHT. It is superior to
+        // the code published in the Numerical Recipies and some other published code.
+        // That is the reason why I decided to include it into the MatPack C++ library.
+        // I left the original code unchanged exept for introducing prototypes for all
+        // functions according to the ANSI standard. All functions now compile with
+        // ANSI C and C++. Note that the file "trigtbl.h" is included.
+        //
+        // Improvements:
+        // -------------
+        // The FFT routines in their original version competely failed if the vector
+        // exceeded a certain size. This was due to the limited size of the trig tables
+        // in "fhttrigtbl.h". I (B. Gammel) extended the tables to 60 entries with 50 digits
+        // precision (plus some other changes) which should be sufficient also for the
+        // next three computer generations.
+        //
+        // Important Note:
+        // ---------------
+        // Ron Mayer notes (below) that the Fast Hartley Trasform code below is
+        // restricted by patents (U.S. Patent No. 4,646,256 (1987)).
+        // As noted in Computer in Pysics, Vol. 9, No. 4,
+        // Jul/Aug 1995 pp 373-379 it was placed in the public domain by the
+        // Board of Trustees of Stanford University in 1994 and is now freely available.
+        //
+        // Berndt M. Gammel, 1994.
+        //
+        //
+        // FFT and FHT routines  Copyright 1988, 1993 by Ron Mayer
+        // -------------------------------------------------------
+        //
+        //  void fht (double* fz, int n);
+        //      Does a hartley transform of 'n' points in the array 'fz'.
+        //
+        //  void fht_fft (int n, double* real, double* imag);
+        //      Does a fourier transform of 'n' points of the 'real' and
+        //      'imag' arrays.
+        //
+        //  void fht_ifft (int n, double* real, double* imag);
+        //      Does an inverse fourier transform of 'n' points of the 'real'
+        //      and 'imag' arrays.
+        //
+        //  void fht_realfft (int n, double* real);
+        //      Does a real-valued fourier transform of 'n' points of the
+        //      'real' array.  The real part of the transform ends
+        //      up in the first half of the array and the imaginary part of the
+        //      transform ends up in the second half of the array.
 
-    //
-    //  void fht_realifft (int n, double* real);
-    //      The inverse of the fht_realfft() routine above.
-    //
-    //
-    // NOTE: This routine uses at least 2 patented algorithms, and may be
-    //       under the restrictions of a bunch of different organizations.
-    //       Although I wrote it completely myself; it is kind of a derivative
-    //       of a routine I once authored and released under the GPL, so it
-    //       may fall under the free software foundation's restrictions;
-    //       it was worked on as a Stanford Univ project, so they claim
-    //       some rights to it; it was further optimized at work here, so
-    //       I think this company claims parts of it.  The patents are
-    //       held by R. Bracewell (the FHT algorithm) and O. Buneman (the
-    //       trig generator), both at Stanford Univ.
-    //       If it were up to me, I'd say go do whatever you want with it;
-    //       but it would be polite to give credit to the following people
-    //       if you use this anywhere:
-    //           Euler     - probable inventor of the fourier transform.
-    //           Gauss     - probable inventor of the FFT.
-    //           Hartley   - probable inventor of the hartley transform.
-    //           Buneman   - for a really cool trig generator
-    //           Mayer     - for authoring this particular version and
-    //                       including all the optimizations in one package.
-    //       Thanks,
-    //       Ron Mayer; mayer@acuson.com
-    //
-    //
-    // The follwing comments from Ron Mayer came along with the code:
-    // --------------------------------------------------------------
-    //
-    // As I'm sure you realize, 'best' depends quite a bit on what you
-    // consider best, and 'fastest' depends largely on the number of points,
-    // what compiler, and what architecture you're using.  If it's amazingly
-    // critical to have the best and fastest, you're probably best off
-    // writing your own to meet your specific application.  Short of
-    // specialized hardware, if you can use a real valued FFT this would be
-    // your best optimization (should be faster by a factor of 2).
-    //
-    // It seems that two of the source code sections in your summary used
-    // 'a duhamel-holman split radix fft'.  Perhaps this is considered a
-    // 'standard piece of code', but I do know of two different fft's which
-    // in my opinion qualify as both 'faster' and 'better'.
-    //
-    // I tried comparing my code to the code by Dave Edelblute that you
-    // included in your previous posting; but the times for that code was so
-    // much worse (twice as slow) that it's unlikely that such code would
-    // have been in a posting labeled best and fastest; so I probably made an
-    // error in compiling it.  In the nearly identical test programs I
-    // include in my other posting, they both seem to produce the same
-    // results; but who knows.  I'll include the code duhamel-holman code I
-    // tested in the second part of this posting so someone can point out
-    // where I screwed up.  (If anyone tries it, please let me know if you
-    // get the same results...)
-    //
-    // The best' published FFT routine I have studied recently is based on
-    // Singleton's mixed-radix FFT algorithm.  His routine has a number of
-    // optimizations which include a decent trig function generator, and
-    // doing a quite optimized radix-4 transforms and only 0 or 1 radix-2
-    // transforms for any power of 2.  It is also neat in that it works with
-    // any sized array, not just powers of 2!  I believe the published
-    // version is in fortran; but someone at work translated it to C, and
-    // it seems to be ~25% faster than the duhamel-holman routine you posted
-    // in your summary (if I compiled it correctly).  I can probably dig up a
-    // reference to this code next time I dig through all my school stuff if
-    // anyone really needs it.
-    //
-    // The 'fastest' (for typical computers: single processor, non-vector,
-    // fast-integer-math, slower-floating-point-math, slow-trig-function) FFT
-    // routine I have ever seen is one I wrote myself; trying to incorporate
-    // as many optimizations I could find in various IEEE publications while
-    // I was at college.  As you can see in the file 'summary.sparc' included
-    // below, it is nearly twice as fast as the duhamel-holman routine you
-    // posted in your posting.
-    //
-    // The routine I came up with includes the following optimizations:
-    //
-    //   1) It is a wrapper around a highly optimized FHT (hartley transform)
-    //      A FHT better localizes memory accesses for large transforms,
-    //      thereby avoiding paging.  Hartley transforms are also much easier
-    //      to add optimization tricks too; more than making up for the
-    //      overhead of converting the hartley transfrom to a fourier
-    //      transform.  Another advantage is that the transformation from
-    //          FHT -> real_valued_FFT
-    //      is faster than the transformation from
-    //          1/2pointFFT-> real_valued_FFT
-    //      so my real-valued fft is even better when compared to most
-    //      published real valued ffts.
-    //
-    //   2) Avoid multiplications by 1 and zero (and sometimes sqrt2).
-    //      Many published routines such as Numerical Recipes seem to spend
-    //      a lot of time multiplying by cos(0), cos(pi), etc. and almost all
-    //      seem to do 1/sqrt_2*x+1/sqrt_2*y instead of 1/sqrt_2*(x+y).
-    //
-    //   3) Faster trig generation.
-    //      Most algorithms use 1 'sin' library call for each level of the
-    //      transform; and 2 real multiplications and 2 real additions for
-    //      each needed trig value within it's loop.
-    //
-    //      I use a stable algorithm to generate each trig value using 1 real
-    //      multiplication and 1 real addition for each value using a small
-    //      (log(n)) table of trig values.  The tradeoff is that I require
-    //      much more integer arithmetic for this calculation, including a
-    //      (n*log(n)) loop; but for multiples of pi/16 or so, my routine
-    //      still seems faster.  By taking advantage of the fact that
-    //      values required for FFTs are for evenly spaced angles, I avoid
-    //      all calls to slow trig library functions which are unnecessarily
-    //      complex because they need to work for arbitrary values.
-    //
-    //   4) Generate less trig values
-    //      I use the identities sin(x)=sin(pi-x)=-sin(pi+x)=-sin(-x),etc. to
-    //      avoid excessive trig calculations, and sin(2x) = 2*cos(x)*sin(x)
-    //      to allow simpler trig calculations when accuracy permits.  A more
-    //      stable than average trig generator mentioned in (3) above allows
-    //      me to use the unstable sin(2x) = 2*cos(x)*sin(x) hack for every
-    //      other 'level' in the FFT without the usual loss of accuracy.
-    //
-    //   5) Mixed 2,4-radix inner loop.
-    //      By doing two levels in the inner loop, I gain all the advantages
-    //      of a radix-4 algorithm; primarily reducing integer arithmetic and
-    //      memory access.  This has a great affect on large arrays when
-    //      paging occurs.
-    //
-    //   6) Unrolling loops and variable storage to optimize register
-    //      allocation.  I try not to require storing too many values in
-    //      variables at any one time to ease a compilers register
-    //      allocation.
-    //
-    //   7) Remove low levels of the transform out of the loop.  It's
-    //      significantly faster to do 8 point transforms explicitly; rather
-    //      than using the general loop.
-    //
-    // One catch to this routine is that at least two of the algorithms used
-    // by it are patented(!) (just about any FHT is patented by R. Bracewell;
-    // and the stable trig generator is patented by O. Buneman; both at
-    // Stanford Univ.)  Who owns the copyright rights to it is also probably
-    // being debated; since it is a derivative work of a GNU-licensed
-    // routine, so subject to their restrictions; it was worked on for a
-    // Stanford project, so they have a claim on it;  and I optimized it
-    // further working for this company, so they probably claim parts of it.
-    //
-    // Considering Gauss apparently used the equivalent of real valued FFTs
-    // in 1805; and Euler did fourier transforms it in the mid 1700s; I'm
-    // amazed that people still want to claim this math.
-    //
-    //
-    // Here are the test results posted by Ron Mayer
-    // ---------------------------------------------
-    //
-    // This file contains a benchmark results of a number of popular FFT
-    // algorithms.  The algorithms compared are:
-    //
-    //     FFT-numrec
-    //         The FFT from numerical recipies, converted to double precision
-    //     FFT-duhamel
-    //         A 'duhamel-holman split radix fft' from "electronics letters,
-    //         jan. 5, 1994", coded by Dave Edelblute, edelblut@cod.nosc.mil
-    //     FFT-wang
-    //         Singleton's arbitrary-radix FFT translated to C and coded by
-    //         John Wang, wang@acuson.com
-    //     FFT-mayer
-    //         An original FFT by Ron Mayer (mayer@acuson.com)
-    //     real-FFT-numrec
-    //         The real valued FFT from numerical recipies, converted to
-    //         double precision.
-    //     real-FFT-mayer
-    //         An original real valued FFT by Ron Mayer (mayer@acuson.com)
-    //
-    // I compiled each of the programs using gcc 2.0 with the -O4 flag on a
-    // Sun Sparc 1; and timed (using the "clock()" function in SunOS) a
-    // number of iterations of forward and reverse transforms of a known data
-    // set.  At the end of the iterations of forward and reverse transforms I
-    // compared the data with the original to check for accumulated errors.
-    //
-    // algorithm                  # of       # of     time           errors
-    //   used                   iterations   points
-    //
-    // n=4
-    // FFT-numrec                (16386       4):   4466488 CPU us ;ssq errors 0.0
-    // FFT-duhamel               (16386       4):   2016586 CPU us ;ssq errors 0.0
-    // FFT-wang                  (16386       4):   3299868 CPU us ;ssq errors 0.0
-    // FFT-mayer                 (16386       4):   1333280 CPU us ;ssq errors 0.0
-    // real-FFT-numrec           (16386       4):   3133208 CPU us ;ssq errors 0.0
-    // real-FFT-mayer            (16386       4):    666640 CPU us ;ssq errors 0.0
-    //
-    // n=128
-    // FFT-numrec                (514       128):   3883178 CPU us ;ssq errors 4.1e-21
-    // FFT-duhamel               (514       128):   6349746 CPU us ;ssq errors 8.6e-22
-    // FFT-wang                  (514       128):   3866512 CPU us ;ssq errors 1.5e-09
-    // FFT-mayer                 (514       128):   2999880 CPU us ;ssq errors 6.9e-22
-    // real-FFT-numrec           (514       128):   2333240 CPU us ;ssq errors 4.1e-21
-    // real-FFT-mayer            (514       128):   1433276 CPU us ;ssq errors 6.9e-22
-    //
-    // n=2048
-    // FFT-numrec                (34       2048):   5733104 CPU us ;ssq errors 8.6e-19
-    // FFT-duhamel               (34       2048):   8849646 CPU us ;ssq errors 3.2e-20
-    // FFT-wang                  (34       2048):   5783102 CPU us ;ssq errors 2.2e-08
-    // FFT-mayer                 (34       2048):   4649814 CPU us ;ssq errors 9.4e-20
-    // real-FFT-numrec           (34       2048):   3116542 CPU us ;ssq errors 1.6e-18
-    // real-FFT-mayer            (34       2048):   2183246 CPU us ;ssq errors 9.4e-20
-    //
-    // n=32768
-    // FFT-numrec                (4       32768):  18732584 CPU us ;ssq errors 1.5e-16
-    // FFT-duhamel               (4       32768):  22632428 CPU us ;ssq errors 3.7e-18
-    // FFT-wang                  (4       32768):  16299348 CPU us ;ssq errors 1.1e-06
-    // FFT-mayer                 (4       32768):  13849446 CPU us ;ssq errors 1.2e-17
-    // real-FFT-numrec           (4       32768):   9999600 CPU us ;ssq errors 1.9e-16
-    // real-FFT-mayer            (4       32768):   6716398 CPU us ;ssq errors 1.2e-17
-    //
-    //-----------------------------------------------------------------------------//
+        //
+        //  void fht_realifft (int n, double* real);
+        //      The inverse of the fht_realfft() routine above.
+        //
+        //
+        // NOTE: This routine uses at least 2 patented algorithms, and may be
+        //       under the restrictions of a bunch of different organizations.
+        //       Although I wrote it completely myself; it is kind of a derivative
+        //       of a routine I once authored and released under the GPL, so it
+        //       may fall under the free software foundation's restrictions;
+        //       it was worked on as a Stanford Univ project, so they claim
+        //       some rights to it; it was further optimized at work here, so
+        //       I think this company claims parts of it.  The patents are
+        //       held by R. Bracewell (the FHT algorithm) and O. Buneman (the
+        //       trig generator), both at Stanford Univ.
+        //       If it were up to me, I'd say go do whatever you want with it;
+        //       but it would be polite to give credit to the following people
+        //       if you use this anywhere:
+        //           Euler     - probable inventor of the fourier transform.
+        //           Gauss     - probable inventor of the FFT.
+        //           Hartley   - probable inventor of the hartley transform.
+        //           Buneman   - for a really cool trig generator
+        //           Mayer     - for authoring this particular version and
+        //                       including all the optimizations in one package.
+        //       Thanks,
+        //       Ron Mayer; mayer@acuson.com
+        //
+        //
+        // The follwing comments from Ron Mayer came along with the code:
+        // --------------------------------------------------------------
+        //
+        // As I'm sure you realize, 'best' depends quite a bit on what you
+        // consider best, and 'fastest' depends largely on the number of points,
+        // what compiler, and what architecture you're using.  If it's amazingly
+        // critical to have the best and fastest, you're probably best off
+        // writing your own to meet your specific application.  Short of
+        // specialized hardware, if you can use a real valued FFT this would be
+        // your best optimization (should be faster by a factor of 2).
+        //
+        // It seems that two of the source code sections in your summary used
+        // 'a duhamel-holman split radix fft'.  Perhaps this is considered a
+        // 'standard piece of code', but I do know of two different fft's which
+        // in my opinion qualify as both 'faster' and 'better'.
+        //
+        // I tried comparing my code to the code by Dave Edelblute that you
+        // included in your previous posting; but the times for that code was so
+        // much worse (twice as slow) that it's unlikely that such code would
+        // have been in a posting labeled best and fastest; so I probably made an
+        // error in compiling it.  In the nearly identical test programs I
+        // include in my other posting, they both seem to produce the same
+        // results; but who knows.  I'll include the code duhamel-holman code I
+        // tested in the second part of this posting so someone can point out
+        // where I screwed up.  (If anyone tries it, please let me know if you
+        // get the same results...)
+        //
+        // The best' published FFT routine I have studied recently is based on
+        // Singleton's mixed-radix FFT algorithm.  His routine has a number of
+        // optimizations which include a decent trig function generator, and
+        // doing a quite optimized radix-4 transforms and only 0 or 1 radix-2
+        // transforms for any power of 2.  It is also neat in that it works with
+        // any sized array, not just powers of 2!  I believe the published
+        // version is in fortran; but someone at work translated it to C, and
+        // it seems to be ~25% faster than the duhamel-holman routine you posted
+        // in your summary (if I compiled it correctly).  I can probably dig up a
+        // reference to this code next time I dig through all my school stuff if
+        // anyone really needs it.
+        //
+        // The 'fastest' (for typical computers: single processor, non-vector,
+        // fast-integer-math, slower-floating-point-math, slow-trig-function) FFT
+        // routine I have ever seen is one I wrote myself; trying to incorporate
+        // as many optimizations I could find in various IEEE publications while
+        // I was at college.  As you can see in the file 'summary.sparc' included
+        // below, it is nearly twice as fast as the duhamel-holman routine you
+        // posted in your posting.
+        //
+        // The routine I came up with includes the following optimizations:
+        //
+        //   1) It is a wrapper around a highly optimized FHT (hartley transform)
+        //      A FHT better localizes memory accesses for large transforms,
+        //      thereby avoiding paging.  Hartley transforms are also much easier
+        //      to add optimization tricks too; more than making up for the
+        //      overhead of converting the hartley transfrom to a fourier
+        //      transform.  Another advantage is that the transformation from
+        //          FHT -> real_valued_FFT
+        //      is faster than the transformation from
+        //          1/2pointFFT-> real_valued_FFT
+        //      so my real-valued fft is even better when compared to most
+        //      published real valued ffts.
+        //
+        //   2) Avoid multiplications by 1 and zero (and sometimes sqrt2).
+        //      Many published routines such as Numerical Recipes seem to spend
+        //      a lot of time multiplying by cos(0), cos(pi), etc. and almost all
+        //      seem to do 1/sqrt_2*x+1/sqrt_2*y instead of 1/sqrt_2*(x+y).
+        //
+        //   3) Faster trig generation.
+        //      Most algorithms use 1 'sin' library call for each level of the
+        //      transform; and 2 real multiplications and 2 real additions for
+        //      each needed trig value within it's loop.
+        //
+        //      I use a stable algorithm to generate each trig value using 1 real
+        //      multiplication and 1 real addition for each value using a small
+        //      (log(n)) table of trig values.  The tradeoff is that I require
+        //      much more integer arithmetic for this calculation, including a
+        //      (n*log(n)) loop; but for multiples of pi/16 or so, my routine
+        //      still seems faster.  By taking advantage of the fact that
+        //      values required for FFTs are for evenly spaced angles, I avoid
+        //      all calls to slow trig library functions which are unnecessarily
+        //      complex because they need to work for arbitrary values.
+        //
+        //   4) Generate less trig values
+        //      I use the identities sin(x)=sin(pi-x)=-sin(pi+x)=-sin(-x),etc. to
+        //      avoid excessive trig calculations, and sin(2x) = 2*cos(x)*sin(x)
+        //      to allow simpler trig calculations when accuracy permits.  A more
+        //      stable than average trig generator mentioned in (3) above allows
+        //      me to use the unstable sin(2x) = 2*cos(x)*sin(x) hack for every
+        //      other 'level' in the FFT without the usual loss of accuracy.
+        //
+        //   5) Mixed 2,4-radix inner loop.
+        //      By doing two levels in the inner loop, I gain all the advantages
+        //      of a radix-4 algorithm; primarily reducing integer arithmetic and
+        //      memory access.  This has a great affect on large arrays when
+        //      paging occurs.
+        //
+        //   6) Unrolling loops and variable storage to optimize register
+        //      allocation.  I try not to require storing too many values in
+        //      variables at any one time to ease a compilers register
+        //      allocation.
+        //
+        //   7) Remove low levels of the transform out of the loop.  It's
+        //      significantly faster to do 8 point transforms explicitly; rather
+        //      than using the general loop.
+        //
+        // One catch to this routine is that at least two of the algorithms used
+        // by it are patented(!) (just about any FHT is patented by R. Bracewell;
+        // and the stable trig generator is patented by O. Buneman; both at
+        // Stanford Univ.)  Who owns the copyright rights to it is also probably
+        // being debated; since it is a derivative work of a GNU-licensed
+        // routine, so subject to their restrictions; it was worked on for a
+        // Stanford project, so they have a claim on it;  and I optimized it
+        // further working for this company, so they probably claim parts of it.
+        //
+        // Considering Gauss apparently used the equivalent of real valued FFTs
+        // in 1805; and Euler did fourier transforms it in the mid 1700s; I'm
+        // amazed that people still want to claim this math.
+        //
+        //
+        // Here are the test results posted by Ron Mayer
+        // ---------------------------------------------
+        //
+        // This file contains a benchmark results of a number of popular FFT
+        // algorithms.  The algorithms compared are:
+        //
+        //     FFT-numrec
+        //         The FFT from numerical recipies, converted to double precision
+        //     FFT-duhamel
+        //         A 'duhamel-holman split radix fft' from "electronics letters,
+        //         jan. 5, 1994", coded by Dave Edelblute, edelblut@cod.nosc.mil
+        //     FFT-wang
+        //         Singleton's arbitrary-radix FFT translated to C and coded by
+        //         John Wang, wang@acuson.com
+        //     FFT-mayer
+        //         An original FFT by Ron Mayer (mayer@acuson.com)
+        //     real-FFT-numrec
+        //         The real valued FFT from numerical recipies, converted to
+        //         double precision.
+        //     real-FFT-mayer
+        //         An original real valued FFT by Ron Mayer (mayer@acuson.com)
+        //
+        // I compiled each of the programs using gcc 2.0 with the -O4 flag on a
+        // Sun Sparc 1; and timed (using the "clock()" function in SunOS) a
+        // number of iterations of forward and reverse transforms of a known data
+        // set.  At the end of the iterations of forward and reverse transforms I
+        // compared the data with the original to check for accumulated errors.
+        //
+        // algorithm                  # of       # of     time           errors
+        //   used                   iterations   points
+        //
+        // n=4
+        // FFT-numrec                (16386       4):   4466488 CPU us ;ssq errors 0.0
+        // FFT-duhamel               (16386       4):   2016586 CPU us ;ssq errors 0.0
+        // FFT-wang                  (16386       4):   3299868 CPU us ;ssq errors 0.0
+        // FFT-mayer                 (16386       4):   1333280 CPU us ;ssq errors 0.0
+        // real-FFT-numrec           (16386       4):   3133208 CPU us ;ssq errors 0.0
+        // real-FFT-mayer            (16386       4):    666640 CPU us ;ssq errors 0.0
+        //
+        // n=128
+        // FFT-numrec                (514       128):   3883178 CPU us ;ssq errors 4.1e-21
+        // FFT-duhamel               (514       128):   6349746 CPU us ;ssq errors 8.6e-22
+        // FFT-wang                  (514       128):   3866512 CPU us ;ssq errors 1.5e-09
+        // FFT-mayer                 (514       128):   2999880 CPU us ;ssq errors 6.9e-22
+        // real-FFT-numrec           (514       128):   2333240 CPU us ;ssq errors 4.1e-21
+        // real-FFT-mayer            (514       128):   1433276 CPU us ;ssq errors 6.9e-22
+        //
+        // n=2048
+        // FFT-numrec                (34       2048):   5733104 CPU us ;ssq errors 8.6e-19
+        // FFT-duhamel               (34       2048):   8849646 CPU us ;ssq errors 3.2e-20
+        // FFT-wang                  (34       2048):   5783102 CPU us ;ssq errors 2.2e-08
+        // FFT-mayer                 (34       2048):   4649814 CPU us ;ssq errors 9.4e-20
+        // real-FFT-numrec           (34       2048):   3116542 CPU us ;ssq errors 1.6e-18
+        // real-FFT-mayer            (34       2048):   2183246 CPU us ;ssq errors 9.4e-20
+        //
+        // n=32768
+        // FFT-numrec                (4       32768):  18732584 CPU us ;ssq errors 1.5e-16
+        // FFT-duhamel               (4       32768):  22632428 CPU us ;ssq errors 3.7e-18
+        // FFT-wang                  (4       32768):  16299348 CPU us ;ssq errors 1.1e-06
+        // FFT-mayer                 (4       32768):  13849446 CPU us ;ssq errors 1.2e-17
+        // real-FFT-numrec           (4       32768):   9999600 CPU us ;ssq errors 1.9e-16
+        // real-FFT-mayer            (4       32768):   6716398 CPU us ;ssq errors 1.2e-17
+        //
+        //-----------------------------------------------------------------------------//
 
-    //-----------------------------------------------------------------------------//
-    //  REAL is usually defined to be double, could also be float,
-    //  but all routines execpt fht use double ! So don't change it !
-    //-----------------------------------------------------------------------------//
+        //-----------------------------------------------------------------------------//
+        //  REAL is usually defined to be double, could also be float,
+        //  but all routines execpt fht use double ! So don't change it !
+        //-----------------------------------------------------------------------------//
 
-    // #define REAL double
-    // #define GOOD_TRIG       //could also use #define FAST_TRIG, but this is worse
+        // #define REAL double
+        // #define GOOD_TRIG       //could also use #define FAST_TRIG, but this is worse
 
-    //-----------------------------------------------------------------------------//
-    // include trigonometric table generator
-    //-----------------------------------------------------------------------------//
+        //-----------------------------------------------------------------------------//
+        // include trigonometric table generator
+        //-----------------------------------------------------------------------------//
 
-    private const double SQRT2_2 = 0.70710678118654752440084436210484;
-    private const double SQRT2 = 2 * SQRT2_2;
+        private const double SQRT2_2 = 0.70710678118654752440084436210484;
+        private const double SQRT2 = 2 * SQRT2_2;
 
-    /// <summary>
-    /// Return true if number is 0 (!) or a power of two
-    /// </summary>
-    /// <param name="x">Argument to test.</param>
-    /// <returns>Return true if number is 0 (!) or a power of two.</returns>
-    private static bool IsPowerOfTwo(int x)
-    {
-      return ((x & -x) == x);
-    }
-
-    //----------------------------------------------------------------------------//
-
-    /// <summary>
-    ///  Does a hartley transform of 'n' points in the array 'fz'.
-    /// </summary>
-    /// <param name="fz">The array of points.</param>
-    /// <param name="n">The number of points, must be a power of two. This precondition is not checked!</param>
-    public static void FHT(double[] fz, int n)
-    {
-      if (n < 4)
-        throw new ArgumentException("Invalid n, n is less than 4!");
-      if (!IsPowerOfTwo(n))
-        throw new ArgumentException("Invalid n, n is not a power of two!");
-
-      int i, k, k1, k2, k3, k4, kx;
-      //double *fi,*fn,*gi;
-      int fi, fn, gi;
-
-      // TRIG_VARS;
-      int t_lam = 0;
-
-      for (k1 = 1, k2 = 0; k1 < n; k1++)
-      {
-        double a;
-        for (k = n >> 1; (0 == (k & (k2 = k2 ^ k))); k >>= 1)
-          ; // the original code is: for (k=n >> 1; (!((k2^=k)&k)); k >>= 1);
-        if (k1 > k2)
+        /// <summary>
+        /// Return true if number is 0 (!) or a power of two
+        /// </summary>
+        /// <param name="x">Argument to test.</param>
+        /// <returns>Return true if number is 0 (!) or a power of two.</returns>
+        private static bool IsPowerOfTwo(int x)
         {
-          a = fz[k1];
-          fz[k1] = fz[k2];
-          fz[k2] = a;
-        }
-      }
-
-      for (k = 0; (1 << k) < n; k++)
-        ;
-
-      k &= 1;
-
-      if (k == 0)
-      {
-        for (fi = 0, fn = n; fi < fn; fi += 4)
-        {
-          double f0, f1, f2, f3;
-          f1 = fz[fi] - fz[fi + 1];
-          f0 = fz[fi] + fz[fi + 1];
-          f3 = fz[fi + 2] - fz[fi + 3];
-          f2 = fz[fi + 2] + fz[fi + 3];
-          fz[fi + 2] = (f0 - f2);
-          fz[fi] = (f0 + f2);
-          fz[fi + 3] = (f1 - f3);
-          fz[fi + 1] = (f1 + f3);
-        }
-      }
-      else
-      {
-        for (fi = 0, fn = n, gi = fi + 1; fi < fn; fi += 8, gi += 8)
-        {
-          double s1, c1, s2, c2, s3, c3, s4, c4, g0, f0, f1, g1, f2, g2, f3, g3;
-          c1 = fz[fi] - fz[gi];
-          s1 = fz[fi] + fz[gi];
-          c2 = fz[fi + 2] - fz[gi + 2];
-          s2 = fz[fi + 2] + fz[gi + 2];
-          c3 = fz[fi + 4] - fz[gi + 4];
-          s3 = fz[fi + 4] + fz[gi + 4];
-          c4 = fz[fi + 6] - fz[gi + 6];
-          s4 = fz[fi + 6] + fz[gi + 6];
-          f1 = (s1 - s2);
-          f0 = (s1 + s2);
-          g1 = (c1 - c2);
-          g0 = (c1 + c2);
-          f3 = (s3 - s4);
-          f2 = (s3 + s4);
-          g3 = SQRT2 * c4;
-          g2 = SQRT2 * c3;
-          fz[fi + 4] = f0 - f2;
-          fz[fi + 0] = f0 + f2;
-          fz[fi + 6] = f1 - f3;
-          fz[fi + 2] = f1 + f3;
-          fz[gi + 4] = g0 - g2;
-          fz[gi + 0] = g0 + g2;
-          fz[gi + 6] = g1 - g3;
-          fz[gi + 2] = g1 + g3;
-        }
-      }
-
-      if (n < 16)
-        return;
-
-      do
-      {
-        double s1, c1;
-        k += 2;
-        k1 = 1 << k;
-        k2 = k1 << 1;
-        k4 = k2 << 1;
-        k3 = k2 + k1;
-        kx = k1 >> 1;
-        fi = 0; // fz;
-        gi = fi + kx;
-        fn = n;
-
-        do
-        {
-          double g0, f0, f1, g1, f2, g2, f3, g3;
-          f1 = fz[fi + 0] - fz[fi + k1];
-          f0 = fz[fi + 0] + fz[fi + k1];
-          f3 = fz[fi + k2] - fz[fi + k3];
-          f2 = fz[fi + k2] + fz[fi + k3];
-          fz[fi + k2] = f0 - f2;
-          fz[fi + 0] = f0 + f2;
-          fz[fi + k3] = f1 - f3;
-          fz[fi + k1] = f1 + f3;
-          g1 = fz[gi + 0] - fz[gi + k1];
-          g0 = fz[gi + 0] + fz[gi + k1];
-          g3 = SQRT2 * fz[gi + k3];
-          g2 = SQRT2 * fz[gi + k2];
-          fz[gi + k2] = g0 - g2;
-          fz[gi + 0] = g0 + g2;
-          fz[gi + k3] = g1 - g3;
-          fz[gi + k1] = g1 + g3;
-          gi += k4;
-          fi += k4;
-        } while (fi < fn);
-
-        // TRIG_INIT(k,c1,s1);
-        {
-          int i1;
-          for (i1 = 2; i1 <= k; i1++)
-          {
-            coswrk[i1] = costab[i1];
-            sinwrk[i1] = sintab[i1];
-          }
-          t_lam = 0;
-          c1 = 1;
-          s1 = 0;
+            return ((x & -x) == x);
         }
 
-        for (i = 1; i < kx; i++)
-        {
-          double c2, s2;
+        //----------------------------------------------------------------------------//
 
-          // TRIG_NEXT(k,c1,s1);
-          {
-            int i2, j2;
-            (t_lam)++;
-            for (i2 = 0; 0 == ((1 << i2) & t_lam); i2++)
-              ;
-            i2 = k - i2;
-            s1 = sinwrk[i2];
-            c1 = coswrk[i2];
-            if (i2 > 1)
+        /// <summary>
+        ///  Does a hartley transform of 'n' points in the array 'fz'.
+        /// </summary>
+        /// <param name="fz">The array of points.</param>
+        /// <param name="n">The number of points, must be a power of two. This precondition is not checked!</param>
+        public static void FHT(double[] fz, int n)
+        {
+            if (n < 4)
+                throw new ArgumentException("Invalid n, n is less than 4!");
+            if (!IsPowerOfTwo(n))
+                throw new ArgumentException("Invalid n, n is not a power of two!");
+
+            int i, k, k1, k2, k3, k4, kx;
+            //double *fi,*fn,*gi;
+            int fi, fn, gi;
+
+            // TRIG_VARS;
+            int t_lam = 0;
+
+            for (k1 = 1, k2 = 0; k1 < n; k1++)
             {
-              for (j2 = k - i2 + 2; 0 != ((1 << j2) & t_lam); j2++)
-                ;
-              j2 = k - j2;
-              sinwrk[i2] = halsec[i2] * (sinwrk[i2 - 1] + sinwrk[j2]);
-              coswrk[i2] = halsec[i2] * (coswrk[i2 - 1] + coswrk[j2]);
+                double a;
+                for (k = n >> 1; (0 == (k & (k2 = k2 ^ k))); k >>= 1)
+                    ; // the original code is: for (k=n >> 1; (!((k2^=k)&k)); k >>= 1);
+                if (k1 > k2)
+                {
+                    a = fz[k1];
+                    fz[k1] = fz[k2];
+                    fz[k2] = a;
+                }
             }
-          }
 
-          c2 = c1 * c1 - s1 * s1;
-          s2 = 2 * (c1 * s1);
-          fn = n; // fn = fz + n;
-          fi = i; // fi = fz +i;
-          gi = k1 - i; // gi = fz +k1-i;
+            for (k = 0; (1 << k) < n; k++)
+                ;
 
-          do
-          {
-            double a, b, g0, f0, f1, g1, f2, g2, f3, g3;
-            b = s2 * fz[fi + k1] - c2 * fz[gi + k1];
-            a = c2 * fz[fi + k1] + s2 * fz[gi + k1];
-            f1 = fz[fi + 0] - a;
-            f0 = fz[fi + 0] + a;
-            g1 = fz[gi + 0] - b;
-            g0 = fz[gi + 0] + b;
-            b = s2 * fz[fi + k3] - c2 * fz[gi + k3];
-            a = c2 * fz[fi + k3] + s2 * fz[gi + k3];
-            f3 = fz[fi + k2] - a;
-            f2 = fz[fi + k2] + a;
-            g3 = fz[gi + k2] - b;
-            g2 = fz[gi + k2] + b;
-            b = s1 * f2 - c1 * g3;
-            a = c1 * f2 + s1 * g3;
-            fz[fi + k2] = f0 - a;
-            fz[fi + 0] = f0 + a;
-            fz[gi + k3] = g1 - b;
-            fz[gi + k1] = g1 + b;
-            b = c1 * g2 - s1 * f3;
-            a = s1 * g2 + c1 * f3;
-            fz[gi + k2] = g0 - a;
-            fz[gi + 0] = g0 + a;
-            fz[fi + k3] = f1 - b;
-            fz[fi + k1] = f1 + b;
-            gi += k4;
-            fi += k4;
-          } while (fi < fn);
+            k &= 1;
+
+            if (k == 0)
+            {
+                for (fi = 0, fn = n; fi < fn; fi += 4)
+                {
+                    double f0, f1, f2, f3;
+                    f1 = fz[fi] - fz[fi + 1];
+                    f0 = fz[fi] + fz[fi + 1];
+                    f3 = fz[fi + 2] - fz[fi + 3];
+                    f2 = fz[fi + 2] + fz[fi + 3];
+                    fz[fi + 2] = (f0 - f2);
+                    fz[fi] = (f0 + f2);
+                    fz[fi + 3] = (f1 - f3);
+                    fz[fi + 1] = (f1 + f3);
+                }
+            }
+            else
+            {
+                for (fi = 0, fn = n, gi = fi + 1; fi < fn; fi += 8, gi += 8)
+                {
+                    double s1, c1, s2, c2, s3, c3, s4, c4, g0, f0, f1, g1, f2, g2, f3, g3;
+                    c1 = fz[fi] - fz[gi];
+                    s1 = fz[fi] + fz[gi];
+                    c2 = fz[fi + 2] - fz[gi + 2];
+                    s2 = fz[fi + 2] + fz[gi + 2];
+                    c3 = fz[fi + 4] - fz[gi + 4];
+                    s3 = fz[fi + 4] + fz[gi + 4];
+                    c4 = fz[fi + 6] - fz[gi + 6];
+                    s4 = fz[fi + 6] + fz[gi + 6];
+                    f1 = (s1 - s2);
+                    f0 = (s1 + s2);
+                    g1 = (c1 - c2);
+                    g0 = (c1 + c2);
+                    f3 = (s3 - s4);
+                    f2 = (s3 + s4);
+                    g3 = SQRT2 * c4;
+                    g2 = SQRT2 * c3;
+                    fz[fi + 4] = f0 - f2;
+                    fz[fi + 0] = f0 + f2;
+                    fz[fi + 6] = f1 - f3;
+                    fz[fi + 2] = f1 + f3;
+                    fz[gi + 4] = g0 - g2;
+                    fz[gi + 0] = g0 + g2;
+                    fz[gi + 6] = g1 - g3;
+                    fz[gi + 2] = g1 + g3;
+                }
+            }
+
+            if (n < 16)
+                return;
+
+            do
+            {
+                double s1, c1;
+                k += 2;
+                k1 = 1 << k;
+                k2 = k1 << 1;
+                k4 = k2 << 1;
+                k3 = k2 + k1;
+                kx = k1 >> 1;
+                fi = 0; // fz;
+                gi = fi + kx;
+                fn = n;
+
+                do
+                {
+                    double g0, f0, f1, g1, f2, g2, f3, g3;
+                    f1 = fz[fi + 0] - fz[fi + k1];
+                    f0 = fz[fi + 0] + fz[fi + k1];
+                    f3 = fz[fi + k2] - fz[fi + k3];
+                    f2 = fz[fi + k2] + fz[fi + k3];
+                    fz[fi + k2] = f0 - f2;
+                    fz[fi + 0] = f0 + f2;
+                    fz[fi + k3] = f1 - f3;
+                    fz[fi + k1] = f1 + f3;
+                    g1 = fz[gi + 0] - fz[gi + k1];
+                    g0 = fz[gi + 0] + fz[gi + k1];
+                    g3 = SQRT2 * fz[gi + k3];
+                    g2 = SQRT2 * fz[gi + k2];
+                    fz[gi + k2] = g0 - g2;
+                    fz[gi + 0] = g0 + g2;
+                    fz[gi + k3] = g1 - g3;
+                    fz[gi + k1] = g1 + g3;
+                    gi += k4;
+                    fi += k4;
+                } while (fi < fn);
+
+                // TRIG_INIT(k,c1,s1);
+                {
+                    int i1;
+                    for (i1 = 2; i1 <= k; i1++)
+                    {
+                        coswrk[i1] = costab[i1];
+                        sinwrk[i1] = sintab[i1];
+                    }
+                    t_lam = 0;
+                    c1 = 1;
+                    s1 = 0;
+                }
+
+                for (i = 1; i < kx; i++)
+                {
+                    double c2, s2;
+
+                    // TRIG_NEXT(k,c1,s1);
+                    {
+                        int i2, j2;
+                        (t_lam)++;
+                        for (i2 = 0; 0 == ((1 << i2) & t_lam); i2++)
+                            ;
+                        i2 = k - i2;
+                        s1 = sinwrk[i2];
+                        c1 = coswrk[i2];
+                        if (i2 > 1)
+                        {
+                            for (j2 = k - i2 + 2; 0 != ((1 << j2) & t_lam); j2++)
+                                ;
+                            j2 = k - j2;
+                            sinwrk[i2] = halsec[i2] * (sinwrk[i2 - 1] + sinwrk[j2]);
+                            coswrk[i2] = halsec[i2] * (coswrk[i2 - 1] + coswrk[j2]);
+                        }
+                    }
+
+                    c2 = c1 * c1 - s1 * s1;
+                    s2 = 2 * (c1 * s1);
+                    fn = n; // fn = fz + n;
+                    fi = i; // fi = fz +i;
+                    gi = k1 - i; // gi = fz +k1-i;
+
+                    do
+                    {
+                        double a, b, g0, f0, f1, g1, f2, g2, f3, g3;
+                        b = s2 * fz[fi + k1] - c2 * fz[gi + k1];
+                        a = c2 * fz[fi + k1] + s2 * fz[gi + k1];
+                        f1 = fz[fi + 0] - a;
+                        f0 = fz[fi + 0] + a;
+                        g1 = fz[gi + 0] - b;
+                        g0 = fz[gi + 0] + b;
+                        b = s2 * fz[fi + k3] - c2 * fz[gi + k3];
+                        a = c2 * fz[fi + k3] + s2 * fz[gi + k3];
+                        f3 = fz[fi + k2] - a;
+                        f2 = fz[fi + k2] + a;
+                        g3 = fz[gi + k2] - b;
+                        g2 = fz[gi + k2] + b;
+                        b = s1 * f2 - c1 * g3;
+                        a = c1 * f2 + s1 * g3;
+                        fz[fi + k2] = f0 - a;
+                        fz[fi + 0] = f0 + a;
+                        fz[gi + k3] = g1 - b;
+                        fz[gi + k1] = g1 + b;
+                        b = c1 * g2 - s1 * f3;
+                        a = s1 * g2 + c1 * f3;
+                        fz[gi + k2] = g0 - a;
+                        fz[gi + 0] = g0 + a;
+                        fz[fi + k3] = f1 - b;
+                        fz[fi + k1] = f1 + b;
+                        gi += k4;
+                        fi += k4;
+                    } while (fi < fn);
+                }
+
+                // TRIG_RESET(k,c1,s1);
+            } while (k4 < n);
         }
 
-        // TRIG_RESET(k,c1,s1);
-      } while (k4 < n);
+        //----------------------------------------------------------------------------//
+
+        /// <summary>
+        ///      Does a fourier transform of 'n' points of the 'real' and
+        ///      'imag' arrays.
+        /// </summary>
+        /// <param name="real">The array holding the real part of the values.</param>
+        /// <param name="imag">The array holding the imaginary part of the values.</param>
+        /// <param name="n">Number of points to transform. Have to be a power of 2 (unchecked!)</param>
+        public static void FFT(double[] real, double[] imag, int n)
+        {
+            FHT(real, n);
+            FHT(imag, n);
+
+            for (int i = 1, j = n - 1, k = n / 2; i < k; i++, j--)
+            {
+                double a, b, c, d, q, r, s, t;
+                a = real[i];
+                b = real[j];
+                q = a + b;
+                r = a - b;
+                c = imag[i];
+                d = imag[j];
+                s = c + d;
+                t = c - d;
+                imag[i] = (s + r) * 0.5;
+                imag[j] = (s - r) * 0.5;
+                real[i] = (q - t) * 0.5;
+                real[j] = (q + t) * 0.5;
+            }
+        }
+
+        /// <summary>
+        ///      Does an in-place inverse fourier transform of 'n' points of the 'real'
+        ///      and 'imag' arrays.
+        /// </summary>
+        /// <param name="n">Number of points to transform. Have to be a power of 2 (unchecked!)</param>
+        /// <param name="real">The array holding the real part of the values.</param>
+        /// <param name="imag">The array holding the imaginary part of the values.</param>
+        public static void IFFT(double[] real, double[] imag, int n)
+        {
+            for (int i = 1, j = n - 1, k = n / 2; i < k; i++, j--)
+            {
+                double a, b, c, d, q, r, s, t;
+                a = real[i];
+                b = real[j];
+                q = a + b;
+                r = a - b;
+                c = imag[i];
+                d = imag[j];
+                s = c + d;
+                t = c - d;
+                real[i] = (q + t) * .5;
+                real[j] = (q - t) * .5;
+                imag[i] = (s - r) * .5;
+                imag[j] = (s + r) * .5;
+            }
+
+            FHT(real, n);
+            FHT(imag, n);
+        }
+
+        /// <summary>
+        ///      Does the inverse of a real-valued fourier transform of 'n' points.
+        /// </summary>
+        /// <param name="n">Number of points to transform. Has to be a power of 2 (unchecked).</param>
+        /// <param name="real">The array holding the fourier transform values, which will be transformed back.</param>
+        public static void RealIFFT(double[] real, int n)
+        {
+            for (int i = 1, j = n - 1, k = n / 2; i < k; i++, j--)
+            {
+                double a, b;
+                a = real[i];
+                b = real[j];
+                real[j] = (a - b);
+                real[i] = (a + b);
+            }
+
+            FHT(real, n);
+        }
+
+        /// <summary>
+        ///      Does a real-valued fourier transform of 'n' points of the
+        ///      'real' array.  The real part of the transform ends
+        ///      up in the first half of the array and the imaginary part of the
+        ///      transform ends up in the second half of the array.
+        /// </summary>
+        /// <param name="n">The number of points to transform. Has to be a power of 2 (unchecked!).</param>
+        /// <param name="real">The array holding the real values to transform.</param>
+        public static void RealFFT(double[] real, int n)
+        {
+            FHT(real, n);
+
+            for (int i = 1, j = n - 1, k = n / 2; i < k; i++, j--)
+            {
+                double a, b;
+                a = real[i];
+                b = real[j];
+                real[j] = (a - b) * 0.5;
+                real[i] = (a + b) * 0.5;
+            }
+        }
+
+        /// <summary>
+        /// Does a fourier transform of 'n' points of the 'real' and 'imag' arrays.
+        /// </summary>
+        /// <param name="real">The array holding the real part of the values.</param>
+        /// <param name="imag">The array holding the imaginary part of the values.</param>
+        /// <param name="direction">The direction of the Fourier transformation.</param>
+        public static void FFT(double[] real, double[] imag, FourierDirection direction)
+        {
+            if (real.Length != imag.Length)
+                throw new ArgumentException("Length of real and imag array do not match!");
+
+            FFT(real, imag, real.Length, direction);
+        }
+
+        /// <summary>
+        /// Does a fourier transform of 'n' points of the 'real' and 'imag' arrays.
+        /// </summary>
+        /// <param name="real">The array holding the real part of the values.</param>
+        /// <param name="imag">The array holding the imaginary part of the values.</param>
+        /// <param name="n">Number of points to transform. Have to be a power of 2 (unchecked!)</param>
+        /// <param name="direction">The direction of the Fourier transformation.</param>
+        public static void FFT(double[] real, double[] imag, int n, FourierDirection direction)
+        {
+            if (direction == FourierDirection.Forward)
+                FFT(real, imag, n);
+            else
+                IFFT(real, imag, n);
+        }
+
+        /// <summary>
+        /// Does a real-valued fourier transform of 'n' points of the
+        /// 'real' array.  On forward transform, the real part of the transform ends
+        /// up in the first half of the array and the imaginary part of the
+        /// transform ends up in the second half of the array. On backward transform, real and imaginary part
+        /// have to be located in the same way like the result of the forward transform.
+        /// </summary>
+        /// <param name="n">The number of points to transform. Has to be a power of 2 (unchecked!).</param>
+        /// <param name="real">The array holding the real values to transform.</param>
+        /// <param name="direction">The direction of the Fourier transform.</param>
+        public static void RealFFT(double[] real, int n, FourierDirection direction)
+        {
+            if (direction == FourierDirection.Forward)
+                RealFFT(real, n);
+            else
+                RealIFFT(real, n);
+        }
+
+        /// <summary>
+        /// Does a real-valued fourier transform of 'n' points of the
+        /// 'real' array.  On forward transform, the real part of the transform ends
+        /// up in the first half of the array and the imaginary part of the
+        /// transform ends up in the second half of the array. On backward transform, real and imaginary part
+        /// have to be located in the same way like the result of the forward transform.
+        /// </summary>
+        /// <param name="real">The array holding the real values to transform.</param>
+        /// <param name="direction">The direction of the Fourier transform.</param>
+        public static void RealFFT(double[] real, FourierDirection direction)
+        {
+            RealFFT(real, real.Length, direction);
+        }
+
+        /// <summary>
+        /// Performs a cyclic convolution of two real valued arrays. The content of the input arrays is destroyed during this operation.
+        /// </summary>
+        /// <param name="data">The first input array (the data).</param>
+        /// <param name="resp">The second input array (the response function).</param>
+        /// <param name="result">The result of the convolution.</param>
+        /// <param name="n">The convolution size. The provided arrays may be larger than n, but of course not smaller.</param>
+        public static void CyclicDestructiveConvolution(double[] data, double[] resp, double[] result, int n)
+        {
+            FHT(data, n);
+            FHT(resp, n);
+
+            double scale = 0.25 / n;
+            int nh = n / 2;
+            for (int i = 1, j = n - 1; i < nh; i++, j--)
+            {
+                double a, b, re1, im1, re2, im2, re, im;
+                a = data[i];
+                b = data[j];
+                im1 = (a - b); // this is exactly (a-b)/2, but the /2 is included in the scale
+                re1 = (a + b); // this is exactly (a+b)/2, but the /2 is included in the scale
+
+                a = resp[i];
+                b = resp[j];
+                im2 = (a - b);  // this is exactly (a-b)/2, but the /2 is included in the scale
+                re2 = (a + b);  // this is exactly (a+b)/2, but the /2 is included in the scale
+
+                re = (re1 * re2 - im1 * im2) * scale;
+                im = (re1 * im2 + im1 * re2) * scale;
+
+                result[j] = (re - im);
+                result[i] = (re + im);
+            }
+
+            // handle the zero and the half point
+            result[0] = data[0] * resp[0] / n;
+            result[nh] = data[nh] * resp[nh] / n;
+
+            FHT(result, n);
+        }
+
+        /// <summary>
+        /// Performs a cyclic convolution of two real valued arrays. The content of the input arrays is leaved intact.
+        /// </summary>
+        /// <param name="data">The first input array (the data).</param>
+        /// <param name="resp">The second input array (the response function).</param>
+        /// <param name="result">The result of the convolution.</param>
+        /// <param name="scratch">A helper array of at least size n. If null or a smaller array is provided, a new array will be allocated automatically.</param>
+        /// <param name="n">The convolution size. The provided arrays may be larger than n, but of course not smaller.</param>
+        public static void CyclicRealConvolution(double[] data, double[] resp, double[] result, int n, double[] scratch)
+        {
+            if (null == scratch || scratch.Length < n)
+                scratch = new double[n];
+
+            Array.Copy(data, result, n);
+            Array.Copy(resp, scratch, n);
+
+            FHT(result, n);
+            FHT(scratch, n);
+
+            double scale = 0.25 / n;
+            int nh = n / 2;
+            for (int i = 1, j = n - 1; i < nh; i++, j--)
+            {
+                double a, b, re1, im1, re2, im2, re, im;
+                a = result[i];
+                b = result[j];
+                im1 = (a - b); // this is exactly (a-b)/2, but the /2 is included in the scale
+                re1 = (a + b); // this is exactly (a+b)/2, but the /2 is included in the scale
+
+                a = scratch[i];
+                b = scratch[j];
+                im2 = (a - b);  // this is exactly (a-b)/2, but the /2 is included in the scale
+                re2 = (a + b);  // this is exactly (a+b)/2, but the /2 is included in the scale
+
+                re = (re1 * re2 - im1 * im2) * scale;
+                im = (re1 * im2 + im1 * re2) * scale;
+
+                result[j] = (re - im);
+                result[i] = (re + im);
+            }
+
+            // handle the zero and the half point
+            result[0] = result[0] * scratch[0] / n;
+            result[nh] = result[nh] * scratch[nh] / n;
+
+            FHT(result, n);
+        }
+
+        /// <summary>
+        /// Performs a convolution of two comlex arrays which are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the data into the
+        /// input arrays will be destroyed!
+        /// </summary>
+        /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
+        /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
+        /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
+        /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
+        /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+        /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+        /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+        public static void CyclicDestructiveConvolution(
+          double[] src1real, double[] src1imag,
+          double[] src2real, double[] src2imag,
+          double[] resultreal, double[] resultimag,
+          int n)
+        {
+            FFT(src1real, src1imag, n);
+            FFT(src2real, src2imag, n);
+            ArrayMath.MultiplySplittedComplexArrays(src1real, src1imag, src2real, src2imag, resultreal, resultimag, n);
+            IFFT(resultreal, resultimag, n);
+            ArrayMath.NormalizeArrays(resultreal, resultimag, 1.0 / n, n);
+        }
+
+        /// <summary>
+        /// Performs a convolution of two complex arrays which are in splitted form. The input arrays will leave intact.
+        /// </summary>
+        /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
+        /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
+        /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
+        /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
+        /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+        /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+        /// <param name="scratchreal">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
+        /// <param name="scratchimag">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
+        /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+        public static void CyclicConvolution(
+          double[] src1real, double[] src1imag,
+          double[] src2real, double[] src2imag,
+          double[] resultreal, double[] resultimag,
+          double[] scratchreal, double[] scratchimag,
+          int n)
+        {
+            if (null == scratchreal || scratchreal.Length < n)
+                scratchreal = new double[n];
+            if (null == scratchimag || scratchimag.Length < n)
+                scratchimag = new double[n];
+
+            // First copy the arrays data and response to result and scratch,
+            // respectively, to prevent overwriting of the original data.
+            Array.Copy(src1real, resultreal, n);
+            Array.Copy(src1imag, resultimag, n);
+            Array.Copy(src2real, scratchreal, n);
+            Array.Copy(src2imag, scratchimag, n);
+
+            FFT(resultreal, resultimag, n);
+            FFT(scratchreal, scratchimag, n);
+            ArrayMath.MultiplySplittedComplexArrays(resultreal, resultimag, scratchreal, scratchimag, resultreal, resultimag, n);
+            FastHartleyTransform.IFFT(resultreal, resultimag, n);
+            ArrayMath.NormalizeArrays(resultreal, resultimag, 1.0 / n, n);
+        }
+
+        /// <summary>
+        /// Performs a correlation of two comlex arrays which are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the data into the
+        /// input arrays will be destroyed!
+        /// </summary>
+        /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
+        /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
+        /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
+        /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
+        /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+        /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+        /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+        public static void CyclicCorrelationDestructive(
+          double[] src1real, double[] src1imag,
+          double[] src2real, double[] src2imag,
+          double[] resultreal, double[] resultimag,
+          int n)
+        {
+            FFT(src1real, src1imag, n);
+            FFT(src2real, src2imag, n);
+            ArrayMath.MultiplySplittedComplexArraysCrossed(src1real, src1imag, src2real, src2imag, resultreal, resultimag, n, 1.0 / n);
+            FFT(resultreal, resultimag, n);
+        }
+
+        /// <summary>
+        /// Performs a cyclic correlation of two complex arrays which are in splitted form. The input arrays will leave intact.
+        /// </summary>
+        /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
+        /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
+        /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
+        /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
+        /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+        /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+        /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+        /// <remarks>Two helper arrays of length n are automatially allocated and freed during the operation.</remarks>
+        public static void CyclicCorrelation(
+          double[] src1real, double[] src1imag,
+          double[] src2real, double[] src2imag,
+          double[] resultreal, double[] resultimag,
+          int n)
+        {
+            double[] help1 = null, help2 = null;
+            CyclicCorrelation(src1real, src1imag,
+              src2real, src2imag,
+              resultreal, resultimag,
+              n,
+              ref help1, ref help2);
+        }
+
+        /// <summary>
+        /// Performs a cyclic correlation of two complex arrays which are in splitted form. The input arrays will leave intact.
+        /// </summary>
+        /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
+        /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
+        /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
+        /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
+        /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+        /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+        /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+        /// <param name="scratchreal">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
+        /// <param name="scratchimag">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
+        public static void CyclicCorrelation(
+          double[] src1real, double[] src1imag,
+          double[] src2real, double[] src2imag,
+          double[] resultreal, double[] resultimag,
+          int n,
+          ref double[] scratchreal, ref double[] scratchimag
+          )
+        {
+            if (null == scratchreal || scratchreal.Length < n)
+                scratchreal = new double[n];
+            if (null == scratchimag || scratchimag.Length < n)
+                scratchimag = new double[n];
+
+            // First copy the arrays data and response to result and scratch,
+            // respectively, to prevent overwriting of the original data.
+            Array.Copy(src1real, resultreal, n);
+            Array.Copy(src1imag, resultimag, n);
+            Array.Copy(src2real, scratchreal, n);
+            Array.Copy(src2imag, scratchimag, n);
+
+            FFT(resultreal, resultimag, n);
+            FFT(scratchreal, scratchimag, n);
+            ArrayMath.MultiplySplittedComplexArraysCrossed(resultreal, resultimag, scratchreal, scratchimag, resultreal, resultimag, n, 1.0 / n);
+            FFT(resultreal, resultimag, n);
+        }
+
+        /// <summary>
+        /// Performes a cyclic correlation between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
+        /// different from the other two arrays.
+        /// </summary>
+        /// <param name="arr1">First array.</param>
+        /// <param name="arr2">Second array.</param>
+        /// <param name="resultarr">The array that stores the correleation result.</param>
+        /// <param name="n">Number of points to correlate.</param>
+        public static void CyclicCorrelationDestructive(double[] arr1, double[] arr2, double[] resultarr, int n)
+        {
+            RealFFT(arr1, n);
+            RealFFT(arr2, n);
+            // multiply the result in arr1 (real part in the first half, imaginary part in the second half)
+            // with the complex conjugate of arr2 and store the result in result
+            int i, j;
+            double re, im;
+            double scale = 1.0 / n;
+            for (i = 1, j = n - 1; i < j; ++i, --j)
+            {
+                re = arr1[i] * arr2[i] + arr1[j] * arr2[j]; // + because of complex conjugate
+                im = arr1[i] * arr2[j] - arr1[j] * arr2[i];
+                resultarr[i] = re * scale;
+                resultarr[j] = im * scale;
+            }
+            // special points 0 and n/2
+            resultarr[0] = scale * arr1[0] * arr2[0];
+            resultarr[n / 2] = scale * arr1[n / 2] * arr2[n / 2];
+
+            RealIFFT(resultarr, n);
+        }
     }
-
-    //----------------------------------------------------------------------------//
-
-    /// <summary>
-    ///      Does a fourier transform of 'n' points of the 'real' and
-    ///      'imag' arrays.
-    /// </summary>
-    /// <param name="real">The array holding the real part of the values.</param>
-    /// <param name="imag">The array holding the imaginary part of the values.</param>
-    /// <param name="n">Number of points to transform. Have to be a power of 2 (unchecked!)</param>
-    public static void FFT(double[] real, double[] imag, int n)
-    {
-      FHT(real, n);
-      FHT(imag, n);
-
-      for (int i = 1, j = n - 1, k = n / 2; i < k; i++, j--)
-      {
-        double a, b, c, d, q, r, s, t;
-        a = real[i];
-        b = real[j];
-        q = a + b;
-        r = a - b;
-        c = imag[i];
-        d = imag[j];
-        s = c + d;
-        t = c - d;
-        imag[i] = (s + r) * 0.5;
-        imag[j] = (s - r) * 0.5;
-        real[i] = (q - t) * 0.5;
-        real[j] = (q + t) * 0.5;
-      }
-    }
-
-    /// <summary>
-    ///      Does an in-place inverse fourier transform of 'n' points of the 'real'
-    ///      and 'imag' arrays.
-    /// </summary>
-    /// <param name="n">Number of points to transform. Have to be a power of 2 (unchecked!)</param>
-    /// <param name="real">The array holding the real part of the values.</param>
-    /// <param name="imag">The array holding the imaginary part of the values.</param>
-    public static void IFFT(double[] real, double[] imag, int n)
-    {
-      for (int i = 1, j = n - 1, k = n / 2; i < k; i++, j--)
-      {
-        double a, b, c, d, q, r, s, t;
-        a = real[i];
-        b = real[j];
-        q = a + b;
-        r = a - b;
-        c = imag[i];
-        d = imag[j];
-        s = c + d;
-        t = c - d;
-        real[i] = (q + t) * .5;
-        real[j] = (q - t) * .5;
-        imag[i] = (s - r) * .5;
-        imag[j] = (s + r) * .5;
-      }
-
-      FHT(real, n);
-      FHT(imag, n);
-    }
-
-    /// <summary>
-    ///      Does the inverse of a real-valued fourier transform of 'n' points.
-    /// </summary>
-    /// <param name="n">Number of points to transform. Has to be a power of 2 (unchecked).</param>
-    /// <param name="real">The array holding the fourier transform values, which will be transformed back.</param>
-    public static void RealIFFT(double[] real, int n)
-    {
-      for (int i = 1, j = n - 1, k = n / 2; i < k; i++, j--)
-      {
-        double a, b;
-        a = real[i];
-        b = real[j];
-        real[j] = (a - b);
-        real[i] = (a + b);
-      }
-
-      FHT(real, n);
-    }
-
-    /// <summary>
-    ///      Does a real-valued fourier transform of 'n' points of the
-    ///      'real' array.  The real part of the transform ends
-    ///      up in the first half of the array and the imaginary part of the
-    ///      transform ends up in the second half of the array.
-    /// </summary>
-    /// <param name="n">The number of points to transform. Has to be a power of 2 (unchecked!).</param>
-    /// <param name="real">The array holding the real values to transform.</param>
-    public static void RealFFT(double[] real, int n)
-    {
-      FHT(real, n);
-
-      for (int i = 1, j = n - 1, k = n / 2; i < k; i++, j--)
-      {
-        double a, b;
-        a = real[i];
-        b = real[j];
-        real[j] = (a - b) * 0.5;
-        real[i] = (a + b) * 0.5;
-      }
-    }
-
-    /// <summary>
-    /// Does a fourier transform of 'n' points of the 'real' and 'imag' arrays.
-    /// </summary>
-    /// <param name="real">The array holding the real part of the values.</param>
-    /// <param name="imag">The array holding the imaginary part of the values.</param>
-    /// <param name="direction">The direction of the Fourier transformation.</param>
-    public static void FFT(double[] real, double[] imag, FourierDirection direction)
-    {
-      if (real.Length != imag.Length)
-        throw new ArgumentException("Length of real and imag array do not match!");
-
-      FFT(real, imag, real.Length, direction);
-    }
-
-    /// <summary>
-    /// Does a fourier transform of 'n' points of the 'real' and 'imag' arrays.
-    /// </summary>
-    /// <param name="real">The array holding the real part of the values.</param>
-    /// <param name="imag">The array holding the imaginary part of the values.</param>
-    /// <param name="n">Number of points to transform. Have to be a power of 2 (unchecked!)</param>
-    /// <param name="direction">The direction of the Fourier transformation.</param>
-    public static void FFT(double[] real, double[] imag, int n, FourierDirection direction)
-    {
-      if (direction == FourierDirection.Forward)
-        FFT(real, imag, n);
-      else
-        IFFT(real, imag, n);
-    }
-
-    /// <summary>
-    /// Does a real-valued fourier transform of 'n' points of the
-    /// 'real' array.  On forward transform, the real part of the transform ends
-    /// up in the first half of the array and the imaginary part of the
-    /// transform ends up in the second half of the array. On backward transform, real and imaginary part
-    /// have to be located in the same way like the result of the forward transform.
-    /// </summary>
-    /// <param name="n">The number of points to transform. Has to be a power of 2 (unchecked!).</param>
-    /// <param name="real">The array holding the real values to transform.</param>
-    /// <param name="direction">The direction of the Fourier transform.</param>
-    public static void RealFFT(double[] real, int n, FourierDirection direction)
-    {
-      if (direction == FourierDirection.Forward)
-        RealFFT(real, n);
-      else
-        RealIFFT(real, n);
-    }
-
-    /// <summary>
-    /// Does a real-valued fourier transform of 'n' points of the
-    /// 'real' array.  On forward transform, the real part of the transform ends
-    /// up in the first half of the array and the imaginary part of the
-    /// transform ends up in the second half of the array. On backward transform, real and imaginary part
-    /// have to be located in the same way like the result of the forward transform.
-    /// </summary>
-    /// <param name="real">The array holding the real values to transform.</param>
-    /// <param name="direction">The direction of the Fourier transform.</param>
-    public static void RealFFT(double[] real, FourierDirection direction)
-    {
-      RealFFT(real, real.Length, direction);
-    }
-
-    /// <summary>
-    /// Performs a cyclic convolution of two real valued arrays. The content of the input arrays is destroyed during this operation.
-    /// </summary>
-    /// <param name="data">The first input array (the data).</param>
-    /// <param name="resp">The second input array (the response function).</param>
-    /// <param name="result">The result of the convolution.</param>
-    /// <param name="n">The convolution size. The provided arrays may be larger than n, but of course not smaller.</param>
-    public static void CyclicDestructiveConvolution(double[] data, double[] resp, double[] result, int n)
-    {
-      FHT(data, n);
-      FHT(resp, n);
-
-      double scale = 0.25 / n;
-      int nh = n / 2;
-      for (int i = 1, j = n - 1; i < nh; i++, j--)
-      {
-        double a, b, re1, im1, re2, im2, re, im;
-        a = data[i];
-        b = data[j];
-        im1 = (a - b); // this is exactly (a-b)/2, but the /2 is included in the scale
-        re1 = (a + b); // this is exactly (a+b)/2, but the /2 is included in the scale
-
-        a = resp[i];
-        b = resp[j];
-        im2 = (a - b);  // this is exactly (a-b)/2, but the /2 is included in the scale
-        re2 = (a + b);  // this is exactly (a+b)/2, but the /2 is included in the scale
-
-        re = (re1 * re2 - im1 * im2) * scale;
-        im = (re1 * im2 + im1 * re2) * scale;
-
-        result[j] = (re - im);
-        result[i] = (re + im);
-      }
-
-      // handle the zero and the half point
-      result[0] = data[0] * resp[0] / n;
-      result[nh] = data[nh] * resp[nh] / n;
-
-      FHT(result, n);
-    }
-
-    /// <summary>
-    /// Performs a cyclic convolution of two real valued arrays. The content of the input arrays is leaved intact.
-    /// </summary>
-    /// <param name="data">The first input array (the data).</param>
-    /// <param name="resp">The second input array (the response function).</param>
-    /// <param name="result">The result of the convolution.</param>
-    /// <param name="scratch">A helper array of at least size n. If null or a smaller array is provided, a new array will be allocated automatically.</param>
-    /// <param name="n">The convolution size. The provided arrays may be larger than n, but of course not smaller.</param>
-    public static void CyclicRealConvolution(double[] data, double[] resp, double[] result, int n, double[] scratch)
-    {
-      if (null == scratch || scratch.Length < n)
-        scratch = new double[n];
-
-      Array.Copy(data, result, n);
-      Array.Copy(resp, scratch, n);
-
-      FHT(result, n);
-      FHT(scratch, n);
-
-      double scale = 0.25 / n;
-      int nh = n / 2;
-      for (int i = 1, j = n - 1; i < nh; i++, j--)
-      {
-        double a, b, re1, im1, re2, im2, re, im;
-        a = result[i];
-        b = result[j];
-        im1 = (a - b); // this is exactly (a-b)/2, but the /2 is included in the scale
-        re1 = (a + b); // this is exactly (a+b)/2, but the /2 is included in the scale
-
-        a = scratch[i];
-        b = scratch[j];
-        im2 = (a - b);  // this is exactly (a-b)/2, but the /2 is included in the scale
-        re2 = (a + b);  // this is exactly (a+b)/2, but the /2 is included in the scale
-
-        re = (re1 * re2 - im1 * im2) * scale;
-        im = (re1 * im2 + im1 * re2) * scale;
-
-        result[j] = (re - im);
-        result[i] = (re + im);
-      }
-
-      // handle the zero and the half point
-      result[0] = result[0] * scratch[0] / n;
-      result[nh] = result[nh] * scratch[nh] / n;
-
-      FHT(result, n);
-    }
-
-    /// <summary>
-    /// Performs a convolution of two comlex arrays which are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the data into the
-    /// input arrays will be destroyed!
-    /// </summary>
-    /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
-    /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
-    /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
-    /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
-    /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
-    /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
-    /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
-    public static void CyclicDestructiveConvolution(
-      double[] src1real, double[] src1imag,
-      double[] src2real, double[] src2imag,
-      double[] resultreal, double[] resultimag,
-      int n)
-    {
-      FFT(src1real, src1imag, n);
-      FFT(src2real, src2imag, n);
-      ArrayMath.MultiplySplittedComplexArrays(src1real, src1imag, src2real, src2imag, resultreal, resultimag, n);
-      IFFT(resultreal, resultimag, n);
-      ArrayMath.NormalizeArrays(resultreal, resultimag, 1.0 / n, n);
-    }
-
-    /// <summary>
-    /// Performs a convolution of two complex arrays which are in splitted form. The input arrays will leave intact.
-    /// </summary>
-    /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
-    /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
-    /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
-    /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
-    /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
-    /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
-    /// <param name="scratchreal">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
-    /// <param name="scratchimag">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
-    /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
-    public static void CyclicConvolution(
-      double[] src1real, double[] src1imag,
-      double[] src2real, double[] src2imag,
-      double[] resultreal, double[] resultimag,
-      double[] scratchreal, double[] scratchimag,
-      int n)
-    {
-      if (null == scratchreal || scratchreal.Length < n)
-        scratchreal = new double[n];
-      if (null == scratchimag || scratchimag.Length < n)
-        scratchimag = new double[n];
-
-      // First copy the arrays data and response to result and scratch,
-      // respectively, to prevent overwriting of the original data.
-      Array.Copy(src1real, resultreal, n);
-      Array.Copy(src1imag, resultimag, n);
-      Array.Copy(src2real, scratchreal, n);
-      Array.Copy(src2imag, scratchimag, n);
-
-      FFT(resultreal, resultimag, n);
-      FFT(scratchreal, scratchimag, n);
-      ArrayMath.MultiplySplittedComplexArrays(resultreal, resultimag, scratchreal, scratchimag, resultreal, resultimag, n);
-      FastHartleyTransform.IFFT(resultreal, resultimag, n);
-      ArrayMath.NormalizeArrays(resultreal, resultimag, 1.0 / n, n);
-    }
-
-    /// <summary>
-    /// Performs a correlation of two comlex arrays which are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the data into the
-    /// input arrays will be destroyed!
-    /// </summary>
-    /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
-    /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
-    /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
-    /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
-    /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
-    /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
-    /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
-    public static void CyclicCorrelationDestructive(
-      double[] src1real, double[] src1imag,
-      double[] src2real, double[] src2imag,
-      double[] resultreal, double[] resultimag,
-      int n)
-    {
-      FFT(src1real, src1imag, n);
-      FFT(src2real, src2imag, n);
-      ArrayMath.MultiplySplittedComplexArraysCrossed(src1real, src1imag, src2real, src2imag, resultreal, resultimag, n, 1.0 / n);
-      FFT(resultreal, resultimag, n);
-    }
-
-    /// <summary>
-    /// Performs a cyclic correlation of two complex arrays which are in splitted form. The input arrays will leave intact.
-    /// </summary>
-    /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
-    /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
-    /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
-    /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
-    /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
-    /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
-    /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
-    /// <remarks>Two helper arrays of length n are automatially allocated and freed during the operation.</remarks>
-    public static void CyclicCorrelation(
-      double[] src1real, double[] src1imag,
-      double[] src2real, double[] src2imag,
-      double[] resultreal, double[] resultimag,
-      int n)
-    {
-      double[] help1 = null, help2 = null;
-      CyclicCorrelation(src1real, src1imag,
-        src2real, src2imag,
-        resultreal, resultimag,
-        n,
-        ref help1, ref help2);
-    }
-
-    /// <summary>
-    /// Performs a cyclic correlation of two complex arrays which are in splitted form. The input arrays will leave intact.
-    /// </summary>
-    /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
-    /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
-    /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
-    /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
-    /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
-    /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
-    /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
-    /// <param name="scratchreal">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
-    /// <param name="scratchimag">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
-    public static void CyclicCorrelation(
-      double[] src1real, double[] src1imag,
-      double[] src2real, double[] src2imag,
-      double[] resultreal, double[] resultimag,
-      int n,
-      ref double[] scratchreal, ref double[] scratchimag
-      )
-    {
-      if (null == scratchreal || scratchreal.Length < n)
-        scratchreal = new double[n];
-      if (null == scratchimag || scratchimag.Length < n)
-        scratchimag = new double[n];
-
-      // First copy the arrays data and response to result and scratch,
-      // respectively, to prevent overwriting of the original data.
-      Array.Copy(src1real, resultreal, n);
-      Array.Copy(src1imag, resultimag, n);
-      Array.Copy(src2real, scratchreal, n);
-      Array.Copy(src2imag, scratchimag, n);
-
-      FFT(resultreal, resultimag, n);
-      FFT(scratchreal, scratchimag, n);
-      ArrayMath.MultiplySplittedComplexArraysCrossed(resultreal, resultimag, scratchreal, scratchimag, resultreal, resultimag, n, 1.0 / n);
-      FFT(resultreal, resultimag, n);
-    }
-
-    /// <summary>
-    /// Performes a cyclic correlation between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
-    /// different from the other two arrays.
-    /// </summary>
-    /// <param name="arr1">First array.</param>
-    /// <param name="arr2">Second array.</param>
-    /// <param name="resultarr">The array that stores the correleation result.</param>
-    /// <param name="n">Number of points to correlate.</param>
-    public static void CyclicCorrelationDestructive(double[] arr1, double[] arr2, double[] resultarr, int n)
-    {
-      RealFFT(arr1, n);
-      RealFFT(arr2, n);
-      // multiply the result in arr1 (real part in the first half, imaginary part in the second half)
-      // with the complex conjugate of arr2 and store the result in result
-      int i, j;
-      double re, im;
-      double scale = 1.0 / n;
-      for (i = 1, j = n - 1; i < j; ++i, --j)
-      {
-        re = arr1[i] * arr2[i] + arr1[j] * arr2[j]; // + because of complex conjugate
-        im = arr1[i] * arr2[j] - arr1[j] * arr2[i];
-        resultarr[i] = re * scale;
-        resultarr[j] = im * scale;
-      }
-      // special points 0 and n/2
-      resultarr[0] = scale * arr1[0] * arr2[0];
-      resultarr[n / 2] = scale * arr1[n / 2] * arr2[n / 2];
-
-      RealIFFT(resultarr, n);
-    }
-  }
 }

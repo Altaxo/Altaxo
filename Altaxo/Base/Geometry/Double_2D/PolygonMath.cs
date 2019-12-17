@@ -86,12 +86,12 @@ namespace Altaxo.Geometry.Double_2D
       return GetClosedPolygonCircumference(closedPolygon.Select(p => new PointD2D(p.X, p.Y)));
     }
 
-      /// <summary>
-      /// Gets the area of a closed polygon.
-      /// </summary>
-      /// <param name="closedPolygon">The points forming a closed polygon.</param>
-      /// <returns>The polygon area. The value is signed. The sign is positive if the polygon is counter-clockwise (in a coordinate system in which x is to the right and y is up).</returns>
-      public static double GetClosedPolygonArea(IEnumerable<PointD2D> closedPolygon)
+    /// <summary>
+    /// Gets the area of a closed polygon.
+    /// </summary>
+    /// <param name="closedPolygon">The points forming a closed polygon.</param>
+    /// <returns>The polygon area. The value is signed. The sign is positive if the polygon is counter-clockwise (in a coordinate system in which x is to the right and y is up).</returns>
+    public static double GetClosedPolygonArea(IEnumerable<PointD2D> closedPolygon)
     {
       PointD2D firstPoint = default;
       PointD2D previous = default;
@@ -143,14 +143,14 @@ namespace Altaxo.Geometry.Double_2D
       return GetClosedPolygonArea(closedPolygon.Select(p => new PointD2D(p.X, p.Y)));
     }
 
-      /// <summary>
-      /// Calculate the center of gravity (centroid) of the given closed polygon. The polygon
-      /// has to be non-selfintersecting!
-      /// </summary>
-      /// <param name="closedPolygon">The closed polygon.</param>
-      /// <returns>The center of gravity of the given polygon.</returns>
-      /// <seealso href="https://en.wikipedia.org/wiki/Centroid"/>
-      public static PointD2D GetClosedPolygonCentroid(IEnumerable<PointD2D> closedPolygon)
+    /// <summary>
+    /// Calculate the center of gravity (centroid) of the given closed polygon. The polygon
+    /// has to be non-selfintersecting!
+    /// </summary>
+    /// <param name="closedPolygon">The closed polygon.</param>
+    /// <returns>The center of gravity of the given polygon.</returns>
+    /// <seealso href="https://en.wikipedia.org/wiki/Centroid"/>
+    public static PointD2D GetClosedPolygonCentroid(IEnumerable<PointD2D> closedPolygon)
     {
       PointD2D firstPoint = default;
       PointD2D previous = default;
@@ -218,14 +218,14 @@ namespace Altaxo.Geometry.Double_2D
       return GetClosedPolygonCentroid(closedPolygon.Select(t => new PointD2D(t.X, t.Y)));
     }
 
-      /// <summary>
-      /// Calculates the 2nd moments of the given closed polygons. The polygons
-      /// have to be non-selfintersecting!
-      /// </summary>
-      /// <param name="closedPolygons">The closed polygons.</param>
-      /// <returns>The second moments, Ixx, Iyy, and Ixy, of the given polygons (with respect to the origin (x=0, y=0)).</returns>
-      /// <seealso href="https://en.wikipedia.org/wiki/Second_moment_of_area"/>
-      public static (double Ixx, double Iyy, double Ixy) GetClosedPolygonSecondMoments(IEnumerable<IEnumerable<PointD2D>> closedPolygons)
+    /// <summary>
+    /// Calculates the 2nd moments of the given closed polygons. The polygons
+    /// have to be non-selfintersecting!
+    /// </summary>
+    /// <param name="closedPolygons">The closed polygons.</param>
+    /// <returns>The second moments, Ixx, Iyy, and Ixy, of the given polygons (with respect to the origin (x=0, y=0)).</returns>
+    /// <seealso href="https://en.wikipedia.org/wiki/Second_moment_of_area"/>
+    public static (double Ixx, double Iyy, double Ixy) GetClosedPolygonSecondMoments(IEnumerable<IEnumerable<PointD2D>> closedPolygons)
     {
       double sumX = 0, sumY = 0, sumXY = 0;
 
@@ -336,14 +336,14 @@ namespace Altaxo.Geometry.Double_2D
       return GetClosedPolygonSecondMoments(closedPolygon.Select(p => new PointD2D(p.X, p.Y)));
     }
 
-      /// <summary>
-      /// Gets the orientation angle (in rad) of the principal axis from the second moments.
-      /// </summary>
-      /// <param name="Ixx">The second moment Ixx.</param>
-      /// <param name="Iyy">The second moment Iyy.</param>
-      /// <param name="Ixy">The second moment Ixy.</param>
-      /// <returns>The orientation angle of the principal axis in rad.</returns>
-      public static double GetOrientationAngleOfPrincipalAxisFromSecondMoments(double Ixx, double Iyy, double Ixy)
+    /// <summary>
+    /// Gets the orientation angle (in rad) of the principal axis from the second moments.
+    /// </summary>
+    /// <param name="Ixx">The second moment Ixx.</param>
+    /// <param name="Iyy">The second moment Iyy.</param>
+    /// <param name="Ixy">The second moment Ixy.</param>
+    /// <returns>The orientation angle of the principal axis in rad.</returns>
+    public static double GetOrientationAngleOfPrincipalAxisFromSecondMoments(double Ixx, double Iyy, double Ixy)
     {
       return 0.5 * Math.Atan2(2 * Ixy, Iyy - Ixx);
     }

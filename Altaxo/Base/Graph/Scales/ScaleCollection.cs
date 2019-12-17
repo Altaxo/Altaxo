@@ -45,13 +45,13 @@ namespace Altaxo.Graph.Scales
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				ScaleCollection s = (ScaleCollection)obj;
+                ScaleCollection s = (ScaleCollection)obj;
 
-				info.CreateArray("Members", s._scales.Length);
-				for (int i = 0; i < s._scales.Length; ++i)
-					info.AddValue("e", s._scales[i]);
-				info.CommitArray();
-				*/
+                info.CreateArray("Members", s._scales.Length);
+                for (int i = 0; i < s._scales.Length; ++i)
+                    info.AddValue("e", s._scales[i]);
+                info.CommitArray();
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

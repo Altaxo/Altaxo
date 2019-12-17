@@ -51,10 +51,10 @@ namespace Altaxo.Graph.Gdi.Background
       {
         throw new ApplicationException("Programming error - this should not be called");
         /*
-				DarkMarbel s = (DarkMarbel)obj;
-				info.AddValue("Color", s._color);
-				info.AddValue("ShadowLength", s._shadowLength);
-				*/
+                DarkMarbel s = (DarkMarbel)obj;
+                info.AddValue("Color", s._color);
+                info.AddValue("ShadowLength", s._shadowLength);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

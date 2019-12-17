@@ -70,12 +70,12 @@ namespace Altaxo.Graph.Scales
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				var s = (InverseScale)obj;
-				info.AddValue("InvOrg", s._cachedAxisOrgInv);
-				info.AddValue("InvEnd", s._cachedAxisEndInv);
-				info.AddValue("Rescaling", s._rescaling);
-				info.AddValue("Bounds", s._dataBounds);
-				*/
+                var s = (InverseScale)obj;
+                info.AddValue("InvOrg", s._cachedAxisOrgInv);
+                info.AddValue("InvEnd", s._cachedAxisEndInv);
+                info.AddValue("Rescaling", s._rescaling);
+                info.AddValue("Bounds", s._dataBounds);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

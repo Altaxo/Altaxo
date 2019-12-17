@@ -36,9 +36,9 @@ namespace Altaxo.Main.Services
   /// <seealso cref="Altaxo.Main.Services.IProjectArchiveManager" />
   public class UnnamedProjectArchiveManager : IProjectArchiveManager
   {
-    bool _isDisposed; // not really neccessary, but useful for debugging purposes
+    private bool _isDisposed; // not really neccessary, but useful for debugging purposes
 
-    PathName _fileOrFolderName;
+    private PathName _fileOrFolderName;
 
     public event EventHandler<NameChangedEventArgs> FileOrFolderNameChanged // Never used, because name can not change
     {

@@ -71,18 +71,18 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         throw new ApplicationException("This serializer is not the actual version, and should therefore not be called");
         /*
-				TextGraphics s = (TextGraphics)obj;
-				info.AddBaseValueEmbedded(s,typeof(TextGraphics).BaseType);
+                TextGraphics s = (TextGraphics)obj;
+                info.AddBaseValueEmbedded(s,typeof(TextGraphics).BaseType);
 
-				info.AddValue("Text",s.m_Text);
-				info.AddValue("Font",s.m_Font);
-				info.AddValue("Brush",s.m_BrushHolder);
-				info.AddValue("BackgroundStyle",s.m_BackgroundStyle);
-				info.AddValue("LineSpacing",s.m_LineSpacingFactor);
-				info.AddValue("ShadowLength",s.m_ShadowLength);
-				info.AddValue("XAnchor",s.m_XAnchorType);
-				info.AddValue("YAnchor",s.m_YAnchorType);
-				*/
+                info.AddValue("Text",s.m_Text);
+                info.AddValue("Font",s.m_Font);
+                info.AddValue("Brush",s.m_BrushHolder);
+                info.AddValue("BackgroundStyle",s.m_BackgroundStyle);
+                info.AddValue("LineSpacing",s.m_LineSpacingFactor);
+                info.AddValue("ShadowLength",s.m_ShadowLength);
+                info.AddValue("XAnchor",s.m_XAnchorType);
+                info.AddValue("YAnchor",s.m_YAnchorType);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -119,17 +119,17 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         throw new InvalidOperationException("Serialization of old type");
         /*
-				TextGraphic s = (TextGraphic)obj;
-				info.AddBaseValueEmbedded(s, typeof(TextGraphic).BaseType);
+                TextGraphic s = (TextGraphic)obj;
+                info.AddBaseValueEmbedded(s, typeof(TextGraphic).BaseType);
 
-				info.AddValue("Text", s._text);
-				info.AddValue("Font", s._font);
-				info.AddValue("Brush", s._textBrush);
-				info.AddValue("BackgroundStyle", s._background);
-				info.AddValue("LineSpacing", s._lineSpacingFactor);
-				info.AddValue("XAnchor", s._xAnchorType);
-				info.AddValue("YAnchor", s._yAnchorType);
-				*/
+                info.AddValue("Text", s._text);
+                info.AddValue("Font", s._font);
+                info.AddValue("Brush", s._textBrush);
+                info.AddValue("BackgroundStyle", s._background);
+                info.AddValue("LineSpacing", s._lineSpacingFactor);
+                info.AddValue("XAnchor", s._xAnchorType);
+                info.AddValue("YAnchor", s._yAnchorType);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

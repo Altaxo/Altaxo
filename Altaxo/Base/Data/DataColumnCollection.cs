@@ -616,7 +616,7 @@ namespace Altaxo.Data
       }
     }
 
-    void LoadDeferredData(IProjectArchiveEntryMemento memento)
+    private void LoadDeferredData(IProjectArchiveEntryMemento memento)
     {
       var zipEntry = memento.GetArchiveEntry();
       using (var zipinpstream = zipEntry.OpenForReading())

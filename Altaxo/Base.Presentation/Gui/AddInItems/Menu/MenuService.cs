@@ -359,38 +359,38 @@ namespace Altaxo.Gui.AddInItems
 /// <remarks>Only works with Windows.Forms.Keys. The WPF Key enum seems to be horribly distorted!</remarks>
 public static string KeyToUnicode(WinForms.Keys key)
 {
-	StringBuilder sb = new StringBuilder(256);
-	IntPtr hkl = GetKeyboardLayout(0);
+    StringBuilder sb = new StringBuilder(256);
+    IntPtr hkl = GetKeyboardLayout(0);
 
-	uint scanCode = MapVirtualKeyEx((uint)key, 0, hkl);
-	if (scanCode < 1) return null;
+    uint scanCode = MapVirtualKeyEx((uint)key, 0, hkl);
+    if (scanCode < 1) return null;
 
-	ClearKeyboardBuffer(hkl);
-	int len = ToUnicodeEx((uint)key, scanCode, new byte[256], sb, sb.Capacity, 0, hkl);
-	if (len > 0)
-		return sb.ToString(0, len).ToUpper();
+    ClearKeyboardBuffer(hkl);
+    int len = ToUnicodeEx((uint)key, scanCode, new byte[256], sb, sb.Capacity, 0, hkl);
+    if (len > 0)
+        return sb.ToString(0, len).ToUpper();
 
-	ClearKeyboardBuffer(hkl);
-	return null;
+    ClearKeyboardBuffer(hkl);
+    return null;
 }
 
 private static void ClearKeyboardBuffer(IntPtr hkl)
 {
-	StringBuilder sb = new StringBuilder(10);
-	uint key = (uint)WinForms.Keys.Space;
-	int rc;
-	do
-	{
-		rc = ToUnicodeEx(key, MapVirtualKeyEx(key, 0, hkl), new byte[256], sb, sb.Capacity, 0, hkl);
-	} while (rc < 0);
+    StringBuilder sb = new StringBuilder(10);
+    uint key = (uint)WinForms.Keys.Space;
+    int rc;
+    do
+    {
+        rc = ToUnicodeEx(key, MapVirtualKeyEx(key, 0, hkl), new byte[256], sb, sb.Capacity, 0, hkl);
+    } while (rc < 0);
 }
 
-		public static WinForms.Keys ToKeys(this Key key)
+        public static WinForms.Keys ToKeys(this Key key)
 {
-	WinForms.Keys result;
-	if (Enum.TryParse(key.ToString(), true, out result))
-		return result;
-	return WinForms.Keys.None;
+    WinForms.Keys result;
+    if (Enum.TryParse(key.ToString(), true, out result))
+        return result;
+    return WinForms.Keys.None;
 }
 
 */

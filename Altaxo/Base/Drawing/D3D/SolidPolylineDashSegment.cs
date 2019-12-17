@@ -423,16 +423,16 @@ namespace Altaxo.Drawing.D3D
       else if (drawLine)
       {
         /*
-				LineCaps.Flat.AddGeometry(
-					AddPositionAndNormal,
-					AddIndices,
-					ref vertexIndexOffset,
-					true,
-					_startCapBase,
-					_startCapForwardVector,
-					null
-					);
-				*/
+                LineCaps.Flat.AddGeometry(
+                    AddPositionAndNormal,
+                    AddIndices,
+                    ref vertexIndexOffset,
+                    true,
+                    _startCapBase,
+                    _startCapForwardVector,
+                    null
+                    );
+                */
 
         LineCaps.Flat.Instance.AddGeometry(
         AddPositionAndNormal,
@@ -468,16 +468,16 @@ namespace Altaxo.Drawing.D3D
       else if (drawLine)
       {
         /*
-				LineCaps.Flat.AddGeometry(
-					AddPositionAndNormal,
-					AddIndices,
-					ref vertexIndexOffset,
-					false,
-					_endCapBase,
-					_endCapForwardVector,
-					null
-					);
-				*/
+                LineCaps.Flat.AddGeometry(
+                    AddPositionAndNormal,
+                    AddIndices,
+                    ref vertexIndexOffset,
+                    false,
+                    _endCapBase,
+                    _endCapForwardVector,
+                    null
+                    );
+                */
 
         LineCaps.Flat.Instance.AddGeometry(
           AddPositionAndNormal,

@@ -29,18 +29,18 @@ using System.Threading.Tasks;
 
 namespace Altaxo
 {
-  /// <summary>
-  /// Designates a sort direction (ascending, descending, or no sorting at all).
-  /// </summary>
-  public enum SortDirection
-  {
-    /// <summary>Sort ascending.</summary>
-    Ascending = System.ComponentModel.ListSortDirection.Ascending,
+    /// <summary>
+    /// Designates a sort direction (ascending, descending, or no sorting at all).
+    /// </summary>
+    public enum SortDirection
+    {
+        /// <summary>Sort ascending.</summary>
+        Ascending = System.ComponentModel.ListSortDirection.Ascending,
 
-    /// <summary>Sort descending.</summary>
-    Descending = System.ComponentModel.ListSortDirection.Descending,
+        /// <summary>Sort descending.</summary>
+        Descending = System.ComponentModel.ListSortDirection.Descending,
 
-    /// <summary>Do not sort.</summary>
-    None
-  }
+        /// <summary>Do not sort.</summary>
+        None
+    }
 }

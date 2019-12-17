@@ -207,22 +207,22 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       var pipeline = Pipeline ?? DefaultPipeline;
 
-        var markdownDocument = Markdig.Markdown.Parse(sourceText, pipeline);
+      var markdownDocument = Markdig.Markdown.Parse(sourceText, pipeline);
 
-        // We override the renderer with our own writer
-        var flowDocument = new FlowDocument
-        {
-          IsHyphenationEnabled = true,
-          Language = System.Windows.Markup.XmlLanguage.GetLanguage(documentCulture.IetfLanguageTag)
-        };
+      // We override the renderer with our own writer
+      var flowDocument = new FlowDocument
+      {
+        IsHyphenationEnabled = true,
+        Language = System.Windows.Markup.XmlLanguage.GetLanguage(documentCulture.IetfLanguageTag)
+      };
 
-        var renderer = new Markdig.Renderers.WpfRenderer(flowDocument, DynamicStyles.Instance)
-        {
-          // ImageProvider = ImageProvider
-        };
+      var renderer = new Markdig.Renderers.WpfRenderer(flowDocument, DynamicStyles.Instance)
+      {
+        // ImageProvider = ImageProvider
+      };
 
-        pipeline.Setup(renderer);
-        renderer.Render(markdownDocument);
+      pipeline.Setup(renderer);
+      renderer.Render(markdownDocument);
       return flowDocument;
     }
 

@@ -48,9 +48,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         throw new InvalidOperationException("Try to serialize old version");
         /*
-				ImageGraphic s = (ImageGraphic)obj;
-				info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
-				*/
+                ImageGraphic s = (ImageGraphic)obj;
+                info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -74,12 +74,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				ImageGraphic s = (ImageGraphic)obj;
-				info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
+                ImageGraphic s = (ImageGraphic)obj;
+                info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
 
-				info.AddValue("SizeBasedOnSourceSize", s._isSizeCalculationBasedOnSourceSize);
-				info.AddEnum("AspectPreserving", s._aspectPreserving);
-				*/
+                info.AddValue("SizeBasedOnSourceSize", s._isSizeCalculationBasedOnSourceSize);
+                info.AddEnum("AspectPreserving", s._aspectPreserving);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

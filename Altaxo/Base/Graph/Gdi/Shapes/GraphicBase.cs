@@ -65,12 +65,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
         /*
-				GraphicBase s = (GraphicBase)obj;
-				info.AddValue("Position",s._position);
-				info.AddValue("Bounds",s._bounds);
-				info.AddValue("Rotation",s._rotation);
-				info.AddValue("AutoSize",s._autoSize);
-				*/
+                GraphicBase s = (GraphicBase)obj;
+                info.AddValue("Position",s._position);
+                info.AddValue("Bounds",s._bounds);
+                info.AddValue("Rotation",s._rotation);
+                info.AddValue("AutoSize",s._autoSize);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -112,12 +112,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
         /*
-				 GraphicBase s = (GraphicBase)obj;
-				info.AddValue("Position", s._position);
-				info.AddValue("Bounds", s._bounds);
-				info.AddValue("Rotation", s._rotation);
-				info.AddValue("AutoSize", s._autoSize);
-				*/
+                 GraphicBase s = (GraphicBase)obj;
+                info.AddValue("Position", s._position);
+                info.AddValue("Bounds", s._bounds);
+                info.AddValue("Rotation", s._rotation);
+                info.AddValue("AutoSize", s._autoSize);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -159,15 +159,15 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
         /*
-				GraphicBase s = (GraphicBase)obj;
-				info.AddValue("Position", s._position);
-				info.AddValue("Bounds", s._bounds);
-				info.AddValue("Rotation", s._rotation);
-				info.AddValue("ScaleX", s._scaleX);
-				info.AddValue("ScaleY", s._scaleY);
-				info.AddValue("Shear", s._shear);
-				info.AddValue("AutoSize", s._autoSize);
-				*/
+                GraphicBase s = (GraphicBase)obj;
+                info.AddValue("Position", s._position);
+                info.AddValue("Bounds", s._bounds);
+                info.AddValue("Rotation", s._rotation);
+                info.AddValue("ScaleX", s._scaleX);
+                info.AddValue("ScaleY", s._scaleY);
+                info.AddValue("Shear", s._shear);
+                info.AddValue("AutoSize", s._autoSize);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -215,18 +215,18 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				GraphicBase s = (GraphicBase)obj;
-				info.AddValue("Width", s.Width);
-				info.AddValue("Height", s.Height);
-				info.AddValue("OffsetX", s._leftUpper.X);
-				info.AddValue("OffsetY", s._leftUpper.Y);
-				info.AddValue("X", s.X);
-				info.AddValue("Y", s.Y);
-				info.AddValue("Rotation", s._rotation);
-				info.AddValue("ScaleX", s._scaleX);
-				info.AddValue("ScaleY", s._scaleY);
-				info.AddValue("Shear", s._shear);
-				*/
+                GraphicBase s = (GraphicBase)obj;
+                info.AddValue("Width", s.Width);
+                info.AddValue("Height", s.Height);
+                info.AddValue("OffsetX", s._leftUpper.X);
+                info.AddValue("OffsetY", s._leftUpper.Y);
+                info.AddValue("X", s.X);
+                info.AddValue("Y", s.Y);
+                info.AddValue("Rotation", s._rotation);
+                info.AddValue("ScaleX", s._scaleX);
+                info.AddValue("ScaleY", s._scaleY);
+                info.AddValue("Shear", s._shear);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

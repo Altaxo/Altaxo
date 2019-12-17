@@ -400,25 +400,25 @@ namespace Altaxo.Analysis.Statistics.Histograms
       double guessedSigma = stat.SampleStandardDeviation;
 
       /*
-				Altaxo.Calc.Regression.Nonlinear.SimpleNonlinearFit fit = new Altaxo.Calc.Regression.Nonlinear.SimpleNonlinearFit(
-					delegate (double[] indep, double[] p, double[] res)
-					{
-						// 3 Parameter:  mu and sigma
-						res[0] = Calc.Probability.NormalDistribution.PDF(indep[0], p[0], p[1]);
-					},
-					new double[] { guessedMu, guessedSigma },
-					colBinPosition,
-					colProbabilityDensity,
-					0, // Start (first point)
-					binning.Count // point count
-					);
+                Altaxo.Calc.Regression.Nonlinear.SimpleNonlinearFit fit = new Altaxo.Calc.Regression.Nonlinear.SimpleNonlinearFit(
+                    delegate (double[] indep, double[] p, double[] res)
+                    {
+                        // 3 Parameter:  mu and sigma
+                        res[0] = Calc.Probability.NormalDistribution.PDF(indep[0], p[0], p[1]);
+                    },
+                    new double[] { guessedMu, guessedSigma },
+                    colBinPosition,
+                    colProbabilityDensity,
+                    0, // Start (first point)
+                    binning.Count // point count
+                    );
 
-				fit.Fit();
+                fit.Fit();
 
-				guessedMu = fit.GetParameter(0);
-				guessedSigma = fit.GetParameter(1);
+                guessedMu = fit.GetParameter(0);
+                guessedSigma = fit.GetParameter(1);
 
-	*/
+    */
 
       // Test hypothesis that we have a normal distribution
 

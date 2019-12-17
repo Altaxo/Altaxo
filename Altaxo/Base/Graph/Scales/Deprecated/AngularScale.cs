@@ -275,32 +275,32 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
 
       /*
-			if (_useDegree)
-			{
-				// Major ticks at 0, 45, 90 degree, minor every 15°
-				double start = 45*Math.Floor(_cachedAxisOrg / 45);
-				for (; start < End; start += 45)
-					result.Add(start);
-			}
-			else
-			{
-				// Major ticks at 0, Pi/4, Pi/2, minor every Pi/12
-				double istart =  Math.Floor(_cachedAxisOrg / (0.25*Math.PI));
-				double iend = Math.Ceiling(End / (0.25 * Math.PI));
-				double cachedAxisEnd = _cachedAxisOrg+_cachedAxisSpan;
+            if (_useDegree)
+            {
+                // Major ticks at 0, 45, 90 degree, minor every 15°
+                double start = 45*Math.Floor(_cachedAxisOrg / 45);
+                for (; start < End; start += 45)
+                    result.Add(start);
+            }
+            else
+            {
+                // Major ticks at 0, Pi/4, Pi/2, minor every Pi/12
+                double istart =  Math.Floor(_cachedAxisOrg / (0.25*Math.PI));
+                double iend = Math.Ceiling(End / (0.25 * Math.PI));
+                double cachedAxisEnd = _cachedAxisOrg+_cachedAxisSpan;
 
-				for (double i=istart; i < iend; i += 1)
-				{
-					double val = i * 0.25 * Math.PI;
-					if (val >= _cachedAxisOrg && val <= cachedAxisEnd)
-						result.Add(val);
-					else if (IsDoubleEqual(val, _cachedAxisOrg, 2 * float.MinValue))
-						result.Add(val);
-					else if (IsDoubleEqual(val, cachedAxisEnd, 2 * float.MinValue))
-						result.Add(val);
-				}
-			}
-			*/
+                for (double i=istart; i < iend; i += 1)
+                {
+                    double val = i * 0.25 * Math.PI;
+                    if (val >= _cachedAxisOrg && val <= cachedAxisEnd)
+                        result.Add(val);
+                    else if (IsDoubleEqual(val, _cachedAxisOrg, 2 * float.MinValue))
+                        result.Add(val);
+                    else if (IsDoubleEqual(val, cachedAxisEnd, 2 * float.MinValue))
+                        result.Add(val);
+                }
+            }
+            */
       return result.ToArray();
     }
 

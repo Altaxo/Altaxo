@@ -77,19 +77,19 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         throw new NotSupportedException("Serialization of old versions not supported - probably a programming error");
         /*
-				XYPlotLayerAxisStyleProperties s = (XYPlotLayerAxisStyleProperties)obj;
+                XYPlotLayerAxisStyleProperties s = (XYPlotLayerAxisStyleProperties)obj;
 
-				info.AddValue("ShowAxis", s._showAxis);
-				info.AddValue("Edge", s._edgeType);
-				info.AddValue("AxisStyle", s._axisStyle);
-				info.AddValue("ShowMajorLabels", s._showMajorLabels);
-				if (s._showMajorLabels)
-					info.AddValue("MajorLabelStyle", s._majorLabelStyle);
-				info.AddValue("ShowMinorLabels", s._showMinorLabels);
-				if (s._showMinorLabels)
-					info.AddValue("MinorLabelStyle", s._minorLabelStyle);
-				info.AddValue("AxisTitle", s._axisTitle);
-				*/
+                info.AddValue("ShowAxis", s._showAxis);
+                info.AddValue("Edge", s._edgeType);
+                info.AddValue("AxisStyle", s._axisStyle);
+                info.AddValue("ShowMajorLabels", s._showMajorLabels);
+                if (s._showMajorLabels)
+                    info.AddValue("MajorLabelStyle", s._majorLabelStyle);
+                info.AddValue("ShowMinorLabels", s._showMinorLabels);
+                if (s._showMinorLabels)
+                    info.AddValue("MinorLabelStyle", s._minorLabelStyle);
+                info.AddValue("AxisTitle", s._axisTitle);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

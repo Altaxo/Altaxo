@@ -344,12 +344,12 @@ namespace Altaxo.Graph
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
-				MemoryStreamImageProxy s = (MemoryStreamImageProxy)obj;
-				info.AddValue("Url", s._url);
-				info.AddValue("Name", s._name);
-				info.AddValue("Hash", s._hash);
-				info.AddValue("Stream", s._stream);
-				*/
+                MemoryStreamImageProxy s = (MemoryStreamImageProxy)obj;
+                info.AddValue("Url", s._url);
+                info.AddValue("Name", s._name);
+                info.AddValue("Hash", s._hash);
+                info.AddValue("Stream", s._stream);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

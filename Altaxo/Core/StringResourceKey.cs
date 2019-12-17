@@ -29,46 +29,46 @@ using System.Text;
 
 namespace Altaxo
 {
-  /// <summary>
-  /// Designates a resource key that will be used to retrieve a resource string. This struct is immutable. Store instances of this struct in static fields. This will help external programs to prove that for all resource keys there exists corresponding entries.
-  /// </summary>
-  public struct StringResourceKey
-  {
-    private readonly string _key;
-    private readonly string _exampleValue;
-    private readonly string _description;
-
     /// <summary>
-    /// Initializes a new instance of the <see cref="StringResourceKey"/> struct.
+    /// Designates a resource key that will be used to retrieve a resource string. This struct is immutable. Store instances of this struct in static fields. This will help external programs to prove that for all resource keys there exists corresponding entries.
     /// </summary>
-    /// <param name="key">The resource key.</param>
-    /// <param name="exampleValue">An example of the resource string (always in the english language).</param>
-    /// <param name="description">The description of the resource string to help translating it into other languages.</param>
-    public StringResourceKey(string key, string exampleValue, string description)
+    public struct StringResourceKey
     {
-      _key = key;
-      _exampleValue = exampleValue;
-      _description = description;
+        private readonly string _key;
+        private readonly string _exampleValue;
+        private readonly string _description;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StringResourceKey"/> struct.
+        /// </summary>
+        /// <param name="key">The resource key.</param>
+        /// <param name="exampleValue">An example of the resource string (always in the english language).</param>
+        /// <param name="description">The description of the resource string to help translating it into other languages.</param>
+        public StringResourceKey(string key, string exampleValue, string description)
+        {
+            _key = key;
+            _exampleValue = exampleValue;
+            _description = description;
+        }
+
+        /// <summary>
+        /// Gets the resource key.
+        /// </summary>
+        public string Key { get { return _key; } }
+
+        /// <summary>
+        /// Gets an example of the resource string value (always in english).
+        /// </summary>
+        public string ExampleStringValue { get { return _exampleValue; } }
+
+        /// <summary>
+        /// Gets the description of the resource string to help translating it into other languages.
+        /// </summary>
+        public string Description { get { return _description; } }
+
+        public override string ToString()
+        {
+            return Key;
+        }
     }
-
-    /// <summary>
-    /// Gets the resource key.
-    /// </summary>
-    public string Key { get { return _key; } }
-
-    /// <summary>
-    /// Gets an example of the resource string value (always in english).
-    /// </summary>
-    public string ExampleStringValue { get { return _exampleValue; } }
-
-    /// <summary>
-    /// Gets the description of the resource string to help translating it into other languages.
-    /// </summary>
-    public string Description { get { return _description; } }
-
-    public override string ToString()
-    {
-      return Key;
-    }
-  }
 }

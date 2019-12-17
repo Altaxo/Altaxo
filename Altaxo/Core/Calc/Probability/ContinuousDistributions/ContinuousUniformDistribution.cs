@@ -27,265 +27,265 @@ using System;
 
 namespace Altaxo.Calc.Probability
 {
-  /// <summary>
-  /// Provides generation of continuous uniformly distributed random numbers.
-  /// </summary>
-  /// <remarks>
-  /// The implementation of the <see cref="ContinuousUniformDistribution"/> type bases upon information presented on
-  ///   <a href="http://en.wikipedia.org/wiki/Uniform_distribution_%28continuous%29">
-  ///   Wikipedia - Uniform distribution (continuous)</a>.
-  /// </remarks>
-  public class ContinuousUniformDistribution : ContinuousDistribution
-  {
-    #region instance fields
-
     /// <summary>
-    /// Gets or sets the parameter alpha which is used for generation of uniformly distributed random numbers.
-    /// </summary>
-    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
-    public double Alpha
-    {
-      get
-      {
-        return alpha;
-      }
-    }
-
-    /// <summary>
-    /// Stores the parameter alpha which is used for generation of uniformly distributed random numbers.
-    /// </summary>
-    private double alpha;
-
-    /// <summary>
-    /// Gets or sets the parameter beta which is used for generation of uniformly distributed random numbers.
-    /// </summary>
-    /// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefor assignable.</remarks>
-    public double Beta
-    {
-      get
-      {
-        return beta;
-      }
-    }
-
-    /// <summary>
-    /// Stores the parameter beta which is used for generation of uniformly distributed random numbers.
-    /// </summary>
-    private double beta;
-
-    /// <summary>
-    /// Stores an intermediate result for generation of uniformly distributed random numbers.
+    /// Provides generation of continuous uniformly distributed random numbers.
     /// </summary>
     /// <remarks>
-    /// Speeds up random number generation cause this value only depends on distribution parameters
-    ///   and therefor doesn't need to be recalculated in successive executions of <see cref="NextDouble"/>.
+    /// The implementation of the <see cref="ContinuousUniformDistribution"/> type bases upon information presented on
+    ///   <a href="http://en.wikipedia.org/wiki/Uniform_distribution_%28continuous%29">
+    ///   Wikipedia - Uniform distribution (continuous)</a>.
     /// </remarks>
-    private double helper1;
-
-    #endregion instance fields
-
-    #region construction
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ContinuousUniformDistribution"/> class, using a
-    ///   <see cref="StandardGenerator"/> as underlying random number generator.
-    /// </summary>
-    public ContinuousUniformDistribution()
-      : this(DefaultGenerator)
+    public class ContinuousUniformDistribution : ContinuousDistribution
     {
+        #region instance fields
+
+        /// <summary>
+        /// Gets or sets the parameter alpha which is used for generation of uniformly distributed random numbers.
+        /// </summary>
+        /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
+        public double Alpha
+        {
+            get
+            {
+                return alpha;
+            }
+        }
+
+        /// <summary>
+        /// Stores the parameter alpha which is used for generation of uniformly distributed random numbers.
+        /// </summary>
+        private double alpha;
+
+        /// <summary>
+        /// Gets or sets the parameter beta which is used for generation of uniformly distributed random numbers.
+        /// </summary>
+        /// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefor assignable.</remarks>
+        public double Beta
+        {
+            get
+            {
+                return beta;
+            }
+        }
+
+        /// <summary>
+        /// Stores the parameter beta which is used for generation of uniformly distributed random numbers.
+        /// </summary>
+        private double beta;
+
+        /// <summary>
+        /// Stores an intermediate result for generation of uniformly distributed random numbers.
+        /// </summary>
+        /// <remarks>
+        /// Speeds up random number generation cause this value only depends on distribution parameters
+        ///   and therefor doesn't need to be recalculated in successive executions of <see cref="NextDouble"/>.
+        /// </remarks>
+        private double helper1;
+
+        #endregion instance fields
+
+        #region construction
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ContinuousUniformDistribution"/> class, using a
+        ///   <see cref="StandardGenerator"/> as underlying random number generator.
+        /// </summary>
+        public ContinuousUniformDistribution()
+          : this(DefaultGenerator)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ContinuousUniformDistribution"/> class, using the specified
+        ///   <see cref="Generator"/> as underlying random number generator.
+        /// </summary>
+        /// <param name="generator">A <see cref="Generator"/> object.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+        /// </exception>
+        public ContinuousUniformDistribution(Generator generator)
+          : this(0, 1, generator)
+        {
+        }
+
+        public ContinuousUniformDistribution(double lower, double upper)
+          : this(lower, upper, DefaultGenerator)
+        {
+        }
+
+        public ContinuousUniformDistribution(double lower, double upper, Generator generator)
+          : base(generator)
+        {
+            Initialize(lower, upper);
+        }
+
+        #endregion construction
+
+        #region instance methods
+
+        public void Initialize(double lower, double upper)
+        {
+            if (!(lower <= upper))
+                throw new ArgumentOutOfRangeException("Lower bound is not less or equal than upper bound");
+            if (!IsValidAlpha(lower))
+                throw new ArgumentOutOfRangeException("Lower bound is out of range");
+            if (!IsValidBeta(upper))
+                throw new ArgumentOutOfRangeException("Upper bound is out of range");
+
+            alpha = lower;
+            beta = upper;
+            helper1 = beta - alpha;
+        }
+
+        /// <summary>
+        /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
+        /// </summary>
+        /// <param name="value">The value to check.</param>
+        /// <returns>
+        /// <see langword="true"/> if value is a valid number and not infinity; otherwise, <see langword="false"/>.
+        /// </returns>
+        public bool IsValidAlpha(double value)
+        {
+            return value >= double.MinValue && value <= double.MaxValue;
+        }
+
+        /// <summary>
+        /// Determines whether the specified value is valid for parameter <see cref="Beta"/>.
+        /// </summary>
+        /// <param name="value">The value to check.</param>
+        /// <returns>
+        /// <see langword="true"/> if value is a valid number and not infinity; otherwise, <see langword="false"/>.
+        /// </returns>
+        public bool IsValidBeta(double value)
+        {
+            return value >= double.MinValue && value <= double.MaxValue;
+        }
+
+        #endregion instance methods
+
+        #region overridden Distribution members
+
+        /// <summary>
+        /// Gets the minimum possible value of uniformly distributed random numbers.
+        /// </summary>
+        public override double Minimum
+        {
+            get
+            {
+                return alpha;
+            }
+        }
+
+        /// <summary>
+        /// Gets the maximum possible value of uniformly distributed random numbers.
+        /// </summary>
+        public override double Maximum
+        {
+            get
+            {
+                return beta;
+            }
+        }
+
+        /// <summary>
+        /// Gets the mean value of the uniformly distributed random numbers.
+        /// </summary>
+        public override double Mean
+        {
+            get
+            {
+                return alpha / 2.0 + beta / 2.0;
+            }
+        }
+
+        /// <summary>
+        /// Gets the median of uniformly distributed random numbers.
+        /// </summary>
+        public override double Median
+        {
+            get
+            {
+                return alpha / 2.0 + beta / 2.0;
+            }
+        }
+
+        /// <summary>
+        /// Gets the variance of uniformly distributed random numbers.
+        /// </summary>
+        public override double Variance
+        {
+            get
+            {
+                return Math.Pow(beta - alpha, 2.0) / 12.0;
+            }
+        }
+
+        /// <summary>
+        /// Gets the mode of the uniformly distributed random numbers.
+        /// </summary>
+        public override double[] Mode
+        {
+            get
+            {
+                return new double[] { };
+            }
+        }
+
+        /// <summary>
+        /// Returns a uniformly distributed floating point random number.
+        /// </summary>
+        /// <returns>A uniformly distributed double-precision floating point number.</returns>
+        public override double NextDouble()
+        {
+            return alpha + Generator.NextDouble() * helper1;
+        }
+
+        #endregion overridden Distribution members
+
+        #region CdfPdfQuantile
+
+        public override double CDF(double z)
+        {
+            return CDF(z, alpha, beta);
+        }
+
+        public static double CDF(double z, double low, double high)
+        {
+            if (z < low)
+                return 0;
+            else if (z >= high)
+                return 1;
+            else
+                return (z - low) / (high - low);
+        }
+
+        public override double PDF(double z)
+        {
+            return PDF(z, alpha, beta);
+        }
+
+        public static double PDF(double z, double low, double high)
+        {
+            if (z < low)
+                return 0;
+            else if (z >= high)
+                return 0;
+            else
+                return 1.0 / (high - low);
+        }
+
+        public override double Quantile(double p)
+        {
+            return Quantile(p, alpha, beta);
+        }
+
+        public static double Quantile(double p, double low, double high)
+        {
+            if (p < 0 || p > 1)
+                throw new ArgumentException("Probability p must be between 0 and 1");
+            return low + p * (high - low);
+        }
+
+        #endregion CdfPdfQuantile
     }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ContinuousUniformDistribution"/> class, using the specified
-    ///   <see cref="Generator"/> as underlying random number generator.
-    /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
-    public ContinuousUniformDistribution(Generator generator)
-      : this(0, 1, generator)
-    {
-    }
-
-    public ContinuousUniformDistribution(double lower, double upper)
-      : this(lower, upper, DefaultGenerator)
-    {
-    }
-
-    public ContinuousUniformDistribution(double lower, double upper, Generator generator)
-      : base(generator)
-    {
-      Initialize(lower, upper);
-    }
-
-    #endregion construction
-
-    #region instance methods
-
-    public void Initialize(double lower, double upper)
-    {
-      if (!(lower <= upper))
-        throw new ArgumentOutOfRangeException("Lower bound is not less or equal than upper bound");
-      if (!IsValidAlpha(lower))
-        throw new ArgumentOutOfRangeException("Lower bound is out of range");
-      if (!IsValidBeta(upper))
-        throw new ArgumentOutOfRangeException("Upper bound is out of range");
-
-      alpha = lower;
-      beta = upper;
-      helper1 = beta - alpha;
-    }
-
-    /// <summary>
-    /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
-    /// </summary>
-    /// <param name="value">The value to check.</param>
-    /// <returns>
-    /// <see langword="true"/> if value is a valid number and not infinity; otherwise, <see langword="false"/>.
-    /// </returns>
-    public bool IsValidAlpha(double value)
-    {
-      return value >= double.MinValue && value <= double.MaxValue;
-    }
-
-    /// <summary>
-    /// Determines whether the specified value is valid for parameter <see cref="Beta"/>.
-    /// </summary>
-    /// <param name="value">The value to check.</param>
-    /// <returns>
-    /// <see langword="true"/> if value is a valid number and not infinity; otherwise, <see langword="false"/>.
-    /// </returns>
-    public bool IsValidBeta(double value)
-    {
-      return value >= double.MinValue && value <= double.MaxValue;
-    }
-
-    #endregion instance methods
-
-    #region overridden Distribution members
-
-    /// <summary>
-    /// Gets the minimum possible value of uniformly distributed random numbers.
-    /// </summary>
-    public override double Minimum
-    {
-      get
-      {
-        return alpha;
-      }
-    }
-
-    /// <summary>
-    /// Gets the maximum possible value of uniformly distributed random numbers.
-    /// </summary>
-    public override double Maximum
-    {
-      get
-      {
-        return beta;
-      }
-    }
-
-    /// <summary>
-    /// Gets the mean value of the uniformly distributed random numbers.
-    /// </summary>
-    public override double Mean
-    {
-      get
-      {
-        return alpha / 2.0 + beta / 2.0;
-      }
-    }
-
-    /// <summary>
-    /// Gets the median of uniformly distributed random numbers.
-    /// </summary>
-    public override double Median
-    {
-      get
-      {
-        return alpha / 2.0 + beta / 2.0;
-      }
-    }
-
-    /// <summary>
-    /// Gets the variance of uniformly distributed random numbers.
-    /// </summary>
-    public override double Variance
-    {
-      get
-      {
-        return Math.Pow(beta - alpha, 2.0) / 12.0;
-      }
-    }
-
-    /// <summary>
-    /// Gets the mode of the uniformly distributed random numbers.
-    /// </summary>
-    public override double[] Mode
-    {
-      get
-      {
-        return new double[] { };
-      }
-    }
-
-    /// <summary>
-    /// Returns a uniformly distributed floating point random number.
-    /// </summary>
-    /// <returns>A uniformly distributed double-precision floating point number.</returns>
-    public override double NextDouble()
-    {
-      return alpha + Generator.NextDouble() * helper1;
-    }
-
-    #endregion overridden Distribution members
-
-    #region CdfPdfQuantile
-
-    public override double CDF(double z)
-    {
-      return CDF(z, alpha, beta);
-    }
-
-    public static double CDF(double z, double low, double high)
-    {
-      if (z < low)
-        return 0;
-      else if (z >= high)
-        return 1;
-      else
-        return (z - low) / (high - low);
-    }
-
-    public override double PDF(double z)
-    {
-      return PDF(z, alpha, beta);
-    }
-
-    public static double PDF(double z, double low, double high)
-    {
-      if (z < low)
-        return 0;
-      else if (z >= high)
-        return 0;
-      else
-        return 1.0 / (high - low);
-    }
-
-    public override double Quantile(double p)
-    {
-      return Quantile(p, alpha, beta);
-    }
-
-    public static double Quantile(double p, double low, double high)
-    {
-      if (p < 0 || p > 1)
-        throw new ArgumentException("Probability p must be between 0 and 1");
-      return low + p * (high - low);
-    }
-
-    #endregion CdfPdfQuantile
-  }
 }

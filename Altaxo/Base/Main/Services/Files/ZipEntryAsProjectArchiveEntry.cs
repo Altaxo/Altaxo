@@ -34,7 +34,7 @@ namespace Altaxo.Main.Services.Files
   /// <seealso cref="Altaxo.Main.Services.Files.IProjectArchiveEntry" />
   public class ZipEntryAsProjectArchiveEntry : IProjectArchiveEntry
   {
-    ZipArchiveEntryAxo _entry;
+    private ZipArchiveEntryAxo _entry;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ZipEntryAsProjectArchiveEntry"/> class.

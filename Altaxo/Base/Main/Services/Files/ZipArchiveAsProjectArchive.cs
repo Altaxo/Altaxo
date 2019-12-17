@@ -39,9 +39,9 @@ namespace Altaxo.Main.Services.Files
   public class ZipArchiveAsProjectArchive : IProjectArchive
   {
     private bool _isDisposed;
-    Stream _stream;
-    ZipArchiveAxo _zipArchive;
-    bool _leaveOpen;
+    private Stream _stream;
+    private ZipArchiveAxo _zipArchive;
+    private bool _leaveOpen;
 
     /// <inheritdoc/>
     public PathName FileName

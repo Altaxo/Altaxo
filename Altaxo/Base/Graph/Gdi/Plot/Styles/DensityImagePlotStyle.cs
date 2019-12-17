@@ -129,16 +129,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         throw new NotImplementedException("This function should not be called, since a newer serialization version is available");
         /*
-				DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
+                DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
 
-				info.AddEnum("ScalingStyle", s._scalingStyle);
-				info.AddValue("RangeFrom", s._vRangeFrom);
-				info.AddValue("RangeTo", s._vRangeTo);
-				info.AddValue("ClipToLayer", s._clipToLayer);
-				info.AddValue("ColorBelow", s._colorBelow);
-				info.AddValue("ColorAbove", s._colorAbove);
-				info.AddValue("ColorInvalid", s._colorInvalid);
-				*/
+                info.AddEnum("ScalingStyle", s._scalingStyle);
+                info.AddValue("RangeFrom", s._vRangeFrom);
+                info.AddValue("RangeTo", s._vRangeTo);
+                info.AddValue("ClipToLayer", s._clipToLayer);
+                info.AddValue("ColorBelow", s._colorBelow);
+                info.AddValue("ColorAbove", s._colorAbove);
+                info.AddValue("ColorInvalid", s._colorInvalid);
+                */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
