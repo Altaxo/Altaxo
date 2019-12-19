@@ -32,7 +32,6 @@ using System.Text;
 
 namespace Altaxo.AddInItems
 {
-
   /// <summary>
   /// Assembly load context to load not only DLLs dynamically, but also their dependencies.
   /// The assemblies are loaded into the default context.

@@ -1,11 +1,11 @@
 ﻿<Application
     x:Class="Altaxo.Gui.Startup.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     x:ClassModifier="internal">
 
     <Application.Resources>
-        <!-- Style AvalonDock windows -->
+        <!--  Style AvalonDock windows  -->
         <!--
 		<Style TargetType="{x:Type avalondock:LayoutDocumentFloatingWindowControl}" BasedOn="{x:Static agc:GlobalStyles.WindowStyle}" />
 		<Style TargetType="{x:Type avalondock:LayoutDocumentControl}" BasedOn="{x:Static agc:GlobalStyles.WindowStyle}" />

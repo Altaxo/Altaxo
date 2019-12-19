@@ -55,8 +55,8 @@ namespace Altaxo.AddInItems
         container.AddService(
           interfaceType, delegate
           {
-                    // This callback runs within the service container's lock
-                    if (serviceLoading)
+            // This callback runs within the service container's lock
+            if (serviceLoading)
               throw new InvalidOperationException("Found cyclic dependency when initializating " + className);
             serviceLoading = true;
             return args.AddIn.CreateObject(className);
@@ -79,12 +79,12 @@ namespace Altaxo.AddInItems
           container.AddService(
             otherInterfaceType, delegate
             {
-                        // This callback runs within the service container's lock
-                        if (service1Loading)
+              // This callback runs within the service container's lock
+              if (service1Loading)
                 throw new InvalidOperationException("Found cyclic dependency when initializating " + otherInterfaceType.ToString());
               service1Loading = true;
               return container.GetService(interfaceType); // we return the service registered with the interface given in the Id of the codon
-                      });
+            });
         }
       }
 

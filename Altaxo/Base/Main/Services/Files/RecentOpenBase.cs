@@ -47,10 +47,10 @@ namespace Altaxo.Main.Services
             "App\\RecentFiles",
             Altaxo.Main.Properties.PropertyLevel.Application);
     private static readonly Altaxo.Main.Properties.PropertyKey<IList<FileName>> PropertyKeyRecentProjects =
-        new Altaxo.Main.Properties.PropertyKey<IList<FileName>>(
-            "0C3B80BC-BE6B-4270-B59A-AAF5BA9CF00C",
-            "App\\RecentProjects",
-            Altaxo.Main.Properties.PropertyLevel.Application);
+    new Altaxo.Main.Properties.PropertyKey<IList<FileName>>(
+        "0C3B80BC-BE6B-4270-B59A-AAF5BA9CF00C",
+        "App\\RecentProjects",
+        Altaxo.Main.Properties.PropertyLevel.Application);
 
     #region Serialization
 
@@ -89,7 +89,6 @@ namespace Altaxo.Main.Services
         return s;
       }
     }
-
 
     #endregion Serialization
 
@@ -138,8 +137,8 @@ namespace Altaxo.Main.Services
     public void RemoveRecentProject(PathName pathName)
     {
       if (pathName is FileName name)
-      {
-        _recentProjects.Remove(name);
+    {
+      _recentProjects.Remove(name);
       }
       Current.PropertyService.SetValue(PropertyKeyRecentProjects, _recentProjects);
     }
@@ -147,15 +146,15 @@ namespace Altaxo.Main.Services
     public virtual void AddRecentProject(PathName pathName)
     {
       if (pathName is FileName name)
+    {
+      _recentProjects.Remove(name);
+
+      while (_recentProjects.Count >= MAX_LENGTH)
       {
-        _recentProjects.Remove(name);
+        _recentProjects.RemoveAt(_recentProjects.Count - 1);
+      }
 
-        while (_recentProjects.Count >= MAX_LENGTH)
-        {
-          _recentProjects.RemoveAt(_recentProjects.Count - 1);
-        }
-
-        _recentProjects.Insert(0, name);
+      _recentProjects.Insert(0, name);
       }
 
       Current.PropertyService.SetValue(PropertyKeyRecentProjects, _recentProjects);

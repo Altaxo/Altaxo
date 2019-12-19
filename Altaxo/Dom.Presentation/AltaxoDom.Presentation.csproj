@@ -33,7 +33,4 @@
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="if not exist $(SolutionDir)rtDir\AddIns mkdir $(SolutionDir)rtDir\AddIns&#xD;&#xA;copy $(ProjectDir)AltaxoCore.addin $(SolutionDir)rtDir\AddIns" />
   </Target>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if not exist $(SolutionDir)rtDir\data\resources mkdir $(SolutionDir)rtDir\data\resources&#xD;&#xA;copy $(ProjectDir)Resources\*.resources $(SolutionDir)rtDir\data\resources" />
-  </Target>
 </Project>

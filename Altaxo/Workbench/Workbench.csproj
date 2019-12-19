@@ -12,11 +12,7 @@
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Resources\AltaxoBitmap.resources" />
-    <None Remove="Resources\AltaxoString.resources" />
-    <None Remove="Resources\BitmapResources.resources" />
     <None Remove="Resources\SplashScreen.jpg" />
-    <None Remove="Resources\StringResources.resources" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\AltaxoCore.csproj" />
@@ -24,11 +20,12 @@
     <ProjectReference Include="..\Base.Presentation\AltaxoBase.Presentation.csproj" />
     <ProjectReference Include="..\WorkbenchCore\WorkbenchCore.csproj" />
     <ProjectReference Include="..\WorkbenchBase\WorkbenchBase.csproj" />
-    <ProjectReference Include="..\..\Libraries\AvalonDock\Xceed.Wpf.AvalonDock\Xceed.Wpf.AvalonDock.csproj" />
-    <ProjectReference Include="..\..\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.Aero\Xceed.Wpf.AvalonDock.Themes.Aero.csproj" />
-    <ProjectReference Include="..\..\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.Metro\Xceed.Wpf.AvalonDock.Themes.Metro.csproj" />
-    <ProjectReference Include="..\..\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.VS2010\Xceed.Wpf.AvalonDock.Themes.VS2010.csproj" />
-    <ProjectReference Include="..\..\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.VS2013\Xceed.Wpf.AvalonDock.Themes.VS2013.csproj" />
+    <ProjectReference Include="..\..\Libraries\AvalonDock\AvalonDock\AvalonDock.csproj" />
+    <ProjectReference Include="..\..\Libraries\AvalonDock\AvalonDock.Themes.Aero\AvalonDock.Themes.Aero.csproj" />
+    <ProjectReference Include="..\..\Libraries\AvalonDock\AvalonDock.Themes.Expression\AvalonDock.Themes.Expression.csproj" />
+    <ProjectReference Include="..\..\Libraries\AvalonDock\AvalonDock.Themes.Metro\AvalonDock.Themes.Metro.csproj" />
+    <ProjectReference Include="..\..\Libraries\AvalonDock\AvalonDock.Themes.VS2010\AvalonDock.Themes.VS2010.csproj" />
+    <ProjectReference Include="..\..\Libraries\AvalonDock\AvalonDock.Themes.VS2013\AvalonDock.Themes.VS2013.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -36,11 +33,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\AltaxoBitmap.resources" />
-    <EmbeddedResource Include="Resources\AltaxoString.resources" />
-    <EmbeddedResource Include="Resources\BitmapResources.resources" />
     <EmbeddedResource Include="Resources\SplashScreen.jpg" />
-    <EmbeddedResource Include="Resources\StringResources.resources" />
   </ItemGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
   <Target Name="GenAssInfo">

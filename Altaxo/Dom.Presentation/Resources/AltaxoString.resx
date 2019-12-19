@@ -1,0 +1,2661 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnAsNegError" xml:space="preserve">
+    <value>Set column as &amp;-Error</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiRGB" xml:space="preserve">
+    <value>300 dpi - RGB</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Background.RectangularBackground" xml:space="preserve">
+    <value>Rectangular</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.PasteNewLayerBefore.Description" xml:space="preserve">
+    <value>Paste as new layer before the active layer position.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarXPlotStyle" xml:space="preserve">
+    <value>Error bar (x)</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu" xml:space="preserve">
+    <value>&amp;Analysis</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.RenameFolder" xml:space="preserve">
+    <value>Rename folder</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeLayers.Description" xml:space="preserve">
+    <value>Arranges the layers in a table wise order.</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnAsY.Description" xml:space="preserve">
+    <value>Sets the column as an Y column (independent variable).</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.Header4.Description" xml:space="preserve">
+    <value>Formats selected text as 4th level header text</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.ClearDataOnly.Description" xml:space="preserve">
+    <value>Clears the data columns only</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.Bold.Description" xml:space="preserve">
+    <value>Formats selected text as bold text</value>
+  </data>
+  <data name="XML.MML.KohlrauschTimeDomain" xml:space="preserve">
+    <value>&lt;math&gt;
+  &lt;mi&gt;&amp;Phi;&lt;/mi&gt;
+  &lt;mo&gt;&amp;af;&lt;/mo&gt;
+  &lt;mrow&gt;
+    &lt;mo&gt;(&lt;/mo&gt;
+    &lt;mi&gt;t&lt;/mi&gt;
+    &lt;mo&gt;)&lt;/mo&gt;
+  &lt;/mrow&gt;
+  &lt;mo&gt;=&lt;/mo&gt;
+  &lt;mrow&gt;
+    &lt;mi&gt;exp&lt;/mi&gt;
+    &lt;mo&gt;&amp;af;&lt;/mo&gt;
+    &lt;mrow&gt;
+      &lt;mo&gt;(&lt;/mo&gt;
+      &lt;msup&gt;
+        &lt;mrow&gt;
+          &lt;mi&gt;-&lt;/mi&gt;
+          &lt;mo&gt;(&lt;/mo&gt;
+          &lt;mfrac&gt;
+            &lt;mi&gt;t&lt;/mi&gt;
+            &lt;mi&gt;&amp;tau;&lt;/mi&gt;
+          &lt;/mfrac&gt;
+          &lt;mo&gt;)&lt;/mo&gt;
+        &lt;/mrow&gt;
+        &lt;mi&gt;&amp;beta;&lt;/mi&gt;
+      &lt;/msup&gt;
+      &lt;mo&gt;)&lt;/mo&gt;
+    &lt;/mrow&gt;
+  &lt;/mrow&gt;
+&lt;/math&gt;</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.PasteInActiveLayer.Description" xml:space="preserve">
+    <value>Paste the layer as a template in the active layer.</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.2DCenteredFFT" xml:space="preserve">
+    <value>2D Centered FFT</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarZPlotStyle" xml:space="preserve">
+    <value>ErrorBar(Z)</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.FolderTextDocument.Description" xml:space="preserve">
+    <value>Add a new folder text document, i.e. a text document named like the folder it resides into</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.Delete.Description" xml:space="preserve">
+    <value>Deletes the selected items.</value>
+  </data>
+  <data name="FitFunctions.Relaxation.KohlrauschDielectricSusceptibility.Part3" xml:space="preserve">
+    <value> and \f2 e\f0 ' and \f2 e\f0 '' being the dependent variables, namely the real and negative imaginary part of the dielectric function.\par
+\par
+Parameter:\par
+\par
+\f2 e\f0\sub\u8734?\nosupersub  :\tab high frequency permittivity limit\par
+\f2 De\f0  :\tab step height of the permittivity\par
+\f2 t\f0  :\tab retardation time\par
+\f2 b\f0  :\tab shape exponent (0&lt;\f2 b\f0 &lt;=1) \par
+\f2 s\f0  :\tab electrical conductivity [S/m]\par\par</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.ExtractTableData" xml:space="preserve">
+    <value>Extract worksheet data..</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.HideAllWindowsRecursively" xml:space="preserve">
+    <value>Hide all windows in folder and subfolders</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.ExportHtml.Description" xml:space="preserve">
+    <value>Exports the Markdown text document to one or multiple Html files.</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.Duplicate.Description" xml:space="preserve">
+    <value>Duplicates the current worksheet</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarPlotStyle" xml:space="preserve">
+    <value>ErrorBar</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.DecomposeCyclingVariable" xml:space="preserve">
+    <value>Decompose table with cycling indep. var.</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.CmdExchangeTablesForPlotItems.Description" xml:space="preserve">
+    <value>Exchanges for all plot items in the selected graphs the underlying tables of the plot items.</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeLeftToRight.Description" xml:space="preserve">
+    <value>Left alignment of the selected elements to the right side of the master element.</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.Rename" xml:space="preserve">
+    <value>Rename ..</value>
+  </data>
+  <data name="Altaxo.FileFilter.AllFiles" xml:space="preserve">
+    <value>All files</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.TestProjectLoading" xml:space="preserve">
+    <value>Test all projects in folder...</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.CameraPerspective.Description" xml:space="preserve">
+    <value>View graph through perspective camera</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.Correlate" xml:space="preserve">
+    <value>Correlate columns</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.StatisticsCreateHistogram" xml:space="preserve">
+    <value>Create histogram</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ViewOnSelectOn" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="XML.StartupTips.Tip2" xml:space="preserve">
+    <value>That you can open a Worksheet Script Window (Menu: "Worksheet" -&gt; "Worksheet Script") and write cool C# scripts into it, even with syntax highlighting and code completion?</value>
+  </data>
+  <data name="XML.StartupTips.Tip1" xml:space="preserve">
+    <value>That you should look out for new Altaxo versions and tell all your friends how good Altaxo is and what cool graphs you can create with it!</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeHorizontal.Description" xml:space="preserve">
+    <value>Horizontal alignment of the selected elements.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.AsciiWithOptions" xml:space="preserve">
+    <value>Import ASCII (with options) ...</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.EditTextDocumentProperties" xml:space="preserve">
+    <value>Edit properties ..</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.VisibleLightSpectrum" xml:space="preserve">
+    <value>Visible light spectrum</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.BarGraphPlotStyle" xml:space="preserve">
+    <value>BarGraph</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotBarChartStack" xml:space="preserve">
+    <value>Stacked Bar</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveGraphAsMiniProject.Description" xml:space="preserve">
+    <value>Saves the current graph as MiniProject along with all neccessary data.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear" xml:space="preserve">
+    <value>Rel.Near-Near.LinkLayer</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.LayerControl" xml:space="preserve">
+    <value>Layer &amp;control</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotColumnChartStack.Description" xml:space="preserve">
+    <value>Plots a vertical stacked column chart.</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.ViewRight.Description" xml:space="preserve">
+    <value>View graph from right side</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.Figure.Description" xml:space="preserve">
+    <value>Formats selected text as figure block</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.FitPolynomial" xml:space="preserve">
+    <value>Fit polynomial...</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnAsError.Description" xml:space="preserve">
+    <value>Sets the currently selected column to a error column</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeBottom.Description" xml:space="preserve">
+    <value>Bottom alignment of the selected elements.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Export.SpecificFile.Description" xml:space="preserve">
+    <value>Export to user specified file format by opening the format dialog.</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ShowAllWindows.Description" xml:space="preserve">
+    <value>Show all items in this folder.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderAHSBGradient" xml:space="preserve">
+    <value>Alpha-Hue-Saturation-Brightness Gradient</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelTriangleSymmetrically" xml:space="preserve">
+    <value>Triangle2</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.ShowUserSettings" xml:space="preserve">
+    <value>Show all user settings...</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.MultiRenameItems.Description" xml:space="preserve">
+    <value>Rename the selected items.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveProjectAs.Description" xml:space="preserve">
+    <value>Saves the current project under a user defined file name</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Export.SpecificFile" xml:space="preserve">
+    <value>To specific format ..</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.CumulativeProbabilityScale" xml:space="preserve">
+    <value>Cumulative probability scale</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.CS.G3DCartesicCoordinateSystem" xml:space="preserve">
+    <value>Cartesic coordinate system</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.FFT" xml:space="preserve">
+    <value>FFT</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description" xml:space="preserve">
+    <value>Adds one or more property columns to the worksheet</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.Database" xml:space="preserve">
+    <value>Import data from database ..</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetChangeStructureMenu" xml:space="preserve">
+    <value>Restructure worksheet data</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.PLSOnRows.Description" xml:space="preserve">
+    <value>Performs a Partial Least Squares analysis of the selected row spectra</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.MoveToFolder" xml:space="preserve">
+    <value>Move graph to folder..</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.FitNonlinear.Description" xml:space="preserve">
+    <value>Opens the nonlinear regression dialog.</value>
+  </data>
+  <data name="XML.MainMenu.NewLayerMenu.LinkedTopXRightY_XAxisStraight" xml:space="preserve">
+    <value>(Linked): Top X + Right Y + X axis straight</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SortTableDescending" xml:space="preserve">
+    <value>Sort table descending</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotDensityImage.Description" xml:space="preserve">
+    <value>Creates a linear density image of the selected column range</value>
+  </data>
+  <data name="XML.MML.HavriliakNegamiSusceptibility.Dielectrics" xml:space="preserve">
+    <value>&lt;math&gt;
+  &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
+  &lt;mo&gt;&amp;DiacriticalAcute;&lt;/mo&gt;
+  &lt;mo&gt;-&lt;/mo&gt;
+  &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+  &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
+  &lt;mo&gt;&amp;DiacriticalDoubleAcute;&lt;/mo&gt;
+  &lt;mo&gt;=&lt;/mo&gt;
+  &lt;msub&gt;
+    &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
+    &lt;mo&gt;&amp;infin;&lt;/mo&gt;
+  &lt;/msub&gt;
+  &lt;mo&gt;+&lt;/mo&gt;
+  &lt;mfrac&gt;
+    &lt;mrow&gt;
+      &lt;mi&gt;&amp;Delta;&lt;/mi&gt;
+      &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
+    &lt;/mrow&gt;
+    &lt;msup&gt;
+      &lt;mrow&gt;
+        &lt;mo&gt;(&lt;/mo&gt;
+        &lt;mrow&gt;
+          &lt;msup&gt;
+            &lt;mrow&gt;
+              &lt;mn&gt;1&lt;/mn&gt;
+              &lt;mo&gt;+&lt;/mo&gt;
+              &lt;mo&gt;(&lt;/mo&gt;
+              &lt;mrow&gt;
+                &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+                &lt;mi&gt;&amp;tau;&lt;/mi&gt;
+                &lt;mi&gt;&amp;omega;&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo&gt;)&lt;/mo&gt;
+            &lt;/mrow&gt;
+            &lt;mi&gt;&amp;alpha;&lt;/mi&gt;
+          &lt;/msup&gt;
+        &lt;/mrow&gt;
+        &lt;mo&gt;)&lt;/mo&gt;
+      &lt;/mrow&gt;
+      &lt;mrow&gt;
+        &lt;mi&gt;&amp;gamma;&lt;/mi&gt;
+      &lt;/mrow&gt;
+    &lt;/msup&gt;
+  &lt;/mfrac&gt;
+  &lt;mo&gt;-&lt;/mo&gt;
+  &lt;mfrac&gt;
+    &lt;mrow&gt;
+      &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+            &lt;mi&gt;&amp;sigma;&lt;/mi&gt;
+    &lt;/mrow&gt;
+    &lt;mrow&gt; &lt;mi&gt;&amp;omega;&lt;/mi&gt;
+ &lt;msub&gt;
+      &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
+      &lt;mn&gt;0&lt;/mn&gt;
+    &lt;/msub&gt;
+  &lt;/mrow&gt; &lt;/mfrac&gt;
+&lt;/math&gt;</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ViewOnSelect" xml:space="preserve">
+    <value>View on select:</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelCMYK" xml:space="preserve">
+    <value>CMYK</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.Duplicate.Description" xml:space="preserve">
+    <value>Duplicates the current worksheet or graph (and the corresponding table or graph document)</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.AddPropertyColumns" xml:space="preserve">
+    <value>Add &amp;Property Columns ..</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.MoveGraphItemUp.Description" xml:space="preserve">
+    <value>Move item one step upwards</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.RequeryTableDataSource.Description" xml:space="preserve">
+    <value>Requery the table data source immediately.</value>
+  </data>
+  <data name="FitFunctions.General.PolynomialFit" xml:space="preserve">
+    <value>This implements a polynomial fit. Please use the polynomial fit from the analysis menu instead this one unless you need to set some parameters fixed. The fit function is defined as:
+$$
+y(x) = a_0 + a_1 x + a_2 x^2 + ... + a_n x^n
+$$
+in which x is the independent variable, y is the dependent variable, and $ a_0 ... a_n $ are the parameters.</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.PasteAsNewLayer" xml:space="preserve">
+    <value>As new layer</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiARGB.Description" xml:space="preserve">
+    <value>Copy the page to clipboard as bitmap format 300 dpi - ARGB</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.FixedManually.Description" xml:space="preserve">
+    <value>Fixed by the user value. Rescaling by the user is ignored. If zoomed, the new zoom value is used as new user provided value.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMinorOrMajor" xml:space="preserve">
+    <value>Snap to major or minor</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotActualVersusPredictedY.Description" xml:space="preserve">
+    <value>Plots the predicted Y value versus the acual one.</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotColumnChartRelStack.Description" xml:space="preserve">
+    <value>Plots a vertical relative stacked column chart.</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.PasteInActiveLayer" xml:space="preserve">
+    <value>Paste as template here ..</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.Header2.Description" xml:space="preserve">
+    <value>Formats selected text as 2nd level header text</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotLineAndScatter" xml:space="preserve">
+    <value>Line&amp;&amp;Sc&amp;atter</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.BarGraphPlotStyle" xml:space="preserve">
+    <value>Bar</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiARGB" xml:space="preserve">
+    <value>300 dpi - ARGB</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.SpanTickSpacing" xml:space="preserve">
+    <value>Span tick spacing</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.PasteGraphAsMiniProject.Description" xml:space="preserve">
+    <value>Pastes the clipboard content as a miniproject into a new user defined folder.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelComplementary" xml:space="preserve">
+    <value>Complementary</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotPreprocessedSpectra.Description" xml:space="preserve">
+    <value>Plots the preprocessed spectra.</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.Italic.Description" xml:space="preserve">
+    <value>Formats selected text as italic text</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.Hide.Description" xml:space="preserve">
+    <value>Hide selected items from the document area.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.TextTickSpacing" xml:space="preserve">
+    <value>Text tick spacing</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.Zoom100Percent" xml:space="preserve">
+    <value>100% Zoom</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Refresh" xml:space="preserve">
+    <value>Refresh graph</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.EditTableDataSource" xml:space="preserve">
+    <value>Edit table data source ..</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.Margin50Percent" xml:space="preserve">
+    <value>50% View margin</value>
+  </data>
+  <data name="Altaxo.TestString" xml:space="preserve">
+    <value>String to test if string resource loading works.</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.HideAllWindows" xml:space="preserve">
+    <value>Hide all windows in folder</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeSameHorizontalSize.Description" xml:space="preserve">
+    <value>Same horizontal size of the selected elements.</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.ExtractPropertyValues.Description" xml:space="preserve">
+    <value>Extract values from property strings of the type "key=value"</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.RegistryMenu.Description" xml:space="preserve">
+    <value>Contains menu items concerning the registration / unregistration of the application.</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.Subscript.Description" xml:space="preserve">
+    <value>Formats selected text as subscript text</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarYPlotStyle" xml:space="preserve">
+    <value>ErrorBar(Y)</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.CopyToMultipleFolders.Description" xml:space="preserve">
+    <value>Copies the selected items to multiple folders.</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.PasteNewLayerAsChild" xml:space="preserve">
+    <value>Paste as new child layer</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiARGB" xml:space="preserve">
+    <value>150 dpi - ARGB</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.SetNumberOfFactors.Description" xml:space="preserve">
+    <value>Set the preferred number of factors for calculation and plotting of prediction and residuals.</value>
+  </data>
+  <data name="Dialog.Options.GraphSettings" xml:space="preserve">
+    <value>Graph settings</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.MoveToFolder.Description" xml:space="preserve">
+    <value>Move the current graph to another folder.</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotYCrossResiduals.Description" xml:space="preserve">
+    <value>Plot all Y residuals from cross prediction individually in a graph.</value>
+  </data>
+  <data name="XML.MainMenu.CopySpecificMenu" xml:space="preserve">
+    <value>Copy specific</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.OpenAllWorksheets" xml:space="preserve">
+    <value>Worksheets</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.LabelPlotStyle" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="XML.MainMenu.TextViewConfigurationMenu" xml:space="preserve">
+    <value>View configuration ...</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.TableScript" xml:space="preserve">
+    <value>Worksheet script ..</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.ImageData.Description" xml:space="preserve">
+    <value>Imports the pixel data of an image into the current worksheet</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ViewOnSelectOn.Description" xml:space="preserve">
+    <value>Switches on the 'view on select' function.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.Jcamp.Description" xml:space="preserve">
+    <value>Imports one or more Jcamp-DX files</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveWorksheetAs.Description" xml:space="preserve">
+    <value>Saves a worksheet including all table data</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ResizeGraph" xml:space="preserve">
+    <value>Resize graph ...</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.Jcamp" xml:space="preserve">
+    <value>Jcamp-DX file(s) ..</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.CodeBlock.Description" xml:space="preserve">
+    <value>Formats selected text as a block of code</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.Ascii" xml:space="preserve">
+    <value>Ascii ..</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.PlotCommonColumns.Description" xml:space="preserve">
+    <value>Plots columns that are common to all of the selected tables.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.PropertyBag" xml:space="preserve">
+    <value>Property bag</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.ViewBack.Description" xml:space="preserve">
+    <value>View graph from back side</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveWorksheetAsTemplate.Description" xml:space="preserve">
+    <value>Saves a worksheet with layout and scripts, but without the table data</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.RequeryTableDataSource" xml:space="preserve">
+    <value>Requery table data source</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.PasteNewLayer.Description" xml:space="preserve">
+    <value>Paste as new layer at the end.</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.MultiResizeGraphs.Description" xml:space="preserve">
+    <value>Resizes all the selected graph documents according to user defined values </value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.MoveActiveLayer.Description" xml:space="preserve">
+    <value>Moves the active layer to another position.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet.Description" xml:space="preserve">
+    <value>This imports all selected ascii data files into a single worksheet.</value>
+  </data>
+  <data name="MainWindow.Windows.AltaxoOutputWindowLabel" xml:space="preserve">
+    <value>Output</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.PageSetup" xml:space="preserve">
+    <value>Page Setup ..</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyTextWithImages.Description" xml:space="preserve">
+    <value>Copies the source text along with the local images to the clipboard in order to be pasted into another text document.</value>
+  </data>
+  <data name="Gui.DataConnection.Views" xml:space="preserve">
+    <value>Views</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.ShowOptions.Description" xml:space="preserve">
+    <value>Opens the options dialog.</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotYResiduals.Description" xml:space="preserve">
+    <value>Plot all Y residuals individually in a graph.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ScatterPlotStyle" xml:space="preserve">
+    <value>Scatter</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.DeleteAllButSelected" xml:space="preserve">
+    <value>Delete all but selected</value>
+  </data>
+  <data name="Altaxo.Gui.ExceptionBox.CopyToClipboard" xml:space="preserve">
+    <value>Copy error message to clipboard</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.CumulativeProbabilityTickSpacing" xml:space="preserve">
+    <value>Cumulative probability tick spacing</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.InverseScale" xml:space="preserve">
+    <value>Inverse scale</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.InstanceScript.Description" xml:space="preserve">
+    <value>Creates a new instance script for one-time execution.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.FolderTextDocument" xml:space="preserve">
+    <value>Folder text document</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Export.GalacticSPC.Description" xml:space="preserve">
+    <value>Exports worksheet data into one or more Galactic SPC files</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Append.Description" xml:space="preserve">
+    <value>Merges the objects from a project into the current project</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ViewFolderAndSubfolderItemsOnSelectTN.Description" xml:space="preserve">
+    <value>When a tree node is selected, shows the items in that folder and in the subfolders in the document area.</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SortTableAscending.Description" xml:space="preserve">
+    <value>Sorts the table so that the items in the selected column appear in ascending order.</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.PLSPredictOnRows.Description" xml:space="preserve">
+    <value>PLS prediction of horizontally oriented spectra</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.AddDataColumns" xml:space="preserve">
+    <value>Add &amp;Data Columns ..</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetGroupNumber" xml:space="preserve">
+    <value>Set &amp;group number ..</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ResizeGraph.Description" xml:space="preserve">
+    <value>Shows a dialog for resizing the current graph document.</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Duplicate" xml:space="preserve">
+    <value>&amp;Duplicate</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.InsertOneRow" xml:space="preserve">
+    <value>Insert a row before</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotPredictionScores.Description" xml:space="preserve">
+    <value>Plots the prediction score vectors.</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyGraphActiveLayer.Description" xml:space="preserve">
+    <value>Copies the active layer of the current graph to the clipboard.</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiARGB.Description" xml:space="preserve">
+    <value>Copy the page to clipboard as bitmap format 150 dpi - ARGB</value>
+  </data>
+  <data name="FitFunctions.Relaxation.KohlrauschSusceptibility.Part2" xml:space="preserve">
+    <value>\par\pard based on the Fourier transform of the (derivative of the) Kohlrausch function:\par\pard\qc</value>
+  </data>
+  <data name="FitFunctions.Relaxation.KohlrauschSusceptibility.Part3" xml:space="preserve">
+    <value> and \f2 c\f0 ' and \f2 c\f0 '' being the dependent variables, namely the real and negative imaginary part of the dynamic susceptibility.\par
+\par
+Parameter:\par
+\par
+\f2 c\f0\sub\u8734?\nosupersub\f0  :\tab high frequency susceptibility limit\par
+\f2 Dc\f0  :\tab step height of the susceptibility function\par
+\f2 t\f0  :\tab retardation time\par
+\f2 b\f0  :\tab shape exponent (0&lt;\f2 b\f0 &lt;=1) \par
+\f2 h\f0  :\tab generalized flow term, for instance viscosity\par\par</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.StandardWorksheet.Description" xml:space="preserve">
+    <value>Creates a new worksheet with a X column "A" and a V column "B"</value>
+  </data>
+  <data name="Altaxo.Gui.ExceptionBox.ThankYouMsg" xml:space="preserve">
+    <value>Thank you for helping make Altaxo a better program for everyone!</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.SortByTypeAndCreation" xml:space="preserve">
+    <value>Type and Creation time</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.TextDocument" xml:space="preserve">
+    <value>Text document</value>
+  </data>
+  <data name="XML.MainMenu.PasteSpecificMenu" xml:space="preserve">
+    <value>Paste specific</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotLineRelStack.Description" xml:space="preserve">
+    <value>Plot the selected columns as relative stacked areas</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.StatisticsOnRows" xml:space="preserve">
+    <value>Statistic on rows</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.ViewTop.Description" xml:space="preserve">
+    <value>View graph from top side</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.AngularDegreeScale" xml:space="preserve">
+    <value>Angular degree scale</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Auto.Description" xml:space="preserve">
+    <value>Org or End automatically set according to the data bounds. If zoomed by the user, switched to AutoTempFixed. If rescaled, sets the scale bound back according to the data bound.</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.LayerControl.Description" xml:space="preserve">
+    <value>Opens the layer control dialog</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Print" xml:space="preserve">
+    <value>Print ..</value>
+  </data>
+  <data name="MainWindow.DialogName" xml:space="preserve">
+    <value>Altaxo</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.ExportMarkdown.Description" xml:space="preserve">
+    <value>Exports the text document to an external markdown file.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.OriginOpj" xml:space="preserve">
+    <value>Origin project file (.opj) ..</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ScatterPlotStyle" xml:space="preserve">
+    <value>Symbol</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.Database.Description" xml:space="preserve">
+    <value>Imports data from a local or remote database.</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeBottomToTop.Description" xml:space="preserve">
+    <value>Bottom alignment of the selected elements to the top side of the master element.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Close" xml:space="preserve">
+    <value>&amp;Close</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelLinearCMY" xml:space="preserve">
+    <value>LinCMY</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelLinearRGB" xml:space="preserve">
+    <value>LinRGB</value>
+  </data>
+  <data name="XML.MainMenu.NewLayerMenu.LinkedRightY" xml:space="preserve">
+    <value>(Linked): Right Y</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.Rename.Description" xml:space="preserve">
+    <value>Renames the current worksheet</value>
+  </data>
+  <data name="XML.MainMenu.FilesMenu.SaveProjectWithoutWorksheetScripts.Description" xml:space="preserve">
+    <value>Saves the current project under a new name without worksheet scripts, then restores the current project.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Export.WindowsMetaFile" xml:space="preserve">
+    <value>WMF (Windows Meta File)</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.XYVToMatrix.Description" xml:space="preserve">
+    <value>Converts 3 selected columns (X-Y-V) to a matrix.</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.2DCenteredFFT.Description" xml:space="preserve">
+    <value>Performs a 2 dimensional FFT with frequency 0 centered in the middle of the worksheet</value>
+  </data>
+  <data name="Altaxo.Project.CantSaveProjectErrorText" xml:space="preserve">
+    <value>Can't save Altaxo project file ${FileNameWithoutPath}
+in the path ${Path}.
+ Possible reasons are:
+ + Path permission denied or it doesn't exists
+ + File permission denied or write protected, or serialization error.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.AngularRadianTickSpacing" xml:space="preserve">
+    <value>Angular radian tick spacing</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotPRESSValue.Description" xml:space="preserve">
+    <value>Plots the Predicted Error Sum of Squares value.</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyTextWithImages" xml:space="preserve">
+    <value>Copy text and images</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelARGBHex" xml:space="preserve">
+    <value>ARGB (hex)</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ShowAllWindowsRecursively.Description" xml:space="preserve">
+    <value>Show all windows in this folder and in its subfolders.</value>
+  </data>
+  <data name="XML.MML.GenericRetardationModulus" xml:space="preserve">
+    <value>&lt;math&gt;
+  &lt;mi&gt;M&lt;/mi&gt;
+  &lt;mo&gt;&amp;DiacriticalAcute;&lt;/mo&gt;
+  &lt;mo&gt;+&lt;/mo&gt;
+  &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+  &lt;mi&gt;M&lt;/mi&gt;
+  &lt;mo&gt;&amp;DiacriticalDoubleAcute;&lt;/mo&gt;
+  &lt;mo&gt;=&lt;/mo&gt;
+  &lt;mfrac&gt;
+    &lt;mn&gt;1&lt;/mn&gt;
+    &lt;mrow&gt;
+      &lt;mfrac&gt;
+        &lt;mn&gt;1&lt;/mn&gt;
+        &lt;msub&gt;
+          &lt;mi&gt;M&lt;/mi&gt;
+          &lt;mi&gt;&amp;infin;&lt;/mi&gt;
+        &lt;/msub&gt;
+      &lt;/mfrac&gt;
+      &lt;mo&gt;+&lt;/mo&gt;
+      &lt;mrow&gt;
+        &lt;mo&gt;(&lt;/mo&gt;
+        &lt;mfrac&gt;
+          &lt;mn&gt;1&lt;/mn&gt;
+          &lt;msub&gt;
+            &lt;mi&gt;M&lt;/mi&gt;
+            &lt;mn&gt;0&lt;/mn&gt;
+          &lt;/msub&gt;
+        &lt;/mfrac&gt;
+        &lt;mo&gt;-&lt;/mo&gt;
+        &lt;mfrac&gt;
+          &lt;mn&gt;1&lt;/mn&gt;
+          &lt;msub&gt;
+            &lt;mi&gt;M&lt;/mi&gt;
+            &lt;mi&gt;&amp;infin;&lt;/mi&gt;
+          &lt;/msub&gt;
+        &lt;/mfrac&gt;
+        &lt;mo&gt;)&lt;/mo&gt;
+      &lt;/mrow&gt;
+      &lt;mo&gt;&amp;InvisibleTimes;&lt;/mo&gt;
+      &lt;mo&gt;&amp;it;&lt;/mo&gt;
+      &lt;mrow&gt;
+        &lt;munderover&gt;
+          &lt;mi&gt;&amp;Integral;&lt;/mi&gt;
+          &lt;mn&gt;0&lt;/mn&gt;
+          &lt;mi&gt;&amp;infin;&lt;/mi&gt;
+        &lt;/munderover&gt;
+        &lt;mo&gt;&amp;it;&lt;/mo&gt;
+        &lt;mrow&gt;
+          &lt;mrow&gt;
+            &lt;mi&gt;exp&lt;/mi&gt;
+            &lt;mo&gt;&amp;af;&lt;/mo&gt;
+            &lt;mrow&gt;
+              &lt;mo&gt;(&lt;/mo&gt;
+              &lt;mrow&gt;
+                &lt;mi&gt;-&lt;/mi&gt;
+                &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+                &lt;mi&gt;&amp;omega;&lt;/mi&gt;
+                &lt;mi&gt;t&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo&gt;)&lt;/mo&gt;
+            &lt;/mrow&gt;
+          &lt;/mrow&gt;
+          &lt;mover&gt;
+            &lt;mi&gt;&amp;Phi;&lt;/mi&gt;
+            &lt;mi&gt;.&lt;/mi&gt;
+          &lt;/mover&gt;
+          &lt;mo&gt;&amp;af;&lt;/mo&gt;
+          &lt;mrow&gt;
+            &lt;mo&gt;(&lt;/mo&gt;
+            &lt;mi&gt;t&lt;/mi&gt;
+            &lt;mo&gt;)&lt;/mo&gt;
+          &lt;/mrow&gt;
+          &lt;mi&gt;&amp;dd;&lt;/mi&gt;
+          &lt;mi&gt;t&lt;/mi&gt;
+        &lt;/mrow&gt;
+      &lt;/mrow&gt;
+      &lt;mo&gt;-&lt;/mo&gt;
+      &lt;mfrac&gt;
+        &lt;mrow&gt;
+          &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+          &lt;mi&gt;&amp;eta;&lt;/mi&gt;
+        &lt;/mrow&gt;
+        &lt;mi&gt;&amp;omega;&lt;/mi&gt;
+      &lt;/mfrac&gt;
+    &lt;/mrow&gt;
+  &lt;/mfrac&gt;
+&lt;/math&gt;
+</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveProjectAs" xml:space="preserve">
+    <value>Save Project As ..</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.ShowUserSettings.Description" xml:space="preserve">
+    <value>Shows all properties in the user settings.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.LinePlotStyle" xml:space="preserve">
+    <value>Line</value>
+  </data>
+  <data name="Altaxo.FileFilter.ProjectFiles" xml:space="preserve">
+    <value>Altaxo project files</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.EditGraphProperties.Description" xml:space="preserve">
+    <value>Edit the properties of this graph.</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.CameraOrtho.Description" xml:space="preserve">
+    <value>View graph through orthographic camera</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.AsciiWithOptions.Description" xml:space="preserve">
+    <value>Imports one or multiple ASCII files. The user can choose the import options that should be applied.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.OriginOpj.Description" xml:space="preserve">
+    <value>Import all tables from an Origin project file (.opj).</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotActualVersusCrossPredictedY" xml:space="preserve">
+    <value>Plot actual versus predicted Y (from cross prediction)</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.PasteNewLayerAfter.Description" xml:space="preserve">
+    <value>Paste as new layer after the active layer position.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Export.BitmapTiffFile" xml:space="preserve">
+    <value>Tiff file</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.StatisticsCreateHistogram.Description" xml:space="preserve">
+    <value>Create histogram data from the data in the selected column(s)</value>
+  </data>
+  <data name="XML.MainMenu.HelpMenu.ClassHelp" xml:space="preserve">
+    <value>Altaxo class reference</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.DeleteAllButSelected.Description" xml:space="preserve">
+    <value>Delete all but selected.</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.PLSOnColumns.Description" xml:space="preserve">
+    <value>Performs a PLS analysis of the selected columns (spectra) </value>
+  </data>
+  <data name="Dialog.Options.AsciiAnalysis" xml:space="preserve">
+    <value>Ascii file analysis</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.DateTimeScale" xml:space="preserve">
+    <value>Date-time scale</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.TextScale" xml:space="preserve">
+    <value>Text scale</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.NewLayerLegend.Description" xml:space="preserve">
+    <value>Creates a new layer legend for the currently selected layer</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Rename" xml:space="preserve">
+    <value>Rename graph</value>
+  </data>
+  <data name="FitFunctions.Relaxation.Kohlrausch.Decay" xml:space="preserve">
+    <value>This implements the Kohlrausch decay function in the time domain: \par 
+&lt;math&gt;
+  &lt;mrow&gt;
+    &lt;mrow&gt;
+    &lt;mi&gt;y&lt;/mi&gt;
+      &lt;mrow&gt;
+  &lt;mo&gt;(&lt;/mo&gt;
+  &lt;mi&gt;x&lt;/mi&gt;
+  &lt;mo&gt;)&lt;/mo&gt;
+      &lt;/mrow&gt;
+    &lt;/mrow&gt;
+  &lt;mo&gt;=&lt;/mo&gt;
+  &lt;mrow&gt;
+    &lt;mi&gt;o&lt;/mi&gt;
+    &lt;mo&gt;+&lt;/mo&gt;
+    &lt;mi&gt;a&lt;/mi&gt;
+    &lt;mo&gt;&amp;times;&lt;/mo&gt;
+    &lt;mi&gt;exp&lt;/mi&gt;
+    &lt;mo&gt;(&lt;/mo&gt;
+    &lt;mi&gt;-&lt;/mi&gt;
+    &lt;msup&gt;
+      &lt;mrow&gt;
+        &lt;mo&gt;(&lt;/mo&gt;
+        &lt;mfrac&gt;
+          &lt;mi&gt;x&lt;/mi&gt;
+          &lt;mi&gt;&amp;tau;&lt;/mi&gt;
+        &lt;/mfrac&gt;
+        &lt;mo&gt;)&lt;/mo&gt;
+      &lt;/mrow&gt;
+      &lt;mi&gt;&amp;beta;&lt;/mi&gt;
+    &lt;/msup&gt;
+    &lt;mo&gt;)&lt;/mo&gt;
+  &lt;/mrow&gt;
+  &lt;/mrow&gt;
+&lt;/math&gt;
+ \par where o is the offset, a is the amplitude, \f2 t\f0  is the decay time and \f2 b\f0  is the form parameter.</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnAsY" xml:space="preserve">
+    <value>Set column as Y</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnAsX" xml:space="preserve">
+    <value>Set column As &amp;X</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.EditGrid.Description" xml:space="preserve">
+    <value>Edits the grid of the current layer, or, if the current layer has no child layers, edits the grid of the parent layer of the current layer.</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.MoveSelectedRows" xml:space="preserve">
+    <value>Move selected rows to position...</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotColumnChartRelStack" xml:space="preserve">
+    <value>Relative stack column</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMajorOnly" xml:space="preserve">
+    <value>Snap to major only</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotLineWaterfall" xml:space="preserve">
+    <value>Waterfall</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.MoveToFolder" xml:space="preserve">
+    <value>Move Worksheet to folder..</value>
+  </data>
+  <data name="Gui.DataConnection.Tables" xml:space="preserve">
+    <value>Tables</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotActualVersusPredictedY" xml:space="preserve">
+    <value>Plot actual versus predicted Y</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.AddTempUserAssembly.Description" xml:space="preserve">
+    <value>Adds an assembly file (libary, exe) to the list of temporary user assemblies (only valid for the current session of Altaxo).</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.Clean" xml:space="preserve">
+    <value>Clean</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelRGB" xml:space="preserve">
+    <value>RGB</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelCMY" xml:space="preserve">
+    <value>CMY</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelHSB" xml:space="preserve">
+    <value>HSB</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.EditorRightViewerLeft.Description" xml:space="preserve">
+    <value>Editor on the right side, viewer on the left side</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.AsciiSingleWorksheetVert.Description" xml:space="preserve">
+    <value>This imports all selected ASCII data files into a single worksheet by appending new data vertically, i.e. to the same column.</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.StrikeThrough.Description" xml:space="preserve">
+    <value>Formats selected text as strikethrough text</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.PrintPreview" xml:space="preserve">
+    <value>Print Preview ..</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu" xml:space="preserve">
+    <value>&amp;Worksheet</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu" xml:space="preserve">
+    <value>&amp;Graph</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelPrimary" xml:space="preserve">
+    <value>Primary</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotXCrossResiduals.Description" xml:space="preserve">
+    <value>Plots the spectral residuals (from cross prediction).</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.MoveToFolder.Description" xml:space="preserve">
+    <value>Asks for a folder name and moves the selected items to that folder.</value>
+  </data>
+  <data name="ClassName.Altaxo.Gui.Drawing.ColorManagement.ColorModelLinearRGB" xml:space="preserve">
+    <value>LinRGB</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.Zoom200Percent" xml:space="preserve">
+    <value>200% Zoom</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.ReadLayerCoordinates.Description" xml:space="preserve">
+    <value>Reads the layer coordinates at the pointer location.</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.PasteLayerContentsAdditionally" xml:space="preserve">
+    <value>Paste plot content additionally</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.Rectangle.Description" xml:space="preserve">
+    <value>Draws a rectangle or a circle on the graph (for a circle, press the shift key during drawing).</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap" xml:space="preserve">
+    <value>Copy page as bitmap</value>
+  </data>
+  <data name="XML.MainMenu.NewLayerMenu.LinkedTopX.Description" xml:space="preserve">
+    <value>Adds a linked layer with a top X axis (but no axes links)</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyGraphActiveLayer" xml:space="preserve">
+    <value>Active Layer</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeRight.Description" xml:space="preserve">
+    <value>Right alignment of the selected elements.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu..NewDocumentIdentifier.Description" xml:space="preserve">
+    <value>Sets a new document identifier.</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.Header5.Description" xml:space="preserve">
+    <value>Formats selected text as 5th level header text</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotXLeverage" xml:space="preserve">
+    <value>X Leverage</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.Header3.Description" xml:space="preserve">
+    <value>Formats selected text as 3rd level header text</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotLine.Description" xml:space="preserve">
+    <value>Plot the selected columns as lines</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotColumnChartNormal.Description" xml:space="preserve">
+    <value>Plots a vertical column chart.</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.Rename.Description" xml:space="preserve">
+    <value>Renames the currently selected column</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ViewOnSelectOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.HideAllWindows.Description" xml:space="preserve">
+    <value>Hides all windows in this folder.</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.ViewIso60.Description" xml:space="preserve">
+    <value>View graph isometrically 60 degrees</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.WksGraphFromFile.Description" xml:space="preserve">
+    <value>Loads a worksheet or a graph from file</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.Rename.Description" xml:space="preserve">
+    <value>Shows the rename dialog for this item.</value>
+  </data>
+  <data name="Dialog.Options.Graph.EmbeddedObjectRenderingOptions" xml:space="preserve">
+    <value>Rendering options for embedded graphs</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.Ascii.Description" xml:space="preserve">
+    <value>Imports Ascii data file(s)</value>
+  </data>
+  <data name="XML.MainMenu.Plot3DMenu" xml:space="preserve">
+    <value>3D-Plots</value>
+  </data>
+  <data name="Altaxo.Gui.ExceptionBox.ReportError" xml:space="preserve">
+    <value>Report error to the Altaxo team</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisFarToLinkedLayerNear" xml:space="preserve">
+    <value>Rel.Far-Near.LinkLayer</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.RegisterApplicationForCom.Description" xml:space="preserve">
+    <value>Registers Altaxo for OLE/COM functionality, i.e. for embedding or linking Altaxo graphs in other documents.</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.TableScript.Description" xml:space="preserve">
+    <value>Opens the worksheet script dialog.</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.AddTempUserAssembly" xml:space="preserve">
+    <value>Add temporary user assembly ..</value>
+  </data>
+  <data name="Altaxo.Project.ProjectSavedMessage" xml:space="preserve">
+    <value>Project successfully saved.</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.PasteLayerContentsAdditionally.Description" xml:space="preserve">
+    <value>Paste the plot content into the active layer, keeping the old contents.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.EditTableProperties" xml:space="preserve">
+    <value>Edit table properties</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.ViewFront.Description" xml:space="preserve">
+    <value>View graph from front side</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ViewOnSelectTNOff.Description" xml:space="preserve">
+    <value>Switches off the 'view on select' function.</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.FitPolynomial.Description" xml:space="preserve">
+    <value>Fits a polynomial to the currently active plot</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.NoTickSpacing" xml:space="preserve">
+    <value>No tick spacing</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.ViewBottom.Description" xml:space="preserve">
+    <value>View graph from bottom side</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeSameVerticalSize" xml:space="preserve">
+    <value>Same vertical size</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.Zoom50Percent" xml:space="preserve">
+    <value>50% Zoom</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.MultivariateLinearRegression" xml:space="preserve">
+    <value>Multivariate linear regression</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.Margin10Percent" xml:space="preserve">
+    <value>10% View margin</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.ManualMargin" xml:space="preserve">
+    <value>Graph view margin</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetGroupNumber.Description" xml:space="preserve">
+    <value>Sets the group number of the currently selected column</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.Graph.Description" xml:space="preserve">
+    <value>Creates a new empty graph</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyPage" xml:space="preserve">
+    <value>Copy page</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotYResiduals" xml:space="preserve">
+    <value>Y Residuals</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.Show.Description" xml:space="preserve">
+    <value>Shows the selected items in the document area.</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.MultiRenameItems" xml:space="preserve">
+    <value>Multi rename items..</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.ExportMaml.Description" xml:space="preserve">
+    <value>Exports the Markdown text document to one or multiple Maml files.</value>
+  </data>
+  <data name="XML.MainMenu.HelpMenu.ProgramHelp.Description" xml:space="preserve">
+    <value>Shows the Altaxo program help topics.</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.OpenAll" xml:space="preserve">
+    <value>Open All Worksheets and Graphs</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisNearToLinkedLayerFar" xml:space="preserve">
+    <value>Rel.Near-Far.LinkLayer</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.Pointer.Description" xml:space="preserve">
+    <value>Click objects and move them around or double click objects to edit them.</value>
+  </data>
+  <data name="Gui.DataConnection.StoredProcedures" xml:space="preserve">
+    <value>Stored Procedures</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet" xml:space="preserve">
+    <value>Ascii (all into a single worksheet) ..</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.ShowOutline" xml:space="preserve">
+    <value>Show outline window</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.EditTableDataSource.Description" xml:space="preserve">
+    <value>Opens a dialog to edit the table data source (if a data source is present).</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Exit.Description" xml:space="preserve">
+    <value>Closes the application</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.EditGraphProperties" xml:space="preserve">
+    <value>Edit graph properties</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnAsValue.Description" xml:space="preserve">
+    <value>Sets the currently selected column to a value column, i.e. to the dependent variable</value>
+  </data>
+  <data name="Altaxo.Project.AskForSavingOfProjectDialog.Caption" xml:space="preserve">
+    <value>Question</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.OpenAllWorksheets.Description" xml:space="preserve">
+    <value>Opens all Worksheets that are currently not open.</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyGraphAsMiniProject" xml:space="preserve">
+    <value>As mini project</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotPolar.Description" xml:space="preserve">
+    <value>Plots the selected columns into a polar diagram.</value>
+  </data>
+  <data name="Altaxo.Project.UntitledName" xml:space="preserve">
+    <value>Untitled</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ShowAllWindows" xml:space="preserve">
+    <value>Show all windows</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.Duplicate" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
+  <data name="XML.MainMenu.FilesMenu.SaveProjectWithoutWorksheetScripts" xml:space="preserve">
+    <value>Save project as, without worksheet scripts ...</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotYCrossResiduals" xml:space="preserve">
+    <value>Y cross prediction residuals</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Print.Description" xml:space="preserve">
+    <value>Prints the current window</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.CopyActiveLayerContents.Description" xml:space="preserve">
+    <value>Copies the plot contents of the active layer to the clipboard.</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.MoveColumns.Description" xml:space="preserve">
+    <value>Move the selected columns to a new position.</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.AutoZoom" xml:space="preserve">
+    <value>AutoZoom</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.LinearScale" xml:space="preserve">
+    <value>Linear scale</value>
+  </data>
+  <data name="XML.MML.HavriliakNegamiSusceptibility.General" xml:space="preserve">
+    <value>&lt;math&gt;
+  &lt;mi&gt;&amp;chi;&lt;/mi&gt;
+  &lt;mo&gt;&amp;DiacriticalAcute;&lt;/mo&gt;
+  &lt;mo&gt;-&lt;/mo&gt;
+  &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+  &lt;mi&gt;&amp;chi;&lt;/mi&gt;
+  &lt;mo&gt;&amp;DiacriticalDoubleAcute;&lt;/mo&gt;
+  &lt;mo&gt;=&lt;/mo&gt;
+  &lt;msub&gt;
+    &lt;mi&gt;&amp;chi;&lt;/mi&gt;
+    &lt;mo&gt;&amp;infin;&lt;/mo&gt;
+  &lt;/msub&gt;
+  &lt;mo&gt;+&lt;/mo&gt;
+  &lt;mfrac&gt;
+    &lt;mrow&gt;
+      &lt;mi&gt;&amp;Delta;&lt;/mi&gt;
+      &lt;mi&gt;&amp;chi;&lt;/mi&gt;
+    &lt;/mrow&gt;
+    &lt;msup&gt;
+      &lt;mrow&gt;
+        &lt;mo&gt;(&lt;/mo&gt;
+        &lt;mrow&gt;
+          &lt;msup&gt;
+            &lt;mrow&gt;
+              &lt;mn&gt;1&lt;/mn&gt;
+              &lt;mo&gt;+&lt;/mo&gt;
+              &lt;mo&gt;(&lt;/mo&gt;
+              &lt;mrow&gt;
+                &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+                &lt;mi&gt;&amp;tau;&lt;/mi&gt;
+                &lt;mi&gt;&amp;omega;&lt;/mi&gt;
+              &lt;/mrow&gt;
+              &lt;mo&gt;)&lt;/mo&gt;
+            &lt;/mrow&gt;
+            &lt;mi&gt;&amp;alpha;&lt;/mi&gt;
+          &lt;/msup&gt;
+        &lt;/mrow&gt;
+        &lt;mo&gt;)&lt;/mo&gt;
+      &lt;/mrow&gt;
+      &lt;mrow&gt;
+        &lt;mi&gt;&amp;gamma;&lt;/mi&gt;
+      &lt;/mrow&gt;
+    &lt;/msup&gt;
+  &lt;/mfrac&gt;
+  &lt;mo&gt;-&lt;/mo&gt;
+  &lt;mfrac&gt; &lt;mrow&gt;
+    &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+      &lt;mi&gt;&amp;eta;&lt;/mi&gt;
+  &lt;/mrow&gt;
+ &lt;mi&gt;&amp;omega;&lt;/mi&gt;
+  &lt;/mfrac&gt; &lt;/math&gt;</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.Transpose.Description" xml:space="preserve">
+    <value>Transposes the current worksheet</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Export.BitmapTiffFile.Description" xml:space="preserve">
+    <value>Exports the current graph as a Tiff file.</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.DeleteFolder" xml:space="preserve">
+    <value>Delete folder</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.PrintableSizeSetup" xml:space="preserve">
+    <value>Setup printable size ..</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.EditorLeftViewerRight" xml:space="preserve">
+    <value>Editor left, viewer right</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.2DFFT.Description" xml:space="preserve">
+    <value>Calculates a two dimensional Fourier transform of the data</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.MultiRescaleGraphs.Description" xml:space="preserve">
+    <value>Rescales the axes of all layers of the selected graph documents.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.PrintOptionsSetup.Description" xml:space="preserve">
+    <value>Shows the print options dialog to setup printing options.</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.SingleLine.Description" xml:space="preserve">
+    <value>Draws a line on the graph.</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.SetCopyPageOptions" xml:space="preserve">
+    <value>Set CopyPage options ..</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.StatisticsOnRows.Description" xml:space="preserve">
+    <value>Calculates a statistic of each selected row</value>
+  </data>
+  <data name="FitFunctions.Relaxation.DielectricSusceptibility.Introduction" xml:space="preserve">
+    <value>This implements the dielectric susceptibility function\par\pard\qc</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveProject.Description" xml:space="preserve">
+    <value>Saves the current project to disk</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.AddCurvePlot" xml:space="preserve">
+    <value>Add cur&amp;ve plot ..</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="XML.MainToolBar.FontFamilyChooser.ToolTip" xml:space="preserve">
+    <value>Font family of all selected objects</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ViewFolderItemsOnSelectTN.Description" xml:space="preserve">
+    <value>When a tree node is selected, the items in the folder are shown in the document area.</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotColumnChartStack" xml:space="preserve">
+    <value>Stacked column</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.GalacticSPC.Description" xml:space="preserve">
+    <value>Imports one or more Galactic SPC files</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderBGRY" xml:space="preserve">
+    <value>Blue-Green-Red-Yellow</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnAsLabel" xml:space="preserve">
+    <value>Set column as &amp;Label</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.ExtractPropertyValues" xml:space="preserve">
+    <value>&amp;Extract property values</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnAsError" xml:space="preserve">
+    <value>Set column as &amp;Error</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelCMYK" xml:space="preserve">
+    <value>CMYK</value>
+  </data>
+  <data name="Dialog.Options.DocumentLanguage" xml:space="preserve">
+    <value>Document culture</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnAsValue" xml:space="preserve">
+    <value>Set column As &amp;Value</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelRGBHex" xml:space="preserve">
+    <value>RGB (hex)</value>
+  </data>
+  <data name="XML.MainMenu.NewLayerMenu.LinkedTopXRightY.Description" xml:space="preserve">
+    <value>Adds a linked layer with top X axis and right Y axis (but no axes links)</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.AutoTempFixed.Description" xml:space="preserve">
+    <value>Temporarily fixed by the user value. If rescaled, falls back to Auto mode. If zoomed, the zoom value is used as new user provided value.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.WksGraphFromFile" xml:space="preserve">
+    <value>Worksheet/Graph from File ..</value>
+  </data>
+  <data name="XML.MainMenu.Plot.BarChartMenu" xml:space="preserve">
+    <value>Bar charts</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Open.Project.Description" xml:space="preserve">
+    <value>Open Altaxo project</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.DecomposeCyclingVariable.Description" xml:space="preserve">
+    <value>Decomposes a table with a independent variable column, which contains cycling values.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.ExitAndReturn" xml:space="preserve">
+    <value>Exit and return to container application</value>
+  </data>
+  <data name="FitFunctions.Relaxation.Susceptibility.Introduction" xml:space="preserve">
+    <value>This implements the susceptibility function:\par\pard\qc</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="FitFunctions.IndependentVariable.Omega" xml:space="preserve">
+    <value>\par\pard with the circular frequency \f2 w\f0  being the independent variable,</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.Superscript.Description" xml:space="preserve">
+    <value>Formats selected text as superscript text</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Groups.WaterfallTransform+TransformedLayerWrapper+TransformedScale" xml:space="preserve">
+    <value>Transformed scale</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarYPlotStyle" xml:space="preserve">
+    <value>Error bar (y)</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.SortByTypeAndCreation.Description" xml:space="preserve">
+    <value>Sort windows by type and creation time.</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.ArrowLine.Description" xml:space="preserve">
+    <value>Draws a straight arrow line.</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.Rename" xml:space="preserve">
+    <value>&amp;Rename Worksheet ..</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.DeleteActiveLayer" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Export.Ascii.Description" xml:space="preserve">
+    <value>Exports the table data into an Ascii file</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.PasteLayerContentsExclusively.Description" xml:space="preserve">
+    <value>Paste the plot content into the active layer, deleting the old plot content.</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ShowAllWindowsRecursively" xml:space="preserve">
+    <value>Show all windows in folder and subfolders</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.CopyActiveLayer" xml:space="preserve">
+    <value>Copy layer</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.TabbedEditorAndViewer" xml:space="preserve">
+    <value>Editor and viewer tabbed</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.ExpandText" xml:space="preserve">
+    <value>Expand into new text document</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveWorksheetAsTemplate" xml:space="preserve">
+    <value>Save Worksheet Template As ..</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiRGB" xml:space="preserve">
+    <value>150 dpi - RGB</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Duplicate.Description" xml:space="preserve">
+    <value>Duplicates the current graph</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.ExportGraph3D" xml:space="preserve">
+    <value>Export 3D graph image ..</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.Transpose" xml:space="preserve">
+    <value>&amp;Transpose</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.ExportPLSCalibration" xml:space="preserve">
+    <value>Export PLS calibration ...</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDesaturate" xml:space="preserve">
+    <value>Brighter</value>
+  </data>
+  <data name="XML.MainMenu.NewLayerMenu" xml:space="preserve">
+    <value>New layer (axes)</value>
+  </data>
+  <data name="FitFunctions.Relaxation.ModulusRetardation.Part3" xml:space="preserve">
+    <value> and M' and M'' being the dependent variables, namely the real and imaginary part of the dynamic modulus.\par
+\par
+Parameter:\par
+\par
+M\sub 0\nosupersub  :\tab low frequency modulus limit\par
+M\sub\u8734?\nosupersub  :\tab high frequency modulus limit\par
+\f2 t\f0  :\tab retardation time (not relaxation time!)\par
+\f2 b\f0  :\tab shape exponent (0&lt;\f2 b\f0 &lt;=1) \par
+\f2 h\f0  :\tab generalized flow term, for instance viscosity\par\par</value>
+  </data>
+  <data name="XML.MainMenu.Analysis.ChemometricsMenu" xml:space="preserve">
+    <value>Chemometrics</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.PageSetup.Description" xml:space="preserve">
+    <value>Setup the page format for the current window</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveCopyOfProjectAs.Description" xml:space="preserve">
+    <value>Saves a copy of this project into a file.</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.MoveSelectedRows.Description" xml:space="preserve">
+    <value>Moves the selected rows to a new position.</value>
+  </data>
+  <data name="MainWindow.Windows.AltaxoDataDisplayWindowLabel" xml:space="preserve">
+    <value>Data Reader</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotXLeverage.Description" xml:space="preserve">
+    <value>Adds a plot for the spectral leverage.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Append" xml:space="preserve">
+    <value>&amp;Append</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.InstanceScript" xml:space="preserve">
+    <value>Instance script</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.ExpandText.Description" xml:space="preserve">
+    <value>Expands the current text document into a new text document</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.ViewIso30.Description" xml:space="preserve">
+    <value>View graph isometrically 30 degrees</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix.Description" xml:space="preserve">
+    <value>Multiplies the first half of selected columns with the second half to a matrix </value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.MoveActiveLayer" xml:space="preserve">
+    <value>Move to position ..</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ViewOnSelectTNOff" xml:space="preserve">
+    <value>View on select: Off</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotScatter" xml:space="preserve">
+    <value>&amp;Scatter</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.PrintPreview.Description" xml:space="preserve">
+    <value>Shows the print preview of the current window</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.ClosedCardinalSpline.Description" xml:space="preserve">
+    <value>Draws a closed cardinal spline curve with user defined control points.</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.StatisticsOnColumns.Description" xml:space="preserve">
+    <value>Calculates a statistic of each selected column</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.Worksheet" xml:space="preserve">
+    <value>&amp;Worksheet</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.SortByName.Description" xml:space="preserve">
+    <value>Sort windows by name.</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu" xml:space="preserve">
+    <value>&amp;Column</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.DeleteFolder.Description" xml:space="preserve">
+    <value>Deletes the folder by deleting all items in it.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelLinearRGB" xml:space="preserve">
+    <value>LinRGB</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ViewOnSelectOff.Description" xml:space="preserve">
+    <value>Switches off the 'view on select' function.</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.CreatePropertyColumnOfColumnNames.Description" xml:space="preserve">
+    <value>Creates a property columns with the names of the data columns.</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.PasteNewLayer" xml:space="preserve">
+    <value>Paste as new layer</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.EditorBottomViewerTop" xml:space="preserve">
+    <value>Editor bottom, viewer top</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.DensityImagePlotStyle" xml:space="preserve">
+    <value>Density</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.EditorLeftViewerRight.Description" xml:space="preserve">
+    <value>Editor on the left side, viewer on the right side</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.ExitAndReturn.Description" xml:space="preserve">
+    <value>Closes Altaxo and returns to the container application in which the Altaxo document is embedded.</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.ManualZoom" xml:space="preserve">
+    <value>Manual Zoom</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Rename.Description" xml:space="preserve">
+    <value>Rename the graph.</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotPolar" xml:space="preserve">
+    <value>Polar diagram</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.Rename" xml:space="preserve">
+    <value>&amp;Rename</value>
+  </data>
+  <data name="XML.MainToolBar.FontSizeChooser.ToolTip" xml:space="preserve">
+    <value>Font size of all selected objects</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.VectorCartesicPlotStyle" xml:space="preserve">
+    <value>CartesicVector</value>
+  </data>
+  <data name="XML.MML.GenericSusceptibility" xml:space="preserve">
+    <value>&lt;math&gt;
+  &lt;mi&gt;&amp;chi;&lt;/mi&gt;
+  &lt;mo&gt;&amp;DiacriticalAcute;&lt;/mo&gt;
+  &lt;mo&gt;-&lt;/mo&gt;
+  &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+  &lt;mi&gt;&amp;chi;&lt;/mi&gt;
+  &lt;mo&gt;&amp;DiacriticalDoubleAcute;&lt;/mo&gt;
+  &lt;mo&gt;=&lt;/mo&gt;
+  &lt;msub&gt;
+    &lt;mi&gt;&amp;chi;&lt;/mi&gt;
+    &lt;mi&gt;&amp;infin;&lt;/mi&gt;
+  &lt;/msub&gt;
+  &lt;mo&gt;+&lt;/mo&gt;
+  &lt;mi&gt;&amp;Delta;&lt;/mi&gt;
+  &lt;mi&gt;&amp;chi;&lt;/mi&gt;
+  &lt;mo&gt;&amp;InvisibleTimes;&lt;/mo&gt;
+  &lt;mo&gt;&amp;it;&lt;/mo&gt;
+  &lt;mrow&gt;
+    &lt;munderover&gt;
+      &lt;mi&gt;&amp;Integral;&lt;/mi&gt;
+      &lt;mn&gt;0&lt;/mn&gt;
+      &lt;mi&gt;&amp;infin;&lt;/mi&gt;
+    &lt;/munderover&gt;
+    &lt;mo&gt;&amp;it;&lt;/mo&gt;
+    &lt;mrow&gt;
+      &lt;mrow&gt;
+        &lt;mi&gt;exp&lt;/mi&gt;
+        &lt;mo&gt;&amp;af;&lt;/mo&gt;
+        &lt;mrow&gt;
+          &lt;mo&gt;(&lt;/mo&gt;
+          &lt;mrow&gt;
+            &lt;mi&gt;-&lt;/mi&gt;
+            &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+            &lt;mi&gt;&amp;omega;&lt;/mi&gt;
+            &lt;mi&gt;t&lt;/mi&gt;
+          &lt;/mrow&gt;
+          &lt;mo&gt;)&lt;/mo&gt;
+        &lt;/mrow&gt;
+      &lt;/mrow&gt;
+      &lt;mover&gt;
+        &lt;mi&gt;&amp;Phi;&lt;/mi&gt;
+        &lt;mi&gt;.&lt;/mi&gt;
+      &lt;/mover&gt;
+      &lt;mo&gt;&amp;af;&lt;/mo&gt;
+      &lt;mrow&gt;
+        &lt;mo&gt;(&lt;/mo&gt;
+        &lt;mi&gt;t&lt;/mi&gt;
+        &lt;mo&gt;)&lt;/mo&gt;
+      &lt;/mrow&gt;
+      &lt;mi&gt;&amp;dd;&lt;/mi&gt;
+      &lt;mi&gt;t&lt;/mi&gt;
+    &lt;/mrow&gt;
+  &lt;/mrow&gt;
+  &lt;mo&gt;-&lt;/mo&gt;
+  &lt;mfrac&gt;
+  &lt;mrow&gt;
+    &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+    &lt;mi&gt;&amp;eta;&lt;/mi&gt;
+  &lt;/mrow&gt;
+  &lt;mi&gt;&amp;omega;&lt;/mi&gt;
+  &lt;/mfrac&gt;
+&lt;/math&gt;</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Refresh.Description" xml:space="preserve">
+    <value>Refreshes the graph. Draws the graph completely new.</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.EditActiveLayer.Description" xml:space="preserve">
+    <value>Opens the layer dialog box.</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnAsLabel.Description" xml:space="preserve">
+    <value>Sets the currently selected column to a label column</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.RenameFolder.Description" xml:space="preserve">
+    <value>Renames the folder.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.DropLinePlotStyle" xml:space="preserve">
+    <value>DropLine</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.PLSOnRows" xml:space="preserve">
+    <value>PLS on rows</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotCrossPRESSValue" xml:space="preserve">
+    <value>Plot Cross PRESS value</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.Ellipse.Description" xml:space="preserve">
+    <value>Draws an ellipse or an circle on the graph (for a circle, press the shift key during drawing).</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.UnregisterApplicationForCom.Description" xml:space="preserve">
+    <value>Removes all registry entries neccessary for Altaxo's OLE/COM functionality.</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiRGB.Description" xml:space="preserve">
+    <value>Copy the page to clipboard as bitmap format 150 dpi - RGB</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.NewDocumentIdentifier" xml:space="preserve">
+    <value>New document identifier ..</value>
+  </data>
+  <data name="MainWindow.Windows.DataDisplayWindow" xml:space="preserve">
+    <value>Data reader</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeTopToBottom.Description" xml:space="preserve">
+    <value>Top alignment of the selected elements to the bottom side of the master element.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Log10Scale" xml:space="preserve">
+    <value>Logarithmic (decadic) scale</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.Header1.Description" xml:space="preserve">
+    <value>Formats selected text as 1st level header text </value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.AddDataColumns.Description" xml:space="preserve">
+    <value>Adds one or more data columns to the worksheet</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.ClearDataAll" xml:space="preserve">
+    <value>Clear data+props</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.LinearTickSpacing" xml:space="preserve">
+    <value>Linear tick spacing</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotPredictionScores" xml:space="preserve">
+    <value>Prediction scores</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.PasteNewLayerBefore" xml:space="preserve">
+    <value>Paste as new layer before</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.Rename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SortTableDescending.Description" xml:space="preserve">
+    <value>Sorts the table so that the items in the selected column appear in descending order.</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.DecomposeByColumnContent.Description" xml:space="preserve">
+    <value>Decomposes a table according to the contents of one column. For each distinguished value of that column, in the destination worksheet a separate data column will be created.</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.InsertDataRows.Description" xml:space="preserve">
+    <value>Inserts a user defined number of rows before the first selected row.</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.Duplicate" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.PrintableSizeSetup.Description" xml:space="preserve">
+    <value>Setup the size of the graph or table.</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.RenumerateFigures.Description" xml:space="preserve">
+    <value>Renumerates the figure captions and the links to the figures.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.LessOrEqual.Description" xml:space="preserve">
+    <value>Fixed by the user value or the data bound value, whichever is less. Rescaling is working, using the user provided value and the data bound value, whichever is less. Zooming is working, while the user provided value is kept as is.</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.DeleteActiveLayer.Description" xml:space="preserve">
+    <value>Delete the active layer.</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.Clean.Description" xml:space="preserve">
+    <value>Clears the content of all selected cells in the worksheet.</value>
+  </data>
+  <data name="MainWindow.Windows.AltaxoProjectScoutLabel" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Export.WindowsMetaFile.Description" xml:space="preserve">
+    <value>Exports the current graph as Windows Meta File</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.ShowOutline.Description" xml:space="preserve">
+    <value>Toggles the visibility of the outline window.</value>
+  </data>
+  <data name="FitFunctions.Relaxation.ModulusRetardation.Introduction" xml:space="preserve">
+    <value>This implements the moduls function as the scaled inverse of the generic susceptibility:\par\pard\qc</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotActualVersusCrossPredictedY.Description" xml:space="preserve">
+    <value>Plots the cross predicted Y value versus the acual one.</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.EditorTopViewerBottom.Description" xml:space="preserve">
+    <value>Editor on top, viewer on the bottom</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.OpenCardinalSpline.Description" xml:space="preserve">
+    <value>Draws an open cardinal spline curve with user defined control points.</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.EditorTopViewerBottom" xml:space="preserve">
+    <value>Editor top, viewer bottom</value>
+  </data>
+  <data name="Dialog.Options.Graph.ClipboardExport" xml:space="preserve">
+    <value>Clipboard export</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotLine" xml:space="preserve">
+    <value>&amp;Line</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.SortBy" xml:space="preserve">
+    <value>Sort by</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.ShowOptions" xml:space="preserve">
+    <value>Options...</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiRGB.Description" xml:space="preserve">
+    <value>Copy the page to clipboard as bitmap format 300 dpi - RGB</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotLineArea" xml:space="preserve">
+    <value>Area</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotBarChartRelStack.Description" xml:space="preserve">
+    <value>Plots a horizontal relative stack bar chart.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDarker" xml:space="preserve">
+    <value>Darker</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.LabelPlotStyle" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerSizeType.RelativeToLinkedLayer" xml:space="preserve">
+    <value>Rel.LinkLayer</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.HideAllWindowsRecursively.Description" xml:space="preserve">
+    <value>Hides all windows in this folder and its subfolders.</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap.Description" xml:space="preserve">
+    <value>Copy the actual page to the clipboard as a bitmap.</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotLineStack" xml:space="preserve">
+    <value>Line stack</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.RescaleAxes.Description" xml:space="preserve">
+    <value>Rescales the x and y axes to show all data.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelColder" xml:space="preserve">
+    <value>Colder</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.EditTableProperties.Description" xml:space="preserve">
+    <value>Edit the properties of this table.</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.PasteGraphAsMiniProject" xml:space="preserve">
+    <value>As mini project in new folder ...</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.GalacticSPC" xml:space="preserve">
+    <value>Galactic SPC file(s) ..</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.NewLayerLegend" xml:space="preserve">
+    <value>New layer &amp;legend</value>
+  </data>
+  <data name="Altaxo.Gui.ExceptionBox.QuitWarning" xml:space="preserve">
+    <value>Do you really want to quit Altaxo? Unsaved changes will be lost!</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.2DFFT" xml:space="preserve">
+    <value>2-dim FFT</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.PCAOnColumns.Description" xml:space="preserve">
+    <value>Performs a Principal Component Analysis on the selected columns</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.FitNonlinear" xml:space="preserve">
+    <value>Nonlinear regression..</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Open.Description" xml:space="preserve">
+    <value>Opens a project</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.MoveColumns" xml:space="preserve">
+    <value>Move columns to position...</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotXCrossResiduals" xml:space="preserve">
+    <value>Plot spectral residuals (cross prediction)</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.MoveGraphItemToBottom.Description" xml:space="preserve">
+    <value>Move item to bottom</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.XYVToMatrix" xml:space="preserve">
+    <value>Convert X-Y-V to matrix</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ColumnDrivenSymbolSizePlotStyle" xml:space="preserve">
+    <value>Data column driven symbol size</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu" xml:space="preserve">
+    <value>&amp;Plot</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.Show" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.Hide" xml:space="preserve">
+    <value>Hide</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.FixedZoomable.Description" xml:space="preserve">
+    <value>Fixed by the user value. Rescaling by the user is ignored. If zoomed, the new zoom value is used, while the user provided value is kept as is.</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.PasteAsNewLayer.Description" xml:space="preserve">
+    <value>Pastes the clipboard content as a new layer into the current graph.</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.OpenAllGraphs.Description" xml:space="preserve">
+    <value>Opens all Graphs that are currently not open.</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.InlineCode.Description" xml:space="preserve">
+    <value>Formats selected text as inline code text</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotColumnChartNormal" xml:space="preserve">
+    <value>Column</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.ZoomUserPercent.Description" xml:space="preserve">
+    <value>Enter a zoom value manually.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveGraphAsMiniProject" xml:space="preserve">
+    <value>Save Graph as MiniProject (with data)</value>
+  </data>
+  <data name="MainWindow.Windows.ProjectScoutLabel" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ViewFolderItemsOnSelectTN" xml:space="preserve">
+    <value>View on select: View folder items</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.Quoted.Description" xml:space="preserve">
+    <value>Formats selected text as quoted text</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.PLSPredictOnColumns" xml:space="preserve">
+    <value>PLS Predict on columns...</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotBarChartNormal" xml:space="preserve">
+    <value>Bar</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.MultiResizeGraphs" xml:space="preserve">
+    <value>Resize selected graphs</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeTop.Description" xml:space="preserve">
+    <value>Top alignment of the selected elements.</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.PLSPredictOnColumns.Description" xml:space="preserve">
+    <value>PLS prediction of vertically oriented spectra</value>
+  </data>
+  <data name="FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics" xml:space="preserve">
+    <value> and \f2 e\f0 ' and \f2 e\f0 '' being the dependent variables, namely the real and negative imaginary part of the dielectric function.\par
+\par
+Parameter:\par
+\par
+\f2 e\sub\'a5\nosupersub\f0  :\tab high frequency dielectric constant\par
+\f2 De\f0  :\tab step height of dielectric function\par
+\f2 t\f0  :\tab retardation time\par
+\f2 a\f0 , \f2 g\f0  :\tab shape exponents\par
+\f2 s\f0  :\tab conductivity [S/m]\par\par
+</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnAsPosError" xml:space="preserve">
+    <value>Set column as &amp;+Error</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.MultiExportGraphs" xml:space="preserve">
+    <value>Export graphs...</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.SortByCreation" xml:space="preserve">
+    <value>Creation time</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.RegularPolygon.Description" xml:space="preserve">
+    <value>Draws a regular polygon with or without round corners.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveGraphAsTemplate.Description" xml:space="preserve">
+    <value>Saves the graph as template under a user provided name</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ViewFolderAndSubfolderItemsOnSelectTN" xml:space="preserve">
+    <value>View on select: View folder and subfolder items</value>
+  </data>
+  <data name="XML.MainMenu.NewLayerMenu.LinkedTopXRightY_XAxisStraight.Description" xml:space="preserve">
+    <value>Adds a linked layer with top X axis, right Y axis and straight linked X axis</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotPreprocessedSpectra" xml:space="preserve">
+    <value>Plot preprocessed spectra</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.PLSPredictOnRows" xml:space="preserve">
+    <value>PLS Predict on rows...</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.MoveGraphItemDown.Description" xml:space="preserve">
+    <value>Move item one step downwards</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.MarginUserPercent.Description" xml:space="preserve">
+    <value>Enter a view margin value manually.</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.MultiRescaleGraphs" xml:space="preserve">
+    <value>Rescale selected graphs</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeSameHorizontalSize" xml:space="preserve">
+    <value>Same horizontal size</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.RegistryMenu" xml:space="preserve">
+    <value>Registry</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.InverseTickSpacing" xml:space="preserve">
+    <value>Inverse tick spacing</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.StandardWorksheet" xml:space="preserve">
+    <value>Standard worksheet</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveGraphAsTemplate" xml:space="preserve">
+    <value>Save Graph Template As ..</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeRightToLeft.Description" xml:space="preserve">
+    <value>Right alignment of the selected elements to the left side of the master element.</value>
+  </data>
+  <data name="XML.MainMenu.PLSPlotMenu" xml:space="preserve">
+    <value>Partial Least Squares Plots</value>
+  </data>
+  <data name="XML.MainMenu.HelpMenu.ForceException.Description" xml:space="preserve">
+    <value>This throws an exception to test the exception handling.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToNothing" xml:space="preserve">
+    <value>Snap to nothing</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.Convolute" xml:space="preserve">
+    <value>Convolute columns</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMinorOnly" xml:space="preserve">
+    <value>Snap to minor only</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.OpenAllWorksheetsAndGraphs.Description" xml:space="preserve">
+    <value>Opens all Worksheets and Graphs that are currently not open.</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.ClearDataOnly" xml:space="preserve">
+    <value>Clear data only</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelRGB" xml:space="preserve">
+    <value>RGB</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelHSB" xml:space="preserve">
+    <value>HSB</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelCMY" xml:space="preserve">
+    <value>CMY</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.TestProjectLoading.Description" xml:space="preserve">
+    <value>Tests all projects in a given directory for correct loading.</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.MoveToFolder" xml:space="preserve">
+    <value>Move to folder ..</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnAsX.Description" xml:space="preserve">
+    <value>Sets the currently selected column as X column</value>
+  </data>
+  <data name="MainWindow.Windows.OutputWindow" xml:space="preserve">
+    <value>Output</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.CmdExchangeTablesForPlotItems" xml:space="preserve">
+    <value>Exchange plot items table...</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.PCAOnRows" xml:space="preserve">
+    <value>PCA on rows</value>
+  </data>
+  <data name="Altaxo.Project.AskForSavingOfProjectDialog.Text" xml:space="preserve">
+    <value>Your project was modified. Do you want to save your project?</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotXResiduals" xml:space="preserve">
+    <value>Plot spectral residuals</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnValues" xml:space="preserve">
+    <value>Set column &amp;values ..</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotPRESSValue" xml:space="preserve">
+    <value>Plot PRESS value</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveProject" xml:space="preserve">
+    <value>&amp;Save Project</value>
+  </data>
+  <data name="Dialog.Options.AutoUpdates" xml:space="preserve">
+    <value>Auto updates</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.SortByCreation.Description" xml:space="preserve">
+    <value>Sort windows by the creation time.</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.FFT.Description" xml:space="preserve">
+    <value>Calculates a one dimensional Fourier transform of the selected column</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelPentagonSymmetrically" xml:space="preserve">
+    <value>Pentagon</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeLeft.Description" xml:space="preserve">
+    <value>Left alignment of the selected elements.</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.PasteNewLayerAfter" xml:space="preserve">
+    <value>Paste as new layer after</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnAsPosError.Description" xml:space="preserve">
+    <value>Sets the currently selected column to a positive error column</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveWorksheetAs" xml:space="preserve">
+    <value>Save Worksheet As ..</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.OpenAllWorksheetsAndGraphs" xml:space="preserve">
+    <value>Worksheets and Graphs</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.GroupShapes.Description" xml:space="preserve">
+    <value>Groups the selected objects.</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.PlotCommonColumns" xml:space="preserve">
+    <value>Plot common columns</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotBarChartRelStack" xml:space="preserve">
+    <value>Relative stack bar</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotBarChartStack.Description" xml:space="preserve">
+    <value>Plots a horizontal stacked bar chart.</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.SetNumberOfFactors" xml:space="preserve">
+    <value>Set preferred number of factors ...</value>
+  </data>
+  <data name="FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction" xml:space="preserve">
+    <value>This implements the Havriliak-Negami function\par\pard\qc</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.ExportPLSCalibration.Description" xml:space="preserve">
+    <value>Exports the current table into a PLS calibration model.</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeHorizontalTable.Description" xml:space="preserve">
+    <value>Horizontal uniform spacing of the selected elements.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ColumnDrivenColorPlotStyle" xml:space="preserve">
+    <value>Data column driven color</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDesaturateAndDarker" xml:space="preserve">
+    <value>Desaturate</value>
+  </data>
+  <data name="Dialog.Options.UILanguage" xml:space="preserve">
+    <value>User interface language</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerSizeType.RelativeToGraphDocument" xml:space="preserve">
+    <value>Rel.Graph</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.DifferentiateSmooth" xml:space="preserve">
+    <value>Diff/Smooth..</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.EditActiveLayer" xml:space="preserve">
+    <value>Edit ..</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.ZoomUserPercent" xml:space="preserve">
+    <value>User defined zoom value ...</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.EditTextDocumentProperties.Description" xml:space="preserve">
+    <value>Edit the text document's properties</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.InsertOneRow.Description" xml:space="preserve">
+    <value>Inserts a single row before the first selected row.</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.PCAOnColumns" xml:space="preserve">
+    <value>PCA on columns</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.Graph" xml:space="preserve">
+    <value>&amp;Graph</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.CreateMasterCurve.Description" xml:space="preserve">
+    <value>Creates a master curve from multiple curves.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.ExportMarkdown" xml:space="preserve">
+    <value>Export Markdown ...</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.TextDocument.Description" xml:space="preserve">
+    <value>Add a new text document (Markdown annotated text)</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.DropAreaPlotStyle" xml:space="preserve">
+    <value>Drop area</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotLineWaterfall.Description" xml:space="preserve">
+    <value>Plot the selected columns as waterfall plot.</value>
+  </data>
+  <data name="XML.MainMenu.Plot.ColumnChartMenu" xml:space="preserve">
+    <value>Column charts</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.AbsoluteValue" xml:space="preserve">
+    <value>Absolute</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.ChangeRowsToPropertyColumns" xml:space="preserve">
+    <value>Change rows to prop.columns</value>
+  </data>
+  <data name="XML.MainMenu.HelpMenu.ProgramHelp" xml:space="preserve">
+    <value>Help topics</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderARGBGradient" xml:space="preserve">
+    <value>Alpha-Red-Green-Blue Gradient</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.SortByTypeAndName.Description" xml:space="preserve">
+    <value>Sort windows by Type and Name.</value>
+  </data>
+  <data name="XML.MainMenu.NewLayerMenu.LinkedTopX" xml:space="preserve">
+    <value>(Linked): Top X</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.AddSphere.Description" xml:space="preserve">
+    <value>Add a 3D sphere</value>
+  </data>
+  <data name="MainWindow.Windows.AltaxoLightingWindowLabel" xml:space="preserve">
+    <value>Lighting</value>
+  </data>
+  <data name="XML.MainToolBar.StrokeWidthChooser.ToolTip" xml:space="preserve">
+    <value>Stroke width of all selected lines / pens</value>
+  </data>
+  <data name="XML.MainMenu.NewLayerMenu.NormalBottomXLeftY" xml:space="preserve">
+    <value>(Normal): Bottom X + Left Y </value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.CurlyBrace.Description" xml:space="preserve">
+    <value>Draws a curly brace.</value>
+  </data>
+  <data name="Altaxo.Gui.ExceptionBox.Title" xml:space="preserve">
+    <value>Unhandled exception has occured</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.EditorBottomViewerTop.Description" xml:space="preserve">
+    <value>Editor on the bottom, viewer on top</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeToGraphDocument" xml:space="preserve">
+    <value>Rel.Graph</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Shapes.FloatingScale+ScaleSegment" xml:space="preserve">
+    <value>Floating scale segment</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotBarChartNormal.Description" xml:space="preserve">
+    <value>Plots a horizontal bar chart.</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.PLSOnColumns" xml:space="preserve">
+    <value>PLS on columns</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelWarmer" xml:space="preserve">
+    <value>Warmer</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SortTableAscending" xml:space="preserve">
+    <value>Sort table ascending</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnValues.Description" xml:space="preserve">
+    <value>Sets the values of the column items by a script</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Open" xml:space="preserve">
+    <value>&amp;Open</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Export.Ascii" xml:space="preserve">
+    <value>Ascii ..</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeSameVerticalSize.Description" xml:space="preserve">
+    <value>Same vertical size of the selected elements.</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotCrossPRESSValue.Description" xml:space="preserve">
+    <value>Plots the Cross validated PRedicted  Error Sum of Squares.</value>
+  </data>
+  <data name="MainWindow.Windows.AltaxoNotesWindowLabel" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderBGMYR" xml:space="preserve">
+    <value>Blue-Green-Magenta-Yellow-Red</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.DecomposeByColumnContent" xml:space="preserve">
+    <value>Decompose table by content of one column</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.StatisticsOnColumns" xml:space="preserve">
+    <value>Statistic on columns</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.Interpolate" xml:space="preserve">
+    <value>Interpolate..</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.RemoveDataColumnsOnly.Description" xml:space="preserve">
+    <value>Remove all data columns in the current table</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.FillToCurvePlotStyle" xml:space="preserve">
+    <value>Fill to curve</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.AngularDegreeTickSpacing" xml:space="preserve">
+    <value>Angular degree tick spacing</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.ImageData" xml:space="preserve">
+    <value>Image data ..</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.UngroupShapes.Description" xml:space="preserve">
+    <value>Ungroup the selected objects.</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.MultivariateLinearRegression.Description" xml:space="preserve">
+    <value>Performs a multivariate linear regression. Please select both independent and the dependent column.</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.MultiExportGraphs.Description" xml:space="preserve">
+    <value>Export a single or multiple graphs to files.</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeLayers" xml:space="preserve">
+    <value>Arrange all layers..</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.RemoveDataColumnsOnly" xml:space="preserve">
+    <value>Remove all data columns</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.Interpolate.Description" xml:space="preserve">
+    <value>Interpolate data to create an equally spaced data set.</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyGraphAsMiniProject.Description" xml:space="preserve">
+    <value>Copies the currently selected graph as mini project.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.VectorCartesicPlotStyle" xml:space="preserve">
+    <value>Vector (cartesic)</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.ImportMarkdown.Description" xml:space="preserve">
+    <value>Imports a markdown file into a new TextDocument.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.ExportGraph3D.Description" xml:space="preserve">
+    <value>Exports a 3D graph to an image using a format specified by the user.</value>
+  </data>
+  <data name="FitFunctions.IndependentVariable.FrequencyAsOmega" xml:space="preserve">
+    <value>\par\pard with the frequency f being the independent variable (\f2 w\f0 = 2\f2 p\f0 f is calculated from f),</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveCopyOfProjectAs" xml:space="preserve">
+    <value>Save Copy of Project as ...</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.Header6.Description" xml:space="preserve">
+    <value>Formats selected text as 6th level header text</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.ClearDataAll.Description" xml:space="preserve">
+    <value>Clears all data and properties in the current worksheet</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotLineArea.Description" xml:space="preserve">
+    <value>Plot the selected columns as areas</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotDensityImage" xml:space="preserve">
+    <value>&amp;Density Image</value>
+  </data>
+  <data name="XML.MainMenu.NewLayerMenu.LinkedTopXRightY" xml:space="preserve">
+    <value>(Linked): Top X + Right Y</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Export.GalacticSPC" xml:space="preserve">
+    <value>Galactic SPC file(s) ..</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.MarginUserPercent" xml:space="preserve">
+    <value>User defined view margin ...</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.AsciiSingleWorksheetVert" xml:space="preserve">
+    <value>Import ASCII vertically</value>
+  </data>
+  <data name="Altaxo.Gui.ExceptionBox.HelpText1" xml:space="preserve">
+    <value>An unhandled exception has occurred in Altaxo. This is unexpected and we'd ask you to help us improve Altaxo by reporting this error to the Altaxo team.</value>
+  </data>
+  <data name="Altaxo.Gui.ExceptionBox.HelpText2" xml:space="preserve">
+    <value>How to report errors efficiently: We have set up a Web-based forum to report and track errors that are reported by users of Altaxo. To minimize necessary questions by the team members, in addition to providing the error message that is copied to the clipboard for easier pasting in the error report, we ask that you provide us with an as detailed as possible step-by-step procedure to reproduce this bug.</value>
+  </data>
+  <data name="Altaxo.Gui.ExceptionBox.Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.MoveToFolder.Description" xml:space="preserve">
+    <value>Moves the current worksheet to another project folder.</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.OpenAllGraphs" xml:space="preserve">
+    <value>Graphs</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotLineStack.Description" xml:space="preserve">
+    <value>Plot the selected columns as stacked areas</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.RegisterApplicationForCom" xml:space="preserve">
+    <value>Register Altaxo for OLE/COM functionality</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.UnregisterApplicationForCom" xml:space="preserve">
+    <value>Unregister Altaxo for OLE/COM functionality</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotLineRelStack" xml:space="preserve">
+    <value>Relative line stack</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.AngularRadianScale" xml:space="preserve">
+    <value>Angular radian scale</value>
+  </data>
+  <data name="XML.MML.GenericDielectricSusceptibility" xml:space="preserve">
+    <value>&lt;math&gt;
+  &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
+  &lt;mo&gt;&amp;DiacriticalAcute;&lt;/mo&gt;
+  &lt;mo&gt;-&lt;/mo&gt;
+  &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+  &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
+  &lt;mo&gt;&amp;DiacriticalDoubleAcute;&lt;/mo&gt;
+  &lt;mo&gt;=&lt;/mo&gt;
+  &lt;msub&gt;
+    &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
+    &lt;mi&gt;&amp;infin;&lt;/mi&gt;
+  &lt;/msub&gt;
+  &lt;mo&gt;+&lt;/mo&gt;
+  &lt;mi&gt;&amp;Delta;&lt;/mi&gt;
+  &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
+  &lt;mo&gt;&amp;InvisibleTimes;&lt;/mo&gt;
+  &lt;mo&gt;&amp;it;&lt;/mo&gt;
+  &lt;mrow&gt;
+    &lt;munderover&gt;
+      &lt;mi&gt;&amp;int;&lt;/mi&gt;
+      &lt;mn&gt;0&lt;/mn&gt;
+      &lt;mi&gt;&amp;infin;&lt;/mi&gt;
+    &lt;/munderover&gt;
+    &lt;mo&gt;&amp;it;&lt;/mo&gt;
+    &lt;mrow&gt;
+      &lt;mi&gt;exp&lt;/mi&gt;
+      &lt;mo&gt;&amp;af;&lt;/mo&gt;
+      &lt;mrow&gt;
+        &lt;mo&gt;(&lt;/mo&gt;
+        &lt;mrow&gt;
+          &lt;mi&gt;-&lt;/mi&gt;
+          &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+          &lt;mi&gt;&amp;omega;&lt;/mi&gt;
+          &lt;mi&gt;t&lt;/mi&gt;
+        &lt;/mrow&gt;
+        &lt;mo&gt;)&lt;/mo&gt;
+      &lt;/mrow&gt;
+    &lt;/mrow&gt;
+    &lt;mover&gt;
+      &lt;mi&gt;&amp;Phi;&lt;/mi&gt;
+      &lt;mi&gt;.&lt;/mi&gt;
+    &lt;/mover&gt;
+    &lt;mo&gt;&amp;af;&lt;/mo&gt;
+    &lt;mrow&gt;
+      &lt;mo&gt;(&lt;/mo&gt;
+      &lt;mi&gt;t&lt;/mi&gt;
+      &lt;mo&gt;)&lt;/mo&gt;
+    &lt;/mrow&gt;
+    &lt;mi&gt;&amp;dd;&lt;/mi&gt;
+    &lt;mi&gt;t&lt;/mi&gt;
+  &lt;/mrow&gt;
+  &lt;mo&gt;-&lt;/mo&gt;
+  &lt;mfrac&gt;
+    &lt;mrow&gt;
+      &lt;mi&gt;&amp;ii;&lt;/mi&gt;
+      &lt;mi&gt;&amp;sigma;&lt;/mi&gt;
+    &lt;/mrow&gt;
+      &lt;mrow&gt;
+      &lt;mi&gt;&amp;omega;&lt;/mi&gt;
+        &lt;msub&gt;
+        &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
+        &lt;mn&gt;0&lt;/mn&gt;
+        &lt;/msub&gt;
+    &lt;/mrow&gt;
+  &lt;/mfrac&gt;
+&lt;/math&gt;
+
+</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SetColumnAsNegError.Description" xml:space="preserve">
+    <value>Sets the currently selected column to a negative error column</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.CopyToFolder" xml:space="preserve">
+    <value>Copy items to folder ..</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.Worksheet.Description" xml:space="preserve">
+    <value>Creates a new empty worksheet</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.Margin0Percent" xml:space="preserve">
+    <value>0% View margin</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.PropertyBag.Description" xml:space="preserve">
+    <value>Adds a new property bag to the current folder.</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.CreateMasterCurve" xml:space="preserve">
+    <value>Create master curve ...</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.ExportHtml" xml:space="preserve">
+    <value>Export to Html ..</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.ExportMaml" xml:space="preserve">
+    <value>Export to Maml ..</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.MoveGraphItemToTop.Description" xml:space="preserve">
+    <value>Move item to top</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ZoomAxes.Description" xml:space="preserve">
+    <value>Zooms the x and y axes</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelRectangle" xml:space="preserve">
+    <value>Rectangle</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.Log10TickSpacing" xml:space="preserve">
+    <value>Decadic logarithm tick spacing</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.SortByTypeAndName" xml:space="preserve">
+    <value>Type and Name</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.AddCurvePlot.Description" xml:space="preserve">
+    <value>Adds a user defined curve</value>
+  </data>
+  <data name="XML.MainMenu.NewLayerMenu.LinkedRightY.Description" xml:space="preserve">
+    <value>Adds a linked layer with a right Y axis (but no linked axes)</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.PrintOptionsSetup" xml:space="preserve">
+    <value>Setup print options ..</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotScatter.Description" xml:space="preserve">
+    <value>Creates a scatter plot of the selected data</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.SortByName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.PCAOnRows.Description" xml:space="preserve">
+    <value>Performs a Principal Component Analysis of the selected row spectra</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.TabbedEditorAndViewer.Description" xml:space="preserve">
+    <value>Editor and viewer in a tab control</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed.Description" xml:space="preserve">
+    <value>Fixed by the user value. Rescaling or zooming by the user will be ignored.</value>
+  </data>
+  <data name="FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General" xml:space="preserve">
+    <value> and \f2 c\f0 ' and \f2 c\f0 '' being the dependent variables, namely the real and negative imaginary part of the dynamic susceptibility.\par
+\par
+Parameter:\par
+\par
+\f2 c\f0\sub\u8734?\nosupersub  :\tab high frequency susceptibility limit\par
+\f2 De\f0  :\tab step height of the susceptibility function\par
+\f2 t\f0  :\tab retardation time\par
+\f2 a\f0 , \f2 g\f0  :\tab shape exponents\par
+\f2 h\f0  :\tab generalized flow term, for instance viscosity\par\par</value>
+  </data>
+  <data name="Altaxo.Gui.ExceptionBox.ExitAltaxo" xml:space="preserve">
+    <value>Exit Altaxo</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.PasteLayerContentsExclusively" xml:space="preserve">
+    <value>Paste plot contents exclusively</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PLS.PlotXResiduals.Description" xml:space="preserve">
+    <value>Plots the spectral residuals.</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.Rename.Description" xml:space="preserve">
+    <value>Renames this text document</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.ExtractTableData.Description" xml:space="preserve">
+    <value>Opens the extract worksheet data script window.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.DropLinePlotStyle" xml:space="preserve">
+    <value>Drop line</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelTriangleComplementary" xml:space="preserve">
+    <value>Triangle1</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.RenumerateFigures" xml:space="preserve">
+    <value>Renumerate figures</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.LinePlotStyle" xml:space="preserve">
+    <value>Line</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.ViewLeft.Description" xml:space="preserve">
+    <value>View graph from left side</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarXPlotStyle" xml:space="preserve">
+    <value>ErrorBar(X)</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.CreatePropertyColumnOfColumnNames" xml:space="preserve">
+    <value>Create property column with column names</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.ChangeRowsToPropertyColumns.Description" xml:space="preserve">
+    <value>Changes the selected rows to property columns and deletes the rows afterwards
+</value>
+  </data>
+  <data name="XML.MainMenu.NewLayerMenu.NormalBottomXLeftY.Description" xml:space="preserve">
+    <value>Adds a unlinked layer with bottom X axis and left Y axis</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.InsertDataRows" xml:space="preserve">
+    <value>Insert rows before ..</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerSizeType.AbsoluteValue" xml:space="preserve">
+    <value>Absolute</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.CopyToFolder.Description" xml:space="preserve">
+    <value>Copies the selected items to another folder (duplicating them).</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeVerticalTable.Description" xml:space="preserve">
+    <value>Vertical uniform spacing of the selected elements.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Close.Description" xml:space="preserve">
+    <value>Closes the current project</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.GreaterOrEqual.Description" xml:space="preserve">
+    <value>Fixed by the user value or the data bound value, whichever is greater. Rescaling is working, using the user provided value and the data bound value, whichever is greater. Zooming is working, while the user provided value is kept as is.</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix" xml:space="preserve">
+    <value>Multiply columns to matrix</value>
+  </data>
+  <data name="XML.MainMenu.HelpMenu.ForceException" xml:space="preserve">
+    <value>Throw exception (test)</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.CopyActiveLayerContents" xml:space="preserve">
+    <value>Copy layer contents</value>
+  </data>
+  <data name="XML.MainMenu.TextMenu.EditorRightViewerLeft" xml:space="preserve">
+    <value>Editor right, viewer left</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.DateTimeTickSpacing" xml:space="preserve">
+    <value>Date-time tick spacing</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.CopyToMultipleFolders" xml:space="preserve">
+    <value>Copy items to multiple folders..</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.ArrangeVertical.Description" xml:space="preserve">
+    <value>Vertical alignment of the selected elements.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisFarToLinkedLayerFar" xml:space="preserve">
+    <value>Rel.Far-Far.LinkLayer</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotLineAndScatter.Description" xml:space="preserve">
+    <value>Creates a line+scatter plot of the selected data</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.CopyActiveLayer.Description" xml:space="preserve">
+    <value>Copies the active layer to the clipboard.</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.Data" xml:space="preserve">
+    <value>Plot items</value>
+  </data>
+  <data name="XML.MainMenu.HelpMenu.ClassHelp.Description" xml:space="preserve">
+    <value>Shows the Altaxo class reference (be patient - this takes some time!)</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.TextTool.Description" xml:space="preserve">
+    <value>Creates a text box.</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.DifferentiateSmooth.Description" xml:space="preserve">
+    <value>Differentiate/smoth using Savitzky-Golay filtering.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.ImportMarkdown" xml:space="preserve">
+    <value>Markdown file ..</value>
+  </data>
+  <data name="XML.MainMenu.LayerMenu.PasteNewLayerAsChild.Description" xml:space="preserve">
+    <value>Paste the layer as child layer of this layer</value>
+  </data>
+  <data name="Dialog.Options.LanguageSettings" xml:space="preserve">
+    <value>Language settings</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.ReadPlotItemData.Description" xml:space="preserve">
+    <value>Reads the data of a plot point when you click on it.</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.CopyPage.Description" xml:space="preserve">
+    <value>Copy the actual page to the clipboard</value>
+  </data>
+</root>

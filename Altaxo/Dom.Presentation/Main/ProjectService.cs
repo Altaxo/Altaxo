@@ -218,7 +218,7 @@ namespace Altaxo.Main
 
       OnProjectChanged(new ProjectEventArgs(null, projectArchive.FileName, ProjectEventKind.ProjectOpening));
 
-      AltaxoDocument newdocument = null;
+      AltaxoDocument newdocument;
       Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info;
 
       try

@@ -6,7 +6,7 @@
         xmlns:axo="clr-namespace:Altaxo;assembly=AltaxoBase"
         xmlns:bpaxog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase.Presentation"
         xmlns:local="clr-namespace:Altaxo.Gui.Workbench"
-        xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:avalonDock="https://github.com/Dirkster99/AvalonDock"
         xmlns:conv="clr-namespace:Altaxo.Gui.Common.Converters;assembly=AltaxoBase.Presentation"
         mc:Ignorable="d"
 
@@ -28,7 +28,7 @@
         <bpaxog:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
         <local:ActiveDocumentConverter x:Key="ActiveDocumentConverter" />
         <local:DockManagerThemeConverter x:Key="DockManagerThemeConverter" />
-        <avalonDockConv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" xmlns:avalonDockConv="clr-namespace:Xceed.Wpf.AvalonDock.Converters;assembly=Xceed.Wpf.AvalonDock" />
+        <avalonDockConv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" xmlns:avalonDockConv="clr-namespace:AvalonDock.Converters;assembly=AvalonDock" />
         <conv:ResourceImageConverter x:Key="ResourceStringToImageSourceConverter" xmlns:conv="clr-namespace:Altaxo.Gui.Common.Converters;assembly=AltaxoBase.Presentation" />
         <conv:StringParserConverter x:Key="StringParserConverter" xmlns:conv="clr-namespace:Altaxo.Gui.Common.Converters;assembly=AltaxoBase.Presentation" />
 

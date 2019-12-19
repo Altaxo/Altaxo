@@ -142,13 +142,13 @@ namespace Altaxo.Gui
         {
           if (name.Contains("Xaml"))
           {
-          // then it is probably a Xaml text
-          // Note: do not catch Exceptions here, because we want to know about wrong resources
-          using (var ms = new System.IO.MemoryStream(byteArray))
-          {
-            var presentation = System.Windows.Markup.XamlReader.Load(ms);
-            return (ImageSource)presentation;
-          }
+            // then it is probably a Xaml text
+            // Note: do not catch Exceptions here, because we want to know about wrong resources
+            using (var ms = new System.IO.MemoryStream(byteArray))
+            {
+              var presentation = System.Windows.Markup.XamlReader.Load(ms);
+              return (ImageSource)presentation;
+            }
           }
           else
           {

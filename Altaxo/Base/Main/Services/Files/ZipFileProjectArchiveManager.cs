@@ -97,7 +97,7 @@ namespace Altaxo.Main.Services
         {
           roFileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           _originalFileStream = null;
           throw exIO;
@@ -111,7 +111,7 @@ namespace Altaxo.Main.Services
 
         return;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         _originalFileStream = null;
         throw;
@@ -194,7 +194,7 @@ namespace Altaxo.Main.Services
       IDictionary<string, IProjectItem> dictionaryResult = null;
 
       var originalFileName = _originalFileStream?.Name;
-      bool isNewDestinationFileName = destinationFileName != originalFileName;
+      bool isNewDestinationFileName = destinationFileName != new FileName(originalFileName);
 
       TryFinishCloneTask();  // Force decision whether we have a cloned file of the original file or not
       bool useClonedStreamAsBackup = _clonedFileStream != null;
@@ -392,7 +392,7 @@ namespace Altaxo.Main.Services
           _clonedFileStream = null;
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
 
       }

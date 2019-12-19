@@ -9,25 +9,25 @@
 				WindowStyle="SingleBorderWindow"
 				Loaded="EhViewLoaded"
 				Unloaded="EhViewUnloaded">
-	<Grid Name="_grid" Margin="4,4,4,4">
-		<Grid.RowDefinitions>
-			<RowDefinition />
-			<RowDefinition Height="6" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<Grid Name="_buttonGrid" Grid.Row="2" Margin="0,4,0,4">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="0" />
-				<ColumnDefinition Width="4*" />
-				<ColumnDefinition Width="1*" />
-				<ColumnDefinition Width="4*" />
-				<ColumnDefinition Width="1*" />
-				<ColumnDefinition Width="4*" />
-				<ColumnDefinition Width="0" />
-			</Grid.ColumnDefinitions>
-			<Button Grid.Column="1" Name="_btOk" IsDefault="True" Click="EhButtonOKPressed">Ok</Button>
-			<Button Grid.Column="3" Name="_btCancel" IsCancel="True" Click="EhButtonCancelPressed">Cancel</Button>
-			<Button Grid.Column="5" Name="_btApply" Click="EhButtonApplyPressed">Apply</Button>
-		</Grid>
-	</Grid>
+    <Grid Name="_grid" Margin="4,4,4,4">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="6" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Name="_buttonGrid" Grid.Row="2" Margin="0,4,0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="0" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Name="_btOk" IsDefault="True" Click="EhButtonOKPressed">Ok</Button>
+            <Button Grid.Column="3" Name="_btCancel" IsCancel="True" Click="EhButtonCancelPressed">Cancel</Button>
+            <Button Grid.Column="5" Name="_btApply" Click="EhButtonApplyPressed">Apply</Button>
+        </Grid>
+    </Grid>
 </Window>

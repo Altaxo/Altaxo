@@ -40,6 +40,7 @@ namespace Altaxo.Main.Services
 
     private PathName _fileOrFolderName;
 
+    /// <inheritdoc/>
     public event EventHandler<NameChangedEventArgs> FileOrFolderNameChanged // Never used, because name can not change
     {
       add { }
@@ -47,11 +48,15 @@ namespace Altaxo.Main.Services
     }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UnnamedProjectArchiveManager"/> class.
+    /// </summary>
     public UnnamedProjectArchiveManager()
     {
 
     }
 
+    /// <inheritdoc/>
     public UnnamedProjectArchiveManager(PathName pathName)
     {
       _fileOrFolderName = pathName;

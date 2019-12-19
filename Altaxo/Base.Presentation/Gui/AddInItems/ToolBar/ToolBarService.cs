@@ -145,8 +145,8 @@ namespace Altaxo.Gui.AddInItems
       }
 
       private void EhLanguageChanged()
-        {
-          MenuService.UpdateText(ItemsSource);
+      {
+        MenuService.UpdateText(ItemsSource);
       }
     }
 

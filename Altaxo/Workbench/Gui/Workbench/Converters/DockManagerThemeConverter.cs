@@ -29,7 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using Xceed.Wpf.AvalonDock.Themes;
+using AvalonDock.Themes;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -47,6 +47,12 @@ namespace Altaxo.Gui.Workbench
         {
           case "aero":
             return new AeroTheme();
+
+          case "expressiondark":
+            return new ExpressionDarkTheme();
+
+          case "expressionlight":
+            return new ExpressionLightTheme();
 
           case "metro":
             return new MetroTheme();

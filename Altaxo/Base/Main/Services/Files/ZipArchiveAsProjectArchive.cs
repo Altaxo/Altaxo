@@ -65,6 +65,7 @@ namespace Altaxo.Main.Services.Files
     /// Initializes a new instance of the <see cref="ZipArchiveAsProjectArchive"/> class.
     /// </summary>
     /// <param name="stream">The archive stream.</param>
+    /// <param name="mode">The mode in which to create the Zip archive.</param>
     /// <param name="leaveOpen">If true, the stream will be left open, even if this instance is disposed.</param>
     /// <exception cref="ArgumentNullException">zipArchive</exception>
     public ZipArchiveAsProjectArchive(Stream stream, ZipArchiveMode mode, bool leaveOpen)
@@ -79,6 +80,7 @@ namespace Altaxo.Main.Services.Files
     /// Initializes a new instance of the <see cref="ZipArchiveAsProjectArchive"/> class.
     /// </summary>
     /// <param name="stream">The archive stream.</param>
+    /// <param name="mode">The mode in which to create the Zip archive.</param>
     /// <param name="leaveOpen">If true, the stream will be left open, even if this instance is disposed.</param>
     /// <param name="archiveManager">The archive manager managing this archive.</param>
     /// <exception cref="ArgumentNullException">zipArchive</exception>

@@ -216,7 +216,7 @@ namespace Altaxo.Main.Services
           (Action)delegate
           {
             if (_rootReporterIsDisposed) // ignore double dispose
-                    return;
+              return;
             _rootReporterIsDisposed = true;
             if (ProgressMonitorDisposed != null)
             {

@@ -91,7 +91,7 @@ namespace Altaxo.Main.Services
         {
           stream = new FileStream(lockFile, FileMode.Open, FileAccess.Write, FileShare.None);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           isCandidateForRemoving = false;
         }

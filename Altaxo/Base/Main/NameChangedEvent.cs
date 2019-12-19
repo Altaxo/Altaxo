@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2019 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,14 +26,42 @@ using System;
 
 namespace Altaxo.Main
 {
+  /// <summary>
+  /// Event args that accompany a NameChanged event.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.TunnelingEventArgs" />
   public class NameChangedEventArgs : TunnelingEventArgs
   {
+    /// <summary>
+    /// Gets the source of the event, i.e. the instance whose name has changed.
+    /// </summary>
+    /// <value>
+    /// The source of the event.
+    /// </value>
     public object Source { get; private set; }
 
+    /// <summary>
+    /// Gets the old name of the instance that was renamed.
+    /// </summary>
+    /// <value>
+    /// The old name of the instance that was renamed.
+    /// </value>
     public string OldName { get; private set; }
 
+    /// <summary>
+    /// Gets the new name of the instance that was renamed.
+    /// </summary>
+    /// <value>
+    /// The new name of the instance that was renamed.
+    /// </value>
     public string NewName { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NameChangedEventArgs"/> class.
+    /// </summary>
+    /// <param name="source">The source of the event, i.e. the instance whose name has changed.</param>
+    /// <param name="oldName">The old name of that instance.</param>
+    /// <param name="newName">The new name of that instance.</param>
     public NameChangedEventArgs(object source, string oldName, string newName)
     {
       Source = source;
@@ -42,5 +70,10 @@ namespace Altaxo.Main
     }
   }
 
+  /// <summary>
+  /// Event handler of the name changed event.
+  /// </summary>
+  /// <param name="sender">The sender of the event (not neccessarily the instance whose name has changed).</param>
+  /// <param name="e">The <see cref="NameChangedEventArgs"/> instance containing the event data.</param>
   public delegate void NameChangedEventHandler(object sender, NameChangedEventArgs e);
 }

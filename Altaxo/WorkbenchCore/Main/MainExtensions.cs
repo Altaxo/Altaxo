@@ -447,8 +447,8 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Removes <paramref name="stringToRemove" /> from the end of this string.
-    /// Throws ArgumentException if this string does not end with <paramref name="stringToRemove" />.
+    /// Removes <paramref name="stringToRemove"/> from the end of this string.
+    /// Throws ArgumentException if this string does not end with <paramref name="stringToRemove"/>.
     /// </summary>
     /// <param name="s">String from which we want to remove another string at the end.</param>
     /// <param name="stringToRemove">The string to remove.</param>

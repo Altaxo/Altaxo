@@ -31,7 +31,7 @@ namespace Altaxo.Main.Services.Files
   /// <summary>
   /// Wraps a <see cref="ZipArchiveEntry"/> to implement <see cref="IProjectArchiveEntry"/>.
   /// </summary>
-  /// <seealso cref="Altaxo.Main.Services.Files.IProjectArchiveEntry" />
+  /// <seealso cref="IProjectArchiveEntry" />
   public class ZipEntryAsProjectArchiveEntry : IProjectArchiveEntry
   {
     private ZipArchiveEntryAxo _entry;

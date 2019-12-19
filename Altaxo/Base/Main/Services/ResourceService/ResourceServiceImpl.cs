@@ -303,46 +303,46 @@ namespace Altaxo.Main.Services
         }
         else
         {
-        // search all local resource managers
-        foreach ((string prefix, ResourceManager resourceManger) in _localStringsResMgrs)
-        {
-          try
+          // search all local resource managers
+          foreach ((string prefix, ResourceManager resourceManger) in _localStringsResMgrs)
           {
-            s = resourceManger.GetString(name);
-          }
-          catch (Exception) { }
-
-          if (s != null)
-          {
-            break;
-          }
-        }
-
-        if (s == null)
-        {
-          // search all unlocalized resource managers
-          foreach ((string prefix, ResourceManager resourceManger) in _neutralStringsResMgrs)
-          {
-            if (prefix.Length == 0 || name.StartsWith(prefix))
+            try
             {
-              try
-              {
-                s = resourceManger.GetString(prefix.Length == 0 ? name : name.Substring(prefix.Length));
-              }
-              catch (Exception) { }
+              s = resourceManger.GetString(name);
+            }
+            catch (Exception) { }
 
-              if (s != null)
+            if (s != null)
+            {
+              break;
+            }
+          }
+
+          if (s == null)
+          {
+            // search all unlocalized resource managers
+            foreach ((string prefix, ResourceManager resourceManger) in _neutralStringsResMgrs)
+            {
+              if (prefix.Length == 0 || name.StartsWith(prefix))
               {
-                break;
+                try
+                {
+                  s = resourceManger.GetString(prefix.Length == 0 ? name : name.Substring(prefix.Length));
+                }
+                catch (Exception) { }
+
+                if (s != null)
+                {
+                  break;
+                }
               }
             }
           }
-        }
-        if (s == null)
-        {
-          // throw an exception if not found
-          throw new ResourceNotFoundException("string >" + name + "<");
-        }
+          if (s == null)
+          {
+            // throw an exception if not found
+            throw new ResourceNotFoundException("string >" + name + "<");
+          }
         }
 
 #if USERESOURCETRACKING

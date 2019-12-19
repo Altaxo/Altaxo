@@ -96,13 +96,13 @@ namespace Altaxo.Dom
 
     /// <summary>
     /// Returns the currently open project.
-    /// For setting, call <see cref="SetCurrentProject(IProject, string)"/>.
+    /// For setting, call <see cref="SetCurrentProject(IProject, bool)"/>.
     /// </summary>
     public IProject CurrentProject { get => _currentProject; }
 
     /// <summary>
     /// Gets the file name for the currently open project. Is null if the project has not got a file name for now.
-    /// For setting, call <see cref="SetCurrentProject(IProject, string)"/>.
+    /// For setting, call <see cref="SetCurrentProject(IProject, bool)"/>.
     /// </summary>
     public virtual PathName CurrentProjectFileName
     {
@@ -384,12 +384,9 @@ namespace Altaxo.Dom
     #region Project opening
 
     /// <summary>
-    /// Loads the project from an (already open) input stream. Do not use this call when opening the project from a file (use <see cref="LoadProjectFromFile(string)"/> instead).
+    /// Loads the project from project archive.
     /// </summary>
-    /// <param name="istream">The input stream.</param>
-    /// <returns>
-    /// Null if the project was successfully loaded; or an error string otherwise.
-    /// </returns>
+    /// <param name="archive">The project archive to load from.</param>
     public void OpenProjectFromArchive(IProjectArchive archive)
     {
       InternalLoadProjectAndWindowsStateFromArchive(archive);
@@ -462,10 +459,9 @@ namespace Altaxo.Dom
     }
 
     /// <summary>
-    /// Loads the project (see <see cref="AltaxoDocument"/>) and the state of the windows from a project archive.
+    /// Loads the project and the state of the windows from a project archive.
     /// </summary>
     /// <param name="archive">The project archive to load from.</param>
-    /// <returns>Null if successfull, otherwise the errors that have occured during loading.</returns>
     protected abstract void InternalLoadProjectAndWindowsStateFromArchive(IProjectArchive archive);
 
     /// <summary>

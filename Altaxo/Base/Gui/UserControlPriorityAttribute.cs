@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2019 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -34,14 +34,24 @@ namespace Altaxo.Gui
   /// </summary>
   public class UserControlPriorityAttribute : System.Attribute, IComparable
   {
-    protected int _priority = 0;
+    protected int _priority;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UserControlPriorityAttribute"/> class.
+    /// </summary>
+    /// <param name="priority">The priority. Higher values mean higher priority.</param>
     public UserControlPriorityAttribute(int priority)
     {
       _priority = priority;
     }
 
 
+    /// <summary>
+    /// Gets the priority.
+    /// </summary>
+    /// <value>
+    /// The priority value.
+    /// </value>
     public int Priority
     {
       get { return _priority; }
@@ -49,6 +59,11 @@ namespace Altaxo.Gui
 
     #region IComparable Members
 
+    /// <summary>
+    /// Compares to another priority attribute.
+    /// </summary>
+    /// <param name="obj">The other priority attribute.</param>
+    /// <returns>1 if the other priority attribute has higher priority than this attribute, -1 if this attribute has higher priority than the other; otherwise 0.</returns>
     public int CompareTo(object obj)
     {
       // Attention - we sort the items so that the item with the highest priority value is the first (!) entry in a sorted list

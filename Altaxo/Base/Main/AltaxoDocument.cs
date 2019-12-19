@@ -100,6 +100,7 @@ namespace Altaxo
     /// <param name="info">The serialization information.</param>
     /// <param name="originalArchive">The original archive that belongs to the project being saved. Can accelerate the saving of the document by recycling some of the already saved streams.
     /// This parameter can be null.</param>
+    /// <param name="projectArchiveManager">The project archive manager that manages the archive.</param>
     /// <returns>A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</returns>
     /// <exception cref="ApplicationException"></exception>
     public Dictionary<string, IProjectItem> SaveToArchive(IProjectArchive archiveToSaveTo, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info, IProjectArchive originalArchive = null, IProjectArchiveManager projectArchiveManager = null)

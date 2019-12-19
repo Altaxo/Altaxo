@@ -197,7 +197,7 @@ namespace Altaxo.Workbench
         (Action)delegate
         {
           if (rootMonitorIsDisposed) // ignore double dispose
-                  return;
+            return;
           rootMonitorIsDisposed = true;
           if (ProgressMonitorDisposed != null)
           {
