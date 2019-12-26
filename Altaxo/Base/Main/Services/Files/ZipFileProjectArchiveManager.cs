@@ -194,7 +194,7 @@ namespace Altaxo.Main.Services
       IDictionary<string, IProjectItem> dictionaryResult = null;
 
       var originalFileName = _originalFileStream?.Name;
-      bool isNewDestinationFileName = destinationFileName != new FileName(originalFileName);
+      bool isNewDestinationFileName = originalFileName != (string)destinationFileName;
 
       TryFinishCloneTask();  // Force decision whether we have a cloned file of the original file or not
       bool useClonedStreamAsBackup = _clonedFileStream != null;
