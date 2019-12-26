@@ -595,12 +595,12 @@ namespace Altaxo.Main
 
       var controller = viewContent as IMVCController;
 
-      if (controller.ViewObject == null)
+      if (null != controller && controller.ViewObject == null)
       {
         Current.Gui.FindAndAttachControlTo(controller);
       }
 
-      if (null != Current.Workbench)
+      if (null != Current.Workbench && null != viewContent)
         Current.Workbench.ShowView(viewContent, true);
 
       return controller;
