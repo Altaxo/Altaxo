@@ -283,7 +283,7 @@ namespace Altaxo.Dom
       var options = new SaveFileOptions();
       var fileExtensions = "*" + string.Join(";*", ProjectFileExtensions);
       options.AddFilter(fileExtensions, string.Format("{0} ({1})", "Project files", fileExtensions));
-      options.AddFilter("*.*", StringParser.Parse("${res: Altaxo.FileFilter.AllFiles}"));
+      options.AddFilter("*.*", StringParser.Parse("${res:Altaxo.FileFilter.AllFiles}"));
       options.OverwritePrompt = true;
       options.AddExtension = true;
 
@@ -305,7 +305,7 @@ namespace Altaxo.Dom
       var options = new SaveFileOptions();
       var fileExtensions = "*" + string.Join(";*", ProjectFileExtensions);
       options.AddFilter(fileExtensions, string.Format("{0} ({1})", "Project files", fileExtensions));
-      options.AddFilter("*.*", StringParser.Parse("${res: Altaxo.FileFilter.AllFiles}"));
+      options.AddFilter("*.*", StringParser.Parse("${res:Altaxo.FileFilter.AllFiles}"));
       options.OverwritePrompt = true;
       options.AddExtension = true;
 
