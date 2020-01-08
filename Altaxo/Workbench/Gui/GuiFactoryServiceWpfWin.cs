@@ -24,13 +24,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing.Printing;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Input;
-using System.Windows.Interop;
 using Altaxo.Geometry;
 using Altaxo.Gui.Common;
 using Altaxo.Main.Services;
@@ -43,8 +39,8 @@ namespace Altaxo.Gui
 
     public GuiFactoryServiceWpfWin()
     {
-      RegisteredGuiTechnologies.Add(typeof(System.Windows.UIElement));
-      RegistedContextMenuProviders.Add(typeof(System.Windows.UIElement), ShowWpfContextMenu);
+      RegisteredGuiTechnologies.Add(typeof(System.Windows.FrameworkElement));
+      RegistedContextMenuProviders.Add(typeof(System.Windows.FrameworkElement), ShowWpfContextMenu);
     }
 
     private static void ShowWpfContextMenu(object parent, object owner, string addInPath, double x, double y)
