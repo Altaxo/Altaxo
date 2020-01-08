@@ -28,8 +28,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.AddInItems;
 using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Startup;
@@ -270,7 +268,7 @@ namespace Altaxo.Gui.Workbench
 
       // Initialize pads (tool windows)
       var padDescriptors = AddInTree.BuildItems<PadDescriptor>(appNamePrefix + padContentPathPostFix, this, false);
-      _padContentCollection.AddRange(padDescriptors.Select(x => x.PadContent));
+      _padContentCollection.AddRange(padDescriptors.Select(x => x.PadContent).Where(padContent => !(padContent is null)));
 
       // Initialize status bar
       var statusBarService = Current.GetService<IStatusBarService>();
