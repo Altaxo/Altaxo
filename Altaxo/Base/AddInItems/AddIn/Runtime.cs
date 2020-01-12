@@ -22,7 +22,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-using Altaxo;
 using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
@@ -295,11 +294,10 @@ namespace Altaxo.AddInItems
 
     protected virtual Assembly LoadAssembly(string assemblyString)
     {
-#if NETSTANDARD
-      var loader = new AssemblyLoadContextIntoDefault(this.hintPath);
-      return loader.LoadFromPartialName(assemblyString);
-#else
+#if NETFRAMEWORK
       return System.Reflection.Assembly.Load(assemblyString);
+#else
+      return AssemblyLoaderService.Instance.LoadAssemblyFromPartialName(assemblyString, this.hintPath);
 #endif
 
     }
