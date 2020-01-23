@@ -90,8 +90,9 @@ namespace Altaxo.Main.Services
         // Open the stream for reading ...
         _originalFileStream = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
       }
-      catch (System.IO.IOException exIO)
+      catch (Exception ex1)
       {
+        // try to open as readonly...
         FileStream roFileStream;
         try
         {
@@ -99,8 +100,9 @@ namespace Altaxo.Main.Services
         }
         catch (Exception)
         {
+          // open as readonly has failed too, so we have to throw..
           _originalFileStream = null;
-          throw exIO;
+          throw ex1;
         }
         var shouldOpenReadonly = Current.Gui.YesNoMessageBox($"The file {fileName} seems to be read-only or currently in use.\r\n\r\nDo you want try to open it in read-only mode?", "Question", true);
 
@@ -111,11 +113,7 @@ namespace Altaxo.Main.Services
 
         return;
       }
-      catch (Exception)
-      {
-        _originalFileStream = null;
-        throw;
-      }
+
 
       // deserialize the project....
       using (var projectArchive = new Services.Files.ZipArchiveAsProjectArchive(_originalFileStream, ZipArchiveMode.Read, leaveOpen: true, archiveManager: this))
@@ -388,9 +386,9 @@ namespace Altaxo.Main.Services
           _cloneTask = null;
           _cloneTaskCancel?.Dispose();
           _cloneTaskCancel = null;
-          _clonedFileStream?.Dispose();
-          _clonedFileStream = null;
         }
+        _clonedFileStream?.Dispose();
+        _clonedFileStream = null;
       }
       catch (Exception)
       {
