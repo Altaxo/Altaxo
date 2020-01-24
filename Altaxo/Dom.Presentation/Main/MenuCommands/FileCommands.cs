@@ -400,34 +400,97 @@ namespace Altaxo.Main.Commands
   {
     public override void Execute(object parameter)
     {
-      var dict = new Dictionary<DataTable, TableScript>();
-
-      foreach (var table in Current.Project.DataTableCollection)
+      if (Current.Project.IsDirty)
       {
 
-        dict.Add(table, table.TableScript);
-        table.TableScript = null;
+        string msg = "Before saving the project without scripts, at first your project must be saved with scripts.\r\n";
+        if (string.IsNullOrEmpty(Current.ProjectService.CurrentProjectFileName))
+          msg += "Next, you will be prompted for a file name to save the project with (!) scripts.\r\n";
+        msg += "\r\nDo you want to save your project with scripts?";
+
+
+        var answer = Current.Gui.YesNoMessageBox(msg, "First of all save project with scripts", false);
+
+        if (answer == true)
+        {
+          Current.ProjectService.SaveProject();
+          Current.Gui.InfoMessageBox(
+            "Your project was successfully saved (with scripts).\r\n\r\n" +
+            "You will now be prompted for a file name to save the project without scripts.", "Success saving original project"
+            );
+        }
+        else
+        {
+          Current.Gui.ErrorMessageBox("The operation was cancelled.", "Operation cancelled");
+          return;
+        }
       }
 
-      var oldFileName = Current.ProjectService.CurrentProjectFileName;
 
+      var options = new SaveFileOptions();
+      var fileExtensions = "*" + string.Join(";*", Current.ProjectService.ProjectFileExtensions);
+      options.AddFilter(fileExtensions, string.Format("{0} ({1})", "Project files", fileExtensions));
+      options.AddFilter("*.*", StringParser.Parse("${res:Altaxo.FileFilter.AllFiles}"));
+      options.OverwritePrompt = true;
+      options.AddExtension = true;
+      options.Title = "Save without table scripts (please use a different file name)";
 
-      IProjectArchiveManager oldManager = null;
-      try
+      for (; ; )
       {
-        oldManager = Current.ProjectService.ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(new UnnamedProjectArchiveManager());
-        Current.ProjectService.SaveProjectAs();
+        if (!Current.Gui.ShowSaveFileDialog(options))
+        {
+          return;
+        }
+        if (Current.ProjectService.CurrentProjectFileName == options.FileName)
+        {
+          Current.Gui.ErrorMessageBox("Please choose a file name different from the current project file name!", "Error - same file name");
+        }
+        else
+        {
+          break;
+        }
       }
-      finally
+
+      using (var newManager = ZipFileProjectArchiveManagerWithoutClonedFile.CreateForSavingWithEmptyProjectFile(new FileName(options.FileName), true))
       {
+        // used to temporarily store the table scripts for later restoration
+        var dict = new Dictionary<DataTable, TableScript>();
+
+        // memorize current table scripts, and strip table scripts from table
         foreach (var table in Current.Project.DataTableCollection)
         {
-          table.TableScript = dict[table];
+
+          dict.Add(table, table.TableScript);
+          table.TableScript = null;
         }
 
-        var tempManager = Current.ProjectService.ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(oldManager);
-        tempManager?.Dispose();
+        // memorize current project file name
+        var oldFileName = Current.ProjectService.CurrentProjectFileName;
+
+        IProjectArchiveManager oldManager = null;
+        try
+        {
+
+          oldManager = Current.ProjectService.ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(newManager);
+          Current.ProjectService.SaveProject();
+        }
+        finally
+        {
+          // restore the table scripts
+          foreach (var table in Current.Project.DataTableCollection)
+          {
+            table.TableScript = dict[table];
+          }
+
+          // restore the project archive manager
+          var tempManager = Current.ProjectService.ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(oldManager);
+
+          // dispose the temporary manager
+          tempManager?.Dispose();
+        }
       }
+
+      Current.Gui.InfoMessageBox($"Project without scripts successfully saved to {options.FileName}!", "Success");
 
     }
   }
