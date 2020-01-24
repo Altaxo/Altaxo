@@ -314,7 +314,8 @@ namespace Altaxo.Main
     /// <param name="value">The document node. If <c>docNode</c> implements <see cref="Main.IDocumentLeafNode" />,
     /// the document path is stored for this object in addition to the object itself.</param>
     /// <param name="isCalledFromConstructor">If true, this function is called from the constructor. A value of true indicated, that some values might not be set yet.</param>
-    protected virtual void InternalSetDocNode(IDocumentLeafNode value, bool isCalledFromConstructor = false)
+    /// <param name="doNotTriggerChangedEvent">If true, the ChangedEvent is not triggered. Set this parameter to true only if setting the doc node during resolving of the document.</param>
+    protected virtual void InternalSetDocNode(IDocumentLeafNode value, bool isCalledFromConstructor = false, bool doNotTriggerChangedEvent = false)
     {
       if (null == value)
         throw new ArgumentNullException(nameof(value));
@@ -364,7 +365,10 @@ namespace Altaxo.Main
 
       OnAfterSetDocNode();
 
-      EhSelfChanged(new Main.InstanceChangedEventArgs(oldValue, value));
+      if (!doNotTriggerChangedEvent)
+      {
+        EhSelfChanged(new Main.InstanceChangedEventArgs(oldValue, value));
+      }
 
 #if DOCNODEPROXY_CONCURRENTDEBUG
 			_debug.Enqueue("STOP  InternalSetDocNode");

@@ -204,7 +204,7 @@ namespace Altaxo.Main
         if (null != child)
         {
           _childName = null;
-          SetDocNode(child); // we are tracking the child now
+          InternalSetDocNode(child, isCalledFromConstructor: false, doNotTriggerChangedEvent: true); // we are tracking the child now
           result = child;
         }
         else
