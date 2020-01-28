@@ -32,34 +32,6 @@ using Altaxo.Gui.AddInItems;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
-  public abstract class ProjectBrowseControllerCommand : SimpleCommand
-  {
-    private ProjectBrowseController _controller;
-
-    protected abstract void Run(ProjectBrowseController ctrl);
-
-    public override void Execute(object parameter)
-    {
-      _controller = parameter as ProjectBrowseController;
-
-      Run((ProjectBrowseController)parameter);
-    }
-
-    public override bool CanExecute(object parameter)
-    {
-      _controller = parameter as ProjectBrowseController;
-      return base.CanExecute(parameter);
-    }
-
-    protected ProjectBrowseController Ctrl
-    {
-      get
-      {
-        return _controller;
-      }
-    }
-  }
-
   public class CmdListItemShow : ProjectBrowseControllerCommand
   {
     protected override void Run(ProjectBrowseController ctrl)

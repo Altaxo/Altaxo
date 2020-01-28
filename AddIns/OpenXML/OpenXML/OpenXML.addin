@@ -15,6 +15,13 @@
   </Runtime>
 
   <Path name = "/Altaxo/Workbench/MainMenu/File">
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Exclude">
+      <MenuItem id = "ExportTableAsExcel"
+                insertbefore="ExportTextAsMaml"
+                label = "Export to Excel (.xlsx)"
+                class = "Altaxo.Data.Commands.ExportDataTableToExcel"/>
+    </Condition>
+
     <Condition name = "WindowActive" activewindow="Altaxo.Gui.Text.Viewing.TextDocumentController" action="Exclude">
       <MenuItem id = "ExportTextAsOpenXML"
                 insertbefore="ExportTextAsMaml"
@@ -23,4 +30,15 @@
 
     </Condition>
   </Path>
+
+
+  <Path name="/Altaxo/Pads/ProjectBrowser/ItemList/ContextMenu">
+    <Condition name="ProjbrowserListItemSelection" selcount=">0" selitems="Altaxo.Data.DataTable, AltaxoBase" action="Disable">
+      <MenuItem id="ExportMultiExcel" 
+                insertbefore="PlotCommonCols"
+                label="Export tables to MS Excel ..."
+                description="Export selected tables to multiple Excel files"
+							  class="Altaxo.Data.Commands.ExportDataTablesToMultipleExcelFiles" />
+    </Condition>
+    </Path>
 </AddIn>
