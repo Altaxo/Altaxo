@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ namespace Altaxo.Text.Commands
   {
     public override void Run(TextDocumentController ctrl)
     {
-      OpenXMLExportOptions.ExportShowDialog(ctrl.TextDocument);
+      TextDocumentToOpenXmlExportActions.ExportShowDialog(ctrl.TextDocument);
     }
 
     // we need at least one reference to a UIElement in this assembly in order to let the ReflectionService

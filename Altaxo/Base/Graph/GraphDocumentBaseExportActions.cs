@@ -67,23 +67,35 @@ namespace Altaxo.Graph
       return filter;
     }
 
-    private static GraphExportOptions _graphExportOptionsToFile = new GraphExportOptions();
+    public static GraphExportOptions _graphExportOptionsToFile { get; private set; } = new GraphExportOptions();
 
-    /// <summary>Shows the dialog to choose the graph export options, and then the multi file export dialog.</summary>
-    /// <param name="documents">List with graph documents to export.</param>
-    public static void ShowExportMultipleGraphsDialogAndExportOptions(IEnumerable<Graph.GraphDocumentBase> documents)
+
+    /// <summary>
+    /// Shows the graph export options dialog and thus sets the current graph export options.
+    /// </summary>
+    /// <returns>True if the user accepts the dialog with OK; false if the user cancels this dialog.</returns>
+    public static bool ShowGraphExportOptionsDialog()
     {
       object resopt = _graphExportOptionsToFile;
       if (Current.Gui.ShowDialog(ref resopt, "Choose export options"))
       {
         _graphExportOptionsToFile = (GraphExportOptions)resopt;
+        return true;
       }
       else
       {
-        return;
+        return false;
       }
+    }
 
-      ShowExportMultipleGraphsDialog(documents);
+    /// <summary>Shows the dialog to choose the graph export options, and then the multi file export dialog.</summary>
+    /// <param name="documents">List with graph documents to export.</param>
+    public static void ShowExportMultipleGraphsDialogAndExportOptions(IEnumerable<Graph.GraphDocumentBase> documents)
+    {
+      if (ShowGraphExportOptionsDialog())
+      {
+        ShowExportMultipleGraphsDialog(documents);
+      }
     }
 
     /// <summary>Shows the multi file export dialog and exports the graphs, using the <see cref="GraphExportOptions"/> that are stored in this class.</summary>
@@ -152,6 +164,11 @@ namespace Altaxo.Graph
         Current.Gui.InfoMessageBox(string.Format("{0} graphs successfully exported.", mrData.ObjectsToRenameCount));
 
       return failedItems;
+    }
+
+    public static void DoExportGraph(Graph.GraphDocumentBase doc, string fileName)
+    {
+      DoExportGraph(doc, fileName, _graphExportOptionsToFile);
     }
 
     public static void DoExportGraph(Graph.GraphDocumentBase doc, string fileName, Graph.Gdi.GraphExportOptions graphExportOptions)

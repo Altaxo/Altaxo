@@ -112,7 +112,7 @@
         </GroupBox>
 
 
-        <GroupBox Header="Output file name:" Grid.Row="16" Grid.ColumnSpan="3">
+        <GroupBox Header="Output file name:" Grid.Row="16" Grid.ColumnSpan="3" IsEnabled="{Binding EnableFileNameAndOpenApplicationGui}">
             <DockPanel>
                 <Button Content="Select ..."
                         DockPanel.Dock="Right"
@@ -126,6 +126,7 @@
             </DockPanel>
         </GroupBox>
         <CheckBox  Grid.Row="18" Grid.ColumnSpan="3"  Margin="4,0,0,0"
+                             IsEnabled="{Binding EnableFileNameAndOpenApplicationGui}"
 							 IsChecked="{Binding OpenApplication, Mode=TwoWay}"
 							 Content="Open the application associated with OpenXML files (.docx) after export"
 							 ToolTip="By enabling this option, if you have a application associated with .docx files, after export this application is launched."/>

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -39,8 +39,9 @@ namespace Altaxo.Gui.Text
   }
 
   [ExpectedTypeOfView(typeof(IOpenXMLExportOptionsView))]
-  [UserControllerForObject(typeof(OpenXMLExportOptions))]
-  public class OpenXMLExportOptionsController : MVCANControllerEditOriginalDocBase<OpenXMLExportOptions, IOpenXMLExportOptionsView>, INotifyPropertyChanged
+  [UserControllerForObject(typeof(TextDocumentToOpenXmlExportOptions))]
+  [UserControllerForObject(typeof(TextDocumentToOpenXmlExportOptionsAndData))]
+  public class OpenXMLExportOptionsController : MVCANControllerEditOriginalDocBase<TextDocumentToOpenXmlExportOptions, IOpenXMLExportOptionsView>, INotifyPropertyChanged
   {
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -90,16 +91,16 @@ namespace Altaxo.Gui.Text
 
     public string ThemeName { get { return _doc.ThemeName; } set { _doc.ThemeName = value; OnPropertyChanged(nameof(ThemeName)); } }
     public bool RemoveOldContentsOfTemplateFile { get { return _doc.RemoveOldContentsOfTemplateFile; } set { _doc.RemoveOldContentsOfTemplateFile = value; OnPropertyChanged(nameof(RemoveOldContentsOfTemplateFile)); } }
-    public string OutputFileName { get { return _doc.OutputFileName; } set { _doc.OutputFileName = value; OnPropertyChanged(nameof(OutputFileName)); } }
-    public bool OpenApplication { get { return _doc.OpenApplication; } set { _doc.OpenApplication = value; OnPropertyChanged(nameof(OpenApplication)); } }
-
+    public string OutputFileName { get { return _doc is TextDocumentToOpenXmlExportOptionsAndData dd ? dd.OutputFileName : string.Empty; } set { if (_doc is TextDocumentToOpenXmlExportOptionsAndData dd) { dd.OutputFileName = value; OnPropertyChanged(nameof(OutputFileName)); } } }
+    public bool OpenApplication { get { return _doc is TextDocumentToOpenXmlExportOptionsAndData dd ? dd.OpenApplication : false; } set { if (_doc is TextDocumentToOpenXmlExportOptionsAndData dd) { dd.OpenApplication = value; OnPropertyChanged(nameof(OpenApplication)); } } }
+    public bool EnableFileNameAndOpenApplicationGui { get { return _doc is TextDocumentToOpenXmlExportOptionsAndData; } }
 
     public ICommand CommandSelectTemplateFile { get; }
     public ICommand CommandSelectOutputFile { get; }
 
     private void EhSelectOutputFile()
     {
-      var (dialogResult, outputFileName) = OpenXMLExportOptions.ShowGetOutputFileDialog(OutputFileName);
+      var (dialogResult, outputFileName) = TextDocumentToOpenXmlExportActions.ShowGetOutputFileDialog(OutputFileName);
       if (dialogResult == true)
       {
         OutputFileName = outputFileName;
@@ -108,7 +109,7 @@ namespace Altaxo.Gui.Text
 
     private void EhSelectTemplateFile()
     {
-      var (dialogResult, templateFileName) = OpenXMLExportOptions.ShowGetTemplateFileDialog(System.IO.Path.IsPathRooted(ThemeName) ? ThemeName : null);
+      var (dialogResult, templateFileName) = TextDocumentToOpenXmlExportActions.ShowGetTemplateFileDialog(System.IO.Path.IsPathRooted(ThemeName) ? ThemeName : null);
       if (dialogResult == true)
       {
         ThemeName = templateFileName;
@@ -132,15 +133,18 @@ namespace Altaxo.Gui.Text
         _doc.MaximumImageHeight = null;
 
 
-      if (string.IsNullOrEmpty(OutputFileName))
+      if (_doc is TextDocumentToOpenXmlExportOptionsAndData)
       {
-        Current.Gui.ErrorMessageBox("Please provide a name for the output file.");
-        failed |= true;
-      }
-      else if (!System.IO.Path.IsPathRooted(OutputFileName))
-      {
-        Current.Gui.ErrorMessageBox("The name of the output file must be an absolute path name.");
-        failed |= true;
+        if (string.IsNullOrEmpty(OutputFileName))
+        {
+          Current.Gui.ErrorMessageBox("Please provide a name for the output file.");
+          failed |= true;
+        }
+        else if (!System.IO.Path.IsPathRooted(OutputFileName))
+        {
+          Current.Gui.ErrorMessageBox("The name of the output file must be an absolute path name.");
+          failed |= true;
+        }
       }
 
       if (failed)
