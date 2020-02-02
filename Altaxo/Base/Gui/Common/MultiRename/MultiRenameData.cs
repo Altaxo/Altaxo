@@ -137,6 +137,14 @@ namespace Altaxo.Gui.Common.MultiRename
     }
 
     /// <summary>
+    /// Sets a value indicating whether the rename operation is file system based (if the names refer to file names).
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the names refer to the file system; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsRenameOperationFileSystemBased { get; set; } = true;
+
+    /// <summary>
     /// Stores columns of information for the objects to rename. Key is the column name, value is a function which retrieves a string for each object.
     /// Note that it is assumed that the first list item corresponds to the old name of the object. This is shown in the first column.
     /// The second column is reserved for the new name. Then the other columns follow.

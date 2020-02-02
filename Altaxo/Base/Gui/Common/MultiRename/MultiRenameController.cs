@@ -58,6 +58,17 @@ namespace Altaxo.Gui.Common.MultiRename
 
     /// <summary>Fired when the rename string template has changed.</summary>
     event Action RenameStringTemplateChanged;
+
+    /// <summary>
+    /// Sets a value indicating whether the button to choose the base directory should be visible.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the button to choose the base directory is visible; otherwise, <c>false</c>.
+    /// </value>
+    bool IsBaseDirectoryButtonVisible { set; }
+
+    /// <summary>Fired when the user has chosen a base directory. The argument is the selected path.</summary>
+    event Action<string> BaseDirectoryChosen;
   }
 
   [ExpectedTypeOfView(typeof(IMultiRenameView))]
@@ -70,6 +81,8 @@ namespace Altaxo.Gui.Common.MultiRename
     private ListNodeList _itemsShown = new ListNodeList();
     private string[] _columNames;
     private ListNodeList _shortcutDescriptionList = new ListNodeList();
+
+
 
     #region ListNode
 
@@ -208,6 +221,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
       if (null != _view)
       {
+        _view.IsBaseDirectoryButtonVisible = _doc.IsRenameOperationFileSystemBased;
         _view.RenameStringTemplate = _doc.DefaultPatternString;
         _view.InitializeItemListColumns(_columNames);
         _view.InitializeItemListItems(_itemsShown);
@@ -230,15 +244,34 @@ namespace Altaxo.Gui.Common.MultiRename
       {
         if (null != _view)
         {
+          _view.RenameStringTemplateChanged -= EhRenameStringTemplateChanged;
+          _view.BaseDirectoryChosen -= EhBaseDirectoryChosen;
         }
         _view = value as IMultiRenameView;
 
         if (null != _view)
         {
           _view.RenameStringTemplateChanged += EhRenameStringTemplateChanged;
+          _view.BaseDirectoryChosen += EhBaseDirectoryChosen;
           Initialize(false);
         }
       }
+    }
+
+    private void EhBaseDirectoryChosen(string path)
+    {
+      if (!path.EndsWith("\\"))
+        path += "\\";
+
+
+      string template = _view.RenameStringTemplate;
+      var idx = template.IndexOf("[");
+      if (idx < 0)
+        idx = template.Length;
+
+      template = path + template.Substring(idx, template.Length - idx);
+
+      _view.RenameStringTemplate = template;
     }
 
     private void EhRenameStringTemplateChanged()

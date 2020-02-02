@@ -45,11 +45,10 @@ namespace Altaxo.Text
     #region "Serialization"
 
     /// <summary>
-    /// Created 2018-12-07
+    /// 2020-01-29: Created
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("OpenXMLAddin", "Altaxo.Text.OpenXMLExportOptions", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextDocumentToOpenXmlExportOptions), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextDocumentToOpenXmlExportOptions), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -67,7 +66,7 @@ namespace Altaxo.Text
         info.AddValue("RenumerateFigures", s.RenumerateFigures);
         info.AddValue("UseAutomaticFigureNumbering", s.UseAutomaticFigureNumbering);
         info.AddValue("DoNotFormatFigureLinksAsHyperlinks", s.DoNotFormatFigureLinksAsHyperlinks);
-
+        info.AddValue("ShiftSolitaryHeader1ToTitle", s.ShiftSolitaryHeader1ToTitle);
       }
 
       public void Deserialize(TextDocumentToOpenXmlExportOptions s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -87,6 +86,11 @@ namespace Altaxo.Text
           s.RenumerateFigures = info.GetBoolean("RenumerateFigures");
           s.UseAutomaticFigureNumbering = info.GetBoolean("UseAutomaticFigureNumbering");
           s.DoNotFormatFigureLinksAsHyperlinks = info.GetBoolean("DoNotFormatFigureLinksAsHyperlinks");
+        }
+
+        if (info.CurrentElementName == "ShiftSolitaryHeader1ToTitle")
+        {
+          s.ShiftSolitaryHeader1ToTitle = info.GetBoolean("ShiftSolitaryHeader1ToTitle");
         }
       }
 
@@ -151,6 +155,14 @@ namespace Altaxo.Text
     /// <c>true</c> if links to figures should not be hyperlink formatted.; otherwise, <c>false</c>.
     /// </value>
     public bool DoNotFormatFigureLinksAsHyperlinks { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether a solitary Header1 should be shifted to the title, an header2..header7 should be shifted one level upwards.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if a solitary Header1 should be shifted to the title, an header2..header7 should be shifted one level upwards.
+    /// </value>
+    public bool ShiftSolitaryHeader1ToTitle { get; set; }
 
 
 

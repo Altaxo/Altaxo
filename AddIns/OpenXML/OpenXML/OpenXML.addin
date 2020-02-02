@@ -35,15 +35,16 @@
   <Path name="/Altaxo/Pads/ProjectBrowser/ItemList/ContextMenu">
     <Condition name="ProjbrowserListItemSelection" selcount=">0" selitems="Altaxo.Data.DataTable, AltaxoBase" action="Disable">
       <MenuItem id="ExportMultiExcel" 
-                insertbefore="PlotCommonCols"
+                insertbefore="ExportMultiMicrosoft"
                 label="Export tables to MS Excel ..."
                 description="Export selected tables to multiple Excel files"
 							  class="Altaxo.Data.Commands.ExportDataTablesToMultipleExcelFiles" />
     </Condition>
     <Condition name="ProjbrowserListItemSelection" selcount=">0" selitems="Altaxo.Main.IProjectItem, AltaxoBase" action="Disable">
       <MenuItem id="ExportMultiMicrosoft"
-                label="Export items to Microsoft ..."
-                description="Export selected project items to Microsoft files"
+                insertbefore="MultiRescaleGraphs"
+                label="Export items to Excel, Images and Word ..."
+                description="Export selected project items to MS Excel, MS Word and Image files"
 							  class="Altaxo.Main.Commands.ExportProjectItemsToOpenXMLCommand" />
     </Condition>
     </Path>

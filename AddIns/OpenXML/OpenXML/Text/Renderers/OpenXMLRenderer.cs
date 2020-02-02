@@ -138,6 +138,15 @@ namespace Altaxo.Text.Renderers
     /// </value>
     public ImageStreamProvider ImageProvider { get; private set; } = new ImageStreamProvider();
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to allow shifting a solitary header1 to the title, and uplifting all other header levels by one.
+    /// If this flag is true and there is only one header1 in the document, then heading level 1 is formatted as title, heading level2 is formatted as Heading1, etc.
+    /// The actual result (if header1 was treated as title during rendering) can be read-out with <see cref="TreatHeading1AsTitle"/>.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if heading level1 is treated as as title; otherwise, <c>false</c>.
+    /// </value>
+    public bool ShiftSolitaryHeader1ToTitle { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether to treat heading level 1 as title.
@@ -146,7 +155,7 @@ namespace Altaxo.Text.Renderers
     /// <value>
     ///   <c>true</c> if heading level1 is treated as as title; otherwise, <c>false</c>.
     /// </value>
-    public bool TreatHeading1AsTitle { get; set; }
+    public bool TreatHeading1AsTitle { get; private set; }
 
     /// <summary>
     /// This of the figure captions that needs to be replaced by automatic figure numbers.
@@ -250,7 +259,7 @@ namespace Altaxo.Text.Renderers
 
       if (markdownObject is MarkdownDocument markdownDocument)
       {
-        if (markdownDocument[0] is HeadingBlock hbStart && hbStart.Level == 1)
+        if (ShiftSolitaryHeader1ToTitle && markdownDocument[0] is HeadingBlock hbStart && hbStart.Level == 1)
         {
           var firstHeadingBlockIsParentOfAll = (1 == markdownDocument.Count(x => x is HeadingBlock hb && hb.Level <= hbStart.Level));
           TreatHeading1AsTitle = firstHeadingBlockIsParentOfAll;

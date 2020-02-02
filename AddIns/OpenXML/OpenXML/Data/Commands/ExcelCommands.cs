@@ -58,7 +58,8 @@ namespace Altaxo.Data.Commands
     /// <inheritdoc />
     protected override void Run(ProjectBrowseController ctrl)
     {
-      var list = ctrl.GetSelectedListItems().OfType<Altaxo.Data.DataTable>();
+      var list = Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetSelectedListItems())
+                      .OfType<Altaxo.Data.DataTable>();
       int count = list.Count();
 
       if (count == 0)

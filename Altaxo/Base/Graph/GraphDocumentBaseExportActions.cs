@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -115,6 +115,7 @@ namespace Altaxo.Graph
       mrData.RegisterListColumn("Creation date", MultiRenameDocuments.GetCreationDateString);
 
       mrData.DefaultPatternString = "[SN][E]";
+      mrData.IsRenameOperationFileSystemBased = true;
 
       var mrController = new MultiRenameController();
       mrController.InitializeDocument(mrData);

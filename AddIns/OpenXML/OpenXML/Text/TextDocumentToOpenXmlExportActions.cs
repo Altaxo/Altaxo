@@ -175,7 +175,6 @@ namespace Altaxo.Text
         textDocumentFolder: document.Folder
         );
 
-
       if (o.MaximumImageWidth.HasValue)
         renderer.MaxImageWidthIn96thInch = o.MaximumImageWidth.Value.AsValueIn(Altaxo.Units.Length.Inch.Instance) * 96.0;
       if (o.MaximumImageHeight.HasValue)
@@ -186,6 +185,7 @@ namespace Altaxo.Text
       renderer.ImageResolution = o.ImageResolutionDpi;
       renderer.UseAutomaticFigureNumbering = o.UseAutomaticFigureNumbering;
       renderer.DoNotFormatFigureLinksAsHyperlinks = o.DoNotFormatFigureLinksAsHyperlinks;
+      renderer.ShiftSolitaryHeader1ToTitle = o.ShiftSolitaryHeader1ToTitle;
 
       renderer.Render(markdownDocument);
     }

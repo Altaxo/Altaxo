@@ -82,6 +82,7 @@ namespace Altaxo.Data
       mrData.RegisterListColumn("Creation date", MultiRenameDocuments.GetCreationDateString);
 
       mrData.DefaultPatternString = "[PA]\\[SN][E]";
+      mrData.IsRenameOperationFileSystemBased = true;
 
       var mrController = new MultiRenameController();
       mrController.InitializeDocument(mrData);

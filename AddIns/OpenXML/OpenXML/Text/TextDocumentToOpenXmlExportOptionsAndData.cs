@@ -61,7 +61,7 @@ namespace Altaxo.Text
         info.AddValue("RenumerateFigures", s.RenumerateFigures);
         info.AddValue("UseAutomaticFigureNumbering", s.UseAutomaticFigureNumbering);
         info.AddValue("DoNotFormatFigureLinksAsHyperlinks", s.DoNotFormatFigureLinksAsHyperlinks);
-
+        info.AddValue("ShiftSolitaryHeader1ToTitle", s.ShiftSolitaryHeader1ToTitle);
       }
 
       public void Deserialize(TextDocumentToOpenXmlExportOptionsAndData s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -83,6 +83,10 @@ namespace Altaxo.Text
           s.RenumerateFigures = info.GetBoolean("RenumerateFigures");
           s.UseAutomaticFigureNumbering = info.GetBoolean("UseAutomaticFigureNumbering");
           s.DoNotFormatFigureLinksAsHyperlinks = info.GetBoolean("DoNotFormatFigureLinksAsHyperlinks");
+        }
+        if (info.CurrentElementName == "ShiftSolitaryHeader1ToTitle")
+        {
+          s.ShiftSolitaryHeader1ToTitle = info.GetBoolean("ShiftSolitaryHeader1ToTitle");
         }
       }
 

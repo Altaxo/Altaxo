@@ -44,7 +44,7 @@ namespace Altaxo.Main.Commands
     /// <inheritdoc />
     protected override void Run(ProjectBrowseController ctrl)
     {
-      var list = ctrl.GetSelectedListItems().OfType<Altaxo.Main.IProjectItem>();
+      var list = Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetSelectedListItems());
       int count = list.Count();
 
       if (count == 0)

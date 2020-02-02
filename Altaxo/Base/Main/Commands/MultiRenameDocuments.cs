@@ -53,6 +53,7 @@ namespace Altaxo.Main.Commands
       renameData.DefaultPatternString = "[N]";
 
       renameData.RegisterRenameActionHandler(RenameDocuments);
+      renameData.IsRenameOperationFileSystemBased = false;
 
       var controller = new Altaxo.Gui.Common.MultiRename.MultiRenameController();
       controller.InitializeDocument(renameData);

@@ -91,6 +91,7 @@ namespace Altaxo.Gui.Text
 
     public string ThemeName { get { return _doc.ThemeName; } set { _doc.ThemeName = value; OnPropertyChanged(nameof(ThemeName)); } }
     public bool RemoveOldContentsOfTemplateFile { get { return _doc.RemoveOldContentsOfTemplateFile; } set { _doc.RemoveOldContentsOfTemplateFile = value; OnPropertyChanged(nameof(RemoveOldContentsOfTemplateFile)); } }
+    public bool ShiftSolitaryHeader1ToTitle { get { return _doc.ShiftSolitaryHeader1ToTitle; } set { _doc.ShiftSolitaryHeader1ToTitle = value; OnPropertyChanged(nameof(ShiftSolitaryHeader1ToTitle)); } }
     public string OutputFileName { get { return _doc is TextDocumentToOpenXmlExportOptionsAndData dd ? dd.OutputFileName : string.Empty; } set { if (_doc is TextDocumentToOpenXmlExportOptionsAndData dd) { dd.OutputFileName = value; OnPropertyChanged(nameof(OutputFileName)); } } }
     public bool OpenApplication { get { return _doc is TextDocumentToOpenXmlExportOptionsAndData dd ? dd.OpenApplication : false; } set { if (_doc is TextDocumentToOpenXmlExportOptionsAndData dd) { dd.OpenApplication = value; OnPropertyChanged(nameof(OpenApplication)); } } }
     public bool EnableFileNameAndOpenApplicationGui { get { return _doc is TextDocumentToOpenXmlExportOptionsAndData; } }

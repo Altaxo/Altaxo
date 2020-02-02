@@ -76,5 +76,32 @@ namespace Altaxo.Gui.Common.MultiRename
     }
 
     public event Action RenameStringTemplateChanged;
+
+    /// <summary>
+    /// Sets a value indicating whether the button to choose the base directory should be visible.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the button to choose the base directory is visible; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsBaseDirectoryButtonVisible
+    {
+      set
+      {
+        _guiChooseBaseDirectory.Visibility = value ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+      }
+    }
+
+    public event Action<string> BaseDirectoryChosen;
+
+    private void EhChooseBaseDirectory(object sender, System.Windows.RoutedEventArgs e)
+    {
+      var dlg = new System.Windows.Forms.FolderBrowserDialog();
+      dlg.ShowNewFolderButton = true;
+      dlg.Description = "Choose base folder";
+      if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+      {
+        BaseDirectoryChosen?.Invoke(dlg.SelectedPath);
+      }
+    }
   }
 }

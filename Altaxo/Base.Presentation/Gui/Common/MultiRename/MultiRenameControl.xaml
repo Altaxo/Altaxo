@@ -1,185 +1,205 @@
-﻿<UserControl x:Class="Altaxo.Gui.Common.MultiRename.MultiRenameControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*" MinHeight="40" />
-			<RowDefinition Height="4" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+﻿<UserControl
+    x:Class="Altaxo.Gui.Common.MultiRename.MultiRenameControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" MinHeight="40" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-		<ListView x:Name="_guiItemList" Grid.Row="0" ScrollViewer.VerticalScrollBarVisibility="Auto" />
-		<GroupBox Header="Pattern" Grid.Row="2">
-			<TextBox x:Name="_guiRenameText"  TextChanged="EhRenameTextChanged" />
-		</GroupBox>
-		<Expander Header="Available shortcuts" Grid.Row="4">
-			<ListView x:Name="_guiAvailableShortcuts">
-				<ListView.View>
-					<GridView>
-						<GridViewColumn Header="Type" DisplayMemberBinding="{Binding Text}" />
-						<GridViewColumn Header="Shortcut" DisplayMemberBinding="{Binding Text1}" />
-						<GridViewColumn Header="Description" DisplayMemberBinding="{Binding Text2}" />
-					</GridView>
-				</ListView.View>
-			</ListView>
-		</Expander>
-		<ScrollViewer Grid.Row="6" VerticalScrollBarVisibility="Auto">
-			<Expander Header="Syntax">
-				<StackPanel Orientation="Vertical" Margin="20,0,0,0">
-					<Expander Header="Numbers">
-						<FlowDocument Language="en-US" IsHyphenationEnabled="True">
-							<Paragraph>
-								In most cases a shortcut [C] is provided, which represents the position of the item in the list. Assuming that the number shortcut used here is [C] for example, and that the shortcut's value is 42, the syntax for number shortcuts is:
-							</Paragraph>
-							<List>
-								<ListItem>
-									<Paragraph>[C] includes the number in normal format.</Paragraph>
-									<Paragraph>Example: [C] → 42</Paragraph>
-								</ListItem>
-								<ListItem>
-									<Paragraph>[Cd] includes the number with d decimal places. If d=0, the normal number format is used.</Paragraph>
-									<Paragraph>Example: [C4] → 0042</Paragraph>
-								</ListItem>
-								<ListItem>
-									<Paragraph>[Cd,offset,multiplier] includes a number with d decimal places, where the result is (originalNumber*multiplier+offset). All arguments are optional, but the commas have to be kept.</Paragraph>
-									<Paragraph FontStyle="Italic">Examples:</Paragraph>
-									<Paragraph>[C3,,] → 042</Paragraph>
-									<Paragraph>[C,1,] → 43</Paragraph>
-									<Paragraph>[C,1,10] → 430</Paragraph>
-								</ListItem>
-							</List>
-						</FlowDocument>
-					</Expander>
+        <ListView
+            x:Name="_guiItemList"
+            Grid.Row="0"
+            ScrollViewer.VerticalScrollBarVisibility="Auto" />
+        <GroupBox Grid.Row="2" Header="Pattern">
+            <TextBox x:Name="_guiRenameText" TextChanged="EhRenameTextChanged" />
+        </GroupBox>
+        <Button
+            x:Name="_guiChooseBaseDirectory"
+            Grid.Row="4"
+            Click="EhChooseBaseDirectory"
+            Content="Get base directory ..."
+            ToolTip="Lets you choose a base directory. The directory name is inserted at the first position of the pattern." />
+        <Expander Grid.Row="6" Header="Available shortcuts">
+            <ListView x:Name="_guiAvailableShortcuts">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn DisplayMemberBinding="{Binding Text}" Header="Type" />
+                        <GridViewColumn DisplayMemberBinding="{Binding Text1}" Header="Shortcut" />
+                        <GridViewColumn DisplayMemberBinding="{Binding Text2}" Header="Description" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Expander>
+        <ScrollViewer Grid.Row="8" VerticalScrollBarVisibility="Auto">
+            <Expander Header="Syntax">
+                <StackPanel Margin="20,0,0,0" Orientation="Vertical">
+                    <Expander Header="Numbers">
+                        <FlowDocument IsHyphenationEnabled="True" Language="en-US">
+                            <Paragraph>
+                                In most cases a shortcut [C] is provided, which represents the position of the item in the list. Assuming that the number shortcut used here is [C] for example, and that the shortcut's value is 42, the syntax for number shortcuts is:
+                            </Paragraph>
+                            <List>
+                                <ListItem>
+                                    <Paragraph>[C] includes the number in normal format.</Paragraph>
+                                    <Paragraph>Example: [C] → 42</Paragraph>
+                                </ListItem>
+                                <ListItem>
+                                    <Paragraph>[Cd] includes the number with d decimal places. If d=0, the normal number format is used.</Paragraph>
+                                    <Paragraph>Example: [C4] → 0042</Paragraph>
+                                </ListItem>
+                                <ListItem>
+                                    <Paragraph>[Cd,offset,multiplier] includes a number with d decimal places, where the result is (originalNumber*multiplier+offset). All arguments are optional, but the commas have to be kept.</Paragraph>
+                                    <Paragraph FontStyle="Italic">Examples:</Paragraph>
+                                    <Paragraph>[C3,,] → 042</Paragraph>
+                                    <Paragraph>[C,1,] → 43</Paragraph>
+                                    <Paragraph>[C,1,10] → 430</Paragraph>
+                                </ListItem>
+                            </List>
+                        </FlowDocument>
+                    </Expander>
 
-					<Expander Header="Strings">
-						<FlowDocument Language="en-US" IsHyphenationEnabled="True">
-							<Paragraph>
-								In most cases a shortcut [N] is provided, which represents the full name of the item (a string). Assuming that the string shortcut used here is [N] for example, and that the shortcut's value is "Hello", the syntax for string shortcuts is:
-							</Paragraph>
-							<List>
-								<ListItem>
-									<Paragraph>[N] includes the string without modification.</Paragraph>
-									<Paragraph>Example: [N] → "Hello"</Paragraph>
-								</ListItem>
-								<ListItem>
-									<Paragraph>[Ns,e] includes the string from position s to position e. Thus, s and e have to be integral numbers, either positive or negative. If positive, the position is measured from the first
-										character in the string, thus position 0 represents the first character, 1 represents the second character and so on. If the number is negative, the position is measured from
-										the end of the string. Thus, -1 represents the position of the last character of the string, -2 to the character before the last one and so on.
-										One of the arguments can be omitted, in this case the standard value (0 for s, and -1 for e) is used.
-									</Paragraph>
-									<Paragraph FontStyle="Italic">Examples:</Paragraph>
-									<Paragraph>[N2,] → "llo"</Paragraph>
-									<Paragraph>[N-2,] → "lo"</Paragraph>
-									<Paragraph>[N1,3] → "all"</Paragraph>
-									<Paragraph>[N,-2] → "Hall"</Paragraph>
-								</ListItem>
-								<ListItem>
-									<Paragraph>[Np] includes only the single character at position p of the string. As in the previous example, p can either be positive or negative.</Paragraph>
-									<Paragraph>Example: [N1] → "a"</Paragraph>
-								</ListItem>
-							</List>
-						</FlowDocument>
-					</Expander>
-					<Expander Header="DateTime">
-						<FlowDocument Language="en-US" IsHyphenationEnabled="True">
-							<Paragraph>In most cases a shortcut [CD] is provided, which represents the creation date of the item. Assuming that the string shortcut used here is [CD] for example,
-								that the shortcut's date value is "2011-09-17 21:50:30" of UTC time, and the timezone is +1h UTC, the syntax for string shortcuts is:</Paragraph>
-							<List>
-								<ListItem>
-									<Paragraph>[CD] includes the DateTime string in standard format and local time.</Paragraph>
-									<Paragraph>Example: [CD] → "2011-09-17 22:50:30"</Paragraph>
-								</ListItem>
-								<ListItem>
-									<Paragraph>[CD"format_string",z] includes the DateTime string in custom format given by the format_string and with either local or UTC time.
-										If z is the character u or U, the time is given as UTC time. If z is either l or L, the time is given in local time.
-										The format_string is a string that can contain the following template characters:
-									</Paragraph>
-									<List>
-										<ListItem>
-											<Paragraph>yyyy → year (4 digits); yy → year (2 digits)</Paragraph>
-										</ListItem>
-										<ListItem>
-											<Paragraph>MM → month</Paragraph>
-										</ListItem>
-										<ListItem>
-											<Paragraph>dd → day of month</Paragraph>
-										</ListItem>
-										<ListItem>
-											<Paragraph>HH → hour (24 h format)</Paragraph>
-										</ListItem>
-										<ListItem>
-											<Paragraph>mm → minute</Paragraph>
-										</ListItem>
-										<ListItem>
-											<Paragraph>ss → second</Paragraph>
-										</ListItem>
-										<ListItem>
-											<Paragraph>ff → fractions of a second</Paragraph>
-										</ListItem>
-									</List>
-									<Paragraph>Many more specifiers are available, see the article on "Custom Date and Time Format Strings" in the .Net framework documentation.</Paragraph>
-									<Paragraph FontStyle="Italic">Examples:</Paragraph>
-									<Paragraph>[CD,U] → "2011-09-17 21:50:30"</Paragraph>
-									<Paragraph>[CD,L] → "2011-09-17 22:50:30"</Paragraph>
-									<Paragraph>[CD"dd.MM.yyyy HH:mm:ss"]  → "17.09.2011 22:50:30" (because if z is omitted, local time is used).</Paragraph>
-									<Paragraph>[CD"dd.MM.yyyy HH:mm:ss",U]  → "17.09.2011 21:50:30" (universal time is used here because of U).</Paragraph>
-									<Paragraph>[CD"MM_dd_yy_HH_mm_ss",U]  → "09_17_11_21_50_30" (universal time is used here because of U).</Paragraph>
-								</ListItem>
-							</List>
-						</FlowDocument>
-					</Expander>
-					<Expander Header="Array">
-						<FlowDocument Language="en-US" IsHyphenationEnabled="True">
-							<Paragraph>
-								Arrays of string are used for instance, when a full path name is split into the separate folder names. In most cases, for items that can have a full name (e.g. tables or graphs), a shortcut [PA] is provided,
-								which represents the path name of the item split into individual pieces. Assuming that you have an item with the full name "foo\bar\tro\max". Then the folder path of this
-								item is "foo\bar\tro", and the individual pieces of this path are "foo", "bar", and "tro". The purpose of the [PA] shortcut is to be able to access the individual pieces individually.
-							</Paragraph>
-							<Paragraph>The syntax of array shortcuts is:</Paragraph>
-							<List>
-								<ListItem>
-									<Paragraph>[PA] includes all of the individual pieces, separated by the standard separator, which is a backslash ("\") character.</Paragraph>
-									<Paragraph>Example: [PA] → "foo\bar\tro" (please note here that there is no backslash character after the last part "tro")</Paragraph>
-								</ListItem>
-								<ListItem>
-									<Paragraph>[PA"quoted_string"] includes all of the individual pieces, separated by the provided string argument. To include a backslash in the string argument, use
-									a double backslash ("\\", to include a quote use an escaped quote ("\"").</Paragraph>
-									<Paragraph>Examples:</Paragraph>
-									<Paragraph>[PA"\\"] → "foo\bar\tro"</Paragraph>
-									<Paragraph>[PA"\""] → "foo"bar"tro"</Paragraph>
-									<Paragraph>[PA"_,_"] → "foo_,_bar_,_tro"</Paragraph>
-									<Paragraph>[PA""] → "foobartro"</Paragraph>
-								</ListItem>
-								<ListItem>
-									<Paragraph>[PA"quoted_string"s,e] includes the individual pieces from start position s to position e, separated by the string argument.
-										The arguments s and e must be integral numbers, either positive or negative.
-									If positive, the position is measured from the first element of the array, thus position 0 represents the first element, 1 represents the second element and so on.
-										If the number is negative, the position is measured from the end of the array. Thus, -1 represents the last element, -2 the element before the last element.
-										One of the arguments s or e can be omitted, in this case the standard value (0 for s, and -1 for e) is used. The string argument can be omitted, too (backslash is used as standard separator).</Paragraph>
-									<Paragraph>Examples:</Paragraph>
-									<Paragraph>[PA"_"1,] → "bar_tro"</Paragraph>
-									<Paragraph>[PA-2,] → "bar\tro"</Paragraph>
-									<Paragraph>[PA" ",-2] → "foo bar"</Paragraph>
-								</ListItem>
-								<ListItem>
-									<Paragraph>
-										[PAp] includes only the single array element at position p. As before, the integral number p can either be positive or negative.
-									</Paragraph>
-									<Paragraph>Examples:</Paragraph>
-									<Paragraph>[PA1] → "bar"</Paragraph>
-									<Paragraph>[PA-1] → "tro"</Paragraph>
-								</ListItem>
-							</List>
-						</FlowDocument>
-					</Expander>
-				</StackPanel>
-			</Expander>
-		</ScrollViewer>
-	</Grid>
+                    <Expander Header="Strings">
+                        <FlowDocument IsHyphenationEnabled="True" Language="en-US">
+                            <Paragraph>
+                                In most cases a shortcut [N] is provided, which represents the full name of the item (a string). Assuming that the string shortcut used here is [N] for example, and that the shortcut's value is &quot;Hello&quot;, the syntax for string shortcuts is:
+                            </Paragraph>
+                            <List>
+                                <ListItem>
+                                    <Paragraph>[N] includes the string without modification.</Paragraph>
+                                    <Paragraph>Example: [N] → &quot;Hello&quot;</Paragraph>
+                                </ListItem>
+                                <ListItem>
+                                    <Paragraph>
+                                        [Ns,e] includes the string from position s to position e. Thus, s and e have to be integral numbers, either positive or negative. If positive, the position is measured from the first
+                                        character in the string, thus position 0 represents the first character, 1 represents the second character and so on. If the number is negative, the position is measured from
+                                        the end of the string. Thus, -1 represents the position of the last character of the string, -2 to the character before the last one and so on.
+                                        One of the arguments can be omitted, in this case the standard value (0 for s, and -1 for e) is used.
+                                    </Paragraph>
+                                    <Paragraph FontStyle="Italic">Examples:</Paragraph>
+                                    <Paragraph>[N2,] → &quot;llo&quot;</Paragraph>
+                                    <Paragraph>[N-2,] → &quot;lo&quot;</Paragraph>
+                                    <Paragraph>[N1,3] → &quot;all&quot;</Paragraph>
+                                    <Paragraph>[N,-2] → &quot;Hall&quot;</Paragraph>
+                                </ListItem>
+                                <ListItem>
+                                    <Paragraph>[Np] includes only the single character at position p of the string. As in the previous example, p can either be positive or negative.</Paragraph>
+                                    <Paragraph>Example: [N1] → &quot;a&quot;</Paragraph>
+                                </ListItem>
+                            </List>
+                        </FlowDocument>
+                    </Expander>
+                    <Expander Header="DateTime">
+                        <FlowDocument IsHyphenationEnabled="True" Language="en-US">
+                            <Paragraph>
+                                In most cases a shortcut [CD] is provided, which represents the creation date of the item. Assuming that the string shortcut used here is [CD] for example,
+                                that the shortcut's date value is &quot;2011-09-17 21:50:30&quot; of UTC time, and the timezone is +1h UTC, the syntax for string shortcuts is:
+                            </Paragraph>
+                            <List>
+                                <ListItem>
+                                    <Paragraph>[CD] includes the DateTime string in standard format and local time.</Paragraph>
+                                    <Paragraph>Example: [CD] → &quot;2011-09-17 22:50:30&quot;</Paragraph>
+                                </ListItem>
+                                <ListItem>
+                                    <Paragraph>
+                                        [CD&quot;format_string&quot;,z] includes the DateTime string in custom format given by the format_string and with either local or UTC time.
+                                        If z is the character u or U, the time is given as UTC time. If z is either l or L, the time is given in local time.
+                                        The format_string is a string that can contain the following template characters:
+                                    </Paragraph>
+                                    <List>
+                                        <ListItem>
+                                            <Paragraph>yyyy → year (4 digits); yy → year (2 digits)</Paragraph>
+                                        </ListItem>
+                                        <ListItem>
+                                            <Paragraph>MM → month</Paragraph>
+                                        </ListItem>
+                                        <ListItem>
+                                            <Paragraph>dd → day of month</Paragraph>
+                                        </ListItem>
+                                        <ListItem>
+                                            <Paragraph>HH → hour (24 h format)</Paragraph>
+                                        </ListItem>
+                                        <ListItem>
+                                            <Paragraph>mm → minute</Paragraph>
+                                        </ListItem>
+                                        <ListItem>
+                                            <Paragraph>ss → second</Paragraph>
+                                        </ListItem>
+                                        <ListItem>
+                                            <Paragraph>ff → fractions of a second</Paragraph>
+                                        </ListItem>
+                                    </List>
+                                    <Paragraph>Many more specifiers are available, see the article on &quot;Custom Date and Time Format Strings&quot; in the .Net framework documentation.</Paragraph>
+                                    <Paragraph FontStyle="Italic">Examples:</Paragraph>
+                                    <Paragraph>[CD,U] → &quot;2011-09-17 21:50:30&quot;</Paragraph>
+                                    <Paragraph>[CD,L] → &quot;2011-09-17 22:50:30&quot;</Paragraph>
+                                    <Paragraph>[CD&quot;dd.MM.yyyy HH:mm:ss&quot;]  → &quot;17.09.2011 22:50:30&quot; (because if z is omitted, local time is used).</Paragraph>
+                                    <Paragraph>[CD&quot;dd.MM.yyyy HH:mm:ss&quot;,U]  → &quot;17.09.2011 21:50:30&quot; (universal time is used here because of U).</Paragraph>
+                                    <Paragraph>[CD&quot;MM_dd_yy_HH_mm_ss&quot;,U]  → &quot;09_17_11_21_50_30&quot; (universal time is used here because of U).</Paragraph>
+                                </ListItem>
+                            </List>
+                        </FlowDocument>
+                    </Expander>
+                    <Expander Header="Array">
+                        <FlowDocument IsHyphenationEnabled="True" Language="en-US">
+                            <Paragraph>
+                                Arrays of string are used for instance, when a full path name is split into the separate folder names. In most cases, for items that can have a full name (e.g. tables or graphs), a shortcut [PA] is provided,
+                                which represents the path name of the item split into individual pieces. Assuming that you have an item with the full name &quot;foo\bar\tro\max&quot;. Then the folder path of this
+                                item is &quot;foo\bar\tro&quot;, and the individual pieces of this path are &quot;foo&quot;, &quot;bar&quot;, and &quot;tro&quot;. The purpose of the [PA] shortcut is to be able to access the individual pieces individually.
+                            </Paragraph>
+                            <Paragraph>The syntax of array shortcuts is:</Paragraph>
+                            <List>
+                                <ListItem>
+                                    <Paragraph>[PA] includes all of the individual pieces, separated by the standard separator, which is a backslash (&quot;\&quot;) character.</Paragraph>
+                                    <Paragraph>Example: [PA] → &quot;foo\bar\tro&quot; (please note here that there is no backslash character after the last part &quot;tro&quot;)</Paragraph>
+                                </ListItem>
+                                <ListItem>
+                                    <Paragraph>
+                                        [PA&quot;quoted_string&quot;] includes all of the individual pieces, separated by the provided string argument. To include a backslash in the string argument, use
+                                        a double backslash (&quot;\\&quot;, to include a quote use an escaped quote (&quot;\&quot;&quot;).
+                                    </Paragraph>
+                                    <Paragraph>Examples:</Paragraph>
+                                    <Paragraph>[PA&quot;\\&quot;] → &quot;foo\bar\tro&quot;</Paragraph>
+                                    <Paragraph>[PA&quot;\&quot;&quot;] → &quot;foo&quot;bar&quot;tro&quot;</Paragraph>
+                                    <Paragraph>[PA&quot;_,_&quot;] → &quot;foo_,_bar_,_tro&quot;</Paragraph>
+                                    <Paragraph>[PA&quot;&quot;] → &quot;foobartro&quot;</Paragraph>
+                                </ListItem>
+                                <ListItem>
+                                    <Paragraph>
+                                        [PA&quot;quoted_string&quot;s,e] includes the individual pieces from start position s to position e, separated by the string argument.
+                                        The arguments s and e must be integral numbers, either positive or negative.
+                                        If positive, the position is measured from the first element of the array, thus position 0 represents the first element, 1 represents the second element and so on.
+                                        If the number is negative, the position is measured from the end of the array. Thus, -1 represents the last element, -2 the element before the last element.
+                                        One of the arguments s or e can be omitted, in this case the standard value (0 for s, and -1 for e) is used. The string argument can be omitted, too (backslash is used as standard separator).
+                                    </Paragraph>
+                                    <Paragraph>Examples:</Paragraph>
+                                    <Paragraph>[PA&quot;_&quot;1,] → &quot;bar_tro&quot;</Paragraph>
+                                    <Paragraph>[PA-2,] → &quot;bar\tro&quot;</Paragraph>
+                                    <Paragraph>[PA&quot; &quot;,-2] → &quot;foo bar&quot;</Paragraph>
+                                </ListItem>
+                                <ListItem>
+                                    <Paragraph>
+                                        [PAp] includes only the single array element at position p. As before, the integral number p can either be positive or negative.
+                                    </Paragraph>
+                                    <Paragraph>Examples:</Paragraph>
+                                    <Paragraph>[PA1] → &quot;bar&quot;</Paragraph>
+                                    <Paragraph>[PA-1] → &quot;tro&quot;</Paragraph>
+                                </ListItem>
+                            </List>
+                        </FlowDocument>
+                    </Expander>
+                </StackPanel>
+            </Expander>
+        </ScrollViewer>
+    </Grid>
 </UserControl>
