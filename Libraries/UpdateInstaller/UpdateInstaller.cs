@@ -34,12 +34,8 @@ namespace Altaxo.Serialization.AutoUpdates
   /// <summary>
   /// Responsible for installing the downloaded update.
   /// </summary>
-  public class UpdateInstaller
+  public class UpdateInstaller : UpdateInstallerBase
   {
-    private static System.Threading.EventWaitHandle _eventWaitHandle;
-
-    private const string PackListRelativePath = "doc\\PackList.txt";
-
     /// <summary>Name of the event that signals to Altaxo that Altaxo now should shutdown in order to be updated.</summary>
     private string _eventName;
 
@@ -169,13 +165,7 @@ namespace Altaxo.Serialization.AutoUpdates
       }
     }
 
-    /// <summary>Creates and then sets the specified event.</summary>
-    /// <param name="eventName">Name of the event.</param>
-    public static void SetEvent(string eventName)
-    {
-      _eventWaitHandle = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.ManualReset, eventName);
-      _eventWaitHandle.Set();
-    }
+
 
     /// <summary>Extracts the package files.</summary>
     /// <param name="fs">File stream of the package file (this is a zip file).</param>
@@ -279,49 +269,6 @@ namespace Altaxo.Serialization.AutoUpdates
         if (info.Exists && info.Length == fileLength)
           info.Delete();
       }
-    }
-
-    /// <summary>Deletes the directory if it is orphaned, i.e. contains no files or subfolders. The call is recursive, i.e. prior to looking if this directory doesn't contain files or folders,
-    /// the operation is applied to all subfolders of the directory.</summary>
-    /// <param name="dir">The full path of the directory.</param>
-    /// <returns>True if this directory was orphaned and thus was deleted.</returns>
-    private static bool DeleteDirIfOrphaned(DirectoryInfo dir, Func<double, string, bool> ReportProgress)
-    {
-      bool isOrphaned = true;
-
-      // delete orphaned subdirectories
-      foreach (DirectoryInfo subdir in dir.GetDirectories())
-      {
-        if (!DeleteDirIfOrphaned(subdir, ReportProgress))
-          isOrphaned = false;
-      }
-
-      if (dir.GetFiles().Length != 0)
-        isOrphaned = false; // not orphaned
-      if (dir.GetDirectories().Length != 0)
-        isOrphaned = false; // not orphaned
-
-      // if the directory is orphaned, the it can be deleted
-      if (isOrphaned)
-      {
-        for (int i = 1, j = 3; j >= 0; ++i, --j)
-        {
-          try
-          {
-            dir.Delete();
-            break;
-          }
-          catch (Exception ex)
-          {
-            ReportProgress(0, string.Format("Failed to delete orphaned directory '{0}' ({1}. try), Message: {2}. Please close all explorer windows or other programs that currently access this directory.", dir.FullName, i, ex.Message));
-            System.Threading.Thread.Sleep(1000);
-            if (j == 0)
-              throw ex;
-          }
-        }
-      }
-
-      return isOrphaned;
     }
   }
 }

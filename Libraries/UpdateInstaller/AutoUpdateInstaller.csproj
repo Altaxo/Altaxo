@@ -124,6 +124,8 @@
     <Compile Include="SharpZipLib\Zip\ZipInputStream.cs" />
     <Compile Include="SharpZipLib\Zip\ZipNameTransform.cs" />
     <Compile Include="SharpZipLib\Zip\ZipOutputStream.cs" />
+    <Compile Include="UpdateInstalleBase.cs" />
+    <Compile Include="UpdateInstallerOuterDirectory.cs" />
     <Compile Include="UpdateInstaller.cs" />
     <Compile Include="UpdateInstallerMain.cs" />
     <Page Include="InstallerMainWindow.xaml">
