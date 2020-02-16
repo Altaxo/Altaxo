@@ -195,16 +195,19 @@ namespace Altaxo.Main.Properties
     /// Gets all property names in all bags currently present (unsorted).
     /// </summary>
     /// <returns>All property names in all bags.</returns>
-    public IEnumerable<string> GetAllPropertyNames()
+    public IEnumerable<string> Keys
     {
-      var result = new HashSet<string>();
-      foreach (var tuple in _propertyBags)
+      get
       {
-        var bag = tuple.Bag;
-        foreach (var item in bag)
-          result.Add(item.Key);
+        var result = new HashSet<string>();
+        foreach (var tuple in _propertyBags)
+        {
+          var bag = tuple.Bag;
+          foreach (var key in bag.Keys)
+            result.Add(key);
+        }
+        return result;
       }
-      return result;
     }
 
     /// <summary>

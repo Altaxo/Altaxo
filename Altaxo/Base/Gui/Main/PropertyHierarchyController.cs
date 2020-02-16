@@ -190,7 +190,7 @@ namespace Altaxo.Gui.Main
     private void InitializeExistingPropertyValuesList()
     {
       var sortedNames = new List<KeyValuePair<string, string>>(); // key is the property key string, value is the property name
-      foreach (var key in _doc.GetAllPropertyNames())
+      foreach (var key in _doc.Keys)
       {
         string keyName = PropertyKeyBase.GetPropertyName(key);
         if (null == keyName)

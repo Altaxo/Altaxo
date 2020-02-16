@@ -532,6 +532,21 @@ namespace Altaxo.Main.Properties
       return GetEnumerator();
     }
 
+
+    /// <summary>
+    /// Gets the property keys.
+    /// </summary>
+    /// <value>
+    /// The property keys.
+    /// </value>
+    public virtual IEnumerable<string> Keys
+    {
+      get
+      {
+        return _properties.Keys;
+      }
+    }
+
     /// <summary>
     /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
     /// </summary>

@@ -59,6 +59,14 @@ namespace Altaxo.Main.Properties
     /// <param name="value">If successfull, on return this value contains the property value.</param>
     /// <returns><c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.</returns>
     bool TryGetValue<T>(PropertyKey<T> p, out T value);
+
+    /// <summary>
+    /// Gets the property keys in this bag.
+    /// </summary>
+    /// <value>
+    /// The property keys.
+    /// </value>
+    IEnumerable<string> Keys { get; }
   }
 
   /// <summary>
