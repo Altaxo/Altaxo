@@ -112,7 +112,7 @@ namespace Altaxo.Graph.Plot.Data
         Gdi.IPlotArea layer)
     {
       const int functionPoints = 1000;
-      const double MaxRelativeValue = 1E6;
+      const double MaxRelativeValue = 1E2; // 2020-02-20 changed from 1E6 to 1E2, since GDI+ overflow exception with 1E6
 
       // allocate an array PointF to hold the line points
       var ptArray = new PointF[functionPoints];
