@@ -41,6 +41,115 @@ namespace Altaxo.Serialization.AutoUpdates
 
     private static System.Threading.EventWaitHandle _eventWaitHandle;
 
+    /// <summary>Full path to the installation directory (the directory in which the subdirs 'bin', 'doc', 'Addins' and 'data' resides).</summary>
+    protected string _pathToInstallation;
+
+
+    /// <summary>Tests whether the pack list file exists in the installation directory (this is the file PackList.txt in the doc folder of the Altaxo installation).</summary>
+    /// <returns>Returns <c>true</c> if the pack list file exists.</returns>
+    public bool PackListFileExists()
+    {
+      return File.Exists(PackListFileFullName);
+    }
+
+    /// <summary>Gets the full name of the pack list file (this is the file PackList.txt in the doc folder of the Altaxo installation).</summary>
+    /// <value>The full name of the pack list file.</value>
+    public string PackListFileFullName
+    {
+      get
+      {
+        return Path.Combine(_pathToInstallation, PackListRelativePath);
+      }
+    }
+
+    /// <summary>
+    /// Determines whether the installation directory is writeable. Is is done by creating and then removing a temporary file.
+    /// </summary>
+    /// <returns>
+    ///   <c>true</c> if the installation directory is writeable; otherwise, <c>false</c>.
+    /// </returns>
+    public bool IsInstallationDirectoryWriteable()
+    {
+
+      // First of all, test whether the installation directory is writeable
+      var tempFileName = Path.Combine(_pathToInstallation, Guid.NewGuid().ToString());
+
+      try
+      {
+        using (var fs = new FileStream(tempFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))
+        {
+          fs.Close();
+          File.Delete(tempFileName);
+          return true;
+        }
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+    }
+
+    public bool IsParentDirectoryOfInstallationDirectoryWriteable()
+    {
+      var parentDir = GetBaseDirectory(_pathToInstallation);
+
+      var tempDirName = Path.Combine(_pathToInstallation, Guid.NewGuid().ToString());
+
+      try
+      {
+        Directory.CreateDirectory(tempDirName);
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+
+      // First of all, test whether the installation directory is writeable
+      var tempFileName = Path.Combine(tempDirName, Guid.NewGuid().ToString());
+
+      try
+      {
+        using (var fs = new FileStream(tempFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))
+        {
+          fs.Close();
+          File.Delete(tempFileName);
+        }
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+
+      try
+      {
+        Directory.Delete(tempDirName, true);
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+
+      return true;
+    }
+
+    /// <summary>Tests whether or not the packaging file is writeable (this is the file PackList.txt in the doc folder of the Altaxo installation).</summary>
+    /// <returns>Returns <c>true</c> if the packaging file is writeable. If returning <c>false</c>, this is probably an indication that elevated privileges are required to update the installation.</returns>
+    public bool IsPackListFileWriteable()
+    {
+      try
+      {
+        using (var fs = new FileStream(PackListFileFullName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
+        {
+          fs.Close();
+          return true;
+        }
+      }
+      catch (Exception)
+      {
+      }
+      return false;
+    }
+
 
     /// <summary>Creates and then sets the specified event.</summary>
     /// <param name="eventName">Name of the event.</param>
@@ -218,5 +327,96 @@ namespace Altaxo.Serialization.AutoUpdates
         File.SetLastWriteTime(destinationFileName, entry.DateTime);
       }
     }
+
+    /// <summary>
+    /// Waits for the moment that Altaxo's installation directory is ready for installation.
+    /// </summary>
+    public void WaitForReadyForInstallation(Func<double, string, bool> ReportProgress)
+    {
+      var startWaitingTime = DateTime.UtcNow;
+
+
+      var dir = new DirectoryInfo(_pathToInstallation);
+      var allFiles = dir.GetFiles("*.*", SearchOption.AllDirectories);
+
+      var exeFiles = allFiles.Where(fi => (Path.GetExtension(fi.FullName).ToLowerInvariant() == ".exe")).ToArray();
+      var othFiles = allFiles.Where(fi => !(Path.GetExtension(fi.FullName).ToLowerInvariant() == ".exe")).ToArray();
+
+      var exeFileStreams = new FileStream[exeFiles.Length];
+
+      for (; ; )
+      {
+        bool success = true;
+
+        for (int i = 0; i < exeFiles.Length; ++i)
+        {
+          try
+          {
+            exeFileStreams[i] = new FileStream(exeFiles[i].FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+          }
+          catch
+          {
+            for (int j = i - 1; j >= 0; --j)
+            {
+              exeFileStreams[j].Dispose();
+              exeFileStreams[j] = null;
+            }
+            success = false;
+
+            if (ReportProgress(0, string.Format("Waiting for shutdown of Altaxo ... {0} s \r\n\r\nFile still in use: \"{1}\"", Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds, 1), exeFiles[i])))
+              throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
+
+            break;
+          }
+        }
+
+        if (success)
+          break;
+        else
+          System.Threading.Thread.Sleep(1000);
+      }
+
+      // now, while holding the handles to the exefiles, we try to open all other files
+
+
+      for (; ; )
+      {
+        var success = true;
+        foreach (var file in othFiles)
+        {
+          try
+          {
+            using (var s = new FileStream(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
+            {
+
+            }
+          }
+          catch
+          {
+            if (ReportProgress(0, string.Format("Waiting for shutdown of Altaxo ... {0} s \r\n\r\nFile still in use: \"{1}\"", Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds, 1), file.FullName)))
+              throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
+
+            success = false;
+            break;
+          }
+        }
+
+        if (success)
+          break;
+        else
+          System.Threading.Thread.Sleep(1000);
+      }
+
+      // now release the handles to the exe-files
+      for (int i = exeFileStreams.Length - 1; i >= 0; --i)
+      {
+        exeFileStreams[i].Dispose();
+        exeFileStreams[i] = null;
+      }
+
+      // Altaxo is now ready for installation
+    }
+
+
   }
 }

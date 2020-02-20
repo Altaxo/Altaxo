@@ -37,7 +37,7 @@ namespace Altaxo.Serialization.AutoUpdates
   /// This can only work if Altaxo is not installed in a root folder.
   /// 
   /// </summary>
-  public class UpdateInstallerOuterDirectory : UpdateInstallerBase
+  public class UpdateInstallerOuterDirectory : UpdateInstallerBase, IUpdateInstaller
   {
 
     /// <summary>Name of the event that signals to Altaxo that Altaxo now should shutdown in order to be updated.</summary>
@@ -48,10 +48,6 @@ namespace Altaxo.Serialization.AutoUpdates
 
     /// <summary>Full name of the Altaxo executable that should be updated.</summary>
     private string _altaxoExecutableFullName;
-
-    /// <summary>Full path to the installation directory (the directory in which the subdirs 'bin', 'doc', 'Addins' and 'data' resides).
-    /// For instance, if AltaxoStartup.exe resides in C:\Altaxo\bin\, this directory is C:\Altaxo\</summary>
-    private string _pathToInstallation;
 
     /// <summary>Full path to the base installation directory (e.g. if AltaxoStartup.exe resides in C:\Altaxo\bin, the base directory is C:\.</summary>
     private string _pathToInstallationBaseDirectory;
@@ -99,6 +95,8 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="ReportProgress">Used to report the installation progress. Arguments are the progress in percent and a progress message. If this function returns true, the program must thow an <see cref="System.Threading.ThreadInterruptedException"/>.</param>
     public void Run(Func<double, string, bool> ReportProgress)
     {
+      // Preparation - this work can be done independently whether or not Altaxo is running
+
       var altaxoOldDirSub = Path.GetFileName(_pathToInstallation);
       var altaxoNewDirSub = altaxoOldDirSub + "_NextInstallation";
       var pathToNewInstallation = Path.Combine(_pathToInstallationBaseDirectory, altaxoNewDirSub);

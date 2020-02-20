@@ -34,7 +34,7 @@ namespace Altaxo.Serialization.AutoUpdates
   /// <summary>
   /// Responsible for installing the downloaded update.
   /// </summary>
-  public class UpdateInstaller : UpdateInstallerBase
+  public class UpdateInstaller : UpdateInstallerBase, IUpdateInstaller
   {
     /// <summary>Name of the event that signals to Altaxo that Altaxo now should shutdown in order to be updated.</summary>
     private string _eventName;
@@ -45,8 +45,6 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>Full name of the Altaxo executable that should be updated.</summary>
     private string _altaxoExecutableFullName;
 
-    /// <summary>Full path to the installation directory (the directory in which the subdirs 'bin', 'doc', 'Addins' and 'data' resides).</summary>
-    private string _pathToInstallation;
 
     /// <summary>If true, this indicates that the waiting for the end of Altaxo was already done successfully. Thus in a possible second installation attempt we can skip this waiting.</summary>
     private bool _isWaitingForAltaxosEndDone;
@@ -202,41 +200,9 @@ namespace Altaxo.Serialization.AutoUpdates
       }
     }
 
-    /// <summary>Tests whether the pack list file exists in the installation directory (this is the file PackList.txt in the doc folder of the Altaxo installation).</summary>
-    /// <returns>Returns <c>true</c> if the pack list file exists.</returns>
-    public bool PackListFileExists()
-    {
-      return File.Exists(PackListFileFullName);
-    }
 
-    /// <summary>Gets the full name of the pack list file (this is the file PackList.txt in the doc folder of the Altaxo installation).</summary>
-    /// <value>The full name of the pack list file.</value>
-    public string PackListFileFullName
-    {
-      get
-      {
-        return Path.Combine(_pathToInstallation, PackListRelativePath);
-      }
-    }
 
-    /// <summary>Tests whether or not the packs the list file is writeable (this is the file PackList.txt in the doc folder of the Altaxo installation).</summary>
-    /// <returns>Returns <c>true</c> if the pack list file is writeable. If returning <c>false</c>, this is probably an indication that elevated privileges are required to update the installation.</returns>
-    public bool PackListFileIsWriteable()
-    {
-      string fullName = Path.Combine(_pathToInstallation, PackListRelativePath);
-      try
-      {
-        using (var fs = new FileStream(fullName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
-        {
-          fs.Close();
-          return true;
-        }
-      }
-      catch (Exception)
-      {
-      }
-      return false;
-    }
+
 
     /// <summary>Removes the old installation files. For this purpose, the pack list file of the old installation is opened, and all files that match the content of the pack list files are removed.</summary>
     private void RemoveOldInstallationFiles()

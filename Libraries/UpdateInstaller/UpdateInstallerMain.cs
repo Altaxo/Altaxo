@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -36,6 +37,7 @@ namespace Altaxo.Serialization.AutoUpdates
   {
     private static System.Windows.Application app;
     private static InstallerMainWindow mainWindow;
+    private static Semaphore _updaterSemaphore;
 
     /// <summary>
     /// A text that should occur prior to the error message.
@@ -72,10 +74,23 @@ namespace Altaxo.Serialization.AutoUpdates
           return;
         }
 
-        // try to set the current directory to this of the entry assembly in order to not block the removing of the Altaxo directories
         try
-        { System.Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location); }
-        catch (Exception) { }
+        {
+          _updaterSemaphore = new Semaphore(0, 0, "AltaxoUpdateInstallerSemaphore");
+        }
+        catch (Exception ex)
+        {
+          return; // another instance of the updater is already running
+        }
+
+        try
+        {
+          // try to set the current directory to this of the entry assembly in order to not block the removing of the Altaxo directories
+          System.Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+        }
+        catch (Exception)
+        {
+        }
 
         string eventName = args[0];
         string packageFullFileName = args[1];
@@ -89,7 +104,7 @@ namespace Altaxo.Serialization.AutoUpdates
         var installer = new UpdateInstaller(eventName, packageFullFileName, fullPathOfTheAltaxoExecutable);
         if (installer.PackListFileExists())
         {
-          if (installer.PackListFileIsWriteable())
+          if (installer.IsPackListFileWriteable() && installer.IsInstallationDirectoryWriteable())
           {
             StartVisualApp(installer, showInstallationWindow, timeoutAfterSuccessfullInstallation);
           }
@@ -97,12 +112,15 @@ namespace Altaxo.Serialization.AutoUpdates
           {
             if (0 != (options & 2)) // do we have already elevated privileges?
             {
+              // we have already elevated privileges - thus end this with an error message
               StartVisualAppWithErrorMessage(eventName,
                 string.Format(ErrorIntroduction + "There is still no write access to the package file of the old installation, try to update again later!"));
               return; // returns is ok here, no need to restart Altaxo since we run with elevated privileges
             }
             else
             {
+              // we do not yet have elevated privileges, thus start a new process with elevated privileges
+
               // Start a new process with elevated privileges and wait for exit
               var proc = new System.Diagnostics.ProcessStartInfo
               {
@@ -115,12 +133,18 @@ namespace Altaxo.Serialization.AutoUpdates
 
               proc.Arguments = stb.ToString();
               proc.Verb = "runas";
+
+              // before running the elevated updater, close the semaphore
+              _updaterSemaphore.Close();
+              _updaterSemaphore.Dispose();
               var runProcWithElevated = System.Diagnostics.Process.Start(proc);
 
               if (restartAltaxo)
+              {
                 runProcWithElevated.WaitForExit();
+              }
             }
-          }
+          } // else package file is not writeable
         }
         else // package file don't exist
         {

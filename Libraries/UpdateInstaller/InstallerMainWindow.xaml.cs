@@ -43,7 +43,7 @@ namespace Altaxo.Serialization.AutoUpdates
   /// </summary>
   public partial class InstallerMainWindow : Window
   {
-    public UpdateInstaller _installer;
+    public IUpdateInstaller _installer;
     private System.Threading.Tasks.Task _installerTask;
 
     public double _progress;
