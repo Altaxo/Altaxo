@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using ICSharpCode.SharpZipLib.Zip;
 
 namespace Altaxo.Serialization.AutoUpdates
@@ -209,6 +210,17 @@ namespace Altaxo.Serialization.AutoUpdates
       return Path.GetDirectoryName(directoryName);
     }
 
+    public static string GetLastPathPart(string fullFileName, string baseDirectory)
+    {
+      if (fullFileName.StartsWith(baseDirectory))
+        return fullFileName.Substring(baseDirectory.Length);
+
+      if (fullFileName.ToLowerInvariant().StartsWith(baseDirectory.ToLowerInvariant()))
+        return fullFileName.Substring(baseDirectory.Length);
+
+      throw new InvalidOperationException($"Can not determine last part part. File name is {fullFileName}, base directory is {baseDirectory}");
+    }
+
     /// <summary>
     /// Removes the contents of the given directory, i.e. all files and all subdirectories in the given directory.
     /// The provided directory itself is not deleted.
@@ -296,10 +308,11 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>Extracts the package files.</summary>
     /// <param name="fs">File stream of the package file (this is a zip file).</param>
     /// <param name="ReportProgress">Used to report the installation progress. Arguments are the progress in percent and a progress message. If this function returns true, the program must thow an <see cref="System.Threading.ThreadInterruptedException"/>.</param>
-    protected static void ExtractPackageFiles(FileStream fs, string pathToInstallation, Func<double, string, bool> ReportProgress)
+    /// <param name="cleanupAction">Clean up actions that should be called before you throw an exception.</param>
+    protected static void ExtractPackageFiles(FileStream fs, string pathToInstallation, Func<double, string, bool> ReportProgress, Action cleanupAction = null)
     {
       var zipFile = new ZipFile(fs);
-      byte[] buffer = new byte[4096];
+      byte[] buffer = new byte[1024 * 1024];
 
       double totalNumberOfFiles = zipFile.Count;
       int currentProcessedFile = -1;
@@ -308,23 +321,36 @@ namespace Altaxo.Serialization.AutoUpdates
         ++currentProcessedFile;
         var destinationFileName = Path.Combine(pathToInstallation, entry.Name);
         var destinationPath = Path.GetDirectoryName(destinationFileName);
-        ReportProgress(100 * currentProcessedFile / totalNumberOfFiles, string.Format("Updating file {0}", destinationFileName));
 
-        if (!Directory.Exists(destinationPath))
-          Directory.CreateDirectory(destinationPath);
-
-        using (var entryStream = zipFile.GetInputStream(entry))
+        try
         {
-          using (var destStream = new FileStream(destinationFileName, FileMode.Create, FileAccess.Write, FileShare.None))
+          if (!Directory.Exists(destinationPath))
+            Directory.CreateDirectory(destinationPath);
+
+          using (var entryStream = zipFile.GetInputStream(entry))
           {
-            int bytesReaded;
-            while (0 != (bytesReaded = entryStream.Read(buffer, 0, buffer.Length)))
+            using (var destStream = new FileStream(destinationFileName, FileMode.Create, FileAccess.Write, FileShare.None))
             {
-              destStream.Write(buffer, 0, bytesReaded);
+              int bytesReaded;
+              while (0 != (bytesReaded = entryStream.Read(buffer, 0, buffer.Length)))
+              {
+                destStream.Write(buffer, 0, bytesReaded);
+              }
             }
           }
+          File.SetLastWriteTime(destinationFileName, entry.DateTime);
+
+          if (ReportProgress(100 * currentProcessedFile / totalNumberOfFiles, string.Format("Updating file {0}", destinationFileName)))
+          {
+            cleanupAction?.Invoke();
+            throw new ThreadInterruptedException();
+          }
         }
-        File.SetLastWriteTime(destinationFileName, entry.DateTime);
+        catch (Exception)
+        {
+          cleanupAction();
+          throw;
+        }
       }
     }
 

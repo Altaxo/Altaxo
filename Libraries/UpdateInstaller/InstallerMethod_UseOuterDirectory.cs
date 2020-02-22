@@ -32,12 +32,11 @@ using ICSharpCode.SharpZipLib.Zip;
 namespace Altaxo.Serialization.AutoUpdates
 {
   /// <summary>
-  /// Installation of the downloaded update. Here it is tried to create a directory besides the installation directory,
+  /// Installation method using a temporary outer directory. In particular, it is tried to create a directory besides the installation directory,
   /// to install all files in it, and then to swap the new and the old installation directory, and then remove the old installation directory.
   /// This can only work if Altaxo is not installed in a root folder.
-  /// 
   /// </summary>
-  public class UpdateInstallerOuterDirectory : UpdateInstallerBase, IUpdateInstaller
+  public class InstallerMethod_UseOuterDirectory : UpdateInstallerBase, IUpdateInstaller
   {
 
     /// <summary>Name of the event that signals to Altaxo that Altaxo now should shutdown in order to be updated.</summary>
@@ -65,7 +64,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="loadUnstable">If set to <c>true</c>, the <see cref="Downloader"/> take a look for the latest unstable version. If set to <c>false</c>, it
     /// looks for the latest stable version.</param>
     /// <param name="currentProgramVersion">The version of the currently installed Altaxo program.</param>
-    public UpdateInstallerOuterDirectory(string eventName, string packageFullFileName, string altaxoExecutableFullFileName)
+    public InstallerMethod_UseOuterDirectory(string eventName, string packageFullFileName, string altaxoExecutableFullFileName)
     {
       _eventName = eventName;
       _packageName = packageFullFileName;
@@ -95,73 +94,108 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="ReportProgress">Used to report the installation progress. Arguments are the progress in percent and a progress message. If this function returns true, the program must thow an <see cref="System.Threading.ThreadInterruptedException"/>.</param>
     public void Run(Func<double, string, bool> ReportProgress)
     {
-      // Preparation - this work can be done independently whether or not Altaxo is running
+      // ----------------------------------------------------------------------------------------------------------------------
+      // Create an update lock file
+      // ----------------------------------------------------------------------------------------------------------------------
 
-      var altaxoOldDirSub = Path.GetFileName(_pathToInstallation);
-      var altaxoNewDirSub = altaxoOldDirSub + "_NextInstallation";
-      var pathToNewInstallation = Path.Combine(_pathToInstallationBaseDirectory, altaxoNewDirSub);
-      var pathToPreviousInstallation = Path.Combine(_pathToInstallationBaseDirectory, altaxoOldDirSub + "_PreviousInstallation");
-
-      if (Directory.Exists(pathToNewInstallation))
+      var updateLockFileName = Path.Combine(_pathToInstallation, "~AltaxoIsCurrentlyUpdated.txt");
+      FileStream updateLockFile = null;
+      try
       {
-        RemoveContentsOfDirectory(new DirectoryInfo(pathToNewInstallation), removeDirectoryItself: false);
+        updateLockFile = new FileStream(updateLockFileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+      }
+      catch (Exception)
+      {
+        ReportProgress(0, "It seems that another process is already updating Altaxo. Therefore, this updater is stopping now.");
+        return;
       }
 
-      // Install the content
-      // 1st extract the content of the package file into the new directory
-      using (var fs = new FileStream(_packageName, FileMode.Open, FileAccess.Read, FileShare.Read))
-      {
-        fs.Seek(0, SeekOrigin.Begin);
-        ExtractPackageFiles(fs, altaxoNewDirSub, ReportProgress);
-      }
+      Action cleanupAction = () =>
+      { try { updateLockFile?.Dispose(); if (File.Exists(updateLockFileName)) File.Delete(updateLockFileName); } catch { } };
 
-      // 2nd: Copy all files from the old installation, that are __not__ on its packing list
-      CopyFilesNewOrChanged(_pathToInstallation, pathToNewInstallation);
-
-
-      // now comes the critical point: we have to rename the old installation path, and then rename the new installation path
-
-      if (!_isWaitingForAltaxosEndDone)
-      {
-        // signal Altaxo, that we have the stream now
-        SetEvent(_eventName);
-
-        // warte auf das Close von Altaxo
-
-        bool isDirectoryRenamed = false;
-        DateTime startWaitingTime = DateTime.UtcNow;
-        do
-        {
-          try
-          {
-            Directory.Move(_pathToInstallation, pathToPreviousInstallation);
-            isDirectoryRenamed = true;
-          }
-          catch (Exception)
-          {
-            if (ReportProgress(0, string.Format("Waiting for shutdown of Altaxo ... {0} s", Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds, 1))))
-              throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
-            System.Threading.Thread.Sleep(250);
-          }
-          finally
-          {
-          }
-        } while (!isDirectoryRenamed);
-      }
 
       try
       {
-        Directory.Move(pathToNewInstallation, _pathToInstallation);
-      }
-      catch (Exception ex)
-      {
-        // this has not worked, thus we try to re-rename the old installation
-        Directory.Move(pathToPreviousInstallation, _pathToInstallation);
-        throw;
-      }
+        // ----------------------------------------------------------------------------------------------------------------------
+        // Preparation - this work can be done independently whether or not Altaxo is running
+        // ----------------------------------------------------------------------------------------------------------------------
 
-      // and if everything has worked, we remove the old directory
-      RemoveContentsOfDirectory(new DirectoryInfo(pathToPreviousInstallation), removeDirectoryItself: true);
+        var altaxoOldDirSub = Path.GetFileName(_pathToInstallation);
+        var altaxoNewDirSub = altaxoOldDirSub + "_NextInstallation";
+        var pathToNewInstallation = Path.Combine(_pathToInstallationBaseDirectory, altaxoNewDirSub);
+        var pathToPreviousInstallation = Path.Combine(_pathToInstallationBaseDirectory, altaxoOldDirSub + "_PreviousInstallation");
+
+        if (Directory.Exists(pathToNewInstallation))
+        {
+          RemoveContentsOfDirectory(new DirectoryInfo(pathToNewInstallation), removeDirectoryItself: false);
+        }
+
+        // Install the content
+        // 1st extract the content of the package file into the new directory
+        using (var fs = new FileStream(_packageName, FileMode.Open, FileAccess.Read, FileShare.Read))
+        {
+          fs.Seek(0, SeekOrigin.Begin);
+          ExtractPackageFiles(fs, altaxoNewDirSub, ReportProgress);
+        }
+
+        // 2nd: Copy all files from the old installation, that are __not__ on its packing list
+        CopyFilesNewOrChanged(_pathToInstallation, pathToNewInstallation);
+
+
+        // now comes the critical point: we have to rename the old installation path, and then rename the new installation path
+
+        if (!_isWaitingForAltaxosEndDone)
+        {
+          // signal Altaxo, that we have the stream now
+          SetEvent(_eventName);
+
+          // warte auf das Close von Altaxo
+
+          bool isDirectoryRenamed = false;
+          DateTime startWaitingTime = DateTime.UtcNow;
+          do
+          {
+            try
+            {
+              // for this we have to release the lock file - TODO find another way
+              updateLockFile?.Dispose();
+              updateLockFile = null;
+              if (File.Exists(updateLockFileName))
+                File.Delete(updateLockFileName);
+
+              Directory.Move(_pathToInstallation, pathToPreviousInstallation);
+              isDirectoryRenamed = true;
+            }
+            catch (Exception)
+            {
+              if (ReportProgress(0, string.Format("Waiting for shutdown of Altaxo ... {0} s", Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds, 1))))
+                throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
+              System.Threading.Thread.Sleep(250);
+            }
+            finally
+            {
+            }
+          } while (!isDirectoryRenamed);
+        }
+
+        try
+        {
+          Directory.Move(pathToNewInstallation, _pathToInstallation);
+        }
+        catch (Exception ex)
+        {
+          // this has not worked, thus we try to re-rename the old installation
+          Directory.Move(pathToPreviousInstallation, _pathToInstallation);
+          throw;
+        }
+
+        // and if everything has worked, we remove the old directory
+        RemoveContentsOfDirectory(new DirectoryInfo(pathToPreviousInstallation), removeDirectoryItself: true);
+      }
+      finally
+      {
+        cleanupAction();
+      }
     }
   }
 }

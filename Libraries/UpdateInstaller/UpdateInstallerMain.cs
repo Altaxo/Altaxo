@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ namespace Altaxo.Serialization.AutoUpdates
   {
     private static System.Windows.Application app;
     private static InstallerMainWindow mainWindow;
-    private static Semaphore _updaterSemaphore;
+    private static Mutex _updaterMutex;
 
     /// <summary>
     /// A text that should occur prior to the error message.
@@ -74,9 +74,12 @@ namespace Altaxo.Serialization.AutoUpdates
           return;
         }
 
+
         try
         {
-          _updaterSemaphore = new Semaphore(0, 0, "AltaxoUpdateInstallerSemaphore");
+          _updaterMutex = new Mutex(true, "AltaxoUpdateInstallerMutex", out var mutexWasCreated);
+          if (!mutexWasCreated)
+            return;
         }
         catch (Exception ex)
         {
@@ -101,7 +104,7 @@ namespace Altaxo.Serialization.AutoUpdates
         bool wasStartedWithElevatedPrivileges = 0 != (options & 2);
         bool restartAltaxo = (0 != (options & 1)) && !wasStartedWithElevatedPrivileges;
 
-        var installer = new UpdateInstaller(eventName, packageFullFileName, fullPathOfTheAltaxoExecutable);
+        var installer = new InstallerMethod_BackupInnerDirectory(eventName, packageFullFileName, fullPathOfTheAltaxoExecutable);
         if (installer.PackListFileExists())
         {
           if (installer.IsPackListFileWriteable() && installer.IsInstallationDirectoryWriteable())
@@ -135,8 +138,9 @@ namespace Altaxo.Serialization.AutoUpdates
               proc.Verb = "runas";
 
               // before running the elevated updater, close the semaphore
-              _updaterSemaphore.Close();
-              _updaterSemaphore.Dispose();
+              _updaterMutex?.Close();
+              _updaterMutex?.Dispose();
+              _updaterMutex = null;
               var runProcWithElevated = System.Diagnostics.Process.Start(proc);
 
               if (restartAltaxo)
@@ -163,11 +167,14 @@ namespace Altaxo.Serialization.AutoUpdates
       {
         StartVisualAppWithErrorMessage(args[0], string.Format("{0}{1}", ex.GetType().ToString(), ex.ToString()));
       }
+
+      _updaterMutex?.Close();
+      _updaterMutex?.Dispose();
     }
 
     /// <summary>Starts the window of the application, and then runs the provided installer program.</summary>
     /// <param name="installer">The installer program to run..</param>
-    private static void StartVisualApp(UpdateInstaller installer, bool showInstallationWindow, int timeoutAfterSuccessfullInstallation)
+    private static void StartVisualApp(InstallerMethod_BackupInnerDirectory installer, bool showInstallationWindow, int timeoutAfterSuccessfullInstallation)
     {
       if (null == app)
       {
@@ -189,7 +196,7 @@ namespace Altaxo.Serialization.AutoUpdates
     private static void StartVisualAppWithErrorMessage(string eventName, string message)
     {
       if (null != eventName)
-        UpdateInstaller.SetEvent(eventName); // Altaxo is waiting for this event to finish itself
+        InstallerMethod_BackupInnerDirectory.SetEvent(eventName); // Altaxo is waiting for this event to finish itself
 
       if (null == app)
       {

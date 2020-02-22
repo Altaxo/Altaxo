@@ -81,11 +81,11 @@ namespace Altaxo.Serialization.AutoUpdates
       if (IsParentDirectoryOfInstallationDirectoryWriteable())
       {
         // then we use the direct method
-        subInstaller = new UpdateInstallerOuterDirectory(_eventName, _packageName, _altaxoExecutableFullName);
+        subInstaller = new InstallerMethod_UseOuterDirectory(_eventName, _packageName, _altaxoExecutableFullName);
       }
       else
       {
-        subInstaller = new UpdateInstaller(_eventName, _packageName, _altaxoExecutableFullName);
+        subInstaller = new InstallerMethod_BackupInnerDirectory(_eventName, _packageName, _altaxoExecutableFullName);
       }
 
       subInstaller.Run(ReportProgress);
