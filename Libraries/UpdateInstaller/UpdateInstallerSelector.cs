@@ -35,13 +35,10 @@ namespace Altaxo.Serialization.AutoUpdates
   /// The prefered method is to create another directory as sibling of the installation directory, install the files, and then swap the two directories.
   /// The other method is to create a temporary directory in the appdata directory, save all installation files there, and install the new files in the old directory.
   /// </summary>
-  /// <seealso cref="Altaxo.Serialization.AutoUpdates.UpdateInstallerBase" />
+  /// <seealso cref="Altaxo.Serialization.AutoUpdates.InstallerMethodBase" />
   /// <seealso cref="Altaxo.Serialization.AutoUpdates.IUpdateInstaller" />
-  internal class UpdateInstallerSelector : UpdateInstallerBase, IUpdateInstaller
+  internal class UpdateInstallerSelector : InstallerMethodBase, IUpdateInstaller
   {
-    /// <summary>Name of the event that signals to Altaxo that Altaxo now should shutdown in order to be updated.</summary>
-    private string _eventName;
-
     /// <summary>Full name of the zip file that contains the update files.</summary>
     private string _packageName;
 

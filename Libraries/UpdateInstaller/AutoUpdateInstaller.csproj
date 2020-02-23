@@ -129,7 +129,7 @@
     <Compile Include="SharpZipLib\Zip\ZipInputStream.cs" />
     <Compile Include="SharpZipLib\Zip\ZipNameTransform.cs" />
     <Compile Include="SharpZipLib\Zip\ZipOutputStream.cs" />
-    <Compile Include="UpdateInstalleBase.cs" />
+    <Compile Include="InstallerMethodBase.cs" />
     <Compile Include="InstallerMethod_UseOuterDirectory.cs" />
     <Compile Include="InstallerMethod_BackupInnerDirectory.cs" />
     <Compile Include="UpdateInstallerMain.cs" />
@@ -161,7 +161,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

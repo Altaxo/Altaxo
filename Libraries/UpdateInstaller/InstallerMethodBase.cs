@@ -35,15 +35,23 @@ namespace Altaxo.Serialization.AutoUpdates
   /// <summary>
   /// Responsible for installing the downloaded update.
   /// </summary>
-  public class UpdateInstallerBase
+  public class InstallerMethodBase
   {
     protected const string PackListRelativePath = "doc\\PackList.txt";
-
+    protected const string UpdateLockFileName = "~AltaxoIsCurrentlyUpdated.txt";
 
     private static System.Threading.EventWaitHandle _eventWaitHandle;
 
     /// <summary>Full path to the installation directory (the directory in which the subdirs 'bin', 'doc', 'Addins' and 'data' resides).</summary>
     protected string _pathToInstallation;
+
+
+    /// <summary>Name of the event that signals to Altaxo that Altaxo now should shutdown in order to be updated.</summary>
+    protected string _eventName;
+
+    /// <summary>If true, this indicates that the waiting for the end of Altaxo was already done successfully. Thus in a possible second installation attempt we can skip this waiting.</summary>
+    protected bool _isWaitingForAltaxosEndDone;
+
 
 
     /// <summary>Tests whether the pack list file exists in the installation directory (this is the file PackList.txt in the doc folder of the Altaxo installation).</summary>
@@ -73,32 +81,69 @@ namespace Altaxo.Serialization.AutoUpdates
     {
 
       // First of all, test whether the installation directory is writeable
-      var tempFileName = Path.Combine(_pathToInstallation, Guid.NewGuid().ToString());
+      var tempFileName1 = Path.Combine(_pathToInstallation, "~UpdateTestFile_" + Guid.NewGuid().ToString() + ".txt");
+      var tempFileName2 = Path.Combine(_pathToInstallation, "~UpdateTestFile_" + Guid.NewGuid().ToString() + ".txt");
 
       try
       {
-        using (var fs = new FileStream(tempFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))
+        try
         {
-          fs.Close();
-          File.Delete(tempFileName);
-          return true;
+          using (var fs = new FileStream(tempFileName1, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))
+          {
+            fs.Close();
+          }
+        }
+        catch (Exception)
+        {
+          return false;
+        }
+
+        // Test also, wether we have change rights (the above test succeeds if you have write rights, but no change rights
+        try
+        {
+          File.Move(tempFileName1, tempFileName2);
+        }
+        catch (Exception)
+        {
+          return false;
+        }
+
+        try
+        {
+          File.Delete(tempFileName2);
+        }
+        catch (Exception)
+        {
+          return false;
         }
       }
-      catch (Exception)
+      finally
       {
-        return false;
+        try { if (File.Exists(tempFileName1)) File.Delete(tempFileName1); } catch { }
+        try { if (File.Exists(tempFileName2)) File.Delete(tempFileName2); } catch { }
       }
+      return true;
     }
 
     public bool IsParentDirectoryOfInstallationDirectoryWriteable()
     {
       var parentDir = GetBaseDirectory(_pathToInstallation);
 
-      var tempDirName = Path.Combine(_pathToInstallation, Guid.NewGuid().ToString());
+      var tempDirName1 = Path.Combine(parentDir, Guid.NewGuid().ToString());
+      var tempDirName2 = Path.Combine(parentDir, Guid.NewGuid().ToString());
 
       try
       {
-        Directory.CreateDirectory(tempDirName);
+        Directory.CreateDirectory(tempDirName1);
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+
+      try
+      {
+        Directory.Move(tempDirName1, tempDirName2);
       }
       catch (Exception)
       {
@@ -106,7 +151,7 @@ namespace Altaxo.Serialization.AutoUpdates
       }
 
       // First of all, test whether the installation directory is writeable
-      var tempFileName = Path.Combine(tempDirName, Guid.NewGuid().ToString());
+      var tempFileName = Path.Combine(tempDirName2, "~UpdateTestFile_" + Guid.NewGuid().ToString() + ".txt");
 
       try
       {
@@ -123,7 +168,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
       try
       {
-        Directory.Delete(tempDirName, true);
+        Directory.Delete(tempDirName2, true);
       }
       catch (Exception)
       {
@@ -221,6 +266,25 @@ namespace Altaxo.Serialization.AutoUpdates
       throw new InvalidOperationException($"Can not determine last part part. File name is {fullFileName}, base directory is {baseDirectory}");
     }
 
+    private static readonly string DirectorySeparatorString = string.Empty + Path.DirectorySeparatorChar;
+
+    /// <summary>
+    /// Given the full file name and its base installation directory, this returns the full file name for the same file in another directory.
+    /// </summary>
+    /// <param name="newDirectory">The new directory.</param>
+    /// <param name="baseDirectory">The base directory of the file.</param>
+    /// <param name="fullFileName">Full name of the file.</param>
+    /// <returns>The full file name in the <paramref name="newDirectory"/>.</returns>
+    public static string GetFileNameForNewDirectory(string newDirectory, string baseDirectory, string fullFileName)
+    {
+      var lastPart = GetLastPathPart(fullFileName, baseDirectory);
+
+      if (newDirectory.EndsWith(DirectorySeparatorString) || lastPart.StartsWith(DirectorySeparatorString))
+        return newDirectory + lastPart;
+      else
+        return newDirectory + DirectorySeparatorString + lastPart;
+    }
+
     /// <summary>
     /// Removes the contents of the given directory, i.e. all files and all subdirectories in the given directory.
     /// The provided directory itself is not deleted.
@@ -234,6 +298,8 @@ namespace Altaxo.Serialization.AutoUpdates
       }
       else
       {
+        string lockFileFullName = Path.Combine(directory.FullName, UpdateLockFileName);
+
         var subDirectories = directory.GetDirectories();
 
         foreach (var subDir in subDirectories)
@@ -244,7 +310,10 @@ namespace Altaxo.Serialization.AutoUpdates
         var allFiles = directory.GetFiles();
         foreach (var file in allFiles)
         {
-          file.Delete();
+          if (0 != string.Compare(file.FullName, lockFileFullName, ignoreCase: true)) // Do not try to delete the lock file
+          {
+            file.Delete();
+          }
         }
       }
     }
@@ -297,11 +366,18 @@ namespace Altaxo.Serialization.AutoUpdates
       {
         if (!file.FullName.StartsWith(pathToOldInstallation))
           continue;
-        var relativeName = file.FullName.Substring(pathToOldInstallation.Length);
+
+        var relativeName = GetLastPathPart(file.FullName, pathToOldInstallation);
         relativeName = relativeName.TrimStart(new char[] { '\\' });
 
+        if (relativeName.ToLowerInvariant() == UpdateLockFileName.ToLowerInvariant())
+          continue;
+
         if (!oldPackageFiles.ContainsKey(relativeName) || oldPackageFiles[relativeName] != file.Length)
-          File.Copy(file.FullName, Path.Combine(pathToNewInstallation, relativeName));
+        {
+          var newFileName = GetFileNameForNewDirectory(pathToNewInstallation, pathToOldInstallation, file.FullName);
+          File.Copy(file.FullName, newFileName, true);
+        }
       }
     }
 
@@ -370,6 +446,12 @@ namespace Altaxo.Serialization.AutoUpdates
 
       var exeFileStreams = new FileStream[exeFiles.Length];
 
+      // signal Altaxo, that we have the stream now
+      if (!_isWaitingForAltaxosEndDone)
+      {
+        SetEvent(_eventName);
+      }
+
       for (; ; )
       {
         bool success = true;
@@ -405,11 +487,15 @@ namespace Altaxo.Serialization.AutoUpdates
       // now, while holding the handles to the exefiles, we try to open all other files
 
 
+      string updateLockFileName = (string.Empty + Path.DirectorySeparatorChar + UpdateLockFileName).ToLowerInvariant();
       for (; ; )
       {
         var success = true;
         foreach (var file in othFiles)
         {
+          if (file.FullName.ToLowerInvariant().EndsWith(updateLockFileName))
+            continue; // ignore the lock file!
+
           try
           {
             using (var s = new FileStream(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
@@ -441,6 +527,7 @@ namespace Altaxo.Serialization.AutoUpdates
       }
 
       // Altaxo is now ready for installation
+      _isWaitingForAltaxosEndDone = true;
     }
 
 

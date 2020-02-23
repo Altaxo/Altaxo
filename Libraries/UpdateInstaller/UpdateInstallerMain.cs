@@ -74,6 +74,7 @@ namespace Altaxo.Serialization.AutoUpdates
           return;
         }
 
+        // System.Diagnostics.Debugger.Launch();
 
         try
         {
@@ -104,7 +105,7 @@ namespace Altaxo.Serialization.AutoUpdates
         bool wasStartedWithElevatedPrivileges = 0 != (options & 2);
         bool restartAltaxo = (0 != (options & 1)) && !wasStartedWithElevatedPrivileges;
 
-        var installer = new InstallerMethod_BackupInnerDirectory(eventName, packageFullFileName, fullPathOfTheAltaxoExecutable);
+        var installer = new UpdateInstallerSelector(eventName, packageFullFileName, fullPathOfTheAltaxoExecutable);
         if (installer.PackListFileExists())
         {
           if (installer.IsPackListFileWriteable() && installer.IsInstallationDirectoryWriteable())
@@ -174,7 +175,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
     /// <summary>Starts the window of the application, and then runs the provided installer program.</summary>
     /// <param name="installer">The installer program to run..</param>
-    private static void StartVisualApp(InstallerMethod_BackupInnerDirectory installer, bool showInstallationWindow, int timeoutAfterSuccessfullInstallation)
+    private static void StartVisualApp(IUpdateInstaller installer, bool showInstallationWindow, int timeoutAfterSuccessfullInstallation)
     {
       if (null == app)
       {
