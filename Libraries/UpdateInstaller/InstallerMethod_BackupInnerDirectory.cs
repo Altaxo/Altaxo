@@ -71,7 +71,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
     /// <summary>Runs the installer</summary>
     /// <param name="ReportProgress">Used to report the installation progress. Arguments are the progress in percent and a progress message. If this function returns true, the program must thow an <see cref="System.Threading.ThreadInterruptedException"/>.</param>
-    public void Run(Func<double, string, bool> ReportProgress)
+    public void Run(Func<double, string, MessageKind, bool> ReportProgress)
     {
       var pathToInstallationInfo = new DirectoryInfo(_pathToInstallation);
       var allFiles = pathToInstallationInfo.GetFiles("*.*", SearchOption.AllDirectories);
@@ -89,7 +89,7 @@ namespace Altaxo.Serialization.AutoUpdates
       }
       catch (Exception)
       {
-        ReportProgress(0, "It seems that another process is already updating Altaxo. Therefore, this updater is stopping now.");
+        ReportProgress(0, "It seems that another process is already updating Altaxo. Therefore, this updater is stopping now.", MessageKind.Warning);
         return;
       }
 
@@ -128,7 +128,7 @@ namespace Altaxo.Serialization.AutoUpdates
             Directory.CreateDirectory(newPath);
             File.Copy(file.FullName, newFileName);
             allFilesHash.Remove(file);
-            if (ReportProgress(0 + 33.33 * (1 - allFilesHash.Count / initialCount), "Create backup copy"))
+            if (ReportProgress(0 + 33.33 * (1 - allFilesHash.Count / initialCount), "Create backup copy", MessageKind.Info))
             {
               throw new ThreadInterruptedException();
             }
@@ -136,7 +136,7 @@ namespace Altaxo.Serialization.AutoUpdates
           }
           catch (Exception ex)
           {
-            if (ReportProgress(0 + 33.33 * (1 - allFilesHash.Count / initialCount), $"Exception backing up file {file.FullName}, Details: {ex.Message}"))
+            if (ReportProgress(0 + 33.33 * (1 - allFilesHash.Count / initialCount), $"Exception backing up file {file.FullName}, Details: {ex.Message}", MessageKind.Warning))
             {
               throw new ThreadInterruptedException();
             }
@@ -171,7 +171,7 @@ namespace Altaxo.Serialization.AutoUpdates
           {
             File.Delete(file.FullName);
             allFilesHash.Remove(file);
-            if (ReportProgress(33.33 + 33.33 * (1 - allFilesHash.Count / initialCount), "Delete old files"))
+            if (ReportProgress(33.33 + 33.33 * (1 - allFilesHash.Count / initialCount), "Delete old files", MessageKind.Info))
             {
               cleanupAction();
               throw new ThreadInterruptedException();
@@ -180,7 +180,7 @@ namespace Altaxo.Serialization.AutoUpdates
           }
           catch (Exception ex)
           {
-            if (ReportProgress(33.33 + 33.33 * (1 - allFilesHash.Count / initialCount), $"Exception deleting old file {file.FullName}, Details: {ex.Message}"))
+            if (ReportProgress(33.33 + 33.33 * (1 - allFilesHash.Count / initialCount), $"Exception deleting old file {file.FullName}, Details: {ex.Message}", MessageKind.Warning))
             {
               throw new ThreadInterruptedException();
             }
@@ -199,7 +199,7 @@ namespace Altaxo.Serialization.AutoUpdates
           {
             Directory.Delete(dir.FullName, true);
             allDirsHash.Remove(dir);
-            if (ReportProgress(66.66, "Delete old directories"))
+            if (ReportProgress(66.66, "Delete old directories", MessageKind.Info))
             {
               cleanupAction();
               throw new ThreadInterruptedException();
@@ -207,7 +207,7 @@ namespace Altaxo.Serialization.AutoUpdates
           }
           catch (Exception ex)
           {
-            if (ReportProgress(66.66, $"Exception deleting old directory {dir.FullName}, Details: {ex.Message}"))
+            if (ReportProgress(66.66, $"Exception deleting old directory {dir.FullName}, Details: {ex.Message}", MessageKind.Warning))
             {
               throw new ThreadInterruptedException();
             }
@@ -225,7 +225,7 @@ namespace Altaxo.Serialization.AutoUpdates
           using (var fs = new FileStream(_packageName, FileMode.Open, FileAccess.Read, FileShare.Read))
           {
             fs.Seek(0, SeekOrigin.Begin);
-            ExtractPackageFiles(fs, _pathToInstallation, (d, s) => ReportProgress(66.66 + 0.3333 * d, s), null);
+            ExtractPackageFiles(fs, _pathToInstallation, (d, s, k) => ReportProgress(66.66 + 0.3333 * d, s, k), null);
           }
 
           // 2nd: Copy all files from the old installation, that are __not__ on its packing list
@@ -249,11 +249,11 @@ namespace Altaxo.Serialization.AutoUpdates
 
         }
 
-        ReportProgress(100, "All new installation files extracted, auto update finished successfully!");
+        ReportProgress(100, "All new installation files extracted, auto update finished successfully!", MessageKind.Info);
       }
       catch (Exception ex)
       {
-        ReportProgress(0, "An exception was thrown during installation. Details:\r\n\r\n" + ex.Message);
+        ReportProgress(0, "An exception was thrown during installation. Details:\r\n\r\n" + ex.Message, MessageKind.Error);
         cleanupAction();
       }
       finally

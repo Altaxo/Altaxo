@@ -385,7 +385,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="fs">File stream of the package file (this is a zip file).</param>
     /// <param name="ReportProgress">Used to report the installation progress. Arguments are the progress in percent and a progress message. If this function returns true, the program must thow an <see cref="System.Threading.ThreadInterruptedException"/>.</param>
     /// <param name="cleanupAction">Clean up actions that should be called before you throw an exception.</param>
-    protected static void ExtractPackageFiles(FileStream fs, string pathToInstallation, Func<double, string, bool> ReportProgress, Action cleanupAction = null)
+    protected static void ExtractPackageFiles(FileStream fs, string pathToInstallation, Func<double, string, MessageKind, bool> ReportProgress, Action cleanupAction = null)
     {
       var zipFile = new ZipFile(fs);
       byte[] buffer = new byte[1024 * 1024];
@@ -416,7 +416,7 @@ namespace Altaxo.Serialization.AutoUpdates
           }
           File.SetLastWriteTime(destinationFileName, entry.DateTime);
 
-          if (ReportProgress(100 * currentProcessedFile / totalNumberOfFiles, string.Format("Updating file {0}", destinationFileName)))
+          if (ReportProgress(100 * currentProcessedFile / totalNumberOfFiles, string.Format("Updating file {0}", destinationFileName), MessageKind.Info))
           {
             cleanupAction?.Invoke();
             throw new ThreadInterruptedException();
@@ -433,7 +433,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>
     /// Waits for the moment that Altaxo's installation directory is ready for installation.
     /// </summary>
-    public void WaitForReadyForInstallation(Func<double, string, bool> ReportProgress)
+    public void WaitForReadyForInstallation(Func<double, string, MessageKind, bool> ReportProgress)
     {
       var startWaitingTime = DateTime.UtcNow;
 
@@ -471,8 +471,15 @@ namespace Altaxo.Serialization.AutoUpdates
             }
             success = false;
 
-            if (ReportProgress(0, string.Format("Waiting for shutdown of Altaxo ... {0} s \r\n\r\nFile still in use: \"{1}\"", Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds, 1), exeFiles[i])))
+            if (ReportProgress(
+              0,
+              $"Waiting for shutdown of Altaxo ... {Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds)} s\r\n\r\n" +
+              $"File still in use: \"{exeFiles[i]}\"\r\n\r\n" +
+              $"Please make sure that neither Altaxo nor any other program is keeping this file open!",
+              MessageKind.Warning))
+            {
               throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
+            }
 
             break;
           }
@@ -505,8 +512,15 @@ namespace Altaxo.Serialization.AutoUpdates
           }
           catch
           {
-            if (ReportProgress(0, string.Format("Waiting for shutdown of Altaxo ... {0} s \r\n\r\nFile still in use: \"{1}\"", Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds, 1), file.FullName)))
+            if (ReportProgress(
+              0,
+              $"Waiting for shutdown of Altaxo ... {Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds)} s\r\n\r\n" +
+              $"File still in use: \"{file.FullName}\"\r\n\r\n" +
+              $"Please make sure that neither Altaxo nor any other program is keeping this file open!",
+              MessageKind.Warning))
+            {
               throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
+            }
 
             success = false;
             break;

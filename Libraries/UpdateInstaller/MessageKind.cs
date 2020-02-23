@@ -29,12 +29,18 @@ using System.Text;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
-  public interface IUpdateInstaller
+  /// <summary>
+  /// Kind of messages the report system is issuing.
+  /// </summary>
+  public enum MessageKind
   {
-    /// <summary>Runs the installer</summary>
-    /// <param name="ReportProgress">Used to report the installation progress by the installer routine.
-    /// Arguments are: 1st argument is the progress in percent and the 2nd argument is the progress message.
-    /// If this function returns true, the installer routine must throw a <see cref="System.Threading.ThreadInterruptedException"/>.</param>
-    void Run(Func<double, string, MessageKind, bool> ReportProgress);
+    /// <summary>Information for the user</summary>
+    Info = 0,
+
+    /// <summary>Warning: the user should note something, or do something.</summary>
+    Warning = 1,
+
+    /// <summary>Error: the installation failed.</summary>
+    Error = 2
   }
 }

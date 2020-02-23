@@ -82,7 +82,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
     /// <summary>Runs the installer</summary>
     /// <param name="ReportProgress">Used to report the installation progress. Arguments are the progress in percent and a progress message. If this function returns true, the program must thow an <see cref="System.Threading.ThreadInterruptedException"/>.</param>
-    public void Run(Func<double, string, bool> ReportProgress)
+    public void Run(Func<double, string, MessageKind, bool> ReportProgress)
     {
       var altaxoOldDirSub = Path.GetFileName(_pathToInstallation);
       var altaxoNewDirSub = altaxoOldDirSub + "_NextInstallation";
@@ -106,7 +106,7 @@ namespace Altaxo.Serialization.AutoUpdates
       }
       catch (Exception)
       {
-        ReportProgress(0, "It seems that another process is already updating Altaxo. Therefore, this updater is stopping now.");
+        ReportProgress(0, "It seems that another process is already updating Altaxo. Therefore, this updater is stopping now.", MessageKind.Warning);
         return;
       }
 
@@ -139,7 +139,7 @@ namespace Altaxo.Serialization.AutoUpdates
         }
         catch (Exception)
         {
-          ReportProgress(0, "It seems that another process is already updating Altaxo. Therefore, this updater is stopping now.");
+          ReportProgress(0, "It seems that another process is already updating Altaxo. Therefore, this updater is stopping now.", MessageKind.Warning);
           return;
         }
 
@@ -208,7 +208,8 @@ namespace Altaxo.Serialization.AutoUpdates
               $"Renaming the old Altaxo installation directory \"{_pathToInstallation}\" fails currently.\r\n" +
               $"The exception message is: {ex.Message}\r\n\r\n" +
               $"Please make sure that no files, explorer windows or other file manager windows are open in this directory or its subdirectories!\r\n\r\n" +
-              $"Waiting for the directory to be released... {Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds)} s"
+              $"Waiting for the directory to be released... {Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds)} s",
+              MessageKind.Warning
               ))
             {
               throw new ThreadInterruptedException("Installation cancelled by the user");
@@ -259,7 +260,8 @@ namespace Altaxo.Serialization.AutoUpdates
               $"Renaming the new Altaxo installation directory \"{pathToNewInstallation}\" fails currently.\r\n" +
               $"The exception message is: {ex.Message}\r\n\r\n" +
               $"Please make sure that no files, explorer windows or other file manager windows are open in this directory or its subdirectories!\r\n\r\n" +
-              $"Waiting for the directory to be released... {Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds)} s"
+              $"Waiting for the directory to be released... {Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds)} s",
+              MessageKind.Warning
               ))
             {
               Directory.Move(pathToPreviousInstallation, _pathToInstallation);             // this has not worked, thus we try to re-rename the old installation
@@ -291,11 +293,11 @@ namespace Altaxo.Serialization.AutoUpdates
         // and if everything has worked, we remove the old directory
         RemoveContentsOfDirectory(new DirectoryInfo(pathToPreviousInstallation), removeDirectoryItself: true);
 
-        ReportProgress(100, "All new installation files extracted, auto update finished successfully!");
+        ReportProgress(100, "All new installation files extracted, auto update finished successfully!", MessageKind.Info);
       }
       catch (Exception ex)
       {
-        ReportProgress(0, "An exception was thrown during installation. Details:\r\n\r\n" + ex.Message);
+        ReportProgress(0, "An exception was thrown during installation. Details:\r\n\r\n" + ex.Message, MessageKind.Error);
         cleanupAction();
       }
       finally

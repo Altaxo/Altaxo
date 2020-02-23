@@ -71,7 +71,7 @@ namespace Altaxo.Serialization.AutoUpdates
     }
 
 
-    public void Run(Func<double, string, bool> ReportProgress)
+    public void Run(Func<double, string, MessageKind, bool> ReportProgress)
     {
       IUpdateInstaller subInstaller = null;
 
