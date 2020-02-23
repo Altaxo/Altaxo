@@ -43,11 +43,12 @@ namespace Altaxo.Serialization.AutoUpdates
   /// </summary>
   public partial class InstallerMainWindow : Window
   {
-    public UpdateInstaller _installer;
+    public IUpdateInstaller _installer;
     private System.Threading.Tasks.Task _installerTask;
 
     public double _progress;
     public string _message = string.Empty;
+    public MessageKind _messageKind;
     private System.Windows.Threading.DispatcherTimer _timer;
     private Brush _normalBackground;
     private bool _isCancellationRequested = false;
@@ -157,6 +158,19 @@ namespace Altaxo.Serialization.AutoUpdates
       _guiProgress.Value = _progress;
       _guiProgressText.Content = string.Format("{0:F1}% completed", _progress);
       _guiMessages.Text = _message.ToString();
+      switch (_messageKind)
+      {
+        case MessageKind.Error:
+          _guiMessages.Background = Brushes.LightPink;
+          break;
+        case MessageKind.Warning:
+          _guiMessages.Background = Brushes.Yellow;
+          break;
+        case MessageKind.Info:
+        default:
+          _guiMessages.Background = Brushes.LightGreen;
+          break;
+      }
 
       if (_installerTask.IsCompleted)
       {
@@ -214,10 +228,11 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="progress">The progress in percent.</param>
     /// <param name="message">The message text.</param>
     /// <returns>True when the user has requested a cancellation.</returns>
-    private bool ReportProgressAsync(double progress, string message)
+    private bool ReportProgressAsync(double progress, string message, MessageKind messageKind)
     {
       _progress = progress;
       _message = message;
+      _messageKind = messageKind;
       return _isCancellationRequested;
     }
 
