@@ -95,6 +95,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     [NonSerialized]
     protected WeakEventHandler[] _weakEventHandlersForDoc;
+    protected WeakActionHandler<object, object, TunnelingEventArgs> _weakEventHandlerForDoc_TunneledEvent;
 
     private static IList<IHitTestObject> _emptyReadOnlyList;
 
@@ -254,6 +255,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         doc.Changed += (_weakEventHandlersForDoc[0] = new WeakEventHandler(EhGraph_Changed, x => doc.Changed -= x));
         rootLayer.LayerCollectionChanged += (_weakEventHandlersForDoc[1] = new WeakEventHandler(EhGraph_LayerCollectionChanged, x => rootLayer.LayerCollectionChanged -= x));
         doc.SizeChanged += (_weakEventHandlersForDoc[2] = new WeakEventHandler(EhGraph_SizeChanged, x => doc.SizeChanged -= x));
+        doc.TunneledEvent += (_weakEventHandlerForDoc_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhGraph_TunneledEvent, x => doc.TunneledEvent -= x));
       }
       // if the host layer has at least one child, we set the active layer to the first child of the host layer
       if (_doc.RootLayer.Layers.Count >= 1)
@@ -265,6 +267,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       Title = _doc.Name;
     }
 
+
+
     private void InternalUninitializeGraphDocument()
     {
       // remove the weak event handlers from doc
@@ -275,6 +279,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
           ev.Remove();
         _weakEventHandlersForDoc = null;
       }
+      _weakEventHandlerForDoc_TunneledEvent?.Remove();
+      _weakEventHandlerForDoc_TunneledEvent = null;
 
       _doc = null;
     }
@@ -953,6 +959,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         _view.GraphViewTitle = Doc.Name;
 
       Title = Doc.Name;
+    }
+
+    private void EhGraph_TunneledEvent(object sender, object originalSource, TunnelingEventArgs e)
+    {
+      if (e is DisposeEventArgs && object.ReferenceEquals(originalSource, _doc))
+      {
+        Current.ProjectService.RemoveGraph(this);
+      }
     }
 
     #endregion Event handlers from GraphDocument

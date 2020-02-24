@@ -44,7 +44,9 @@ namespace Altaxo.Gui.Text.Viewing
 
     private Altaxo.Text.GuiModels.TextDocumentViewOptions _options;
 
-    public TextDocument TextDocument { get { return _options.Document; } }
+    protected WeakActionHandler<object, object, TunnelingEventArgs> _weakEventHandlerForDoc_TunneledEvent;
+
+    public TextDocument TextDocument { get { return _options?.Document; } }
 
     public TextDocumentController()
     {
@@ -106,15 +108,25 @@ namespace Altaxo.Gui.Text.Viewing
 
       Title = GetTitleFromDocumentName(TextDocument);
 
-      TextDocument.TunneledEvent += new WeakActionHandler<object, object, Altaxo.Main.TunnelingEventArgs>(EhDocumentTunneledEvent, (handler) => TextDocument.TunneledEvent -= handler);
+      var textDocument = TextDocument;
+      {
+        // Attention: use LOCAL variables here in order to avoid references to the controller!
+        _weakEventHandlerForDoc_TunneledEvent?.Remove();
+        textDocument.TunneledEvent += new WeakActionHandler<object, object, Altaxo.Main.TunnelingEventArgs>(EhDocumentTunneledEvent, (handler) => textDocument.TunneledEvent -= handler);
+      }
     }
 
-    private void EhDocumentTunneledEvent(object arg1, object arg2, TunnelingEventArgs e)
+    private void EhDocumentTunneledEvent(object sender, object originalSource, TunnelingEventArgs e)
     {
       if (e is Altaxo.Main.DocumentPathChangedEventArgs && _view != null)
       {
         _view.SetDocumentNameAndLocalImages(TextDocument.Name, TextDocument.Images);
         Title = GetTitleFromDocumentName(TextDocument);
+      }
+
+      if (e is DisposeEventArgs && object.ReferenceEquals(originalSource, TextDocument))
+      {
+        Current.Workbench.CloseContent(this);
       }
     }
 
@@ -419,6 +431,15 @@ namespace Altaxo.Gui.Text.Viewing
           Initialize(false);
         }
       }
+    }
+
+    public override void Dispose()
+    {
+      ViewObject = null;
+      _weakEventHandlerForDoc_TunneledEvent?.Remove();
+      _options = null;
+
+      base.Dispose();
     }
 
     public override object ModelObject

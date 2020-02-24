@@ -60,13 +60,6 @@ namespace Altaxo.Main
     T CreateDocument<T>(string inFolder) where T : IProjectItem;
 
     /// <summary>
-    /// This function will delete a project document and close all corresponding views.
-    /// </summary>
-    /// <param name="document">The document (project item) to delete.</param>
-    /// <param name="force">If true, the document is deleted without safety question; otherwise, the user is ask before the graph document is deleted.</param>
-    void DeleteDocument(IProjectItem document, bool force);
-
-    /// <summary>
     /// Creates a new table and the view content for the newly created table.
     /// </summary>
     /// <returns>The content controller for that table.</returns>
@@ -162,6 +155,11 @@ namespace Altaxo.Main
     /// <param name="ctrl">The Graph to remove.</param>
     /// <remarks>No exception is thrown if the Form frm is not a member of the workbench views collection.</remarks>
     void RemoveGraph(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl);
+
+    /// <summary>This will remove the Graph <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
+    /// <param name="ctrl">The Graph to remove.</param>
+    /// <remarks>No exception is thrown if the Form frm is not a member of the workbench views collection.</remarks>
+    void RemoveGraph3D(Altaxo.Gui.Graph.Graph3D.Viewing.IGraphController ctrl);
 
     /// <summary>
     /// Gets an exporter that can be used to export an image of the provided project item.

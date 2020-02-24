@@ -74,6 +74,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     [NonSerialized]
     protected WeakEventHandler[] _weakEventHandlersForDoc;
+    protected WeakActionHandler<object, object, TunnelingEventArgs> _weakEventHandlerForDoc_TunneledEvent;
+
 
     private IGraphicsContext3D _drawing;
 
@@ -280,6 +282,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         doc.Changed += (_weakEventHandlersForDoc[0] = new WeakEventHandler(EhGraph_Changed, x => doc.Changed -= x));
         rootLayer.LayerCollectionChanged += (_weakEventHandlersForDoc[1] = new WeakEventHandler(EhGraph_LayerCollectionChanged, x => rootLayer.LayerCollectionChanged -= x));
         doc.SizeChanged += (_weakEventHandlersForDoc[2] = new WeakEventHandler(EhGraph_SizeChanged, x => doc.SizeChanged -= x));
+        doc.TunneledEvent += (_weakEventHandlerForDoc_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhGraph_TunneledEvent, x => doc.TunneledEvent -= x));
       }
       // if the host layer has at least one child, we set the active layer to the first child of the host layer
       if (_doc.RootLayer.Layers.Count >= 1)
@@ -302,6 +305,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
           ev.Remove();
         _weakEventHandlersForDoc = null;
       }
+      _weakEventHandlerForDoc_TunneledEvent?.Remove();
+      _weakEventHandlerForDoc_TunneledEvent = null;
 
       _doc = null;
     }
@@ -1175,6 +1180,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     private void EhGraphDocumentNameChanged_Unsynchronized(INameOwner sender, string oldName)
     {
       Title = Doc.Name;
+    }
+
+    private void EhGraph_TunneledEvent(object sender, object originalSource, TunnelingEventArgs e)
+    {
+      if (e is DisposeEventArgs && object.ReferenceEquals(originalSource, _doc))
+      {
+        Current.ProjectService.RemoveGraph3D(this);
+      }
     }
 
     /// <summary>

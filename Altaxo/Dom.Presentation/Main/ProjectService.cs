@@ -951,6 +951,20 @@ namespace Altaxo.Main
         Current.Workbench.CloseContent(content);
     }
 
+    /// <summary>This will remove the GraphController <paramref>ctrl</paramref> from the graph forms collection.</summary>
+    /// <param name="ctrl">The GraphController to remove.</param>
+    /// <remarks>No exception is thrown if the Form frm is not a member of the graph forms collection.</remarks>
+    public void RemoveGraph3D(Altaxo.Gui.Graph.Graph3D.Viewing.IGraphController ctrl)
+    {
+      Current.Dispatcher.InvokeIfRequired(RemoveGraph_Unsynchronized, ctrl);
+    }
+
+    private void RemoveGraph_Unsynchronized(Altaxo.Gui.Graph.Graph3D.Viewing.IGraphController ctrl)
+    {
+      if (ctrl is IViewContent content)
+        Current.Workbench.CloseContent(content);
+    }
+
     #endregion Graph functions
 
     #region Graph3D functions

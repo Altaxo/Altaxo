@@ -96,6 +96,8 @@ namespace Altaxo.Worksheet
     /// </summary>
     protected bool _doShowPropertyColumns;
 
+    protected WeakActionHandler<object, object, TunnelingEventArgs> _weakEventHandlerForTable_TunneledEvent;
+
     #endregion Member variables
 
     #region Serialization
@@ -374,15 +376,23 @@ namespace Altaxo.Worksheet
           throw new InvalidOperationException("This instance is already bound to a data table. It is not allowed to assign another data table to it");
 
         _dataTable = value;
-        _dataTable.TunneledEvent += EhDataTableTunneledEvent;
+
+        {
+          var table = _dataTable;
+
+          // use LOCAL variables only to connect to weak event handlers!
+          _weakEventHandlerForTable_TunneledEvent?.Remove();
+          table.TunneledEvent += (_weakEventHandlerForTable_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhDataTableTunneledEvent, x => table.TunneledEvent -= x));
+        }
       }
     }
 
-    private void EhDataTableTunneledEvent(object sender, object source, Main.TunnelingEventArgs args)
+    private void EhDataTableTunneledEvent(object sender, object originalSource, Main.TunnelingEventArgs e)
     {
-      if (args is Main.DisposeEventArgs)
+      if (e is DisposeEventArgs && object.ReferenceEquals(originalSource, _dataTable))
       {
-        Dispose();
+        if (!Current.Project?.TableLayouts?.Remove(this) ?? true)
+          Dispose();
       }
     }
 
@@ -491,10 +501,8 @@ namespace Altaxo.Worksheet
     {
       if (null != _parent)
       {
-        if (null != _dataTable)
-        {
-          _dataTable.TunneledEvent -= EhDataTableTunneledEvent;
-        }
+        _weakEventHandlerForTable_TunneledEvent?.Remove();
+        _weakEventHandlerForTable_TunneledEvent = null;
 
         base.Dispose(isDisposing);
         _dataTable = null;

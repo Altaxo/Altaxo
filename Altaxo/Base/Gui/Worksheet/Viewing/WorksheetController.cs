@@ -40,7 +40,10 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     protected Altaxo.Worksheet.WorksheetLayout _worksheetLayout;
 
-    public WeakEventHandler _weakTableNameChangedHandler;
+    protected WeakEventHandler _weakEventHandlerForTable_Changed;
+    protected WeakActionHandler<object, object, TunnelingEventArgs> _weakEventHandlerForTable_TunneledEvent;
+    protected WeakActionHandler<object, object, TunnelingEventArgs> _weakEventHandlerForLayout_TunneledEvent;
+
 
     private IWorksheetView _view;
 
@@ -107,14 +110,38 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
       _worksheetLayout = value;
       _table = _worksheetLayout.DataTable;
-      var table = _table; // use local variable for anonymous method below
-      _table.Changed += (_weakTableNameChangedHandler = new WeakEventHandler(EhTableNameChanged, x => table.Changed -= x));
+
+      var table = _table;
+
+      {
+        // use local variable for anonymous method below in order to avoid references to the controller instance
+        _weakEventHandlerForTable_Changed?.Remove();
+        table.Changed += (_weakEventHandlerForTable_Changed = new WeakEventHandler(EhTable_Changed, x => table.Changed -= x));
+
+        _weakEventHandlerForTable_TunneledEvent?.Remove();
+        table.TunneledEvent += (_weakEventHandlerForTable_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhTable_TunneledEvent, x => table.TunneledEvent -= x));
+      }
+
+      var layout = _worksheetLayout;
+      {
+        _weakEventHandlerForLayout_TunneledEvent?.Remove();
+        // use local variable for anonymous method below in order to avoid references to the controller instance
+        layout.TunneledEvent += (_weakEventHandlerForLayout_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhLayout_TunneledEvent, x => layout.TunneledEvent -= x));
+      }
+
+
+
       Title = _table.Name;
 
       var dataColumns = _table.DataColumns;
-      dataColumns.Changed += (_weakEventHandlerDataColumnChanged = new WeakEventHandler(EhTableDataChanged, x => dataColumns.Changed -= x));
       var propColumns = _table.PropCols;
-      propColumns.Changed += (_weakEventHandlerPropertyColumnChanged = new WeakEventHandler(EhPropertyDataChanged, x => propColumns.Changed -= x));
+      {
+        _weakEventHandlerDataColumnChanged?.Remove();
+        dataColumns.Changed += (_weakEventHandlerDataColumnChanged = new WeakEventHandler(EhTableDataChanged, x => dataColumns.Changed -= x));
+
+        _weakEventHandlerPropertyColumnChanged?.Remove();
+        propColumns.Changed += (_weakEventHandlerPropertyColumnChanged = new WeakEventHandler(EhPropertyDataChanged, x => propColumns.Changed -= x));
+      }
 
       SetCachedNumberOfDataColumns();
       SetCachedNumberOfDataRows();
@@ -126,15 +153,15 @@ namespace Altaxo.Gui.Worksheet.Viewing
       var view = _view;
       ViewObject = null;
       HideCellEditControl();
-      if (view is IDisposable)
-        ((IDisposable)view).Dispose();
+      (view as IDisposable)?.Dispose();
 
-      if (null != _table)
-      {
-        _weakTableNameChangedHandler.Remove();
-        _weakEventHandlerDataColumnChanged.Remove();
-        _weakEventHandlerPropertyColumnChanged.Remove();
-      }
+      _weakEventHandlerForLayout_TunneledEvent?.Remove();
+
+      _weakEventHandlerForTable_Changed?.Remove();
+      _weakEventHandlerForTable_TunneledEvent?.Remove();
+
+      _weakEventHandlerDataColumnChanged?.Remove();
+      _weakEventHandlerPropertyColumnChanged?.Remove();
 
       _table = null;
       _worksheetLayout = null; // removes also the event handler(s)
@@ -167,7 +194,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
-    public void EhTableNameChanged(object sender, EventArgs e)
+    public void EhTable_Changed(object sender, EventArgs e)
     {
       if (e is Altaxo.Main.NamedObjectCollectionChangedEventArgs eAsCCEA && object.ReferenceEquals(eAsCCEA.Item, _table))
       {
@@ -178,6 +205,23 @@ namespace Altaxo.Gui.Worksheet.Viewing
         }
       }
     }
+
+    private void EhTable_TunneledEvent(object sender, object originalSource, TunnelingEventArgs e)
+    {
+      if (e is DisposeEventArgs && object.ReferenceEquals(originalSource, _table))
+      {
+        Current.ProjectService.RemoveWorksheet(this);
+      }
+    }
+
+    private void EhLayout_TunneledEvent(object sender, object originalSource, TunnelingEventArgs e)
+    {
+      if (e is DisposeEventArgs && object.ReferenceEquals(originalSource, _worksheetLayout))
+      {
+        Current.ProjectService.RemoveWorksheet(this);
+      }
+    }
+
 
     #endregion IWorksheetController Members
 
