@@ -513,7 +513,7 @@ namespace Altaxo.Main
           InternalCheckAbsolutePath();
         }
 
-        shouldFireChangedEvent = true;
+        shouldFireChangedEvent = false; // 2020-02-25 set from true to false: when renaming a table, which contains data of a density plot, the event caused repeatedly calculations of the boundaries
       }
 
       shouldFireChangedEvent |= OnDocNode_TunnelingEvent(sender, source, e);
