@@ -166,7 +166,7 @@ namespace Altaxo.Data
     /// Is true if any data in a child DataColumn has changed since the last saving of the project.
     /// This flag is <b>not</b> set to true if other parts of this collection changed, for instance the column scripts.
     /// </summary>
-    protected bool _isDataDirty;
+    protected bool _isDataDirty = true;
 
     /// <summary>
     /// Cached number of rows. This is the maximum of the Count of all DataColumns contained in this collection.
