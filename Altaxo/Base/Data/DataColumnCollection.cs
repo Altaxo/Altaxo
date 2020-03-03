@@ -28,9 +28,7 @@ using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Main;
 using Altaxo.Main.Services;
-using Altaxo.Main.Services.Files;
 using Altaxo.Scripting;
-using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
@@ -2269,6 +2267,14 @@ namespace Altaxo.Data
     }
 
     /// <summary>
+    /// Sets the data dirty flag. Setting this flag will force the table to be serialized during the next project saving.
+    /// </summary>
+    public void SetDataDirty()
+    {
+      _isDataDirty = true;
+    }
+
+    /// <summary>
     /// The row count, i.e. the maximum of the row counts of all columns.
     /// </summary>
     public int RowCount
@@ -2427,6 +2433,7 @@ namespace Altaxo.Data
       }
       else if (e is DataColumnCollectionChangedEventArgs dataColumnCollectionChangeEventArgs) // ChangeEventArgs from a DataColumnCollection, i.e. from myself
       {
+        _isDataDirty = true;
         if (null == accumulatedEventData)
           accumulatedEventData = dataColumnCollectionChangeEventArgs;
         else
