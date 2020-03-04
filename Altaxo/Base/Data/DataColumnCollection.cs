@@ -397,6 +397,7 @@ namespace Altaxo.Data
         {
           s._numberOfRows = numberOfRows;
           s._hasNumberOfRowsDecreased = false;
+          s._isDataDirty = false;
         }
 
         return s;
@@ -622,12 +623,24 @@ namespace Altaxo.Data
         info.PropertyDictionary[DeserialiationInfoProperty_RestoreDataOnly] = "true";
         info.BeginReading(zipinpstream);
         object readedobject = info.GetValue("TableData", null);
-        if (readedobject is Altaxo.Data.DataColumnCollection dataColColl)
+        try
         {
-          TransferDeferredData(dataColColl);
+          if (readedobject is Altaxo.Data.DataColumnCollection dataColColl)
+          {
+            TransferDeferredData(dataColColl);
+            _isDataDirty = false;
+          }
+          else
+          {
+            throw new InvalidCastException($"Expected type for readedObject is {nameof(Altaxo.Data.DataColumnCollection)}, but it is acually {readedobject?.GetType()}");
+          }
         }
-        info.EndReading();
-        info.Dispose();
+        finally
+        {
+          info.EndReading();
+          info.Dispose();
+
+        }
       }
     }
 

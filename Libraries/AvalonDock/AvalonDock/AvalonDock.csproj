@@ -22,6 +22,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.0|AnyCPU'">
     <DefineConstants />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net4|AnyCPU'">
+    <DefineConstants />
+  </PropertyGroup>
 
   <ItemGroup>
     <Resource Include="**\*.png" />
