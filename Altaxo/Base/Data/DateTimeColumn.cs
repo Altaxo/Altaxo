@@ -25,7 +25,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
@@ -76,10 +75,10 @@ namespace Altaxo.Data
         // serialize the base class
         info.AddBaseValueEmbedded(s, typeof(Altaxo.Data.DataColumn));
 
-        if (null == info.GetProperty("Altaxo.Data.DataColumn.SaveAsTemplate"))
-          info.AddArray("Data", s._data, s._count);
-        else
+        if ("true" == info.GetProperty(DataTable.SerializationInfoProperty_SaveAsTemplate))
           info.AddArray("Data", s._data, 0);
+        else
+          info.AddArray("Data", s._data, s._count);
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

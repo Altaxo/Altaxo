@@ -166,7 +166,7 @@ namespace Altaxo.Data
     /// Is true if any data in a child DataColumn has changed since the last saving of the project.
     /// This flag is <b>not</b> set to true if other parts of this collection changed, for instance the column scripts.
     /// </summary>
-    protected bool _isDataDirty = true;
+    protected bool _isDataDirty;
 
     /// <summary>
     /// Cached number of rows. This is the maximum of the Count of all DataColumns contained in this collection.
@@ -310,10 +310,9 @@ namespace Altaxo.Data
 
         var s = (Altaxo.Data.DataColumnCollection)obj;
 
-        var storeDataOnly = info.GetProperty(SerialiationInfoProperty_StoreDataOnly) != null;
-        var supportsSeparateDataStorage = info.GetProperty(DataTable.SerializationInfoProperty_SupportsSeparatedData) != null;
-
-        if (!supportsSeparateDataStorage)
+        var storeDataOnly = info.GetProperty(SerialiationInfoProperty_StoreDataOnly) == "true";
+        var saveAsTemplate = info.GetProperty(DataTable.SerializationInfoProperty_SaveAsTemplate) == "true";
+        if (!saveAsTemplate)
         {
           s.EnsureDeferredDataAreLoaded();
         }
@@ -378,7 +377,7 @@ namespace Altaxo.Data
           info.CloseArray(count);
         }
 
-        if (!info.PropertyDictionary.ContainsKey(DeserialiationInfoProperty_RestoreDataOnly))
+        if ("true" != info.GetPropertyOrDefault<string>(DeserialiationInfoProperty_RestoreDataOnly))
         {
           // deserialize the scripts
           int count = info.OpenArray();

@@ -24,12 +24,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO.Compression;
-using System.Runtime.Serialization;
 using Altaxo.Main;
 using Altaxo.Main.Services;
 using Altaxo.Main.Services.Files;
-using Altaxo.Serialization;
 
 namespace Altaxo
 {
@@ -109,6 +106,7 @@ namespace Altaxo
       var dictionary = new Dictionary<string, IProjectItem>();
 
       // If true, data were stored separately from the table
+
       bool supportsSeparateDataStorage = archiveToSaveTo.SupportsDeferredLoading;
 
       // If true, archive entries (of items that have not changed) are copied directly from the original archive to the new archive
@@ -117,6 +115,10 @@ namespace Altaxo
       if (supportsSeparateDataStorage)
       {
         info.SetProperty(Altaxo.Data.DataTable.SerializationInfoProperty_SupportsSeparatedData, "true");
+      }
+      else
+      {
+        info.SetProperty(Altaxo.Data.DataTable.SerializationInfoProperty_SupportsSeparatedData, null);
       }
 
       // first, we save all tables into the tables subdirectory

@@ -24,10 +24,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Scripting;
-using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
@@ -110,6 +108,9 @@ namespace Altaxo.Data
 
     /// <summary>Serialization property that when set, indicates that storage of data separate from the DataColumnCollection is supported.</summary>
     public const string SerializationInfoProperty_SupportsSeparatedData = "Altaxo.Data.DataTable.SupSepData";
+
+    /// <summary>Serialization property that when set to "true", indicates that the table should be stored without data.</summary>
+    public const string SerializationInfoProperty_SaveAsTemplate = "Altaxo.Data.DataColumn.SaveAsTemplate";
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataTable", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -282,15 +283,15 @@ namespace Altaxo.Data
         bool saveDataAsTemplateRequired = null != s._tableDataSource && s._tableDataSource.ImportOptions.DoNotSaveCachedTableData;
         if (saveDataAsTemplateRequired)
         {
-          originalSaveAsTemplateOption = info.GetProperty("Altaxo.Data.DataColumn.SaveAsTemplate");
-          info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate", "true");
+          originalSaveAsTemplateOption = info.GetProperty(SerializationInfoProperty_SaveAsTemplate);
+          info.SetProperty(SerializationInfoProperty_SaveAsTemplate, "true");
         }
 
         info.AddValue("DataCols", s._dataColumns);
 
         if (saveDataAsTemplateRequired)
         {
-          info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate", originalSaveAsTemplateOption);
+          info.SetProperty(SerializationInfoProperty_SaveAsTemplate, originalSaveAsTemplateOption);
         }
 
         info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
@@ -365,20 +366,24 @@ namespace Altaxo.Data
         info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
 
         // Now the data
-        string originalSaveAsTemplateOption = info.GetProperty("Altaxo.Data.DataColumn.SaveAsTemplate");
+        string originalSaveAsTemplateOption = info.GetProperty(SerializationInfoProperty_SaveAsTemplate);
 
         bool saveDataAsTemplateRequired =
           (null != s._tableDataSource && s._tableDataSource.ImportOptions.DoNotSaveCachedTableData) ||
-          (null != info.GetProperty(SerializationInfoProperty_SupportsSeparatedData));
+          ("true" == info.GetProperty(SerializationInfoProperty_SupportsSeparatedData));
 
         if (saveDataAsTemplateRequired)
         {
-          info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate", "true");
+          info.SetProperty(SerializationInfoProperty_SaveAsTemplate, "true");
+        }
+        else
+        {
+          info.SetProperty(SerializationInfoProperty_SaveAsTemplate, null);
         }
 
         info.AddValue("DataCols", s._dataColumns);
 
-        info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate", originalSaveAsTemplateOption);
+        info.SetProperty(SerializationInfoProperty_SaveAsTemplate, originalSaveAsTemplateOption);
       }
 
       public virtual void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

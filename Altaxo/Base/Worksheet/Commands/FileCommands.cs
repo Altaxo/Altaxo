@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using System;
 using System.IO;
+using Altaxo.Data;
 
 namespace Altaxo.Worksheet
 {
@@ -43,7 +43,7 @@ namespace Altaxo.Worksheet
       var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
       if (saveAsTemplate)
       {
-        info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate", "true");
+        info.SetProperty(DataTable.SerializationInfoProperty_SaveAsTemplate, "true");
       }
       info.BeginWriting(myStream);
 
