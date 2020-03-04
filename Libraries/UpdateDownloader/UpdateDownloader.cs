@@ -109,42 +109,112 @@ namespace Altaxo.Serialization.AutoUpdates
             return;
           }
 
-          if (Comparer<Version>.Default.Compare(parsedVersion.Version, _currentVersion) > 0) // if the remote version is higher than the currently installed Altaxo version
+          if (!(Comparer<Version>.Default.Compare(parsedVersion.Version, _currentVersion) > 0)) // if the remote version is not higher than the currently installed Altaxo version
           {
-            Console.Write("Cleaning download directory ...");
-            CleanDirectory(versionFileFullName); // Clean old downloaded files from the directory
-            Console.WriteLine(" ok!");
+            Console.WriteLine($"The current version of Altaxo ({_currentVersion}) is equal to or higher than the available version ({parsedVersion.Version}). Therefore, no download is needed.");
+            return; // then there is nothing to do
+          }
 
-            var packageUrl = _downloadURL + PackageInfo.GetPackageFileName(parsedVersion.Version);
-            var packageFileName = Path.Combine(_storagePath, PackageInfo.GetPackageFileName(parsedVersion.Version));
-            Console.WriteLine("Starting download of package file ...");
-            webClient.DownloadProgressChanged += EhDownloadOfPackageFileProgressChanged;
-            webClient.DownloadFileCompleted += EhDownloadOfPackageFileCompleted;
-            _isDownloadOfPackageCompleted = false;
-            webClient.DownloadFileAsync(new Uri(packageUrl), packageFileName);// download the package asynchronously to get progress messages
-            for (; !_isDownloadOfPackageCompleted;)
+          // Test, whether the required file is already present...
+          var packageFileName = Path.Combine(_storagePath, PackageInfo.GetPackageFileName(parsedVersion.Version));
+          try
+          {
+            if (File.Exists(packageFileName))
             {
-              System.Threading.Thread.Sleep(250);
+              if (parsedVersion.FileLength == new FileInfo(packageFileName).Length)
+              {
+                if (IsHashOfFileEqualTo(packageFileName, parsedVersion.Hash, out var _))
+                {
+                  Console.WriteLine($"The package file ({packageFileName}) is already present and up to date. Therefore, no download is needed.");
+                  return; // then there is nothing to do
+                }
+              }
             }
-            webClient.DownloadProgressChanged -= EhDownloadOfPackageFileProgressChanged;
-            webClient.DownloadFileCompleted -= EhDownloadOfPackageFileCompleted;
+          }
+          catch (Exception testExistingPackageException)
+          {
+            Console.WriteLine($"An exception was thrown while testing for the existence of the package file \"{packageFileName}\". The exception message is {testExistingPackageException.Message}.");
+            // do not stop the program here, if an exception was thrown during the testing of the existing package file...
+          }
 
-            Console.WriteLine("Download finished!");
 
-            // make at least the test for the right length
-            var fileInfo = new FileInfo(packageFileName);
-            if (fileInfo.Length != parsedVersion.FileLength)
-            {
-              Console.WriteLine("Downloaded file length ({0}) differs from length in VersionInfo.txt {1}, thus the downloaded file will be deleted!", fileInfo.Length, parsedVersion.FileLength);
-              fileInfo.Delete();
-            }
-            else
-            {
-              Console.WriteLine("Test file length of downloaded package file ... ok!");
-            }
+          Console.Write("Cleaning download directory ...");
+          CleanDirectory(versionFileFullName); // Clean old downloaded files from the directory
+          Console.WriteLine(" ok!");
+
+          var packageUrl = _downloadURL + PackageInfo.GetPackageFileName(parsedVersion.Version);
+          Console.WriteLine("Starting download of package file ...");
+          webClient.DownloadProgressChanged += EhDownloadOfPackageFileProgressChanged;
+          webClient.DownloadFileCompleted += EhDownloadOfPackageFileCompleted;
+          _isDownloadOfPackageCompleted = false;
+          webClient.DownloadFileAsync(new Uri(packageUrl), packageFileName);// download the package asynchronously to get progress messages
+          for (; !_isDownloadOfPackageCompleted;)
+          {
+            System.Threading.Thread.Sleep(250);
+          }
+          webClient.DownloadProgressChanged -= EhDownloadOfPackageFileProgressChanged;
+          webClient.DownloadFileCompleted -= EhDownloadOfPackageFileCompleted;
+
+          Console.WriteLine("Download finished!");
+
+          // make at least the test for the right length
+          var fileInfo = new FileInfo(packageFileName);
+          if (fileInfo.Length != parsedVersion.FileLength)
+          {
+            Console.WriteLine("Downloaded file length ({0}) differs from length in VersionInfo.txt {1}, thus the downloaded file will be deleted!", fileInfo.Length, parsedVersion.FileLength);
+            fileInfo.Delete();
+            return;
+          }
+          else
+          {
+            Console.WriteLine("Test file length of downloaded package file ... ok!");
+          }
+
+          if (IsHashOfFileEqualTo(packageFileName, parsedVersion.Hash, out var calculatedHash))
+          {
+            Console.WriteLine("Test hash of downloaded package file ... ok!");
+          }
+          else
+          {
+            Console.WriteLine($"The hash of the downloaded file ({calculatedHash}) differs from the hash in VersionInfo.txt ({parsedVersion.Hash}). Therefore, the downloaded file will be deleted!");
+            fileInfo.Delete();
+            return;
           }
         }
       }
+    }
+
+    /// <summary>
+    /// Calculates the hash of the package file, and compares it to the expected hash.
+    /// </summary>
+    /// <param name="packageFileName">Name of the package file.</param>
+    /// <param name="expectedHash">The expected hash.</param>
+    /// <param name="calculatedHash">The hash as calculated from the file.</param>
+    /// <returns>True if the hash of file is equal to the expected hash; otherwise, <c>false</c>.
+    /// </returns>
+    private bool IsHashOfFileEqualTo(string packageFileName, string expectedHash, out string calculatedHash)
+    {
+      System.Security.Cryptography.HashAlgorithm hashProvider;
+      switch (expectedHash.Length)
+      {
+        default:
+        case 40:
+          hashProvider = new System.Security.Cryptography.SHA1CryptoServiceProvider();
+          break;
+        case 64:
+          hashProvider = new System.Security.Cryptography.SHA256CryptoServiceProvider();
+          break;
+        case 128:
+          hashProvider = new System.Security.Cryptography.SHA512CryptoServiceProvider();
+          break;
+      }
+      byte[] hashBytes;
+      using (var packageFileStream = new FileStream(packageFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+      {
+        hashBytes = hashProvider.ComputeHash(packageFileStream);
+      }
+      calculatedHash = PackageInfo.GetHashAsString(hashBytes);
+      return (calculatedHash == expectedHash);
     }
 
     /// <summary>It is neccessary to modify the download directory access rights, because as default only creator/owner has the right to change the newly created directory.

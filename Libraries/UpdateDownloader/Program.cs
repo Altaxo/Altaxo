@@ -48,6 +48,8 @@ namespace Altaxo.Serialization.AutoUpdates
           throw new ArgumentOutOfRangeException("Programm called with less than or more than 2 arguments");
         }
 
+        // System.Diagnostics.Debugger.Launch();
+
         Console.WriteLine("Altaxo auto update downloader (C) D.Lellinger 2012");
         Console.WriteLine("Configured to look for {0} versions; current Altaxo version: {1}", args[0].ToLower(), args[1]);
         Console.WriteLine();
