@@ -53,11 +53,14 @@ namespace Altaxo.Serialization.AutoUpdates
     private Brush _normalBackground;
     private bool _isCancellationRequested = false;
     private bool _installerFinishedSuccessfully = false;
-
     private bool _showInstallationWindow;
     private int _timeoutAfterSucessfullInstallation;
-
     private int _timeLeftBeforeClosing;
+
+    private Brush _errorMessageBrush = Brushes.LightPink;
+    private Brush _warningMessageBrush = Brushes.Yellow;
+    private Brush _infoMessageBrush = Brushes.LightGreen;
+
 
     /// <summary>Initializes a new instance of the <see cref="InstallerMainWindow"/> class.</summary>
     public InstallerMainWindow(bool showInstallationWindow, int timeoutAfterSuccessfullInstallation)
@@ -131,9 +134,10 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="message">The error message.</param>
     public void SetErrorMessage(string message)
     {
+      _messageKind = MessageKind.Error;
       _guiProgress.Value = 0;
       _guiMessages.Text = message;
-      _guiMessages.Background = new SolidColorBrush(Colors.LightPink);
+      _guiMessages.Background = _errorMessageBrush;
 
       Visibility = System.Windows.Visibility.Visible;
     }
@@ -161,14 +165,14 @@ namespace Altaxo.Serialization.AutoUpdates
       switch (_messageKind)
       {
         case MessageKind.Error:
-          _guiMessages.Background = Brushes.LightPink;
+          _guiMessages.Background = _errorMessageBrush;
           break;
         case MessageKind.Warning:
-          _guiMessages.Background = Brushes.Yellow;
+          _guiMessages.Background = _warningMessageBrush;
           break;
         case MessageKind.Info:
         default:
-          _guiMessages.Background = Brushes.LightGreen;
+          _guiMessages.Background = _infoMessageBrush;
           break;
       }
 
@@ -177,7 +181,12 @@ namespace Altaxo.Serialization.AutoUpdates
         var exception = InstallerTaskCleanup();
         if (null != exception)
         {
+          // Set the message and do not start the countdown timer
           SetErrorMessage(UpdateInstallerMain.ErrorIntroduction + exception.ToString());
+        }
+        else if (_messageKind == MessageKind.Error)
+        {
+          // do not start the count-down timer here
         }
         else
         {

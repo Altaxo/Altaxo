@@ -376,9 +376,32 @@ namespace Altaxo.Serialization.AutoUpdates
         if (!oldPackageFiles.ContainsKey(relativeName) || oldPackageFiles[relativeName] != file.Length)
         {
           var newFileName = GetFileNameForNewDirectory(pathToNewInstallation, pathToOldInstallation, file.FullName);
-          File.Copy(file.FullName, newFileName, true);
+          EnhancedFileCopy(file.FullName, newFileName, true);
         }
       }
+    }
+
+    /// <summary>
+    /// Enhanceds file copy. Here, it is ensured that the destination directory exists before the file is copied.
+    /// </summary>
+    /// <param name="sourceFileName">Name of the source file.</param>
+    /// <param name="destFileName">Name of the dest file.</param>
+    /// <param name="overwrite">If set to <c>true</c>, overwriting an existing file is allowed.</param>
+    protected static void EnhancedFileCopy(string sourceFileName, string destFileName, bool overwrite)
+    {
+      try // try it first, if it fails, we then try to create the directory...
+      {
+        File.Copy(sourceFileName, destFileName, overwrite);
+        return;
+      }
+      catch (Exception)
+      {
+      }
+
+      // Ok, it failed, so we try to create the destination directory first...
+      var destinationDirectory = Path.GetDirectoryName(destFileName);
+      Directory.CreateDirectory(destinationDirectory);
+      File.Copy(sourceFileName, destFileName, overwrite);
     }
 
     /// <summary>Extracts the package files.</summary>
