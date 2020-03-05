@@ -181,22 +181,36 @@ namespace Altaxo.Serialization.Ascii
     {
       var validFileNames = _asciiFiles.Select(x => x.GetResolvedFileNameOrNull()).Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
-      if (validFileNames.Length == 0)
-        return;
-
-      if (_asciiFiles.Count == 1)
+      if (validFileNames.Length > 0)
       {
-        using (var stream = new System.IO.FileStream(validFileNames[0], System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite))
+        if (validFileNames.Length == 1)
         {
-          AsciiImporter.ImportFromAsciiStream(destinationTable, stream, AsciiImporter.FileUrlStart + validFileNames[0], _asciiImportOptions);
+          using (var stream = new System.IO.FileStream(validFileNames[0], System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite))
+          {
+            AsciiImporter.ImportFromAsciiStream(destinationTable, stream, AsciiImporter.FileUrlStart + validFileNames[0], _asciiImportOptions);
+          }
+        }
+        else
+        {
+          if (_asciiImportOptions.ImportMultipleStreamsVertically)
+            AsciiImporter.ImportFromMultipleAsciiFilesVertically(destinationTable, validFileNames, false, _asciiImportOptions);
+          else
+            AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(destinationTable, validFileNames, false, _asciiImportOptions);
         }
       }
-      else
+
+      var invalidFileNames = _asciiFiles.Where(x => string.IsNullOrEmpty(x.GetResolvedFileNameOrNull())).ToArray();
+      if (invalidFileNames.Length > 0)
       {
-        if (_asciiImportOptions.ImportMultipleStreamsVertically)
-          AsciiImporter.ImportFromMultipleAsciiFilesVertically(destinationTable, validFileNames, false, _asciiImportOptions);
-        else
-          AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(destinationTable, validFileNames, false, _asciiImportOptions);
+        var stb = new StringBuilder();
+        stb.AppendLine("The following file names could not be resolved:");
+        foreach (var fn in invalidFileNames)
+        {
+          stb.AppendLine(fn.AbsoluteFileName);
+        }
+        stb.AppendLine("(End of file names that could not be resolved)");
+
+        throw new ApplicationException(stb.ToString());
       }
     }
 
