@@ -619,7 +619,15 @@ namespace Altaxo.Main
 
         if (null == currentProject)
         {
-          throw new ApplicationException("Could not find document root. Please debug to find the node which has not set its ParentObject.");
+          if (false != Current.GetService<Altaxo.Main.Services.IShutdownService>()?.IsApplicationClosing)
+          {
+            return InternalDocumentNode; // if the application is closing, then return without resolving properly
+          }
+          else
+          {
+            // Application is not closing - this is some programming error
+            throw new ApplicationException("Could not find document root. Please debug to find the node which has not set its ParentObject.");
+          }
         }
       }
 
