@@ -57,8 +57,6 @@ namespace Altaxo.Graph.Gdi.Background
       {
         FilledRectangle s = null != o ? (FilledRectangle)o : new FilledRectangle();
         s._brush = (BrushX)info.GetValue("Brush", s);
-        s._brush.ParentObject = s;
-
         return s;
       }
     }
@@ -71,16 +69,12 @@ namespace Altaxo.Graph.Gdi.Background
 
     public FilledRectangle(NamedColor c)
     {
-      _brush = new BrushX(c)
-      {
-        ParentObject = this
-      };
+      _brush = new BrushX(c);
     }
 
     public FilledRectangle(BrushX brush)
     {
-      _brush = brush.Clone();
-      _brush.ParentObject = this;
+      _brush = brush ?? throw new ArgumentNullException(nameof(brush));
     }
 
     public FilledRectangle(FilledRectangle from)
@@ -98,8 +92,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _brush)
-        yield return new Main.DocumentNodeAndName(_brush, "Brush");
+      yield break;
     }
 
     public object Clone()
@@ -123,8 +116,10 @@ namespace Altaxo.Graph.Gdi.Background
     {
       if (brush != null)
       {
-        brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-        g.FillRectangle(brush, (RectangleF)innerArea);
+        using (var gdibrush = BrushCacheGdi.Instance.BorrowBrush(brush, innerArea, g, 1))
+        {
+          g.FillRectangle(gdibrush, (RectangleF)innerArea);
+        }
       }
     }
 
@@ -138,8 +133,11 @@ namespace Altaxo.Graph.Gdi.Background
       }
       set
       {
-        _brush = value == null ? null : value.Clone();
-        _brush.ParentObject = this;
+        if (!(_brush == value))
+        {
+          _brush = value;
+          EhSelfChanged();
+        }
       }
     }
 

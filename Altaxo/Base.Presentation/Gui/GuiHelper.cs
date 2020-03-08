@@ -131,8 +131,10 @@ namespace Altaxo.Gui
       {
         using (var g = System.Drawing.Graphics.FromImage(bmp))
         {
-          brush.SetEnvironment(new RectangleD2D(0, 0, xsize, ysize), 96);
-          g.FillRectangle(brush, 0, 0, xsize, ysize);
+          using (var brushGdi = Altaxo.Graph.Gdi.BrushCacheGdi.Instance.BorrowBrush(brush, new RectangleD2D(0, 0, xsize, ysize), 1))
+          {
+            g.FillRectangle(brushGdi, 0, 0, xsize, ysize);
+          }
         }
         var stream = Altaxo.Graph.ImageProxy.ImageToStream(bmp, System.Drawing.Imaging.ImageFormat.Png);
         var decoder = System.Windows.Media.Imaging.BitmapDecoder.Create(stream, System.Windows.Media.Imaging.BitmapCreateOptions.None, System.Windows.Media.Imaging.BitmapCacheOption.Default);

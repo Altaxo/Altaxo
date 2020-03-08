@@ -104,10 +104,12 @@ namespace Altaxo.Worksheet
 
       string myString = ((Altaxo.Data.TextColumn)data)[nRow];
 
-      if (bSelected)
-        dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), _defaultSelectedTextBrush, cellRectangle, _textFormat);
-      else
-        dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), TextBrush, cellRectangle, _textFormat);
+      var brush = bSelected ? _defaultSelectedTextBrush : TextBrush;
+
+      using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, cellRectangle, dc, 1))
+      {
+        dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), brushGdi, cellRectangle, _textFormat);
+      }
     }
   } // end of class Altaxo.Worksheet.DateTimeColumnStyle
 }

@@ -112,17 +112,13 @@ namespace Altaxo.Worksheet
       numRectangle.Height = (int)fontheight;
       numRectangle.Y = (int)Math.Max(cellRectangle.Y + cellRectangle.Height - fontheight, cellRectangle.Y);
 
-      if (bSelected)
+      var brush = bSelected ? _defaultSelectedTextBrush : TextBrush;
+
+      using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, cellRectangle, dc, 1))
       {
-        dc.DrawString(columnnumber, gdiTextFont, _defaultSelectedTextBrush, numRectangle, _leftUpperTextFormat);
-        dc.DrawString(kindandgroup, gdiTextFont, _defaultSelectedTextBrush, numRectangle, _rightUpperTextFormat);
-        dc.DrawString(data.Name, gdiTextFont, _defaultSelectedTextBrush, nameRectangle, _textFormat);
-      }
-      else
-      {
-        dc.DrawString(columnnumber, gdiTextFont, TextBrush, numRectangle, _leftUpperTextFormat);
-        dc.DrawString(kindandgroup, gdiTextFont, TextBrush, numRectangle, _rightUpperTextFormat);
-        dc.DrawString(data.Name, gdiTextFont, TextBrush, nameRectangle, _textFormat);
+        dc.DrawString(columnnumber, gdiTextFont, brushGdi, numRectangle, _leftUpperTextFormat);
+        dc.DrawString(kindandgroup, gdiTextFont, brushGdi, numRectangle, _rightUpperTextFormat);
+        dc.DrawString(data.Name, gdiTextFont, brushGdi, nameRectangle, _textFormat);
       }
     }
 

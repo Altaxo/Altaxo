@@ -177,9 +177,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     {
       _nonPageAreaColor = NamedColors.Gray;
 
-      _pageGroundBrush = new BrushX(NamedColors.LightGray) { ParentObject = SuspendableDocumentNode.StaticInstance };
+      _pageGroundBrush = new BrushX(NamedColors.LightGray);
 
-      _graphAreaBrush = new BrushX(NamedColors.Snow) { ParentObject = SuspendableDocumentNode.StaticInstance };
+      _graphAreaBrush = new BrushX(NamedColors.Snow);
 
       _screenResolutionDpi = Current.Gui.ScreenResolutionDpi;
     }
@@ -1937,7 +1937,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       // Fill the page with its own color
       //g.FillRectangle(_pageGroundBrush,_doc.PageBounds);
       //g.FillRectangle(m_PrintableAreaBrush,m_Graph.PrintableBounds);
-      g.FillRectangle(_graphAreaBrush, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y, (float)Doc.Size.X, (float)Doc.Size.Y);
+      using (var graphAreaBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_graphAreaBrush, RectangleD2D.Empty, g, 1))
+      {
+        g.FillRectangle(graphAreaBrushGdi, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y, (float)Doc.Size.X, (float)Doc.Size.Y);
+      }
       // DrawMargins(g);
 
       // Paint the graph now

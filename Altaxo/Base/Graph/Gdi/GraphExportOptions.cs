@@ -86,7 +86,7 @@ namespace Altaxo.Graph.Gdi
       {
         _imageFormat = from.ImageFormat;
         _pixelFormat = from.PixelFormat;
-        _backgroundBrush = null == from._backgroundBrush ? null : from._backgroundBrush.Clone();
+        _backgroundBrush = from._backgroundBrush;
         SourceDpiResolution = from.SourceDpiResolution;
         DestinationDpiResolution = from.DestinationDpiResolution;
         return true;

@@ -102,9 +102,20 @@ namespace Altaxo.Worksheet
       PaintBackground(dc, cellRectangle, bSelected);
 
       if (bSelected)
-        dc.DrawString("[" + nRow + "]", GdiFontManager.ToGdi(_textFont), _defaultSelectedTextBrush, cellRectangle, _textFormat);
+      {
+        using (var defaultSelectedTextBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_defaultSelectedTextBrush, cellRectangle, dc, 1))
+        {
+          dc.DrawString("[" + nRow + "]", GdiFontManager.ToGdi(_textFont), defaultSelectedTextBrushGdi, cellRectangle, _textFormat);
+        }
+      }
+
       else
-        dc.DrawString("[" + nRow + "]", GdiFontManager.ToGdi(_textFont), TextBrush, cellRectangle, _textFormat);
+      {
+        using (var textBrushGdi = BrushCacheGdi.Instance.BorrowBrush(TextBrush, cellRectangle, dc, 1))
+        {
+          dc.DrawString("[" + nRow + "]", GdiFontManager.ToGdi(_textFont), textBrushGdi, cellRectangle, _textFormat);
+        }
+      }
     }
 
     public static Dictionary<System.Type, Action<RowHeaderStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<RowHeaderStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();

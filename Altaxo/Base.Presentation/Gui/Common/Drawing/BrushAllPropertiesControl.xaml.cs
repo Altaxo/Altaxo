@@ -393,8 +393,10 @@ namespace Altaxo.Gui.Common.Drawing
         r2.Inflate(-r2.Width / 4, -r2.Height / 4);
         //grfx.FillRectangle(System.Drawing.Brushes.Black, r2);
 
-        brush.SetEnvironment(fullRect, BrushX.GetEffectiveMaximumResolution(grfx));
-        grfx.FillRectangle(brush, fullRect);
+        using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, fullRect, grfx, 1))
+        {
+          grfx.FillRectangle(brushGdi, fullRect);
+        }
 
         _previewBitmap.EndGdiPainting();
       }

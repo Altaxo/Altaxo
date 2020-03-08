@@ -259,9 +259,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void InternalSetFillColorToFrameColor()
     {
-      var newBrush = _view.FillBrush.Clone();
-      newBrush.Color = _view.FramePen.Color;
-      _view.FillBrush = newBrush;
+      _view.FillBrush = _view.FillBrush.WithColor(_view.FramePen.Color);
     }
 
     private void InternalSetFrameColorToFillColor()

@@ -217,7 +217,7 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         var var = new Altaxo.Data.AltaxoVariant(0.0);
         double rel = axis.PhysicalVariantToNormal(var);
-        _majorPen.SetEnvironment(layerRect, BrushX.GetEffectiveMaximumResolution(g, 1));
+        _majorPen.SetEnvironment(layerRect, BrushCacheGdi.GetEffectiveMaximumResolution(g, 1));
         if (rel >= 0 && rel <= 1)
         {
           if (axisnumber == 0)
@@ -234,7 +234,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
         if (_showMinor)
         {
-          _minorPen.SetEnvironment(layerRect, BrushX.GetEffectiveMaximumResolution(g, 1));
+          _minorPen.SetEnvironment(layerRect, BrushCacheGdi.GetEffectiveMaximumResolution(g, 1));
           ticks = ticking.GetMinorTicksNormal(axis);
           for (int i = 0; i < ticks.Length; ++i)
           {
@@ -247,7 +247,7 @@ namespace Altaxo.Graph.Gdi.Axis
           }
         }
 
-        MajorPen.SetEnvironment(layerRect, BrushX.GetEffectiveMaximumResolution(g, 1));
+        MajorPen.SetEnvironment(layerRect, BrushCacheGdi.GetEffectiveMaximumResolution(g, 1));
         ticks = ticking.GetMajorTicksNormal(axis);
         for (int i = 0; i < ticks.Length; ++i)
         {

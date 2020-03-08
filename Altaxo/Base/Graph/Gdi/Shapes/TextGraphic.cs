@@ -97,8 +97,6 @@ namespace Altaxo.Graph.Gdi.Shapes
         s._text = info.GetString("Text");
         s._font = (FontX)info.GetValue("Font", s);
         s._textBrush = (BrushX)info.GetValue("Brush", s);
-        if (null != s._textBrush)
-          s._textBrush.ParentObject = s;
         s.BackgroundStyleOld = (BackgroundStyle)info.GetValue("BackgroundStyle", s);
         s._lineSpacingFactor = info.GetSingle("LineSpacing");
         info.GetSingle("ShadowLength");
@@ -147,8 +145,6 @@ namespace Altaxo.Graph.Gdi.Shapes
         s._text = info.GetString("Text");
         s._font = (FontX)info.GetValue("Font", s);
         s._textBrush = (BrushX)info.GetValue("Brush", s);
-        if (null != s._textBrush)
-          s._textBrush.ParentObject = s;
         s._background = (IBackgroundStyle)info.GetValue("BackgroundStyle", s);
         if (null != s._background)
           s._background.ParentObject = s;
@@ -188,7 +184,6 @@ namespace Altaxo.Graph.Gdi.Shapes
         s._text = info.GetString("Text");
         s._font = (FontX)info.GetValue("Font", s);
         s._textBrush = (BrushX)info.GetValue("Brush", s);
-        s._textBrush.ParentObject = s;
 
         s.Background = (IBackgroundStyle)info.GetValue("BackgroundStyle", s);
 
@@ -217,7 +212,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       _font = context.GetValue(GraphDocument.PropertyKeyDefaultFont);
-      _textBrush = new BrushX(context.GetValue(GraphDocument.PropertyKeyDefaultForeColor)) { ParentObject = this };
+      _textBrush = new BrushX(context.GetValue(GraphDocument.PropertyKeyDefaultForeColor));
     }
 
     public TextGraphic(PointD2D graphicPosition, string text,
@@ -272,9 +267,7 @@ namespace Altaxo.Graph.Gdi.Shapes
           _text = from._text;
           _font = from._font;
 
-          _textBrush = from._textBrush == null ? null : from._textBrush.Clone();
-          if (null != _textBrush)
-            _textBrush.ParentObject = this;
+          _textBrush = from._textBrush;
 
           _background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
           if (null != _background)
@@ -304,8 +297,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
     {
-      if (null != _textBrush)
-        yield return new Main.DocumentNodeAndName(_textBrush, "TextBrush");
 
       if (null != _background)
         yield return new Main.DocumentNodeAndName(_background, "Background");
@@ -513,7 +504,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
-        _textBrush = new BrushX(value) { ParentObject = this };
+        _textBrush = new BrushX(value);
         _isStructureInSync = false; // we must invalidate the structure, because the color is part of the structures temp storage
         EhSelfChanged(EventArgs.Empty);
       }
@@ -530,10 +521,12 @@ namespace Altaxo.Graph.Gdi.Shapes
         if (value == null)
           throw new ArgumentNullException();
 
-        _textBrush = value.Clone();
-        _textBrush.ParentObject = this;
-        _isStructureInSync = false; // we must invalidate the structure, because the color is part of the structures temp storage
-        EhSelfChanged(EventArgs.Empty);
+        if (!(_textBrush == value))
+        {
+          _textBrush = value;
+          _isStructureInSync = false; // we must invalidate the structure, because the color is part of the structures temp storage
+          EhSelfChanged(EventArgs.Empty);
+        }
       }
     }
 

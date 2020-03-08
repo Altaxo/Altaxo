@@ -92,7 +92,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public DarkMarbel()
     {
-      _brush = new BrushX(NamedColors.LightGray) { ParentObject = this };
+      _brush = new BrushX(NamedColors.LightGray);
     }
 
     public DarkMarbel(NamedColor c)
@@ -116,8 +116,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _brush)
-        yield return new Main.DocumentNodeAndName(_brush, "Brush");
+      yield break;
     }
 
     public object Clone()
@@ -144,8 +143,10 @@ namespace Altaxo.Graph.Gdi.Background
       var outerArea = innerArea;
       outerArea.Inflate(_shadowLength, _shadowLength);
 
-      brush.SetEnvironment(outerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-      g.FillRectangle(brush, (RectangleF)outerArea);
+      using (var gdibrush = BrushCacheGdi.Instance.BorrowBrush(brush, outerArea, g, 1))
+      {
+        g.FillRectangle(gdibrush, (RectangleF)outerArea);
+      }
 
       var twhite = new SolidBrush(Color.FromArgb(128, 255, 255, 255));
       var oA = (RectangleF)outerArea;
@@ -186,8 +187,11 @@ namespace Altaxo.Graph.Gdi.Background
       }
       set
       {
-        _brush = value == null ? null : value.Clone();
-        _brush.ParentObject = this;
+        if (!(_brush == value))
+        {
+          _brush = value;
+          EhSelfChanged();
+        }
       }
     }
 

@@ -190,7 +190,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       if (null != _view)
       {
         _view.LabelFont = _doc.Font;
-        _view.LabelBrush = _doc.Brush.Clone();
+        _view.LabelBrush = _doc.Brush;
         _view.HorizontalAlignment_Initialize(_horizontalAlignmentChoices);
         _view.VerticalAlignment_Initialize(_verticalAlignmentChoices);
         _view.AutomaticAlignment = _doc.AutomaticAlignment;
@@ -211,7 +211,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     public override bool Apply(bool disposeController)
     {
       _doc.Font = _view.LabelFont;
-      _doc.Brush = _view.LabelBrush.Clone();
+      _doc.Brush = _view.LabelBrush;
       _doc.HorizontalAlignment = (StringAlignment)_horizontalAlignmentChoices.FirstSelectedNode.Tag;
       _doc.VerticalAlignment = (StringAlignment)_verticalAlignmentChoices.FirstSelectedNode.Tag;
       _doc.AutomaticAlignment = _view.AutomaticAlignment;

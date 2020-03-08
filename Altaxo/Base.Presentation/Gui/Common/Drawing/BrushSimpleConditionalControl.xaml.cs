@@ -52,8 +52,7 @@ namespace Altaxo.Gui.Common.Drawing
         }
         else
         {
-          var brush = _cbBrush.SelectedBrush;
-          brush.Color = NamedColors.Transparent;
+          var brush = _cbBrush.SelectedBrush.WithColor(NamedColors.Transparent);
           return brush;
         }
       }
@@ -66,11 +65,10 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhEnableFill_Checked(object sender, RoutedEventArgs e)
     {
-      var brush = _cbBrush.SelectedBrush.Clone();
+      var brush = _cbBrush.SelectedBrush;
       if (!brush.IsVisible)
       {
-        brush.Color = NamedColors.AliceBlue;
-        _cbBrush.SelectedBrush = brush;
+        _cbBrush.SelectedBrush = brush.WithColor(NamedColors.AliceBlue);
       }
     }
   }

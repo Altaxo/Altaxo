@@ -111,14 +111,18 @@ namespace Altaxo.Graph.Gdi
 
         if (null != backbrush1)
         {
-          backbrush1.SetEnvironment(new RectangleD2D(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution);
-          grfx.FillRectangle(backbrush1, new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
+          using (var backbrush1Gdi = BrushCacheGdi.Instance.BorrowBrush(backbrush1, new RectangleD2D(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution))
+          {
+            grfx.FillRectangle(backbrush1Gdi, new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
+          }
         }
 
         if (null != backbrush2)
         {
-          backbrush2.SetEnvironment(new RectangleD2D(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution);
-          grfx.FillRectangle(backbrush2, new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
+          using (var backbrush2Gdi = BrushCacheGdi.Instance.BorrowBrush(backbrush1, new RectangleD2D(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution))
+          {
+            grfx.FillRectangle(backbrush2Gdi, new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
+          }
         }
 
 #if DIAGNOSTICLINERENDERING
@@ -175,12 +179,7 @@ namespace Altaxo.Graph.Gdi
       if (!GraphExportOptions.HasPixelFormatAlphaChannel(pixelFormat))
         opaqueGround = new BrushX(exportOptions.BackgroundColorForFormatsWithoutAlphaChannel);
 
-      var result = RenderAsBitmap(doc, opaqueGround, exportOptions.BackgroundBrush, pixelFormat, exportOptions.SourceDpiResolution, exportOptions.SourceDpiResolution / exportOptions.OutputScalingFactor);
-
-      if (null != opaqueGround)
-        opaqueGround.Dispose();
-
-      return result;
+      return RenderAsBitmap(doc, opaqueGround, exportOptions.BackgroundBrush, pixelFormat, exportOptions.SourceDpiResolution, exportOptions.SourceDpiResolution / exportOptions.OutputScalingFactor);
     }
 
     public static Bitmap RenderAsBitmap(this GraphDocument doc, GraphExportOptions options)
@@ -561,8 +560,10 @@ namespace Altaxo.Graph.Gdi
           {
             if (backgroundBrush != null)
             {
-              backgroundBrush.SetEnvironment(new RectangleD2D(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution);
-              grfxMetafile.FillRectangle(backgroundBrush, new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
+              using (var backgroundBrushGdi = BrushCacheGdi.Instance.BorrowBrush(backgroundBrush, new RectangleD2D(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution))
+              {
+                grfxMetafile.FillRectangle(backgroundBrushGdi, new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
+              }
             }
 
 #if DIAGNOSTICLINERENDERING
@@ -578,7 +579,7 @@ namespace Altaxo.Graph.Gdi
 				}
 #endif
 
-                  doc.Paint(grfxMetafile, true);
+            doc.Paint(grfxMetafile, true);
           });
 
       return RenderAsEnhancedMetafileToStream(renderingProc, stream, doc.Size, sourceDpiResolution, outputScalingFactor, pixelFormat);

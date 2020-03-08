@@ -104,7 +104,7 @@ namespace Altaxo.Graph.Gdi.Axis
         var edge = (Edge)info.GetValue("Edge", s);
         s._font = (FontX)info.GetValue("Font", s);
 
-        s._brush = new BrushX(NamedColors.Black) { ParentObject = s };
+        s._brush = new BrushX(NamedColors.Black);
         s._automaticRotationShift = true;
         s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
         s._labelFormatting = new Gdi.LabelFormatting.NumericLabelFormattingAuto() { ParentObject = s };
@@ -145,9 +145,6 @@ namespace Altaxo.Graph.Gdi.Axis
         var edge = (Edge)info.GetValue("Edge", s);
         s._font = (FontX)info.GetValue("Font", s);
         s._brush = (BrushX)info.GetValue("Brush", s);
-        if (null != s._brush)
-          s._brush.ParentObject = s;
-
         s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
         if (null != s._backgroundStyle)
           s._backgroundStyle.ParentObject = s;
@@ -391,7 +388,6 @@ namespace Altaxo.Graph.Gdi.Axis
 
         s._font = (FontX)info.GetValue("Font", s);
         s._brush = (BrushX)info.GetValue("Brush", s);
-        s._brush.ParentObject = s;
 
         s.BackgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
 
@@ -444,7 +440,7 @@ namespace Altaxo.Graph.Gdi.Axis
       _font = context.GetValue(GraphDocument.PropertyKeyDefaultFont);
       var foreColor = context.GetValue(GraphDocument.PropertyKeyDefaultForeColor);
 
-      _brush = new BrushX(foreColor) { ParentObject = this };
+      _brush = new BrushX(foreColor);
       _automaticRotationShift = true;
       _suppressedLabels = new SuppressedTicks() { ParentObject = this };
       _labelFormatting = new Gdi.LabelFormatting.NumericLabelFormattingAuto() { ParentObject = this };
@@ -473,7 +469,7 @@ namespace Altaxo.Graph.Gdi.Axis
         _horizontalAlignment = from._horizontalAlignment;
         _verticalAlignment = from._verticalAlignment;
 
-        ChildCopyToMember(ref _brush, from._brush);
+        _brush = from._brush;
 
         _automaticRotationShift = from._automaticRotationShift;
         _xOffset = from._xOffset;
@@ -500,9 +496,6 @@ namespace Altaxo.Graph.Gdi.Axis
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _brush)
-        yield return new Main.DocumentNodeAndName(_brush, "Brush");
-
       if (null != _labelFormatting)
         yield return new Main.DocumentNodeAndName(_labelFormatting, "LabelFormatting");
 
@@ -591,10 +584,9 @@ namespace Altaxo.Graph.Gdi.Axis
       get { return _brush.Color; }
       set
       {
-        var oldColor = Color;
-        if (value != oldColor)
+        if (!(Color == value))
         {
-          _brush.SetSolidBrush(value);
+          _brush = new BrushX(value);
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -606,12 +598,14 @@ namespace Altaxo.Graph.Gdi.Axis
       get
       {
         return _brush;
-        ;
       }
       set
       {
-        ChildCloneToMember(ref _brush, value.Clone());
-        EhSelfChanged(EventArgs.Empty);
+        if (!(_brush == value))
+        {
+          _brush = value;
+          EhSelfChanged(EventArgs.Empty);
+        }
       }
     }
 
@@ -1008,8 +1002,8 @@ namespace Altaxo.Graph.Gdi.Axis
         if (_backgroundStyle != null)
           _backgroundStyle.Draw(g, new RectangleD2D(PointD2D.Empty, msize));
 
-        _brush.SetEnvironment(new RectangleD2D(PointD2D.Empty, msize), BrushX.GetEffectiveMaximumResolution(g, 1));
-        labels[i].Draw(g, _brush, new PointF(0, 0));
+        var envbrush = new BrushXEnv(_brush, new RectangleD2D(PointD2D.Empty, msize), BrushCacheGdi.GetEffectiveMaximumResolution(g, 1));
+        labels[i].Draw(g, envbrush, new PointF(0, 0));
         g.Restore(gs); // Restore the graphics state
 
         helperPath.Reset();

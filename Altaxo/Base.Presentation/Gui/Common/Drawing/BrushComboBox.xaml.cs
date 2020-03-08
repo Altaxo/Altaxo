@@ -83,8 +83,7 @@ namespace Altaxo.Gui.Common.Drawing
         var selBrush = InternalSelectedBrush;
         if (null != selBrush)
         {
-          selBrush = selBrush.Clone();
-          selBrush.Color = value;
+          selBrush = selBrush.WithColor(value);
           InternalSelectedBrush = selBrush;
         }
       }
@@ -110,15 +109,10 @@ namespace Altaxo.Gui.Common.Drawing
     {
       get
       {
-        return ((BrushX)GetValue(SelectedBrushProperty)).Clone(); // use only a copy - don't give the original selected brush away from this combobox, it might be changed externally
+        return (BrushX)GetValue(SelectedBrushProperty); // use only a copy - don't give the original selected brush away from this combobox, it might be changed externally
       }
       set
       {
-        if (null != value)
-        {
-          value = value.Clone(); // BrushX is not immutable, so it must be ensured that SelectedBrush stored here can not be changed externally
-          value.ParentObject = Altaxo.Main.SuspendableDocumentNode.StaticInstance;
-        }
         SetValue(SelectedBrushProperty, value);
       }
     }
@@ -156,14 +150,12 @@ namespace Altaxo.Gui.Common.Drawing
       var coercedColor = brush.Color.CoerceParentColorSetToNullIfNotMember();
       if (!brush.Color.Equals(coercedColor))
       {
-        brush = brush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
-        brush.Color = coercedColor;
+        brush = brush.WithColor(coercedColor);
       }
 
       if (ShowPlotColorsOnly && (brush.Color.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(brush.Color.ParentColorSet)))
       {
-        brush = brush.Clone();
-        brush.Color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
+        brush = brush.WithColor(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
       }
       return brush;
     }
@@ -318,7 +310,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhShowCustomBrushDialog(object sender, RoutedEventArgs e)
     {
-      var localBrush = InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
+      var localBrush = InternalSelectedBrush; // under no circumstances change the selected brush, since it may come from an unknown source
       var ctrl = new BrushControllerAdvanced
       {
         RestrictBrushColorToPlotColorsOnly = ShowPlotColorsOnly
@@ -332,9 +324,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (base.InternalShowCustomColorDialog(sender, out var newColor))
       {
-        var newBrush = InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
-        newBrush.Color = newColor;
-        InternalSelectedBrush = newBrush;
+        InternalSelectedBrush = InternalSelectedBrush.WithColor(newColor);
       }
     }
 
@@ -342,9 +332,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (base.InternalChooseOpacityFromContextMenu(sender, out var newColor))
       {
-        var newBrush = InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
-        newBrush.Color = newColor;
-        InternalSelectedBrush = newBrush;
+        InternalSelectedBrush = InternalSelectedBrush.WithColor(newColor);
       }
     }
 

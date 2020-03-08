@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Common.Drawing
 
   [UserControllerForObject(typeof(BrushX))]
   [ExpectedTypeOfView(typeof(IBrushViewAdvanced))]
-  public class BrushControllerAdvanced : MVCANDControllerEditOriginalDocBase<BrushX, IBrushViewAdvanced>
+  public class BrushControllerAdvanced : MVCANDControllerEditImmutableDocBase<BrushX, IBrushViewAdvanced>
   {
     private Main.InstancePropertyController _imageProxyController;
 
@@ -342,7 +342,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhBrushTypeChanged()
     {
-      _doc.BrushType = _view.BrushType;
+      _doc = _doc.WithBrushType(_view.BrushType);
       InitializeViewElementsWhenBrushTypeChanged();
       EnableElementsInDependenceOnBrushType();
       OnMadeDirty();
@@ -350,56 +350,56 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhForeColorChanged()
     {
-      _doc.Color = _view.ForeColor;
+      _doc = _doc.WithColor(_view.ForeColor);
       OnMadeDirty();
     }
 
     private void EhBackColorChanged()
     {
-      _doc.BackColor = _view.BackColor;
+      _doc = _doc.WithBackColor(_view.BackColor);
       OnMadeDirty();
     }
 
     private void EhExchangeColorsChanged()
     {
-      _doc.ExchangeColors = _view.ExchangeColors;
+      _doc = _doc.WithExchangedColors(_view.ExchangeColors);
       _view.RestrictBrushColorToPlotColorsOnly = _restrictBrushColorToPlotColorsOnly;
       OnMadeDirty();
     }
 
     private void EhWrapModeChanged()
     {
-      _doc.WrapMode = _view.WrapMode;
+      _doc = _doc.WithWrapMode(_view.WrapMode);
       OnMadeDirty();
     }
 
     private void EhGradientFocusChanged()
     {
-      _doc.GradientFocus = (float)_view.GradientFocus;
+      _doc = _doc.WithGradientFocus(_view.GradientFocus);
       OnMadeDirty();
     }
 
     private void EhGradientScaleChanged()
     {
-      _doc.GradientColorScale = (float)_view.GradientColorScale;
+      _doc = _doc.WithGradientColorScale(_view.GradientColorScale);
       OnMadeDirty();
     }
 
     private void EhGradientAngleChanged()
     {
-      _doc.GradientAngle = _view.GradientAngle;
+      _doc = _doc.WithGradientAngle(_view.GradientAngle);
       OnMadeDirty();
     }
 
     private void EhTextureOffsetXChanged()
     {
-      _doc.TextureOffsetX = _view.TextureOffsetX;
+      _doc = _doc.WithTextureOffsetX(_view.TextureOffsetX);
       OnMadeDirty();
     }
 
     private void EhTextureOffsetYChanged()
     {
-      _doc.TextureOffsetY = _view.TextureOffsetY;
+      _doc = _doc.WithTextureOffsetY(_view.TextureOffsetY);
       OnMadeDirty();
     }
 
@@ -416,7 +416,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (newTexture is Altaxo.Main.ICopyFrom)
         ((Altaxo.Main.ICopyFrom)newTexture).CopyFrom(oldTexture); // Try to keep the settings from the old texture
 
-      _doc.TextureImage = newTexture;
+      _doc = _doc.WithTextureImage(newTexture);
       _imageProxyController.InitializeDocument(_doc.TextureImage);
       if (null != _doc.TextureImage)
         _textureScalingController.SourceTextureSize = GetSizeOfImageProxy(_doc.TextureImage);
@@ -425,14 +425,13 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhAdditionalPropertiesChanged(IMVCANController ctrl)
     {
-      _doc.TextureImage = (ImageProxy)_imageProxyController.ProvisionalModelObject;
-      _doc.InvalidateCachedBrush(); // we have to manully invalidate the brush since the brush is not aware off that only some members of the imageproxy have changed
+      _doc = _doc.WithTextureImage((ImageProxy)_imageProxyController.ProvisionalModelObject);
       OnMadeDirty();
     }
 
     private void EhTextureScalingChanged(IMVCANController ctrl)
     {
-      _doc.TextureScale = (TextureScaling)_textureScalingController.ProvisionalModelObject;
+      _doc = _doc.WithTextureScaling((TextureScaling)_textureScalingController.ProvisionalModelObject);
       OnMadeDirty();
     }
 

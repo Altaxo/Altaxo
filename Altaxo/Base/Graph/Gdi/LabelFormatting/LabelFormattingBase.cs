@@ -26,6 +26,7 @@ using System;
 using System.Drawing;
 using Altaxo.Data;
 using Altaxo.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
@@ -175,7 +176,10 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     public virtual void DrawItem(System.Drawing.Graphics g, BrushX brush, FontX font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
     {
       string text = _prefix + FormatItem(item) + _suffix;
-      g.DrawString(text, GdiFontManager.ToGdi(font), brush, morg, strfmt);
+      using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, RectangleD2D.Empty, g, 1))
+      {
+        g.DrawString(text, GdiFontManager.ToGdi(font), brushGdi, morg, strfmt);
+      }
     }
 
     /// <summary>
@@ -233,9 +237,12 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         }
       }
 
-      public virtual void Draw(Graphics g, BrushX brush, PointF point)
+      public virtual void Draw(Graphics g, BrushXEnv brush, PointF point)
       {
-        g.DrawString(_text, GdiFontManager.ToGdi(_font), brush, point, _strfmt);
+        using (var gdibrush = BrushCacheGdi.Instance.BorrowBrush(brush))
+        {
+          g.DrawString(_text, GdiFontManager.ToGdi(_font), gdibrush, point, _strfmt);
+        }
       }
 
       #endregion IMeasuredLabelItem Members

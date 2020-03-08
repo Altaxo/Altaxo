@@ -481,8 +481,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush)
       {
-        var newBrush = _doc.BackgroundStyle.Brush.Clone();
-        newBrush.Color = _view.LabelBrush.Color;
+        var newBrush = _doc.BackgroundStyle.Brush.WithColor(_view.LabelBrush.Color);
         _doc.BackgroundStyle.Brush = newBrush;
         _view.Background = _doc.BackgroundStyle;
       }
@@ -495,10 +494,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush)
       {
-        var newBrush = _doc.BackgroundStyle.Brush.Clone();
+        var newBrush = _doc.BackgroundStyle.Brush;
         var c = _view.LabelBrush.Color.NewWithAlphaValue(newBrush.Color.Color.A);
         ;
-        newBrush.Color = c;
+        newBrush = newBrush.WithColor(c);
         _doc.BackgroundStyle.Brush = newBrush;
         _view.Background = _doc.BackgroundStyle;
       }
@@ -511,9 +510,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush)
       {
-        var newBrush = _view.LabelBrush.Clone();
-        newBrush.Color = _view.Background.Brush.Color;
-        _view.LabelBrush = newBrush;
+        _view.LabelBrush = _view.LabelBrush.WithColor(_view.Background.Brush.Color);
       }
     }
 

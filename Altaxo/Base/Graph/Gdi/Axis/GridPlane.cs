@@ -65,7 +65,7 @@ namespace Altaxo.Graph.Gdi.Axis
       _planeID = from._planeID;
       GridStyleFirst = from._grid1 == null ? null : (GridStyle)from._grid1.Clone();
       GridStyleSecond = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();
-      Background = from._background == null ? null : from._background.Clone();
+      Background = from._background;
     }
 
     #region Serialization
@@ -125,8 +125,6 @@ namespace Altaxo.Graph.Gdi.Axis
         yield return new Main.DocumentNodeAndName(_grid1, "Grid1");
       if (null != _grid2)
         yield return new Main.DocumentNodeAndName(_grid2, "Grid2");
-      if (null != _background)
-        yield return new Main.DocumentNodeAndName(_background, "Background");
     }
 
     public GridPlane Clone()
@@ -181,8 +179,9 @@ namespace Altaxo.Graph.Gdi.Axis
       get { return _background; }
       set
       {
-        if (ChildSetMember(ref _background, value))
+        if (!(_background == value))
         {
+          _background = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -206,8 +205,10 @@ namespace Altaxo.Graph.Gdi.Axis
       if (_background != null)
       {
         RectangleF innerArea = region.GetBounds(g);
-        _background.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-        g.FillRegion(_background, region);
+        using (var gdiBackgroundBrush = BrushCacheGdi.Instance.BorrowBrush(_background, innerArea, g, 1))
+        {
+          g.FillRegion(gdiBackgroundBrush, region);
+        }
       }
     }
 

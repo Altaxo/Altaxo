@@ -23,11 +23,11 @@
 #endregion Copyright
 
 using System;
-using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -89,10 +89,7 @@ namespace Altaxo.Graph.Gdi
   /// can be made serializable.
   /// </summary>
   [Serializable]
-  public class BrushX
-    :
-    Main.SuspendableDocumentLeafNodeWithEventArgs,
-    System.ICloneable, System.IDisposable, IEquatable<BrushX>
+  public class BrushX : IEquatable<BrushX>, IImmutable
   {
     protected BrushType _brushType; // Type of the brush
     protected NamedColor _foreColor; // Color of the brush
@@ -105,15 +102,6 @@ namespace Altaxo.Graph.Gdi
     protected double _gradientColorScale;
     protected ImageProxy _textureImage; // für Texturebrush
     protected TextureScaling _textureScale = TextureScaling.Default;
-
-    protected RectangleD2D _brushBoundingRectangle;
-
-    [NonSerialized]
-    protected Brush _cachedBrush;      // this is the cached brush object
-
-    /// <summary>Cached effective maximum resolution in dots per inch. Important for repeateable texture brushes only.</summary>
-    [NonSerialized]
-    protected double _cachedEffectiveMaximumResolutionDpi = 96;
 
     #region "Serialization"
 
@@ -160,12 +148,11 @@ namespace Altaxo.Graph.Gdi
             break;
         }
 
-        if (s.ParentObject == null)
-          s.ParentObject = parent as Main.IDocumentNode;
-
         return s;
       }
     }
+
+
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BrushHolder", 1)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushX), 2)]
@@ -267,15 +254,12 @@ namespace Altaxo.Graph.Gdi
             break;
 
           case BrushType.TextureBrush:
-            s.TextureImage = (ImageProxy)info.GetValue("Texture", s);
+            s._textureImage = (ImageProxy)info.GetValue("Texture", s);
             s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
             var scale = info.GetSingle("Scale");
             s._textureScale = new TextureScaling(TextureScalingMode.Source, AspectRatioPreservingMode.PreserveXPriority, scale, scale);
             break;
         }
-
-        if (s.ParentObject == null)
-          s.ParentObject = parent as Main.IDocumentNode;
 
         return s;
       }
@@ -375,15 +359,13 @@ namespace Altaxo.Graph.Gdi
             break;
 
           case BrushType.TextureBrush:
-            s.TextureImage = (ImageProxy)info.GetValue("Texture", s);
+            s._textureImage = (ImageProxy)info.GetValue("Texture", s);
             s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
             var scale = info.GetSingle("Scale");
             s._textureScale = new TextureScaling(TextureScalingMode.Source, AspectRatioPreservingMode.PreserveXPriority, scale, scale);
             break;
         }
 
-        if (s.ParentObject == null)
-          s.ParentObject = parent as Main.IDocumentNode;
 
         return s;
       }
@@ -503,7 +485,7 @@ namespace Altaxo.Graph.Gdi
             s._textureScale = (TextureScaling)info.GetValue("Scale", s);
             s._offsetX = info.GetDouble("OffsetX");
             s._offsetY = info.GetDouble("OffsetY");
-            s.TextureImage = (ImageProxy)info.GetValue("Texture", s);
+            s._textureImage = (ImageProxy)info.GetValue("Texture", s);
             break;
 
           case BrushType.TextureBrush:
@@ -512,12 +494,9 @@ namespace Altaxo.Graph.Gdi
             s._textureScale = (TextureScaling)info.GetValue("Scale", s);
             s._offsetX = info.GetDouble("OffsetX");
             s._offsetY = info.GetDouble("OffsetY");
-            s.TextureImage = (ImageProxy)info.GetValue("Texture", s);
+            s._textureImage = (ImageProxy)info.GetValue("Texture", s);
             break;
         }
-
-        if (s.ParentObject == null)
-          s.ParentObject = parent as Main.IDocumentNode;
 
         return s;
       }
@@ -626,8 +605,7 @@ namespace Altaxo.Graph.Gdi
 
     public override bool Equals(object obj)
     {
-      var other = obj as BrushX;
-      if (null != other)
+      if (obj is BrushX other)
         return Equals(other);
       else
         return false;
@@ -651,9 +629,6 @@ namespace Altaxo.Graph.Gdi
       _gradientColorScale = from._gradientColorScale;
       _textureImage = null == from._textureImage ? null : (ImageProxy)from._textureImage.Clone(); // für Texturebrush
       _textureScale = from._textureScale;
-
-      _brushBoundingRectangle = from._brushBoundingRectangle;
-      _cachedBrush = null;      // this is the cached brush object
     }
 
     public BrushX(NamedColor c)
@@ -662,10 +637,6 @@ namespace Altaxo.Graph.Gdi
       _foreColor = c;
     }
 
-    public static implicit operator System.Drawing.Brush(BrushX bh)
-    {
-      return bh == null ? null : bh.Brush;
-    }
 
     public static ImageProxy DefaultTextureBrush
     {
@@ -694,107 +665,80 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    /// <summary>Invalidates the cached brush.</summary>
-    public void InvalidateCachedBrush()
-    {
-      _SetBrushVariable(null);
-    }
-
     public BrushType BrushType
     {
       get
       {
         return _brushType;
       }
-      set
+    }
+
+    public BrushX WithBrushType(BrushType brushType)
+    {
+      if (_brushType == brushType)
       {
-        BrushType oldValue = _brushType;
-        _brushType = value;
-        if (_brushType != oldValue)
-        {
-          _SetBrushVariable(null);
-          OnBrushTypeChanged(oldValue, value);
-          EhSelfChanged(EventArgs.Empty);
-        }
+        return this;
+      }
+      else
+      {
+        var result = new BrushX(brushType);
+        return result;
       }
     }
 
-    /// <summary>
-    /// Intended to initialize some brush variables to default values if the brush type changed.
-    /// </summary>
-    /// <param name="oldValue">Old brush type.</param>
-    /// <param name="newValue">New brush type.</param>
-    protected virtual void OnBrushTypeChanged(BrushType oldValue, BrushType newValue)
+    public BrushX(BrushType brushType)
     {
-      bool disposeTexture = false;
-      switch (newValue)
+      _brushType = brushType;
+
+      switch (_brushType)
       {
-        case Gdi.BrushType.SolidBrush:
-          disposeTexture = true;
+        case BrushType.SolidBrush:
           break;
-
-        case Gdi.BrushType.LinearGradientBrush:
-          _wrapMode = System.Drawing.Drawing2D.WrapMode.TileFlipXY;
-          disposeTexture = true;
-          break;
-
-        case Gdi.BrushType.TriangularShapeLinearGradientBrush:
-          _wrapMode = System.Drawing.Drawing2D.WrapMode.TileFlipXY;
-          _offsetX = 0.5;
-          _gradientColorScale = 1;
-          disposeTexture = true;
-          break;
-
-        case Gdi.BrushType.SigmaBellShapeLinearGradientBrush:
-          _wrapMode = System.Drawing.Drawing2D.WrapMode.TileFlipXY;
-          _offsetX = 0.5;
-          _gradientColorScale = 1;
-          disposeTexture = true;
-          break;
-
-        case Gdi.BrushType.PathGradientBrush:
-          _wrapMode = System.Drawing.Drawing2D.WrapMode.TileFlipXY;
-          _offsetX = 0.5;
-          _offsetY = 0.5;
-          disposeTexture = true;
-          break;
-
-        case Gdi.BrushType.TriangularShapePathGradientBrush:
-        case Gdi.BrushType.SigmaBellShapePathGradientBrush:
-          _wrapMode = System.Drawing.Drawing2D.WrapMode.TileFlipXY;
-          _offsetX = 0.5;
-          _offsetY = 0.5;
-          _gradientColorScale = 1;
-          disposeTexture = true;
-          break;
-
-        case Gdi.BrushType.HatchBrush:
+        case BrushType.HatchBrush:
           _wrapMode = System.Drawing.Drawing2D.WrapMode.Tile;
           _offsetX = 0;
           _offsetY = 0;
           _textureImage = DefaultHatchBrush;
           break;
-
-        case Gdi.BrushType.SyntheticTextureBrush:
-          _wrapMode = System.Drawing.Drawing2D.WrapMode.Tile;
-          _offsetX = 0;
-          _offsetY = 0;
-          _textureImage = DefaultSyntheticBrush;
-          break;
-
-        case Gdi.BrushType.TextureBrush:
+        case BrushType.TextureBrush:
           _wrapMode = System.Drawing.Drawing2D.WrapMode.Tile;
           _offsetX = 0;
           _offsetY = 0;
           _textureImage = DefaultTextureBrush;
           break;
-      }
-
-      if (disposeTexture)
-      {
-        if (_textureImage is IDisposable)
-          ((IDisposable)_textureImage).Dispose();
-        _textureImage = null;
+        case BrushType.LinearGradientBrush:
+          _wrapMode = System.Drawing.Drawing2D.WrapMode.TileFlipXY;
+          break;
+        case BrushType.PathGradientBrush:
+          _wrapMode = System.Drawing.Drawing2D.WrapMode.TileFlipXY;
+          _offsetX = 0.5;
+          _offsetY = 0.5;
+          break;
+        case BrushType.SigmaBellShapeLinearGradientBrush:
+          _wrapMode = System.Drawing.Drawing2D.WrapMode.TileFlipXY;
+          _offsetX = 0.5;
+          _gradientColorScale = 1;
+          break;
+        case BrushType.TriangularShapeLinearGradientBrush:
+          _wrapMode = System.Drawing.Drawing2D.WrapMode.TileFlipXY;
+          _offsetX = 0.5;
+          _gradientColorScale = 1;
+          break;
+        case BrushType.SigmaBellShapePathGradientBrush:
+        case BrushType.TriangularShapePathGradientBrush:
+          _wrapMode = System.Drawing.Drawing2D.WrapMode.TileFlipXY;
+          _offsetX = 0.5;
+          _offsetY = 0.5;
+          _gradientColorScale = 1;
+          break;
+        case BrushType.SyntheticTextureBrush:
+          _wrapMode = System.Drawing.Drawing2D.WrapMode.Tile;
+          _offsetX = 0;
+          _offsetY = 0;
+          _textureImage = DefaultSyntheticBrush;
+          break;
+        default:
+          break;
       }
     }
 
@@ -823,30 +767,53 @@ namespace Altaxo.Graph.Gdi
     public NamedColor Color
     {
       get { return _foreColor; }
-      set
+    }
+
+    public BrushX WithColor(NamedColor color)
+    {
+      if (!(_foreColor == color))
       {
-        bool bChanged = !_foreColor.Equals(value);
-        _foreColor = value;
-        if (bChanged)
-        {
-          _SetBrushVariable(null);
-          EhSelfChanged(EventArgs.Empty);
-        }
+        var result = (BrushX)this.MemberwiseClone();
+        result._foreColor = color;
+        return result;
+      }
+      else
+      {
+        return this;
+      }
+    }
+
+    public BrushX WithColors(NamedColor foreColor, NamedColor backColor)
+    {
+      if (!(_foreColor == foreColor) || (BrushType != BrushType.SolidBrush) && !(_backColor == backColor))
+      {
+        var result = (BrushX)this.MemberwiseClone();
+        result._foreColor = foreColor;
+        result._backColor = backColor;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
     public NamedColor BackColor
     {
       get { return _backColor; }
-      set
+    }
+
+    public BrushX WithBackColor(NamedColor color)
+    {
+      if (!(_backColor == color))
       {
-        bool bChanged = !_backColor.Equals(value);
-        _backColor = value;
-        if (bChanged)
-        {
-          _SetBrushVariable(null);
-          EhSelfChanged(EventArgs.Empty);
-        }
+        var result = (BrushX)this.MemberwiseClone();
+        result._backColor = color;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -856,15 +823,19 @@ namespace Altaxo.Graph.Gdi
       {
         return _exchangeColors;
       }
-      set
+    }
+
+    public BrushX WithExchangedColors(bool exchangeColors)
+    {
+      if (!(_exchangeColors == exchangeColors))
       {
-        bool oldValue = _exchangeColors;
-        _exchangeColors = value;
-        if (value != oldValue)
-        {
-          _SetBrushVariable(null);
-          EhSelfChanged(EventArgs.Empty);
-        }
+        var result = (BrushX)this.MemberwiseClone();
+        result._exchangeColors = exchangeColors;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -874,17 +845,23 @@ namespace Altaxo.Graph.Gdi
       {
         return _wrapMode;
       }
-      set
+    }
+
+    public BrushX WithWrapMode(WrapMode wrapMode)
+    {
+      if (!(_wrapMode == wrapMode))
       {
-        bool bChanged = (_wrapMode != value);
-        _wrapMode = value;
-        if (bChanged)
-        {
-          _SetBrushVariable(null);
-          EhSelfChanged(EventArgs.Empty);
-        }
+        var result = (BrushX)this.MemberwiseClone();
+        result._wrapMode = _wrapMode;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
+
+
 
     public double GradientAngle
     {
@@ -892,15 +869,19 @@ namespace Altaxo.Graph.Gdi
       {
         return _angle;
       }
-      set
+    }
+
+    public BrushX WithGradientAngle(double angle)
+    {
+      if (!(_angle == angle))
       {
-        bool bChanged = (_angle != value);
-        _angle = value;
-        if (bChanged)
-        {
-          _SetBrushVariable(null);
-          EhSelfChanged(EventArgs.Empty);
-        }
+        var result = (BrushX)this.MemberwiseClone();
+        result._angle = angle;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -910,15 +891,19 @@ namespace Altaxo.Graph.Gdi
       {
         return _offsetX;
       }
-      set
+    }
+
+    public BrushX WithGradientFocus(double gradientFocus)
+    {
+      if (!(_offsetX == gradientFocus))
       {
-        bool bChanged = (_offsetX != value);
-        _offsetX = value;
-        if (bChanged)
-        {
-          _SetBrushVariable(null);
-          EhSelfChanged(EventArgs.Empty);
-        }
+        var result = (BrushX)this.MemberwiseClone();
+        result._offsetX = gradientFocus;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -928,15 +913,20 @@ namespace Altaxo.Graph.Gdi
       {
         return _gradientColorScale;
       }
-      set
+
+    }
+
+    public BrushX WithGradientColorScale(double gradientColorScale)
+    {
+      if (!(_gradientColorScale == gradientColorScale))
       {
-        bool bChanged = (_gradientColorScale != value);
-        _gradientColorScale = value;
-        if (bChanged)
-        {
-          _SetBrushVariable(null);
-          EhSelfChanged(EventArgs.Empty);
-        }
+        var result = (BrushX)this.MemberwiseClone();
+        result._gradientColorScale = gradientColorScale;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -946,15 +936,19 @@ namespace Altaxo.Graph.Gdi
       {
         return _offsetX;
       }
-      set
+    }
+
+    public BrushX WithTextureOffsetX(double offsetX)
+    {
+      if (!(_offsetX == offsetX))
       {
-        bool bChanged = (_offsetX != value);
-        _offsetX = value;
-        if (bChanged)
-        {
-          _SetBrushVariable(null);
-          EhSelfChanged(EventArgs.Empty);
-        }
+        var result = (BrushX)this.MemberwiseClone();
+        result._offsetX = offsetX;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -964,15 +958,19 @@ namespace Altaxo.Graph.Gdi
       {
         return _offsetY;
       }
-      set
+    }
+
+    public BrushX WithTextureOffsetY(double offsetY)
+    {
+      if (!(_offsetY == offsetY))
       {
-        bool bChanged = (_offsetY != value);
-        _offsetY = value;
-        if (bChanged)
-        {
-          _SetBrushVariable(null);
-          EhSelfChanged(EventArgs.Empty);
-        }
+        var result = (BrushX)this.MemberwiseClone();
+        result._offsetY = offsetY;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -982,15 +980,19 @@ namespace Altaxo.Graph.Gdi
       {
         return _textureImage;
       }
-      set
+    }
+
+    public BrushX WithTextureImage(ImageProxy textureImage)
+    {
+      if (!object.ReferenceEquals(_textureImage, textureImage))
       {
-        bool bChanged = !object.ReferenceEquals(_textureImage, value) || (null != value && _textureImage.ContentHash != value.ContentHash);
-        _textureImage = value;
-        if (bChanged)
-        {
-          _SetBrushVariable(null);
-          EhSelfChanged(EventArgs.Empty);
-        }
+        var result = (BrushX)this.MemberwiseClone();
+        result._textureImage = textureImage;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -1000,248 +1002,30 @@ namespace Altaxo.Graph.Gdi
       {
         return _textureScale;
       }
-      set
-      {
-        bool bChanged = _textureScale != value;
-        _textureScale = value;
-        if (bChanged)
-        {
-          _SetBrushVariable(null);
-          EhSelfChanged(EventArgs.Empty);
-        }
-      }
     }
 
-    /// <summary>
-    /// Sets the environment for the creation of native brush.
-    /// </summary>
-    /// <param name="boundingRectangle">Bounding rectangle used for gradient textures.</param>
-    /// <param name="maxEffectiveResolution">Maximum effective resolution in Dpi. This information is neccessary for repeatable texture brushes. You can calculate this using <see cref="M:GetEffectiveMaximumResolution"/></param>
-    /// <returns>True if changes to the brush were made. False otherwise.</returns>
-    public bool SetEnvironment(RectangleD2D boundingRectangle, double maxEffectiveResolution)
+    public BrushX WithTextureScaling(TextureScaling textureScale)
     {
-      return SetEnvironment((RectangleF)boundingRectangle, maxEffectiveResolution);
-    }
-
-    /// <summary>
-    /// Sets the environment for the creation of native brush.
-    /// </summary>
-    /// <param name="boundingRectangle">Bounding rectangle used for gradient textures.</param>
-    /// <param name="maxEffectiveResolution">Maximum effective resolution in Dpi. This information is neccessary for repeatable texture brushes. You can calculate this using <see cref="M:GetEffectiveMaximumResolution"/></param>
-    /// <returns>True if changes to the brush were made. False otherwise.</returns>
-    public bool SetEnvironment(RectangleF boundingRectangle, double maxEffectiveResolution)
-    {
-      bool changed = false;
-
-      // fix: in order that a gradient is shown, the bounding rectangle's width and height must always be positive (this is not the case for instance for pens)
-      if (boundingRectangle.Width < 0)
+      if (!(_textureScale == textureScale))
       {
-        boundingRectangle.X += boundingRectangle.Width;
-        boundingRectangle.Width = -boundingRectangle.Width;
-      }
-      else if (boundingRectangle.Width == 0)
-      {
-        boundingRectangle.Width = 1;
-      }
-
-      if (boundingRectangle.Height < 0)
-      {
-        boundingRectangle.Y += boundingRectangle.Height;
-        boundingRectangle.Height = -boundingRectangle.Height;
-      }
-      else if (boundingRectangle.Height == 0)
-      {
-        boundingRectangle.Height = 1;
-      }
-
-      if (_brushType == BrushType.SolidBrush)
-      {
-        _brushBoundingRectangle = boundingRectangle; // has no meaning for solid brushes, so we set it but dont care
+        var result = (BrushX)this.MemberwiseClone();
+        result._textureScale = textureScale;
+        return result;
       }
       else
       {
-        changed = (_brushBoundingRectangle != boundingRectangle); // for all other brushes it has a meaning, thus we will invalidate the brush if the rectangle changed
-        _brushBoundingRectangle = boundingRectangle;
+        return this;
       }
-
-      if (_textureImage is ISyntheticRepeatableTexture)
-      {
-        if (maxEffectiveResolution != _cachedEffectiveMaximumResolutionDpi)
-          changed = true;
-      }
-
-      _cachedEffectiveMaximumResolutionDpi = maxEffectiveResolution;
-
-      if (changed)
-      {
-        // we consider this set of the environment not as a change of the brush properties itself
-        // thus we invalidate the cached brush, but we don't fire the Changed event
-        _SetBrushVariable(null);
-      }
-
-      return changed;
     }
 
-    public static double GetEffectiveMaximumResolution(Graphics g)
-    {
-      return GetEffectiveMaximumResolution(g, 1);
-    }
 
-    public static double GetEffectiveMaximumResolution(Graphics g, double objectScale)
-    {
-      double maxDpi = Math.Max(g.DpiX, g.DpiY) * g.PageScale;
-      var e = g.Transform.Elements;
-      var scaleX = e[0] * e[0] + e[1] * e[1];
-      var scaleY = (e[0] * e[3] - e[1] * e[2]) / Math.Sqrt(scaleX);
-      maxDpi *= Math.Max(scaleX, scaleY);
-      maxDpi *= objectScale;
-      return maxDpi;
-    }
 
-    private Bitmap GetDefaultTextureBitmap()
-    {
-      var result = new Bitmap(3, 3, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-      result.SetPixel(1, 1, System.Drawing.Color.Black);
-      return result;
-    }
 
-    private static System.Drawing.Color ToGdi(NamedColor color)
-    {
-      var c = color.Color;
-      return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
-    }
 
-    public Brush Brush
-    {
-      get
-      {
-        if (_cachedBrush == null)
-        {
-          Brush br = null;
-          switch (_brushType)
-          {
-            case BrushType.SolidBrush:
-              br = new SolidBrush(ToGdi(_foreColor));
-              break;
 
-            case BrushType.LinearGradientBrush:
-            case BrushType.TriangularShapeLinearGradientBrush:
-            case BrushType.SigmaBellShapeLinearGradientBrush:
-              if (_brushBoundingRectangle.IsEmpty)
-                _brushBoundingRectangle = new RectangleF(0, 0, 1000, 1000);
-              LinearGradientBrush lgb;
-              br = lgb = new LinearGradientBrush((RectangleF)_brushBoundingRectangle, GetColor1(), GetColor2(), (float)-_angle);
-              if (_wrapMode != WrapMode.Clamp)
-                lgb.WrapMode = _wrapMode;
-              if (_brushType == Gdi.BrushType.TriangularShapeLinearGradientBrush)
-                lgb.SetBlendTriangularShape((float)_offsetX, (float)_gradientColorScale);
-              else if (_brushType == Gdi.BrushType.SigmaBellShapeLinearGradientBrush)
-                lgb.SetSigmaBellShape((float)_offsetX, (float)_gradientColorScale);
-              break;
 
-            case BrushType.PathGradientBrush:
-            case BrushType.TriangularShapePathGradientBrush:
-            case Gdi.BrushType.SigmaBellShapePathGradientBrush:
-              {
-                var p = new GraphicsPath();
-                if (_brushBoundingRectangle.IsEmpty)
-                  _brushBoundingRectangle = new RectangleD2D(0, 0, 1000, 1000);
-                var outerRectangle = _brushBoundingRectangle.OuterCircleBoundingBox;
-                p.AddEllipse((RectangleF)outerRectangle);
-                var pgb = new PathGradientBrush(p);
-                if (_exchangeColors)
-                {
-                  pgb.SurroundColors = new Color[] { ToGdi(_backColor) };
-                  pgb.CenterColor = ToGdi(_foreColor);
-                }
-                else
-                {
-                  pgb.SurroundColors = new Color[] { ToGdi(_foreColor) };
-                  pgb.CenterColor = ToGdi(_backColor);
-                }
-                pgb.WrapMode = _wrapMode;
-                if (_brushType == Gdi.BrushType.TriangularShapePathGradientBrush)
-                  pgb.SetBlendTriangularShape(1, (float)_gradientColorScale);
-                if (_brushType == Gdi.BrushType.SigmaBellShapePathGradientBrush)
-                  pgb.SetSigmaBellShape(1, (float)_gradientColorScale);
-                pgb.CenterPoint = (PointF)(outerRectangle.Location + new PointD2D(outerRectangle.Width * _offsetX, outerRectangle.Height * _offsetY));
-                br = pgb;
-              }
-              break;
 
-            case BrushType.HatchBrush:
-            case BrushType.SyntheticTextureBrush:
-            case BrushType.TextureBrush:
-              if (_brushBoundingRectangle.IsEmpty)
-                _brushBoundingRectangle = new RectangleD2D(0, 0, 1000, 1000);
 
-              Image img = null;
-              PointD2D finalSize = PointD2D.Empty;
-              PointD2D sourceSize = PointD2D.Empty;
-              double blowFactor;
-
-              if (_textureImage is IHatchBrushTexture)
-              {
-                sourceSize = (_textureImage as IHatchBrushTexture).Size;
-                finalSize = _textureScale.GetResultingSize(sourceSize, _brushBoundingRectangle.Size);
-                blowFactor = Math.Max(Math.Abs(finalSize.X / sourceSize.X), Math.Abs(finalSize.Y / sourceSize.Y));
-                img = (_textureImage as IHatchBrushTexture).GetImage(_cachedEffectiveMaximumResolutionDpi * blowFactor, _exchangeColors ? _backColor : _foreColor, _exchangeColors ? _foreColor : _backColor);
-              }
-              else if (_textureImage is ISyntheticRepeatableTexture)
-              {
-                sourceSize = (_textureImage as IHatchBrushTexture).Size;
-                finalSize = _textureScale.GetResultingSize(sourceSize, _brushBoundingRectangle.Size);
-                blowFactor = Math.Max(Math.Abs(finalSize.X / sourceSize.X), Math.Abs(finalSize.Y / sourceSize.Y));
-                img = (_textureImage as ISyntheticRepeatableTexture).GetImage(_cachedEffectiveMaximumResolutionDpi * blowFactor);
-              }
-              else if (_textureImage != null)
-              {
-                img = _textureImage.GetImage();
-                sourceSize = new PointD2D(img.Width * 72.0 / img.HorizontalResolution, img.Height * 72.0 / img.VerticalResolution);
-                finalSize = _textureScale.GetResultingSize(sourceSize, _brushBoundingRectangle.Size);
-              }
-
-              if (img == null)
-              {
-                img = GetDefaultTextureBitmap();
-                sourceSize = new PointD2D(img.Width * 72.0 / img.HorizontalResolution, img.Height * 72.0 / img.VerticalResolution);
-                finalSize = _textureScale.GetResultingSize(sourceSize, _brushBoundingRectangle.Size);
-              }
-              var tb = new TextureBrush(img)
-              {
-                WrapMode = _wrapMode
-              };
-
-              double xscale = finalSize.X / img.Width;
-              double yscale = finalSize.Y / img.Height;
-
-              if (0 != _offsetX || 0 != _offsetY)
-                tb.TranslateTransform((float)(-finalSize.X * _offsetX), (float)(-finalSize.Y * _offsetY));
-
-              if (0 != _angle)
-                tb.RotateTransform((float)(-_angle));
-
-              if (xscale != 1 || yscale != 1)
-                tb.ScaleTransform((float)xscale, (float)yscale);
-
-              br = tb;
-              break;
-          } // end of switch
-          _SetBrushVariable(br);
-        }
-        return _cachedBrush;
-      } // end of get
-    } // end of prop. Brush
-
-    private Color GetColor1()
-    {
-      return _exchangeColors ? ToGdi(_backColor) : ToGdi(_foreColor);
-    }
-
-    private Color GetColor2()
-    {
-      return _exchangeColors ? ToGdi(_foreColor) : ToGdi(_backColor);
-    }
 
     public static bool AreEqual(BrushX b1, BrushX b2)
     {
@@ -1307,42 +1091,7 @@ namespace Altaxo.Graph.Gdi
       return true;
     }
 
-    public void SetSolidBrush(NamedColor c)
-    {
-      _brushType = BrushType.SolidBrush;
-      _foreColor = c;
-      _SetBrushVariable(null);
-      EhSelfChanged(EventArgs.Empty);
-    }
 
-    protected void _SetBrushVariable(Brush br)
-    {
-      if (null != _cachedBrush)
-        _cachedBrush.Dispose();
-
-      _cachedBrush = br;
-    }
-
-    object ICloneable.Clone()
-    {
-      return new BrushX(this);
-    }
-
-    public BrushX Clone()
-    {
-      return new BrushX(this);
-    }
-
-    protected override void Dispose(bool isDisposing)
-    {
-      if (null != _cachedBrush)
-      {
-        _cachedBrush.Dispose();
-        _cachedBrush = null;
-      }
-
-      base.Dispose(isDisposing);
-    }
 
     #region static members
 
@@ -1463,5 +1212,8 @@ namespace Altaxo.Graph.Gdi
     }
 
     #endregion Helpers
-  } // end of class BrushHolder
+
+  } // end of class BrushX
+
+
 } // end of namespace

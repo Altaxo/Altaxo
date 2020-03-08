@@ -100,11 +100,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       var boundsF = (RectangleF)bounds;
       if (Brush.IsVisible)
       {
-        Brush.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
-        g.FillEllipse(Brush, boundsF);
+        using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(Brush, Bounds, g, Math.Max(ScaleX, ScaleY)))
+        {
+          g.FillEllipse(brushGdi, boundsF);
+        }
       }
 
-      Pen.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
+      Pen.SetEnvironment(boundsF, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
       g.DrawEllipse(Pen, boundsF);
       g.Restore(gs);
     }

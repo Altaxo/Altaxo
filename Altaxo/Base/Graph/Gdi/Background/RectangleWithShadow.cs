@@ -64,7 +64,7 @@ namespace Altaxo.Graph.Gdi.Background
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
-        s.Brush = new BrushX((NamedColor)info.GetValue("Color", s)) { ParentObject = s };
+        s.Brush = new BrushX((NamedColor)info.GetValue("Color", s));
         s._shadowLength = info.GetDouble();
 
         return s;
@@ -96,7 +96,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public RectangleWithShadow()
     {
-      _brush = new BrushX(NamedColors.White) { ParentObject = this };
+      _brush = new BrushX(NamedColors.White);
     }
 
     public RectangleWithShadow(NamedColor c)
@@ -119,11 +119,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _brush)
-        yield return new Main.DocumentNodeAndName(_brush, "Brush");
-
-      if (null != _cachedShadowBrush)
-        yield return new Main.DocumentNodeAndName(_cachedShadowBrush, "CachedShadowBrush");
+      yield break;
     }
 
     public object Clone()
@@ -156,9 +152,7 @@ namespace Altaxo.Graph.Gdi.Background
 
         case BrushType.LinearGradientBrush:
         case BrushType.PathGradientBrush:
-          cachedShadowBrush = mainBrush.Clone();
-          cachedShadowBrush.Color = NamedColor.FromArgb(mainBrush.Color.Color.A, 0, 0, 0);
-          cachedShadowBrush.BackColor = NamedColor.FromArgb(mainBrush.BackColor.Color.A, 0, 0, 0);
+          cachedShadowBrush = mainBrush.WithColors(NamedColor.FromArgb(mainBrush.Color.Color.A, 0, 0, 0), NamedColor.FromArgb(mainBrush.BackColor.Color.A, 0, 0, 0));
           break;
       }
       return cachedShadowBrush;
@@ -187,7 +181,6 @@ namespace Altaxo.Graph.Gdi.Background
         if (null == _cachedShadowBrush)
         {
           _cachedShadowBrush = GetShadowBrush(brush);
-          _cachedShadowBrush.ParentObject = this;
         }
         shadowBrush = _cachedShadowBrush;
       }
@@ -201,18 +194,22 @@ namespace Altaxo.Graph.Gdi.Background
       // please note: m_Bounds is already extended to the shadow
 
       // first the shadow
-      shadowBrush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-
-      // shortCuts to floats
       var iArea = (RectangleF)innerArea;
-      float shadowLength = (float)_shadowLength;
-      g.TranslateTransform(shadowLength, shadowLength);
-      g.FillRectangle(shadowBrush, iArea);
-      g.TranslateTransform(-shadowLength, -shadowLength);
+      using (var gdiShadowBrush = BrushCacheGdi.Instance.BorrowBrush(shadowBrush, innerArea, g, 1))
+      {
+        // shortCuts to floats
+        float shadowLength = (float)_shadowLength;
+        g.TranslateTransform(shadowLength, shadowLength);
+        g.FillRectangle(gdiShadowBrush, iArea);
+        g.TranslateTransform(-shadowLength, -shadowLength);
+      }
 
-      brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-      g.FillRectangle(brush, iArea);
-      g.DrawRectangle(Pens.Black, iArea.Left, iArea.Top, iArea.Width, iArea.Height);
+
+      using (var gdiBrush = BrushCacheGdi.Instance.BorrowBrush(brush, innerArea, g, 1))
+      {
+        g.FillRectangle(gdiBrush, iArea);
+        g.DrawRectangle(Pens.Black, iArea.Left, iArea.Top, iArea.Width, iArea.Height);
+      }
     }
 
     public bool SupportsBrush
@@ -231,9 +228,12 @@ namespace Altaxo.Graph.Gdi.Background
       }
       set
       {
-        _brush = value == null ? null : value.Clone();
-        _brush.ParentObject = this;
-        ResetCachedBrushes();
+        if (!(_brush == value))
+        {
+          _brush = value;
+          ResetCachedBrushes();
+          EhSelfChanged();
+        }
       }
     }
 

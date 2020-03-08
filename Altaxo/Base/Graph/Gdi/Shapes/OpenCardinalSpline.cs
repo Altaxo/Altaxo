@@ -284,12 +284,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       var bounds = Bounds;
       var path = InternalGetPath(bounds.LeftTop);
 
-      Pen.SetEnvironment((RectangleF)bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
+      Pen.SetEnvironment((RectangleF)bounds, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
       g.DrawPath(Pen, path);
       if (_outlinePen != null && _outlinePen.IsVisible)
       {
         path.Widen(Pen);
-        OutlinePen.SetEnvironment((RectangleF)bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
+        OutlinePen.SetEnvironment((RectangleF)bounds, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
         g.DrawPath(OutlinePen, path);
       }
 

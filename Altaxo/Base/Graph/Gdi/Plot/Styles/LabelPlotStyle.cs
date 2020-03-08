@@ -617,7 +617,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _fontSizeFactor = from._fontSizeFactor;
 
         _font = from._font;
-        ChildCopyToMember(ref _brush, from._brush);
+        _brush = from._brush;
         _independentColor = from._independentColor;
 
         _alignmentX = from._alignmentX;
@@ -695,7 +695,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       var color = GraphDocument.GetDefaultPlotColor(context);
       _independentColor = false;
-      _brush = new BrushX(color) { ParentObject = this };
+      _brush = new BrushX(color);
       _backgroundColorLinkage = ColorLinkage.Independent;
       LabelColumnProxy = Altaxo.Data.ReadableColumnProxyBase.FromColumn(labelColumn);
 
@@ -704,9 +704,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _brush)
-        yield return new Main.DocumentNodeAndName(_brush, "Brush");
-
       if (null != _backgroundStyle)
         yield return new Main.DocumentNodeAndName(_backgroundStyle, "Background");
 
@@ -906,8 +903,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
       set
       {
-        if (ChildSetMember(ref _brush, value))
+        if (!(_brush == value))
+        {
+          _brush = value;
           EhSelfChanged(EventArgs.Empty);
+        }
       }
     }
 
@@ -1246,9 +1246,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       BrushX clonedTextBrush = null;
       BrushX clonedBackBrush = null;
       if (isUsingVariableColorForLabelText)
-        clonedTextBrush = _brush.Clone();
+        clonedTextBrush = _brush;
       if (isUsingVariableColorForLabelBackground)
-        clonedBackBrush = _backgroundStyle.Brush.Clone();
+        clonedBackBrush = _backgroundStyle.Brush;
 
       // save the graphics stat since we have to translate the origin
       var gs = g.Save();
@@ -1304,14 +1304,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
           if (isUsingVariableColorForLabelText)
           {
-            clonedTextBrush.Color = new NamedColor(AxoColor.FromArgb(c.A, c.R, c.G, c.B), "e");
+            clonedTextBrush = clonedTextBrush.WithColor(new NamedColor(AxoColor.FromArgb(c.A, c.R, c.G, c.B), "e"));
           }
           if (isUsingVariableColorForLabelBackground)
           {
             if (_backgroundColorLinkage == ColorLinkage.PreserveAlpha)
-              clonedBackBrush.Color = new NamedColor(AxoColor.FromArgb(clonedBackBrush.Color.Color.A, c.R, c.G, c.B), "e");
+              clonedBackBrush = clonedBackBrush.WithColor(new NamedColor(AxoColor.FromArgb(clonedBackBrush.Color.Color.A, c.R, c.G, c.B), "e"));
             else
-              clonedBackBrush.Color = new NamedColor(AxoColor.FromArgb(c.A, c.R, c.G, c.B), "e");
+              clonedBackBrush = clonedBackBrush.WithColor(new NamedColor(AxoColor.FromArgb(c.A, c.R, c.G, c.B), "e"));
           }
         }
         // end of preparation of brushes for variable colors
@@ -1408,9 +1408,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
       }
 
-      var brush = null != variableTextBrush ? variableTextBrush : _brush;
-      brush.SetEnvironment(new RectangleF(new PointF((float)xpos, (float)ypos), stringsize), BrushX.GetEffectiveMaximumResolution(g, 1));
-      g.DrawString(label, gdiFont, brush, (float)xpos, (float)ypos, _cachedStringFormat);
+      var brush = variableTextBrush ?? _brush;
+      using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, new RectangleD2D(new PointD2D(xpos, ypos), stringsize), g, 1))
+      {
+        g.DrawString(label, gdiFont, brushGdi, (float)xpos, (float)ypos, _cachedStringFormat);
+      }
     }
 
     public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
@@ -1545,17 +1547,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         // try to get a constant color ...
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-        { LabelBrush.Color = c; });
+        { LabelBrush = LabelBrush.WithColor(c); });
       }
 
       if (IsBackgroundColorReceiver)
       {
         if (_backgroundColorLinkage == ColorLinkage.Dependent)
           ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-          { _backgroundStyle.Brush.Color = c; });
+          { _backgroundStyle.Brush = _backgroundStyle.Brush.WithColor(c); });
         else if (_backgroundColorLinkage == ColorLinkage.PreserveAlpha)
           ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-          { _backgroundStyle.Brush.Color = c.NewWithAlphaValue(_backgroundStyle.Brush.Color.Color.A); });
+          { _backgroundStyle.Brush = _backgroundStyle.Brush.WithColor(c.NewWithAlphaValue(_backgroundStyle.Brush.Color.Color.A)); });
       }
 
       if (IsColorReceiver || IsBackgroundColorReceiver)

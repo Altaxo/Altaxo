@@ -72,6 +72,9 @@ namespace Altaxo.Graph.Gdi
     [NonSerialized()]
     private Pen _cachedPen; // the cached pen object
 
+    private RectangleD2D _env_BoundingRectangle;
+    private double _env_MaximumEffectiveResolution_dpi;
+
     #region "ConfiguredProperties"
 
     [Serializable]
@@ -278,7 +281,7 @@ if (0 != (cp & PenHolder.Configured.Width))
         if (0 != (cp & PenX.Configured.Brush))
           s._brush = (BrushX)info.GetValue("Brush", s);
         else
-          s._brush = new BrushX(NamedColors.Black) { ParentObject = s };
+          s._brush = new BrushX(NamedColors.Black);
 
         if (0 != (cp & PenX.Configured.Color))
           s._color = (NamedColor)info.GetValue("Color", s);
@@ -432,7 +435,7 @@ if (0 != (cp & PenX.Configured.Width))
         else
           s._brush = new BrushX(NamedColors.Black);
 
-        s._brush.ParentObject = s;
+
 
         if (0 != (cp & PenX.Configured.Color))
           s._color = (NamedColor)info.GetValue("Color", s);
@@ -590,7 +593,7 @@ if (0 != (cp & PenX.Configured.Width))
         else
           s._brush = new BrushX(NamedColors.Black);
 
-        s._brush.ParentObject = s;
+
 
         if (0 != (cp & PenX.Configured.Color))
           s._color = (NamedColor)info.GetValue("Color", s);
@@ -751,7 +754,7 @@ if (0 != (cp & PenX.Configured.Width))
         else
           s._brush = new BrushX(NamedColors.Black);
 
-        s._brush.ParentObject = s;
+
 
         if (0 != (cp & PenX.Configured.Color))
           s._color = (NamedColor)info.GetValue("Color", s);
@@ -1023,7 +1026,11 @@ protected void _SetPropertiesFromPen(Pen pen)
       if (0 != (cp & PenX.Configured.Color))
         pen.Color = ToGdi(_color);
       if (0 != (cp & PenX.Configured.Brush))
-        pen.Brush = _brush;
+      {
+        var brushGdi = BrushCacheGdi.Instance.BorrowBrush(_brush, _env_BoundingRectangle, _env_MaximumEffectiveResolution_dpi);
+        pen.Brush = brushGdi;
+        brushGdi.DoNotReturnToCache();
+      }
 
       if (0 != (cp & PenX.Configured.CompoundArray))
         pen.CompoundArray = _compoundArray;
@@ -1176,13 +1183,7 @@ protected void _SetPropertiesFromPen(Pen pen)
 
     private void _SetBrushVariable(BrushX bh)
     {
-      if (null != _brush)
-        _brush.Dispose();
-
       _brush = bh;
-
-      if (null != _brush)
-        _brush.ParentObject = this;
     }
 
     public PenType PenType
@@ -1309,7 +1310,7 @@ protected void _SetPropertiesFromPen(Pen pen)
         if (bChanged)
         {
           if (null != _brush)
-            _brush.Color = value;
+            _brush = _brush.WithColor(value);
           else
             _SetProp(Configured.Color, NamedColors.Black != value);
 
@@ -1639,8 +1640,7 @@ protected void _SetPropertiesFromPen(Pen pen)
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _brush)
-        yield return new Main.DocumentNodeAndName(_brush, "Brush");
+      yield break;
     }
 
     #endregion Document node functions
@@ -1656,11 +1656,22 @@ protected void _SetPropertiesFromPen(Pen pen)
       bool changed = false;
       if (_brush != null)
       {
-        changed |= _brush.SetEnvironment(boundingRectangle, maxEffectiveResolution);
+        var former = new BrushXEnv(_brush, _env_BoundingRectangle, _env_MaximumEffectiveResolution_dpi);
+        var next = new BrushXEnv(_brush, boundingRectangle, maxEffectiveResolution);
+        _env_BoundingRectangle = boundingRectangle;
+        _env_MaximumEffectiveResolution_dpi = maxEffectiveResolution;
+        changed |= (former.BrushBoundingRectangle != next.BrushBoundingRectangle);
+        changed |= (former.EffectiveMaximumResolutionDpi != next.EffectiveMaximumResolutionDpi);
+
+        if (changed && null != _cachedPen)
+        {
+          var brushGdi = BrushCacheGdi.Instance.BorrowBrush(next);
+          _cachedPen.Brush = brushGdi;
+          brushGdi.DoNotReturnToCache();
+        }
       }
 
-      if (changed && null != _cachedPen)
-        _cachedPen.Brush = _brush.Brush;
+
 
       return changed;
     }
@@ -1676,11 +1687,20 @@ protected void _SetPropertiesFromPen(Pen pen)
       bool changed = false;
       if (_brush != null)
       {
-        changed |= _brush.SetEnvironment(boundingRectangle, maxEffectiveResolution);
-      }
+        var former = new BrushXEnv(_brush, _env_BoundingRectangle, _env_MaximumEffectiveResolution_dpi);
+        var next = new BrushXEnv(_brush, boundingRectangle, maxEffectiveResolution);
+        _env_BoundingRectangle = boundingRectangle;
+        _env_MaximumEffectiveResolution_dpi = maxEffectiveResolution;
+        changed |= (former.BrushBoundingRectangle != next.BrushBoundingRectangle);
+        changed |= (former.EffectiveMaximumResolutionDpi != next.EffectiveMaximumResolutionDpi);
 
-      if (changed && null != _cachedPen)
-        _cachedPen.Brush = _brush.Brush;
+        if (changed && null != _cachedPen)
+        {
+          var brushGdi = BrushCacheGdi.Instance.BorrowBrush(next);
+          _cachedPen.Brush = brushGdi;
+          brushGdi.DoNotReturnToCache();
+        }
+      }
 
       return changed;
     }

@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Common.Drawing
 
   [UserControllerForObject(typeof(BrushX))]
   [ExpectedTypeOfView(typeof(IBrushViewSimple))]
-  public class BrushControllerSimple : MVCANControllerEditOriginalDocBase<BrushX, IBrushViewSimple>
+  public class BrushControllerSimple : MVCANControllerEditImmutableDocBase<BrushX, IBrushViewSimple>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {

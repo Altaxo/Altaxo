@@ -111,9 +111,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public FontX FontId { get; set; }
 
-      public Brush brush;
+      public BrushX brush;
 
-      public StyleContext(FontX font, Brush brush)
+      public StyleContext(FontX font, BrushX brush)
       {
         FontId = font;
         this.brush = brush;
@@ -474,7 +474,11 @@ namespace Altaxo.Graph.Gdi.Shapes
           FontInfo fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
           var gdiFont = GdiFontManager.ToGdi(Style.FontId);
           double psize = g.MeasureString(".", gdiFont, PointF.Empty, StringFormat).Width;
-          g.DrawString(".", gdiFont, Style.brush, (float)(xbase + _child.Width / 2 - psize / 2), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), StringFormat);
+          using (var styleBrushGdi = BrushCacheGdi.Instance.BorrowBrush(Style.brush, new RectangleD2D(xbase + _child.Width / 2 - psize / 2, ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent, Width, ExtendAboveBaseline + ExtendBelowBaseline), g, 1))
+          {
+
+            g.DrawString(".", gdiFont, styleBrushGdi, (float)(xbase + _child.Width / 2 - psize / 2), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), StringFormat);
+          }
         }
       }
     }
@@ -501,7 +505,10 @@ namespace Altaxo.Graph.Gdi.Shapes
         {
           _child.Draw(g, dc, xbase, ybase);
           FontInfo fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-          g.DrawString("_", GdiFontManager.ToGdi(Style.FontId), Style.brush, (float)(xbase), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), StringFormat);
+          using (var styleBrushGdi = BrushCacheGdi.Instance.BorrowBrush(Style.brush, new RectangleD2D(xbase, ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent, Width, ExtendAboveBaseline + ExtendBelowBaseline), g, 1))
+          {
+            g.DrawString("_", GdiFontManager.ToGdi(Style.FontId), styleBrushGdi, (float)(xbase), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), StringFormat);
+          }
         }
       }
     }
@@ -611,7 +618,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       public override void Draw(Graphics g, DrawContext dc, double xbase, double ybase)
       {
         var fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-        g.DrawString(_text, GdiFontManager.ToGdi(Style.FontId), Style.brush, (float)xbase, (float)(ybase - fontInfo.cyAscent), _stringFormat);
+        using (var styleBrushGdi = BrushCacheGdi.Instance.BorrowBrush(Style.brush, new RectangleD2D(0, 0, Width, ExtendAboveBaseline + ExtendBelowBaseline), g, 1))
+        {
+          g.DrawString(_text, GdiFontManager.ToGdi(Style.FontId), styleBrushGdi, (float)xbase, (float)(ybase - fontInfo.cyAscent), _stringFormat);
+        }
       }
 
       public override string ToString()

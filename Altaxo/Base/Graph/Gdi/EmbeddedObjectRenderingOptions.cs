@@ -153,7 +153,7 @@ namespace Altaxo.Graph.Gdi
         _renderWindowsMetafile = from._renderWindowsMetafile; // has to be rendered as Metafile with included bitmap
         _renderBitmap = from._renderBitmap; // rendered as bitmap plus DIB bitmap
         _backgroundColorForFormatsWithoutAlphaChannel = from._backgroundColorForFormatsWithoutAlphaChannel;
-        _backgroundBrush = null == from._backgroundBrush ? null : from._backgroundBrush.Clone();
+        _backgroundBrush = from._backgroundBrush;
 
         return true;
       }
@@ -179,8 +179,7 @@ namespace Altaxo.Graph.Gdi
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _backgroundBrush)
-        yield return new Main.DocumentNodeAndName(_backgroundBrush, "BackgroundBrush");
+      yield break;
     }
 
     #endregion Construction
@@ -242,8 +241,11 @@ namespace Altaxo.Graph.Gdi
       }
       set
       {
-        if (ChildSetMember(ref _backgroundBrush, value))
+        if (!(_backgroundBrush == value))
+        {
+          _backgroundBrush = value;
           EhSelfChanged(EventArgs.Empty);
+        }
       }
     }
 

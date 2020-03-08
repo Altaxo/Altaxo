@@ -755,7 +755,8 @@ namespace Altaxo.Gui.Common.Drawing
       {
         var fullRect = _previewBitmap.GdiRectangle;
         grfx.FillRectangle(System.Drawing.Brushes.White, fullRect);
-        _pen.BrushHolder.SetEnvironment(fullRect, BrushX.GetEffectiveMaximumResolution(grfx));
+
+        _pen.SetEnvironment(fullRect, BrushCacheGdi.GetEffectiveMaximumResolution(grfx));
         grfx.DrawLine(_pen, fullRect.Width / 6, fullRect.Height / 2, (fullRect.Width * 5) / 6, fullRect.Height / 2);
 
         _previewBitmap.EndGdiPainting();

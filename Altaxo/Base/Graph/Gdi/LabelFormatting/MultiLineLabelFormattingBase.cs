@@ -193,7 +193,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         }
       }
 
-      public virtual void Draw(Graphics g, BrushX brush, PointF point)
+      public virtual void Draw(Graphics g, BrushXEnv brush, PointF point)
       {
         var positionX = point.X + GetHorizontalOffset();
         var positionY = point.Y + GetVerticalOffset();
@@ -212,7 +212,11 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
               break;
           }
 
-          g.DrawString(_text[i], GdiFontManager.ToGdi(_font), brush, new PointF((float)posX, (float)positionY), _strfmt);
+          using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush))
+          {
+            g.DrawString(_text[i], GdiFontManager.ToGdi(_font), brushGdi, new PointF((float)posX, (float)positionY), _strfmt);
+          }
+
           positionY += _stringSize[i].Y * _lineSpacing;
         }
       }

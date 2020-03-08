@@ -196,22 +196,25 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
       var gdiFont = GdiFontManager.ToGdi(font);
       SizeF size1 = g.MeasureString(_prefix + firstpart + middelpart, gdiFont, morg, strfmt);
-      g.DrawString(_prefix + firstpart + middelpart, gdiFont, brush, morg, strfmt);
-      var orginalY = morg.Y;
-      morg.X += size1.Width;
-      morg.Y += size1.Height / 3;
-      FontX font2 = font.WithSize(font.Size * 2 / 3.0);
-      var gdiFont2 = GdiFontManager.ToGdi(font2);
-      g.DrawString(exponent, gdiFont2, brush, morg);
-      if (!string.IsNullOrEmpty(_suffix))
+      using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, new Geometry.RectangleD2D(0, 0, size1.Width, size1.Height), g, 1))
       {
-        morg.X += g.MeasureString(exponent, gdiFont2, morg, strfmt).Width;
-        morg.Y = orginalY;
-      }
+        g.DrawString(_prefix + firstpart + middelpart, gdiFont, brushGdi, morg, strfmt);
+        var orginalY = morg.Y;
+        morg.X += size1.Width;
+        morg.Y += size1.Height / 3;
+        FontX font2 = font.WithSize(font.Size * 2 / 3.0);
+        var gdiFont2 = GdiFontManager.ToGdi(font2);
+        g.DrawString(exponent, gdiFont2, brushGdi, morg);
+        if (!string.IsNullOrEmpty(_suffix))
+        {
+          morg.X += g.MeasureString(exponent, gdiFont2, morg, strfmt).Width;
+          morg.Y = orginalY;
+        }
 
-      if (!string.IsNullOrEmpty(_suffix))
-      {
-        g.DrawString(_suffix, gdiFont, brush, morg, strfmt);
+        if (!string.IsNullOrEmpty(_suffix))
+        {
+          g.DrawString(_suffix, gdiFont, brushGdi, morg, strfmt);
+        }
       }
     }
 
@@ -313,17 +316,20 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         }
       }
 
-      public virtual void Draw(Graphics g, BrushX brush, PointF point)
+      public virtual void Draw(Graphics g, BrushXEnv brush, PointF point)
       {
-        g.DrawString(_firstpart, GdiFontManager.ToGdi(_font1), brush, point, _strfmt);
+        using (var gdibrush = BrushCacheGdi.Instance.BorrowBrush(brush))
+        {
+          g.DrawString(_firstpart, GdiFontManager.ToGdi(_font1), gdibrush, point, _strfmt);
 
-        point.X += _size1.Width;
-        point.Y += 0;
+          point.X += _size1.Width;
+          point.Y += 0;
 
-        g.DrawString(_exponent, GdiFontManager.ToGdi(_font2), brush, point, _strfmt);
+          g.DrawString(_exponent, GdiFontManager.ToGdi(_font2), gdibrush, point, _strfmt);
 
-        point.X += _size2.Width;
-        g.DrawString(_lastpart, GdiFontManager.ToGdi(_font1), brush, point, _strfmt);
+          point.X += _size2.Width;
+          g.DrawString(_lastpart, GdiFontManager.ToGdi(_font1), gdibrush, point, _strfmt);
+        }
       }
 
       #endregion IMeasuredLabelItem Members

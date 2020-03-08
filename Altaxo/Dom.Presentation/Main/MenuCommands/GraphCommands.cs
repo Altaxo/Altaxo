@@ -163,8 +163,8 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(GraphController ctrl)
     {
-      using (var brush = new BrushX(NamedColors.White))
-        ctrl.Doc.CopyToClipboardAsBitmap(150, brush, PixelFormat.Format24bppRgb);
+      var brush = new BrushX(NamedColors.White);
+      ctrl.Doc.CopyToClipboardAsBitmap(150, brush, PixelFormat.Format24bppRgb);
     }
   }
 
@@ -188,8 +188,8 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(GraphController ctrl)
     {
-      using (var brush = new BrushX(NamedColors.White))
-        ctrl.Doc.CopyToClipboardAsBitmap(300, brush, PixelFormat.Format24bppRgb);
+      var brush = new BrushX(NamedColors.White);
+      ctrl.Doc.CopyToClipboardAsBitmap(300, brush, PixelFormat.Format24bppRgb);
     }
   }
 

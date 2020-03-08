@@ -356,8 +356,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private void InternalSetFillColorToFrameColor()
     {
-      var newBrush = _view.FillBrush.Clone();
-      newBrush.Color = _view.FramePen.Color;
+      var newBrush = _view.FillBrush.WithColor(_view.FramePen.Color);
 
       // Change fill brush without notification
       _view.FillBrushChanged -= EhFillBrushChanged;
@@ -384,10 +383,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private void InternalSetFillColorRGBToLineColor()
     {
-      var newBrush = _view.FillBrush.Clone();
+      var newBrush = _view.FillBrush;
       var c = _view.FramePen.Color.NewWithAlphaValue(newBrush.Color.Color.A);
-      ;
-      newBrush.Color = c;
+
+      newBrush = newBrush.WithColor(c);
 
       // Change fill brush without notification
       _view.FillBrushChanged -= EhFillBrushChanged;

@@ -46,11 +46,11 @@ namespace Altaxo.Worksheet
     Main.SuspendableDocumentNodeWithEventArgs,
     System.ICloneable
   {
-    protected static BrushX _defaultNormalBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Window)) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
-    protected static BrushX _defaultHeaderBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Control)) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
-    protected static BrushX _defaultSelectedBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Highlight)) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
-    protected static BrushX _defaultNormalTextBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.WindowText)) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
-    protected static BrushX _defaultSelectedTextBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.HighlightText)) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
+    protected static BrushX _defaultNormalBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Window));
+    protected static BrushX _defaultHeaderBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Control));
+    protected static BrushX _defaultSelectedBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Highlight));
+    protected static BrushX _defaultNormalTextBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.WindowText));
+    protected static BrushX _defaultSelectedTextBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.HighlightText));
     protected static PenX _defaultCellPen = new PenX(GdiColorHelper.ToNamedColor(SystemColors.InactiveBorder), 1) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
     protected static FontX _defaultTextFont = GdiFontManager.GetFontXGenericSansSerif(9, FontXStyle.Regular);
 
@@ -202,8 +202,8 @@ namespace Altaxo.Worksheet
     public ColumnStyle(ColumnStyleType type)
     {
       _cellPen = new PenX(GdiColorHelper.ToNamedColor(SystemColors.InactiveBorder), 1) { ParentObject = this };
-      _textBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.WindowText)) { ParentObject = this };
-      _backgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Window)) { ParentObject = this };
+      _textBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.WindowText));
+      _backgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Window));
 
       _columnStyleType = type;
 
@@ -217,10 +217,6 @@ namespace Altaxo.Worksheet
     {
       if (null != _cellPen)
         yield return new Main.DocumentNodeAndName(_cellPen, () => _cellPen = null, "CellPen");
-      if (null != _textBrush)
-        yield return new Main.DocumentNodeAndName(_textBrush, () => _textBrush = null, "TextBrush");
-      if (null != _backgroundBrush)
-        yield return new Main.DocumentNodeAndName(_backgroundBrush, () => _backgroundBrush = null, "BackgroundBrush");
     }
 
     public void ChangeTypeTo(ColumnStyleType type)
@@ -250,10 +246,10 @@ namespace Altaxo.Worksheet
       _textFont = s._textFont;
 
       _isTextBrushCustom = s._isTextBrushCustom;
-      ChildCopyToMember(ref _textBrush, s._textBrush);
+      _textBrush = s._textBrush;
 
       _isBackgroundBrushCustom = s._isBackgroundBrushCustom;
-      ChildCopyToMember(ref _backgroundBrush, s._backgroundBrush);
+      _backgroundBrush = s._backgroundBrush;
     }
 
     /// <summary>
@@ -277,7 +273,7 @@ namespace Altaxo.Worksheet
     public static BrushX GetDefaultTextBrush(ColumnStyleType type)
     {
       if (type == ColumnStyleType.DataCell || type == ColumnStyleType.PropertyCell)
-        return _defaultNormalTextBrush.Clone();
+        return _defaultNormalTextBrush;
       else
         return new BrushX(GdiColorHelper.ToNamedColor(SystemColors.ControlText));
     }
@@ -291,9 +287,9 @@ namespace Altaxo.Worksheet
     public static BrushX GetDefaultBackgroundBrush(ColumnStyleType type)
     {
       if (type == ColumnStyleType.DataCell)
-        return _defaultNormalBackgroundBrush.Clone();
+        return _defaultNormalBackgroundBrush;
       else
-        return _defaultHeaderBackgroundBrush.Clone();
+        return _defaultHeaderBackgroundBrush;
     }
 
     public void SetDefaultBackgroundBrush()
@@ -369,17 +365,13 @@ namespace Altaxo.Worksheet
       set
       {
         if (value == null)
-          throw new ArgumentNullException();
-        if (object.ReferenceEquals(_backgroundBrush, value))
-          return;
+          throw new ArgumentNullException(nameof(BackgroundBrush));
 
-        if (null != _backgroundBrush)
-          _backgroundBrush.Dispose();
-
-        _backgroundBrush = value;
-
-        if (null != _backgroundBrush)
-          _backgroundBrush.ParentObject = this;
+        if (!(_backgroundBrush == value))
+        {
+          _backgroundBrush = value;
+          EhSelfChanged();
+        }
       }
     }
 
@@ -412,8 +404,9 @@ namespace Altaxo.Worksheet
       }
       set
       {
-        if (ChildSetMember(ref _textBrush, value ?? throw new ArgumentNullException(nameof(value))))
+        if (!(_textBrush == value))
         {
+          _textBrush = value;
           EhSelfChanged();
         }
       }
@@ -454,9 +447,19 @@ namespace Altaxo.Worksheet
     public virtual void PaintBackground(Graphics dc, Rectangle cellRectangle, bool bSelected)
     {
       if (bSelected)
-        dc.FillRectangle(_defaultSelectedBackgroundBrush, cellRectangle);
+      {
+        using (var defaultSelectedBackgroundBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_defaultSelectedBackgroundBrush, cellRectangle, dc, 1))
+        {
+          dc.FillRectangle(defaultSelectedBackgroundBrushGdi, cellRectangle);
+        }
+      }
       else
-        dc.FillRectangle(_backgroundBrush, cellRectangle);
+      {
+        using (var backgroundBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_backgroundBrush, cellRectangle, dc, 1))
+        {
+          dc.FillRectangle(backgroundBrushGdi, cellRectangle);
+        }
+      }
 
       _cellPen.Cached = true;
       dc.DrawLine(_cellPen.Pen, cellRectangle.Left, cellRectangle.Bottom - 1, cellRectangle.Right - 1, cellRectangle.Bottom - 1);

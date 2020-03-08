@@ -66,7 +66,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private bool _fillToNextPlotItem = true;
 
     [NonSerialized]
-    private Action<Graphics, Processed2DPlotData, PlotRange, IPlotArea, Processed2DPlotData> _cachedPaintOneRange;
+    private Action<Graphics, Processed2DPlotData, PlotRange, IPlotArea, Processed2DPlotData, Brush> _cachedPaintOneRange;
 
     #region Serialization
 
@@ -162,7 +162,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       using (var suspendToken = SuspendGetToken())
       {
         _independentFillColor = from._independentFillColor;
-        FillBrush = null == from._fillBrush ? null : from._fillBrush.Clone();
+        FillBrush = from._fillBrush;
 
         _independentFrameColor = from._independentFrameColor;
         _framePen = null == from._framePen ? null : from._framePen.Clone();
@@ -234,8 +234,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected override System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _fillBrush)
-        yield return new Main.DocumentNodeAndName(_fillBrush, "FillBrush");
       if (null != _framePen)
         yield return new Main.DocumentNodeAndName(_framePen, "Pen");
     }
@@ -267,8 +265,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
       set
       {
-        if (ChildSetMember(ref _fillBrush, value))
+        if (!(_fillBrush == value))
+        {
+          _fillBrush = value;
           EhSelfChanged(EventArgs.Empty);
+        }
       }
     }
 
@@ -385,10 +386,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (_fillToNextPlotItem && null != nextItemData)
       {
         // ensure that brush and pen are cached
-        if (null != _fillBrush)
-        {
-          _fillBrush.SetEnvironment(new RectangleD2D(PointD2D.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
-        }
+        using var fillBrush = _fillBrush is null ? null : BrushCacheGdi.Instance.BorrowBrush(_fillBrush, new RectangleD2D(PointD2D.Empty, layer.Size), g, 1);
 
         PlotRangeList rangeList = pdata.RangeList;
         int rangelistlen = rangeList.Count;
@@ -399,7 +397,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           // as one range, i.e. continuously
           // for this, we create the totalRange, which contains all ranges
           var totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
-          _cachedPaintOneRange(g, pdata, totalRange, layer, nextItemData);
+          _cachedPaintOneRange(g, pdata, totalRange, layer, nextItemData, fillBrush);
         }
       }
     }
@@ -407,10 +405,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private void PaintFillToPrevPlotItem(Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData prevItemData)
     {
       // ensure that brush and pen are cached
-      if (null != _fillBrush)
-      {
-        _fillBrush.SetEnvironment(new RectangleD2D(PointD2D.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
-      }
+      using var fillbrush = _fillBrush is null ? null : BrushCacheGdi.Instance.BorrowBrush(_fillBrush, new RectangleD2D(PointD2D.Empty, layer.Size), g, 1);
 
       PlotRangeList rangeList = pdata.RangeList;
       int rangelistlen = rangeList.Count;
@@ -419,7 +414,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // as one range, i.e. continuously
       // for this, we create the totalRange, which contains all ranges
       var totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound, rangeList[0].OffsetToOriginal);
-      _cachedPaintOneRange(g, pdata, totalRange, layer, prevItemData);
+      _cachedPaintOneRange(g, pdata, totalRange, layer, prevItemData, fillbrush);
     }
 
     public RectangleF PaintSymbol(Graphics g, RectangleF bounds)
@@ -446,7 +441,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       Processed2DPlotData pdata,
       PlotRange range,
       IPlotArea layer,
-      Processed2DPlotData previousData)
+      Processed2DPlotData previousData,
+      Brush fillBrush)
     {
       PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
       var linepts = new PointF[range.Length];
@@ -500,7 +496,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (_fillBrush.IsVisible)
       {
-        g.FillPath(_fillBrush, gp);
+        g.FillPath(fillBrush, gp);
       }
 
       if (null != _framePen)

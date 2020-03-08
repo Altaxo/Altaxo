@@ -482,8 +482,8 @@ namespace Altaxo.Graph.Gdi.Shapes
               {
                 try
                 {
-                  object result = conv.ConvertFromInvariantString(s1);
-                  newContext.brush = new SolidBrush((Color)result);
+                  var result = (Color)conv.ConvertFromInvariantString(s1);
+                  newContext.brush = new BrushX(NamedColor.FromArgb(result.A, result.R, result.G, result.B));
                   wasColorConverted = true;
                 }
                 catch (Exception)
@@ -497,7 +497,7 @@ namespace Altaxo.Graph.Gdi.Shapes
                 {
                   if (Drawing.ColorManagement.ColorSetManager.Instance.TryGetColorByHierarchicalName(s1, out var namedColor, true))
                   {
-                    newContext.brush = new SolidBrush(namedColor);
+                    newContext.brush = new BrushX(namedColor);
                     wasColorConverted = true;
                   }
                 }

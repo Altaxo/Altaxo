@@ -294,13 +294,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       if (Brush.IsVisible)
       {
-        Brush.SetEnvironment((RectangleF)bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
-        g.FillPath(Brush, path);
+        using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(Brush, bounds, g, Math.Max(ScaleX, ScaleY)))
+        {
+          g.FillPath(brushGdi, path);
+        }
       }
 
       if (Pen.IsVisible)
       {
-        Pen.SetEnvironment((RectangleF)bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
+        Pen.SetEnvironment((RectangleF)bounds, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
         g.DrawPath(Pen, path);
       }
       g.Restore(gs);

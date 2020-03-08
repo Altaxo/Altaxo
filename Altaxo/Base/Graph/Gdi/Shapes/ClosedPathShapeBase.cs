@@ -97,7 +97,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         var from = obj as ClosedPathShapeBase;
         if (null != from)
         {
-          ChildCopyToMember(ref _fillBrush, from._fillBrush);
+          _fillBrush = from._fillBrush;
           ChildCopyToMember(ref _linePen, from._linePen);
         }
       }
@@ -108,9 +108,6 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       if (null != _linePen)
         yield return new Main.DocumentNodeAndName(_linePen, () => _linePen = null, "LinePen");
-
-      if (null != _fillBrush)
-        yield return new Main.DocumentNodeAndName(_fillBrush, () => _fillBrush = null, "FillBrush");
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -145,8 +142,11 @@ namespace Altaxo.Graph.Gdi.Shapes
         if (value == null)
           throw new ArgumentNullException("The fill brush must not be null");
 
-        if (ChildCopyToMember(ref _fillBrush, value))
+        if (!(_fillBrush == value))
+        {
+          _fillBrush = value;
           EhSelfChanged(EventArgs.Empty);
+        }
       }
     }
 

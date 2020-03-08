@@ -43,6 +43,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     /// <param name="g">Graphics context.</param>
     /// <param name="brush">The brush to use for the drawing.</param>
     /// <param name="point">The point where to draw the item.</param>
-    void Draw(Graphics g, BrushX brush, PointF point);
+    void Draw(Graphics g, BrushXEnv brush, PointF point);
   }
 }

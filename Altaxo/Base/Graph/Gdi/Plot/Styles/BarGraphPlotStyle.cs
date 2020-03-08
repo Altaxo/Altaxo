@@ -228,7 +228,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _xSizeLogical = from._xSizeLogical;
         _xOffsetLogical = from._xOffsetLogical;
         _independentFillColor = from._independentFillColor;
-        ChildCloneToMember(ref _fillBrush, from._fillBrush);
+        _fillBrush = from._fillBrush;
         _independentFrameColor = from._independentFrameColor;
         ChildCloneToMember(ref _framePen, from._framePen);
         _startAtPreviousItem = from._startAtPreviousItem;
@@ -278,8 +278,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       if (_framePen != null)
         yield return new Main.DocumentNodeAndName(_framePen, "FramePen");
-      if (_fillBrush != null)
-        yield return new Main.DocumentNodeAndName(_fillBrush, "FillBrush");
     }
 
     public bool IsColorReceiver
@@ -469,7 +467,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         if (null == _fillBrush)
           _fillBrush = new BrushX(Drawing.ColorManagement.ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-        { _fillBrush.Color = c; });
+        { _fillBrush = _fillBrush.WithColor(c); });
 
         // but if there is a color evaluation function, then use that function with higher priority
         VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc)
@@ -518,7 +516,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       bool useVariableFillColor = null != _fillBrush && null != _cachedColorForIndexFunction && !_independentFillColor;
       bool useVariableFrameColor = null != _framePen && null != _cachedColorForIndexFunction && !_independentFrameColor;
 
-      var fillBrush = _fillBrush == null ? null : useVariableFillColor ? _fillBrush.Clone() : _fillBrush;
+      var fillBrush = _fillBrush;
       var framePen = _framePen == null ? null : useVariableFrameColor ? _framePen.Clone() : _framePen;
 
       int j = -1;
@@ -553,10 +551,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         if (null != fillBrush)
         {
           if (useVariableFillColor)
-            fillBrush.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(originalRowIndex), "VariableColor");
+          {
+            fillBrush = fillBrush.WithColor(GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(originalRowIndex), "VariableColor"));
+          }
 
-          fillBrush.SetEnvironment(path.GetBounds(), BrushX.GetEffectiveMaximumResolution(g, 1));
-          g.FillPath(fillBrush, path);
+          using (var fillBrushGdi = BrushCacheGdi.Instance.BorrowBrush(fillBrush, path.GetBounds(), g, 1))
+          {
+            g.FillPath(fillBrushGdi, path);
+          }
         }
 
         if (null != framePen)
@@ -564,7 +566,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           if (useVariableFrameColor)
             framePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(originalRowIndex), "VariableColor");
 
-          framePen.SetEnvironment(path.GetBounds(), BrushX.GetEffectiveMaximumResolution(g, 1));
+          framePen.SetEnvironment(path.GetBounds(), BrushCacheGdi.GetEffectiveMaximumResolution(g, 1));
           g.DrawPath(framePen, path);
         }
       }
@@ -575,12 +577,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       bounds.Inflate(0, -bounds.Height / 4);
       if (null != _fillBrush)
       {
-        _fillBrush.SetEnvironment(bounds, BrushX.GetEffectiveMaximumResolution(g, 1));
-        g.FillRectangle(_fillBrush, bounds);
+        using (var fillBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_fillBrush, bounds, g, 1))
+        {
+          g.FillRectangle(fillBrushGdi, bounds);
+        }
       }
       if (null != _framePen)
       {
-        _framePen.SetEnvironment(bounds, BrushX.GetEffectiveMaximumResolution(g, 1));
+        _framePen.SetEnvironment(bounds, BrushCacheGdi.GetEffectiveMaximumResolution(g, 1));
         g.DrawRectangle(_framePen, bounds.X, bounds.Y, bounds.Width, bounds.Height);
       }
       return bounds;

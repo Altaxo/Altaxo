@@ -120,11 +120,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       var boundsF = (RectangleF)bounds;
       if (Brush.IsVisible)
       {
-        Brush.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
-        g.FillRectangle(Brush, boundsF);
+        using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(Brush, Bounds, g, Math.Max(ScaleX, ScaleY)))
+        {
+          g.FillRectangle(brushGdi, boundsF);
+        }
       }
 
-      Pen.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
+      Pen.SetEnvironment(boundsF, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
       g.DrawRectangle(Pen, (float)bounds.X, (float)bounds.Y, (float)bounds.Width, (float)bounds.Height);
       g.Restore(gs);
     }
