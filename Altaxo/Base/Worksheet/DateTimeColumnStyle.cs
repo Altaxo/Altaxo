@@ -95,19 +95,12 @@ namespace Altaxo.Worksheet
         t.ToString("yyyy-MM-dd HH:mm:ss.FFFFFFF") :
         t.ToString("o");
 
-      if (bSelected)
+      var brush = bSelected ? _defaultSelectedTextBrush : TextBrush;
+
+      using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, cellRectangle, dc, 1))
       {
-        using (var defaultSelectedTextBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_defaultSelectedTextBrush, cellRectangle, dc, 1))
-        {
-          dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), defaultSelectedTextBrushGdi, cellRectangle, _textFormat);
-        }
-      }
-      else
-      {
-        using (var textBrushGdi = BrushCacheGdi.Instance.BorrowBrush(TextBrush, cellRectangle, dc, 1))
-        {
-          dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), textBrushGdi, cellRectangle, _textFormat);
-        }
+        dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), brushGdi, cellRectangle, _textFormat);
+
       }
 
     }

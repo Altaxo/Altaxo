@@ -101,20 +101,12 @@ namespace Altaxo.Worksheet
     {
       PaintBackground(dc, cellRectangle, bSelected);
 
-      if (bSelected)
-      {
-        using (var defaultSelectedTextBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_defaultSelectedTextBrush, cellRectangle, dc, 1))
-        {
-          dc.DrawString("[" + nRow + "]", GdiFontManager.ToGdi(_textFont), defaultSelectedTextBrushGdi, cellRectangle, _textFormat);
-        }
-      }
+      var brush = bSelected ? _defaultSelectedTextBrush : TextBrush;
 
-      else
+      using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, cellRectangle, dc, 1))
       {
-        using (var textBrushGdi = BrushCacheGdi.Instance.BorrowBrush(TextBrush, cellRectangle, dc, 1))
-        {
-          dc.DrawString("[" + nRow + "]", GdiFontManager.ToGdi(_textFont), textBrushGdi, cellRectangle, _textFormat);
-        }
+        dc.DrawString("[" + nRow + "]", GdiFontManager.ToGdi(_textFont), brushGdi, cellRectangle, _textFormat);
+
       }
     }
 
