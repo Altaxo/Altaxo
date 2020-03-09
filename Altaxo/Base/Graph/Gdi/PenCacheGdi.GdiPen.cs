@@ -162,7 +162,7 @@ namespace Altaxo.Graph.Gdi
           brushGdi.DoNotReturnToCache();
         }
 
-        if (p.CompoundArray is { } compoundArray)
+        if (p.CompoundArray is { } compoundArray && compoundArray.Length > 0)
           pen.CompoundArray = compoundArray;
 
         if (!(p.DashPattern is Drawing.DashPatterns.Solid))
@@ -194,7 +194,7 @@ namespace Altaxo.Graph.Gdi
         if (!(p.StartCap is LineCaps.FlatCap))
           p.StartCap.SetStartCap(pen);
 
-        if (!(p.Transform.IsIdentity))
+        if (!(p.Transform is null || p.Transform.IsIdentity))
           pen.Transform = p.Transform;
 
         return pen;

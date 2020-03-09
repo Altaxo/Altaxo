@@ -74,6 +74,7 @@ namespace Altaxo.Graph.Gdi
     public const PenAlignment DefaultAlignment = PenAlignment.Center;
     public const LineJoin DefaultLineJoin = LineJoin.Miter;
     public const double DefaultMiterLimit = 10;
+    public static readonly float[] DefaultCompoundArray = new float[0];
 
 
     #region "ConfiguredProperties"
@@ -131,11 +132,11 @@ namespace Altaxo.Graph.Gdi
         throw new ArgumentNullException(nameof(pen));
 
       Configured c = Configured.Nothing;
-      if (pen.PenType != PenType.SolidColor)
+      if (pen._penType != PenType.SolidColor)
         c |= Configured.PenType;
-      if (pen.PenType == PenType.SolidColor && pen.Color != NamedColors.Black)
+      if (pen._penType == PenType.SolidColor && pen.Color != NamedColors.Black)
         c |= Configured.Color;
-      if (pen.PenType != PenType.SolidColor)
+      if (pen._penType != PenType.SolidColor)
         c |= Configured.Brush;
       if (pen.Alignment != PenAlignment.Center)
         c |= Configured.Alignment;
@@ -645,7 +646,7 @@ if (0 != (cp & PenX.Configured.Width))
 
         info.AddValue("Configured", (int)cp);
         if (0 != (cp & PenX.Configured.PenType))
-          info.AddEnum("Type", s.PenType);
+          info.AddEnum("Type", s._penType);
         if (0 != (cp & PenX.Configured.Alignment))
           info.AddEnum("Alignment", s.Alignment);
         if (0 != (cp & PenX.Configured.Brush))
@@ -802,7 +803,7 @@ if (0 != (cp & PenX.Configured.Width))
       _dashPattern = DashPatternListManager.Instance.BuiltinDefaultSolid;
       _startCap = LineCapExtension.Flat;
       _endCap = LineCapExtension.Flat;
-
+      _compoundArray = DefaultCompoundArray;
 
       _SetProp(Configured.Color, NamedColors.Black != c);
       _SetProp(Configured.Width, 1 != width);
@@ -953,11 +954,6 @@ if (0 != (cp & PenX.Configured.Width))
       return result;
     }
 
-    public PenType PenType
-    {
-      get { return _penType; }
-    }
-
     public PenAlignment Alignment
     {
       get { return _alignment; }
@@ -1100,6 +1096,7 @@ if (0 != (cp & PenX.Configured.Width))
 
     public PenX WithCompoundArray(float[] value)
     {
+      value ??= new float[0];
       if (!(_compoundArray == value))
       {
         var result = Clone();

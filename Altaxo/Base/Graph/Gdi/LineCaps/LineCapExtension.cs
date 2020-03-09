@@ -31,9 +31,10 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
+
   [Serializable]
   [System.ComponentModel.ImmutableObject(true)]
-  public abstract class LineCapExtension
+  public abstract class LineCapExtension : ILineCap
   {
     private double _minimumAbsoluteSizePt;
     private double _minimumRelativeSize;
