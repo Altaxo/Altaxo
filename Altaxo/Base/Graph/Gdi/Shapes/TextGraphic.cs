@@ -518,7 +518,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException();
 
         if (!(_textBrush == value))

@@ -44,7 +44,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
     {
     }
 
-    public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+    public override LineCapExtension WithAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
     {
       return new SquareOLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
     }
@@ -104,7 +104,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
     {
     }
 
-    public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+    public override LineCapExtension WithAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
     {
       return new SquareFLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
     }

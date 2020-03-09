@@ -120,8 +120,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._fillColorLinkage = (ColorLinkage)info.GetEnum("FillColorLinkage", typeof(ColorLinkage));
 
         s._framePen = (PenX)info.GetValue("Pen", s);
-        if (null != s._framePen)
-          s._framePen.ParentObject = s;
         s._frameColorLinkage = (ColorLinkage)info.GetEnum("FrameColorLinkage", typeof(ColorLinkage));
         return s;
       }
@@ -147,7 +145,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _fillRule = from._fillRule;
         _fillBrush = from._fillBrush;
         _fillColorLinkage = from._fillColorLinkage;
-        ChildCopyToMember(ref _framePen, from._framePen);
+        _framePen = from._framePen;
         _frameColorLinkage = from._frameColorLinkage;
 
         EhSelfChanged();
@@ -201,7 +199,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _fillDirection = direction;
       _fillColorLinkage = fillColorLinkage;
       _fillBrush = fillBrush;
-      ChildSetMember(ref _framePen, new PenX(NamedColors.Transparent, 1));
+      _framePen = new PenX(NamedColors.Transparent, 1);
     }
 
     public DropAreaPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
@@ -209,7 +207,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var penWidth = GraphDocument.GetDefaultPenWidth(context);
       var color = GraphDocument.GetDefaultPlotColor(context);
 
-      ChildSetMember(ref _framePen, new PenX(NamedColors.Transparent, penWidth) { LineJoin = LineJoin.Bevel });
+      _framePen = new PenX(NamedColors.Transparent, penWidth).WithLineJoin(LineJoin.Bevel);
       _ignoreMissingDataPoints = false;
       _fillBrush = new BrushX(color);
       _fillDirection = new CSPlaneID(1, 0);
@@ -223,8 +221,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _framePen)
-        yield return new Main.DocumentNodeAndName(_framePen, "Pen");
+      yield break;
     }
 
     #endregion Construction and copying
@@ -336,7 +333,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       set
       {
         // copy the brush only if not null
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("FillBrush", "FillBrush must not be set to null, instead set FillArea to false");
 
         if (!(_fillBrush == value))
@@ -370,8 +367,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         if (null == value)
           throw new ArgumentNullException(nameof(value));
 
-        if (ChildCopyToMember(ref _framePen, value))
+        if (!(_framePen == value))
+        {
+          _framePen = value;
           EhSelfChanged();
+        }
       }
     }
 
@@ -427,12 +427,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         plotPositions = Processed2DPlotData.GetPlotPointsInAbsoluteLayerCoordinatesWithShift(pdata, layer, _cachedLogicalShiftX, _cachedLogicalShiftY);
       }
 
-      // ensure that brush and pen are cached
-      if (null != _framePen)
-        _framePen.Cached = true;
-
-
-
       _fillDirection = layer.UpdateCSPlaneID(_fillDirection);
 
       var gp = new GraphicsPath();
@@ -462,7 +456,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
       }
 
-      g.DrawPath(_framePen, gp);
+      using (var framePenGdi = PenCacheGdi.Instance.BorrowPen(_framePen))
+      {
+        g.DrawPath(framePenGdi, gp);
+      }
     }
 
     #endregion Painting
@@ -512,8 +509,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (ColorLinkage.Independent != _fillColorLinkage)
       {
-        if (null == _fillBrush)
-          _fillBrush = new BrushX(NamedColors.Black);
+        _fillBrush ??= new BrushX(NamedColors.Black);
 
         if (_fillColorLinkage == ColorLinkage.Dependent)
           ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
@@ -524,15 +520,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
       if (ColorLinkage.Independent != _frameColorLinkage)
       {
-        if (null == _framePen)
-          ChildSetMember(ref _framePen, new PenX(NamedColors.Black));
+        _framePen ??= new PenX(NamedColors.Black);
 
         if (_frameColorLinkage == ColorLinkage.Dependent)
           ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-          { _framePen.Color = c; });
+          { _framePen = _framePen.WithColor(c); });
         else if (ColorLinkage.PreserveAlpha == _fillColorLinkage)
           ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-          { _framePen.Color = c.NewWithAlphaValue(_framePen.Color.Color.A); });
+          { _framePen = _framePen.WithColor(c.NewWithAlphaValue(_framePen.Color.Color.A)); });
       }
 
       // Shift the items ?
@@ -581,7 +576,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       switch (propertyName)
       {
         case "StrokeWidth":
-          yield return (propertyName, _framePen.Width, (w) => _framePen.Width = (double)w);
+          yield return (propertyName, _framePen.Width, (w) => _framePen = _framePen.WithWidth((double)w));
           break;
       }
 

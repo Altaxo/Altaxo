@@ -193,9 +193,9 @@ namespace Altaxo.Graph.Gdi.Axis
       double majorTickLength = GraphDocument.GetDefaultMajorTickLength(context);
       var color = GraphDocument.GetDefaultForeColor(context);
 
-      _axisPen = new PenX(color, penWidth) { ParentObject = this };
-      _majorTickPen = new PenX(color, penWidth) { ParentObject = this };
-      _minorTickPen = new PenX(color, penWidth) { ParentObject = this };
+      _axisPen = new PenX(color, penWidth);
+      _majorTickPen = new PenX(color, penWidth);
+      _minorTickPen = new PenX(color, penWidth);
       _majorTickLength = majorTickLength;
       _minorTickLength = majorTickLength / 2;
       _showFirstUpMajorTicks = true; // true if right major ticks should be visible
@@ -228,16 +228,16 @@ namespace Altaxo.Graph.Gdi.Axis
 
       using (var suspendToken = SuspendGetToken())
       {
-        ChildCopyToMember(ref _axisPen, from._axisPen);
+        _axisPen = from._axisPen;
         _axisPosition = from._axisPosition;
         _showFirstDownMajorTicks = from._showFirstDownMajorTicks;
         _showFirstDownMinorTicks = from._showFirstDownMinorTicks;
         _showFirstUpMajorTicks = from._showFirstUpMajorTicks;
         _showFirstUpMinorTicks = from._showFirstUpMinorTicks;
         _majorTickLength = from._majorTickLength;
-        ChildCopyToMember(ref _majorTickPen, from._majorTickPen);
+        _majorTickPen = from._majorTickPen;
         _minorTickLength = from._minorTickLength;
-        ChildCopyToMember(ref _minorTickPen, from._minorTickPen);
+        _minorTickPen = from._minorTickPen;
 
         _cachedAxisStyleInfo = from._cachedAxisStyleInfo;
 
@@ -250,14 +250,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _axisPen)
-        yield return new Main.DocumentNodeAndName(_axisPen, "AxisPen");
-
-      if (null != _majorTickPen)
-        yield return new Main.DocumentNodeAndName(_majorTickPen, "MajorTickPen");
-
-      if (null != _minorTickPen)
-        yield return new Main.DocumentNodeAndName(_minorTickPen, "MinorTickPen");
+      yield break;
     }
 
     /// <summary>
@@ -347,8 +340,9 @@ namespace Altaxo.Graph.Gdi.Axis
         if (null == value)
           throw new ArgumentNullException("value");
 
-        if (ChildSetMember(ref _axisPen, value))
+        if (!(_axisPen == value))
         {
+          _axisPen = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -361,9 +355,9 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         if (null == value)
           throw new ArgumentNullException("value");
-
-        if (ChildSetMember(ref _majorTickPen, value))
+        if (!(_majorTickPen == value))
         {
+          _majorTickPen = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -377,8 +371,9 @@ namespace Altaxo.Graph.Gdi.Axis
         if (null == value)
           throw new ArgumentNullException("value");
 
-        if (ChildSetMember(ref _minorTickPen, value))
+        if (!(_minorTickPen == value))
         {
+          _minorTickPen = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -485,10 +480,13 @@ namespace Altaxo.Graph.Gdi.Axis
       get { return _axisPen.Width; }
       set
       {
-        _axisPen.Width = value;
-        _majorTickPen.Width = value;
-        _minorTickPen.Width = value;
-        EhSelfChanged(EventArgs.Empty);
+        if (_axisPen.Width != value || _majorTickPen.Width != value || _minorTickPen.Width != value)
+        {
+          _axisPen = _axisPen.WithWidth(value);
+          _majorTickPen = _majorTickPen.WithWidth(value);
+          _minorTickPen = _minorTickPen.WithWidth(value);
+          EhSelfChanged(EventArgs.Empty);
+        }
       }
     }
 
@@ -503,9 +501,9 @@ namespace Altaxo.Graph.Gdi.Axis
       get { return _axisPen.Color; }
       set
       {
-        _axisPen.Color = value;
-        _majorTickPen.Color = value;
-        _minorTickPen.Color = value;
+        _axisPen = _axisPen.WithColor(value);
+        _majorTickPen = _majorTickPen.WithColor(value);
+        _minorTickPen = _minorTickPen.WithColor(value);
         EhSelfChanged(EventArgs.Empty);
       }
     }
@@ -597,8 +595,14 @@ namespace Altaxo.Graph.Gdi.Axis
       Logical3D r0 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisOrg);
       Logical3D r1 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisEnd);
 
-      layer.CoordinateSystem.DrawIsoline(g, _axisPen, r0, r1);
+      using (var axisPenGdi = PenCacheGdi.Instance.BorrowPen(_axisPen))
+      {
+        layer.CoordinateSystem.DrawIsoline(g, axisPenGdi, r0, r1);
+      }
 
+
+      using var majorTickPenGdi = PenCacheGdi.Instance.BorrowPen(_majorTickPen);
+      using var minorTickPenGdi = PenCacheGdi.Instance.BorrowPen(_minorTickPen);
       Logical3D outer;
 
       // now the major ticks
@@ -613,14 +617,14 @@ namespace Altaxo.Graph.Gdi.Axis
           outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
           var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
           var tickend = tickorg + outVector * _majorTickLength;
-          g.DrawLine(_majorTickPen, (PointF)tickorg, (PointF)tickend);
+          g.DrawLine(majorTickPenGdi, (PointF)tickorg, (PointF)tickend);
         }
         if (_showFirstDownMajorTicks)
         {
           outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
           var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
           var tickend = tickorg + outVector * _majorTickLength;
-          g.DrawLine(_majorTickPen, (PointF)tickorg, (PointF)tickend);
+          g.DrawLine(majorTickPenGdi, (PointF)tickorg, (PointF)tickend);
         }
       }
       // now the major ticks
@@ -634,14 +638,14 @@ namespace Altaxo.Graph.Gdi.Axis
           outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
           var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
           var tickend = tickorg + outVector * _minorTickLength;
-          g.DrawLine(_minorTickPen, (PointF)tickorg, (PointF)tickend);
+          g.DrawLine(minorTickPenGdi, (PointF)tickorg, (PointF)tickend);
         }
         if (_showFirstDownMinorTicks)
         {
           outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
           var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
           var tickend = tickorg + outVector * _minorTickLength;
-          g.DrawLine(_minorTickPen, (PointF)tickorg, (PointF)tickend);
+          g.DrawLine(minorTickPenGdi, (PointF)tickorg, (PointF)tickend);
         }
       }
     }
@@ -658,9 +662,9 @@ namespace Altaxo.Graph.Gdi.Axis
       switch (propertyName)
       {
         case "StrokeWidth":
-          yield return (propertyName, _axisPen.Width, (value) => _axisPen.Width = (double)value);
-          yield return (propertyName, _majorTickPen.Width, (value) => _majorTickPen.Width = (double)value);
-          yield return (propertyName, _minorTickPen.Width, (value) => _minorTickPen.Width = (double)value);
+          yield return (propertyName, _axisPen.Width, (value) => _axisPen = _axisPen.WithWidth((double)value));
+          yield return (propertyName, _majorTickPen.Width, (value) => _majorTickPen = _majorTickPen.WithWidth((double)value));
+          yield return (propertyName, _minorTickPen.Width, (value) => _minorTickPen = _minorTickPen.WithWidth((double)value));
           break;
 
         case "MajorTickLength":

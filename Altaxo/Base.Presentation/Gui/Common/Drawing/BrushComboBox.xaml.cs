@@ -144,7 +144,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected virtual BrushX InternalSelectedBrushCoerce(DependencyObject obj, BrushX brush)
     {
-      if (null == brush)
+      if (brush is null)
         brush = new BrushX(NamedColors.Transparent);
 
       var coercedColor = brush.Color.CoerceParentColorSetToNullIfNotMember();

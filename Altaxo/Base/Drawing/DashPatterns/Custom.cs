@@ -134,17 +134,16 @@ namespace Altaxo.Drawing.DashPatterns
       }
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(IDashPattern obj)
     {
-      var from = obj as Custom;
-      if (null == from)
+      if (!(obj is Custom other))
         return false;
 
-      if (_customDashPattern.Length != from._customDashPattern.Length)
+      if (this.DashOffset != other.DashOffset || this.Count != other.Count)
         return false;
 
-      for (int i = 0; i < _customDashPattern.Length; ++i)
-        if (_customDashPattern[i] != from._customDashPattern[i])
+      for (int i = 0; i < Count; ++i)
+        if (_customDashPattern[i] != other._customDashPattern[i])
           return false;
 
       return true;

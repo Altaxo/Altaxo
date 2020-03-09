@@ -204,12 +204,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._useSymbolGap = info.GetBoolean("SymbolGap");
         s._skipFrequency = info.GetInt32("SkipFreq");
         if (info.GetBoolean("ShowEndBars"))
-          pen.EndCap = new LineCaps.SymBarLineCap();
+          pen = pen.WithEndCap(new LineCaps.SymBarLineCap());
         s._independentOnShiftingGroupStyles = info.GetBoolean("NotShiftHorzPos");
 
         if (null == pen)
           throw new ArgumentNullException(nameof(pen));
-        s.ChildSetMember(ref s._pen, pen);
+        s._pen = pen;
 
         s._forceVisibilityOfEndCap = true;
 
@@ -299,7 +299,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
         s._symbolSize = info.GetDouble("SymbolSize");
 
-        s.ChildSetMember(ref s._pen, (PenX)info.GetValue("Pen", s));
+        s._pen = (PenX)info.GetValue("Pen", s);
         s._independentColor = info.GetBoolean("IndependentColor");
         s._independentDashPattern = info.GetBoolean("IndependentDashPattern");
 
@@ -347,7 +347,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _lineWidth1Offset = penWidth;
       _lineWidth1Factor = 0;
 
-      _pen = new PenX(color, penWidth) { EndCap = new Altaxo.Graph.Gdi.LineCaps.SymBarLineCap(), ParentObject = this };
+      _pen = new PenX(color, penWidth).WithEndCap(new Altaxo.Graph.Gdi.LineCaps.SymBarLineCap());
     }
 
     public ErrorBarPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences)
@@ -380,7 +380,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _independentSymbolSize = from._independentSymbolSize;
         _symbolSize = from._symbolSize;
 
-        ChildCopyToMember(ref _pen, from._pen);
+        _pen = from._pen;
         _independentColor = from._independentColor;
         _independentDashPattern = from._independentDashPattern;
 
@@ -411,9 +411,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _pen)
-        yield return new Main.DocumentNodeAndName(_pen, "Pen");
-
       if (null != _commonErrorColumn)
         yield return new Main.DocumentNodeAndName(_commonErrorColumn, "CommonErrorColumn");
 
@@ -727,9 +724,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         if (null == value)
           throw new ArgumentNullException(nameof(value));
 
-        if (!object.Equals(_pen, value))
+        if (!(_pen == value))
         {
-          ChildCopyToMember(ref _pen, value);
+          _pen = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -937,7 +934,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!_independentColor)
       {
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-        { _pen.Color = c; });
+        { _pen = _pen.WithColor(c); });
 
         // but if there is a color evaluation function, then use that function with higher priority
         VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc)
@@ -969,7 +966,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!_independentDashPattern)
       {
         DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern dashPattern)
-        { _pen.DashPattern = dashPattern; });
+        { _pen = _pen.WithDashPattern(dashPattern); });
       }
 
       // Shift the items ?
@@ -1036,7 +1033,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (posErrCol == null && negErrCol == null)
         return; // nothing to do if both error columns are null
 
-      var strokePen = _pen.Clone();
+      var strokePen = _pen;
 
       var errorBarPath = new System.Drawing.Drawing2D.GraphicsPath();
 
@@ -1050,12 +1047,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         int originalRowIndex = range.GetOriginalRowIndexFromPlotPointIndex(j);
         double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalRowIndex);
-        strokePen.Width = (_lineWidth1Offset + _lineWidth1Factor * symbolSize);
+        strokePen = strokePen.WithWidth(_lineWidth1Offset + _lineWidth1Factor * symbolSize);
 
         if (null != _cachedColorForIndexFunction)
-          strokePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(originalRowIndex), "VariableColor");
+          strokePen = strokePen.WithColor(GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(originalRowIndex), "VariableColor"));
         if (null != strokePen.EndCap)
-          strokePen.EndCap = strokePen.EndCap.WithMinimumAbsoluteAndRelativeSize(symbolSize * _endCapSizeFactor + _endCapSizeOffset, 1 + 1E-6);
+          strokePen = strokePen.WithEndCap(strokePen.EndCap.WithMinimumAbsoluteAndRelativeSize(symbolSize * _endCapSizeFactor + _endCapSizeOffset, 1 + 1E-6));
 
         AltaxoVariant vMeanPhysical = pdata.GetPhysical(axisNumber, originalRowIndex);
         Logical3D logicalMean = layer.GetLogical3D(pdata, originalRowIndex);
@@ -1145,78 +1142,81 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         if (!(logicalPosValid || logicalNegValid))
           continue; // nothing to do for this point if both pos and neg logical point are invalid.
 
-        if (logicalNegValid)
+        using (var strokePenGdi = PenCacheGdi.Instance.BorrowPen(strokePen))
         {
-          errorBarPath.Reset();
-          layer.CoordinateSystem.GetIsoline(errorBarPath, logicalMean, logicalNeg);
-          PointF[] shortenedPathPoints = null;
-          bool shortenedPathPointsCalculated = false;
-          if (_useSymbolGap)
+          if (logicalNegValid)
           {
-            double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
-            if (gap > 0)
+            errorBarPath.Reset();
+            layer.CoordinateSystem.GetIsoline(errorBarPath, logicalMean, logicalNeg);
+            PointF[] shortenedPathPoints = null;
+            bool shortenedPathPointsCalculated = false;
+            if (_useSymbolGap)
             {
-              errorBarPath.Flatten();
-              var pathPoints = errorBarPath.PathPoints;
-              shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
-              shortenedPathPointsCalculated = true;
-              if (null == shortenedPathPoints && _forceVisibilityOfEndCap && !(strokePen.EndCap is Altaxo.Graph.Gdi.LineCaps.FlatCap))
+              double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
+              if (gap > 0)
               {
-                var totalLineLength = GdiExtensionMethods.TotalLineLength(pathPoints);
-                var shortTheLineBy = Math.Max(0, totalLineLength - 0.125 * strokePen.Width);
-                shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(shortTheLineBy), RADouble.NewAbs(0));
+                errorBarPath.Flatten();
+                var pathPoints = errorBarPath.PathPoints;
+                shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
+                shortenedPathPointsCalculated = true;
+                if (null == shortenedPathPoints && _forceVisibilityOfEndCap && !(strokePen.EndCap is Altaxo.Graph.Gdi.LineCaps.FlatCap))
+                {
+                  var totalLineLength = GdiExtensionMethods.TotalLineLength(pathPoints);
+                  var shortTheLineBy = Math.Max(0, totalLineLength - 0.125 * strokePen.Width);
+                  shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(shortTheLineBy), RADouble.NewAbs(0));
+                }
               }
             }
-          }
 
-          if (shortenedPathPointsCalculated)
-          {
-            if (null != shortenedPathPoints)
+            if (shortenedPathPointsCalculated)
             {
-              g.DrawLines(strokePen, shortenedPathPoints);
-            }
-          }
-          else
-          {
-            g.DrawPath(strokePen, errorBarPath);
-          }
-        }
-
-        if (logicalPosValid)
-        {
-          errorBarPath.Reset();
-          layer.CoordinateSystem.GetIsoline(errorBarPath, logicalMean, logicalPos);
-          PointF[] shortenedPathPoints = null;
-          bool shortenedPathPointsCalculated = false;
-
-          if (_useSymbolGap)
-          {
-            double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
-            if (gap > 0)
-            {
-              errorBarPath.Flatten();
-              var pathPoints = errorBarPath.PathPoints;
-              shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
-              shortenedPathPointsCalculated = true;
-              if (null == shortenedPathPoints && _forceVisibilityOfEndCap && !(strokePen.EndCap is Altaxo.Graph.Gdi.LineCaps.FlatCap))
+              if (null != shortenedPathPoints)
               {
-                var totalLineLength = GdiExtensionMethods.TotalLineLength(pathPoints);
-                var shortTheLineBy = Math.Max(0, totalLineLength - 0.125 * strokePen.Width);
-                shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(shortTheLineBy), RADouble.NewAbs(0));
+                g.DrawLines(strokePenGdi, shortenedPathPoints);
               }
             }
-          }
-
-          if (shortenedPathPointsCalculated)
-          {
-            if (null != shortenedPathPoints)
+            else
             {
-              g.DrawLines(strokePen, shortenedPathPoints);
+              g.DrawPath(strokePenGdi, errorBarPath);
             }
           }
-          else
+
+          if (logicalPosValid)
           {
-            g.DrawPath(strokePen, errorBarPath);
+            errorBarPath.Reset();
+            layer.CoordinateSystem.GetIsoline(errorBarPath, logicalMean, logicalPos);
+            PointF[] shortenedPathPoints = null;
+            bool shortenedPathPointsCalculated = false;
+
+            if (_useSymbolGap)
+            {
+              double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
+              if (gap > 0)
+              {
+                errorBarPath.Flatten();
+                var pathPoints = errorBarPath.PathPoints;
+                shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
+                shortenedPathPointsCalculated = true;
+                if (null == shortenedPathPoints && _forceVisibilityOfEndCap && !(strokePen.EndCap is Altaxo.Graph.Gdi.LineCaps.FlatCap))
+                {
+                  var totalLineLength = GdiExtensionMethods.TotalLineLength(pathPoints);
+                  var shortTheLineBy = Math.Max(0, totalLineLength - 0.125 * strokePen.Width);
+                  shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(shortTheLineBy), RADouble.NewAbs(0));
+                }
+              }
+            }
+
+            if (shortenedPathPointsCalculated)
+            {
+              if (null != shortenedPathPoints)
+              {
+                g.DrawLines(strokePenGdi, shortenedPathPoints);
+              }
+            }
+            else
+            {
+              g.DrawPath(strokePenGdi, errorBarPath);
+            }
           }
         }
       }
@@ -1300,7 +1300,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       switch (propertyName)
       {
         case "StrokeWidth":
-          yield return (propertyName, _pen.Width, (w) => _pen.Width = (double)w);
+          yield return (propertyName, _pen.Width, (w) => _pen = _pen.WithWidth((double)w));
           break;
 
         case "SymbolSize":

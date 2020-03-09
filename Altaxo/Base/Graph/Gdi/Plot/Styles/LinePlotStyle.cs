@@ -216,9 +216,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
 
         s._linePen = (PenX)info.GetValue("Pen", s);
-        if (null != s._linePen)
-          s._linePen.ParentObject = s;
-
         s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
         s._useSymbolGap = info.GetBoolean("LineSymbolGap");
         s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
@@ -275,9 +272,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
 
         s._linePen = (PenX)info.GetValue("Pen", s);
-        if (null != s._linePen)
-          s._linePen.ParentObject = s;
-
         s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
         s._useSymbolGap = info.GetBoolean("LineSymbolGap");
         s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
@@ -318,9 +312,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
 
         s._linePen = (PenX)info.GetValue("Pen", s);
-        if (null != s._linePen)
-          s._linePen.ParentObject = s;
-
         s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
         s._useSymbolGap = info.GetBoolean("LineSymbolGap");
         s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
@@ -434,9 +425,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._connectionStyle = (ILineConnectionStyle)info.GetValue("Connection", s);
 
         s._linePen = (PenX)info.GetValue("Pen", s);
-        if (null != s._linePen)
-          s._linePen.ParentObject = s;
-
         s._independentDashStyle = info.GetBoolean("IndependentDashStyle");
         s._independentColor = info.GetBoolean("IndependentColor");
 
@@ -471,7 +459,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _connectCircular = from._connectCircular;
         _connectionStyle = from._connectionStyle;
 
-        _linePen = null == from._linePen ? null : from._linePen.Clone();
+        _linePen = from._linePen;
         _independentDashStyle = from._independentDashStyle;
         _independentColor = from._independentColor;
 
@@ -530,7 +518,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var penWidth = 1;
       var color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
 
-      _linePen = new PenX(color, penWidth) { LineJoin = LineJoin.Bevel };
+      _linePen = new PenX(color, penWidth).WithLineJoin(LineJoin.Bevel);
       _useSymbolGap = true;
       _ignoreMissingDataPoints = false;
       _connectionStyle = LineConnectionStyles.StraightConnection.Instance;
@@ -544,7 +532,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var penWidth = GraphDocument.GetDefaultPenWidth(context);
       var color = GraphDocument.GetDefaultPlotColor(context);
 
-      _linePen = new PenX(color, penWidth) { LineJoin = LineJoin.Bevel };
+      _linePen = new PenX(color, penWidth).WithLineJoin(LineJoin.Bevel);
       _ignoreMissingDataPoints = false;
       _connectionStyle = LineConnectionStyles.StraightConnection.Instance;
       _independentColor = false;
@@ -560,14 +548,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _linePen)
-        yield return new Main.DocumentNodeAndName(_linePen, "Pen");
+      yield break;
     }
 
     protected virtual void CreateEventChain()
     {
-      if (null != _linePen)
-        _linePen.ParentObject = this;
     }
 
     #endregion Construction and copying
@@ -774,8 +759,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         if (null == value)
           throw new ArgumentNullException(nameof(value));
 
-        if (ChildCopyToMember(ref _linePen, value))
+        if (!(_linePen == value))
+        {
+          _linePen = value;
           EhSelfChanged();
+        }
       }
     }
 
@@ -822,14 +810,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Painting
 
-    public virtual void PaintLine(Graphics g, PointF beg, PointF end)
-    {
-      if (null != _linePen)
-      {
-        g.DrawLine(_linePen, beg, end);
-      }
-    }
-
     /// <summary>
     /// Prepares the scale of this plot style. Since this style does not utilize a scale, this function does nothing.
     /// </summary>
@@ -845,16 +825,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         GraphicsState gs = g.Save();
         g.TranslateTransform(bounds.X + 0.5f * bounds.Width, bounds.Y + 0.5f * bounds.Height);
         float halfwidth = bounds.Width / 2;
-        if (UseSymbolGap == true)
+
+        if (_linePen is { } _)
         {
-          // plot a line with the length of symbolsize from
-          var symGap = (float)(_symbolGapOffset + _symbolGapFactor * _symbolSize);
-          PaintLine(g, new PointF(-halfwidth, 0), new PointF(-symGap / 2, 0));
-          PaintLine(g, new PointF(symGap / 2, 0), new PointF(halfwidth, 0));
-        }
-        else // no gap
-        {
-          PaintLine(g, new PointF(-halfwidth, 0), new PointF(halfwidth, 0));
+          using (var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen))
+          {
+            if (UseSymbolGap == true)
+            {
+              // plot a line with the length of symbolsize from
+              var symGap = (float)(_symbolGapOffset + _symbolGapFactor * _symbolSize);
+              g.DrawLine(linePenGdi, new PointF(-halfwidth, 0), new PointF(-symGap / 2, 0));
+              g.DrawLine(linePenGdi, new PointF(symGap / 2, 0), new PointF(halfwidth, 0));
+            }
+            else // no gap
+            {
+              g.DrawLine(linePenGdi, new PointF(-halfwidth, 0), new PointF(halfwidth, 0));
+            }
+          }
         }
         g.Restore(gs);
       }
@@ -897,9 +884,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
       }
 
-      // ensure that brush and pen are cached
-      if (null != _linePen)
-        _linePen.Cached = true;
+      using var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen);
 
       PlotRangeList rangeList = pdata.RangeList;
       if (_ignoreMissingDataPoints)
@@ -908,13 +893,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         // as one range, i.e. continuously
         // for this, we create the totalRange, which contains all ranges
         var totalRange = new PlotRangeCompound(rangeList);
-        _connectionStyle.PaintOneRange(g, plotPositions, totalRange, layer, _linePen, symbolGapFunction, _skipFrequency, _connectCircular, this);
+        _connectionStyle.PaintOneRange(g, plotPositions, totalRange, layer, linePenGdi, symbolGapFunction, _skipFrequency, _connectCircular, this);
       }
       else // we not ignore missing points, so plot all ranges separately
       {
         for (int i = 0; i < rangeList.Count; i++)
         {
-          _connectionStyle.PaintOneRange(g, plotPositions, rangeList[i], layer, _linePen, symbolGapFunction, _skipFrequency, _connectCircular, this);
+          _connectionStyle.PaintOneRange(g, plotPositions, rangeList[i], layer, linePenGdi, symbolGapFunction, _skipFrequency, _connectCircular, this);
         }
       }
     }
@@ -964,7 +949,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
       set
       {
-        _linePen.Color = value;
+        if (!(_linePen.Color == value))
+        {
+          _linePen = _linePen.WithColor(value);
+          EhSelfChanged();
+        }
       }
     }
 
@@ -1023,7 +1012,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (!_independentDashStyle)
         DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern c)
-        { _linePen.DashPattern = c; });
+        { _linePen = _linePen.WithDashPattern(c); });
 
       if (!_independentSymbolSize)
       {
@@ -1095,7 +1084,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       switch (propertyName)
       {
         case "StrokeWidth":
-          yield return (propertyName, _linePen.Width, (w) => _linePen.Width = (double)w);
+          yield return (propertyName, _linePen.Width, (w) => _linePen = _linePen.WithWidth((double)w));
           break;
 
         case "SymbolSize":

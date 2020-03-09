@@ -98,7 +98,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         if (null != from)
         {
           _fillBrush = from._fillBrush;
-          ChildCopyToMember(ref _linePen, from._linePen);
+          _linePen = from._linePen;
         }
       }
       return isCopied;
@@ -106,8 +106,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
     {
-      if (null != _linePen)
-        yield return new Main.DocumentNodeAndName(_linePen, () => _linePen = null, "LinePen");
+      yield break;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -126,8 +125,11 @@ namespace Altaxo.Graph.Gdi.Shapes
         if (value == null)
           throw new ArgumentNullException("The line pen must not be null");
 
-        if (ChildCopyToMember(ref _linePen, value))
+        if (!(_linePen == value))
+        {
+          _linePen = value;
           EhSelfChanged(EventArgs.Empty);
+        }
       }
     }
 
@@ -139,7 +141,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException("The fill brush must not be null");
 
         if (!(_fillBrush == value))
@@ -182,7 +184,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         case "StrokeWidth":
           if (null != _linePen)
-            yield return (propertyName, _linePen.Width, (w) => _linePen.Width = (double)w);
+            yield return (propertyName, _linePen.Width, (w) => _linePen = _linePen.WithWidth((double)w));
           break;
       }
 

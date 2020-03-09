@@ -431,7 +431,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhTextureScalingChanged(IMVCANController ctrl)
     {
-      _doc = _doc.WithTextureScaling((TextureScaling)_textureScalingController.ProvisionalModelObject);
+      _doc = _doc.WithTextureScale((TextureScaling)_textureScalingController.ProvisionalModelObject);
       OnMadeDirty();
     }
 

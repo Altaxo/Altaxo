@@ -170,16 +170,14 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       _location.SizeX = RADouble.NewAbs(endPosition.X - startPosition.X);
       _location.SizeY = RADouble.NewAbs(endPosition.Y - startPosition.Y);
-      Pen.Width = (float)lineWidth;
-      Pen.Color = lineColor;
+      Pen = Pen.WithWidth(lineWidth).WithColor(lineColor);
     }
 
     public LineShape(double startX, double startY, double endX, double endY, double lineWidth, NamedColor lineColor)
       :
       this(new PointD2D(startX, startY), new PointD2D(endX, endY), null)
     {
-      Pen.Width = (float)lineWidth;
-      Pen.Color = lineColor;
+      Pen = Pen.WithWidth(lineWidth).WithColor(lineColor);
     }
 
     #endregion Constructors
@@ -227,16 +225,19 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       HitTestObjectBase result = null;
       GraphicsPath gp = GetPath();
-      if (gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), _linePen))
+      using (var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen))
       {
-        result = new LineShapeHitTestObject(this);
-      }
-      else
-      {
-        gp.Transform(htd.GetTransformation(_transformation)); // Transform to page coord
-        if (gp.IsOutlineVisible((PointF)htd.HittedPointInPageCoord, new Pen(Color.Black, 6)))
+        if (gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), linePenGdi))
         {
           result = new LineShapeHitTestObject(this);
+        }
+        else
+        {
+          gp.Transform(htd.GetTransformation(_transformation)); // Transform to page coord
+          if (gp.IsOutlineVisible((PointF)htd.HittedPointInPageCoord, new Pen(Color.Black, 6)))
+          {
+            result = new LineShapeHitTestObject(this);
+          }
         }
       }
 
@@ -260,16 +261,21 @@ namespace Altaxo.Graph.Gdi.Shapes
       TransformGraphics(g);
 
       var bounds = Bounds;
-      Pen.SetEnvironment((RectangleF)bounds, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
-      g.DrawLine(Pen, (float)bounds.X, (float)bounds.Y, (float)bounds.Right, (float)bounds.Bottom);
-
-      if (_outlinePen != null && _outlinePen.IsVisible)
+      using (var penGdi = PenCacheGdi.Instance.BorrowPen(Pen, bounds, g, Math.Max(ScaleX, ScaleY)))
       {
-        var p = new GraphicsPath();
-        p.AddLine((float)bounds.X, (float)bounds.Y, (float)bounds.Right, (float)bounds.Bottom);
-        p.Widen(Pen);
-        OutlinePen.SetEnvironment((RectangleF)bounds, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
-        g.DrawPath(OutlinePen, p);
+        g.DrawLine(penGdi, (float)bounds.X, (float)bounds.Y, (float)bounds.Right, (float)bounds.Bottom);
+
+        if (_outlinePen != null && _outlinePen.IsVisible)
+        {
+          var p = new GraphicsPath();
+          p.AddLine((float)bounds.X, (float)bounds.Y, (float)bounds.Right, (float)bounds.Bottom);
+          p.Widen(penGdi);
+
+          using (var outlinePenGdi = PenCacheGdi.Instance.BorrowPen(OutlinePen, bounds, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY))))
+          {
+            g.DrawPath(outlinePenGdi, p);
+          }
+        }
       }
 
       g.Restore(gs);

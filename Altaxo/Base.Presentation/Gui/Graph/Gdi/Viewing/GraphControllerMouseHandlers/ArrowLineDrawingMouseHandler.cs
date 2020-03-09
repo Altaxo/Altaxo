@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       var go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, context);
 
       var absArrowSize = go.Pen.Width * 8;
-      go.Pen.EndCap = new Altaxo.Graph.Gdi.LineCaps.ArrowF10LineCap(absArrowSize, 4);
+      go.Pen = go.Pen.WithEndCap(new Altaxo.Graph.Gdi.LineCaps.ArrowF10LineCap(absArrowSize, 4));
 
       // deselect the text tool
       _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);

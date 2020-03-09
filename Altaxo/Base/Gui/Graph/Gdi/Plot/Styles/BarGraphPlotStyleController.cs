@@ -112,7 +112,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         _view.UseFill = _doc.FillBrush != null && _doc.FillBrush.IsVisible;
         _view.IndependentFillColor = _doc.IndependentFillColor;
         _view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
-        _view.FillBrush = null != _doc.FillBrush ? _doc.FillBrush : new BrushX(NamedColors.Transparent);
+        _view.FillBrush = _doc.FillBrush ?? new BrushX(NamedColors.Transparent);
 
         _view.UseFrame = _doc.FramePen != null && _doc.FramePen.IsVisible;
         _view.IndependentFrameColor = _doc.IndependentFrameColor;
@@ -264,9 +264,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void InternalSetFrameColorToFillColor()
     {
-      var newPen = _view.FramePen.Clone();
-      newPen.Color = _view.FillBrush.Color;
-      _view.FramePen = newPen;
+      _view.FramePen = _view.FramePen.WithColor(_view.FillBrush.Color);
     }
 
     private void EhUseFillChanged()
@@ -279,7 +277,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         {
           InternalSetFillColorToFrameColor();
         }
-        else if (null == _view.FillBrush || _view.FillBrush.IsInvisible)
+        else if (_view.FillBrush is null || _view.FillBrush.IsInvisible)
         {
           _view.FillBrush = new BrushX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
         }

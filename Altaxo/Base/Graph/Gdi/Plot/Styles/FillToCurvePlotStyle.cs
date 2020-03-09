@@ -165,7 +165,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         FillBrush = from._fillBrush;
 
         _independentFrameColor = from._independentFrameColor;
-        _framePen = null == from._framePen ? null : from._framePen.Clone();
+        _framePen = from._framePen;
 
         _fillToPrevPlotItem = from._fillToPrevPlotItem;
         _fillToNextPlotItem = from._fillToNextPlotItem;
@@ -234,8 +234,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected override System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _framePen)
-        yield return new Main.DocumentNodeAndName(_framePen, "Pen");
+      yield break;
     }
 
     #endregion Constructor
@@ -293,8 +292,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return _framePen; }
       set
       {
-        if (ChildSetMember(ref _framePen, value))
+        if (!(_framePen == value))
+        {
+          _framePen = value;
           EhSelfChanged(EventArgs.Empty);
+        }
       }
     }
 
@@ -500,7 +502,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
 
       if (null != _framePen)
-        g.DrawPath(_framePen, gp);
+      {
+        using (var framePenGdi = PenCacheGdi.Instance.BorrowPen(_framePen))
+        {
+          g.DrawPath(framePenGdi, gp);
+        }
+      }
 
       gp.Reset();
     } // end function PaintOneRange
@@ -516,7 +523,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       switch (propertyName)
       {
         case "StrokeWidth":
-          yield return (propertyName, _framePen.Width, (w) => _framePen.Width = (double)w);
+          yield return (propertyName, _framePen.Width, (w) => _framePen = _framePen.WithWidth((double)w));
           break;
       }
 

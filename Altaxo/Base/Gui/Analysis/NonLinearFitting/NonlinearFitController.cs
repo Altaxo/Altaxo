@@ -624,7 +624,11 @@ Label_EditScript:
               if (null == newPlotStyleLowerConfBand)
               {
                 newPlotStyleLowerConfBand = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext());
-                newPlotStyleLowerConfBand.Styles.OfType<LinePlotStyle>().First().LinePen.DashPattern = Altaxo.Drawing.DashPatterns.DashDot.Instance;
+
+                if (newPlotStyleLowerConfBand.Styles.OfType<LinePlotStyle>().FirstOrDefault() is { } fstyle)
+                {
+                  fstyle.LinePen = fstyle.LinePen.WithDashPattern(Altaxo.Drawing.DashPatterns.DashDot.Instance);
+                }
               }
 
               var newPlotDataLowerConfBand = new XYNonlinearFitFunctionConfidenceBandPlotData(
@@ -656,7 +660,10 @@ Label_EditScript:
               if (null == newPlotStyleUpperConfBand)
               {
                 newPlotStyleUpperConfBand = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext());
-                newPlotStyleUpperConfBand.Styles.OfType<LinePlotStyle>().First().LinePen.DashPattern = Altaxo.Drawing.DashPatterns.DashDot.Instance;
+                if (newPlotStyleUpperConfBand.Styles.OfType<LinePlotStyle>().First() is { } fstyle)
+                {
+                  fstyle.LinePen = fstyle.LinePen.WithDashPattern(Altaxo.Drawing.DashPatterns.DashDot.Instance);
+                }
               }
 
               var newPlotDataUpperConfBand = new XYNonlinearFitFunctionConfidenceBandPlotData(

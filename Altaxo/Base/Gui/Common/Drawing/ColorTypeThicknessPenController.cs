@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (doc == null)
         throw new ArgumentNullException("doc");
       _doc = doc;
-      _tempDoc = doc.Clone();
+      _tempDoc = doc;
     }
 
     private void Initialize()
@@ -136,7 +136,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     public bool Apply(bool disposeController)
     {
-      _doc.CopyFrom(_view.DocPen);
+      _doc = _view.DocPen;
       return true;
     }
 

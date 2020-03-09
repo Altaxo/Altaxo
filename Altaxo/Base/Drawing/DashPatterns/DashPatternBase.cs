@@ -31,7 +31,7 @@ using Altaxo.Drawing.DashPatternManagement;
 
 namespace Altaxo.Drawing.DashPatterns
 {
-  public abstract class DashPatternBase : IDashPattern
+  public abstract class DashPatternBase : IDashPattern, Main.IImmutable
   {
     #region Serialization
 
@@ -68,53 +68,15 @@ namespace Altaxo.Drawing.DashPatterns
 
     #endregion Serialization
 
-    public override int GetHashCode()
-    {
-      return GetType().GetHashCode();
-    }
-
-    public override bool Equals(object obj)
-    {
-      return GetType() == obj?.GetType();
-    }
-
-    public object Clone()
-    {
-      return MemberwiseClone();
-    }
-
     public abstract double this[int index] { get; set; }
 
     public abstract int Count { get; }
 
     public virtual double DashOffset { get { return 0; } }
 
-    public bool IsReadOnly
+    public object Clone() // Attention: although IDashPattern is immutable, different instances of the same pattern are neccessary to establish a membership into the DashPatternList!
     {
-      get
-      {
-        return true;
-      }
-    }
-
-    public void Add(double item)
-    {
-      throw new NotImplementedException();
-    }
-
-    public void Clear()
-    {
-      throw new NotImplementedException();
-    }
-
-    public bool Contains(double item)
-    {
-      throw new NotImplementedException();
-    }
-
-    public void CopyTo(double[] array, int arrayIndex)
-    {
-      throw new NotImplementedException();
+      return MemberwiseClone();
     }
 
     public IEnumerator<double> GetEnumerator()
@@ -123,30 +85,45 @@ namespace Altaxo.Drawing.DashPatterns
         yield return this[i];
     }
 
-    public int IndexOf(double item)
-    {
-      throw new NotImplementedException();
-    }
-
-    public void Insert(int index, double item)
-    {
-      throw new NotImplementedException();
-    }
-
-    public bool Remove(double item)
-    {
-      throw new NotImplementedException();
-    }
-
-    public void RemoveAt(int index)
-    {
-      throw new NotImplementedException();
-    }
-
     IEnumerator IEnumerable.GetEnumerator()
     {
       for (int i = 0; i < Count; ++i)
         yield return this[i];
+    }
+
+    public virtual bool Equals(IDashPattern other)
+    {
+      if (other is null)
+        return false;
+
+      if (this.GetType() != other.GetType())
+        return false;
+
+      if (this.DashOffset != other.DashOffset)
+        return false;
+
+      if (this.Count != other.Count)
+        return false;
+
+      for (int i = 0; i < Count; ++i)
+      {
+        if (this[i] != other[i])
+        {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    public override int GetHashCode()
+    {
+      return GetType().GetHashCode();
+    }
+
+    public override bool Equals(object obj)
+    {
+      return Equals(obj as DashPatternBase);
     }
   }
 }

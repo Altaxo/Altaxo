@@ -1398,7 +1398,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             y -= stringsize.Height;
             break;
         }
-        if (null == variableBackBrush)
+        if (variableBackBrush is null)
         {
           _backgroundStyle.Draw(g, new RectangleF((float)x, (float)y, stringsize.Width, stringsize.Height));
         }

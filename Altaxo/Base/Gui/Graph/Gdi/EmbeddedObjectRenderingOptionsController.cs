@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Graph.Gdi
         _view.SetSourceDpi(_sourceDpi);
         _view.OutputScaling = _doc.OutputScalingFactor;
         _view.BackgroundColor = _doc.BackgroundColorForFormatsWithoutAlphaChannel;
-        _view.BackgroundBrush = null == _doc.BackgroundBrush ? new BrushX(NamedColors.Transparent) : _doc.BackgroundBrush;
+        _view.BackgroundBrush = _doc.BackgroundBrush ?? new BrushX(NamedColors.Transparent);
 
         _view.RenderEnhancedMetafile = _doc.RenderEnhancedMetafile;
         _view.RenderEnhancedMetafileAsVectorFormat = _doc.RenderEnhancedMetafileAsVectorFormat;

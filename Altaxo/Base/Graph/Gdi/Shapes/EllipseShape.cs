@@ -106,8 +106,8 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
-      Pen.SetEnvironment(boundsF, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
-      g.DrawEllipse(Pen, boundsF);
+      using var penGdi = PenCacheGdi.Instance.BorrowPen(Pen, boundsF, g, Math.Max(ScaleX, ScaleY));
+      g.DrawEllipse(penGdi, boundsF);
       g.Restore(gs);
     }
   } // end class

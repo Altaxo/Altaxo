@@ -51,7 +51,7 @@ namespace Altaxo.Worksheet
     protected static BrushX _defaultSelectedBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Highlight));
     protected static BrushX _defaultNormalTextBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.WindowText));
     protected static BrushX _defaultSelectedTextBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.HighlightText));
-    protected static PenX _defaultCellPen = new PenX(GdiColorHelper.ToNamedColor(SystemColors.InactiveBorder), 1) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
+    protected static PenX _defaultCellPen = new PenX(GdiColorHelper.ToNamedColor(SystemColors.InactiveBorder), 1);
     protected static FontX _defaultTextFont = GdiFontManager.GetFontXGenericSansSerif(9, FontXStyle.Regular);
 
     protected ColumnStyleType _columnStyleType;
@@ -201,7 +201,7 @@ namespace Altaxo.Worksheet
 
     public ColumnStyle(ColumnStyleType type)
     {
-      _cellPen = new PenX(GdiColorHelper.ToNamedColor(SystemColors.InactiveBorder), 1) { ParentObject = this };
+      _cellPen = new PenX(GdiColorHelper.ToNamedColor(SystemColors.InactiveBorder), 1);
       _textBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.WindowText));
       _backgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Window));
 
@@ -215,8 +215,7 @@ namespace Altaxo.Worksheet
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _cellPen)
-        yield return new Main.DocumentNodeAndName(_cellPen, () => _cellPen = null, "CellPen");
+      yield break;
     }
 
     public void ChangeTypeTo(ColumnStyleType type)
@@ -241,7 +240,7 @@ namespace Altaxo.Worksheet
       _columnSize = s._columnSize;
 
       _isCellPenCustom = s._isCellPenCustom;
-      ChildCopyToMember(ref _cellPen, s._cellPen);
+      _cellPen = s._cellPen;
       _textFormat = (StringFormat)s._textFormat.Clone();
       _textFont = s._textFont;
 
@@ -259,7 +258,7 @@ namespace Altaxo.Worksheet
     public static PenX GetDefaultCellBorder(ColumnStyleType type)
     {
       if (type == ColumnStyleType.DataCell || type == ColumnStyleType.PropertyCell)
-        return _defaultCellPen.Clone();
+        return _defaultCellPen;
       else
         return new PenX(GdiColorHelper.ToNamedColor(SystemColors.ControlDarkDark), 1);
     }
@@ -346,13 +345,7 @@ namespace Altaxo.Worksheet
         if (object.ReferenceEquals(_cellPen, value))
           return;
 
-        if (null != _cellPen)
-          _cellPen.Dispose();
-
         _cellPen = value;
-
-        if (null != _cellPen)
-          _cellPen.ParentObject = this;
       }
     }
 
@@ -364,7 +357,7 @@ namespace Altaxo.Worksheet
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException(nameof(BackgroundBrush));
 
         if (!(_backgroundBrush == value))
@@ -461,9 +454,11 @@ namespace Altaxo.Worksheet
         }
       }
 
-      _cellPen.Cached = true;
-      dc.DrawLine(_cellPen.Pen, cellRectangle.Left, cellRectangle.Bottom - 1, cellRectangle.Right - 1, cellRectangle.Bottom - 1);
-      dc.DrawLine(_cellPen.Pen, cellRectangle.Right - 1, cellRectangle.Bottom - 1, cellRectangle.Right - 1, cellRectangle.Top);
+      using (var cellPenGdi = PenCacheGdi.Instance.BorrowPen(_cellPen))
+      {
+        dc.DrawLine(cellPenGdi, cellRectangle.Left, cellRectangle.Bottom - 1, cellRectangle.Right - 1, cellRectangle.Bottom - 1);
+        dc.DrawLine(cellPenGdi, cellRectangle.Right - 1, cellRectangle.Bottom - 1, cellRectangle.Right - 1, cellRectangle.Top);
+      }
     }
 
     public abstract object Clone();

@@ -30,50 +30,51 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Altaxo.Drawing;
 using Altaxo.Drawing.DashPatternManagement;
+using Altaxo.Drawing.DashPatterns;
 using Altaxo.Geometry;
 using Altaxo.Graph.Gdi.LineCaps;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi
 {
-  #region PenX
-
   /// <summary>
-  /// PenHolder is a serializable surrogate for a Pen object.
-  /// you can implicitly or explicitly convert it to a pen, but you must
-  /// not dispose the pen object you got from this, since the ownership has still the Penholder object
-  /// if you convert a Penholder to a Pen, either implicitly or explicitly,
-  /// the Cached property of the PenHolder is set to true to indicate that
-  /// the PenHolder is holding a Pen object
+  /// PenX is a graphics framework independent pen object. Use <see cref="PenCacheGdi.Instance"/> to convert it into a Gdi pen.
   /// </summary>
   [Serializable]
-  public class PenX
-      :
-      Main.SuspendableDocumentNodeWithEventArgs,
-      ICloneable, IDisposable
+  public class PenX : IImmutable, IEquatable<PenX>
   {
-    protected PenX.Configured _configuredProperties; // ORed collection of the configured properties (i.e. non-standard properties)
-    protected PenType _penType; // the type of the pen
-    protected PenAlignment _alignment; // Alignment of the Pen
-    protected BrushX _brush; // the brush of this pen
+    protected Configured _configuredProperties; // ORed collection of the configured properties (i.e. non-standard properties)
+    protected PenType _penType; // the type of the pen    
+
+    /// <summary>The color of the pen (only in effect if <see cref="_brush"/> is null.</summary>
     protected NamedColor _color; // Color of this Pen object
-    protected float[] _compoundArray;
-    protected DashCap _dashCap;
-    protected IDashPattern _dashPattern;
-    protected float _cachedDashOffset;
-    protected float[] _cachedDashPattern;
-    protected DashStyle _cachedDashStyle;
-    protected LineCapExtension _endCap;
-    protected LineJoin _lineJoin;
-    protected float _miterLimit;
-    protected LineCapExtension _startCap;
-    protected Matrix _transformation;
+
+    /// <summary>The brush of the pen (has always precendence over <see cref="_color"/>.</summary>
+    protected BrushX _brush; // the brush of this pen
+
+    /// <summary>The width of the pen.</summary>
     protected double _width; // Width of this Pen object
 
-    [NonSerialized()]
-    private Pen _cachedPen; // the cached pen object
+    /// <summary>The alignment of the pen.</summary>
+    protected PenAlignment _alignment;
+    protected LineJoin _lineJoin;
+    protected double _miterLimit;
+    protected LineCapExtension _startCap;
+    protected LineCapExtension _endCap;
+    protected IDashPattern _dashPattern;
+    protected DashCap _dashCap;
 
-    private RectangleD2D _env_BoundingRectangle;
-    private double _env_MaximumEffectiveResolution_dpi;
+    protected float[] _compoundArray;
+    protected Matrix _transformation;
+
+    protected int? _cachedHashCode;
+
+
+    public const double DefaultWidth = 1;
+    public const PenAlignment DefaultAlignment = PenAlignment.Center;
+    public const LineJoin DefaultLineJoin = LineJoin.Miter;
+    public const double DefaultMiterLimit = 10;
+
 
     #region "ConfiguredProperties"
 
@@ -81,9 +82,7 @@ namespace Altaxo.Graph.Gdi
     [Flags]
     public enum Configured
     {
-      IsNull = 0x00000,
-      IsNotNull = 0x00001,
-      InCachedMode = 0x00002,
+      Nothing = 0x00000,
       PenType = 0x00004,
       Alignment = 0x00008,
       Brush = 0x00010,
@@ -126,58 +125,12 @@ namespace Altaxo.Graph.Gdi
         public const int Configured.Width           = 0x40000;
 */
 
-    protected static Configured _GetConfiguredPropertiesVariable(Pen pen)
-    {
-      Configured c = Configured.IsNull;
-      if (null == pen)
-        return 0; // Pen is null, so nothing is configured
-
-      c |= Configured.IsNotNull; // Pen is at least not null
-      if (pen.PenType != PenType.SolidColor)
-        c |= Configured.PenType;
-      if (pen.PenType == PenType.SolidColor && pen.Color.ToArgb() != NamedColors.Black.Color.ToArgb())
-        c |= Configured.Color;
-      if (pen.PenType != PenType.SolidColor)
-        c |= Configured.Brush;
-      if (pen.Alignment != PenAlignment.Center)
-        c |= Configured.Alignment;
-      if (pen.CompoundArray != null && pen.CompoundArray.Length > 0)
-        c |= Configured.CompoundArray;
-      if (pen.DashStyle != DashStyle.Solid)
-        c |= Configured.DashStyle;
-      if (pen.DashStyle != DashStyle.Solid && pen.DashCap != DashCap.Flat)
-        c |= Configured.DashCap;
-      if (pen.DashStyle != DashStyle.Solid && pen.DashOffset != 0)
-        c |= Configured.DashOffset;
-      if (pen.DashStyle == DashStyle.Custom && pen.DashPattern != null)
-        c |= Configured.DashPattern;
-      if (pen.EndCap != LineCap.Flat)
-        c |= Configured.EndCap;
-      if (pen.StartCap != LineCap.Flat)
-        c |= Configured.StartCap;
-      if (pen.EndCap != LineCap.Custom)
-        c |= Configured.CustomEndCap;
-      if (pen.StartCap != LineCap.Custom)
-        c |= Configured.CustomStartCap;
-      if (pen.LineJoin != LineJoin.Miter)
-        c |= Configured.LineJoin;
-      if (pen.MiterLimit != 10)
-        c |= Configured.MiterLimit;
-      if (!pen.Transform.IsIdentity)
-        c |= Configured.Transform;
-      if (pen.Width != 1)
-        c |= Configured.Width;
-
-      return c;
-    }
-
     protected static Configured _GetConfiguredPropertiesVariable(PenX pen)
     {
-      Configured c = Configured.IsNull;
-      if (null == pen || pen._configuredProperties == 0)
-        return c; // Pen is null, so nothing is configured
+      if (null == pen)
+        throw new ArgumentNullException(nameof(pen));
 
-      c |= Configured.IsNotNull; // Pen is at least not null
+      Configured c = Configured.Nothing;
       if (pen.PenType != PenType.SolidColor)
         c |= Configured.PenType;
       if (pen.PenType == PenType.SolidColor && pen.Color != NamedColors.Black)
@@ -188,13 +141,13 @@ namespace Altaxo.Graph.Gdi
         c |= Configured.Alignment;
       if (pen.CompoundArray != null && pen.CompoundArray.Length > 0)
         c |= Configured.CompoundArray;
-      if (pen._cachedDashStyle != DashStyle.Solid)
+      if (pen.DashPattern != Solid.Instance)
         c |= Configured.DashStyle;
-      if (pen._cachedDashStyle != DashStyle.Solid && pen.DashCap != DashCap.Flat)
+      if (pen.DashPattern != Solid.Instance && pen.DashCap != DashCap.Flat)
         c |= Configured.DashCap;
-      if (pen._cachedDashStyle != DashStyle.Solid && pen._cachedDashOffset != 0)
+      if (pen.DashPattern != Solid.Instance && pen.DashPattern != null && pen.DashPattern?.DashOffset != 0)
         c |= Configured.DashOffset;
-      if (pen._cachedDashStyle == DashStyle.Custom && pen._cachedDashPattern != null)
+      if (pen.DashPattern != Solid.Instance && pen.DashPattern != null)
         c |= Configured.DashPattern;
       if (!pen.EndCap.IsDefaultStyle)
         c |= Configured.EndCap;
@@ -293,27 +246,30 @@ if (0 != (cp & PenHolder.Configured.Width))
         else
           s._compoundArray = new float[0];
 
+        DashStyle cachedDashStyle;
         if (0 != (cp & PenX.Configured.DashStyle))
-          s._cachedDashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
+          cachedDashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
         else
-          s._cachedDashStyle = DashStyle.Solid;
+          cachedDashStyle = DashStyle.Solid;
 
         if (0 != (cp & PenX.Configured.DashCap))
           s._dashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
         else
           s._dashCap = DashCap.Flat;
 
+        float cachedDashOffset;
         if (0 != (cp & PenX.Configured.DashOffset))
-          s._cachedDashOffset = info.GetSingle("DashOffset");
+          cachedDashOffset = info.GetSingle("DashOffset");
         else
-          s._cachedDashOffset = 0;
+          cachedDashOffset = 0;
 
+        float[] cachedDashPattern;
         if (0 != (cp & PenX.Configured.DashPattern))
-          info.GetArray(out s._cachedDashPattern);
+          info.GetArray(out cachedDashPattern);
         else
-          s._cachedDashPattern = null;
+          cachedDashPattern = null;
 
-        s.SetDashPatternFromCachedDashPropertiesAfterOldDeserialization();
+        s.SetDashPatternFromCachedDashPropertiesAfterOldDeserialization(cachedDashStyle, cachedDashPattern, cachedDashOffset);
 
         if (0 != (cp & PenX.Configured.EndCap))
         {
@@ -353,9 +309,6 @@ if (0 != (cp & PenHolder.Configured.Width))
           s._width = info.GetDouble("Width");
         else
           s._width = 1;
-
-        if (s.ParentObject == null)
-          s.ParentObject = (Main.IDocumentNode)parent;
 
         return s;
       }
@@ -446,28 +399,30 @@ if (0 != (cp & PenX.Configured.Width))
           info.GetArray(out s._compoundArray);
         else
           s._compoundArray = new float[0];
-
+        DashStyle cachedDashStyle;
         if (0 != (cp & PenX.Configured.DashStyle))
-          s._cachedDashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
+          cachedDashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
         else
-          s._cachedDashStyle = DashStyle.Solid;
+          cachedDashStyle = DashStyle.Solid;
 
         if (0 != (cp & PenX.Configured.DashCap))
           s._dashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
         else
           s._dashCap = DashCap.Flat;
 
+        float cachedDashOffset;
         if (0 != (cp & PenX.Configured.DashOffset))
-          s._cachedDashOffset = info.GetSingle("DashOffset");
+          cachedDashOffset = info.GetSingle("DashOffset");
         else
-          s._cachedDashOffset = 0;
+          cachedDashOffset = 0;
 
+        float[] cachedDashPattern;
         if (0 != (cp & PenX.Configured.DashPattern))
-          info.GetArray(out s._cachedDashPattern);
+          info.GetArray(out cachedDashPattern);
         else
-          s._cachedDashPattern = null;
+          cachedDashPattern = null;
 
-        s.SetDashPatternFromCachedDashPropertiesAfterOldDeserialization();
+        s.SetDashPatternFromCachedDashPropertiesAfterOldDeserialization(cachedDashStyle, cachedDashPattern, cachedDashOffset);
 
         if (0 != (cp & PenX.Configured.EndCap))
         {
@@ -510,7 +465,6 @@ if (0 != (cp & PenX.Configured.Width))
         else
           s._width = 1;
 
-        s.ParentObject = (Main.IDocumentNode)parent;
         return s;
       }
     }
@@ -605,27 +559,30 @@ if (0 != (cp & PenX.Configured.Width))
         else
           s._compoundArray = new float[0];
 
+        DashStyle cachedDashStyle;
         if (0 != (cp & PenX.Configured.DashStyle))
-          s._cachedDashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
+          cachedDashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
         else
-          s._cachedDashStyle = DashStyle.Solid;
+          cachedDashStyle = DashStyle.Solid;
 
         if (0 != (cp & PenX.Configured.DashCap))
           s._dashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
         else
           s._dashCap = DashCap.Flat;
 
+        float cachedDashOffset;
         if (0 != (cp & PenX.Configured.DashOffset))
-          s._cachedDashOffset = info.GetSingle("DashOffset");
+          cachedDashOffset = info.GetSingle("DashOffset");
         else
-          s._cachedDashOffset = 0;
+          cachedDashOffset = 0;
 
+        float[] cachedDashPattern;
         if (0 != (cp & PenX.Configured.DashPattern))
-          info.GetArray(out s._cachedDashPattern);
+          info.GetArray(out cachedDashPattern);
         else
-          s._cachedDashPattern = null;
+          cachedDashPattern = null;
 
-        s.SetDashPatternFromCachedDashPropertiesAfterOldDeserialization();
+        s.SetDashPatternFromCachedDashPropertiesAfterOldDeserialization(cachedDashStyle, cachedDashPattern, cachedDashOffset);
 
         if (0 != (cp & PenX.Configured.EndCap))
         {
@@ -670,7 +627,6 @@ if (0 != (cp & PenX.Configured.Width))
         else
           s._width = 1;
 
-        s.ParentObject = (Main.IDocumentNode)parent;
         return s;
       }
     }
@@ -686,8 +642,6 @@ if (0 != (cp & PenX.Configured.Width))
       {
         var s = (PenX)obj;
         Configured cp = PenX._GetConfiguredPropertiesVariable(s);
-        if (s.Cached)
-          cp |= PenX.Configured.InCachedMode;
 
         info.AddValue("Configured", (int)cp);
         if (0 != (cp & PenX.Configured.PenType))
@@ -695,7 +649,7 @@ if (0 != (cp & PenX.Configured.Width))
         if (0 != (cp & PenX.Configured.Alignment))
           info.AddEnum("Alignment", s.Alignment);
         if (0 != (cp & PenX.Configured.Brush))
-          info.AddValue("Brush", s.BrushHolder);
+          info.AddValue("Brush", s.Brush);
         if (0 != (cp & PenX.Configured.Color))
           info.AddValue("Color", s.Color);
         if (0 != (cp & PenX.Configured.CompoundArray))
@@ -778,8 +732,6 @@ if (0 != (cp & PenX.Configured.Width))
           }
         }
 
-        s.SetCachedDashProperties();
-
         if (0 != (cp & PenX.Configured.EndCap))
         {
           string name = info.GetString("EndCap");
@@ -823,7 +775,6 @@ if (0 != (cp & PenX.Configured.Width))
         else
           s._width = 1;
 
-        s.ParentObject = (Main.IDocumentNode)parent;
         return s;
       }
     }
@@ -831,239 +782,154 @@ if (0 != (cp & PenX.Configured.Width))
     #endregion Serialization
 
     public PenX()
+      : this(NamedColors.Black, 1)
     {
-      _dashPattern = DashPatternListManager.Instance.BuiltinDefaultSolid;
     }
 
     public PenX(NamedColor c)
-        : this(c, 1, false)
+        : this(c, 1)
     {
     }
 
     public PenX(NamedColor c, double width)
-        : this(c, width, false)
-    {
-    }
-
-    public PenX(NamedColor c, double width, bool bCachedMode)
     {
       _penType = PenType.SolidColor;
-      _dashPattern = DashPatternListManager.Instance.BuiltinDefaultSolid;
       _color = c;
       _width = width;
-
+      _alignment = DefaultAlignment;
+      _lineJoin = DefaultLineJoin;
+      _miterLimit = DefaultMiterLimit;
+      _dashPattern = DashPatternListManager.Instance.BuiltinDefaultSolid;
       _startCap = LineCapExtension.Flat;
       _endCap = LineCapExtension.Flat;
 
-      _SetProp(PenX.Configured.IsNotNull, true);
+
       _SetProp(Configured.Color, NamedColors.Black != c);
       _SetProp(Configured.Width, 1 != width);
-
-      if (bCachedMode)
-        _SetPenVariable(new Pen(ToGdi(c), (float)width));
     }
 
-    /// <summary>
-    /// Copy constructor of PenHolder
-    /// </summary>
-    /// <param name="pen">the PenHolder object to copy</param>
-    public PenX(PenX pen)
+    private bool Equals(PenX other, bool penWidthMattersHere)
     {
-      CopyFrom(pen);
-    }
+      if (other is null)
+        return false;
+      if (object.ReferenceEquals(this, other))
+        return true;
 
-    /// <summary>
-    /// Copies the properties of another instance to this instance.
-    /// </summary>
-    /// <param name="pen">the PenHolder object to copy</param>
-    public void CopyFrom(PenX pen)
-    {
-      if (object.ReferenceEquals(this, pen))
-        return;
-
-      _SetPenVariable(null);
-
-      _configuredProperties = pen._configuredProperties;
-      _penType = pen.PenType;
-      _alignment = pen.Alignment;
-
-      if (0 != (_configuredProperties & Configured.Brush))
-        _brush = new BrushX(pen._brush);
-
-      _color = pen.Color;
-
-      if (null != pen._compoundArray)
-        _compoundArray = (float[])pen.CompoundArray.Clone();
-      else
-        _compoundArray = null;
-
-      _dashPattern = pen._dashPattern; // immutable
-      _dashCap = pen._dashCap;
-
-      _cachedDashStyle = pen._cachedDashStyle;
-
-      if (null != pen._cachedDashPattern)
-        _cachedDashPattern = (float[])pen._cachedDashPattern.Clone();
-      else
-        _cachedDashPattern = null;
-
-      _cachedDashOffset = pen._cachedDashOffset;
-
-      _endCap = pen.EndCap;
-      _lineJoin = pen.LineJoin;
-      _miterLimit = pen.MiterLimit;
-      _startCap = pen.StartCap;
-
-      if (null != pen._transformation)
-        _transformation = pen.Transform.Clone();
-      else
-        _transformation = null;
-
-      _width = pen.Width;
-
-      // note: there is an problem with Pen.Clone() : if the Color of the pen
-      // was set to a known color, the color of the cloned pen is the same, but no longer a known color
-      // therefore we avoid the cloning of the pen here
-
-      // if(m_CachedMode && null!=pen.m_Pen)
-      //   _SetPenVariable( (Pen)pen.m_Pen.Clone() );
-      // else
-      //   _SetPenVariable(null);
-    }
-
-    /*
-public PenHolder(Pen pen)
-    : this(pen, true)
-{
-}
-
-public PenHolder(Pen pen, bool bCached)
-{
-    this.m_CachedMode = bCached;
-    _SetPropertiesFromPen(pen);
-    this.m_ConfiguredProperties = _GetConfiguredPropertiesVariable(pen);
-    if (bCached)
-        _SetPenVariable(_GetPenFromProperties()); // do not clone the pen because there is a problem with pen cloning with known colors (see above)
-}
-*/
-
-    public static implicit operator System.Drawing.Pen(PenX ph)
-    {
-      ph.Cached = true; // if implicit conversion, we maybe are not aware that the pen is never destroyed, so _we_ control the pen by caching it
-      return ph.Pen;
-    }
-
-    public Pen Pen
-    {
-      get
+      if (this._brush is null && other._brush is null)
       {
-        if (_cachedPen == null)
-          _cachedPen = _GetPenFromProperties();
-
-        return _cachedPen;
+        if (!(this._color == other._color))
+          return false;
       }
-    }
-
-    public bool Cached
-    {
-      get { return false; }
-      set
+      else
       {
-      }
-    }
-
-    protected void _SetPenVariable(Pen pen)
-    {
-      if (null != _cachedPen)
-        _cachedPen.Dispose();
-      _cachedPen = pen;
-    }
-
-    /*
-protected void _SetPropertiesFromPen(Pen pen)
-{
-    this.m_ConfiguredProperties = _GetConfiguredPropertiesVariable(pen);
-    this.m_PenType = pen.PenType;
-    this.m_Alignment = pen.Alignment;
-    this.m_Brush = new BrushHolder(pen.Brush, false);
-    this.m_Color = pen.Color;
-    this.m_CompoundArray = (float[])pen.CompoundArray.Clone();
-    this.m_DashCap = pen.DashCap;
-    this.m_DashOffset = pen.DashOffset;
-    this.m_DashPattern = (float[])pen.DashPattern.Clone();
-    this.m_DashStyle = pen.DashStyle;
-    this.m_EndCap = pen.EndCap;
-    this.m_LineJoin = pen.LineJoin;
-    this.m_MiterLimit = pen.MiterLimit;
-    this.m_StartCap = pen.StartCap;
-    this.m_Transform = (Matrix)pen.Transform.Clone();
-    this.m_Width = pen.Width;
-}
-*/
-
-    private static System.Drawing.Color ToGdi(NamedColor color)
-    {
-      var c = color.Color;
-      return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
-    }
-
-    protected Pen _GetPenFromProperties()
-    {
-      Configured cp = _configuredProperties;
-
-      if (Configured.IsNull == cp)
-        return null;
-
-      var pen = new Pen(ToGdi(NamedColors.Black));
-
-      // now set the optional Pen properties
-      if (0 != (cp & PenX.Configured.Width))
-        pen.Width = (float)(_width);
-
-      if (0 != (cp & PenX.Configured.Alignment))
-        pen.Alignment = _alignment;
-
-      if (0 != (cp & PenX.Configured.Color))
-        pen.Color = ToGdi(_color);
-      if (0 != (cp & PenX.Configured.Brush))
-      {
-        var brushGdi = BrushCacheGdi.Instance.BorrowBrush(_brush, _env_BoundingRectangle, _env_MaximumEffectiveResolution_dpi);
-        pen.Brush = brushGdi;
-        brushGdi.DoNotReturnToCache();
+        if (!(this._brush == other._brush))
+          return false;
       }
 
-      if (0 != (cp & PenX.Configured.CompoundArray))
-        pen.CompoundArray = _compoundArray;
-      if (0 != (cp & PenX.Configured.DashStyle))
-        pen.DashStyle = _cachedDashStyle;
-      if (0 != (cp & PenX.Configured.DashCap))
-        pen.DashCap = _dashCap;
-      if (0 != (cp & PenX.Configured.DashOffset))
-        pen.DashOffset = _cachedDashOffset;
-      if (0 != (cp & PenX.Configured.DashPattern))
-        pen.DashPattern = _cachedDashPattern;
-      if (0 != (cp & PenX.Configured.EndCap))
-        _endCap.SetEndCap(pen);
-      if (0 != (cp & PenX.Configured.LineJoin))
-        pen.LineJoin = _lineJoin;
-      if (0 != (cp & PenX.Configured.MiterLimit))
-        pen.MiterLimit = _miterLimit;
-      if (0 != (cp & PenX.Configured.StartCap))
-        _startCap.SetStartCap(pen);
-      if (0 != (cp & PenX.Configured.Transform))
-        pen.Transform = _transformation;
+      if (!(this._width == other._width) && penWidthMattersHere)
+        return false;
 
-      return pen;
+      if (!(this._alignment == other._alignment))
+        return false;
+
+      if (!(this._lineJoin == other._lineJoin))
+        return false;
+
+      if (!(this._miterLimit == other._miterLimit))
+        return false;
+
+      if (!(this._startCap == other._startCap))
+        return false;
+
+      if (!(this._endCap == other._endCap))
+        return false;
+
+
+      if (!(this._dashPattern == other._dashPattern))
+        return false;
+
+      if (!(this._dashPattern is Drawing.DashPatterns.Solid))
+      {
+        if (!(this._dashCap != other._dashCap))
+          return false;
+      }
+
+      if (!(AreEqual(this._compoundArray, other._compoundArray)))
+        return false;
+
+      if (!object.Equals(this._transformation, other._transformation))
+        return false;
+
+      return true;
     }
 
-    private static Configured SetProp(Configured allprop, Configured prop, bool bSet)
+    public bool Equals(PenX other)
     {
-      allprop &= (Configured.All ^ prop);
-      if (bSet)
-        allprop |= prop;
-
-      return allprop;
+      return Equals(other, true);
     }
+
+    public override bool Equals(object obj)
+    {
+      return Equals(obj as PenX, true);
+    }
+
+    public static bool operator ==(PenX x, PenX y)
+    {
+      return x is { } _ ? x.Equals(y, true) : y is { } _ ? y.Equals(x, true) : true;
+    }
+    public static bool operator !=(PenX x, PenX y)
+    {
+      return !(x == y);
+    }
+
+    public static bool AreEqualUnlessWidth(PenX x, PenX y)
+    {
+      return x is { } _ ? x.Equals(y, false) : y is { } _ ? y.Equals(x, false) : true;
+    }
+
+    protected int CalculateHash()
+    {
+      int result = _brush is null ? _color.GetHashCode() : _brush.GetHashCode();
+
+      unchecked
+      {
+        if (!(_width == DefaultWidth))
+          result += 5 * _width.GetHashCode();
+
+        if (!(_alignment == DefaultAlignment))
+          result += 7 * _alignment.GetHashCode();
+
+        if (!(_lineJoin == DefaultLineJoin))
+          result += 11 * _lineJoin.GetHashCode();
+
+        if (!(_miterLimit == DefaultMiterLimit))
+          result += 13 * _miterLimit.GetHashCode();
+
+        result += 17 * _startCap.GetHashCode();
+        result += 19 * _endCap.GetHashCode();
+        result += 23 * _dashPattern.GetHashCode();
+
+        if (!(this._dashPattern is Drawing.DashPatterns.Solid))
+          result += 29 * _dashCap.GetHashCode();
+
+        if (_compoundArray is { } _)
+          result += 31 * _compoundArray.GetHashCode();
+
+        if (_transformation is { } _)
+          result += 37 * _transformation.GetHashCode();
+      }
+      return result;
+    }
+
+    public override int GetHashCode()
+    {
+      if (!_cachedHashCode.HasValue)
+      {
+        _cachedHashCode = CalculateHash();
+      }
+      return _cachedHashCode.Value;
+    }
+
 
     private static bool AreEqual(float[] x1, float[] x2)
     {
@@ -1080,110 +946,11 @@ protected void _SetPropertiesFromPen(Pen pen)
       return true;
     }
 
-    /// <summary>
-    /// Returns all differences between two pens as a flagged enum.
-    /// </summary>
-    /// <param name="p1">First pen to compare.</param>
-    /// <param name="p2">Second pen to comare.</param>
-    /// <returns>A enum where all those bits are set where the two pens are different.</returns>
-    public static Configured GetDifferences(PenX p1, PenX p2)
+    protected PenX Clone()
     {
-      Configured cp1 = p1._configuredProperties;
-      Configured cp2 = p2._configuredProperties;
-
-      Configured cp = cp1 & cp2;
-
-      // for all properties that are configured both in p1 and p2, test if they are equal
-      // now set the optional Pen properties
-      if (0 != (cp & PenX.Configured.IsNotNull))
-        cp = SetProp(cp, Configured.IsNotNull, false);
-
-      if (0 != (cp & PenX.Configured.Width))
-        cp = SetProp(cp, PenX.Configured.Width, p1._width != p2._width);
-
-      if (0 != (cp & PenX.Configured.Alignment))
-        cp = SetProp(cp, PenX.Configured.Alignment, p1._alignment != p2._alignment);
-
-      if (0 != (cp & PenX.Configured.Color))
-        cp = SetProp(cp, PenX.Configured.Color, p1._color != p2._color);
-
-      if (0 != (cp & PenX.Configured.Brush))
-        cp = SetProp(cp, PenX.Configured.Brush, !BrushX.AreEqual(p1._brush, p2._brush));
-
-      if (0 != (cp & PenX.Configured.CompoundArray))
-        cp = SetProp(cp, PenX.Configured.CompoundArray, !AreEqual(p1._compoundArray, p2._compoundArray));
-
-      if (0 != (cp & PenX.Configured.DashStyle))
-        cp = SetProp(cp, PenX.Configured.DashStyle, p1._cachedDashStyle != p2._cachedDashStyle);
-
-      if (0 != (cp & PenX.Configured.DashCap))
-        cp = SetProp(cp, PenX.Configured.DashCap, p1._dashCap != p2._dashCap);
-
-      if (0 != (cp & PenX.Configured.DashOffset))
-        cp = SetProp(cp, PenX.Configured.DashOffset, p1._cachedDashOffset != p2._cachedDashOffset);
-
-      if (0 != (cp & PenX.Configured.DashPattern))
-        cp = SetProp(cp, PenX.Configured.DashPattern, !AreEqual(p1._cachedDashPattern, p2._cachedDashPattern));
-
-      if (0 != (cp & PenX.Configured.EndCap))
-        cp = SetProp(cp, PenX.Configured.EndCap, p1._endCap != p2._endCap);
-
-      if (0 != (cp & PenX.Configured.LineJoin))
-        cp = SetProp(cp, PenX.Configured.LineJoin, p1._lineJoin != p2._lineJoin);
-
-      if (0 != (cp & PenX.Configured.MiterLimit))
-        cp = SetProp(cp, PenX.Configured.MiterLimit, p1._miterLimit != p2._miterLimit);
-
-      if (0 != (cp & PenX.Configured.StartCap))
-        cp = SetProp(cp, PenX.Configured.StartCap, p1._startCap != p2._startCap);
-
-      if (0 != (cp & PenX.Configured.Transform))
-        cp = SetProp(cp, PenX.Configured.Transform, p1._transformation != p2._transformation);
-
-      return cp | (cp1 ^ cp2);
-    }
-
-    public static bool AreEqual(PenX p1, PenX p2)
-    {
-      if (p1 == null && p2 == null)
-        return true;
-      if (p1 == null || p2 == null)
-        return false;
-      if (object.ReferenceEquals(p1, p2))
-        return true;
-
-      if (p1._configuredProperties != p2._configuredProperties)
-        return false;
-
-      Configured diff = GetDifferences(p1, p2);
-      return diff == 0;
-    }
-
-    public static bool AreEqualUnlessWidth(PenX p1, PenX p2)
-    {
-      if (p1 == null && p2 == null)
-        return true;
-      if (p1 == null || p2 == null)
-        return false;
-      if (object.ReferenceEquals(p1, p2))
-        return true;
-
-      Configured c1 = p1._configuredProperties;
-      Configured c2 = p2._configuredProperties;
-      c1 = SetProp(c1, Configured.Width, false);
-      c2 = SetProp(c2, Configured.Width, false);
-
-      if (c1 != c2)
-        return false;
-
-      Configured diff = GetDifferences(p1, p2);
-      diff = SetProp(diff, Configured.Width, false);
-      return diff == 0;
-    }
-
-    private void _SetBrushVariable(BrushX bh)
-    {
-      _brush = bh;
+      var result = (PenX)MemberwiseClone();
+      result._cachedHashCode = null;
+      return result;
     }
 
     public PenType PenType
@@ -1194,18 +961,20 @@ protected void _SetPropertiesFromPen(Pen pen)
     public PenAlignment Alignment
     {
       get { return _alignment; }
-      set
+    }
+
+    public PenX WithAlignment(PenAlignment value)
+    {
+      if (!(_alignment == value))
       {
-        bool bChanged = (_alignment != value);
-        _alignment = value;
-        if (bChanged)
-        {
-          _SetProp(Configured.Alignment, PenAlignment.Center != value);
-
-          _SetPenVariable(null);
-
-          EhSelfChanged(EventArgs.Empty); // Fire the Changed event
-        }
+        var result = Clone();
+        result._alignment = value;
+        result._SetProp(Configured.Alignment, PenAlignment.Center != value);
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -1231,121 +1000,191 @@ protected void _SetPropertiesFromPen(Pen pen)
       }
     }
 
-    public BrushX BrushHolder
+    public BrushX Brush
     {
       get
       {
-        if (_brush == null)
-          return new BrushX(_color);
-        else
-          return _brush;
+        return _brush ?? new BrushX(_color);
       }
-      set
+    }
+
+    public PenX WithBrush(BrushX value)
+    {
+      if (!(Brush == value))
       {
-        if (null == value)
+        var result = Clone();
+        result._brush = value;
+
+        if (value is null)
         {
-          _SetProp(Configured.PenType, false);
-          _SetProp(Configured.Color, NamedColors.Black != _color);
-          _penType = PenType.SolidColor;
-          _SetBrushVariable(null);
+          result._SetProp(Configured.PenType, false);
+          result._SetProp(Configured.Color, NamedColors.Black != _color);
+          result._penType = PenType.SolidColor;
         }
         else if (value.BrushType == BrushType.SolidBrush)
         {
-          _penType = PenType.SolidColor;
-          _color = value.Color;
-          _SetBrushVariable(null);
-
-          _SetProp(Configured.PenType, PenType.SolidColor != _penType);
-          _SetProp(Configured.Color, NamedColors.Black != _color);
-          _SetProp(Configured.Brush, false);
+          result._penType = PenType.SolidColor;
+          result._color = value.Color;
+          result._SetProp(Configured.PenType, PenType.SolidColor != _penType);
+          result._SetProp(Configured.Color, NamedColors.Black != _color);
+          result._SetProp(Configured.Brush, false);
         } // if value is SolidBrush
         else if (value.BrushType == BrushType.HatchBrush)
         {
-          _penType = PenType.HatchFill;
-          _SetBrushVariable(new BrushX(value));
-
-          _SetProp(Configured.PenType, true);
-          _SetProp(Configured.Color, false);
-          _SetProp(Configured.Brush, true);
+          result._penType = PenType.HatchFill;
+          result._SetProp(Configured.PenType, true);
+          result._SetProp(Configured.Color, false);
+          result._SetProp(Configured.Brush, true);
         }
         else if (value.BrushType == BrushType.TextureBrush)
         {
-          _penType = PenType.TextureFill;
-          _SetBrushVariable(new BrushX(value));
-
-          _SetProp(Configured.PenType, true);
-          _SetProp(Configured.Color, false);
-          _SetProp(Configured.Brush, true);
+          result._penType = PenType.TextureFill;
+          result._SetProp(Configured.PenType, true);
+          result._SetProp(Configured.Color, false);
+          result._SetProp(Configured.Brush, true);
         }
         else if (value.BrushType == BrushType.LinearGradientBrush)
         {
-          _penType = PenType.LinearGradient;
-          _SetBrushVariable(new BrushX(value));
-
-          _SetProp(Configured.PenType, true);
-          _SetProp(Configured.Color, false);
-          _SetProp(Configured.Brush, true);
+          result._penType = PenType.LinearGradient;
+          result._SetProp(Configured.PenType, true);
+          result._SetProp(Configured.Color, false);
+          result._SetProp(Configured.Brush, true);
         }
         else if (value.BrushType == BrushType.PathGradientBrush)
         {
-          _penType = PenType.PathGradient;
-          _SetBrushVariable(new BrushX(value));
-
-          _SetProp(Configured.PenType, true);
-          _SetProp(Configured.Color, false);
-          _SetProp(Configured.Brush, true);
+          result._penType = PenType.PathGradient;
+          result._SetProp(Configured.PenType, true);
+          result._SetProp(Configured.Color, false);
+          result._SetProp(Configured.Brush, true);
         }
-        _SetPenVariable(null);
-        EhSelfChanged(EventArgs.Empty); // Fire the Changed event
+
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
     public NamedColor Color
     {
-      get { return _color; }
-      set
+      get
       {
-        bool bChanged = (_color != value);
-        _color = value;
-        if (bChanged)
-        {
-          if (null != _brush)
-            _brush = _brush.WithColor(value);
-          else
-            _SetProp(Configured.Color, NamedColors.Black != value);
+        return _brush?.Color ?? _color;
+      }
+    }
 
-          _SetPenVariable(null);
+    public PenX WithColor(NamedColor value)
+    {
+      if (!(Color == value))
+      {
+        var result = Clone();
 
-          EhSelfChanged(EventArgs.Empty); // Fire the Changed event
-        }
+        if (result._brush is { } brush)
+          result._brush = brush.WithColor(value);
+        else
+          result._SetProp(Configured.Color, NamedColors.Black != value);
+
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
     public float[] CompoundArray
     {
       get { return _compoundArray; }
-      set
+    }
+
+    public PenX WithCompoundArray(float[] value)
+    {
+      if (!(_compoundArray == value))
       {
-        _SetProp(Configured.CompoundArray, null != value && value.Length > 0);
-        _compoundArray = (float[])value.Clone();
-        _SetPenVariable(null);
-        EhSelfChanged(EventArgs.Empty); // Fire the Changed event
+        var result = Clone();
+        result._compoundArray = (float[])value?.Clone();
+        result._SetProp(Configured.CompoundArray, null != value && value.Length > 0);
+
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
     public DashCap DashCap
     {
       get { return _dashCap; }
-      set
+    }
+
+    public PenX WithDashCap(DashCap value)
+    {
+      if (!(_dashCap == value))
       {
-        bool bChanged = (_dashCap != value);
-        _dashCap = value;
-        if (bChanged)
-        {
-          _SetProp(Configured.DashCap, DashCap.Flat != value);
-          _SetPenVariable(null);
-          EhSelfChanged(EventArgs.Empty); // Fire the Changed event
-        }
+        var result = Clone();
+        result._dashCap = value;
+        result._SetProp(Configured.DashCap, DashCap.Flat != value);
+        return result;
+      }
+      else
+      {
+        return this;
+      }
+    }
+
+    public LineCapExtension StartCap
+    {
+      get
+      {
+        return _startCap;
+      }
+    }
+
+    public PenX WithStartCap(LineCapExtension value)
+    {
+      if (value is null)
+        throw new ArgumentNullException(nameof(value));
+
+      if (!(object.Equals(_startCap, value)))
+      {
+        var result = Clone();
+        result._startCap = value;
+        result._SetProp(Configured.StartCap, value != null && !value.IsDefaultStyle);
+
+        return result;
+      }
+      else
+      {
+        return this;
+      }
+    }
+
+    public LineCapExtension EndCap
+    {
+      get
+      {
+        return _endCap;
+      }
+    }
+
+    public PenX WithEndCap(LineCapExtension value)
+    {
+      if (value is null)
+        throw new ArgumentNullException(nameof(value));
+
+      if (!(object.Equals(_endCap, value)))
+      {
+        var result = Clone();
+        result._endCap = value;
+        result._SetProp(Configured.EndCap, result._endCap != null && !result._endCap.IsDefaultStyle);
+
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -1355,89 +1194,30 @@ protected void _SetPropertiesFromPen(Pen pen)
       {
         return _dashPattern;
       }
-      set
-      {
-        if (null == value)
-          throw new ArgumentNullException();
-
-        if (!object.ReferenceEquals(_dashPattern, value))
-        {
-          _dashPattern = value;
-          SetCachedDashProperties();
-          _SetPenVariable(null);
-          EhSelfChanged(EventArgs.Empty); // Fire the Changed event
-        }
-      }
     }
 
-    private void SetCachedDashProperties()
+    public PenX WithDashPattern(IDashPattern value)
     {
-      var value = _dashPattern;
+      if (null == value)
+        throw new ArgumentNullException();
 
-      bool configuredDashStyle;
-      bool configuredDashPattern;
-      DashStyle dashStyle;
-      float[] dashPattern = null;
-      float dashOffset = 0;
-
-      if (value is Drawing.DashPatterns.Solid)
+      if (!(object.Equals(_dashPattern, value)))
       {
-        configuredDashStyle = false;
-        configuredDashPattern = false;
-        dashStyle = DashStyle.Solid;
-      }
-      else if (value is Drawing.DashPatterns.Dash)
-      {
-        configuredDashStyle = true;
-        configuredDashPattern = false;
-        dashStyle = DashStyle.Dash;
-      }
-      else if (value is Drawing.DashPatterns.Dot)
-      {
-        configuredDashStyle = true;
-        configuredDashPattern = false;
-        dashStyle = DashStyle.Dot;
-      }
-      else if (value is Drawing.DashPatterns.DashDot)
-      {
-        configuredDashStyle = true;
-        configuredDashPattern = false;
-        dashStyle = DashStyle.DashDot;
-      }
-      else if (value is Drawing.DashPatterns.DashDotDot)
-      {
-        configuredDashStyle = true;
-        configuredDashPattern = false;
-        dashStyle = DashStyle.DashDotDot;
+        var result = Clone();
+        result._dashPattern = value;
+        return result;
       }
       else
       {
-        configuredDashStyle = true;
-        configuredDashPattern = true;
-        dashStyle = DashStyle.Custom;
-        dashPattern = value.Select(x => (float)x).ToArray();
-        dashOffset = (float)value.DashOffset;
-      }
-
-      if (
-          configuredDashStyle != _configuredProperties.HasFlag(Configured.DashStyle) ||
-          configuredDashPattern != _configuredProperties.HasFlag(Configured.DashPattern) ||
-          dashStyle != _cachedDashStyle ||
-          dashOffset != _cachedDashOffset ||
-          !object.ReferenceEquals(dashPattern, _cachedDashPattern))
-      {
-        _SetProp(Configured.DashStyle, configuredDashStyle);
-        _SetProp(Configured.DashPattern, configuredDashPattern);
-        _cachedDashStyle = dashStyle;
-        _cachedDashPattern = dashPattern;
-        _cachedDashOffset = dashOffset;
+        return this;
       }
     }
+
 
     /// <summary>
     /// Sets the <see cref="_dashPattern"/> member after deserialization of old versions (before 2016-10-10).
     /// </summary>
-    private void SetDashPatternFromCachedDashPropertiesAfterOldDeserialization()
+    private void SetDashPatternFromCachedDashPropertiesAfterOldDeserialization(DashStyle cachedDashStyle, float[] cachedDashPattern, float cachedDashOffset)
     {
       if (!_configuredProperties.HasFlag(Configured.DashStyle))
       {
@@ -1445,7 +1225,7 @@ protected void _SetPropertiesFromPen(Pen pen)
       }
       else // DashStyle is configured
       {
-        switch (_cachedDashStyle)
+        switch (cachedDashStyle)
         {
           case DashStyle.Solid:
             _dashPattern = DashPatternListManager.Instance.BuiltinDefaultSolid;
@@ -1468,7 +1248,7 @@ protected void _SetPropertiesFromPen(Pen pen)
             break;
 
           case DashStyle.Custom:
-            _dashPattern = new Drawing.DashPatterns.Custom(_cachedDashPattern.Select(x => (double)x), _cachedDashOffset);
+            _dashPattern = new Drawing.DashPatterns.Custom(cachedDashPattern.Select(x => (double)x), cachedDashOffset);
             break;
 
           default:
@@ -1490,108 +1270,88 @@ protected void _SetPropertiesFromPen(Pen pen)
       return true;
     }
 
-    public LineCapExtension EndCap
-    {
-      get
-      {
-        return _endCap;
-      }
-      set
-      {
-        if (null == value)
-          value = LineCapExtension.Flat;
-        bool bChanged = (_endCap != value);
-        _endCap = value;
 
-        if (bChanged)
-        {
-          _SetProp(Configured.EndCap, !_endCap.IsDefaultStyle);
-          _SetPenVariable(null);
-          EhSelfChanged(EventArgs.Empty); // Fire the Changed event
-        }
-      }
-    }
 
     public LineJoin LineJoin
     {
       get { return _lineJoin; }
-      set
+    }
+
+    public PenX WithLineJoin(LineJoin value)
+    {
+      if (!(_lineJoin == value))
       {
-        bool bChanged = (_lineJoin != value);
-        _lineJoin = value;
-        if (bChanged)
-        {
-          _SetProp(Configured.LineJoin, LineJoin.Miter != value);
-          _SetPenVariable(null);
-          EhSelfChanged(EventArgs.Empty); // Fire the Changed event
-        }
+        var result = Clone();
+        result._lineJoin = value;
+        result._SetProp(Configured.LineJoin, LineJoin.Miter != value);
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
-    public float MiterLimit
+    public double MiterLimit
     {
       get { return _miterLimit; }
-      set
-      {
-        bool bChanged = (_miterLimit != value);
-        _miterLimit = value;
-        if (bChanged)
-        {
-          _SetProp(Configured.MiterLimit, 10 != value);
-          _SetPenVariable(null);
-          EhSelfChanged(EventArgs.Empty); // Fire the Changed event
-        }
-      }
     }
 
-    public LineCapExtension StartCap
+    public PenX WithMiterLimit(double value)
     {
-      get
+      if (!(_miterLimit == value))
       {
-        return _startCap;
+        var result = Clone();
+        result._miterLimit = value;
+        result._SetProp(Configured.MiterLimit, 10 != value);
+        return result;
       }
-      set
+      else
       {
-        if (null == value)
-          value = LineCapExtension.Flat;
-
-        bool bChanged = (_startCap != value);
-        _startCap = value;
-        if (bChanged)
-        {
-          _SetProp(Configured.StartCap, !_startCap.IsDefaultStyle);
-          _SetPenVariable(null);
-
-          EhSelfChanged(EventArgs.Empty); // Fire the Changed event
-        }
+        return this;
       }
     }
 
     public Matrix Transform
     {
       get { return _transformation; }
-      set
+    }
+
+    public PenX WithTransform(Matrix value)
+    {
+      if (value is null)
+        throw new ArgumentNullException(nameof(value));
+
+      if (!(object.Equals(_transformation, value)))
       {
-        _SetProp(Configured.Transform, null != value && !value.IsIdentity);
-        _transformation = value.Clone();
-        _SetPenVariable(null);
-        EhSelfChanged(EventArgs.Empty); // Fire the Changed event
+        var result = Clone();
+        result._transformation = value.Clone();
+        result._SetProp(Configured.Transform, null != value && !value.IsIdentity);
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
     public double Width
     {
       get { return _width; }
-      set
+    }
+
+    public PenX WithWidth(double value)
+    {
+      if (!(_width == value))
       {
-        bool bChanged = (_width != value);
-        _width = value;
-        if (bChanged)
-        {
-          _SetProp(Configured.Width, 1 != value);
-          _SetPenVariable(null);
-          EhSelfChanged(EventArgs.Empty); // Fire the Changed event
-        }
+        var result = Clone();
+        result._width = value;
+        result._SetProp(Configured.Width, 1 != value);
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -1601,298 +1361,5 @@ protected void _SetPropertiesFromPen(Pen pen)
       if (bSet)
         _configuredProperties |= prop;
     }
-
-    public PenX Clone()
-    {
-      return new PenX(this);
-    }
-
-    object ICloneable.Clone()
-    {
-      return new PenX(this);
-    }
-
-    protected override void Dispose(bool isDisposing)
-    {
-      _configuredProperties = 0;
-      if (null != _cachedPen)
-      { _cachedPen.Dispose(); _cachedPen = null; }
-      if (null != _transformation)
-      { _transformation.Dispose(); _transformation = null; }
-      if (null != _compoundArray)
-      { _compoundArray = null; }
-      if (null != _cachedDashPattern)
-      { _cachedDashPattern = null; }
-
-      base.Dispose(isDisposing);
-    }
-
-    #region IChangedEventSource Members
-
-    protected virtual void OnBrushChangedEventHandler(object sender, EventArgs e)
-    {
-      EhSelfChanged(EventArgs.Empty);
-    }
-
-    #endregion IChangedEventSource Members
-
-    #region Document node functions
-
-    protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-    {
-      yield break;
-    }
-
-    #endregion Document node functions
-
-    /// <summary>
-    /// Sets the environment for the creation of the pen's brush.
-    /// </summary>
-    /// <param name="boundingRectangle">Bounding rectangle used for gradient textures.</param>
-    /// <param name="maxEffectiveResolution">Maximum effective resolution in Dpi. This information is neccessary for repeatable texture brushes. You can calculate this using <see cref="M:BrushX.GetMaximumEffectiveResolution"/></param>
-    /// <returns>True if changes to the pen's brush were made. False otherwise.</returns>
-    public bool SetEnvironment(RectangleD2D boundingRectangle, double maxEffectiveResolution)
-    {
-      bool changed = false;
-      if (_brush != null)
-      {
-        var former = new BrushXEnv(_brush, _env_BoundingRectangle, _env_MaximumEffectiveResolution_dpi);
-        var next = new BrushXEnv(_brush, boundingRectangle, maxEffectiveResolution);
-        _env_BoundingRectangle = boundingRectangle;
-        _env_MaximumEffectiveResolution_dpi = maxEffectiveResolution;
-        changed |= (former.BrushBoundingRectangle != next.BrushBoundingRectangle);
-        changed |= (former.EffectiveMaximumResolutionDpi != next.EffectiveMaximumResolutionDpi);
-
-        if (changed && null != _cachedPen)
-        {
-          var brushGdi = BrushCacheGdi.Instance.BorrowBrush(next);
-          _cachedPen.Brush = brushGdi;
-          brushGdi.DoNotReturnToCache();
-        }
-      }
-
-
-
-      return changed;
-    }
-
-    /// <summary>
-    /// Sets the environment for the creation of the pen's brush.
-    /// </summary>
-    /// <param name="boundingRectangle">Bounding rectangle used for gradient textures.</param>
-    /// <param name="maxEffectiveResolution">Maximum effective resolution in Dpi. This information is neccessary for repeatable texture brushes. You can calculate this using <see cref="M:BrushX.GetMaximumEffectiveResolution"/></param>
-    /// <returns>True if changes to the pen's brush were made. False otherwise.</returns>
-    public bool SetEnvironment(RectangleF boundingRectangle, double maxEffectiveResolution)
-    {
-      bool changed = false;
-      if (_brush != null)
-      {
-        var former = new BrushXEnv(_brush, _env_BoundingRectangle, _env_MaximumEffectiveResolution_dpi);
-        var next = new BrushXEnv(_brush, boundingRectangle, maxEffectiveResolution);
-        _env_BoundingRectangle = boundingRectangle;
-        _env_MaximumEffectiveResolution_dpi = maxEffectiveResolution;
-        changed |= (former.BrushBoundingRectangle != next.BrushBoundingRectangle);
-        changed |= (former.EffectiveMaximumResolutionDpi != next.EffectiveMaximumResolutionDpi);
-
-        if (changed && null != _cachedPen)
-        {
-          var brushGdi = BrushCacheGdi.Instance.BorrowBrush(next);
-          _cachedPen.Brush = brushGdi;
-          brushGdi.DoNotReturnToCache();
-        }
-      }
-
-      return changed;
-    }
-  } // end of class PenHolder
-
-  #endregion PenX
-
-  #region DashStyleEx
-
-  [Serializable]
-  public class DashStyleEx : ICloneable
-  {
-    private DashStyle _knownStyle;
-    private float[] _customStyle;
-
-    public DashStyleEx(DashStyle style)
-    {
-      if (style == DashStyle.Custom)
-        throw new ArgumentOutOfRangeException("Style must not be a custom style, use the other constructor instead");
-
-      _knownStyle = style;
-    }
-
-    public DashStyleEx(float[] customStyle)
-    {
-      _customStyle = (float[])customStyle.Clone();
-      _knownStyle = DashStyle.Custom;
-    }
-
-    public DashStyleEx(double[] customStyle)
-    {
-      _customStyle = new float[customStyle.Length];
-      for (int i = 0; i < customStyle.Length; ++i)
-        _customStyle[i] = (float)customStyle[i];
-
-      _knownStyle = DashStyle.Custom;
-    }
-
-    public DashStyleEx(DashStyleEx from)
-    {
-      CopyFrom(from);
-    }
-
-    public void CopyFrom(DashStyleEx from)
-    {
-      if (object.ReferenceEquals(this, from))
-        return;
-
-      _knownStyle = from.KnownStyle;
-      _customStyle = from._customStyle == null ? null : (float[])from._customStyle.Clone();
-    }
-
-    public DashStyleEx Clone()
-    {
-      return new DashStyleEx(this);
-    }
-
-    object ICloneable.Clone()
-    {
-      return new DashStyleEx(this);
-    }
-
-    public bool IsKnownStyle
-    {
-      get
-      {
-        return _knownStyle != DashStyle.Custom;
-      }
-    }
-
-    public bool IsCustomStyle
-    {
-      get
-      {
-        return _knownStyle == DashStyle.Custom;
-      }
-    }
-
-    public DashStyle KnownStyle
-    {
-      get
-      {
-        return _knownStyle;
-      }
-    }
-
-    public float[] CustomStyle
-    {
-      get
-      {
-        return null == _customStyle ? null : (float[])_customStyle.Clone();
-      }
-    }
-
-    public void SetPenDash(Pen pen)
-    {
-      pen.DashStyle = _knownStyle;
-      if (IsCustomStyle)
-        pen.DashPattern = (float[])_customStyle.Clone();
-    }
-
-    private static bool IsEqual(float[] a, float[] b)
-    {
-      if (a == null || b == null)
-        return false;
-      if (a.Length != b.Length)
-        return false;
-      for (int i = a.Length - 1; i >= 0; i--)
-        if (a[i] != b[i])
-          return false;
-
-      return true;
-    }
-
-    public override bool Equals(object obj)
-    {
-      if (obj is DashStyleEx)
-      {
-        var from = (DashStyleEx)obj;
-
-        if (IsKnownStyle && from.IsKnownStyle && _knownStyle == from._knownStyle)
-          return true;
-        else if (IsCustomStyle && from.IsCustomStyle && IsEqual(_customStyle, from._customStyle))
-          return true;
-      }
-      return false;
-    }
-
-    public static bool operator ==(DashStyleEx x, DashStyleEx y)
-    {
-      return x.Equals(y);
-    }
-
-    public static bool operator !=(DashStyleEx x, DashStyleEx y)
-    {
-      return !(x.Equals(y));
-    }
-
-    public override int GetHashCode()
-    {
-      if (IsCustomStyle && _customStyle != null)
-        return _customStyle.GetHashCode();
-      else
-        return _knownStyle.GetHashCode();
-    }
-
-    public override string ToString()
-    {
-      if (_knownStyle != DashStyle.Custom)
-        return _knownStyle.ToString();
-      else
-      {
-        var stb = new System.Text.StringBuilder();
-        foreach (float f in _customStyle)
-        {
-          stb.Append(Altaxo.Serialization.GUIConversion.ToString(f));
-          stb.Append(";");
-        }
-        return stb.ToString(0, stb.Length - 1);
-      }
-    }
-
-    public static DashStyleEx Solid
-    {
-      get { return new DashStyleEx(DashStyle.Solid); }
-    }
-
-    public static DashStyleEx Dot
-    {
-      get { return new DashStyleEx(DashStyle.Dot); }
-    }
-
-    public static DashStyleEx Dash
-    {
-      get { return new DashStyleEx(DashStyle.Dash); }
-    }
-
-    public static DashStyleEx DashDot
-    {
-      get { return new DashStyleEx(DashStyle.DashDot); }
-    }
-
-    public static DashStyleEx DashDotDot
-    {
-      get { return new DashStyleEx(DashStyle.DashDotDot); }
-    }
-
-    public static DashStyleEx LongDash
-    {
-      get { return new DashStyleEx(new float[] { 5.0f, 3.0f }); }
-    }
-  }
-
-  #endregion DashStyleEx
+  } // end of class PenX
 }

@@ -83,13 +83,13 @@ namespace Altaxo.Graph.Gdi.Axis
         {
           s._showZeroOnly = info.GetBoolean("ZeroOnly");
           s._majorPen = (PenX)info.GetValue("MajorPen", s);
-          s._majorPen.ParentObject = s;
+
 
           s._showMinor = info.GetBoolean("ShowMinor");
           if (s._showMinor)
           {
             s._minorPen = (PenX)info.GetValue("MinorPen", s);
-            s._minorPen.ParentObject = s;
+
           }
         }
 
@@ -114,19 +114,19 @@ namespace Altaxo.Graph.Gdi.Axis
       if (object.ReferenceEquals(this, from))
         return;
 
-      MajorPen = from._majorPen == null ? null : from._majorPen.Clone();
-      MinorPen = from._minorPen == null ? null : from._minorPen.Clone();
-      _showGrid = from._showGrid;
-      _showMinor = from._showMinor;
-      _showZeroOnly = from._showZeroOnly;
+      using (var token = SuspendGetToken())
+      {
+        MajorPen = from._majorPen;
+        MinorPen = from._minorPen;
+        ShowGrid = from._showGrid;
+        ShowMinor = from._showMinor;
+        ShowZeroOnly = from._showZeroOnly;
+      }
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _majorPen)
-        yield return new Main.DocumentNodeAndName(_majorPen, "MajorPen");
-      if (null != _minorPen)
-        yield return new Main.DocumentNodeAndName(_minorPen, "MinorPen");
+      yield break;
     }
 
     public PenX MajorPen
@@ -139,8 +139,10 @@ namespace Altaxo.Graph.Gdi.Axis
       }
       set
       {
-        if (ChildSetMember(ref _majorPen, value ?? new PenX(NamedColors.Blue)))
+        value ??= new PenX(NamedColors.Blue);
+        if (!(_majorPen == value))
         {
+          _majorPen = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -157,8 +159,10 @@ namespace Altaxo.Graph.Gdi.Axis
       }
       set
       {
-        if (ChildSetMember(ref _minorPen, value ?? new PenX(NamedColors.LightBlue)))
+        value ??= new PenX(NamedColors.LightBlue);
+        if (!(_minorPen == value))
         {
+          _minorPen = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -217,15 +221,17 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         var var = new Altaxo.Data.AltaxoVariant(0.0);
         double rel = axis.PhysicalVariantToNormal(var);
-        _majorPen.SetEnvironment(layerRect, BrushCacheGdi.GetEffectiveMaximumResolution(g, 1));
-        if (rel >= 0 && rel <= 1)
+        using (var majorPenGdi = PenCacheGdi.Instance.BorrowPen(_majorPen, layerRect, g, 1))
         {
-          if (axisnumber == 0)
-            layer.CoordinateSystem.DrawIsoline(g, MajorPen, new Logical3D(rel, 0), new Logical3D(rel, 1));
-          else
-            layer.CoordinateSystem.DrawIsoline(g, MajorPen, new Logical3D(0, rel), new Logical3D(1, rel));
+          if (rel >= 0 && rel <= 1)
+          {
+            if (axisnumber == 0)
+              layer.CoordinateSystem.DrawIsoline(g, majorPenGdi, new Logical3D(rel, 0), new Logical3D(rel, 1));
+            else
+              layer.CoordinateSystem.DrawIsoline(g, majorPenGdi, new Logical3D(0, rel), new Logical3D(1, rel));
 
-          //layer.DrawIsoLine(g, MajorPen, axisnumber, rel, 0, 1);
+            //layer.DrawIsoLine(g, MajorPen, axisnumber, rel, 0, 1);
+          }
         }
       }
       else
@@ -234,29 +240,33 @@ namespace Altaxo.Graph.Gdi.Axis
 
         if (_showMinor)
         {
-          _minorPen.SetEnvironment(layerRect, BrushCacheGdi.GetEffectiveMaximumResolution(g, 1));
-          ticks = ticking.GetMinorTicksNormal(axis);
-          for (int i = 0; i < ticks.Length; ++i)
+          using (var minorPenGdi = PenCacheGdi.Instance.BorrowPen(_minorPen, layerRect, g, 1))
           {
-            if (axisnumber == 0)
-              layer.CoordinateSystem.DrawIsoline(g, MinorPen, new Logical3D(ticks[i], 0), new Logical3D(ticks[i], 1));
-            else
-              layer.CoordinateSystem.DrawIsoline(g, MinorPen, new Logical3D(0, ticks[i]), new Logical3D(1, ticks[i]));
+            ticks = ticking.GetMinorTicksNormal(axis);
+            for (int i = 0; i < ticks.Length; ++i)
+            {
+              if (axisnumber == 0)
+                layer.CoordinateSystem.DrawIsoline(g, minorPenGdi, new Logical3D(ticks[i], 0), new Logical3D(ticks[i], 1));
+              else
+                layer.CoordinateSystem.DrawIsoline(g, minorPenGdi, new Logical3D(0, ticks[i]), new Logical3D(1, ticks[i]));
 
-            //layer.DrawIsoLine(g, MinorPen, axisnumber, ticks[i], 0, 1);
+              //layer.DrawIsoLine(g, MinorPen, axisnumber, ticks[i], 0, 1);
+            }
           }
         }
 
-        MajorPen.SetEnvironment(layerRect, BrushCacheGdi.GetEffectiveMaximumResolution(g, 1));
-        ticks = ticking.GetMajorTicksNormal(axis);
-        for (int i = 0; i < ticks.Length; ++i)
+        using (var majorPenGdi = PenCacheGdi.Instance.BorrowPen(_majorPen, layerRect, g, 1))
         {
-          if (axisnumber == 0)
-            layer.CoordinateSystem.DrawIsoline(g, MajorPen, new Logical3D(ticks[i], 0), new Logical3D(ticks[i], 1));
-          else
-            layer.CoordinateSystem.DrawIsoline(g, MajorPen, new Logical3D(0, ticks[i]), new Logical3D(1, ticks[i]));
+          ticks = ticking.GetMajorTicksNormal(axis);
+          for (int i = 0; i < ticks.Length; ++i)
+          {
+            if (axisnumber == 0)
+              layer.CoordinateSystem.DrawIsoline(g, majorPenGdi, new Logical3D(ticks[i], 0), new Logical3D(ticks[i], 1));
+            else
+              layer.CoordinateSystem.DrawIsoline(g, majorPenGdi, new Logical3D(0, ticks[i]), new Logical3D(1, ticks[i]));
 
-          //layer.DrawIsoLine(g, MajorPen, axisnumber, ticks[i], 0, 1);
+            //layer.DrawIsoLine(g, MajorPen, axisnumber, ticks[i], 0, 1);
+          }
         }
       }
     }
@@ -278,9 +288,9 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         case "StrokeWidth":
           if (null != _majorPen)
-            yield return (propertyName, _majorPen.Width, (value) => _majorPen.Width = (double)value);
+            yield return (propertyName, _majorPen.Width, (value) => _majorPen = _majorPen.WithWidth((double)value));
           if (null != _minorPen)
-            yield return (propertyName, _minorPen.Width, (value) => _minorPen.Width = (double)value);
+            yield return (propertyName, _minorPen.Width, (value) => _minorPen = _minorPen.WithWidth((double)value));
 
           break;
       }

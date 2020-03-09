@@ -178,7 +178,7 @@ namespace Altaxo.Graph.Gdi.Background
       BrushX shadowBrush = null;
       if (object.ReferenceEquals(brush, _brush))
       {
-        if (null == _cachedShadowBrush)
+        if (_cachedShadowBrush is null)
         {
           _cachedShadowBrush = GetShadowBrush(brush);
         }

@@ -201,7 +201,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       set
       {
         if (m_LineStyle != null)
-          m_LineStyle.LinePen.Color = value;
+          m_LineStyle.LinePen = m_LineStyle.LinePen.WithColor(value);
         if (m_ScatterStyle != null)
           m_ScatterStyle.Color = value;
       }

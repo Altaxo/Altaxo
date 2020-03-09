@@ -73,12 +73,12 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       if (false == _chkCustomMajorColor.IsChecked)
       {
         if (_majorPenGlue.Pen != null)
-          _majorPenGlue.Pen.BrushHolder = _linePenGlue.Pen.BrushHolder;
+          _majorPenGlue.Pen = _majorPenGlue.Pen.WithBrush(_linePenGlue.Pen.Brush);
       }
       if (false == _chkCustomMinorColor.IsChecked)
       {
         if (_minorPenGlue.Pen != null)
-          _minorPenGlue.Pen.BrushHolder = _linePenGlue.Pen.BrushHolder;
+          _minorPenGlue.Pen = _minorPenGlue.Pen.WithBrush(_linePenGlue.Pen.Brush);
       }
 
       if (false == _chkCustomMajorThickness.IsChecked)

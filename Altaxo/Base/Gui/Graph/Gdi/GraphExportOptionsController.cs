@@ -145,7 +145,7 @@ namespace Altaxo.Gui.Graph.Gdi
         _view.SetPixelFormat(_pixelFormat);
         _view.SetSourceDpi(_sourceDpi);
         _view.SetDestinationDpi(_destinationDpi);
-        _view.BackgroundBrush = null == _doc.BackgroundBrush ? new BrushX(NamedColors.Transparent) : _doc.BackgroundBrush;
+        _view.BackgroundBrush = _doc.BackgroundBrush ?? new BrushX(NamedColors.Transparent);
       }
     }
 

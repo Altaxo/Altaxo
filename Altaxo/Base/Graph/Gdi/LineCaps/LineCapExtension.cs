@@ -44,7 +44,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
       _minimumRelativeSize = DefaultMinimumRelativeSize;
     }
 
-    public abstract LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize);
+    public abstract LineCapExtension WithAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize);
 
     protected LineCapExtension(double minimumAbsoluteSizePt, double minimumRelativeSize)
     {
@@ -178,7 +178,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
 
       if (_registeredStyles.TryGetValue(name, out var currentStyle))
       {
-        return currentStyle.Clone(sizePt, currentStyle.DefaultMinimumRelativeSize);
+        return currentStyle.WithAbsoluteAndRelativeSize(sizePt, currentStyle.DefaultMinimumRelativeSize);
       }
       else if (_deprecatedGdiStyles.TryGetValue(name, out currentStyle))
       {
@@ -193,7 +193,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
 
       if (_registeredStyles.TryGetValue(name, out var currentStyle))
       {
-        return currentStyle.Clone(sizePt, relSize);
+        return currentStyle.WithAbsoluteAndRelativeSize(sizePt, relSize);
       }
       else if (_deprecatedGdiStyles.TryGetValue(name, out currentStyle))
       {

@@ -61,9 +61,7 @@ namespace Altaxo.Gui.Common.Drawing
         }
         else
         {
-          var pen = _glue.Pen;
-          pen.Color = NamedColors.Transparent;
-          return pen;
+          return _glue.Pen.WithColor(NamedColors.Transparent);
         }
       }
       set
@@ -77,9 +75,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (!_glue.Pen.IsVisible)
       {
-        var pen = _glue.Pen;
-        pen.Color = NamedColors.Black;
-        _glue.Pen = pen;
+        _glue.Pen = _glue.Pen.WithColor(NamedColors.Black);
       }
     }
   }

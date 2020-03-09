@@ -71,13 +71,11 @@ namespace Altaxo.Gui.Common.Drawing
     {
       get
       {
-        return _pen.Clone(); // Pen is not immutable. Before giving it out, make a copy, so an external program can meddle with this without disturbing us
+        return _pen;
       }
       set
       {
-        if (null == value)
-          throw new NotImplementedException("Pen is null");
-        InternalSelectedPen = value.Clone(); // Pen is not immutable. Before changing it here in this control, make a copy, so an external program can change the old pen without interference
+        InternalSelectedPen = value ?? throw new ArgumentNullException(nameof(Pen));
       }
     }
 
@@ -109,7 +107,6 @@ namespace Altaxo.Gui.Common.Drawing
         if (null != _pen)
         {
           var pen = _pen;
-          pen.Changed += (_weakPenChangedHandler = new WeakEventHandler(EhPenChanged, handler => pen.Changed -= handler));
         }
 
         InitControlProperties();
@@ -119,7 +116,7 @@ namespace Altaxo.Gui.Common.Drawing
     private void InitControlProperties()
     {
       if (null != CbBrush)
-        CbBrush.SelectedBrush = _pen.BrushHolder;
+        CbBrush.SelectedBrush = _pen.Brush;
       if (null != CbLineThickness)
         CbLineThickness.SelectedQuantityAsValueInPoints = _pen.Width;
       if (null != CbDashPattern)
@@ -188,7 +185,7 @@ namespace Altaxo.Gui.Common.Drawing
         if (_cbBrush != null && null != _pen)
         {
           _cbBrush.ShowPlotColorsOnly = _showPlotColorsOnly;
-          _cbBrush.SelectedBrush = _pen.BrushHolder;
+          _cbBrush.SelectedBrush = _pen.Brush;
         }
 
         if (_cbBrush != null)
@@ -225,7 +222,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_pen != null)
       {
-        _pen.BrushHolder = _cbBrush.SelectedBrush;
+        _pen = _pen.WithBrush(_cbBrush.SelectedBrush);
         OnPenChanged();
       }
     }
@@ -259,7 +256,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_pen != null)
       {
-        _pen.DashPattern = _cbDashPattern.SelectedItem;
+        _pen = _pen.WithDashPattern(_cbDashPattern.SelectedItem);
         OnPenChanged();
       }
     }
@@ -289,7 +286,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_pen != null)
       {
-        _pen.DashCap = _cbDashCap.SelectedDashCap;
+        _pen = _pen.WithDashCap(_cbDashCap.SelectedDashCap);
         OnPenChanged();
       }
     }
@@ -321,12 +318,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_pen != null)
       {
-        using (var suspendToken = _pen.SuspendGetToken())
-        {
-          _pen.Width = (float)_cbThickness.SelectedQuantityAsValueInPoints;
-          suspendToken.ResumeSilently();
-        };
-
+        _pen = _pen.WithWidth(_cbThickness.SelectedQuantityAsValueInPoints);
         OnPenChanged();
       }
     }
@@ -362,15 +354,11 @@ namespace Altaxo.Gui.Common.Drawing
       {
         var cap = _cbStartCap.SelectedLineCap;
         if (_userChangedAbsStartCapSize && _cbStartCapAbsSize != null)
-          cap = cap.Clone(_cbStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+          cap = cap.WithAbsoluteAndRelativeSize(_cbStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
         if (_userChangedRelStartCapSize && _cbStartCapRelSize != null)
-          cap = cap.Clone(cap.MinimumAbsoluteSizePt, _cbStartCapRelSize.SelectedQuantityAsValueInSIUnits);
+          cap = cap.WithAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbStartCapRelSize.SelectedQuantityAsValueInSIUnits);
 
-        using (var suspendToken = _pen.SuspendGetToken())
-        {
-          _pen.StartCap = cap;
-          suspendToken.ResumeSilently();
-        };
+        _pen = _pen.WithStartCap(cap);
 
         if (_cbStartCapAbsSize != null && cap != null)
         {
@@ -415,13 +403,9 @@ namespace Altaxo.Gui.Common.Drawing
       if (_pen != null)
       {
         var cap = _pen.StartCap;
-        cap = cap.Clone(_cbStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+        cap = cap.WithAbsoluteAndRelativeSize(_cbStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
 
-        using (var suspendToken = _pen.SuspendGetToken())
-        {
-          _pen.StartCap = cap;
-          suspendToken.ResumeSilently();
-        };
+        _pen = _pen.WithStartCap(cap);
 
         OnPenChanged();
       }
@@ -453,14 +437,9 @@ namespace Altaxo.Gui.Common.Drawing
       if (_pen != null)
       {
         var cap = _pen.StartCap;
-        cap = cap.Clone(cap.MinimumAbsoluteSizePt, _cbStartCapRelSize.SelectedQuantityAsValueInSIUnits);
+        cap = cap.WithAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbStartCapRelSize.SelectedQuantityAsValueInSIUnits);
 
-        using (var suspendToken = _pen.SuspendGetToken())
-        {
-          _pen.StartCap = cap;
-          suspendToken.ResumeSilently();
-        };
-
+        _pen = _pen.WithStartCap(cap);
         OnPenChanged();
       }
     }
@@ -496,15 +475,11 @@ namespace Altaxo.Gui.Common.Drawing
       {
         var cap = _cbEndCap.SelectedLineCap;
         if (_userChangedAbsEndCapSize && _cbEndCapAbsSize != null)
-          cap = cap.Clone(_cbEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+          cap = cap.WithAbsoluteAndRelativeSize(_cbEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
         if (_userChangedRelEndCapSize && _cbEndCapRelSize != null)
-          cap = cap.Clone(cap.MinimumAbsoluteSizePt, _cbEndCapRelSize.SelectedQuantityAsValueInSIUnits);
+          cap = cap.WithAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbEndCapRelSize.SelectedQuantityAsValueInSIUnits);
 
-        using (var suspendToken = _pen.SuspendGetToken())
-        {
-          _pen.EndCap = cap;
-          suspendToken.ResumeSilently();
-        };
+        _pen = _pen.WithEndCap(cap);
 
         if (_cbEndCapAbsSize != null)
         {
@@ -549,14 +524,9 @@ namespace Altaxo.Gui.Common.Drawing
       if (_pen != null)
       {
         var cap = _pen.EndCap;
-        cap = cap.Clone(_cbEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+        cap = cap.WithAbsoluteAndRelativeSize(_cbEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
 
-        using (var suspendToken = _pen.SuspendGetToken())
-        {
-          _pen.EndCap = cap;
-          suspendToken.ResumeSilently();
-        };
-
+        _pen = _pen.WithEndCap(cap);
         OnPenChanged();
       }
     }
@@ -587,14 +557,8 @@ namespace Altaxo.Gui.Common.Drawing
       if (_pen != null)
       {
         var cap = _pen.EndCap;
-        cap = cap.Clone(cap.MinimumAbsoluteSizePt, _cbEndCapRelSize.SelectedQuantityAsValueInSIUnits);
-
-        using (var suspendToken = _pen.SuspendGetToken())
-        {
-          _pen.EndCap = cap;
-          suspendToken.ResumeSilently();
-        };
-
+        cap = cap.WithAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbEndCapRelSize.SelectedQuantityAsValueInSIUnits);
+        _pen = _pen.WithEndCap(cap);
         OnPenChanged();
       }
     }
@@ -628,12 +592,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_pen != null)
       {
-        using (var suspendToken = _pen.SuspendGetToken())
-        {
-          _pen.LineJoin = _cbLineJoin.SelectedLineJoin;
-          suspendToken.ResumeSilently();
-        };
-
+        _pen = _pen.WithLineJoin(_cbLineJoin.SelectedLineJoin);
         OnPenChanged();
       }
     }
@@ -665,12 +624,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_pen != null)
       {
-        using (var suspendToken = _pen.SuspendGetToken())
-        {
-          _pen.MiterLimit = (float)_cbMiterLimit.SelectedQuantityInSIUnits;
-          suspendToken.ResumeSilently();
-        };
-
+        _pen = _pen.WithMiterLimit(_cbMiterLimit.SelectedQuantityInSIUnits);
         OnPenChanged();
       }
     }
@@ -681,7 +635,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhShowCustomPenDialog(object sender, EventArgs e)
     {
-      var ctrler = new PenAllPropertiesController(Pen.Clone())
+      var ctrler = new PenAllPropertiesController(Pen)
       {
         ShowPlotColorsOnly = _showPlotColorsOnly,
         ViewObject = new PenAllPropertiesControl()
@@ -756,8 +710,10 @@ namespace Altaxo.Gui.Common.Drawing
         var fullRect = _previewBitmap.GdiRectangle;
         grfx.FillRectangle(System.Drawing.Brushes.White, fullRect);
 
-        _pen.SetEnvironment(fullRect, BrushCacheGdi.GetEffectiveMaximumResolution(grfx));
-        grfx.DrawLine(_pen, fullRect.Width / 6, fullRect.Height / 2, (fullRect.Width * 5) / 6, fullRect.Height / 2);
+        using (var penGdi = PenCacheGdi.Instance.BorrowPen(_pen, fullRect, grfx, 1))
+        {
+          grfx.DrawLine(penGdi, fullRect.Width / 6, fullRect.Height / 2, (fullRect.Width * 5) / 6, fullRect.Height / 2);
+        }
 
         _previewBitmap.EndGdiPainting();
       }

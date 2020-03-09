@@ -163,7 +163,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         _view.InitializeFrameColorLinkage(_frameColorLinkageChoices);
         _view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
         _view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FrameColorLinkage);
-        _view.FillBrush = null != _doc.FillBrush ? _doc.FillBrush : new BrushX(NamedColors.Transparent);
+        _view.FillBrush = _doc.FillBrush ?? new BrushX(NamedColors.Transparent);
         _view.InitializeFillDirection(_areaFillDirectionChoices);
       }
     }
@@ -369,8 +369,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private void InternalSetFrameColorToFillColor()
     {
-      var newPen = _view.FramePen.Clone();
-      newPen.Color = _view.FillBrush.Color;
+      var newPen = _view.FramePen.WithColor(_view.FillBrush.Color);
 
       // Change frame pen without notification
       _view.FramePenChanged -= EhFramePenChanged;
@@ -399,10 +398,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private void InternalSetFrameColorRGBToFillColor()
     {
-      var newPen = _view.FramePen.Clone();
-      var c = _view.FillBrush.Color.NewWithAlphaValue(newPen.Color.Color.A);
-      ;
-      newPen.Color = c;
+      var newPen = _view.FramePen.WithColor(_view.FillBrush.Color.NewWithAlphaValue(_view.FramePen.Color.Color.A));
 
       // Change frame pen without notification
       _view.FramePenChanged -= EhFramePenChanged;

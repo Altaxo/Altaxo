@@ -178,7 +178,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           s._additionalDropTargetBaseValue = (Altaxo.Data.AltaxoVariant)info.GetValue("AdditionalDropTargetBaseValue", s);
         }
 
-        s.ChildSetMember(ref s._pen, (PenX)info.GetValue("Pen", s) ?? new PenX(NamedColors.Black, 1));
+        s._pen = (PenX)info.GetValue("Pen", s) ?? new PenX(NamedColors.Black, 1);
         s._independentColor = info.GetBoolean("IndependentColor");
 
         s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
@@ -247,7 +247,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _additionalDropTargetUsePhysicalBaseValue = from._additionalDropTargetUsePhysicalBaseValue;
         _additionalDropTargetBaseValue = from._additionalDropTargetBaseValue;
 
-        ChildCopyToMember(ref _pen, from._pen);
+        _pen = from._pen;
 
         _independentColor = from._independentColor;
 
@@ -299,7 +299,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (null == pen)
         throw new ArgumentNullException(nameof(pen));
 
-      ChildSetMember(ref _pen, pen);
+      _pen = pen;
       _dropTargets = new CSPlaneIDList(new[] { planeID });
 
       // Cached values
@@ -311,7 +311,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (null == pen)
         throw new ArgumentNullException(nameof(pen));
 
-      ChildSetMember(ref _pen, pen);
+      _pen = pen;
       _dropTargets = new CSPlaneIDList(planeIDs);
 
       // Cached values
@@ -324,7 +324,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       var color = GraphDocument.GetDefaultPlotColor(context);
       double penWidth = GraphDocument.GetDefaultPenWidth(context);
-      _pen = new PenX(color, penWidth) { ParentObject = this };
+      _pen = new PenX(color, penWidth);
 
       _lineWidth1Offset = penWidth;
       _lineWidth1Factor = 0;
@@ -332,8 +332,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _pen)
-        yield return new DocumentNodeAndName(_pen, () => _pen = null, "Pen");
+      yield break;
     }
 
     public bool IsVisible
@@ -352,9 +351,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         if (null == value)
           throw new ArgumentNullException(nameof(value));
 
-        if (!object.ReferenceEquals(_pen, value))
+        if (!(_pen == value))
         {
-          ChildCopyToMember(ref _pen, value);
+          _pen = value;
           SetCachedValues();
           EhSelfChanged(EventArgs.Empty); // Fire Changed event
         }
@@ -366,7 +365,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return _pen.Color; }
       set
       {
-        _pen.Color = value;
+        if (!(_pen.Color == value))
+        {
+          _pen = _pen.WithColor(value);
+          EhSelfChanged();
+        }
       }
     }
 
@@ -775,9 +778,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size and constant color
       {
         // update pen widths
-        var pen = _pen.Clone();
+        var pen = _pen;
         double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
-        pen.Width = w1;
+        pen = pen.WithWidth(w1);
 
         var gapStart = 0.5 * (_gapAtStartOffset + _gapAtStartFactor * _cachedSymbolSize);
         var gapEnd = 0.5 * (_gapAtEndOffset + _gapAtEndFactor * _cachedSymbolSize);
@@ -793,22 +796,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           r3d.RX += _cachedLogicalShiftX;
           r3d.RY += _cachedLogicalShiftY;
 
-          foreach (CSPlaneID id in dropTargets)
+          using (var penGdi = PenCacheGdi.Instance.BorrowPen(pen))
           {
-            gpath.Reset();
-            layer.CoordinateSystem.GetIsolineFromPointToPlane(gpath, r3d, id);
-            PointF[] shortenedPathPoints = null;
-            if (gapStart != 0 || gapEnd != 0)
+            foreach (CSPlaneID id in dropTargets)
             {
-              gpath.Flatten();
-              var pathPoints = gpath.PathPoints;
-              shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
-              if (null != shortenedPathPoints)
-                g.DrawLines(pen, shortenedPathPoints);
-            }
-            else
-            {
-              g.DrawPath(pen, gpath);
+              gpath.Reset();
+              layer.CoordinateSystem.GetIsolineFromPointToPlane(gpath, r3d, id);
+              PointF[] shortenedPathPoints = null;
+
+              if (gapStart != 0 || gapEnd != 0)
+              {
+                gpath.Flatten();
+                var pathPoints = gpath.PathPoints;
+                shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
+                if (null != shortenedPathPoints)
+                  g.DrawLines(penGdi, shortenedPathPoints);
+              }
+              else
+              {
+                g.DrawPath(penGdi, gpath);
+              }
             }
           }
         }
@@ -820,12 +827,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         for (int j = lower; j < upper; j += _skipFrequency)
         {
           var originalRowIndex = range.GetOriginalRowIndexFromPlotPointIndex(j);
-          var pen = _pen.Clone();
+          var pen = _pen;
           if (null == _cachedColorForIndexFunction)
           {
             _cachedSymbolSize = _cachedSymbolSizeForIndexFunction(originalRowIndex);
             double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
-            pen.Width = w1;
+            pen = pen.WithWidth(w1);
           }
           else
           {
@@ -833,8 +840,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
 
             var customSymbolColor = _cachedColorForIndexFunction(originalRowIndex);
-            pen.Width = w1;
-            pen.Color = NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B);
+            pen = pen
+              .WithWidth(w1)
+              .WithColor(NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B));
           }
 
           var gapStart = 0.5 * (_gapAtStartOffset + _gapAtStartFactor * _cachedSymbolSize);
@@ -844,22 +852,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           r3d.RX += _cachedLogicalShiftX;
           r3d.RY += _cachedLogicalShiftY;
 
-          foreach (CSPlaneID id in _dropTargets)
+          using (var penGdi = PenCacheGdi.Instance.BorrowPen(pen))
           {
-            gpath.Reset();
-            layer.CoordinateSystem.GetIsolineFromPointToPlane(gpath, r3d, id);
-            PointF[] shortenedPathPoints = null;
-            if (gapStart != 0 || gapEnd != 0)
+            foreach (CSPlaneID id in _dropTargets)
             {
-              gpath.Flatten();
-              var pathPoints = gpath.PathPoints;
-              shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
-              if (null != shortenedPathPoints)
-                g.DrawLines(pen, shortenedPathPoints);
-            }
-            else
-            {
-              g.DrawPath(pen, gpath);
+              gpath.Reset();
+              layer.CoordinateSystem.GetIsolineFromPointToPlane(gpath, r3d, id);
+              PointF[] shortenedPathPoints = null;
+
+              if (gapStart != 0 || gapEnd != 0)
+              {
+                gpath.Flatten();
+                var pathPoints = gpath.PathPoints;
+                shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
+                if (null != shortenedPathPoints)
+                  g.DrawLines(penGdi, shortenedPathPoints);
+              }
+              else
+              {
+                g.DrawPath(penGdi, gpath);
+              }
             }
           }
         }
@@ -1000,7 +1012,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       switch (propertyName)
       {
         case "StrokeWidth":
-          yield return (propertyName, _pen.Width, (w) => _pen.Width = (double)w);
+          yield return (propertyName, _pen.Width, (w) => _pen = _pen.WithWidth((double)w));
           break;
 
         case "SymbolSize":

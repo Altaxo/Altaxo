@@ -359,7 +359,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     public void UpdatePreview(BrushX brush)
     {
-      if (null == _previewPanel || null == brush)
+      if (_previewPanel is null || brush is null)
         return;
 
       int height = (int)_previewPanel.ActualHeight;

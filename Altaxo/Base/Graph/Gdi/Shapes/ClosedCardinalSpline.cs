@@ -252,11 +252,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       HitTestObjectBase result = null;
       GraphicsPath gp = GetPath();
 
+      using var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen);
       if (_fillBrush.IsVisible && gp.IsVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation)))
       {
         result = new ClosedCardinalSplineHitTestObject(this);
       }
-      else if (_linePen.IsVisible && gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), _linePen))
+      else if (_linePen.IsVisible && gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), linePenGdi))
       {
         result = new ClosedCardinalSplineHitTestObject(this);
       }
@@ -302,8 +303,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       if (Pen.IsVisible)
       {
-        Pen.SetEnvironment((RectangleF)bounds, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
-        g.DrawPath(Pen, path);
+        using (var penGdi = PenCacheGdi.Instance.BorrowPen(Pen, bounds, g, Math.Max(ScaleX, ScaleY)))
+        {
+          g.DrawPath(penGdi, path);
+        }
       }
       g.Restore(gs);
     }

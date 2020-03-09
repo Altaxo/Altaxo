@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       PointF[] allLinePoints,
       IPlotRange range,
       IPlotArea layer,
-      PenX pen,
+      PenCacheGdi.GdiPen pen,
       Func<int, double> symbolGap,
       int skipFrequency,
       bool connectCircular,

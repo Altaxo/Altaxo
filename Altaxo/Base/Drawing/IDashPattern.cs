@@ -29,7 +29,13 @@ using System.Text;
 
 namespace Altaxo.Drawing
 {
-  public interface IDashPattern : IReadOnlyList<double>, Main.IImmutable, ICloneable
+  public interface IDashPattern
+    :
+    IReadOnlyList<double>,
+    Main.IImmutable,
+    IEquatable<IDashPattern>,
+    ICloneable // Attention: although IDashPattern is immutable, different instances of the same pattern are neccessary to establish a membership into the DashPatternList!
+
   {
     double DashOffset { get; }
   }

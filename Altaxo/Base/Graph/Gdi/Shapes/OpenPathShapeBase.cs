@@ -97,8 +97,8 @@ namespace Altaxo.Graph.Gdi.Shapes
         var from = obj as OpenPathShapeBase;
         if (from != null)
         {
-          ChildCopyToMember(ref _outlinePen, from._outlinePen);
-          ChildCopyToMember(ref _linePen, from._linePen);
+          _outlinePen = from._outlinePen;
+          _linePen = from._linePen;
         }
       }
       return isCopied;
@@ -106,11 +106,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
     {
-      if (null != _linePen)
-        yield return new Main.DocumentNodeAndName(_linePen, () => _linePen = null, "LinePen");
-
-      if (null != _outlinePen)
-        yield return new Main.DocumentNodeAndName(_outlinePen, () => _outlinePen = null, "OutlinePen");
+      yield break;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -128,12 +124,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         if (value == null)
           throw new ArgumentNullException("The line pen must not be null");
-        if (object.ReferenceEquals(_linePen, value))
-          return;
-
-        ChildCopyToMember(ref _linePen, value); // we always clone to have full control
-
-        EhSelfChanged(EventArgs.Empty);
+        if (!(_linePen == value))
+        {
+          _linePen = value;
+          EhSelfChanged(EventArgs.Empty);
+        }
       }
     }
 
@@ -145,8 +140,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
-        if (ChildCopyToMember(ref _outlinePen, value))
+        if (!(_outlinePen == value))
+        {
+          _outlinePen = value;
           EhSelfChanged(EventArgs.Empty);
+        }
       }
     }
 
@@ -182,10 +180,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         case "StrokeWidth":
           if (null != _linePen)
-            yield return (propertyName, _linePen.Width, (w) => _linePen.Width = (double)w);
+            yield return (propertyName, _linePen.Width, (w) => _linePen = _linePen.WithWidth((double)w));
 
           if (null != _outlinePen)
-            yield return (propertyName, _outlinePen.Width, (w) => _outlinePen.Width = (double)w);
+            yield return (propertyName, _outlinePen.Width, (w) => _outlinePen = _outlinePen.WithWidth((double)w));
           break;
       }
 

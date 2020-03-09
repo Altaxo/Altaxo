@@ -126,8 +126,8 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
-      Pen.SetEnvironment(boundsF, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
-      g.DrawRectangle(Pen, (float)bounds.X, (float)bounds.Y, (float)bounds.Width, (float)bounds.Height);
+      using var penGdi = PenCacheGdi.Instance.BorrowPen(Pen, bounds, g, Math.Max(ScaleX, ScaleY));
+      g.DrawRectangle(penGdi, (float)bounds.X, (float)bounds.Y, (float)bounds.Width, (float)bounds.Height);
       g.Restore(gs);
     }
   } // End Class

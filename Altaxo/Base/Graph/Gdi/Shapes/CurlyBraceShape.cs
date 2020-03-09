@@ -161,15 +161,15 @@ namespace Altaxo.Graph.Gdi.Shapes
       var bounds = Bounds;
       var boundsF = (RectangleF)bounds;
 
-      Pen.SetEnvironment(boundsF, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
+      using var penGdi = PenCacheGdi.Instance.BorrowPen(Pen, boundsF, g, Math.Max(ScaleX, ScaleY));
       var path = GetPath();
-      g.DrawPath(Pen, path);
+      g.DrawPath(penGdi, path);
 
       if (_outlinePen != null && _outlinePen.IsVisible)
       {
-        path.Widen(Pen);
-        _outlinePen.SetEnvironment(boundsF, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
-        g.DrawPath(_outlinePen, path);
+        path.Widen(penGdi);
+        using var outlinePenGdi = PenCacheGdi.Instance.BorrowPen(_outlinePen, boundsF, g, Math.Max(ScaleX, ScaleY));
+        g.DrawPath(outlinePenGdi, path);
       }
 
       g.Restore(gs);
@@ -179,7 +179,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       HitTestObjectBase result = null;
       GraphicsPath gp = GetPath();
-      if (gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), _linePen))
+
+      using var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen);
+      if (gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), linePenGdi))
       {
         result = new GraphicBaseHitTestObject(this);
       }

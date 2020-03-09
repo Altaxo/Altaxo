@@ -205,9 +205,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._symbolSize = info.GetDouble("SymbolSize");
 
         s._strokePen = (PenX)info.GetValue("Pen", s);
-        if (null != s._strokePen)
-          s._strokePen.ParentObject = s;
-
         s._independentColor = info.GetBoolean("IndependentColor");
 
         s._lineWidth1Offset = info.GetDouble("LineWidth1Offset");
@@ -249,7 +246,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _lineWidth1Offset = penWidth;
       _lineWidth1Factor = 0;
 
-      ChildSetMember(ref _strokePen, new PenX(color, penWidth) { EndCap = new LineCaps.ArrowF10LineCap() });
+      _strokePen = new PenX(color, penWidth).WithEndCap(new LineCaps.ArrowF10LineCap());
     }
 
     public VectorCartesicPlotStyle(VectorCartesicPlotStyle from, bool copyWithDataReferences)
@@ -710,10 +707,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         if (null == value)
           throw new ArgumentNullException(nameof(value));
 
-        if (!_strokePen.Equals(value))
+        if (!(_strokePen == value))
         {
-          ChildCloneToMember(ref _strokePen, value);
-          EhSelfChanged(EventArgs.Empty);
+          _strokePen = value;
+          EhSelfChanged();
         }
       }
     }
@@ -768,7 +765,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!_independentColor)
       {
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-        { _strokePen.Color = c; });
+        { _strokePen = _strokePen.WithColor(c); });
 
         // but if there is a color evaluation function, then use that function with higher priority
         VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, System.Drawing.Color> evalFunc)
@@ -854,7 +851,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!typeof(double).IsAssignableFrom(columnX.ItemType) || !typeof(double).IsAssignableFrom(columnY.ItemType))
         return; // TODO make this an runtime paint error to be reported
 
-      var strokePen = _strokePen.Clone();
+      var strokePen = _strokePen;
 
       using (var isoLine = new GraphicsPath())
       {
@@ -866,13 +863,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           int originalRowIndex = range.GetOriginalRowIndexFromPlotPointIndex(j);
           double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalRowIndex);
 
-          strokePen.Width = (_lineWidth1Offset + _lineWidth1Factor * symbolSize);
+          strokePen = strokePen.WithWidth(_lineWidth1Offset + _lineWidth1Factor * symbolSize);
 
           if (null != _cachedColorForIndexFunction)
-            strokePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(originalRowIndex), "VariableColor");
+            strokePen = strokePen.WithColor(GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(originalRowIndex), "VariableColor"));
 
           if (!(strokePen.EndCap is LineCaps.FlatCap))
-            strokePen.EndCap = strokePen.EndCap.WithMinimumAbsoluteAndRelativeSize(symbolSize * _endCapSizeFactor + _endCapSizeOffset, 1 + 1E-6);
+            strokePen = strokePen.WithEndCap(strokePen.EndCap.WithMinimumAbsoluteAndRelativeSize(symbolSize * _endCapSizeFactor + _endCapSizeOffset, 1 + 1E-6));
 
           // Calculate target
           AltaxoVariant targetX, targetY;
@@ -957,11 +954,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 continue;
             }
           }
-
-          if (null != isoLinePathPoints)
-            g.DrawLines(strokePen, isoLinePathPoints);
-          else
-            g.DrawPath(strokePen, isoLine);
+          using (var strokePenGdi = PenCacheGdi.Instance.BorrowPen(strokePen))
+          {
+            if (null != isoLinePathPoints)
+              g.DrawLines(strokePenGdi, isoLinePathPoints);
+            else
+              g.DrawPath(strokePenGdi, isoLine);
+          }
         }
       }
     }
@@ -1042,7 +1041,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       switch (propertyName)
       {
         case "StrokeWidth":
-          yield return (propertyName, _strokePen.Width, (w) => _strokePen.Width = (double)w);
+          yield return (propertyName, _strokePen.Width, (w) => _strokePen = _strokePen.WithWidth((double)w));
           break;
 
         case "SymbolSize":

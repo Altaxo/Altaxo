@@ -110,9 +110,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("FillBrush");
-        _guiFillBrush.SelectedBrush = value;
+        _guiFillBrush.SelectedBrush = value ?? throw new ArgumentNullException(nameof(FillBrush));
       }
     }
 
