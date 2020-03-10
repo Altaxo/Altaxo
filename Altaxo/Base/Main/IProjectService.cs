@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Main
@@ -123,6 +124,7 @@ namespace Altaxo.Main
   /// <summary>
   /// Manages the currently open Altaxo project.
   /// </summary>
+  [GlobalService("IProjectService", FallbackImplementation = typeof(ProjectServiceDummyImpl))]
   public interface IProjectService
   {
     /// <summary>
@@ -337,4 +339,127 @@ namespace Altaxo.Main
     /// <param name="cmdFiles">The command line arguments that are files (i.e. those arguments <b>not</b> beginning with '-' or '/').</param>
     void ExecuteActionsImmediatelyBeforeRunningApplication(string[] cmdArgs, string[] cmdParameter, string[] cmdFiles);
   }
+
+  public class ProjectServiceDummyImpl : IProjectService
+  {
+    public IProject CurrentProject => throw new NotImplementedException();
+
+    public PathName CurrentProjectFileName => throw new NotImplementedException();
+
+    public IProjectArchiveManager CurrentProjectArchiveManager => throw new NotImplementedException();
+
+    public IEnumerable<string> ProjectFileExtensions => throw new NotImplementedException();
+
+    public event ProjectEventHandler ProjectOpened;
+    public event ProjectEventHandler ProjectClosed;
+    public event ProjectRenameEventHandler ProjectRenamed;
+    public event ProjectEventHandler ProjectDirtyChanged;
+    public event ProjectEventHandler ProjectChanged;
+
+    public void AskForSavingOfProject(CancelEventArgs e)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void CloseDocumentViews(object document)
+    {
+      throw new NotImplementedException();
+    }
+
+    public bool CloseProject(bool forceClose)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void CreateInitialProject()
+    {
+      throw new NotImplementedException();
+    }
+
+    public void DeleteDocument(IProjectItem document, bool force)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void DisposeProjectAndSetToNull()
+    {
+      throw new NotImplementedException();
+    }
+
+    public IProjectArchiveManager ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(IProjectArchiveManager newManager)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void ExecuteActionsImmediatelyBeforeRunningApplication(string[] cmdArgs, string[] cmdParameter, string[] cmdFiles)
+    {
+      throw new NotImplementedException();
+    }
+
+    public string GetMainWindowTitle()
+    {
+      throw new NotImplementedException();
+    }
+
+    public HashSet<object> GetOpenDocuments()
+    {
+      throw new NotImplementedException();
+    }
+
+    public bool HasDocumentAnOpenView(object document)
+    {
+      throw new NotImplementedException();
+    }
+
+    public bool IsProjectFileExtension(string extension)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void OpenProject(PathName pathName, bool withoutUserInteraction)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void OpenProjectFromArchive(IProjectArchive istream)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void SaveProject(PathName fileOrFolderName)
+    {
+      throw new NotImplementedException();
+    }
+
+    public IDictionary<string, IProjectItem> SaveProject(IProjectArchive archive)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void SaveProject()
+    {
+      throw new NotImplementedException();
+    }
+
+    public void SaveProjectAs()
+    {
+      throw new NotImplementedException();
+    }
+
+    public void SaveProjectCopyAs()
+    {
+      throw new NotImplementedException();
+    }
+
+    public void ShowDocumentView(object document)
+    {
+      throw new NotImplementedException();
+    }
+
+    public bool TryOpenProjectItemFile(FileName fileName, bool forceTrialRegardlessOfExtension)
+    {
+      throw new NotImplementedException();
+    }
+  }
+
 }

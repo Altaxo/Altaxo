@@ -851,7 +851,7 @@ if (0 != (cp & PenX.Configured.Width))
 
       if (!(this._dashPattern is Drawing.DashPatterns.Solid))
       {
-        if (!(this._dashCap != other._dashCap))
+        if (!(this._dashCap == other._dashCap))
           return false;
       }
 
@@ -914,10 +914,10 @@ if (0 != (cp & PenX.Configured.Width))
           result += 29 * _dashCap.GetHashCode();
 
         if (_compoundArray is { } _)
-          result += 31 * _compoundArray.GetHashCode();
+          result += 31 * GetHashCode(_compoundArray);
 
         if (_transformation is { } _)
-          result += 37 * _transformation.GetHashCode();
+          result += 37 * GetHashCode(_transformation);
       }
       return result;
     }
@@ -945,6 +945,48 @@ if (0 != (cp & PenX.Configured.Width))
           return false;
 
       return true;
+    }
+
+    private int GetHashCode(float[] x)
+    {
+      if (x is null || x.Length == 0)
+        return 0;
+
+      return
+        x.Length.GetHashCode() +
+        5 * x[0].GetHashCode() +
+        7 * x[x.Length - 1].GetHashCode();
+    }
+
+    private int GetHashCode(System.Drawing.Drawing2D.Matrix m)
+    {
+      if (m is null || m.IsIdentity)
+        return 0;
+      else
+        return
+        m.Elements[0].GetHashCode() +
+        3 * m.Elements[3].GetHashCode() +
+        7 * m.Elements[4].GetHashCode();
+    }
+
+    private static bool AreEqual(System.Drawing.Drawing2D.Matrix x1, System.Drawing.Drawing2D.Matrix x2)
+    {
+      if (x1 is null && x2 is null)
+        return true;
+      if (object.ReferenceEquals(x1, x2))
+        return true;
+
+      if (!(x1 is { } _ && x2 is { }))
+        return false;
+
+      return
+        x1.Elements[0] == x2.Elements[0] &&
+        x1.Elements[1] == x2.Elements[1] &&
+        x1.Elements[2] == x2.Elements[2] &&
+        x1.Elements[3] == x2.Elements[3] &&
+        x1.Elements[4] == x2.Elements[4] &&
+        x1.Elements[5] == x2.Elements[5]
+        ;
     }
 
     protected PenX Clone()

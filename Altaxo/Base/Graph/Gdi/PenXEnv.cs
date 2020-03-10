@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Gdi
 
     private BrushXEnv BrushXEnv;
 
-    private int? _cachedHashCode;
+    private int _cachedHashCode;
 
     /// <summary>
     /// Gets the bounding rectangle of the pen's brush.
@@ -59,19 +59,15 @@ namespace Altaxo.Graph.Gdi
     {
       PenX = penX;
       BrushXEnv = new BrushXEnv(penX.Brush, boundingRectangle, effectiveMaximumResolutionDpi);
-      _cachedHashCode = null;
+      unchecked
+      {
+        _cachedHashCode = BrushXEnv.GetHashCode() + 113 * PenX.GetHashCode();
+      }
     }
 
     public override int GetHashCode()
     {
-      if (!_cachedHashCode.HasValue)
-      {
-        unchecked
-        {
-          _cachedHashCode = BrushXEnv.GetHashCode() + 113 * PenX.GetHashCode();
-        }
-      }
-      return _cachedHashCode.Value;
+      return _cachedHashCode;
     }
 
     public bool Equals(PenXEnv other)
@@ -79,6 +75,11 @@ namespace Altaxo.Graph.Gdi
       return
         this.BrushXEnv == other.BrushXEnv &&
         this.PenX == other.PenX;
+    }
+
+    public override bool Equals(object obj)
+    {
+      return obj is PenXEnv other ? this.Equals(other) : false;
     }
 
     public static bool operator ==(PenXEnv x, PenXEnv y)

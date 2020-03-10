@@ -156,11 +156,7 @@ namespace Altaxo.Graph.Gdi
           pen.Color = ToGdi(p.Color);
 
         if (p.Brush is { } brush)
-        {
-          var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, boundingRectangle, maximumEffectiveResolutionDpi);
-          pen.Brush = brushGdi;
-          brushGdi.DoNotReturnToCache();
-        }
+          pen.Brush = BrushCacheGdi.GdiBrush.CreateGdiBrush(brush, boundingRectangle, maximumEffectiveResolutionDpi);
 
         if (p.CompoundArray is { } compoundArray && compoundArray.Length > 0)
           pen.CompoundArray = compoundArray;

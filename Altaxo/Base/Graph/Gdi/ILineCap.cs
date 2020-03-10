@@ -22,10 +22,12 @@
 
 #endregion Copyright
 
+using System;
+
 
 namespace Altaxo.Graph.Gdi
 {
-  public interface ILineCap
+  public interface ILineCap : IEquatable<ILineCap>
   {
     double MinimumAbsoluteSizePt { get; }
 

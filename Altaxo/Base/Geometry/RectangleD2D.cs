@@ -31,7 +31,7 @@ namespace Altaxo.Geometry
   /// RectangleD describes a rectangle in 2D space.
   /// </summary>
   [Serializable]
-  public struct RectangleD2D
+  public struct RectangleD2D : IEquatable<RectangleD2D>
   {
     private double _x, _y, _w, _h;
 
@@ -134,19 +134,27 @@ namespace Altaxo.Geometry
       return new RectangleD2D(ax, ay, bx - ax, by - ay);
     }
 
+    public bool Equals(RectangleD2D q)
+    {
+      return _x == q._x && _y == q._y && _w == q._w && _h == q._h;
+    }
+
     public static bool operator ==(RectangleD2D p, RectangleD2D q)
     {
-      return p._x == q._x && p._y == q._y && p._w == q._w && p._h == q._h;
+      return p.Equals(q);
     }
 
     public static bool operator !=(RectangleD2D p, RectangleD2D q)
     {
-      return !(p._x == q._x && p._y == q._y && p._w == q._w && p._h == q._h);
+      return !(p.Equals(q));
     }
 
     public override int GetHashCode()
     {
-      return X.GetHashCode() + Y.GetHashCode() + Width.GetHashCode() + Height.GetHashCode();
+      unchecked
+      {
+        return X.GetHashCode() + 5 * Y.GetHashCode() + 7 * Width.GetHashCode() + 11 * Height.GetHashCode();
+      }
     }
 
     public override bool Equals(object obj)

@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>Gets the effective maximum resolution in dots per inch. Important for repeateable texture brushes only.</summary>
     public double EffectiveMaximumResolutionDpi { get; }
 
-    private int? _cachedHashCode;
+    private int _cachedHashCode;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BrushXEnv"/> struct.
@@ -58,7 +58,6 @@ namespace Altaxo.Graph.Gdi
     /// <param name="effectiveMaximumResolutionDpi">The effective maximum resolution in dots per inch. Important for repeateable texture brushes only.</param>
     public BrushXEnv(BrushX brushX, RectangleD2D boundingRectangle, double effectiveMaximumResolutionDpi)
     {
-      _cachedHashCode = null;
       BrushX = brushX;
 
       // avoid keys with different hashes but the same outcome. For example, for a SolidBrush, the boundingRectangle is meaningless, so set it to Empty.
@@ -109,18 +108,16 @@ namespace Altaxo.Graph.Gdi
 
       EffectiveMaximumResolutionDpi = effectiveMaximumResolutionDpi;
       BrushBoundingRectangle = boundingRectangle;
+
+      unchecked
+      {
+        _cachedHashCode = _cachedHashCode = BrushX.GetHashCode() + 61 * BrushBoundingRectangle.GetHashCode() + 67 * EffectiveMaximumResolutionDpi.GetHashCode();
+      }
     }
 
     public override int GetHashCode()
     {
-      if (!_cachedHashCode.HasValue)
-      {
-        unchecked
-        {
-          _cachedHashCode = BrushX.GetHashCode() + 61 * BrushBoundingRectangle.GetHashCode() + 67 * EffectiveMaximumResolutionDpi.GetHashCode();
-        }
-      }
-      return _cachedHashCode.Value;
+      return _cachedHashCode;
     }
 
     public bool Equals(BrushXEnv other)

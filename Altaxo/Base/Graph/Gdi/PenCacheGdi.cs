@@ -24,6 +24,7 @@
 
 using System;
 using System.Drawing;
+using System.Linq;
 using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
@@ -95,6 +96,15 @@ namespace Altaxo.Graph.Gdi
       _dictionary.TryAdd(gdiBrush.Key, gdiBrush);
     }
 
+
+    /// <summary>
+    /// Gets all pens currently in this dictionary.
+    /// </summary>
+    /// <returns></returns>
+    public PenXEnv[] GetKeys()
+    {
+      return _dictionary.Keys.ToArray();
+    }
 
     /// <summary>
     /// Gets the effective maximum resolution in dpi.

@@ -103,35 +103,38 @@ namespace Altaxo.Graph.Gdi.LineCaps
 
     public abstract void SetEndCap(Pen pen, float size);
 
+    public bool Equals(ILineCap other)
+    {
+      if (other is null)
+        return false;
+      if (object.ReferenceEquals(this, other))
+        return true;
+
+      return
+        (MinimumAbsoluteSizePt == other.MinimumAbsoluteSizePt) &&
+        (MinimumRelativeSize == other.MinimumRelativeSize) &&
+        (Name == other.Name) &&
+        (GetType() == other.GetType());
+
+
+    }
+
     public override bool Equals(object obj)
     {
-      var from = obj as LineCapExtension;
-      return ((null != from)
-        && (_minimumAbsoluteSizePt == from._minimumAbsoluteSizePt)
-        && (_minimumRelativeSize == from._minimumRelativeSize)
-        && (GetType() == from.GetType())
-        );
+      return Equals(obj as LineCapExtension);
     }
 
     public override int GetHashCode()
     {
-      return base.GetHashCode() + _minimumAbsoluteSizePt.GetHashCode() + _minimumRelativeSize.GetHashCode();
+      unchecked
+      {
+        return Name.GetHashCode() + 5 * _minimumAbsoluteSizePt.GetHashCode() + 7 * _minimumRelativeSize.GetHashCode();
+      }
     }
 
     public static bool operator ==(LineCapExtension a, LineCapExtension b)
     {
-      // If both are null, or both are same instance, return true.
-      if (System.Object.ReferenceEquals(a, b))
-      {
-        return true;
-      }
-
-      // If one is null, but not both, return false.
-      if (((object)a == null) || ((object)b == null))
-      {
-        return false;
-      }
-      return a.GetType() == b.GetType() && a._minimumAbsoluteSizePt == b._minimumAbsoluteSizePt && a._minimumRelativeSize == b._minimumRelativeSize;
+      return a is { } _ ? a.Equals(b) : b is { } _ ? b.Equals(a) : true;
     }
 
     public static bool operator !=(LineCapExtension a, LineCapExtension b)
@@ -210,6 +213,8 @@ namespace Altaxo.Graph.Gdi.LineCaps
     {
       return _registeredStylesSortedByName;
     }
+
+
 
     static LineCapExtension()
     {

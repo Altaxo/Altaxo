@@ -96,6 +96,9 @@ namespace Altaxo.Drawing.DashPatterns
       if (other is null)
         return false;
 
+      if (object.ReferenceEquals(this, other))
+        return true;
+
       if (this.GetType() != other.GetType())
         return false;
 
@@ -112,13 +115,21 @@ namespace Altaxo.Drawing.DashPatterns
           return false;
         }
       }
-
       return true;
+    }
+
+    public static bool operator ==(DashPatternBase x, DashPatternBase y)
+    {
+      return x is { } _ ? x.Equals(y) : y is { } _ ? y.Equals(x) : true;
+    }
+    public static bool operator !=(DashPatternBase x, DashPatternBase y)
+    {
+      return !(x == y);
     }
 
     public override int GetHashCode()
     {
-      return GetType().GetHashCode();
+      return this.GetType().GetHashCode() + 5 * Count.GetHashCode() + 7 * DashOffset.GetHashCode();
     }
 
     public override bool Equals(object obj)
