@@ -1057,10 +1057,12 @@ if (0 != (cp & PenX.Configured.Width))
         {
           result._SetProp(Configured.PenType, false);
           result._SetProp(Configured.Color, NamedColors.Black != _color);
+          result._SetProp(Configured.Brush, false);
           result._penType = PenType.SolidColor;
         }
         else if (value.BrushType == BrushType.SolidBrush)
         {
+          result._brush = null;
           result._penType = PenType.SolidColor;
           result._color = value.Color;
           result._SetProp(Configured.PenType, PenType.SolidColor != _penType);
@@ -1119,9 +1121,15 @@ if (0 != (cp & PenX.Configured.Width))
         var result = Clone();
 
         if (result._brush is { } brush)
+        {
           result._brush = brush.WithColor(value);
+          result._SetProp(Configured.Brush, true);
+        }
         else
+        {
+          _color = value;
           result._SetProp(Configured.Color, NamedColors.Black != value);
+        }
 
         return result;
       }
@@ -1240,7 +1248,7 @@ if (0 != (cp & PenX.Configured.Width))
       if (null == value)
         throw new ArgumentNullException();
 
-      if (!(object.Equals(_dashPattern, value)))
+      if (!(object.ReferenceEquals(_dashPattern, value))) // use ReferenceEquals because the reference determines to which DashPatternList the DashPattern belongs
       {
         var result = Clone();
         result._dashPattern = value;
