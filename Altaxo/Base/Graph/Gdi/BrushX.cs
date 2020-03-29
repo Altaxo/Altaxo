@@ -31,18 +31,40 @@ using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Designates the type of the brush.
+  /// </summary>
   [Serializable]
   public enum BrushType
   {
+    /// <summary>Brush that has a single uniform color.</summary>
     SolidBrush,
+
+    /// <summary></summary>
     HatchBrush,
+
+    /// <summary>Brush using an image.</summary>
     TextureBrush,
+
+    /// <summary>Brush that changes color along a linear path.</summary>
     LinearGradientBrush,
+
+    /// <summary>Brush that changes color using a path (typically the path of the shape).</summary>
     PathGradientBrush,
+
+    /// <summary>Brush that changes color with a sigma bell shaped function along a linear path.</summary>
     SigmaBellShapeLinearGradientBrush,
+
+    /// <summary>Brush that changes color with a triangular shaped function along a linear path.</summary>
     TriangularShapeLinearGradientBrush,
+
+    /// <summary>Brush that changes color with a sigma bell shaped function along a path (typically the path of the shape).</summary>
     SigmaBellShapePathGradientBrush,
+
+    /// <summary>Brush that changes color with a triangular shaped function along a path (typically the path of the shape).</summary>
     TriangularShapePathGradientBrush,
+
+    /// <summary>Brush that used a synthetic (calculated) texture.</summary>
     SyntheticTextureBrush,
   };
 
@@ -105,6 +127,9 @@ namespace Altaxo.Graph.Gdi
     protected ImageProxy _textureImage; // für Texturebrush
     protected TextureScaling _textureScale = TextureScaling.Default;
 
+    /// <summary>
+    /// Cached hash code. Must be invaliated after cloning the instance.
+    /// </summary>
     protected int? _cachedHashCode;
 
     #region "Serialization"
@@ -535,15 +560,15 @@ namespace Altaxo.Graph.Gdi
             return false;
           if (!_backColor.Equals(other._backColor))
             return false;
-          if (_angle != other._angle)
+          if (!(_angle == other._angle))
             return false;
-          if (_wrapMode != other._wrapMode)
+          if (!(_wrapMode == other._wrapMode))
             return false;
-          if (_brushType != Gdi.BrushType.LinearGradientBrush)
+          if (!(_brushType == Gdi.BrushType.LinearGradientBrush))
           {
-            if (_offsetX != other._offsetX)
+            if (!(_offsetX == other._offsetX))
               return false;
-            if (_gradientColorScale != other._gradientColorScale)
+            if (!(_gradientColorScale == other._gradientColorScale))
               return false;
           }
           break;
@@ -551,22 +576,22 @@ namespace Altaxo.Graph.Gdi
         case BrushType.PathGradientBrush:
         case BrushType.TriangularShapePathGradientBrush:
         case BrushType.SigmaBellShapePathGradientBrush:
-          if (_exchangeColors != other._exchangeColors)
+          if (!(_exchangeColors == other._exchangeColors))
             return false;
           if (!_foreColor.Equals(other._foreColor))
             return false;
           if (!_backColor.Equals(other._backColor))
             return false;
-          if (_wrapMode != other._wrapMode)
+          if (!(_wrapMode == other._wrapMode))
             return false;
-          if (_brushType != BrushType.PathGradientBrush)
+          if (!(_brushType == BrushType.PathGradientBrush))
           {
-            if (_gradientColorScale != other._gradientColorScale)
+            if (!(_gradientColorScale == other._gradientColorScale))
               return false;
           }
-          if (_offsetX != other._offsetX)
+          if (!(_offsetX == other._offsetX))
             return false;
-          if (_offsetY != other._offsetY)
+          if (!(_offsetY == other._offsetY))
             return false;
           break;
 
@@ -575,7 +600,7 @@ namespace Altaxo.Graph.Gdi
         case BrushType.TextureBrush:
           if (_brushType == BrushType.HatchBrush || _brushType == BrushType.SyntheticTextureBrush)
           {
-            if (_exchangeColors != other._exchangeColors)
+            if (!(_exchangeColors == other._exchangeColors))
               return false;
             if (!_foreColor.Equals(other._foreColor))
               return false;
@@ -584,15 +609,15 @@ namespace Altaxo.Graph.Gdi
           }
           if (!object.Equals(_textureImage, other._textureImage))
             return false;
-          if (_textureScale != other._textureScale)
+          if (!(_textureScale == other._textureScale))
             return false;
-          if (_wrapMode != other._wrapMode)
+          if (!(_wrapMode == other._wrapMode))
             return false;
-          if (_angle != other._angle)
+          if (!(_angle == other._angle))
             return false;
-          if (_offsetX != other._offsetX)
+          if (!(_offsetX == other._offsetX))
             return false;
-          if (_offsetY != other._offsetY)
+          if (!(_offsetY == other._offsetY))
             return false;
           break;
 
@@ -636,7 +661,7 @@ namespace Altaxo.Graph.Gdi
             result += 11 * _backColor.GetHashCode();
             result += 13 * _angle.GetHashCode();
             result += 17 * _wrapMode.GetHashCode();
-            if (_brushType != Gdi.BrushType.LinearGradientBrush)
+            if (!(_brushType == Gdi.BrushType.LinearGradientBrush))
             {
               result += 19 * _offsetX.GetHashCode();
               result += 23 * _offsetY.GetHashCode();
@@ -653,7 +678,7 @@ namespace Altaxo.Graph.Gdi
 
             result += 19 * _offsetX.GetHashCode();
             result += 23 * _offsetY.GetHashCode();
-            if (_brushType != BrushType.PathGradientBrush)
+            if (!(_brushType == BrushType.PathGradientBrush))
             {
               result += 29 * _gradientColorScale.GetHashCode();
             }
@@ -662,7 +687,7 @@ namespace Altaxo.Graph.Gdi
           case BrushType.HatchBrush:
           case BrushType.SyntheticTextureBrush:
           case BrushType.TextureBrush:
-            if (_brushType == BrushType.HatchBrush || _brushType == BrushType.SyntheticTextureBrush)
+            if (!(_brushType == BrushType.TextureBrush))
             {
               result += _exchangeColors ? 5 : 0;
               result += 7 * _foreColor.GetHashCode();
