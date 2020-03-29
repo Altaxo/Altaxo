@@ -48,7 +48,7 @@ namespace Altaxo.Geometry
     /// </exception>
     public static RectangleD2D GetIncludedTransformedRectangle(this RectangleD2D outerRectangle, double sx, double rx, double ry, double sy)
     {
-      PointD2D outerRectangleSize = outerRectangle.Size;
+      var outerRectangleSize = outerRectangle.Size;
 
       if (!(outerRectangleSize.X > 0))
         throw new ArgumentOutOfRangeException("X-Size of outer rectangle must be > 0");
