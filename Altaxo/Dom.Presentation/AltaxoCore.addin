@@ -106,6 +106,8 @@
   <Path name="/Altaxo/Autostart">
     <Class id="StartColorSetManager"
 						 class="Altaxo.Gui.Autostart.StartColorSetManager" />
+    <Class id="StartTextureManager"
+						 class="Altaxo.Gui.Autostart.StartTextureManager" />
     <Class id="StartUpdateDownloader"
 						 class="Altaxo.Gui.Autostart.StartUpdateDownloader" />
   </Path>
