@@ -25,6 +25,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
 
@@ -163,37 +164,50 @@ namespace Altaxo.Graph.Gdi
               brushBoundingRectangle = new RectangleD2D(0, 0, 1000, 1000);
 
             Image img = null;
-            PointD2D finalSize = PointD2D.Empty;
-            PointD2D sourceSize = PointD2D.Empty;
+            VectorD2D finalSize = VectorD2D.Empty;
+            VectorD2D sourceSize = VectorD2D.Empty;
             double blowFactor;
 
             if (t.TextureImage is IHatchBrushTexture)
             {
               sourceSize = (t.TextureImage as IHatchBrushTexture).Size;
-              finalSize = t.TextureScale.GetResultingSize(sourceSize, brushBoundingRectangle.Size);
+              finalSize = t.TextureScale.GetResultingSize(sourceSize, (VectorD2D)brushBoundingRectangle.Size);
               blowFactor = Math.Max(Math.Abs(finalSize.X / sourceSize.X), Math.Abs(finalSize.Y / sourceSize.Y));
-              img = (t.TextureImage as IHatchBrushTexture).GetImage(effectiveMaximumResolutionDpi * blowFactor, t.ExchangeColors ? t.BackColor : t.Color, t.ExchangeColors ? t.Color : t.BackColor);
+              var str = (t.TextureImage as IHatchBrushTexture).GetContentStream(effectiveMaximumResolutionDpi * blowFactor, t.ExchangeColors ? t.BackColor : t.Color, t.ExchangeColors ? t.Color : t.BackColor);
+              img = SystemDrawingImageProxyExtensions.GetImage(str, disposeStream: true);
             }
             else if (t.TextureImage is ISyntheticRepeatableTexture)
             {
               sourceSize = (t.TextureImage as IHatchBrushTexture).Size;
-              finalSize = t.TextureScale.GetResultingSize(sourceSize, brushBoundingRectangle.Size);
+              finalSize = t.TextureScale.GetResultingSize(sourceSize, (VectorD2D)brushBoundingRectangle.Size);
               blowFactor = Math.Max(Math.Abs(finalSize.X / sourceSize.X), Math.Abs(finalSize.Y / sourceSize.Y));
-              img = (t.TextureImage as ISyntheticRepeatableTexture).GetImage(effectiveMaximumResolutionDpi * blowFactor);
+              var str = (t.TextureImage as ISyntheticRepeatableTexture).GetContentStream(effectiveMaximumResolutionDpi * blowFactor);
+              img = SystemDrawingImageProxyExtensions.GetImage(str, disposeStream: true);
             }
             else if (t.TextureImage != null)
             {
-              img = t.TextureImage.GetImage();
-              sourceSize = new PointD2D(img.Width * 72.0 / img.HorizontalResolution, img.Height * 72.0 / img.VerticalResolution);
-              finalSize = t.TextureScale.GetResultingSize(sourceSize, brushBoundingRectangle.Size);
+              var str = t.TextureImage.GetContentStream();
+              img = SystemDrawingImageProxyExtensions.GetImage(str, disposeStream: true);
+              sourceSize = new VectorD2D(img.Width * 72.0 / img.HorizontalResolution, img.Height * 72.0 / img.VerticalResolution);
+              finalSize = t.TextureScale.GetResultingSize(sourceSize, (VectorD2D)brushBoundingRectangle.Size);
             }
 
             if (img == null)
             {
               img = GetDefaultTextureBitmap();
-              sourceSize = new PointD2D(img.Width * 72.0 / img.HorizontalResolution, img.Height * 72.0 / img.VerticalResolution);
-              finalSize = t.TextureScale.GetResultingSize(sourceSize, brushBoundingRectangle.Size);
+              sourceSize = new VectorD2D(img.Width * 72.0 / img.HorizontalResolution, img.Height * 72.0 / img.VerticalResolution);
+              finalSize = t.TextureScale.GetResultingSize(sourceSize, (VectorD2D)brushBoundingRectangle.Size);
             }
+
+            // Bug in GDI+: a bitmap created from a stream
+            // needs to be drawn once in order to be used by a TextureBrush
+            // otherwise, creation of the TextureBrush will cause a OutOfMemoryException
+            using (var g = Graphics.FromImage(img))
+            {
+              g.DrawLine(Pens.Transparent, 0, 0, 1, 0); // Hotfix to avoid OutOfMemoryException
+            }
+
+
             var tb = new TextureBrush(img)
             {
               WrapMode = t.WrapMode

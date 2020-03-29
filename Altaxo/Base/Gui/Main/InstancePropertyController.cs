@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Main
         {
           ++defaultDisplayOrder;
           long currentDisplayOrder = defaultDisplayOrder;
-          if (prop.IsWriteable)
+          if (prop.IsWriteable || HasImmutableSetter(prop, _doc.GetType()))
           {
             var displayOrderAttribute = prop.Attributes.OfType<Altaxo.Main.Services.PropertyReflection.DisplayOrderAttribute>().FirstOrDefault();
             if (null != displayOrderAttribute)
@@ -125,6 +125,25 @@ namespace Altaxo.Gui.Main
       }
     }
 
+    private bool HasImmutableSetter(Property p, Type t)
+    {
+      return GetImmutableSetter(p, t) is { } _;
+    }
+
+    private System.Reflection.MethodInfo GetImmutableSetter(Property p, Type t)
+    {
+      var methodName = "With" + p.Name;
+      var method = t.GetMethod(methodName, new[] { p.PropertyType });
+
+      if (method is null)
+        return null;
+
+      if (!(method.ReturnType.IsAssignableFrom(t)))
+        return null;
+
+      return method;
+    }
+
     public override bool Apply(bool disposeController)
     {
       foreach (var entry in _controllerList.Values)
@@ -132,7 +151,18 @@ namespace Altaxo.Gui.Main
         bool success = entry.Value.Apply(disposeController);
         if (!success)
           return false;
-        entry.Key.Value = entry.Value.ModelObject;
+
+        var property = entry.Key;
+        if (property.IsWriteable)
+        {
+          entry.Key.Value = entry.Value.ModelObject;
+        }
+        else
+        {
+          var method = GetImmutableSetter(property, _doc.GetType());
+          _doc = method.Invoke(_doc, new[] { entry.Value.ModelObject });
+        }
+
       }
 
       if (_useDocumentCopy)
@@ -233,8 +263,19 @@ namespace Altaxo.Gui.Main
 
     private void EhMadeDirty(IMVCANDController ctrl)
     {
-      var prop = GetPropertyForController(ctrl);
-      prop.Value = ctrl.ProvisionalModelObject;
+      var property = GetPropertyForController(ctrl);
+      var newValue = ctrl.ProvisionalModelObject;
+
+      if (property.IsWriteable)
+      {
+        property.Value = newValue;
+      }
+      else
+      {
+        var method = GetImmutableSetter(property, _doc.GetType());
+        _doc = method.Invoke(_doc, new[] { newValue });
+      }
+
       OnMadeDirty();
     }
   }

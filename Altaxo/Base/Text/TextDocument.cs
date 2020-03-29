@@ -246,7 +246,7 @@ namespace Altaxo.Text
           _images.Clear();
           foreach (var entry in from._images)
           {
-            _images.Add(entry.Key, (Altaxo.Graph.MemoryStreamImageProxy)entry.Value.Clone());
+            _images.Add(entry.Key, entry.Value);
           }
 
           EhSelfChanged(EventArgs.Empty);

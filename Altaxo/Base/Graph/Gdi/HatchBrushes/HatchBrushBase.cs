@@ -73,11 +73,23 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 
     #endregion Serialization
 
-    public abstract Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor);
+    protected abstract Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor);
 
-    public override PointD2D Size
+    public virtual System.IO.Stream GetContentStream(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
     {
-      get { return new PointD2D(_repeatLengthPt, _repeatLengthPt); }
+      var str = new System.IO.MemoryStream();
+      using (var img = GetImage(maxEffectiveResolutionDpi, foreColor, backColor))
+      {
+        img.Save(str, System.Drawing.Imaging.ImageFormat.Png);
+        str.Flush();
+        str.Seek(0, System.IO.SeekOrigin.Begin);
+      }
+      return str;
+    }
+
+    public override VectorD2D Size
+    {
+      get { return new VectorD2D(_repeatLengthPt, _repeatLengthPt); }
     }
 
     [System.ComponentModel.Editor(typeof(Altaxo.Gui.Common.LengthValueInPointController), typeof(Altaxo.Gui.IMVCANController))]
@@ -85,7 +97,20 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
     public double RepeatLength
     {
       get { return _repeatLengthPt; }
-      set { _repeatLengthPt = value; }
+    }
+
+    public HatchBrushBase WithRepeatLength(double repeatLength)
+    {
+      if (!(_repeatLengthPt == repeatLength))
+      {
+        var result = (HatchBrushBase)MemberwiseClone();
+        result._repeatLengthPt = repeatLength;
+        return result;
+      }
+      else
+      {
+        return this;
+      }
     }
 
     [System.ComponentModel.Editor(typeof(Altaxo.Gui.Common.RelationValueInUnityController), typeof(Altaxo.Gui.IMVCANController))]
@@ -93,7 +118,20 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
     public double StructureFactor
     {
       get { return _structureFactor; }
-      set { _structureFactor = value; }
+    }
+
+    public HatchBrushBase WithStructureFactor(double structureFactor)
+    {
+      if (!(_structureFactor == structureFactor))
+      {
+        var result = (HatchBrushBase)MemberwiseClone();
+        result._structureFactor = structureFactor;
+        return result;
+      }
+      else
+      {
+        return this;
+      }
     }
 
     protected int GetPixelDimensions(double maxEffectiveResolutionDpi)
@@ -119,29 +157,16 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
       get { return GetType().ToString(); }
     }
 
-    public override bool CopyFrom(object obj)
+
+
+    public virtual System.IO.Stream GetContentStream(double maxEffectiveResolutionDpi)
     {
-      bool isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
-      {
-        var from = obj as HatchBrushBase;
-        if (null != from)
-        {
-          _repeatLengthPt = from._repeatLengthPt;
-          _structureFactor = from._structureFactor;
-        }
-      }
-      return isCopied;
+      return GetContentStream(maxEffectiveResolutionDpi, _defaultForeColor, _defaultBackColor);
     }
 
-    public virtual Image GetImage(double maxEffectiveResolutionDpi)
+    public override System.IO.Stream GetContentStream()
     {
-      return GetImage(maxEffectiveResolutionDpi, _defaultForeColor, _defaultBackColor);
-    }
-
-    public override Image GetImage()
-    {
-      return GetImage(DefaultEffectiveResolution, _defaultForeColor, _defaultBackColor);
+      return GetContentStream(300);
     }
 
     public override bool IsValid

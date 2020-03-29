@@ -145,7 +145,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         var from = obj as EmbeddedImageGraphic;
         if (null != from)
         {
-          Image = null == from._imageProxy ? null : (ImageProxy)from._imageProxy.Clone();
+          Image = from._imageProxy;
         }
       }
       return isCopied;
@@ -167,25 +167,27 @@ namespace Altaxo.Graph.Gdi.Shapes
       set
       {
         _imageProxy = value;
-        var originalItemSize = new PointD2D(10, 10);
-        if (null != _imageProxy)
-        {
-          Image img = _imageProxy == null ? null : _imageProxy.GetImage();
-          if (null != img)
-            originalItemSize = new PointD2D((72.0 * img.Width / img.HorizontalResolution), (72.0 * img.Height / img.VerticalResolution));
-        }
-        ((ItemLocationDirectAspectPreserving)_location).OriginalItemSize = originalItemSize;
+        var originalItemSize = _imageProxy is null ? new VectorD2D(10, 10) : _imageProxy.Size;
+        ((ItemLocationDirectAspectPreserving)_location).OriginalItemSize = (PointD2D)originalItemSize;
       }
     }
 
     public override PointD2D GetImageSizePt()
     {
-      return _imageProxy == null ? new PointD2D(1, 1) : _imageProxy.Size;
+      return _imageProxy is null ? new PointD2D(1, 1) : (PointD2D)_imageProxy.Size;
     }
 
     public override Image GetImage()
     {
-      return _imageProxy == null ? null : _imageProxy.GetImage();
+      if (_imageProxy is { } imgproxy)
+      {
+        var str = imgproxy.GetContentStream();
+        return SystemDrawingImageProxyExtensions.GetImage(str, disposeStream: true);
+      }
+      else
+      {
+        return null;
+      }
     }
 
     public override void Paint(Graphics g, IPaintContext context)
@@ -193,7 +195,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       TransformGraphics(g);
 
-      Image img = _imageProxy == null ? null : _imageProxy.GetImage();
+      Image img = GetImage();
 
       if (null != img)
       {

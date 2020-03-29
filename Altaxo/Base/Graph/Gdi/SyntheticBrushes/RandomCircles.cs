@@ -86,14 +86,20 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
       {
         return _fillingFactor;
       }
-      set
+    }
+
+    public RandomCircles WithFillingFactor(double value)
+    {
+      if (!(_fillingFactor == value))
       {
-        var oldValue = _fillingFactor;
-        _fillingFactor = value;
-        if (oldValue != value)
-        {
-          _randomSeed = ++_staticRandomSeed;
-        }
+        var result = (RandomCircles)MemberwiseClone();
+        result._fillingFactor = value;
+        result._randomSeed = ++_staticRandomSeed;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -102,41 +108,28 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
     public double CircleDiameter
     {
       get { return _circleDiameterPt; }
-      set
-      {
-        var oldValue = _circleDiameterPt;
-        _circleDiameterPt = value;
-        if (oldValue != value)
-        {
-          ++_staticRandomSeed;
-        }
-      }
     }
 
-    public override bool CopyFrom(object obj)
+    public RandomCircles WithCircleDiameter(double value)
     {
-      bool copied = base.CopyFrom(obj);
-      var from = obj as RandomCircles;
-      if (null != from)
+      if (!(_circleDiameterPt == value))
       {
-        _fillingFactor = from._fillingFactor;
-        _circleDiameterPt = from._circleDiameterPt;
-        return true;
+        var result = (RandomCircles)MemberwiseClone();
+        result._circleDiameterPt = value;
+        result._randomSeed = ++_staticRandomSeed;
+        return result;
       }
       else
       {
-        return copied;
+        return this;
       }
     }
 
-    public override object Clone()
-    {
-      var result = new RandomCircles();
-      result.CopyFrom(this);
-      return result;
-    }
 
-    public override System.Drawing.Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
+
+
+
+    protected override System.Drawing.Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
     {
       var randomGenerator = new Random(_randomSeed);
       int pixelDim = GetPixelDimensions(maxEffectiveResolutionDpi, _circleDiameterPt, 2);

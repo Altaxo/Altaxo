@@ -111,7 +111,7 @@ namespace Altaxo.Graph.Gdi
 
       unchecked
       {
-        _cachedHashCode = _cachedHashCode = BrushX.GetHashCode() + 61 * BrushBoundingRectangle.GetHashCode() + 67 * EffectiveMaximumResolutionDpi.GetHashCode();
+        _cachedHashCode = BrushX.GetHashCode() + 61 * BrushBoundingRectangle.GetHashCode() + 67 * EffectiveMaximumResolutionDpi.GetHashCode();
       }
     }
 

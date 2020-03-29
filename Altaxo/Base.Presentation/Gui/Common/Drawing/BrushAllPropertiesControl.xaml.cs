@@ -406,8 +406,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhPreviewPanelSizeChanged(object sender, SizeChangedEventArgs e)
     {
-      if (null != PreviewPanelSizeChanged)
-        PreviewPanelSizeChanged();
+      PreviewPanelSizeChanged?.Invoke();
     }
 
     #endregion Preview Panel

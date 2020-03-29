@@ -54,11 +54,10 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 
     #endregion Serialization
 
-    public override Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
+    protected override Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
     {
       int pixelDim = GetPixelDimensions(maxEffectiveResolutionDpi);
       var bmp = new Bitmap(pixelDim, pixelDim, PixelFormat.Format32bppArgb);
-      bmp.SetResolution(2000, 2000);
       using (var g = Graphics.FromImage(bmp))
       {
         using (var brush = new SolidBrush(backColor))
@@ -78,11 +77,6 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
       return bmp;
     }
 
-    public override object Clone()
-    {
-      var result = new HorizontalHatchBrush();
-      result.CopyFrom(this);
-      return result;
-    }
+
   }
 }

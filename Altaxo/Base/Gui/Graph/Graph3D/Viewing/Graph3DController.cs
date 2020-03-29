@@ -592,7 +592,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
             {
               var size = ActiveLayer.Size / 2;
 
-              PointD2D imgSize = img.GetImage().PhysicalDimension;
+              var imgSize = img.Size;
 
               double scale = Math.Min(size.X / imgSize.X, size.Y / imgSize.Y);
               imgSize = imgSize * scale;

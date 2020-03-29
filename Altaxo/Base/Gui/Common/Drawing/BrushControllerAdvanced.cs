@@ -323,17 +323,9 @@ namespace Altaxo.Gui.Common.Drawing
       //_view.AdditionalPropertiesView
     }
 
-    private PointD2D GetSizeOfImageProxy(ImageProxy proxy)
+    private VectorD2D GetSizeOfImageProxy(ImageProxy proxy)
     {
-      if (proxy is ISyntheticRepeatableTexture)
-      {
-        return ((ISyntheticRepeatableTexture)proxy).Size;
-      }
-      else
-      {
-        var img = proxy.GetImage();
-        return new PointD2D(img.Width * 72.0 / img.HorizontalResolution, img.Height * 72.0 / img.VerticalResolution);
-      }
+      return proxy.Size;
     }
 
     #endregion Other helper functions

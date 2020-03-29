@@ -66,11 +66,31 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 
     #endregion Serialization
 
-    public abstract Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor);
+    protected abstract Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor);
 
-    public override PointD2D Size
+    public virtual System.IO.Stream GetContentStream(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
     {
-      get { return new PointD2D(_repeatLengthPt, _repeatLengthPt); }
+      var str = new System.IO.MemoryStream();
+      using (var img = GetImage(maxEffectiveResolutionDpi, foreColor, backColor))
+      {
+        img.Save(str, System.Drawing.Imaging.ImageFormat.Png);
+      }
+      return str;
+    }
+
+    public virtual System.IO.Stream GetContentStream(double maxEffectiveResolutionDpi)
+    {
+      return GetContentStream(maxEffectiveResolutionDpi, _defaultForeColor, _defaultBackColor);
+    }
+
+    public override System.IO.Stream GetContentStream()
+    {
+      return GetContentStream(DefaultEffectiveResolution);
+    }
+
+    public override VectorD2D Size
+    {
+      get { return new VectorD2D(_repeatLengthPt, _repeatLengthPt); }
     }
 
     [System.ComponentModel.Editor(typeof(Altaxo.Gui.Common.LengthValueInPointController), typeof(Altaxo.Gui.IMVCANController))]
@@ -78,7 +98,20 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
     public double RepeatLength
     {
       get { return _repeatLengthPt; }
-      set { _repeatLengthPt = value; }
+    }
+
+    public SyntheticBrushBase WithRepeatLength(double repeatLength)
+    {
+      if (!(_repeatLengthPt == repeatLength))
+      {
+        var result = (SyntheticBrushBase)MemberwiseClone();
+        result._repeatLengthPt = repeatLength;
+        return result;
+      }
+      else
+      {
+        return this;
+      }
     }
 
     protected int GetPixelDimensions(double maxEffectiveResolutionDpi)
@@ -113,30 +146,6 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
     public override string Name
     {
       get { return GetType().ToString(); }
-    }
-
-    public override bool CopyFrom(object obj)
-    {
-      bool isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
-      {
-        var from = obj as SyntheticBrushBase;
-        if (null != from)
-        {
-          _repeatLengthPt = from._repeatLengthPt;
-        }
-      }
-      return isCopied;
-    }
-
-    public virtual Image GetImage(double maxEffectiveResolutionDpi)
-    {
-      return GetImage(maxEffectiveResolutionDpi, _defaultForeColor, _defaultBackColor);
-    }
-
-    public override Image GetImage()
-    {
-      return GetImage(DefaultEffectiveResolution, _defaultForeColor, _defaultBackColor);
     }
 
     public override bool IsValid

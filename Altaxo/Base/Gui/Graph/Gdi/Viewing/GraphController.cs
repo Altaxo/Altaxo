@@ -1486,12 +1486,12 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
               var size = ActiveLayer.Size;
               size *= 0.5;
 
-              PointD2D imgSize = img.GetImage().PhysicalDimension;
+              var imgSize = img.Size;
 
               double scale = Math.Min(size.X / imgSize.X, size.Y / imgSize.Y);
               imgSize *= scale;
 
-              var item = new EmbeddedImageGraphic(PointD2D.Empty, imgSize, img);
+              var item = new EmbeddedImageGraphic(PointD2D.Empty, (PointD2D)imgSize, img);
               ActiveLayer.GraphObjects.Add(item);
               bSuccess = true;
               continue;

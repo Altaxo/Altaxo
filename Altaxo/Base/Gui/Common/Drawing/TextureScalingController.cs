@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Common.Drawing
     /// <summary>
     /// Size of the original texture.
     /// </summary>
-    private PointD2D? _sourceTextureSize;
+    private VectorD2D? _sourceTextureSize;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -122,7 +122,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     /// <summary>Sets the size of the source texture. This is used by the view to automatically change the value of one size/scale when the value for the other size/scale is changed.</summary>
     /// <value>The size of the source texture.</value>
-    public PointD2D SourceTextureSize
+    public VectorD2D SourceTextureSize
     {
       set
       {
@@ -132,7 +132,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhScalingModeChanged()
     {
-      _doc.ScalingMode = _view.ScalingMode;
+      _doc = _doc.WithScalingMode(_view.ScalingMode);
       using (var supp = _suppressDirtyEvent.SuspendGetToken())
       {
         EhXChanged();
@@ -144,23 +144,35 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhAspectPreservingChanged()
     {
-      _doc.SourceAspectRatioPreserving = _view.AspectPreserving;
+      _doc = _doc.WithSourceAspectRatioPreserving(_view.AspectPreserving);
 
       if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None)
       {
         if (_doc.ScalingMode == TextureScalingMode.Absolute)
         {
           if (_doc.SourceAspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority && null != _sourceTextureSize)
-            _view.YSize = _doc.Y = _doc.X * _sourceTextureSize.Value.Y / _sourceTextureSize.Value.X;
+          {
+            _doc = _doc.WithY(_doc.X * _sourceTextureSize.Value.Y / _sourceTextureSize.Value.X);
+            _view.YSize = _doc.Y;
+          }
           else
-            _view.XSize = _doc.X = _doc.Y * _sourceTextureSize.Value.X / _sourceTextureSize.Value.Y;
+          {
+            _doc = _doc.WithX(_doc.Y * _sourceTextureSize.Value.X / _sourceTextureSize.Value.Y);
+            _view.XSize = _doc.X;
+          }
         }
         else
         {
           if (_doc.SourceAspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority)
-            _view.YScale = _doc.Y = _doc.X;
+          {
+            _doc = _doc.WithY(_doc.X);
+            _view.YScale = _doc.Y;
+          }
           else
-            _view.XScale = _doc.X = _doc.Y;
+          {
+            _doc = _doc.WithX(_doc.Y);
+            _view.XScale = _doc.X;
+          }
         }
       }
 
@@ -171,19 +183,20 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_doc.ScalingMode == TextureScalingMode.Absolute)
       {
-        _doc.X = _view.XSize;
+        _doc = _doc.WithX(_view.XSize);
         if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None && null != _sourceTextureSize)
         {
-          _doc.Y = _doc.X * _sourceTextureSize.Value.Y / _sourceTextureSize.Value.X;
+          _doc = _doc.WithY(_doc.X * _sourceTextureSize.Value.Y / _sourceTextureSize.Value.X);
           _view.YSize = _doc.Y;
         }
       }
       else
       {
-        _doc.X = _view.XScale;
+        _doc = _doc.WithX(_view.XScale);
         if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None)
         {
-          _view.YScale = _doc.Y = _doc.X;
+          _doc = _doc.WithY(_doc.X);
+          _view.YScale = _doc.Y;
         }
       }
 
@@ -194,19 +207,20 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_doc.ScalingMode == TextureScalingMode.Absolute)
       {
-        _doc.Y = _view.YSize;
+        _doc = _doc.WithY(_view.YSize);
         if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None && null != _sourceTextureSize)
         {
-          _doc.X = _doc.Y * _sourceTextureSize.Value.X / _sourceTextureSize.Value.Y;
+          _doc = _doc.WithX(_doc.Y * _sourceTextureSize.Value.X / _sourceTextureSize.Value.Y);
           _view.XSize = _doc.X;
         }
       }
       else
       {
-        _doc.Y = _view.YScale;
+        _doc = _doc.WithY(_view.YScale);
         if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None)
         {
-          _view.XScale = _doc.X = _doc.Y;
+          _doc = _doc.WithX(_doc.Y);
+          _view.XScale = _doc.X;
         }
       }
 

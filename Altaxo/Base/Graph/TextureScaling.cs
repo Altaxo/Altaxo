@@ -63,12 +63,25 @@ namespace Altaxo.Graph
   /// <summary>
   /// Designates how and how much a texture image should be scaled.
   /// </summary>
-  public struct TextureScaling : System.IEquatable<TextureScaling>
+  public readonly struct TextureScaling : System.IEquatable<TextureScaling>, Main.IImmutable
   {
-    private TextureScalingMode _scalingMode;
-    private AspectRatioPreservingMode _aspectPreserving;
-    private double _x;
-    private double _y;
+    /// <summary>Gets or sets the scaling mode, i.e. how the texture image should be scaled.</summary>
+    /// <value>The scaling mode.</value>
+    public TextureScalingMode ScalingMode { get; }
+
+    /// <summary>Gets or sets whether the aspect ratio of the texture image should be preserved.</summary>
+    /// <value>The aspect ratio preserving mode.</value>
+    public AspectRatioPreservingMode SourceAspectRatioPreserving { get; }
+
+    /// <summary>If <see cref="ScalingMode"/> is Absolute, this value is the horizontal size of the texture (repeat length) in Points (1/72 inch).
+    /// Otherwise, it is the horizontal scaling factor related either to the source image width or the destination image width.</summary>
+    /// <value>The X value.</value>
+    public double X { get; }
+
+    /// <summary>If <see cref="ScalingMode"/> is Absolute, this value is the vertical size of the texture (repeat length) in Points (1/72 inch).
+    /// Otherwise, it is the vertical scaling factor related either to the source image width or the destination image height.</summary>
+    /// <value>The Y value.</value>
+    public double Y { get; }
 
     #region Serialization
 
@@ -78,66 +91,99 @@ namespace Altaxo.Graph
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TextureScaling)obj;
-        info.AddEnum("Mode", s._scalingMode);
-        info.AddEnum("AspectPreserving", s._aspectPreserving);
-        info.AddValue("X", s._x);
-        info.AddValue("Y", s._y);
+        info.AddEnum("Mode", s.ScalingMode);
+        info.AddEnum("AspectPreserving", s.SourceAspectRatioPreserving);
+        info.AddValue("X", s.X);
+        info.AddValue("Y", s.Y);
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        var s = null != o ? (TextureScaling)o : new TextureScaling();
-        s._scalingMode = (TextureScalingMode)info.GetEnum("Mode", typeof(TextureScalingMode));
-        s._aspectPreserving = (AspectRatioPreservingMode)info.GetEnum("AspectPreserving", typeof(AspectRatioPreservingMode));
-        s._x = info.GetDouble("X");
-        s._y = info.GetDouble("Y");
+        var scalingMode = (TextureScalingMode)info.GetEnum("Mode", typeof(TextureScalingMode));
+        var aspectPreserving = (AspectRatioPreservingMode)info.GetEnum("AspectPreserving", typeof(AspectRatioPreservingMode));
+        var x = info.GetDouble("X");
+        var y = info.GetDouble("Y");
 
-        return s;
+        return new TextureScaling(scalingMode, aspectPreserving, x, y);
       }
     }
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextureScaling"/> struct.
+    /// </summary>
+    /// <param name="mode">The scaling mode.</param>
+    /// <param name="aspectPreserving">The aspect preserving mode.</param>
+    /// <param name="x">The x parameter. See <see cref="X"/> for explanations.</param>
+    /// <param name="y">The y parameter. See <see cref="Y"/> for explanations.</param>
     public TextureScaling(TextureScalingMode mode, AspectRatioPreservingMode aspectPreserving, double x, double y)
     {
-      _scalingMode = mode;
-      _aspectPreserving = aspectPreserving;
-      _x = x;
-      _y = y;
+      ScalingMode = mode;
+      SourceAspectRatioPreserving = aspectPreserving;
+      X = x;
+      Y = y;
     }
 
-    /// <summary>Gets or sets the scaling mode, i.e. how the texture image should be scaled.</summary>
-    /// <value>The scaling mode.</value>
-    public TextureScalingMode ScalingMode
+    /// <summary>Returns a new <see cref="TextureScaling"/> instance with the <see cref="ScalingMode"/> value set to the provided value.</summary>
+    /// <param name="scalingMode">The scaling mode, i.e. how the texture image should be scaled.</param>
+    public TextureScaling WithScalingMode(TextureScalingMode scalingMode)
     {
-      get { return _scalingMode; }
-      set { _scalingMode = value; }
+      if (!(ScalingMode == scalingMode))
+      {
+        return new TextureScaling(scalingMode, SourceAspectRatioPreserving, X, Y);
+      }
+      else
+      {
+        return this;
+      }
     }
 
-    /// <summary>Gets or sets whether the aspect ratio of the texture image should be preserved.</summary>
-    /// <value>The aspect ratio preserving mode.</value>
-    public AspectRatioPreservingMode SourceAspectRatioPreserving
+
+
+    /// <summary>Returns a new <see cref="TextureScaling"/> instance with the <see cref="SourceAspectRatioPreserving"/> value set to the provided value.</summary>
+    /// <param name="aspectPreserving">The aspect ratio preserving mode.</param>
+    public TextureScaling WithSourceAspectRatioPreserving(AspectRatioPreservingMode aspectPreserving)
     {
-      get { return _aspectPreserving; }
-      set { _aspectPreserving = value; }
+      if (!(SourceAspectRatioPreserving == aspectPreserving))
+      {
+        return new TextureScaling(ScalingMode, aspectPreserving, X, Y);
+      }
+      else
+      {
+        return this;
+      }
     }
 
-    /// <summary>If <see cref="ScalingMode"/> is Absolute, this value is the horizontal size of the texture (repeat length) in Points (1/72 inch).
-    /// Otherwise, it is the horizontal scaling factor related either to the source image width or the destination image width.</summary>
-    /// <value>The X value.</value>
-    public double X
+    /// <summary>Returns a new <see cref="TextureScaling"/> instance with the <see cref="X"/> value set to the provided value.</summary>
+    /// <param name="x">If <see cref="ScalingMode"/> is Absolute, this value is the horizontal size of the texture (repeat length) in Points (1/72 inch).
+    /// Otherwise, it is the horizontal scaling factor related either to the source image width or the destination image width.</param>
+    public TextureScaling WithX(double x)
     {
-      get { return _x; }
-      set { _x = value; }
+      if (!(X == x))
+      {
+        return new TextureScaling(ScalingMode, SourceAspectRatioPreserving, x, Y);
+      }
+      else
+      {
+        return this;
+      }
     }
 
-    /// <summary>If <see cref="ScalingMode"/> is Absolute, this value is the vertical size of the texture (repeat length) in Points (1/72 inch).
-    /// Otherwise, it is the vertical scaling factor related either to the source image width or the destination image height.</summary>
-    /// <value>The X value.</value>
-    public double Y
+
+    /// <summary>Returns a new <see cref="TextureScaling"/> instance with the <see cref="Y"/> value set to the provided value.</summary>
+    /// <param name="y">If <see cref="ScalingMode"/> is Absolute, this value is the vertical size of the texture (repeat length) in Points (1/72 inch).
+    /// Otherwise, it is the vertical scaling factor related either to the source image width or the destination image height.</param>
+    public TextureScaling WithY(double y)
     {
-      get { return _y; }
-      set { _y = value; }
+      if (!(Y == y))
+      {
+        return new TextureScaling(ScalingMode, SourceAspectRatioPreserving, X, y);
+      }
+      else
+      {
+        return this;
+      }
     }
 
     /// <summary>Gets the default texture scaling.</summary>
@@ -145,7 +191,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return new TextureScaling() { _scalingMode = TextureScalingMode.Source, _aspectPreserving = AspectRatioPreservingMode.PreserveXPriority, _x = 1, _y = 1 };
+        return new TextureScaling(TextureScalingMode.Source, AspectRatioPreservingMode.PreserveXPriority, 1, 1);
       }
     }
 
@@ -153,49 +199,49 @@ namespace Altaxo.Graph
     /// <param name="sourceSize">Size of the source image (texture image) in points (1/72 inch).</param>
     /// <param name="destinationSize">Size of the destination rectangle in points (1/72 inch).</param>
     /// <returns>The resulting size of the texture repeat unit in points (1/72 inch).</returns>
-    public PointD2D GetResultingSize(PointD2D sourceSize, PointD2D destinationSize)
+    public VectorD2D GetResultingSize(VectorD2D sourceSize, VectorD2D destinationSize)
     {
-      switch (_scalingMode)
+      switch (ScalingMode)
       {
         default:
         case TextureScalingMode.Source:
-          switch (_aspectPreserving)
+          switch (SourceAspectRatioPreserving)
           {
             default:
             case AspectRatioPreservingMode.None:
-              return new PointD2D(_x * sourceSize.X, _y * sourceSize.Y);
+              return new VectorD2D(X * sourceSize.X, Y * sourceSize.Y);
 
             case AspectRatioPreservingMode.PreserveXPriority:
-              return new PointD2D(_x * sourceSize.X, _x * sourceSize.Y);
+              return new VectorD2D(X * sourceSize.X, X * sourceSize.Y);
 
             case AspectRatioPreservingMode.PreserveYPriority:
-              return new PointD2D(_y * sourceSize.X, _y * sourceSize.Y);
+              return new VectorD2D(Y * sourceSize.X, Y * sourceSize.Y);
           }
         case TextureScalingMode.Destination:
-          switch (_aspectPreserving)
+          switch (SourceAspectRatioPreserving)
           {
             default:
             case AspectRatioPreservingMode.None:
-              return new PointD2D(destinationSize.X * _x, destinationSize.Y * _y);
+              return new VectorD2D(destinationSize.X * X, destinationSize.Y * Y);
 
-            case AspectRatioPreservingMode.PreserveXPriority: // we use _x as scaling factor, and we adjust y so that the source aspect ratio is preserved
-              return new PointD2D(_x * destinationSize.X, _x * destinationSize.X * (sourceSize.Y / sourceSize.X));
+            case AspectRatioPreservingMode.PreserveXPriority: // we use X as scaling factor, and we adjust y so that the source aspect ratio is preserved
+              return new VectorD2D(X * destinationSize.X, X * destinationSize.X * (sourceSize.Y / sourceSize.X));
 
             case AspectRatioPreservingMode.PreserveYPriority:
-              return new PointD2D(_y * destinationSize.Y * (sourceSize.X / sourceSize.Y), _y * destinationSize.Y);
+              return new VectorD2D(Y * destinationSize.Y * (sourceSize.X / sourceSize.Y), Y * destinationSize.Y);
           }
         case TextureScalingMode.Absolute:
-          switch (_aspectPreserving)
+          switch (SourceAspectRatioPreserving)
           {
             default:
             case AspectRatioPreservingMode.None:
-              return new PointD2D(_x, _y);
+              return new VectorD2D(X, Y);
 
-            case AspectRatioPreservingMode.PreserveXPriority: // we use _x as scaling factor, and we adjust y so that the source aspect ratio is preserved
-              return new PointD2D(_x, _x * (sourceSize.Y / sourceSize.X));
+            case AspectRatioPreservingMode.PreserveXPriority: // we use X as scaling factor, and we adjust y so that the source aspect ratio is preserved
+              return new VectorD2D(X, X * (sourceSize.Y / sourceSize.X));
 
             case AspectRatioPreservingMode.PreserveYPriority:
-              return new PointD2D(_y * (sourceSize.X / sourceSize.Y), _y);
+              return new VectorD2D(Y * (sourceSize.X / sourceSize.Y), Y);
           }
       }
     }
@@ -205,7 +251,7 @@ namespace Altaxo.Graph
     /// <returns><c>True</c> if this value is equal to the other value.</returns>
     public bool Equals(TextureScaling other)
     {
-      return _scalingMode == other._scalingMode && _aspectPreserving == other._aspectPreserving && _x == other._x && _y == other._y;
+      return ScalingMode == other.ScalingMode && SourceAspectRatioPreserving == other.SourceAspectRatioPreserving && X == other.X && Y == other.Y;
     }
 
     public override bool Equals(object obj)
@@ -218,7 +264,7 @@ namespace Altaxo.Graph
 
     public override int GetHashCode()
     {
-      return 17 * _scalingMode.GetHashCode() + 31 * _aspectPreserving.GetHashCode() + 61 * _x.GetHashCode() + 127 * _y.GetHashCode();
+      return 17 * ScalingMode.GetHashCode() + 31 * SourceAspectRatioPreserving.GetHashCode() + 61 * X.GetHashCode() + 127 * Y.GetHashCode();
     }
 
     /// <summary>Implements the operator ==.</summary>

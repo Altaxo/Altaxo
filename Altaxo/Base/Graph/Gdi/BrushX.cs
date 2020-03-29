@@ -573,7 +573,7 @@ namespace Altaxo.Graph.Gdi
         case BrushType.HatchBrush:
         case BrushType.SyntheticTextureBrush:
         case BrushType.TextureBrush:
-          if (_brushType == BrushType.HatchBrush)
+          if (_brushType == BrushType.HatchBrush || _brushType == BrushType.SyntheticTextureBrush)
           {
             if (_exchangeColors != other._exchangeColors)
               return false;
@@ -662,7 +662,7 @@ namespace Altaxo.Graph.Gdi
           case BrushType.HatchBrush:
           case BrushType.SyntheticTextureBrush:
           case BrushType.TextureBrush:
-            if (_brushType == BrushType.HatchBrush)
+            if (_brushType == BrushType.HatchBrush || _brushType == BrushType.SyntheticTextureBrush)
             {
               result += _exchangeColors ? 5 : 0;
               result += 7 * _foreColor.GetHashCode();
@@ -765,6 +765,71 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    private void SetMembersToDefaultAfterBrushTypeChange()
+    {
+      switch (_brushType)
+      {
+        case BrushType.SolidBrush:
+          // nothing matters save ForeColor
+          _backColor = NamedColors.Transparent; // Backcolor of brush, f.i.f. HatchStyle brushes
+          _exchangeColors = false;
+          _wrapMode = WrapMode.Tile; // für TextureBrush und LinearGradientBrush
+          _angle = 0;
+          _offsetX = 0;
+          _offsetY = 0;
+          _gradientColorScale = 0;
+          _textureImage = null; // für Texturebrush
+          _textureScale = TextureScaling.Default;
+          break;
+        case BrushType.HatchBrush:
+          _wrapMode = WrapMode.Tile;
+          _offsetX = 0;
+          _offsetY = 0;
+          _textureImage = DefaultHatchBrush;
+          break;
+        case BrushType.TextureBrush:
+          _wrapMode = WrapMode.Tile;
+          _offsetX = 0;
+          _offsetY = 0;
+          _textureImage = DefaultTextureBrush;
+          break;
+        case BrushType.LinearGradientBrush:
+          _wrapMode = WrapMode.TileFlipXY;
+          break;
+        case BrushType.PathGradientBrush:
+          _wrapMode = WrapMode.TileFlipXY;
+          _offsetX = 0.5;
+          _offsetY = 0.5;
+          break;
+        case BrushType.SigmaBellShapeLinearGradientBrush:
+          _wrapMode = WrapMode.TileFlipXY;
+          _offsetX = 0.5;
+          _gradientColorScale = 1;
+          break;
+        case BrushType.TriangularShapeLinearGradientBrush:
+          _wrapMode = WrapMode.TileFlipXY;
+          _offsetX = 0.5;
+          _gradientColorScale = 1;
+          break;
+        case BrushType.SigmaBellShapePathGradientBrush:
+        case BrushType.TriangularShapePathGradientBrush:
+          _wrapMode = WrapMode.TileFlipXY;
+          _offsetX = 0.5;
+          _offsetY = 0.5;
+          _gradientColorScale = 1;
+          break;
+        case BrushType.SyntheticTextureBrush:
+          _wrapMode = WrapMode.Tile;
+          _offsetX = 0;
+          _offsetY = 0;
+          _textureImage = DefaultSyntheticBrush;
+          break;
+        default:
+          break;
+      }
+
+    }
+
     public BrushType BrushType
     {
       get
@@ -777,7 +842,10 @@ namespace Altaxo.Graph.Gdi
     {
       if (!(_brushType == value))
       {
-        return new BrushX(value);
+        var result = Clone();
+        result._brushType = value;
+        result.SetMembersToDefaultAfterBrushTypeChange();
+        return result;
       }
       else
       {
