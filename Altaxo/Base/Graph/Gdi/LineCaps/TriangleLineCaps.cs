@@ -33,29 +33,11 @@ namespace Altaxo.Graph.Gdi.LineCaps
   /// <summary>
   /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
   /// </summary>
-  public class TriangleOLineCap : LineCapExtension
+  public class TriangleOLineCap : GdiLineCapBase
   {
-    public TriangleOLineCap()
-    {
-    }
+    public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.TriangleOLineCap);
 
-    public TriangleOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-      : base(minimumAbsoluteSizePt, minimumRelativeSize)
-    {
-    }
-
-    public override LineCapExtension WithAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
-    {
-      return new TriangleOLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-    }
-
-    public override string Name { get { return "TriangleO"; } }
-
-    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
-
-    public override double DefaultMinimumRelativeSize { get { return 4; } }
-
-    private CustomLineCap GetClone(Pen pen, float size)
+    protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float endPoint;
 
@@ -78,46 +60,17 @@ namespace Altaxo.Graph.Gdi.LineCaps
       clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
       return clone;
     }
-
-    public override void SetStartCap(Pen pen, float size)
-    {
-      pen.StartCap = LineCap.Custom;
-      pen.CustomStartCap = GetClone(pen, size);
-    }
-
-    public override void SetEndCap(Pen pen, float size)
-    {
-      pen.EndCap = LineCap.Custom;
-      pen.CustomEndCap = GetClone(pen, size);
-    }
   }
 
   /// <summary>
   /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
   /// </summary>
-  public class TriangleFLineCap : LineCapExtension
+  public class TriangleFLineCap : GdiLineCapBase
   {
-    public TriangleFLineCap()
-    {
-    }
+    public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.TriangleFLineCap);
 
-    public TriangleFLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-      : base(minimumAbsoluteSizePt, minimumRelativeSize)
-    {
-    }
 
-    public override LineCapExtension WithAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
-    {
-      return new TriangleFLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-    }
-
-    public override string Name { get { return "TriangleF"; } }
-
-    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
-
-    public override double DefaultMinimumRelativeSize { get { return 4; } }
-
-    private CustomLineCap GetClone(Pen pen, float size)
+    protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float scale = pen.Width == 0 ? 1 : size / pen.Width;
       if (scale <= 0)
@@ -136,18 +89,6 @@ namespace Altaxo.Graph.Gdi.LineCaps
         WidthScale = scale
       };
       return clone;
-    }
-
-    public override void SetStartCap(Pen pen, float size)
-    {
-      pen.StartCap = LineCap.Custom;
-      pen.CustomStartCap = GetClone(pen, size);
-    }
-
-    public override void SetEndCap(Pen pen, float size)
-    {
-      pen.EndCap = LineCap.Custom;
-      pen.CustomEndCap = GetClone(pen, size);
     }
   }
 }

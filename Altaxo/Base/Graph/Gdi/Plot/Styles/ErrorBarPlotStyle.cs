@@ -36,8 +36,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Altaxo.Graph;
   using Altaxo.Graph.Gdi.Plot.Data;
   using Altaxo.Main;
-  using Drawing;
-  using Geometry;
 
   #region Error bar (abstract, for implementations see below)
 
@@ -205,7 +203,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._useSymbolGap = info.GetBoolean("SymbolGap");
         s._skipFrequency = info.GetInt32("SkipFreq");
         if (info.GetBoolean("ShowEndBars"))
-          pen = pen.WithEndCap(new LineCaps.SymBarLineCap());
+          pen = pen.WithEndCap(new Altaxo.Drawing.LineCaps.SymBarLineCap());
         s._independentOnShiftingGroupStyles = info.GetBoolean("NotShiftHorzPos");
 
         if (null == pen)
@@ -348,7 +346,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _lineWidth1Offset = penWidth;
       _lineWidth1Factor = 0;
 
-      _pen = new PenX(color, penWidth).WithEndCap(new Altaxo.Graph.Gdi.LineCaps.SymBarLineCap());
+      _pen = new PenX(color, penWidth).WithEndCap(new Altaxo.Drawing.LineCaps.SymBarLineCap());
     }
 
     public ErrorBarPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences)

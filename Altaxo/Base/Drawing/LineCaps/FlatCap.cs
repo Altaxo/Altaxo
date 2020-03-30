@@ -23,39 +23,36 @@
 #endregion Copyright
 
 using System;
-using System.Windows.Input;
-using Altaxo.Graph.Gdi.Shapes;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Text;
+using Altaxo.Drawing;
 
-namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
+namespace Altaxo.Drawing.LineCaps
 {
   /// <summary>
-  /// Summary description for ArrowLineDrawingMouseHandler.
+  /// Designates a flat line cap (i.e. no cap at all). If possible, use the static <see cref="Instance"/> function to get a flat cap.
   /// </summary>
-  public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
+  /// <seealso cref="Altaxo.Drawing.ILineCap" />
+  public class FlatCap : ILineCap
   {
-    public ArrowLineDrawingMouseHandler(GraphController grac)
-      : base(grac)
+    public static FlatCap Instance { get; } = new FlatCap();
+
+    public double MinimumAbsoluteSizePt => 0;
+
+    public double MinimumRelativeSize => 0;
+
+    public string Name => "Flat";
+
+    public bool Equals(ILineCap other)
     {
-      if (_grac != null)
-        _grac.SetPanelCursor(Cursors.Pen);
+      return other is FlatCap;
     }
 
-    public override GraphToolType GraphToolType
+    public ILineCap WithMinimumAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
     {
-      get { return GraphToolType.ArrowLineDrawing; }
-    }
-
-    protected override void FinishDrawing()
-    {
-      var context = _grac.Doc.GetPropertyContext();
-      var go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, context);
-
-      var absArrowSize = go.Pen.Width * 8;
-      go.Pen = go.Pen.WithEndCap(new Altaxo.Drawing.LineCaps.ArrowF10LineCap(absArrowSize, 4));
-
-      // deselect the text tool
-      _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
-      _grac.ActiveLayer.GraphObjects.Add(go);
+      return Instance;
     }
   }
 }

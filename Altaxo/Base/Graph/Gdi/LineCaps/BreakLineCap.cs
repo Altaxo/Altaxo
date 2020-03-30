@@ -33,31 +33,14 @@ namespace Altaxo.Graph.Gdi.LineCaps
   /// <summary>
   /// Draws a cap that is a line perpendicular to the end of the line, and on the right side of the line.
   /// </summary>
-  public class BreakLineCap : LineCapExtension
+  public class BreakLineCap : GdiLineCapBase
   {
     private const double _designAngle = 45;
 
-    public BreakLineCap()
-    {
-    }
+    public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.BreakLineCap);
 
-    public BreakLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-      : base(minimumAbsoluteSizePt, minimumRelativeSize)
-    {
-    }
 
-    public override LineCapExtension WithAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
-    {
-      return new BreakLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-    }
-
-    public override string Name { get { return "Break"; } }
-
-    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
-
-    public override double DefaultMinimumRelativeSize { get { return 4; } }
-
-    private CustomLineCap GetClone(Pen pen, float size)
+    protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float endPoint;
       endPoint = pen.Width == 0 ? 1 : size / pen.Width;
@@ -88,16 +71,5 @@ namespace Altaxo.Graph.Gdi.LineCaps
       return clone;
     }
 
-    public override void SetStartCap(Pen pen, float size)
-    {
-      pen.StartCap = LineCap.Custom;
-      pen.CustomStartCap = GetClone(pen, size);
-    }
-
-    public override void SetEndCap(Pen pen, float size)
-    {
-      pen.EndCap = LineCap.Custom;
-      pen.CustomEndCap = GetClone(pen, size);
-    }
   }
 }

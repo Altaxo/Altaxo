@@ -179,11 +179,9 @@ namespace Altaxo.Graph.Gdi
             pen.DashPattern = cachedDashPattern;
         }
 
-        if (!(p.EndCap is LineCaps.FlatCap) && p.EndCap is LineCapExtension extEnd)
+        if (!(p.EndCap is null) && !(p.EndCap is LineCaps.FlatCap))
         {
-          double size = Math.Max(p.EndCap.MinimumAbsoluteSizePt, p.Width * p.EndCap.MinimumRelativeSize);
-          extEnd.SetEndCap(pen, (float)size);
-
+          GdiLineCapBase.SetEndCap(pen, p.EndCap);
         }
 
         if (p.LineJoin != LineJoin.Miter)
@@ -192,10 +190,9 @@ namespace Altaxo.Graph.Gdi
         if (p.MiterLimit != 10)
           pen.MiterLimit = (float)p.MiterLimit;
 
-        if (!(p.StartCap is LineCaps.FlatCap) && p.StartCap is LineCapExtension extStart)
+        if (!(p.StartCap is null) && !(p.StartCap is LineCaps.FlatCap))
         {
-          double size = Math.Max(p.StartCap.MinimumAbsoluteSizePt, p.Width * p.StartCap.MinimumRelativeSize);
-          extStart.SetStartCap(pen, (float)size);
+          GdiLineCapBase.SetStartCap(pen, p.StartCap);
         }
 
         if (!(p.Transform is null || p.Transform.IsIdentity))

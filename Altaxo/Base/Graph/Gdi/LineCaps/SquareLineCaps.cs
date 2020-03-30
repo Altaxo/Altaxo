@@ -33,29 +33,12 @@ namespace Altaxo.Graph.Gdi.LineCaps
   /// <summary>
   /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
   /// </summary>
-  public class SquareOLineCap : LineCapExtension
+  public class SquareOLineCap : GdiLineCapBase
   {
-    public SquareOLineCap()
-    {
-    }
+    public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.SquareOLineCap);
 
-    public SquareOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-      : base(minimumAbsoluteSizePt, minimumRelativeSize)
-    {
-    }
 
-    public override LineCapExtension WithAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
-    {
-      return new SquareOLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-    }
-
-    public override string Name { get { return "SquareO"; } }
-
-    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
-
-    public override double DefaultMinimumRelativeSize { get { return 4; } }
-
-    private CustomLineCap GetClone(Pen pen, float size)
+    protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float endPoint;
 
@@ -77,45 +60,17 @@ namespace Altaxo.Graph.Gdi.LineCaps
       return clone;
     }
 
-    public override void SetStartCap(Pen pen, float size)
-    {
-      pen.StartCap = LineCap.Custom;
-      pen.CustomStartCap = GetClone(pen, size);
-    }
-
-    public override void SetEndCap(Pen pen, float size)
-    {
-      pen.EndCap = LineCap.Custom;
-      pen.CustomEndCap = GetClone(pen, size);
-    }
   }
 
   /// <summary>
   /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
   /// </summary>
-  public class SquareFLineCap : LineCapExtension
+  public class SquareFLineCap : GdiLineCapBase
   {
-    public SquareFLineCap()
-    {
-    }
+    public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.SquareFLineCap);
 
-    public SquareFLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-      : base(minimumAbsoluteSizePt, minimumRelativeSize)
-    {
-    }
 
-    public override LineCapExtension WithAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
-    {
-      return new SquareFLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-    }
-
-    public override string Name { get { return "SquareF"; } }
-
-    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
-
-    public override double DefaultMinimumRelativeSize { get { return 4; } }
-
-    private CustomLineCap GetClone(Pen pen, float size)
+    protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float scale = pen.Width == 0 ? 1 : size / (pen.Width * 2);
 
@@ -137,16 +92,6 @@ namespace Altaxo.Graph.Gdi.LineCaps
       return clone;
     }
 
-    public override void SetStartCap(Pen pen, float size)
-    {
-      pen.StartCap = LineCap.Custom;
-      pen.CustomStartCap = GetClone(pen, size);
-    }
 
-    public override void SetEndCap(Pen pen, float size)
-    {
-      pen.EndCap = LineCap.Custom;
-      pen.CustomEndCap = GetClone(pen, size);
-    }
   }
 }

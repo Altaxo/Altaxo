@@ -34,7 +34,7 @@ using Altaxo.Main;
 using Altaxo.Main.Services;
 using NUnit.Framework;
 
-namespace Altaxo.Graph.Gdi
+namespace Altaxo.Drawing
 {
   [TestFixture]
   internal class TestPenX

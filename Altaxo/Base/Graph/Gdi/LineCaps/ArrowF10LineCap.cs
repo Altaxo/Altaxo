@@ -30,29 +30,11 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
-  public class ArrowF10LineCap : LineCapExtension
+  public class ArrowF10LineCap : GdiLineCapBase
   {
-    public ArrowF10LineCap()
-    {
-    }
+    public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.ArrowF10LineCap);
 
-    public ArrowF10LineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-      : base(minimumAbsoluteSizePt, minimumRelativeSize)
-    {
-    }
-
-    public override LineCapExtension WithAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
-    {
-      return new ArrowF10LineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-    }
-
-    public override string Name { get { return "ArrowF10"; } }
-
-    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
-
-    public override double DefaultMinimumRelativeSize { get { return 4; } }
-
-    private CustomLineCap GetClone(Pen pen, float size)
+    protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float scale = pen.Width == 0 ? 1 : size / (2 * pen.Width);
       if (scale <= 0)
@@ -71,18 +53,6 @@ namespace Altaxo.Graph.Gdi.LineCaps
         WidthScale = scale
       }; // we set the stroke path only
       return clone;
-    }
-
-    public override void SetStartCap(Pen pen, float size)
-    {
-      pen.StartCap = LineCap.Custom;
-      pen.CustomStartCap = GetClone(pen, size);
-    }
-
-    public override void SetEndCap(Pen pen, float size)
-    {
-      pen.EndCap = LineCap.Custom;
-      pen.CustomEndCap = GetClone(pen, size);
     }
   }
 }

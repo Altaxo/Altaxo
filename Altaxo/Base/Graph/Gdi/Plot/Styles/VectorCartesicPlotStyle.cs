@@ -247,7 +247,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _lineWidth1Offset = penWidth;
       _lineWidth1Factor = 0;
 
-      _strokePen = new PenX(color, penWidth).WithEndCap(new LineCaps.ArrowF10LineCap());
+      _strokePen = new PenX(color, penWidth).WithEndCap(new Altaxo.Drawing.LineCaps.ArrowF10LineCap());
     }
 
     public VectorCartesicPlotStyle(VectorCartesicPlotStyle from, bool copyWithDataReferences)

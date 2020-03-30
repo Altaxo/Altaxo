@@ -35,32 +35,18 @@ namespace Altaxo.Graph.Gdi.LineCaps
   /// </summary>
   public class LeftBarLineCap : RightBarLineCap
   {
-    public LeftBarLineCap()
-    {
-    }
-
-    public LeftBarLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-      : base(minimumAbsoluteSizePt, minimumRelativeSize)
-    {
-    }
-
-    public override LineCapExtension WithAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
-    {
-      return new LeftBarLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-    }
-
-    public override string Name { get { return "BarLeft"; } }
+    public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.LeftBarLineCap);
 
     public override void SetStartCap(Pen pen, float size)
     {
       pen.StartCap = LineCap.Custom;
-      pen.CustomStartCap = GetClone(pen, size, true);
+      pen.CustomStartCap = GetCustomLineCap(pen, size, true);
     }
 
     public override void SetEndCap(Pen pen, float size)
     {
       pen.EndCap = LineCap.Custom;
-      pen.CustomEndCap = GetClone(pen, size, false);
+      pen.CustomEndCap = GetCustomLineCap(pen, size, false);
     }
   }
 }

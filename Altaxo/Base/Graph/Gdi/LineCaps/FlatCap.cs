@@ -30,33 +30,10 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
-  public class FlatCap : LineCapExtension
+  public class FlatCap : GdiLineCapBase
   {
-    public FlatCap()
-    {
-    }
+    public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.FlatCap);
 
-    private FlatCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-      : base(minimumAbsoluteSizePt, minimumRelativeSize)
-    {
-    }
-
-    public override LineCapExtension WithAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
-    {
-      return new FlatCap(minimumAbsoluteSizePt, minimumRelativeSize);
-    }
-
-    public override string Name
-    {
-      get
-      {
-        return "Flat";
-      }
-    }
-
-    public override double DefaultMinimumAbsoluteSizePt { get { return 0; } }
-
-    public override double DefaultMinimumRelativeSize { get { return 0; } }
 
     public override void SetStartCap(Pen pen, float size)
     {
@@ -65,7 +42,12 @@ namespace Altaxo.Graph.Gdi.LineCaps
 
     public override void SetEndCap(Pen pen, float size)
     {
-      pen.StartCap = LineCap.Flat;
+      pen.EndCap = LineCap.Flat;
+    }
+
+    protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
+    {
+      throw new NotImplementedException();
     }
   }
 }

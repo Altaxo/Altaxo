@@ -23,39 +23,33 @@
 #endregion Copyright
 
 using System;
-using System.Windows.Input;
-using Altaxo.Graph.Gdi.Shapes;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Text;
 
-namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
+namespace Altaxo.Drawing.LineCaps
 {
   /// <summary>
-  /// Summary description for ArrowLineDrawingMouseHandler.
+  /// Draws a cap that is a line perpendicular to the end of the line, and on the right side of the line.
   /// </summary>
-  public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
+  public class BreakLineCap : LineCapBase
   {
-    public ArrowLineDrawingMouseHandler(GraphController grac)
-      : base(grac)
+    private const double _designAngle = 45;
+
+    public BreakLineCap()
     {
-      if (_grac != null)
-        _grac.SetPanelCursor(Cursors.Pen);
     }
 
-    public override GraphToolType GraphToolType
+    public BreakLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+      : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
-      get { return GraphToolType.ArrowLineDrawing; }
     }
 
-    protected override void FinishDrawing()
-    {
-      var context = _grac.Doc.GetPropertyContext();
-      var go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, context);
+    public override string Name { get { return "Break"; } }
 
-      var absArrowSize = go.Pen.Width * 8;
-      go.Pen = go.Pen.WithEndCap(new Altaxo.Drawing.LineCaps.ArrowF10LineCap(absArrowSize, 4));
+    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
-      // deselect the text tool
-      _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
-      _grac.ActiveLayer.GraphObjects.Add(go);
-    }
+    public override double DefaultMinimumRelativeSize { get { return 4; } }
   }
 }

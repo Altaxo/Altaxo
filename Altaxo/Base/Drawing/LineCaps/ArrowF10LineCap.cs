@@ -23,39 +23,28 @@
 #endregion Copyright
 
 using System;
-using System.Windows.Input;
-using Altaxo.Graph.Gdi.Shapes;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Text;
 
-namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
+namespace Altaxo.Drawing.LineCaps
 {
-  /// <summary>
-  /// Summary description for ArrowLineDrawingMouseHandler.
-  /// </summary>
-  public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
+  public class ArrowF10LineCap : LineCapBase
   {
-    public ArrowLineDrawingMouseHandler(GraphController grac)
-      : base(grac)
+    public ArrowF10LineCap()
     {
-      if (_grac != null)
-        _grac.SetPanelCursor(Cursors.Pen);
     }
 
-    public override GraphToolType GraphToolType
+    public ArrowF10LineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+      : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
-      get { return GraphToolType.ArrowLineDrawing; }
     }
 
-    protected override void FinishDrawing()
-    {
-      var context = _grac.Doc.GetPropertyContext();
-      var go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, context);
+    public override string Name { get { return "ArrowF10"; } }
 
-      var absArrowSize = go.Pen.Width * 8;
-      go.Pen = go.Pen.WithEndCap(new Altaxo.Drawing.LineCaps.ArrowF10LineCap(absArrowSize, 4));
+    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
-      // deselect the text tool
-      _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
-      _grac.ActiveLayer.GraphObjects.Add(go);
-    }
+    public override double DefaultMinimumRelativeSize { get { return 4; } }
   }
 }

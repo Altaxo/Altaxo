@@ -32,7 +32,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Altaxo.Drawing;
-using Altaxo.Graph.Gdi.LineCaps;
+using Altaxo.Drawing.LineCaps;
 using sdd = System.Drawing.Drawing2D;
 
 namespace Altaxo.Gui.Common.Drawing
@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Common.Drawing
       {
         var val = (ILineCap)value;
         if (null == val || val is FlatCap)
-          return _cb._cachedItems[LineCapExtension.Flat.Name];
+          return _cb._cachedItems[FlatCap.Instance.Name];
         else
           return _cb._cachedItems[val.Name];
       }
@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void SetDefaultValues()
     {
-      foreach (LineCapExtension cap in LineCapExtension.GetRegisteredValues())
+      foreach (var cap in LineCapBase.GetRegisteredValues())
       {
         var item = new ImageComboBoxItem(this, cap);
         _cachedItems.Add(cap.Name, item);
@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     public static readonly DependencyProperty SelectedLineCapProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(ILineCap), typeof(LineCapComboBox),
-        new FrameworkPropertyMetadata(LineCapExtension.Flat, OnSelectedLineCapChanged));
+        new FrameworkPropertyMetadata(FlatCap.Instance, OnSelectedLineCapChanged));
 
     private static void OnSelectedLineCapChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
@@ -169,14 +169,12 @@ namespace Altaxo.Gui.Common.Drawing
         var linePen = new System.Drawing.Pen(System.Drawing.Brushes.Black, (float)Math.Ceiling(lineWidth));
         if (isForEndCap)
         {
-          double size = Math.Max(join.MinimumAbsoluteSizePt, linePen.Width * join.MinimumRelativeSize);
-          (join as LineCapExtension)?.SetEndCap(linePen, (float)size);
+          Altaxo.Graph.Gdi.LineCaps.GdiLineCapBase.SetEndCap(linePen, join);
           grfx.DrawLine(linePen, 0, 0.5f * bmpHeight, bmpWidth * (1 - 0.25f), 0.5f * bmpHeight);
         }
         else
         {
-          double size = Math.Max(join.MinimumAbsoluteSizePt, linePen.Width * join.MinimumRelativeSize);
-          (join as LineCapExtension)?.SetStartCap(linePen, (float)size);
+          Altaxo.Graph.Gdi.LineCaps.GdiLineCapBase.SetStartCap(linePen, join);
           grfx.DrawLine(linePen, 0.25f * bmpWidth, 0.5f * bmpHeight, bmpWidth, 0.5f * bmpHeight);
         }
         _interopBitmap.EndGdiPainting();

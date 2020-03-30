@@ -28,31 +28,13 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
 
-namespace Altaxo.Graph.Gdi.LineCaps.Foo
+namespace Altaxo.Graph.Gdi.LineCaps
 {
-  public class ArrowF05LineCap : LineCapExtension
+  public class ArrowF05LineCap : GdiLineCapBase
   {
-    public ArrowF05LineCap()
-    {
-    }
+    public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.ArrowF05LineCap);
 
-    public ArrowF05LineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-      : base(minimumAbsoluteSizePt, minimumRelativeSize)
-    {
-    }
-
-    public override LineCapExtension WithAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
-    {
-      return new ArrowF05LineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-    }
-
-    public override string Name { get { return "ArrowF05"; } }
-
-    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
-
-    public override double DefaultMinimumRelativeSize { get { return 4; } }
-
-    private CustomLineCap GetClone(Pen pen, float size)
+    protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float scale = pen.Width == 0 ? 1 : size / (2 * pen.Width);
       if (scale <= 0)
@@ -71,18 +53,6 @@ namespace Altaxo.Graph.Gdi.LineCaps.Foo
         WidthScale = scale
       };
       return clone;
-    }
-
-    public override void SetStartCap(Pen pen, float size)
-    {
-      pen.StartCap = LineCap.Custom;
-      pen.CustomStartCap = GetClone(pen, size);
-    }
-
-    public override void SetEndCap(Pen pen, float size)
-    {
-      pen.EndCap = LineCap.Custom;
-      pen.CustomEndCap = GetClone(pen, size);
     }
   }
 }

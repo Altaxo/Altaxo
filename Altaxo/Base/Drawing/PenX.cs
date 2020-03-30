@@ -30,9 +30,8 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Altaxo.Drawing.DashPatternManagement;
 using Altaxo.Drawing.DashPatterns;
+using Altaxo.Drawing.LineCaps;
 using Altaxo.Geometry;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.LineCaps;
 using Altaxo.Main;
 
 namespace Altaxo.Drawing
@@ -275,10 +274,10 @@ if (0 != (cp & PenHolder.Configured.Width))
         if (0 != (cp & Configured.EndCap))
         {
           var cap = (LineCap)info.GetEnum("EndCap", typeof(LineCap));
-          s._endCap = LineCapExtension.FromName(Enum.GetName(typeof(LineCap), cap));
+          s._endCap = LineCapBase.FromName(Enum.GetName(typeof(LineCap), cap));
         }
         else
-          s._endCap = LineCapExtension.Flat;
+          s._endCap = FlatCap.Instance;
 
         if (0 != (cp & Configured.LineJoin))
           s._lineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
@@ -293,10 +292,10 @@ if (0 != (cp & PenHolder.Configured.Width))
         if (0 != (cp & Configured.StartCap))
         {
           var cap = (LineCap)info.GetEnum("StartCap", typeof(LineCap));
-          s._startCap = LineCapExtension.FromName(Enum.GetName(typeof(LineCap), cap));
+          s._startCap = LineCapBase.FromName(Enum.GetName(typeof(LineCap), cap));
         }
         else
-          s._startCap = LineCapExtension.Flat;
+          s._startCap = FlatCap.Instance;
 
         if (0 != (cp & Configured.Transform))
         {
@@ -429,10 +428,10 @@ if (0 != (cp & PenX.Configured.Width))
         {
           var name = info.GetString("EndCap");
           var size = info.GetDouble("EndCapSize");
-          s._endCap = LineCapExtension.FromNameAndAbsAndRelSize(name, size, 2);
+          s._endCap = LineCapBase.FromNameAndAbsAndRelSize(name, size, 2);
         }
         else
-          s._endCap = LineCapExtension.Flat;
+          s._endCap = FlatCap.Instance;
 
         if (0 != (cp & Configured.LineJoin))
           s._lineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
@@ -448,10 +447,10 @@ if (0 != (cp & PenX.Configured.Width))
         {
           var name = info.GetString("StartCap");
           var size = info.GetDouble("StartCapSize");
-          s._startCap = LineCapExtension.FromNameAndAbsAndRelSize(name, size, 2);
+          s._startCap = LineCapBase.FromNameAndAbsAndRelSize(name, size, 2);
         }
         else
-          s._startCap = LineCapExtension.Flat;
+          s._startCap = FlatCap.Instance;
 
         if (0 != (cp & Configured.Transform))
         {
@@ -590,10 +589,10 @@ if (0 != (cp & PenX.Configured.Width))
           var name = info.GetString("EndCap");
           var absSize = info.GetDouble("EndCapAbsSize");
           var relSize = info.GetDouble("EndCapRelSize");
-          s._endCap = LineCapExtension.FromNameAndAbsAndRelSize(name, absSize, relSize);
+          s._endCap = LineCapBase.FromNameAndAbsAndRelSize(name, absSize, relSize);
         }
         else
-          s._endCap = LineCapExtension.Flat;
+          s._endCap = FlatCap.Instance;
 
         if (0 != (cp & Configured.LineJoin))
           s._lineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
@@ -610,10 +609,10 @@ if (0 != (cp & PenX.Configured.Width))
           var name = info.GetString("StartCap");
           var absSize = info.GetDouble("StartCapAbsSize");
           var relSize = info.GetDouble("StartCapRelSize");
-          s._startCap = LineCapExtension.FromNameAndAbsAndRelSize(name, absSize, relSize);
+          s._startCap = LineCapBase.FromNameAndAbsAndRelSize(name, absSize, relSize);
         }
         else
-          s._startCap = LineCapExtension.Flat;
+          s._startCap = FlatCap.Instance;
 
         if (0 != (cp & Configured.Transform))
         {
@@ -740,10 +739,10 @@ if (0 != (cp & PenX.Configured.Width))
           var name = info.GetString("EndCap");
           var absSize = info.GetDouble("EndCapAbsSize");
           var relSize = info.GetDouble("EndCapRelSize");
-          s._endCap = LineCapExtension.FromNameAndAbsAndRelSize(name, absSize, relSize);
+          s._endCap = LineCapBase.FromNameAndAbsAndRelSize(name, absSize, relSize);
         }
         else
-          s._endCap = LineCapExtension.Flat;
+          s._endCap = FlatCap.Instance;
 
         if (0 != (cp & Configured.LineJoin))
           s._lineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
@@ -760,10 +759,10 @@ if (0 != (cp & PenX.Configured.Width))
           var name = info.GetString("StartCap");
           var absSize = info.GetDouble("StartCapAbsSize");
           var relSize = info.GetDouble("StartCapRelSize");
-          s._startCap = LineCapExtension.FromNameAndAbsAndRelSize(name, absSize, relSize);
+          s._startCap = LineCapBase.FromNameAndAbsAndRelSize(name, absSize, relSize);
         }
         else
-          s._startCap = LineCapExtension.Flat;
+          s._startCap = FlatCap.Instance;
 
         if (0 != (cp & Configured.Transform))
         {
@@ -803,8 +802,8 @@ if (0 != (cp & PenX.Configured.Width))
       _lineJoin = DefaultLineJoin;
       _miterLimit = DefaultMiterLimit;
       _dashPattern = DashPatternListManager.Instance.BuiltinDefaultSolid;
-      _startCap = LineCapExtension.Flat;
-      _endCap = LineCapExtension.Flat;
+      _startCap = FlatCap.Instance;
+      _endCap = FlatCap.Instance;
       _compoundArray = DefaultCompoundArray;
 
       _SetProp(Configured.Color, NamedColors.Black != c);

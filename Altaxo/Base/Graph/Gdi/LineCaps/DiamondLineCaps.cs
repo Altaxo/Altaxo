@@ -33,29 +33,12 @@ namespace Altaxo.Graph.Gdi.LineCaps
   /// <summary>
   /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
   /// </summary>
-  public class DiamondOLineCap : LineCapExtension
+  public class DiamondOLineCap : GdiLineCapBase
   {
-    public DiamondOLineCap()
-    {
-    }
+    public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.DiamondOLineCap);
 
-    public DiamondOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-      : base(minimumAbsoluteSizePt, minimumRelativeSize)
-    {
-    }
 
-    public override LineCapExtension WithAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
-    {
-      return new DiamondOLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-    }
-
-    public override string Name { get { return "DiamondO"; } }
-
-    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
-
-    public override double DefaultMinimumRelativeSize { get { return 4; } }
-
-    private CustomLineCap GetClone(Pen pen, float size)
+    protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float endPoint;
 
@@ -77,45 +60,18 @@ namespace Altaxo.Graph.Gdi.LineCaps
       return clone;
     }
 
-    public override void SetStartCap(Pen pen, float size)
-    {
-      pen.StartCap = LineCap.Custom;
-      pen.CustomStartCap = GetClone(pen, size);
-    }
 
-    public override void SetEndCap(Pen pen, float size)
-    {
-      pen.EndCap = LineCap.Custom;
-      pen.CustomEndCap = GetClone(pen, size);
-    }
   }
 
   /// <summary>
   /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
   /// </summary>
-  public class DiamondFLineCap : LineCapExtension
+  public class DiamondFLineCap : GdiLineCapBase
   {
-    public DiamondFLineCap()
-    {
-    }
+    public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.DiamondFLineCap);
 
-    public DiamondFLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-      : base(minimumAbsoluteSizePt, minimumRelativeSize)
-    {
-    }
 
-    public override LineCapExtension WithAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
-    {
-      return new DiamondFLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-    }
-
-    public override string Name { get { return "DiamondF"; } }
-
-    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
-
-    public override double DefaultMinimumRelativeSize { get { return 4; } }
-
-    private CustomLineCap GetClone(Pen pen, float size)
+    protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float scale = pen.Width == 0 ? 1 : size / (pen.Width * 2);
       if (scale <= 0)
@@ -137,16 +93,6 @@ namespace Altaxo.Graph.Gdi.LineCaps
       return clone;
     }
 
-    public override void SetStartCap(Pen pen, float size)
-    {
-      pen.StartCap = LineCap.Custom;
-      pen.CustomStartCap = GetClone(pen, size);
-    }
 
-    public override void SetEndCap(Pen pen, float size)
-    {
-      pen.EndCap = LineCap.Custom;
-      pen.CustomEndCap = GetClone(pen, size);
-    }
   }
 }

@@ -23,39 +23,27 @@
 #endregion Copyright
 
 using System;
-using System.Windows.Input;
-using Altaxo.Graph.Gdi.Shapes;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Text;
 
-namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
+namespace Altaxo.Drawing.LineCaps
 {
   /// <summary>
-  /// Summary description for ArrowLineDrawingMouseHandler.
+  /// Draws a cap that is a line perpendicular to the end of the line, and on the left side of the line.
   /// </summary>
-  public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
+  public class LeftBarLineCap : RightBarLineCap
   {
-    public ArrowLineDrawingMouseHandler(GraphController grac)
-      : base(grac)
+    public LeftBarLineCap()
     {
-      if (_grac != null)
-        _grac.SetPanelCursor(Cursors.Pen);
     }
 
-    public override GraphToolType GraphToolType
+    public LeftBarLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+      : base(minimumAbsoluteSizePt, minimumRelativeSize)
     {
-      get { return GraphToolType.ArrowLineDrawing; }
     }
 
-    protected override void FinishDrawing()
-    {
-      var context = _grac.Doc.GetPropertyContext();
-      var go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, context);
-
-      var absArrowSize = go.Pen.Width * 8;
-      go.Pen = go.Pen.WithEndCap(new Altaxo.Drawing.LineCaps.ArrowF10LineCap(absArrowSize, 4));
-
-      // deselect the text tool
-      _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
-      _grac.ActiveLayer.GraphObjects.Add(go);
-    }
+    public override string Name { get { return "BarLeft"; } }
   }
 }
