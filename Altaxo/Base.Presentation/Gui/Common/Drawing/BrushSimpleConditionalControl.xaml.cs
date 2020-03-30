@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Common.Drawing
       InitializeComponent();
     }
 
-    public Altaxo.Graph.Gdi.BrushX SelectedBrush
+    public BrushX SelectedBrush
     {
       get
       {

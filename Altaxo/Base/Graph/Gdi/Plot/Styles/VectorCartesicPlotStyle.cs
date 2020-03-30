@@ -33,6 +33,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using System.Drawing;
   using System.Drawing.Drawing2D;
+  using Altaxo.Drawing;
   using Altaxo.Graph;
   using Altaxo.Main;
   using Data;

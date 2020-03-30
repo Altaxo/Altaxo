@@ -32,7 +32,7 @@ using System.Windows.Controls;
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
   using Altaxo.Collections;
-  using Altaxo.Graph.Gdi;
+  using Altaxo.Drawing;
   using Common.Drawing;
 
   /// <summary>

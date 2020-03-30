@@ -31,6 +31,7 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
+  using Altaxo.Drawing;
   using Altaxo.Gui.Common.Drawing;
 
   /// <summary>
@@ -136,7 +137,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       set { _guiFillBrush.ShowPlotColorsOnly = value; }
     }
 
-    public Altaxo.Graph.Gdi.BrushX FillBrush
+    public BrushX FillBrush
     {
       get
       {
@@ -181,7 +182,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       set { _framePenGlue.ShowPlotColorsOnly = value; }
     }
 
-    public Altaxo.Graph.Gdi.PenX FramePen
+    public PenX FramePen
     {
       get
       {

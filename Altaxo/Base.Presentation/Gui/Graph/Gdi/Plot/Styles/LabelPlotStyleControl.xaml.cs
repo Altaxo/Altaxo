@@ -31,7 +31,6 @@ using System.Windows;
 using System.Windows.Controls;
 using Altaxo.Drawing;
 using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Gui.Drawing;
 using Altaxo.Gui.Graph.Gdi.Background;

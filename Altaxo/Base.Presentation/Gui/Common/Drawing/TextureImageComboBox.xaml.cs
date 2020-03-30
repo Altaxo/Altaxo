@@ -31,8 +31,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using Altaxo.Drawing;
 using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -236,15 +236,15 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Dependency property TextureImageType
 
-    public Altaxo.Graph.Gdi.BrushType TextureImageType
+    public BrushType TextureImageType
     {
-      get { return (Altaxo.Graph.Gdi.BrushType)GetValue(TextureImageTypeProperty); }
+      get { return (BrushType)GetValue(TextureImageTypeProperty); }
       set { SetValue(TextureImageTypeProperty, value); }
     }
 
     public static readonly DependencyProperty TextureImageTypeProperty =
-        DependencyProperty.Register("TextureImageType", typeof(Altaxo.Graph.Gdi.BrushType), typeof(TextureImageComboBox),
-        new FrameworkPropertyMetadata(Altaxo.Graph.Gdi.BrushType.HatchBrush, EhTextureImageTypeChanged));
+        DependencyProperty.Register("TextureImageType", typeof(BrushType), typeof(TextureImageComboBox),
+        new FrameworkPropertyMetadata(BrushType.HatchBrush, EhTextureImageTypeChanged));
 
     private static void EhTextureImageTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
@@ -272,15 +272,15 @@ namespace Altaxo.Gui.Common.Drawing
       SelectedIndex = -1;
       switch (TextureImageType)
       {
-        case Altaxo.Graph.Gdi.BrushType.TextureBrush:
+        case BrushType.TextureBrush:
           _currentItemsSource = _textureItems;
           break;
 
-        case Altaxo.Graph.Gdi.BrushType.HatchBrush:
+        case BrushType.HatchBrush:
           _currentItemsSource = _hatchItems;
           break;
 
-        case Altaxo.Graph.Gdi.BrushType.SyntheticTextureBrush:
+        case BrushType.SyntheticTextureBrush:
           _currentItemsSource = _syntheticItems;
           break;
 
@@ -291,7 +291,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       ItemsSource = _currentItemsSource;
 
-      _menuLoadTextureFromFile.IsEnabled = TextureImageType == Altaxo.Graph.Gdi.BrushType.TextureBrush;
+      _menuLoadTextureFromFile.IsEnabled = TextureImageType == BrushType.TextureBrush;
     }
 
     private void EhLoadFromFile(object sender, EventArgs e)

@@ -28,7 +28,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using Altaxo.Drawing;
-using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Gui.Common.Drawing;
 

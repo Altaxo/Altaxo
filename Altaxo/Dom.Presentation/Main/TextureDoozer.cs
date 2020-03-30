@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Altaxo.AddInItems;
+using Altaxo.Drawing;
 using Altaxo.Graph;
 
 namespace Altaxo.Main

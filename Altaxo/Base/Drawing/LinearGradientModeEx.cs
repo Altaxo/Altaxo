@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,15 +24,20 @@
 
 using System;
 
-
-namespace Altaxo.Graph.Gdi
+namespace Altaxo.Drawing
 {
-  public interface ILineCap : IEquatable<ILineCap>
+  [Serializable]
+  public enum LinearGradientModeEx
   {
-    double MinimumAbsoluteSizePt { get; }
-
-    double MinimumRelativeSize { get; }
-
-    string Name { get; }
+    BackwardDiagonal,
+    ForwardDiagonal,
+    Horizontal,
+    Vertical,
+    RevBackwardDiagonal,
+    RevForwardDiagonal,
+    RevHorizontal,
+    RevVertical
   }
-}
+
+
+} // end of namespace

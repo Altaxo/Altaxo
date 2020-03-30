@@ -32,6 +32,7 @@ using Altaxo.Graph.Scales.Rescaling;
 
 namespace Altaxo.Graph.Gdi
 {
+  using Altaxo.Drawing;
   using Axis;
   using Plot;
   using Shapes;

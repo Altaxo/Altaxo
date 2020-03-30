@@ -1511,7 +1511,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         if (img != null)
         {
           var size = 0.5 * ActiveLayer.Size;
-          var item = new EmbeddedImageGraphic(PointD2D.Empty, size, ImageProxy.FromImage(img));
+          var item = new EmbeddedImageGraphic(PointD2D.Empty, size, SystemDrawingImageProxyExtensions.FromImage(img));
           ActiveLayer.GraphObjects.Add(item);
           return;
         }
@@ -1522,7 +1522,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         if (img != null)
         {
           var size = 0.5 * ActiveLayer.Size;
-          var item = new EmbeddedImageGraphic(PointD2D.Empty, size, ImageProxy.FromImage(img));
+          var item = new EmbeddedImageGraphic(PointD2D.Empty, size, SystemDrawingImageProxyExtensions.FromImage(img));
           ActiveLayer.GraphObjects.Add(item);
           return;
         }

@@ -36,6 +36,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Xml;
 using Altaxo.Collections;
+using Altaxo.Drawing;
 using Altaxo.Geometry;
 
 namespace Altaxo.Gui
@@ -44,14 +45,14 @@ namespace Altaxo.Gui
   {
     #region Brush and Pen
 
-    public static System.Windows.Media.Brush ToWpf(this Altaxo.Graph.Gdi.BrushX brushx)
+    public static System.Windows.Media.Brush ToWpf(this BrushX brushx)
     {
       System.Windows.Media.Color c = ToWpf(brushx.Color);
       var result = new System.Windows.Media.SolidColorBrush(c);
       return result;
     }
 
-    public static System.Windows.Media.Pen ToWpf(this Altaxo.Graph.Gdi.PenX penx)
+    public static System.Windows.Media.Pen ToWpf(this PenX penx)
     {
       System.Windows.Media.Color c = ToWpf(penx.Color);
       var result = new System.Windows.Media.Pen(new System.Windows.Media.SolidColorBrush(c), penx.Width);
@@ -110,10 +111,10 @@ namespace Altaxo.Gui
 
     #region Image Proxy converters
 
-    /// <summary>Converts <see cref="Altaxo.Graph.ImageProxy"/> instances to Wpf <see cref="ImageSource"/> instances.</summary>
+    /// <summary>Converts <see cref="Altaxo.Drawing.ImageProxy"/> instances to Wpf <see cref="ImageSource"/> instances.</summary>
     /// <param name="proxy">The proxy.</param>
     /// <returns></returns>
-    public static ImageSource ToWpf(Altaxo.Graph.ImageProxy proxy)
+    public static ImageSource ToWpf(ImageProxy proxy)
     {
       var stream = proxy.GetContentStream();
       var decoder = System.Windows.Media.Imaging.BitmapDecoder.Create(stream, System.Windows.Media.Imaging.BitmapCreateOptions.None, System.Windows.Media.Imaging.BitmapCacheOption.Default);
@@ -125,7 +126,7 @@ namespace Altaxo.Gui
     /// <param name="xsize">The horizontal number of pixels of the image.</param>
     /// <param name="ysize">The vertical number of pixels of the image.</param>
     /// <returns>An image that represents the brush.</returns>
-    public static ImageSource ToWpf(Altaxo.Graph.Gdi.BrushX brush, int xsize, int ysize)
+    public static ImageSource ToWpf(BrushX brush, int xsize, int ysize)
     {
       using (var bmp = new System.Drawing.Bitmap(xsize, ysize, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
       {

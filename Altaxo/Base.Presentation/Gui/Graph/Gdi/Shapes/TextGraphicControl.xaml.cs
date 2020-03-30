@@ -211,7 +211,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
-    public Altaxo.Graph.Gdi.BrushX SelectedFontBrush
+    public BrushX SelectedFontBrush
     {
       get
       {

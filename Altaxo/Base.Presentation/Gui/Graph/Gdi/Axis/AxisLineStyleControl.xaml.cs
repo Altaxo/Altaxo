@@ -31,7 +31,7 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
-  using Altaxo.Graph.Gdi;
+  using Altaxo.Drawing;
   using Altaxo.Gui.Common.Drawing;
 
   /// <summary>
@@ -169,7 +169,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
-    public Altaxo.Graph.Gdi.PenX LinePen
+    public PenX LinePen
     {
       get
       {
@@ -181,7 +181,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
-    public Altaxo.Graph.Gdi.PenX MajorPen
+    public PenX MajorPen
     {
       get
       {
@@ -198,7 +198,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
-    public Altaxo.Graph.Gdi.PenX MinorPen
+    public PenX MinorPen
     {
       get
       {

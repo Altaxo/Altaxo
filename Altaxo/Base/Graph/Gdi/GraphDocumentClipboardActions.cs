@@ -31,6 +31,7 @@ using Altaxo.Collections;
 
 namespace Altaxo.Graph.Gdi
 {
+  using Altaxo.Drawing;
   using Altaxo.Serialization.Clipboard;
 
   /// <summary>

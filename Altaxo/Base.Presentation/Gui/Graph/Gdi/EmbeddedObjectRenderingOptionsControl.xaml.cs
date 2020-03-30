@@ -117,7 +117,7 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
-    public Altaxo.Graph.Gdi.BrushX BackgroundBrush
+    public BrushX BackgroundBrush
     {
       get
       {

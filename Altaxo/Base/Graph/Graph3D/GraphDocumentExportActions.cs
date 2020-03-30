@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="sourceDpiResolution">Resolution at which the graph document is rendered into a bitmap.</param>
     /// <param name="destinationDpiResolution">Resolution which is assigned to the bitmap. This determines the physical size of the bitmap.</param>
     /// <returns>The saved bitmap. You should call Dispose when you no longer need the bitmap.</returns>
-    public static Bitmap RenderAsBitmap(this GraphDocument doc, Altaxo.Graph.Gdi.BrushX backbrush, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
+    public static Bitmap RenderAsBitmap(this GraphDocument doc, BrushX backbrush, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
     {
       return RenderAsBitmap(doc, backbrush, null, pixelformat, sourceDpiResolution, destinationDpiResolution);
     }
@@ -86,7 +86,7 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="sourceDpiResolution">Resolution at which the graph document is rendered into a bitmap.</param>
     /// <param name="destinationDpiResolution">Resolution which is assigned to the bitmap. This determines the physical size of the bitmap.</param>
     /// <returns>The pixel dimensions of the image if the rendering was successful. The tuple (0,0) is returned if the rendering was unsuccessful, e.g. if no exporter was available.</returns>
-    public static (int PixelsX, int PixelsY) RenderToStream(this GraphDocument doc, System.IO.Stream stream, Altaxo.Graph.Gdi.BrushX backbrush1, Altaxo.Graph.Gdi.BrushX backbrush2, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
+    public static (int PixelsX, int PixelsY) RenderToStream(this GraphDocument doc, System.IO.Stream stream, BrushX backbrush1, BrushX backbrush2, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
     {
       var exportOptions = new Altaxo.Graph.Gdi.GraphExportOptions();
       exportOptions.TrySetImageAndPixelFormat(ImageFormat.Png, PixelFormat.Format32bppArgb);
@@ -106,7 +106,7 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="sourceDpiResolution">Resolution at which the graph document is rendered into a bitmap.</param>
     /// <param name="destinationDpiResolution">Resolution which is assigned to the bitmap. This determines the physical size of the bitmap.</param>
     /// <returns>The saved bitmap. You should call Dispose when you no longer need the bitmap.</returns>
-    public static Bitmap RenderAsBitmap(this GraphDocument doc, Altaxo.Graph.Gdi.BrushX backbrush1, Altaxo.Graph.Gdi.BrushX backbrush2, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
+    public static Bitmap RenderAsBitmap(this GraphDocument doc, BrushX backbrush1, BrushX backbrush2, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
     {
       var imageExporter = Current.ProjectService.GetProjectItemImageExporter(doc);
       if (null == imageExporter)

@@ -106,14 +106,14 @@ namespace Altaxo.Main.Commands
 
     public void Run2()
     {
-      var pen = new Altaxo.Graph.Gdi.PenX(NamedColors.Red, 2);
+      var pen = new PenX(NamedColors.Red, 2);
       var ctrl = new Altaxo.Gui.Common.Drawing.PenAllPropertiesController(pen);
       Current.Gui.ShowDialog(ctrl, "Pen properties");
     }
 
     public void Run1()
     {
-      var brush = new Altaxo.Graph.Gdi.BrushX(NamedColors.Black);
+      var brush = new BrushX(NamedColors.Black);
       var ctrl = new Altaxo.Gui.Common.Drawing.BrushControllerAdvanced();
       ctrl.InitializeDocument(brush);
       Current.Gui.ShowDialog(ctrl, "Brush pros");

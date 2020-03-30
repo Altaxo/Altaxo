@@ -24,6 +24,7 @@
 
 using System;
 using System.Drawing;
+using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {

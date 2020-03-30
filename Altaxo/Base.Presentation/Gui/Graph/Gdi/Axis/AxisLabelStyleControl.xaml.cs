@@ -33,7 +33,6 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 {
   using Altaxo.Drawing;
   using Altaxo.Graph;
-  using Altaxo.Graph.Gdi;
   using Background;
 
   /// <summary>

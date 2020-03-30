@@ -27,8 +27,6 @@ using System.Collections.Generic;
 using System.Text;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {

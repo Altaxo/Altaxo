@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -59,7 +60,7 @@ namespace Altaxo.Gui.Common.Drawing
       set { _controller = value; }
     }
 
-    public Altaxo.Graph.Gdi.PenX DocPen
+    public PenX DocPen
     {
       get
       {

@@ -28,6 +28,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
+using Altaxo.Graph.Gdi.LineCaps;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -178,8 +179,12 @@ namespace Altaxo.Graph.Gdi
             pen.DashPattern = cachedDashPattern;
         }
 
-        if (!(p.EndCap is LineCaps.FlatCap))
-          p.EndCap.SetEndCap(pen);
+        if (!(p.EndCap is LineCaps.FlatCap) && p.EndCap is LineCapExtension extEnd)
+        {
+          double size = Math.Max(p.EndCap.MinimumAbsoluteSizePt, p.Width * p.EndCap.MinimumRelativeSize);
+          extEnd.SetEndCap(pen, (float)size);
+
+        }
 
         if (p.LineJoin != LineJoin.Miter)
           pen.LineJoin = p.LineJoin;
@@ -187,8 +192,11 @@ namespace Altaxo.Graph.Gdi
         if (p.MiterLimit != 10)
           pen.MiterLimit = (float)p.MiterLimit;
 
-        if (!(p.StartCap is LineCaps.FlatCap))
-          p.StartCap.SetStartCap(pen);
+        if (!(p.StartCap is LineCaps.FlatCap) && p.StartCap is LineCapExtension extStart)
+        {
+          double size = Math.Max(p.StartCap.MinimumAbsoluteSizePt, p.Width * p.StartCap.MinimumRelativeSize);
+          extStart.SetStartCap(pen, (float)size);
+        }
 
         if (!(p.Transform is null || p.Transform.IsIdentity))
           pen.Transform = p.Transform;

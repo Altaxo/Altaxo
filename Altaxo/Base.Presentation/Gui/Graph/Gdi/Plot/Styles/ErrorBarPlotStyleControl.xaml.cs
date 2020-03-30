@@ -29,7 +29,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using Altaxo.Collections;
-using Altaxo.Graph.Gdi;
+using Altaxo.Drawing;
 using Altaxo.Gui.Common.Drawing;
 using Altaxo.Gui.Graph.Plot.Data;
 

@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Common.Drawing
       };
     }
 
-    public Altaxo.Graph.Gdi.PenX SelectedPen
+    public PenX SelectedPen
     {
       get
       {

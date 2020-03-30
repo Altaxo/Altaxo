@@ -31,6 +31,7 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+  using Altaxo.Drawing;
   using Altaxo.Units;
   using AUL = Altaxo.Units.Length;
 
@@ -80,22 +81,22 @@ namespace Altaxo.Gui.Common.Drawing
         YChanged();
     }
 
-    public Altaxo.Graph.TextureScalingMode ScalingMode
+    public TextureScalingMode ScalingMode
     {
       get
       {
         if (true == _guiScaleWithSource.IsChecked)
-          return Altaxo.Graph.TextureScalingMode.Source;
+          return TextureScalingMode.Source;
         if (true == _guiScaleWithDest.IsChecked)
-          return Altaxo.Graph.TextureScalingMode.Destination;
+          return TextureScalingMode.Destination;
         else
-          return Altaxo.Graph.TextureScalingMode.Absolute;
+          return TextureScalingMode.Absolute;
       }
       set
       {
-        if (value == Altaxo.Graph.TextureScalingMode.Source)
+        if (value == TextureScalingMode.Source)
           _guiScaleWithSource.IsChecked = true;
-        else if (value == Altaxo.Graph.TextureScalingMode.Destination)
+        else if (value == TextureScalingMode.Destination)
           _guiScaleWithDest.IsChecked = true;
         else
           _guiScaleWithAbs.IsChecked = true;
@@ -104,22 +105,22 @@ namespace Altaxo.Gui.Common.Drawing
 
     public event Action ScalingModeChanged;
 
-    public Altaxo.Graph.AspectRatioPreservingMode AspectPreserving
+    public AspectRatioPreservingMode AspectPreserving
     {
       get
       {
         if (true == _guiKeepAspectX.IsChecked)
-          return Altaxo.Graph.AspectRatioPreservingMode.PreserveXPriority;
+          return AspectRatioPreservingMode.PreserveXPriority;
         else if (true == _guiKeepAspectY.IsChecked)
-          return Altaxo.Graph.AspectRatioPreservingMode.PreserveYPriority;
+          return AspectRatioPreservingMode.PreserveYPriority;
         else
-          return Altaxo.Graph.AspectRatioPreservingMode.None;
+          return AspectRatioPreservingMode.None;
       }
       set
       {
-        if (value == Altaxo.Graph.AspectRatioPreservingMode.PreserveXPriority)
+        if (value == AspectRatioPreservingMode.PreserveXPriority)
           _guiKeepAspectX.IsChecked = true;
-        else if (value == Altaxo.Graph.AspectRatioPreservingMode.PreserveYPriority)
+        else if (value == AspectRatioPreservingMode.PreserveYPriority)
           _guiKeepAspectY.IsChecked = true;
         else
           _guiKeepAspectNo.IsChecked = true;

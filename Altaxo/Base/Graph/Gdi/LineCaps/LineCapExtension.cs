@@ -28,6 +28,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
@@ -63,18 +64,6 @@ namespace Altaxo.Graph.Gdi.LineCaps
       get { return _minimumRelativeSize; }
     }
 
-    public virtual void SetStartCap(Pen pen)
-    {
-      double size = Math.Max(_minimumAbsoluteSizePt, pen.Width * _minimumRelativeSize);
-      SetStartCap(pen, (float)size);
-    }
-
-    public virtual void SetEndCap(Pen pen)
-    {
-      double size = Math.Max(_minimumAbsoluteSizePt, pen.Width * _minimumRelativeSize);
-      SetEndCap(pen, (float)size);
-    }
-
     public abstract string Name { get; }
 
     /// <summary>Gets the default minimum absolute size in points (1/72 inch).</summary>
@@ -97,6 +86,11 @@ namespace Altaxo.Graph.Gdi.LineCaps
         result._minimumRelativeSize = relativeSize;
         return result;
       }
+    }
+
+    ILineCap ILineCap.WithMinimumAbsoluteAndRelativeSize(double minimumAbsoluteSizePt, double minimumRelativeSize)
+    {
+      return WithMinimumAbsoluteAndRelativeSize(minimumAbsoluteSizePt, minimumRelativeSize);
     }
 
     public abstract void SetStartCap(Pen pen, float size);
@@ -215,6 +209,11 @@ namespace Altaxo.Graph.Gdi.LineCaps
     }
 
 
+
+    bool IEquatable<ILineCap>.Equals(ILineCap other)
+    {
+      throw new NotImplementedException();
+    }
 
     static LineCapExtension()
     {

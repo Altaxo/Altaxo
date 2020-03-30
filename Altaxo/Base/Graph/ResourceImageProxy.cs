@@ -24,6 +24,7 @@
 
 using System;
 using System.IO;
+using Altaxo.Drawing;
 using Altaxo.Geometry;
 
 namespace Altaxo.Graph

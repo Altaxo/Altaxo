@@ -32,7 +32,6 @@ using System.Windows.Documents;
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {

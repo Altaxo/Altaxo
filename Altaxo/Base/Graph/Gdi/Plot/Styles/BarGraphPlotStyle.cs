@@ -31,6 +31,7 @@ using System.Text;
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using Altaxo.Data;
+  using Altaxo.Drawing;
   using Altaxo.Main;
   using Drawing;
   using Graph.Plot.Data;

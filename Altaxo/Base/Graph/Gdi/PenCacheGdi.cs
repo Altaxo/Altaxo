@@ -25,6 +25,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using Altaxo.Drawing;
 using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi

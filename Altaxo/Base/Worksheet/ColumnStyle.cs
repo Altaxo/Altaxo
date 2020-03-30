@@ -29,6 +29,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Worksheet
 {
+  using Altaxo.Drawing;
   using Altaxo.Graph;
   using Drawing;
   using Geometry;

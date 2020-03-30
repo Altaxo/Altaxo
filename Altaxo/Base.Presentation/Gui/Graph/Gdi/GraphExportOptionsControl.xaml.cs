@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
@@ -97,7 +98,7 @@ namespace Altaxo.Gui.Graph.Gdi
       get { return _cbDestinationResolution.Text; }
     }
 
-    public Altaxo.Graph.Gdi.BrushX BackgroundBrush
+    public BrushX BackgroundBrush
     {
       get
       {

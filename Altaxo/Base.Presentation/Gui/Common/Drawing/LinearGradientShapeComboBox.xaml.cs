@@ -30,12 +30,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using Altaxo.Graph.Gdi;
+using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Common.Drawing
 {
   /// <summary>
-  /// ComboBox for <see cref="Altaxo.Graph.Gdi.LinearGradientShape"/>.
+  /// ComboBox for <see cref="Altaxo.Drawing.LinearGradientShape"/>.
   /// </summary>
   public partial class LinearGradientShapeComboBox : ImageComboBox
   {

@@ -24,6 +24,7 @@
 
 using System;
 using System.Drawing;
+using Altaxo.Drawing;
 using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Background

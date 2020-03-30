@@ -25,8 +25,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Drawing;
 using Altaxo.Geometry;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Gui.Graph.Gdi;
@@ -37,7 +37,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   {
     PointD2D SourceSize { set; }
 
-    Altaxo.Graph.AspectRatioPreservingMode AspectPreserving { get; set; }
+    AspectRatioPreservingMode AspectPreserving { get; set; }
 
     bool IsSizeCalculationBasedOnSourceSize { get; set; }
 

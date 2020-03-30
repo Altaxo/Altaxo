@@ -31,6 +31,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Altaxo.Drawing;
 using Altaxo.Graph.Gdi.LineCaps;
 using sdd = System.Drawing.Drawing2D;
 
@@ -54,8 +55,8 @@ namespace Altaxo.Gui.Common.Drawing
 
       public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
       {
-        var val = (LineCapExtension)value;
-        if (null == val || val.IsDefaultStyle)
+        var val = (ILineCap)value;
+        if (null == val || val is FlatCap)
           return _cb._cachedItems[LineCapExtension.Flat.Name];
         else
           return _cb._cachedItems[val.Name];
@@ -112,14 +113,14 @@ namespace Altaxo.Gui.Common.Drawing
 
     private const string _nameOfValueProp = "SelectedLineCap";
 
-    public LineCapExtension SelectedLineCap
+    public ILineCap SelectedLineCap
     {
-      get { return (LineCapExtension)GetValue(SelectedLineCapProperty); }
+      get { return (ILineCap)GetValue(SelectedLineCapProperty); }
       set { SetValue(SelectedLineCapProperty, value); }
     }
 
     public static readonly DependencyProperty SelectedLineCapProperty =
-        DependencyProperty.Register(_nameOfValueProp, typeof(LineCapExtension), typeof(LineCapComboBox),
+        DependencyProperty.Register(_nameOfValueProp, typeof(ILineCap), typeof(LineCapComboBox),
         new FrameworkPropertyMetadata(LineCapExtension.Flat, OnSelectedLineCapChanged));
 
     private static void OnSelectedLineCapChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
@@ -130,13 +131,13 @@ namespace Altaxo.Gui.Common.Drawing
 
     public override string GetItemText(object item)
     {
-      var value = (LineCapExtension)item;
+      var value = (ILineCap)item;
       return value.Name;
     }
 
     public override ImageSource GetItemImage(object item)
     {
-      var val = (LineCapExtension)item;
+      var val = (ILineCap)item;
       ImageSource result;
       if (_isForEndCap)
       {
@@ -151,7 +152,7 @@ namespace Altaxo.Gui.Common.Drawing
       return result;
     }
 
-    public static ImageSource GetImage(LineCapExtension join, bool isForEndCap)
+    public static ImageSource GetImage(ILineCap join, bool isForEndCap)
     {
       const int bmpHeight = 24;
       const int bmpWidth = 48;
@@ -168,12 +169,14 @@ namespace Altaxo.Gui.Common.Drawing
         var linePen = new System.Drawing.Pen(System.Drawing.Brushes.Black, (float)Math.Ceiling(lineWidth));
         if (isForEndCap)
         {
-          join.SetEndCap(linePen);
+          double size = Math.Max(join.MinimumAbsoluteSizePt, linePen.Width * join.MinimumRelativeSize);
+          (join as LineCapExtension)?.SetEndCap(linePen, (float)size);
           grfx.DrawLine(linePen, 0, 0.5f * bmpHeight, bmpWidth * (1 - 0.25f), 0.5f * bmpHeight);
         }
         else
         {
-          join.SetStartCap(linePen);
+          double size = Math.Max(join.MinimumAbsoluteSizePt, linePen.Width * join.MinimumRelativeSize);
+          (join as LineCapExtension)?.SetStartCap(linePen, (float)size);
           grfx.DrawLine(linePen, 0.25f * bmpWidth, 0.5f * bmpHeight, bmpWidth, 0.5f * bmpHeight);
         }
         _interopBitmap.EndGdiPainting();

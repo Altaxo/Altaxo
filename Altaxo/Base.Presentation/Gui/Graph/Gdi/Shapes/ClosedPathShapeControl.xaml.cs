@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
@@ -43,7 +44,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     #region IShapeGraphicView
 
-    public Altaxo.Graph.Gdi.PenX DocPen
+    public PenX DocPen
     {
       get
       {
@@ -55,7 +56,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
-    public Altaxo.Graph.Gdi.BrushX DocBrush
+    public BrushX DocBrush
     {
       get
       {

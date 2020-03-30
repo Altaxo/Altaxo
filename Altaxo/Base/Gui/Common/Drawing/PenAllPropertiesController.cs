@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  using Altaxo.Graph.Gdi;
+  using Altaxo.Drawing;
 
   #region Interfaces
 

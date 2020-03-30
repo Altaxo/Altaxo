@@ -32,7 +32,7 @@ using System.Windows.Controls;
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
   using Altaxo.Collections;
-  using Altaxo.Graph.Gdi;
+  using Altaxo.Drawing;
   using Common.Drawing;
 
   /// <summary>
@@ -122,7 +122,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       set { _guiFillBrush.ShowPlotColorsOnly = value; }
     }
 
-    public Altaxo.Graph.Gdi.BrushX FillBrush
+    public BrushX FillBrush
     {
       get
       {

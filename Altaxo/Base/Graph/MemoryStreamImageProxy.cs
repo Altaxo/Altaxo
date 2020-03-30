@@ -25,6 +25,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Altaxo.Drawing;
 using Altaxo.Geometry;
 
 namespace Altaxo.Graph
@@ -32,7 +33,7 @@ namespace Altaxo.Graph
   /// <summary>
   /// Holds an image, either from a resource or from a file stream or from the clipboard.
   /// </summary>
-  /// <seealso cref="Altaxo.Graph.ImageProxy" />
+  /// <seealso cref="Drawing.ImageProxy" />
   [Serializable]
   public class MemoryStreamImageProxy : ImageProxy, Main.IImmutable
   {

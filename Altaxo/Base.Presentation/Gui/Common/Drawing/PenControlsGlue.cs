@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph.Gdi;
 using Altaxo.Gui.Drawing;
@@ -354,9 +355,9 @@ namespace Altaxo.Gui.Common.Drawing
       {
         var cap = _cbStartCap.SelectedLineCap;
         if (_userChangedAbsStartCapSize && _cbStartCapAbsSize != null)
-          cap = cap.WithAbsoluteAndRelativeSize(_cbStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+          cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
         if (_userChangedRelStartCapSize && _cbStartCapRelSize != null)
-          cap = cap.WithAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbStartCapRelSize.SelectedQuantityAsValueInSIUnits);
+          cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbStartCapRelSize.SelectedQuantityAsValueInSIUnits);
 
         _pen = _pen.WithStartCap(cap);
 
@@ -403,7 +404,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (_pen != null)
       {
         var cap = _pen.StartCap;
-        cap = cap.WithAbsoluteAndRelativeSize(_cbStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+        cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
 
         _pen = _pen.WithStartCap(cap);
 
@@ -437,7 +438,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (_pen != null)
       {
         var cap = _pen.StartCap;
-        cap = cap.WithAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbStartCapRelSize.SelectedQuantityAsValueInSIUnits);
+        cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbStartCapRelSize.SelectedQuantityAsValueInSIUnits);
 
         _pen = _pen.WithStartCap(cap);
         OnPenChanged();
@@ -475,9 +476,9 @@ namespace Altaxo.Gui.Common.Drawing
       {
         var cap = _cbEndCap.SelectedLineCap;
         if (_userChangedAbsEndCapSize && _cbEndCapAbsSize != null)
-          cap = cap.WithAbsoluteAndRelativeSize(_cbEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+          cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
         if (_userChangedRelEndCapSize && _cbEndCapRelSize != null)
-          cap = cap.WithAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbEndCapRelSize.SelectedQuantityAsValueInSIUnits);
+          cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbEndCapRelSize.SelectedQuantityAsValueInSIUnits);
 
         _pen = _pen.WithEndCap(cap);
 
@@ -524,7 +525,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (_pen != null)
       {
         var cap = _pen.EndCap;
-        cap = cap.WithAbsoluteAndRelativeSize(_cbEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+        cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
 
         _pen = _pen.WithEndCap(cap);
         OnPenChanged();
@@ -557,7 +558,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (_pen != null)
       {
         var cap = _pen.EndCap;
-        cap = cap.WithAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbEndCapRelSize.SelectedQuantityAsValueInSIUnits);
+        cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbEndCapRelSize.SelectedQuantityAsValueInSIUnits);
         _pen = _pen.WithEndCap(cap);
         OnPenChanged();
       }

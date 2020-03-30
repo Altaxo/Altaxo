@@ -28,7 +28,6 @@ using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles;
 using Altaxo.Graph.Plot.Groups;

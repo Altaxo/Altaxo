@@ -26,7 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Altaxo.Collections;
-using Altaxo.Graph.Gdi;
+using Altaxo.Drawing;
 using Altaxo.Graph.Gdi.Axis;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis

@@ -29,10 +29,10 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using Altaxo.Geometry;
-using Altaxo.Graph;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
+  using Altaxo.Drawing;
   using Altaxo.Units;
   using AUL = Altaxo.Units.Length;
 
@@ -55,22 +55,22 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
-    public Altaxo.Graph.AspectRatioPreservingMode AspectPreserving
+    public AspectRatioPreservingMode AspectPreserving
     {
       get
       {
         if (true == _guiKeepAspectX.IsChecked)
-          return Altaxo.Graph.AspectRatioPreservingMode.PreserveXPriority;
+          return AspectRatioPreservingMode.PreserveXPriority;
         else if (true == _guiKeepAspectY.IsChecked)
-          return Altaxo.Graph.AspectRatioPreservingMode.PreserveYPriority;
+          return AspectRatioPreservingMode.PreserveYPriority;
         else
-          return Altaxo.Graph.AspectRatioPreservingMode.None;
+          return AspectRatioPreservingMode.None;
       }
       set
       {
-        if (value == Altaxo.Graph.AspectRatioPreservingMode.PreserveXPriority)
+        if (value == AspectRatioPreservingMode.PreserveXPriority)
           _guiKeepAspectX.IsChecked = true;
-        else if (value == Altaxo.Graph.AspectRatioPreservingMode.PreserveYPriority)
+        else if (value == AspectRatioPreservingMode.PreserveYPriority)
           _guiKeepAspectY.IsChecked = true;
         else
           _guiKeepAspectNo.IsChecked = true;

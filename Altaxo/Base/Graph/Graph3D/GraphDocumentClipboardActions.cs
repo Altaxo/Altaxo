@@ -31,6 +31,7 @@ using Altaxo.Collections;
 
 namespace Altaxo.Graph.Graph3D
 {
+  using Altaxo.Drawing;
   using Altaxo.Serialization.Clipboard;
   using ClipboardRenderingOptions = Altaxo.Graph.Gdi.ClipboardRenderingOptions;
   using GraphCopyOptions = Altaxo.Graph.Gdi.GraphCopyOptions;
@@ -80,7 +81,7 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
     /// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
     /// <param name="pixelformat">Specify the pixelformat here.</param>
-    public static void CopyToClipboardAsBitmap(this GraphDocument doc, int dpiResolution, Altaxo.Graph.Gdi.BrushX backbrush, PixelFormat pixelformat)
+    public static void CopyToClipboardAsBitmap(this GraphDocument doc, int dpiResolution, BrushX backbrush, PixelFormat pixelformat)
     {
       var dao = Current.Gui.GetNewClipboardDataObject();
       System.Drawing.Bitmap bitmap = GraphDocumentExportActions.RenderAsBitmap(doc, backbrush, pixelformat, dpiResolution, dpiResolution);

@@ -25,7 +25,7 @@
 using System;
 using Altaxo.Geometry;
 
-namespace Altaxo.Graph.Gdi
+namespace Altaxo.Drawing
 {
   /// <summary>
   /// Represents an immutable <see cref="PenX"/> in its environment (rectangle and resolution). This structure is immutable itself.
@@ -73,13 +73,13 @@ namespace Altaxo.Graph.Gdi
     public bool Equals(PenXEnv other)
     {
       return
-        this.BrushXEnv == other.BrushXEnv &&
-        this.PenX == other.PenX;
+        BrushXEnv == other.BrushXEnv &&
+        PenX == other.PenX;
     }
 
     public override bool Equals(object obj)
     {
-      return obj is PenXEnv other ? this.Equals(other) : false;
+      return obj is PenXEnv other ? Equals(other) : false;
     }
 
     public static bool operator ==(PenXEnv x, PenXEnv y)
@@ -88,7 +88,7 @@ namespace Altaxo.Graph.Gdi
     }
     public static bool operator !=(PenXEnv x, PenXEnv y)
     {
-      return !(x.Equals(y));
+      return !x.Equals(y);
     }
   }
 } // end of namespace

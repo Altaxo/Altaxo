@@ -23,47 +23,16 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using Altaxo.Drawing;
 
-namespace Altaxo.Gui.Graph.Gdi.Shapes
+namespace Altaxo.Drawing
 {
-  /// <summary>
-  /// Interaction logic for LineGraphicControl.xaml
-  /// </summary>
-  public partial class OpenPathShapeControl : UserControl, IOpenPathShapeView
+  [Serializable]
+  public enum LinearGradientShape
   {
-    public OpenPathShapeControl()
-    {
-      InitializeComponent();
-    }
-
-    #region ILineGraphicView
-
-    public PenX DocPen
-    {
-      get
-      {
-        return _penControl.Pen;
-      }
-      set
-      {
-        _penControl.Pen = value;
-      }
-    }
-
-    public object LocationView
-    {
-      set
-      {
-        _guiLocationHost.Child = (UIElement)value;
-      }
-    }
-
-    #endregion ILineGraphicView
+    Linear,
+    Triangular,
+    SigmaBell
   }
-}
+
+
+} // end of namespace

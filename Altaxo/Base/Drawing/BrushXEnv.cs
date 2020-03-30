@@ -25,7 +25,7 @@
 using System;
 using Altaxo.Geometry;
 
-namespace Altaxo.Graph.Gdi
+namespace Altaxo.Drawing
 {
   /// <summary>
   /// Represents an immutable <see cref="BrushX"/> in its environment (rectangle and resolution). This structure is immutable itself.
@@ -123,9 +123,9 @@ namespace Altaxo.Graph.Gdi
     public bool Equals(BrushXEnv other)
     {
       return
-        this.EffectiveMaximumResolutionDpi == other.EffectiveMaximumResolutionDpi &&
-        this.BrushBoundingRectangle == other.BrushBoundingRectangle &&
-        object.Equals(this.BrushX, other.BrushX);
+        EffectiveMaximumResolutionDpi == other.EffectiveMaximumResolutionDpi &&
+        BrushBoundingRectangle == other.BrushBoundingRectangle &&
+        Equals(BrushX, other.BrushX);
     }
 
     public static bool operator ==(BrushXEnv x, BrushXEnv y)
@@ -134,7 +134,7 @@ namespace Altaxo.Graph.Gdi
     }
     public static bool operator !=(BrushXEnv x, BrushXEnv y)
     {
-      return !(x.Equals(y));
+      return !x.Equals(y);
     }
   }
 } // end of namespace
