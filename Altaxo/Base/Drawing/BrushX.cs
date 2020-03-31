@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@ using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Main;
 
+#nullable enable
+
 namespace Altaxo.Drawing
 {
   /// <summary>
@@ -50,8 +52,8 @@ namespace Altaxo.Drawing
     protected double _offsetX;
     protected double _offsetY;
     protected double _gradientColorScale;
-    protected ImageProxy _textureImage; // für Texturebrush
     protected TextureScaling _textureScale = TextureScaling.Default;
+    protected ImageProxy? _textureImage; // für Texturebrush
 
     /// <summary>
     /// Cached hash code. Must be invaliated after cloning the instance.
@@ -59,6 +61,8 @@ namespace Altaxo.Drawing
     protected int? _cachedHashCode;
 
     #region "Serialization"
+
+    #region Version 0
 
     [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BrushHolder", 0)]
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
@@ -103,11 +107,14 @@ namespace Altaxo.Drawing
             break;
         }
 
+        s._cachedHashCode = null;
         return s;
       }
     }
 
+    #endregion Version 0
 
+    #region Version 1 and 2
 
     [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BrushHolder", 1)]
     [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.BrushX", 2)]
@@ -216,9 +223,14 @@ namespace Altaxo.Drawing
             break;
         }
 
+        s._cachedHashCode = null;
         return s;
       }
     }
+
+    #endregion Version 1 and 2
+
+    #region Version 3
 
     [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.BrushX", 3)]
     private class XmlSerializationSurrogate3 : Serialization.Xml.IXmlSerializationSurrogate
@@ -321,10 +333,14 @@ namespace Altaxo.Drawing
             break;
         }
 
-
+        s._cachedHashCode = null;
         return s;
       }
     }
+
+    #endregion Version 3
+
+    #region Version 4 and 5
 
     /// <summary>
     /// 2012-02-14 Version 4: new serialization code.
@@ -459,13 +475,84 @@ namespace Altaxo.Drawing
             break;
         }
 
+        s._cachedHashCode = null;
         return s;
       }
     }
 
+    #endregion Version 4 and 5
+
     #endregion "Serialization"
 
-    public bool Equals(BrushX other)
+    #region Constructors
+
+    public BrushX(NamedColor c)
+    {
+      _brushType = BrushType.SolidBrush;
+      _foreColor = c;
+    }
+
+    public BrushX(BrushType brushType)
+    {
+      _brushType = brushType;
+
+      switch (_brushType)
+      {
+        case BrushType.SolidBrush:
+          break;
+        case BrushType.HatchBrush:
+          _wrapMode = WrapMode.Tile;
+          _offsetX = 0;
+          _offsetY = 0;
+          _textureImage = DefaultHatchBrush;
+          break;
+        case BrushType.TextureBrush:
+          _wrapMode = WrapMode.Tile;
+          _offsetX = 0;
+          _offsetY = 0;
+          _textureImage = DefaultTextureBrush;
+          break;
+        case BrushType.LinearGradientBrush:
+          _wrapMode = WrapMode.TileFlipXY;
+          break;
+        case BrushType.PathGradientBrush:
+          _wrapMode = WrapMode.TileFlipXY;
+          _offsetX = 0.5;
+          _offsetY = 0.5;
+          break;
+        case BrushType.SigmaBellShapeLinearGradientBrush:
+          _wrapMode = WrapMode.TileFlipXY;
+          _offsetX = 0.5;
+          _gradientColorScale = 1;
+          break;
+        case BrushType.TriangularShapeLinearGradientBrush:
+          _wrapMode = WrapMode.TileFlipXY;
+          _offsetX = 0.5;
+          _gradientColorScale = 1;
+          break;
+        case BrushType.SigmaBellShapePathGradientBrush:
+        case BrushType.TriangularShapePathGradientBrush:
+          _wrapMode = WrapMode.TileFlipXY;
+          _offsetX = 0.5;
+          _offsetY = 0.5;
+          _gradientColorScale = 1;
+          break;
+        case BrushType.SyntheticTextureBrush:
+          _wrapMode = WrapMode.Tile;
+          _offsetX = 0;
+          _offsetY = 0;
+          _textureImage = DefaultSyntheticBrush;
+          break;
+        default:
+          break;
+      }
+    }
+
+    #endregion Constructors
+
+    #region Equality and Hash
+
+    public bool Equals(BrushX? other)
     {
       if (other is null)
         return false;
@@ -559,7 +646,7 @@ namespace Altaxo.Drawing
       return true;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return Equals(obj as BrushX);
     }
@@ -630,7 +717,8 @@ namespace Altaxo.Drawing
             result += 19 * _offsetX.GetHashCode();
             result += 23 * _offsetY.GetHashCode();
             result += 31 * _textureScale.GetHashCode();
-            result += 37 * _textureImage.GetHashCode();
+            if (_textureImage is { } texImage)
+              result += 37 * texImage.GetHashCode();
             break;
 
           default:
@@ -660,132 +748,9 @@ namespace Altaxo.Drawing
       return result;
     }
 
-    public BrushX(NamedColor c)
-    {
-      _brushType = BrushType.SolidBrush;
-      _foreColor = c;
-    }
+    #endregion
 
-    public BrushX(BrushType brushType)
-    {
-      _brushType = brushType;
-
-      switch (_brushType)
-      {
-        case BrushType.SolidBrush:
-          break;
-        case BrushType.HatchBrush:
-          _wrapMode = WrapMode.Tile;
-          _offsetX = 0;
-          _offsetY = 0;
-          _textureImage = DefaultHatchBrush;
-          break;
-        case BrushType.TextureBrush:
-          _wrapMode = WrapMode.Tile;
-          _offsetX = 0;
-          _offsetY = 0;
-          _textureImage = DefaultTextureBrush;
-          break;
-        case BrushType.LinearGradientBrush:
-          _wrapMode = WrapMode.TileFlipXY;
-          break;
-        case BrushType.PathGradientBrush:
-          _wrapMode = WrapMode.TileFlipXY;
-          _offsetX = 0.5;
-          _offsetY = 0.5;
-          break;
-        case BrushType.SigmaBellShapeLinearGradientBrush:
-          _wrapMode = WrapMode.TileFlipXY;
-          _offsetX = 0.5;
-          _gradientColorScale = 1;
-          break;
-        case BrushType.TriangularShapeLinearGradientBrush:
-          _wrapMode = WrapMode.TileFlipXY;
-          _offsetX = 0.5;
-          _gradientColorScale = 1;
-          break;
-        case BrushType.SigmaBellShapePathGradientBrush:
-        case BrushType.TriangularShapePathGradientBrush:
-          _wrapMode = WrapMode.TileFlipXY;
-          _offsetX = 0.5;
-          _offsetY = 0.5;
-          _gradientColorScale = 1;
-          break;
-        case BrushType.SyntheticTextureBrush:
-          _wrapMode = WrapMode.Tile;
-          _offsetX = 0;
-          _offsetY = 0;
-          _textureImage = DefaultSyntheticBrush;
-          break;
-        default:
-          break;
-      }
-    }
-
-    private void SetMembersToDefaultAfterBrushTypeChange()
-    {
-      switch (_brushType)
-      {
-        case BrushType.SolidBrush:
-          // nothing matters save ForeColor
-          _backColor = NamedColors.Transparent; // Backcolor of brush, f.i.f. HatchStyle brushes
-          _exchangeColors = false;
-          _wrapMode = WrapMode.Tile; // für TextureBrush und LinearGradientBrush
-          _angle = 0;
-          _offsetX = 0;
-          _offsetY = 0;
-          _gradientColorScale = 0;
-          _textureImage = null; // für Texturebrush
-          _textureScale = TextureScaling.Default;
-          break;
-        case BrushType.HatchBrush:
-          _wrapMode = WrapMode.Tile;
-          _offsetX = 0;
-          _offsetY = 0;
-          _textureImage = DefaultHatchBrush;
-          break;
-        case BrushType.TextureBrush:
-          _wrapMode = WrapMode.Tile;
-          _offsetX = 0;
-          _offsetY = 0;
-          _textureImage = DefaultTextureBrush;
-          break;
-        case BrushType.LinearGradientBrush:
-          _wrapMode = WrapMode.TileFlipXY;
-          break;
-        case BrushType.PathGradientBrush:
-          _wrapMode = WrapMode.TileFlipXY;
-          _offsetX = 0.5;
-          _offsetY = 0.5;
-          break;
-        case BrushType.SigmaBellShapeLinearGradientBrush:
-          _wrapMode = WrapMode.TileFlipXY;
-          _offsetX = 0.5;
-          _gradientColorScale = 1;
-          break;
-        case BrushType.TriangularShapeLinearGradientBrush:
-          _wrapMode = WrapMode.TileFlipXY;
-          _offsetX = 0.5;
-          _gradientColorScale = 1;
-          break;
-        case BrushType.SigmaBellShapePathGradientBrush:
-        case BrushType.TriangularShapePathGradientBrush:
-          _wrapMode = WrapMode.TileFlipXY;
-          _offsetX = 0.5;
-          _offsetY = 0.5;
-          _gradientColorScale = 1;
-          break;
-        case BrushType.SyntheticTextureBrush:
-          _wrapMode = WrapMode.Tile;
-          _offsetX = 0;
-          _offsetY = 0;
-          _textureImage = DefaultSyntheticBrush;
-          break;
-        default:
-          break;
-      }
-
-    }
+    #region Properties
 
     public BrushType BrushType
     {
@@ -799,14 +764,34 @@ namespace Altaxo.Drawing
     {
       if (!(_brushType == value))
       {
-        var result = Clone();
-        result._brushType = value;
-        result.SetMembersToDefaultAfterBrushTypeChange();
+        var result = new BrushX(value);
+
+        if (value != BrushType.TextureBrush)
+        {
+          if (value == BrushType.SolidBrush)
+          {
+            result._foreColor = Color;
+          }
+          else
+          {
+            result._exchangeColors = _exchangeColors;
+            result._backColor = _backColor;
+            result._foreColor = _foreColor;
+          }
+        }
         return result;
       }
       else
       {
         return this;
+      }
+    }
+
+    public bool IsSolidBrush
+    {
+      get
+      {
+        return _brushType == BrushType.SolidBrush;
       }
     }
 
@@ -1041,7 +1026,7 @@ namespace Altaxo.Drawing
       }
     }
 
-    public ImageProxy TextureImage
+    public ImageProxy? TextureImage
     {
       get
       {
@@ -1085,15 +1070,12 @@ namespace Altaxo.Drawing
       }
     }
 
+    #endregion Properties
+
     #region static members
 
-    public static BrushX Empty
-    {
-      get
-      {
-        return new BrushX(NamedColors.Transparent);
-      }
-    }
+    public static BrushX Empty { get; } = new BrushX(NamedColors.Transparent);
+
 
     public static ImageProxy DefaultTextureBrush
     {

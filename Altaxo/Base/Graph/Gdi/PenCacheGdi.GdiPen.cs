@@ -30,6 +30,8 @@ using Altaxo.Drawing;
 using Altaxo.Geometry;
 using Altaxo.Graph.Gdi.LineCaps;
 
+#nullable enable
+
 namespace Altaxo.Graph.Gdi
 {
   public partial class PenCacheGdi
@@ -50,7 +52,10 @@ namespace Altaxo.Graph.Gdi
       /// </summary>
       public Pen Pen { get; }
 
-      private PenCacheGdi _parentCache;
+      /// <summary>
+      /// The parent cache of this object. Can intendendly be set to null. In this case, the cached pen object is not returned to the cache.
+      /// </summary>
+      private PenCacheGdi? _parentCache;
 
       /// <summary>
       /// Performs an implicit conversion from <see cref="GdiPen"/> to <see cref="System.Drawing.Brush"/>.
@@ -61,7 +66,10 @@ namespace Altaxo.Graph.Gdi
       /// </returns>
       public static implicit operator System.Drawing.Pen(GdiPen pen)
       {
-        return pen?.Pen;
+        if (pen is null)
+          throw new ArgumentNullException(nameof(pen));
+
+        return pen.Pen;
       }
 
 
@@ -95,136 +103,95 @@ namespace Altaxo.Graph.Gdi
       }
 
       /// <summary>
-      /// Sets the Gdi pen dash style to reflect the <see cref="DashStyleEx"/> object.
+      /// Creates a Gdi+ <see cref="System.Drawing.Pen"/> from a independent <see cref="PenX"/>, a bounding rectangle, and the effective resolution of the drawing.
       /// </summary>
-      /// <param name="pen">The Gdi pen to set the dash style for.</param>
-      /// <param name="dashStyleEx">The <see cref="DashStyleEx"/> object used to set the dash style of the Gdi pen.</param>
-      public static void SetPenDash(Pen pen, DashStyleEx dashStyleEx)
-      {
-        pen.DashStyle = dashStyleEx.KnownStyle;
-        if (dashStyleEx.IsCustomStyle)
-          pen.DashPattern = dashStyleEx.CustomStyle;
-      }
-
-      private static void SetCachedDashProperties(PenX p, out DashStyle dashStyle, out float[] dashPattern, out float dashOffset)
-      {
-        var value = p.DashPattern;
-        dashStyle = DashStyle.Solid;
-        dashPattern = null;
-        dashOffset = 0;
-
-        if (value is Drawing.DashPatterns.Solid)
-        {
-          dashStyle = DashStyle.Solid;
-        }
-        else if (value is Drawing.DashPatterns.Dash)
-        {
-          dashStyle = DashStyle.Dash;
-        }
-        else if (value is Drawing.DashPatterns.Dot)
-        {
-          dashStyle = DashStyle.Dot;
-        }
-        else if (value is Drawing.DashPatterns.DashDot)
-        {
-          dashStyle = DashStyle.DashDot;
-        }
-        else if (value is Drawing.DashPatterns.DashDotDot)
-        {
-          dashStyle = DashStyle.DashDotDot;
-        }
-        else
-        {
-          dashStyle = DashStyle.Custom;
-          dashPattern = value.Select(x => (float)x).ToArray();
-          dashOffset = (float)value.DashOffset;
-        }
-      }
-
-
+      /// <param name="p">The system independend pen object..</param>
+      /// <param name="boundingRectangle">The bounding rectangle.</param>
+      /// <param name="maximumEffectiveResolutionDpi">The maximum effective resolution of the drawing in dpi.</param>
+      /// <returns>The corresponding <see cref="System.Drawing.Pen"/> object. This value must be disposed if no longer in use.</returns>
       public static Pen CreateGdiPen(PenX p, RectangleD2D boundingRectangle, double maximumEffectiveResolutionDpi)
       {
-        var pen = new Pen(Color.Black);
+        var gdiPen = new Pen(Color.Black);
 
         // now set the optional Pen properties
-        if (pen.Width != p.Width)
-          pen.Width = (float)(p.Width);
+        if (gdiPen.Width != p.Width)
+          gdiPen.Width = (float)(p.Width);
 
         if (p.Alignment != PenAlignment.Center)
-          pen.Alignment = p.Alignment;
+          gdiPen.Alignment = p.Alignment;
 
-        if (p.Brush is null && p.Color != NamedColors.Black)
-          pen.Color = ToGdi(p.Color);
-
-        if (p.Brush is { } brush)
-          pen.Brush = BrushCacheGdi.GdiBrush.CreateGdiBrush(brush, boundingRectangle, maximumEffectiveResolutionDpi);
+        if (!(p.Brush.IsSolidBrush))
+          gdiPen.Brush = BrushCacheGdi.GdiBrush.CreateGdiBrush(p.Brush, boundingRectangle, maximumEffectiveResolutionDpi);
+        else if (p.Color != NamedColors.Black)
+          gdiPen.Color = ToGdi(p.Color);
 
         if (p.CompoundArray is { } compoundArray && compoundArray.Length > 0)
-          pen.CompoundArray = compoundArray;
+          gdiPen.CompoundArray = compoundArray.Select(x => (float)x).ToArray();
 
         if (!(p.DashPattern is Drawing.DashPatterns.Solid))
         {
-          SetCachedDashProperties(p, out var cachedDashStyle, out var cachedDashPattern, out var cachedDashOffset);
+          var (gdiDashStyle, gdiDashPattern, gdiDashOffset) = GetGdiDashProperties(p);
 
-          if (cachedDashStyle != DashStyle.Solid)
-            pen.DashStyle = cachedDashStyle;
+          if (gdiDashStyle != DashStyle.Solid)
+            gdiPen.DashStyle = gdiDashStyle;
 
           if (!(p.DashCap == DashCap.Flat))
-            pen.DashCap = p.DashCap;
+            gdiPen.DashCap = p.DashCap;
 
-          if (0 != cachedDashOffset)
-            pen.DashOffset = cachedDashOffset;
+          if (0 != gdiDashOffset)
+            gdiPen.DashOffset = gdiDashOffset;
 
-          if (null != cachedDashPattern)
-            pen.DashPattern = cachedDashPattern;
+          if (null != gdiDashPattern)
+            gdiPen.DashPattern = gdiDashPattern;
         }
 
         if (!(p.EndCap is null) && !(p.EndCap is LineCaps.FlatCap))
         {
-          GdiLineCapBase.SetEndCap(pen, p.EndCap);
+          GdiLineCapBase.SetEndCap(gdiPen, p.EndCap);
         }
 
         if (p.LineJoin != LineJoin.Miter)
-          pen.LineJoin = p.LineJoin;
+          gdiPen.LineJoin = p.LineJoin;
 
         if (p.MiterLimit != 10)
-          pen.MiterLimit = (float)p.MiterLimit;
+          gdiPen.MiterLimit = (float)p.MiterLimit;
 
         if (!(p.StartCap is null) && !(p.StartCap is LineCaps.FlatCap))
         {
-          GdiLineCapBase.SetStartCap(pen, p.StartCap);
+          GdiLineCapBase.SetStartCap(gdiPen, p.StartCap);
         }
 
-        if (!(p.Transform is null || p.Transform.IsIdentity))
-          pen.Transform = p.Transform;
+        if (!(p.Transformation is null || p.Transformation.Matrix.IsIdentity))
+        {
+          var x = p.Transformation.Matrix;
+          gdiPen.Transform = new Matrix((float)x.M11, (float)x.M12, (float)x.M21, (float)x.M22, (float)x.M31, (float)x.M32);
+        }
 
-        return pen;
+        return gdiPen;
       }
+
+      private static (DashStyle GdiDashStyle, float[]? GdiDashPattern, float GdiDashOffset) GetGdiDashProperties(PenX p)
+      {
+        var value = p.DashPattern;
+
+        return value switch
+        {
+          Drawing.DashPatterns.Solid _ => (DashStyle.Solid, null, 0),
+          Drawing.DashPatterns.Dash _ => (DashStyle.Dash, null, 0),
+          Drawing.DashPatterns.Dot _ => (DashStyle.Dot, null, 0),
+          Drawing.DashPatterns.DashDot _ => (DashStyle.DashDot, null, 0),
+          Drawing.DashPatterns.DashDotDot _ => (DashStyle.DashDotDot, null, 0),
+          _ => (DashStyle.Custom, value.Select(x => (float)x).ToArray(), (float)value.DashOffset),
+        };
+      }
+
 
       private static System.Drawing.Color ToGdi(NamedColor color)
       {
         var c = color.Color;
         return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
       }
-
-      private static Color GetColor1(BrushX x)
-      {
-        return x.ExchangeColors ? ToGdi(x.BackColor) : ToGdi(x.Color);
-      }
-
-      private static Color GetColor2(BrushX x)
-      {
-        return x.ExchangeColors ? ToGdi(x.Color) : ToGdi(x.BackColor);
-      }
-
-      private static Bitmap GetDefaultTextureBitmap()
-      {
-        var result = new Bitmap(3, 3, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-        result.SetPixel(1, 1, System.Drawing.Color.Black);
-        return result;
-      }
     }
-
   }
 
 

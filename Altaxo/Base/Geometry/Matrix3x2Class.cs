@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Geometry
 {
@@ -42,6 +43,36 @@ namespace Altaxo.Geometry
     /// The wrapped matrix.
     /// </value>
     public Matrix3x2 Matrix { get; }
+
+    #region Serialization
+
+    [Serialization.Xml.XmlSerializationSurrogateFor(typeof(Matrix3x2Class), 0)]
+    private class XmlSerializationSurrogate4 : Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object o, IXmlSerializationInfo info)
+      {
+        var s = (Matrix3x2Class)o;
+        info.AddValue("M11", s.Matrix.M11);
+        info.AddValue("M12", s.Matrix.M12);
+        info.AddValue("M21", s.Matrix.M21);
+        info.AddValue("M22", s.Matrix.M22);
+        info.AddValue("M31", s.Matrix.M31);
+        info.AddValue("M32", s.Matrix.M32);
+      }
+
+      public object Deserialize(object o, IXmlDeserializationInfo info, object parentobject)
+      {
+        var m11 = info.GetDouble("M11");
+        var m12 = info.GetDouble("M12");
+        var m21 = info.GetDouble("M21");
+        var m22 = info.GetDouble("M22");
+        var m31 = info.GetDouble("M31");
+        var m32 = info.GetDouble("M32");
+        return new Matrix3x2Class(m11, m12, m21, m22, m31, m32);
+      }
+    }
+
+    #endregion Serialization
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Matrix3x2Class"/> class with the identity transformation.

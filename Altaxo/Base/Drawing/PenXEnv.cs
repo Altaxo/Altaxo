@@ -25,6 +25,8 @@
 using System;
 using Altaxo.Geometry;
 
+#nullable enable
+
 namespace Altaxo.Drawing
 {
   /// <summary>
@@ -57,7 +59,8 @@ namespace Altaxo.Drawing
     /// <param name="effectiveMaximumResolutionDpi">The effective maximum resolution in dots per inch. Important for repeateable texture brushes only.</param>
     public PenXEnv(PenX penX, RectangleD2D boundingRectangle, double effectiveMaximumResolutionDpi)
     {
-      PenX = penX;
+      PenX = penX ?? throw new ArgumentNullException(nameof(penX));
+
       BrushXEnv = new BrushXEnv(penX.Brush, boundingRectangle, effectiveMaximumResolutionDpi);
       unchecked
       {

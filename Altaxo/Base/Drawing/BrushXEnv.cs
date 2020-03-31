@@ -25,6 +25,8 @@
 using System;
 using Altaxo.Geometry;
 
+#nullable enable
+
 namespace Altaxo.Drawing
 {
   /// <summary>
@@ -58,7 +60,7 @@ namespace Altaxo.Drawing
     /// <param name="effectiveMaximumResolutionDpi">The effective maximum resolution in dots per inch. Important for repeateable texture brushes only.</param>
     public BrushXEnv(BrushX brushX, RectangleD2D boundingRectangle, double effectiveMaximumResolutionDpi)
     {
-      BrushX = brushX;
+      BrushX = brushX ?? throw new ArgumentNullException(nameof(brushX));
 
       // avoid keys with different hashes but the same outcome. For example, for a SolidBrush, the boundingRectangle is meaningless, so set it to Empty.
       if (brushX.BrushType == BrushType.SolidBrush)

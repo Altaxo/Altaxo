@@ -30,6 +30,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Altaxo.Drawing;
 using Altaxo.Drawing.DashPatternManagement;
+using Altaxo.Geometry;
 using Altaxo.Main;
 using Altaxo.Main.Services;
 using NUnit.Framework;
@@ -82,8 +83,8 @@ namespace Altaxo.Drawing
       pen2 = new PenX(NamedColors.Green, 3.5).WithDashPattern(DashPatternListManager.Instance.BuiltinDefaultDashDot);
       yield return (pen1, pen2, "SolidPen_WithDashPattern");
 
-      pen1 = new PenX(NamedColors.Green, 3.5).WithTransform(new System.Drawing.Drawing2D.Matrix());
-      pen2 = new PenX(NamedColors.Green, 3.5).WithTransform(new System.Drawing.Drawing2D.Matrix());
+      pen1 = new PenX(NamedColors.Green, 3.5).WithTransformation(new Matrix3x2Class());
+      pen2 = new PenX(NamedColors.Green, 3.5).WithTransformation(new Matrix3x2Class());
       yield return (pen1, pen2, "SolidPen_WithTransform");
     }
 
