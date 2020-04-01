@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Altaxo.Drawing;
 using Altaxo.Text.Renderers.OpenXML;
 using Altaxo.Text.Renderers.OpenXML.Extensions;
 using Altaxo.Text.Renderers.OpenXML.Inlines;
@@ -128,7 +129,7 @@ namespace Altaxo.Text.Renderers
     /// <value>
     /// The local images of the rendered document.
     /// </value>
-    public IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> LocalImages { get; private set; }
+    public IReadOnlyDictionary<string, MemoryStreamImageProxy> LocalImages { get; private set; }
 
     /// <summary>
     /// Gets the image provider, responsible for rendering the graphs.
@@ -196,7 +197,7 @@ namespace Altaxo.Text.Renderers
     /// <param name="wordDocumentFileName">Full name of the word document file (should have .docx extension).</param>
     /// <param name="localImages">The local images of the text document.</param>
     /// <param name="textDocumentFolder">The folder of the text document (needed to resolve the graphs).</param>
-    public OpenXMLRenderer(string wordDocumentFileName, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages, string textDocumentFolder)
+    public OpenXMLRenderer(string wordDocumentFileName, IReadOnlyDictionary<string, MemoryStreamImageProxy> localImages, string textDocumentFolder)
     {
       WordDocumentFileName = wordDocumentFileName;
       LocalImages = localImages;

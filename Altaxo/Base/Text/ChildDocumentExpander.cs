@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Altaxo.Graph;
+using Altaxo.Drawing;
 using Altaxo.Main;
 using Markdig;
 using Markdig.Syntax;

@@ -36,7 +36,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   using Altaxo.Drawing;
   using Altaxo.Drawing.D3D;
   using Altaxo.Geometry;
-  using Altaxo.Graph;
   using Altaxo.Graph.Graph3D;
   using Altaxo.Graph.Graph3D.Camera;
   using Altaxo.Graph.Graph3D.GraphicsContext;
@@ -617,7 +616,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         if (img != null)
         {
           var size = (0.5 * ActiveLayer.Size).WithZ(0);
-          var item = new EmbeddedImageGraphic(PointD3D.Empty, size, SystemDrawingImageProxyExtensions.FromImage(img));
+          var item = new EmbeddedImageGraphic(PointD3D.Empty, size, Altaxo.Graph.Gdi.SystemDrawingImageProxyExtensions.GetImageProxyFromImage(img));
           ActiveLayer.GraphObjects.Add(item);
           return;
         }
@@ -628,7 +627,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         if (img != null)
         {
           var size = 0.5 * ActiveLayer.Size.WithZ(0);
-          var item = new EmbeddedImageGraphic(PointD3D.Empty, size, SystemDrawingImageProxyExtensions.FromImage(img));
+          var item = new EmbeddedImageGraphic(PointD3D.Empty, size, Altaxo.Graph.Gdi.SystemDrawingImageProxyExtensions.GetImageProxyFromImage(img));
           ActiveLayer.GraphObjects.Add(item);
           return;
         }

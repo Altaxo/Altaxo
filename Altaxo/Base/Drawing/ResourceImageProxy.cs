@@ -24,10 +24,11 @@
 
 using System;
 using System.IO;
-using Altaxo.Drawing;
 using Altaxo.Geometry;
 
-namespace Altaxo.Graph
+#nullable enable
+
+namespace Altaxo.Drawing
 {
   /// <summary>
   /// Holds an image, either from a resource or from a file stream or from the clipboard.
@@ -48,32 +49,36 @@ namespace Altaxo.Graph
     private VectorD2D? _imageSizePt;
 
     [NonSerialized]
-    private byte[] _streamBuffer;
+    private byte[]? _streamBuffer;
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ResourceImageProxy), 0)]
-    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    /// <summary>
+    /// 2020-04-01: moved to namespace Altaxo.Drawing
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ResourceImageProxy", 0)]
+    [Serialization.Xml.XmlSerializationSurrogateFor(typeof(ResourceImageProxy), 1)]
+    private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ResourceImageProxy)obj;
         info.AddValue("Url", s._url);
         info.AddValue("Name", s._name);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ResourceImageProxy s = SDeserialize(o, info, parent);
+        var s = SDeserialize(o, info, parent);
         return s;
       }
 
-      public virtual ResourceImageProxy SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual ResourceImageProxy SDeserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ResourceImageProxy s = null != o ? (ResourceImageProxy)o : new ResourceImageProxy();
-        s._url = info.GetString("Url");
-        s._name = info.GetString("Name");
-        return s;
+        var url = info.GetString("Url");
+        var name = info.GetString("Name");
+        return new ResourceImageProxy(url: url, name: name);
       }
     }
 
@@ -104,38 +109,33 @@ namespace Altaxo.Graph
       return _name;
     }
 
-    private ResourceImageProxy()
+    private ResourceImageProxy(string url, string name)
     {
+      _url = url;
+      _name = name;
     }
 
 
 
-    public static new ImageProxy FromResource(string fullpath)
+    public static new ImageProxy FromResource(string resourceKey)
     {
-      if (string.IsNullOrEmpty(fullpath))
+      if (string.IsNullOrEmpty(resourceKey))
         throw new ArgumentException("Path is null or empty");
 
-      var img = new ResourceImageProxy
-      {
-        _url = fullpath,
-        _name = System.IO.Path.GetFileName(fullpath)
-      };
-      return img;
+      var url = resourceKey;
+      var name = Path.GetFileName(resourceKey); // misuse GetFileName to get the last part of the resource key
+
+      return new ResourceImageProxy(url: url, name: name);
     }
 
-    public static ImageProxy FromResource(string name, string fullpath)
+    public static ImageProxy FromResource(string name, string resourceKey)
     {
       if (string.IsNullOrEmpty(name))
-        throw new ArgumentException("Name is null or empty");
-      if (string.IsNullOrEmpty(fullpath))
-        throw new ArgumentException("Path is null or empty");
+        throw new ArgumentNullException(name);
+      if (string.IsNullOrEmpty(resourceKey))
+        throw new ArgumentNullException(resourceKey);
 
-      var img = new ResourceImageProxy
-      {
-        _url = fullpath,
-        _name = name
-      };
-      return img;
+      return new ResourceImageProxy(url: resourceKey, name: name);
     }
 
     public override string Name { get { return _name; } }

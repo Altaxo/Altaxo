@@ -28,12 +28,14 @@ using System.Drawing.Drawing2D;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
 
+#nullable enable
+
 namespace Altaxo.Graph.Gdi.Shapes
 {
   [Serializable]
   public class EmbeddedImageGraphic : ImageGraphic
   {
-    protected ImageProxy _imageProxy;
+    protected ImageProxy? _imageProxy;
 
     #region Serialization
 
@@ -159,7 +161,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       return new EmbeddedImageGraphic(this);
     }
 
-    public ImageProxy Image
+    /// <summary>
+    /// Gets or sets the image.
+    /// </summary>
+    /// <value>
+    /// The image.
+    /// </value>
+    public ImageProxy? Image
     {
       get
       {
@@ -178,7 +186,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return _imageProxy is null ? new PointD2D(1, 1) : (PointD2D)_imageProxy.Size;
     }
 
-    public override Image GetImage()
+    public override Image? GetImage()
     {
       if (_imageProxy is { } imgproxy)
       {
@@ -196,9 +204,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       TransformGraphics(g);
 
-      Image img = GetImage();
-
-      if (null != img)
+      if (GetImage() is { } img)
       {
         var bounds = Bounds;
 

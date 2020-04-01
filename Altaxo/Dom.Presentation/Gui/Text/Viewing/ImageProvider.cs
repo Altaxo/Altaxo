@@ -32,6 +32,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Altaxo.Drawing;
 using Altaxo.Text;
 using Markdig.Renderers;
 
@@ -68,9 +69,9 @@ namespace Altaxo.Gui.Text.Viewing
     /// <summary>
     /// Gets or sets the collection of local images. Key is the unique name of the image, value is the image proxy.
     /// </summary>
-    public IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> LocalImages { get; protected set; }
+    public IReadOnlyDictionary<string, MemoryStreamImageProxy> LocalImages { get; protected set; }
 
-    public ImageProvider(string folder, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages)
+    public ImageProvider(string folder, IReadOnlyDictionary<string, MemoryStreamImageProxy> localImages)
     {
       if (!Altaxo.Main.ProjectFolder.IsValidFolderName(folder))
         throw new ArgumentOutOfRangeException(nameof(folder), "Is not a valid folder name");

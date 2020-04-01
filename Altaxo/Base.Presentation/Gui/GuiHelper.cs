@@ -38,6 +38,7 @@ using System.Xml;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui
 {
@@ -137,7 +138,7 @@ namespace Altaxo.Gui
             g.FillRectangle(brushGdi, 0, 0, xsize, ysize);
           }
         }
-        var stream = Altaxo.Graph.SystemDrawingImageProxyExtensions.ImageToStream(bmp, System.Drawing.Imaging.ImageFormat.Png);
+        var stream = SystemDrawingImageProxyExtensions.GetStreamFromImage(bmp, System.Drawing.Imaging.ImageFormat.Png);
         var decoder = System.Windows.Media.Imaging.BitmapDecoder.Create(stream, System.Windows.Media.Imaging.BitmapCreateOptions.None, System.Windows.Media.Imaging.BitmapCacheOption.Default);
         return decoder.Frames[0];
       }

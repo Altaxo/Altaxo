@@ -27,6 +27,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
+using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D.Shapes

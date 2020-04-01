@@ -25,15 +25,16 @@
 using System;
 using System.IO;
 using System.Text;
-using Altaxo.Drawing;
 using Altaxo.Geometry;
 
-namespace Altaxo.Graph
+#nullable enable
+
+namespace Altaxo.Drawing
 {
   /// <summary>
   /// Holds an image, either from a resource or from a file stream or from the clipboard.
   /// </summary>
-  /// <seealso cref="Drawing.ImageProxy" />
+  /// <seealso cref="ImageProxy" />
   [Serializable]
   public class MemoryStreamImageProxy : ImageProxy, Main.IImmutable
   {
@@ -60,14 +61,14 @@ namespace Altaxo.Graph
     private VectorD2D _imageResolutionDpi;
 
     // Static helpers
-    private static System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5CryptoServiceProvider.Create();
+    private static System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.MemoryStreamImageProxy", 0)]
-    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.MemoryStreamImageProxy", 0)]
+    private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -79,13 +80,13 @@ namespace Altaxo.Graph
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        MemoryStreamImageProxy s = SDeserialize(o, info, parent);
+        var s = SDeserialize(o, info, parent);
         return s;
       }
 
-      public virtual MemoryStreamImageProxy SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual MemoryStreamImageProxy SDeserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         var url = info.GetString("Url");
         var name = info.GetString("Name");
@@ -95,21 +96,22 @@ namespace Altaxo.Graph
 
         return new MemoryStreamImageProxy(
           stream: stream,
-          useStreamDirectly: true,
-          hash: hash,
-          extension: extension,
-          name: name,
-          url: url);
+            hash: hash,
+            extension: extension,
+            name: name,
+            url: url);
       }
     }
 
     /// <summary>
-    /// Extended 2018-03-27 with _extension;
+    /// 2018-03-27: Extended with _extension
+    /// 2020-04-01: Moved to namespace Altaxo.Drawing
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MemoryStreamImageProxy), 1)]
-    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.MemoryStreamImageProxy", 1)]
+    [Serialization.Xml.XmlSerializationSurrogateFor(typeof(MemoryStreamImageProxy), 2)]
+    private class XmlSerializationSurrogate1 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MemoryStreamImageProxy)obj;
         info.AddValue("Url", s.Url);
@@ -121,13 +123,13 @@ namespace Altaxo.Graph
         s_stream.Dispose();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        MemoryStreamImageProxy s = SDeserialize(o, info, parent);
+        var s = SDeserialize(o, info, parent);
         return s;
       }
 
-      public virtual MemoryStreamImageProxy SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual MemoryStreamImageProxy SDeserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         var url = info.GetString("Url");
         var name = info.GetString("Name");
@@ -137,11 +139,10 @@ namespace Altaxo.Graph
 
         return new MemoryStreamImageProxy(
           stream: stream,
-          useStreamDirectly: true,
-          hash: hash,
-          extension: extension,
-          name: name,
-          url: url);
+            hash: hash,
+            extension: extension,
+            name: name,
+            url: url);
       }
     }
 
@@ -152,11 +153,7 @@ namespace Altaxo.Graph
       return Name;
     }
 
-    private MemoryStreamImageProxy()
-    {
-    }
-
-    public MemoryStreamImageProxy(Stream stream, bool useStreamDirectly, string hash, string extension, string name, string url, VectorD2D? imageSizePoint = null, VectorD2D? imageSizePixel = null, VectorD2D? imageResolutionDpi = null)
+    public MemoryStreamImageProxy(Stream stream, string hash, string extension, string name, string url, VectorD2D? imageSizePoint = null, VectorD2D? imageSizePixel = null, VectorD2D? imageResolutionDpi = null)
     {
       if (stream is null)
         throw new ArgumentNullException(nameof(stream));
@@ -178,7 +175,11 @@ namespace Altaxo.Graph
         stream.Read(_streamBuffer, 0, _streamBuffer.Length);
       }
 
-      ContentHash = ComputeStreamHash(_streamBuffer);
+      if (string.IsNullOrEmpty(hash))
+        ContentHash = ComputeStreamHash(_streamBuffer);
+      else
+        ContentHash = hash;
+
       Extension = extension;
       Name = name;
       Url = url;
@@ -203,11 +204,10 @@ namespace Altaxo.Graph
 
       var img = new MemoryStreamImageProxy(
         stream,
-        useStreamDirectly: true,
-        hash: hash,
-        extension: System.IO.Path.GetExtension(fullpath),
-        name: System.IO.Path.GetFileName(fullpath),
-        url: fullpath
+          hash: hash,
+          extension: Path.GetExtension(fullpath),
+          name: Path.GetFileName(fullpath),
+          url: fullpath
         );
 
 
@@ -241,11 +241,10 @@ namespace Altaxo.Graph
 
       var img = new MemoryStreamImageProxy(
         stream: stream,
-        useStreamDirectly: true,
-        hash: ComputeStreamHash(stream),
-        extension: System.IO.Path.GetExtension(name),
-        name: name,
-        url: name);
+          hash: ComputeStreamHash(stream),
+          extension: Path.GetExtension(name),
+          name: name,
+          url: name);
 
       return img;
     }
@@ -259,7 +258,7 @@ namespace Altaxo.Graph
     public static string ComputeStreamHash(Stream stream)
     {
       stream.Seek(0, SeekOrigin.Begin);
-      byte[] hash = _md5.ComputeHash(stream);
+      var hash = _md5.ComputeHash(stream);
       stream.Seek(0, SeekOrigin.Begin);
       return HashBytesToString(hash);
     }
@@ -272,14 +271,14 @@ namespace Altaxo.Graph
     /// <returns>String with the MD5 hash of the stream.</returns>
     public static string ComputeStreamHash(byte[] buffer)
     {
-      byte[] hash = _md5.ComputeHash(buffer, 0, buffer.Length); ;
+      var hash = _md5.ComputeHash(buffer, 0, buffer.Length); ;
       return HashBytesToString(hash);
     }
 
     private static string HashBytesToString(byte[] hash)
     {
       var stb = new StringBuilder();
-      for (int i = 0; i < hash.Length; i++)
+      for (var i = 0; i < hash.Length; i++)
         stb.Append(hash[i].ToString("X2"));
       return stb.ToString();
     }

@@ -26,7 +26,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Altaxo.Geometry;
-using Altaxo.Graph;
+
+#nullable enable
 
 namespace Altaxo.Drawing
 {
@@ -47,10 +48,13 @@ namespace Altaxo.Drawing
     /// <returns>The size in points (1/72 inch), the size in pixels, as well as the horizontal and vertical resolution of the image).</returns>
     public static (VectorD2D SizePoint, VectorD2D SizePixel, VectorD2D Resolution) GetImageInformation(Stream str)
     {
+      if (str is null)
+        throw new ArgumentNullException(nameof(str));
+
       // Note that the function here uses the System.Drawing.Imaging library.
       // This can be replaced as needed by any other library.
 
-      System.Drawing.Image img = null;
+      System.Drawing.Image? img = null;
       try
       {
         str.Seek(0, SeekOrigin.Begin);

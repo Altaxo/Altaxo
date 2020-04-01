@@ -28,6 +28,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Drawing;
 
 namespace Altaxo.Text
 {
@@ -85,7 +86,7 @@ namespace Altaxo.Text
     /// <param name="altaxoFolderLocation">The folder location of the <see cref="TextDocument"/> It is used for searching graphs relative to that location.</param>
     /// <param name="localImages">The local images of the <see cref="TextDocument"/>.</param>
     /// <returns>A tuple of tree values. isStreamImage is true if the url could be resolved to an image. extension is the file extension of the image. errorMessage is unequal to null if an error has occured. In this case the content of <paramref name="stream"/> was not set.</returns>
-    public ImageRenderToStreamResult GetImageStream(System.IO.Stream stream, string url, double targetResolution, string altaxoFolderLocation, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages)
+    public ImageRenderToStreamResult GetImageStream(System.IO.Stream stream, string url, double targetResolution, string altaxoFolderLocation, IReadOnlyDictionary<string, MemoryStreamImageProxy> localImages)
     {
       if (url.StartsWith(ImagePretext.GraphRelativePathPretext))
       {

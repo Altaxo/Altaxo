@@ -28,6 +28,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Drawing;
 using Altaxo.Text.GuiModels;
 
 namespace Altaxo.Gui.Text.Viewing
@@ -46,7 +47,7 @@ namespace Altaxo.Gui.Text.Viewing
     /// </summary>
     /// <param name="documentName">The full name of the document.</param>
     /// <param name="localImages">The dictionary of local images.</param>
-    void SetDocumentNameAndLocalImages(string documentName, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages);
+    void SetDocumentNameAndLocalImages(string documentName, IReadOnlyDictionary<string, MemoryStreamImageProxy> localImages);
 
     string SourceText { get; set; }
 

@@ -25,7 +25,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Altaxo;
-using Altaxo.Graph;
+using Altaxo.Drawing;
 using Altaxo.Main.Services;
 using Altaxo.Text.Renderers;
 using Altaxo.Text.Renderers.Maml;

@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Drawing;
 using Altaxo.Main;
 using Altaxo.Main.Properties;
 
@@ -60,7 +61,7 @@ namespace Altaxo.Text
     /// Local images for this markdown, stored in a dictionary. The key is a Guid which is created when the image is pasted into the markdown document.
     /// The value is a memory stream image proxy.
     /// </summary>
-    private Dictionary<string, Altaxo.Graph.MemoryStreamImageProxy> _images;
+    private Dictionary<string, MemoryStreamImageProxy> _images;
 
     /// <summary>
     /// Gets or sets the collection of all referenced image Urls.
@@ -174,7 +175,7 @@ namespace Altaxo.Text
             info.OpenElement();
             {
               string key = info.GetString("Name");
-              var value = (Altaxo.Graph.MemoryStreamImageProxy)info.GetValue("Image", s);
+              var value = (MemoryStreamImageProxy)info.GetValue("Image", s);
               s._images.Add(key, value);
             }
             info.CloseElement();
@@ -200,7 +201,7 @@ namespace Altaxo.Text
     {
       _creationTime = _lastChangeTime = DateTime.UtcNow;
       _notes = new TextBackedConsole() { ParentObject = this };
-      _images = new Dictionary<string, Graph.MemoryStreamImageProxy>();
+      _images = new Dictionary<string, MemoryStreamImageProxy>();
     }
 
     /// <summary>
@@ -212,7 +213,7 @@ namespace Altaxo.Text
       using (var suppressToken = SuspendGetToken())
       {
         _creationTime = _lastChangeTime = DateTime.UtcNow;
-        _images = new Dictionary<string, Graph.MemoryStreamImageProxy>();
+        _images = new Dictionary<string, MemoryStreamImageProxy>();
         CopyFrom(from);
 
         suppressToken.ResumeSilently();
@@ -500,7 +501,7 @@ namespace Altaxo.Text
     /// Local images for this markdown, stored in a dictionary. The key is a Guid which is created when the image is pasted into the markdown document.
     /// The value is a memory stream image proxy.
     /// </summary>
-    public IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> Images
+    public IReadOnlyDictionary<string, MemoryStreamImageProxy> Images
     {
       get
       {
@@ -518,7 +519,7 @@ namespace Altaxo.Text
     /// <param name="image">The image.</param>
     /// <returns>The name of the image added.</returns>
     /// <exception cref="ArgumentNullException">image</exception>
-    public string AddImage(Altaxo.Graph.MemoryStreamImageProxy image)
+    public string AddImage(MemoryStreamImageProxy image)
     {
       if (null == image)
         throw new ArgumentNullException(nameof(image));

@@ -26,7 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Altaxo.Graph;
+using Altaxo.Drawing;
 using Altaxo.Gui;
 using Altaxo.Text.Renderers.Html;
 

@@ -28,7 +28,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Altaxo.Graph;
+using Altaxo.Drawing;
 using Altaxo.Gui;
 
 namespace Altaxo.Text

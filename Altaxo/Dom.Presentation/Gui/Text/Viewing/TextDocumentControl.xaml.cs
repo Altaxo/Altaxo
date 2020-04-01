@@ -36,6 +36,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Altaxo.Drawing;
 using Altaxo.Gui.Markdown;
 using Altaxo.Text.GuiModels;
 
@@ -76,7 +77,7 @@ namespace Altaxo.Gui.Text.Viewing
     public bool IsInInitializationMode { set { _guiEditor.IsInInitializationMode = value; } }
 
     /// <inheritdoc/>
-    public void SetDocumentNameAndLocalImages(string documentName, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages)
+    public void SetDocumentNameAndLocalImages(string documentName, IReadOnlyDictionary<string, MemoryStreamImageProxy> localImages)
     {
       _documentName = documentName;
       var folder = Altaxo.Main.ProjectFolder.GetFolderPart(_documentName);

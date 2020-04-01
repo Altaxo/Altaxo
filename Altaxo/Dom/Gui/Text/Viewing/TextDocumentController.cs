@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Altaxo.Graph;
+using Altaxo.Drawing;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
 using Altaxo.Text;
