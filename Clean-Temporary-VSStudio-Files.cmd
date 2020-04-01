@@ -63,17 +63,23 @@ rmdir /S /Q .\Altaxo\WorkbenchCore\bin
 rmdir /S /Q .\Content\obj
 rmdir /S /Q .\Content\bin
 
-rmdir /S /Q .\Libraries\AvalonDock\Xceed.Wpf.AvalonDock\obj
-rmdir /S /Q .\Libraries\AvalonDock\Xceed.Wpf.AvalonDock\bin
+rmdir /S /Q .\Libraries\AvalonDock\AvalonDock\obj
+rmdir /S /Q .\Libraries\AvalonDock\AvalonDock\bin
 
-rmdir /S /Q .\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.Aero\obj
-rmdir /S /Q .\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.Aero\bin
+rmdir /S /Q .\Libraries\AvalonDock\AvalonDock.Themes.Aero\obj
+rmdir /S /Q .\Libraries\AvalonDock\AvalonDock.Themes.Aero\bin
 
-rmdir /S /Q .\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.Metro\obj
-rmdir /S /Q .\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.Metro\bin
+rmdir /S /Q .\Libraries\AvalonDock\AvalonDock.Themes.Expression\obj
+rmdir /S /Q .\Libraries\AvalonDock\AvalonDock.Themes.Expression\bin
 
-rmdir /S /Q .\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.VS2010\obj
-rmdir /S /Q .\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.VS2010\bin
+rmdir /S /Q .\Libraries\AvalonDock\AvalonDock.Themes.Metro\obj
+rmdir /S /Q .\Libraries\AvalonDock\AvalonDock.Themes.Metro\bin
+
+rmdir /S /Q .\Libraries\AvalonDock\AvalonDock.Themes.VS2010\obj
+rmdir /S /Q .\Libraries\AvalonDock\AvalonDock.Themes.VS2010\bin
+
+rmdir /S /Q .\Libraries\AvalonDock\AvalonDock.Themes.VS2013\obj
+rmdir /S /Q .\Libraries\AvalonDock\AvalonDock.Themes.VS2013\bin
 
 rmdir /S /Q .\Libraries\ICSharpCode.AvalonEdit\obj
 rmdir /S /Q .\Libraries\ICSharpCode.AvalonEdit\bin
