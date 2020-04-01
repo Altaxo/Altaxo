@@ -172,12 +172,20 @@ namespace Altaxo.Drawing
     {
       if (_streamBuffer is null)
       {
-        var stream = Current.ResourceService.GetResourceStream(_url);
-        if (stream is { } _)
+        var imgObject = Current.ResourceService.GetImageResource(_url);
+        if (imgObject is null)
+          imgObject = Current.ResourceService.GetResourceStream(_url);
+
+        if (imgObject is Stream stream)
         {
           var streamBuffer = new byte[stream.Length];
           stream.Read(streamBuffer, 0, streamBuffer.Length);
           _streamBuffer ??= streamBuffer;
+          stream.Dispose();
+        }
+        else if (imgObject is byte[] buffer)
+        {
+          _streamBuffer = buffer;
         }
       }
     }
