@@ -94,6 +94,9 @@ namespace Altaxo.Drawing
         var stream = info.GetMemoryStream("Stream");
         var extension = ".png";
 
+        if (string.IsNullOrEmpty(name))
+          name = "Image"; // to prevent ArgumentNullExceptions
+
         return new MemoryStreamImageProxy(
           stream: stream,
             hash: hash,
