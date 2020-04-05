@@ -385,7 +385,10 @@ namespace Altaxo.Main.Services
               {
                 iconobj = resourceManger.GetObject(name);
               }
-              catch (Exception) { }
+              catch (Exception ex)
+              {
+                System.Diagnostics.Debug.WriteLine($"Exception in GetImageResource, Message: {ex.Message}");
+              }
 
               if (iconobj != null)
               {
