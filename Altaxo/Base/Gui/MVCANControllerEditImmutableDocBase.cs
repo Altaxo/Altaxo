@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,7 +36,7 @@ namespace Altaxo.Gui
   /// </summary>
   /// <typeparam name="TModel">The type of the document to edit.</typeparam>
   /// <typeparam name="TView">The type of the view.</typeparam>
-  public abstract class MVCANControllerEditImmutableDocBase<TModel, TView> : IMVCANController
+  public abstract class MVCANControllerEditImmutableDocBase<TModel, TView> : IMVCANController, INotifyPropertyChanged
     where TView : class
   {
     /// <summary>The document to edit. If <see cref="_useDocumentCopy"/> is true, this is a copy of the original document; otherwise, it is the original document itself.</summary>
@@ -52,6 +53,8 @@ namespace Altaxo.Gui
 
     /// <summary>Set to true if this controller is already disposed.</summary>
     private bool _isDisposed;
+
+    public event PropertyChangedEventHandler PropertyChanged;
 
     /// <summary>
     /// Enumerates the sub controllers. This function is called on <see cref="Dispose(bool)"/> of this controller to dispose the subcontrollers too.
@@ -126,6 +129,10 @@ namespace Altaxo.Gui
     /// </summary>
     protected virtual void AttachView()
     {
+      if (_view is IDataContextAwareView dcview)
+      {
+        dcview.DataContext = this;
+      }
     }
 
     /// <summary>
@@ -133,6 +140,15 @@ namespace Altaxo.Gui
     /// </summary>
     protected virtual void DetachView()
     {
+      if (_view is IDataContextAwareView dcview)
+      {
+        dcview.DataContext = null;
+      }
+    }
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     /// <summary>
