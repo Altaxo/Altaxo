@@ -219,4 +219,36 @@ namespace Altaxo.Main.Commands
       }
     }
   }
+
+  /// <summary>
+  /// This command opens Altaxo's installation directory in Windows explorer.
+  /// </summary>
+  public class OpenInstallationDirectory : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+
+      if (dir.ToLowerInvariant().EndsWith(@"\bin") || dir.ToLowerInvariant().EndsWith(@"\bin\"))
+        dir = dir.Substring(0, dir.Length - 4);
+
+
+      string args = "/e," + dir;
+
+      var processInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe", args)
+      {
+        CreateNoWindow = false,
+        WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal
+      };
+
+      try
+      {
+        var proc = System.Diagnostics.Process.Start(processInfo);
+      }
+      catch (Exception)
+      {
+      }
+    }
+  }
+
 }
