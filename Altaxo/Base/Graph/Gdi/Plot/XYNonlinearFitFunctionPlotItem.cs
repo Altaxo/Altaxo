@@ -33,6 +33,7 @@ namespace Altaxo.Graph.Gdi.Plot
 {
   using Altaxo.Calc.Regression.Nonlinear;
   using Altaxo.Data;
+  using Altaxo.Main;
   using Data;
   using Graph.Plot.Data;
   using Styles;
@@ -166,6 +167,12 @@ namespace Altaxo.Graph.Gdi.Plot
       {
         throw new InvalidOperationException("Data is read-only");
       }
+    }
+
+    public override void VisitDocumentReferences(DocNodeProxyReporter Report)
+    {
+      _plotData.VisitDocumentReferences(Report);
+      base.VisitDocumentReferences(Report);
     }
   }
 }

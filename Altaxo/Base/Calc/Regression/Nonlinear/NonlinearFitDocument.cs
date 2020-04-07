@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using Altaxo.Main;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -187,6 +188,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         yield return new Main.DocumentNodeAndName(_fitEnsemble, "FitEnsemble");
       }
+    }
+
+    /// <summary>
+    /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+    /// to change a plot so that the plot items refer to another table.
+    /// </summary>
+    /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    public virtual void VisitDocumentReferences(DocNodeProxyReporter Report)
+    {
+      _fitEnsemble?.VisitDocumentReferences(Report);
     }
 
     #endregion Document node functions

@@ -27,6 +27,7 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Plot.Data
 {
+  using Altaxo.Main;
   using Gdi.Plot.Data;
 
   #region XYFunctionPlotData
@@ -121,6 +122,8 @@ namespace Altaxo.Graph.Plot.Data
       if (null != _function && Function is Main.IDocumentLeafNode)
         yield return new Main.DocumentNodeAndName((Main.IDocumentLeafNode)_function, "Function");
     }
+
+
 
     public override string ToString()
     {

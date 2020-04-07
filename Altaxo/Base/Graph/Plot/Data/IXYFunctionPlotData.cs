@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Plot.Data
 {
@@ -45,5 +46,12 @@ namespace Altaxo.Graph.Plot.Data
     /// <param name="layer">The layer.</param>
     /// <returns></returns>
     Processed2DPlotData GetRangesAndPoints(Gdi.IPlotArea layer);
+
+    /// <summary>
+    /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+    /// to change a plot so that the plot items refer to another table.
+    /// </summary>
+    /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    void VisitDocumentReferences(DocNodeProxyReporter Report);
   }
 }

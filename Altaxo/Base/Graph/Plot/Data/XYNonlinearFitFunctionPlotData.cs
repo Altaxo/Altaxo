@@ -29,6 +29,7 @@ namespace Altaxo.Graph.Plot.Data
 {
   using Altaxo.Calc.Regression.Nonlinear;
   using Altaxo.Data;
+  using Altaxo.Main;
   using Gdi.Plot.Data;
 
   /// <summary>
@@ -150,6 +151,20 @@ namespace Altaxo.Graph.Plot.Data
       if (null != _fitDocument)
         yield return new Main.DocumentNodeAndName(_fitDocument, () => _fitDocument = null, "FitDocument");
     }
+
+
+
+    /// <summary>
+    /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+    /// to change a plot so that the plot items refer to another table.
+    /// </summary>
+    /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    public override void VisitDocumentReferences(DocNodeProxyReporter Report)
+    {
+      if (_fitDocument is { } fdoc)
+        fdoc.VisitDocumentReferences(Report);
+    }
+
 
     /// <summary>
     /// Gets a copy of the fit document.

@@ -29,6 +29,7 @@ using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
 using Altaxo.Graph.Plot.Data;
+using Altaxo.Main;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -883,6 +884,39 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       if (_fitFunction is Main.IDocumentLeafNode)
         yield return new Main.DocumentNodeAndName((Main.IDocumentLeafNode)_fitFunction, () => _fitFunction = null, "FitFunction");
+    }
+
+    /// <summary>
+    /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+    /// to change a plot so that the plot items refer to another table.
+    /// </summary>
+    /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    public virtual void VisitDocumentReferences(DocNodeProxyReporter Report)
+    {
+      if (_dataTable is { } _)
+        Report(_dataTable, this, nameof(DataTable));
+
+      {
+        if (_independentVariables is { } v)
+        {
+          for (int i = 0; i < v.Length; ++i)
+          {
+            if (v[i] is { } vv)
+              Report(vv, this, FormattableString.Invariant($"IndependentVariable{i}"));
+          }
+        }
+      }
+      {
+        if (_dependentVariables is { } v)
+        {
+          for (int i = 0; i < v.Length; ++i)
+          {
+            if (v[i] is { } vv)
+              Report(vv, this, FormattableString.Invariant($"DependentVariable{i}"));
+          }
+        }
+      }
+
     }
 
     #endregion Document node functions
