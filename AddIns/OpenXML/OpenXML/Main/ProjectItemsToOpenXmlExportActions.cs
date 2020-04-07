@@ -64,7 +64,7 @@ namespace Altaxo.Main
 
 
       var mrData = new MultiRenameData();
-      MultiRenameDocuments.RegisterCommonDocumentShortcuts(mrData);
+      MultiRenameDocuments.RegisterCommonDocumentShortcutsForFileOperations(mrData);
       mrData.RegisterStringShortcut(
         "E",
         (o, i) =>
@@ -85,7 +85,7 @@ namespace Altaxo.Main
 
       mrData.AddObjectsToRename(documents);
 
-      mrData.RegisterListColumn("FullName", MultiRenameDocuments.GetFullName);
+      mrData.RegisterListColumn("FullName", MultiRenameDocuments.GetFullNameWithAugmentingProjectFolderItems);
       mrData.RegisterListColumn("File name", null);
       mrData.RegisterListColumn("Creation date", MultiRenameDocuments.GetCreationDateString);
 

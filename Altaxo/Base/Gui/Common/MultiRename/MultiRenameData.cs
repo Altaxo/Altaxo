@@ -274,8 +274,8 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <param name="descriptionText">Some text that describes the shortcut.</param>
     public void RegisterStringShortcut(string shortcut, Func<object, int, string> valueGetter, string descriptionText)
     {
-      _shortcutToType.Add(shortcut, new ShortcutInformation(ShortcutType.String, descriptionText));
-      _stringShortcutToGetter.Add(shortcut, valueGetter);
+      _shortcutToType[shortcut] = new ShortcutInformation(ShortcutType.String, descriptionText);
+      _stringShortcutToGetter[shortcut] = valueGetter;
     }
 
     /// <summary>Registers a DateTime shortcut.</summary>

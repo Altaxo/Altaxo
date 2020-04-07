@@ -102,15 +102,15 @@ namespace Altaxo.Graph
     /// <param name="documents">List with graph documents to export.</param>
     public static void ShowExportMultipleGraphsDialog(IEnumerable<Graph.GraphDocumentBase> documents)
     {
-      var mrData = new MultiRenameData();
-      MultiRenameDocuments.RegisterCommonDocumentShortcuts(mrData);
+      var mrData = new MultiRenameData() { IsRenameOperationFileSystemBased = true };
+      MultiRenameDocuments.RegisterCommonDocumentShortcutsForFileOperations(mrData);
       mrData.RegisterStringShortcut("E", (o, i) => _graphExportOptionsToFile.GetDefaultFileNameExtension(), "File extension (depends on the image type that was chosen before");
 
       mrData.RegisterRenameActionHandler(DoExportGraphs);
 
       mrData.AddObjectsToRename(documents);
 
-      mrData.RegisterListColumn("FullName", MultiRenameDocuments.GetFullName);
+      mrData.RegisterListColumn("FullName", MultiRenameDocuments.GetFullNameWithAugmentingProjectFolderItems);
       mrData.RegisterListColumn("File name", null);
       mrData.RegisterListColumn("Creation date", MultiRenameDocuments.GetCreationDateString);
 

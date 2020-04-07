@@ -69,15 +69,15 @@ namespace Altaxo.Data
       if (documents is null)
         throw new ArgumentNullException(nameof(documents));
 
-      var mrData = new MultiRenameData();
-      MultiRenameDocuments.RegisterCommonDocumentShortcuts(mrData);
+      var mrData = new MultiRenameData() { IsRenameOperationFileSystemBased = true };
+      MultiRenameDocuments.RegisterCommonDocumentShortcutsForFileOperations(mrData);
       mrData.RegisterStringShortcut("E", (o, i) => ".xlsx", "File extension (*.xslx)");
 
       mrData.RegisterRenameActionHandler(DoExportExcelFiles);
 
       mrData.AddObjectsToRename(documents);
 
-      mrData.RegisterListColumn("FullName", MultiRenameDocuments.GetFullName);
+      mrData.RegisterListColumn("FullName", MultiRenameDocuments.GetFullNameWithAugmentingProjectFolderItems);
       mrData.RegisterListColumn("File name", null);
       mrData.RegisterListColumn("Creation date", MultiRenameDocuments.GetCreationDateString);
 
