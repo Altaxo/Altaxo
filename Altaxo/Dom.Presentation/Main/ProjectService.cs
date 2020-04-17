@@ -515,6 +515,14 @@ namespace Altaxo.Main
       SelectFirstAvailableView();
     }
 
+    public override void ShowDocumentView(object document)
+    {
+      if (document is IProjectItem projectItem && OpenOrCreateViewContentForDocument(projectItem) is { } _)
+        return;
+      else
+        base.ShowDocumentView(document);
+    }
+
     /// <summary>
     /// Opens a view that shows the <paramref name="document"/>. If no view for the document can be found,
     /// a new default view is created.

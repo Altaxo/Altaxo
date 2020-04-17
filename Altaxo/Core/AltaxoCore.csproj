@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>

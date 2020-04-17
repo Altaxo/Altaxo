@@ -2,6 +2,7 @@
   <PropertyGroup>
     <AssemblyName>MLNETAddin</AssemblyName>
     <TargetFramework>net471</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>

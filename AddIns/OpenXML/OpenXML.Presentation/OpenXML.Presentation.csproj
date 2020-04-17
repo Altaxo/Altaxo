@@ -2,6 +2,7 @@
   <PropertyGroup>
     <AssemblyName>OpenXMLAddin.Presentation</AssemblyName>
     <TargetFramework>net471</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <UseWPF>true</UseWPF>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
