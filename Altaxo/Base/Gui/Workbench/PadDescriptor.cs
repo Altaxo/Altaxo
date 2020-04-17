@@ -230,7 +230,7 @@ namespace Altaxo.Gui.Workbench
         }
         catch (Exception ex)
         {
-          MessageService.ShowException(ex, "Error creating pad instance");
+          MessageService.ShowException(ex, $"Error creating pad instance of class: {Class}");
         }
       }
     }

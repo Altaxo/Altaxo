@@ -131,5 +131,13 @@ namespace Altaxo.Gui
     public bool OverwritePrompt { get; set; }
 
     public bool AddExtension { get; set; }
+
+    /// <summary>
+    /// Gets or sets the default extension
+    /// </summary>
+    /// <value>
+    /// The default extension.
+    /// </value>
+    public string DefaultExt { get; set; }
   }
 }

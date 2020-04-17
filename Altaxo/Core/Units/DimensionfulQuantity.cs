@@ -34,7 +34,7 @@ namespace Altaxo.Units
   /// Please note that two <see cref="DimensionfulQuantity"/> instances are considered equal only if (i) the units are equal, (ii) the prefixes are equal, and (iii) the values are equal.
   /// If you want to compare the SI values, please compare the <see cref="AsValueInSIUnits"/> values.
   /// </summary>
-  public struct DimensionfulQuantity : IComparable<DimensionfulQuantity>
+  public struct DimensionfulQuantity : IComparable<DimensionfulQuantity>, IFormattable
   {
     private double _value;
     private SIPrefix _prefix;
@@ -541,6 +541,14 @@ namespace Altaxo.Units
         return double.NaN.ToString();
 
       return string.Format("{0} {1}{2}", _value, Prefix.ShortCut, Unit.ShortCut);
+    }
+
+    public string ToString(string format, IFormatProvider formatProvider)
+    {
+      if (IsEmpty)
+        return double.NaN.ToString(formatProvider);
+
+      return string.Format(formatProvider, "{0} {1}{2}", _value, Prefix.ShortCut, Unit.ShortCut);
     }
   }
 }

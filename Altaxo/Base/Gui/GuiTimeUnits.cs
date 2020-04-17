@@ -40,7 +40,7 @@ namespace Altaxo.Gui
     {
       var instance = new List<IUnit>
       {
-        new UnitWithLimitedPrefixes(Second.Instance, new SIPrefix[] { SIPrefix.Femto, SIPrefix.Pico, SIPrefix.Nano, SIPrefix.Micro, SIPrefix.Milli }),
+        new UnitWithLimitedPrefixes(Second.Instance, new SIPrefix[] { SIPrefix.Femto, SIPrefix.Pico, SIPrefix.Nano, SIPrefix.Micro, SIPrefix.Milli, SIPrefix.None }),
         Minute.Instance,
         Hour.Instance,
         Day.Instance,

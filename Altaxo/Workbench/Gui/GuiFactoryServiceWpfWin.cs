@@ -372,7 +372,9 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
         dlg.InitialDirectory = options.InitialDirectory;
       dlg.RestoreDirectory = options.RestoreDirectory;
       dlg.OverwritePrompt = options.OverwritePrompt;
+      dlg.DefaultExt = options.DefaultExt;
       dlg.AddExtension = options.AddExtension;
+      dlg.FileName = options.FileName;
 
       if (true == dlg.ShowDialog(TopmostModalWindow))
       {
