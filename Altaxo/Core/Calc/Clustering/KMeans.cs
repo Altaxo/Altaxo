@@ -27,6 +27,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace Altaxo.Calc.Clustering
 {
   /// <summary>
@@ -183,6 +185,12 @@ namespace Altaxo.Calc.Clustering
       _isDistanceFunctionSquareOfDistance = isDistanceFunctionReturningSquareOfDistance;
       _sumUpFunction = sumUpFunction ?? throw new ArgumentNullException(nameof(sumUpFunction));
       _divideFunction = divideFunction ?? throw new ArgumentNullException(nameof(divideFunction));
+
+      _pointsData = new TData[0];
+      _pointsClusterIdx = new int[0];
+      _clusterMeans = new TDataSum[0];
+      _clusterCounts = new int[0];
+
     }
 
     /// <summary>

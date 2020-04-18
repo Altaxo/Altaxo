@@ -140,7 +140,7 @@ namespace Altaxo.Collections
       }
       else
       {
-        value = default(TValue);
+        value = default;
         return false;
       }
     }

@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#nullable enable
+
 namespace Altaxo.Collections
 {
   /// <summary>
@@ -64,7 +66,7 @@ namespace Altaxo.Collections
     private int _indexCacheInvalidFrom;
 
     /// <summary>Permanent proxy for the range collection</summary>
-    private RangeCollectionProxy _collectionOfRanges;
+    private RangeCollectionProxy? _collectionOfRanges;
 
     public AscendingIntegerRangeCollection()
     {
@@ -96,7 +98,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        if (null == _collectionOfRanges)
+        if (_collectionOfRanges is null)
           _collectionOfRanges = new RangeCollectionProxy(this);
         return _collectionOfRanges;
       }
@@ -157,7 +159,7 @@ namespace Altaxo.Collections
     /// <returns><c>True</c> if the collection contains the element, otherwise <c>false</c>.</returns>
     public bool Contains(int element)
     {
-      return Contains(element, out var rangeIndex);
+      return Contains(element, out var _);
     }
 
     /// <summary>
@@ -211,8 +213,6 @@ namespace Altaxo.Collections
     public IEnumerator<int> GetEnumerator()
     {
       var ranges = _rangeArray;
-      var len = _rangeArrayCount;
-
       for (int i = 0; i < _rangeArrayCount; i += 2)
       {
         var to = ranges[i + 1];
@@ -259,7 +259,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Gets the <see cref="System.Int32"/> element with the specified index.
+    /// Gets the <see cref="int"/> element with the specified index.
     /// </summary>
     /// <value>The element.</value>
     /// <param name="idx">The index of the element.</param>
