@@ -28,6 +28,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace Altaxo.Units.ElectricFieldStrength
 {
   [UnitDescription("Electric field strength", 1, 1, -3, -1, 0, 0, 0)]

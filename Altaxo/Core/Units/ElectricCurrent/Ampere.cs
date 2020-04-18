@@ -28,6 +28,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace Altaxo.Units.ElectricCurrent
 {
   [UnitDescription("Electric current", 0, 0, 0, 1, 0, 0, 0)]

@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#nullable enable
+
 namespace Altaxo.Units
 {
   /// <summary>
@@ -69,8 +71,8 @@ namespace Altaxo.Units
     /// <param name="referenceQuantity">The reference quantity.</param>
     public ChangeableRelativeUnit(string name, string shortcut, double divider, DimensionfulQuantity referenceQuantity)
     {
-      _name = name;
-      _shortCut = shortcut;
+      _name = name ?? throw new ArgumentNullException(nameof(name));
+      _shortCut = shortcut ?? throw new ArgumentNullException(nameof(shortcut));
       _divider = divider;
       _referenceQuantity = referenceQuantity;
     }

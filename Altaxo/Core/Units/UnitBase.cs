@@ -28,6 +28,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace Altaxo.Units
 {
   /// <summary>
@@ -38,26 +40,17 @@ namespace Altaxo.Units
   {
     public bool Equals(SIUnit obj)
     {
-      if (null == obj)
-        return false;
-
-      return obj.Equals(this);
+      return obj is null ? false : obj.Equals(this);
     }
 
     public bool Equals(IUnit obj)
     {
-      if (null == obj)
-        return false;
-
-      return GetType() == obj.GetType();
+      return obj is null ? false : GetType() == obj.GetType();
     }
 
     public override bool Equals(object obj)
     {
-      if (!(obj is IUnit other))
-        return false;
-
-      return GetType() == obj.GetType();
+      return obj is IUnit other ? GetType() == other.GetType() : false;
     }
 
     public override int GetHashCode()
@@ -67,7 +60,12 @@ namespace Altaxo.Units
 
     public static bool operator ==(UnitBase a, IUnit b)
     {
-      return a?.Equals(b) ?? false;
+      if (a is { } aa)
+        return aa.Equals(b);
+      else if (b is { } bb)
+        return b.Equals(a);
+      else
+        return true; // null==null
     }
 
     public static bool operator !=(UnitBase a, IUnit b)

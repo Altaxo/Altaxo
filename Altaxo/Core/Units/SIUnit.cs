@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#nullable enable
+
 namespace Altaxo.Units
 {
   /// <summary>
@@ -41,11 +43,6 @@ namespace Altaxo.Units
     private sbyte _kelvin;
     private sbyte _mole;
     private sbyte _candela;
-
-    /// <summary>
-    /// Cache for unit names. Here the units, as specified by their individual powers of basic units, act as keys, whereas the commonly used name of this units are the values.
-    /// </summary>
-    private static Dictionary<SIUnit, string> _specialNames = new Dictionary<SIUnit, string>();
 
     /// <summary>
     /// Constructor of the SI unit.
@@ -98,30 +95,31 @@ namespace Altaxo.Units
       }
     }
 
-    /// <summary>Compares this unit with another unit <paramref name="b"/> and returns <c>true</c> when both are equal. Two SI units are considered equal if the exponents
+    /// <summary>Compares this unit with another unit <paramref name="other"/> and returns <c>true</c> when both are equal. Two SI units are considered equal if the exponents
     /// are equal, independently of the unit name. This means e.g. that J (Joule), Nm, and Ws are considered equal. If you want to compare the name too, use <see cref="Equals(IUnit)"/></summary>.
-    /// <param name="b">The other unit.</param>
+    /// <param name="other">The other unit.</param>
     /// <returns><c>True</c> when both units are equal.</returns>
-    public bool Equals(SIUnit b)
+    public bool Equals(SIUnit? other)
     {
-      return null == b ? false :
+      return other is { } b ?
       _metre == b._metre &&
       _kilogram == b._kilogram &&
       _second == b._second &&
       _ampere == b._ampere &&
       _kelvin == b._kelvin &&
       _mole == b._mole &&
-      _candela == b._candela;
+      _candela == b._candela :
+      false;
     }
 
-    public static bool operator ==(SIUnit a, SIUnit b)
+    public static bool operator ==(SIUnit? a, SIUnit? b)
     {
-      return a?.Equals(b) ?? false;
+      return a is { } aa ? aa.Equals(b) : b is { } bb ? bb.Equals(a) : true;
     }
 
     public static bool operator ==(SIUnit a, IUnit b)
     {
-      return a?.Equals(b) ?? false;
+      return a is { } aa ? aa.Equals(b) : b is { } bb ? bb.Equals(a) : true;
     }
 
     public static bool operator !=(SIUnit a, SIUnit b)
@@ -138,23 +136,17 @@ namespace Altaxo.Units
     /// To be equal, the other unit has to be (i) a SI unit, and (ii) the same name. Thus, J (Joule) and Nm (Newtonmeter) are not considered equal.</summary>
     /// <param name="obj">The other unit.</param>
     /// <returns><c>True</c> when both units are equal.</returns>
-    public bool Equals(IUnit obj)
+    public bool Equals(IUnit? obj)
     {
-      if (!(obj is SIUnit other))
-        return false;
-
-      return GetType() == other.GetType();
+      return obj is { } other ? GetType() == other.GetType() : false;
     }
 
-    /// <summary>Determines whether the specified <see cref="System.Object"/> is equal to this instance.</summary>
-    /// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
-    /// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.</returns>
+    /// <summary>Determines whether the specified <see cref="object"/> is equal to this instance.</summary>
+    /// <param name="obj">The <see cref="object"/> to compare with this instance.</param>
+    /// <returns><c>true</c> if the specified <see cref="object"/> is equal to this instance; otherwise, <c>false</c>.</returns>
     public override bool Equals(object obj)
     {
-      if (!(obj is IUnit other))
-        return false;
-
-      return Equals(other);
+      return obj is IUnit other ? Equals(other) : false;
     }
 
     /// <summary>Returns a hash code for this instance.</summary>

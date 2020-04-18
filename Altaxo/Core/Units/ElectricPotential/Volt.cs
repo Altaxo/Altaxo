@@ -28,6 +28,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace Altaxo.Units.ElectricPotential
 {
   [UnitDescription("Electric potential", 2, 1, -3, -1, 0, 0, 0)]

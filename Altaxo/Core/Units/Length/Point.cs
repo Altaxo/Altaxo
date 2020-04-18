@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#nullable enable
+
 namespace Altaxo.Units.Length
 {
   [UnitDescription("Length", 1, 0, 0, 0, 0, 0, 0)]

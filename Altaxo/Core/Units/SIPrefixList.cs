@@ -28,13 +28,15 @@ using System.Linq;
 using System.Text;
 using Altaxo.Calc;
 
+#nullable enable
+
 namespace Altaxo.Units
 {
   public interface ISIPrefixList : IEnumerable<SIPrefix>
   {
     int Count { get; }
 
-    SIPrefix TryGetPrefixFromShortCut(string shortCut);
+    SIPrefix? TryGetPrefixFromShortCut(string shortCut);
 
     bool ContainsNonePrefixOnly { get; }
   }
@@ -47,6 +49,9 @@ namespace Altaxo.Units
 
     public SIPrefixList(IEnumerable<SIPrefix> from)
     {
+      if (from is null)
+        throw new ArgumentNullException(nameof(from));
+
       var prefixes = from.ToArray();
       Array.Sort(prefixes, (a, b) => Comparer<int>.Default.Compare(a.Exponent, b.Exponent));
 
@@ -76,12 +81,12 @@ namespace Altaxo.Units
       }
     }
 
-    public SIPrefix TryGetPrefixFromShortCut(string shortCut)
+    public SIPrefix? TryGetPrefixFromShortCut(string shortCut)
     {
-      if (_shortCutDictionary.TryGetValue(shortCut, out var result))
-        return result;
-      else
-        return null;
+      if (string.IsNullOrEmpty(shortCut))
+        throw new ArgumentNullException(nameof(shortCut));
+
+      return _shortCutDictionary.TryGetValue(shortCut, out var result) ? result : null;
     }
 
     public (SIPrefix prefix, double remainingFactor) GetPrefixFromExponent(int exponent)

@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#nullable enable
+
 namespace Altaxo.Units
 {
   /// <summary>
@@ -43,7 +45,7 @@ namespace Altaxo.Units
     /// <summary>Creates a dimensionless quantity with the provided value.</summary>
     /// <param name="value">Value.</param>
     public DimensionfulQuantity(double value)
-        : this(value, null, Altaxo.Units.Dimensionless.Unity.Instance)
+        : this(value, SIPrefix.None, Altaxo.Units.Dimensionless.Unity.Instance)
     {
     }
 
@@ -51,7 +53,7 @@ namespace Altaxo.Units
     /// <param name="value">The value of the created quantity.</param>
     /// <param name="unit">The unit of the created quantity.</param>
     public DimensionfulQuantity(double value, IUnit unit)
-        : this(value, null, unit)
+        : this(value, SIPrefix.None, unit)
     {
     }
 
@@ -61,8 +63,9 @@ namespace Altaxo.Units
     /// <param name="unit">The unit of the created quantity.</param>
     public DimensionfulQuantity(double value, SIPrefix prefix, IUnit unit)
     {
-      if (null == unit)
+      if (unit is null)
         throw new ArgumentNullException(nameof(unit));
+      prefix ??= SIPrefix.None;
 
       if (unit is IPrefixedUnit punit)
       {
@@ -89,6 +92,9 @@ namespace Altaxo.Units
     /// <param name="prefixedUnit">The prefixed unit of the created quanity.</param>
     public DimensionfulQuantity(double value, IPrefixedUnit prefixedUnit)
     {
+      if (prefixedUnit is null)
+        throw new ArgumentNullException(nameof(prefixedUnit));
+
       _value = value;
       _prefix = prefixedUnit.Prefix;
       _unit = prefixedUnit.Unit;
@@ -185,9 +191,9 @@ namespace Altaxo.Units
     {
       if (double.IsNaN(_value))
         return _value;
-      if (null == unit)
-        throw new ArgumentNullException("unit");
-      if (null == _unit)
+      if (unit is null)
+        throw new ArgumentNullException(nameof(unit));
+      if (_unit is null)
         throw new InvalidOperationException("This instance is empty, i.e. the unit of this quantity is set to null.");
       if (unit.SIUnit != _unit.SIUnit)
         throw new ArgumentException(string.Format("Provided unit ({0}) is incompatible with this unit ({1})", unit.SIUnit, _unit));
@@ -203,14 +209,14 @@ namespace Altaxo.Units
     {
       if (double.IsNaN(_value))
         return _value;
-      if (null == unit)
-        throw new ArgumentNullException("unit");
-      if (null == prefix)
-        throw new ArgumentNullException("prefix");
-      if (null == _unit)
+      if (unit is null)
+        throw new ArgumentNullException(nameof(unit));
+      if (prefix is null)
+        throw new ArgumentNullException(nameof(prefix));
+      if (_unit is null)
         throw new InvalidOperationException("This instance is empty");
       if (unit.SIUnit != _unit.SIUnit)
-        throw new ArgumentException(string.Format("Provided unit ({0}) is incompatible with this unit ({1})", unit.SIUnit, _unit));
+        throw new ArgumentException($"Provided unit ({unit.SIUnit}) is incompatible with this unit ({_unit})");
 
       return prefix.FromSIUnit(unit.FromSIUnit(AsValueInSIUnits));
     }
@@ -228,7 +234,7 @@ namespace Altaxo.Units
     {
       get
       {
-        return new DimensionfulQuantity(AsValueInSIUnits, _unit == null ? null : _unit.SIUnit);
+        return new DimensionfulQuantity(AsValueInSIUnits, _unit is { } unit ? unit.SIUnit : throw new InvalidOperationException("Unit is empty"));
       }
     }
 
@@ -237,7 +243,7 @@ namespace Altaxo.Units
     /// <returns>New instance of a quantity in the provided unit (without prefix).</returns>
     public DimensionfulQuantity AsQuantityIn(IUnit unit)
     {
-      return new DimensionfulQuantity(AsValueIn(unit), null, unit);
+      return new DimensionfulQuantity(AsValueIn(unit), SIPrefix.None, unit);
     }
 
     /// <summary>Converts this quantity to another quantity in the provided unit, with the provided prefix.</summary>
@@ -263,7 +269,7 @@ namespace Altaxo.Units
     public int CompareTo(DimensionfulQuantity other)
     {
       if (null == _unit || null == other._unit || _unit.SIUnit != other._unit.SIUnit)
-        throw new ArgumentException(string.Format("Incompatible units in comparison of a quantity in {0} with a quantity in {1}", _unit.Name, other._unit.Name));
+        throw new ArgumentException($"Incompatible units in comparison of a quantity in {_unit?.Name} with a quantity in {other._unit?.Name}");
 
       double thisval = AsValueIn(_unit.SIUnit);
       double otherval = other.AsValueIn(_unit.SIUnit);

@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#nullable enable
+
 namespace Altaxo.Units.Mass
 {
   [UnitDescription("Mass", 0, 1, 0, 0, 0, 0, 0)]

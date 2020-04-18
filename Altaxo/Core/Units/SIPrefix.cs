@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#nullable enable
+
 namespace Altaxo.Units
 {
   public class SIPrefix : IUnit, IEquatable<SIPrefix>, IComparable<SIPrefix>
@@ -211,8 +213,11 @@ namespace Altaxo.Units
       }
     }
 
-    public static SIPrefix TryGetPrefixFromShortcut(string shortcut)
+    public static SIPrefix? TryGetPrefixFromShortcut(string shortcut)
     {
+      if (string.IsNullOrEmpty(shortcut))
+        throw new ArgumentNullException(nameof(shortcut));
+
       return _allPrefixes.TryGetPrefixFromShortCut(shortcut);
     }
 
@@ -225,6 +230,10 @@ namespace Altaxo.Units
     /// <param name="exponent">The exponent associated with the prefix.</param>
     public SIPrefix(string name, string shortCut, int exponent)
     {
+      if (string.IsNullOrEmpty(name))
+        throw new ArgumentNullException(nameof(name));
+      if (string.IsNullOrEmpty(shortCut))
+        throw new ArgumentNullException(nameof(shortCut));
       _name = name;
       _shortCut = shortCut;
       _exponent = exponent;
@@ -285,14 +294,12 @@ namespace Altaxo.Units
 
     public bool Equals(SIPrefix other)
     {
-      return other == null ? false :
-          _exponent == other._exponent;
+      return other is { } b ? _exponent == b._exponent : false;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var other = obj as SIPrefix;
-      return other == null ? false : Equals(other);
+      return (obj is SIPrefix other) ? Equals(other) : false;
     }
 
     public override int GetHashCode()
@@ -302,10 +309,10 @@ namespace Altaxo.Units
 
     public int CompareTo(SIPrefix other)
     {
-      if (_exponent == other._exponent)
-        return 0;
-      else
-        return _exponent < other._exponent ? -1 : 1;
+      if (other is null)
+        throw new ArgumentNullException(nameof(other));
+
+      return _exponent == other._exponent ? 0 : _exponent < other._exponent ? -1 : 1;
     }
 
     #region IUnit implementation

@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#nullable enable
+
 namespace Altaxo.Units
 {
   public interface IPrefixedUnit
@@ -43,6 +45,9 @@ namespace Altaxo.Units
 
     public PrefixedUnit(SIPrefix prefix, IUnit unit)
     {
+      prefix ??= SIPrefix.None;
+      unit ??= Units.Dimensionless.Unity.Instance;
+
       if (unit is IPrefixedUnit punit)
       {
         if (punit.Unit is IPrefixedUnit)

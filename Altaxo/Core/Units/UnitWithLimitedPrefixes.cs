@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#nullable enable
+
 namespace Altaxo.Units
 {
   /// <summary>
@@ -39,17 +41,13 @@ namespace Altaxo.Units
 
     public UnitWithLimitedPrefixes(IUnit unit, IEnumerable<SIPrefix> allowedPrefixes)
     {
-      if (null == unit)
-        throw new ArgumentNullException(nameof(unit));
+      if (allowedPrefixes is null)
+        throw new ArgumentNullException(nameof(allowedPrefixes));
+      _unit = unit ?? throw new ArgumentNullException(nameof(unit));
 
-      _unit = unit;
-
-      if (null != allowedPrefixes)
-      {
-        var l = new HashSet<SIPrefix>(_unit.Prefixes);
-        l.IntersectWith(allowedPrefixes);
-        _prefixes = new SIPrefixList(l);
-      }
+      var l = new HashSet<SIPrefix>(_unit.Prefixes);
+      l.IntersectWith(allowedPrefixes);
+      _prefixes = new SIPrefixList(l);
     }
 
     public string Name
