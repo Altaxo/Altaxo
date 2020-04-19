@@ -28,6 +28,8 @@ namespace Markdig.Parsers
         private readonly ProcessDocumentDelegate documentProcessed;
         private readonly bool preciseSourceLocation;
 
+        private readonly int roughLineCountEstimate;
+
         private LineReader lineReader;
 
         /// <summary>
@@ -40,22 +42,22 @@ namespace Markdig.Parsers
         /// </exception>
         private MarkdownParser(string text, MarkdownPipeline pipeline, MarkdownParserContext context)
         {
-            if (text == null) throw new ArgumentNullException(nameof(text));
-            if (pipeline == null) throw new ArgumentNullException(nameof(pipeline));
+            if (text == null) ThrowHelper.ArgumentNullException_text();
+            if (pipeline == null) ThrowHelper.ArgumentNullException(nameof(pipeline));
+
+            roughLineCountEstimate = text.Length / 40;
             text = FixupZero(text);
             lineReader = new LineReader(text);
             preciseSourceLocation = pipeline.PreciseSourceLocation;
 
             // Initialize the pipeline
-            var stringBuilderCache = pipeline.StringBuilderCache ?? new StringBuilderCache();
-
             document = new MarkdownDocument();
 
             // Initialize the block parsers
-            blockProcessor = new BlockProcessor(stringBuilderCache, document, pipeline.BlockParsers, context);
+            blockProcessor = new BlockProcessor(document, pipeline.BlockParsers, context);
 
             // Initialize the inline parsers
-            inlineProcessor = new InlineProcessor(stringBuilderCache, document, pipeline.InlineParsers, pipeline.PreciseSourceLocation, context)
+            inlineProcessor = new InlineProcessor(document, pipeline.InlineParsers, pipeline.PreciseSourceLocation, context)
             {
                 DebugLog = pipeline.DebugLog
             };
@@ -73,8 +75,8 @@ namespace Markdig.Parsers
         /// <exception cref="System.ArgumentNullException">if reader variable is null</exception>
         public static MarkdownDocument Parse(string text, MarkdownPipeline pipeline = null, MarkdownParserContext context = null)
         {
-            if (text == null) throw new ArgumentNullException(nameof(text));
-            pipeline = pipeline ?? new MarkdownPipelineBuilder().Build();
+            if (text == null) ThrowHelper.ArgumentNullException_text();
+            pipeline ??= new MarkdownPipelineBuilder().Build();
 
             // Perform the parsing
             var markdownParser = new MarkdownParser(text, pipeline, context);
@@ -82,13 +84,16 @@ namespace Markdig.Parsers
         }
 
         /// <summary>
-        /// Parses the current <see cref="Reader"/> into a Markdown <see cref="MarkdownDocument"/>.
+        /// Parses the current <see cref="lineReader"/> into a Markdown <see cref="MarkdownDocument"/>.
         /// </summary>
         /// <returns>A document instance</returns>
         private MarkdownDocument Parse()
         {
             if (preciseSourceLocation)
-                document.LineStartIndexes = new List<int>();
+            {
+                // Save some List resizing allocations
+                document.LineStartIndexes = new List<int>(Math.Min(512, roughLineCountEstimate));
+            }
 
             ProcessBlocks();
             ProcessInlines();
@@ -109,11 +114,11 @@ namespace Markdig.Parsers
                 var lineText = lineReader.ReadLine();
                 
                 // If this is the end of file and the last line is empty
-                if (lineText == null)
+                if (lineText.Text is null)
                 {
                     break;
                 }
-                blockProcessor.ProcessLine(lineText.Value);
+                blockProcessor.ProcessLine(lineText);
             }
             blockProcessor.CloseAll(true);
         }
@@ -124,10 +129,10 @@ namespace Markdig.Parsers
         /// <param name="text">The text to secure.</param>
         private string FixupZero(string text)
         {
-            return text.Replace('\0', CharHelper.ZeroSafeChar);
+            return text.Replace('\0', CharHelper.ReplacementChar);
         }
 
-        private class ContainerItemCache : DefaultObjectCache<ContainerItem>
+        private sealed class ContainerItemCache : DefaultObjectCache<ContainerItem>
         {
             protected override void Reset(ContainerItem instance)
             {

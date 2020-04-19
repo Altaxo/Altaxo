@@ -1,5 +1,5 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
-// This file is licensed under the BSD-Clause 2 license. 
+// This file is licensed under the BSD-Clause 2 license.
 // See the license.txt file in the project root for more information.
 
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ namespace Markdig.Extensions.GenericAttributes
     /// <summary>
     /// An inline parser used to parse a HTML attributes that can be attached to the previous <see cref="Inline"/> or current <see cref="Block"/>.
     /// </summary>
-    /// <seealso cref="Markdig.Parsers.InlineParser" />
+    /// <seealso cref="InlineParser" />
     public class GenericAttributesParser : InlineParser
     {
         /// <summary>
@@ -27,13 +27,12 @@ namespace Markdig.Extensions.GenericAttributes
 
         public override bool Match(InlineProcessor processor, ref StringSlice slice)
         {
-            HtmlAttributes attributes;
             var startPosition = slice.Start;
-            if (TryParse(ref slice, out attributes))
+            if (TryParse(ref slice, out HtmlAttributes attributes))
             {
                 var inline = processor.Inline;
 
-                // If the curent object to attach is either a literal or delimiter
+                // If the current object to attach is either a literal or delimiter
                 // try to find a suitable parent, otherwise attach the html attributes to the block
                 if (inline is LiteralInline)
                 {
@@ -50,8 +49,10 @@ namespace Markdig.Extensions.GenericAttributes
 
                 // If the current block is a Paragraph, but only the HtmlAttributes is used,
                 // Try to attach the attributes to the following block
-                var paragraph = objectToAttach as ParagraphBlock;
-                if (paragraph != null && paragraph.Inline.FirstChild == null && processor.Inline == null && slice.IsEmptyOrWhitespace())
+                if (objectToAttach is ParagraphBlock paragraph &&
+                    paragraph.Inline.FirstChild == null &&
+                    processor.Inline == null &&
+                    slice.IsEmptyOrWhitespace())
                 {
                     var parent = paragraph.Parent;
                     var indexOfParagraph = parent.IndexOf(paragraph);
@@ -67,9 +68,7 @@ namespace Markdig.Extensions.GenericAttributes
                 attributes.CopyTo(currentHtmlAttributes, true, false);
 
                 // Update the position of the attributes
-                int line;
-                int column;
-                currentHtmlAttributes.Span.Start = processor.GetSourcePosition(startPosition, out line, out column);
+                currentHtmlAttributes.Span.Start = processor.GetSourcePosition(startPosition, out int line, out int column);
                 currentHtmlAttributes.Line = line;
                 currentHtmlAttributes.Column = column;
                 currentHtmlAttributes.Span.End = currentHtmlAttributes.Span.Start + slice.Start - startPosition - 1;
@@ -86,7 +85,7 @@ namespace Markdig.Extensions.GenericAttributes
         /// </summary>
         /// <param name="slice">The slice to parse.</param>
         /// <param name="attributes">The output attributes or null if not found or invalid</param>
-        /// <returns><c>true</c> if parsing the HTML attributes was succsesfull</returns>
+        /// <returns><c>true</c> if parsing the HTML attributes was successful</returns>
         public static bool TryParse(ref StringSlice slice, out HtmlAttributes attributes)
         {
             attributes = null;
@@ -173,7 +172,7 @@ namespace Markdig.Extensions.GenericAttributes
                     line.TrimStart();
                     c = line.CurrentChar;
 
-                    // Handle boolean properties that are not followed by = 
+                    // Handle boolean properties that are not followed by =
                     if ((hasSpace && (c == '.' || c == '#' || IsStartAttributeName(c))) || c == '}')
                     {
                         if (properties == null)
@@ -184,7 +183,7 @@ namespace Markdig.Extensions.GenericAttributes
                         properties.Add(new KeyValuePair<string, string>(name, null));
                         continue;
                     }
-                    
+
                     // Else we expect a regular property
                     if (line.CurrentChar != '=')
                     {
@@ -223,6 +222,7 @@ namespace Markdig.Extensions.GenericAttributes
                     {
                         // Parse until we match a space or a special html character
                         startValue = line.Start;
+                        bool valid = false;
                         while (true)
                         {
                             if (c == '\0')
@@ -234,9 +234,10 @@ namespace Markdig.Extensions.GenericAttributes
                                 break;
                             }
                             c = line.NextChar();
+                            valid = true;
                         }
                         endValue = line.Start - 1;
-                        if (endValue == startValue)
+                        if (!valid)
                         {
                             break;
                         }
@@ -264,7 +265,7 @@ namespace Markdig.Extensions.GenericAttributes
                     Properties = properties
                 };
 
-                // Assign back the current processor of the line to 
+                // Assign back the current processor of the line to
                 slice = line;
             }
             return isValid;

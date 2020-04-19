@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using Markdig.Extensions.SelfPipeline;
+using Markdig.Helpers;
 using Markdig.Parsers;
 using Markdig.Renderers;
 using Markdig.Renderers.Normalize;
@@ -17,11 +18,7 @@ namespace Markdig
     /// </summary>
     public static partial class Markdown
     {
-#if NETSTANDARD_11
-        public static readonly string Version = typeof(Markdown).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-#else
         public static readonly string Version = ((AssemblyFileVersionAttribute) typeof(Markdown).Assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false)[0]).Version;
-#endif
 
         /// <summary>
         /// Normalizes the specified markdown to a normalized markdown text.
@@ -72,10 +69,19 @@ namespace Markdig
         /// <exception cref="System.ArgumentNullException">if markdown variable is null</exception>
         public static string ToHtml(string markdown, MarkdownPipeline pipeline = null)
         {
-            if (markdown == null) throw new ArgumentNullException(nameof(markdown));
-            var writer = new StringWriter();
-            ToHtml(markdown, writer, pipeline);
-            return writer.ToString();
+            if (markdown == null) ThrowHelper.ArgumentNullException_markdown();
+            pipeline ??= new MarkdownPipelineBuilder().Build();
+            pipeline = CheckForSelfPipeline(pipeline, markdown);
+
+            var renderer = pipeline.GetCacheableHtmlRenderer();
+
+            var document = Parse(markdown, pipeline);
+            renderer.Render(document);
+            renderer.Writer.Flush();
+
+            string html = renderer.Writer.ToString();
+            pipeline.ReleaseCacheableHtmlRenderer(renderer);
+            return html;
         }
 
         /// <summary>
@@ -89,9 +95,9 @@ namespace Markdig
         /// <exception cref="System.ArgumentNullException">if reader or writer variable are null</exception>
         public static MarkdownDocument ToHtml(string markdown, TextWriter writer, MarkdownPipeline pipeline = null, MarkdownParserContext context = null)
         {
-            if (markdown == null) throw new ArgumentNullException(nameof(markdown));
-            if (writer == null) throw new ArgumentNullException(nameof(writer));
-            pipeline = pipeline ?? new MarkdownPipelineBuilder().Build();
+            if (markdown == null) ThrowHelper.ArgumentNullException_markdown();
+            if (writer == null) ThrowHelper.ArgumentNullException_writer();
+            pipeline ??= new MarkdownPipelineBuilder().Build();
             pipeline = CheckForSelfPipeline(pipeline, markdown);
 
             // We override the renderer with our own writer
@@ -115,9 +121,9 @@ namespace Markdig
         /// <exception cref="System.ArgumentNullException">if markdown or writer variable are null</exception>
         public static object Convert(string markdown, IMarkdownRenderer renderer, MarkdownPipeline pipeline = null, MarkdownParserContext context = null)
         {
-            if (markdown == null) throw new ArgumentNullException(nameof(markdown));
-            if (renderer == null) throw new ArgumentNullException(nameof(renderer));
-            pipeline = pipeline ?? new MarkdownPipelineBuilder().Build();
+            if (markdown == null) ThrowHelper.ArgumentNullException_markdown();
+            if (renderer == null) ThrowHelper.ArgumentNullException(nameof(renderer));
+            pipeline ??= new MarkdownPipelineBuilder().Build();
 
             pipeline = CheckForSelfPipeline(pipeline, markdown);
             var document = Parse(markdown, pipeline, context);
@@ -133,7 +139,7 @@ namespace Markdig
         /// <exception cref="System.ArgumentNullException">if markdown variable is null</exception>
         public static MarkdownDocument Parse(string markdown)
         {
-            if (markdown == null) throw new ArgumentNullException(nameof(markdown));
+            if (markdown == null) ThrowHelper.ArgumentNullException_markdown();
             return Parse(markdown, null);
         }
 
@@ -147,8 +153,8 @@ namespace Markdig
         /// <exception cref="System.ArgumentNullException">if markdown variable is null</exception>
         public static MarkdownDocument Parse(string markdown, MarkdownPipeline pipeline, MarkdownParserContext context = null)
         {
-            if (markdown == null) throw new ArgumentNullException(nameof(markdown));
-            pipeline = pipeline ?? new MarkdownPipelineBuilder().Build();
+            if (markdown == null) ThrowHelper.ArgumentNullException_markdown();
+            pipeline ??= new MarkdownPipelineBuilder().Build();
 
             pipeline = CheckForSelfPipeline(pipeline, markdown);
             return MarkdownParser.Parse(markdown, pipeline, context);
@@ -175,16 +181,17 @@ namespace Markdig
         /// <exception cref="System.ArgumentNullException">if reader or writer variable are null</exception>
         public static MarkdownDocument ToPlainText(string markdown, TextWriter writer, MarkdownPipeline pipeline = null, MarkdownParserContext context = null)
         {
-            if (markdown == null) throw new ArgumentNullException(nameof(markdown));
-            if (writer == null) throw new ArgumentNullException(nameof(writer));
-            pipeline = pipeline ?? new MarkdownPipelineBuilder().Build();
+            if (markdown == null) ThrowHelper.ArgumentNullException_markdown();
+            if (writer == null) ThrowHelper.ArgumentNullException_writer();
+            pipeline ??= new MarkdownPipelineBuilder().Build();
             pipeline = CheckForSelfPipeline(pipeline, markdown);
 
             // We override the renderer with our own writer
             var renderer = new HtmlRenderer(writer)
             {
                 EnableHtmlForBlock = false,
-                EnableHtmlForInline = false
+                EnableHtmlForInline = false,
+                EnableHtmlEscape = false,
             };
             pipeline.Setup(renderer);
 
@@ -205,7 +212,7 @@ namespace Markdig
         /// <exception cref="System.ArgumentNullException">if markdown variable is null</exception>
         public static string ToPlainText(string markdown, MarkdownPipeline pipeline = null, MarkdownParserContext context = null)
         {
-            if (markdown == null) throw new ArgumentNullException(nameof(markdown));
+            if (markdown == null) ThrowHelper.ArgumentNullException_markdown();
             var writer = new StringWriter();
             ToPlainText(markdown, writer, pipeline, context);
             return writer.ToString();

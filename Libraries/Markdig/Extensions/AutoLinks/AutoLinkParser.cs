@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using Markdig.Helpers;
 using Markdig.Parsers;
+using Markdig.Renderers.Html;
 using Markdig.Syntax.Inlines;
 
 namespace Markdig.Extensions.AutoLinks
@@ -13,14 +14,16 @@ namespace Markdig.Extensions.AutoLinks
     /// <summary>
     /// The inline parser used to for autolinks.
     /// </summary>
-    /// <seealso cref="Markdig.Parsers.InlineParser" />
+    /// <seealso cref="InlineParser" />
     public class AutoLinkParser : InlineParser
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AutoLinkParser"/> class.
         /// </summary>
-        public AutoLinkParser(string validPreviousCharacters = DefaultValidPreviousCharacters)
+        public AutoLinkParser(AutoLinkOptions options)
         {
+            Options = options ?? throw new ArgumentNullException(nameof(options));
+
             OpeningCharacters = new char[]
             {
                 'h', // for http:// and https://
@@ -29,172 +32,178 @@ namespace Markdig.Extensions.AutoLinks
                 'w', // for www.
             };
 
-            ValidPreviousCharacters = validPreviousCharacters;
+            _listOfCharCache = new ListOfCharCache();
         }
 
-        // All such recognized autolinks can only come at the beginning of a line, after whitespace, or any of the delimiting characters *, _, ~, and (.
-        public readonly string ValidPreviousCharacters;
-        public const string DefaultValidPreviousCharacters = "*_~(";
+        public readonly AutoLinkOptions Options;
+
+        private readonly ListOfCharCache _listOfCharCache;
 
         public override bool Match(InlineProcessor processor, ref StringSlice slice)
         {
             // Previous char must be a whitespace or a punctuation
             var previousChar = slice.PeekCharExtra(-1);
-            if (!previousChar.IsWhiteSpaceOrZero() && ValidPreviousCharacters.IndexOf(previousChar) == -1)
+            if (!previousChar.IsWhiteSpaceOrZero() && Options.ValidPreviousCharacters.IndexOf(previousChar) == -1)
             {
                 return false;
             }
 
-            List<char> pendingEmphasis;
-            // Check that an autolink is possible in the current context
-            if (!IsAutoLinkValidInCurrentContext(processor, out pendingEmphasis))
+            List<char> pendingEmphasis = _listOfCharCache.Get();
+            try
             {
-                return false;
-            }
-
-            var startPosition = slice.Start;
-            int domainOffset = 0;
-
-            var c = slice.CurrentChar;
-            // Precheck URL
-            switch (c)
-            {
-                case 'h':
-                    if (slice.MatchLowercase("ttp://", 1))
-                    {
-                        domainOffset = 7; // http://
-                    }
-                    else if (slice.MatchLowercase("ttps://", 1))
-                    {
-                        domainOffset = 8; // https://
-                    }
-                    else return false;
-                    break;
-                case 'f':
-                    if (!slice.MatchLowercase("tp://", 1))
-                    {
-                        return false;
-                    }
-                    domainOffset = 6; // ftp://
-                    break;
-                case 'm':
-                    if (!slice.MatchLowercase("ailto:", 1))
-                    {
-                        return false;
-                    }
-                    break;
-
-                case 'w':
-                    if (!slice.MatchLowercase("ww.", 1)) // We won't match http:/www. or /www.xxx
-                    {
-                        return false;
-                    }
-                    domainOffset = 4; // www.
-                    break;
-            }
-
-            // Parse URL
-            string link;
-            if (!LinkHelper.TryParseUrl(ref slice, out link, true))
-            {
-                return false;
-            }
-
-
-            // If we have any pending emphasis, remove any pending emphasis characters from the end of the link
-            if (pendingEmphasis != null)
-            {
-                for (int i = link.Length - 1; i >= 0; i--)
+                // Check that an autolink is possible in the current context
+                if (!IsAutoLinkValidInCurrentContext(processor, pendingEmphasis))
                 {
-                    if (pendingEmphasis.Contains(link[i]))
-                    {
-                        slice.Start--;
-                    }
-                    else
-                    {
-                        if (i < link.Length - 1)
+                    return false;
+                }
+
+                var startPosition = slice.Start;
+                int domainOffset = 0;
+
+                var c = slice.CurrentChar;
+                // Precheck URL
+                switch (c)
+                {
+                    case 'h':
+                        if (slice.MatchLowercase("ttp://", 1))
                         {
-                            link = link.Substring(0, i + 1);
+                            domainOffset = 7; // http://
+                        }
+                        else if (slice.MatchLowercase("ttps://", 1))
+                        {
+                            domainOffset = 8; // https://
+                        }
+                        else return false;
+                        break;
+                    case 'f':
+                        if (!slice.MatchLowercase("tp://", 1))
+                        {
+                            return false;
+                        }
+                        domainOffset = 6; // ftp://
+                        break;
+                    case 'm':
+                        if (!slice.MatchLowercase("ailto:", 1))
+                        {
+                            return false;
                         }
                         break;
+
+                    case 'w':
+                        if (!slice.MatchLowercase("ww.", 1)) // We won't match http:/www. or /www.xxx
+                        {
+                            return false;
+                        }
+                        domainOffset = 4; // www.
+                        break;
+                }
+
+                // Parse URL
+                if (!LinkHelper.TryParseUrl(ref slice, out string link, true))
+                {
+                    return false;
+                }
+
+
+                // If we have any pending emphasis, remove any pending emphasis characters from the end of the link
+                if (pendingEmphasis.Count > 0)
+                {
+                    for (int i = link.Length - 1; i >= 0; i--)
+                    {
+                        if (pendingEmphasis.Contains(link[i]))
+                        {
+                            slice.Start--;
+                        }
+                        else
+                        {
+                            if (i < link.Length - 1)
+                            {
+                                link = link.Substring(0, i + 1);
+                            }
+                            break;
+                        }
                     }
                 }
-            }
 
-            // Post-check URL
-            switch (c)
-            {
-                case 'h':
-                    if (string.Equals(link, "http://", StringComparison.OrdinalIgnoreCase) ||
-                        string.Equals(link, "https://", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return false;
-                    }
-                    break;
-                case 'f':
-                    if (string.Equals(link, "ftp://", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return false;
-                    }
-                    break;
-                case 'm':
-                    int atIndex = link.IndexOf('@');
-                    if (atIndex == -1 ||
-                        atIndex == 7) // mailto:@ - no email part
-                    {
-                        return false;
-                    }
-                    domainOffset = atIndex + 1;
-                    break;
-            }
-
-            if (!LinkHelper.IsValidDomain(link, domainOffset))
-            {
-                return false;
-            }
-
-            int line;
-            int column;
-            var inline = new LinkInline()
-            {
-                Span =
+                // Post-check URL
+                switch (c)
                 {
-                    Start = processor.GetSourcePosition(startPosition, out line, out column),
-                },
-                Line = line,
-                Column = column,
-                Url = c == 'w' ? "http://" + link : link,
-                IsClosed = true,
-                IsAutoLink = true,
-            };
+                    case 'h':
+                        if (string.Equals(link, "http://", StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(link, "https://", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return false;
+                        }
+                        break;
+                    case 'f':
+                        if (string.Equals(link, "ftp://", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return false;
+                        }
+                        break;
+                    case 'm':
+                        int atIndex = link.IndexOf('@');
+                        if (atIndex == -1 ||
+                            atIndex == 7) // mailto:@ - no email part
+                        {
+                            return false;
+                        }
+                        domainOffset = atIndex + 1;
+                        break;
+                }
 
-            var skipFromBeginning = c == 'm' ? 7 : 0; // For mailto: skip "mailto:" for content
+                if (!LinkHelper.IsValidDomain(link, domainOffset))
+                {
+                    return false;
+                }
 
-            inline.Span.End = inline.Span.Start + link.Length - 1;
-            inline.UrlSpan = inline.Span;
-            inline.AppendChild(new LiteralInline()
+                var inline = new LinkInline()
+                {
+                    Span =
+                    {
+                        Start = processor.GetSourcePosition(startPosition, out int line, out int column),
+                    },
+                    Line = line,
+                    Column = column,
+                    Url = c == 'w' ? ((Options.UseHttpsForWWWLinks ? "https://" : "http://") + link) : link,
+                    IsClosed = true,
+                    IsAutoLink = true,
+                };
+
+                var skipFromBeginning = c == 'm' ? 7 : 0; // For mailto: skip "mailto:" for content
+
+                inline.Span.End = inline.Span.Start + link.Length - 1;
+                inline.UrlSpan = inline.Span;
+                inline.AppendChild(new LiteralInline()
+                {
+                    Span = inline.Span,
+                    Line = line,
+                    Column = column,
+                    Content = new StringSlice(slice.Text, startPosition + skipFromBeginning, startPosition + link.Length - 1),
+                    IsClosed = true
+                });
+                processor.Inline = inline;
+
+                if (Options.OpenInNewWindow)
+                {
+                    inline.GetAttributes().AddPropertyIfNotExist("target", "blank");
+                }
+
+                return true;
+            }
+            finally
             {
-                Span = inline.Span,
-                Line = line,
-                Column = column,
-                Content = new StringSlice(slice.Text, startPosition + skipFromBeginning, startPosition + link.Length - 1),
-                IsClosed = true
-            });
-            processor.Inline = inline;
-
-            return true;
+                _listOfCharCache.Release(pendingEmphasis);
+            }
         }
 
-        private bool IsAutoLinkValidInCurrentContext(InlineProcessor processor, out List<char> pendingEmphasis)
+        private bool IsAutoLinkValidInCurrentContext(InlineProcessor processor, List<char> pendingEmphasis)
         {
-            pendingEmphasis = null;
-
             // Case where there is a pending HtmlInline <a>
             var currentInline = processor.Inline;
             while (currentInline != null)
             {
-                var htmlInline = currentInline as HtmlInline;
-                if (htmlInline != null)
+                if (currentInline is HtmlInline htmlInline)
                 {
                     // If we have a </a> we don't expect nested <a>
                     if (htmlInline.Tag.StartsWith("</a", StringComparison.OrdinalIgnoreCase))
@@ -209,7 +218,7 @@ namespace Markdig.Extensions.AutoLinks
                     }
                 }
 
-                // Check previous sibling and parents in the tree 
+                // Check previous sibling and parents in the tree
                 currentInline = currentInline.PreviousSibling ?? currentInline.Parent;
             }
 
@@ -219,8 +228,7 @@ namespace Markdig.Extensions.AutoLinks
             int countBrackets = 0;
             while (currentInline != null)
             {
-                var linkDelimiterInline = currentInline as LinkDelimiterInline;
-                if (linkDelimiterInline != null && linkDelimiterInline.IsActive)
+                if (currentInline is LinkDelimiterInline linkDelimiterInline && linkDelimiterInline.IsActive)
                 {
                     if (linkDelimiterInline.Type == DelimiterType.Open)
                     {
@@ -234,14 +242,8 @@ namespace Markdig.Extensions.AutoLinks
                 else
                 {
                     // Record all pending characters for emphasis
-                    var emphasisDelimiter = currentInline as EmphasisDelimiterInline;
-                    if (emphasisDelimiter != null)
+                    if (currentInline is EmphasisDelimiterInline emphasisDelimiter)
                     {
-                        if (pendingEmphasis == null)
-                        {
-                            // Not optimized for GC, but we don't expect this case much
-                            pendingEmphasis = new List<char>();
-                        }
                         if (!pendingEmphasis.Contains(emphasisDelimiter.DelimiterChar))
                         {
                             pendingEmphasis.Add(emphasisDelimiter.DelimiterChar);
@@ -252,6 +254,14 @@ namespace Markdig.Extensions.AutoLinks
             }
 
             return countBrackets <= 0;
+        }
+
+        private sealed class ListOfCharCache : DefaultObjectCache<List<char>>
+        {
+            protected override void Reset(List<char> instance)
+            {
+                instance.Clear();
+            }
         }
     }
 }

@@ -1,9 +1,12 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
-// This file is licensed under the BSD-Clause 2 license. 
+// This file is licensed under the BSD-Clause 2 license.
 // See the license.txt file in the project root for more information.
+
+using Markdig.Helpers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 namespace Markdig.Syntax.Inlines
@@ -48,10 +51,10 @@ namespace Markdig.Syntax.Inlines
         /// <exception cref="System.ArgumentException">Inline has already a parent</exception>
         public virtual ContainerInline AppendChild(Inline child)
         {
-            if (child == null) throw new ArgumentNullException(nameof(child));
+            if (child == null) ThrowHelper.ArgumentNullException(nameof(child));
             if (child.Parent != null)
             {
-                throw new ArgumentException("Inline has already a parent", nameof(child));
+                ThrowHelper.ArgumentException("Inline has already a parent", nameof(child));
             }
 
             if (FirstChild == null)
@@ -94,8 +97,18 @@ namespace Markdig.Syntax.Inlines
         /// <returns>An enumeration of T</returns>
         public IEnumerable<T> FindDescendants<T>() where T : Inline
         {
-            // Fast-path an empty container to avoid allocating a Stack
-            if (LastChild == null) yield break;
+            if (FirstChild is null)
+            {
+                return Array.Empty<T>();
+            }
+            else
+            {
+                return FindDescendantsInternal<T>();
+            }
+        }
+        internal IEnumerable<T> FindDescendantsInternal<T>() where T : MarkdownObject
+        {
+            Debug.Assert(typeof(T).IsSubclassOf(typeof(Inline)));
 
             Stack<Inline> stack = new Stack<Inline>();
 
@@ -133,16 +146,16 @@ namespace Markdig.Syntax.Inlines
         /// <param name="parent">The parent.</param>
         public void MoveChildrenAfter(Inline parent)
         {
-            if (parent == null) throw new ArgumentNullException(nameof(parent));
+            if (parent == null) ThrowHelper.ArgumentNullException(nameof(parent));
             var child = FirstChild;
-            var nextSibliing = parent;
+            var nextSibling = parent;
             while (child != null)
             {
                 var next = child.NextSibling;
                 // TODO: optimize this
                 child.Remove();
-                nextSibliing.InsertAfter(child);
-                nextSibliing = child;
+                nextSibling.InsertAfter(child);
+                nextSibling = child;
                 child = next;
             }
         }
@@ -154,7 +167,7 @@ namespace Markdig.Syntax.Inlines
         /// <exception cref="System.ArgumentNullException">If the container is null</exception>
         public void EmbraceChildrenBy(ContainerInline container)
         {
-            if (container == null) throw new ArgumentNullException(nameof(container));
+            if (container == null) ThrowHelper.ArgumentNullException(nameof(container));
             var child = FirstChild;
             while (child != null)
             {
@@ -226,7 +239,7 @@ namespace Markdig.Syntax.Inlines
 
             public Enumerator(ContainerInline container) : this()
             {
-                if (container == null) throw new ArgumentNullException(nameof(container));
+                if (container == null) ThrowHelper.ArgumentNullException(nameof(container));
                 this.container = container;
                 currentChild = nextChild = container.FirstChild;
             }

@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 /*
@@ -25,10 +26,8 @@ namespace Markdig.Helpers
     /// <para>Something between a Trie and a full Radix tree, but stored linearly in memory</para>
     /// </summary>
     /// <typeparam name="TValue">The value associated with the key</typeparam>
-    internal class CompactPrefixTree<TValue>
-//#if !LEGACY
-//        : IReadOnlyDictionary<string, TValue>, IReadOnlyList<KeyValuePair<string, TValue>>
-//#endif
+    [ExcludeFromCodeCoverage]
+    internal sealed class CompactPrefixTree<TValue> : IReadOnlyDictionary<string, TValue>, IReadOnlyList<KeyValuePair<string, TValue>>
     {
         /// <summary>
         /// Used internally to control behavior of insertion
@@ -118,7 +117,7 @@ namespace Markdig.Helpers
                 }
             }
         }
-        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureTreeCapacity(int min)
         {
             if (_tree.Length < min)
@@ -167,7 +166,7 @@ namespace Markdig.Helpers
                 }
             }
         }
-        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureCapacity(int min)
         {
             // Expansion logic as in System.Collections.Generic.List<T>
@@ -225,7 +224,7 @@ namespace Markdig.Helpers
                 }
             }
         }
-        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureChildrenCapacity(int min)
         {
             if (_children.Length < min)
@@ -252,7 +251,7 @@ namespace Markdig.Helpers
 
         // Inspired by Markdig's CharacterMap
 
-        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool TryGetRoot(char rootChar, out int rootNodeIndex)
         {
             if (rootChar < 128)
@@ -336,7 +335,7 @@ namespace Markdig.Helpers
         /// <returns>The key/value pair of the element at the specified index</returns>
         public KeyValuePair<string, TValue> this[int index]
         {
-            [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 if ((uint)index >= (uint)Count) ThrowHelper.ThrowIndexOutOfRangeException();
@@ -353,7 +352,7 @@ namespace Markdig.Helpers
         {
             get
             {
-                if (TryMatchExact(key, out KeyValuePair<string, TValue> match))
+                if (TryMatchExact(key.AsSpan(), out KeyValuePair<string, TValue> match))
                     return match.Value;
                 throw new KeyNotFoundException(key);
             }
@@ -365,7 +364,6 @@ namespace Markdig.Helpers
             }
         } // Get, Set
 
-#if NETCORE
         /// <summary>
         /// Gets the value associated with the specified key
         /// </summary>
@@ -380,7 +378,6 @@ namespace Markdig.Helpers
                 throw new KeyNotFoundException(key.ToString());
             }
         } // Get only
-#endif
 
         #endregion this[] accessors
 
@@ -712,50 +709,6 @@ namespace Markdig.Helpers
         #region TryMatch longest
 
         /// <summary>
-        /// Tries to find the longest prefix of text, starting at offset, that is contained in this <see cref="CompactPrefixTree{TValue}"/>
-        /// </summary>
-        /// <param name="text">The text in which to search for the prefix</param>
-        /// <param name="offset">Index of the character at which to start searching</param>
-        /// <param name="match">The found prefix and the corresponding value</param>
-        /// <returns>True if a match was found, false otherwise</returns>
-        public bool TryMatchLongest(string text, int offset, out KeyValuePair<string, TValue> match)
-        {
-#if NETCORE
-            return TryMatchLongest(text.AsSpan(offset), out match);
-#else
-            return TryMatchLongest(text, offset, text.Length - offset, out match);
-#endif
-        }
-
-        /// <summary>
-        /// Tries to find the longest prefix of text, that is contained in this <see cref="CompactPrefixTree{TValue}"/>
-        /// </summary>
-        /// <param name="text">The text in which to search for the prefix</param>
-        /// <param name="match">The found prefix and the corresponding value</param>
-        /// <returns>True if a match was found, false otherwise</returns>
-        public bool TryMatchLongest(string text, out KeyValuePair<string, TValue> match)
-        {
-            if (text == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.text);
-#if NETCORE
-            return TryMatchLongest(text.AsSpan(), out match);
-#else
-            return TryMatchLongest(text, 0, text.Length, out match);
-#endif
-        }
-
-        /// <summary>
-        /// Tries to find the longest prefix of text, starting at offset, that is contained in this <see cref="CompactPrefixTree{TValue}"/>
-        /// </summary>
-        /// <param name="text">The text in which to search for the prefix</param>
-        /// <param name="offset">The offset in text at which to start looking for the prefix</param>
-        /// <param name="length">The longest prefix allowed to match</param>
-        /// <param name="match">The found prefix and the corresponding value</param>
-        /// <returns>True if a match was found, false otherwise</returns>
-#if NETCORE
-        public bool TryMatchLongest(string text, int offset, int length, out KeyValuePair<string, TValue> match)
-            => TryMatchLongest(text.AsSpan(offset, length), out match);
-
-        /// <summary>
         /// Tries to find the longest prefix of text, that is contained in this <see cref="CompactPrefixTree{TValue}"/>
         /// </summary>
         /// <param name="text">The text in which to search for the prefix</param>
@@ -766,20 +719,6 @@ namespace Markdig.Helpers
             match = default;
             if (text.Length == 0 || !TryGetRoot(text[0], out int nodeIndex))
                 return false;
-#else
-        public bool TryMatchLongest(string text, int offset, int length, out KeyValuePair<string, TValue> match)
-        {
-            int limit = offset + length;
-            if (text == null)
-                ThrowHelper.ThrowArgumentNullException(ExceptionArgument.text);
-
-            if (offset < 0 || length < 0 || text.Length < limit)
-                ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.offsetLength, ExceptionReason.InvalidOffsetLength);
-
-            match = default;
-            if (length == 0 || !TryGetRoot(text[offset], out int nodeIndex))
-                return false;
-#endif
 
             int matchIndex = -1;
             int depth = 1;
@@ -788,11 +727,7 @@ namespace Markdig.Helpers
             if (node.ChildChar == 0) goto LeafNodeFound;
             if (node.MatchIndex != -1) matchIndex = node.MatchIndex;
 
-#if NETCORE
             for (int i = 1; i < text.Length; i++)
-#else
-            for (int i = offset + 1; i < limit; i++)
-#endif
             {
                 char c = text[i];
 
@@ -824,7 +759,6 @@ namespace Markdig.Helpers
 
         LeafNodeFound:;
             ref KeyValuePair<string, TValue> possibleMatch = ref _matches[node.MatchIndex];
-#if NETCORE
             if (possibleMatch.Key.Length <= text.Length)
             {
                 // Check that the rest of the strings match
@@ -833,18 +767,6 @@ namespace Markdig.Helpers
                     matchIndex = node.MatchIndex;
                 }
             }
-#else
-            if (possibleMatch.Key.Length <= length)
-            {
-                // Check that the rest of the strings match
-                for (int i = offset + depth, j = depth; j < possibleMatch.Key.Length; i++, j++)
-                {
-                    if (text[i] != possibleMatch.Key[j])
-                        goto Return;
-                }
-                matchIndex = node.MatchIndex;
-            }
-#endif
 
         Return:;
             if (matchIndex != -1)
@@ -860,50 +782,6 @@ namespace Markdig.Helpers
         #region TryMatch exact
 
         /// <summary>
-        /// Tries to find a suffix of text, starting at offset, that is contained in this <see cref="CompactPrefixTree{TValue}"/> and is exactly (text.Length - offset) characters long
-        /// </summary>
-        /// <param name="text">The text in which to search for the prefix</param>
-        /// <param name="offset">Index of the character at which to start searching</param>
-        /// <param name="match">The found prefix and the corresponding value</param>
-        /// <returns>True if a match was found, false otherwise</returns>
-        public bool TryMatchExact(string text, int offset, out KeyValuePair<string, TValue> match)
-        {
-#if NETCORE
-            return TryMatchExact(text.AsSpan(offset), out match);
-#else
-            return TryMatchExact(text, offset, text.Length - offset, out match);
-#endif
-        }
-
-        /// <summary>
-        /// Tries to find a prefix of text, that is contained in this <see cref="CompactPrefixTree{TValue}"/> and is exactly text.Length characters long
-        /// </summary>
-        /// <param name="text">The text in which to search for the prefix</param>
-        /// <param name="match">The found prefix and the corresponding value</param>
-        /// <returns>True if a match was found, false otherwise</returns>
-        public bool TryMatchExact(string text, out KeyValuePair<string, TValue> match)
-        {
-            if (text == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.text);
-#if NETCORE
-            return TryMatchExact(text.AsSpan(), out match);
-#else
-            return TryMatchExact(text, 0, text.Length, out match);
-#endif
-        }
-
-        /// <summary>
-        /// Tries to find a prefix of text, starting at offset, that is contained in this <see cref="CompactPrefixTree{TValue}"/> and is exactly length characters long
-        /// </summary>
-        /// <param name="text">The text in which to search for the prefix</param>
-        /// <param name="offset">The offset in text at which to start looking for the prefix</param>
-        /// <param name="length">The longest prefix allowed to match</param>
-        /// <param name="match">The found prefix and the corresponding value</param>
-        /// <returns>True if a match was found, false otherwise</returns>
-#if NETCORE
-        public bool TryMatchExact(string text, int offset, int length, out KeyValuePair<string, TValue> match)
-            => TryMatchExact(text.AsSpan(offset, length), out match);
-
-        /// <summary>
         /// Tries to find a prefix of text, that is contained in this <see cref="CompactPrefixTree{TValue}"/> and is exactly text.Length characters long
         /// </summary>
         /// <param name="text">The text in which to search for the prefix</param>
@@ -914,39 +792,18 @@ namespace Markdig.Helpers
             match = default;
             if (text.Length == 0 || !TryGetRoot(text[0], out int nodeIndex))
                 return false;
-#else
-        public bool TryMatchExact(string text, int offset, int length, out KeyValuePair<string, TValue> match)
-        {
-            int limit = offset + length;
-            if (text == null)
-                ThrowHelper.ThrowArgumentNullException(ExceptionArgument.text);
 
-            if (offset < 0 || length < 0 || text.Length < limit)
-                ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.offsetLength, ExceptionReason.InvalidOffsetLength);
-
-            match = default;
-            if (length == 0 || !TryGetRoot(text[offset], out int nodeIndex))
-                return false;
-#endif
             int depth = 1;
 
             ref Node node = ref _tree[nodeIndex];
             if (node.ChildChar == 0) goto LeafNodeFound;
-#if NETCORE
             if (node.MatchIndex != -1 && text.Length == 1)
-#else
-            if (node.MatchIndex != -1 && length == 1)
-#endif
             {
                 match = _matches[node.MatchIndex];
                 return true;
             }
 
-#if NETCORE
             for (int i = 1; i < text.Length; i++)
-#else
-            for (int i = offset + 1; i < limit; i++)
-#endif
             {
                 char c = text[i];
 
@@ -975,80 +832,19 @@ namespace Markdig.Helpers
 
             if (node.MatchIndex == -1) return false;
             match = _matches[node.MatchIndex];
-#if NETCORE
             Debug.Assert(match.Key.Length == text.Length);
-#else
-            Debug.Assert(match.Key.Length == length);
-#endif
             return true;
 
         LeafNodeFound:;
             match = _matches[node.MatchIndex];
-#if NETCORE
+
             return match.Key.Length == text.Length &&
                 text.Slice(depth).Equals(match.Key.AsSpan(depth), StringComparison.Ordinal);
-#else
-            if (match.Key.Length == length)
-            {
-                // Check that the rest of the strings match
-                for (int i = offset + depth, j = depth; j < match.Key.Length; i++, j++)
-                {
-                    if (text[i] != match.Key[j])
-                        return false;
-                }
-                return true;
-            }
-            return false;
-#endif
         }
 
         #endregion TryMatch exact
 
         #region TryMatch shortest
-
-        /// <summary>
-        /// Tries to find the shortest prefix of text, starting at offset, that is contained in this <see cref="CompactPrefixTree{TValue}"/>
-        /// </summary>
-        /// <param name="text">The text in which to search for the prefix</param>
-        /// <param name="offset">Index of the character at which to start searching</param>
-        /// <param name="match">The found prefix and the corresponding value</param>
-        /// <returns>True if a match was found, false otherwise</returns>
-        public bool TryMatchShortest(string text, int offset, out KeyValuePair<string, TValue> match)
-        {
-#if NETCORE
-            return TryMatchShortest(text.AsSpan(offset), out match);
-#else
-            return TryMatchShortest(text, offset, text.Length - offset, out match);
-#endif
-        }
-
-        /// <summary>
-        /// Tries to find the shortest prefix of text, that is contained in this <see cref="CompactPrefixTree{TValue}"/>
-        /// </summary>
-        /// <param name="text">The text in which to search for the prefix</param>
-        /// <param name="match">The found prefix and the corresponding value</param>
-        /// <returns>True if a match was found, false otherwise</returns>
-        public bool TryMatchShortest(string text, out KeyValuePair<string, TValue> match)
-        {
-            if (text == null) ThrowHelper.ThrowArgumentNullException(ExceptionArgument.text);
-#if NETCORE
-            return TryMatchShortest(text.AsSpan(), out match);
-#else
-            return TryMatchShortest(text, 0, text.Length, out match);
-#endif
-        }
-
-        /// <summary>
-        /// Tries to find the shortest prefix of text, starting at offset, that is contained in this <see cref="CompactPrefixTree{TValue}"/>
-        /// </summary>
-        /// <param name="text">The text in which to search for the prefix</param>
-        /// <param name="offset">The offset in text at which to start looking for the prefix</param>
-        /// <param name="length">The longest prefix allowed to match</param>
-        /// <param name="match">The found prefix and the corresponding value</param>
-        /// <returns>True if a match was found, false otherwise</returns>
-#if NETCORE
-        public bool TryMatchShortest(string text, int offset, int length, out KeyValuePair<string, TValue> match)
-            => TryMatchShortest(text.AsSpan(offset, length), out match);
 
         /// <summary>
         /// Tries to find the shortest prefix of text, that is contained in this <see cref="CompactPrefixTree{TValue}"/>
@@ -1061,20 +857,7 @@ namespace Markdig.Helpers
             match = default;
             if (text.Length == 0 || !TryGetRoot(text[0], out int nodeIndex))
                 return false;
-#else
-        public bool TryMatchShortest(string text, int offset, int length, out KeyValuePair<string, TValue> match)
-        {
-            int limit = offset + length;
-            if (text == null)
-                ThrowHelper.ThrowArgumentNullException(ExceptionArgument.text);
 
-            if (offset < 0 || length < 0 || text.Length < limit)
-                ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.offsetLength, ExceptionReason.InvalidOffsetLength);
-
-            match = default;
-            if (length == 0 || !TryGetRoot(text[offset], out int nodeIndex))
-                return false;
-#endif
             ref Node node = ref _tree[nodeIndex];
             if (node.MatchIndex != -1)
             {
@@ -1082,11 +865,7 @@ namespace Markdig.Helpers
                 return true;
             }
 
-#if NETCORE
             for (int i = 1; i < text.Length; i++)
-#else
-            for (int i = offset + 1; i < limit; i++)
-#endif
             {
                 char c = text[i];
 
@@ -1129,7 +908,7 @@ namespace Markdig.Helpers
         /// <param name="key">The key to locate in this <see cref="CompactPrefixTree{TValue}"/></param>
         /// <returns>True if the key is contained in this PrefixTree, false otherwise.</returns>
         public bool ContainsKey(string key)
-            => TryMatchExact(key, out _);
+            => TryMatchExact(key.AsSpan(), out _);
 
         /// <summary>
         /// Gets the value associated with the specified key
@@ -1139,7 +918,7 @@ namespace Markdig.Helpers
         /// <returns>True if the key is contained in this PrefixTree, false otherwise.</returns>
         public bool TryGetValue(string key, out TValue value)
         {
-            bool ret = TryMatchExact(key, out KeyValuePair<string, TValue> match);
+            bool ret = TryMatchExact(key.AsSpan(), out KeyValuePair<string, TValue> match);
             value = match.Value;
             return ret;
         }
@@ -1173,9 +952,8 @@ namespace Markdig.Helpers
         /// </summary>
         /// <returns></returns>
         public IEnumerator<KeyValuePair<string, TValue>> GetEnumerator() => new Enumerator(_matches);
-//#if !LEGACY
-        //IEnumerator IEnumerable.GetEnumerator() => new Enumerator(_matches);
-//#endif
+
+        IEnumerator IEnumerable.GetEnumerator() => new Enumerator(_matches);
 
         /// <summary>
         /// Enumerates the elements of a <see cref="CompactPrefixTree{TValue}"/>

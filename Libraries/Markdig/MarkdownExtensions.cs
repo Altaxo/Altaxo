@@ -34,6 +34,7 @@ using Markdig.Extensions.Yaml;
 using Markdig.Parsers;
 using Markdig.Parsers.Inlines;
 using Markdig.Extensions.Globalization;
+using Markdig.Helpers;
 
 namespace Markdig
 {
@@ -93,15 +94,15 @@ namespace Markdig
                 .UseAutoLinks()
                 .UseGenericAttributes(); // Must be last as it is one parser that is modifying other parsers
         }
-        
+
         /// <summary>
         /// Uses this extension to enable autolinks from text `http://`, `https://`, `ftp://`, `mailto:`, `www.xxx.yyy`
         /// </summary>
         /// <param name="pipeline">The pipeline.</param>
         /// <returns>The modified pipeline</returns>
-        public static MarkdownPipelineBuilder UseAutoLinks(this MarkdownPipelineBuilder pipeline, string validPreviousCharacters = AutoLinkParser.DefaultValidPreviousCharacters)
+        public static MarkdownPipelineBuilder UseAutoLinks(this MarkdownPipelineBuilder pipeline, AutoLinkOptions options = null)
         {
-            pipeline.Extensions.ReplaceOrAdd<AutoLinkExtension>(new AutoLinkExtension(validPreviousCharacters));
+            pipeline.Extensions.ReplaceOrAdd<AutoLinkExtension>(new AutoLinkExtension(options));
             return pipeline;
         }
 
@@ -138,7 +139,7 @@ namespace Markdig
         {
             if (pipeline.Extensions.Count != 0)
             {
-                throw new InvalidOperationException("The SelfPipeline extension cannot be used with other extensions");
+                ThrowHelper.InvalidOperationException("The SelfPipeline extension cannot be used with other extensions");
             }
 
             pipeline.Extensions.Add(new SelfPipelineExtension(defaultTag, defaultExtensions));
@@ -421,20 +422,35 @@ namespace Markdig
         }
 
         /// <summary>
-        /// Uses the emoji and smiley extension.
+        /// Uses the emojis and smileys extension.
         /// </summary>
         /// <param name="pipeline">The pipeline.</param>
-        /// <param name="enableSmiley">Enable smiley in addition to Emoji, <c>true</c> by default.</param>
+        /// <param name="enableSmileys">Enable smileys in addition to emoji shortcodes, <c>true</c> by default.</param>
         /// <returns>The modified pipeline</returns>
-        public static MarkdownPipelineBuilder UseEmojiAndSmiley(this MarkdownPipelineBuilder pipeline, bool enableSmiley = true)
+        public static MarkdownPipelineBuilder UseEmojiAndSmiley(this MarkdownPipelineBuilder pipeline, bool enableSmileys = true)
         {
             if (!pipeline.Extensions.Contains<EmojiExtension>())
             {
-                pipeline.Extensions.Add(new EmojiExtension(enableSmiley));
+                var emojiMapping = enableSmileys ? EmojiMapping.DefaultEmojisAndSmileysMapping : EmojiMapping.DefaultEmojisOnlyMapping;
+                pipeline.Extensions.Add(new EmojiExtension(emojiMapping));
             }
             return pipeline;
         }
 
+        /// <summary>
+        /// Uses the emojis and smileys extension.
+        /// </summary>
+        /// <param name="pipeline">The pipeline.</param>
+        /// <param name="customEmojiMapping">Enable customization of the emojis and smileys mapping.</param>
+        /// <returns>The modified pipeline</returns>
+        public static MarkdownPipelineBuilder UseEmojiAndSmiley(this MarkdownPipelineBuilder pipeline, EmojiMapping customEmojiMapping)
+        {
+            if (!pipeline.Extensions.Contains<EmojiExtension>())
+            {
+                pipeline.Extensions.Add(new EmojiExtension(customEmojiMapping));
+            }
+            return pipeline;
+        }
         /// <summary>
         /// Add rel=nofollow to all links rendered to HTML.
         /// </summary>
@@ -614,6 +630,21 @@ namespace Markdig
         public static MarkdownPipelineBuilder ConfigureNewLine(this MarkdownPipelineBuilder pipeline, string newLine)
         {
             pipeline.Use(new ConfigureNewLineExtension(newLine));
+            return pipeline;
+        }
+
+        /// <summary>
+        /// Disables parsing of ATX and Setex headings
+        /// </summary>
+        /// <param name="pipeline">The pipeline.</param>
+        /// <returns>The modified pipeline</returns>
+        public static MarkdownPipelineBuilder DisableHeadings(this MarkdownPipelineBuilder pipeline)
+        {
+            pipeline.BlockParsers.TryRemove<HeadingBlockParser>();
+            if (pipeline.BlockParsers.TryFind<ParagraphBlockParser>(out var parser))
+            {
+                parser.ParseSetexHeadings = false;
+            }
             return pipeline;
         }
     }

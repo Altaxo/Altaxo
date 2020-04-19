@@ -1,5 +1,5 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
-// This file is licensed under the BSD-Clause 2 license. 
+// This file is licensed under the BSD-Clause 2 license.
 // See the license.txt file in the project root for more information.
 using System;
 using System.Collections.Generic;
@@ -36,12 +36,10 @@ namespace Markdig.Parsers
         /// <param name="inlineCreated">The inline created event.</param>
         /// <exception cref="System.ArgumentNullException">
         /// </exception>
-        public InlineProcessor(StringBuilderCache stringBuilders, MarkdownDocument document, InlineParserList parsers, bool preciseSourcelocation, MarkdownParserContext context)
+        public InlineProcessor(MarkdownDocument document, InlineParserList parsers, bool preciseSourcelocation, MarkdownParserContext context)
         {
-            if (stringBuilders == null) throw new ArgumentNullException(nameof(stringBuilders));
-            if (document == null) throw new ArgumentNullException(nameof(document));
-            if (parsers == null) throw new ArgumentNullException(nameof(parsers));
-            StringBuilders = stringBuilders;
+            if (document == null) ThrowHelper.ArgumentNullException(nameof(document));
+            if (parsers == null) ThrowHelper.ArgumentNullException(nameof(parsers));
             Document = document;
             Parsers = parsers;
             Context = context;
@@ -52,7 +50,7 @@ namespace Markdig.Parsers
         }
 
         /// <summary>
-        /// Gets the current block being proessed.
+        /// Gets the current block being processed.
         /// </summary>
         public LeafBlock Block { get; private set; }
 
@@ -90,11 +88,6 @@ namespace Markdig.Parsers
         /// Gets the root document.
         /// </summary>
         public MarkdownDocument Document { get; }
-
-        /// <summary>
-        /// Gets the cache string builders.
-        /// </summary>
-        public StringBuilderCache StringBuilders { get;  }
 
         /// <summary>
         /// Gets or sets the index of the line from the begining of the document being processed.
@@ -143,7 +136,7 @@ namespace Markdig.Parsers
         /// <returns>The source position</returns>
         public int GetSourcePosition(int sliceOffset, out int lineIndex, out int column)
         {
-            column = 0;            
+            column = 0;
             lineIndex = sliceOffset >= previousSliceOffset ? previousLineIndexForSliceOffset : 0;
             int position = 0;
             if (PreciseSourceLocation)
@@ -153,7 +146,7 @@ namespace Markdig.Parsers
                     var lineOffset = lineOffsets[lineIndex];
                     if (sliceOffset <= lineOffset.End)
                     {
-                        // Use the beginning of the line as a previous slice offset 
+                        // Use the beginning of the line as a previous slice offset
                         // (since it is on the same line)
                         previousSliceOffset = lineOffsets[lineIndex].Start;
                         var delta = sliceOffset - previousSliceOffset;
@@ -176,7 +169,7 @@ namespace Markdig.Parsers
         /// <param name="leafBlock">The leaf block.</param>
         public void ProcessInlineLeaf(LeafBlock leafBlock)
         {
-            if (leafBlock == null) throw new ArgumentNullException(nameof(leafBlock));
+            if (leafBlock == null) ThrowHelper.ArgumentNullException_leafBlock();
 
             // clear parser states
             Array.Clear(ParserStates, 0, ParserStates.Length);
@@ -192,7 +185,7 @@ namespace Markdig.Parsers
             previousLineIndexForSliceOffset = 0;
             lineOffsets.Clear();
             var text = leafBlock.Lines.ToSlice(lineOffsets);
-            leafBlock.Lines = new StringLineGroup();
+            leafBlock.Lines.Release();
 
             int previousStart = -1;
 
@@ -201,7 +194,7 @@ namespace Markdig.Parsers
                 // Security check so that the parser can't go into a crazy infinite loop if one extension is messing
                 if (previousStart == text.Start)
                 {
-                    throw new InvalidOperationException($"The parser is in an invalid infinite loop while trying to parse inlines for block [{leafBlock.GetType().Name}] at position ({leafBlock.ToPositionText()}");
+                    ThrowHelper.InvalidOperationException($"The parser is in an invalid infinite loop while trying to parse inlines for block [{leafBlock.GetType().Name}] at position ({leafBlock.ToPositionText()}");
                 }
                 previousStart = text.Start;
 

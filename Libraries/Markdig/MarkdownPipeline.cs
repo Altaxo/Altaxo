@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alexandre Mutel. All rights reserved.
+// Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
 using System;
@@ -20,15 +20,14 @@ namespace Markdig
         /// <summary>
         /// Initializes a new instance of the <see cref="MarkdownPipeline" /> class.
         /// </summary>
-        internal MarkdownPipeline(OrderedList<IMarkdownExtension> extensions, BlockParserList blockParsers, InlineParserList inlineParsers, StringBuilderCache cache, TextWriter debugLog, ProcessDocumentDelegate documentProcessed)
+        internal MarkdownPipeline(OrderedList<IMarkdownExtension> extensions, BlockParserList blockParsers, InlineParserList inlineParsers, TextWriter debugLog, ProcessDocumentDelegate documentProcessed)
         {
-            if (blockParsers == null) throw new ArgumentNullException(nameof(blockParsers));
-            if (inlineParsers == null) throw new ArgumentNullException(nameof(inlineParsers));
+            if (blockParsers == null) ThrowHelper.ArgumentNullException(nameof(blockParsers));
+            if (inlineParsers == null) ThrowHelper.ArgumentNullException(nameof(inlineParsers));
             // Add all default parsers
             Extensions = extensions;
             BlockParsers = blockParsers;
             InlineParsers = inlineParsers;
-            StringBuilderCache = cache;
             DebugLog = debugLog;
             DocumentProcessed = documentProcessed;
         }
@@ -44,8 +43,6 @@ namespace Markdig
 
         internal InlineParserList InlineParsers { get; }
 
-        internal StringBuilderCache StringBuilderCache { get; }
-
         // TODO: Move the log to a better place
         internal TextWriter DebugLog { get; }
 
@@ -57,10 +54,47 @@ namespace Markdig
         /// <param name="renderer">The markdown renderer to setup</param>
         public void Setup(IMarkdownRenderer renderer)
         {
-            if (renderer == null) throw new ArgumentNullException(nameof(renderer));
+            if (renderer == null) ThrowHelper.ArgumentNullException(nameof(renderer));
             foreach (var extension in Extensions)
             {
                 extension.Setup(this, renderer);
+            }
+        }
+
+
+        private HtmlRendererCache _rendererCache = null;
+
+        internal HtmlRenderer GetCacheableHtmlRenderer()
+        {
+            if (_rendererCache is null)
+            {
+                _rendererCache = new HtmlRendererCache
+                {
+                    OnNewInstanceCreated = Setup
+                };
+            }
+            return _rendererCache.Get();
+        }
+        internal void ReleaseCacheableHtmlRenderer(HtmlRenderer renderer)
+        {
+            _rendererCache.Release(renderer);
+        }
+
+        private sealed class HtmlRendererCache : ObjectCache<HtmlRenderer>
+        {
+            public Action<HtmlRenderer> OnNewInstanceCreated;
+
+            protected override HtmlRenderer NewInstance()
+            {
+                var writer = new StringWriter();
+                var renderer = new HtmlRenderer(writer);
+                OnNewInstanceCreated(renderer);
+                return renderer;
+            }
+
+            protected override void Reset(HtmlRenderer instance)
+            {
+                instance.Reset();
             }
         }
     }

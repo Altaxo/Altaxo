@@ -51,7 +51,7 @@ namespace Markdig.Helpers
 
         public static bool TryParseHtmlTag(ref StringSlice text, StringBuilder builder)
         {
-            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            if (builder == null) ThrowHelper.ArgumentNullException(nameof(builder));
             var c = text.CurrentChar;
             if (c != '<')
             {
@@ -373,7 +373,7 @@ namespace Markdig.Helpers
             }
             builder.Append('-');
             builder.Append('-');
-            if (text.PeekChar(1) == '>')
+            if (text.PeekChar() == '>')
             {
                 return false;
             }
@@ -450,11 +450,7 @@ namespace Markdig.Helpers
 
             while ((searchPos = text.IndexOfAny(search, searchPos)) != -1)
             {
-                if (sb == null)
-                {
-                    sb = StringBuilderCache.Local();
-                    sb.Length = 0;
-                }
+                sb ??= StringBuilderCache.Local();
                 c = text[searchPos];
                 if (removeBackSlash && c == '\\')
                 {
@@ -472,10 +468,7 @@ namespace Markdig.Helpers
                 }
                 else if (c == '&')
                 {
-                    int entityNameStart;
-                    int entityNameLength;
-                    int numericEntity;
-                    var match = ScanEntity(new StringSlice(text, searchPos, text.Length - 1), out numericEntity, out entityNameStart, out entityNameLength);
+                    var match = ScanEntity(new StringSlice(text, searchPos, text.Length - 1), out int numericEntity, out int entityNameStart, out int entityNameLength);
                     if (match == 0)
                     {
                         searchPos++;
@@ -486,8 +479,7 @@ namespace Markdig.Helpers
 
                         if (entityNameLength > 0)
                         {
-                            var namedEntity = new StringSlice(text, entityNameStart, entityNameStart + entityNameLength - 1);
-                            var decoded = EntityHelper.DecodeEntity(namedEntity.ToString());
+                            var decoded = EntityHelper.DecodeEntity(text.AsSpan(entityNameStart, entityNameLength));
                             if (decoded != null)
                             {
                                 sb.Append(text, lastPos, searchPos - match - lastPos);
@@ -498,36 +490,18 @@ namespace Markdig.Helpers
                         else if (numericEntity >= 0)
                         {
                             sb.Append(text, lastPos, searchPos - match - lastPos);
-                            if (numericEntity == 0)
-                            {
-                                sb.Append('\0'.EscapeInsecure());
-                            }
-                            else
-                            {
-                                var decoded = EntityHelper.DecodeEntity(numericEntity);
-                                if (decoded != null)
-                                {
-                                    sb.Append(decoded);
-                                }
-                                else
-                                {
-                                    sb.Append('\uFFFD');
-                                }
-                            }
-
+                            EntityHelper.DecodeEntity(numericEntity, sb);
                             lastPos = searchPos;
                         }
                     }
                 }
             }
 
-            if (sb == null)
+            if (sb == null || lastPos == 0)
                 return text;
 
             sb.Append(text, lastPos, text.Length - lastPos);
-            var result = sb.ToString();
-            sb.Length = 0;
-            return result;
+            return sb.GetStringAndReset();
         }
 
         /// <summary>
@@ -539,12 +513,6 @@ namespace Markdig.Helpers
             // Credits: code from CommonMark.NET
             // Copyright (c) 2014, Kārlis Gaņģis All rights reserved. 
             // See license for details:  https://github.com/Knagis/CommonMark.NET/blob/master/LICENSE.md
-
-            /*!re2c
-                  [&] ([#] ([Xx][A-Fa-f0-9]{1,8}|[0-9]{1,8}) |[A-Za-z][A-Za-z0-9]{1,31} ) [;]
-                     { return (p - start); }
-                  .? { return 0; }
-                */
 
             numericEntity = 0;
             namedEntityStart = 0;
@@ -565,25 +533,25 @@ namespace Markdig.Helpers
                 if (c == 'x' || c == 'X')
                 {
                     c = slice.NextChar(); // skip #
-                    // expect 1-8 hex digits starting from pos+3
+                    // expect 1-6 hex digits starting from pos+3
                     while (c != '\0')
                     {
                         c = slice.NextChar();
                         if (c >= '0' && c <= '9')
                         {
-                            if (++counter == 9) return 0;
+                            if (++counter == 7) return 0;
                             numericEntity = numericEntity*16 + (c - '0');
                             continue;
                         }
                         else if (c >= 'A' && c <= 'F')
                         {
-                            if (++counter == 9) return 0;
+                            if (++counter == 7) return 0;
                             numericEntity = numericEntity*16 + (c - 'A' + 10);
                             continue;
                         }
                         else if (c >= 'a' && c <= 'f')
                         {
-                            if (++counter == 9) return 0;
+                            if (++counter == 7) return 0;
                             numericEntity = numericEntity*16 + (c - 'a' + 10);
                             continue;
                         }
@@ -596,14 +564,14 @@ namespace Markdig.Helpers
                 }
                 else
                 {
-                    // expect 1-8 digits starting from pos+2
+                    // expect 1-7 digits starting from pos+2
                     while (c != '\0')
                     {
                         c = slice.NextChar();
 
                         if (c >= '0' && c <= '9')
                         {
-                            if (++counter == 9) return 0;
+                            if (++counter == 8) return 0;
                             numericEntity = numericEntity*10 + (c - '0');
                             continue;
                         }

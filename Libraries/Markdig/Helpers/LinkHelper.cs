@@ -101,18 +101,16 @@ namespace Markdig.Helpers
             var headingBuffer = StringBuilderCache.Local();
             for (int i = 0; i < headingText.Length; i++)
             {
-                var c = char.ToLowerInvariant(headingText[i]);
+                var c = headingText[i];
                 if (char.IsLetterOrDigit(c) || c == ' ' || c == '-' || c == '_')
                 {
-                    headingBuffer.Append(c == ' ' ? '-' : c);
+                    headingBuffer.Append(c == ' ' ? '-' : char.ToLowerInvariant(c));
                 }
             }
-            var result = headingBuffer.ToString();
-            headingBuffer.Length = 0;
-            return result;
+            return headingBuffer.GetStringAndReset();
         }
 
-        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsReservedPunctuation(char c)
         {
             return c == '_' || c == '-' || c == '.';
@@ -427,7 +425,6 @@ namespace Markdig.Helpers
         {
             bool isValid = false;
             var buffer = StringBuilderCache.Local();
-            buffer.Length = 0;
 
             // a sequence of zero or more characters between straight double-quote characters ("), including a " character only if it is backslash-escaped, or
             // a sequence of zero or more characters between straight single-quote characters ('), including a ' character only if it is backslash-escaped, or
@@ -519,12 +516,11 @@ namespace Markdig.Helpers
         {
             bool isValid = false;
             var buffer = StringBuilderCache.Local();
-            buffer.Length = 0;
 
             var c = text.CurrentChar;
 
             // a sequence of zero or more characters between an opening < and a closing > 
-            // that contains no spaces, line breaks, or unescaped < or > characters, or
+            // that contains no line breaks, or unescaped < or > characters, or
             if (c == '<')
             {
                 bool hasEscape = false;
@@ -554,12 +550,12 @@ namespace Markdig.Helpers
                         continue;
                     }
 
-                    hasEscape = false;
-
-                    if (c.IsWhitespace()) // TODO: specs unclear. space is strict or relaxed? (includes tabs?)
+                    if (c.IsNewLine())
                     {
                         break;
                     }
+
+                    hasEscape = false;
 
                     buffer.Append(c);
 
@@ -567,7 +563,7 @@ namespace Markdig.Helpers
             }
             else
             {
-                // a nonempty sequence of characters that does not include ASCII space or control characters, 
+                // a nonempty sequence of characters that does not start with <, does not include ASCII space or control characters,
                 // and includes parentheses only if (a) they are backslash-escaped or (b) they are part of a 
                 // balanced pair of unescaped parentheses that is not itself inside a balanced pair of unescaped 
                 // parentheses. 
@@ -597,20 +593,23 @@ namespace Markdig.Helpers
                         }
                     }
 
-                    if (hasEscape && !c.IsAsciiPunctuation())
+                    if (!isAutoLink)
                     {
-                        buffer.Append('\\');
-                    }
+                        if (hasEscape && !c.IsAsciiPunctuation())
+                        {
+                            buffer.Append('\\');
+                        }
 
-                    // If we have an escape
-                    if (c == '\\')
-                    {
-                        hasEscape = true;
-                        c = text.NextChar();
-                        continue;
-                    }
+                        // If we have an escape
+                        if (c == '\\')
+                        {
+                            hasEscape = true;
+                            c = text.NextChar();
+                            continue;
+                        }
 
-                    hasEscape = false;
+                        hasEscape = false;
+                    }
 
                     if (IsEndOfUri(c, isAutoLink))
                     {
@@ -622,10 +621,7 @@ namespace Markdig.Helpers
                     {
                         if (c == '&')
                         {
-                            int entityNameStart;
-                            int entityNameLength;
-                            int entityValue;
-                            if (HtmlHelper.ScanEntity(text, out entityValue, out entityNameStart, out entityNameLength) > 0)
+                            if (HtmlHelper.ScanEntity(text, out _, out _, out _) > 0)
                             {
                                 isValid = true;
                                 break;
@@ -654,14 +650,14 @@ namespace Markdig.Helpers
             return isValid;
         }
 
-        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsTrailingUrlStopCharacter(char c)
         {
             // Trailing punctuation (specifically, ?, !, ., ,, :, *, _, and ~) will not be considered part of the autolink, though they may be included in the interior of the link:
             return c == '?' || c == '!' || c == '.' || c == ',' || c == ':' || c == '*' || c == '*' || c == '_' || c == '~';
         }
 
-        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsEndOfUri(char c, bool isAutoLink)
         {
             return c == '\0' || c.IsSpaceOrTab() || c.IsControl() || (isAutoLink && c == '<'); // TODO: specs unclear. space is strict or relaxed? (includes tabs?)
@@ -758,7 +754,8 @@ namespace Markdig.Helpers
             text.TrimStart();
 
             urlSpan.Start = text.Start;
-            if (!TryParseUrl(ref text, out url) || string.IsNullOrEmpty(url))
+            bool isAngleBracketsUrl = text.CurrentChar == '<';
+            if (!TryParseUrl(ref text, out url) || (!isAngleBracketsUrl && string.IsNullOrEmpty(url)))
             {
                 return false;
             }
