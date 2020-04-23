@@ -58,6 +58,7 @@ namespace Altaxo.Main.Services
     ///
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.Collections.Generic.List`1[ICSharpCode.Core.FileName]", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Private.CoreLib", "System.Collections.Generic.List`1[Altaxo.Main.Services.FileName]", 1)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.Collections.Generic.List`1[Altaxo.Main.Services.FileName]", 1)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(List<FileName>), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate

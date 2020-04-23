@@ -59,6 +59,8 @@ namespace Altaxo.Serialization.Xml
     /// 2015-06-30 Initial version
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(double), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Private.CoreLib", "System.Double", 0)] // Deserialization for .Net core type
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.Double", 0)] // Deserialization for .Net framework type
     private class XmlSerializationSurrogateForSystemDouble : IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -77,6 +79,8 @@ namespace Altaxo.Serialization.Xml
     /// 2015-06-30 Initial version
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(int), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Private.CoreLib", "System.Int32", 0)] // Deserialization for .Net core type
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.Int32", 0)] // Deserialization for .Net framework type
     private class XmlSerializationSurrogateForSystemInt32 : IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -95,6 +99,8 @@ namespace Altaxo.Serialization.Xml
     /// 2015-06-30 Initial version
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(long), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Private.CoreLib", "System.Int64", 0)] // Deserialization for .Net core type
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.Int64", 0)] // Deserialization for .Net framework type
     private class XmlSerializationSurrogateForSystemInt64 : IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -113,6 +119,8 @@ namespace Altaxo.Serialization.Xml
     /// 2015-06-30 Initial version
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DateTime), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Private.CoreLib", "System.DateTime", 0)] // Deserialization for .Net core type
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.DateTime", 0)] // Deserialization for .Net framework type
     private class XmlSerializationSurrogateForSystemDateTime : IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -131,6 +139,8 @@ namespace Altaxo.Serialization.Xml
     /// 2018-04-11 Initial version
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(bool), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Private.CoreLib", "System.Boolean", 0)] // Deserialization for .Net core type
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.Boolean", 0)] // Deserialization for .Net framework type
     private class XmlSerializationSurrogateForBoolean : IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
