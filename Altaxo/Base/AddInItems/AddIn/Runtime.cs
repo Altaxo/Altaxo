@@ -16,6 +16,9 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#define VerboseInfo_AssemblyLoading
+
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +26,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using Altaxo.Main.Services;
+
 
 namespace Altaxo.AddInItems
 {
@@ -297,14 +301,27 @@ namespace Altaxo.AddInItems
 #if NETFRAMEWORK
       return System.Reflection.Assembly.Load(assemblyString);
 #else
-      return AssemblyLoaderService.Instance.LoadAssemblyFromPartialName(assemblyString, this.hintPath);
+      var assembly = AssemblyLoaderService.Instance.LoadAssemblyFromPartialName(assemblyString, this.hintPath);
+
+#if VerboseInfo_AssemblyLoading
+      System.Diagnostics.Debug.WriteLine($"AssemblyLoader called with assemblyString={assemblyString}, result is {assembly.Location}");
+#endif
+
+      return assembly;
+
 #endif
 
     }
 
     protected virtual Assembly LoadAssemblyFrom(string assemblyFile)
     {
-      return System.Reflection.Assembly.LoadFrom(assemblyFile);
+      var assembly = System.Reflection.Assembly.LoadFrom(assemblyFile);
+
+#if VerboseInfo_AssemblyLoading
+      System.Diagnostics.Debug.WriteLine($"Attention: {nameof(LoadAssemblyFrom)} called with assemblyFile={assemblyFile}, result is {assembly.Location}");
+#endif
+      return assembly;
+
     }
 
     protected virtual void ShowError(string message)
