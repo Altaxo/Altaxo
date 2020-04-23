@@ -315,7 +315,7 @@ namespace Altaxo.AddInItems
 
     protected virtual Assembly LoadAssemblyFrom(string assemblyFile)
     {
-      var assembly = System.Reflection.Assembly.LoadFrom(assemblyFile);
+      var assembly = AssemblyLoaderService.Instance.LoadAssemblyFromFullySpecifiedName(assemblyFile);
 
 #if VerboseInfo_AssemblyLoading
       System.Diagnostics.Debug.WriteLine($"Attention: {nameof(LoadAssemblyFrom)} called with assemblyFile={assemblyFile}, result is {assembly.Location}");
