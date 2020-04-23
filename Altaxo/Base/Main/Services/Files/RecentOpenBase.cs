@@ -58,6 +58,7 @@ namespace Altaxo.Main.Services
     ///
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.Collections.Generic.List`1[ICSharpCode.Core.FileName]", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.Collections.Generic.List`1[Altaxo.Main.Services.FileName]", 1)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(List<FileName>), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
@@ -137,8 +138,8 @@ namespace Altaxo.Main.Services
     public void RemoveRecentProject(PathName pathName)
     {
       if (pathName is FileName name)
-    {
-      _recentProjects.Remove(name);
+      {
+        _recentProjects.Remove(name);
       }
       Current.PropertyService.SetValue(PropertyKeyRecentProjects, _recentProjects);
     }
@@ -146,15 +147,15 @@ namespace Altaxo.Main.Services
     public virtual void AddRecentProject(PathName pathName)
     {
       if (pathName is FileName name)
-    {
-      _recentProjects.Remove(name);
-
-      while (_recentProjects.Count >= MAX_LENGTH)
       {
-        _recentProjects.RemoveAt(_recentProjects.Count - 1);
-      }
+        _recentProjects.Remove(name);
 
-      _recentProjects.Insert(0, name);
+        while (_recentProjects.Count >= MAX_LENGTH)
+        {
+          _recentProjects.RemoveAt(_recentProjects.Count - 1);
+        }
+
+        _recentProjects.Insert(0, name);
       }
 
       Current.PropertyService.SetValue(PropertyKeyRecentProjects, _recentProjects);
