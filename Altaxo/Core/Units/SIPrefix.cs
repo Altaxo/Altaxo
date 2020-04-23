@@ -230,10 +230,11 @@ namespace Altaxo.Units
     /// <param name="exponent">The exponent associated with the prefix.</param>
     public SIPrefix(string name, string shortCut, int exponent)
     {
-      if (string.IsNullOrEmpty(name))
+      if (name is null) // string.Empty is allowed here,  in order to support SIPrefix.None
         throw new ArgumentNullException(nameof(name));
-      if (string.IsNullOrEmpty(shortCut))
+      if (shortCut is null) // string.Empty is allowed here, in order to support SIPrefix.None
         throw new ArgumentNullException(nameof(shortCut));
+
       _name = name;
       _shortCut = shortCut;
       _exponent = exponent;
