@@ -40,6 +40,7 @@ namespace Altaxo.Serialization.Xml.FrameworkSurrogates
     /// <summary>
     /// Initial version (2014-01-18)
     /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Drawing", "System.Drawing.Imaging.ImageFormat", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Drawing.Imaging.ImageFormat), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {

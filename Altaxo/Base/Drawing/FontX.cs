@@ -60,6 +60,7 @@ namespace Altaxo.Drawing
 
     #region Serialization
 
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Drawing", "System.Drawing.Font", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Drawing.Font), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {

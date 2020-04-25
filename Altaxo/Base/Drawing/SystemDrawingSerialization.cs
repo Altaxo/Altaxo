@@ -26,6 +26,7 @@ using System;
 
 namespace System.Drawing
 {
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Drawing", "System.Drawing.Color", 0)]
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Drawing.Color), 0)]
   public class ColorXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
@@ -49,6 +50,7 @@ namespace System.Drawing
     }
   }
 
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Drawing", "System.Drawing.SizeF", 0)]
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Drawing.SizeF), 0)]
   public class SizeFXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
@@ -68,6 +70,7 @@ namespace System.Drawing
     }
   }
 
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Drawing", "System.Drawing.PointF", 0)]
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Drawing.PointF), 0)]
   public class PointFXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
@@ -87,6 +90,7 @@ namespace System.Drawing
     }
   }
 
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Drawing", "System.Drawing.RectangleF", 0)]
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Drawing.RectangleF), 0)]
   public class RectangleFXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
