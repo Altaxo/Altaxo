@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc;
 using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
@@ -1165,13 +1166,19 @@ namespace Altaxo.Graph.Scales.Ticks
       {
         if (span >= TimeSpan.FromDays(365 * targetNumberOfMajorTicks + 1))
         {
-          double yearPerTick = LinearTickSpacing.CalculateMajorSpan(span.TotalDays / 365.25, targetNumberOfMajorTicks);
+          var (spanRaw, spanDecadicExponent) = LinearTickSpacing.CalculateMajorSpan(span.TotalDays / 365.25, targetNumberOfMajorTicks);
+          double yearPerTick = RMath.ScaleDecadic(spanRaw, spanDecadicExponent);
           if (yearPerTick > 0.75)
             return TimeSpanEx.FromYears((long)Math.Round(yearPerTick));
         }
-        double monthPerTick = LinearTickSpacing.CalculateMajorSpan(span.TotalDays / (365.25 / 12), targetNumberOfMajorTicks);
-        if (monthPerTick >= 0.8)
-          return TimeSpanEx.FromMonths(RoundTo1_2_3_4_6_8_12_18(monthPerTick));
+
+        {
+          var (spanRaw, spanDecadicExponent) = LinearTickSpacing.CalculateMajorSpan(span.TotalDays / (365.25 / 12), targetNumberOfMajorTicks);
+          double monthPerTick = RMath.ScaleDecadic(spanRaw, spanDecadicExponent);
+          if (monthPerTick >= 0.8)
+            return TimeSpanEx.FromMonths(RoundTo1_2_3_4_6_8_12_18(monthPerTick));
+        }
+
       }
       int i = _possibleMajorTickSpans.Length - 1;
       var destMajorTickSpan = new TimeSpan(span.Ticks / targetNumberOfMajorTicks);

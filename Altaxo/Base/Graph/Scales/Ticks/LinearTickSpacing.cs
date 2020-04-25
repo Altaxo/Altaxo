@@ -41,12 +41,25 @@ namespace Altaxo.Graph.Scales.Ticks
     private class CachedMajorMinor : ICloneable
     {
       public double Org, End;
-      /// <summary>Physical span value between two major ticks.</summary>
 
-      public double MajorSpan;
+      /// <summary>Raw value of physical span value between two major ticks, must be scaled with the MajorSpanDecadicExponent.</summary>
+      public double MajorSpanRaw;
+      /// <summary>
+      /// The decadic exponent for the Major Span.
+      /// In order to get the MajorSpan, the MajorSpanRaw value must be multiplied with
+      /// 10^MajorSpanDecadicExponent.
+      /// </summary>
+      public int MajorSpanDecadicExponent;
+
+      /// <summary>
+      /// Value of physical span value between two major ticks, must be scaled with the MajorSpanDecadicExponent.
+      /// Attention: Do not use this value for repeated calculations (summation, multiplication) due to possible rounding errors.
+      /// Instead, use the <see cref="MajorSpanRaw"/> for summation or multiplication, and scale afterwards using <see cref="RMath.ScaleDecadic(double, int)"/>
+      /// with <see cref="MajorSpanDecadicExponent"/> for the exponent.
+      /// </summary>
+      public double MajorSpan => RMath.ScaleDecadic(MajorSpanRaw, MajorSpanDecadicExponent);
 
       /// <summary>Minor ticks per Major tick ( if there is one minor tick between two major ticks m_minorticks is 2!</summary>
-
       public int MinorTicks;
 
       /// <summary>Current axis origin divided by the major tick span value.</summary>
@@ -55,11 +68,12 @@ namespace Altaxo.Graph.Scales.Ticks
       /// <summary>Current axis end divided by the major tick span value.</summary>
       public double AxisEndByMajor;
 
-      public CachedMajorMinor(double org, double end, double major, int minor)
+      public CachedMajorMinor(double org, double end, double majorRaw, int majorDecadicExponent, int minor)
       {
         Org = org;
         End = end;
-        MajorSpan = major;
+        MajorSpanRaw = majorRaw;
+        MajorSpanDecadicExponent = majorDecadicExponent;
         MinorTicks = minor;
       }
 
@@ -716,7 +730,8 @@ namespace Altaxo.Graph.Scales.Ticks
 
       var axisOrgByMajor = _cachedMajorMinor.AxisOrgByMajor;
       var axisEndByMajor = _cachedMajorMinor.AxisEndByMajor;
-      var majorSpan = _cachedMajorMinor.MajorSpan;
+      var majorSpanRaw = _cachedMajorMinor.MajorSpanRaw;
+      var majorSpanDecadicExponent = _cachedMajorMinor.MajorSpanDecadicExponent;
 
       double beg = System.Math.Ceiling(axisOrgByMajor);
       double end = System.Math.Floor(axisEndByMajor);
@@ -727,7 +742,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
       for (int i = 0; i <= len; i++)
       {
-        double v = (i + beg) * majorSpan;
+        double v = RMath.ScaleDecadic((i + beg) * majorSpanRaw, majorSpanDecadicExponent);
         _majorTicks.Add(v);
       }
 
@@ -749,7 +764,8 @@ namespace Altaxo.Graph.Scales.Ticks
 
       var axisOrgByMajor = _cachedMajorMinor.AxisOrgByMajor;
       var axisEndByMajor = _cachedMajorMinor.AxisEndByMajor;
-      var majorSpan = _cachedMajorMinor.MajorSpan;
+      var majorSpanRaw = _cachedMajorMinor.MajorSpanRaw;
+      var majorSpanDecadicExponent = _cachedMajorMinor.MajorSpanDecadicExponent;
       var numberOfMinorTicks = _cachedMajorMinor.MinorTicks;
 
       if (numberOfMinorTicks < 2)
@@ -772,7 +788,7 @@ namespace Altaxo.Graph.Scales.Ticks
         if ((i + shift) % numberOfMinorTicks == 0)
           continue;
 
-        double v = (i + beg) * majorSpan / numberOfMinorTicks;
+        double v = RMath.ScaleDecadic((i + beg) * majorSpanRaw / numberOfMinorTicks, majorSpanDecadicExponent);
         _minorTicks.Add(v);
       }
 
@@ -831,7 +847,7 @@ namespace Altaxo.Graph.Scales.Ticks
       }
 
       bool modGraceAndOneLever = GetOrgEndWithGraceAndZeroLever(xorg, xend, isOrgExtendable, isEndExtendable, out var xOrgWithGraceAndOneLever, out var xEndWithGraceAndOneLever);
-      bool modTickSnapping = GetOrgEndWithTickSnappingOnly(xend - xorg, xorg, xend, isOrgExtendable, isEndExtendable, out var xOrgWithTickSnapping, out var xEndWithTickSnapping, out var majorTickSpan, out var minorTicks);
+      bool modTickSnapping = GetOrgEndWithTickSnappingOnly(xend - xorg, xorg, xend, isOrgExtendable, isEndExtendable, out var xOrgWithTickSnapping, out var xEndWithTickSnapping, out var majorTickSpanRaw, out var majorTickSpanDecadicExponent, out var minorTicks);
 
       // now compare the two
       if (xOrgWithTickSnapping <= xOrgWithGraceAndOneLever && xEndWithTickSnapping >= xEndWithGraceAndOneLever)
@@ -842,13 +858,13 @@ namespace Altaxo.Graph.Scales.Ticks
       else
       {
         modified |= modGraceAndOneLever;
-        modified |= GetOrgEndWithTickSnappingOnly(xEndWithGraceAndOneLever - xOrgWithGraceAndOneLever, xOrgWithGraceAndOneLever, xEndWithGraceAndOneLever, isOrgExtendable, isEndExtendable, out xOrgWithTickSnapping, out xEndWithTickSnapping, out majorTickSpan, out minorTicks);
+        modified |= GetOrgEndWithTickSnappingOnly(xEndWithGraceAndOneLever - xOrgWithGraceAndOneLever, xOrgWithGraceAndOneLever, xEndWithGraceAndOneLever, isOrgExtendable, isEndExtendable, out xOrgWithTickSnapping, out xEndWithTickSnapping, out majorTickSpanRaw, out majorTickSpanDecadicExponent, out minorTicks);
       }
 
       xorg = xOrgWithTickSnapping;
       xend = xEndWithTickSnapping;
 
-      _cachedMajorMinor = new CachedMajorMinor(xOrgWithTickSnapping, xEndWithTickSnapping, majorTickSpan, minorTicks);
+      _cachedMajorMinor = new CachedMajorMinor(xOrgWithTickSnapping, xEndWithTickSnapping, majorTickSpanRaw, majorTickSpanDecadicExponent, minorTicks);
 
       return modified;
       ;
@@ -933,20 +949,24 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <param name="majorSpan">The physical value that corresponds to one major tick interval.</param>
     /// <param name="minorTicks">Number of minor ticks per major tick interval. This variable has some special values (see <see cref="MinorTicks"/>).</param>
     /// <returns>True if at least either org or end were adjusted to a new value.</returns>
-    private bool GetOrgEndWithTickSnappingOnly(double overriddenScaleSpan, double scaleOrg, double scaleEnd, bool isOrgExtendable, bool isEndExtendable, out double propOrg, out double propEnd, out double majorSpan, out int minorTicks)
+    private bool GetOrgEndWithTickSnappingOnly(double overriddenScaleSpan, double scaleOrg, double scaleEnd, bool isOrgExtendable, bool isEndExtendable, out double propOrg, out double propEnd, out double majorSpanRaw, out int majorSpanDecadicExponent, out int minorTicks)
     {
       bool modified = false;
       propOrg = scaleOrg;
       propEnd = scaleEnd;
 
+      majorSpanDecadicExponent = 0;
+
       if (null != _userDefinedMajorSpan)
       {
-        majorSpan = Math.Abs(_userDefinedMajorSpan.Value);
+        majorSpanRaw = Math.Abs(_userDefinedMajorSpan.Value);
       }
       else
       {
-        majorSpan = CalculateMajorSpan(overriddenScaleSpan, _targetNumberOfMajorTicks);
+        (majorSpanRaw, majorSpanDecadicExponent) = CalculateMajorSpan(overriddenScaleSpan, _targetNumberOfMajorTicks);
       }
+
+      var majorSpan = RMath.ScaleDecadic(majorSpanRaw, majorSpanDecadicExponent);
 
       if (null != _userDefinedMinorTicks)
       {
@@ -1027,7 +1047,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// </summary>
     /// <param name="scaleSpan">Scale span (end-origin).</param>
     /// <param name="targetNumberOfMajorTicks">Target number of major ticks.</param>
-    public static double CalculateMajorSpan(double scaleSpan, int targetNumberOfMajorTicks)
+    public static (double MajorSpanRaw, int MajorSpanDecadicExponent) CalculateMajorSpan(double scaleSpan, int targetNumberOfMajorTicks)
     {
       if (!(scaleSpan > 0))
         throw new ArgumentOutOfRangeException("scaleSpan must be >0");
@@ -1044,7 +1064,7 @@ namespace Altaxo.Graph.Scales.Ticks
           break;
         }
       }
-      return normMajorSpan * RMath.Pow(10, log10RawMajorSpan);
+      return (normMajorSpan, log10RawMajorSpan);
     }
 
     /// <summary>

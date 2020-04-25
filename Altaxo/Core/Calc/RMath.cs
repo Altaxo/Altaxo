@@ -443,5 +443,16 @@ namespace Altaxo.Calc
 
       return inverse ? 1.0 / value : value;
     }
+
+    /// <summary>
+    /// Calculates x * 10^n.
+    /// </summary>
+    /// <param name="x">The scaling factor.</param>
+    /// <param name="n">The decadic exponent.</param>
+    /// <returns>The product x * 10^n.</returns>
+    public static double ScaleDecadic(double x, int n)
+    {
+      return n < 0 ? x / Pow(10, -n) : x * Pow(10, n);
+    }
   }
 }
