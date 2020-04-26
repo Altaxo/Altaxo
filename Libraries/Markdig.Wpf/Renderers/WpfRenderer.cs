@@ -178,19 +178,16 @@ namespace Markdig.Renderers
             }
             else if (stackEle != null)
             {
-                Type type = stackEle.GetType();
-                System.Reflection.PropertyInfo prop = type.GetProperty("FontSize");
+                var type = stackEle.GetType();
+                var prop = type.GetProperty("FontSize");
                 if (null != prop)
                 {
                     return (double)prop.GetValue(stackEle);
                 }
-
-                try
+                var field = type.GetField("FontSize");
+                if (null != field)
                 {
-                    return ((dynamic)stackEle).FontSize;
-                }
-                catch (Exception)
-                {
+                    return (double)field.GetValue(stackEle);
                 }
             }
 
