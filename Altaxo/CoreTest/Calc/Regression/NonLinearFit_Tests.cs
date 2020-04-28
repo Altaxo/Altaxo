@@ -457,20 +457,4 @@ namespace AltaxoTest.Calc.Regression
       Assert.AreEqual(0.755, dep, 1E-2, "Dependency should be around 0.755");
     }
   }
-
-  /// <summary>
-  /// Summary description for Class1.
-  /// </summary>
-  internal class MainMain
-  {
-    /// <summary>
-    /// The main entry point for the application.
-    /// </summary>
-    [STAThread]
-    private static void Main(string[] args)
-    {
-      double[] arr = { 1E20, 1, 1E-20 };
-      double result = NLFit.enorm(3, arr);
-    }
-  }
 }
