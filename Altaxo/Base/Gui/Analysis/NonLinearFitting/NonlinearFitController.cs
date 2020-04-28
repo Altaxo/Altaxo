@@ -543,6 +543,79 @@ Label_EditScript:
 
     private void CreateOrReplaceFunctionPlotItems(XYPlotLayer xylayer)
     {
+      _previousFitDocumentIdentifier = CreateOrReplaceFunctionPlotItems(
+        xylayer,
+        _doc,
+        _previousFitDocumentIdentifier,
+        _showUnusedDependentVariables,
+        _showConfidenceBands,
+        _confidenceLevel,
+        _sigmaSquare,
+        _numberOfFitPoints,
+        _covarianceMatrix
+        );
+    }
+
+    /// <summary>
+    /// Creates the or replace function plot items after a successful Levenberg-Marquardt-Fit.
+    /// </summary>
+    /// <param name="xylayer">The XY-Plot Layer for which to replace the plot items.</param>
+    /// <param name="doc">The fit document.</param>
+    /// <param name="fitAdapter">The Levenberg-Marquardt fit adapter.</param>
+    /// <param name="previousFitDocumentIdentifier">The fit document identifier of the previous fit.</param>
+    /// <param name="showUnusedDependentVariables">If set to <c>true</c>, shows the unused dependent variables of the fit, too.</param>
+    /// <param name="showConfidenceBands">If set to <c>true</c>, shows the confidence bands of the fit (next parameter is the confidence level).</param>
+    /// <param name="confidenceLevel">The confidence level (only used if <paramref name="showConfidenceBands"/> is set to true).</param>
+    /// <returns>The new identifier of the fit.</returns>
+    public static string CreateOrReplaceFunctionPlotItems(
+        XYPlotLayer xylayer,
+        NonlinearFitDocument doc,
+        LevMarAdapter fitAdapter,
+        string previousFitDocumentIdentifier,
+        bool showUnusedDependentVariables,
+        bool showConfidenceBands = false,
+        double confidenceLevel = 0
+      )
+    {
+      return CreateOrReplaceFunctionPlotItems(
+        xylayer,
+        doc,
+        previousFitDocumentIdentifier,
+        showUnusedDependentVariables,
+        showConfidenceBands,
+        confidenceLevel,
+        fitAdapter.ResultingSigmaSquare,
+        fitAdapter.NumberOfData,
+        (double[])fitAdapter.CovarianceMatrix.Clone()
+        );
+
+    }
+
+    /// <summary>
+    /// Creates or replaces function plot items after a successful Levenberg-Marquardt-Fit.
+    /// </summary>
+    /// <param name="xylayer">The XY-Plot Layer for which to replace the plot items.</param>
+    /// <param name="doc">The fit document.</param>
+    /// <param name="previousFitDocumentIdentifier">The fit document identifier of the previous fit.</param>
+    /// <param name="showUnusedDependentVariables">If set to <c>true</c>, shows the unused dependent variables of the fit, too.</param>
+    /// <param name="showConfidenceBands">If set to <c>true</c>, shows the confidence bands of the fit (next parameter is the confidence level).</param>
+    /// <param name="confidenceLevel">The confidence level (only used if <paramref name="showConfidenceBands"/> is set to true).</param>
+    /// <param name="sigmaSquare">The Sigma² of fit.</param>
+    /// <param name="numberOfFitPoints">Number of fit points.</param>
+    /// <param name="covarianceMatrix">The covariance matrix of the fit.</param>
+    /// <returns>The new identifier of the fit.</returns>
+    public static string CreateOrReplaceFunctionPlotItems(
+      XYPlotLayer xylayer,
+      NonlinearFitDocument doc,
+      string previousFitDocumentIdentifier,
+      bool showUnusedDependentVariables,
+      bool showConfidenceBands,
+      double confidenceLevel,
+      double sigmaSquare,
+      int numberOfFitPoints,
+      double[] covarianceMatrix
+      )
+    {
       // collect the old plot items and put them into a dictionary whose key is a combination of fit element index and dependentVariableIndex and
       // a third number which is 0 for the fit function, -1 for the lower confidence band, and +1 for the upper confidence band
       var oldItemsDictionary = new Dictionary<(int fitElementIndex, int dependentVariableIndex, int itemType), XYFunctionPlotItem>();
@@ -552,14 +625,14 @@ Label_EditScript:
 
       foreach (var pi in TreeNodeExtensions.TakeFromHereToFirstLeaves((IGPlotItem)xylayer.PlotItems))
       {
-        if (pi is XYNonlinearFitFunctionPlotItem plotItem && plotItem.FitDocumentIdentifier == _previousFitDocumentIdentifier)
+        if (pi is XYNonlinearFitFunctionPlotItem plotItem && plotItem.FitDocumentIdentifier == previousFitDocumentIdentifier)
         {
           oldItemsDictionary.Add((plotItem.FitElementIndex, plotItem.DependentVariableIndex, 0), plotItem);
         }
 
         if (pi is XYFunctionPlotItem fpi &&
             fpi.Data is XYNonlinearFitFunctionConfidenceBandPlotData fcPlotData &&
-            fcPlotData.FitDocumentIdentifier == _previousFitDocumentIdentifier)
+            fcPlotData.FitDocumentIdentifier == previousFitDocumentIdentifier)
         {
           oldItemsDictionary.Add((fcPlotData.FitElementIndex, fcPlotData.DependentVariableIndex, fcPlotData.IsLowerBand ? -1 : 1), fpi);
         }
@@ -577,16 +650,16 @@ Label_EditScript:
 
       // now create a plot item for each dependent variable, reuse if possible the style from the old items
       int funcNumber = 0;
-      for (int idxFitEnsemble = 0; idxFitEnsemble < _doc.FitEnsemble.Count; idxFitEnsemble++)
+      for (int idxFitEnsemble = 0; idxFitEnsemble < doc.FitEnsemble.Count; idxFitEnsemble++)
       {
-        FitElement fitEle = _doc.FitEnsemble[idxFitEnsemble];
+        FitElement fitEle = doc.FitEnsemble[idxFitEnsemble];
 
         for (int idxDependentVariable = 0; idxDependentVariable < fitEle.NumberOfDependentVariables; idxDependentVariable++, funcNumber++)
         {
           oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, 0), out var oldPlotItem);
 
           // if unused variables should not be shown, we remove them from the plot item collection
-          if (!_showUnusedDependentVariables && null == fitEle.DependentVariables(idxDependentVariable))
+          if (!showUnusedDependentVariables && null == fitEle.DependentVariables(idxDependentVariable))
           {
             if (null != oldPlotItem)
               oldPlotItem.ParentCollection.Remove(oldPlotItem);
@@ -616,7 +689,7 @@ Label_EditScript:
           }
 
           // Plot items for confidence intervals
-          if (_showConfidenceBands && _covarianceMatrix != null)
+          if (showConfidenceBands && covarianceMatrix != null)
           {
             { // generate new item for the lower confidence band
               oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, -1), out var oldPlotItemLowerConfBand);
@@ -634,17 +707,17 @@ Label_EditScript:
               var newPlotDataLowerConfBand = new XYNonlinearFitFunctionConfidenceBandPlotData(
                   false,
                   true, // lower confidence band
-                  _confidenceLevel,
+                  confidenceLevel,
                   newFitDocumentIdentifier,
-                  _doc,
+                  doc,
                   idxFitEnsemble,
                   idxDependentVariable,
                   functionDepVarPlotItemTransformation,
                   0,
                   functionIndepVarPlotItemTransformation,
-                  _numberOfFitPoints,
-                  _sigmaSquare,
-                  _covarianceMatrix
+                  numberOfFitPoints,
+                  sigmaSquare,
+                  covarianceMatrix
                   );
               var newPlotItemLowerConfBand = new XYFunctionPlotItem(newPlotDataLowerConfBand, newPlotStyleLowerConfBand);
 
@@ -669,17 +742,17 @@ Label_EditScript:
               var newPlotDataUpperConfBand = new XYNonlinearFitFunctionConfidenceBandPlotData(
                   false, // confidence band
                   false, // upper confidence band
-                  _confidenceLevel,
+                  confidenceLevel,
                   newFitDocumentIdentifier,
-                  _doc,
+                  doc,
                   idxFitEnsemble,
                   idxDependentVariable,
                   functionDepVarPlotItemTransformation,
                   0,
                   functionIndepVarPlotItemTransformation,
-                  _numberOfFitPoints,
-                  _sigmaSquare,
-                  _covarianceMatrix
+                  numberOfFitPoints,
+                  sigmaSquare,
+                  covarianceMatrix
                   );
               var newPlotItemUpperConf = new XYFunctionPlotItem(newPlotDataUpperConfBand, newPlotStyleUpperConfBand);
 
@@ -701,7 +774,7 @@ Label_EditScript:
           }
 
           // New plot item for fit function
-          var newPlotItem = new XYNonlinearFitFunctionPlotItem(newFitDocumentIdentifier, _doc, idxFitEnsemble, idxDependentVariable, functionDepVarPlotItemTransformation, 0, functionIndepVarPlotItemTransformation, newPlotStyle);
+          var newPlotItem = new XYNonlinearFitFunctionPlotItem(newFitDocumentIdentifier, doc, idxFitEnsemble, idxDependentVariable, functionDepVarPlotItemTransformation, 0, functionIndepVarPlotItemTransformation, newPlotStyle);
 
           if (null != oldPlotItem)
           {
@@ -714,10 +787,10 @@ Label_EditScript:
         }
       }
 
-      _previousFitDocumentIdentifier = newFitDocumentIdentifier;
+      return newFitDocumentIdentifier;
     }
 
-    private IVariantToVariantTransformation GetFitFunctionDependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitDependentVariable)
+    private static IVariantToVariantTransformation GetFitFunctionDependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitDependentVariable)
     {
       if (null == transformationOfOriginalDataColumn && null == transformationOfFitDependentVariable)
       {
@@ -737,7 +810,7 @@ Label_EditScript:
       }
     }
 
-    private IVariantToVariantTransformation GetFitFunctionIndependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitIndependentVariable)
+    private static IVariantToVariantTransformation GetFitFunctionIndependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitIndependentVariable)
     {
       if (null == transformationOfOriginalDataColumn && null == transformationOfFitIndependentVariable)
       {
@@ -757,7 +830,7 @@ Label_EditScript:
       }
     }
 
-    private void SplitInDataColumnAndTransformation(IReadableColumn ycolumn, out DataColumn dataColumn, out IVariantToVariantTransformation transformation)
+    private static void SplitInDataColumnAndTransformation(IReadableColumn ycolumn, out DataColumn dataColumn, out IVariantToVariantTransformation transformation)
     {
       dataColumn = null;
       transformation = null;
