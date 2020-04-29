@@ -29,6 +29,11 @@ using NUnit.Framework;
 
 namespace Altaxo
 {
+  public class PrivateClassToTestWeak
+  {
+
+  }
+
   [TestFixture]
   internal class WeakEventHandlersTest
   {
@@ -40,16 +45,26 @@ namespace Altaxo
     private class EventSource
     {
       public event EventHandler Changed;
+
+      public void FireEvent() => Changed?.Invoke(this, EventArgs.Empty);
+
+      public bool AreChangedHandlersAttached => (Changed != null);
     }
+
+
 
     private class EventSink
     {
       private readonly InstanceCounter _counter;
-
       public WeakEventHandler StoreTheWeakEventHandler;
+
+      private int _numberOfEventsReceived;
+
+      public int NumberOfEventsReceived => _numberOfEventsReceived;
 
       public void EhChanged(object o, EventArgs e)
       {
+        System.Threading.Interlocked.Increment(ref _numberOfEventsReceived);
       }
 
       public EventSink(InstanceCounter counter)
@@ -64,41 +79,32 @@ namespace Altaxo
       }
     }
 
-    private class EventSink2
+
+
+
+
+    [Test]
+    public void Test01_GarbageCollectionIsWorking()
     {
-      private readonly InstanceCounter _counter;
-
-      public WeakEventHandler StoreTheWeakEventHandler;
-      private EventSource _src;
-
-      public void EhChanged(object o, EventArgs e)
-      {
-      }
-
-      public EventSink2(InstanceCounter counter, EventSource src)
-      {
-        _counter = counter;
-        _src = src;
-        System.Threading.Interlocked.Increment(ref counter.Instances);
-      }
-
-      public void CreateLinkToSourceBadStyle()
-      {
-        // using member variable _src in the anonymous method below create a hard link to this, thus EventSink will never be claimed by the garbage collector
-        _src.Changed += new WeakEventHandler(EhChanged, h => _src.Changed -= h);
-      }
-
-      public void CreateLinkToSourceGoodStyle()
-      {
-        var src = _src; // using the local variable "src" in the anonymous method below doesn't create a pointer to this
-        _src.Changed += new WeakEventHandler(EhChanged, h => src.Changed -= h); // thus the event sink should be claimed during garbage collection
-      }
-
-      ~EventSink2()
-      {
-        System.Threading.Interlocked.Decrement(ref _counter.Instances);
-      }
+      var we = Test01_GarbageCollectionIsWorkingSetup();
+      GC.Collect(2, GCCollectionMode.Forced, true, true);
+      GC.WaitForPendingFinalizers();
+      Assert.IsFalse(we.IsAlive);
     }
+
+    private static WeakReference Test01_GarbageCollectionIsWorkingSetup()
+    {
+      WeakReference we;
+      {
+        var obj = new PrivateClassToTestWeak();
+        we = new WeakReference(obj);
+        Assert.IsTrue(we.IsAlive);
+        obj = null;
+      }
+
+      return we;
+    }
+
 
     /// <summary>
     /// Tests with conventionally event handlers and with weak event handlers.
@@ -106,11 +112,21 @@ namespace Altaxo
     /// whereas the sinks linked with WeakEventHandlers should be claimed.
     /// </summary>
     [Test]
-    public void TestWithAndWithoutWeakEventHandler()
+    public void Test02_WithAndWithoutWeakEventHandler()
+    {
+      var evSrc = new EventSource();
+      var counter = Test02_WithAndWithoutWeakEventHandlerSetup(evSrc);
+      GC.Collect(2, GCCollectionMode.Forced, true, true);
+      GC.WaitForPendingFinalizers();
+      Assert.AreEqual(2, counter.Instances); // the 2 instances that are reachable by ordinary event handlers should be still reachable
+      evSrc.FireEvent();
+      Assert.IsTrue(evSrc.AreChangedHandlersAttached); // the non-weak handlers should still be attached
+    }
+
+    private static InstanceCounter Test02_WithAndWithoutWeakEventHandlerSetup(EventSource evSrc)
     {
       var counter = new InstanceCounter();
 
-      var evSrc = new EventSource();
       var evSink1 = new EventSink(counter);
       var evSink2 = new EventSink(counter);
       var evSink3 = new EventSink(counter);
@@ -119,9 +135,9 @@ namespace Altaxo
 
       Assert.AreEqual(5, counter.Instances);
 
-      evSrc.Changed += new WeakEventHandler(evSink1.EhChanged, (h) => evSrc.Changed -= h);
-      evSrc.Changed += new WeakEventHandler(evSink2.EhChanged, (h) => evSrc.Changed -= h);
-      evSrc.Changed += new WeakEventHandler(evSink3.EhChanged, (h) => evSrc.Changed -= h);
+      evSrc.Changed += new WeakEventHandler(evSink1.EhChanged, evSrc, nameof(evSrc.Changed));
+      evSrc.Changed += new WeakEventHandler(evSink2.EhChanged, evSrc, nameof(evSrc.Changed));
+      evSrc.Changed += new WeakEventHandler(evSink3.EhChanged, evSrc, nameof(evSrc.Changed));
       evSrc.Changed += evSink4.EhChanged;
       evSrc.Changed += evSink5.EhChanged;
 
@@ -131,11 +147,7 @@ namespace Altaxo
       evSink4 = null;
       evSink5 = null;
 
-      GC.Collect();
-      System.Threading.Thread.Sleep(500);
-      GC.Collect();
-
-      Assert.AreEqual(2, counter.Instances); // the 2 instances that are reachable by ordinary event handlers should be still reachable
+      return counter;
     }
 
     /// <summary>
@@ -145,11 +157,18 @@ namespace Altaxo
     /// It should be reclaimed nevertheless.
     /// </summary>
     [Test]
-    public void TestWithoutAndWithWeakEventHandlerWithStorage()
+    public void Test03_WithoutAndWithWeakEventHandlerWithStorage()
+    {
+      var evSrc = new EventSource();
+      var counter = Test03_WithoutAndWithWeakEventHandlerWithStorageSetup(evSrc);
+      GC.Collect(2, GCCollectionMode.Forced, true, true);
+      GC.WaitForPendingFinalizers();
+      Assert.AreEqual(2, counter.Instances); // the 2 instances that are reachable by ordinary event handlers should be still reachable
+    }
+
+    private static InstanceCounter Test03_WithoutAndWithWeakEventHandlerWithStorageSetup(EventSource evSrc)
     {
       var counter = new InstanceCounter();
-
-      var evSrc = new EventSource();
       var evSink1 = new EventSink(counter);
       var evSink2 = new EventSink(counter);
       var evSink3 = new EventSink(counter);
@@ -158,9 +177,9 @@ namespace Altaxo
 
       Assert.AreEqual(5, counter.Instances);
 
-      evSrc.Changed += (evSink1.StoreTheWeakEventHandler = new WeakEventHandler(evSink1.EhChanged, (h) => evSrc.Changed -= h)); // with storage
-      evSrc.Changed += (evSink1.StoreTheWeakEventHandler = new WeakEventHandler(evSink2.EhChanged, (h) => evSrc.Changed -= h)); // with storage
-      evSrc.Changed += new WeakEventHandler(evSink3.EhChanged, (h) => evSrc.Changed -= h); // without storage
+      evSrc.Changed += (evSink1.StoreTheWeakEventHandler = new WeakEventHandler(evSink1.EhChanged, evSrc, nameof(evSrc.Changed))); // with storage
+      evSrc.Changed += (evSink2.StoreTheWeakEventHandler = new WeakEventHandler(evSink2.EhChanged, evSrc, nameof(evSrc.Changed))); // with storage
+      evSrc.Changed += new WeakEventHandler(evSink3.EhChanged, evSrc, nameof(evSrc.Changed)); // without storage
       evSrc.Changed += evSink4.EhChanged;
       evSrc.Changed += evSink5.EhChanged;
 
@@ -169,78 +188,59 @@ namespace Altaxo
       evSink3 = null;
       evSink4 = null;
       evSink5 = null;
+      return counter;
+    }
 
-      GC.Collect();
-      System.Threading.Thread.Sleep(500);
-      GC.Collect();
 
-      Assert.AreEqual(2, counter.Instances); // the 2 instances that are reachable by ordinary event handlers should be still reachable
+    /// <summary>
+    /// Tests whether the event source gets claimed, even if
+    /// the event sink is alive and has a member that stores the WeakEventHandler. 
+    /// </summary>
+    [Test]
+    public void Test04_EventSourceIsClaimed()
+    {
+      var counter = new InstanceCounter();
+      var (eventSource, eventSink) = Test04_EventSourceIsClaimedSetup(counter);
+      GC.Collect(2, GCCollectionMode.Forced, true, true);
+      GC.WaitForPendingFinalizers();
+      Assert.IsFalse(eventSource.IsAlive);
+      Assert.AreEqual(1, counter.Instances);
+      Assert.AreEqual(1, eventSink.NumberOfEventsReceived);
+    }
+
+    private static (WeakReference EventSource, EventSink EventSink) Test04_EventSourceIsClaimedSetup(InstanceCounter counter)
+    {
+      var evSrc = new EventSource();
+      var evSink1 = new EventSink(counter);
+      evSrc.Changed += (evSink1.StoreTheWeakEventHandler = new WeakEventHandler(evSink1.EhChanged, evSrc, nameof(evSrc.Changed)));
+      evSrc.FireEvent();
+      return (new WeakReference(evSrc), evSink1);
+    }
+
+    public class StaticEventSource
+    {
+      public static event EventHandler Changed;
+      public static void Fire() => Changed?.Invoke(null, EventArgs.Empty);
+
+      public static bool IsEventAttached => null != Changed;
     }
 
     [Test]
-    public void TestWithInstanceVariableInAnonymousMethod()
+    public void Test05_UseStaticEventSource()
     {
       var counter = new InstanceCounter();
+      var eventSink = new EventSink(counter);
 
-      var evSrc = new EventSource();
-      var evSink1 = new EventSink2(counter, evSrc);
-      var evSink2 = new EventSink2(counter, evSrc);
-      var evSink3 = new EventSink2(counter, evSrc);
-      var evSink4 = new EventSink2(counter, evSrc);
-      var evSink5 = new EventSink2(counter, evSrc);
+      StaticEventSource.Changed += eventSink.EhChanged;
+      Assert.IsTrue(StaticEventSource.IsEventAttached);
 
-      Assert.AreEqual(5, counter.Instances);
+      var eventInfo = typeof(StaticEventSource).GetEvent(nameof(StaticEventSource.Changed));
+      Assert.AreEqual(nameof(StaticEventSource.Changed), eventInfo.Name);
 
-      evSink1.CreateLinkToSourceBadStyle();
-      evSink2.CreateLinkToSourceBadStyle();
-      evSink3.CreateLinkToSourceBadStyle();
-      evSink4.CreateLinkToSourceBadStyle();
-      evSink5.CreateLinkToSourceBadStyle();
-
-      evSink1 = null;
-      evSink2 = null;
-      evSink3 = null;
-      evSink4 = null;
-      evSink5 = null;
-
-      GC.Collect();
-      System.Threading.Thread.Sleep(500);
-      GC.Collect();
-
-      Assert.AreEqual(5, counter.Instances); // the 5 instances could not be claimed because we used the instance member in CreateLinkToSource1,
-    }
-
-    [Test]
-    public void TestWithLocalVariableInAnonymousMethod()
-    {
-      var counter = new InstanceCounter();
-
-      var evSrc = new EventSource();
-      var evSink1 = new EventSink2(counter, evSrc);
-      var evSink2 = new EventSink2(counter, evSrc);
-      var evSink3 = new EventSink2(counter, evSrc);
-      var evSink4 = new EventSink2(counter, evSrc);
-      var evSink5 = new EventSink2(counter, evSrc);
-
-      Assert.AreEqual(5, counter.Instances);
-
-      evSink1.CreateLinkToSourceGoodStyle();
-      evSink2.CreateLinkToSourceGoodStyle();
-      evSink3.CreateLinkToSourceGoodStyle();
-      evSink4.CreateLinkToSourceGoodStyle();
-      evSink5.CreateLinkToSourceGoodStyle();
-
-      evSink1 = null;
-      evSink2 = null;
-      evSink3 = null;
-      evSink4 = null;
-      evSink5 = null;
-
-      GC.Collect();
-      System.Threading.Thread.Sleep(500);
-      GC.Collect();
-
-      Assert.AreEqual(0, counter.Instances); // all instances should be claimed because we used a local variable to create the anonymous methode
+      // try to remove the event handler, using the event info
+      Delegate sink = (EventHandler)(eventSink.EhChanged);
+      eventInfo.RemoveEventHandler(null, sink);
+      Assert.IsFalse(StaticEventSource.IsEventAttached);
     }
   }
 }

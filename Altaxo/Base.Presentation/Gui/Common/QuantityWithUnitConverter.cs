@@ -160,8 +160,8 @@ namespace Altaxo.Gui.Common
         if (null != _unitEnvironment)
         {
           var unitEnvironment = _unitEnvironment;
-          unitEnvironment.DefaultUnitChanged += _defaultUnitChangedHandler = new WeakEventHandler(EhDefaultUnitChanged, x => unitEnvironment.DefaultUnitChanged -= x);
-          unitEnvironment.NumberOfDisplayedDigitsChanged += _numberOfDisplayedDigitsChangedHandler = new WeakEventHandler(EhNumberOfDisplayedDigitsChanged, x => unitEnvironment.NumberOfDisplayedDigitsChanged -= x);
+          unitEnvironment.DefaultUnitChanged += _defaultUnitChangedHandler = new WeakEventHandler(EhDefaultUnitChanged, unitEnvironment, nameof(unitEnvironment.DefaultUnitChanged));
+          unitEnvironment.NumberOfDisplayedDigitsChanged += _numberOfDisplayedDigitsChangedHandler = new WeakEventHandler(EhNumberOfDisplayedDigitsChanged, unitEnvironment, nameof(unitEnvironment.NumberOfDisplayedDigitsChanged));
         }
       }
     }

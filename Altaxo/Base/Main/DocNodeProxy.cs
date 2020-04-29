@@ -360,8 +360,8 @@ namespace Altaxo.Main
 
       InternalCheckAbsolutePath();
 
-      value.TunneledEvent += (_weakDocNodeTunneledEventHandler = new WeakActionHandler<object, object, TunnelingEventArgs>(EhDocNode_TunneledEvent, handler => value.TunneledEvent -= handler));
-      value.Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhDocNode_Changed, handler => value.Changed -= handler));
+      value.TunneledEvent += (_weakDocNodeTunneledEventHandler = new WeakActionHandler<object, object, TunnelingEventArgs>(EhDocNode_TunneledEvent, value, nameof(value.TunneledEvent)));
+      value.Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhDocNode_Changed, value, nameof(value.Changed)));
 
       OnAfterSetDocNode();
 
@@ -721,8 +721,8 @@ namespace Altaxo.Main
         _weakDocNodeTunneledEventHandler = null;
       }
 
-      node.TunneledEvent += (_weakDocNodeTunneledEventHandler = new WeakActionHandler<object, object, TunnelingEventArgs>(EhWatchedNode_TunneledEvent, handler => node.TunneledEvent -= handler));
-      node.Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhWatchedNode_Changed, handler => node.Changed -= handler));
+      node.TunneledEvent += (_weakDocNodeTunneledEventHandler = new WeakActionHandler<object, object, TunnelingEventArgs>(EhWatchedNode_TunneledEvent, node, nameof(node.TunneledEvent)));
+      node.Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhWatchedNode_Changed, node, nameof(node.Changed)));
 
 #if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("Start watching node <<{0}>> of total path <<{1}>>", AbsoluteDocumentPath.GetAbsolutePath(node), _docNodePath);

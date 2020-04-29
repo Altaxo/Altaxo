@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
         {
           var controllerAdvanced = new PlotGroupCollectionControllerAdvanced() { UseDocumentCopy = UseDocument.Directly };
           controllerAdvanced.InitializeDocument(_doc);
-          controllerAdvanced.GroupStyleChanged += new WeakActionHandler(EhGroupStyleChanged, (handler) => controllerAdvanced.GroupStyleChanged -= handler);
+          controllerAdvanced.GroupStyleChanged += new WeakActionHandler(EhGroupStyleChanged, controllerAdvanced, nameof(controllerAdvanced.GroupStyleChanged));
           _controllerAdvanced = controllerAdvanced;
         }
       }
@@ -193,7 +193,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
         UseDocumentCopy = UseDocument.Directly
       };
       controllerAdvanced.InitializeDocument(_doc);
-      controllerAdvanced.GroupStyleChanged += new WeakActionHandler(EhGroupStyleChanged, (handler) => controllerAdvanced.GroupStyleChanged -= handler);
+      controllerAdvanced.GroupStyleChanged += new WeakActionHandler(EhGroupStyleChanged, controllerAdvanced, nameof(controllerAdvanced.GroupStyleChanged));
       _controllerAdvanced = controllerAdvanced;
       Initialize(false);
     }

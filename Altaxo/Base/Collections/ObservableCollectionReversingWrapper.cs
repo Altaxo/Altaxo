@@ -42,7 +42,7 @@ namespace Altaxo.Collections
     public ObservableCollectionReversingWrapper(ObservableCollection<T> coll)
     {
       _coll = coll;
-      _coll.CollectionChanged += new WeakEventHandler<NotifyCollectionChangedEventArgs>(EhOrigjnalCollectionChanged, x => _coll.CollectionChanged -= x.EventSink).EventSink;
+      _coll.CollectionChanged += new WeakEventHandler<NotifyCollectionChangedEventArgs>(EhOrigjnalCollectionChanged, _coll, nameof(_coll.CollectionChanged)).EventSink;
     }
 
     private void EhOrigjnalCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

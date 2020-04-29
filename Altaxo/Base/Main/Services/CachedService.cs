@@ -65,7 +65,7 @@ namespace Altaxo.Main.Services
       _instance = default(T);
       _instanceRetrievalTried = false;
 
-      Current.ServiceChanged += new WeakActionHandler(EhServiceChanged, handler => Current.ServiceChanged -= handler);
+      Current.ServiceChanged += new WeakActionHandler(EhServiceChanged, typeof(Current), nameof(Current.ServiceChanged));
       // EhServiceChanged(); do not call EhServiceChanged here: for services that have a static intance of CachedService to cache their own service, we would create a circular dependence
     }
 

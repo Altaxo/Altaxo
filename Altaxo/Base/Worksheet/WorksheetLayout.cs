@@ -382,7 +382,7 @@ namespace Altaxo.Worksheet
 
           // use LOCAL variables only to connect to weak event handlers!
           _weakEventHandlerForTable_TunneledEvent?.Remove();
-          table.TunneledEvent += (_weakEventHandlerForTable_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhDataTableTunneledEvent, x => table.TunneledEvent -= x));
+          table.TunneledEvent += (_weakEventHandlerForTable_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhDataTableTunneledEvent, table, nameof(table.TunneledEvent)));
         }
       }
     }

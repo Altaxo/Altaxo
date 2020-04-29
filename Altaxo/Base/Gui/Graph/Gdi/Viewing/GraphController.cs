@@ -252,10 +252,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         // Attention: use local variable doc instead of member _doc for the anonymous methods below!
         var rootLayer = doc.RootLayer; // local variable for rootLayer
         _weakEventHandlersForDoc = new WeakEventHandler[3]; // storage for WeakEventhandlers for later removal
-        doc.Changed += (_weakEventHandlersForDoc[0] = new WeakEventHandler(EhGraph_Changed, x => doc.Changed -= x));
-        rootLayer.LayerCollectionChanged += (_weakEventHandlersForDoc[1] = new WeakEventHandler(EhGraph_LayerCollectionChanged, x => rootLayer.LayerCollectionChanged -= x));
-        doc.SizeChanged += (_weakEventHandlersForDoc[2] = new WeakEventHandler(EhGraph_SizeChanged, x => doc.SizeChanged -= x));
-        doc.TunneledEvent += (_weakEventHandlerForDoc_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhGraph_TunneledEvent, x => doc.TunneledEvent -= x));
+        doc.Changed += (_weakEventHandlersForDoc[0] = new WeakEventHandler(EhGraph_Changed, doc, nameof(doc.Changed)));
+        rootLayer.LayerCollectionChanged += (_weakEventHandlersForDoc[1] = new WeakEventHandler(EhGraph_LayerCollectionChanged, rootLayer, nameof(rootLayer.LayerCollectionChanged)));
+        doc.SizeChanged += (_weakEventHandlersForDoc[2] = new WeakEventHandler(EhGraph_SizeChanged, doc, nameof(doc.SizeChanged)));
+        doc.TunneledEvent += (_weakEventHandlerForDoc_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhGraph_TunneledEvent, doc, nameof(doc.TunneledEvent)));
       }
       // if the host layer has at least one child, we set the active layer to the first child of the host layer
       if (_doc.RootLayer.Layers.Count >= 1)

@@ -112,7 +112,7 @@ namespace Altaxo.Gui.Text.Viewing
       {
         // Attention: use LOCAL variables here in order to avoid references to the controller!
         _weakEventHandlerForDoc_TunneledEvent?.Remove();
-        textDocument.TunneledEvent += new WeakActionHandler<object, object, Altaxo.Main.TunnelingEventArgs>(EhDocumentTunneledEvent, (handler) => textDocument.TunneledEvent -= handler);
+        textDocument.TunneledEvent += new WeakActionHandler<object, object, Altaxo.Main.TunnelingEventArgs>(EhDocumentTunneledEvent, textDocument, nameof(textDocument.TunneledEvent));
       }
     }
 

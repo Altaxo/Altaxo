@@ -52,7 +52,7 @@ namespace Altaxo.Graph.Graph3D.Commands
       _graphToolType = toolType;
       if (null != Current.Workbench)
       {
-        Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchContentChanged, handler => Current.Workbench.ActiveViewContentChanged -= handler);
+        Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchContentChanged, Current.Workbench, nameof(Current.Workbench.ActiveViewContentChanged));
         EhWorkbenchContentChanged(this, EventArgs.Empty);
       }
     }

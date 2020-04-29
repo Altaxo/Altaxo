@@ -116,17 +116,17 @@ namespace Altaxo.Gui.Worksheet.Viewing
       {
         // use local variable for anonymous method below in order to avoid references to the controller instance
         _weakEventHandlerForTable_Changed?.Remove();
-        table.Changed += (_weakEventHandlerForTable_Changed = new WeakEventHandler(EhTable_Changed, x => table.Changed -= x));
+        table.Changed += (_weakEventHandlerForTable_Changed = new WeakEventHandler(EhTable_Changed, table, nameof(table.Changed)));
 
         _weakEventHandlerForTable_TunneledEvent?.Remove();
-        table.TunneledEvent += (_weakEventHandlerForTable_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhTable_TunneledEvent, x => table.TunneledEvent -= x));
+        table.TunneledEvent += (_weakEventHandlerForTable_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhTable_TunneledEvent, table, nameof(table.TunneledEvent)));
       }
 
       var layout = _worksheetLayout;
       {
         _weakEventHandlerForLayout_TunneledEvent?.Remove();
         // use local variable for anonymous method below in order to avoid references to the controller instance
-        layout.TunneledEvent += (_weakEventHandlerForLayout_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhLayout_TunneledEvent, x => layout.TunneledEvent -= x));
+        layout.TunneledEvent += (_weakEventHandlerForLayout_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhLayout_TunneledEvent, layout, nameof(layout.TunneledEvent)));
       }
 
 
@@ -137,10 +137,10 @@ namespace Altaxo.Gui.Worksheet.Viewing
       var propColumns = _table.PropCols;
       {
         _weakEventHandlerDataColumnChanged?.Remove();
-        dataColumns.Changed += (_weakEventHandlerDataColumnChanged = new WeakEventHandler(EhTableDataChanged, x => dataColumns.Changed -= x));
+        dataColumns.Changed += (_weakEventHandlerDataColumnChanged = new WeakEventHandler(EhTableDataChanged, dataColumns, nameof(dataColumns.Changed)));
 
         _weakEventHandlerPropertyColumnChanged?.Remove();
-        propColumns.Changed += (_weakEventHandlerPropertyColumnChanged = new WeakEventHandler(EhPropertyDataChanged, x => propColumns.Changed -= x));
+        propColumns.Changed += (_weakEventHandlerPropertyColumnChanged = new WeakEventHandler(EhPropertyDataChanged, propColumns, nameof(propColumns.Changed)));
       }
 
       SetCachedNumberOfDataColumns();

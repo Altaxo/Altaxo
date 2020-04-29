@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Pads.LightingPad
 
     public LightingController()
     {
-      Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchActiveViewContentChanged, handler => Current.Workbench.ActiveViewContentChanged -= handler);
+      Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchActiveViewContentChanged, Current.Workbench, nameof(Current.Workbench.ActiveViewContentChanged));
     }
 
     private void EhView_LightingChanged(object sender, EventArgs e)

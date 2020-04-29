@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Graph
           _doc.PrintOptions = new SingleGraphPrintOptions();
         _documentPrintOptionsController.InitializeDocument(_doc.PrintOptions);
         Current.Gui.FindAndAttachControlTo(_documentPrintOptionsController);
-        _doc.PrintOptions.PropertyChanged += new Altaxo.WeakPropertyChangedEventHandler(EhDocumentPrintOptionsChanged, x => _doc.PrintOptions.PropertyChanged -= x);
+        _doc.PrintOptions.PropertyChanged += new Altaxo.WeakPropertyChangedEventHandler(EhDocumentPrintOptionsChanged, _doc.PrintOptions, nameof(_doc.PrintOptions.PropertyChanged));
 
         InitAvailablePaperSizes(true);
         InitAvailablePaperSources(true);

@@ -165,7 +165,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         {
           var fitEnsemble = _doc.FitEnsemble;
-          fitEnsemble.Changed += new WeakEventHandler(EhFitEnsemble_Changed, handler => fitEnsemble.Changed -= handler);
+          fitEnsemble.Changed += new WeakEventHandler(EhFitEnsemble_Changed, fitEnsemble, nameof(fitEnsemble.Changed));
         }
 
         _generationInterval = new Common.EquallySpacedInterval();

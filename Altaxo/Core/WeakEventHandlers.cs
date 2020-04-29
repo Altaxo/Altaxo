@@ -33,21 +33,22 @@ namespace Altaxo
   #region WeakEventHandler (for an EventHandler with no specialized EventArgs)
 
   /// <summary>
-  /// Mediates an <see cref="EventHandler"/> event, holding only a weak reference to the event sink.
-  /// Thus there is no reference created from the event source to the event sink, and the event sink can be garbage collected.
+  /// Mediates an <see cref="EventHandler"/> event, holding only a weak reference to the event sink, and a weak
+  /// reference to the event source for removing the event handler.
+  /// Thus there is no reference created from the event source to the event sink, and both the event sink and the event source can be garbage collected.
   /// </summary>
   /// <remarks>
-  /// Typical use:  (Attention: source has to be a local variable, <b>not</b> a member variable!)
+  /// Typical use: 
   /// <code>
-  /// source.Changed += new WeakEventHandler(this.EhHandleChange, x =&gt; source.Changed -= x);
+  /// source.Changed += new WeakEventHandler(this.EhHandleChange, source, nameof(source.Changed));
   /// </code>
-  /// Sometimes it might be neccessary to use explicitly the event handler method of this instance:
+  /// Sometimes it might be neccessary to explicitly use the event handler method of this instance:
   /// <code>
-  /// source.Changed += new WeakEventHandler(this.EhHandleChange, x=&gt; source.Changed -= x.EventSink).EventSink;
+  /// source.Changed += new WeakEventHandler(this.EhHandleChange, source, nameof(source.Changed)).EventSink;
   /// </code>
   /// You can even maintain a reference to the WeakActionHandler instance in your event sink instance, in case you have to remove the event handling programmatically:
   /// <code>
-  /// _weakEventHandler = new WeakEventHandler(this.EhHandleChange, x =&gt; source.Changed -= x); // weakEventHandler is an instance variable of this class
+  /// _weakEventHandler = new WeakEventHandler(this.EhHandleChange, source, nameof(source.Changed)); // weakEventHandler is an instance variable of this class
   /// source.Changed += _weakEventHandler;
   /// .
   /// .
@@ -57,28 +58,83 @@ namespace Altaxo
   /// </remarks>
   public class WeakEventHandler
   {
-    private static WeakReference _weakNullReference = new WeakReference(null);
+    /// <summary>A weak reference holding null.</summary>
+    private static readonly WeakReference _weakNullReference = new WeakReference(null);
+
+    /// <summary>Weak reference to the event sink object.</summary>
     private WeakReference _handlerObjectWeakRef;
+
+    /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
     private MethodInfo _handlerMethodInfo;
-    private Action<WeakEventHandler> _removeAction;
+
+    /// <summary>The information about the event this object is attached to.</summary>
+    private EventInfo _eventInfo;
+
+    /// <summary>The object that holds the event this object is attached to. If the event is a static event,
+    /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
+    private WeakReference _eventSource;
+
 
     /// <summary>
-    /// Constructs the WeakEventHandler. Attention! Make sure that you don't use member variables in <paramref name="removeHandlerAction"/>! Instead, make a copy to a local variable before and use this variable.
+    /// Initializes a new instance of the <see cref="WeakEventHandler"/> class.
     /// </summary>
-    /// <param name="handler">Event handler for the event to wrap (event sink).</param>
-    /// <param name="removeHandlerAction">Action that removes the event handling by this instance from the source.</param>
-    /// <remarks>
-    /// Typcical usage: <code>source.Changed += new WeakEventHandler(this.EhHandleChange, x =&gt; source.Changed -= x);</code>
-    /// </remarks>
-    public WeakEventHandler(EventHandler handler, Action<WeakEventHandler> removeHandlerAction)
+    /// <param name="handler">The event handler method (the event sink).</param>
+    /// <param name="eventSource">The object that holds the event source.</param>
+    /// <param name="eventName">The name of the event.</param>
+    public WeakEventHandler(EventHandler handler, object eventSource, string eventName)
     {
+      if (handler is null)
+        throw new ArgumentNullException(nameof(handler));
+      if (eventSource is null)
+        throw new ArgumentNullException(nameof(eventSource));
+      if (string.IsNullOrEmpty(eventName))
+        throw new ArgumentNullException(nameof(eventName));
+
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
+      _eventInfo = eventSource.GetType().GetEvent(eventName);
+      if (_eventInfo is null)
+        throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
+
+      _eventSource = new WeakReference(eventSource);
+
       _handlerObjectWeakRef = new WeakReference(handler.Target);
+
       _handlerMethodInfo = handler.Method;
-      _removeAction = removeHandlerAction;
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WeakActionHandler"/> class for a static event.
+    /// </summary>
+    /// <param name="handler">The event handler method (the event sink).</param>
+    /// <param name="eventSourceType">The type of object that holds the static event.</param>
+    /// <param name="eventName">The name of the static event.</param>
+    /// <remarks>
+    /// Typical usage: <code>StaticClass.Changed += new WeakActionHandler(this.EhHandleChange, typeof(StaticClass), nameof(StaticClass.Changed));</code>
+    /// </remarks>
+    public WeakEventHandler(EventHandler handler, Type eventSourceType, string eventName)
+    {
+      if (handler is null)
+        throw new ArgumentNullException(nameof(handler));
+      if (eventSourceType is null)
+        throw new ArgumentNullException(nameof(eventSourceType));
+      if (string.IsNullOrEmpty(eventName))
+        throw new ArgumentNullException(nameof(eventName));
+
+      if (handler.Target == null)
+        throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
+
+      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static);
+      if (_eventInfo is null)
+        throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+      _eventSource = null; // WeakReference to null for static event source
+
+      _handlerObjectWeakRef = new WeakReference(handler.Target);
+
+      _handlerMethodInfo = handler.Method;
+    }
+
 
     /// <summary>
     /// Handles the event from the original source. You must not call this method directly. However, it can be neccessary to use the method reference if the implicit casting fails. See remarks in the description of this class.
@@ -87,8 +143,7 @@ namespace Altaxo
     /// <param name="e">Event args.</param>
     public void EventSink(object sender, EventArgs e)
     {
-      var handlerObj = _handlerObjectWeakRef.Target;
-      if (null != handlerObj)
+      if (_handlerObjectWeakRef.Target is { } handlerObj)
       {
         _handlerMethodInfo.Invoke(handlerObj, new object[] { sender, e });
       }
@@ -102,10 +157,15 @@ namespace Altaxo
     public void Remove()
     {
       _handlerObjectWeakRef = _weakNullReference;
-      var removeAction = System.Threading.Interlocked.Exchange(ref _removeAction, null);
-      if (null != removeAction)
+      if (_eventSource.Target is { } eventSource)
       {
-        removeAction(this);
+        Delegate evHandler = (EventHandler)(this.EventSink);
+        _eventInfo.RemoveEventHandler(eventSource, evHandler);
+      }
+      else if (_eventSource is null) // Static event source
+      {
+        Delegate evHandler = (EventHandler)(this.EventSink);
+        _eventInfo.RemoveEventHandler(null, evHandler);
       }
     }
 
@@ -150,28 +210,85 @@ namespace Altaxo
   /// </remarks>
   public class WeakEventHandler<TEventArgs> where TEventArgs : EventArgs
   {
-    private static WeakReference _weakNullReference = new WeakReference(null);
+    /// <summary>A weak reference holding null.</summary>
+    private static readonly WeakReference _weakNullReference = new WeakReference(null);
+
+    /// <summary>Weak reference to the event sink object.</summary>
     private WeakReference _handlerObjectWeakRef;
+
+    /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
     private MethodInfo _handlerMethodInfo;
-    private Action<WeakEventHandler<TEventArgs>> _removeAction;
+
+    /// <summary>The information about the event this object is attached to.</summary>
+    private EventInfo _eventInfo;
+
+    /// <summary>The object that holds the event this object is attached to. If the event is a static event,
+    /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
+    private WeakReference _eventSource;
 
     /// <summary>
-    /// Constructs the WeakEventHandler.  Attention! Make sure that you don't use member variables in <paramref name="removeHandlerAction"/>! Instead, make a copy to a local variable before and use this variable.
+    /// Initializes a new instance of the <see cref="WeakEventHandler"/> class.
     /// </summary>
-    /// <param name="handler">Event handler for the event to wrap (event sink).</param>
-    /// <param name="removeHandlerAction">Action that removes the event handling by this instance from the source.</param>
+    /// <param name="handler">The event handler method (the event sink).</param>
+    /// <param name="eventSource">The object that holds the event source.</param>
+    /// <param name="eventName">The name of the event.</param>
     /// <remarks>
-    /// Typcical usage: <code>source.Changed += new WeakEventHandler&lt;MyEventArgs&gt;(this.EhHandleChange, x =&gt; source.Changed -= x);</code>
+    /// Typcical usage: <code>source.Changed += new WeakEventHandler&lt;MyEventArgs&gt;(this.EhHandleChange, source, nameof(source.Changed));</code>
     /// </remarks>
-    public WeakEventHandler(EventHandler<TEventArgs> handler, Action<WeakEventHandler<TEventArgs>> removeHandlerAction)
+    public WeakEventHandler(EventHandler<TEventArgs> handler, object eventSource, string eventName)
     {
+      if (handler is null)
+        throw new ArgumentNullException(nameof(handler));
+      if (eventSource is null)
+        throw new ArgumentNullException(nameof(eventSource));
+      if (string.IsNullOrEmpty(eventName))
+        throw new ArgumentNullException(nameof(eventName));
+
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
+      _eventInfo = eventSource.GetType().GetEvent(eventName);
+      if (_eventInfo is null)
+        throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
+
+      _eventSource = new WeakReference(eventSource);
+
       _handlerObjectWeakRef = new WeakReference(handler.Target);
+
       _handlerMethodInfo = handler.Method;
-      _removeAction = removeHandlerAction;
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WeakActionHandler"/> class for a static event.
+    /// </summary>
+    /// <param name="handler">The event handler method (the event sink).</param>
+    /// <param name="eventSourceType">The type of object that holds the static event.</param>
+    /// <param name="eventName">The name of the static event.</param>
+    /// <remarks>
+    /// Typical usage: <code>StaticClass.Changed += new WeakActionHandler(this.EhHandleChange, typeof(StaticClass), nameof(StaticClass.Changed));</code>
+    /// </remarks>
+    public WeakEventHandler(EventHandler<TEventArgs> handler, Type eventSourceType, string eventName)
+    {
+      if (handler is null)
+        throw new ArgumentNullException(nameof(handler));
+      if (eventSourceType is null)
+        throw new ArgumentNullException(nameof(eventSourceType));
+      if (string.IsNullOrEmpty(eventName))
+        throw new ArgumentNullException(nameof(eventName));
+
+      if (handler.Target == null)
+        throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
+
+      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static);
+      if (_eventInfo is null)
+        throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+      _eventSource = null; // WeakReference to null for static event source
+
+      _handlerObjectWeakRef = new WeakReference(handler.Target);
+
+      _handlerMethodInfo = handler.Method;
+    }
+
 
     /// <summary>
     /// Handles the event from the original source. You must not call this method directly. However, it can be neccessary to use the method reference if the implicit casting failes. See remarks in the description of this class.
@@ -180,8 +297,7 @@ namespace Altaxo
     /// <param name="e">Event args.</param>
     public void EventSink(object sender, TEventArgs e)
     {
-      var handlerObj = _handlerObjectWeakRef.Target;
-      if (null != handlerObj)
+      if (_handlerObjectWeakRef.Target is { } handlerObj)
       {
         _handlerMethodInfo.Invoke(handlerObj, new object[] { sender, e });
       }
@@ -195,10 +311,15 @@ namespace Altaxo
     public void Remove()
     {
       _handlerObjectWeakRef = _weakNullReference;
-      var removeAction = System.Threading.Interlocked.Exchange(ref _removeAction, null);
-      if (null != removeAction)
+      if (_eventSource.Target is { } eventSource)
       {
-        removeAction(this);
+        Delegate evHandler = (EventHandler<TEventArgs>)(this.EventSink);
+        _eventInfo.RemoveEventHandler(eventSource, evHandler);
+      }
+      else if (_eventSource is null) // Static event source
+      {
+        Delegate evHandler = (EventHandler<TEventArgs>)(this.EventSink);
+        _eventInfo.RemoveEventHandler(null, evHandler);
       }
     }
 
@@ -242,28 +363,86 @@ namespace Altaxo
   /// </remarks>
   public class WeakPropertyChangedEventHandler
   {
-    private static WeakReference _weakNullReference = new WeakReference(null);
+    /// <summary>A weak reference holding null.</summary>
+    private static readonly WeakReference _weakNullReference = new WeakReference(null);
+
+    /// <summary>Weak reference to the event sink object.</summary>
     private WeakReference _handlerObjectWeakRef;
+
+    /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
     private MethodInfo _handlerMethodInfo;
-    private Action<WeakPropertyChangedEventHandler> _removeAction;
+
+    /// <summary>The information about the event this object is attached to.</summary>
+    private EventInfo _eventInfo;
+
+    /// <summary>The object that holds the event this object is attached to. If the event is a static event,
+    /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
+    private WeakReference _eventSource;
+
 
     /// <summary>
-    /// Constructs the WeakEventHandler.  Attention! Make sure that you don't use member variables in <paramref name="removeHandlerAction"/>! Instead, make a copy to a local variable before and use this variable.
+    /// Initializes a new instance of the <see cref="WeakPropertyChangedEventHandler"/> class.
     /// </summary>
-    /// <param name="handler">Event handler for the event to wrap (event sink).</param>
-    /// <param name="removeHandlerAction">Action that removes the event handling by this instance from the source.</param>
+    /// <param name="handler">The event handler method (the event sink).</param>
+    /// <param name="eventSource">The object that holds the event source.</param>
+    /// <param name="eventName">The name of the event.</param>
     /// <remarks>
-    /// Typcical usage: <code>source.Changed += new WeakEventHandler(this.EhHandleChange, x =&gt; source.Changed -= x);</code>
+    /// Typcical usage: <code>source.Changed += new WeakEventHandler&lt;MyEventArgs&gt;(this.EhHandleChange, source, nameof(source.Changed));</code>
     /// </remarks>
-    public WeakPropertyChangedEventHandler(System.ComponentModel.PropertyChangedEventHandler handler, Action<WeakPropertyChangedEventHandler> removeHandlerAction)
+    public WeakPropertyChangedEventHandler(System.ComponentModel.PropertyChangedEventHandler handler, object eventSource, string eventName)
     {
+      if (handler is null)
+        throw new ArgumentNullException(nameof(handler));
+      if (eventSource is null)
+        throw new ArgumentNullException(nameof(eventSource));
+      if (string.IsNullOrEmpty(eventName))
+        throw new ArgumentNullException(nameof(eventName));
+
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
+      _eventInfo = eventSource.GetType().GetEvent(eventName);
+      if (_eventInfo is null)
+        throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
+
+      _eventSource = new WeakReference(eventSource);
+
       _handlerObjectWeakRef = new WeakReference(handler.Target);
+
       _handlerMethodInfo = handler.Method;
-      _removeAction = removeHandlerAction;
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WeakActionHandler"/> class for a static event.
+    /// </summary>
+    /// <param name="handler">The event handler method (the event sink).</param>
+    /// <param name="eventSourceType">The type of object that holds the static event.</param>
+    /// <param name="eventName">The name of the static event.</param>
+    /// <remarks>
+    /// Typical usage: <code>StaticClass.Changed += new WeakActionHandler(this.EhHandleChange, typeof(StaticClass), nameof(StaticClass.Changed));</code>
+    /// </remarks>
+    public WeakPropertyChangedEventHandler(System.ComponentModel.PropertyChangedEventHandler handler, Type eventSourceType, string eventName)
+    {
+      if (handler is null)
+        throw new ArgumentNullException(nameof(handler));
+      if (eventSourceType is null)
+        throw new ArgumentNullException(nameof(eventSourceType));
+      if (string.IsNullOrEmpty(eventName))
+        throw new ArgumentNullException(nameof(eventName));
+
+      if (handler.Target == null)
+        throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
+
+      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static);
+      if (_eventInfo is null)
+        throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+      _eventSource = null; // WeakReference to null for static event source
+
+      _handlerObjectWeakRef = new WeakReference(handler.Target);
+
+      _handlerMethodInfo = handler.Method;
+    }
+
 
     /// <summary>
     /// Handles the event from the original source. You must not call this method directly. However, it can be neccessary to use the method reference if the implicit casting fails. See remarks in the description of this class.
@@ -272,8 +451,7 @@ namespace Altaxo
     /// <param name="e">Event args.</param>
     public void EventSink(object sender, EventArgs e)
     {
-      var handlerObj = _handlerObjectWeakRef.Target;
-      if (null != handlerObj)
+      if (_handlerObjectWeakRef.Target is { } handlerObj)
       {
         _handlerMethodInfo.Invoke(handlerObj, new object[] { sender, e });
       }
@@ -287,10 +465,15 @@ namespace Altaxo
     public void Remove()
     {
       _handlerObjectWeakRef = _weakNullReference;
-      var removeAction = System.Threading.Interlocked.Exchange(ref _removeAction, null);
-      if (null != removeAction)
+      if (_eventSource.Target is { } eventSource)
       {
-        removeAction(this);
+        Delegate evHandler = (System.ComponentModel.PropertyChangedEventHandler)(this.EventSink);
+        _eventInfo.RemoveEventHandler(eventSource, evHandler);
+      }
+      else if (_eventSource is null) // Static event source
+      {
+        Delegate evHandler = (System.ComponentModel.PropertyChangedEventHandler)(this.EventSink);
+        _eventInfo.RemoveEventHandler(null, evHandler);
       }
     }
 
@@ -334,27 +517,83 @@ namespace Altaxo
   /// </remarks>
   public class WeakActionHandler
   {
-    private static WeakReference _weakNullReference = new WeakReference(null);
+    /// <summary>A weak reference holding null.</summary>
+    private static readonly WeakReference _weakNullReference = new WeakReference(null);
+
+    /// <summary>Weak reference to the event sink object.</summary>
     private WeakReference _handlerObjectWeakRef;
+
+    /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
     private MethodInfo _handlerMethodInfo;
-    private Action<WeakActionHandler> _removeAction;
+
+    /// <summary>The information about the event this object is attached to.</summary>
+    private EventInfo _eventInfo;
+
+    /// <summary>The object that holds the event this object is attached to. If the event is a static event,
+    /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
+    private WeakReference _eventSource;
 
     /// <summary>
-    /// Constructs the WeakActionHandler.  Attention! Make sure that you don't use member variables in <paramref name="removeHandlerAction"/>! Instead, make a copy to a local variable before and use this variable.
+    /// Initializes a new instance of the <see cref="WeakActionHandler"/> class.
     /// </summary>
-    /// <param name="handler">Event handler for the action event (event sink).</param>
-    /// <param name="removeHandlerAction">Action that should remove the event handling by this instance.</param>
-    /// 	/// <remarks>
-    /// Typical usage: <code>source.ActionEvent += new WeakActionHandler(this.EhActionHandling, x =&gt; source.ActionEvent -= x);</code>
+    /// <param name="handler">The event handler method (the event sink).</param>
+    /// <param name="eventSource">The object that holds the event source.</param>
+    /// <param name="eventName">The name of the event.</param>
+    /// <remarks>
+    /// Typcical usage: <code>source.Changed += new WeakEventHandler&lt;MyEventArgs&gt;(this.EhHandleChange, source, nameof(source.Changed));</code>
     /// </remarks>
-    public WeakActionHandler(Action handler, Action<WeakActionHandler> removeHandlerAction)
+    public WeakActionHandler(Action handler, object eventSource, string eventName)
     {
+      if (handler is null)
+        throw new ArgumentNullException(nameof(handler));
+      if (eventSource is null)
+        throw new ArgumentNullException(nameof(eventSource));
+      if (string.IsNullOrEmpty(eventName))
+        throw new ArgumentNullException(nameof(eventName));
+
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
+      _eventInfo = eventSource.GetType().GetEvent(eventName);
+      if (_eventInfo is null)
+        throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
+
+      _eventSource = new WeakReference(eventSource);
+
       _handlerObjectWeakRef = new WeakReference(handler.Target);
+
       _handlerMethodInfo = handler.Method;
-      _removeAction = removeHandlerAction;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WeakActionHandler"/> class for a static event.
+    /// </summary>
+    /// <param name="handler">The event handler method (the event sink).</param>
+    /// <param name="eventSourceType">The type of object that holds the static event.</param>
+    /// <param name="eventName">The name of the static event.</param>
+    /// <remarks>
+    /// Typical usage: <code>StaticClass.Changed += new WeakActionHandler(this.EhHandleChange, typeof(StaticClass), nameof(StaticClass.Changed));</code>
+    /// </remarks>
+    public WeakActionHandler(Action handler, Type eventSourceType, string eventName)
+    {
+      if (handler is null)
+        throw new ArgumentNullException(nameof(handler));
+      if (eventSourceType is null)
+        throw new ArgumentNullException(nameof(eventSourceType));
+      if (string.IsNullOrEmpty(eventName))
+        throw new ArgumentNullException(nameof(eventName));
+
+      if (handler.Target == null)
+        throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
+
+      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static);
+      if (_eventInfo is null)
+        throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+      _eventSource = null; // WeakReference to null for static event source
+
+      _handlerObjectWeakRef = new WeakReference(handler.Target);
+
+      _handlerMethodInfo = handler.Method;
     }
 
     /// <summary>
@@ -362,8 +601,7 @@ namespace Altaxo
     /// </summary>
     public void EventSink()
     {
-      var handlerObj = _handlerObjectWeakRef.Target;
-      if (null != handlerObj)
+      if (_handlerObjectWeakRef.Target is { } handlerObj)
       {
         _handlerMethodInfo.Invoke(handlerObj, null);
       }
@@ -377,10 +615,15 @@ namespace Altaxo
     public void Remove()
     {
       _handlerObjectWeakRef = _weakNullReference;
-      var removeAction = System.Threading.Interlocked.Exchange(ref _removeAction, null);
-      if (null != removeAction)
+      if (_eventSource.Target is { } eventSource)
       {
-        removeAction(this);
+        Delegate evHandler = (Action)(this.EventSink);
+        _eventInfo.RemoveEventHandler(eventSource, evHandler);
+      }
+      else if (_eventSource is null) // Static event source
+      {
+        Delegate evHandler = (Action)(this.EventSink);
+        _eventInfo.RemoveEventHandler(null, evHandler);
       }
     }
 
@@ -425,28 +668,85 @@ namespace Altaxo
   /// </remarks>
   public class WeakActionHandler<T1>
   {
-    private static WeakReference _weakNullReference = new WeakReference(null);
+    /// <summary>A weak reference holding null.</summary>
+    private static readonly WeakReference _weakNullReference = new WeakReference(null);
+
+    /// <summary>Weak reference to the event sink object.</summary>
     private WeakReference _handlerObjectWeakRef;
+
+    /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
     private MethodInfo _handlerMethodInfo;
-    private Action<WeakActionHandler<T1>> _removeAction;
+
+    /// <summary>The information about the event this object is attached to.</summary>
+    private EventInfo _eventInfo;
+
+    /// <summary>The object that holds the event this object is attached to. If the event is a static event,
+    /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
+    private WeakReference _eventSource;
 
     /// <summary>
-    /// Constructs the WeakActionHandler.  Attention! Make sure that you don't use member variables in <paramref name="removeHandlerAction"/>! Instead, make a copy to a local variable before and use this variable.
+    /// Initializes a new instance of the <see cref="WeakActionHandler"/> class.
     /// </summary>
-    /// <param name="handler">Event handler for the action event (event sink).</param>
-    /// <param name="removeHandlerAction">Action that should remove the event handling by this instance.</param>
-    /// 	/// <remarks>
-    /// Typcical usage: <code>source.ActionEvent += new WeakActionHandler&lt;int&gt;(this.EhActionHandling, x =&gt; source.ActionEvent -= x);</code>
+    /// <param name="handler">The event handler method (the event sink).</param>
+    /// <param name="eventSource">The object that holds the event source.</param>
+    /// <param name="eventName">The name of the event.</param>
+    /// <remarks>
+    /// Typcical usage: <code>source.Changed += new WeakActionHandler&lt;MyClass&gt;(this.EhHandleChange, source, nameof(source.Changed));</code>
     /// </remarks>
-    public WeakActionHandler(Action<T1> handler, Action<WeakActionHandler<T1>> removeHandlerAction)
+    public WeakActionHandler(Action<T1> handler, object eventSource, string eventName)
     {
+      if (handler is null)
+        throw new ArgumentNullException(nameof(handler));
+      if (eventSource is null)
+        throw new ArgumentNullException(nameof(eventSource));
+      if (string.IsNullOrEmpty(eventName))
+        throw new ArgumentNullException(nameof(eventName));
+
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
+      _eventInfo = eventSource.GetType().GetEvent(eventName);
+      if (_eventInfo is null)
+        throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
+
+      _eventSource = new WeakReference(eventSource);
+
       _handlerObjectWeakRef = new WeakReference(handler.Target);
+
       _handlerMethodInfo = handler.Method;
-      _removeAction = removeHandlerAction;
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WeakActionHandler"/> class for a static event.
+    /// </summary>
+    /// <param name="handler">The event handler method (the event sink).</param>
+    /// <param name="eventSourceType">The type of object that holds the static event.</param>
+    /// <param name="eventName">The name of the static event.</param>
+    /// <remarks>
+    /// Typical usage: <code>StaticClass.Changed += new WeakActionHandler(this.EhHandleChange, typeof(StaticClass), nameof(StaticClass.Changed));</code>
+    /// </remarks>
+    public WeakActionHandler(Action<T1> handler, Type eventSourceType, string eventName)
+    {
+      if (handler is null)
+        throw new ArgumentNullException(nameof(handler));
+      if (eventSourceType is null)
+        throw new ArgumentNullException(nameof(eventSourceType));
+      if (string.IsNullOrEmpty(eventName))
+        throw new ArgumentNullException(nameof(eventName));
+
+      if (handler.Target == null)
+        throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
+
+      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static);
+      if (_eventInfo is null)
+        throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+      _eventSource = null; // WeakReference to null for static event source
+
+      _handlerObjectWeakRef = new WeakReference(handler.Target);
+
+      _handlerMethodInfo = handler.Method;
+    }
+
 
     /// <summary>
     /// Handles the event from the original source. You must not call this method directly. However, it can be neccessary to use the method reference if the implicit casting fails. See remarks in the description of this class.
@@ -454,8 +754,7 @@ namespace Altaxo
     /// <param name="t1">First action argument.</param>
     public void EventSink(T1 t1)
     {
-      var handlerObj = _handlerObjectWeakRef.Target;
-      if (null != handlerObj)
+      if (_handlerObjectWeakRef.Target is { } handlerObj)
       {
         _handlerMethodInfo.Invoke(handlerObj, new object[] { t1 });
       }
@@ -469,10 +768,15 @@ namespace Altaxo
     public void Remove()
     {
       _handlerObjectWeakRef = _weakNullReference;
-      var removeAction = System.Threading.Interlocked.Exchange(ref _removeAction, null);
-      if (null != removeAction)
+      if (_eventSource.Target is { } eventSource)
       {
-        removeAction(this);
+        Delegate evHandler = (Action<T1>)(this.EventSink);
+        _eventInfo.RemoveEventHandler(eventSource, evHandler);
+      }
+      else if (_eventSource is null) // Static event source
+      {
+        Delegate evHandler = (Action<T1>)(this.EventSink);
+        _eventInfo.RemoveEventHandler(null, evHandler);
       }
     }
 
@@ -518,28 +822,88 @@ namespace Altaxo
   /// </remarks>
   public class WeakActionHandler<T1, T2>
   {
-    private static WeakReference _weakNullReference = new WeakReference(null);
+    /// <summary>A weak reference holding null.</summary>
+    private static readonly WeakReference _weakNullReference = new WeakReference(null);
+
+    /// <summary>Weak reference to the event sink object.</summary>
     private WeakReference _handlerObjectWeakRef;
+
+    /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
     private MethodInfo _handlerMethodInfo;
-    private Action<WeakActionHandler<T1, T2>> _removeAction;
+
+    /// <summary>The information about the event this object is attached to.</summary>
+    private EventInfo _eventInfo;
+
+    /// <summary>The object that holds the event this object is attached to. If the event is a static event,
+    /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
+    private WeakReference _eventSource;
+
+
 
     /// <summary>
-    /// Constructs the WeakActionHandler.  Attention! Make sure that you don't use member variables in <paramref name="removeHandlerAction"/>! Instead, make a copy to a local variable before and use this variable.
+    /// Initializes a new instance of the <see cref="WeakActionHandler"/> class.
     /// </summary>
-    /// <param name="handler">Event handler for the action event (event sink).</param>
-    /// <param name="removeHandlerAction">Action that should remove the event handling by this instance.</param>
-    /// 	/// <remarks>
-    /// Typcical usage: <code>source.ActionEvent += new WeakActionHandler&lt;int,double&gt;(this.EhActionHandling, x =&gt; source.ActionEvent -= x);</code>
+    /// <param name="handler">The event handler method (the event sink).</param>
+    /// <param name="eventSource">The object that holds the event source.</param>
+    /// <param name="eventName">The name of the event.</param>
+    /// <remarks>
+    /// Typical usage: <code>source.Changed += new WeakActionHandler&lt;MyClass1, MyClass2&gt;(this.EhHandleChange, source, nameof(source.Changed));</code>
     /// </remarks>
-    public WeakActionHandler(Action<T1, T2> handler, Action<WeakActionHandler<T1, T2>> removeHandlerAction)
+    public WeakActionHandler(Action<T1, T2> handler, object eventSource, string eventName)
     {
+      if (handler is null)
+        throw new ArgumentNullException(nameof(handler));
+      if (eventSource is null)
+        throw new ArgumentNullException(nameof(eventSource));
+      if (string.IsNullOrEmpty(eventName))
+        throw new ArgumentNullException(nameof(eventName));
+
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
+      _eventInfo = eventSource.GetType().GetEvent(eventName);
+      if (_eventInfo is null)
+        throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
+
+      _eventSource = new WeakReference(eventSource);
+
       _handlerObjectWeakRef = new WeakReference(handler.Target);
+
       _handlerMethodInfo = handler.Method;
-      _removeAction = removeHandlerAction;
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WeakActionHandler"/> class for a static event.
+    /// </summary>
+    /// <param name="handler">The event handler method (the event sink).</param>
+    /// <param name="eventSourceType">The type of object that holds the static event.</param>
+    /// <param name="eventName">The name of the static event.</param>
+    /// <remarks>
+    /// Typical usage: <code>StaticClass.Changed += new WeakActionHandler(this.EhHandleChange, typeof(StaticClass), nameof(StaticClass.Changed));</code>
+    /// </remarks>
+    public WeakActionHandler(Action<T1, T2> handler, Type eventSourceType, string eventName)
+    {
+      if (handler is null)
+        throw new ArgumentNullException(nameof(handler));
+      if (eventSourceType is null)
+        throw new ArgumentNullException(nameof(eventSourceType));
+      if (string.IsNullOrEmpty(eventName))
+        throw new ArgumentNullException(nameof(eventName));
+
+      if (handler.Target == null)
+        throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
+
+      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static);
+      if (_eventInfo is null)
+        throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+      _eventSource = null; // WeakReference to null for static event source
+
+      _handlerObjectWeakRef = new WeakReference(handler.Target);
+
+      _handlerMethodInfo = handler.Method;
+    }
+
+
 
     /// <summary>
     /// Handles the event from the original source. You must not call this method directly. However, it can be neccessary to use the method reference if the implicit casting fails. See remarks in the description of this class.
@@ -548,8 +912,7 @@ namespace Altaxo
     /// <param name="t2">Second action argument.</param>
     public void EventSink(T1 t1, T2 t2)
     {
-      var handlerObj = _handlerObjectWeakRef.Target;
-      if (null != handlerObj)
+      if (_handlerObjectWeakRef.Target is { } handlerObj)
       {
         _handlerMethodInfo.Invoke(handlerObj, new object[] { t1, t2 });
       }
@@ -563,10 +926,15 @@ namespace Altaxo
     public void Remove()
     {
       _handlerObjectWeakRef = _weakNullReference;
-      var removeAction = System.Threading.Interlocked.Exchange(ref _removeAction, null);
-      if (null != removeAction)
+      if (_eventSource.Target is { } eventSource)
       {
-        removeAction(this);
+        Delegate evHandler = (Action<T1, T2>)(this.EventSink);
+        _eventInfo.RemoveEventHandler(eventSource, evHandler);
+      }
+      else if (_eventSource is null) // Static event source
+      {
+        Delegate evHandler = (Action<T1, T2>)(this.EventSink);
+        _eventInfo.RemoveEventHandler(null, evHandler);
       }
     }
 
@@ -613,28 +981,86 @@ namespace Altaxo
   /// </remarks>
   public class WeakActionHandler<T1, T2, T3>
   {
-    private static WeakReference _weakNullReference = new WeakReference(null);
+    /// <summary>A weak reference holding null.</summary>
+    private static readonly WeakReference _weakNullReference = new WeakReference(null);
+
+    /// <summary>Weak reference to the event sink object.</summary>
     private WeakReference _handlerObjectWeakRef;
+
+    /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
     private MethodInfo _handlerMethodInfo;
-    private Action<WeakActionHandler<T1, T2, T3>> _removeAction;
+
+    /// <summary>The information about the event this object is attached to.</summary>
+    private EventInfo _eventInfo;
+
+    /// <summary>The object that holds the event this object is attached to. If the event is a static event,
+    /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
+    private WeakReference _eventSource;
 
     /// <summary>
-    /// Constructs the WeakActionHandler.  Attention! Make sure that you don't use member variables in <paramref name="removeHandlerAction"/>! Instead, make a copy to a local variable before and use this variable.
+    /// Initializes a new instance of the <see cref="WeakActionHandler"/> class.
     /// </summary>
-    /// <param name="handler">Event handler for the action event (event sink).</param>
-    /// <param name="removeHandlerAction">Action that should remove the event handling by this instance.</param>
-    /// 	/// <remarks>
-    /// Typcical usage: <code>source.ActionEvent += new WeakActionHandler&lt;int,double&gt;(this.EhActionHandling, x =&gt; source.ActionEvent -= x);</code>
+    /// <param name="handler">The event handler method (the event sink).</param>
+    /// <param name="eventSource">The object that holds the event source.</param>
+    /// <param name="eventName">The name of the event.</param>
+    /// <remarks>
+    /// Typical usage: <code>source.Changed += new WeakActionHandler&lt;MyClass1, MyClass2, MyClass3&gt;(this.EhHandleChange, source, nameof(source.Changed));</code>
     /// </remarks>
-    public WeakActionHandler(Action<T1, T2, T3> handler, Action<WeakActionHandler<T1, T2, T3>> removeHandlerAction)
+    public WeakActionHandler(Action<T1, T2, T3> handler, object eventSource, string eventName)
     {
+      if (handler is null)
+        throw new ArgumentNullException(nameof(handler));
+      if (eventSource is null)
+        throw new ArgumentNullException(nameof(eventSource));
+      if (string.IsNullOrEmpty(eventName))
+        throw new ArgumentNullException(nameof(eventName));
+
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
+      _eventInfo = eventSource.GetType().GetEvent(eventName);
+      if (_eventInfo is null)
+        throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
+
+      _eventSource = new WeakReference(eventSource);
+
       _handlerObjectWeakRef = new WeakReference(handler.Target);
+
       _handlerMethodInfo = handler.Method;
-      _removeAction = removeHandlerAction;
     }
+
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WeakActionHandler"/> class for a static event.
+    /// </summary>
+    /// <param name="handler">The event handler method (the event sink).</param>
+    /// <param name="eventSourceType">The type of object that holds the static event.</param>
+    /// <param name="eventName">The name of the static event.</param>
+    /// <remarks>
+    /// Typical usage: <code>StaticClass.Changed += new WeakActionHandler(this.EhHandleChange, typeof(StaticClass), nameof(StaticClass.Changed));</code>
+    /// </remarks>
+    public WeakActionHandler(Action<T1, T2, T3> handler, Type eventSourceType, string eventName)
+    {
+      if (handler is null)
+        throw new ArgumentNullException(nameof(handler));
+      if (eventSourceType is null)
+        throw new ArgumentNullException(nameof(eventSourceType));
+      if (string.IsNullOrEmpty(eventName))
+        throw new ArgumentNullException(nameof(eventName));
+
+      if (handler.Target == null)
+        throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
+
+      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static);
+      if (_eventInfo is null)
+        throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+      _eventSource = null; // WeakReference to null for static event source
+
+      _handlerObjectWeakRef = new WeakReference(handler.Target);
+
+      _handlerMethodInfo = handler.Method;
+    }
+
 
     /// <summary>
     /// Handles the event from the original source. You must not call this method directly. However, it can be neccessary to use the method reference if the implicit casting fails. See remarks in the description of this class.
@@ -644,8 +1070,7 @@ namespace Altaxo
     /// <param name="t3">Third action argument.</param>
     public void EventSink(T1 t1, T2 t2, T3 t3)
     {
-      var handlerObj = _handlerObjectWeakRef.Target;
-      if (null != handlerObj)
+      if (_handlerObjectWeakRef.Target is { } handlerObj)
       {
         _handlerMethodInfo.Invoke(handlerObj, new object[] { t1, t2, t3 });
       }
@@ -659,10 +1084,15 @@ namespace Altaxo
     public void Remove()
     {
       _handlerObjectWeakRef = _weakNullReference;
-      var removeAction = System.Threading.Interlocked.Exchange(ref _removeAction, null);
-      if (null != removeAction)
+      if (_eventSource.Target is { } eventSource)
       {
-        removeAction(this);
+        Delegate evHandler = (Action<T1, T2, T3>)(this.EventSink);
+        _eventInfo.RemoveEventHandler(eventSource, evHandler);
+      }
+      else if (_eventSource is null) // Static event source
+      {
+        Delegate evHandler = (Action<T1, T2, T3>)(this.EventSink);
+        _eventInfo.RemoveEventHandler(null, evHandler);
       }
     }
 

@@ -151,7 +151,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 
         var plotGroupController = new PlotGroupCollectionController();
         plotGroupController.InitializeDocument(_groupStyles);
-        plotGroupController.GroupStyleChanged += new WeakActionHandler(EhPlotGroupChanged, (handler) => plotGroupController.GroupStyleChanged -= handler);
+        plotGroupController.GroupStyleChanged += new WeakActionHandler(EhPlotGroupChanged, plotGroupController, nameof(plotGroupController.GroupStyleChanged));
         _plotGroupController = plotGroupController;
 
         // find the style collection controller
