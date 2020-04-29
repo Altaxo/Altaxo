@@ -37,8 +37,6 @@ namespace Altaxo.Gui.Pads.Notes
   {
     private System.Windows.Data.BindingExpressionBase _textBinding;
 
-    public event Action ShouldSaveText;
-
     public NotesControl()
     {
       TextWrapping = System.Windows.TextWrapping.NoWrap;
@@ -47,10 +45,6 @@ namespace Altaxo.Gui.Pads.Notes
       VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
       HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
       FontFamily = new System.Windows.Media.FontFamily("Global Monospace");
-
-      LostFocus += new System.Windows.RoutedEventHandler(EhLostFocus);
-      LostKeyboardFocus += new System.Windows.Input.KeyboardFocusChangedEventHandler(EhLostKeyboardFocus);
-      TextChanged += new System.Windows.Controls.TextChangedEventHandler(EhTextChanged);
       IsEnabled = false;
     }
 
@@ -64,29 +58,14 @@ namespace Altaxo.Gui.Pads.Notes
     public void SetTextFromNotesAndSetBinding(Altaxo.Main.ITextBackedConsole con)
     {
       Text = con.Text;
-
       var binding = new System.Windows.Data.Binding
       {
         Source = con,
         Path = new System.Windows.PropertyPath(nameof(Text)),
-        Mode = System.Windows.Data.BindingMode.TwoWay
+        Mode = System.Windows.Data.BindingMode.TwoWay, // binding the other way is handled by the event
+        UpdateSourceTrigger = System.Windows.Data.UpdateSourceTrigger.PropertyChanged
       };
       _textBinding = SetBinding(System.Windows.Controls.TextBox.TextProperty, binding);
-    }
-
-    private void EhTextChanged(object sender, TextChangedEventArgs e)
-    {
-      _textBinding?.UpdateSource();
-    }
-
-    private void EhLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-    {
-      ShouldSaveText?.Invoke();
-    }
-
-    private void EhLostFocus(object sender, RoutedEventArgs e)
-    {
-      ShouldSaveText?.Invoke();
     }
   }
 }

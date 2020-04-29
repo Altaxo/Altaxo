@@ -167,11 +167,7 @@ namespace Altaxo.Main
     /// </summary>
     public void Clear()
     {
-      var count = _stb.Length;
-      _stb.Clear();
-
-      if (count != 0)
-        EhSelfChanged(EventArgs.Empty);
+      Text = string.Empty;
     }
 
     /// <summary>
@@ -188,11 +184,7 @@ namespace Altaxo.Main
       }
       set
       {
-        if (string.IsNullOrEmpty(value))
-        {
-          Clear();
-          return;
-        }
+        value ??= string.Empty;
 
         var isDifferent = _stb.Length != value.Length || 0 != string.CompareOrdinal(value, _stb.ToString());
         if (isDifferent)
@@ -209,10 +201,7 @@ namespace Altaxo.Main
 
     protected override void OnChanged(EventArgs e)
     {
-      var ev = PropertyChanged;
-      if (null != ev)
-        ev(this, new System.ComponentModel.PropertyChangedEventArgs("Text"));
-
+      PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(Text)));
       base.OnChanged(e);
     }
   }
