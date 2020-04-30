@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+
+#nullable enable
 
 namespace Altaxo
 {
@@ -72,7 +74,7 @@ namespace Altaxo
 
     /// <summary>The object that holds the event this object is attached to. If the event is a static event,
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
-    private WeakReference _eventSource;
+    private WeakReference? _eventSource;
 
 
     /// <summary>
@@ -157,15 +159,15 @@ namespace Altaxo
     public void Remove()
     {
       _handlerObjectWeakRef = _weakNullReference;
-      if (_eventSource.Target is { } eventSource)
-      {
-        Delegate evHandler = (EventHandler)(this.EventSink);
-        _eventInfo.RemoveEventHandler(eventSource, evHandler);
-      }
-      else if (_eventSource is null) // Static event source
+      if (_eventSource is null) // Static event source
       {
         Delegate evHandler = (EventHandler)(this.EventSink);
         _eventInfo.RemoveEventHandler(null, evHandler);
+      }
+      else if (_eventSource.Target is { } eventSource)
+      {
+        Delegate evHandler = (EventHandler)(this.EventSink);
+        _eventInfo.RemoveEventHandler(eventSource, evHandler);
       }
     }
 
@@ -224,7 +226,7 @@ namespace Altaxo
 
     /// <summary>The object that holds the event this object is attached to. If the event is a static event,
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
-    private WeakReference _eventSource;
+    private WeakReference? _eventSource;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WeakEventHandler"/> class.
@@ -311,15 +313,15 @@ namespace Altaxo
     public void Remove()
     {
       _handlerObjectWeakRef = _weakNullReference;
-      if (_eventSource.Target is { } eventSource)
-      {
-        Delegate evHandler = (EventHandler<TEventArgs>)(this.EventSink);
-        _eventInfo.RemoveEventHandler(eventSource, evHandler);
-      }
-      else if (_eventSource is null) // Static event source
+      if (_eventSource is null) // Static event source
       {
         Delegate evHandler = (EventHandler<TEventArgs>)(this.EventSink);
         _eventInfo.RemoveEventHandler(null, evHandler);
+      }
+      else if (_eventSource.Target is { } eventSource)
+      {
+        Delegate evHandler = (EventHandler<TEventArgs>)(this.EventSink);
+        _eventInfo.RemoveEventHandler(eventSource, evHandler);
       }
     }
 
@@ -377,7 +379,7 @@ namespace Altaxo
 
     /// <summary>The object that holds the event this object is attached to. If the event is a static event,
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
-    private WeakReference _eventSource;
+    private WeakReference? _eventSource;
 
 
     /// <summary>
@@ -465,15 +467,15 @@ namespace Altaxo
     public void Remove()
     {
       _handlerObjectWeakRef = _weakNullReference;
-      if (_eventSource.Target is { } eventSource)
-      {
-        Delegate evHandler = (System.ComponentModel.PropertyChangedEventHandler)(this.EventSink);
-        _eventInfo.RemoveEventHandler(eventSource, evHandler);
-      }
-      else if (_eventSource is null) // Static event source
+      if (_eventSource is null) // Static event source
       {
         Delegate evHandler = (System.ComponentModel.PropertyChangedEventHandler)(this.EventSink);
         _eventInfo.RemoveEventHandler(null, evHandler);
+      }
+      else if (_eventSource.Target is { } eventSource)
+      {
+        Delegate evHandler = (System.ComponentModel.PropertyChangedEventHandler)(this.EventSink);
+        _eventInfo.RemoveEventHandler(eventSource, evHandler);
       }
     }
 
@@ -531,7 +533,7 @@ namespace Altaxo
 
     /// <summary>The object that holds the event this object is attached to. If the event is a static event,
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
-    private WeakReference _eventSource;
+    private WeakReference? _eventSource;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WeakActionHandler"/> class.
@@ -615,15 +617,16 @@ namespace Altaxo
     public void Remove()
     {
       _handlerObjectWeakRef = _weakNullReference;
-      if (_eventSource.Target is { } eventSource)
-      {
-        Delegate evHandler = (Action)(this.EventSink);
-        _eventInfo.RemoveEventHandler(eventSource, evHandler);
-      }
-      else if (_eventSource is null) // Static event source
+
+      if (_eventSource is null) // Static event source
       {
         Delegate evHandler = (Action)(this.EventSink);
         _eventInfo.RemoveEventHandler(null, evHandler);
+      }
+      else if (_eventSource.Target is { } eventSource)
+      {
+        Delegate evHandler = (Action)(this.EventSink);
+        _eventInfo.RemoveEventHandler(eventSource, evHandler);
       }
     }
 
@@ -682,7 +685,7 @@ namespace Altaxo
 
     /// <summary>The object that holds the event this object is attached to. If the event is a static event,
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
-    private WeakReference _eventSource;
+    private WeakReference? _eventSource;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WeakActionHandler"/> class.
@@ -756,7 +759,7 @@ namespace Altaxo
     {
       if (_handlerObjectWeakRef.Target is { } handlerObj)
       {
-        _handlerMethodInfo.Invoke(handlerObj, new object[] { t1 });
+        _handlerMethodInfo.Invoke(handlerObj, new object?[] { t1 });
       }
       else
       {
@@ -768,15 +771,15 @@ namespace Altaxo
     public void Remove()
     {
       _handlerObjectWeakRef = _weakNullReference;
-      if (_eventSource.Target is { } eventSource)
-      {
-        Delegate evHandler = (Action<T1>)(this.EventSink);
-        _eventInfo.RemoveEventHandler(eventSource, evHandler);
-      }
-      else if (_eventSource is null) // Static event source
+      if (_eventSource is null) // Static event source
       {
         Delegate evHandler = (Action<T1>)(this.EventSink);
         _eventInfo.RemoveEventHandler(null, evHandler);
+      }
+      else if (_eventSource.Target is { } eventSource)
+      {
+        Delegate evHandler = (Action<T1>)(this.EventSink);
+        _eventInfo.RemoveEventHandler(eventSource, evHandler);
       }
     }
 
@@ -836,7 +839,7 @@ namespace Altaxo
 
     /// <summary>The object that holds the event this object is attached to. If the event is a static event,
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
-    private WeakReference _eventSource;
+    private WeakReference? _eventSource;
 
 
 
@@ -914,7 +917,7 @@ namespace Altaxo
     {
       if (_handlerObjectWeakRef.Target is { } handlerObj)
       {
-        _handlerMethodInfo.Invoke(handlerObj, new object[] { t1, t2 });
+        _handlerMethodInfo.Invoke(handlerObj, new object?[] { t1, t2 });
       }
       else
       {
@@ -926,15 +929,15 @@ namespace Altaxo
     public void Remove()
     {
       _handlerObjectWeakRef = _weakNullReference;
-      if (_eventSource.Target is { } eventSource)
-      {
-        Delegate evHandler = (Action<T1, T2>)(this.EventSink);
-        _eventInfo.RemoveEventHandler(eventSource, evHandler);
-      }
-      else if (_eventSource is null) // Static event source
+      if (_eventSource is null) // Static event source
       {
         Delegate evHandler = (Action<T1, T2>)(this.EventSink);
         _eventInfo.RemoveEventHandler(null, evHandler);
+      }
+      else if (_eventSource.Target is { } eventSource)
+      {
+        Delegate evHandler = (Action<T1, T2>)(this.EventSink);
+        _eventInfo.RemoveEventHandler(eventSource, evHandler);
       }
     }
 
@@ -995,7 +998,7 @@ namespace Altaxo
 
     /// <summary>The object that holds the event this object is attached to. If the event is a static event,
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
-    private WeakReference _eventSource;
+    private WeakReference? _eventSource;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WeakActionHandler"/> class.
@@ -1072,7 +1075,7 @@ namespace Altaxo
     {
       if (_handlerObjectWeakRef.Target is { } handlerObj)
       {
-        _handlerMethodInfo.Invoke(handlerObj, new object[] { t1, t2, t3 });
+        _handlerMethodInfo.Invoke(handlerObj, new object?[] { t1, t2, t3 });
       }
       else
       {
@@ -1084,15 +1087,15 @@ namespace Altaxo
     public void Remove()
     {
       _handlerObjectWeakRef = _weakNullReference;
-      if (_eventSource.Target is { } eventSource)
-      {
-        Delegate evHandler = (Action<T1, T2, T3>)(this.EventSink);
-        _eventInfo.RemoveEventHandler(eventSource, evHandler);
-      }
-      else if (_eventSource is null) // Static event source
+      if (_eventSource is null) // Static event source
       {
         Delegate evHandler = (Action<T1, T2, T3>)(this.EventSink);
         _eventInfo.RemoveEventHandler(null, evHandler);
+      }
+      else if (_eventSource.Target is { } eventSource)
+      {
+        Delegate evHandler = (Action<T1, T2, T3>)(this.EventSink);
+        _eventInfo.RemoveEventHandler(eventSource, evHandler);
       }
     }
 
