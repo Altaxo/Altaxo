@@ -87,7 +87,15 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="ctrl">The controller that controls the data table.</param>
     public static void RequeryTableDataSource(WorksheetController ctrl)
     {
-      var table = ctrl.DataTable;
+      RequeryTableDataSource(ctrl.DataTable);
+    }
+
+    /// <summary>
+    /// Requeries the table data source.
+    /// </summary>
+    /// <param name="table">The table that holds the data source.</param>
+    public static void RequeryTableDataSource(DataTable table)
+    {
       if (null == table || null == table.DataSource)
         return;
 

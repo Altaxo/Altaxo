@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using Altaxo.Gui.Common.MultiRename;
 using Altaxo.Main.Commands;
 using Altaxo.Serialization.Ascii;
+using Altaxo.Worksheet.Commands;
 
 #nullable enable
 
@@ -169,12 +170,12 @@ namespace Altaxo.Data
       if (doc.DataSource is Serialization.Ascii.AsciiImportDataSource aids)
       {
         aids.SourceFileName = fileName;
-        aids.FillData(doc);
+        DataSourceCommands.RequeryTableDataSource(doc);
       }
       else if (doc.DataSource is FileImportScriptDataSource fisds)
       {
         fisds.SourceFileName = fileName;
-        fisds.FillData(doc);
+        DataSourceCommands.RequeryTableDataSource(doc);
       }
       else
       {
