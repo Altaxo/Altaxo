@@ -126,7 +126,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// Note that it is assumed that the first list item corresponds to the old name of the object. This is shown in the first column.
     /// The second column is reserved for the new name. Then the other columns follow.
     /// </summary>
-    private List<KeyValuePair<string, Func<object, string>>> _columnsOfObjectInformation = new List<KeyValuePair<string, Func<object, string>>>();
+    private List<KeyValuePair<string, Func<object, string, string>>> _columnsOfObjectInformation = new List<KeyValuePair<string, Func<object, string, string>>>();
 
     /// <summary>Gets or sets the default pattern string, i.e. the pattern string that is initially shown when the multi rename dialog opens.</summary>
     /// <value>Pattern string that is initially shown when the multi rename dialog opens.</value>
@@ -145,11 +145,22 @@ namespace Altaxo.Gui.Common.MultiRename
     public bool IsRenameOperationFileSystemBased { get; set; } = true;
 
     /// <summary>
-    /// Stores columns of information for the objects to rename. Key is the column name, value is a function which retrieves a string for each object.
-    /// Note that it is assumed that the first list item corresponds to the old name of the object. This is shown in the first column.
+    /// Gets or sets a value indicating whether the generated names are existing files, and
+    /// it is shown if these files exist.
+    /// </summary>
+    public bool ShowExistingFileInformation { get; set; }
+
+    /// <summary>
+    /// Stores columns of information for the objects to rename.
+    /// Key is the column name.
+    /// Value is a function which retrieves a string for each object, that appears as text in the column.
+    /// The first argument of the function is the object (DataTable, Graph, etc.).
+    /// The second argument is the new calculated name.
+    /// Note that it is assumed that the first list item corresponds to the old name of the object.
+    /// This is shown in the first column.
     /// The second column is reserved for the new name. Then the other columns follow.
     /// </summary>
-    public List<KeyValuePair<string, Func<object, string>>> ColumnsOfObjectInformation
+    public List<KeyValuePair<string, Func<object, string, string>>> ColumnsOfObjectInformation
     {
       get { return _columnsOfObjectInformation; }
     }
@@ -305,7 +316,17 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <param name="valueGetter">A function that gets the value of this column for this object, e.g. its old name etc. If this argument is null, it is assumed that the column you want to register here is the column of the new name, so the new name is shown in this column.</param>
     public void RegisterListColumn(string columnName, Func<object, string> valueGetter)
     {
-      _columnsOfObjectInformation.Add(new KeyValuePair<string, Func<object, string>>(columnName, valueGetter));
+      _columnsOfObjectInformation.Add(new KeyValuePair<string, Func<object, string, string>>(columnName, (o, n) => valueGetter(o)));
+    }
+
+    /// <summary>
+    /// Register a column for a Gui list that shows the properties of the objects to rename, for instance its old name, its creation date, its new name etc.
+    /// </summary>
+    /// <param name="columnName">The text that is used as header for this column.</param>
+    /// <param name="valueGetter">A function that gets the value of this column for this object, e.g. its old name etc. If this argument is null, it is assumed that the column you want to register here is the column of the new name, so the new name is shown in this column.</param>
+    public void RegisterListColumn(string columnName, Func<object, string, string> valueGetter)
+    {
+      _columnsOfObjectInformation.Add(new KeyValuePair<string, Func<object, string, string>>(columnName, valueGetter));
     }
 
     /// <summary>
@@ -316,7 +337,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <returns></returns>
     public string GetListValue(int columnNumber, int rowNumber)
     {
-      return _columnsOfObjectInformation[columnNumber].Value(_objectsToRename[rowNumber]);
+      return _columnsOfObjectInformation[columnNumber].Value(_objectsToRename[rowNumber], string.Empty);
     }
 
     /// <summary>

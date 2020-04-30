@@ -104,14 +104,13 @@ namespace Altaxo.Gui.Common.MultiRename
             _data.SetNewNameForObject((int)_tag, value);
 
             for (int i = 0; i < _data.ColumnsOfObjectInformation.Count; ++i)
-              if (_data.ColumnsOfObjectInformation[i].Value == null)
-                OnPropertyChanged("Text" + (i != 0 ? i.ToString() : string.Empty));
+              OnPropertyChanged("Text" + (i != 0 ? i.ToString() : string.Empty));
           }
         }
       }
 
       public MyNode(MultiRenameData data, int idx)
-        : base(data.ColumnsOfObjectInformation[0].Value(data.GetObjectToRename(idx)), idx)
+        : base(data.ColumnsOfObjectInformation[0].Value(data.GetObjectToRename(idx), string.Empty), idx)
       {
         _data = data;
       }
@@ -134,10 +133,12 @@ namespace Altaxo.Gui.Common.MultiRename
       {
         var fkt = _data.ColumnsOfObjectInformation[i].Value;
 
+        var newName = _data.GetNewNameForObject((int)_tag);
+
         if (null != fkt)
-          return fkt(_data.GetObjectToRename((int)_tag));
+          return fkt(_data.GetObjectToRename((int)_tag), newName);
         else
-          return _data.GetNewNameForObject((int)_tag);
+          return newName;
       }
 
       public override int SubItemCount

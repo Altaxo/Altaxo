@@ -45,7 +45,7 @@ namespace Altaxo.Main.Commands
       renameData.AddObjectsToRename(objectsToRename);
 
       renameData.RegisterListColumn("Full name", Main.Commands.MultiRenameDocuments.GetFullName);
-      renameData.RegisterListColumn("New name", null);
+      renameData.RegisterListColumn("New name", (obj, newName) => newName);
       renameData.RegisterListColumn("Creation date", Main.Commands.MultiRenameDocuments.GetCreationDateString);
 
       Main.Commands.MultiRenameDocuments.RegisterCommonDocumentShortcuts(renameData);

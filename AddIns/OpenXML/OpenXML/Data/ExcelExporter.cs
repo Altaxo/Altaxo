@@ -78,7 +78,7 @@ namespace Altaxo.Data
       mrData.AddObjectsToRename(documents);
 
       mrData.RegisterListColumn("FullName", MultiRenameDocuments.GetFullNameWithAugmentingProjectFolderItems);
-      mrData.RegisterListColumn("File name", null);
+      mrData.RegisterListColumn("File name", (obj, newName) => newName);
       mrData.RegisterListColumn("Creation date", MultiRenameDocuments.GetCreationDateString);
 
       mrData.DefaultPatternString = "[PA]\\[SN][E]";

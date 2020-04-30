@@ -1314,6 +1314,8 @@
     <Condition name="ProjbrowserListItemSelection" selcount=">1" selitems="Altaxo.Data.DataTable, AltaxoBase" action="Disable">
       <MenuItem id="PlotCommonCols" label="${res:XML.ProjectBrowserMenu.PlotCommonColumns}" description="${res:XML.ProjectBrowserMenu.PlotCommonColumns.Description}"
 							class="Altaxo.Gui.Pads.ProjectBrowser.CmdPlotCommonColumns" />
+      <MenuItem id="MultiImportTables" label="Import data into multiple tables" description="Imports from files into multiple tables"
+							class="Altaxo.Gui.Pads.ProjectBrowser.CmdMultiImportTables" />
     </Condition>
     <Condition name="ProjbrowserListItemSelection" selcount=">0" selitems="Altaxo.Graph.GraphDocumentBase, AltaxoBase" action="Disable">
       <MenuItem id="MultiExportGraphs" label="${res:XML.ProjectBrowserMenu.MultiExportGraphs}" description="${res:XML.ProjectBrowserMenu.MultiExportGraphs.Description}"
