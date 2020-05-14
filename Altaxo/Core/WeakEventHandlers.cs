@@ -67,14 +67,14 @@ namespace Altaxo
     private WeakReference _handlerObjectWeakRef;
 
     /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
-    private MethodInfo _handlerMethodInfo;
+    private readonly MethodInfo _handlerMethodInfo;
 
     /// <summary>The information about the event this object is attached to.</summary>
-    private EventInfo _eventInfo;
+    private readonly EventInfo _eventInfo;
 
     /// <summary>The object that holds the event this object is attached to. If the event is a static event,
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
-    private WeakReference? _eventSource;
+    private readonly WeakReference? _eventSource;
 
 
     /// <summary>
@@ -95,9 +95,8 @@ namespace Altaxo
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
-      _eventInfo = eventSource.GetType().GetEvent(eventName);
-      if (_eventInfo is null)
-        throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
+      _eventInfo = eventSource.GetType().GetEvent(eventName) ??
+         throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
 
       _eventSource = new WeakReference(eventSource);
 
@@ -127,9 +126,9 @@ namespace Altaxo
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
-      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static);
-      if (_eventInfo is null)
-        throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static) ??
+          throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+
       _eventSource = null; // WeakReference to null for static event source
 
       _handlerObjectWeakRef = new WeakReference(handler.Target);
@@ -143,11 +142,11 @@ namespace Altaxo
     /// </summary>
     /// <param name="sender">Sender of the event.</param>
     /// <param name="e">Event args.</param>
-    public void EventSink(object sender, EventArgs e)
+    public void EventSink(object? sender, EventArgs e)
     {
       if (_handlerObjectWeakRef.Target is { } handlerObj)
       {
-        _handlerMethodInfo.Invoke(handlerObj, new object[] { sender, e });
+        _handlerMethodInfo.Invoke(handlerObj, new object?[] { sender, e });
       }
       else
       {
@@ -219,14 +218,14 @@ namespace Altaxo
     private WeakReference _handlerObjectWeakRef;
 
     /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
-    private MethodInfo _handlerMethodInfo;
+    private readonly MethodInfo _handlerMethodInfo;
 
     /// <summary>The information about the event this object is attached to.</summary>
-    private EventInfo _eventInfo;
+    private readonly EventInfo _eventInfo;
 
     /// <summary>The object that holds the event this object is attached to. If the event is a static event,
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
-    private WeakReference? _eventSource;
+    private readonly WeakReference? _eventSource;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WeakEventHandler"/> class.
@@ -249,9 +248,8 @@ namespace Altaxo
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
-      _eventInfo = eventSource.GetType().GetEvent(eventName);
-      if (_eventInfo is null)
-        throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
+      _eventInfo = eventSource.GetType().GetEvent(eventName) ??
+          throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
 
       _eventSource = new WeakReference(eventSource);
 
@@ -281,9 +279,8 @@ namespace Altaxo
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
-      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static);
-      if (_eventInfo is null)
-        throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static) ??
+          throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
       _eventSource = null; // WeakReference to null for static event source
 
       _handlerObjectWeakRef = new WeakReference(handler.Target);
@@ -297,11 +294,11 @@ namespace Altaxo
     /// </summary>
     /// <param name="sender">Sender of the event.</param>
     /// <param name="e">Event args.</param>
-    public void EventSink(object sender, TEventArgs e)
+    public void EventSink(object? sender, TEventArgs e)
     {
       if (_handlerObjectWeakRef.Target is { } handlerObj)
       {
-        _handlerMethodInfo.Invoke(handlerObj, new object[] { sender, e });
+        _handlerMethodInfo.Invoke(handlerObj, new object?[] { sender, e });
       }
       else
       {
@@ -372,14 +369,14 @@ namespace Altaxo
     private WeakReference _handlerObjectWeakRef;
 
     /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
-    private MethodInfo _handlerMethodInfo;
+    private readonly MethodInfo _handlerMethodInfo;
 
     /// <summary>The information about the event this object is attached to.</summary>
-    private EventInfo _eventInfo;
+    private readonly EventInfo _eventInfo;
 
     /// <summary>The object that holds the event this object is attached to. If the event is a static event,
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
-    private WeakReference? _eventSource;
+    private readonly WeakReference? _eventSource;
 
 
     /// <summary>
@@ -403,9 +400,8 @@ namespace Altaxo
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
-      _eventInfo = eventSource.GetType().GetEvent(eventName);
-      if (_eventInfo is null)
-        throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
+      _eventInfo = eventSource.GetType().GetEvent(eventName) ??
+          throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
 
       _eventSource = new WeakReference(eventSource);
 
@@ -435,9 +431,8 @@ namespace Altaxo
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
-      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static);
-      if (_eventInfo is null)
-        throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static) ??
+          throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
       _eventSource = null; // WeakReference to null for static event source
 
       _handlerObjectWeakRef = new WeakReference(handler.Target);
@@ -526,14 +521,14 @@ namespace Altaxo
     private WeakReference _handlerObjectWeakRef;
 
     /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
-    private MethodInfo _handlerMethodInfo;
+    private readonly MethodInfo _handlerMethodInfo;
 
     /// <summary>The information about the event this object is attached to.</summary>
-    private EventInfo _eventInfo;
+    private readonly EventInfo _eventInfo;
 
     /// <summary>The object that holds the event this object is attached to. If the event is a static event,
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
-    private WeakReference? _eventSource;
+    private readonly WeakReference? _eventSource;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WeakActionHandler"/> class.
@@ -556,9 +551,8 @@ namespace Altaxo
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
-      _eventInfo = eventSource.GetType().GetEvent(eventName);
-      if (_eventInfo is null)
-        throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
+      _eventInfo = eventSource.GetType().GetEvent(eventName) ??
+          throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
 
       _eventSource = new WeakReference(eventSource);
 
@@ -588,9 +582,8 @@ namespace Altaxo
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
-      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static);
-      if (_eventInfo is null)
-        throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static) ??
+          throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
       _eventSource = null; // WeakReference to null for static event source
 
       _handlerObjectWeakRef = new WeakReference(handler.Target);
@@ -678,14 +671,14 @@ namespace Altaxo
     private WeakReference _handlerObjectWeakRef;
 
     /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
-    private MethodInfo _handlerMethodInfo;
+    private readonly MethodInfo _handlerMethodInfo;
 
     /// <summary>The information about the event this object is attached to.</summary>
-    private EventInfo _eventInfo;
+    private readonly EventInfo _eventInfo;
 
     /// <summary>The object that holds the event this object is attached to. If the event is a static event,
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
-    private WeakReference? _eventSource;
+    private readonly WeakReference? _eventSource;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WeakActionHandler"/> class.
@@ -708,9 +701,8 @@ namespace Altaxo
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
-      _eventInfo = eventSource.GetType().GetEvent(eventName);
-      if (_eventInfo is null)
-        throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
+      _eventInfo = eventSource.GetType().GetEvent(eventName) ??
+          throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
 
       _eventSource = new WeakReference(eventSource);
 
@@ -740,9 +732,8 @@ namespace Altaxo
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
-      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static);
-      if (_eventInfo is null)
-        throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static) ??
+          throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
       _eventSource = null; // WeakReference to null for static event source
 
       _handlerObjectWeakRef = new WeakReference(handler.Target);
@@ -832,14 +823,14 @@ namespace Altaxo
     private WeakReference _handlerObjectWeakRef;
 
     /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
-    private MethodInfo _handlerMethodInfo;
+    private readonly MethodInfo _handlerMethodInfo;
 
     /// <summary>The information about the event this object is attached to.</summary>
-    private EventInfo _eventInfo;
+    private readonly EventInfo _eventInfo;
 
     /// <summary>The object that holds the event this object is attached to. If the event is a static event,
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
-    private WeakReference? _eventSource;
+    private readonly WeakReference? _eventSource;
 
 
 
@@ -864,9 +855,8 @@ namespace Altaxo
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
-      _eventInfo = eventSource.GetType().GetEvent(eventName);
-      if (_eventInfo is null)
-        throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
+      _eventInfo = eventSource.GetType().GetEvent(eventName) ??
+          throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
 
       _eventSource = new WeakReference(eventSource);
 
@@ -896,9 +886,8 @@ namespace Altaxo
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
-      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static);
-      if (_eventInfo is null)
-        throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static) ??
+          throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
       _eventSource = null; // WeakReference to null for static event source
 
       _handlerObjectWeakRef = new WeakReference(handler.Target);
@@ -991,14 +980,14 @@ namespace Altaxo
     private WeakReference _handlerObjectWeakRef;
 
     /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
-    private MethodInfo _handlerMethodInfo;
+    private readonly MethodInfo _handlerMethodInfo;
 
     /// <summary>The information about the event this object is attached to.</summary>
-    private EventInfo _eventInfo;
+    private readonly EventInfo _eventInfo;
 
     /// <summary>The object that holds the event this object is attached to. If the event is a static event,
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
-    private WeakReference? _eventSource;
+    private readonly WeakReference? _eventSource;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WeakActionHandler"/> class.
@@ -1021,9 +1010,8 @@ namespace Altaxo
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
-      _eventInfo = eventSource.GetType().GetEvent(eventName);
-      if (_eventInfo is null)
-        throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
+      _eventInfo = eventSource.GetType().GetEvent(eventName) ??
+          throw new ArgumentException($"Event name {eventName} not found on type {eventSource.GetType()}!", nameof(eventName));
 
       _eventSource = new WeakReference(eventSource);
 
@@ -1054,9 +1042,8 @@ namespace Altaxo
       if (handler.Target == null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
-      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static);
-      if (_eventInfo is null)
-        throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
+      _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static) ??
+          throw new ArgumentException($"Static event \"{eventName}\" not found on type {eventSourceType}!", nameof(eventName));
       _eventSource = null; // WeakReference to null for static event source
 
       _handlerObjectWeakRef = new WeakReference(handler.Target);
