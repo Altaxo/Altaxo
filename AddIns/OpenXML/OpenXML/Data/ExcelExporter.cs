@@ -185,8 +185,10 @@ namespace Altaxo.Data
       int rowOffset = 0;
       int columnOffset = 1;
 
+      string spanFrom1ToNumberOfColumns = "1:" + (numberOfColumns + columnOffset).ToString(System.Globalization.CultureInfo.InvariantCulture);
+
       // First, export the column names
-      Row headerRow = new Row() { RowIndex = (uint)(1), Spans = new ListValue<StringValue>() };
+      Row headerRow = new Row() { RowIndex = (uint)(1), Spans = new ListValue<StringValue>() { InnerText = spanFrom1ToNumberOfColumns } };
       for (int nCol = 0; nCol < numberOfColumns; ++nCol)
       {
         var dataColName = dataTable.DataColumns.GetColumnName(nCol);
@@ -207,7 +209,7 @@ namespace Altaxo.Data
 
       for (int nPCol = 0; nPCol < dataTable.PropertyColumnCount; ++nPCol, ++rowOffset)
       {
-        Row row = new Row() { RowIndex = (uint)(1 + rowOffset), Spans = new ListValue<StringValue>() };
+        Row row = new Row() { RowIndex = (uint)(1 + rowOffset), Spans = new ListValue<StringValue>() { InnerText = spanFrom1ToNumberOfColumns } };
 
         {
           // First, add the name of the property column
@@ -254,7 +256,7 @@ namespace Altaxo.Data
       // now export the data
       for (int nRow = 0; nRow < numberOfRows; ++nRow)
       {
-        Row row = new Row() { RowIndex = (uint)(nRow + 1 + rowOffset), Spans = new ListValue<StringValue>() };
+        Row row = new Row() { RowIndex = (uint)(nRow + 1 + rowOffset), Spans = new ListValue<StringValue>() { InnerText = spanFrom1ToNumberOfColumns } };
 
         for (int nCol = 0; nCol < numberOfColumns; ++nCol)
         {
