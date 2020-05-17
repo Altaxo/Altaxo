@@ -440,13 +440,15 @@ namespace Altaxo.Dom
     /// Opens a Altaxo project from a project file (without asking the user). The old project is closed without asking the user.
     /// </summary>
     /// <param name="filename"></param>
-    protected virtual void LoadProjectFromFileOrFolder(PathName filename)
+    /// <param name="showUserInteraction">If true, and the file is read-only, a dialog box is asking the user whether to open the file in read-only mode.
+    /// If false, and the file is read-only, the file will be opened in read-only-mode.</param>
+    protected virtual void LoadProjectFromFileOrFolder(PathName filename, bool showUserInteraction = true)
     {
       var projectArchiveManager = InternalCreateProjectArchiveManagerFromFileOrFolderLocation(filename) ?? throw new ApplicationException($"Can not find any archive manager that can handle the file / folder {filename}");
       CurrentProjectArchiveManager = projectArchiveManager;
 
       if (projectArchiveManager is IFileBasedProjectArchiveManager fileProjectArchiveManager)
-        fileProjectArchiveManager.LoadFromFile((FileName)filename, InternalLoadProjectAndWindowsStateFromArchive);
+        fileProjectArchiveManager.LoadFromFile((FileName)filename, InternalLoadProjectAndWindowsStateFromArchive, showUserInteraction);
       else if (projectArchiveManager is IFolderBasedProjectArchiveManager folderProjectArchiveManager)
         folderProjectArchiveManager.LoadFromFolder((DirectoryName)filename, InternalLoadProjectAndWindowsStateFromArchive);
       else

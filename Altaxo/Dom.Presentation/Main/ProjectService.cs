@@ -348,7 +348,7 @@ namespace Altaxo.Main
       foreach (var file in cmdFiles)
       {
         if (System.IO.File.Exists(file))
-          LoadProjectFromFileOrFolder(FileName.Create(file));
+          LoadProjectFromFileOrFolder(FileName.Create(file), showUserInteraction: false);
         else if (System.IO.Directory.Exists(file))
           LoadProjectFromFileOrFolder(DirectoryName.Create(file));
         break;

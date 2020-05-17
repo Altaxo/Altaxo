@@ -108,7 +108,9 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="fileName">Name of the file to load from.</param>
     /// <param name="restoreProjectAndWindowsState">Delegate that is used to deserialize and restore the project and the windows state.</param>
-    void LoadFromFile(FileName fileName, RestoreProjectAndWindowsState restoreProjectAndWindowsState);
+    /// <param name="showUserInteraction">If true, and the file is read-only, a dialog box is asking the user whether to open the file in read-only mode.
+    /// If false, and the file is read-only, the file will be opened in read-only-mode.</param>
+    void LoadFromFile(FileName fileName, RestoreProjectAndWindowsState restoreProjectAndWindowsState, bool showUserInteraction = true);
 
     /// <summary>
     /// Saves a project into a Zip file using the name given in <paramref name="fileName"/>.

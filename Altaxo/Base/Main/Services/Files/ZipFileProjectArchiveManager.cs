@@ -75,8 +75,10 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="fileName">Name of the file to load from.</param>
     /// <param name="restoreProjectAndWindowsState">Delegate that is used to deserialize and restore the project and the windows state.</param>
+    /// <param name="showUserInteraction">If true, and the file is read-only, a dialog box is asking the user whether to open the file in read-only mode.
+    /// If false, and the file is read-only, the file will be opened in read-only-mode.</param>
     /// <exception cref="ObjectDisposedException"></exception>
-    public void LoadFromFile(FileName fileName, RestoreProjectAndWindowsState restoreProjectAndWindowsState)
+    public void LoadFromFile(FileName fileName, RestoreProjectAndWindowsState restoreProjectAndWindowsState, bool showUserInteraction = true)
     {
       if (_isDisposed) throw new ObjectDisposedException(this.GetType().Name);
 
@@ -104,7 +106,13 @@ namespace Altaxo.Main.Services
           _originalFileStream = null;
           throw ex1;
         }
-        var shouldOpenReadonly = Current.Gui.YesNoMessageBox($"The file {fileName} seems to be read-only or currently in use.\r\n\r\nDo you want try to open it in read-only mode?", "Question", true);
+
+
+        bool shouldOpenReadonly = true;
+        if (showUserInteraction)
+        {
+          Current.Gui.YesNoMessageBox($"The file {fileName} seems to be read-only or currently in use.\r\n\r\nDo you want try to open it in read-only mode?", "Question", true);
+        }
 
         if (shouldOpenReadonly)
         {
