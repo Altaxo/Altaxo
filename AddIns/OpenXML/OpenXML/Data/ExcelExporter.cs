@@ -141,6 +141,16 @@ namespace Altaxo.Data
       return failedItems;
     }
 
+    private static string DoubleToExcelString(double x)
+    {
+      if (double.IsNaN(x))
+        return string.Empty;
+
+      if (double.IsInfinity(x))
+        x = double.IsPositiveInfinity(x) ? 1.7976931348623E+308 : -1.7976931348623E+308;
+
+      return x.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    }
 
     /// <summary>
     /// Exports a <see cref="DataTable"/> to an Excel file.
@@ -231,7 +241,7 @@ namespace Altaxo.Data
           {
             CellValue cellValue;
             if (propertyColumn is DoubleColumn)
-              cellValue = new CellValue(((double)propertyColumn[nCol]).ToString(System.Globalization.CultureInfo.InvariantCulture));
+              cellValue = new CellValue(DoubleToExcelString((double)propertyColumn[nCol]));
             else if (propertyColumn is DateTimeColumn)
               cellValue = new CellValue((DateTime)propertyColumn[nCol]);
             else
@@ -266,7 +276,7 @@ namespace Altaxo.Data
           {
             CellValue cellValue;
             if (dataCol is DoubleColumn)
-              cellValue = new CellValue(((double)dataCol[nRow]).ToString(System.Globalization.CultureInfo.InvariantCulture));
+              cellValue = new CellValue(DoubleToExcelString((double)dataCol[nRow]));
             else if (dataCol is DateTimeColumn)
               cellValue = new CellValue((DateTime)dataCol[nRow]);
             else
