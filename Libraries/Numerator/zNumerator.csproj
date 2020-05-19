@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>Numerator</AssemblyName>
     <RootNamespace>Numerator</RootNamespace>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>..\..\rtDir\bin</OutputPath>
