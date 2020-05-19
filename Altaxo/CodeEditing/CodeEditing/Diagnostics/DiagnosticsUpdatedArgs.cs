@@ -2,9 +2,10 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Diagnostics/DiagnosticsUpdatedArgs.cs
 
+extern alias MCW;
 using System.Collections.Immutable;
 using System.Linq;
-using Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.Diagnostics
 {

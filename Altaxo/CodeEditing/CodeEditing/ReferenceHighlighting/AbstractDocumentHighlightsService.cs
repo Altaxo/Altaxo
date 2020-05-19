@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, Features, Core/Portable/DocumentHighlighting/AbstractDocumentHighlightsService.cs
 
+extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -9,9 +10,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.ErrorReporting;
+using MCW::Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.ErrorReporting;
-using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.LanguageServices;
 using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Shared.Extensions;

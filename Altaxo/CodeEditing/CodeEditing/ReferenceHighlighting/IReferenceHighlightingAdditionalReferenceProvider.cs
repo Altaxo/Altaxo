@@ -2,11 +2,13 @@
 
 // Originated from: Roslyn, EditorFeatures, Implementation\ReferenceHighlighting\IReferenceHighlightingAdditionalReferenceProvider.cs
 
+extern alias MCW;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Host;
 
 namespace Altaxo.CodeEditing.ReferenceHighlighting
 {

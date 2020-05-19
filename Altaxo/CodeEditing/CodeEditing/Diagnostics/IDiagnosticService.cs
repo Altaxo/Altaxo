@@ -1,11 +1,11 @@
 ﻿// Copyright Eli Arbel (no explicit copyright notice in original file)
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Diagnostics/IDiagnosticService.cs
-
+extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.Diagnostics
 {

@@ -3,7 +3,7 @@
 // Originated from: RoslynPad, RoslynPad.Roslyn, RoslynHost.cs
 
 // Strongly revised for the Altaxo project, Copyright Dr. D. Lellinger, 2017
-
+extern alias MCW;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -19,10 +19,11 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Altaxo.CodeEditing.Diagnostics;
+using MCW::Microsoft.CodeAnalysis.Host;
+using MCW::Microsoft.CodeAnalysis.Host;
+using MCW::Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Host;
-using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing
@@ -34,7 +35,7 @@ namespace Altaxo.CodeEditing
     /// <summary>
     /// In order to have access to DocumentationProviderService, which is located inside a sealed internal class, you have i) to name the assembly "RoslynETAHost" and ii) sign the assembly with the roslyn private key.
     /// </summary>
-    private readonly Microsoft.CodeAnalysis.Host.IDocumentationProviderService _documentationProviderService;
+    private readonly IDocumentationProviderService _documentationProviderService;
 
     /// <summary>
     /// Path to the framework assemblies. Used by the documentation service to get the xml documentation of the framework assemblies.

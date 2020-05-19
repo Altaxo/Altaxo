@@ -2,8 +2,9 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Diagnostics/UpdatedEventArgs.cs
 
+extern alias MCW;
 using System;
-using Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.Diagnostics
 {

@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 // Originated from: Roslyn, EditorFeatures, Core/Host/IStreamingFindReferencesPresenter.cs
 
+extern alias MCW;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
+using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.FindUsages;
 
 namespace Microsoft.CodeAnalysis.Editor.Host

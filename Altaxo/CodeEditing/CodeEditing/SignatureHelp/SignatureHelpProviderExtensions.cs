@@ -2,8 +2,10 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, SignatureHelp/SignatureHelpProviderExtensions.cs
 
+extern alias MCW;
 using System;
 using System.Threading.Tasks;
+using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 

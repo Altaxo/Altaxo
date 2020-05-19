@@ -2,18 +2,19 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/FindUsages/IDefinitionsAndReferencesFactory.cs
 
+extern alias MCW;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.FindSymbols;
+using MCW::Microsoft.CodeAnalysis.Host;
+using MCW::Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.Features.RQName;
-using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.FindUsages;
-using Microsoft.CodeAnalysis.Host;
-using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Roslyn.Utilities;

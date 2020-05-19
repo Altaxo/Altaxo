@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 // Originated from: Roslyn, EditorFeatures, Core/Implementation/BraceMatching/AbstractBraceMatcher.cs
-
+extern alias MCW;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.BraceMatching

@@ -2,13 +2,14 @@
 
 // Originated from: Roslyn, Features, Core/Portable/SignatureHelp/ISignatureHelpProvider.cs
 
+extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.SignatureHelp
 {

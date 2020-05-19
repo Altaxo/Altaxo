@@ -2,11 +2,12 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/GoToDefinition/IGoToDefinitionService.cs
 
+extern alias MCW;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Host;
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Navigation;
 
 namespace Microsoft.CodeAnalysis.Editor

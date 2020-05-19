@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+extern alias MCW;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -31,10 +32,11 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Altaxo.CodeEditing.Diagnostics;
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
 

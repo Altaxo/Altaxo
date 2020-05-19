@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <AssemblyName>RoslynETAHost</AssemblyName>
+    <AssemblyName>AltaxoCodeEditing</AssemblyName>
     <TargetFramework>net472</TargetFramework>
     <LangVersion>latest</LangVersion>
     <UseWPF>true</UseWPF>
@@ -10,7 +10,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>..\..\rtDir\bin</OutputPath>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>Keys\RoslynInternalKey.Private.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Keys\AltaxoCodeEditing.Private.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
@@ -39,6 +39,10 @@
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces">
       <HintPath>LibrariesBin\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+    <Aliases>MCW</Aliases>
+    </Reference>
+    <Reference Include="Microsoft.DiaSymReader">
+      <HintPath>LibrariesBin\Microsoft.DiaSymReader.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Collections.Immutable">
@@ -48,20 +52,20 @@
     <Reference Include="System.Composition.AttributedModel">
       <HintPath>LibrariesBin\System.Composition.AttributedModel.dll</HintPath>
     </Reference>
-    <Reference Include="System.Composition.Hosting">
+    <Reference Include="System.Memory">
+      <HintPath>LibrariesBin\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics.Vectors">
+      <HintPath>LibrariesBin\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+        <Reference Include="System.Composition.Hosting">
       <HintPath>LibrariesBin\System.Composition.Hosting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.Runtime">
-      <HintPath>LibrariesBin\System.Composition.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.TypedParts">
-      <HintPath>LibrariesBin\System.Composition.TypedParts.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.Compression">
-      <HintPath>LibrariesBin\System.IO.Compression.dll</HintPath>
     </Reference>
     <Reference Include="System.Reflection.Metadata">
       <HintPath>LibrariesBin\System.Reflection.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>LibrariesBin\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Tasks.Extensions">
       <HintPath>LibrariesBin\System.Threading.Tasks.Extensions.dll</HintPath>

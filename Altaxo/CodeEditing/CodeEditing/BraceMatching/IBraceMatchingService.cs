@@ -2,9 +2,10 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/IBraceMatchingService.cs
 
+extern alias MCW;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.BraceMatching

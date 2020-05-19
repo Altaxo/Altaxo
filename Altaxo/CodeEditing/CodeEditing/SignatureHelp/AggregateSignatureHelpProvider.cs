@@ -2,6 +2,7 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, SignatureHelp/AggregateSignatureHelpProvider.cs
 
+extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -9,8 +10,9 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.SignatureHelp

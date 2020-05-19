@@ -1,14 +1,15 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 // Originated from: Roslyn, Workspaces, Core/Portable/Workspace/Host/Documentation/DocumentationProviderServiceFactory.cs
-
+extern alias MCW;
 using System;
 using System.Collections.Concurrent;
 using System.Composition;
 using System.IO;
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.Host;
+using MCW::Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Host;
-using Microsoft.CodeAnalysis.Host.Mef;
 
 namespace Altaxo.CodeEditing.Documentation
 {

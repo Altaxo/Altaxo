@@ -2,16 +2,18 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/GoToDefinition/AbstractGoToDefinitionService.cs
 
+extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.LanguageServices;
+using MCW::Microsoft.CodeAnalysis.Shared.Extensions;
+using MCW::Roslyn.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.LanguageServices;
 using Microsoft.CodeAnalysis.Navigation;
-using Microsoft.CodeAnalysis.Shared.Extensions;
-using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
 {

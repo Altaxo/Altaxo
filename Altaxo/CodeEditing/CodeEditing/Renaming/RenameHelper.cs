@@ -2,15 +2,18 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Rename/RenameHelper.cs
 
+extern alias MCW;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.FindSymbols;
+using MCW::Microsoft.CodeAnalysis.LanguageServices;
+using MCW::Microsoft.CodeAnalysis.Rename;
+using MCW::Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.FindSymbols;
-using Microsoft.CodeAnalysis.LanguageServices;
-using Microsoft.CodeAnalysis.Rename;
-using Microsoft.CodeAnalysis.Shared.Extensions;
 
 namespace Altaxo.CodeEditing.Renaming
 {

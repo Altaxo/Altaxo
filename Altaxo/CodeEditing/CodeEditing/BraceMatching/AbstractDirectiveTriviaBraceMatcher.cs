@@ -2,9 +2,11 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/Extensibility/BraceMatching/AbstractDirectiveTriviaBraceMatcher.cs
 
+extern alias MCW;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 

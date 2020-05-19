@@ -1,7 +1,7 @@
 ﻿// Copyright Eli Arbel (no explicit copyright notice in original file)
 
 // Originated from: RoslynPad, RoslynPad.Roslyn.Windows, RoslynCompletionData.cs
-
+extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,7 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
-using Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
 
 namespace Altaxo.CodeEditing.Completion

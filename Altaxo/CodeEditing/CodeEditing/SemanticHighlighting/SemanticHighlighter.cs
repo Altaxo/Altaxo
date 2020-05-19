@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -29,8 +30,8 @@ using System.Threading.Tasks;
 using Altaxo.Gui.CodeEditing.SemanticHighlighting;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Classification;
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.SemanticHighlighting

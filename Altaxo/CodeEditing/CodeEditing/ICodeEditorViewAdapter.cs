@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -34,6 +35,7 @@ using Altaxo.CodeEditing.Diagnostics;
 using Altaxo.CodeEditing.ReferenceHighlighting;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Indentation;
+using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing
@@ -57,7 +59,7 @@ namespace Altaxo.CodeEditing
     /// <value>
     /// The document identifier.
     /// </value>
-    Microsoft.CodeAnalysis.DocumentId DocumentId { get; }
+    DocumentId DocumentId { get; }
 
     /*
 		/// <summary>

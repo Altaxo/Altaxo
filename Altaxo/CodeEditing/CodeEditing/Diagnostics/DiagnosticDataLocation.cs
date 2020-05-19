@@ -2,14 +2,16 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Diagnostics/DiagnosticDataLocation.cs
 
-using Microsoft.CodeAnalysis;
+extern alias MCW;
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.Diagnostics
 {
   public sealed class DiagnosticDataLocation
   {
-    private readonly Microsoft.CodeAnalysis.Diagnostics.DiagnosticDataLocation _inner;
+    private readonly DiagnosticDataLocation _inner;
 
     public DocumentId DocumentId => _inner.DocumentId;
 
@@ -26,7 +28,7 @@ namespace Altaxo.CodeEditing.Diagnostics
     public int OriginalEndLine => _inner.OriginalEndLine;
     public int OriginalEndColumn => _inner.OriginalEndColumn;
 
-    internal DiagnosticDataLocation(Microsoft.CodeAnalysis.Diagnostics.DiagnosticDataLocation inner)
+    internal DiagnosticDataLocation(DiagnosticDataLocation inner)
     {
       _inner = inner;
     }

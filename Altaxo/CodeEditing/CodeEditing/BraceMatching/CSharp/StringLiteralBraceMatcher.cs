@@ -2,8 +2,10 @@
 
 // Originated from: Roslyn, EditorFeatures, CSharp/BraceMatching/StringLiteralBraceMatcher.cs
 
+extern alias MCW;
 using System.Threading;
 using System.Threading.Tasks;
+using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

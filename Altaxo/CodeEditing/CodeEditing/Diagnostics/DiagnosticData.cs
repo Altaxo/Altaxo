@@ -2,9 +2,12 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Diagnostics/DiagnosticData.cs
 
+extern alias MCW;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
@@ -12,7 +15,7 @@ namespace Altaxo.CodeEditing.Diagnostics
 {
   public sealed class DiagnosticData
   {
-    private readonly Microsoft.CodeAnalysis.Diagnostics.DiagnosticData _inner;
+    private readonly MCW::Microsoft.CodeAnalysis.Diagnostics.DiagnosticData _inner;
 
     public string Id => _inner.Id;
     public string Category => _inner.Category;
@@ -36,7 +39,7 @@ namespace Altaxo.CodeEditing.Diagnostics
     public DiagnosticDataLocation DataLocation { get; }
     public IReadOnlyCollection<DiagnosticDataLocation> AdditionalLocations { get; }
 
-    internal DiagnosticData(Microsoft.CodeAnalysis.Diagnostics.DiagnosticData inner)
+    internal DiagnosticData(DiagnosticData inner)
     {
       _inner = inner;
       DataLocation = new DiagnosticDataLocation(inner.DataLocation);

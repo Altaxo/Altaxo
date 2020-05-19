@@ -2,9 +2,12 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/FindUsages/ClassifiedSpansAndHighlightSpanFactory.cs
 
+extern alias MCW;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Editor;

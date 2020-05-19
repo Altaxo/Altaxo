@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -39,12 +40,13 @@ using Altaxo.CodeEditing.ReferenceHighlighting;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Indentation;
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editor;
 using Microsoft.CodeAnalysis.Editor.CSharp.GoToDefinition;
-using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing
@@ -74,7 +76,7 @@ namespace Altaxo.CodeEditing
     /// <value>
     /// The document identifier.
     /// </value>
-    public Microsoft.CodeAnalysis.DocumentId DocumentId { get; }
+    public DocumentId DocumentId { get; }
 
     /// <summary>
     /// Gets the source text, suitable both for use with AvalonEdit and with Roslyn.
@@ -189,7 +191,7 @@ namespace Altaxo.CodeEditing
     /// </summary>
     public event EventHandler<TextChangeEventArgs> SourceTextChanged;
 
-    public CodeEditorViewAdapterCSharp(AltaxoWorkspaceBase workspace, Microsoft.CodeAnalysis.DocumentId documentID, RoslynSourceTextContainerAdapter sourceText)
+    public CodeEditorViewAdapterCSharp(AltaxoWorkspaceBase workspace, DocumentId documentID, RoslynSourceTextContainerAdapter sourceText)
     {
       Workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
       DocumentId = documentID ?? throw new ArgumentNullException(nameof(documentID));
@@ -211,7 +213,7 @@ namespace Altaxo.CodeEditing
       StartBackgroundEvaluationOfSyntaxTreeAndSemanticModel();
     }
 
-    CancellationTokenSource _syntaxTreeCancellationTokenSource;
+    private CancellationTokenSource _syntaxTreeCancellationTokenSource;
 
     /// <summary>
     /// Occurs when the syntax tree has been evaluated after the document changed.
@@ -470,7 +472,7 @@ namespace Altaxo.CodeEditing
       var document = Workspace.CurrentSolution.GetDocument(DocumentId);
 
       var syntaxTree = await document.GetSyntaxRootAsync();
-      var textChanges = await Formatter.GetFormattedTextChangesAsync(syntaxTree, Workspace);
+      var textChanges = Formatter.GetFormattedTextChanges(syntaxTree, Workspace);
       SourceTextAdapter.ApplyTextChangesToAvalonEdit(textChanges);
     }
 

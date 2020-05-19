@@ -2,12 +2,14 @@
 
 // Originated from: Roslyn, CSharpEditorFeatures, ReferenceHighlighting\ReferenceHighlightingAdditionalReferenceProvider.cs
 
+extern alias MCW;
 using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Altaxo.CodeEditing.LanguageService;
+using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Roslyn.Utilities;

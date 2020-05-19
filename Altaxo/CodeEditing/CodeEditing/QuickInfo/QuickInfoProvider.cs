@@ -2,6 +2,7 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, QuickInfo/QuickInfoProvider.cs
 
+extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -10,10 +11,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.FindSymbols;
+using MCW::Microsoft.CodeAnalysis.LanguageServices;
+using MCW::Microsoft.CodeAnalysis.Shared.Extensions;
+using MCW::Microsoft.CodeAnalysis.Shared.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.DocumentationComments;
-using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.LanguageServices;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Shared.Utilities;
@@ -210,7 +215,7 @@ namespace Altaxo.CodeEditing.QuickInfo
     {
       var descriptionService = workspace.Services.GetLanguageServices(token.Language).GetService<ISymbolDisplayService>();
 
-      var sections = await descriptionService.ToDescriptionGroupsAsync(workspace, semanticModel, token.SpanStart, symbols.AsImmutable(), cancellationToken).ConfigureAwait(false);
+      var sections = await descriptionService.ToDescriptionGroupsAsync(workspace, semanticModel, token.SpanStart, Microsoft.CodeAnalysis.ImmutableArrayExtensions.AsImmutable(symbols), cancellationToken).ConfigureAwait(false);
 
       var mainDescriptionBuilder = new List<TaggedText>();
       if (sections.ContainsKey(SymbolDescriptionGroups.MainDescription))
