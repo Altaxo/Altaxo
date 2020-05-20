@@ -44,7 +44,9 @@ namespace Altaxo.CodeEditing
 
     private readonly CompositionHost _compositionContext;
 
+#if !NoDiagnostics
     private IDiagnosticService _diagnosticsService;
+#endif
 
     public MefHostServices MefHost { get; }
 
@@ -97,7 +99,9 @@ namespace Altaxo.CodeEditing
 
       _documentationProviderService = new Altaxo.CodeEditing.Documentation.DocumentationProviderServiceFactory.DocumentationProviderService();
 
+#if !NoDiagnostics
       _diagnosticsService = GetService<IDiagnosticService>(); // instantiate diagnostics service to get it working
+#endif
     }
 
     private static string GetReferenceAssembliesPath()

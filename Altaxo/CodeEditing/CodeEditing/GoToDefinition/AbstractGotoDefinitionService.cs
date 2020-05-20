@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/GoToDefinition/AbstractGoToDefinitionService.cs
 
+#if !NoGotoDefinition
 extern alias MCW;
 using System;
 using System.Collections.Generic;
@@ -98,3 +99,4 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
     }
   }
 }
+#endif

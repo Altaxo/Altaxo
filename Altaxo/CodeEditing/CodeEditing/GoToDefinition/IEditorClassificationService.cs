@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/Implementation/Classification/IEditorClassificationService.cs
 
+#if !NoGotoDefinition
 extern alias MCW;
 using System;
 
@@ -114,3 +115,4 @@ namespace Microsoft.CodeAnalysis.Editor
   }
 #pragma warning restore CS0612 // Type or member is obsolete
 }
+#endif

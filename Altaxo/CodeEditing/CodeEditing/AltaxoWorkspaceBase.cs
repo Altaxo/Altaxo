@@ -46,7 +46,12 @@ namespace Altaxo.CodeEditing
   /// Abstract workspace that is the base for different kind of workspaces.
   /// </summary>
   /// <seealso cref="Microsoft.CodeAnalysis.Workspace" />
-  public abstract class AltaxoWorkspaceBase : Workspace, IAltaxoWorkspace, IDiagnosticsEventSink
+  public abstract class AltaxoWorkspaceBase :
+    Workspace,
+    IAltaxoWorkspace
+#if !NoDiagnostics
+    , IDiagnosticsEventSink
+#endif
   {
     /// <summary>
     /// Gets the static references of the project, i.e. all references that are not stated in the code by #r statements.
@@ -76,8 +81,10 @@ namespace Altaxo.CodeEditing
     /// </summary>
     protected Dictionary<DocumentId, Action<SourceText>> _sourceTextChangedHandlers = new Dictionary<DocumentId, Action<SourceText>>();
 
+#if !NoDiagnostics
     /// <summary>Dictionary that holds for source document IDs an action that is called if the diagnostics for that source document has been updated.</summary>
     protected ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>> _diagnosticsUpdatedNotifiers = new ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>>();
+#endif
 
     private static readonly ImmutableArray<string> DefaultPreprocessorSymbols = ImmutableArray.CreateRange(new[] { "TRACE", "DEBUG" });
 
@@ -123,7 +130,10 @@ namespace Altaxo.CodeEditing
     {
       DiagnosticProvider.Disable(this);
       _sourceTextChangedHandlers.Clear();
+
+#if !NoDiagnostics
       _diagnosticsUpdatedNotifiers.Clear();
+#endif
       base.Dispose(finalize);
     }
 
@@ -207,6 +217,7 @@ namespace Altaxo.CodeEditing
       OnDocumentClosed(documentId, TextLoader.From(TextAndVersion.Create(CurrentSolution.GetDocument(documentId).GetTextAsync().Result, VersionStamp.Create())));
     }
 
+#if !NoDiagnostics
     /// <summary>
     /// Is called by the roslyn host if the diagnostics for a document of this workspace has been updated.
     /// </summary>
@@ -226,20 +237,7 @@ namespace Altaxo.CodeEditing
       }
     }
 
-    /// <summary>
-    /// Must be overridden by script workspaces. Processes the reference directives. Searches the provided document for #r directives. Then it
-    /// updates the <see cref="_referencesDirectives"/> dictionary. Directives no longer in the document are marked as passive
-    /// in the reference dictionary, all that are there are marked active. If changes have occured, the project is updated
-    /// to reference all active references.
-    /// </summary>
-    /// <param name="document">The document.</param>
-    /// <returns></returns>
-    public virtual Task ProcessReferenceDirectives(Document document)
-    {
-      return Task.CompletedTask;
-    }
-
-    public void SubscribeToDiagnosticsUpdateNotification(DocumentId documentId, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated)
+        public void SubscribeToDiagnosticsUpdateNotification(DocumentId documentId, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated)
     {
       if (null == documentId)
         throw new ArgumentNullException(nameof(documentId));
@@ -259,6 +257,23 @@ namespace Altaxo.CodeEditing
       // enable diagnostics now, if not already enabled
       DiagnosticProvider.Enable(this, DiagnosticProvider.Options.Semantic);
     }
+
+
+#endif
+
+    /// <summary>
+    /// Must be overridden by script workspaces. Processes the reference directives. Searches the provided document for #r directives. Then it
+    /// updates the <see cref="_referencesDirectives"/> dictionary. Directives no longer in the document are marked as passive
+    /// in the reference dictionary, all that are there are marked active. If changes have occured, the project is updated
+    /// to reference all active references.
+    /// </summary>
+    /// <param name="document">The document.</param>
+    /// <returns></returns>
+    public virtual Task ProcessReferenceDirectives(Document document)
+    {
+      return Task.CompletedTask;
+    }
+
 
     protected override void ApplyDocumentTextChanged(DocumentId document, SourceText newText)
     {

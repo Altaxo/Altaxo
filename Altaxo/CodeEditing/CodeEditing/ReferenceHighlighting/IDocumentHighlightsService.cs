@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 // Originated from: Roslyn, Features, Core/Portable/DocumentHighlighting/IDocumentHighlightsService.cs
+#if !NoReferenceHighlighting
 extern alias MCW;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -50,3 +51,4 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
         Document document, int position, IImmutableSet<Document> documentsToSearch, CancellationToken cancellationToken);
   }
 }
+#endif

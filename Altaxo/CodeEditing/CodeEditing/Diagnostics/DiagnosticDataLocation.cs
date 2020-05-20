@@ -2,6 +2,8 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Diagnostics/DiagnosticDataLocation.cs
 
+#if !NoDiagnostics
+
 extern alias MCW;
 using MCW::Microsoft.CodeAnalysis;
 using MCW::Microsoft.CodeAnalysis.Diagnostics;
@@ -34,3 +36,4 @@ namespace Altaxo.CodeEditing.Diagnostics
     }
   }
 }
+#endif

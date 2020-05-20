@@ -9,6 +9,7 @@ using System.Reflection;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Roslyn.Utilities;
 
+#if false
 namespace Altaxo.CodeEditing.CompilationHandling
 {
   internal sealed class DesktopAssemblyLoader : AssemblyLoaderImpl
@@ -98,3 +99,4 @@ namespace Altaxo.CodeEditing.CompilationHandling
     }
   }
 }
+#endif

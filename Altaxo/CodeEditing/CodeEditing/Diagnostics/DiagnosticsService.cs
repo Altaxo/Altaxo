@@ -1,6 +1,9 @@
 ﻿// Copyright Eli Arbel (no explicit copyright notice in original file)
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Diagnostics/DiagnosticsService.cs
+
+#if !NoDiagnostics
+
 extern alias MCW;
 using System;
 using System.Collections.Generic;
@@ -45,3 +48,4 @@ namespace Altaxo.CodeEditing.Diagnostics
     }
   }
 }
+#endif

@@ -2,6 +2,8 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Diagnostics/DiagnosticData.cs
 
+#if !NoDiagnostics
+
 extern alias MCW;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -48,3 +50,4 @@ namespace Altaxo.CodeEditing.Diagnostics
     }
   }
 }
+#endif

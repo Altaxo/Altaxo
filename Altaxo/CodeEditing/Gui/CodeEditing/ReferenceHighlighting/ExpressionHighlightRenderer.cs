@@ -3,6 +3,7 @@
 
 // Originated from: SharpDevelop, AvalonEdit.Addin, Src/BracketHighlightRenderer.cs
 
+#if !NoReferenceHighlighting
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -90,3 +91,4 @@ namespace Altaxo.Gui.CodeEditing.ReferenceHightlighting
     }
   }
 }
+#endif

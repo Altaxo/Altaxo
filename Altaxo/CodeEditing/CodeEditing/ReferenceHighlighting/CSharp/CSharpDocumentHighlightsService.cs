@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, Features, CSharp/Portable/DocumentHighlighting/CSharpDocumentHighlightsService.cs
 
+#if !NoReferenceHighlighting
 using System.Composition;
 using Altaxo.CodeEditing.LanguageService;
 using Microsoft.CodeAnalysis;
@@ -9,7 +10,8 @@ using Microsoft.CodeAnalysis;
 namespace Altaxo.CodeEditing.ReferenceHighlighting.CSharp
 {
   [ExportLanguageService(typeof(IDocumentHighlightsService), LanguageNames.CSharp), Shared]
-  public class CSharpDocumentHighlightsService : AbstractDocumentHighlightsService
+  internal class CSharpDocumentHighlightsService : Microsoft.CodeAnalysis.DocumentHighlighting.AbstractDocumentHighlightsService // AbstractDocumentHighlightsService
   {
   }
 }
+#endif

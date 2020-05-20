@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, Features, Core/Portable/DocumentHighlighting/AbstractDocumentHighlightsService.cs
 
+#if !NoReferenceHighlighting
 extern alias MCW;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,11 @@ using System.Threading.Tasks;
 using MCW::Microsoft.CodeAnalysis;
 using MCW::Microsoft.CodeAnalysis.ErrorReporting;
 using MCW::Microsoft.CodeAnalysis.FindSymbols;
+using MCW::Microsoft.CodeAnalysis.LanguageServices;
+using MCW::Microsoft.CodeAnalysis.Shared.Extensions;
+using MCW::Roslyn.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.LanguageServices;
 using Microsoft.CodeAnalysis.PooledObjects;
-using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
 
@@ -76,10 +78,10 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
     }
 
     private async Task<ImmutableArray<DocumentHighlights>> GetTagsForReferencedSymbolAsync(
-        SymbolAndProjectId symbolAndProjectId,
-        IImmutableSet<Document> documentsToSearch,
-        Solution solution,
-        CancellationToken cancellationToken)
+          SymbolAndProjectId symbolAndProjectId,
+          Document document,
+          IImmutableSet<Document> documentsToSearch,
+          CancellationToken cancellationToken)
     {
       var symbol = symbolAndProjectId.Symbol;
       Contract.ThrowIfNull(symbol);
@@ -87,13 +89,15 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
       {
         var progress = new StreamingProgressCollector(
             StreamingFindReferencesProgress.Instance);
+
+        var options = FindReferencesSearchOptions.GetFeatureOptionsForStartingSymbol(symbol);
         await SymbolFinder.FindReferencesAsync(
-            symbolAndProjectId, solution, progress,
-            documentsToSearch, cancellationToken).ConfigureAwait(false);
+            symbolAndProjectId, document.Project.Solution, progress,
+            documentsToSearch, options, cancellationToken).ConfigureAwait(false);
 
         return await FilterAndCreateSpansAsync(
-            progress.GetReferencedSymbols(), solution, documentsToSearch,
-            symbol, cancellationToken).ConfigureAwait(false);
+            progress.GetReferencedSymbols(), document, documentsToSearch,
+            symbol, options, cancellationToken).ConfigureAwait(false);
       }
 
       return ImmutableArray<DocumentHighlights>.Empty;
@@ -124,11 +128,13 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
     }
 
     private async Task<ImmutableArray<DocumentHighlights>> FilterAndCreateSpansAsync(
-        IEnumerable<ReferencedSymbol> references, Solution solution,
+        IEnumerable<ReferencedSymbol> references, Document startingDocument,
         IImmutableSet<Document> documentsToSearch, ISymbol symbol,
-        CancellationToken cancellationToken)
+        FindReferencesSearchOptions options, CancellationToken cancellationToken)
     {
-      references = references.FilterToItemsToShow();
+      var solution = startingDocument.Project.Solution;
+
+      references = references.FilterToItemsToShow(options);
       references = references.FilterNonMatchingMethodNames(solution, symbol);
       references = references.FilterToAliasMatches(symbol as IAliasSymbol);
 
@@ -139,9 +145,16 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
 
       var additionalReferences = new List<Location>();
 
-      foreach (var document in documentsToSearch)
+      foreach (var currentDocument in documentsToSearch)
       {
-        additionalReferences.AddRange(await GetAdditionalReferencesAsync(document, symbol, cancellationToken).ConfigureAwait(false));
+        // 'documentsToSearch' may contain documents from languages other than our own
+        // (for example cshtml files when we're searching the cs document).  Since we're
+        // delegating to a virtual method for this language type, we have to make sure
+        // we only process the document if it's also our language.
+        if (currentDocument.Project.Language == startingDocument.Project.Language)
+        {
+          additionalReferences.AddRange(await GetAdditionalReferencesAsync(currentDocument, symbol, cancellationToken).ConfigureAwait(false));
+        }
       }
 
       return await CreateSpansAsync(
@@ -149,28 +162,22 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
           documentsToSearch, cancellationToken).ConfigureAwait(false);
     }
 
-    private Task<IEnumerable<Location>> GetAdditionalReferencesAsync(
-        Document document, ISymbol symbol, CancellationToken cancellationToken)
+    protected virtual Task<ImmutableArray<Location>> GetAdditionalReferencesAsync(
+            Document document, ISymbol symbol, CancellationToken cancellationToken)
     {
-      var additionalReferenceProvider = document.Project.LanguageServices.GetService<IReferenceHighlightingAdditionalReferenceProvider>();
-      if (additionalReferenceProvider != null)
-      {
-        return additionalReferenceProvider.GetAdditionalReferencesAsync(document, symbol, cancellationToken);
-      }
-
-      return Task.FromResult(SpecializedCollections.EmptyEnumerable<Location>());
+      return SpecializedTasks.EmptyImmutableArray<Location>();
     }
 
-    private async Task<ImmutableArray<DocumentHighlights>> CreateSpansAsync(
-        Solution solution,
-        ISymbol symbol,
-        IEnumerable<ReferencedSymbol> references,
-        IEnumerable<Location> additionalReferences,
-        IImmutableSet<Document> documentToSearch,
-        CancellationToken cancellationToken)
+    private static async Task<ImmutableArray<DocumentHighlights>> CreateSpansAsync(
+            Solution solution,
+            ISymbol symbol,
+            IEnumerable<ReferencedSymbol> references,
+            IEnumerable<Location> additionalReferences,
+            IImmutableSet<Document> documentToSearch,
+            CancellationToken cancellationToken)
     {
       var spanSet = new HashSet<DocumentSpan>();
-      var tagMap = new MultiDictionary<Document, HighlightSpan>();
+      var tagMap = new Roslyn.Utilities.MultiDictionary<Document, HighlightSpan>();
       bool addAllDefinitions = true;
 
       // Add definitions
@@ -203,7 +210,7 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
               // Document once https://github.com/dotnet/roslyn/issues/5260 is fixed.
               if (document == null)
               {
-                Debug.Assert(solution.Workspace.Kind == "Interactive");
+                Debug.Assert(solution.Workspace.Kind == WorkspaceKind.Interactive || solution.Workspace.Kind == WorkspaceKind.MiscellaneousFiles);
                 continue;
               }
 
@@ -269,7 +276,7 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
       return true;
     }
 
-    private async Task AddLocationSpan(Location location, Solution solution, HashSet<DocumentSpan> spanSet, MultiDictionary<Document, HighlightSpan> tagList, HighlightSpanKind kind, CancellationToken cancellationToken)
+    private static async Task AddLocationSpan(Location location, Solution solution, HashSet<DocumentSpan> spanSet, Roslyn.Utilities.MultiDictionary<Document, HighlightSpan> tagList, HighlightSpanKind kind, CancellationToken cancellationToken)
     {
       var span = await GetLocationSpanAsync(solution, location, cancellationToken).ConfigureAwait(false);
       if (span != null && !spanSet.Contains(span.Value))
@@ -279,8 +286,8 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
       }
     }
 
-    private async Task<DocumentSpan?> GetLocationSpanAsync(
-        Solution solution, Location location, CancellationToken cancellationToken)
+    private static async Task<DocumentSpan?> GetLocationSpanAsync(
+              Solution solution, Location location, CancellationToken cancellationToken)
     {
       try
       {
@@ -289,7 +296,7 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
           var tree = location.SourceTree;
 
           var document = solution.GetDocument(tree);
-          var syntaxFacts = document.Project.LanguageServices.GetService<ISyntaxFactsService>();
+          var syntaxFacts = document.GetLanguageService<ISyntaxFactsService>();
 
           if (syntaxFacts != null)
           {
@@ -303,10 +310,10 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
           }
         }
       }
-      catch (NullReferenceException e) when (FatalError.ReportWithoutCrash(e))
+      catch (NullReferenceException e) when (Microsoft.CodeAnalysis.FatalError.ReportWithoutCrash(e))
       {
         // We currently are seeing a strange null references crash in this code.  We have
-        // a strong belief that this is recoverable, but we'd like to know why it is
+        // a strong belief that this is recoverable, but we'd like to know why it is 
         // happening.  This exception filter allows us to report the issue and continue
         // without damaging the user experience.  Once we get more crash reports, we
         // can figure out the root cause and address appropriately.  This is preferable
@@ -318,3 +325,4 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
     }
   }
 }
+#endif

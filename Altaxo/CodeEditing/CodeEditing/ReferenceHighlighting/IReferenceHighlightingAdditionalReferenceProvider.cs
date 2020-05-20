@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, EditorFeatures, Implementation\ReferenceHighlighting\IReferenceHighlightingAdditionalReferenceProvider.cs
 
+#if !NoReferenceHighlighting
 extern alias MCW;
 using System.Collections.Generic;
 using System.Threading;
@@ -17,3 +18,4 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
     Task<IEnumerable<Location>> GetAdditionalReferencesAsync(Document document, ISymbol symbol, CancellationToken cancellationToken);
   }
 }
+#endif

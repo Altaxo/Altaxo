@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+#if !NoDiagnostics
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,3 +45,4 @@ namespace Altaxo.CodeEditing.Diagnostics
     void OnDiagnosticsUpdated(object sender, DiagnosticsUpdatedArgs diagnosticsUpdatedArgs);
   }
 }
+#endif

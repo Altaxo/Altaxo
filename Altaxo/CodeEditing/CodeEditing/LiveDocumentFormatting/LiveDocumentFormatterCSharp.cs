@@ -67,7 +67,7 @@ namespace Altaxo.CodeEditing.LiveDocumentFormatting
 
       if (textSpanToFormat.HasValue)
       {
-        var textChanges = await Formatter.GetFormattedTextChangesAsync(syntaxTree, textSpanToFormat.Value, workspace);
+        var textChanges = Formatter.GetFormattedTextChanges(syntaxTree, textSpanToFormat.Value, workspace);
         sourceText.ApplyTextChangesToAvalonEdit(textChanges);
       }
     }

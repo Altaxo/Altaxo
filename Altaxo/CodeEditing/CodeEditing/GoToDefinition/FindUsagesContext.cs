@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 // Originated from: Roslyn, EditorFeatures, Core/FindUsages/FindUsagesContext.cs
 
+#if !NoGotoDefinition
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,3 +30,4 @@ namespace Microsoft.CodeAnalysis.FindUsages
     public virtual Task ReportProgressAsync(int current, int maximum) => Task.CompletedTask;
   }
 }
+#endif

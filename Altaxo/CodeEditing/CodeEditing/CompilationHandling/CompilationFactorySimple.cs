@@ -34,6 +34,7 @@ using Altaxo.Gui.CodeEditing;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.CodeAnalysis.Scripting.Hosting;
 
 namespace Altaxo.CodeEditing.CompilationHandling
 {

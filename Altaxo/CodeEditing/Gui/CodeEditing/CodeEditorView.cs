@@ -35,9 +35,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Altaxo.CodeEditing;
 using Altaxo.CodeEditing.Diagnostics;
-using Altaxo.CodeEditing.ReferenceHighlighting;
 using Altaxo.Gui.CodeEditing.BraceMatching;
-using Altaxo.Gui.CodeEditing.ReferenceHightlighting;
 using Altaxo.Gui.CodeEditing.TextMarkerHandling;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.CodeCompletion;
@@ -46,6 +44,11 @@ using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Folding;
 using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
+
+#if !NoReferenceHighlighting
+using Altaxo.CodeEditing.ReferenceHighlighting;
+#endif
+
 
 /// <summary>
 ///
@@ -104,7 +107,9 @@ namespace Altaxo.Gui.CodeEditing
           TextArea.TextView.LineTransformers.Remove(_adapter.HighlightingColorizer);
           TextArea.IndentationStrategy = null;
 
+#if !NoDiagnostics
           _adapter.DiagnosticsUpdated -= EhDiagnosticsUpdated;
+#endif
           _adapter.SyntaxTreeChanged -= EhSyntaxTreeChanged;
         }
         _adapter = value;
@@ -116,7 +121,10 @@ namespace Altaxo.Gui.CodeEditing
 
           TextArea.IndentationStrategy = _adapter.IndentationStrategy;
 
+#if !NoDiagnostics
           _adapter.DiagnosticsUpdated += EhDiagnosticsUpdated;
+#endif
+
           _adapter.SyntaxTreeChanged += EhSyntaxTreeChanged;
 
           // now use the adapter to do all the little things
@@ -180,8 +188,9 @@ namespace Altaxo.Gui.CodeEditing
       //this.TextArea.LeftMargins.Insert(0, _errorMargin);
       //this.PreviewMouseWheel += EditorOnPreviewMouseWheel;
       //this.TextArea.Caret.PositionChanged += CaretOnPositionChanged;
-
+#if !NoReferenceHighlighting
       ReferencesHighlightRenderer_Initialize();
+#endif
 
       BuildTextAreaContextMenu();
     }
@@ -251,6 +260,7 @@ namespace Altaxo.Gui.CodeEditing
     #endregion Code Completion
 
     #region Diagnostics (wriggles under the code text)
+#if !NoDiagnostics
 
     public void EhDiagnosticsUpdated(DiagnosticsUpdatedArgs a)
     {
@@ -294,7 +304,7 @@ namespace Altaxo.Gui.CodeEditing
           throw new ArgumentOutOfRangeException();
       }
     }
-
+#endif
     #endregion Diagnostics (wriggles under the code text)
 
     #region Bracket Highlighting (matching brackets are highlighted)
@@ -314,6 +324,7 @@ namespace Altaxo.Gui.CodeEditing
     #endregion Bracket Highlighting (matching brackets are highlighted)
 
     #region Reference highlighting (all identical items are highlighted)
+#if !NoReferenceHighlighting
 
     /// <summary>
     /// Delays the Resolve check so that it does not get called too often when user holds an arrow.
@@ -457,6 +468,7 @@ namespace Altaxo.Gui.CodeEditing
       return x.Kind == y.Kind && x.TextSpan == y.TextSpan;
     }
 
+#endif
     #endregion Reference highlighting (all identical items are highlighted)
 
     #region Folding
@@ -503,7 +515,8 @@ namespace Altaxo.Gui.CodeEditing
         var topLevelWindow = GetTopLevelWindow(this);
         _adapter.RenameSymbol(CaretOffset, topLevelWindow, () => Focus());
       }
-      // F12 - GoToDefinitiion
+#if !NoGotoDefinition
+      // F12 - GoToDefinition
       else if (e.Key == Key.F12 && null != _adapter)
       {
         int? jumpTo = _adapter.GoToDefinition(CaretOffset);
@@ -512,6 +525,7 @@ namespace Altaxo.Gui.CodeEditing
           JumpTo(jumpTo.Value);
         }
       }
+#endif
     }
 
     private static Window GetTopLevelWindow(DependencyObject ctrl)

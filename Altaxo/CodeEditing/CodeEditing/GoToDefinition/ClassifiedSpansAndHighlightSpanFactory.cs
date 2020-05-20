@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/FindUsages/ClassifiedSpansAndHighlightSpanFactory.cs
 
+#if !NoGotoDefinition
 extern alias MCW;
 using System.Collections.Immutable;
 using System.Threading;
@@ -100,3 +101,4 @@ namespace Microsoft.CodeAnalysis.Editor.FindUsages
     }
   }
 }
+#endif

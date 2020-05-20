@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/GoToDefinition/IGoToDefinitionService.cs
 
+#if !NoGotoDefinition
 extern alias MCW;
 using System.Collections.Generic;
 using System.Threading;
@@ -27,3 +28,4 @@ namespace Microsoft.CodeAnalysis.Editor
     bool TryGoToDefinition(Document document, int position, CancellationToken cancellationToken);
   }
 }
+#endif

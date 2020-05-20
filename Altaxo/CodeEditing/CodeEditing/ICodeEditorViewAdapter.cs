@@ -32,11 +32,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using Altaxo.CodeEditing.BraceMatching;
 using Altaxo.CodeEditing.Diagnostics;
-using Altaxo.CodeEditing.ReferenceHighlighting;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Indentation;
 using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
+
+#if !NoReferenceHighlighting
+using Altaxo.CodeEditing.ReferenceHighlighting;
+#endif
+
 
 namespace Altaxo.CodeEditing
 {
@@ -101,11 +105,13 @@ namespace Altaxo.CodeEditing
     /// <returns>Matching braces</returns>
     Task<BraceMatchingResult?> GetMatchingBracesAsync(int position, CancellationToken cancellationToken = default(CancellationToken));
 
+#if !NoDiagnostics
     /// <summary>
     /// Occurs when the diagnostics was updated and new diagnostics is available (diagnostics is responsible for the wriggles under the text
     /// that show in advance the errors in code).
     /// </summary>
     event Action<DiagnosticsUpdatedArgs> DiagnosticsUpdated;
+#endif
 
     /// <summary>
     /// Occurs after the source text has changed. This event is routed from the <see cref="SourceTextAdapter"/>.
@@ -117,10 +123,12 @@ namespace Altaxo.CodeEditing
     /// </summary>
     event Action<Document, SyntaxTree> SyntaxTreeChanged;
 
+#if !NoReferenceHighlighting
     /// <summary>
     /// Finds references to resolved expression in the current file.
     /// </summary>
     Task<ImmutableArray<DocumentHighlights>> FindReferencesInCurrentFile(int cursorPosition);
+#endif
 
     Task<CompletionResult> GetCompletionData(int position, char? triggerChar, bool useSignatureHelp);
 
@@ -170,6 +178,8 @@ namespace Altaxo.CodeEditing
     /// <returns></returns>
     Task RenameSymbol(int caretPositionOrSelectionStart, object topLevelWindow, Action FocusBackOnEditor);
 
+
+#if !NoGotoDefinition
     /// <summary>
     /// Try to go to the definition of the symbol under the caret. This function is designed here for solutions
     /// containing only of a single code document.
@@ -178,5 +188,6 @@ namespace Altaxo.CodeEditing
     /// <returns>The position of the symbol in the document where it is defined. If the symbol under the caret is not defined in the document,
     /// the return value is null.</returns>
     int? GoToDefinition(int caretOffset);
+#endif
   }
 }

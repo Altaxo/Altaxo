@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using Altaxo.CodeEditing.CompilationHandling;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Scripting.Hosting;
 
 namespace Altaxo.CodeEditing.CompilationHandling
 {

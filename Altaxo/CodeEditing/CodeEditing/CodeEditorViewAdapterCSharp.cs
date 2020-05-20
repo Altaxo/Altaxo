@@ -36,7 +36,6 @@ using Altaxo.CodeEditing.Diagnostics;
 using Altaxo.CodeEditing.Folding;
 using Altaxo.CodeEditing.LiveDocumentFormatting;
 using Altaxo.CodeEditing.QuickInfo;
-using Altaxo.CodeEditing.ReferenceHighlighting;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Indentation;
@@ -46,8 +45,17 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editor;
-using Microsoft.CodeAnalysis.Editor.CSharp.GoToDefinition;
 using Microsoft.CodeAnalysis.Text;
+
+#if !NoReferenceHighlighting
+using Altaxo.CodeEditing.ReferenceHighlighting;
+#endif
+
+
+#if !NoGotoDefinition
+using Microsoft.CodeAnalysis.Editor.CSharp.GoToDefinition;
+#endif
+
 
 namespace Altaxo.CodeEditing
 {
@@ -121,6 +129,7 @@ namespace Altaxo.CodeEditing
     /// </value>
     public IBraceMatchingService BraceMatchingService { get; set; }
 
+#if !NoReferenceHighlighting
     /// <summary>
     /// Gets or sets the reference highlight service.
     /// Responsible for highlighting all identical items, e.g. variable names, if the cursor is inside such an item.
@@ -129,6 +138,7 @@ namespace Altaxo.CodeEditing
     /// The reference highlight service.
     /// </value>
     public IDocumentHighlightsService ReferenceHighlightService { get; set; }
+#endif
 
     /// <summary>
     /// Gets or sets the completion provider.
@@ -180,11 +190,13 @@ namespace Altaxo.CodeEditing
     /// </summary>
     public event Action<ExternalHelp.ExternalHelpItem> ExternalHelpRequired;
 
+#if !NoDiagnostics
     /// <summary>
     /// Occurs when the diagnostics was updated and new diagnostics is available (diagnostics is responsible for the wriggles under the text
     /// that show in advance the errors in code).
     /// </summary>
     public event Action<DiagnosticsUpdatedArgs> DiagnosticsUpdated;
+#endif
 
     /// <summary>
     /// Occurs after the source text has changed. This event is routed from the <see cref="SourceTextAdapter"/>.
@@ -203,13 +215,18 @@ namespace Altaxo.CodeEditing
       QuickInfoProvider = _roslynHost.GetService<QuickInfo.IQuickInfoProvider>();
       FoldingStrategy = new SyntaxTreeFoldingStrategy();
       BraceMatchingService = _roslynHost.GetService<IBraceMatchingService>();
+#if !NoReferenceHighlighting
       ReferenceHighlightService = new ReferenceHighlighting.CSharp.CSharpDocumentHighlightsService();
+#endif
       CompletionProvider = new Completion.CodeEditorCompletionProvider(_roslynHost, Workspace, DocumentId);
       RenamingService = new Renaming.RenamingService();
       IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.CSharp.CSharpIndentationStrategy();
       LiveDocumentFormatter = new LiveDocumentFormatterCSharp();
       ExternalHelpProvider = new ExternalHelp.ExternalHelpProvider();
+
+#if !NoDiagnostics
       Workspace.SubscribeToDiagnosticsUpdateNotification(DocumentId, EhDiagnosticsUpdated);
+#endif
       StartBackgroundEvaluationOfSyntaxTreeAndSemanticModel();
     }
 
@@ -390,6 +407,7 @@ namespace Altaxo.CodeEditing
     #endregion Brace matching
 
     #region Diagnostics
+#if !NoDiagnostics
 
     /// <summary>
     /// Called from the roslyn host when diagnostics was updated.
@@ -399,11 +417,11 @@ namespace Altaxo.CodeEditing
     {
       DiagnosticsUpdated?.Invoke(a);
     }
-
+#endif
     #endregion Diagnostics
 
     #region Reference Highlighting
-
+#if !NoReferenceHighlighting
     /// <summary>
     /// Finds references to resolved expression in the current file.
     /// </summary>
@@ -422,6 +440,7 @@ namespace Altaxo.CodeEditing
       return await service.GetDocumentHighlightsAsync(document, cursorPosition, builder.ToImmutable(), CancellationToken.None);
     }
 
+#endif
     #endregion Reference Highlighting
 
     #region Completion
@@ -519,6 +538,7 @@ namespace Altaxo.CodeEditing
     #endregion External Help
 
     #region GoToDefinition
+#if !NoGotoDefinition
 
     private IGoToDefinitionService _goToDefinitionService;
 
@@ -540,7 +560,7 @@ namespace Altaxo.CodeEditing
 
       return location?.SourceSpan.Start;
     }
-
+#endif
     #endregion GoToDefinition
   }
 }

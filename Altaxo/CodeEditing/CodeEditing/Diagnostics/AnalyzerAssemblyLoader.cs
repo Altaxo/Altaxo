@@ -2,6 +2,8 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, AnalyzerAssemblyLoader.cs
 
+#if !NoDiagnostics
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,3 +26,4 @@ namespace Altaxo.CodeEditing.Diagnostics
     }
   }
 }
+#endif

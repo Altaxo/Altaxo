@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, CSharpEditorFeatures, ReferenceHighlighting\ReferenceHighlightingAdditionalReferenceProvider.cs
 
+#if !NoReferenceHighlighting
 extern alias MCW;
 using System.Collections.Generic;
 using System.Composition;
@@ -71,3 +72,4 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting.CSharp
     }
   }
 }
+#endif

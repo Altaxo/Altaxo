@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/FindUsages/IDefinitionsAndReferencesFactory.cs
 
+#if !NoGotoDefinition
 extern alias MCW;
 using System.Collections.Immutable;
 using System.Composition;
@@ -223,3 +224,4 @@ namespace Microsoft.CodeAnalysis.Editor.FindUsages
         .AddParameterOptions(SymbolDisplayParameterOptions.IncludeName);
   }
 }
+#endif

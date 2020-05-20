@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 // Originated from: Roslyn, EditorFeatures, Core/Implementation/Classification/EditorClassifier.cs
 
+#if !NoGotoDefinition
 extern alias MCW;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -235,3 +236,4 @@ namespace Microsoft.CodeAnalysis.Editor
     }
   }
 }
+#endif

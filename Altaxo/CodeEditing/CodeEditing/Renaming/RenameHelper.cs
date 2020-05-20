@@ -7,12 +7,12 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
 using MCW::Microsoft.CodeAnalysis;
 using MCW::Microsoft.CodeAnalysis.FindSymbols;
 using MCW::Microsoft.CodeAnalysis.LanguageServices;
 using MCW::Microsoft.CodeAnalysis.Rename;
 using MCW::Microsoft.CodeAnalysis.Shared.Extensions;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.Renaming
@@ -39,7 +39,7 @@ namespace Altaxo.CodeEditing.Renaming
         Document document, SyntaxToken triggerToken, CancellationToken cancellationToken)
     {
       var syntaxFactsService = document.Project.LanguageServices.GetService<ISyntaxFactsService>();
-      if (syntaxFactsService.IsKeyword(triggerToken))
+      if (syntaxFactsService.IsReservedKeyword(triggerToken))
       {
         return null;
       }

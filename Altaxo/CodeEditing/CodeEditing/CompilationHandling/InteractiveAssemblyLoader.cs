@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 // Originated from: Roslyn, Scripting, Core/Hosting/AssemblyLoader/InteractiveAssemblyLoader.cs
-
+#if false
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -298,7 +298,7 @@ namespace Altaxo.CodeEditing.CompilationHandling
           if (!loadedAssemblyWithEqualNameAndVersionOpt.IsDefault)
           {
             if (TryReadMvid(assemblyFilePathOpt, out var mvid) &&
-                CorLightup.Desktop.GetModuleVersionId(loadedAssemblyWithEqualNameAndVersionOpt.Assembly.ManifestModule) == mvid)
+                CoreLightup.Desktop.GetModuleVersionId(loadedAssemblyWithEqualNameAndVersionOpt.Assembly.ManifestModule) == mvid)
             {
               return loadedAssemblyWithEqualNameAndVersionOpt.Assembly;
             }
@@ -494,3 +494,4 @@ namespace Altaxo.CodeEditing.CompilationHandling
     }
   }
 }
+#endif
