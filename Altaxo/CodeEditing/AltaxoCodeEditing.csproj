@@ -19,8 +19,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj" />
   </ItemGroup>
+  
   <ItemGroup>
-    <Reference Include="Microsoft.CodeAnalysis">
+     <Reference Include="Microsoft.CodeAnalysis">
       <HintPath>LibrariesBin\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp">
@@ -46,6 +47,13 @@
       <HintPath>LibrariesBin\Microsoft.DiaSymReader.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Memory">
+      <HintPath>LibrariesBin\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory">
+      <HintPath>LibrariesBin\System.Buffers.dll</HintPath>
+    </Reference>
+     
     <Reference Include="System.Collections.Immutable">
       <HintPath>LibrariesBin\System.Collections.Immutable.dll</HintPath>
     </Reference>
@@ -53,16 +61,18 @@
     <Reference Include="System.Composition.AttributedModel">
       <HintPath>LibrariesBin\System.Composition.AttributedModel.dll</HintPath>
     </Reference>
-    <Reference Include="System.Memory">
-      <HintPath>LibrariesBin\System.Memory.dll</HintPath>
-    </Reference>
     <Reference Include="System.Numerics.Vectors">
       <HintPath>LibrariesBin\System.Numerics.Vectors.dll</HintPath>
     </Reference>
         <Reference Include="System.Composition.Hosting">
       <HintPath>LibrariesBin\System.Composition.Hosting.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reflection.Metadata">
+    <Reference Include="System.Composition.TypedParts">
+      <HintPath>LibrariesBin\System.Composition.TypedParts.dll</HintPath>
+    </Reference>
+     <Reference Include="System.Composition.Runtime">
+      <HintPath>LibrariesBin\System.Composition.Runtime.dll</HintPath>
+    </Reference> <Reference Include="System.Reflection.Metadata">
       <HintPath>LibrariesBin\System.Reflection.Metadata.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">

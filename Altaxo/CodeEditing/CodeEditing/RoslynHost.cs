@@ -79,12 +79,15 @@ namespace Altaxo.CodeEditing
 
       // the following code is usefull if the composition fails
       // here every assembly is inspected seperately to make it easy to find the rogue assembly
+      // Attention: some of the dependency DLLs needed for AltaxoCodeEditing might be replaced by other versions, e.g. if another component of Altaxo uses a newer or older version of the same DLL
+      // Use FindOutRequiredDLLs to list all DLLs in the final compiled Altaxo bin folder, and compare with the libraries in AltaxoCodeEditing
+      // If different, use binding redirects in AltaxoStartup
       /*
-			 foreach (var ass in assemblies)
-			{
-				ass.GetTypes();
-			}
-			*/
+      foreach (var ass in assemblies)
+      {
+        ass.GetTypes();
+      }
+      */
 
       var partTypes = MefHostServices.DefaultAssemblies.Concat(assemblies)
               .Distinct()
