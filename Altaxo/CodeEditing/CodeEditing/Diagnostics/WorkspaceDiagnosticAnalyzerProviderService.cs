@@ -15,6 +15,10 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Altaxo.CodeEditing.Diagnostics
 {
+  /// <summary>
+  /// Provides diagnostics for CSharp.
+  /// </summary>
+  /// <seealso cref="Microsoft.CodeAnalysis.Diagnostics.IWorkspaceDiagnosticAnalyzerProviderService" />
   [Export(typeof(IWorkspaceDiagnosticAnalyzerProviderService))]
   internal sealed class WorkspaceDiagnosticAnalyzerProviderService : IWorkspaceDiagnosticAnalyzerProviderService
   {

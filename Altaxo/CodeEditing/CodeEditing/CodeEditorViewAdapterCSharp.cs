@@ -32,7 +32,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Altaxo.CodeEditing.BraceMatching;
 using Altaxo.CodeEditing.Completion;
-using Altaxo.CodeEditing.Diagnostics;
 using Altaxo.CodeEditing.Folding;
 using Altaxo.CodeEditing.LiveDocumentFormatting;
 using Altaxo.CodeEditing.QuickInfo;

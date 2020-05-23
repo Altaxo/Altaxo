@@ -31,7 +31,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Altaxo.CodeEditing.BraceMatching;
-using Altaxo.CodeEditing.Diagnostics;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Indentation;
 using MCW::Microsoft.CodeAnalysis;

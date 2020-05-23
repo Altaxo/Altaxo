@@ -31,7 +31,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Altaxo.CodeEditing.Diagnostics;
 using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -42,6 +41,7 @@ using Roslyn.Utilities;
 
 #if !NoDiagnostics
 using Microsoft.CodeAnalysis.Diagnostics;
+using Altaxo.CodeEditing.Diagnostics;
 #endif
 
 namespace Altaxo.CodeEditing

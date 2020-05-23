@@ -18,8 +18,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Altaxo.CodeEditing.Diagnostics;
-using MCW::Microsoft.CodeAnalysis.Host;
 using MCW::Microsoft.CodeAnalysis.Host;
 using MCW::Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis;
@@ -45,7 +43,8 @@ namespace Altaxo.CodeEditing
     private readonly CompositionHost _compositionContext;
 
 #if !NoDiagnostics
-    private IDiagnosticService _diagnosticsService;
+    private
+      Microsoft.CodeAnalysis.Diagnostics.IDiagnosticService _diagnosticsService;
 #endif
 
     public MefHostServices MefHost { get; }
@@ -103,7 +102,12 @@ namespace Altaxo.CodeEditing
       _documentationProviderService = new Altaxo.CodeEditing.Documentation.DocumentationProviderServiceFactory.DocumentationProviderService();
 
 #if !NoDiagnostics
-      _diagnosticsService = GetService<IDiagnosticService>(); // instantiate diagnostics service to get it working
+      _diagnosticsService = GetService<Microsoft.CodeAnalysis.Diagnostics.IDiagnosticService>(); // instantiate diagnostics service to get it working
+
+      _diagnosticsService.DiagnosticsUpdated += (s, e) =>
+      {
+        (e.Solution.Workspace as Altaxo.CodeEditing.Diagnostics.IDiagnosticsEventSink)?.OnDiagnosticsUpdated(s, e);
+      };
 #endif
     }
 

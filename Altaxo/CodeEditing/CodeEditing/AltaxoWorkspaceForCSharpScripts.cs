@@ -31,7 +31,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Altaxo.CodeEditing.Diagnostics;
 using MCW::Microsoft.CodeAnalysis;
 using MCW::Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis;

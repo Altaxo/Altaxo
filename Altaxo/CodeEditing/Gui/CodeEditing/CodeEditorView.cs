@@ -34,7 +34,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Altaxo.CodeEditing;
-using Altaxo.CodeEditing.Diagnostics;
 using Altaxo.Gui.CodeEditing.BraceMatching;
 using Altaxo.Gui.CodeEditing.TextMarkerHandling;
 using ICSharpCode.AvalonEdit;
