@@ -37,6 +37,10 @@ using ICSharpCode.AvalonEdit.Indentation;
 using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
+#if !NoDiagnostics
+using Microsoft.CodeAnalysis.Diagnostics;
+#endif
+
 #if !NoReferenceHighlighting
 using Microsoft.CodeAnalysis.DocumentHighlighting;
 #endif
@@ -110,7 +114,7 @@ namespace Altaxo.CodeEditing
     /// Occurs when the diagnostics was updated and new diagnostics is available (diagnostics is responsible for the wriggles under the text
     /// that show in advance the errors in code).
     /// </summary>
-    event Action<DiagnosticsUpdatedArgs> DiagnosticsUpdated;
+    internal event Action<DiagnosticsUpdatedArgs> DiagnosticsUpdated;
 #endif
 
     /// <summary>

@@ -45,6 +45,10 @@ using ICSharpCode.AvalonEdit.Folding;
 using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
+#if !NoDiagnostics
+using Microsoft.CodeAnalysis.Diagnostics;
+#endif
+
 #if !NoReferenceHighlighting
 using Microsoft.CodeAnalysis.DocumentHighlighting;
 #endif
@@ -262,7 +266,7 @@ namespace Altaxo.Gui.CodeEditing
     #region Diagnostics (wriggles under the code text)
 #if !NoDiagnostics
 
-    public void EhDiagnosticsUpdated(DiagnosticsUpdatedArgs a)
+    internal void EhDiagnosticsUpdated(DiagnosticsUpdatedArgs a)
     {
       _syncContext.Post(o => ProcessDiagnostics(a), null);
     }
@@ -287,7 +291,7 @@ namespace Altaxo.Gui.CodeEditing
       }
     }
 
-    private static Color GetDiagnosticsColor(DiagnosticData diagnosticData)
+    private static Color GetDiagnosticsColor(MCW::Microsoft.CodeAnalysis.Diagnostics.DiagnosticData diagnosticData)
     {
       switch (diagnosticData.Severity)
       {

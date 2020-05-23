@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Altaxo.CodeEditing.Diagnostics
 {
@@ -19,7 +20,7 @@ namespace Altaxo.CodeEditing.Diagnostics
   /// </summary>
   public interface IDiagnosticService
   {
-    IEnumerable<DiagnosticData> GetDiagnostics(Workspace workspace, ProjectId projectId, DocumentId documentId, object id, bool includeSuppressedDiagnostics, CancellationToken cancellationToken);
+    internal IEnumerable<DiagnosticData> GetDiagnostics(Workspace workspace, ProjectId projectId, DocumentId documentId, object id, bool includeSuppressedDiagnostics, CancellationToken cancellationToken);
 
     IEnumerable<UpdatedEventArgs> GetDiagnosticsUpdatedEventArgs(Workspace workspace, ProjectId projectId, DocumentId documentId, CancellationToken cancellationToken);
   }

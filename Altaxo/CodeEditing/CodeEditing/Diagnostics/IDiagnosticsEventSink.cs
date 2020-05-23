@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Altaxo.CodeEditing.Diagnostics
 {
@@ -42,7 +43,7 @@ namespace Altaxo.CodeEditing.Diagnostics
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="diagnosticsUpdatedArgs">The diagnostics updated arguments.</param>
-    void OnDiagnosticsUpdated(object sender, DiagnosticsUpdatedArgs diagnosticsUpdatedArgs);
+    internal void OnDiagnosticsUpdated(object sender, DiagnosticsUpdatedArgs diagnosticsUpdatedArgs);
   }
 }
 #endif

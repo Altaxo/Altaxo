@@ -47,6 +47,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editor;
 using Microsoft.CodeAnalysis.Text;
 
+#if !NoDiagnostics
+using Microsoft.CodeAnalysis.Diagnostics;
+#endif
+
 #if !NoReferenceHighlighting
 using Microsoft.CodeAnalysis.DocumentHighlighting;
 #endif
@@ -191,11 +195,22 @@ namespace Altaxo.CodeEditing
     public event Action<ExternalHelp.ExternalHelpItem> ExternalHelpRequired;
 
 #if !NoDiagnostics
+    private Action<DiagnosticsUpdatedArgs> _diagnosticsUpdated;
     /// <summary>
     /// Occurs when the diagnostics was updated and new diagnostics is available (diagnostics is responsible for the wriggles under the text
     /// that show in advance the errors in code).
     /// </summary>
-    public event Action<DiagnosticsUpdatedArgs> DiagnosticsUpdated;
+    event Action<DiagnosticsUpdatedArgs> ICodeEditorViewAdapter.DiagnosticsUpdated
+    {
+      add
+      {
+        _diagnosticsUpdated += value;
+      }
+      remove
+      {
+        _diagnosticsUpdated -= value;
+      }
+    }
 #endif
 
     /// <summary>
@@ -413,9 +428,9 @@ namespace Altaxo.CodeEditing
     /// Called from the roslyn host when diagnostics was updated.
     /// </summary>
     /// <param name="a">a.</param>
-    public void EhDiagnosticsUpdated(DiagnosticsUpdatedArgs a)
+    internal void EhDiagnosticsUpdated(DiagnosticsUpdatedArgs a)
     {
-      DiagnosticsUpdated?.Invoke(a);
+      _diagnosticsUpdated?.Invoke(a);
     }
 #endif
     #endregion Diagnostics

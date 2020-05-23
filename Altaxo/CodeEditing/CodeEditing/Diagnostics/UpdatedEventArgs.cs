@@ -2,6 +2,7 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Diagnostics/UpdatedEventArgs.cs
 
+#if !NoDiagnostics
 extern alias MCW;
 using System;
 using MCW::Microsoft.CodeAnalysis;
@@ -27,3 +28,4 @@ namespace Altaxo.CodeEditing.Diagnostics
     }
   }
 }
+#endif

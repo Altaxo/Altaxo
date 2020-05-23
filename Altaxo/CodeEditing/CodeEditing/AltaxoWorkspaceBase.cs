@@ -40,6 +40,10 @@ using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
 
+#if !NoDiagnostics
+using Microsoft.CodeAnalysis.Diagnostics;
+#endif
+
 namespace Altaxo.CodeEditing
 {
   /// <summary>
@@ -83,7 +87,7 @@ namespace Altaxo.CodeEditing
 
 #if !NoDiagnostics
     /// <summary>Dictionary that holds for source document IDs an action that is called if the diagnostics for that source document has been updated.</summary>
-    protected ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>> _diagnosticsUpdatedNotifiers = new ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>>();
+    internal ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>> _diagnosticsUpdatedNotifiers = new ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>>();
 #endif
 
     private static readonly ImmutableArray<string> DefaultPreprocessorSymbols = ImmutableArray.CreateRange(new[] { "TRACE", "DEBUG" });
@@ -223,7 +227,7 @@ namespace Altaxo.CodeEditing
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="diagnosticsUpdatedArgs">The diagnostics updated arguments.</param>
-    public void OnDiagnosticsUpdated(object sender, DiagnosticsUpdatedArgs diagnosticsUpdatedArgs)
+    void IDiagnosticsEventSink.OnDiagnosticsUpdated(object sender, DiagnosticsUpdatedArgs diagnosticsUpdatedArgs)
     {
       var documentId = diagnosticsUpdatedArgs?.DocumentId;
       if (documentId != null)
@@ -237,7 +241,7 @@ namespace Altaxo.CodeEditing
       }
     }
 
-        public void SubscribeToDiagnosticsUpdateNotification(DocumentId documentId, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated)
+    internal void SubscribeToDiagnosticsUpdateNotification(DocumentId documentId, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated)
     {
       if (null == documentId)
         throw new ArgumentNullException(nameof(documentId));

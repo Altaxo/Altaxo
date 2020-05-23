@@ -11,6 +11,7 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Altaxo.CodeEditing.Diagnostics
 {
@@ -30,14 +31,14 @@ namespace Altaxo.CodeEditing.Diagnostics
     private void OnDiagnosticsUpdated(object sender, Microsoft.CodeAnalysis.Diagnostics.DiagnosticsUpdatedArgs e)
     {
       if (e.Solution.Workspace is IDiagnosticsEventSink diagnosticsEventSink)
-        diagnosticsEventSink.OnDiagnosticsUpdated(this, new DiagnosticsUpdatedArgs(e));
+        diagnosticsEventSink.OnDiagnosticsUpdated(this, e);
     }
 
-    public IEnumerable<DiagnosticData> GetDiagnostics(Workspace workspace, ProjectId projectId, DocumentId documentId, object id,
+    IEnumerable<DiagnosticData> IDiagnosticService.GetDiagnostics(Workspace workspace, ProjectId projectId, DocumentId documentId, object id,
         bool includeSuppressedDiagnostics, CancellationToken cancellationToken)
     {
       return _inner.GetDiagnostics(workspace, projectId, documentId, id, includeSuppressedDiagnostics,
-          cancellationToken).Select(x => new DiagnosticData(x));
+          cancellationToken);
     }
 
     public IEnumerable<UpdatedEventArgs> GetDiagnosticsUpdatedEventArgs(Workspace workspace, ProjectId projectId, DocumentId documentId,
