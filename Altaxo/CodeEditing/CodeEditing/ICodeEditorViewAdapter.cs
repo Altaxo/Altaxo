@@ -68,16 +68,7 @@ namespace Altaxo.CodeEditing
     /// </value>
     DocumentId DocumentId { get; }
 
-    /*
-		/// <summary>
-		/// Gets the highlighting service.
-		/// </summary>
-		/// <value>
-		/// The highlighting service.
-		/// </value>
-		ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition HighlightingService { get; }
-		*/
-
+#if !NoSemanticHighlighting
     /// <summary>
     /// Gets the highlighting colorizer to colorize the code.
     /// </summary>
@@ -85,6 +76,7 @@ namespace Altaxo.CodeEditing
     /// The highlighting colorizer.
     /// </value>
     ICSharpCode.AvalonEdit.Highlighting.HighlightingColorizer HighlightingColorizer { get; }
+#endif
 
     /// <summary>
     /// Gets the quick info tool tip.

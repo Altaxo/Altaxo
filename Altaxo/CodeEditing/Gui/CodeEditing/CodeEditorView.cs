@@ -106,8 +106,9 @@ namespace Altaxo.Gui.CodeEditing
       {
         if (null != _adapter)
         {
-          // SyntaxHighlighting = null;
+#if !NoSemanticHighlighting
           TextArea.TextView.LineTransformers.Remove(_adapter.HighlightingColorizer);
+#endif
           TextArea.IndentationStrategy = null;
 
 #if !NoDiagnostics
@@ -119,8 +120,9 @@ namespace Altaxo.Gui.CodeEditing
 
         if (null != _adapter)
         {
+#if !NoSemanticHighlighting
           TextArea.TextView.LineTransformers.Insert(0, _adapter.HighlightingColorizer);
-          //SyntaxHighlighting = _adapter.HighlightingService;
+#endif
 
           TextArea.IndentationStrategy = _adapter.IndentationStrategy;
 

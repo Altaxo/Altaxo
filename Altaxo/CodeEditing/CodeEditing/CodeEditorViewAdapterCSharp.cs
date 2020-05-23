@@ -97,6 +97,7 @@ namespace Altaxo.CodeEditing
     /// </value>
     public RoslynSourceTextContainerAdapter SourceTextAdapter { get; }
 
+#if !NoSemanticHighlighting
     /// <summary>
     /// Gets the highlighting colorizer to colorize the code by it's syntax or sematics.
     /// </summary>
@@ -104,6 +105,7 @@ namespace Altaxo.CodeEditing
     /// The highlighting colorizer.
     /// </value>
     public ICSharpCode.AvalonEdit.Highlighting.HighlightingColorizer HighlightingColorizer { get; }
+#endif
 
     /// <summary>
     /// Gets or sets the quick information provider.
@@ -224,8 +226,9 @@ namespace Altaxo.CodeEditing
       SourceTextAdapter = sourceText ?? throw new ArgumentNullException(nameof(sourceText));
       _roslynHost = workspace.RoslynHost;
       SourceTextAdapter.TextChanged += EhSourceTextAdapter_TextChanged;
-
+#if !NoSemanticHighlighting
       HighlightingColorizer = new SemanticHighlighting.SemanticHighlightingColorizer(this, Workspace, DocumentId);
+#endif
       QuickInfoProvider = _roslynHost.GetService<QuickInfo.IQuickInfoProvider>();
       FoldingStrategy = new SyntaxTreeFoldingStrategy();
       BraceMatchingService = _roslynHost.GetService<IBraceMatchingService>();
@@ -347,9 +350,10 @@ namespace Altaxo.CodeEditing
       {
         if (null == value)
           throw new ArgumentNullException(nameof(value));
-
+#if !NoSemanticHighlighting
         if (HighlightingColorizer is SemanticHighlighting.SemanticHighlightingColorizer shc)
           shc.HighlightingColors = value;
+#endif
       }
     }
 

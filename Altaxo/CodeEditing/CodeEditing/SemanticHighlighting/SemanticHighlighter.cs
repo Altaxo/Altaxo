@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+#if !NoSemanticHighlighting
+
 extern alias MCW;
 using System;
 using System.Collections.Generic;
@@ -286,3 +288,4 @@ namespace Altaxo.CodeEditing.SemanticHighlighting
     #endregion Caching
   }
 }
+#endif
