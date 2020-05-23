@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading;
 using MCW::Microsoft.CodeAnalysis;
 using MCW::Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Common;
 
 namespace Altaxo.CodeEditing.Diagnostics
 {
@@ -27,7 +28,6 @@ namespace Altaxo.CodeEditing.Diagnostics
       inner.DiagnosticsUpdated += OnDiagnosticsUpdated;
     }
 
-    // ReSharper disable once UnusedParameter.Local
     private void OnDiagnosticsUpdated(object sender, Microsoft.CodeAnalysis.Diagnostics.DiagnosticsUpdatedArgs e)
     {
       if (e.Solution.Workspace is IDiagnosticsEventSink diagnosticsEventSink)
@@ -39,13 +39,6 @@ namespace Altaxo.CodeEditing.Diagnostics
     {
       return _inner.GetDiagnostics(workspace, projectId, documentId, id, includeSuppressedDiagnostics,
           cancellationToken);
-    }
-
-    public IEnumerable<UpdatedEventArgs> GetDiagnosticsUpdatedEventArgs(Workspace workspace, ProjectId projectId, DocumentId documentId,
-        CancellationToken cancellationToken)
-    {
-      return _inner.GetDiagnosticsUpdatedEventArgs(workspace, projectId, documentId, cancellationToken)
-          .Select(x => new UpdatedEventArgs(x));
     }
   }
 }

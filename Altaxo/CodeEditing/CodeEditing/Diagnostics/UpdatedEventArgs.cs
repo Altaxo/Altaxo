@@ -2,7 +2,7 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Diagnostics/UpdatedEventArgs.cs
 
-#if !NoDiagnostics
+#if YesDiagnostics
 extern alias MCW;
 using System;
 using MCW::Microsoft.CodeAnalysis;
