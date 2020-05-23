@@ -11,7 +11,7 @@
     <OutputPath>..\..\rtDir\bin</OutputPath>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Keys\AltaxoCodeEditing.Private.snk</AssemblyOriginatorKeyFile>
-    <DefineConstants>NoDiagnostics;NoReferenceHighlighting;ModifiedForAltaxoCodeEditing</DefineConstants>
+    <DefineConstants>NoDiagnostics;ModifiedForAltaxoCodeEditing</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
@@ -81,6 +81,10 @@
     <Reference Include="System.Threading.Tasks.Extensions">
       <HintPath>LibrariesBin\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="CodeEditing\ReferenceHighlighting\" />
   </ItemGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
   <Target Name="GenAssInfo">

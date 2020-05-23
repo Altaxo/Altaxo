@@ -48,7 +48,7 @@ using Microsoft.CodeAnalysis.Editor;
 using Microsoft.CodeAnalysis.Text;
 
 #if !NoReferenceHighlighting
-using Altaxo.CodeEditing.ReferenceHighlighting;
+using Microsoft.CodeAnalysis.DocumentHighlighting;
 #endif
 
 
@@ -137,7 +137,7 @@ namespace Altaxo.CodeEditing
     /// <value>
     /// The reference highlight service.
     /// </value>
-    public IDocumentHighlightsService ReferenceHighlightService { get; set; }
+    internal Microsoft.CodeAnalysis.DocumentHighlighting.IDocumentHighlightsService ReferenceHighlightService { get; set; }
 #endif
 
     /// <summary>
@@ -216,7 +216,7 @@ namespace Altaxo.CodeEditing
       FoldingStrategy = new SyntaxTreeFoldingStrategy();
       BraceMatchingService = _roslynHost.GetService<IBraceMatchingService>();
 #if !NoReferenceHighlighting
-      ReferenceHighlightService = new ReferenceHighlighting.CSharp.CSharpDocumentHighlightsService();
+      ReferenceHighlightService = new Microsoft.CodeAnalysis.CSharp.DocumentHighlighting.CSharpDocumentHighlightsService();
 #endif
       CompletionProvider = new Completion.CodeEditorCompletionProvider(_roslynHost, Workspace, DocumentId);
       RenamingService = new Renaming.RenamingService();
@@ -425,7 +425,7 @@ namespace Altaxo.CodeEditing
     /// <summary>
     /// Finds references to resolved expression in the current file.
     /// </summary>
-    public virtual async Task<ImmutableArray<DocumentHighlights>> FindReferencesInCurrentFile(int cursorPosition)
+    async Task<ImmutableArray<DocumentHighlights>> ICodeEditorViewAdapter.FindReferencesInCurrentFile(int cursorPosition)
     {
       var service = ReferenceHighlightService;
 

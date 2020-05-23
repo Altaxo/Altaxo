@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Windows.Media;
-using Altaxo.CodeEditing.ReferenceHighlighting;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
+using Microsoft.CodeAnalysis.DocumentHighlighting;
 
 namespace Altaxo.Gui.CodeEditing.ReferenceHightlighting
 {
@@ -29,7 +29,7 @@ namespace Altaxo.Gui.CodeEditing.ReferenceHightlighting
     private readonly int borderThickness = 1;
     private readonly int cornerRadius = 1;
 
-    public void SetHighlight(ImmutableArray<DocumentHighlights> renderedReferences)
+    internal void SetHighlight(ImmutableArray<DocumentHighlights> renderedReferences)
     {
       if (this.renderedReferences != renderedReferences)
       {

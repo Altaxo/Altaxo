@@ -46,7 +46,7 @@ using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
 #if !NoReferenceHighlighting
-using Altaxo.CodeEditing.ReferenceHighlighting;
+using Microsoft.CodeAnalysis.DocumentHighlighting;
 #endif
 
 
@@ -346,7 +346,7 @@ namespace Altaxo.Gui.CodeEditing
     /// </summary>
     private const int _referenceHighlightRenderer_FindReferencesTimeoutInMilliSeconds = 200;
 
-    private ExpressionHighlightRenderer _referencesHighlightRenderer;
+    private ReferenceHightlighting.ExpressionHighlightRenderer _referencesHighlightRenderer;
 
     private ImmutableArray<DocumentHighlights> _referencesHighlightRenderer_LastResolveResult;
 
@@ -355,7 +355,7 @@ namespace Altaxo.Gui.CodeEditing
     /// </summary>
     public void ReferencesHighlightRenderer_Initialize()
     {
-      _referencesHighlightRenderer = new ExpressionHighlightRenderer(TextArea.TextView);
+      _referencesHighlightRenderer = new ReferenceHightlighting.ExpressionHighlightRenderer(TextArea.TextView);
       _referenceHighlightRenderer_DelayTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(_referenceHighlightRenderer_DelayInMilliseconds) };
       _referenceHighlightRenderer_DelayTimer.Stop();
       _referenceHighlightRenderer_DelayTimer.Tick += ReferencesHighlightRenderer_TimerTick;

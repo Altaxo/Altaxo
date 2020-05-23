@@ -38,7 +38,7 @@ using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
 #if !NoReferenceHighlighting
-using Altaxo.CodeEditing.ReferenceHighlighting;
+using Microsoft.CodeAnalysis.DocumentHighlighting;
 #endif
 
 
@@ -127,7 +127,7 @@ namespace Altaxo.CodeEditing
     /// <summary>
     /// Finds references to resolved expression in the current file.
     /// </summary>
-    Task<ImmutableArray<DocumentHighlights>> FindReferencesInCurrentFile(int cursorPosition);
+    internal Task<ImmutableArray<DocumentHighlights>> FindReferencesInCurrentFile(int cursorPosition);
 #endif
 
     Task<CompletionResult> GetCompletionData(int position, char? triggerChar, bool useSignatureHelp);
