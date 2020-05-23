@@ -21,14 +21,14 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
   // GoToDefinition
   internal abstract class AbstractGoToDefinitionService : IGoToDefinitionService
   {
-    /*
-		protected AbstractGoToDefinitionService(
-				IEnumerable<Lazy<IStreamingFindUsagesPresenter>> streamingPresenters
-			)
-		{
-			_streamingPresenters = streamingPresenters;
-		}
-		*/
+#if !ModifiedForAltaxoCodeEditing
+    protected AbstractGoToDefinitionService(
+            IEnumerable<Lazy<IStreamingFindUsagesPresenter>> streamingPresenters
+        )
+    {
+      _streamingPresenters = streamingPresenters;
+    }
+#endif
 
     public async Task<IEnumerable<INavigableItem>> FindDefinitionsAsync(Document document, int position, CancellationToken cancellationToken)
     {
@@ -59,7 +59,11 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
 
       return GoToDefinitionHelpers.TryGoToDefinition(symbol,
           document.Project,
-          null, // _streamingPresenters,
+#if !ModifiedForAltaxoCodeEditing
+          _streamingPresenters,
+#else
+          null,
+#endif
           thirdPartyNavigationAllowed: isThirdPartyNavigationAllowed,
           throwOnHiddenDefinition: true,
           cancellationToken: cancellationToken);
@@ -85,7 +89,7 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
               ? symbolToNavigateTo
               : symbolToNavigateTo.ContainingType;
 
-          if (containingTypeSymbol == candidateTypeSymbol)
+          if (Equals(containingTypeSymbol, candidateTypeSymbol))
           {
             // We are navigating from the same type, so don't allow third parties to perform the navigation.
             // This ensures that if we navigate to a class from within that class, we'll stay in the same file

@@ -11,7 +11,7 @@
     <OutputPath>..\..\rtDir\bin</OutputPath>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Keys\AltaxoCodeEditing.Private.snk</AssemblyOriginatorKeyFile>
-    <DefineConstants>NoDiagnostics;NoGotoDefinition;NoReferenceHighlighting</DefineConstants>
+    <DefineConstants>NoDiagnostics;NoReferenceHighlighting;ModifiedForAltaxoCodeEditing</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
