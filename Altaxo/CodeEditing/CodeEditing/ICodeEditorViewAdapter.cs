@@ -185,12 +185,14 @@ namespace Altaxo.CodeEditing
     event Action<ExternalHelp.ExternalHelpItem> ExternalHelpRequired;
 #endif
 
+#if !NoRenaming
     /// <summary>
     /// Renames the symbol at the caret position or the start of the selection.
     /// </summary>
     /// <param name="caretPositionOrSelectionStart">The caret position or selection start.</param>
     /// <returns></returns>
     Task RenameSymbol(int caretPositionOrSelectionStart, object topLevelWindow, Action FocusBackOnEditor);
+#endif
 
 
 #if !NoGotoDefinition

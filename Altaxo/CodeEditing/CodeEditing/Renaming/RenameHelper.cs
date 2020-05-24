@@ -2,6 +2,7 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Rename/RenameHelper.cs
 
+#if !NoRenaming
 extern alias MCW;
 using System;
 using System.Linq;
@@ -184,3 +185,4 @@ namespace Altaxo.CodeEditing.Renaming
     }
   }
 }
+#endif

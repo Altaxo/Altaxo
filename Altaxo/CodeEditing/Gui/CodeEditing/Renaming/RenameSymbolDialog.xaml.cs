@@ -15,10 +15,13 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Altaxo.CodeEditing.Renaming;
+
 
 namespace Altaxo.Gui.CodeEditing.Renaming
 {
+#if !NoRenaming
+
+using Altaxo.CodeEditing.Renaming;
   /// <summary>
   /// Interaction logic for RenameSymbolDialog.xaml
   /// </summary>
@@ -98,4 +101,29 @@ namespace Altaxo.Gui.CodeEditing.Renaming
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
   }
+
+#else
+  public partial class RenameSymbolDialog : Window
+  {
+    public RenameSymbolDialog()
+    {
+      InitializeComponent();
+    }
+
+    private void SymbolText_KeyDown(object sender, KeyEventArgs e)
+    {
+
+    }
+
+    private void Rename_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void Cancel_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+  }
+#endif
 }

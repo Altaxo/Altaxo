@@ -179,6 +179,7 @@ namespace Altaxo.CodeEditing
     public ICodeEditorCompletionProvider CompletionProvider { get; set; }
 #endif
 
+#if !NoRenaming
     /// <summary>
     /// Gets or sets the renaming service.
     /// Responsible for renaming members, local variables, classes, parameters, etc.
@@ -187,6 +188,7 @@ namespace Altaxo.CodeEditing
     /// The renaming service.
     /// </value>
     public Renaming.IRenamingService RenamingService { get; set; }
+#endif
 
     /// <summary>
     /// Gets the indentation strategy.
@@ -255,6 +257,7 @@ namespace Altaxo.CodeEditing
       SourceTextAdapter = sourceText ?? throw new ArgumentNullException(nameof(sourceText));
       _roslynHost = workspace.RoslynHost;
       SourceTextAdapter.TextChanged += EhSourceTextAdapter_TextChanged;
+
 #if !NoSemanticHighlighting
       HighlightingColorizer = new SemanticHighlighting.SemanticHighlightingColorizer(this, Workspace, DocumentId);
 #endif
@@ -278,7 +281,11 @@ namespace Altaxo.CodeEditing
 #if !NoCompletion
       CompletionProvider = new Completion.CodeEditorCompletionProvider(_roslynHost, Workspace, DocumentId);
 #endif
+
+#if !NoRenaming
       RenamingService = new Renaming.RenamingService();
+#endif
+
       IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.CSharp.CSharpIndentationStrategy();
 
 #if !NoLiveDocumentFormatting
@@ -523,7 +530,7 @@ namespace Altaxo.CodeEditing
     #endregion Completion
 
     #region Symbol renaming
-
+#if !NoRenaming
     /// <summary>
     /// Renames the symbol at the caret position or the start of the selection.
     /// </summary>
@@ -538,7 +545,7 @@ namespace Altaxo.CodeEditing
         await service.RenameSymbol(Workspace, DocumentId, SourceTextAdapter, caretPositionOrSelectionStart, topLevelWindow, FocusBackOnEditor).ConfigureAwait(false);
       }
     }
-
+#endif
     #endregion Symbol renaming
 
     #region QuickClassBrowser

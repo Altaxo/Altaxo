@@ -542,12 +542,15 @@ namespace Altaxo.Gui.CodeEditing
       }
 #endif
 
+#if !NoRenaming
       // F2 - Rename symbol
       if (e.Key == Key.F2 && null != _adapter)
       {
         var topLevelWindow = GetTopLevelWindow(this);
         _adapter.RenameSymbol(CaretOffset, topLevelWindow, () => Focus());
       }
+#endif
+
 #if !NoGotoDefinition
       // F12 - GoToDefinition
       else if (e.Key == Key.F12 && null != _adapter)

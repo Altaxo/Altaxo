@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+#if !NoRenaming
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,3 +18,4 @@ namespace Altaxo.CodeEditing.Renaming
     void Show(object topLevelWindow);
   }
 }
+#endif

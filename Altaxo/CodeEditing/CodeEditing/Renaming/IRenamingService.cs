@@ -1,4 +1,7 @@
-﻿extern alias MCW;
+﻿
+
+#if !NoRenaming
+extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,3 +24,4 @@ namespace Altaxo.CodeEditing.Renaming
     Task RenameSymbol(Workspace workspace, DocumentId documentId, RoslynSourceTextContainerAdapter sourceText, int caretPosition, object topLevelWindow, Action FocusOnEditor);
   }
 }
+#endif
