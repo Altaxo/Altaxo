@@ -120,7 +120,10 @@ namespace Altaxo.Gui.CodeEditing
 #if !NoDiagnostics
           _adapter.DiagnosticsUpdated -= EhDiagnosticsUpdated;
 #endif
-          _adapter.SyntaxTreeChanged -= EhSyntaxTreeChanged;
+
+#if !NoFolding
+          _adapter.SyntaxTreeChanged -= EhSyntaxTreeChanged_UpdateFoldings;
+#endif
         }
         _adapter = value;
 
@@ -136,13 +139,17 @@ namespace Altaxo.Gui.CodeEditing
           _adapter.DiagnosticsUpdated += EhDiagnosticsUpdated;
 #endif
 
-          _adapter.SyntaxTreeChanged += EhSyntaxTreeChanged;
+#if !NoFolding
+          _adapter.SyntaxTreeChanged += EhSyntaxTreeChanged_UpdateFoldings;
+#endif
 
           // now use the adapter to do all the little things
 
+#if !NoFolding
           // foldings
           var newFoldings = _adapter?.GetNewFoldings();
           _foldingManager.UpdateFoldings(newFoldings, -1);
+#endif
         }
       }
     }
@@ -490,8 +497,8 @@ namespace Altaxo.Gui.CodeEditing
     #endregion Reference highlighting (all identical items are highlighted)
 
     #region Folding
-
-    private void EhSyntaxTreeChanged(Document document, SyntaxTree syntaxTree)
+#if !NoFolding
+    private void EhSyntaxTreeChanged_UpdateFoldings(Document document, SyntaxTree syntaxTree)
     {
       Action action = () =>
       {
@@ -505,7 +512,7 @@ namespace Altaxo.Gui.CodeEditing
       else
         Dispatcher.BeginInvoke(action, DispatcherPriority.Background);
     }
-
+#endif
     #endregion Folding
 
     protected override void OnKeyDown(KeyEventArgs e)

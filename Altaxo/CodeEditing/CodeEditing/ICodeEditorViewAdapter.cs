@@ -89,12 +89,14 @@ namespace Altaxo.CodeEditing
     /// <returns>The quick info tool tip, or null.</returns>
     Task<QuickInfo.QuickInfoItem> GetToolTipAsync(int cursorPosition);
 
+#if !NoFolding
     /// <summary>
     /// Central routine of the folding strategy. Uses the document's syntax tree
     /// to calculate all folding positions.
     /// </summary>
     /// <returns>Enumeration of foldings.</returns>
     IEnumerable<NewFolding> GetNewFoldings();
+#endif
 
 #if !NoBraceMatching
     /// <summary>
@@ -166,7 +168,7 @@ namespace Altaxo.CodeEditing
 
 
 #if !NoExternalHelp
-/// <summary>
+    /// <summary>
     /// Gets the external help item for the symbol under the caret position, and then fires the <see cref="ExternalHelpRequired"/> event.
     /// </summary>
     /// <param name="caretPosition">The caret position.</param>

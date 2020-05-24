@@ -30,7 +30,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Altaxo.CodeEditing.Folding;
 using Altaxo.CodeEditing.LiveDocumentFormatting;
 using Altaxo.CodeEditing.QuickInfo;
 using ICSharpCode.AvalonEdit;
@@ -56,14 +55,19 @@ using Altaxo.CodeEditing.Completion;
 using Microsoft.CodeAnalysis.Diagnostics;
 #endif
 
+#if !NoFolding
+using Altaxo.CodeEditing.Folding;
+#endif
+
+#if !NoGotoDefinition
+using Microsoft.CodeAnalysis.Editor.CSharp.GoToDefinition;
+#endif
+
 #if !NoReferenceHighlighting
 using Microsoft.CodeAnalysis.DocumentHighlighting;
 #endif
 
 
-#if !NoGotoDefinition
-using Microsoft.CodeAnalysis.Editor.CSharp.GoToDefinition;
-#endif
 
 
 namespace Altaxo.CodeEditing
@@ -122,6 +126,7 @@ namespace Altaxo.CodeEditing
     /// </value>
     public QuickInfo.IQuickInfoProvider QuickInfoProvider { get; set; }
 
+#if !NoFolding
     /// <summary>
     /// Gets or sets the folding strategy.
     /// Responsible for getting the code spans where foldings occur.
@@ -130,6 +135,7 @@ namespace Altaxo.CodeEditing
     /// The folding strategy.
     /// </value>
     public SyntaxTreeFoldingStrategy FoldingStrategy { get; set; }
+#endif
 
 #if !NoBraceMatching
     /// <summary>
@@ -242,7 +248,10 @@ namespace Altaxo.CodeEditing
       HighlightingColorizer = new SemanticHighlighting.SemanticHighlightingColorizer(this, Workspace, DocumentId);
 #endif
       QuickInfoProvider = _roslynHost.GetService<QuickInfo.IQuickInfoProvider>();
+
+#if !NoFolding
       FoldingStrategy = new SyntaxTreeFoldingStrategy();
+#endif
 
 #if !NoBraceMatching
       BraceMatchingService = _roslynHost.GetService<IBraceMatchingService>();
@@ -401,7 +410,7 @@ namespace Altaxo.CodeEditing
     #endregion QuickInfo
 
     #region Folding
-
+#if !NoFolding
     /// <summary>
     /// Central routine of the folding strategy. Uses the document's syntax tree
     /// to calculate all folding positions.
@@ -419,7 +428,7 @@ namespace Altaxo.CodeEditing
       }
       return FoldingStrategy?.GetNewFoldings(syntaxTree);
     }
-
+#endif
     #endregion Folding
 
     #region Brace matching
