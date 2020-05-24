@@ -74,8 +74,6 @@ using Microsoft.CodeAnalysis.DocumentHighlighting;
 #endif
 
 
-
-
 namespace Altaxo.CodeEditing
 {
   /// <summary>
