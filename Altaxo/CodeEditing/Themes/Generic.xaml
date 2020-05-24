@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Altaxo.Themes"
-										xmlns:completion="clr-namespace:Altaxo.CodeEditing.Completion"
+										xmlns:completion="clr-namespace:Altaxo.CodeEditing.Common"
 										xmlns:root="clr-namespace:Altaxo">
 
 	<!-- ************************************ Start of Glyphs.xaml ************************************************************ -->
@@ -46,7 +46,7 @@
 			</DrawingGroup>
 		</DrawingImage.Drawing>
 	</DrawingImage>
-	<DrawingImage x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type completion:Glyph }, ResourceId={x:Static completion:Glyph.EnumMember}}">
+	<DrawingImage x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type completion:Glyph }, ResourceId={x:Static completion:Glyph.EnumMemberPublic}}">
 		<DrawingImage.Drawing>
 			<DrawingGroup>
 				<DrawingGroup.Children>

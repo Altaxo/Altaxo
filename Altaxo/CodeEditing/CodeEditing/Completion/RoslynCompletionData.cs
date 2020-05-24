@@ -1,6 +1,8 @@
 ﻿// Copyright Eli Arbel (no explicit copyright notice in original file)
 
 // Originated from: RoslynPad, RoslynPad.Roslyn.Windows, RoslynCompletionData.cs
+
+#if !NoCompletion
 extern alias MCW;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using MCW::Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
 
 namespace Altaxo.CodeEditing.Completion
@@ -40,9 +43,9 @@ namespace Altaxo.CodeEditing.Completion
       Text = item.DisplayText;
       Content = item.DisplayText;
       _glyph = item.GetGlyph();
-      if (_glyph != null)
+      if (_glyph.HasValue)
       {
-        Image = _glyph.Value.ToImageSource();
+        Image = Altaxo.CodeEditing.Common.GlyphExtensions.ToImageSource(_glyph.Value);
       }
     }
 
@@ -147,3 +150,4 @@ namespace Altaxo.CodeEditing.Completion
     }
   }
 }
+#endif

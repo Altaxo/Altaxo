@@ -30,7 +30,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Altaxo.CodeEditing.Completion;
 using Altaxo.CodeEditing.Folding;
 using Altaxo.CodeEditing.LiveDocumentFormatting;
 using Altaxo.CodeEditing.QuickInfo;
@@ -47,6 +46,10 @@ using Microsoft.CodeAnalysis.Text;
 
 #if !NoBraceMatching
 using Altaxo.CodeEditing.BraceMatching;
+#endif
+
+#if !NoCompletion
+using Altaxo.CodeEditing.Completion;
 #endif
 
 #if !NoDiagnostics
@@ -150,6 +153,7 @@ namespace Altaxo.CodeEditing
     internal Microsoft.CodeAnalysis.DocumentHighlighting.IDocumentHighlightsService ReferenceHighlightService { get; set; }
 #endif
 
+#if !NoCompletion
     /// <summary>
     /// Gets or sets the completion provider.
     /// Responsible for displaying proposals for writing code.
@@ -158,6 +162,7 @@ namespace Altaxo.CodeEditing
     /// The completion provider.
     /// </value>
     public ICodeEditorCompletionProvider CompletionProvider { get; set; }
+#endif
 
     /// <summary>
     /// Gets or sets the renaming service.
@@ -244,7 +249,10 @@ namespace Altaxo.CodeEditing
 #if !NoReferenceHighlighting
       ReferenceHighlightService = new Microsoft.CodeAnalysis.CSharp.DocumentHighlighting.CSharpDocumentHighlightsService();
 #endif
+
+#if !NoCompletion
       CompletionProvider = new Completion.CodeEditorCompletionProvider(_roslynHost, Workspace, DocumentId);
+#endif
       RenamingService = new Renaming.RenamingService();
       IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.CSharp.CSharpIndentationStrategy();
       LiveDocumentFormatter = new LiveDocumentFormatterCSharp();
@@ -472,12 +480,13 @@ namespace Altaxo.CodeEditing
     #endregion Reference Highlighting
 
     #region Completion
+#if !NoCompletion
 
     public async Task<CompletionResult> GetCompletionData(int position, char? triggerChar, bool useSignatureHelp)
     {
       return await CompletionProvider?.GetCompletionData(position, triggerChar, useSignatureHelp);
     }
-
+#endif
     #endregion Completion
 
     #region Symbol renaming

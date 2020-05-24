@@ -40,7 +40,7 @@ namespace Altaxo.CodeEditing.Completion
       return builder.ToImmutable();
     }
 
-    public static Glyph? GetGlyph(this CompletionItem completionItem)
+    internal static Glyph? GetGlyph(this CompletionItem completionItem)
     {
       var tags = completionItem.Tags;
       for (var index = 0; index < tags.Length; index++)

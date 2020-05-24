@@ -29,7 +29,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using Altaxo.CodeEditing;
-using Altaxo.CodeEditing.Completion;
 using Microsoft.CodeAnalysis;
 
 namespace Altaxo.Gui.CodeEditing

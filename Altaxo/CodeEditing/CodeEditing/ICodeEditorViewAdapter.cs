@@ -131,7 +131,9 @@ namespace Altaxo.CodeEditing
     internal Task<ImmutableArray<DocumentHighlights>> FindReferencesInCurrentFile(int cursorPosition);
 #endif
 
+#if !NoCompletion
     Task<CompletionResult> GetCompletionData(int position, char? triggerChar, bool useSignatureHelp);
+#endif
 
     /// <summary>
     /// Gets the indentation strategy.

@@ -9,16 +9,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using Microsoft.CodeAnalysis;
 
-namespace Altaxo.CodeEditing.Completion
+namespace Altaxo.CodeEditing.Common
 {
+
   public static class GlyphExtensions
   {
-    public static ImageSource ToImageSource(this Glyph glyph)
+    internal static ImageSource ToImageSource(this Microsoft.CodeAnalysis.Glyph glyph)
     {
       try
       {
-        var obj = Application.Current.TryFindResource(new ComponentResourceKey(typeof(Glyph), glyph));
+        var obj = Application.Current.TryFindResource(new ComponentResourceKey(typeof(Altaxo.CodeEditing.Common.Glyph), (Altaxo.CodeEditing.Common.Glyph)glyph));
         return obj as ImageSource;
       }
       catch (Exception ex)
@@ -27,9 +29,9 @@ namespace Altaxo.CodeEditing.Completion
       return null;
     }
 
-    public static Completion.Glyph GetGlyph(this Microsoft.CodeAnalysis.ISymbol symbol)
+    internal static Microsoft.CodeAnalysis.Glyph GetGlyph(this Microsoft.CodeAnalysis.ISymbol symbol)
     {
-      return (Completion.Glyph)Microsoft.CodeAnalysis.Shared.Extensions.ISymbolExtensions2.GetGlyph(symbol);
+      return Microsoft.CodeAnalysis.Shared.Extensions.ISymbolExtensions2.GetGlyph(symbol);
     }
   }
 }

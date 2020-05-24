@@ -6,12 +6,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Altaxo.CodeEditing.Common;
+using Altaxo.Gui.CodeEditing;
 using Microsoft.CodeAnalysis;
+
 
 namespace Altaxo.CodeEditing.QuickInfo
 {
-  using Altaxo.Gui.CodeEditing;
-  using Completion;
 
   [Export(typeof(IDeferredQuickInfoContentProvider))]
   internal class DeferredQuickInfoContentProvider : IDeferredQuickInfoContentProvider
@@ -45,7 +46,7 @@ namespace Altaxo.CodeEditing.QuickInfo
 
     private static IDeferredQuickInfoContent CreateWarningGlyph()
     {
-      return new SymbolGlyphDeferredContent(Glyph.CompletionWarning);
+      return new SymbolGlyphDeferredContent(Microsoft.CodeAnalysis.Glyph.CompletionWarning);
     }
 
     public IDeferredQuickInfoContent CreateDocumentationCommentDeferredContent(string documentationComment)
@@ -261,7 +262,7 @@ namespace Altaxo.CodeEditing.QuickInfo
 
     private class SymbolGlyphDeferredContent : IDeferredQuickInfoContent
     {
-      public SymbolGlyphDeferredContent(Glyph glyph)
+      public SymbolGlyphDeferredContent(Microsoft.CodeAnalysis.Glyph glyph)
       {
         Glyph = glyph;
       }
@@ -277,7 +278,7 @@ namespace Altaxo.CodeEditing.QuickInfo
         return image;
       }
 
-      private Glyph Glyph { get; }
+      private Microsoft.CodeAnalysis.Glyph Glyph { get; }
     }
 
     private class ClassifiableDeferredContent : IDeferredQuickInfoContent

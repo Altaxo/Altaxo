@@ -167,8 +167,11 @@ namespace Altaxo.Gui.CodeEditing
       MouseHover += OnMouseHover;
       MouseHoverStopped += OnMouseHoverStopped;
       TextArea.TextView.VisualLinesChanged += OnVisualLinesChanged;
+
+#if !NoCompletion
       TextArea.TextEntering += OnTextEntering;
       TextArea.TextEntered += OnTextEntered;
+#endif
 
       TextArea.MouseWheel += OnTextArea_MouseWheel;
 
@@ -509,6 +512,7 @@ namespace Altaxo.Gui.CodeEditing
     {
       base.OnKeyDown(e);
 
+#if !NoCompletion
       if (e.Key == Key.Space && e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control))
       {
         e.Handled = true;
@@ -518,9 +522,10 @@ namespace Altaxo.Gui.CodeEditing
 
         var task = ShowCompletion(mode);
       }
+#endif
 
       // F1 - Get help
-      else if (e.Key == Key.F1 && null != _adapter)
+      if (e.Key == Key.F1 && null != _adapter)
       {
         _adapter.GetExternalHelpItemAndFireHelpEvent(CaretOffset);
       }
@@ -701,7 +706,7 @@ namespace Altaxo.Gui.CodeEditing
     #endregion Open & Save File
 
     #region Code Completion
-
+#if !NoCompletion
     private void OnTextEntered(object sender, TextCompositionEventArgs textCompositionEventArgs)
     {
       // ReSharper disable once UnusedVariable
@@ -810,7 +815,7 @@ namespace Altaxo.Gui.CodeEditing
       offset = CaretOffset;
       return Document;
     }
-
+#endif
     #endregion Code Completion
 
     #region Jumping into text positions

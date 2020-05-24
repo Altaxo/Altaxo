@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Altaxo.CodeEditing.Completion;
 using MCW::Microsoft.CodeAnalysis;
 using MCW::Microsoft.CodeAnalysis.Rename;
 using Microsoft.CodeAnalysis.Text;

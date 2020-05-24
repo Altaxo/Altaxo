@@ -2,6 +2,7 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Completion/CompletionHelper.cs
 
+#if !NoCompletion
 extern alias MCW;
 using System;
 using System.Collections.Generic;
@@ -35,3 +36,4 @@ namespace Altaxo.CodeEditing.Completion
     }
   }
 }
+#endif

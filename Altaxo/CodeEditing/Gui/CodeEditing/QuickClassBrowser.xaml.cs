@@ -37,7 +37,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Altaxo.CodeEditing;
-using Altaxo.CodeEditing.Completion;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
@@ -69,33 +68,33 @@ namespace Altaxo.Gui.CodeEditing
         ClassDeclarationSyntax = syntax;
         Text = syntax.Identifier.Text;
 
-        var glyph = Altaxo.CodeEditing.Completion.Glyph.ClassPublic;
+        var glyph = Glyph.ClassPublic;
 
         foreach (var mod in syntax.Modifiers)
         {
           if (mod.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.PublicKeyword))
           {
-            glyph = Altaxo.CodeEditing.Completion.Glyph.ClassPublic;
+            glyph = Glyph.ClassPublic;
             break;
           }
           else if (mod.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.ProtectedKeyword))
           {
-            glyph = Altaxo.CodeEditing.Completion.Glyph.ClassProtected;
+            glyph = Glyph.ClassProtected;
             break;
           }
           else if (mod.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.PrivateKeyword))
           {
-            glyph = Altaxo.CodeEditing.Completion.Glyph.ClassPrivate;
+            glyph = Glyph.ClassPrivate;
             break;
           }
           else if (mod.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.InternalKeyword))
           {
-            glyph = Altaxo.CodeEditing.Completion.Glyph.ClassInternal;
+            glyph = Glyph.ClassInternal;
             break;
           }
         }
 
-        Image = Altaxo.CodeEditing.Completion.GlyphExtensions.ToImageSource(glyph);
+        Image = Altaxo.CodeEditing.Common.GlyphExtensions.ToImageSource(glyph);
       }
 
       public int CompareTo(ClassItem other)
@@ -115,18 +114,18 @@ namespace Altaxo.Gui.CodeEditing
 
       public bool IsInSamePart { get { return true; } }
 
-      public static readonly Altaxo.CodeEditing.Completion.Glyph[] fieldGlyphs = new[] { Altaxo.CodeEditing.Completion.Glyph.FieldPublic, Altaxo.CodeEditing.Completion.Glyph.FieldProtected, Altaxo.CodeEditing.Completion.Glyph.FieldPrivate, Altaxo.CodeEditing.Completion.Glyph.FieldInternal };
-      public static readonly Altaxo.CodeEditing.Completion.Glyph[] enumGlyphs = new[] { Altaxo.CodeEditing.Completion.Glyph.EnumPublic, Altaxo.CodeEditing.Completion.Glyph.EnumProtected, Altaxo.CodeEditing.Completion.Glyph.EnumPrivate, Altaxo.CodeEditing.Completion.Glyph.EnumInternal };
-      public static readonly Altaxo.CodeEditing.Completion.Glyph[] eventGlyphs = new[] { Altaxo.CodeEditing.Completion.Glyph.EnumPublic, Altaxo.CodeEditing.Completion.Glyph.EventProtected, Altaxo.CodeEditing.Completion.Glyph.EventPrivate, Altaxo.CodeEditing.Completion.Glyph.EventInternal };
-      public static readonly Altaxo.CodeEditing.Completion.Glyph[] constantGlyphs = new[] { Altaxo.CodeEditing.Completion.Glyph.ConstantPublic, Altaxo.CodeEditing.Completion.Glyph.ConstantProtected, Altaxo.CodeEditing.Completion.Glyph.ConstantPrivate, Altaxo.CodeEditing.Completion.Glyph.ConstantInternal };
-      public static readonly Altaxo.CodeEditing.Completion.Glyph[] methodGlyphs = new[] { Altaxo.CodeEditing.Completion.Glyph.MethodPublic, Altaxo.CodeEditing.Completion.Glyph.MethodProtected, Altaxo.CodeEditing.Completion.Glyph.MethodPrivate, Altaxo.CodeEditing.Completion.Glyph.MethodInternal };
-      public static readonly Altaxo.CodeEditing.Completion.Glyph[] propertyGlyphs = new[] { Altaxo.CodeEditing.Completion.Glyph.PropertyPublic, Altaxo.CodeEditing.Completion.Glyph.PropertyProtected, Altaxo.CodeEditing.Completion.Glyph.PropertyPrivate, Altaxo.CodeEditing.Completion.Glyph.PropertyInternal };
-      public static readonly Altaxo.CodeEditing.Completion.Glyph[] structGlyphs = new[] { Altaxo.CodeEditing.Completion.Glyph.StructurePublic, Altaxo.CodeEditing.Completion.Glyph.StructureProtected, Altaxo.CodeEditing.Completion.Glyph.StructurePrivate, Altaxo.CodeEditing.Completion.Glyph.StructureInternal };
+      public static readonly Glyph[] fieldGlyphs = new[] { Glyph.FieldPublic, Glyph.FieldProtected, Glyph.FieldPrivate, Glyph.FieldInternal };
+      public static readonly Glyph[] enumGlyphs = new[] { Glyph.EnumPublic, Glyph.EnumProtected, Glyph.EnumPrivate, Glyph.EnumInternal };
+      public static readonly Glyph[] eventGlyphs = new[] { Glyph.EnumPublic, Glyph.EventProtected, Glyph.EventPrivate, Glyph.EventInternal };
+      public static readonly Glyph[] constantGlyphs = new[] { Glyph.ConstantPublic, Glyph.ConstantProtected, Glyph.ConstantPrivate, Glyph.ConstantInternal };
+      public static readonly Glyph[] methodGlyphs = new[] { Glyph.MethodPublic, Glyph.MethodProtected, Glyph.MethodPrivate, Glyph.MethodInternal };
+      public static readonly Glyph[] propertyGlyphs = new[] { Glyph.PropertyPublic, Glyph.PropertyProtected, Glyph.PropertyPrivate, Glyph.PropertyInternal };
+      public static readonly Glyph[] structGlyphs = new[] { Glyph.StructurePublic, Glyph.StructureProtected, Glyph.StructurePrivate, Glyph.StructureInternal };
 
       public SyntaxItem(SyntaxNode syntax)
       {
         SyntaxNode = syntax;
-        var glyph = Altaxo.CodeEditing.Completion.Glyph.FieldPublic;
+        var glyph = Glyph.FieldPublic;
 
         int modifierIndex = 0;
 
@@ -168,42 +167,42 @@ namespace Altaxo.Gui.CodeEditing
         if (syntax is ConstructorDeclarationSyntax cds)
         {
           Text = cds.Identifier.ValueText;
-          Image = Altaxo.CodeEditing.Completion.GlyphExtensions.ToImageSource(methodGlyphs[modifierIndex]);
+          Image = Altaxo.CodeEditing.Common.GlyphExtensions.ToImageSource(methodGlyphs[modifierIndex]);
         }
         else if (syntax is MethodDeclarationSyntax mds)
         {
           Text = mds.Identifier.Text;
-          Image = Altaxo.CodeEditing.Completion.GlyphExtensions.ToImageSource(methodGlyphs[modifierIndex]);
+          Image = Altaxo.CodeEditing.Common.GlyphExtensions.ToImageSource(methodGlyphs[modifierIndex]);
         }
         else if (syntax is PropertyDeclarationSyntax pds)
         {
           Text = pds.Identifier.Text;
-          Image = Altaxo.CodeEditing.Completion.GlyphExtensions.ToImageSource(propertyGlyphs[modifierIndex]);
+          Image = Altaxo.CodeEditing.Common.GlyphExtensions.ToImageSource(propertyGlyphs[modifierIndex]);
         }
         else if (syntax is EventDeclarationSyntax eds)
         {
           Text = eds.Identifier.Text;
-          Image = Altaxo.CodeEditing.Completion.GlyphExtensions.ToImageSource(eventGlyphs[modifierIndex]);
+          Image = Altaxo.CodeEditing.Common.GlyphExtensions.ToImageSource(eventGlyphs[modifierIndex]);
         }
         else if (syntax is EventFieldDeclarationSyntax evfds)
         {
           Text = evfds.Declaration.Variables[0].Identifier.Text;
-          Image = Altaxo.CodeEditing.Completion.GlyphExtensions.ToImageSource(eventGlyphs[modifierIndex]);
+          Image = Altaxo.CodeEditing.Common.GlyphExtensions.ToImageSource(eventGlyphs[modifierIndex]);
         }
         else if (syntax is FieldDeclarationSyntax fds)
         {
           Text = fds.Declaration.Variables[0].Identifier.Text;
-          Image = Altaxo.CodeEditing.Completion.GlyphExtensions.ToImageSource(fieldGlyphs[modifierIndex]);
+          Image = Altaxo.CodeEditing.Common.GlyphExtensions.ToImageSource(fieldGlyphs[modifierIndex]);
         }
         else if (syntax is EnumDeclarationSyntax enumDs)
         {
           Text = enumDs.Identifier.Text;
-          Image = Altaxo.CodeEditing.Completion.GlyphExtensions.ToImageSource(enumGlyphs[modifierIndex]);
+          Image = Altaxo.CodeEditing.Common.GlyphExtensions.ToImageSource(enumGlyphs[modifierIndex]);
         }
         else if (syntax is StructDeclarationSyntax structDs)
         {
           Text = structDs.Identifier.Text;
-          Image = Altaxo.CodeEditing.Completion.GlyphExtensions.ToImageSource(structGlyphs[modifierIndex]);
+          Image = Altaxo.CodeEditing.Common.GlyphExtensions.ToImageSource(structGlyphs[modifierIndex]);
         }
         else
         {
