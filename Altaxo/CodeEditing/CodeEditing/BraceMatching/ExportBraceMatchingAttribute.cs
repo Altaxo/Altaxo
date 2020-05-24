@@ -17,7 +17,7 @@ namespace Altaxo.CodeEditing.BraceMatching
     public ExportBraceMatcherAttribute(string language)
         : base(typeof(IBraceMatcher))
     {
-      Language = language ?? throw new ArgumentNullException(nameof(language));
+      this.Language = language ?? throw new ArgumentNullException(nameof(language));
     }
   }
 }

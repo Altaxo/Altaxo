@@ -1,5 +1,4 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
-
 // Originated from: Roslyn, EditorFeatures, Core/IBraceMatchingService.cs
 
 #if !NoBraceMatching
@@ -13,7 +12,7 @@ namespace Altaxo.CodeEditing.BraceMatching
 {
   public interface IBraceMatchingService
   {
-    Task<BraceMatchingResult?> GetMatchingBracesAsync(Document document, int position, CancellationToken cancellationToken = default(CancellationToken));
+    Task<BraceMatchingResult?> GetMatchingBracesAsync(Document document, int position, CancellationToken cancellationToken = default);
   }
 
   public struct BraceMatchingResult
@@ -24,8 +23,8 @@ namespace Altaxo.CodeEditing.BraceMatching
     public BraceMatchingResult(TextSpan leftSpan, TextSpan rightSpan)
         : this()
     {
-      LeftSpan = leftSpan;
-      RightSpan = rightSpan;
+      this.LeftSpan = leftSpan;
+      this.RightSpan = rightSpan;
     }
   }
 }

@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.BraceMatching
 {
-  public abstract class AbstractBraceMatcher : IBraceMatcher
+  internal abstract class AbstractBraceMatcher : IBraceMatcher
   {
     private readonly BraceCharacterAndKind _openBrace;
     private readonly BraceCharacterAndKind _closeBrace;
@@ -52,7 +52,7 @@ namespace Altaxo.CodeEditing.BraceMatching
         }
       }
 
-      match = default(SyntaxToken);
+      match = default;
       return false;
     }
 
@@ -65,7 +65,7 @@ namespace Altaxo.CodeEditing.BraceMatching
       var token = root.FindToken(position);
 
       var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-      if (position < text.Length && IsBrace(text[position]))
+      if (position < text.Length && this.IsBrace(text[position]))
       {
         if (token.RawKind == _openBrace.Kind && AllowedForToken(token))
         {

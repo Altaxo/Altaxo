@@ -6,37 +6,35 @@
 extern alias MCW;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MCW::Microsoft.CodeAnalysis;
+using MCW::Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.BraceMatching
 {
   [Export(typeof(IBraceMatchingService))]
-  public class BraceMatchingService : IBraceMatchingService
+  internal class BraceMatchingService : IBraceMatchingService
   {
-    private readonly List<Lazy<IBraceMatcher, LanguageMetadata>> _braceMatchers;
+    private readonly ImmutableArray<Lazy<IBraceMatcher, LanguageMetadata>> _braceMatchers;
 
     [ImportingConstructor]
-    public BraceMatchingService([ImportMany] IEnumerable<Lazy<IBraceMatcher, LanguageMetadata>> braceMatchers)
+    public BraceMatchingService(
+        [ImportMany] IEnumerable<Lazy<IBraceMatcher, LanguageMetadata>> braceMatchers)
     {
-      ////braceMatchers.RealizeImports();
-      _braceMatchers = braceMatchers.ToList();
+      _braceMatchers = braceMatchers.ToImmutableArray();
     }
 
     public async Task<BraceMatchingResult?> GetMatchingBracesAsync(Document document, int position, CancellationToken cancellationToken)
     {
       var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-      if (position < 0)
+      if (position < 0 || position > text.Length)
       {
-        throw new ArgumentOutOfRangeException(nameof(position), "must be >= 0");
-      }
-      else if (position > text.Length)
-      {
-        throw new ArgumentOutOfRangeException(nameof(position), "must be < text.Length");
+        throw new ArgumentException(nameof(position));
       }
 
       var matchers = _braceMatchers.Where(b => b.Metadata.Language == document.Project.Language);

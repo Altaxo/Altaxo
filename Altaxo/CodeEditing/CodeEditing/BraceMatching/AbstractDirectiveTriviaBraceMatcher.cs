@@ -14,21 +14,19 @@ using Microsoft.CodeAnalysis.Text;
 namespace Altaxo.CodeEditing.BraceMatching
 {
   internal abstract class AbstractDirectiveTriviaBraceMatcher<TDirectiveTriviaSyntax,
-      TIfDirectiveTriviaSyntax, TElseIfDirectiveTriviaSyntax,
-      TElseDirectiveTriviaSyntax, TEndIfDirectiveTriviaSyntax,
-      TRegionDirectiveTriviaSyntax, TEndRegionDirectiveTriviaSyntax> : IBraceMatcher
-          where TDirectiveTriviaSyntax : SyntaxNode
-          where TIfDirectiveTriviaSyntax : TDirectiveTriviaSyntax
-          where TElseIfDirectiveTriviaSyntax : TDirectiveTriviaSyntax
-          where TElseDirectiveTriviaSyntax : TDirectiveTriviaSyntax
-          where TEndIfDirectiveTriviaSyntax : TDirectiveTriviaSyntax
-          where TRegionDirectiveTriviaSyntax : TDirectiveTriviaSyntax
-          where TEndRegionDirectiveTriviaSyntax : TDirectiveTriviaSyntax
+         TIfDirectiveTriviaSyntax, TElseIfDirectiveTriviaSyntax,
+         TElseDirectiveTriviaSyntax, TEndIfDirectiveTriviaSyntax,
+         TRegionDirectiveTriviaSyntax, TEndRegionDirectiveTriviaSyntax> : IBraceMatcher
+             where TDirectiveTriviaSyntax : SyntaxNode
+             where TIfDirectiveTriviaSyntax : TDirectiveTriviaSyntax
+             where TElseIfDirectiveTriviaSyntax : TDirectiveTriviaSyntax
+             where TElseDirectiveTriviaSyntax : TDirectiveTriviaSyntax
+             where TEndIfDirectiveTriviaSyntax : TDirectiveTriviaSyntax
+             where TRegionDirectiveTriviaSyntax : TDirectiveTriviaSyntax
+             where TEndRegionDirectiveTriviaSyntax : TDirectiveTriviaSyntax
   {
     internal abstract List<TDirectiveTriviaSyntax> GetMatchingConditionalDirectives(TDirectiveTriviaSyntax directive, CancellationToken cancellationToken);
-
     internal abstract TDirectiveTriviaSyntax GetMatchingDirective(TDirectiveTriviaSyntax directive, CancellationToken cancellationToken);
-
     internal abstract TextSpan GetSpanForTagging(TDirectiveTriviaSyntax directive);
 
     public async Task<BraceMatchingResult?> FindBracesAsync(Document document, int position, CancellationToken cancellationToken)
@@ -68,6 +66,7 @@ namespace Altaxo.CodeEditing.BraceMatching
           leftSpan: GetSpanForTagging(directive),
           rightSpan: GetSpanForTagging(matchingDirective));
     }
+
 
     private bool IsConditionalDirective(TDirectiveTriviaSyntax directive)
     {

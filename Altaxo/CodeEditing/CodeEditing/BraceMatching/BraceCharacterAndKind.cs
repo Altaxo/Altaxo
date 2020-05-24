@@ -19,8 +19,8 @@ namespace Altaxo.CodeEditing.BraceMatching
     public BraceCharacterAndKind(char character, int kind)
         : this()
     {
-      Character = character;
-      Kind = kind;
+      this.Character = character;
+      this.Kind = kind;
     }
   }
 }
