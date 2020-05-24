@@ -3,13 +3,13 @@
 // Originated from: RoslynPad, RoslynPad.Roslyn, Diagnostics/WorkspaceDiagnosticAnalyzerProviderService.cs
 
 #if !NoDiagnostics
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
