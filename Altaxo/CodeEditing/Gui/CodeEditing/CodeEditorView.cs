@@ -524,13 +524,16 @@ namespace Altaxo.Gui.CodeEditing
       }
 #endif
 
+#if !NoExternalHelp
       // F1 - Get help
       if (e.Key == Key.F1 && null != _adapter)
       {
         _adapter.GetExternalHelpItemAndFireHelpEvent(CaretOffset);
       }
+#endif
+
       // F2 - Rename symbol
-      else if (e.Key == Key.F2 && null != _adapter)
+      if (e.Key == Key.F2 && null != _adapter)
       {
         var topLevelWindow = GetTopLevelWindow(this);
         _adapter.RenameSymbol(CaretOffset, topLevelWindow, () => Focus());

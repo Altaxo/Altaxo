@@ -191,6 +191,7 @@ namespace Altaxo.CodeEditing
     /// </value>
     public ILiveDocumentFormatter LiveDocumentFormatter { get; set; }
 
+#if !NoExternalHelp
     /// <summary>
     /// Responsible for getting an <see cref="ExternalHelp.ExternalHelpItem"/> from the symbol under the caret position.
     /// If this is successful, the event <see cref="ExternalHelpRequired"/> is fired.
@@ -204,6 +205,7 @@ namespace Altaxo.CodeEditing
     /// Event that is fired when external help is required.
     /// </summary>
     public event Action<ExternalHelp.ExternalHelpItem> ExternalHelpRequired;
+#endif
 
 #if !NoDiagnostics
     private Action<DiagnosticsUpdatedArgs> _diagnosticsUpdated;
@@ -256,7 +258,10 @@ namespace Altaxo.CodeEditing
       RenamingService = new Renaming.RenamingService();
       IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.CSharp.CSharpIndentationStrategy();
       LiveDocumentFormatter = new LiveDocumentFormatterCSharp();
+
+#if !NoExternalHelp
       ExternalHelpProvider = new ExternalHelp.ExternalHelpProvider();
+#endif
 
 #if !NoDiagnostics
       Workspace.SubscribeToDiagnosticsUpdateNotification(DocumentId, EhDiagnosticsUpdated);
@@ -551,7 +556,7 @@ namespace Altaxo.CodeEditing
     #endregion Document formatting
 
     #region External Help
-
+#if !NoExternalHelp
     /// <summary>
     /// Gets the external help item for the symbol under the caret position.
     /// </summary>
@@ -571,7 +576,7 @@ namespace Altaxo.CodeEditing
         }
       }
     }
-
+#endif
     #endregion External Help
 
     #region GoToDefinition

@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+
+#if !NoExternalHelp
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -95,7 +97,7 @@ namespace Altaxo.CodeEditing.ExternalHelp
       get
       {
         string result = SymbolTypeCharacter + "_" + string.Join("_", TypeNameParts);
-        if(!string.IsNullOrEmpty(MemberName))
+        if (!string.IsNullOrEmpty(MemberName))
         {
           result += "_" + MemberName;
         }
@@ -104,3 +106,4 @@ namespace Altaxo.CodeEditing.ExternalHelp
     }
   }
 }
+#endif

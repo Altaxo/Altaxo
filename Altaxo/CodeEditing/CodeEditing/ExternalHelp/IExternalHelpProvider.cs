@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#if !NoExternalHelp
 extern alias MCW;
 using System;
 using System.Collections.Generic;
@@ -38,3 +39,4 @@ namespace Altaxo.CodeEditing.ExternalHelp
     Task<ExternalHelpItem> GetExternalHelpItem(Document document, int position, CancellationToken cancellationToken);
   }
 }
+#endif

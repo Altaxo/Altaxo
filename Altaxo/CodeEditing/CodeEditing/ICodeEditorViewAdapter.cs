@@ -163,7 +163,10 @@ namespace Altaxo.CodeEditing
     /// <returns></returns>
     Task FormatDocumentAfterEnteringTriggerChar(int caretPosition, char triggerChar);
 
-    /// <summary>
+
+
+#if !NoExternalHelp
+/// <summary>
     /// Gets the external help item for the symbol under the caret position, and then fires the <see cref="ExternalHelpRequired"/> event.
     /// </summary>
     /// <param name="caretPosition">The caret position.</param>
@@ -173,6 +176,7 @@ namespace Altaxo.CodeEditing
     /// Event that is fired when external help is required.
     /// </summary>
     event Action<ExternalHelp.ExternalHelpItem> ExternalHelpRequired;
+#endif
 
     /// <summary>
     /// Renames the symbol at the caret position or the start of the selection.
