@@ -2,6 +2,7 @@
 
 // Originated from: RoslynPad, RoslynPad.Editor.Windows, RoslynOverloadProvider.cs
 
+#if !NoCompletion
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
@@ -135,3 +136,4 @@ namespace Altaxo.CodeEditing.SignatureHelp
     }
   }
 }
+#endif

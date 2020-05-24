@@ -2,6 +2,7 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, SignatureHelp/SignatureHelpProviderExtensions.cs
 
+#if !NoCompletion
 extern alias MCW;
 using System;
 using System.Threading.Tasks;
@@ -24,3 +25,4 @@ namespace Altaxo.CodeEditing.SignatureHelp
     }
   }
 }
+#endif

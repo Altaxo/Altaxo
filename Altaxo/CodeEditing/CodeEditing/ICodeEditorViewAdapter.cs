@@ -72,6 +72,21 @@ namespace Altaxo.CodeEditing
     /// </value>
     DocumentId DocumentId { get; }
 
+    /// <summary>
+    /// Occurs after the source text has changed. This event is routed from the <see cref="SourceTextAdapter"/>.
+    /// </summary>
+    event EventHandler<Microsoft.CodeAnalysis.Text.TextChangeEventArgs> SourceTextChanged;
+
+    /// <summary>
+    /// Occurs when the syntax tree changed has been evaluated after the document changed.
+    /// </summary>
+    event Action<Document, SyntaxTree> SyntaxTreeChanged;
+
+    /// <summary>
+    /// Gets the syntax tree of the document.
+    /// </summary>
+    Task<SyntaxTree> GetDocumentSyntaxTreeAsync();
+
 #if !NoSemanticHighlighting
     /// <summary>
     /// Gets the highlighting colorizer to colorize the code.
@@ -118,16 +133,6 @@ namespace Altaxo.CodeEditing
     internal event Action<DiagnosticsUpdatedArgs> DiagnosticsUpdated;
 #endif
 
-    /// <summary>
-    /// Occurs after the source text has changed. This event is routed from the <see cref="SourceTextAdapter"/>.
-    /// </summary>
-    event EventHandler<Microsoft.CodeAnalysis.Text.TextChangeEventArgs> SourceTextChanged;
-
-    /// <summary>
-    /// Occurs when the syntax tree changed has been evaluated after the document changed.
-    /// </summary>
-    event Action<Document, SyntaxTree> SyntaxTreeChanged;
-
 #if !NoReferenceHighlighting
     /// <summary>
     /// Finds references to resolved expression in the current file.
@@ -147,10 +152,7 @@ namespace Altaxo.CodeEditing
     /// </value>
     IIndentationStrategy IndentationStrategy { get; }
 
-    /// <summary>
-    /// Gets the syntax tree of the document.
-    /// </summary>
-    Task<SyntaxTree> GetDocumentSyntaxTreeAsync();
+
 
     /// <summary>
     /// Formats the complete document.

@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, Features, Core/Portable/SignatureHelp/ISignatureHelpProvider.cs
 
+#if !NoCompletion
 extern alias MCW;
 using System;
 using System.Collections.Generic;
@@ -22,3 +23,4 @@ namespace Altaxo.CodeEditing.SignatureHelp
     Task<SignatureHelpItems> GetItemsAsync(Document document, int position, SignatureHelpTriggerInfo triggerInfo, CancellationToken cancellationToken = default(CancellationToken));
   }
 }
+#endif

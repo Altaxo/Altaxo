@@ -2,6 +2,7 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, SignatureHelp/AggregateSignatureHelpProvider.cs
 
+#if !NoCompletion
 extern alias MCW;
 using System;
 using System.Collections.Generic;
@@ -161,3 +162,4 @@ namespace Altaxo.CodeEditing.SignatureHelp
     }
   }
 }
+#endif

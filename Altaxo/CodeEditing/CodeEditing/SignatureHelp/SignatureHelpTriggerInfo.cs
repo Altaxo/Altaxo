@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, Features, Core/Portable/SignatureHelp/SignatureHelpTriggerInfo.cs
 
+#if !NoCompletion
 namespace Altaxo.CodeEditing.SignatureHelp
 {
   public struct SignatureHelpTriggerInfo
@@ -19,3 +20,4 @@ namespace Altaxo.CodeEditing.SignatureHelp
     }
   }
 }
+#endif

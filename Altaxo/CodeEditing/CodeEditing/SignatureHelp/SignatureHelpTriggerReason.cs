@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, Features, Core/Portable/SignatureHelp/SignatureHelpTriggerReason.cs
 
+#if !NoCompletion
 namespace Altaxo.CodeEditing.SignatureHelp
 {
   public enum SignatureHelpTriggerReason
@@ -11,3 +12,4 @@ namespace Altaxo.CodeEditing.SignatureHelp
     RetriggerCommand
   }
 }
+#endif

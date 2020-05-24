@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, Features, Core/Portable/SignatureHelp/SignatureHelpItems.cs
 
+#if !NoCompletion
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis.Text;
@@ -33,3 +34,4 @@ namespace Altaxo.CodeEditing.SignatureHelp
     }
   }
 }
+#endif
