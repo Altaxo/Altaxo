@@ -30,11 +30,12 @@ namespace Altaxo.CodeEditing
   {
     public static RoslynHost Instance { get; private set; }
 
+#if !NoDocumentation
     /// <summary>
     /// In order to have access to DocumentationProviderService, which is located inside a sealed internal class, you have i) to name the assembly "RoslynETAHost" and ii) sign the assembly with the roslyn private key.
     /// </summary>
     private readonly IDocumentationProviderService _documentationProviderService;
-
+#endif
     /// <summary>
     /// Path to the framework assemblies. Used by the documentation service to get the xml documentation of the framework assemblies.
     /// </summary>
@@ -99,7 +100,9 @@ namespace Altaxo.CodeEditing
 
       MefHost = MefHostServices.Create(_compositionContext);
 
+#if !NoDocumentation
       _documentationProviderService = new Altaxo.CodeEditing.Documentation.DocumentationProviderServiceFactory.DocumentationProviderService();
+#endif
 
 #if !NoDiagnostics
       _diagnosticsService = GetService<Microsoft.CodeAnalysis.Diagnostics.IDiagnosticService>(); // instantiate diagnostics service to get it working
@@ -162,8 +165,14 @@ namespace Altaxo.CodeEditing
     /// <returns>A metadata reference.</returns>
     public MetadataReference CreateMetadataReference(string assemblyLocation)
     {
+#if !NoDocumentation
       return MetadataReference.CreateFromFile(assemblyLocation, documentation: GetDocumentationProvider(assemblyLocation));
+#else
+      return MetadataReference.CreateFromFile(assemblyLocation);
+#endif
     }
+
+#if !NoDocumentation
 
     public DocumentationProvider GetDocumentationProvider(string location)
     {
@@ -181,6 +190,7 @@ namespace Altaxo.CodeEditing
       }
       return null;
     }
+#endif
 
     public TService GetService<TService>()
     {
