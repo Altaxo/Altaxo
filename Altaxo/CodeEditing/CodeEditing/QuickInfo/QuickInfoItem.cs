@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/Extensibility/QuickInfo/QuickInfoItem.cs
 
+#if !NoQuickInfo
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,3 +27,4 @@ namespace Altaxo.CodeEditing.QuickInfo
     }
   }
 }
+#endif

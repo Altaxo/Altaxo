@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+#if !NoQuickInfo
+using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Text;
@@ -334,3 +336,4 @@ namespace Altaxo.CodeEditing.QuickInfo
     }
   }
 }
+#endif

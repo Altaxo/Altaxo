@@ -30,7 +30,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Altaxo.CodeEditing.QuickInfo;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Indentation;
@@ -64,6 +63,10 @@ using Microsoft.CodeAnalysis.Editor.CSharp.GoToDefinition;
 
 #if !NoLiveDocumentFormatting
 using Altaxo.CodeEditing.LiveDocumentFormatting;
+#endif
+
+#if !NoQuickInfo
+using Altaxo.CodeEditing.QuickInfo;
 #endif
 
 #if !NoReferenceHighlighting
@@ -120,6 +123,8 @@ namespace Altaxo.CodeEditing
     public ICSharpCode.AvalonEdit.Highlighting.HighlightingColorizer HighlightingColorizer { get; }
 #endif
 
+#if !NoQuickInfo
+
     /// <summary>
     /// Gets or sets the quick information provider.
     /// (If the mouse hovers over an item, it displays short information about the item).
@@ -128,6 +133,7 @@ namespace Altaxo.CodeEditing
     /// The quick information provider.
     /// </value>
     public QuickInfo.IQuickInfoProvider QuickInfoProvider { get; set; }
+#endif
 
 #if !NoFolding
     /// <summary>
@@ -252,7 +258,10 @@ namespace Altaxo.CodeEditing
 #if !NoSemanticHighlighting
       HighlightingColorizer = new SemanticHighlighting.SemanticHighlightingColorizer(this, Workspace, DocumentId);
 #endif
+
+#if !NoQuickInfo
       QuickInfoProvider = _roslynHost.GetService<QuickInfo.IQuickInfoProvider>();
+#endif
 
 #if !NoFolding
       FoldingStrategy = new SyntaxTreeFoldingStrategy();
@@ -399,6 +408,7 @@ namespace Altaxo.CodeEditing
     #endregion Syntax highlighting
 
     #region QuickInfo
+#if !NoQuickInfo
 
     public virtual async Task<QuickInfo.QuickInfoItem> GetToolTipAsync(int cursorPosition)
     {
@@ -415,6 +425,7 @@ namespace Altaxo.CodeEditing
       }
     }
 
+#endif
     #endregion QuickInfo
 
     #region Folding

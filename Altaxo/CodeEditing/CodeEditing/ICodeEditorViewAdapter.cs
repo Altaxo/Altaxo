@@ -82,12 +82,14 @@ namespace Altaxo.CodeEditing
     ICSharpCode.AvalonEdit.Highlighting.HighlightingColorizer HighlightingColorizer { get; }
 #endif
 
+#if !NoQuickInfo
     /// <summary>
     /// Gets the quick info tool tip.
     /// </summary>
     /// <param name="cursorPosition">The cursor position.</param>
     /// <returns>The quick info tool tip, or null.</returns>
     Task<QuickInfo.QuickInfoItem> GetToolTipAsync(int cursorPosition);
+#endif
 
 #if !NoFolding
     /// <summary>

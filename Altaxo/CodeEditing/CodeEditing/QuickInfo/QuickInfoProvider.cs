@@ -2,6 +2,7 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, QuickInfo/QuickInfoProvider.cs
 
+#if !NoQuickInfo
 extern alias MCW;
 using System;
 using System.Collections.Generic;
@@ -501,3 +502,4 @@ namespace Altaxo.CodeEditing.QuickInfo
     object Create();
   }
 }
+#endif

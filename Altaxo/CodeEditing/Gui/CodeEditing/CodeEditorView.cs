@@ -195,7 +195,9 @@ namespace Altaxo.Gui.CodeEditing
 
       _foldingManager = FoldingManager.Install(TextArea);
 
+#if !NoQuickInfo
       AsyncToolTipRequest = AsyncToolTipRequestDefaultImpl;
+#endif
 
 #if !NoBraceMatching
       {
@@ -577,16 +579,11 @@ namespace Altaxo.Gui.CodeEditing
     }
 
     #region QuickInfo
-
-    public static readonly RoutedEvent ToolTipRequestEvent = EventManager.RegisterRoutedEvent("ToolTipRequest",
-        RoutingStrategy.Bubble, typeof(ToolTipRequestEventHandler), typeof(CodeEditorView));
-
-    public Func<ToolTipRequestEventArgs, Task> AsyncToolTipRequest { get; set; }
+#if !NoQuickInfo
 
     protected virtual async Task AsyncToolTipRequestDefaultImpl(ToolTipRequestEventArgs arg)
     {
-      var adapter = _adapter;
-      if (null != adapter)
+      if (_adapter is { } adapter)
       {
         var info = await adapter.GetToolTipAsync(arg.Position);
         if (null != info)
@@ -595,6 +592,12 @@ namespace Altaxo.Gui.CodeEditing
         }
       }
     }
+#endif
+
+    public static readonly RoutedEvent ToolTipRequestEvent = EventManager.RegisterRoutedEvent("ToolTipRequest",
+        RoutingStrategy.Bubble, typeof(ToolTipRequestEventHandler), typeof(CodeEditorView));
+
+    public Func<ToolTipRequestEventArgs, Task> AsyncToolTipRequest { get; set; }
 
     public event ToolTipRequestEventHandler ToolTipRequest
     {
@@ -647,10 +650,12 @@ namespace Altaxo.Gui.CodeEditing
 
       if (args.ContentToShow == null)
       {
+#if !NoQuickInfo
         if (AsyncToolTipRequest != null)
         {
           await AsyncToolTipRequest.Invoke(args).ConfigureAwait(true);
         }
+#endif
       }
 
       if (args.ContentToShow == null)
