@@ -177,8 +177,9 @@ namespace Altaxo.Gui.CodeEditing
 
 #if !NoCompletion
       TextArea.TextEntering += OnTextEntering;
-      TextArea.TextEntered += OnTextEntered;
 #endif
+
+      TextArea.TextEntered += OnTextEntered;
 
       TextArea.MouseWheel += OnTextArea_MouseWheel;
 
@@ -715,13 +716,14 @@ namespace Altaxo.Gui.CodeEditing
 
     #endregion Open & Save File
 
-    #region Code Completion
-#if !NoCompletion
+
     private void OnTextEntered(object sender, TextCompositionEventArgs textCompositionEventArgs)
     {
-      // ReSharper disable once UnusedVariable
+#if !NoCompletion
       var task = ShowCompletion(TriggerMode.Text);
+#endif
 
+#if !NoLiveDocumentFormatting
       // Format document when entering closing curly brace or semicolon
       var lastChar = Document.GetCharAt(CaretOffset - 1);
       if (lastChar == '}' || lastChar == ';')
@@ -731,7 +733,12 @@ namespace Altaxo.Gui.CodeEditing
           adapter.FormatDocumentAfterEnteringTriggerChar(CaretOffset, lastChar);
         }
       }
+#endif
     }
+
+    #region Code Completion
+#if !NoCompletion
+
 
     private async Task ShowCompletion(TriggerMode triggerMode)
     {

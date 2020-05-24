@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#if !NoLiveDocumentFormatting
 extern alias MCW;
 using System;
 using System.Collections.Generic;
@@ -47,3 +48,4 @@ namespace Altaxo.CodeEditing.LiveDocumentFormatting
     Task FormatDocumentAfterEnteringTriggerChar(Workspace workspace, DocumentId documentId, RoslynSourceTextContainerAdapter sourceText, int caretPosition, char triggerChar);
   }
 }
+#endif

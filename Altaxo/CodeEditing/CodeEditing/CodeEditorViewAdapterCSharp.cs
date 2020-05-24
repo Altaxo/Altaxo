@@ -30,7 +30,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Altaxo.CodeEditing.LiveDocumentFormatting;
 using Altaxo.CodeEditing.QuickInfo;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Folding;
@@ -61,6 +60,10 @@ using Altaxo.CodeEditing.Folding;
 
 #if !NoGotoDefinition
 using Microsoft.CodeAnalysis.Editor.CSharp.GoToDefinition;
+#endif
+
+#if !NoLiveDocumentFormatting
+using Altaxo.CodeEditing.LiveDocumentFormatting;
 #endif
 
 #if !NoReferenceHighlighting
@@ -188,6 +191,7 @@ namespace Altaxo.CodeEditing
     /// </value>
     public IIndentationStrategy IndentationStrategy { get; set; }
 
+#if !NoLiveDocumentFormatting
     /// <summary>
     /// Gets or sets the live document formatter.
     /// Responsible for formatting the code if the user enters a trigger char, like a semicolon or a closing brace.
@@ -196,6 +200,7 @@ namespace Altaxo.CodeEditing
     /// The live document formatter.
     /// </value>
     public ILiveDocumentFormatter LiveDocumentFormatter { get; set; }
+#endif
 
 #if !NoExternalHelp
     /// <summary>
@@ -266,7 +271,10 @@ namespace Altaxo.CodeEditing
 #endif
       RenamingService = new Renaming.RenamingService();
       IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.CSharp.CSharpIndentationStrategy();
+
+#if !NoLiveDocumentFormatting
       LiveDocumentFormatter = new LiveDocumentFormatterCSharp();
+#endif
 
 #if !NoExternalHelp
       ExternalHelpProvider = new ExternalHelp.ExternalHelpProvider();
@@ -546,6 +554,7 @@ namespace Altaxo.CodeEditing
       SourceTextAdapter.ApplyTextChangesToAvalonEdit(textChanges);
     }
 
+#if !NoLiveDocumentFormatting
     /// <summary>
     /// Formats the document after entering a trigger character. Trigger chars are e.g. closing curly brace (then format whole paragraph)
     /// or semicolon (then format line).
@@ -561,6 +570,7 @@ namespace Altaxo.CodeEditing
         await formatter.FormatDocumentAfterEnteringTriggerChar(Workspace, DocumentId, SourceTextAdapter, caretPosition, triggerChar).ConfigureAwait(false);
       }
     }
+#endif
 
     #endregion Document formatting
 

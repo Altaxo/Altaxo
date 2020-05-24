@@ -156,6 +156,8 @@ namespace Altaxo.CodeEditing
     /// <returns></returns>
     Task FormatDocument();
 
+
+#if !NoLiveDocumentFormatting
     /// <summary>
     /// Formats the document after entering a trigger character. Trigger chars are e.g. closing curly brace (then format whole paragraph)
     /// or semicolon (then format line).
@@ -164,6 +166,7 @@ namespace Altaxo.CodeEditing
     /// <param name="triggerChar">The trigger char.</param>
     /// <returns></returns>
     Task FormatDocumentAfterEnteringTriggerChar(int caretPosition, char triggerChar);
+#endif
 
 
 

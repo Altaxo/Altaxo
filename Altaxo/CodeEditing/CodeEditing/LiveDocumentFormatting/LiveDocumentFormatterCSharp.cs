@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#if !NoLiveDocumentFormatting
 extern alias MCW;
 using System;
 using System.Collections.Generic;
@@ -116,3 +117,4 @@ namespace Altaxo.CodeEditing.LiveDocumentFormatting
     }
   }
 }
+#endif
