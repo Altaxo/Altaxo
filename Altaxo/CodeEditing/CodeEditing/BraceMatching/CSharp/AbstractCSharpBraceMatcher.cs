@@ -2,6 +2,8 @@
 
 // Originated from: Roslyn, EditorFeatures, CSharp/BraceMatching/AbstractCSharpBraceMatcher.cs
 
+#if !NoBraceMatching
+
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace Altaxo.CodeEditing.BraceMatching.CSharp
@@ -15,3 +17,4 @@ namespace Altaxo.CodeEditing.BraceMatching.CSharp
     }
   }
 }
+#endif

@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/Implementation/BraceMatching/BraceMatchingService.cs
 
+#if !NoBraceMatching
 extern alias MCW;
 using System;
 using System.Collections.Generic;
@@ -53,3 +54,4 @@ namespace Altaxo.CodeEditing.BraceMatching
     }
   }
 }
+#endif

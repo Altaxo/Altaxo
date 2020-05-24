@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/Extensibility/BraceMatching/AbstractDirectiveTriviaBraceMatcher.cs
 
+#if !NoBraceMatching
 extern alias MCW;
 using System.Collections.Generic;
 using System.Threading;
@@ -77,3 +78,4 @@ namespace Altaxo.CodeEditing.BraceMatching
     }
   }
 }
+#endif

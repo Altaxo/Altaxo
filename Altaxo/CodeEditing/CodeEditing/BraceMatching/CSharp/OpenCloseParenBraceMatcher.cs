@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, EditorFeatures, CSharp/BraceMatching/OpenCloseParenBraceMatcher.cs
 
+#if !NoBraceMatching
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -16,3 +17,4 @@ namespace Altaxo.CodeEditing.BraceMatching.CSharp
     }
   }
 }
+#endif

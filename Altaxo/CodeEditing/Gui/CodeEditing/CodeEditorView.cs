@@ -34,7 +34,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Altaxo.CodeEditing;
-using Altaxo.Gui.CodeEditing.BraceMatching;
 using Altaxo.Gui.CodeEditing.TextMarkerHandling;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.CodeCompletion;
@@ -43,6 +42,11 @@ using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Folding;
 using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
+
+#if !NoBraceMatching
+using Altaxo.Gui.CodeEditing.BraceMatching;
+#endif
+
 
 #if !NoDiagnostics
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -79,8 +83,10 @@ namespace Altaxo.Gui.CodeEditing
     /// </summary>
     protected FoldingManager _foldingManager;
 
+#if !NoBraceMatching
     /// <summary>Gui component that highlights pairs of matching braces or other pairing items.</summary>
     private BracketHighlightRenderer _bracketHighlightRenderer;
+#endif
 
     /// <summary>
     /// Gui component responsible for wriggles under the text that show pre-diagnostics.
@@ -180,11 +186,13 @@ namespace Altaxo.Gui.CodeEditing
 
       AsyncToolTipRequest = AsyncToolTipRequestDefaultImpl;
 
+#if !NoBraceMatching
       {
         // responsible for rendering brace matches
         _bracketHighlightRenderer = new BracketHighlightRenderer(TextArea.TextView);
         TextArea.Caret.PositionChanged += HighlightBrackets;
       }
+#endif
 
       _textMarkerService = new TextMarkerService(this);
       // _errorMargin = new ErrorMargin { Visibility = Visibility.Collapsed, MarkerBrush = TryFindResource("ExceptionMarker") as Brush, Width = 10 };
@@ -313,6 +321,7 @@ namespace Altaxo.Gui.CodeEditing
     #endregion Diagnostics (wriggles under the code text)
 
     #region Bracket Highlighting (matching brackets are highlighted)
+#if !NoBraceMatching
 
     /// <summary>
     /// Highlights matching brackets.
@@ -326,6 +335,7 @@ namespace Altaxo.Gui.CodeEditing
       }
     }
 
+#endif
     #endregion Bracket Highlighting (matching brackets are highlighted)
 
     #region Reference highlighting (all identical items are highlighted)

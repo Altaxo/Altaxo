@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, Workspaces, Core/Portable/Workspace/Host/Mef/LanguageMetadata.cs
 
+#if !NoBraceMatching
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,3 +39,4 @@ namespace Altaxo.CodeEditing.BraceMatching
     }
   }
 }
+#endif

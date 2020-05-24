@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/Extensibility/BraceMatching/IBraceMatcher.cs
 
+#if !NoBraceMatching
 extern alias MCW;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,3 +16,4 @@ namespace Altaxo.CodeEditing.BraceMatching
     Task<BraceMatchingResult?> FindBracesAsync(Document document, int position, CancellationToken cancellationToken = default(CancellationToken));
   }
 }
+#endif

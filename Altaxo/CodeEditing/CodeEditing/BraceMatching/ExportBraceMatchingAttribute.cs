@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/Extensibility/BraceMatching/ExportBraceMatcherAttribute.cs
 
+#if !NoBraceMatching
 using System;
 using System.Composition;
 
@@ -20,3 +21,4 @@ namespace Altaxo.CodeEditing.BraceMatching
     }
   }
 }
+#endif

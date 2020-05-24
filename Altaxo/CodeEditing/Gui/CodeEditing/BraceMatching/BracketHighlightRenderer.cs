@@ -3,6 +3,8 @@
 
 // Originated from: SharpDevelop, AvalonEdit.Addin, Src/BracketHighlightRenderer.cs
 
+#if !NoBraceMatching
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -100,3 +102,4 @@ namespace Altaxo.Gui.CodeEditing.BraceMatching
 		*/
   }
 }
+#endif

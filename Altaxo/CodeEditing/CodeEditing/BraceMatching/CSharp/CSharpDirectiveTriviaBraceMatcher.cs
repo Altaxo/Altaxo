@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, EditorFeatures, CSharp/BraceMatching/CSharpDirectiveTriviaBraceMatcher.cs
 
+#if !NoBraceMatching
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,3 +32,4 @@ namespace Altaxo.CodeEditing.BraceMatching.CSharp
 	}
 	*/
 }
+#endif

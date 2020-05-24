@@ -2,6 +2,7 @@
 
 // Originated from: Roslyn, EditorFeatures, CSharp/BraceMatching/StringLiteralBraceMatcher.cs
 
+#if !NoBraceMatching
 extern alias MCW;
 using System.Threading;
 using System.Threading.Tasks;
@@ -66,3 +67,4 @@ namespace Altaxo.CodeEditing.BraceMatching.CSharp
     }
   }
 }
+#endif

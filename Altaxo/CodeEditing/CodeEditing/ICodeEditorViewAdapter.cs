@@ -30,11 +30,15 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Altaxo.CodeEditing.BraceMatching;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Indentation;
 using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
+
+#if !NoBraceMatching
+using Altaxo.CodeEditing.BraceMatching;
+#endif
+
 
 #if !NoDiagnostics
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -92,6 +96,7 @@ namespace Altaxo.CodeEditing
     /// <returns>Enumeration of foldings.</returns>
     IEnumerable<NewFolding> GetNewFoldings();
 
+#if !NoBraceMatching
     /// <summary>
     /// Gets the matching braces asynchronously.
     /// </summary>
@@ -99,6 +104,7 @@ namespace Altaxo.CodeEditing
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>Matching braces</returns>
     Task<BraceMatchingResult?> GetMatchingBracesAsync(int position, CancellationToken cancellationToken = default(CancellationToken));
+#endif
 
 #if !NoDiagnostics
     /// <summary>

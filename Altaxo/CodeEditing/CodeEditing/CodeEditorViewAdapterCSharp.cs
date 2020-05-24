@@ -30,7 +30,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Altaxo.CodeEditing.BraceMatching;
 using Altaxo.CodeEditing.Completion;
 using Altaxo.CodeEditing.Folding;
 using Altaxo.CodeEditing.LiveDocumentFormatting;
@@ -45,6 +44,10 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editor;
 using Microsoft.CodeAnalysis.Text;
+
+#if !NoBraceMatching
+using Altaxo.CodeEditing.BraceMatching;
+#endif
 
 #if !NoDiagnostics
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -125,6 +128,7 @@ namespace Altaxo.CodeEditing
     /// </value>
     public SyntaxTreeFoldingStrategy FoldingStrategy { get; set; }
 
+#if !NoBraceMatching
     /// <summary>
     /// Gets or sets the brace matching service.
     /// Responsible for highlighting matching pairs of braces, brackets, etc.
@@ -133,6 +137,7 @@ namespace Altaxo.CodeEditing
     /// The brace matching service.
     /// </value>
     public IBraceMatchingService BraceMatchingService { get; set; }
+#endif
 
 #if !NoReferenceHighlighting
     /// <summary>
@@ -231,7 +236,11 @@ namespace Altaxo.CodeEditing
 #endif
       QuickInfoProvider = _roslynHost.GetService<QuickInfo.IQuickInfoProvider>();
       FoldingStrategy = new SyntaxTreeFoldingStrategy();
+
+#if !NoBraceMatching
       BraceMatchingService = _roslynHost.GetService<IBraceMatchingService>();
+#endif
+
 #if !NoReferenceHighlighting
       ReferenceHighlightService = new Microsoft.CodeAnalysis.CSharp.DocumentHighlighting.CSharpDocumentHighlightsService();
 #endif
@@ -401,6 +410,7 @@ namespace Altaxo.CodeEditing
     #endregion Folding
 
     #region Brace matching
+#if !NoBraceMatching
 
     /// <summary>
     /// Gets the matching braces asynchronously.
@@ -421,7 +431,7 @@ namespace Altaxo.CodeEditing
         return null;
       }
     }
-
+#endif
     #endregion Brace matching
 
     #region Diagnostics
