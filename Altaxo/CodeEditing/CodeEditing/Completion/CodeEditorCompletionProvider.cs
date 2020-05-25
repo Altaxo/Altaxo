@@ -93,13 +93,13 @@ namespace Altaxo.CodeEditing.Completion
         if (data != null && data.Items.Any())
         {
           useHardSelection = data.SuggestionModeItem == null;
-          var helper = CompletionHelper.GetHelper(document, completionService);
+          var helper = Microsoft.CodeAnalysis.Completion.CompletionHelper.GetHelper(document);
           var text = await document.GetTextAsync().ConfigureAwait(false);
           var textSpanToText = new Dictionary<TextSpan, string>();
 
           completionData = data.Items
               .Where(item => MatchesFilterText(helper, item, text, textSpanToText))
-              .Select(item => new RoslynCompletionData(document, item, triggerChar, _snippetService.SnippetManager))
+              .Select(item => new AvalonEditCompletionItem(document, item, triggerChar, _snippetService.SnippetManager))
                   .ToArray<ICompletionDataEx>();
         }
         else
@@ -111,12 +111,12 @@ namespace Altaxo.CodeEditing.Completion
       return new CompletionResult(completionData, overloadProvider, useHardSelection);
     }
 
-    private static bool MatchesFilterText(CompletionHelper helper, CompletionItem item, SourceText text, Dictionary<TextSpan, string> textSpanToText)
+    private static bool MatchesFilterText(Microsoft.CodeAnalysis.Completion.CompletionHelper helper, CompletionItem item, SourceText text, Dictionary<TextSpan, string> textSpanToText)
     {
       var filterText = GetFilterText(item, text, textSpanToText);
       if (string.IsNullOrEmpty(filterText))
         return true;
-      return helper.MatchesFilterText(item, filterText);
+      return helper.MatchesPattern(item.FilterText, filterText, System.Globalization.CultureInfo.InvariantCulture);
     }
 
     private static string GetFilterText(CompletionItem item, SourceText text, Dictionary<TextSpan, string> textSpanToText)

@@ -2,13 +2,15 @@
 
 // Originated from: RoslynPad, RoslynPad.Editor.Windows, CompletionResult.cs
 
+#if !NoCompletion
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.CodeEditing.SignatureHelp;
 
-namespace Altaxo.CodeEditing
+namespace Altaxo.CodeEditing.Completion
 {
   public sealed class CompletionResult
   {
@@ -26,3 +28,4 @@ namespace Altaxo.CodeEditing
     public IOverloadProviderEx OverloadProvider { get; }
   }
 }
+#endif

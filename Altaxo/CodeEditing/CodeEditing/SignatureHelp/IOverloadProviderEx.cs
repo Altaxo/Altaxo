@@ -2,18 +2,18 @@
 
 // Originated from: RoslynPad, RoslynPad.Editor.Windows, ICompletionDataEx.cs
 
+#if !NoCompletion
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.CodeEditing
+namespace Altaxo.CodeEditing.SignatureHelp
 {
-  public interface ICompletionDataEx : ICSharpCode.AvalonEdit.CodeCompletion.ICompletionData
+  public interface IOverloadProviderEx : ICSharpCode.AvalonEdit.CodeCompletion.IOverloadProvider
   {
-    bool IsSelected { get; }
-
-    string SortText { get; }
+    void Refresh();
   }
 }
+#endif

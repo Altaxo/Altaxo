@@ -141,7 +141,7 @@ namespace Altaxo.CodeEditing
 #endif
 
 #if !NoCompletion
-    Task<CompletionResult> GetCompletionData(int position, char? triggerChar, bool useSignatureHelp);
+    Task<Completion.CompletionResult> GetCompletionData(int position, char? triggerChar, bool useSignatureHelp);
 #endif
 
     /// <summary>

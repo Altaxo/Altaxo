@@ -47,6 +47,9 @@ using Microsoft.CodeAnalysis;
 using Altaxo.Gui.CodeEditing.BraceMatching;
 #endif
 
+#if !NoCompletion
+using Altaxo.CodeEditing.Completion;
+#endif
 
 #if !NoDiagnostics
 using Microsoft.CodeAnalysis.Diagnostics;

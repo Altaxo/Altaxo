@@ -2,16 +2,18 @@
 
 // Originated from: RoslynPad, RoslynPad.Editor.Windows, ICodeEditorCompletionProvider.cs
 
+#if !NoCompletion
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.CodeEditing
+namespace Altaxo.CodeEditing.Completion
 {
   public interface ICodeEditorCompletionProvider
   {
     Task<CompletionResult> GetCompletionData(int position, char? triggerChar, bool useSignatureHelp);
   }
 }
+#endif

@@ -25,7 +25,13 @@ namespace Altaxo.CodeEditing.Completion
   using Altaxo.Gui.CodeEditing;
   using SnippetHandling;
 
-  internal sealed class RoslynCompletionData : ICompletionDataEx, INotifyPropertyChanged
+  /// <summary>
+  /// Implements an AvalonEdit compatible completion item.
+  /// </summary>
+  /// <seealso cref="ICSharpCode.AvalonEdit.CodeCompletion.ICompletionData" />
+  /// <seealso cref="Altaxo.CodeEditing.ICompletionDataEx" />
+  /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
+  internal sealed class AvalonEditCompletionItem : ICompletionDataEx, INotifyPropertyChanged
   {
     private readonly Document _document;
     private readonly CompletionItem _item;
@@ -34,7 +40,7 @@ namespace Altaxo.CodeEditing.Completion
     private readonly Glyph? _glyph;
     private object _description;
 
-    public RoslynCompletionData(Document document, CompletionItem item, char? completionChar, SnippetManager snippetManager)
+    public AvalonEditCompletionItem(Document document, CompletionItem item, char? completionChar, SnippetManager snippetManager)
     {
       _document = document;
       _item = item;
@@ -49,11 +55,20 @@ namespace Altaxo.CodeEditing.Completion
       }
     }
 
+    /// <summary>
+    /// Performs the completion.
+    /// </summary>
+    /// <param name="textArea">The text area on which completion is performed.</param>
+    /// <param name="completionSegment">The text segment that was used by the completion window if
+    /// the user types (segment between CompletionWindow.StartOffset and CompletionWindow.EndOffset).</param>
+    /// <param name="insertionRequestEventArgs">The EventArgs used for the insertion request.
+    /// These can be TextCompositionEventArgs, KeyEventArgs, MouseEventArgs, depending on how
+    /// the insertion was triggered.</param>
     public async void Complete(TextArea textArea, ISegment completionSegment, EventArgs e)
     {
       if (_glyph == Glyph.Snippet && CompleteSnippet(textArea, completionSegment, e))
       {
-        return;
+        return; // if this was a snippet and the snippet replacement was successfull, then return
       }
 
       var changes = await CompletionService.GetService(_document)
@@ -110,17 +125,30 @@ namespace Altaxo.CodeEditing.Completion
       return false;
     }
 
+    /// <summary>
+    /// Gets the image.
+    /// </summary>
     public ImageSource Image { get; }
 
+    /// <summary>
+    /// Gets the text. This property is used to filter the list of visible elements.
+    /// </summary>
     public string Text { get; }
 
+    /// <summary>
+    /// The displayed content. This can be the same as 'Text', or a WPF UIElement if
+    /// you want to display rich content.
+    /// </summary>
     public object Content { get; }
 
+    /// <summary>
+    /// Gets the description.
+    /// </summary>
     public object Description
     {
       get
       {
-        if (_description == null)
+        if (_description is null)
         {
           RetrieveDescription();
         }
@@ -135,11 +163,22 @@ namespace Altaxo.CodeEditing.Completion
       OnPropertyChanged(nameof(Description));
     }
 
-    // ReSharper disable once UnusedAutoPropertyAccessor.Local
-    public double Priority { get; private set; }
+    /// <summary>
+    /// Gets the priority. This property is used in the selection logic. You can use it to prefer selecting those items
+    /// which the user is accessing most frequently.
+    /// </summary>
+    public double Priority { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether this completion item is preselected.
+    /// </summary>
     public bool IsSelected => _item.Rules.MatchPriority == MatchPriority.Preselect;
 
+    /// <summary>
+    /// The text used to determine the order that the item appears in the list. This
+    /// is often the same as the Microsoft.CodeAnalysis.Completion.CompletionItem.DisplayText
+    /// but may be different in certain circumstances.
+    /// </summary>
     public string SortText => _item.SortText;
 
     public event PropertyChangedEventHandler PropertyChanged;
