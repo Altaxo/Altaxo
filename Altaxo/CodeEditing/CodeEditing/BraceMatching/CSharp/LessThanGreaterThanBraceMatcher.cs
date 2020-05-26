@@ -3,6 +3,7 @@
 // Originated from: Roslyn, EditorFeatures, CSharp/BraceMatching/LessThanGreaterThanBraceMatcher.cs
 
 #if !NoBraceMatching
+using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -11,8 +12,9 @@ namespace Altaxo.CodeEditing.BraceMatching.CSharp
   [ExportBraceMatcher(LanguageNames.CSharp)]
   internal class LessThanGreaterThanBraceMatcher : AbstractCSharpBraceMatcher
   {
+    [ImportingConstructor]
     public LessThanGreaterThanBraceMatcher()
-        : base(SyntaxKind.LessThanToken, SyntaxKind.GreaterThanToken)
+    : base(SyntaxKind.LessThanToken, SyntaxKind.GreaterThanToken)
     {
     }
   }

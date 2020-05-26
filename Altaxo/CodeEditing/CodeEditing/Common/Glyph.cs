@@ -14,81 +14,114 @@ namespace Altaxo.CodeEditing.Common
 
   public enum Glyph
   {
-    None = 0,
-    Assembly = 1,
-    BasicFile = 2,
-    BasicProject = 3,
-    ClassPublic = 4,
-    ClassProtected = 5,
-    ClassPrivate = 6,
-    ClassInternal = 7,
-    CSharpFile = 8,
-    CSharpProject = 9,
-    ConstantPublic = 10,
-    ConstantProtected = 11,
-    ConstantPrivate = 12,
-    ConstantInternal = 13,
-    DelegatePublic = 14,
-    DelegateProtected = 15,
-    DelegatePrivate = 16,
-    DelegateInternal = 17,
-    EnumPublic = 18,
-    EnumProtected = 19,
-    EnumPrivate = 20,
-    EnumInternal = 21,
-    EnumMemberPublic = 22,
-    EnumMemberProtected = 23,
-    EnumMemberPrivate = 24,
-    EnumMemberInternal = 25,
-    Error = 26,
-    StatusInformation = 27,
-    EventPublic = 28,
-    EventProtected = 29,
-    EventPrivate = 30,
-    EventInternal = 31,
-    ExtensionMethodPublic = 32,
-    ExtensionMethodProtected = 33,
-    ExtensionMethodPrivate = 34,
-    ExtensionMethodInternal = 35,
-    FieldPublic = 36,
-    FieldProtected = 37,
-    FieldPrivate = 38,
-    FieldInternal = 39,
-    InterfacePublic = 40,
-    InterfaceProtected = 41,
-    InterfacePrivate = 42,
-    InterfaceInternal = 43,
-    Intrinsic = 44,
-    Keyword = 45,
-    Label = 46,
-    Local = 47,
-    Namespace = 48,
-    MethodPublic = 49,
-    MethodProtected = 50,
-    MethodPrivate = 51,
-    MethodInternal = 52,
-    ModulePublic = 53,
-    ModuleProtected = 54,
-    ModulePrivate = 55,
-    ModuleInternal = 56,
-    OpenFolder = 57,
-    Operator = 58,
-    Parameter = 59,
-    PropertyPublic = 60,
-    PropertyProtected = 61,
-    PropertyPrivate = 62,
-    PropertyInternal = 63,
-    RangeVariable = 64,
-    Reference = 65,
-    StructurePublic = 66,
-    StructureProtected = 67,
-    StructurePrivate = 68,
-    StructureInternal = 69,
-    TypeParameter = 70,
-    Snippet = 71,
-    CompletionWarning = 72,
-    AddReference = 73,
-    NuGet = 74,
-    TargetTypeMatch = 75
+
+        None,
+
+        Assembly,
+
+        BasicFile,
+        BasicProject,
+
+        ClassPublic,
+        ClassProtected,
+        ClassPrivate,
+        ClassInternal,
+
+        CSharpFile,
+        CSharpProject,
+
+        ConstantPublic,
+        ConstantProtected,
+        ConstantPrivate,
+        ConstantInternal,
+
+        DelegatePublic,
+        DelegateProtected,
+        DelegatePrivate,
+        DelegateInternal,
+
+        EnumPublic,
+        EnumProtected,
+        EnumPrivate,
+        EnumInternal,
+
+        EnumMemberPublic,
+        EnumMemberProtected,
+        EnumMemberPrivate,
+        EnumMemberInternal,
+
+        Error,
+        StatusInformation,
+
+        EventPublic,
+        EventProtected,
+        EventPrivate,
+        EventInternal,
+
+        ExtensionMethodPublic,
+        ExtensionMethodProtected,
+        ExtensionMethodPrivate,
+        ExtensionMethodInternal,
+
+        FieldPublic,
+        FieldProtected,
+        FieldPrivate,
+        FieldInternal,
+
+        InterfacePublic,
+        InterfaceProtected,
+        InterfacePrivate,
+        InterfaceInternal,
+
+        Intrinsic,
+
+        Keyword,
+
+        Label,
+
+        Local,
+
+        Namespace,
+
+        MethodPublic,
+        MethodProtected,
+        MethodPrivate,
+        MethodInternal,
+
+        ModulePublic,
+        ModuleProtected,
+        ModulePrivate,
+        ModuleInternal,
+
+        OpenFolder,
+
+        Operator,
+
+        Parameter,
+
+        PropertyPublic,
+        PropertyProtected,
+        PropertyPrivate,
+        PropertyInternal,
+
+        RangeVariable,
+
+        Reference,
+
+        StructurePublic,
+        StructureProtected,
+        StructurePrivate,
+        StructureInternal,
+
+        TypeParameter,
+
+        Snippet,
+
+        CompletionWarning,
+
+        AddReference,
+        NuGet,
+        TargetTypeMatch
+
   }
 }

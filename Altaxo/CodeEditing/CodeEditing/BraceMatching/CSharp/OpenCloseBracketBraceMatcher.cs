@@ -3,6 +3,7 @@
 // Originated from: Roslyn, EditorFeatures, CSharp/BraceMatching/OpenCloseBracketBraceMatcher.cs
 
 #if !NoBraceMatching
+using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -11,6 +12,7 @@ namespace Altaxo.CodeEditing.BraceMatching.CSharp
   [ExportBraceMatcher(LanguageNames.CSharp)]
   internal class OpenCloseBracketBraceMatcher : AbstractCSharpBraceMatcher
   {
+        [ImportingConstructor]
     public OpenCloseBracketBraceMatcher()
         : base(SyntaxKind.OpenBracketToken, SyntaxKind.CloseBracketToken)
     {

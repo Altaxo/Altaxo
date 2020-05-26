@@ -15,7 +15,7 @@ using MCW::Microsoft.CodeAnalysis.Host;
 using MCW::Microsoft.CodeAnalysis.Host.Mef;
 using MCW::Microsoft.CodeAnalysis.Shared.Extensions;
 using MCW::Roslyn.Utilities;
-using Microsoft.CodeAnalysis.Completion;
+using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Features.RQName;
 using Microsoft.CodeAnalysis.FindUsages;
 using Microsoft.CodeAnalysis.PooledObjects;
@@ -32,10 +32,10 @@ namespace Microsoft.CodeAnalysis.Editor.FindUsages
   [ExportWorkspaceService(typeof(IDefinitionsAndReferencesFactory)), Shared]
   internal class DefaultDefinitionsAndReferencesFactory : IDefinitionsAndReferencesFactory
   {
-        [ImportingConstructor]
-        public DefaultDefinitionsAndReferencesFactory()
-        {
-        }
+    [ImportingConstructor]
+    public DefaultDefinitionsAndReferencesFactory()
+    {
+    }
 
     /// <summary>
     /// Provides an extension point that allows for other workspace layers to add additional
@@ -52,41 +52,41 @@ namespace Microsoft.CodeAnalysis.Editor.FindUsages
   {
     public static DefinitionItem ToNonClassifiedDefinitionItem(
         this ISymbol definition,
-            Project project,
+        Project project,
         bool includeHiddenLocations)
     {
       // Because we're passing in 'false' for 'includeClassifiedSpans', this won't ever have
       // to actually do async work.  This is because the only asynchrony is when we are trying
-      // to compute the classified spans for the locations of the definition.  So it's totally
+      // to compute the classified spans for the locations of the definition.  So it's totally 
       // fine to pass in CancellationToken.None and block on the result.
-            return ToDefinitionItemAsync(
-                definition, project, includeHiddenLocations, includeClassifiedSpans: false,
-                options: FindReferencesSearchOptions.Default, cancellationToken: CancellationToken.None).WaitAndGetResult_CanCallOnBackground(CancellationToken.None);
+      return ToDefinitionItemAsync(
+          definition, project, includeHiddenLocations, includeClassifiedSpans: false,
+          options: FindReferencesSearchOptions.Default, cancellationToken: CancellationToken.None).WaitAndGetResult_CanCallOnBackground(CancellationToken.None);
     }
 
     public static Task<DefinitionItem> ToClassifiedDefinitionItemAsync(
         this ISymbol definition,
-            Project project,
+        Project project,
         bool includeHiddenLocations,
-            FindReferencesSearchOptions options,
+        FindReferencesSearchOptions options,
         CancellationToken cancellationToken)
     {
       return ToDefinitionItemAsync(definition, project,
-                includeHiddenLocations, includeClassifiedSpans: true,
-                options, cancellationToken);
+          includeHiddenLocations, includeClassifiedSpans: true,
+          options, cancellationToken);
     }
 
     private static async Task<DefinitionItem> ToDefinitionItemAsync(
         this ISymbol definition,
-            Project project,
+        Project project,
         bool includeHiddenLocations,
         bool includeClassifiedSpans,
-            FindReferencesSearchOptions options,
+        FindReferencesSearchOptions options,
         CancellationToken cancellationToken)
     {
-      // Ensure we're working with the original definition for the symbol. I.e. When we're
+      // Ensure we're working with the original definition for the symbol. I.e. When we're 
       // creating definition items, we want to create them for types like Dictionary<TKey,TValue>
-      // not some random instantiation of that type.
+      // not some random instantiation of that type.  
       //
       // This ensures that the type will both display properly to the user, as well as ensuring
       // that we can accurately resolve the type later on when we try to navigate to it.
@@ -97,14 +97,14 @@ namespace Microsoft.CodeAnalysis.Editor.FindUsages
 
       var tags = GlyphTags.GetTags(definition.GetGlyph());
       var displayIfNoReferences = definition.ShouldShowWithNoReferenceLocations(
-                options, showMetadataSymbolsWithoutReferences: false);
+          options, showMetadataSymbolsWithoutReferences: false);
 
       var sourceLocations = ArrayBuilder<DocumentSpan>.GetInstance();
 
       var properties = GetProperties(definition);
 
       // If it's a namespace, don't create any normal location.  Namespaces
-      // come from many different sources, but we'll only show a single
+      // come from many different sources, but we'll only show a single 
       // root definition node for it.  That node won't be navigable.
       if (definition.Kind != SymbolKind.Namespace)
       {
@@ -113,7 +113,7 @@ namespace Microsoft.CodeAnalysis.Editor.FindUsages
           if (location.IsInMetadata)
           {
             return DefinitionItem.CreateMetadataDefinition(
-                            tags, displayParts, nameDisplayParts, project,
+                tags, displayParts, nameDisplayParts, project,
                 definition, properties, displayIfNoReferences);
           }
           else if (location.IsInSource)
@@ -198,7 +198,7 @@ namespace Microsoft.CodeAnalysis.Editor.FindUsages
       var documentSpan = await ClassifiedSpansAndHighlightSpanFactory.GetClassifiedDocumentSpanAsync(
           document, sourceSpan, cancellationToken).ConfigureAwait(false);
 
-            return new SourceReferenceItem(definitionItem, documentSpan, referenceLocation.SymbolUsageInfo);
+      return new SourceReferenceItem(definitionItem, documentSpan, referenceLocation.SymbolUsageInfo);
     }
 
     private static SymbolDisplayFormat GetFormat(ISymbol definition)

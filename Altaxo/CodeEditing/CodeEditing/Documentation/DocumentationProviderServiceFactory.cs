@@ -17,6 +17,11 @@ namespace Altaxo.CodeEditing.Documentation
   [ExportWorkspaceServiceFactory(typeof(IDocumentationProviderService), ServiceLayer.Host), Shared]
   internal sealed class DocumentationProviderServiceFactory : IWorkspaceServiceFactory
   {
+        [ImportingConstructor]
+        public DocumentationProviderServiceFactory()
+        {
+        }
+
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
     {
       return new DocumentationProviderService();

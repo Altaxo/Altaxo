@@ -5,7 +5,7 @@
 #if !NoBraceMatching
 using System;
 using System.Collections.Generic;
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -21,10 +21,10 @@ namespace Altaxo.CodeEditing.BraceMatching.CSharp
         ElseDirectiveTriviaSyntax, EndIfDirectiveTriviaSyntax,
         RegionDirectiveTriviaSyntax, EndRegionDirectiveTriviaSyntax>
   {
-    [ImportingConstructor]
-    public CSharpDirectiveTriviaBraceMatcher()
-    {
-    }
+        [ImportingConstructor]
+        public CSharpDirectiveTriviaBraceMatcher()
+        {
+        }
 
     internal override List<DirectiveTriviaSyntax> GetMatchingConditionalDirectives(DirectiveTriviaSyntax directive, CancellationToken cancellationToken)
             => directive.GetMatchingConditionalDirectives(cancellationToken)?.ToList();

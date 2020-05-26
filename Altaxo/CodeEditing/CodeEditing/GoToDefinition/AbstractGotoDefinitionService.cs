@@ -21,7 +21,9 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
   // GoToDefinition
   internal abstract class AbstractGoToDefinitionService : IGoToDefinitionService
   {
-#if !ModifiedForAltaxoCodeEditing
+#if NoModificationForAltaxoCodeEditing
+        private readonly IEnumerable<Lazy<IStreamingFindUsagesPresenter>> _streamingPresenters;
+
     protected AbstractGoToDefinitionService(
             IEnumerable<Lazy<IStreamingFindUsagesPresenter>> streamingPresenters
         )
@@ -59,7 +61,7 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
 
       return GoToDefinitionHelpers.TryGoToDefinition(symbol,
           document.Project,
-#if !ModifiedForAltaxoCodeEditing
+#if NoModificationForAltaxoCodeEditing
           _streamingPresenters,
 #else
           null,
@@ -89,7 +91,7 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
               ? symbolToNavigateTo
               : symbolToNavigateTo.ContainingType;
 
-          if (Equals(containingTypeSymbol, candidateTypeSymbol))
+                    if (Equals(containingTypeSymbol, candidateTypeSymbol))
           {
             // We are navigating from the same type, so don't allow third parties to perform the navigation.
             // This ensures that if we navigate to a class from within that class, we'll stay in the same file

@@ -22,7 +22,7 @@ namespace Microsoft.CodeAnalysis.Editor.Host
     /// Tells the presenter that a search is starting.  The returned <see cref="FindUsagesContext"/>
     /// is used to push information about the search into.  i.e. when a reference is found
     /// <see cref="FindUsagesContext.OnReferenceFoundAsync"/> should be called.  When the
-    /// search completes <see cref="FindUsagesContext.OnCompletedAsync"/> should be called.
+    /// search completes <see cref="FindUsagesContext.OnCompletedAsync"/> should be called. 
     /// etc. etc.
     /// </summary>
     /// <param name="title">A title to display to the user in the presentation of the results.</param>
@@ -52,7 +52,7 @@ namespace Microsoft.CodeAnalysis.Editor.Host
       // Ignore any definitions that we can't navigate to.
       var definitions = items.WhereAsArray(d => d.CanNavigateTo(workspace));
 
-      // See if there's a third party external item we can navigate to.  If so, defer
+      // See if there's a third party external item we can navigate to.  If so, defer 
       // to that item and finish.
       var externalItems = definitions.WhereAsArray(d => d.IsExternal);
       foreach (var item in externalItems)

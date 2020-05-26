@@ -16,14 +16,14 @@ namespace Microsoft.CodeAnalysis.Editor.CSharp.GoToDefinition
   [ExportLanguageService(typeof(IGoToDefinitionService), LanguageNames.CSharp), Shared]
   internal class CSharpGoToDefinitionService : AbstractGoToDefinitionService
   {
-    /*
-		[ImportingConstructor]
+#if NoModificationForAltaxoCodeEditing // can not use this constructor because we don't have streamingPresenters
+    [ImportingConstructor]
 		public CSharpGoToDefinitionService(
 				[ImportMany]IEnumerable<Lazy<IStreamingFindUsagesPresenter>> streamingPresenters)
 				: base(streamingPresenters)
 		{
 		}
-		*/
+#endif
   }
 }
 #endif
