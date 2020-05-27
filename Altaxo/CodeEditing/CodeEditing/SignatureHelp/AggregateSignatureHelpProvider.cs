@@ -13,21 +13,24 @@ using System.Threading;
 using System.Threading.Tasks;
 using MCW::Microsoft.CodeAnalysis;
 using MCW::Microsoft.CodeAnalysis.Host.Mef;
+using MCW::Microsoft.CodeAnalysis.Shared.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.SignatureHelp;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.SignatureHelp
 {
-  [Export(typeof(ISignatureHelpProvider)), Shared]
-  internal sealed class AggregateSignatureHelpProvider : ISignatureHelpProvider
+  [Export(typeof(IAxoSignatureHelpProvider)), Shared]
+  internal sealed class AggregateSignatureHelpProvider : IAxoSignatureHelpProvider
   {
     private ImmutableArray<Microsoft.CodeAnalysis.SignatureHelp.ISignatureHelpProvider> _providers;
 
     [ImportingConstructor]
     public AggregateSignatureHelpProvider([ImportMany] IEnumerable<Lazy<Microsoft.CodeAnalysis.SignatureHelp.ISignatureHelpProvider, OrderableLanguageMetadata>> providers)
     {
-      _providers = providers.Where(x => x.Metadata.Language == LanguageNames.CSharp)
-          .Select(x => x.Value).ToImmutableArray();
+      _providers = ExtensionOrderer.Order(providers) // maybe not neccessary to order them?
+        .Where(x => x.Metadata.Language == LanguageNames.CSharp)
+        .Select(x => x.Value).ToImmutableArray();
     }
 
     public bool IsTriggerCharacter(char ch)
@@ -40,7 +43,7 @@ namespace Altaxo.CodeEditing.SignatureHelp
       return _providers.Any(p => p.IsRetriggerCharacter(ch));
     }
 
-    public async Task<SignatureHelpItems> GetItemsAsync(Document document, int position, SignatureHelpTriggerInfo trigger, CancellationToken cancellationToken)
+    async Task<SignatureHelpItems> IAxoSignatureHelpProvider.GetItemsAsync(Document document, int position, SignatureHelpTriggerInfo trigger, CancellationToken cancellationToken)
     {
       Microsoft.CodeAnalysis.SignatureHelp.SignatureHelpItems bestItems = null;
 
@@ -50,7 +53,7 @@ namespace Altaxo.CodeEditing.SignatureHelp
       {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var currentItems = await provider.GetItemsAsync(document, position, trigger.Inner, cancellationToken).ConfigureAwait(false);
+        var currentItems = await provider.GetItemsAsync(document, position, trigger, cancellationToken).ConfigureAwait(false);
         if (currentItems != null && currentItems.ApplicableSpan.IntersectsWith(position))
         {
           // If another provider provides sig help items, then only take them if they
@@ -70,16 +73,17 @@ namespace Altaxo.CodeEditing.SignatureHelp
 
       if (bestItems != null)
       {
-        var items = new SignatureHelpItems(bestItems);
-        if (items.SelectedItemIndex == null)
+        // var items = new SignatureHelpItems(bestItems);
+        if (bestItems.SelectedItemIndex == null)
         {
-          var bestItem = GetBestItem(null, items.Items, items.ArgumentCount, items.ArgumentName, isCaseSensitive: true);
+          var bestItem = GetBestItem(null, bestItems.Items, bestItems.ArgumentCount, bestItems.ArgumentName, isCaseSensitive: true);
           if (bestItem != null)
           {
-            items.SelectedItemIndex = items.Items.IndexOf(bestItem);
+            int selectedItemIndex = bestItems.Items.IndexOf(bestItem);
+            bestItems = new SignatureHelpItems(bestItems.Items, bestItems.ApplicableSpan, bestItems.ArgumentIndex, bestItems.ArgumentCount, bestItems.ArgumentName, selectedItemIndex);
           }
         }
-        return items;
+        return bestItems;
       }
       return null;
     }

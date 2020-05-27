@@ -11,16 +11,18 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MCW::Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.SignatureHelp;
+
 
 namespace Altaxo.CodeEditing.SignatureHelp
 {
-  public interface ISignatureHelpProvider
+  public interface IAxoSignatureHelpProvider
   {
     bool IsTriggerCharacter(char ch);
 
     bool IsRetriggerCharacter(char ch);
 
-    Task<SignatureHelpItems> GetItemsAsync(Document document, int position, SignatureHelpTriggerInfo triggerInfo, CancellationToken cancellationToken = default(CancellationToken));
+    internal Task<SignatureHelpItems> GetItemsAsync(Document document, int position, SignatureHelpTriggerInfo triggerInfo, CancellationToken cancellationToken = default(CancellationToken));
   }
 }
 #endif

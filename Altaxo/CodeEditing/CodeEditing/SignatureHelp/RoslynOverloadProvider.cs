@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using Altaxo.CodeEditing.Utilities;
 using Altaxo.Gui.CodeEditing;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.SignatureHelp;
 
 namespace Altaxo.CodeEditing.SignatureHelp
 {

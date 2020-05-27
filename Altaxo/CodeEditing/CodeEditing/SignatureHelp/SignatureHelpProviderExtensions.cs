@@ -8,13 +8,14 @@ using System;
 using System.Threading.Tasks;
 using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.SignatureHelp;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.SignatureHelp
 {
   public static class SignatureHelpProviderExtensions
   {
-    public static async Task<bool> IsTriggerCharacter(this ISignatureHelpProvider provider, Document document, int position)
+    internal static async Task<bool> IsTriggerCharacter(this ISignatureHelpProvider provider, Document document, int position)
     {
       if (provider == null)
         throw new ArgumentNullException(nameof(provider));

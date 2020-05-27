@@ -31,10 +31,12 @@ using System.Threading.Tasks;
 using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.CodeAnalysis.SignatureHelp;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.Completion
 {
+  using System.Threading;
   using SignatureHelp;
   using SnippetHandling;
 
@@ -62,7 +64,15 @@ namespace Altaxo.CodeEditing.Completion
       var document = _workspace.CurrentSolution.GetDocument(_documentId);
       if (useSignatureHelp || triggerChar != null)
       {
-        var signatureHelpProvider = _roslynHost.GetService<ISignatureHelpProvider>();
+        IAxoSignatureHelpProvider signatureHelpProvider = null;
+        try
+        {
+          signatureHelpProvider = _roslynHost.GetService<IAxoSignatureHelpProvider>();
+        }
+        catch (Exception ex)
+        {
+
+        }
         var isSignatureHelp = useSignatureHelp || signatureHelpProvider.IsTriggerCharacter(triggerChar.Value);
         if (isSignatureHelp)
         {
@@ -72,7 +82,8 @@ namespace Altaxo.CodeEditing.Completion
               new SignatureHelpTriggerInfo(
                   useSignatureHelp
                       ? SignatureHelpTriggerReason.InvokeSignatureHelpCommand
-                      : SignatureHelpTriggerReason.TypeCharCommand, triggerChar))
+                      : SignatureHelpTriggerReason.TypeCharCommand, triggerChar),
+              CancellationToken.None)
               .ConfigureAwait(false);
           if (signatureHelp != null)
           {
