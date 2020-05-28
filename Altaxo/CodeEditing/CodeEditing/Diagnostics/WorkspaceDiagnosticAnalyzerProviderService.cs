@@ -19,10 +19,10 @@ namespace Altaxo.CodeEditing.Diagnostics
   /// Provides diagnostics for CSharp.
   /// </summary>
   /// <seealso cref="Microsoft.CodeAnalysis.Diagnostics.IWorkspaceDiagnosticAnalyzerProviderService" />
-  [Export(typeof(IWorkspaceDiagnosticAnalyzerProviderService))]
-  internal sealed class WorkspaceDiagnosticAnalyzerProviderService : IWorkspaceDiagnosticAnalyzerProviderService
+  [Export(typeof(IHostDiagnosticAnalyzerPackageProvider))]
+  internal sealed class WorkspaceDiagnosticAnalyzerProviderService : IHostDiagnosticAnalyzerPackageProvider
   {
-    public IEnumerable<HostDiagnosticAnalyzerPackage> GetHostDiagnosticAnalyzerPackages()
+    public ImmutableArray<HostDiagnosticAnalyzerPackage> GetHostDiagnosticAnalyzerPackages()
     {
       var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
       if (path == null)
@@ -33,7 +33,7 @@ namespace Altaxo.CodeEditing.Diagnostics
                     ImmutableArray.Create(
                         Path.Combine(path, "Microsoft.CodeAnalysis.dll"),
                         Path.Combine(path, "Microsoft.CodeAnalysis.CSharp.dll")))
-            };
+            }.AsImmutable();
     }
 
     public IAnalyzerAssemblyLoader GetAnalyzerAssemblyLoader()

@@ -2,7 +2,7 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, SignatureHelp/AggregateSignatureHelpProvider.cs
 
-#if !NoCompletion
+#if !NoCompletion && !NoSignatureHelp
 extern alias MCW;
 using System;
 using System.Collections.Generic;

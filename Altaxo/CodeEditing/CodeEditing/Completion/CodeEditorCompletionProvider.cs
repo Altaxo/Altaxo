@@ -62,35 +62,39 @@ namespace Altaxo.CodeEditing.Completion
       var useHardSelection = true;
 
       var document = _workspace.CurrentSolution.GetDocument(_documentId);
-      if (useSignatureHelp || triggerChar != null)
+#if !NoSignatureHelp
+      try
       {
-        IAxoSignatureHelpProvider signatureHelpProvider = null;
-        try
-        {
-          signatureHelpProvider = _roslynHost.GetService<IAxoSignatureHelpProvider>();
-        }
-        catch (Exception ex)
-        {
 
-        }
-        var isSignatureHelp = useSignatureHelp || signatureHelpProvider.IsTriggerCharacter(triggerChar.Value);
-        if (isSignatureHelp)
+
+        if (useSignatureHelp || triggerChar != null)
         {
-          var signatureHelp = await signatureHelpProvider.GetItemsAsync(
-              document,
-              position,
-              new SignatureHelpTriggerInfo(
-                  useSignatureHelp
-                      ? SignatureHelpTriggerReason.InvokeSignatureHelpCommand
-                      : SignatureHelpTriggerReason.TypeCharCommand, triggerChar),
-              CancellationToken.None)
-              .ConfigureAwait(false);
-          if (signatureHelp != null)
+          IAxoSignatureHelpProvider signatureHelpProvider = _roslynHost.GetService<IAxoSignatureHelpProvider>();
+
+          var isSignatureHelp = useSignatureHelp || signatureHelpProvider.IsTriggerCharacter(triggerChar.Value);
+          if (isSignatureHelp)
           {
-            overloadProvider = new RoslynOverloadProvider(signatureHelp);
+            var signatureHelp = await signatureHelpProvider.GetItemsAsync(
+                document,
+                position,
+                new SignatureHelpTriggerInfo(
+                    useSignatureHelp
+                        ? SignatureHelpTriggerReason.InvokeSignatureHelpCommand
+                        : SignatureHelpTriggerReason.TypeCharCommand, triggerChar),
+                CancellationToken.None)
+                .ConfigureAwait(false);
+            if (signatureHelp != null)
+            {
+              overloadProvider = new RoslynOverloadProvider(signatureHelp);
+            }
           }
         }
       }
+      catch (Exception ex)
+      {
+
+      }
+#endif
 
       if (overloadProvider == null)
       {

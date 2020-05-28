@@ -105,6 +105,7 @@ namespace Altaxo.CodeEditing
 #endif
 
 #if !NoDiagnostics
+
       _diagnosticsService = GetService<Microsoft.CodeAnalysis.Diagnostics.IDiagnosticService>(); // instantiate diagnostics service to get it working
 
       _diagnosticsService.DiagnosticsUpdated += (s, e) =>

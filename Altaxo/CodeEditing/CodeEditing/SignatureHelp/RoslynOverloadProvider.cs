@@ -2,7 +2,7 @@
 
 // Originated from: RoslynPad, RoslynPad.Editor.Windows, RoslynOverloadProvider.cs
 
-#if !NoCompletion
+#if !NoCompletion && !NoSignatureHelp
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows;

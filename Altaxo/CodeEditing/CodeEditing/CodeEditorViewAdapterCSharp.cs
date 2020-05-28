@@ -155,17 +155,6 @@ namespace Altaxo.CodeEditing
     public IBraceMatchingService BraceMatchingService { get; set; }
 #endif
 
-#if !NoReferenceHighlighting
-    /// <summary>
-    /// Gets or sets the reference highlight service.
-    /// Responsible for highlighting all identical items, e.g. variable names, if the cursor is inside such an item.
-    /// </summary>
-    /// <value>
-    /// The reference highlight service.
-    /// </value>
-    internal Microsoft.CodeAnalysis.DocumentHighlighting.IDocumentHighlightsService ReferenceHighlightService { get; set; }
-#endif
-
 #if !NoCompletion
     /// <summary>
     /// Gets or sets the completion provider.
@@ -270,10 +259,6 @@ namespace Altaxo.CodeEditing
 
 #if !NoBraceMatching
       BraceMatchingService = _roslynHost.GetService<IBraceMatchingService>();
-#endif
-
-#if !NoReferenceHighlighting
-      ReferenceHighlightService = new Microsoft.CodeAnalysis.CSharp.DocumentHighlighting.CSharpDocumentHighlightsService();
 #endif
 
 #if !NoCompletion
@@ -501,12 +486,13 @@ namespace Altaxo.CodeEditing
     /// </summary>
     async Task<ImmutableArray<DocumentHighlights>> ICodeEditorViewAdapter.FindReferencesInCurrentFile(int cursorPosition)
     {
-      var service = ReferenceHighlightService;
+      var document = Workspace.CurrentSolution.GetDocument(DocumentId);
+      var service = document.Project.LanguageServices.GetService<IDocumentHighlightsService>();
 
       if (null == service)
         return ImmutableArray<DocumentHighlights>.Empty;
 
-      var document = Workspace.CurrentSolution.GetDocument(DocumentId);
+
 
       var builder = ImmutableHashSet<Document>.Empty.ToBuilder();
       builder.Add(document);

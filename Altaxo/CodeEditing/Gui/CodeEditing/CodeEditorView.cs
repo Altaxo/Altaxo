@@ -307,7 +307,7 @@ namespace Altaxo.Gui.CodeEditing
           continue;
         }
 
-        var marker = _textMarkerService.TryCreate(diagnosticData.TextSpan.Start, diagnosticData.TextSpan.Length);
+        var marker = _textMarkerService.TryCreate(diagnosticData.DataLocation.SourceSpan.Value.Start, diagnosticData.DataLocation.SourceSpan.Value.Length);
         if (marker != null)
         {
           marker.MarkerColor = GetDiagnosticsColor(diagnosticData);
