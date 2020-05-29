@@ -55,6 +55,7 @@ namespace Altaxo.Gui.Common
     private void Initialize()
     {
       m_View.DescriptionText = _description;
+      m_View.ValueText = m_InitialContents.ToString();
     }
 
     private ISingleValueView View

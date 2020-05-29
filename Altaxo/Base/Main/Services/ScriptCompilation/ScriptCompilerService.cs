@@ -247,7 +247,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
       /// <returns>True if successfully compiles, otherwise false.</returns>
       public IScriptCompilerResult Compile(string[] scriptText)
       {
-
+#if NETFRAMEWORK
         var scriptTextWithHash = new CodeTextsWithHash(scriptText);
 
         if (_compilerResults.TryGetValue(scriptTextWithHash.Hash, out var result))
@@ -301,6 +301,9 @@ namespace Altaxo.Main.Services.ScriptCompilation
           _compilerResults.TryAdd(result);
           return result;
         }
+#else
+        throw new NotImplementedException();
+#endif
       }
     }
   }
