@@ -1,8 +1,8 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:local="clr-namespace:Altaxo.Gui.Common"
->
-    <!-- Colors for DropDownButton and SplitButton -->
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Altaxo.Gui.Common">
+    <!--  Colors for DropDownButton and SplitButton  -->
     <SolidColorBrush x:Key="{ComponentResourceKey {x:Type local:DropDownButton}, ActiveBorder}" Color="#FF3399FF" />
     <SolidColorBrush x:Key="{ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}" Color="#FFC2E0FF" />
     <SolidColorBrush x:Key="{ComponentResourceKey {x:Type local:SplitButton}, PressedBackground}" Color="#FF99CCFF" />

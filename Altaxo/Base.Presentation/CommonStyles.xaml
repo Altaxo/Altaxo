@@ -1,12 +1,11 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- *********************** Arrows and other geometries ************************************** -->
+    <!--  *********************** Arrows and other geometries **************************************  -->
 
-    <Geometry x:Key="LeftArrowGeometry" >M 0 3 L 2 3 L 2 4 L 4 2 L 2 0 L 2 1 L 0 1 Z</Geometry>
-    <Geometry x:Key="LeftIndentGeometry" >M 0 3 L 2 3 L 2 4 L 4 2 L 2 0 L 2 1 L 0 1 Z M 0 0 L 0 4 L 4 4 L 4 3.8 L 0.2 3.8 L 0.2 0 Z</Geometry>
-    <Geometry x:Key="RemoveCrossGeometry" >M 4 4 L 0 0.5 L 0.5 0 Z M 4 0 L 0 3.5 L 0.5 4 Z</Geometry>
-    <Geometry x:Key="AddCrossGeometry" >M 0 1.5 L 1.5 1.5 L 1.5 0 L 2.5 0 L 2.5 1.5 L 4 1.5 L 4 2.5 L 2.5 2.5 L 2.5 4 L 1.5 4 L 1.5 2.5 L 0 2.5 Z</Geometry>
+    <Geometry x:Key="LeftArrowGeometry">M 0 3 L 2 3 L 2 4 L 4 2 L 2 0 L 2 1 L 0 1 Z</Geometry>
+    <Geometry x:Key="LeftIndentGeometry">M 0 3 L 2 3 L 2 4 L 4 2 L 2 0 L 2 1 L 0 1 Z M 0 0 L 0 4 L 4 4 L 4 3.8 L 0.2 3.8 L 0.2 0 Z</Geometry>
+    <Geometry x:Key="RemoveCrossGeometry">M 4 4 L 0 0.5 L 0.5 0 Z M 4 0 L 0 3.5 L 0.5 4 Z</Geometry>
+    <Geometry x:Key="AddCrossGeometry">M 0 1.5 L 1.5 1.5 L 1.5 0 L 2.5 0 L 2.5 1.5 L 4 1.5 L 4 2.5 L 2.5 2.5 L 2.5 4 L 1.5 4 L 1.5 2.5 L 0 2.5 Z</Geometry>
     <Style x:Key="LeftArrowPathStyle" TargetType="Path">
         <Style.Setters>
             <Setter Property="Data" Value="{StaticResource LeftArrowGeometry}" />
@@ -20,21 +19,30 @@
             </Setter>
         </Style.Setters>
     </Style>
-    <Style x:Key="RightArrowPathStyle" BasedOn="{StaticResource LeftArrowPathStyle}" TargetType="Path">
+    <Style
+        x:Key="RightArrowPathStyle"
+        BasedOn="{StaticResource LeftArrowPathStyle}"
+        TargetType="Path">
         <Setter Property="LayoutTransform">
             <Setter.Value>
                 <RotateTransform Angle="180" />
             </Setter.Value>
         </Setter>
     </Style>
-    <Style x:Key="UpArrowPathStyle" BasedOn="{StaticResource LeftArrowPathStyle}" TargetType="Path">
+    <Style
+        x:Key="UpArrowPathStyle"
+        BasedOn="{StaticResource LeftArrowPathStyle}"
+        TargetType="Path">
         <Setter Property="LayoutTransform">
             <Setter.Value>
                 <RotateTransform Angle="270" />
             </Setter.Value>
         </Setter>
     </Style>
-    <Style x:Key="DownArrowPathStyle" BasedOn="{StaticResource LeftArrowPathStyle}" TargetType="Path">
+    <Style
+        x:Key="DownArrowPathStyle"
+        BasedOn="{StaticResource LeftArrowPathStyle}"
+        TargetType="Path">
         <Setter Property="LayoutTransform">
             <Setter.Value>
                 <RotateTransform Angle="90" />
@@ -42,7 +50,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="LeftIndentPathStyle" BasedOn="{StaticResource LeftArrowPathStyle}" TargetType="Path">
+    <Style
+        x:Key="LeftIndentPathStyle"
+        BasedOn="{StaticResource LeftArrowPathStyle}"
+        TargetType="Path">
         <Setter Property="Data" Value="{StaticResource LeftIndentGeometry}" />
         <Setter Property="LayoutTransform">
             <Setter.Value>
@@ -51,7 +62,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="RightIndentPathStyle" BasedOn="{StaticResource LeftArrowPathStyle}" TargetType="Path">
+    <Style
+        x:Key="RightIndentPathStyle"
+        BasedOn="{StaticResource LeftArrowPathStyle}"
+        TargetType="Path">
         <Setter Property="Data" Value="{StaticResource LeftIndentGeometry}" />
         <Setter Property="LayoutTransform">
             <Setter.Value>
@@ -60,14 +74,20 @@
         </Setter>
     </Style>
 
-    <Style x:Key="RemoveCrossPathStyle" BasedOn="{StaticResource LeftArrowPathStyle}" TargetType="Path">
+    <Style
+        x:Key="RemoveCrossPathStyle"
+        BasedOn="{StaticResource LeftArrowPathStyle}"
+        TargetType="Path">
         <Setter Property="Data" Value="{StaticResource RemoveCrossGeometry}" />
         <Setter Property="Stroke" Value="Red" />
         <Setter Property="StrokeThickness" Value="0" />
         <Setter Property="Fill" Value="Red" />
     </Style>
 
-    <Style x:Key="AddCrossPathStyle" BasedOn="{StaticResource LeftArrowPathStyle}" TargetType="Path">
+    <Style
+        x:Key="AddCrossPathStyle"
+        BasedOn="{StaticResource LeftArrowPathStyle}"
+        TargetType="Path">
         <Setter Property="Data" Value="{StaticResource AddCrossGeometry}" />
         <Setter Property="Stroke" Value="Green" />
         <Setter Property="StrokeThickness" Value="0" />

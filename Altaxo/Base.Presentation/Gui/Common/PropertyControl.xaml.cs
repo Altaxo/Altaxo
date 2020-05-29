@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Controls;
 
+
 namespace Altaxo.Gui.Common
 {
   /// <summary>
@@ -35,10 +36,20 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class PropertyControl : UserControl, IPropertyView
   {
+#if NETFRAMEWORK
+    private WPG.PropertyGrid _propertyGrid;
+#endif
+
+
     public PropertyControl()
     {
       InitializeComponent();
+
+#if NETFRAMEWORK
+      _guiGrid.Children.Add(new WPG.PropertyGrid());
+#endif
     }
+
 #if !NETFRAMEWORK
     private object _instance;
     public object[] SelectedObjectsToView
