@@ -18,18 +18,19 @@
     <ProjectReference Include="..\..\Libraries\Markdig.Wpf\Markdig.Wpf.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+  </ItemGroup>
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Management" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <Reference Include="WPG">
       <HintPath>..\..\Libraries\AssembliesOnly\WPG.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Management" Version="4.7.0" />
   </ItemGroup>
   
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />

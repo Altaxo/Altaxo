@@ -9,6 +9,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Keys\AltaxoCodeEditing.Private.snk</AssemblyOriginatorKeyFile>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
     <OutputPath>..\..\rt$(TargetFramework)\bin</OutputPath>
@@ -46,56 +47,25 @@
     </Reference>
     </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+  <ItemGroup>
     <PackageReference Include="Microsoft.DiaSymReader" Version="1.3.0" />
     <PackageReference Include="System.ComponentModel.Composition" Version="4.7.0" />
     <PackageReference Include="System.Composition.Hosting" Version="1.4.1" />
     <PackageReference Include="System.Composition.TypedParts" Version="1.4.1" />
     <PackageReference Include="System.Composition.AttributedModel" Version="1.4.1" />
   </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+  </ItemGroup>
   
      <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <Reference Include="Microsoft.CSharp" />
-
-    <Reference Include="Microsoft.DiaSymReader">
-      <HintPath>LibrariesBin\$(TargetFramework)\Microsoft.DiaSymReader.dll</HintPath>
-    </Reference>
-    
-      <Reference Include="System.Memory">
-      <HintPath>LibrariesBin\$(TargetFramework)\System.Buffers.dll</HintPath>
-    </Reference>
-    
-      <Reference Include="System.Memory">
-      <HintPath>LibrariesBin\$(TargetFramework)\System.Memory.dll</HintPath>
-    </Reference>
-     
-    <Reference Include="System.Collections.Immutable">
-      <HintPath>LibrariesBin\$(TargetFramework)\System.Collections.Immutable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Composition.AttributedModel">
-      <HintPath>LibrariesBin\$(TargetFramework)\System.Composition.AttributedModel.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics.Vectors">
-      <HintPath>LibrariesBin\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-        <Reference Include="System.Composition.Hosting">
-      <HintPath>LibrariesBin\$(TargetFramework)\System.Composition.Hosting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.TypedParts">
-      <HintPath>LibrariesBin\$(TargetFramework)\System.Composition.TypedParts.dll</HintPath>
-    </Reference>
-     <Reference Include="System.Composition.Runtime">
-      <HintPath>LibrariesBin\System.Composition.Runtime.dll</HintPath>
-    </Reference> <Reference Include="System.Reflection.Metadata">
-      <HintPath>LibrariesBin\$(TargetFramework)\System.Reflection.Metadata.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe">
-      <HintPath>LibrariesBin\$(TargetFramework)\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions">
-      <HintPath>LibrariesBin\$(TargetFramework)\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0"/>
+    <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+     <PackageReference Include="System.Composition.Runtime" Version="1.4.1" />
+     <PackageReference Include="System.Reflection.Metadata" Version="1.8.1"/>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1"/>
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4"/>
   </ItemGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
   <Target Name="GenAssInfo">

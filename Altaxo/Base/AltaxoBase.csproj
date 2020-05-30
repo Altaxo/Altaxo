@@ -18,28 +18,30 @@
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
+
  <ItemGroup>
     <ProjectReference Include="..\..\Libraries\System.IO.Compression.Altaxo\System.IO.Compression.Altaxo.csproj" />
     <ProjectReference Include="..\Core\AltaxoCore.csproj" />
     <ProjectReference Include="..\..\Libraries\Markdig\Markdig.csproj" />
     <ProjectReference Include="..\..\Libraries\Numerator\zNumerator.csproj" />
   </ItemGroup>
-  
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.OleDb" Version="4.7.1" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
     <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
-    <PackageReference Include="System.Data.OleDb" Version="4.7.0" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.IO.Compression" Version="4.0.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
-    <Reference Include="System.Configuration" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
   </ItemGroup>
   
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
