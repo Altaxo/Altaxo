@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net48;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
     <RootNamespace>System</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <OutputPath>..\..\rtDir\bin</OutputPath>
     <NoWarn>1701;1702;1573;1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <AssemblyName>OpenXMLAddin.Presentation</AssemblyName>
     <TargetFrameworks>net48; netcoreapp3.1</TargetFrameworks>
+    <AssemblyName>OpenXMLAddin.Presentation</AssemblyName>
     <LangVersion>latest</LangVersion>
     <UseWPF>true</UseWPF>
     <RootNamespace>Altaxo</RootNamespace>

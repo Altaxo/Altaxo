@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
     <AssemblyName>OpenXMLAddin</AssemblyName>
-    <TargetFrameworks>net48</TargetFrameworks>
+    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>

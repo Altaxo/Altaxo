@@ -27,7 +27,6 @@ extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MCW::Microsoft.CodeAnalysis;
@@ -62,7 +61,7 @@ namespace Altaxo.CodeEditing.ExternalHelp
       if (!desc.CanBeReferencedByName && !desc.IsConstructor())
         return null;
 
-      if (desc.DeclaredAccessibility != Accessibility.NotApplicable && desc.DeclaredAccessibility < Accessibility.Protected)
+      if (desc.DeclaredAccessibility != Microsoft.CodeAnalysis.Accessibility.NotApplicable && desc.DeclaredAccessibility < Microsoft.CodeAnalysis.Accessibility.Protected)
         return null; // only types that are at least protected should be reported
 
       var assemblySymbol = desc.ContainingAssembly;

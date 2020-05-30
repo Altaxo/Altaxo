@@ -1,14 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <UseWPF>true</UseWPF>
     <RootNamespace>WpfMath</RootNamespace>
     <AssemblyName>WpfMath</AssemblyName>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <OutputPath>..\..\rtDir\bin\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Data\*" />

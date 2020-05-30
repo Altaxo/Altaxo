@@ -1,11 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net4</TargetFramework>
+    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
     <LangVersion>latest</LangVersion>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <OutputPath>bin\</OutputPath>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy $(SolutionDir)Content\data\*.* $(SolutionDir)rtDir\data /E /I /Y&#xD;&#xA;xcopy $(SolutionDir)Content\doc\*.* $(SolutionDir)rtDir\doc /E /I /Y" />
+    <Exec Command="xcopy $(SolutionDir)Content\data\*.* $(SolutionDir)rt$(TargetFramework)\data /E /I /Y&#xD;&#xA;xcopy $(SolutionDir)Content\doc\*.* $(SolutionDir)rt$(TargetFramework)\doc /E /I /Y" />
   </Target>
 </Project>

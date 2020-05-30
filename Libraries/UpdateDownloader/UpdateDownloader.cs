@@ -230,7 +230,7 @@ namespace Altaxo.Serialization.AutoUpdates
         var security = new DirectorySecurity();
         security.AddAccessRule(new FileSystemAccessRule(authenticatedUser, FileSystemRights.Modify, inheritance, propagation, AccessControlType.Allow));
         security.SetAccessRuleProtection(false, true);
-        Directory.SetAccessControl(downloadDirectory, security);
+        new DirectoryInfo(downloadDirectory).SetAccessControl(security);
       }
       catch (Exception)
       {

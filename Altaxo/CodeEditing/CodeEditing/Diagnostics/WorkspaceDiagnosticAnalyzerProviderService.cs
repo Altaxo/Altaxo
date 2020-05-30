@@ -9,7 +9,6 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.IO;
 using System.Reflection;
-using System.Runtime.Remoting.Messaging;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 

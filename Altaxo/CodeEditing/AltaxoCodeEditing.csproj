@@ -1,16 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="GenAssInfo">
   <PropertyGroup>
+    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
     <AssemblyName>AltaxoCodeEditing</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
     <LangVersion>latest</LangVersion>
     <UseWPF>true</UseWPF>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <OutputPath>..\..\rtDir\bin</OutputPath>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Keys\AltaxoCodeEditing.Private.snk</AssemblyOriginatorKeyFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
+    <OutputPath>..\..\rt$(TargetFramework)\bin</OutputPath>
     <DefineConstants></DefineConstants>
   </PropertyGroup>
   <ItemGroup>
@@ -37,49 +38,63 @@
       <HintPath>LibrariesBin\Microsoft.CodeAnalysis.Features.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Scripting">
-      <HintPath>LibrariesBin\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
+      <HintPath>LibrariesBin\$(TargetFramework)\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces">
       <HintPath>LibrariesBin\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
     <Aliases>MCW</Aliases>
     </Reference>
-    <Reference Include="Microsoft.DiaSymReader">
-      <HintPath>LibrariesBin\Microsoft.DiaSymReader.dll</HintPath>
-    </Reference>
+    </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+    <PackageReference Include="Microsoft.DiaSymReader" Version="1.3.0" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.7.0" />
+    <PackageReference Include="System.Composition.Hosting" Version="1.4.1" />
+    <PackageReference Include="System.Composition.TypedParts" Version="1.4.1" />
+    <PackageReference Include="System.Composition.AttributedModel" Version="1.4.1" />
+  </ItemGroup>
+  
+     <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Memory">
-      <HintPath>LibrariesBin\System.Buffers.dll</HintPath>
+
+    <Reference Include="Microsoft.DiaSymReader">
+      <HintPath>LibrariesBin\$(TargetFramework)\Microsoft.DiaSymReader.dll</HintPath>
     </Reference>
-    <Reference Include="System.Memory">
-      <HintPath>LibrariesBin\System.Buffers.dll</HintPath>
+    
+      <Reference Include="System.Memory">
+      <HintPath>LibrariesBin\$(TargetFramework)\System.Buffers.dll</HintPath>
+    </Reference>
+    
+      <Reference Include="System.Memory">
+      <HintPath>LibrariesBin\$(TargetFramework)\System.Memory.dll</HintPath>
     </Reference>
      
     <Reference Include="System.Collections.Immutable">
-      <HintPath>LibrariesBin\System.Collections.Immutable.dll</HintPath>
+      <HintPath>LibrariesBin\$(TargetFramework)\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Composition.AttributedModel">
-      <HintPath>LibrariesBin\System.Composition.AttributedModel.dll</HintPath>
+      <HintPath>LibrariesBin\$(TargetFramework)\System.Composition.AttributedModel.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics.Vectors">
       <HintPath>LibrariesBin\System.Numerics.Vectors.dll</HintPath>
     </Reference>
         <Reference Include="System.Composition.Hosting">
-      <HintPath>LibrariesBin\System.Composition.Hosting.dll</HintPath>
+      <HintPath>LibrariesBin\$(TargetFramework)\System.Composition.Hosting.dll</HintPath>
     </Reference>
     <Reference Include="System.Composition.TypedParts">
-      <HintPath>LibrariesBin\System.Composition.TypedParts.dll</HintPath>
+      <HintPath>LibrariesBin\$(TargetFramework)\System.Composition.TypedParts.dll</HintPath>
     </Reference>
      <Reference Include="System.Composition.Runtime">
       <HintPath>LibrariesBin\System.Composition.Runtime.dll</HintPath>
     </Reference> <Reference Include="System.Reflection.Metadata">
-      <HintPath>LibrariesBin\System.Reflection.Metadata.dll</HintPath>
+      <HintPath>LibrariesBin\$(TargetFramework)\System.Reflection.Metadata.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
-      <HintPath>LibrariesBin\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <HintPath>LibrariesBin\$(TargetFramework)\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Tasks.Extensions">
-      <HintPath>LibrariesBin\System.Threading.Tasks.Extensions.dll</HintPath>
+      <HintPath>LibrariesBin\$(TargetFramework)\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
@@ -87,6 +102,6 @@
     <GitVersionFile TemplateFile="Properties\AssemblyInfo.cs" DestinationFile="Properties\AssemblyInfo.autogenerated.cs" SettingsFile="..\..\MSBuildVersioning.xml" />
   </Target>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy $(ProjectDir)\LibrariesBin\*.dll $(ProjectDir)..\..\rtDir\bin" />
+    <Exec Command="copy $(ProjectDir)\LibrariesBin\*.dll $(ProjectDir)..\..\rt$(TargetFramework)\bin" />
   </Target>
 </Project>

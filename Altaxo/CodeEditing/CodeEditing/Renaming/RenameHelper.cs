@@ -14,7 +14,6 @@ using MCW::Microsoft.CodeAnalysis.LanguageServices;
 using MCW::Microsoft.CodeAnalysis.Rename;
 using MCW::Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.Renaming
 {

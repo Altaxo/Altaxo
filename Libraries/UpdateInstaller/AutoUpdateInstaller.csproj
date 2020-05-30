@@ -1,14 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFramework>net4</TargetFramework>
+    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
     <LangVersion>latest</LangVersion>
+    <OutputType>WinExe</OutputType>
     <UseWPF>true</UseWPF>
     <AssemblyName>AltaxoUpdateInstaller</AssemblyName>
     <RootNamespace>Altaxo.Serialization.AutoUpdates</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <OutputPath>..\..\rtDir\bin\</OutputPath>
-    <OutputType>WinExe</OutputType>
+    <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
+    <OutputPath>..\..\rt$(TargetFramework)\bin</OutputPath>
     <StartupObject>Altaxo.Serialization.AutoUpdates.UpdateInstallerMain</StartupObject>
   </PropertyGroup>
   <ItemGroup>
