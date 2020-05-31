@@ -28,7 +28,9 @@
     <String id="MSML_StandardTrainers" text="..\AddIns\ML.Net\Microsoft.ML.StandardTrainers.dll" />
     <String id="MSML_TimeSeries"       text="..\AddIns\ML.Net\Microsoft.ML.TimeSeries.dll" />
     <String id="MSML_Transforms"       text="..\AddIns\ML.Net\Microsoft.ML.Transforms.dll" />
+   <!--
     <String id="Sys_Memory"            text="..\AddIns\ML.Net\System.Memory.dll" />
+-->
 
   </Path>
 
