@@ -26,7 +26,7 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.11.0" />
-    <PackageReference Include="System.IO.Compression" Version="4.0.0"/>
+    <PackageReference Include="System.IO.Compression" Version="4.3.0"/>
   </ItemGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\..\MSBuildVersioning.dll" />
   <Target Name="GenAssInfo">
