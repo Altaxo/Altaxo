@@ -13,17 +13,17 @@
     <RootNamespace>Documentation</RootNamespace>
     <Name>Documentation</Name>
     <!-- SHFB properties -->
-    <FrameworkVersion>.NET Framework 4.7.1</FrameworkVersion>
+    <FrameworkVersion>.NET Framework 4.8</FrameworkVersion>
     <OutputPath>..\..\AltaxoClassReference\</OutputPath>
     <HtmlHelpName>Documentation</HtmlHelpName>
     <Language>en-US</Language>
     <DocumentationSources>
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.xml" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoCore.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoCore.xml" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoDom.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoDom.xml" />
+      <DocumentationSource sourceFile="rtnet48\bin\AltaxoBase.dll" />
+      <DocumentationSource sourceFile="rtnet48\bin\AltaxoBase.xml" />
+      <DocumentationSource sourceFile="rtnet48\bin\AltaxoCore.dll" />
+      <DocumentationSource sourceFile="rtnet48\bin\AltaxoCore.xml" />
+      <DocumentationSource sourceFile="rtnet48\bin\AltaxoDom.dll" />
+      <DocumentationSource sourceFile="rtnet48\bin\AltaxoDom.xml" />
     </DocumentationSources>
     <HelpFileFormat>Website</HelpFileFormat>
     <SyntaxFilters>C#</SyntaxFilters>

@@ -3,5 +3,5 @@
 <!--  Remember: change the Upgrade code only if a really big change to the product has happened, and you want to allow to install this version side by side with an older version.  -->
 <Token Name="UPGRADECODE" Value="{0F325C16-3E37-4CE0-A9C1-3EA42F7A0F84}"/>
 <Token Name="MAJORVERSION" Value="4"/>
-<Token Name="MINORVERSION" Value="7"/>
+<Token Name="MINORVERSION" Value="8"/>
 </Tokens>

@@ -13,22 +13,21 @@
     <RootNamespace>Documentation</RootNamespace>
     <Name>Documentation</Name>
     <!-- SHFB properties -->
-    <FrameworkVersion>.NET Framework 4.7.1</FrameworkVersion>
+    <FrameworkVersion>.NET Framework 4.8</FrameworkVersion>
     <OutputPath>rtDir\doc\help\</OutputPath>
     <HtmlHelpName>AltaxoClassRef</HtmlHelpName>
     <Language>en-US</Language>
     <DocumentationSources>
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.xml" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.Presentation.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.Presentation.xml" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoCore.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoCore.xml" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoDom.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoDom.xml" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoDom.Presentation.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoDom.Presentation.xml" />
-    </DocumentationSources>
+      <DocumentationSource sourceFile="rtnet48\bin\AltaxoBase.dll" />
+<DocumentationSource sourceFile="rtnet48\bin\AltaxoBase.xml" />
+<DocumentationSource sourceFile="rtnet48\bin\AltaxoBase.Presentation.dll" />
+<DocumentationSource sourceFile="rtnet48\bin\AltaxoBase.Presentation.xml" />
+<DocumentationSource sourceFile="rtnet48\bin\AltaxoCore.dll" />
+<DocumentationSource sourceFile="rtnet48\bin\AltaxoCore.xml" />
+<DocumentationSource sourceFile="rtnet48\bin\AltaxoDom.dll" />
+<DocumentationSource sourceFile="rtnet48\bin\AltaxoDom.xml" />
+<DocumentationSource sourceFile="rtnet48\bin\AltaxoDom.Presentation.dll" />
+<DocumentationSource sourceFile="rtnet48\bin\AltaxoDom.Presentation.xml" /></DocumentationSources>
     <HelpFileFormat>HtmlHelp1</HelpFileFormat>
     <SyntaxFilters>C#</SyntaxFilters>
     <PresentationStyle>VS2013</PresentationStyle>
@@ -47,7 +46,7 @@
     <Preliminary>False</Preliminary>
     <FooterText>Altaxo is hosted on &amp;lt%3ba href=&amp;quot%3bhttps://sourceforge.net/projects/altaxo&amp;quot%3b target=&amp;quot%3b_blank&amp;quot%3b&amp;gt%3b&amp;lt%3bimg src=&amp;quot%3bhttps://sflogo.sourceforge.net/sflogo.php%3fgroup_id=73395&amp;amp%3bamp%3btype=10&amp;quot%3b width=&amp;quot%3b80&amp;quot%3b height=&amp;quot%3b15&amp;quot%3b alt=&amp;quot%3bGet Altaxo Data Processing/Plotting Program at SourceForge.net. Fast, secure and Free Open Source software downloads&amp;quot%3b /&amp;gt%3b&amp;lt%3b/a&amp;gt%3b</FooterText>
     <CopyrightHref>https://sourceforge.net/u/dlellinger/profile/</CopyrightHref>
-    <CopyrightText>%28C%29 Dr. Dirk Lellinger 2002 - 2019</CopyrightText>
+    <CopyrightText>%28C%29 Dr. Dirk Lellinger 2002 - 2020</CopyrightText>
     <FeedbackEMailAddress>dlellinger%40users.sourceforge.net</FeedbackEMailAddress>
     <SdkLinkTarget>Blank</SdkLinkTarget>
     <WarnOnMissingSourceContext>False</WarnOnMissingSourceContext>

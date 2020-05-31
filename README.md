@@ -22,9 +22,9 @@ and [for installation instructions](https://altaxo.sourceforge.io/AltaxoClassRef
 
 Clone the sources: `git clone https://github.com/Altaxo/Altaxo.git`
 
-Open the solution file in the Altaxo source folder with the **latest** version of Visual Studio 2017.
-Visual Studio 2017 Community edition is sufficient.
-The installation of Visual Studio 2017 should include the C# desktop development workload,
+Open the solution file in the Altaxo source folder with the **latest** version of Visual Studio 2019.
+Visual Studio 2019 Community edition is sufficient.
+The installation of Visual Studio 2019 should include the C# desktop development workload, the .NET core workload
 and furthermore should include the T4 text templates feature. 
 
 
