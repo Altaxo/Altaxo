@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Documents;
@@ -83,6 +84,10 @@ namespace Altaxo.Gui.Common
         return result;
       }
     }
+
+    public string OSDescription => RuntimeInformation.OSDescription;
+
+    public string FrameworkDescription => RuntimeInformation.FrameworkDescription;
 
     private void EhOpenExplorer(object sender, MouseButtonEventArgs e)
     {
