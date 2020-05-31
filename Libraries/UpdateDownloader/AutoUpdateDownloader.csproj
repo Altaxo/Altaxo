@@ -18,6 +18,9 @@
     <Compile Include="..\..\Altaxo\Base\Serialization\AutoUpdates\INetFrameworkVersionDetermination.cs">
       <Link>INetFrameworkVersionDetermination.cs</Link>
     </Compile>
+    <Compile Include="..\..\Altaxo\Base.Presentation\Main\Services\NetCoreVersionDetermination.cs">
+      <Link>NetCoreVersionDetermination.cs</Link>
+    </Compile>
     <Compile Include="..\..\Altaxo\Base.Presentation\Main\Services\NetFrameworkVersionDetermination.cs">
       <Link>NetFrameworkVersionDetermination.cs</Link>
     </Compile>
