@@ -759,7 +759,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       // World projection and camera
       _evWorldViewProj.SetMatrixTranspose(ref worldViewProjTr);
-      _evEyePosition.Set(ToVector3(_altaxoCamera.EyePosition));
+      _evEyePosition.Set(ToVector4(_altaxoCamera.EyePosition, 1f));
 
       // lighting
       _lighting.SetLighting(_altaxoLightSettings, _altaxoCamera);
@@ -1035,14 +1035,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     // helper
 
-    private static Vector3 ToVector3(PointD3D a)
+    private static Vector4 ToVector4(PointD3D a, float c4)
     {
-      return new Vector3((float)a.X, (float)a.Y, (float)a.Z);
+      return new Vector4((float)a.X, (float)a.Y, (float)a.Z, c4);
     }
 
-    private static Vector3 ToVector3(VectorD3D a)
+    private static Vector4 ToVector4(VectorD3D a, float c4)
     {
-      return new Vector3((float)a.X, (float)a.Y, (float)a.Z);
+      return new Vector4((float)a.X, (float)a.Y, (float)a.Z, c4);
     }
 
     private static Vector4 ToVector4(PointD3D a)
@@ -1050,15 +1050,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       return new Vector4((float)a.X, (float)a.Y, (float)a.Z, 1.0f);
     }
 
-    private static Vector3 ToVector3(Altaxo.Drawing.AxoColor color)
-    {
-      return new Vector3(color.ScR, color.ScG, color.ScB);
-    }
-
-    private static Vector3 ToVector3(Altaxo.Drawing.AxoColor color, double amplitude)
+    private static Vector4 ToVector4(Altaxo.Drawing.AxoColor color, double amplitude, double alpha)
     {
       float amp = (float)amplitude;
-      return new Vector3(color.ScR * amp, color.ScG * amp, color.ScB * amp);
+      return new Vector4(color.ScR * amp, color.ScG * amp, color.ScB * amp, (float)alpha);
     }
 
     private static Vector4 ToVector4(Altaxo.Drawing.AxoColor color)

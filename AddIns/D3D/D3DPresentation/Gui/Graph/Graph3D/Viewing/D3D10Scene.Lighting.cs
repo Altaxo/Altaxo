@@ -47,9 +47,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     {
       private struct SingleLight
       {
-        public Vector3 Color; // unused if Color == 0
-        public Vector3 Position;
-        public Vector3 Direction;
+        public Vector4 Color; // unused if Color == 0
+        public Vector4 Position;
+        public Vector4 Direction;
         public float LightRangeRcp;
         public float CapsuleLength;
         public float SpotCosOuterCone;
@@ -164,9 +164,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       public void SetDefaultLighting()
       {
-        HemisphericLightBelowToAboveVector.Set(new Vector3(0, 0, 1));
-        HemisphericLightColorBelow.Set(0.1f * new Vector3(0.55f, 0.5f, 0.5f)); // slightly red
-        HemisphericLightColorAbove.Set(new Vector3(0.5f, 0.5f, 0.55f)); // slightly blue
+        HemisphericLightBelowToAboveVector.Set(new Vector4(0, 0, 1, 1));
+        HemisphericLightColorBelow.Set(0.1f * new Vector4(0.55f, 0.5f, 0.5f, 1)); // slightly red
+        HemisphericLightColorAbove.Set(new Vector4(0.5f, 0.5f, 0.55f, 1)); // slightly blue
 
         ClearSingleLight(0);
         ClearSingleLight(1);
@@ -254,9 +254,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       public void SetAmbientLight(Altaxo.Drawing.AxoColor colorBelow, Altaxo.Drawing.AxoColor colorAbove, double lightAmplitude, VectorD3D directionBelowToAbove)
       {
         directionBelowToAbove = directionBelowToAbove.Normalized;
-        HemisphericLightBelowToAboveVector.Set(new Vector3((float)directionBelowToAbove.X, (float)directionBelowToAbove.Y, (float)directionBelowToAbove.Z));
-        HemisphericLightColorBelow.Set(ToVector3(colorBelow, lightAmplitude));
-        HemisphericLightColorAbove.Set(ToVector3(colorAbove, lightAmplitude));
+        HemisphericLightBelowToAboveVector.Set(new Vector4((float)directionBelowToAbove.X, (float)directionBelowToAbove.Y, (float)directionBelowToAbove.Z, 0));
+        HemisphericLightColorBelow.Set(ToVector4(colorBelow, lightAmplitude, 1));
+        HemisphericLightColorAbove.Set(ToVector4(colorAbove, lightAmplitude, 1));
       }
 
       public void SetDirectionalLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, VectorD3D directionToLight)
@@ -293,9 +293,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       {
         var sl = new SingleLight()
         {
-          Color = ToVector3(color, colorAmplitude),
-          Position = ToVector3(position),
-          Direction = ToVector3(direction),
+          Color = ToVector4(color, colorAmplitude, 1),
+          Position = ToVector4(position, 1f),
+          Direction = ToVector4(direction, 0f),
           LightRangeRcp = (float)lightRangeRcp,
           CapsuleLength = (float)capsuleLength,
           SpotCosOuterCone = (float)spotCosOuterCone,
