@@ -34,7 +34,7 @@ namespace Altaxo.Collections
   /// </summary>
   public static class EnumerationExtensions
   {
-    public static bool Is<T>(this System.Enum type, T value)
+    public static bool Is<T>(this System.Enum type, T value) where T : struct
     {
       try
       {
@@ -46,7 +46,7 @@ namespace Altaxo.Collections
       }
     }
 
-    public static T WithFlag<T>(this System.Enum type, T flag, bool value)
+    public static T WithFlag<T>(this System.Enum type, T flag, bool value) where T : struct
     {
       if (value)
         return WithSetFlag(type, flag);
@@ -54,7 +54,7 @@ namespace Altaxo.Collections
         return WithClearedFlag(type, flag);
     }
 
-    public static T WithSetFlag<T>(this System.Enum type, T value)
+    public static T WithSetFlag<T>(this System.Enum type, T value) where T : struct
     {
       try
       {
@@ -70,7 +70,7 @@ namespace Altaxo.Collections
       }
     }
 
-    public static T WithClearedFlag<T>(this System.Enum type, T value)
+    public static T WithClearedFlag<T>(this System.Enum type, T value) where T : struct
     {
       try
       {

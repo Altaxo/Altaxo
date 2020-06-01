@@ -47,24 +47,24 @@ namespace Altaxo
 
     public void Combine(TDelegate target)
     {
-      if (null == target)
-        return;
-
-      foreach (Delegate d in (target as Delegate).GetInvocationList())
-        _targets.Add(new MethodTarget(d));
+      if (target is Delegate targetDelegate)
+      {
+        foreach (Delegate d in targetDelegate.GetInvocationList())
+          _targets.Add(new MethodTarget(d));
+      }
     }
 
     public void Remove(TDelegate target)
     {
-      if (null == target)
-        return;
-
-      foreach (Delegate d in (target as Delegate).GetInvocationList())
+      if (target is Delegate targetDelegate)
       {
-        MethodTarget mt = _targets.Find(w => Equals(d.Target, w.Reference?.Target) && Equals(d.Method.MethodHandle, w.Method.MethodHandle));
-
-        if (mt != null)
-          _targets.Remove(mt);
+        foreach (Delegate d in targetDelegate.GetInvocationList())
+        {
+          if (_targets.Find(w => Equals(d.Target, w.Reference?.Target) && Equals(d.Method.MethodHandle, w.Method.MethodHandle)) is { } methodTarget)
+          {
+            _targets.Remove(methodTarget);
+          }
+        }
       }
     }
 
@@ -76,11 +76,11 @@ namespace Altaxo
     /// <value>
     /// The target.
     /// </value>
-    public TDelegate Target
+    public TDelegate? Target
     {
       get
       {
-        Delegate combinedTarget = null;
+        Delegate? combinedTarget = null;
         foreach (MethodTarget methodTarget in _targets.ToArray())
         {
           var weakReference = methodTarget.Reference;
@@ -101,8 +101,11 @@ namespace Altaxo
       }
       set
       {
-        _targets.Clear();
-        Combine(value);
+        if (!(value is null))
+        {
+          _targets.Clear();
+          Combine(value);
+        }
       }
     }
 

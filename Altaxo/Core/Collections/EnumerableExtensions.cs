@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -133,7 +134,7 @@ namespace Altaxo.Collections
     /// <param name="first">if successful, the first value of the enumeration.</param>
     /// <param name="last">If successful, the last value of the enumeration.</param>
     /// <returns>True if successful; otherwise false.</returns>
-    public static bool TryGetFirstAndLast<T>(this IEnumerable<T> org, out T first, out T last)
+    public static bool TryGetFirstAndLast<T>(this IEnumerable<T> org, [MaybeNullWhen(false)] out T first, [MaybeNullWhen(false)] out T last)
     {
       if (null == org)
         throw new ArgumentNullException(nameof(org));
@@ -398,9 +399,9 @@ namespace Altaxo.Collections
     /// </returns>
     public static bool AreStructurallyEqual<T>(IEnumerable<T> e1, IEnumerable<T> e2, IEqualityComparer<T> equalityComparer)
     {
-      if (null == e1 && null == e2)
+      if (e1 is null && e2 is null)
         return true;
-      if ((null == e1 && null != e2) || (null != e1 && null == e2))
+      if ((e1 is null) || (e2 is null))
         return false;
 
       // both e1 and e2 are != null

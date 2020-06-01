@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2017 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -28,49 +28,40 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-#nullable enable
-
-namespace Altaxo.Units
+namespace Altaxo
 {
+#if NETFRAMEWORK
   /// <summary>
-  /// Base class for classes that implement <see cref="IUnit"/> and are not a <see cref="SIUnit"/>. Classes that are SI units should derive from
-  /// <see cref="SIUnit"/>.
+  /// Fake MayBeNullWhen Attribute that avoids compile errors when using the .NET framework.
   /// </summary>
-  public abstract class UnitBase
+  public class MaybeNullWhenAttribute : Attribute
   {
-    public bool Equals(SIUnit obj)
+    public MaybeNullWhenAttribute(bool _)
     {
-      return obj is null ? false : obj.Equals(this);
-    }
-
-    public bool Equals(IUnit obj)
-    {
-      return obj is null ? false : GetType() == obj.GetType();
-    }
-
-    public override bool Equals(object? obj)
-    {
-      return obj is IUnit other ? GetType() == other.GetType() : false;
-    }
-
-    public override int GetHashCode()
-    {
-      return GetType().GetHashCode();
-    }
-
-    public static bool operator ==(UnitBase a, IUnit b)
-    {
-      if (a is { } aa)
-        return aa.Equals(b);
-      else if (b is { } bb)
-        return b.Equals(a);
-      else
-        return true; // null==null
-    }
-
-    public static bool operator !=(UnitBase a, IUnit b)
-    {
-      return !(a == b);
     }
   }
+
+
+  /// <summary>
+  /// Fake MayBeNull Attribute that avoids compile errors when using the .NET framework.
+  /// </summary>
+  public class MaybeNull : Attribute
+  {
+    public MaybeNull()
+    {
+
+    }
+  }
+
+  /// <summary>
+  /// Fake AllowNull Attribute that avoids compile errors when using the .NET framework.
+  /// </summary>
+  public class AllowNull : Attribute
+  {
+    public AllowNull()
+    {
+
+    }
+  }
+#endif
 }

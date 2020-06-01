@@ -276,17 +276,18 @@ namespace Altaxo.Units
       return thisval.CompareTo(otherval);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (!(obj is DimensionfulQuantity))
+      if (obj is DimensionfulQuantity quantity)
+      {
+        return _value == quantity._value &&
+             EqualityComparer<SIPrefix>.Default.Equals(_prefix, quantity._prefix) &&
+             EqualityComparer<IUnit>.Default.Equals(_unit, quantity._unit);
+      }
+      else
       {
         return false;
       }
-
-      var quantity = (DimensionfulQuantity)obj;
-      return _value == quantity._value &&
-             EqualityComparer<SIPrefix>.Default.Equals(_prefix, quantity._prefix) &&
-             EqualityComparer<IUnit>.Default.Equals(_unit, quantity._unit);
     }
 
     public override int GetHashCode()
@@ -549,12 +550,11 @@ namespace Altaxo.Units
       return string.Format("{0} {1}{2}", _value, Prefix.ShortCut, Unit.ShortCut);
     }
 
-    public string ToString(string format, IFormatProvider formatProvider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
-      if (IsEmpty)
-        return double.NaN.ToString(formatProvider);
-
-      return string.Format(formatProvider, "{0} {1}{2}", _value, Prefix.ShortCut, Unit.ShortCut);
+      return IsEmpty
+        ? double.NaN.ToString(formatProvider)
+        : string.Format(formatProvider, "{0} {1}{2}", _value, Prefix.ShortCut, Unit.ShortCut);
     }
   }
 }

@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -273,7 +274,7 @@ namespace Altaxo.Units
     /// <param name="exponent">The exponent.</param>
     /// <param name="prefix">If sucessfull, returns the prefix.</param>
     /// <returns>True if a known prefix with the given exponent was found; otherwise, false.</returns>
-    public static bool TryGetPrefixFromExponent(int exponent, out SIPrefix prefix)
+    public static bool TryGetPrefixFromExponent(int exponent, [MaybeNullWhen(false)] out SIPrefix prefix)
     {
       return _prefixByExponent.TryGetValue(exponent, out prefix);
     }

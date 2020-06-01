@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -36,7 +37,7 @@ namespace Altaxo.Collections
   /// <typeparam name="TKey">The type of the key.</typeparam>
   /// <typeparam name="TValue">The type of the value.</typeparam>
   /// <typeparam name="TToken">The type of the token.</typeparam>
-  public class ConcurrentTokenizedPriorityQueue<TKey, TValue, TToken> where TKey : IComparable<TKey>
+  public class ConcurrentTokenizedPriorityQueue<TKey, TValue, TToken> where TKey : IComparable<TKey> where TToken : notnull
   {
     #region Inner structs
 
@@ -68,10 +69,10 @@ namespace Altaxo.Collections
       }
 
       /// <summary>
-      /// Returns a <see cref="System.String" /> for debugging purposes.
+      /// Returns a <see cref="string" /> for debugging purposes.
       /// </summary>
       /// <returns>
-      /// A <see cref="System.String" /> that represents this instance.
+      /// A <see cref="string" /> that represents this instance.
       /// </returns>
       public override string ToString()
       {
@@ -95,10 +96,11 @@ namespace Altaxo.Collections
     private Dictionary<TToken, Item> _tokenToItem;
 
     /// <summary>The next token to give out.</summary>
+    [AllowNull]
     private TToken _nextToken;
 
     /// <summary>Function that creates a new token. Argument is the old token. Return value should be a new token, which is different from all tokens created so far.</summary>
-    private Func<TToken, TToken> _GetNextToken;
+    private Func<TToken, TToken>? _GetNextToken;
 
     /// <summary>Object used to synchronize this queue.</summary>
     private System.Threading.ReaderWriterLockSlim _syncLock = new System.Threading.ReaderWriterLockSlim();
@@ -112,7 +114,7 @@ namespace Altaxo.Collections
     /// use the TryAdd(..) functions to enqueue items.
     /// </summary>
     public ConcurrentTokenizedPriorityQueue()
-      : this(64, default(TToken), null)
+      : this(64, default, null)
     {
     }
 
@@ -122,7 +124,7 @@ namespace Altaxo.Collections
     /// </summary>
     /// <param name="initialCapacity">The initial capacity of the queue.</param>
     public ConcurrentTokenizedPriorityQueue(int initialCapacity)
-      : this(initialCapacity, default(TToken), null)
+      : this(initialCapacity, default, null)
     {
     }
 
@@ -147,7 +149,7 @@ namespace Altaxo.Collections
     /// <param name="initialToken">The initial token.</param>
     /// <param name="GetNextToken">The function to generate new tokens. Argument is the old token. The return value should be a new token that was not generated before.</param>
     /// <exception cref="System.ArgumentOutOfRangeException"></exception>
-    public ConcurrentTokenizedPriorityQueue(int capacity, TToken initialToken, Func<TToken, TToken> GetNextToken)
+    public ConcurrentTokenizedPriorityQueue(int capacity, [AllowNull] TToken initialToken, Func<TToken, TToken>? GetNextToken)
     {
       if (capacity <= 0)
         throw new ArgumentOutOfRangeException();
@@ -415,7 +417,7 @@ namespace Altaxo.Collections
     /// <param name="value">On successfull return, contains the value associated with the minimum key.</param>
     /// <param name="token">On successfull return, contains the token associated with the minimum key.</param>
     /// <returns><c>True</c> if the queue contained at least one element that could be Peek'd; otherwise <c>false</c>.</returns>
-    public bool TryPeek(out TKey key, out TValue value, out TToken token)
+    public bool TryPeek([MaybeNullWhen(false)] out TKey key, [MaybeNull]out TValue value, [MaybeNullWhen(false)] out TToken token)
     {
       _syncLock.EnterReadLock();
       try
@@ -434,9 +436,9 @@ namespace Altaxo.Collections
         _syncLock.ExitReadLock();
       }
 
-      key = default(TKey);
-      value = default(TValue);
-      token = default(TToken);
+      key = default;
+      value = default;
+      token = default;
       return false;
     }
 
@@ -448,7 +450,7 @@ namespace Altaxo.Collections
     /// <returns><c>True</c> if the queue contained at least one element that could be Peek'd; otherwise <c>false</c>.</returns>
     public bool TryPeek(out TKey key, out TValue value)
     {
-      return TryPeek(out key, out value, out var token);
+      return TryPeek(out key, out value, out _);
     }
 
     /// <summary>
@@ -458,7 +460,7 @@ namespace Altaxo.Collections
     /// <returns><c>True</c> if the queue contained at least one element that could be Peek'd; otherwise <c>false</c>.</returns>
     public bool TryPeek(out TKey key)
     {
-      return TryPeek(out key, out var value, out var token);
+      return TryPeek(out key, out _, out _);
     }
 
     /// <summary>
@@ -476,7 +478,7 @@ namespace Altaxo.Collections
       }
       else
       {
-        result = default(KeyValuePair<TKey, TValue>);
+        result = default;
         return false;
       }
     }
@@ -488,15 +490,12 @@ namespace Altaxo.Collections
     /// <returns><c>True</c> if the queue contained at least one element; otherwise <c>false</c>.</returns>
     public bool TryPeek(out KeyValuePair<TKey, TValue> result)
     {
-      return TryPeek(out result, out var token);
+      return TryPeek(out result, out _);
     }
 
-    public bool TryPeekKey(out TKey key)
+    public bool TryPeekKey([MaybeNullWhen(false)] out TKey key)
     {
-      TToken token;
-      KeyValuePair<TKey, TValue> item;
-
-      var result = TryPeek(out item, out token);
+      var result = TryPeek(out KeyValuePair<TKey, TValue> item, out _);
       if (result)
       {
         key = item.Key;
@@ -504,7 +503,7 @@ namespace Altaxo.Collections
       }
       else
       {
-        key = default(TKey);
+        key = default;
         return false;
       }
     }
@@ -516,10 +515,7 @@ namespace Altaxo.Collections
     /// <exception cref="System.InvalidOperationException">Queue is empty</exception>
     public KeyValuePair<TKey, TValue> Peek()
     {
-      KeyValuePair<TKey, TValue> result;
-      TToken token;
-
-      if (TryPeek(out result, out token))
+      if (TryPeek(out var result, out TToken _))
         return result;
       else
         throw new InvalidOperationException("Queue is empty");
@@ -554,7 +550,7 @@ namespace Altaxo.Collections
     /// <param name="value">On sucessfull return, contains value belonging to the minimum key value.</param>
     /// <param name="token">On successfull return, contains the token associated with the key/value pair with minimum key.</param>
     /// <returns><c>True if an item could be successfully retrieved from the queue; <c>false</c> if the queue contains no items.</c></returns>
-    public bool TryDequeue(out TKey key, out TValue value, out TToken token)
+    public bool TryDequeue([MaybeNullWhen(false)]out TKey key, [MaybeNull] out TValue value, [MaybeNullWhen(false)] out TToken token)
     {
       _syncLock.EnterUpgradeableReadLock();
       try
@@ -589,9 +585,9 @@ namespace Altaxo.Collections
         _syncLock.ExitUpgradeableReadLock();
       }
 
-      token = default(TToken);
-      key = default(TKey);
-      value = default(TValue);
+      token = default;
+      key = default;
+      value = default;
       return false;
     }
 
@@ -611,7 +607,7 @@ namespace Altaxo.Collections
       }
       else
       {
-        keyValuePair = default(KeyValuePair<TKey, TValue>);
+        keyValuePair = default;
         return false;
       }
     }
@@ -623,7 +619,7 @@ namespace Altaxo.Collections
     /// <returns><c>True if an item could be successfully retrieved from the queue; <c>false</c> if the queue contains no items.</c></returns>
     public bool TryDequeue(out KeyValuePair<TKey, TValue> result)
     {
-      return TryDequeue(out result, out var token);
+      return TryDequeue(out result, out _);
     }
 
     /// <summary>
@@ -633,7 +629,7 @@ namespace Altaxo.Collections
     /// <exception cref="System.InvalidOperationException">Queue is empty.</exception>
     public KeyValuePair<TKey, TValue> Dequeue()
     {
-      if (TryDequeue(out var result, out var token))
+      if (TryDequeue(out var result, out _))
         return result;
       else
         throw new InvalidOperationException("Queue is empty");
@@ -650,7 +646,7 @@ namespace Altaxo.Collections
     /// <param name="key">On sucessfull return, contains the key of the key/value pair associated with the token.</param>
     /// <param name="value">On sucessfull return, contains the value of the key/value pair associated with the token.</param>
     /// <returns><c>True</c> if the key/value pair associated with the token existed in the queue. <c>False</c> if the a key/value pair associated with the provided token is not in the queue.</returns>
-    public bool TryGet(TToken token, out TKey key, out TValue value)
+    public bool TryGet([MaybeNullWhen(false)] TToken token, [MaybeNull] out TKey key, [MaybeNullWhen(false)] out TValue value)
     {
       _syncLock.EnterReadLock();
       try
@@ -667,8 +663,8 @@ namespace Altaxo.Collections
         _syncLock.ExitReadLock();
       }
 
-      key = default(TKey);
-      value = default(TValue);
+      key = default;
+      value = default;
       return false;
     }
 
@@ -680,7 +676,7 @@ namespace Altaxo.Collections
     /// <returns><c>True</c> if the key/value pair associated with the token existed in the queue. <c>False</c> if the a key/value pair associated with the provided token is not in the queue.</returns>
     public bool TryGet(TToken token, out TKey key)
     {
-      return TryGet(token, out key, out var value);
+      return TryGet(token, out key, out _);
     }
 
     /// <summary>
@@ -819,7 +815,7 @@ namespace Altaxo.Collections
     /// <param name="key">On successfull return, contains the key of the removed key/value pair.</param>
     /// <param name="value">On successfull return, contains the value of the removed key/value pair.</param>
     /// <returns><c>True</c> if the item still existed in the queue and could be successfully removed; otherwise <c>false</c>.</returns>
-    public bool TryRemove(TToken token, out TKey key, out TValue value)
+    public bool TryRemove(TToken token, [MaybeNullWhen(false)] out TKey key, [MaybeNull] out TValue value)
     {
       _syncLock.EnterUpgradeableReadLock();
       try
@@ -851,8 +847,8 @@ namespace Altaxo.Collections
         _syncLock.ExitUpgradeableReadLock();
       }
 
-      key = default(TKey);
-      value = default(TValue);
+      key = default;
+      value = default;
       return false;
     }
 
@@ -864,7 +860,7 @@ namespace Altaxo.Collections
     /// <returns><c>True</c> if the item still existed in the queue and could be successfully removed; otherwise <c>false</c>.</returns>
     public bool TryRemove(TToken token, out TKey key)
     {
-      return TryRemove(token, out key, out var value);
+      return TryRemove(token, out key, out _);
     }
 
     /// <summary>
@@ -874,7 +870,7 @@ namespace Altaxo.Collections
     /// <returns><c>True</c> if the item still existed in the queue and could be successfully removed; otherwise <c>false</c>.</returns>
     public bool TryRemove(TToken token)
     {
-      return TryRemove(token, out var key, out var value);
+      return TryRemove(token, out var _, out var _);
     }
 
     /// <summary>
@@ -918,6 +914,9 @@ namespace Altaxo.Collections
 
     private TToken InternalGetNewTokenNoLock()
     {
+      if (_GetNextToken is null)
+        throw new InvalidOperationException("No token creation function was provided.");
+
       var result = _nextToken;
       _nextToken = _GetNextToken(_nextToken);
       return result;

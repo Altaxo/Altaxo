@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -144,7 +145,8 @@ namespace Altaxo.Collections
       action(node);
     }
 
-    public static T AnyBetweenHereAndLeaves<T>(this T node, Func<T, bool> condition) where T : ITreeNode<T>
+    [return: MaybeNull]
+    public static T AnyBetweenHereAndLeaves<T>(this T node, Func<T, bool> condition) where T : class, ITreeNode<T>
     {
       if (condition(node))
         return node;
@@ -159,9 +161,10 @@ namespace Altaxo.Collections
             return result;
         }
       }
-      return default(T);
+      return default;
     }
 
+    [return: MaybeNull]
     public static T AnyBetweenLeavesAndHere<T>(this T node, Func<T, bool> condition) where T : ITreeNode<T>
     {
       var childNodes = node.ChildNodes;
@@ -169,16 +172,12 @@ namespace Altaxo.Collections
       {
         foreach (var childNode in childNodes)
         {
-          var result = AnyBetweenLeavesAndHere(childNode, condition);
-          if (null != result)
+          if (AnyBetweenLeavesAndHere(childNode, condition) is { } result)
             return result;
         }
       }
 
-      if (condition(node))
-        return node;
-
-      return default(T);
+      return condition(node) ? node : (default);
     }
 
     /// <summary>
@@ -525,7 +524,7 @@ namespace Altaxo.Collections
       where S : ITreeNode<S>
       where D : ITreeListNode<D>, new()
     {
-      List<(D, D, int)> destNodesToDelete = null;
+      List<(D, D, int)>? destNodesToDelete = null;
       ProjectTreeToTree(
         sourceRoot,
         destRoot,
@@ -553,7 +552,7 @@ namespace Altaxo.Collections
       where S : ITreeNode<S>
       where D : ITreeListNode<D>
     {
-      List<(D, D, int)> destNodesToDelete = null;
+      List<(D, D, int)>? destNodesToDelete = null;
       ProjectTreeToTree(
         sourceRoot,
         destRoot,
@@ -583,7 +582,7 @@ namespace Altaxo.Collections
       where S : ITreeNode<S>
       where D : ITreeNode<D>
     {
-      List<(D, D, int)> destNodesToDelete = null;
+      List<(D, D, int)>? destNodesToDelete = null;
       ProjectTreeToTree(sourceRoot, destRoot, updateDestinationNodeFromSourceNode, createDestinationNode, deleteDestinationNode, ref destNodesToDelete);
     }
 
@@ -605,7 +604,7 @@ namespace Altaxo.Collections
       Action<S, D> updateDestinationNodeFromSourceNode,
       Func<D, D> createDestinationNode,
       Action<D, D, int> deleteDestinationNode,
-      ref List<(D, D, int)> destNodesToDelete)
+      ref List<(D, D, int)>? destNodesToDelete)
       where S : ITreeNode<S>
       where D : ITreeNode<D>
     {
@@ -638,12 +637,12 @@ namespace Altaxo.Collections
     public static void ProjectTreeToTree<S, D>(
         S sourceRootNode,
         D destinationRootNode,
-        Func<S, IEnumerator<S>> getSourceChildEnumerator,
-        Func<D, IEnumerator<D>> getDestinationChildEnumerator,
+        Func<S, IEnumerator<S>?> getSourceChildEnumerator,
+        Func<D, IEnumerator<D>?> getDestinationChildEnumerator,
         Action<S, D> updateDestinationNodeFromSourceNode,
         Func<D, D> createDestinationNode,
         Action<D, D, int> deleteDestinationNode,
-        ref List<(D ParentNode, D ChildNode, int Index)> destinationNodesToDelete)
+        ref List<(D ParentNode, D ChildNode, int Index)>? destinationNodesToDelete)
     {
       updateDestinationNodeFromSourceNode(sourceRootNode, destinationRootNode);
 
@@ -654,23 +653,23 @@ namespace Altaxo.Collections
       {
         using (var destChildEnum = getDestinationChildEnumerator(destinationRootNode))
         {
-          bool s = !(sourceChildEnum is null);
-          bool d = !(destChildEnum is null);
+          bool s = sourceChildEnum is { } _;
+          bool d = !(destChildEnum is { } _);
           for (int idx = 0; ; ++idx)
           {
             if (s)
-              s = sourceChildEnum.MoveNext();
+              s = sourceChildEnum!.MoveNext();
 
             if (d)
-              d = destChildEnum.MoveNext();
+              d = destChildEnum!.MoveNext();
             else
               destChildEnum?.Dispose(); // allows addition of elements without complaining
 
             if (s)
             {
-              var destChildNode = d ? destChildEnum.Current : createDestinationNode(destinationRootNode);
+              var destChildNode = d ? destChildEnum!.Current : createDestinationNode(destinationRootNode);
               ProjectTreeToTree(
-                sourceChildEnum.Current,
+                sourceChildEnum!.Current,
                 destChildNode,
                 getSourceChildEnumerator,
                 getDestinationChildEnumerator,
@@ -717,9 +716,9 @@ namespace Altaxo.Collections
     public static bool EnsureValidityOfNodeIndex<T>(this T rootNode, IList<int> index) where T : ITreeListNode<T>
     {
       if (null == rootNode)
-        throw new ArgumentNullException("rootNode");
+        throw new ArgumentNullException(nameof(rootNode));
       if (null == index)
-        throw new ArgumentNullException("index");
+        throw new ArgumentNullException(nameof(index));
 
       if (index.Count > 0)
         return EnsureValidityOfNodeIndex(rootNode.ChildNodes, index, 0);
@@ -836,14 +835,14 @@ namespace Altaxo.Collections
     /// <param name="index">The index that points to a node inside the tree.</param>
     /// <param name="nodeAtIndex">If the return value was true, this parameter contains the node at the given index.</param>
     /// <returns><c>true</c> if the given index is valid; otherwise, <c>false</c>.</returns>
-    public static bool IsValidIndex<T>(this T rootNode, IEnumerable<int> index, out T nodeAtIndex) where T : ITreeListNode<T>
+    public static bool IsValidIndex<T>(this T rootNode, IEnumerable<int> index, [MaybeNullWhen(false)] out T nodeAtIndex) where T : ITreeListNode<T>
     {
       if (null == rootNode)
-        throw new ArgumentNullException("rootNode");
+        throw new ArgumentNullException(nameof(rootNode));
 
       if (null == index)
       {
-        nodeAtIndex = default(T);
+        nodeAtIndex = default;
         return false;
       }
 
@@ -861,18 +860,25 @@ namespace Altaxo.Collections
       return result;
     }
 
-    private static bool IsValidIndex<T>(IList<T> nodes, IEnumerator<int> it, int level, out T nodeAtIndex) where T : ITreeListNode<T>
+    private static bool IsValidIndex<T>(IList<T> nodes, IEnumerator<int> it, int level, [MaybeNullWhen(false)] out T nodeAtIndex) where T : ITreeListNode<T>
     {
-      nodeAtIndex = default(T);
-
       if (null == nodes || 0 == nodes.Count)
+      {
+        nodeAtIndex = default;
         return false;
+      }
 
       var idx = it.Current;
       if (idx < 0)
+      {
+        nodeAtIndex = default;
         return false; // throw new ArgumentOutOfRangeException(string.Format("index at level {0} is < 0", level));
+      }
       else if (idx >= nodes.Count)
+      {
+        nodeAtIndex = default;
         return false; //  throw new ArgumentOutOfRangeException(string.Format("index at level {0} is greater than number of child nodes", level));
+      }
 
       if (it.MoveNext())
       {
@@ -1008,9 +1014,9 @@ namespace Altaxo.Collections
     public static bool FixAndTestParentChildRelations<T>(this T node, Action<T, T> Set1stArgParentNodeTo2ndArg) where T : ITreeListNodeWithParent<T>
     {
       if (null == node)
-        throw new ArgumentNullException("node");
+        throw new ArgumentNullException(nameof(node));
       if (null == Set1stArgParentNodeTo2ndArg)
-        throw new ArgumentNullException("Set1stArgParentNodeTo2ndArg");
+        throw new ArgumentNullException(nameof(Set1stArgParentNodeTo2ndArg));
       return FixAndTestParentChildRelationsInternal(node, Set1stArgParentNodeTo2ndArg);
     }
 
@@ -1042,7 +1048,7 @@ namespace Altaxo.Collections
     public static IEnumerable<T> TakeFromHereToRoot<T>(this T node) where T : INodeWithParentNode<T>
     {
       if (null == node)
-        throw new ArgumentNullException("node");
+        throw new ArgumentNullException(nameof(node));
 
       yield return node;
 
@@ -1152,6 +1158,7 @@ namespace Altaxo.Collections
     /// <typeparam name="T">Type of the node.</typeparam>
     /// <param name="node">The node. The first node being considered is the parent node of this node.</param>
     /// <returns></returns>
+    [return: MaybeNull]
     public static M FirstAncestorImplementing<M, T>(this T node)
         where T : INodeWithParentNode<T>
         where M : class
@@ -1160,12 +1167,11 @@ namespace Altaxo.Collections
       {
         foreach (var n in TakeFromHereToRoot(node.ParentNode))
         {
-          var nodeAsM = n as M;
-          if (null != nodeAsM)
+          if (n is M nodeAsM)
             return nodeAsM;
         }
       }
-      return null;
+      return default;
     }
 
     /// <summary>

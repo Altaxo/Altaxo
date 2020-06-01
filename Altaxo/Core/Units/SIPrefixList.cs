@@ -91,7 +91,7 @@ namespace Altaxo.Units
 
     public (SIPrefix prefix, double remainingFactor) GetPrefixFromExponent(int exponent)
     {
-      if (_exponentDictionary.TryGetValue(exponent, out SIPrefix result))
+      if (_exponentDictionary.TryGetValue(exponent, out SIPrefix? result))
       {
         return (result, 1);
       }

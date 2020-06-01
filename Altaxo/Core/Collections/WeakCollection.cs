@@ -75,19 +75,21 @@ namespace Altaxo.Collections
       var comparer = EqualityComparer<T>.Default;
       for (int i = 0; i < innerList.Count;)
       {
-        var element = (T)innerList[i].Target;
-        if (element == null)
+        if (innerList[i].Target is T element)
         {
-          RemoveAt(i);
-        }
-        else if (comparer.Equals(element, item))
-        {
-          RemoveAt(i);
-          return true;
+          if (comparer.Equals(element, item))
+          {
+            RemoveAt(i);
+            return true;
+          }
+          else
+          {
+            i++;
+          }
         }
         else
         {
-          i++;
+          RemoveAt(i);
         }
       }
       return false;
@@ -121,15 +123,14 @@ namespace Altaxo.Collections
         hasEnumerator = true;
         for (int i = 0; i < innerList.Count;)
         {
-          var element = (T)innerList[i].Target;
-          if (element == null)
-          {
-            RemoveAt(i);
-          }
-          else
+          if (innerList[i].Target is T element)
           {
             yield return element;
             i++;
+          }
+          else
+          {
+            RemoveAt(i);
           }
         }
       }
