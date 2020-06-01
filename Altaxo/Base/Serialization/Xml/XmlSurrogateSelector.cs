@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
+
 using System;
 using System.Reflection;
 
@@ -38,13 +40,13 @@ namespace Altaxo.Serialization.Xml
     /// <remarks>There are two kind of keys here: 1) System.Type objects and 2) strings containing the fully qualified name of a type.
     /// The key strings are used to retrieve the serialization surrogate onto deserialization, and if the class to deserialize no longer exists in the assembly.
     /// The values are instances (!) of type IXmlSerializationSurrogate.</remarks>
-    private System.Collections.Hashtable m_Surrogates = new System.Collections.Hashtable();
+    private System.Collections.Hashtable _surrogates = new System.Collections.Hashtable();
 
     /// <summary>
     /// Used to store the actual serialization versions of the classes.
     /// </summary>
     /// <remarks>The keys for the hashtable are System.Type objects, the values are integers storing the serialization version.</remarks>
-    private System.Collections.Hashtable m_Versions = new System.Collections.Hashtable();
+    private System.Collections.Hashtable _versions = new System.Collections.Hashtable();
 
     /// <summary>
     /// Constructs an empty surrogate selector.
@@ -60,8 +62,8 @@ namespace Altaxo.Serialization.Xml
     /// <returns>The fully qualified name of the type.</returns>
     public string GetFullyQualifiedTypeName(System.Type type)
     {
-      object version = m_Versions[type];
-      return GetFullyQualifiedTypeName(type, (null == version ? 0 : (int)version));
+      object? version = _versions[type];
+      return GetFullyQualifiedTypeName(type, (version is null ? 0 : (int)version));
     }
 
     /// <summary>
@@ -71,8 +73,8 @@ namespace Altaxo.Serialization.Xml
     /// <returns>The serialization version of the type.</returns>
     public int GetVersion(System.Type type)
     {
-      object version = m_Versions[type];
-      return null == version ? 0 : (int)version;
+      object? version = _versions[type];
+      return version is null ? 0 : (int)version;
     }
 
     /// <summary>
@@ -83,7 +85,8 @@ namespace Altaxo.Serialization.Xml
     /// <returns>The fully qualified name of the type.</returns>
     public static string GetFullyQualifiedTypeName(System.Type type, int version)
     {
-      string[] assembly = type.Assembly.FullName.Split(new char[] { ',' }, 2);
+      var fullName = type.Assembly.FullName ?? throw new InvalidOperationException($"FullName not available for assembly {type.Assembly}");
+      string[] assembly = fullName.Split(new char[] { ',' }, 2);
       return string.Format("{0},{1},{2}", assembly[0], type.ToString(), version.ToString());
     }
 
@@ -100,7 +103,7 @@ namespace Altaxo.Serialization.Xml
       // which care for the same type as the current version of that type
       AddTypeAndVersionIfHigher(type, version, surrogate);
 
-      m_Surrogates[GetFullyQualifiedTypeName(type, version)] = surrogate;
+      _surrogates[GetFullyQualifiedTypeName(type, version)] = surrogate;
     }
 
     /// <summary>
@@ -112,7 +115,7 @@ namespace Altaxo.Serialization.Xml
     /// <param name="surrogate">The surrogate which is responsible to deserialize the type.</param>
     public void AddSurrogate(string assemblyname, string typename, int version, IXmlSerializationSurrogate surrogate)
     {
-      m_Surrogates[assemblyname + "," + typename + "," + version] = surrogate;
+      _surrogates[assemblyname + "," + typename + "," + version] = surrogate;
     }
 
     /// <summary>
@@ -130,23 +133,23 @@ namespace Altaxo.Serialization.Xml
 
     protected void AddTypeAndVersionIfHigher(System.Type type, int version, IXmlSerializationSurrogate surrogate)
     {
-      int storedversion = m_Versions.ContainsKey(type) ? (int)m_Versions[type] : int.MinValue;
+      int storedversion = _versions.ContainsKey(type) ? (int)(_versions[type] ?? 0) : int.MinValue;
 
       if (version > storedversion)
       {
-        m_Versions[type] = version;
-        m_Surrogates[type] = surrogate;
+        _versions[type] = version;
+        _surrogates[type] = surrogate;
       }
     }
 
     /// <summary>
-    /// Get a serialization surrogate for the spezified type.
+    /// Get a serialization surrogate for the specified type.
     /// </summary>
     /// <param name="type">The full qualified type name (<see cref="GetFullyQualifiedTypeName(System.Type)" />) for which a serialization surrogate should be found.</param>
     /// <returns>The serialization surrogate for the specified type, or null if no surrogate is found.</returns>
-    public IXmlSerializationSurrogate GetSurrogate(string type)
+    public IXmlSerializationSurrogate? GetSurrogate(string type)
     {
-      return (IXmlSerializationSurrogate)m_Surrogates[type];
+      return (IXmlSerializationSurrogate?)_surrogates[type];
     }
 
     /// <summary>
@@ -154,9 +157,9 @@ namespace Altaxo.Serialization.Xml
     /// </summary>
     /// <param name="type">The type for which a serialization surrogate should be found.</param>
     /// <returns>The serialization surrogate for the specified type, or null if no surrogate is found.</returns>
-    public IXmlSerializationSurrogate GetSurrogate(System.Type type)
+    public IXmlSerializationSurrogate? GetSurrogate(System.Type type)
     {
-      return (IXmlSerializationSurrogate)m_Surrogates[type];
+      return (IXmlSerializationSurrogate?)_surrogates[type];
     }
 
     /// <summary>
@@ -180,7 +183,7 @@ namespace Altaxo.Serialization.Xml
 
           foreach (XmlSerializationSurrogateForAttribute att in surrogateattributes)
           {
-            object obj = Activator.CreateInstance(definedtype);
+            var obj = Activator.CreateInstance(definedtype);
             if (!(obj is IXmlSerializationSurrogate))
               throw new InvalidProgramException(string.Format("Classes that have the XmlSerializationSurrogateForAttribute applied have to implement IXmlSerializationSurrogate. This is not the case for the type " + definedtype.ToString()));
             if (obj is IXmlSerializationSurrogate)

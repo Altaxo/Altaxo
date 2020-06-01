@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #endregion Copyright
+
+#nullable enable
 
 using System;
 using System.Collections.Generic;
@@ -66,10 +68,11 @@ namespace Altaxo.Serialization.Xml
 
     TimeSpan GetTimeSpan(string name);
 
-    System.IO.MemoryStream GetMemoryStream(string name);
+    System.IO.MemoryStream? GetMemoryStream(string name);
 
     object GetEnum(string name, System.Type type); // see remarks on serialization
 
+    T GetEnum<T>(string name) where T : Enum;
     T? GetNullableEnum<T>(string name) where T : struct;
 
     string GetNodeContent(); // gets the inner text of the node directly
@@ -125,9 +128,16 @@ namespace Altaxo.Serialization.Xml
     /// <returns>The name of the current node.</returns>
     string GetNodeName();
 
-    object GetValue(string name, object parent);
+    object GetValue(string name, object? parent);
 
-    object GetValueOrOuterXml(string name, object parent, out bool returnValueIsOuterXml);
+    object? GetValueOrNull(string name, object? parent);
+
+    T GetValue<T>(string name, object? parentObject);
+
+    T? GetValueOrNull<T>(string name, object? parentObject) where T : class;
+
+
+    object? GetValueOrOuterXml(string name, object parent, out bool returnValueIsOuterXml);
 
     void GetBaseValueEmbedded(object instance, System.Type basetype, object parent);
 
@@ -161,12 +171,12 @@ namespace Altaxo.Serialization.Xml
     /// done only if the objects are put in the right places in the document, so that
     /// the document paths can be resolved to the right objects.
     /// </summary>
-    event XmlDeserializationCallbackEventHandler DeserializationFinished;
+    event XmlDeserializationCallbackEventHandler? DeserializationFinished;
 
     /// <summary>
     /// Occurs after (!) the deserialization process has completely finished, and the dirty flag of the document was cleared. This callback is intended to activate
     /// the data sources of the document, which should be suspended during the deserialization process.
     /// </summary>
-    event Action AfterDeserializationHasCompletelyFinished;
+    event Action? AfterDeserializationHasCompletelyFinished;
   }
 }

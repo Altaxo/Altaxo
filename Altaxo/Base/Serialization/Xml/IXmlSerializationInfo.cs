@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
+
 using System;
 
 namespace Altaxo.Serialization.Xml
@@ -33,7 +35,7 @@ namespace Altaxo.Serialization.Xml
   {
     void SetProperty(string propertyname, string propertyvalue);
 
-    string GetProperty(string propertyname);
+    string? GetProperty(string propertyname);
 
     /// <summary>
     /// Clears the property dictionary. Useful if the serialization info should be used to serialize multiple values.
@@ -64,7 +66,7 @@ namespace Altaxo.Serialization.Xml
 
     void AddValue(string name, double? val);
 
-    void AddValue(string name, string val);
+    void AddValue(string name, string? val);
 
     void AddValue(string name, DateTime val);
 
@@ -109,6 +111,7 @@ namespace Altaxo.Serialization.Xml
     void CommitElement();
 
     void AddValue(string name, object o);
+    void AddValueOrNull(string name, object? o);
 
     bool IsSerializable(object o);
 

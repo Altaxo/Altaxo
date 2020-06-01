@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,18 +40,18 @@ namespace Altaxo.Serialization.Xml
     /// <summary>
     /// 2015-06-30 Initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(string), 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Private.CoreLib", "System.String", 0)] // Deserialization for .Net core type
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.String", 0)] // Deserialization for .Net framework type
+    [XmlSerializationSurrogateFor(typeof(string), 0)]
+    [XmlSerializationSurrogateFor("System.Private.CoreLib", "System.String", 0)] // Deserialization for .Net core type
+    [XmlSerializationSurrogateFor("mscorlib", "System.String", 0)] // Deserialization for .Net framework type
     private class XmlSerializationSurrogateForSystemString : IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object obj, IXmlSerializationInfo info)
       {
         var s = (string)obj;
         info.AddValue("e", s);
       }
 
-      public object Deserialize(object o, IXmlDeserializationInfo info, object parentobject)
+      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         return info.GetString("e");
       }

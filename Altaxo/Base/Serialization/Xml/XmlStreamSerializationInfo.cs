@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
+
 using System;
 using System.Xml;
 
@@ -32,16 +34,18 @@ namespace Altaxo.Serialization.Xml
   /// </summary>
   public class XmlStreamSerializationInfo : IXmlSerializationInfo
   {
-    private XmlWriter m_Writer;
+    private static readonly XmlWriter _nullWriter = new XmlTextWriter(System.IO.Stream.Null, System.Text.Encoding.UTF8);
+
+    private XmlWriter _writer;
 
     /// <summary>Designates, whether the XmlWriter is created in this instance or not. If it is created here, it will be closed when calling <see cref="EndWriting"/>. Otherwise, it will only be detached.</summary>
     private bool _isWriterCreatedHere;
 
-    private XmlSurrogateSelector m_SurrogateSelector;
-    private System.Text.StringBuilder m_StringBuilder = new System.Text.StringBuilder();
+    private XmlSurrogateSelector _surrogateSelector;
+    private System.Text.StringBuilder _stringBuilder = new System.Text.StringBuilder();
 
-    private byte[] m_Buffer;
-    private int m_BufferSize;
+    private byte[] _buffer;
+    private int _bufferSize;
 
     private XmlArrayEncoding m_DefaultArrayEncoding = XmlArrayEncoding.Xml;
 
@@ -54,24 +58,25 @@ namespace Altaxo.Serialization.Xml
 
     public XmlStreamSerializationInfo()
     {
-      m_BufferSize = 16384;
-      m_Buffer = new byte[m_BufferSize];
-      m_SurrogateSelector = new XmlSurrogateSelector();
-      m_SurrogateSelector.TraceLoadedAssembliesForSurrogates();
+      _bufferSize = 16384;
+      _buffer = new byte[_bufferSize];
+      _surrogateSelector = new XmlSurrogateSelector();
+      _surrogateSelector.TraceLoadedAssembliesForSurrogates();
+      _writer = _nullWriter;
     }
 
     public void BeginWriting(System.IO.Stream stream)
     {
-      m_Writer = new XmlTextWriter(stream, System.Text.Encoding.UTF8);
+      _writer = new XmlTextWriter(stream, System.Text.Encoding.UTF8);
       _isWriterCreatedHere = true;
-      m_Writer.WriteStartDocument();
+      _writer.WriteStartDocument();
     }
 
     public void BeginWriting(System.Text.StringBuilder stb)
     {
-      m_Writer = XmlWriter.Create(stb);
+      _writer = XmlWriter.Create(stb);
       _isWriterCreatedHere = true;
-      m_Writer.WriteStartDocument();
+      _writer.WriteStartDocument();
     }
 
     /// <summary>
@@ -80,7 +85,7 @@ namespace Altaxo.Serialization.Xml
     /// <param name="xmlWriter">The XML writer.</param>
     public void BeginWriting(XmlWriter xmlWriter)
     {
-      m_Writer = xmlWriter;
+      _writer = xmlWriter;
       _isWriterCreatedHere = false;
     }
 
@@ -88,13 +93,13 @@ namespace Altaxo.Serialization.Xml
     {
       if (_isWriterCreatedHere)
       {
-        m_Writer.WriteEndDocument();
-        m_Writer.Flush();
-        m_Writer = null;
+        _writer?.WriteEndDocument();
+        _writer?.Flush();
+        _writer = _nullWriter;
       }
       else
       {
-        m_Writer = null;
+        _writer = _nullWriter;
       }
     }
 
@@ -138,113 +143,114 @@ namespace Altaxo.Serialization.Xml
 
     public void AddValue(string name, bool val)
     {
-      m_Writer.WriteElementString(name, XmlConvert.ToString(val));
+      _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
     public void AddValue(string name, bool? val)
     {
       if (null == val)
-        m_Writer.WriteElementString(name, string.Empty);
+        _writer.WriteElementString(name, string.Empty);
       else
-        m_Writer.WriteElementString(name, XmlConvert.ToString(val.Value));
+        _writer.WriteElementString(name, XmlConvert.ToString(val.Value));
     }
 
     public void AddValue(string name, char val)
     {
-      m_Writer.WriteElementString(name, XmlConvert.ToString(val));
+      _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
     public void AddValue(string name, int val)
     {
-      m_Writer.WriteElementString(name, XmlConvert.ToString(val));
+      _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
     public void AddValue(string name, int? val)
     {
       if (null == val)
-        m_Writer.WriteElementString(name, string.Empty);
+        _writer.WriteElementString(name, string.Empty);
       else
-        m_Writer.WriteElementString(name, XmlConvert.ToString((int)val));
+        _writer.WriteElementString(name, XmlConvert.ToString((int)val));
     }
 
     public void AddValue(string name, long val)
     {
-      m_Writer.WriteElementString(name, XmlConvert.ToString(val));
+      _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
-    public void AddValue(string name, string val)
+    public void AddValue(string name, string? val)
     {
-      m_Writer.WriteElementString(name, val);
+      _writer.WriteElementString(name, val);
     }
+
 
     public void AddAttributeValue(string name, int val)
     {
-      m_Writer.WriteAttributeString(name, XmlConvert.ToString(val));
+      _writer.WriteAttributeString(name, XmlConvert.ToString(val));
     }
 
     public void AddAttributeValue(string name, string val)
     {
-      m_Writer.WriteAttributeString(name, val);
+      _writer.WriteAttributeString(name, val);
     }
 
     public void AddValue(string name, float val)
     {
-      m_Writer.WriteElementString(name, XmlConvert.ToString(val));
+      _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
     public void AddValue(string name, double val)
     {
-      m_Writer.WriteElementString(name, XmlConvert.ToString(val));
+      _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
     public void AddValue(string name, double? val)
     {
       if (null == val)
-        m_Writer.WriteElementString(name, string.Empty);
+        _writer.WriteElementString(name, string.Empty);
       else
-        m_Writer.WriteElementString(name, XmlConvert.ToString((double)val));
+        _writer.WriteElementString(name, XmlConvert.ToString((double)val));
     }
 
     public void AddValue(string name, DateTime val)
     {
-      m_Writer.WriteElementString(name, XmlConvert.ToString(val, XmlDateTimeSerializationMode.RoundtripKind));
+      _writer.WriteElementString(name, XmlConvert.ToString(val, XmlDateTimeSerializationMode.RoundtripKind));
     }
 
     public void AddValue(string name, TimeSpan val)
     {
-      m_Writer.WriteElementString(name, XmlConvert.ToString(val));
+      _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
     public void AddValue(string name, System.IO.MemoryStream stream)
     {
-      m_Writer.WriteStartElement(name);
+      _writer.WriteStartElement(name);
       if (stream == null)
-        m_Writer.WriteAttributeString("Length", XmlConvert.ToString(0));
+        _writer.WriteAttributeString("Length", XmlConvert.ToString(0));
       else
       {
         byte[] buffer = stream.ToArray();
-        m_Writer.WriteAttributeString("Length", XmlConvert.ToString(buffer.Length));
-        m_Writer.WriteBase64(buffer, 0, buffer.Length);
+        _writer.WriteAttributeString("Length", XmlConvert.ToString(buffer.Length));
+        _writer.WriteBase64(buffer, 0, buffer.Length);
       }
-      m_Writer.WriteEndElement();
+      _writer.WriteEndElement();
     }
 
     public void AddEnum(string name, System.Enum val)
     {
-      m_Writer.WriteElementString(name, val.ToString());
+      _writer.WriteElementString(name, val.ToString());
     }
 
     public void AddNullableEnum<T>(string name, T? val) where T : struct
     {
       if (null == val)
-        m_Writer.WriteElementString(name, string.Empty);
+        _writer.WriteElementString(name, string.Empty);
       else
-        m_Writer.WriteElementString(name, val.Value.ToString());
+        _writer.WriteElementString(name, val.Value.ToString());
     }
 
     public void SetNodeContent(string nodeContent)
     {
-      m_Writer.WriteString(nodeContent);
+      _writer.WriteString(nodeContent);
     }
 
     public void CreateArray(string name, int count)
@@ -252,13 +258,13 @@ namespace Altaxo.Serialization.Xml
       if (count < 0)
         throw new ArgumentOutOfRangeException("count has to be >=0");
 
-      m_Writer.WriteStartElement(name);
-      m_Writer.WriteAttributeString("Count", XmlConvert.ToString(count));
+      _writer.WriteStartElement(name);
+      _writer.WriteAttributeString("Count", XmlConvert.ToString(count));
     }
 
     public void CommitArray()
     {
-      m_Writer.WriteEndElement(); // Node "name"
+      _writer.WriteEndElement(); // Node "name"
     }
 
     public void AddArray(string name, float[] val, int count)
@@ -269,15 +275,15 @@ namespace Altaxo.Serialization.Xml
       {
         if (m_DefaultArrayEncoding == XmlArrayEncoding.Xml)
         {
-          m_Writer.WriteAttributeString("Encoding", "Xml");
-          m_Writer.WriteStartElement("e");
-          m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[0]));
+          _writer.WriteAttributeString("Encoding", "Xml");
+          _writer.WriteStartElement("e");
+          _writer.WriteRaw(System.Xml.XmlConvert.ToString(val[0]));
           for (int i = 1; i < count; i++)
           {
-            m_Writer.WriteRaw("</e><e>");
-            m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i]));
+            _writer.WriteRaw("</e><e>");
+            _writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i]));
           }
-          m_Writer.WriteEndElement(); // node "e"
+          _writer.WriteEndElement(); // node "e"
         }
         else
         {
@@ -295,15 +301,15 @@ namespace Altaxo.Serialization.Xml
       {
         if (m_DefaultArrayEncoding == XmlArrayEncoding.Xml)
         {
-          m_Writer.WriteAttributeString("Encoding", "Xml");
-          m_Writer.WriteStartElement("e");
-          m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[0]));
+          _writer.WriteAttributeString("Encoding", "Xml");
+          _writer.WriteStartElement("e");
+          _writer.WriteRaw(System.Xml.XmlConvert.ToString(val[0]));
           for (int i = 1; i < count; i++)
           {
-            m_Writer.WriteRaw("</e><e>");
-            m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i]));
+            _writer.WriteRaw("</e><e>");
+            _writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i]));
           }
-          m_Writer.WriteEndElement(); // node "e"
+          _writer.WriteEndElement(); // node "e"
         }
         else
         {
@@ -321,15 +327,15 @@ namespace Altaxo.Serialization.Xml
       {
         if (m_DefaultArrayEncoding == XmlArrayEncoding.Xml)
         {
-          m_Writer.WriteAttributeString("Encoding", "Xml");
-          m_Writer.WriteStartElement("e");
-          m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[0]));
+          _writer.WriteAttributeString("Encoding", "Xml");
+          _writer.WriteStartElement("e");
+          _writer.WriteRaw(System.Xml.XmlConvert.ToString(val[0]));
           for (int i = 1; i < count; i++)
           {
-            m_Writer.WriteRaw("</e><e>");
-            m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i]));
+            _writer.WriteRaw("</e><e>");
+            _writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i]));
           }
-          m_Writer.WriteEndElement(); // node "e"
+          _writer.WriteEndElement(); // node "e"
         }
         else
         {
@@ -347,15 +353,15 @@ namespace Altaxo.Serialization.Xml
       {
         if (m_DefaultArrayEncoding == XmlArrayEncoding.Xml)
         {
-          m_Writer.WriteAttributeString("Encoding", "Xml");
-          m_Writer.WriteStartElement("e");
-          m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[0], System.Xml.XmlDateTimeSerializationMode.RoundtripKind));
+          _writer.WriteAttributeString("Encoding", "Xml");
+          _writer.WriteStartElement("e");
+          _writer.WriteRaw(System.Xml.XmlConvert.ToString(val[0], System.Xml.XmlDateTimeSerializationMode.RoundtripKind));
           for (int i = 1; i < count; i++)
           {
-            m_Writer.WriteRaw("</e><e>");
-            m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i], System.Xml.XmlDateTimeSerializationMode.RoundtripKind));
+            _writer.WriteRaw("</e><e>");
+            _writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i], System.Xml.XmlDateTimeSerializationMode.RoundtripKind));
           }
-          m_Writer.WriteEndElement(); // node "e"
+          _writer.WriteEndElement(); // node "e"
         }
         else
         {
@@ -373,7 +379,7 @@ namespace Altaxo.Serialization.Xml
       {
         for (int i = 0; i < count; i++)
         {
-          m_Writer.WriteElementString("e", val[i]);
+          _writer.WriteElementString("e", val[i]);
         }
       } // count>0
       CommitArray();
@@ -388,18 +394,18 @@ namespace Altaxo.Serialization.Xml
       {
         if (m_DefaultArrayEncoding == XmlArrayEncoding.Xml)
         {
-          m_Writer.WriteAttributeString("Encoding", "Xml");
-          m_Writer.WriteStartElement("e");
-          m_Writer.WriteRaw(cond[0] ? System.Xml.XmlConvert.ToString(val[0]) : string.Empty);
+          _writer.WriteAttributeString("Encoding", "Xml");
+          _writer.WriteStartElement("e");
+          _writer.WriteRaw(cond[0] ? System.Xml.XmlConvert.ToString(val[0]) : string.Empty);
           for (int i = 1; i < count; i++)
           {
-            m_Writer.WriteRaw("</e><e>");
+            _writer.WriteRaw("</e><e>");
             if (cond[i])
             {
-              m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i]));
+              _writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i]));
             }
           }
-          m_Writer.WriteEndElement(); // node "e"
+          _writer.WriteEndElement(); // node "e"
         }
         else
         {
@@ -415,33 +421,33 @@ namespace Altaxo.Serialization.Xml
       {
         case XmlArrayEncoding.Base64:
           {
-            m_Writer.WriteAttributeString("Encoding", "Base64");
-            m_Writer.WriteStartElement("Base64");
+            _writer.WriteAttributeString("Encoding", "Base64");
+            _writer.WriteStartElement("Base64");
             int remainingBytes = count * sizeofelement;
             for (int pos = 0; pos < remainingBytes;)
             {
-              int bytesToWrite = Math.Min(m_BufferSize, remainingBytes - pos);
-              System.Buffer.BlockCopy(val, pos, m_Buffer, 0, bytesToWrite);
-              m_Writer.WriteBase64(m_Buffer, 0, bytesToWrite);
+              int bytesToWrite = Math.Min(_bufferSize, remainingBytes - pos);
+              System.Buffer.BlockCopy(val, pos, _buffer, 0, bytesToWrite);
+              _writer.WriteBase64(_buffer, 0, bytesToWrite);
               pos += bytesToWrite;
             }
-            m_Writer.WriteEndElement();
+            _writer.WriteEndElement();
           }
           break;
 
         case XmlArrayEncoding.BinHex:
           {
-            m_Writer.WriteAttributeString("Encoding", "BinHex");
-            m_Writer.WriteStartElement("BinHex");
+            _writer.WriteAttributeString("Encoding", "BinHex");
+            _writer.WriteStartElement("BinHex");
             int remainingBytes = count * sizeofelement;
             for (int pos = 0; pos < remainingBytes;)
             {
-              int bytesToWrite = Math.Min(m_BufferSize, remainingBytes - pos);
-              System.Buffer.BlockCopy(val, pos, m_Buffer, 0, bytesToWrite);
-              m_Writer.WriteBinHex(m_Buffer, 0, bytesToWrite);
+              int bytesToWrite = Math.Min(_bufferSize, remainingBytes - pos);
+              System.Buffer.BlockCopy(val, pos, _buffer, 0, bytesToWrite);
+              _writer.WriteBinHex(_buffer, 0, bytesToWrite);
               pos += bytesToWrite;
             }
-            m_Writer.WriteEndElement();
+            _writer.WriteEndElement();
           }
           break;
 
@@ -468,70 +474,83 @@ namespace Altaxo.Serialization.Xml
 
     public void CreateElement(string name)
     {
-      m_Writer.WriteStartElement(name);
+      _writer.WriteStartElement(name);
     }
 
     public void CommitElement()
     {
-      m_Writer.WriteEndElement();
+      _writer.WriteEndElement();
     }
 
     public bool IsSerializable(object o)
     {
-      return null == o || null != m_SurrogateSelector.GetSurrogate(o.GetType());
+      return null == o || null != _surrogateSelector.GetSurrogate(o.GetType());
     }
 
     public bool IsSerializableType(System.Type type)
     {
-      return null != m_SurrogateSelector.GetSurrogate(type);
+      return null != _surrogateSelector.GetSurrogate(type);
     }
 
     public void AddValue(string name, object o)
     {
+#if !NONULLSTRICTCHECK
+      AddValueOrNull(name, o ?? throw new ArgumentNullException(nameof(o)));
+#else
+      AddValueOrNull(name, o);
+#endif
+    }
+
+
+    public void AddValueOrNull(string name, object? o)
+    {
       if (null != o)
       {
-        IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(o.GetType());
-        if (null == ss)
-          throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", o.GetType()));
+        if (_surrogateSelector.GetSurrogate(o.GetType()) is { } ss)
+        {
+          _writer.WriteStartElement(name);
+          _writer.WriteAttributeString("Type", _surrogateSelector.GetFullyQualifiedTypeName(o.GetType()));
+          ss.Serialize(o, this);
+          _writer.WriteEndElement();
+        }
         else
         {
-          m_Writer.WriteStartElement(name);
-          m_Writer.WriteAttributeString("Type", m_SurrogateSelector.GetFullyQualifiedTypeName(o.GetType()));
-          ss.Serialize(o, this);
-          m_Writer.WriteEndElement();
+          throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", o.GetType()));
         }
       }
       else // o is null, we add only an empty element
       {
-        m_Writer.WriteStartElement(name);
-        m_Writer.WriteAttributeString("Type", "UndefinedValue");
-        m_Writer.WriteEndElement();
+        _writer.WriteStartElement(name);
+        _writer.WriteAttributeString("Type", "UndefinedValue");
+        _writer.WriteEndElement();
       }
     }
 
     public void AddBaseValueEmbedded(object o, System.Type basetype)
     {
-      IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(basetype);
-      if (null == ss)
-        throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", basetype));
+      if (_surrogateSelector.GetSurrogate(basetype) is { } ss)
+      {
+        _writer.WriteElementString("BaseType", _surrogateSelector.GetFullyQualifiedTypeName(basetype)); // included since 2006-06-20 (Rev. 471)
+        ss.Serialize(o, this);
+      }
       else
       {
-        m_Writer.WriteElementString("BaseType", m_SurrogateSelector.GetFullyQualifiedTypeName(basetype)); // included since 2006-06-20 (Rev. 471)
-        ss.Serialize(o, this);
+        throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", basetype));
       }
     }
 
     public void AddBaseValueStandalone(string name, object o, System.Type basetype)
     {
-      IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(basetype);
-      if (null == ss)
-        throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", basetype));
+      if (_surrogateSelector.GetSurrogate(basetype) is { } ss)
+      {
+        _writer.WriteStartElement(name);
+        _writer.WriteAttributeString("Type", _surrogateSelector.GetFullyQualifiedTypeName(basetype));
+        ss.Serialize(o, this);
+        _writer.WriteEndElement();
+      }
       else
       {
-        m_Writer.WriteStartElement(name);
-        m_Writer.WriteAttributeString("Type", m_SurrogateSelector.GetFullyQualifiedTypeName(basetype));
-        ss.Serialize(o, this);
-        m_Writer.WriteEndElement();
+        throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", basetype));
       }
     }
 
@@ -541,7 +560,7 @@ namespace Altaxo.Serialization.Xml
     /// <param name="rawXmlString">The raw XML string.</param>
     public void WriteRaw(string rawXmlString)
     {
-      m_Writer.WriteRaw(rawXmlString);
+      _writer.WriteRaw(rawXmlString);
     }
 
     #endregion IXmlSerializationInfo Members

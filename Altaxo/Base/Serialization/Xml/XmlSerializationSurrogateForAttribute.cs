@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
+
 using System;
 
 namespace Altaxo.Serialization.Xml
@@ -32,10 +34,10 @@ namespace Altaxo.Serialization.Xml
   [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
   public class XmlSerializationSurrogateForAttribute : Attribute
   {
-    protected int m_Version;
-    protected System.Type m_SerializationType;
-    protected string m_AssemblyName;
-    protected string m_TypeName;
+    protected int _version;
+    protected System.Type? _serializationType;
+    protected string? _assemblyName;
+    protected string? _typeName;
 
     /// <summary>
     /// Constructor. The class this attribute is applied provides a serialization surrogate for the type <code>serializationtype</code>, version <code>version.</code>.
@@ -44,8 +46,8 @@ namespace Altaxo.Serialization.Xml
     /// <param name="version">The version of the class for which this surrogate is intended.</param>
     public XmlSerializationSurrogateForAttribute(Type serializationtype, int version)
     {
-      m_Version = version;
-      m_SerializationType = serializationtype;
+      _version = version;
+      _serializationType = serializationtype;
     }
 
     /// <summary>
@@ -57,9 +59,9 @@ namespace Altaxo.Serialization.Xml
     /// <param name="version"></param>
     public XmlSerializationSurrogateForAttribute(string assembly, string typename, int version)
     {
-      m_Version = version;
-      m_AssemblyName = assembly;
-      m_TypeName = typename;
+      _version = version;
+      _assemblyName = assembly;
+      _typeName = typename;
     }
 
     /// <summary>
@@ -67,15 +69,15 @@ namespace Altaxo.Serialization.Xml
     /// </summary>
     public int Version
     {
-      get { return m_Version; }
+      get { return _version; }
     }
 
     /// <summary>
     ///Returns the target type for which the class this attribute is applied for is the serialization surrogate.
     /// </summary>
-    public System.Type SerializationType
+    public System.Type? SerializationType
     {
-      get { return m_SerializationType; }
+      get { return _serializationType; }
     }
 
     /// <summary>
@@ -85,10 +87,21 @@ namespace Altaxo.Serialization.Xml
     {
       get
       {
-        if (null != m_SerializationType)
-          return (m_SerializationType.Assembly.FullName.Split(new char[] { ',' }, 2))[0];
+        if (null != _serializationType)
+        {
+          if (_serializationType.Assembly.FullName is { } fullName)
+            return (_serializationType.Assembly.FullName.Split(new char[] { ',' }, 2))[0];
+          else
+            throw new InvalidOperationException($"No FullName available for assembly {_serializationType.Assembly}");
+        }
+        else if (_assemblyName is { } _)
+        {
+          return _assemblyName;
+        }
         else
-          return m_AssemblyName;
+        {
+          throw new InvalidOperationException("Either type or AssemblyName should be != null");
+        }
       }
     }
 
@@ -99,7 +112,7 @@ namespace Altaxo.Serialization.Xml
     {
       get
       {
-        return null != m_SerializationType ? m_SerializationType.ToString() : m_TypeName;
+        return _serializationType?.ToString() ?? _typeName ?? throw new InvalidOperationException();
       }
     }
   } // end class SerializationSurrogateForAttribute

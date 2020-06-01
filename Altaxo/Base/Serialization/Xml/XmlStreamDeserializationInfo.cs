@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,8 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 
 namespace Altaxo.Serialization.Xml
@@ -33,6 +36,8 @@ namespace Altaxo.Serialization.Xml
   /// </summary>
   public class XmlStreamDeserializationInfo : IXmlDeserializationInfo, IDisposable
   {
+    private static readonly XmlTextReader _nullXmlReader = new XmlTextReader(System.IO.Stream.Null);
+
     private XmlTextReader _xmlReader;
 
     private XmlSurrogateSelector _surrogateSelector;
@@ -55,13 +60,13 @@ namespace Altaxo.Serialization.Xml
     /// done only if the objects are put in the right places in the document, so that
     /// the document paths can be resolved to the right objects.
     /// </summary>
-    public event XmlDeserializationCallbackEventHandler DeserializationFinished;
+    public event XmlDeserializationCallbackEventHandler? DeserializationFinished;
 
     /// <summary>
     /// Occurs after (!) the deserialization process has completely finished, and the dirty flag of the document was cleared. This callback is intended to activate
     /// the data sources of the document, which should be suspended during the deserialization process.
     /// </summary>
-    public event Action AfterDeserializationHasCompletelyFinished;
+    public event Action? AfterDeserializationHasCompletelyFinished;
 
     /// <summary>
     /// Occurs when a new instance of this class is created. Argument is the created instance.
@@ -75,6 +80,7 @@ namespace Altaxo.Serialization.Xml
       _buffer = new byte[_bufferSize];
       _surrogateSelector = new XmlSurrogateSelector();
       _surrogateSelector.TraceLoadedAssembliesForSurrogates();
+      _xmlReader = _nullXmlReader;
 
       // Announce that an instance of the deserialization info was created.
       _instanceCreated.Target?.Invoke(this);
@@ -103,12 +109,12 @@ namespace Altaxo.Serialization.Xml
     public void EndReading()
     {
       // m_Reader.Close(); Do not close the reader, since the underlying stream is closed too then..., this will not work if reading zip files
-      _xmlReader = null;
+      _xmlReader = _nullXmlReader;
     }
 
     public void Dispose()
     {
-      _xmlReader = null;
+      _xmlReader = _nullXmlReader;
     }
 
     /// <summary>
@@ -144,9 +150,13 @@ namespace Altaxo.Serialization.Xml
       }
       else
       {
+#nullable disable
         return default(T);
+#nullable enable
       }
     }
+
+
 
     public void AnnounceDeserializationEnd(Main.IDocumentNode documentRoot, bool isFinalCall)
     {
@@ -263,7 +273,7 @@ namespace Altaxo.Serialization.Xml
       return GetString();
     }
 
-    public System.IO.MemoryStream GetMemoryStream(string name)
+    public System.IO.MemoryStream? GetMemoryStream(string name)
     {
       int length = XmlConvert.ToInt32(_xmlReader["Length"]);
       if (length == 0)
@@ -292,11 +302,17 @@ namespace Altaxo.Serialization.Xml
       return System.Enum.Parse(type, val);
     }
 
+    public T GetEnum<T>(string name) where T : Enum
+    {
+      string val = _xmlReader.ReadElementString(name);
+      return (T)System.Enum.Parse(typeof(T), val);
+    }
+
     public T? GetNullableEnum<T>(string name) where T : struct
     {
       string val = _xmlReader.ReadElementString(name);
       if (string.IsNullOrEmpty(val))
-        return default(System.Nullable<T>);
+        return null;
       else
         return (T)System.Enum.Parse(typeof(T), val);
     }
@@ -583,12 +599,49 @@ namespace Altaxo.Serialization.Xml
       return _xmlReader.LocalName;
     }
 
-    public object GetValue(string name, object parentobject)
+    public object GetValue(string name, object? parentobject)
     {
-      return GetValue(parentobject);
+      return GetValueOrNull(parentobject) ?? throw new DeserializationNullException(name, parentobject);
     }
 
-    public object GetValue(object parentobject)
+    public object? GetValueOrNull(string name, object? parentobject)
+    {
+      return GetValueOrNull(parentobject);
+    }
+
+    public T GetValue<T>(string name, object? parentObject)
+    {
+
+#if !NONULLSTRICTCHECK
+      var o = GetValueOrNull(parentObject) ?? throw new DeserializationNullException(name, parentObject);
+
+
+      return (o is T result) ?
+          result :
+          throw new DeserializationException($"Name: {name}, Parent: {parentObject}, Type unexpected: Current: {o?.GetType()} but expected: {typeof(T)}");
+#else
+      var o = GetValueOrNull(parentObject);
+#nullable disable
+      return (T)o;
+#nullable enable
+#endif
+    }
+
+
+
+    public T? GetValueOrNull<T>(string name, object? parentObject) where T : class
+    {
+      var o = GetValueOrNull(parentObject);
+
+      return (o is null) ?
+          null :
+          (o is T result) ?
+              result :
+              throw new DeserializationException($"Name: {name}, Parent: {parentObject}, Type unexpected: Current: {o?.GetType()} but expected: {typeof(T)}");
+    }
+
+
+    public object? GetValueOrNull(object? parentobject)
     {
       string type = _xmlReader.GetAttribute("Type");
 
@@ -601,12 +654,7 @@ namespace Altaxo.Serialization.Xml
         }
 
         // Get the surrogate for this type
-        IXmlSerializationSurrogate surr = _surrogateSelector.GetSurrogate(type);
-        if (null == surr)
-        {
-          throw new ApplicationException(string.Format("Unable to find XmlSurrogate for type {0}!", type));
-        }
-        else
+        if (_surrogateSelector.GetSurrogate(type) is { } surr)
         {
           bool bNotEmpty = !_xmlReader.IsEmptyElement;
           // System.Diagnostics.Trace.WriteLine(string.Format("Xml val {0}, type {1}, empty:{2}",m_Reader.Name,type,bNotEmpty));
@@ -614,7 +662,7 @@ namespace Altaxo.Serialization.Xml
           if (bNotEmpty)
             _xmlReader.ReadStartElement();  // note: this must now be done by  in the deserialization code
 
-          object retvalue = surr.Deserialize(null, this, parentobject);
+          var retvalue = surr.Deserialize(null, this, parentobject);
 
           if (bNotEmpty)
             _xmlReader.ReadEndElement();
@@ -622,6 +670,10 @@ namespace Altaxo.Serialization.Xml
             _xmlReader.Read();
 
           return retvalue;
+        }
+        else
+        {
+          throw new ApplicationException(string.Format("Unable to find XmlSurrogate for type {0}!", type));
         }
       }
       else
@@ -639,7 +691,7 @@ namespace Altaxo.Serialization.Xml
     /// <param name="returnValueIsOuterXml">If set to <c>true</c>, the return value is a string containing the outer XML node.</param>
     /// <returns>The deserialized value (if <paramref name="returnValueIsOuterXml"/> is false), or the outer XML node (if <paramref name="returnValueIsOuterXml"/> is true).</returns>
     /// <exception cref="ApplicationException"></exception>
-    public object GetValueOrOuterXml(string name, object parentobject, out bool returnValueIsOuterXml)
+    public object? GetValueOrOuterXml(string name, object parentobject, out bool returnValueIsOuterXml)
     {
       returnValueIsOuterXml = false;
       string type = _xmlReader.GetAttribute("Type");
@@ -653,13 +705,7 @@ namespace Altaxo.Serialization.Xml
         }
 
         // Get the surrogate for this type
-        IXmlSerializationSurrogate surr = _surrogateSelector.GetSurrogate(type);
-        if (null == surr)
-        {
-          returnValueIsOuterXml = true;
-          return _xmlReader.ReadOuterXml();
-        }
-        else
+        if (_surrogateSelector.GetSurrogate(type) is { } surr)
         {
           bool bNotEmpty = !_xmlReader.IsEmptyElement;
           // System.Diagnostics.Trace.WriteLine(string.Format("Xml val {0}, type {1}, empty:{2}",m_Reader.Name,type,bNotEmpty));
@@ -667,7 +713,7 @@ namespace Altaxo.Serialization.Xml
           if (bNotEmpty)
             _xmlReader.ReadStartElement();  // note: this must now be done by  in the deserialization code
 
-          object retvalue = surr.Deserialize(null, this, parentobject);
+          var retvalue = surr.Deserialize(null, this, parentobject);
 
           if (bNotEmpty)
             _xmlReader.ReadEndElement();
@@ -675,6 +721,11 @@ namespace Altaxo.Serialization.Xml
             _xmlReader.Read();
 
           return retvalue;
+        }
+        else
+        {
+          returnValueIsOuterXml = true;
+          return _xmlReader.ReadOuterXml();
         }
       }
       else
@@ -690,56 +741,61 @@ namespace Altaxo.Serialization.Xml
       if ("BaseType" == CurrentElementName)
       {
         string basetypestring = _xmlReader.ReadElementString();
-        IXmlSerializationSurrogate ss = _surrogateSelector.GetSurrogate(basetypestring);
-        if (null == ss)
+        if (_surrogateSelector.GetSurrogate(basetypestring) is { } ss)
+          ss.Deserialize(instance, this, parent);
+        else
           throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", basetype));
-        ss.Deserialize(instance, this, parent);
+
       }
       else
       {
-        IXmlSerializationSurrogate ss = _surrogateSelector.GetSurrogate(basetype);
-        if (null == ss)
+        if (_surrogateSelector.GetSurrogate(basetype) is { } ss)
+          ss.Deserialize(instance, this, parent);
+        else
           throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", basetype));
-        ss.Deserialize(instance, this, parent);
       }
     }
 
     /// <summary>Deserializes the embedded base type.</summary>
     /// <param name="instance">The instance of the object to deserialize.</param>
-    /// <param name="fullyQualifiedBaseTypeName">Fully qualified base type name. It is the short name of the assembly, comma, the full type name, comma, and the version. The string must not contain whitespaces. Example: 'AltaxoBase,Altaxo.Main.DocumentPath,0'.</param>
+    /// <param name="fullyQualifiedBaseTypeName">Fully qualified base type name. It is the short name of the assembly, comma, the full type name, comma, and the version. The string must not contain whitespaces. Example: 'AltaxoBase,SampleFileRenamer.Main.DocumentPath,0'.</param>
     /// <param name="parent">The parent object of the current object to deserialize.</param>
     public object GetBaseValueEmbedded(object instance, string fullyQualifiedBaseTypeName, object parent)
     {
-      object obj;
+      object? obj;
       if ("BaseType" == CurrentElementName)
       {
         string basetypestring = _xmlReader.ReadElementString();
-        IXmlSerializationSurrogate ss = _surrogateSelector.GetSurrogate(basetypestring);
-        if (null == ss)
-          throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", fullyQualifiedBaseTypeName));
-        obj = ss.Deserialize(instance, this, parent);
+        if (_surrogateSelector.GetSurrogate(basetypestring) is { } ss)
+          obj = ss.Deserialize(instance, this, parent);
+        else
+          throw new DeserializationException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", fullyQualifiedBaseTypeName));
       }
       else
       {
-        IXmlSerializationSurrogate ss = _surrogateSelector.GetSurrogate(fullyQualifiedBaseTypeName);
-        if (null == ss)
-          throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", fullyQualifiedBaseTypeName));
-        obj = ss.Deserialize(instance, this, parent);
+        if (_surrogateSelector.GetSurrogate(fullyQualifiedBaseTypeName) is { } ss)
+          obj = ss.Deserialize(instance, this, parent);
+        else
+          throw new DeserializationException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", fullyQualifiedBaseTypeName));
       }
+
+      if (obj is null)
+        throw new DeserializationException($"{nameof(GetBaseValueEmbedded)} with Type={fullyQualifiedBaseTypeName} resulted in deserializing null");
+
       return obj;
     }
 
     public void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent)
     {
-      IXmlSerializationSurrogate ss = _surrogateSelector.GetSurrogate(basetype);
-      if (null == ss)
-        throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", basetype));
-      else
+      if (_surrogateSelector.GetSurrogate(basetype) is { } ss)
       {
         _xmlReader.ReadStartElement(); // note: this must now be done by  in the deserialization code
         ss.Deserialize(instance, this, parent);
         _xmlReader.ReadEndElement();
       }
+      else
+        throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", basetype));
+
     }
 
     public string GetElementAsOuterXml(string name)
