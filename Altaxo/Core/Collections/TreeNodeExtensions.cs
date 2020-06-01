@@ -654,7 +654,7 @@ namespace Altaxo.Collections
         using (var destChildEnum = getDestinationChildEnumerator(destinationRootNode))
         {
           bool s = sourceChildEnum is { } _;
-          bool d = !(destChildEnum is { } _);
+          bool d = destChildEnum is { } _;
           for (int idx = 0; ; ++idx)
           {
             if (s)
@@ -685,7 +685,7 @@ namespace Altaxo.Collections
                 if (null == destinationNodesToDelete)
                   destinationNodesToDelete = new List<(D, D, int)>();
 
-                destinationNodesToDelete.Add((destinationRootNode, destChildEnum.Current, idx));
+                destinationNodesToDelete.Add((destinationRootNode, destChildEnum!.Current, idx));
               }
               else
               {
@@ -846,18 +846,18 @@ namespace Altaxo.Collections
         return false;
       }
 
-      bool result;
       using (var it = index.GetEnumerator())
       {
         if (it.MoveNext())
-          result = IsValidIndex(rootNode.ChildNodes, it, 1, out nodeAtIndex);
+        {
+          return IsValidIndex(rootNode.ChildNodes, it, 1, out nodeAtIndex);
+        }
         else
         {
           nodeAtIndex = rootNode;
-          result = true; // List is empty => return true, since this is the root node.
+          return true; // List is empty => return true, since this is the root node.
         }
       }
-      return result;
     }
 
     private static bool IsValidIndex<T>(IList<T> nodes, IEnumerator<int> it, int level, [MaybeNullWhen(false)] out T nodeAtIndex) where T : ITreeListNode<T>

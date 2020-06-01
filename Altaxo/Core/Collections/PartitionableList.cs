@@ -54,7 +54,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Defines an action that is executed before an item is inserted. The 1st argument is the item to insert.
     /// </summary>
-    protected Action<T> _actionBeforeInsertion;
+    protected Action<T>? _actionBeforeInsertion;
 
     /// <summary>
     /// Get information whether the CollectionChanged events are enabled or disabled.
@@ -64,7 +64,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Holds the last fired CollectionChanged event in case the event state is disabled.
     /// </summary>
-    private NotifyCollectionChangedEventArgs _pendingEvent;
+    private NotifyCollectionChangedEventArgs? _pendingEvent;
 
     #region Constructors
 
@@ -151,7 +151,7 @@ namespace Altaxo.Collections
     /// <returns></returns>
     public IObservableList<M> CreatePartialViewOfType<M>(Func<M, bool> selectionCriterium) where M : T
     {
-      var result = new PartialView<M>(this, x => (x is M) && selectionCriterium((M)x));
+      var result = new PartialView<M>(this, x => (x is M mx) && selectionCriterium(mx));
       _partialViews.AddLast(new WeakReference(result));
       return result;
     }
@@ -166,7 +166,7 @@ namespace Altaxo.Collections
     /// <returns></returns>
     public IObservableList<M> CreatePartialViewOfType<M>(Func<M, bool> selectionCriterium, Action<M> actionBeforeInsertion) where M : T
     {
-      var result = new PartialView<M>(this, x => (x is M) && selectionCriterium((M)x), actionBeforeInsertion);
+      var result = new PartialView<M>(this, x => (x is M mx) && selectionCriterium(mx), actionBeforeInsertion);
       _partialViews.AddLast(new WeakReference(result));
       return result;
     }
@@ -314,8 +314,7 @@ namespace Altaxo.Collections
       {
         for (var node = _partialViews.First; null != node; node = node.Next)
         {
-          var pv = node.Value.Target as PartialViewBase;
-          if (null != pv)
+          if (node.Value.Target is PartialViewBase pv)
           {
             var itemIndex = pv._itemIndex;
             int i, j;
@@ -399,8 +398,7 @@ namespace Altaxo.Collections
 
     protected override void SetItem(int index, T item)
     {
-      if (null != _actionBeforeInsertion)
-        _actionBeforeInsertion(item);
+      _actionBeforeInsertion?.Invoke(item);
 
       for (var node = _partialViews.First; null != node; node = node.Next)
       {
@@ -509,7 +507,7 @@ namespace Altaxo.Collections
 
       private class SuspendToken : ISuspendToken
       {
-        private TemporaryDisabler _parent;
+        private TemporaryDisabler? _parent;
 
         internal SuspendToken(TemporaryDisabler parent)
         {
@@ -527,7 +525,7 @@ namespace Altaxo.Collections
         /// </summary>
         public void ResumeSilently()
         {
-          var parent = System.Threading.Interlocked.Exchange<TemporaryDisabler>(ref _parent, null);
+          var parent = System.Threading.Interlocked.Exchange<TemporaryDisabler?>(ref _parent, null);
           if (parent != null)
           {
             int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
@@ -558,7 +556,7 @@ namespace Altaxo.Collections
 
         public void Dispose()
         {
-          var parent = System.Threading.Interlocked.Exchange<TemporaryDisabler>(ref _parent, null);
+          var parent = System.Threading.Interlocked.Exchange<TemporaryDisabler?>(ref _parent, null);
           if (parent != null)
           {
             int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
@@ -642,9 +640,7 @@ namespace Altaxo.Collections
       /// </summary>
       protected virtual void OnResume()
       {
-        var ev = _reenablingEventHandler;
-        if (null != ev)
-          ev();
+        _reenablingEventHandler?.Invoke();
       }
 
       /// <summary>

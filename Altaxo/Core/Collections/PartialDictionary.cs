@@ -25,12 +25,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
 namespace Altaxo.Collections
 {
-  public class PartialDictionary<TKey, TBaseValue, TDerivValue> : IDictionary<TKey, TDerivValue> where TDerivValue : class where TBaseValue : class
+  public class PartialDictionary<TKey, TBaseValue, TDerivValue> : IDictionary<TKey, TDerivValue> where TKey : notnull where TBaseValue : class where TDerivValue : class, TBaseValue
   {
     private IDictionary<TKey, TBaseValue> _parent;
 
@@ -44,7 +45,7 @@ namespace Altaxo.Collections
       get
       {
         var result = _parent[key];
-        return result as TDerivValue;
+        return result as TDerivValue ?? throw new InvalidOperationException();
       }
 
       set
@@ -138,7 +139,7 @@ namespace Altaxo.Collections
 
     public bool Contains(KeyValuePair<TKey, TDerivValue> item)
     {
-      return _parent.Contains(new KeyValuePair<TKey, TBaseValue>(item.Key, item.Value as TBaseValue));
+      return _parent.Contains(new KeyValuePair<TKey, TBaseValue>(item.Key, (TBaseValue)(item.Value)));
     }
 
     public bool ContainsKey(TKey key)
@@ -163,8 +164,8 @@ namespace Altaxo.Collections
     public IEnumerator<KeyValuePair<TKey, TDerivValue>> GetEnumerator()
     {
       foreach (var entry in _parent)
-        if (entry.Value is TDerivValue)
-          yield return new KeyValuePair<TKey, TDerivValue>(entry.Key, entry.Value as TDerivValue);
+        if (entry.Value is TDerivValue tdvalue)
+          yield return new KeyValuePair<TKey, TDerivValue>(entry.Key, tdvalue);
     }
 
     public bool Remove(KeyValuePair<TKey, TDerivValue> item)
@@ -185,22 +186,22 @@ namespace Altaxo.Collections
       return _parent.Remove(key);
     }
 
-    public bool TryGetValue(TKey key, out TDerivValue value)
+    public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TDerivValue value)
     {
       if (!_parent.TryGetValue(key, out var d))
       {
-        value = default(TDerivValue);
+        value = null;
         return false;
       }
       value = d as TDerivValue;
-      return null != value;
+      return !(value is null);
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
       foreach (var entry in _parent)
-        if (entry.Value is TDerivValue)
-          yield return new KeyValuePair<TKey, TDerivValue>(entry.Key, entry.Value as TDerivValue);
+        if (entry.Value is TDerivValue tdvalue)
+          yield return new KeyValuePair<TKey, TDerivValue>(entry.Key, tdvalue);
     }
   }
 }

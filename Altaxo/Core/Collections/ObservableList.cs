@@ -45,10 +45,10 @@ namespace Altaxo.Collections
     private IList<T> _innerList;
 
     /// <inheritdoc />
-    public event NotifyCollectionChangedEventHandler CollectionChanged;
+    public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
     /// <inheritdoc />
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     private static PropertyChangedEventArgs _countChangedEventArgs;
 

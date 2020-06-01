@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -34,7 +35,7 @@ namespace Altaxo.Collections
   /// </summary>
   /// <typeparam name="TKey">The type of the key (token).</typeparam>
   /// <typeparam name="TValue">The type of the value.</typeparam>
-  public class ConcurrentTokenizedLinkedList<TKey, TValue>
+  public class ConcurrentTokenizedLinkedList<TKey, TValue> where TKey : notnull
   {
     private LinkedList<Tuple<TKey, TValue>> _list;
     private Dictionary<TKey, LinkedListNode<Tuple<TKey, TValue>>> _dictionary;
@@ -87,14 +88,13 @@ namespace Altaxo.Collections
     /// <param name="key">If successful, contains the key that was used to add the item.</param>
     /// <param name="value">if successful, contains the value of the item.</param>
     /// <returns>True if the operation was successful. If the list contains no items, the return value is false.</returns>
-    public bool TryTakeFirst(out TKey key, out TValue value)
+    public bool TryTakeFirst([MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value)
     {
       _lock.EnterUpgradeableReadLock();
       try
       {
-        if (_list.Count > 0)
+        if (_list.First is { } node)
         {
-          var node = _list.First;
           key = node.Value.Item1;
           value = node.Value.Item2;
           _lock.EnterWriteLock();
@@ -111,8 +111,8 @@ namespace Altaxo.Collections
         }
         else
         {
-          key = default(TKey);
-          value = default(TValue);
+          key = default;
+          value = default;
           return false;
         }
       }
@@ -128,14 +128,13 @@ namespace Altaxo.Collections
     /// <param name="key">If successful, contains the key that was used to add the item.</param>
     /// <param name="value">if successful, contains the value of the item.</param>
     /// <returns>True if the operation was successful. If the list contains no items, the return value is false.</returns>
-    public bool TryTakeLast(out TKey key, out TValue value)
+    public bool TryTakeLast([MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value)
     {
       _lock.EnterUpgradeableReadLock();
       try
       {
-        if (_list.Count > 0)
+        if (_list.Last is { } node)
         {
-          var node = _list.Last;
           key = node.Value.Item1;
           value = node.Value.Item2;
           _lock.EnterWriteLock();
@@ -152,8 +151,8 @@ namespace Altaxo.Collections
         }
         else
         {
-          key = default(TKey);
-          value = default(TValue);
+          key = default;
+          value = default;
           return false;
         }
       }

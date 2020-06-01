@@ -417,7 +417,7 @@ namespace Altaxo.Collections
     /// <param name="value">On successfull return, contains the value associated with the minimum key.</param>
     /// <param name="token">On successfull return, contains the token associated with the minimum key.</param>
     /// <returns><c>True</c> if the queue contained at least one element that could be Peek'd; otherwise <c>false</c>.</returns>
-    public bool TryPeek([MaybeNullWhen(false)] out TKey key, [MaybeNull]out TValue value, [MaybeNullWhen(false)] out TToken token)
+    public bool TryPeek([MaybeNullWhen(false)] out TKey key, [MaybeNull] out TValue value, [MaybeNullWhen(false)] out TToken token)
     {
       _syncLock.EnterReadLock();
       try
@@ -448,7 +448,7 @@ namespace Altaxo.Collections
     /// <param name="key">On successfull return, contains the minimum key.</param>
     /// <param name="value">On successfull return, contains the value associated with the minimum key.</param>
     /// <returns><c>True</c> if the queue contained at least one element that could be Peek'd; otherwise <c>false</c>.</returns>
-    public bool TryPeek(out TKey key, out TValue value)
+    public bool TryPeek([MaybeNullWhen(false)] out TKey key, [MaybeNull] out TValue value)
     {
       return TryPeek(out key, out value, out _);
     }
@@ -458,7 +458,7 @@ namespace Altaxo.Collections
     /// </summary>
     /// <param name="key">On successfull return, contains the minimum key.</param>
     /// <returns><c>True</c> if the queue contained at least one element that could be Peek'd; otherwise <c>false</c>.</returns>
-    public bool TryPeek(out TKey key)
+    public bool TryPeek([MaybeNullWhen(false)] out TKey key)
     {
       return TryPeek(out key, out _, out _);
     }
@@ -469,7 +469,7 @@ namespace Altaxo.Collections
     /// <param name="result">On successfull return, contains the element with minimum key.</param>
     /// <param name="token">On successfull return, contains the token associated with the element with minimum key.</param>
     /// <returns><c>True</c> if the queue contained at least one element; otherwise <c>false</c>.</returns>
-    public bool TryPeek(out KeyValuePair<TKey, TValue> result, out TToken token)
+    public bool TryPeek(out KeyValuePair<TKey, TValue> result, [MaybeNullWhen(false)] out TToken token)
     {
       if (TryPeek(out var key, out var value, out token))
       {
@@ -550,7 +550,7 @@ namespace Altaxo.Collections
     /// <param name="value">On sucessfull return, contains value belonging to the minimum key value.</param>
     /// <param name="token">On successfull return, contains the token associated with the key/value pair with minimum key.</param>
     /// <returns><c>True if an item could be successfully retrieved from the queue; <c>false</c> if the queue contains no items.</c></returns>
-    public bool TryDequeue([MaybeNullWhen(false)]out TKey key, [MaybeNull] out TValue value, [MaybeNullWhen(false)] out TToken token)
+    public bool TryDequeue([MaybeNullWhen(false)] out TKey key, [MaybeNull] out TValue value, [MaybeNullWhen(false)] out TToken token)
     {
       _syncLock.EnterUpgradeableReadLock();
       try
@@ -597,7 +597,7 @@ namespace Altaxo.Collections
     /// <param name="keyValuePair">On sucessfull return, contains the key/value pair with minimum key value.</param>
     /// <param name="token">On successfull return, contains the token associated with the key/value pair with minimum key.</param>
     /// <returns><c>True if an item could be successfully retrieved from the queue; <c>false</c> if the queue contains no items.</c></returns>
-    public bool TryDequeue(out KeyValuePair<TKey, TValue> keyValuePair, out TToken token)
+    public bool TryDequeue(out KeyValuePair<TKey, TValue> keyValuePair, [MaybeNullWhen(false)] out TToken token)
     {
 
       if (TryDequeue(out var key, out var value, out token))

@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -44,7 +45,7 @@ namespace Altaxo.Collections
   /// To have fast access to the items by key, a dictionary can be accessed by those keys. The values of this dictionary are HashSets
   /// of LinkedListNodes, these LinkedListNodes that are members of the doubly linked list, and whose values are associated with the key.
   /// </remarks>
-  public sealed class CachedObjectManagerByMaximumNumberOfItems<TKey, TValue>
+  public sealed class CachedObjectManagerByMaximumNumberOfItems<TKey, TValue> where TKey : notnull
   {
     private object _syncObj;
 
@@ -86,7 +87,7 @@ namespace Altaxo.Collections
     /// <param name="key">The key of the object.</param>
     /// <param name="value">On success, the object taken from this collection.</param>
     /// <returns>True if the object was found; false otherwise.</returns>
-    public bool TryTake(TKey key, out TValue value)
+    public bool TryTake(TKey key, [MaybeNullWhen(false)] out TValue value)
     {
       lock (_syncObj)
       {
@@ -112,7 +113,7 @@ namespace Altaxo.Collections
     /// </summary>
     public void Clear()
     {
-      KeyValuePair<TKey, TValue>[] itemsToDispose = null;
+      KeyValuePair<TKey, TValue>[] itemsToDispose;
       lock (_syncObj)
       {
         itemsToDispose = _valueList.ToArray();
@@ -124,7 +125,7 @@ namespace Altaxo.Collections
         itemToDispose.Dispose();
     }
 
-    private bool InternalTryTake_Unlocked(TKey key, out TValue value)
+    private bool InternalTryTake_Unlocked(TKey key, [MaybeNullWhen(false)] out TValue value)
     {
 
       if (_keyDictionary.TryGetValue(key, out var nodeSet))
@@ -165,9 +166,8 @@ namespace Altaxo.Collections
 
     private void InternalRemoveLastItem_Unlocked()
     {
-      if (_valueList.Count > 0)
+      if (_valueList.Last is { } lastItem)
       {
-        var lastItem = _valueList.Last;
         _valueList.RemoveLast();
         var keyRemove = lastItem.Value.Key;
         var valueRemove = lastItem.Value.Value;

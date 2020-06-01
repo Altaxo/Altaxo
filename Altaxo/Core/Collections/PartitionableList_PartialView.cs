@@ -134,13 +134,11 @@ namespace Altaxo.Collections
         }
       }
 
-      public event NotifyCollectionChangedEventHandler CollectionChanged;
+      public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
       public virtual void OnNotifyCollectionChanged()
       {
-        var eventCall = CollectionChanged;
-        if (null != eventCall)
-          eventCall(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
       }
     }
 
@@ -148,7 +146,7 @@ namespace Altaxo.Collections
 
     protected class PartialView<M> : PartialViewBase, IObservableList<M> where M : T
     {
-      protected Action<M> _actionBeforeInsertion;
+      protected Action<M>? _actionBeforeInsertion;
       private PartitionableListAddBehavior _addBehavior = PartitionableListAddBehavior.KeepTogether_AddLastIfEmpty;
 
       protected internal PartialView(PartitionableList<T> list, Func<T, bool> selectionCriterium)
@@ -229,8 +227,7 @@ namespace Altaxo.Collections
           insertPoint = _itemIndex[index];
         }
 
-        if (null != _actionBeforeInsertion)
-          _actionBeforeInsertion(item);
+        _actionBeforeInsertion?.Invoke(item);
 
         _collection.Insert(insertPoint, item);
       }
@@ -252,8 +249,7 @@ namespace Altaxo.Collections
           if (!_selectionCriterium(value))
             throw new ArgumentException("item does not fulfill the selection criterion");
 
-          if (null != _actionBeforeInsertion)
-            _actionBeforeInsertion(value);
+          _actionBeforeInsertion?.Invoke(value);
 
           _collection[_itemIndex[index]] = value;
         }
@@ -264,8 +260,7 @@ namespace Altaxo.Collections
         if (!_selectionCriterium(item))
           throw new ArgumentException("item to insert does not fulfill the selection criterion");
 
-        if (null != _actionBeforeInsertion)
-          _actionBeforeInsertion(item);
+        _actionBeforeInsertion?.Invoke(item);
 
         if (_itemIndex.Count == 0)
         {
