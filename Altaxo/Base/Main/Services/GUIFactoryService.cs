@@ -390,13 +390,7 @@ namespace Altaxo.Main.Services
           }
 
           // we can try to use a property grid
-          #if NETFRAMEWORK
-          controller = new PropertyController(args[0]);          
-          #else
-          var ctrl = new Gui.Main.InstancePropertyController();
-          ctrl.InitializeDocument(args);
-          controller = ctrl;
-          #endif
+          controller = new PropertyController(args[0]);
           FindAndAttachControlTo(controller);
         }
 

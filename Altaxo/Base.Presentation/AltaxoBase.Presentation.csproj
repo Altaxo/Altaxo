@@ -16,6 +16,7 @@
     <ProjectReference Include="..\Base\AltaxoBase.csproj" />
     <ProjectReference Include="..\..\Libraries\Markdig\Markdig.csproj" />
     <ProjectReference Include="..\..\Libraries\Markdig.Wpf\Markdig.Wpf.csproj" />
+    <ProjectReference Include="..\..\Libraries\WpfPropertyGrid\WpfPropertyGrid.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,9 +29,6 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <Reference Include="WPG">
-      <HintPath>..\..\Libraries\AssembliesOnly\WPG.dll</HintPath>
-    </Reference>
   </ItemGroup>
   
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />

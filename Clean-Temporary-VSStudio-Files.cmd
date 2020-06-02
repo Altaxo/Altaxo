@@ -102,6 +102,9 @@ rmdir /S /Q .\Libraries\UpdateInstaller\bin
 rmdir /S /Q .\Libraries\WpfMath\obj
 rmdir /S /Q .\Libraries\WpfMath\bin
 
+rmdir /S /Q .\Libraries\WpfPropertyGrid\obj
+rmdir /S /Q .\Libraries\WpfPropertyGrid\bin
+
 rmdir /S /Q .\Setup\Debug
 rmdir /S /Q .\Setup\Release
 
