@@ -294,7 +294,7 @@ namespace Altaxo.Units
       get { return false; }
     }
 
-    public bool Equals(SIPrefix other)
+    public bool Equals(SIPrefix? other)
     {
       return other is { } b ? _exponent == b._exponent : false;
     }
@@ -309,7 +309,7 @@ namespace Altaxo.Units
       return _exponent.GetHashCode();
     }
 
-    public int CompareTo(SIPrefix other)
+    public int CompareTo(SIPrefix? other)
     {
       if (other is null)
         throw new ArgumentNullException(nameof(other));
