@@ -59,7 +59,7 @@ namespace Altaxo.Calc.Integration
   {
     #region offical C# interface
 
-    private gsl_integration_workspace _cycleWorkspace;
+    private gsl_integration_workspace? _cycleWorkspace;
 
     /// <summary>
     /// Creates an instance of this integration class with a default integration rule and default debug flag setting.
@@ -80,7 +80,7 @@ namespace Altaxo.Calc.Integration
     {
     }
 
-    public GSL_ERROR
+    public GSL_ERROR?
      Integrate(Func<double, double> f,
      double a,
      OscillatoryTerm oscTerm,
@@ -91,7 +91,7 @@ namespace Altaxo.Calc.Integration
       return Integrate(f, a, oscTerm, omega, epsabs, limit, _debug, out result, out abserr);
     }
 
-    public GSL_ERROR
+    public GSL_ERROR?
       Integrate(Func<double, double> f,
       double a,
       OscillatoryTerm oscTerm,
@@ -117,7 +117,7 @@ namespace Altaxo.Calc.Integration
       return gsl_integration_qawf(f, a, epsabs, limit, _workSpace, _cycleWorkspace, _qawoTable, out result, out abserr, debug);
     }
 
-    public static GSL_ERROR
+    public static GSL_ERROR?
     Integration(Func<double, double> f,
           double a,
       OscillatoryTerm oscTerm,
@@ -125,7 +125,7 @@ namespace Altaxo.Calc.Integration
           double epsabs,
           int limit,
           out double result, out double abserr,
-          ref object tempStorage
+          ref object? tempStorage
           )
     {
       var algo = tempStorage as QawfIntegration;
@@ -157,7 +157,7 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-    private static GSL_ERROR
+    private static GSL_ERROR?
     gsl_integration_qawf(Func<double, double> f,
                           double a,
                           double epsabs,
@@ -219,7 +219,7 @@ namespace Altaxo.Calc.Integration
         {
           /* The function cos(w x) f(x) is always f(x) for w = 0 */
 
-          GSL_ERROR status = QagiuIntegration.gsl_integration_qagiu(f, a, epsabs, 0.0,
+          var status = QagiuIntegration.gsl_integration_qagiu(f, a, epsabs, 0.0,
                                               cycle_workspace.limit,
                                               cycle_workspace,
                                               out result, out abserr,
@@ -259,7 +259,7 @@ namespace Altaxo.Calc.Integration
 
         double epsabs1 = eps * factor;
 
-        GSL_ERROR status = gsl_integration_qawo(f, a1, epsabs1, 0.0, limit,
+        var status = gsl_integration_qawo(f, a1, epsabs1, 0.0, limit,
                                            cycle_workspace, wf,
                                            out var area1, out var error1, false);
 

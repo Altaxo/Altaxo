@@ -95,7 +95,7 @@ namespace Altaxo.Calc.Fourier
 
     #region Amplitude
 
-    private AmplitudeWrapper _amplitudeWrapper;
+    private AmplitudeWrapper? _amplitudeWrapper;
 
     /// <summary>
     /// Returns the vector of amplitudes, i.e. the modulus of the complex result.
@@ -169,7 +169,7 @@ namespace Altaxo.Calc.Fourier
 
     #region Real part
 
-    private RealPartWrapper _realPartWrapper;
+    private RealPartWrapper? _realPartWrapper;
 
     /// <summary>
     /// Returns the vector of the resulting real parts of the FFT.
@@ -243,7 +243,7 @@ namespace Altaxo.Calc.Fourier
 
     #region Imaginary part
 
-    private ImaginaryPartWrapper _imagPartWrapper;
+    private ImaginaryPartWrapper? _imagPartWrapper;
 
     /// <summary>
     /// Returns the vector of the resulting imaginary parts of the FFT.
@@ -317,7 +317,7 @@ namespace Altaxo.Calc.Fourier
 
     #region Complex Re-Im
 
-    private ComplexPartWrapper _complexPartWrapper;
+    private ComplexPartWrapper? _complexPartWrapper;
 
     /// <summary>
     /// Returns the vector of the complex result of the FFT.
@@ -374,7 +374,7 @@ namespace Altaxo.Calc.Fourier
 
     #region Phase
 
-    private PhaseWrapper _phaseWrapper;
+    private PhaseWrapper? _phaseWrapper;
 
     /// <summary>
     /// Returns the vector of the resulting phases of the FFT.

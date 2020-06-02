@@ -46,7 +46,7 @@ namespace Altaxo.Calc.Integration
     #region offical C# interface
 
     private bool _debug;
-    private gsl_integration_workspace _workSpace;
+    private gsl_integration_workspace? _workSpace;
 
     /// <summary>
     /// Creates an instance of this integration class with a default integration rule and default debug flag setting.
@@ -67,7 +67,7 @@ namespace Altaxo.Calc.Integration
       _debug = debug;
     }
 
-    public GSL_ERROR Integrate(Func<double, double> f,
+    public GSL_ERROR? Integrate(Func<double, double> f,
        double a, double b, double c,
        double epsabs, double epsrel,
        int limit,
@@ -80,7 +80,7 @@ namespace Altaxo.Calc.Integration
       return gsl_integration_qawc(f, a, b, c, epsabs, epsrel, limit, _workSpace, out result, out abserr, debug);
     }
 
-    public GSL_ERROR Integrate(Func<double, double> f,
+    public GSL_ERROR? Integrate(Func<double, double> f,
          double a, double b, double c,
           double epsabs, double epsrel,
           int limit,
@@ -89,14 +89,14 @@ namespace Altaxo.Calc.Integration
       return Integrate(f, a, b, c, epsabs, epsrel, limit, _debug, out result, out abserr);
     }
 
-    public static GSL_ERROR
+    public static GSL_ERROR?
     Integration(Func<double, double> f,
          double a, double b, double c,
           double epsabs, double epsrel,
           int limit,
           bool debug,
           out double result, out double abserr,
-          ref object tempStorage)
+          ref object? tempStorage)
     {
       var algo = tempStorage as QawcIntegration;
       if (null == algo)
@@ -104,13 +104,13 @@ namespace Altaxo.Calc.Integration
       return algo.Integrate(f, a, b, c, epsabs, epsrel, limit, debug, out result, out abserr);
     }
 
-    public static GSL_ERROR
+    public static GSL_ERROR?
     Integration(Func<double, double> f,
           double a, double b, double c,
           double epsabs, double epsrel,
           int limit,
           out double result, out double abserr,
-          ref object tempStorage
+          ref object? tempStorage
           )
     {
       var algo = tempStorage as QawcIntegration;
@@ -119,7 +119,7 @@ namespace Altaxo.Calc.Integration
       return algo.Integrate(f, a, b, c, epsabs, epsrel, limit, out result, out abserr);
     }
 
-    public static GSL_ERROR
+    public static GSL_ERROR?
    Integration(Func<double, double> f,
         double a, double b, double c,
          double epsabs, double epsrel,
@@ -127,18 +127,18 @@ namespace Altaxo.Calc.Integration
          bool debug,
          out double result, out double abserr)
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       return Integration(f, a, b, c, epsabs, epsrel, limit, debug, out result, out abserr, ref tempStorage);
     }
 
-    public static GSL_ERROR
+    public static GSL_ERROR?
     Integration(Func<double, double> f,
           double a, double b, double c,
           double epsabs, double epsrel,
           int limit,
           out double result, out double abserr)
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       return Integration(f, a, b, c, epsabs, epsrel, limit, out result, out abserr, ref tempStorage);
     }
 
@@ -165,7 +165,7 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-    private static GSL_ERROR
+    private static GSL_ERROR?
     gsl_integration_qawc(Func<double, double> f,
                           double a, double b, double c,
                           double epsabs, double epsrel,

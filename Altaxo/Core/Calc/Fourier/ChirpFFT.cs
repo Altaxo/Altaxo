@@ -334,7 +334,7 @@ namespace Altaxo.Calc.Fourier
       double[] inputimag,
       int arrsize,
       FourierDirection direction,
-      ref ChirpNativeFFTStorage s)
+      ref ChirpNativeFFTStorage? s)
     {
       if (arrsize <= 2)
         throw new ArgumentException("This algorithm works for array sizes > 2 only.");
@@ -390,7 +390,7 @@ namespace Altaxo.Calc.Fourier
     public static void
       FFT(double[] x, double[] y, FourierDirection direction)
     {
-      object storage = null;
+      object? storage = null;
       FFT(x, y, direction, ref storage);
     }
 
@@ -403,7 +403,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="direction">Direction of Fourier transform.</param>
     /// <param name="temporaryStorage">On return, this reference holds an object for temporary storage. You can use this in subsequent FFTs of the same size.</param>
     public static void
-      FFT(double[] x, double[] y, FourierDirection direction, ref object temporaryStorage)
+      FFT(double[] x, double[] y, FourierDirection direction, ref object? temporaryStorage)
     {
       if (x.Length != y.Length)
         throw new ArgumentException("Length of real and imaginary array do not match!");
@@ -424,7 +424,7 @@ namespace Altaxo.Calc.Fourier
     public static void
       FFT(double[] x, double[] y, uint n, FourierDirection direction)
     {
-      object storage = null;
+      object? storage = null;
       FFT(x, y, n, direction, ref storage);
     }
 
@@ -439,7 +439,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="temporaryStorage">On return, this reference holds an object for temporary storage. You can use this in subsequent FFTs of the same size.</param>
 
     public static void
-      FFT(double[] x, double[] y, uint n, FourierDirection direction, ref object temporaryStorage)
+      FFT(double[] x, double[] y, uint n, FourierDirection direction, ref object? temporaryStorage)
     {
       var s = temporaryStorage as ChirpNativeFFTStorage;
       chirpnativefft(x, y, x, y, (int)n, direction, ref s);
@@ -463,7 +463,7 @@ namespace Altaxo.Calc.Fourier
       // Do the FFT in the first direction
 
       // First direction: transform all columns of the matrix
-      ChirpNativeFFTStorage tempStorage = null;
+      ChirpNativeFFTStorage? tempStorage = null;
       var resultArrayRe = new double[numberOfRows];
       var resultArrayIm = new double[numberOfRows];
       var inputArrayRe = new double[numberOfRows];

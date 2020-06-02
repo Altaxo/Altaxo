@@ -390,7 +390,7 @@ namespace Altaxo.Calc.Fourier
 
     //======================================================================================
 
-    private static int[][] _reverseBits = null;
+    private static int[][]? _reverseBits = null;
 
     private static int _ReverseBits(int bits, int n)
     {
@@ -418,10 +418,10 @@ namespace Altaxo.Calc.Fourier
     }
 
     private static int _lookupTabletLength = -1;
-    private static double[,][] _uRLookup = null;
-    private static double[,][] _uILookup = null;
-    private static float[,][] _uRLookupF = null;
-    private static float[,][] _uILookupF = null;
+    private static double[,][]? _uRLookup = null;
+    private static double[,][]? _uILookup = null;
+    private static float[,][]? _uRLookupF = null;
+    private static float[,][]? _uILookupF = null;
 
     private static void SyncLookupTableLength(int length)
     {
@@ -527,7 +527,7 @@ namespace Altaxo.Calc.Fourier
     private static bool _bufferFLocked = false;
     private static float[] _bufferF = new float[0];
 
-    private static void LockBufferF(int length, ref float[] buffer)
+    private static float[] LockBufferF(int length)
     {
       if (!(_bufferFLocked == false))
         throw new InvalidProgramException();
@@ -536,10 +536,10 @@ namespace Altaxo.Calc.Fourier
       {
         _bufferF = new float[length];
       }
-      buffer = _bufferF;
+      return _bufferF;
     }
 
-    private static void UnlockBufferF(ref float[] buffer)
+    private static void UnlockBufferF(ref float[]? buffer)
     {
       if (!(_bufferF == buffer))
         throw new InvalidProgramException();
@@ -563,8 +563,7 @@ namespace Altaxo.Calc.Fourier
         throw new InvalidProgramException();
 
       // copy to buffer
-      float[] buffer = null;
-      LockBufferF(length * 2, ref buffer);
+      float[]? buffer = LockBufferF(length * 2);
       int j = start;
       for (int i = 0; i < length * 2; i++)
       {
@@ -593,8 +592,7 @@ namespace Altaxo.Calc.Fourier
             Debug.Assert( ( start + inc * ( length - 1 ) ) * 2 < data.Length );*/
 
       // copy to buffer
-      float[] buffer = null;
-      LockBufferF(length * 2, ref buffer);
+      float[]? buffer = LockBufferF(length * 2);
       int j = start;
       for (int i = 0; i < length * 2; i++)
       {
@@ -620,7 +618,7 @@ namespace Altaxo.Calc.Fourier
     private static bool _bufferCFLocked = false;
     private static ComplexFloat[] _bufferCF = new ComplexFloat[0];
 
-    private static void LockBufferCF(int length, ref ComplexFloat[] buffer)
+    private static ComplexFloat[] LockBufferCF(int length)
     {
       if (!(length >= 0))
         throw new InvalidProgramException();
@@ -632,10 +630,10 @@ namespace Altaxo.Calc.Fourier
       {
         _bufferCF = new ComplexFloat[length];
       }
-      buffer = _bufferCF;
+      return _bufferCF;
     }
 
-    private static void UnlockBufferCF(ref ComplexFloat[] buffer)
+    private static void UnlockBufferCF(ref ComplexFloat[]? buffer)
     {
       if (!(_bufferCF == buffer))
         throw new InvalidProgramException();
@@ -660,8 +658,7 @@ namespace Altaxo.Calc.Fourier
         throw new InvalidProgramException();
 
       // copy to buffer
-      ComplexFloat[] buffer = null;
-      LockBufferCF(length, ref buffer);
+      ComplexFloat[]? buffer = LockBufferCF(length);
       int j = start;
       for (int i = 0; i < length; i++)
       {
@@ -690,8 +687,7 @@ namespace Altaxo.Calc.Fourier
             Debug.Assert( ( start + inc * ( length - 1 ) ) < data.Length ); */
 
       // copy to buffer
-      ComplexFloat[] buffer = null;
-      LockBufferCF(length, ref buffer);
+      ComplexFloat[]? buffer = LockBufferCF(length);
       int j = start;
       for (int i = 0; i < length; i++)
       {
@@ -717,7 +713,7 @@ namespace Altaxo.Calc.Fourier
     private static bool _bufferCLocked = false;
     private static Complex[] _bufferC = new Complex[0];
 
-    private static void LockBufferC(int length, ref Complex[] buffer)
+    private static Complex[] LockBufferC(int length)
     {
       if (!(length >= 0))
         throw new InvalidProgramException();
@@ -729,10 +725,10 @@ namespace Altaxo.Calc.Fourier
       {
         _bufferC = new Complex[length];
       }
-      buffer = _bufferC;
+      return _bufferC;
     }
 
-    private static void UnlockBufferC(ref Complex[] buffer)
+    private static void UnlockBufferC(ref Complex[]? buffer)
     {
       if (!(_bufferC == buffer))
         throw new InvalidProgramException();
@@ -757,8 +753,7 @@ namespace Altaxo.Calc.Fourier
         throw new InvalidProgramException();
 
       // copy to buffer
-      Complex[] buffer = null;
-      LockBufferC(length, ref buffer);
+      Complex[]? buffer = LockBufferC(length);
       int j = start;
       for (int i = 0; i < length; i++)
       {
@@ -787,8 +782,7 @@ namespace Altaxo.Calc.Fourier
             Debug.Assert( ( start + inc * ( length - 1 ) ) < data.Length );*/
 
       // copy to buffer
-      Complex[] buffer = null;
-      LockBufferC(length, ref buffer);
+      Complex[]? buffer = LockBufferC(length);
       int j = start;
       for (int i = 0; i < length; i++)
       {
@@ -832,6 +826,9 @@ namespace Altaxo.Calc.Fourier
 
       // reorder array
       ComplexFFT.ReorderArray(data);
+
+      if (_uRLookupF is null || _uILookupF is null)
+        throw new InvalidProgramException();
 
       // successive doubling
       int N = 1;
@@ -891,6 +888,9 @@ namespace Altaxo.Calc.Fourier
 
       // reorder array
       ComplexFFT.ReorderArray(data);
+
+      if (_uRLookupF is null || _uILookupF is null)
+        throw new InvalidProgramException();
 
       // successive doubling
       int N = 1;
@@ -960,6 +960,9 @@ namespace Altaxo.Calc.Fourier
       // reorder array
       ComplexFFT.ReorderArray(data);
 
+      if (_uRLookupF is null || _uILookupF is null)
+        throw new InvalidProgramException();
+
       // successive doubling
       int N = 1;
       int signIndex = (direction == FourierDirection.Forward) ? 0 : 1;
@@ -1024,6 +1027,9 @@ namespace Altaxo.Calc.Fourier
 
       // reorder array
       ComplexFFT.ReorderArray(data);
+
+      if (_uRLookupF is null || _uILookupF is null)
+        throw new InvalidProgramException();
 
       // successive doubling
       int N = 1;
@@ -1107,6 +1113,9 @@ namespace Altaxo.Calc.Fourier
       // reorder array
       ComplexFFT.ReorderArray(data);
 
+      if (_uRLookup is null || _uILookup is null)
+        throw new InvalidProgramException();
+
       // successive doubling
       int N = 1;
       int signIndex = (direction == FourierDirection.Forward) ? 0 : 1;
@@ -1171,6 +1180,9 @@ namespace Altaxo.Calc.Fourier
 
       // reorder array
       ComplexFFT.ReorderArray(data);
+
+      if (_uRLookup is null || _uILookup is null)
+        throw new InvalidProgramException();
 
       // successive doubling
       int N = 1;

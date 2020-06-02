@@ -68,8 +68,8 @@ namespace Altaxo.Calc.Fourier.Windows
 
     public void Compute(double[] array, bool periodic)
     {
-      if (array == null)
-        throw new ArgumentNullException("array is null");
+      if (array is null)
+        throw new ArgumentNullException(nameof(array));
       if (array.Length == 0)
         throw new ArgumentException("array length is null");
       InternalCompute(VectorMath.ToVector(array), periodic);
@@ -77,8 +77,8 @@ namespace Altaxo.Calc.Fourier.Windows
 
     public void Compute(double[] array, int startidx, int count, bool periodic)
     {
-      if (array == null)
-        throw new ArgumentNullException("array is null");
+      if (array is null)
+        throw new ArgumentNullException(nameof(array));
       if (array.Length == 0)
         throw new ArgumentException("array length is null");
       if (startidx < 0)
@@ -93,7 +93,7 @@ namespace Altaxo.Calc.Fourier.Windows
 
     public void Compute(IVector<double> array, bool periodic)
     {
-      if (array == null)
+      if (array is null)
         throw new ArgumentNullException("array is null");
       if (array.Length == 0)
         throw new ArgumentException("array length is null");
@@ -102,7 +102,7 @@ namespace Altaxo.Calc.Fourier.Windows
 
     public void Compute(IVector<double> array, int startidx, int count, bool periodic)
     {
-      if (array == null)
+      if (array is null)
         throw new ArgumentNullException("array is null");
       if (array.Length == 0)
         throw new ArgumentException("array length is null");

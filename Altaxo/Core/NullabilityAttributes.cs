@@ -47,10 +47,6 @@ namespace Altaxo
   /// </summary>
   public class MaybeNull : Attribute
   {
-    public MaybeNull()
-    {
-
-    }
   }
 
   /// <summary>
@@ -58,10 +54,25 @@ namespace Altaxo
   /// </summary>
   public class AllowNull : Attribute
   {
-    public AllowNull()
-    {
-
-    }
   }
+
+  //
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
+    public sealed class NotNullIfNotNullAttribute : Attribute
+    {
+  string _parameterName;
+        public string ParameterName
+        {
+            get
+            {
+                return _parameterName;
+            }
+        }
+
+        public NotNullIfNotNullAttribute(string parameterName)
+        {
+  _parameterName = parameterName;
+        }
+    }
 #endif
 }

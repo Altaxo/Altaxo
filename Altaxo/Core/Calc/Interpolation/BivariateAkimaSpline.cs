@@ -40,17 +40,13 @@ namespace Altaxo.Calc.Interpolation
   /// </remarks>
   public class BivariateAkimaSpline
   {
-    /// <summary>
-    /// This empty constructor is only be used to construct the instance by the internal static
-    /// interpolation functions.
-    /// </summary>
-    private BivariateAkimaSpline()
-    {
-    }
+
 
     private IReadOnlyList<double> _myX;
     private IReadOnlyList<double> _myY;
     private IROMatrix<double> _myZ;
+
+
 
     /// <summary>
     /// Constructs an Akima bivariate spline.
@@ -70,7 +66,7 @@ namespace Altaxo.Calc.Interpolation
         _myY = VectorMath.ToVector(new double[y.Count]);
         VectorMath.Copy(y, (IVector<double>)_myY);
 
-        _myZ = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_myZ.RowCount, _myZ.ColumnCount);
+        _myZ = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(z.RowCount, z.ColumnCount);
         MatrixMath.Copy(z, (IMatrix<double>)_myZ);
       }
       else
@@ -106,7 +102,7 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="w">VECTOR OF DIMENSION N WHERE THE INTERPOLATED Z VALUES AT DESIRED POINTS ARE TO BE DISPLAYED</param>
     public static void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y, IROMatrix<double> z, IReadOnlyList<double> u, IReadOnlyList<double> v, IVector<double> w)
     {
-      var spline = new BivariateAkimaSpline();
+      var spline = new BivariateAkimaSpline(x, y, z, true);
       spline.itplbv_(x.Count, y.Count, x, y, z, w.Length, u, v, w);
     }
 
@@ -121,8 +117,9 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="w">ARRAY OF DIMENSION N WHERE THE INTERPOLATED Z VALUES AT DESIRED POINTS ARE TO BE DISPLAYED</param>
     public static void Interpolate(double[] x, double[] y, double[] z, double[] u, double[] v, double[] w)
     {
-      var spline = new BivariateAkimaSpline();
-      spline.itplbv_(x.Length, y.Length, VectorMath.ToROVector(x), VectorMath.ToROVector(y), MatrixMath.ToROMatrixFromColumnMajorLinearArray(z, x.Length),
+      var zMatrix = MatrixMath.ToROMatrixFromColumnMajorLinearArray(z, x.Length);
+      var spline = new BivariateAkimaSpline(x, y, zMatrix, true);
+      spline.itplbv_(x.Length, y.Length, VectorMath.ToROVector(x), VectorMath.ToROVector(y), zMatrix,
         w.Length, VectorMath.ToROVector(u), VectorMath.ToROVector(v), VectorMath.ToVector(w));
     }
 

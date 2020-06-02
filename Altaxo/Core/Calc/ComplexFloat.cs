@@ -349,7 +349,7 @@ namespace Altaxo.Calc
     ///<param name="obj"><c>obj</c> to compare present <c>ComplexFloat</c> to.</param>
     ///<returns>Returns true if the variable is the same as the <c>ComplexFloat</c> variable</returns>
     ///<remarks>The <c>obj</c> parameter is converted into a <c>ComplexFloat</c> variable before comparing with the current <c>ComplexFloat</c>.</remarks>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (obj == null)
       {
@@ -379,7 +379,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    public int CompareTo(object o)
+    public int CompareTo(object? o)
     {
       if (o == null)
       {
@@ -738,7 +738,7 @@ namespace Altaxo.Calc
     ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
     ///<exception cref="FormatException">if the n, is not a number.</exception>
     ///<exception cref="ArgumentNullException">if s, is <c>null</c>.</exception>
-    public string ToString(string format, IFormatProvider formatProvider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
       if (IsNaN())
       {

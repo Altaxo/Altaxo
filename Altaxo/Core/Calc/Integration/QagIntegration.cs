@@ -63,7 +63,7 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-    private static GSL_ERROR
+    private static GSL_ERROR?
     qag(Func<double, double> f,
          double a, double b,
          double epsabs, double epsrel,

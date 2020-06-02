@@ -716,7 +716,7 @@ qelg(out double result, out double abserr)
 
     /* Main integration function */
 
-    protected static GSL_ERROR
+    protected static GSL_ERROR?
     qags(Func<double, double> f,
           double a, double b,
           double epsabs, double epsrel,

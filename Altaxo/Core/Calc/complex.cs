@@ -350,21 +350,19 @@ namespace Altaxo.Calc
     ///<param name="obj"><c>obj</c> to compare present <c>ComplexDouble</c> to.</param>
     ///<returns>Returns true if the variable is the same as the <c>ComplexDouble</c> variable</returns>
     ///<remarks>The <c>obj</c> parameter is converted into a <c>ComplexDouble</c> variable before comparing with the current <c>ComplexDouble</c>.</remarks>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (obj == null)
+      if (obj is null)
       {
         return false;
       }
-      if (obj is Complex)
+      if (obj is Complex crhs)
       {
-        var rhs = (Complex)obj;
-        return Equals(rhs);
+        return Equals(crhs);
       }
-      else if (obj is ComplexFloat)
+      else if (obj is ComplexFloat cfrhs)
       {
-        var rhs = (ComplexFloat)obj;
-        return Equals(rhs);
+        return Equals(cfrhs);
       }
       else
       {
@@ -380,27 +378,27 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    public int CompareTo(object o)
+    public int CompareTo(object? o)
     {
-      if (o == null)
+      if (o is null)
       {
         return 1;  // null sorts before current
       }
-      if (o is Complex)
+      if (o is Complex c)
       {
-        return GetModulus().CompareTo(((Complex)o).GetModulus());
+        return GetModulus().CompareTo(c.GetModulus());
       }
-      if (o is double)
+      if (o is double d)
       {
-        return GetModulus().CompareTo((double)o);
+        return GetModulus().CompareTo(d);
       }
-      if (o is ComplexFloat)
+      if (o is ComplexFloat cf)
       {
-        return GetModulus().CompareTo(((ComplexFloat)o).GetModulus());
+        return GetModulus().CompareTo(cf.GetModulus());
       }
-      if (o is float)
+      if (o is float f)
       {
-        return GetModulus().CompareTo((float)o);
+        return GetModulus().CompareTo(f);
       }
       throw new ArgumentException();
     }
@@ -450,7 +448,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex operator +(double f, Complex a)
     {
-      a.Re = a.Re + f;
+      a.Re += f;
       return a;
     }
 
@@ -747,7 +745,7 @@ namespace Altaxo.Calc
     ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
     ///<exception cref="FormatException">if the n, is not a number.</exception>
     ///<exception cref="ArgumentNullException">if s, is <c>null</c>.</exception>
-    public string ToString(string format, IFormatProvider formatProvider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
       if (IsNaN())
       {

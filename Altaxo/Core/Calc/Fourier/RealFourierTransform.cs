@@ -38,9 +38,9 @@ namespace Altaxo.Calc.Fourier
 
     private Method _method;
     private int _numberOfData;
-    private Pfa235FFT _pfa235;
-    private double[] _tempArr1N;
-    private object _fftTempStorage;
+    private Pfa235FFT? _pfa235;
+    private double[]? _tempArr1N;
+    private object? _fftTempStorage;
 
     public RealFourierTransform(int length)
     {
@@ -118,17 +118,17 @@ namespace Altaxo.Calc.Fourier
 
         case Method.Pfa235:
           {
-            NullifyTempArrN1();
-
-            _pfa235.RealFFT(arr, _tempArr1N, direction);
+            var tempArr1N = NullifyTempArrN1();
+            _pfa235!.RealFFT(arr, tempArr1N, direction);
           }
           break;
 
         case Method.Chirp:
           {
+            double[] tempArr1N;
             if (direction == FourierDirection.Forward)
             {
-              NullifyTempArrN1();
+              tempArr1N = NullifyTempArrN1();
             }
             else
             {
@@ -145,16 +145,17 @@ namespace Altaxo.Calc.Fourier
                 _tempArr1N[_numberOfData - k] = -sumimag;
                 arr[_numberOfData - k] = sumreal;
               }
+              tempArr1N = _tempArr1N;
             }
 
-            ChirpFFT.FFT(arr, _tempArr1N, direction, ref _fftTempStorage);
+            ChirpFFT.FFT(arr, tempArr1N, direction, ref _fftTempStorage);
 
             if (direction == FourierDirection.Forward)
             {
               for (int k = 0; k <= _numberOfData / 2; k++)
               {
                 double sumreal = arr[k];
-                double sumimag = _tempArr1N[k];
+                double sumimag = tempArr1N[k];
 
                 if (k != 0 && (k + k) != _numberOfData)
                   arr[_numberOfData - k] = sumimag;
@@ -168,7 +169,7 @@ namespace Altaxo.Calc.Fourier
 
     #region Helper
 
-    private void NullifyTempArrN1()
+    private double[] NullifyTempArrN1()
     {
       if (null == _tempArr1N)
       {
@@ -178,6 +179,7 @@ namespace Altaxo.Calc.Fourier
       {
         Array.Clear(_tempArr1N, 0, _tempArr1N.Length);
       }
+      return _tempArr1N;
     }
 
     #endregion Helper

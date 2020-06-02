@@ -62,8 +62,8 @@ namespace Altaxo.Calc.Integration
 
     protected static int _defaultOscTableLength = 20;
     protected bool _debug;
-    protected gsl_integration_workspace _workSpace;
-    protected gsl_integration_qawo_table _qawoTable;
+    protected gsl_integration_workspace? _workSpace;
+    protected gsl_integration_qawo_table? _qawoTable;
 
     /// <summary>
     /// Creates an instance of this integration class with a default integration rule and default debug flag setting.
@@ -84,7 +84,7 @@ namespace Altaxo.Calc.Integration
       _debug = debug;
     }
 
-    public GSL_ERROR
+    public GSL_ERROR?
      Integrate(Func<double, double> f,
      double a, double b,
      OscillatoryTerm oscTerm,
@@ -95,7 +95,7 @@ namespace Altaxo.Calc.Integration
       return Integrate(f, a, b, oscTerm, omega, epsabs, epsrel, limit, _debug, out result, out abserr);
     }
 
-    public GSL_ERROR
+    public GSL_ERROR?
       Integrate(Func<double, double> f,
       double a, double b,
       OscillatoryTerm oscTerm,
@@ -118,7 +118,7 @@ namespace Altaxo.Calc.Integration
       return gsl_integration_qawo(f, a, epsabs, epsrel, limit, _workSpace, _qawoTable, out result, out abserr, debug);
     }
 
-    public static GSL_ERROR
+    public static GSL_ERROR?
     Integration(Func<double, double> f,
           double a, double b,
       OscillatoryTerm oscTerm,
@@ -484,7 +484,7 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector<double> b
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-    protected static GSL_ERROR
+    protected static GSL_ERROR?
     gsl_integration_qawo(Func<double, double> f,
                           double a,
                           double epsabs, double epsrel,

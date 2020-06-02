@@ -121,7 +121,7 @@ namespace Altaxo.Calc
     private static bool _workspaceFLocked = false;
     private static ComplexFloat[] _workspaceF = new ComplexFloat[0];
 
-    private static void LockWorkspaceF(int length, ref ComplexFloat[] workspace)
+    private static ComplexFloat[] LockWorkspaceF(int length)
     {
       if (!(_workspaceFLocked == false))
         throw new InvalidProgramException();
@@ -130,10 +130,10 @@ namespace Altaxo.Calc
       {
         _workspaceF = new ComplexFloat[length];
       }
-      workspace = _workspaceF;
+      return _workspaceF;
     }
 
-    private static void UnlockWorkspaceF(ref ComplexFloat[] workspace)
+    private static void UnlockWorkspaceF(ref ComplexFloat[]? workspace)
     {
       if (!(_workspaceF == workspace))
         throw new InvalidProgramException();
@@ -197,8 +197,7 @@ namespace Altaxo.Calc
       }
 
       int length = array.Length;
-      ComplexFloat[] workspace = null;
-      ComplexArray.LockWorkspaceF(length, ref workspace);
+      ComplexFloat[]? workspace = ComplexArray.LockWorkspaceF(length);
 
       for (int i = 0; i < length; i++)
       {

@@ -45,7 +45,7 @@ namespace Altaxo.Calc.Integration
     #region offical C# interface
 
     private bool _debug;
-    private gsl_integration_workspace _workSpace;
+    private gsl_integration_workspace? _workSpace;
     private gsl_integration_rule _integrationRule;
 
     /// <summary>
@@ -106,7 +106,7 @@ namespace Altaxo.Calc.Integration
     /// <param name="result">On return, contains the integration result.</param>
     /// <param name="abserr">On return, contains the absolute error of integration.</param>
     /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
-    public GSL_ERROR Integrate(Func<double, double> f,
+    public GSL_ERROR? Integrate(Func<double, double> f,
        double b,
        double epsabs, double epsrel, int limit,
        gsl_integration_rule integrationRule, bool debug,
@@ -129,7 +129,7 @@ namespace Altaxo.Calc.Integration
     /// <param name="result">On return, contains the integration result.</param>
     /// <param name="abserr">On return, contains the absolute error of integration.</param>
     /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
-    public GSL_ERROR Integrate(Func<double, double> f,
+    public GSL_ERROR? Integrate(Func<double, double> f,
           double b,
           double epsabs, double epsrel, int limit,
           out double result, out double abserr)
@@ -153,14 +153,14 @@ namespace Altaxo.Calc.Integration
     /// <param name="abserr">On return, contains the absolute error of integration.</param>
     /// <param name="tempStorage">Provides a temporary storage object that you can reuse for repeating function calls.</param>
     /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
-    public static GSL_ERROR
+    public static GSL_ERROR?
     Integration(Func<double, double> f,
           double b,
           double epsabs, double epsrel,
           int limit,
           gsl_integration_rule integrationRule, bool debug,
           out double result, out double abserr,
-          ref object tempStorage)
+          ref object? tempStorage)
     {
       var algo = tempStorage as QagilIntegration;
       if (null == algo)
@@ -180,13 +180,13 @@ namespace Altaxo.Calc.Integration
     /// <param name="abserr">On return, contains the absolute error of integration.</param>
     /// <param name="tempStorage">Provides a temporary storage object that you can reuse for repeating function calls.</param>
     /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
-    public static GSL_ERROR
+    public static GSL_ERROR?
     Integration(Func<double, double> f,
           double b,
           double epsabs, double epsrel,
           int limit,
           out double result, out double abserr,
-          ref object tempStorage
+          ref object? tempStorage
           )
     {
       var algo = tempStorage as QagilIntegration;
@@ -210,7 +210,7 @@ namespace Altaxo.Calc.Integration
     /// <param name="result">On return, contains the integration result.</param>
     /// <param name="abserr">On return, contains the absolute error of integration.</param>
     /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
-    public static GSL_ERROR
+    public static GSL_ERROR?
    Integration(Func<double, double> f,
       double b,
      double epsabs, double epsrel,
@@ -219,7 +219,7 @@ namespace Altaxo.Calc.Integration
      out double result, out double abserr
      )
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       return Integration(f, b, epsabs, epsrel, limit, q, debug, out result, out abserr, ref tempStorage);
     }
 
@@ -234,7 +234,7 @@ namespace Altaxo.Calc.Integration
     /// <param name="result">On return, contains the integration result.</param>
     /// <param name="abserr">On return, contains the absolute error of integration.</param>
     /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
-    public static GSL_ERROR
+    public static GSL_ERROR?
     Integration(Func<double, double> f,
       double b,
       double epsabs, double epsrel,
@@ -242,7 +242,7 @@ namespace Altaxo.Calc.Integration
       out double result, out double abserr
       )
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       return Integration(f, b, epsabs, epsrel, limit, out result, out abserr, ref tempStorage);
     }
 
@@ -259,7 +259,7 @@ namespace Altaxo.Calc.Integration
 
     //static double il_transform (double t, void *params);
 
-    private static GSL_ERROR
+    private static GSL_ERROR?
     gsl_integration_qagil(Func<double, double> f,
                            double b,
                            double epsabs, double epsrel, int limit,
@@ -281,7 +281,7 @@ namespace Altaxo.Calc.Integration
       Func<double, double> f_transform = delegate (double t)
       { return il_transform(t, transform_params); };
 
-      GSL_ERROR status = qags(f_transform, 0.0, 1.0,
+      var status = qags(f_transform, 0.0, 1.0,
                      epsabs, epsrel, limit,
                      workspace,
                      out result, out abserr,

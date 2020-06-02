@@ -39,9 +39,11 @@ namespace Altaxo.Calc.Regression
   /// </summary>
   public class LinearFitBySvd
   {
-    private double[] _parameter;
+    private const string ErrorNoExecutionYet = "No results available yet - please execute the fit first!";
+
+    private double[]? _parameter;
     private double _chiSquare;
-    private double[][] _covarianceMatrix;
+    private double[][]? _covarianceMatrix;
     private int _numberOfParameter;
     private int _numberOfFreeParameter;
     private int _numberOfData;
@@ -55,23 +57,23 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Vector of residuals.
     /// </summary>
-    private double[] _residual;
+    private double[]? _residual;
 
     /// <summary>
     /// Vector of predicted values.
     /// </summary>
-    private double[] _predicted;
+    private double[]? _predicted;
 
     /// <summary>
     /// The reduced variance of prediction at each index. Is calculated from x' (X'X)^(-1) x.
     /// To get the real prediction variance, the values have to be multiplicated with sigma².
     /// </summary>
-    private double[] _reducedPredictionVariance;
+    private double[]? _reducedPredictionVariance;
 
     /// <summary>
     /// The singular value composition of our data.
     /// </summary>
-    private MatrixMath.SingularValueDecomposition _decomposition;
+    private MatrixMath.SingularValueDecomposition? _decomposition;
 
     /// <summary>
     /// Fits a data set linear to a given function base.
@@ -86,7 +88,7 @@ namespace Altaxo.Calc.Regression
     public LinearFitBySvd(
         double[] xarr,
         double[] yarr,
-        double[] stddev,
+        double[]? stddev,
         int numberOfData,
         int numberOfParameter,
         FunctionBaseEvaluator evaluateFunctionBase,
@@ -127,7 +129,7 @@ namespace Altaxo.Calc.Regression
     public LinearFitBySvd(
         IReadOnlyList<double> xarr,
         IReadOnlyList<double> yarr,
-        IReadOnlyList<double> stddev,
+        IReadOnlyList<double>? stddev,
         int numberOfData,
         int numberOfParameter,
         FunctionBaseEvaluator evaluateFunctionBase,
@@ -167,12 +169,12 @@ namespace Altaxo.Calc.Regression
     public LinearFitBySvd(
         IROMatrix<double> xbase, // NumberOfData, NumberOfParameters
         double[] yarr,
-        double[] stddev,
+        double[]? stddev,
         int numberOfData,
         int numberOfParameter,
         double threshold)
     {
-      Calculate(xbase, VectorMath.ToROVector(yarr), VectorMath.ToROVector(stddev), numberOfData, numberOfParameter, threshold);
+      Calculate(xbase, VectorMath.ToROVector(yarr), stddev is null ? null : VectorMath.ToROVector(stddev), numberOfData, numberOfParameter, threshold);
     }
 
     /// <summary>
@@ -187,7 +189,7 @@ namespace Altaxo.Calc.Regression
     public LinearFitBySvd Calculate(
         IROMatrix<double> xbase, // NumberOfData, NumberOfParameters
         IReadOnlyList<double> yarr,
-        IReadOnlyList<double> stddev,
+        IReadOnlyList<double>? stddev,
         int numberOfData,
         int numberOfParameter,
         double threshold)
@@ -209,7 +211,7 @@ namespace Altaxo.Calc.Regression
       var u = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfData, numberOfParameter);
       // Fill the function base matrix (rows: numberOfData, columns: numberOfParameter)
       // and scale also y
-      if (null == stddev)
+      if (stddev is null)
       {
         for (int i = 0; i < numberOfData; i++)
         {
@@ -323,7 +325,7 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Get the resulting parameters, so that the model y = SUM(parameter[i]*functionbase[i])
     /// </summary>
-    public double[] Parameter { get { return _parameter; } }
+    public double[] Parameter { get { return _parameter ?? throw new InvalidOperationException(ErrorNoExecutionYet); } }
 
     /// <summary>
     /// Gets the sum of ChiSquare for the fit. This is SUM(yi-yi`)^2, where yi is the ith y value and yi` is the ith predicted y.
@@ -369,7 +371,7 @@ namespace Altaxo.Calc.Regression
     {
       get
       {
-        return _decomposition.Condition;
+        return _decomposition?.Condition ?? throw new InvalidOperationException(ErrorNoExecutionYet);
       }
     }
 
@@ -380,7 +382,8 @@ namespace Altaxo.Calc.Regression
     /// <returns>The estimated standard error of parameter <c>i</c>.</returns>
     public double StandardErrorOfParameter(int i)
     {
-      return Math.Sqrt(EstimatedVariance * _covarianceMatrix[i][i]);
+      var covarianceMatrix = _covarianceMatrix ?? throw new InvalidOperationException(ErrorNoExecutionYet);
+      return Math.Sqrt(EstimatedVariance * covarianceMatrix[i][i]);
     }
 
     public double TofParameter(int i)
@@ -393,7 +396,7 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     public double[] ResidualValues
     {
-      get { return _residual; }
+      get { return _residual ?? throw new InvalidOperationException(ErrorNoExecutionYet); }
     }
 
     /// <summary>
@@ -401,7 +404,7 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     public double[] PredictedValues
     {
-      get { return _predicted; }
+      get { return _predicted ?? throw new InvalidOperationException(ErrorNoExecutionYet); }
     }
 
     /// <summary>
@@ -415,6 +418,9 @@ namespace Altaxo.Calc.Regression
 
     public double PRESSResidual(int i)
     {
+      if (_residual is null || _decomposition is null)
+        throw new InvalidOperationException(ErrorNoExecutionYet);
+
       return _residual[i] / (1 - _decomposition.HatDiagonal[i]);
     }
 
@@ -427,6 +433,9 @@ namespace Altaxo.Calc.Regression
     /// <para>Ref: Introduction to linear regression analysis, 3rd ed., Wiley, p.134</para></remarks>
     public double StudentizedResidual(int i)
     {
+      if (_residual is null || _decomposition is null)
+        throw new InvalidOperationException(ErrorNoExecutionYet);
+
       return _residual[i] / Math.Sqrt((1 - _decomposition.HatDiagonal[i]) * EstimatedVariance);
     }
 
@@ -443,6 +452,9 @@ namespace Altaxo.Calc.Regression
     /// </remarks>
     public double ExternallyStudentizedResidual(int i)
     {
+      if (_residual is null || _decomposition is null)
+        throw new InvalidOperationException(ErrorNoExecutionYet);
+
       double ssi = _chiSquare - square(_residual[i]) / (1 - _decomposition.HatDiagonal[i]);
       ssi /= (_numberOfData - _numberOfFreeParameter - 1);
 
@@ -452,7 +464,7 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Get the variance-covariance-matrix for the fit.
     /// </summary>
-    public double[][] Covariances { get { return _covarianceMatrix; } }
+    public double[][] Covariances { get { return _covarianceMatrix ?? throw new InvalidOperationException(ErrorNoExecutionYet); } }
 
     /// <summary>Get the estimated residual mean square, also called SigmaSquare..</summary>
     /// <remarks>The estimated mean square is defined as SumChiSquare(n-p), where n is the number of data
@@ -475,6 +487,9 @@ namespace Altaxo.Calc.Regression
     /// <returns>The variance of the ith prediction value.</returns>
     public double PredictionVariance(int i)
     {
+      if (_reducedPredictionVariance is null)
+        throw new InvalidOperationException(ErrorNoExecutionYet);
+
       return EstimatedVariance * _reducedPredictionVariance[i];
     }
 
@@ -596,7 +611,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="errorValues">The column of errorValues. If null, errorValues are set to 1 for each element.</param>
     /// <param name="count">Number of values to use (array[0] ... array[count-1].</param>
     /// <returns>The fit.</returns>
-    public static LinearFitBySvd FitPolymomialDestructive(int order, double[] xValues, double[] yValues, double[] errorValues, int count)
+    public static LinearFitBySvd FitPolymomialDestructive(int order, double[] xValues, double[] yValues, double[]? errorValues, int count)
     {
       if (!(xValues != null))
         throw new ArgumentNullException(nameof(xValues));
@@ -611,11 +626,11 @@ namespace Altaxo.Calc.Regression
       if (null != errorValues && !(count <= errorValues.Length))
         throw new ArgumentOutOfRangeException(nameof(count), "exceeds capacity of array " + nameof(errorValues));
 
-      double[] xarr = xValues;
-      double[] yarr = yValues;
-      double[] earr = errorValues;
+      var xarr = xValues;
+      var yarr = yValues;
+      var earr = errorValues;
 
-      if (null == earr)
+      if (earr is null)
       {
         earr = new double[count];
         VectorMath.FillWith(earr, 1);
@@ -646,9 +661,9 @@ namespace Altaxo.Calc.Regression
       // rescale parameter of fit in order to account for rescaled x variable
       for (int i = 0; i <= order; ++i)
       {
-        fit._parameter[i] *= RMath.Pow(xinvscale, i);
+        fit._parameter![i] *= RMath.Pow(xinvscale, i);
         for (int j = 0; j <= order; ++j)
-          fit._covarianceMatrix[i][j] *= RMath.Pow(xinvscale, i + j);
+          fit._covarianceMatrix![i][j] *= RMath.Pow(xinvscale, i + j);
       }
 
       return fit;

@@ -698,7 +698,7 @@ ErrorExit:
       double[] resultreal, double[] resultimag,
       int n)
     {
-      double[] help1 = null, help2 = null;
+      double[]? help1 = null, help2 = null;
       CyclicCorrelation(src1real, src1imag, src2real, src2imag, resultreal, resultimag,
         n, ref help1, ref help2);
     }
@@ -720,7 +720,7 @@ ErrorExit:
       double[] src2real, double[] src2imag,
       double[] resultreal, double[] resultimag,
       int n,
-      ref double[] scratchreal, ref double[] scratchimag
+      ref double[]? scratchreal, ref double[]? scratchimag
       )
     {
       // return status

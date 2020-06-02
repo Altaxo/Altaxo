@@ -37,9 +37,9 @@ namespace Altaxo.Calc.Fourier
   {
     protected IMatrix<double> _realMatrix;
 
-    protected IMatrix<double> _imagMatrix;
+    protected IMatrix<double>? _imagMatrix;
 
-    protected Action<IMatrix<double>> _pretreatment;
+    protected Action<IMatrix<double>>? _pretreatment;
 
     protected double? _columnSpacing;
 
@@ -181,10 +181,7 @@ namespace Altaxo.Calc.Fourier
     {
       var numColumns = NumberOfColumns;
       var numRows = NumberOfRows;
-      if (null != _pretreatment)
-      {
-        _pretreatment(_realMatrix); // and call the pretreatment function(s)
-      }
+      _pretreatment?.Invoke(_realMatrix); // and call the pretreatment function(s)
     }
 
     /// <summary>
@@ -360,7 +357,7 @@ namespace Altaxo.Calc.Fourier
     /// <exception cref="InvalidDimensionMatrixException">If the provided matrix <paramref name="matrix"/> has more rows or more columns than the result can provide.</exception>
     public void GetResult(IMatrix<double> matrix, Func<double, double, double> resultantEval)
     {
-      if (!_arraysContainTransformation)
+      if (!_arraysContainTransformation || _imagMatrix is null)
         throw new InvalidOperationException("Before getting any result, you must execute the Fourier transformation first (by calling Execute).");
 
       var numColumns = NumberOfColumns;
@@ -397,7 +394,7 @@ namespace Altaxo.Calc.Fourier
     /// <exception cref="InvalidDimensionMatrixException">If the provided matrix <paramref name="matrix"/> has more rows or more columns than the result can provide.</exception>
     protected void GetResultCentered(IMatrix<double> matrix, Func<double, double, double> resultantEval)
     {
-      if (!_arraysContainTransformation)
+      if (!_arraysContainTransformation || _imagMatrix is null)
         throw new InvalidOperationException("Before getting any result, you must execute the Fourier transformation first (by calling Execute).");
 
       var numColumns = NumberOfColumns;

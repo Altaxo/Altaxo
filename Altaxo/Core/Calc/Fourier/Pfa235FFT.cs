@@ -98,6 +98,7 @@ namespace Altaxo.Calc.Fourier
 
     public Pfa235FFT()
     {
+      trigs = new double[0];
     }
 
     /// <summary>

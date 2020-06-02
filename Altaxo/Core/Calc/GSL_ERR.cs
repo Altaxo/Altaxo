@@ -105,10 +105,9 @@ namespace Altaxo.Calc
         throw new ArithmeticException(message);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var b = obj as GSL_ERROR;
-      if (b != null)
+      if (obj is GSL_ERROR b)
         return Number == b.Number;
       else
         return false;

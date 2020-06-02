@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
@@ -306,7 +307,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit conversion from <c>FloatMatrix</c> matrix.</summary>
     ///<param name="source"><c>FloatMatrix</c> to make a deep copy conversion from.</param>
-    public static implicit operator DoubleMatrix(FloatMatrix source)
+    public static implicit operator DoubleMatrix?(FloatMatrix? source)
     {
       if (source == null)
       {
@@ -361,18 +362,16 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit conversion from <c>FloatMatrix</c> matrix.</summary>
     ///<param name="source"><c>FloatMatrix</c> to make a deep copy conversion from.</param>
-    public static DoubleMatrix ToDoubleMatrix(FloatMatrix source)
+    [return: NotNullIfNotNull("source")]
+    public static DoubleMatrix? ToDoubleMatrix(FloatMatrix? source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      return source;
+      return source is null ? null : (DoubleMatrix?)source;
     }
 
     ///<summary>Implicit conversion from <c>double</c> array.</summary>
     ///<param name="source"><c>double</c> array to make a deep copy conversion from.</param>
-    public static implicit operator DoubleMatrix(double[,] source)
+    [return: NotNullIfNotNull("source")]
+    public static implicit operator DoubleMatrix?(double[,]? source)
     {
       if (source == null)
       {
@@ -383,7 +382,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit conversion from <c>double</c> array</summary>
     ///<param name="source"><c>double</c> array to make a deep copy conversion from.</param>
-    public static DoubleMatrix ToDoubleMatrix(double[,] source)
+    [return: NotNullIfNotNull("source")]
+    public static DoubleMatrix? ToDoubleMatrix(double[,]? source)
     {
       if (source == null)
       {
@@ -394,24 +394,18 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit conversion from <c>float</c> array</summary>
     ///<param name="source"><c>double</c> array to make a deep copy conversion from.</param>
-    public static implicit operator DoubleMatrix(float[,] source)
+    [return: NotNullIfNotNull("source")]
+    public static implicit operator DoubleMatrix?(float[,]? source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      return new DoubleMatrix(source);
+      return source == null ? null : new DoubleMatrix(source);
     }
 
     ///<summary>Implicit conversion from <c>float</c> array</summary>
     ///<param name="source"><c>double</c> array to make a deep copy conversion from.</param>
-    public static DoubleMatrix ToDoubleMatrix(float[,] source)
+    [return: NotNullIfNotNull("source")]
+    public static DoubleMatrix? ToDoubleMatrix(float[,]? source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      return new DoubleMatrix(source);
+      return source == null ? null : new DoubleMatrix(source);
     }
 
     ///<summary>Creates an identity matrix.</summary>
@@ -549,10 +543,9 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Check if <c>DoubleMatrix</c> variable is the same as another object.</summary>
     ///<param name="obj"><c>obj</c> to compare present <c>DoubleMatrix</c> to.</param>
     ///<returns>Returns true if the variable is the same as the <c>DoubleMatrix</c> variable</returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var matrix = obj as DoubleMatrix;
-      if (matrix == null)
+      if (!(obj is DoubleMatrix matrix))
       {
         return false;
       }
@@ -1970,7 +1963,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="format">A format specification.</param>
     ///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
     ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
-    public string ToString(string format, IFormatProvider formatProvider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
       var sb = new StringBuilder();
 
@@ -2063,14 +2056,27 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="index">The element to access</param>
     ///<exception cref="ArgumentOutOfRangeException">Exception thrown in element accessed is out of the bounds of the vector.</exception>
     ///<returns>Returns a <c>ComplexDouble</c> vector element</returns>
-    object IList.this[int index]
+    object? IList.this[int index]
     {
       get { return this[index % rows, index / rows]; }
-      set { this[index % rows, index / rows] = (double)value; }
+      set
+      {
+        if (value is double d)
+        {
+          this[index % rows, index / rows] = d;
+        }
+        else
+        {
+          if (value is null)
+            throw new ArgumentNullException(nameof(value));
+          else
+            throw new ArgumentException("Argument has wrong type", nameof(value));
+        }
+      }
     }
 
     ///<summary>Add a new value to the end of the <c>DoubleVector</c></summary>
-    public int Add(object value)
+    public int Add(object? value)
     {
       throw new System.NotSupportedException();
     }
@@ -2088,42 +2094,49 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Check if the any of the <c>DoubleVector</c> components equals a given <c>double</c></summary>
-    public bool Contains(object value)
+    public bool Contains(object? value)
     {
-      for (int i = 0; i < rows; i++)
-        for (int j = 0; j < columns; j++)
+      if (value is double d)
+      {
+        for (int i = 0; i < rows; i++)
+          for (int j = 0; j < columns; j++)
 #if MANAGED
-          if (data[i][j] == (double)value)
+            if (data[i][j] == d)
 #else
           if (data[j*rows+i]==(double)value)
 #endif
-            return true;
+              return true;
+      }
 
       return false;
     }
 
     ///<summary>Return the index of the <c>xDoubleVector</c> for the first component that equals a given <c>double</c></summary>
-    public int IndexOf(object value)
+    public int IndexOf(object? value)
     {
-      for (int i = 0; i < rows; i++)
-        for (int j = 0; j < columns; j++)
+      if (value is double d)
+      {
+        for (int i = 0; i < rows; i++)
+          for (int j = 0; j < columns; j++)
 #if MANAGED
-          if (data[i][j] == (double)value)
+            if (data[i][j] == d)
 #else
-          if (data[j*rows+i]==(double)value)
+          if (data[j*rows+i]==d)
 #endif
-            return j * rows + i;
+              return j * rows + i;
+      }
+
       return -1;
     }
 
     ///<summary>Insert a <c>double</c> into the <c>DoubleVector</c> at a given index</summary>
-    public void Insert(int index, object value)
+    public void Insert(int index, object? value)
     {
       throw new System.NotSupportedException();
     }
 
     ///<summary>Remove the first instance of a given <c>double</c> from the <c>DoubleVector</c></summary>
-    public void Remove(object value)
+    public void Remove(object? value)
     {
       throw new System.NotSupportedException();
     }
