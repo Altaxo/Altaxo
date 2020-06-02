@@ -49,10 +49,10 @@ namespace Altaxo.Collections.Text
     private int _x_repeats;
 
     // intermediate data neccessary for the algorithm
-    private int[][] _items;
+    private int[][]? _items;
 
-    private int[] _last_index;
-    private MinimumOnSlidingWindow[] _pqls;
+    private int[]? _last_index;
+    private MinimumOnSlidingWindow[]? _pqls;
 
     /// <summary>Initializes a new instance of the problem solver for the repeated longest common substring problem.</summary>
     /// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
@@ -134,6 +134,9 @@ namespace Altaxo.Collections.Text
       CleanIntermediates();
       return this;
     }
+
+#nullable disable
+
 
     private void InitializeIntermediates()
     {
@@ -354,6 +357,7 @@ namespace Altaxo.Collections.Text
       }
     }
 
+
     protected override void print_debug()
     {
       base.print_debug();
@@ -362,5 +366,8 @@ namespace Altaxo.Collections.Text
         Console.Write("{0} ", _pqls[i].MinimumValue);
       Console.WriteLine();
     }
+
+#nullable enable
+
   }
 }

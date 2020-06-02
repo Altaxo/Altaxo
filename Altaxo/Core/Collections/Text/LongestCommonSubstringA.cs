@@ -42,7 +42,7 @@ namespace Altaxo.Collections.Text
   public class LongestCommonSubstringA : LongestCommonSubstringBaseA
   {
     // intermediate data neccessary for the algorithm
-    protected int[] _items;
+    protected int[]? _items;
 
     /// <summary>Initializes a new instance of the problem solver for the longest common substring problem.</summary>
     /// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
@@ -129,6 +129,8 @@ namespace Altaxo.Collections.Text
       _items = null;
       _lastLcp = null;
     }
+
+#nullable disable
 
     /// <summary>Posts the process results. Here the maximum number of words that have at least one common substring is evaluated.</summary>
     protected void EvaluateMaximumNumberOfWordsWithCommonSubstring()
@@ -249,6 +251,8 @@ namespace Altaxo.Collections.Text
 
       L[currentIdx].Idx = i;
     }
+
+#nullable enable
 
 #if LinkedListDebug
 

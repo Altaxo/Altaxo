@@ -125,7 +125,7 @@ namespace Altaxo.Collections.Text
       /// <summary>Clears this instance (i.e. frees the array).</summary>
       public void Clear()
       {
-        L = null;
+        L = new LLElement[0];
         First = Last = 0;
       }
     }
@@ -138,7 +138,7 @@ namespace Altaxo.Collections.Text
     protected LinkedList _ddlList;
 
     /// <summary></summary>
-    protected int[] _lastLcp;
+    protected int[]? _lastLcp;
 
     /// <summary>Initializes a new instance of the problem solver for the longest common substring problem.</summary>
     /// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>

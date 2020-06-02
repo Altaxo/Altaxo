@@ -204,7 +204,7 @@ namespace Altaxo.Collections
     /// <exception cref="System.InvalidOperationException">This queue is unable to generate tokens by itself. You have to construct the priority queue using a token generating function.</exception>
     public void Enqueue(TKey key, TValue value, out TToken token)
     {
-      if (null == _GetNextToken)
+      if (_GetNextToken is null)
         throw new InvalidOperationException("This queue is unable to generate tokens by itself. Use TryAdd(token, key, value) instead!");
 
       _syncLock.EnterWriteLock();
@@ -229,7 +229,7 @@ namespace Altaxo.Collections
     /// <exception cref="System.InvalidOperationException">This queue is generating tokens by itself. Use Enqueue(key, value) instead!</exception>
     public bool TryAdd(TToken token, TKey key, TValue value)
     {
-      if (null != _GetNextToken)
+      if (!(_GetNextToken is null))
         throw new InvalidOperationException("This queue is generating tokens by itself. Use Enqueue(key, value) instead!");
 
       _syncLock.EnterWriteLock();
@@ -262,10 +262,10 @@ namespace Altaxo.Collections
     /// <exception cref="System.InvalidOperationException">This queue is generating tokens by itself. Use Enqueue(key, value) instead!</exception>
     public bool EnqueueOrUpdate(TKey key, TValue value, ref TToken token)
     {
-      if (null == _GetNextToken)
+      if (_GetNextToken is null)
         throw new InvalidOperationException("This queue is unable to generate tokens by itself. Use TryAdd(token, key, value) instead!");
-      if (null == token)
-        throw new ArgumentNullException("token");
+      if (token is null)
+        throw new ArgumentNullException(nameof(token));
 
       _syncLock.EnterWriteLock();
       try
@@ -301,7 +301,7 @@ namespace Altaxo.Collections
     /// <exception cref="System.InvalidOperationException">This queue is generating tokens by itself. Use Enqueue(key, value) instead!</exception>
     public bool AddOrUpdate(TToken token, TKey key, TValue value)
     {
-      if (null != _GetNextToken)
+      if (!(_GetNextToken is null))
         throw new InvalidOperationException("This queue is generating tokens by itself. Use Enqueue(key, value) instead!");
 
       _syncLock.EnterWriteLock();
@@ -341,7 +341,7 @@ namespace Altaxo.Collections
     /// <exception cref="System.InvalidOperationException">This queue is generating tokens by itself. Use Enqueue(key, value) instead!</exception>
     public KeyValuePair<TKey, TValue> EnqueueOrUpdate(KeyValuePair<TKey, TValue> addValue, ref TToken token, Func<TToken, KeyValuePair<TKey, TValue>, KeyValuePair<TKey, TValue>> updateFactory)
     {
-      if (null == _GetNextToken)
+      if (_GetNextToken is null)
         throw new InvalidOperationException("This queue is unable to generate tokens by itself. Use TryAdd(token, key, value) instead!");
 
       _syncLock.EnterWriteLock();
@@ -379,7 +379,7 @@ namespace Altaxo.Collections
     /// <exception cref="System.InvalidOperationException">This queue is generating tokens by itself. Use Enqueue(key, value) instead!</exception>
     public KeyValuePair<TKey, TValue> AddOrUpdate(TToken token, KeyValuePair<TKey, TValue> addValue, Func<TToken, KeyValuePair<TKey, TValue>, KeyValuePair<TKey, TValue>> updateFactory)
     {
-      if (null != _GetNextToken)
+      if (!(_GetNextToken is null))
         throw new InvalidOperationException("This queue is generating tokens by itself. Use Enqueue(key, value) instead!");
 
       _syncLock.EnterWriteLock();
@@ -417,7 +417,7 @@ namespace Altaxo.Collections
     /// <param name="value">On successfull return, contains the value associated with the minimum key.</param>
     /// <param name="token">On successfull return, contains the token associated with the minimum key.</param>
     /// <returns><c>True</c> if the queue contained at least one element that could be Peek'd; otherwise <c>false</c>.</returns>
-    public bool TryPeek([MaybeNullWhen(false)] out TKey key, [MaybeNull] out TValue value, [MaybeNullWhen(false)] out TToken token)
+    public bool TryPeek([MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value, [MaybeNullWhen(false)] out TToken token)
     {
       _syncLock.EnterReadLock();
       try
@@ -448,7 +448,7 @@ namespace Altaxo.Collections
     /// <param name="key">On successfull return, contains the minimum key.</param>
     /// <param name="value">On successfull return, contains the value associated with the minimum key.</param>
     /// <returns><c>True</c> if the queue contained at least one element that could be Peek'd; otherwise <c>false</c>.</returns>
-    public bool TryPeek([MaybeNullWhen(false)] out TKey key, [MaybeNull] out TValue value)
+    public bool TryPeek([MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value)
     {
       return TryPeek(out key, out value, out _);
     }
@@ -463,62 +463,9 @@ namespace Altaxo.Collections
       return TryPeek(out key, out _, out _);
     }
 
-    /// <summary>
-    /// Tries to retrieve the element with minimum key.
-    /// </summary>
-    /// <param name="result">On successfull return, contains the element with minimum key.</param>
-    /// <param name="token">On successfull return, contains the token associated with the element with minimum key.</param>
-    /// <returns><c>True</c> if the queue contained at least one element; otherwise <c>false</c>.</returns>
-    public bool TryPeek(out KeyValuePair<TKey, TValue> result, [MaybeNullWhen(false)] out TToken token)
-    {
-      if (TryPeek(out var key, out var value, out token))
-      {
-        result = new KeyValuePair<TKey, TValue>(key, value);
-        return true;
-      }
-      else
-      {
-        result = default;
-        return false;
-      }
-    }
-
-    /// <summary>
-    /// Tries to retrieve the element with minimum key.
-    /// </summary>
-    /// <param name="result">On successfull return, contains the element with minimum key.</param>
-    /// <returns><c>True</c> if the queue contained at least one element; otherwise <c>false</c>.</returns>
-    public bool TryPeek(out KeyValuePair<TKey, TValue> result)
-    {
-      return TryPeek(out result, out _);
-    }
-
     public bool TryPeekKey([MaybeNullWhen(false)] out TKey key)
     {
-      var result = TryPeek(out KeyValuePair<TKey, TValue> item, out _);
-      if (result)
-      {
-        key = item.Key;
-        return true;
-      }
-      else
-      {
-        key = default;
-        return false;
-      }
-    }
-
-    /// <summary>
-    /// Tries to retrieve the element with minimum key. An exception is thrown if the queue is empty.
-    /// </summary>
-    /// <returns>The element with the minimum key.</returns>
-    /// <exception cref="System.InvalidOperationException">Queue is empty</exception>
-    public KeyValuePair<TKey, TValue> Peek()
-    {
-      if (TryPeek(out var result, out TToken _))
-        return result;
-      else
-        throw new InvalidOperationException("Queue is empty");
+      return TryPeek(out key, out _);
     }
 
     /// <summary>
@@ -550,7 +497,7 @@ namespace Altaxo.Collections
     /// <param name="value">On sucessfull return, contains value belonging to the minimum key value.</param>
     /// <param name="token">On successfull return, contains the token associated with the key/value pair with minimum key.</param>
     /// <returns><c>True if an item could be successfully retrieved from the queue; <c>false</c> if the queue contains no items.</c></returns>
-    public bool TryDequeue([MaybeNullWhen(false)] out TKey key, [MaybeNull] out TValue value, [MaybeNullWhen(false)] out TToken token)
+    public bool TryDequeue([MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value, [MaybeNullWhen(false)] out TToken token)
     {
       _syncLock.EnterUpgradeableReadLock();
       try
@@ -592,45 +539,14 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Tries to dequeue the item with minimum key.
-    /// </summary>
-    /// <param name="keyValuePair">On sucessfull return, contains the key/value pair with minimum key value.</param>
-    /// <param name="token">On successfull return, contains the token associated with the key/value pair with minimum key.</param>
-    /// <returns><c>True if an item could be successfully retrieved from the queue; <c>false</c> if the queue contains no items.</c></returns>
-    public bool TryDequeue(out KeyValuePair<TKey, TValue> keyValuePair, [MaybeNullWhen(false)] out TToken token)
-    {
-
-      if (TryDequeue(out var key, out var value, out token))
-      {
-        keyValuePair = new KeyValuePair<TKey, TValue>(key, value);
-        return true;
-      }
-      else
-      {
-        keyValuePair = default;
-        return false;
-      }
-    }
-
-    /// <summary>
-    /// Tries to dequeue the item with minimum key.
-    /// </summary>
-    /// <param name="result">On sucessfull return, contains the key/value pair with minimum key value.</param>
-    /// <returns><c>True if an item could be successfully retrieved from the queue; <c>false</c> if the queue contains no items.</c></returns>
-    public bool TryDequeue(out KeyValuePair<TKey, TValue> result)
-    {
-      return TryDequeue(out result, out _);
-    }
-
-    /// <summary>
     /// Dequeues the item with minimum key. If the queue is empty, an exception will be thrown.
     /// </summary>
     /// <returns>The key/value pair with minimum key value.</returns>
     /// <exception cref="System.InvalidOperationException">Queue is empty.</exception>
-    public KeyValuePair<TKey, TValue> Dequeue()
+    public (TKey Key, TValue Value) Dequeue()
     {
-      if (TryDequeue(out var result, out _))
-        return result;
+      if (TryDequeue(out var key, out var value, out var _))
+        return (key, value);
       else
         throw new InvalidOperationException("Queue is empty");
     }
@@ -646,7 +562,7 @@ namespace Altaxo.Collections
     /// <param name="key">On sucessfull return, contains the key of the key/value pair associated with the token.</param>
     /// <param name="value">On sucessfull return, contains the value of the key/value pair associated with the token.</param>
     /// <returns><c>True</c> if the key/value pair associated with the token existed in the queue. <c>False</c> if the a key/value pair associated with the provided token is not in the queue.</returns>
-    public bool TryGet([MaybeNullWhen(false)] TToken token, [MaybeNull] out TKey key, [MaybeNullWhen(false)] out TValue value)
+    public bool TryGet(TToken token, [MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value)
     {
       _syncLock.EnterReadLock();
       try
@@ -674,22 +590,9 @@ namespace Altaxo.Collections
     /// <param name="token">The token.</param>
     /// <param name="key">On sucessfull return, contains the key of the key/value pair associated with the token.</param>
     /// <returns><c>True</c> if the key/value pair associated with the token existed in the queue. <c>False</c> if the a key/value pair associated with the provided token is not in the queue.</returns>
-    public bool TryGet(TToken token, out TKey key)
+    public bool TryGet(TToken token, [MaybeNullWhen(false)] out TKey key)
     {
       return TryGet(token, out key, out _);
-    }
-
-    /// <summary>
-    /// Tries to get the key/value pair that is associated with the provided <paramref name="token"/>.
-    /// </summary>
-    /// <param name="token">The token.</param>
-    /// <param name="keyValuePair">On sucessful return, contains the key value pair associated with the token.</param>
-    /// <returns><c>True</c> if the key/value pair associated with the token existed in the queue. <c>False</c> if the a key/value pair associated with the provided token is not in the queue.</returns>
-    public bool TryGet(TToken token, out KeyValuePair<TKey, TValue> keyValuePair)
-    {
-      var retValue = TryGet(token, out var key, out var value);
-      keyValuePair = new KeyValuePair<TKey, TValue>(key, value);
-      return retValue;
     }
 
     #endregion Get queue items by token
@@ -815,7 +718,7 @@ namespace Altaxo.Collections
     /// <param name="key">On successfull return, contains the key of the removed key/value pair.</param>
     /// <param name="value">On successfull return, contains the value of the removed key/value pair.</param>
     /// <returns><c>True</c> if the item still existed in the queue and could be successfully removed; otherwise <c>false</c>.</returns>
-    public bool TryRemove(TToken token, [MaybeNullWhen(false)] out TKey key, [MaybeNull] out TValue value)
+    public bool TryRemove(TToken token, [MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value)
     {
       _syncLock.EnterUpgradeableReadLock();
       try
@@ -858,7 +761,7 @@ namespace Altaxo.Collections
     /// <param name="token">The token associated with the key/value pair to remove.</param>
     /// <param name="key">On successfull return, contains the key of the removed key/value pair.</param>
     /// <returns><c>True</c> if the item still existed in the queue and could be successfully removed; otherwise <c>false</c>.</returns>
-    public bool TryRemove(TToken token, out TKey key)
+    public bool TryRemove(TToken token, [MaybeNullWhen(false)] out TKey key)
     {
       return TryRemove(token, out key, out _);
     }
@@ -873,18 +776,7 @@ namespace Altaxo.Collections
       return TryRemove(token, out var _, out var _);
     }
 
-    /// <summary>
-    /// Tries to remove the key/value pair associated with the provided <paramref name="token"/> from the queue (independently on the current position of the key/value pair in the queue).
-    /// </summary>
-    /// <param name="token">The token associated with the key/value pair to remove.</param>
-    /// <param name="result">On successfull return, contains the removed key/value pair.</param>
-    /// <returns><c>True</c> if the item still existed in the queue and could be successfully removed; otherwise <c>false</c>.</returns>
-    public bool TryRemove(TToken token, out KeyValuePair<TKey, TValue> result)
-    {
-      var retValue = TryRemove(token, out var key, out var value);
-      result = new KeyValuePair<TKey, TValue>(key, value);
-      return retValue;
-    }
+
 
     #endregion Remove queue items before they are enqueued
 

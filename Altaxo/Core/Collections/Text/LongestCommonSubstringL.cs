@@ -43,7 +43,7 @@ namespace Altaxo.Collections.Text
   {
     // intermediate data neccessary for the algorithm
 
-    private LLElement[] _textPtr;
+    private LLElement[]? _textPtr;
 
     /// <summary>Initializes a new instance of the problem solver for the longest common substring problem.</summary>
     /// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
@@ -134,6 +134,8 @@ namespace Altaxo.Collections.Text
         _singleResultOfNumberOfWords = new SuffixArrayRegion[_numberOfWords + 1];
     }
 
+#nullable disable // disable nullable for the private functions
+
     /// <summary>Posts the process results. Here the maximum number of words that have at least one common substring is evaluated.</summary>
     private void PostProcessResults()
     {
@@ -147,6 +149,7 @@ namespace Altaxo.Collections.Text
         }
       }
     }
+
 
     private void lcp_update(int lcp_i, int index)
     {
@@ -242,6 +245,8 @@ namespace Altaxo.Collections.Text
 
       nodeToRemove.Idx = i;
     }
+
+#nullable enable
 
 #if LinkedListDebug
 

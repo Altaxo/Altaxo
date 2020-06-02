@@ -35,10 +35,12 @@ namespace Altaxo.Collections.Text
   /// </summary>
   public class IntegerText
   {
+    private static int[] _intArrayEmpty = new int[0];
+
     /// <summary>Original text, converted to an integer alphabet. Each unique element of the original text (or each unique list element) corresponds to an integer value. The order of this integer alphabet is the same as the order of the original elements.
     /// Note that the value 0 is reserved for the internal algorithm. If the original text was separated in different words, the first <c>numberOfWords</c> integers (1..<c>numberOfWords</c>) are reserved as separator elements, too.
     /// </summary>
-    private int[] _text;
+    private int[] _text = _intArrayEmpty;
 
     /// <summary>
     /// Length of the text. This is the total length of the original text, plus, if the text was separated into words, the number of separator elements (which is equal to the number of words). Note that the
@@ -65,7 +67,7 @@ namespace Altaxo.Collections.Text
     /// <summary>
     /// Start positions of the words in which the original text was separated in the array <see cref="_text"/>.
     /// </summary>
-    private int[] _wordStartPositions;
+    private int[] _wordStartPositions = _intArrayEmpty;
 
     /// <summary>Original text, converted to an integer alphabet. Each unique element of the original text (or each unique list element) corresponds to an integer value. The order of this integer alphabet is the same as the order of the original elements.
     /// Note that the value 0 is reserved for the internal algorithm. If the original text was separated in different words, the first <c>numberOfWords</c> integers (1..<c>numberOfWords</c>) are reserved as separator elements, too.
@@ -130,7 +132,7 @@ namespace Altaxo.Collections.Text
     /// <param name="padding">Number of additional elements reserved in the allocated <see cref="Text"/> array. This is neccessary for some algorithms. The additional elements will contain zero values.</param>
     /// <param name="customComparer">Provides a custom comparer. If you don't want to provide an own comparer, leave this argument <c>null</c>.</param>
     /// <returns>The integer text data, which holds the text converted to an integer alphabet.</returns>
-    public static IntegerText FromWords(IEnumerable<string> words, bool withSeparators, int padding, IComparer<char> customComparer)
+    public static IntegerText FromWords(IEnumerable<string> words, bool withSeparators, int padding, IComparer<char>? customComparer)
     {
       var result = new IntegerText();
 
@@ -194,7 +196,7 @@ namespace Altaxo.Collections.Text
     /// <param name="useSortedMapping">If this parameter is true, a sorted mapping of the elements T to integers will be used. The type T then has to implement IComparable. If this parameter is <c>false</c>, a unsorted <see cref="System.Collections.Generic.HashSet&lt;T&gt;"/> will be used to make a unique mapping of the elements to integers.</param>
     /// <param name="customSortingComparer">If <paramref name="useSortedMapping"/> is <c>true</c>, you can here provide a custom comparer for the elements of type T. Otherwise, if you want to use the default comparer, leave this parameter <c>null</c>.</param>
     /// <returns>The integer text data, which holds the text converted to an integer alphabet.</returns>
-    public static IntegerText FromWords<T>(IEnumerable<IEnumerable<T>> lists, bool withSeparators, int padding, bool useSortedMapping, IComparer<T> customSortingComparer)
+    public static IntegerText FromWords<T>(IEnumerable<IEnumerable<T>> lists, bool withSeparators, int padding, bool useSortedMapping, IComparer<T>? customSortingComparer) where T : notnull
     {
       var result = new IntegerText();
 

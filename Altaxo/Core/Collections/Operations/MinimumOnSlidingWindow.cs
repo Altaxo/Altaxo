@@ -136,14 +136,8 @@ namespace Altaxo.Collections.Operations
     /// <returns>An enumeration. Each value is the minimum of the <paramref name="windowWidth"/> values (including the current one) of the original enumeration.</returns>
     public static IEnumerable<T> GetSlidingMinimum(IEnumerable<T> list, int windowWidth)
     {
-      MinimumOnSlidingWindow<T> window = null;
-      foreach (var val in list)
-      {
-        window = new MinimumOnSlidingWindow<T>(windowWidth, val);
-        break;
-      }
-
-      if (null != window)
+      var window = (list.FirstOrDefault() is { } firstVal) ? new MinimumOnSlidingWindow<T>(windowWidth, firstVal) : null;
+      if (!(window is null))
       {
         foreach (var val in list)
         {

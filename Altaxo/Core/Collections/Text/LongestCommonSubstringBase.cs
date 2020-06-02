@@ -158,6 +158,8 @@ namespace Altaxo.Collections.Text
 
     #endregion internal types
 
+    protected const string ERROR_NO_RESULTS_YET = "There are no results available yet - please execute the algorithm first!";
+
     // copy-paste from the generalized suffix array
 
     /// <summary>Number of words the text was separated into.</summary>
@@ -198,7 +200,7 @@ namespace Altaxo.Collections.Text
     /// <summary>
     /// Stores in element <c>idx</c> the length of the longest substring that is common to <c>idx</c> number of words (it follows that index 0 and 1 are unused here).
     /// </summary>
-    protected int[] _lcsOfNumberOfWords;
+    protected int[]? _lcsOfNumberOfWords;
 
     /// <summary>
     /// If <see cref="_verboseResultsOfNumberOfWords"/> is false, stores only the first report of a longest common string for the given number of words.
@@ -206,14 +208,14 @@ namespace Altaxo.Collections.Text
     /// The length of this substring is stored in <see cref="_lcsOfNumberOfWords"/> at the same index.
     /// If <see cref="_verboseResultsOfNumberOfWords"/> is true, this array is not used and is set to <c>null</c>.
     /// </summary>
-    protected SuffixArrayRegion[] _singleResultOfNumberOfWords;
+    protected SuffixArrayRegion[]? _singleResultOfNumberOfWords;
 
     /// <summary>
     /// If <see cref="_verboseResultsOfNumberOfWords"/> is true, this array stores, for a given number of words that have one or more substrings in common, a list with all positions where such common substrings occur.
     /// The content of one element of each list is the beginning and the end index in the suffix array that indicate all suffixes that have a substring in common. The length of this substring is stored in <see cref="_lcsOfNumberOfWords"/>
     /// If <see cref="_verboseResultsOfNumberOfWords"/> is false, this array is not used and is set to <c>null</c>.
     /// </summary>
-    protected List<SuffixArrayRegion>[] _verboseResultsOfNumberOfWords;
+    protected List<SuffixArrayRegion>[]? _verboseResultsOfNumberOfWords;
 
     /// <summary>
     /// Determines the amount of information to store during evaluation.
@@ -282,6 +284,9 @@ namespace Altaxo.Collections.Text
     /// <returns>An enumeration will all positions of substrings common to the given number of words. The amount of information returned depends on the state of <see cref="StoreVerboseResults"/>.</returns>
     public IEnumerable<CommonSubstring> GetSubstringPositionsCommonToTheNumberOfWords(int numberOfWordsWithCommonSubstring)
     {
+      if (_lcsOfNumberOfWords is null)
+        throw new InvalidOperationException(ERROR_NO_RESULTS_YET);
+
       int substringLength = _lcsOfNumberOfWords[numberOfWordsWithCommonSubstring];
       if (substringLength > 0)
       {
@@ -311,6 +316,9 @@ namespace Altaxo.Collections.Text
     /// <param name="lcslIsReallyGreaterThanBefore">If set to <c>true</c>, the longest common substring length is really greater than evaluated before. Thus, it is neccessary to clear all results stored so far.</param>
     protected void StoreVerboseResult(int list_pos, int beg, int end, bool lcslIsReallyGreaterThanBefore)
     {
+      if (_verboseResultsOfNumberOfWords is null)
+        throw new InvalidProgramException();
+
       var list = _verboseResultsOfNumberOfWords[list_pos];
       if (list == null)
         _verboseResultsOfNumberOfWords[list_pos] = list = new List<SuffixArrayRegion>();

@@ -37,8 +37,8 @@ namespace Altaxo.Collections.Text
   /// <remarks>
   /// <para>
   /// This is close to the original implementation, using a linked list of class instances. Thus, a
-  /// lot (repeats * textlength) class instances will be created as intermediates. The implementation
-  /// <see cref="LongestCommonRepeatA"/> is avoiding this by using a array of struct's instead.
+  /// lot (repeats * textlength) class instances will be created as intermediates. The alternative implementation
+  /// <see cref="LongestCommonRepeatA"/> is avoiding this by using an array of struct's instead.
   /// </para>
   /// <para>
   /// For details of the algorithm see the very nice paper by Michael Arnold and Enno Ohlebusch, 'Linear Time Algorithms for Generalizations of the Longest Common Substring Problem', Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
@@ -48,11 +48,11 @@ namespace Altaxo.Collections.Text
   public class LongestCommonRepeatL : LongestCommonSubstringBaseL
   {
     // intermediate data neccessary for the algorithm
-    private LLElement[][] _items;
+    private LLElement[][]? _items;
 
     private int _x_repeats;
-    private int[] _last_index;
-    private MinimumOnSlidingWindow[] _pqls;
+    private int[]? _last_index;
+    private MinimumOnSlidingWindow[]? _pqls;
 
     /// <summary>Initializes a new instance of the problem solver for the repeated longest common substring problem.</summary>
     /// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
@@ -163,8 +163,8 @@ namespace Altaxo.Collections.Text
 
       _lastLcp = new LLElement[_maximumLcp + 1];
 
-      var begin = _ddlList.Last.Previous; // front.prev->prev;
-      LLElement end = _ddlList.First; // originally back.next
+      var begin = _ddlList.Last!.Previous!; // front.prev->prev;
+      LLElement end = _ddlList.First!; // originally back.next
       begin.IntervalEnd = end;
       end.IntervalBegin = begin;
       if (_x_repeats > 1)
@@ -175,9 +175,9 @@ namespace Altaxo.Collections.Text
       {
         end.IntervalSize = _numberOfWords - 1;
       }
-      _ddlList.Last.IntervalEnd = _ddlList.First;
-      _ddlList.First.IntervalBegin = _ddlList.Last;
-      _ddlList.First.IntervalSize = _numberOfWords;
+      _ddlList.Last.IntervalEnd = _ddlList.First!;
+      _ddlList.First!.IntervalBegin = _ddlList.Last;
+      _ddlList.First!.IntervalSize = _numberOfWords;
       _lastLcp[0] = _ddlList.First;
     }
 
@@ -201,6 +201,8 @@ namespace Altaxo.Collections.Text
       else
         _singleResultOfNumberOfWords = new SuffixArrayRegion[_numberOfWords + 1];
     }
+
+#nullable disable // disable for private functions
 
     private void create_interval(LLElement end, LLElement begin, int lcp, int size)
     {
@@ -335,6 +337,7 @@ namespace Altaxo.Collections.Text
       _lastLcp[lcp_i] = last_updated;
     }
 
+
     /// <summary>Posts the process results. Here the maximum number of words that have at least one common substring is evaluated.</summary>
     protected void EvaluateMaximumNumberOfWordsWithCommonSubstring()
     {
@@ -348,6 +351,9 @@ namespace Altaxo.Collections.Text
         }
       }
     }
+
+#nullable enable
+
 
 #if LinkedListDebug
 		protected override void print_debug()

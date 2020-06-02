@@ -54,10 +54,10 @@ namespace Altaxo.Collections.Text
       public int Lcp;
 
       /// <summary>Next list element in the array, or null if no such element exists.</summary>
-      public LLElement Next;
+      public LLElement? Next;
 
       /// <summary>Previous list element in the array, or null if no such element exists.</summary>
-      public LLElement Previous;
+      public LLElement? Previous;
 
       /// <summary>First list element of the interval to which this list element belongs.</summary>
       public LLElement IntervalBegin;
@@ -110,8 +110,8 @@ namespace Altaxo.Collections.Text
     /// </summary>
     protected class LinkedList
     {
-      private LLElement _first;
-      private LLElement _last;
+      private LLElement? _first;
+      private LLElement? _last;
       private int _count;
 
       public void AddLast(LLElement node)
@@ -151,7 +151,7 @@ namespace Altaxo.Collections.Text
         --_count;
       }
 
-      public LLElement First
+      public LLElement? First
       {
         get
         {
@@ -159,7 +159,7 @@ namespace Altaxo.Collections.Text
         }
       }
 
-      public LLElement Last
+      public LLElement? Last
       {
         get
         {
@@ -179,9 +179,9 @@ namespace Altaxo.Collections.Text
     #endregion internal types
 
     // intermediate data neccessary for the algorithm
-    protected LinkedList _ddlList;
+    protected LinkedList? _ddlList;
 
-    protected LLElement[] _lastLcp;
+    protected LLElement[]? _lastLcp;
 
     /// <summary>Initializes a new instance of the problem solver for the longest common substring problem.</summary>
     /// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>

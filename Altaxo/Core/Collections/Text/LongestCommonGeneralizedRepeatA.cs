@@ -150,7 +150,7 @@ namespace Altaxo.Collections.Text
 
       public void Clear()
       {
-        L = null;
+        L = new DDLElement[0];
         First = Last = 0;
       }
     }
@@ -168,25 +168,27 @@ namespace Altaxo.Collections.Text
     // intermediate data neccessary for the algorithm
     protected LinkedObjectList _ddlList;
 
-    protected int[] _lastLcp;
+    protected int[]? _lastLcp;
 
     // intermediate data neccessary for the algorithm
-    private int[][] _items;
+    private int[][]? _items;
 
     private int[] _x_repeats;
-    private int[] list_sizes;
-    private int[] _last_index;
+    private int[]? list_sizes;
+    private int[]? _last_index;
 
     /// <summary>For a given number of words as the index, this array stores some preliminarily found suffix regions for some algorithms (e.g. generalized common repeat algorithm).</summary>
-    protected List<PreResult> _preResults;
+    protected List<PreResult>? _preResults;
 
-    private MinimumOnSlidingWindow[] _pqls;
+    private MinimumOnSlidingWindow[]? _pqls;
 
     /// <summary>Initializes a new instance of the problem solver for the repeated longest common substring problem.</summary>
     /// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
     public LongestCommonGeneralizedRepeatA(GeneralizedSuffixArray gsa)
       : base(gsa)
     {
+      _x_repeats = new int[_numberOfWords];
+      for (int i = 0; i < _x_repeats.Length; ++i) _x_repeats[i] = 1;
     }
 
     /// <summary>Initializes a new instance of the problem solver for the repeated longest common substring problem.</summary>
@@ -195,6 +197,11 @@ namespace Altaxo.Collections.Text
     public LongestCommonGeneralizedRepeatA(GeneralizedSuffixArray gsa, int[] x_repeats)
       : base(gsa)
     {
+      if (x_repeats is null)
+        throw new ArgumentNullException(nameof(x_repeats));
+      if (x_repeats.Length < _numberOfWords)
+        throw new ArgumentException("Length of array not sufficient", nameof(x_repeats));
+
       _x_repeats = x_repeats;
     }
 
@@ -265,6 +272,7 @@ namespace Altaxo.Collections.Text
       return this;
     }
 
+#nullable disable
     private void InitializeIntermediates()
     {
       // initialize items
@@ -514,6 +522,8 @@ namespace Altaxo.Collections.Text
       }
       _preResults.Clear();
     }
+
+#nullable enable
 
 #if LinkedListDebug
 		protected virtual void print_debug()

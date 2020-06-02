@@ -201,8 +201,8 @@ namespace Altaxo.Collections.Text
       return FirstPosition.GetCommonSubstring<T>(words);
     }
 
-    /// <summary>Returns a <see cref="System.String"/> that represents this instance.</summary>
-    /// <returns>A <see cref="System.String"/> that represents this instance.</returns>
+    /// <summary>Returns a <see cref="string"/> that represents this instance.</summary>
+    /// <returns>A <see cref="string"/> that represents this instance.</returns>
     public override string ToString()
     {
       return string.Format("CommonSubstring Length={0}, SuffixArray_Begin={1}, End={2}", _substringLength, _begin, _end);
