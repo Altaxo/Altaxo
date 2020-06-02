@@ -85,7 +85,7 @@ namespace Altaxo.Main.Properties
           info.AddValue("Key", key);
 
           if (s._properties.TryGetValue(key, out var value))
-            info.AddValue("Value", value);
+            info.AddValueOrNull("Value", value);
           else if (s._propertiesLazyLoaded.TryGetValue(key, out var rawXml))
             info.WriteRaw(rawXml);
           else
@@ -150,7 +150,7 @@ namespace Altaxo.Main.Properties
       using (var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo())
       {
         info.BeginReading(xml);
-        object propval = info.GetValue("Value", this);
+        object propval = info.GetValueOrNull("Value", this);
 
         if (propval is IDocumentLeafNode documentLeafNode)
           documentLeafNode.ParentObject = this;
