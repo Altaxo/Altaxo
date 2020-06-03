@@ -276,8 +276,7 @@ namespace Altaxo.Collections
 
     protected override void InsertItem(int index, T item)
     {
-      if (null != _actionBeforeInsertion)
-        _actionBeforeInsertion(item);
+      _actionBeforeInsertion?.Invoke(item);
 
       for (var node = _partialViews.First; null != node; node = node.Next)
       {

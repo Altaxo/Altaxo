@@ -13,7 +13,7 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <NoWarn>
       1701;1702;1591;
-      8600;8601;8603;8604
+      8600;8601;8603;8604;8625
     </NoWarn>
   </PropertyGroup>
   <ItemGroup>

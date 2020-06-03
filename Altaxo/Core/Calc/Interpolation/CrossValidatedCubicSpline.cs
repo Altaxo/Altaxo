@@ -117,7 +117,9 @@ namespace Altaxo.Calc.Interpolation
       double[] WK3,
       out int ier)
     {
+#nullable disable
       cubgcv(_x, _f, _df, n, _y0, _c, n - 1, _variance, 1, _se, _wkr, _wkt, _wku, _wkv, out ier);
+#nullable enable
     }
 
 

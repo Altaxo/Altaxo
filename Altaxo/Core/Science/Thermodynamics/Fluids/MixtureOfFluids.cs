@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -64,8 +65,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       {
         if (_fluidDefinitions.TryGetValue(casNumber, out var fluidType))
         {
-          var pd = fluidType.GetProperty("Instance").GetGetMethod();
-          var definition = (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl)pd.Invoke(null, null);
+          var pd = fluidType.GetProperty("Instance")?.GetGetMethod() ?? throw new InvalidOperationException($"Fluid type {fluidType} doesn't seem to have an instance property");
+          var definition = (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl)(pd.Invoke(null, null) ?? throw new InvalidOperationException($"Instance property of fluid type {fluidType} returned null."));
           list.Add((definition, moleFraction));
         }
         else
@@ -87,8 +88,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       {
         if (_fluidDefinitions.TryGetValue(casNumber, out var fluidType))
         {
-          var pd = fluidType.GetProperty("Instance").GetGetMethod();
-          var definition = (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl)pd.Invoke(null, null);
+          var pd = fluidType.GetProperty("Instance")?.GetGetMethod() ?? throw new InvalidOperationException($"Fluid type {fluidType} doesn't seem to have an instance property");
+          var definition = (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl)(pd.Invoke(null, null) ?? throw new InvalidOperationException($"Fluid type {fluidType} doesn't seem to have an instance property"));
           list.Add((definition, massFraction));
         }
         else
@@ -199,14 +200,16 @@ namespace Altaxo.Science.Thermodynamics.Fluids
         {
           if (j == i)
           {
+#nullable disable
             _mixtureDefinitions[i, j] = (null, false);
+#nullable enable
           }
           else
           {
             if (_binaryMixtureDefinitions.TryGetValue((_fluidsAndMoleFractions[i].pureFluid.CASRegistryNumber, _fluidsAndMoleFractions[j].pureFluid.CASRegistryNumber), out var definitionType))
             {
-              var pd = definitionType.GetProperty("Instance").GetGetMethod();
-              var definition = (BinaryMixtureDefinitionBase)pd.Invoke(null, null);
+              var pd = definitionType.GetProperty("Instance")?.GetGetMethod() ?? throw new InvalidOperationException($"Fluid type {definitionType} doesn't seem to have an instance property");
+              var definition = (BinaryMixtureDefinitionBase)(pd.Invoke(null, null) ?? throw new InvalidOperationException($"Fluid type {definitionType} doesn't seem to have an instance property"));
               bool reverse = _fluidsAndMoleFractions[i].pureFluid.CASRegistryNumber != definition.CASRegistryNumber1;
               _mixtureDefinitions[i, j] = (definition, reverse);
               _mixtureDefinitions[j, i] = (definition, !reverse);
@@ -669,8 +672,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
                       entry.Value,
                       () =>
                       {
-                        var pd = entry.Value.GetProperty("Instance").GetGetMethod();
-                        var definition = (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl)pd.Invoke(null, null);
+                        var pd = entry.Value.GetProperty("Instance")?.GetGetMethod() ?? throw new InvalidOperationException($"Fluid type {entry.Value} doesn't seem to have an instance property");
+                        var definition = (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl)(pd.Invoke(null, null) ?? throw new InvalidOperationException($"Instance property of fluid type {entry.Value} returned null."));
                         return definition;
                       }
           );
@@ -684,12 +687,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <param name="casRegistryNumber">The CAS registry number of the fluid.</param>
     /// <param name="fluid">If the return value is true, an instance of the fluid; otherwise null.</param>
     /// <returns>True if an instance of a fluid with the given CAS registry number could be found; otherwise false.</returns>
-    public static bool TryGetFluidFromCasRegistryNumber(string casRegistryNumber, out HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid)
+    public static bool TryGetFluidFromCasRegistryNumber(string casRegistryNumber, [MaybeNullWhen(false)] out HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid)
     {
       if (_fluidDefinitions.TryGetValue(casRegistryNumber, out var type))
       {
-        var pd = type.GetProperty("Instance").GetGetMethod();
-        fluid = (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl)pd.Invoke(null, null);
+        var pd = type.GetProperty("Instance")?.GetGetMethod() ?? throw new InvalidOperationException($"Fluid type {type} doesn't seem to have an instance property");
+        fluid = (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl)(pd.Invoke(null, null) ?? throw new InvalidOperationException($"Instance property of fluid type {type} returned null."));
         return true;
       }
 
@@ -715,8 +718,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
                       entry.Value,
                       () =>
                       {
-                        var pd = entry.Value.GetProperty("Instance").GetGetMethod();
-                        var definition = (BinaryMixtureDefinitionBase)pd.Invoke(null, null);
+                        var pd = entry.Value.GetProperty("Instance")?.GetGetMethod() ?? throw new InvalidOperationException($"Fluid type {entry.Value} doesn't seem to have an instance property");
+                        var definition = (BinaryMixtureDefinitionBase)(pd.Invoke(null, null) ?? throw new InvalidOperationException($"Instance property of fluid type {entry.Value} returned null."));
                         return definition;
                       }
           );

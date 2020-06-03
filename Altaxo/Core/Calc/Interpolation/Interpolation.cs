@@ -49,6 +49,7 @@
 #endregion Acknowledgements
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 
@@ -131,6 +132,26 @@ namespace Altaxo.Calc.Interpolation
     Norm1
   }
 
+  public static class EmptyArrays
+  {
+    private static ConcurrentDictionary<Type, object> _dict = new ConcurrentDictionary<Type, object>();
+    public static T[] Empty<T>()
+    {
+      if (_dict.TryGetValue(typeof(T), out var o))
+      {
+        return (T[])o;
+      }
+      else
+      {
+        var result = new T[0];
+        _dict.AddOrUpdate(typeof(T), result, (t, x) => x);
+        return result;
+      }
+    }
+  }
+
+
+
   #region CurveBase
 
   /// <summary>
@@ -138,16 +159,18 @@ namespace Altaxo.Calc.Interpolation
   /// </summary>
   public abstract class CurveBase : IInterpolationCurve
   {
+    private static readonly double[] _emptyDouble = new double[0];
     /// <summary>
     /// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
     /// </summary>
     protected const double DBL_EPSILON = 2.2204460492503131e-016;
 
     /// <summary>Reference to the vector of the independent variable.</summary>
-    protected IReadOnlyList<double> x;
+    protected IReadOnlyList<double> x = _emptyDouble;
 
     /// <summary>Reference to the vector of the dependent variable.</summary>
-    protected IReadOnlyList<double> y;
+    protected IReadOnlyList<double> y = _emptyDouble;
+
 
     #region Helper functions
 
@@ -586,7 +609,8 @@ namespace Altaxo.Calc.Interpolation
   {
     #region Members
 
-    private DoubleVector x, y;
+    private DoubleVector _x = new DoubleVector();
+    private DoubleVector _y = new DoubleVector();
 
     #endregion Members
 
@@ -594,16 +618,16 @@ namespace Altaxo.Calc.Interpolation
 
     public double GetYOfX(double xval)
     {
-      int idx = CurveBase.FindInterval(xval, x);
+      int idx = CurveBase.FindInterval(xval, _x);
       if (idx < 0)
         throw new ArgumentOutOfRangeException("xval is smaller than the interpolation x range");
-      if (idx + 1 > x.Length)
+      if (idx + 1 > _x.Length)
         throw new ArgumentOutOfRangeException("xval is greater than the interpolation x range");
 
-      if (idx + 1 == x.Length)
+      if (idx + 1 == _x.Length)
         idx--;
 
-      return Interpolate(xval, x[idx], x[idx + 1], y[idx], y[idx + 1]);
+      return Interpolate(xval, _x[idx], _x[idx + 1], _y[idx], _y[idx + 1]);
     }
 
     #endregion IInterpolationFunction Members
@@ -612,13 +636,13 @@ namespace Altaxo.Calc.Interpolation
 
     public void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
-      if (null == x)
-        x = new DoubleVector();
-      if (null == y)
-        y = new DoubleVector();
+      if (null == _x)
+        _x = new DoubleVector();
+      if (null == _y)
+        _y = new DoubleVector();
 
-      x.CopyFrom(xvec);
-      y.CopyFrom(yvec);
+      _x.CopyFrom(xvec);
+      _y.CopyFrom(yvec);
     }
 
     public double GetYOfU(double u)
@@ -652,7 +676,7 @@ namespace Altaxo.Calc.Interpolation
       return (1 - r) * y0 + r * y1;
     }
 
-    public static string Interpolate(
+    public static string? Interpolate(
       IReadOnlyList<double> xcol,
       IReadOnlyList<double> ycol,
       int sourceLength,
@@ -717,7 +741,7 @@ tryinterpolation:
       return null;
     }
 
-    public static string Interpolate(
+    public static string? Interpolate(
       IReadOnlyList<double> xcol,
       IReadOnlyList<double> ycol,
       int sourceLength,
@@ -791,7 +815,7 @@ tryinterpolation:
 
   public class PolynomialRegressionAsInterpolation : IInterpolationFunction
   {
-    private Regression.LinearFitBySvd _fit;
+    private Regression.LinearFitBySvd? _fit;
 
     public int RegressionOrder { get; set; }
 
@@ -813,6 +837,9 @@ tryinterpolation:
 
     public double GetYOfX(double x)
     {
+      if (_fit is null)
+        throw new InvalidOperationException($"Results not available yet - please execute an interpolation first");
+
       double[] paras = _fit.Parameter;
 
       double result = 0;

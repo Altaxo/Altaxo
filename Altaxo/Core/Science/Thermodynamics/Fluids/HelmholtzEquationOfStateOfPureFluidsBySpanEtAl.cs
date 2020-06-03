@@ -284,6 +284,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     #endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
+#nullable disable
+
     #region Residual part of dimensionless Helmholtz energy and derivatives
 
     #region Parameter from Table, e.g. for Water: 6.2, page 430  in [2]
@@ -1704,5 +1706,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
     #endregion Functions to calculate melting pressure
+
+#nullable enable
   }
 }

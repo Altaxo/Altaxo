@@ -52,12 +52,12 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>Default value of the <see cref="DerivativeOrder"/>.</summary>
     public const int DefaultDerivativeOrder = 2;
 
-    private DoubleVector _mtx_v;
+    private DoubleVector? _mtx_v;
 
     /// <summary>
     /// This matrix is only neccessary for calculating the bending energy.
     /// </summary>
-    private DoubleMatrix _mtx_orig_k;
+    private DoubleMatrix? _mtx_orig_k;
 
     private int _derivativeOrder;
 
@@ -74,18 +74,18 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// The cached Tps function.
     /// </summary>
-    private Func<double, double> _cachedTpsFunc;
+    private Func<double, double>? _cachedTpsFunc;
 
     /// <summary>
     /// The coordinate points. The first index is the index to the coordinate component (i.e. 0==x, 1,==y ..). The second index is the index of the control point.
     /// </summary>
-    private double[][] _coordinates;
+    private double[][]? _coordinates;
 
     /// <summary>
     /// Values associated with the control points. If for instance splining height values of an area, this is the height value.
     /// But it can be any other value, like temperature, and so on.
     /// </summary>
-    private double[] _values;
+    private double[]? _values;
 
     /// <summary>
     /// Regularization parameter (&gt;=0).
@@ -240,6 +240,42 @@ namespace Altaxo.Calc.Interpolation
       InternalCompute();
     }
 
+    /// <summary>
+    /// Gets the interpolation value of given coordinates x and y.
+    /// </summary>
+    /// <param name="x">The x coordinate of the point.</param>
+    /// <returns>The interpolated value at the point (x,y).</returns>
+    public double GetInterpolatedValue(params double[] x)
+    {
+      if (_mtx_v is null || _cachedTpsFunc is null)
+        throw new InvalidOperationException("No results available yet - please execute a spline first");
+
+      int N = _numberOfControlPoints;
+      // first calculate the linear interpolation h = intercept + a1*x1 + a2*x2 + ..
+      double h = _mtx_v[N + 0]; // intercept
+      for (int d = 0; d < _coordDim; d++) // calculate linear interpolation of x, y, ..
+        h += _mtx_v[N + 1 + d] * x[d];
+
+      for (int i = 0; i < N; ++i)
+      {
+        double distance = DistanceBetweenControlPointAndPoint(i, x);
+        h += _mtx_v[i] * _cachedTpsFunc(distance);
+      }
+      return h;
+    }
+
+    /// <summary>
+    /// Gets the bending energy of the interpolation.
+    /// </summary>
+    /// <returns></returns>
+    public double GetBendingEnergy()
+    {
+      if (_mtx_v is null || _mtx_orig_k is null)
+        throw new InvalidOperationException("No results available yet - please execute a spline first");
+
+      return MatrixMath.MultiplyVectorFromLeftAndRight(_mtx_orig_k, _mtx_v);
+    }
+
     private double tps_base_even_pos(double r)
     {
       return r == 0 ? 0 : RMath.Pow(r, 2 * _derivativeOrder - _coordDim) * Math.Log(r);
@@ -287,6 +323,8 @@ namespace Altaxo.Calc.Interpolation
     {
       return x * x;
     }
+
+#nullable disable
 
     /// <summary>
     /// Returns the distance between the control points at index i and j.
@@ -385,34 +423,7 @@ namespace Altaxo.Calc.Interpolation
       _mtx_v = solver.Solve(_mtx_v);
     }
 
-    /// <summary>
-    /// Gets the interpolation value of given coordinates x and y.
-    /// </summary>
-    /// <param name="x">The x coordinate of the point.</param>
-    /// <returns>The interpolated value at the point (x,y).</returns>
-    public double GetInterpolatedValue(params double[] x)
-    {
-      int N = _numberOfControlPoints;
-      // first calculate the linear interpolation h = intercept + a1*x1 + a2*x2 + ..
-      double h = _mtx_v[N + 0]; // intercept
-      for (int d = 0; d < _coordDim; d++) // calculate linear interpolation of x, y, ..
-        h += _mtx_v[N + 1 + d] * x[d];
+#nullable restore
 
-      for (int i = 0; i < N; ++i)
-      {
-        double distance = DistanceBetweenControlPointAndPoint(i, x);
-        h += _mtx_v[i] * _cachedTpsFunc(distance);
-      }
-      return h;
-    }
-
-    /// <summary>
-    /// Gets the bending energy of the interpolation.
-    /// </summary>
-    /// <returns></returns>
-    public double GetBendingEnergy()
-    {
-      return MatrixMath.MultiplyVectorFromLeftAndRight(_mtx_orig_k, _mtx_v);
-    }
   }
 }

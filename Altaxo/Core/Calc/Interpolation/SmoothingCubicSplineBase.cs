@@ -121,27 +121,28 @@ namespace Altaxo.Calc.Interpolation
     private bool _standardErrorEstimatesCalculated;
 
     // Vector wrappers. Attention: these wrappers may have less length than the underlying arrays!
-    protected IROVector<double> _xVec;
-    protected IROVector<double> _fVec;
-    protected IROVector<double> _c0Vec;
-    protected IROVector<double> _c1Vec;
-    protected IROVector<double> _c2Vec;
-    protected IROVector<double> _c3Vec;
-    protected IROVector<double> _seVec;
+    protected IROVector<double>? _xVec;
+    protected IROVector<double>? _fVec;
+    protected IROVector<double>? _c0Vec;
+    protected IROVector<double>? _c1Vec;
+    protected IROVector<double>? _c2Vec;
+    protected IROVector<double>? _c3Vec;
+    protected IROVector<double>? _seVec;
 
 
-    protected double[] _x; // Abscissa values
-    protected double[] _f; // Ordinate values
-    protected double[] _df; // Stores the known deviations of the ordinate values _f
-    protected double[] _y0; // the calculated spline ordinate values at x[i], i.e. the spline coefficients of order 0
-    protected double[] _se; // the estimated standard error of the points (only valid if doing cross-validation!)
-    protected double[][] _c; // the coefficients of order 1 to 3
+    protected double[]? _x; // Abscissa values
+    protected double[]? _f; // Ordinate values
+    protected double[]? _df; // Stores the known deviations of the ordinate values _f
+    protected double[]? _y0; // the calculated spline ordinate values at x[i], i.e. the spline coefficients of order 0
+    protected double[]? _se; // the estimated standard error of the points (only valid if doing cross-validation!)
+    protected double[][]? _c; // the coefficients of order 1 to 3
 
     // Work-arrays
-    protected double[][] _wkr;
-    protected double[][] _wkt;
-    protected double[] _wku;
-    protected double[] _wkv;
+    protected double[][]? _wkr;
+    protected double[][]? _wkt;
+    protected double[]? _wku;
+    protected double[]? _wkv;
+
 
     public SmoothingCubicSplineBase()
     {
@@ -193,7 +194,7 @@ namespace Altaxo.Calc.Interpolation
     /// If the absolute standard deviations are known, these should be provided here and the error
     /// variance parameter <paramref name="variance"/> should then be set to 1.
     /// If the relative standard deviations are unknown, set each element to 1, or set this parameter to null.</param>
-    public void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y, double variance, IReadOnlyList<double> dy)
+    public void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y, double variance, IReadOnlyList<double>? dy)
     {
       // check input parameters
       if (null == x)
@@ -237,6 +238,8 @@ namespace Altaxo.Calc.Interpolation
       // different number of points, we reallocate the arrays only if
       // the required number of points is larger than currently.
       SmartReallocate(n);
+
+#nullable disable
 
       if (CombineNeighbouringPoints)
       {
@@ -404,6 +407,8 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+#nullable enable
+
     #region Fit results
 
     protected Exception NotExecutedException()
@@ -418,7 +423,7 @@ namespace Altaxo.Calc.Interpolation
     {
       get
       {
-        if (_interpolationSuccessfullyExecuted)
+        if (_interpolationSuccessfullyExecuted && !(_c0Vec is null))
           return _c0Vec;
         else
           throw NotExecutedException();
@@ -432,7 +437,7 @@ namespace Altaxo.Calc.Interpolation
     {
       get
       {
-        if (_interpolationSuccessfullyExecuted)
+        if (_interpolationSuccessfullyExecuted && !(_c1Vec is null))
           return _c1Vec;
         else
           throw NotExecutedException();
@@ -447,7 +452,7 @@ namespace Altaxo.Calc.Interpolation
     {
       get
       {
-        if (_interpolationSuccessfullyExecuted)
+        if (_interpolationSuccessfullyExecuted && !(_c2Vec is null))
           return _c2Vec;
         else
           throw NotExecutedException();
@@ -462,7 +467,7 @@ namespace Altaxo.Calc.Interpolation
     {
       get
       {
-        if (_interpolationSuccessfullyExecuted)
+        if (_interpolationSuccessfullyExecuted && !(_c3Vec is null))
           return _c3Vec;
         else
           throw NotExecutedException();
@@ -477,7 +482,7 @@ namespace Altaxo.Calc.Interpolation
     {
       get
       {
-        if (_interpolationSuccessfullyExecuted && _standardErrorEstimatesCalculated)
+        if (_interpolationSuccessfullyExecuted && _standardErrorEstimatesCalculated && !(_seVec is null))
           return _seVec;
         else
           throw NotExecutedException();
@@ -494,7 +499,7 @@ namespace Altaxo.Calc.Interpolation
     {
       get
       {
-        if (_interpolationSuccessfullyExecuted)
+        if (_interpolationSuccessfullyExecuted && !(_wkr is null))
           return _wkr[0][0];
         else
           throw NotExecutedException();
@@ -512,7 +517,7 @@ namespace Altaxo.Calc.Interpolation
     {
       get
       {
-        if (_interpolationSuccessfullyExecuted)
+        if (_interpolationSuccessfullyExecuted && !(_wkr is null))
           return _wkr[1][0];
         else
           throw NotExecutedException();
@@ -526,7 +531,7 @@ namespace Altaxo.Calc.Interpolation
     {
       get
       {
-        if (_interpolationSuccessfullyExecuted)
+        if (_interpolationSuccessfullyExecuted && !(_wkr is null))
           return _wkr[2][0];
         else
           throw NotExecutedException();
@@ -540,7 +545,7 @@ namespace Altaxo.Calc.Interpolation
     {
       get
       {
-        if (_interpolationSuccessfullyExecuted)
+        if (_interpolationSuccessfullyExecuted && !(_wkt is null))
           return _wkt[0][0];
         else
           throw NotExecutedException();
@@ -554,7 +559,7 @@ namespace Altaxo.Calc.Interpolation
     {
       get
       {
-        if (_interpolationSuccessfullyExecuted)
+        if (_interpolationSuccessfullyExecuted && !(_wkt is null))
           return _wkt[1][0];
         else
           throw NotExecutedException();
@@ -571,7 +576,7 @@ namespace Altaxo.Calc.Interpolation
     {
       get
       {
-        if (_interpolationSuccessfullyExecuted)
+        if (_interpolationSuccessfullyExecuted && !(_wku is null))
           return _wku[0];
         else
           throw NotExecutedException();
@@ -589,7 +594,7 @@ namespace Altaxo.Calc.Interpolation
     {
       get
       {
-        if (_interpolationSuccessfullyExecuted)
+        if (_interpolationSuccessfullyExecuted && !(_wkv is null))
           return _wkv[0];
         else
           throw NotExecutedException();
@@ -1222,12 +1227,18 @@ namespace Altaxo.Calc.Interpolation
 
     public double GetY1stDerivativeOfX(double xx)
     {
-      return CubicSplineHorner1stDerivative(xx, x, _c0Vec, _c1Vec, _c2Vec, _c3Vec);
+      if (_interpolationSuccessfullyExecuted)
+        return CubicSplineHorner1stDerivative(xx, x, _c0Vec!, _c1Vec!, _c2Vec!, _c3Vec!);
+      else
+        throw NotExecutedException();
     }
 
     public override double GetYOfU(double u)
     {
-      return CubicSplineHorner(u, x, _c0Vec, _c1Vec, _c2Vec, _c3Vec);
+      if (_interpolationSuccessfullyExecuted)
+        return CubicSplineHorner(u, x, _c0Vec!, _c1Vec!, _c2Vec!, _c3Vec!);
+      else
+        throw NotExecutedException();
     }
 
 
