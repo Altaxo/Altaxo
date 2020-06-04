@@ -24,13 +24,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
   /// <summary>
   /// IROMatrix represents a read-only matrix of values.
   /// </summary>
-  public interface IROMatrix<T>
+  public interface IROMatrix<T> where T : struct
   {
     /// <summary>Gets an element of the matrix at (row, col).</summary>
     T this[int row, int col] { get; }
@@ -45,7 +46,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <summary>
   /// IMatrix represents the simplest form of a 2D matrix, which is readable and writeable.
   /// </summary>
-  public interface IMatrix<T> : IROMatrix<T>
+  public interface IMatrix<T> : IROMatrix<T> where T : struct
   {
     /// <summary>Get / sets an element of the matrix at (row, col).</summary>
     new T this[int row, int col] { get; set; }
@@ -55,7 +56,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// IRightExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
   /// can be appended to the right of the matrix.
   /// </summary>
-  public interface IRightExtensibleMatrix<T> : IMatrix<T>
+  public interface IRightExtensibleMatrix<T> : IMatrix<T> where T : struct
   {
     /// <summary>
     /// Append matrix a to the right edge of this matrix. Matrix a must have the same number of rows than this matrix, except this matrix
@@ -69,7 +70,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// IBottomExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
   /// can be appended to the bottom of the matrix.
   /// </summary>
-  public interface IBottomExtensibleMatrix<T> : IMatrix<T>
+  public interface IBottomExtensibleMatrix<T> : IMatrix<T> where T : struct
   {
     /// <summary>
     /// Append matrix a to the bottom of this matrix. Matrix a must have the same number of columns than this matrix, except this matrix
@@ -83,11 +84,11 @@ namespace Altaxo.Calc.LinearAlgebra
   /// IExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
   /// can be appended either to the right or to the bottom of the matrix.
   /// </summary>
-  public interface IExtensibleMatrix<T> : IRightExtensibleMatrix<T>, IBottomExtensibleMatrix<T>
+  public interface IExtensibleMatrix<T> : IRightExtensibleMatrix<T>, IBottomExtensibleMatrix<T> where T : struct
   {
   }
 
-  public interface IROBandMatrix<T> : IROMatrix<T>
+  public interface IROBandMatrix<T> : IROMatrix<T> where T : struct
   {
     int LowerBandwidth { get; }
     int UpperBandwidth { get; }
@@ -95,7 +96,7 @@ namespace Altaxo.Calc.LinearAlgebra
     IEnumerable<(int row, int column, T value)> EnumerateElementsIndexed(Zeros zeros = Zeros.AllowSkip);
   }
 
-  public interface IROSparseMatrix<T> : IROMatrix<T>
+  public interface IROSparseMatrix<T> : IROMatrix<T> where T : struct
   {
   }
 
@@ -103,7 +104,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// Operations on matrices which do not change the matrix instance.
   /// </summary>
   /// <typeparam name="T"></typeparam>
-  public interface IROMatrixLevel1<T> : IROMatrix<T>
+  public interface IROMatrixLevel1<T> : IROMatrix<T> where T : struct
   {
     IEnumerable<(int row, int column, T value)> EnumerateElementsIndexed(Zeros zeros = Zeros.AllowSkip);
 
@@ -125,7 +126,7 @@ namespace Altaxo.Calc.LinearAlgebra
     void MapIndexed<T1>(T1 sourceParameter1, Func<int, int, T, T1, T> function, IMatrix<T> result, Zeros zeros = Zeros.AllowSkip);
   }
 
-  public interface IMatrixLevel1<T> : IROMatrixLevel1<T>
+  public interface IMatrixLevel1<T> : IROMatrixLevel1<T> where T : struct
   {
     /// <summary>
     /// Sets all elements of the matrix to the default value (i.e. zero for numerical values).

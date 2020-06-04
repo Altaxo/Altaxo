@@ -86,22 +86,21 @@ namespace Altaxo.Calc.LinearAlgebra
       return result;
     }
 
-    public static string MatrixToString<T>(string name, IROMatrix<T> a)
+    public static string MatrixToString<T>(string? name, IROMatrix<T> a) where T : struct
     {
-      if (null == name)
-        name = "";
+      name = name ?? string.Empty;
 
       if (a.RowCount == 0 || a.ColumnCount == 0)
         return string.Format("EmptyMatrix {0}({1},{2})", name, a.RowCount, a.ColumnCount);
 
-      var s = new System.Text.StringBuilder();
+      var s = new StringBuilder();
       s.Append("Matrix " + name + ":");
       for (int i = 0; i < a.RowCount; i++)
       {
         s.Append("\n(");
         for (int j = 0; j < a.ColumnCount; j++)
         {
-          s.Append(a[i, j].ToString());
+          s.Append(a[i, j]);
           if (j + 1 < a.ColumnCount)
             s.Append(";");
           else
@@ -195,7 +194,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The jagged array. Each double[] vector is a row of the matrix.</param>
     /// <returns></returns>
-    public static IBottomExtensibleMatrix<T> ToROMatrixFromLeftSpineJaggedArray<T>(T[][] x)
+    public static IBottomExtensibleMatrix<T> ToROMatrixFromLeftSpineJaggedArray<T>(T[][] x) where T : struct
     {
       return new LeftSpineJaggedArrayMatrix<T>(x);
     }
@@ -205,12 +204,12 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The jagged array. Each double[] vector is a row of the matrix.</param>
     /// <returns></returns>
-    public static IBottomExtensibleMatrix<T> ToMatrixFromLeftSpineJaggedArray<T>(T[][] x)
+    public static IBottomExtensibleMatrix<T> ToMatrixFromLeftSpineJaggedArray<T>(T[][] x) where T : struct
     {
       return new LeftSpineJaggedArrayMatrix<T>(x);
     }
 
-    public static IBottomExtensibleMatrix<T> ToMatrix<T>(MatrixWrapperStructForLeftSpineJaggedArray<T> wrapper)
+    public static IBottomExtensibleMatrix<T> ToMatrix<T>(MatrixWrapperStructForLeftSpineJaggedArray<T> wrapper) where T : struct
     {
       return new LeftSpineJaggedArrayMatrix<T>(wrapper);
     }
@@ -220,7 +219,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// the columns (!) of the matrix. The data is not copied.
     /// </summary>
     /// <param name="x">Array of columns (!) of the matrix.</param>
-    public static IRightExtensibleMatrix<T> ToROMatrixFromTopSpineJaggedArray<T>(T[][] x)
+    public static IRightExtensibleMatrix<T> ToROMatrixFromTopSpineJaggedArray<T>(T[][] x) where T : struct
     {
       return new TopSpineJaggedArrayMatrix<T>(x);
     }
@@ -230,7 +229,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// the columns (!) of the matrix. The data is not copied.
     /// </summary>
     /// <param name="x">Array of columns (!) of the matrix.</param>
-    public static IRightExtensibleMatrix<T> ToMatrixFromTopSpineJaggedArray<T>(T[][] x)
+    public static IRightExtensibleMatrix<T> ToMatrixFromTopSpineJaggedArray<T>(T[][] x) where T : struct
     {
       return new TopSpineJaggedArrayMatrix<T>(x);
     }
@@ -240,7 +239,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// the columns (!) of the matrix. The data is not copied.
     /// </summary>
     /// <param name="wrapper">Wrapper around a top spine jagged array matrix.</param>
-    public static IRightExtensibleMatrix<T> ToMatrix<T>(MatrixWrapperStructForTopSpineJaggedArray<T> wrapper)
+    public static IRightExtensibleMatrix<T> ToMatrix<T>(MatrixWrapperStructForTopSpineJaggedArray<T> wrapper) where T : struct
     {
       return new TopSpineJaggedArrayMatrix<T>(wrapper);
     }
@@ -252,7 +251,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="arrayInColumMajorOrder">Linear array in column major order. The length has to be a multiple of <c>nRows</c>.</param>
     /// <param name="rows">Number of rows of the resulting matrix.</param>
     /// <returns>The read-only matrix wrappage of the linear array.</returns>
-    public static IROMatrix<T> ToROMatrixFromColumnMajorLinearArray<T>(T[] arrayInColumMajorOrder, int rows)
+    public static IROMatrix<T> ToROMatrixFromColumnMajorLinearArray<T>(T[] arrayInColumMajorOrder, int rows) where T : struct
     {
       return new ROMatrixFromColumnMajorLinearArray<T>(arrayInColumMajorOrder, rows);
     }
@@ -263,7 +262,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="wrapper">Wrapper around a linear array in column major order, which provides number of rows and columns.</param>
     /// <returns>The read-only matrix wrappage of the linear array.</returns>
-    public static IROMatrix<T> ToROMatrix<T>(MatrixWrapperStructForColumnMajorOrderLinearArray<T> wrapper)
+    public static IROMatrix<T> ToROMatrix<T>(MatrixWrapperStructForColumnMajorOrderLinearArray<T> wrapper) where T : struct
     {
       return new ROMatrixFromColumnMajorLinearArray<T>(wrapper);
     }
@@ -274,7 +273,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="x">Linear array. The length has to be a multiple of <c>nRows</c>.</param>
     /// <param name="nRows">Number of rows of the resulting matrix.</param>
     /// <returns>The read-only matrix wrappage of the linear array.</returns>
-    public static IMatrix<T> ToMatrixFromColumnMajorLinearArray<T>(T[] x, int nRows)
+    public static IMatrix<T> ToMatrixFromColumnMajorLinearArray<T>(T[] x, int nRows) where T : struct
     {
       return new MatrixFromColumnMajorLinearArray<T>(x, nRows);
     }
@@ -285,7 +284,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="wrapper">Wrapper around a linear array in column major order, which provides number of rows and columns.</param>
     /// <returns>The read-only matrix wrappage of the linear array.</returns>
-    public static IROMatrix<T> ToMatrix<T>(MatrixWrapperStructForColumnMajorOrderLinearArray<T> wrapper)
+    public static IROMatrix<T> ToMatrix<T>(MatrixWrapperStructForColumnMajorOrderLinearArray<T> wrapper) where T : struct
     {
       return new ROMatrixFromColumnMajorLinearArray<T>(wrapper);
     }
@@ -295,7 +294,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The matrix.</param>
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
-    public static IROVector<T> RowToROVector<T>(IROMatrix<T> x, int row)
+    public static IROVector<T> RowToROVector<T>(IROMatrix<T> x, int row) where T : struct
     {
       return new MatrixRowROVector<T>(x, row);
     }
@@ -307,7 +306,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
     /// <param name="columnoffset">The column of the matrix that corresponds to the first element of the vector.</param>
     /// <param name="length">The length of the resulting vector.</param>
-    public static IROVector<T> RowToROVector<T>(IROMatrix<T> x, int row, int columnoffset, int length)
+    public static IROVector<T> RowToROVector<T>(IROMatrix<T> x, int row, int columnoffset, int length) where T : struct
     {
       return new MatrixRowROVector<T>(x, row, columnoffset, length);
     }
@@ -317,7 +316,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The matrix.</param>
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
-    public static IVector<T> RowToVector<T>(IMatrix<T> x, int row)
+    public static IVector<T> RowToVector<T>(IMatrix<T> x, int row) where T : struct
     {
       return new MatrixRowVector<T>(x, row);
     }
@@ -329,7 +328,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
     /// <param name="columnoffset">The column of the matrix that corresponds to the first element of the vector.</param>
     /// <param name="length">The length of the resulting vector.</param>
-    public static IVector<T> RowToVector<T>(IMatrix<T> x, int row, int columnoffset, int length)
+    public static IVector<T> RowToVector<T>(IMatrix<T> x, int row, int columnoffset, int length) where T : struct
     {
       return new MatrixRowVector<T>(x, row, columnoffset, length);
     }
@@ -339,7 +338,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The matrix.</param>
     /// <param name="column">The column number of the matrix that is wrapped to a vector.</param>
-    public static IROVector<T> ColumnToROVector<T>(IROMatrix<T> x, int column)
+    public static IROVector<T> ColumnToROVector<T>(IROMatrix<T> x, int column) where T : struct
     {
       return new MatrixColumnROVector<T>(x, column);
     }
@@ -349,7 +348,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The matrix.</param>
     /// <param name="column">The column number of the matrix that is wrapped to a vector.</param>
-    public static IVector<T> ColumnToVector<T>(IMatrix<T> x, int column)
+    public static IVector<T> ColumnToVector<T>(IMatrix<T> x, int column) where T : struct
     {
       return new MatrixColumnVector<T>(x, column);
     }
@@ -363,7 +362,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="rows">Number of rows of the submatrix.</param>
     /// <param name="columns">Number of columns of the submatrix.</param>
     /// <returns>A read-only wrapper matrix that represents the submatrix part of the matrix.</returns>
-    public static IROMatrix<T> ToROSubMatrix<T>(IROMatrix<T> matrix, int rowOffset, int columnOffset, int rows, int columns)
+    public static IROMatrix<T> ToROSubMatrix<T>(IROMatrix<T> matrix, int rowOffset, int columnOffset, int rows, int columns) where T : struct
     {
       return new SubMatrixROWrapper<T>(matrix, rowOffset, columnOffset, rows, columns);
     }
@@ -377,7 +376,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="rows">Number of rows of the submatrix.</param>
     /// <param name="columns">Number of columns of the submatrix.</param>
     /// <returns>A wrapper matrix that represents the submatrix part of the matrix.</returns>
-    public static IMatrix<T> ToSubMatrix<T>(IMatrix<T> matrix, int rowoffset, int columnoffset, int rows, int columns)
+    public static IMatrix<T> ToSubMatrix<T>(IMatrix<T> matrix, int rowoffset, int columnoffset, int rows, int columns) where T : struct
     {
       return new SubMatrixWrapper<T>(matrix, rowoffset, columnoffset, rows, columns);
     }
@@ -389,7 +388,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="vectoroffset">The index of the vector that is the first matrix element(0,0).</param>
     /// <param name="matrixdimensions">The number of rows = number of columns of the diagonal matrix.</param>
     /// <returns></returns>
-    public static IROMatrix<T> ToRODiagonalMatrix<T>(IReadOnlyList<T> vector, int vectoroffset, int matrixdimensions)
+    public static IROMatrix<T> ToRODiagonalMatrix<T>(IReadOnlyList<T> vector, int vectoroffset, int matrixdimensions) where T : struct
     {
       return new RODiagonalMatrixVectorWrapper<T>(vector, vectoroffset, matrixdimensions);
     }
@@ -398,7 +397,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Clear
 
-    public static void Clear<T>(IMatrix<T> matrix)
+    public static void Clear<T>(IMatrix<T> matrix) where T : struct
     {
       if (matrix is IMatrixLevel1<T> l1)
       {
@@ -410,13 +409,15 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
-    public static void Clear_DefaultImpl<T>(IMatrix<T> matrix)
+    public static void Clear_DefaultImpl<T>(IMatrix<T> matrix) where T : struct
     {
       var rowCount = matrix.RowCount;
       var columnCount = matrix.ColumnCount;
       for (int i = 0; i < rowCount; ++i)
         for (int j = 0; j < columnCount; ++j)
-          matrix[i, j] = default(T);
+        {
+          matrix[i, j] = default;
+        }
     }
 
     #endregion Clear
@@ -987,7 +988,7 @@ namespace Altaxo.Calc.LinearAlgebra
       return false;
     }
 
-    public static IEnumerable<(int row, int column, T value)> EnumerateElementsIndexed<T>(IROMatrix<T> matrix, Zeros zeros = Zeros.AllowSkip)
+    public static IEnumerable<(int row, int column, T value)> EnumerateElementsIndexed<T>(IROMatrix<T> matrix, Zeros zeros = Zeros.AllowSkip) where T : struct
     {
       if (matrix is IROBandMatrix<T> bm)
         return bm.EnumerateElementsIndexed();
@@ -997,7 +998,7 @@ namespace Altaxo.Calc.LinearAlgebra
         return InternalEnumerateElementsIndexed(matrix);
     }
 
-    private static IEnumerable<(int row, int column, T value)> InternalEnumerateElementsIndexed<T>(IROMatrix<T> matrix)
+    private static IEnumerable<(int row, int column, T value)> InternalEnumerateElementsIndexed<T>(IROMatrix<T> matrix) where T : struct
     {
       {
         int rowCount = matrix.RowCount;
@@ -1008,7 +1009,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
-    public static void MapIndexed<T, T1>(this IROMatrix<T> src1, T1 parameter1, Func<int, int, T, T1, T> function, IMatrix<T> result, Zeros zeros = Zeros.AllowSkip)
+    public static void MapIndexed<T, T1>(this IROMatrix<T> src1, T1 parameter1, Func<int, int, T, T1, T> function, IMatrix<T> result, Zeros zeros = Zeros.AllowSkip) where T : struct
     {
       if (src1 is IROMatrixLevel1<T> l1)
         l1.MapIndexed(parameter1, function, result, zeros);
@@ -1016,7 +1017,7 @@ namespace Altaxo.Calc.LinearAlgebra
         MapIndexed_DefaultImpl(src1, parameter1, function, result);
     }
 
-    private static void MapIndexed_DefaultImpl<T, T1>(this IROMatrix<T> src1, T1 parameter1, Func<int, int, T, T1, T> function, IMatrix<T> result)
+    private static void MapIndexed_DefaultImpl<T, T1>(this IROMatrix<T> src1, T1 parameter1, Func<int, int, T, T1, T> function, IMatrix<T> result) where T : struct
     {
       if (null == src1)
         throw new ArgumentNullException(nameof(src1));
@@ -1756,7 +1757,7 @@ namespace Altaxo.Calc.LinearAlgebra
         residualVarianceVector.AppendBottom(new MatrixMath.ScalarAsMatrix<double>(originalVariance));
 
       IMatrix<double> l = new MatrixWithOneRow<double>(X.ColumnCount);
-      IMatrix<double> t_prev = null;
+      IMatrix<double>? t_prev = null;
       IMatrix<double> t = new MatrixWithOneColumn<double>(X.RowCount);
 
       int maxFactors = numFactors <= 0 ? X.ColumnCount : Math.Min(numFactors, X.ColumnCount);
@@ -1803,7 +1804,7 @@ namespace Altaxo.Calc.LinearAlgebra
         // if the number of factors to calculate is not provided,
         // calculate the norm of the residual matrix and compare with the original
         // one
-        if (numFactors <= 0 || null != residualVarianceVector)
+        if (numFactors <= 0 && !(residualVarianceVector is null))
         {
           double residualVariance = Math.Sqrt(MatrixMath.SumOfSquares(X));
           residualVarianceVector.AppendBottom(new MatrixMath.ScalarAsMatrix<double>(residualVariance));
@@ -1995,7 +1996,9 @@ namespace Altaxo.Calc.LinearAlgebra
       /// Creates a singular value decomposition of matrix a, resulting in matrix a itself.
       /// </summary>
       /// <param name="a">Matrix to decompose, on return: decomposed matrix.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       public SingularValueDecomposition(IMatrix<double> a)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       {
         ComputeSingularValueDecomposition(a);
       }
@@ -2446,6 +2449,12 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         public IMatrix<double> A;
         public SingularValueDecomposition SVD;
+
+        public SolveTempStorage(IMatrix<double> a, SingularValueDecomposition svd)
+        {
+          A = a;
+          SVD = svd;
+        }
       }
 
       /// <summary>
@@ -2458,10 +2467,8 @@ namespace Altaxo.Calc.LinearAlgebra
       /// in subsequent calls to Solve with the same dimensions of the matrix.</param>
       public static void Solve(IROMatrix<double> A, IReadOnlyList<double> B, IVector<double> x, ref object tempstorage)
       {
-        SolveTempStorage sts;
-        if (tempstorage is SolveTempStorage)
+        if (tempstorage is SolveTempStorage sts)
         {
-          sts = (SolveTempStorage)tempstorage;
           if (sts.A.RowCount == A.RowCount && sts.A.ColumnCount == A.ColumnCount)
           {
             MatrixMath.Copy(A, sts.A);
@@ -2471,14 +2478,11 @@ namespace Altaxo.Calc.LinearAlgebra
           }
         }
         // tempstorage can not be used
-        sts = new SolveTempStorage
-        {
-          A = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(A.RowCount, A.ColumnCount)
-        };
-        MatrixMath.Copy(A, sts.A);
-        sts.SVD = new SingularValueDecomposition(sts.A);
-        sts.SVD.Backsubstitution(B, x);
-        tempstorage = sts;
+        var stsA = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(A.RowCount, A.ColumnCount);
+        MatrixMath.Copy(A, stsA);
+        var stsSVD = new SingularValueDecomposition(stsA);
+        stsSVD.Backsubstitution(B, x);
+        tempstorage = new SolveTempStorage(stsA, stsSVD);
         return;
       }
 
@@ -2603,11 +2607,11 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          if (null == _HatDiagonal)
+          if (_HatDiagonal is null)
           {
             BuildHatDiagonal();
           }
-          return _HatDiagonal;
+          return _HatDiagonal!;
         }
       }
 

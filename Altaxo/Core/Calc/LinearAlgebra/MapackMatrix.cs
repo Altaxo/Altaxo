@@ -1703,8 +1703,8 @@ namespace Altaxo.Calc.LinearAlgebra
       private int n;            // matrix dimension
       private double[] d, e;    // storage of eigenvalues.
       private Matrix V;       // storage of eigenvectors.
-      private Matrix H;       // storage of nonsymmetric Hessenberg form.
-      private double[] ort;     // storage for nonsymmetric algorithm.
+      private Matrix? H;       // storage of nonsymmetric Hessenberg form.
+      private double[]? ort;     // storage for nonsymmetric algorithm.
       private double cdivr, cdivi;
       private bool isSymmetric;
 
@@ -1989,6 +1989,8 @@ namespace Altaxo.Calc.LinearAlgebra
           }
         }
       }
+
+#nullable disable
 
       private void orthes()
       {
@@ -2533,6 +2535,7 @@ namespace Altaxo.Calc.LinearAlgebra
           }
       }
 
+#nullable enable
       public double[] RealEigenvalues
       {
         get { return d; }

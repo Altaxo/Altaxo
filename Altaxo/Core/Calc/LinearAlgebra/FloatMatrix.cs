@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
@@ -150,7 +151,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
     public FloatMatrix(FloatMatrix source)
     {
-      if (source == null)
+      if (source is null)
       {
         throw new ArgumentNullException("source", "The input FloatMatrix cannot be null.");
       }
@@ -182,7 +183,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException"><c>values</c> is null.</exception>
     public FloatMatrix(float[,] values)
     {
-      if (values == null)
+      if (values is null)
       {
         throw new ArgumentNullException("values", "The input matrix cannot be null.");
       }
@@ -213,12 +214,14 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Explicit conversion from <c>DoubleMatrix</c> matrix</summary>
     ///<param name="source"><c>DoubleMatrix</c> to make a deep copy conversion from.</param>
-    public static explicit operator FloatMatrix(DoubleMatrix source)
+    [return: NotNullIfNotNull("source")]
+    public static explicit operator FloatMatrix?(DoubleMatrix? source)
     {
-      if (source == null)
+      if (source is null)
       {
         return null;
       }
+
       var ret = new FloatMatrix(source.RowLength, source.ColumnLength);
 #if MANAGED
       for (int i = 0; i < source.RowLength; i++)
@@ -238,20 +241,18 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Explicit conversion from <c>DoubleMatrix</c> matrix</summary>
     ///<param name="source"><c>DoubleMatrix</c> to make a deep copy conversion from.</param>
-    public static FloatMatrix ToFloatMatrix(DoubleMatrix source)
+    [return: NotNullIfNotNull("source")]
+    public static FloatMatrix? ToFloatMatrix(DoubleMatrix? source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      return (FloatMatrix)source;
+      return source is null ? null : (FloatMatrix)source!;
     }
 
     ///<summary>explicit conversion from <c>double</c> array.</summary>
     ///<param name="source"><c>double</c> array to make a deep copy conversion from.</param>
-    public static explicit operator FloatMatrix(double[,] source)
+    [return: NotNullIfNotNull("source")]
+    public static explicit operator FloatMatrix?(double[,]? source)
     {
-      if (source == null)
+      if (source is null)
       {
         return null;
       }
@@ -278,35 +279,26 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>explicit conversion from <c>double</c> array</summary>
     ///<param name="source"><c>double</c> array to make a deep copy conversion from.</param>
-    public static FloatMatrix ToComplexFloatMatrix(double[,] source)
+    [return: NotNullIfNotNull("source")]
+    public static FloatMatrix? ToComplexFloatMatrix(double[,]? source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      return (FloatMatrix)source;
+      return source is null ? null : (FloatMatrix)source!;
     }
 
     ///<summary>Implicit conversion from <c>float</c> array.</summary>
     ///<param name="source"><c>float</c> array to make a deep copy conversion from.</param>
-    public static implicit operator FloatMatrix(float[,] source)
+    [return: NotNullIfNotNull("source")]
+    public static implicit operator FloatMatrix?(float[,]? source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      return new FloatMatrix(source);
+      return source is null ? null : new FloatMatrix(source);
     }
 
     ///<summary>Implicit conversion from <c>float</c> array</summary>
     ///<param name="source"><c>float</c> array to make a deep copy conversion from.</param>
-    public static FloatMatrix ToFloatMatrix(float[,] source)
+    [return: NotNullIfNotNull("source")]
+    public static FloatMatrix? ToFloatMatrix(float[,]? source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      return new FloatMatrix(source);
+      return source is null ? null : new FloatMatrix(source);
     }
 
     ///<summary>Creates an identity matrix.</summary>
@@ -393,10 +385,9 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Check if <c>FloatMatrix</c> variable is the same as another object.</summary>
     ///<param name="obj"><c>obj</c> to compare present <c>FloatMatrix</c> to.</param>
     ///<returns>Returns true if the variable is the same as the <c>FloatMatrix</c> variable</returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var matrix = obj as FloatMatrix;
-      if (matrix == null)
+      if (!(obj is FloatMatrix matrix))
       {
         return false;
       }
@@ -1765,7 +1756,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="format">A format specification.</param>
     ///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
     ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
-    public string ToString(string format, IFormatProvider formatProvider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
       var sb = new StringBuilder("rows: ");
       sb.Append(rows).Append(", cols: ").Append(columns).Append(System.Environment.NewLine);
@@ -1853,14 +1844,14 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="index">The element to access</param>
     ///<exception cref="ArgumentOutOfRangeException">Exception thrown in element accessed is out of the bounds of the matrix.</exception>
     ///<returns>Returns a <c>float</c> matrix element</returns>
-    object IList.this[int index]
+    object? IList.this[int index]
     {
       get { return this[index % rows, index / rows]; }
-      set { this[index % rows, index / rows] = (float)value; }
+      set { this[index % rows, index / rows] = (float)(value ?? throw new ArgumentNullException(nameof(value))); }
     }
 
     ///<summary>Add a new value to the end of the <c>FloatMatrix</c></summary>
-    public int Add(object value)
+    public int Add(object? value)
     {
       throw new System.NotSupportedException();
     }
@@ -1878,42 +1869,47 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Check if the any of the <c>FloatMatrix</c> components equals a given <c>float</c></summary>
-    public bool Contains(object value)
+    public bool Contains(object? value)
     {
-      for (int i = 0; i < rows; i++)
-        for (int j = 0; j < columns; j++)
+      if (value is float f)
+      {
+        for (int i = 0; i < rows; i++)
+          for (int j = 0; j < columns; j++)
 #if MANAGED
-          if (data[i][j] == (float)value)
+            if (data[i][j] == f)
 #else
-          if (data[j*rows+i]==(float)value)
+          if (data[j*rows+i]==f)
 #endif
-            return true;
-
+              return true;
+      }
       return false;
     }
 
     ///<summary>Return the index of the <c>FloatMatrix</c> for the first component that equals a given <c>float</c></summary>
-    public int IndexOf(object value)
+    public int IndexOf(object? value)
     {
-      for (int i = 0; i < rows; i++)
-        for (int j = 0; j < columns; j++)
+      if (value is float f)
+      {
+        for (int i = 0; i < rows; i++)
+          for (int j = 0; j < columns; j++)
 #if MANAGED
-          if (data[i][j] == (float)value)
+            if (data[i][j] == f)
 #else
-          if (data[j*rows+i]==(float)value)
+          if (data[j*rows+i]==f)
 #endif
-            return j * rows + i;
+              return j * rows + i;
+      }
       return -1;
     }
 
     ///<summary>Insert a <c>float</c> into the <c>FloatMatrix</c> at a given index</summary>
-    public void Insert(int index, object value)
+    public void Insert(int index, object? value)
     {
       throw new System.NotSupportedException();
     }
 
     ///<summary>Remove the first instance of a given <c>float</c> from the <c>FloatMatrix</c></summary>
-    public void Remove(object value)
+    public void Remove(object? value)
     {
       throw new System.NotSupportedException();
     }

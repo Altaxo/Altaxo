@@ -33,6 +33,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   public class JaggedArrayMatrix : IMatrix<double>, IBottomExtensibleMatrix<double>
   {
+    private static readonly double[][] _emptyArray = new double[0][];
     /// <summary>The rows of the matrix = number of double[] arrays in it.</summary>
     private int m_Rows;
 
@@ -40,7 +41,7 @@ namespace Altaxo.Calc.LinearAlgebra
     private int m_Cols;
 
     /// <summary>The array which holds the matrix.</summary>
-    private double[][] m_Array;
+    private double[][] m_Array = _emptyArray;
 
     /// <summary>
     /// Sets up an empty matrix with dimension(row,cols).

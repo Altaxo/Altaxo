@@ -36,7 +36,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// saving of the matrix and the vector is not required.
   /// </summary>
   /// <typeparam name="T">Type of scalar arithmetic value.</typeparam>
-  public interface ILinearEquationSolver<T>
+  public interface ILinearEquationSolver<T> where T : struct
   {
     /// <summary>
     /// Solves the equation A*x == b. The matrix m and vector b will be kept. If this is not neccessary,

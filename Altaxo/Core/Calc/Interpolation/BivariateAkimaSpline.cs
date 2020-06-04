@@ -79,7 +79,7 @@ namespace Altaxo.Calc.Interpolation
 
     public double Interpolate(double x, double y)
     {
-      var z = new MatrixMath.ScalarAsMatrix<double>();
+      var z = new MatrixMath.ScalarAsMatrix<double>(0);
       itplbv_(_myX.Count, _myY.Count, _myX, _myY, _myZ, 1, new MatrixMath.ScalarAsMatrix<double>(x), new MatrixMath.ScalarAsMatrix<double>(y), z);
       return z;
     }

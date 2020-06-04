@@ -25,6 +25,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -41,7 +42,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Implements a scalar as a special case of the matrix which has the dimensions (1,1).
     /// </summary>
-    public class ScalarAsMatrix<T> : IMatrix<T>, IVector<T>
+    public class ScalarAsMatrix<T> : IMatrix<T>, IVector<T> where T : struct
     {
       /// <summary>
       /// Holds the only element of the matrix.
@@ -55,13 +56,6 @@ namespace Altaxo.Calc.LinearAlgebra
       public ScalarAsMatrix(T val)
       {
         _value = val;
-      }
-
-      /// <summary>
-      /// Creates the scalar with the default value of zero.
-      /// </summary>
-      public ScalarAsMatrix()
-      {
       }
 
       /// <inheritdoc/>
@@ -187,7 +181,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Implements a horizontal vector, i.e. a matrix which has only one row, but many columns.
     /// </summary>
-    public class MatrixWithOneRow<T> : IMatrix<T>, IVector<T>
+    public class MatrixWithOneRow<T> : IMatrix<T>, IVector<T> where T : struct
     {
       /// <summary>
       /// Holds the elements of the vector
@@ -311,7 +305,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Implements a vertical vector, i.e. a matrix which has only one column, but many rows.
     /// </summary>
-    public class MatrixWithOneColumn<T> : IMatrix<T>, IVector<T>
+    public class MatrixWithOneColumn<T> : IMatrix<T>, IVector<T> where T : struct
     {
       /// <summary>
       /// Holds the elements of the vertical vector.
@@ -435,7 +429,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wrapper for a row of an existing matrix to a read-only vector.
     /// </summary>
-    public class MatrixRowROVector<T> : IROVector<T>
+    public class MatrixRowROVector<T> : IROVector<T> where T : struct
     {
       private IROMatrix<T> _matrix;
       private int _row;
@@ -523,7 +517,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wrapper for a matrix row to a vector.
     /// </summary>
-    public class MatrixRowVector<T> : IVector<T>
+    public class MatrixRowVector<T> : IVector<T> where T : struct
     {
       private IMatrix<T> _matrix;
       private int _row;
@@ -624,7 +618,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wrapper for a matrix column to a read-only vector.
     /// </summary>
-    public class MatrixColumnROVector<T> : IROVector<T>
+    public class MatrixColumnROVector<T> : IROVector<T> where T : struct
     {
       private IROMatrix<T> _matrix;
       private int _column;
@@ -699,7 +693,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wrapper for a matrix row to a vector.
     /// </summary>
-    public class MatrixColumnVector<T> : IVector<T>
+    public class MatrixColumnVector<T> : IVector<T> where T : struct
     {
       private IMatrix<T> _matrix;
       private int _column;
@@ -782,7 +776,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wraps part of a matrix so that it can be used as read-only submatrix in operations.
     /// </summary>
-    private class SubMatrixROWrapper<T> : IROMatrix<T>
+    private class SubMatrixROWrapper<T> : IROMatrix<T> where T : struct
     {
       private IROMatrix<T> _matrix;
       private int _rowOffset, _columnOffset;
@@ -844,7 +838,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wraps part of a matrix so that it can be used as submatrix in operations.
     /// </summary>
-    private class SubMatrixWrapper<T> : IMatrix<T>
+    private class SubMatrixWrapper<T> : IMatrix<T> where T : struct
     {
       private IMatrix<T> _matrix;
       private int _rowOffset, _columnOffset;
@@ -923,7 +917,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wraps a vector to a diagonal matrix
     /// </summary>
-    private class RODiagonalMatrixVectorWrapper<T> : IROMatrix<T>
+    private class RODiagonalMatrixVectorWrapper<T> : IROMatrix<T> where T : struct
     {
       private IReadOnlyList<T> _diagonal;
       private int _offset, _matrixDimensions;
@@ -948,12 +942,10 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          if (row == col)
-            return _diagonal[row + _offset];
-          else
-            return default(T);
+          return row == col ? _diagonal[row + _offset] : default;
         }
       }
+
 
       /// <inheritdoc/>
       public int RowCount
@@ -984,7 +976,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Wraps a linear array to a read-only matrix. The array is column oriented, i.e. consecutive elements
     /// belong mostly to one column. This is the convention used for LAPACK routines.
     /// </summary>
-    public class ROMatrixFromColumnMajorLinearArray<T> : IROMatrix<T>
+    public class ROMatrixFromColumnMajorLinearArray<T> : IROMatrix<T> where T : struct
     {
       protected T[] _array;
       protected int _rows;
@@ -1051,7 +1043,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Wraps a linear array to a read-write matrix. The array is column oriented, i.e. consecutive elements
     /// belong mostly to one column. This is the convention used for LAPACK routines.
     /// </summary>
-    public class MatrixFromColumnMajorLinearArray<T> : ROMatrixFromColumnMajorLinearArray<T>, IMatrix<T>
+    public class MatrixFromColumnMajorLinearArray<T> : ROMatrixFromColumnMajorLinearArray<T>, IMatrix<T> where T : struct
     {
       /// <summary>
       /// Initializes a new instance of the <see cref="MatrixFromColumnMajorLinearArray{T}"/> class.
@@ -1096,8 +1088,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// BEMatrix is a matrix implementation that is relatively easy to extend to the botton, i.e. to append rows.
     /// It is horizontal oriented, i.e. the storage is as a number of horizontal vectors.
     /// </summary>
-    public class LeftSpineJaggedArrayMatrix<T> : IMatrix<T>, IBottomExtensibleMatrix<T>
+    public class LeftSpineJaggedArrayMatrix<T> : IMatrix<T>, IBottomExtensibleMatrix<T> where T : struct
     {
+      private static T[][] _emptyArray = new T[0][];
       /// <summary>The rows of the matrix = number of double[] arrays in it.</summary>
       private int _rows;
 
@@ -1105,7 +1098,7 @@ namespace Altaxo.Calc.LinearAlgebra
       private int _columns;
 
       /// <summary>The array which holds the matrix.</summary>
-      private T[][] _array;
+      private T[][] _array = _emptyArray;
 
       /// <summary>
       /// Sets up an empty matrix with dimension(row,cols).
@@ -1245,7 +1238,9 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           _array[i] = new T[_columns]; // create new horizontal vectors for the elements to append
           for (int j = 0; j < _columns; j++)
+#pragma warning disable CS8601 // Possible null reference assignment.
             _array[i][j] = a[i - _rows, j]; // copy the elements
+#pragma warning restore CS8601 // Possible null reference assignment.
         }
 
         _rows = newRows;
@@ -1262,8 +1257,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// REMatrix is a matrix implementation that is relatively easy to extend to the right, i.e. to append columns.
     /// It is vertical oriented, i.e. the storage is as a number of vertical vectors.
     /// </summary>
-    public class TopSpineJaggedArrayMatrix<T> : IMatrix<T>, IRightExtensibleMatrix<T>
+    public class TopSpineJaggedArrayMatrix<T> : IMatrix<T>, IRightExtensibleMatrix<T> where T : struct
     {
+      private static T[][] _emptyArray = new T[0][];
+
       /// <summary>The rows of the matrix = length of each double[] array.</summary>
       private int _rows;
 
@@ -1271,7 +1268,7 @@ namespace Altaxo.Calc.LinearAlgebra
       private int _columns;
 
       /// <summary>The array which holds the matrix.</summary>
-      private T[][] _array;
+      private T[][] _array = _emptyArray;
 
       /// <summary>
       /// Sets up an empty matrix with dimension(row,cols).
@@ -1417,7 +1414,9 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           _array[i] = new T[_rows]; // create new horizontal vectors for the elements to append
           for (int j = 0; j < _rows; j++)
+#pragma warning disable CS8601 // Possible null reference assignment.
             _array[i][j] = a[j, i - _columns]; // copy the elements
+#pragma warning restore CS8601 // Possible null reference assignment.
         }
 
         _columns = newCols;

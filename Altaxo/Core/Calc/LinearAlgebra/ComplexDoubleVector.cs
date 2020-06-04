@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
@@ -77,7 +78,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'value' parameter.</exception>
     public ComplexDoubleVector(Complex[] values)
     {
-      if (values == null)
+      if (values is null)
       {
         throw new ArgumentNullException("Array cannot be null");
       }
@@ -93,14 +94,14 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'values' parameter.</exception>
     public ComplexDoubleVector(IList values)
     {
-      if (values == null)
+      if (values is null)
       {
-        throw new ArgumentNullException("IList cannot be null");
+        throw new ArgumentNullException(nameof(values));
       }
       data = new Complex[values.Count];
       for (int i = 0; i < values.Count; ++i)
       {
-        data[i] = (Complex)values[i];
+        data[i] = (Complex)(values[i] ?? throw new ArgumentNullException($"{nameof(values)}[{i}]"));
       }
     }
 
@@ -109,7 +110,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'src' parameter.</exception>
     public ComplexDoubleVector(ComplexDoubleVector src)
     {
-      if (src == null)
+      if (src is null)
       {
         throw new ArgumentNullException("ComplexDoubleVector cannot be null");
       }
@@ -122,13 +123,13 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'src' parameter.</exception>
     public ComplexDoubleVector(IROComplexDoubleVector src)
     {
-      if (src == null)
+      if (src is null)
       {
         throw new ArgumentNullException("IROComplexDoubleVector cannot be null");
       }
-      if (src is ComplexDoubleVector)
+      if (src is ComplexDoubleVector vector)
       {
-        data = (Complex[])(((ComplexDoubleVector)src).data.Clone());
+        data = (Complex[])(vector.data.Clone());
       }
       else
       {
@@ -187,10 +188,9 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="obj"><c>obj</c> to compare present <c>ComplexDoubleVector</c> to.</param>
     ///<returns>Returns true if the variable is the same as the <c>ComplexDoubleVector</c> variable</returns>
     ///<remarks>The <c>obj</c> parameter is converted into a <c>ComplexDoubleVector</c> variable before comparing with the current <c>ComplexDoubleVector</c>.</remarks>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var vector = obj as ComplexDoubleVector;
-      if (vector == null)
+      if (!(obj is ComplexDoubleVector vector))
       {
         return false;
       }
@@ -254,9 +254,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>float</c> array</summary>
-    public static implicit operator ComplexDoubleVector(float[] src)
+    [return: NotNullIfNotNull("src")]
+    public static implicit operator ComplexDoubleVector?(float[]? src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }
@@ -269,9 +270,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>float</c> array</summary>
-    public static ComplexDoubleVector ToComplexDoubleVector(float[] src)
+    [return: NotNullIfNotNull("src")]
+    public static ComplexDoubleVector? ToComplexDoubleVector(float[]? src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }
@@ -284,9 +286,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>double</c> array</summary>
-    public static implicit operator ComplexDoubleVector(double[] src)
+    [return: NotNullIfNotNull("src")]
+    public static implicit operator ComplexDoubleVector?(double[]? src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }
@@ -299,9 +302,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>double</c> array</summary>
-    public static ComplexDoubleVector ToComplexDoubleVector(double[] src)
+    [return: NotNullIfNotNull("src")]
+    public static ComplexDoubleVector? ToComplexDoubleVector(double[]? src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }
@@ -315,9 +319,10 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>ComplexFloat</c> array</summary>
     ///<returns><c>Complex</c> array with data from <c>ComplexFloat</c> array.</returns>
-    public static implicit operator ComplexDoubleVector(ComplexFloat[] src)
+    [return: NotNullIfNotNull("src")]
+    public static implicit operator ComplexDoubleVector?(ComplexFloat[]? src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }
@@ -331,9 +336,10 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>ComplexFloat</c> array</summary>
     ///<returns><c>Complex</c> array with data from <c>ComplexFloat</c> array.</returns>
-    public static ComplexDoubleVector ToComplexDoubleVector(ComplexFloat[] src)
+    [return: NotNullIfNotNull("src")]
+    public static ComplexDoubleVector? ToComplexDoubleVector(ComplexFloat[]? src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }
@@ -347,21 +353,27 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>Complex</c> array</summary>
     ///<returns><c>Complex</c> array with data from <c>Complex</c> array.</returns>
-    public static implicit operator ComplexDoubleVector(Complex[] src)
+    [return: NotNullIfNotNull("src")]
+    public static implicit operator ComplexDoubleVector?(Complex[]? src)
     {
-      return new ComplexDoubleVector(src);
+      return src is null ? null : new ComplexDoubleVector(src);
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>Complex</c> array</summary>
     ///<returns><c>Complex</c> array with data from <c>Complex</c> array.</returns>
-    public static ComplexDoubleVector ToComplexDoubleVector(Complex[] src)
+    [return: NotNullIfNotNull("src")]
+    public static ComplexDoubleVector? ToComplexDoubleVector(Complex[]? src)
     {
-      return new ComplexDoubleVector(src);
+      return src is null ? null : new ComplexDoubleVector(src);
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>DoubleVector</c></summary>
-    public static implicit operator ComplexDoubleVector(DoubleVector src)
+    [return: NotNullIfNotNull("src")]
+    public static implicit operator ComplexDoubleVector?(DoubleVector? src)
     {
+      if (src is null)
+        return null;
+
       double[] temp = src.ToArray();
       var ret = new ComplexDoubleVector(temp.Length);
       for (int i = 0; i < temp.Length; ++i)
@@ -372,8 +384,12 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>DoubleVector</c></summary>
-    public static ComplexDoubleVector ToComplexDoubleVector(DoubleVector src)
+    [return: NotNullIfNotNull("src")]
+    public static ComplexDoubleVector? ToComplexDoubleVector(DoubleVector? src)
     {
+      if (src is null)
+        return null;
+
       double[] temp = src.ToArray();
       var ret = new ComplexDoubleVector(temp.Length);
       for (int i = 0; i < temp.Length; ++i)
@@ -384,8 +400,12 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>FloatVector</c></summary>
-    public static implicit operator ComplexDoubleVector(FloatVector src)
+    [return: NotNullIfNotNull("src")]
+    public static implicit operator ComplexDoubleVector?(FloatVector? src)
     {
+      if (src is null)
+        return null;
+
       float[] temp = src.ToArray();
       var ret = new ComplexDoubleVector(temp.Length);
       for (int i = 0; i < temp.Length; ++i)
@@ -396,8 +416,12 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>FloatVector</c></summary>
-    public static ComplexDoubleVector ToComplexDoubleVector(FloatVector src)
+    [return: NotNullIfNotNull("src")]
+    public static ComplexDoubleVector? ToComplexDoubleVector(FloatVector? src)
     {
+      if (src is null)
+        return null;
+
       float[] temp = src.ToArray();
       var ret = new ComplexDoubleVector(temp.Length);
       for (int i = 0; i < temp.Length; ++i)
@@ -408,8 +432,12 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>ComplexFloatVector</c></summary>
-    public static implicit operator ComplexDoubleVector(ComplexFloatVector src)
+    [return: NotNullIfNotNull("src")]
+    public static implicit operator ComplexDoubleVector?(ComplexFloatVector? src)
     {
+      if (src is null)
+        return null;
+
       ComplexFloat[] temp = src.ToArray();
       var ret = new ComplexDoubleVector(temp.Length);
       for (int i = 0; i < temp.Length; ++i)
@@ -420,8 +448,12 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>ComplexFloatVector</c></summary>
-    public static ComplexDoubleVector ToComplexDoubleVector(ComplexFloatVector src)
+    [return: NotNullIfNotNull("src")]
+    public static ComplexDoubleVector? ToComplexDoubleVector(ComplexFloatVector? src)
     {
+      if (src is null)
+        return null;
+
       ComplexFloat[] temp = src.ToArray();
       var ret = new ComplexDoubleVector(temp.Length);
       for (int i = 0; i < temp.Length; ++i)
@@ -849,7 +881,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="format">A format specification.</param>
     ///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
     ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
-    public string ToString(string format, IFormatProvider formatProvider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
       var sb = new StringBuilder("Length: ");
       sb.Append(data.Length).Append(System.Environment.NewLine);
@@ -941,15 +973,18 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
-    object IList.this[int index]
+    object? IList.this[int index]
     {
       get { return this[index]; }
-      set { this[index] = (Complex)value; }
+      set { this[index] = (Complex)(value ?? throw new ArgumentNullException(nameof(value))); }
     }
 
     ///<summary>Add a new value to the end of the <c>ComplexDoubleVector</c></summary>
-    public int Add(object value)
+    public int Add(object? value)
     {
+      if (value is null)
+        throw new ArgumentNullException(nameof(value));
+
       var newdata = new Complex[data.Length + 1];
       int newpos = newdata.Length - 1;
 
@@ -967,34 +1002,40 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Check if the any of the <c>ComplexDoubleVector</c> components equals a given <c>Complex</c></summary>
-    public bool Contains(object value)
+    public bool Contains(object? value)
     {
-      for (int i = 0; i < data.Length; i++)
+      if (value is Complex c)
       {
-        if (data[i] == (Complex)value)
-          return true;
+        for (int i = 0; i < data.Length; i++)
+        {
+          if (data[i] == c)
+            return true;
+        }
       }
       return false;
     }
 
     ///<summary>Return the index of the <c>ComplexDoubleVector</c> for the first component that equals a given <c>Complex</c></summary>
-    public int IndexOf(object value)
+    public int IndexOf(object? value)
     {
-      for (int i = 0; i < data.Length; i++)
+      if (value is Complex c)
       {
-        if (data[i] == (Complex)value)
-          return i;
+        for (int i = 0; i < data.Length; i++)
+        {
+          if (data[i] == c)
+            return i;
+        }
       }
       return -1;
     }
 
     ///<summary>Insert a <c>Complex</c> into the <c>ComplexDoubleVector</c> at a given index</summary>
-    public void Insert(int index, object value)
+    public void Insert(int index, object? value)
     {
+      if (value is null)
+        throw new ArgumentNullException(nameof(value));
       if (index > data.Length)
-      {
         throw new System.ArgumentOutOfRangeException("index");
-      }
 
       var newdata = new Complex[data.Length + 1];
       System.Array.Copy(data, newdata, index);
@@ -1004,12 +1045,13 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Remove the first instance of a given <c>Complex</c> from the <c>ComplexDoubleVector</c></summary>
-    public void Remove(object value)
+    public void Remove(object? value)
     {
       int index = IndexOf(value);
 
       if (index == -1)
         return;
+
       RemoveAt(index);
     }
 
@@ -1020,9 +1062,9 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new System.ArgumentOutOfRangeException("index");
 
       var newdata = new Complex[data.Length - 1];
-      System.Array.Copy(data, newdata, index);
+      Array.Copy(data, newdata, index);
       if (index < data.Length)
-        System.Array.Copy(data, index + 1, newdata, index, newdata.Length - index);
+        Array.Copy(data, index + 1, newdata, index, newdata.Length - index);
       data = newdata;
     }
 

@@ -35,7 +35,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// The spine array is oriented vertically, thus access to the array is down by array[row][column].
   /// </summary>
   /// <typeparam name="T">Type of scaler value.</typeparam>
-  public struct MatrixWrapperStructForLeftSpineJaggedArray<T> : IMatrix<T>
+  public struct MatrixWrapperStructForLeftSpineJaggedArray<T> : IMatrix<T> where T : struct
   {
     /// <summary>
     /// Gets the underlying array. Access to elements is done using Array[row][column].
@@ -135,7 +135,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// Access to the underlying array is done by array[row][column].
   /// </summary>
   /// <typeparam name="T">Type of scaler value.</typeparam>
-  public struct MatrixWrapperStructForTopSpineJaggedArray<T> : IMatrix<T>
+  public struct MatrixWrapperStructForTopSpineJaggedArray<T> : IMatrix<T> where T : struct
   {
     /// <summary>
     /// Gets the underlying array. Access to elements is done using Array[column][row], i.e. with exchanged column and row.
@@ -236,7 +236,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// Attention: this is <b>not</b> LAPACK convention (!)).
   /// </summary>
   /// <typeparam name="T">Element type.</typeparam>
-  public struct MatrixWrapperStructForColumnMajorOrderLinearArray<T> : IMatrix<T>
+  public struct MatrixWrapperStructForColumnMajorOrderLinearArray<T> : IMatrix<T> where T : struct
   {
     /// <summary>
     /// Gets the underlying array. Access to elements is done using Array[column * Rows + row].
@@ -331,7 +331,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// Attention: this is <b>not</b> LAPACK convention (!)). If using LAPACK, you need column major order (<see cref="MatrixWrapperStructForColumnMajorOrderLinearArray{T}"/>).
   /// </summary>
   /// <typeparam name="T">Element type.</typeparam>
-  public struct MatrixWrapperStructForRowMajorOrderLinearArray<T> : IMatrix<T>
+  public struct MatrixWrapperStructForRowMajorOrderLinearArray<T> : IMatrix<T> where T : struct
   {
     /// <summary>
     /// Gets the underlying array. Access to elements is done using Array[row * Columns + column].

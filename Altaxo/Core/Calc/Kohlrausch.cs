@@ -525,11 +525,7 @@ namespace Altaxo.Calc
       }
       else
       {
-        if (_respline == null)
-          CreateRealPartSpline();
-
-        double log_OneMinusRe = _respline.Value.Interpolate(beta, y);
-
+        double log_OneMinusRe = _respline.Value!.Interpolate(beta, y);
         return 1 - Math.Exp(log_OneMinusRe);
       }
     }
@@ -556,11 +552,7 @@ namespace Altaxo.Calc
         return -Im1(beta, w);
       else
       {
-        if (_imspline == null)
-          CreateImaginaryPartSpline();
-
-        double log_ar = _imspline.Value.Interpolate(beta, y);
-
+        double log_ar = _imspline.Value!.Interpolate(beta, y);
         return -beta * Math.Exp(log_ar);
       }
     }

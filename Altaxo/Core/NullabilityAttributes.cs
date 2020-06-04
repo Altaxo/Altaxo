@@ -28,7 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo
+namespace System.Diagnostics.CodeAnalysis
 {
 #if NETFRAMEWORK
   /// <summary>
