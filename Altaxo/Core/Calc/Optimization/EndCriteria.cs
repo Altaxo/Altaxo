@@ -357,7 +357,7 @@ namespace Altaxo.Calc.Optimization
     ///<summary>A string representation of this <c>EndCriteria</c>.</summary>
     ///<param name="format">A format specification.</param>
     ///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
-    public string ToString(string format, IFormatProvider formatProvider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
       if (endCriteria == CriteriaType.MaximumFunctionEvaluation)
         return "Maximum Function Evaluations";

@@ -102,7 +102,9 @@ namespace Altaxo.Calc.Probability
     /// <exception cref="ArgumentNullException">
     /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
     /// </exception>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public StudentsTDistribution(double nu, Generator generator)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(generator)
     {
       normalDistribution = new NormalDistribution(0, 1, generator);

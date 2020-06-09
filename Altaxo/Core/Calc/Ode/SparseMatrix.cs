@@ -91,7 +91,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>The result A + B</returns>
     public SparseMatrix plus(SparseMatrix B)
     {
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException("B");
       var C = new SparseMatrix(m, n);
 
@@ -119,9 +119,9 @@ namespace Altaxo.Calc.Ode
     /// <returns>     A + B</returns>
     public static SparseMatrix operator +(SparseMatrix A, SparseMatrix B)
     {
-      if (A == null)
+      if (A is null)
         throw new ArgumentNullException(nameof(A));
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException(nameof(B));
       return A.plus(B);
     }
@@ -131,7 +131,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>The result A - B</returns>
     public SparseMatrix minus(SparseMatrix B)
     {
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException("B");
       var C = new SparseMatrix(m, n);
 
@@ -159,9 +159,9 @@ namespace Altaxo.Calc.Ode
     /// <returns>The result A - B</returns>
     public static SparseMatrix operator -(SparseMatrix A, SparseMatrix B)
     {
-      if (A == null)
+      if (A is null)
         throw new ArgumentNullException("A");
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException("B");
       return A.minus(B);
     }
@@ -188,13 +188,14 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>Matrix multiplication</summary>
-    /// <param name="v">Vector</param>
+    /// <param name="m">First factor</param>
+    /// <param name="v">Second factor</param>
     /// <returns></returns>
     public static Vector operator *(SparseMatrix m, Vector v)
     {
-      if (m == null)
+      if (m is null)
         throw new ArgumentNullException("m");
-      if ((double[])v == null)
+      if ((double[])v is null)
         throw new ArgumentNullException("v");
       return m.times(v);
     }
@@ -223,9 +224,9 @@ namespace Altaxo.Calc.Ode
     /// <returns></returns>
     public static Vector operator *(Vector v, SparseMatrix m)
     {
-      if (m == null)
+      if (m is null)
         throw new ArgumentNullException("m");
-      if ((double[])v == null)
+      if ((double[])v is null)
         throw new ArgumentNullException("v");
       return m.timesRight(v);
     }
@@ -260,7 +261,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>Scaled sparse matrix</returns>
     public static SparseMatrix operator *(SparseMatrix A, double s)
     {
-      if (A == null)
+      if (A is null)
         throw new ArgumentNullException("A");
       return A.times(s);
     }
@@ -285,7 +286,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>A * B where A is current sparce matrix</returns>
     public SparseMatrix times(SparseMatrix B)
     {
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException("B");
       if (B.m != n)
       {
@@ -317,9 +318,9 @@ namespace Altaxo.Calc.Ode
 
     public static SparseMatrix operator *(SparseMatrix A, SparseMatrix B)
     {
-      if (A == null)
+      if (A is null)
         throw new ArgumentNullException("A");
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException("B");
       return A.times(B);
     }
@@ -337,7 +338,7 @@ namespace Altaxo.Calc.Ode
           throw new IndexOutOfRangeException(string.Format(CultureInfo.InvariantCulture,
               "Element index ({0},{1}) is out of range", i, j));
 #endif
-        if (indices[i] == null)
+        if (indices[i] is null)
           return 0;
         int jidx = Array.BinarySearch(indices[i], 0, count[i], j);
         if (jidx < 0)
@@ -352,7 +353,7 @@ namespace Altaxo.Calc.Ode
           throw new IndexOutOfRangeException(string.Format(CultureInfo.InvariantCulture,
               "Element index ({0},{1}) is out of range", i, j));
 #endif
-        if (indices[i] == null)
+        if (indices[i] is null)
         {
           indices[i] = new int[Delta];
           items[i] = new double[Delta];

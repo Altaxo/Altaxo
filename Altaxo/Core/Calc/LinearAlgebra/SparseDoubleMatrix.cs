@@ -18,14 +18,14 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <summary>Sparse matrix class</summary>
   public class SparseDoubleMatrix : IROSparseMatrix<double>, IMatrix<double>
   {
+    private static int[] _emptyIntArray = new int[0];
+    private static double[] _emptyDoubleArray = new double[0];
     private const int Delta = 1;
-
     private int n, m;
     private double[][] items;
     private int[][] indices;
     private int[] count;
 
-    private static int[] _emptyIntArray = new int[0];
 
     /// <summary>Constructor for SparseMatrix class</summary>
     /// <param name="numberOfRows">Number of rows</param>
@@ -147,7 +147,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (int i = 0; i < m; i++)
       {
-        if (indices[i] != null)
+        if (indices[i] != null && indices[i].Length > 0)
         {
           C.indices[i] = new int[count[i]];
           C.items[i] = new double[count[i]];
@@ -187,7 +187,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (int i = 0; i < m; i++)
       {
-        if (indices[i] != null)
+        if (indices[i] != null && indices[i].Length > 0)
         {
           C.indices[i] = new int[count[i]];
           C.items[i] = new double[count[i]];
@@ -225,7 +225,7 @@ namespace Altaxo.Calc.LinearAlgebra
       unchecked // Turns off integral overflow checking: small speedup
       {
         for (int i = 0; i < m; i++)
-          if (indices[i] != null)
+          if (indices[i] != null && indices[i].Length > 0)
           {
             double s = 0;
             for (int k = 0; k < count[i]; k++)
@@ -258,7 +258,7 @@ namespace Altaxo.Calc.LinearAlgebra
       unchecked // Turns off integral overflow checking: small speedup
       {
         for (int i = 0; i < n; i++)
-          if (indices[i] != null)
+          if (indices[i] != null && indices[i].Length > 0)
           {
             for (int k = 0; k < count[i]; k++)
               result[indices[i][k]] += v[i] * items[i][k];
@@ -289,7 +289,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (int i = 0; i < m; i++)
       {
-        if (indices[i] != null)
+        if (indices[i] != null && indices[i].Length > 0)
         {
           B.indices[i] = new int[count[i]];
           B.items[i] = new double[count[i]];
@@ -346,13 +346,13 @@ namespace Altaxo.Calc.LinearAlgebra
       int idx, ii;
       for (int i = 0; i < m; i++)
       {
-        if (indices[i] != null)
+        if (indices[i] != null && indices[i].Length > 0)
           for (int j = 0; j < B.n; j++)
           {
             for (int jj = 0; jj < count[i]; jj++)
             {
               ii = indices[i][jj];
-              if (B.indices[ii] != null)
+              if (B.indices[ii] != null && B.indices[ii].Length > 0)
               {
                 idx = Array.BinarySearch(B.indices[ii], 0, B.count[ii], j);
                 if (idx >= 0)
@@ -512,9 +512,9 @@ namespace Altaxo.Calc.LinearAlgebra
           }
           else // value is null
           {
-            result.indices[row] = null;
+            result.indices[row] = _emptyIntArray;
             result.count[row] = 0;
-            result.items[row] = null;
+            result.items[row] = _emptyDoubleArray;
           }
         }
       }
@@ -533,7 +533,7 @@ namespace Altaxo.Calc.LinearAlgebra
           throw new IndexOutOfRangeException(string.Format(CultureInfo.InvariantCulture,
               "Element index ({0},{1}) is out of range", i, j));
 #endif
-        if (indices[i] == null)
+        if (indices[i] is null || indices[i].Length == 0)
           return 0;
         int jidx = Array.BinarySearch(indices[i], 0, count[i], j);
         if (jidx < 0)
@@ -548,7 +548,7 @@ namespace Altaxo.Calc.LinearAlgebra
           throw new IndexOutOfRangeException(string.Format(CultureInfo.InvariantCulture,
               "Element index ({0},{1}) is out of range", i, j));
 #endif
-        if (indices[i] == null)
+        if (indices[i] is null || indices[i].Length == 0)
         {
           indices[i] = new int[Delta];
           items[i] = new double[Delta];

@@ -48,7 +48,7 @@ namespace Altaxo.Calc.Probability
 
     public static double PDF(double x, double alpha)
     {
-      object store = null;
+      object? store = null;
       return PDF(x, alpha, ref store, Math.Sqrt(DoubleConstants.DBL_EPSILON));
     }
 
@@ -61,7 +61,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="tempStorage">Object which can be used to speed up subsequent calculations of the function. At the first call, provide an object initialized with <see langword="null"/> and provide this object for the following calculations.</param>
     /// <param name="precision">Goal for the relative precision.</param>
     /// <returns></returns>
-    public static double PDF(double x, double alpha, ref object tempStorage, double precision)
+    public static double PDF(double x, double alpha, ref object? tempStorage, double precision)
     {
       if (!(alpha > 0))
         throw new ArgumentException(string.Format("Parameter alpha must be >0, but is: {0}", alpha));
@@ -104,7 +104,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
-    public static double PDFAlphaBetween01And02(double x, double alpha, double precision, ref object tempStorage)
+    public static double PDFAlphaBetween01And02(double x, double alpha, double precision, ref object? tempStorage)
     {
       x = Math.Abs(x);
 
@@ -130,7 +130,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
-    public static double PDFAlphaBetween02And099(double x, double alpha, double precision, ref object tempStorage)
+    public static double PDFAlphaBetween02And099(double x, double alpha, double precision, ref object? tempStorage)
     {
       x = Math.Abs(x);
 
@@ -159,7 +159,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
-    public static double PDFAlphaBetween099And101(double x, double alpha, double precision, ref object tempStorage)
+    public static double PDFAlphaBetween099And101(double x, double alpha, double precision, ref object? tempStorage)
     {
       if (alpha == 1)
         return 1 / (Math.PI * (1 + x * x));
@@ -181,7 +181,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
-    public static double PDFAlphaBetween101And199999(double x, double alpha, double precision, ref object tempStorage)
+    public static double PDFAlphaBetween101And199999(double x, double alpha, double precision, ref object? tempStorage)
     {
       x = Math.Abs(x);
 
@@ -202,7 +202,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
-    public static double PDFAlphaBetween199999And2(double x, double alpha, double precision, ref object tempStorage)
+    public static double PDFAlphaBetween199999And2(double x, double alpha, double precision, ref object? tempStorage)
     {
       if (alpha == 2)
         return Math.Exp(-0.25 * x * x) / (2 * Math.Sqrt(Math.PI));
@@ -419,7 +419,7 @@ namespace Altaxo.Calc.Probability
       logPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * x));
     }
 
-    public static double PDFIntegration(double x, double alpha, double precision, ref object tempStorage)
+    public static double PDFIntegration(double x, double alpha, double precision, ref object? tempStorage)
     {
       if (alpha < 1)
       {
@@ -485,11 +485,11 @@ namespace Altaxo.Calc.Probability
 
     public static double CDF(double x, double alpha)
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       return CDF(x, alpha, ref tempStorage, DefaultPrecision);
     }
 
-    public static double CDF(double x, double alpha, ref object tempStorage, double precision)
+    public static double CDF(double x, double alpha, ref object? tempStorage, double precision)
     {
       // test input parameter
       if (!(alpha > 0 && alpha <= 2))
@@ -514,11 +514,11 @@ namespace Altaxo.Calc.Probability
 
     public static double CCDF(double x, double alpha)
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       return CCDF(x, alpha, ref tempStorage, DefaultPrecision);
     }
 
-    public static double CCDF(double x, double alpha, ref object tempStorage, double precision)
+    public static double CCDF(double x, double alpha, ref object? tempStorage, double precision)
     {
       // test input parameter
       if (!(alpha > 0 && alpha <= 2))
@@ -543,11 +543,11 @@ namespace Altaxo.Calc.Probability
 
     public static double XZCDF(double x, double alpha)
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       return XZCDF(x, alpha, ref tempStorage, DefaultPrecision);
     }
 
-    public static double XZCDF(double x, double alpha, ref object tempStorage, double precision)
+    public static double XZCDF(double x, double alpha, ref object? tempStorage, double precision)
     {
       // test input parameter
       if (!(alpha > 0 && alpha <= 2))
@@ -575,7 +575,7 @@ namespace Altaxo.Calc.Probability
       return Math.Abs(x) < DoubleConstants.DBL_EPSILON;
     }
 
-    private static void CDFMethodForPositiveX(double x, double alpha, ref object tempStorage, double precision, out double integFromXZero, out double integFromXInfinity)
+    private static void CDFMethodForPositiveX(double x, double alpha, ref object? tempStorage, double precision, out double integFromXZero, out double integFromXInfinity)
     {
       const double offs = 0.5;
 
@@ -647,7 +647,7 @@ namespace Altaxo.Calc.Probability
         x1 = xguess;
       }
 
-      object tempStorage = null;
+      object? tempStorage = null;
       if (BracketRootByExtensionOnly(delegate (double x)
       { return CDF(x, alpha, ref tempStorage, DefaultPrecision) - p; }, 0, ref x0, ref x1))
       {
@@ -677,7 +677,7 @@ namespace Altaxo.Calc.Probability
         x1 = xguess;
       }
 
-      object tempStorage = null;
+      object? tempStorage = null;
       if (QuickRootFinding.BracketRootByExtensionOnly(delegate (double x)
       { return CCDF(x, alpha, ref tempStorage, DefaultPrecision) - q; }, 0, ref x0, ref x1))
       {

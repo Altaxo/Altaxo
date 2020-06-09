@@ -40,17 +40,18 @@ namespace Altaxo.Calc.RootFinding
     private const double DBL_RADIX = 2;
 
     // Allocate arrays
-    private double[] pr;
+    private static readonly double[] _emptyDoubleArray = new double[0];
+    private double[] pr = _emptyDoubleArray;
 
-    private double[] pi;
-    private double[] hr;
-    private double[] hi;
-    private double[] qpr;
-    private double[] qpi;
-    private double[] qhr;
-    private double[] qhi;
-    private double[] shr;
-    private double[] shi;
+    private double[] pi = _emptyDoubleArray;
+    private double[] hr = _emptyDoubleArray;
+    private double[] hi = _emptyDoubleArray;
+    private double[] qpr = _emptyDoubleArray;
+    private double[] qpi = _emptyDoubleArray;
+    private double[] qhr = _emptyDoubleArray;
+    private double[] qhi = _emptyDoubleArray;
+    private double[] shr = _emptyDoubleArray;
+    private double[] shi = _emptyDoubleArray;
 
     /// <summary>
     /// The Jenkins–Traub algorithm for finding the roots of a polynomial.

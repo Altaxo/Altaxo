@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
@@ -99,7 +100,7 @@ namespace Altaxo.Calc.LinearAlgebra
       data = new ComplexFloat[values.Count];
       for (int i = 0; i < values.Count; ++i)
       {
-        data[i] = (ComplexFloat)values[i];
+        data[i] = (ComplexFloat)(values[i] ?? throw new ArgumentNullException($"{nameof(values)}[{i}]"));
       }
     }
 
@@ -179,10 +180,9 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="obj"><c>obj</c> to compare present <c>ComplexFloatVector</c> to.</param>
     ///<returns>Returns true if the variable is the same as the <c>ComplexFloatVector</c> variable</returns>
     ///<remarks>The <c>obj</c> parameter is converted into a <c>ComplexFloatVector</c> variable before comparing with the current <c>ComplexFloatVector</c>.</remarks>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var vector = obj as ComplexFloatVector;
-      if (vector == null)
+      if (!(obj is ComplexFloatVector vector))
       {
         return false;
       }
@@ -250,7 +250,8 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexFloatVector</c> from <c>float</c> array</summary>
-    public static implicit operator ComplexFloatVector(float[] src)
+    [return: NotNullIfNotNull("src")]
+    public static implicit operator ComplexFloatVector?(float[] src)
     {
       if (src == null)
       {
@@ -265,7 +266,8 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexFloatVector</c> from <c>float</c> array</summary>
-    public static ComplexFloatVector ToComplexFloatVector(float[] src)
+    [return: NotNullIfNotNull("src")]
+    public static ComplexFloatVector? ToComplexFloatVector(float[]? src)
     {
       if (src == null)
       {
@@ -280,7 +282,8 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Explicit cast conversion to <c>ComplexFloatVector</c> from <c>double</c> array</summary>
-    public static explicit operator ComplexFloatVector(ComplexDoubleVector src)
+    [return: NotNullIfNotNull("src")]
+    public static explicit operator ComplexFloatVector?(ComplexDoubleVector? src)
     {
       if (src == null)
       {
@@ -295,7 +298,8 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Explicit cast conversion to <c>ComplexFloatVector</c> from <c>double</c> array</summary>
-    public static ComplexFloatVector ToComplexFloatVector(ComplexDoubleVector src)
+    [return: NotNullIfNotNull("src")]
+    public static ComplexFloatVector? ToComplexFloatVector(ComplexDoubleVector? src)
     {
       if (src == null)
       {
@@ -764,7 +768,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="format">A format specification.</param>
     ///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
     ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
-    public string ToString(string format, IFormatProvider formatProvider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
       var sb = new StringBuilder("Length: ");
       sb.Append(data.Length).Append(System.Environment.NewLine);
@@ -844,15 +848,20 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="index">The element to access</param>
     ///<exception cref="ArgumentOutOfRangeException">Exception thrown in element accessed is out of the bounds of the vector.</exception>
     ///<returns>Returns a <c>ComplexDouble</c> vector element</returns>
-    object IList.this[int index]
+    object? IList.this[int index]
     {
       get { return this[index]; }
-      set { this[index] = (ComplexFloat)value; }
+      set { this[index] = (ComplexFloat)(value ?? throw new ArgumentNullException(nameof(value))); }
     }
 
     ///<summary>Add a new value to the end of the <c>ComplexFloatVector</c></summary>
-    public int Add(object value)
+    public int Add(object? value)
     {
+      if (value is null)
+        throw new ArgumentNullException(nameof(value));
+      if (!(value is ComplexFloat cf))
+        throw new ArgumentException("Wrong type", nameof(value));
+
       var newdata = new ComplexFloat[data.Length + 1];
       int newpos = newdata.Length - 1;
 
@@ -870,46 +879,63 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Check if the any of the <c>ComplexFloatVector</c> components equals a given <c>ComplexFloat</c></summary>
-    public bool Contains(object value)
+    public bool Contains(object? value)
     {
+      if (value is null)
+        throw new ArgumentNullException(nameof(value));
+      if (!(value is ComplexFloat cf))
+        throw new ArgumentException("Wrong type", nameof(value));
+
       for (int i = 0; i < data.Length; i++)
       {
-        if (data[i] == (ComplexFloat)value)
+        if (data[i] == cf)
           return true;
       }
       return false;
     }
 
     ///<summary>Return the index of the <c>ComplexFloatVector</c> for the first component that equals a given <c>ComplexFloat</c></summary>
-    public int IndexOf(object value)
+    public int IndexOf(object? value)
     {
+      if (value is null)
+        throw new ArgumentNullException(nameof(value));
+      if (!(value is ComplexFloat cf))
+        throw new ArgumentException("Wrong type", nameof(value));
+
       for (int i = 0; i < data.Length; i++)
       {
-        if (data[i] == (ComplexFloat)value)
+        if (data[i] == cf)
           return i;
       }
       return -1;
     }
 
     ///<summary>Insert a <c>ComplexFloat</c> into the <c>ComplexFloatVector</c> at a given index</summary>
-    public void Insert(int index, object value)
+    public void Insert(int index, object? value)
     {
+      if (value is null)
+        throw new ArgumentNullException(nameof(value));
+      if (!(value is ComplexFloat cf))
+        throw new ArgumentException("Wrong type", nameof(value));
       if (index > data.Length)
-      {
         throw new System.ArgumentOutOfRangeException("index");
-      }
 
       var newdata = new ComplexFloat[data.Length + 1];
       System.Array.Copy(data, newdata, index);
-      newdata[index] = (ComplexFloat)value;
+      newdata[index] = cf;
       System.Array.Copy(data, index, newdata, index + 1, data.Length - index);
       data = newdata;
     }
 
     ///<summary>Remove the first instance of a given <c>ComplexFloat</c> from the <c>ComplexFloatVector</c></summary>
-    public void Remove(object value)
+    public void Remove(object? value)
     {
-      int index = IndexOf(value);
+      if (value is null)
+        throw new ArgumentNullException(nameof(value));
+      if (!(value is ComplexFloat cf))
+        throw new ArgumentException("Wrong type", nameof(value));
+
+      int index = IndexOf(cf);
 
       if (index == -1)
         return;

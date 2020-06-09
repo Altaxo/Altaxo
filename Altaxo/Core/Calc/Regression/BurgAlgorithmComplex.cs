@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Calc.LinearAlgebra;
@@ -35,17 +36,19 @@ namespace Altaxo.Calc.Regression
   /// </summary>
   public class BurgAlgorithmComplex
   {
+    private const string ErrorNoExecution = "No results yet - call Execute first!";
+
     /// <summary>Forward prediction errors.</summary>
-    private Complex[] _f;
+    private Complex[]? _f;
 
     /// <summary>Backward prediction errors.</summary>
-    private Complex[] _b;
+    private Complex[]? _b;
 
     /// <summary>Prediction coefficients. Note that for technical reasons _Ak[0] is always 1 and the calculated coefficients start with _Ak[1].</summary>
-    private Complex[] _Ak;
+    private Complex[]? _Ak;
 
     /// <summary>Wrapper for the coefficients that can be returned by <see cref="Coefficients"/>.</summary>
-    private ComplexVectorWrapper _AkWrapper;
+    private ComplexVectorWrapper? _AkWrapper;
 
     /// <summary>Number of coefficients that were calculated.</summary>
     private int _numberOfCoefficients;
@@ -71,6 +74,9 @@ namespace Altaxo.Calc.Regression
     {
       get
       {
+        if (_AkWrapper is null)
+          throw new InvalidOperationException(ErrorNoExecution);
+
         return _AkWrapper;
       }
     }
@@ -165,6 +171,9 @@ namespace Altaxo.Calc.Regression
     /// </remarks>
     public void PredictRecursivelyForward(IComplexDoubleVector x, int firstPoint, int count)
     {
+      if (_Ak is null)
+        throw new InvalidOperationException(ErrorNoExecution);
+
       int last = firstPoint + count;
       for (int i = firstPoint; i < last; i++)
       {
@@ -191,6 +200,9 @@ namespace Altaxo.Calc.Regression
     /// </remarks>
     public double GetMeanPredictionErrorNonrecursivelyForward(IROComplexDoubleVector x)
     {
+      if (_Ak is null)
+        throw new InvalidOperationException(ErrorNoExecution);
+
       int first = _numberOfCoefficients;
       int last = x.Length;
       double sumsqr = 0;
@@ -232,6 +244,9 @@ namespace Altaxo.Calc.Regression
     /// </remarks>
     public void PredictRecursivelyBackward(IComplexDoubleVector x, int lastPoint, int count)
     {
+      if (_Ak is null)
+        throw new InvalidOperationException(ErrorNoExecution);
+
       int first = lastPoint - count;
       for (int i = lastPoint; i > first; i--)
       {
@@ -258,6 +273,9 @@ namespace Altaxo.Calc.Regression
     /// </remarks>
     public double GetMeanPredictionErrorNonrecursivelyBackward(IROComplexDoubleVector x)
     {
+      if (_Ak is null)
+        throw new InvalidOperationException(ErrorNoExecution);
+
       int last = x.Length - _numberOfCoefficients;
       double sumsqr = 0;
       for (int i = last - 1; i >= 0; i--)
@@ -277,8 +295,12 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="xLength">Length of the vector to build the model.</param>
     /// <param name="coeffLength">Number of parameters of the model.</param>
+    [MemberNotNull(nameof(_Ak), nameof(_AkWrapper), nameof(_b), nameof(_f))]
     private void EnsureAllocation(int xLength, int coeffLength)
     {
+      if (_AkWrapper is null)
+        throw new InvalidOperationException(ErrorNoExecution);
+
       _numberOfCoefficients = coeffLength;
 
       if (null == _Ak || _Ak.Length < coeffLength + 1)
@@ -354,7 +376,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="reflectionCoefficients">Vector to be filled with the reflection coefficients.</param>
     /// <param name="tempStorage">Instance of this class used to hold the temporary arrays.</param>
     /// <returns>The mean square error of backward and forward prediction.</returns>
-    private static double Execution(IROComplexDoubleVector x, IComplexDoubleVector coefficients, IVector<double> errors, IComplexDoubleVector reflectionCoefficients, BurgAlgorithmComplex tempStorage)
+    private static double Execution(IROComplexDoubleVector x, IComplexDoubleVector coefficients, IVector<double>? errors, IComplexDoubleVector? reflectionCoefficients, BurgAlgorithmComplex? tempStorage)
     {
       int N = x.Length - 1;
       int m = coefficients.Length;

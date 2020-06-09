@@ -153,7 +153,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Stores the used seed array.
     /// </summary>
-    private uint[] seedArray;
+    private uint[]? seedArray;
 
     /// <summary>
     /// Stores an <see cref="uint"/> used to generate up to 32 random <see cref="bool"/> values.
@@ -291,9 +291,12 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     private void ResetBySeedArray()
     {
+      if (seedArray is null)
+        throw new InvalidProgramException();
+
       uint i = 1;
       uint j = 0;
-      int k = (MT19937Generator.N > seedArray.Length) ? MT19937Generator.N : seedArray.Length;
+      int k = (MT19937Generator.N > (seedArray.Length)) ? MT19937Generator.N : (seedArray.Length);
       for (; k > 0; k--)
       {
         mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >> 30)) * 1664525U)) + seedArray[j] + j; // non linear

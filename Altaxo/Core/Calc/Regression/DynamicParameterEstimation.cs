@@ -63,10 +63,10 @@ namespace Altaxo.Calc.Regression
     /// Then the y parameters, having indices of (_numX.._numX+_numY-1). Lastly, the background parameters are stored in the array
     /// (indices _numX+_numY ... end_of_array)
     /// </summary>
-    protected double[] _parameter;
+    protected double[]? _parameter;
 
     /// <summary>Holds the input matrix.</summary>
-    protected JaggedArrayMatrix _inputMatrix;
+    protected JaggedArrayMatrix? _inputMatrix;
 
     /// <summary>Total number of parameter, i.e. _numX+_numY + _backgroundOrderPlus1</summary>
     protected int _numberOfParameter;
@@ -76,7 +76,7 @@ namespace Altaxo.Calc.Regression
 
     /// <summary>Array of y-values neccessary for backsubstitution. Is a copy of the input y vector, but
     /// only for the elements _startingPoint...end_of_y_vector.</summary>
-    protected double[] _scaledY;
+    protected double[]? _scaledY;
 
     /// <summary>Stores an instance of a solver used to solve the linear equation. The solver
     /// should keep and recycle the memory neccessary for solving the equation.</summary>
@@ -105,8 +105,8 @@ namespace Altaxo.Calc.Regression
     /// <param name="solver">The solver to use with dynamic parameter estimation. Use the static getter methods <see cref="SVDSolver" /> or <see cref="LUSolver" /> to get a solver.</param>
     public DynamicParameterEstimation(int numX, int numY, int backgroundOrder, IDynamicParameterEstimationSolver solver)
     {
-      if (solver == null)
-        throw new ArgumentNullException("solver must not be null");
+      if (solver is null)
+        throw new ArgumentNullException(nameof(solver));
 
       _solver = solver;
       SetHelperMembers(numX, numY, backgroundOrder);
@@ -187,7 +187,8 @@ namespace Altaxo.Calc.Regression
     {
       CalculateStartingPoint();
       CalculateNumberOfData(x, y);
-      _inputMatrix = FillInputMatrix(x, y, _inputMatrix);
+      var m = FillInputMatrix(x, y, _inputMatrix);
+      _inputMatrix = m;
       FillBacksubstitutionY(y);
       CalculateResultingParameter();
     }
@@ -260,10 +261,10 @@ namespace Altaxo.Calc.Regression
     /// <param name="y">Vector of y data.</param>
     /// <param name="M">Matrix to fill. If the dimensions are not appropriate, a new matrix is allocated and stored in the member _inputMatrix.</param>
     /// <returns></returns>
-    protected virtual JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double> x, IReadOnlyList<double> y, JaggedArrayMatrix M)
+    protected virtual JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double> x, IReadOnlyList<double> y, JaggedArrayMatrix? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
-      if (M == null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
+      if (M is null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
         M = new JaggedArrayMatrix(numberOfData, _numberOfParameter);
 
       // Fill the matrix

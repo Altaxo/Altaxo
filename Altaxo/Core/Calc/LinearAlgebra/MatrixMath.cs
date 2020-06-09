@@ -1339,7 +1339,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="scalevec">You can provide a vector of length(a.Cols) where the inverse of the variance of the columns is stored, or null if not interested in this vector.</param>
     /// <remarks>Calling this function will change the matrix a to a column
     /// centered matrix. The original matrix data are lost.</remarks>
-    public static void ColumnsToZeroMeanAndUnitVariance(IMatrix<double> a, IVector<double> meanvec, IVector<double> scalevec)
+    public static void ColumnsToZeroMeanAndUnitVariance(IMatrix<double> a, IVector<double>? meanvec, IVector<double>? scalevec)
     {
       if (null != meanvec && (meanvec.Length != a.ColumnCount))
         throw new ArithmeticException(string.Format("The provided resultant mean vector (actual dim({0})has not the expected length ({1})", meanvec.Length, a.ColumnCount));

@@ -79,7 +79,9 @@ namespace Altaxo.Calc.Probability
     /// A number used to calculate a starting value for the pseudo-random number sequence.
     /// If a negative number is specified, the absolute value of the number is used.
     /// </param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public StandardGenerator(int seed)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
       this.seed = Math.Abs(seed);
       ResetGenerator();

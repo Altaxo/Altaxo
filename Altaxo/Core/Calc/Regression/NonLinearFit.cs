@@ -1892,6 +1892,7 @@ L130:
     /// <param name="m">Second dimension of the parameter vector.</param>
     /// <param name="covar">Array to hold the covariance matrix. Must be of dimension m*n.</param>
     /// <param name="sumchisq">Outputs the sum of chi squared.</param>
+    /// <param name="sigmasq">Sigma squared.</param>
     public static int ComputeCovariances(LMFunction fcn, double[] x, int n, int m, double[] covar, out double sumchisq, out double sigmasq)
     {
       int info = 0;

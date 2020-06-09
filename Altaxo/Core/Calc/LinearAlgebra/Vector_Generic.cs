@@ -140,7 +140,7 @@ namespace Altaxo.Calc.LinearAlgebra
       _array = new T[values.Count];
       for (int i = 0; i < _array.Length; ++i)
       {
-        _array[i] = (T)values[i];
+        _array[i] = (T)(values[i] ?? throw new ArgumentNullException($"{nameof(values)}[{i}]"));
       }
     }
 
@@ -181,8 +181,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     public void Clear()
     {
+#pragma warning disable CS8601 // Possible null reference assignment.
       for (int i = 0; i < _array.Length; ++i)
-        _array[i] = default(T);
+        _array[i] = default;
+#pragma warning restore CS8601 // Possible null reference assignment.
     }
 
     public int Length { get { return _array.Length; } }
@@ -222,7 +224,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="obj"><c>obj</c> to compare present <c>FloatVector</c> to.</param>
     ///<returns>Returns true if the variable is the same as the <c>FloatVector</c> variable</returns>
     ///<remarks>The <c>obj</c> parameter is converted into a <c>FloatVector</c> variable before comparing with the current <c>DoubleVector</c>.</remarks>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (!(obj is Vector<T> vector))
       {
@@ -399,7 +401,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="format">A format specification.</param>
     ///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
     ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
-    public virtual string ToString(string format, IFormatProvider formatProvider)
+    public virtual string ToString(string? format, IFormatProvider? formatProvider)
     {
       var sb = new StringBuilder("Length: ");
       sb.Append(_array.Length).Append(System.Environment.NewLine);

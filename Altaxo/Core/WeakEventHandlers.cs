@@ -446,11 +446,11 @@ namespace Altaxo
     /// </summary>
     /// <param name="sender">Sender of the event.</param>
     /// <param name="e">Event args.</param>
-    public void EventSink(object sender, EventArgs e)
+    public void EventSink(object? sender, EventArgs e)
     {
       if (_handlerObjectWeakRef.Target is { } handlerObj)
       {
-        _handlerMethodInfo.Invoke(handlerObj, new object[] { sender, e });
+        _handlerMethodInfo.Invoke(handlerObj, new object?[] { sender, e });
       }
       else
       {

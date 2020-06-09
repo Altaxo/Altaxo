@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -31,7 +32,8 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   public class IntegerVector
   {
-    protected int[] x;
+    protected static readonly int[] _emptyIntArray = new int[0];
+    protected int[] x = _emptyIntArray;
     protected int len = 0;
 
     /// <summary>
@@ -58,7 +60,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     public void Clear()
     {
-      x = null;
+      x = _emptyIntArray;
       len = 0;
     }
 
@@ -66,9 +68,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Resizes the vector. Previosly stored data are lost.
     /// </summary>
     /// <param name="length">New length.</param>
+    [MemberNotNull(nameof(x))]
     public void Resize(int length)
     {
-      if (x == null || length >= x.Length)
+      if (x is null || length >= x.Length)
       {
         x = new int[length];
       }

@@ -1428,6 +1428,7 @@ namespace Altaxo.Calc.Probability.Old
     /// <summary>Empty constructor. Use this only in inheritance hierarchies.</summary>
     protected ProbabilityDistribution()
     {
+      generator = RandomGenerator.DefaultGenerator;
     }
 
     /// <summary>
@@ -3090,6 +3091,7 @@ fin:;
   internal class RanLux    // Luescher - James - Marsaglia - Zaman - RANLUX
   {
     private int k1, k2;
+
     public RanLux(int luxury, uint seed)
     {
       SetState(luxury, seed);
@@ -3519,9 +3521,9 @@ L_rluxgo:
     private static void ranlux(ref double rdum)
     {
       int b = 0, c = 0, d = 0, e = 0;
-
-      ranlux_driver(0, ref rdum, null, ref b, ref c,
-        ref d, ref e, 0, 0);
+      var isdext = new int[25];
+      ranlux_driver(0, ref rdum, isdext, ref b, ref c,
+          ref d, ref e, 0, 0);
     }
 
     //-----------------------------------------------------------------------------//
@@ -3549,7 +3551,8 @@ L_rluxgo:
     private static void rluxat(ref int lout, ref int inout, ref int k1, ref int k2)
     {
       double a = 0;
-      ranlux_driver(3, ref a, null, ref lout,
+      var isdext = new int[25];
+      ranlux_driver(3, ref a, isdext, ref lout,
         ref inout, ref k1, ref k2, 0, 0);
     }
 
@@ -3559,8 +3562,8 @@ L_rluxgo:
     {
       double a = 0;
       int c = 0, d = 0;
-
-      ranlux_driver(4, ref a, null, ref c, ref d,
+      var isdext = new int[25];
+      ranlux_driver(4, ref a, isdext, ref c, ref d,
         ref k1, ref k2, lux, ins);
     }
 

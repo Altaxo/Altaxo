@@ -173,7 +173,7 @@ namespace Altaxo.Calc.RootFinding
       public double fa, fb, fc;
     }
 
-    private static GSL_ERROR
+    private static GSL_ERROR?
     brent_init(Func<double, double> f, double x_lower, double x_upper, out double root, out brent_state_t state)
     {
       double f_lower, f_upper;
@@ -203,7 +203,7 @@ namespace Altaxo.Calc.RootFinding
       return null;
     }
 
-    private static GSL_ERROR
+    private static GSL_ERROR?
 brent_iterate(ref brent_state_t state, Func<double, double> f, out double root, ref double x_lower, ref double x_upper)
     {
       double tol, m;
@@ -370,9 +370,9 @@ brent_iterate(ref brent_state_t state, Func<double, double> f, out double root, 
         return double.NaN;
     }
 
-    public static GSL_ERROR ByBrentsAlgorithm(Func<double, double> f, double x0, double x1, double epsabs, double epsrel, out double root)
+    public static GSL_ERROR? ByBrentsAlgorithm(Func<double, double> f, double x0, double x1, double epsabs, double epsrel, out double root)
     {
-      GSL_ERROR err;
+      GSL_ERROR? err;
       err = brent_init(f, x0, x1, out root, out var state);
       if (null != err)
         return err;
@@ -388,7 +388,7 @@ brent_iterate(ref brent_state_t state, Func<double, double> f, out double root, 
 
     #endregion Brents algorithm
 
-    private static GSL_ERROR gsl_root_test_interval(double x_lower, double x_upper, double epsabs, double epsrel)
+    private static GSL_ERROR? gsl_root_test_interval(double x_lower, double x_upper, double epsabs, double epsrel)
     {
       double abs_lower = Math.Abs(x_lower);
       double abs_upper = Math.Abs(x_upper);

@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
@@ -59,9 +60,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>FloatVector</c></summary>
-    public static explicit operator DoubleVector(FloatVector src)
+    [return: NotNullIfNotNull("src")]
+    public static explicit operator DoubleVector?(FloatVector? src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }
@@ -71,9 +73,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>FloatVector</c></summary>
-    public static DoubleVector ToDoubleVector(FloatVector src)
+    [return: NotNullIfNotNull("src")]
+    public static DoubleVector? ToDoubleVector(FloatVector? src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }
@@ -83,9 +86,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>float</c> array</summary>
-    public static explicit operator DoubleVector(double[] src)
+    [return: NotNullIfNotNull("src")]
+    public static explicit operator DoubleVector?(double[]? src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }
@@ -95,9 +99,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>float</c> array</summary>
-    public static explicit operator DoubleVector(float[] src)
+    [return: NotNullIfNotNull("src")]
+    public static explicit operator DoubleVector?(float[]? src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }
@@ -107,9 +112,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>float</c> array</summary>
-    public static DoubleVector ToDoubleVector(float[] src)
+    [return: NotNullIfNotNull("src")]
+    public static DoubleVector? ToDoubleVector(float[]? src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }

@@ -153,7 +153,7 @@ namespace Altaxo.Calc.Ode
 
     #region Methods
 
-    internal void InitializeRungeKutta(OdeFunction function, OdeJacobian jacobian, int numEquations)
+    internal void InitializeRungeKutta(OdeFunction function, OdeJacobian? jacobian, int numEquations)
     {
       //internal void InitializeRungeKutta(OdeFunction function, OdeJacobian jacobian, double[] y0, double t0, double deltaT, double tEnd)
       //this.TestArguments(t0, deltaT, tEnd);

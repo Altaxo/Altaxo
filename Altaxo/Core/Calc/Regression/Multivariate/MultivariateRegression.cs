@@ -67,8 +67,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     public abstract void PredictedYAndSpectralResidualsFromPreprocessed(
       IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
       int numFactors, // number of factors to use for prediction
-      IMatrix<double> predictedY,
-      IMatrix<double> spectralResiduals // Matrix of spectral residuals, n rows x 1 column
+      IMatrix<double>? predictedY,
+      IMatrix<double>? spectralResiduals // Matrix of spectral residuals, n rows x 1 column
       );
 
     /// <summary>
@@ -248,9 +248,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
       int numFactors, // number of factors to use for prediction
       bool calculatePredictedY,
-      out IMatrix<double> predictedY,
+      out IMatrix<double>? predictedY,
       bool calculateSpectralResiduals,
-      out IMatrix<double> spectralResiduals // Matrix of spectral residuals, n rows x 1 column
+      out IMatrix<double>? spectralResiduals // Matrix of spectral residuals, n rows x 1 column
       )
     {
       // check the dimensions of the matrices

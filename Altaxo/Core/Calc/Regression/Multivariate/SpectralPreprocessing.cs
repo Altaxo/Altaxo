@@ -148,7 +148,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       // The reason for this deviation is that we don't want to store two separate xMean vectors: one used
       // for MSC (the x in linear regression) and another to center the MSC corrected spectra
 
-      IVector<double> xMeanBefore = null;
+      IVector<double>? xMeanBefore = null;
       double threshold = 1E-14 * MatrixMath.SumOfSquares(xMatrix) / xMatrix.RowCount;
       for (int cycle = 0; cycle < 50; cycle++)
       {
@@ -325,7 +325,7 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// </summary>
   public class SavitzkyGolayCorrection : NoSpectralCorrection
   {
-    private SavitzkyGolay _filter = null;
+    private SavitzkyGolay _filter;
 
     private int _numberOfPoints, _derivativeOrder, _polynomialOrder;
 

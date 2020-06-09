@@ -185,7 +185,9 @@ namespace Altaxo.Calc.Probability
     /// <param name="seed">
     /// An unsigned number used to calculate a starting value for the pseudo-random number sequence.
     /// </param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public ALFGenerator(uint seed)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
       this.seed = seed;
       shortLag = 418;

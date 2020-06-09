@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Altaxo.Calc.Ode
@@ -36,13 +37,13 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// The initial conditions.
     /// </summary>
-    protected internal double[] _Y0;
+    protected internal double[]? _Y0;
 
     /// <summary>
     /// Array used to set the initial values and to return the solution in some ODE solvers.
     /// This array must be initialized equal to the initial values in the first call.
     /// </summary>
-    protected internal double[] _Y;
+    protected internal double[]? _Y;
 
     /// <summary>
     /// Indicated if the SetInitialValues method need to be invoked.
@@ -57,7 +58,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// Array containing the exception messages.
     /// </summary>
-    protected string[] _Errors;
+    protected string[]? _Errors;
 
     /// <summary>
     /// For AdamsMoulton and  OdeGearsBDF:
@@ -98,7 +99,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// A relative error tolerance parameter, either a scalar or an array of length NEQ.
     /// </summary>
-    protected internal double[] _RelTolArray;
+    protected internal double[]? _RelTolArray;
 
     /// <summary>
     /// An absolute error tolerance parameter
@@ -108,12 +109,12 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// An absolute error tolerance parameter(array of length NEQ)
     /// </summary>
-    protected internal double[] _AbsTolArray;
+    protected internal double[]? _AbsTolArray;
 
     /// <summary>
     /// MeRWork= A real working array (double precision)
     /// </summary>
-    protected internal double[] _RWork;
+    protected internal double[]? _RWork;
 
     /// <summary>
     /// MeLrw= The length of the array RWORK
@@ -123,7 +124,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// MeIWork= An integer work array.
     /// </summary>
-    protected internal int[] _IWork;
+    protected internal int[]? _IWork;
 
     /// <summary>
     /// MeLiw= the length of the array IWORK
@@ -269,6 +270,7 @@ namespace Altaxo.Calc.Ode
     /// This method should be invoked before to start the integration.
     /// When this method is invoked, the ODE solver is restarted.
     /// </remarks>
+    [MemberNotNull(nameof(_Y0), nameof(_Y), nameof(_T0))]
     public virtual void SetInitialValues(double t0, double[] y0)
     {
       if (_InvokeInitializeODEs == true)
@@ -298,6 +300,7 @@ namespace Altaxo.Calc.Ode
     /// Number of equations, Relative tolerances,  Absolute tolerances, Working space
     /// </summary>
     /// <param name="numEquations">The number of equations.</param>
+    [MemberNotNull(nameof(_RelTolArray), nameof(_AbsTolArray), nameof(_T0))]
     internal void InitializeSizeDependentVariables(int numEquations)
     {
       _NEquations = numEquations;
@@ -317,7 +320,7 @@ namespace Altaxo.Calc.Ode
       InitializeWorkingSpace();
     }
 
-    internal virtual void InitializeInternal(OdeFunction function, OdeJacobian jacobian, int numEquations)
+    internal virtual void InitializeInternal(OdeFunction function, OdeJacobian? jacobian, int numEquations)
     {
       //this.MeIsInitialized = true;
 
@@ -410,7 +413,7 @@ namespace Altaxo.Calc.Ode
     /// </summary>
     internal abstract void InitializeWorkingSpace();
 
-    internal abstract void InitializeFunctionAndJacobian(OdeFunction fun, OdeJacobian jac);
+    internal abstract void InitializeFunctionAndJacobian(OdeFunction fun, OdeJacobian? jac);
 
     internal abstract void InitializeExceptionMessages();
 

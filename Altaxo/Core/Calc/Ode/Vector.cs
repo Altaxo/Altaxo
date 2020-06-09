@@ -510,11 +510,10 @@ namespace Altaxo.Calc.Ode
       return sb.ToString();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (obj is Vector)
+      if (obj is Vector v2)
       {
-        var v2 = (Vector)obj;
         if (v2.Length != Length)
           return false;
         var av2 = v2.v;

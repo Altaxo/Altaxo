@@ -20,8 +20,8 @@ namespace Altaxo.Calc.LinearAlgebra
   public class GaussianEliminationSolver : ILinearEquationSolver<double>
   {
     private MatrixWrapperStructForLeftSpineJaggedArray<double> _temp_A;
-    private double[] _temp_b;
-    private double[] _temp_x;
+    private double[]? _temp_b;
+    private double[]? _temp_x;
 
     /// <summary>Solves system of linear equations Ax = b using Gaussian elimination with partial pivoting.
     /// Attention! Both matrix A and vector b are destroyed (changed).</summary>

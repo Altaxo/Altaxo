@@ -28,7 +28,8 @@ namespace Altaxo.Calc.LinearAlgebra
 {
   internal class TransposableMatrix : IExtensibleMatrix<double>
   {
-    private double[][] m_Array;
+    private static readonly double[][] _emptyArray = new double[0][];
+    private double[][] m_Array = _emptyArray;
     private int m_NumVectors;
     private int m_VectorLen;
     private bool m_bVerticalVectors = false; // normally the matrix consists of several rows containing column vectors
@@ -330,13 +331,16 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public static void NIPALS(TransposableMatrix X, int numFactors, out TransposableMatrix factors, out TransposableMatrix loads)
     {
+      if (numFactors < 1)
+        throw new ArgumentOutOfRangeException(nameof(numFactors), "Must be >=1");
+
       X.ColumnsToZeroMean();
 
       double original_variance = Math.Sqrt(X.SumOfSquares());
 
-      TransposableMatrix l = null;
-      TransposableMatrix t_prev = null;
-      TransposableMatrix t = null;
+      TransposableMatrix l;
+      TransposableMatrix? t_prev = null;
+      TransposableMatrix? t = null;
 
       loads = new TransposableMatrix(numFactors, X.ColumnCount);
       factors = new TransposableMatrix(X.RowCount, numFactors);
@@ -369,7 +373,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // 5. Calculate the residual matrix
-        t.Transpose(); // t is now vertical again
+        t!.Transpose(); // t is now vertical again
         factors.SetColumn(nFactor, t);
         loads.SetRow(nFactor, l);
 

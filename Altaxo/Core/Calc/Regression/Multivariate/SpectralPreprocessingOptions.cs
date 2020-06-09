@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using Altaxo.Calc.LinearAlgebra;
 
@@ -103,9 +104,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// Copies all settings from another instance.
     /// </summary>
     /// <param name="from">The other instance to copy the data from.</param>
+    [MemberNotNull(nameof(_regions))]
     public void CopyFrom(SpectralPreprocessingOptions from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (object.ReferenceEquals(this, from) && !(_regions is null))
         return;
 
       _method = from._method;

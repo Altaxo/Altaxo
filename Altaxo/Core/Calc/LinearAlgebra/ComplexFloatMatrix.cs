@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
@@ -278,9 +279,10 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>explicit conversion from <c>ComplexFloatMatrix</c> matrix.</summary>
     ///<param name="source"><c>ComplexFloatMatrix</c> to make a deep copy conversion from.</param>
-    public static explicit operator ComplexFloatMatrix(ComplexDoubleMatrix source)
+    [return: NotNullIfNotNull("source")]
+    public static explicit operator ComplexFloatMatrix?(ComplexDoubleMatrix? source)
     {
-      if (source == null)
+      if (source is null)
       {
         return null;
       }
@@ -303,20 +305,18 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>explicit conversion from <c>ComplexDoubleMatrix</c> matrix.</summary>
     ///<param name="source"><c>ComplexDoubleMatrix</c> to make a deep copy conversion from.</param>
-    public static ComplexFloatMatrix ToComplexFloatMatrix(ComplexDoubleMatrix source)
+    [return: NotNullIfNotNull("source")]
+    public static ComplexFloatMatrix? ToComplexFloatMatrix(ComplexDoubleMatrix? source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      return (ComplexFloatMatrix)source;
+      return source is null ? null : (ComplexFloatMatrix?)source;
     }
 
     ///<summary>Implicit conversion from <c>FloatMatrix</c> matrix.</summary>
     ///<param name="source"><c>FloatMatrix</c> to make a deep copy conversion from.</param>
-    public static implicit operator ComplexFloatMatrix(FloatMatrix source)
+    [return: NotNullIfNotNull("source")]
+    public static implicit operator ComplexFloatMatrix?(FloatMatrix? source)
     {
-      if (source == null)
+      if (source is null)
       {
         return null;
       }
@@ -339,20 +339,18 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit conversion from <c>FloatMatrix</c> matrix.</summary>
     ///<param name="source"><c>FloatMatrix</c> to make a deep copy conversion from.</param>
-    public static ComplexFloatMatrix ToComplexFloatMatrix(FloatMatrix source)
+    [return: NotNullIfNotNull("source")]
+    public static ComplexFloatMatrix? ToComplexFloatMatrix(FloatMatrix? source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      return source;
+      return source is null ? null : (ComplexFloatMatrix?)source;
     }
 
     ///<summary>explicit conversion from <c>Complex</c> array.</summary>
     ///<param name="source"><c>Complex</c> array to make a deep copy conversion from.</param>
-    public static explicit operator ComplexFloatMatrix(Complex[,] source)
+    [return: NotNullIfNotNull("source")]
+    public static explicit operator ComplexFloatMatrix?(Complex[,]? source)
     {
-      if (source == null)
+      if (source is null)
       {
         return null;
       }
@@ -379,20 +377,18 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>explicit conversion from <c>Complex</c> array</summary>
     ///<param name="source"><c>Complex</c> array to make a deep copy conversion from.</param>
-    public static ComplexFloatMatrix ToComplexFloatMatrix(Complex[,] source)
+    [return: NotNullIfNotNull("source")]
+    public static ComplexFloatMatrix? ToComplexFloatMatrix(Complex[,]? source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      return (ComplexFloatMatrix)source;
+      return source is null ? null : (ComplexFloatMatrix?)source;
     }
 
     ///<summary>implicit conversion from <c>ComplexFloat</c> array.</summary>
     ///<param name="source"><c>ComplexFloat</c> array to make a deep copy conversion from.</param>
-    public static implicit operator ComplexFloatMatrix(ComplexFloat[,] source)
+    [return: NotNullIfNotNull("source")]
+    public static implicit operator ComplexFloatMatrix?(ComplexFloat[,]? source)
     {
-      if (source == null)
+      if (source is null)
       {
         return null;
       }
@@ -419,24 +415,18 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>implicit conversion from <c>ComplexFloat</c> array</summary>
     ///<param name="source"><c>ComplexFloat</c> array to make a deep copy conversion from.</param>
-    public static ComplexFloatMatrix ToComplexFloatMatrix(ComplexFloat[,] source)
+    [return: NotNullIfNotNull("source")]
+    public static ComplexFloatMatrix? ToComplexFloatMatrix(ComplexFloat[,]? source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      return source;
+      return source is null ? null : (ComplexFloatMatrix?)source;
     }
 
     ///<summary>Implicit conversion from <c>float</c> array</summary>
     ///<param name="source"><c>float</c> array to make a deep copy conversion from.</param>
-    public static ComplexFloatMatrix ToComplexFloatMatrix(float[,] source)
+    [return: NotNullIfNotNull("source")]
+    public static ComplexFloatMatrix? ToComplexFloatMatrix(float[,]? source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      return new ComplexFloatMatrix(source);
+      return source is null ? null : new ComplexFloatMatrix(source);
     }
 
     ///<summary>Creates an identity matrix.</summary>
@@ -523,10 +513,9 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Check if <c>ComplexFloatMatrix</c> variable is the same as another object.</summary>
     ///<param name="obj"><c>obj</c> to compare present <c>ComplexFloatMatrix</c> to.</param>
     ///<returns>Returns true if the variable is the same as the <c>ComplexFloatMatrix</c> variable</returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var matrix = obj as ComplexFloatMatrix;
-      if (matrix == null)
+      if (!(obj is ComplexFloatMatrix matrix))
       {
         return false;
       }
@@ -1942,7 +1931,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="format">A format specification.</param>
     ///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
     ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
-    public string ToString(string format, IFormatProvider formatProvider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
       var sb = new StringBuilder("rows: ");
       sb.Append(rows).Append(", cols: ").Append(columns).Append(System.Environment.NewLine);
@@ -2030,14 +2019,14 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="index">The element to access</param>
     ///<exception cref="ArgumentOutOfRangeException">Exception thrown in element accessed is out of the bounds of the matrix.</exception>
     ///<returns>Returns a <c>ComplexFloat</c> vector element</returns>
-    object IList.this[int index]
+    object? IList.this[int index]
     {
       get { return this[index % rows, index / rows]; }
-      set { this[index % rows, index / rows] = (ComplexFloat)value; }
+      set { this[index % rows, index / rows] = (ComplexFloat)(value ?? throw new ArgumentNullException(nameof(value))); }
     }
 
     ///<summary>Add a new value to the end of the <c>ComplexFloatMatrix</c></summary>
-    public int Add(object value)
+    public int Add(object? value)
     {
       throw new System.NotSupportedException();
     }
@@ -2055,42 +2044,48 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Check if the any of the <c>ComplexFloatMatrix</c> components equals a given <c>ComplexFloat</c></summary>
-    public bool Contains(object value)
+    public bool Contains(object? value)
     {
-      for (int i = 0; i < rows; i++)
-        for (int j = 0; j < columns; j++)
+      if (value is ComplexFloat cf)
+      {
+        for (int i = 0; i < rows; i++)
+          for (int j = 0; j < columns; j++)
 #if MANAGED
-          if (data[i][j] == (ComplexFloat)value)
+            if (data[i][j] == cf)
 #else
-          if (data[j*rows+i]==(ComplexFloat)value)
+          if (data[j*rows+i]==cf)
 #endif
-            return true;
+              return true;
+      }
 
       return false;
     }
 
     ///<summary>Return the index of the <c>ComplexFloatMatrix</c> for the first component that equals a given <c>ComplexFloat</c></summary>
-    public int IndexOf(object value)
+    public int IndexOf(object? value)
     {
-      for (int i = 0; i < rows; i++)
-        for (int j = 0; j < columns; j++)
+      if (value is ComplexFloat cf)
+      {
+        for (int i = 0; i < rows; i++)
+          for (int j = 0; j < columns; j++)
 #if MANAGED
-          if (data[i][j] == (ComplexFloat)value)
+            if (data[i][j] == cf)
 #else
-          if (data[j*rows+i]==(ComplexFloat)value)
+          if (data[j*rows+i]==cf)
 #endif
-            return j * rows + i;
+              return j * rows + i;
+      }
       return -1;
     }
 
     ///<summary>Insert a <c>double</c> into the <c>DoubleVector</c> at a given index</summary>
-    public void Insert(int index, object value)
+    public void Insert(int index, object? value)
     {
       throw new System.NotSupportedException();
     }
 
     ///<summary>Remove the first instance of a given <c>double</c> from the <c>DoubleVector</c></summary>
-    public void Remove(object value)
+    public void Remove(object? value)
     {
       throw new System.NotSupportedException();
     }

@@ -67,7 +67,7 @@ namespace Altaxo.Calc.RootFinding
     protected double _xMax;
     protected double _accuracy;
     protected Func<double, double> _function;
-    protected Func<double, double> _originalFunction;
+    protected Func<double, double>? _originalFunction;
     private double _bracketingFactor = 1.6;
 
     #endregion Variables

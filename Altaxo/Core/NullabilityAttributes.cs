@@ -57,22 +57,37 @@ namespace System.Diagnostics.CodeAnalysis
   }
 
   //
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
-    public sealed class NotNullIfNotNullAttribute : Attribute
+  [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
+  public sealed class NotNullIfNotNullAttribute : Attribute
+  {
+    private string _parameterName;
+    public string ParameterName
     {
-  string _parameterName;
-        public string ParameterName
-        {
-            get
-            {
-                return _parameterName;
-            }
-        }
-
-        public NotNullIfNotNullAttribute(string parameterName)
-        {
-  _parameterName = parameterName;
-        }
+      get
+      {
+        return _parameterName;
+      }
     }
+
+    public NotNullIfNotNullAttribute(string parameterName)
+    {
+      _parameterName = parameterName;
+    }
+  }
+#endif
+
+#if NETFRAMEWORK || NETCOREAPP3_1
+
+  [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+  public sealed class MemberNotNullAttribute : Attribute
+  {
+    public MemberNotNullAttribute(string _)
+    {
+    }
+
+    public MemberNotNullAttribute(params string[] _)
+    {
+    }
+  }
 #endif
 }

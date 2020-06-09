@@ -31,6 +31,7 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -43,7 +44,7 @@ namespace Altaxo.Calc.LinearAlgebra
   {
     private readonly int order;
     private bool ispd = true;
-    private ComplexDoubleMatrix l;
+    private ComplexDoubleMatrix? l;
     private ComplexDoubleMatrix matrix;
 
     ///<summary>Constructor for Cholesky decomposition class. The constructor performs the factorization of a Hermitian positive
@@ -71,6 +72,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Computes the algorithm.</summary>
+    [MemberNotNull(nameof(l))]
     protected override void InternalCompute()
     {
 #if MANAGED
@@ -139,6 +141,9 @@ namespace Altaxo.Calc.LinearAlgebra
       get
       {
         Compute();
+        if (l is null)
+          throw new InvalidProgramException();
+
         return l;
       }
     }
@@ -149,6 +154,9 @@ namespace Altaxo.Calc.LinearAlgebra
     public Complex GetDeterminant()
     {
       Compute();
+      if (l is null)
+        throw new InvalidProgramException();
+
       if (!ispd)
       {
         throw new NotPositiveDefiniteException();
@@ -173,11 +181,14 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentException">The number of rows of A and B must be the same.</exception>
     public ComplexDoubleMatrix Solve(IROComplexDoubleMatrix B)
     {
-      if (B == null)
+      if (B is null)
       {
-        throw new System.ArgumentNullException("B cannot be null.");
+        throw new System.ArgumentNullException(nameof(B));
       }
       Compute();
+      if (l is null)
+        throw new InvalidProgramException();
+
       if (!ispd)
       {
         throw new NotPositiveDefiniteException();
@@ -236,11 +247,14 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentException">The number of rows of A and the length of B must be the same.</exception>
     public ComplexDoubleVector Solve(IROComplexDoubleVector B)
     {
-      if (B == null)
+      if (B is null)
       {
-        throw new System.ArgumentNullException("B cannot be null.");
+        throw new System.ArgumentNullException(nameof(B));
       }
       Compute();
+      if (l is null)
+        throw new InvalidProgramException();
+
       if (!ispd)
       {
         throw new NotPositiveDefiniteException();

@@ -81,7 +81,9 @@ namespace Altaxo.Calc.Probability
     {
     }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public ChiSquareDistribution(double f, Generator ran)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(ran)
     {
       Initialize(f);

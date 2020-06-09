@@ -561,7 +561,7 @@ if(!(k%100)){
       double[] wrk;        /* nx1 */
 
       bool using_ffdif = true;
-      double[] wrk2 = null; /* nx1, used for differentiating with central differences only */
+      double[] wrk2 = new double[0]; /* nx1, used for differentiating with central differences only */
 
       double mu,  /* damping constant */
         tmp; /* mainly used in matrix & vector multiplications */
@@ -1005,7 +1005,7 @@ if(!(k%100)){
  * http://www-2.cs.cmu.edu/afs/cs/academic/class/15213-f02/www/R07/section_a/Recitation07-SectionA.pdf
  */
 
-    private static void TRANS_MAT_MAT_MULT(double[] a, double[] b, int n, int m, int bsize, double[] weights)
+    private static void TRANS_MAT_MAT_MULT(double[] a, double[] b, int n, int m, int bsize, double[]? weights)
     {
       int i, j, k, jj, kk;
       double sum;

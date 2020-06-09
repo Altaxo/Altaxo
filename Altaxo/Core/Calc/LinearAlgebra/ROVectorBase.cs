@@ -39,21 +39,25 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public int IndexOf(T item)
     {
-      var cnt = Count;
-      for (int i = 0; i < Count; ++i)
-        if (item.Equals(this[i]))
-          return i;
-
+      if (!(item is null))
+      {
+        var cnt = Count;
+        for (int i = 0; i < Count; ++i)
+          if (item.Equals(this[i]))
+            return i;
+      }
       return -1;
     }
 
     public bool Contains(T item)
     {
-      var cnt = Count;
-      for (int i = 0; i < Count; ++i)
-        if (item.Equals(this[i]))
-          return true;
-
+      if (!(item is null))
+      {
+        var cnt = Count;
+        for (int i = 0; i < Count; ++i)
+          if (item.Equals(this[i]))
+            return true;
+      }
       return false;
     }
 

@@ -39,7 +39,7 @@ namespace Altaxo.Calc.Probability
     private double _location;
     private double _scale = 1;
 
-    private object _tempStorePDF;
+    private object? _tempStorePDF;
     private static readonly double _pdfPrecision = Math.Sqrt(DoubleConstants.DBL_EPSILON);
 
     #region construction
@@ -293,13 +293,13 @@ namespace Altaxo.Calc.Probability
 
     public static double PDF(double x, double alpha, double gamma)
     {
-      object store = null;
+      object? store = null;
       return PDF(x, alpha, gamma, ref store, Math.Sqrt(DoubleConstants.DBL_EPSILON));
     }
 
     public static double PDF(double x, double alpha, double gamma, double aga)
     {
-      object store = null;
+      object? store = null;
       return PDF(x, alpha, gamma, aga, ref store, Math.Sqrt(DoubleConstants.DBL_EPSILON));
     }
 
@@ -313,13 +313,13 @@ namespace Altaxo.Calc.Probability
     /// <param name="tempStorage"></param>
     /// <param name="precision">Relative precision goal for the calculation.</param>
     /// <returns></returns>
-    public static double PDF(double x, double alpha, double gamma, ref object tempStorage, double precision)
+    public static double PDF(double x, double alpha, double gamma, ref object? tempStorage, double precision)
     {
       double aga = GetAgaFromAlphaGamma(alpha, gamma);
       return PDF(x, alpha, gamma, aga, ref tempStorage, precision);
     }
 
-    public static double PDF(double x, double alpha, double gamma, double aga, double scale, double pos, ref object tempStorage, double precision)
+    public static double PDF(double x, double alpha, double gamma, double aga, double scale, double pos, ref object? tempStorage, double precision)
     {
       return PDF((x - pos) / scale, alpha, gamma, aga, ref tempStorage, precision) / scale;
     }
@@ -335,7 +335,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="tempStorage"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
-    public static double PDF(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    public static double PDF(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       if (x == 0)
         return PDFforXZero(alpha, gamma, aga);
@@ -374,18 +374,18 @@ namespace Altaxo.Calc.Probability
 
     public static double CDF(double x, double alpha, double gamma)
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       double aga = GetAgaFromAlphaGamma(alpha, gamma);
       return CDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
     public static double CDF(double x, double alpha, double gamma, double aga)
     {
-      object temp = null;
+      object? temp = null;
       return CDF(x, alpha, gamma, aga, ref temp, DefaultPrecision);
     }
 
-    public static double CDF(double x, double alpha, double gamma, ref object tempStorage, double precision)
+    public static double CDF(double x, double alpha, double gamma, ref object? tempStorage, double precision)
     {
       double aga = GetAgaFromAlphaGamma(alpha, gamma);
       return CDF(x, alpha, gamma, aga, ref tempStorage, precision);
@@ -427,7 +427,7 @@ namespace Altaxo.Calc.Probability
       return result;
     }
 
-    public static double CDF(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    public static double CDF(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       // test input parameter
       if (!(alpha > 0 && alpha <= 2))
@@ -452,18 +452,18 @@ namespace Altaxo.Calc.Probability
 
     public static double CCDF(double x, double alpha, double gamma)
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       double aga = GetAgaFromAlphaGamma(alpha, gamma);
       return CCDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
     public static double CCDF(double x, double alpha, double gamma, double aga)
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       return CCDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
-    public static double CCDF(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    public static double CCDF(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       // test input parameter
       if (!(alpha > 0 && alpha <= 2))
@@ -488,18 +488,18 @@ namespace Altaxo.Calc.Probability
 
     public static double XZCDF(double x, double alpha, double gamma)
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       double aga = GetAgaFromAlphaGamma(alpha, gamma);
       return XZCDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
     public static double XZCDF(double x, double alpha, double gamma, double aga)
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       return XZCDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
-    public static double XZCDF(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    public static double XZCDF(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       // test input parameter
       if (!(alpha > 0 && alpha <= 2))
@@ -525,7 +525,7 @@ namespace Altaxo.Calc.Probability
       return result;
     }
 
-    public static void CDFMethodForPositiveX(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision, out double integFromXZero, out double integFromXInfinity, out double offs)
+    public static void CDFMethodForPositiveX(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision, out double integFromXZero, out double integFromXInfinity, out double offs)
     {
       if (alpha <= 0)
         throw new ArgumentException("Alpha must be in the range alpha>0");
@@ -629,18 +629,18 @@ namespace Altaxo.Calc.Probability
 
     public static double Quantile(double p, double alpha, double gamma)
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       double aga = GetAgaFromAlphaGamma(alpha, gamma);
       return Quantile(p, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
     public static double Quantile(double p, double alpha, double gamma, double aga)
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       return Quantile(p, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
-    public static double Quantile(double p, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    public static double Quantile(double p, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       if (p == 0.5)
         return 0;
@@ -659,7 +659,7 @@ namespace Altaxo.Calc.Probability
         x1 = xguess;
       }
 
-      object temp = tempStorage;
+      object? temp = tempStorage;
       double root = double.NaN;
       if (QuickRootFinding.BracketRootByExtensionOnly(delegate (double x)
       { return CDF(x, alpha, gamma, aga, ref temp, precision) - p; }, 0, ref x0, ref x1))
@@ -674,18 +674,18 @@ namespace Altaxo.Calc.Probability
 
     public static double QuantileCCDF(double p, double alpha, double gamma)
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       double aga = GetAgaFromAlphaGamma(alpha, gamma);
       return QuantileCCDF(p, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
     public static double QuantileCCDF(double p, double alpha, double gamma, double aga)
     {
-      object tempStorage = null;
+      object? tempStorage = null;
       return QuantileCCDF(p, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
-    public static double QuantileCCDF(double q, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    public static double QuantileCCDF(double q, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       if (q == 0.5)
         return 0;
@@ -704,7 +704,7 @@ namespace Altaxo.Calc.Probability
         x1 = xguess;
       }
 
-      object temp = tempStorage;
+      object? temp = tempStorage;
       double root = double.NaN;
       if (QuickRootFinding.BracketRootByExtensionOnly(delegate (double x)
       { return CCDF(x, alpha, gamma, aga, ref temp, precision) - q; }, 0, ref x0, ref x1))
@@ -844,7 +844,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="tempStorage">Object that can be used to speed up subsequent calculations of the function. At first use, provide an object initialized with <see langword="null"/> and then provide this object in subsequent calls of this function.</param>
     /// <param name="precision">Relative precision goal.</param>
     /// <returns></returns>
-    public static double PDFforPositiveX(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    public static double PDFforPositiveX(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       const double OneMinus2Eps = 1 - 4 * DoubleConstants.DBL_EPSILON;
       if (!(alpha > 0))
@@ -1026,7 +1026,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
-    public static double PDFAlphaBetween0And01(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    public static double PDFAlphaBetween0And01(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       double smallestexp = GetLog10BoundaryForOneTermOfSeriesExpansionSmall(alpha, DoubleConstants.DBL_EPSILON);
       double lgx = Math.Log10(x);
@@ -1049,7 +1049,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
-    public static double PDFAlphaBetween01And02(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    public static double PDFAlphaBetween01And02(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       double a15 = alpha * Math.Sqrt(alpha);
       double smallestexp = -9 + 0.217147240951625 * ((-1.92074130618617 / a15 + 1.35936488329912 * a15));
@@ -1074,7 +1074,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
-    public static double PDFAlphaBetween02And099(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    public static double PDFAlphaBetween02And099(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       double smallestexp;
       if (alpha <= 0.3)
@@ -1103,7 +1103,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
-    public static double PDFAlphaBetween099And101(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    public static double PDFAlphaBetween099And101(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       if (alpha == 1)
         return PDFAlphaEqualOne(x, alpha, gamma, aga);
@@ -1125,7 +1125,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
-    public static double PDFAlphaBetween101And199999(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    public static double PDFAlphaBetween101And199999(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       if (x <= 1E-2)
         return PDFSeriesSmallXFeller(x, alpha, gamma, aga);
@@ -1146,7 +1146,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
-    public static double PDFAlphaBetween199999And2(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    public static double PDFAlphaBetween199999And2(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       if (alpha == 2)
         return Math.Exp(-0.25 * x * x) / (2 * Math.Sqrt(Math.PI)); // because gamma must be zero for alpha==2
@@ -1394,7 +1394,7 @@ namespace Altaxo.Calc.Probability
 
     #region Integration
 
-    public static double PDFIntegral(double x, double alpha, double gamma, double aga, ref object temp, double precision)
+    public static double PDFIntegral(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       if (alpha < 1)
       {
@@ -1419,7 +1419,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
-    public static double PDFIntegralA1(double x, double alpha, double gamma, double aga, ref object temp, double precision)
+    public static double PDFIntegralA1(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       if (gamma < 0)
       {
@@ -1488,7 +1488,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
-    public static double PDFIntegralAlt1Gn(double x, double alpha, double gamma, double aga, ref object temp, double precision)
+    public static double PDFIntegralAlt1Gn(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
 
@@ -1521,7 +1521,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
-    public static double PDFIntegralAlt1GnI(double x, double alpha, double gamma, double aga, ref object temp, double precision)
+    public static double PDFIntegralAlt1GnI(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
 
@@ -1541,7 +1541,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
-    public static double PDFIntegralAlt1GnD(double x, double alpha, double gamma, double aga, ref object temp, double precision)
+    public static double PDFIntegralAlt1GnD(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
 
@@ -1586,7 +1586,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
-    public static double PDFIntegralAlt1Gp(double x, double alpha, double gamma, double aga, ref object temp, double precision)
+    public static double PDFIntegralAlt1Gp(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
 
@@ -1611,7 +1611,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
-    public static double PDFIntegralAlt1GpI(double x, double alpha, double gamma, double aga, ref object temp, double precision)
+    public static double PDFIntegralAlt1GpI(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
 
@@ -1631,7 +1631,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
-    public static double PDFIntegralAlt1GpD(double x, double alpha, double gamma, double aga, ref object temp, double precision)
+    public static double PDFIntegralAlt1GpD(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
 
@@ -1676,7 +1676,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
-    public static double PDFIntegralAgt1Gn(double x, double alpha, double gamma, double aga, ref object temp, double precision)
+    public static double PDFIntegralAgt1Gn(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var factorw, out var dev, out var prefactor);
 
@@ -1700,7 +1700,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
-    public static double PDFIntegralAgt1GnD(double x, double alpha, double gamma, double aga, ref object temp, double precision)
+    public static double PDFIntegralAgt1GnD(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var factorw, out var dev, out var prefactor);
 
@@ -1719,7 +1719,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
-    public static double PDFIntegralAgt1GnI(double x, double alpha, double gamma, double aga, ref object temp, double precision)
+    public static double PDFIntegralAgt1GnI(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var factorw, out var dev, out var prefactor);
 
@@ -1732,7 +1732,7 @@ namespace Altaxo.Calc.Probability
 
     #region CDF Integral
 
-    private static double CDFIntegralForPositiveXAlt1(double x, double alpha, double gamma, double aga, ref object temp, double precision, out bool inverseRuleUsed)
+    private static double CDFIntegralForPositiveXAlt1(double x, double alpha, double gamma, double aga, ref object? temp, double precision, out bool inverseRuleUsed)
     {
       double result;
       if (gamma <= 0)
@@ -1752,7 +1752,7 @@ namespace Altaxo.Calc.Probability
       return result;
     }
 
-    private static double CDFIntegralForPositiveXAgt1(double x, double alpha, double gamma, double aga, ref object temp, double precision)
+    private static double CDFIntegralForPositiveXAgt1(double x, double alpha, double gamma, double aga, ref object? temp, double precision)
     {
       GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var factorw, out var dev, out var logPdfPrefactor);
       var a = new Agt1GnI(factorp, factorw, logPdfPrefactor, alpha, dev);

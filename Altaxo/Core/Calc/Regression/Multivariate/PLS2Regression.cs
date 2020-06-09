@@ -114,8 +114,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     public override void PredictedYAndSpectralResidualsFromPreprocessed(
       IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
       int numFactors, // number of factors to use for prediction
-      IMatrix<double> predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
-      IMatrix<double> spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
+      IMatrix<double>? predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
+      IMatrix<double>? spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
       )
     {
       if (numFactors > NumberOfFactors)
@@ -191,7 +191,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       var Y = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_Y.RowCount, _Y.ColumnCount);
       MatrixMath.Copy(_Y, Y);
 
-      IMatrix<double> u_prev = null;
+      IMatrix<double>? u_prev = null;
       var w = new MatrixMath.MatrixWithOneRow<double>(X.ColumnCount); // horizontal vector of X (spectral) weighting
       var t = new MatrixMath.MatrixWithOneColumn<double>(X.RowCount); // vertical vector of X  scores
       var u = new MatrixMath.MatrixWithOneColumn<double>(X.RowCount); // vertical vector of Y scores
@@ -294,8 +294,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROMatrix<double> W, // weighting matrix
       IROMatrix<double> V,  // Cross product vector
       int numFactors, // number of factors to use for prediction
-      IMatrix<double> predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
-      IMatrix<double> spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
+      IMatrix<double>? predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
+      IMatrix<double>? spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
       )
     {
       // now predicting a "unkown" spectra

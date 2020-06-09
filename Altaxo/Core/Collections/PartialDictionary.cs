@@ -188,13 +188,16 @@ namespace Altaxo.Collections
 
     public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TDerivValue value)
     {
-      if (!_parent.TryGetValue(key, out var d))
+      if (_parent.TryGetValue(key, out var d))
+      {
+        value = d as TDerivValue;
+        return !(value is null);
+      }
+      else
       {
         value = null;
         return false;
       }
-      value = d as TDerivValue;
-      return !(value is null);
     }
 
     IEnumerator IEnumerable.GetEnumerator()

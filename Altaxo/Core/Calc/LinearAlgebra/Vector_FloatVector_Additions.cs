@@ -27,6 +27,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
@@ -42,23 +43,26 @@ namespace Altaxo.Calc.LinearAlgebra
   public partial class FloatVector : Vector<float>
   {
     ///<summary>Implicit cast conversion to <c>FloatVector</c> from <c>float</c> array</summary>
-    public static implicit operator FloatVector(float[] src)
+    [return: NotNullIfNotNull("src")]
+    public static implicit operator FloatVector?(float[]? src)
     {
-      return new FloatVector(src);
+      return src is null ? null : new FloatVector(src);
     }
 
     ///<summary>Implicit cast conversion to <c>FloatVector</c> from <c>float</c> array</summary>
-    public static FloatVector ToFloatVector(float[] src)
+    [return: NotNullIfNotNull("src")]
+    public static FloatVector? ToFloatVector(float[]? src)
     {
-      return new FloatVector(src);
+      return src is null ? null : new FloatVector(src);
     }
 
     ///<summary>Explicit cast conversion to <c>FloatVector</c> from <c>DoubleVector</c></summary>
-    public static explicit operator FloatVector(DoubleVector src)
+    [return: NotNullIfNotNull("src")]
+    public static explicit operator FloatVector?(DoubleVector? src)
     {
-      if (src == null)
+      if (src is null)
       {
-        throw new ArgumentNullException("DoubleVector cannot be null");
+        return null;
       }
       var ret = new FloatVector(src.Length);
       // Can't use Array.Copy to implicitly copy from a double[] to a float[]
