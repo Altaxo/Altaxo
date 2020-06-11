@@ -1964,6 +1964,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// Infrastructure: intended to be used by graph views to draw the overlay (the selection rectangles and handles of the currently selected tool) into a bitmap.
     /// </summary>
     /// <param name="g">The graphics contexts (ususally created from a bitmap).</param>
+    /// <param name="zoomFactor">The current zoom factor.</param>
+    /// <param name="positionOfViewportsUpperLeftCornerInGraphCoordinates">The position Of viewports upper left corner in graph coordinates.</param>
     public void DoPaintOverlay(Graphics g, double zoomFactor, PointD2D positionOfViewportsUpperLeftCornerInGraphCoordinates)
     {
       // g.SmoothingMode = SmoothingMode.AntiAlias;

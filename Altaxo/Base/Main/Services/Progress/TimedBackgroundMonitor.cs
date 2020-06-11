@@ -31,7 +31,9 @@ namespace Altaxo.Main.Services
   {
     private System.Timers.Timer _timer = new System.Timers.Timer(200);
     private bool _shouldReport;
+#pragma warning disable CS0649
     private CancellationToken _cancellationToken;
+#pragma warning restore CS0649
     private string _reportText;
     private double _progressFraction = double.NaN;
     private OperationStatus _operationStatus;

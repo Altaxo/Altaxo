@@ -168,7 +168,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
       private int _firstColumn;
       private int _columnCount;
-      private DataTable _dataTable;
+      // private DataTable _dataTable;
       private List<string> _columns;
 
       public DataColumnBundleNode(List<string> columnList, int firstColumn, int columnCount)

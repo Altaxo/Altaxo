@@ -41,14 +41,14 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
       {
         case '*':
         case '_':
-          if (obj.IsDouble)
+          if (obj.DelimiterCount == 2)
             mamlElement = MamlElements.legacyBold;
           else
             mamlElement = MamlElements.legacyItalic;
           break;
 
         case '~':
-          if (obj.IsDouble)
+          if (obj.DelimiterCount == 2)
             mamlElement = MamlElements.legacyStrikethrough;
           else
             mamlElement = MamlElements.subscript;

@@ -60,7 +60,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Borrows a brush for temporary use. Please embed the returned <see cref="GdiPen"/> in a using statement, so that it is properly returned to the cache.
     /// </summary>
-    /// <param name="brush">The <see cref="BrushX"/>.</param>
+    /// <param name="pen">The <see cref="PenX"/> that is used as template for the <see cref="GdiPen"/> to return.</param>
     /// <param name="boundingRectangle">The bounding rectangle of the brush.</param>
     /// <param name="effectiveMaximumResolutionDpi">The maximum effective resolution of the graphics.</param>
     /// <returns>A <see cref="GdiPen"/> object for temporary use.</returns>

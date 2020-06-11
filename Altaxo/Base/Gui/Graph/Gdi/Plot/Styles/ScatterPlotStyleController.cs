@@ -232,7 +232,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public override bool Apply(bool disposeController)
     {
-      bool applyResult = true;
+      // bool applyResult = true;
       // don't trust user input, so all into a try statement
       try
       {

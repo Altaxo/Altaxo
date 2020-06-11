@@ -34,7 +34,6 @@ using Altaxo.Graph.Scales.Ticks;
 namespace Altaxo.Graph.Gdi.Axis
 {
   using Altaxo.Drawing;
-  using Drawing;
   using Gdi.LabelFormatting;
   using Geometry;
 

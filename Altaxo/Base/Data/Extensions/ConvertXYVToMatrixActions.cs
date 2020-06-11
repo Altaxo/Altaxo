@@ -37,7 +37,8 @@ namespace Altaxo.Data
     /// <summary>
     /// Creates a matrix from three selected columns. This must be a x-column, a y-column, and a value column.
     /// </summary>
-    /// <param name="ctrl">Controller where the columns are selected in.</param>
+    /// <param name="srcTable">The source table containing the columns.</param>
+    /// <param name="selectedDataColumns">Indices of the data columns that should be used.</param>
     /// <returns>Null if no error occurs, or an error message.</returns>
     public static string DoMakeActionWithoutDialog(this DataTable srcTable, IAscendingIntegerCollection selectedDataColumns)
     {

@@ -82,6 +82,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="selectedColumns">Columns for which to create plot items.</param>
     /// <param name="xColumnName">Name of the x column. If it is null or empty, or that column is not found in the table, the current assigned x column is used.</param>
+    /// <param name="yColumnName">Name of the y column.</param>
     /// <param name="templatePlotStyle">The template plot style used to create the basic plot item.</param>
     /// <param name="processedColumns">On return, contains all columns that where used in creating the plot items. That are
     /// not only the columns given in the first argument, but maybe also columns that are right to those columns in the table and have special kinds, like

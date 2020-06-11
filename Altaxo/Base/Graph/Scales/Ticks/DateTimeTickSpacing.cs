@@ -276,6 +276,16 @@ namespace Altaxo.Graph.Scales.Ticks
         return (other is TimeSpanEx) ? Equals((TimeSpanEx)other) : false;
       }
 
+      public override bool Equals(object obj)
+      {
+        return obj is TimeSpanEx other ? Equals(other) : false;
+      }
+
+      public override int GetHashCode()
+      {
+        return _span.GetHashCode() + 13 * _unit.GetHashCode();
+      }
+
       public static bool operator ==(TimeSpanEx x, TimeSpanEx y)
       {
         return x.Equals(y);

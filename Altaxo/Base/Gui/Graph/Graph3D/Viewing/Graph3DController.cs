@@ -78,10 +78,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     private IGraphicsContext3D _drawing;
 
-    /// <summary>
-    /// Additional geometry, that is not part of the graph, for instance the selection markers.
-    /// </summary>
-    private IGraphicsContext3D __markerGeometry;
+    // <summary>
+    // Additional geometry, that is not part of the graph, for instance the selection markers.
+    // </summary>
+    // private IGraphicsContext3D __markerGeometry;
 
     /// <summary>
     /// If true, markers are shown in each of the corners of the graph document.
@@ -1286,6 +1286,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// </summary>
     /// <param name="position">Mouse position. X and Y components are the current relative mouse coordinates, the Z component is the screen's aspect ratio.</param>
     /// <param name="e">MouseEventArgs.</param>
+    /// <param name="modifierKeys"></param>
     public virtual void EhView_GraphPanelMouseDown(PointD3D position, AltaxoMouseEventArgs e, AltaxoKeyboardModifierKeys modifierKeys)
     {
       bool isSHIFTpressed = modifierKeys.HasFlag(AltaxoKeyboardModifierKeys.Shift);

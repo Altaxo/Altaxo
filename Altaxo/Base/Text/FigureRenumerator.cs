@@ -424,7 +424,7 @@ namespace Altaxo.Text
 
 
     /// <summary>
-    /// Helper function that works like <see cref="string.TrimStart"/> but additionally tracks the position.
+    /// Helper function that works like TrimStart but additionally tracks the position.
     /// </summary>
     /// <param name="text">The text tuple, consisting of the text and the position of that text in the source text.</param>
     /// <returns>The text trimmed at the start, and the position of the trimmed text in the source text.</returns>

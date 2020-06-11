@@ -44,12 +44,15 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// Initializes the name of the label column.
     /// </summary>
     /// <param name="columnAsText">Label column's name.</param>
+    /// <param name="toolTip"></param>
+    /// <param name="status"></param>
     void Init_DataColumn(string columnAsText, string toolTip, int status);
 
     /// <summary>
     /// Initializes the transformation text.
     /// </summary>
     /// <param name="text">Text for the transformation</param>
+    /// <param name="toolTip"></param>
     void Init_DataColumnTransformation(string text, string toolTip);
 
     double SymbolSizeAt0 { get; set; }

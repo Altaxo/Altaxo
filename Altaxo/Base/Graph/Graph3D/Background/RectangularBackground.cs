@@ -271,7 +271,7 @@ namespace Altaxo.Graph.Graph3D.Background
     }
 
     /// <summary>
-    /// Gets the rectangle for the background to draw. Used both by <see cref="Measure"/> as well as <see cref="Draw"/>.
+    /// Gets the rectangle for the background to draw. Used both by <see cref="Measure"/> as well as <see cref="Draw(IGraphicsContext3D, RectangleD3D)"/>.
     /// </summary>
     /// <param name="itemRectangle">The item rectangle.</param>
     /// <returns></returns>

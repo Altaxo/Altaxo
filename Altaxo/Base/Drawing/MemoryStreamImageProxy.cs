@@ -26,6 +26,7 @@ using System;
 using System.IO;
 using System.Text;
 using Altaxo.Geometry;
+using Altaxo.Serialization.Xml;
 
 #nullable enable
 
@@ -80,22 +81,24 @@ namespace Altaxo.Drawing
                 */
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
       }
 
-      public virtual MemoryStreamImageProxy SDeserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual MemoryStreamImageProxy SDeserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var url = info.GetString("Url");
         var name = info.GetString("Name");
         var hash = info.GetString("Hash");
-        var stream = info.GetMemoryStream("Stream");
+        var stream = info.GetMemoryStream("Stream") ?? throw new DeserializationNullException("Stream", parent);
         var extension = ".png";
 
         if (string.IsNullOrEmpty(name))
           name = "Image"; // to prevent ArgumentNullExceptions
+
+
 
         return new MemoryStreamImageProxy(
           stream: stream,
@@ -126,19 +129,19 @@ namespace Altaxo.Drawing
         s_stream.Dispose();
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
       }
 
-      public virtual MemoryStreamImageProxy SDeserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual MemoryStreamImageProxy SDeserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var url = info.GetString("Url");
         var name = info.GetString("Name");
         var hash = info.GetString("Hash");
         var extension = info.GetString("Extension");
-        var stream = info.GetMemoryStream("Stream");
+        var stream = info.GetMemoryStream("Stream") ?? throw new DeserializationNullException("Stream", parent);
 
         return new MemoryStreamImageProxy(
           stream: stream,

@@ -37,7 +37,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Altaxo.Graph;
   using Altaxo.Main;
   using Data;
-  using Drawing;
   using Geometry;
   using Groups;
 

@@ -294,36 +294,36 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         _reportTextDirty = true;
       }
 
-      public bool CancellationPending => _cancellationTokenSource.IsCancellationRequested;
+      public new bool CancellationPending => _cancellationTokenSource.IsCancellationRequested;
 
-      public bool HasReportText => _reportTextDirty;
+      public new bool HasReportText => _reportTextDirty;
 
-      public bool ShouldReportNow => _reportTextDirty;
+      public new bool ShouldReportNow => _reportTextDirty;
 
-      public double GetProgressFraction()
+      public new double GetProgressFraction()
       {
         return 0;
       }
 
-      public string GetReportText()
+      public new string GetReportText()
       {
         return _reportText;
       }
 
-      public void ReportProgress(string text)
+      public new void ReportProgress(string text)
       {
       }
 
-      public void ReportProgress(string text, double progressValue)
+      public new void ReportProgress(string text, double progressValue)
       {
       }
 
-      public void SetCancellationPending()
+      public new void SetCancellationPending()
       {
         _cancellationTokenSource.Cancel();
       }
 
-      public void SetShouldReportNow()
+      public new void SetShouldReportNow()
       {
         _reportTextDirty = true;
       }

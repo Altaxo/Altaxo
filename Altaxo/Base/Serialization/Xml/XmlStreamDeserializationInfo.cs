@@ -604,7 +604,7 @@ namespace Altaxo.Serialization.Xml
 #if !NONULLSTRICTCHECK
       return GetValueOrNull(parentobject) ?? throw new DeserializationNullException(name, parentobject);
 #else
-      return GetValueOrNull(parentobject);
+      return GetValueOrNull(parentobject)!;
 #endif
     }
 
@@ -737,7 +737,7 @@ namespace Altaxo.Serialization.Xml
 
 
 
-    public void GetBaseValueEmbedded(object instance, System.Type basetype, object parent)
+    public void GetBaseValueEmbedded(object instance, System.Type basetype, object? parent)
     {
       if ("BaseType" == CurrentElementName)
       {
@@ -761,7 +761,7 @@ namespace Altaxo.Serialization.Xml
     /// <param name="instance">The instance of the object to deserialize.</param>
     /// <param name="fullyQualifiedBaseTypeName">Fully qualified base type name. It is the short name of the assembly, comma, the full type name, comma, and the version. The string must not contain whitespaces. Example: 'AltaxoBase,SampleFileRenamer.Main.DocumentPath,0'.</param>
     /// <param name="parent">The parent object of the current object to deserialize.</param>
-    public object GetBaseValueEmbedded(object instance, string fullyQualifiedBaseTypeName, object parent)
+    public object GetBaseValueEmbedded(object instance, string fullyQualifiedBaseTypeName, object? parent)
     {
       object? obj;
       if ("BaseType" == CurrentElementName)
@@ -786,7 +786,7 @@ namespace Altaxo.Serialization.Xml
       return obj;
     }
 
-    public void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent)
+    public void GetBaseValueStandalone(string name, object instance, System.Type basetype, object? parent)
     {
       if (_surrogateSelector.GetSurrogate(basetype) is { } ss)
       {

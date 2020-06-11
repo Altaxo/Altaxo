@@ -46,15 +46,15 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (EmbeddedImageGraphic)obj;
-        info.AddBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType);
-        info.AddValue("Image", s._imageProxy);
+        info.AddBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType!);
+        info.AddValueOrNull("Image", s._imageProxy);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         EmbeddedImageGraphic s = null != o ? (EmbeddedImageGraphic)o : new EmbeddedImageGraphic();
-        info.GetBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType, parent);
-        s.Image = (ImageProxy)info.GetValue("Image", s);
+        info.GetBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType!, parent);
+        s.Image = info.GetValueOrNull<ImageProxy>("Image", s);
         return s;
       }
     }

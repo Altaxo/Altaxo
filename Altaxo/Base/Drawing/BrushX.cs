@@ -88,7 +88,7 @@ namespace Altaxo.Drawing
                 */
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o as BrushX ?? new BrushX(NamedColors.Black);
 
@@ -163,7 +163,7 @@ namespace Altaxo.Drawing
                 */
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o as BrushX ?? new BrushX(NamedColors.Black);
 
@@ -185,8 +185,8 @@ namespace Altaxo.Drawing
             s._foreColor = (NamedColor)info.GetValue("ForeColor", s);
             s._backColor = (NamedColor)info.GetValue("BackColor", s);
             s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
-            var gm = (LinearGradientModeEx)info.GetEnum("GradientMode", typeof(LinearGradientModeEx));
-            var gmname = Enum.GetName(typeof(LinearGradientModeEx), gm);
+            var gm = info.GetEnum<LinearGradientModeEx>("GradientMode");
+            var gmname = Enum.GetName(typeof(LinearGradientModeEx), gm) ?? string.Empty;
             if (gmname.StartsWith("Rev"))
             {
               s._exchangeColors = true;
@@ -281,7 +281,7 @@ namespace Altaxo.Drawing
                 */
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o as BrushX ?? new BrushX(NamedColors.Black);
 
@@ -399,7 +399,7 @@ namespace Altaxo.Drawing
             info.AddValue("Scale", s._textureScale);
             info.AddValue("OffsetX", s._offsetX);
             info.AddValue("OffsetY", s._offsetY);
-            info.AddValue("Texture", s._textureImage);
+            info.AddValueOrNull("Texture", s._textureImage);
             break;
 
           case BrushType.TextureBrush:
@@ -408,12 +408,12 @@ namespace Altaxo.Drawing
             info.AddValue("Scale", s._textureScale);
             info.AddValue("OffsetX", s._offsetX);
             info.AddValue("OffsetY", s._offsetY);
-            info.AddValue("Texture", s._textureImage);
+            info.AddValueOrNull("Texture", s._textureImage);
             break;
         } // end of switch
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o as BrushX ?? new BrushX(NamedColors.Black);
 

@@ -130,6 +130,11 @@ namespace Altaxo.Drawing
         Equals(BrushX, other.BrushX);
     }
 
+    public override bool Equals(object? obj)
+    {
+      return obj is BrushXEnv other ? Equals(other) : false;
+    }
+
     public static bool operator ==(BrushXEnv x, BrushXEnv y)
     {
       return x.Equals(y);

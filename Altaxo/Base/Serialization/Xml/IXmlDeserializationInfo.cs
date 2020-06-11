@@ -139,11 +139,11 @@ namespace Altaxo.Serialization.Xml
 
     object? GetValueOrOuterXml(string name, object parent, out bool returnValueIsOuterXml);
 
-    void GetBaseValueEmbedded(object instance, System.Type basetype, object parent);
+    void GetBaseValueEmbedded(object instance, System.Type basetype, object? parent);
 
-    object GetBaseValueEmbedded(object instance, string fullyQualifiedBasetypeName, object parent);
+    object GetBaseValueEmbedded(object instance, string fullyQualifiedBasetypeName, object? parent);
 
-    void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent);
+    void GetBaseValueStandalone(string name, object instance, System.Type basetype, object? parent);
 
     string GetElementAsOuterXml(string name);
 

@@ -32,7 +32,6 @@ using System.Text;
 namespace Altaxo.Graph.Gdi.Shapes
 {
   using Altaxo.Drawing;
-  using Drawing;
   using Geometry;
   using Graph.Plot.Data;
   using Plot;

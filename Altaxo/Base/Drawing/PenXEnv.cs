@@ -80,7 +80,7 @@ namespace Altaxo.Drawing
         PenX == other.PenX;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return obj is PenXEnv other ? Equals(other) : false;
     }

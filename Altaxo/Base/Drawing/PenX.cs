@@ -199,7 +199,7 @@ if (0 != (cp & PenHolder.Configured.Width))
  */
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = null != o ? (PenX)o : new PenX();
 
@@ -329,7 +329,7 @@ if (0 != (cp & PenX.Configured.Width))
 */
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = null != o ? (PenX)o : new PenX();
 
@@ -464,7 +464,7 @@ if (0 != (cp & PenX.Configured.Width))
 */
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = null != o ? (PenX)o : new PenX();
 
@@ -610,7 +610,7 @@ if (0 != (cp & PenX.Configured.Width))
           */
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = null != o ? (PenX)o : new PenX();
 
@@ -744,13 +744,13 @@ if (0 != (cp & PenX.Configured.Width))
         }
 
         if (0 != (cp & Configured.Transform))
-          info.AddValue("Transformation", s.Transformation);
+          info.AddValue("Transformation", s.Transformation!);
 
         if (0 != (cp & Configured.CompoundArray))
-          info.AddArray("CompoundArray", s.CompoundArray, s.CompoundArray?.Length ?? 0);
+          info.AddArray("CompoundArray", s.CompoundArray!, s.CompoundArray?.Length ?? 0);
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = new PenX();
         var cp = (Configured)info.GetInt32("Configured");

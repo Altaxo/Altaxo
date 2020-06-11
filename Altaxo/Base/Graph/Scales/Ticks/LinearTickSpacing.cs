@@ -946,7 +946,8 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <param name="isEndExtendable">if set to <c>true</c>, it is allowed to adjust the scale end value.</param>
     /// <param name="propOrg">The adjusted scale orgin.</param>
     /// <param name="propEnd">The adjusted scale end.</param>
-    /// <param name="majorSpan">The physical value that corresponds to one major tick interval.</param>
+    /// <param name="majorSpanRaw">The physical value that corresponds to one major tick interval.</param>
+    /// <param name="majorSpanDecadicExponent">The decadic exponent to get from <paramref name="majorSpanRaw"/> the true major span.</param>
     /// <param name="minorTicks">Number of minor ticks per major tick interval. This variable has some special values (see <see cref="MinorTicks"/>).</param>
     /// <returns>True if at least either org or end were adjusted to a new value.</returns>
     private bool GetOrgEndWithTickSnappingOnly(double overriddenScaleSpan, double scaleOrg, double scaleEnd, bool isOrgExtendable, bool isEndExtendable, out double propOrg, out double propEnd, out double majorSpanRaw, out int majorSpanDecadicExponent, out int minorTicks)

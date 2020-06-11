@@ -350,11 +350,13 @@ namespace Altaxo.Main
 
     public IEnumerable<string> ProjectFileExtensions => throw new NotImplementedException();
 
+#pragma warning disable CS0067
     public event ProjectEventHandler ProjectOpened;
     public event ProjectEventHandler ProjectClosed;
     public event ProjectRenameEventHandler ProjectRenamed;
     public event ProjectEventHandler ProjectDirtyChanged;
     public event ProjectEventHandler ProjectChanged;
+#pragma warning restore CS0067
 
     public void AskForSavingOfProject(CancelEventArgs e)
     {

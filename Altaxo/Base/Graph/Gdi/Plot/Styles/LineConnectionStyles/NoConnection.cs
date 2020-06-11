@@ -74,6 +74,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     /// <param name="symbolGap">The size of the symbol gap. Argument is the original index of the data. The return value is the absolute symbol gap at this index.
     /// This function is null if no symbol gap is required.</param>
     /// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
+    /// <param name="connectCircular">If true, connects the end point with the starting point.</param>
+    /// <param name="linePlotStyle">The plot style.</param>
     public override void PaintOneRange(
       Graphics g,
       PointF[] allLinePoints,

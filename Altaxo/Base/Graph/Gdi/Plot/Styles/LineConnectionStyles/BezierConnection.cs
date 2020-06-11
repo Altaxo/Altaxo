@@ -225,6 +225,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     /// <param name="fillDirection">Designates a bound to fill to.</param>
     /// <param name="linePoints">The points that mark the line.</param>
     /// <param name="connectCircular">If true, a circular connection is drawn.</param>
+    /// <param name="logicalShiftX">Logical shift in x-direction.</param>
+    /// <param name="logicalShiftY">Logical shift in y-direction.</param>
     private void FillOneRange_PreprocessedPoints(
     GraphicsPath gp,
       Processed2DPlotData pdata,
