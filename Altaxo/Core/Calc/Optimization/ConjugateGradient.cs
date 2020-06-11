@@ -43,6 +43,26 @@ namespace Altaxo.Calc.Optimization
   /// </remarks>
   public class ConjugateGradient : FunctionMinimizeMethod
   {
+#nullable disable
+    private DoubleVector g;
+    //DoubleVector gold;
+
+    private int restartCount = 0;
+    private int restartCounter = 0;
+
+    private LineSearchMethod lineSearchMethod_;
+
+    private DoubleVector[] iterationDirections_;
+    private double[] iterationTrialSteps_;
+    private DoubleVector[] iterationGradients_;
+
+    private double delta_new;
+    private double delta_old;
+    private double delta_mid;
+    private DoubleVector s;
+
+#nullable enable
+
     ///<summary>Constructor for Conjugate Gradient Method. The constructor specifies the
     /// costfunction and optionally user specified ending criteria and line search methods.</summary>
     ///<param name="costfunction">Nonlinear cost function to minimize.</param>
@@ -85,13 +105,7 @@ namespace Altaxo.Calc.Optimization
       }
     }
 
-    private DoubleVector g;
-    //DoubleVector gold;
 
-    private int restartCount = 0;
-    private int restartCounter = 0;
-
-    private LineSearchMethod lineSearchMethod_;
 
     ///<summary> Method Name </summary>
     public override string MethodName
@@ -99,14 +113,6 @@ namespace Altaxo.Calc.Optimization
       get { return "Conjugate Gradient Method"; }
     }
 
-    private DoubleVector[] iterationDirections_;
-    private double[] iterationTrialSteps_;
-    private DoubleVector[] iterationGradients_;
-
-    private double delta_new;
-    private double delta_old;
-    private double delta_mid;
-    private DoubleVector s;
 
     ///<summary> Initialize the optimization method </summary>
     ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>

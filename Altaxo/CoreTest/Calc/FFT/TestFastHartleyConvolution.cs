@@ -187,7 +187,7 @@ namespace AltaxoTest.Calc.Fourier
 
     private void MyConvolution(double[] re1, double[] re2, double[] re, int n)
     {
-      FastHartleyTransform.CyclicRealConvolution(re1, re2, re, n, null);
+      FastHartleyTransform.CyclicRealConvolution(re1, re2, re, n);
     }
 
     [Test]

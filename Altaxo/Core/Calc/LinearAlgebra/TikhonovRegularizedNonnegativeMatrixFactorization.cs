@@ -51,8 +51,8 @@ namespace Altaxo.Calc.LinearAlgebra
     public static void TikhonovNMF3(
           IMatrix<double> A,
           int r,
-          IMatrix<double> B0,
-          IMatrix<double> C0,
+          IMatrix<double>? B0,
+          IMatrix<double>? C0,
           IVector<double> oldalpha,
     IVector<double> oldbeta,
     IMatrix<double> gammaB,

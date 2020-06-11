@@ -32,9 +32,10 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// </summary>
   public class PLS1Regression : MultivariateRegression
   {
+#nullable disable
     private PLS1CalibrationModel _calib;
-
     protected IExtensibleVector<double> _PRESS;
+#nullable enable
 
     public IROVector<double> PRESS { get { return _PRESS; } }
 
@@ -118,15 +119,15 @@ namespace Altaxo.Calc.Regression.Multivariate
     public override void PredictedYAndSpectralResidualsFromPreprocessed(
       IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
       int numFactors, // number of factors to use for prediction
-      IMatrix<double> predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
-      IMatrix<double> spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
+      IMatrix<double>? predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
+      IMatrix<double>? spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
       )
     {
       if (numFactors > NumberOfFactors)
         throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})", numFactors, NumberOfFactors));
 
-      IMatrix<double> helperY = predictedY == null ? null : new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, 1);
-      IMatrix<double> helperS = spectralResiduals == null ? null : new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, 1);
+      IMatrix<double>? helperY = predictedY is null ? null : new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, 1);
+      IMatrix<double>? helperS = spectralResiduals is null ? null : new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, 1);
       for (int i = 0; i < _calib.NumberOfY; i++)
       {
         PLS2Regression.Predict(
@@ -140,9 +141,9 @@ namespace Altaxo.Calc.Regression.Multivariate
           helperS // Matrix of spectral residuals, n rows x 1 column, can be zero
           );
 
-        if (null != predictedY)
+        if (!(helperY is null || predictedY is null))
           MatrixMath.Copy(helperY, predictedY, 0, i);
-        if (null != spectralResiduals)
+        if (!(spectralResiduals is null || helperS is null))
           MatrixMath.Copy(helperS, spectralResiduals, 0, i);
       }
     }

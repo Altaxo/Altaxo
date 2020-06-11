@@ -221,6 +221,7 @@ namespace Altaxo.Calc.Ode
 
     /// <summary>Matrix multiplication</summary>
     /// <param name="v">Vector</param>
+    /// <param name="m">2nd factor</param>
     /// <returns></returns>
     public static Vector operator *(Vector v, SparseMatrix m)
     {

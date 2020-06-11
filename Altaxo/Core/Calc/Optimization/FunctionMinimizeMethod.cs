@@ -44,6 +44,7 @@ namespace Altaxo.Calc.Optimization
   /// </remarks>
   public abstract class FunctionMinimizeMethod : OptimizationMethod
   {
+#nullable disable
     ///<summary> Iteration Solutions </summary>
     protected DoubleVector[] iterationVectors_;
 
@@ -52,6 +53,8 @@ namespace Altaxo.Calc.Optimization
 
     ///<summary> Iteration Gradient Norms </summary>
     protected double[] iterationGradientNorms_;
+
+#nullable enable
 
     ///<summary> Get solution vectors for all iterations </summary>
     public DoubleVector[] IterationVectors

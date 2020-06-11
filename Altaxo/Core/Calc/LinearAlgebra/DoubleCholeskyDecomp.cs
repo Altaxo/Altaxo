@@ -42,10 +42,12 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </remarks>
   public sealed class DoubleCholeskyDecomp : Algorithm
   {
+#nullable disable
     private readonly int order;
     private bool ispd = true;
     private DoubleMatrix l;
     private DoubleMatrix matrix;
+#nullable enable
 
     ///<summary>Constructor for Cholesky decomposition class. The constructor performs the factorization of a symmetric positive
     ///definite matrax and the Cholesky factored matrix is accessible by the <c>Factor</c> property. The factor is the lower
@@ -57,7 +59,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///upper triangle.</remarks>
     public DoubleCholeskyDecomp(IROMatrix<double> matrix)
     {
-      if (matrix == null)
+      if (matrix is null)
       {
         throw new System.ArgumentNullException("matrix cannot be null.");
       }

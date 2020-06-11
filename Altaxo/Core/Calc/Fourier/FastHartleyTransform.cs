@@ -1161,6 +1161,19 @@ namespace Altaxo.Calc.Fourier
     /// <param name="resp">The second input array (the response function).</param>
     /// <param name="result">The result of the convolution.</param>
     /// <param name="n">The convolution size. The provided arrays may be larger than n, but of course not smaller.</param>
+    public static void CyclicRealConvolution(double[] data, double[] resp, double[] result, int n)
+    {
+      double[]? scratch = null;
+      CyclicRealConvolution(data, resp, result, n, ref scratch);
+    }
+
+    /// <summary>
+    /// Performs a cyclic convolution of two real valued arrays. The content of the input arrays is leaved intact.
+    /// </summary>
+    /// <param name="data">The first input array (the data).</param>
+    /// <param name="resp">The second input array (the response function).</param>
+    /// <param name="result">The result of the convolution.</param>
+    /// <param name="n">The convolution size. The provided arrays may be larger than n, but of course not smaller.</param>
     /// <param name="scratch">A helper array of at least size n. If null or a smaller array is provided, a new array will be allocated automatically.</param>
     public static void CyclicRealConvolution(double[] data, double[] resp, double[] result, int n, ref double[]? scratch)
     {

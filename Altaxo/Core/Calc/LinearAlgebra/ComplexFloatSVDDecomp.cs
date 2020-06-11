@@ -43,11 +43,13 @@ namespace Altaxo.Calc.LinearAlgebra
   {
     private const int MAXITER = 1000;
 
+#nullable disable
     private ComplexFloatMatrix u;
     private ComplexFloatMatrix v;
     private ComplexFloatMatrix w;
     private ComplexFloatMatrix matrix;
     private ComplexFloatVector s;
+#nullable enable
 
     private readonly bool computeVectors;
     private int rank;
@@ -140,7 +142,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public ComplexFloatSVDDecomp(IROComplexFloatMatrix matrix, bool computeVectors)
     {
-      if (matrix == null)
+      if (matrix is null)
       {
         throw new System.ArgumentNullException("matrix cannot be null.");
       }
@@ -658,7 +660,9 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           if (ii == jj)
           {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             w[ii, ii] = s[ii];
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
           }
         }
       }

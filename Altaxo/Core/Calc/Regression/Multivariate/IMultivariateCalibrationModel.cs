@@ -47,7 +47,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       get;
     }
 
-    IMultivariatePreprocessingModel? PreprocessingModel
+    IMultivariatePreprocessingModel PreprocessingModel
     {
       get;
     }
@@ -61,14 +61,21 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     private MultivariatePreprocessingModel? _preprocessingData;
 
-    public IMultivariatePreprocessingModel? PreprocessingModel
+    public IMultivariatePreprocessingModel PreprocessingModel
     {
-      get { return _preprocessingData; }
+      get { return _preprocessingData ?? throw new InvalidOperationException($"{nameof(PreprocessingModel)} not set yet!"); }
     }
 
     public void SetPreprocessingModel(MultivariatePreprocessingModel? val)
     {
       _preprocessingData = val;
+    }
+
+    public void Reset()
+    {
+      _preprocessingData = null;
+      _numberOfFactors = 0;
+
     }
 
     public int NumberOfX

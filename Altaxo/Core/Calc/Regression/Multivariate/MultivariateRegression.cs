@@ -135,8 +135,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     public virtual void Reset()
     {
-      InternalCalibrationModel.NumberOfFactors = 0;
-      InternalCalibrationModel.SetPreprocessingModel(null);
+      InternalCalibrationModel.Reset();
     }
 
     #endregion Properties and helpers
@@ -653,10 +652,10 @@ namespace Altaxo.Calc.Regression.Multivariate
       //      int[][] groups = bExcludeGroups ? new ExcludeGroupsGroupingStrategy().Group(Y) : new ExcludeSingleMeasurementsGroupingStrategy().Group(Y);
       int[][] groups = groupingStrategy.Group(Y);
 
-      IMatrix<double> XX = null;
-      IMatrix<double> YY = null;
-      IMatrix<double> XU = null;
-      IMatrix<double> YU = null;
+      IMatrix<double>? XX = null;
+      IMatrix<double>? YY = null;
+      IMatrix<double>? XU = null;
+      IMatrix<double>? YU = null;
 
       for (int nGroup = 0, prevNumExcludedSpectra = int.MinValue; nGroup < groups.Length; nGroup++)
       {
@@ -671,6 +670,9 @@ namespace Altaxo.Calc.Regression.Multivariate
           YU = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfExcludedSpectraOfGroup, Y.ColumnCount);
           prevNumExcludedSpectra = numberOfExcludedSpectraOfGroup;
         }
+
+        if (XX is null || YY is null || XU is null || YU is null)
+          throw new InvalidProgramException();
 
         // build a new x and y matrix with the group information
         // fill XX and YY with values

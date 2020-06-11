@@ -43,11 +43,13 @@ namespace Altaxo.Calc.LinearAlgebra
   {
     private const int MAXITER = 1000;
 
+#nullable disable
+    private DoubleMatrix matrix;
     private DoubleMatrix u;
     private DoubleMatrix v;
     private DoubleMatrix w;
-    private DoubleMatrix matrix;
     private DoubleVector s;
+#nullable enable
 
     private bool computeVectors;
     private int rank;
@@ -140,7 +142,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public DoubleSVDDecomp(IROMatrix<double> matrix, bool computeVectors)
     {
-      if (matrix == null)
+      if (matrix is null)
       {
         throw new System.ArgumentNullException("matrix cannot be null.");
       }

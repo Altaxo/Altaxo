@@ -43,6 +43,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </remarks>
   public sealed class DoubleLUDecomp : Algorithm
   {
+#nullable disable
     private bool singular;
     private int[] pivots;
     private int order;
@@ -57,6 +58,8 @@ namespace Altaxo.Calc.LinearAlgebra
     private double[] factor;
 #endif
 
+#nullable enable
+
     ///<summary>Constructor for LU decomposition class. The constructor performs the factorization and the upper and
     ///lower matrices are accessible by the <c>U</c> and <c>L</c> properties.</summary>
     ///<param name="matrix">The matrix to factor.</param>
@@ -64,7 +67,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="NotSquareMatrixException">matrix is not square.</exception>
     public DoubleLUDecomp(IROMatrix<double> matrix)
     {
-      if (matrix == null)
+      if (matrix is null)
       {
         throw new System.ArgumentNullException("matrix cannot be null.");
       }

@@ -43,7 +43,7 @@ namespace Altaxo.Calc.LinearAlgebra
   {
     private readonly FloatMatrix matrix;
     private bool isFullRank = true;
-
+#nullable disable
     private FloatMatrix q_;
     private FloatMatrix r_;
 #if !MANAGED
@@ -51,6 +51,7 @@ namespace Altaxo.Calc.LinearAlgebra
     int[] jpvt;
     private float[] qr;
 #endif
+#nullable enable
 
     ///<summary>Constructor for QR decomposition class. The constructor performs the factorization and the upper and
     ///lower matrices are accessible by the <c>Q</c> and <c>R</c> properties.</summary>
@@ -58,7 +59,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public FloatQRDecomp(IROMatrix<float> matrix)
     {
-      if (matrix == null)
+      if (matrix is null)
         throw new System.ArgumentNullException("matrix cannot be null.");
       this.matrix = new FloatMatrix(matrix);
     }

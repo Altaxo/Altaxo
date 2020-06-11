@@ -33,9 +33,11 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// </summary>
   public class PCRRegression : MultivariateRegression
   {
+#nullable disable
     private PCRCalibrationModel _calib;
 
     protected IExtensibleVector<double> _PRESS;
+#nullable enable
 
     public override IROVector<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
     {
@@ -113,8 +115,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     public override void PredictedYAndSpectralResidualsFromPreprocessed(
       IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
       int numFactors, // number of factors to use for prediction
-      IMatrix<double> predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
-      IMatrix<double> spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
+      IMatrix<double>? predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
+      IMatrix<double>? spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
       )
     {
       if (numFactors > _calib.NumberOfFactors)
@@ -212,18 +214,21 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROMatrix<double> xScores,
       IReadOnlyList<double> crossProduct,
       int numberOfFactors,
-      IMatrix<double> predictedY,
-      IMatrix<double> spectralResiduals)
+      IMatrix<double>? predictedY,
+      IMatrix<double>? spectralResiduals)
     {
       int numX = xLoads.ColumnCount;
       int numY = yLoads.ColumnCount;
       int numM = yLoads.RowCount;
 
-      var predictionScores = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numX, numY);
-      GetPredictionScoreMatrix(xLoads, yLoads, xScores, crossProduct, numberOfFactors, predictionScores);
-      MatrixMath.Multiply(matrixX, predictionScores, predictedY);
+      if (!(predictedY is null))
+      {
+        var predictionScores = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numX, numY);
+        GetPredictionScoreMatrix(xLoads, yLoads, xScores, crossProduct, numberOfFactors, predictionScores);
+        MatrixMath.Multiply(matrixX, predictionScores, predictedY);
+      }
 
-      if (null != spectralResiduals)
+      if (!(spectralResiduals is null))
         GetSpectralResiduals(matrixX, xLoads, yLoads, xScores, crossProduct, numberOfFactors, spectralResiduals);
     }
 

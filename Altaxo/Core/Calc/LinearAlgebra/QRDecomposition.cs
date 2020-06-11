@@ -38,6 +38,7 @@ namespace Altaxo.Calc.LinearAlgebra
      Class variables
  * ------------------------ */
 
+#nullable disable
     /** Array for internal storage of decomposition.
         @serial internal array storage.
         */
@@ -56,6 +57,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
     private JaggedArrayMatrix _solveMatrixWorkspace;
     private double[] _solveVectorWorkspace;
+
+#nullable enable
 
     /* ------------------------
              Constructor

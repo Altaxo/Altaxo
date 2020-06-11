@@ -44,8 +44,10 @@ namespace Altaxo.Calc.LinearAlgebra
   {
     private readonly int order;
     private bool ispd = true;
-    private FloatMatrix l;
+#nullable disable
     private FloatMatrix matrix;
+    private FloatMatrix l;
+#nullable enable
 
     ///<summary>Constructor for Cholesky decomposition class. The constructor performs the factorization of a symmetric positive
     ///definite matrax and the Cholesky factored matrix is accessible by the <c>Factor</c> property. The factor is the lower

@@ -43,9 +43,10 @@ namespace Altaxo.Calc.LinearAlgebra
   {
     private readonly IROComplexFloatMatrix matrix;
     private bool isFullRank = true;
-
+#nullable disable
     private ComplexFloatMatrix q_;
     private ComplexFloatMatrix r_;
+#nullable enable
 
 #if !MANAGED
     private ComplexFloat[] tau;

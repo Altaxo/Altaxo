@@ -56,10 +56,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 
   public class CrossPRESSEvaluator : CrossValidationWorker
   {
+#nullable disable
     protected IMatrix<double> _predictedY;
-
     private double[] _crossPRESS;
-
+#nullable enable
     public double[] CrossPRESS { get { return _crossPRESS; } }
 
     public CrossPRESSEvaluator(
@@ -101,8 +101,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 
   public class CrossPredictedYEvaluator : CrossValidationWorker
   {
+#nullable disable
     protected IMatrix<double> _predictedY;
     public IMatrix<double> _YCrossValidationPrediction;
+#nullable enable
 
     public CrossPredictedYEvaluator(
       int[] spectralRegions,
@@ -141,9 +143,10 @@ namespace Altaxo.Calc.Regression.Multivariate
   {
     private int _numberOfPoints;
 
+#nullable disable
     public IMatrix<double> _XCrossResiduals;
-
     public IROMatrix<double> XCrossResiduals { get { return _XCrossResiduals; } }
+#nullable enable
 
     public CrossPredictedXResidualsEvaluator(
       int numberOfPoints,
@@ -181,8 +184,10 @@ namespace Altaxo.Calc.Regression.Multivariate
   {
     private CrossValidationResult _result;
 
+#nullable disable
     protected IMatrix<double> _predictedY;
     protected IMatrix<double> _spectralResidual;
+#nullable enable
 
     public CrossValidationResultEvaluator(
       int[] spectralRegions,

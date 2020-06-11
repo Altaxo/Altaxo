@@ -41,6 +41,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </remarks>
   public sealed class ComplexDoubleQRDecomp : Algorithm
   {
+#nullable disable
     private readonly IROComplexDoubleMatrix matrix;
     private bool isFullRank = true;
 
@@ -52,6 +53,8 @@ namespace Altaxo.Calc.LinearAlgebra
     int[] jpvt;
     private Complex[] qr;
 #endif
+
+#nullable enable
 
     ///<summary>Constructor for QR decomposition class. The constructor performs the factorization and the upper and
     ///lower matrices are accessible by the <c>Q</c> and <c>R</c> properties.</summary>

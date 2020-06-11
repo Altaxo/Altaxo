@@ -166,7 +166,6 @@ namespace Altaxo.Calc.LinearAlgebra
   public sealed class FloatLevinson : Algorithm
   {
     #region Fields
-
     /// <summary>
     /// The left-most column of the Toeplitz matrix.
     /// </summary>
@@ -306,7 +305,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
         // copy diagonal vector into a FloatMatrix
         var Diagonal = new FloatMatrix(m_Order);
+#pragma warning disable CS8604 // Possible null reference argument.
         Diagonal.SetDiagonal(m_Diagonal);
+#pragma warning restore CS8604 // Possible null reference argument.
 
         return Diagonal;
       }

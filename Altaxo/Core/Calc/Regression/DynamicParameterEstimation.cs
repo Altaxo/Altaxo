@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Altaxo.Calc.LinearAlgebra;
 
@@ -57,16 +58,17 @@ namespace Altaxo.Calc.Regression
     /// <summary>"Moves" the sequence x in relation to sequence y. Normally, the y[i] is considered in dependence on x[i], x[i-1].. and so on. By setting the offset,
     /// the y[i] is considered in dependence on x[i-offset], x[x-offset-1]...</summary>
     protected int _offsetX;
-
+#nullable disable
     /// <summary>
     /// Array to store the estimated parameters. First in the array, the x parameters are stored (indices 0.._numX-1).
     /// Then the y parameters, having indices of (_numX.._numX+_numY-1). Lastly, the background parameters are stored in the array
     /// (indices _numX+_numY ... end_of_array)
     /// </summary>
-    protected double[]? _parameter;
+    protected double[] _parameter;
 
     /// <summary>Holds the input matrix.</summary>
-    protected JaggedArrayMatrix? _inputMatrix;
+    protected JaggedArrayMatrix _inputMatrix;
+#nullable enable
 
     /// <summary>Total number of parameter, i.e. _numX+_numY + _backgroundOrderPlus1</summary>
     protected int _numberOfParameter;
@@ -121,8 +123,11 @@ namespace Altaxo.Calc.Regression
     /// <param name="numY">Number of history y samples to be taken into account for the parameter estimation (samples y[i-1], y[i-2]..x[i-numY].</param>
     /// <param name="backgroundOrder">Order of the background fit, i.e. components 1, i, i² are fitted additionally to x and y. A order of 0 fits a constant
     /// background, 1 a linear depencence, and so on. Set this parameter to -1 if you don't need a background fit.</param>
-    public DynamicParameterEstimation(IReadOnlyList<double> x, IReadOnlyList<double> y, int numX, int numY, int backgroundOrder)
+    public DynamicParameterEstimation(IReadOnlyList<double>? x, IReadOnlyList<double> y, int numX, int numY, int backgroundOrder)
     {
+      if (x is null && numX > 0)
+        throw new ArgumentNullException(nameof(x));
+
       _solver = SVDSolver;
       SetHelperMembers(numX, numY, backgroundOrder);
       MakeEstimation(x, y);
@@ -183,7 +188,7 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="x">Vector of x values ("input values"). This parameter can be null when numX was set to 0 (in this case only y values are taken into account).</param>
     /// <param name="y">Vector of y values ("response values").</param>
-    public void MakeEstimation(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public void MakeEstimation(IReadOnlyList<double>? x, IReadOnlyList<double> y)
     {
       CalculateStartingPoint();
       CalculateNumberOfData(x, y);
@@ -245,11 +250,11 @@ namespace Altaxo.Calc.Regression
     /// <param name="x">Vector of x data.</param>
     /// <param name="y">Vector of y data.</param>
     /// <returns></returns>
-    protected virtual int CalculateNumberOfData(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    protected virtual int CalculateNumberOfData(IReadOnlyList<double>? x, IReadOnlyList<double> y)
     {
       // Find the number of data to use.
       if (_numX > 0)
-        return Math.Min(x.Count, y.Count) - _startingPoint;
+        return Math.Min(x!.Count, y.Count) - _startingPoint;
       else
         return y.Count - _startingPoint;
     }
@@ -261,7 +266,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="y">Vector of y data.</param>
     /// <param name="M">Matrix to fill. If the dimensions are not appropriate, a new matrix is allocated and stored in the member _inputMatrix.</param>
     /// <returns></returns>
-    protected virtual JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double> x, IReadOnlyList<double> y, JaggedArrayMatrix? M)
+    protected virtual JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, JaggedArrayMatrix? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
       if (M is null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
@@ -275,7 +280,7 @@ namespace Altaxo.Calc.Regression
         // fill with x history samples
         for (int j = 0; j < _numX; j++)
         {
-          M[i, j] = x[yIdx - j - _offsetX];
+          M[i, j] = x![yIdx - j - _offsetX];
         }
 
         // fill with y history samples
@@ -312,10 +317,11 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Calculates the resulting parameter array by calling the solver.
     /// </summary>
+    [MemberNotNull(nameof(_parameter))]
     protected virtual void CalculateResultingParameter()
     {
       // allocate parameter array
-      if (_parameter == null || _parameter.Length != _numberOfParameter)
+      if (_parameter is null || _parameter.Length != _numberOfParameter)
         _parameter = new double[_numberOfParameter];
 
       _solver.Solve(_inputMatrix, VectorMath.ToROVector(_scaledY), VectorMath.ToVector(_parameter));
@@ -335,7 +341,7 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="predictedOutput">The resultant predicted output. If null, a temporary vector is allocated for calculation.</param>
     /// <returns>The mean prediction error.i.e. Sqrt(Sum((y-yprediced)²)/N).</returns>
-    public virtual double CalculatePredictionError(IVector<double> predictedOutput)
+    public virtual double CalculatePredictionError(IVector<double>? predictedOutput)
     {
       if (null == predictedOutput)
         predictedOutput = new DoubleVector(_inputMatrix.RowCount);
@@ -355,12 +361,12 @@ namespace Altaxo.Calc.Regression
       return CalculateSelfPredictionError(null);
     }
 
-    public virtual double CalculateSelfPredictionError(IVector<double> predictedOutput)
+    public virtual double CalculateSelfPredictionError(IVector<double>? predictedOutput)
     {
       return CalculateSelfPredictionError(_inputMatrix, VectorMath.ToROVector(_scaledY), predictedOutput);
     }
 
-    protected virtual double CalculateSelfPredictionError(IMatrix<double> inputMatrix, IReadOnlyList<double> yCompare, IVector<double> predictedOutput)
+    protected virtual double CalculateSelfPredictionError(IMatrix<double> inputMatrix, IReadOnlyList<double> yCompare, IVector<double>? predictedOutput)
     {
       double[] inputVector = new double[_numY];
       for (int i = 0; i < inputVector.Length; i++)
@@ -412,7 +418,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="y">Vector of y data.</param>
     /// <param name="predictedOutput">Vector to store the predicted y values. Can be null.</param>
     /// <returns>The mean error between y prediction values and actual y values.</returns>
-    public virtual double CalculateCrossPredictionError(IReadOnlyList<double> x, IReadOnlyList<double> y, IVector<double> predictedOutput)
+    public virtual double CalculateCrossPredictionError(IReadOnlyList<double> x, IReadOnlyList<double> y, IVector<double>? predictedOutput)
     {
       JaggedArrayMatrix m = FillInputMatrix(x, y, null);
       return CalculateSelfPredictionError(m, VectorMath.ToROVector(y, _startingPoint, y.Count - _startingPoint), predictedOutput);
@@ -579,10 +585,11 @@ namespace Altaxo.Calc.Regression
       /// <summary>
       /// The singular value composition of our data.
       /// </summary>
-      private MatrixMath.SingularValueDecomposition _decomposition;
+      private MatrixMath.SingularValueDecomposition? _decomposition;
 
       #region IDynamicParameterEstimationSolver Members
 
+      [MemberNotNull(nameof(_decomposition))]
       public void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector<double> result)
       {
         IMatrix<double> work = new JaggedArrayMatrix(a.RowCount, a.ColumnCount);
@@ -714,7 +721,7 @@ namespace Altaxo.Calc.Regression
       }
     }
 
-    protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double> x, IReadOnlyList<double> y, JaggedArrayMatrix M)
+    protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, JaggedArrayMatrix? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
       if (M == null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
@@ -730,14 +737,14 @@ namespace Altaxo.Calc.Regression
         {
           if (_xcount == null || _xcount[j] == 1)
           {
-            M[i, j] = x[yIdx - k - _offsetX];
+            M[i, j] = x![yIdx - k - _offsetX];
             k++;
           }
           else
           {
             double sum = 0;
             for (int l = _xcount[j]; l > 0; l--, k++)
-              sum += x[yIdx - k - _offsetX];
+              sum += x![yIdx - k - _offsetX];
             M[i, j] = sum;
           }
         }
@@ -1112,7 +1119,7 @@ namespace Altaxo.Calc.Regression
         _startingPoint = Math.Max(_startingPoint, 1 + (_numY - 1) * _ySpacing);
     }
 
-    protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double> x, IReadOnlyList<double> y, JaggedArrayMatrix M)
+    protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, JaggedArrayMatrix? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
       if (M == null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
@@ -1126,7 +1133,7 @@ namespace Altaxo.Calc.Regression
         // fill with x history samples
         for (int j = 0; j < _numX; j++)
         {
-          M[i, j] = x[yIdx - _offsetX - j * _xSpacing];
+          M[i, j] = x![yIdx - _offsetX - j * _xSpacing];
         }
 
         // fill with y history samples
@@ -1262,7 +1269,7 @@ namespace Altaxo.Calc.Regression
         _startingPoint = Math.Max(_startingPoint, _maxYBin);
     }
 
-    protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double> x, IReadOnlyList<double> y, JaggedArrayMatrix M)
+    protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, JaggedArrayMatrix? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
       if (M == null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
@@ -1276,7 +1283,7 @@ namespace Altaxo.Calc.Regression
         // fill with x history samples
         for (int j = 0; j < _numX; j++)
         {
-          M[i, j] = x[yIdx - _offsetX - _xBins[j]];
+          M[i, j] = x![yIdx - _offsetX - _xBins[j]];
         }
 
         // fill with y history samples

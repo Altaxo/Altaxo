@@ -29,10 +29,12 @@ namespace Altaxo.Calc.Regression.Multivariate
 {
   public class PCRCalibrationModel : MultivariateCalibrationModel
   {
+#nullable disable
     private IROMatrix<double> _xScores;
     private IROMatrix<double> _xLoads;
     private IROMatrix<double> _yLoads;
     private IROVector<double> _crossProduct;
+#nullable enable
 
     public IROMatrix<double> XScores
     {

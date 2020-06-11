@@ -44,6 +44,12 @@ namespace Altaxo.Calc.Optimization
   /// </remarks>
   public class NelderMead : FunctionMinimizeMethod
   {
+#nullable enable
+    private DoubleVector[] x; // Array of Simplexes
+    private double[] fx; //Array of simplex function values
+#nullable disable
+
+
     ///<summary>Default constructor for simplex method</summary>
     public NelderMead(ICostFunction costfunction)
       : this(costfunction, new EndCriteria()) { }
@@ -152,8 +158,6 @@ namespace Altaxo.Calc.Optimization
       Array.Sort(fx, x);
     }
 
-    private DoubleVector[] x; // Array of Simplexes
-    private double[] fx; //Array of simplex function values
 
     /*  Below are overriden Methods */
 

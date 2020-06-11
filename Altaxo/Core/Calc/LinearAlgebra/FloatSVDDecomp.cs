@@ -42,13 +42,13 @@ namespace Altaxo.Calc.LinearAlgebra
   public sealed class FloatSVDDecomp : Algorithm
   {
     private const int MAXITER = 1000;
-
+#nullable disable
     private FloatMatrix u;
     private FloatMatrix v;
     private FloatMatrix w;
     private FloatMatrix matrix;
     private FloatVector s;
-
+#nullable enable
     private bool computeVectors;
     private int rank;
     private int rows;
@@ -140,7 +140,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public FloatSVDDecomp(IROMatrix<float> matrix, bool computeVectors)
     {
-      if (matrix == null)
+      if (matrix is null)
       {
         throw new System.ArgumentNullException("matrix cannot be null.");
       }
@@ -153,7 +153,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public FloatSVDDecomp(IROMatrix<float> matrix)
     {
-      if (matrix == null)
+      if (matrix is null)
       {
         throw new System.ArgumentNullException("matrix cannot be null.");
       }

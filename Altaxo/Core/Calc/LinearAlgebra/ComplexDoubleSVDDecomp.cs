@@ -43,11 +43,13 @@ namespace Altaxo.Calc.LinearAlgebra
   {
     private const int MAXITER = 1000;
 
+#nullable disable
     private ComplexDoubleMatrix u;
     private ComplexDoubleMatrix v;
     private ComplexDoubleMatrix w;
     private ComplexDoubleMatrix matrix;
     private ComplexDoubleVector s;
+#nullable enable
 
     private readonly bool computeVectors;
     private int rank;

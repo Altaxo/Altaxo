@@ -43,7 +43,11 @@ namespace Altaxo.Calc.LinearAlgebra
   {
     private readonly int order;
     private bool ispd = true;
+
+#nullable disable
     private ComplexFloatMatrix l;
+#nullable enable
+
     private ComplexFloatMatrix matrix;
 
     ///<summary>Constructor for Cholesky decomposition class. The constructor performs the factorization of a Hermitian positive
@@ -56,7 +60,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///upper triangle.</remarks>
     public ComplexFloatCholeskyDecomp(IROComplexFloatMatrix matrix)
     {
-      if (matrix == null)
+      if (matrix is null)
       {
         throw new System.ArgumentNullException("matrix cannot be null.");
       }

@@ -32,9 +32,11 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// </summary>
   public class PLS2Regression : MultivariateRegression
   {
+#nullable disable
     private PLS2CalibrationModel _calib;
 
     protected IExtensibleVector<double> _PRESS;
+#nullable enable
 
     public IROVector<double> PRESS { get { return _PRESS; } }
 

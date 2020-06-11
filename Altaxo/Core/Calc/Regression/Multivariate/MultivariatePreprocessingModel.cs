@@ -71,6 +71,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
   public class MultivariatePreprocessingModel : IMultivariatePreprocessingModel
   {
+#nullable disable
     private SpectralPreprocessingOptions _preprocessOptions;
 
     private int[] _spectralRegions;
@@ -79,6 +80,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     private IROVector<double> _xScale;
     private IROVector<double> _yMean;
     private IROVector<double> _yScale;
+#nullable enable
 
     public SpectralPreprocessingOptions PreprocessOptions
     {

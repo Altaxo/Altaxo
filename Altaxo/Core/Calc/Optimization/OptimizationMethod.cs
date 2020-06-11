@@ -44,11 +44,13 @@ namespace Altaxo.Calc.Optimization
   /// </remarks>
   public abstract class OptimizationMethod : IFormattable
   {
+#nullable disable
     ///<summary> Optimization ending critera </summary>
     public EndCriteria endCriteria_;
 
     ///<summary> Optimization Cost Function </summary>
     public ICostFunction costFunction_;
+#nullable enable
 
     ///<summary> Method Name </summary>
     public virtual string MethodName
