@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
@@ -57,10 +58,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns></returns>
     public int[][] Group(IROMatrix<double> Y)
     {
-      var groups = new System.Collections.ArrayList();
+      var groups = new List<List<int>>();
 
       // add the first y-row to the first group
-      var newcoll = new System.Collections.ArrayList
+      var newcoll = new List<int>
       {
         0
       };
@@ -71,7 +72,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         bool bNewGroup = true;
         for (int gr = 0; gr < groups.Count; gr++)
         {
-          int refrow = (int)(((System.Collections.ArrayList)groups[gr])[0]);
+          int refrow = groups[gr][0];
           bool match = true;
           for (int j = 0; j < Y.ColumnCount; j++)
           {
@@ -85,13 +86,13 @@ namespace Altaxo.Calc.Regression.Multivariate
           if (match)
           {
             bNewGroup = false;
-            ((System.Collections.ArrayList)groups[gr]).Add(i);
+            groups[gr].Add(i);
             break;
           }
         }
         if (bNewGroup)
         {
-          newcoll = new System.Collections.ArrayList
+          newcoll = new List<int>
           {
             i
           };
@@ -101,7 +102,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       int[][] result = new int[groups.Count][];
       for (int i = 0; i < result.Length; i++)
-        result[i] = (int[])((System.Collections.ArrayList)groups[i]).ToArray(typeof(int));
+        result[i] = groups[i].ToArray();
       return result;
     }
   }
@@ -114,9 +115,9 @@ namespace Altaxo.Calc.Regression.Multivariate
   {
     public int[][] Group(IROMatrix<double> Y)
     {
-      var groups = new System.Collections.ArrayList[2];
+      var groups = new List<int>[2];
       for (int i = 0; i < 2; i++)
-        groups[i] = new System.Collections.ArrayList();
+        groups[i] = new List<int>();
 
       int[][] similarGroups = new ExcludeGroupsGroupingStrategy().Group(Y);
 
@@ -132,7 +133,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       int[][] result = new int[2][];
       for (int i = 0; i < result.Length; i++)
-        result[i] = (int[])groups[i].ToArray(typeof(int));
+        result[i] = groups[i].ToArray();
       return result;
     }
   }
