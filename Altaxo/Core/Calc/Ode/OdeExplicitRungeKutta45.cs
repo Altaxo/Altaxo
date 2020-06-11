@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Altaxo.Calc.Ode.Dopri5;
 
@@ -25,7 +26,7 @@ namespace Altaxo.Calc.Ode
     #region Fields
 
     private DOPRI5 _Dopri5;
-    private FAREN _Faren;
+    private FAREN? _Faren;
     //private SOLOUT Solout;
 
     private DOPCOR _dopcor;
@@ -112,6 +113,7 @@ namespace Altaxo.Calc.Ode
 
     #region Internal Metods
 
+    [MemberNotNull(nameof(_hinit), nameof(_cdopri), nameof(_contd5), nameof(_dopcor), nameof(_Dopri5))]
     internal override void InitializeRungeKuttaClasses()
     {
       _hinit = new HINIT();
@@ -133,7 +135,7 @@ namespace Altaxo.Calc.Ode
       _Errors[4] = "PROBLEM IS PROBABLY STIFF.";
     }
 
-    internal override void InitializeFunctionAndJacobian(OdeFunction fun, OdeJacobian jac)
+    internal override void InitializeFunctionAndJacobian(OdeFunction fun, OdeJacobian? jac)
     {
       _Faren = new FAREN(_NEquations, fun);
     }
@@ -185,7 +187,7 @@ namespace Altaxo.Calc.Ode
     {
       bool WasSuccessfully = true;
 
-      _Dopri5.Run(_NEquations, _Faren, ref _T0, ref _Y0, 0, MeTf, _RelTolArray, 0
+      _Dopri5.Run(_NEquations, _Faren!, ref _T0, ref _Y0, 0, MeTf, _RelTolArray, 0
       , _AbsTolArray, 0, _ITolRK, _RKSolOut, _IOut, ref _RWork, 0, _Lrw
       , ref _IWork, 0, _Liw, _RPar, 0, _IPar, 0, ref _IDID);
 

@@ -21,6 +21,7 @@ namespace Altaxo.Calc.Ode
   public abstract class xOdeBase
   {
     #region Fields
+#nullable disable
 
     //internal protected bool MeIsInitialized = false;
 
@@ -37,13 +38,13 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// The initial conditions.
     /// </summary>
-    protected internal double[]? _Y0;
+    protected internal double[] _Y0;
 
     /// <summary>
     /// Array used to set the initial values and to return the solution in some ODE solvers.
     /// This array must be initialized equal to the initial values in the first call.
     /// </summary>
-    protected internal double[]? _Y;
+    protected internal double[] _Y;
 
     /// <summary>
     /// Indicated if the SetInitialValues method need to be invoked.
@@ -58,7 +59,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// Array containing the exception messages.
     /// </summary>
-    protected string[]? _Errors;
+    protected string[] _Errors;
 
     /// <summary>
     /// For AdamsMoulton and  OdeGearsBDF:
@@ -99,7 +100,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// A relative error tolerance parameter, either a scalar or an array of length NEQ.
     /// </summary>
-    protected internal double[]? _RelTolArray;
+    protected internal double[] _RelTolArray;
 
     /// <summary>
     /// An absolute error tolerance parameter
@@ -109,12 +110,12 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// An absolute error tolerance parameter(array of length NEQ)
     /// </summary>
-    protected internal double[]? _AbsTolArray;
+    protected internal double[] _AbsTolArray;
 
     /// <summary>
     /// MeRWork= A real working array (double precision)
     /// </summary>
-    protected internal double[]? _RWork;
+    protected internal double[] _RWork;
 
     /// <summary>
     /// MeLrw= The length of the array RWORK
@@ -124,7 +125,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// MeIWork= An integer work array.
     /// </summary>
-    protected internal int[]? _IWork;
+    protected internal int[] _IWork;
 
     /// <summary>
     /// MeLiw= the length of the array IWORK
@@ -140,6 +141,8 @@ namespace Altaxo.Calc.Ode
     /// User-specified array used to communicate integer parameter
     /// </summary>
     protected internal int[] _IPar = new int[1];
+
+#nullable enable
 
     #endregion Fields
 
@@ -300,7 +303,7 @@ namespace Altaxo.Calc.Ode
     /// Number of equations, Relative tolerances,  Absolute tolerances, Working space
     /// </summary>
     /// <param name="numEquations">The number of equations.</param>
-    [MemberNotNull(nameof(_RelTolArray), nameof(_AbsTolArray), nameof(_T0))]
+    [MemberNotNull(nameof(_RelTolArray), nameof(_AbsTolArray))]
     internal void InitializeSizeDependentVariables(int numEquations)
     {
       _NEquations = numEquations;

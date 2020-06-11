@@ -24,6 +24,7 @@ namespace Altaxo.Calc.Ode
   public sealed class OdeImplicitRungeKutta5 : xBaseOdeRungeKutta
   {
     #region Fields
+#nullable disable
 
     //internal SOLOUTR solout;
     internal FVPOL fvpol; internal JVPOL jvpol;
@@ -33,6 +34,8 @@ namespace Altaxo.Calc.Ode
     internal DEC dec; internal SOL sol; internal DECH dech; internal SOLH solh; internal DECC decc; internal SOLC solc;
     internal DECHC dechc; internal SOLHC solhc; internal DECB decb; internal SOLB solb; internal DECBC decbc;
     internal SOLBC solbc; internal ELMHES elmhes; internal RADAU5 radau5; internal RADCOR radcor; internal CONTR5 contr5;
+
+#nullable enable
 
     private CommonBlock INTERN = new CommonBlock(1, 0, 0, 0);
     private CommonBlock LINAL = new CommonBlock(0, 7, 0, 0);
@@ -271,10 +274,11 @@ namespace Altaxo.Calc.Ode
       _Errors[4] = "MATRIX IS REPEATEDLY SINGULAR.";
     }
 
-    internal override void InitializeFunctionAndJacobian(OdeFunction fun, OdeJacobian jac)
+    internal override void InitializeFunctionAndJacobian(OdeFunction fun, OdeJacobian? jac)
     {
       fvpol = new FVPOL(_NEquations, fun);
-      jvpol = new JVPOL(_NEquations, jac);
+      if (!(jac is null))
+        jvpol = new JVPOL(_NEquations, jac);
     }
 
     internal override void InitializeWorkingSpace()

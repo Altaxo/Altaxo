@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Altaxo.Calc.LinearAlgebra;
@@ -168,6 +169,7 @@ namespace Altaxo.Calc.Ode
     /// </summary>
     private class NordsieckState
     {
+#nullable disable
       /// <summary>At the end of a predictor step, this is
       /// still the time of the previous state (!),
       /// the current time is tn + dt.</summary>
@@ -219,6 +221,7 @@ namespace Altaxo.Calc.Ode
       private double[] gm; // length n
       private double[] deltaE; // length n
 
+#nullable enable
       /// <summary>
       /// Initializes a new instance of the <see cref="NordsieckState"/> class.
       /// </summary>
@@ -354,7 +357,7 @@ namespace Altaxo.Calc.Ode
           }
         }
       }
-
+      [MemberNotNull(nameof(P))]
       private void AllocatePMatrixForJacobian(IROMatrix<double> J)
       {
         switch (J)
@@ -608,6 +611,7 @@ namespace Altaxo.Calc.Ode
       }
     }
 
+#nullable disable
     // Vector l for Nordsieck algorithm (orders 1 to 5)
     private static double[][] l = new double[6][] {
                         new double[] { 1, 1 },
@@ -655,6 +659,8 @@ namespace Altaxo.Calc.Ode
     private double[] xout;
     private double last_tout = double.NaN;
     private double r;
+
+#nullable enable
 
     #endregion Members
 
@@ -775,9 +781,11 @@ namespace Altaxo.Calc.Ode
 
     // Arrays needed for initialization and at discontinuities
     // All arrays have length n
+#nullable disable
     private double[] _dydt;
     private double[] _ewt;
     private double[] _ywt;
+#nullable enable
 
     /// <summary>
     /// Implementation of Gear's BDF method with dynamically changed step size and order. Order changes between 1 and 3.

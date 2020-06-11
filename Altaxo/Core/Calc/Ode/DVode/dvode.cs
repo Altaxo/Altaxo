@@ -23,8 +23,16 @@ namespace Altaxo.Calc.Ode.DVode
   {
     #region Dependencies
 
-    private DVNLSD _dvnlsd; private DUMACH _dumach; private DVNORM _dvnorm; private DCOPY _dcopy; private DEWSET _dewset; private DVHIN _dvhin; private DSCAL _dscal; private DVINDY _dvindy;
-    private XERRWD _xerrwd; private DVSTEP _dvstep;
+    private DVNLSD _dvnlsd;
+    private DUMACH _dumach;
+    private DVNORM _dvnorm;
+    private DCOPY _dcopy;
+    private DEWSET _dewset;
+    private DVHIN _dvhin;
+    private DSCAL _dscal;
+    private DVINDY _dvindy;
+    private XERRWD _xerrwd;
+    private DVSTEP _dvstep;
 
     #endregion Dependencies
 
@@ -33,13 +41,64 @@ namespace Altaxo.Calc.Ode.DVode
     #region Common Block: DVOD01 Declaration
 
     private CommonBlock _dvod01;
-    private Odouble ACNRM; private Odouble CCMXJ; private Odouble CONP; private Odouble CRATE; private Odouble DRC; private Odouble[] EL; private int o_el; private Odouble ETA;
-    private Odouble ETAMAX; private Odouble H; private Odouble HMIN; private Odouble HMXI; private Odouble HNEW; private Odouble HSCAL; private Odouble PRL1; private Odouble RC; private Odouble RL1;
-    private Odouble[] TAU; private int o_tau; private Odouble[] TQ; private int o_tq; private Odouble TN; private Odouble UROUND;
-    private Oint ICF; private Oint INIT; private Oint IPUP; private Oint JCUR; private Oint JSTART; private Oint JSV; private Oint KFLAG; private Oint KUTH; private Oint L; private Oint LMAX; private Oint LYH;
-    private Oint LEWT; private Oint LACOR; private Oint LSAVF; private Oint LWM; private Oint LIWM; private Oint LOCJS; private Oint MAXORD; private Oint METH; private Oint MITER; private Oint MSBJ;
-    private Oint MXHNIL; private Oint MXSTEP; private Oint N; private Oint NEWH; private Oint NEWQ; private Oint NHNIL; private Oint NQ; private Oint NQNYH; private Oint NQWAIT; private Oint NSLJ; private Oint NSLP;
+    private Odouble ACNRM;
+    private Odouble CCMXJ;
+    private Odouble CONP;
+    private Odouble CRATE;
+    private Odouble DRC;
+    private Odouble[] EL;
+    //private int o_el;
+    private Odouble ETA;
+    private Odouble ETAMAX;
+    private Odouble H;
+    private Odouble HMIN;
+    private Odouble HMXI;
+    private Odouble HNEW;
+    private Odouble HSCAL;
+    private Odouble PRL1;
+    private Odouble RC;
+    private Odouble RL1;
+    private Odouble[] TAU;
+    // private int o_tau;
+    private Odouble[] TQ;
+    //private int o_tq;
+    private Odouble TN;
+    private Odouble UROUND;
+    private Oint ICF;
+    private Oint INIT;
+    private Oint IPUP;
+    private Oint JCUR;
+    private Oint JSTART;
+    private Oint JSV;
+    private Oint KFLAG;
+    private Oint KUTH;
+    private Oint L;
+    private Oint LMAX;
+    private Oint LYH;
+    private Oint LEWT;
+    private Oint LACOR;
+    private Oint LSAVF;
+    private Oint LWM;
+    private Oint LIWM;
+    private Oint LOCJS;
+    private Oint MAXORD;
+    private Oint METH;
+    private Oint MITER;
+    private Oint MSBJ;
+    private Oint MXHNIL;
+    private Oint MXSTEP;
+    private Oint N;
+    private Oint NEWH;
+    private Oint NEWQ;
+    private Oint NHNIL;
+    private Oint NQ;
+    private Oint NQNYH;
+    private Oint NQWAIT;
+    private Oint NSLJ;
+    private Oint NSLP;
     private Oint NYH;
+
+
 
     #endregion Common Block: DVOD01 Declaration
 
@@ -47,7 +106,14 @@ namespace Altaxo.Calc.Ode.DVode
 
     private CommonBlock _dvod02;
     private Odouble HU;
-    private Oint NCFN; private Oint NETF; private Oint NFE; private Oint NJE; private Oint NLU; private Oint NNI; private Oint NQU; private Oint NST;
+    private Oint NCFN;
+    private Oint NETF;
+    private Oint NFE;
+    private Oint NJE;
+    private Oint NLU;
+    private Oint NNI;
+    private Oint NQU;
+    private Oint NST;
 
     #endregion Common Block: DVOD02 Declaration
 
@@ -55,8 +121,17 @@ namespace Altaxo.Calc.Ode.DVode
 
     #region Variables
 
-    private double FOUR = 0; private double HUN = 0; private double ONE = 0; private double PT2 = 0; private double TWO = 0; private double ZERO = 0;
-    private int[] MORD = new int[2]; private int offset_mord = 0; private int o_mord = -1; private int MXHNL0 = 0; private int MXSTP0 = 0;
+    private double FOUR = 0;
+    private double HUN = 0;
+    private double ONE = 0;
+    private double PT2 = 0;
+    private double TWO = 0;
+    private double ZERO = 0;
+    private int[] MORD = new int[2];
+    // private int offset_mord = 0;
+    private int o_mord = -1;
+    private int MXHNL0 = 0;
+    private int MXSTP0 = 0;
 
     #endregion Variables
 
@@ -115,8 +190,8 @@ namespace Altaxo.Calc.Ode.DVode
       DRC = DVOD01.doubleData[4];
       //Start Array: EL  StartIndex: 5  LastIndex: 17
       EL = DVOD01.doubleData;
-      o_el = 4;  //o_ = StartIndex-1
-                 //End Array: EL
+      //o_el = 4;  //o_ = StartIndex-1
+      //End Array: EL
       ETA = DVOD01.doubleData[18];
       ETAMAX = DVOD01.doubleData[19];
       H = DVOD01.doubleData[20];
@@ -129,12 +204,12 @@ namespace Altaxo.Calc.Ode.DVode
       RL1 = DVOD01.doubleData[27];
       //Start Array: TAU  StartIndex: 28  LastIndex: 40
       TAU = DVOD01.doubleData;
-      o_tau = 27;  //o_ = StartIndex-1
-                   //End Array: TAU
-                   //Start Array: TQ  StartIndex: 41  LastIndex: 45
+      //o_tau = 27;  //o_ = StartIndex-1
+      //End Array: TAU
+      //Start Array: TQ  StartIndex: 41  LastIndex: 45
       TQ = DVOD01.doubleData;
-      o_tq = 40;  //o_ = StartIndex-1
-                  //End Array: TQ
+      // o_tq = 40;  //o_ = StartIndex-1
+      //End Array: TQ
       TN = DVOD01.doubleData[46];
       UROUND = DVOD01.doubleData[47];
       ICF = DVOD01.intData[0];
@@ -282,8 +357,8 @@ namespace Altaxo.Calc.Ode.DVode
       DRC = DVOD01.doubleData[4];
       //Start Array: EL  StartIndex: 5  LastIndex: 17
       EL = DVOD01.doubleData;
-      o_el = 4;  //o_ = StartIndex-1
-                 //End Array: EL
+      // o_el = 4;  //o_ = StartIndex-1
+      //End Array: EL
       ETA = DVOD01.doubleData[18];
       ETAMAX = DVOD01.doubleData[19];
       H = DVOD01.doubleData[20];
@@ -296,12 +371,12 @@ namespace Altaxo.Calc.Ode.DVode
       RL1 = DVOD01.doubleData[27];
       //Start Array: TAU  StartIndex: 28  LastIndex: 40
       TAU = DVOD01.doubleData;
-      o_tau = 27;  //o_ = StartIndex-1
-                   //End Array: TAU
-                   //Start Array: TQ  StartIndex: 41  LastIndex: 45
+      // o_tau = 27;  //o_ = StartIndex-1
+      //End Array: TAU
+      //Start Array: TQ  StartIndex: 41  LastIndex: 45
       TQ = DVOD01.doubleData;
-      o_tq = 40;  //o_ = StartIndex-1
-                  //End Array: TQ
+      //o_tq = 40;  //o_ = StartIndex-1
+      //End Array: TQ
       TN = DVOD01.doubleData[46];
       UROUND = DVOD01.doubleData[47];
       ICF = DVOD01.intData[0];
@@ -726,6 +801,13 @@ namespace Altaxo.Calc.Ode.DVode
     /// to user-supplied subroutines.  The comments on dimensioning
     /// RPAR apply to IPAR.
     ///</param>
+    ///<param name="offset_atol"></param>
+    ///<param name="offset_ipar"></param>
+    ///<param name="offset_iwork"></param>
+    ///<param name="offset_rpar"></param>
+    ///<param name="offset_rtol"></param>
+    ///<param name="offset_rwork"></param>
+    ///<param name="offset_y"></param>
     public void Run(IFEX F, int NEQ, ref double[] Y, int offset_y, ref double T, double TOUT, int ITOL
                      , double[] RTOL, int offset_rtol, double[] ATOL, int offset_atol, int ITASK, ref int ISTATE, int IOPT, ref double[] RWORK, int offset_rwork
                      , int LRW, ref int[] IWORK, int offset_iwork, int LIW, IJEX JAC, int MF, double[] RPAR, int offset_rpar
@@ -2660,7 +2742,10 @@ LABEL800:
 
     #region Variables
 
-    private double HALF = 0; private double HUN = 0; private double PT1 = 0; private double TWO = 0;
+    private double HALF = 0;
+    private double HUN = 0;
+    private double PT1 = 0;
+    private double TWO = 0;
 
     #endregion Variables
 
@@ -2747,6 +2832,21 @@ LABEL800:
     /// IER = 0  if no trouble occurred, or
     /// IER = -1 if TOUT and T0 are considered too close to proceed.
     ///</param>
+    ///<param name="offset_y"></param>
+    ///<param name="offset_rpar"></param>
+    ///<param name="offset_ipar"></param>
+    ///<param name="offset_atol"></param>
+    ///<param name="ATOL"></param>
+    ///<param name="EWT"></param>
+    ///<param name="IPAR"></param>
+    ///<param name="ITOL"></param>
+    ///<param name="offset_ewt"></param>
+    ///<param name="offset_temp"></param>
+    ///<param name="offset_y0"></param>
+    ///<param name="offset_ydot"></param>
+    ///<param name="RPAR"></param>
+    ///<param name="TEMP"></param>
+    ///<param name="Y"></param>
     public void Run(int N, double T0, double[] Y0, int offset_y0, double[] YDOT, int offset_ydot, IFEX F, double[] RPAR, int offset_rpar
                      , int[] IPAR, int offset_ipar, double TOUT, double UROUND, double[] EWT, int offset_ewt, int ITOL, double[] ATOL, int offset_atol
                      , ref double[] Y, int offset_y, ref double[] TEMP, int offset_temp, ref double H0, ref int NITER, ref int IER)
@@ -2948,7 +3048,8 @@ LABEL100:
   {
     #region Dependencies
 
-    private DSCAL _dscal; private XERRWD _xerrwd;
+    private DSCAL _dscal;
+    private XERRWD _xerrwd;
 
     #endregion Dependencies
 
@@ -2957,12 +3058,61 @@ LABEL100:
     #region Common Block: DVOD01 Declaration
 
     private CommonBlock _dvod01;
-    private Odouble ACNRM; private Odouble CCMXJ; private Odouble CONP; private Odouble CRATE; private Odouble DRC; private Odouble[] EL; private int o_el; private Odouble ETA;
-    private Odouble ETAMAX; private Odouble H; private Odouble HMIN; private Odouble HMXI; private Odouble HNEW; private Odouble HSCAL; private Odouble PRL1; private Odouble RC; private Odouble RL1;
-    private Odouble[] TAU; private int o_tau; private Odouble[] TQ; private int o_tq; private Odouble TN; private Odouble UROUND;
-    private Oint ICF; private Oint INIT; private Oint IPUP; private Oint JCUR; private Oint JSTART; private Oint JSV; private Oint KFLAG; private Oint KUTH; private Oint L; private Oint LMAX; private Oint LYH;
-    private Oint LEWT; private Oint LACOR; private Oint LSAVF; private Oint LWM; private Oint LIWM; private Oint LOCJS; private Oint MAXORD; private Oint METH; private Oint MITER; private Oint MSBJ;
-    private Oint MXHNIL; private Oint MXSTEP; private Oint N; private Oint NEWH; private Oint NEWQ; private Oint NHNIL; private Oint NQ; private Oint NQNYH; private Oint NQWAIT; private Oint NSLJ; private Oint NSLP;
+    private Odouble ACNRM;
+    private Odouble CCMXJ;
+    private Odouble CONP;
+    private Odouble CRATE;
+    private Odouble DRC;
+    private Odouble[] EL;
+    // private int o_el;
+    private Odouble ETA;
+    private Odouble ETAMAX;
+    private Odouble H;
+    private Odouble HMIN;
+    private Odouble HMXI;
+    private Odouble HNEW;
+    private Odouble HSCAL;
+    private Odouble PRL1;
+    private Odouble RC;
+    private Odouble RL1;
+    private Odouble[] TAU;
+    // private int o_tau;
+    private Odouble[] TQ;
+    // private int o_tq;
+    private Odouble TN;
+    private Odouble UROUND;
+    private Oint ICF;
+    private Oint INIT;
+    private Oint IPUP;
+    private Oint JCUR;
+    private Oint JSTART;
+    private Oint JSV;
+    private Oint KFLAG;
+    private Oint KUTH;
+    private Oint L;
+    private Oint LMAX;
+    private Oint LYH;
+    private Oint LEWT;
+    private Oint LACOR;
+    private Oint LSAVF;
+    private Oint LWM;
+    private Oint LIWM;
+    private Oint LOCJS;
+    private Oint MAXORD;
+    private Oint METH;
+    private Oint MITER;
+    private Oint MSBJ;
+    private Oint MXHNIL;
+    private Oint MXSTEP;
+    private Oint N;
+    private Oint NEWH;
+    private Oint NEWQ;
+    private Oint NHNIL;
+    private Oint NQ;
+    private Oint NQNYH;
+    private Oint NQWAIT;
+    private Oint NSLJ;
+    private Oint NSLP;
     private Oint NYH;
 
     #endregion Common Block: DVOD01 Declaration
@@ -2971,7 +3121,14 @@ LABEL100:
 
     private CommonBlock _dvod02;
     private Odouble HU;
-    private Oint NCFN; private Oint NETF; private Oint NFE; private Oint NJE; private Oint NLU; private Oint NNI; private Oint NQU; private Oint NST;
+    private Oint NCFN;
+    private Oint NETF;
+    private Oint NFE;
+    private Oint NJE;
+    private Oint NLU;
+    private Oint NNI;
+    private Oint NQU;
+    private Oint NST;
 
     #endregion Common Block: DVOD02 Declaration
 
@@ -2979,7 +3136,8 @@ LABEL100:
 
     #region Variables
 
-    private double HUN = 0; private double ZERO = 0;
+    private double HUN = 0;
+    private double ZERO = 0;
 
     #endregion Variables
 
@@ -3013,8 +3171,8 @@ LABEL100:
       DRC = DVOD01.doubleData[4];
       //Start Array: EL  StartIndex: 5  LastIndex: 17
       EL = DVOD01.doubleData;
-      o_el = 4;  //o_ = StartIndex-1
-                 //End Array: EL
+      // o_el = 4;  //o_ = StartIndex-1
+      //End Array: EL
       ETA = DVOD01.doubleData[18];
       ETAMAX = DVOD01.doubleData[19];
       H = DVOD01.doubleData[20];
@@ -3027,12 +3185,12 @@ LABEL100:
       RL1 = DVOD01.doubleData[27];
       //Start Array: TAU  StartIndex: 28  LastIndex: 40
       TAU = DVOD01.doubleData;
-      o_tau = 27;  //o_ = StartIndex-1
-                   //End Array: TAU
-                   //Start Array: TQ  StartIndex: 41  LastIndex: 45
+      // o_tau = 27;  //o_ = StartIndex-1
+      //End Array: TAU
+      //Start Array: TQ  StartIndex: 41  LastIndex: 45
       TQ = DVOD01.doubleData;
-      o_tq = 40;  //o_ = StartIndex-1
-                  //End Array: TQ
+      // o_tq = 40;  //o_ = StartIndex-1
+      //End Array: TQ
       TN = DVOD01.doubleData[46];
       UROUND = DVOD01.doubleData[47];
       ICF = DVOD01.intData[0];
@@ -3135,8 +3293,8 @@ LABEL100:
       DRC = DVOD01.doubleData[4];
       //Start Array: EL  StartIndex: 5  LastIndex: 17
       EL = DVOD01.doubleData;
-      o_el = 4;  //o_ = StartIndex-1
-                 //End Array: EL
+      // o_el = 4;  //o_ = StartIndex-1
+      //End Array: EL
       ETA = DVOD01.doubleData[18];
       ETAMAX = DVOD01.doubleData[19];
       H = DVOD01.doubleData[20];
@@ -3149,12 +3307,12 @@ LABEL100:
       RL1 = DVOD01.doubleData[27];
       //Start Array: TAU  StartIndex: 28  LastIndex: 40
       TAU = DVOD01.doubleData;
-      o_tau = 27;  //o_ = StartIndex-1
-                   //End Array: TAU
-                   //Start Array: TQ  StartIndex: 41  LastIndex: 45
+      // o_tau = 27;  //o_ = StartIndex-1
+      //End Array: TAU
+      //Start Array: TQ  StartIndex: 41  LastIndex: 45
       TQ = DVOD01.doubleData;
-      o_tq = 40;  //o_ = StartIndex-1
-                  //End Array: TQ
+      // o_tq = 40;  //o_ = StartIndex-1
+      //End Array: TQ
       TN = DVOD01.doubleData[46];
       UROUND = DVOD01.doubleData[47];
       ICF = DVOD01.intData[0];
@@ -3214,6 +3372,13 @@ LABEL100:
     /// <param name="IFLAG">
     /// is returned negative if either K or T is out of bounds.
     ///</param>
+    ///<param name="DKY"></param>
+    ///<param name="K"></param>
+    ///<param name="LDYH"></param>
+    ///<param name="offset_dky"></param>
+    ///<param name="offset_yh"></param>
+    ///<param name="T"></param>
+    ///<param name="YH"></param>
     public void Run(double T, int K, double[] YH, int offset_yh, int LDYH, ref double[] DKY, int offset_dky, ref int IFLAG)
     {
       #region Variables
@@ -3380,7 +3545,12 @@ LABEL90:
   {
     #region Dependencies
 
-    private DVNORM _dvnorm; private DVJUST _dvjust; private DSCAL _dscal; private DVSET _dvset; private DAXPY _daxpy; private DCOPY _dcopy;
+    private DVNORM _dvnorm;
+    private DVJUST _dvjust;
+    private DSCAL _dscal;
+    private DVSET _dvset;
+    private DAXPY _daxpy;
+    private DCOPY _dcopy;
 
     #endregion Dependencies
 
@@ -3389,12 +3559,61 @@ LABEL90:
     #region Common Block: DVOD01 Declaration
 
     private CommonBlock _dvod01;
-    private Odouble ACNRM; private Odouble CCMXJ; private Odouble CONP; private Odouble CRATE; private Odouble DRC; private Odouble[] EL; private int o_el; private Odouble ETA;
-    private Odouble ETAMAX; private Odouble H; private Odouble HMIN; private Odouble HMXI; private Odouble HNEW; private Odouble HSCAL; private Odouble PRL1; private Odouble RC; private Odouble RL1;
-    private Odouble[] TAU; private int o_tau; private Odouble[] TQ; private int o_tq; private Odouble TN; private Odouble UROUND;
-    private Oint ICF; private Oint INIT; private Oint IPUP; private Oint JCUR; private Oint JSTART; private Oint JSV; private Oint KFLAG; private Oint KUTH; private Oint L; private Oint LMAX; private Oint LYH;
-    private Oint LEWT; private Oint LACOR; private Oint LSAVF; private Oint LWM; private Oint LIWM; private Oint LOCJS; private Oint MAXORD; private Oint METH; private Oint MITER; private Oint MSBJ;
-    private Oint MXHNIL; private Oint MXSTEP; private Oint N; private Oint NEWH; private Oint NEWQ; private Oint NHNIL; private Oint NQ; private Oint NQNYH; private Oint NQWAIT; private Oint NSLJ; private Oint NSLP;
+    private Odouble ACNRM;
+    private Odouble CCMXJ;
+    private Odouble CONP;
+    private Odouble CRATE;
+    private Odouble DRC;
+    private Odouble[] EL;
+    private int o_el;
+    private Odouble ETA;
+    private Odouble ETAMAX;
+    private Odouble H;
+    private Odouble HMIN;
+    private Odouble HMXI;
+    private Odouble HNEW;
+    private Odouble HSCAL;
+    private Odouble PRL1;
+    private Odouble RC;
+    private Odouble RL1;
+    private Odouble[] TAU;
+    private int o_tau;
+    private Odouble[] TQ;
+    private int o_tq;
+    private Odouble TN;
+    private Odouble UROUND;
+    private Oint ICF;
+    private Oint INIT;
+    private Oint IPUP;
+    private Oint JCUR;
+    private Oint JSTART;
+    private Oint JSV;
+    private Oint KFLAG;
+    private Oint KUTH;
+    private Oint L;
+    private Oint LMAX;
+    private Oint LYH;
+    private Oint LEWT;
+    private Oint LACOR;
+    private Oint LSAVF;
+    private Oint LWM;
+    private Oint LIWM;
+    private Oint LOCJS;
+    private Oint MAXORD;
+    private Oint METH;
+    private Oint MITER;
+    private Oint MSBJ;
+    private Oint MXHNIL;
+    private Oint MXSTEP;
+    private Oint N;
+    private Oint NEWH;
+    private Oint NEWQ;
+    private Oint NHNIL;
+    private Oint NQ;
+    private Oint NQNYH;
+    private Oint NQWAIT;
+    private Oint NSLJ;
+    private Oint NSLP;
     private Oint NYH;
 
     #endregion Common Block: DVOD01 Declaration
@@ -3403,7 +3622,14 @@ LABEL90:
 
     private CommonBlock _dvod02;
     private Odouble HU;
-    private Oint NCFN; private Oint NETF; private Oint NFE; private Oint NJE; private Oint NLU; private Oint NNI; private Oint NQU; private Oint NST;
+    private Oint NCFN;
+    private Oint NETF;
+    private Oint NFE;
+    private Oint NJE;
+    private Oint NLU;
+    private Oint NNI;
+    private Oint NQU;
+    private Oint NST;
 
     #endregion Common Block: DVOD02 Declaration
 
@@ -3411,9 +3637,25 @@ LABEL90:
 
     #region Variables
 
-    private double ADDON = 0; private double BIAS1 = 0; private double BIAS2 = 0; private double BIAS3 = 0; private double ETACF = 0; private double ETAMIN = 0;
-    private double ETAMX1 = 0; private double ETAMX2 = 0; private double ETAMX3 = 0; private double ETAMXF = 0; private double ETAQ = 0; private double ETAQM1 = 0;
-    private double ONE = 0; private double ONEPSM = 0; private double THRESH = 0; private double ZERO = 0; private int KFC = 0; private int KFH = 0; private int MXNCF = 0;
+    private double ADDON = 0;
+    private double BIAS1 = 0;
+    private double BIAS2 = 0;
+    private double BIAS3 = 0;
+    private double ETACF = 0;
+    private double ETAMIN = 0;
+    private double ETAMX1 = 0;
+    private double ETAMX2 = 0;
+    private double ETAMX3 = 0;
+    private double ETAMXF = 0;
+    private double ETAQ = 0;
+    private double ETAQM1 = 0;
+    private double ONE = 0;
+    private double ONEPSM = 0;
+    private double THRESH = 0;
+    private double ZERO = 0;
+    private int KFC = 0;
+    private int KFH = 0;
+    private int MXNCF = 0;
 
     #endregion Variables
 
@@ -3765,6 +4007,21 @@ LABEL90:
     /// = Dummy name for the nonlinear system solving subroutine,
     /// whose real name is dependent on the method used.
     ///</param>
+    ///<param name="offset_yh"></param>
+    ///<param name="RPAR"></param>
+    ///<param name="IPAR"></param>
+    ///<param name="IWM"></param>
+    ///<param name="offset_acor"></param>
+    ///<param name="offset_ewt"></param>
+    ///<param name="offset_ipar"></param>
+    ///<param name="offset_iwm"></param>
+    ///<param name="offset_rpar"></param>
+    ///<param name="offset_savf"></param>
+    ///<param name="offset_vsav"></param>
+    ///<param name="offset_wm"></param>
+    ///<param name="offset_y"></param>
+    ///<param name="offset_yh1"></param>
+    ///<param name="WM"></param>
     public void Run(ref double[] Y, int offset_y, ref double[] YH, int offset_yh, int LDYH, ref double[] YH1, int offset_yh1, double[] EWT, int offset_ewt, ref double[] SAVF, int offset_savf
                      , double[] VSAV, int offset_vsav, ref double[] ACOR, int offset_acor, ref double[] WM, int offset_wm, ref int[] IWM, int offset_iwm, IFEX F, IJEX JAC
                      , IFEX PSOL, IDVNLSD VNLS, double[] RPAR, int offset_rpar, int[] IPAR, int offset_ipar)
@@ -4308,12 +4565,61 @@ LABEL720:
     #region Common Block: DVOD01 Declaration
 
     private CommonBlock _dvod01;
-    private Odouble ACNRM; private Odouble CCMXJ; private Odouble CONP; private Odouble CRATE; private Odouble DRC; private Odouble[] EL; private int o_el; private Odouble ETA;
-    private Odouble ETAMAX; private Odouble H; private Odouble HMIN; private Odouble HMXI; private Odouble HNEW; private Odouble HSCAL; private Odouble PRL1; private Odouble RC; private Odouble RL1;
-    private Odouble[] TAU; private int o_tau; private Odouble[] TQ; private int o_tq; private Odouble TN; private Odouble UROUND;
-    private Oint ICF; private Oint INIT; private Oint IPUP; private Oint JCUR; private Oint JSTART; private Oint JSV; private Oint KFLAG; private Oint KUTH; private Oint L; private Oint LMAX; private Oint LYH;
-    private Oint LEWT; private Oint LACOR; private Oint LSAVF; private Oint LWM; private Oint LIWM; private Oint LOCJS; private Oint MAXORD; private Oint METH; private Oint MITER; private Oint MSBJ;
-    private Oint MXHNIL; private Oint MXSTEP; private Oint N; private Oint NEWH; private Oint NEWQ; private Oint NHNIL; private Oint NQ; private Oint NQNYH; private Oint NQWAIT; private Oint NSLJ; private Oint NSLP;
+    private Odouble ACNRM;
+    private Odouble CCMXJ;
+    private Odouble CONP;
+    private Odouble CRATE;
+    private Odouble DRC;
+    private Odouble[] EL;
+    private int o_el;
+    private Odouble ETA;
+    private Odouble ETAMAX;
+    private Odouble H;
+    private Odouble HMIN;
+    private Odouble HMXI;
+    private Odouble HNEW;
+    private Odouble HSCAL;
+    private Odouble PRL1;
+    private Odouble RC;
+    private Odouble RL1;
+    private Odouble[] TAU;
+    private int o_tau;
+    private Odouble[] TQ;
+    private int o_tq;
+    private Odouble TN;
+    private Odouble UROUND;
+    private Oint ICF;
+    private Oint INIT;
+    private Oint IPUP;
+    private Oint JCUR;
+    private Oint JSTART;
+    private Oint JSV;
+    private Oint KFLAG;
+    private Oint KUTH;
+    private Oint L;
+    private Oint LMAX;
+    private Oint LYH;
+    private Oint LEWT;
+    private Oint LACOR;
+    private Oint LSAVF;
+    private Oint LWM;
+    private Oint LIWM;
+    private Oint LOCJS;
+    private Oint MAXORD;
+    private Oint METH;
+    private Oint MITER;
+    private Oint MSBJ;
+    private Oint MXHNIL;
+    private Oint MXSTEP;
+    private Oint N;
+    private Oint NEWH;
+    private Oint NEWQ;
+    private Oint NHNIL;
+    private Oint NQ;
+    private Oint NQNYH;
+    private Oint NQWAIT;
+    private Oint NSLJ;
+    private Oint NSLP;
     private Oint NYH;
 
     #endregion Common Block: DVOD01 Declaration
@@ -4322,7 +4628,12 @@ LABEL720:
 
     #region Variables
 
-    private double CORTES = 0; private double[] EM = new double[13]; private double ONE = 0; private double SIX = 0; private double TWO = 0; private double ZERO = 0;
+    private double CORTES = 0;
+    private double[] EM = new double[13];
+    private double ONE = 0;
+    private double SIX = 0;
+    private double TWO = 0;
+    private double ZERO = 0;
 
     #endregion Variables
 
@@ -4788,12 +5099,61 @@ LABEL300:
     #region Common Block: DVOD01 Declaration
 
     private CommonBlock _dvod01;
-    private Odouble ACNRM; private Odouble CCMXJ; private Odouble CONP; private Odouble CRATE; private Odouble DRC; private Odouble[] EL; private int o_el; private Odouble ETA;
-    private Odouble ETAMAX; private Odouble H; private Odouble HMIN; private Odouble HMXI; private Odouble HNEW; private Odouble HSCAL; private Odouble PRL1; private Odouble RC; private Odouble RL1;
-    private Odouble[] TAU; private int o_tau; private Odouble[] TQ; private int o_tq; private Odouble TN; private Odouble UROUND;
-    private Oint ICF; private Oint INIT; private Oint IPUP; private Oint JCUR; private Oint JSTART; private Oint JSV; private Oint KFLAG; private Oint KUTH; private Oint L; private Oint LMAX; private Oint LYH;
-    private Oint LEWT; private Oint LACOR; private Oint LSAVF; private Oint LWM; private Oint LIWM; private Oint LOCJS; private Oint MAXORD; private Oint METH; private Oint MITER; private Oint MSBJ;
-    private Oint MXHNIL; private Oint MXSTEP; private Oint N; private Oint NEWH; private Oint NEWQ; private Oint NHNIL; private Oint NQ; private Oint NQNYH; private Oint NQWAIT; private Oint NSLJ; private Oint NSLP;
+    private Odouble ACNRM;
+    private Odouble CCMXJ;
+    private Odouble CONP;
+    private Odouble CRATE;
+    private Odouble DRC;
+    private Odouble[] EL;
+    private int o_el;
+    private Odouble ETA;
+    private Odouble ETAMAX;
+    private Odouble H;
+    private Odouble HMIN;
+    private Odouble HMXI;
+    private Odouble HNEW;
+    private Odouble HSCAL;
+    private Odouble PRL1;
+    private Odouble RC;
+    private Odouble RL1;
+    private Odouble[] TAU;
+    private int o_tau;
+    private Odouble[] TQ;
+    // private int o_tq;
+    private Odouble TN;
+    private Odouble UROUND;
+    private Oint ICF;
+    private Oint INIT;
+    private Oint IPUP;
+    private Oint JCUR;
+    private Oint JSTART;
+    private Oint JSV;
+    private Oint KFLAG;
+    private Oint KUTH;
+    private Oint L;
+    private Oint LMAX;
+    private Oint LYH;
+    private Oint LEWT;
+    private Oint LACOR;
+    private Oint LSAVF;
+    private Oint LWM;
+    private Oint LIWM;
+    private Oint LOCJS;
+    private Oint MAXORD;
+    private Oint METH;
+    private Oint MITER;
+    private Oint MSBJ;
+    private Oint MXHNIL;
+    private Oint MXSTEP;
+    private Oint N;
+    private Oint NEWH;
+    private Oint NEWQ;
+    private Oint NHNIL;
+    private Oint NQ;
+    private Oint NQNYH;
+    private Oint NQWAIT;
+    private Oint NSLJ;
+    private Oint NSLP;
     private Oint NYH;
 
     #endregion Common Block: DVOD01 Declaration
@@ -4802,7 +5162,8 @@ LABEL300:
 
     #region Variables
 
-    private double ONE = 0; private double ZERO = 0;
+    private double ONE = 0;
+    private double ZERO = 0;
 
     #endregion Variables
 
@@ -4853,8 +5214,8 @@ LABEL300:
                    //End Array: TAU
                    //Start Array: TQ  StartIndex: 41  LastIndex: 45
       TQ = DVOD01.doubleData;
-      o_tq = 40;  //o_ = StartIndex-1
-                  //End Array: TQ
+      // o_tq = 40;  //o_ = StartIndex-1
+      //End Array: TQ
       TN = DVOD01.doubleData[46];
       UROUND = DVOD01.doubleData[47];
       ICF = DVOD01.intData[0];
@@ -4955,8 +5316,8 @@ LABEL300:
                    //End Array: TAU
                    //Start Array: TQ  StartIndex: 41  LastIndex: 45
       TQ = DVOD01.doubleData;
-      o_tq = 40;  //o_ = StartIndex-1
-                  //End Array: TQ
+      // o_tq = 40;  //o_ = StartIndex-1
+      //End Array: TQ
       TN = DVOD01.doubleData[46];
       UROUND = DVOD01.doubleData[47];
       ICF = DVOD01.intData[0];
@@ -5002,6 +5363,9 @@ LABEL300:
     /// = An integer flag used when METH = 2 to indicate an order
     /// increase (IORD = +1) or an order decrease (IORD = -1).
     ///</param>
+    ///<param name="LDYH"></param>
+    ///<param name="offset_yh"></param>
+    ///<param name="YH"></param>
     public void Run(ref double[] YH, int offset_yh, int LDYH, int IORD)
     {
       #region Variables
@@ -5228,7 +5592,12 @@ LABEL340:
   {
     #region Dependencies
 
-    private DVNORM _dvnorm; private DCOPY _dcopy; private DVJAC _dvjac; private DVSOL _dvsol; private DSCAL _dscal; private DAXPY _daxpy;
+    private DVNORM _dvnorm;
+    private DCOPY _dcopy;
+    private DVJAC _dvjac;
+    private DVSOL _dvsol;
+    private DSCAL _dscal;
+    private DAXPY _daxpy;
 
     #endregion Dependencies
 
@@ -5237,12 +5606,61 @@ LABEL340:
     #region Common Block: DVOD01 Declaration
 
     private CommonBlock _dvod01;
-    private Odouble ACNRM; private Odouble CCMXJ; private Odouble CONP; private Odouble CRATE; private Odouble DRC; private Odouble[] EL; private int o_el; private Odouble ETA;
-    private Odouble ETAMAX; private Odouble H; private Odouble HMIN; private Odouble HMXI; private Odouble HNEW; private Odouble HSCAL; private Odouble PRL1; private Odouble RC; private Odouble RL1;
-    private Odouble[] TAU; private int o_tau; private Odouble[] TQ; private int o_tq; private Odouble TN; private Odouble UROUND;
-    private Oint ICF; private Oint INIT; private Oint IPUP; private Oint JCUR; private Oint JSTART; private Oint JSV; private Oint KFLAG; private Oint KUTH; private Oint L; private Oint LMAX; private Oint LYH;
-    private Oint LEWT; private Oint LACOR; private Oint LSAVF; private Oint LWM; private Oint LIWM; private Oint LOCJS; private Oint MAXORD; private Oint METH; private Oint MITER; private Oint MSBJ;
-    private Oint MXHNIL; private Oint MXSTEP; private Oint N; private Oint NEWH; private Oint NEWQ; private Oint NHNIL; private Oint NQ; private Oint NQNYH; private Oint NQWAIT; private Oint NSLJ; private Oint NSLP;
+    private Odouble ACNRM;
+    private Odouble CCMXJ;
+    private Odouble CONP;
+    private Odouble CRATE;
+    private Odouble DRC;
+    private Odouble[] EL;
+    // private int o_el;
+    private Odouble ETA;
+    private Odouble ETAMAX;
+    private Odouble H;
+    private Odouble HMIN;
+    private Odouble HMXI;
+    private Odouble HNEW;
+    private Odouble HSCAL;
+    private Odouble PRL1;
+    private Odouble RC;
+    private Odouble RL1;
+    private Odouble[] TAU;
+    // private int o_tau;
+    private Odouble[] TQ;
+    private int o_tq;
+    private Odouble TN;
+    private Odouble UROUND;
+    private Oint ICF;
+    private Oint INIT;
+    private Oint IPUP;
+    private Oint JCUR;
+    private Oint JSTART;
+    private Oint JSV;
+    private Oint KFLAG;
+    private Oint KUTH;
+    private Oint L;
+    private Oint LMAX;
+    private Oint LYH;
+    private Oint LEWT;
+    private Oint LACOR;
+    private Oint LSAVF;
+    private Oint LWM;
+    private Oint LIWM;
+    private Oint LOCJS;
+    private Oint MAXORD;
+    private Oint METH;
+    private Oint MITER;
+    private Oint MSBJ;
+    private Oint MXHNIL;
+    private Oint MXSTEP;
+    private Oint N;
+    private Oint NEWH;
+    private Oint NEWQ;
+    private Oint NHNIL;
+    private Oint NQ;
+    private Oint NQNYH;
+    private Oint NQWAIT;
+    private Oint NSLJ;
+    private Oint NSLP;
     private Oint NYH;
 
     #endregion Common Block: DVOD01 Declaration
@@ -5251,7 +5669,14 @@ LABEL340:
 
     private CommonBlock _dvod02;
     private Odouble HU;
-    private Oint NCFN; private Oint NETF; private Oint NFE; private Oint NJE; private Oint NLU; private Oint NNI; private Oint NQU; private Oint NST;
+    private Oint NCFN;
+    private Oint NETF;
+    private Oint NFE;
+    private Oint NJE;
+    private Oint NLU;
+    private Oint NNI;
+    private Oint NQU;
+    private Oint NST;
 
     #endregion Common Block: DVOD02 Declaration
 
@@ -5259,7 +5684,13 @@ LABEL340:
 
     #region Variables
 
-    private double CCMAX = 0; private double CRDOWN = 0; private double ONE = 0; private double RDIV = 0; private double TWO = 0; private double ZERO = 0; private int MAXCOR = 0;
+    private double CCMAX = 0;
+    private double CRDOWN = 0;
+    private double ONE = 0;
+    private double RDIV = 0;
+    private double TWO = 0;
+    private double ZERO = 0;
+    private int MAXCOR = 0;
     private int MSBP = 0;
 
     #endregion Variables
@@ -5310,8 +5741,8 @@ LABEL340:
       DRC = DVOD01.doubleData[4];
       //Start Array: EL  StartIndex: 5  LastIndex: 17
       EL = DVOD01.doubleData;
-      o_el = 4;  //o_ = StartIndex-1
-                 //End Array: EL
+      // o_el = 4;  //o_ = StartIndex-1
+      //End Array: EL
       ETA = DVOD01.doubleData[18];
       ETAMAX = DVOD01.doubleData[19];
       H = DVOD01.doubleData[20];
@@ -5324,9 +5755,9 @@ LABEL340:
       RL1 = DVOD01.doubleData[27];
       //Start Array: TAU  StartIndex: 28  LastIndex: 40
       TAU = DVOD01.doubleData;
-      o_tau = 27;  //o_ = StartIndex-1
-                   //End Array: TAU
-                   //Start Array: TQ  StartIndex: 41  LastIndex: 45
+      // o_tau = 27;  //o_ = StartIndex-1
+      //End Array: TAU
+      //Start Array: TQ  StartIndex: 41  LastIndex: 45
       TQ = DVOD01.doubleData;
       o_tq = 40;  //o_ = StartIndex-1
                   //End Array: TQ
@@ -5457,8 +5888,8 @@ LABEL340:
       DRC = DVOD01.doubleData[4];
       //Start Array: EL  StartIndex: 5  LastIndex: 17
       EL = DVOD01.doubleData;
-      o_el = 4;  //o_ = StartIndex-1
-                 //End Array: EL
+      // o_el = 4;  //o_ = StartIndex-1
+      //End Array: EL
       ETA = DVOD01.doubleData[18];
       ETAMAX = DVOD01.doubleData[19];
       H = DVOD01.doubleData[20];
@@ -5471,9 +5902,9 @@ LABEL340:
       RL1 = DVOD01.doubleData[27];
       //Start Array: TAU  StartIndex: 28  LastIndex: 40
       TAU = DVOD01.doubleData;
-      o_tau = 27;  //o_ = StartIndex-1
-                   //End Array: TAU
-                   //Start Array: TQ  StartIndex: 41  LastIndex: 45
+      // o_tau = 27;  //o_ = StartIndex-1
+      //End Array: TAU
+      //Start Array: TQ  StartIndex: 41  LastIndex: 45
       TQ = DVOD01.doubleData;
       o_tq = 40;  //o_ = StartIndex-1
                   //End Array: TQ
@@ -5580,6 +6011,20 @@ LABEL340:
     /// -3 unrecoverable error in solution (cannot occur
     /// here).
     ///</param>
+    ///<param name="offset_yh"></param>
+    ///<param name="WM"></param>
+    ///<param name="offset_y"></param>
+    ///<param name="offset_wm"></param>
+    ///<param name="offset_vsav"></param>
+    ///<param name="offset_savf"></param>
+    ///<param name="offset_rpar"></param>
+    ///<param name="IPAR"></param>
+    ///<param name="IWM"></param>
+    ///<param name="offset_acor"></param>
+    ///<param name="offset_ewt"></param>
+    ///<param name="offset_ipar"></param>
+    ///<param name="offset_iwm"></param>
+    ///<param name="RPAR"></param>
     public void Run(ref double[] Y, int offset_y, double[] YH, int offset_yh, int LDYH, double[] VSAV, int offset_vsav, ref double[] SAVF, int offset_savf, double[] EWT, int offset_ewt
                      , ref double[] ACOR, int offset_acor, ref int[] IWM, int offset_iwm, ref double[] WM, int offset_wm, IFEX F, IJEX JAC, IFEX PDUM
                      , ref int NFLAG, double[] RPAR, int offset_rpar, int[] IPAR, int offset_ipar)
@@ -5865,7 +6310,12 @@ LABEL450:
   {
     #region Dependencies
 
-    private DVNORM _dvnorm; private DCOPY _dcopy; private DSCAL _dscal; private DGEFA _dgefa; private DACOPY _dacopy; private DGBFA _dgbfa;
+    private DVNORM _dvnorm;
+    private DCOPY _dcopy;
+    private DSCAL _dscal;
+    private DGEFA _dgefa;
+    private DACOPY _dacopy;
+    private DGBFA _dgbfa;
 
     #endregion Dependencies
 
@@ -5874,12 +6324,61 @@ LABEL450:
     #region Common Block: DVOD01 Declaration
 
     private CommonBlock _dvod01;
-    private Odouble ACNRM; private Odouble CCMXJ; private Odouble CONP; private Odouble CRATE; private Odouble DRC; private Odouble[] EL; private int o_el; private Odouble ETA;
-    private Odouble ETAMAX; private Odouble H; private Odouble HMIN; private Odouble HMXI; private Odouble HNEW; private Odouble HSCAL; private Odouble PRL1; private Odouble RC; private Odouble RL1;
-    private Odouble[] TAU; private int o_tau; private Odouble[] TQ; private int o_tq; private Odouble TN; private Odouble UROUND;
-    private Oint ICF; private Oint INIT; private Oint IPUP; private Oint JCUR; private Oint JSTART; private Oint JSV; private Oint KFLAG; private Oint KUTH; private Oint L; private Oint LMAX; private Oint LYH;
-    private Oint LEWT; private Oint LACOR; private Oint LSAVF; private Oint LWM; private Oint LIWM; private Oint LOCJS; private Oint MAXORD; private Oint METH; private Oint MITER; private Oint MSBJ;
-    private Oint MXHNIL; private Oint MXSTEP; private Oint N; private Oint NEWH; private Oint NEWQ; private Oint NHNIL; private Oint NQ; private Oint NQNYH; private Oint NQWAIT; private Oint NSLJ; private Oint NSLP;
+    private Odouble ACNRM;
+    private Odouble CCMXJ;
+    private Odouble CONP;
+    private Odouble CRATE;
+    private Odouble DRC;
+    private Odouble[] EL;
+    // private int o_el;
+    private Odouble ETA;
+    private Odouble ETAMAX;
+    private Odouble H;
+    private Odouble HMIN;
+    private Odouble HMXI;
+    private Odouble HNEW;
+    private Odouble HSCAL;
+    private Odouble PRL1;
+    private Odouble RC;
+    private Odouble RL1;
+    private Odouble[] TAU;
+    // private int o_tau;
+    private Odouble[] TQ;
+    // private int o_tq;
+    private Odouble TN;
+    private Odouble UROUND;
+    private Oint ICF;
+    private Oint INIT;
+    private Oint IPUP;
+    private Oint JCUR;
+    private Oint JSTART;
+    private Oint JSV;
+    private Oint KFLAG;
+    private Oint KUTH;
+    private Oint L;
+    private Oint LMAX;
+    private Oint LYH;
+    private Oint LEWT;
+    private Oint LACOR;
+    private Oint LSAVF;
+    private Oint LWM;
+    private Oint LIWM;
+    private Oint LOCJS;
+    private Oint MAXORD;
+    private Oint METH;
+    private Oint MITER;
+    private Oint MSBJ;
+    private Oint MXHNIL;
+    private Oint MXSTEP;
+    private Oint N;
+    private Oint NEWH;
+    private Oint NEWQ;
+    private Oint NHNIL;
+    private Oint NQ;
+    private Oint NQNYH;
+    private Oint NQWAIT;
+    private Oint NSLJ;
+    private Oint NSLP;
     private Oint NYH;
 
     #endregion Common Block: DVOD01 Declaration
@@ -5888,7 +6387,14 @@ LABEL450:
 
     private CommonBlock _dvod02;
     private Odouble HU;
-    private Oint NCFN; private Oint NETF; private Oint NFE; private Oint NJE; private Oint NLU; private Oint NNI; private Oint NQU; private Oint NST;
+    private Oint NCFN;
+    private Oint NETF;
+    private Oint NFE;
+    private Oint NJE;
+    private Oint NLU;
+    private Oint NNI;
+    private Oint NQU;
+    private Oint NST;
 
     #endregion Common Block: DVOD02 Declaration
 
@@ -5896,7 +6402,10 @@ LABEL450:
 
     #region Variables
 
-    private double ONE = 0; private double PT1 = 0; private double THOU = 0; private double ZERO = 0;
+    private double ONE = 0;
+    private double PT1 = 0;
+    private double THOU = 0;
+    private double ZERO = 0;
 
     #endregion Variables
 
@@ -5938,8 +6447,8 @@ LABEL450:
       DRC = DVOD01.doubleData[4];
       //Start Array: EL  StartIndex: 5  LastIndex: 17
       EL = DVOD01.doubleData;
-      o_el = 4;  //o_ = StartIndex-1
-                 //End Array: EL
+      // o_el = 4;  //o_ = StartIndex-1
+      //End Array: EL
       ETA = DVOD01.doubleData[18];
       ETAMAX = DVOD01.doubleData[19];
       H = DVOD01.doubleData[20];
@@ -5952,12 +6461,12 @@ LABEL450:
       RL1 = DVOD01.doubleData[27];
       //Start Array: TAU  StartIndex: 28  LastIndex: 40
       TAU = DVOD01.doubleData;
-      o_tau = 27;  //o_ = StartIndex-1
-                   //End Array: TAU
-                   //Start Array: TQ  StartIndex: 41  LastIndex: 45
+      // o_tau = 27;  //o_ = StartIndex-1
+      //End Array: TAU
+      //Start Array: TQ  StartIndex: 41  LastIndex: 45
       TQ = DVOD01.doubleData;
-      o_tq = 40;  //o_ = StartIndex-1
-                  //End Array: TQ
+      // o_tq = 40;  //o_ = StartIndex-1
+      //End Array: TQ
       TN = DVOD01.doubleData[46];
       UROUND = DVOD01.doubleData[47];
       ICF = DVOD01.intData[0];
@@ -6072,8 +6581,8 @@ LABEL450:
       DRC = DVOD01.doubleData[4];
       //Start Array: EL  StartIndex: 5  LastIndex: 17
       EL = DVOD01.doubleData;
-      o_el = 4;  //o_ = StartIndex-1
-                 //End Array: EL
+      // o_el = 4;  //o_ = StartIndex-1
+      //End Array: EL
       ETA = DVOD01.doubleData[18];
       ETAMAX = DVOD01.doubleData[19];
       H = DVOD01.doubleData[20];
@@ -6086,12 +6595,12 @@ LABEL450:
       RL1 = DVOD01.doubleData[27];
       //Start Array: TAU  StartIndex: 28  LastIndex: 40
       TAU = DVOD01.doubleData;
-      o_tau = 27;  //o_ = StartIndex-1
-                   //End Array: TAU
-                   //Start Array: TQ  StartIndex: 41  LastIndex: 45
+      // o_tau = 27;  //o_ = StartIndex-1
+      //End Array: TAU
+      //Start Array: TQ  StartIndex: 41  LastIndex: 45
       TQ = DVOD01.doubleData;
-      o_tq = 40;  //o_ = StartIndex-1
-                  //End Array: TQ
+      // o_tq = 40;  //o_ = StartIndex-1
+      //End Array: TQ
       TN = DVOD01.doubleData[46];
       UROUND = DVOD01.doubleData[47];
       ICF = DVOD01.intData[0];
@@ -6189,6 +6698,19 @@ LABEL450:
     /// = Output error flag,  = 0 if no trouble, 1 if the P
     /// matrix is found to be singular.
     ///</param>
+    ///<param name="RPAR"></param>
+    ///<param name="offset_iwm"></param>
+    ///<param name="offset_ipar"></param>
+    ///<param name="offset_ewt"></param>
+    ///<param name="IPAR"></param>
+    ///<param name="offset_rpar"></param>
+    ///<param name="offset_savf"></param>
+    ///<param name="FTEM"></param>
+    ///<param name="offset_ftem"></param>
+    ///<param name="offset_wm"></param>
+    ///<param name="offset_y"></param>
+    ///<param name="offset_yh"></param>
+
     public void Run(ref double[] Y, int offset_y, double[] YH, int offset_yh, int LDYH, double[] EWT, int offset_ewt, ref double[] FTEM, int offset_ftem, double[] SAVF, int offset_savf
                      , ref double[] WM, int offset_wm, ref int[] IWM, int offset_iwm, IFEX F, IJEX JAC, ref int IERPJ, double[] RPAR, int offset_rpar
                      , int[] IPAR, int offset_ipar)
@@ -6639,7 +7161,8 @@ LABEL330:
   {
     #region Dependencies
 
-    private DGESL _dgesl; private DGBSL _dgbsl;
+    private DGESL _dgesl;
+    private DGBSL _dgbsl;
 
     #endregion Dependencies
 
@@ -6648,12 +7171,61 @@ LABEL330:
     #region Common Block: DVOD01 Declaration
 
     private CommonBlock _dvod01;
-    private Odouble ACNRM; private Odouble CCMXJ; private Odouble CONP; private Odouble CRATE; private Odouble DRC; private Odouble[] EL; private int o_el; private Odouble ETA;
-    private Odouble ETAMAX; private Odouble H; private Odouble HMIN; private Odouble HMXI; private Odouble HNEW; private Odouble HSCAL; private Odouble PRL1; private Odouble RC; private Odouble RL1;
-    private Odouble[] TAU; private int o_tau; private Odouble[] TQ; private int o_tq; private Odouble TN; private Odouble UROUND;
-    private Oint ICF; private Oint INIT; private Oint IPUP; private Oint JCUR; private Oint JSTART; private Oint JSV; private Oint KFLAG; private Oint KUTH; private Oint L; private Oint LMAX; private Oint LYH;
-    private Oint LEWT; private Oint LACOR; private Oint LSAVF; private Oint LWM; private Oint LIWM; private Oint LOCJS; private Oint MAXORD; private Oint METH; private Oint MITER; private Oint MSBJ;
-    private Oint MXHNIL; private Oint MXSTEP; private Oint N; private Oint NEWH; private Oint NEWQ; private Oint NHNIL; private Oint NQ; private Oint NQNYH; private Oint NQWAIT; private Oint NSLJ; private Oint NSLP;
+    private Odouble ACNRM;
+    private Odouble CCMXJ;
+    private Odouble CONP;
+    private Odouble CRATE;
+    private Odouble DRC;
+    private Odouble[] EL;
+    // private int o_el;
+    private Odouble ETA;
+    private Odouble ETAMAX;
+    private Odouble H;
+    private Odouble HMIN;
+    private Odouble HMXI;
+    private Odouble HNEW;
+    private Odouble HSCAL;
+    private Odouble PRL1;
+    private Odouble RC;
+    private Odouble RL1;
+    private Odouble[] TAU;
+    // private int o_tau;
+    private Odouble[] TQ;
+    // private int o_tq;
+    private Odouble TN;
+    private Odouble UROUND;
+    private Oint ICF;
+    private Oint INIT;
+    private Oint IPUP;
+    private Oint JCUR;
+    private Oint JSTART;
+    private Oint JSV;
+    private Oint KFLAG;
+    private Oint KUTH;
+    private Oint L;
+    private Oint LMAX;
+    private Oint LYH;
+    private Oint LEWT;
+    private Oint LACOR;
+    private Oint LSAVF;
+    private Oint LWM;
+    private Oint LIWM;
+    private Oint LOCJS;
+    private Oint MAXORD;
+    private Oint METH;
+    private Oint MITER;
+    private Oint MSBJ;
+    private Oint MXHNIL;
+    private Oint MXSTEP;
+    private Oint N;
+    private Oint NEWH;
+    private Oint NEWQ;
+    private Oint NHNIL;
+    private Oint NQ;
+    private Oint NQNYH;
+    private Oint NQWAIT;
+    private Oint NSLJ;
+    private Oint NSLP;
     private Oint NYH;
 
     #endregion Common Block: DVOD01 Declaration
@@ -6662,7 +7234,8 @@ LABEL330:
 
     #region Variables
 
-    private double ONE = 0; private double ZERO = 0;
+    private double ONE = 0;
+    private double ZERO = 0;
 
     #endregion Variables
 
@@ -6696,8 +7269,8 @@ LABEL330:
       DRC = DVOD01.doubleData[4];
       //Start Array: EL  StartIndex: 5  LastIndex: 17
       EL = DVOD01.doubleData;
-      o_el = 4;  //o_ = StartIndex-1
-                 //End Array: EL
+      // o_el = 4;  //o_ = StartIndex-1
+      //End Array: EL
       ETA = DVOD01.doubleData[18];
       ETAMAX = DVOD01.doubleData[19];
       H = DVOD01.doubleData[20];
@@ -6710,12 +7283,12 @@ LABEL330:
       RL1 = DVOD01.doubleData[27];
       //Start Array: TAU  StartIndex: 28  LastIndex: 40
       TAU = DVOD01.doubleData;
-      o_tau = 27;  //o_ = StartIndex-1
-                   //End Array: TAU
-                   //Start Array: TQ  StartIndex: 41  LastIndex: 45
+      // o_tau = 27;  //o_ = StartIndex-1
+      //End Array: TAU
+      //Start Array: TQ  StartIndex: 41  LastIndex: 45
       TQ = DVOD01.doubleData;
-      o_tq = 40;  //o_ = StartIndex-1
-                  //End Array: TQ
+      // o_tq = 40;  //o_ = StartIndex-1
+      //End Array: TQ
       TN = DVOD01.doubleData[46];
       UROUND = DVOD01.doubleData[47];
       ICF = DVOD01.intData[0];
@@ -6802,8 +7375,8 @@ LABEL330:
       DRC = DVOD01.doubleData[4];
       //Start Array: EL  StartIndex: 5  LastIndex: 17
       EL = DVOD01.doubleData;
-      o_el = 4;  //o_ = StartIndex-1
-                 //End Array: EL
+      // o_el = 4;  //o_ = StartIndex-1
+      //End Array: EL
       ETA = DVOD01.doubleData[18];
       ETAMAX = DVOD01.doubleData[19];
       H = DVOD01.doubleData[20];
@@ -6816,12 +7389,12 @@ LABEL330:
       RL1 = DVOD01.doubleData[27];
       //Start Array: TAU  StartIndex: 28  LastIndex: 40
       TAU = DVOD01.doubleData;
-      o_tau = 27;  //o_ = StartIndex-1
-                   //End Array: TAU
-                   //Start Array: TQ  StartIndex: 41  LastIndex: 45
+      // o_tau = 27;  //o_ = StartIndex-1
+      //End Array: TAU
+      //Start Array: TQ  StartIndex: 41  LastIndex: 45
       TQ = DVOD01.doubleData;
-      o_tq = 40;  //o_ = StartIndex-1
-                  //End Array: TQ
+      // o_tq = 40;  //o_ = StartIndex-1
+      //End Array: TQ
       TN = DVOD01.doubleData[46];
       UROUND = DVOD01.doubleData[47];
       ICF = DVOD01.intData[0];
@@ -6884,6 +7457,9 @@ LABEL330:
     /// = Output flag.  IERSL = 0 if no trouble occurred.
     /// IERSL = 1 if a singular matrix arose with MITER = 3.
     ///</param>
+    ///<param name="offset_wm"></param>
+    ///<param name="offset_iwm"></param>
+    ///<param name="offset_x"></param>
     public void Run(ref double[] WM, int offset_wm, int[] IWM, int offset_iwm, ref double[] X, int offset_x, ref int IERSL)
     {
       #region Variables
@@ -7025,16 +7601,20 @@ LABEL400:
     #region Common Block: DVOD01 Declaration
 
     private CommonBlock _dvod01;
-    private Odouble[] RVOD1; private int o_rvod1;
-    private Oint[] IVOD1; private int o_ivod1;
+    private Odouble[] RVOD1;
+    private int o_rvod1;
+    private Oint[] IVOD1;
+    private int o_ivod1;
 
     #endregion Common Block: DVOD01 Declaration
 
     #region Common Block: DVOD02 Declaration
 
     private CommonBlock _dvod02;
-    private Odouble[] RVOD2; private int o_rvod2;
-    private Oint[] IVOD2; private int o_ivod2;
+    private Odouble[] RVOD2;
+    private int o_rvod2;
+    private Oint[] IVOD2;
+    private int o_ivod2;
 
     #endregion Common Block: DVOD02 Declaration
 
@@ -7042,7 +7622,10 @@ LABEL400:
 
     #region Variables
 
-    private int LENIV1 = 0; private int LENIV2 = 0; private int LENRV1 = 0; private int LENRV2 = 0;
+    private int LENIV1 = 0;
+    private int LENIV2 = 0;
+    private int LENRV1 = 0;
+    private int LENRV2 = 0;
 
     #endregion Variables
 
@@ -7161,6 +7744,8 @@ LABEL400:
     /// JOB  = 2 if COMMON is to be restored (read from RSAV/ISAV).
     /// A call with JOB = 2 presumes a prior call with JOB = 1.
     ///</param>
+    ///<param name="offset_isav"></param>
+    ///<param name="offset_rsav"></param>
     public void Run(ref double[] RSAV, int offset_rsav, ref int[] ISAV, int offset_isav, int JOB)
     {
       #region Variables
@@ -7692,6 +8277,10 @@ LABEL40:
     /// <param name="NR">
     /// = Number of reals (0, 1, or 2) to be printed with message.
     ///</param>
+    ///<param name="I1"></param>
+    ///<param name="I2"></param>
+    ///<param name="R1"></param>
+    ///<param name="R2"></param>
     public void Run(string MSG, int NMES, int NERR, int LEVEL, int NI, int I1
                      , int I2, int NR, double R1, double R2)
     {
@@ -8157,7 +8746,8 @@ LABEL100:
 
     #region Variables
 
-    private int LUNIT = 0; private int MESFLG = 0;
+    private int LUNIT = 0;
+    private int MESFLG = 0;
 
     #endregion Variables
 
@@ -8692,7 +9282,9 @@ LABEL10:
   {
     #region Dependencies
 
-    private IDAMAX _idamax; private DSCAL _dscal; private DAXPY _daxpy;
+    private IDAMAX _idamax;
+    private DSCAL _dscal;
+    private DAXPY _daxpy;
 
     #endregion Dependencies
 
@@ -8809,6 +9401,8 @@ LABEL10:
     /// if called.  Use  RCOND  in DGECO for a reliable
     /// indication of singularity.
     ///</param>
+    ///<param name="offset_a"></param>
+    ///<param name="offset_ipvt"></param>
     public void Run(ref double[] A, int offset_a, int LDA, int N, ref int[] IPVT, int offset_ipvt, ref int INFO)
     {
       #region Variables
@@ -9042,7 +9636,8 @@ LABEL70:
   {
     #region Dependencies
 
-    private DDOT _ddot; private DAXPY _daxpy;
+    private DDOT _ddot;
+    private DAXPY _daxpy;
 
     #endregion Dependencies
 
@@ -9170,6 +9765,9 @@ LABEL70:
     /// = nonzero   to solve  TRANS(A)*X = B  where
     /// TRANS(A)  is the transpose.
     ///</param>
+    ///<param name="offset_ipvt"></param>
+    ///<param name="offset_a"></param>
+    ///<param name="offset_b"></param>
     public void Run(double[] A, int offset_a, int LDA, int N, int[] IPVT, int offset_ipvt, ref double[] B, int offset_b, int JOB)
     {
       #region Variables
@@ -9443,7 +10041,9 @@ LABEL100:
   {
     #region Dependencies
 
-    private IDAMAX _idamax; private DSCAL _dscal; private DAXPY _daxpy;
+    private IDAMAX _idamax;
+    private DSCAL _dscal;
+    private DAXPY _daxpy;
 
     #endregion Dependencies
 
@@ -9612,6 +10212,8 @@ LABEL100:
     /// called.  Use  RCOND  in DGBCO for a reliable
     /// indication of singularity.
     ///</param>
+    ///<param name="offset_abd"></param>
+    ///<param name="offset_ipvt"></param>
     public void Run(ref double[] ABD, int offset_abd, int LDA, int N, int ML, int MU, ref int[] IPVT, int offset_ipvt
                      , ref int INFO)
     {
@@ -9950,7 +10552,8 @@ LABEL130:
   {
     #region Dependencies
 
-    private DDOT _ddot; private DAXPY _daxpy;
+    private DDOT _ddot;
+    private DAXPY _daxpy;
 
     #endregion Dependencies
 
@@ -10093,6 +10696,9 @@ LABEL130:
     /// = nonzero   to solve  TRANS(A)*X = B , where
     /// TRANS(A)  is the transpose.
     ///</param>
+    ///<param name="offset_ipvt"></param>
+    ///<param name="offset_abd"></param>
+    ///<param name="offset_b"></param>
     public void Run(double[] ABD, int offset_abd, int LDA, int N, int ML, int MU, int[] IPVT, int offset_ipvt
                      , ref double[] B, int offset_b, int JOB)
     {
@@ -10410,6 +11016,8 @@ LABEL100:
     /// <param name="INCY">
     /// storage spacing between elements of DY
     ///</param>
+    ///<param name="offset_dx"></param>
+    ///<param name="offset_dy"></param>
     public void Run(int N, double DA, double[] DX, int offset_dx, int INCX, ref double[] DY, int offset_dy, int INCY)
     {
       #region Implicit Variables
@@ -10668,6 +11276,8 @@ LABEL60:
     /// <param name="INCY">
     /// storage spacing between elements of DY
     ///</param>
+    ///<param name="offset_dx"></param>
+    ///<param name="offset_dy"></param>
     public void Run(int N, double[] DX, int offset_dx, int INCX, ref double[] DY, int offset_dy, int INCY)
     {
       #region Implicit Variables
@@ -10927,6 +11537,8 @@ LABEL60:
     /// <param name="INCY">
     /// storage spacing between elements of DY
     ///</param>
+    /// <param name="offset_dx"></param>
+    /// <param name="offset_dy"></param>
     public double Run(int N, double[] DX, int offset_dx, int INCX, double[] DY, int offset_dy, int INCY)
     {
       double ddot = 0;
@@ -11152,7 +11764,10 @@ LABEL60:
   {
     #region Variables
 
-    private double CUTLO = 0; private double CUTHI = 0; private double ZERO = 0; private double ONE = 0;
+    private double CUTLO = 0;
+    private double CUTHI = 0;
+    private double ZERO = 0;
+    private double ONE = 0;
 
     #endregion Variables
 
@@ -11254,6 +11869,7 @@ LABEL60:
     /// <param name="INCX">
     /// storage spacing between elements of DX
     ///</param>
+    ///<param name="offset_dx"></param>
     public double Run(int N, double[] DX, int offset_dx, int INCX)
     {
       double dnrm2 = 0;
@@ -11587,6 +12203,7 @@ LABEL300:
     /// <param name="INCX">
     /// storage spacing between elements of DX
     ///</param>
+    /// <param name="offset_dx"></param>
     public void Run(int N, double DA, ref double[] DX, int offset_dx, int INCX)
     {
       #region Variables
@@ -11806,6 +12423,7 @@ LABEL40:
     /// <param name="INCX">
     /// storage spacing between elements of DX
     ///</param>
+    ///<param name="offset_dx"></param>
     public int Run(int N, double[] DX, int offset_dx, int INCX)
     {
       int idamax = 0;

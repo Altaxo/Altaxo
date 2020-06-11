@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Altaxo.Calc.Ode.DVode
@@ -22,8 +23,10 @@ namespace Altaxo.Calc.Ode.DVode
     #region Fields
 
     private DVODE _dvode = new DVODE();
+#nullable disable
     internal FEX _fex;
     internal JEX _jex;
+#nullable enable
 
     internal enum ODEType { NonStiff, Stiff }
 
@@ -89,7 +92,7 @@ namespace Altaxo.Calc.Ode.DVode
       _UserJacobian = false;
       _Type = type;
 
-      OdeJacobian jac = null;
+      OdeJacobian? jac = null;
 
       base.InitializeInternal(Func, jac, numEquations);
     }
@@ -349,10 +352,12 @@ namespace Altaxo.Calc.Ode.DVode
       _IWork = new int[_Liw];
     }
 
-    internal override void InitializeFunctionAndJacobian(OdeFunction fun, OdeJacobian jac)
+    [MemberNotNull(nameof(_fex))]
+    internal override void InitializeFunctionAndJacobian(OdeFunction fun, OdeJacobian? jac)
     {
       _fex = new FEX(_NEquations, fun);
-      _jex = new JEX(_NEquations, jac);
+      if (!(jac is null))
+        _jex = new JEX(_NEquations, jac);
     }
 
     internal override void InitializeExceptionMessages()

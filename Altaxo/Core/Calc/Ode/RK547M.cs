@@ -316,6 +316,7 @@ namespace Altaxo.Calc.Ode
     /// <param name="tfinal">Final time</param>
     /// <param name="x0">Initial phase vector value</param>
     /// <param name="f">System right parts vector function</param>
+    /// <param name="opts"></param>
     /// <example>Let our problem will be:
     /// dx/dt=y+1,
     /// dy/dt=-x+2.

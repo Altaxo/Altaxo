@@ -146,6 +146,18 @@ namespace Altaxo.Calc.Ode.Dopri5
     /// IDID=-3  STEP SIZE BECOMES TOO SMALL.
     /// IDID=-4  PROBLEM IS PROBABLY STIFF (INTERRUPTED).
     ///</param>
+    /// <param name="ATOL"></param>
+    /// <param name="IPAR"></param>
+    /// <param name="offset_atol"></param>
+    /// <param name="offset_ipar"></param>
+    /// <param name="offset_iwork"></param>
+    /// <param name="offset_rpar"></param>
+    /// <param name="offset_rtol"></param>
+    /// <param name="offset_work"></param>
+    /// <param name="offset_y"></param>
+    /// <param name="RPAR"></param>
+    /// <param name="RTOL"></param>
+    /// <param name="Y"></param>
     public void Run(int N, IFAREN FCN, ref double X, ref double[] Y, int offset_y, double XEND, double[] RTOL, int offset_rtol
                      , double[] ATOL, int offset_atol, int ITOL, ISOLOUT SOLOUT, int IOUT, ref double[] WORK, int offset_work, int LWORK
                      , ref int[] IWORK, int offset_iwork, int LIWORK, double[] RPAR, int offset_rpar, int[] IPAR, int offset_ipar, ref int IDID)

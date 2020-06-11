@@ -20,7 +20,7 @@ namespace Altaxo.Calc.Ode
   public abstract class xBaseOdeRungeKutta : xOdeBase
   {
     #region Fields
-
+#nullable disable
     /// <summary>
     /// The Sub for the solution.
     /// </summary>
@@ -32,6 +32,7 @@ namespace Altaxo.Calc.Ode
     /// The array containing the solution of the ODEs [T, Y1,Y2,...]
     /// </summary>
     protected double[,] _Solution;
+#nullable enable
 
     /// <summary>
     /// SWITCH FOR CALLING THE SUBROUTINE SOLOUTR:

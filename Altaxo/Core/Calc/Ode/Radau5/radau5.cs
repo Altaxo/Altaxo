@@ -270,6 +270,18 @@ namespace Altaxo.Calc.Ode.Radau5
     /// IDID=-3  STEP SIZE BECOMES TOO SMALL,
     /// IDID=-4  MATRIX IS REPEATEDLY SINGULAR.
     ///</param>
+    ///<param name="ATOL"></param>
+    ///<param name="IPAR"></param>
+    ///<param name="offset_atol"></param>
+    ///<param name="offset_ipar"></param>
+    ///<param name="offset_iwork"></param>
+    ///<param name="offset_rpar"></param>
+    ///<param name="offset_rtol"></param>
+    ///<param name="offset_work"></param>
+    ///<param name="offset_y"></param>
+    ///<param name="RPAR"></param>
+    ///<param name="RTOL"></param>
+    ///<param name="Y"></param>
     public void Run(int N, IFVPOL FCN, ref double X, ref double[] Y, int offset_y, double XEND, ref double H
                      , ref double[] RTOL, int offset_rtol, ref double[] ATOL, int offset_atol, int ITOL, IJVPOL JAC, int IJAC, ref int MLJAC
                      , ref int MUJAC, IBBAMPL MAS, int IMAS, int MLMAS, ref int MUMAS, ISOLOUTR SOLOUT

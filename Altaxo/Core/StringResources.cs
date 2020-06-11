@@ -35,7 +35,7 @@ namespace Altaxo
   public class StringResources
   {
     private System.Resources.ResourceManager _defaultResourceMgr;
-    private Dictionary<string, System.Resources.ResourceManager> _resourceManagersByLanguage;
+    private Dictionary<string, System.Resources.ResourceManager?> _resourceManagersByLanguage;
     private System.Reflection.Assembly _assemblyContainingTheResources;
     private string _resourcePath;
     private string _resourceName;
@@ -70,7 +70,7 @@ namespace Altaxo
       _resourceName = resourceName;
       _assemblyContainingTheResources = assemblyContainingTheResources;
       _defaultResourceMgr = new System.Resources.ResourceManager(path + "." + resourceName, assemblyContainingTheResources);
-      _resourceManagersByLanguage = new Dictionary<string, System.Resources.ResourceManager>
+      _resourceManagersByLanguage = new Dictionary<string, System.Resources.ResourceManager?>
       {
         { "en", _defaultResourceMgr }
       };
@@ -112,7 +112,7 @@ namespace Altaxo
         _resourceManagersByLanguage.Add(cu, mgr); // add the manager even if it is null -> this then indicates that no such resource localization exists.
       }
 
-      string result;
+      string? result;
       mgr = _resourceManagersByLanguage[cu];
       if (null != mgr && null != (result = mgr.GetString(resourceKey.Key)))
         return result;

@@ -35,8 +35,12 @@ namespace Altaxo.Calc.Ode
     public double rFactor;
 
     public Vector xn, en;
-    public Matrix zn;
     public double epsilon = 1e-12;
+
+#nullable disable
+    public Matrix zn;
+#nullable enable
+
 
     public void ChangeStep()
     {

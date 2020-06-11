@@ -30,7 +30,6 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  [Obsolete("Do not use this class, it is only temporary, and will be replaced by a more advanced version")]
   public class BandDoubleMatrix : IMatrix<double>, IROBandMatrix<double>, IROMatrixLevel1<double>
   {
     private double[][] _array;

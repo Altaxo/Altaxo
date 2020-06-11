@@ -48,6 +48,7 @@ namespace Altaxo.Calc.Ode
     protected enum SolutionOutType { Array, Delegate }
 
     #region Fields
+#nullable disable
 
     private CONTD5 _Contd5ExpicitRK;
 
@@ -134,7 +135,7 @@ namespace Altaxo.Calc.Ode
     ///// El indice en el que se esta calculando.
     ///// </summary>
     /////
-
+#nullable enable
     #endregion Fields
 
     #region Constructor

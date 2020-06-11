@@ -37,6 +37,9 @@ namespace Altaxo.Calc.Ode.Radau5
     /// = 0 IF MATRIX A IS NONSINGULAR, OR K IF FOUND TO BE
     /// SINGULAR AT STAGE K.
     ///</param>
+    ///<param name="IP"></param>
+    ///<param name="offset_a"></param>
+    ///<param name="offset_ip"></param>
     public void Run(int N, int NDIM, ref double[] A, int offset_a, ref int[] IP, int offset_ip, ref int IER)
     {
       #region Variables
@@ -174,6 +177,9 @@ LABEL80:
     /// <param name="IP">
     /// = PIVOT VECTOR OBTAINED FROM DEC.
     ///</param>
+    ///<param name="offset_ip"></param>
+    ///<param name="offset_a"></param>
+    ///<param name="offset_b"></param>
     public void Run(int N, int NDIM, double[] A, int offset_a, ref double[] B, int offset_b, int[] IP, int offset_ip)
     {
       #region Variables
@@ -280,6 +286,9 @@ LABEL50:
     /// = 0 IF MATRIX A IS NONSINGULAR, OR K IF FOUND TO BE
     /// SINGULAR AT STAGE K.
     ///</param>
+    ///<param name="IP"></param>
+    ///<param name="offset_a"></param>
+    ///<param name="offset_ip"></param>
     public void Run(int N, int NDIM, ref double[] A, int offset_a, int LB, ref int[] IP, int offset_ip, ref int IER)
     {
       #region Variables
@@ -425,6 +434,9 @@ LABEL80:
     /// <param name="IP">
     /// = PIVOT VECTOR OBTAINED FROM DEC.
     ///</param>
+    ///<param name="offset_a"></param>
+    ///<param name="offset_b"></param>
+    ///<param name="offset_ip"></param>
     public void Run(int N, int NDIM, double[] A, int offset_a, int LB, ref double[] B, int offset_b, int[] IP, int offset_ip)
     {
       #region Variables
@@ -527,6 +539,12 @@ LABEL50:
     /// = 0 IF MATRIX A IS NONSINGULAR, OR K IF FOUND TO BE
     /// SINGULAR AT STAGE K.
     ///</param>
+    ///<param name="AI"></param>
+    ///<param name="offset_ip"></param>
+    ///<param name="IP"></param>
+    ///<param name="AR"></param>
+    ///<param name="offset_ai"></param>
+    ///<param name="offset_ar"></param>
     public void Run(int N, int NDIM, ref double[] AR, int offset_ar, ref double[] AI, int offset_ai, ref int[] IP, int offset_ip, ref int IER)
     {
       #region Variables
@@ -726,6 +744,15 @@ LABEL80:
     /// <param name="IP">
     /// = PIVOT VECTOR OBTAINED FROM DEC.
     ///</param>
+    ///<param name="offset_ar"></param>
+    ///<param name="offset_ai"></param>
+    ///<param name="AR"></param>
+    ///<param name="offset_ip"></param>
+    ///<param name="AI"></param>
+    ///<param name="BI"></param>
+    ///<param name="BR"></param>
+    ///<param name="offset_bi"></param>
+    ///<param name="offset_br"></param>
     public void Run(int N, int NDIM, double[] AR, int offset_ar, double[] AI, int offset_ai, ref double[] BR, int offset_br, ref double[] BI, int offset_bi
                      , int[] IP, int offset_ip)
     {
@@ -866,6 +893,12 @@ LABEL50:
     /// = 0 IF MATRIX A IS NONSINGULAR, OR K IF FOUND TO BE
     /// SINGULAR AT STAGE K.
     ///</param>
+    ///<param name="AI"></param>
+    ///<param name="AR"></param>
+    ///<param name="offset_ai"></param>
+    ///<param name="offset_ar"></param>
+    ///<param name="IP"></param>
+    ///<param name="offset_ip"></param>
     public void Run(int N, int NDIM, ref double[] AR, int offset_ar, ref double[] AI, int offset_ai, int LB, ref int[] IP, int offset_ip
                      , ref int IER)
     {
@@ -1074,6 +1107,15 @@ LABEL80:
     /// <param name="IP">
     /// = PIVOT VECTOR OBTAINED FROM DEC.
     ///</param>
+    ///<param name="offset_br"></param>
+    ///<param name="offset_bi"></param>
+    ///<param name="BR"></param>
+    ///<param name="BI"></param>
+    ///<param name="AI"></param>
+    ///<param name="offset_ip"></param>
+    ///<param name="AR"></param>
+    ///<param name="offset_ai"></param>
+    ///<param name="offset_ar"></param>
     public void Run(int N, int NDIM, double[] AR, int offset_ar, double[] AI, int offset_ai, int LB, ref double[] BR, int offset_br
                      , ref double[] BI, int offset_bi, int[] IP, int offset_ip)
     {
@@ -1230,6 +1272,8 @@ LABEL50:
     /// = 0 IF MATRIX A IS NONSINGULAR, OR  = K IF FOUND TO BE
     /// SINGULAR AT STAGE K.
     ///</param>
+    ///<param name="offset_ip"></param>
+    ///<param name="offset_a"></param>
     public void Run(int N, int NDIM, ref double[] A, int offset_a, int ML, int MU, ref int[] IP, int offset_ip
                      , ref int IER)
     {
@@ -1422,6 +1466,9 @@ LABEL80:
     /// <param name="IP">
     /// PIVOT VECTOR OBTAINED FROM DECB.
     ///</param>
+    ///<param name="offset_a"></param>
+    ///<param name="offset_ip"></param>
+    ///<param name="offset_b"></param>
     public void Run(int N, int NDIM, double[] A, int offset_a, int ML, int MU, ref double[] B, int offset_b
                      , int[] IP, int offset_ip)
     {
@@ -1552,6 +1599,11 @@ LABEL50:
     /// = 0 IF MATRIX A IS NONSINGULAR, OR  = K IF FOUND TO BE
     /// SINGULAR AT STAGE K.
     ///</param>
+    ///<param name="offset_ip"></param>
+    ///<param name="offset_ar"></param>
+    ///<param name="offset_ai"></param>
+    ///<param name="AR"></param>
+    ///<param name="AI"></param>
     public void Run(int N, int NDIM, ref double[] AR, int offset_ar, ref double[] AI, int offset_ai, int ML, int MU
                      , ref int[] IP, int offset_ip, ref int IER)
     {
@@ -1791,6 +1843,15 @@ LABEL80:
     /// <param name="IP">
     /// PIVOT VECTOR OBTAINED FROM DECBC.
     ///</param>
+    ///<param name="offset_ip"></param>
+    ///<param name="offset_ar"></param>
+    ///<param name="offset_ai"></param>
+    ///<param name="AI"></param>
+    ///<param name="AR"></param>
+    ///<param name="BI"></param>
+    ///<param name="BR"></param>
+    ///<param name="offset_bi"></param>
+    ///<param name="offset_br"></param>
     public void Run(int N, int NDIM, double[] AR, int offset_ar, double[] AI, int offset_ai, int ML, int MU
                      , ref double[] BR, int offset_br, ref double[] BI, int offset_bi, int[] IP, int offset_ip)
     {
@@ -1951,6 +2012,9 @@ LABEL50:
     /// interchanged in the reduction.
     /// only elements low through igh are used.
     ///</param>
+    ///<param name="IGH"></param>
+    ///<param name="offset_a"></param>
+    ///<param name="offset_int"></param>
     public void Run(int NM, int N, int LOW, int IGH, ref double[] A, int offset_a, ref int[] INT, int offset_int)
     {
       #region Variables

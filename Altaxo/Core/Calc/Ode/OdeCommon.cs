@@ -46,10 +46,10 @@ namespace Altaxo.Calc.Ode
     public int NumberOfIterations { get; set; }
 
     /// <summary>Gets or sets a dense Jacobian matrix</summary>
-    public Matrix Jacobian { get; set; }
+    public Matrix? Jacobian { get; set; }
 
     /// <summary>Gets or sets a sparse Jacobian matrix</summary>
-    public SparseMatrix SparseJacobian { get; set; }
+    public SparseMatrix? SparseJacobian { get; set; }
 
     /// <summary>Default construction of an Options instance.</summary>
     public Options()

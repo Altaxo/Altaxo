@@ -42,8 +42,10 @@ namespace Altaxo.Calc.Ode
 
     //private string MeName = "";
 
+#nullable disable
     private Odouble[] MeDoubleData;
     private Oint[] MeIntData;
+#nullable enable
 
     #endregion Fields
 
@@ -527,17 +529,16 @@ namespace Altaxo.Calc.Ode
       return areEqual;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       // If parameter is null return false.
-      if (obj == null)
+      if (obj is null)
       {
         return false;
       }
 
       // If parameter cannot be cast to Characters return false.
-      var c = obj as Characters;
-      if ((object)c == null)
+      if (!(obj is Characters c))
       {
         return false;
       }
