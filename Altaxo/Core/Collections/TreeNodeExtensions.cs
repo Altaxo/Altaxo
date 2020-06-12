@@ -1245,11 +1245,14 @@ namespace Altaxo.Collections
 
     private static bool MoveNodesOneIndexDownwards<T>(IEnumerable<T> nodesToMove) where T : ITreeListNodeWithParent<T>
     {
-      var hashOfSelectedNodes = (nodesToMove is HashSet<T>) ? (HashSet<T>)nodesToMove : new HashSet<T>(nodesToMove);
+      var hashOfSelectedNodes = (nodesToMove is HashSet<T> hset) ? hset : new HashSet<T>(nodesToMove);
       if (0 == hashOfSelectedNodes.Count)
         return false; // nothing to move
 
-      T parent = hashOfSelectedNodes.First().ParentNode;
+      var parent = hashOfSelectedNodes.First().ParentNode;
+      if (parent is null)
+        return false; // nodes does not have a parent
+
       var childs = parent.ChildNodes;
 
       // we iterate through the list of child nodes
@@ -1283,6 +1286,8 @@ namespace Altaxo.Collections
         return false; // nothing to move
 
       T parent = hashOfSelectedNodes.First().ParentNode;
+      if (parent is null)
+        return false; // nodes does not have a parent
       var childs = parent.ChildNodes;
 
       int childsCountM1 = childs.Count - 1;

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -46,24 +47,24 @@ namespace Altaxo
     /// Occurs when a service was added or removed. Static classes that cache a service should invalidate their cached service member in response to this event.
     /// Attention: Only static classes should subscribe to this event! (Or use a weak event handler in order to avoid memory leaks).
     /// </summary>
-    public static event Action ServiceChanged;
+    public static event Action? ServiceChanged;
 
     // Cached services (if you add something, be sure to add it to InvalidateCachedServices too)
-    private static AddInItems.IAddInTree _addInTree;
+    private static AddInItems.IAddInTree? _addInTree;
 
-    private static Main.IComManager _comManager;
-    private static IGuiFactoryService _guiFactoryService;
-    private static IGuiTimerService _guiTimerService;
-    private static IInfoWarningErrorTextMessageService _infoTextMessageService;
-    private static ILoggingService _loggingService;
-    private static IMessageService _messageService;
-    private static ITextOutputService _outputService;
-    private static Main.IProjectService _projectService;
-    private static Main.Services.IPropertyService _propertyService;
-    private static Main.Services.IResourceService _resourceService;
-    private static IStatusBarService _statusBarService;
-    private static IDispatcherMessageLoop _dispatcher;
-    private static IWorkbench _workbench;
+    private static Main.IComManager? _comManager;
+    private static IGuiFactoryService? _guiFactoryService;
+    private static IGuiTimerService? _guiTimerService;
+    private static IInfoWarningErrorTextMessageService? _infoTextMessageService;
+    private static ILoggingService? _loggingService;
+    private static IMessageService? _messageService;
+    private static ITextOutputService? _outputService;
+    private static Main.IProjectService? _projectService;
+    private static Main.Services.IPropertyService? _propertyService;
+    private static Main.Services.IResourceService? _resourceService;
+    private static IStatusBarService? _statusBarService;
+    private static IDispatcherMessageLoop? _dispatcher;
+    private static IWorkbench? _workbench;
 
     private static void InvalidateCachedServices()
     {
@@ -194,13 +195,13 @@ namespace Altaxo
     /// <summary>
     /// Gets a service. Returns null if service is not found.
     /// </summary>
-    public static T GetService<T>()
+    public static T? GetService<T>() where T : class
     {
       object service = instance.GetService(typeof(T));
       return (T)service;
     }
 
-    public static T GetService<T, U>() where T : U
+    public static T? GetService<T, U>() where T : class, U
     {
       object serviceObj = instance.GetService(typeof(T));
       if (serviceObj is T serviceT)
@@ -212,7 +213,7 @@ namespace Altaxo
         return serviceU;
       }
 
-      return default(T);
+      return default;
     }
 
     /// <summary>
@@ -234,9 +235,9 @@ namespace Altaxo
     /// but does not throw a NullReferenceException when ActiveViewContent is null.
     /// (instead, null is returned).
     /// </summary>
-    public static T GetActiveViewContentService<T>() where T : class
+    public static T? GetActiveViewContentService<T>() where T : class
     {
-      return (T)GetActiveViewContentService(typeof(T));
+      return (T?)GetActiveViewContentService(typeof(T));
     }
 
     /// <summary>
@@ -244,7 +245,7 @@ namespace Altaxo
     /// but does not throw a NullReferenceException when ActiveViewContent is null.
     /// (instead, null is returned).
     /// </summary>
-    public static object GetActiveViewContentService(Type type)
+    public static object? GetActiveViewContentService(Type type)
     {
       var workbench = instance.GetService(typeof(IWorkbench)) as IWorkbench;
       if (workbench != null)
@@ -264,7 +265,7 @@ namespace Altaxo
     {
       get
       {
-        return _messageService ?? (_messageService = GetRequiredService<IMessageService>());
+        return _messageService ??= GetRequiredService<IMessageService>();
       }
     }
 
@@ -273,7 +274,7 @@ namespace Altaxo
     {
       get
       {
-        return _infoTextMessageService ?? (_infoTextMessageService = GetRequiredService<IInfoWarningErrorTextMessageService>());
+        return _infoTextMessageService ??= GetRequiredService<IInfoWarningErrorTextMessageService>();
       }
     }
 
@@ -286,7 +287,7 @@ namespace Altaxo
     /// <inheritdoc see="IAddInTree"/>
     public static AddInItems.IAddInTree AddInTree
     {
-      get { return _addInTree ?? (_addInTree = GetRequiredService<AddInItems.IAddInTree>()); }
+      get { return _addInTree ??= GetRequiredService<AddInItems.IAddInTree>(); }
     }
 
     #endregion Unspecified services
@@ -297,7 +298,7 @@ namespace Altaxo
     {
       get
       {
-        return _guiFactoryService ?? (_guiFactoryService = GetService<IGuiFactoryService>());
+        return _guiFactoryService ??= GetRequiredService<IGuiFactoryService>();
       }
     }
 
@@ -379,7 +380,7 @@ namespace Altaxo
     {
       get
       {
-        return _guiTimerService ?? (_guiTimerService = GetRequiredService<IGuiTimerService>());
+        return _guiTimerService ??= GetRequiredService<IGuiTimerService>();
       }
     }
 
@@ -392,7 +393,7 @@ namespace Altaxo
     {
       get
       {
-        return _projectService ?? (_projectService = GetRequiredService<Main.IProjectService>());
+        return _projectService ??= GetRequiredService<Main.IProjectService>();
       }
     }
 
@@ -400,11 +401,11 @@ namespace Altaxo
 
     #region Com Manager
 
-    public static Main.IComManager ComManager
+    public static Main.IComManager? ComManager
     {
       get
       {
-        return _comManager ?? (_comManager = GetService<Main.IComManager>());
+        return _comManager ??= GetService<Main.IComManager>();
       }
     }
 
@@ -419,7 +420,7 @@ namespace Altaxo
     {
       get
       {
-        return _workbench ?? (_workbench = GetRequiredService<IWorkbench>());
+        return _workbench ??= GetRequiredService<IWorkbench>();
       }
     }
 

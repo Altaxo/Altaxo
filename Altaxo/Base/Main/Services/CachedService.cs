@@ -36,7 +36,7 @@ namespace Altaxo.Main.Services
   /// </summary>
   /// <typeparam name="T">Primary type under which to search for the service in <see cref="Altaxo.Current"/>.</typeparam>
   /// <typeparam name="U">Secondary type (usually an interface type) under which to search for the service in <see cref="Altaxo.Current"/>.</typeparam>
-  public struct CachedService<T, U> where T : U
+  public struct CachedService<T, U> where T : class, U
   {
     private Action<T> _serviceAttached;
     private Action<T> _serviceDetached;

@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Main.Properties;
@@ -284,7 +286,9 @@ namespace Altaxo
     /// value for this type of property value is returned.</param>
     /// <returns>If the property is found anywhere in the hierarchy of property bags, the property value of the topmost bag that contains the property is returned.
     /// Otherwise, if <paramref name="resultCreationIfNotFound"/> is not null, the result of this procedure is returned. Else the default value of the type of property value is returned.</returns>
-    public static T GetPropertyValueStartingFromApplicationSettings<T>(PropertyKey<T> p, Func<T> resultCreationIfNotFound)
+    [return: NotNullIfNotNull("resultCreationIfNotFound")]
+    [return: MaybeNull]
+    public static T GetPropertyValueStartingFromApplicationSettings<T>(PropertyKey<T> p, Func<T>? resultCreationIfNotFound)
     {
       ;
       foreach (var bagTuple in GetPropertyBagsStartingFromApplicationSettings())
@@ -293,10 +297,14 @@ namespace Altaxo
           return returnValue;
       }
 
-      if (null != resultCreationIfNotFound)
-        return resultCreationIfNotFound();
+      if (resultCreationIfNotFound is null)
+      {
+        return default;
+      }
       else
-        return default(T);
+      {
+        return resultCreationIfNotFound();
+      }
     }
 
     /// <summary>
@@ -309,7 +317,9 @@ namespace Altaxo
     /// value for this type of property value is returned.</param>
     /// <returns>If the property is found anywhere in the hierarchy of property bags, the property value of the topmost bag that contains the property is returned.
     /// Otherwise, if <paramref name="resultCreationIfNotFound"/> is not null, the result of this procedure is returned. Else the default value of the type of property value is returned.</returns>
-    public static T GetPropertyValue<T>(this IPropertyBagOwner owner, PropertyKey<T> p, Func<T> resultCreationIfNotFound)
+    [return: NotNullIfNotNull("resultCreationIfNotFound")]
+    [return: MaybeNull]
+    public static T GetPropertyValue<T>(this IPropertyBagOwner owner, PropertyKey<T> p, Func<T>? resultCreationIfNotFound)
     {
       ;
       foreach (var bagTuple in GetPropertyBags(owner))
@@ -318,10 +328,10 @@ namespace Altaxo
           return returnValue;
       }
 
-      if (null != resultCreationIfNotFound)
-        return resultCreationIfNotFound();
+      if (resultCreationIfNotFound is null)
+        return default;
       else
-        return default(T);
+        return resultCreationIfNotFound();
     }
 
     /// <summary>
@@ -334,7 +344,9 @@ namespace Altaxo
     /// value for this type of property value is returned.</param>
     /// <returns>If the property is found anywhere in the hierarchy of property bags, the property value of the topmost bag that contains the property is returned.
     /// Otherwise, if <paramref name="resultCreationIfNotFound"/> is not null, the result of this procedure is returned. Else the default value of the type of property value is returned.</returns>
-    public static T GetPropertyValue<T>(this IPropertyBagOwner owner, string propertyKeyString, Func<T> resultCreationIfNotFound = null)
+    [return: NotNullIfNotNull("resultCreationIfNotFound")]
+    [return: MaybeNull]
+    public static T GetPropertyValue<T>(this IPropertyBagOwner owner, string propertyKeyString, Func<T>? resultCreationIfNotFound = null)
     {
       ;
       foreach (var bagTuple in GetPropertyBags(owner))
@@ -343,10 +355,10 @@ namespace Altaxo
           return returnValue;
       }
 
-      if (null != resultCreationIfNotFound)
-        return resultCreationIfNotFound();
+      if (resultCreationIfNotFound is null)
+        return default;
       else
-        return default(T);
+        return resultCreationIfNotFound();
     }
   }
 }
