@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 
@@ -36,45 +37,45 @@ namespace Altaxo.Collections
       info.CreateArray("List", s.Count);
 
       for (int i = 0; i < s.Count; ++i)
-        info.AddValue("e", s[i]);
+        info.AddValueOrNull("e", s[i]);
 
       info.CommitArray();
     }
 
-    public object Deserialize(object obj, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? obj, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       int count = info.OpenArray("List");
-      var s = null != obj ? (ArrayList)obj : new ArrayList(count);
+      var s = (ArrayList?)obj ?? new ArrayList(count);
       s.Clear();
       for (int i = 0; i < count; ++i)
-        s.Add(info.GetValue("e", parent));
+        s.Add(info.GetValueOrNull("e", parent));
       info.CloseArray(count);
 
       return s;
     }
   }
 
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Collections.Generic.List<object>), 0)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Collections.Generic.List<object?>), 0)]
   public class SystemCollectionsListOfObjectListXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      var s = (System.Collections.Generic.List<object>)obj;
+      var s = (System.Collections.Generic.List<object?>)obj;
       info.CreateArray("List", s.Count);
 
       for (int i = 0; i < s.Count; ++i)
-        info.AddValue("e", s[i]);
+        info.AddValueOrNull("e", s[i]);
 
       info.CommitArray();
     }
 
-    public object Deserialize(object obj, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? obj, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       int count = info.OpenArray("List");
-      var s = null != obj ? (System.Collections.Generic.List<object>)obj : new System.Collections.Generic.List<object>(count);
+      var s = (System.Collections.Generic.List<object?>?)obj ?? new System.Collections.Generic.List<object?>(count);
       s.Clear();
       for (int i = 0; i < count; ++i)
-        s.Add(info.GetValue("e", parent));
+        s.Add(info.GetValueOrNull("e", parent));
       info.CloseArray(count);
 
       return s;

@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -34,7 +36,7 @@ namespace Altaxo.Collections
   /// </summary>
   /// <typeparam name="TKey">Key type.</typeparam>
   /// <typeparam name="TValue">Value type.</typeparam>
-  public class DictionaryWithNullableKey<TKey, TValue> : IDictionary<TKey, TValue>
+  public class DictionaryWithNullableKey<TKey, TValue> : IDictionary<TKey, TValue> where TKey : notnull
   {
     /// <summary>Underlying dictionary for the normal keys (without the null key).</summary>
     private Dictionary<TKey, TValue> _dict = new Dictionary<TKey, TValue>();
@@ -43,13 +45,15 @@ namespace Altaxo.Collections
     private bool _nullValueSet;
 
     /// <summary>Value corresponding to the null key. Only valid if <see cref="_nullValueSet"/> is True.</summary>
+#nullable disable
     private TValue _nullValue;
+#nullable enable
 
     #region IDictionary<TKey,TValue> Members
 
-    public void Add(TKey key, TValue value)
+    public void Add([MaybeNull] TKey key, TValue value)
     {
-      if (null == key)
+      if (key is null)
       {
         if (_nullValueSet)
           throw new ArgumentException("Null key can not be added because it is already set");
@@ -62,7 +66,7 @@ namespace Altaxo.Collections
 
     public bool ContainsKey(TKey key)
     {
-      return null == key ? _nullValueSet : _dict.ContainsKey(key);
+      return key is null ? _nullValueSet : _dict.ContainsKey(key);
     }
 
     public ICollection<TKey> Keys
@@ -72,11 +76,11 @@ namespace Altaxo.Collections
 
     public bool Remove(TKey key)
     {
-      if (null == key)
+      if (key is null)
       {
         bool wasSet = _nullValueSet;
         _nullValueSet = false;
-        _nullValue = default(TValue);
+        _nullValue = default;
         return wasSet;
       }
       else
@@ -85,9 +89,9 @@ namespace Altaxo.Collections
       }
     }
 
-    public bool TryGetValue(TKey key, out TValue value)
+    public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
     {
-      if (null == key)
+      if (key is null)
       {
         if (_nullValueSet)
         {
@@ -96,7 +100,7 @@ namespace Altaxo.Collections
         }
         else
         {
-          value = default(TValue);
+          value = default;
           return false;
         }
       }
@@ -113,7 +117,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        if (null == key)
+        if (key is null)
         {
           if (_nullValueSet)
             return _nullValue;
@@ -125,7 +129,7 @@ namespace Altaxo.Collections
       }
       set
       {
-        if (null == key)
+        if (key is null)
         {
           _nullValue = value;
           _nullValueSet = true;
@@ -141,7 +145,7 @@ namespace Altaxo.Collections
 
     public void Add(KeyValuePair<TKey, TValue> item)
     {
-      if (null == item.Key)
+      if (item.Key is null)
       {
         if (_nullValueSet)
           throw new ArgumentException("Null key can not be added because it is already set");
@@ -156,7 +160,7 @@ namespace Altaxo.Collections
     {
       _dict.Clear();
       _nullValueSet = false;
-      _nullValue = default(TValue);
+      _nullValue = default;
     }
 
     public bool Contains(KeyValuePair<TKey, TValue> item)

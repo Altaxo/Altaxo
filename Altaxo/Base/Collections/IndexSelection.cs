@@ -22,18 +22,25 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// Summary description for IndexSelection.
+  /// Selection of indices, mimicking the behavior of selection in lists etc, using CTRL key to select single items and SHIFT to select multiple items.
   /// </summary>
   public class IndexSelection : Altaxo.Collections.AscendingIntegerCollection
   {
     protected int _lastSelectedIndex = 0;
     protected bool _useExtendedSelectionBehaviour = true;
 
+    /// <summary>
+    /// Gets the last selected index.
+    /// </summary>
+    /// <value>
+    /// The last selection.
+    /// </value>
     public int LastSelection
     {
       get
@@ -42,21 +49,34 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Determines whether the specified  index <paramref name="nIndex"/> is selected.
+    /// </summary>
+    /// <param name="nIndex">Index.</param>
+    /// <returns>
+    ///   <c>true</c> if the specified index is selected; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsSelected(int nIndex)
     {
       return Contains(nIndex);
     }
 
-    public void Select(int nIndex, bool bShiftKey, bool bControlKey)
+    /// <summary>
+    /// Selects the specified index <paramref name="nIndex"/>, mimicking the behavior when using CTRL and SHIFT keys.
+    /// </summary>
+    /// <param name="nIndex">Index to select.</param>
+    /// <param name="isShiftKeyActive">Set to true if the shift key is pressed. If the control key is pressed, this parameter is ignored.</param>
+    /// <param name="isControlKeyActive">Set to true if the control key is pressed. </param>
+    public void Select(int nIndex, bool isShiftKeyActive, bool isControlKeyActive)
     {
-      if (bControlKey) // Control pressed
+      if (isControlKeyActive) // Control pressed
       {
         if (Contains(nIndex))
           Remove(nIndex);
         else
           Add(nIndex);
       }
-      else if (bShiftKey)
+      else if (isShiftKeyActive)
       {
         if (0 == Count)
           _lastSelectedIndex = 0;

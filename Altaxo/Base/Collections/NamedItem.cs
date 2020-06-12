@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -43,7 +44,7 @@ namespace Altaxo.Collections
 
     public T Item { get { return _item; } }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (obj == null)
         return false;
@@ -55,7 +56,7 @@ namespace Altaxo.Collections
 
     public override int GetHashCode()
     {
-      return _item.GetHashCode();
+      return _item?.GetHashCode() ?? 0;
     }
 
     public override string ToString()

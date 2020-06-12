@@ -49,7 +49,9 @@ namespace Altaxo.Data
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         var s = (DataTableProxy)o ?? new DataTableProxy(info);
-        var baseobj = info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
+#pragma warning disable CS0618 // Type or member is obsolete
+        var baseobj = info.GetBaseValueEmbeddedOrNull(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
+#pragma warning restore CS0618 // Type or member is obsolete
 
         if (!object.ReferenceEquals(s, baseobj))
         {

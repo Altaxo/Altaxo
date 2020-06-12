@@ -54,7 +54,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       {
         LogarithmicScaleRescaleConditions s = null != o ? (LogarithmicScaleRescaleConditions)o : new LogarithmicScaleRescaleConditions();
 
-        info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Graph.Scales.Rescaling.NumericAxisRescaleConditions,1", parent);
+#pragma warning disable CS0618 // Type or member is obsolete
+        info.GetBaseValueEmbeddedOrNull(s, "AltaxoBase,Altaxo.Graph.Scales.Rescaling.NumericAxisRescaleConditions,1", parent);
+#pragma warning restore CS0618 // Type or member is obsolete
 
         return s;
       }

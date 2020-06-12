@@ -757,11 +757,12 @@ namespace Altaxo.Serialization.Xml
       }
     }
 
+
     /// <summary>Deserializes the embedded base type.</summary>
     /// <param name="instance">The instance of the object to deserialize.</param>
     /// <param name="fullyQualifiedBaseTypeName">Fully qualified base type name. It is the short name of the assembly, comma, the full type name, comma, and the version. The string must not contain whitespaces. Example: 'AltaxoBase,SampleFileRenamer.Main.DocumentPath,0'.</param>
     /// <param name="parent">The parent object of the current object to deserialize.</param>
-    public object GetBaseValueEmbedded(object instance, string fullyQualifiedBaseTypeName, object? parent)
+    public object? GetBaseValueEmbeddedOrNull(object instance, string fullyQualifiedBaseTypeName, object? parent)
     {
       object? obj;
       if ("BaseType" == CurrentElementName)
@@ -780,8 +781,6 @@ namespace Altaxo.Serialization.Xml
           throw new DeserializationException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", fullyQualifiedBaseTypeName));
       }
 
-      if (obj is null)
-        throw new DeserializationException($"{nameof(GetBaseValueEmbedded)} with Type={fullyQualifiedBaseTypeName} resulted in deserializing null");
 
       return obj;
     }

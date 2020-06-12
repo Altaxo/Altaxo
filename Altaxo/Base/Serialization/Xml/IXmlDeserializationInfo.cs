@@ -141,7 +141,12 @@ namespace Altaxo.Serialization.Xml
 
     void GetBaseValueEmbedded(object instance, System.Type basetype, object? parent);
 
-    object GetBaseValueEmbedded(object instance, string fullyQualifiedBasetypeName, object? parent);
+    /// <summary>Deserializes the embedded base type.</summary>
+    /// <param name="instance">The instance of the object to deserialize.</param>
+    /// <param name="fullyQualifiedBaseTypeName">Fully qualified base type name. It is the short name of the assembly, comma, the full type name, comma, and the version. The string must not contain whitespaces. Example: 'AltaxoBase,SampleFileRenamer.Main.DocumentPath,0'.</param>
+    /// <param name="parent">The parent object of the current object to deserialize.</param>
+    [Obsolete("For backward compatibility only (if base type has changed). Use 'void GetBaseValueEmbedded(object instance, System.Type basetype, object? parent)' instead!")]
+    object? GetBaseValueEmbeddedOrNull(object instance, string fullyQualifiedBaseTypeName, object? parent);
 
     void GetBaseValueStandalone(string name, object instance, System.Type basetype, object? parent);
 

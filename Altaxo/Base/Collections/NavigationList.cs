@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -84,7 +86,7 @@ namespace Altaxo.Collections
     /// </summary>
     /// <param name="point">On success, returns the previous navigation point.</param>
     /// <returns>True if a previous navigation point could be returned in <paramref name="point"/>, otherwise <c>false</c>.</returns>
-    public bool TryNavigateBackward(out T point)
+    public bool TryNavigateBackward([MaybeNullWhen(false)] out T point)
     {
       return TryNavigateBackward(out point, null, false);
     }
@@ -94,18 +96,18 @@ namespace Altaxo.Collections
     /// <param name="IsStillValidEvaluation">Evaluation function, which tests the navigation points in the list for validity.</param>
     /// <param name="removeInvalidNavigationPoints">If set to <c>true</c>, invalid navigation points encountered during the backward movement in the list would be removed from the navigation list.</param>
     /// <returns>Returns <c>True</c> when a valid navigation point backward in the list was found. </returns>
-    public bool TryNavigateBackward(out T point, Func<T, bool> IsStillValidEvaluation, bool removeInvalidNavigationPoints)
+    public bool TryNavigateBackward([MaybeNullWhen(false)] out T point, Func<T, bool>? IsStillValidEvaluation, bool removeInvalidNavigationPoints)
     {
       for (; ; )
       {
         var newNavigationPoint = _currentNavigationPoint - 1;
         if (newNavigationPoint < 0)
         {
-          point = default(T);
+          point = default;
           _currentNavigationPoint = _list.Count == 0 ? -1 : 0;
           return false;
         }
-        if (null == IsStillValidEvaluation || IsStillValidEvaluation(_list[newNavigationPoint]))
+        if (IsStillValidEvaluation is null || IsStillValidEvaluation(_list[newNavigationPoint]))
         {
           point = _list[newNavigationPoint];
           _currentNavigationPoint = newNavigationPoint;
@@ -124,7 +126,7 @@ namespace Altaxo.Collections
     /// </summary>
     /// <param name="point">On success, returns the previous navigation point.</param>
     /// <returns>True if a previous navigation point could be returned in <paramref name="point"/>, otherwise <c>false</c>.</returns>
-    public bool TryNavigateForward(out T point)
+    public bool TryNavigateForward([MaybeNullWhen(false)] out T point)
     {
       return TryNavigateForward(out point, null, false);
     }
@@ -134,18 +136,18 @@ namespace Altaxo.Collections
     /// <param name="IsStillValidEvaluation">Evaluation function, which tests the navigation points in the list for validity.</param>
     /// <param name="removeInvalidNavigationPoints">If set to <c>true</c>, invalid navigation points encountered during the forward movement in the list would be removed from the navigation list.</param>
     /// <returns>Returns <c>True</c> when a valid navigation point forward in the list was found. </returns>
-    public bool TryNavigateForward(out T point, Func<T, bool> IsStillValidEvaluation, bool removeInvalidNavigationPoints)
+    public bool TryNavigateForward([MaybeNullWhen(false)] out T point, Func<T, bool>? IsStillValidEvaluation, bool removeInvalidNavigationPoints)
     {
       for (; ; )
       {
         var newNavigationPoint = _currentNavigationPoint + 1;
         if (newNavigationPoint >= _list.Count)
         {
-          point = default(T);
+          point = default;
           _currentNavigationPoint = _list.Count - 1;
           return false;
         }
-        if (null == IsStillValidEvaluation || IsStillValidEvaluation(_list[newNavigationPoint]))
+        if (IsStillValidEvaluation is null || IsStillValidEvaluation(_list[newNavigationPoint]))
         {
           point = _list[newNavigationPoint];
           _currentNavigationPoint = newNavigationPoint;

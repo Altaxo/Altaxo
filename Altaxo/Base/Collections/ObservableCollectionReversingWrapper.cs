@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -42,10 +43,10 @@ namespace Altaxo.Collections
     public ObservableCollectionReversingWrapper(ObservableCollection<T> coll)
     {
       _coll = coll;
-      _coll.CollectionChanged += new WeakEventHandler<NotifyCollectionChangedEventArgs>(EhOrigjnalCollectionChanged, _coll, nameof(_coll.CollectionChanged)).EventSink;
+      _coll.CollectionChanged += new WeakEventHandler<NotifyCollectionChangedEventArgs>(EhOriginalCollectionChanged, _coll, nameof(_coll.CollectionChanged)).EventSink;
     }
 
-    private void EhOrigjnalCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void EhOriginalCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
       NotifyCollectionChangedEventArgs result;
 
@@ -83,7 +84,7 @@ namespace Altaxo.Collections
         CollectionChanged(this, result);
     }
 
-    public event NotifyCollectionChangedEventHandler CollectionChanged;
+    public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
     #region IList<T>
 

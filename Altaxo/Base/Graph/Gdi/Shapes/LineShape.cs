@@ -79,7 +79,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         var s = null != o ? (DeprecatedLineShape)o : new DeprecatedLineShape(info);
 
-        info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent);
+#pragma warning disable CS0618 // Type or member is obsolete
+        info.GetBaseValueEmbeddedOrNull(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent);
+#pragma warning restore CS0618 // Type or member is obsolete
 
         if (info.CurrentElementName == "LinePen")// 2012-06-18 bugfix: the next three lines are in some cases deserialized in ClosedPathShapeBase
         {

@@ -22,17 +22,19 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Altaxo.Collections
 {
-  public class WeakDictionary<Key, Value>
+  public class WeakDictionary<TKey, TValue> where TKey : notnull
   {
-    private Dictionary<object, Value> _dict = new Dictionary<object, Value>();
+    private Dictionary<object, TValue> _dict = new Dictionary<object, TValue>();
 
     protected class WeakKey<T> : WeakReference
     {
@@ -41,14 +43,14 @@ namespace Altaxo.Collections
       public WeakKey(T obj)
         : base(obj)
       {
-        _hash = obj.GetHashCode();
+        _hash = obj?.GetHashCode() ?? 0;
       }
 
-      public override bool Equals(object obj)
+      public override bool Equals(object? obj)
       {
         if (obj is WeakReference)
           return object.ReferenceEquals(obj, this);
-        else if (obj != null)
+        else if (obj is { } _)
           return obj.Equals(Target);
         else
           return false;
@@ -68,7 +70,7 @@ namespace Altaxo.Collections
           handle.Free();
       }
 
-      public CleanerRef(WeakDictionaryCleaner cleaner, WeakDictionary<Key, Value> dictionary)
+      public CleanerRef(WeakDictionaryCleaner cleaner, WeakDictionary<TKey, TValue> dictionary)
       {
         handle = GCHandle.Alloc(cleaner, GCHandleType.WeakTrackResurrection);
         Dictionary = dictionary;
@@ -79,18 +81,18 @@ namespace Altaxo.Collections
         get { return handle.IsAllocated && handle.Target != null; }
       }
 
-      public object Target
+      public object? Target
       {
         get { return IsAlive ? handle.Target : null; }
       }
 
       private GCHandle handle;
-      public WeakDictionary<Key, Value> Dictionary;
+      public WeakDictionary<TKey, TValue> Dictionary;
     }
 
     internal class WeakDictionaryCleaner
     {
-      public WeakDictionaryCleaner(WeakDictionary<Key, Value> dict)
+      public WeakDictionaryCleaner(WeakDictionary<TKey, TValue> dict)
       {
         refs.Add(new CleanerRef(this, dict));
       }
@@ -117,10 +119,10 @@ namespace Altaxo.Collections
 
     protected void ClearGcedEntries()
     {
-      var toRemove = new List<KeyValuePair<object, Value>>();
+      var toRemove = new List<KeyValuePair<object, TValue>>();
       foreach (var entry in _dict)
       {
-        if (ShouldEntryBeRemoved((WeakKey<Key>)entry.Key, entry.Value))
+        if (ShouldEntryBeRemoved((WeakKey<TKey>)entry.Key, entry.Value))
           toRemove.Add(entry);
       }
       foreach (var entry in toRemove)
@@ -130,39 +132,38 @@ namespace Altaxo.Collections
         new WeakDictionaryCleaner(this); // create again a new instance of WeakDictionaryCleaner without a reference so it can be garbage collected
     }
 
-    protected bool ShouldEntryBeRemoved(WeakKey<Key> key, Value val)
+    protected bool ShouldEntryBeRemoved(WeakKey<TKey> key, TValue val)
     {
       return !key.IsAlive;
     }
 
-    public void Add(Key key, Value val)
+    public void Add(TKey key, TValue val)
     {
       int countBefore = _dict.Count;
 
-      _dict.Add(new WeakKey<Key>(key), val);
+      _dict.Add(new WeakKey<TKey>(key), val);
 
       if (countBefore == 0) // this is the first entry, so create a dictionary cleaner for it and all items added previously
         new WeakDictionaryCleaner(this); // create again a new instance of WeakDictionaryCleaner without a reference so it can be garbage collected
     }
 
-    public virtual bool TryGetValue(Key key, out Value val)
+    public virtual bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue val)
     {
       return _dict.TryGetValue(key, out val);
     }
 
-    public Value this[Key key]
+    public TValue this[TKey key]
     {
       get
       {
-        var isH = TryGetValue(key, out var val);
-        if (isH)
+        if (TryGetValue(key, out var val))
           return val;
         else
           throw new ArgumentOutOfRangeException("Specified key has no entry in dictionary");
       }
     }
 
-    public virtual bool Contains(Key key)
+    public virtual bool Contains(TKey key)
     {
       return _dict.ContainsKey(key);
     }

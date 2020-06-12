@@ -88,7 +88,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         TextGraphic s = null != o ? (TextGraphic)o : new TextGraphic(info);
-        info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent);
+#pragma warning disable CS0618 // Type or member is obsolete
+        info.GetBaseValueEmbeddedOrNull(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent);
+#pragma warning restore CS0618 // Type or member is obsolete
 
         // we have changed the meaning of rotation in the meantime, This is not handled in GetBaseValueEmbedded,
         // since the former versions did not store the version number of embedded bases
@@ -139,7 +141,9 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
         else
         {
-          info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent); // before 2006-06-20, it was version 0 of the GraphicsObject
+#pragma warning disable CS0618 // Type or member is obsolete
+          info.GetBaseValueEmbeddedOrNull(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent); // before 2006-06-20, it was version 0 of the GraphicsObject
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         s._text = info.GetString("Text");

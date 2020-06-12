@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -45,7 +46,7 @@ namespace Altaxo.Collections
   public interface ITreeNode<T> where T : ITreeNode<T>
   {
     /// <summary>
-    /// Gets the child nodes.
+    /// Gets the child nodes. 
     /// </summary>
     /// <value>
     /// The child nodes.
@@ -95,6 +96,7 @@ namespace Altaxo.Collections
     /// <value>
     /// The parent node.
     /// </value>
+    [MaybeNull]
     T ParentNode { get; }
   }
 
@@ -121,6 +123,11 @@ namespace Altaxo.Collections
   {
     public static void FromHereToLeavesDo<T>(this T node, Action<T> action) where T : ITreeNode<T>
     {
+      if (action is null)
+      {
+        throw new ArgumentNullException(nameof(action));
+      }
+
       action(node);
       var childNodes = node.ChildNodes;
       if (null != childNodes)

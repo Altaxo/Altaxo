@@ -166,7 +166,9 @@ namespace Altaxo.Data
       {
         var s = (NumericColumnProxy)o ?? new NumericColumnProxy(info);
 
-        object baseobj = info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
+#pragma warning disable CS0618 // Type or member is obsolete
+        object baseobj = info.GetBaseValueEmbeddedOrNull(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
+#pragma warning restore CS0618 // Type or member is obsolete
 
         if (!object.ReferenceEquals(s, baseobj))
         {

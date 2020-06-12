@@ -41,7 +41,7 @@ namespace Altaxo.Collections
 
     public void Add(T item)
     {
-      if (_itemHash == null)
+      if (_itemHash.Count == 0)
         EnsureHashNotNull();
 
       if (_itemHash.ContainsKey(item))
@@ -53,7 +53,7 @@ namespace Altaxo.Collections
 
     public bool Contains(T item)
     {
-      if (_itemHash == null)
+      if (_itemHash.Count == 0)
         EnsureHashNotNull();
       return _itemHash.ContainsKey(item);
     }
@@ -81,7 +81,7 @@ namespace Altaxo.Collections
 
     public bool Remove(T item)
     {
-      if (_itemHash != null)
+      if (_itemHash.Count > 0)
       {
         if (_itemHash.ContainsKey(item))
         {
@@ -133,7 +133,7 @@ namespace Altaxo.Collections
 
     private void InvalidateHash()
     {
-      _itemHash = null;
+      _itemHash.Clear();
     }
 
     /// <summary>
@@ -141,10 +141,9 @@ namespace Altaxo.Collections
     /// </summary>
     private void EnsureHashNotNull()
     {
-      if (null != _itemHash)
+      if (_itemHash.Count > 0)
         return;
 
-      _itemHash = new Dictionary<T, int>();
       for (int i = 0; i < _itemList.Count; i++)
       {
         _itemHash.Add(_itemList[i], i);
@@ -153,7 +152,7 @@ namespace Altaxo.Collections
 
     public int IndexOf(T item)
     {
-      if (_itemHash == null)
+      if (_itemHash.Count == 0)
         EnsureHashNotNull();
 
       return _itemHash.TryGetValue(item, out var result) ? result : -1;

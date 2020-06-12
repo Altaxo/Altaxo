@@ -89,5 +89,17 @@ namespace System.Diagnostics.CodeAnalysis
     {
     }
   }
+
+  [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+  public sealed class MemberNotNullWhenAttribute : Attribute
+  {
+    public MemberNotNullWhenAttribute(bool cond, string _)
+    {
+    }
+
+    public MemberNotNullWhenAttribute(bool cond, params string[] _)
+    {
+    }
+  }
 #endif
 }

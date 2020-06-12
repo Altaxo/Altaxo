@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -63,18 +65,18 @@ namespace Altaxo.Collections
   {
     private static NGTreeNode _dummyNode = new NGTreeNode();
 
-    protected object _guiTag;
+    protected object? _guiTag;
     protected bool _isExpanded;
 
     /// <summary>
     /// Collection of child nodes.
     /// </summary>
-    private NGTreeNodeCollection _nodes;
+    private NGTreeNodeCollection? _nodes;
 
     /// <summary>
     /// Parent node.
     /// </summary>
-    private NGTreeNode _parent;
+    private NGTreeNode? _parent;
 
     /// <summary>
     /// Empty constructor.
@@ -122,14 +124,14 @@ namespace Altaxo.Collections
       }
       set
       {
-        OnPropertyChanged("AlwaysFalse");
+        OnPropertyChanged(nameof(AlwaysFalse));
       }
     }
 
     /// <summary>
     /// Can be used by some GUI to get a connection to GUI elements.
     /// </summary>
-    public object GuiTag
+    public object? GuiTag
     {
       get
       {
@@ -137,17 +139,18 @@ namespace Altaxo.Collections
       }
       set
       {
-        var oldValue = _guiTag;
-        _guiTag = value;
-        if (!object.ReferenceEquals(value, oldValue))
-          OnPropertyChanged("GuiTag");
+        if (!object.Equals(_guiTag, value))
+        {
+          _guiTag = value;
+          OnPropertyChanged(nameof(GuiTag));
+        }
       }
     }
 
     /// <summary>
     /// Parent tree node.
     /// </summary>
-    public NGTreeNode ParentNode { get { return _parent; } }
+    public NGTreeNode? ParentNode { get { return _parent; } }
 
     /// <summary>
     /// Gets/sets whether the TreeViewItem
@@ -158,10 +161,10 @@ namespace Altaxo.Collections
       get { return _isExpanded; }
       set
       {
-        if (value != _isExpanded)
+        if (!(_isExpanded == value))
         {
           _isExpanded = value;
-          OnPropertyChanged("IsExpanded");
+          OnPropertyChanged(nameof(IsExpanded));
         }
 
         // Expand all the way up to the root.
@@ -184,20 +187,22 @@ namespace Altaxo.Collections
         n.ClearSelectionRecursively();
     }
 
-    public NGTreeNode FirstSelectedNode
+
+    public NGTreeNode? FirstSelectedNode
     {
       get
       {
-        return Altaxo.Collections.TreeNodeExtensions.AnyBetweenHereAndLeaves(this, node => node.IsSelected);
+        return TreeNodeExtensions.AnyBetweenHereAndLeaves(this, node => node.IsSelected);
       }
     }
 
     /// <summary>
     /// Returns true if this object's Children have not yet been populated.
     /// </summary>
+    [MemberNotNullWhen(true, nameof(_nodes))]
     public bool HasDummyChild
     {
-      get { return null != _nodes && _nodes.Count == 1 && _nodes[0] == _dummyNode; }
+      get { return _nodes is { } nodes && nodes.Count == 1 && nodes[0] == _dummyNode; }
     }
 
     /// <summary>
@@ -249,7 +254,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        if (null == _nodes)
+        if (_nodes is null)
           _nodes = new MyColl3(this);
 
         return _nodes;
@@ -260,7 +265,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        if (null == _nodes)
+        if (_nodes is null)
           _nodes = new MyColl3(this);
 
         return _nodes;
@@ -271,7 +276,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        if (null == _nodes)
+        if (_nodes is null)
           _nodes = new MyColl3(this);
 
         return _nodes;
@@ -283,8 +288,8 @@ namespace Altaxo.Collections
     /// </summary>
     public void Remove()
     {
-      if (_parent != null)
-        _parent.Nodes.Remove(this);
+      if (_parent is { } parent)
+        parent.Nodes.Remove(this);
     }
 
     /// <summary>
@@ -293,13 +298,13 @@ namespace Altaxo.Collections
     /// <param name="newNode">The new node to replace this node.</param>
     public void ReplaceBy(NGTreeNode newNode)
     {
-      if (null == newNode)
+      if (newNode is null)
         throw new ArgumentNullException(nameof(newNode));
 
-      if (_parent != null)
+      if (_parent is { } parent)
       {
         var idx = Index;
-        _parent.Nodes[idx] = newNode;
+        parent.Nodes[idx] = newNode;
         _parent = null;
       }
     }
@@ -312,7 +317,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        return _parent == null ? 0 : 1 + _parent.Level;
+        return _parent is null ? 0 : 1 + _parent.Level;
       }
     }
 
@@ -323,7 +328,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        return _parent == null ? -1 : _parent.Nodes.IndexOf(this);
+        return _parent is null ? -1 : _parent.Nodes.IndexOf(this);
       }
     }
 
@@ -336,11 +341,11 @@ namespace Altaxo.Collections
       get
       {
         int[] result = new int[Level];
-        NGTreeNode n = this;
+        NGTreeNode? n = this;
         for (int i = result.Length - 1; i >= 0; i--)
         {
-          result[i] = n.Index;
-          n = n.ParentNode;
+          result[i] = n?.Index ?? -1;
+          n = n?.ParentNode;
         }
 
         return result;
@@ -354,31 +359,31 @@ namespace Altaxo.Collections
     {
       get
       {
-        return null == _parent ? this : _parent.RootNode;
+        return _parent is { } parent ? parent.RootNode : this;
       }
     }
 
     #region Filtering
 
     /// <summary>
-    /// If the <c>nodes</c> array contain both some nodes and their childs (or relatives up in the hierarchie), those childs are removed and only
+    /// If the <c>nodes</c> array contain both some nodes and their childs (or relatives up in the hierarchy), those childs are removed and only
     /// the nodes with the lowest level in the hierarchy are returned.
     /// </summary>
     /// <param name="nodes">Collection of nodes</param>
     /// <returns>Only the nodes who have no parent (or grand parent and so on) in the collection.</returns>
     public static NGTreeNode[] FilterIndependentNodes(NGTreeNode[] nodes)
     {
-      var hash = new System.Collections.Hashtable();
+      var hash = new HashSet<NGTreeNode>();
       for (int i = 0; i < nodes.Length; i++)
-        hash.Add(nodes[i], null);
+        hash.Add(nodes[i]);
 
       var result = new List<NGTreeNode>();
       for (int i = 0; i < nodes.Length; i++)
       {
         bool isContained = false;
-        for (NGTreeNode currNode = nodes[i].ParentNode; currNode != null; currNode = currNode.ParentNode)
+        for (var currNode = nodes[i].ParentNode; currNode != null; currNode = currNode.ParentNode)
         {
-          if (hash.ContainsKey(currNode))
+          if (hash.Contains(currNode))
           {
             isContained = true;
             break;
@@ -421,7 +426,7 @@ namespace Altaxo.Collections
       if (firstNode == null)
         return true;
 
-      NGTreeNode parent = firstNode.ParentNode;
+      var parent = firstNode.ParentNode;
       foreach (var node in nodes)
         if (node.ParentNode != parent)
           return false;
@@ -440,13 +445,13 @@ namespace Altaxo.Collections
       int? level = null;
       foreach (var node in selNodes)
       {
-        if (null == level)
+        if (!level.HasValue)
           level = node.Level;
 
         if (level != node.Level)
           return false;
       }
-      return null == level ? false : true;
+      return level.HasValue ? true : false;
     }
 
     /// <summary>
@@ -502,22 +507,27 @@ namespace Altaxo.Collections
     /// </summary>
     /// <param name="node">The original node.</param>
     /// <returns>The first parent node in the hierarchy, which is selected, or <c>null</c> if such a node does not exist.</returns>
-    public static NGTreeNode FindFirstSelectedNodeParent(NGTreeNode node)
+    public static NGTreeNode? FindFirstSelectedNodeParent(NGTreeNode node)
     {
-      while (null != (node = node.ParentNode))
+      NGTreeNode? n = node;
+      while (!((n = n?.ParentNode) is null))
       {
-        if (node.IsSelected)
-          return node;
+        if (n.IsSelected)
+          return n;
       }
       return null;
     }
 
     private class IntArrayComparer : IComparer<int[]>
     {
+      private static int[] _emptyIntArray = new int[0];
       #region IComparer<int[]> Members
 
-      public int Compare(int[] x, int[] y)
+      public int Compare(int[]? x, int[]? y)
       {
+        x ??= _emptyIntArray;
+        y ??= _emptyIntArray;
+
         int len = Math.Min(x.Length, y.Length);
         for (int i = 0; i < len; i++)
         {
@@ -560,7 +570,7 @@ namespace Altaxo.Collections
       if (!(selNodes.Length > 0))
         throw new InvalidOperationException();
 
-      NGTreeNode parent = selNodes[0].ParentNode;
+      var parent = selNodes[0].ParentNode;
       if (parent == null)
         throw new ArgumentException("Parent of the nodes is null");
 
@@ -586,7 +596,7 @@ namespace Altaxo.Collections
       for (int i = 0; i < selNodes.Length; i++)
       {
         int idx = selNodes[i].Index;
-        parent._nodes.Swap(idx, idx - 1);
+        parent._nodes!.Swap(idx, idx - 1);
       }
     }
 
@@ -598,7 +608,7 @@ namespace Altaxo.Collections
       for (int i = selNodes.Length - 1; i >= 0; i--)
       {
         int idx = selNodes[i].Index;
-        parent._nodes.Swap(idx, idx + 1);
+        parent._nodes!.Swap(idx, idx + 1);
       }
     }
 
