@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Diagnostics;
 using System.Text;
@@ -28,39 +29,39 @@ namespace Altaxo.AddInItems
   /// </summary>
   public class NegatedCondition : ICondition
   {
-    private ICondition condition;
+    private ICondition _condition;
+    private ConditionFailedAction _action = ConditionFailedAction.Exclude;
 
     public string Name
     {
       get
       {
-        return "Not " + condition.Name;
+        return "Not " + _condition.Name;
       }
     }
 
-    private ConditionFailedAction action = ConditionFailedAction.Exclude;
 
     public ConditionFailedAction Action
     {
       get
       {
-        return action;
+        return _action;
       }
       set
       {
-        action = value;
+        _action = value;
       }
     }
 
     public NegatedCondition(ICondition condition)
     {
       Debug.Assert(condition != null);
-      this.condition = condition;
+      this._condition = condition;
     }
 
     public bool IsValid(object parameter)
     {
-      return !condition.IsValid(parameter);
+      return !_condition.IsValid(parameter);
     }
 
     public static ICondition Read(XmlReader reader, AddIn addIn)
@@ -74,17 +75,18 @@ namespace Altaxo.AddInItems
   /// </summary>
   public class AndCondition : ICondition
   {
-    private ICondition[] conditions;
+    private ICondition[] _conditions;
+    private ConditionFailedAction _action = ConditionFailedAction.Exclude;
 
     public string Name
     {
       get
       {
         var sb = new StringBuilder();
-        for (int i = 0; i < conditions.Length; ++i)
+        for (int i = 0; i < _conditions.Length; ++i)
         {
-          sb.Append(conditions[i].Name);
-          if (i + 1 < conditions.Length)
+          sb.Append(_conditions[i].Name);
+          if (i + 1 < _conditions.Length)
           {
             sb.Append(" And ");
           }
@@ -93,29 +95,28 @@ namespace Altaxo.AddInItems
       }
     }
 
-    private ConditionFailedAction action = ConditionFailedAction.Exclude;
 
     public ConditionFailedAction Action
     {
       get
       {
-        return action;
+        return _action;
       }
       set
       {
-        action = value;
+        _action = value;
       }
     }
 
     public AndCondition(ICondition[] conditions)
     {
       Debug.Assert(conditions.Length >= 1);
-      this.conditions = conditions;
+      this._conditions = conditions;
     }
 
     public bool IsValid(object parameter)
     {
-      foreach (ICondition condition in conditions)
+      foreach (ICondition condition in _conditions)
       {
         if (!condition.IsValid(parameter))
         {
@@ -136,17 +137,18 @@ namespace Altaxo.AddInItems
   /// </summary>
   public class OrCondition : ICondition
   {
-    private ICondition[] conditions;
+    private ICondition[] _conditions;
+    private ConditionFailedAction _action = ConditionFailedAction.Exclude;
 
     public string Name
     {
       get
       {
         var sb = new StringBuilder();
-        for (int i = 0; i < conditions.Length; ++i)
+        for (int i = 0; i < _conditions.Length; ++i)
         {
-          sb.Append(conditions[i].Name);
-          if (i + 1 < conditions.Length)
+          sb.Append(_conditions[i].Name);
+          if (i + 1 < _conditions.Length)
           {
             sb.Append(" Or ");
           }
@@ -155,29 +157,28 @@ namespace Altaxo.AddInItems
       }
     }
 
-    private ConditionFailedAction action = ConditionFailedAction.Exclude;
 
     public ConditionFailedAction Action
     {
       get
       {
-        return action;
+        return _action;
       }
       set
       {
-        action = value;
+        _action = value;
       }
     }
 
     public OrCondition(ICondition[] conditions)
     {
       Debug.Assert(conditions.Length >= 1);
-      this.conditions = conditions;
+      this._conditions = conditions;
     }
 
     public bool IsValid(object parameter)
     {
-      foreach (ICondition condition in conditions)
+      foreach (ICondition condition in _conditions)
       {
         if (condition.IsValid(parameter))
         {

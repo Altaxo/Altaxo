@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -30,8 +31,8 @@ namespace Altaxo.AddInItems
   {
     private readonly object lockObj = new object();
     private Dictionary<string, AddInTreeNode> childNodes = new Dictionary<string, AddInTreeNode>();
-    private ReadOnlyCollection<Codon> codons;
-    private List<IEnumerable<Codon>> codonInput;
+    private ReadOnlyCollection<Codon>? codons;
+    private List<IEnumerable<Codon>>? codonInput;
 
     /// <summary>
     /// A dictionary containing the child paths.
@@ -46,14 +47,14 @@ namespace Altaxo.AddInItems
 
     public void AddCodons(IEnumerable<Codon> newCodons)
     {
-      if (newCodons == null)
-        throw new ArgumentNullException("newCodons");
+      if (newCodons is null)
+        throw new ArgumentNullException(nameof(newCodons));
       lock (lockObj)
       {
-        if (codonInput == null)
+        if (codonInput is null)
         {
           codonInput = new List<IEnumerable<Codon>>();
-          if (codons != null)
+          if (!(codons is null))
             codonInput.Add(codons);
         }
         codonInput.Add(newCodons);
@@ -69,9 +70,9 @@ namespace Altaxo.AddInItems
       {
         lock (lockObj)
         {
-          if (codons == null)
+          if (codons is null)
           {
-            if (codonInput == null)
+            if (codonInput is null)
             {
               codons = new ReadOnlyCollection<Codon>(new Codon[0]);
             }
@@ -91,14 +92,14 @@ namespace Altaxo.AddInItems
     /// </summary>
     /// <param name="parameter">A parameter that gets passed into the doozer and condition evaluators.</param>
     /// <param name="additionalConditions">Additional conditions applied to the node.</param>
-    public List<T> BuildChildItems<T>(object parameter, IEnumerable<ICondition> additionalConditions = null)
+    public List<T> BuildChildItems<T>(object parameter, IEnumerable<ICondition>? additionalConditions = null)
     {
       var codons = Codons;
       var items = new List<T>(codons.Count);
       foreach (Codon codon in codons)
       {
-        object result = BuildChildItem(codon, parameter, additionalConditions);
-        if (result == null)
+        object? result = BuildChildItem(codon, parameter, additionalConditions);
+        if (result is null)
           continue;
         var mod = result as IBuildItemsModifier;
         if (mod != null)
@@ -119,17 +120,17 @@ namespace Altaxo.AddInItems
       return items;
     }
 
-    public object BuildChildItem(Codon codon, object parameter, IEnumerable<ICondition> additionalConditions = null)
+    public object? BuildChildItem(Codon codon, object parameter, IEnumerable<ICondition>? additionalConditions = null)
     {
-      if (codon == null)
-        throw new ArgumentNullException("codon");
+      if (codon is null)
+        throw new ArgumentNullException(nameof(codon));
 
       childNodes.TryGetValue(codon.Id, out var subItemNode);
 
       IReadOnlyCollection<ICondition> conditions;
-      if (additionalConditions == null)
+      if (additionalConditions is null)
         conditions = codon.Conditions;
-      else if (codon.Conditions == null)
+      else if (codon.Conditions is null)
         conditions = additionalConditions.ToList();
       else
         conditions = additionalConditions.Concat(codon.Conditions).ToList();
@@ -148,7 +149,7 @@ namespace Altaxo.AddInItems
     /// <exception cref="TreePathNotFoundException">
     /// Occurs when <paramref name="childItemID"/> does not exist in this path.
     /// </exception>
-    public object BuildChildItem(string childItemID, object parameter, IEnumerable<ICondition> additionalConditions = null)
+    public object? BuildChildItem(string childItemID, object parameter, IEnumerable<ICondition>? additionalConditions = null)
     {
       foreach (Codon codon in Codons)
       {

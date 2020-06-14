@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -87,9 +88,9 @@ namespace Altaxo.AddInItems
   /// </summary>
   public static class AddInManager
   {
-    private static string configurationFileName;
-    private static string addInInstallTemp;
-    private static string userAddInPath;
+    private static string _configurationFileName = string.Empty;
+    private static string _addInInstallTemp = string.Empty;
+    private static string _userAddInPath = string.Empty;
 
     /// <summary>
     /// Gets or sets the user addin path.
@@ -100,11 +101,11 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return userAddInPath;
+        return _userAddInPath;
       }
       set
       {
-        userAddInPath = value;
+        _userAddInPath = value;
       }
     }
 
@@ -118,11 +119,11 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return addInInstallTemp;
+        return _addInInstallTemp;
       }
       set
       {
-        addInInstallTemp = value;
+        _addInInstallTemp = value;
       }
     }
 
@@ -136,11 +137,11 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return configurationFileName;
+        return _configurationFileName;
       }
       set
       {
-        configurationFileName = value;
+        _configurationFileName = value;
       }
     }
 
@@ -157,25 +158,24 @@ namespace Altaxo.AddInItems
     /// </summary>
     public static void InstallAddIns(List<string> disabled)
     {
-      if (!Directory.Exists(addInInstallTemp))
+      if (!Directory.Exists(_addInInstallTemp))
         return;
       Current.Log.Info("AddInManager.InstallAddIns started");
-      if (!Directory.Exists(userAddInPath))
-        Directory.CreateDirectory(userAddInPath);
-      string removeFile = Path.Combine(addInInstallTemp, "remove.txt");
+      if (!Directory.Exists(_userAddInPath))
+        Directory.CreateDirectory(_userAddInPath);
+      string removeFile = Path.Combine(_addInInstallTemp, "remove.txt");
       bool allOK = true;
       var notRemoved = new List<string>();
       if (File.Exists(removeFile))
       {
         using (var r = new StreamReader(removeFile))
         {
-          string addInName;
-          while ((addInName = r.ReadLine()) != null)
+          while (r.ReadLine() is { } addInName)
           {
             addInName = addInName.Trim();
             if (addInName.Length == 0)
               continue;
-            string targetDir = Path.Combine(userAddInPath, addInName);
+            string targetDir = Path.Combine(_userAddInPath, addInName);
             if (!UninstallAddIn(disabled, addInName, targetDir))
             {
               notRemoved.Add(addInName);
@@ -197,10 +197,10 @@ namespace Altaxo.AddInItems
           }
         }
       }
-      foreach (string sourceDir in Directory.GetDirectories(addInInstallTemp))
+      foreach (string sourceDir in Directory.GetDirectories(_addInInstallTemp))
       {
         string addInName = Path.GetFileName(sourceDir);
-        string targetDir = Path.Combine(userAddInPath, addInName);
+        string targetDir = Path.Combine(_userAddInPath, addInName);
         if (notRemoved.Contains(addInName))
         {
           Current.Log.Info("Skipping installation of " + addInName + " because deinstallation failed.");
@@ -220,7 +220,7 @@ namespace Altaxo.AddInItems
       {
         try
         {
-          Directory.Delete(addInInstallTemp, false);
+          Directory.Delete(_addInInstallTemp, false);
         }
         catch (Exception ex)
         {
@@ -263,13 +263,12 @@ namespace Altaxo.AddInItems
     public static void RemoveUserAddInOnNextStart(string identity)
     {
       var removeEntries = new List<string>();
-      string removeFile = Path.Combine(addInInstallTemp, "remove.txt");
+      string removeFile = Path.Combine(_addInInstallTemp, "remove.txt");
       if (File.Exists(removeFile))
       {
         using (var r = new StreamReader(removeFile))
         {
-          string addInName;
-          while ((addInName = r.ReadLine()) != null)
+          while (r.ReadLine() is { } addInName)
           {
             addInName = addInName.Trim();
             if (addInName.Length > 0)
@@ -280,8 +279,8 @@ namespace Altaxo.AddInItems
           return;
       }
       removeEntries.Add(identity);
-      if (!Directory.Exists(addInInstallTemp))
-        Directory.CreateDirectory(addInInstallTemp);
+      if (!Directory.Exists(_addInInstallTemp))
+        Directory.CreateDirectory(_addInInstallTemp);
       using (var w = new StreamWriter(removeFile))
       {
         removeEntries.ForEach(w.WriteLine);
@@ -297,7 +296,7 @@ namespace Altaxo.AddInItems
     /// <param name="identity">The identity of which to abort the removal.</param>
     public static void AbortRemoveUserAddInOnNextStart(string identity)
     {
-      string removeFile = Path.Combine(addInInstallTemp, "remove.txt");
+      string removeFile = Path.Combine(_addInInstallTemp, "remove.txt");
       if (!File.Exists(removeFile))
       {
         return;
@@ -305,8 +304,7 @@ namespace Altaxo.AddInItems
       var removeEntries = new List<string>();
       using (var r = new StreamReader(removeFile))
       {
-        string addInName;
-        while ((addInName = r.ReadLine()) != null)
+        while (r.ReadLine() is { } addInName)
         {
           addInName = addInName.Trim();
           if (addInName.Length > 0)
@@ -338,6 +336,9 @@ namespace Altaxo.AddInItems
 
       foreach (AddIn addIn in addIns)
       {
+        if (addIn.FileName is null)
+          throw new InvalidOperationException($"Addin.FileName is null - was AddIn initialized before?");
+
         if (!addInFiles.Contains(addIn.FileName))
           addInFiles.Add(addIn.FileName);
         addIn.Enabled = false;
@@ -362,6 +363,10 @@ namespace Altaxo.AddInItems
 
       foreach (AddIn addIn in addIns)
       {
+        if (addIn.FileName is null)
+          throw new InvalidOperationException($"Addin.FileName is null - was AddIn initialized before?");
+
+
         foreach (string identity in addIn.Manifest.Identities.Keys)
         {
           disabled.Remove(identity);
@@ -395,7 +400,7 @@ namespace Altaxo.AddInItems
         }
         if (addIn.Action == AddInAction.Uninstall)
         {
-          if (FileUtility.IsBaseDirectory(userAddInPath, addIn.FileName))
+          if (FileUtility.IsBaseDirectory(_userAddInPath, addIn.FileName))
           {
             foreach (string identity in addIn.Manifest.Identities.Keys)
             {
@@ -404,6 +409,9 @@ namespace Altaxo.AddInItems
           }
           else
           {
+            if (addIn.FileName is null)
+              throw new InvalidOperationException($"Addin.FileName is null - was AddIn initialized before?");
+
             if (!addInFiles.Contains(addIn.FileName))
               addInFiles.Add(addIn.FileName);
           }
@@ -426,8 +434,8 @@ namespace Altaxo.AddInItems
 
       foreach (AddIn addIn in addIns)
       {
-        string identity = addIn.Manifest.PrimaryIdentity;
-        if (identity == null)
+        string? identity = addIn.Manifest.PrimaryIdentity;
+        if (identity is null)
           throw new ArgumentException("The AddIn cannot be disabled because it has no identity.");
 
         if (!disabled.Contains(identity))
@@ -449,9 +457,9 @@ namespace Altaxo.AddInItems
     /// <param name="disabledAddIns">Identities of disabled addins are added to this collection.</param>
     public static void LoadAddInConfiguration(List<string> addInFiles, List<string> disabledAddIns)
     {
-      if (!File.Exists(configurationFileName))
+      if (!File.Exists(_configurationFileName))
         return;
-      using (var reader = new XmlTextReader(configurationFileName))
+      using (var reader = new XmlTextReader(_configurationFileName))
       {
         while (reader.Read())
         {
@@ -486,7 +494,7 @@ namespace Altaxo.AddInItems
     /// <param name="disabledAddIns">List of Identities of disabled addins.</param>
     public static void SaveAddInConfiguration(List<string> addInFiles, List<string> disabledAddIns)
     {
-      using (var writer = new XmlTextWriter(configurationFileName, Encoding.UTF8))
+      using (var writer = new XmlTextWriter(_configurationFileName, Encoding.UTF8))
       {
         writer.Formatting = Formatting.Indented;
         writer.WriteStartDocument();

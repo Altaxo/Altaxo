@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -71,6 +72,6 @@ namespace Altaxo.AddInItems
     /// <see cref="TreePathNotFoundException"/> when the path does not exist.
     /// If set to <c>false</c>, <c>null</c> is returned for non-existing paths.
     /// </param>
-    AddInTreeNode GetTreeNode(string path, bool throwOnNotFound = true);
+    AddInTreeNode? GetTreeNode(string path, bool throwOnNotFound = true);
   }
 }

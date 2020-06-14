@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.IO;
 using System.Linq;
@@ -51,14 +52,14 @@ namespace Altaxo.AddInItems
     /// <param name="hintPath">A directory where to search for the assembly. Can be null. If not null, first this directory, and
     /// then the directory of the entry assembly is searched for the assembly.</param>
     /// <returns>The assembly that was loaded, or null if the assembly was not found.</returns>
-    public Assembly LoadAssemblyFromPartialName(string assemblyString, string hintPath)
+    public Assembly? LoadAssemblyFromPartialName(string assemblyString, string hintPath)
     {
       // First of all, we look if such an assembly is already loaded 
       Assembly result = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.GetName().Name == assemblyString).FirstOrDefault();
       if (null != result)
         return result;
 
-      FileInfo resolvedFile = null;
+      FileInfo? resolvedFile = null;
       assemblyString += ".dll";
       if (null != hintPath && Directory.Exists(hintPath))
       {
@@ -68,14 +69,12 @@ namespace Altaxo.AddInItems
 
       if (resolvedFile is null)
       {
-        var dirInfo = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+        var entryAssembly = Assembly.GetEntryAssembly() ?? throw new InvalidOperationException("Can not retrieve entry assembly!");
+        var dirInfo = new DirectoryInfo(Path.GetDirectoryName(entryAssembly.Location));
         resolvedFile = dirInfo.GetFiles(assemblyString, SearchOption.AllDirectories).FirstOrDefault();
       }
 
-      if (resolvedFile is null)
-        return null;
-
-      return LoadAssemblyFromFullySpecifiedName(resolvedFile.FullName);
+      return resolvedFile is null ? null : LoadAssemblyFromFullySpecifiedName(resolvedFile.FullName);
     }
 
     /// <summary>
@@ -133,7 +132,7 @@ namespace Altaxo.AddInItems
     /// <returns>
     /// The loaded assembly, or <see langword="null" />.
     /// </returns>
-    protected override Assembly Load(AssemblyName assemblyName)
+    protected override Assembly? Load(AssemblyName assemblyName)
     {
       // this function is called when dependencies of the pluginAssembly should be loaded
 
@@ -143,8 +142,8 @@ namespace Altaxo.AddInItems
       if (result is null)
       {
         // otherwise, we use the _resolver to resolve the dependent assembly
-        string assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
-        if (assemblyPath != null)
+        string? assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
+        if (!(assemblyPath is null))
         {
           // note that we load the dependent assemblies into the default load context,
           // and not in this context here
@@ -166,8 +165,8 @@ namespace Altaxo.AddInItems
     /// </returns>
     protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
     {
-      string libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
-      if (libraryPath != null)
+      var libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
+      if (!(libraryPath is null))
       {
         return LoadUnmanagedDllFromPath(libraryPath);
       }

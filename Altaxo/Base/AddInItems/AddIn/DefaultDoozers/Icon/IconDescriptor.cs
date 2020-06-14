@@ -16,19 +16,20 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 
 namespace Altaxo.AddInItems
 {
   public class IconDescriptor
   {
-    private Codon codon;
+    private Codon _codon;
 
     public string Id
     {
       get
       {
-        return codon.Id;
+        return _codon.Id;
       }
     }
 
@@ -36,7 +37,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return codon.Properties["language"];
+        return _codon.Properties["language"];
       }
     }
 
@@ -44,7 +45,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return codon.Properties["resource"];
+        return _codon.Properties["resource"];
       }
     }
 
@@ -52,13 +53,13 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return codon.Properties["extensions"].Split(';');
+        return _codon.Properties["extensions"].Split(';');
       }
     }
 
     public IconDescriptor(Codon codon)
     {
-      this.codon = codon;
+      this._codon = codon;
     }
   }
 }

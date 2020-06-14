@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,16 +30,16 @@ namespace Altaxo.AddInItems
   /// </summary>
   public class Codon
   {
-    private AddIn addIn;
-    private string name;
-    private Properties properties;
-    private IReadOnlyList<ICondition> conditions;
+    private AddIn _addIn;
+    private string _name;
+    private Properties _properties;
+    private IReadOnlyList<ICondition> _conditions;
 
     public string Name
     {
       get
       {
-        return name;
+        return _name;
       }
     }
 
@@ -46,7 +47,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return addIn;
+        return _addIn;
       }
     }
 
@@ -54,7 +55,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return properties["id"];
+        return _properties["id"];
       }
     }
 
@@ -62,7 +63,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return properties["insertafter"];
+        return _properties["insertafter"];
       }
     }
 
@@ -70,7 +71,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return properties["insertbefore"];
+        return _properties["insertbefore"];
       }
     }
 
@@ -78,7 +79,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return properties[key];
+        return _properties[key];
       }
     }
 
@@ -86,7 +87,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return properties;
+        return _properties;
       }
     }
 
@@ -94,7 +95,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return conditions;
+        return _conditions;
       }
     }
 
@@ -104,15 +105,15 @@ namespace Altaxo.AddInItems
         throw new ArgumentNullException("name");
       if (properties == null)
         throw new ArgumentNullException("properties");
-      this.addIn = addIn;
-      this.name = name;
-      this.properties = properties;
-      this.conditions = conditions;
+      this._addIn = addIn;
+      this._name = name;
+      this._properties = properties;
+      this._conditions = conditions;
     }
 
-    internal object BuildItem(BuildItemArgs args)
+    internal object? BuildItem(BuildItemArgs args)
     {
-      if (!addIn.AddInTree.Doozers.TryGetValue(Name, out var doozer))
+      if (!_addIn.AddInTree.Doozers.TryGetValue(Name, out var doozer))
         throw new BaseException("Doozer " + Name + " not found! " + ToString());
 
       if (!doozer.HandleConditions)
@@ -129,9 +130,9 @@ namespace Altaxo.AddInItems
     public override string ToString()
     {
       return string.Format("[Codon: name = {0}, id = {1}, addIn={2}]",
-                           name,
+                           _name,
                            Id,
-                           addIn.FileName);
+                           _addIn.FileName);
     }
   }
 }

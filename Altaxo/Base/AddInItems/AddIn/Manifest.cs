@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,25 +30,25 @@ namespace Altaxo.AddInItems
   /// </summary>
   public class AddInManifest
   {
-    private List<AddInReference> dependencies = new List<AddInReference>();
-    private List<AddInReference> conflicts = new List<AddInReference>();
-    private Dictionary<string, Version> identities = new Dictionary<string, Version>();
-    private Version primaryVersion;
-    private string primaryIdentity;
+    private List<AddInReference> _dependencies = new List<AddInReference>();
+    private List<AddInReference> _conflicts = new List<AddInReference>();
+    private Dictionary<string, Version> _identities = new Dictionary<string, Version>();
+    private Version? _primaryVersion;
+    private string? _primaryIdentity;
 
-    public string PrimaryIdentity
+    public string? PrimaryIdentity
     {
       get
       {
-        return primaryIdentity;
+        return _primaryIdentity;
       }
     }
 
-    public Version PrimaryVersion
+    public Version? PrimaryVersion
     {
       get
       {
-        return primaryVersion;
+        return _primaryVersion;
       }
     }
 
@@ -55,7 +56,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return identities;
+        return _identities;
       }
     }
 
@@ -63,7 +64,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return dependencies.AsReadOnly();
+        return _dependencies.AsReadOnly();
       }
     }
 
@@ -71,11 +72,11 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return conflicts.AsReadOnly();
+        return _conflicts.AsReadOnly();
       }
     }
 
-    private void AddIdentity(string name, string version, string hintPath)
+    private void AddIdentity(string name, string version, string? hintPath)
     {
       if (name.Length == 0)
         throw new AddInLoadException("Identity needs a name");
@@ -87,18 +88,18 @@ namespace Altaxo.AddInItems
         }
       }
       Version v = AddInReference.ParseVersion(version, hintPath);
-      if (primaryVersion == null)
+      if (_primaryVersion is null)
       {
-        primaryVersion = v;
+        _primaryVersion = v;
       }
-      if (primaryIdentity == null)
+      if (_primaryIdentity is null)
       {
-        primaryIdentity = name;
+        _primaryIdentity = name;
       }
-      identities.Add(name, v);
+      _identities.Add(name, v);
     }
 
-    public void ReadManifestSection(XmlReader reader, string hintPath)
+    public void ReadManifestSection(XmlReader reader, string? hintPath)
     {
       if (reader.AttributeCount != 0)
       {
@@ -129,11 +130,11 @@ namespace Altaxo.AddInItems
                 break;
 
               case "Dependency":
-                dependencies.Add(AddInReference.Create(properties, hintPath));
+                _dependencies.Add(AddInReference.Create(properties, hintPath));
                 break;
 
               case "Conflict":
-                conflicts.Add(AddInReference.Create(properties, hintPath));
+                _conflicts.Add(AddInReference.Create(properties, hintPath));
                 break;
 
               default:

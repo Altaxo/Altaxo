@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.ComponentModel.Design;
 
@@ -41,12 +42,12 @@ namespace Altaxo.AddInItems
       get { return false; }
     }
 
-    public object BuildItem(BuildItemArgs args)
+    public object? BuildItem(BuildItemArgs args)
     {
       var container = (IServiceContainer)args.Parameter;
       if (container == null)
         throw new InvalidOperationException("Expected the parameter to be a service container");
-      Type interfaceType = args.AddIn.FindType(args.Codon.Id);
+      Type? interfaceType = args.AddIn.FindType(args.Codon.Id);
       if (interfaceType != null)
       {
         string className = args.Codon.Properties["class"];
@@ -71,7 +72,7 @@ namespace Altaxo.AddInItems
         string otherInterface = args.Codon.Properties["interface" + i.ToString(System.Globalization.CultureInfo.InvariantCulture)];
         if (string.IsNullOrEmpty(otherInterface))
           break;
-        Type otherInterfaceType = args.AddIn.FindType(otherInterface);
+        Type? otherInterfaceType = args.AddIn.FindType(otherInterface);
         if (null != otherInterfaceType)
         {
           bool service1Loading = false;

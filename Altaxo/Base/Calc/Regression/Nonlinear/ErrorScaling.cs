@@ -69,7 +69,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ConstantVarianceScaling s = (ConstantVarianceScaling)o ?? new ConstantVarianceScaling();
+        ConstantVarianceScaling s = (ConstantVarianceScaling?)o ?? new ConstantVarianceScaling();
 
         s._scaling = info.GetDouble("ScalingFactor");
 
@@ -132,7 +132,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        RelativeVarianceScaling s = (RelativeVarianceScaling)o ?? new RelativeVarianceScaling();
+        RelativeVarianceScaling s = (RelativeVarianceScaling?)o ?? new RelativeVarianceScaling();
 
         s._scaling = info.GetDouble("ScalingFactor");
 

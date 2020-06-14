@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -37,7 +38,13 @@ namespace Altaxo.AddInItems
       return addInTree.BuildItems<T>(path, parameter, throwOnNotFound).ToList();
     }
 
-    public static AddInTreeNode GetTreeNode(string path, bool throwOnNotFound = true)
+    public static AddInTreeNode GetTreeNode(string path)
+    {
+      var addInTree = Altaxo.Current.GetRequiredService<IAddInTree>();
+      return addInTree.GetTreeNode(path, true)!;
+    }
+
+    public static AddInTreeNode? GetTreeNode(string path, bool throwOnNotFound = true)
     {
       var addInTree = Altaxo.Current.GetRequiredService<IAddInTree>();
       return addInTree.GetTreeNode(path, throwOnNotFound);
@@ -141,6 +148,15 @@ namespace Altaxo.AddInItems
     }
 
     /// <summary>
+    /// Gets the <see cref="AddInTreeNode"/> representing the specified path. An exception will be thrown if the node is not found.
+    /// </summary>
+    /// <param name="path">The path of the AddIn tree node</param>
+    public AddInTreeNode GetTreeNode(string path)
+    {
+      return GetTreeNode(path, true)!;
+    }
+
+    /// <summary>
     /// Gets the <see cref="AddInTreeNode"/> representing the specified path.
     /// </summary>
     /// <param name="path">The path of the AddIn tree node</param>
@@ -149,14 +165,14 @@ namespace Altaxo.AddInItems
     /// <see cref="TreePathNotFoundException"/> when the path does not exist.
     /// If set to <c>false</c>, <c>null</c> is returned for non-existing paths.
     /// </param>
-    public AddInTreeNode GetTreeNode(string path, bool throwOnNotFound = true)
+    public AddInTreeNode? GetTreeNode(string path, bool throwOnNotFound)
     {
-      if (path == null || path.Length == 0)
+      if (path is null || path.Length == 0)
       {
         return rootNode;
       }
       string[] splittedPath = path.Split('/');
-      AddInTreeNode curPath = rootNode;
+      AddInTreeNode? curPath = rootNode;
       for (int i = 0; i < splittedPath.Length; i++)
       {
         if (!curPath.ChildNodes.TryGetValue(splittedPath[i], out curPath))
@@ -182,13 +198,17 @@ namespace Altaxo.AddInItems
       return BuildItem(path, parameter, null);
     }
 
-    public object BuildItem(string path, object parameter, IEnumerable<ICondition> additionalConditions)
+    public object BuildItem(string path, object parameter, IEnumerable<ICondition>? additionalConditions)
     {
       int pos = path.LastIndexOf('/');
       string parent = path.Substring(0, pos);
       string child = path.Substring(pos + 1);
-      AddInTreeNode node = GetTreeNode(parent);
-      return node.BuildChildItem(child, parameter, additionalConditions);
+      var node = GetTreeNode(parent);
+      var result = node.BuildChildItem(child, parameter, additionalConditions);
+      if (result is null)
+        throw new TreePathNotFoundException(path);
+
+      return result;
     }
 
     /// <summary>
@@ -201,8 +221,8 @@ namespace Altaxo.AddInItems
     /// path is not found.</param>
     public IReadOnlyList<T> BuildItems<T>(string path, object parameter, bool throwOnNotFound = true)
     {
-      AddInTreeNode node = GetTreeNode(path, throwOnNotFound);
-      if (node == null)
+      var node = GetTreeNode(path, throwOnNotFound);
+      if (node is null)
         return new List<T>();
       else
         return node.BuildChildItems<T>(parameter);
@@ -210,7 +230,7 @@ namespace Altaxo.AddInItems
 
     private AddInTreeNode CreatePath(AddInTreeNode localRoot, string path)
     {
-      if (path == null || path.Length == 0)
+      if (path is null || path.Length == 0)
       {
         return localRoot;
       }
@@ -269,18 +289,18 @@ namespace Altaxo.AddInItems
           }
         }
 
-        string addInRoot = Path.GetDirectoryName(addIn.FileName);
+        var addInRoot = Path.GetDirectoryName(addIn.FileName) ?? string.Empty;
         foreach (string bitmapResource in addIn.BitmapResources)
         {
-          string path = Path.Combine(addInRoot, bitmapResource);
-          var resourceManager = ResourceManager.CreateFileBasedResourceManager(Path.GetFileNameWithoutExtension(path), Path.GetDirectoryName(path), null);
+          var path = Path.Combine(addInRoot, bitmapResource);
+          var resourceManager = ResourceManager.CreateFileBasedResourceManager(Path.GetFileNameWithoutExtension(path), Path.GetDirectoryName(path) ?? string.Empty, null);
           Altaxo.Current.GetRequiredService<IResourceService>().RegisterNeutralImages(resourceManager);
         }
 
         foreach (string stringResource in addIn.StringResources)
         {
           string path = Path.Combine(addInRoot, stringResource);
-          var resourceManager = ResourceManager.CreateFileBasedResourceManager(Path.GetFileNameWithoutExtension(path), Path.GetDirectoryName(path), null);
+          var resourceManager = ResourceManager.CreateFileBasedResourceManager(Path.GetFileNameWithoutExtension(path), Path.GetDirectoryName(path) ?? string.Empty, null);
           Altaxo.Current.GetRequiredService<IResourceService>().RegisterNeutralStrings(resourceManager);
         }
       }
@@ -352,7 +372,7 @@ namespace Altaxo.AddInItems
           }
           addIn = new AddIn(this)
           {
-            addInFileName = fileName,
+            _addInFileName = fileName,
             CustomErrorMessage = ex.Message
           };
         }
@@ -401,7 +421,7 @@ checkDependencies:
         if (!addIn.Enabled)
           continue;
 
-        Version versionFound;
+        Version? versionFound;
 
         foreach (AddInReference reference in addIn.Manifest.Conflicts)
         {

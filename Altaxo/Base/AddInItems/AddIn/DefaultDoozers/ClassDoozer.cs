@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 
 namespace Altaxo.AddInItems
@@ -48,7 +49,10 @@ namespace Altaxo.AddInItems
     public object BuildItem(BuildItemArgs args)
     {
       Codon codon = args.Codon;
-      return codon.AddIn.CreateObject(codon.Properties["class"]);
+      var result = codon.AddIn.CreateObject(codon.Properties["class"]);
+      if (result is null)
+        throw new AddInLoadException($"Unable to create object from {codon.Properties["class"]}");
+      return result;
     }
   }
 }

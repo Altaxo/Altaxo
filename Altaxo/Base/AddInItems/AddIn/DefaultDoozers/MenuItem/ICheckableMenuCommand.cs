@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Windows.Input;
 
@@ -31,6 +32,6 @@ namespace Altaxo.AddInItems
     /// Subscribers need to ensure they keep a reference to the delegate alive.
     /// Implementers need to ensure they use a weak reference to the delegate.
     /// </summary>
-    event EventHandler IsCheckedChanged;
+    event EventHandler? IsCheckedChanged;
   }
 }
