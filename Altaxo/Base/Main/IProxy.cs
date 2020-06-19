@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Main
@@ -44,7 +45,7 @@ namespace Altaxo.Main
     /// Returns the document node. If the stored doc node is null, it is tried to resolve the stored document path.
     /// If that fails too, null is returned.
     /// </summary>
-    object DocumentObject();
+    object? DocumentObject();
 
     /// <summary>
     /// Gets the path to the document, if the <see cref="DocumentObject"/> is or was part of the document.

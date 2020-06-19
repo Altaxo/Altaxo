@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -76,7 +77,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
       for (int i = 0; i < scripts.Count; i++)
         len += scripts[i].Length;
 
-      byte[] hash = null;
+      byte[]? hash = null;
 
       using (var stream = new System.IO.MemoryStream(len))
       {

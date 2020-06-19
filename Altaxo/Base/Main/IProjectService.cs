@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -66,7 +67,7 @@ namespace Altaxo.Main
     /// <value>
     /// The project.
     /// </value>
-    public IProject Project { get; private set; }
+    public IProject? Project { get; private set; }
 
     /// <summary>
     /// Gets the kind of the project event.
@@ -76,8 +77,8 @@ namespace Altaxo.Main
     /// </value>
     public ProjectEventKind ProjectEventKind { get; private set; }
 
-    /// <summary>The name of the project after renaming.</summary>
-    public string NewName { get; private set; }
+    /// <summary>The name of the project after renaming. Null if no name is yet attached.</summary>
+    public string? NewName { get; private set; }
 
     /// <summary>
     /// Constructor.
@@ -85,7 +86,7 @@ namespace Altaxo.Main
     /// <param name="project">The project which was changed.</param>
     /// <param name="fileName">The file name of the project.</param>
     /// <param name="eventKind">The kind of the event.</param>
-    public ProjectEventArgs(IProject project, string fileName, ProjectEventKind eventKind)
+    public ProjectEventArgs(IProject? project, string? fileName, ProjectEventKind eventKind)
     {
       Project = project;
       NewName = fileName;
@@ -104,9 +105,9 @@ namespace Altaxo.Main
   public class ProjectRenamedEventArgs : ProjectEventArgs
   {
     /// <summary>
-    /// The name of the project before renaming.
+    /// The name of the project before renaming. Null if the project 
     /// </summary>
-    public string OldName { get; private set; }
+    public string? OldName { get; private set; }
 
     /// <summary>
     /// Constructor.
@@ -114,7 +115,7 @@ namespace Altaxo.Main
     /// <param name="renamedProject">The project renamed.</param>
     /// <param name="oldName">The old name of the project.</param>
     /// <param name="newName">The new name of the project.</param>
-    public ProjectRenamedEventArgs(IProject renamedProject, string oldName, string newName)
+    public ProjectRenamedEventArgs(IProject renamedProject, string? oldName, string? newName)
         : base(renamedProject, newName, ProjectEventKind.ProjectRenamed)
     {
       OldName = oldName;
@@ -130,7 +131,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Getter / setter for the currently open project.
     /// </summary>
-    IProject CurrentProject { get; }
+    IProject? CurrentProject { get; }
 
     /// <summary>
     /// Gets the file name for the currently open project. Is null if the project has not got a file name for now.
@@ -351,11 +352,11 @@ namespace Altaxo.Main
     public IEnumerable<string> ProjectFileExtensions => throw new NotImplementedException();
 
 #pragma warning disable CS0067
-    public event ProjectEventHandler ProjectOpened;
-    public event ProjectEventHandler ProjectClosed;
-    public event ProjectRenameEventHandler ProjectRenamed;
-    public event ProjectEventHandler ProjectDirtyChanged;
-    public event ProjectEventHandler ProjectChanged;
+    public event ProjectEventHandler? ProjectOpened;
+    public event ProjectEventHandler? ProjectClosed;
+    public event ProjectRenameEventHandler? ProjectRenamed;
+    public event ProjectEventHandler? ProjectDirtyChanged;
+    public event ProjectEventHandler? ProjectChanged;
 #pragma warning restore CS0067
 
     public void AskForSavingOfProject(CancelEventArgs e)

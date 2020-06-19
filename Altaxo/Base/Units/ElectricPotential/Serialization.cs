@@ -11,7 +11,7 @@ namespace Altaxo.Units.ElectricPotential
     {
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       return Volt.Instance;
     }

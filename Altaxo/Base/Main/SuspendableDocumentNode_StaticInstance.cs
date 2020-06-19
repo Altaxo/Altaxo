@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace Altaxo.Main
   {
     private class StaticInstanceClass : IDocumentNode
     {
-      public IDocumentNode ParentObject
+      public IDocumentNode? ParentObject
       {
         get
         {
@@ -55,7 +56,7 @@ namespace Altaxo.Main
         get { return "DocumentNodeStaticInstance"; }
       }
 
-      public event EventHandler Changed;
+      public event EventHandler? Changed;
 
       public ISuspendToken SuspendGetToken()
       {
@@ -83,7 +84,7 @@ namespace Altaxo.Main
       {
       }
 
-      public IDocumentLeafNode GetChildObjectNamed(string name)
+      public IDocumentLeafNode? GetChildObjectNamed(string name)
       {
         return null;
       }
@@ -101,7 +102,7 @@ namespace Altaxo.Main
         get { yield break; }
       }
 
-      public IDocumentLeafNode ParentNode
+      public IDocumentLeafNode? ParentNode
       {
         get { return null; }
       }
@@ -110,7 +111,7 @@ namespace Altaxo.Main
       {
       }
 
-      public event Action<object, object, TunnelingEventArgs> TunneledEvent;
+      public event Action<object, object, TunnelingEventArgs>? TunneledEvent;
 
       protected void OnTunneledEvent(object origin, TunnelingEventArgs e)
       {

@@ -103,7 +103,7 @@ namespace Altaxo.Serialization.Xml
       }
     }
 
-    public void SetProperty(string propertyname, string propertyvalue)
+    public void SetProperty(string propertyname, string? propertyvalue)
     {
       if (m_Properties.ContainsKey(propertyname))
         m_Properties[propertyname] = propertyvalue;
@@ -111,12 +111,12 @@ namespace Altaxo.Serialization.Xml
         m_Properties.Add(propertyname, propertyvalue);
     }
 
-    public string GetProperty(string propertyname)
+    public string? GetProperty(string? propertyname)
     {
       return m_Properties[propertyname];
     }
 
-    public string SaveAndSetProperty(string propertyName, string propertyValue)
+    public string? SaveAndSetProperty(string propertyName, string? propertyValue)
     {
       var result = m_Properties[propertyName];
       SetProperty(propertyName, propertyValue);

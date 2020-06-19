@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace Altaxo.Main
     /// If this is set (not null), which happens after deserialization, then the parent node is tracked instead of the proxy's document node.
     /// Only when explicitly calling <see cref="DocumentObject"/>, then it is tried to resolve the proxy's document node. 
     /// </summary>
-    private string _childName;
+    private string? _childName;
 
     #region Serialization
 
@@ -74,9 +75,9 @@ namespace Altaxo.Main
         info.AddValue("Path", (s._childName is null) ? s._docNodePath : s._docNodePath.Append(s._childName));
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (DocNodeProxy2ndLevel)o ?? new DocNodeProxy2ndLevel(info);
+        var s = (DocNodeProxy2ndLevel?)o ?? new DocNodeProxy2ndLevel(info);
 
         var nodePath = (Main.AbsoluteDocumentPath)info.GetValue("Path", s);
 
@@ -149,7 +150,7 @@ namespace Altaxo.Main
     /// the document path is stored for this object in addition to the object itself.</param>
     public override void SetDocNode(IDocumentLeafNode value)
     {
-      if (null == value)
+      if (value is null)
         throw new ArgumentNullException(nameof(value));
 
       _childName = null;
@@ -194,7 +195,7 @@ namespace Altaxo.Main
     /// Returns the document node. If the stored doc node is null, it is tried to resolve the stored document path.
     /// If that fails too, null is returned.
     /// </summary>
-    public override object DocumentObject()
+    public override object? DocumentObject()
     {
       var result = base.DocumentObject();
 

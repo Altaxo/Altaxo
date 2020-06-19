@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,7 +80,7 @@ namespace Altaxo.Main
 
     /// <summary>Support for binding to a view. At least this event must be called when the Text property has changed.</summary>
     [field: NonSerialized]
-    public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TextBackedConsole"/> class with empty text.
@@ -125,7 +126,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using <paramref name="format"/>.</param>
-    public void Write(string format, params object[] args)
+    public void Write(string format, params object?[] args)
     {
       _stb.AppendFormat(format, args);
       EhSelfChanged(EventArgs.Empty);
@@ -155,7 +156,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using <paramref name="format"/>.</param>
-    public void WriteLine(string format, params object[] args)
+    public void WriteLine(string format, params object?[] args)
     {
       _stb.AppendFormat(format, args);
       _stb.AppendLine();

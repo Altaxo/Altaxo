@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -145,7 +146,7 @@ namespace Altaxo.Main.Services
     /// </param>
     [System.Runtime.InteropServices.DllImportAttribute("gdiplus.dll")]
     private static extern uint GdipEmfToWmfBits(IntPtr hEmf, uint bufferSize,
-      byte[] buffer, int mappingMode, EmfToWmfBitsFlags flags);
+      byte[]? buffer, int mappingMode, EmfToWmfBitsFlags flags);
 
     // Allows the x-coordinates and y-coordinates of the metafile to be adjusted
     // independently
@@ -163,13 +164,13 @@ namespace Altaxo.Main.Services
     /// </returns>
     public static string GetRtfImage(Image image)
     {
-      StringBuilder rtf = null;
+      StringBuilder? rtf = null;
 
       // Used to store the enhanced metafile
-      MemoryStream stream = null;
+      MemoryStream? stream = null;
 
       // The enhanced metafile
-      Metafile metaFile = null;
+      Metafile? metaFile = null;
 
       // Handle to the device context used to create the metafile
       IntPtr hdc;

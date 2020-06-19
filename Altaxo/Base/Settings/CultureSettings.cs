@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -31,6 +32,7 @@ using System.Text;
 namespace Altaxo.Settings
 {
   using System.ComponentModel;
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Main.Properties;
 
   /// <summary>
@@ -72,9 +74,9 @@ namespace Altaxo.Settings
         info.AddValue("NumberGroupSeparator", s._numberGroupSeparator);
       }
 
-      protected virtual CultureSettings SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual CultureSettings SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (CultureSettings)o : new CultureSettings();
+        var s = (CultureSettings?)o ?? new CultureSettings();
 
         s._cultureID = info.GetInt32("CultureID");
         s._cultureName = info.GetString("CultureName");
@@ -85,7 +87,7 @@ namespace Altaxo.Settings
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -110,7 +112,7 @@ namespace Altaxo.Settings
     }
 
     /// <summary>Initializes a new instance of the <see cref="CultureSettings"/> class with nothing initialized.</summary>
-    protected CultureSettings()
+    protected CultureSettings() : this(System.Globalization.CultureInfo.InvariantCulture)
     {
     }
 
@@ -128,7 +130,9 @@ namespace Altaxo.Settings
 
     /// <summary>Copies from another instance.</summary>
     /// <param name="from">Other instance to copy from.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected CultureSettings(CultureSettings from)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
       CopyFrom(from);
     }
@@ -276,23 +280,36 @@ namespace Altaxo.Settings
   /// </summary>
   public static class CultureSettingsAtStartup
   {
-    private static CultureInfo _startupDocumentCultureInfo;
-    private static CultureInfo _startupUICultureInfo;
+    private static CultureInfo? _startupDocumentCultureInfo;
+    private static CultureInfo? _startupUICultureInfo;
 
     public static CultureInfo StartupDocumentCultureInfo
     {
-      get { return (CultureInfo)_startupDocumentCultureInfo.Clone(); }
+      get
+      {
+        if (_startupDocumentCultureInfo is null)
+          throw new InvalidOperationException($"{nameof(_startupDocumentCultureInfo)} not yet set! It must be set very early at startup of the application.");
+
+        return (CultureInfo)_startupDocumentCultureInfo.Clone();
+      }
       set
       {
         if (null != _startupDocumentCultureInfo)
           throw new InvalidOperationException("Value already set, but it can be set only once at startup");
+
         _startupDocumentCultureInfo = (CultureInfo)value.Clone();
       }
     }
 
     public static CultureInfo StartupUICultureInfo
     {
-      get { return _startupUICultureInfo; }
+      get
+      {
+        if (_startupUICultureInfo is null)
+          throw new InvalidOperationException($"{nameof(_startupUICultureInfo)} not yet set! It must be set very early at startup of the application.");
+
+        return _startupUICultureInfo;
+      }
       set
       {
         if (null != _startupUICultureInfo)

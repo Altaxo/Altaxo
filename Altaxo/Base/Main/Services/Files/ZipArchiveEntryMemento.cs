@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -42,7 +43,7 @@ namespace Altaxo.Main.Services.Files
     private readonly IProjectArchiveManager _archiveManager;
 
     // operational data
-    private IProjectArchive _archive;
+    private IProjectArchive? _archive;
 
 
     /// <summary>
@@ -91,7 +92,7 @@ namespace Altaxo.Main.Services.Files
     /// <returns>
     /// The archive entry.
     /// </returns>
-    public IProjectArchiveEntry GetArchiveEntry()
+    public IProjectArchiveEntry? GetArchiveEntry()
     {
       if (!(_archiveManager is null || _archiveManager.IsDisposed))
       {
@@ -109,9 +110,9 @@ namespace Altaxo.Main.Services.Files
     /// <inheritdoc/>
     public void Dispose()
     {
-      if (!(_archiveManager?.IsDisposed == true))
+      if (_archiveManager is { } archiveManager && !archiveManager.IsDisposed)
       {
-        _archiveManager.ReleaseArchiveThreadSave(this, ref _archive);
+        archiveManager.ReleaseArchiveThreadSave(this, ref _archive);
       }
       else
       {

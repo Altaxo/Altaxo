@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,16 +46,16 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// A Gui timer tick that occurs every 10 ms.
     /// </summary>
-    event GuiTimerServiceHandler TickEvery10ms;
+    event GuiTimerServiceHandler? TickEvery10ms;
 
     /// <summary>
     /// A Gui timer tick that occurs every 100 ms.
     /// </summary>
-    event GuiTimerServiceHandler TickEvery100ms;
+    event GuiTimerServiceHandler? TickEvery100ms;
 
     /// <summary>
     /// A Gui timer tick that occurs every 1000 ms.
     /// </summary>
-    event GuiTimerServiceHandler TickEvery1000ms;
+    event GuiTimerServiceHandler? TickEvery1000ms;
   }
 }

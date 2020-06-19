@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Collections;
@@ -81,14 +82,14 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="name">The objects name.</param>
     /// <returns>The object with the specified name.</returns>
-    IDocumentLeafNode GetChildObjectNamed(string name);
+    IDocumentLeafNode? GetChildObjectNamed(string name);
 
     /// <summary>
     /// Retrieves the name of the provided object.
     /// </summary>
     /// <param name="o">The object for which the name should be found.</param>
     /// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
-    string GetNameOfChildObject(IDocumentLeafNode o);
+    string? GetNameOfChildObject(IDocumentLeafNode o);
   }
 
   /// <summary>
@@ -141,6 +142,22 @@ namespace Altaxo.Main
     private string _newItemName;
     private NamedObjectCollectionChangeType _operation;
 
+    public NamedObjectCollectionChangedEventArgs(object item, string newItemName, string oldItemName, NamedObjectCollectionChangeType operation)
+    {
+      _item = item;
+      _newItemName = newItemName;
+      _oldItemName = oldItemName;
+      _operation = operation;
+    }
+
+    public NamedObjectCollectionChangedEventArgs(object item, NamedObjectCollectionChangeType operation)
+    {
+      _item = item;
+      _newItemName = string.Empty;
+      _oldItemName = string.Empty;
+      _operation = operation;
+    }
+
     #region Properties
 
     public object Item { get { return _item; } }
@@ -168,7 +185,7 @@ namespace Altaxo.Main
     {
       if (null == item)
         throw new ArgumentNullException("item");
-      var result = new NamedObjectCollectionChangedEventArgs() { _item = item, _newItemName = item.Name, _oldItemName = item.Name, _operation = NamedObjectCollectionChangeType.ItemAdded };
+      var result = new NamedObjectCollectionChangedEventArgs(item, newItemName: item.Name, oldItemName: item.Name, operation: NamedObjectCollectionChangeType.ItemAdded);
       return result;
     }
 
@@ -179,7 +196,7 @@ namespace Altaxo.Main
     {
       if (null == item)
         throw new ArgumentNullException("item");
-      var result = new NamedObjectCollectionChangedEventArgs() { _item = item, _newItemName = item.Name, _oldItemName = item.Name, _operation = NamedObjectCollectionChangeType.ItemRemoved };
+      var result = new NamedObjectCollectionChangedEventArgs(item, newItemName: item.Name, oldItemName: item.Name, operation: NamedObjectCollectionChangeType.ItemRemoved);
       return result;
     }
 
@@ -191,7 +208,7 @@ namespace Altaxo.Main
     {
       if (null == item)
         throw new ArgumentNullException("item");
-      var result = new NamedObjectCollectionChangedEventArgs() { _item = item, _newItemName = itemNameOverride, _oldItemName = itemNameOverride, _operation = NamedObjectCollectionChangeType.ItemRemoved };
+      var result = new NamedObjectCollectionChangedEventArgs(item, newItemName: itemNameOverride, oldItemName: itemNameOverride, operation: NamedObjectCollectionChangeType.ItemRemoved);
       return result;
     }
 
@@ -202,7 +219,7 @@ namespace Altaxo.Main
     {
       if (null == item)
         throw new ArgumentNullException("item");
-      var result = new NamedObjectCollectionChangedEventArgs() { _item = item, _newItemName = item.Name, _oldItemName = oldName, _operation = NamedObjectCollectionChangeType.ItemRenamed };
+      var result = new NamedObjectCollectionChangedEventArgs(item, newItemName: item.Name, oldItemName: oldName, operation: NamedObjectCollectionChangeType.ItemRenamed);
       return result;
     }
 
@@ -211,7 +228,7 @@ namespace Altaxo.Main
     /// </summary>
     public static NamedObjectCollectionChangedEventArgs FromMultipleChanges()
     {
-      var result = new NamedObjectCollectionChangedEventArgs() { _item = MultipleChangesItem, _operation = NamedObjectCollectionChangeType.MultipleChanges };
+      var result = new NamedObjectCollectionChangedEventArgs(item: MultipleChangesItem, operation: NamedObjectCollectionChangeType.MultipleChanges);
       return result;
     }
 
@@ -230,8 +247,8 @@ namespace Altaxo.Main
       {
         _operation = NamedObjectCollectionChangeType.MultipleChanges;
         _item = MultipleChangesItem;
-        _newItemName = null;
-        _oldItemName = null;
+        _newItemName = string.Empty;
+        _oldItemName = string.Empty;
         return;
       }
 
@@ -271,7 +288,7 @@ namespace Altaxo.Main
     /// <returns>
     ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
     /// </returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (null == obj || GetType() != obj.GetType())
         return false;

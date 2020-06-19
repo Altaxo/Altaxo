@@ -16,8 +16,10 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 
@@ -39,7 +41,8 @@ namespace Altaxo.Main.Services
     /// Creates a FileName instance from the string.
     /// It is valid to pass null or an empty string to this method (in that case, a null reference will be returned).
     /// </summary>
-    public static FileName Create(string fileName)
+    [return: NotNullIfNotNull("fileName")]
+    public static FileName? Create(string? fileName)
     {
       if (string.IsNullOrEmpty(fileName))
         return null;
@@ -95,17 +98,17 @@ namespace Altaxo.Main.Services
 
     #region Equals and GetHashCode implementation
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return Equals(obj as FileName);
     }
 
-    public bool Equals(FileName other)
+    public bool Equals(FileName? other)
     {
-      if (other != null)
-        return string.Equals(_normalizedPath, other._normalizedPath, StringComparison.OrdinalIgnoreCase);
-      else
+      if (other is null)
         return false;
+      else
+        return string.Equals(_normalizedPath, other._normalizedPath, StringComparison.OrdinalIgnoreCase);
     }
 
     public override int GetHashCode()
@@ -130,25 +133,25 @@ namespace Altaxo.Main.Services
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator ==(FileName left, string right)
     {
-      return (string)left == right;
+      return (string?)left == right;
     }
 
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator !=(FileName left, string right)
     {
-      return (string)left != right;
+      return (string?)left != right;
     }
 
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator ==(string left, FileName right)
     {
-      return left == (string)right;
+      return left == (string?)right;
     }
 
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator !=(string left, FileName right)
     {
-      return left != (string)right;
+      return left != (string?)right;
     }
 
     #endregion Equals and GetHashCode implementation
@@ -175,11 +178,11 @@ namespace Altaxo.Main.Services
       return destinationType == typeof(FileName) || base.CanConvertTo(context, destinationType);
     }
 
-    public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+    public override object? ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
     {
-      if (value is string)
+      if (value is string s)
       {
-        return FileName.Create((string)value);
+        return FileName.Create(s);
       }
       return base.ConvertFrom(context, culture, value);
     }
@@ -189,7 +192,7 @@ namespace Altaxo.Main.Services
     {
       if (destinationType == typeof(string))
       {
-        return value.ToString();
+        return value.ToString() ?? string.Empty;
       }
       return base.ConvertTo(context, culture, value, destinationType);
     }

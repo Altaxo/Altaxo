@@ -22,9 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 
 namespace Altaxo.Main.Services.PropertyReflection
@@ -71,24 +73,29 @@ namespace Altaxo.Main.Services.PropertyReflection
         }
       }
       else
+      {
         properties = new PropertyDescriptorCollection(new PropertyDescriptor[] { });
+      }
 
       var propertyCollection = new List<Property>();
 
-      foreach (PropertyDescriptor propertyDescriptor in properties)
+      if (!(instance is null))
       {
-        if (useCustomTypeConverter)
+        foreach (PropertyDescriptor propertyDescriptor in properties.OfType<PropertyDescriptor>())
         {
-          var property = new Property(instance, propertyDescriptor);
-          propertyCollection.Add(property);
-        }
-        else
-        {
-          CollectProperties(instance, propertyDescriptor, propertyCollection, automaticlyExpandObjects, filter);
-          if (noCategory)
-            propertyCollection.Sort(Property.CompareByName);
+          if (useCustomTypeConverter)
+          {
+            var property = new Property(instance, propertyDescriptor);
+            propertyCollection.Add(property);
+          }
           else
-            propertyCollection.Sort(Property.CompareByCategoryThenByName);
+          {
+            CollectProperties(instance, propertyDescriptor, propertyCollection, automaticlyExpandObjects, filter);
+            if (noCategory)
+              propertyCollection.Sort(Property.CompareByName);
+            else
+              propertyCollection.Sort(Property.CompareByCategoryThenByName);
+          }
         }
       }
 
@@ -115,7 +122,7 @@ namespace Altaxo.Main.Services.PropertyReflection
             }
             else
             {
-              propertyCategory = new PropertyCategory(property.Category);
+              propertyCategory = new PropertyCategory(category);
               groups[category] = propertyCategory;
               Items.Add(propertyCategory);
             }
@@ -150,7 +157,7 @@ namespace Altaxo.Main.Services.PropertyReflection
       {
         instance = descriptor.GetValue(instance);
         PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(instance);
-        foreach (PropertyDescriptor propertyDescriptor in properties)
+        foreach (PropertyDescriptor propertyDescriptor in properties.OfType<PropertyDescriptor>())
         {
           CollectProperties(instance, propertyDescriptor, propertyCollection, automaticlyExpandObjects, filter);
         }

@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 
 namespace Altaxo.Main
@@ -38,6 +39,6 @@ namespace Altaxo.Main
     /// Is called when the content is changed after a save/load operation
     /// and this signals that changes could be saved.
     /// </summary>
-    event EventHandler IsDirtyChanged;
+    event EventHandler? IsDirtyChanged;
   }
 }

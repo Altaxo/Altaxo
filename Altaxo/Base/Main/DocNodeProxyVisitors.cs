@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,7 +69,7 @@ namespace Altaxo.Main
     /// <param name="propertyName">Name of the property that accesses the proxy in this instance.</param>
     public void Visit(IProxy proxy, object owner, string propertyName)
     {
-      if (null == proxy)
+      if (proxy is null)
         return;
 
       var docPath = proxy.DocumentPath();

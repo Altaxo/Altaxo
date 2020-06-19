@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.CodeDom.Compiler;
 using System.Collections;
@@ -39,9 +40,9 @@ namespace Altaxo.Main.Services.ScriptCompilation
   {
     private static CachedService<IScriptCompilerService, IScriptCompilerService> _instance = new CachedService<IScriptCompilerService, IScriptCompilerService>(true, null, null);
 
-    protected static IScriptCompilerService Instance => _instance.Instance;
+    protected static IScriptCompilerService Instance => _instance.Instance ?? throw new InvalidOperationException("ScriptCompilerService not available");
 
-    public IScriptCompilerSuccessfulResult GetCompilerResult(Assembly ass)
+    public IScriptCompilerSuccessfulResult? GetCompilerResult(Assembly ass)
     {
       return Instance.GetCompilerResult(ass);
     }
@@ -129,7 +130,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
         }
       }
 
-      public override bool Equals(object obj)
+      public override bool Equals(object? obj)
       {
         return (obj is FileHash) && (this == (FileHash)obj);
       }
@@ -177,13 +178,13 @@ namespace Altaxo.Main.Services.ScriptCompilation
 
       #region IComparable Members
 
-      public int CompareTo(object obj)
+      public int CompareTo(object? obj)
       {
-        if (obj is FileHash)
+        if (obj is FileHash o)
         {
-          return this == (FileHash)obj ? 0 : (this > (FileHash)obj ? 1 : -1);
+          return this == o ? 0 : (this > o ? 1 : -1);
         }
-        else if (obj == null)
+        else if (obj is null)
         {
           return 0;
         }
@@ -200,7 +201,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
         for (int i = 0; i < scripts.Length; i++)
           len += scripts[i].Length;
 
-        byte[] hash = null;
+        byte[]? hash = null;
 
         using (var stream = new System.IO.MemoryStream(len))
         {
@@ -230,7 +231,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
     {
       private ConcurrentScriptCompilerResultDictionary _compilerResults = new ConcurrentScriptCompilerResultDictionary();
 
-      public IScriptCompilerSuccessfulResult GetCompilerResult(Assembly ass)
+      public IScriptCompilerSuccessfulResult? GetCompilerResult(Assembly ass)
       {
         if (_compilerResults.TryGetValue(ass, out var result))
           return result;

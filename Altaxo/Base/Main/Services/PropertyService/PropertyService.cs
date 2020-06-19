@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -38,7 +39,7 @@ namespace Altaxo.Main.Services
 
   public class PropertyService : Altaxo.Main.Services.IPropertyService
   {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public DirectoryName DataDirectory { get; protected set; }
     public DirectoryName ConfigDirectory { get; protected set; }
@@ -217,7 +218,7 @@ namespace Altaxo.Main.Services
       {
         System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(PropertiesFileName));
 
-        System.IO.FileStream streamForWriting = null;
+        System.IO.FileStream? streamForWriting = null;
         for (int i = 500; i >= 0; --i) // Try to save the file, wait up to 10 seconds for getting the file (avoid exception if another instance is currently reading the properties file, especially with Com
         {
           try
@@ -234,7 +235,7 @@ namespace Altaxo.Main.Services
           System.Threading.Thread.Sleep(20);
         }
 
-        using (var stream = streamForWriting)
+        using (var stream = streamForWriting!)
         {
           var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
           info.BeginWriting(stream);

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -63,7 +64,7 @@ namespace Altaxo.Main.Services
     DirectoryName DataDirectory { get; }
 
     /// <summary>Occurs when a property has changed. Argument is the property key.</summary>
-    event PropertyChangedEventHandler PropertyChanged;
+    event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// Returns the property bag with user settings. These are typically stored in the user's application settings directory.

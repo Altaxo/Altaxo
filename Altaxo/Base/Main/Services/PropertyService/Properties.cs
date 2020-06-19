@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -67,16 +68,16 @@ namespace Altaxo.Main.Services
     // Properties instances form a tree due to the nested properties containers.
     // All nodes in such a tree share the same syncRoot in order to simplify synchronization.
     // When an existing node is added to a tree, its syncRoot needs to change.
-    private object syncRoot;
+    private object _syncRoot;
 
-    private Properties parent;
+    private Properties? _parent;
 
     // Objects in the dictionary are one of:
     // - string: value stored using TypeConverter
     // - XElement: serialized object
     // - object[]: a stored list (array elements are null, string or XElement)
     // - Properties: nested properties container
-    private Dictionary<string, object> dict = new Dictionary<string, object>();
+    private Dictionary<string, object> _dict = new Dictionary<string, object>();
 
     #region ModifiedForAltaxo
 
@@ -84,11 +85,11 @@ namespace Altaxo.Main.Services
     {
       get
       {
-        return dict;
+        return _dict;
       }
     }
 
-    public int Count { get { return dict.Count; } }
+    public int Count { get { return _dict.Count; } }
 
     #endregion ModifiedForAltaxo
 
@@ -96,26 +97,24 @@ namespace Altaxo.Main.Services
 
     public Properties()
     {
-      syncRoot = new object();
+      _syncRoot = new object();
     }
 
     private Properties(Properties parent)
     {
-      this.parent = parent;
-      syncRoot = parent.syncRoot;
+      this._parent = parent;
+      _syncRoot = parent._syncRoot;
     }
 
     #endregion Constructor
 
     #region PropertyChanged
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     private void OnPropertyChanged(string key)
     {
-      var handler = Volatile.Read(ref PropertyChanged);
-      if (handler != null)
-        handler(this, new PropertyChangedEventArgs(key));
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(key));
     }
 
     #endregion PropertyChanged
@@ -134,7 +133,7 @@ namespace Altaxo.Main.Services
       get { return isDirty; }
       set
       {
-        lock (syncRoot)
+        lock (_syncRoot)
         {
           if (value)
             MakeDirty();
@@ -150,8 +149,8 @@ namespace Altaxo.Main.Services
       if (!isDirty)
       {
         isDirty = true;
-        if (parent != null)
-          parent.MakeDirty();
+        if (_parent != null)
+          _parent.MakeDirty();
       }
     }
 
@@ -160,7 +159,7 @@ namespace Altaxo.Main.Services
       if (isDirty)
       {
         isDirty = false;
-        foreach (var properties in dict.Values.OfType<Properties>())
+        foreach (var properties in _dict.Values.OfType<Properties>())
         {
           properties.CleanDirty();
         }
@@ -178,9 +177,9 @@ namespace Altaxo.Main.Services
     {
       get
       {
-        lock (syncRoot)
+        lock (_syncRoot)
         {
-          return dict.Keys.ToArray();
+          return _dict.Keys.ToArray();
         }
       }
     }
@@ -191,9 +190,9 @@ namespace Altaxo.Main.Services
     /// </summary>
     public bool Contains(string key)
     {
-      lock (syncRoot)
+      lock (_syncRoot)
       {
-        return dict.ContainsKey(key);
+        return _dict.ContainsKey(key);
       }
     }
 
@@ -209,9 +208,9 @@ namespace Altaxo.Main.Services
     {
       get
       {
-        lock (syncRoot)
+        lock (_syncRoot)
         {
-          dict.TryGetValue(key, out var val);
+          _dict.TryGetValue(key, out var val);
           return val as string ?? string.Empty;
         }
       }
@@ -228,13 +227,17 @@ namespace Altaxo.Main.Services
     /// <param name="defaultValue">Default value to be returned if the key is not present.</param>
     public T Get<T>(string key, T defaultValue)
     {
-      lock (syncRoot)
+      lock (_syncRoot)
       {
-        if (dict.TryGetValue(key, out var val))
+        if (_dict.TryGetValue(key, out var val))
         {
           try
           {
-            return (T)Deserialize(val, typeof(T));
+            if (Deserialize(val, typeof(T)) is T t)
+              return t;
+            else
+              return defaultValue;
+
           }
           catch (SerializationException ex)
           {
@@ -256,26 +259,26 @@ namespace Altaxo.Main.Services
     /// <remarks>Setting a key to <c>null</c> has the same effect as calling <see cref="Remove"/>.</remarks>
     public void Set<T>(string key, T value)
     {
-      object serializedValue = Serialize(value, typeof(T), key);
+      var serializedValue = Serialize(value, typeof(T), key);
       SetSerializedValue(key, serializedValue);
     }
 
-    private void SetSerializedValue(string key, object serializedValue)
+    private void SetSerializedValue(string key, object? serializedValue)
     {
-      if (serializedValue == null)
+      if (serializedValue is null)
       {
         Remove(key);
         return;
       }
-      lock (syncRoot)
+      lock (_syncRoot)
       {
-        if (dict.TryGetValue(key, out var oldValue))
+        if (_dict.TryGetValue(key, out var oldValue))
         {
           if (object.Equals(serializedValue, oldValue))
             return;
           HandleOldValue(oldValue);
         }
-        dict[key] = serializedValue;
+        _dict[key] = serializedValue;
       }
       OnPropertyChanged(key);
     }
@@ -294,21 +297,22 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public IReadOnlyList<T> GetList<T>(string key)
     {
-      lock (syncRoot)
+      lock (_syncRoot)
       {
-        if (dict.TryGetValue(key, out var val))
+        if (_dict.TryGetValue(key, out var val))
         {
-          object[] serializedArray = val as object[];
+          object[]? serializedArray = val as object[];
           if (serializedArray != null)
           {
             try
             {
-              var array = new T[serializedArray.Length];
-              for (int i = 0; i < array.Length; i++)
+              var array = new List<T>(serializedArray.Length);
+              for (int i = 0; i < serializedArray.Length; i++)
               {
-                array[i] = (T)Deserialize(serializedArray[i], typeof(T));
+                if (Deserialize(serializedArray[i], typeof(T)) is T t)
+                  array.Add(t);
               }
-              return array;
+              return array.AsReadOnly();
             }
             catch (NotImplementedException /* XamlObjectWriterException */ ex)
             {
@@ -346,7 +350,7 @@ namespace Altaxo.Main.Services
         Remove(key);
         return;
       }
-      object[] serializedArray = new object[array.Length];
+      object?[] serializedArray = new object[array.Length];
       for (int i = 0; i < array.Length; i++)
       {
         serializedArray[i] = Serialize(array[i], typeof(T), null);
@@ -394,9 +398,9 @@ namespace Altaxo.Main.Services
 
     #region Serialization
 
-    private object Serialize(object value, Type sourceType, string key)
+    private object? Serialize(object? value, Type sourceType, string? key)
     {
-      if (value == null)
+      if (value is null)
         return null;
       TypeConverter c = TypeDescriptor.GetConverter(sourceType);
       if (c != null && c.CanConvertTo(typeof(string)) && c.CanConvertFrom(typeof(string)))
@@ -417,9 +421,9 @@ namespace Altaxo.Main.Services
       // return element;
     }
 
-    private object Deserialize(object serializedVal, Type targetType)
+    private object? Deserialize(object serializedVal, Type targetType)
     {
-      if (serializedVal == null)
+      if (serializedVal is null)
         return null;
       var element = serializedVal as XElement;
       if (element != null)
@@ -432,8 +436,8 @@ namespace Altaxo.Main.Services
       }
       else
       {
-        string text = serializedVal as string;
-        if (text == null)
+        string? text = serializedVal as string;
+        if (text is null)
           throw new InvalidOperationException("Cannot read a properties container as a single value");
         TypeConverter c = TypeDescriptor.GetConverter(targetType);
         return c.ConvertFromInvariantString(text);
@@ -450,14 +454,14 @@ namespace Altaxo.Main.Services
     public bool Remove(string key)
     {
       bool removed = false;
-      lock (syncRoot)
+      lock (_syncRoot)
       {
-        if (dict.TryGetValue(key, out var oldValue))
+        if (_dict.TryGetValue(key, out var oldValue))
         {
           removed = true;
           HandleOldValue(oldValue);
           MakeDirty();
-          dict.Remove(key);
+          _dict.Remove(key);
         }
       }
       if (removed)
@@ -472,13 +476,13 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Gets the parent property container.
     /// </summary>
-    public Properties Parent
+    public Properties? Parent
     {
       get
       {
-        lock (syncRoot)
+        lock (_syncRoot)
         {
-          return parent;
+          return _parent;
         }
       }
     }
@@ -504,15 +508,15 @@ namespace Altaxo.Main.Services
     public Properties NestedProperties(string key)
     {
       bool isNewContainer = false;
-      Properties result;
-      lock (syncRoot)
+      Properties? result;
+      lock (_syncRoot)
       {
-        dict.TryGetValue(key, out var oldValue);
+        _dict.TryGetValue(key, out var oldValue);
         result = oldValue as Properties;
         if (result == null)
         {
           result = new Properties(this);
-          dict[key] = result;
+          _dict[key] = result;
           isNewContainer = true;
         }
       }
@@ -526,8 +530,8 @@ namespace Altaxo.Main.Services
       var p = oldValue as Properties;
       if (p != null)
       {
-        Debug.Assert(p.parent == this);
-        p.parent = null;
+        Debug.Assert(p._parent == this);
+        p._parent = null;
       }
     }
 
@@ -544,28 +548,28 @@ namespace Altaxo.Main.Services
         Remove(key);
         return;
       }
-      lock (syncRoot)
+      lock (_syncRoot)
       {
-        for (Properties ancestor = this; ancestor != null; ancestor = ancestor.parent)
+        for (Properties? ancestor = this; ancestor != null; ancestor = ancestor._parent)
         {
           if (ancestor == properties)
             throw new InvalidOperationException("Cannot add a properties container to itself.");
         }
 
-        if (dict.TryGetValue(key, out var oldValue))
+        if (_dict.TryGetValue(key, out var oldValue))
         {
           if (oldValue == properties)
             return;
           HandleOldValue(oldValue);
         }
-        lock (properties.syncRoot)
+        lock (properties._syncRoot)
         {
-          if (properties.parent != null)
+          if (properties._parent != null)
             throw new InvalidOperationException("Cannot attach nested properties that already have a parent.");
           MakeDirty();
-          properties.SetSyncRoot(syncRoot);
-          properties.parent = this;
-          dict[key] = properties;
+          properties.SetSyncRoot(_syncRoot);
+          properties._parent = this;
+          _dict[key] = properties;
         }
       }
       OnPropertyChanged(key);
@@ -573,8 +577,8 @@ namespace Altaxo.Main.Services
 
     private void SetSyncRoot(object newSyncRoot)
     {
-      syncRoot = newSyncRoot;
-      foreach (var properties in dict.Values.OfType<Properties>())
+      _syncRoot = newSyncRoot;
+      foreach (var properties in _dict.Values.OfType<Properties>())
       {
         properties.SetSyncRoot(newSyncRoot);
       }
@@ -589,22 +593,22 @@ namespace Altaxo.Main.Services
     /// </summary>
     public Properties Clone()
     {
-      lock (syncRoot)
+      lock (_syncRoot)
       {
         return CloneWithParent(null);
       }
     }
 
-    private Properties CloneWithParent(Properties parent)
+    private Properties CloneWithParent(Properties? parent)
     {
       Properties copy = parent != null ? new Properties(parent) : new Properties();
-      foreach (var pair in dict)
+      foreach (var pair in _dict)
       {
         var child = pair.Value as Properties;
         if (child != null)
-          copy.dict.Add(pair.Key, child.CloneWithParent(copy));
+          copy._dict.Add(pair.Key, child.CloneWithParent(copy));
         else
-          copy.dict.Add(pair.Key, pair.Value);
+          copy._dict.Add(pair.Key, pair.Value);
       }
       return copy;
     }
@@ -663,29 +667,29 @@ namespace Altaxo.Main.Services
         switch (element.Name.LocalName)
         {
           case "Property":
-            dict[key] = element.Value;
+            _dict[key] = element.Value;
             break;
 
           case "Array":
-            dict[key] = LoadArray(element.Elements());
+            _dict[key] = LoadArray(element.Elements());
             break;
 
           case "SerializedObject":
-            dict[key] = new XElement(element);
+            _dict[key] = new XElement(element);
             break;
 
           case "Properties":
             var child = new Properties(this);
             child.LoadContents(element.Elements());
-            dict[key] = child;
+            _dict[key] = child;
             break;
         }
       }
     }
 
-    private static object[] LoadArray(IEnumerable<XElement> elements)
+    private static object?[] LoadArray(IEnumerable<XElement> elements)
     {
-      var result = new List<object>();
+      var result = new List<object?>();
       foreach (var element in elements)
       {
         switch (element.Name.LocalName)
@@ -713,7 +717,7 @@ namespace Altaxo.Main.Services
 
     public XElement Save()
     {
-      lock (syncRoot)
+      lock (_syncRoot)
       {
         return new XElement("Properties", SaveContents());
       }
@@ -722,7 +726,7 @@ namespace Altaxo.Main.Services
     private IReadOnlyList<XElement> SaveContents()
     {
       var result = new List<XElement>();
-      foreach (var pair in dict)
+      foreach (var pair in _dict)
       {
         var key = new XAttribute("key", pair.Key);
         var child = pair.Value as Properties;

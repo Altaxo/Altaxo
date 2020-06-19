@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -36,6 +37,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     public GlobalServiceAttribute()
     {
+      StaticPropertyPath = string.Empty;
     }
 
     /// <summary>
@@ -64,16 +66,19 @@ namespace Altaxo.Main.Services
     /// Fallback services must not maintain any state, as that would be preserved between runs
     /// even if <c>SD.TearDownForUnitTests()</c> or <c>SD.InitializeForUnitTests()</c> is called.
     /// </remarks>
-    public Type FallbackImplementation { get; set; }
+    public Type? FallbackImplementation { get; set; }
   }
 
   public class FallbackServiceProvider : IServiceProvider
   {
-    private Dictionary<Type, object> fallbackServiceDict = new Dictionary<Type, object>();
+    /// <summary>
+    /// The fallback service dictionary. Stores null as value if no fallback service exists.
+    /// </summary>
+    private Dictionary<Type, object?> fallbackServiceDict = new Dictionary<Type, object?>();
 
-    public object GetService(Type serviceType)
+    public object? GetService(Type serviceType)
     {
-      object instance;
+      object? instance;
       lock (fallbackServiceDict)
       {
         if (!fallbackServiceDict.TryGetValue(serviceType, out instance))

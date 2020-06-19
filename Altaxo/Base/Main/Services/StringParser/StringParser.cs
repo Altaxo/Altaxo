@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -68,7 +69,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Expands ${xyz} style property values.
     /// </summary>
-    public static string Parse(string input)
+    public static string? Parse(string input)
     {
       return Parse(input, null);
     }
@@ -94,12 +95,12 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Expands ${xyz} style property values.
     /// </summary>
-    public static string Parse(string input, params StringTagPair[] customTags)
+    public static string? Parse(string input, params StringTagPair[]? customTags)
     {
-      if (input == null)
+      if (input is null)
         return null;
       int pos = 0;
-      StringBuilder output = null; // don't use StringBuilder if input is a single property
+      StringBuilder? output = null; // don't use StringBuilder if input is a single property
       do
       {
         int oldPos = pos;
@@ -144,8 +145,8 @@ namespace Altaxo.Main.Services
         else
         {
           string property = input.Substring(pos + 2, end - pos - 2);
-          string val = GetValue(property, customTags);
-          if (val == null)
+          string? val = GetValue(property, customTags);
+          if (val is null)
           {
             output.Append("${");
             output.Append(property);
@@ -164,7 +165,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Evaluates a property using the StringParser. Equivalent to StringParser.Parse("${" + propertyName + "}");
     /// </summary>
-    public static string GetValue(string propertyName, params StringTagPair[] customTags)
+    public static string? GetValue(string propertyName, params StringTagPair[]? customTags)
     {
       if (propertyName == null)
         throw new ArgumentNullException("propertyName");
@@ -204,7 +205,7 @@ namespace Altaxo.Main.Services
 
         foreach (IStringTagProvider provider in stringTagProviders)
         {
-          string result = provider.ProvideString(propertyName, customTags);
+          var result = provider.ProvideString(propertyName, customTags);
           if (result != null)
             return result;
         }
@@ -263,8 +264,8 @@ namespace Altaxo.Main.Services
             return GetProperty(propertyName);
 
           default:
-            IStringTagProvider provider;
-            if (prefixedStringTagProviders.TryGetValue(prefix, out provider))
+
+            if (prefixedStringTagProviders.TryGetValue(prefix, out var provider))
               return provider.ProvideString(propertyName, customTags);
             else
               return null;
@@ -283,7 +284,11 @@ namespace Altaxo.Main.Services
     {
       try
       {
-        return string.Format(StringParser.Parse(formatstring), formatitems);
+        var fmt = StringParser.Parse(formatstring);
+        if (fmt is null)
+          throw new InvalidOperationException($"Parsing string \"{formatstring}\" resulted in null.");
+
+        return string.Format(fmt, formatitems);
       }
       catch (FormatException ex)
       {

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Main.Services
@@ -35,7 +36,7 @@ namespace Altaxo.Main.Services
     /// Gets the archive entry.
     /// </summary>
     /// <returns>The archive entry.</returns>
-    IProjectArchiveEntry GetArchiveEntry();
+    IProjectArchiveEntry? GetArchiveEntry();
 
     /// <summary>
     /// Gets the full name of the archive entry.

@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using Altaxo.Main.Services.Implementation;
 
@@ -49,7 +50,7 @@ namespace Altaxo.Main.Services
 
     void Fatal(object message);
 
-    void Fatal(object message, Exception exception);
+    void Fatal(object message, Exception? exception);
 
     void FatalFormatted(string format, params object[] args);
 

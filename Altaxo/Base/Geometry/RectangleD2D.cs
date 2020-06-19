@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -77,7 +78,7 @@ namespace Altaxo.Geometry
         info.AddValue("Height", s.Height);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         RectangleD2D s = null != o ? (RectangleD2D)o : new RectangleD2D();
         s.X = info.GetDouble("X");

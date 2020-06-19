@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Main;
 using Altaxo.Main.Services;
 using Altaxo.Main.Services.Files;
@@ -40,16 +42,16 @@ namespace Altaxo
     Main.IProject
   {
     /// <summary>Collection of all data tables in this document.</summary>
-    protected Altaxo.Data.DataTableCollection _dataTables = null; // The root of all the data
+    protected Altaxo.Data.DataTableCollection _dataTables; // The root of all the data
 
     /// <summary>Collection of all graphs in this document.</summary>
-    protected Altaxo.Graph.Gdi.GraphDocumentCollection _graphs = null; // all graphs are stored here
+    protected Altaxo.Graph.Gdi.GraphDocumentCollection _graphs; // all graphs are stored here
 
     /// <summary>Collection of all graphs in this document.</summary>
-    protected Altaxo.Graph.Graph3D.GraphDocumentCollection _graphs3D = null; // all graphs are stored here
+    protected Altaxo.Graph.Graph3D.GraphDocumentCollection _graphs3D; // all graphs are stored here
 
     /// <summary>Collection of all notes documents in this document.</summary>
-    protected Altaxo.Text.TextDocumentCollection _textDocuments = null;
+    protected Altaxo.Text.TextDocumentCollection _textDocuments;
 
     /// <summary>
     /// The properties associated with the project folders. Please note that the properties of the project are also stored inside this collection, with the name being an empty string (root folder node).
@@ -57,7 +59,7 @@ namespace Altaxo
     protected Altaxo.Main.Properties.ProjectFolderPropertyDocumentCollection _projectFolderProperties;
 
     /// <summary>Collection of all data tables layouts in this document.</summary>
-    protected Altaxo.Worksheet.WorksheetLayoutCollection _tableLayouts = null;
+    protected Altaxo.Worksheet.WorksheetLayoutCollection _tableLayouts;
 
     /// <summary>Collection of all fit function scripts in this document.</summary>
     private Altaxo.Scripting.FitFunctionScriptCollection _fitFunctionScripts;
@@ -71,7 +73,7 @@ namespace Altaxo
     [NonSerialized]
     protected bool _isDirty = false;
 
-    public event EventHandler IsDirtyChanged;
+    public event EventHandler? IsDirtyChanged;
 
     public AltaxoDocument()
     {
@@ -100,7 +102,7 @@ namespace Altaxo
     /// <param name="projectArchiveManager">The project archive manager that manages the archive.</param>
     /// <returns>A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</returns>
     /// <exception cref="ApplicationException"></exception>
-    public Dictionary<string, IProjectItem> SaveToArchive(IProjectArchive archiveToSaveTo, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info, IProjectArchive originalArchive = null, IProjectArchiveManager projectArchiveManager = null)
+    public Dictionary<string, IProjectItem> SaveToArchive(IProjectArchive archiveToSaveTo, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info, IProjectArchive? originalArchive = null, IProjectArchiveManager? projectArchiveManager = null)
     {
       var errorText = new System.Text.StringBuilder();
       var dictionary = new Dictionary<string, IProjectItem>();
@@ -110,7 +112,9 @@ namespace Altaxo
       bool supportsSeparateDataStorage = archiveToSaveTo.SupportsDeferredLoading;
 
       // If true, archive entries (of items that have not changed) are copied directly from the original archive to the new archive
-      bool supportsStreamRecycling = originalArchive?.GetType() == archiveToSaveTo.GetType() && archiveToSaveTo.SupportsCopyEntryFrom(originalArchive);
+      bool supportsStreamRecycling = !(originalArchive is null) &&
+                                      originalArchive.GetType() == archiveToSaveTo.GetType() &&
+                                      archiveToSaveTo.SupportsCopyEntryFrom(originalArchive);
 
       if (supportsSeparateDataStorage)
       {
@@ -155,7 +159,7 @@ namespace Altaxo
             if (supportsStreamRecycling &&
                 !table.DataColumns.IsDataDirty &&
                 table.DataColumns.DeferredDataMemento is IProjectArchiveEntryMemento entryMemento &&
-                originalArchive.ContainsEntry(entryMemento.EntryName))
+                originalArchive!.ContainsEntry(entryMemento.EntryName))
             {
               archiveToSaveTo.CopyEntryFrom(originalArchive, sourceEntryName: entryMemento.EntryName, destinationEntryName: entryName);
 
@@ -273,7 +277,7 @@ namespace Altaxo
       }
 
       // 4th, we save all FitFunctions into the FitFunctions subdirectory
-      foreach (Altaxo.Scripting.FitFunctionScript fit in _fitFunctionScripts)
+      foreach (var fit in _fitFunctionScripts)
       {
         try
         {
@@ -587,7 +591,7 @@ namespace Altaxo
       _accumulatedEventData = e ?? EventArgs.Empty;
     }
 
-    public override Main.IDocumentNode ParentObject
+    public override Main.IDocumentNode? ParentObject
     {
       get
       {
@@ -637,7 +641,7 @@ namespace Altaxo
       return layout;
     }
 
-    public override IDocumentLeafNode GetChildObjectNamed(string name)
+    public override IDocumentLeafNode? GetChildObjectNamed(string name)
     {
       switch (name)
       {
@@ -670,8 +674,8 @@ namespace Altaxo
 
     public override string GetNameOfChildObject(IDocumentLeafNode o)
     {
-      if (null == o)
-        return null;
+      if (o is null)
+        throw new ArgumentNullException(nameof(o));
       else if (object.ReferenceEquals(o, _dataTables))
         return "Tables";
       else if (object.ReferenceEquals(o, _graphs))
@@ -689,34 +693,34 @@ namespace Altaxo
       else if (object.ReferenceEquals(o, _projectFolders))
         return "ProjectFolders";
       else
-        return null;
+        return string.Empty;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (null != _dataTables)
-        yield return new Main.DocumentNodeAndName(_dataTables, () => _dataTables = null, "Tables");
+        yield return new Main.DocumentNodeAndName(_dataTables, () => _dataTables = null!, "Tables");
 
       if (null != _graphs)
-        yield return new Main.DocumentNodeAndName(_graphs, () => _graphs = null, "Graphs");
+        yield return new Main.DocumentNodeAndName(_graphs, () => _graphs = null!, "Graphs");
 
       if (null != _graphs3D)
-        yield return new Main.DocumentNodeAndName(_graphs3D, () => _graphs3D = null, "Graphs3D");
+        yield return new Main.DocumentNodeAndName(_graphs3D, () => _graphs3D = null!, "Graphs3D");
 
       if (null != _textDocuments)
-        yield return new Main.DocumentNodeAndName(_textDocuments, () => _textDocuments = null, "Text");
+        yield return new Main.DocumentNodeAndName(_textDocuments, () => _textDocuments = null!, "Text");
 
       if (null != _tableLayouts)
-        yield return new Main.DocumentNodeAndName(_tableLayouts, () => _tableLayouts = null, "TableLayouts");
+        yield return new Main.DocumentNodeAndName(_tableLayouts, () => _tableLayouts = null!, "TableLayouts");
 
       if (null != _fitFunctionScripts)
-        yield return new Main.DocumentNodeAndName(_fitFunctionScripts, () => _fitFunctionScripts = null, "FitFunctionScripts");
+        yield return new Main.DocumentNodeAndName(_fitFunctionScripts, () => _fitFunctionScripts = null!, "FitFunctionScripts");
 
       if (null != _projectFolderProperties)
-        yield return new Main.DocumentNodeAndName(_projectFolderProperties, () => _projectFolderProperties = null, "FolderProperties");
+        yield return new Main.DocumentNodeAndName(_projectFolderProperties, () => _projectFolderProperties = null!, "FolderProperties");
 
       if (null != _projectFolders)
-        yield return new Main.DocumentNodeAndName(_projectFolders, () => _projectFolders = null, "ProjectFolders");
+        yield return new Main.DocumentNodeAndName(_projectFolders, () => _projectFolders = null!, "ProjectFolders");
     }
 
     #region Static functions
@@ -882,22 +886,29 @@ namespace Altaxo
     }
 
     /// <summary>
-    /// Tries to get an existring project item with the same type and name as the provided item.
+    /// Tries to get an existing project item with the same type and name as the provided item.
     /// </summary>
     /// <param name="item">The item to test for.</param>
-    /// <returns>True an item with the same type and name as the provided item exists in the project, that existing item is returned; otherwise, the return value is null.</returns>
+    /// <param name="existingItem">If an item with the same type and name as the provided item exists in the project, that existing item is returned.</param>
+    /// <returns>True if an item with the same type and name as the provided item exists in the project; otherwise, false.</returns>
     /// <exception cref="System.ArgumentNullException">item</exception>
     /// <exception cref="System.ArgumentOutOfRangeException"></exception>
-    public IProjectItem TryGetExistingItemWithSameTypeAndName(IProjectItem item)
+    public bool TryGetExistingItemWithSameTypeAndName(IProjectItem item, [MaybeNullWhen(false)] out IProjectItem existingItem)
     {
       if (null == item)
         throw new ArgumentNullException(nameof(item));
 
       var coll = GetCollectionForProjectItemType(item.GetType());
       if (coll.Contains(item.Name))
-        return coll[item.Name];
-
-      return null;
+      {
+        existingItem = coll[item.Name];
+        return true;
+      }
+      else
+      {
+        existingItem = default;
+        return false;
+      }
     }
 
     /// <summary>
@@ -909,7 +920,7 @@ namespace Altaxo
     /// <exception cref="System.ArgumentOutOfRangeException"></exception>
     public bool ExistsItemWithSameTypeAndName(IProjectItem item)
     {
-      return null != TryGetExistingItemWithSameTypeAndName(item);
+      return TryGetExistingItemWithSameTypeAndName(item, out _);
     }
 
     /// <summary>
@@ -920,8 +931,9 @@ namespace Altaxo
     /// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
     public bool RemoveItem(IProjectItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
+
       var coll = GetCollectionForProjectItemType(item.GetType());
       return coll.Remove(item);
     }

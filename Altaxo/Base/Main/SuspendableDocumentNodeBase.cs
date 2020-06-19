@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,17 +42,17 @@ namespace Altaxo.Main
     /// The parent object this instance belongs to.
     /// </summary>
     [NonSerialized]
-    protected IDocumentNode _parent;
+    protected IDocumentNode? _parent;
 
     /// <summary>Fired when something in the object has changed, and the object is not suspended.</summary>
     [field: NonSerialized]
-    public event EventHandler Changed;
+    public event EventHandler? Changed;
 
     /// <summary>
     /// The event that is fired when the object is disposed. First argument is the sender, second argument is the original source, and third argument is the event arg.
     /// </summary>
     [field: NonSerialized]
-    public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
+    public event Action<object, object, Main.TunnelingEventArgs>? TunneledEvent;
 
     /// <summary>
     /// The dispose state. If 0, the instance is fully functional. If <see cref="DisposeState_DisposeInProgress"/> (1), Dispose is currently in progress. If the value is <see cref="DisposeState_Disposed"/>, this instance is disposed.
@@ -71,7 +72,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Gets/sets the parent object this instance belongs to.
     /// </summary>
-    public virtual IDocumentNode ParentObject
+    public virtual IDocumentNode? ParentObject
     {
       get
       {
@@ -135,7 +136,7 @@ namespace Altaxo.Main
     {
       get
       {
-        return _parent != null || Changed != null || TunneledEvent != null;
+        return !(_parent is null) || !(Changed is null) || !(TunneledEvent is null);
       }
     }
 
@@ -149,7 +150,7 @@ namespace Altaxo.Main
     {
       get
       {
-        return _parent == null ? null : _parent.GetNameOfChildObject(this);
+        return _parent?.GetNameOfChildObject(this) ?? string.Empty;
       }
       set
       {
@@ -166,7 +167,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="singleEventArg">The <see cref="EventArgs"/> instance containing the event data, if there is exactly one event arg accumulated. Otherwise, it is <c>null</c>.</param>
     /// <returns>True if there is zero or one event arg accumulated, otherwise <c>false</c>.</returns>
-    protected abstract bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg);
+    protected abstract bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs? singleEventArg);
 
     /// <summary>
     /// Gets the accumulated event data.
@@ -229,13 +230,10 @@ namespace Altaxo.Main
     /// If Event data were accumulated during the suspended state, a changed event is triggered for each event data.
     /// </summary>
     /// <param name="suspendToken">The suspend token.</param>
-    public void Resume(ref ISuspendToken suspendToken)
+    public void Resume(ref ISuspendToken? suspendToken)
     {
-      if (null != suspendToken)
-      {
-        suspendToken.Resume();
-        suspendToken = null;
-      }
+      suspendToken?.Resume();
+      suspendToken = null;
     }
 
     /// <summary>
@@ -243,13 +241,10 @@ namespace Altaxo.Main
     /// All event data accumulated during the suspended state are discarded, and thus no change event is triggered even if the instance has changed during the suspended state.
     /// </summary>
     /// <param name="suspendToken">The suspend token.</param>
-    public void ResumeSilently(ref ISuspendToken suspendToken)
+    public void ResumeSilently(ref ISuspendToken? suspendToken)
     {
-      if (null != suspendToken)
-      {
-        suspendToken.ResumeSilently();
-        suspendToken = null;
-      }
+      suspendToken?.ResumeSilently();
+      suspendToken = null;
     }
 
     /// <summary>
@@ -258,13 +253,10 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="suspendToken">The suspend token.</param>
     /// <param name="eventFiring">This argument determines if the events are resumed taking the event data into account, or the resume is silent, i.e. accumulated event data are discarded.</param>
-    public void Resume(ref ISuspendToken suspendToken, EventFiring eventFiring)
+    public void Resume(ref ISuspendToken? suspendToken, EventFiring eventFiring)
     {
-      if (null != suspendToken)
-      {
-        suspendToken.Resume(eventFiring);
-        suspendToken = null;
-      }
+      suspendToken?.Resume(eventFiring);
+      suspendToken = null;
     }
 
     #region Implementation of a set of accumulated event data
@@ -421,7 +413,7 @@ namespace Altaxo.Main
     /// <value>
     /// The parent node.
     /// </value>
-    IDocumentLeafNode Collections.INodeWithParentNode<IDocumentLeafNode>.ParentNode
+    IDocumentLeafNode? Collections.INodeWithParentNode<IDocumentLeafNode>.ParentNode
     {
       get { return _parent; }
     }
@@ -480,7 +472,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <typeparam name="T">Type of child node.</typeparam>
     /// <param name="childNode">The child node to dispose.</param>
-    protected void ChildDisposeMember<T>(ref T childNode) where T : class, IDisposable
+    protected void ChildDisposeMember<T>(ref T? childNode) where T : class, IDisposable
     {
       var tmpNode = childNode;
       childNode = null;
@@ -571,12 +563,12 @@ namespace Altaxo.Main
     /// <value>
     /// The absolute path.
     /// </value>
-    protected string Debug_AbsolutePath
+    protected string? Debug_AbsolutePath
     {
       get
       {
         var rootNode = AbsoluteDocumentPath.GetRootNode(this);
-        return RelativeDocumentPath.GetRelativePathFromTo(rootNode, this).ToString();
+        return RelativeDocumentPath.GetRelativePathFromTo(rootNode, this)?.ToString();
       }
     }
 

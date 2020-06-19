@@ -17,10 +17,12 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -58,9 +60,9 @@ namespace Altaxo.Main.Services
     private Dictionary<string, Assembly> _neutralLatentImageStreams = new Dictionary<string, Assembly>();
 
     /// <summary>Hashtable containing the local strings from the main application.</summary>
-    private Hashtable _localStrings = null;
+    private Hashtable? _localStrings = null;
 
-    private Hashtable _localIcons = null;
+    private Hashtable? _localIcons = null;
 
     /// <summary>Strings resource managers for the current language</summary>
     private List<(string Prefix, ResourceManager Manager)> _localStringsResMgrs = new List<(string Prefix, ResourceManager Manager)>();
@@ -73,7 +75,7 @@ namespace Altaxo.Main.Services
 
     private string _currentLanguage;
 
-    public event EventHandler LanguageChanged;
+    public event EventHandler? LanguageChanged;
 
     public ResourceServiceImpl(string resourceDirectory, IPropertyService propertyService)
     {
@@ -211,12 +213,11 @@ namespace Altaxo.Main.Services
       if (e.PropertyName == uiLanguageProperty)
       {
         LoadLanguageResources(Language);
-        EventHandler handler = LanguageChanged;
-        if (handler != null)
-          handler(this, e);
+        LanguageChanged?.Invoke(this, e);
       }
     }
 
+    [MemberNotNull(nameof(_localStrings), nameof(_currentLanguage))]
     private void LoadLanguageResources(string language)
     {
       lock (_loadLock)
@@ -256,15 +257,16 @@ namespace Altaxo.Main.Services
       }
     }
 
-    private Hashtable Load(string fileName)
+    private Hashtable? Load(string fileName)
     {
       if (File.Exists(fileName))
       {
         var resources = new Hashtable();
         var rr = new ResourceReader(fileName);
-        foreach (DictionaryEntry entry in rr)
+        foreach (var entryObj in rr)
         {
-          resources.Add(entry.Key, entry.Value);
+          if (entryObj is DictionaryEntry entry)
+            resources.Add(entry.Key, entry.Value);
         }
         rr.Close();
         return resources;
@@ -272,7 +274,7 @@ namespace Altaxo.Main.Services
       return null;
     }
 
-    private Hashtable Load(string name, string language)
+    private Hashtable? Load(string name, string language)
     {
       return Load(_resourceDirectory + Path.DirectorySeparatorChar + name + "." + language + ".resources");
     }
@@ -290,16 +292,16 @@ namespace Altaxo.Main.Services
     /// <exception cref="ResourceNotFoundException">
     /// Is thrown when the GlobalResource manager can't find a requested resource.
     /// </exception>
-    public string GetString(string name)
+    public string? GetString(string name)
     {
       lock (_loadLock)
       {
-        string s = null;
+        string? s = null;
 
         // String is already in the hashtable of localized strings?
-        if (_localStrings != null && _localStrings[name] != null)
+        if (_localStrings?[name] is { } lsn)
         {
-          s = _localStrings[name].ToString();
+          s = lsn.ToString();
         }
         else
         {
@@ -318,7 +320,7 @@ namespace Altaxo.Main.Services
             }
           }
 
-          if (s == null)
+          if (s is null)
           {
             // search all unlocalized resource managers
             foreach ((string prefix, ResourceManager resourceManger) in _neutralStringsResMgrs)
@@ -353,7 +355,7 @@ namespace Altaxo.Main.Services
       }
     }
 
-    public object GetImageResource(string name)
+    public object? GetImageResource(string name)
     {
 #if USERESOURCETRACKING
         LogImageResource(name, s, Assembly.GetCallingAssembly());
@@ -361,23 +363,23 @@ namespace Altaxo.Main.Services
 
       lock (_loadLock)
       {
-        object iconobj = null;
-        if (_localIcons != null && _localIcons[name] != null)
+        object? iconobj = null;
+        if (_localIcons?[name] is { } lin)
         {
-          iconobj = _localIcons[name];
+          iconobj = lin;
         }
         else
         {
           foreach ((string prefix, ResourceManager resourceManger) in _localIconsResMgrs)
           {
             iconobj = resourceManger.GetObject(name);
-            if (iconobj != null)
+            if (!(iconobj is null))
             {
               break;
             }
           }
 
-          if (iconobj == null)
+          if (iconobj is null)
           {
             foreach ((string prefix, ResourceManager resourceManger) in _neutralIconsResMgrs)
             {
@@ -401,16 +403,16 @@ namespace Altaxo.Main.Services
       }
     }
 
-    public Bitmap GetBitmap(string name)
+    public Bitmap? GetBitmap(string name)
     {
-      return (Bitmap)GetImageResource(name);
+      return (Bitmap?)GetImageResource(name);
     }
 
-    public System.IO.Stream GetResourceStream(string name)
+    public System.IO.Stream? GetResourceStream(string name)
     {
       lock (_loadLock)
       {
-        System.IO.Stream resourceStream = null;
+        System.IO.Stream? resourceStream = null;
 
         if (_neutralLatentImageStreams.TryGetValue(name, out var assembly))
         {
@@ -427,7 +429,7 @@ namespace Altaxo.Main.Services
           }
         }
 
-        if (resourceStream == null)
+        if (resourceStream is null)
         {
           foreach ((string prefix, ResourceManager resourceManger) in _neutralIconsResMgrs)
           {
@@ -465,12 +467,12 @@ namespace Altaxo.Main.Services
         _isIcons = isIcons;
       }
 
-      private ResourceManager TrySatellite(string language)
+      private ResourceManager? TrySatellite(string language)
       {
         // ResourceManager should automatically use satellite assemblies, but it doesn't work
         // and we have to do it manually.
         string fileName = Path.GetFileNameWithoutExtension(_assembly.Location) + ".resources.dll";
-        fileName = Path.Combine(Path.Combine(Path.GetDirectoryName(_assembly.Location), language), fileName);
+        fileName = Path.Combine(Path.Combine(Path.GetDirectoryName(_assembly.Location) ?? string.Empty, language), fileName);
         if (File.Exists(fileName))
         {
           Current.Log.Info("Logging resources " + _baseResourceName + " loading from satellite " + language);
@@ -486,7 +488,7 @@ namespace Altaxo.Main.Services
       {
         string currentLanguage = _service._currentLanguage;
         string logMessage = "Loading resources " + _baseResourceName + "." + currentLanguage + ": ";
-        ResourceManager manager = null;
+        ResourceManager? manager = null;
         if (_assembly.GetManifestResourceInfo(_baseResourceName + "." + currentLanguage + ".resources") != null)
         {
           Current.Log.Info(logMessage + " loading from main assembly");
@@ -529,7 +531,7 @@ namespace Altaxo.Main.Services
 
     #region Instrumentation
 
-    private HashSet<string> _stringKeysForLogging;
+    private HashSet<string>? _stringKeysForLogging;
     private void LogStringResource(string name, string value, Assembly callingAssembly)
     {
       if (null == _stringKeysForLogging)
@@ -557,7 +559,7 @@ namespace Altaxo.Main.Services
       }
     }
 
-    private HashSet<string> _imageKeysForLogging;
+    private HashSet<string>? _imageKeysForLogging;
     private void LogImageResource(string name, Assembly callingAssembly)
     {
       if (null == _imageKeysForLogging)

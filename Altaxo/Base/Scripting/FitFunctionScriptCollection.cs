@@ -160,7 +160,7 @@ namespace Altaxo.Scripting
 
     #region IEnumerable Members
 
-    public IEnumerator GetEnumerator()
+    IEnumerator IEnumerable.GetEnumerator()
     {
       return _innerList.Keys.GetEnumerator();
     }

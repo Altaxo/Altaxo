@@ -16,20 +16,21 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 
 namespace Altaxo.Main.Services
 {
   public class FileEventArgs : EventArgs
   {
-    private string fileName = null;
-    private bool isDirectory;
+    private string _fileName = string.Empty;
+    private bool _isDirectory;
 
     public string FileName
     {
       get
       {
-        return fileName;
+        return _fileName;
       }
     }
 
@@ -37,14 +38,14 @@ namespace Altaxo.Main.Services
     {
       get
       {
-        return isDirectory;
+        return _isDirectory;
       }
     }
 
     public FileEventArgs(string fileName, bool isDirectory)
     {
-      this.fileName = fileName;
-      this.isDirectory = isDirectory;
+      this._fileName = fileName;
+      this._isDirectory = isDirectory;
     }
   }
 

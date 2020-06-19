@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -100,7 +101,7 @@ namespace Altaxo.Settings
         info.AddValue("InstallationWindowClosingTime", s.InstallationWindowClosingTime);
       }
 
-      protected virtual AutoUpdateSettings SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AutoUpdateSettings SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (o == null ? new AutoUpdateSettings() : (AutoUpdateSettings)o);
 
@@ -117,7 +118,7 @@ namespace Altaxo.Settings
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Main
@@ -65,6 +66,7 @@ namespace Altaxo.Main
       // we set the print document default orientation to landscape
       _printDocument.DefaultPageSettings.Landscape = true;
       _printerSettings = new System.Drawing.Printing.PrinterSettings();
+      _printerMargins = new System.Drawing.Printing.Margins();
       UpdateBoundsAndMargins();
     }
 

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,14 +66,12 @@ namespace Altaxo.Main
       return Name.GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var a = obj as ProjectFolder;
-      if (null != a)
+      if (obj is ProjectFolder a)
         return a.Name == Name;
 
-      var b = obj as string;
-      if (null != b)
+      if (obj is string b)
         return b == Name;
 
       return false;
@@ -444,8 +443,8 @@ namespace Altaxo.Main
     /// <exception cref="System.ArgumentException">itemNames enumeration was empty</exception>
     public static string GetCommonFolderOfNames(IEnumerable<string> itemNames)
     {
-      if (null == itemNames)
-        throw new ArgumentNullException("itemNames");
+      if (itemNames is null)
+        throw new ArgumentNullException(nameof(itemNames));
 
       IList<string> nameList;
 

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.ComponentModel;
@@ -40,8 +41,15 @@ namespace Altaxo.Main.Services
     private class InvokeData
     {
       public Action @Action;
-      public System.Threading.AutoResetEvent @Event;
-      public Exception @Exception;
+      public System.Threading.AutoResetEvent? @Event;
+      public Exception? @Exception;
+
+      public InvokeData(Action action, System.Threading.AutoResetEvent? ev)
+      {
+        Action = action;
+        Event = ev;
+
+      }
     }
 
     // this is the time after which the thread is looped around anyway (if something goes wrong, for instance if two _triggerEvent.Set calls are too close)
@@ -50,9 +58,9 @@ namespace Altaxo.Main.Services
 
     private volatile bool _keepThreadRunning;
 
-    private Thread _thread;
+    private Thread? _thread;
 
-    private System.Threading.AutoResetEvent _triggeringEvent;
+    private System.Threading.AutoResetEvent? _triggeringEvent;
 
     /// <summary>
     /// The dispatcher for re-throwing exceptions. Normally, you should use the dispatcher of the MainWindow.
@@ -140,7 +148,7 @@ namespace Altaxo.Main.Services
     public void Stop()
     {
       _keepThreadRunning = false;
-      _triggeringEvent.Set();
+      _triggeringEvent?.Set();
     }
 
     /// <summary>
@@ -149,8 +157,11 @@ namespace Altaxo.Main.Services
     /// <param name="action">The action to execute.</param>
     public void Invoke(Action action)
     {
+      if (_triggeringEvent is null)
+        throw new InvalidOperationException("Instance is either not started already, stopped or disposed");
+
       var evnt = new System.Threading.AutoResetEvent(false);
-      var invokeData = new InvokeData { @Action = action, @Event = evnt };
+      var invokeData = new InvokeData(action, evnt);
       _invokerQueue.Enqueue(invokeData);
       _triggeringEvent.Set();
 
@@ -166,7 +177,10 @@ namespace Altaxo.Main.Services
     /// <param name="action">The action to execute.</param>
     public void InvokeAsync(Action action)
     {
-      _invokerQueue.Enqueue(new InvokeData() { @Action = action, @Event = null });
+      if (_triggeringEvent is null)
+        throw new InvalidOperationException("Instance is either not started already, stopped or disposed");
+
+      _invokerQueue.Enqueue(new InvokeData(action, null));
       _triggeringEvent.Set();
     }
 
@@ -199,7 +213,10 @@ namespace Altaxo.Main.Services
         try
         {
           ProcessInvokerQueue();
-          _triggeringEvent.WaitOne(_safetyIntervalTime_msec);
+          if (_triggeringEvent is null)
+            break;
+          else
+            _triggeringEvent.WaitOne(_safetyIntervalTime_msec);
         }
         catch (Exception ex)
         {

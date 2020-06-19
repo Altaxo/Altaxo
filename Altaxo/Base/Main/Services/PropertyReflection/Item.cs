@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,13 +42,10 @@ namespace Altaxo.Main.Services.PropertyReflection
 
     protected void NotifyPropertyChanged(string property)
     {
-      if (PropertyChanged != null)
-      {
-        PropertyChanged(this, new PropertyChangedEventArgs(property));
-      }
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     #endregion Notify Property Changed Members
 

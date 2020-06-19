@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Drawing;
 using System.Reflection;
@@ -49,16 +50,16 @@ namespace Altaxo.Main.Services
     /// <exception cref="ResourceNotFoundException">
     /// Is thrown when the GlobalResource manager can't find a requested resource.
     /// </exception>
-    string GetString(string name);
+    string? GetString(string name);
 
-    object GetImageResource(string name);
+    object? GetImageResource(string name);
 
     /// <summary>
     /// Gets a resource as a stream. The retrieve resource stream is not cached.
     /// </summary>
     /// <param name="name">The name of the resource.</param>
     /// <returns>The resource stream, or null if the resource don't exist.</returns>
-    System.IO.Stream GetResourceStream(string name);
+    System.IO.Stream? GetResourceStream(string name);
 
     /// <summary>
     /// Returns a bitmap from the resource database, it handles localization
@@ -73,7 +74,7 @@ namespace Altaxo.Main.Services
     /// <exception cref="ResourceNotFoundException">
     /// Is thrown when the GlobalResource manager can't find a requested resource.
     /// </exception>
-    System.Drawing.Bitmap GetBitmap(string name);
+    System.Drawing.Bitmap? GetBitmap(string name);
 
     /// <summary>
     /// Registers string resources in the resource service.
@@ -120,17 +121,17 @@ namespace Altaxo.Main.Services
       }
     }
 
-    string IResourceService.GetString(string name)
+    string? IResourceService.GetString(string name)
     {
       return null;
     }
 
-    object IResourceService.GetImageResource(string name)
+    object? IResourceService.GetImageResource(string name)
     {
       return null;
     }
 
-    System.IO.Stream IResourceService.GetResourceStream(string name)
+    System.IO.Stream? IResourceService.GetResourceStream(string name)
     {
       return null;
     }

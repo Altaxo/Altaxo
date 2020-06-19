@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace Altaxo.Main
     /// Holds the accumulated change data.
     /// </summary>
     [NonSerialized]
-    protected T _accumulatedEventData;
+    protected T? _accumulatedEventData;
 
     /// <summary>
     /// Determines whether there is no or only one single event arg accumulated. If this is the case, the return value is <c>true</c>. If there is one event arg accumulated, it is returned in the argument <paramref name="singleEventArg" />.
@@ -52,7 +53,7 @@ namespace Altaxo.Main
     /// <returns>
     /// True if there is zero or one event arg accumulated, otherwise <c>false</c>.
     /// </returns>
-    protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg)
+    protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs? singleEventArg)
     {
       singleEventArg = _accumulatedEventData;
       return true;

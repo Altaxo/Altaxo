@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System.Reflection;
 
 namespace Altaxo.Main.Services.ScriptCompilation
@@ -31,7 +32,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
   /// </summary>
   public interface IScriptCompilerService
   {
-    IScriptCompilerSuccessfulResult GetCompilerResult(Assembly ass);
+    IScriptCompilerSuccessfulResult? GetCompilerResult(Assembly ass);
 
     /// <summary>
     /// Does the compilation of the script into an assembly. The assembly is stored together with

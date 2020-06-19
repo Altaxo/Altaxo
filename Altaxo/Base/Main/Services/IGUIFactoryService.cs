@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Threading;
 using System.Windows.Input;
@@ -58,19 +59,19 @@ namespace Altaxo.Main.Services
 
     void FindAndAttachControlTo(IMVCController controller);
 
-    object FindAndAttachControlTo(IMVCController controller, Type expectedType);
+    object? FindAndAttachControlTo(IMVCController controller, Type expectedType);
 
-    IMVCController GetController(object[] args, Type expectedControllerType);
+    IMVCController? GetController(object[] args, Type expectedControllerType);
 
-    IMVCController GetController(object[] args, Type expectedControllerType, UseDocument copyDocument);
+    IMVCController? GetController(object[] args, Type expectedControllerType, UseDocument copyDocument);
 
-    IMVCController GetController(object[] creationArgs, Type overrideArg0Type, Type expectedControllerType, UseDocument copyDocument);
+    IMVCController? GetController(object[] creationArgs, Type overrideArg0Type, Type expectedControllerType, UseDocument copyDocument);
 
-    IMVCController GetControllerAndControl(object[] args, Type expectedControllerType);
+    IMVCController? GetControllerAndControl(object[] args, Type expectedControllerType);
 
-    IMVCController GetControllerAndControl(object[] args, Type expectedControllerType, UseDocument copyDocument);
+    IMVCController? GetControllerAndControl(object[] args, Type expectedControllerType, UseDocument copyDocument);
 
-    IMVCController GetControllerAndControl(object[] args, Type overrideArg0Type, Type expectedControllerType, UseDocument copyDocument);
+    IMVCController? GetControllerAndControl(object[] args, Type overrideArg0Type, Type expectedControllerType, UseDocument copyDocument);
 
     string GetUserFriendlyClassName(Type definedtype);
 
@@ -204,7 +205,7 @@ namespace Altaxo.Main.Services
     /// <param name="execute">The execute action.</param>
     /// <param name="canExecute">The canExecute function that evaluates if the execute action can be executed under the current conditions. May be null (in this case, it is considered to return true).</param>
     /// <returns>A command that can be used, e.g. for binding to the Gui.</returns>
-    ICommand NewRelayCommand(Action execute, Func<bool> canExecute = null);
+    ICommand NewRelayCommand(Action execute, Func<bool>? canExecute = null);
 
     /// <summary>
     /// Gets a command that executes an action and evaluates the <paramref name="canExecute"/> condition every time when
@@ -213,7 +214,7 @@ namespace Altaxo.Main.Services
     /// <param name="execute">The execute action.</param>
     /// <param name="canExecute">The canExecute function that evaluates if the execute action can be executed under the current conditions. May be null (in this case, it is considered to return true).</param>
     /// <returns>A command that can be used, e.g. for binding to the Gui.</returns>
-    ICommand NewRelayCommand(Action<object> execute, Predicate<object> canExecute = null);
+    ICommand NewRelayCommand(Action<object> execute, Predicate<object>? canExecute = null);
 
     /// <summary>
     /// Registers a handler that will be called back if something in the Gui has changed so that

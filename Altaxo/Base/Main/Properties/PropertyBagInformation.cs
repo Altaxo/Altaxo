@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,14 +44,14 @@ namespace Altaxo.Main.Properties
     /// <summary>
     /// The bag's application item type.
     /// </summary>
-    public System.Type ApplicationItemType { get; private set; }
+    public System.Type? ApplicationItemType { get; private set; }
 
     public PropertyBagInformation(string name, PropertyLevel applicationLevel)
       : this(name, applicationLevel, null)
     {
     }
 
-    public PropertyBagInformation(string name, PropertyLevel applicationLevel, System.Type applicationItemType)
+    public PropertyBagInformation(string name, PropertyLevel applicationLevel, System.Type? applicationItemType)
       : this()
     {
       Name = name;

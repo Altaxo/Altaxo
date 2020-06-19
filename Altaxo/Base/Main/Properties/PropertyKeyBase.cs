@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace Altaxo.Main.Properties
     private string _guidString;
     private string _propertyName;
     private PropertyLevel _applicationLevel;
-    private Type _applicationItemType;
+    private Type? _applicationItemType;
 
     private static Dictionary<string, PropertyKeyBase> _allRegisteredProperties = new Dictionary<string, PropertyKeyBase>();
 
@@ -82,14 +83,14 @@ namespace Altaxo.Main.Properties
     /// <value>
     /// The type of the application item.
     /// </value>
-    public Type ApplicationItemType { get { return _applicationItemType; } }
+    public Type? ApplicationItemType { get { return _applicationItemType; } }
 
     protected PropertyKeyBase(System.Type typeOfProperty, string guidString, string propertyName, PropertyLevel applicationLevel)
       : this(typeOfProperty, guidString, propertyName, applicationLevel, null)
     {
     }
 
-    protected PropertyKeyBase(System.Type typeOfProperty, string guidString, string propertyName, PropertyLevel applicationLevel, Type applicationItemType)
+    protected PropertyKeyBase(System.Type typeOfProperty, string guidString, string propertyName, PropertyLevel applicationLevel, Type? applicationItemType)
     {
       if (applicationLevel.HasFlag(PropertyLevel.Document) && applicationItemType == null)
         throw new ArgumentNullException("applicationItemType is mandatory since applicationLevel has flag 'Document'");
@@ -127,7 +128,7 @@ namespace Altaxo.Main.Properties
     /// </summary>
     /// <param name="originalValue">The orignal property value.</param>
     /// <returns>The Gui controller used to edit this value, or null if such a controller could not be created, or the <see cref="PropertyKey{T}.EditingControllerCreation"/> value was not set.</returns>
-    public virtual Gui.IMVCANController CreateEditingController(object originalValue)
+    public virtual Gui.IMVCANController? CreateEditingController(object originalValue)
     {
       return null;
     }
@@ -137,7 +138,7 @@ namespace Altaxo.Main.Properties
     /// </summary>
     /// <param name="propertyKeyString">The property key as string value.</param>
     /// <returns>The name of the property</returns>
-    public static string GetPropertyName(string propertyKeyString)
+    public static string? GetPropertyName(string propertyKeyString)
     {
       if (_allRegisteredProperties.TryGetValue(propertyKeyString, out var result))
         return result._propertyName;
@@ -150,7 +151,7 @@ namespace Altaxo.Main.Properties
     /// </summary>
     /// <param name="propertyKeyString">The property key as string.</param>
     /// <returns>Type of the property value associated with the provided key.</returns>
-    public static Type GetPropertyValueType(string propertyKeyString)
+    public static Type? GetPropertyValueType(string propertyKeyString)
     {
       if (_allRegisteredProperties.TryGetValue(propertyKeyString, out var result))
         return result._type;
@@ -163,7 +164,7 @@ namespace Altaxo.Main.Properties
     /// </summary>
     /// <param name="propertyKeyString">The properties key string.</param>
     /// <returns>The property key.</returns>
-    public static PropertyKeyBase GetPropertyKey(string propertyKeyString)
+    public static PropertyKeyBase? GetPropertyKey(string propertyKeyString)
     {
       if (_allRegisteredProperties.TryGetValue(propertyKeyString, out var result))
         return result;

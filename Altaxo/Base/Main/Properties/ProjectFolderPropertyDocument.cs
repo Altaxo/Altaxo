@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -41,7 +43,7 @@ namespace Altaxo.Main.Properties
     Main.ICopyFrom
   {
     private string _name;
-    private PropertyBag _propertyBag;
+    private PropertyBag? _propertyBag;
     private DateTime _creationTimeUtc;
     private DateTime _changeTimeUtc;
 
@@ -60,18 +62,18 @@ namespace Altaxo.Main.Properties
         info.AddValue("Name", s._name);
         info.AddValue("CreationTimeUtc", s._creationTimeUtc);
         info.AddValue("ChangeTimeUtc", s._changeTimeUtc);
-        info.AddValue("Properties", s._propertyBag);
+        info.AddValueOrNull("Properties", s._propertyBag);
       }
 
-      public void Deserialize(ProjectFolderPropertyDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public void Deserialize(ProjectFolderPropertyDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s._name = info.GetString("Name");
         s._creationTimeUtc = info.GetDateTime("CreationTimeUtc");
         s._changeTimeUtc = info.GetDateTime("ChangeTimeUtc");
-        s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
+        s.PropertyBag = info.GetValueOrNull<Main.Properties.PropertyBag>("Properties", s);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = null != o ? (ProjectFolderPropertyDocument)o : new ProjectFolderPropertyDocument(string.Empty);
         Deserialize(s, info, parent);
@@ -87,6 +89,7 @@ namespace Altaxo.Main.Properties
     /// <param name="folderName">Name of the folder.</param>
     public ProjectFolderPropertyDocument(string folderName)
     {
+      _name = string.Empty;
       Name = folderName;
       _creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
       PropertyBag = new PropertyBag();
@@ -98,6 +101,7 @@ namespace Altaxo.Main.Properties
     /// <param name="from">Another instance to copy the name of the bag and the properties from.</param>
     public ProjectFolderPropertyDocument(ProjectFolderPropertyDocument from)
     {
+      _name = string.Empty;
       _creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
       CopyFrom(from);
     }
@@ -155,9 +159,10 @@ namespace Altaxo.Main.Properties
       {
         return _name;
       }
+      [MemberNotNull(nameof(_name))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("New name is null");
         if (_name == value)
           return; // nothing changed
@@ -234,7 +239,7 @@ namespace Altaxo.Main.Properties
     /// <value>
     /// The property bag, or <c>null</c> if there is no property bag.
     /// </value>
-    public PropertyBag PropertyBag
+    public PropertyBag? PropertyBag
     {
       get
       {
@@ -256,9 +261,9 @@ namespace Altaxo.Main.Properties
     {
       get
       {
-        if (null == _propertyBag)
+        if (_propertyBag is null)
           PropertyBag = new PropertyBag();
-        return _propertyBag;
+        return _propertyBag!;
       }
     }
 

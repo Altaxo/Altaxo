@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,7 +58,7 @@ namespace Altaxo.Main.Properties
       {
         var s = (PropertyBagLazyLoaded)obj;
 
-        var assemblyVersion = s.GetType().Assembly.GetName().Version;
+        var assemblyVersion = s.GetType().Assembly.GetName().Version ?? throw new InvalidOperationException($"Can not get version info from assembly {s.GetType().Assembly}");
         var keyList = new HashSet<string>();
         foreach (var entry in s._properties)
         {
@@ -96,7 +98,7 @@ namespace Altaxo.Main.Properties
         info.CommitArray();
       }
 
-      public void Deserialize(PropertyBagLazyLoaded s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public void Deserialize(PropertyBagLazyLoaded s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var assemblyVersionString = info.GetStringAttribute("AssemblyVersion");
         s.AssemblyVersionLoadedFrom = Version.Parse(assemblyVersionString);
@@ -114,7 +116,7 @@ namespace Altaxo.Main.Properties
         info.CloseArray(count);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o as PropertyBagLazyLoaded ?? new PropertyBagLazyLoaded();
         Deserialize(s, info, parent);
@@ -150,7 +152,7 @@ namespace Altaxo.Main.Properties
       using (var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo())
       {
         info.BeginReading(xml);
-        object propval = info.GetValueOrNull("Value", this);
+        object? propval = info.GetValueOrNull("Value", this);
 
         if (propval is IDocumentLeafNode documentLeafNode)
           documentLeafNode.ParentObject = this;
@@ -204,6 +206,7 @@ namespace Altaxo.Main.Properties
     /// <returns>
     /// The property.
     /// </returns>
+    [return: MaybeNull]
     public override T GetValue<T>(PropertyKey<T> p)
     {
       if (_propertiesLazyLoaded.TryGetValue(p.PropertyName, out var propValueAsString))
@@ -213,6 +216,7 @@ namespace Altaxo.Main.Properties
       return base.GetValue<T>(p);
     }
 
+    [return: MaybeNull]
     public override T GetValue<T>(PropertyKey<T> p, T defaultValue)
     {
       if (_propertiesLazyLoaded.TryGetValue(p.PropertyName, out var propValueAsString))
@@ -248,6 +252,7 @@ namespace Altaxo.Main.Properties
     /// <returns>
     /// The property.
     /// </returns>
+    [return: MaybeNull]
     public override T GetValue<T>(string propName)
     {
       if (_propertiesLazyLoaded.TryGetValue(propName, out var propValueAsString))
@@ -345,7 +350,7 @@ namespace Altaxo.Main.Properties
     /// <returns>
     /// A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
     /// </returns>
-    public override IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+    public override IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
     {
       ConvertAllFromLazy();
       return base.GetEnumerator();

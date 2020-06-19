@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.IO;
 
@@ -40,7 +41,7 @@ namespace Altaxo.Main.Services
       IsDebugEnabled = true;
     }
 
-    private void Write(object message, Exception exception)
+    private void Write(object message, Exception? exception)
     {
       if (message != null)
       {
@@ -89,7 +90,7 @@ namespace Altaxo.Main.Services
       Warn(message, null);
     }
 
-    public void Warn(object message, Exception exception)
+    public void Warn(object message, Exception? exception)
     {
       if (IsWarnEnabled)
       {
@@ -107,7 +108,7 @@ namespace Altaxo.Main.Services
       Error(message, null);
     }
 
-    public void Error(object message, Exception exception)
+    public void Error(object message, Exception? exception)
     {
       if (IsErrorEnabled)
       {
@@ -125,7 +126,7 @@ namespace Altaxo.Main.Services
       Fatal(message, null);
     }
 
-    public void Fatal(object message, Exception exception)
+    public void Fatal(object message, Exception? exception)
     {
       if (IsFatalEnabled)
       {

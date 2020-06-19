@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,15 +39,15 @@ namespace Altaxo.Main.Services
   /// <typeparam name="U">Secondary type (usually an interface type) under which to search for the service in <see cref="Altaxo.Current"/>.</typeparam>
   public struct CachedService<T, U> where T : class, U
   {
-    private Action<T> _serviceAttached;
-    private Action<T> _serviceDetached;
+    private Action<T>? _serviceAttached;
+    private Action<T>? _serviceDetached;
     private bool _isRequiredService;
 
     // operational variables
-    private T _instance;
+    private T? _instance;
 
     /// <summary>
-    /// True if it was tried to retrive the instance
+    /// True if it was tried to retrieve the instance
     /// </summary>
     private bool _instanceRetrievalTried;
 
@@ -56,13 +57,13 @@ namespace Altaxo.Main.Services
     /// <param name="isRequiredService">If set to <c>true</c>, it is threated as a required service, and thus, an exception will be thrown if the service is not found.</param>
     /// <param name="serviceAttached">Action that will be executed if a new service instance is cached here.</param>
     /// <param name="serviceDetached">Action that is executed if an old service instance is released from this cache.</param>
-    public CachedService(bool isRequiredService, Action<T> serviceAttached, Action<T> serviceDetached)
+    public CachedService(bool isRequiredService, Action<T>? serviceAttached, Action<T>? serviceDetached)
     {
       _serviceAttached = serviceAttached;
       _serviceDetached = serviceDetached;
       _isRequiredService = isRequiredService;
 
-      _instance = default(T);
+      _instance = default;
       _instanceRetrievalTried = false;
 
       Current.ServiceChanged += new WeakActionHandler(EhServiceChanged, typeof(Current), nameof(Current.ServiceChanged));
@@ -76,12 +77,9 @@ namespace Altaxo.Main.Services
         _serviceDetached?.Invoke(_instance);
       }
 
-      if (_isRequiredService)
-        _instance = Current.GetRequiredService<T, U>();
-      else
-        _instance = Current.GetService<T, U>();
+      _instance = _isRequiredService ? Current.GetRequiredService<T, U>() : Current.GetService<T, U>();
 
-      if (null != _instance)
+      if (!(_instance is null))
       {
         _serviceAttached?.Invoke(_instance);
       }
@@ -96,7 +94,7 @@ namespace Altaxo.Main.Services
     /// <returns>
     /// The result of the conversion.
     /// </returns>
-    public static implicit operator T(CachedService<T, U> s)
+    public static implicit operator T?(CachedService<T, U> s)
     {
       return s.Instance;
     }
@@ -107,11 +105,11 @@ namespace Altaxo.Main.Services
     /// <value>
     /// The service.
     /// </value>
-    public T Instance
+    public T? Instance
     {
       get
       {
-        if (null == _instance && !_instanceRetrievalTried)
+        if (_instance is null && !_instanceRetrievalTried)
         {
           EhServiceChanged();
         }
@@ -129,7 +127,5 @@ namespace Altaxo.Main.Services
         EhServiceChanged();
       }
     }
-
-
   }
 }

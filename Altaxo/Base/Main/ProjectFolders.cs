@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace Altaxo.Main
     : SuspendableDocumentLeafNodeWithSetOfEventArgs
   {
     /// <summary>The parent document for which the folder structure is kept.</summary>
-    private AltaxoDocument AltaxoDocument { get { return (AltaxoDocument)_parent; } }
+    private AltaxoDocument? AltaxoDocument { get { return (AltaxoDocument?)_parent; } }
 
     /// <summary>Directory dictionary. Key is the directoryname. Value is a list of objects contained in the directory.</summary>
     private Dictionary<string, HashSet<object>> _directories = new Dictionary<string, HashSet<object>>();
@@ -46,7 +47,7 @@ namespace Altaxo.Main
     /// Fired if a item or a directory is added or removed. Arguments are the type of change, the item, the old name and the new name.
     /// Note that for directories the item is of type string: it is the directory name.
     /// </summary>
-    public event EventHandler<Main.NamedObjectCollectionChangedEventArgs> CollectionChanged;
+    public event EventHandler<Main.NamedObjectCollectionChangedEventArgs>? CollectionChanged;
 
     /// <summary>
     /// Creates the instance of project folders, tracking the provided Altaxo project.
@@ -54,8 +55,8 @@ namespace Altaxo.Main
     /// <param name="doc">Altaxo project.</param>
     public ProjectFolders(AltaxoDocument doc)
     {
-      if (null == doc)
-        throw new ArgumentNullException();
+      if (doc is null)
+        throw new ArgumentNullException(nameof(doc));
 
       foreach (var coll in doc.ProjectItemCollections)
         coll.CollectionChanged += EhItemCollectionChanged;
@@ -81,7 +82,7 @@ namespace Altaxo.Main
       base.Dispose(isDisposing);
     }
 
-    public override IDocumentNode ParentObject
+    public override IDocumentNode? ParentObject
     {
       get
       {
@@ -412,7 +413,7 @@ namespace Altaxo.Main
       EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromMultipleChanges());
     }
 
-    private void EhItemCollectionChanged(object sender, Main.NamedObjectCollectionChangedEventArgs e)
+    private void EhItemCollectionChanged(object? sender, Main.NamedObjectCollectionChangedEventArgs e)
     {
       if (e.WasMultipleItemsChanged)
       {
@@ -623,7 +624,7 @@ namespace Altaxo.Main
       {
       }
 
-      public override string Validate(string name)
+      public override string? Validate(string name)
       {
         string err = base.Validate(name);
         if (null != err)
@@ -673,9 +674,7 @@ namespace Altaxo.Main
 
     private void SortItemsByDependencyProxyReporter(IProxy proxy, object owner, string propertyName, HashSet<IProjectItem> dependenciesOfItem)
     {
-      var proxyDoc = proxy?.DocumentObject() as IDocumentLeafNode;
-
-      if (proxyDoc != null)
+      if (proxy?.DocumentObject() is IDocumentLeafNode proxyDoc)
       {
         var dependentOnItem = AbsoluteDocumentPath.GetRootNodeImplementing<IProjectItem>(proxyDoc);
         if (null != dependentOnItem)
@@ -815,8 +814,7 @@ namespace Altaxo.Main
 
         if (overwriteExistingItemsOfSameType)
         {
-          var existingItem = AltaxoDocument.TryGetExistingItemWithSameTypeAndName(clonedItem);
-          if (null != existingItem)
+          if (AltaxoDocument.TryGetExistingItemWithSameTypeAndName(clonedItem, out var existingItem))
           {
             Current.ProjectService.DeleteDocument(existingItem, true);
           }

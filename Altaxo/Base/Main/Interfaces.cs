@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Main
@@ -51,7 +52,7 @@ namespace Altaxo.Main
   public interface IChangedEventSource
   {
     /// <summary>Fired when something in the object has changed.</summary>
-    event System.EventHandler Changed;
+    event System.EventHandler? Changed;
   }
 
   public interface IChildChangedEventSink
@@ -95,14 +96,14 @@ namespace Altaxo.Main
     public object Originator;
 
     /// <summary>Can be used to store additional information about that Changed event.</summary>
-    public object Tag;
+    public object? Tag;
 
     /// <summary>
     /// Creates the ChangedEventArgs.
     /// </summary>
     /// <param name="originator">The originator of the Changed event.</param>
     /// <param name="tag">Additional information about the event, may be null.</param>
-    public ChangedEventArgs(object originator, object tag)
+    public ChangedEventArgs(object originator, object? tag)
     {
       Originator = originator;
       Tag = tag;

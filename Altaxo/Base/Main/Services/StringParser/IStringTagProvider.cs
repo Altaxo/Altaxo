@@ -16,12 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 
 namespace Altaxo.Main.Services
 {
   public interface IStringTagProvider
   {
-    string ProvideString(string tag, StringTagPair[] customTags);
+    string? ProvideString(string tag, StringTagPair[]? customTags);
   }
 }

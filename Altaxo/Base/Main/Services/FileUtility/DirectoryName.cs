@@ -16,8 +16,10 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 
@@ -45,7 +47,7 @@ namespace Altaxo.Main.Services
     /// Creates a DirectoryName instance from the string.
     /// It is valid to pass null or an empty string to this method (in that case, a null reference will be returned).
     /// </summary>
-    public static DirectoryName Create(string DirectoryName)
+    public static DirectoryName? Create(string DirectoryName)
     {
       if (string.IsNullOrEmpty(DirectoryName))
         return null;
@@ -62,27 +64,32 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Combines this directory name with a relative path.
     /// </summary>
-    public DirectoryName Combine(DirectoryName relativePath)
+    [return: NotNullIfNotNull("relativePath")]
+    public DirectoryName? Combine(DirectoryName? relativePath)
     {
-      if (relativePath == null)
+      if (relativePath is null)
         return null;
-      return DirectoryName.Create(Path.Combine(_normalizedPath, relativePath));
+      return DirectoryName.Create(Path.Combine(_normalizedPath, relativePath!));
     }
 
     /// <summary>
     /// Combines this directory name with a relative path.
     /// </summary>
-    public FileName Combine(FileName relativePath)
+    [return: NotNullIfNotNull("relativePath")]
+    public FileName? Combine(FileName? relativePath)
     {
-      if (relativePath == null)
+      if (relativePath is { } rpath)
+        return FileName.Create(Path.Combine(_normalizedPath, rpath!));
+      else
         return null;
-      return FileName.Create(Path.Combine(_normalizedPath, relativePath));
+
     }
 
     /// <summary>
     /// Combines this directory name with a relative path.
     /// </summary>
-    public FileName CombineFile(string relativeFileName)
+    [return: NotNullIfNotNull("relativePath")]
+    public FileName? CombineFile(string? relativeFileName)
     {
       if (relativeFileName == null)
         return null;
@@ -92,9 +99,10 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Combines this directory name with a relative path.
     /// </summary>
-    public DirectoryName CombineDirectory(string relativeDirectoryName)
+    [return: NotNullIfNotNull("relativeDirectoryName")]
+    public DirectoryName? CombineDirectory(string? relativeDirectoryName)
     {
-      if (relativeDirectoryName == null)
+      if (relativeDirectoryName is null)
         return null;
       return DirectoryName.Create(Path.Combine(_normalizedPath, relativeDirectoryName));
     }
@@ -102,21 +110,23 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Converts the specified absolute path into a relative path (relative to <c>this</c>).
     /// </summary>
-    public DirectoryName GetRelativePath(DirectoryName path)
+    [return: NotNullIfNotNull("path")]
+    public DirectoryName? GetRelativePath(DirectoryName? path)
     {
-      if (path == null)
+      if (path is null)
         return null;
-      return DirectoryName.Create(FileUtility.GetRelativePath(_normalizedPath, path));
+      return DirectoryName.Create(FileUtility.GetRelativePath(_normalizedPath, path!));
     }
 
     /// <summary>
     /// Converts the specified absolute path into a relative path (relative to <c>this</c>).
     /// </summary>
-    public FileName GetRelativePath(FileName path)
+    [return: NotNullIfNotNull("path")]
+    public FileName? GetRelativePath(FileName? path)
     {
-      if (path == null)
+      if (path is null)
         return null;
-      return FileName.Create(FileUtility.GetRelativePath(_normalizedPath, path));
+      return FileName.Create(FileUtility.GetRelativePath(_normalizedPath, path!));
     }
 
     /// <summary>
@@ -132,17 +142,17 @@ namespace Altaxo.Main.Services
 
     #region Equals and GetHashCode implementation
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return Equals(obj as DirectoryName);
     }
 
-    public bool Equals(DirectoryName other)
+    public bool Equals(DirectoryName? other)
     {
-      if (other != null)
-        return string.Equals(_normalizedPath, other._normalizedPath, StringComparison.OrdinalIgnoreCase);
-      else
+      if (other is null)
         return false;
+      else
+        return string.Equals(_normalizedPath, other._normalizedPath, StringComparison.OrdinalIgnoreCase);
     }
 
     public override int GetHashCode()
@@ -167,25 +177,25 @@ namespace Altaxo.Main.Services
     [ObsoleteAttribute("Warning: comparing DirectoryName with string results in case-sensitive comparison")]
     public static bool operator ==(DirectoryName left, string right)
     {
-      return (string)left == right;
+      return (string?)left == right;
     }
 
     [ObsoleteAttribute("Warning: comparing DirectoryName with string results in case-sensitive comparison")]
     public static bool operator !=(DirectoryName left, string right)
     {
-      return (string)left != right;
+      return (string?)left != right;
     }
 
     [ObsoleteAttribute("Warning: comparing DirectoryName with string results in case-sensitive comparison")]
     public static bool operator ==(string left, DirectoryName right)
     {
-      return left == (string)right;
+      return left == (string?)right;
     }
 
     [ObsoleteAttribute("Warning: comparing DirectoryName with string results in case-sensitive comparison")]
     public static bool operator !=(string left, DirectoryName right)
     {
-      return left != (string)right;
+      return left != (string?)right;
     }
 
     #endregion Equals and GetHashCode implementation
@@ -213,11 +223,11 @@ namespace Altaxo.Main.Services
       return destinationType == typeof(DirectoryName) || base.CanConvertTo(context, destinationType);
     }
 
-    public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+    public override object? ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
     {
-      if (value is string)
+      if (value is string s)
       {
-        return DirectoryName.Create((string)value);
+        return DirectoryName.Create(s);
       }
       return base.ConvertFrom(context, culture, value);
     }
@@ -227,7 +237,7 @@ namespace Altaxo.Main.Services
     {
       if (destinationType == typeof(string))
       {
-        return value.ToString();
+        return value.ToString() ?? string.Empty;
       }
       return base.ConvertTo(context, culture, value, destinationType);
     }

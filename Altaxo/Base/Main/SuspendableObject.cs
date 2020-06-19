@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,14 +64,11 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="token"></param>
     /// <returns>The event count accumulated during the suspend phase.</returns>
-    public int Resume(ref ISuspendToken token)
+    public int Resume(ref ISuspendToken? token)
     {
       int result = 0;
-      if (token != null)
-      {
-        token.Dispose(); // the OnResume function is called from the SuppressToken
-        token = null;
-      }
+      token?.Dispose(); // the OnResume function is called from the SuppressToken
+      token = null;
       return result;
     }
 
@@ -81,19 +79,17 @@ namespace Altaxo.Main
     /// <param name="token"></param>
     /// <param name="firingOfResumeEvent">Designates whether or not to fire the resume event.</param>
     /// <returns>The event count accumulated during the suspend phase.</returns>
-    public int Resume(ref ISuspendToken token, EventFiring firingOfResumeEvent)
+    public int Resume(ref ISuspendToken? token, EventFiring firingOfResumeEvent)
     {
       int result = 0;
-      if (token != null)
+      if (firingOfResumeEvent == EventFiring.Suppressed)
       {
-        if (firingOfResumeEvent == EventFiring.Suppressed)
-        {
-          token.ResumeSilently();
-        }
-
-        token.Dispose(); // the OnResume function is called from the SuppressToken
-        token = null;
+        token?.ResumeSilently();
       }
+
+      token?.Dispose(); // the OnResume function is called from the SuppressToken
+      token = null;
+
       return result;
     }
 
@@ -148,7 +144,7 @@ namespace Altaxo.Main
 
     private class SuspendToken : ISuspendToken
     {
-      private SuspendableObject _parent;
+      private SuspendableObject? _parent;
 
       internal SuspendToken(SuspendableObject parent)
       {
@@ -180,7 +176,7 @@ namespace Altaxo.Main
       /// </summary>
       public void ResumeSilently()
       {
-        var parent = System.Threading.Interlocked.Exchange<SuspendableObject>(ref _parent, null);
+        var parent = System.Threading.Interlocked.Exchange<SuspendableObject?>(ref _parent, null);
         if (parent != null)
         {
           int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
@@ -250,10 +246,10 @@ namespace Altaxo.Main
 
       public void Dispose()
       {
-        var parent = System.Threading.Interlocked.Exchange<SuspendableObject>(ref _parent, null);
+        var parent = System.Threading.Interlocked.Exchange<SuspendableObject?>(ref _parent, null);
         if (parent != null)
         {
-          Exception exceptionInAboutToBeResumed = null;
+          Exception? exceptionInAboutToBeResumed = null;
           if (1 == parent._suspendLevel)
           {
             try
@@ -307,9 +303,9 @@ namespace Altaxo.Main
 
       internal void ResumeTemporarily()
       {
-        Exception ex1 = null;
-        Exception ex2 = null;
-        Exception ex3 = null;
+        Exception? ex1 = null;
+        Exception? ex2 = null;
+        Exception? ex3 = null;
 
         // Try to bring the suspend level to 0
         int suspendLevel = _parent._suspendLevel;
@@ -378,7 +374,7 @@ namespace Altaxo.Main
 
       public void Dispose()
       {
-        Exception exception = null;
+        Exception? exception = null;
         while (_numberOfSuspendLevelsAbsorbed > 0)
         {
           int suspendLevel = System.Threading.Interlocked.Increment(ref _parent._suspendLevel);

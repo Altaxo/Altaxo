@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -61,7 +62,7 @@ namespace Altaxo.Main.Services
     /// optional, and are usually the parents of this document.</param>
     /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If not found, null is returned.</returns>
-    public IMVCController GetController(object[] args, System.Type expectedControllerType)
+    public IMVCController? GetController(object[] args, System.Type expectedControllerType)
     {
       return GetController(args, null, expectedControllerType, UseDocument.Copy);
     }
@@ -74,7 +75,7 @@ namespace Altaxo.Main.Services
     /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
     /// <param name="copyDocument">Determines whether to work directly with the document or use a copy.</param>
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If not found, null is returned.</returns>
-    public IMVCController GetController(object[] args, System.Type expectedControllerType, UseDocument copyDocument)
+    public IMVCController? GetController(object[] args, System.Type expectedControllerType, UseDocument copyDocument)
     {
       return GetController(args, null, expectedControllerType, copyDocument);
     }
@@ -88,12 +89,12 @@ namespace Altaxo.Main.Services
     /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
     /// <param name="copyDocument">Determines wether to use the document directly or use a clone of the document.</param>
     /// <returns>The controller for that document when found.</returns>
-    public IMVCController GetController(object[] creationArgs, System.Type overrideArg0Type, System.Type expectedControllerType, UseDocument copyDocument)
+    public IMVCController? GetController(object[] creationArgs, System.Type? overrideArg0Type, System.Type expectedControllerType, UseDocument copyDocument)
     {
       if (!ReflectionService.IsSubClassOfOrImplements(expectedControllerType, typeof(IMVCController)))
         throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
 
-      object result = null;
+      object? result = null;
 
       // 1st search for all classes that wear the UserControllerForObject attribute
       ReflectionService.IAttributeForClassList list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(typeof(UserControllerForObjectAttribute), creationArgs[0], overrideArg0Type);
@@ -102,7 +103,7 @@ namespace Altaxo.Main.Services
       {
         if (typeof(IMVCANController).IsAssignableFrom(definedType) && expectedControllerType.IsAssignableFrom(definedType))
         {
-          var mvcan = (IMVCANController)Activator.CreateInstance(definedType);
+          var mvcan = (IMVCANController)(Activator.CreateInstance(definedType) ?? throw new InvalidOperationException($"Unable to create instance of type {definedType}"));
           mvcan.UseDocumentCopy = copyDocument;
           if (mvcan.InitializeDocument(creationArgs))
             result = mvcan;
@@ -116,7 +117,8 @@ namespace Altaxo.Main.Services
           break;
       }
 
-      return (IMVCController)result;
+
+      return (IMVCController?)result;
     }
 
     /// <summary>
@@ -126,7 +128,7 @@ namespace Altaxo.Main.Services
     /// optional, and are usually the parents of this document.</param>
     /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
-    public IMVCController GetControllerAndControl(object[] args, System.Type expectedControllerType)
+    public IMVCController? GetControllerAndControl(object[] args, System.Type expectedControllerType)
     {
       return GetControllerAndControl(args, null, expectedControllerType, UseDocument.Copy);
     }
@@ -139,7 +141,7 @@ namespace Altaxo.Main.Services
     /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
     /// <param name="copyDocument">Determines whether to use the document directly or a cloned copy of the document.</param>
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
-    public IMVCController GetControllerAndControl(object[] args, System.Type expectedControllerType, UseDocument copyDocument)
+    public IMVCController? GetControllerAndControl(object[] args, System.Type expectedControllerType, UseDocument copyDocument)
     {
       return GetControllerAndControl(args, null, expectedControllerType, copyDocument);
     }
@@ -153,16 +155,16 @@ namespace Altaxo.Main.Services
     /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
     /// <param name="copyDocument">Determines whether to use the document directly or a cloned copy.</param>
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
-    public IMVCController GetControllerAndControl(object[] args, System.Type overrideArg0Type, System.Type expectedControllerType, UseDocument copyDocument)
+    public IMVCController? GetControllerAndControl(object[] args, System.Type? overrideArg0Type, System.Type expectedControllerType, UseDocument copyDocument)
     {
       if (!typeof(IMVCController).IsAssignableFrom(expectedControllerType))
         throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
 
-      IMVCController controller = GetController(args, overrideArg0Type, expectedControllerType, copyDocument);
-      if (controller == null)
-        return null;
-
-      FindAndAttachControlTo(controller);
+      var controller = GetController(args, overrideArg0Type, expectedControllerType, copyDocument);
+      if (!(controller is null))
+      {
+        FindAndAttachControlTo(controller);
+      }
       return controller;
     }
 
@@ -173,9 +175,9 @@ namespace Altaxo.Main.Services
     /// <param name="controller">The controller a control is searched for.</param>
     /// <param name="expectedType">The expected type of the control.</param>
     /// <returns>The control with the type provided as expectedType argument, or null if no such controller was found.</returns>
-    public object FindAndAttachControlTo(IMVCController controller, System.Type expectedType)
+    public object? FindAndAttachControlTo(IMVCController controller, System.Type expectedType)
     {
-      object result = null;
+      object? result = null;
 
       foreach (var guiControlType in RegisteredGuiTechnologies)
       {
@@ -303,19 +305,19 @@ namespace Altaxo.Main.Services
 
     private static void CreateControlForControllerWithNoExpectedTypeOfViewAttribute(IMVCController controller, System.Type guiControlType)
     {
-      object control =
+      object? control =
         ReflectionService.GetClassForClassInstanceByAttribute(
         typeof(UserControlForControllerAttribute),
         new System.Type[] { guiControlType },
         new object[] { controller });
-      if (null != control)
+      if (!(control is null))
         controller.ViewObject = control;
     }
 
     private static void CreateAndAttachControlOfType(IMVCController controller, System.Type controltype)
     {
-      object controlinstance = System.Activator.CreateInstance(controltype);
-      if (null == controlinstance)
+      object? controlinstance = System.Activator.CreateInstance(controltype);
+      if (controlinstance is null)
         throw new ApplicationException(string.Format("Searching a control for controller of type {0}. Find control type {1}, but it was not possible to create a instance of this type.", controller.GetType(), controltype));
       controller.ViewObject = controlinstance;
     }
@@ -378,14 +380,13 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public bool ShowDialog(object[] args, string title, bool showApplyButton)
     {
-      var controller = (IMVCAController)GetControllerAndControl(args, typeof(IMVCAController));
+      var controller = (IMVCAController?)GetControllerAndControl(args, typeof(IMVCAController));
       try
       {
-        if (null == controller)
+        if (controller is null)
         {
-          if (args[0] is System.Enum)
+          if (args[0] is System.Enum arge)
           {
-            var arge = (System.Enum)args[0];
             return ShowDialog(ref arge, title);
           }
 
@@ -415,10 +416,10 @@ namespace Altaxo.Main.Services
     #region Commands
 
     /// <inheritdoc/>
-    public abstract ICommand NewRelayCommand(Action execute, Func<bool> canExecute = null);
+    public abstract ICommand NewRelayCommand(Action execute, Func<bool>? canExecute = null);
 
     /// <inheritdoc/>
-    public abstract ICommand NewRelayCommand(Action<object> execute, Predicate<object> canExecute = null);
+    public abstract ICommand NewRelayCommand(Action<object> execute, Predicate<object>? canExecute = null);
 
     /// <inheritdoc/>
     public abstract void RegisterRequerySuggestedHandler(EventHandler handler);
@@ -431,10 +432,10 @@ namespace Altaxo.Main.Services
     public bool ShowDialog(ref System.Enum arg, string title)
     {
       System.Type type = arg.GetType();
-      System.Array arr = System.Enum.GetValues(type);
+      System.Array arr = System.Enum.GetValues(type) ?? throw new InvalidOperationException();
       int i;
       for (i = 0; i < arr.Length; ++i)
-        if (arg.ToString() == arr.GetValue(i).ToString())
+        if (arg.ToString() == arr.GetValue(i)?.ToString())
           break;
       if (i == arr.Length)
         throw new ArgumentException("The enumeration is not of integer type", "arg");
@@ -443,7 +444,8 @@ namespace Altaxo.Main.Services
 
       if (ShowDialog(ref obj, title))
       {
-        arg = (System.Enum)arr.GetValue((obj as SingleChoiceObject).Selection);
+        int idx = ((SingleChoiceObject)obj).Selection;
+        arg = (System.Enum)(arr.GetValue(idx) ?? throw new InvalidOperationException());
         return true;
       }
       else
@@ -452,9 +454,6 @@ namespace Altaxo.Main.Services
 
     public bool ShowDialogForEnumFlag(ref System.Enum arg, string title)
     {
-      System.Type type = arg.GetType();
-      System.Array arr = System.Enum.GetValues(type);
-
       var ctrl = new Altaxo.Gui.Common.EnumFlagController();
       ctrl.InitializeDocument(new object[] { arg });
 
@@ -503,9 +502,8 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public bool ShowDialog(ref object arg, string title, bool showApplyButton)
     {
-      if (arg is System.Enum)
+      if (arg is System.Enum arge)
       {
-        var arge = (System.Enum)arg;
         return ShowDialog(ref arge, title);
       }
 
@@ -534,6 +532,9 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public bool ShowDialog<T>(ref T arg, string title, bool showApplyButton)
     {
+      if (arg is null)
+        throw new ArgumentNullException(nameof(arg));
+
       object[] args = new object[1];
       args[0] = arg;
       bool result = ShowDialog(args, title, showApplyButton);
@@ -555,7 +556,7 @@ namespace Altaxo.Main.Services
     /// <param name="errortxt">The error text.</param>
     public void ErrorMessageBox(string errortxt)
     {
-      ErrorMessageBox(errortxt, null);
+      ErrorMessageBox(errortxt, string.Empty);
     }
 
     /// <summary>
@@ -571,7 +572,7 @@ namespace Altaxo.Main.Services
     /// <param name="infotxt">The info text.</param>
     public void InfoMessageBox(string infotxt)
     {
-      InfoMessageBox(infotxt, null);
+      InfoMessageBox(infotxt, string.Empty);
     }
 
     /// <summary>
@@ -607,7 +608,7 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public string GetUserFriendlyClassName(System.Type definedtype)
     {
-      string result = null;
+      string? result = null;
 
       try
       {
@@ -622,8 +623,8 @@ namespace Altaxo.Main.Services
       Attribute[] attributes = Attribute.GetCustomAttributes(definedtype, typeof(System.ComponentModel.DescriptionAttribute));
       if (attributes.Length > 0)
         return ((System.ComponentModel.DescriptionAttribute)attributes[0]).Description;
-
-      return string.Format("{0} ({1})", definedtype.Name, definedtype.Namespace);
+      else
+        return $"{definedtype.Name} ({definedtype.Namespace})";
     }
 
     /// <summary>
@@ -657,7 +658,7 @@ namespace Altaxo.Main.Services
     /// to return the name of the value.</returns>
     public string GetUserFriendlyName(Enum value)
     {
-      string result = null;
+      string? result = null;
       try
       {
         Type t = value.GetType();
@@ -669,10 +670,23 @@ namespace Altaxo.Main.Services
       if (null != result)
         return result;
 
-      FieldInfo fi = value.GetType().GetField(value.ToString());
-      var attributes =
-        (System.ComponentModel.DescriptionAttribute[])fi.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
-      return (attributes.Length > 0) ? attributes[0].Description : value.ToString();
+      try
+      {
+        FieldInfo? fi = value.GetType().GetField(value.ToString());
+        if (!(fi is null))
+        {
+          var attributes =
+            (System.ComponentModel.DescriptionAttribute[])fi.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
+          if (attributes.Length > 0)
+            result = attributes[0].Description;
+        }
+      }
+      catch (Exception)
+      {
+
+      }
+
+      return result ?? value.ToString();
     }
 
     /// <summary>
@@ -683,10 +697,14 @@ namespace Altaxo.Main.Services
     /// to return the name of the value.</returns>
     public static string GetDescription(Enum value)
     {
-      FieldInfo fi = value.GetType().GetField(value.ToString());
-      var attributes =
-        (System.ComponentModel.DescriptionAttribute[])fi.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
-      return (attributes.Length > 0) ? attributes[0].Description : value.ToString();
+      System.ComponentModel.DescriptionAttribute[]? attributes = null;
+      FieldInfo? fi = value.GetType().GetField(value.ToString());
+      if (!(fi is null))
+      {
+        attributes =
+          (System.ComponentModel.DescriptionAttribute[])fi.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
+      }
+      return (attributes?.Length > 0) ? attributes[0].Description : value.ToString();
     }
 
     /// <summary>

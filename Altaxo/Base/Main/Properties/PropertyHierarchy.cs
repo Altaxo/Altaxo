@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -79,7 +81,7 @@ namespace Altaxo.Main.Properties
     /// <param name="bag">On successfull return, this contains the property bag from which the property value was retrieved.</param>
     /// <param name="bagInfo">On successfull return, this contains the information about the property bag from which the property value was retrieved.</param>
     /// <returns><c>True</c> if the property value could be successfully retrieved; <c>false</c> otherwise.</returns>
-    public bool TryGetValue<T>(PropertyKey<T> p, out T value, out IPropertyBag bag, out PropertyBagInformation bagInfo)
+    public bool TryGetValue<T>(PropertyKey<T> p, [MaybeNull] out T value, [MaybeNullWhen(false)] out IPropertyBag bag, [MaybeNullWhen(false)] out PropertyBagInformation bagInfo)
     {
       foreach (var tuple in _propertyBags)
       {
@@ -106,7 +108,7 @@ namespace Altaxo.Main.Properties
     /// <param name="bag">On successfull return, this contains the property bag from which the property value was retrieved.</param>
     /// <param name="bagInfo">On successfull return, this contains the information about the property bag from which the property value was retrieved.</param>
     /// <returns><c>True</c> if the property value could be successfully retrieved; <c>false</c> otherwise.</returns>
-    public bool TryGetValue<T>(string propName, out T value, out IPropertyBag bag, out PropertyBagInformation bagInfo)
+    public bool TryGetValue<T>(string propName, [MaybeNull] out T value, [MaybeNullWhen(false)] out IPropertyBag bag, [MaybeNullWhen(false)] out PropertyBagInformation bagInfo)
     {
       return TryGetValue<T>(propName, false, out value, out bag, out bagInfo);
     }
@@ -130,9 +132,10 @@ namespace Altaxo.Main.Properties
     /// <param name="p">The property key.</param>
     /// <returns>The property value if found in this hierarchy. If the property value is not found, an <see cref="System.Collections.Generic.KeyNotFoundException"/> is thrown.</returns>
     /// <exception cref="System.Collections.Generic.KeyNotFoundException">Thrown if the property key was not found in this hierarchy.</exception>
+    [return: MaybeNull]
     public T GetValue<T>(PropertyKey<T> p)
     {
-      if (TryGetValue(p, out var result, out var bag, out var info))
+      if (TryGetValue(p, out var result, out var _, out var _))
       {
         return result;
       }
@@ -149,7 +152,8 @@ namespace Altaxo.Main.Properties
     /// <param name="p">The property key.</param>
     /// <param name="defaultValue">The default value. This value is returned if the property hierarchy does not contain the property value.</param>
     /// <returns>The property value if found in this hierarchy, or the provided default value.</returns>
-    public T GetValue<T>(PropertyKey<T> p, T defaultValue)
+    [return: MaybeNull]
+    public T GetValue<T>(PropertyKey<T> p, [MaybeNull] T defaultValue)
     {
       if (TryGetValue(p, out var result, out var bag, out var info))
       {
@@ -171,7 +175,7 @@ namespace Altaxo.Main.Properties
     /// <param name="bag">On successfull return, this contains the property bag from which the property value was retrieved.</param>
     /// <param name="bagInfo">On successfull return, this contains the information about the property bag from which the property value was retrieved.</param>
     /// <returns><c>True</c> if the property value could be successfully retrieved; <c>false</c> otherwise.</returns>
-    public bool TryGetValue<T>(string propName, bool useTopmostBagOnly, out T value, out IPropertyBag bag, out PropertyBagInformation bagInfo)
+    public bool TryGetValue<T>(string propName, bool useTopmostBagOnly, [MaybeNull] out T value, [MaybeNullWhen(false)] out IPropertyBag bag, [MaybeNullWhen(false)] out PropertyBagInformation bagInfo)
     {
       foreach (var tuple in _propertyBags)
       {

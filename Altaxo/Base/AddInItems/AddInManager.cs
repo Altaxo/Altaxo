@@ -400,7 +400,7 @@ namespace Altaxo.AddInItems
         }
         if (addIn.Action == AddInAction.Uninstall)
         {
-          if (FileUtility.IsBaseDirectory(_userAddInPath, addIn.FileName))
+          if (FileUtility.IsBaseDirectory(_userAddInPath, addIn.FileName ?? string.Empty))
           {
             foreach (string identity in addIn.Manifest.Identities.Keys)
             {

@@ -22,10 +22,13 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Main.Properties
 {
@@ -40,7 +43,7 @@ namespace Altaxo.Main.Properties
     /// <summary>
     /// Dictionary that hold the properties. Key is the Guid of the property key (or any other string). Value is the property value.
     /// </summary>
-    protected Dictionary<string, object> _properties;
+    protected Dictionary<string, object?> _properties;
 
     /// <summary>
     /// The properties lazy loaded. All keys that are included here are not yet deserialized, i.e in the dictionary <see cref="_properties"/> the value should be a string.
@@ -60,7 +63,7 @@ namespace Altaxo.Main.Properties
     /// <value>
     /// The assembly version of Altaxo this bag was loaded from, or null if this is the default bag.
     /// </value>
-    public Version AssemblyVersionLoadedFrom { get; protected set; }
+    public Version? AssemblyVersionLoadedFrom { get; protected set; }
 
     #region Serialization
 
@@ -84,7 +87,7 @@ namespace Altaxo.Main.Properties
         }
 
         info.CreateArray("Properties", keyList.Count);
-        info.AddAttributeValue("AssemblyVersion", s.GetType().Assembly.GetName().Version.ToString());
+        info.AddAttributeValue("AssemblyVersion", s.GetType().Assembly.GetName().Version?.ToString() ?? throw new InvalidProgramException($"No assembly version available for assembly {s.GetType().Assembly}"));
         foreach (var key in keyList)
         {
           var value = s._properties[key];
@@ -95,14 +98,14 @@ namespace Altaxo.Main.Properties
           if (s._propertiesLazyLoaded.Contains(key) && value is string rawXml)
             info.WriteRaw(rawXml);
           else
-            info.AddValue("Value", value);
+            info.AddValueOrNull("Value", value);
 
           info.CommitElement();
         }
         info.CommitArray();
       }
 
-      public void Deserialize(PropertyBag s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public void Deserialize(PropertyBag s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var assemblyVersionString = info.GetStringAttribute("AssemblyVersion");
         if (!string.IsNullOrEmpty(assemblyVersionString))
@@ -115,7 +118,7 @@ namespace Altaxo.Main.Properties
         {
           info.OpenElement(); // "e"
           string propkey = info.GetString("Key");
-          object value = info.GetValueOrOuterXml("Value", s, out var isOuterXml);
+          object? value = info.GetValueOrOuterXml("Value", s, out var isOuterXml);
           info.CloseElement(); // "e"
 
           if (isOuterXml)
@@ -136,7 +139,7 @@ namespace Altaxo.Main.Properties
         info.CloseArray(count);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = null != o ? (PropertyBag)o : new PropertyBag();
         Deserialize(s, info, parent);
@@ -151,7 +154,7 @@ namespace Altaxo.Main.Properties
     /// </summary>
     public PropertyBag()
     {
-      _properties = new Dictionary<string, object>();
+      _properties = new Dictionary<string, object?>();
     }
 
     /// <summary>
@@ -160,7 +163,7 @@ namespace Altaxo.Main.Properties
     /// <param name="from">From.</param>
     public PropertyBag(PropertyBag from)
     {
-      _properties = new Dictionary<string, object>();
+      _properties = new Dictionary<string, object?>();
       CopyFrom(from);
     }
 
@@ -187,7 +190,7 @@ namespace Altaxo.Main.Properties
         _propertiesLazyLoaded.Clear();
         foreach (var entry in from)
         {
-          object value;
+          object? value;
           if (entry.Value is ICloneable)
           {
             value = ((ICloneable)entry.Value).Clone();
@@ -317,10 +320,11 @@ namespace Altaxo.Main.Properties
     /// <returns>
     /// The property.
     /// </returns>
+    [return: MaybeNull]
     public virtual T GetValue<T>(PropertyKey<T> p)
     {
       if (_propertiesLazyLoaded.Contains(p.GuidString) && _properties.TryGetValue(p.GuidString, out var obj) && obj is string xml && !ConvertFromLazy(p.GuidString, xml))
-        return default(T);
+        return default;
 
       if (_properties.ContainsKey(p.GuidString))
         return (T)_properties[p.GuidString];
@@ -328,7 +332,8 @@ namespace Altaxo.Main.Properties
         throw new KeyNotFoundException(string.Format("The property key {0} was not found in this collection", p.PropertyName));
     }
 
-    public virtual T GetValue<T>(PropertyKey<T> p, T defaultValue)
+    [return: MaybeNull]
+    public virtual T GetValue<T>(PropertyKey<T> p, [MaybeNull] T defaultValue)
     {
       if (_propertiesLazyLoaded.Contains(p.GuidString) && _properties.TryGetValue(p.GuidString, out var obj) && obj is string xml && !ConvertFromLazy(p.GuidString, xml))
         return defaultValue;
@@ -348,23 +353,23 @@ namespace Altaxo.Main.Properties
     /// <returns>
     ///   <c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.
     /// </returns>
-    public virtual bool TryGetValue<T>(PropertyKey<T> p, out T value)
+    public virtual bool TryGetValue<T>(PropertyKey<T> p, [MaybeNullWhen(false)] out T value)
     {
       if (_propertiesLazyLoaded.Contains(p.GuidString) && _properties.TryGetValue(p.GuidString, out var obj) && obj is string xml && !ConvertFromLazy(p.GuidString, xml))
       {
-        value = default(T);
+        value = default;
         return false;
       }
 
       var isPresent = _properties.TryGetValue(p.GuidString, out var o);
-      if (isPresent)
+      if (isPresent && o is T to)
       {
-        value = (T)o;
+        value = to;
         return true;
       }
       else
       {
-        value = default(T);
+        value = default;
         return false;
       }
     }
@@ -422,10 +427,11 @@ namespace Altaxo.Main.Properties
     /// <returns>
     /// The property.
     /// </returns>
+    [return: MaybeNull]
     public virtual T GetValue<T>(string propName)
     {
       if (_propertiesLazyLoaded.Contains(propName) && _properties.TryGetValue(propName, out var obj) && obj is string xml && !ConvertFromLazy(propName, xml))
-        return default(T);
+        return default;
 
       var result = _properties[propName];
       return (T)result;
@@ -440,11 +446,11 @@ namespace Altaxo.Main.Properties
     /// <returns>
     ///   <c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.
     /// </returns>
-    public virtual bool TryGetValue<T>(string propName, out T value)
+    public virtual bool TryGetValue<T>(string propName, [MaybeNull] out T value)
     {
       if (_propertiesLazyLoaded.Contains(propName) && _properties.TryGetValue(propName, out var obj) && obj is string xml && !ConvertFromLazy(propName, xml))
       {
-        value = default(T);
+        value = default;
         return false;
       }
 
@@ -457,7 +463,7 @@ namespace Altaxo.Main.Properties
       }
       else
       {
-        value = default(T);
+        value = default;
         return false;
       }
     }
@@ -508,7 +514,7 @@ namespace Altaxo.Main.Properties
     /// <returns>
     /// A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
     /// </returns>
-    public virtual IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+    public virtual IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
     {
       // we yield only those properties which could be deserialized
       foreach (var entry in _properties)
@@ -516,7 +522,7 @@ namespace Altaxo.Main.Properties
         if (_propertiesLazyLoaded.Contains(entry.Key) && _properties.TryGetValue(entry.Key, out var obj) && obj is string xml)
         {
           if (ConvertFromLazy(entry.Key, xml))
-            yield return new KeyValuePair<string, object>(entry.Key, _properties[entry.Key]);
+            yield return new KeyValuePair<string, object?>(entry.Key, _properties[entry.Key]);
           else
             continue;
         }

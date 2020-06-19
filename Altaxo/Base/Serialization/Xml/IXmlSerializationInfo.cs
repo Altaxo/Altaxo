@@ -113,7 +113,7 @@ namespace Altaxo.Serialization.Xml
     void AddValue(string name, object o);
     void AddValueOrNull(string name, object? o);
 
-    bool IsSerializable(object o);
+    bool IsSerializable(object? o);
 
     void AddBaseValueEmbedded(object o, System.Type basetype);
 

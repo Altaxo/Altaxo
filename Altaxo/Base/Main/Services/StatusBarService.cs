@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,11 +35,13 @@ namespace Altaxo.Main.Services
   [ExpectedTypeOfView(typeof(IStatusBarView))]
   public class StatusBarService : IStatusBarService, IMVCController
   {
-    protected IStatusBarView _statusBarView;
+    private IStatusBarView? _statusBarView;
     protected bool _isStatusBarVisible = true;
+    private bool _isDisposed;
 
     public StatusBarService()
     {
+
     }
 
     public StatusBarService(IStatusBarView statusBar)
@@ -54,70 +57,89 @@ namespace Altaxo.Main.Services
       }
       set
       {
-        _statusBarView.IsStatusBarVisible = value;
+        if (_statusBarView is { } view)
+          view.IsStatusBarVisible = value;
         _isStatusBarVisible = value;
       }
     }
 
     public virtual void SetRightCornerText(string text)
     {
-      _statusBarView.ModeStatusBarPanelContent = text;
+      if (_statusBarView is { } view)
+        view.ModeStatusBarPanelContent = text;
     }
 
     public virtual void SetCaretPosition(int x, int y, int charOffset)
     {
-      _statusBarView.CursorStatusBarPanelContent = StringParser.Parse(
+      if (_statusBarView is { } view)
+      {
+        view.CursorStatusBarPanelContent = StringParser.Parse(
           "${res:StatusBarService.CursorStatusBarPanelText}",
           new StringTagPair("Line", string.Format("{0,-10}", y)),
           new StringTagPair("Column", string.Format("{0,-5}", x)),
           new StringTagPair("Character", string.Format("{0,-5}", charOffset))
       );
+      }
     }
 
     public void SetSelectionSingle(int length)
     {
-      if (length > 0)
+      if (_statusBarView is { } view)
       {
-        _statusBarView.SelectionStatusBarPanelContent = StringParser.Parse(
-            "${res:StatusBarService.SelectionStatusBarPanelTextSingle}",
-            new StringTagPair("Length", string.Format("{0,-10}", length)));
-      }
-      else
-      {
-        _statusBarView.SelectionStatusBarPanelContent = null;
+        if (length > 0)
+        {
+          view.SelectionStatusBarPanelContent = StringParser.Parse(
+              "${res:StatusBarService.SelectionStatusBarPanelTextSingle}",
+              new StringTagPair("Length", string.Format("{0,-10}", length)));
+        }
+        else
+        {
+          view.SelectionStatusBarPanelContent = null;
+        }
       }
     }
 
     public void SetSelectionMulti(int rows, int cols)
     {
-      if (rows > 0 && cols > 0)
+      if (_statusBarView is { } view)
       {
-        _statusBarView.SelectionStatusBarPanelContent = StringParser.Parse(
-            "${res:StatusBarService.SelectionStatusBarPanelTextMulti}",
-            new StringTagPair("Rows", string.Format("{0}", rows)),
-            new StringTagPair("Cols", string.Format("{0}", cols)),
-            new StringTagPair("Total", string.Format("{0}", rows * cols)));
-      }
-      else
-      {
-        _statusBarView.SelectionStatusBarPanelContent = null;
+        if (rows > 0 && cols > 0)
+        {
+          view.SelectionStatusBarPanelContent = StringParser.Parse(
+              "${res:StatusBarService.SelectionStatusBarPanelTextMulti}",
+              new StringTagPair("Rows", string.Format("{0}", rows)),
+              new StringTagPair("Cols", string.Format("{0}", cols)),
+              new StringTagPair("Total", string.Format("{0}", rows * cols)));
+        }
+        else
+        {
+          view.SelectionStatusBarPanelContent = null;
+        }
       }
     }
 
     public void SetInsertMode(bool insertMode)
     {
-      _statusBarView.ModeStatusBarPanelContent = insertMode ? StringParser.Parse("${res:StatusBarService.CaretModes.Insert}") : StringParser.Parse("${res:StatusBarService.CaretModes.Overwrite}");
+      if (_statusBarView is { } view)
+        view.ModeStatusBarPanelContent = insertMode ? StringParser.Parse("${res:StatusBarService.CaretModes.Insert}") : StringParser.Parse("${res:StatusBarService.CaretModes.Overwrite}");
     }
 
-    public void SetMessage(string message, bool highlighted, object icon)
+    public void SetMessage(string message, bool highlighted, object? icon)
     {
-      _statusBarView.SetMessage(StringParser.Parse(message), highlighted, icon);
+      if (_statusBarView is { } view)
+        view.SetMessage(StringParser.Parse(message), highlighted, icon);
     }
 
     #region Progress Monitor
 
-    private Stack<ProgressCollector> waitingProgresses = new Stack<ProgressCollector>();
-    private ProgressCollector currentProgress;
+    private Stack<ProgressCollector?> _waitingProgresses = new Stack<ProgressCollector?>();
+    private ProgressCollector? _currentProgress;
+
+    private void ThrowIfDisposed()
+    {
+      if (_isDisposed)
+        throw new ObjectDisposedException(this.GetType().Name);
+    }
 
     public IProgressReporter CreateProgressReporter(CancellationToken cancellationToken = default(CancellationToken))
     {
@@ -131,29 +153,29 @@ namespace Altaxo.Main.Services
       if (progress == null)
         throw new ArgumentNullException(nameof(progress));
       Current.Dispatcher.VerifyAccess();
-      if (currentProgress != null)
+      if (_currentProgress != null)
       {
-        currentProgress.ProgressMonitorDisposed -= progress_ProgressMonitorDisposed;
-        currentProgress.PropertyChanged -= progress_PropertyChanged;
+        _currentProgress.ProgressMonitorDisposed -= progress_ProgressMonitorDisposed;
+        _currentProgress.PropertyChanged -= progress_PropertyChanged;
       }
-      waitingProgresses.Push(currentProgress); // push even if currentProgress==null
+      _waitingProgresses.Push(_currentProgress); // push even if currentProgress==null
       SetActiveProgress(progress);
     }
 
-    private void SetActiveProgress(ProgressCollector progress)
+    private void SetActiveProgress(ProgressCollector? progress)
     {
       Current.Dispatcher.VerifyAccess();
-      currentProgress = progress;
-      if (progress == null)
+      _currentProgress = progress;
+      if (progress is null)
       {
-        _statusBarView.HideProgress();
+        _statusBarView?.HideProgress();
         return;
       }
 
       progress.ProgressMonitorDisposed += progress_ProgressMonitorDisposed;
       if (progress.ProgressMonitorIsDisposed)
       {
-        progress_ProgressMonitorDisposed(progress, null);
+        progress_ProgressMonitorDisposed(progress, EventArgs.Empty);
         return;
       }
       progress.PropertyChanged += progress_PropertyChanged;
@@ -161,21 +183,25 @@ namespace Altaxo.Main.Services
 
     private void progress_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-      Debug.Assert(sender == currentProgress);
-      _statusBarView.DisplayProgress(currentProgress.TaskName, currentProgress.Progress, currentProgress.Status);
+      if (_currentProgress is null)
+        throw new InvalidProgramException();
+      if (!(_currentProgress == sender))
+        throw new InvalidProgramException();
+
+      _statusBarView?.DisplayProgress(_currentProgress.TaskName, _currentProgress.Progress, _currentProgress.Status);
     }
 
-    private void progress_ProgressMonitorDisposed(object sender, EventArgs e)
+    private void progress_ProgressMonitorDisposed(object? sender, EventArgs e)
     {
-      Debug.Assert(sender == currentProgress);
-      SetActiveProgress(waitingProgresses.Pop()); // stack is never empty: we push null as first element
+      Debug.Assert(sender == _currentProgress);
+      SetActiveProgress(_waitingProgresses.Pop()); // stack is never empty: we push null as first element
     }
 
     #endregion Progress Monitor
 
     #region IMVCController
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {
@@ -183,15 +209,23 @@ namespace Altaxo.Main.Services
       }
       set
       {
-        _statusBarView = value as IStatusBarView;
+        ThrowIfDisposed();
+        if (value is IStatusBarView view)
+          _statusBarView = view;
+        else if (value is null)
+          throw new ArgumentNullException(nameof(ViewObject));
+        else
+          throw new ArgumentException("Wrong type", nameof(ViewObject));
+
       }
     }
 
-    public object ModelObject { get { return null; } }
+    public object? ModelObject { get { return null; } }
 
     public virtual void Dispose()
     {
-      _statusBarView = null;
+      _isDisposed = true;
+      _statusBarView = null!;
     }
 
     #endregion IMVCController

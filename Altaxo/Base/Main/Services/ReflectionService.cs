@@ -22,9 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Altaxo.Gui;
 
@@ -56,7 +58,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private static void EhAssemblyLoaded(object sender, AssemblyLoadEventArgs e)
+    private static void EhAssemblyLoaded(object? sender, AssemblyLoadEventArgs e)
     {
       _loadedAssemblies.Add(e.LoadedAssembly);
     }
@@ -174,16 +176,24 @@ namespace Altaxo.Main.Services
     /// </summary>
     private class SubClassTypeList : IEnumerable<Type>
     {
+
       /// <summary>
       /// How many assemblies are currently cached into this list.
       /// </summary>
       private int _currentAssemblyCount;
 
+      /// <summary>
+      /// The base type that the type under consideration must implement;
+      /// </summary>
       private System.Type _baseType;
-      private System.Type[] _moreTypes;
+
+      /// <summary>
+      /// More types that the classes under consideration must implement (if only implementing the base type is required, the length of the array is zero).
+      /// </summary>
+      private System.Type[]? _moreTypes;
 
       private List<System.Type> _listOfTypes;
-      private List<int> _listOfAssemblies;
+      private IList<int>? _listOfAssemblies;
 
       private SubClassTypeListCollection _parent;
 
@@ -191,6 +201,7 @@ namespace Altaxo.Main.Services
       {
         _baseType = basetypes[0];
         _listOfTypes = new List<Type>();
+        // _moreTypes = _emptyTypeArray;
         _parent = parent;
 
         if (basetypes.Length == 1)
@@ -206,6 +217,9 @@ namespace Altaxo.Main.Services
 
       private void UpdateForOneBasetype()
       {
+        if (_listOfAssemblies is null)
+          throw new InvalidProgramException("For one base type, the list should have been initialized");
+
         int loadedAssemblyCount = _loadedAssemblies.Count;
         if (_currentAssemblyCount == loadedAssemblyCount)
           return;
@@ -232,6 +246,9 @@ namespace Altaxo.Main.Services
 
       private void UpdateForManyBasetypes()
       {
+        if (_moreTypes is null)
+          throw new InvalidProgramException($"{nameof(_moreTypes)} should not be null here!");
+
         int loadedAssemblyCount = _loadedAssemblies.Count;
         if (_currentAssemblyCount == loadedAssemblyCount)
           return;
@@ -250,10 +267,10 @@ namespace Altaxo.Main.Services
 
       public void Update()
       {
-        if (null != _moreTypes)
-          UpdateForManyBasetypes();
-        else
+        if (_moreTypes is null)
           UpdateForOneBasetype();
+        else
+          UpdateForManyBasetypes();
       }
 
       public IEnumerator<Type> GetEnumerator()
@@ -270,7 +287,7 @@ namespace Altaxo.Main.Services
       {
         int nextAssembly = firstAssembly + count;
         int upper, lower;
-        for (upper = _listOfAssemblies.Count - 1; upper >= 0; upper--)
+        for (upper = _listOfAssemblies!.Count - 1; upper >= 0; upper--)
           if (_listOfAssemblies[upper] < nextAssembly)
             break;
 
@@ -437,7 +454,8 @@ namespace Altaxo.Main.Services
         var nameList = new List<AssemblyName>();
         foreach (Type t in types)
         {
-          AssemblyName name = Assembly.GetAssembly(t).GetName();
+          var assembly = Assembly.GetAssembly(t) ?? throw new InvalidOperationException($"Unable to get assembly for type {t}");
+          AssemblyName name = assembly.GetName();
           if (!nameList.Contains(name))
             nameList.Add(name);
         }
@@ -560,7 +578,7 @@ namespace Altaxo.Main.Services
     public static IAttributeForClassList GetAttributeInstancesAndClassTypesForClass(
       System.Type attributeType,
       object target,
-      System.Type overrideObjectType)
+      System.Type? overrideObjectType)
     {
       if (!IsSubClassOfOrImplements(attributeType, typeof(IClassForClassAttribute)))
       {
@@ -583,9 +601,9 @@ namespace Altaxo.Main.Services
     /// <param name="expectedType">The expected type of return value.</param>
     /// <param name="creationArgs">The creation arguments used to instantiate a class.</param>
     /// <returns>The instance of the first class for which the instantiation was successfull and results in the expectedType. Otherwise null.</returns>
-    public static object GetClassInstanceByAttribute(System.Type attributeType, System.Type expectedType, object[] creationArgs)
+    public static object? GetClassInstanceByAttribute(System.Type attributeType, System.Type expectedType, object[] creationArgs)
     {
-      object result = null;
+      object? result = null;
       // 1st search for all classes that wear the UserControllerForObject attribute
       IEnumerable<Type> list = ReflectionService.GetSortedClassTypesHavingAttribute(attributeType, false);
 
@@ -618,7 +636,7 @@ namespace Altaxo.Main.Services
     /// <returns>The instance of the first class for which the instantiation was successfull and results in the expectedType. Otherwise null.</returns>
     /// <remarks>The instantiation is tried first with the full argument list. If that fails, the last element of the argument list is chopped and the instantiation is tried again.
     /// This process is repeated until the instantiation was successfull or the argument list is empty (empty constructor is tried at last).</remarks>
-    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type[] expectedTypes, object[] creationArgs)
+    public static object? GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type[] expectedTypes, object[] creationArgs)
     {
       return GetClassForClassInstanceByAttribute(attributeType, expectedTypes, creationArgs, null);
     }
@@ -636,7 +654,7 @@ namespace Altaxo.Main.Services
     /// <returns>The instance of the first class for which the instantiation was successfull and results in the expectedType. Otherwise null.</returns>
     /// <remarks>The instantiation is tried first with the full argument list. If that fails, the last element of the argument list is chopped and the instantiation is tried again.
     /// This process is repeated until the instantiation was successfull or the argument list is empty (empty constructor is tried at last).</remarks>
-    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type[] expectedTypes, object[] creationArgs, System.Type overrideArgs0Type)
+    public static object? GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type[] expectedTypes, object[] creationArgs, System.Type? overrideArgs0Type)
     {
       // 1st search for all classes that wear the UserControllerForObject attribute
       IAttributeForClassList list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(attributeType, creationArgs[0], overrideArgs0Type);
@@ -654,9 +672,9 @@ namespace Altaxo.Main.Services
     /// <returns>The instance of the first class for which the instantiation was successfull and results in the expectedType. Otherwise null.</returns>
     /// <remarks>The instantiation is tried first with the full argument list. If that fails, the last element of the argument list is chopped and the instantiation is tried again.
     /// This process is repeated until the instantiation was successfull or the argument list is empty (empty constructor is tried at last).</remarks>
-    public static object CreateInstanceFromList(IAttributeForClassList list, System.Type[] expectedTypes, object[] creationArgs)
+    public static object? CreateInstanceFromList(IAttributeForClassList list, System.Type[] expectedTypes, object[] creationArgs)
     {
-      object result = null;
+      object? result = null;
 
       // evaluate the len of the creation args without null's as arguments
       int trueArgLen = creationArgs.Length;
@@ -688,10 +706,10 @@ namespace Altaxo.Main.Services
             }
           }
 
-          ConstructorInfo cinfo = definedType.GetConstructor(creationTypes[j]);
+          ConstructorInfo? cinfo = definedType.GetConstructor(creationTypes[j]);
           if (cinfo != null)
           {
-            object[] chopped = null;
+            object[]? chopped = null;
             if (j < creationArgs.Length)
             {
               chopped = new object[j];
@@ -820,7 +838,8 @@ namespace Altaxo.Main.Services
       /// <summary>
       /// Maintains a list of attribute instances and the class type this attribute is applied to.
       /// </summary>
-      private List<KeyValuePair<Attribute, System.Type>> _list;
+      private List<KeyValuePair<Attribute, System.Type>>? _list;
+      private static readonly KeyValuePair<Attribute, System.Type>[] _emptyList = new KeyValuePair<Attribute, Type>[0];
 
       public ClassesHavingCfCAttributeTargetingTypeList(System.Type attributeType, System.Type targettype)
       {
@@ -829,9 +848,10 @@ namespace Altaxo.Main.Services
         _isSortable = IsSubClassOfOrImplements(_attributeType, typeof(IComparable));
       }
 
+      [MemberNotNull(nameof(_list))]
       public void Add(Attribute attr, System.Type target)
       {
-        if (null == _list)
+        if (_list is null)
           _list = new List<KeyValuePair<Attribute, Type>>();
         _list.Add(new KeyValuePair<Attribute, Type>(attr, target));
       }
@@ -846,7 +866,10 @@ namespace Altaxo.Main.Services
 
       public IEnumerator<KeyValuePair<Attribute, Type>> GetEnumerator()
       {
-        return _list.GetEnumerator();
+        if (_list is null)
+          return (IEnumerator<KeyValuePair<Attribute, Type>>)_emptyList.GetEnumerator();
+        else
+          return _list.GetEnumerator();
       }
 
       #endregion IEnumerable<KeyValuePair<Attribute,Type>> Members
@@ -855,7 +878,10 @@ namespace Altaxo.Main.Services
 
       IEnumerator IEnumerable.GetEnumerator()
       {
-        return _list.GetEnumerator();
+        if (_list is null)
+          return (IEnumerator<KeyValuePair<Attribute, Type>>)_emptyList.GetEnumerator();
+        else
+          return _list.GetEnumerator();
       }
 
       #endregion IEnumerable Members
@@ -890,7 +916,7 @@ namespace Altaxo.Main.Services
       /// Dictionary: Key is the target type of the attribute. Value is a list of objects that have the attribute
       /// of type _attributeType, and this attribute targets the type given in the key.
       /// </summary>
-      private Dictionary<System.Type, ClassesHavingCfCAttributeTargetingTypeList> _attributeForClassListCollection;
+      private Dictionary<System.Type, ClassesHavingCfCAttributeTargetingTypeList>? _attributeForClassListCollection;
 
       public ClassesHavingClassForClassAttributeList(System.Type attributeType)
         : base(attributeType)
@@ -1051,15 +1077,18 @@ namespace Altaxo.Main.Services
       /// <param name="minfo">The minfo.</param>
       /// <param name="para">The para.</param>
       /// <returns>Always false.</returns>
-      private static bool PropertyKeyFieldForceRegistering(System.Reflection.MemberInfo minfo, object para)
+      private static bool PropertyKeyFieldForceRegistering(System.Reflection.MemberInfo minfo, object? para)
       {
         var fieldInfo = minfo as System.Reflection.FieldInfo;
         if (null != fieldInfo)
         {
           if (fieldInfo.FieldType.IsSubclassOf(typeof(Main.Properties.PropertyKeyBase)))
           {
-            // Force getting this field, so that the PropertyKey is registered and is available globally through Altaxo.Main.Properties.AltaxoPropertyKeyBase
-            ((Type)para).InvokeMember(fieldInfo.Name, BindingFlags.Static | BindingFlags.Public | BindingFlags.GetField, null, null, null);
+            if (para is Type type)
+              // Force getting this field, so that the PropertyKey is registered and is available globally through Altaxo.Main.Properties.AltaxoPropertyKeyBase
+              type.InvokeMember(fieldInfo.Name, BindingFlags.Static | BindingFlags.Public | BindingFlags.GetField, null, null, null);
+            else
+              throw new InvalidCastException($"{nameof(para)} is not of expected type Type");
           }
         }
         return false; // return always false, because we don't need the information

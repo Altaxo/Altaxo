@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Altaxo.Serialization;
 
@@ -46,7 +48,7 @@ namespace Altaxo.Main
     /// Arguments are the type of change, the item that changed, the old name (if renamed), and the new name (if renamed).
     /// This event can not be suspended.
     /// </summary>
-    public event EventHandler<Main.NamedObjectCollectionChangedEventArgs> CollectionChanged;
+    public event EventHandler<Main.NamedObjectCollectionChangedEventArgs>? CollectionChanged;
 
     #region Abstract members
 
@@ -189,14 +191,14 @@ namespace Altaxo.Main
       }
     }
 
-    bool IProjectItemCollection.TryGetValue(string projectItemName, out IProjectItem projectItem)
+    bool IProjectItemCollection.TryGetValue(string projectItemName, [MaybeNullWhen(false)] out IProjectItem projectItem)
     {
       var result = _itemsByName.TryGetValue(projectItemName, out var item);
       projectItem = item;
-      return result;
+      return result && !(projectItem is null);
     }
 
-    public bool TryGetValue(string name, out TItem item)
+    public bool TryGetValue(string name, [MaybeNullWhen(false)] out TItem item)
     {
       return _itemsByName.TryGetValue(name, out item);
     }
@@ -345,10 +347,7 @@ namespace Altaxo.Main
 
     bool Main.IParentOfINameOwnerChildNodes.EhChild_CanBeRenamed(Main.INameOwner childNode, string newName)
     {
-      if (_itemsByName.ContainsKey(newName) && !object.ReferenceEquals(_itemsByName[newName], childNode))
-        return false;
-      else
-        return true;
+      return !_itemsByName.ContainsKey(newName) || object.ReferenceEquals(_itemsByName[newName], childNode);
     }
 
     void Main.IParentOfINameOwnerChildNodes.EhChild_HasBeenRenamed(Main.INameOwner item, string oldName)
@@ -389,7 +388,7 @@ namespace Altaxo.Main
     /// <returns>A new project item name that is unique in this collection.</returns>
     public string FindNewItemName()
     {
-      return FindNewItemNameInFolder(null);
+      return FindNewItemNameInFolder(string.Empty);
     }
 
     /// <summary>
@@ -451,22 +450,14 @@ namespace Altaxo.Main
       }
     }
 
-    public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
+    public override Main.IDocumentLeafNode? GetChildObjectNamed(string name)
     {
-      if (_itemsByName.TryGetValue(name, out var result))
-        return result;
-
-      return null;
+      return _itemsByName.TryGetValue(name, out var result) ? result : (IDocumentLeafNode?)null;
     }
 
-    public override string GetNameOfChildObject(Main.IDocumentLeafNode obj)
+    public override string? GetNameOfChildObject(Main.IDocumentLeafNode obj)
     {
-      if (obj is TItem item)
-      {
-        if (_itemsByName.ContainsKey(item.Name))
-          return item.Name;
-      }
-      return null;
+      return obj is TItem item && _itemsByName.ContainsKey(item.Name) ? item.Name : null;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()

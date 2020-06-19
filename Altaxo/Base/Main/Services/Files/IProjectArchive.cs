@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,12 +38,12 @@ namespace Altaxo.Main.Services
   public interface IProjectArchive : IDisposable
   {
     /// <summary>
-    /// Gets the name of the file or folder 
+    /// Gets the name of the file or folder. Can be null if no name is given yet.
     /// </summary>
     /// <value>
     /// The name of the file / describing name of the location.
     /// </value>
-    PathName FileName { get; }
+    PathName? FileName { get; }
 
     // Write mode    
     /// <summary>
@@ -69,7 +70,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="entryName">Name of the entry.</param>
     /// <returns>The entry (if existent); otherwise, null.</returns>
-    IProjectArchiveEntry GetEntry(string entryName);
+    IProjectArchiveEntry? GetEntry(string entryName);
 
 
     /// <summary>
@@ -112,7 +113,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="entryName">Name of the entry.</param>
     /// <returns></returns>
-    IProjectArchiveEntryMemento GetEntryMemento(string entryName);
+    IProjectArchiveEntryMemento? GetEntryMemento(string entryName);
   }
 
   /// <summary>

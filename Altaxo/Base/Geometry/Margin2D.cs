@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,7 +68,7 @@ namespace Altaxo.Geometry
         info.AddValue("Bottom", s.Bottom);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = null != o ? (Margin2D)o : new Margin2D();
 
@@ -97,11 +98,10 @@ namespace Altaxo.Geometry
       return !(a.Equals(b));
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (obj is Margin2D)
+      if (obj is Margin2D from)
       {
-        var from = (Margin2D)obj;
         return Equals(from);
       }
       else

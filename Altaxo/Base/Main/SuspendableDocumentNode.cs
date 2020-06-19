@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Main.Services;
@@ -49,7 +51,7 @@ namespace Altaxo.Main
     private int _resumeInProgress;
 
     /// <summary>Stores the suspend tokens of the suspended childs of this object.</summary>
-    protected HashSet<ISuspendToken> _suspendTokensOfChilds = new HashSet<ISuspendToken>();
+    protected HashSet<ISuspendToken>? _suspendTokensOfChilds = new HashSet<ISuspendToken>();
 
     #region Call back functions by the suspendToken
 
@@ -75,7 +77,7 @@ namespace Altaxo.Main
     protected virtual void OnResume(int eventCount)
     {
       // resume the suspended childs
-      var suspendTokensOfChilds = System.Threading.Interlocked.Exchange(ref _suspendTokensOfChilds, null);
+      var suspendTokensOfChilds = System.Threading.Interlocked.Exchange<HashSet<ISuspendToken>?>(ref _suspendTokensOfChilds, null);
       if (null != suspendTokensOfChilds)
       {
         foreach (var obj in suspendTokensOfChilds)
@@ -401,7 +403,7 @@ namespace Altaxo.Main
     /// The child node with the specified name, or <code>null</code> if no such node exists.
     /// </returns>
     /// <exception cref="System.ArgumentNullException">The specified name was null.</exception>
-    public virtual IDocumentLeafNode GetChildObjectNamed(string name)
+    public virtual IDocumentLeafNode? GetChildObjectNamed(string name)
     {
       if (null == name)
         throw new ArgumentNullException("name");
@@ -415,7 +417,7 @@ namespace Altaxo.Main
     /// <param name="docNode">The child node.</param>
     /// <returns>The name of the child node.</returns>
     /// <exception cref="System.ArgumentNullException">The provided argument docNode was null.</exception>
-    public virtual string GetNameOfChildObject(IDocumentLeafNode docNode)
+    public virtual string? GetNameOfChildObject(IDocumentLeafNode docNode)
     {
       if (null == docNode)
         throw new ArgumentNullException("docNode");
@@ -446,12 +448,9 @@ namespace Altaxo.Main
       {
         if (isDisposing) // Dispose all childs (but only if calling dispose, and not in the finalizer)
         {
-          Action setMemberToNullAction;
           foreach (var tuple in GetDocumentNodeChildrenWithName())
           {
-            if (null != (setMemberToNullAction = tuple.SetMemberToNullAction))
-              setMemberToNullAction(); // set the node to null in the parent __before__ we dispose the node
-
+            tuple.SetMemberToNullAction?.Invoke(); // set the node to null in the parent __before__ we dispose the node
             tuple.DocumentNode?.Dispose();
           }
         }
@@ -465,7 +464,7 @@ namespace Altaxo.Main
 
     private class SuspendToken : ISuspendToken
     {
-      private SuspendableDocumentNode _parent;
+      private SuspendableDocumentNode? _parent;
 
       internal SuspendToken(SuspendableDocumentNode parent)
       {
@@ -498,7 +497,7 @@ namespace Altaxo.Main
       public void ResumeSilently()
       {
         {
-          var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentNode>(ref _parent, null);
+          var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentNode?>(ref _parent, null);
           if (parent != null)
           {
             int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
@@ -547,10 +546,10 @@ namespace Altaxo.Main
 
       public void Dispose()
       {
-        var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentNode>(ref _parent, null);
+        var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentNode?>(ref _parent, null);
         if (parent != null)
         {
-          Exception exceptionInAboutToBeResumed = null;
+          Exception? exceptionInAboutToBeResumed = null;
           if (1 == parent._suspendLevel)
           {
             try
@@ -620,7 +619,7 @@ namespace Altaxo.Main
     /// </summary>
     private class TemporaryResumeToken : IDisposable
     {
-      private SuspendableDocumentNode _parent;
+      private SuspendableDocumentNode? _parent;
       private int _numberOfSuspendLevelsAbsorbed;
 
       internal TemporaryResumeToken(SuspendableDocumentNode parent)
@@ -641,9 +640,12 @@ namespace Altaxo.Main
 
       internal void ResumeTemporarily()
       {
-        Exception ex1 = null;
-        Exception ex2 = null;
-        Exception ex3 = null;
+        if (_parent is null)
+          return; // disposed already
+
+        Exception? ex1 = null;
+        Exception? ex2 = null;
+        Exception? ex3 = null;
 
         // Try to bring the suspend level to 0
         int suspendLevel = _parent._suspendLevel;
@@ -697,13 +699,13 @@ namespace Altaxo.Main
 
       public void Dispose(bool isDisposing)
       {
-        var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentNode>(ref _parent, null);
+        var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentNode?>(ref _parent, null);
         if (parent != null)
         {
           if (!(_numberOfSuspendLevelsAbsorbed >= 0))
             throw new InvalidProgramException();
 
-          Exception exception = null;
+          Exception? exception = null;
           while (_numberOfSuspendLevelsAbsorbed > 0)
           {
             int suspendLevel = System.Threading.Interlocked.Increment(ref parent._suspendLevel);
@@ -739,7 +741,7 @@ namespace Altaxo.Main
     /// <param name="childNode">The child node member variable to set.</param>
     /// <param name="instanceToSet">The instance to set the variable with.</param>
     /// <returns><c>True</c> if the child has been set. If the old child reference equals to the new child, nothing is done, and <c>false</c> is returned.</returns>
-    protected bool ChildSetMember<T>(ref T childNode, T instanceToSet) where T : class, IDocumentLeafNode
+    protected bool ChildSetMember<T>(ref T? childNode, T? instanceToSet) where T : class, IDocumentLeafNode
     {
       if (object.ReferenceEquals(childNode, instanceToSet))
         return false;
@@ -747,11 +749,10 @@ namespace Altaxo.Main
       var tmpNode = childNode;
 
       childNode = instanceToSet;
-      if (null != childNode)
+      if (!(childNode is null))
         childNode.ParentObject = this;
 
-      if (null != tmpNode)
-        tmpNode.Dispose();
+      tmpNode?.Dispose();
 
       return true;
     }
@@ -797,9 +798,9 @@ namespace Altaxo.Main
 
       var oldChild = myChild;
 
-      if (null == fromAnotherChild)
+      if (fromAnotherChild is null)
       {
-        myChild = default(T);
+        myChild = default!;
         if (null != oldChild)
           oldChild.Dispose();
       }
@@ -859,7 +860,7 @@ namespace Altaxo.Main
       {
         if (null != myChild)
           myChild.Dispose();
-        myChild = default(T);
+        myChild = default!;
       }
       else
       {
@@ -879,19 +880,20 @@ namespace Altaxo.Main
     /// <typeparam name="T">Type of the node to clone.</typeparam>
     /// <param name="fromAnotherChild">Node to clone.</param>
     /// <returns>Cloned node with the node's parent already set to this instance.</returns>
+    [return: NotNullIfNotNull("fromAnotherChild")]
+    [return: MaybeNull]
     protected T ChildCloneFrom<T>(T fromAnotherChild) where T : IDocumentLeafNode, ICloneable
     {
-      T result;
-      if (null == fromAnotherChild)
+      if (fromAnotherChild is null)
       {
-        result = default(T);
+        return default;
       }
       else
       {
-        result = (T)fromAnotherChild.Clone();
+        var result = (T)fromAnotherChild.Clone();
         result.ParentObject = this;
+        return result;
       }
-      return result;
     }
 
     /// <summary>
@@ -910,7 +912,7 @@ namespace Altaxo.Main
       get { return GetDocumentNodeChildrenWithName().Select(x => x.DocumentNode); }
     }
 
-    IDocumentLeafNode Collections.INodeWithParentNode<IDocumentLeafNode>.ParentNode
+    IDocumentLeafNode? Collections.INodeWithParentNode<IDocumentLeafNode>.ParentNode
     {
       get { return _parent; }
     }

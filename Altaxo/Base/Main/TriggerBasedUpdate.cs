@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,7 +107,7 @@ namespace Altaxo.Main
     private TimeSpan _timeOfLastTrigger;
     private TimeSpan _timeOfNextUpdate;
 
-    public Action _updateAction;
+    public Action? _updateAction;
 
     /// <summary>Reference to the timer queue.</summary>
     private readonly ITimerQueue _timerQueue;
@@ -129,10 +130,7 @@ namespace Altaxo.Main
     /// <exception cref="System.ArgumentNullException">queue</exception>
     public TriggerBasedUpdate(ITimerQueue queue)
     {
-      if (null == queue)
-        throw new ArgumentNullException("queue");
-
-      _timerQueue = queue;
+      _timerQueue = queue ?? throw new ArgumentNullException(nameof(queue));
     }
 
     #region Properties
@@ -297,7 +295,7 @@ namespace Altaxo.Main
 
     private void EnsureUpdatedDueTime()
     {
-      if (null == _updateAction)
+      if (_updateAction is null)
         return;
 
       if (_updateLock.TryEnterWriteLock(0)) // calculate a new due time only if no update is currently in progress. If update is in progress, the timer queue is updated at the end of the update anyway
@@ -316,7 +314,7 @@ namespace Altaxo.Main
       if (null == updateAction)
         return;
 
-      Exception exception = null;
+      Exception? exception = null;
 
       _updateLock.EnterWriteLock();
 

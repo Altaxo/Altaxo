@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,7 +67,7 @@ namespace Altaxo.Geometry
         info.AddValue("Y", s.Y);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var x = info.GetDouble("X");
         var y = info.GetDouble("Y");
@@ -141,11 +142,10 @@ namespace Altaxo.Geometry
     /// </value>
     public bool IsEmpty { get { return 0 == X && 0 == Y; } }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (obj is VectorD2D)
+      if (obj is VectorD2D from)
       {
-        var from = (VectorD2D)obj;
         return X == from.X && Y == from.Y;
       }
       else

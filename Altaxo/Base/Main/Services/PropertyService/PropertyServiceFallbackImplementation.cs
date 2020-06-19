@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace Altaxo.Main.Services
     public IPropertyBag BuiltinSettings { get; } = new PropertyBag() { ParentObject = SuspendableDocumentNode.StaticInstance };
 
     /// <inheritdoc/>
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PropertyServiceFallbackImplementation"/> class.

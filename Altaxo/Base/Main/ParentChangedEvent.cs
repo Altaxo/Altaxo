@@ -22,26 +22,27 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Main
 {
   public class ParentChangedEventArgs : System.EventArgs
   {
-    protected object _oldParent, _newParent;
+    protected object? _oldParent, _newParent;
 
-    public ParentChangedEventArgs(object oldParent, object newParent)
+    public ParentChangedEventArgs(object? oldParent, object? newParent)
     {
       _oldParent = oldParent;
       _newParent = newParent;
     }
 
-    public object NewParent
+    public object? NewParent
     {
       get { return _newParent; }
     }
 
-    public object OldParent
+    public object? OldParent
     {
       get { return _oldParent; }
     }

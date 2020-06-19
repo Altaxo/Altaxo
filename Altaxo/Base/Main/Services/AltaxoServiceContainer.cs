@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -53,9 +54,9 @@ namespace Altaxo.Main.Services
       _fallbackServiceProviders.Push(provider);
     }
 
-    public object GetService(Type serviceType)
+    public object? GetService(Type serviceType)
     {
-      object instance;
+      object? instance;
       lock (_services)
       {
         if (_services.TryGetValue(serviceType, out instance))
@@ -99,10 +100,10 @@ namespace Altaxo.Main.Services
       // dispose services in reverse order of their creation
       for (int i = disposableTypes.Length - 1; i >= 0; i--)
       {
-        IDisposable disposable = null;
+        IDisposable? disposable = null;
         lock (_services)
         {
-          if (_services.TryGetValue(disposableTypes[i], out object serviceInstance))
+          if (_services.TryGetValue(disposableTypes[i], out var serviceInstance))
           {
             disposable = serviceInstance as IDisposable;
             if (disposable != null)
@@ -118,7 +119,7 @@ namespace Altaxo.Main.Services
       if (serviceInstance is IDisposable disposableService)
         servicesToDispose.Add(serviceType);
 
-      if (_taskCompletionSources.TryGetValue(serviceType, out dynamic taskCompletionSource))
+      if (_taskCompletionSources.TryGetValue(serviceType, out dynamic? taskCompletionSource))
       {
         _taskCompletionSources.Remove(serviceType);
         taskCompletionSource.SetResult(serviceInstance);
@@ -156,7 +157,7 @@ namespace Altaxo.Main.Services
     {
       lock (_services)
       {
-        if (_services.TryGetValue(serviceType, out object instance))
+        if (_services.TryGetValue(serviceType, out var instance))
         {
           _services.Remove(serviceType);
           var disposableInstance = instance as IDisposable;
@@ -182,7 +183,7 @@ namespace Altaxo.Main.Services
         }
         else
         {
-          if (_taskCompletionSources.TryGetValue(serviceType, out object taskCompletionSource))
+          if (_taskCompletionSources.TryGetValue(serviceType, out var taskCompletionSource))
           {
             return ((TaskCompletionSource<T>)taskCompletionSource).Task;
           }

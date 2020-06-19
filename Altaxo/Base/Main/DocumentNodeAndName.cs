@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace Altaxo.Main
   {
     private IDocumentLeafNode _doc;
     private string _name;
-    private Action _setMemberToNullAction;
+    private Action? _setMemberToNullAction;
 
     public DocumentNodeAndName(IDocumentLeafNode doc, string name)
     {
@@ -53,8 +54,8 @@ namespace Altaxo.Main
 
     public string Name { get { return _name; } }
 
-    public Action SetMemberToNullAction { get { return _setMemberToNullAction; } }
+    public Action? SetMemberToNullAction { get { return _setMemberToNullAction; } }
 
-    public bool IsEmpty { get { return null == _doc; } }
+    public bool IsEmpty { get { return _doc is null; } }
   }
 }
