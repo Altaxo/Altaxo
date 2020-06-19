@@ -39,8 +39,8 @@ namespace Altaxo.Units
   public struct DimensionfulQuantity : IComparable<DimensionfulQuantity>, IFormattable
   {
     private double _value;
-    private SIPrefix _prefix;
-    private IUnit _unit;
+    private SIPrefix? _prefix;
+    private IUnit? _unit;
 
     /// <summary>Creates a dimensionless quantity with the provided value.</summary>
     /// <param name="value">Value.</param>
@@ -115,7 +115,10 @@ namespace Altaxo.Units
     /// <returns>A new quantity with the provided value and the same prefix and unit as this quantity.</returns>
     public DimensionfulQuantity WithNewValue(double value)
     {
-      return new DimensionfulQuantity(value, _prefix, _unit);
+      if (_unit is null)
+        throw new InvalidOperationException($"{nameof(DimensionfulQuantity)} is uninitialized!");
+
+      return new DimensionfulQuantity(value, Prefix, _unit);
     }
 
     /// <summary>Gets a value indicating whether this instance is empty. It is empty if no unit has been associated so far with this instance.</summary>
@@ -142,7 +145,7 @@ namespace Altaxo.Units
     {
       get
       {
-        return _unit;
+        return _unit ?? throw new InvalidOperationException($"{nameof(DimensionfulQuantity)} is uninitialized!");
       }
     }
 
@@ -292,12 +295,18 @@ namespace Altaxo.Units
 
     public override int GetHashCode()
     {
-      var hashCode = -1954364663;
-      hashCode = hashCode * -1521134295 + base.GetHashCode();
-      hashCode = hashCode * -1521134295 + _value.GetHashCode();
-      hashCode = hashCode * -1521134295 + EqualityComparer<SIPrefix>.Default.GetHashCode(_prefix);
-      hashCode = hashCode * -1521134295 + EqualityComparer<IUnit>.Default.GetHashCode(_unit);
-      return hashCode;
+      if (_unit is null)
+        return 0;
+      else
+      {
+
+        var hashCode = -1954364663;
+        hashCode = hashCode * -1521134295 + base.GetHashCode();
+        hashCode = hashCode * -1521134295 + _value.GetHashCode();
+        hashCode = hashCode * -1521134295 + EqualityComparer<SIPrefix>.Default.GetHashCode(Prefix);
+        hashCode = hashCode * -1521134295 + EqualityComparer<IUnit>.Default.GetHashCode(_unit);
+        return hashCode;
+      }
     }
 
     public static bool operator ==(DimensionfulQuantity a, DimensionfulQuantity b)
