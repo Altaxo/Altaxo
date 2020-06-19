@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
@@ -61,7 +62,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     public static string Escape(string input)
     {
-      if (input == null)
+      if (input is null)
         throw new ArgumentNullException("input");
       return input.Replace("${", "${$}{");
     }
@@ -69,7 +70,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Expands ${xyz} style property values.
     /// </summary>
-    public static string? Parse(string input)
+    [return: NotNullIfNotNull("input")]
+    public static string? Parse(string? input)
     {
       return Parse(input, null);
     }
@@ -83,10 +85,10 @@ namespace Altaxo.Main.Services
 
     public static void RegisterStringTagProvider(string prefix, IStringTagProvider tagProvider)
     {
-      if (prefix == null)
-        throw new ArgumentNullException("prefix");
-      if (tagProvider == null)
-        throw new ArgumentNullException("tagProvider");
+      if (prefix is null)
+        throw new ArgumentNullException(nameof(prefix));
+      if (tagProvider is null)
+        throw new ArgumentNullException(nameof(tagProvider));
       prefixedStringTagProviders[prefix] = tagProvider;
     }
 
@@ -95,7 +97,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Expands ${xyz} style property values.
     /// </summary>
-    public static string? Parse(string input, params StringTagPair[]? customTags)
+    [return: NotNullIfNotNull("input")]
+    public static string? Parse(string? input, params StringTagPair[]? customTags)
     {
       if (input is null)
         return null;
@@ -107,7 +110,7 @@ namespace Altaxo.Main.Services
         pos = input.IndexOf("${", pos, StringComparison.Ordinal);
         if (pos < 0)
         {
-          if (output == null)
+          if (output is null)
           {
             return input;
           }
@@ -121,7 +124,7 @@ namespace Altaxo.Main.Services
             return output.ToString();
           }
         }
-        if (output == null)
+        if (output is null)
         {
           if (pos == 0)
             output = new StringBuilder();
@@ -167,8 +170,8 @@ namespace Altaxo.Main.Services
     /// </summary>
     public static string? GetValue(string propertyName, params StringTagPair[]? customTags)
     {
-      if (propertyName == null)
-        throw new ArgumentNullException("propertyName");
+      if (propertyName is null)
+        throw new ArgumentNullException(nameof(propertyName));
       if (propertyName == "$")
         return "$";
 
@@ -285,9 +288,6 @@ namespace Altaxo.Main.Services
       try
       {
         var fmt = StringParser.Parse(formatstring);
-        if (fmt is null)
-          throw new InvalidOperationException($"Parsing string \"{formatstring}\" resulted in null.");
-
         return string.Format(fmt, formatitems);
       }
       catch (FormatException ex)
@@ -321,27 +321,23 @@ namespace Altaxo.Main.Services
 
   public struct StringTagPair
   {
-    private readonly string tag;
-    private readonly string value;
+    private readonly string _tag;
+    private readonly string _value;
 
     public string Tag
     {
-      get { return tag; }
+      get { return _tag; }
     }
 
     public string Value
     {
-      get { return value; }
+      get { return _value; }
     }
 
     public StringTagPair(string tag, string value)
     {
-      if (tag == null)
-        throw new ArgumentNullException("tag");
-      if (value == null)
-        throw new ArgumentNullException("value");
-      this.tag = tag;
-      this.value = value;
+      this._tag = tag ?? throw new ArgumentNullException(nameof(tag));
+      this._value = value ?? throw new ArgumentNullException(nameof(value));
     }
   }
 }

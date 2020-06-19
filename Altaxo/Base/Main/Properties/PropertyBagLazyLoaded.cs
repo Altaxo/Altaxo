@@ -217,7 +217,7 @@ namespace Altaxo.Main.Properties
     }
 
     [return: MaybeNull]
-    public override T GetValue<T>(PropertyKey<T> p, T defaultValue)
+    public override T GetValue<T>(PropertyKey<T> p, [MaybeNull] T defaultValue)
     {
       if (_propertiesLazyLoaded.TryGetValue(p.PropertyName, out var propValueAsString))
       {
@@ -235,7 +235,7 @@ namespace Altaxo.Main.Properties
     /// <returns>
     ///   <c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.
     /// </returns>
-    public override bool TryGetValue<T>(PropertyKey<T> p, out T value)
+    public override bool TryGetValue<T>(PropertyKey<T> p, [MaybeNullWhen(false)] out T value)
     {
       if (_propertiesLazyLoaded.TryGetValue(p.GuidString, out var propValueAsString))
       {
@@ -271,7 +271,7 @@ namespace Altaxo.Main.Properties
     /// <returns>
     ///   <c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.
     /// </returns>
-    public override bool TryGetValue<T>(string propName, out T value)
+    public override bool TryGetValue<T>(string propName, [MaybeNull] out T value)
     {
       if (_propertiesLazyLoaded.TryGetValue(propName, out var propValueAsString))
       {

@@ -266,7 +266,8 @@ namespace Altaxo.AddInItems
                 throw new AddInLoadException("BitmapResources requires ONE attribute.");
               }
 
-              string filename = StringParser.Parse(reader.GetAttribute("file"));
+              var filename = StringParser.Parse(reader.GetAttribute("file"));
+
 
               if (reader.LocalName == "BitmapResources")
               {
@@ -276,6 +277,7 @@ namespace Altaxo.AddInItems
               {
                 addIn.StringResources.Add(filename);
               }
+
               break;
 
             case "Runtime":
@@ -405,7 +407,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        if (FileUtility.IsBaseDirectory(FileUtility.ApplicationRootPath, FileName))
+        if (!string.IsNullOrEmpty(FileName) && FileUtility.IsBaseDirectory(FileUtility.ApplicationRootPath, FileName))
         {
           string hidden = Properties["addInManagerHidden"];
           return string.Equals(hidden, "true", StringComparison.OrdinalIgnoreCase)

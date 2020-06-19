@@ -25,7 +25,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 *
 */
 
+#nullable enable
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Altaxo.Geometry.Double_2D
@@ -83,7 +85,7 @@ namespace Altaxo.Geometry.Double_2D
 
 
 
-
+    [MemberNotNull(nameof(ConvexHullPoints), nameof(_hull_convex_edges))]
     private void CalculateConvexHullAsLineList(IEnumerable<PointD2DAnnotated> nodes)
     {
       ConvexHullPoints = GrahamScan.GetConvexHull(nodes);
@@ -104,6 +106,7 @@ namespace Altaxo.Geometry.Double_2D
     /// <param name="concavity">The concavity.</param>
     /// <param name="scaleFactor">The scale factor.</param>
     /// <param name="isSquareGrid"></param>
+    [MemberNotNull(nameof(ConcaveHullPoints))]
     public void SetConcaveHull(double concavity, int scaleFactor, bool isSquareGrid)
     {
 

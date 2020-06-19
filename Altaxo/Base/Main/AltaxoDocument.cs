@@ -565,7 +565,7 @@ namespace Altaxo
     /// </summary>
     /// <param name="archiveManager">The archive manager that currently manages the archive in which the project is stored.</param>
     /// <param name="entryNameToItemDictionary">A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</param>
-    public void ClearIsDirty(IProjectArchiveManager archiveManager, IDictionary<string, IProjectItem> entryNameToItemDictionary)
+    public void ClearIsDirty(IProjectArchiveManager archiveManager, IDictionary<string, IProjectItem>? entryNameToItemDictionary)
     {
       if (null != archiveManager && null != entryNameToItemDictionary)
       {

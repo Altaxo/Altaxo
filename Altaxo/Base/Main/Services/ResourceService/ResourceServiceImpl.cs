@@ -81,7 +81,7 @@ namespace Altaxo.Main.Services
     {
       _resourceDirectory = resourceDirectory ?? throw new ArgumentNullException(nameof(resourceDirectory));
       _propertyService = propertyService ?? throw new ArgumentNullException(nameof(propertyService));
-      _propertyService.PropertyChanged += new PropertyChangedEventHandler(OnPropertyChange);
+      _propertyService.PropertyChanged += EhPropertyChanged;
       LoadLanguageResources(Language);
     }
 
@@ -208,7 +208,7 @@ namespace Altaxo.Main.Services
       }
     }
 
-    private void OnPropertyChange(object sender, PropertyChangedEventArgs e)
+    private void EhPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
       if (e.PropertyName == uiLanguageProperty)
       {
@@ -217,7 +217,7 @@ namespace Altaxo.Main.Services
       }
     }
 
-    [MemberNotNull(nameof(_localStrings), nameof(_currentLanguage))]
+    [MemberNotNull(nameof(_currentLanguage))]
     private void LoadLanguageResources(string language)
     {
       lock (_loadLock)
@@ -236,7 +236,7 @@ namespace Altaxo.Main.Services
         }
 
         _localStrings = Load(stringResources, language);
-        if (_localStrings == null && language.IndexOf('-') > 0)
+        if (_localStrings is null && language.IndexOf('-') > 0)
         {
           _localStrings = Load(stringResources, language.Split('-')[0]);
         }

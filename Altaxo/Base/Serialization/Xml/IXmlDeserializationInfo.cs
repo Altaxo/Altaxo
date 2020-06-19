@@ -158,7 +158,7 @@ namespace Altaxo.Serialization.Xml
     /// <value>
     /// The property dictionary.
     /// </value>
-    IDictionary<string, object> PropertyDictionary { get; }
+    IDictionary<string, object?> PropertyDictionary { get; }
 
     /// <summary>
     /// Gets a property value from the property dictionary identified by the provided key string. If the property does not exist in the dictionary, the default value is returned.

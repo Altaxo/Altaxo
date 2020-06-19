@@ -581,9 +581,9 @@ namespace Altaxo.Main.Properties
     /// <param name="from">The bag from which to take the property values that should be merged into.</param>
     /// <param name="overrideExistingProperties">If <c>true</c>, a property that already exist in this bag will be overriden by the property in the other bag. Otherwise, the existing
     /// property is left untouched.</param>
-    public void MergePropertiesFrom(PropertyBag from, bool overrideExistingProperties)
+    public void MergePropertiesFrom(PropertyBag? from, bool overrideExistingProperties)
     {
-      if (null == from)
+      if (from is null)
         return;
 
       bool anythingChanged = false;

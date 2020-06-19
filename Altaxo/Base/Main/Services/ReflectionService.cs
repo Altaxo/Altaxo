@@ -314,8 +314,13 @@ namespace Altaxo.Main.Services
       {
         #region IEqualityComparer<Type[]> Members
 
-        public bool Equals(Type[] x, Type[] y)
+        public bool Equals(Type[]? x, Type[]? y)
         {
+          if (x is null && y is null)
+            return true;
+          if (x is null || y is null)
+            return false;
+
           if (x.Length != y.Length)
             return false;
           for (int i = 0; i < x.Length; i++)
@@ -978,8 +983,13 @@ namespace Altaxo.Main.Services
       {
         #region IEqualityComparer<Type[]> Members
 
-        public bool Equals(Type[] x, Type[] y)
+        public bool Equals(Type[]? x, Type[]? y)
         {
+          if (x is null && y is null)
+            return true;
+          if (x is null || y is null)
+            return false;
+
           if (x.Length != y.Length)
             return false;
           for (int i = 0; i < x.Length; i++)

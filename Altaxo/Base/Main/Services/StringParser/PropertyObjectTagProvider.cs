@@ -34,7 +34,7 @@ namespace Altaxo.Main.Services
       this.obj = obj ?? throw new ArgumentNullException(nameof(obj));
     }
 
-    public string? ProvideString(string tag, StringTagPair[] customTags)
+    public string? ProvideString(string tag, StringTagPair[]? customTags)
     {
       Type type = obj.GetType();
       if (type.GetProperty(tag) is PropertyInfo prop)

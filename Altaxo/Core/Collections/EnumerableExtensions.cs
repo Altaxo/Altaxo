@@ -64,8 +64,7 @@ namespace Altaxo.Collections
           {
             T element = stack.Peek().Current;
             yield return element;
-            IEnumerable<T> children = recursion(element);
-            if (children != null)
+            if (recursion(element) is { } children)
             {
               stack.Push(children.GetEnumerator());
             }

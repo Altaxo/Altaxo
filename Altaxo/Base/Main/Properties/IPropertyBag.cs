@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -50,7 +51,8 @@ namespace Altaxo.Main.Properties
     /// <param name="p">The property key.</param>
     /// <param name="defaultValue">Default value that is returned if no property value is found in the bag.</param>
     /// <returns>The property.</returns>
-    T GetValue<T>(PropertyKey<T> p, T defaultValue);
+    [return: MaybeNull]
+    T GetValue<T>(PropertyKey<T> p, [MaybeNull] T defaultValue);
 
     /// <summary>
     /// Tries to get the value of a property.

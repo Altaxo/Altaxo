@@ -224,7 +224,7 @@ namespace Altaxo.AddInItems
         _appName = applicationName;
       }
 
-      public string? ProvideString(string tag, StringTagPair[] customTags)
+      public string? ProvideString(string tag, StringTagPair[]? customTags)
       {
         if (string.Equals(tag, "AppName", StringComparison.OrdinalIgnoreCase))
           return _appName;

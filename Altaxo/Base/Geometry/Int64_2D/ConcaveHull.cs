@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ClipperLib;
 
@@ -101,6 +103,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// Thus a value of 1 is the limit case of a convex hull, a value of -1 allows sharp and deep bends.
     /// </param>
     /// <param name="minimalEdgeLength">The minimal length of an edge of the hull that is considered as a candidate edge for having a concave bend.</param>
+    [MemberNotNull(nameof(ConcaveHullPoints))]
     public void CalculateConcaveHull(double concavity, double minimalEdgeLength)
     {
       concavity = Math.Min(1, Math.Max(concavity, -1));

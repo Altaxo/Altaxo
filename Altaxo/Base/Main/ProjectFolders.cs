@@ -38,7 +38,7 @@ namespace Altaxo.Main
     : SuspendableDocumentLeafNodeWithSetOfEventArgs
   {
     /// <summary>The parent document for which the folder structure is kept.</summary>
-    private AltaxoDocument? AltaxoDocument { get { return (AltaxoDocument?)_parent; } }
+    private AltaxoDocument AltaxoDocument { get { return (AltaxoDocument)_parent!; } }
 
     /// <summary>Directory dictionary. Key is the directoryname. Value is a list of objects contained in the directory.</summary>
     private Dictionary<string, HashSet<object>> _directories = new Dictionary<string, HashSet<object>>();

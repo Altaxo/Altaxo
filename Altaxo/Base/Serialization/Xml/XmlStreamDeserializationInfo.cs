@@ -42,7 +42,7 @@ namespace Altaxo.Serialization.Xml
 
     private XmlSurrogateSelector _surrogateSelector;
     private System.Text.StringBuilder _stringBuilder = new System.Text.StringBuilder();
-    private Dictionary<string, object> _propertyDictionary = new Dictionary<string, object>();
+    private Dictionary<string, object?> _propertyDictionary = new Dictionary<string, object?>();
 
     private byte[] _buffer;
     private int _bufferSize;
@@ -139,9 +139,10 @@ namespace Altaxo.Serialization.Xml
     /// <value>
     /// The property dictionary.
     /// </value>
-    public IDictionary<string, object> PropertyDictionary { get { return _propertyDictionary; } }
+    public IDictionary<string, object?> PropertyDictionary { get { return _propertyDictionary; } }
 
     /// <inheritdoc />
+    [return: MaybeNull]
     public T GetPropertyOrDefault<T>(string propertyKey)
     {
       if (_propertyDictionary.TryGetValue(propertyKey, out var result))
@@ -151,7 +152,7 @@ namespace Altaxo.Serialization.Xml
       else
       {
 #nullable disable
-        return default(T);
+        return default;
 #nullable enable
       }
     }

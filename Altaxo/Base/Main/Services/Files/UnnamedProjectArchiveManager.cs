@@ -84,7 +84,7 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
-    public void ReleaseArchiveThreadSave(object claimer, ref IProjectArchive archive)
+    public void ReleaseArchiveThreadSave(object claimer, ref IProjectArchive? archive)
     {
       throw new NotImplementedException();
     }

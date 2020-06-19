@@ -40,7 +40,7 @@ namespace Altaxo.Main.Services.Files
     // fixed data
     private readonly string _fileName;
     private readonly string _entryName;
-    private readonly IProjectArchiveManager _archiveManager;
+    private readonly IProjectArchiveManager? _archiveManager;
 
     // operational data
     private IProjectArchive? _archive;
@@ -52,7 +52,7 @@ namespace Altaxo.Main.Services.Files
     /// <param name="entryName">Name of the entry.</param>
     /// <param name="archiveManager">The archive manager.</param>
     /// <param name="archiveFileName">Name of the archive file. This parameter is used only if the provided <paramref name="archiveManager"/> is null or invalid.</param>
-    public ProjectArchiveEntryMemento(string entryName, IProjectArchiveManager archiveManager, string archiveFileName)
+    public ProjectArchiveEntryMemento(string entryName, IProjectArchiveManager? archiveManager, string archiveFileName)
     {
       _entryName = entryName;
       _archiveManager = archiveManager;
