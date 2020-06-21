@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Immutable;
 using Altaxo.Main.Services.ScriptCompilation;
@@ -62,7 +63,7 @@ namespace Altaxo.Scripting
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         PropertyColumnScript s = null != o ? (PropertyColumnScript)o : new PropertyColumnScript();
 
@@ -237,7 +238,7 @@ namespace Altaxo.Scripting
     public bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
     {
       bool bSucceeded = true;
-      Altaxo.Data.DataTableCollection myDataSet = null;
+      Altaxo.Data.DataTableCollection? myDataSet;
 
       // first, test some preconditions
       if (null == _scriptObject)
@@ -252,7 +253,7 @@ namespace Altaxo.Scripting
 
       myDataSet = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myTable);
 
-      IDisposable suspendToken = null;
+      IDisposable? suspendToken = null;
 
       if (null != myDataSet)
         suspendToken = myDataSet.SuspendGetToken();

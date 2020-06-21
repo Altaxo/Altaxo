@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Immutable;
 using Altaxo.Main.Services.ScriptCompilation;
@@ -47,7 +48,7 @@ namespace Altaxo.Scripting
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         DataColumnScript s = null != o ? (DataColumnScript)o : new DataColumnScript();
 
@@ -90,9 +91,9 @@ namespace Altaxo.Scripting
         throw new NotSupportedException("Serializing this old type is not supported any longer");
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DataColumnScript s = null != o ? (DataColumnScript)o : new DataColumnScript();
+        var s = (DataColumnScript?)o ?? new DataColumnScript();
 
         var scriptStyle = (ScriptStyle)info.GetInt32("Style");
         string scriptText = info.GetString("Text");
@@ -273,13 +274,13 @@ namespace Altaxo.Scripting
     public bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
     {
       bool bSucceeded = true;
-      Altaxo.Data.DataTableCollection myDataSet = null;
+      Altaxo.Data.DataTableCollection? myDataSet;
 
-      if (null == _scriptObject && !_wasTriedToCompile)
+      if (_scriptObject is null && !_wasTriedToCompile)
         Compile();
 
       // first, test some preconditions
-      if (null == _scriptObject)
+      if (_scriptObject is null)
       {
         _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, "Script Object is null"));
         return false;
@@ -291,7 +292,7 @@ namespace Altaxo.Scripting
 
       myDataSet = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myTable);
 
-      IDisposable suspendToken = null;
+      IDisposable? suspendToken = null;
 
       if (null != myDataSet)
         suspendToken = myDataSet.SuspendGetToken();

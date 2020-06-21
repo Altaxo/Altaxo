@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable  enable
 using System;
 using System.Collections.Immutable;
 using Altaxo.Main.Services.ScriptCompilation;
@@ -58,9 +59,9 @@ namespace Altaxo.Scripting
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        FunctionEvaluationScript s = null != o ? (FunctionEvaluationScript)o : new FunctionEvaluationScript();
+        FunctionEvaluationScript s = (FunctionEvaluationScript?)o ?? new FunctionEvaluationScript();
 
         // deserialize the base class
         info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Immutable;
 using Altaxo.Main.Services.ScriptCompilation;
@@ -49,9 +50,9 @@ namespace Altaxo.Scripting
         info.AddValue("Text", s.ScriptText);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        TableScript s = null != o ? (TableScript)o : new TableScript();
+        var s = (TableScript?)o ?? new TableScript();
 
         s.ScriptText = info.GetString("Text");
         return s;
@@ -276,7 +277,7 @@ namespace Altaxo.Scripting
     public bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataTable myTable, Altaxo.IProgressReporter reporter)
     {
       bool bSucceeded = true;
-      Altaxo.Data.DataTableCollection myDataSet = null;
+      Altaxo.Data.DataTableCollection? myDataSet;
 
       if (null == _scriptObject && !_wasTriedToCompile)
         Compile();
@@ -290,7 +291,7 @@ namespace Altaxo.Scripting
 
       myDataSet = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myTable);
 
-      IDisposable suspendToken = null;
+      IDisposable? suspendToken = null;
 
       if (null != myDataSet)
         suspendToken = myDataSet.SuspendGetToken();

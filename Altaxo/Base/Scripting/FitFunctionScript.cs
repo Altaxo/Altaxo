@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main.Services.ScriptCompilation;
 
@@ -41,7 +43,7 @@ namespace Altaxo.Scripting
     /// <see cref="IsUsingUserDefinedParameterNames" /> to true, and the <see cref="NumberOfParameters" /> to the given number
     /// of user defined parameters.
     /// </summary>
-    string[] UserDefinedParameterNames { get; set; }
+    string[]? UserDefinedParameterNames { get; set; }
 
     string[] DependentVariablesNames { set; }
 
@@ -92,7 +94,7 @@ namespace Altaxo.Scripting
     /// <summary>
     /// Names of the parameters. This is set to null if no parameter names where provided.
     /// </summary>
-    private string[] _UserDefinedParameterNames = new string[] { "A", "B" };
+    private string[]? _UserDefinedParameterNames = new string[] { "A", "B" };
 
     private string[] _IndependentVariablesNames = new string[] { "x" };
     private string[] _DependentVariablesNames = new string[] { "y" };
@@ -135,7 +137,7 @@ namespace Altaxo.Scripting
       set { _fitFunctionDescription = value; }
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return obj is FitFunctionScript from &&
                       base.Equals(from) &&
@@ -158,7 +160,7 @@ namespace Altaxo.Scripting
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitFunctionScript), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      private FitFunctionScript _deserializedObject;
+      private FitFunctionScript? _deserializedObject;
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -167,9 +169,9 @@ namespace Altaxo.Scripting
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        FitFunctionScript s = null != o ? (FitFunctionScript)o : new FitFunctionScript();
+        var s = (FitFunctionScript?)o ?? new FitFunctionScript();
 
         // deserialize the base class
         info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
@@ -187,10 +189,8 @@ namespace Altaxo.Scripting
       {
         info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
 
-        if (documentRoot is AltaxoDocument)
+        if (documentRoot is AltaxoDocument doc)
         {
-          var doc = documentRoot as AltaxoDocument;
-
           // add this script to the collection of scripts
           doc.FitFunctionScripts.Add(_deserializedObject);
         }
@@ -200,7 +200,7 @@ namespace Altaxo.Scripting
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitFunctionScript), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      private FitFunctionScript _deserializedObject;
+      private FitFunctionScript? _deserializedObject;
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -233,9 +233,9 @@ namespace Altaxo.Scripting
         info.AddArray("DependentVariableNames", s._DependentVariablesNames, s._DependentVariablesNames.Length);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        FitFunctionScript s = null != o ? (FitFunctionScript)o : new FitFunctionScript();
+        var s = (FitFunctionScript?)o ?? new FitFunctionScript();
 
         // deserialize the base class
         info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
@@ -256,7 +256,7 @@ namespace Altaxo.Scripting
         };
         info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
 
-        if (s._IsUsingUserDefinedParameterNames && s._NumberOfParameters != s._UserDefinedParameterNames.Length)
+        if (s.IsUsingUserDefinedParameterNames && s._NumberOfParameters != s._UserDefinedParameterNames.Length)
           s.Compile(); // dirty quick fix in the case that the userdefined parameters where not updated before serialization
 
         return s;
@@ -266,10 +266,8 @@ namespace Altaxo.Scripting
       {
         info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(info_DeserializationFinished);
 
-        if (documentRoot is AltaxoDocument)
+        if (documentRoot is AltaxoDocument doc)
         {
-          var doc = documentRoot as AltaxoDocument;
-
           // add this script to the collection of scripts
           doc.FitFunctionScripts.Add(_deserializedObject);
         }
@@ -279,7 +277,7 @@ namespace Altaxo.Scripting
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitFunctionScript), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      private FitFunctionScript _deserializedObject;
+      private FitFunctionScript? _deserializedObject;
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -313,9 +311,9 @@ namespace Altaxo.Scripting
         info.AddArray("DependentVariableNames", s._DependentVariablesNames, s._DependentVariablesNames.Length);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        FitFunctionScript s = null != o ? (FitFunctionScript)o : new FitFunctionScript();
+        var s = (FitFunctionScript?)o ?? new FitFunctionScript();
 
         s._fitFunctionCategory = info.GetString("Category");
         s._fitFunctionName = info.GetString("Name");
@@ -345,10 +343,8 @@ namespace Altaxo.Scripting
       {
         info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
 
-        if (documentRoot is AltaxoDocument)
+        if (documentRoot is AltaxoDocument doc)
         {
-          var doc = documentRoot as AltaxoDocument;
-
           // add this script to the collection of scripts
           doc.FitFunctionScripts.Add(_deserializedObject);
         }
@@ -388,7 +384,7 @@ namespace Altaxo.Scripting
     {
       _IsUsingUserDefinedParameterNames = from._IsUsingUserDefinedParameterNames;
       _NumberOfParameters = from._NumberOfParameters;
-      _UserDefinedParameterNames = null == from._UserDefinedParameterNames ? null : (string[])from._UserDefinedParameterNames.Clone();
+      _UserDefinedParameterNames = from._UserDefinedParameterNames is null ? null : (string[])from._UserDefinedParameterNames.Clone();
       _IndependentVariablesNames = (string[])from._IndependentVariablesNames.Clone();
       _DependentVariablesNames = (string[])from._DependentVariablesNames.Clone();
       _fitFunctionName = from._fitFunctionName;
@@ -963,16 +959,17 @@ namespace Altaxo.Scripting
 
     public bool IsUsingUserDefinedParameterNames
     {
+      [MemberNotNullWhen(true, nameof(_UserDefinedParameterNames))]
       get
       {
-        return _IsUsingUserDefinedParameterNames;
+        return _IsUsingUserDefinedParameterNames && !(_UserDefinedParameterNames is null);
       }
       set
       {
         if (value == true && _IsUsingUserDefinedParameterNames == false)
         {
-          string[] oldNames = _UserDefinedParameterNames;
-          if (oldNames == null)
+          var oldNames = _UserDefinedParameterNames;
+          if (oldNames is null)
             oldNames = new string[0];
 
           string[] newNames = new string[_NumberOfParameters];
@@ -1025,17 +1022,20 @@ namespace Altaxo.Scripting
       ScriptText = sb.ToString();
     }
 
-    public string[] UserDefinedParameterNames
+    public string[]? UserDefinedParameterNames
     {
       get
       {
-        if (_IsUsingUserDefinedParameterNames)
+        if (IsUsingUserDefinedParameterNames)
           return (string[])_UserDefinedParameterNames.Clone();
         else
           return null;
       }
       set
       {
+        if (value is null)
+          throw new ArgumentNullException(nameof(value));
+
         var sb = new System.Text.StringBuilder();
 
         _IsUsingUserDefinedParameterNames = true;
@@ -1173,7 +1173,7 @@ namespace Altaxo.Scripting
         return 0;
     }
 
-    public IVarianceScaling DefaultVarianceScaling(int i)
+    public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       if (_scriptObject != null)
         return ((IFitFunction)_scriptObject).DefaultVarianceScaling(i);
