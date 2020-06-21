@@ -101,9 +101,9 @@ namespace Altaxo.Settings
         info.AddValue("InstallationWindowClosingTime", s.InstallationWindowClosingTime);
       }
 
-      protected virtual AutoUpdateSettings SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      protected virtual AutoUpdateSettings SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new AutoUpdateSettings() : (AutoUpdateSettings)o);
+        var s = (AutoUpdateSettings?)o ?? new AutoUpdateSettings();
 
         s.EnableAutoUpdates = info.GetBoolean("EnableAutoUpdates");
         s.DownloadUnstableVersion = info.GetBoolean("DownloadUnstableVersion");

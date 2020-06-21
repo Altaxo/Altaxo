@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -49,14 +50,16 @@ namespace Altaxo.Settings.Scripting
       options.AddFilter("*.*", "All files (*.*)");
       options.FilterIndex = 0;
       options.Multiselect = true;
-      options.InitialDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+      var initialDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location);
+      if (!string.IsNullOrEmpty(initialDirectory))
+        options.InitialDirectory = initialDirectory;
       if (Current.Gui.ShowOpenFileDialog(options))
       {
         var stb = new StringBuilder();
         // try to create an assembly out of the filename(s)
         foreach (string filename in options.FileNames)
         {
-          Assembly asm = null;
+          Assembly? asm = null;
           try
           {
             asm = Assembly.LoadFrom(filename);
