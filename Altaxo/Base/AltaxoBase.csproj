@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net48;net5.0</TargetFrameworks>
     <LangVersion>preview</LangVersion>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -32,14 +32,8 @@
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
   </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
-    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="4.7.0" />
-  </ItemGroup>
   
-   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp5.0' ">
+   <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
     <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="4.7.0" />
