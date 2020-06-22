@@ -43,7 +43,7 @@ namespace Altaxo
     /// </summary>
     /// <param name="owner">The owner of a property bag with which to start the enumeration.</param>
     /// <returns>Enumeration of the property bags in the project hierarchy.</returns>
-    public static IEnumerable<PropertyBagWithInformation> GetPropertyBags(this IPropertyBagOwner owner)
+    public static IEnumerable<PropertyBagWithInformation> GetPropertyBags(this IPropertyBagOwner? owner)
     {
       if (null != owner && !(owner is ProjectFolderPropertyDocument)) // Project folder bags are handled further down
       {
@@ -53,7 +53,7 @@ namespace Altaxo
 
       var namedOwner = owner as Main.INameOwner;
       var proj = Current.Project;
-      ProjectFolderPropertyDocument bag;
+      ProjectFolderPropertyDocument? bag;
       if (null != namedOwner && !string.IsNullOrEmpty(namedOwner.Name))
       {
         var folder = Main.ProjectFolder.GetFolderPart(namedOwner.Name);
@@ -102,7 +102,7 @@ namespace Altaxo
     public static IEnumerable<PropertyBagWithInformation> GetPropertyBagsStartingFromFolder(string folder)
     {
       var proj = Current.Project;
-      ProjectFolderPropertyDocument bag;
+      ProjectFolderPropertyDocument? bag;
       while (!string.IsNullOrEmpty(folder))
       {
         if (proj.ProjectFolderProperties.TryGetValue(folder, out bag) && bag.PropertyBag != null)
@@ -223,7 +223,7 @@ namespace Altaxo
     public static PropertyHierarchy GetPropertyContext(this Altaxo.Main.IDocumentLeafNode node)
     {
       var owner = node as IPropertyBagOwner;
-      if (null == owner)
+      if (owner is null)
         owner = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<IPropertyBagOwner>(node);
 
       return new PropertyHierarchy(GetPropertyBags(owner));
@@ -256,7 +256,7 @@ namespace Altaxo
     {
       var proj = Current.Project;
 
-      ProjectFolderPropertyDocument bag;
+      ProjectFolderPropertyDocument? bag;
 
       if (null != namedOwner)
       {

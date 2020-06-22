@@ -105,7 +105,7 @@ namespace Altaxo.Dom
     /// Gets the file name for the currently open project. Is null if the project has not got a file name for now.
     /// For setting, call <see cref="SetCurrentProject(IProject, bool)"/>.
     /// </summary>
-    public virtual PathName CurrentProjectFileName
+    public virtual PathName? CurrentProjectFileName
     {
       get { return _currentProjectArchiveManager.FileOrFolderName; }
     }

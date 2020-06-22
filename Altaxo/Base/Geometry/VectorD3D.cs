@@ -53,7 +53,7 @@ namespace Altaxo.Geometry
         info.AddValue("Z", s.Z);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var x = info.GetDouble("X");
         var y = info.GetDouble("Y");
@@ -140,17 +140,9 @@ namespace Altaxo.Geometry
     /// </value>
     public bool IsEmpty { get { return 0 == X && 0 == Y && 0 == Z; } }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (obj is VectorD3D)
-      {
-        var from = (VectorD3D)obj;
-        return X == from.X && Y == from.Y && Z == from.Z;
-      }
-      else
-      {
-        return false;
-      }
+      return obj is VectorD3D from && X == from.X && Y == from.Y && Z == from.Z;
     }
 
     public override int GetHashCode()

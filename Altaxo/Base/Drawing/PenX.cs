@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -30,8 +31,6 @@ using Altaxo.Drawing.DashPatterns;
 using Altaxo.Drawing.LineCaps;
 using Altaxo.Geometry;
 using Altaxo.Main;
-
-#nullable enable
 
 namespace Altaxo.Drawing
 {

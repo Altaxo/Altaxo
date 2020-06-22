@@ -128,14 +128,10 @@ namespace Altaxo.Geometry
       return 7 * X.GetHashCode() + 11 * Y.GetHashCode() + 17 * Z.GetHashCode() + 31 * W.GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (!(obj is PlaneD3D))
-        return false;
-
-      var b = (PlaneD3D)obj;
-
-      return X == b.X && Y == b.Y && Z == b.Z && W == b.W;
+      return obj is PlaneD3D b &&
+             X == b.X && Y == b.Y && Z == b.Z && W == b.W;
     }
 
     public bool Equals(PlaneD3D a, PlaneD3D b)

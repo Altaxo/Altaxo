@@ -76,7 +76,7 @@ namespace Altaxo.Geometry
         info.AddValue("Z", s.Z);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var x = info.GetDouble("X");
         var y = info.GetDouble("Y");
@@ -254,17 +254,10 @@ namespace Altaxo.Geometry
 
     #endregion Other calculations
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (obj is PointD3D)
-      {
-        var from = (PointD3D)obj;
-        return X == from.X && Y == from.Y && Z == from.Z;
-      }
-      else
-      {
-        return false;
-      }
+      return obj is PointD3D from &&
+             X == from.X && Y == from.Y && Z == from.Z;
     }
 
     public override int GetHashCode()

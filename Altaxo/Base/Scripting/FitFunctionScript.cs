@@ -180,7 +180,7 @@ namespace Altaxo.Scripting
         {
           _deserializedObject = s
         };
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+        info.DeserializationFinished += surr.EhDeserializationFinished;
 
         return s;
       }
@@ -192,7 +192,7 @@ namespace Altaxo.Scripting
         if (documentRoot is AltaxoDocument doc)
         {
           // add this script to the collection of scripts
-          doc.FitFunctionScripts.Add(_deserializedObject);
+          doc.FitFunctionScripts.Add(_deserializedObject!);
         }
       }
     }
@@ -254,7 +254,7 @@ namespace Altaxo.Scripting
         {
           _deserializedObject = s
         };
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
+        info.DeserializationFinished += surr.info_DeserializationFinished;
 
         if (s.IsUsingUserDefinedParameterNames && s._NumberOfParameters != s._UserDefinedParameterNames.Length)
           s.Compile(); // dirty quick fix in the case that the userdefined parameters where not updated before serialization
@@ -269,7 +269,7 @@ namespace Altaxo.Scripting
         if (documentRoot is AltaxoDocument doc)
         {
           // add this script to the collection of scripts
-          doc.FitFunctionScripts.Add(_deserializedObject);
+          doc.FitFunctionScripts.Add(_deserializedObject!);
         }
       }
     }
@@ -334,7 +334,7 @@ namespace Altaxo.Scripting
         {
           _deserializedObject = s
         };
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+        info.DeserializationFinished += surr.EhDeserializationFinished;
 
         return s;
       }
@@ -346,7 +346,7 @@ namespace Altaxo.Scripting
         if (documentRoot is AltaxoDocument doc)
         {
           // add this script to the collection of scripts
-          doc.FitFunctionScripts.Add(_deserializedObject);
+          doc.FitFunctionScripts.Add(_deserializedObject!);
         }
       }
     }

@@ -457,7 +457,7 @@ namespace Altaxo.Main
         if (depth >= maxDepth)
           break;
 
-        string name = parent.GetNameOfChildObject(node);
+        var name = parent.GetNameOfChildObject(node);
 
         if (name is null) // an empty string is a valid name, e.g. for a folder text document located in the root folder
           throw new InvalidOperationException(string.Format("Parent node (type:{0}) of node (type: {1}) did not return a valid name for the child node!", parent.GetType(), node.GetType()));

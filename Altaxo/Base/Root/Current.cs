@@ -161,8 +161,8 @@ namespace Altaxo
     /// </summary>
     public static T GetRequiredService<T>()
     {
-      object service = instance.GetService(typeof(T));
-      if (service == null)
+      var service = instance.GetService(typeof(T));
+      if (service is null)
         throw new ServiceNotFoundException(typeof(T));
       return (T)service;
     }
@@ -179,7 +179,7 @@ namespace Altaxo
     /// <exception cref="ServiceNotFoundException">If a service of type <typeparamref name="T"/> was not found.</exception>
     public static T GetRequiredService<T, U>() where T : U
     {
-      object serviceObj = instance.GetService(typeof(T));
+      var serviceObj = instance.GetService(typeof(T));
       if (serviceObj is T serviceT)
         return serviceT;
       serviceObj = instance.GetService(typeof(U));
@@ -197,13 +197,13 @@ namespace Altaxo
     /// </summary>
     public static T? GetService<T>() where T : class
     {
-      object service = instance.GetService(typeof(T));
-      return (T)service;
+      var service = instance.GetService(typeof(T));
+      return (T?)service;
     }
 
     public static T? GetService<T, U>() where T : class, U
     {
-      object serviceObj = instance.GetService(typeof(T));
+      var serviceObj = instance.GetService(typeof(T));
       if (serviceObj is T serviceT)
         return serviceT;
       serviceObj = instance.GetService(typeof(U));

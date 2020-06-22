@@ -61,7 +61,7 @@ namespace Altaxo.Geometry
         info.AddValue("M32", s.Matrix.M32);
       }
 
-      public object Deserialize(object o, IXmlDeserializationInfo info, object parentobject)
+      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         var m11 = info.GetDouble("M11");
         var m12 = info.GetDouble("M12");
@@ -110,9 +110,9 @@ namespace Altaxo.Geometry
       Matrix = new Matrix3x2(m11, m12, m21, m22, m31, m32);
     }
 
-    public bool Equals(Matrix3x2Class other)
+    public bool Equals(Matrix3x2Class? other)
     {
-      return other is null ? false : Matrix.Equals(other.Matrix);
+      return other is { } from && Matrix.Equals(from.Matrix);
     }
 
     public bool Equals(Matrix3x2 other)
@@ -120,7 +120,7 @@ namespace Altaxo.Geometry
       return Matrix.Equals(other);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return Equals(obj as Matrix3x2Class);
     }
