@@ -198,7 +198,7 @@ namespace Altaxo.AddInItems
       container.AddService(typeof(IPropertyService), propertyService);
       SetCultureSettingsFromProperties(startupSettings); // set the document culture and the UI culture as early as possible (when PropertyService is functional)
 
-      container.AddService(typeof(IResourceService), new ResourceServiceImpl(Path.Combine(propertyService.DataDirectory, "resources"), propertyService));
+      container.AddService(typeof(IResourceService), new ResourceServiceImpl(Path.Combine(propertyService.DataDirectory.ToString(), "resources"), propertyService));
       container.AddService(typeof(IAddInTree), _addInTree);
       container.AddService(typeof(ApplicationStateInfoService), applicationStateInfoService);
       StringParser.RegisterStringTagProvider(new ApplicationNameProvider(_applicationName));

@@ -292,7 +292,7 @@ namespace Altaxo.Main.Services
     /// <exception cref="ResourceNotFoundException">
     /// Is thrown when the GlobalResource manager can't find a requested resource.
     /// </exception>
-    public string? GetString(string name)
+    public string GetString(string name)
     {
       lock (_loadLock)
       {
@@ -351,7 +351,7 @@ namespace Altaxo.Main.Services
         LogStringResource(name, s, Assembly.GetCallingAssembly());
 #endif
 
-        return s;
+        return s ?? name;
       }
     }
 

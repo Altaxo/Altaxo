@@ -24,7 +24,6 @@
 
 #nullable enable
 using System;
-using System.Threading;
 using System.Windows.Input;
 using Altaxo.Geometry;
 using Altaxo.Gui;

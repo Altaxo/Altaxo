@@ -27,8 +27,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services
@@ -61,8 +59,7 @@ namespace Altaxo.Main.Services
       {
         if (_services.TryGetValue(serviceType, out instance))
         {
-          var callback = instance as ServiceCreatorCallback;
-          if (callback != null)
+          if (instance is ServiceCreatorCallback callback)
           {
             instance = callback(this, serviceType);
             if (instance != null)
@@ -172,24 +169,24 @@ namespace Altaxo.Main.Services
       RemoveService(serviceType);
     }
 
-    public Task<T> GetFutureService<T>()
+    public Task<T?> GetFutureService<T>() where T : class
     {
       Type serviceType = typeof(T);
       lock (_services)
       {
         if (_services.ContainsKey(serviceType))
         {
-          return Task.FromResult((T)GetService(serviceType));
+          return Task.FromResult((T?)GetService(serviceType));
         }
         else
         {
           if (_taskCompletionSources.TryGetValue(serviceType, out var taskCompletionSource))
           {
-            return ((TaskCompletionSource<T>)taskCompletionSource).Task;
+            return ((TaskCompletionSource<T?>)taskCompletionSource).Task;
           }
           else
           {
-            var tcs = new TaskCompletionSource<T>();
+            var tcs = new TaskCompletionSource<T?>();
             _taskCompletionSources.Add(serviceType, tcs);
             return tcs.Task;
           }

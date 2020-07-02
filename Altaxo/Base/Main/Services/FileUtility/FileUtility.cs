@@ -248,7 +248,10 @@ namespace Altaxo.Main.Services
         IEnumerable<string> files;
         try
         {
-          files = Directory.EnumerateFiles(d, filemask);
+          if (string.IsNullOrEmpty(filemask))
+            files = Directory.EnumerateFiles(d);
+          else
+            files = Directory.EnumerateFiles(d, filemask);
         }
         catch (UnauthorizedAccessException)
         {
@@ -471,7 +474,7 @@ namespace Altaxo.Main.Services
       try
       {
         saveFile();
-        RaiseFileSaved(new FileNameEventArgs(fileName));
+        RaiseFileSaved(new PathNameEventArgs(fileName));
         return FileOperationResult.OK;
       }
       catch (IOException e)
@@ -522,9 +525,11 @@ namespace Altaxo.Main.Services
       System.Diagnostics.Debug.Assert(IsValidPath(fileName));
       try
       {
-        Directory.CreateDirectory(fileName.GetParentDirectory());
+        if (fileName.GetParentDirectory() is { } parentDirectory)
+          Directory.CreateDirectory(parentDirectory.ToString());
+
         saveFileAs(fileName);
-        RaiseFileSaved(new FileNameEventArgs(fileName));
+        RaiseFileSaved(new PathNameEventArgs(fileName));
         return FileOperationResult.OK;
       }
       catch (IOException e)
@@ -582,7 +587,7 @@ namespace Altaxo.Main.Services
       try
       {
         loadFile();
-        OnFileLoaded(new FileNameEventArgs(fileName));
+        OnFileLoaded(new PathNameEventArgs(fileName));
         return FileOperationResult.OK;
       }
       catch (IOException e)
@@ -644,18 +649,18 @@ namespace Altaxo.Main.Services
         policy);
     }
 
-    private static void OnFileLoaded(FileNameEventArgs e)
+    private static void OnFileLoaded(PathNameEventArgs e)
     {
       FileLoaded?.Invoke(null, e);
     }
 
-    public static void RaiseFileSaved(FileNameEventArgs e)
+    public static void RaiseFileSaved(PathNameEventArgs e)
     {
       FileSaved?.Invoke(null, e);
     }
 
-    public static event EventHandler<FileNameEventArgs>? FileLoaded;
+    public static event EventHandler<PathNameEventArgs>? FileLoaded;
 
-    public static event EventHandler<FileNameEventArgs>? FileSaved;
+    public static event EventHandler<PathNameEventArgs>? FileSaved;
   }
 }

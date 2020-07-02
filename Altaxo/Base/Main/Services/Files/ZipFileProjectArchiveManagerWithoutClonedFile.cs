@@ -27,12 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Altaxo.Main.Services.Files;
-using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Main.Services
 {
@@ -70,9 +65,9 @@ namespace Altaxo.Main.Services
       // Open the stream
 
       if (allowOverwriting)
-        result._originalFileStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+        result._originalFileStream = new FileStream(fileName.ToString(), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
       else
-        result._originalFileStream = new FileStream(fileName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
+        result._originalFileStream = new FileStream(fileName.ToString(), FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
 
       return result;
     }
@@ -95,7 +90,7 @@ namespace Altaxo.Main.Services
       try
       {
         // Open the stream for reading ...
-        _originalFileStream = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+        _originalFileStream = new FileStream(fileName.ToString(), FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
       }
       catch (Exception ex1)
       {
@@ -103,7 +98,7 @@ namespace Altaxo.Main.Services
         FileStream roFileStream;
         try
         {
-          roFileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+          roFileStream = new FileStream(fileName.ToString(), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         }
         catch (Exception)
         {
@@ -181,7 +176,7 @@ namespace Altaxo.Main.Services
       IDictionary<string, IProjectItem>? dictionaryResult = null;
 
       var originalFileName = _originalFileStream?.Name;
-      bool isNewDestinationFileName = originalFileName != (string)destinationFileName;
+      bool isNewDestinationFileName = originalFileName != destinationFileName.ToString();
 
 
       // Open the old archive, using the original stream
@@ -192,7 +187,7 @@ namespace Altaxo.Main.Services
       if (isNewDestinationFileName)
       {
         // create a new file stream for writing to
-        newProjectArchiveFileStream = new FileStream(destinationFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
+        newProjectArchiveFileStream = new FileStream(destinationFileName.ToString(), FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
       }
 
       // now serialize the data

@@ -26,10 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Gui;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
@@ -159,7 +156,7 @@ namespace Altaxo.Dom
     /// </summary>
     /// <param name="newManager">The new manager that becomes the current manager after this call.</param>
     /// <returns>The archive manager that is currently set.</returns>
-    public IProjectArchiveManager ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(IProjectArchiveManager newManager)
+    public IProjectArchiveManager? ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(IProjectArchiveManager? newManager)
     {
       if (_currentProject is null)
         throw new InvalidProgramException();
@@ -235,8 +232,8 @@ namespace Altaxo.Dom
     /// <inheritdoc/>
     public void AskForSavingOfProject(CancelEventArgs e)
     {
-      string text = Current.ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Text");
-      string caption = Current.ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Caption");
+      string? text = Current.ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Text");
+      string? caption = Current.ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Caption");
       bool? dlgresult = Current.Gui.YesNoCancelMessageBox(text, caption, null);
 
       if (null == dlgresult) // Cancel
@@ -260,6 +257,9 @@ namespace Altaxo.Dom
     /// </summary>
     public void SaveProject()
     {
+      if (CurrentProjectFileName is null)
+        throw new InvalidOperationException("The current project has not file name yet.");
+
       SaveProject(CurrentProjectFileName);
     }
 
@@ -273,7 +273,7 @@ namespace Altaxo.Dom
       if (_currentProject is null)
         throw new InvalidProgramException();
 
-      string oldFileName = CurrentProjectFileName;
+      var oldFileName = CurrentProjectFileName;
       var currentProjectFileName = fileOrFolderName; // set file name silently
       if (oldFileName != fileOrFolderName)
       {
@@ -281,7 +281,7 @@ namespace Altaxo.Dom
       }
 
       FileUtility.ObservedSave(new NamedFileOrFolderOperationDelegate(InternalSave),
-          FileName.Create(fileOrFolderName),
+          fileOrFolderName,
           Current.ResourceService.GetString("Altaxo.Project.CantSaveProjectErrorText"),
           FileErrorPolicy.ProvideAlternative);
     }
@@ -302,7 +302,7 @@ namespace Altaxo.Dom
       {
         var filename = new FileName(options.FileName);
         SaveProject(filename);
-        Current.GetService<IRecentOpen>()?.AddRecentProject(new FileName(filename));
+        Current.GetService<IRecentOpen>()?.AddRecentProject(filename);
         Current.StatusBar.SetMessage(filename + ": " + Current.ResourceService.GetString("Altaxo.Project.ProjectSavedMessage"));
       }
     }
@@ -644,7 +644,7 @@ namespace Altaxo.Dom
 
       if (null == viewcontent) // if not found, try to create a new viewcontent
       {
-        viewcontent = (IViewContent)Current.Gui.GetControllerAndControl(new object[] { document }, typeof(IViewContent));
+        viewcontent = (IViewContent?)Current.Gui.GetControllerAndControl(new object[] { document }, typeof(IViewContent));
       }
 
       if (null != viewcontent)

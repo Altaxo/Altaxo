@@ -64,6 +64,9 @@ namespace Altaxo.AddInItems
           });
       }
 
+      if (interfaceType is null)
+        throw new InvalidOperationException($"No interface type was given or could be resolved from: {args.Codon.Id}");
+
       // look for more interface types as given as parameters interface1, interface2, ..., interface9
       // note that when using the other interface types, the
       // ServiceContainer try to load the original service type

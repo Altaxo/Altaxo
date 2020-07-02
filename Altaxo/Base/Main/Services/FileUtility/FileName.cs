@@ -50,6 +50,11 @@ namespace Altaxo.Main.Services
         return new FileName(fileName);
     }
 
+    [return: NotNullIfNotNull("path")]
+    public static explicit operator string?(FileName? path)
+    {
+      return path?._normalizedPath;
+    }
 
     /// <summary>
     /// Gets the file name (not the full path).

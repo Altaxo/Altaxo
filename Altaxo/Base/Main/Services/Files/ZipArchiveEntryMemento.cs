@@ -38,8 +38,8 @@ namespace Altaxo.Main.Services.Files
   public class ProjectArchiveEntryMemento : IProjectArchiveEntryMemento, IDisposable
   {
     // fixed data
-    private readonly string _fileName;
     private readonly string _entryName;
+    private readonly string? _fileName;
     private readonly IProjectArchiveManager? _archiveManager;
 
     // operational data
@@ -52,11 +52,16 @@ namespace Altaxo.Main.Services.Files
     /// <param name="entryName">Name of the entry.</param>
     /// <param name="archiveManager">The archive manager.</param>
     /// <param name="archiveFileName">Name of the archive file. This parameter is used only if the provided <paramref name="archiveManager"/> is null or invalid.</param>
-    public ProjectArchiveEntryMemento(string entryName, IProjectArchiveManager? archiveManager, string archiveFileName)
+    public ProjectArchiveEntryMemento(string entryName, IProjectArchiveManager? archiveManager, string? archiveFileName)
     {
+      if (archiveManager is null && string.IsNullOrEmpty(archiveFileName))
+        throw new ArgumentNullException(nameof(archiveFileName), $"If {nameof(archiveManager)} is null, then the {nameof(archiveFileName)} must be provided!");
+
       _entryName = entryName;
       _archiveManager = archiveManager;
       _fileName = archiveFileName;
+
+
     }
 
     /// <inheritdoc/>
@@ -87,23 +92,30 @@ namespace Altaxo.Main.Services.Files
     }
 
     /// <summary>
-    /// Gets the archive entry that is memento refers to.
+    /// Gets the archive entry that this memento refers to.
     /// </summary>
     /// <returns>
     /// The archive entry.
     /// </returns>
     public IProjectArchiveEntry? GetArchiveEntry()
     {
-      if (!(_archiveManager is null || _archiveManager.IsDisposed))
+      if (!(_archiveManager is null))
       {
+        if (_archiveManager.IsDisposed)
+          throw new ObjectDisposedException(nameof(_archiveManager));
+
         _archive = _archiveManager.GetArchiveReadOnlyThreadSave(this);
         return _archive.GetEntry(_entryName);
       }
-      else
+      else if (!(_fileName is null))
       {
         var stream = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         _archive = new ZipArchiveAsProjectArchive(stream, ZipArchiveMode.Read, false);
         return _archive.GetEntry(_entryName);
+      }
+      else
+      {
+        throw new InvalidProgramException($"Either {nameof(_archiveManager)} or {nameof(_fileName)} should not be null here!");
       }
     }
 

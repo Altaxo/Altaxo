@@ -88,7 +88,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Combines this directory name with a relative path.
     /// </summary>
-    [return: NotNullIfNotNull("relativePath")]
+    [return: NotNullIfNotNull("relativeFileName")]
     public FileName? CombineFile(string? relativeFileName)
     {
       if (relativeFileName == null)
@@ -138,6 +138,12 @@ namespace Altaxo.Main.Services
         return _normalizedPath; // trailing backslash exists in normalized version for root of drives ("C:\")
       else
         return _normalizedPath + "\\";
+    }
+
+    [return: NotNullIfNotNull("path")]
+    public static implicit operator string?(DirectoryName? path)
+    {
+      return path?._normalizedPath;
     }
 
     #region Equals and GetHashCode implementation

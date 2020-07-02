@@ -45,12 +45,21 @@ namespace Altaxo.Main.Services
         throw new ArgumentNullException("path");
       _normalizedPath = path._normalizedPath;
     }
-
-    // [return: NotNullIfNotNull("path")]
-    public static implicit operator string(PathName path)
+    /*
+    [return: NotNullIfNotNull("path")]
+    public static explicit operator string?(PathName? path)
     {
-      return path._normalizedPath;
+      return path?._normalizedPath;
     }
+    */
+
+    [return: NotNullIfNotNull("path")]
+    public static implicit operator string?(PathName? path)
+    {
+      return path?._normalizedPath;
+    }
+
+
 
     [return: NotNullIfNotNull("path")]
     public static string? ToStringPath(PathName? path)

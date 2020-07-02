@@ -44,10 +44,15 @@ namespace Altaxo.Main.Services
 
     public FitFunctionService()
     {
-      string userFitFunctionDirectory = System.IO.Path.Combine(Current.PropertyService.ConfigDirectory, "FitFunctionScripts");
+      string userFitFunctionDirectory = System.IO.Path.Combine(Current.PropertyService.ConfigDirectory.ToString(), "FitFunctionScripts");
       _userFunctionService = new FileBasedFitFunctionService(userFitFunctionDirectory);
 
-      string appdir = System.Configuration.ConfigurationManager.AppSettings.Get("ApplicationFitFunctionDirectory");
+      string? appdir = System.Configuration.ConfigurationManager.AppSettings.Get("ApplicationFitFunctionDirectory");
+
+      if (string.IsNullOrEmpty(appdir))
+      {
+        appdir = System.IO.Path.Combine(Current.PropertyService.DataDirectory.ToString(), "FitFunctionScripts");
+      }
 
       _applicationFunctionService = new FileBasedFitFunctionService(appdir, true);
 
@@ -217,7 +222,7 @@ namespace Altaxo.Main.Services
 
         if (Directory.Exists(_fitFunctionDirectory))
         {
-          _fitFunctionDirectoryWatcher = new FileSystemWatcher(_fitFunctionDirectory, "*,xml");
+          _fitFunctionDirectoryWatcher = new FileSystemWatcher(_fitFunctionDirectory, "*.xml");
 
           _fitFunctionDirectoryWatcher.Changed += new FileSystemEventHandler(EhChanged);
           _fitFunctionDirectoryWatcher.Created += new FileSystemEventHandler(EhChanged);

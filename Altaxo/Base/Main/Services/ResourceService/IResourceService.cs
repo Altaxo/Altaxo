@@ -39,7 +39,7 @@ namespace Altaxo.Main.Services
 
     /// <summary>
     /// Returns a string from the resource database, it handles localization
-    /// transparent for the user.
+    /// transparent for the user. If the resource is not found, the original string is returned.
     /// </summary>
     /// <returns>
     /// The string in the (localized) resource database.
@@ -50,7 +50,7 @@ namespace Altaxo.Main.Services
     /// <exception cref="ResourceNotFoundException">
     /// Is thrown when the GlobalResource manager can't find a requested resource.
     /// </exception>
-    string? GetString(string name);
+    string GetString(string name);
 
     object? GetImageResource(string name);
 
@@ -121,9 +121,9 @@ namespace Altaxo.Main.Services
       }
     }
 
-    string? IResourceService.GetString(string name)
+    string IResourceService.GetString(string name)
     {
-      return null;
+      return name;
     }
 
     object? IResourceService.GetImageResource(string name)

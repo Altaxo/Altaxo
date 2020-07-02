@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Main.Properties
 {
@@ -178,7 +176,7 @@ namespace Altaxo.Main.Properties
 
         if (canBeRenamed)
         {
-          var oldName = _name;
+          var oldName = _name!;
           _name = value;
 
           if (null != parentAs)

@@ -55,7 +55,7 @@ namespace Altaxo.AddInItems
     public Assembly? LoadAssemblyFromPartialName(string assemblyString, string hintPath)
     {
       // First of all, we look if such an assembly is already loaded 
-      Assembly result = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.GetName().Name == assemblyString).FirstOrDefault();
+      var result = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.GetName().Name == assemblyString).FirstOrDefault();
       if (null != result)
         return result;
 
@@ -70,7 +70,7 @@ namespace Altaxo.AddInItems
       if (resolvedFile is null)
       {
         var entryAssembly = Assembly.GetEntryAssembly() ?? throw new InvalidOperationException("Can not retrieve entry assembly!");
-        var dirInfo = new DirectoryInfo(Path.GetDirectoryName(entryAssembly.Location));
+        var dirInfo = new DirectoryInfo(Path.GetDirectoryName(entryAssembly.Location)!);
         resolvedFile = dirInfo.GetFiles(assemblyString, SearchOption.AllDirectories).FirstOrDefault();
       }
 
@@ -137,7 +137,7 @@ namespace Altaxo.AddInItems
       // this function is called when dependencies of the pluginAssembly should be loaded
 
       // First of all, we look if such an assembly is loaded already
-      Assembly result = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.GetName().Name == assemblyName.Name).FirstOrDefault();
+      var result = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.GetName().Name == assemblyName.Name).FirstOrDefault();
 
       if (result is null)
       {

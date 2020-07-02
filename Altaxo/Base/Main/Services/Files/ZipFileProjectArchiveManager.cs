@@ -27,12 +27,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Altaxo.Main.Services.Files;
-using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Main.Services
 {
@@ -91,7 +88,7 @@ namespace Altaxo.Main.Services
       try
       {
         // Open the stream for reading ...
-        _originalFileStream = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+        _originalFileStream = new FileStream(fileName.ToString(), FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
       }
       catch (Exception ex1)
       {
@@ -99,7 +96,7 @@ namespace Altaxo.Main.Services
         FileStream roFileStream;
         try
         {
-          roFileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+          roFileStream = new FileStream(fileName.ToString(), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         }
         catch (Exception)
         {

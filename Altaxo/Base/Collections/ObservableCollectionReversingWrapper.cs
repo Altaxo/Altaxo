@@ -27,8 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Collections
 {
@@ -69,7 +67,7 @@ namespace Altaxo.Collections
           break;
 
         case NotifyCollectionChangedAction.Replace:
-          result = new NotifyCollectionChangedEventArgs(e.Action, e.NewItems, e.OldItems);
+          result = new NotifyCollectionChangedEventArgs(e.Action, e.NewItems!, e.OldItems!);
           break;
 
         case NotifyCollectionChangedAction.Reset:

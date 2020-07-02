@@ -24,9 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Geometry
 {
@@ -230,7 +227,7 @@ namespace Altaxo.Geometry
       return double.NaN;
     }
 
-    public static PointD2D[] ShortenBezierSegmentsByDistanceFromEndPoints(PointD2D[] points, double distanceFromStart, double distanceFromEnd)
+    public static PointD2D[]? ShortenBezierSegmentsByDistanceFromEndPoints(PointD2D[] points, double distanceFromStart, double distanceFromEnd)
     {
       return null;
     }

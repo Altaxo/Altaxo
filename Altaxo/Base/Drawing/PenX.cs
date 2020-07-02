@@ -1300,7 +1300,7 @@ if (0 != (cp & PenX.Configured.Width))
           DashStyle.Dot => DashPatternListManager.Instance.BuiltinDefaultDot,
           DashStyle.DashDot => DashPatternListManager.Instance.BuiltinDefaultDashDot,
           DashStyle.DashDotDot => DashPatternListManager.Instance.BuiltinDefaultDashDotDot,
-          DashStyle.Custom => new Custom(cachedDashPattern.Select(x => (double)x), cachedDashOffset),
+          DashStyle.Custom => new Custom(cachedDashPattern!.Select(x => (double)x), cachedDashOffset),
           _ => throw new NotImplementedException(),
         });
     }

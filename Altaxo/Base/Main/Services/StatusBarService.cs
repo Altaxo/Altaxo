@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using System.Windows;
 using Altaxo.Gui;
 using Altaxo.Gui.Workbench;
 
@@ -156,7 +155,7 @@ namespace Altaxo.Main.Services
       if (_currentProgress != null)
       {
         _currentProgress.ProgressMonitorDisposed -= progress_ProgressMonitorDisposed;
-        _currentProgress.PropertyChanged -= progress_PropertyChanged;
+        _currentProgress.PropertyChanged -= EhProgress_PropertyChanged;
       }
       _waitingProgresses.Push(_currentProgress); // push even if currentProgress==null
       SetActiveProgress(progress);
@@ -178,10 +177,10 @@ namespace Altaxo.Main.Services
         progress_ProgressMonitorDisposed(progress, EventArgs.Empty);
         return;
       }
-      progress.PropertyChanged += progress_PropertyChanged;
+      progress.PropertyChanged += EhProgress_PropertyChanged;
     }
 
-    private void progress_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void EhProgress_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
       if (_currentProgress is null)
         throw new InvalidProgramException();

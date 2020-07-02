@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Main.Properties
 {
@@ -120,9 +118,9 @@ namespace Altaxo.Main.Properties
     /// <param name="p">The property key.</param>
     /// <param name="value">On successfull return, this contains the retrieved property value.</param>
     /// <returns><c>True</c> if the property value could be successfully retrieved; <c>false</c> otherwise.</returns>
-    public bool TryGetValue<T>(PropertyKey<T> p, out T value)
+    public bool TryGetValue<T>(PropertyKey<T> p, [MaybeNull] out T value)
     {
-      return TryGetValue<T>(p, out value, out var bag, out var bagInfo);
+      return TryGetValue<T>(p, out value, out var _, out var _);
     }
 
     /// <summary>

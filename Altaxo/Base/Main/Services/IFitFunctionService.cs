@@ -152,7 +152,8 @@ namespace Altaxo.Main.Services
 
     public Altaxo.Calc.Regression.Nonlinear.IFitFunction CreateFitFunction()
     {
-      return FitFunctionService.ReadUserDefinedFitFunction(this);
+      return FitFunctionService.ReadUserDefinedFitFunction(this) ??
+        throw new InvalidOperationException($"Could not create fit function from file {_fileName}");
     }
   }
 
@@ -215,7 +216,7 @@ namespace Altaxo.Main.Services
         }
         else
         {
-          string rawtext = null;
+          string? rawtext = null;
           try
           {
             rawtext = Current.ResourceService.GetString(res);
@@ -233,7 +234,12 @@ namespace Altaxo.Main.Services
 
     public Altaxo.Calc.Regression.Nonlinear.IFitFunction CreateFitFunction()
     {
-      return _method.Invoke(null, new object[] { }) as Altaxo.Calc.Regression.Nonlinear.IFitFunction;
+      var result = _method.Invoke(null, new object[] { });
+      if (result is Altaxo.Calc.Regression.Nonlinear.IFitFunction fitfunction)
+        return fitfunction;
+      else
+        throw new InvalidProgramException($"Method that should create fit function actually returned {result}");
+
     }
   }
 

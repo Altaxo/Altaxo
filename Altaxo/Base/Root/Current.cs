@@ -24,11 +24,8 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Text;
 using System.Threading.Tasks;
-using Altaxo.Gui.Common;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main.Services;
 
@@ -225,7 +222,7 @@ namespace Altaxo
     /// <remarks>
     /// This method can be used to solve cyclic dependencies in service initialization.
     /// </remarks>
-    public static Task<T> GetFutureService<T>() where T : class
+    public static Task<T?> GetFutureService<T>() where T : class
     {
       return GetRequiredService<AltaxoServiceContainer>().GetFutureService<T>();
     }
