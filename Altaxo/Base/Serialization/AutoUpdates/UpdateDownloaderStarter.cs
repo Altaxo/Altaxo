@@ -77,8 +77,10 @@ namespace Altaxo.Serialization.AutoUpdates
         var proc = System.Diagnostics.Process.Start(processInfo);
         proc.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        if (Current.Console is { } console)
+          console.WriteLine($"Exception while starting the update downloader: {ex.Message}");
       }
     }
   }

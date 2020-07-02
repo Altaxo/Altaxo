@@ -94,7 +94,9 @@ namespace Altaxo.Serialization.AutoUpdates
           var parsedVersions = PackageInfo.FromStream(new MemoryStream(versionData));
 
           fs.Write(versionData, 0, versionData.Length);
+          fs.SetLength(versionData.Length); // cut the stream at this length
           fs.Flush(); // write the new version to disc in order to change the write date
+
 
           // from all parsed versions, choose that one that matches the requirements
           var parsedVersion = PackageInfo.GetHighestVersion(parsedVersions);

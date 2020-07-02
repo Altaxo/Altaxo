@@ -337,11 +337,15 @@ namespace Altaxo.Data
           break;
       }
 
-      int[] clusterIndices = new int[col.Count];
+      var dict = new Dictionary<AltaxoVariant, int>();
+      for (int i = 0; i < result.Count; ++i)
+        dict.Add(result[i], i);
 
-      for (int i = 0; i < clusterIndices[i]; ++i)
+
+      int[] clusterIndices = new int[col.Count];
+      for (int i = 0; i < clusterIndices.Length; ++i)
       {
-        clusterIndices[i] = result.IndexOf(col[i]);
+        clusterIndices[i] = dict[col[i]];
       }
 
       return (result, clusterIndices);
