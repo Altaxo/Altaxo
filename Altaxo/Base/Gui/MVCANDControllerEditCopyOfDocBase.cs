@@ -22,11 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Gui
 {
@@ -48,7 +45,7 @@ namespace Altaxo.Gui
     /// <summary>
     /// Event fired when the user changed some data that will change the model.
     /// </summary>
-    public event Action<IMVCANDController> MadeDirty;
+    public event Action<IMVCANDController>? MadeDirty;
 
     /// <summary>
     /// Initialize the controller with the document. If successfull, the function has to return true.
@@ -76,7 +73,7 @@ namespace Altaxo.Gui
     /// <summary>
     /// Returns the Gui element that shows the model to the user.
     /// </summary>
-    public override object ViewObject
+    public override object? ViewObject
     {
       get
       {
@@ -116,7 +113,12 @@ namespace Altaxo.Gui
     /// </summary>
     public object ProvisionalModelObject
     {
-      get { return _doc; }
+      get
+      {
+        if (_doc is null)
+          throw CreateNotInitializedException();
+        return _doc;
+      }
     }
   }
 }

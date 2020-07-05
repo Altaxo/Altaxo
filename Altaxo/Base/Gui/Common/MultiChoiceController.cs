@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
@@ -36,7 +35,7 @@ namespace Altaxo.Gui.Common
   public class MultiChoiceList
   {
     /// <summary>The description text shown above the list of items.</summary>
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     /// <summary>List of items. Has to be filled before showing the control.</summary>
     public SelectableListNodeList List { get; protected set; }
@@ -93,11 +92,17 @@ namespace Altaxo.Gui.Common
   [UserControllerForObject(typeof(MultiChoiceList))]
   public class MultiChoiceController : IMVCANController
   {
-    private MultiChoiceList _doc;
-    private IMultiChoiceView _view;
+    private MultiChoiceList? _doc;
+    private IMultiChoiceView? _view;
+
+    private Exception NoDocumentException => new InvalidOperationException("This controller is not yet initialized with a document!");
+
 
     protected void Initialize(bool initData)
     {
+      if (_doc is null)
+        throw NoDocumentException;
+
       if (null != _view)
       {
         _view.InitializeDescription(_doc.Description);
@@ -134,7 +139,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {
@@ -152,7 +157,13 @@ namespace Altaxo.Gui.Common
 
     public object ModelObject
     {
-      get { return _doc; }
+      get
+      {
+        if (_doc is null)
+          throw NoDocumentException;
+
+        return _doc;
+      }
     }
 
     public void Dispose()

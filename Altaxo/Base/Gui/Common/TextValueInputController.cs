@@ -22,21 +22,21 @@
 
 #endregion Copyright
 
-using System;
+#nullable enable
 
 namespace Altaxo.Gui.Common
 {
   [ExpectedTypeOfView(typeof(ISingleValueView))]
   public class TextValueInputController : IMVCAController
   {
-    private ISingleValueView _view;
+    private ISingleValueView? _view;
     private string _captionText;
 
     private string _initialContents;
     private string _contents;
     private bool _isContentsValid = true;
 
-    private IStringValidator _validator;
+    private IStringValidator? _validator;
 
     public TextValueInputController(string initialcontents, string description)
     {
@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    private ISingleValueView View
+    private ISingleValueView? View
     {
       get { return _view; }
       set
@@ -88,7 +88,7 @@ namespace Altaxo.Gui.Common
       _contents = e.ValueToValidate;
       if (_validator != null)
       {
-        string err = _validator.Validate(_contents);
+        var err = _validator.Validate(_contents);
         if (null != err)
         {
           _isContentsValid = false;
@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Common
       /// </summary>
       /// <param name="txt">The text entered by the user.</param>
       /// <returns>Null if this input is valid, error message else.</returns>
-      string Validate(string txt);
+      string? Validate(string txt);
     }
 
     /// <summary>
@@ -140,9 +140,9 @@ namespace Altaxo.Gui.Common
         m_EmptyMessage = errmsg;
       }
 
-      public virtual string Validate(string txt)
+      public virtual string? Validate(string txt)
       {
-        if (txt == null || txt.Trim().Length == 0)
+        if (txt is null || txt.Trim().Length == 0)
           return m_EmptyMessage;
         else
           return null;
@@ -153,7 +153,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {

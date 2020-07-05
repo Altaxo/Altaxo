@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 
 namespace Altaxo.Main
@@ -626,7 +625,7 @@ namespace Altaxo.Main
 
       public override string? Validate(string name)
       {
-        string err = base.Validate(name);
+        string? err = base.Validate(name);
         if (null != err)
           return err;
 

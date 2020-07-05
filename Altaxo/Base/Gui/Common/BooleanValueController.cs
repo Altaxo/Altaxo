@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Gui.Common
@@ -51,7 +52,7 @@ namespace Altaxo.Gui.Common
   [ExpectedTypeOfView(typeof(IBooleanValueView))]
   public class BooleanValueController : IBooleanValueController
   {
-    protected IBooleanValueView _view;
+    protected IBooleanValueView? _view;
     protected bool _value1Bool;
     protected bool _value1BoolTemporary;
 
@@ -90,7 +91,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
-    public virtual object ViewObject
+    public virtual object? ViewObject
     {
       get
       {

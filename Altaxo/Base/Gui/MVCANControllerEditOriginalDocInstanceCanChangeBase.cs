@@ -22,11 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Gui
 {
@@ -65,12 +62,12 @@ namespace Altaxo.Gui
     /// <param name="newInstance">The new instance.</param>
     protected void OnDocumentInstanceChanged(TModel oldInstance, TModel newInstance)
     {
-      Altaxo.Main.ISuspendToken newSuspendToken = null;
+      Altaxo.Main.ISuspendToken? newSuspendToken = null;
 
       if (null != _suspendToken)
       {
-        if (newInstance is Altaxo.Main.ISuspendableByToken)
-          newSuspendToken = ((Altaxo.Main.ISuspendableByToken)newInstance).SuspendGetToken();
+        if (newInstance is Altaxo.Main.ISuspendableByToken suspendable)
+          newSuspendToken = suspendable.SuspendGetToken();
       }
 
       // Set the instance

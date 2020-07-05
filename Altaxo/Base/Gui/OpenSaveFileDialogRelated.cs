@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
-using System;
+#nullable enable
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui
 {
@@ -72,7 +70,7 @@ namespace Altaxo.Gui
     /// <value>
     /// The title.
     /// </value>
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the index of the filter that is shown by default.
@@ -104,7 +102,7 @@ namespace Altaxo.Gui
     /// <value>
     /// The initial directory.
     /// </value>
-    public string InitialDirectory { get; set; }
+    public string? InitialDirectory { get; set; }
 
     /// <summary>
     /// Gets or sets the file names (only if multiselect is on).
@@ -112,7 +110,9 @@ namespace Altaxo.Gui
     /// <value>
     /// The file names.
     /// </value>
-    public string[] FileNames { get; set; }
+    public string[] FileNames { get; set; } = _emptyStringArray;
+
+    private static readonly string[] _emptyStringArray = new string[0];
 
     /// <summary>
     /// Gets or sets the name of the file the user has chosen.
@@ -120,7 +120,7 @@ namespace Altaxo.Gui
     /// <value>
     /// The name of the file.
     /// </value>
-    public string FileName { get; set; }
+    public string FileName { get; set; } = string.Empty;
   }
 
   /// <summary>
@@ -138,6 +138,6 @@ namespace Altaxo.Gui
     /// <value>
     /// The default extension.
     /// </value>
-    public string DefaultExt { get; set; }
+    public string DefaultExt { get; set; } = string.Empty;
   }
 }

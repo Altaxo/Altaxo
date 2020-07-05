@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Gui.Common
@@ -43,11 +44,11 @@ namespace Altaxo.Gui.Common
     /// </summary>
     string Title { set; }
 
-    event Action<System.ComponentModel.CancelEventArgs> ButtonOKPressed;
+    event Action<System.ComponentModel.CancelEventArgs>? ButtonOKPressed;
 
-    event Action ButtonCancelPressed;
+    event Action? ButtonCancelPressed;
 
-    event Action ButtonApplyPressed;
+    event Action? ButtonApplyPressed;
   }
 
   #endregion Interfaces
@@ -57,7 +58,7 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class DialogShellController
   {
-    private IDialogShellView _view;
+    private IDialogShellView? _view;
     private IApplyController _hostedController;
 
     private string _title = string.Empty;
@@ -99,7 +100,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Get / sets the view of this controller.
     /// </summary>
-    private IDialogShellView View
+    private IDialogShellView? View
     {
       get { return _view; }
       set
@@ -140,14 +141,12 @@ namespace Altaxo.Gui.Common
     /// </summary>
     public void EhOK(System.ComponentModel.CancelEventArgs e)
     {
-      bool bSuccess = true;
-      if (null != _hostedController)
-        bSuccess = _hostedController.Apply(true);
+      var bSuccess = _hostedController?.Apply(true) ?? true;
 
-      if (!bSuccess)
-        e.Cancel = true;
-      else
+      if (bSuccess)
         View = null;
+      else
+        e.Cancel = true;
     }
 
     /// <summary>
@@ -155,7 +154,7 @@ namespace Altaxo.Gui.Common
     /// </summary>
     public void EhCancel()
     {
-      _hostedController.Revert(true);
+      _hostedController?.Revert(true);
       View = null;
     }
 
@@ -165,8 +164,7 @@ namespace Altaxo.Gui.Common
     /// </summary>
     public void EhApply()
     {
-      if (null != _hostedController)
-        _hostedController.Apply(false);
+      _hostedController?.Apply(false);
     }
 
     #endregion IDialogShellController Members

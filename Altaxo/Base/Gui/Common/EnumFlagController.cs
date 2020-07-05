@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
@@ -44,23 +42,31 @@ namespace Altaxo.Gui.Common
   [ExpectedTypeOfView(typeof(IEnumFlagView))]
   internal class EnumFlagController : IMVCANController
   {
-    private System.Enum _doc;
+    private System.Enum? _doc;
     private long _tempDoc;
-    private IEnumFlagView _view;
+    private IEnumFlagView? _view;
 
-    private SelectableListNodeList _list;
+    private SelectableListNodeList? _list;
 
     private int _checkedChangeLock = 0;
 
+    private Exception NoDocumentException => new InvalidOperationException("This controller is not yet initialized with a document!");
+
+    private Exception NotInitializedException => new InvalidProgramException("This controller has a document, but was not properly initialized!");
+
+
     private void Initialize(bool initData)
     {
+      if (_doc is null)
+        throw NoDocumentException;
+
       if (initData)
       {
         _list = new SelectableListNodeList();
         var values = System.Enum.GetValues(_doc.GetType());
         foreach (var val in values)
         {
-          var node = new SelectableListNode(System.Enum.GetName(_doc.GetType(), val), val, IsChecked(val, _tempDoc));
+          var node = new SelectableListNode(System.Enum.GetName(_doc.GetType(), val!) ?? string.Empty, val, IsChecked(val, _tempDoc));
           node.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(EhNode_PropertyChanged);
           _list.Add(node);
         }
@@ -68,16 +74,19 @@ namespace Altaxo.Gui.Common
 
       if (_view != null)
       {
+        if (_list is null) throw NotInitializedException;
         _view.Initialize(_list);
       }
     }
 
-    private void EhNode_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void EhNode_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
       if (0 != _checkedChangeLock || "IsSelected" != e.PropertyName)
         return;
 
-      var node = (SelectableListNode)sender;
+      if (!(sender is SelectableListNode node))
+        return;
+
 
       bool b = node.IsSelected;
       long x = Convert.ToInt64(node.Tag); // get the selected flag
@@ -99,7 +108,7 @@ namespace Altaxo.Gui.Common
       --_checkedChangeLock;
     }
 
-    private static bool IsChecked(object flag, long document)
+    private static bool IsChecked(object? flag, long document)
     {
       long x = Convert.ToInt64(flag);
       if (x == 0)
@@ -110,6 +119,8 @@ namespace Altaxo.Gui.Common
 
     private void CalculateChecksFromDoc()
     {
+      if (_list is null) throw NotInitializedException;
+
       foreach (var n in _list)
       {
         n.IsSelected = IsChecked(n.Tag, _tempDoc);
@@ -118,6 +129,8 @@ namespace Altaxo.Gui.Common
 
     private void CalculateEnumFromChecks()
     {
+      if (_list is null) throw NotInitializedException;
+
       // calculate enum from checks
       long sum = 0;
       for (int i = 0; i < _list.Count; i++)
@@ -153,7 +166,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {
@@ -172,7 +185,11 @@ namespace Altaxo.Gui.Common
 
     public object ModelObject
     {
-      get { return _doc; }
+      get
+      {
+        if (_doc is null) throw NoDocumentException;
+        return _doc;
+      }
     }
 
     public void Dispose()
@@ -185,6 +202,7 @@ namespace Altaxo.Gui.Common
 
     public bool Apply(bool disposeController)
     {
+      if (_doc is null) throw NoDocumentException;
       _doc = (System.Enum)System.Enum.ToObject(_doc.GetType(), _tempDoc);
       return true;
     }

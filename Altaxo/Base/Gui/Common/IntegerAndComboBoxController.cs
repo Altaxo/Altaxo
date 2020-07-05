@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Collections;
 
@@ -52,7 +53,7 @@ namespace Altaxo.Gui.Common
   [ExpectedTypeOfView(typeof(IIntegerAndComboBoxView))]
   public class IntegerAndComboBoxController : IMVCAController
   {
-    protected IIntegerAndComboBoxView _view;
+    protected IIntegerAndComboBoxView? _view;
     protected string _integerLabelText;
     protected string _comboBoxLabelText;
     protected int _integerMinimum;
@@ -123,7 +124,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
-    public object ViewObject
+    public object? ViewObject
     {
       get { return _view; }
       set

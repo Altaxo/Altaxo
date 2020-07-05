@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Common
 {
@@ -33,22 +31,22 @@ namespace Altaxo.Gui.Common
   {
     bool IsConditionalViewEnabled { get; set; }
 
-    event Action ConditionalViewEnabledChanged;
+    event Action? ConditionalViewEnabledChanged;
 
-    object ConditionalView { set; }
+    object? ConditionalView { set; }
 
     string EnablingText { set; }
   }
 
   [ExpectedTypeOfView(typeof(IConditionalDocumentView))]
-  public class ConditionalDocumentController<TModel> : IMVCANController
+  public class ConditionalDocumentController<TModel> : IMVCANController where TModel : notnull
   {
     private Func<TModel> _creationAction;
     private Action _removalAction;
-    private Func<TModel, UseDocument, IMVCANController> _controllerCreationAction;
+    private Func<TModel, UseDocument, IMVCANController?> _controllerCreationAction;
 
-    private IConditionalDocumentView _view;
-    private IMVCANController _controller;
+    private IConditionalDocumentView? _view;
+    private IMVCANController? _controller;
     private UseDocument _useDocumentCopy;
 
     public ConditionalDocumentController(Func<TModel> CreationAction, Action RemovalAction)
@@ -56,7 +54,7 @@ namespace Altaxo.Gui.Common
     {
     }
 
-    public ConditionalDocumentController(Func<TModel> CreationAction, Action RemovalAction, Func<TModel, UseDocument, IMVCANController> ControllerCreationAction)
+    public ConditionalDocumentController(Func<TModel> CreationAction, Action RemovalAction, Func<TModel, UseDocument, IMVCANController?> ControllerCreationAction)
     {
       if (null == CreationAction)
         throw new ArgumentNullException("CreationAction");
@@ -70,7 +68,7 @@ namespace Altaxo.Gui.Common
       _controllerCreationAction = ControllerCreationAction;
     }
 
-    public IMVCANController UnderlyingController
+    public IMVCANController? UnderlyingController
     {
       get
       {
@@ -78,9 +76,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    private static IMVCANController InternalCreateController(TModel doc, UseDocument useDocumentCopy)
+    private static IMVCANController? InternalCreateController(TModel doc, UseDocument useDocumentCopy)
     {
-      return (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { doc }, typeof(IMVCANController), useDocumentCopy);
+      return (IMVCANController?)Current.Gui.GetControllerAndControl(new object[] { doc }, typeof(IMVCANController), useDocumentCopy);
     }
 
     public bool InitializeDocument(params object[] args)
@@ -104,7 +102,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {
@@ -128,7 +126,7 @@ namespace Altaxo.Gui.Common
 
     public object ModelObject
     {
-      get { return null != _controller ? _controller.ModelObject : null; }
+      get { return _controller?.ModelObject ?? new object(); }
     }
 
     public void Dispose()
@@ -174,7 +172,10 @@ namespace Altaxo.Gui.Common
 
     private void EhViewEnabledChanged()
     {
-      AnnounceEnabledChanged(_view.IsConditionalViewEnabled);
+      if (!(_view is null))
+      {
+        AnnounceEnabledChanged(_view.IsConditionalViewEnabled);
+      }
     }
 
     public void AnnounceEnabledChanged(bool enableState)
@@ -185,7 +186,7 @@ namespace Altaxo.Gui.Common
         {
           TModel document = _creationAction();
           _controller = _controllerCreationAction(document, _useDocumentCopy);
-          if (null != _view)
+          if (null != _view && null != _controller)
             _view.ConditionalView = _controller.ViewObject;
         }
       }

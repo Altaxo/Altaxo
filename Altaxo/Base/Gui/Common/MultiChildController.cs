@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Main;
 
@@ -42,10 +43,10 @@ namespace Altaxo.Gui.Common
     void InitializeChilds(ViewDescriptionElement[] childs, int initialFocusedChild);
 
     /// <summary>Event fired when one of the child controls is leaved.</summary>
-    event EventHandler ChildControlEntered;
+    event EventHandler? ChildControlEntered;
 
     /// <summary>Event fired when one of the child controls is leaved.</summary>
-    event EventHandler ChildControlValidated;
+    event EventHandler? ChildControlValidated;
   }
 
   public interface IMultiChildController : IMVCAController
@@ -67,12 +68,15 @@ namespace Altaxo.Gui.Common
   [ExpectedTypeOfView(typeof(IMultiChildView))]
   public class MultiChildController : IMultiChildController, IRefreshable
   {
-    protected IMultiChildView _view;
-    protected ControlViewElement[] _childController;
+    protected IMultiChildView? _view;
+    protected ControlViewElement[] _childController = new ControlViewElement[0];
     protected bool _horizontalLayout;
 
     /// <summary>Event fired when one of the child controls is leaved.</summary>
-    public event EventHandler<InstanceChangedEventArgs> ChildControlChanged;
+    public event EventHandler<InstanceChangedEventArgs>? ChildControlChanged;
+
+    private object? _lastActiveChild;
+
 
     protected string _descriptionText = string.Empty;
 
@@ -160,25 +164,22 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    private object _lastActiveChild;
 
-    protected virtual void EhView_ChildControlEntered(object sender, EventArgs e)
+    protected virtual void EhView_ChildControlEntered(object? sender, EventArgs e)
     {
-      if (ChildControlChanged != null)
-        ChildControlChanged(sender, new InstanceChangedEventArgs(_lastActiveChild, sender));
+      ChildControlChanged?.Invoke(sender, new InstanceChangedEventArgs(_lastActiveChild, sender));
       _lastActiveChild = sender;
     }
 
-    protected virtual void EhView_ChildControlValidated(object sender, EventArgs e)
+    protected virtual void EhView_ChildControlValidated(object? sender, EventArgs e)
     {
-      if (ChildControlChanged != null)
-        ChildControlChanged(sender, new InstanceChangedEventArgs(sender, null));
+      ChildControlChanged?.Invoke(sender, new InstanceChangedEventArgs(sender, null));
       _lastActiveChild = null; // because now this was the last message from the child control
     }
 
     #region IMVCController Members
 
-    public virtual object ViewObject
+    public virtual object? ViewObject
     {
       get
       {

@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using Altaxo.Main.Services;
 
@@ -27,7 +28,7 @@ namespace Altaxo.Gui
   public static class LanguageChangeWeakEventManager
   {
     private static WeakDelegate<Action> _languageChanged = new WeakDelegate<Action>();
-    private static IResourceService _resourceService;
+    private static IResourceService? _resourceService;
 
     /// <summary>
     /// Occurs when the Gui language has changed. The event is hold weak, thus you can safely add your handler without running in memory leaks.
@@ -65,7 +66,7 @@ namespace Altaxo.Gui
       }
     }
 
-    private static void EhLanguageChanged(object sender, EventArgs e)
+    private static void EhLanguageChanged(object? sender, EventArgs e)
     {
       _languageChanged.Target?.Invoke();
     }

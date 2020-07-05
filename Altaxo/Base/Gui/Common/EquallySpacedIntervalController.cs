@@ -22,11 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Common
@@ -69,31 +68,31 @@ namespace Altaxo.Gui.Common
 
   public interface IEquallySpacedIntervalView
   {
-    event Action<EquallySpacedIntervalSpecificationMethod> MethodChanged;
+    event Action<EquallySpacedIntervalSpecificationMethod>? MethodChanged;
 
-    event Action<string> StartChanged;
+    event Action<string>? StartChanged;
 
-    event Action<string> EndChanged;
+    event Action<string>? EndChanged;
 
-    event Action<string> CountChanged;
+    event Action<string>? CountChanged;
 
-    event Action<string> IntervalChanged;
+    event Action<string>? IntervalChanged;
 
-    event Action<CancelEventArgs> CountValidating;
+    event Action<CancelEventArgs>? CountValidating;
 
-    event Action<CancelEventArgs> IntervalValidating;
+    event Action<CancelEventArgs>? IntervalValidating;
 
     void EnableEditBoxes(bool start, bool end, bool count, bool interval);
 
     void InitializeMethod(EquallySpacedIntervalSpecificationMethod method);
 
-    void InitializeStart(string text);
+    void InitializeStart(string? text);
 
-    void InitializeEnd(string text);
+    void InitializeEnd(string? text);
 
-    void InitializeCount(string text);
+    void InitializeCount(string? text);
 
-    void InitializeInterval(string text);
+    void InitializeInterval(string? text);
   }
 
   #endregion Interfaces
@@ -116,6 +115,9 @@ namespace Altaxo.Gui.Common
 
     protected override void Initialize(bool initData)
     {
+      if (_doc is null)
+        throw CreateNotInitializedException;
+
       base.Initialize(initData);
       if (initData)
       {
@@ -131,7 +133,7 @@ namespace Altaxo.Gui.Common
         EhMethodChanged(_currentMethod);
 
         // Start, End, Count, Interval initialisieren
-        string sStart = null, sEnd = null, sCount = null, sInterval = null;
+        string? sStart = null, sEnd = null, sCount = null, sInterval = null;
 
         if (!double.IsNaN(_start))
           sStart = GUIConversion.ToString(_start);
@@ -146,14 +148,17 @@ namespace Altaxo.Gui.Common
           sStart = GUIConversion.ToString(_interval);
 
         _view.InitializeStart(sStart);
-        _view.InitializeStart(sEnd);
-        _view.InitializeStart(sCount);
-        _view.InitializeStart(sInterval);
+        _view.InitializeEnd(sEnd);
+        _view.InitializeCount(sCount);
+        _view.InitializeInterval(sInterval);
       }
     }
 
     public override bool Apply(bool disposeController)
     {
+      if (_doc is null)
+        throw CreateNotInitializedException;
+
       if (double.IsNaN(_start))
         return false;
       if (double.IsNaN(_end))
@@ -179,6 +184,9 @@ namespace Altaxo.Gui.Common
 
     protected override void AttachView()
     {
+      if (_view is null)
+        throw CreateNoViewException;
+
       base.AttachView();
       _view.MethodChanged += EhMethodChanged;
       _view.StartChanged += EhStartChanged;
@@ -191,6 +199,9 @@ namespace Altaxo.Gui.Common
 
     protected override void DetachView()
     {
+      if (_view is null)
+        throw CreateNoViewException;
+
       _view.MethodChanged -= EhMethodChanged;
       _view.StartChanged -= EhStartChanged;
       _view.EndChanged -= EhEndChanged;
@@ -204,6 +215,10 @@ namespace Altaxo.Gui.Common
 
     private void EhMethodChanged(EquallySpacedIntervalSpecificationMethod method)
     {
+      if (_view is null)
+        return;
+
+
       _currentMethod = method;
       switch (method)
       {
@@ -250,6 +265,9 @@ namespace Altaxo.Gui.Common
 
     private void ChangeDependentVariable()
     {
+      if (_view is null)
+        return;
+
       switch (_currentMethod)
       {
         case EquallySpacedIntervalSpecificationMethod.StartEndCount:
@@ -344,6 +362,9 @@ namespace Altaxo.Gui.Common
 
     private void EhCountValidating(CancelEventArgs e)
     {
+      if (_view is null)
+        return;
+
       switch (_currentMethod)
       {
         case EquallySpacedIntervalSpecificationMethod.StartCountInterval:
@@ -362,6 +383,9 @@ namespace Altaxo.Gui.Common
 
     private void EhIntervalValidating(CancelEventArgs e)
     {
+      if (_view is null)
+        return;
+
       if (_currentMethod == EquallySpacedIntervalSpecificationMethod.StartEndInterval)
       {
         if (((_end > _start) && _interval < 0) || ((_end < _start) && _interval > 0))

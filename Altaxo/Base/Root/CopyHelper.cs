@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo
 {
@@ -119,6 +117,36 @@ namespace Altaxo
         to = (T)from.Clone();
       }
     }
+
+    /// <summary>Copies an instance.</summary>
+    /// <typeparam name="T">The type of the instance to copy.</typeparam>
+    /// <param name="to">The variable to copy to.</param>
+    /// <param name="from">The instance that was copied.</param>
+    public static void CopyN<T>([NotNullIfNotNull("from")] ref T to, [MaybeNull] T from) where T : ICloneable
+    {
+      if (object.ReferenceEquals(to, from))
+      {
+      }
+      else if (from is null)
+      {
+#pragma warning disable CS8601 // Possible null reference assignment.
+        to = default;
+#pragma warning restore CS8601 // Possible null reference assignment.
+      }
+      else if (to is null)
+      {
+        to = (T)from.Clone();
+      }
+      else if (to is Main.ICopyFrom tocf && to.GetType() == from.GetType())
+      {
+        tocf.CopyFrom(from);
+      }
+      else
+      {
+        to = (T)from.Clone();
+      }
+    }
+
 
     /// <summary>Gets a copy of an instance, either by using <see cref="Altaxo.Main.ICopyFrom"/> or <see cref="ICloneable"/> interface.</summary>
     /// <typeparam name="T">The type of the instance to copy.</typeparam>

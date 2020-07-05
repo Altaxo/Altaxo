@@ -22,10 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#nullable enable
 
 namespace Altaxo.Gui.Common
 {
@@ -37,7 +34,7 @@ namespace Altaxo.Gui.Common
   [ExpectedTypeOfView(typeof(IPropertyView))]
   public class PropertyController : IMVCAController
   {
-    private IPropertyView _view;
+    private IPropertyView? _view;
     private object _doc;
 
     public PropertyController(object doc)
@@ -56,7 +53,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {
@@ -64,7 +61,7 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        _view = (IPropertyView)value;
+        _view = value as IPropertyView;
         Initialize();
       }
     }

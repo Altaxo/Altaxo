@@ -22,11 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Common
 {
@@ -38,9 +36,9 @@ namespace Altaxo.Gui.Common
     protected string[] _choices;
     protected int _selection;
     private bool _allowFreeText;
-    private string _choosenText;
+    private string? _choosenText;
     private string _description = string.Empty;
-    private Func<string, string> _textValidationFunction;
+    private Func<string, string>? _textValidationFunction;
 
     public TextChoice(string[] choices, int selection, bool allowFreeText)
     {
@@ -91,7 +89,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Get/sets the Text that is choosen by the user or entered as free text.
     /// </summary>
-    public string Text
+    public string? Text
     {
       get { return _choosenText; }
       set { _choosenText = value; }
@@ -106,7 +104,7 @@ namespace Altaxo.Gui.Common
       set { _description = value; }
     }
 
-    public Func<string, string> TextValidationFunction
+    public Func<string, string>? TextValidationFunction
     {
       get
       {
@@ -139,11 +137,17 @@ namespace Altaxo.Gui.Common
   [ExpectedTypeOfView(typeof(IFreeTextChoiceView))]
   public class TextChoiceController : IMVCANController
   {
-    private IFreeTextChoiceView _view;
-    private TextChoice _doc;
+    private IFreeTextChoiceView? _view;
+    private TextChoice? _doc;
+
+    private Exception NoDocumentException => new InvalidOperationException("This controller is not yet initialized with a document!");
+
 
     private void Initialize(bool initData)
     {
+      if (_doc is null)
+        throw NoDocumentException;
+
       if (null != _view)
       {
         _view.SetDescription(_doc.Description);
@@ -153,6 +157,9 @@ namespace Altaxo.Gui.Common
 
     private void EhSelectionChangeCommitted(int selIndex)
     {
+      if (_doc is null)
+        throw NoDocumentException;
+
       _doc.SelectedIndex = selIndex;
 
       if (selIndex >= 0)
@@ -161,7 +168,10 @@ namespace Altaxo.Gui.Common
 
     private void EhTextValidating(string text, CancelEventArgs e)
     {
-      string validationResult = null;
+      if (_doc is null)
+        throw NoDocumentException;
+
+      string? validationResult = null;
       if (null != _doc.TextValidationFunction)
       {
         validationResult = _doc.TextValidationFunction(text);
@@ -197,7 +207,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {
@@ -224,7 +234,12 @@ namespace Altaxo.Gui.Common
 
     public object ModelObject
     {
-      get { return _doc; }
+      get
+      {
+        if (_doc is null)
+          throw NoDocumentException;
+        return _doc;
+      }
     }
 
     public void Dispose()

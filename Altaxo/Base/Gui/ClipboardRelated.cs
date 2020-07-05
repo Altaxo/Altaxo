@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui
 {
@@ -56,9 +54,9 @@ namespace Altaxo.Gui
 
     bool GetDataPresent(System.Type type);
 
-    object GetData(string format);
+    object? GetData(string format);
 
-    object GetData(System.Type type);
+    object? GetData(System.Type type);
 
     bool ContainsFileDropList();
 

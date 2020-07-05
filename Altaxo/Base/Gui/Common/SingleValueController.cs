@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Gui.Common
@@ -51,7 +52,7 @@ namespace Altaxo.Gui.Common
   [ExpectedTypeOfView(typeof(ISingleValueView))]
   public class SingleValueController : ISingleValueController
   {
-    protected ISingleValueView _view;
+    protected ISingleValueView? _view;
     protected string _value1String;
     protected string _value1StringTemporary;
 
@@ -90,7 +91,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
-    public virtual object ViewObject
+    public virtual object? ViewObject
     {
       get
       {

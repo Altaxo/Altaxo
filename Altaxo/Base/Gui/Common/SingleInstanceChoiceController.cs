@@ -22,14 +22,16 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Gui.Common
 {
   public class SingleInstanceChoice
   {
     private System.Type _instanceType;
-    private object _instance;
+    private object? _instance;
 
     public System.Type InstanceType
     {
@@ -39,7 +41,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    public object Instance
+    public object? Instance
     {
       get
       {
@@ -59,6 +61,7 @@ namespace Altaxo.Gui.Common
       Initialize(instanceType, instance);
     }
 
+    [MemberNotNull(nameof(_instanceType))]
     public void Initialize(System.Type instanceType, object instance)
     {
       if (instanceType == null)
@@ -115,7 +118,7 @@ namespace Altaxo.Gui.Common
         return true;
       else
       {
-        object current = System.Activator.CreateInstance(_types[selected]);
+        object? current = System.Activator.CreateInstance(_types[selected]);
         if (current != null)
         {
           _doc.Instance = current;

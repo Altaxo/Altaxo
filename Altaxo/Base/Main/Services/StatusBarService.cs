@@ -219,7 +219,7 @@ namespace Altaxo.Main.Services
       }
     }
 
-    public object? ModelObject { get { return null; } }
+    public object ModelObject { get { return new object(); } }
 
     public virtual void Dispose()
     {

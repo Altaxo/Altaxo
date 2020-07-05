@@ -22,11 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Gui
 {
@@ -38,7 +35,7 @@ namespace Altaxo.Gui
     /// <summary>
     /// Returns the Gui element that shows the model to the user.
     /// </summary>
-    object ViewObject { get; set; }
+    object? ViewObject { get; set; }
 
     /// <summary>
     /// Returns the model (document) that this controller manages.
@@ -92,7 +89,7 @@ namespace Altaxo.Gui
   public interface IMVCANDController : IMVCANController
   {
     /// <summary>Event fired when the user changed some data that will change the model.</summary>
-    event Action<IMVCANDController> MadeDirty;
+    event Action<IMVCANDController>? MadeDirty;
 
     /// <summary>Gets the provisional model object. This is the model object that is based on the current user input.</summary>
     object ProvisionalModelObject { get; }
@@ -107,13 +104,13 @@ namespace Altaxo.Gui
     /// <summary>
     /// Occurs when the controller has sucessfully executed the apply function.
     /// </summary>
-    event Action SuccessfullyApplied;
+    event Action? SuccessfullyApplied;
   }
 
   public struct ControllerAndSetNullMethod
   {
-    private IMVCAController _doc;
-    private Action _setMemberToNullAction;
+    private IMVCAController? _doc;
+    private Action? _setMemberToNullAction;
 
     public ControllerAndSetNullMethod(IMVCAController doc, Action setMemberToNullAction)
     {
@@ -121,11 +118,11 @@ namespace Altaxo.Gui
       _setMemberToNullAction = setMemberToNullAction;
     }
 
-    public IMVCAController Controller { get { return _doc; } }
+    public IMVCAController? Controller { get { return _doc; } }
 
-    public Action SetMemberToNullAction { get { return _setMemberToNullAction; } }
+    public Action? SetMemberToNullAction { get { return _setMemberToNullAction; } }
 
-    public bool IsEmpty { get { return null == _doc; } }
+    public bool IsEmpty { get { return _doc is null; } }
   }
 
   /// <summary>
@@ -133,7 +130,7 @@ namespace Altaxo.Gui
   /// </summary>
   public interface IDataContextAwareView
   {
-    object DataContext { set; }
+    object? DataContext { set; }
   }
 
   /// <summary>

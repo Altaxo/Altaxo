@@ -22,9 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Gui
 {
@@ -59,11 +58,18 @@ namespace Altaxo.Gui
 
     #region IComparable Members
 
-    public int CompareTo(object obj)
+    public int CompareTo(object? obj)
     {
-      // Attention - we sort the items so that the item with the highest priority value is the first (!) entry in a sorted list
-      var to = (ExpectedTypeOfViewAttribute)obj;
-      return _priority == to._priority ? 0 : (_priority > to._priority ? -1 : 1);
+      if (obj is ExpectedTypeOfViewAttribute to)
+      {
+        // Attention - we sort the items so that the item with the highest priority value is the first (!) entry in a sorted list
+
+        return _priority == to._priority ? 0 : (_priority > to._priority ? -1 : 1);
+      }
+      else
+      {
+        throw new ArgumentException($"Argument is not of the expected type {GetType()}", nameof(obj));
+      }
     }
 
     #endregion IComparable Members

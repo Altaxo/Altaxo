@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
@@ -40,13 +40,13 @@ namespace Altaxo.Gui.Common
 
     int EasyRangeTo { get; set; }
 
-    event Action SwitchToAdvandedView;
+    event Action? SwitchToAdvandedView;
 
-    event Action<object> InitializingNewRangeItem;
+    event Action<object>? InitializingNewRangeItem;
 
-    event Action<int, int> AdvancedAddRange;
+    event Action<int, int>? AdvancedAddRange;
 
-    event Action<int, int> AdvancedRemoveRange;
+    event Action<int, int>? AdvancedRemoveRange;
   }
 
   [ExpectedTypeOfView(typeof(IAscendingIntegerCollectionView))]
@@ -58,11 +58,11 @@ namespace Altaxo.Gui.Common
     private class MyRange : System.ComponentModel.INotifyPropertyChanged, System.ComponentModel.IEditableObject
     {
       private int _from, _to;
-      private MyRange _savedRange;
+      private MyRange? _savedRange;
 
-      public RangeCollection Parent { get; set; }
+      public RangeCollection? Parent { get; set; }
 
-      public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+      public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
       public int From
       {
@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Common
           ev(this, new System.ComponentModel.PropertyChangedEventArgs(name));
       }
 
-      public void Exclude(MyRange excluded, out MyRange rangeLeft, out MyRange rangeRight)
+      public void Exclude(MyRange excluded, out MyRange? rangeLeft, out MyRange? rangeRight)
       {
         int leftTo = Math.Min(To, Math.Max(From - 1, excluded.From - 1));
         int rightFrom = Math.Max(From, Math.Min(To + 1, excluded.To + 1));
@@ -136,7 +136,7 @@ namespace Altaxo.Gui.Common
 
         if (null != savedRange && (To != savedRange.To || From != savedRange.From))
         {
-          Parent.NormalizeRanges();
+          Parent?.NormalizeRanges();
         }
       }
     }
@@ -253,6 +253,11 @@ namespace Altaxo.Gui.Common
 
     public override bool Apply(bool disposeController)
     {
+      if (_doc is null)
+        throw CreateNotInitializedException;
+      if (_view is null)
+        throw CreateNoViewException;
+
       if (_isInAdvancedView)
       {
         _doc.Clear();
@@ -279,6 +284,8 @@ namespace Altaxo.Gui.Common
 
     protected override void AttachView()
     {
+      if (_view is null) throw CreateNoViewException;
+
       base.AttachView();
       _view.SwitchToAdvandedView += EhSwitchToAdvancedView;
       _view.InitializingNewRangeItem += EhInitializingNewRangeItem;
@@ -288,6 +295,8 @@ namespace Altaxo.Gui.Common
 
     protected override void DetachView()
     {
+      if (_view is null) throw CreateNoViewException;
+
       _view.SwitchToAdvandedView -= EhSwitchToAdvancedView;
       _view.InitializingNewRangeItem -= EhInitializingNewRangeItem;
       _view.AdvancedAddRange -= EhAdvancedAddRange;
@@ -298,6 +307,8 @@ namespace Altaxo.Gui.Common
 
     private void EhSwitchToAdvancedView()
     {
+      if (_view is null) throw CreateNoViewException;
+
       int from = _view.EasyRangeFrom;
       int to = _view.EasyRangeTo;
 
@@ -338,6 +349,8 @@ namespace Altaxo.Gui.Common
 
     private void InitRanges()
     {
+      if (_doc is null) throw CreateNotInitializedException;
+
       _ranges.Clear();
       foreach (var range in _doc.RangesAscending)
       {

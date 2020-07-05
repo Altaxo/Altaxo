@@ -22,12 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Gui
 {
@@ -39,14 +38,20 @@ namespace Altaxo.Gui
   public abstract class MVCANControllerEditImmutableDocBase<TModel, TView> : IMVCANController, INotifyPropertyChanged
     where TView : class
   {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
     /// <summary>The document to edit. If <see cref="_useDocumentCopy"/> is true, this is a copy of the original document; otherwise, it is the original document itself.</summary>
+    [MaybeNull]
     protected TModel _doc;
 
     /// <summary>The original document. If <see cref="_useDocumentCopy"/> is false, it maybe has been edited by this controller.</summary>
+    [MaybeNull]
     protected TModel _originalDoc;
 
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
     /// <summary>The Gui view of this controller</summary>
-    protected TView _view;
+    protected TView? _view;
 
     /// <summary>If true, a copy of the document is made before editing; this copy can later be used to revert the state of the document to the original state.</summary>
     protected bool _useDocumentCopy;
@@ -54,7 +59,7 @@ namespace Altaxo.Gui
     /// <summary>Set to true if this controller is already disposed.</summary>
     private bool _isDisposed;
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// Enumerates the sub controllers. This function is called on <see cref="Dispose(bool)"/> of this controller to dispose the subcontrollers too.
@@ -82,6 +87,24 @@ namespace Altaxo.Gui
 
       Initialize(true);
       return true;
+    }
+
+    protected InvalidOperationException CreateNotInitializedException =>
+new InvalidOperationException($"Controller {GetType()} was not initialized with a document");
+
+
+    protected InvalidOperationException CreateNoViewException =>
+     new InvalidOperationException($"Controller {GetType()} currently has no view.");
+
+
+
+    /// <summary>Throws an exception if the controller is not initialized with a document.</summary>
+    /// <exception cref="InvalidOperationException">Controller was not initialized with a document</exception>
+    [MemberNotNull(nameof(_originalDoc), nameof(_doc))]
+    protected void ThrowIfNotInitialized()
+    {
+      if (_originalDoc is null || _doc is null)
+        throw CreateNotInitializedException;
     }
 
     /// <summary>
@@ -160,6 +183,8 @@ namespace Altaxo.Gui
     /// </returns>
     public virtual bool Revert(bool disposeController)
     {
+      ThrowIfNotInitialized();
+
       _doc = _originalDoc;
 
       if (disposeController)
@@ -193,7 +218,7 @@ namespace Altaxo.Gui
     /// <summary>
     /// Returns the Gui element that shows the model to the user.
     /// </summary>
-    public virtual object ViewObject
+    public virtual object? ViewObject
     {
       get
       {
@@ -221,7 +246,11 @@ namespace Altaxo.Gui
     /// </summary>
     public virtual object ModelObject
     {
-      get { return _doc; }
+      get
+      {
+        ThrowIfNotInitialized();
+        return _doc;
+      }
     }
 
     /// <summary>

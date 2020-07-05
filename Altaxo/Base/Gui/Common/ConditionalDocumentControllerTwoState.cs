@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Common
 {
@@ -34,18 +32,18 @@ namespace Altaxo.Gui.Common
   /// </summary>
   /// <typeparam name="TModel">The type of the model.</typeparam>
   [ExpectedTypeOfView(typeof(IConditionalDocumentView))]
-  public class ConditionalDocumentControllerWithDisabledView<TModel> : IMVCANController
+  public class ConditionalDocumentControllerWithDisabledView<TModel> : IMVCANController where TModel : notnull
   {
     private Func<TModel> _documentCreationActionForEnabledState;
     private Func<TModel> _documentCreationActionForDisabledState;
-    private Func<TModel, UseDocument, IMVCANController> _controllerCreationAction;
+    private Func<TModel, UseDocument, IMVCANController?> _controllerCreationAction;
 
-    private IConditionalDocumentView _view;
-    private IMVCANController _controllerForEnabledState;
-    private IMVCANController _controllerForDisabledState;
+    private IConditionalDocumentView? _view;
+    private IMVCANController? _controllerForEnabledState;
+    private IMVCANController? _controllerForDisabledState;
     private UseDocument _useDocumentCopy;
     protected bool _isInEnabledState;
-    protected string _enablingText = null;
+    protected string? _enablingText = null;
 
     public ConditionalDocumentControllerWithDisabledView(
       Func<TModel> DocumentCreationActionForEnabledState,
@@ -58,7 +56,7 @@ namespace Altaxo.Gui.Common
     public ConditionalDocumentControllerWithDisabledView(
       Func<TModel> DocumentCreationActionForEnabledState,
       Func<TModel> DocumentCreationActionForDisabledState,
-      Func<TModel, UseDocument, IMVCANController> ControllerCreationAction)
+      Func<TModel, UseDocument, IMVCANController?> ControllerCreationAction)
     {
       if (null == DocumentCreationActionForEnabledState)
         throw new ArgumentNullException("CreationAction");
@@ -72,7 +70,7 @@ namespace Altaxo.Gui.Common
       _controllerCreationAction = ControllerCreationAction;
     }
 
-    public IMVCANController UnderlyingControllerForEnabledState
+    public IMVCANController? UnderlyingControllerForEnabledState
     {
       get
       {
@@ -90,9 +88,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    private static IMVCANController InternalCreateController(TModel doc, UseDocument useDocumentCopy)
+    private static IMVCANController? InternalCreateController(TModel doc, UseDocument useDocumentCopy)
     {
-      return (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { doc }, typeof(IMVCANController), useDocumentCopy);
+      return (IMVCANController?)Current.Gui.GetControllerAndControl(new object[] { doc }, typeof(IMVCANController), useDocumentCopy);
     }
 
     /// <summary>
@@ -136,7 +134,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {
@@ -160,7 +158,17 @@ namespace Altaxo.Gui.Common
 
     public object ModelObject
     {
-      get { return _isInEnabledState ? _controllerForEnabledState.ModelObject : null; }
+      get
+      {
+        object? result = null;
+
+        if (_isInEnabledState)
+          result = _controllerForEnabledState?.ModelObject;
+
+        return result ?? new object();
+
+
+      }
     }
 
     public void Dispose()
@@ -197,51 +205,55 @@ namespace Altaxo.Gui.Common
         if (_isInEnabledState)
         {
           _view.IsConditionalViewEnabled = true;
-          _view.ConditionalView = _controllerForEnabledState.ViewObject;
+          _view.ConditionalView = _controllerForEnabledState?.ViewObject;
         }
         else
         {
           _view.IsConditionalViewEnabled = false;
-          _view.ConditionalView = _controllerForDisabledState.ViewObject;
+          _view.ConditionalView = _controllerForDisabledState?.ViewObject;
         }
       }
     }
 
     private void EhViewEnabledChanged()
     {
-      AnnounceEnabledChanged(_view.IsConditionalViewEnabled);
+      if (null != _view)
+        AnnounceEnabledChanged(_view.IsConditionalViewEnabled);
     }
 
     public void AnnounceEnabledChanged(bool enableState)
     {
       _isInEnabledState = enableState;
 
+
       if (enableState)
       {
         if (null != _controllerForEnabledState)
         {
-          _view.ConditionalView = _controllerForEnabledState.ViewObject;
+          if (null != _view)
+            _view.ConditionalView = _controllerForEnabledState.ViewObject;
         }
         else // document and controller have to be constructed
         {
           TModel document = _documentCreationActionForEnabledState();
           _controllerForEnabledState = _controllerCreationAction(document, _useDocumentCopy);
           if (null != _view)
-            _view.ConditionalView = _controllerForEnabledState.ViewObject;
+            _view.ConditionalView = _controllerForEnabledState?.ViewObject;
         }
       }
       else // disabled
       {
         if (null != _controllerForDisabledState)
         {
-          _view.ConditionalView = _controllerForDisabledState.ViewObject;
+          if (null != _view)
+            _view.ConditionalView = _controllerForDisabledState.ViewObject;
         }
         else // document and controller have to be constructed
         {
           TModel document = _documentCreationActionForDisabledState();
           _controllerForDisabledState = _controllerCreationAction(document, _useDocumentCopy);
           if (null != _view)
-            _view.ConditionalView = _controllerForEnabledState.ViewObject;
+            _view.ConditionalView = _controllerForEnabledState?.ViewObject;
         }
       }
 

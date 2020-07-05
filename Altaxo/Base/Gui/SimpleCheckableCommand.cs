@@ -22,12 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Altaxo.AddInItems;
 
 namespace Altaxo.Gui
@@ -41,18 +37,18 @@ namespace Altaxo.Gui
   {
     public virtual bool IsChecked { get; set; }
 
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
       IsChecked = !IsChecked;
     }
 
-    event EventHandler ICheckableMenuCommand.IsCheckedChanged
+    event EventHandler? ICheckableMenuCommand.IsCheckedChanged
     {
-      add { Current.Gui.RegisterRequerySuggestedHandler(value); }
-      remove { Current.Gui.UnregisterRequerySuggestedHandler(value); }
+      add { if (!(value is null)) Current.Gui.RegisterRequerySuggestedHandler(value); }
+      remove { if (!(value is null)) Current.Gui.UnregisterRequerySuggestedHandler(value); }
     }
 
-    bool ICheckableMenuCommand.IsChecked(object parameter)
+    bool ICheckableMenuCommand.IsChecked(object? parameter)
     {
       return IsChecked;
     }

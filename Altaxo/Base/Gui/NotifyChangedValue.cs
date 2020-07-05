@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#nullable enable
+
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Gui
 {
@@ -35,14 +34,17 @@ namespace Altaxo.Gui
   /// <typeparam name="T">Type of the value to wrap.</typeparam>
   public class NotifyChangedValue<T> : System.ComponentModel.INotifyPropertyChanged
   {
+    [MaybeNull]
     private T _value;
 
-    public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// Empty constructor, which sets the value to the defaulting one.
     /// </summary>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public NotifyChangedValue()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
@@ -58,6 +60,7 @@ namespace Altaxo.Gui
     /// <summary>
     /// Gets/sets the value. If the value set is different from the old one, the PropertyChanged event is triggered.
     /// </summary>
+    [MaybeNull]
     public T Value
     {
       get
@@ -66,7 +69,7 @@ namespace Altaxo.Gui
       }
       set
       {
-        T oldValue = _value;
+        var oldValue = _value;
         _value = value;
         if (!object.Equals(oldValue, value) && null != PropertyChanged)
           PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs("Value"));
