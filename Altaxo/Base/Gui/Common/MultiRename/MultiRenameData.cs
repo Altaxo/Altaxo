@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Common.MultiRename
 {
@@ -69,9 +68,16 @@ namespace Altaxo.Gui.Common.MultiRename
 
     private class RenameInfo
     {
-      public object ObjectToRename;
-      public string OldName;
-      public string NewName;
+      public object ObjectToRename { get; }
+      public string? OldName;
+      public string? NewName;
+
+      public RenameInfo(object objectToRename, string? oldName = null, string? newName = null)
+      {
+        ObjectToRename = objectToRename;
+        OldName = oldName;
+        NewName = newName;
+      }
     }
 
     #endregion Inner classes
@@ -79,7 +85,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Pattern string that is initially shown when the multi rename dialog opens.
     /// </summary>
-    private string _defaultPatternString;
+    private string _defaultPatternString = string.Empty;
 
     /// <summary>
     /// Stores for every shortcut some information, for instance the type of shortcut, and a description, which can be shown in a Gui view.
@@ -119,7 +125,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// This handler is called when the items should be processed (renamed, exported or so). If the function succeeds, the return value should be zero or an empty list.
     /// If the function is partially unsuccessfull, for instance because some items could not be renamed, the function should return those unsuccessfully processed items in the list.
     /// </summary>
-    private Func<MultiRenameData, List<object>> _renameActionHandler;
+    private Func<MultiRenameData, List<object>>? _renameActionHandler;
 
     /// <summary>
     /// Stores columns of information for the objects to rename. Key is the column name, value is a function which retrieves a string for each object.
@@ -181,7 +187,7 @@ namespace Altaxo.Gui.Common.MultiRename
     {
       foreach (object o in list)
       {
-        _objectsToRename.Add(new RenameInfo() { ObjectToRename = o, OldName = null, NewName = null });
+        _objectsToRename.Add(new RenameInfo(o));
       }
     }
 
@@ -208,7 +214,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <returns>The proposed new name of the object at index i.</returns>
     public string GetNewNameForObject(int i)
     {
-      return _objectsToRename[i].NewName;
+      return _objectsToRename[i].NewName ?? throw new InvalidOperationException($"New name was not set for object {_objectsToRename[i].NewName} (OldName: {_objectsToRename[i].OldName})");
     }
 
     /// <summary>Gets the integer value of a integer shortcut.</summary>

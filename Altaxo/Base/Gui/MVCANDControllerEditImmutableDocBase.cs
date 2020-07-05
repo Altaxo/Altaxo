@@ -113,7 +113,7 @@ namespace Altaxo.Gui
     protected override bool ApplyEnd(bool applyResult, bool disposeController)
     {
       if (_doc is null)
-        throw CreateNotInitializedException;
+        throw NoDocumentException;
 
       if (true == applyResult)
       {
@@ -140,7 +140,7 @@ namespace Altaxo.Gui
       get
       {
         if (_doc is null)
-          throw CreateNotInitializedException;
+          throw NoDocumentException;
         return _doc;
       }
     }

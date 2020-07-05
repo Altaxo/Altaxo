@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
-using System;
+#nullable enable
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Common.MultiRename
 {
@@ -41,7 +39,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// </summary>
     private class LongestFirstComparer : IComparer<string>
     {
-      public int Compare(string x, string y)
+      public int Compare(string? x, string? y)
       {
         int lenx = null == x ? 0 : x.Length;
         int leny = null == y ? 0 : y.Length;

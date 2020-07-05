@@ -64,7 +64,7 @@ namespace Altaxo.Gui.Common
     protected override void Initialize(bool initData)
     {
       if (_doc is null)
-        throw CreateNotInitializedException;
+        throw NoDocumentException;
 
       base.Initialize(initData);
 
@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Common
     protected override void AttachView()
     {
       if (_view is null)
-        throw CreateNoViewException;
+        throw NoViewException;
 
       base.AttachView();
       _view.BrowseSelectedFileName += EhBrowseFileName;
@@ -111,7 +111,7 @@ namespace Altaxo.Gui.Common
     protected override void DetachView()
     {
       if (_view is null)
-        throw CreateNoViewException;
+        throw NoViewException;
 
       _view.BrowseSelectedFileName -= EhBrowseFileName;
       _view.DeleteSelectedFileName -= EhDeleteFileName;

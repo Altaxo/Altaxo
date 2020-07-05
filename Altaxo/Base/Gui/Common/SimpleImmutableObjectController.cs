@@ -73,9 +73,6 @@ namespace Altaxo.Gui.Common
 
     private List<ValueInfo> _valueInfo = new List<ValueInfo>();
 
-    private Exception NoDocumentException => new InvalidOperationException("This controller is not yet initialized with a document!");
-
-    private Exception NotInitializedException => new InvalidProgramException("This controller has a document, but was not properly initialized!");
 
 
     protected override void Initialize(bool initData)
@@ -127,7 +124,7 @@ namespace Altaxo.Gui.Common
     public override bool Apply(bool disposeController)
     {
       if (_view is null)
-        throw CreateNoViewException;
+        throw NoViewException;
 
       for (int i = 0; i < _valueInfo.Count; ++i)
       {

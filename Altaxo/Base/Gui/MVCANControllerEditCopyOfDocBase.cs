@@ -35,7 +35,7 @@ namespace Altaxo.Gui
   /// </summary>
   /// <typeparam name="TModel">The type of the document to edit.</typeparam>
   /// <typeparam name="TView">The type of the view.</typeparam>
-  public abstract class MVCANControllerEditCopyOfDocBase<TModel, TView> : IMVCANController
+  public abstract class MVCANControllerEditCopyOfDocBase<TModel, TView> : ControllerBase, IMVCANController
     where TModel : class // for structs please use MVCANControllerEditImmutableDocBase
     where TView : class
   {
@@ -98,10 +98,7 @@ namespace Altaxo.Gui
         throw new InvalidOperationException("This controller was not initialized with a document.");
     }
 
-    protected InvalidOperationException CreateNotInitializedException()
-    {
-      return new InvalidOperationException($"Controller {GetType()} was not initialized with a document");
-    }
+
 
     /// <summary>Throws an exception if the controller is not initialized with a document.</summary>
     /// <exception cref="InvalidOperationException">Controller was not initialized with a document</exception>
@@ -109,7 +106,7 @@ namespace Altaxo.Gui
     protected void ThrowIfNotInitialized()
     {
       if (_originalDoc is null || _doc is null)
-        throw CreateNotInitializedException();
+        throw NoDocumentException;
     }
 
     /// <summary>

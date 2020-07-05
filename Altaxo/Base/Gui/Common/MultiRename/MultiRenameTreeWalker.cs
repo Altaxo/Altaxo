@@ -22,9 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Altaxo.Main.PegParser;
 
@@ -164,7 +163,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
     private IMultiRenameElement HandleDateTimeTemplate(PegNode node)
     {
-      string dateTimeFormat = null;
+      string? dateTimeFormat = null;
       bool useUtcTime = false;
       var childNode = node.child_;
       if (childNode == null)

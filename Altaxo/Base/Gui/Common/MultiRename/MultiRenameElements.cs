@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Altaxo.Gui.Common.MultiRename
@@ -167,7 +167,7 @@ namespace Altaxo.Gui.Common.MultiRename
     private string _dateTimeFormat;
     private bool _useUtcTime;
 
-    public MultiRenameDateTimeElement(MultiRenameData multiRenameData, string shortCut, string dateTimeFormat, bool useUtcTime)
+    public MultiRenameDateTimeElement(MultiRenameData multiRenameData, string shortCut, string? dateTimeFormat, bool useUtcTime)
       : base(multiRenameData, shortCut)
     {
       _dateTimeFormat = string.IsNullOrEmpty(dateTimeFormat) ? DefaultDateTimeFormat : dateTimeFormat;

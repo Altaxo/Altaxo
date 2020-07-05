@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,41 +24,22 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 
-namespace Altaxo.Gui.Common.BasicTypes
+namespace Altaxo.Gui
 {
-  public interface IDateTimeNakedControl
+  /// <summary>
+  /// Provides some basic properties common for all controllers.
+  /// </summary>
+  public class ControllerBase
   {
-    DateTime SelectedValue { get; set; }
-  }
+    protected InvalidOperationException NoDocumentException =>
+      new InvalidOperationException($"Controller {GetType()} was not initialized with a document");
 
-  [UserControllerForObject(typeof(DateTime), 100)]
-  [ExpectedTypeOfView(typeof(IDateTimeNakedControl))]
-  public class DateTimeController : MVCANControllerEditImmutableDocBase<DateTime, IDateTimeNakedControl>
-  {
-    protected override void Initialize(bool initData)
-    {
-      base.Initialize(initData);
 
-      if (null != _view)
-      {
-        _view.SelectedValue = _doc;
-      }
-    }
+    protected InvalidOperationException NoViewException =>
+      new InvalidOperationException($"Controller {GetType()} currently has no view.");
 
-    public override bool Apply(bool disposeController)
-    {
-      if (_view is null)
-        throw NoViewException;
-
-      _doc = _view.SelectedValue;
-      return ApplyEnd(true, disposeController);
-    }
-
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-    {
-      yield break;
-    }
+    protected InvalidOperationException NotInitializedException =>
+      new InvalidOperationException($"Controller {GetType()} is not property initialized.");
   }
 }

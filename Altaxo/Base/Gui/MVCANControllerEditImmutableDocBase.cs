@@ -35,7 +35,7 @@ namespace Altaxo.Gui
   /// </summary>
   /// <typeparam name="TModel">The type of the document to edit.</typeparam>
   /// <typeparam name="TView">The type of the view.</typeparam>
-  public abstract class MVCANControllerEditImmutableDocBase<TModel, TView> : IMVCANController, INotifyPropertyChanged
+  public abstract class MVCANControllerEditImmutableDocBase<TModel, TView> : ControllerBase, IMVCANController, INotifyPropertyChanged
     where TView : class
   {
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
@@ -89,22 +89,13 @@ namespace Altaxo.Gui
       return true;
     }
 
-    protected InvalidOperationException CreateNotInitializedException =>
-new InvalidOperationException($"Controller {GetType()} was not initialized with a document");
-
-
-    protected InvalidOperationException CreateNoViewException =>
-     new InvalidOperationException($"Controller {GetType()} currently has no view.");
-
-
-
     /// <summary>Throws an exception if the controller is not initialized with a document.</summary>
     /// <exception cref="InvalidOperationException">Controller was not initialized with a document</exception>
     [MemberNotNull(nameof(_originalDoc), nameof(_doc))]
     protected void ThrowIfNotInitialized()
     {
       if (_originalDoc is null || _doc is null)
-        throw CreateNotInitializedException;
+        throw NoDocumentException;
     }
 
     /// <summary>

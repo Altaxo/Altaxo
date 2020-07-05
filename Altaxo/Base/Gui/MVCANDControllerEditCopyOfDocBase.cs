@@ -116,7 +116,7 @@ namespace Altaxo.Gui
       get
       {
         if (_doc is null)
-          throw CreateNotInitializedException();
+          throw NoDocumentException;
         return _doc;
       }
     }
