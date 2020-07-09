@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Data.Transformations
 {
@@ -51,7 +49,7 @@ namespace Altaxo.Data.Transformations
         info.AddValue("Scale", s._offset);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var scale = info.GetDouble("Scale");
         return new OffsetTransformation(scale);
@@ -123,16 +121,9 @@ namespace Altaxo.Data.Transformations
         return new OffsetTransformation(offset);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var from = obj as OffsetTransformation;
-      if (null == from)
-        return false;
-
-      if (_offset != from._offset)
-        return false;
-
-      return true;
+      return obj is OffsetTransformation from ? _offset == from._offset : false;
     }
 
     public override int GetHashCode()

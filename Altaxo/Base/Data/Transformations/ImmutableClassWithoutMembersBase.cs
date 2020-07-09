@@ -22,10 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#nullable enable
 
 namespace Altaxo.Data.Transformations
 {
@@ -36,7 +33,7 @@ namespace Altaxo.Data.Transformations
       return GetType().GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return GetType() == obj?.GetType();
     }
