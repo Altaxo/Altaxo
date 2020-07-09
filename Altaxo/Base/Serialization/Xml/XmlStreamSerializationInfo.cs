@@ -371,7 +371,7 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
-    public void AddArray(string name, string[] val, int count)
+    public void AddArray(string name, string?[] val, int count)
     {
       CreateArray(name, count);
 

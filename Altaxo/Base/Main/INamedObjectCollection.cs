@@ -24,7 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using Altaxo.Collections;
 
 namespace Altaxo.Main
@@ -117,7 +116,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="childNode">The child node.</param>
     /// <param name="oldParent">The old parent of the child node.</param>
-    void EhChild_ParentChanged(Main.INameOwner childNode, IDocumentNode oldParent);
+    void EhChild_ParentChanged(Main.INameOwner childNode, IDocumentNode? oldParent);
 
     /// <summary>
     /// Helper function called by a child of this collection to handle renaming of this child.

@@ -22,11 +22,12 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
 
@@ -166,10 +167,10 @@ namespace Altaxo.Data
         _coll = coll;
       }
 
-      public int Compare(IReadableColumnProxy a, IReadableColumnProxy b)
+      public int Compare(IReadableColumnProxy? a, IReadableColumnProxy? b)
       {
-        var ca = a.Document() as DataColumn;
-        var cb = b.Document() as DataColumn;
+        var ca = a?.Document() as DataColumn;
+        var cb = b?.Document() as DataColumn;
 
         if (ca != null && cb != null)
         {
@@ -177,9 +178,9 @@ namespace Altaxo.Data
           int nb = _coll.GetColumnNumber(cb);
           return Comparer<int>.Default.Compare(na, nb);
         }
-        if (ca == null && cb == null)
+        if (ca is null && cb is null)
           return 0;
-        else if (ca == null)
+        else if (ca is null)
           return -1;
         else
           return 1;
@@ -255,11 +256,10 @@ namespace Altaxo.Data
     {
       if (object.ReferenceEquals(this, obj))
         return true;
-      var from = obj as DataTableMatrixProxy;
-      if (null == from)
+      if (!(obj is DataTableMatrixProxy from))
         return false;
 
-      InternalSetDataTable(null == from._dataTable ? null : (DataTableProxy)from._dataTable.Clone());
+      InternalSetDataTable((DataTableProxy)from._dataTable.Clone());
       InternalSetDataColumnsWithCloning(from._dataColumns);
       InternalSetRowHeaderColumn((IReadableColumnProxy)from._rowHeaderColumn.Clone());
       InternalSetColumnHeaderColumn((IReadableColumnProxy)from._columnHeaderColumn.Clone());
@@ -330,9 +330,9 @@ namespace Altaxo.Data
         }
       }
 
-      protected virtual DataTableMatrixProxy SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual DataTableMatrixProxy SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new DataTableMatrixProxy() : (DataTableMatrixProxy)o);
+        var s = (DataTableMatrixProxy?)o ?? new DataTableMatrixProxy();
 
         s.InternalSetDataTable((DataTableProxy)info.GetValue("Table", s));
         s._groupNumber = info.GetInt32("Group");
@@ -373,7 +373,7 @@ namespace Altaxo.Data
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -400,9 +400,11 @@ namespace Altaxo.Data
     /// <summary>
     /// Deserialization constructor
     /// </summary>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected DataTableMatrixProxy()
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DataTableMatrixProxy"/> class. The selected collections determine which columns and rows contribute to the matrix, and which
@@ -467,7 +469,7 @@ namespace Altaxo.Data
         _participatingDataRows = new AscendingIntegerCollection(),
         _dataColumns = new List<IReadableColumnProxy>(),
 
-        _dataTable = null
+        _dataTable = null!
       };
       result.InternalSetRowHeaderColumn(ReadableColumnProxyBase.FromColumn(null));
       result.InternalSetColumnHeaderColumn(ReadableColumnProxyBase.FromColumn(null));
@@ -482,7 +484,7 @@ namespace Altaxo.Data
       _participatingDataRows = new AscendingIntegerCollection();
       _dataColumns = new List<IReadableColumnProxy>();
 
-      _dataTable = null;
+      _dataTable = null!;
       InternalSetRowHeaderColumn(xColumn);
       InternalSetColumnHeaderColumn(yColumn);
       InternalSetDataColumnsWithCloning(dataColumns);
@@ -518,11 +520,13 @@ namespace Altaxo.Data
       ChildSetMember(ref _dataTable, proxy);
     }
 
+    [MemberNotNull(nameof(_rowHeaderColumn))]
     private void InternalSetRowHeaderColumn(IReadableColumnProxy proxy)
     {
       ChildSetMember(ref _rowHeaderColumn, proxy ?? ReadableColumnProxyBase.FromColumn(null)); // always ensure to have a proxy != null
     }
 
+    [MemberNotNull(nameof(_columnHeaderColumn))]
     private void InternalSetColumnHeaderColumn(IReadableColumnProxy proxy)
     {
       ChildSetMember(ref _columnHeaderColumn, proxy ?? ReadableColumnProxyBase.FromColumn(null));
@@ -588,6 +592,7 @@ namespace Altaxo.Data
     /// <value>
     /// The data table.
     /// </value>
+    [MaybeNull]
     public DataTable DataTable
     {
       get
@@ -595,11 +600,11 @@ namespace Altaxo.Data
         if (_isDirty)
           Update();
 
-        return null == _dataTable ? null : _dataTable.Document;
+        return _dataTable?.Document;
       }
       set
       {
-        var oldValue = _dataTable.Document;
+        var oldValue = _dataTable?.Document;
         if (!object.ReferenceEquals(oldValue, value))
         {
           InternalSetDataTable(new DataTableProxy(value));
@@ -627,6 +632,7 @@ namespace Altaxo.Data
     }
 
     /// <summary>Column that correlate each row of the resulting matrix to a corresponding physical value. This value can be used for instance for calculating the x- or y- position in the coordinate system.</summary>
+    [MaybeNull]
     public IReadableColumn RowHeaderColumn
     {
       get
@@ -645,6 +651,7 @@ namespace Altaxo.Data
     }
 
     /// <summary>Column that correlate each column of the resulting matrix to a corresponding physical value. This value can be used for instance for calculating the x- or y- position in the coordinate system.</summary>
+    [MaybeNull]
     public IReadableColumn ColumnHeaderColumn
     {
       get
@@ -816,7 +823,7 @@ namespace Altaxo.Data
     {
       var tableDataColumns = table.DataColumns;
 
-      var indicesToRemove = new List<int>();
+      //var indicesToRemove = new List<int>();
 
       for (int i = _dataColumns.Count - 1; i >= 0; --i)
       {
@@ -826,8 +833,7 @@ namespace Altaxo.Data
           continue;
         }
 
-        var c = _dataColumns[i].Document() as DataColumn;
-        if (c == null)
+        if (!(_dataColumns[i].Document() is DataColumn c))
         {
           continue; // not yet resolved, leave it as it is
         }
@@ -872,7 +878,7 @@ namespace Altaxo.Data
     protected virtual void InternalAddMissingDataColumnsIfAllDataColumnsShouldBeIncluded(DataTable table)
     {
       var dataColumns = table.DataColumns;
-      var existing = new HashSet<DataColumn>(_dataColumns.Select(x => x.Document() as DataColumn).Where(c => null != c));
+      var existing = new HashSet<DataColumn>(_dataColumns.Select(x => x.Document()).OfType<DataColumn>());
       var toInsert = dataColumns.Columns.Where(c => dataColumns.GetColumnGroup(c) == _groupNumber && dataColumns.GetColumnKind(c) == ColumnKind.V && !existing.Contains(c));
       foreach (var ins in toInsert)
       {
@@ -926,8 +932,7 @@ namespace Altaxo.Data
 
       for (int i = 0; i < _dataColumns.Count; ++i)
       {
-        var col = _dataColumns[i].Document() as DataColumn;
-        if (null != col)
+        if (_dataColumns[i].Document() is DataColumn col)
         {
           _participatingDataColumns.Add(table.DataColumns.GetColumnNumber(col));
         }
@@ -940,7 +945,7 @@ namespace Altaxo.Data
     /// <returns></returns>
     private int GetMaximumRowCountNow()
     {
-      return _dataColumns.Where(p => p.Document() != null).MaxOrDefault(p => p.Document().Count ?? 0, 0);
+      return _dataColumns.Select(p => p.Document()).MaxOrDefault(d => d?.Count ?? 0, 0);
     }
 
     /// <summary>
@@ -948,8 +953,8 @@ namespace Altaxo.Data
     /// </summary>
     private void TryGetDataTableProxyFromColumns()
     {
-      DataColumn col;
-      DataTable table;
+      DataColumn? col;
+      DataTable? table;
       foreach (var colproxy in _dataColumns)
       {
         col = colproxy.Document() as DataColumn;
@@ -991,8 +996,8 @@ namespace Altaxo.Data
       if (null == _dataTable)
         return;
 
-      DataTable table = _dataTable.Document;
-      if (null == table || table.IsDisposeInProgress)
+      var table = _dataTable.Document;
+      if (table is null || table.IsDisposeInProgress)
         return;
 
       InternalRemoveDataColumnsWithDeviatingParentOrKindOrGroupNumber(table);
@@ -1026,7 +1031,10 @@ namespace Altaxo.Data
         Update();
       }
 
-      var table = null == _dataTable ? null : _dataTable.Document;
+      var table = _dataTable?.Document;
+      if (table is null)
+        throw new InvalidOperationException("DataTableProxy or DataTable is null");
+
       int rowCount = RowCount;
       int columnCount = ColumnCount;
 
@@ -1054,10 +1062,10 @@ namespace Altaxo.Data
         Update();
       }
 
-      var table = null == _dataTable ? null : _dataTable.Document;
+      var table = _dataTable?.Document;
 
-      if (null == table)
-        throw new InvalidOperationException("DataTableProxy is null");
+      if (table is null)
+        throw new InvalidOperationException("DataTableProxy or DataTable is null");
 
       return new MyMatrixWrapper(table.DataColumns, _participatingDataRows, _participatingDataColumns);
     }
@@ -1068,10 +1076,10 @@ namespace Altaxo.Data
     /// <returns>Wrapper vector around the row header data. Each element of this vector corresponds to the row with the same index of the matrix.</returns>
     public IROVector<double> GetRowHeaderWrapper()
     {
-      if (_rowHeaderColumn.IsEmpty || _rowHeaderColumn.Document() == null)
-        return VectorMath.CreateEquidistantSequenceByStartStepLength(0.0, 1.0, _participatingDataRows.Count);
+      if (!_rowHeaderColumn.IsEmpty && _rowHeaderColumn.Document() is { } rowHeaderColumn)
+        return new HeaderColumnWrapper(rowHeaderColumn, _participatingDataRows);
       else
-        return new HeaderColumnWrapper(_rowHeaderColumn.Document(), _participatingDataRows);
+        return VectorMath.CreateEquidistantSequenceByStartStepLength(0.0, 1.0, _participatingDataRows.Count);
     }
 
     /// <summary>
@@ -1080,10 +1088,10 @@ namespace Altaxo.Data
     /// <returns>Wrapper vector around the column header data. Each element of this vector corresponds to the column with the same index of the matrix.</returns>
     public IROVector<double> GetColumnHeaderWrapper()
     {
-      if (_columnHeaderColumn.IsEmpty || _columnHeaderColumn.Document() == null)
-        return VectorMath.CreateEquidistantSequenceByStartStepLength(0.0, 1.0, _participatingDataColumns.Count);
+      if (!_columnHeaderColumn.IsEmpty && _columnHeaderColumn.Document() is { } columnHeaderColumn)
+        return new HeaderColumnWrapper(columnHeaderColumn, _participatingDataColumns);
       else
-        return new HeaderColumnWrapper(_columnHeaderColumn.Document(), _participatingDataColumns);
+        return VectorMath.CreateEquidistantSequenceByStartStepLength(0.0, 1.0, _participatingDataColumns.Count);
     }
 
     /// <summary>
@@ -1103,9 +1111,9 @@ namespace Altaxo.Data
         Update();
       }
 
-      var table = null == _dataTable ? null : _dataTable.Document;
+      var table = _dataTable?.Document;
 
-      if (null == table)
+      if (table is null)
       {
         resultantMatrix = new Matrix(0, 0);
         resultantTransformedColumnHeaderValues = new DoubleVector();
@@ -1166,8 +1174,8 @@ namespace Altaxo.Data
         Update();
       }
 
-      var table = null == _dataTable ? null : _dataTable.Document;
-      if (null == table)
+      var table = _dataTable?.Document;
+      if (table is null)
         return; // nothing to do if we can not resolve the table
 
       int rowCount = _participatingDataRows.Count;
@@ -1228,7 +1236,7 @@ namespace Altaxo.Data
 
     #region Changed event handling
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       _isDirty = true;
       return base.HandleHighPriorityChildChangeCases(sender, ref e);
@@ -1247,7 +1255,7 @@ namespace Altaxo.Data
     /// <param name="incrementValue">If the function is successfull, the value of the spacing between each element is returned.</param>
     /// <param name="errorOrWarningMessage">If the function is not successfull, a user friendly error or warning message is returned here.</param>
     /// <returns><c>True</c> if successfull, otherwise <c>false</c>.</returns>
-    public static bool TryGetColumnDataIncrement(IReadableColumnProxy proxy, string rowOrCol, IAscendingIntegerCollection selectedIndices, out double incrementValue, out string errorOrWarningMessage)
+    public static bool TryGetColumnDataIncrement(IReadableColumnProxy proxy, string rowOrCol, IAscendingIntegerCollection selectedIndices, out double incrementValue, [MaybeNullWhen(true)] out string errorOrWarningMessage)
     {
       incrementValue = 1;
 
@@ -1264,8 +1272,7 @@ namespace Altaxo.Data
         return false;
       }
 
-      var xCol = col as INumericColumn;
-      if (null == xCol)
+      if (!(col is INumericColumn xCol))
       {
         errorOrWarningMessage = string.Format("The {0} header column is not a numeric column, thus the increment value could not be evaluated.", rowOrCol);
         return false;
@@ -1301,7 +1308,7 @@ namespace Altaxo.Data
     /// <param name="incrementValue">If the function is successfull, the value of the spacing between each element is returned.</param>
     /// <param name="errorOrWarningMessage">If the function is not successfull, a user friendly error or warning message is returned here.</param>
     /// <returns><c>True</c> if successfull, otherwise <c>false</c>.</returns>
-    public bool TryGetRowHeaderIncrement(out double incrementValue, out string errorOrWarningMessage)
+    public bool TryGetRowHeaderIncrement(out double incrementValue, [MaybeNullWhen(true)] out string errorOrWarningMessage)
     {
       if (_isDirty)
       {
@@ -1320,7 +1327,7 @@ namespace Altaxo.Data
     /// <param name="incrementValue">If the function is successfull, the value of the spacing between each element is returned.</param>
     /// <param name="errorOrWarningMessage">If the function is not successfull, a user friendly error or warning message is returned here.</param>
     /// <returns><c>True</c> if successfull, otherwise <c>false</c>.</returns>
-    public bool TryGetColumnHeaderIncrement(out double incrementValue, out string errorOrWarningMessage)
+    public bool TryGetColumnHeaderIncrement(out double incrementValue, [MaybeNullWhen(true)] out string errorOrWarningMessage)
     {
       if (_isDirty)
       {

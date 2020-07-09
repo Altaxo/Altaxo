@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Main;
 
@@ -46,16 +47,17 @@ namespace Altaxo.Data
                 */
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (DataTableProxy)o ?? new DataTableProxy(info);
+        var s = (DataTableProxy?)o ?? new DataTableProxy(info);
 #pragma warning disable CS0618 // Type or member is obsolete
         var baseobj = info.GetBaseValueEmbeddedOrNull(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
 #pragma warning restore CS0618 // Type or member is obsolete
 
         if (!object.ReferenceEquals(s, baseobj))
         {
-          return null;
+          throw new InvalidProgramException($"What should be returned here? S: {s}, baseobj: {baseobj}");
+          // return null;
         }
 
         if (!(null != s.InternalDocumentPath))
@@ -72,13 +74,13 @@ namespace Altaxo.Data
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType); // serialize the base class
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!); // serialize the base class
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (DataTableProxy)o ?? new DataTableProxy(info);
-        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);         // deserialize the base class
+        var s = (DataTableProxy?)o ?? new DataTableProxy(info);
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType!, parent);         // deserialize the base class
 
         if (!(null != s.InternalDocumentPath))
           throw new InvalidOperationException();
@@ -116,11 +118,11 @@ namespace Altaxo.Data
       return (obj is DataTable) || obj == null;
     }
 
-    public DataTable Document
+    public DataTable? Document
     {
       get
       {
-        return (DataTable)base.DocumentObject();
+        return (DataTable?)base.DocumentObject();
       }
     }
 

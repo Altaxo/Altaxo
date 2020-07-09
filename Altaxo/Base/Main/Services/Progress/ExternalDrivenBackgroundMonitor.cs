@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Threading;
 
@@ -41,7 +42,14 @@ namespace Altaxo.Main.Services
     private string _taskName;
 
     private bool _cancellationPending;
-    private CancellationTokenSource _cancellationTokenSource;
+    private Lazy<CancellationTokenSource> _cancellationTokenSource;
+
+    public ExternalDrivenBackgroundMonitor()
+    {
+      _reportText = string.Empty;
+      _taskName = nameof(ExternalDrivenBackgroundMonitor);
+      _cancellationTokenSource = new Lazy<CancellationTokenSource>(() => new CancellationTokenSource());
+    }
 
     #region IBackgroundMonitor Members
 
@@ -119,15 +127,15 @@ namespace Altaxo.Main.Services
     {
       get
       {
-        _cancellationTokenSource = _cancellationTokenSource ?? new CancellationTokenSource();
-        return _cancellationTokenSource.Token;
+        return _cancellationTokenSource.Value.Token;
       }
     }
 
     public void SetCancellationPending()
     {
       _cancellationPending = true;
-      _cancellationTokenSource?.Cancel();
+      if (_cancellationTokenSource.IsValueCreated)
+        _cancellationTokenSource.Value.Cancel();
     }
 
     public IProgressReporter CreateSubTask(double workAmount)

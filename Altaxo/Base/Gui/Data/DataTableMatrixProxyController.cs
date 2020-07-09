@@ -25,7 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Data;
 
@@ -133,7 +132,7 @@ namespace Altaxo.Gui.Data
         // Initialize tables
         string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
 
-        string dataTableName = _doc.DataTable == null ? string.Empty : _doc.DataTable.Name;
+        string dataTableName = _doc.DataTable?.Name ?? string.Empty;
 
         _availableTables.Clear();
         foreach (var tableName in tables)

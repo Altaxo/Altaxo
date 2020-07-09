@@ -22,9 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Data
 {
@@ -36,8 +38,9 @@ namespace Altaxo.Data
     Altaxo.Data.DataColumn,
     INumericColumn
   {
-    private DateTime[] _data;
-    private int _capacity; // shortcut to m_Array.Length;
+    static readonly DateTime[] _emptyDateTimeArray = new DateTime[0];
+    private DateTime[] _data = _emptyDateTimeArray;
+    private int _capacity; // shortcut to _data.Length;
     private int _count;
     public static readonly DateTime NullValue = DateTime.MinValue;
 
@@ -56,7 +59,7 @@ namespace Altaxo.Data
     {
       _count = from._count;
       _capacity = from._capacity;
-      _data = null == from._data ? null : (DateTime[])from._data.Clone();
+      _data = from._data.Length == 0 ? _emptyDateTimeArray : (DateTime[])from._data.Clone();
     }
 
     public override object Clone()
@@ -81,17 +84,17 @@ namespace Altaxo.Data
           info.AddArray("Data", s._data, s._count);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        Altaxo.Data.DateTimeColumn s = null != o ? (Altaxo.Data.DateTimeColumn)o : new Altaxo.Data.DateTimeColumn();
+        var s = (Altaxo.Data.DateTimeColumn?)o ?? new Altaxo.Data.DateTimeColumn();
 
         // deserialize the base class
         info.GetBaseValueEmbedded(s, typeof(Altaxo.Data.DataColumn), parent);
 
         int count = info.GetInt32Attribute("Count");
-        s._data = new DateTime[count];
+        s._data = count == 0 ? _emptyDateTimeArray : new DateTime[count];
         info.GetArray(s._data, count);
-        s._capacity = null == s._data ? 0 : s._data.Length;
+        s._capacity = s._data.Length;
         s._count = s._capacity;
         return s;
       }
@@ -149,45 +152,44 @@ namespace Altaxo.Data
       var oldCount = _count;
       _count = 0;
 
-      if (o is DateTimeColumn)
+      if (o is DateTimeColumn dtcol)
       {
-        var src = (DateTimeColumn)o;
-        _data = null == src._data ? null : (DateTime[])src._data.Clone();
         _capacity = _data?.Length ?? 0;
-        _count = src._count;
+        _data = _capacity == 0 ? _emptyDateTimeArray : (DateTime[])dtcol._data.Clone();
+        _count = dtcol._count;
       }
       else
       {
-        if (o is ICollection)
-          Realloc((o as ICollection).Count); // Prealloc the array if count of the collection is known beforehand
+        if (o is ICollection ocoll)
+          Realloc(ocoll.Count); // Prealloc the array if count of the collection is known beforehand
 
-        if (o is IEnumerable<DateTime>)
+        if (o is IEnumerable<DateTime> srcdt)
         {
-          var src = (IEnumerable<DateTime>)o;
+
           _count = 0;
-          foreach (var it in src)
+          foreach (var it in srcdt)
           {
             if (_count >= _capacity)
               Realloc(_count);
             _data[_count++] = it;
           }
         }
-        else if (o is IEnumerable<double>)
+        else if (o is IEnumerable<double> srcdbl)
         {
-          var src = (IEnumerable<double>)o;
+
           _count = 0;
-          foreach (var it in src)
+          foreach (var it in srcdbl)
           {
             if (_count >= _capacity)
               Realloc(_count);
             _data[_count++] = new DateTime((long)(1e7 * it));
           }
         }
-        else if (o is IEnumerable<AltaxoVariant>)
+        else if (o is IEnumerable<AltaxoVariant> srcv)
         {
-          var src = (IEnumerable<AltaxoVariant>)o;
+
           _count = 0;
-          foreach (var it in src)
+          foreach (var it in srcv)
           {
             if (_count >= _capacity)
               Realloc(_count);
@@ -466,7 +468,7 @@ namespace Altaxo.Data
       return Altaxo.Data.DoubleColumn.Subtraction(c1, c2);
     }
 
-    public override bool vop_Subtraction(DataColumn c2, out DataColumn c3)
+    public override bool vop_Subtraction(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DateTimeColumn)
       {
@@ -477,7 +479,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Subtraction_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_Subtraction_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DateTimeColumn)
       {
@@ -488,7 +490,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Subtraction(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Subtraction(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDateTime))
       {
@@ -500,7 +502,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Subtraction_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Subtraction_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDateTime))
       {

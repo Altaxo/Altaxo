@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Main
@@ -237,7 +236,7 @@ namespace Altaxo.Main
     /// <returns>True if the event will not change the state of the object and the handling of the event is completely done. Thus, if returning <c>true</c>, the object is considered as 'not changed'.
     /// If in doubt, return <c>false</c>. This will allow the further processing of the event.
     /// </returns>
-    protected virtual bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected virtual bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       return false;
     }
@@ -253,7 +252,7 @@ namespace Altaxo.Main
     /// <returns><c>True</c> if the event will not change this object, and further processing of the event is not neccessary.
     /// If in doubt, return <c>false</c>. This will allow the further processing of the event.
     /// </returns>
-    protected virtual bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected virtual bool HandleLowPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       return false;
     }
@@ -263,7 +262,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="sender">The sender of this event, usually a child of this object.</param>
     /// <param name="e">The change details.</param>
-    public void EhChildChanged(object sender, System.EventArgs e)
+    public void EhChildChanged(object? sender, System.EventArgs e)
     {
       if (IsDisposeInProgress)
         return; // do not handle any event if dispose is in progress or is already disposed
@@ -741,7 +740,7 @@ namespace Altaxo.Main
     /// <param name="childNode">The child node member variable to set.</param>
     /// <param name="instanceToSet">The instance to set the variable with.</param>
     /// <returns><c>True</c> if the child has been set. If the old child reference equals to the new child, nothing is done, and <c>false</c> is returned.</returns>
-    protected bool ChildSetMember<T>(ref T? childNode, T? instanceToSet) where T : class, IDocumentLeafNode
+    protected bool ChildSetMember<T>([NotNullIfNotNull("instanceToSet")] ref T? childNode, T? instanceToSet) where T : class, IDocumentLeafNode
     {
       if (object.ReferenceEquals(childNode, instanceToSet))
         return false;
@@ -792,6 +791,44 @@ namespace Altaxo.Main
     /// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
     /// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
     protected bool ChildCopyToMember<T>(ref T myChild, T fromAnotherChild) where T : IDocumentLeafNode, ICloneable
+    {
+      if (object.ReferenceEquals(myChild, fromAnotherChild))
+        return false;
+
+      var oldChild = myChild;
+
+      if (fromAnotherChild is null)
+      {
+        myChild = default!;
+        if (null != oldChild)
+          oldChild.Dispose();
+      }
+      else if ((myChild is Main.ICopyFrom) && myChild.GetType() == fromAnotherChild.GetType())
+      {
+        ((Main.ICopyFrom)myChild).CopyFrom(fromAnotherChild);
+      }
+      else
+      {
+        myChild = (T)(fromAnotherChild.Clone());
+        myChild.ParentObject = this;
+
+        if (null != oldChild)
+          oldChild.Dispose();
+      }
+
+      return true;
+    }
+
+    /// <summary>
+    /// Copies a document node from another source into a member of this instance.
+    /// If an old instance member (provided in <paramref name="myChild"/> exists and can not be used, it is disposed first.
+    /// The node is then copied using either Main.ICopyFrom or System.ICloneable. The resulting node's <see cref="M:IDocumentLeafNode.ParentObject"/>
+    /// is then set to this instance in order to maintain the parent-child relationship.
+    /// </summary>
+    /// <typeparam name="T">Type of the node to copy.</typeparam>
+    /// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
+    /// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
+    protected bool ChildCopyToMemberC<T>([NotNullIfNotNull("fromAnotherChild")] ref T? myChild, T? fromAnotherChild) where T : class, IDocumentLeafNode, ICloneable
     {
       if (object.ReferenceEquals(myChild, fromAnotherChild))
         return false;

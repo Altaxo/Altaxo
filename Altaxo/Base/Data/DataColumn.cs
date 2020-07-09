@@ -22,10 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Altaxo.Serialization;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Data
 {
@@ -75,9 +76,9 @@ namespace Altaxo.Data
       /// <param name="info">Serialization info.</param>
       /// <param name="parent">The parental object.</param>
       /// <returns>The deserialized object.</returns>
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (Altaxo.Data.DataColumn)o;
+        var s = (Altaxo.Data.DataColumn?)o ?? throw new InvalidProgramException($"Expected {typeof(Altaxo.Data.DataColumn)}, but actually got {o}");
         // s.m_Table = (Altaxo.Data.DataTable)(info.GetValue("Parent",typeof(Altaxo.Data.DataTable)));
         return s;
       }
@@ -184,7 +185,7 @@ namespace Altaxo.Data
     /// If this type of data column is not used in a datagrid, you can return null for this type.
     /// </remarks>
     // TODO: reimplement this using attributes in the style class
-    public abstract System.Type GetColumnStyleType();
+    public abstract System.Type? GetColumnStyleType();
 
     #endregion Abstract functions
 
@@ -235,18 +236,18 @@ namespace Altaxo.Data
     /// </summary>
     /// <remarks>Normally the parent object is a <see cref="DataColumnCollection" />. In this case this member is set during addition of the data column
     /// to the collection. If some other object owns the data column, it is responsible for setting the parent to himself.</remarks>
-    public override Main.IDocumentNode ParentObject
+    public override Main.IDocumentNode? ParentObject
     {
       get { return _parent; }
       set
       {
-        object oldParent = _parent;
+        var oldParent = _parent;
         base.ParentObject = value;
 
         if (!object.ReferenceEquals(oldParent, _parent))
         {
-          if (oldParent is Main.IChildChangedEventSink)
-            ((Main.IChildChangedEventSink)oldParent).EhChildChanged(this, new Main.ParentChangedEventArgs(oldParent, _parent));
+          if (oldParent is Main.IChildChangedEventSink oldSink)
+            oldSink.EhChildChanged(this, new Main.ParentChangedEventArgs(oldParent, _parent));
           if (_parent is Main.IChildChangedEventSink)
             _parent.EhChildChanged(this, new Main.ParentChangedEventArgs(oldParent, _parent));
         }
@@ -262,7 +263,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="sender">The sender of the change notification (currently unused).</param>
     /// <param name="e">The change event args can provide details of the change (currently unused).</param>
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       var ea = e as DataColumnChangedEventArgs;
       if (null == ea)
@@ -402,7 +403,7 @@ namespace Altaxo.Data
     /// <param name="selectedRows">Selected row indices (can be null - then the entire column is used).</param>
     /// <param name="numrows">Number of rows to create. Must not more than contained in selectedRows.</param>
     /// <returns>A freshly created column consisting of x at the selected indices, or of the indices itself if x was null.</returns>
-    public static DataColumn CreateColumnOfSelectedRows(Altaxo.Data.DataColumn x, Altaxo.Collections.IAscendingIntegerCollection selectedRows, int numrows)
+    public static DataColumn CreateColumnOfSelectedRows(Altaxo.Data.DataColumn? x, Altaxo.Collections.IAscendingIntegerCollection? selectedRows, int numrows)
     {
       Altaxo.Data.DataColumn result;
       if (x != null)
@@ -435,7 +436,7 @@ namespace Altaxo.Data
     /// <param name="selectedRows">Selected row indices (can be null - then the entire column is used).</param>
     /// <returns>A freshly created column consisting of x at the selected indices, or of the indices itself if x was null. If both x and selectedRows are null,
     /// an empty <see cref="DoubleColumn" /> is returned.</returns>
-    public static DataColumn CreateColumnOfSelectedRows(Altaxo.Data.DataColumn x, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
+    public static DataColumn CreateColumnOfSelectedRows(Altaxo.Data.DataColumn? x, Altaxo.Collections.IAscendingIntegerCollection? selectedRows)
     {
       int numrows = 0;
       if (selectedRows != null)
@@ -451,7 +452,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="selectedRows">Selected row indices (can be null - then the entire column is used).</param>
     /// <returns>A freshly created column consisting of x at the selected indices.</returns>
-    public DataColumn CreateColumnOfSelectedRows(Altaxo.Collections.IAscendingIntegerCollection selectedRows)
+    public DataColumn CreateColumnOfSelectedRows(Altaxo.Collections.IAscendingIntegerCollection? selectedRows)
     {
       return CreateColumnOfSelectedRows(this, selectedRows);
     }
@@ -628,16 +629,16 @@ namespace Altaxo.Data
     /// <param name="a">The data column to add.</param>
     /// <param name="b">The result of the addition (this+a).</param>
     /// <returns>True if successful, false if this operation is not supported.</returns>
-    public virtual bool vop_Addition(DataColumn a, out DataColumn b)
+    public virtual bool vop_Addition(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Addition_Rev(DataColumn a, out DataColumn b)
+    public virtual bool vop_Addition_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Addition(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Addition(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Addition_Rev(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Addition_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
     /// <summary>
@@ -646,16 +647,16 @@ namespace Altaxo.Data
     /// <param name="a">The data column to subtract.</param>
     /// <param name="b">The result of the subtraction (this-a).</param>
     /// <returns>True if successful, false if this operation is not supported.</returns>
-    public virtual bool vop_Subtraction(DataColumn a, out DataColumn b)
+    public virtual bool vop_Subtraction(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Subtraction_Rev(DataColumn a, out DataColumn b)
+    public virtual bool vop_Subtraction_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Subtraction(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Subtraction(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Subtraction_Rev(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Subtraction_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
     /// <summary>
@@ -664,16 +665,16 @@ namespace Altaxo.Data
     /// <param name="a">The data column to multiply.</param>
     /// <param name="b">The result of the multiplication (this*a).</param>
     /// <returns>True if successful, false if this operation is not supported.</returns>
-    public virtual bool vop_Multiplication(DataColumn a, out DataColumn b)
+    public virtual bool vop_Multiplication(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Multiplication_Rev(DataColumn a, out DataColumn b)
+    public virtual bool vop_Multiplication_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Multiplication(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Multiplication(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Multiplication_Rev(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Multiplication_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
     /// <summary>
@@ -682,155 +683,155 @@ namespace Altaxo.Data
     /// <param name="a">The data column used for division.</param>
     /// <param name="b">The result of the division (this/a).</param>
     /// <returns>True if successful, false if this operation is not supported.</returns>
-    public virtual bool vop_Division(DataColumn a, out DataColumn b)
+    public virtual bool vop_Division(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Division_Rev(DataColumn a, out DataColumn b)
+    public virtual bool vop_Division_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Division(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Division(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Division_Rev(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Division_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Modulo(DataColumn a, out DataColumn b)
+    public virtual bool vop_Modulo(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Modulo_Rev(DataColumn a, out DataColumn b)
+    public virtual bool vop_Modulo_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Modulo(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Modulo(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Modulo_Rev(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Modulo_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_And(DataColumn a, out DataColumn b)
+    public virtual bool vop_And(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_And_Rev(DataColumn a, out DataColumn b)
+    public virtual bool vop_And_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_And(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_And(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_And_Rev(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_And_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Or(DataColumn a, out DataColumn b)
+    public virtual bool vop_Or(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Or_Rev(DataColumn a, out DataColumn b)
+    public virtual bool vop_Or_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Or(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Or(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Or_Rev(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Or_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Xor(DataColumn a, out DataColumn b)
+    public virtual bool vop_Xor(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Xor_Rev(DataColumn a, out DataColumn b)
+    public virtual bool vop_Xor_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Xor(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Xor(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Xor_Rev(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Xor_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_ShiftLeft(DataColumn a, out DataColumn b)
+    public virtual bool vop_ShiftLeft(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_ShiftLeft_Rev(DataColumn a, out DataColumn b)
+    public virtual bool vop_ShiftLeft_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_ShiftLeft(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_ShiftLeft(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_ShiftLeft_Rev(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_ShiftLeft_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_ShiftRight(DataColumn a, out DataColumn b)
+    public virtual bool vop_ShiftRight(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_ShiftRight_Rev(DataColumn a, out DataColumn b)
+    public virtual bool vop_ShiftRight_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_ShiftRight(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_ShiftRight(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_ShiftRight_Rev(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_ShiftRight_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Lesser(DataColumn a, out DataColumn b)
+    public virtual bool vop_Lesser(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Lesser_Rev(DataColumn a, out DataColumn b)
+    public virtual bool vop_Lesser_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Lesser(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Lesser(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Lesser_Rev(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Lesser_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Greater(DataColumn a, out DataColumn b)
+    public virtual bool vop_Greater(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Greater_Rev(DataColumn a, out DataColumn b)
+    public virtual bool vop_Greater_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Greater(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Greater(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Greater_Rev(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_Greater_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_LesserOrEqual(DataColumn a, out DataColumn b)
+    public virtual bool vop_LesserOrEqual(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_LesserOrEqual_Rev(DataColumn a, out DataColumn b)
+    public virtual bool vop_LesserOrEqual_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_LesserOrEqual(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_LesserOrEqual(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_LesserOrEqual_Rev(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_LesserOrEqual_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_GreaterOrEqual(DataColumn a, out DataColumn b)
+    public virtual bool vop_GreaterOrEqual(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_GreaterOrEqual_Rev(DataColumn a, out DataColumn b)
+    public virtual bool vop_GreaterOrEqual_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_GreaterOrEqual(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_GreaterOrEqual(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_GreaterOrEqual_Rev(AltaxoVariant a, out DataColumn b)
+    public virtual bool vop_GreaterOrEqual_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
     // Unary operators
-    public virtual bool vop_Plus(out DataColumn b)
+    public virtual bool vop_Plus([MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Minus(out DataColumn b)
+    public virtual bool vop_Minus([MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Not(out DataColumn b)
+    public virtual bool vop_Not([MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Complement(out DataColumn b)
+    public virtual bool vop_Complement([MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Increment(out DataColumn b)
+    public virtual bool vop_Increment([MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
-    public virtual bool vop_Decrement(out DataColumn b)
+    public virtual bool vop_Decrement([MaybeNullWhen(false)] out DataColumn b)
     { b = null; return false; }
 
     public virtual bool vop_True(out bool b)

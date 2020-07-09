@@ -22,23 +22,26 @@
 
 #endregion Copyright
 
-using System;
+#nullable enable
 
 namespace Altaxo.Serialization
 {
   /// <summary>
-  /// Summary description for NumberParsing.
+  /// Helper methods to convert numbers to strings.
+  /// Conversion is using the invariant culture.
   /// </summary>
   public class NumberConversion
   {
-    public static bool IsDouble(string txt, out double parsedNumber)
+
+    public static bool IsDouble(string? txt, out double parsedNumber)
     {
-      return double.TryParse(txt, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.CurrentCulture.NumberFormat, out parsedNumber);
+      return double.TryParse(txt, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out parsedNumber);
     }
 
-    public static bool IsDouble(string txt)
+
+    public static bool IsDouble(string? txt)
     {
-      return IsDouble(txt, out var d);
+      return IsDouble(txt, out var _);
     }
 
     /// <summary>
@@ -46,14 +49,18 @@ namespace Altaxo.Serialization
     /// </summary>
     /// <param name="txt">The string to test.</param>
     /// <returns>True if the string represents a number.</returns>
-    public static bool IsNumeric(string txt)
+
+    public static bool IsNumeric(string? txt)
     {
-      return double.TryParse(txt, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.CurrentCulture.NumberFormat, out var parsedNumber);
+      return txt is null ?
+        false :
+        double.TryParse(txt, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var _);
     }
+
 
     public static string ToString(double d)
     {
-      return d.ToString();
+      return d.ToString(System.Globalization.CultureInfo.InvariantCulture);
     }
   }
 }

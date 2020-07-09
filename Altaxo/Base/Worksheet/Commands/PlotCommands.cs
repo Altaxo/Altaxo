@@ -22,11 +22,8 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Gdi;
@@ -582,9 +579,9 @@ namespace Altaxo.Worksheet.Commands
       var plotStyle = new DensityImagePlotStyle();
 
       var assoc = new XYZMeshedColumnPlotData(dg.DataTable, dg.SelectedDataRows, dg.SelectedDataColumns, dg.SelectedPropertyColumns);
-      if (assoc.DataTableMatrix.RowHeaderColumn == null)
+      if (assoc.DataTableMatrix.RowHeaderColumn is null)
         assoc.DataTableMatrix.RowHeaderColumn = new IndexerColumn();
-      if (assoc.DataTableMatrix.ColumnHeaderColumn == null)
+      if (assoc.DataTableMatrix.ColumnHeaderColumn is null)
         assoc.DataTableMatrix.ColumnHeaderColumn = new IndexerColumn();
 
       IGPlotItem pi = new DensityImagePlotItem(assoc, plotStyle);

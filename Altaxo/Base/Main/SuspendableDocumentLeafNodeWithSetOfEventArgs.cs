@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Altaxo.Main
 {
@@ -104,7 +103,7 @@ namespace Altaxo.Main
         _accumulatedEventData.Add(ev);
     }
 
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData.SetOrAccumulate(e);
     }

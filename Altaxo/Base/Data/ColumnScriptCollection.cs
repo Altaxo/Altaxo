@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Scripting;
 
 namespace Altaxo.Data
@@ -97,7 +99,7 @@ namespace Altaxo.Data
       }
     }
 
-    public bool TryGetValue(DataColumn key, out IColumnScriptText value)
+    public bool TryGetValue(DataColumn key, [MaybeNullWhen(false)] out IColumnScriptText value)
     {
       return _innerDict.TryGetValue(key, out value);
     }

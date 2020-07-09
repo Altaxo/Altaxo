@@ -22,11 +22,15 @@
 
 #endregion Copyright
 
-using System;
-using System.Threading;
+#nullable enable
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Interface to both a means to cancel an operation, and to report the progress of that operation.
+  /// </summary>
+  /// <seealso cref="Altaxo.IProgressReporter" />
+  /// <seealso cref="Altaxo.Main.Services.IProgressMonitor" />
   public interface IExternalDrivenBackgroundMonitor : IProgressReporter, IProgressMonitor
   {
     /// <summary>

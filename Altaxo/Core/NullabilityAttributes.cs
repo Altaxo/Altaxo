@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace System.Diagnostics.CodeAnalysis
 {
@@ -53,6 +48,13 @@ namespace System.Diagnostics.CodeAnalysis
   /// Fake AllowNull Attribute that avoids compile errors when using the .NET framework.
   /// </summary>
   public class AllowNull : Attribute
+  {
+  }
+
+  /// <summary>
+  /// Fake NotNull Attribute that avoids compile errors when using the .NET framework.
+  /// </summary>
+  public class NotNull : Attribute
   {
   }
 

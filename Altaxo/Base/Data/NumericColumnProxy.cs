@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Main;
 
@@ -35,7 +36,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Returns the holded object. Null can be returned if the object is no longer available (e.g. disposed).
     /// </summary>
-    new INumericColumn Document();
+    new INumericColumn? Document();
   }
 
   /// <summary>
@@ -48,7 +49,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="column">The column.</param>
     /// <returns>An instance of <see cref="INumericColumnProxy"/>. The type of instance returned depends on the type of the provided column (e.g. whether the column is part of the document or not).</returns>
-    public static INumericColumnProxy FromColumn(INumericColumn column)
+    public static INumericColumnProxy FromColumn(INumericColumn? column)
     {
       if (column is IDocumentLeafNode)
         return NumericColumnProxy.FromColumn(column);
@@ -59,23 +60,31 @@ namespace Altaxo.Data
 
   public class NumericColumnProxyForStandaloneColumns : Main.SuspendableDocumentLeafNodeWithEventArgs, INumericColumnProxy
   {
-    private INumericColumn _column;
+    private INumericColumn? _column;
 
-    public static NumericColumnProxyForStandaloneColumns FromColumn(INumericColumn column)
+    public static NumericColumnProxyForStandaloneColumns FromColumn(INumericColumn? column)
     {
-      var colAsDocumentNode = column as IDocumentLeafNode;
-      if (null != colAsDocumentNode)
-        throw new ArgumentException(string.Format("column does implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
-
+      if (column is IDocumentLeafNode colAsDocumentNode)
+        throw new ArgumentException($"Column does implement {typeof(IDocumentLeafNode)}. The actual type of column is {column?.GetType()}");
       return new NumericColumnProxyForStandaloneColumns(column);
-      ;
     }
+
+    /// <summary>
+    /// Constructor for deserialization purposes.
+    /// </summary>
+    /// <param name="info">Unused.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    protected NumericColumnProxyForStandaloneColumns(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+
+    }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>
     /// Constructor by giving a numeric column.
     /// </summary>
     /// <param name="column">The numeric column to hold.</param>
-    protected NumericColumnProxyForStandaloneColumns(INumericColumn column)
+    protected NumericColumnProxyForStandaloneColumns(INumericColumn? column)
     {
       _column = column;
     }
@@ -91,33 +100,33 @@ namespace Altaxo.Data
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NumericColumnProxyForStandaloneColumns)obj;
-        info.AddValue("Column", s._column);
+        info.AddValueOrNull("Column", s._column);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (NumericColumnProxyForStandaloneColumns)o ?? new NumericColumnProxyForStandaloneColumns(null);
-        object node = info.GetValue("Column", s);
-        s._column = (INumericColumn)node;
+        var s = (NumericColumnProxyForStandaloneColumns?)o ?? new NumericColumnProxyForStandaloneColumns(info);
+        var node = info.GetValueOrNull("Column", s);
+        s._column = (INumericColumn?)node;
         return s;
       }
     }
 
     #endregion Serialization
 
-    public INumericColumn Document()
+    public INumericColumn? Document()
     {
       return _column;
     }
 
-    IReadableColumn IReadableColumnProxy.Document()
+    IReadableColumn? IReadableColumnProxy.Document()
     {
       return _column;
     }
 
     string IReadableColumnProxy.GetName(int level)
     {
-      return _column?.FullName;
+      return _column?.FullName ?? string.Empty;
     }
 
     public bool IsEmpty
@@ -130,7 +139,7 @@ namespace Altaxo.Data
       return FromColumn(_column);
     }
 
-    public object DocumentObject()
+    public object? DocumentObject()
     {
       return _column;
     }
@@ -162,17 +171,17 @@ namespace Altaxo.Data
         //info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy)); // serialize the base class
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (NumericColumnProxy)o ?? new NumericColumnProxy(info);
+        var s = (NumericColumnProxy?)o ?? new NumericColumnProxy(info);
 
 #pragma warning disable CS0618 // Type or member is obsolete
-        object baseobj = info.GetBaseValueEmbeddedOrNull(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
+        object? baseobj = info.GetBaseValueEmbeddedOrNull(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
 #pragma warning restore CS0618 // Type or member is obsolete
 
         if (!object.ReferenceEquals(s, baseobj))
         {
-          return NumericColumnProxyForStandaloneColumns.FromColumn((INumericColumn)baseobj);
+          return NumericColumnProxyForStandaloneColumns.FromColumn((INumericColumn?)baseobj);
         }
         else
         {
@@ -189,9 +198,9 @@ namespace Altaxo.Data
         info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy)); // serialize the base class
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (NumericColumnProxy)o ?? new NumericColumnProxy(info);
+        var s = (NumericColumnProxy?)o ?? new NumericColumnProxy(info);
         info.GetBaseValueEmbedded(s, typeof(DocNodeProxy), parent);         // deserialize the base class
 
         return s;
@@ -210,9 +219,9 @@ namespace Altaxo.Data
         info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy2ndLevel)); // serialize the base class
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (NumericColumnProxy)o ?? new NumericColumnProxy(info);
+        var s = (NumericColumnProxy?)o ?? new NumericColumnProxy(info);
         info.GetBaseValueEmbedded(s, typeof(DocNodeProxy2ndLevel), parent);         // deserialize the base class
 
         return s;
@@ -272,19 +281,19 @@ namespace Altaxo.Data
     /// <summary>
     /// Returns the holded object. Null can be returned if the object is no longer available (e.g. disposed).
     /// </summary>
-    public INumericColumn Document()
+    public INumericColumn? Document()
     {
-      return (INumericColumn)base.DocumentObject();
+      return (INumericColumn?)base.DocumentObject();
     }
 
-    IReadableColumn IReadableColumnProxy.Document()
+    IReadableColumn? IReadableColumnProxy.Document()
     {
-      return (INumericColumn)base.DocumentObject();
+      return (INumericColumn?)base.DocumentObject();
     }
 
     string IReadableColumnProxy.GetName(int level)
     {
-      return Document()?.FullName;
+      return Document()?.FullName ?? string.Empty;
     }
 
     /// <summary>

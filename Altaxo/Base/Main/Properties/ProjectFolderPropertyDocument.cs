@@ -283,7 +283,7 @@ namespace Altaxo.Main.Properties
 
     #region Suspend
 
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = EventArgs.Empty;
     }

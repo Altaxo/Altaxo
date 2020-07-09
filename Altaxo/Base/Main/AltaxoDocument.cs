@@ -580,13 +580,13 @@ namespace Altaxo
       IsDirty = false;
     }
 
-    protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleLowPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       IsDirty = true;
       return base.HandleLowPriorityChildChangeCases(sender, ref e);
     }
 
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = e ?? EventArgs.Empty;
     }

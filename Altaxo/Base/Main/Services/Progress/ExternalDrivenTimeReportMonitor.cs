@@ -22,11 +22,15 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Threading;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Reports the progress time of an operation.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.Services.ExternalDrivenBackgroundMonitor" />
   public class ExternalDrivenTimeReportMonitor : ExternalDrivenBackgroundMonitor
   {
     private DateTime _timeBegin = DateTime.Now;

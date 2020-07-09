@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
-using System;
+#nullable enable
 using System.Collections.Generic;
-using System.Linq;
-using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
@@ -70,7 +68,7 @@ namespace Altaxo.Data
       }
     }
 
-    public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
+    public override Main.IDocumentLeafNode? GetChildObjectNamed(string name)
     {
       if (_itemsByName.TryGetValue(name, out var result))
         return result;
@@ -78,7 +76,7 @@ namespace Altaxo.Data
       return null;
     }
 
-    public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
+    public override string? GetNameOfChildObject(Main.IDocumentLeafNode o)
     {
       if (o is DataTable)
       {
@@ -100,9 +98,9 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="child">Can be a DataTable, a DataColumnCollection, or a DataColumn for which the parent table collection is searched.</param>
     /// <returns>The parent DataTableCollection, if it exists, or null otherwise.</returns>
-    public static Altaxo.Data.DataTableCollection GetParentDataTableCollectionOf(Main.IDocumentLeafNode child)
+    public static Altaxo.Data.DataTableCollection? GetParentDataTableCollectionOf(Main.IDocumentLeafNode child)
     {
-      return (DataTableCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(DataTableCollection));
+      return (DataTableCollection?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(DataTableCollection));
     }
   }
 }

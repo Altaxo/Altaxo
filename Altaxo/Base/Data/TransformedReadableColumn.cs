@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Data
 {
@@ -43,10 +41,10 @@ namespace Altaxo.Data
 
     public TransformedReadableColumn(IReadableColumn column, IVariantToVariantTransformation transformation)
     {
-      if (null == column)
+      if (column is null)
         throw new ArgumentNullException(nameof(column));
 
-      if (null == transformation)
+      if (transformation is null)
         throw new ArgumentNullException(nameof(transformation));
 
       _originalColumn = column;
@@ -113,7 +111,7 @@ namespace Altaxo.Data
       var val = _transformation.Transform(_originalColumn[i]);
       if (val.IsType(AltaxoVariant.Content.VDouble) && double.IsNaN(val))
         return true;
-      if (val.IsType(AltaxoVariant.Content.VString) && null == (string)val)
+      if (val.IsType(AltaxoVariant.Content.VString) && string.IsNullOrEmpty(val))
         return true;
 
       return false;
@@ -143,7 +141,7 @@ namespace Altaxo.Data
       }
       else
       {
-        if (null == transformation)
+        if (transformation is null)
           throw new ArgumentNullException(nameof(transformation));
         var result = (TransformedReadableColumn)MemberwiseClone();
         result._transformation = transformation;

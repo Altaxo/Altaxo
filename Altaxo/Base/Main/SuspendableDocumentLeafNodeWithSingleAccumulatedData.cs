@@ -25,8 +25,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Main
 {
@@ -105,7 +103,7 @@ namespace Altaxo.Main
     /// <param name="e">The change event args can provide details of the change (currently unused).</param>
     /// <exception cref="System.ArgumentNullException">Argument e is null</exception>
     /// <exception cref="System.ArgumentException"></exception>
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       if (null == e)
         throw new ArgumentNullException("Argument e is null");

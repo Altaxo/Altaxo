@@ -537,7 +537,7 @@ namespace Altaxo.Serialization.Xml
       GetArray(val, count);
     }
 
-    public void GetArray(string[] val, int count)
+    public void GetArray(string?[] val, int count)
     {
       // Attribute must be readed before ReadStartElement
       if (count > 0)

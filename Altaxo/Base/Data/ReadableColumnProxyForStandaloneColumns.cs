@@ -22,33 +22,28 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Main;
 
 namespace Altaxo.Data
 {
   internal class ReadableColumnProxyForStandaloneColumns : Main.SuspendableDocumentLeafNodeWithEventArgs, IReadableColumnProxy
   {
-    private IReadableColumn _column;
+    private IReadableColumn? _column;
 
-    public static ReadableColumnProxyForStandaloneColumns FromColumn(IReadableColumn column)
+    public static ReadableColumnProxyForStandaloneColumns FromColumn(IReadableColumn? column)
     {
-      var colAsDocumentNode = column as IDocumentLeafNode;
-      if (null != colAsDocumentNode)
-        throw new ArgumentException(string.Format("column does implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
-
+      if (column is IDocumentLeafNode)
+        throw new ArgumentException($"column does implement {typeof(IDocumentLeafNode)}. The actual type of column is {column?.GetType()}");
       return new ReadableColumnProxyForStandaloneColumns(column);
-      ;
     }
 
     /// <summary>
     /// Constructor by giving a numeric column.
     /// </summary>
     /// <param name="column">The numeric column to hold.</param>
-    protected ReadableColumnProxyForStandaloneColumns(IReadableColumn column)
+    protected ReadableColumnProxyForStandaloneColumns(IReadableColumn? column)
     {
       _column = column;
     }
@@ -64,21 +59,21 @@ namespace Altaxo.Data
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ReadableColumnProxyForStandaloneColumns)obj;
-        info.AddValue("Column", s._column);
+        info.AddValueOrNull("Column", s._column);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ReadableColumnProxyForStandaloneColumns)o ?? new ReadableColumnProxyForStandaloneColumns(null);
-        object node = info.GetValue("Column", s);
-        s._column = (IReadableColumn)node;
+        var s = (ReadableColumnProxyForStandaloneColumns?)o ?? new ReadableColumnProxyForStandaloneColumns(null);
+        var node = info.GetValueOrNull("Column", s);
+        s._column = (IReadableColumn?)node;
         return s;
       }
     }
 
     #endregion Serialization
 
-    public IReadableColumn Document()
+    public IReadableColumn? Document()
     {
       return _column;
     }
@@ -95,10 +90,10 @@ namespace Altaxo.Data
 
     public string GetName(int level)
     {
-      return _column == null ? string.Empty : _column.ToString();
+      return _column?.ToString() ?? string.Empty;
     }
 
-    public object DocumentObject()
+    public object? DocumentObject()
     {
       return _column;
     }

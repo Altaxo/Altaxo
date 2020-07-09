@@ -22,14 +22,11 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 #nullable enable
+using System;
+using System.Diagnostics.CodeAnalysis;
+
+
 namespace Altaxo.Main
 {
 

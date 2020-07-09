@@ -39,7 +39,9 @@ namespace Altaxo.Main.Services.Files
   {
     // fixed data
     private readonly string _entryName;
-    private readonly string? _fileName;
+
+    // either archiveFileName or archiveManager is not null
+    private readonly string? _archiveFileName;
     private readonly IProjectArchiveManager? _archiveManager;
 
     // operational data
@@ -59,7 +61,7 @@ namespace Altaxo.Main.Services.Files
 
       _entryName = entryName;
       _archiveManager = archiveManager;
-      _fileName = archiveFileName;
+      _archiveFileName = archiveFileName;
 
 
     }
@@ -82,13 +84,13 @@ namespace Altaxo.Main.Services.Files
       if (_entryName == newName)
         return this;
 
-      return new ProjectArchiveEntryMemento(newName, _archiveManager, _fileName);
+      return new ProjectArchiveEntryMemento(newName, _archiveManager, _archiveFileName);
     }
 
     /// <inheritdoc/>
     public IProjectArchiveEntryMemento Clone()
     {
-      return new ProjectArchiveEntryMemento(_entryName, _archiveManager, _fileName);
+      return new ProjectArchiveEntryMemento(_entryName, _archiveManager, _archiveFileName);
     }
 
     /// <summary>
@@ -97,7 +99,7 @@ namespace Altaxo.Main.Services.Files
     /// <returns>
     /// The archive entry.
     /// </returns>
-    public IProjectArchiveEntry? GetArchiveEntry()
+    public IProjectArchiveEntry GetArchiveEntry()
     {
       if (!(_archiveManager is null))
       {
@@ -105,17 +107,23 @@ namespace Altaxo.Main.Services.Files
           throw new ObjectDisposedException(nameof(_archiveManager));
 
         _archive = _archiveManager.GetArchiveReadOnlyThreadSave(this);
-        return _archive.GetEntry(_entryName);
+        var entry = _archive.GetEntry(_entryName);
+        if (entry is null)
+          throw new InvalidDataException($"Archive {_archive} seems not to contain entry {_entryName} any more!");
+        return entry;
       }
-      else if (!(_fileName is null))
+      else if (!(_archiveFileName is null))
       {
-        var stream = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        var stream = new FileStream(_archiveFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         _archive = new ZipArchiveAsProjectArchive(stream, ZipArchiveMode.Read, false);
-        return _archive.GetEntry(_entryName);
+        var entry = _archive.GetEntry(_entryName);
+        if (entry is null)
+          throw new InvalidDataException($"Archive {_archiveFileName} seems not to contain entry {_entryName} any more!");
+        return entry;
       }
       else
       {
-        throw new InvalidProgramException($"Either {nameof(_archiveManager)} or {nameof(_fileName)} should not be null here!");
+        throw new InvalidProgramException($"Either {nameof(_archiveManager)} or {nameof(_archiveFileName)} should not be null here!");
       }
     }
 

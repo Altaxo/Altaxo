@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,10 +36,11 @@ namespace Altaxo.Data
     :
     Altaxo.Data.DataColumn
   {
-    private string[] _data;
+    static readonly string?[] _emptyStringArray = new string?[0];
+    private string?[] _data = _emptyStringArray;
     private int _capacity; // shortcout to m_Array.Length;
     private int _count;
-    public static readonly string NullValue = null;
+    public static readonly string? NullValue = null;
 
     public TextColumn()
     {
@@ -55,7 +57,7 @@ namespace Altaxo.Data
     {
       _count = from._count;
       _capacity = from._capacity;
-      _data = null == from._data ? null : (string[])from._data.Clone();
+      _data = from._data.Length == 0 ? _emptyStringArray : (string?[])from._data.Clone();
     }
 
     public override object Clone()
@@ -80,7 +82,7 @@ namespace Altaxo.Data
           info.AddArray("Data", s._data, s._count);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         Altaxo.Data.TextColumn s = null != o ? (Altaxo.Data.TextColumn)o : new Altaxo.Data.TextColumn();
 
@@ -134,7 +136,7 @@ namespace Altaxo.Data
       }
     }
 
-    protected internal string GetValueDirect(int idx)
+    protected internal string? GetValueDirect(int idx)
     {
       return _data[idx];
     }
@@ -149,38 +151,37 @@ namespace Altaxo.Data
       var oldCount = _count;
       _count = 0;
 
-      if (o is TextColumn)
+      if (o is TextColumn tcol)
       {
-        var src = (TextColumn)o;
-        _data = null == src._data ? null : (string[])src._data.Clone();
+
+        _data = tcol._data.Length == 0 ? _emptyStringArray : (string?[])tcol._data.Clone();
         _capacity = _data?.Length ?? 0;
-        _count = src._count;
+        _count = tcol._count;
       }
       else
       {
-        if (o is ICollection)
-          Realloc((o as ICollection).Count); // Prealloc the array if count of the collection is known beforehand
+        if (o is ICollection ocoll)
+          Realloc(ocoll.Count); // Prealloc the array if count of the collection is known beforehand
 
-        if (o is IEnumerable<string>)
+        if (o is IEnumerable<string> srcs)
         {
-          var src = (IEnumerable<string>)o;
           _count = 0;
-          foreach (var it in src)
+          foreach (var it in srcs)
           {
             if (_count >= _capacity)
               Realloc(_count);
             _data[_count++] = it;
           }
         }
-        else if (o is IEnumerable)
+        else if (o is IEnumerable srce)
         {
-          var src = (IEnumerable)o;
+
           _count = 0;
-          foreach (var it in src)
+          foreach (var it in srce)
           {
             if (_count >= _capacity)
               Realloc(_count);
-            _data[_count++] = it.ToString();
+            _data[_count++] = it?.ToString();
           }
         }
         else
@@ -247,7 +248,7 @@ namespace Altaxo.Data
         this[i] = NullValue;
     }
 
-    public new string this[int i]
+    public new string? this[int i]
     {
       get
       {

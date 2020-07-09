@@ -109,7 +109,7 @@ namespace Altaxo.Serialization.Xml
 
     void GetArray(string name, out string[] val);
 
-    void GetArray(string[] val, int count);
+    void GetArray(string?[] val, int count);
 
     /// <summary>
     /// Gets an array of nullable booleans.

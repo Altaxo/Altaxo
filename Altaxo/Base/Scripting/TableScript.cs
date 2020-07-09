@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Immutable;
 using Altaxo.Main.Services.ScriptCompilation;
-using Altaxo.Serialization;
 
 namespace Altaxo.Scripting
 {

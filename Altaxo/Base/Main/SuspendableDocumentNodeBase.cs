@@ -25,8 +25,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Main
@@ -194,7 +192,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="sender">The sender of the change event notification.</param>
     /// <param name="e">The change event args can provide details of the change.</param>
-    protected abstract void AccumulateChangeData(object sender, EventArgs e);
+    protected abstract void AccumulateChangeData(object? sender, EventArgs e);
 
     /// <summary>
     /// Increase the SuspendLevel by one, and return a token that, if disposed, will resume the object.

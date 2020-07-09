@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Threading;
 
@@ -39,10 +40,12 @@ namespace Altaxo.Main.Services
     private OperationStatus _operationStatus;
     private string _taskName;
 
-    public event System.Timers.ElapsedEventHandler Elapsed;
+    public event System.Timers.ElapsedEventHandler? Elapsed;
 
     public TimedBackgroundMonitor()
     {
+      _reportText = string.Empty;
+      _taskName = nameof(TimedBackgroundMonitor);
       _timer.Elapsed += new System.Timers.ElapsedEventHandler(EhTimerElapsed);
     }
 
@@ -175,7 +178,6 @@ namespace Altaxo.Main.Services
     public void Dispose()
     {
       _timer?.Dispose();
-      _timer = null;
     }
   }
 }

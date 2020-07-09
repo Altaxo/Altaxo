@@ -22,8 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Threading;
+#nullable enable
 
 namespace Altaxo.Main.Services
 {

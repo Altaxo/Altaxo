@@ -251,7 +251,7 @@ namespace Altaxo.Scripting
 
       var myTable = Altaxo.Data.DataTable.GetParentDataTableOf(myColumnCollection);
 
-      myDataSet = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myTable);
+      myDataSet = myTable is null ? null : Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myTable);
 
       IDisposable? suspendToken = null;
 
