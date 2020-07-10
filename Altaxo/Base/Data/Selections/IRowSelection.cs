@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
@@ -57,7 +56,7 @@ namespace Altaxo.Data.Selections
     /// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
     IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
+      IReadableColumn? Column, // the column as it was at the time of this call
       string ColumnName, // the name of the column (last part of the column proxies document path)
       Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns();

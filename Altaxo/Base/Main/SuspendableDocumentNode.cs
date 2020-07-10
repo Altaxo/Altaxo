@@ -888,7 +888,7 @@ namespace Altaxo.Main
     /// <typeparam name="T">Type of the node to copy.</typeparam>
     /// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
     /// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
-    protected void ChildCloneToMember<T>(ref T myChild, T fromAnotherChild) where T : IDocumentLeafNode, ICloneable
+    protected void ChildCloneToMember<T>([NotNullIfNotNull("fromAnotherChild")][MaybeNull] ref T? myChild, T? fromAnotherChild) where T : class, IDocumentLeafNode, ICloneable
     {
       if (object.ReferenceEquals(myChild, fromAnotherChild))
         return;

@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
@@ -38,7 +37,7 @@ namespace Altaxo.Data.Selections
     private AltaxoVariant _upperValue;
     private bool _isUpperInclusive;
 
-    private IReadableColumnProxy _columnProxy;
+    private IReadableColumnProxy? _columnProxy;
 
     #region Serialization
 
@@ -58,10 +57,10 @@ namespace Altaxo.Data.Selections
         info.AddValue("UpperValue", (object)s._upperValue);
         info.AddValue("UpperIsInclusive", s._isUpperInclusive);
 
-        info.AddValue("Column", s._columnProxy);
+        info.AddValueOrNull("Column", s._columnProxy);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var lower = (AltaxoVariant)info.GetValue("LowerValue", parent);
         var isLowerInclusive = info.GetBoolean("LowerIsInclusive");
@@ -69,7 +68,7 @@ namespace Altaxo.Data.Selections
         var upper = (AltaxoVariant)info.GetValue("UpperValue", parent);
         var isUpperInclusive = info.GetBoolean("UppperIsInclusive");
 
-        var columnProxy = (IReadableColumnProxy)info.GetValue("Column", parent);
+        var columnProxy = (IReadableColumnProxy?)info.GetValueOrNull("Column", parent);
 
         return new RangeOfNumericalValues(info, lower, isLowerInclusive, upper, isUpperInclusive, columnProxy);
       }
@@ -115,7 +114,7 @@ namespace Altaxo.Data.Selections
     /// <param name="upper">The upper.</param>
     /// <param name="isUpperInclusive">if set to <c>true</c> [is upper inclusive].</param>
     /// <param name="columnProxy">The column.</param>
-    protected RangeOfNumericalValues(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, double lower, bool isLowerInclusive, double upper, bool isUpperInclusive, IReadableColumnProxy columnProxy)
+    protected RangeOfNumericalValues(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, double lower, bool isLowerInclusive, double upper, bool isUpperInclusive, IReadableColumnProxy? columnProxy)
     {
       _lowerValue = lower;
       _isLowerInclusive = isLowerInclusive;
@@ -194,7 +193,7 @@ namespace Altaxo.Data.Selections
     /// <summary>
     /// Data that define the error in the negative direction.
     /// </summary>
-    public IReadableColumn Column
+    public IReadableColumn? Column
     {
       get
       {
@@ -212,16 +211,16 @@ namespace Altaxo.Data.Selections
     }
 
     /// <summary>
-    /// Gets the name of the column, if it is a data column. Otherwise, null is returned.
+    /// Gets the name of the column, if it is a data column. Otherwise, <see cref="string.Empty"/> is returned.
     /// </summary>
     /// <value>
-    /// The name of the column if it is a data column. Otherwise, null.
+    /// The name of the column if it is a data column. Otherwise, <see cref="string.Empty"/>.
     /// </value>
     public string ColumnName
     {
       get
       {
-        return _columnProxy?.DocumentPath()?.LastPartOrDefault;
+        return _columnProxy?.DocumentPath()?.LastPartOrDefault ?? string.Empty;
       }
     }
 
@@ -298,7 +297,7 @@ namespace Altaxo.Data.Selections
     /// <inheritdoc/>
     public IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
+      IReadableColumn? Column, // the column as it was at the time of this call
       string ColumnName, // the name of the column (last part of the column proxies document path)
       Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
@@ -313,7 +312,8 @@ namespace Altaxo.Data.Selections
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
     public void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
-      Report(_columnProxy, this, nameof(Column));
+      if (!(_columnProxy is null))
+        Report(_columnProxy, this, nameof(Column));
     }
   }
 }
