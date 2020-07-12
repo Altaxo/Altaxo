@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Altaxo.Calc;
 using Altaxo.Calc.Interpolation;
 using Altaxo.Calc.Optimization;
@@ -87,7 +87,7 @@ namespace Altaxo.Data
       /// <summary>
       /// Gets the resulting interpolation curve for each group of columns.
       /// </summary>
-      public InterpolationInformation[] ResultingInterpolation { get; set; }
+      public InterpolationInformation[]? ResultingInterpolation { get; set; }
 
       /// <summary>
       /// Determines the method to best fit the data into the master curve.
@@ -410,8 +410,9 @@ namespace Altaxo.Data
         interpolations[nColumnGroup].Initialize(options.InterpolationFunctionCreation);
 
         var yCol = columnGroups[nColumnGroup][indexOfReferenceColumnInColumnGroup];
-        var table = DataColumnCollection.GetParentDataColumnCollectionOf(yCol);
-        var xCol = (DoubleColumn)table.FindXColumnOf(yCol);
+        var table = DataColumnCollection.GetParentDataColumnCollectionOf(yCol) ?? throw new InvalidOperationException($"Column {yCol.Name} has no parent data table!");
+        var xCol = (DoubleColumn)(table.FindXColumnOf(yCol) ?? throw new InvalidOperationException($"Can't find corresponding x-column for column {yCol.Name}"));
+
 
         interpolations[nColumnGroup].AddXYColumnToInterpolation(0, indexOfReferenceColumnInColumnGroup, xCol, yCol, options);
       }
@@ -443,8 +444,8 @@ namespace Altaxo.Data
             for (int nColumnGroup = 0; nColumnGroup < interpolations.Length; nColumnGroup++)
             {
               var yCol = columnGroups[nColumnGroup][indexOfCurveInShiftGroup];
-              var table = DataColumnCollection.GetParentDataColumnCollectionOf(yCol);
-              var xCol = (DoubleColumn)table.FindXColumnOf(yCol);
+              var table = DataColumnCollection.GetParentDataColumnCollectionOf(yCol) ?? throw new InvalidOperationException($"Column {yCol.Name} has no parent data table!");
+              var xCol = (DoubleColumn)(table.FindXColumnOf(yCol) ?? throw new InvalidOperationException($"Can't find corresponding x-column for column {yCol.Name}"));
               currentColumns[nColumnGroup].CurrentXCol = xCol;
               currentColumns[nColumnGroup].CurrentYCol = yCol;
               GetMinMaxOfFirstColumnForValidSecondColumn(xCol, yCol, options.LogarithmizeXForInterpolation, options.LogarithmizeYForInterpolation, out var xmin, out var xmax);
@@ -487,8 +488,8 @@ namespace Altaxo.Data
                   Func<double, double> optFunc = delegate (double shift)
                   {
                     double res = GetMeanSquaredPenalty(interpolations, currentColumns, shift, options);
-                                      //Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
-                                      return res;
+                    //Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
+                    return res;
                   };
 
                   var optimizationMethod = new StupidLineSearch(new Simple1DCostFunction(optFunc));
@@ -512,8 +513,8 @@ namespace Altaxo.Data
                   Func<double, double> optFunc = delegate (double shift)
                   {
                     double res = GetMeanSquaredPenalty(interpolations, currentColumns, shift, options);
-                                      //Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
-                                      return res;
+                    //Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
+                    return res;
                   };
                   var optimizationMethod = new BruteForceLineSearch(new Simple1DCostFunction(optFunc));
                   var vec = new Calc.LinearAlgebra.DoubleVector(1)

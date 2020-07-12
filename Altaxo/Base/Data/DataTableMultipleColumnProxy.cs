@@ -263,10 +263,10 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="identifier">The identifier of the bundle of columns that are initially set with this constructor.</param>
     /// <param name="table">The underlying table.</param>
-    /// <param name="selectedDataRows">The selected data rows.</param>
-    /// <param name="selectedDataColumns">The selected data columns.</param>
+    /// <param name="selectedDataRows">The selected data rows. If all data rows should be included, this argument can be null.</param>
+    /// <param name="selectedDataColumns">The selected data columns. If all data columns should be selected, this argument can be null.</param>
     /// <exception cref="System.ArgumentNullException">table must not be null.</exception>
-    public DataTableMultipleColumnProxy(string identifier, DataTable table, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns)
+    public DataTableMultipleColumnProxy(string identifier, DataTable table, IAscendingIntegerCollection? selectedDataRows, IAscendingIntegerCollection? selectedDataColumns)
     {
       if (null == identifier)
         throw new ArgumentNullException("identifier");

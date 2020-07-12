@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.IO;
 using Altaxo.Collections;
@@ -169,7 +170,7 @@ namespace Altaxo.Data
 
       if (Current.Gui.ShowOpenFileDialog(options) && options.FileNames.Length > 0)
       {
-        var analysisOptions = dataTable.GetPropertyValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, null);
+        var analysisOptions = dataTable.GetPropertyValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, null) ?? throw new InvalidProgramException(); ;
         if (!ShowAsciiImportOptionsDialog(options.FileName, analysisOptions, out var importOptions))
           return;
 
@@ -200,13 +201,18 @@ namespace Altaxo.Data
     /// <returns><c>True</c> if the user confirms this dialog (clicks OK). False if the user cancels this dialog.</returns>
     public static bool ShowAsciiImportOptionsDialog(string fileName, AsciiDocumentAnalysisOptions analysisOptions, out AsciiImportOptions importOptions)
     {
+      if (analysisOptions is null)
+        throw new ArgumentNullException(nameof(analysisOptions));
+
       importOptions = new AsciiImportOptions();
 
       using (FileStream str = AsciiImporter.GetAsciiInputFileStream(fileName))
       {
         importOptions = AsciiDocumentAnalysis.Analyze(new AsciiImportOptions(), str, analysisOptions);
         object[] args = new object[] { importOptions, str };
-        var controller = (Altaxo.Gui.IMVCAController)Current.Gui.GetControllerAndControl(args, typeof(Altaxo.Gui.IMVCAController), Gui.UseDocument.Directly);
+        var controller = (Altaxo.Gui.IMVCAController?)Current.Gui.GetControllerAndControl(args, typeof(Altaxo.Gui.IMVCAController), Gui.UseDocument.Directly);
+        if (controller is null)
+          throw new InvalidProgramException($"Controller not found for import options");
 
         if (!Current.Gui.ShowDialog(controller, "Choose Ascii import options"))
           return false;

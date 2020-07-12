@@ -1536,12 +1536,19 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="datac">The column..</param>
     /// <returns>The name of the column.</returns>
-    public string? GetColumnName(DataColumn datac)
+    public string GetColumnName(DataColumn datac)
     {
       if (_columnInfoByColumn.TryGetValue(datac, out var info))
+      {
         return info.Name;
+      }
       else
-        return null;
+      {
+        if (IsDisposeInProgress)
+          return string.Empty; // silently return any name if dispose is in progress
+        else
+          throw new ArgumentException("The provided column is not member of this collection", nameof(datac));
+      }
     }
 
     /// <summary>

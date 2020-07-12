@@ -22,10 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#nullable enable
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
 
@@ -78,10 +75,10 @@ namespace Altaxo.Data
         _parent = parent;
       }
 
-      public override string Validate(string name)
+      public override string? Validate(string name)
       {
-        string err = base.Validate(name);
-        if (null != err)
+        var err = base.Validate(name);
+        if (!string.IsNullOrEmpty(err))
           return err;
 
         if (_col.Name == name)

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,10 +72,15 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="analysisOptions">Options that specify how many lines are analyzed, and what number formats and date/time formats will be tested.</param>
     /// <returns>Import options that can be used in a following step to read in the ascii stream. If the stream contains no data, the returned import options will be not fully specified.
     /// The same instance is returned as given by the parameter <paramref name="importOptions"/>. If <paramref name="importOptions"/> was <c>null</c>, a new instance is created.</returns>
-    public static AsciiImportOptions Analyze(AsciiImportOptions importOptions, System.IO.Stream stream, AsciiDocumentAnalysisOptions analysisOptions)
+    public static AsciiImportOptions Analyze(AsciiImportOptions? importOptions, System.IO.Stream stream, AsciiDocumentAnalysisOptions analysisOptions)
     {
-      if (importOptions == null)
-        importOptions = new AsciiImportOptions();
+      if (stream is null)
+        throw new ArgumentNullException(nameof(stream));
+      if (analysisOptions is null)
+        throw new ArgumentNullException(nameof(analysisOptions));
+
+      importOptions ??= new AsciiImportOptions();
+
 
       var analysis = new AsciiDocumentAnalysis();
 
@@ -90,12 +96,12 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="analysisOptions">Options that specify how many lines are analyzed, and what number formats and date/time formats will be tested.</param>
     public void InternalAnalyze(AsciiImportOptions importOptions, System.IO.Stream stream, AsciiDocumentAnalysisOptions analysisOptions)
     {
-      if (null == stream)
-        throw new ArgumentNullException("Stream");
-      if (null == analysisOptions)
-        throw new ArgumentNullException("analysisOptions");
-      if (null == importOptions)
-        throw new ArgumentNullException("importOptions");
+      if (stream is null)
+        throw new ArgumentNullException(nameof(stream));
+      if (analysisOptions is null)
+        throw new ArgumentNullException(nameof(analysisOptions));
+      if (importOptions is null)
+        throw new ArgumentNullException(nameof(importOptions));
 
       // Read-in the lines into _bodyLines. If the number of header lines is already known, those header lines are read into _headerLines
       ReadLinesToAnalyze(stream, analysisOptions.NumberOfLinesToAnalyze, importOptions.NumberOfMainHeaderLines);

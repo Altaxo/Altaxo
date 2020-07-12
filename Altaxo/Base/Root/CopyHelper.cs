@@ -93,7 +93,7 @@ namespace Altaxo
     /// <typeparam name="T">The type of the instance to copy.</typeparam>
     /// <param name="to">The variable to copy to.</param>
     /// <param name="from">The instance that was copied.</param>
-    public static void Copy<T>([NotNullIfNotNull("from")] ref T to, [MaybeNull] T from) where T : ICloneable
+    public static void Copy<T>([NotNullIfNotNull("from")][AllowNull] ref T to, [MaybeNull] T from) where T : ICloneable?
     {
       if (object.ReferenceEquals(to, from))
       {
@@ -174,6 +174,23 @@ namespace Altaxo
         if (e is null)
           yield return default;
         else
+          yield return (T)e.Clone();
+      }
+    }
+
+    /// <summary>
+    /// Gets the members of the input enumeration cloned as output enumeration.
+    /// Here, only those entries of the input enumeration, which are not null, are cloned and returned in the output enumeration.
+    /// </summary>
+    /// <typeparam name="T">Type of the enumeration members.</typeparam>
+    /// <param name="toClone">Input enumeration.</param>
+    /// <returns>Output enumeration with cloned members of the input enumeration.</returns>
+    public static IEnumerable<T> GetEnumerationMembersNotNullCloned<T>(IEnumerable<T?> toClone) where T : class, ICloneable
+    {
+      foreach (var e in toClone)
+      {
+        if (!(e is null))
+
           yield return (T)e.Clone();
       }
     }

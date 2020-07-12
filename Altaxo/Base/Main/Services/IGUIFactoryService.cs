@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Input;
 using Altaxo.Geometry;
 using Altaxo.Gui;
@@ -130,7 +131,7 @@ namespace Altaxo.Main.Services
     /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
     /// </list>
     /// </remarks>
-    bool ShowDialog<T>(ref T arg, string title, bool showApplyButton);
+    bool ShowDialog<T>([DisallowNull][NotNull] ref T arg, string title, bool showApplyButton);
 
     bool ShowDialog(IMVCAController controller, string title, bool showApplyButton);
 

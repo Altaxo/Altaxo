@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Data
       if (initData)
       {
         _dataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-        _processOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ExpandCyclingVariableColumnOptions }, typeof(IMVCANController), UseDocument.Directly);
+        _processOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataSourceOptions }, typeof(IMVCANController), UseDocument.Directly);
 
         _processDataController = new ExpandCyclingVariableDataController() { UseDocumentCopy = UseDocument.Directly };
         _processDataController.InitializeDocument(_doc.InputData);

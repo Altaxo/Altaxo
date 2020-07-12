@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Text;
 using Altaxo.Collections;
 
 namespace Altaxo.Data
@@ -105,12 +105,12 @@ namespace Altaxo.Data
     /// <exception cref="InvalidOperationException">The data columns to transpose are not of the same type. The first column that has a deviating type is column number  + firstDifferentColumnIndex.ToString()</exception>
     public static void Transpose(this DataTable srcTable, DataTableTransposeOptions options, DataTable destTable)
     {
-      if (null == srcTable)
+      if (srcTable is null)
         throw new ArgumentNullException(nameof(srcTable));
-      if (null == destTable)
+      if (destTable is null)
         throw new ArgumentNullException(nameof(destTable));
       if (object.ReferenceEquals(srcTable, destTable))
-        throw new ArgumentException(nameof(srcTable) + " and " + nameof(destTable) + " are identical. This inline transpose operation is not supported.");
+        throw new ArgumentException($"{nameof(srcTable)} and {nameof(destTable)} are identical. This inline transpose operation is not supported.");
 
       int numberOfDataColumnsChangeToPropertyColumns = Math.Min(options.DataColumnsMoveToPropertyColumns, srcTable.DataColumnCount);
 
@@ -156,7 +156,7 @@ namespace Altaxo.Data
           srcRows = Math.Max(srcRows, srcTable.DataColumns[i].Count);
 
         // create as many columns in destTable as srcRows and fill them with data
-        Type columnType = dataColumnsToTransposeIndices.Count > 0 ? srcTable.DataColumns[dataColumnsToTransposeIndices[0]].GetType() : null;
+        Type? columnType = dataColumnsToTransposeIndices.Count > 0 ? srcTable.DataColumns[dataColumnsToTransposeIndices[0]].GetType() : null;
         for (int i = 0; i < srcRows; ++i)
         {
           string destColName = string.Format("{0}{1}", options.ColumnNamingPreString, i);
@@ -165,7 +165,7 @@ namespace Altaxo.Data
             destColName = string.Format("{0}{1}", options.ColumnNamingPreString, srcTable.DataColumns[0][i]);
           }
 
-          var destCol = destTable.DataColumns.EnsureExistenceAtPositionStrictly(numberOfPriorDestDataColumns + i, destColName, false, columnType, ColumnKind.V, 0);
+          var destCol = destTable.DataColumns.EnsureExistenceAtPositionStrictly(numberOfPriorDestDataColumns + i, destColName, false, columnType!, ColumnKind.V, 0);
           int k = 0;
           foreach (int j in dataColumnsToTransposeIndices)
             destCol[k++] = srcTable.DataColumns[j][i];

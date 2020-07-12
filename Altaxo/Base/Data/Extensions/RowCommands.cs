@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 
 namespace Altaxo.Data
@@ -44,7 +43,7 @@ namespace Altaxo.Data
       foreach (var rowIdx in selectedDataRows)
       {
         var propColType = GetTypeOfColumnForRowReplacement(table.DataColumns, rowIdx, selectedDataColumns);
-        var propCol = (DataColumn)Activator.CreateInstance(propColType);
+        var propCol = (DataColumn?)Activator.CreateInstance(propColType) ?? throw new InvalidOperationException($"Unable to instantiate column of type {propColType}");
         CopyRowToDataColumn(table.DataColumns, rowIdx, selectedDataColumns, propCol);
         table.PropCols.Add(propCol);
       }
@@ -82,7 +81,7 @@ namespace Altaxo.Data
 
       // return the data column type with the topmost count
       int bestCount = 0;
-      System.Type bestType = null;
+      System.Type? bestType = null;
       foreach (var entry in typesToCount)
       {
         if (entry.Value > bestCount)
@@ -92,7 +91,7 @@ namespace Altaxo.Data
         }
       }
 
-      return bestType != null ? bestType : typeof(DoubleColumn);
+      return bestType ?? typeof(DoubleColumn);
     }
 
     /// <summary>

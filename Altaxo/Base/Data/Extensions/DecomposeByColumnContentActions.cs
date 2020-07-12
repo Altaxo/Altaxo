@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Altaxo.Collections;
 
 namespace Altaxo.Data
@@ -34,8 +34,8 @@ namespace Altaxo.Data
   {
     public static void ShowDecomposeByColumnContentDialog(this DataTable srcTable, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns)
     {
-      DataTableMultipleColumnProxy proxy = null;
-      DecomposeByColumnContentOptions options = null;
+      DataTableMultipleColumnProxy? proxy = null;
+      DecomposeByColumnContentOptions? options = null;
 
       try
       {
@@ -59,7 +59,7 @@ namespace Altaxo.Data
         proxy = dataAndOptions.Data;
         options = dataAndOptions.Options;
 
-        string error = null;
+        string? error = null;
         try
         {
           error = DecomposeByColumnContent(dataAndOptions.Data, dataAndOptions.Options, destTable);
@@ -90,9 +90,11 @@ namespace Altaxo.Data
     /// <param name="options">The settings for decomposing.</param>
     /// <param name="destTable">The destination table. Any data will be removed before filling with the new data.</param>
     /// <returns>Null if the method finishes successfully, or an error information.</returns>
-    public static string DecomposeByColumnContent(DataTableMultipleColumnProxy inputData, DecomposeByColumnContentOptions options, DataTable destTable)
+    public static string? DecomposeByColumnContent(DataTableMultipleColumnProxy inputData, DecomposeByColumnContentOptions options, DataTable destTable)
     {
       var srcTable = inputData.DataTable;
+      if (srcTable is null)
+        return "Source data table is null";
 
       try
       {
@@ -106,7 +108,10 @@ namespace Altaxo.Data
       destTable.DataColumns.RemoveColumnsAll();
       destTable.PropCols.RemoveColumnsAll();
 
-      DataColumn srcCycCol = inputData.GetDataColumnOrNull(DecomposeByColumnContentDataAndOptions.ColumnWithCyclingVariableIdentifier);
+      var srcCycCol = inputData.GetDataColumnOrNull(DecomposeByColumnContentDataAndOptions.ColumnWithCyclingVariableIdentifier);
+      if (srcCycCol is null)
+        return "Could not get column with cycling variable";
+
       var decomposedValues = Decompose(srcCycCol);
       // the decomposedValues are not sorted yes
 

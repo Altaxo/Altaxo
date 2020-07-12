@@ -22,10 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
 
@@ -42,13 +43,13 @@ namespace Altaxo.Data
     protected DataTable _sourceTable;
 
     /// <summary>Collection of selected data columns.</summary>
-    protected IAscendingIntegerCollection _selectedColumns;
+    protected IAscendingIntegerCollection? _selectedColumns;
 
     /// <summary>Collection of selected data rows.</summary>
-    protected IAscendingIntegerCollection _selectedRows;
+    protected IAscendingIntegerCollection? _selectedRows;
 
     /// <summary>Collection of selected property columns.</summary>
-    protected IAscendingIntegerCollection _selectedPropertyColumns;
+    protected IAscendingIntegerCollection? _selectedPropertyColumns;
 
     /// <summary>
     /// Function that is used to generate a writeable matrix. First argument is number of rows, the 2nd argument is the number of columns of the matrix. The result shold be a writeable matrix with the corresponding number of rows and columns.
@@ -71,28 +72,28 @@ namespace Altaxo.Data
     private bool _executionDone;
 
     /// <summary>The indices of the data columns of the <see cref="_sourceTable"/> that contribute to the resulting matrix.</summary>
-    private IAscendingIntegerCollection _participatingDataColumns;
+    private IAscendingIntegerCollection? _participatingDataColumns;
 
     /// <summary>The indices of the data rows of the <see cref="_sourceTable"/> that contribute to the resulting matrix.</summary>
-    private IAscendingIntegerCollection _participatingDataRows;
+    private IAscendingIntegerCollection? _participatingDataRows;
 
     /// <summary>The group number of the data columns that contribute to the matrix. All columns must have this group number.</summary>
     private int _dataColumnsGroupNumber;
 
     /// <summary>Column that correlate each row of the resulting matrix to a corresponding physical value. This value can be used for instance for calculating the x- or y- position in the coordinate system.</summary>
-    private INumericColumn _rowHeaderColumn;
+    private INumericColumn? _rowHeaderColumn;
 
     /// <summary>Column that correlate each column of the resulting matrix to a corresponding physical value. This value can be used for instance for calculating the x- or y- position in the coordinate system.</summary>
-    private INumericColumn _columnHeaderColumn;
+    private INumericColumn? _columnHeaderColumn;
 
     /// <summary>Resulting matrix.</summary>
-    private IMatrix<double> _resultingMatrix;
+    private IMatrix<double>? _resultingMatrix;
 
     /// <summary>Resulting row header vector. The members of this vector correspond to the row of the matrix with the same index.</summary>
-    private IVector<double> _rowHeaderVector;
+    private IROVector<double>? _rowHeaderVector;
 
     /// <summary>Resulting column header vector. The members of this vector correspond to the column of the matrix with the same index.</summary>
-    private IVector<double> _columnHeaderVector;
+    private IROVector<double>? _columnHeaderVector;
 
     #endregion Working / resulting members
 
@@ -103,8 +104,8 @@ namespace Altaxo.Data
     /// <exception cref="System.ArgumentNullException">SourceTable must not be null</exception>
     public DataTableToMatrixConverter(DataTable sourceTable)
     {
-      if (null == sourceTable)
-        throw new ArgumentNullException("SourceTable must not be null");
+      if (sourceTable is null)
+        throw new ArgumentNullException(nameof(sourceTable));
 
       _sourceTable = sourceTable;
       _matrixGenerator = DefaultMatrixGenerator;
@@ -220,9 +221,10 @@ namespace Altaxo.Data
     /// </summary>
     /// <returns>Indices of the participating data columns of the data table.</returns>
     /// <exception cref="InvalidDimensionMatrixException">No columns found that can be used for the matrix. Thus number of columns of the matrix would be zero.</exception>
+    [MemberNotNull(nameof(_participatingDataColumns))]
     public IAscendingIntegerCollection GetParticipatingDataColumns()
     {
-      if (null == _participatingDataColumns)
+      if (_participatingDataColumns is null)
       {
         _participatingDataColumns = GetParticipatingDataColumns(_sourceTable, _selectedColumns);
 
@@ -239,11 +241,12 @@ namespace Altaxo.Data
     /// Gets the indices of the data rows of the table that contribute to the matrix.
     /// </summary>
     /// <returns></returns>
+    [MemberNotNull(nameof(_participatingDataRows))]
     public IAscendingIntegerCollection GetParticipatingDataRows()
     {
-      if (null == _participatingDataColumns)
+      if (_participatingDataColumns is null)
         GetParticipatingDataColumns();
-      if (null == _participatingDataRows)
+      if (_participatingDataRows is null)
         _participatingDataRows = GetParticipatingDataRows(_sourceTable, _selectedRows, _participatingDataColumns);
       return _participatingDataRows;
     }
@@ -338,7 +341,7 @@ namespace Altaxo.Data
         if (!_executionDone)
           throw new InvalidOperationException("Resulting matrix is not known yet. Please call Execute first.");
 
-        return _resultingMatrix;
+        return _resultingMatrix!;
       }
     }
 
@@ -358,7 +361,7 @@ namespace Altaxo.Data
         if (!_executionDone)
           throw new InvalidOperationException("RowHeaderColumn is not known yet. Please call Execute first.");
 
-        return _rowHeaderColumn;
+        return _rowHeaderColumn!;
       }
     }
 
@@ -370,14 +373,14 @@ namespace Altaxo.Data
     /// The row header vector.
     /// </value>
     /// <exception cref="System.InvalidOperationException">RowHeaderVector is not known yet. Please call Execute first.</exception>
-    public IVector<double> RowHeaderVector
+    public IROVector<double> RowHeaderVector
     {
       get
       {
         if (!_executionDone)
           throw new InvalidOperationException("RowHeaderVector is not known yet. Please call Execute first.");
 
-        return _rowHeaderVector;
+        return _rowHeaderVector!;
       }
     }
 
@@ -397,7 +400,7 @@ namespace Altaxo.Data
         if (!_executionDone)
           throw new InvalidOperationException("ColumnHeaderColumn is not known yet. Please call Execute first.");
 
-        return _columnHeaderColumn;
+        return _columnHeaderColumn!;
       }
     }
 
@@ -409,14 +412,14 @@ namespace Altaxo.Data
     /// The column header vector.
     /// </value>
     /// <exception cref="System.InvalidOperationException">ColumnHeaderVector is not known yet. Please call Execute first.</exception>
-    public IVector<double> ColumnHeaderVector
+    public IROVector<double> ColumnHeaderVector
     {
       get
       {
         if (!_executionDone)
           throw new InvalidOperationException("ColumnHeaderVector is not known yet. Please call Execute first.");
 
-        return _columnHeaderVector;
+        return _columnHeaderVector!;
       }
     }
 
@@ -467,7 +470,7 @@ namespace Altaxo.Data
     /// <param name="errorMessage">If the function is not successful, contains a diagnostic error message.</param>
     /// <returns><c>True</c> if the function was successful, otherwise <c>False</c>.</returns>
     /// <exception cref="System.InvalidOperationException">RowHeaderVector is not known yet, thus row spacing is not known. Please call Execute first.</exception>
-    public bool TryGetRowSpacing(out double rowSpacing, out string errorMessage)
+    public bool TryGetRowSpacing(out double rowSpacing, [MaybeNullWhen(true)] out string? errorMessage)
     {
       if (!_executionDone)
         throw new InvalidOperationException("RowHeaderVector is not known yet, thus row spacing is not known. Please call Execute first.");
@@ -489,7 +492,7 @@ namespace Altaxo.Data
     /// <param name="errorMessage">If the function is not successful, contains a diagnostic error message.</param>
     /// <returns><c>True</c> if the function was successful, otherwise <c>False</c>.</returns>
     /// <exception cref="System.InvalidOperationException">ColumnHeaderVector is not known yet, thus column spacing is not known. Please call Execute first.</exception>
-    public bool TryGetColumnSpacing(out double columnSpacing, out string errorMessage)
+    public bool TryGetColumnSpacing(out double columnSpacing, [MaybeNullWhen(true)] out string? errorMessage)
     {
       if (!_executionDone)
         throw new InvalidOperationException("ColumnHeaderVector is not known yet, thus row spacing is not known. Please call Execute first.");
@@ -512,7 +515,7 @@ namespace Altaxo.Data
     /// <param name="spacingValue">If the function is successful, contains the uniform spacing value.</param>
     /// <param name="errorMessage">If the function is not successful, contains a diagnostic error message.</param>
     /// <returns><c>True</c> if the function was successful, otherwise <c>False</c>.</returns>
-    public static bool TryGetRowOrColumnSpacing(IReadOnlyList<double> headerVector, string rowOrColumn, out double spacingValue, out string errorMessage)
+    public static bool TryGetRowOrColumnSpacing(IReadOnlyList<double> headerVector, string rowOrColumn, out double spacingValue, [MaybeNullWhen(true)] out string? errorMessage)
     {
       var spacing = new Calc.LinearAlgebra.VectorSpacingEvaluator(headerVector);
 
@@ -541,6 +544,12 @@ namespace Altaxo.Data
     /// Performs the assembling for the resulting matrix and the row / column header vectors. After calling this function, the properties <see cref="ResultingMatrix"/>, <see cref="RowHeaderVector"/> and
     /// <see cref="ColumnHeaderVector"/> are available.
     /// </summary>
+    [MemberNotNull(
+      nameof(_participatingDataColumns),
+      nameof(_participatingDataRows),
+      nameof(_columnHeaderVector),
+      nameof(_rowHeaderVector),
+      nameof(_resultingMatrix))]
     public void Execute()
     {
       _executionDone = false;
@@ -561,8 +570,12 @@ namespace Altaxo.Data
     /// <summary>
     /// Creates and fills the column header vector.
     /// </summary>
+    [MemberNotNull(nameof(_columnHeaderVector))]
     private void GetColumnHeaderVector()
     {
+      if (_participatingDataColumns is null || _participatingDataRows is null)
+        throw new InvalidProgramException();
+
       // find out if there is a y property column or not
       _columnHeaderColumn = null;
       if (null != _selectedPropertyColumns && _selectedPropertyColumns.Count > 0)
@@ -585,16 +598,24 @@ namespace Altaxo.Data
           arr[i] = _columnHeaderColumn[_participatingDataColumns[i]];
         _columnHeaderVector = VectorMath.ToVector(arr);
       }
+      else
+      {
+        _columnHeaderVector = VectorMath.CreateEquidistantSequenceByStartStepLength(0.0, 1.0, _participatingDataColumns.Count);
+      }
     }
 
     /// <summary>
     /// Creates and fills the row header vector.
     /// </summary>
+    [MemberNotNull(nameof(_rowHeaderVector))]
     private void GetRowHeaderVector()
     {
+      if (_participatingDataColumns is null || _participatingDataRows is null)
+        throw new InvalidProgramException();
+
       // find out if there is a xcolumn or not
       int group = _sourceTable.DataColumns.GetColumnGroup(_participatingDataColumns[0]);
-      DataColumn xcol = _sourceTable.DataColumns.FindXColumnOfGroup(group);
+      DataColumn? xcol = _sourceTable.DataColumns.FindXColumnOfGroup(group);
       _rowHeaderColumn = xcol as INumericColumn;
 
       if (null != _rowHeaderColumn)
@@ -603,6 +624,10 @@ namespace Altaxo.Data
         for (int i = 0; i < _participatingDataRows.Count; ++i)
           arr[i] = _rowHeaderColumn[_participatingDataRows[i]];
         _rowHeaderVector = VectorMath.ToVector(arr);
+      }
+      else
+      {
+        _rowHeaderVector = VectorMath.CreateEquidistantSequenceByStartStepLength(0.0, 1.0, _participatingDataRows.Count);
       }
     }
 
@@ -615,11 +640,11 @@ namespace Altaxo.Data
     /// <param name="table">The table.</param>
     /// <param name="selectedColumns">The selected data columns of the provided table. You can provide <c>null</c> for this parameter. This is considered as if all columns of the table are selected.</param>
     /// <returns></returns>
-    public static AscendingIntegerCollection GetParticipatingDataColumns(DataTable table, IAscendingIntegerCollection selectedColumns)
+    public static AscendingIntegerCollection GetParticipatingDataColumns(DataTable table, IAscendingIntegerCollection? selectedColumns)
     {
       var result = new Altaxo.Collections.AscendingIntegerCollection();
       int? groupNumber = null;
-      if (selectedColumns == null || selectedColumns.Count == 0) // No columns selected - than we assume all columns, but only V-columns
+      if (selectedColumns is null || selectedColumns.Count == 0) // No columns selected - than we assume all columns, but only V-columns
       {
         var dc = table.DataColumns;
         for (int i = 0; i < table.DataColumnCount; ++i)
@@ -652,7 +677,7 @@ namespace Altaxo.Data
     /// <param name="selectedRows">The selected data rows.</param>
     /// <param name="participatingColumns">The data columns that participate in the matrix area.</param>
     /// <returns>The collection of indices of data rows that participate in the matrix area.</returns>
-    public static Altaxo.Collections.AscendingIntegerCollection GetParticipatingDataRows(DataTable table, IAscendingIntegerCollection selectedRows, IAscendingIntegerCollection participatingColumns)
+    public static Altaxo.Collections.AscendingIntegerCollection GetParticipatingDataRows(DataTable table, IAscendingIntegerCollection? selectedRows, IAscendingIntegerCollection participatingColumns)
     {
       var result = new AscendingIntegerCollection();
 
@@ -660,12 +685,16 @@ namespace Altaxo.Data
       {
         result.Add(selectedRows);
       }
-      else
+      else if (!(participatingColumns is null))
       {
         var dc = table.DataColumns;
         int rows = participatingColumns.Select(i => dc[i].Count).MaxOrDefault(0);
 
         result.AddRange(0, rows);
+      }
+      else
+      {
+        throw new ArgumentException($"Either {nameof(selectedRows)} or {nameof(participatingColumns)} must not be null.");
       }
 
       return result;
@@ -707,8 +736,12 @@ namespace Altaxo.Data
     /// Creates the resulting matrix and fills it with values.
     /// </summary>
     /// <exception cref="System.InvalidOperationException">The matrix generator worked not as expected. Either the generated matrix is null, or the dimensions of the returned matrix deviate from the provided dimensions.</exception>
+    [MemberNotNull(nameof(_resultingMatrix))]
     protected virtual void FillMatrix()
     {
+      if (_participatingDataColumns is null || _participatingDataRows is null)
+        throw new InvalidProgramException();
+
       // reserve two arrays (one for real part, which is filled with the table contents)
       // and the imaginary part - which is left zero here)
 

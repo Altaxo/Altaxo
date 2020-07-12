@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Data
 {
@@ -51,9 +49,9 @@ namespace Altaxo.Data
 
     public class RealFourierTransformOptions : ICloneable
     {
-      public DataColumn ColumnToTransform { get; set; }
+      public DataColumn? ColumnToTransform { get; set; }
 
-      public string XIncrementMessage { get; set; }
+      public string? XIncrementMessage { get; set; }
 
       public double XIncrementValue { get; set; }
 
@@ -69,20 +67,19 @@ namespace Altaxo.Data
 
     #endregion Helper types
 
-    public static string DetermineXIncrement(DataColumn yColumnToTransform, out double xIncrement)
+    public static string? DetermineXIncrement(DataColumn yColumnToTransform, out double xIncrement)
     {
       xIncrement = 1;
       var coll = DataColumnCollection.GetParentDataColumnCollectionOf(yColumnToTransform);
 
-      if (null == coll)
+      if (coll is null)
         return "Can't find parent collection of provided data column to transform";
 
       var xColD = coll.FindXColumnOf(yColumnToTransform);
-      if (null == xColD)
+      if (xColD is null)
         return "Can't find x-column of provided data column to transform";
 
-      var xCol = xColD as DoubleColumn;
-      if (null == xCol)
+      if (!(xColD is DoubleColumn xCol))
         return "X-column of provided data column to transform is not a numeric column";
 
       var spacing = new Calc.LinearAlgebra.VectorSpacingEvaluator(xCol.ToROVector());
@@ -99,7 +96,7 @@ namespace Altaxo.Data
 
     public static void RealFourierTransform(RealFourierTransformOptions options)
     {
-      var yCol = options.ColumnToTransform;
+      var yCol = options.ColumnToTransform ?? throw new InvalidOperationException("Y-column to be transformed is null");
       int fftLen = yCol.Count;
 
       double[] resultCol = new double[fftLen];
@@ -111,7 +108,7 @@ namespace Altaxo.Data
 
       var wrapper = new Calc.Fourier.RealFFTResultWrapper(resultCol);
 
-      DataTable outputTable = null;
+      DataTable? outputTable;
       switch (options.OutputPlacement)
       {
         case RealFourierTransformOutputPlacement.CreateInNewWorksheet:
@@ -125,7 +122,7 @@ namespace Altaxo.Data
 
         case RealFourierTransformOutputPlacement.CreateInSameWorksheet:
           outputTable = DataTable.GetParentDataTableOf(yCol);
-          if (null == outputTable)
+          if (outputTable is null)
             throw new ArgumentException("Provided y-column does not belong to a data table.");
           break;
 
@@ -196,7 +193,7 @@ namespace Altaxo.Data
       options.XIncrementMessage = DetermineXIncrement(ycolumnToTransform, out var xIncrementValue);
       options.XIncrementValue = xIncrementValue;
 
-      if (Current.Gui.ShowDialog(ref options, "Choose fourier transform options", false))
+      if (Current.Gui.ShowDialog(ref options, "Choose fourier transform options", false) && !(options is null))
       {
         RealFourierTransform(options);
       }

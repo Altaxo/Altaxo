@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Data
@@ -92,20 +93,16 @@ namespace Altaxo.Data
         info.AddValue("ColumnNamingPreString", s.ColumnNamingPreString);
       }
 
-      protected virtual DataTableTransposeOptions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new DataTableTransposeOptions() : (DataTableTransposeOptions)o);
+        var s = (DataTableTransposeOptions?)o ?? new DataTableTransposeOptions();
         s.DataColumnsMoveToPropertyColumns = info.GetInt32("NumberOfDataColumnsMovingToPropertyColumns");
         s.PropertyColumnsMoveToDataColumns = info.GetInt32("NumberOfPropertyColumnsMovingToDataColumns");
         s.StoreDataColumnNamesInFirstDataColumn = info.GetBoolean("StoreDataColumnNamesInFirstDataColumn");
         s.UseFirstDataColumnForColumnNaming = info.GetBoolean("UseFirstDataColumnForColumnNaming");
         s.ColumnNamingPreString = info.GetString("ColumnNamingPreString");
-        return s;
-      }
-
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        var s = SDeserialize(o, info, parent);
         return s;
       }
     }

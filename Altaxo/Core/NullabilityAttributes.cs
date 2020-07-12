@@ -52,6 +52,13 @@ namespace System.Diagnostics.CodeAnalysis
   }
 
   /// <summary>
+  /// Fake DisallowNull Attribute that avoids compile errors when using the .NET framework.
+  /// </summary>
+  public class DisallowNull : Attribute
+  {
+  }
+
+  /// <summary>
   /// Fake NotNull Attribute that avoids compile errors when using the .NET framework.
   /// </summary>
   public class NotNull : Attribute

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Data
 {
@@ -35,7 +35,7 @@ namespace Altaxo.Data
     private DataTableMultipleColumnProxy _processData;
     private IDataSourceImportOptions _importOptions;
 
-    public Action<IAltaxoTableDataSource> _dataSourceChanged;
+    public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
 
@@ -56,31 +56,44 @@ namespace Altaxo.Data
         info.AddValue("ImportOptions", s._importOptions);
       }
 
-      protected virtual ConvertXYVToMatrixDataSource SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new ConvertXYVToMatrixDataSource() : (ConvertXYVToMatrixDataSource)o);
-
-        s.ChildSetMember(ref s._processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", s));
-        s.ChildSetMember(ref s._processOptions, (ConvertXYVToMatrixOptions)info.GetValue("ProcessOptions", s));
-        s.ChildSetMember(ref s._importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", s));
-
+        if (o is ConvertXYVToMatrixDataSource s)
+          s.DeserializeSurrogate0(info);
+        else
+          s = new ConvertXYVToMatrixDataSource(info, 0);
         return s;
       }
+    }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        var s = SDeserialize(o, info, parent);
-        return s;
-      }
+    [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
+    void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      ChildSetMember(ref _processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this));
+      ChildSetMember(ref _processOptions, (ConvertXYVToMatrixOptions)info.GetValue("ProcessOptions", this));
+      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
     }
 
     #endregion Version 0
 
+    protected ConvertXYVToMatrixDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
+    {
+      switch (version)
+      {
+        case 0:
+          DeserializeSurrogate0(info);
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(version));
+      }
+    }
+
+
+
+
     #endregion Serialization
 
-    protected ConvertXYVToMatrixDataSource()
-    {
-    }
+
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConvertXYVToMatrixDataSource"/> class.
@@ -97,11 +110,11 @@ namespace Altaxo.Data
     /// </exception>
     public ConvertXYVToMatrixDataSource(DataTableMultipleColumnProxy inputData, ConvertXYVToMatrixOptions dataSourceOptions, IDataSourceImportOptions importOptions)
     {
-      if (null == inputData)
+      if (inputData is null)
         throw new ArgumentNullException(nameof(inputData));
-      if (null == dataSourceOptions)
+      if (dataSourceOptions is null)
         throw new ArgumentNullException(nameof(dataSourceOptions));
-      if (null == importOptions)
+      if (importOptions is null)
         throw new ArgumentNullException(nameof(importOptions));
 
       using (var token = SuspendGetToken())
@@ -121,6 +134,25 @@ namespace Altaxo.Data
       CopyFrom(from);
     }
 
+    [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
+    public void CopyFrom(ConvertXYVToMatrixDataSource from)
+    {
+      using (var token = SuspendGetToken())
+      {
+        ConvertXYVToMatrixOptions? dataSourceOptions = null;
+        DataTableMultipleColumnProxy? inputData = null;
+        IDataSourceImportOptions? importOptions = null;
+
+        CopyHelper.Copy(ref importOptions, from._importOptions);
+        CopyHelper.Copy(ref dataSourceOptions, from._processOptions);
+        CopyHelper.Copy(ref inputData, from._processData);
+
+        DataSourceOptions = dataSourceOptions;
+        ImportOptions = importOptions;
+        InputData = inputData;
+      }
+    }
+
     /// <summary>
     /// Copies from another instance.
     /// </summary>
@@ -131,28 +163,17 @@ namespace Altaxo.Data
       if (object.ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as ConvertXYVToMatrixDataSource;
-      if (null != from)
+      if (obj is ConvertXYVToMatrixDataSource from)
       {
-        using (var token = SuspendGetToken())
-        {
-          ConvertXYVToMatrixOptions dataSourceOptions = null;
-          DataTableMultipleColumnProxy inputData = null;
-          IDataSourceImportOptions importOptions = null;
+        CopyFrom(from);
 
-          CopyHelper.Copy(ref importOptions, from._importOptions);
-          CopyHelper.Copy(ref dataSourceOptions, from._processOptions);
-          CopyHelper.Copy(ref inputData, from._processData);
+        return true;
 
-          DataSourceOptions = dataSourceOptions;
-          ImportOptions = importOptions;
-          InputData = inputData;
-
-          return true;
-        }
       }
       return false;
     }
+
+
 
     /// <summary>
     /// Creates a new object that is a copy of the current instance.
@@ -219,6 +240,7 @@ namespace Altaxo.Data
       {
         return _processData;
       }
+      [MemberNotNull(nameof(_processData))]
       set
       {
         if (ChildSetMember(ref _processData, value ?? throw new ArgumentNullException(nameof(value))))
@@ -241,6 +263,7 @@ namespace Altaxo.Data
       {
         return _importOptions;
       }
+      [MemberNotNull(nameof(_importOptions))]
       set
       {
         if (ChildSetMember(ref _importOptions, value ?? throw new ArgumentNullException(nameof(value))))
@@ -262,6 +285,7 @@ namespace Altaxo.Data
       {
         return _processOptions;
       }
+      [MemberNotNull(nameof(_processOptions))]
       set
       {
         if (ChildSetMember(ref _processOptions, value ?? throw new ArgumentNullException(nameof(value))))
@@ -273,7 +297,7 @@ namespace Altaxo.Data
 
     #region Change event handling
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
       {

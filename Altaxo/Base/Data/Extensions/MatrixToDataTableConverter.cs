@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Data
@@ -35,17 +34,17 @@ namespace Altaxo.Data
     private const string DefaultColumnBaseName = "C";
     private DataTable _destinationTable;
     private IROMatrix<double> _sourceMatrix;
-    private string _columnNameBase;
+    private string? _columnNameBase;
 
     private List<Tuple<IReadOnlyList<double>, string>> _rowHeaderColumns = new List<Tuple<IReadOnlyList<double>, string>>();
     private List<Tuple<IReadOnlyList<double>, string>> _columnHeaderColumns = new List<Tuple<IReadOnlyList<double>, string>>();
 
     public MatrixToDataTableConverter(IROMatrix<double> sourceMatrix, DataTable destinationTable)
     {
-      if (null == sourceMatrix)
-        throw new ArgumentNullException("sourceMatrix");
-      if (null == destinationTable)
-        throw new ArgumentNullException("destinationTable");
+      if (sourceMatrix is null)
+        throw new ArgumentNullException(nameof(sourceMatrix));
+      if (destinationTable is null)
+        throw new ArgumentNullException(nameof(destinationTable));
 
       _sourceMatrix = sourceMatrix;
       _destinationTable = destinationTable;
@@ -91,7 +90,7 @@ namespace Altaxo.Data
       }
     }
 
-    public event Func<int, string> ColumnNameGenerator;
+    public event Func<int, string>? ColumnNameGenerator;
 
     public void AddMatrixRowHeaderData(IReadOnlyList<double> vector, string name)
     {
