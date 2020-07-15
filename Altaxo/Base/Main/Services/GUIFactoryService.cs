@@ -25,11 +25,9 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing.Printing;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Altaxo.Geometry;
 using Altaxo.Gui;
@@ -530,7 +528,7 @@ namespace Altaxo.Main.Services
     /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
     /// </list>
     /// </remarks>
-    public bool ShowDialog<T>(ref T arg, string title, bool showApplyButton)
+    public bool ShowDialog<T>([DisallowNull][NotNull] ref T arg, string title, bool showApplyButton)
     {
       if (arg is null)
         throw new ArgumentNullException(nameof(arg));

@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -36,25 +37,25 @@ namespace Altaxo.Serialization.Ascii
   public class AsciiDocumentAnalysis
   {
     /// <summary>If the number of main header lines is known before this analysis, this list contains the main header lines.</summary>
-    private List<string> _headerLines;
+    private List<string>? _headerLines;
 
     /// <summary>First lines of the document to analyze. Note that this not neccessarily have to be the first lines. The line number of the first line in this collection is designated by <see cref="P:_headerLines.Count"/>.</summary>
-    private List<string> _bodyLines;
+    private List<string>? _bodyLines;
 
     /// <summary>Global structure of the document.</summary>
-    private AsciiGlobalStructureAnalysis _globalStructure;
+    private AsciiGlobalStructureAnalysis? _globalStructure;
 
     /// <summary>List of all useful combinations of SeparationStrategy, NumberFormat and DateTimeFormat that should be tested.</summary>
-    private List<AsciiLineAnalysisOption> _lineAnalysisOptionsToTest;
+    private List<AsciiLineAnalysisOption>? _lineAnalysisOptionsToTest;
 
-    private List<AsciiLineAnalysis> _lineAnalysisOfHeaderLines;
+    private List<AsciiLineAnalysis>? _lineAnalysisOfHeaderLines;
 
-    private AsciiLineAnalysis[] _lineAnalysisOfBodyLines;
+    private AsciiLineAnalysis[]? _lineAnalysisOfBodyLines;
 
-    private Dictionary<AsciiLineAnalysisOption, NumberAndStructure> _lineAnalysisOptionsScoring;
+    private Dictionary<AsciiLineAnalysisOption, NumberAndStructure>? _lineAnalysisOptionsScoring;
 
-    private AsciiLineAnalysisOption _highestScoredLineAnalysisOption;
-    private AsciiLineStructure _highestScoredLineStructure;
+    private AsciiLineAnalysisOption? _highestScoredLineAnalysisOption;
+    private AsciiLineStructure? _highestScoredLineStructure;
 
     private int _numberOfMainHeaderLines;
 
@@ -62,6 +63,25 @@ namespace Altaxo.Serialization.Ascii
 
     private AsciiDocumentAnalysis()
     {
+    }
+
+    /// <summary>
+    /// Analyzes the first <code>nLines</code> of the ascii stream.
+    /// </summary>
+    /// <param name="importOptions">The import options. Some of the field can already be filled with useful values. Since it is not neccessary to determine the value of those known fields, the analysis will be run faster then.</param>
+    /// <param name="stream">The ascii stream to analyze.</param>
+    /// <param name="analysisOptions">Options that specify how many lines are analyzed, and what number formats and date/time formats will be tested.</param>
+    /// <returns>Import options that can be used in a following step to read in the ascii stream. If the stream contains no data, the returned import options will be not fully specified.
+    /// The same instance is returned as given by the parameter <paramref name="importOptions"/>. If <paramref name="importOptions"/> was <c>null</c>, a new instance is created.</returns>
+    public AsciiDocumentAnalysis(ref AsciiImportOptions? importOptions, System.IO.Stream stream, AsciiDocumentAnalysisOptions analysisOptions)
+    {
+      if (stream is null)
+        throw new ArgumentNullException(nameof(stream));
+      if (analysisOptions is null)
+        throw new ArgumentNullException(nameof(analysisOptions));
+
+      importOptions ??= new AsciiImportOptions();
+      InternalAnalyze(importOptions, stream, analysisOptions);
     }
 
     /// <summary>
@@ -94,6 +114,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="importOptions">The import options. This can already contain known values. On return, this instance should be ready to be used to import ascii data, i.e. all fields should contain values unequal to <c>null</c>.</param>
     /// <param name="stream">The ascii stream to analyze.</param>
     /// <param name="analysisOptions">Options that specify how many lines are analyzed, and what number formats and date/time formats will be tested.</param>
+    [MemberNotNull(nameof(_headerLines), nameof(_bodyLines))]
     public void InternalAnalyze(AsciiImportOptions importOptions, System.IO.Stream stream, AsciiDocumentAnalysisOptions analysisOptions)
     {
       if (stream is null)
@@ -130,7 +151,7 @@ namespace Altaxo.Serialization.Ascii
       EvaluateHighestScoredLineAnalysisOption();
 
       // look how many header lines are in the file by comparing the structure of the first lines  with the _highestScoredLineStructure
-      if (null == importOptions.NumberOfMainHeaderLines)
+      if (importOptions.NumberOfMainHeaderLines is null)
         EvaluateNumberOfMainHeaderLines();
       else
         _numberOfMainHeaderLines = importOptions.NumberOfMainHeaderLines.Value;
@@ -151,9 +172,10 @@ namespace Altaxo.Serialization.Ascii
       importOptions.RecognizedStructure = _lineAnalysisOptionsScoring[_highestScoredLineAnalysisOption].LineStructure;
     }
 
+    [MemberNotNull(nameof(_headerLines), nameof(_bodyLines))]
     private void ReadLinesToAnalyze(System.IO.Stream stream, int numberOfLinesToAnalyze, int? numberOfMainHeaderLines)
     {
-      string sLine;
+      string? sLine;
 
       stream.Position = 0;
       var sr = new System.IO.StreamReader(stream, System.Text.Encoding.Default, true);
@@ -188,8 +210,12 @@ namespace Altaxo.Serialization.Ascii
       }
     }
 
+    [MemberNotNull(nameof(_lineAnalysisOptionsToTest))]
     private void SetLineAnalysisOptionsToTest(AsciiImportOptions importOptions, AsciiDocumentAnalysisOptions analysisOptions)
     {
+      if (_globalStructure is null)
+        throw new InvalidProgramException();
+
       var numberFormatsToTest = new List<System.Globalization.CultureInfo>();
       var dateTimeFormatsToTest = new List<System.Globalization.CultureInfo>();
       var separationStrategiesToTest = new List<IAsciiSeparationStrategy>();
@@ -268,8 +294,12 @@ namespace Altaxo.Serialization.Ascii
     /// Calculates the scoring of all separation strategies to test (in <see cref="_lineAnalysisOptionsToTest"/>),
     /// and puts the number of common lines and the line structure in the dictionary <see cref="_lineAnalysisOptionsScoring"/>.
     /// </summary>
+    [MemberNotNull(nameof(_lineAnalysisOptionsScoring))]
     private void EvaluateScoringOfAllLineAnalysisOptions()
     {
+      if (_lineAnalysisOptionsToTest is null || _lineAnalysisOfBodyLines is null || _lineAnalysisOptionsScoring is null)
+        throw new InvalidProgramException();
+
       _lineAnalysisOptionsScoring = new Dictionary<AsciiLineAnalysisOption, NumberAndStructure>();
 
       // for each of the separation strategies, determine the maximum number of equal lines and the line with the highest score among the equal lines
@@ -284,8 +314,12 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Evaluates the highest scored separation strategy, and stores the winning separation strategy in <see cref="_highestScoredLineAnalysisOption"/> and the corresponding line structure in <see cref="_highestScoredLineStructure"/>.
     /// </summary>
+    [MemberNotNull(nameof(_highestScoredLineAnalysisOption), nameof(_highestScoredLineStructure))]
     private void EvaluateHighestScoredLineAnalysisOption()
     {
+      if (_lineAnalysisOptionsScoring is null)
+        throw new InvalidProgramException();
+
       // determine, which of the separation strategies results in the topmost total priority (product of number of lines and best line priority)
       double maxScore = int.MinValue;
       var maxScoredEntry = _lineAnalysisOptionsScoring.First();
@@ -312,6 +346,9 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     private void EvaluateNumberOfMainHeaderLines()
     {
+      if (_lineAnalysisOfBodyLines is null || _highestScoredLineAnalysisOption is null || _highestScoredLineStructure is null)
+        throw new InvalidProgramException();
+
       for (int i = 0; i < _lineAnalysisOfBodyLines.Length; i++)
       {
         if (_lineAnalysisOfBodyLines[i][_highestScoredLineAnalysisOption].IsCompatibleWith(_highestScoredLineStructure))
@@ -327,6 +364,9 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     private void EvaluateIndexOfCaptionLine()
     {
+      if (_headerLines is null || _lineAnalysisOfBodyLines is null || _highestScoredLineAnalysisOption is null || _highestScoredLineStructure is null)
+        throw new InvalidProgramException();
+
       // try to guess which of the header lines is the caption line
       // we take the caption line to be the first column which has the same number of tokens as the recognized structure
       // if no line fulfilles this criteria, the IndexOfCaptionLine remain unchanged.
@@ -378,7 +418,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="result"></param>
     /// <param name="maxNumberOfEqualLines"></param>
     /// <param name="bestLine"></param>
-    public static void CalculateScoreOfLineAnalysisOption(AsciiLineAnalysisOption analysisOption, IList<AsciiLineAnalysis> result, out int maxNumberOfEqualLines, out AsciiLineStructure bestLine)
+    public static void CalculateScoreOfLineAnalysisOption(AsciiLineAnalysisOption analysisOption, IList<AsciiLineAnalysis> result, out int maxNumberOfEqualLines, out AsciiLineStructure? bestLine)
     {
       CalculateScoreOfLineAnalysisOption(analysisOption, result, null, out maxNumberOfEqualLines, out bestLine);
     }
@@ -391,7 +431,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="excludeLineStructureHashes"></param>
     /// <param name="maxNumberOfEqualLines"></param>
     /// <param name="bestLine"></param>
-    public static void CalculateScoreOfLineAnalysisOption(AsciiLineAnalysisOption analysisOption, IList<AsciiLineAnalysis> result, HashSet<int> excludeLineStructureHashes, out int maxNumberOfEqualLines, out AsciiLineStructure bestLine)
+    public static void CalculateScoreOfLineAnalysisOption(AsciiLineAnalysisOption analysisOption, IList<AsciiLineAnalysis> result, HashSet<int>? excludeLineStructureHashes, out int maxNumberOfEqualLines, out AsciiLineStructure? bestLine)
     {
       // Dictionary, Key is the hash of the line structure hash, Value is the number of lines that have this hash
       var numberOfLinesForLineStructureHash = new Dictionary<int, int>();

@@ -71,9 +71,9 @@ namespace Altaxo.Data
     public static void ImportAsciiToSingleWorksheetHorizontally(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
     {
       if (null != importOptions)
-        AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, true, importOptions);
+        AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, true, importOptions, out _);
       else
-        AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, true, true);
+        AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, true, true, out _);
     }
 
     /// <summary>
@@ -86,9 +86,9 @@ namespace Altaxo.Data
     public static void ImportAsciiToSingleWorksheetVertically(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
     {
       if (null != importOptions)
-        AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, filenames, true, importOptions);
+        AsciiImporter.TryImportFromMultipleAsciiFilesVertically(dataTable, filenames, true, importOptions, out _);
       else
-        AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, filenames, true, true);
+        AsciiImporter.TryImportFromMultipleAsciiFilesVertically(dataTable, filenames, true, true, out _);
     }
 
     /// <summary>
@@ -139,14 +139,19 @@ namespace Altaxo.Data
         }
         else
         {
+          bool success;
+          string? errors;
           if (vertically)
           {
-            AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, options.FileNames, true, false);
+            success = AsciiImporter.TryImportFromMultipleAsciiFilesVertically(dataTable, options.FileNames, true, false, out errors);
           }
           else
           {
-            AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, options.FileNames, true, false);
+            success = AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(dataTable, options.FileNames, true, false, out errors);
           }
+
+          if (!success && !string.IsNullOrEmpty(errors))
+            Current.Gui.ErrorMessageBox(errors);
         }
       }
     }
@@ -180,14 +185,18 @@ namespace Altaxo.Data
         }
         else
         {
+          bool success;
+          string? errors;
           if (vertically)
           {
-            AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, options.FileNames, true, importOptions);
+            success = AsciiImporter.TryImportFromMultipleAsciiFilesVertically(dataTable, options.FileNames, true, importOptions, out errors);
           }
           else
           {
-            AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, options.FileNames, true, importOptions);
+            success = AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(dataTable, options.FileNames, true, importOptions, out errors);
           }
+          if (!success && !string.IsNullOrEmpty(errors))
+            Current.Gui.ErrorMessageBox(errors);
         }
       }
     }

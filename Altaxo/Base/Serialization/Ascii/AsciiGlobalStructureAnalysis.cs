@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -53,7 +53,7 @@ namespace Altaxo.Serialization.Ascii
     /// If a fixed column width structure was recognized, this element contains the tabbed start positions of
     /// the columns, assuming a tab size of <see cref="_recognizedTabSize"/>.
     /// </summary>
-    private List<int> _fixedBoundaries;
+    private List<int>? _fixedBoundaries;
 
     /// If a fixed column width structure was recognized, this element contains the recognized tab size.
     private int _recognizedTabSize = 1;
@@ -89,7 +89,7 @@ namespace Altaxo.Serialization.Ascii
     /// If a fixed column width structure was recognized, this element contains the tabbed start positions of
     /// the columns, assuming a tab size of <see cref="_recognizedTabSize"/>.
     /// </summary>
-    public List<int> FixedBoundaries
+    public List<int>? FixedBoundaries
     {
       get
       {

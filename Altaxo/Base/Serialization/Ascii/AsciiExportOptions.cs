@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Serialization.Ascii
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
 
   /// <summary>
@@ -73,11 +73,15 @@ namespace Altaxo.Serialization.Ascii
 
     public IFormatProvider FormatProvider
     {
-      get { return _formatProvider; }
+      get
+      {
+        return _formatProvider;
+      }
+      [MemberNotNull(nameof(_formatProvider))]
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("value");
+        if (value is null)
+          throw new ArgumentNullException(nameof(IFormatProvider));
         _formatProvider = value;
       }
     }
@@ -143,7 +147,7 @@ namespace Altaxo.Serialization.Ascii
         _typeConverters[columnType] = GetDefaultConverter(columnType);
     }
 
-    public Func<Altaxo.Data.AltaxoVariant, string> GetConverter(System.Type columnType)
+    public Func<Altaxo.Data.AltaxoVariant, string>? GetConverter(System.Type columnType)
     {
       if (_typeConverters.TryGetValue(columnType, out var result))
         return result;

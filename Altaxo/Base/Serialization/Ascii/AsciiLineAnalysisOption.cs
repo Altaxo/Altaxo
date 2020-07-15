@@ -22,8 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
+#nullable enable
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -52,9 +51,9 @@ namespace Altaxo.Serialization.Ascii
 
     public System.Globalization.CultureInfo DateTimeFormat { get { return _dateTimeFormat; } }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (obj == null || GetType() != obj.GetType())
+      if (obj is null || GetType() != obj.GetType())
       {
         return false;
       }
