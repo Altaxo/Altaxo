@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Data;
 
@@ -90,9 +91,9 @@ namespace Altaxo.Serialization.Galactic
     /// <param name="yvalues">The y values of the spectrum.</param>
     /// <param name="filename">The filename where to import from.</param>
     /// <returns>Null if successful, otherwise an error description.</returns>
-    public static string ToArrays(string filename, out double[] xvalues, out double[] yvalues)
+    public static string? ToArrays(string filename, out double[]? xvalues, out double[]? yvalues)
     {
-      System.IO.Stream stream = null;
+      System.IO.Stream? stream = null;
 
       var hdr = new SPCHDR();
       var subhdr = new SUBHDR();
@@ -223,34 +224,36 @@ namespace Altaxo.Serialization.Galactic
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
-    public static string ImportSpcFiles(string[] filenames, Altaxo.Data.DataTable table)
+    public static string? ImportSpcFiles(string[] filenames, Altaxo.Data.DataTable table)
     {
-      Altaxo.Data.DoubleColumn xcol = null;
+      Altaxo.Data.DoubleColumn? xcol = null;
       var errorList = new System.Text.StringBuilder();
       int lastColumnGroup = 0;
 
       if (table.DataColumns.ColumnCount > 0)
       {
         lastColumnGroup = table.DataColumns.GetColumnGroup(table.DataColumns.ColumnCount - 1);
-        Altaxo.Data.DataColumn xColumnOfRightMost = table.DataColumns.FindXColumnOfGroup(lastColumnGroup);
+        Altaxo.Data.DataColumn? xColumnOfRightMost = table.DataColumns.FindXColumnOfGroup(lastColumnGroup);
         if (xColumnOfRightMost is Altaxo.Data.DoubleColumn)
           xcol = (Altaxo.Data.DoubleColumn)xColumnOfRightMost;
       }
 
       foreach (string filename in filenames)
       {
-        string error = ToArrays(filename, out var xvalues, out var yvalues);
+        string? error = ToArrays(filename, out var xvalues, out var yvalues);
         if (null != error)
         {
           errorList.Append(error);
           continue;
         }
+        if (xvalues is null || yvalues is null)
+          throw new InvalidProgramException();
 
-        bool bMatchsXColumn = false;
+
 
         // first look if our default xcolumn matches the xvalues
-        if (null != xcol)
-          bMatchsXColumn = ValuesMatch(xvalues, xcol);
+
+        bool bMatchsXColumn = null != xcol && ValuesMatch(xvalues, xcol);
 
         // if no match, then consider all xcolumns from right to left, maybe some fits
         if (!bMatchsXColumn)
@@ -319,7 +322,7 @@ namespace Altaxo.Serialization.Galactic
         string[] filenames = options.FileNames;
         Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
 
-        string errors = ImportSpcFiles(filenames, table);
+        string? errors = ImportSpcFiles(filenames, table);
 
         if (errors != null)
         {

@@ -22,9 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+#nullable enable
 using Altaxo.Data;
 
 namespace Altaxo.Serialization.Origin
@@ -39,7 +37,7 @@ namespace Altaxo.Serialization.Origin
     /// </summary>
     /// <param name="filename">The file name of the origin OPJ file.</param>
     /// <returns>Null if the import was successfull, or a error message.</returns>
-    public static string Import(string filename)
+    public static string? Import(string filename)
     {
       var opj = new OpjFile(filename);
       opj.Parse();

@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Altaxo.Serialization.Origin
 {
@@ -458,7 +457,7 @@ namespace Altaxo.Serialization.Origin
               {
                 fstr.Seek(LAYER + ATYPE + j * COL_JUMP - 1, SeekOrigin.Begin); //fseek(f,LAYER+ATYPE+j*COL_JUMP-1, SEEK_SET);
                 c = f.ReadByte(); // fread(&c,1,1,f);
-                string type = null;
+                string? type = null;
                 switch (c)
                 {
                   case 3:
@@ -478,6 +477,9 @@ namespace Altaxo.Serialization.Origin
                     break;
                   case 4:
                     type = "LABEL";
+                    break;
+                  default:
+                    type = string.Empty;
                     break;
                 }
                 coltype[i][j] = type;

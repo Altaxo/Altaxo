@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
+#nullable enable
 using System.Linq;
-using System.Text;
 
 namespace Altaxo.Serialization.Xml.FrameworkSurrogates
 {
@@ -51,7 +49,7 @@ namespace Altaxo.Serialization.Xml.FrameworkSurrogates
         info.AddValue("Guid", System.Xml.XmlConvert.ToString(s.Guid));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var guid = System.Xml.XmlConvert.ToGuid(info.GetString("Guid"));
 

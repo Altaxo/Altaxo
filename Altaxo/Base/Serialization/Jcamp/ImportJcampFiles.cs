@@ -22,11 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Text;
 using Altaxo.Data;
 
 namespace Altaxo.Serialization.Jcamp
@@ -41,7 +40,7 @@ namespace Altaxo.Serialization.Jcamp
     /// <param name="table">On return, contains the newly created data table with the spectral data.</param>
     /// <param name="stream">The stream where to import from.</param>
     /// <returns>Null if successful, otherwise an error description.</returns>
-    public static string ToDataTable(System.IO.Stream stream, out DataTable table)
+    public static string? ToDataTable(System.IO.Stream stream, out DataTable? table)
     {
       table = null;
       TextReader tr;
@@ -62,7 +61,7 @@ namespace Altaxo.Serialization.Jcamp
     /// <param name="table">On return, contains the newly created data table with the spectral data.</param>
     /// <param name="tr">A <see cref="System.IO.TextReader"/> where to import from.</param>
     /// <returns>Null if successful, otherwise an error description.</returns>
-    public static string ToDataTable(TextReader tr, out DataTable table)
+    public static string? ToDataTable(TextReader tr, out DataTable table)
     {
       const string XLabelHeader = "##XLABEL=";
       const string YLabelHeader = "##YLABEL=";
@@ -81,21 +80,22 @@ namespace Altaxo.Serialization.Jcamp
 
       try
       {
-        string line;
+        string? line;
         int lineCounter = 0;
 
         double xFirst = double.NaN;
         double xInc = double.NaN;
         double xScale = double.NaN;
         double yScale = double.NaN;
-        string xLabel = null, yLabel = null, xUnit = null, yUnit = null;
+        string? xLabel = null, yLabel = null, xUnit = null, yUnit = null;
         DateTime dateValue = DateTime.MinValue;
         DateTime timeValue = DateTime.MinValue;
 
         do
         {
-          line = tr.ReadLine();
+          line = tr.ReadLine() ?? throw new InvalidDataException("Unexpected end of file");
           lineCounter++;
+
 
           if (line.StartsWith(XLabelHeader))
             xLabel = line.Substring(XLabelHeader.Length).Trim();
@@ -236,9 +236,9 @@ namespace Altaxo.Serialization.Jcamp
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
-    public static string ImportJcampFiles(string[] filenames, Altaxo.Data.DataTable table)
+    public static string? ImportJcampFiles(string[] filenames, Altaxo.Data.DataTable table)
     {
-      DoubleColumn xcol = null;
+      DoubleColumn? xcol = null;
       DoubleColumn xvalues, yvalues;
       var errorList = new System.Text.StringBuilder();
       int lastColumnGroup = 0;
@@ -246,15 +246,15 @@ namespace Altaxo.Serialization.Jcamp
       if (table.DataColumns.ColumnCount > 0)
       {
         lastColumnGroup = table.DataColumns.GetColumnGroup(table.DataColumns.ColumnCount - 1);
-        Altaxo.Data.DataColumn xColumnOfRightMost = table.DataColumns.FindXColumnOfGroup(lastColumnGroup);
-        if (xColumnOfRightMost is Altaxo.Data.DoubleColumn)
-          xcol = (Altaxo.Data.DoubleColumn)xColumnOfRightMost;
+        Altaxo.Data.DataColumn? xColumnOfRightMost = table.DataColumns.FindXColumnOfGroup(lastColumnGroup);
+        if (xColumnOfRightMost is Altaxo.Data.DoubleColumn dcolMostRight)
+          xcol = dcolMostRight;
       }
 
       foreach (string filename in filenames)
       {
         var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-        string error = ToDataTable(stream, out var localTable);
+        string? error = ToDataTable(stream, out var localTable);
         stream.Close();
 
         if (null != error)
@@ -262,6 +262,9 @@ namespace Altaxo.Serialization.Jcamp
           errorList.Append(error);
           continue;
         }
+        if (localTable is null)
+          throw new InvalidProgramException();
+
         if (localTable.DataColumns.RowCount == 0)
           continue;
         xvalues = (DoubleColumn)localTable[0];
@@ -358,7 +361,7 @@ namespace Altaxo.Serialization.Jcamp
         string[] filenames = options.FileNames;
         Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
 
-        string errors = ImportJcampFiles(filenames, table);
+        string? errors = ImportJcampFiles(filenames, table);
 
         if (errors != null)
         {

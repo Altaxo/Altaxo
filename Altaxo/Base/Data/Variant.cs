@@ -526,7 +526,7 @@ namespace Altaxo.Data
       throw new ApplicationException("Variant contains " + f._typeOfContent.ToString() + ", but expecting type string");
     }
 
-    public static implicit operator AltaxoVariant(string f)
+    public static implicit operator AltaxoVariant(string? f)
     {
       return new AltaxoVariant(f);
     }
