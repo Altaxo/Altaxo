@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Altaxo.Serialization.AutoUpdates
@@ -51,8 +50,8 @@ namespace Altaxo.Serialization.AutoUpdates
 
       bool loadUnstable = updateSettings.DownloadUnstableVersion;
 
-      FileStream versionFileStream = null;
-      FileStream packageStream = null;
+      FileStream? versionFileStream = null;
+      FileStream? packageStream = null;
 
       // try to lock the version file in the download directory, thus no other process can modify it
       try
@@ -67,7 +66,7 @@ namespace Altaxo.Serialization.AutoUpdates
         if (null == info || null == packageStream)
           return false;
 
-        var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
+        var entryAssembly = System.Reflection.Assembly.GetEntryAssembly() ?? throw new InvalidOperationException("Unable to get entry assembly");
         var entryAssemblyVersion = entryAssembly.GetName().Version;
 
         if (info.Version <= entryAssemblyVersion)
@@ -86,7 +85,7 @@ namespace Altaxo.Serialization.AutoUpdates
         }
 
         // copy the Updater executable to the download folder
-        var entryAssemblyFolder = Path.GetDirectoryName(entryAssembly.Location);
+        var entryAssemblyFolder = Path.GetDirectoryName(entryAssembly.Location) ?? throw new InvalidOperationException("Unable to get directory of entry assembly");
         var installerFullSrcName = Path.Combine(entryAssemblyFolder, UpdateInstallerFileName);
         var installerFullDestName = Path.Combine(downloadFolder, UpdateInstallerFileName);
         File.Copy(installerFullSrcName, installerFullDestName, true);
@@ -122,13 +121,16 @@ namespace Altaxo.Serialization.AutoUpdates
         // Start the updater program
         var process = System.Diagnostics.Process.Start(processInfo);
 
-        for (; ; )
+        if (null != process)
         {
-          // we wait until the update program signals that it has now taken the VersionInfo file
-          if (waitForRemoteStartSignal.WaitOne(100))
-            break;
-          if (process.HasExited)
-            return false; // then something has gone wrong or the user has closed the window
+          for (; ; )
+          {
+            // we wait until the update program signals that it has now taken the VersionInfo file
+            if (waitForRemoteStartSignal.WaitOne(100))
+              break;
+            if (process.HasExited)
+              return false; // then something has gone wrong or the user has closed the window
+          }
         }
 
         return true;

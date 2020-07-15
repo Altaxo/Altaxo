@@ -22,10 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#nullable enable
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -33,6 +30,11 @@ namespace Altaxo.Serialization.AutoUpdates
   {
     public const string PropertyKeyNetFrameworkVersion = "RequiredNetFrameworkVersion";
 
+    /// <summary>
+    /// Determines whether the system matches the requirements given in the provided package info.
+    /// </summary>
+    /// <param name="packageInfo">The package information.</param>
+    /// <returns>True if the system matches the requirements; otherwise, false.</returns>
     public static bool MatchesRequirements(PackageInfo packageInfo)
     {
       var properties = packageInfo.Properties;

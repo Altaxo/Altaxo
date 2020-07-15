@@ -22,11 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -52,12 +50,13 @@ namespace Altaxo.Serialization.AutoUpdates
           return;
       }
 
-      var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
-      string assemblyLocation = entryAssembly.Location;
-      string binPath = Path.GetDirectoryName(assemblyLocation);
+
+      string binPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()?.Location) ??
+        throw new InvalidOperationException("Unable to determine directory name of entry assembly.");
+
       string downLoadExe = Path.Combine(binPath, "AltaxoUpdateDownloader.exe");
 
-      var args = string.Format("{0}\t{1}", PackageInfo.GetStableIdentifier(updateSettings.DownloadUnstableVersion), entryAssembly.GetName().Version);
+      var args = string.Format("{0}\t{1}", PackageInfo.GetStableIdentifier(updateSettings.DownloadUnstableVersion), System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version ?? throw new InvalidOperationException($"Unable to get version of entry assembly"));
 
       var processInfo = new System.Diagnostics.ProcessStartInfo(downLoadExe, args);
 
@@ -75,7 +74,8 @@ namespace Altaxo.Serialization.AutoUpdates
       try
       {
         var proc = System.Diagnostics.Process.Start(processInfo);
-        proc.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
+        if (proc != null)
+          proc.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
       }
       catch (Exception ex)
       {

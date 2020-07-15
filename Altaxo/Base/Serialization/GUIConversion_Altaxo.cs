@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Altaxo.Data;
 
@@ -55,7 +55,7 @@ namespace Altaxo.Serialization
       return stb.ToString();
     }
 
-    public static bool TryParseMultipleAltaxoVariant(string s, out AltaxoVariant[] vals)
+    public static bool TryParseMultipleAltaxoVariant(string s, [MaybeNullWhen(false)] out AltaxoVariant[] vals)
     {
       vals = null;
       bool failed = false;

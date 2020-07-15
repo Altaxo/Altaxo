@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using System;
+#nullable enable
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Serialization
 {
@@ -120,7 +120,7 @@ namespace Altaxo.Serialization
     /// <param name="lengthUnit">On success, returns the length unit parsed.</param>
     /// <param name="remainder">On success, returns the part of the input string, which belongs not to the length unit.</param>
     /// <returns>True if successfull, otherwise false.</returns>
-    public static bool TryParse(string s, out LengthUnit lengthUnit, out string remainder)
+    public static bool TryParse(string s, [MaybeNullWhen(false)] out LengthUnit lengthUnit, [MaybeNullWhen(false)] out string remainder)
     {
       s = s.TrimEnd();
 

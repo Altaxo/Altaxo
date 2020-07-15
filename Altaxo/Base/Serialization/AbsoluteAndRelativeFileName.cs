@@ -22,11 +22,12 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Altaxo.Serialization
 {
@@ -36,7 +37,7 @@ namespace Altaxo.Serialization
   public class AbsoluteAndRelativeFileName : Main.ICopyFrom
   {
     private string _absoluteFileName;
-    private string _relativeFileName;
+    private string? _relativeFileName;
 
     #region Serialization
 
@@ -56,11 +57,11 @@ namespace Altaxo.Serialization
         info.AddValue("RelativeName", s._relativeFileName);
       }
 
-      protected virtual AbsoluteAndRelativeFileName SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AbsoluteAndRelativeFileName SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var absoluteFilePath = info.GetString("AbsolutePath");
 
-        var s = (o == null ? new AbsoluteAndRelativeFileName(absoluteFilePath) : (AbsoluteAndRelativeFileName)o);
+        var s = (AbsoluteAndRelativeFileName?)o ?? new AbsoluteAndRelativeFileName(absoluteFilePath);
 
         s._absoluteFileName = absoluteFilePath;
         s._relativeFileName = info.GetString("RelativePath");
@@ -68,7 +69,7 @@ namespace Altaxo.Serialization
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -134,6 +135,7 @@ namespace Altaxo.Serialization
       {
         return _absoluteFileName;
       }
+      [MemberNotNull(nameof(_absoluteFileName))]
       set
       {
         if (string.IsNullOrEmpty(value))
@@ -151,7 +153,7 @@ namespace Altaxo.Serialization
     /// If neither the absolute nor the relative file name leads to an existing file, <c>null</c> is returned.
     /// </summary>
     /// <returns>The absolute file name of an existing file, or <c>null</c>.</returns>
-    public string GetResolvedFileNameOrNull()
+    public string? GetResolvedFileNameOrNull()
     {
       if (File.Exists(_absoluteFileName))
         return _absoluteFileName;
@@ -164,7 +166,7 @@ namespace Altaxo.Serialization
       if (string.IsNullOrEmpty(_relativeFileName))
         return null;
 
-      var projectDirectory = Path.GetDirectoryName(projectFile);
+      var projectDirectory = Path.GetDirectoryName(projectFile) ?? throw new InvalidOperationException($"Error GetDirectoryName from file name {projectFile}");
 
       var combinedPath = Path.Combine(projectDirectory, _relativeFileName);
 
@@ -184,7 +186,7 @@ namespace Altaxo.Serialization
     /// <returns>A new path without relative path parts like '.' or '..'.</returns>
     private string ConvertToNormalizedAbsolutePath(string path)
     {
-      var root = System.IO.Path.GetPathRoot(path);
+      var root = System.IO.Path.GetPathRoot(path) ?? throw new InvalidOperationException($"Error getting path root of path {path}");
       var rest = path.Substring(root.Length);
 
       var restParted = rest.Split(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
@@ -215,9 +217,9 @@ namespace Altaxo.Serialization
     /// <returns><c>True</c> if the relative file name could be calculated (if the project has a name, and the project file is in the same volume as the absolute file name). Otherwise , <c>false</c> is returned.</returns>
     private bool TrySetRelativeFileName()
     {
-      string projectFile = Current.IProjectService.CurrentProjectFileName;
+      string? projectFile = Current.IProjectService.CurrentProjectFileName;
 
-      if (null == projectFile)
+      if (string.IsNullOrEmpty(projectFile))
       {
         _relativeFileName = null;
         return false;
@@ -281,13 +283,11 @@ namespace Altaxo.Serialization
     /// <returns>
     ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
     /// </returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var from = obj as AbsoluteAndRelativeFileName;
-      if (null != from)
-        return from._absoluteFileName == _absoluteFileName && from._relativeFileName == _relativeFileName;
-      else
-        return false;
+      return obj is AbsoluteAndRelativeFileName from &&
+             from._absoluteFileName == _absoluteFileName &&
+             from._relativeFileName == _relativeFileName;
     }
 
     /// <summary>

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Serialization
@@ -38,7 +39,7 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a DateTime object.</returns>
     public static bool IsDateTime(string s)
     {
-      return DateTime.TryParse(s, out var result);
+      return DateTime.TryParse(s, out var _);
     }
 
     /// <summary>
@@ -59,7 +60,7 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a TimeSpan object.</returns>
     public static bool IsTimeSpan(string s)
     {
-      return TimeSpan.TryParse(s, out var result);
+      return TimeSpan.TryParse(s, out var _);
     }
 
     /// <summary>

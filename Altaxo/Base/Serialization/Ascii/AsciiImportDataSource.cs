@@ -195,7 +195,7 @@ namespace Altaxo.Serialization.Ascii
 
     public void FillData(DataTable destinationTable)
     {
-      var validFileNames = _asciiFiles.Select(x => x.GetResolvedFileNameOrNull()).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+      var validFileNames = _asciiFiles.Select(x => x.GetResolvedFileNameOrNull()).OfType<string>().Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
       if (validFileNames.Length > 0)
       {
@@ -359,7 +359,7 @@ namespace Altaxo.Serialization.Ascii
       if (_importOptions.ImportTriggerSource != ImportTriggerSource.DataSourceChanged)
         return; // DataSource is updated manually
 
-      var validFileNames = _asciiFiles.Select(x => x.GetResolvedFileNameOrNull()).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+      var validFileNames = _asciiFiles.Select(x => x.GetResolvedFileNameOrNull()).OfType<string>().Where(x => !string.IsNullOrEmpty(x)).ToArray();
       if (0 == validFileNames.Length)
         return;  // No file name set
 
