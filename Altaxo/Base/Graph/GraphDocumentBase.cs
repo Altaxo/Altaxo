@@ -23,15 +23,10 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Altaxo.Drawing;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Geometry;
 //using Altaxo.Graph;
 using Altaxo.Main;
-using Altaxo.Main.Properties;
 
 namespace Altaxo.Graph
 {
@@ -138,6 +133,19 @@ namespace Altaxo.Graph
         if (null != parentAs)
           parentAs.EhChild_ParentChanged(this, oldParent);
       }
+    }
+
+    /// <summary>
+    /// Tests if this item already has a name.
+    /// </summary>
+    /// <param name="name">On success, returns the name of the item.</param>
+    /// <returns>
+    /// True if the item already has a name; otherwise false.
+    /// </returns>
+    public bool TryGetName([MaybeNullWhen(false)] out string name)
+    {
+      name = _name;
+      return !(name is null);
     }
 
     public override string Name

@@ -101,10 +101,12 @@ namespace Altaxo.Main
 
     public bool Contains(TItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
-      if (_itemsByName.TryGetValue(item.Name, out var foundItem))
+
+
+      if (item.TryGetName(out var itemName) && _itemsByName.TryGetValue(itemName, out var foundItem))
         return object.ReferenceEquals(foundItem, item);
       else
         return false;
@@ -234,13 +236,14 @@ namespace Altaxo.Main
 
     public virtual void Add(TItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
-      if (null == item.Name) // if no name provided (an empty string is a valid name)
+      item.ParentObject = null;
+      if (false == item.TryGetName(out var itemName)) // if no name provided (an empty string is a valid name)
         item.Name = FindNewItemName();                 // find a new one
-      else if (_itemsByName.ContainsKey(item.Name)) // else if this name is already in use
-        item.Name = FindNewItemName(item.Name); // find a new  name based on the original name
+      else if (_itemsByName.ContainsKey(itemName)) // else if this name is already in use
+        item.Name = FindNewItemName(itemName); // find a new  name based on the original name
 
       // now the project item has a unique name in any case
       InternalAdd(item);
@@ -349,7 +352,7 @@ namespace Altaxo.Main
       return !_itemsByName.ContainsKey(newName) || object.ReferenceEquals(_itemsByName[newName], childNode);
     }
 
-    void Main.IParentOfINameOwnerChildNodes.EhChild_HasBeenRenamed(Main.INameOwner item, string oldName)
+    void Main.IParentOfINameOwnerChildNodes.EhChild_HasBeenRenamed(Main.INameOwner item, string? oldName)
     {
       if (_itemsByName.ContainsKey(item.Name))
       {
@@ -359,7 +362,7 @@ namespace Altaxo.Main
           throw new ApplicationException(string.Format("{0} with name " + item.Name + " already exists!", typeof(TItem).Name));
       }
 
-      if (_itemsByName.ContainsKey(oldName))
+      if (!(oldName is null) && _itemsByName.ContainsKey(oldName))
       {
         if (!object.ReferenceEquals(_itemsByName[oldName], item))
           throw new ApplicationException(string.Format("Names between parent collection and {0} not in sync", typeof(TItem).Name));

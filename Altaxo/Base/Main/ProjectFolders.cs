@@ -430,12 +430,12 @@ namespace Altaxo.Main
       }
       else if (e.WasItemRemoved)
       {
-        ItemRemoved(item, e.OldName, EventFiring.Enabled);
+        ItemRemoved(item, e.OldName ?? string.Empty, EventFiring.Enabled);
       }
 
       if (e.WasItemRenamed)
       {
-        ItemRenamed(item, e.OldName, e.NewName, EventFiring.Enabled);
+        ItemRenamed(item, e.OldName ?? string.Empty, e.NewName, EventFiring.Enabled);
       }
     }
 

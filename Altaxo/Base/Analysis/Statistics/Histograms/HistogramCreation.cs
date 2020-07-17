@@ -22,9 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Altaxo.Calc;
 using Altaxo.Collections;
@@ -44,7 +45,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
 
       private int _nCol = -1;
       private int _nRow = 0;
-      private INumericColumn _col;
+      private INumericColumn? _col;
 
       public NumericTableRegionEnumerator(DataTable srctable,
       IAscendingIntegerCollection selectedColumns,
@@ -78,9 +79,6 @@ namespace Altaxo.Analysis.Statistics.Histograms
       public void Dispose()
       {
         _col = null;
-        _srctable = null;
-        _selectedColumns = null;
-        _selectedRows = null;
       }
 
       object System.Collections.IEnumerator.Current
@@ -149,15 +147,15 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <param name="selectedColumns">Selected data columns in the source table.</param>
     /// <param name="selectedRows">Selected rows in the source table.</param>
     /// <param name="userInteractionLevel">Determines the level of user interaction.</param>
-    public static DataTable CreateHistogramOnColumns(
+    public static DataTable? CreateHistogramOnColumns(
       this DataTable srctable,
       IAscendingIntegerCollection selectedColumns,
       IAscendingIntegerCollection selectedRows,
       Gui.UserInteractionLevel userInteractionLevel
       )
     {
-      if (null == srctable)
-        throw new ArgumentNullException("srctable");
+      if (srctable is null)
+        throw new ArgumentNullException(nameof(srctable));
 
       var histInfo = new HistogramCreationInformation() { UserInteractionLevel = userInteractionLevel, OriginalDataEnsemble = new NumericTableRegionEnumerator(srctable, selectedColumns, selectedRows) };
 
@@ -166,13 +164,13 @@ namespace Altaxo.Analysis.Statistics.Histograms
 
     public static void CreateHistogram(ref DataTable destinationTable, HistogramCreationInformation histInfo)
     {
-      if (null == histInfo)
-        throw new ArgumentNullException("histInfo");
+      if (histInfo is null)
+        throw new ArgumentNullException(nameof(histInfo));
 
       var dataEnumerator = histInfo.OriginalDataEnsemble;
       var userInteractionLevel = histInfo.UserInteractionLevel;
 
-      if (null == dataEnumerator)
+      if (dataEnumerator is null)
         throw new ArgumentNullException("histInfo's DataEnsemble is null.");
 
       bool showDialog = PopulateHistogramCreationInformation(histInfo);
@@ -183,18 +181,21 @@ namespace Altaxo.Analysis.Statistics.Histograms
           return;
       }
 
+      if (histInfo.FilteredAndSortedDataEnsemble is null || histInfo.CreationOptions.Binning is null)
+        throw new InvalidProgramException();
+
       CreateHistogramTable(ref destinationTable, null, histInfo.FilteredAndSortedDataEnsemble, histInfo.CreationOptions.Binning);
     }
 
-    public static DataTable CreateHistogram(string proposedTableName, HistogramCreationInformation histInfo)
+    public static DataTable? CreateHistogram(string proposedTableName, HistogramCreationInformation histInfo)
     {
-      if (null == proposedTableName)
-        throw new ArgumentNullException("proposedTableName");
+      if (proposedTableName is null)
+        throw new ArgumentNullException(nameof(proposedTableName));
 
-      if (null == histInfo)
-        throw new ArgumentNullException("histInfo");
+      if (histInfo is null)
+        throw new ArgumentNullException(nameof(histInfo));
 
-      DataTable destinationTable = null;
+      DataTable? destinationTable = null;
 
       bool showDialog = PopulateHistogramCreationInformation(histInfo);
 
@@ -204,6 +205,9 @@ namespace Altaxo.Analysis.Statistics.Histograms
           return null;
       }
 
+      if (histInfo.FilteredAndSortedDataEnsemble is null || histInfo.CreationOptions.Binning is null)
+        throw new InvalidProgramException();
+
       CreateHistogramTable(ref destinationTable, proposedTableName, histInfo.FilteredAndSortedDataEnsemble, histInfo.CreationOptions.Binning);
 
       return destinationTable;
@@ -211,11 +215,11 @@ namespace Altaxo.Analysis.Statistics.Histograms
 
     public static bool PopulateHistogramCreationInformation(HistogramCreationInformation histInfo)
     {
-      if (null == histInfo)
-        throw new ArgumentNullException("histInfo");
+      if (histInfo is null)
+        throw new ArgumentNullException(nameof(histInfo));
 
-      if (null == histInfo.OriginalDataEnsemble)
-        throw new ArgumentNullException("histInfo's DataEnsemble is null, but is required for this action.");
+      if (histInfo.OriginalDataEnsemble is null)
+        throw new ArgumentNullException($"{nameof(histInfo)}.{nameof(histInfo.OriginalDataEnsemble)} is null, but is required for this action.");
 
       histInfo.Errors.Clear();
       histInfo.Warnings.Clear();
@@ -296,14 +300,17 @@ namespace Altaxo.Analysis.Statistics.Histograms
           else
             binningType = typeof(LinearBinning);
 
-          if (binningType != histInfo.CreationOptions.Binning.GetType())
-            histInfo.CreationOptions.Binning = (IBinning)Activator.CreateInstance(binningType);
+          if (binningType != histInfo.CreationOptions.Binning?.GetType())
+            histInfo.CreationOptions.Binning = (IBinning)(Activator.CreateInstance(binningType) ?? throw new InvalidProgramException($"Unable to create IBinning class {binningType}. Maybe a public parameterless constructor is missing?"));
         }
       }
 
       // OK, up here we have either LinearBinning or LogarithmicBinning
 
       var binning = histInfo.CreationOptions.Binning;
+
+      if (binning is null)
+        throw new InvalidProgramException($"Here, {nameof(binning)} should be either {nameof(LinearBinning)} or {nameof(LogarithmicBinning)}.");
 
       try
       {
@@ -352,9 +359,9 @@ namespace Altaxo.Analysis.Statistics.Histograms
       return showDialog;
     }
 
-    private static void CreateHistogramTable(ref DataTable destinationTable, string proposedTableName, IReadOnlyList<double> sortedListOfData, IBinning binning)
+    private static void CreateHistogramTable([AllowNull][NotNull] ref DataTable destinationTable, string? proposedTableName, IReadOnlyList<double> sortedListOfData, IBinning binning)
     {
-      if (null == destinationTable)
+      if (destinationTable is null)
       {
         destinationTable = Current.Project.CreateNewTable(proposedTableName, false);
         Current.ProjectService.CreateNewWorksheet(destinationTable);

@@ -371,7 +371,7 @@ namespace Altaxo.Main
         return true;
     }
 
-    void Main.IParentOfINameOwnerChildNodes.EhChild_HasBeenRenamed(Main.INameOwner item, string oldName)
+    void Main.IParentOfINameOwnerChildNodes.EhChild_HasBeenRenamed(Main.INameOwner item, string? oldName)
     {
       if (_itemsByName.ContainsKey(item.Name))
       {
@@ -381,7 +381,7 @@ namespace Altaxo.Main
           throw new ApplicationException(string.Format("{0} with name " + item.Name + " already exists!", typeof(TItem).Name));
       }
 
-      if (_itemsByName.ContainsKey(oldName))
+      if (!(oldName is null) && _itemsByName.ContainsKey(oldName))
       {
         if (!object.ReferenceEquals(_itemsByName[oldName], item))
           throw new ApplicationException(string.Format("Names between parent collection and {0} not in sync", typeof(TItem).Name));

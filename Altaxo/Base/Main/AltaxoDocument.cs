@@ -616,11 +616,17 @@ namespace Altaxo
       }
     }
 
-    public Altaxo.Data.DataTable CreateNewTable(string worksheetName, bool bCreateDefaultColumns)
+    /// <summary>
+    /// Creates the new data table and adds it to the project.
+    /// </summary>
+    /// <param name="proposedTableName">Proposed table name. Can be null.</param>
+    /// <param name="createDefaultColumns">If set to <c>true</c>, the table is created with default columns.</param>
+    /// <returns>The newly created table. The returned table has certainly a name, but the name might be different from the proposed name.</returns>
+    public Altaxo.Data.DataTable CreateNewTable(string? proposedTableName, bool createDefaultColumns)
     {
-      var dt1 = new Altaxo.Data.DataTable(worksheetName);
+      var dt1 = proposedTableName is null ? new Data.DataTable() : new Data.DataTable(proposedTableName);
 
-      if (bCreateDefaultColumns)
+      if (createDefaultColumns)
       {
         dt1.DataColumns.Add(new Altaxo.Data.DoubleColumn(), "A", Altaxo.Data.ColumnKind.X);
         dt1.DataColumns.Add(new Altaxo.Data.DoubleColumn(), "B");

@@ -146,6 +146,19 @@ namespace Altaxo.Main.Properties
     }
 
     /// <summary>
+    /// Tests if this item already has a name.
+    /// </summary>
+    /// <param name="name">On success, returns the name of the item.</param>
+    /// <returns>
+    /// True if the item already has a name; otherwise false.
+    /// </returns>
+    public bool TryGetName([MaybeNullWhen(false)] out string name)
+    {
+      name = _name;
+      return !(name is null);
+    }
+
+    /// <summary>
     /// Gets or sets the name of the property bag. This has to be a valid project folder name.
     /// </summary>
     /// <value>

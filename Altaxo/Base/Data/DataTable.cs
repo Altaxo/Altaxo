@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Collections;
 using Altaxo.Scripting;
 
@@ -54,7 +55,7 @@ namespace Altaxo.Data
     /// The name of this table, has to be unique if there is a parent data set, since the tables in the parent data set
     /// can only be accessed by name.
     /// </summary>
-    protected string _name = string.Empty; // the name of the table
+    protected string? _name; // the name of the table
 
     /// <summary>
     /// Collection of property columns, i.e. "horizontal" columns.
@@ -540,7 +541,7 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Constructs an empty data table with the name provided by the argiment.
+    /// Constructs an empty data table with the name provided by the argument.
     /// </summary>
     /// <param name="name">The initial name of the table.</param>
     public DataTable(string name)
@@ -696,18 +697,34 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Get or sets the full name of the table.
+    /// Tests if this item already has a name.
     /// </summary>
+    /// <param name="name">On success, returns the name of the item.</param>
+    /// <returns>
+    /// True if the item already has a name; otherwise false.
+    /// </returns>
+    public bool TryGetName([MaybeNullWhen(false)] out string name)
+    {
+      name = _name;
+      return !(name is null);
+    }
+
+    /// <summary>
+    /// Get or sets the full name of the table.
+    /// At first (if the table is not added to a collection), the name of the table may be null.
+    /// </summary>
+
     public override string Name
     {
       get
       {
-        return _name;
+        return _name ?? throw new InvalidOperationException($"Name is not set yet. Use '{nameof(TryGetName)}' to test for this condition");
       }
+      [MemberNotNull(nameof(_name))]
       set
       {
         if (value is null)
-          throw new ArgumentNullException("New name is null");
+          throw new ArgumentNullException(nameof(Name));
 
         if (!(_name == value))
         {
@@ -742,7 +759,7 @@ namespace Altaxo.Data
     /// The event arg of the Tunneling event is an instance of <see cref="T:Altaxo.Main.DocumentPathChangedEventArgs"/>.
     /// </summary>
     /// <param name="oldName">The name of the table before it has changed the name.</param>
-    protected virtual void OnNameChanged(string oldName)
+    protected virtual void OnNameChanged(string? oldName)
     {
       EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty);
       EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(this, oldName));

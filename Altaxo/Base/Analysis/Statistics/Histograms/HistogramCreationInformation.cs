@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Analysis.Statistics.Histograms
 {
@@ -116,7 +115,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <value>
     /// The original data ensemble.
     /// </value>
-    public IEnumerator<double> OriginalDataEnsemble { get; set; }
+    public IEnumerator<double>? OriginalDataEnsemble { get; set; }
 
     /// <summary>
     /// Gets or sets the filtered and sorted data ensemble. The filter options can be found in <see cref="CreationOptions"/>.
@@ -124,7 +123,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <value>
     /// The filtered and sorted data ensemble.
     /// </value>
-    public IReadOnlyList<double> FilteredAndSortedDataEnsemble { get; set; }
+    public IReadOnlyList<double>? FilteredAndSortedDataEnsemble { get; set; }
 
     /// <summary>
     /// Gets or sets the level of user interaction.
