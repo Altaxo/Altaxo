@@ -144,7 +144,7 @@ namespace Altaxo.Serialization.Ascii
         var tokens = new List<string>(importOptions.SeparationStrategy.GetTokens(sLine));
         if (i == importOptions.IndexOfCaptionLine) // is it the column name line
         {
-          for (int k = 0; k < tokens.Count; ++k)
+          for (int k = 0; k < Math.Min(tokens.Count, newcols.ColumnCount); ++k)
           {
             var ttoken = tokens[k].Trim();
             if (!string.IsNullOrEmpty(ttoken))
