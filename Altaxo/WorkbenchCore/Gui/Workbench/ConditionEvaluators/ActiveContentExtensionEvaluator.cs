@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Workbench
       {
         string name = fileViewContent.PrimaryFileName;
 
-        if (name == null)
+        if (name is null)
         {
           return false;
         }

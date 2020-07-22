@@ -48,8 +48,8 @@ namespace Altaxo.Main
 
       public IDisposable Subscribe(IObserver<T> observer)
       {
-        return source.Subscribe(value => synchronizationContext.Post(state => observer.OnNext((T)state), value),
-                                ex => synchronizationContext.Post(state => observer.OnError((Exception)state), ex),
+        return source.Subscribe(value => synchronizationContext.Post(state => observer.OnNext((T)state!), value),
+                                ex => synchronizationContext.Post(state => observer.OnError((Exception)state!), ex),
                                 () => synchronizationContext.Post(state => observer.OnCompleted(), null));
       }
     }
@@ -100,8 +100,8 @@ namespace Altaxo.Main
       private readonly CancellationTokenSource cts = new CancellationTokenSource();
       private readonly object syncLock = new object();
       private readonly IObserver<T> observer;
-      private readonly IProgressMonitor childProgressMonitor;
-      private readonly IProgressMonitor progressMonitor;
+      private readonly IProgressMonitor? childProgressMonitor;
+      private readonly IProgressMonitor? progressMonitor;
 
       public TaskToObserverSubscription(Func<CancellationToken, Action<T>, Task> func, IObserver<T> observer)
       {
@@ -163,7 +163,7 @@ namespace Altaxo.Main
       if (throwIfEmpty)
         onCompleted = () => tcs.TrySetException(new InvalidOperationException());
       else
-        onCompleted = () => tcs.TrySetResult(default(T));
+        onCompleted = () => tcs.TrySetResult(default(T)!);
       using (source.Subscribe(item => tcs.TrySetResult(item),
                               exception => tcs.TrySetException(exception),
                               onCompleted))
@@ -190,7 +190,7 @@ namespace Altaxo.Main
       var gate = new SemaphoreSlim(0);
       var value = default(T);
       bool isEmpty = true;
-      Exception ex = null;
+      Exception? ex = null;
       using (source.Subscribe(
         item =>
         {
@@ -221,7 +221,7 @@ namespace Altaxo.Main
         throw ex;
       if (isEmpty && throwIfEmpty)
         throw new InvalidOperationException("Sequence contains no elements.");
-      return value;
+      return value!;
     }
 
     public static Task<T> LastAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
@@ -239,7 +239,7 @@ namespace Altaxo.Main
       var gate = new SemaphoreSlim(0);
       var value = default(T);
       bool isEmpty = true;
-      Exception ex = null;
+      Exception? ex = null;
       using (source.Subscribe(
         item =>
         {
@@ -262,7 +262,7 @@ namespace Altaxo.Main
         throw ex;
       if (isEmpty && throwIfEmpty)
         throw new InvalidOperationException("Sequence contains no elements.");
-      return value;
+      return value!;
     }
 
     #endregion First/Single/Last
@@ -309,7 +309,7 @@ namespace Altaxo.Main
         }
       },
                               exception => tcs.TrySetException(exception),
-                              () => tcs.TrySetResult(null)))
+                              () => tcs.TrySetResult(null!)))
       {
         await tcs.Task.ConfigureAwait(false);
       }

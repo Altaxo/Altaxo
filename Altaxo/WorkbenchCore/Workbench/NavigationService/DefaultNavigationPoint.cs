@@ -28,8 +28,8 @@ namespace Altaxo.Workbench
   /// </summary>
   public class DefaultNavigationPoint : INavigationPoint
   {
-    private string fileName;
-    private object data;
+    private string _fileName;
+    private object? _data;
 
     #region constructor
 
@@ -41,10 +41,10 @@ namespace Altaxo.Workbench
     {
     }
 
-    public DefaultNavigationPoint(string fileName, object data)
+    public DefaultNavigationPoint(string fileName, object? data)
     {
-      this.fileName = fileName == null ? string.Empty : fileName;
-      this.data = data;
+      this._fileName = fileName == null ? string.Empty : fileName;
+      this._data = data;
     }
 
     #endregion constructor
@@ -67,7 +67,7 @@ namespace Altaxo.Workbench
     {
       get
       {
-        return fileName;
+        return _fileName;
       }
     }
 
@@ -76,7 +76,7 @@ namespace Altaxo.Workbench
       get
       {
         return string.Format(CultureInfo.CurrentCulture,
-                             "{0}: {1}", fileName, data);
+                             "{0}: {1}", _fileName, _data);
       }
     }
 
@@ -110,15 +110,15 @@ namespace Altaxo.Workbench
       }
     }
 
-    public object NavigationData
+    public object? NavigationData
     {
       get
       {
-        return data;
+        return _data;
       }
       set
       {
-        data = value;
+        _data = value;
       }
     }
 
@@ -129,7 +129,7 @@ namespace Altaxo.Workbench
 
     public void FileNameChanged(string newName)
     {
-      fileName = newName == null ? string.Empty : newName;
+      _fileName = newName == null ? string.Empty : newName;
     }
 
     public virtual void ContentChanging(object sender, EventArgs e)
@@ -141,7 +141,7 @@ namespace Altaxo.Workbench
 
     #region Equality
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       var b = obj as DefaultNavigationPoint;
       if (object.ReferenceEquals(b, null))
@@ -158,39 +158,36 @@ namespace Altaxo.Workbench
 
     #region IComparable
 
-    public virtual int CompareTo(object obj)
+    public virtual int CompareTo(object? obj)
     {
-      if (obj == null)
+      if (obj is null)
         return 1;
-      if (GetType() != obj.GetType())
-      {
-        // if of different types, sort the types by name
+      else if (obj is DefaultNavigationPoint defNavPt)
+        return FileName.CompareTo(defNavPt.FileName);
+      else   // if of different types, sort the types by name
         return GetType().Name.CompareTo(obj.GetType().Name);
-      }
-      var b = obj as DefaultNavigationPoint;
-      return FileName.CompareTo(b.FileName);
     }
 
     // Omitting any of the following operator overloads
     // violates rule: OverrideMethodsOnComparableTypes.
-    public static bool operator ==(DefaultNavigationPoint p1, DefaultNavigationPoint p2)
+    public static bool operator ==(DefaultNavigationPoint? p1, DefaultNavigationPoint? p2)
     {
       return object.Equals(p1, p2); // checks for null and calls p1.Equals(p2)
     }
 
-    public static bool operator !=(DefaultNavigationPoint p1, DefaultNavigationPoint p2)
+    public static bool operator !=(DefaultNavigationPoint? p1, DefaultNavigationPoint? p2)
     {
       return !(p1 == p2);
     }
 
-    public static bool operator <(DefaultNavigationPoint p1, DefaultNavigationPoint p2)
+    public static bool operator <(DefaultNavigationPoint? p1, DefaultNavigationPoint? p2)
     {
-      return p1 == null ? p2 != null : (p1.CompareTo(p2) < 0);
+      return p1 is null ? !(p2 is null) : (p1.CompareTo(p2) < 0);
     }
 
-    public static bool operator >(DefaultNavigationPoint p1, DefaultNavigationPoint p2)
+    public static bool operator >(DefaultNavigationPoint? p1, DefaultNavigationPoint? p2)
     {
-      return p1 == null ? false : (p1.CompareTo(p2) > 0);
+      return p1 is null ? false : (p1.CompareTo(p2) > 0);
     }
 
     #endregion IComparable

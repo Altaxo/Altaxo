@@ -22,14 +22,14 @@ namespace Altaxo.Gui.Workbench
 {
   public class FileEventArgs : EventArgs
   {
-    private string fileName = null;
-    private bool isDirectory;
+    private string _fileName;
+    private bool _isDirectory;
 
     public string FileName
     {
       get
       {
-        return fileName;
+        return _fileName;
       }
     }
 
@@ -37,44 +37,44 @@ namespace Altaxo.Gui.Workbench
     {
       get
       {
-        return isDirectory;
+        return _isDirectory;
       }
     }
 
     public FileEventArgs(string fileName, bool isDirectory)
     {
-      this.fileName = fileName;
-      this.isDirectory = isDirectory;
+      this._fileName = fileName;
+      this._isDirectory = isDirectory;
     }
   }
 
   public class FileCancelEventArgs : FileEventArgs
   {
-    private bool cancel;
+    private bool _cancel;
 
     public bool Cancel
     {
       get
       {
-        return cancel;
+        return _cancel;
       }
       set
       {
-        cancel = value;
+        _cancel = value;
       }
     }
 
-    private bool operationAlreadyDone;
+    private bool _operationAlreadyDone;
 
     public bool OperationAlreadyDone
     {
       get
       {
-        return operationAlreadyDone;
+        return _operationAlreadyDone;
       }
       set
       {
-        operationAlreadyDone = value;
+        _operationAlreadyDone = value;
       }
     }
 

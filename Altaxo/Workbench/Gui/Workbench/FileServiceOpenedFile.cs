@@ -110,10 +110,10 @@ namespace Altaxo.Gui.Workbench
       registeredViews.Remove(view);
       if (registeredViews.Count > 0)
       {
-        if (currentView == view)
+        if (_currentView == view)
         {
           SaveCurrentView();
-          currentView = null;
+          _currentView = null;
         }
       }
       else

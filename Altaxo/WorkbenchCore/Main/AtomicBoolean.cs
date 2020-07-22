@@ -70,9 +70,9 @@ namespace Altaxo.Main
     }
 
     /// <inheritdoc/>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      return (obj is AtomicBoolean) && Value == ((AtomicBoolean)obj).Value;
+      return (obj is AtomicBoolean from) && Value == from.Value;
     }
   }
 }

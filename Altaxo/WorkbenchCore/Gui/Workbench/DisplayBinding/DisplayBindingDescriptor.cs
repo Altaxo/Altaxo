@@ -25,62 +25,62 @@ namespace Altaxo.Gui.Workbench
 {
   public class DisplayBindingDescriptor
   {
-    private object binding;
-    private bool isSecondary;
-    private Codon codon;
+    private object? _binding;
+    private bool _isSecondary;
+    private Codon? _codon;
 
     /// <summary>
     /// Gets the IDisplayBinding or ISecondaryDisplayBinding if it is already loaded,
     /// otherwise returns null.
     /// </summary>
-    public object GetLoadedBinding()
+    public object? GetLoadedBinding()
     {
-      return binding;
+      return _binding;
     }
 
-    public IDisplayBinding Binding
+    public IDisplayBinding? Binding
     {
       get
       {
-        if (codon != null && binding == null)
+        if (_codon != null && _binding == null)
         {
-          binding = codon.AddIn.CreateObject(codon.Properties["class"]);
+          _binding = _codon.AddIn.CreateObject(_codon.Properties["class"]);
         }
-        return binding as IDisplayBinding;
+        return _binding as IDisplayBinding;
       }
     }
 
-    public ISecondaryDisplayBinding SecondaryBinding
+    public ISecondaryDisplayBinding? SecondaryBinding
     {
       get
       {
-        if (codon != null && binding == null)
+        if (_codon != null && _binding == null)
         {
-          binding = codon.AddIn.CreateObject(codon.Properties["class"]);
+          _binding = _codon.AddIn.CreateObject(_codon.Properties["class"]);
         }
-        return binding as ISecondaryDisplayBinding;
+        return _binding as ISecondaryDisplayBinding;
       }
     }
 
     public bool IsSecondary
     {
-      get { return isSecondary; }
+      get { return _isSecondary; }
     }
 
-    public string Id { get; set; }
-    public string Title { get; set; }
-    public string FileNameRegex { get; set; }
+    public string? Id { get; set; }
+    public string? Title { get; set; }
+    public string? FileNameRegex { get; set; }
 
     public DisplayBindingDescriptor(Codon codon)
     {
-      if (codon == null)
-        throw new ArgumentNullException("codon");
+      if (codon is null)
+        throw new ArgumentNullException(nameof(codon));
 
-      isSecondary = codon.Properties["type"] == "Secondary";
-      if (!isSecondary && codon.Properties["type"] != "" && codon.Properties["type"] != "Primary")
+      _isSecondary = codon.Properties["type"] == "Secondary";
+      if (!_isSecondary && codon.Properties["type"] != "" && codon.Properties["type"] != "Primary")
         MessageService.ShowWarning("Unknown display binding type: " + codon.Properties["type"]);
 
-      this.codon = codon;
+      this._codon = codon;
       Id = codon.Id;
 
       string title = codon.Properties["title"];
@@ -94,20 +94,20 @@ namespace Altaxo.Gui.Workbench
 
     public DisplayBindingDescriptor(IDisplayBinding binding)
     {
-      if (binding == null)
-        throw new ArgumentNullException("binding");
+      if (binding is null)
+        throw new ArgumentNullException(nameof(binding));
 
-      isSecondary = false;
-      this.binding = binding;
+      _isSecondary = false;
+      this._binding = binding;
     }
 
     public DisplayBindingDescriptor(ISecondaryDisplayBinding binding)
     {
-      if (binding == null)
-        throw new ArgumentNullException("binding");
+      if (binding is null)
+        throw new ArgumentNullException(nameof(binding));
 
-      isSecondary = true;
-      this.binding = binding;
+      _isSecondary = true;
+      this._binding = binding;
     }
 
     /// <summary>
@@ -123,17 +123,17 @@ namespace Altaxo.Gui.Workbench
     /// </remarks>
     public bool CanOpenFile(string fileName)
     {
-      string fileNameRegex = StringParser.Parse(FileNameRegex);
-      if (fileNameRegex == null || fileNameRegex.Length == 0) // no regex specified
+      string? fileNameRegex = StringParser.Parse(FileNameRegex);
+      if (fileNameRegex is null || fileNameRegex.Length == 0) // no regex specified
         return true;
-      if (fileName == null) // regex specified but file has no name
+      if (fileName is null) // regex specified but file has no name
         return false;
       return Regex.IsMatch(fileName, fileNameRegex, RegexOptions.IgnoreCase);
     }
 
     public override string ToString()
     {
-      return string.Format("[DisplayBindingDescriptor Id={1} Binding={0}]", binding, Id);
+      return string.Format("[DisplayBindingDescriptor Id={1} Binding={0}]", _binding, Id);
     }
   }
 }

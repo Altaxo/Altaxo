@@ -63,7 +63,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Gets/Sets the name to show while the task is active.
     /// </summary>
-    string TaskName { get; set; }
+    string? TaskName { get; set; }
 
     /// <summary>
     /// Gets/sets if the task current shows a modal dialog. Set this property to true to make progress
@@ -94,7 +94,7 @@ namespace Altaxo.Main
   /// </summary>
   public sealed class DummyProgressMonitor : IProgressMonitor
   {
-    public string TaskName { get; set; }
+    public string? TaskName { get; set; } = string.Empty;
 
     public bool ShowingDialog { get; set; }
 

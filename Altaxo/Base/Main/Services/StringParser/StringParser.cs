@@ -70,8 +70,9 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Expands ${xyz} style property values.
     /// </summary>
+    [return: MaybeNull]
     [return: NotNullIfNotNull("input")]
-    public static string? Parse(string? input)
+    public static string Parse(string? input)
     {
       return Parse(input, null);
     }

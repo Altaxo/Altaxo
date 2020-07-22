@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Workbench
   {
     public bool IsValid(object caller, Condition condition)
     {
-      var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
+      var workbench = Altaxo.Current.GetRequiredService<Workbench.IWorkbenchEx>();
 
       var activeWorkbenchWindow = workbench.ActiveViewContent;
       if (activeWorkbenchWindow == null)
@@ -90,9 +90,9 @@ namespace Altaxo.Gui.Workbench
       return isWindowStateOk;
     }
 
-    private static bool IsUntitled(IFileViewContent viewContent)
+    private static bool IsUntitled(IFileViewContent? viewContent)
     {
-      if (viewContent == null)
+      if (viewContent is null)
         return false;
       OpenedFile file = viewContent.PrimaryFile;
       if (file == null)

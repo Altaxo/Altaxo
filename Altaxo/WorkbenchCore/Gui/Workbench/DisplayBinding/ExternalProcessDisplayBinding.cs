@@ -30,17 +30,17 @@ namespace Altaxo.Gui.Workbench
   [TypeConverter(typeof(ExternalProcessDisplayBindingConverter))]
   public sealed class ExternalProcessDisplayBinding : IDisplayBinding
   {
-    public string FileExtension { get; set; }
-    public string CommandLine { get; set; }
-    public string Title { get; set; }
-    public string Id { get; set; }
+    public string? FileExtension { get; set; }
+    public string? CommandLine { get; set; }
+    public string? Title { get; set; }
+    public string? Id { get; set; }
 
     public bool CanCreateContentForFile(FileName fileName)
     {
       return string.Equals(Path.GetExtension(fileName), FileExtension, StringComparison.OrdinalIgnoreCase);
     }
 
-    public IViewContent CreateContentForFile(OpenedFile file)
+    public IViewContent? CreateContentForFile(OpenedFile file)
     {
       if (file.IsDirty)
       {
@@ -48,6 +48,7 @@ namespace Altaxo.Gui.Workbench
       }
       try
       {
+        CommandLine ??= string.Empty;
         string cmd;
         if (CommandLine.Contains("%1"))
           cmd = CommandLine.Replace("%1", file.FileName);
@@ -62,7 +63,7 @@ namespace Altaxo.Gui.Workbench
       return null;
     }
 
-    private static void StartCommandLine(string cmd, string workingDir)
+    private static void StartCommandLine(string cmd, string? workingDir)
     {
       Current.Log.Debug("ExternalProcessDisplayBinding> " + cmd);
       cmd = cmd.Trim();
@@ -81,7 +82,11 @@ namespace Altaxo.Gui.Workbench
         info.FileName = cmd.Substring(0, pos);
         info.Arguments = cmd.Substring(pos + 1);
       }
-      info.WorkingDirectory = workingDir;
+      if (!string.IsNullOrEmpty(workingDir))
+      {
+        info.WorkingDirectory = workingDir;
+      }
+
       Process.Start(info);
     }
 
@@ -127,11 +132,11 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+    public override object? ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
     {
-      if (value is string)
+      if (value is string valueString)
       {
-        string[] values = value.ToString().Split('|');
+        string[] values = valueString.Split('|');
         if (values.Length == 4)
         {
           return new ExternalProcessDisplayBinding

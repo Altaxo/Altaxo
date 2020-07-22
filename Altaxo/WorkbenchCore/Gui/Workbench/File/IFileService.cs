@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Workbench
     /// <param name="description">Description shown in the dialog.</param>
     /// <param name="selectedPath">Optional: Initially selected folder.</param>
     /// <returns>The selected folder; or <c>null</c> if the user cancelled the dialog.</returns>
-    string BrowseForFolder(string description, string selectedPath = null);
+    string BrowseForFolder(string description, string? selectedPath = null);
 
     #endregion BrowseForFolder
 

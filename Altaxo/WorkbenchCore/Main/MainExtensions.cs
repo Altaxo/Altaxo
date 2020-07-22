@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -159,6 +160,7 @@ namespace Altaxo.Main
       return new ReadOnlyCollection<T>(arr);
     }
 
+    [return: MaybeNull]
     public static V GetOrDefault<K, V>(this IReadOnlyDictionary<K, V> dict, K key)
     {
       dict.TryGetValue(key, out var ret);
@@ -175,7 +177,7 @@ namespace Altaxo.Main
     /// <returns>Returns the index of the element with the specified key.
     /// If no such element is found, this method returns a negative number that is the bitwise complement of the
     /// index where the element could be inserted while maintaining the order.</returns>
-    public static int BinarySearch<T, K>(this IList<T> list, K key, Func<T, K> keySelector, IComparer<K> keyComparer = null)
+    public static int BinarySearch<T, K>(this IList<T> list, K key, Func<T, K> keySelector, IComparer<K>? keyComparer = null)
     {
       return BinarySearch(list, 0, list.Count, key, keySelector, keyComparer);
     }
@@ -192,7 +194,7 @@ namespace Altaxo.Main
     /// <returns>Returns the index of the element with the specified key.
     /// If no such element is found in the specified range, this method returns a negative number that is the bitwise complement of the
     /// index where the element could be inserted while maintaining the order.</returns>
-    public static int BinarySearch<T, K>(this IList<T> list, int index, int length, K key, Func<T, K> keySelector, IComparer<K> keyComparer = null)
+    public static int BinarySearch<T, K>(this IList<T> list, int index, int length, K key, Func<T, K> keySelector, IComparer<K>? keyComparer = null)
     {
       if (keyComparer == null)
         keyComparer = Comparer<K>.Default;
@@ -435,9 +437,11 @@ namespace Altaxo.Main
     /// <param name="stringToRemove">The string to remove.</param>
     /// <returns>The string <paramref name="s"/> without string <paramref name="stringToRemove"/> at the start.</returns>
     /// <exception cref="ArgumentException"></exception>
-    public static string RemoveFromStart(this string s, string stringToRemove)
+    [return: MaybeNull]
+    [return: NotNullIfNotNull("s")]
+    public static string RemoveFromStart(this string? s, string stringToRemove)
     {
-      if (s == null)
+      if (s is null)
         return null;
       if (string.IsNullOrEmpty(stringToRemove))
         return s;
@@ -454,9 +458,11 @@ namespace Altaxo.Main
     /// <param name="stringToRemove">The string to remove.</param>
     /// <returns>The string <paramref name="s"/> without string <paramref name="stringToRemove"/> at the end.</returns>
     /// <exception cref="ArgumentException"></exception>
-    public static string RemoveFromEnd(this string s, string stringToRemove)
+    [return: MaybeNull]
+    [return: NotNullIfNotNull("s")]
+    public static string RemoveFromEnd(this string? s, string stringToRemove)
     {
-      if (s == null)
+      if (s is null)
         return null;
       if (string.IsNullOrEmpty(stringToRemove))
         return s;
@@ -469,9 +475,11 @@ namespace Altaxo.Main
     /// Trims the string from the first occurence of <paramref name="cutoffStart" /> to the end, including <paramref name="cutoffStart" />.
     /// If the string does not contain <paramref name="cutoffStart" />, just returns the original string.
     /// </summary>
-    public static string CutoffEnd(this string s, string cutoffStart)
+    [return: MaybeNull]
+    [return: NotNullIfNotNull("s")]
+    public static string CutoffEnd(this string? s, string cutoffStart)
     {
-      if (s == null)
+      if (s is null)
         return null;
       int pos = s.IndexOf(cutoffStart);
       if (pos != -1)
@@ -593,7 +601,7 @@ namespace Altaxo.Main
       return index;
     }
 
-    public static bool ContainsAny(this string haystack, IEnumerable<string> needles, int startIndex, out string match)
+    public static bool ContainsAny(this string haystack, IEnumerable<string> needles, int startIndex, [MaybeNullWhen(false)] out string match)
     {
       if (haystack == null)
         throw new ArgumentNullException("haystack");
@@ -610,7 +618,7 @@ namespace Altaxo.Main
           match = needle;
         }
       }
-      return index > -1;
+      return index > -1 && match != null;
     }
 
     /// <summary>
@@ -651,9 +659,9 @@ namespace Altaxo.Main
     /// Retrieves the service of type <c>T</c> from the provider.
     /// If the service cannot be found, this method returns <c>null</c>.
     /// </summary>
-    public static T GetService<T>(this IServiceProvider provider) where T : class
+    public static T? GetService<T>(this IServiceProvider provider) where T : class
     {
-      return (T)provider.GetService(typeof(T));
+      return (T?)provider.GetService(typeof(T));
     }
 
     /// <summary>
@@ -671,8 +679,8 @@ namespace Altaxo.Main
     /// </summary>
     public static object GetRequiredService(this IServiceProvider provider, Type serviceType)
     {
-      object service = provider.GetService(serviceType);
-      if (service == null)
+      object? service = provider.GetService(serviceType);
+      if (service is null)
         throw new ServiceNotFoundException(serviceType);
       return service;
     }

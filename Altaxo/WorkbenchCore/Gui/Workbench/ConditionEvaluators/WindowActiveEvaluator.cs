@@ -41,9 +41,11 @@ namespace Altaxo.Gui.Workbench
   {
     public bool IsValid(object caller, Condition condition)
     {
-      var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
       if (!(caller is IViewContent activeViewContent)) // active view content is coming from the data context of the menu
+      {
+        var workbench = Altaxo.Current.GetRequiredService<Workbench.IWorkbenchEx>();
         activeViewContent = workbench.ActiveViewContent; // else active view content is retrieved from the workbench
+      }
 
       string activeWindow = condition.Properties["activewindow"];
       if (activeWindow == "*")
@@ -51,8 +53,8 @@ namespace Altaxo.Gui.Workbench
         return activeViewContent != null;
       }
 
-      Type activeWindowType = condition.AddIn.FindType(activeWindow);
-      if (activeWindowType == null)
+      var activeWindowType = condition.AddIn.FindType(activeWindow);
+      if (activeWindowType is null)
       {
         Current.Log.WarnFormatted("WindowActiveCondition: cannot find Type {0}", activeWindow);
         return false;
@@ -65,7 +67,7 @@ namespace Altaxo.Gui.Workbench
       if (activeViewContent == null)
         return false;
 
-      Type currentType = activeViewContent.GetType();
+      Type? currentType = activeViewContent.GetType();
       if (currentType.FullName == activeWindow)
         return true;
       foreach (Type interf in currentType.GetInterfaces())

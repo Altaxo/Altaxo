@@ -53,16 +53,17 @@ namespace Altaxo.Main.Services
     }
     */
 
+    [return: MaybeNull]
     [return: NotNullIfNotNull("path")]
-    public static implicit operator string?(PathName? path)
+    public static implicit operator string(PathName? path)
     {
       return path?._normalizedPath;
     }
 
 
-
+    [return: MaybeNull]
     [return: NotNullIfNotNull("path")]
-    public static string? ToStringPath(PathName? path)
+    public static string ToStringPath(PathName? path)
     {
       return path?._normalizedPath;
     }

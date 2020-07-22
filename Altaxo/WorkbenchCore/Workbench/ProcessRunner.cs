@@ -55,9 +55,9 @@ namespace Altaxo.Workbench
   {
     Task<int> RunInOutputPadAsync(IOutputCategory outputCategory, string program, params string[] arguments);
 
-    string WorkingDirectory { get; set; }
+    string? WorkingDirectory { get; set; }
     ProcessCreationFlags CreationFlags { get; set; }
-    IDictionary<string, string> EnvironmentVariables { get; }
+    IDictionary<string, string?> EnvironmentVariables { get; }
     bool RedirectStandardOutput { get; set; }
     bool RedirectStandardError { get; set; }
     bool RedirectStandardOutputAndErrorToSingleStream { get; set; }
@@ -201,9 +201,9 @@ namespace Altaxo.Workbench
     /// - (2n) + 1 backslashes followed by a quotation mark again produce n backslashes followed by a quotation mark.
     /// - n backslashes not followed by a quotation mark simply produce n backslashes.
     /// </remarks>
-    public static string ArgumentArrayToCommandLine(params string[] arguments)
+    public static string? ArgumentArrayToCommandLine(params string[] arguments)
     {
-      if (arguments == null)
+      if (arguments is null)
         return null;
       var b = new StringBuilder();
       for (int i = 0; i < arguments.Length; i++)
@@ -256,7 +256,7 @@ namespace Altaxo.Workbench
 
     #region RunInOutputPad
 
-    public async Task<int> RunInOutputPadAsync(IOutputCategory outputCategory, string program, params string[] arguments)
+    public Task<int> RunInOutputPadAsync(IOutputCategory outputCategory, string program, params string[] arguments)
     {
       RedirectStandardOutputAndErrorToSingleStream = true;
       Start(program, arguments);
@@ -286,7 +286,7 @@ namespace Altaxo.Workbench
     /// <summary>
     /// Gets or sets the process's working directory.
     /// </summary>
-    public string WorkingDirectory { get; set; }
+    public string? WorkingDirectory { get; set; }
 
     private ProcessCreationFlags creationFlags = ProcessCreationFlags.CreateNoWindow;
 
@@ -296,25 +296,25 @@ namespace Altaxo.Workbench
       set { creationFlags = value; }
     }
 
-    private IDictionary<string, string> environmentVariables;
+    private IDictionary<string, string?>? _environmentVariables;
 
-    public IDictionary<string, string> EnvironmentVariables
+    public IDictionary<string, string?> EnvironmentVariables
     {
       get
       {
-        if (environmentVariables == null)
+        if (_environmentVariables is null)
         {
-          environmentVariables = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+          _environmentVariables = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
           foreach (DictionaryEntry e in Environment.GetEnvironmentVariables())
           {
-            environmentVariables.Add((string)e.Key, (string)e.Value);
+            _environmentVariables.Add((string)e.Key, (string?)e.Value);
           }
         }
-        return environmentVariables;
+        return _environmentVariables;
       }
     }
 
-    public string CommandLine { get; private set; }
+    public string? CommandLine { get; private set; }
 
     public bool RedirectStandardOutput { get; set; }
     public bool RedirectStandardError { get; set; }
@@ -328,8 +328,8 @@ namespace Altaxo.Workbench
 
     #region Start
 
-    private bool wasStarted;
-    private SafeProcessHandle safeProcessHandle;
+    private bool _wasStarted;
+    private SafeProcessHandle? _safeProcessHandle;
 
     public void Start(string program, params string[] arguments)
     {
@@ -348,9 +348,9 @@ namespace Altaxo.Workbench
 
     public void StartCommandLine(string commandLine)
     {
-      lock (lockObj)
+      lock (_lockObj)
       {
-        if (wasStarted)
+        if (_wasStarted)
           throw new InvalidOperationException();
         DoStart(commandLine);
       }
@@ -378,8 +378,8 @@ namespace Altaxo.Workbench
       };
       if (RedirectStandardOutput || RedirectStandardOutputAndErrorToSingleStream)
       {
-        standardOutput = new AnonymousPipeServerStream(PipeDirection.In, HandleInheritability.Inheritable);
-        startupInfo.hStdOutput = standardOutput.ClientSafePipeHandle;
+        _standardOutput = new AnonymousPipeServerStream(PipeDirection.In, HandleInheritability.Inheritable);
+        startupInfo.hStdOutput = _standardOutput.ClientSafePipeHandle;
       }
       else
       {
@@ -387,13 +387,14 @@ namespace Altaxo.Workbench
       }
       if (RedirectStandardOutputAndErrorToSingleStream)
       {
-        standardError = standardOutput;
-        startupInfo.hStdError = standardError.ClientSafePipeHandle;
+        _standardError = _standardOutput;
+        if (null != _standardError)
+          startupInfo.hStdError = _standardError.ClientSafePipeHandle;
       }
       else if (RedirectStandardError)
       {
-        standardError = new AnonymousPipeServerStream(PipeDirection.In, HandleInheritability.Inheritable);
-        startupInfo.hStdError = standardError.ClientSafePipeHandle;
+        _standardError = new AnonymousPipeServerStream(PipeDirection.In, HandleInheritability.Inheritable);
+        startupInfo.hStdError = _standardError.ClientSafePipeHandle;
       }
       else
       {
@@ -402,24 +403,24 @@ namespace Altaxo.Workbench
 
       uint flags = (uint)CreationFlags;
 
-      string environmentBlock = null;
-      if (environmentVariables != null)
+      string? environmentBlock = null;
+      if (_environmentVariables != null)
       {
-        environmentBlock = BuildEnvironmentBlock(environmentVariables);
+        environmentBlock = BuildEnvironmentBlock(_environmentVariables);
         flags |= CREATE_UNICODE_ENVIRONMENT;
       }
 
       var processInfo = new PROCESS_INFORMATION();
       try
       {
-        CreateProcess(null, new StringBuilder(commandLine), IntPtr.Zero, IntPtr.Zero, true, flags, environmentBlock, WorkingDirectory, ref startupInfo, out processInfo);
-        wasStarted = true;
+        CreateProcess(string.Empty, new StringBuilder(commandLine), IntPtr.Zero, IntPtr.Zero, true, flags, environmentBlock!, WorkingDirectory!, ref startupInfo, out processInfo);
+        _wasStarted = true;
       }
       finally
       {
         if (processInfo.hProcess != IntPtr.Zero && processInfo.hProcess != new IntPtr(-1))
         {
-          safeProcessHandle = new SafeProcessHandle(processInfo.hProcess);
+          _safeProcessHandle = new SafeProcessHandle(processInfo.hProcess);
         }
         if (processInfo.hThread != IntPtr.Zero && processInfo.hThread != new IntPtr(-1))
         {
@@ -429,26 +430,26 @@ namespace Altaxo.Workbench
         // They got copied into the new process, we don't need our local copies anymore.
         startupInfo.hStdInput.Dispose();
         startupInfo.hStdOutput.Dispose();
-        startupInfo.hStdError.Dispose();
-        if (!wasStarted)
+        startupInfo.hStdError?.Dispose();
+        if (!_wasStarted)
         {
           // In case of error, dispose the server side of the pipes as well
-          if (standardOutput != null)
+          if (_standardOutput != null)
           {
-            standardOutput.Dispose();
-            standardOutput = null;
+            _standardOutput.Dispose();
+            _standardOutput = null;
           }
-          if (standardError != null)
+          if (_standardError != null)
           {
-            standardError.Dispose();
-            standardError = null;
+            _standardError.Dispose();
+            _standardError = null;
           }
         }
       }
       //StartStreamCopyAfterProcessCreation();
     }
 
-    private static string BuildEnvironmentBlock(IEnumerable<KeyValuePair<string, string>> environment)
+    private static string BuildEnvironmentBlock(IEnumerable<KeyValuePair<string, string?>> environment)
     {
       var b = new StringBuilder();
       foreach (var pair in environment.OrderBy(p => p.Key, StringComparer.OrdinalIgnoreCase))
@@ -484,12 +485,12 @@ namespace Altaxo.Workbench
 
     public void Dispose()
     {
-      if (safeProcessHandle != null)
-        safeProcessHandle.Dispose();
-      if (standardOutput != null)
-        standardOutput.Dispose();
-      if (standardError != null)
-        standardError.Dispose();
+      if (_safeProcessHandle != null)
+        _safeProcessHandle.Dispose();
+      if (_standardOutput != null)
+        _standardOutput.Dispose();
+      if (_standardError != null)
+        _standardError.Dispose();
     }
 
     #region HasExited / ExitCode / Kill
@@ -518,9 +519,9 @@ namespace Altaxo.Workbench
     /// </summary>
     public void Kill()
     {
-      if (!wasStarted)
+      if (!_wasStarted)
         throw new InvalidOperationException("Process was not started");
-      if (!TerminateProcess(safeProcessHandle, -1))
+      if (!TerminateProcess(_safeProcessHandle!, -1))
       {
         int err = Marshal.GetLastWin32Error();
         // If TerminateProcess fails, maybe it's because the process has already exited.
@@ -558,15 +559,15 @@ namespace Altaxo.Workbench
     {
       if (hasExited)
         return true;
-      if (!wasStarted)
+      if (!_wasStarted)
         throw new InvalidOperationException("Process was not yet started");
-      if (safeProcessHandle.IsClosed)
+      if (_safeProcessHandle!.IsClosed)
         throw new ObjectDisposedException("ProcessRunner");
-      using (var waitHandle = new ProcessWaitHandle(safeProcessHandle))
+      using (var waitHandle = new ProcessWaitHandle(_safeProcessHandle))
       {
         if (waitHandle.WaitOne(millisecondsTimeout, false))
         {
-          if (!GetExitCodeProcess(safeProcessHandle, out exitCode))
+          if (!GetExitCodeProcess(_safeProcessHandle, out exitCode))
             throw new Win32Exception();
           // Wait until the output is processed
           //					if (standardOutputTask != null)
@@ -579,10 +580,10 @@ namespace Altaxo.Workbench
       return hasExited;
     }
 
-    private readonly object lockObj = new object();
-    private TaskCompletionSource<object> waitForExitTCS;
-    private ProcessWaitHandle waitForExitAsyncWaitHandle;
-    private RegisteredWaitHandle waitForExitAsyncRegisteredWaitHandle;
+    private readonly object _lockObj = new object();
+    private TaskCompletionSource<object?>? _waitForExitTCS;
+    private ProcessWaitHandle? _waitForExitAsyncWaitHandle;
+    private RegisteredWaitHandle? _waitForExitAsyncRegisteredWaitHandle;
 
     /// <summary>
     /// Asynchronously waits for the process to exit.
@@ -591,50 +592,50 @@ namespace Altaxo.Workbench
     {
       if (hasExited)
         return Task.FromResult(true);
-      if (!wasStarted)
+      if (!_wasStarted)
         throw new InvalidOperationException("Process was not yet started");
-      if (safeProcessHandle.IsClosed)
+      if (_safeProcessHandle!.IsClosed)
         throw new ObjectDisposedException("ProcessRunner");
-      lock (lockObj)
+      lock (_lockObj)
       {
-        if (waitForExitTCS == null)
+        if (_waitForExitTCS == null)
         {
-          waitForExitTCS = new TaskCompletionSource<object>();
-          waitForExitAsyncWaitHandle = new ProcessWaitHandle(safeProcessHandle);
-          waitForExitAsyncRegisteredWaitHandle = ThreadPool.RegisterWaitForSingleObject(waitForExitAsyncWaitHandle, WaitForExitAsyncCallback, null, -1, true);
+          _waitForExitTCS = new TaskCompletionSource<object?>();
+          _waitForExitAsyncWaitHandle = new ProcessWaitHandle(_safeProcessHandle);
+          _waitForExitAsyncRegisteredWaitHandle = ThreadPool.RegisterWaitForSingleObject(_waitForExitAsyncWaitHandle, WaitForExitAsyncCallback, null, -1, true);
         }
-        return waitForExitTCS.Task;
+        return _waitForExitTCS.Task;
       }
     }
 
-    private void WaitForExitAsyncCallback(object context, bool wasSignaled)
+    private void WaitForExitAsyncCallback(object? context, bool wasSignaled)
     {
-      waitForExitAsyncRegisteredWaitHandle.Unregister(null);
-      waitForExitAsyncRegisteredWaitHandle = null;
-      waitForExitAsyncWaitHandle.Close();
-      waitForExitAsyncWaitHandle = null;
+      _waitForExitAsyncRegisteredWaitHandle?.Unregister(null);
+      _waitForExitAsyncRegisteredWaitHandle = null;
+      _waitForExitAsyncWaitHandle?.Close();
+      _waitForExitAsyncWaitHandle = null;
       // Wait until the output is processed
       //			if (standardOutputTask != null)
       //				await standardOutputTask;
       //			if (standardErrorTask != null)
       //				await standardErrorTask;
-      waitForExitTCS.SetResult(null);
+      _waitForExitTCS?.SetResult((object?)null);
     }
 
     #endregion WaitForExit
 
     #region StandardOutput/StandardError
 
-    private AnonymousPipeServerStream standardOutput;
-    private AnonymousPipeServerStream standardError;
+    private AnonymousPipeServerStream? _standardOutput;
+    private AnonymousPipeServerStream? _standardError;
 
     public Stream StandardOutput
     {
       get
       {
-        if (standardOutput == null)
-          throw new InvalidOperationException(wasStarted ? "stdout was not redirected" : "Process not yet started");
-        return standardOutput;
+        if (_standardOutput == null)
+          throw new InvalidOperationException(_wasStarted ? "stdout was not redirected" : "Process not yet started");
+        return _standardOutput;
       }
     }
 
@@ -642,9 +643,9 @@ namespace Altaxo.Workbench
     {
       get
       {
-        if (standardError == null)
-          throw new InvalidOperationException(wasStarted ? "stderr was not redirected" : "Process not yet started");
-        return standardError;
+        if (_standardError == null)
+          throw new InvalidOperationException(_wasStarted ? "stderr was not redirected" : "Process not yet started");
+        return _standardError;
       }
     }
 
