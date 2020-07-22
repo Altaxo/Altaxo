@@ -67,9 +67,9 @@ namespace Altaxo.Calc.Regression
  * the aid of finite differences (forward or central, see the comment for the opts argument)
  */
 
-    public delegate void FitFunction(double[] parameter, double[] output, object additionalData);
+    public delegate void FitFunction(double[] parameter, double[] output, object? additionalData);
 
-    public delegate void JacobianFunction(double[] parameter, double[] output, object additionalData);
+    public delegate void JacobianFunction(double[] parameter, double[] output, object? additionalData);
 
     private class WorkArrays
     {
@@ -123,13 +123,13 @@ namespace Altaxo.Calc.Regression
       JacobianFunction jacf,  /* function to evaluate the jacobian \part x / \part p */
       double[] p,         /* I/O: initial parameter estimates. On output has the estimated solution */
       double[] x,         /* I: measurement vector */
-      double[] weights,   /* vector of the weights used to scale the fit differences, can be null */
+      double[]? weights,   /* vector of the weights used to scale the fit differences, can be null */
 
       int itmax,          /* I: maximum number of iterations */
-      double[] opts,    /* I: minim. options [\mu, \epsilon1, \epsilon2, \epsilon3]. Respectively the scale factor for initial \mu,
+      double[]? opts,    /* I: minim. options [\mu, \epsilon1, \epsilon2, \epsilon3]. Respectively the scale factor for initial \mu,
                        * stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2. Set to NULL for defaults to be used
                        */
-      double[] info,
+      double[]? info,
       /* O: information regarding the minimization. Set to NULL if don't care
                                             * info[0]= ||e||_2 at initial p.
                                             * info[1-4]=[ ||e||_2, ||J^T e||_inf,  ||Dp||_2, mu/max[J^T J]_ii ], all computed at estimated p.
@@ -143,9 +143,9 @@ namespace Altaxo.Calc.Regression
                                             * info[7]= # function evaluations
                                             * info[8]= # jacobian evaluations
                                             */
-      ref object workingmemory,     /* working memory, allocate if NULL */
-      double[] covar,    /* O: Covariance matrix corresponding to LS solution; mxm. Set to NULL if not needed. */
-      object adata)       /* pointer to possibly additional data, passed uninterpreted to func & jacf.
+      ref object? workingmemory,     /* working memory, allocate if NULL */
+      double[]? covar,    /* O: Covariance matrix corresponding to LS solution; mxm. Set to NULL if not needed. */
+      object? adata)       /* pointer to possibly additional data, passed uninterpreted to func & jacf.
                       * Set to NULL if not needed
                       */
     {

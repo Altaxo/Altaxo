@@ -90,11 +90,12 @@ namespace Altaxo.Gui
     /// <param name="initData">If set to <c>true</c>, it indicates that the controller should initialize its model classes..</param>
     /// <exception cref="System.InvalidOperationException">This controller was not initialized with a document.</exception>
     /// <exception cref="System.ObjectDisposedException">The controller was already disposed.</exception>
+    [MemberNotNull(nameof(_doc))]
     protected virtual void Initialize(bool initData)
     {
       if (IsDisposed)
         throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);
-      if (null == _doc)
+      if (_doc is null)
         throw new InvalidOperationException("This controller was not initialized with a document.");
     }
 

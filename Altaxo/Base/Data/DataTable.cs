@@ -594,7 +594,7 @@ namespace Altaxo.Data
         _tableProperties = null;
       }
 
-      ChildCopyToMemberC(ref _tableDataSource, from._tableDataSource);
+      ChildCopyToMember(ref _tableDataSource, from._tableDataSource);
     }
 
     /// <summary>

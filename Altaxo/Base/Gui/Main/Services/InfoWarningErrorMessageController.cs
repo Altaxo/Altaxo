@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,7 +44,7 @@ namespace Altaxo.Gui.Main.Services
     /// <value>
     /// The data context.
     /// </value>
-    object DataContext { set; }
+    object? DataContext { set; }
 
     double[] ColumnWidths { get; set; }
   }
@@ -52,13 +53,13 @@ namespace Altaxo.Gui.Main.Services
   public class InfoWarningErrorMessageController : AbstractPadContent, IMementoCapable
   {
     private bool _viewDirectionRecentIsFirst = true;
-    private double[] _columnWidths;
-    private IInfoWarningErrorMessageView _view;
+    private double[]? _columnWidths;
+    private IInfoWarningErrorMessageView? _view;
     private ObservableCollection<InfoWarningErrorTextMessageItem> _unreversedDoc;
     private Altaxo.Collections.ObservableCollectionReversingWrapper<InfoWarningErrorTextMessageItem> _reversedDoc;
     private IReadOnlyList<InfoWarningErrorTextMessageItem> _currentDoc;
 
-    private IInfoWarningErrorTextMessageService _cachedService;
+    private IInfoWarningErrorTextMessageService? _cachedService;
 
     private ICommand _commandClearAllMessages;
     private ICommand _commandReverseMessages;
@@ -80,7 +81,7 @@ namespace Altaxo.Gui.Main.Services
         (shutdownService) => shutdownService.Closed -= EhApplicationClosed);
       _shutDownService.StartCaching();
 
-      var memento = Current.PropertyService.GetValue(PropertyKeyMessageControlState, RuntimePropertyKind.UserAndApplicationAndBuiltin, () => null);
+      var memento = Current.PropertyService.GetValue(PropertyKeyMessageControlState, RuntimePropertyKind.UserAndApplicationAndBuiltin, null);
       if (null != memento)
         SetMemento(memento);
 
@@ -196,15 +197,15 @@ namespace Altaxo.Gui.Main.Services
 
     protected void AttachView()
     {
-      _view.DataContext = this;
+      _view!.DataContext = this;
     }
 
     protected void DetachView()
     {
-      _view.DataContext = null;
+      _view!.DataContext = null;
     }
 
-    public override object ViewObject
+    public override object? ViewObject
     {
       get { return _view; }
       set
@@ -266,12 +267,12 @@ namespace Altaxo.Gui.Main.Services
       tw.WriteEndElement(); // localName
     }
 
-    public void ShowException(Exception ex, string message = null)
+    public void ShowException(Exception ex, string? message = null)
     {
       throw new NotImplementedException();
     }
 
-    public void ShowHandledException(Exception ex, string message = null)
+    public void ShowHandledException(Exception ex, string? message = null)
     {
       throw new NotImplementedException();
     }
@@ -296,7 +297,7 @@ namespace Altaxo.Gui.Main.Services
       throw new NotImplementedException();
     }
 
-    public void ShowMessage(string message, string caption = null)
+    public void ShowMessage(string message, string? caption = null)
     {
       throw new NotImplementedException();
     }
@@ -306,7 +307,7 @@ namespace Altaxo.Gui.Main.Services
       throw new NotImplementedException();
     }
 
-    public bool AskQuestion(string question, string caption = null)
+    public bool AskQuestion(string question, string? caption = null)
     {
       throw new NotImplementedException();
     }
@@ -346,7 +347,7 @@ namespace Altaxo.Gui.Main.Services
 
     #region Memento
 
-    public override object GetService(Type serviceType)
+    public override object? GetService(Type serviceType)
     {
       // TODO make MementoService availabe if the user chooses to store the state of the online window with the document file
       // and make it unavailable if not ( but then store the state in the properties of the application)
@@ -355,7 +356,7 @@ namespace Altaxo.Gui.Main.Services
       return base.GetService(serviceType);
     }
 
-    private void EhApplicationClosed(object sender, EventArgs e)
+    private void EhApplicationClosed(object? sender, EventArgs e)
     {
       Current.PropertyService.SetValue(PropertyKeyMessageControlState, (StateMemento)CreateMemento());
     }
@@ -367,15 +368,15 @@ namespace Altaxo.Gui.Main.Services
     {
       if (null != _view)
         _columnWidths = _view.ColumnWidths;
-      return new StateMemento(_columnWidths);
+      return new StateMemento(_columnWidths ?? new double[0]);
     }
 
     public void SetMemento(object memento)
     {
       if (memento is StateMemento m)
         _columnWidths = m.ColumnWidths;
-      if (null != _view)
-        _view.ColumnWidths = _columnWidths;
+      if (null != _view && _columnWidths is { } cw && cw.Length > 0)
+        _view.ColumnWidths = cw;
     }
 
 
@@ -406,9 +407,9 @@ namespace Altaxo.Gui.Main.Services
           info.CommitArray();
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = (StateMemento)o ?? new StateMemento(new double[0]);
+          var s = (StateMemento?)o ?? new StateMemento(new double[0]);
 
           var count = info.OpenArray("ColumnWidths");
           s.ColumnWidths = new double[count];

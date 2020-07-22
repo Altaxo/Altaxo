@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,21 +50,17 @@ namespace Altaxo.Gui.Units
   {
     private Dictionary<Type, UnitDescriptionAttribute> _listOfUnits = new Dictionary<Type, UnitDescriptionAttribute>();
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     private string _quantity;
     private SelectableListNodeList _availableUnits = new SelectableListNodeList();
-    private SelectableListNode _selectedAvailableUnit;
+    private SelectableListNode? _selectedAvailableUnit;
     private SelectableListNodeList _includedUnits = new SelectableListNodeList();
-    private SelectableListNode _selectedIncludedUnit;
+    private SelectableListNode? _selectedIncludedUnit;
     private SelectableListNodeList _prefixes = new SelectableListNodeList();
     private SelectableListNodeList _allChoosenPrefixedUnits = new SelectableListNodeList();
 
     private Dictionary<IUnit, List<SIPrefix>> _prefixesForUnit = new Dictionary<IUnit, List<SIPrefix>>();
-
-    public UnitEnvironmentController()
-    {
-    }
 
     public UnitEnvironmentController(string quantity)
     {
@@ -72,6 +69,9 @@ namespace Altaxo.Gui.Units
 
     protected override void Initialize(bool initData)
     {
+      if (_doc is null)
+        throw new InvalidOperationException("This controller was not initialized with a document.");
+
       base.Initialize(initData);
 
       if (initData)
@@ -122,7 +122,7 @@ namespace Altaxo.Gui.Units
     {
       if (null != SelectedAvailableUnit && !IncludedUnits.Any(x => x.Tag == SelectedAvailableUnit.Tag))
       {
-        var newNode = new SelectableListNode(SelectedAvailableUnit.Text, SelectedAvailableUnit.Tag, false);
+        var newNode = new SelectableListNode(SelectedAvailableUnit.Text ?? string.Empty, SelectedAvailableUnit.Tag, false);
         _includedUnits.Add(newNode);
         SelectedIncludedUnit = newNode;
       }
@@ -131,12 +131,12 @@ namespace Altaxo.Gui.Units
     protected override void AttachView()
     {
       base.AttachView();
-      _view.DataContext = this;
+      _view!.DataContext = this;
     }
 
     protected override void DetachView()
     {
-      _view.DataContext = null;
+      _view!.DataContext = null;
       base.DetachView();
     }
 
@@ -200,10 +200,10 @@ namespace Altaxo.Gui.Units
       foreach (var ty in unitTypes)
       {
         var propInfo = ty.GetProperty("Instance");
-        var propMethod = propInfo.GetGetMethod();
+        var propMethod = propInfo?.GetGetMethod();
         if (null != propMethod)
         {
-          var instance = (IUnit)propMethod.Invoke(null, null);
+          var instance = (IUnit)propMethod.Invoke(null, null)!;
           result.Add(new SelectableListNode(instance.Name, instance, false));
         }
       }
@@ -221,8 +221,8 @@ namespace Altaxo.Gui.Units
     {
       if (null != SelectedIncludedUnit)
       {
-        var unit = (IUnit)SelectedIncludedUnit.Tag;
-        var list = new List<SIPrefix>(Prefixes.Where(x => x.IsSelected).Select(x => (SIPrefix)x.Tag));
+        var unit = (IUnit)SelectedIncludedUnit.Tag!;
+        var list = new List<SIPrefix>(Prefixes.Where(x => x.IsSelected).Select(x => (SIPrefix)x.Tag!));
         _prefixesForUnit[unit] = list;
       }
 
@@ -233,7 +233,7 @@ namespace Altaxo.Gui.Units
     {
       result.Clear();
 
-      HashSet<SIPrefix> previouslySelectedPrefixes = null;
+      HashSet<SIPrefix>? previouslySelectedPrefixes = null;
 
       if (_prefixesForUnit.TryGetValue(unit, out var list))
         previouslySelectedPrefixes = new HashSet<SIPrefix>(list);
@@ -271,7 +271,7 @@ namespace Altaxo.Gui.Units
       }
     }
 
-    public SelectableListNode SelectedAvailableUnit
+    public SelectableListNode? SelectedAvailableUnit
     {
       get
       {
@@ -295,7 +295,7 @@ namespace Altaxo.Gui.Units
       }
     }
 
-    public SelectableListNode SelectedIncludedUnit
+    public SelectableListNode? SelectedIncludedUnit
     {
       get
       {
@@ -308,7 +308,7 @@ namespace Altaxo.Gui.Units
           StoreSelectedPrefixes(); // store selected prefixes for old unit
           _selectedPrefixesChangedCommandDisabled = true; // temporary diabling of Store
           _selectedIncludedUnit = value;
-          GetAvailablePrefixes((IUnit)_selectedIncludedUnit?.Tag, _prefixes);
+          GetAvailablePrefixes((IUnit)_selectedIncludedUnit?.Tag!, _prefixes);
           PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedIncludedUnit)));
           _selectedPrefixesChangedCommandDisabled = false;
         }
@@ -331,11 +331,11 @@ namespace Altaxo.Gui.Units
       }
     }
 
-    public ICommand AddToIncludedUnits { get; private set; }
+    public ICommand? AddToIncludedUnits { get; private set; }
 
-    public ICommand RemoveFromIncludedUnits { get; private set; }
+    public ICommand? RemoveFromIncludedUnits { get; private set; }
 
-    public ICommand SelectedPrefixesChangedCommand { get; private set; }
+    public ICommand? SelectedPrefixesChangedCommand { get; private set; }
 
     #endregion Binding properties
   }

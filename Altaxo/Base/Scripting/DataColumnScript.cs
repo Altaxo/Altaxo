@@ -300,7 +300,7 @@ namespace Altaxo.Scripting
         suspendToken = myTable.SuspendGetToken();
       else if (null != myColumnCollection)
         suspendToken = myColumnCollection.SuspendGetToken();
-      else if (null != myColumn)
+      else
         suspendToken = myColumn.SuspendGetToken();
 
       try

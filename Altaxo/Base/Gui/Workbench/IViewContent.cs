@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,7 +36,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// The tooltip that will be shown when you hover the mouse over the title
     /// </summary>
-    string InfoTip
+    string? InfoTip
     {
       get;
     }
@@ -43,7 +44,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Builds an <see cref="INavigationPoint"/> for the current position.
     /// </summary>
-    INavigationPoint BuildNavPoint();
+    INavigationPoint? BuildNavPoint();
 
     /// <summary>
     /// Announces that this view content is about to be disposed very soon. The view content should remain passiv (e.g. should not react to events any more),

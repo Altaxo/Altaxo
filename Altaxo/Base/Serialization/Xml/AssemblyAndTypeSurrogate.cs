@@ -63,7 +63,7 @@ namespace Altaxo.Serialization.Xml
     }
 
     [MemberNotNull(nameof(_assemblyName), nameof(_typeName))]
-    void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       _assemblyName = info.GetString("AssemblyName");
       _typeName = info.GetString("TypeName");

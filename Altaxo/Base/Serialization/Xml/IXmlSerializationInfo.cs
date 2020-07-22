@@ -104,7 +104,7 @@ namespace Altaxo.Serialization.Xml
     /// <param name="count">The count.</param>
     void AddArray(string name, System.Collections.BitArray val, System.Collections.BitArray cond, int count);
 
-    void AddArray(string name, object[] val, int count);
+    void AddArray(string name, object?[] val, int count);
 
     void CreateElement(string name);
 

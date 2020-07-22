@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,7 +63,9 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
-    public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T> ValueCreationIfNotFound)
+    [return: NotNullIfNotNull("ValueCreationIfNotFound")]
+    [return: MaybeNull]
+    public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound)
     {
       if (kind == RuntimePropertyKind.UserAndApplicationAndBuiltin && UserSettings.TryGetValue<T>(p, out var result))
         return result;
@@ -73,7 +76,7 @@ namespace Altaxo.Main.Services
       else if (null != ValueCreationIfNotFound)
         return ValueCreationIfNotFound();
       else
-        throw new ArgumentOutOfRangeException(nameof(p), string.Format("No entry found for property key {0}", p));
+        return default;
 
     }
 

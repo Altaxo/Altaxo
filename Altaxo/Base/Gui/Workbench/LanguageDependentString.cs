@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,7 +38,7 @@ namespace Altaxo.Gui.Workbench
     private string _originalString;
     private string _transformedString;
 
-    public event EventHandler ValueChanged;
+    public event EventHandler? ValueChanged;
 
     public LanguageDependentString(string originalString)
     {
@@ -50,7 +51,7 @@ namespace Altaxo.Gui.Workbench
     private void EhLanguageChanged()
     {
       _transformedString = StringParser.Parse(_originalString);
-      ValueChanged.Invoke(this, EventArgs.Empty);
+      ValueChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public string Value

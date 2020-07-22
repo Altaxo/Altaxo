@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable enable
 namespace Altaxo.Gui.Workbench
 {
   /// <summary>
@@ -43,7 +44,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Gets the control which has focus initially.
     /// </summary>
-    object InitiallyFocusedControl
+    object? InitiallyFocusedControl
     {
       get;
     }
@@ -74,6 +75,6 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Returns the title of the pad (<see cref="IPadContent"/>), or the text on the tab page of the document window (<see cref="IViewContent"/>).
     /// </summary>
-    string Title { get; }
+    string? Title { get; }
   }
 }

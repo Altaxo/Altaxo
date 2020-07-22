@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Altaxo.Main;
 
 namespace Altaxo.Calc.Regression.Nonlinear
@@ -68,7 +68,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.CommitArray();
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         FitEnsemble s = o != null ? (FitEnsemble)o : new FitEnsemble();
 
@@ -101,7 +101,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
           {
             var parameterName = ele.ParameterName(k);
 
-            if (!(_parametersSortedByName.ContainsKey(parameterName)))
+            if (!string.IsNullOrEmpty(parameterName) && !(_parametersSortedByName.ContainsKey(parameterName)))
             {
               _parametersSortedByName.Add(parameterName, nameposition++);
             }
@@ -271,7 +271,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region Changed handling
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       CollectParameterNames();
 

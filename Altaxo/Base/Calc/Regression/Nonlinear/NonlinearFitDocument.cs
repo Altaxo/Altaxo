@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Main;
@@ -52,7 +53,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.AddValue("Parameters", s._currentParameters);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         NonlinearFitDocument s = o != null ? (NonlinearFitDocument)o : new NonlinearFitDocument();
 
@@ -74,10 +75,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public NonlinearFitDocument(NonlinearFitDocument from)
     {
-      _fitEnsemble = null == from._fitEnsemble ? null : (FitEnsemble)from._fitEnsemble.Clone();
-      _fitEnsemble.ParentObject = this;
-
-      _currentParameters = null == from._currentParameters ? null : (ParameterSet)from._currentParameters.Clone();
+      _fitEnsemble = ChildCloneFrom(from._fitEnsemble);
+      _currentParameters = (ParameterSet)from._currentParameters.Clone();
       // Note that the fit context is not cloned here.
     }
 
@@ -125,7 +124,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       if (fitele.FitFunction == null)
         return;
 
-      var byName = new System.Collections.Hashtable();
+      var byName = new Dictionary<string, int>();
       for (int i = 0; i < _currentParameters.Count; i++)
         byName.Add(_currentParameters[i].Name, i);
 
@@ -141,7 +140,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private void RecalculateParameterSet()
     {
       // save old values
-      var byName = new System.Collections.Hashtable();
+      var byName = new Dictionary<string, ParameterSetElement>();
       for (int i = 0; i < _currentParameters.Count; i++)
         byName.Add(_currentParameters[i].Name, _currentParameters[i]);
 
@@ -171,7 +170,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region Changed event handling
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       RecalculateParameterSet();
 

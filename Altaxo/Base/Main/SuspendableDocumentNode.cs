@@ -740,14 +740,14 @@ namespace Altaxo.Main
     /// <param name="childNode">The child node member variable to set.</param>
     /// <param name="instanceToSet">The instance to set the variable with.</param>
     /// <returns><c>True</c> if the child has been set. If the old child reference equals to the new child, nothing is done, and <c>false</c> is returned.</returns>
-    protected bool ChildSetMember<T>([NotNullIfNotNull("instanceToSet")] ref T? childNode, T? instanceToSet) where T : class, IDocumentLeafNode
+    protected bool ChildSetMember<T>([MaybeNull][AllowNull][NotNullIfNotNull("instanceToSet")] ref T childNode, [AllowNull] T instanceToSet) where T : IDocumentLeafNode?
     {
       if (object.ReferenceEquals(childNode, instanceToSet))
         return false;
 
       var tmpNode = childNode;
-
       childNode = instanceToSet;
+
       if (!(childNode is null))
         childNode.ParentObject = this;
 
@@ -764,21 +764,25 @@ namespace Altaxo.Main
     /// <param name="childNode">The child node member variable to set.</param>
     /// <param name="instanceToSet">The instance to set the variable with.</param>
     /// <returns><c>True</c> if the child has been set. If the old child reference equals to the new child, nothing is done, and <c>false</c> is returned.</returns>
-    protected bool ChildSetMemberAlt<T>(ref T childNode, T instanceToSet) where T : class
+    protected bool ChildSetMemberAlt<T>([MaybeNull][AllowNull][NotNullIfNotNull("instanceToSet")] ref T childNode, [AllowNull] T instanceToSet)
     {
       if (object.ReferenceEquals(childNode, instanceToSet))
+      {
         return false;
+      }
+      else
+      {
+        var tmpNode = childNode;
+        childNode = instanceToSet;
 
-      var tmpNode = childNode;
+        if (childNode is IDocumentLeafNode documentLeafNode)
+          documentLeafNode.ParentObject = this;
 
-      childNode = instanceToSet;
-      if (childNode is IDocumentLeafNode)
-        ((IDocumentLeafNode)childNode).ParentObject = this;
+        if (tmpNode is IDisposable disposableNode)
+          disposableNode.Dispose();
 
-      if (tmpNode is IDisposable)
-        ((IDisposable)tmpNode).Dispose();
-
-      return true;
+        return true;
+      }
     }
 
     /// <summary>
@@ -790,7 +794,7 @@ namespace Altaxo.Main
     /// <typeparam name="T">Type of the node to copy.</typeparam>
     /// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
     /// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
-    protected bool ChildCopyToMember<T>([NotNullIfNotNull("fromAnotherChild")][AllowNull] ref T myChild, T fromAnotherChild) where T : IDocumentLeafNode, ICloneable
+    protected bool ChildCopyToMember<T>([MaybeNull][AllowNull][NotNullIfNotNull("fromAnotherChild")] ref T myChild, [AllowNull] T fromAnotherChild) where T : IDocumentLeafNode?, ICloneable?
     {
       if (object.ReferenceEquals(myChild, fromAnotherChild))
         return false;
@@ -819,43 +823,7 @@ namespace Altaxo.Main
       return true;
     }
 
-    /// <summary>
-    /// Copies a document node from another source into a member of this instance.
-    /// If an old instance member (provided in <paramref name="myChild"/> exists and can not be used, it is disposed first.
-    /// The node is then copied using either Main.ICopyFrom or System.ICloneable. The resulting node's <see cref="M:IDocumentLeafNode.ParentObject"/>
-    /// is then set to this instance in order to maintain the parent-child relationship.
-    /// </summary>
-    /// <typeparam name="T">Type of the node to copy.</typeparam>
-    /// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
-    /// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
-    protected bool ChildCopyToMemberC<T>([NotNullIfNotNull("fromAnotherChild")] ref T? myChild, T? fromAnotherChild) where T : class, IDocumentLeafNode, ICloneable
-    {
-      if (object.ReferenceEquals(myChild, fromAnotherChild))
-        return false;
 
-      var oldChild = myChild;
-
-      if (fromAnotherChild is null)
-      {
-        myChild = default!;
-        if (null != oldChild)
-          oldChild.Dispose();
-      }
-      else if ((myChild is Main.ICopyFrom) && myChild.GetType() == fromAnotherChild.GetType())
-      {
-        ((Main.ICopyFrom)myChild).CopyFrom(fromAnotherChild);
-      }
-      else
-      {
-        myChild = (T)(fromAnotherChild.Clone());
-        myChild.ParentObject = this;
-
-        if (null != oldChild)
-          oldChild.Dispose();
-      }
-
-      return true;
-    }
 
     /// <summary>
     /// Copies a document node from another source into a member of this instance.
@@ -867,7 +835,7 @@ namespace Altaxo.Main
     /// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
     /// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
     /// <param name="createNew">If the parameter <paramref name="fromAnotherChild"/> is null, the provided function is used to create a new object of type <typeparamref name="T"/>. This object is then used to set the member.</param>
-    protected bool ChildCopyToMemberOrCreateNew<T>(ref T myChild, T fromAnotherChild, Func<T> createNew) where T : class, IDocumentLeafNode, ICloneable
+    protected bool ChildCopyToMemberOrCreateNew<T>([AllowNull][NotNull] ref T myChild, T fromAnotherChild, Func<T> createNew) where T : class, IDocumentLeafNode, ICloneable
     {
       if (null != fromAnotherChild)
       {
@@ -888,7 +856,7 @@ namespace Altaxo.Main
     /// <typeparam name="T">Type of the node to copy.</typeparam>
     /// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
     /// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
-    protected void ChildCloneToMember<T>([NotNullIfNotNull("fromAnotherChild")][MaybeNull] ref T? myChild, T? fromAnotherChild) where T : class, IDocumentLeafNode, ICloneable
+    protected void ChildCloneToMember<T>([MaybeNull][AllowNull][NotNullIfNotNull("fromAnotherChild")] ref T myChild, [AllowNull] T fromAnotherChild) where T : IDocumentLeafNode?, ICloneable?
     {
       if (object.ReferenceEquals(myChild, fromAnotherChild))
         return;
@@ -919,7 +887,7 @@ namespace Altaxo.Main
     /// <returns>Cloned node with the node's parent already set to this instance.</returns>
     [return: NotNullIfNotNull("fromAnotherChild")]
     [return: MaybeNull]
-    protected T ChildCloneFrom<T>(T fromAnotherChild) where T : IDocumentLeafNode, ICloneable
+    protected T ChildCloneFrom<T>([AllowNull] T fromAnotherChild) where T : IDocumentLeafNode?, ICloneable?
     {
       if (fromAnotherChild is null)
       {

@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -37,12 +38,12 @@ namespace Altaxo.Gui.Workbench
     // additional parameters
 
     private bool _useExceptionBoxForErrorHandler = true;
-    private string _applicationRootPath;
+    private string? _applicationRootPath;
     private bool _allowAddInConfigurationAndExternalAddIns = true;
     private bool _allowUserAddIns;
-    private string _propertiesName;
-    private string _configDirectory;
-    private string _dataDirectory;
+    private string? _propertiesName;
+    private string? _configDirectory;
+    private string? _dataDirectory;
     private string _resourceAssemblyName;
     public List<string> _addInDirectories { get; private set; } = new List<string>();
     public List<string> _addInFiles { get; private set; } = new List<string>();
@@ -77,7 +78,7 @@ namespace Altaxo.Gui.Workbench
       RequestedFileList = requestedFileList ?? throw new ArgumentNullException(nameof(requestedFileList));
       ParameterList = parameterList ?? throw new ArgumentNullException(nameof(parameterList));
 
-      _resourceAssemblyName = System.Reflection.Assembly.GetCallingAssembly().GetName().Name;
+      _resourceAssemblyName = System.Reflection.Assembly.GetCallingAssembly().GetName().Name ?? throw new InvalidOperationException();
       OriginalUICulture = System.Globalization.CultureInfo.CurrentUICulture;
       OriginalCulture = System.Globalization.CultureInfo.CurrentCulture;
     }
@@ -131,7 +132,7 @@ namespace Altaxo.Gui.Workbench
     /// Gets/Sets the application root path to use.
     /// Use null (default) to use the base directory of the application's AppDomain.
     /// </summary>
-    public string ApplicationRootPath
+    public string? ApplicationRootPath
     {
       get { return _applicationRootPath; }
       set { _applicationRootPath = value; }
@@ -142,7 +143,7 @@ namespace Altaxo.Gui.Workbench
     /// settings and user AddIns.
     /// Use null (default) to use "ApplicationData\ApplicationName"
     /// </summary>
-    public string ConfigDirectory
+    public string? ConfigDirectory
     {
       get { return _configDirectory; }
       set { _configDirectory = value; }
@@ -152,7 +153,7 @@ namespace Altaxo.Gui.Workbench
     /// Sets the data directory used to load resources.
     /// Use null (default) to use the default path "ApplicationRootPath\data".
     /// </summary>
-    public string DataDirectory
+    public string? DataDirectory
     {
       get { return _dataDirectory; }
       set { _dataDirectory = value; }
@@ -162,7 +163,7 @@ namespace Altaxo.Gui.Workbench
     /// Sets the name used for the properties file (without path or extension).
     /// Use null (default) to use the default name.
     /// </summary>
-    public string PropertiesName
+    public string? PropertiesName
     {
       get { return _propertiesName; }
       set { _propertiesName = value; }

@@ -311,7 +311,7 @@ namespace Altaxo.Scripting
 
       if (null != myDataSet)
         suspendToken = myDataSet.SuspendGetToken();
-      else if (null != myTable)
+      else
         suspendToken = myTable.SuspendGetToken();
 
       try

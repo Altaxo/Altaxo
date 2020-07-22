@@ -399,10 +399,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       bool changed = false;
       if (_doc.FitEnsemble.Count == 0) // Fitting is fresh, we can add the function silently
       {
-        var newele = new FitElement
-        {
-          FitFunction = func
-        };
+        var newele = new FitElement(func);
         _doc.FitEnsemble.Add(newele);
         _doc.SetDefaultParametersForFitElement(0);
         changed = true;
@@ -437,10 +434,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
             case SelectionChoice.SelectAsAdditional:
               {
-                var newele = new FitElement
-                {
-                  FitFunction = func
-                };
+                var newele = new FitElement(func);
                 _doc.FitEnsemble.Add(newele);
                 _doc.SetDefaultParametersForFitElement(_doc.FitEnsemble.Count - 1);
                 changed = true;

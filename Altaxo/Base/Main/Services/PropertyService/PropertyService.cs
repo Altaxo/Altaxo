@@ -31,6 +31,7 @@ using System.Xml;
 
 namespace Altaxo.Main.Services
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Main.Properties;
 
   public class PropertyService : Altaxo.Main.Services.IPropertyService
@@ -100,7 +101,10 @@ namespace Altaxo.Main.Services
         throw new ArgumentOutOfRangeException(nameof(p), string.Format("No entry found for property key {0}", p));
     }
 
-    public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T> ValueCreationIfNotFound)
+
+    [return: NotNullIfNotNull("ValueCreationIfNotFound")]
+    [return: MaybeNull]
+    public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound)
     {
       if (kind == RuntimePropertyKind.UserAndApplicationAndBuiltin && UserSettings.TryGetValue<T>(p, out var result))
         return result;
@@ -111,7 +115,7 @@ namespace Altaxo.Main.Services
       else if (null != ValueCreationIfNotFound)
         return ValueCreationIfNotFound();
       else
-        throw new ArgumentOutOfRangeException(nameof(p), string.Format("No entry found for property key {0}", p));
+        return default;
     }
 
     #endregion Property getters

@@ -85,8 +85,9 @@ namespace System.Diagnostics.CodeAnalysis
   }
 #endif
 
-#if NETFRAMEWORK || NETCOREAPP3_1
+#if NETFRAMEWORK 
 
+  
   [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
   public sealed class MemberNotNullAttribute : Attribute
   {
@@ -98,6 +99,7 @@ namespace System.Diagnostics.CodeAnalysis
     {
     }
   }
+  
 
   [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
   public sealed class MemberNotNullWhenAttribute : Attribute

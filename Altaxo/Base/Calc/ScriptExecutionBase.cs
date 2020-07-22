@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -1216,9 +1217,10 @@ namespace Altaxo.Calc
 
   public abstract class FitFunctionExeBase : ScriptExecutionBase, Altaxo.Calc.Regression.Nonlinear.IFitFunction
   {
-    protected string[] _independentVariableNames;
-    protected string[] _dependentVariableNames;
-    protected string[] _parameterNames;
+    static readonly string[] _emptyStringArray = new string[0];
+    protected string[] _independentVariableNames = _emptyStringArray;
+    protected string[] _dependentVariableNames = _emptyStringArray;
+    protected string[] _parameterNames = _emptyStringArray;
 
     /// <summary>
     /// Number of independent variables (i.e. x).
@@ -1300,7 +1302,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="i">Index of dependent variable.</param>
     /// <returns>Null by default. You can override this behaviour.</returns>
-    public virtual Altaxo.Calc.Regression.Nonlinear.IVarianceScaling DefaultVarianceScaling(int i)
+    public virtual Altaxo.Calc.Regression.Nonlinear.IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
@@ -1321,14 +1323,13 @@ namespace Altaxo.Calc
     /// </summary>
     protected virtual void OnChanged()
     {
-      if (null != Changed)
-        Changed(this, EventArgs.Empty);
+      Changed?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
     /// Fired when the fit function changed.
     /// </summary>
-    public event EventHandler Changed;
+    public event EventHandler? Changed;
 
     #endregion Change event
   }

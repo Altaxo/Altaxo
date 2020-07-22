@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Gui
 {
@@ -41,5 +42,12 @@ namespace Altaxo.Gui
 
     protected InvalidOperationException NotInitializedException =>
       new InvalidOperationException($"Controller {GetType()} is not property initialized.");
+
+
+    protected void CheckDocumentInitialized<T>([AllowNull][NotNull] ref T doc)
+    {
+      if (doc is null)
+        throw NoDocumentException;
+    }
   }
 }

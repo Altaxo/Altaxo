@@ -458,7 +458,7 @@ namespace Altaxo.Serialization.Xml
       } // end switch
     }
 
-    public void AddArray(string name, object[] val, int count)
+    public void AddArray(string name, object?[] val, int count)
     {
       CreateArray(name, count);
 
@@ -466,7 +466,7 @@ namespace Altaxo.Serialization.Xml
       {
         for (int i = 0; i < count; i++)
         {
-          AddValue("e", val[i]);
+          AddValueOrNull("e", val[i]);
         }
       } // count>0
       CommitArray();

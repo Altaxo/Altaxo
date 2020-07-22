@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Text;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Collections;
 
 namespace Altaxo.Calc.Regression.Nonlinear
@@ -49,7 +51,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       public double[] Xs;
 
       /// <summary>Array of jacobians (derivatives of the function value with respect to the parameters) for temporary purpose.</summary>
-      public double[][] DYs;
+      public double[][]? DYs;
 
       /// <summary>Parameter mapping from the local parameter list to the global parameter list. Positive entries
       /// give the position in the global variable parameter list, negative entries gives the position -entry-1 in the
@@ -64,6 +66,25 @@ namespace Altaxo.Calc.Regression.Nonlinear
       /// Information, which of the rows are valid, i.e. all independent columns contains values, and all used dependent columns contain values in those rows.
       /// </summary>
       public IAscendingIntegerCollection ValidRows;
+
+      public CachedFitElementInfo(
+        double[] parameters,
+        double[] xs,
+        double[] ys,
+        double[][]? dYs,
+        int[] parameterMapping,
+        int[] dependentVariablesInUse,
+        IAscendingIntegerCollection validRows
+        )
+      {
+        Parameters = parameters;
+        Xs = xs;
+        Ys = ys;
+        DYs = dYs;
+        ParameterMapping = parameterMapping;
+        DependentVariablesInUse = dependentVariablesInUse;
+        ValidRows = validRows;
+      }
     }
 
     #endregion inner classes
@@ -90,10 +111,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private double[] _cachedDependentValues; //
 
     /// <summary>If this array is set, the weights are used to scale the fit differences (yreal-yfit).</summary>
-    private double[] _cachedWeights;
+    private double[]? _cachedWeights;
 
     /// <summary>Holds (after the fit) the resulting covariances of the parameters.</summary>
-    private double[] _resultingCovariances;
+    private double[]? _resultingCovariances;
 
     /// <summary>After the fit, this is the resulting sum of squares of the deviations.</summary>
     private double _resultingSumChiSquare;
@@ -118,12 +139,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// Internal function to set up the cached data for the fitting procedure.
     /// </summary>
     /// <param name="paraSet">The set of parameters (the information which parameters are fixed is mainly used here).</param>
+    [MemberNotNull(nameof(_constantParameters), nameof(_cachedVaryingParameters), nameof(_cachedFitElementInfo), nameof(_cachedDependentValues))]
     private void CalculateCachedData(ParameterSet paraSet)
     {
       // Preparation: Store the parameter names by name and index, and store
       // all parameter values in _constantParameters
-      var paraNames = new System.Collections.Hashtable();
-      var varyingParaNames = new System.Collections.Hashtable();
+      var paraNames = new Dictionary<string, int>();
+      var varyingParaNames = new Dictionary<string, int>();
 
       _constantParameters = new double[paraSet.Count];
       int numberOfVaryingParameters = 0;
@@ -148,15 +170,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _cachedFitElementInfo = new CachedFitElementInfo[_fitEnsemble.Count];
       for (int i = 0; i < _fitEnsemble.Count; i++)
       {
-        var info = new CachedFitElementInfo();
-        _cachedFitElementInfo[i] = info;
+        // var info = new CachedFitElementInfo();
+
         FitElement fitEle = _fitEnsemble[i];
 
-        info.ValidRows = fitEle.CalculateValidNumericRows();
+        var validRows = fitEle.CalculateValidNumericRows();
 
-        info.Xs = new double[fitEle.NumberOfIndependentVariables];
-        info.Parameters = new double[fitEle.NumberOfParameters];
-        info.Ys = new double[fitEle.NumberOfDependentVariables];
+        var xs = new double[fitEle.NumberOfIndependentVariables];
+        var parameters = new double[fitEle.NumberOfParameters];
+        var ys = new double[fitEle.NumberOfDependentVariables];
 
         // Calculate the number of used variables
         int numVariablesUsed = 0;
@@ -165,34 +187,46 @@ namespace Altaxo.Calc.Regression.Nonlinear
           if (fitEle.DependentVariables(j) != null)
             ++numVariablesUsed;
         }
-        info.DependentVariablesInUse = new int[numVariablesUsed];
+        var dependentVariablesInUse = new int[numVariablesUsed];
         for (int j = 0, used = 0; j < fitEle.NumberOfDependentVariables; ++j)
         {
           if (fitEle.DependentVariables(j) != null)
-            info.DependentVariablesInUse[used++] = j;
+            dependentVariablesInUse[used++] = j;
         }
 
         // calculate the total number of data points
-        _cachedNumberOfData += numVariablesUsed * info.ValidRows.Count;
+        _cachedNumberOfData += numVariablesUsed * validRows.Count;
 
         // now create the parameter mapping
-        info.ParameterMapping = new int[fitEle.NumberOfParameters];
+        var parameterMapping = new int[fitEle.NumberOfParameters];
 
-        for (int j = 0; j < info.ParameterMapping.Length; ++j)
+        for (int j = 0; j < parameterMapping.Length; ++j)
         {
-          if (!paraNames.Contains(fitEle.ParameterName(j)))
+          if (!paraNames.ContainsKey(fitEle.ParameterName(j)))
             throw new ArgumentException(string.Format("ParameterSet does not contain parameter {0}, which is used by function[{1}]", fitEle.ParameterName(j), i));
 
           int idx = (int)paraNames[fitEle.ParameterName(j)];
           if (paraSet[idx].Vary)
           {
-            info.ParameterMapping[j] = (int)varyingParaNames[fitEle.ParameterName(j)];
+            parameterMapping[j] = (int)varyingParaNames[fitEle.ParameterName(j)];
           }
           else
           {
-            info.ParameterMapping[j] = -idx - 1;
+            parameterMapping[j] = -idx - 1;
           }
         }
+
+        _cachedFitElementInfo[i] = new CachedFitElementInfo(
+          parameters: parameters,
+          xs: xs,
+          ys: ys,
+          dYs: null,
+          parameterMapping: parameterMapping,
+          dependentVariablesInUse: dependentVariablesInUse,
+          validRows: validRows
+          ); ;
+
+
       }
 
       _cachedDependentValues = new double[_cachedNumberOfData];
@@ -204,7 +238,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
         GetWeights(_cachedWeights);
       }
       else
+      {
+
         _cachedWeights = null;
+      }
     }
 
     /// <summary>Number of total valid data points (y-values) of the fit ensemble. This is the array
@@ -227,6 +264,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       get
       {
+        if (_resultingCovariances is null)
+          throw new InvalidOperationException("Please call one of the Fit functions first before accessing the result.");
         return _resultingCovariances;
       }
     }
@@ -272,7 +311,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         {
           for (int j = 0; j < info.DependentVariablesInUse.Length; ++j)
           {
-            values[outputValuesPointer++] = fitEle.DependentVariables(info.DependentVariablesInUse[j])[validRows[i]];
+            values[outputValuesPointer++] = fitEle.DependentVariables(info.DependentVariablesInUse[j])?[validRows[i]] ?? double.NaN;
           }
         }
       }
@@ -299,8 +338,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
         {
           for (int j = 0; j < info.DependentVariablesInUse.Length; ++j)
           {
-            double yreal = fitEle.DependentVariables(info.DependentVariablesInUse[j])[validRows[i]];
-            values[outputValuesPointer++] = fitEle.GetErrorEvaluation(info.DependentVariablesInUse[j]).GetWeight(yreal, validRows[i]);
+            double yreal = fitEle.DependentVariables(info.DependentVariablesInUse[j])?[validRows[i]] ?? double.NaN;
+            values[outputValuesPointer++] = fitEle.GetErrorEvaluation(info.DependentVariablesInUse[j])?.GetWeight(yreal, validRows[i]) ?? 1;
           }
         }
       }
@@ -363,7 +402,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <remarks>The values of the fit elements are stored in the order from element_0 to element_n. If there is more
     /// than one used dependent variable per fit element, the output values are stored in interleaved order.
     /// </remarks>
-    public void EvalulateFitValues(double[] parameter, double[] outputValues, object additionalData)
+    public void EvalulateFitValues(double[] parameter, double[] outputValues, object? additionalData)
     {
       EvaluateFitValues(parameter, outputValues, false);
     }
@@ -386,6 +425,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
         CachedFitElementInfo info = _cachedFitElementInfo[ele];
         FitElement fitEle = _fitEnsemble[ele];
 
+        if (fitEle.FitFunction is null)
+          throw new InvalidOperationException($"FitFunction of FitElement[{ele}] is not set.");
+
         // copy of the parameter to the temporary array
         for (int i = 0; i < info.Parameters.Length; i++)
         {
@@ -399,7 +441,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         for (int i = 0; i < numValidRows; ++i)
         {
           for (int k = info.Xs.Length - 1; k >= 0; k--)
-            info.Xs[k] = fitEle.IndependentVariables(k)[validRows[i]];
+            info.Xs[k] = fitEle.IndependentVariables(k)?[validRows[i]] ?? throw new ObjectDisposedException($"Independent variables column k={k} not available or disposed.");
 
           fitEle.FitFunction.Evaluate(info.Xs, info.Parameters, info.Ys);
 
@@ -460,7 +502,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// than one used dependent variable per fit element, the output values are stored in interleaved order. The derivatives
     /// on one fitting value  are stored in successive order.
     /// </remarks>
-    public void EvaluateFitJacobian(double[] parameter, double[] outputValues, object adata)
+    public void EvaluateFitJacobian(double[] parameter, double[] outputValues, object? adata)
     {
       outputValues.Initialize(); // make sure every element contains zero
 
@@ -469,6 +511,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         CachedFitElementInfo info = _cachedFitElementInfo[ele];
         FitElement fitEle = _fitEnsemble[ele];
+
+        if (!(fitEle.FitFunction is IFitFunctionWithGradient fitFunctionWithGradient))
+          throw new InvalidOperationException($"FitFunction of FitElement[{ele}] must be implementing {nameof(IFitFunctionWithGradient)}");
 
         // make sure, that the dimension of the DYs is ok
         if (info.DYs == null || info.DYs.Length != fitEle.NumberOfDependentVariables || info.DYs[0].Length != fitEle.NumberOfParameters)
@@ -487,7 +532,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         for (int i = 0; i < numValidRows; ++i)
         {
           for (int k = info.Xs.Length - 1; k >= 0; k--)
-            info.Xs[k] = fitEle.IndependentVariables(k)[validRows[i]];
+            info.Xs[k] = fitEle.IndependentVariables(k)?[validRows[i]] ?? throw new ObjectDisposedException($"Independent variables column k={k} not available or disposed."); ;
 
           ((IFitFunctionWithGradient)fitEle.FitFunction).EvaluateGradient(info.Xs, info.Parameters, info.DYs);
 
@@ -594,7 +639,7 @@ else
     public void Fit2Jac()
     {
       //int info = 0;
-      object workingmemory = null;
+      object? workingmemory = null;
 
       NonLinearFit2.LEVMAR_DER(
           new NonLinearFit2.FitFunction(EvalulateFitValues),
