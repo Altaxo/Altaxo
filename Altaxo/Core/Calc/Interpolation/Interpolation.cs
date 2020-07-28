@@ -1205,14 +1205,14 @@ tryinterpolation:
         // i = 0
         num = Math.Abs(m(lo1) - m(lo)) * m_m1 + Math.Abs(m_m1 - m_m2) * m(lo);
         den = Math.Abs(m(lo1) - m(lo)) + Math.Abs(m_m1 - m_m2);
-        y1[lo] = (den != 0.0) ? num / den : 0.0;
+        y1[lo] = (den != 0.0) ? num / den : m(lo);
 
         // i = 1
         if (x.Count > 3)
         {
           num = Math.Abs(m(lo2) - m(lo1)) * m(lo) + Math.Abs(m(lo) - m_m1) * m(lo1);
           den = Math.Abs(m(lo2) - m(lo1)) + Math.Abs(m(lo) - m_m1);
-          y1[lo1] = (den != 0.0) ? num / den : 0.0;
+          y1[lo1] = (den != 0.0) ? num / den : m(lo1);
 
           for (int i = lo2; i < hi1; i++)
           {
@@ -1222,13 +1222,13 @@ tryinterpolation:
               mim2 = m(i - 2);
             num = Math.Abs(mip1 - mi) * mim1 + Math.Abs(mim1 - mim2) * mi;
             den = Math.Abs(mip1 - mi) + Math.Abs(mim1 - mim2);
-            y1[i] = (den != 0.0) ? num / den : 0.0;
+            y1[i] = (den != 0.0) ? num / den : mi;
           }
 
           // i = n - 2
           num = Math.Abs(m_p1 - m(hi1)) * m(hi2) + Math.Abs(m(hi2) - m(hi3)) * m(hi1);
           den = Math.Abs(m_p1 - m(hi1)) + Math.Abs(m(hi2) - m(hi3));
-          y1[hi1] = (den != 0.0) ? num / den : 0.0;
+          y1[hi1] = (den != 0.0) ? num / den : m(hi1);
         }
         else
         { // exactly three elements
@@ -1240,7 +1240,7 @@ tryinterpolation:
         // i = n - 1
         num = Math.Abs(m_p2 - m_p1) * m(hi1) + Math.Abs(m(hi1) - m(hi2)) * m_p1;
         den = Math.Abs(m_p2 - m_p1) + Math.Abs(m(hi1) - m(hi2));
-        y1[hi] = (den != 0.0) ? num / den : 0.0;
+        y1[hi] = (den != 0.0) ? num / den : m_p1;
 
         // calculate remaining spline coefficients y2(i) and y3(i)
         CubicSplineCoefficients(x, y, y1, y2, y3);
