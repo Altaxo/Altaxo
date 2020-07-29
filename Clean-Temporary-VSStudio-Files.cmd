@@ -1,4 +1,5 @@
 del /F /S /Q .\temp\*
+rmdir /S /Q .\.vs
 
 rmdir /S /Q .\AddIns\D3D\D3DPresentation\obj
 rmdir /S /Q .\AddIns\D3D\D3DPresentation\bin

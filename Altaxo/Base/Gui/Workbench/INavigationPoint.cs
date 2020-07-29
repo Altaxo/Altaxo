@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 
 namespace Altaxo.Gui.Workbench
@@ -67,7 +68,7 @@ namespace Altaxo.Gui.Workbench
     /// Gets the specific data, if any, needed to
     /// navigate to this <see cref="INavigationPoint"/>.
     /// </summary>
-    object NavigationData
+    object? NavigationData
     {
       get;
     }

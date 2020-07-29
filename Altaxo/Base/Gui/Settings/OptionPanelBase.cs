@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,9 +30,9 @@ using System.Text;
 
 namespace Altaxo.Gui.Settings
 {
-  public abstract class OptionPanelBase<T> : IOptionPanel where T : IMVCANController
+  public abstract class OptionPanelBase<T> : IOptionPanel where T : class, IMVCANController
   {
-    protected T _controller;
+    protected T? _controller;
 
     /// <summary>
     /// Creates the controller and calls _controller.InitializeDocument.
@@ -45,7 +46,7 @@ namespace Altaxo.Gui.Settings
     /// </summary>
     protected abstract void ProcessControllerResult();
 
-    public object Owner { get; set; }
+    public object? Owner { get; set; }
 
     public object ViewObject
     {

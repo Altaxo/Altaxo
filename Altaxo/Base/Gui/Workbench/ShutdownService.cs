@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -43,7 +44,7 @@ namespace Altaxo.Gui.Workbench
     /// This is a weak event in order to prevent garbage collection of item that subscribe to this event.
     /// The event is raised during stage 3 <see cref="OnClosingStage3_SignalShutdownToken"/>.
     /// </summary>
-    public event EventHandler Closed
+    public event EventHandler? Closed
     {
       add
       {
@@ -95,7 +96,15 @@ namespace Altaxo.Gui.Workbench
           });
     }
 
-    public string CurrentReasonPreventingShutdown
+    /// <summary>
+    /// Gets the current reason that prevents shutdown.
+    /// If there isn't any reason, returns null.
+    /// If there are multiple reasons, only one of them is returned.
+    /// </summary>
+    /// <remarks>
+    /// This property is thread-safe.
+    /// </remarks>
+    public string? CurrentReasonPreventingShutdown
     {
       get
       {

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace Altaxo.Gui.Settings
 {
   public interface IOptionPanel
   {
-    void Initialize(object optionPanelOwner);
+    void Initialize(object? optionPanelOwner);
 
     object ViewObject { get; }
 

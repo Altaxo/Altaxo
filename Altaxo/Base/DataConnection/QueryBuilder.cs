@@ -26,6 +26,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -77,7 +78,7 @@ namespace Altaxo.DataConnection
     /// <param name="schema"><see cref="OleDbSchema"/> used by the query builder.</param>
     public QueryBuilder(OleDbSchema schema)
     {
-      _sql = null;
+      _sql = string.Empty;
       _schema = schema;
       _queryFields = new QueryFieldCollection();
       _queryFields.ListChanged += _queryFields_ListChanged;
@@ -100,7 +101,7 @@ namespace Altaxo.DataConnection
         if (_schema.ConnectionString != value)
         {
           _schema.ConnectionString = value;
-          _sql = null;
+          _sql = string.Empty;
           QueryFields.Clear();
         }
       }
@@ -126,7 +127,7 @@ namespace Altaxo.DataConnection
         if (_groupBy != value)
         {
           _groupBy = value;
-          _sql = null;
+          _sql = string.Empty;
         }
       }
     }
@@ -142,7 +143,7 @@ namespace Altaxo.DataConnection
         if (_gbExtension != value)
         {
           _gbExtension = value;
-          _sql = null;
+          _sql = string.Empty;
         }
       }
     }
@@ -156,7 +157,7 @@ namespace Altaxo.DataConnection
       set
       {
         _top = value;
-        _sql = null;
+        _sql = string.Empty;
       }
     }
 
@@ -169,7 +170,7 @@ namespace Altaxo.DataConnection
       set
       {
         _distinct = value;
-        _sql = null;
+        _sql = string.Empty;
       }
     }
 
@@ -181,7 +182,7 @@ namespace Altaxo.DataConnection
     {
       get
       {
-        if (_sql == null || _sqlIsDirty)
+        if (string.IsNullOrEmpty(_sql) || _sqlIsDirty)
         {
           _sqlIsDirty = false;
           _sql = BuildSqlStatement();
@@ -356,11 +357,10 @@ namespace Altaxo.DataConnection
         // get relation
         var dt1 = qTables[index];
         var dt2 = qTables[index + 1];
-        DataRelation dr = GetRelation(dt1, dt2);
+        DataRelation? dr = GetRelation(dt1, dt2) ?? throw new InvalidOperationException("Unable to get data relation");
 
         // build join statement
-        qJoins.Add(string.Format("{0}.{1} = {2}.{3}",
-                    OleDbSchema.GetFullTableName(dr.ParentTable),
+        qJoins.Add(string.Format("{0}.{1} = {2}.{3}", OleDbSchema.GetFullTableName(dr.ParentTable),
           dr.ParentColumns[0].ColumnName,
                     OleDbSchema.GetFullTableName(dr.ChildTable),
           dr.ChildColumns[0].ColumnName));
@@ -443,7 +443,7 @@ namespace Altaxo.DataConnection
     }
 
     // get the relation between two tables (or null if there's no relation)
-    private DataRelation GetRelation(DataTable dt1, DataTable dt2)
+    private DataRelation? GetRelation(DataTable dt1, DataTable dt2)
     {
       foreach (DataRelation dr in _schema.Relations)
       {

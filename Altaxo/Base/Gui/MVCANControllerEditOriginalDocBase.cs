@@ -34,7 +34,7 @@ namespace Altaxo.Gui
   /// </summary>
   /// <typeparam name="TModel">The type of the document to edit.</typeparam>
   /// <typeparam name="TView">The type of the view.</typeparam>
-  public abstract class MVCANControllerEditOriginalDocBase<TModel, TView> : IMVCANController
+  public abstract class MVCANControllerEditOriginalDocBase<TModel, TView> : ControllerBase, IMVCANController
     where TView : class
     where TModel : ICloneable
   {

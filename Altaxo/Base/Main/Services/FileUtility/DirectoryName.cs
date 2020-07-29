@@ -47,12 +47,13 @@ namespace Altaxo.Main.Services
     /// Creates a DirectoryName instance from the string.
     /// It is valid to pass null or an empty string to this method (in that case, a null reference will be returned).
     /// </summary>
-    public static DirectoryName? Create(string DirectoryName)
+    [return: NotNullIfNotNull("directoryName")]
+    public static DirectoryName? Create(string directoryName)
     {
-      if (string.IsNullOrEmpty(DirectoryName))
+      if (string.IsNullOrEmpty(directoryName))
         return null;
       else
-        return new DirectoryName(DirectoryName);
+        return new DirectoryName(directoryName);
     }
 
     [Obsolete("The input already is a DirectoryName")]

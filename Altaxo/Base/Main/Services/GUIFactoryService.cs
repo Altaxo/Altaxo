@@ -89,7 +89,7 @@ namespace Altaxo.Main.Services
     /// <returns>The controller for that document when found.</returns>
     public IMVCController? GetController(object[] creationArgs, System.Type? overrideArg0Type, System.Type expectedControllerType, UseDocument copyDocument)
     {
-      if (!ReflectionService.IsSubClassOfOrImplements(expectedControllerType, typeof(IMVCController)))
+      if (!(typeof(IMVCController).IsAssignableFrom((expectedControllerType))))
         throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
 
       object? result = null;
@@ -97,14 +97,25 @@ namespace Altaxo.Main.Services
       // 1st search for all classes that wear the UserControllerForObject attribute
       ReflectionService.IAttributeForClassList list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(typeof(UserControllerForObjectAttribute), creationArgs[0], overrideArg0Type);
 
+      var types = new Type[creationArgs.Length];
+      for (int i = 0; i < types.Length; ++i)
+        types[i] = creationArgs[i].GetType();
+
       foreach (Type definedType in list.Types)
       {
         if (typeof(IMVCANController).IsAssignableFrom(definedType) && expectedControllerType.IsAssignableFrom(definedType))
         {
-          var mvcan = (IMVCANController)(Activator.CreateInstance(definedType) ?? throw new InvalidOperationException($"Unable to create instance of type {definedType}"));
-          mvcan.UseDocumentCopy = copyDocument;
-          if (mvcan.InitializeDocument(creationArgs))
-            result = mvcan;
+          // First, try to use a suited constructor
+          if (definedType.GetConstructor(types) is { } constructorInfo)
+            result = constructorInfo.Invoke(creationArgs);
+
+          if (result is null) // else use a constructor with no arguments, and then call InitializeDocument
+          {
+            var mvcan = (IMVCANController)(Activator.CreateInstance(definedType) ?? throw new InvalidOperationException($"Unable to create instance of type {definedType}"));
+            mvcan.UseDocumentCopy = copyDocument;
+            if (mvcan.InitializeDocument(creationArgs))
+              result = mvcan;
+          }
         }
         else
         {

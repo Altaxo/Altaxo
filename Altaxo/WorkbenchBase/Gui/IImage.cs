@@ -99,10 +99,7 @@ namespace Altaxo.Gui
 
     public override bool Equals(object obj)
     {
-      var other = obj as ResourceServiceImage;
-      if (other == null)
-        return false;
-      return resourceName == other.resourceName;
+      return obj is ResourceServiceImage other ? resourceName == other.resourceName : false;
     }
 
     public override int GetHashCode()

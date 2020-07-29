@@ -43,7 +43,7 @@ namespace Altaxo.Units
     private SIPrefix _denominatorPrefix;
     private IUnit _denominatorUnit;
 
-    public UnitRatioComposite(SIPrefix nominatorPrefix, IUnit nominatorUnit, SIPrefix denominatorPrefix, IUnit denominatorUnit)
+    public UnitRatioComposite(SIPrefix? nominatorPrefix, IUnit nominatorUnit, SIPrefix? denominatorPrefix, IUnit denominatorUnit)
     {
       _nominatorPrefix = nominatorPrefix ?? SIPrefix.None;
       _nominatorUnit = nominatorUnit ?? throw new ArgumentException(nameof(nominatorUnit));

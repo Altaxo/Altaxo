@@ -41,11 +41,9 @@ namespace Altaxo.Gui
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>The document to edit. If <see cref="_useDocumentCopy"/> is true, this is a copy of the original document; otherwise, it is the original document itself.</summary>
-    [MaybeNull]
     protected TModel _doc;
 
     /// <summary>The original document. If <see cref="_useDocumentCopy"/> is false, it maybe has been edited by this controller.</summary>
-    [MaybeNull]
     protected TModel _originalDoc;
 
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
@@ -106,7 +104,7 @@ namespace Altaxo.Gui
     /// <exception cref="System.ObjectDisposedException">The controller was already disposed.</exception>
     protected virtual void Initialize(bool initData)
     {
-      if (null == _doc)
+      if (_doc is null)
         throw new InvalidOperationException("This controller was not initialized with a document.");
       if (IsDisposed)
         throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);

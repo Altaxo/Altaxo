@@ -71,8 +71,8 @@ namespace Altaxo.Gui
       {
         var oldValue = _value;
         _value = value;
-        if (!object.Equals(oldValue, value) && null != PropertyChanged)
-          PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs("Value"));
+        if (!object.Equals(oldValue, value))
+          PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(Value)));
       }
     }
   }

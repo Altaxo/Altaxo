@@ -103,7 +103,7 @@ namespace Altaxo.Main.Services
     /// Gets the service that is cached here.
     /// </summary>
     /// <value>
-    /// The service.
+    /// The service, or null, if it was not found.
     /// </value>
     public T? Instance
     {
@@ -115,6 +115,25 @@ namespace Altaxo.Main.Services
         }
 
         return _instance;
+      }
+    }
+
+    /// <summary>
+    /// Gets the service that is cached here. An <see cref="InvalidOperationException"/> is thrown if the service could not be retrieved.
+    /// </summary>
+    /// <value>
+    /// The service.
+    /// </value>
+    public T RequiredInstance
+    {
+      get
+      {
+        if (_instance is null && !_instanceRetrievalTried)
+        {
+          EhServiceChanged();
+        }
+
+        return _instance ?? throw new InvalidOperationException($"Service of type {typeof(T)} was not found.");
       }
     }
 

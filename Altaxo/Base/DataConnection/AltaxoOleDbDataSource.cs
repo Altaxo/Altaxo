@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -36,7 +38,7 @@ namespace Altaxo.DataConnection
     protected Data.IDataSourceImportOptions _importOptions;
     private OleDbDataQuery _dataQuery = OleDbDataQuery.Empty;
 
-    protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
+    protected Altaxo.Main.TriggerBasedUpdate? _triggerBasedUpdate;
 
     private int _updateReentrancyCount;
 
@@ -52,8 +54,22 @@ namespace Altaxo.DataConnection
       _dataQuery = new OleDbDataQuery(selectionStatement, connectionString);
     }
 
-    protected AltaxoOleDbDataSource()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    protected AltaxoOleDbDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
+    }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
+    protected AltaxoOleDbDataSource(AltaxoOleDbDataSource from)
+    {
+      CopyFrom(from);
+    }
+
+    [MemberNotNull(nameof(_dataQuery), nameof(_importOptions))]
+    public virtual void CopyFrom(AltaxoOleDbDataSource from)
+    {
+      ChildCopyToMember(ref _importOptions, from._importOptions);
+      CopyHelper.CopyImmutable(ref _dataQuery, from._dataQuery);
     }
 
     public virtual bool CopyFrom(object obj)
@@ -61,11 +77,9 @@ namespace Altaxo.DataConnection
       if (object.ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as AltaxoOleDbDataSource;
-      if (null != from)
+      if (obj is AltaxoOleDbDataSource from)
       {
-        ChildCopyToMember(ref _importOptions, from._importOptions);
-        CopyHelper.CopyImmutable(ref _dataQuery, from._dataQuery);
+        CopyFrom(from);
         EhSelfChanged(EventArgs.Empty);
         return true;
       }
@@ -78,15 +92,13 @@ namespace Altaxo.DataConnection
     /// <returns>A clone of this instance.</returns>
     public object Clone()
     {
-      var result = new AltaxoOleDbDataSource();
-      result.CopyFrom(this);
-      return result;
+      return new AltaxoOleDbDataSource(this);
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (null != _importOptions)
-        yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null, "ImportOptions");
+        yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null!, "ImportOptions");
     }
 
     #endregion Construction
@@ -109,9 +121,9 @@ namespace Altaxo.DataConnection
         info.AddValue("ImportOptions", s._importOptions);
       }
 
-      protected virtual AltaxoOleDbDataSource SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AltaxoOleDbDataSource SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new AltaxoOleDbDataSource() : (AltaxoOleDbDataSource)o);
+        var s = (o == null ? new AltaxoOleDbDataSource(info) : (AltaxoOleDbDataSource)o);
 
         s._isDeserializationInProgress = true;
         s._dataQuery = (OleDbDataQuery)info.GetValue("DataQuery", s);
@@ -121,7 +133,7 @@ namespace Altaxo.DataConnection
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -134,7 +146,7 @@ namespace Altaxo.DataConnection
 
     #region Properties
 
-    public override Main.IDocumentNode ParentObject
+    public override Main.IDocumentNode? ParentObject
     {
       get
       {
@@ -155,8 +167,8 @@ namespace Altaxo.DataConnection
       }
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("DataQuery");
+        if (value is null)
+          throw new ArgumentNullException(nameof(DataQuery));
 
         var oldValue = _dataQuery;
         _dataQuery = value;
@@ -176,8 +188,8 @@ namespace Altaxo.DataConnection
       }
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("ImportOptions");
+        if (value is null)
+          throw new ArgumentNullException(nameof(ImportOptions));
 
         var oldValue = _importOptions;
 
@@ -278,12 +290,9 @@ namespace Altaxo.DataConnection
 
     private void SwitchOffWatching()
     {
-      IDisposable disp;
-
-      disp = _triggerBasedUpdate;
+      var disp = _triggerBasedUpdate;
       _triggerBasedUpdate = null;
-      if (null != disp)
-        disp.Dispose();
+      disp?.Dispose();
     }
 
     protected override void Dispose(bool disposing)

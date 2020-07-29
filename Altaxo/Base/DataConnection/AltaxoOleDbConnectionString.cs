@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,12 +37,12 @@ namespace Altaxo.DataConnection
   {
     private const string UserIDKey = "User ID";
     private const string PasswordKey = "Password";
-    private static AltaxoOleDbConnectionString _emptyInstance = new AltaxoOleDbConnectionString(null, null);
+    private static AltaxoOleDbConnectionString _emptyInstance = new AltaxoOleDbConnectionString(string.Empty, null);
 
     private string _originalConnectionString;
     private string _connectionStringWithCredentials;
 
-    public AltaxoOleDbConnectionString(string originalConnectionString, LoginCredentials credentials)
+    public AltaxoOleDbConnectionString(string originalConnectionString, LoginCredentials? credentials)
     {
       _originalConnectionString = originalConnectionString;
 
@@ -71,21 +72,20 @@ namespace Altaxo.DataConnection
     public LoginCredentials GetCredentials()
     {
       var connBuilder = new System.Data.OleDb.OleDbConnectionStringBuilder(_originalConnectionString);
-      string username = null, password = null;
+      string? username = null, password = null;
       if (connBuilder.ContainsKey(UserIDKey))
         username = connBuilder[UserIDKey] as string;
       if (connBuilder.ContainsKey(PasswordKey))
         password = connBuilder[PasswordKey] as string;
-      return new LoginCredentials(username, password);
+      return new LoginCredentials(username ?? string.Empty, password ?? string.Empty);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var from = obj as AltaxoOleDbConnectionString;
-      if (null == from)
-        return false;
-      else
+      if (obj is AltaxoOleDbConnectionString from)
         return _originalConnectionString == from._originalConnectionString && _connectionStringWithCredentials == from._connectionStringWithCredentials;
+      else
+        return false;
     }
 
     public override string ToString()

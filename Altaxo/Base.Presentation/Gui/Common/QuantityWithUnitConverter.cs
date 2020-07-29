@@ -276,14 +276,20 @@ namespace Altaxo.Gui.Common
     /// <returns>A validation result depending on the result of the validation.</returns>
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
-      string s = (string)value;
-      var result = ConvertValidate(s, out var q);
-      if (result.IsValid)
+      if (value is string s)
       {
-        _lastConvertedString = s;
-        _lastConvertedQuantity = q;
+        var result = ConvertValidate(s, out var q);
+        if (result.IsValid)
+        {
+          _lastConvertedString = s;
+          _lastConvertedQuantity = q;
+        }
+        return result;
       }
-      return result;
+      else
+      {
+        return new ValidationResult(false, "Provided value is not a string!");
+      }
     }
 
     private ValidationResult ConvertValidate(string s, out DimensionfulQuantity result)

@@ -85,9 +85,11 @@ namespace System.Diagnostics.CodeAnalysis
   }
 #endif
 
-#if NETFRAMEWORK 
 
-  
+
+#if !NET5_0
+
+
   [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
   public sealed class MemberNotNullAttribute : Attribute
   {
@@ -99,7 +101,7 @@ namespace System.Diagnostics.CodeAnalysis
     {
     }
   }
-  
+
 
   [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
   public sealed class MemberNotNullWhenAttribute : Attribute

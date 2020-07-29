@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -57,6 +58,8 @@ namespace Altaxo.Gui.Common
     /// </summary>
     public QuantityWithUnitTextBox()
     {
+      _converter = new QuantityWithUnitConverter(this, SelectedQuantityProperty);
+
       var binding = new Binding
       {
         Source = this,
@@ -64,7 +67,6 @@ namespace Altaxo.Gui.Common
         Mode = BindingMode.TwoWay,
         UpdateSourceTrigger = UpdateSourceTrigger.LostFocus
       };
-      _converter = new QuantityWithUnitConverter(this, SelectedQuantityProperty);
       binding.Converter = _converter;
       binding.ValidationRules.Add(_converter);
       _converter.BindingExpression = SetBinding(TextBox.TextProperty, binding);

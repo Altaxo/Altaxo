@@ -80,5 +80,13 @@ namespace Altaxo.Gui.Units
       _quantity = quantityName;
       _environment = environment;
     }
+
+    public static UserDefinedUnitEnvironment Empty
+    {
+      get
+      {
+        return new UserDefinedUnitEnvironment(string.Empty, string.Empty, null!);
+      }
+    }
   }
 }

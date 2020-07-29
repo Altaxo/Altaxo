@@ -161,7 +161,7 @@ namespace Altaxo.Main
     }
 
     [return: MaybeNull]
-    public static V GetOrDefault<K, V>(this IReadOnlyDictionary<K, V> dict, K key)
+    public static V GetOrDefault<K, V>(this IReadOnlyDictionary<K, V> dict, K key) where K : notnull
     {
       dict.TryGetValue(key, out var ret);
       return ret;
@@ -305,11 +305,11 @@ namespace Altaxo.Main
     /// <exception cref="InvalidOperationException">The input sequence is empty</exception>
     public static T MinBy<T, K>(this IEnumerable<T> source, Func<T, K> keySelector, IComparer<K> keyComparer)
     {
-      if (source == null)
-        throw new ArgumentNullException("source");
-      if (keySelector == null)
-        throw new ArgumentNullException("selector");
-      if (keyComparer == null)
+      if (source is null)
+        throw new ArgumentNullException(nameof(source));
+      if (keySelector is null)
+        throw new ArgumentNullException(nameof(keySelector));
+      if (keyComparer is null)
         keyComparer = Comparer<K>.Default;
       using (var enumerator = source.GetEnumerator())
       {
