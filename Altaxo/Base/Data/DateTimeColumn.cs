@@ -38,7 +38,7 @@ namespace Altaxo.Data
     Altaxo.Data.DataColumn,
     INumericColumn
   {
-    static readonly DateTime[] _emptyDateTimeArray = new DateTime[0];
+    private static readonly DateTime[] _emptyDateTimeArray = new DateTime[0];
     private DateTime[] _data = _emptyDateTimeArray;
     private int _capacity; // shortcut to _data.Length;
     private int _count;
@@ -152,11 +152,11 @@ namespace Altaxo.Data
       var oldCount = _count;
       _count = 0;
 
-      if (o is DateTimeColumn dtcol)
+      if (o is DateTimeColumn dcol)
       {
+        _data = dcol._data.Length == 0 ? _emptyDateTimeArray : (DateTime[])dcol._data.Clone();
         _capacity = _data?.Length ?? 0;
-        _data = _capacity == 0 ? _emptyDateTimeArray : (DateTime[])dtcol._data.Clone();
-        _count = dtcol._count;
+        _count = dcol._count;
       }
       else
       {
