@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Collections;
@@ -50,8 +52,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static void MultiplyColumnsToMatrix(IWorksheetController ctrl)
     {
-      string err = MultiplyColumnsToMatrix(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns);
-      if (null != err)
+      var err = MultiplyColumnsToMatrix(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns);
+      if (!string.IsNullOrEmpty(err))
         Current.Gui.ErrorMessageBox(err, "An error occured");
     }
 
@@ -67,7 +69,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// number of rows. The first half of selected columns form a matrix of dimensions(firstrowcount,halfselected), and the second half
     /// of selected columns form a matrix of dimension(halfselected, secondrowcount). The resulting matrix has dimensions (firstrowcount,secondrowcount) and is
     /// stored in a separate worksheet.</remarks>
-    public static string MultiplyColumnsToMatrix(
+    public static string? MultiplyColumnsToMatrix(
       Altaxo.AltaxoDocument mainDocument,
       Altaxo.Data.DataTable srctable,
       IAscendingIntegerCollection selectedColumns
@@ -169,8 +171,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       };
       if (Current.Gui.ShowDialog(ivictrl, "Set maximum number of factors", false))
       {
-        string err = PrincipalComponentAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, true, ivictrl.EnteredContents);
-        if (null != err)
+        var err = PrincipalComponentAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, true, ivictrl.EnteredContents);
+        if (!string.IsNullOrEmpty(err))
           Current.Gui.ErrorMessageBox(err);
       }
     }
@@ -184,8 +186,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       };
       if (Current.Gui.ShowDialog(ivictrl, "Set maximum number of factors", false))
       {
-        string err = PrincipalComponentAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, false, ivictrl.EnteredContents);
-        if (null != err)
+        var err = PrincipalComponentAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, false, ivictrl.EnteredContents);
+        if (!string.IsNullOrEmpty(err))
           Current.Gui.ErrorMessageBox(err);
       }
     }
@@ -199,40 +201,42 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="selectedRows">The selected rows.</param>
     /// <param name="bHorizontalOrientedSpectrum">True if a spectrum is a single row, False if a spectrum is a single column.</param>
     /// <param name="maxNumberOfFactors">The maximum number of factors to calculate.</param>
-    /// <returns></returns>
-    public static string PrincipalComponentAnalysis(
+    /// <returns>Null if successfull; otherwise, an error message.</returns>
+    public static string? PrincipalComponentAnalysis(
       Altaxo.AltaxoDocument mainDocument,
       Altaxo.Data.DataTable srctable,
-      IAscendingIntegerCollection selectedColumns,
-      IAscendingIntegerCollection selectedRows,
+      IAscendingIntegerCollection? selectedColumns,
+      IAscendingIntegerCollection? selectedRows,
       bool bHorizontalOrientedSpectrum,
       int maxNumberOfFactors
       )
     {
-      bool bUseSelectedColumns = (null != selectedColumns && 0 != selectedColumns.Count);
-      int prenumcols = bUseSelectedColumns ? selectedColumns.Count : srctable.DataColumns.ColumnCount;
+      var usedSelectedColumns = selectedColumns is null || selectedColumns.Count == 0 ? null : selectedColumns;
+      int prenumcols = usedSelectedColumns is null ? srctable.DataColumns.ColumnCount : usedSelectedColumns.Count;
 
       // check for the number of numeric columns
       int numcols = 0;
       for (int i = 0; i < prenumcols; i++)
       {
-        int idx = bUseSelectedColumns ? selectedColumns[i] : i;
+        int idx = usedSelectedColumns is null ? i : usedSelectedColumns[i];
         if (srctable[i] is Altaxo.Data.INumericColumn)
           numcols++;
       }
 
       // check the number of rows
-      bool bUseSelectedRows = (null != selectedRows && 0 != selectedRows.Count);
+      var usedSelectedRows = (selectedRows is null || 0 == selectedRows.Count) ? null : selectedRows;
 
       int numrows;
-      if (bUseSelectedRows)
-        numrows = selectedRows.Count;
+      if (!(usedSelectedRows is null))
+      {
+        numrows = usedSelectedRows.Count;
+      }
       else
       {
         numrows = 0;
         for (int i = 0; i < numcols; i++)
         {
-          int idx = bUseSelectedColumns ? selectedColumns[i] : i;
+          int idx = usedSelectedColumns is null ? i : usedSelectedColumns[i];
           numrows = Math.Max(numrows, srctable[idx].Count);
         }
       }
@@ -252,13 +256,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
         int ccol = 0; // current column in the matrix
         for (int i = 0; i < prenumcols; i++)
         {
-          int colidx = bUseSelectedColumns ? selectedColumns[i] : i;
+          int colidx = usedSelectedColumns is null ? i : usedSelectedColumns[i];
           var col = srctable[colidx] as Altaxo.Data.INumericColumn;
           if (null != col)
           {
             for (int j = 0; j < numrows; j++)
             {
-              int rowidx = bUseSelectedRows ? selectedRows[j] : j;
+              int rowidx = usedSelectedRows is null ? j : usedSelectedRows[j];
               matrixX[j, ccol] = col[rowidx];
             }
             ++ccol;
@@ -271,13 +275,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
         int ccol = 0; // current column in the matrix
         for (int i = 0; i < prenumcols; i++)
         {
-          int colidx = bUseSelectedColumns ? selectedColumns[i] : i;
+          int colidx = usedSelectedColumns is null ? i : usedSelectedColumns[i];
           var col = srctable[colidx] as Altaxo.Data.INumericColumn;
           if (null != col)
           {
             for (int j = 0; j < numrows; j++)
             {
-              int rowidx = bUseSelectedRows ? selectedRows[j] : j;
+              int rowidx = usedSelectedRows is null ? j : usedSelectedRows[j];
               matrixX[ccol, j] = col[rowidx];
             }
             ++ccol;
@@ -373,8 +377,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       WorksheetAnalysis analysis = new PLS2WorksheetAnalysis();
 
-      string err = analysis.ExecuteAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, ctrl.SelectedPropertyColumns, true, options, preprocessOptions);
-      if (null != err)
+      var err = analysis.ExecuteAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, ctrl.SelectedPropertyColumns, true, options, preprocessOptions);
+      if (!string.IsNullOrEmpty(err))
         Current.Gui.ErrorMessageBox(err, "An error occured");
     }
 
@@ -383,7 +387,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if (!QuestPLSAnalysisOptions(out var options, out var preprocessOptions))
         return;
 
-      var analysis = (WorksheetAnalysis)System.Activator.CreateInstance(options.AnalysisMethod);
+      var analysis = (WorksheetAnalysis)(System.Activator.CreateInstance(options.AnalysisMethod) ?? throw new InvalidProgramException($"Unable to create instance of type {options.AnalysisMethod}. Is a constructor missing?"));
 
       string err = analysis.ExecuteAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, ctrl.SelectedPropertyColumns, false, options, preprocessOptions);
       if (null != err)
@@ -424,8 +428,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Data.DataTable modelTable = Current.Project.DataTableCollection[modelName];
       Altaxo.Data.DataTable destTable = (null == destName ? new Altaxo.Data.DataTable() : Current.Project.DataTableCollection[destName]);
 
-      if (modelTable == null || destTable == null)
-        throw new ApplicationException("Unexpected: modelTable or destTable is null");
+      if (modelTable is null)
+        throw new ArgumentNullException(nameof(modelTable));
+      if (destTable is null)
+        throw new ArgumentNullException(nameof(destTable));
 
       int numberOfFactors = 0;
 
@@ -442,20 +448,23 @@ namespace Altaxo.Worksheet.Commands.Analysis
           numberOfFactors = memento.PreferredNumberOfFactors;
       }
 
-      memento.Analysis.PredictValues(
-        ctrl.DataTable,
-        ctrl.SelectedDataColumns,
-        ctrl.SelectedDataRows,
-        spectrumIsRow,
-        numberOfFactors,
-        modelTable,
-        destTable);
-
-      // if destTable is new, show it
-      if (destTable.ParentObject == null)
+      if (!(memento is null))
       {
-        Current.Project.DataTableCollection.Add(destTable);
-        Current.ProjectService.OpenOrCreateWorksheetForTable(destTable);
+        memento.Analysis.PredictValues(
+          ctrl.DataTable,
+          ctrl.SelectedDataColumns,
+          ctrl.SelectedDataRows,
+          spectrumIsRow,
+          numberOfFactors,
+          modelTable,
+          destTable);
+
+        // if destTable is new, show it
+        if (destTable.ParentObject == null)
+        {
+          Current.Project.DataTableCollection.Add(destTable);
+          Current.ProjectService.OpenOrCreateWorksheetForTable(destTable);
+        }
       }
     }
 
@@ -552,7 +561,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="modelTableName">On return, contains the name of the table containing the calibration model.</param>
     /// <param name="destinationTableName">On return, contains the name of the destination table, or null if a new table should be used as destination.</param>
     /// <returns>True if OK, false if the users pressed Cancel.</returns>
-    public static bool QuestCalibrationModelAndDestinationTable(out string modelTableName, out string destinationTableName)
+    public static bool QuestCalibrationModelAndDestinationTable([MaybeNullWhen(false)] out string modelTableName, [MaybeNullWhen(false)] out string destinationTableName)
     {
       var ctrl = new PLSPredictValueController();
 
@@ -669,7 +678,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PlotPredictionScores(Altaxo.Data.DataTable table)
     {
       var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo == null)
+      if (plsMemo is null)
         return;
       if (plsMemo.PreferredNumberOfFactors <= 0)
         QuestPreferredNumberOfFactors(plsMemo);

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -47,13 +48,13 @@ namespace Altaxo.Worksheet
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ColumnHeaderStyle)obj;
-        info.AddBaseValueEmbedded(s, typeof(ColumnHeaderStyle).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(ColumnHeaderStyle).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ColumnHeaderStyle s = null != o ? (ColumnHeaderStyle)o : new ColumnHeaderStyle();
-        info.GetBaseValueEmbedded(s, typeof(ColumnHeaderStyle).BaseType, parent);
+        ColumnHeaderStyle s = (ColumnHeaderStyle?)o ?? new ColumnHeaderStyle();
+        info.GetBaseValueEmbedded(s, typeof(ColumnHeaderStyle).BaseType!, parent);
         return s;
       }
     }
@@ -99,9 +100,9 @@ namespace Altaxo.Worksheet
     {
       PaintBackground(dc, cellRectangle, bSelected);
 
-      var dataColCol = (Altaxo.Data.DataColumnCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(data, typeof(Altaxo.Data.DataColumnCollection));
-      string columnnumber = dataColCol.GetColumnNumber(data).ToString();
-      string kindandgroup = string.Format("({0}{1})", dataColCol.GetColumnKind(data).ToString(), dataColCol.GetColumnGroup(data));
+      var dataColCol = (Altaxo.Data.DataColumnCollection?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(data, typeof(Altaxo.Data.DataColumnCollection));
+      string columnnumber = dataColCol is null ? "" : dataColCol.GetColumnNumber(data).ToString();
+      string kindandgroup = dataColCol is null ? "" : $"({dataColCol.GetColumnKind(data)}{dataColCol.GetColumnGroup(data)})";
 
       var gdiTextFont = GdiFontManager.ToGdi(_textFont);
 

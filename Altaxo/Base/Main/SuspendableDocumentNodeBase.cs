@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Main
@@ -487,7 +488,7 @@ namespace Altaxo.Main
     /// <typeparam name="T">Type of member variable.</typeparam>
     /// <param name="memberVariable">The member variable to set.</param>
     /// <param name="value">The new value.</param>
-    protected void SetMemberAndRaiseSelfChanged<T>(ref T memberVariable, T value) where T : IEquatable<T>
+    protected void SetMemberAndRaiseSelfChanged<T>([AllowNull][MaybeNull][NotNullIfNotNull("value")] ref T memberVariable, [AllowNull] T value) where T : IEquatable<T>?
     {
       var oldValue = memberVariable;
       memberVariable = value;
@@ -502,6 +503,7 @@ namespace Altaxo.Main
         EhSelfChanged(EventArgs.Empty);
       }
     }
+
 
     /// <summary>
     /// Sets a member variable of this instance and raise a change event with <see cref="System.EventArgs.Empty"/> if the new value is different from the old value.
@@ -526,6 +528,7 @@ namespace Altaxo.Main
         EhSelfChanged(EventArgs.Empty);
       }
     }
+
 
     /// <summary>
     /// Sets a member variable (which is an Enum) of this instance and raise a change event with <see cref="System.EventArgs.Empty"/> if the new value is different from the old value.

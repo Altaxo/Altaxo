@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -43,14 +44,14 @@ namespace Altaxo.Worksheet
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RowHeaderStyle)obj;
-        info.AddBaseValueEmbedded(s, typeof(RowHeaderStyle).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(RowHeaderStyle).BaseType!);
         info.AddValue("Height", s._rowHeight);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        RowHeaderStyle s = null != o ? (RowHeaderStyle)o : new RowHeaderStyle();
-        info.GetBaseValueEmbedded(s, typeof(RowHeaderStyle).BaseType, parent);
+        RowHeaderStyle s = (RowHeaderStyle?)o ?? new RowHeaderStyle();
+        info.GetBaseValueEmbedded(s, typeof(RowHeaderStyle).BaseType!, parent);
         s._rowHeight = info.GetInt32("Height");
         return s;
       }
@@ -97,7 +98,7 @@ namespace Altaxo.Worksheet
     {
     }
 
-    public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+    public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn? data, bool bSelected)
     {
       PaintBackground(dc, cellRectangle, bSelected);
 

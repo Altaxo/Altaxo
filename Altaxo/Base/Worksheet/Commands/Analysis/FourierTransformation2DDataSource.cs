@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Data;
@@ -39,7 +41,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     private DataTableMatrixProxy _inputData;
     private IDataSourceImportOptions _importOptions;
 
-    public Action<IAltaxoTableDataSource> _dataSourceChanged;
+    public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
 
@@ -51,6 +53,15 @@ namespace Altaxo.Worksheet.Commands.Analysis
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FourierTransformation2DDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        if (o is FourierTransformation2DDataSource s)
+          s.DeserializeSurrogate0(info);
+        else
+          s = new FourierTransformation2DDataSource(info, 0);
+        return s;
+      }
+
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FourierTransformation2DDataSource)obj;
@@ -59,37 +70,38 @@ namespace Altaxo.Worksheet.Commands.Analysis
         info.AddValue("TransformationOptions", s._transformationOptions);
         info.AddValue("ImportOptions", s._importOptions);
       }
+    }
 
-      protected virtual FourierTransformation2DDataSource SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        var s = (o == null ? new FourierTransformation2DDataSource() : (FourierTransformation2DDataSource)o);
+    [MemberNotNull(nameof(_importOptions), nameof(_inputData), nameof(_transformationOptions))]
+    private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      _inputData = (DataTableMatrixProxy)info.GetValue("InputData", this);
+      if (null != _inputData)
+        _inputData.ParentObject = this;
 
-        s._inputData = (DataTableMatrixProxy)info.GetValue("InputData", s);
-        if (null != s._inputData)
-          s._inputData.ParentObject = s;
+      _transformationOptions = (RealFourierTransformation2DOptions)info.GetValue("TransformationOptions", this);
+      _importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", this);
 
-        s._transformationOptions = (RealFourierTransformation2DOptions)info.GetValue("TransformationOptions", s);
-        s._importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", s);
-
-        s.InputData = s._inputData;
-
-        return s;
-      }
-
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        var s = SDeserialize(o, info, parent);
-        return s;
-      }
+      InputData = _inputData;
     }
 
     #endregion Version 0
 
+    protected FourierTransformation2DDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
+    {
+      switch (version)
+      {
+        case 0:
+          DeserializeSurrogate0(info);
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(version));
+      }
+    }
+
     #endregion Serialization
 
-    protected FourierTransformation2DDataSource()
-    {
-    }
+
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FourierTransformation2DDataSource"/> class.
@@ -106,12 +118,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// </exception>
     public FourierTransformation2DDataSource(DataTableMatrixProxy inputData, RealFourierTransformation2DOptions transformationOptions, IDataSourceImportOptions importOptions)
     {
-      if (null == inputData)
-        throw new ArgumentNullException("inputData");
-      if (null == transformationOptions)
-        throw new ArgumentNullException("transformationOptions");
-      if (null == importOptions)
-        throw new ArgumentNullException("importOptions");
+      if (inputData is null)
+        throw new ArgumentNullException(nameof(inputData));
+      if (transformationOptions is null)
+        throw new ArgumentNullException(nameof(transformationOptions));
+      if (importOptions is null)
+        throw new ArgumentNullException(nameof(importOptions));
 
       using (var token = SuspendGetToken())
       {
@@ -130,6 +142,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
       CopyFrom(from);
     }
 
+    [MemberNotNull(nameof(_importOptions), nameof(_transformationOptions), nameof(_inputData))]
+    protected void CopyFrom(FourierTransformation2DDataSource from)
+    {
+      ChildCopyToMember(ref _importOptions, from._importOptions);
+      ChildCopyToMember(ref _transformationOptions, from._transformationOptions);
+      ChildCopyToMember(ref _inputData, from._inputData);
+    }
+
     /// <summary>
     /// Copies from another instance.
     /// </summary>
@@ -140,14 +160,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if (object.ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as FourierTransformation2DDataSource;
-      if (null != from)
+      if (obj is FourierTransformation2DDataSource from)
       {
         using (var token = SuspendGetToken())
         {
-          ChildCopyToMember(ref _importOptions, from._importOptions);
-          ChildCopyToMember(ref _transformationOptions, from._transformationOptions);
-          ChildCopyToMember(ref _inputData, from._inputData);
+          CopyFrom(from);
 
           return true;
         }
@@ -155,16 +172,18 @@ namespace Altaxo.Worksheet.Commands.Analysis
       return false;
     }
 
+
+
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (null != _inputData)
-        yield return new Main.DocumentNodeAndName(_inputData, () => _inputData = null, "Data");
+        yield return new Main.DocumentNodeAndName(_inputData, () => _inputData = null!, "Data");
 
       if (null != _transformationOptions)
-        yield return new Main.DocumentNodeAndName(_transformationOptions, () => _transformationOptions = null, "TransformationOptions");
+        yield return new Main.DocumentNodeAndName(_transformationOptions, () => _transformationOptions = null!, "TransformationOptions");
 
       if (null != _importOptions)
-        yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null, "ImportOptions");
+        yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null!, "ImportOptions");
     }
 
     /// <summary>
@@ -197,7 +216,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <summary>
     /// Occurs when the data source has changed and the import trigger source is DataSourceChanged. The argument is the sender of this event.
     /// </summary>
-    public event Action<Data.IAltaxoTableDataSource> DataSourceChanged
+    public event Action<Data.IAltaxoTableDataSource>? DataSourceChanged
     {
       add
       {
@@ -230,10 +249,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
       {
         return _inputData;
       }
+      [MemberNotNull(nameof(_inputData))]
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("value");
+        if (value is null)
+          throw new ArgumentNullException(nameof(InputData));
 
         if (ChildSetMember(ref _inputData, value))
         {
@@ -255,10 +275,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
       {
         return _importOptions;
       }
+      [MemberNotNull(nameof(_importOptions))]
       set
       {
         if (null == value)
-          throw new ArgumentNullException("ImportOptions");
+          throw new ArgumentNullException(nameof(ImportOptions));
 
         if (ChildSetMember(ref _importOptions, value))
           EhSelfChanged(EventArgs.Empty);
@@ -278,9 +299,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
       {
         return _transformationOptions;
       }
+      [MemberNotNull(nameof(_transformationOptions))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("FourierTransformation2DOptions");
 
         if (ChildSetMember(ref _transformationOptions, value))

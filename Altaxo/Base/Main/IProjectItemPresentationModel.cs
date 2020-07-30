@@ -36,7 +36,7 @@ namespace Altaxo.Main
   public interface IProjectItemPresentationModel
   {
     /// <summary>
-    /// Gets the Document this presentation data is based on.
+    /// Gets the Document this presentation data is based on. 
     /// </summary>
     /// <value>
     /// The project item.

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -41,13 +42,13 @@ namespace Altaxo.Worksheet
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DoubleColumnStyle)obj;
-        info.AddBaseValueEmbedded(s, typeof(DoubleColumnStyle).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(DoubleColumnStyle).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         DoubleColumnStyle s = null != o ? (DoubleColumnStyle)o : new DoubleColumnStyle();
-        info.GetBaseValueEmbedded(s, typeof(DoubleColumnStyle).BaseType, parent);
+        info.GetBaseValueEmbedded(s, typeof(DoubleColumnStyle).BaseType!, parent);
         return s;
       }
     }

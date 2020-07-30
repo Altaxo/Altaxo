@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Collections;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
@@ -40,20 +42,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     protected Altaxo.Worksheet.WorksheetLayout _worksheetLayout;
 
-    protected WeakEventHandler _weakEventHandlerForTable_Changed;
-    protected WeakActionHandler<object, object, TunnelingEventArgs> _weakEventHandlerForTable_TunneledEvent;
-    protected WeakActionHandler<object, object, TunnelingEventArgs> _weakEventHandlerForLayout_TunneledEvent;
+    protected WeakEventHandler? _weakEventHandlerForTable_Changed;
+    protected WeakActionHandler<object, object, TunnelingEventArgs>? _weakEventHandlerForTable_TunneledEvent;
+    protected WeakActionHandler<object, object, TunnelingEventArgs>? _weakEventHandlerForLayout_TunneledEvent;
 
 
-    private IWorksheetView _view;
+    private IWorksheetView? _view;
 
     #region Constructors
-
-    /// <summary>Deserialization constructor.</summary>
-    public WorksheetController()
-    {
-      SetMemberVariablesToDefault();
-    }
 
     public WorksheetController(Altaxo.Data.DataTable table)
       : this(new Altaxo.Worksheet.WorksheetLayout(table ?? throw new ArgumentNullException(nameof(table))))
@@ -97,6 +93,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       set { }
     }
 
+    [MemberNotNull(nameof(_worksheetLayout), nameof(_table))]
     protected virtual void InternalInitializeWorksheetLayout(WorksheetLayout value)
     {
       if (null != _worksheetLayout)
@@ -163,8 +160,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
       _weakEventHandlerDataColumnChanged?.Remove();
       _weakEventHandlerPropertyColumnChanged?.Remove();
 
-      _table = null;
-      _worksheetLayout = null; // removes also the event handler(s)
+      _table = null!;
+      _worksheetLayout = null!; // removes also the event handler(s)
     }
 
     #endregion Constructors
@@ -188,13 +185,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       get { return _worksheetLayout; }
 
+      [MemberNotNull(nameof(_table), nameof(_worksheetLayout))]
       set
       {
         InternalInitializeWorksheetLayout(value);
       }
     }
 
-    public void EhTable_Changed(object sender, EventArgs e)
+    public void EhTable_Changed(object? sender, EventArgs e)
     {
       if (e is Altaxo.Main.NamedObjectCollectionChangedEventArgs eAsCCEA && object.ReferenceEquals(eAsCCEA.Item, _table))
       {
@@ -229,7 +227,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void AttachView()
     {
-      _view.Controller = this;
+      _view!.Controller = this;
       _view.CellEdit_PreviewKeyPressed += EhCellEditControl_PreviewKeyDown;
       _view.CellEdit_LostFocus += EhCellEditControl_LostFocus;
       _view.CellEdit_TextChanged += EhCellEditControl_TextChanged;
@@ -237,13 +235,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void DetachView()
     {
-      _view.CellEdit_PreviewKeyPressed -= EhCellEditControl_PreviewKeyDown;
+      _view!.CellEdit_PreviewKeyPressed -= EhCellEditControl_PreviewKeyDown;
       _view.CellEdit_LostFocus -= EhCellEditControl_LostFocus;
       _view.CellEdit_TextChanged -= EhCellEditControl_TextChanged;
       _view.Controller = null;
     }
 
-    public override object ViewObject
+    public override object? ViewObject
     {
       get
       {

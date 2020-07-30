@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,9 +48,9 @@ namespace Altaxo.Worksheet.Commands
       var originalDataSource = table.DataSource;
       var dataSource = (Data.IAltaxoTableDataSource)table.DataSource.Clone();
 
-      var dataSourceController = (Altaxo.Gui.IMVCANController)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(Altaxo.Gui.IMVCANController), Gui.UseDocument.Directly);
+      var dataSourceController = (Altaxo.Gui.IMVCANController?)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(Altaxo.Gui.IMVCANController), Gui.UseDocument.Directly);
 
-      if (null == dataSourceController)
+      if (dataSourceController is null)
       {
         Current.Gui.ErrorMessageBox(string.Format("Sorry. There is no dialog available to edit the data source of type {0}", dataSource.GetType()), "No dialog available");
         return;

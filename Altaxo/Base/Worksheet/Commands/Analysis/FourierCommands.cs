@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Calc.Fourier;
 using Altaxo.Calc.LinearAlgebra;
@@ -52,7 +53,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region Two dimensional Fourier transformation
 
-    public static RealFourierTransformation2DOptions _lastUsedOptions;
+    public static RealFourierTransformation2DOptions? _lastUsedOptions;
 
     public static void TwoDimensionalFFT(IWorksheetController ctrl)
     {
@@ -74,8 +75,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="selectedPropertyColumns">The selected property columns of the table. (A value of <c>null</c> can be provided here).</param>
     public static void ShowRealFourierTransformation2DDialog(DataTable table, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns, IAscendingIntegerCollection selectedPropertyColumns)
     {
-      DataTableMatrixProxy proxy = null;
-      RealFourierTransformation2DOptions options = null;
+      DataTableMatrixProxy? proxy = null;
+      RealFourierTransformation2DOptions? options = null;
 
       try
       {
@@ -224,12 +225,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static void Convolution(IWorksheetController ctrl)
     {
-      string err = Convolution(Current.Project, ctrl);
-      if (null != err)
+      string? err = Convolution(Current.Project, ctrl);
+      if (!string.IsNullOrEmpty(err))
         Current.Gui.ErrorMessageBox(err);
     }
 
-    public static string Convolution(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
+    public static string? Convolution(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
     {
       int len = dg.SelectedDataColumns.Count;
       if (len == 0)
@@ -270,12 +271,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static void Correlation(IWorksheetController ctrl)
     {
-      string err = Correlation(Current.Project, ctrl);
-      if (null != err)
+      var err = Correlation(Current.Project, ctrl);
+      if (!string.IsNullOrEmpty(err))
         Current.Gui.ErrorMessageBox(err);
     }
 
-    public static string Correlation(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
+    public static string? Correlation(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
     {
       int len = dg.SelectedDataColumns.Count;
       if (len == 0)

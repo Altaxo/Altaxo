@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Collections;
 using Altaxo.Data;
@@ -39,7 +40,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="ctrl">Controller where the columns are selected in.</param>
     /// <returns>Null if no error occurs, or an error message.</returns>
-    public static string XYVToMatrix(IWorksheetController ctrl)
+    public static string? XYVToMatrix(IWorksheetController ctrl)
     {
       return ConvertXYVToMatrixActions.DoMakeActionWithoutDialog(ctrl.DataTable, ctrl.SelectedDataColumns);
     }
@@ -529,7 +530,8 @@ namespace Altaxo.Worksheet.Commands
           string name = sourcetable.DataColumns.GetColumnName(nSrcCol);
           int group = sourcetable.DataColumns.GetColumnGroup(nSrcCol);
           Altaxo.Data.ColumnKind kind = sourcetable.DataColumns.GetColumnKind(nSrcCol);
-          destcolumn = (Altaxo.Data.DataColumn)Activator.CreateInstance(sourcetable.DataColumns[nSrcCol].GetType());
+          var type = sourcetable.DataColumns[nSrcCol].GetType();
+          destcolumn = DataColumn.CreateInstanceOfType(type);
           desttable.DataColumns.Add(destcolumn, name, kind, group);
         }
 
@@ -585,7 +587,8 @@ namespace Altaxo.Worksheet.Commands
           string name = sourcetable.DataColumns.GetColumnName(nSrcCol);
           int group = sourcetable.DataColumns.GetColumnGroup(nSrcCol);
           Altaxo.Data.ColumnKind kind = sourcetable.DataColumns.GetColumnKind(nSrcCol);
-          destcolumn = (Altaxo.Data.DataColumn)Activator.CreateInstance(sourcetable.DataColumns[nSrcCol].GetType());
+          var type = sourcetable.DataColumns[nSrcCol].GetType();
+          destcolumn = DataColumn.CreateInstanceOfType(type);
           desttable.PropertyColumns.Add(destcolumn, name, kind, group);
         }
 
@@ -637,7 +640,7 @@ namespace Altaxo.Worksheet.Commands
           string name = sourceTable.DataColumns.GetColumnName(0);
           int group = sourceTable.DataColumns.GetColumnGroup(0);
           Altaxo.Data.ColumnKind kind = sourceTable.DataColumns.GetColumnKind(0);
-          destinationPropertyColumn = (Altaxo.Data.DataColumn)Activator.CreateInstance(sourceTable.DataColumns[0].GetType());
+          destinationPropertyColumn = DataColumn.CreateInstanceOfType(sourceTable.DataColumns[0].GetType());
           destinationTable.PropertyColumns.Add(destinationPropertyColumn, name, kind, group);
         }
 
@@ -766,7 +769,7 @@ namespace Altaxo.Worksheet.Commands
         else
         {
           // the prop col must be empty - we will add the data later
-          columnmap[nCol] = (DataColumn)Activator.CreateInstance(sourcetable.PropCols[nCol].GetType());
+          columnmap[nCol] = DataColumn.CreateInstanceOfType(sourcetable.PropCols[nCol].GetType());
           desttable.PropCols.Add(columnmap[nCol], name, kind, group);
         }
       }
@@ -811,7 +814,7 @@ namespace Altaxo.Worksheet.Commands
         }
         else
         {
-          columnmap[nCol] = (DataColumn)Activator.CreateInstance(sourcetable.DataColumns[nCol].GetType());
+          columnmap[nCol] = DataColumn.CreateInstanceOfType(sourcetable.DataColumns[nCol].GetType());
           desttable.DataColumns.Add(columnmap[nCol], name, kind, group);
         }
       }
@@ -855,14 +858,14 @@ namespace Altaxo.Worksheet.Commands
         }
         else
         {
-          columnmap[nCol] = (DataColumn)Activator.CreateInstance(sourcetable.DataColumns[0].GetType());
+          columnmap[nCol] = DataColumn.CreateInstanceOfType(sourcetable.DataColumns[0].GetType());
           desttable.DataColumns.Add(columnmap[nCol], desttable.DataColumns.FindNewColumnName(), ColumnKind.V, group);
         }
       }
       return columnmap;
     }
 
-    public static DataTable GetTableFromClipboard()
+    public static DataTable? GetTableFromClipboard()
     {
       var dao = Current.Gui.OpenClipboardDataObject();
       string[] formats = dao.GetFormats();
@@ -871,12 +874,12 @@ namespace Altaxo.Worksheet.Commands
 
       if (dao.GetDataPresent("Altaxo.Data.DataTable.ClipboardMemento"))
       {
-        var tablememento = (Altaxo.Data.DataTable.ClipboardMemento)Altaxo.Serialization.Clipboard.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Data.DataTable.ClipboardMemento");
-        return tablememento.DataTable;
+        var tablememento = (Altaxo.Data.DataTable.ClipboardMemento?)Altaxo.Serialization.Clipboard.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Data.DataTable.ClipboardMemento");
+        return tablememento?.DataTable;
       }
 
-      object clipboardobject = null;
-      Altaxo.Data.DataTable table = null;
+      object? clipboardobject = null;
+      Altaxo.Data.DataTable? table = null;
 
       if (dao.GetDataPresent("Csv"))
         clipboardobject = dao.GetData("Csv");
@@ -893,7 +896,7 @@ namespace Altaxo.Worksheet.Commands
 
     public static void PasteFromClipboard(IWorksheetController dg)
     {
-      DataTable table = GetTableFromClipboard();
+      var table = GetTableFromClipboard();
 
       if (null != table)
         PasteFromTable(dg, table);

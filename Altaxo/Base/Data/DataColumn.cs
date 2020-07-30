@@ -560,6 +560,15 @@ namespace Altaxo.Data
 
     #region Converters
 
+    public static DataColumn CreateInstanceOfType(Type type)
+    {
+      if (type is null) throw new ArgumentNullException(nameof(type));
+      if (!typeof(DataColumn).IsAssignableFrom(type))
+        throw new ArgumentException($"Provided type must derive from {nameof(DataColumn)}");
+      return (DataColumn)(Activator.CreateInstance(type) ?? throw new InvalidProgramException($"Can not create instance of type {type}. Is a public constructor missing?"));
+    }
+
+
     /// <summary>
     /// Provides a setter property to which a vector can be assigned to. Copies all elements of the vector to this column.
     /// </summary>

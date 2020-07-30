@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
@@ -51,8 +52,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       var parameters = (SavitzkyGolayParameters)paramobject;
 
-      Altaxo.Data.DataColumn yCol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
-      Altaxo.Data.DataColumn xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
+      var yCol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
+      var xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
 
       SavitzkyGolay(parameters, yCol, xCol);
     }
@@ -62,7 +63,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       SavitzkyGolay(parameters, yCol, null);
     }
 
-    public static void SavitzkyGolay(SavitzkyGolayParameters parameters, Altaxo.Data.DataColumn yCol, Altaxo.Data.DataColumn xCol)
+    public static void SavitzkyGolay(SavitzkyGolayParameters parameters, Altaxo.Data.DataColumn yCol, Altaxo.Data.DataColumn? xCol)
     {
       double spacing = 1;
       if (xCol is Data.INumericColumn)
@@ -124,8 +125,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       for (int nSel = 0; nSel < ctrl.SelectedDataColumns.Count; nSel++)
       {
-        Altaxo.Data.DataColumn yCol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[nSel]];
-        Altaxo.Data.DataColumn xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
+        var yCol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[nSel]];
+        var xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
 
         if (!(yCol is INumericColumn))
         {

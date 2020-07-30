@@ -47,7 +47,7 @@
 
 //use_lines: Enables open path clipping. Adds a very minor cost to performance.
 #define use_lines
-
+#nullable disable
 
 using System;
 using System.Collections.Generic;

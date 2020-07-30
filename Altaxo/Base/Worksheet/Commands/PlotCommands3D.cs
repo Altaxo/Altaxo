@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,7 +90,7 @@ namespace Altaxo.Worksheet.Commands
     /// labels, yerr, and so on.</param>
     /// <param name="context">Property context used to determine default values, e.g. for the pen width or symbol size.</param>
     /// <returns>List of plot items created.</returns>
-    public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, string xColumnName, string yColumnName, G3DPlotStyleCollection templatePlotStyle, HashSet<DataColumn> processedColumns, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, string? xColumnName, string? yColumnName, G3DPlotStyleCollection templatePlotStyle, HashSet<DataColumn> processedColumns, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var result = new List<IGPlotItem>();
       foreach (DataColumn vcol in selectedColumns)
@@ -101,18 +102,18 @@ namespace Altaxo.Worksheet.Commands
 
         var table = DataTable.GetParentDataTableOf(vcol);
         var tablecoll = DataColumnCollection.GetParentDataColumnCollectionOf(vcol);
-        int groupNumber = tablecoll.GetColumnGroup(vcol);
+        int groupNumber = tablecoll?.GetColumnGroup(vcol) ?? 0;
 
-        Altaxo.Data.DataColumn xcol, ycol;
+        Altaxo.Data.DataColumn? xcol, ycol;
         if (!string.IsNullOrEmpty(xColumnName) && null != table && table.ContainsColumn(xColumnName))
           xcol = table[xColumnName];
         else
-          xcol = null == table ? null : tablecoll.FindXColumnOf(vcol);
+          xcol = tablecoll?.FindXColumnOf(vcol);
 
         if (!string.IsNullOrEmpty(yColumnName) && null != table && table.ContainsColumn(yColumnName))
           ycol = table[yColumnName];
         else
-          ycol = null == table ? null : tablecoll.FindYColumnOf(vcol);
+          ycol = tablecoll?.FindYColumnOf(vcol);
 
         var pa = new XYZColumnPlotData(
             table,
@@ -123,11 +124,11 @@ namespace Altaxo.Worksheet.Commands
 
         var ps = templatePlotStyle != null ? templatePlotStyle.Clone() : new G3DPlotStyleCollection();
 
-        if (null == table)
+        if (table is null || tablecoll is null)
           continue;
 
-        ErrorBarPlotStyle unpairedPositiveError = null;
-        ErrorBarPlotStyle unpairedNegativeError = null;
+        ErrorBarPlotStyle? unpairedPositiveError = null;
+        ErrorBarPlotStyle? unpairedNegativeError = null;
 
         bool foundMoreColumns = true;
         for (int idx = 1 + tablecoll.GetColumnNumber(vcol); foundMoreColumns && idx < tablecoll.ColumnCount; idx++)
@@ -431,7 +432,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bLine">If true, the line style is activated (the points are connected by lines).</param>
     /// <param name="bScatter">If true, the scatter style is activated (the points are plotted as symbols).</param>
     /// <param name="preferredGraphName">Preferred name of the graph. Can be null if you have no preference.</param>
-    public static void PlotLine(DataTable table, IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter, string preferredGraphName)
+    public static void PlotLine(DataTable table, IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter, string? preferredGraphName)
     {
       var graph = TemplateWithXYZPlotLayerWithG3DCartesicCoordinateSystem.CreateGraph(table.GetPropertyContext(), preferredGraphName, table.Name, true);
       var context = graph.GetPropertyContext();

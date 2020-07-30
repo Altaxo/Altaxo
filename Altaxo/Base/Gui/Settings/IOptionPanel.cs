@@ -34,10 +34,10 @@ namespace Altaxo.Gui.Settings
   {
     void Initialize(object? optionPanelOwner);
 
-    object ViewObject { get; }
+    object? ViewObject { get; }
 
     bool Apply();
 
-    object Owner { get; set; }
+    object? Owner { get; set; }
   }
 }

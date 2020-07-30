@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Worksheet;
 using Altaxo.Gui.Worksheet.Viewing;
@@ -39,8 +40,8 @@ namespace Altaxo.Worksheet.Commands
 
       // find a new name for the cloned table and add it to the DataTableCollection
       string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.DataTable.Name, "WKS");
-      clonedTable.Name = Data.DataTableCollection.GetParentDataTableCollectionOf(ctrl.DataTable).FindNewItemName(newnamebase);
-      Data.DataTableCollection.GetParentDataTableCollectionOf(ctrl.DataTable).Add(clonedTable);
+      clonedTable.Name = Current.Project.DataTableCollection.FindNewItemName(newnamebase);
+      Current.Project.DataTableCollection.Add(clonedTable);
       Current.ProjectService.CreateNewWorksheet(clonedTable);
     }
 
@@ -125,7 +126,7 @@ namespace Altaxo.Worksheet.Commands
 
       if (true == Current.Gui.ShowDialog(ct, "Add new column(s)", false))
       {
-        var columntype = (System.Type)ct.SelectedItem.Tag;
+        var columntype = (System.Type)ct.SelectedItem.Tag!;
 
         using (var suspendToken = table.SuspendGetToken())
         {
@@ -133,14 +134,14 @@ namespace Altaxo.Worksheet.Commands
           {
             for (int i = 0; i < ct.IntegerValue; i++)
             {
-              table.PropCols.Add((Altaxo.Data.DataColumn)System.Activator.CreateInstance(columntype));
+              table.PropCols.Add(Altaxo.Data.DataColumn.CreateInstanceOfType(columntype));
             }
           }
           else
           {
             for (int i = 0; i < ct.IntegerValue; i++)
             {
-              table.DataColumns.Add((Altaxo.Data.DataColumn)System.Activator.CreateInstance(columntype));
+              table.DataColumns.Add(Altaxo.Data.DataColumn.CreateInstanceOfType(columntype));
             }
           }
 

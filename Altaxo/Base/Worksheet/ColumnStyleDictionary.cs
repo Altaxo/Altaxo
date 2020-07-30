@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Data;
 
 namespace Altaxo.Worksheet
@@ -44,8 +46,8 @@ namespace Altaxo.Worksheet
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColumnStyleDictionary), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      protected ColumnStyleDictionary _deserializedInstance;
-      protected Dictionary<Main.AbsoluteDocumentPath, ColumnStyle> _unresolvedColumns;
+      protected ColumnStyleDictionary? _deserializedInstance;
+      protected Dictionary<Main.AbsoluteDocumentPath, ColumnStyle>? _unresolvedColumns;
 
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -72,14 +74,14 @@ namespace Altaxo.Worksheet
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ColumnStyleDictionary s = null != o ? (ColumnStyleDictionary)o : new ColumnStyleDictionary();
+        ColumnStyleDictionary s = (ColumnStyleDictionary?)o ?? new ColumnStyleDictionary();
         Deserialize(s, info, parent);
         return s;
       }
 
-      protected virtual void Deserialize(ColumnStyleDictionary s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual void Deserialize(ColumnStyleDictionary s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var surr = new XmlSerializationSurrogate0
         {
@@ -98,9 +100,10 @@ namespace Altaxo.Worksheet
           //Type t = Type.ReflectionOnlyGetType(typeName, false, false);
           var t = Type.GetType(typeName, false, false);
           var style = (ColumnStyle)info.GetValue("Style", s);
-          if (null != style)
-            style.ParentObject = s;
-          s._defaultColumnStyles[t] = style;
+          style.ParentObject = s;
+
+          if (!(t is null || style is null))
+            s._defaultColumnStyles[t] = style;
           info.CloseElement(); // "e"
         }
         info.CloseArray(count);
@@ -125,12 +128,12 @@ namespace Altaxo.Worksheet
       public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
       {
         var resolvedStyles = new List<Main.AbsoluteDocumentPath>();
-        foreach (var entry in _unresolvedColumns)
+        foreach (var entry in _unresolvedColumns!)
         {
-          object resolvedobj = Main.AbsoluteDocumentPath.GetObject(entry.Key, _deserializedInstance, documentRoot);
-          if (null != resolvedobj)
+          object? resolvedobj = Main.AbsoluteDocumentPath.GetObject(entry.Key, _deserializedInstance!, documentRoot);
+          if (!(resolvedobj is null))
           {
-            _deserializedInstance._columnStyles.Add((DataColumn)resolvedobj, entry.Value);
+            _deserializedInstance!._columnStyles.Add((DataColumn)resolvedobj, entry.Value);
             resolvedStyles.Add(entry.Key);
           }
         }
@@ -179,12 +182,18 @@ namespace Altaxo.Worksheet
         {
           _defaultColumnStyles = new Dictionary<Type, ColumnStyle>();
           _columnStyles = new Dictionary<DataColumn, ColumnStyle>();
+        }
 
+        if (null != tmpDefaultColumnStyles)
+        {
           foreach (var entry in tmpDefaultColumnStyles)
           {
             entry.Value?.Dispose();
           }
+        }
 
+        if (null != tmpColumnStyles)
+        {
           foreach (var entry in tmpColumnStyles)
           {
             if (null != entry.Key)
@@ -194,7 +203,6 @@ namespace Altaxo.Worksheet
           }
         }
       }
-
       base.Dispose(isDisposing);
     }
 
@@ -273,7 +281,7 @@ namespace Altaxo.Worksheet
       }
     }
 
-    public bool TryGetValue(DataColumn key, out ColumnStyle value)
+    public bool TryGetValue(DataColumn key, [MaybeNullWhen(false)] out ColumnStyle value)
     {
       return _columnStyles.TryGetValue(key, out value);
     }
@@ -295,15 +303,15 @@ namespace Altaxo.Worksheet
           return colstyle;
 
         // second look to the defaultcolumnstyles hash table, key is the type of the column style
-        System.Type searchstyletype = key.GetColumnStyleType();
-        if (null == searchstyletype)
+        var searchstyletype = key.GetColumnStyleType();
+        if (searchstyletype is null)
         {
           throw new ApplicationException("Error: Column of type +" + key.GetType() + " returns no associated ColumnStyleType, you have to overload the method GetColumnStyleType.");
         }
         else
         {
           // if not successfull yet, we will create a new defaultColumnStyle
-          colstyle = (ColumnStyle)Activator.CreateInstance(searchstyletype);
+          colstyle = (ColumnStyle?)Activator.CreateInstance(searchstyletype) ?? throw new InvalidProgramException($"Can not create a instance of type {searchstyletype}. Is there a public constructor?"); ;
           colstyle.ParentObject = this;
           _defaultColumnStyles.Add(key.GetType(), colstyle);
           return colstyle;

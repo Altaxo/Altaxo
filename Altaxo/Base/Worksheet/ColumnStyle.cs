@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using Altaxo.Graph.Gdi;
@@ -91,9 +92,9 @@ namespace Altaxo.Worksheet
         throw new ApplicationException("Programming error, please contact the programmer");
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ColumnStyle)o;
+        var s = (ColumnStyle?)o ?? throw new ArgumentNullException(nameof(o)); ;
         s._columnSize = (int)info.GetSingle("Size");
 
         object notneeded;
@@ -107,7 +108,7 @@ namespace Altaxo.Worksheet
         s._textFormat.Alignment = (StringAlignment)Enum.Parse(typeof(StringAlignment), info.GetString("Alignment"));
         s._textFont = (FontX)info.GetValue("Font", s);
 
-        s.ParentObject = (Main.IDocumentNode)parent;
+        s.ParentObject = (Main.IDocumentNode?)parent;
         return s;
       }
     }
@@ -139,9 +140,9 @@ namespace Altaxo.Worksheet
           info.AddValue("Font", s._textFont);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ColumnStyle)o;
+        var s = (ColumnStyle?)o ?? throw new ArgumentNullException(nameof(o));
 
         if ("Size" == info.CurrentElementName)
           return new XmlSerializationSurrogate0().Deserialize(o, info, parent);
@@ -185,7 +186,7 @@ namespace Altaxo.Worksheet
         else
           s.SetDefaultTextFont();
 
-        s.ParentObject = (Main.IDocumentNode)parent;
+        s.ParentObject = (Main.IDocumentNode?)parent;
         return s;
       }
     }
@@ -195,9 +196,11 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// For deserialization purposes only.
     /// </summary>
-    private ColumnStyle()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    private ColumnStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo _)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     public ColumnStyle(ColumnStyleType type)
     {
@@ -339,8 +342,8 @@ namespace Altaxo.Worksheet
       }
       set
       {
-        if (value == null)
-          throw new ArgumentNullException();
+        if (value is null)
+          throw new ArgumentNullException(nameof(CellBorder));
 
         if (object.ReferenceEquals(_cellPen, value))
           return;
@@ -468,7 +471,7 @@ namespace Altaxo.Worksheet
 
     public abstract void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data);
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _cellPen))
       {
