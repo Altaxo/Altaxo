@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,13 +47,13 @@ namespace Altaxo.Calc.Fourier
       {
       }
 
-      protected virtual void TypeSafeDeserialize(T s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual void TypeSafeDeserialize(T s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new T() : (T)o);
+        var s = o is null ? new T() : (T)o;
         TypeSafeDeserialize(s, info, parent);
         return s;
       }
@@ -85,7 +86,7 @@ namespace Altaxo.Calc.Fourier
         info.AddValue("Sigma", s.Sigma);
       }
 
-      protected override void TypeSafeDeserialize(GaussWindow2D s, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected override void TypeSafeDeserialize(GaussWindow2D s, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s.Sigma = info.GetDouble("Sigma");
       }
@@ -100,7 +101,7 @@ namespace Altaxo.Calc.Fourier
         info.AddValue("Kappa", s.Kappa);
       }
 
-      protected override void TypeSafeDeserialize(SuperGaussWindow2D s, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected override void TypeSafeDeserialize(SuperGaussWindow2D s, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s.Kappa = info.GetDouble("Kappa");
       }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Data;
@@ -182,7 +183,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       calibrationSet.SetPreprocessingModel(preprocessSet);
 
       var sel = new Altaxo.Collections.AscendingIntegerCollection();
-      Altaxo.Data.DataColumn col;
+      Altaxo.Data.DataColumn? col;
 
       col = table.DataColumns.TryGetColumn(GetXOfX_ColumnName());
       if (col == null || !(col is INumericColumn))

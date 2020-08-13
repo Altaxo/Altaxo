@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Probability;
@@ -38,7 +39,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     protected bool _IncludeIntercept;
     protected bool _GenerateRegressionValues;
     protected bool _GenerateResidualValues;
-    protected IAscendingIntegerCollection _selectedDataRows;
+    protected IAscendingIntegerCollection? _selectedDataRows;
 
     public MultivariateLinearFitParameters(DataColumnCollection table, IAscendingIntegerCollection selectedDataColumns)
     {
@@ -62,7 +63,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-    public IAscendingIntegerCollection SelectedDataRows
+    public IAscendingIntegerCollection? SelectedDataRows
     {
       get
       {
@@ -128,7 +129,7 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// </summary>
   public class MultivariateLinearRegression
   {
-    public static LinearFitBySvd ShowDialogAndRegress(DataColumnCollection table, IAscendingIntegerCollection selectedColumns)
+    public static LinearFitBySvd? ShowDialogAndRegress(DataColumnCollection table, IAscendingIntegerCollection selectedColumns)
     {
       if (selectedColumns.Count < 2)
         return null;
@@ -217,23 +218,24 @@ namespace Altaxo.Calc.Regression.Multivariate
     public static void GenerateValues(MultivariateLinearFitParameters parameters, LinearFitBySvd fit)
     {
       DataColumn dependentColumn = parameters.Table[parameters.SelectedDataColumns[parameters.DependentColumnIndexIntoSelection]];
+      var selectedDataRows = parameters.SelectedDataRows ?? throw new InvalidProgramException($"{nameof(parameters.SelectedDataRows)} should be != null here");
 
       if (parameters.GenerateRegressionValues)
       {
         var col = new DoubleColumn();
-        VectorMath.Copy(VectorMath.ToROVector(fit.PredictedValues), DataColumnWrapper.ToVector(col, parameters.SelectedDataRows));
+        VectorMath.Copy(VectorMath.ToROVector(fit.PredictedValues), DataColumnWrapper.ToVector(col, selectedDataRows));
         parameters.Table.Add(col, dependentColumn.Name + "(predicted)", ColumnKind.V, parameters.Table.GetColumnGroup(dependentColumn));
       }
 
       if (parameters.GenerateResidualValues)
       {
         var col = new DoubleColumn();
-        VectorMath.Copy(VectorMath.ToROVector(fit.ResidualValues), DataColumnWrapper.ToVector(col, parameters.SelectedDataRows));
+        VectorMath.Copy(VectorMath.ToROVector(fit.ResidualValues), DataColumnWrapper.ToVector(col, selectedDataRows));
         parameters.Table.Add(col, dependentColumn.Name + "(residual)", ColumnKind.V, parameters.Table.GetColumnGroup(dependentColumn));
       }
     }
 
-    public static string OutputFitResults(LinearFitBySvd fit, string[] paramNames)
+    public static string? OutputFitResults(LinearFitBySvd fit, string[] paramNames)
     {
       // Output of results
 

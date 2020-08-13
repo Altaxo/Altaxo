@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Collections;
 
@@ -33,17 +34,17 @@ namespace Altaxo.Calc.Regression.Multivariate
   public class MultivariateContentMemento
   {
     /// <summary>Represents that indices that build up one spectrum.</summary>
-    public Altaxo.Collections.IAscendingIntegerCollection SpectralIndices;
+    public Altaxo.Collections.IAscendingIntegerCollection? SpectralIndices;
 
     /// <summary>
     /// Represents the indices of the measurements.
     /// </summary>
-    public Altaxo.Collections.IAscendingIntegerCollection MeasurementIndices;
+    public Altaxo.Collections.IAscendingIntegerCollection? MeasurementIndices;
 
     /// <summary>
     /// Represents the indices of the concentrations.
     /// </summary>
-    public Altaxo.Collections.IAscendingIntegerCollection ConcentrationIndices;
+    public Altaxo.Collections.IAscendingIntegerCollection? ConcentrationIndices;
 
     /// <summary>
     /// True if the spectrum is horizontal oriented, i.e. is in one row. False if the spectrum is one column.
@@ -53,7 +54,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Get/sets the name of the table containing the original data.
     /// </summary>
-    public string OriginalDataTableName;
+    public string? OriginalDataTableName;
 
     /// <summary>
     /// Number of factors for calculation and plotting.
@@ -78,12 +79,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// The name of the class used to analyse the data.
     /// </summary>
-    private string _ClassNameOfAnalysisClass;
+    private string? _ClassNameOfAnalysisClass;
 
     /// <summary>
     /// The instance of the class used to analyse the data.
     /// </summary>
-    private WorksheetAnalysis _InstanceOfAnalysisClass;
+    private WorksheetAnalysis? _InstanceOfAnalysisClass;
 
     /// <summary>
     /// What to do with the spectra before processing them.
@@ -99,10 +100,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.SetNodeContent(obj.ToString());
+        info.SetNodeContent(obj.ToString() ?? string.Empty);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
         return System.Enum.Parse(typeof(CrossPRESSCalculationType), val, true);
@@ -119,21 +120,21 @@ namespace Altaxo.Calc.Regression.Multivariate
         var s = (MultivariateContentMemento)obj;
         info.AddValue("TableName", s.OriginalDataTableName); // name of the Table
         info.AddValue("SpectrumIsRow", s.SpectrumIsRow);
-        info.AddValue("SpectralIndices", s.SpectralIndices);
-        info.AddValue("ConcentrationIndices", s.ConcentrationIndices);
-        info.AddValue("MeasurementIndices", s.MeasurementIndices);
+        info.AddValueOrNull("SpectralIndices", s.SpectralIndices);
+        info.AddValueOrNull("ConcentrationIndices", s.ConcentrationIndices);
+        info.AddValueOrNull("MeasurementIndices", s.MeasurementIndices);
         info.AddValue("PreferredNumberOfFactors", s._PreferredNumberOfFactors); // the property columns of that table
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        MultivariateContentMemento s = null != o ? (MultivariateContentMemento)o : new MultivariateContentMemento();
+        var s = (MultivariateContentMemento?)o ?? new MultivariateContentMemento();
 
         s.OriginalDataTableName = info.GetString("Name");
         s.SpectrumIsRow = info.GetBoolean("SpectrumIsRow");
-        s.SpectralIndices = (IAscendingIntegerCollection)info.GetValue("SpectralIndices", s);
-        s.ConcentrationIndices = (IAscendingIntegerCollection)info.GetValue("ConcentrationIndices", s);
-        s.MeasurementIndices = (IAscendingIntegerCollection)info.GetValue("MeasurementIndices", s);
+        s.SpectralIndices = (IAscendingIntegerCollection?)info.GetValueOrNull("SpectralIndices", s);
+        s.ConcentrationIndices = (IAscendingIntegerCollection?)info.GetValueOrNull("ConcentrationIndices", s);
+        s.MeasurementIndices = (IAscendingIntegerCollection?)info.GetValueOrNull("MeasurementIndices", s);
         s._PreferredNumberOfFactors = info.GetInt32("PreferredNumberOfFactors");
 
         // neccessary since version 2
@@ -152,9 +153,9 @@ namespace Altaxo.Calc.Regression.Multivariate
         var s = (MultivariateContentMemento)obj;
         info.AddValue("TableName", s.OriginalDataTableName); // name of the Table
         info.AddValue("SpectrumIsRow", s.SpectrumIsRow);
-        info.AddValue("SpectralIndices", s.SpectralIndices);
-        info.AddValue("ConcentrationIndices", s.ConcentrationIndices);
-        info.AddValue("MeasurementIndices", s.MeasurementIndices);
+        info.AddValueOrNull("SpectralIndices", s.SpectralIndices);
+        info.AddValueOrNull("ConcentrationIndices", s.ConcentrationIndices);
+        info.AddValueOrNull("MeasurementIndices", s.MeasurementIndices);
         info.AddValue("PreferredNumberOfFactors", s._PreferredNumberOfFactors); // the property columns of that table
 
         // new in version 1
@@ -164,15 +165,15 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.AddValue("SpectralPreprocessingEnsembleScale", s._spectralPreprocessing.EnsembleScale);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        MultivariateContentMemento s = null != o ? (MultivariateContentMemento)o : new MultivariateContentMemento();
+        var s = (MultivariateContentMemento?)o ?? new MultivariateContentMemento();
 
         s.OriginalDataTableName = info.GetString("Name");
         s.SpectrumIsRow = info.GetBoolean("SpectrumIsRow");
-        s.SpectralIndices = (IAscendingIntegerCollection)info.GetValue("SpectralIndices", s);
-        s.ConcentrationIndices = (IAscendingIntegerCollection)info.GetValue("ConcentrationIndices", s);
-        s.MeasurementIndices = (IAscendingIntegerCollection)info.GetValue("MeasurementIndices", s);
+        s.SpectralIndices = (IAscendingIntegerCollection?)info.GetValueOrNull("SpectralIndices", s);
+        s.ConcentrationIndices = (IAscendingIntegerCollection?)info.GetValueOrNull("ConcentrationIndices", s);
+        s.MeasurementIndices = (IAscendingIntegerCollection?)info.GetValueOrNull("MeasurementIndices", s);
         s._PreferredNumberOfFactors = info.GetInt32("PreferredNumberOfFactors");
 
         // new in version 1
@@ -200,9 +201,9 @@ namespace Altaxo.Calc.Regression.Multivariate
         var s = (MultivariateContentMemento)obj;
         info.AddValue("TableName", s.OriginalDataTableName); // name of the Table
         info.AddValue("SpectrumIsRow", s.SpectrumIsRow);
-        info.AddValue("SpectralIndices", s.SpectralIndices);
-        info.AddValue("ConcentrationIndices", s.ConcentrationIndices);
-        info.AddValue("MeasurementIndices", s.MeasurementIndices);
+        info.AddValueOrNull("SpectralIndices", s.SpectralIndices);
+        info.AddValueOrNull("ConcentrationIndices", s.ConcentrationIndices);
+        info.AddValueOrNull("MeasurementIndices", s.MeasurementIndices);
         info.AddValue("PreferredNumberOfFactors", s._PreferredNumberOfFactors); // the property columns of that table
 
         // new in version 1
@@ -218,15 +219,15 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.AddValue("CrossPRESSCalculationType", s._crossPRESSCalculationType);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        MultivariateContentMemento s = null != o ? (MultivariateContentMemento)o : new MultivariateContentMemento();
+        var s = (MultivariateContentMemento?)o ?? new MultivariateContentMemento();
 
         s.OriginalDataTableName = info.GetString("Name");
         s.SpectrumIsRow = info.GetBoolean("SpectrumIsRow");
-        s.SpectralIndices = (IAscendingIntegerCollection)info.GetValue("SpectralIndices", s);
-        s.ConcentrationIndices = (IAscendingIntegerCollection)info.GetValue("ConcentrationIndices", s);
-        s.MeasurementIndices = (IAscendingIntegerCollection)info.GetValue("MeasurementIndices", s);
+        s.SpectralIndices = (IAscendingIntegerCollection?)info.GetValueOrNull("SpectralIndices", s);
+        s.ConcentrationIndices = (IAscendingIntegerCollection?)info.GetValueOrNull("ConcentrationIndices", s);
+        s.MeasurementIndices = (IAscendingIntegerCollection?)info.GetValueOrNull("MeasurementIndices", s);
         s._PreferredNumberOfFactors = info.GetInt32("PreferredNumberOfFactors");
 
         // new in version 1
@@ -256,7 +257,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     public int NumberOfMeasurements
     {
-      get { return MeasurementIndices.Count; }
+      get { return MeasurementIndices?.Count ?? 0; }
     }
 
     /// <summary>
@@ -264,7 +265,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     public int NumberOfSpectralData
     {
-      get { return SpectralIndices.Count; }
+      get { return SpectralIndices?.Count ?? 0; }
     }
 
     /// <summary>
@@ -272,7 +273,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     public int NumberOfConcentrationData
     {
-      get { return ConcentrationIndices.Count; }
+      get { return ConcentrationIndices?.Count ?? 0; }
     }
 
     /// <summary>
@@ -332,9 +333,9 @@ namespace Altaxo.Calc.Regression.Multivariate
           if (clstype == null)
             throw new ApplicationException("Can not found the class used to analyse the data, the class type is: " + _ClassNameOfAnalysisClass);
 
-          object instance = System.Activator.CreateInstance(clstype);
-          if (instance == null)
-            throw new ApplicationException("Can not create a instance of the analysis class (no empty constuctor?), class name: " + clstype.ToString());
+          object? instance = System.Activator.CreateInstance(clstype);
+          if (instance is null)
+            throw new InvalidProgramException($"Can not create a instance of the analysis class {clstype}. Is there an public empty constructor missing?");
           if (!(instance is WorksheetAnalysis))
             throw new ApplicationException("The current instance of the analysis class does not inherit from the WorksheetAnalysis class, class name: " + clstype.ToString());
 
@@ -348,7 +349,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       set
       {
         _InstanceOfAnalysisClass = value;
-        _ClassNameOfAnalysisClass = value.GetType().FullName;
+        _ClassNameOfAnalysisClass = value.GetType().FullName!;
       }
     }
   }
