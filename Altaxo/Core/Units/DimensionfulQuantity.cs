@@ -448,7 +448,7 @@ namespace Altaxo.Units
       (var newPrefix, var remainingFactor) = SIPrefix.FromDivision(a.Prefix, b.Prefix);
 
       return new DimensionfulQuantity(
-          remainingFactor * a.AsValueInSIUnits / b.AsValueInSIUnits,
+          remainingFactor * a.Value / b.Value,
           newPrefix,
           a.Unit.SIUnit / b.Unit.SIUnit);
     }
