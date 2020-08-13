@@ -229,6 +229,27 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 
+    /// <summary>
+    /// Adds (elementwise) two vectors a and (b scaled with scaleb) and stores the result in c, i.e. c = a + b * scaleb. All vectors must have the same length.
+    /// The vectors a or b may be identical (the same instance) as c. 
+    /// </summary>
+    /// <param name="a">First summand.</param>
+    /// <param name="b">Second summand.</param>
+    /// <param name="scaleb">Scale factor for vector b.</param>
+    /// <param name="c">The resulting vector calculated as a + b * scaleb.</param>
+    public static void AddScaled(double[] a, double[] b, double scaleb, double[] c)
+    {
+      if (a.Length != b.Length)
+        throw new ArgumentException("Length of vectors a and b unequal");
+      if (c.Length != b.Length)
+        throw new ArgumentException("Length of vectors a and c unequal");
+
+      for (int i = c.Length - 1; i >= 0; --i)
+        c[i] = a[i] + b[i] * scaleb;
+    }
+
+
+
 		/// <summary>
 		/// Returns true if and only if both vectors contain the same elements. Both vectors must have the same length.
 		/// </summary>
@@ -584,6 +605,27 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = c.Length - 1; i >= 0; --i)
         c[i] = a[i] + b[i];
     }
+
+
+    /// <summary>
+    /// Adds (elementwise) two vectors a and (b scaled with scaleb) and stores the result in c, i.e. c = a + b * scaleb. All vectors must have the same length.
+    /// The vectors a or b may be identical (the same instance) as c. 
+    /// </summary>
+    /// <param name="a">First summand.</param>
+    /// <param name="b">Second summand.</param>
+    /// <param name="scaleb">Scale factor for vector b.</param>
+    /// <param name="c">The resulting vector calculated as a + b * scaleb.</param>
+    public static void AddScaled(float[] a, float[] b, float scaleb, float[] c)
+    {
+      if (a.Length != b.Length)
+        throw new ArgumentException("Length of vectors a and b unequal");
+      if (c.Length != b.Length)
+        throw new ArgumentException("Length of vectors a and c unequal");
+
+      for (int i = c.Length - 1; i >= 0; --i)
+        c[i] = a[i] + b[i] * scaleb;
+    }
+
 
 
 		/// <summary>
@@ -943,6 +985,27 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 
+    /// <summary>
+    /// Adds (elementwise) two vectors a and (b scaled with scaleb) and stores the result in c, i.e. c = a + b * scaleb. All vectors must have the same length.
+    /// The vectors a or b may be identical (the same instance) as c. 
+    /// </summary>
+    /// <param name="a">First summand.</param>
+    /// <param name="b">Second summand.</param>
+    /// <param name="scaleb">Scale factor for vector b.</param>
+    /// <param name="c">The resulting vector calculated as a + b * scaleb.</param>
+    public static void AddScaled(int[] a, int[] b, int scaleb, int[] c)
+    {
+      if (a.Length != b.Length)
+        throw new ArgumentException("Length of vectors a and b unequal");
+      if (c.Length != b.Length)
+        throw new ArgumentException("Length of vectors a and c unequal");
+
+      for (int i = c.Length - 1; i >= 0; --i)
+        c[i] = a[i] + b[i] * scaleb;
+    }
+
+
+
 		/// <summary>
 		/// Returns true if and only if both vectors contain the same elements. Both vectors must have the same length.
 		/// </summary>
@@ -1300,6 +1363,27 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 
+    /// <summary>
+    /// Adds (elementwise) two vectors a and (b scaled with scaleb) and stores the result in c, i.e. c = a + b * scaleb. All vectors must have the same length.
+    /// The vectors a or b may be identical (the same instance) as c. 
+    /// </summary>
+    /// <param name="a">First summand.</param>
+    /// <param name="b">Second summand.</param>
+    /// <param name="scaleb">Scale factor for vector b.</param>
+    /// <param name="c">The resulting vector calculated as a + b * scaleb.</param>
+    public static void AddScaled(IReadOnlyList<double> a, IReadOnlyList<double> b, double scaleb, IVector<double> c)
+    {
+      if (a.Count != b.Count)
+        throw new ArgumentException("Length of vectors a and b unequal");
+      if (c.Count != b.Count)
+        throw new ArgumentException("Length of vectors a and c unequal");
+
+      for (int i = c.Count - 1; i >= 0; --i)
+        c[i] = a[i] + b[i] * scaleb;
+    }
+
+
+
 		/// <summary>
 		/// Returns true if and only if both vectors contain the same elements. Both vectors must have the same length.
 		/// </summary>
@@ -1655,6 +1739,27 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = c.Count - 1; i >= 0; --i)
         c[i] = a[i] + b[i];
     }
+
+
+    /// <summary>
+    /// Adds (elementwise) two vectors a and (b scaled with scaleb) and stores the result in c, i.e. c = a + b * scaleb. All vectors must have the same length.
+    /// The vectors a or b may be identical (the same instance) as c. 
+    /// </summary>
+    /// <param name="a">First summand.</param>
+    /// <param name="b">Second summand.</param>
+    /// <param name="scaleb">Scale factor for vector b.</param>
+    /// <param name="c">The resulting vector calculated as a + b * scaleb.</param>
+    public static void AddScaled(IReadOnlyList<float> a, IReadOnlyList<float> b, float scaleb, IVector<float> c)
+    {
+      if (a.Count != b.Count)
+        throw new ArgumentException("Length of vectors a and b unequal");
+      if (c.Count != b.Count)
+        throw new ArgumentException("Length of vectors a and c unequal");
+
+      for (int i = c.Count - 1; i >= 0; --i)
+        c[i] = a[i] + b[i] * scaleb;
+    }
+
 
 
 		/// <summary>

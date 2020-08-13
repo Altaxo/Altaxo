@@ -10,7 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Altaxo.Calc.Ode.Dopri5;
+using Altaxo.Calc.Ode.Dopri;
 using Altaxo.Calc.Ode.Radau5;
 
 namespace Altaxo.Calc.Ode
