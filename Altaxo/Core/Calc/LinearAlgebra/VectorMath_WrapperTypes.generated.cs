@@ -1185,6 +1185,23 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new RWDoubleVectorSectionWrapper(vector, start, len);
 		}
 
+    /// <summary>
+	/// Returns a clone of the source vector.
+	/// </summary>
+	/// <param name="sourceVector">The source vector.</param>
+    /// <returns>A freshly allocated clone of the sourceVector, with the same element values as the source vector.</returns>
+	public static Double[] Clone(Double[] sourceVector)
+	{
+		if (sourceVector is null)
+			throw new ArgumentNullException(nameof(sourceVector));
+
+        var destVector = new Double[sourceVector.Length];
+        Array.Copy(sourceVector, destVector, sourceVector.Length);
+        return destVector;
+	}
+
+
+
 // ******************************************** Definitions for Single *******************************************
 
     /// <summary>
@@ -2331,6 +2348,23 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			return new RWFloatVectorSectionWrapper(vector, start, len);
 		}
+
+    /// <summary>
+	/// Returns a clone of the source vector.
+	/// </summary>
+	/// <param name="sourceVector">The source vector.</param>
+    /// <returns>A freshly allocated clone of the sourceVector, with the same element values as the source vector.</returns>
+	public static Single[] Clone(Single[] sourceVector)
+	{
+		if (sourceVector is null)
+			throw new ArgumentNullException(nameof(sourceVector));
+
+        var destVector = new Single[sourceVector.Length];
+        Array.Copy(sourceVector, destVector, sourceVector.Length);
+        return destVector;
+	}
+
+
 
 // ******************************************** Definitions for Int32 *******************************************
 
@@ -3479,6 +3513,23 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new RWIntVectorSectionWrapper(vector, start, len);
 		}
 
+    /// <summary>
+	/// Returns a clone of the source vector.
+	/// </summary>
+	/// <param name="sourceVector">The source vector.</param>
+    /// <returns>A freshly allocated clone of the sourceVector, with the same element values as the source vector.</returns>
+	public static Int32[] Clone(Int32[] sourceVector)
+	{
+		if (sourceVector is null)
+			throw new ArgumentNullException(nameof(sourceVector));
+
+        var destVector = new Int32[sourceVector.Length];
+        Array.Copy(sourceVector, destVector, sourceVector.Length);
+        return destVector;
+	}
+
+
+
 // ******************************************** Definitions for Int16 *******************************************
 
     /// <summary>
@@ -4626,6 +4677,23 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new RWShortVectorSectionWrapper(vector, start, len);
 		}
 
+    /// <summary>
+	/// Returns a clone of the source vector.
+	/// </summary>
+	/// <param name="sourceVector">The source vector.</param>
+    /// <returns>A freshly allocated clone of the sourceVector, with the same element values as the source vector.</returns>
+	public static Int16[] Clone(Int16[] sourceVector)
+	{
+		if (sourceVector is null)
+			throw new ArgumentNullException(nameof(sourceVector));
+
+        var destVector = new Int16[sourceVector.Length];
+        Array.Copy(sourceVector, destVector, sourceVector.Length);
+        return destVector;
+	}
+
+
+
 // ******************************************** Definitions for SByte *******************************************
 
     /// <summary>
@@ -5772,6 +5840,23 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			return new RWSByteVectorSectionWrapper(vector, start, len);
 		}
+
+    /// <summary>
+	/// Returns a clone of the source vector.
+	/// </summary>
+	/// <param name="sourceVector">The source vector.</param>
+    /// <returns>A freshly allocated clone of the sourceVector, with the same element values as the source vector.</returns>
+	public static SByte[] Clone(SByte[] sourceVector)
+	{
+		if (sourceVector is null)
+			throw new ArgumentNullException(nameof(sourceVector));
+
+        var destVector = new SByte[sourceVector.Length];
+        Array.Copy(sourceVector, destVector, sourceVector.Length);
+        return destVector;
+	}
+
+
 
 	} // class
 } // namespace

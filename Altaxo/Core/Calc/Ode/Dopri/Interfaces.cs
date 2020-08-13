@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Calc.Ode.Dopri5
+namespace Altaxo.Calc.Ode.Dopri
 {
   #region Interface
 

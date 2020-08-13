@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Altaxo.Calc.Ode.Dopri5;
+using Altaxo.Calc.Ode.Dopri;
 
 namespace Altaxo.Calc.Ode
 {

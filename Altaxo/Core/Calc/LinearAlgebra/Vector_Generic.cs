@@ -309,7 +309,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="src">Vector to copy from..</param>
     public void CopyFrom(Vector<T> src)
     {
-      if (src == null)
+      if (src is null)
         throw new System.ArgumentNullException(nameof(src));
       if (src.Length != Length)
         throw new ArgumentException("Source length must be equal to length of this vector", nameof(src));

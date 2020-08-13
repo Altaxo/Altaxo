@@ -14,7 +14,7 @@
 
 using System;
 
-namespace Altaxo.Calc.Ode.Dopri5
+namespace Altaxo.Calc.Ode.Dopri
 {
   #region The Class: DOPRI5
 

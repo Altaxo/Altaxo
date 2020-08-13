@@ -1188,6 +1188,23 @@
 			return new RW<#= bigScalT #>VectorSectionWrapper(vector, start, len);
 		}
 
+    /// <summary>
+	/// Returns a clone of the source vector.
+	/// </summary>
+	/// <param name="sourceVector">The source vector.</param>
+    /// <returns>A freshly allocated clone of the sourceVector, with the same element values as the source vector.</returns>
+	public static <#= scalT #>[] Clone(<#= scalT #>[] sourceVector)
+	{
+		if (sourceVector is null)
+			throw new ArgumentNullException(nameof(sourceVector));
+
+        var destVector = new <#= scalT #>[sourceVector.Length];
+        Array.Copy(sourceVector, destVector, sourceVector.Length);
+        return destVector;
+	}
+
+
+
 <# 
 // ----------- End of code before previous line --------------------------------------------------------------------
     }

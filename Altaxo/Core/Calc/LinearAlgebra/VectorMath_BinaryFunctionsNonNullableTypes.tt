@@ -225,6 +225,27 @@
     }
 
 
+    /// <summary>
+    /// Adds (elementwise) two vectors a and (b scaled with scaleb) and stores the result in c, i.e. c = a + b * scaleb. All vectors must have the same length.
+    /// The vectors a or b may be identical (the same instance) as c. 
+    /// </summary>
+    /// <param name="a">First summand.</param>
+    /// <param name="b">Second summand.</param>
+    /// <param name="scaleb">Scale factor for vector b.</param>
+    /// <param name="c">The resulting vector calculated as a + b * scaleb.</param>
+    public static void AddScaled(<#= arrT #> a, <#= arrT #> b, <#= scalT #> scaleb, <#= rwArrT #> c)
+    {
+      if (a.<#= length #> != b.<#= length #>)
+        throw new ArgumentException("Length of vectors a and b unequal");
+      if (c.<#= length #> != b.<#= length #>)
+        throw new ArgumentException("Length of vectors a and c unequal");
+
+      for (int i = c.<#= length #> - 1; i >= 0; --i)
+        c[i] = a[i] + b[i] * scaleb;
+    }
+
+
+
 		/// <summary>
 		/// Returns true if and only if both vectors contain the same elements. Both vectors must have the same length.
 		/// </summary>

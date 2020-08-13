@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -374,6 +375,20 @@ namespace Altaxo.Calc.LinearAlgebra
 			Blas.Axpy.Compute(this.Length, 1, vector._array, 1, this._array, 1);
 		}
 
+		///<summary>Adds a scaled <c>DoubleVector</c> to this<c>DoubleVector</c></summary>
+		///<param name="vector"><c>DoubleVector</c> to add.</param>
+		///<param name="scale">Factor that is used to scale the vector, before it is added to this vector.</param>
+		///<exception cref="ArgumentNullException">Exception thrown if null given as argument.</exception>
+		public void AddScaled(DoubleVector vector, Double scale)
+		{
+			if (vector == null)
+			{
+				throw new System.ArgumentNullException("Vector cannot be null.");
+			}
+			Blas.Axpy.Compute(this.Length, scale, vector._array, 1, this._array, 1);
+		}
+
+
 		///<summary>Subtract a <c>DoubleVector</c> from this<c>DoubleVector</c></summary>
 		///<param name="vector"><c>DoubleVector</c> to add.</param>
 		///<exception cref="ArgumentNullException">Exception thrown if null given as argument.</exception>
@@ -479,11 +494,49 @@ namespace Altaxo.Calc.LinearAlgebra
 			return lhs / rhs;
 		}
 
+
+    /// <summary>Performs linear interpolation between two vectors at specified point</summary>
+    /// <param name="t">Point of interpolation</param>
+    /// <param name="t0">First time point</param>
+    /// <param name="v0">Vector at first time point</param>
+    /// <param name="t1">Second time point</param>
+    /// <param name="v1">Vector at second time point</param>
+    /// <param name="result">Resulting vector. If <c>null</c> is provided, a new vector will be allocated. The resulting vector is the return value.</param>
+    /// <returns>Intepolated vector value at point <paramref name="t"/></returns>
+    public static DoubleVector Lerp(Double t, Double t0, DoubleVector v0, Double t1, DoubleVector v1, DoubleVector? result = null)
+    {
+      if (v0 is null) 
+        throw new ArgumentNullException(nameof(v0));
+      if (v1 is null)
+        throw new ArgumentNullException(nameof(v0));
+      if (v1.Length != v0.Length)
+        throw new ArgumentNullException(nameof(v1), $"Length of {nameof(v1)} does not match length of {nameof(v0)}");
+      if (result is null)
+        result = new DoubleVector(v0.Length);
+      else if(result.Length != v0.Length)
+        throw new ArgumentNullException(nameof(result), $"Length of {nameof(result)} does not match length of {nameof(v0)}");
+
+      var len = v0.Length;
+
+      var factor0 = (t1 - t);
+      var factor1 = (t - t0);
+      var scale = 1 / (t1 - t0);
+
+      for (int i=0;i<len;++i)
+      {
+        result[i] = (factor0 * v0[i] + factor1 * v1[i]) * scale;
+      }
+
+      return result;
+    }
+
+
+
 		///<summary>A string representation of this <c>DoubleVector</c>.</summary>
 		///<param name="format">A format specification.</param>
 		///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
 		///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
-		public override string ToString(string format, IFormatProvider formatProvider)
+		public override string ToString(string? format, IFormatProvider? formatProvider)
 		{
 			var sb = new System.Text.StringBuilder("Length: ");
 			sb.Append(_array.Length).Append(System.Environment.NewLine);
@@ -921,6 +974,20 @@ namespace Altaxo.Calc.LinearAlgebra
 			Blas.Axpy.Compute(this.Length, 1, vector._array, 1, this._array, 1);
 		}
 
+		///<summary>Adds a scaled <c>DoubleVector</c> to this<c>DoubleVector</c></summary>
+		///<param name="vector"><c>DoubleVector</c> to add.</param>
+		///<param name="scale">Factor that is used to scale the vector, before it is added to this vector.</param>
+		///<exception cref="ArgumentNullException">Exception thrown if null given as argument.</exception>
+		public void AddScaled(FloatVector vector, Single scale)
+		{
+			if (vector == null)
+			{
+				throw new System.ArgumentNullException("Vector cannot be null.");
+			}
+			Blas.Axpy.Compute(this.Length, scale, vector._array, 1, this._array, 1);
+		}
+
+
 		///<summary>Subtract a <c>DoubleVector</c> from this<c>DoubleVector</c></summary>
 		///<param name="vector"><c>DoubleVector</c> to add.</param>
 		///<exception cref="ArgumentNullException">Exception thrown if null given as argument.</exception>
@@ -1026,11 +1093,49 @@ namespace Altaxo.Calc.LinearAlgebra
 			return lhs / rhs;
 		}
 
+
+    /// <summary>Performs linear interpolation between two vectors at specified point</summary>
+    /// <param name="t">Point of interpolation</param>
+    /// <param name="t0">First time point</param>
+    /// <param name="v0">Vector at first time point</param>
+    /// <param name="t1">Second time point</param>
+    /// <param name="v1">Vector at second time point</param>
+    /// <param name="result">Resulting vector. If <c>null</c> is provided, a new vector will be allocated. The resulting vector is the return value.</param>
+    /// <returns>Intepolated vector value at point <paramref name="t"/></returns>
+    public static FloatVector Lerp(Single t, Single t0, FloatVector v0, Single t1, FloatVector v1, FloatVector? result = null)
+    {
+      if (v0 is null) 
+        throw new ArgumentNullException(nameof(v0));
+      if (v1 is null)
+        throw new ArgumentNullException(nameof(v0));
+      if (v1.Length != v0.Length)
+        throw new ArgumentNullException(nameof(v1), $"Length of {nameof(v1)} does not match length of {nameof(v0)}");
+      if (result is null)
+        result = new FloatVector(v0.Length);
+      else if(result.Length != v0.Length)
+        throw new ArgumentNullException(nameof(result), $"Length of {nameof(result)} does not match length of {nameof(v0)}");
+
+      var len = v0.Length;
+
+      var factor0 = (t1 - t);
+      var factor1 = (t - t0);
+      var scale = 1 / (t1 - t0);
+
+      for (int i=0;i<len;++i)
+      {
+        result[i] = (factor0 * v0[i] + factor1 * v1[i]) * scale;
+      }
+
+      return result;
+    }
+
+
+
 		///<summary>A string representation of this <c>DoubleVector</c>.</summary>
 		///<param name="format">A format specification.</param>
 		///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
 		///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
-		public override string ToString(string format, IFormatProvider formatProvider)
+		public override string ToString(string? format, IFormatProvider? formatProvider)
 		{
 			var sb = new System.Text.StringBuilder("Length: ");
 			sb.Append(_array.Length).Append(System.Environment.NewLine);
