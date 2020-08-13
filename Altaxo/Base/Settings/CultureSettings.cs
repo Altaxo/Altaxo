@@ -288,7 +288,12 @@ namespace Altaxo.Settings
       get
       {
         if (_startupDocumentCultureInfo is null)
-          throw new InvalidOperationException($"{nameof(_startupDocumentCultureInfo)} not yet set! It must be set very early at startup of the application.");
+        {
+          if (Current.IsInDesignMode)
+            return CultureInfo.InvariantCulture;
+          else
+            throw new InvalidOperationException($"{nameof(_startupDocumentCultureInfo)} not yet set and not in design mode! It must be set very early at startup of the application.");
+        }
 
         return (CultureInfo)_startupDocumentCultureInfo.Clone();
       }
@@ -306,7 +311,12 @@ namespace Altaxo.Settings
       get
       {
         if (_startupUICultureInfo is null)
-          throw new InvalidOperationException($"{nameof(_startupUICultureInfo)} not yet set! It must be set very early at startup of the application.");
+        {
+          if (Current.IsInDesignMode)
+            return CultureInfo.InvariantCulture;
+          else
+            throw new InvalidOperationException($"{nameof(_startupUICultureInfo)} not yet set and not in design mode! It must be set very early at startup of the application.");
+        }
 
         return _startupUICultureInfo;
       }

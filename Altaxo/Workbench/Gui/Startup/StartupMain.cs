@@ -313,6 +313,8 @@ namespace Altaxo.Gui.Startup
     /// <param name="startupSettings">The settings used for startup of the application.</param>
     public static void InitializeApplication(StartupSettings startupSettings)
     {
+      Current.IsInDesignMode = false; // we are not in design mode
+
       // Initialize the most important services:
       var container = new AltaxoServiceContainer();
       container.AddFallbackProvider(Current.FallbackServiceProvider);

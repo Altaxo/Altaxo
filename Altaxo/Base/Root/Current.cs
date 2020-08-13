@@ -443,5 +443,33 @@ namespace Altaxo
     }
 
     #endregion ApplicationInstanceGuid
+
+    #region Design mode
+
+    private static bool _isNotInDesignMode;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the app is in design mode.
+    /// </summary>
+    /// <value>
+    /// True if the application is in design mode, otherwise, false.
+    /// </value>
+    public static bool IsInDesignMode
+    {
+      get
+      {
+        return !_isNotInDesignMode;
+      }
+      set
+      {
+        if (!value)
+        {
+          _isNotInDesignMode = true;
+        }
+      }
+    }
+
+    #endregion DesignMode
+
   }
 }
