@@ -389,7 +389,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       var analysis = (WorksheetAnalysis)(System.Activator.CreateInstance(options.AnalysisMethod) ?? throw new InvalidProgramException($"Unable to create instance of type {options.AnalysisMethod}. Is a constructor missing?"));
 
-      string err = analysis.ExecuteAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, ctrl.SelectedPropertyColumns, false, options, preprocessOptions);
+      var err = analysis.ExecuteAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, ctrl.SelectedPropertyColumns, false, options, preprocessOptions);
       if (null != err)
         Current.Gui.ErrorMessageBox(err, "An error occured");
     }
@@ -893,7 +893,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PlotCrossPredictedVersusActualY(Altaxo.Data.DataTable table, bool allowGuiForMessages)
     {
       var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo == null)
+      if (plsMemo is null)
       {
         string msg = string.Format("The table <<{0}>> does not seem to contain multivariate analysis data (content memento is missing)", table.Name);
         if (allowGuiForMessages)
@@ -902,13 +902,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
           throw new ApplicationException(msg);
         return;
       }
-      while (!Current.Project.DataTableCollection.Contains(plsMemo.OriginalDataTableName))
+
+      while (string.IsNullOrEmpty(plsMemo.OriginalDataTableName) || !Current.Project.DataTableCollection.Contains(plsMemo.OriginalDataTableName))
       {
         string msg = string.Format("The table of the original spectral data <<{0}>> does not exist (renamed?)", plsMemo.OriginalDataTableName);
         if (allowGuiForMessages)
         {
           Current.Gui.ErrorMessageBox(msg);
-          string newName = plsMemo.OriginalDataTableName;
+          string newName = plsMemo.OriginalDataTableName ?? string.Empty;
           // TODO replace by a TableChoiceDialogBox
           if (Current.Gui.ShowDialog(ref newName, "Please enter the table name of original spectral data", false))
             plsMemo.OriginalDataTableName = newName;

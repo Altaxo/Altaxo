@@ -197,7 +197,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region Multivariate linear fit
 
-    public static LinearFitBySvd MultivariateLinearFit(IWorksheetController ctrl)
+    public static LinearFitBySvd? MultivariateLinearFit(IWorksheetController ctrl)
     {
       return Calc.Regression.Multivariate.MultivariateLinearRegression.ShowDialogAndRegress(ctrl.DataTable.DataColumns, ctrl.SelectedDataColumns);
     }

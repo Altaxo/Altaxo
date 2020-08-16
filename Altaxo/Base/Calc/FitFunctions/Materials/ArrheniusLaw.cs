@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.ComponentModel;
 using Altaxo.Calc.Regression.Nonlinear;
@@ -91,9 +92,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
         info.AddEnum("ParamEnergyUnit", s._paramEnergyUnit);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ArrheniusLaw s = o != null ? (ArrheniusLaw)o : new ArrheniusLaw();
+        ArrheniusLaw s = (ArrheniusLaw?)o ?? new ArrheniusLaw();
 
         s._temperatureUnitOfX = (TemperatureRepresentation)info.GetEnum("IndependentVariableUnit", typeof(TemperatureRepresentation));
         s._dependentVariableTransform = (TransformedValueRepresentation)info.GetEnum("DependentVariableTransform", typeof(TransformedValueRepresentation));
@@ -186,7 +187,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       return 0;
     }
 
-    public IVarianceScaling DefaultVarianceScaling(int i)
+    public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
@@ -198,14 +199,13 @@ namespace Altaxo.Calc.FitFunctions.Materials
     /// </summary>
     protected virtual void OnChanged()
     {
-      if (null != Changed)
-        Changed(this, EventArgs.Empty);
+      Changed?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
     /// Fired when the fit function changed.
     /// </summary>
-    public event EventHandler Changed;
+    public event EventHandler? Changed;
 
     #endregion Change event
 

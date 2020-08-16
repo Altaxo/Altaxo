@@ -753,7 +753,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROMatrix<double> X, // matrix of spectra (a spectra is a row of this matrix)
       IROMatrix<double> Y, // matrix of concentrations (a mixture is a row of this matrix)
       int numFactors,
-      ICrossValidationGroupingStrategy? groupingStrategy,
+      ICrossValidationGroupingStrategy groupingStrategy,
       SpectralPreprocessingOptions preprocessOptions,
       MultivariateRegression regress,
       out IROVector<double> crossPRESS // vertical value of PRESS values for the cross validation
@@ -816,7 +816,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROMatrix<double> X, // matrix of spectra (a spectra is a row of this matrix)
       IROMatrix<double> Y, // matrix of concentrations (a mixture is a row of this matrix)
       int numFactors,
-      ICrossValidationGroupingStrategy? groupingStrategy,
+      ICrossValidationGroupingStrategy groupingStrategy,
       SpectralPreprocessingOptions preprocessOptions,
       MultivariateRegression regress,
 

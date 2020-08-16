@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Calc.Regression.Nonlinear;
 
@@ -46,9 +47,9 @@ namespace Altaxo.Calc.FitFunctions.General
         info.AddValue("Order", s._order);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        PolynomialFit s = o != null ? (PolynomialFit)o : new PolynomialFit();
+        var s = (PolynomialFit?)o ?? new PolynomialFit();
         s._order = info.GetInt32("Order");
         return s;
       }
@@ -138,7 +139,7 @@ namespace Altaxo.Calc.FitFunctions.General
       return 0;
     }
 
-    public IVarianceScaling DefaultVarianceScaling(int i)
+    public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
@@ -160,14 +161,13 @@ namespace Altaxo.Calc.FitFunctions.General
     /// </summary>
     protected virtual void OnChanged()
     {
-      if (null != Changed)
-        Changed(this, EventArgs.Empty);
+      Changed?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
     /// Fired when the fit function changed.
     /// </summary>
-    public event EventHandler Changed;
+    public event EventHandler? Changed;
 
     #endregion IFitFunction Members
 

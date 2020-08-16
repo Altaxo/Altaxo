@@ -441,7 +441,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="spectralResiduals"></param>
     public virtual void CalculateCrossPredictedY(
       IMultivariateCalibrationModel mcalib,
-      ICrossValidationGroupingStrategy? groupingStrategy,
+      ICrossValidationGroupingStrategy groupingStrategy,
       SpectralPreprocessingOptions preprocessOptions,
       IReadOnlyList<double> xOfX,
       IMatrix<double> matrixX,
@@ -562,7 +562,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     /// <param name="plsOptions">The options for PLS analysis</param>
     /// <returns>The used grouping strategy. Returns null if no cross validation is choosen.</returns>
-    public static ICrossValidationGroupingStrategy? GetGroupingStrategy(MultivariateAnalysisOptions plsOptions)
+    public static ICrossValidationGroupingStrategy GetGroupingStrategy(MultivariateAnalysisOptions plsOptions)
     {
       return GetGroupingStrategy(plsOptions.CrossPRESSCalculation);
     }
@@ -572,7 +572,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     /// <param name="crossValidationType">Type of cross validation.</param>
     /// <returns>The used grouping strategy. Returns null if no cross validation is choosen.</returns>
-    public static ICrossValidationGroupingStrategy? GetGroupingStrategy(CrossPRESSCalculationType crossValidationType)
+    public static ICrossValidationGroupingStrategy GetGroupingStrategy(CrossPRESSCalculationType crossValidationType)
     {
       switch (crossValidationType)
       {
@@ -584,8 +584,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 
         case CrossPRESSCalculationType.ExcludeHalfEnsemblyOfMeasurements:
           return new ExcludeHalfObservationsGroupingStrategy();
+
+        default:
+          throw new InvalidOperationException($"Can not get grouping strategy for {nameof(CrossPRESSCalculationType)} {crossValidationType}");
       }
-      return null;
     }
 
     /// <summary>

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Calc.Regression.Nonlinear;
 
@@ -43,9 +44,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
         var s = (SmoothedPercolation)obj;
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        SmoothedPercolation s = o != null ? (SmoothedPercolation)o : new SmoothedPercolation();
+        var s = (SmoothedPercolation?)o ?? new SmoothedPercolation();
         return s;
       }
     }
@@ -126,7 +127,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       return i <= 1 ? 0 : i == 2 ? 0.5 : 1;
     }
 
-    public IVarianceScaling DefaultVarianceScaling(int i)
+    public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
@@ -252,7 +253,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// <summary>
     /// Not used here since this fit function never changed.
     /// </summary>
-    public event EventHandler Changed;
+    public event EventHandler? Changed;
 
     protected virtual void OnChanged()
     {

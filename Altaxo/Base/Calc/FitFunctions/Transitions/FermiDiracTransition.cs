@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -164,14 +165,13 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// </summary>
     protected virtual void OnChanged()
     {
-      if (null != Changed)
-        Changed(this, EventArgs.Empty);
+      Changed?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
     /// Fired when the fit function changed.
     /// </summary>
-    public event EventHandler Changed;
+    public event EventHandler? Changed;
 
     #endregion Change event
 
@@ -191,9 +191,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
         var s = (LinearFermiDiracTransition)obj;
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinearFermiDiracTransition s = o != null ? (LinearFermiDiracTransition)o : new LinearFermiDiracTransition();
+        var s = (LinearFermiDiracTransition?)o ?? new LinearFermiDiracTransition();
         return s;
       }
     }
@@ -235,9 +235,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
         var s = (LogarithmicFermiDiracTransition)obj;
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LogarithmicFermiDiracTransition s = o != null ? (LogarithmicFermiDiracTransition)o : new LogarithmicFermiDiracTransition();
+        var s = (LogarithmicFermiDiracTransition?)o ?? new LogarithmicFermiDiracTransition();
         return s;
       }
     }

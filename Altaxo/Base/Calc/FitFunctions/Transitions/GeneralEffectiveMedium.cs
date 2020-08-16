@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Calc.Regression.Nonlinear;
 
@@ -43,9 +44,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
         var s = (GeneralEffectiveMedium)obj;
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        GeneralEffectiveMedium s = o != null ? (GeneralEffectiveMedium)o : new GeneralEffectiveMedium();
+        var s = (GeneralEffectiveMedium?)o ?? new GeneralEffectiveMedium();
         return s;
       }
     }
@@ -127,7 +128,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       return i <= 1 ? 0 : i == 2 ? 0.5 : 1;
     }
 
-    public IVarianceScaling DefaultVarianceScaling(int i)
+    public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
@@ -139,14 +140,13 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// </summary>
     protected virtual void OnChanged()
     {
-      if (null != Changed)
-        Changed(this, EventArgs.Empty);
+      Changed?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
     /// Fired when the fit function changed.
     /// </summary>
-    public event EventHandler Changed;
+    public event EventHandler? Changed;
 
     #endregion Change event
 
@@ -330,9 +330,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
         var s = (GeneralEffectiveMediumLog10)obj;
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        GeneralEffectiveMediumLog10 s = o != null ? (GeneralEffectiveMediumLog10)o : new GeneralEffectiveMediumLog10();
+        var s = (GeneralEffectiveMediumLog10?)o ?? new GeneralEffectiveMediumLog10();
         return s;
       }
     }
