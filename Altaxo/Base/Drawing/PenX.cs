@@ -243,7 +243,7 @@ if (0 != (cp & PenHolder.Configured.Width))
         if (0 != (cp & Configured.EndCap))
         {
           var cap = (LineCap)info.GetEnum("EndCap", typeof(LineCap));
-          s._endCap = LineCapBase.FromName(Enum.GetName(typeof(LineCap), cap));
+          s._endCap = LineCapBase.FromName(Enum.GetName(typeof(LineCap), cap)!);
         }
 
         if (0 != (cp & Configured.LineJoin))
@@ -255,7 +255,7 @@ if (0 != (cp & PenHolder.Configured.Width))
         if (0 != (cp & Configured.StartCap))
         {
           var cap = (LineCap)info.GetEnum("StartCap", typeof(LineCap));
-          s._startCap = LineCapBase.FromName(Enum.GetName(typeof(LineCap), cap));
+          s._startCap = LineCapBase.FromName(Enum.GetName(typeof(LineCap), cap)!);
         }
 
         if (0 != (cp & Configured.Transform))

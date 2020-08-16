@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -98,7 +100,7 @@ namespace Altaxo.Drawing
     /// <param name="nameHint">The name of the existing list, to which the items belong. Can be <c>null</c>.</param>
     /// <param name="nameOfExistingList">If found (the return value is then <c>true</c>), the name of existing list.</param>
     /// <returns>True if a list with such items was found in the manager, otherwise, <c>false</c>.</returns>
-    bool TryGetListByMembers(IEnumerable<T> symbols, string nameHint, out string nameOfExistingList);
+    bool TryGetListByMembers(IEnumerable<T> symbols, string nameHint, [MaybeNullWhen(false)] out string nameOfExistingList);
 
     /// <summary>
     /// Try to register the provided list.
@@ -122,6 +124,7 @@ namespace Altaxo.Drawing
     /// </summary>
     /// <param name="item">The item.</param>
     /// <returns>The parent list of the item.</returns>
+    [return: MaybeNull]
     TList GetParentList(T item);
   }
 }

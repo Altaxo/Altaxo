@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,7 +103,7 @@ namespace Altaxo.Drawing
         info.AddValue("Y", s.Y);
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var scalingMode = (TextureScalingMode)info.GetEnum("Mode", typeof(TextureScalingMode));
         var aspectPreserving = (AspectRatioPreservingMode)info.GetEnum("AspectPreserving", typeof(AspectRatioPreservingMode));
@@ -259,12 +260,9 @@ namespace Altaxo.Drawing
       return ScalingMode == other.ScalingMode && SourceAspectRatioPreserving == other.SourceAspectRatioPreserving && X == other.X && Y == other.Y;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (obj is TextureScaling)
-        return Equals((TextureScaling)obj);
-      else
-        return false;
+      return obj is TextureScaling other ? Equals(other) : false;
     }
 
     public override int GetHashCode()

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace Altaxo.Drawing.ColorManagement
         throw new InvalidOperationException("Serialization of old versions not supported");
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         info.GetString("Name");
         return ColorSetManager.Instance.BuiltinDarkPlotColors;
@@ -63,7 +64,7 @@ namespace Altaxo.Drawing.ColorManagement
         throw new InvalidOperationException("Serialization of old versions not supported");
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return ColorSetManager.Instance.BuiltinDarkPlotColors;
       }

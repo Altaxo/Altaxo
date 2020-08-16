@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Graph;
@@ -119,9 +121,10 @@ namespace Altaxo.Drawing.ColorManagement
       {
         return _instance;
       }
+      [MemberNotNull(nameof(_instance))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (null != _instance)
@@ -130,11 +133,7 @@ namespace Altaxo.Drawing.ColorManagement
         }
 
         _instance = value;
-
-        if (null != _instance)
-        {
-          Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
-        }
+        Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
       }
     }
 
@@ -143,7 +142,7 @@ namespace Altaxo.Drawing.ColorManagement
       return new ColorSet(name, symbols);
     }
 
-    public override IColorSet GetParentList(NamedColor item)
+    public override IColorSet? GetParentList(NamedColor item)
     {
       return item.ParentColorSet;
     }
@@ -218,7 +217,7 @@ namespace Altaxo.Drawing.ColorManagement
 
     #region Deserialization of colors
 
-    public bool TryFindColorSetContaining(AxoColor color, out IColorSet value)
+    public bool TryFindColorSetContaining(AxoColor color, [MaybeNullWhen(false)] out IColorSet value)
     {
 
       foreach (Main.ItemDefinitionLevel level in Enum.GetValues(typeof(Main.ItemDefinitionLevel)))
@@ -240,7 +239,7 @@ namespace Altaxo.Drawing.ColorManagement
       return false;
     }
 
-    public bool TryFindColorSetContaining(AxoColor colorValue, string colorName, out IColorSet value)
+    public bool TryFindColorSetContaining(AxoColor colorValue, string colorName, [MaybeNullWhen(false)] out IColorSet value)
     {
 
       foreach (Main.ItemDefinitionLevel level in Enum.GetValues(typeof(Main.ItemDefinitionLevel)))
@@ -312,7 +311,7 @@ namespace Altaxo.Drawing.ColorManagement
 
     #region User defined color sets
 
-    protected override void OnUserDefinedListAddedChangedRemoved(IColorSet list)
+    protected override void OnUserDefinedListAddedChangedRemoved(IColorSet? list)
     {
       var colorSetBag = new ColorSetBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => new Tuple<IColorSet, bool>(entry.List, entry.IsPlotColorSet)));
       Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedColorSets, colorSetBag);

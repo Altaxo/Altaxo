@@ -22,9 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Main;
@@ -86,7 +88,7 @@ namespace Altaxo.Drawing
     /// </summary>
     protected Dictionary<string, TListManagerEntry> _allLists = new Dictionary<string, TListManagerEntry>();
 
-    private string _deserializationRenameDictionaryKey;
+    private string? _deserializationRenameDictionaryKey;
 
     private Func<TList, ItemDefinitionLevel, TListManagerEntry> EntryValueCreator;
 
@@ -94,7 +96,7 @@ namespace Altaxo.Drawing
 
     protected StyleListManagerBase(Func<TList, ItemDefinitionLevel, TListManagerEntry> valueCreator, TList builtinDefaultList)
     {
-      if (null == valueCreator)
+      if (valueCreator is null)
         throw new ArgumentNullException(nameof(valueCreator));
 
       EntryValueCreator = valueCreator;
@@ -134,7 +136,7 @@ namespace Altaxo.Drawing
       _changed.Target?.Invoke();
     }
 
-    protected virtual void OnListChanged(TList list, Main.ItemDefinitionLevel level)
+    protected virtual void OnListChanged([AllowNull] TList list, Main.ItemDefinitionLevel level)
     {
       if (level == ItemDefinitionLevel.UserDefined)
         OnUserDefinedListAddedChangedRemoved(list);
@@ -142,7 +144,7 @@ namespace Altaxo.Drawing
       _changed.Target?.Invoke();
     }
 
-    protected virtual void OnUserDefinedListAddedChangedRemoved(TList list)
+    protected virtual void OnUserDefinedListAddedChangedRemoved([AllowNull] TList list)
     {
     }
 
@@ -209,7 +211,7 @@ namespace Altaxo.Drawing
         throw new InvalidOperationException("The list is neither at user defined level nor at project level. Thus the levels can not be switched.");
     }
 
-    public bool TryGetList(string name, out TListManagerEntry value)
+    public bool TryGetList(string name, [MaybeNullWhen(false)] out TListManagerEntry value)
     {
       return _allLists.TryGetValue(name, out value);
     }
@@ -217,7 +219,7 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Called when the current project is closed. Removes all those list which are project lists.
     /// </summary>
-    protected virtual void EhProjectClosed(object sender, Main.ProjectEventArgs e)
+    protected virtual void EhProjectClosed(object? sender, Main.ProjectEventArgs e)
     {
       var namesToRemove = new List<string>(_allLists.Where(entry => entry.Value.Level == Main.ItemDefinitionLevel.Project).Select(entry => entry.Key));
       foreach (var name in namesToRemove)
@@ -366,7 +368,7 @@ namespace Altaxo.Drawing
     }
 
     /// <inheritdoc />
-    public bool TryGetListByMembers(IEnumerable<TItem> symbols, string nameHint, out string nameOfExistingList)
+    public bool TryGetListByMembers(IEnumerable<TItem> symbols, string nameHint, [MaybeNullWhen(false)] out string nameOfExistingList)
     {
       // fast lookup: first test if a list with the hinted name exists and has the same items
       if (!string.IsNullOrEmpty(nameHint) && _allLists.TryGetValue(nameHint, out var existingEntry) && existingEntry.List.IsStructuralEquivalentTo(symbols))
@@ -397,6 +399,7 @@ namespace Altaxo.Drawing
 
     public abstract TList CreateNewList(string name, IEnumerable<TItem> symbols);
 
+    [return: MaybeNull]
     public abstract TList GetParentList(TItem item);
 
     /// <summary>
@@ -443,7 +446,7 @@ namespace Altaxo.Drawing
     /// First argument is the item, second argument the item name. The return value is true if the item's name and the itemName match.</param>
     /// <param name="item">The found item. If the item was not found, the default value.</param>
     /// <returns>True if the item was found; otherwise, false.</returns>
-    public bool TryGetItemByHierarchicalName(string fullItemName, Func<TItem, string, bool> predicate, out TItem item)
+    public bool TryGetItemByHierarchicalName(string fullItemName, Func<TItem, string, bool> predicate, [MaybeNullWhen(false)] out TItem item)
     {
       if (predicate is null)
         throw new ArgumentNullException(nameof(predicate));

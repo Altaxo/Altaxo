@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Drawing
@@ -74,10 +75,10 @@ namespace Altaxo.Drawing
   {
     public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
     {
-      info.SetNodeContent(obj.ToString());
+      info.SetNodeContent(obj.ToString() ?? string.Empty);
     }
 
-    public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       var val = info.GetNodeContent();
       return Enum.Parse(typeof(BrushType), val, true);

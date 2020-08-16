@@ -421,8 +421,8 @@ namespace Altaxo.Worksheet
       }
       set
       {
-        if (null == _textFont)
-          throw new ArgumentNullException();
+        if (value is null)
+          throw new ArgumentNullException(nameof(TextFont));
 
         _textFont = value;
       }

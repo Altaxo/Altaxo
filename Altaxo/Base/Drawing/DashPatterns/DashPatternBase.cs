@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -47,7 +48,7 @@ namespace Altaxo.Drawing.DashPatterns
       }
     }
 
-    protected static TItem DeserializeV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent) where TItem : IDashPattern
+    protected static TItem DeserializeV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent) where TItem : IDashPattern
     {
       if (info.CurrentElementName == "Set")
       {
@@ -91,7 +92,7 @@ namespace Altaxo.Drawing.DashPatterns
         yield return this[i];
     }
 
-    public virtual bool Equals(IDashPattern other)
+    public virtual bool Equals(IDashPattern? other)
     {
       if (other is null)
         return false;
@@ -132,7 +133,7 @@ namespace Altaxo.Drawing.DashPatterns
       return this.GetType().GetHashCode() + 5 * Count.GetHashCode() + 7 * DashOffset.GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return Equals(obj as DashPatternBase);
     }

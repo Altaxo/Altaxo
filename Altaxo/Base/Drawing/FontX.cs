@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,10 +39,10 @@ namespace Altaxo.Drawing
     private const string worldPostfix = "world";
 
     /// <summary>Occurs when a <see cref="FontX"/> instance is created.  Argument is the invariant description string of the created <see cref="FontX"/> instance.</summary>
-    public static event Action<string> FontConstructed;
+    public static event Action<string>? FontConstructed;
 
     /// <summary>Occurs when a <see cref="FontX"/> instance was disposed. Argument is the invariant description string of the destructed <see cref="FontX"/> instance.</summary>
-    public static event Action<string> FontDestructed;
+    public static event Action<string>? FontDestructed;
 
     /// <summary>String describing the original font. It can be different from the constructed font (if the original font is not found on this machine).</summary>
     private string _invariantDescriptionString;
@@ -71,7 +72,7 @@ namespace Altaxo.Drawing
         throw new InvalidOperationException("Serialization of old versions is not allowed");
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string invariantDescriptionString = info.GetNodeContent();
         if (invariantDescriptionString.IndexOf(worldPostfix) < 0)
@@ -104,7 +105,7 @@ namespace Altaxo.Drawing
         info.SetNodeContent(s._invariantDescriptionString);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string invariantDescriptionString = info.GetNodeContent();
         var s = new FontX(invariantDescriptionString);
@@ -334,15 +335,9 @@ namespace Altaxo.Drawing
     /// <returns>
     ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
     /// </returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (null == obj)
-        return false;
-      var from = obj as FontX;
-      if (null == (object)from) // cast to avoid call of the ==(FontX, FontX) operator
-        return false;
-
-      return InvariantDescriptionString == from.InvariantDescriptionString;
+      return obj is FontX from ? InvariantDescriptionString == from.InvariantDescriptionString : false;
     }
 
     /// <summary>

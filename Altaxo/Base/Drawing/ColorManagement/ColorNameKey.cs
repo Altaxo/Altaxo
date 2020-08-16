@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,9 +64,9 @@ namespace Altaxo.Drawing.ColorManagement
     /// </summary>
     /// <param name="obj">The other object.</param>
     /// <returns><c>True</c> if the other object is an instance of <see cref="ColorNameKey"/>, and this key matches with name and color value to the other key. Otherwise, <c>false</c>.</returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      return (obj is ColorNameKey) ? Equals((ColorNameKey)obj) : false;
+      return (obj is ColorNameKey other) && Equals(other);
     }
 
     /// <summary>
