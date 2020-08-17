@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -59,7 +60,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// Event can be used to inform a listener about changed properties.
     /// </summary>
-    public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>If graph is smaller than the printable area, the graph will be zoomed to fill the printable area.</summary>
     private bool _fitGraphToPrintIfSmaller;

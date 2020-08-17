@@ -33,7 +33,7 @@ namespace Altaxo.Drawing.D3D
 {
   /// <summary>
   /// The contour for a line cap. A list of contour points describes the shape of the cap. The x component of each contour point corresponds to the advance of the cap in line direction,
-  /// whereas the y-component of each contour point is multiplied with the cross secction of the line (i.e. it is the relative thickness of the cap at this point).
+  /// whereas the y-component of each contour point is multiplied with the cross section of the line (i.e. it is the relative thickness of the cap at this point).
   /// </summary>
   /// <seealso cref="Altaxo.Main.IImmutable" />
   public interface ILineCapContour : Main.IImmutable
@@ -92,8 +92,8 @@ namespace Altaxo.Drawing.D3D
     protected LineCapContour(int numberOfVertices, int numberOfIsVertexSharp, int numberOfNormals)
     {
       _vertices = new PointD2D[numberOfVertices];
-      _isVertexSharp = new bool[numberOfVertices];
-      _normals = new VectorD2D[numberOfVertices];
+      _isVertexSharp = new bool[numberOfIsVertexSharp];
+      _normals = new VectorD2D[numberOfNormals];
     }
 
     public PointD2D[] Vertices { get { return _vertices; } }

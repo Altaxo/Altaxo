@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,14 +50,14 @@ namespace Altaxo.Graph
         info.CommitArray();
       }
 
-      protected virtual CSPlaneIDList SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual CSPlaneIDList SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = new CSPlaneIDList(info);
 
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         CSPlaneIDList s = SDeserialize(o, info, parent);
         return s;

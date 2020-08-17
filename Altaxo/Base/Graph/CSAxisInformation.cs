@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -36,8 +37,8 @@ namespace Altaxo.Graph
     private string _nameOfAxisStyle;
     private string _nameOfFirstDownSide;
     private string _nameOfFirstUpSide;
-    private string _nameOfSecondDownSide;
-    private string _nameOfSecondUpSide;
+    private string? _nameOfSecondDownSide;
+    private string? _nameOfSecondUpSide;
     private CSAxisSide _preferedLabelSide;
     private CSAxisSide _preferedTickSide;
     private bool _isShownByDefault;
@@ -58,6 +59,9 @@ namespace Altaxo.Graph
     public CSAxisInformation(CSLineID identifier)
     {
       _identifier = identifier;
+      _nameOfFirstDownSide = "FirstDown";
+      _nameOfFirstUpSide = "FirstUp";
+      _nameOfAxisStyle = "Axis";
     }
 
     public CSAxisInformation(
@@ -131,7 +135,7 @@ namespace Altaxo.Graph
       }
       else
       {
-        if (null == identifier)
+        if (identifier is null)
           throw new ArgumentNullException(nameof(identifier));
 
         var result = (CSAxisInformation)MemberwiseClone();
@@ -205,7 +209,7 @@ namespace Altaxo.Graph
 
     public static CSAxisInformation NewWithDefaultValues(CSLineID identifier)
     {
-      if (null == identifier)
+      if (identifier is null)
         throw new ArgumentNullException(nameof(identifier));
 
       return new CSAxisInformation(identifier, identifier);
@@ -272,7 +276,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// Name of the side (in the second alternate direction) of an axis style to lower logical values. For the bottom axis, this would be in the direction to the viewer.
     /// </summary>
-    public string NameOfSecondDownSide
+    public string? NameOfSecondDownSide
     {
       get { return _nameOfSecondDownSide; }
     }
@@ -280,7 +284,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// Name of the side (in the second alternate direction) of an axis style to higher logical values. For the bottom axis, this would be in the direction away from the viewer.
     /// </summary>
-    public string NameOfSecondUpSide
+    public string? NameOfSecondUpSide
     {
       get { return _nameOfSecondUpSide; }
     }

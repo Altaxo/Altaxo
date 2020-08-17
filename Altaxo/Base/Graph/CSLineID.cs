@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -108,7 +109,7 @@ namespace Altaxo.Graph
         }
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = new CSLineID
         {
@@ -441,7 +442,7 @@ namespace Altaxo.Graph
 
     public Logical3D End { get { return GetLogicalPoint(1); } }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (!(obj is CSLineID))
         return false;

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -178,7 +179,7 @@ namespace Altaxo.Graph
         throw new ArgumentException("Path is not rooted!");
 
       var fileNamePart = System.IO.Path.GetFileName(fileName);
-      var pathPart = System.IO.Path.GetDirectoryName(fileName);
+      var pathPart = System.IO.Path.GetDirectoryName(fileName) ?? throw new InvalidOperationException($"Unable to get path of file name {fileName}");
       if (true && !System.IO.Directory.Exists(pathPart))
       {
         System.IO.Directory.CreateDirectory(pathPart);

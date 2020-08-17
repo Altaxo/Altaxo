@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -46,10 +47,10 @@ namespace Altaxo.Graph
   {
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      info.SetNodeContent(obj.ToString());
+      info.SetNodeContent(obj.ToString() ?? string.Empty);
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       string val = info.GetNodeContent();
       return System.Enum.Parse(typeof(LayerDataClipping), val, true);

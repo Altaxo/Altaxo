@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -66,9 +67,9 @@ namespace Altaxo.Graph
         info.CommitArray();
       }
 
-      protected virtual LinearPartitioning SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual LinearPartitioning SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new LinearPartitioning() : (LinearPartitioning)o);
+        var s = (LinearPartitioning?)o ?? new LinearPartitioning();
 
         int count = info.OpenArray("Partitioning");
         for (int i = 0; i < count; ++i)
@@ -78,7 +79,7 @@ namespace Altaxo.Graph
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -110,12 +111,12 @@ namespace Altaxo.Graph
 
     #region event handling
 
-    private void EhInnerList_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void EhInnerList_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
       EhSelfChanged(e);
     }
 
-    private void EhInnerList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void EhInnerList_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
       EhSelfChanged(e);
     }
@@ -385,13 +386,13 @@ namespace Altaxo.Graph
 
     #region INotifyCollectionChanged
 
-    public event NotifyCollectionChangedEventHandler CollectionChanged;
+    public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
     #endregion INotifyCollectionChanged
 
     #region INotifyPropertyChanged
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     #endregion INotifyPropertyChanged
 
@@ -428,22 +429,22 @@ namespace Altaxo.Graph
 
     #region IList
 
-    public int Add(object value)
+    public int Add(object? value)
     {
       return ((IList)_innerList).Add(value);
     }
 
-    public bool Contains(object value)
+    public bool Contains(object? value)
     {
       return ((IList)_innerList).Contains(value);
     }
 
-    public int IndexOf(object value)
+    public int IndexOf(object? value)
     {
       return ((IList)_innerList).IndexOf(value);
     }
 
-    public void Insert(int index, object value)
+    public void Insert(int index, object? value)
     {
       ((IList)_innerList).Insert(index, value);
     }
@@ -453,12 +454,12 @@ namespace Altaxo.Graph
       get { return ((IList)_innerList).IsFixedSize; }
     }
 
-    public void Remove(object value)
+    public void Remove(object? value)
     {
       ((IList)_innerList).Remove(value);
     }
 
-    object IList.this[int index]
+    object? IList.this[int index]
     {
       get
       {

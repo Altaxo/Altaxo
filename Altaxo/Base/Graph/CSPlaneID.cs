@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -78,7 +79,7 @@ namespace Altaxo.Graph
           info.AddValue("Physical", (object)s._physicalValue);
       }
 
-      protected virtual CSPlaneID SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual CSPlaneID SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var perpendicularAxisNumber = info.GetInt32("Axis");
         var logicalValue = info.GetDouble("Logical");
@@ -90,7 +91,7 @@ namespace Altaxo.Graph
         return new CSPlaneID(perpendicularAxisNumber, logicalValue, usePhysicalValue, physicalValue);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         CSPlaneID s = SDeserialize(o, info, parent);
         return s;
@@ -194,7 +195,7 @@ namespace Altaxo.Graph
       get { return _perpendicularAxisNumber == 2 ? 1 : 2; }
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (!(obj is CSPlaneID))
         return false;
