@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,9 +43,9 @@ namespace Altaxo.Drawing.D3D
 
     private int _crossSectionVertexCount;
     private int _crossSectionNormalCount;
-    private ILineCap _dashStartCap;
+    private ILineCap? _dashStartCap;
     private double _dashStartCapBaseInsetAbsolute;
-    private ILineCap _dashEndCap;
+    private ILineCap? _dashEndCap;
     private double _dashEndCapBaseInsetAbsolute;
     private VectorD3D _westVector;
     private VectorD3D _northVector;
@@ -56,9 +57,9 @@ namespace Altaxo.Drawing.D3D
 
     private PointD3D[] _lastPositionsTransformedEnd;
 
-    private object _startCapTemporaryStorageSpace;
+    private object? _startCapTemporaryStorageSpace;
 
-    private object _endCapTemporaryStorageSpace;
+    private object? _endCapTemporaryStorageSpace;
 
     /// <summary>
     /// Initialization that is needed only once per straigth line (not once per dash).
@@ -89,8 +90,8 @@ namespace Altaxo.Drawing.D3D
     ICrossSectionOfLine crossSection,
     double thickness1,
     double thickness2,
-    ILineCap startCap,
-    ILineCap endCap,
+    ILineCap? startCap,
+    ILineCap? endCap,
     VectorD3D westVector,
     VectorD3D northVector,
     LineD3D line)
@@ -121,12 +122,12 @@ namespace Altaxo.Drawing.D3D
     }
 
     public void AddGeometry(
-    Action<PointD3D, VectorD3D> AddPositionAndNormal,
-    Action<int, int, int, bool> AddIndices,
-    ref int vertexIndexOffset,
-    LineD3D dashSegment,
-      ILineCap overrideStartCap,
-      ILineCap overrideEndCap)
+      Action<PointD3D, VectorD3D> AddPositionAndNormal,
+      Action<int, int, int, bool> AddIndices,
+      ref int vertexIndexOffset,
+      LineD3D dashSegment,
+      ILineCap? overrideStartCap,
+      ILineCap? overrideEndCap)
     {
       if (null == _lastNormalsTransformed)
         throw new InvalidProgramException("The structure is not initialized yet. Call Initialize before using it!");
@@ -184,8 +185,8 @@ namespace Altaxo.Drawing.D3D
       PointD3D lineStart,
       PointD3D lineEnd,
       bool drawLine,
-      ILineCap overrideStartCap,
-      ILineCap overrideEndCap
+      ILineCap? overrideStartCap,
+      ILineCap? overrideEndCap
       )
     {
       if (null == _lastNormalsTransformed)

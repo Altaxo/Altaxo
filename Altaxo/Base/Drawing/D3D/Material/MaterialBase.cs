@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -107,7 +108,7 @@ namespace Altaxo.Drawing.D3D.Material
     public abstract bool IsVisible { get; }
 
     ///<inheritdoc/>
-    public abstract bool Equals(IMaterial other);
+    public abstract bool Equals(IMaterial? other);
 
     #region Smothness
 

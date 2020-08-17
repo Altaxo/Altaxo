@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,9 +76,9 @@ namespace Altaxo.Drawing.D3D
       VectorD3D northVector,
       VectorD3D forwardVectorNormalized,
       ICrossSectionOfLine lineCrossSection,
-      PointD3D[] baseCrossSectionPositions,
-      VectorD3D[] baseCrossSectionNormals,
-      ref object temporaryStorageSpace
+      PointD3D[]? baseCrossSectionPositions,
+      VectorD3D[]? baseCrossSectionNormals,
+      ref object? temporaryStorageSpace
     );
   }
 }

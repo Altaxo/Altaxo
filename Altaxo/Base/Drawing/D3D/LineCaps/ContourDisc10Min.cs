@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -131,7 +132,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
         info.AddValue("MinRelativeSize", s._minimumRelativeSize);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         double abs = info.GetDouble("MinAbsoluteSize");
         double rel = info.GetDouble("MinRelativeSize");
@@ -199,7 +200,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       return -Math.Min(thickness1, thickness2);
     }
 
-    public override void AddGeometry(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int, bool> AddIndices, ref int vertexIndexOffset, bool isStartCap, PointD3D basePoint, VectorD3D eastVector, VectorD3D northVector, VectorD3D forwardVectorNormalized, ICrossSectionOfLine lineCrossSection, PointD3D[] baseCrossSectionPositions, VectorD3D[] baseCrossSectionNormals, ref object temporaryStorageSpace)
+    public override void AddGeometry(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int, bool> AddIndices, ref int vertexIndexOffset, bool isStartCap, PointD3D basePoint, VectorD3D eastVector, VectorD3D northVector, VectorD3D forwardVectorNormalized, ICrossSectionOfLine lineCrossSection, PointD3D[]? baseCrossSectionPositions, VectorD3D[]? baseCrossSectionNormals, ref object? temporaryStorageSpace)
     {
       double relSize = Math.Max(_minimumRelativeSize, _minimumAbsoluteSize / Math.Max(lineCrossSection.Size1, lineCrossSection.Size2));
       double relDiscThickness = 2 * Math.Min(lineCrossSection.Size1, lineCrossSection.Size2) / Math.Max(lineCrossSection.Size1, lineCrossSection.Size2);

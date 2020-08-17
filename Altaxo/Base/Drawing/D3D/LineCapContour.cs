@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,6 +82,20 @@ namespace Altaxo.Drawing.D3D
     private bool[] _isVertexSharp;
     private VectorD2D[] _normals;
 
+    protected LineCapContour(int numberOfVertices)
+    {
+      _vertices = new PointD2D[numberOfVertices];
+      _isVertexSharp = new bool[numberOfVertices];
+      _normals = new VectorD2D[numberOfVertices];
+    }
+
+    protected LineCapContour(int numberOfVertices, int numberOfIsVertexSharp, int numberOfNormals)
+    {
+      _vertices = new PointD2D[numberOfVertices];
+      _isVertexSharp = new bool[numberOfVertices];
+      _normals = new VectorD2D[numberOfVertices];
+    }
+
     public PointD2D[] Vertices { get { return _vertices; } }
     public bool[] IsVertexSharp { get { return _isVertexSharp; } }
     public VectorD2D[] Normals { get { return _normals; } }
@@ -99,13 +114,7 @@ namespace Altaxo.Drawing.D3D
       get
       {
         const int segments = 4;
-        var r = new LineCapContour
-        {
-          _vertices = new PointD2D[2 + segments],
-          _normals = new VectorD2D[2 + segments],
-          _isVertexSharp = new bool[2 + segments]
-        };
-
+        var r = new LineCapContour(2 + segments);
         r._vertices[0] = new PointD2D(0, 0);
         r._isVertexSharp[0] = false;
         r._normals[0] = new VectorD2D(0, -1);
@@ -130,17 +139,11 @@ namespace Altaxo.Drawing.D3D
     {
       get
       {
-        var r = new LineCapContour
-        {
-          _vertices = new PointD2D[3]
-        };
+        var r = new LineCapContour(numberOfVertices: 3, numberOfIsVertexSharp: 2, numberOfNormals: 2);
         r._vertices[0] = new PointD2D(0, 1);
         r._vertices[1] = new PointD2D(1, 0);
-
-        r._isVertexSharp = new bool[2];
         r._isVertexSharp[0] = true;
         r._isVertexSharp[1] = true;
-        r._normals = new VectorD2D[2];
         r._normals[0] = VectorD2D.CreateNormalized(1, 1);
         r._normals[1] = VectorD2D.CreateNormalized(1, 1);
         return r;
@@ -151,20 +154,15 @@ namespace Altaxo.Drawing.D3D
     {
       get
       {
-        var r = new LineCapContour
-        {
-          _vertices = new PointD2D[3]
-        };
+        var r = new LineCapContour(numberOfVertices: 3, numberOfIsVertexSharp: 3, numberOfNormals: 4);
         r._vertices[0] = new PointD2D(0, 0);
         r._vertices[1] = new PointD2D(1, 0);
         r._vertices[2] = new PointD2D(0, 1);
 
-        r._isVertexSharp = new bool[3];
         r._isVertexSharp[0] = false;
         r._isVertexSharp[1] = true;
         r._isVertexSharp[2] = false;
 
-        r._normals = new VectorD2D[4];
         r._normals[0] = new VectorD2D(0, -1);
         r._normals[1] = new VectorD2D(0, -1);
         r._normals[2] = new VectorD2D(1, 1);
@@ -180,20 +178,16 @@ namespace Altaxo.Drawing.D3D
     {
       get
       {
-        var r = new LineCapContour
-        {
-          _vertices = new PointD2D[3]
-        };
+        var r = new LineCapContour(numberOfVertices: 3, numberOfIsVertexSharp: 3, numberOfNormals: 4);
+
         r._vertices[0] = new PointD2D(0, 0);
         r._vertices[1] = new PointD2D(2, 0);
         r._vertices[2] = new PointD2D(0, 4);
 
-        r._isVertexSharp = new bool[3];
         r._isVertexSharp[0] = false;
         r._isVertexSharp[1] = true;
         r._isVertexSharp[2] = false;
 
-        r._normals = new VectorD2D[4];
         r._normals[0] = new VectorD2D(0, -1);
         r._normals[1] = new VectorD2D(0, -1);
         r._normals[2] = new VectorD2D(4, 2);
@@ -209,22 +203,18 @@ namespace Altaxo.Drawing.D3D
     {
       get
       {
-        var r = new LineCapContour
-        {
-          _vertices = new PointD2D[4]
-        };
+        var r = new LineCapContour(numberOfVertices: 4, numberOfIsVertexSharp: 4, numberOfNormals: 6);
+
         r._vertices[0] = new PointD2D(0, 0);
         r._vertices[1] = new PointD2D(1, 0);
         r._vertices[2] = new PointD2D(1, 1);
         r._vertices[3] = new PointD2D(0, 1);
 
-        r._isVertexSharp = new bool[4];
         r._isVertexSharp[0] = false;
         r._isVertexSharp[1] = true;
         r._isVertexSharp[2] = true;
         r._isVertexSharp[3] = false;
 
-        r._normals = new VectorD2D[6];
         r._normals[0] = new VectorD2D(0, -1);
         r._normals[1] = new VectorD2D(0, -1);
         r._normals[2] = new VectorD2D(1, 0);

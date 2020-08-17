@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D

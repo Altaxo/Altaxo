@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -117,7 +118,7 @@ namespace Altaxo.Drawing.D3D
           }
         }
 
-        object temporaryStorageSpace = null;
+        object? temporaryStorageSpace = null;
 
         // if the start cap was not drawn before, it must be drawn now
         if (!wasLineStartCapDrawn && null != pen.LineStartCap)
