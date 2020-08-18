@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Graph.Scales
@@ -55,10 +56,11 @@ namespace Altaxo.Graph.Scales
   {
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      info.SetNodeContent(obj.ToString());
+      var s = (ScaleLinkType)obj;
+      info.SetNodeContent(s.ToString());
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       string val = info.GetNodeContent();
       return System.Enum.Parse(typeof(ScaleLinkType), val, true);

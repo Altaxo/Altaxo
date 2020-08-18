@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,15 +43,15 @@ namespace Altaxo.Graph.Scales
         var s = (AngularDegreeScale)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         AngularDegreeScale s = SDeserialize(o, info, parent);
         return s;
       }
 
-      protected virtual AngularDegreeScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AngularDegreeScale SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AngularDegreeScale s = null != o ? (AngularDegreeScale)o : new AngularDegreeScale(info);
+        var s = (AngularDegreeScale?)o ?? new AngularDegreeScale(info);
         info.GetBaseValueEmbedded(s, typeof(AngularScale), s);
         return s;
       }

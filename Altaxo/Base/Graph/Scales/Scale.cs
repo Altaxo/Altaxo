@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Data;
@@ -84,14 +85,14 @@ namespace Altaxo.Graph.Scales
     /// <summary>
     /// Returns the rescaling conditions for this axis as object.
     /// </summary>
-    public abstract Rescaling.IScaleRescaleConditions RescalingObject { get; }
+    public abstract Rescaling.IScaleRescaleConditions? RescalingObject { get; }
 
     public abstract TickSpacing TickSpacing { get; set; }
 
     /// <summary>
     /// Returns the <see cref="IPhysicalBoundaries"/> object that is associated with that axis.
     /// </summary>
-    public abstract IPhysicalBoundaries DataBoundsObject { get; } // return a PhysicalBoundarie object that is associated with that axis
+    public abstract IPhysicalBoundaries DataBoundsObject { get; } // return a PhysicalBoundaries object that is associated with that axis
 
     /// <summary>The axis origin, i.e. the first point in physical units.</summary>
     public abstract AltaxoVariant OrgAsVariant { get; }
@@ -107,7 +108,7 @@ namespace Altaxo.Graph.Scales
     /// <returns>Null when the settings where applied. An string describing the problem otherwise.</returns>
     /// <remarks>Settings like fixed boundaries or the data bounds will be ignored by this function. However, the next call
     /// to <see cref="OnUserRescaled"/> will override the scale bounds.</remarks>
-    protected abstract string SetScaleOrgEnd(AltaxoVariant org, AltaxoVariant end);
+    protected abstract string? SetScaleOrgEnd(AltaxoVariant org, AltaxoVariant end);
 
     /// <summary>
     /// Called when user has pressed the rescale button.
@@ -162,7 +163,11 @@ namespace Altaxo.Graph.Scales
         SortedDictionary<int, Type> dict = _scaleToTickSpacingTypes[type];
 
         foreach (KeyValuePair<int, System.Type> entry in dict)
-          return (TickSpacing)System.Activator.CreateInstance(entry.Value);
+        {
+          var result = (TickSpacing?)System.Activator.CreateInstance(entry.Value);
+          if (result is not null)
+            return result;
+        }
       }
 
       return new NoTickSpacing();

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,15 +43,15 @@ namespace Altaxo.Graph.Scales
         var s = (AngularRadianScale)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         AngularRadianScale s = SDeserialize(o, info, parent);
         return s;
       }
 
-      protected virtual AngularRadianScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AngularRadianScale SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AngularRadianScale s = null != o ? (AngularRadianScale)o : new AngularRadianScale(info);
+        var s = (AngularRadianScale?)o ?? new AngularRadianScale(info);
         info.GetBaseValueEmbedded(s, typeof(AngularScale), s);
         return s;
       }

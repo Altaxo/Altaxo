@@ -54,9 +54,9 @@ namespace Altaxo
       var namedOwner = owner as Main.INameOwner;
       var proj = Current.Project;
       ProjectFolderPropertyDocument? bag;
-      if (null != namedOwner && !string.IsNullOrEmpty(namedOwner.Name))
+      if (null != namedOwner && namedOwner.TryGetName(out var namedOwnerName))
       {
-        var folder = Main.ProjectFolder.GetFolderPart(namedOwner.Name);
+        var folder = Main.ProjectFolder.GetFolderPart(namedOwnerName);
         while (!string.IsNullOrEmpty(folder))
         {
           if (proj.ProjectFolderProperties.TryGetValue(folder, out bag) && bag.PropertyBag != null)

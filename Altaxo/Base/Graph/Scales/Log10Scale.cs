@@ -22,9 +22,12 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Scales
 {
@@ -72,9 +75,9 @@ namespace Altaxo.Graph.Scales
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        Log10Scale s = null != o ? (Log10Scale)o : new Log10Scale(info);
+        var s = (Log10Scale?)o ?? new Log10Scale(info);
 
         s._log10Org = info.GetDouble("Log10Org");
         s._cachedOrg = Math.Pow(10, s._log10Org);
@@ -118,9 +121,9 @@ namespace Altaxo.Graph.Scales
         info.AddValue("TickSpacing", s._tickSpacing);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        Log10Scale s = null != o ? (Log10Scale)o : new Log10Scale(info);
+        var s = (Log10Scale?)o ?? new Log10Scale(info);
 
         s._log10Org = info.GetDouble("Log10Org");
         s._cachedOrg = Math.Pow(10, s._log10Org);
@@ -148,7 +151,9 @@ namespace Altaxo.Graph.Scales
     /// <summary>
     /// Constructor for deserialization only.
     /// </summary>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected Log10Scale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
@@ -163,6 +168,8 @@ namespace Altaxo.Graph.Scales
       UpdateTicksAndOrgEndUsingRescalingObject();
     }
 
+
+
     /// <summary>
     /// Copy constructor.
     /// </summary>
@@ -172,15 +179,9 @@ namespace Altaxo.Graph.Scales
       CopyFrom(from);
     }
 
-    public override bool CopyFrom(object obj)
+    [MemberNotNull(nameof(_dataBounds), nameof(_rescaling), nameof(_tickSpacing))]
+    protected void CopyFrom(Log10Scale from)
     {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-
-      var from = obj as Log10Scale;
-      if (null == from)
-        return false;
-
       using (var suspendToken = SuspendGetToken())
       {
         _log10Org = from._log10Org;
@@ -195,19 +196,32 @@ namespace Altaxo.Graph.Scales
         EhSelfChanged(EventArgs.Empty);
         suspendToken.Resume();
       }
-      return true;
+    }
+
+    public override bool CopyFrom(object obj)
+    {
+      if (object.ReferenceEquals(this, obj))
+        return true;
+
+      if (obj is Log10Scale from)
+      {
+        CopyFrom(from);
+        return true;
+      }
+
+      return false;
     }
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (null != _dataBounds)
-        yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null, "DataBounds");
+        yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null!, "DataBounds");
 
       if (null != _rescaling)
-        yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null, "Rescaling");
+        yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null!, "Rescaling");
 
       if (null != _tickSpacing)
-        yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null, "TickSpacing");
+        yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null!, "TickSpacing");
     }
 
     /// <summary>
@@ -355,7 +369,7 @@ namespace Altaxo.Graph.Scales
         EhSelfChanged(EventArgs.Empty);
     }
 
-    protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+    protected override string? SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
     {
       double o = org.ToDouble();
       double e = end.ToDouble();
