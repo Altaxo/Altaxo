@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Calc;
@@ -125,7 +127,7 @@ namespace Altaxo.Graph.Scales.Ticks
     private List<double> _minorTicks;
 
     // Cached values
-    private CachedMajorMinor _cachedMajorMinor;
+    private CachedMajorMinor? _cachedMajorMinor;
 
     #region Serialization
 
@@ -152,35 +154,35 @@ namespace Altaxo.Graph.Scales.Ticks
         info.AddValue("TransformationIsMultiply", s._transformationOperationIsMultiply);
 
         if (s._suppressedMajorTicks.IsEmpty)
-          info.AddValue("SuppressedMajorTicks", (object)null);
+          info.AddValueOrNull("SuppressedMajorTicks", (object?)null);
         else
-          info.AddValue("SuppressedMajorTicks", s._suppressedMajorTicks);
+          info.AddValueOrNull("SuppressedMajorTicks", s._suppressedMajorTicks);
 
         if (s._suppressedMinorTicks.IsEmpty)
-          info.AddValue("SuppressedMinorTicks", (object)null);
+          info.AddValueOrNull("SuppressedMinorTicks", (object?)null);
         else
-          info.AddValue("SuppressedMinorTicks", s._suppressedMinorTicks);
+          info.AddValueOrNull("SuppressedMinorTicks", s._suppressedMinorTicks);
 
         if (s._additionalMajorTicks.IsEmpty)
-          info.AddValue("AdditionalMajorTicks", (object)null);
+          info.AddValueOrNull("AdditionalMajorTicks", (object?)null);
         else
-          info.AddValue("AdditionalMajorTicks", s._additionalMajorTicks);
+          info.AddValueOrNull("AdditionalMajorTicks", s._additionalMajorTicks);
 
         if (s._additionalMinorTicks.IsEmpty)
-          info.AddValue("AdditionalMinorTicks", (object)null);
+          info.AddValueOrNull("AdditionalMinorTicks", (object?)null);
         else
-          info.AddValue("AdditionalMinorTicks", s._additionalMinorTicks);
+          info.AddValueOrNull("AdditionalMinorTicks", s._additionalMinorTicks);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         LinearTickSpacing s = SDeserialize(o, info, parent);
         return s;
       }
 
-      protected virtual LinearTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual LinearTickSpacing SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinearTickSpacing s = null != o ? (LinearTickSpacing)o : new LinearTickSpacing();
+        var s = (LinearTickSpacing?)o ?? new LinearTickSpacing();
         s._zeroLever = info.GetDouble("ZeroLever");
         s._orgGrace = info.GetDouble("MinGrace");
         s._endGrace = info.GetDouble("MaxGrace");
@@ -196,10 +198,10 @@ namespace Altaxo.Graph.Scales.Ticks
         s._transformationDivider = info.GetDouble("TransformationDivider");
         s._transformationOperationIsMultiply = info.GetBoolean("TransformationIsMultiply");
 
-        s.SuppressedMajorTicks = (SuppressedTicks)info.GetValue("SuppressedMajorTicks", s);
-        s.SuppressedMinorTicks = (SuppressedTicks)info.GetValue("SuppressedMinorTicks", s);
-        s.AdditionalMajorTicks = (AdditionalTicks)info.GetValue("AdditionalMajorTicks", s);
-        s.AdditionalMinorTicks = (AdditionalTicks)info.GetValue("AdditionalMinorTicks", s);
+        s.SuppressedMajorTicks = (SuppressedTicks?)info.GetValueOrNull("SuppressedMajorTicks", s);
+        s.SuppressedMinorTicks = (SuppressedTicks?)info.GetValueOrNull("SuppressedMinorTicks", s);
+        s.AdditionalMajorTicks = (AdditionalTicks?)info.GetValueOrNull("AdditionalMajorTicks", s);
+        s.AdditionalMinorTicks = (AdditionalTicks?)info.GetValueOrNull("AdditionalMinorTicks", s);
 
         return s;
       }
@@ -217,10 +219,12 @@ namespace Altaxo.Graph.Scales.Ticks
       _additionalMinorTicks = new AdditionalTicks() { ParentObject = this };
     }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public LinearTickSpacing(LinearTickSpacing from)
       : base(from) // everything is done here, since CopyFrom is virtual!
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     public override bool CopyFrom(object obj)
     {
@@ -285,7 +289,7 @@ namespace Altaxo.Graph.Scales.Ticks
       return new LinearTickSpacing(this);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (object.ReferenceEquals(this, obj))
         return true;
@@ -548,6 +552,7 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    [AllowNull]
     public SuppressedTicks SuppressedMajorTicks
     {
       get
@@ -560,6 +565,7 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    [AllowNull]
     public SuppressedTicks SuppressedMinorTicks
     {
       get
@@ -572,6 +578,7 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    [AllowNull]
     public AdditionalTicks AdditionalMajorTicks
     {
       get
@@ -584,6 +591,7 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    [AllowNull]
     public AdditionalTicks AdditionalMinorTicks
     {
       get
@@ -718,20 +726,20 @@ namespace Altaxo.Graph.Scales.Ticks
 
       _majorTicks.Clear();
       _minorTicks.Clear();
-      InternalCalculateMajorTicks();
-      InternalCalculateMinorTicks();
+      InternalCalculateMajorTicks(_cachedMajorMinor);
+      InternalCalculateMinorTicks(_cachedMajorMinor);
     }
 
     #region Calculation of tick values
 
-    private void InternalCalculateMajorTicks()
+    private void InternalCalculateMajorTicks(CachedMajorMinor cachedMajorMinor)
     {
       _majorTicks.Clear();
 
-      var axisOrgByMajor = _cachedMajorMinor.AxisOrgByMajor;
-      var axisEndByMajor = _cachedMajorMinor.AxisEndByMajor;
-      var majorSpanRaw = _cachedMajorMinor.MajorSpanRaw;
-      var majorSpanDecadicExponent = _cachedMajorMinor.MajorSpanDecadicExponent;
+      var axisOrgByMajor = cachedMajorMinor.AxisOrgByMajor;
+      var axisEndByMajor = cachedMajorMinor.AxisEndByMajor;
+      var majorSpanRaw = cachedMajorMinor.MajorSpanRaw;
+      var majorSpanDecadicExponent = cachedMajorMinor.MajorSpanDecadicExponent;
 
       double beg = System.Math.Ceiling(axisOrgByMajor);
       double end = System.Math.Floor(axisEndByMajor);
@@ -758,15 +766,15 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
-    private void InternalCalculateMinorTicks()
+    private void InternalCalculateMinorTicks(CachedMajorMinor cachedMajorMinor)
     {
       _minorTicks.Clear();
 
-      var axisOrgByMajor = _cachedMajorMinor.AxisOrgByMajor;
-      var axisEndByMajor = _cachedMajorMinor.AxisEndByMajor;
-      var majorSpanRaw = _cachedMajorMinor.MajorSpanRaw;
-      var majorSpanDecadicExponent = _cachedMajorMinor.MajorSpanDecadicExponent;
-      var numberOfMinorTicks = _cachedMajorMinor.MinorTicks;
+      var axisOrgByMajor = cachedMajorMinor.AxisOrgByMajor;
+      var axisEndByMajor = cachedMajorMinor.AxisEndByMajor;
+      var majorSpanRaw = cachedMajorMinor.MajorSpanRaw;
+      var majorSpanDecadicExponent = cachedMajorMinor.MajorSpanDecadicExponent;
+      var numberOfMinorTicks = cachedMajorMinor.MinorTicks;
 
       if (numberOfMinorTicks < 2)
         return; // below 2 there are no minor ticks per definition

@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Data;
@@ -52,15 +54,9 @@ namespace Altaxo.Graph.Scales.Ticks
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AdditionalTicks s = SDeserialize(o, info, parent);
-        return s;
-      }
-
-      protected virtual AdditionalTicks SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        AdditionalTicks s = null != o ? (AdditionalTicks)o : new AdditionalTicks();
+        var s = (AdditionalTicks?)o ?? new AdditionalTicks();
 
         int count;
 
@@ -85,19 +81,26 @@ namespace Altaxo.Graph.Scales.Ticks
       CopyFrom(from);
     }
 
+    [MemberNotNull(nameof(_additionalTicks))]
+    public void CopyFrom(AdditionalTicks from)
+    {
+      _additionalTicks = new List<AltaxoVariant>(from._additionalTicks);
+      EhSelfChanged();
+    }
+
     public bool CopyFrom(object obj)
     {
       if (object.ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as AdditionalTicks;
-      if (null == from)
-        return false;
+      if (obj is AdditionalTicks from)
+      {
+        CopyFrom(from);
 
-      _additionalTicks = new List<AltaxoVariant>(from._additionalTicks);
-      EhSelfChanged();
+        return true;
+      }
 
-      return true;
+      return false;
     }
 
     public object Clone()
@@ -105,15 +108,15 @@ namespace Altaxo.Graph.Scales.Ticks
       return new AdditionalTicks(this);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (object.ReferenceEquals(this, obj))
         return true;
-      else if (!(obj is AdditionalTicks))
+      else if (!(obj is AdditionalTicks ticks))
         return false;
       else
       {
-        var from = (AdditionalTicks)obj;
+        var from = ticks;
         return _additionalTicks.SequenceEqual(from._additionalTicks);
       }
     }

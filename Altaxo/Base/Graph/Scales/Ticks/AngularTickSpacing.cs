@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,16 +74,9 @@ namespace Altaxo.Graph.Scales.Ticks
         var s = (AngularTickSpacing)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AngularTickSpacing s = SDeserialize(o, info, parent);
-        return s;
-      }
-
-      protected virtual AngularTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        var s = (AngularTickSpacing)o;
-
+        var s = (AngularTickSpacing)(o ?? throw new ArgumentNullException(nameof(o)));
         return s;
       }
     }
@@ -97,32 +91,36 @@ namespace Altaxo.Graph.Scales.Ticks
       _minorTicks = new List<AltaxoVariant>();
     }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public AngularTickSpacing(NumericTickSpacing from)
       : base(from) // everything is done here, since CopyFrom is virtual!
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
 
     public override bool CopyFrom(object obj)
     {
       if (object.ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as AngularTickSpacing;
-      if (null == from)
-        return false;
-
-      using (var suspendToken = SuspendGetToken())
+      if (obj is AngularTickSpacing from)
       {
-        _majorTickDivider = from._majorTickDivider;
-        _minorTickDivider = from._minorTickDivider;
-        _usePositiveNegativeAngles = from._usePositiveNegativeAngles;
-        _majorTicks = new List<AltaxoVariant>(from._majorTicks);
-        _minorTicks = new List<AltaxoVariant>(from._minorTicks);
+        using (var suspendToken = SuspendGetToken())
+        {
+          _majorTickDivider = from._majorTickDivider;
+          _minorTickDivider = from._minorTickDivider;
+          _usePositiveNegativeAngles = from._usePositiveNegativeAngles;
+          _majorTicks = new List<AltaxoVariant>(from._majorTicks);
+          _minorTicks = new List<AltaxoVariant>(from._minorTicks);
 
-        EhSelfChanged();
-        suspendToken.Resume();
+          EhSelfChanged();
+          suspendToken.Resume();
+        }
+        return true;
       }
-      return true;
+
+      return false;
     }
 
     #region User parameters
