@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,14 +49,14 @@ namespace Altaxo.Graph.Scales.Rescaling
       {
         var s = (LinearScaleRescaleConditions)obj;
 
-        info.AddBaseValueEmbedded(s, s.GetType().BaseType);
+        info.AddBaseValueEmbedded(s, s.GetType().BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (LinearScaleRescaleConditions)o ?? new LinearScaleRescaleConditions();
+        var s = (LinearScaleRescaleConditions?)o ?? new LinearScaleRescaleConditions();
 
-        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType!, parent);
 
         return s;
       }

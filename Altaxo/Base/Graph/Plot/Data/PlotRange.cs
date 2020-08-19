@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -73,9 +74,9 @@ namespace Altaxo.Graph.Plot.Data
         info.AddValue("UpperBound", s._upperBound);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        PlotRange s = null != o ? (PlotRange)o : new PlotRange(0, 0);
+        var s = (PlotRange?)o ?? new PlotRange(0, 0);
 
         s._lowerBound = info.GetInt32("LowerBound");
         s._upperBound = info.GetInt32("UpperBound");

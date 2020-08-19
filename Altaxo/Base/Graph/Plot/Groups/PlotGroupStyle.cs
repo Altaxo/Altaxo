@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -51,7 +53,7 @@ namespace Altaxo.Graph.Plot.Groups
 
       return (!found && localGroups != null);
     }
-
+    [return: MaybeNull]
     public static T GetStyleToInitialize<T>(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups
@@ -70,7 +72,7 @@ namespace Altaxo.Graph.Plot.Groups
       else if (localGroups != null)
         grpStyle = (T)localGroups.GetPlotGroupStyle(typeof(T));
 
-      if (grpStyle != null && !grpStyle.IsInitialized)
+      if (grpStyle is not null && !grpStyle.IsInitialized)
         return grpStyle;
       else
         return default(T);
@@ -85,13 +87,14 @@ namespace Altaxo.Graph.Plot.Groups
     /// <param name="externalGroups">First collection to look for the group style.</param>
     /// <param name="localGroups">Second collection to look for the group style.</param>
     /// <returns>The instance of the plot group style (if found), or null otherwise.</returns>
+    [return: MaybeNull]
     public static T GetStyleToApply<T>(
      IPlotGroupStyleCollection externalGroups,
      IPlotGroupStyleCollection localGroups
      ) where T : IPlotGroupStyle
     {
       var grpStyle = default(T);
-      IPlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection? grpColl = null;
       if (externalGroups.ContainsType(typeof(T)))
         grpColl = externalGroups;
       else if (localGroups != null && localGroups.ContainsType(typeof(T)))
@@ -117,12 +120,13 @@ namespace Altaxo.Graph.Plot.Groups
     /// <param name="externalGroups">First collection to look for the group style.</param>
     /// <param name="localGroups">Second collection to look for the group style.</param>
     /// <returns>The instance of the plot group style that implements the interface (if found), or null otherwise.</returns>
+    [return: MaybeNull]
     public static T GetFirstStyleToApplyImplementingInterface<T>(
      IPlotGroupStyleCollection externalGroups,
      IPlotGroupStyleCollection localGroups
      )
     {
-      IPlotGroupStyle grpStyle = null;
+      IPlotGroupStyle? grpStyle = null;
       IPlotGroupStyleCollection grpColl = externalGroups;
       grpStyle = grpColl.FirstOrDefault(style => typeof(T).IsAssignableFrom(style.GetType()));
       if (null == grpStyle)

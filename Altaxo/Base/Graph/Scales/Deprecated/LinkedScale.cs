@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Graph.Scales.Deprecated
 {
@@ -52,13 +54,13 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// Fired if the axis changed or the axis boundaries changed.
     /// </summary>
     [field: NonSerialized]
-    public event EventHandler ScaleInstanceChanged;
+    public event EventHandler? ScaleInstanceChanged;
 
     /// <summary>
     /// Fired if the axis properties changed.
     /// </summary>
     [field: NonSerialized]
-    public event EventHandler LinkPropertiesChanged;
+    public event EventHandler? LinkPropertiesChanged;
 
     #region Serialization
 
@@ -78,15 +80,9 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("EndB", s._linkEndB);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinkedScale s = SDeserialize(o, info, parent);
-        return s;
-      }
-
-      protected virtual LinkedScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        LinkedScale s = null != o ? (LinkedScale)o : new LinkedScale();
+        var s = (LinkedScale?)o ?? new LinkedScale();
 
         s.Scale = (Scale)info.GetValue("Axis", s);
         s._isLinked = info.GetBoolean("Link");
@@ -97,6 +93,8 @@ namespace Altaxo.Graph.Scales.Deprecated
 
         return s;
       }
+
+
     }
 
     #endregion Serialization
@@ -115,7 +113,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       if (object.ReferenceEquals(this, from))
         return;
 
-      Scale = from._scale == null ? null : (Scale)from._scale.Clone();
+      Scale = (Scale)from._scale.Clone();
       _linkOrgA = from._linkOrgA;
       _linkOrgB = from._linkOrgB;
       _linkEndA = from._linkEndA;
@@ -243,9 +241,10 @@ namespace Altaxo.Graph.Scales.Deprecated
       {
         return _scale;
       }
+      [MemberNotNull(nameof(_scale))]
       set
       {
-        Scale oldvalue = _scale;
+        var oldvalue = _scale;
         _scale = value;
         if (!object.ReferenceEquals(value, oldvalue))
         {
@@ -264,7 +263,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
     }
 
-    private void EhScaleChanged(object sender, EventArgs e)
+    private void EhScaleChanged(object? sender, EventArgs e)
     {
       OnLinkPropertiesChanged();
     }
@@ -290,14 +289,12 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     protected virtual void OnScaleInstanceChanged()
     {
-      if (ScaleInstanceChanged != null)
-        ScaleInstanceChanged(this, EventArgs.Empty);
+      ScaleInstanceChanged?.Invoke(this, EventArgs.Empty);
     }
 
     protected virtual void OnLinkPropertiesChanged()
     {
-      if (LinkPropertiesChanged != null)
-        LinkPropertiesChanged(this, EventArgs.Empty);
+      LinkPropertiesChanged?.Invoke(this, EventArgs.Empty);
     }
   }
 }

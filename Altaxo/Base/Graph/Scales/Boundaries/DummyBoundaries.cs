@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -39,9 +40,9 @@ namespace Altaxo.Graph.Scales.Boundaries
       {
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (DummyBoundaries)o ?? new DummyBoundaries();
+        var s = (DummyBoundaries?)o ?? new DummyBoundaries();
         return s;
       }
     }

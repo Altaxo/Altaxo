@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Scales.Boundaries;
@@ -116,21 +118,21 @@ namespace Altaxo.Graph.Plot.Data
                 */
       }
 
-      private Main.AbsoluteDocumentPath _xColumnPath = null;
-      private Main.AbsoluteDocumentPath _yColumnPath = null;
-      private Main.AbsoluteDocumentPath[] _vColumnPaths = null;
+      private Main.AbsoluteDocumentPath? _xColumnPath = null;
+      private Main.AbsoluteDocumentPath? _yColumnPath = null;
+      private Main.AbsoluteDocumentPath?[]? _vColumnPaths = null;
 
-      private IReadableColumnProxy _xColumnProxy = null;
-      private IReadableColumnProxy _yColumnProxy = null;
-      private IReadableColumnProxy[] _vColumnProxies = null;
+      private IReadableColumnProxy? _xColumnProxy = null;
+      private IReadableColumnProxy? _yColumnProxy = null;
+      private IReadableColumnProxy?[]? _vColumnProxies = null;
 
-      private XYZMeshedColumnPlotData _plotAssociation = null;
+      private XYZMeshedColumnPlotData? _plotAssociation = null;
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         bool bSurrogateUsed = false;
 
-        XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
+        var s = (XYZMeshedColumnPlotData?)o ?? new XYZMeshedColumnPlotData(info);
 
         var surr = new XmlSerializationSurrogate0();
 
@@ -200,48 +202,55 @@ namespace Altaxo.Graph.Plot.Data
       {
         bool bAllResolved = true;
 
-        if (_xColumnPath != null)
+        if (_plotAssociation is not null)
         {
-          object xColumn = Main.AbsoluteDocumentPath.GetObject(_xColumnPath, _plotAssociation, documentRoot);
-          bAllResolved &= (null != xColumn);
-          if (xColumn is Altaxo.Data.INumericColumn)
+          if (_xColumnPath is not null)
           {
-            _xColumnPath = null;
-            _xColumnProxy = ReadableColumnProxyBase.FromColumn((Altaxo.Data.INumericColumn)xColumn);
-          }
-        }
-
-        if (_yColumnPath != null)
-        {
-          object yColumn = Main.AbsoluteDocumentPath.GetObject(_yColumnPath, _plotAssociation, documentRoot);
-          bAllResolved &= (null != yColumn);
-          if (yColumn is Altaxo.Data.INumericColumn)
-          {
-            _yColumnPath = null;
-            _yColumnProxy = ReadableColumnProxyBase.FromColumn((Altaxo.Data.INumericColumn)yColumn);
-          }
-        }
-
-        for (int i = 0; i < _vColumnPaths.Length; i++)
-        {
-          if (_vColumnPaths[i] != null)
-          {
-            object vColumn = Main.AbsoluteDocumentPath.GetObject(_vColumnPaths[i], _plotAssociation, documentRoot);
-            bAllResolved &= (null != vColumn);
-            if (vColumn is Altaxo.Data.IReadableColumn)
+            var xColumn = Main.AbsoluteDocumentPath.GetObject(_xColumnPath, _plotAssociation, documentRoot);
+            bAllResolved &= (xColumn is not null);
+            if (xColumn is Altaxo.Data.INumericColumn xn)
             {
-              _vColumnPaths[i] = null;
-              _vColumnProxies[i] = ReadableColumnProxyBase.FromColumn((Altaxo.Data.IReadableColumn)vColumn);
+              _xColumnPath = null;
+              _xColumnProxy = ReadableColumnProxyBase.FromColumn(xn);
             }
           }
-        }
 
-        if (bAllResolved || isFinallyCall)
-        {
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
+          if (_yColumnPath is not null)
+          {
+            var yColumn = Main.AbsoluteDocumentPath.GetObject(_yColumnPath, _plotAssociation, documentRoot);
+            bAllResolved &= (yColumn is not null);
+            if (yColumn is Altaxo.Data.INumericColumn yn)
+            {
+              _yColumnPath = null;
+              _yColumnProxy = ReadableColumnProxyBase.FromColumn(yn);
+            }
+          }
+
+          if (_vColumnPaths is not null && _vColumnProxies is not null)
+          {
+            for (int i = 0; i < _vColumnPaths.Length; i++)
+            {
+              if (_vColumnPaths[i] is { } vpath)
+              {
+                var vColumn = Main.AbsoluteDocumentPath.GetObject(vpath, _plotAssociation, documentRoot);
+                bAllResolved &= (vColumn is not null);
+                if (vColumn is Altaxo.Data.IReadableColumn vn)
+                {
+                  _vColumnPaths[i] = null;
+                  _vColumnProxies[i] = ReadableColumnProxyBase.FromColumn(vn);
+                }
+              }
+            }
+          }
+
+
+          if (bAllResolved || isFinallyCall)
+          {
+            info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
 #pragma warning disable 618
-          _plotAssociation._matrixProxy = new DataTableMatrixProxy(_xColumnProxy, _yColumnProxy, _vColumnProxies) { ParentObject = _plotAssociation };
+            _plotAssociation._matrixProxy = new DataTableMatrixProxy(_xColumnProxy!, _yColumnProxy!, _vColumnProxies!) { ParentObject = _plotAssociation };
 #pragma warning restore 618
+          }
         }
       }
     }
@@ -272,9 +281,9 @@ namespace Altaxo.Graph.Plot.Data
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
+        XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData(info);
 
         var _xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
         var _yColumn = (IReadableColumnProxy)info.GetValue("YColumn", s);
@@ -321,9 +330,9 @@ namespace Altaxo.Graph.Plot.Data
         info.AddValue("VBoundaries", s._vBoundaries);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
+        XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData(info);
 
         s._matrixProxy = (DataTableMatrixProxy)info.GetValue("MatrixProxy", s);
 
@@ -347,9 +356,11 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Deserialization constructor.
     /// </summary>
-    protected XYZMeshedColumnPlotData()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    protected XYZMeshedColumnPlotData(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     public XYZMeshedColumnPlotData(DataTable table, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns, IAscendingIntegerCollection selectedPropertyColumns)
     {
@@ -428,9 +439,10 @@ namespace Altaxo.Graph.Plot.Data
       pb.Add(_vBoundaries);
     }
 
+    [MemberNotNull(nameof(_xBoundaries))]
     public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      if (null == _xBoundaries || val.GetType() != _xBoundaries.GetType())
+      if (_xBoundaries is null || val.GetType() != _xBoundaries.GetType())
       {
         if (ChildCopyToMember(ref _xBoundaries, val))
         {
@@ -440,9 +452,10 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    [MemberNotNull(nameof(_yBoundaries))]
     public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      if (null == _yBoundaries || val.GetType() != _yBoundaries.GetType())
+      if (_yBoundaries is null || val.GetType() != _yBoundaries.GetType())
       {
         if (ChildCopyToMember(ref _yBoundaries, val))
         {
@@ -453,9 +466,10 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    [MemberNotNull(nameof(_vBoundaries))]
     public void SetVBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      if (null == _vBoundaries || val.GetType() != _vBoundaries.GetType())
+      if (_vBoundaries is null || val.GetType() != _vBoundaries.GetType())
       {
         if (ChildCopyToMember(ref _vBoundaries, val))
         {
@@ -482,12 +496,12 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
-    public Altaxo.Data.IReadableColumn GetDataColumn(int i)
+    public Altaxo.Data.IReadableColumn? GetDataColumn(int i)
     {
       return _matrixProxy.GetDataColumnProxy(i).Document();
     }
 
-    public Altaxo.Data.IReadableColumn XColumn
+    public Altaxo.Data.IReadableColumn? XColumn
     {
       get
       {
@@ -495,7 +509,7 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
-    public Altaxo.Data.IReadableColumn YColumn
+    public Altaxo.Data.IReadableColumn? YColumn
     {
       get
       {
@@ -513,18 +527,18 @@ namespace Altaxo.Graph.Plot.Data
         return "Empty (no data)";
     }
 
-    public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds, IPhysicalBoundaries zBounds = null)
+    public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds, IPhysicalBoundaries? zBounds = null)
     {
       if (IsDisposeInProgress)
         return;
 
-      if (_xBoundaries == null || (xBounds != null && _xBoundaries.GetType() != xBounds.GetType()))
+      if (_xBoundaries is null || (xBounds is not null && _xBoundaries.GetType() != xBounds.GetType()))
         SetXBoundsFromTemplate(xBounds);
 
-      if (_yBoundaries == null || (yBounds != null && _yBoundaries.GetType() != yBounds.GetType()))
+      if (_yBoundaries is null || (yBounds is not null && _yBoundaries.GetType() != yBounds.GetType()))
         SetYBoundsFromTemplate(yBounds);
 
-      if (_vBoundaries == null || (zBounds != null && _vBoundaries.GetType() != zBounds.GetType()))
+      if (zBounds is not null && (_vBoundaries is null || _vBoundaries.GetType() != zBounds.GetType()))
         SetVBoundsFromTemplate(zBounds);
 
       CalculateCachedData();
@@ -566,7 +580,7 @@ namespace Altaxo.Graph.Plot.Data
 
     #region Changed event handling
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       // If it is BoundaryChangedEventArgs, we have to set a flag for which boundary is affected
       var eAsBCEA = e as BoundariesChangedEventArgs;

@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Data;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
@@ -63,20 +65,9 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("Rescaling", s._rescaling);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        TextScale s = SDeserialize(o, info, parent);
-        OnAfterDeserialization(s);
-        return s;
-      }
-
-      public virtual void OnAfterDeserialization(TextScale s)
-      {
-      }
-
-      protected virtual TextScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        TextScale s = null != o ? (TextScale)o : new TextScale();
+        var s = (TextScale?)o ?? new TextScale();
 
         s.InternalSetDataBounds((TextBoundaries)info.GetValue("Bounds", s));
         s.InternalSetRescaling((NumericScaleRescaleConditions)info.GetValue("Rescaling", s));
@@ -84,6 +75,10 @@ namespace Altaxo.Graph.Scales.Deprecated
 
         return s;
       }
+
+
+
+
     }
 
     #endregion Serialization
@@ -103,17 +98,18 @@ namespace Altaxo.Graph.Scales.Deprecated
       CopyFrom(from);
     }
 
+    [MemberNotNull(nameof(_dataBounds), nameof(_rescaling))]
     private void CopyFrom(TextScale from)
     {
       if (object.ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       _dataBounds = (TextBoundaries)from._dataBounds.Clone();
       _dataBounds.ParentObject = this;
 
-      _rescaling = from._rescaling == null ? null : (NumericScaleRescaleConditions)from._rescaling.Clone();
-      _rescaling.ParentObject = this;
-
+      ChildCloneToMember(ref _rescaling, from._rescaling);
       _cachedAxisOrg = from._cachedAxisOrg;
       _cachedAxisEnd = from._cachedAxisEnd;
       _cachedAxisSpan = from._cachedAxisSpan;
@@ -137,12 +133,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     protected void InternalSetDataBounds(TextBoundaries bounds)
     {
-      if (_dataBounds != null)
-      {
-        _dataBounds = null;
-      }
-      _dataBounds = bounds;
-      _dataBounds.ParentObject = this;
+      ChildSetMember(ref _dataBounds, bounds);
     }
 
     protected void InternalSetRescaling(NumericScaleRescaleConditions rescaling)

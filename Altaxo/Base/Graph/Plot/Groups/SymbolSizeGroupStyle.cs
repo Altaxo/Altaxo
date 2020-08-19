@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -51,9 +52,9 @@ namespace Altaxo.Graph.Plot.Groups
         var s = (SymbolSizeGroupStyle)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        SymbolSizeGroupStyle s = null != o ? (SymbolSizeGroupStyle)o : new SymbolSizeGroupStyle();
+        var s = (SymbolSizeGroupStyle?)o ?? new SymbolSizeGroupStyle();
         return s;
       }
     }
@@ -209,13 +210,13 @@ namespace Altaxo.Graph.Plot.Groups
         localGroups.Add(new SymbolSizeGroupStyle());
       }
 
-      SymbolSizeGroupStyle grpStyle = null;
+      SymbolSizeGroupStyle? grpStyle = null;
       if (externalGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
         grpStyle = (SymbolSizeGroupStyle)externalGroups.GetPlotGroupStyle(typeof(SymbolSizeGroupStyle));
-      else if (localGroups != null)
+      else if (localGroups is not null)
         grpStyle = (SymbolSizeGroupStyle)localGroups.GetPlotGroupStyle(typeof(SymbolSizeGroupStyle));
 
-      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+      if (grpStyle is not null && getter is not null && !grpStyle.IsInitialized)
         grpStyle.Initialize(getter());
     }
 
@@ -233,16 +234,15 @@ namespace Altaxo.Graph.Plot.Groups
       IPlotGroupStyleCollection localGroups,
       SymbolSizeSetter setter)
     {
-      SymbolSizeGroupStyle grpStyle = null;
-      IPlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection? grpColl = null;
       if (externalGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
         grpColl = externalGroups;
-      else if (localGroups != null && localGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
+      else if (localGroups is not null && localGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
         grpColl = localGroups;
 
-      if (null != grpColl)
+      if (grpColl is not null)
       {
-        grpStyle = (SymbolSizeGroupStyle)grpColl.GetPlotGroupStyle(typeof(SymbolSizeGroupStyle));
+        var grpStyle = (SymbolSizeGroupStyle)grpColl.GetPlotGroupStyle(typeof(SymbolSizeGroupStyle));
         grpColl.OnBeforeApplication(typeof(SymbolSizeGroupStyle));
         setter(grpStyle.SymbolSize);
         return true;

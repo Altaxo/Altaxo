@@ -105,15 +105,18 @@ namespace Altaxo.Worksheet.Commands
         int groupNumber = tablecoll?.GetColumnGroup(vcol) ?? 0;
 
         Altaxo.Data.DataColumn? xcol, ycol;
-        if (!string.IsNullOrEmpty(xColumnName) && null != table && table.ContainsColumn(xColumnName))
+        if (!string.IsNullOrEmpty(xColumnName) && table is not null && table.ContainsColumn(xColumnName))
           xcol = table[xColumnName];
         else
           xcol = tablecoll?.FindXColumnOf(vcol);
 
-        if (!string.IsNullOrEmpty(yColumnName) && null != table && table.ContainsColumn(yColumnName))
+        if (!string.IsNullOrEmpty(yColumnName) && table is not null && table.ContainsColumn(yColumnName))
           ycol = table[yColumnName];
         else
           ycol = tablecoll?.FindYColumnOf(vcol);
+
+        if (table is null || tablecoll is null)
+          continue;
 
         var pa = new XYZColumnPlotData(
             table,
@@ -124,8 +127,7 @@ namespace Altaxo.Worksheet.Commands
 
         var ps = templatePlotStyle != null ? templatePlotStyle.Clone() : new G3DPlotStyleCollection();
 
-        if (table is null || tablecoll is null)
-          continue;
+
 
         ErrorBarPlotStyle? unpairedPositiveError = null;
         ErrorBarPlotStyle? unpairedNegativeError = null;

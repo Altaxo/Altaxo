@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,8 +45,8 @@ namespace Altaxo.Graph.Plot.Data
     /// are retrieved from the x-axis of the layer.
     /// </summary>
     /// <param name="layer">The layer.</param>
-    /// <returns></returns>
-    Processed2DPlotData GetRangesAndPoints(Gdi.IPlotArea layer);
+    /// <returns>The plot data, or null of no data are currently available.</returns>
+    Processed2DPlotData? GetRangesAndPoints(Gdi.IPlotArea layer);
 
     /// <summary>
     /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible

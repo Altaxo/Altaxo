@@ -142,6 +142,40 @@ namespace Altaxo.Main.Services
       return GetControllerAndControl(args, null, expectedControllerType, UseDocument.Copy);
     }
 
+
+    /// <summary>
+    /// Gets the required controller and control.
+    /// Throws an exception if either controller or control could not be retrieved.
+    /// </summary>
+    /// <typeparam name="T">The type of expected controller.</typeparam>
+    /// <param name="arg">The first argument is the object the controller should manage. Always required.</param>
+    /// <param name="args">Additional arguments. May be null, or some of them null.</param>
+    /// <returns>The controller for the provided arguments. A control is already set.</returns>
+    public T GetRequiredControllerAndControl<T>(object arg, params object?[]? args) where T: class, IMVCController
+    {
+      if (arg is null)
+        throw new ArgumentNullException(nameof(arg));
+
+      var newArgs = new object[1 + args?.Length ?? 0];
+      newArgs[0] = arg;
+      if (args is not null)
+      {
+        for (int i = 0; i < args.Length; ++i)
+          newArgs[i + 1] = args[i]!;
+      }
+
+      var controller = GetController(newArgs, null, typeof(T), UseDocument.Copy);
+
+      if (controller is null)
+        throw new ArgumentException($"Unable to find controller for type {arg?.GetType()}");
+
+      FindAndAttachControlTo(controller);
+      if (controller.ViewObject is null)
+        throw new InvalidOperationException($"Unable to find view for controller of type {controller.GetType()}");
+
+      return (T)controller;
+    }
+
     /// <summary>
     /// Gets an <see cref="IMVCController" />  for a given document type, and finding the right GUI user control for it.
     /// </summary>

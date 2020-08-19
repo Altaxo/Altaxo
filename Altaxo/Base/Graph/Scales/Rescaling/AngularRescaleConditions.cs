@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,20 +50,16 @@ namespace Altaxo.Graph.Scales.Rescaling
         info.AddValue("ScaleOrigin", s._scaleOrigin);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AngularRescaleConditions s = SDeserialize(o, info, parent);
-        return s;
-      }
-
-      protected virtual AngularRescaleConditions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        AngularRescaleConditions s = null != o ? (AngularRescaleConditions)o : new AngularRescaleConditions();
+        var s = (AngularRescaleConditions?)o ?? new AngularRescaleConditions();
 
         s._scaleOrigin = info.GetInt32("ScaleOrigin");
 
         return s;
       }
+
+
     }
 
     #endregion Serialization

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Graph.Scales.Rescaling
@@ -50,9 +51,9 @@ namespace Altaxo.Graph.Scales.Rescaling
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LogarithmicScaleRescaleConditions s = null != o ? (LogarithmicScaleRescaleConditions)o : new LogarithmicScaleRescaleConditions();
+        var s = (LogarithmicScaleRescaleConditions?)o ?? new LogarithmicScaleRescaleConditions();
 
 #pragma warning disable CS0618 // Type or member is obsolete
         info.GetBaseValueEmbeddedOrNull(s, "AltaxoBase,Altaxo.Graph.Scales.Rescaling.NumericAxisRescaleConditions,1", parent);
@@ -74,14 +75,14 @@ namespace Altaxo.Graph.Scales.Rescaling
       {
         var s = (LogarithmicScaleRescaleConditions)obj;
 
-        info.AddBaseValueEmbedded(s, s.GetType().BaseType);
+        info.AddBaseValueEmbedded(s, s.GetType().BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LogarithmicScaleRescaleConditions s = null != o ? (LogarithmicScaleRescaleConditions)o : new LogarithmicScaleRescaleConditions();
+        var s = (LogarithmicScaleRescaleConditions?)o ?? new LogarithmicScaleRescaleConditions();
 
-        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType!, parent);
 
         return s;
       }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -119,9 +120,9 @@ namespace Altaxo.Graph.Plot.Groups
         info.AddValue("StepEnabled", s._isStepEnabled);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (BarSizePosition3DGroupStyle)o ?? new BarSizePosition3DGroupStyle();
+        var s = (BarSizePosition3DGroupStyle?)o ?? new BarSizePosition3DGroupStyle();
         s._isStepEnabled = info.GetBoolean("StepEnabled");
         return s;
       }

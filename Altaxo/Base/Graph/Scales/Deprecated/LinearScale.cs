@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
@@ -93,9 +94,9 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("Bounds", s._dataBounds);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinearScale s = null != o ? (LinearScale)o : new LinearScale();
+        var s = (LinearScale?)o ?? new LinearScale();
 
         s._baseOrg = info.GetDouble("BaseOrg");
         s._baseEnd = info.GetDouble("BaseEnd");
@@ -146,9 +147,9 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("Rescaling", s._rescaling);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinearScale s = null != o ? (LinearScale)o : new LinearScale();
+        var s = (LinearScale?)o ?? new LinearScale();
 
         s._baseOrg = info.GetDouble("BaseOrg");
         s._baseEnd = info.GetDouble("BaseEnd");

@@ -22,11 +22,13 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 
 namespace Altaxo.Graph.Plot.Data
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Main;
   using Gdi.Plot.Data;
 
@@ -54,9 +56,9 @@ namespace Altaxo.Graph.Plot.Data
         info.AddValue("Function", s._function);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        XYFunctionPlotData s = null != o ? (XYFunctionPlotData)o : new XYFunctionPlotData();
+        var s = (XYFunctionPlotData?)o ?? new XYFunctionPlotData();
 
         s.Function = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("Function", s);
         if (s.Function is Main.IDocumentLeafNode)
@@ -75,6 +77,7 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     protected XYFunctionPlotData()
     {
+      _function = Calc.NullFunction.Instance;
     }
 
     public XYFunctionPlotData(Altaxo.Calc.IScalarFunctionDD function)
@@ -84,10 +87,16 @@ namespace Altaxo.Graph.Plot.Data
 
     public XYFunctionPlotData(XYFunctionPlotData from)
     {
-      if (null == from)
+      if (from is null)
         throw new ArgumentNullException(nameof(from));
 
       CopyFrom(from);
+    }
+
+    [MemberNotNull(nameof(_function))]
+    public void CopyFrom(XYFunctionPlotData from)
+    {
+      ChildCloneToMemberAlt(ref _function, from._function);
     }
 
     public override bool CopyFrom(object obj)
@@ -100,10 +109,7 @@ namespace Altaxo.Graph.Plot.Data
 
       if (obj is XYFunctionPlotData from)
       {
-        if (from._function is ICloneable)
-          Function = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._function).Clone();
-        else
-          Function = from._function;
+        CopyFrom(from);
 
         return true;
       }
@@ -130,7 +136,7 @@ namespace Altaxo.Graph.Plot.Data
       if (_function != null)
         return "Function: " + _function.ToString();
       else
-        return base.ToString();
+        return base.ToString() ?? string.Empty;
     }
 
     /// <summary>
@@ -143,21 +149,13 @@ namespace Altaxo.Graph.Plot.Data
       {
         return _function;
       }
+      [MemberNotNull(nameof(_function))]
       set
       {
-        if (object.ReferenceEquals(_function, value))
-          return;
-
-        var oldFunction = _function;
-        _function = value;
-
-        if (_function != null && _function is Main.IDocumentLeafNode)
-          ((Main.IDocumentLeafNode)_function).ParentObject = this;
-
-        if (oldFunction is Main.IDocumentLeafNode)
-          ((Main.IDocumentLeafNode)_function).Dispose();
-
-        EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
+        if (ChildSetMemberAlt(ref _function, value ?? throw new ArgumentNullException(nameof(Function))))
+        {
+          EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
+        }
       }
     }
 
@@ -203,9 +201,9 @@ namespace Altaxo.Graph.Plot.Data
         info.AddArray("Coefficients", s._coefficients, s._coefficients.Length);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        PolynomialFunction s = null != o ? (PolynomialFunction)o : new PolynomialFunction();
+        var s = (PolynomialFunction?)o ?? new PolynomialFunction();
 
         info.GetArray("Coefficients", out s._coefficients);
 
@@ -220,6 +218,7 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     protected PolynomialFunction()
     {
+      _coefficients = new double[1];
     }
 
     /// <summary>
@@ -228,8 +227,10 @@ namespace Altaxo.Graph.Plot.Data
     /// <param name="coefficients">The coefficient array, starting with coefficient a0.</param>
     public PolynomialFunction(double[] coefficients)
     {
-      if (coefficients != null)
+      if (coefficients is not null)
         _coefficients = (double[])coefficients.Clone();
+      else
+        _coefficients = new double[1];
     }
 
     /// <summary>
@@ -238,8 +239,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <param name="from">Another polynomial function to clone from.</param>
     public PolynomialFunction(PolynomialFunction from)
     {
-      if (from._coefficients != null)
-        _coefficients = (double[])from._coefficients.Clone();
+      _coefficients = (double[])from._coefficients.Clone();
     }
 
     /// <summary>
@@ -361,9 +361,9 @@ namespace Altaxo.Graph.Plot.Data
         info.AddValue("BaseFunction", s._baseFunction);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        SquareRootFunction s = null != o ? (SquareRootFunction)o : new SquareRootFunction();
+        var s = (SquareRootFunction?)o ?? new SquareRootFunction(info);
 
         s._baseFunction = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("BaseFunction", s);
 
@@ -376,9 +376,11 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Only for deserialization purposes.
     /// </summary>
-    protected SquareRootFunction()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    protected SquareRootFunction(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>
     /// Constructor by providing the array of coefficients (a0 is the first element of the array).
@@ -505,9 +507,9 @@ namespace Altaxo.Graph.Plot.Data
         info.CommitArray();
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ScaledSumFunction s = null != o ? (ScaledSumFunction)o : new ScaledSumFunction();
+        var s = (ScaledSumFunction?)o ?? new ScaledSumFunction(info);
 
         info.GetArray("Coefficients", out s._coefficients);
 
@@ -527,9 +529,11 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Only for deserialization purposes.
     /// </summary>
-    protected ScaledSumFunction()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    protected ScaledSumFunction(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>
     /// Constructor by providing the array of coefficients (a0 is the first element of the array).
@@ -538,19 +542,16 @@ namespace Altaxo.Graph.Plot.Data
     /// <param name="functions">The array of functions to sum up.</param>
     public ScaledSumFunction(double[] coefficients, Altaxo.Calc.IScalarFunctionDD[] functions)
     {
-      if (coefficients != null)
-        _coefficients = (double[])coefficients.Clone();
+      _coefficients = (double[])coefficients.Clone();
 
-      if (functions != null)
+
+      _functions = new Altaxo.Calc.IScalarFunctionDD[functions.Length];
+      for (int i = 0; i < functions.Length; i++)
       {
-        _functions = new Altaxo.Calc.IScalarFunctionDD[functions.Length];
-        for (int i = 0; i < functions.Length; i++)
-        {
-          if (functions[i] is ICloneable)
-            _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)functions[i]).Clone();
-          else
-            _functions[i] = functions[i];
-        }
+        if (functions[i] is ICloneable)
+          _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)functions[i]).Clone();
+        else
+          _functions[i] = functions[i];
       }
     }
 
@@ -560,25 +561,15 @@ namespace Altaxo.Graph.Plot.Data
     /// <param name="from">Another polynomial function to clone from.</param>
     public ScaledSumFunction(ScaledSumFunction from)
     {
-      if (from._coefficients != null)
-        _coefficients = (double[])from._coefficients.Clone();
-      else
-        _coefficients = null;
+      _coefficients = (double[])from._coefficients.Clone();
 
-      if (from._functions != null)
+      _functions = new Altaxo.Calc.IScalarFunctionDD[from._functions.Length];
+      for (int i = 0; i < from._functions.Length; i++)
       {
-        _functions = new Altaxo.Calc.IScalarFunctionDD[from._functions.Length];
-        for (int i = 0; i < from._functions.Length; i++)
-        {
-          if (from._functions[i] is ICloneable)
-            _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._functions[i]).Clone();
-          else
-            _functions[i] = from._functions[i];
-        }
-      }
-      else
-      {
-        _functions = null;
+        if (from._functions[i] is ICloneable)
+          _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._functions[i]).Clone();
+        else
+          _functions[i] = from._functions[i];
       }
     }
 
@@ -682,9 +673,9 @@ namespace Altaxo.Graph.Plot.Data
         info.CommitArray();
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ProductFunction s = null != o ? (ProductFunction)o : new ProductFunction();
+        var s = (ProductFunction?)o ?? new ProductFunction(info);
 
         info.GetArray("Coefficients", out s._coefficients);
 
@@ -704,9 +695,11 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Only for deserialization purposes.
     /// </summary>
-    protected ProductFunction()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    protected ProductFunction(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>
     /// Constructor by providing the array of coefficients (a0 is the first element of the array).
@@ -715,19 +708,15 @@ namespace Altaxo.Graph.Plot.Data
     /// <param name="functions">The array of functions to sum up.</param>
     public ProductFunction(double[] coefficients, Altaxo.Calc.IScalarFunctionDD[] functions)
     {
-      if (coefficients != null)
-        _coefficients = (double[])coefficients.Clone();
+      _coefficients = (double[])coefficients.Clone();
 
-      if (functions != null)
+      _functions = new Altaxo.Calc.IScalarFunctionDD[functions.Length];
+      for (int i = 0; i < functions.Length; i++)
       {
-        _functions = new Altaxo.Calc.IScalarFunctionDD[functions.Length];
-        for (int i = 0; i < functions.Length; i++)
-        {
-          if (functions[i] is ICloneable)
-            _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)functions[i]).Clone();
-          else
-            _functions[i] = functions[i];
-        }
+        if (functions[i] is ICloneable)
+          _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)functions[i]).Clone();
+        else
+          _functions[i] = functions[i];
       }
     }
 
@@ -737,25 +726,15 @@ namespace Altaxo.Graph.Plot.Data
     /// <param name="from">Another polynomial function to clone from.</param>
     public ProductFunction(ProductFunction from)
     {
-      if (from._coefficients != null)
-        _coefficients = (double[])from._coefficients.Clone();
-      else
-        _coefficients = null;
+      _coefficients = (double[])from._coefficients.Clone();
 
-      if (from._functions != null)
+      _functions = new Altaxo.Calc.IScalarFunctionDD[from._functions.Length];
+      for (int i = 0; i < from._functions.Length; i++)
       {
-        _functions = new Altaxo.Calc.IScalarFunctionDD[from._functions.Length];
-        for (int i = 0; i < from._functions.Length; i++)
-        {
-          if (from._functions[i] is ICloneable)
-            _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._functions[i]).Clone();
-          else
-            _functions[i] = from._functions[i];
-        }
-      }
-      else
-      {
-        _functions = null;
+        if (from._functions[i] is ICloneable)
+          _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._functions[i]).Clone();
+        else
+          _functions[i] = from._functions[i];
       }
     }
 

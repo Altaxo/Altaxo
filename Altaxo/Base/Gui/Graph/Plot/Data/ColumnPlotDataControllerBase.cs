@@ -412,13 +412,13 @@ namespace Altaxo.Gui.Graph.Plot.Data
         foreach (var groupEntry in positionDataColumns)
         {
           // find data table if not already known ...
-          foreach (var entry in groupEntry.Item2)
+          foreach (var entry in groupEntry.ColumnInfos)
           {
-            if (docDataTable == null)
+            if (docDataTable is null)
             {
-              docDataTable = DataTable.GetParentDataTableOf(entry.Item2 as DataColumn);
-              if (null != docDataTable && docDataTable.DataColumns.ContainsColumn((DataColumn)entry.Item2))
-                docGroupNumber = docDataTable.DataColumns.GetColumnGroup((DataColumn)entry.Item2);
+              docDataTable = DataTable.GetParentDataTableOf(entry.Column as DataColumn);
+              if (null != docDataTable && docDataTable.DataColumns.ContainsColumn((DataColumn)entry.Column))
+                docGroupNumber = docDataTable.DataColumns.GetColumnGroup((DataColumn)entry.Column);
             }
           }
         }
@@ -465,7 +465,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
         {
           foreach (var groupEntry in positionDataColumns)
           {
-            _columnGroup.Add(new GroupInfo { GroupName = groupEntry.Item1 });
+            _columnGroup.Add(new GroupInfo { GroupName = groupEntry.NameOfColumnGroup });
             ++IndexGroupOtherColumns;
           }
         }
@@ -474,9 +474,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
         {
           grpInfo = _columnGroup[IndexGroupDataColumns + i];
           grpInfo.Columns.Clear();
-          foreach (var entry in positionDataColumns[i].Item2)
+          foreach (var entry in positionDataColumns[i].ColumnInfos)
           {
-            grpInfo.Columns.Add(new PlotColumnInformationInternal(entry.Item2, entry.Item3) { Label = entry.Item1, ColumnSetter = entry.Item4 });
+            grpInfo.Columns.Add(new PlotColumnInformationInternal(entry.Column, entry.ColumnName) { Label = entry.ColumnLabel, ColumnSetter = entry.SetColumnAction });
           }
           foreach (var entry in grpInfo.Columns)
           {

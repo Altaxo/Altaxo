@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -29,6 +30,7 @@ using System.Linq;
 
 namespace Altaxo.Graph.Plot.Data
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Calc.Regression.Nonlinear;
   using Altaxo.Data;
   using Altaxo.Graph.Gdi;
@@ -143,9 +145,9 @@ namespace Altaxo.Graph.Plot.Data
         }
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (XYNonlinearFitFunctionConfidenceBandPlotData)o : new XYNonlinearFitFunctionConfidenceBandPlotData();
+        var s = (XYNonlinearFitFunctionConfidenceBandPlotData?)o ?? new XYNonlinearFitFunctionConfidenceBandPlotData(info);
 
         s._fitDocumentIdentifier = info.GetString("FitDocumentIdentifier");
         s.ChildSetMember(ref s._fitDocument, (NonlinearFitDocument)info.GetValue("FitDocument", s));
@@ -184,15 +186,15 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Only for deserialization purposes.
     /// </summary>
-    protected XYNonlinearFitFunctionConfidenceBandPlotData()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    protected XYNonlinearFitFunctionConfidenceBandPlotData(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
-    public XYNonlinearFitFunctionConfidenceBandPlotData(XYNonlinearFitFunctionConfidenceBandPlotData from)
-    {
-      CopyFrom(from);
-    }
 
+
+    [MemberNotNull(nameof(_cachedFitFunction), nameof(_cachedParameters), nameof(_cachedParametersForJacobianEvaluation), nameof(_cachedJacobian), nameof(_functionValues), nameof(_covarianceMatrix), nameof(_cachedIndicesOfVaryingParametersOfThisFitElement))]
     private (List<string> allVaryingParameterNames, int[] indicesOfThisFitElementsVaryingParametersInAllVaryingParameters) CreateCachedMembers()
     {
       var fitElement = _fitDocument.FitEnsemble[_fitElementIndex];
@@ -306,6 +308,32 @@ namespace Altaxo.Graph.Plot.Data
       return new XYNonlinearFitFunctionConfidenceBandPlotData(this);
     }
 
+    public XYNonlinearFitFunctionConfidenceBandPlotData(XYNonlinearFitFunctionConfidenceBandPlotData from)
+    {
+      CopyFrom(from);
+    }
+
+    [MemberNotNull(nameof(_fitDocumentIdentifier), nameof(_fitDocument), nameof(_independentVariableTransformation), nameof(_dependentVariableTransformation), nameof(_cachedFitFunction), nameof(_cachedParameters), nameof(_cachedParametersForJacobianEvaluation), nameof(_cachedJacobian), nameof(_functionValues), nameof(_covarianceMatrix), nameof(_cachedIndicesOfVaryingParametersOfThisFitElement))]
+    public void CopyFrom(XYNonlinearFitFunctionConfidenceBandPlotData from)
+    {
+      _fitDocumentIdentifier = from._fitDocumentIdentifier;
+      ChildCopyToMember(ref _fitDocument, from._fitDocument);
+      _fitElementIndex = from._fitElementIndex;
+      _independentVariableIndex = from._independentVariableIndex;
+      _independentVariableTransformation = from._independentVariableTransformation;
+      _dependentVariableIndex = from._dependentVariableIndex;
+      _dependentVariableTransformation = from._dependentVariableTransformation;
+      _numberOfFitPoints = from._numberOfFitPoints;
+      _sigmaSquare = from._sigmaSquare;
+
+      IsLowerBand = from.IsLowerBand;
+      IsPredictionBand = from.IsPredictionBand;
+      _confidenceLevel = from._confidenceLevel;
+      CreateCachedMembers();
+      // covariance matrix must be cloned after CreateCachedMembers, because it's allocated there
+      _covarianceMatrix = (double[,])from._covarianceMatrix.Clone();
+    }
+
     public override bool CopyFrom(object obj)
     {
       if (object.ReferenceEquals(this, obj))
@@ -316,22 +344,7 @@ namespace Altaxo.Graph.Plot.Data
 
       if (obj is XYNonlinearFitFunctionConfidenceBandPlotData from)
       {
-        _fitDocumentIdentifier = from._fitDocumentIdentifier;
-        ChildCopyToMember(ref _fitDocument, from._fitDocument);
-        _fitElementIndex = from._fitElementIndex;
-        _independentVariableIndex = from._independentVariableIndex;
-        _independentVariableTransformation = from._independentVariableTransformation;
-        _dependentVariableIndex = from._dependentVariableIndex;
-        _dependentVariableTransformation = from._dependentVariableTransformation;
-        _numberOfFitPoints = from._numberOfFitPoints;
-        _sigmaSquare = from._sigmaSquare;
-
-        IsLowerBand = from.IsLowerBand;
-        IsPredictionBand = from.IsPredictionBand;
-        _confidenceLevel = from._confidenceLevel;
-        CreateCachedMembers();
-        // covariance matrix must be cloned after CreateCachedMembers, because it's allocated there
-        _covarianceMatrix = (double[,])from._covarianceMatrix.Clone();
+        CopyFrom(from);
         return true;
       }
       return false;
@@ -347,7 +360,7 @@ namespace Altaxo.Graph.Plot.Data
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (null != _fitDocument)
-        yield return new Main.DocumentNodeAndName(_fitDocument, () => _fitDocument = null, "FitDocument");
+        yield return new Main.DocumentNodeAndName(_fitDocument, () => _fitDocument = null!, "FitDocument");
     }
 
     /// <summary>
@@ -360,7 +373,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return (NonlinearFitDocument)_fitDocument?.Clone();
+        return (NonlinearFitDocument)_fitDocument.Clone();
       }
     }
 
@@ -392,7 +405,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <value>
     /// The dependent variable column.
     /// </value>
-    public IReadableColumn DependentVariableColumn
+    public IReadableColumn? DependentVariableColumn
     {
       get
       {

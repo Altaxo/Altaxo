@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
@@ -38,8 +40,8 @@ namespace Altaxo.Graph.Plot.Groups
     protected class GroupInfo : ICloneable
     {
       public bool WasApplied;
-      public System.Type ChildGroupType;
-      public System.Type ParentGroupType;
+      public System.Type? ChildGroupType;
+      public System.Type? ParentGroupType;
 
       public GroupInfo()
       {
@@ -103,7 +105,7 @@ namespace Altaxo.Graph.Plot.Groups
           info.AddValue("HasChild", null != s._typeToInfo[t].ChildGroupType);
           savedStyles++;
 
-          System.Type childtype = t;
+          System.Type? childtype = t;
           while (null != (childtype = s._typeToInfo[childtype].ChildGroupType))
           {
             info.AddValue("Style", s._typeToInstance[childtype]);
@@ -120,16 +122,16 @@ namespace Altaxo.Graph.Plot.Groups
         info.AddEnum("Strictness", s._plotGroupStrictness);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        PlotGroupStyleCollectionBase s = null != o ? (PlotGroupStyleCollectionBase)o : new PlotGroupStyleCollectionBase();
+        var s = (PlotGroupStyleCollectionBase?)o ?? new PlotGroupStyleCollectionBase();
         SDeserialize(s, info, parent);
         return s;
       }
 
-      public virtual void SDeserialize(PlotGroupStyleCollectionBase s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual void SDeserialize(PlotGroupStyleCollectionBase s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        Type parentStyleType = null;
+        Type? parentStyleType = null;
         int count = info.OpenArray();
         for (int i = 0; i < count; i++)
         {
@@ -155,7 +157,7 @@ namespace Altaxo.Graph.Plot.Groups
         info.AddValue("DistributeToChilds", s._distributeToChildGroups);
       }
 
-      public override void SDeserialize(PlotGroupStyleCollectionBase s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public override void SDeserialize(PlotGroupStyleCollectionBase s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         base.SDeserialize(s, info, parent);
         s._inheritFromParentGroups = info.GetBoolean("InheritFromParent");
@@ -179,16 +181,9 @@ namespace Altaxo.Graph.Plot.Groups
       CopyFrom(from);
     }
 
-    public virtual bool CopyFrom(object obj)
+    [MemberNotNull(nameof(_typeToInfo), nameof(_typeToInstance))]
+    public void CopyFrom(PlotGroupStyleCollectionBase from)
     {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-
-      var from = obj as PlotGroupStyleCollectionBase;
-
-      if (null == from)
-        return false;
-
       using (var suspendToken = SuspendGetToken())
       {
         _typeToInstance = new Dictionary<Type, IPlotGroupStyle>();
@@ -208,8 +203,21 @@ namespace Altaxo.Graph.Plot.Groups
 
         suspendToken.Resume();
       }
+    }
 
-      return true;
+    public virtual bool CopyFrom(object obj)
+    {
+      if (object.ReferenceEquals(this, obj))
+        return true;
+
+
+      if (obj is PlotGroupStyleCollectionBase from)
+      {
+        CopyFrom(from);
+        return true;
+      }
+
+      return false;
     }
 
     #endregion Constructors
@@ -233,7 +241,7 @@ namespace Altaxo.Graph.Plot.Groups
       if (null != _typeToInstance)
       {
         foreach (var instance in _typeToInstance.Values)
-          yield return new Main.DocumentNodeAndName(instance, instance.GetType().FullName); // FullName of the instance should be sufficient to identify the item
+          yield return new Main.DocumentNodeAndName(instance, instance.GetType().FullName ?? instance.GetType().Name); // FullName of the instance should be sufficient to identify the item
       }
     }
 
@@ -320,7 +328,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// </summary>
     /// <param name="groupStyleType">The type of group style for which the type of child group style should be retrieved.</param>
     /// <returns>Type of the child plot group style, or null if no child exists.</returns>
-    public System.Type GetTypeOfChild(System.Type groupStyleType)
+    public System.Type? GetTypeOfChild(System.Type groupStyleType)
     {
       return _typeToInfo[groupStyleType].ChildGroupType;
     }
@@ -330,7 +338,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// </summary>
     /// <param name="groupStyleType">The type of group style for which the type of parent group style should be retrieved.</param>
     /// <returns>Type of the parent plot group style, or null if no parent exists.</returns>
-    public System.Type GetParentTypeOf(System.Type groupStyleType)
+    public System.Type? GetParentTypeOf(System.Type groupStyleType)
     {
       return _typeToInfo[groupStyleType].ParentGroupType;
     }
@@ -343,7 +351,7 @@ namespace Altaxo.Graph.Plot.Groups
     public int GetTreeLevelOf(System.Type groupStyleType)
     {
       int result = 0;
-      System.Type t = groupStyleType;
+      System.Type? t = groupStyleType;
       while (null != (t = _typeToInfo[t].ParentGroupType))
         ++result;
 
@@ -375,7 +383,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// </summary>
     /// <param name="groupStyle">Group style to add to this collection.</param>
     /// <param name="parentGroupStyleType">Type of the parent group style.</param>
-    public void Add(IPlotGroupStyle groupStyle, System.Type parentGroupStyleType)
+    public void Add(IPlotGroupStyle groupStyle, System.Type? parentGroupStyleType)
     {
       if (parentGroupStyleType != null)
       {
@@ -406,7 +414,7 @@ namespace Altaxo.Graph.Plot.Groups
 
       if (parentGroupStyleType != null)
       {
-        System.Type oldChildType = _typeToInfo[parentGroupStyleType].ChildGroupType;
+        System.Type? oldChildType = _typeToInfo[parentGroupStyleType].ChildGroupType;
         _typeToInfo[parentGroupStyleType].ChildGroupType = groupStyle.GetType();
         groupInfo.ChildGroupType = oldChildType;
         if (oldChildType != null)
@@ -443,7 +451,7 @@ namespace Altaxo.Graph.Plot.Groups
 
       if (childGroupStyleType != null)
       {
-        System.Type oldParentType = _typeToInfo[childGroupStyleType].ParentGroupType;
+        System.Type? oldParentType = _typeToInfo[childGroupStyleType].ParentGroupType;
         _typeToInfo[childGroupStyleType].ParentGroupType = groupStyle.GetType();
         groupInfo.ParentGroupType = oldParentType;
         if (oldParentType != null)
@@ -464,8 +472,8 @@ namespace Altaxo.Graph.Plot.Groups
 
       var groupInstance = _typeToInstance[groupType];
       GroupInfo groupInfo = _typeToInfo[groupType];
-      System.Type parentGroupType = groupInfo.ParentGroupType;
-      System.Type childGroupType = groupInfo.ChildGroupType;
+      System.Type? parentGroupType = groupInfo.ParentGroupType;
+      System.Type? childGroupType = groupInfo.ChildGroupType;
 
       if (parentGroupType != null) // then append my current child directly to the parent
       {
@@ -556,7 +564,7 @@ namespace Altaxo.Graph.Plot.Groups
         {
           int subStep = groupStyle.Step(step);
           GroupInfo subGroupInfo = groupInfo;
-          for (Type subGroupType = subGroupInfo.ChildGroupType; subGroupType != null && subStep != 0; subGroupType = subGroupInfo.ChildGroupType)
+          for (Type? subGroupType = subGroupInfo.ChildGroupType; subGroupType != null && subStep != 0; subGroupType = subGroupInfo.ChildGroupType)
           {
             subGroupInfo = _typeToInfo[subGroupType];
             IPlotGroupStyle subGroupStyle = _typeToInstance[subGroupType];
@@ -613,7 +621,7 @@ namespace Altaxo.Graph.Plot.Groups
         {
           int subStep = groupStyle.Step(step);
           GroupInfo subGroupInfo = groupInfo;
-          for (Type subGroupType = subGroupInfo.ChildGroupType; subGroupType != null && subStep != 0; subGroupType = subGroupInfo.ChildGroupType)
+          for (Type? subGroupType = subGroupInfo.ChildGroupType; subGroupType != null && subStep != 0; subGroupType = subGroupInfo.ChildGroupType)
           {
             subGroupInfo = _typeToInfo[subGroupType];
             IPlotGroupStyle subGroupStyle = _typeToInstance[subGroupType];

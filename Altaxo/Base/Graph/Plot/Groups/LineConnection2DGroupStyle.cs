@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -60,9 +61,9 @@ namespace Altaxo.Graph.Plot.Groups
         var s = (LineConnection2DGroupStyle)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LineConnection2DGroupStyle s = null != o ? (LineConnection2DGroupStyle)o : new LineConnection2DGroupStyle();
+        var s = (LineConnection2DGroupStyle?)o ?? new LineConnection2DGroupStyle();
         return s;
       }
     }
@@ -73,6 +74,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     public LineConnection2DGroupStyle()
     {
+      _lineConnectionStyle = Gdi.Plot.Styles.LineConnectionStyles.NoConnection.Instance;
     }
 
     public LineConnection2DGroupStyle(LineConnection2DGroupStyle from)
@@ -224,13 +226,13 @@ namespace Altaxo.Graph.Plot.Groups
         localGroups.Add(new LineConnection2DGroupStyle());
       }
 
-      LineConnection2DGroupStyle grpStyle = null;
+      LineConnection2DGroupStyle? grpStyle = null;
       if (externalGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
         grpStyle = (LineConnection2DGroupStyle)externalGroups.GetPlotGroupStyle(typeof(LineConnection2DGroupStyle));
-      else if (localGroups != null)
+      else if (localGroups is not null)
         grpStyle = (LineConnection2DGroupStyle)localGroups.GetPlotGroupStyle(typeof(LineConnection2DGroupStyle));
 
-      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+      if (grpStyle is not null && getter is not null && !grpStyle.IsInitialized)
       {
         var data = getter();
         grpStyle.Initialize(data.Item1, data.Item2);
@@ -249,16 +251,15 @@ namespace Altaxo.Graph.Plot.Groups
       IPlotGroupStyleCollection localGroups,
       Action<ILineConnectionStyle, bool> setter)
     {
-      LineConnection2DGroupStyle grpStyle = null;
-      IPlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection? grpColl = null;
       if (externalGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
         grpColl = externalGroups;
-      else if (localGroups != null && localGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
+      else if (localGroups is not null && localGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
         grpColl = localGroups;
 
       if (null != grpColl)
       {
-        grpStyle = (LineConnection2DGroupStyle)grpColl.GetPlotGroupStyle(typeof(LineConnection2DGroupStyle));
+        var grpStyle = (LineConnection2DGroupStyle)grpColl.GetPlotGroupStyle(typeof(LineConnection2DGroupStyle));
         grpColl.OnBeforeApplication(typeof(LineConnection2DGroupStyle));
         setter(grpStyle.LineConnectionStyle, grpStyle._connectCircular);
         return true;

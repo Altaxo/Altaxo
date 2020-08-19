@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Graph.Scales.Rescaling
@@ -130,9 +131,9 @@ namespace Altaxo.Graph.Scales.Rescaling
                  */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DateTimeScaleRescaleConditions s = null != o ? (DateTimeScaleRescaleConditions)o : new DateTimeScaleRescaleConditions();
+        var s = (DateTimeScaleRescaleConditions?)o ?? new DateTimeScaleRescaleConditions();
 
         s._userProvidedOrgRelativeTo = BoundariesRelativeTo.Absolute;
         s._userProvidedEndRelativeTo = BoundariesRelativeTo.Absolute;
@@ -195,9 +196,9 @@ namespace Altaxo.Graph.Scales.Rescaling
         info.AddValue("ResultingMaxEnd", s._resultingMaxEnd);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (DateTimeScaleRescaleConditions)o ?? new DateTimeScaleRescaleConditions();
+        var s = (DateTimeScaleRescaleConditions?)o ?? new DateTimeScaleRescaleConditions();
 
         // Cached values
         s._dataBoundsOrg = info.GetInt64("DataBoundsOrg");

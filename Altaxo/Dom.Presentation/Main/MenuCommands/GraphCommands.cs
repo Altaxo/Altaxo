@@ -775,8 +775,7 @@ namespace Altaxo.Graph.Commands
   {
     public static void Run(Altaxo.Graph.GraphDocumentBase doc)
     {
-      var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
-      var newDocument = miniProjectBuilder.GetMiniProject(doc, false);
+      var newDocument = Altaxo.Graph.Procedures.MiniProjectBuilder.CreateMiniProject(doc, false);
       SaveProjectAs(newDocument);
     }
 
@@ -848,8 +847,7 @@ namespace Altaxo.Graph.Commands
 
     public override void Run(GraphController ctrl)
     {
-      var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
-      var newDocument = miniProjectBuilder.GetMiniProject(ctrl.Doc, false);
+      var newDocument = Altaxo.Graph.Procedures.MiniProjectBuilder.CreateMiniProject(ctrl.Doc, false);
 
       var items = new HashSet<IProjectItem>();
       foreach (var coll in newDocument.ProjectItemCollections)

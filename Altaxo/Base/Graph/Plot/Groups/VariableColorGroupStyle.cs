@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -57,9 +58,9 @@ namespace Altaxo.Graph.Plot.Groups
         var s = (VariableColorGroupStyle)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (VariableColorGroupStyle)o : new VariableColorGroupStyle();
+        var s = (VariableColorGroupStyle?)o ?? new VariableColorGroupStyle();
         return s;
       }
     }
@@ -70,6 +71,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     public VariableColorGroupStyle()
     {
+      _colorForIndex = (i) => Color.Black;
     }
 
     public VariableColorGroupStyle(VariableColorGroupStyle from)
@@ -206,13 +208,13 @@ namespace Altaxo.Graph.Plot.Groups
         localGroups.Add(new VariableColorGroupStyle());
       }
 
-      VariableColorGroupStyle grpStyle = null;
+      VariableColorGroupStyle? grpStyle = null;
       if (externalGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
         grpStyle = (VariableColorGroupStyle)externalGroups.GetPlotGroupStyle(MyType);
-      else if (localGroups != null)
+      else if (localGroups is not null)
         grpStyle = (VariableColorGroupStyle)localGroups.GetPlotGroupStyle(MyType);
 
-      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+      if (grpStyle is not null && getter is not null && !grpStyle.IsInitialized)
         grpStyle.Initialize(getter);
     }
 
@@ -228,16 +230,15 @@ namespace Altaxo.Graph.Plot.Groups
       IPlotGroupStyleCollection localGroups,
       Action<Func<int, Color>> setter)
     {
-      VariableColorGroupStyle grpStyle = null;
-      IPlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection? grpColl = null;
       if (externalGroups.ContainsType(MyType))
         grpColl = externalGroups;
-      else if (localGroups != null && localGroups.ContainsType(MyType))
+      else if (localGroups is not null && localGroups.ContainsType(MyType))
         grpColl = localGroups;
 
-      if (null != grpColl)
+      if (grpColl is not null)
       {
-        grpStyle = (VariableColorGroupStyle)grpColl.GetPlotGroupStyle(MyType);
+        var grpStyle = (VariableColorGroupStyle)grpColl.GetPlotGroupStyle(MyType);
         grpColl.OnBeforeApplication(MyType);
         setter(grpStyle._colorForIndex);
         return true;

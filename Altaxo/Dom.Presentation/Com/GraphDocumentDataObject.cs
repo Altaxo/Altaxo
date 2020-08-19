@@ -86,8 +86,7 @@ namespace Altaxo.Com
 
       if (_graphExportOptions.RenderEmbeddedObject)
       {
-        var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
-        _altaxoMiniProject = miniProjectBuilder.GetMiniProject(graphDocument, true);
+        _altaxoMiniProject = Altaxo.Graph.Procedures.MiniProjectBuilder.CreateMiniProject(graphDocument, true);
       }
       else
       {

@@ -23,6 +23,7 @@
 #endregion Copyright
 
 #nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Collections;
@@ -105,10 +106,12 @@ namespace Altaxo.Worksheet.Commands
         var parentTable = DataTable.GetParentDataTableOf(table);
 
         XYColumnPlotData pa;
-        if (null != xcol)
+        if (xcol is not null && parentTable is not null)
           pa = new XYColumnPlotData(parentTable, groupNumber, xcol, ycol);
-        else
+        else if (parentTable is not null)
           pa = new XYColumnPlotData(parentTable, groupNumber, new Altaxo.Data.IndexerColumn(), ycol);
+        else
+          throw new InvalidOperationException($"Could not find a parent data table for this plot operation.");
 
         G2DPlotStyleCollection ps = templatePlotStyle != null ? templatePlotStyle.Clone() : new G2DPlotStyleCollection();
 

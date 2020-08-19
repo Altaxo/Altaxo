@@ -786,6 +786,40 @@ namespace Altaxo.Main
     }
 
     /// <summary>
+    /// Set a member variable that holds a child node of this instance. The child node may or may not implement <see cref="IDocumentLeafNode"/>.
+    /// The value to set may or may not implement <see cref="ICloneable"/>. If it implements <see cref="ICloneable"/>, then the member variable is
+    /// set to a clone of the value. Otherwise, the member variable is set directly with the value.
+    /// It helps to ensure the correct order: first, the child node is set to the new instance and then the  old child node is disposed.
+    /// </summary>
+    /// <typeparam name="T">Type of child node.</typeparam>
+    /// <param name="childNode">The child node member variable to set.</param>
+    /// <param name="instanceToSet">The instance to set the variable with. If it implements <see cref="ICloneable"/>, a clone of this value is used to set the member variable; otherwise, this value is used directly.</param>
+    /// <returns><c>True</c> if the child has been set. If the old child reference equals to the new child, nothing is done, and <c>false</c> is returned.</returns>
+    protected bool ChildCloneToMemberAlt<T>([MaybeNull][AllowNull][NotNullIfNotNull("instanceToSet")] ref T childNode, [AllowNull] T instanceToSet)
+    {
+      if (object.ReferenceEquals(childNode, instanceToSet))
+      {
+        return false;
+      }
+      else
+      {
+        var tmpNode = childNode;
+
+        if (instanceToSet is ICloneable cloneableInstanceToSet)
+          childNode = (T)cloneableInstanceToSet.Clone();
+        else
+          childNode = instanceToSet;
+
+        if (childNode is IDocumentLeafNode documentLeafNode)
+          documentLeafNode.ParentObject = this;
+
+        (tmpNode as IDisposable)?.Dispose();
+
+        return true;
+      }
+    }
+
+    /// <summary>
     /// Copies a document node from another source into a member of this instance.
     /// If an old instance member (provided in <paramref name="myChild"/> exists and can not be used, it is disposed first.
     /// The node is then copied using either Main.ICopyFrom or System.ICloneable. The resulting node's <see cref="M:IDocumentLeafNode.ParentObject"/>

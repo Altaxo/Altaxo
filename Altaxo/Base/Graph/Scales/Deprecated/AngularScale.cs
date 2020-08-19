@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -92,28 +93,16 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("PosNegAngles", s._usePositiveNegativeAngles);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AngularScale s = SDeserialize(o, info, parent);
-        OnAfterDeserialization(s);
-        return s;
-      }
-
-      protected virtual void OnAfterDeserialization(AngularScale s)
-      {
-        s.SetCachedValues();
-      }
-
-      protected virtual AngularScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        AngularScale s = null != o ? (AngularScale)o : new AngularScale();
+        var s = (AngularScale?)o ?? new AngularScale();
 
         s._useDegree = info.GetBoolean("UseDegree");
         s._majorTickDivider = info.GetInt32("MajorTickDiv");
         s._minorTickDivider = info.GetInt32("MinorTickDiv");
         s._scaleOrigin = info.GetInt32("Org90");
         s._usePositiveNegativeAngles = info.GetBoolean("PosNegAngles");
-        // set cached values is called by the enclosing function
+        s.SetCachedValues();
         return s;
       }
     }
@@ -356,7 +345,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     {
       get
       {
-        return null;
+        return null!;
       }
     }
 

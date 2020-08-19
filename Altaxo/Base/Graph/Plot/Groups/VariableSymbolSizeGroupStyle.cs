@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -56,9 +57,9 @@ namespace Altaxo.Graph.Plot.Groups
         var s = (VariableSymbolSizeGroupStyle)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (VariableSymbolSizeGroupStyle)o : new VariableSymbolSizeGroupStyle();
+        var s = (VariableSymbolSizeGroupStyle?)o ?? new VariableSymbolSizeGroupStyle();
         return s;
       }
     }
@@ -69,6 +70,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     public VariableSymbolSizeGroupStyle()
     {
+      _symbolSizeForIndex = (i) => 0;
     }
 
     public VariableSymbolSizeGroupStyle(VariableSymbolSizeGroupStyle from)
@@ -205,13 +207,13 @@ namespace Altaxo.Graph.Plot.Groups
         localGroups.Add(new VariableSymbolSizeGroupStyle());
       }
 
-      VariableSymbolSizeGroupStyle grpStyle = null;
+      VariableSymbolSizeGroupStyle? grpStyle = null;
       if (externalGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
         grpStyle = (VariableSymbolSizeGroupStyle)externalGroups.GetPlotGroupStyle(MyType);
-      else if (localGroups != null)
+      else if (localGroups is not null)
         grpStyle = (VariableSymbolSizeGroupStyle)localGroups.GetPlotGroupStyle(MyType);
 
-      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+      if (grpStyle is not null && getter is not null && !grpStyle.IsInitialized)
         grpStyle.Initialize(getter);
     }
 
@@ -227,8 +229,7 @@ namespace Altaxo.Graph.Plot.Groups
       IPlotGroupStyleCollection localGroups,
       Action<Func<int, double>> setter)
     {
-      VariableSymbolSizeGroupStyle grpStyle = null;
-      IPlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection? grpColl = null;
       if (externalGroups.ContainsType(MyType))
         grpColl = externalGroups;
       else if (localGroups != null && localGroups.ContainsType(MyType))
@@ -236,7 +237,7 @@ namespace Altaxo.Graph.Plot.Groups
 
       if (null != grpColl)
       {
-        grpStyle = (VariableSymbolSizeGroupStyle)grpColl.GetPlotGroupStyle(MyType);
+        var grpStyle = (VariableSymbolSizeGroupStyle)grpColl.GetPlotGroupStyle(MyType);
         grpColl.OnBeforeApplication(MyType);
         setter(grpStyle._symbolSizeForIndex);
         return true;

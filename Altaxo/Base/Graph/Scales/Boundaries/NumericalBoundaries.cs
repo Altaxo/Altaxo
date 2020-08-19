@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Graph.Scales.Boundaries
@@ -59,9 +60,9 @@ namespace Altaxo.Graph.Scales.Boundaries
         info.AddValue("MaxValue", s._maxValue);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (NumericalBoundaries)o;
+        var s = (NumericalBoundaries)(o ?? throw new ArgumentNullException(nameof(o)));
 
         s._numberOfItems = info.GetInt32("NumberOfItems");
         s._minValue = info.GetDouble("MinValue");

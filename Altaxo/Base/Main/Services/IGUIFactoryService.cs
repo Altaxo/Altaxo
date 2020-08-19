@@ -69,6 +69,15 @@ namespace Altaxo.Main.Services
 
     IMVCController? GetControllerAndControl(object[] args, Type expectedControllerType);
 
+    /// <summary>
+    /// Gets the required controller and control. Throws an exception if either controller or control could not be retrieved.
+    /// </summary>
+    /// <typeparam name="T">The type of expected controller.</typeparam>
+    /// <param name="arg">The first argument. Always required.</param>
+    /// <param name="args">Additional arguments.</param>
+    /// <returns>The controller for the provided arguments. A control is already set.</returns>
+    T GetRequiredControllerAndControl<T>(object arg, params object?[]? args) where T : class, IMVCController;
+
     IMVCController? GetControllerAndControl(object[] args, Type expectedControllerType, UseDocument copyDocument);
 
     IMVCController? GetControllerAndControl(object[] args, Type overrideArg0Type, Type expectedControllerType, UseDocument copyDocument);

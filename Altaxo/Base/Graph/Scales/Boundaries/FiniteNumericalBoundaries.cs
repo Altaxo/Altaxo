@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Graph.Scales.Boundaries
@@ -43,13 +44,13 @@ namespace Altaxo.Graph.Scales.Boundaries
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FiniteNumericalBoundaries)obj;
-        info.AddBaseValueEmbedded(s, typeof(FiniteNumericalBoundaries).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(FiniteNumericalBoundaries).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        FiniteNumericalBoundaries s = null != o ? (FiniteNumericalBoundaries)o : new FiniteNumericalBoundaries();
-        info.GetBaseValueEmbedded(s, typeof(FiniteNumericalBoundaries).BaseType, parent);
+        var s = (FiniteNumericalBoundaries?)o ?? new FiniteNumericalBoundaries();
+        info.GetBaseValueEmbedded(s, typeof(FiniteNumericalBoundaries).BaseType!, parent);
         return s;
       }
     }

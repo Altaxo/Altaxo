@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
@@ -62,16 +64,16 @@ namespace Altaxo.Graph.Plot.Data
     protected Altaxo.Data.IReadableColumnProxy _zColumn; // the Z-Column
 
     // cached or temporary data
-    protected IPhysicalBoundaries _xBoundaries;
+    protected IPhysicalBoundaries? _xBoundaries;
 
-    protected IPhysicalBoundaries _yBoundaries;
+    protected IPhysicalBoundaries? _yBoundaries;
 
-    protected IPhysicalBoundaries _zBoundaries;
+    protected IPhysicalBoundaries? _zBoundaries;
 
     /// <summary>List of plot points that is allocated once per thread (as thread local storage variable).</summary>
     [ThreadStatic]
     [NonSerialized]
-    protected static List<PointD3D> _tlsBufferedPlotData;
+    protected static List<PointD3D>? _tlsBufferedPlotData;
 
     /// <summary>
     /// One more that the index to the last valid pair of plot data.
@@ -88,9 +90,11 @@ namespace Altaxo.Graph.Plot.Data
     /// Deserialization constructor. Initializes a new instance of the <see cref="XYZColumnPlotData"/> class without any member initialization.
     /// </summary>
     /// <param name="info">The information.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected XYZColumnPlotData(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>
     /// 2016-05-31 initial version
@@ -112,14 +116,14 @@ namespace Altaxo.Graph.Plot.Data
         info.AddValue("YColumn", s._yColumn);
         info.AddValue("ZColumn", s._zColumn);
 
-        info.AddValue("XBoundaries", s._xBoundaries);
-        info.AddValue("YBoundaries", s._yBoundaries);
-        info.AddValue("ZBoundaries", s._zBoundaries);
+        info.AddValueOrNull("XBoundaries", s._xBoundaries);
+        info.AddValueOrNull("YBoundaries", s._yBoundaries);
+        info.AddValueOrNull("ZBoundaries", s._zBoundaries);
       }
 
-      public virtual XYZColumnPlotData SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual XYZColumnPlotData SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (XYZColumnPlotData)o ?? new XYZColumnPlotData(info);
+        var s = (XYZColumnPlotData?)o ?? new XYZColumnPlotData(info);
 
         s._dataTable = (DataTableProxy)info.GetValue("DataTable", s);
         if (null != s._dataTable)
@@ -141,22 +145,15 @@ namespace Altaxo.Graph.Plot.Data
         if (null != s._zColumn)
           s._zColumn.ParentObject = s;
 
-        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
-        if (null != s._xBoundaries)
-          s._xBoundaries.ParentObject = s;
+        s.ChildSetMember(ref s._xBoundaries, info.GetValueOrNull<IPhysicalBoundaries>("XBoundaries", s));
+        s.ChildSetMember(ref s._yBoundaries, info.GetValueOrNull<IPhysicalBoundaries>("YBoundaries", s));
+        s.ChildSetMember(ref s._zBoundaries, info.GetValueOrNull<IPhysicalBoundaries>("ZBoundaries", s));
 
-        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
-        if (null != s._yBoundaries)
-          s._yBoundaries.ParentObject = s;
-
-        s._zBoundaries = (IPhysicalBoundaries)info.GetValue("ZBoundaries", s);
-        if (null != s._zBoundaries)
-          s._zBoundaries.ParentObject = s;
 
         return s;
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -208,29 +205,29 @@ namespace Altaxo.Graph.Plot.Data
 
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataTable)
+      if (_dataTable is not null)
         yield return new DocumentNodeAndName(_dataTable, "DataTable");
 
-      if (null != _dataRowSelection)
+      if (_dataRowSelection is not null)
         yield return new DocumentNodeAndName(_dataRowSelection, nameof(DataRowSelection));
 
-      if (null != _xColumn)
+      if (_xColumn is not null)
         yield return new Main.DocumentNodeAndName(_xColumn, "XColumn");
 
-      if (null != _yColumn)
+      if (_yColumn is not null)
         yield return new Main.DocumentNodeAndName(_yColumn, "YColumn");
 
-      if (null != _zColumn)
-        yield return new Main.DocumentNodeAndName(_yColumn, "VColumn");
+      if (_zColumn is not null)
+        yield return new Main.DocumentNodeAndName(_zColumn, "VColumn");
 
-      if (null != _xBoundaries)
+      if (_xBoundaries is not null)
         yield return new Main.DocumentNodeAndName(_xBoundaries, "XBoundaries");
 
-      if (null != _yBoundaries)
+      if (_yBoundaries is not null)
         yield return new Main.DocumentNodeAndName(_yBoundaries, "YBoundaries");
 
-      if (null != _zBoundaries)
-        yield return new Main.DocumentNodeAndName(_yBoundaries, "VBoundaries");
+      if (_zBoundaries is not null)
+        yield return new Main.DocumentNodeAndName(_zBoundaries, "VBoundaries");
     }
 
     /// <summary>
@@ -243,21 +240,17 @@ namespace Altaxo.Graph.Plot.Data
       return new XYZColumnPlotData(this);
     }
 
+    [MaybeNull]
     public DataTable DataTable
     {
       get
       {
         return _dataTable?.Document;
       }
+      [MemberNotNull(nameof(_dataTable))]
       set
       {
-        if (null == value)
-          throw new ArgumentNullException(nameof(value));
-
-        if (object.ReferenceEquals(DataTable, value))
-          return;
-
-        if (ChildSetMember(ref _dataTable, new DataTableProxy(value)))
+        if (ChildSetMember(ref _dataTable, new DataTableProxy(value ?? throw new ArgumentNullException(nameof(DataTable)))))
         {
           EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
         }
@@ -310,20 +303,20 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>The name of the x-column, depending on the provided level: 0: only name of the data column. 1: table name and column name. 2: table name, collection, and column name.</returns>
     public string GetXName(int level)
     {
-      IReadableColumn col = _xColumn.Document();
-      if (col is Altaxo.Data.DataColumn)
+      IReadableColumn? col = _xColumn.Document();
+      if (col is Altaxo.Data.DataColumn dataCol)
       {
-        var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
+        var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataCol);
         string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
+        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
-          return ((DataColumn)col).Name;
+          return dataCol.Name;
         else if (level == 1)
-          return tablename + ((DataColumn)col).Name;
+          return tablename + dataCol.Name;
         else
-          return tablename + collectionname + ((DataColumn)col).Name;
+          return tablename + collectionname + dataCol.Name;
       }
-      else if (col != null)
+      else if (col is not null)
       {
         return col.FullName;
       }
@@ -340,20 +333,20 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>The name of the y-column, depending on the provided level: 0: only name of the data column. 1: table name and column name. 2: table name, collection, and column name.</returns>
     public string GetYName(int level)
     {
-      IReadableColumn col = _yColumn.Document();
-      if (col is Altaxo.Data.DataColumn)
+      IReadableColumn? col = _yColumn.Document();
+      if (col is Altaxo.Data.DataColumn dataCol)
       {
-        var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
+        var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataCol);
         string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
+        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
-          return ((DataColumn)col).Name;
+          return dataCol.Name;
         else if (level == 1)
-          return tablename + ((DataColumn)col).Name;
+          return tablename + dataCol.Name;
         else
-          return tablename + collectionname + ((DataColumn)col).Name;
+          return tablename + collectionname + dataCol.Name;
       }
-      else if (col != null)
+      else if (col is not null)
       {
         return col.FullName;
       }
@@ -370,20 +363,20 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>The name of the z-column, depending on the provided level: 0: only name of the data column. 1: table name and column name. 2: table name, collection, and column name.</returns>
     public string GetZName(int level)
     {
-      IReadableColumn col = _zColumn.Document();
-      if (col is Altaxo.Data.DataColumn)
+      IReadableColumn? col = _zColumn.Document();
+      if (col is Altaxo.Data.DataColumn dataCol)
       {
-        var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
+        var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataCol);
         string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
+        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
-          return ((DataColumn)col).Name;
+          return dataCol.Name;
         else if (level == 1)
-          return tablename + ((DataColumn)col).Name;
+          return tablename + dataCol.Name;
         else
-          return tablename + collectionname + ((DataColumn)col).Name;
+          return tablename + collectionname + dataCol.Name;
       }
-      else if (col != null)
+      else if (col is not null)
       {
         return col.FullName;
       }
@@ -425,7 +418,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public void MergeZBoundsInto(IPhysicalBoundaries pb)
     {
-      if (null == _zBoundaries || pb.GetType() != _zBoundaries.GetType())
+      if (_zBoundaries is null || pb.GetType() != _zBoundaries.GetType())
         SetZBoundsFromTemplate(pb);
 
       if (!_isCachedDataValidY)
@@ -443,9 +436,10 @@ namespace Altaxo.Graph.Plot.Data
     /// are copied into the new x boundary object.
     /// </summary>
     /// <param name="val">The template boundary object.</param>
+    [MemberNotNull(nameof(_xBoundaries))]
     protected void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      if (null == _xBoundaries || val.GetType() != _xBoundaries.GetType())
+      if (_xBoundaries is null || val.GetType() != _xBoundaries.GetType())
       {
         if (ChildCopyToMember(ref _xBoundaries, val))
         {
@@ -461,9 +455,10 @@ namespace Altaxo.Graph.Plot.Data
     /// are copied into the new y boundary object.
     /// </summary>
     /// <param name="val">The template boundary object.</param>
+    [MemberNotNull(nameof(_yBoundaries))]
     protected void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      if (null == _yBoundaries || val.GetType() != _yBoundaries.GetType())
+      if (_yBoundaries is null || val.GetType() != _yBoundaries.GetType())
       {
         if (ChildCopyToMember(ref _yBoundaries, val))
         {
@@ -479,9 +474,10 @@ namespace Altaxo.Graph.Plot.Data
     /// are copied into the new y boundary object.
     /// </summary>
     /// <param name="val">The template boundary object.</param>
+    [MemberNotNull(nameof(_zBoundaries))]
     protected void SetZBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      if (null == _zBoundaries || val.GetType() != _zBoundaries.GetType())
+      if (_zBoundaries is null || val.GetType() != _zBoundaries.GetType())
       {
         if (ChildCopyToMember(ref _zBoundaries, val))
         {
@@ -512,16 +508,9 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     /// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
     /// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
-    public IEnumerable<(string NameOfColumnGroup, // Name of the column group, e.g. "X-Y-Data"
-                  IEnumerable<(
-                    string ColumnLabel, // Column label
-                    IReadableColumn Column, // the column as it was at the time of this call
-                    string ColumnName, // the name of the column (last part of the column proxies document path)
-                    Action<IReadableColumn, DataTable, int> SetColumnAction // action to set the column during Apply of the controller (Arguments are column, table and group number)
-                    )> columnInfos
-                )> GetAdditionallyUsedColumns()
+    public IEnumerable<GroupOfColumnsInformation> GetAdditionallyUsedColumns()
     {
-      yield return ("#0: X-Y-Z-Data", GetColumns());
+      yield return new GroupOfColumnsInformation("#0: X-Y-Z-Data", GetColumns());
     }
 
     /// <summary>
@@ -529,19 +518,11 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     /// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
     /// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
-    private IEnumerable<(
-  string ColumnLabel, // Column label
-  IReadableColumn Column, // the column as it was at the time of this call
-  string ColumnName, // the name of the column (last part of the column proxies document path)
-  Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller (Arguments are column, table and group number)
-  )> GetColumns()
+    private IEnumerable<ColumnInformation> GetColumns()
     {
-      yield return ("X", XColumn, _xColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { XColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } }
-      );
-      yield return ("Y", YColumn, _yColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { YColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } }
-      );
-      yield return ("Z", ZColumn, _zColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { ZColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } }
-      );
+      yield return new ColumnInformation("X", XColumn, _xColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { if (col is not null) XColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
+      yield return new ColumnInformation("Y", YColumn, _yColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { if (col is not null) YColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
+      yield return new ColumnInformation("Z", ZColumn, _zColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { if (col is not null) ZColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
     }
 
     /// <summary>
@@ -560,17 +541,16 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+    [MaybeNull]
     public Altaxo.Data.IReadableColumn XColumn
     {
       get
       {
-        return _xColumn == null ? null : _xColumn.Document();
+        return _xColumn?.Document();
       }
+      [MemberNotNull(nameof(_xColumn))]
       set
       {
-        if (object.ReferenceEquals(XColumn, value))
-          return;
-
         if (ChildSetMember(ref _xColumn, ReadableColumnProxyBase.FromColumn(value)))
         {
           _isCachedDataValidX = _isCachedDataValidY = _isCachedDataValidZ = false; // this influences both x and y boundaries
@@ -583,21 +563,20 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return _xColumn?.DocumentPath()?.LastPartOrDefault;
+        return _xColumn?.DocumentPath()?.LastPartOrDefault ?? string.Empty;
       }
     }
 
+    [MaybeNull]
     public Altaxo.Data.IReadableColumn YColumn
     {
       get
       {
         return _yColumn == null ? null : _yColumn.Document();
       }
+      [MemberNotNull(nameof(_yColumn))]
       set
       {
-        if (object.ReferenceEquals(YColumn, value))
-          return;
-
         if (ChildSetMember(ref _yColumn, ReadableColumnProxyBase.FromColumn(value)))
         {
           _isCachedDataValidX = _isCachedDataValidY = _isCachedDataValidZ = false; // this influences both x and y boundaries
@@ -610,21 +589,20 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return _yColumn?.DocumentPath()?.LastPartOrDefault;
+        return _yColumn?.DocumentPath()?.LastPartOrDefault ?? string.Empty;
       }
     }
 
+    [MaybeNull]
     public Altaxo.Data.IReadableColumn ZColumn
     {
       get
       {
         return _zColumn?.Document();
       }
+      [MemberNotNull(nameof(_zColumn))]
       set
       {
-        if (object.ReferenceEquals(ZColumn, value))
-          return;
-
         if (ChildSetMember(ref _zColumn, ReadableColumnProxyBase.FromColumn(value)))
         {
           _isCachedDataValidX = _isCachedDataValidY = _isCachedDataValidZ = false; // this influences both x and y boundaries
@@ -637,7 +615,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return _zColumn?.DocumentPath()?.LastPartOrDefault;
+        return _zColumn?.DocumentPath()?.LastPartOrDefault ?? string.Empty;
       }
     }
 
@@ -652,13 +630,13 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>The maximum row index that can be deduced from the data columns.</returns>
     public int GetMaximumRowIndexFromDataColumns()
     {
-      IReadableColumn xColumn = XColumn;
-      IReadableColumn yColumn = YColumn;
-      IReadableColumn zColumn = ZColumn;
+      var xColumn = XColumn;
+      var yColumn = YColumn;
+      var zColumn = ZColumn;
 
       int maxRowIndex;
 
-      if (xColumn == null || yColumn == null || zColumn == null)
+      if (xColumn is null || yColumn is null || zColumn is null)
       {
         maxRowIndex = 0;
       }
@@ -686,22 +664,22 @@ namespace Altaxo.Graph.Plot.Data
       if (IsDisposeInProgress)
         return;
 
-      if (_xBoundaries == null || (xBounds != null && _xBoundaries.GetType() != xBounds.GetType()))
+      if (_xBoundaries is null || (xBounds is not null && _xBoundaries.GetType() != xBounds.GetType()))
       {
         _isCachedDataValidX = false;
         SetXBoundsFromTemplate(xBounds);
       }
 
-      if (_yBoundaries == null || (yBounds != null && _yBoundaries.GetType() != yBounds.GetType()))
+      if (_yBoundaries is null || (yBounds is not null && _yBoundaries.GetType() != yBounds.GetType()))
       {
         _isCachedDataValidY = false;
         SetYBoundsFromTemplate(yBounds);
       }
 
-      if (_zBoundaries == null || (vBounds != null && _zBoundaries.GetType() != vBounds.GetType()))
+      if (_zBoundaries is null || (vBounds is not null && _zBoundaries.GetType() != vBounds.GetType()))
       {
         _isCachedDataValidZ = false;
-        SetZBoundsFromTemplate(yBounds);
+        SetZBoundsFromTemplate(vBounds);
       }
 
       if (!_isCachedDataValidX || !_isCachedDataValidY || !_isCachedDataValidZ)
@@ -717,13 +695,11 @@ namespace Altaxo.Graph.Plot.Data
       if (null == _xBoundaries && null == _yBoundaries && null == _zBoundaries)
         return;
 
-      ISuspendToken suspendTokenX = null;
-      ISuspendToken suspendTokenY = null;
-      ISuspendToken suspendTokenZ = null;
 
-      suspendTokenX = _xBoundaries?.SuspendGetToken();
-      suspendTokenY = _yBoundaries?.SuspendGetToken();
-      suspendTokenZ = _zBoundaries?.SuspendGetToken();
+
+      var suspendTokenX = _xBoundaries?.SuspendGetToken();
+      var suspendTokenY = _yBoundaries?.SuspendGetToken();
+      var suspendTokenZ = _zBoundaries?.SuspendGetToken();
 
       try
       {
@@ -733,19 +709,18 @@ namespace Altaxo.Graph.Plot.Data
 
         _pointCount = GetMaximumRowIndexFromDataColumns();
 
-        IReadableColumn xColumn = XColumn;
-        IReadableColumn yColumn = YColumn;
-        IReadableColumn zColumn = ZColumn;
-
-        foreach (var segment in _dataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, _pointCount, _dataTable?.Document?.DataColumns, _pointCount))
+        if (XColumn is { } xColumn && YColumn is { } yColumn && ZColumn is { } zColumn && _dataTable?.Document is { } dataTable)
         {
-          for (int rowIdx = segment.start; rowIdx < segment.endExclusive; ++rowIdx)
+          foreach (var segment in _dataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, _pointCount, dataTable.DataColumns, _pointCount))
           {
-            if (!xColumn.IsElementEmpty(rowIdx) && !yColumn.IsElementEmpty(rowIdx) && !zColumn.IsElementEmpty(rowIdx))
+            for (int rowIdx = segment.start; rowIdx < segment.endExclusive; ++rowIdx)
             {
-              _xBoundaries?.Add(xColumn, rowIdx);
-              _yBoundaries?.Add(yColumn, rowIdx);
-              _zBoundaries?.Add(zColumn, rowIdx);
+              if (!xColumn.IsElementEmpty(rowIdx) && !yColumn.IsElementEmpty(rowIdx) && !zColumn.IsElementEmpty(rowIdx))
+              {
+                _xBoundaries?.Add(xColumn, rowIdx);
+                _yBoundaries?.Add(yColumn, rowIdx);
+                _zBoundaries?.Add(zColumn, rowIdx);
+              }
             }
           }
         }
@@ -801,16 +776,16 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     /// <param name="layer">The plot layer.</param>
     /// <returns>An array of plot points in layer coordinates.</returns>
-    public Processed3DPlotData GetRangesAndPoints(
+    public Processed3DPlotData? GetRangesAndPoints(
       IPlotArea layer)
     {
       const double MaxRelativeValue = 1E2;
 
-      Altaxo.Data.IReadableColumn xColumn = XColumn;
-      Altaxo.Data.IReadableColumn yColumn = YColumn;
-      Altaxo.Data.IReadableColumn zColumn = ZColumn;
+      var xColumn = XColumn;
+      var yColumn = YColumn;
+      var zColumn = ZColumn;
 
-      if (null == xColumn || null == yColumn || null == zColumn)
+      if (xColumn is null || yColumn is null || zColumn is null)
         return null; // this plotitem is only for x and y double columns
 
       var result = new Processed3DPlotData();
@@ -818,7 +793,7 @@ namespace Altaxo.Graph.Plot.Data
       result.XPhysicalAccessor = new IndexedPhysicalValueAccessor(myPlotData.GetXPhysical);
       result.YPhysicalAccessor = new IndexedPhysicalValueAccessor(myPlotData.GetYPhysical);
       result.ZPhysicalAccessor = new IndexedPhysicalValueAccessor(myPlotData.GetZPhysical);
-      PlotRangeList rangeList = null;
+      PlotRangeList? rangeList = null;
 
       // allocate an array PointF to hold the line points
       // _tlsBufferedPlotData is a static buffer that is allocated per thread
@@ -845,79 +820,82 @@ namespace Altaxo.Graph.Plot.Data
       int maxRowIndex = GetMaximumRowIndexFromDataColumns();
       int plotArrayIdx = 0;
 
-      foreach ((int start, int endExclusive) in _dataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, maxRowIndex, _dataTable?.Document?.DataColumns, maxRowIndex))
+      if (_dataTable.Document is { } dataTable)
       {
-        for (int dataRowIdx = start; dataRowIdx < endExclusive; ++dataRowIdx)
+        foreach ((int start, int endExclusive) in _dataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, maxRowIndex, dataTable.DataColumns, maxRowIndex))
         {
-          if (xColumn.IsElementEmpty(dataRowIdx) || yColumn.IsElementEmpty(dataRowIdx) || zColumn.IsElementEmpty(dataRowIdx))
+          for (int dataRowIdx = start; dataRowIdx < endExclusive; ++dataRowIdx)
           {
-            if (weAreInsideSegment)
+            if (xColumn.IsElementEmpty(dataRowIdx) || yColumn.IsElementEmpty(dataRowIdx) || zColumn.IsElementEmpty(dataRowIdx))
             {
-              weAreInsideSegment = false;
-              rangeList.Add(new PlotRange(rangeStart, plotArrayIdx, rangeOffset));
+              if (weAreInsideSegment)
+              {
+                weAreInsideSegment = false;
+                rangeList.Add(new PlotRange(rangeStart, plotArrayIdx, rangeOffset));
+              }
+              continue;
             }
-            continue;
-          }
 
-          double x_rel, y_rel, z_rel;
+            double x_rel, y_rel, z_rel;
 
-          x_rel = xAxis.PhysicalVariantToNormal(xColumn[dataRowIdx]);
-          y_rel = yAxis.PhysicalVariantToNormal(yColumn[dataRowIdx]);
-          z_rel = zAxis.PhysicalVariantToNormal(zColumn[dataRowIdx]);
+            x_rel = xAxis.PhysicalVariantToNormal(xColumn[dataRowIdx]);
+            y_rel = yAxis.PhysicalVariantToNormal(yColumn[dataRowIdx]);
+            z_rel = zAxis.PhysicalVariantToNormal(zColumn[dataRowIdx]);
 
-          // chop relative values to an range of about -+ 10^6
-          if (x_rel > MaxRelativeValue)
-            x_rel = MaxRelativeValue;
-          if (x_rel < -MaxRelativeValue)
-            x_rel = -MaxRelativeValue;
-          if (y_rel > MaxRelativeValue)
-            y_rel = MaxRelativeValue;
-          if (y_rel < -MaxRelativeValue)
-            y_rel = -MaxRelativeValue;
-          if (z_rel > MaxRelativeValue)
-            z_rel = MaxRelativeValue;
-          if (z_rel < -MaxRelativeValue)
-            z_rel = -MaxRelativeValue;
+            // chop relative values to an range of about -+ 10^6
+            if (x_rel > MaxRelativeValue)
+              x_rel = MaxRelativeValue;
+            if (x_rel < -MaxRelativeValue)
+              x_rel = -MaxRelativeValue;
+            if (y_rel > MaxRelativeValue)
+              y_rel = MaxRelativeValue;
+            if (y_rel < -MaxRelativeValue)
+              y_rel = -MaxRelativeValue;
+            if (z_rel > MaxRelativeValue)
+              z_rel = MaxRelativeValue;
+            if (z_rel < -MaxRelativeValue)
+              z_rel = -MaxRelativeValue;
 
-          // after the conversion to relative coordinates it is possible
-          // that with the choosen axis the point is undefined
-          // (for instance negative values on a logarithmic axis)
-          // in this case the returned value is NaN
-          if (coordsys.LogicalToLayerCoordinates(new Logical3D(x_rel, y_rel, z_rel), out var coord))
+            // after the conversion to relative coordinates it is possible
+            // that with the choosen axis the point is undefined
+            // (for instance negative values on a logarithmic axis)
+            // in this case the returned value is NaN
+            if (coordsys.LogicalToLayerCoordinates(new Logical3D(x_rel, y_rel, z_rel), out var coord))
+            {
+              if (!weAreInsideSegment)
+              {
+                weAreInsideSegment = true;
+                rangeStart = plotArrayIdx;
+                rangeOffset = dataRowIdx - plotArrayIdx;
+              }
+              _tlsBufferedPlotData.Add(coord);
+              plotArrayIdx++;
+            }
+            else
+            {
+              if (weAreInsideSegment)
+              {
+                weAreInsideSegment = false;
+                rangeList.Add(new PlotRange(rangeStart, plotArrayIdx, rangeOffset));
+              }
+            }
+          } // end for
+          if (weAreInsideSegment)
           {
-            if (!weAreInsideSegment)
-            {
-              weAreInsideSegment = true;
-              rangeStart = plotArrayIdx;
-              rangeOffset = dataRowIdx - plotArrayIdx;
-            }
-            _tlsBufferedPlotData.Add(coord);
-            plotArrayIdx++;
+            weAreInsideSegment = false;
+            rangeList.Add(new PlotRange(rangeStart, plotArrayIdx, rangeOffset)); // add the last range
           }
-          else
-          {
-            if (weAreInsideSegment)
-            {
-              weAreInsideSegment = false;
-              rangeList.Add(new PlotRange(rangeStart, plotArrayIdx, rangeOffset));
-            }
-          }
-        } // end for
-        if (weAreInsideSegment)
-        {
-          weAreInsideSegment = false;
-          rangeList.Add(new PlotRange(rangeStart, plotArrayIdx, rangeOffset)); // add the last range
-        }
-      } // end foreach
-
+        } // end foreach
+      }
       result.PlotPointsInAbsoluteLayerCoordinates = _tlsBufferedPlotData.ToArray();
 
       return result;
     }
 
+
     #region Change event handling
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _xColumn) || object.ReferenceEquals(sender, _yColumn) || object.ReferenceEquals(sender, _zColumn))
         _isCachedDataValidX = _isCachedDataValidY = _isCachedDataValidZ = false;
