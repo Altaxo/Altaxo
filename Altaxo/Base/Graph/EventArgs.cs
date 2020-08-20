@@ -167,16 +167,16 @@ namespace Altaxo.Graph
   public class ScaleInstanceChangedEventArgs : Main.SelfAccumulateableEventArgs
   {
     private int _scaleIndex = -1;
-    private Altaxo.Graph.Scales.Scale _oldScale;
+    private Altaxo.Graph.Scales.Scale? _oldScale;
     private Altaxo.Graph.Scales.Scale _newScale;
 
     public int ScaleIndex { get { return _scaleIndex; } set { _scaleIndex = value; } }
 
-    public Altaxo.Graph.Scales.Scale OldScale { get { return _oldScale; } }
+    public Altaxo.Graph.Scales.Scale? OldScale { get { return _oldScale; } }
 
     public Altaxo.Graph.Scales.Scale NewScale { get { return _newScale; } }
 
-    public ScaleInstanceChangedEventArgs(Altaxo.Graph.Scales.Scale oldScale, Altaxo.Graph.Scales.Scale newScale)
+    public ScaleInstanceChangedEventArgs(Altaxo.Graph.Scales.Scale? oldScale, Altaxo.Graph.Scales.Scale newScale)
     {
       _oldScale = oldScale;
       _newScale = newScale;

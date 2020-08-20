@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,9 +53,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
         info.AddValue("Fill", s._fillColor);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (OpenSymbolBase)o;
+        var s = (OpenSymbolBase)(o ?? throw new ArgumentNullException(nameof(o)));
         s._relativeStructureWidth = info.GetDouble("StructureScale");
         s._fillColor = (NamedColor)info.GetValue("Fill", null);
 
@@ -140,7 +141,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       return WithRelativeStructureWidth(relativeStructureWidth);
     }
 
-    public IScatterSymbolFrame Frame
+    public IScatterSymbolFrame? Frame
     {
       get { return null; }
     }
@@ -150,7 +151,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       return this;
     }
 
-    public IScatterSymbolInset Inset { get { return null; } }
+    public IScatterSymbolInset? Inset { get { return null; } }
 
     IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset inset)
     {
@@ -159,9 +160,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     public void CalculatePolygons(
       double? relativeStructureWidth,
-      out List<List<ClipperLib.IntPoint>> framePolygon,
-      out List<List<ClipperLib.IntPoint>> insetPolygon,
-      out List<List<ClipperLib.IntPoint>> fillPolygon)
+      out List<List<ClipperLib.IntPoint>>? framePolygon,
+      out List<List<ClipperLib.IntPoint>>? insetPolygon,
+      out List<List<ClipperLib.IntPoint>>? fillPolygon)
 
     {
       insetPolygon = null;
@@ -169,7 +170,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       fillPolygon = GetCopyOfOuterPolygon(relativeStructureWidth ?? _relativeStructureWidth);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (!(GetType() == obj?.GetType()))
         return false;

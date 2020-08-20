@@ -268,7 +268,7 @@ namespace Altaxo.Graph
     /// <param name="renderingOptions">The embedded rendering export options.</param>
     /// <param name="pixelFormat">The pixel format for the bitmap. Default is PixelFormat.Format32bppArgb.</param>
     /// <returns>The rendered enhanced metafile.</returns>
-    public static System.Drawing.Bitmap RenderAsBitmap(GraphDocumentBase document, EmbeddedObjectRenderingOptions renderingOptions, PixelFormat pixelFormat)
+    public static System.Drawing.Bitmap? RenderAsBitmap(GraphDocumentBase document, EmbeddedObjectRenderingOptions renderingOptions, PixelFormat pixelFormat)
     {
       if (document is Gdi.GraphDocument)
         return Gdi.GraphDocumentExportActions.RenderAsBitmap((Gdi.GraphDocument)document, renderingOptions, pixelFormat);

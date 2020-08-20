@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,13 +44,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ConstantThicknessFrame)o ?? new ConstantThicknessFrame();
-        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        var s = (ConstantThicknessFrame?)o ?? new ConstantThicknessFrame();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType!, parent);
         return s;
       }
     }

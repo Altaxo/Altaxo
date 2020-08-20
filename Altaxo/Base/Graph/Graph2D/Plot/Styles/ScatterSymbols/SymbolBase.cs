@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,7 +67,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
-    protected static TItem DeserializeSetV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent) where TItem : IScatterSymbol
+    protected static TItem DeserializeSetV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent) where TItem : IScatterSymbol
     {
       if (info.CurrentElementName == "Set")
       {

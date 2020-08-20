@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,8 +39,8 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     protected NamedColor _fillColor = NamedColors.Black;
 
     protected double _relativeStructureWidth = 0.09375;
-    protected IScatterSymbolFrame _frame;
-    protected IScatterSymbolInset _inset;
+    protected IScatterSymbolFrame? _frame;
+    protected IScatterSymbolInset? _inset;
 
     #region Serialization
 
@@ -55,18 +56,18 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
         info.AddEnum("PlotColorInfluence", s._plotColorInfluence);
         info.AddValue("StructureScale", s._relativeStructureWidth);
         info.AddValue("Fill", s._fillColor);
-        info.AddValue("Frame", s._frame);
-        info.AddValue("Inset", s._inset);
+        info.AddValueOrNull("Frame", s._frame);
+        info.AddValueOrNull("Inset", s._inset);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ClosedSymbolBase)o;
+        var s = (ClosedSymbolBase)(o ?? throw new ArgumentNullException(nameof(o)));
         s._plotColorInfluence = (PlotColorInfluence)info.GetEnum("PlotColorInfluence", typeof(PlotColorInfluence));
         s._relativeStructureWidth = info.GetDouble("StructureScale");
         s._fillColor = (NamedColor)info.GetValue("Fill", null);
-        s._frame = (IScatterSymbolFrame)info.GetValue("Frame", null);
-        s._inset = (IScatterSymbolInset)info.GetValue("Inset", null);
+        s._frame = info.GetValueOrNull<IScatterSymbolFrame>("Frame", null);
+        s._inset = info.GetValueOrNull<IScatterSymbolInset>("Inset", null);
 
         return s;
       }
@@ -165,7 +166,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       return WithRelativeStructureWidth(relativeStructureWidth);
     }
 
-    public IScatterSymbolFrame Frame
+    public IScatterSymbolFrame? Frame
     {
       get { return _frame; }
     }
@@ -196,7 +197,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
-    public IScatterSymbolInset Inset { get { return _inset; } }
+    public IScatterSymbolInset? Inset { get { return _inset; } }
 
     public ClosedSymbolBase WithInset(IScatterSymbolInset inset)
     {
@@ -227,9 +228,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     public void CalculatePolygons(
       double? overrideRelativeStructureWidth,
-      out List<List<ClipperLib.IntPoint>> framePolygon,
-      out List<List<ClipperLib.IntPoint>> insetPolygon,
-      out List<List<ClipperLib.IntPoint>> fillPolygon)
+      out List<List<ClipperLib.IntPoint>>? framePolygon,
+      out List<List<ClipperLib.IntPoint>>? insetPolygon,
+      out List<List<ClipperLib.IntPoint>>? fillPolygon)
 
     {
       insetPolygon = null;
@@ -239,7 +240,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       // get outer polygon
       var outerPolygon = GetCopyOfOuterPolygon();
 
-      List<List<ClipperLib.IntPoint>> innerFramePolygon = null;
+      List<List<ClipperLib.IntPoint>>? innerFramePolygon = null;
       double relativeStructureWidth = overrideRelativeStructureWidth ?? _relativeStructureWidth;
       if (null != _frame && relativeStructureWidth > 0)
       {
@@ -298,7 +299,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (!(GetType() == obj?.GetType()))
         return false;

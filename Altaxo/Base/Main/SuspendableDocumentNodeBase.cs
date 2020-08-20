@@ -475,9 +475,7 @@ namespace Altaxo.Main
     {
       var tmpNode = childNode;
       childNode = null;
-
-      if (null != tmpNode)
-        tmpNode.Dispose();
+      tmpNode?.Dispose();
     }
 
     /// <summary>
