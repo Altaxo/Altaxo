@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -199,10 +200,10 @@ namespace Altaxo.Graph.Gdi
 
       int additionalLayers = Math.Max(0, numDestLayers - numPresentLayers);
 
-      if (null == parentLayer.Grid)
+      if (parentLayer.Grid is null)
         parentLayer.CreateDefaultGrid();
 
-      ArrangeGrid(arrangement, parentLayer.Grid);
+      ArrangeGrid(arrangement, parentLayer.Grid!);
 
       int nLayer = -1;
       for (int i = 0; i < arrangement.NumberOfRows; ++i)

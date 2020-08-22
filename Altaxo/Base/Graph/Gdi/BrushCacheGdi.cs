@@ -22,13 +22,12 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using System.IO;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
-
-#nullable enable
 
 namespace Altaxo.Graph.Gdi
 {

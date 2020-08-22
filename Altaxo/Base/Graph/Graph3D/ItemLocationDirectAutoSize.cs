@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,13 +43,13 @@ namespace Altaxo.Graph.Graph3D
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.AddBaseValueEmbedded(obj, typeof(ItemLocationDirectAutoSize).BaseType);
+        info.AddBaseValueEmbedded(obj, typeof(ItemLocationDirectAutoSize).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ItemLocationDirectAutoSize)o ?? new ItemLocationDirectAutoSize();
-        info.GetBaseValueEmbedded(s, typeof(ItemLocationDirectAutoSize).BaseType, parent);
+        var s = (ItemLocationDirectAutoSize?)o ?? new ItemLocationDirectAutoSize();
+        info.GetBaseValueEmbedded(s, typeof(ItemLocationDirectAutoSize).BaseType!, parent);
         return s;
       }
     }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -141,7 +142,7 @@ namespace Altaxo.Graph.Gdi
 
     protected virtual void ClearCachedObjects()
     {
-      _axisStyleInformation = null;
+      _axisStyleInformation.Clear();
     }
 
     #region ICloneable Members
@@ -459,7 +460,7 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        if (_axisStyleInformation == null || _axisStyleInformation.Count == 0)
+        if (_axisStyleInformation.Count == 0)
           UpdateAxisInfo();
 
         return _axisStyleInformation;
@@ -473,10 +474,10 @@ namespace Altaxo.Graph.Gdi
     /// <returns>Index of the style, or -1 if not found.</returns>
     public int IndexOfAxisStyle(CSLineID id)
     {
-      if (id == null)
+      if (id is null)
         return -1;
 
-      if (_axisStyleInformation == null || _axisStyleInformation.Count == 0)
+      if (_axisStyleInformation.Count == 0)
         UpdateAxisInfo();
 
       for (int i = 0; i < _axisStyleInformation.Count; i++)
@@ -488,12 +489,12 @@ namespace Altaxo.Graph.Gdi
 
     public CSAxisInformation GetAxisStyleInformation(CSLineID styleID)
     {
-      if (_axisStyleInformation == null || _axisStyleInformation.Count == 0)
+      if (_axisStyleInformation.Count == 0)
         UpdateAxisInfo();
 
       // search for the same axis first, then for the style with the nearest logical value
       double minDistance = double.MaxValue;
-      CSAxisInformation nearestInfo = null;
+      CSAxisInformation? nearestInfo = null;
 
       if (!styleID.UsePhysicalValueOtherFirst)
       {
@@ -568,7 +569,7 @@ namespace Altaxo.Graph.Gdi
 
     public IEnumerable<CSLineID> GetJoinedAxisStyleIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSLineID> list2)
     {
-      var dict = new Dictionary<CSLineID, object>();
+      var dict = new Dictionary<CSLineID, object?>();
 
       foreach (CSAxisInformation info in AxisStyles)
       {
@@ -592,7 +593,7 @@ namespace Altaxo.Graph.Gdi
       {
         foreach (CSLineID id in list2)
         {
-          if (null != id && !dict.ContainsKey(id))
+          if (id is not null && !dict.ContainsKey(id))
           {
             dict.Add(id, null);
             yield return id;
@@ -632,7 +633,7 @@ namespace Altaxo.Graph.Gdi
       {
         foreach (CSPlaneID id in list2)
         {
-          if (null != id && !dict.Contains(id))
+          if (id is not null && !dict.Contains(id))
           {
             dict.Add(id);
             yield return id;

@@ -222,10 +222,7 @@ namespace Altaxo
     /// <returns>A <see cref="PropertyHierarchy"/> instance representing the property context of the provided document node.</returns>
     public static PropertyHierarchy GetPropertyContext(this Altaxo.Main.IDocumentLeafNode node)
     {
-      var owner = node as IPropertyBagOwner;
-      if (owner is null)
-        owner = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<IPropertyBagOwner>(node);
-
+      var owner = node as IPropertyBagOwner ?? Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<IPropertyBagOwner>(node);
       return new PropertyHierarchy(GetPropertyBags(owner));
     }
 

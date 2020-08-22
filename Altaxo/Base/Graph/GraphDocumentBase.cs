@@ -251,7 +251,9 @@ namespace Altaxo.Graph
       return result;
     }
 
-    public T GetPropertyValue<T>(Altaxo.Main.Properties.PropertyKey<T> key, Func<T> resultCreationIfNotFound)
+    [return: NotNullIfNotNull("resultCreationIfNotFound")]
+    [return: MaybeNull]
+    public T GetPropertyValue<T>(Altaxo.Main.Properties.PropertyKey<T> key, Func<T>? resultCreationIfNotFound)
     {
       return PropertyExtensions.GetPropertyValue(this, key, resultCreationIfNotFound);
     }

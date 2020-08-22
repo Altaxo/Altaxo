@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -69,10 +70,11 @@ namespace Altaxo.Graph.Gdi
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.SetNodeContent(obj.ToString());
+        var s = (XYPlotLayerSizeType)obj;
+        info.SetNodeContent(s.ToString());
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
         return System.Enum.Parse(typeof(XYPlotLayerSizeType), val, true);
@@ -151,10 +153,11 @@ namespace Altaxo.Graph.Gdi
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.SetNodeContent(obj.ToString());
+        var s = (XYPlotLayerPositionType)obj;
+        info.SetNodeContent(s.ToString());
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
         return System.Enum.Parse(typeof(XYPlotLayerPositionType), val, true);
@@ -328,9 +331,9 @@ namespace Altaxo.Graph.Gdi
           info.AddEnum("YPosType", s._layerYPositionType);
         }
 
-        protected virtual XYPlotLayerPositionAndSize_V0 SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        protected virtual XYPlotLayerPositionAndSize_V0 SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = null != o ? (XYPlotLayerPositionAndSize_V0)o : new XYPlotLayerPositionAndSize_V0();
+          var s = (XYPlotLayerPositionAndSize_V0?)o ?? new XYPlotLayerPositionAndSize_V0();
 
           s._layerWidth = info.GetDouble("Width");
           s._layerWidthType = (XYPlotLayerSizeType)info.GetEnum("WidthType", typeof(XYPlotLayerSizeType));
@@ -347,7 +350,7 @@ namespace Altaxo.Graph.Gdi
           return s;
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           var s = SDeserialize(o, info, parent);
           return s;
@@ -385,9 +388,9 @@ namespace Altaxo.Graph.Gdi
                     */
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          XYPlotLayerCollection s = null != o ? (XYPlotLayerCollection)o : new XYPlotLayerCollection();
+          var s = (XYPlotLayerCollection?)o ?? new XYPlotLayerCollection();
 
           int count = info.OpenArray();
           for (int i = 0; i < count; i++)
@@ -419,9 +422,9 @@ namespace Altaxo.Graph.Gdi
                     */
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          XYPlotLayerCollection s = null != o ? (XYPlotLayerCollection)o : new XYPlotLayerCollection();
+          var s = (XYPlotLayerCollection?)o ?? new XYPlotLayerCollection();
 
           s.GraphSize = (SizeF)info.GetValue("Size", s);
 

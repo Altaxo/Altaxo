@@ -93,10 +93,10 @@ namespace Altaxo.Graph.Procedures
       if (ensureEmbeddedObjectRenderingOptionsStoredInGraph)
       {
         var clipboardRenderingOptions = Altaxo.PropertyExtensions.GetPropertyValue(oldGraph, ClipboardRenderingOptions.PropertyKeyClipboardRenderingOptions, () => new ClipboardRenderingOptions());
-        var embeddedRenderingOptions = Altaxo.PropertyExtensions.GetPropertyValue(oldGraph, EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, () => null);
+        var embeddedRenderingOptions = Altaxo.PropertyExtensions.GetPropertyValue(oldGraph, EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, null);
 
         // if embeddedRenderingOptions exists explicitely, they should be used. Else the clipboard options can be used.
-        var clonedOptions = null != embeddedRenderingOptions ? embeddedRenderingOptions.Clone() : new EmbeddedObjectRenderingOptions(clipboardRenderingOptions);
+        var clonedOptions = embeddedRenderingOptions is not null ? embeddedRenderingOptions.Clone() : new EmbeddedObjectRenderingOptions(clipboardRenderingOptions);
         newGraph.PropertyBagNotNull.SetValue(EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, clonedOptions);
       }
     }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -33,6 +34,7 @@ using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Graph.Gdi
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Main.Properties;
   using Axis;
   using Data;
@@ -75,10 +77,10 @@ namespace Altaxo.Graph.Gdi
     /// Partial list of all <see cref="PlaceHolder"/> instances in <see cref="HostLayer.GraphObjects"/>.
     /// </summary>
     [NonSerialized]
-    private IObservableList<PlaceHolder> _placeHolders;
+    private IObservableList<PlaceHolder>? _placeHolders;
 
     [NonSerialized]
-    private IObservableList<PlotItemPlaceHolder> _plotItemPlaceHolders;
+    private IObservableList<PlotItemPlaceHolder>? _plotItemPlaceHolders;
 
     #endregion Member variables
 
@@ -90,7 +92,9 @@ namespace Altaxo.Graph.Gdi
     /// The copy constructor.
     /// </summary>
     /// <param name="from"></param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public XYPlotLayer(XYPlotLayer from)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(from)
     {
     }
@@ -135,7 +139,7 @@ namespace Altaxo.Graph.Gdi
       // Plot items
       if (0 != (options & GraphCopyOptions.CopyLayerPlotItems))
       {
-        PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems);
+        PlotItems = new PlotItemCollection(this, from._plotItems);
       }
       else if (0 != (options & GraphCopyOptions.CopyLayerPlotStyles))
       {
@@ -174,7 +178,9 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Constructor for deserialization purposes only.
     /// </summary>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected XYPlotLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(info)
     {
       CoordinateSystem = new CS.G2DCartesicCoordinateSystem();
@@ -266,7 +272,7 @@ namespace Altaxo.Graph.Gdi
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
       {
-        var idx = _graphObjects.IndexOfFirst(x => x is T && (x as T).Index == i);
+        var idx = _graphObjects.IndexOfFirst(x => x is T xT && xT.Index == i);
         if (idx >= 0)
         {
           insertIdx = idx + 1;
@@ -284,7 +290,7 @@ namespace Altaxo.Graph.Gdi
 
     public bool Is3D { get { return false; } }
 
-    public Scale ZAxis { get { return null; } }
+    public Scale? ZAxis { get { return null; } }
 
     public Scale GetScale(int i)
     {
@@ -296,7 +302,7 @@ namespace Altaxo.Graph.Gdi
       Logical3D r;
       r.RX = XAxis.PhysicalVariantToNormal(acc.GetXPhysical(idx));
       r.RY = YAxis.PhysicalVariantToNormal(acc.GetYPhysical(idx));
-      r.RZ = Is3D ? ZAxis.PhysicalVariantToNormal(acc.GetZPhysical(idx)) : 0;
+      r.RZ = Is3D ? ZAxis!.PhysicalVariantToNormal(acc.GetZPhysical(idx)) : 0;
       return r;
     }
 
@@ -356,6 +362,7 @@ namespace Altaxo.Graph.Gdi
       {
         return _axisStyles;
       }
+      [MemberNotNull(nameof(_axisStyles))]
       protected set
       {
         if (ChildSetMember(ref _axisStyles, value))
@@ -372,24 +379,21 @@ namespace Altaxo.Graph.Gdi
       {
         return _scales;
       }
+      [MemberNotNull(nameof(_scales))]
       protected set
       {
         if (object.ReferenceEquals(value, _scales))
           return;
 
-        ScaleCollection oldscales = _scales;
+        var oldscales = _scales;
         _scales = value;
-
-        if (null != _scales)
-        {
-          _scales.ParentObject = this;
-        }
+        _scales.ParentObject = this;
 
         using (var suspendToken = SuspendGetToken())
         {
           for (int i = 0; i < _scales.Count; i++)
           {
-            Scale oldScale = oldscales == null ? null : oldscales[i];
+            var oldScale = oldscales is null ? null : oldscales[i];
             Scale newScale = _scales[i];
             if (!object.ReferenceEquals(oldScale, newScale))
               EhSelfChanged(new ScaleInstanceChangedEventArgs(oldScale, newScale) { ScaleIndex = i });
@@ -403,16 +407,16 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    public TextGraphic Legend
+    public TextGraphic? Legend
     {
       get
       {
-        return (LegendText)_graphObjects.FirstOrDefault(item => item is LegendText);
+        return (LegendText?)_graphObjects.FirstOrDefault(item => item is LegendText);
       }
       set
       {
         var idx = _graphObjects.IndexOfFirst(item => item is LegendText);
-        TextGraphic oldvalue = idx >= 0 ? (TextGraphic)_graphObjects[idx] : null;
+        TextGraphic? oldvalue = idx >= 0 ? (TextGraphic)_graphObjects[idx] : null;
 
         if (value != null)
         {
@@ -462,6 +466,7 @@ namespace Altaxo.Graph.Gdi
       {
         return _plotItems;
       }
+      [MemberNotNull(nameof(_plotItems))]
       protected set
       {
         if (null == value)
@@ -669,9 +674,10 @@ namespace Altaxo.Graph.Gdi
       {
         return _gridPlanes;
       }
+      [MemberNotNull(nameof(_gridPlanes))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         if (ChildSetMember(ref _gridPlanes, value))
@@ -679,20 +685,20 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    private string GetAxisTitleString(CSLineID id)
+    private string? GetAxisTitleString(CSLineID id)
     {
-      return _axisStyles[id] != null && _axisStyles[id].Title != null ? _axisStyles[id].Title.Text : null;
+      return _axisStyles[id]?.Title?.Text;
     }
 
     private void SetAxisTitleString(CSLineID id, string value)
     {
       AxisStyle style = _axisStyles[id];
-      string oldtitle = (style == null || style.Title == null) ? null : style.Title.Text;
-      string newtitle = (value == null || value == string.Empty) ? null : value;
+      var oldtitle = style?.Title?.Text;
+      var newtitle = string.IsNullOrEmpty(value) ? null : value;
 
       if (newtitle != oldtitle)
       {
-        if (newtitle == null)
+        if (newtitle is null)
         {
           if (style != null)
             style.Title = null;
@@ -781,6 +787,7 @@ namespace Altaxo.Graph.Gdi
       axisTitle.Location.PositionY = RADouble.NewAbs(distance * normDirection.Y);
     }
 
+    [MaybeNull]
     public string DefaultYAxisTitleString
     {
       get
@@ -793,6 +800,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    [MaybeNull]
     public string DefaultXAxisTitleString
     {
       get
@@ -816,6 +824,9 @@ namespace Altaxo.Graph.Gdi
 
     private void EnsureAppropriatePlotItemPlaceHolders()
     {
+      if (_plotItemPlaceHolders is null)
+        throw new InvalidProgramException();
+
       using (var suspendToken = _graphObjects.GetEventDisableToken())
       {
         if (0 == _plotItemPlaceHolders.Count) // take special measures if not one plot item place holder -> this can happen when deserializing old versions prior to the introduction of place holders
@@ -922,9 +933,9 @@ namespace Altaxo.Graph.Gdi
       base.PaintPostprocessing();
     }
 
-    public override IHitTestObject HitTest(HitTestPointData parentHitTestData, bool plotItemsOnly)
+    public override IHitTestObject? HitTest(HitTestPointData parentHitTestData, bool plotItemsOnly)
     {
-      IHitTestObject hit;
+      IHitTestObject? hit;
 
       // first test the items in the child layers, since they are plotted on top of our own items
       if (null != (hit = base.HitTest(parentHitTestData, plotItemsOnly)))
@@ -974,17 +985,17 @@ namespace Altaxo.Graph.Gdi
 
     #region Editor methods
 
-    public static DoubleClickHandler AxisScaleEditorMethod;
-    public static DoubleClickHandler AxisStyleEditorMethod;
-    public static DoubleClickHandler AxisLabelMajorStyleEditorMethod;
-    public static DoubleClickHandler AxisLabelMinorStyleEditorMethod;
-    public static DoubleClickHandler PlotItemEditorMethod;
+    public static DoubleClickHandler? AxisScaleEditorMethod;
+    public static DoubleClickHandler? AxisStyleEditorMethod;
+    public static DoubleClickHandler? AxisLabelMajorStyleEditorMethod;
+    public static DoubleClickHandler? AxisLabelMinorStyleEditorMethod;
+    public static DoubleClickHandler? PlotItemEditorMethod;
 
     private bool EhAxisLabelMajorStyleRemove(IHitTestObject o)
     {
       var als = o.HittedObject as AxisLabelStyle;
-      AxisStyle axisStyle = als == null ? null : als.ParentObject as AxisStyle;
-      if (axisStyle != null)
+      var axisStyle = als?.ParentObject as AxisStyle;
+      if (axisStyle is not null)
       {
         axisStyle.HideMajorLabels();
         return true;
@@ -995,7 +1006,7 @@ namespace Altaxo.Graph.Gdi
     private bool EhAxisLabelMinorStyleRemove(IHitTestObject o)
     {
       var als = o.HittedObject as AxisLabelStyle;
-      AxisStyle axisStyle = als == null ? null : als.ParentObject as AxisStyle;
+      var axisStyle = als?.ParentObject as AxisStyle;
       if (axisStyle != null)
       {
         axisStyle.HideMinorLabels();
@@ -1011,9 +1022,7 @@ namespace Altaxo.Graph.Gdi
     protected override void OnCachedResultingSizeChanged()
     {
       // first update out direct childs
-      if (null != CoordinateSystem)
-        CoordinateSystem.UpdateAreaSize(Size);
-
+      CoordinateSystem?.UpdateAreaSize(Size);
       base.OnCachedResultingSizeChanged();
     }
 
@@ -1033,7 +1042,7 @@ namespace Altaxo.Graph.Gdi
 
     #region Handler of child events
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _coordinateSystem))
         OnCoordinateSystemChanged();
@@ -1245,7 +1254,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="name">The objects name.</param>
     /// <returns>The object with the specified name.</returns>
-    public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
+    public override Main.IDocumentLeafNode? GetChildObjectNamed(string name)
     {
       if (name == "PlotItems")
         return _plotItems;
@@ -1258,7 +1267,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="o">The object for which the name should be found.</param>
     /// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
-    public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
+    public override string? GetNameOfChildObject(Main.IDocumentLeafNode o)
     {
       if (object.ReferenceEquals(_plotItems, o))
         return "PlotItems";
@@ -1293,11 +1302,11 @@ namespace Altaxo.Graph.Gdi
     {
       if (isDisposing)
       {
-        ChildDisposeMember(ref _scales);
-        ChildDisposeMember(ref _plotItems);
-        ChildDisposeMember(ref _axisStyles);
-        ChildDisposeMember(ref _gridPlanes);
-        ChildDisposeMember(ref _coordinateSystem);
+        ChildDisposeMember(ref _scales!);
+        ChildDisposeMember(ref _plotItems!);
+        ChildDisposeMember(ref _axisStyles!);
+        ChildDisposeMember(ref _gridPlanes!);
+        ChildDisposeMember(ref _coordinateSystem!);
       }
       base.Dispose(isDisposing);
     }
@@ -1314,9 +1323,10 @@ namespace Altaxo.Graph.Gdi
       {
         return _coordinateSystem;
       }
+      [MemberNotNull(nameof(_coordinateSystem))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         if (object.ReferenceEquals(_coordinateSystem, value))
@@ -1344,7 +1354,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     private class ScaleStyle
     {
-      private GridStyle _gridStyle;
+      private GridStyle? _gridStyle;
       private List<AxisStyle> _axisStyles;
 
       //G2DCoordinateSystem _cachedCoordinateSystem;
@@ -1373,15 +1383,15 @@ namespace Altaxo.Graph.Gdi
                     */
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           ScaleStyle s = SDeserialize(o, info, parent);
           return s;
         }
 
-        protected virtual ScaleStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        protected virtual ScaleStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          ScaleStyle s = null != o ? (ScaleStyle)o : new ScaleStyle();
+          var s = (ScaleStyle?)o ?? new ScaleStyle();
 
           s.GridStyle = (GridStyle)info.GetValue("Grid", s);
 
@@ -1420,15 +1430,15 @@ namespace Altaxo.Graph.Gdi
                     */
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           ScaleStyle s = SDeserialize(o, info, parent);
           return s;
         }
 
-        protected virtual ScaleStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        protected virtual ScaleStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          ScaleStyle s = null != o ? (ScaleStyle)o : new ScaleStyle();
+          var s = (ScaleStyle?)o ?? new ScaleStyle();
 
           s.GridStyle = (GridStyle)info.GetValue("Grid", s);
 
@@ -1457,7 +1467,7 @@ namespace Altaxo.Graph.Gdi
         if (object.ReferenceEquals(this, from))
           return;
 
-        GridStyle = from._gridStyle == null ? null : (GridStyle)from._gridStyle.Clone();
+        GridStyle = (GridStyle?)from._gridStyle?.Clone();
 
         _axisStyles.Clear();
         for (int i = 0; i < _axisStyles.Count; ++i)
@@ -1492,8 +1502,8 @@ namespace Altaxo.Graph.Gdi
 
       public AxisStyle AxisStyleEnsured(CSLineID id)
       {
-        AxisStyle prop = AxisStyle(id);
-        if (prop == null)
+        var prop = AxisStyle(id);
+        if (prop is null)
         {
           prop = new AxisStyle(id, false, false, false, null, null);
           // prop.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(id);
@@ -1507,7 +1517,7 @@ namespace Altaxo.Graph.Gdi
         return null != AxisStyle(id);
       }
 
-      public AxisStyle AxisStyle(CSLineID id)
+      public AxisStyle? AxisStyle(CSLineID id)
       {
         foreach (AxisStyle p in _axisStyles)
           if (p.StyleID == id)
@@ -1524,12 +1534,11 @@ namespace Altaxo.Graph.Gdi
         }
       }
 
-      public GridStyle GridStyle
+      public GridStyle? GridStyle
       {
         get { return _gridStyle; }
         set
         {
-          GridStyle oldvalue = _gridStyle;
           _gridStyle = value;
         }
       }
@@ -1562,15 +1571,15 @@ namespace Altaxo.Graph.Gdi
                     */
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           G2DScaleStyleCollection s = SDeserialize(o, info, parent);
           return s;
         }
 
-        protected virtual G2DScaleStyleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        protected virtual G2DScaleStyleCollection SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          G2DScaleStyleCollection s = null != o ? (G2DScaleStyleCollection)o : new G2DScaleStyleCollection();
+          var s = (G2DScaleStyleCollection?)o ?? new G2DScaleStyleCollection();
 
           int count = info.OpenArray();
           s._styles = new ScaleStyle[count];
@@ -1598,7 +1607,7 @@ namespace Altaxo.Graph.Gdi
       /// </summary>
       /// <param name="id"></param>
       /// <returns></returns>
-      public AxisStyle AxisStyle(CSLineID id)
+      public AxisStyle? AxisStyle(CSLineID id)
       {
         ScaleStyle scaleStyle = _styles[id.ParallelAxisNumber];
         return scaleStyle.AxisStyle(id);
@@ -1706,12 +1715,12 @@ namespace Altaxo.Graph.Gdi
       {
       }
 
-      public virtual IHitTestObject HitTest(HitTestPointData hitData)
+      public virtual IHitTestObject? HitTest(HitTestPointData hitData)
       {
         return null;
       }
 
-      public virtual IHitTestObject HitTest(HitTestRectangularData hitData)
+      public virtual IHitTestObject? HitTest(HitTestRectangularData hitData)
       {
         return null;
       }
@@ -1773,10 +1782,10 @@ namespace Altaxo.Graph.Gdi
       /// Gets the axis style this place holder substitutes.
       /// </summary>
       /// <returns></returns>
-      protected AxisStyle GetAxisStyle()
+      protected AxisStyle? GetAxisStyle()
       {
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+        if (layer is not null && Index >= 0 && Index < layer._axisStyles.Count)
           return layer._axisStyles.ItemAt(Index);
         else
           return null;
@@ -1799,9 +1808,9 @@ namespace Altaxo.Graph.Gdi
           info.AddValue("Index", s.Index);
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = null != o ? (AxisStyleLinePlaceHolder)o : new AxisStyleLinePlaceHolder();
+          var s =  (AxisStyleLinePlaceHolder?)o ?? new AxisStyleLinePlaceHolder();
           s.Index = info.GetInt32("Index");
           return s;
         }
@@ -1828,9 +1837,9 @@ namespace Altaxo.Graph.Gdi
           layer._axisStyles.ItemAt(Index).PaintLine(g, layer);
       }
 
-      public override IHitTestObject HitTest(HitTestPointData hitData)
+      public override IHitTestObject? HitTest(HitTestPointData hitData)
       {
-        IHitTestObject hit = null;
+        IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
         if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
         {
@@ -1852,9 +1861,9 @@ namespace Altaxo.Graph.Gdi
         return base.HitTest(hitData);
       }
 
-      public override IHitTestObject HitTest(HitTestRectangularData hitData)
+      public override IHitTestObject? HitTest(HitTestRectangularData hitData)
       {
-        IHitTestObject hit = null;
+        IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
         if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
         {
@@ -1904,9 +1913,9 @@ namespace Altaxo.Graph.Gdi
           info.AddValue("Index", s.Index);
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = null != o ? (AxisStyleMajorLabelPlaceHolder)o : new AxisStyleMajorLabelPlaceHolder();
+          var s = (AxisStyleMajorLabelPlaceHolder?)o ?? new AxisStyleMajorLabelPlaceHolder();
           s.Index = info.GetInt32("Index");
           return s;
         }
@@ -1926,9 +1935,9 @@ namespace Altaxo.Graph.Gdi
         return r;
       }
 
-      public override IHitTestObject HitTest(HitTestPointData hitData)
+      public override IHitTestObject? HitTest(HitTestPointData hitData)
       {
-        IHitTestObject hit = null;
+        IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
         if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
         {
@@ -1943,9 +1952,9 @@ namespace Altaxo.Graph.Gdi
         return base.HitTest(hitData);
       }
 
-      public override IHitTestObject HitTest(HitTestRectangularData hitData)
+      public override IHitTestObject? HitTest(HitTestRectangularData hitData)
       {
-        IHitTestObject hit = null;
+        IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
         if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
         {
@@ -1998,9 +2007,9 @@ namespace Altaxo.Graph.Gdi
           info.AddValue("Index", s.Index);
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = null != o ? (AxisStyleMinorLabelPlaceHolder)o : new AxisStyleMinorLabelPlaceHolder();
+          var s = (AxisStyleMinorLabelPlaceHolder?)o ?? new AxisStyleMinorLabelPlaceHolder();
           s.Index = info.GetInt32("Index");
           return s;
         }
@@ -2020,9 +2029,9 @@ namespace Altaxo.Graph.Gdi
         return r;
       }
 
-      public override IHitTestObject HitTest(HitTestPointData hitData)
+      public override IHitTestObject? HitTest(HitTestPointData hitData)
       {
-        IHitTestObject hit = null;
+        IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
         if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
         {
@@ -2037,9 +2046,9 @@ namespace Altaxo.Graph.Gdi
         return base.HitTest(hitData);
       }
 
-      public override IHitTestObject HitTest(HitTestRectangularData hitData)
+      public override IHitTestObject? HitTest(HitTestRectangularData hitData)
       {
-        IHitTestObject hit = null;
+        IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
         if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
         {
@@ -2092,9 +2101,9 @@ namespace Altaxo.Graph.Gdi
           info.AddValue("Index", s.Index);
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = null != o ? (AxisStyleTitlePlaceHolder)o : new AxisStyleTitlePlaceHolder();
+          var s = (AxisStyleTitlePlaceHolder?)o ?? new AxisStyleTitlePlaceHolder();
           s.Index = info.GetInt32("Index");
           return s;
         }
@@ -2132,9 +2141,9 @@ namespace Altaxo.Graph.Gdi
         }
       }
 
-      public override IHitTestObject HitTest(HitTestPointData hitData)
+      public override IHitTestObject? HitTest(HitTestPointData hitData)
       {
-        IHitTestObject hit = null;
+        IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
         if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
         {
@@ -2149,9 +2158,9 @@ namespace Altaxo.Graph.Gdi
         return base.HitTest(hitData);
       }
 
-      public override IHitTestObject HitTest(HitTestRectangularData hitData)
+      public override IHitTestObject? HitTest(HitTestRectangularData hitData)
       {
-        IHitTestObject hit = null;
+        IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
         if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
         {
@@ -2225,9 +2234,9 @@ namespace Altaxo.Graph.Gdi
           var s = (GridPlanesPlaceHolder)obj;
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = null != o ? (GridPlanesPlaceHolder)o : new GridPlanesPlaceHolder();
+          var s = (GridPlanesPlaceHolder?)o ?? new GridPlanesPlaceHolder();
           return s;
         }
       }
@@ -2258,7 +2267,7 @@ namespace Altaxo.Graph.Gdi
 
     private class PlotItemPlaceHolder : PlaceHolder
     {
-      public PlotItemCollection PlotItemParent { get; set; }
+      public PlotItemCollection? PlotItemParent { get; set; }
 
       public int PlotItemIndex { get; set; }
 
@@ -2275,9 +2284,9 @@ namespace Altaxo.Graph.Gdi
           // Note there is no need to serialize PlotItemParent nor PlotItemIndex, since these variables are used only temporarily
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = null != o ? (PlotItemPlaceHolder)o : new PlotItemPlaceHolder();
+          var s = (PlotItemPlaceHolder?)o ?? new PlotItemPlaceHolder();
           return s;
         }
       }
@@ -2357,7 +2366,7 @@ namespace Altaxo.Graph.Gdi
         return r;
       }
 
-      public override IHitTestObject HitTest(HitTestPointData hitData)
+      public override IHitTestObject? HitTest(HitTestPointData hitData)
       {
         if (null == PlotItemParent)
           return null;
@@ -2402,13 +2411,13 @@ namespace Altaxo.Graph.Gdi
         public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           var s = (LegendText)obj;
-          info.AddBaseValueEmbedded(s, typeof(LegendText).BaseType);
+          info.AddBaseValueEmbedded(s, typeof(LegendText).BaseType!);
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = null != o ? (LegendText)o : new LegendText(info);
-          info.GetBaseValueEmbedded(s, typeof(LegendText).BaseType, this);
+          var s = (LegendText?)o ?? new LegendText(info);
+          info.GetBaseValueEmbedded(s, typeof(LegendText).BaseType!, this);
           return s;
         }
       }

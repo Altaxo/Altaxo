@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -49,6 +51,7 @@ namespace Altaxo.Graph.Gdi
     }
 
     ///<inheritdoc/>
+    [return: MaybeNull]
     public T GetValueOrDefault<T>(object key)
     {
       if (_dictionary.TryGetValue(key, out var o))

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -69,9 +70,9 @@ namespace Altaxo.Graph.Graph3D.Axis
         info.CommitArray();
       }
 
-      protected virtual GridPlaneCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual GridPlaneCollection SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        GridPlaneCollection s = (o == null ? new GridPlaneCollection() : (GridPlaneCollection)o);
+        var s = (GridPlaneCollection?)o ?? new GridPlaneCollection() ;
 
         int count = info.OpenArray("GridPlanes");
         for (int i = 0; i < count; i++)
@@ -84,7 +85,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         GridPlaneCollection s = SDeserialize(o, info, parent);
         return s;
@@ -135,7 +136,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
-    public GridPlane this[CSPlaneID planeid]
+    public GridPlane? this[CSPlaneID planeid]
     {
       get
       {
@@ -152,7 +153,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         {
           if (_innerList[i].PlaneID == planeid)
           {
-            if (value == null)
+            if (value is null)
               _innerList.RemoveAt(i);
             else
               _innerList[i] = value;

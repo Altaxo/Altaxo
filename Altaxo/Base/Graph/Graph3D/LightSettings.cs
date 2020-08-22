@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,10 +41,10 @@ namespace Altaxo.Graph.Graph3D
   public class LightSettings : Main.IImmutable
   {
     private HemisphericAmbientLight _ambientLight;
-    private IDiscreteLight _discreteLight0;
-    private IDiscreteLight _discreteLight1;
-    private IDiscreteLight _discreteLight2;
-    private IDiscreteLight _discreteLight3;
+    private IDiscreteLight? _discreteLight0;
+    private IDiscreteLight? _discreteLight1;
+    private IDiscreteLight? _discreteLight2;
+    private IDiscreteLight? _discreteLight3;
 
     /// <summary>True if any of the lights is affixed to the camera coordinate system.</summary>
     private bool _isAnyLightAffixedToCamera;
@@ -54,9 +55,11 @@ namespace Altaxo.Graph.Graph3D
     /// Deserialization constructor.
     /// </summary>
     /// <param name="info">Not used.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     private LightSettings(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>
     /// 2016-01-24 initial version.
@@ -68,20 +71,20 @@ namespace Altaxo.Graph.Graph3D
       {
         var s = (LightSettings)obj;
         info.AddValue("AmbientLight", s._ambientLight);
-        info.AddValue("DiscreteLight0", s._discreteLight0);
-        info.AddValue("DiscreteLight1", s._discreteLight1);
-        info.AddValue("DiscreteLight2", s._discreteLight2);
-        info.AddValue("DiscreteLight3", s._discreteLight3);
+        info.AddValueOrNull("DiscreteLight0", s._discreteLight0);
+        info.AddValueOrNull("DiscreteLight1", s._discreteLight1);
+        info.AddValueOrNull("DiscreteLight2", s._discreteLight2);
+        info.AddValueOrNull("DiscreteLight3", s._discreteLight3);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (LightSettings)o ?? new LightSettings(info);
+        var s = (LightSettings?)o ?? new LightSettings(info);
         s._ambientLight = (HemisphericAmbientLight)info.GetValue("AmbientLight", s);
-        s._discreteLight0 = (IDiscreteLight)info.GetValue("DiscreteLight0", s);
-        s._discreteLight1 = (IDiscreteLight)info.GetValue("DiscreteLight1", s);
-        s._discreteLight2 = (IDiscreteLight)info.GetValue("DiscreteLight2", s);
-        s._discreteLight3 = (IDiscreteLight)info.GetValue("DiscreteLight3", s);
+        s._discreteLight0 = info.GetValueOrNull<IDiscreteLight>("DiscreteLight0", s);
+        s._discreteLight1 = info.GetValueOrNull<IDiscreteLight>("DiscreteLight1", s);
+        s._discreteLight2 = info.GetValueOrNull<IDiscreteLight>("DiscreteLight2", s);
+        s._discreteLight3 = info.GetValueOrNull<IDiscreteLight>("DiscreteLight3", s);
         s.CalculateIsAnyAffixedToCamera();
         return s;
       }
@@ -128,7 +131,7 @@ namespace Altaxo.Graph.Graph3D
     /// <exception cref="ArgumentNullException"></exception>
     public LightSettings WithAmbientLight(HemisphericAmbientLight ambientLight)
     {
-      if (null == ambientLight)
+      if (ambientLight is null)
         throw new ArgumentNullException(nameof(ambientLight));
 
       var result = (LightSettings)MemberwiseClone();
@@ -144,7 +147,7 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="idx">The index of the discrete light (0..3).</param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException">If index is not in the range 0..3.</exception>
-    public IDiscreteLight GetDiscreteLight(int idx)
+    public IDiscreteLight? GetDiscreteLight(int idx)
     {
       switch (idx)
       {
@@ -171,7 +174,7 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="idx">One of the indices of the discrete lights (0..3).</param>
     /// <param name="discreteLight">The new value for the discrete light. This value can be null (in this case, the discrete light is removed).</param>
     /// <returns>New instance of <see cref="LightSettings"/> with the provided value for the discrete light.</returns>
-    public LightSettings WithDiscreteLight(int idx, IDiscreteLight discreteLight)
+    public LightSettings WithDiscreteLight(int idx, IDiscreteLight? discreteLight)
     {
       var result = (LightSettings)MemberwiseClone();
       switch (idx)

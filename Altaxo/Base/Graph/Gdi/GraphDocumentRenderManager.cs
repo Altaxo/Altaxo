@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -80,7 +81,7 @@ namespace Altaxo.Graph.Gdi
       /// </summary>
       private bool _wasSuccessful;
 
-      public override bool Equals(object obj)
+      public override bool Equals(object? obj)
       {
         var from = obj as GraphDocumentRenderTask;
         if (null != from)
@@ -242,10 +243,11 @@ namespace Altaxo.Graph.Gdi
     /// <param name="rendering">The rendering task that was just finished.</param>
     private void EhRenderTaskFinished(GraphDocumentRenderTask rendering)
     {
-      _tasksRendering.TryRemove(rendering.Document, out var renderTask);
-
-      if (!renderTask.WasSuccessful && renderTask.MoreTrialsAllowed)
-        _tasksWaiting.TryAddLast(renderTask.Owner, renderTask);
+      if (_tasksRendering.TryRemove(rendering.Document, out var renderTask))
+      {
+        if (!renderTask.WasSuccessful && renderTask.MoreTrialsAllowed)
+          _tasksWaiting.TryAddLast(renderTask.Owner, renderTask);
+      }
 
       TryStartWaitingTasks();
     }

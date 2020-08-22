@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
@@ -43,30 +45,33 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Gridstyle of the smaller of the two axis numbers.
     /// </summary>
-    private GridStyle _grid1;
+    private GridStyle? _grid1;
 
     /// <summary>
     /// Gridstyle of the greater axis number.
     /// </summary>
-    private GridStyle _grid2;
+    private GridStyle? _grid2;
 
     /// <summary>
     /// Background of the grid plane.
     /// </summary>
-    private IMaterial _background;
+    private IMaterial? _background;
 
     [NonSerialized]
     private GridIndexer _cachedIndexer;
 
+    [MemberNotNull(nameof(_planeID))]
     private void CopyFrom(GridPlane from)
     {
       if (object.ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       _planeID = from._planeID;
-      GridStyleFirst = from._grid1 == null ? null : (GridStyle)from._grid1.Clone();
-      GridStyleSecond = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();
-      Background = from._background;
+      ChildCloneToMember(ref _grid1, from._grid1);
+      ChildCloneToMember(ref _grid2, from._grid2);
+      ChildCloneToMemberAlt(ref _background, from._background);
     }
 
     #region Serialization
@@ -84,23 +89,23 @@ namespace Altaxo.Graph.Graph3D.Axis
         var s = (GridPlane)obj;
 
         info.AddValue("ID", s._planeID);
-        info.AddValue("Grid1", s._grid1);
-        info.AddValue("Grid2", s._grid2);
-        info.AddValue("Background", s._background);
+        info.AddValueOrNull("Grid1", s._grid1);
+        info.AddValueOrNull("Grid2", s._grid2);
+        info.AddValueOrNull("Background", s._background);
       }
 
-      protected virtual GridPlane SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual GridPlane SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var id = (CSPlaneID)info.GetValue("ID", null);
         GridPlane s = (o == null ? new GridPlane(id) : (GridPlane)o);
-        s.GridStyleFirst = (GridStyle)info.GetValue("Grid1", s);
-        s.GridStyleSecond = (GridStyle)info.GetValue("Grid2", s);
-        s.Background = (IMaterial)info.GetValue("Background", s);
+        s.GridStyleFirst = info.GetValueOrNull<GridStyle>("Grid1", s);
+        s.GridStyleSecond = info.GetValueOrNull<GridStyle>("Grid2", s);
+        s.Background = info.GetValueOrNull<IMaterial>("Background", s);
 
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         GridPlane s = SDeserialize(o, info, parent);
         return s;
@@ -149,7 +154,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
-    public GridStyle GridStyleFirst
+    public GridStyle? GridStyleFirst
     {
       get { return _grid1; }
       set
@@ -161,7 +166,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
-    public GridStyle GridStyleSecond
+    public GridStyle? GridStyleSecond
     {
       get { return _grid2; }
       set
@@ -173,19 +178,17 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
-    public Altaxo.Collections.IArray<GridStyle> GridStyle
+    public Altaxo.Collections.IArray<GridStyle?> GridStyle
     {
       get { return _cachedIndexer; }
     }
 
-    public IMaterial Background
+    public IMaterial? Background
     {
       get { return _background; }
       set
       {
-        var oldValue = _background;
-        _background = value;
-        if (!object.ReferenceEquals(oldValue, _background))
+        if(ChildSetMemberAlt(ref _background, value))
           EhSelfChanged(EventArgs.Empty);
       }
     }
@@ -263,7 +266,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #region Inner class GridIndexer
 
-    private class GridIndexer : Altaxo.Collections.IArray<GridStyle>
+    private class GridIndexer : Altaxo.Collections.IArray<GridStyle?>
     {
       private GridPlane _parent;
 
@@ -274,18 +277,26 @@ namespace Altaxo.Graph.Graph3D.Axis
 
       #region IArray<GridStyle> Members
 
-      public GridStyle this[int i]
+      public GridStyle? this[int i]
       {
         get
         {
-          return 0 == i ? _parent._grid1 : _parent._grid2;
+          return i switch
+          { 
+            0 =>_parent._grid1,
+            1 => _parent._grid2,
+            _ => throw new ArgumentOutOfRangeException()
+          };
+
         }
         set
         {
           if (0 == i)
             _parent.GridStyleFirst = value;
-          else
+          else if (i == 1)
             _parent.GridStyleSecond = value;
+          else
+            throw new ArgumentOutOfRangeException();
         }
       }
 

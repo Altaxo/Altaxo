@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,9 +93,9 @@ namespace Altaxo.Graph.Gdi
         info.AddValue("ForceFitIntoCell", s._forceFitIntoCell);
       }
 
-      protected virtual ItemLocationByGrid SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual ItemLocationByGrid SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (ItemLocationByGrid)o : new ItemLocationByGrid();
+        var s =  (ItemLocationByGrid?)o ?? new ItemLocationByGrid();
 
         s._gridColumn = info.GetDouble("Column");
         s._gridRow = info.GetDouble("Row");
@@ -109,7 +110,7 @@ namespace Altaxo.Graph.Gdi
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;

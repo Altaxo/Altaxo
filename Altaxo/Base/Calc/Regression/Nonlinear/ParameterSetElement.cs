@@ -41,7 +41,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <value>
     /// The parameter's name.
     /// </value>
-    public string Name { get; set; }
+    public string Name { get => _name; [MemberNotNull(nameof(_name))]set => _name= value; }
+    private string _name;
 
     /// <summary>
     /// Gets or sets the parameter's value.
@@ -128,7 +129,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       CopyFrom(from);
     }
 
-    [MemberNotNull(nameof(Name))]
+    [MemberNotNull(nameof(_name))]
     public void CopyFrom(ParameterSetElement from)
     {
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,9 +60,9 @@ namespace Altaxo.Graph.Graph3D
         info.AddValue("ZPartitioning", s._zPartitioning);
       }
 
-      protected virtual GridPartitioning SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual GridPartitioning SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new GridPartitioning() : (GridPartitioning)o);
+        var s = (GridPartitioning?)o ?? new GridPartitioning();
 
         s._xPartitioning = (LinearPartitioning)info.GetValue("XPartitioning", s);
         if (null != s._xPartitioning)
@@ -78,7 +79,7 @@ namespace Altaxo.Graph.Graph3D
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -132,12 +133,12 @@ namespace Altaxo.Graph.Graph3D
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _xPartitioning)
-        yield return new Main.DocumentNodeAndName(_xPartitioning, () => _xPartitioning = null, "XPartitioning");
+      if (_xPartitioning is not null)
+        yield return new Main.DocumentNodeAndName(_xPartitioning, () => _xPartitioning = null!, "XPartitioning");
       if (null != _yPartitioning)
-        yield return new Main.DocumentNodeAndName(_yPartitioning, () => _yPartitioning = null, "YPartitioning");
+        yield return new Main.DocumentNodeAndName(_yPartitioning, () => _yPartitioning = null!, "YPartitioning");
       if (null != _zPartitioning)
-        yield return new Main.DocumentNodeAndName(_zPartitioning, () => _zPartitioning = null, "ZPartitioning");
+        yield return new Main.DocumentNodeAndName(_zPartitioning, () => _zPartitioning = null!, "ZPartitioning");
     }
 
     public LinearPartitioning XPartitioning { get { return _xPartitioning; } }

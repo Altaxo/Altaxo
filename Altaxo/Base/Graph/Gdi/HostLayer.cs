@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -31,6 +32,7 @@ using Altaxo.Collections;
 
 namespace Altaxo.Graph.Gdi
 {
+  using System.Diagnostics.CodeAnalysis;
   using Geometry;
   using Shapes;
 
@@ -104,15 +106,15 @@ namespace Altaxo.Graph.Gdi
 
     /// <summary>Fired when the size of the layer changed.</summary>
     [field: NonSerialized]
-    public event System.EventHandler SizeChanged;
+    public event System.EventHandler? SizeChanged;
 
     /// <summary>Fired when the position of the layer changed.</summary>
     [field: NonSerialized]
-    public event System.EventHandler PositionChanged;
+    public event System.EventHandler? PositionChanged;
 
     /// <summary>Fired when the child layer collection changed.</summary>
     [field: NonSerialized]
-    public event System.EventHandler LayerCollectionChanged;
+    public event System.EventHandler? LayerCollectionChanged;
 
     #endregion Event definitions
 
@@ -141,11 +143,12 @@ namespace Altaxo.Graph.Gdi
         info.AddValue("GraphObjects", s._graphObjects);
       }
 
-      protected virtual HostLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual HostLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        HostLayer s = (o == null ? new HostLayer(info) : (HostLayer)o);
+        var s = (HostLayer?)o ?? new HostLayer(info);
 
-        s.ParentObject = parent as Main.IDocumentNode;
+        if (parent is Main.IDocumentNode parentNode)
+          s.ParentObject = parentNode;
         // size, position, rotation and scale
         s._cachedParentLayerSize = (PointD2D)info.GetValue("CachedParentSize", s);
         s._cachedLayerSize = (PointD2D)info.GetValue("CachedSize", s);
@@ -159,7 +162,7 @@ namespace Altaxo.Graph.Gdi
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         s.CalculateMatrix();
@@ -274,7 +277,7 @@ namespace Altaxo.Graph.Gdi
         if (!fromObj.IsCompatibleWithParent(this))
           continue;
 
-        IGraphicBase thisObj = null;
+        IGraphicBase? thisObj = null;
 
         // if fromObj is a layer, then try to "recycle" all the layers on the This side
         if (fromObj is HostLayer)
@@ -311,17 +314,21 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Constructor for deserialization purposes only.
     /// </summary>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected HostLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       Grid = new GridPartitioning();
       InternalInitializeGraphObjectsCollection();
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>
     /// The copy constructor.
     /// </summary>
     /// <param name="from"></param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public HostLayer(HostLayer from)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
       Grid = new GridPartitioning();
 
@@ -339,7 +346,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="parentLayer">The parent layer of the newly created layer.</param>
     /// <param name="location">The position and size of this layer</param>
-    public HostLayer(HostLayer parentLayer, IItemLocation location)
+    public HostLayer(HostLayer? parentLayer, IItemLocation location)
     {
       Grid = new GridPartitioning();
 
@@ -408,10 +415,11 @@ namespace Altaxo.Graph.Gdi
       {
         return _location;
       }
+      [MemberNotNull(nameof(_location))]
       set
       {
         if (null == value)
-          throw new ArgumentNullException("value");
+          throw new ArgumentNullException(nameof(Location));
 
         if (ChildSetMember(ref _location, value))
         {
@@ -707,16 +715,14 @@ namespace Altaxo.Graph.Gdi
       {
         return; // location is only null during deserialization
       }
-      else if (_location is ItemLocationDirect)
+      else if (_location is ItemLocationDirect lps)
       {
-        var lps = _location as ItemLocationDirect;
         newRect = lps.GetAbsoluteEnclosingRectangleWithoutSSRS();
       }
-      else if (_location is ItemLocationByGrid)
+      else if (_location is ItemLocationByGrid gps)
       {
         if (ParentLayer != null)
         {
-          var gps = _location as ItemLocationByGrid;
           var gridRect = newRect = gps.GetAbsolute(ParentLayer._grid, _cachedParentLayerSize);
 
           if (gps.ForceFitIntoCell)
@@ -761,10 +767,11 @@ namespace Altaxo.Graph.Gdi
       {
         return _grid;
       }
+      [MemberNotNull(nameof(_grid))]
       private set
       {
-        if (null == value)
-          throw new ArgumentNullException("value");
+        if (value is null)
+          throw new ArgumentNullException(nameof(Grid));
 
         ChildSetMember(ref _grid, value);
       }
@@ -774,6 +781,7 @@ namespace Altaxo.Graph.Gdi
     /// Creates the default grid. It consists of three rows and three columns. Columns 0 and 2 are the left and right margin, respectively. Rows 0 and 2 are the top and bottom margin.
     /// The cell column 1 / row 1 is intended to hold the child layer.
     /// </summary>
+    [MemberNotNull(nameof(_grid))]
     public void CreateDefaultGrid()
     {
       _grid = new GridPartitioning();
@@ -884,7 +892,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="itemLocation">The item location of the child layer.</param>
     /// <returns>The new grid cell location for useage by the child layer. If no grid could be created, the return value may be <c>null</c>.</returns>
-    public ItemLocationByGrid CreateGridForLocation(ItemLocationDirect itemLocation)
+    public ItemLocationByGrid? CreateGridForLocation(ItemLocationDirect itemLocation)
     {
       bool isAnyChildLayerPosByGrid = Layers.Any((childLayer) => childLayer.Location is ItemLocationByGrid);
 
@@ -944,9 +952,8 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        if (_parent is HostLayer)
+        if (_parent is HostLayer hl)
         {
-          var hl = _parent as HostLayer;
           var childLayers = hl._childLayers;
           for (int i = 0; i < childLayers.Count; ++i)
             if (object.ReferenceEquals(this, childLayers[i]))
@@ -962,16 +969,16 @@ namespace Altaxo.Graph.Gdi
     /// <value>
     /// The sibling layers (including this layer). <c>Null</c> is returned if this layer has no parent layer (thus no siblings exist).
     /// </value>
-    public IObservableList<HostLayer> SiblingLayers
+    public IObservableList<HostLayer>? SiblingLayers
     {
       get
       {
         var hl = _parent as HostLayer;
-        return hl == null ? null : hl._childLayers;
+        return hl?._childLayers;
       }
     }
 
-    public HostLayer ParentLayer
+    public HostLayer? ParentLayer
     {
       get { return _parent as HostLayer; }
       set { ParentObject = value; }
@@ -990,11 +997,12 @@ namespace Altaxo.Graph.Gdi
     /// or
     /// _childLayers was already set!
     /// </exception>
+    [MemberNotNull(nameof(_graphObjects), nameof(_childLayers))]
     private void InternalInitializeGraphObjectsCollection()
     {
-      if (null != _graphObjects)
+      if (_graphObjects is not null)
         throw new InvalidOperationException("_graphObjects was already set!");
-      if (null != _childLayers)
+      if (_childLayers is not null)
         throw new InvalidOperationException("_childLayers was already set!");
 
       _graphObjects = new GraphicCollection(x => { x.ParentObject = this; x.SetParentSize(Size, false); });
@@ -1005,7 +1013,7 @@ namespace Altaxo.Graph.Gdi
       OnGraphObjectsCollectionInstanceInitialized();
     }
 
-    private void EhGraphObjectCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private void EhGraphObjectCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
       EhSelfChanged(EventArgs.Empty);
     }
@@ -1040,7 +1048,7 @@ namespace Altaxo.Graph.Gdi
       _cachedLayerNumber = newLayerNumber;
     }
 
-    private void EhChildLayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private void EhChildLayers_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
       for (int i = 0; i < _childLayers.Count; ++i)
       {
@@ -1161,14 +1169,14 @@ namespace Altaxo.Graph.Gdi
       return o;
     }
 
-    public virtual IHitTestObject HitTest(HitTestPointData hitData)
+    public virtual IHitTestObject? HitTest(HitTestPointData hitData)
     {
       return HitTest(hitData, false);
     }
 
-    public virtual IHitTestObject HitTest(HitTestPointData parentCoord, bool plotItemsOnly)
+    public virtual IHitTestObject? HitTest(HitTestPointData parentCoord, bool plotItemsOnly)
     {
-      IHitTestObject hit;
+      IHitTestObject? hit;
 
       //			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, ScaleX, ScaleY, ShearX);
       HitTestPointData localCoord = parentCoord.NewFromAdditionalTransformation(_transformation);
@@ -1237,7 +1245,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="hitData">The hit data.</param>
     /// <returns>Here: null, because it was decided that the layer can not be selected by rectangular selection.</returns>
-    public virtual IHitTestObject HitTest(HitTestRectangularData hitData)
+    public virtual IHitTestObject? HitTest(HitTestRectangularData hitData)
     {
       return null;
     }
@@ -1276,6 +1284,8 @@ namespace Altaxo.Graph.Gdi
 
     private static bool EhGraphicsObject_Remove(IHitTestObject o)
     {
+      if (o.ParentLayer is null)
+        throw new InvalidProgramException($"Parent layer of hit test object not set!");
       var go = (IGraphicBase)o.HittedObject;
       o.ParentLayer.GraphObjects.Remove(go);
       return true;
@@ -1285,7 +1295,7 @@ namespace Altaxo.Graph.Gdi
 
     #region Editor methods
 
-    public static DoubleClickHandler LayerPositionEditorMethod;
+    public static DoubleClickHandler? LayerPositionEditorMethod;
 
     #endregion Editor methods
 
@@ -1319,7 +1329,7 @@ namespace Altaxo.Graph.Gdi
         PositionChanged(this, new System.EventArgs());
     }
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (sender is IItemLocation)
         CalculateCachedSizeAndPosition();
@@ -1331,7 +1341,7 @@ namespace Altaxo.Graph.Gdi
 
     #region IDocumentNode Members
 
-    public override Main.IDocumentNode ParentObject
+    public override Main.IDocumentNode? ParentObject
     {
       get
       {
@@ -1406,7 +1416,7 @@ namespace Altaxo.Graph.Gdi
       if (null != _graphObjects)
       {
         var graphObjects = _graphObjects;
-        _graphObjects = null;
+        _graphObjects = null!;
         for (int i = 0; i < graphObjects.Count; ++i)
         {
           if (null != graphObjects[i])
@@ -1414,9 +1424,8 @@ namespace Altaxo.Graph.Gdi
         }
       }
 
-      ChildDisposeMember(ref _location);
-
-      ChildDisposeMember(ref _grid);
+      ChildDisposeMember(ref _location!);
+      ChildDisposeMember(ref _grid!);
 
       base.Dispose(isDisposing);
     }
@@ -1462,12 +1471,12 @@ namespace Altaxo.Graph.Gdi
       get { return _childLayers; }
     }
 
-    Main.IDocumentLeafNode INodeWithParentNode<Main.IDocumentLeafNode>.ParentNode
+    Main.IDocumentLeafNode? INodeWithParentNode<Main.IDocumentLeafNode>.ParentNode
     {
       get { return _parent; }
     }
 
-    HostLayer INodeWithParentNode<HostLayer>.ParentNode
+    HostLayer? INodeWithParentNode<HostLayer>.ParentNode
     {
       get { return _parent as HostLayer; }
     }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +47,7 @@ namespace Altaxo.Graph.Gdi
     protected bool _renderWindowsMetafile; // has to be rendered as Metafile with included bitmap
     protected bool _renderBitmap; // rendered as bitmap plus DIB bitmap
     protected NamedColor _backgroundColorForFormatsWithoutAlphaChannel;
-    protected BrushX _backgroundBrush;
+    protected BrushX? _backgroundBrush;
 
     #region Serialization
 
@@ -62,20 +63,20 @@ namespace Altaxo.Graph.Gdi
 
         info.AddValue("SourceResolution", s._sourceDpiResolution);
         info.AddValue("BackgroundForFormatsWithoutAlphaChannel", s._backgroundColorForFormatsWithoutAlphaChannel);
-        info.AddValue("BackgroundBrush", s._backgroundBrush);
+        info.AddValueOrNull("BackgroundBrush", s._backgroundBrush);
         info.AddValue("RenderEnhancedMetafile", s._renderEnhancedMetafile);
         info.AddValue("RenderEnhancedMetafileAsVectorFormat", s._renderEnhancedMetafileAsVectorFormat);
         info.AddValue("RenderWindowsMetafile", s._renderWindowsMetafile);
         info.AddValue("RenderBitmap", s._renderBitmap);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (EmbeddedObjectRenderingOptions)o : new EmbeddedObjectRenderingOptions();
+        var s = (EmbeddedObjectRenderingOptions?)o ?? new EmbeddedObjectRenderingOptions();
 
         s._sourceDpiResolution = info.GetDouble("SourceResolution");
         s._backgroundColorForFormatsWithoutAlphaChannel = (NamedColor)info.GetValue("BackgroundForFormatsWithoutAlphaChannel", s);
-        s.BackgroundBrush = (BrushX)info.GetValue("Background", s);
+        s.BackgroundBrush = info.GetValueOrNull<BrushX>("Background", s);
         s._renderEnhancedMetafile = info.GetBoolean("RenderEnhancedMetafile");
         s._renderEnhancedMetafileAsVectorFormat = info.GetBoolean("RenderEnhancedMetafileAsVectorFormat");
         s._renderWindowsMetafile = info.GetBoolean("RenderWindowsMetafile");
@@ -98,21 +99,21 @@ namespace Altaxo.Graph.Gdi
         info.AddValue("SourceResolution", s._sourceDpiResolution);
         info.AddValue("OutputScaling", s._outputScalingFactor);
         info.AddValue("BackgroundForFormatsWithoutAlphaChannel", s._backgroundColorForFormatsWithoutAlphaChannel);
-        info.AddValue("BackgroundBrush", s._backgroundBrush);
+        info.AddValueOrNull("BackgroundBrush", s._backgroundBrush);
         info.AddValue("RenderEnhancedMetafile", s._renderEnhancedMetafile);
         info.AddValue("RenderEnhancedMetafileAsVectorFormat", s._renderEnhancedMetafileAsVectorFormat);
         info.AddValue("RenderWindowsMetafile", s._renderWindowsMetafile);
         info.AddValue("RenderBitmap", s._renderBitmap);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (EmbeddedObjectRenderingOptions)o : new EmbeddedObjectRenderingOptions();
+        var s = (EmbeddedObjectRenderingOptions?)o ?? new EmbeddedObjectRenderingOptions();
 
         s._sourceDpiResolution = info.GetDouble("SourceResolution");
         s._outputScalingFactor = info.GetDouble("OutputScaling");
         s._backgroundColorForFormatsWithoutAlphaChannel = (NamedColor)info.GetValue("BackgroundForFormatsWithoutAlphaChannel", s);
-        s.BackgroundBrush = (BrushX)info.GetValue("Background", s);
+        s.BackgroundBrush = info.GetValueOrNull<BrushX>("Background", s);
         s._renderEnhancedMetafile = info.GetBoolean("RenderEnhancedMetafile");
         s._renderEnhancedMetafileAsVectorFormat = info.GetBoolean("RenderEnhancedMetafileAsVectorFormat");
         s._renderWindowsMetafile = info.GetBoolean("RenderWindowsMetafile");
@@ -138,23 +139,26 @@ namespace Altaxo.Graph.Gdi
       _outputScalingFactor = 1;
     }
 
+    protected void CopyFrom(EmbeddedObjectRenderingOptions from)
+    {
+      _sourceDpiResolution = from._sourceDpiResolution;
+      _outputScalingFactor = from._outputScalingFactor;
+
+      _renderEnhancedMetafile = from._renderEnhancedMetafile; // can be rendered as true metafile or as enhanced metafile with included bitmap
+      _renderEnhancedMetafileAsVectorFormat = from._renderEnhancedMetafileAsVectorFormat; // if true, use a true enhanced metafile
+      _renderWindowsMetafile = from._renderWindowsMetafile; // has to be rendered as Metafile with included bitmap
+      _renderBitmap = from._renderBitmap; // rendered as bitmap plus DIB bitmap
+      _backgroundColorForFormatsWithoutAlphaChannel = from._backgroundColorForFormatsWithoutAlphaChannel;
+      _backgroundBrush = from._backgroundBrush;
+    }
+
     public virtual bool CopyFrom(object obj)
     {
       if (object.ReferenceEquals(this, obj))
         return true;
-      var from = obj as EmbeddedObjectRenderingOptions;
-      if (null != from)
+      if (obj is EmbeddedObjectRenderingOptions from)
       {
-        _sourceDpiResolution = from._sourceDpiResolution;
-        _outputScalingFactor = from._outputScalingFactor;
-
-        _renderEnhancedMetafile = from._renderEnhancedMetafile; // can be rendered as true metafile or as enhanced metafile with included bitmap
-        _renderEnhancedMetafileAsVectorFormat = from._renderEnhancedMetafileAsVectorFormat; // if true, use a true enhanced metafile
-        _renderWindowsMetafile = from._renderWindowsMetafile; // has to be rendered as Metafile with included bitmap
-        _renderBitmap = from._renderBitmap; // rendered as bitmap plus DIB bitmap
-        _backgroundColorForFormatsWithoutAlphaChannel = from._backgroundColorForFormatsWithoutAlphaChannel;
-        _backgroundBrush = from._backgroundBrush;
-
+        CopyFrom(from);
         return true;
       }
       return false;
@@ -162,9 +166,7 @@ namespace Altaxo.Graph.Gdi
 
     public EmbeddedObjectRenderingOptions(EmbeddedObjectRenderingOptions from)
     {
-      if (null == from)
-        throw new ArgumentNullException();
-      CopyFrom(from);
+      CopyFrom(from ?? throw new ArgumentNullException(nameof(from)));
     }
 
     public EmbeddedObjectRenderingOptions Clone()
@@ -233,7 +235,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    public BrushX BackgroundBrush
+    public BrushX? BackgroundBrush
     {
       get
       {
@@ -241,9 +243,8 @@ namespace Altaxo.Graph.Gdi
       }
       set
       {
-        if (!(_backgroundBrush == value))
+        if (ChildSetMemberAlt(ref _backgroundBrush, value))
         {
-          _backgroundBrush = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }

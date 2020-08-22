@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -73,7 +74,7 @@ namespace Altaxo.Graph.Gdi
     /// <returns>The image proxy.</returns>
     /// <remarks>Since metafile images can not be converted to a independent image stream, those images are converted to bitmap
     /// images and then converted to an independent image proxy, using the resolution of the metafile image.</remarks>
-    public static MemoryStreamImageProxy GetImageProxyFromImage(Image image, string name)
+    public static MemoryStreamImageProxy GetImageProxyFromImage(Image image, string? name)
     {
       if (image is null)
         throw new ArgumentNullException(nameof(image));

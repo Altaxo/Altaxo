@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing.Drawing2D;
 using Altaxo.Geometry;
@@ -64,7 +65,7 @@ namespace Altaxo.Graph.Gdi
     /// <returns></returns>
     object HittedObject { get; set; }
 
-    HostLayer ParentLayer { get; set; }
+    HostLayer? ParentLayer { get; set; }
 
     /// <summary>
     /// Shifts the position of the hitted object according to the x and y values.
@@ -83,12 +84,12 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Delegate to handle double click events. Should return true if the object was removed during the processing. Otherwise returns false.
     /// </summary>
-    DoubleClickHandler DoubleClick { get; set; }
+    DoubleClickHandler? DoubleClick { get; set; }
 
     /// <summary>
     /// Handler to remove the hitted object. Should return true if the object is removed, otherwise false.
     /// </summary>
-    DoubleClickHandler Remove { get; set; }
+    DoubleClickHandler? Remove { get; set; }
 
     /// <summary>
     /// This function is called if a double click to the object occured.

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Graph.Scales;
@@ -29,6 +30,7 @@ using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
+  using System.Diagnostics.CodeAnalysis;
   using GraphicsContext;
   using Main.Properties;
   using Shapes;
@@ -47,27 +49,27 @@ namespace Altaxo.Graph.Graph3D.Axis
     private CSLineID _styleID;
 
     /// <summary>If not <c>null</c>, this is a custom tick spacing for the axis line that overrides the default tick spacing of the scaleWithTicks.</summary>
-    protected TickSpacing _customTickSpacing;
+    protected TickSpacing? _customTickSpacing;
 
     /// <summary>Style of axis. Determines the line width and color of the axis and the ticks.</summary>
-    protected AxisLineStyle _axisLineStyle;
+    protected AxisLineStyle? _axisLineStyle;
 
     /// <summary>
     /// Determines the style of the major labels.
     /// </summary>
-    private AxisLabelStyle _majorLabelStyle;
+    private AxisLabelStyle? _majorLabelStyle;
 
     /// <summary>
     /// Determines the style of the minor labels.
     /// </summary>
-    private AxisLabelStyle _minorLabelStyle;
+    private AxisLabelStyle? _minorLabelStyle;
 
     /// <summary>
     /// The title of the axis.
     /// </summary>
-    private TextGraphic _axisTitle;
+    private TextGraphic? _axisTitle;
 
-    private CSAxisInformation _cachedAxisInfo;
+    private CSAxisInformation? _cachedAxisInfo;
 
     #region Serialization
 
@@ -80,63 +82,73 @@ namespace Altaxo.Graph.Graph3D.Axis
         var s = (AxisStyle)obj;
 
         info.AddValue("StyleID", s._styleID);
-        info.AddValue("TickSpacing", s._customTickSpacing);
-        info.AddValue("AxisStyle", s._axisLineStyle);
-        info.AddValue("MajorLabelStyle", s._majorLabelStyle);
-        info.AddValue("MinorLabelStyle", s._minorLabelStyle);
-        info.AddValue("AxisTitle", s._axisTitle);
+        info.AddValueOrNull("TickSpacing", s._customTickSpacing);
+        info.AddValueOrNull("AxisStyle", s._axisLineStyle);
+        info.AddValueOrNull("MajorLabelStyle", s._majorLabelStyle);
+        info.AddValueOrNull("MinorLabelStyle", s._minorLabelStyle);
+        info.AddValueOrNull("AxisTitle", s._axisTitle);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisStyle s = SDeserialize(o, info, parent);
-        return s;
-      }
-
-      protected virtual AxisStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        AxisStyle s = null != o ? (AxisStyle)o : new AxisStyle();
+        var s = (AxisStyle?)o ?? new AxisStyle(info);
 
         // Styles
         s._styleID = (CSLineID)info.GetValue("StyleID", s);
-        s.TickSpacing = (TickSpacing)info.GetValue("TickSpacing", s);
-        s.AxisLineStyle = (AxisLineStyle)info.GetValue("AxisStyle", s);
-        s.MajorLabelStyle = (AxisLabelStyle)info.GetValue("MajorLabelStyle", s);
-        s.MinorLabelStyle = (AxisLabelStyle)info.GetValue("MinorLabelStyle", s);
-        s.Title = (TextGraphic)info.GetValue("AxisTitle", s);
+        s.TickSpacing = info.GetValueOrNull<TickSpacing>("TickSpacing", s);
+        s.AxisLineStyle = info.GetValueOrNull<AxisLineStyle>("AxisStyle", s);
+        s.MajorLabelStyle = info.GetValueOrNull<AxisLabelStyle>("MajorLabelStyle", s);
+        s.MinorLabelStyle = info.GetValueOrNull<AxisLabelStyle>("MinorLabelStyle", s);
+        s.Title = info.GetValueOrNull<TextGraphic>("AxisTitle", s);
 
         return s;
       }
+
+
     }
+
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    protected AxisStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+    }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
 
     #endregion Serialization
 
-    protected AxisStyle()
+    public AxisStyle(AxisStyle from)
     {
+      CopyFrom(from);
+    }
+
+    [MemberNotNull(nameof(_styleID))]
+    public void CopyFrom(AxisStyle from)
+    {
+      _styleID = from._styleID; // immutable
+      _cachedAxisInfo = from._cachedAxisInfo; // attention - have to appear _before_ CopyWithoutIdFrom, since the _cachedAxisInfo is used when cloning AxisLineStyle!
+      CopyWithoutIdFrom(from);
+    }
+
+
+    public void CopyWithoutIdFrom(AxisStyle from)
+    {
+      ChildCloneToMember(ref _customTickSpacing, from._customTickSpacing);
+      ChildCloneToMember(ref _axisLineStyle, from._axisLineStyle);
+      ChildCloneToMember(ref _majorLabelStyle, from._majorLabelStyle);
+      ChildCloneToMember(ref _minorLabelStyle, from._minorLabelStyle);
+      ChildCloneToMember(ref _axisTitle, from._axisTitle);
     }
 
     public bool CopyFrom(object obj)
     {
-      var from = obj as AxisStyle;
-      if (null == from)
-        return false;
-
-      if (!object.ReferenceEquals(this, from))
+      if (object.ReferenceEquals(this, obj))
+        return true;
+      if (obj is AxisStyle from)
       {
-        _styleID = from._styleID; // immutable
-        _cachedAxisInfo = from._cachedAxisInfo; // attention - have to appear _before_ CopyWithoutIdFrom, since the _cachedAxisInfo is used when cloning AxisLineStyle!
-        CopyWithoutIdFrom(from);
+        CopyFrom(from);
+        return true;
       }
-      return true;
-    }
-
-    public void CopyWithoutIdFrom(AxisStyle from)
-    {
-      TickSpacing = from._customTickSpacing == null ? null : (TickSpacing)from._customTickSpacing.Clone();
-      AxisLineStyle = from._axisLineStyle == null ? null : (AxisLineStyle)from._axisLineStyle.Clone();
-      MajorLabelStyle = from._majorLabelStyle == null ? null : (AxisLabelStyle)from._majorLabelStyle.Clone();
-      MinorLabelStyle = from._minorLabelStyle == null ? null : (AxisLabelStyle)from._minorLabelStyle.Clone();
-      Title = from._axisTitle == null ? null : (TextGraphic)from._axisTitle.Clone();
+      return false;
     }
 
     /// <summary>
@@ -147,8 +159,9 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <exception cref="System.ArgumentNullException"></exception>
     public void ChangeStyleIdentifier(CSLineID newIdentifier, Func<CSAxisSide, CSAxisSide?> GetNewAxisSideFromOldAxisSide)
     {
-      if (null == newIdentifier)
+      if (newIdentifier is null)
         throw new ArgumentNullException(nameof(newIdentifier));
+
       _styleID = newIdentifier;
 
       if (null != _axisLineStyle)
@@ -163,7 +176,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
-    public AxisStyle(CSLineID id, bool isAxisLineEnabled, bool areMajorTicksEnabled, bool areMinorTicksEnabled, string axisTitleOrNull, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    public AxisStyle(CSLineID id, bool isAxisLineEnabled, bool areMajorTicksEnabled, bool areMinorTicksEnabled, string? axisTitleOrNull, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       _styleID = id;
 
@@ -189,7 +202,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
-    public AxisStyle(CSAxisInformation info, bool isAxisLineEnabled, bool areMajorTicksEnabled, bool areMinorTicksEnabled, string axisTitleOrNull, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    public AxisStyle(CSAxisInformation info, bool isAxisLineEnabled, bool areMajorTicksEnabled, bool areMinorTicksEnabled, string? axisTitleOrNull, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       _styleID = info.Identifier;
 
@@ -208,7 +221,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         ShowMinorLabels(info.PreferredLabelSide, context);
       }
 
-      if (null != axisTitleOrNull)
+      if (axisTitleOrNull is not null)
       {
         ShowTitle(context);
         _axisTitle.Text = axisTitleOrNull;
@@ -244,7 +257,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
-    public CSAxisInformation CachedAxisInformation
+    public CSAxisInformation? CachedAxisInformation
     {
       get
       {
@@ -253,11 +266,11 @@ namespace Altaxo.Graph.Graph3D.Axis
       set
       {
         _cachedAxisInfo = value;
-        if (_axisLineStyle != null)
+        if (_axisLineStyle is not null)
           _axisLineStyle.CachedAxisInformation = value;
-        if (_majorLabelStyle is AxisLabelStyle)
+        if (_majorLabelStyle is not null)
           _majorLabelStyle.CachedAxisInformation = value;
-        if (_minorLabelStyle is AxisLabelStyle)
+        if (_minorLabelStyle is not null)
           _minorLabelStyle.CachedAxisInformation = value;
       }
     }
@@ -296,7 +309,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <value>
     /// The tick spacing.
     /// </value>
-    public TickSpacing TickSpacing
+    public TickSpacing? TickSpacing
     {
       get
       {
@@ -314,21 +327,15 @@ namespace Altaxo.Graph.Graph3D.Axis
       FixupInternalDataStructures(layer, layer.CoordinateSystem.GetAxisStyleInformation);
     }
 
-    public IHitTestObject HitTest(HitTestPointData parentCoord, DoubleClickHandler AxisScaleEditorMethod, DoubleClickHandler AxisStyleEditorMethod, DoubleClickHandler AxisLabelMajorStyleEditorMethod, DoubleClickHandler AxisLabelMinorStyleEditorMethod)
+    public IHitTestObject? HitTest(HitTestPointData parentCoord, DoubleClickHandler? AxisScaleEditorMethod, DoubleClickHandler? AxisStyleEditorMethod, DoubleClickHandler? AxisLabelMajorStyleEditorMethod, DoubleClickHandler? AxisLabelMinorStyleEditorMethod)
     {
-      IHitTestObject hit;
+      IHitTestObject? hit;
       if (null != (hit = _axisTitle?.HitTest(parentCoord)))
         return hit;
 
-      if (IsAxisLineEnabled && null != (hit = _axisLineStyle.HitTest(parentCoord, false)))
-      {
-        hit.DoubleClick = AxisScaleEditorMethod;
-        return hit;
-      }
-
       // hit testing the axes - secondly now with the ticks
       // in this case the TitleAndFormat editor for the axis should be shown
-      if (IsAxisLineEnabled && null != (hit = _axisLineStyle.HitTest(parentCoord, true)))
+      if (null != (hit = _axisLineStyle?.HitTest(parentCoord, true)))
       {
         hit.DoubleClick = AxisStyleEditorMethod;
         return hit;
@@ -366,8 +373,11 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
 
       CachedAxisInformation = GetAxisStyleInformation(_styleID);
+      if (_cachedAxisInfo is null)
+        throw new InvalidOperationException($"{nameof(_cachedAxisInfo)} is null");
 
-      if (null != _customTickSpacing)
+
+      if (_customTickSpacing is not null)
       {
         CSLineID styleID = _cachedAxisInfo.Identifier;
         Scale scale = layer.Scales[styleID.ParallelAxisNumber];
@@ -399,7 +409,10 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public void PaintLine(IGraphicsContext3D g, IPlotArea layer)
     {
-      if (IsAxisLineEnabled)
+      if (_cachedAxisInfo is null)
+        throw new InvalidOperationException($"{nameof(_cachedAxisInfo)} is null");
+
+      if (_axisLineStyle is not null)
       {
         _axisLineStyle.Paint(g, layer, _cachedAxisInfo, _customTickSpacing);
       }
@@ -407,7 +420,10 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public void PaintMajorLabels(IGraphicsContext3D g, IPlotArea layer)
     {
-      if (AreMajorLabelsEnabled)
+      if (_cachedAxisInfo is null)
+        throw new InvalidOperationException($"{nameof(_cachedAxisInfo)} is null");
+
+      if (_majorLabelStyle is not null)
       {
         var labelSide = _majorLabelStyle.PredictLabelSide(_cachedAxisInfo);
         var outerDistance = null == _axisLineStyle ? 0 : _axisLineStyle.GetOuterDistance(labelSide);
@@ -418,7 +434,10 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public void PaintMinorLabels(IGraphicsContext3D g, IPlotArea layer)
     {
-      if (AreMinorLabelsEnabled)
+      if (_cachedAxisInfo is null)
+        throw new InvalidOperationException($"{nameof(_cachedAxisInfo)} is null");
+
+      if (_minorLabelStyle is not null)
       {
         var labelSide = _minorLabelStyle.PredictLabelSide(_cachedAxisInfo);
         var outerDistance = null == _axisLineStyle ? 0 : _axisLineStyle.GetOuterDistance(labelSide);
@@ -429,7 +448,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public void PaintTitle(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer)
     {
-      if (IsTitleEnabled)
+      if (_axisTitle is not null)
       {
         _axisTitle.Paint(g, paintContext);
       }
@@ -454,7 +473,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public void ShowAxisLine(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (_axisLineStyle == null)
+      if (_axisLineStyle is null)
         AxisLineStyle = new AxisLineStyle(context);
     }
 
@@ -510,7 +529,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public void ShowMinorLabels(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (_minorLabelStyle == null)
+      if (_minorLabelStyle is null)
         MinorLabelStyle = new AxisLabelStyle(context) { CachedAxisInformation = _cachedAxisInfo };
     }
 
@@ -536,14 +555,13 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
+    [MemberNotNull(nameof(_axisTitle))]
     public void ShowTitle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (_axisTitle == null)
+      if (_axisTitle is null)
       {
-        Title = new TextGraphic(context)
-        {
-          Text = "axis title"
-        };
+        ChildSetMember(ref _axisTitle, new TextGraphic(context) { Text = "axis title" });
+        EhSelfChanged(EventArgs.Empty);
       }
     }
 
@@ -553,7 +571,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     }
 
     /// <summary>Style of axis. Determines the line width and color of the axis and the ticks.</summary>
-    public AxisLineStyle AxisLineStyle
+    public AxisLineStyle? AxisLineStyle
     {
       get
       {
@@ -561,17 +579,11 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
       set
       {
-        AxisLineStyle oldvalue = _axisLineStyle;
-        _axisLineStyle = value;
-
-        if (null != value)
+        if (ChildSetMember(ref _axisLineStyle, value))
         {
-          value.ParentObject = this;
-          value.CachedAxisInformation = _cachedAxisInfo;
-        }
+          if (_axisLineStyle is not null)
+            _axisLineStyle.CachedAxisInformation = _cachedAxisInfo;
 
-        if (!object.ReferenceEquals(value, oldvalue))
-        {
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -580,7 +592,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>
     /// Determines the style of the major labels.
     /// </summary>
-    public AxisLabelStyle MajorLabelStyle
+    public AxisLabelStyle? MajorLabelStyle
     {
       get
       {
@@ -588,25 +600,15 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
       set
       {
-        var oldvalue = _majorLabelStyle;
-        _majorLabelStyle = value;
-
-        if (null != _majorLabelStyle)
-        {
-          _majorLabelStyle.ParentObject = this;
-        }
-
-        if (!object.ReferenceEquals(value, oldvalue))
-        {
+        if (ChildSetMember(ref _majorLabelStyle, value))
           EhSelfChanged(EventArgs.Empty);
-        }
       }
     }
 
     /// <summary>
     /// Determines the style of the minor labels.
     /// </summary>
-    public AxisLabelStyle MinorLabelStyle
+    public AxisLabelStyle? MinorLabelStyle
     {
       get
       {
@@ -614,44 +616,29 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
       set
       {
-        var oldvalue = _minorLabelStyle;
-        _minorLabelStyle = value;
-
-        if (null != value)
-          value.ParentObject = this;
-
-        if (!object.ReferenceEquals(value, oldvalue))
-        {
+        if (ChildSetMember(ref _minorLabelStyle, value))
           EhSelfChanged(EventArgs.Empty);
-        }
       }
     }
 
-    public TextGraphic Title
+    public TextGraphic? Title
     {
       get { return _axisTitle; }
       set
       {
-        TextGraphic oldvalue = _axisTitle;
-        _axisTitle = value;
-
-        if (null != value)
-          value.ParentObject = this;
-
-        if (!object.ReferenceEquals(_axisTitle, oldvalue))
-        {
+        if (ChildSetMember(ref _axisTitle, value))
           EhSelfChanged(EventArgs.Empty);
-        }
       }
     }
 
     public string TitleText
     {
-      get { return null == _axisTitle ? string.Empty : _axisTitle.Text; }
+      get { return _axisTitle?.Text ?? string.Empty; }
       set
       {
         string oldvalue = TitleText;
-        if (value != oldvalue)
+
+        if (!(TitleText == value))
         {
           if (string.IsNullOrEmpty(value))
           {
@@ -659,14 +646,10 @@ namespace Altaxo.Graph.Graph3D.Axis
           }
           else
           {
-            if (_axisTitle == null)
-            {
-              Title = new TextGraphic(this.GetPropertyContext()) { ParentObject = this };
-            }
-
+            if (_axisTitle is null)
+              ChildSetMember(ref _axisTitle, new TextGraphic(this.GetPropertyContext()));
             _axisTitle.Text = value;
           }
-
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -676,11 +659,11 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     #region ICloneable Members
 
+
+
     public object Clone()
     {
-      var res = new AxisStyle();
-      res.CopyFrom(this);
-      return res;
+      return new AxisStyle(this);
     }
 
     #endregion ICloneable Members

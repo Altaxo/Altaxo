@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,12 +55,16 @@ namespace Altaxo.Graph.Gdi
       _graphDocument = graphDocument;
     }
 
-    /// <summary>Private constructor for deserialization.</summary>
-    private GraphViewLayout()
-    {
-    }
+
 
     #region Serialization
+
+    /// <summary>Private constructor for deserialization.</summary>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    private GraphViewLayout(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+    }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GUI.GraphController", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Graph.GUI.SDGraphController", 0)]
@@ -68,8 +73,8 @@ namespace Altaxo.Graph.Gdi
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphViewLayout", 0)] // since 2012/02/01 build 744
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      private AbsoluteDocumentPath _PathToGraph;
-      private GraphViewLayout _GraphController;
+      private AbsoluteDocumentPath? _PathToGraph;
+      private GraphViewLayout? _GraphController;
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -79,9 +84,9 @@ namespace Altaxo.Graph.Gdi
         info.AddValue("Graph", AbsoluteDocumentPath.GetAbsolutePath(s._graphDocument));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (GraphViewLayout)o : new GraphViewLayout();
+        var s = (GraphViewLayout?)o ?? new GraphViewLayout(info);
 
         if (info.CurrentElementName == "BaseType")
           info.GetString("BaseType");
@@ -101,10 +106,10 @@ namespace Altaxo.Graph.Gdi
 
       private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
       {
-        object o = AbsoluteDocumentPath.GetObject(_PathToGraph, documentRoot);
-        if (o is GraphDocument)
+        var o = AbsoluteDocumentPath.GetObject(_PathToGraph!, documentRoot);
+        if (o is GraphDocument gd && _GraphController is not null)
         {
-          _GraphController._graphDocument = (GraphDocument)o;
+          _GraphController._graphDocument = gd;
           info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
         }
       }
@@ -118,8 +123,8 @@ namespace Altaxo.Graph.Gdi
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphViewLayout), 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      private AbsoluteDocumentPath _PathToGraph;
-      private GraphViewLayout _GraphController;
+      private AbsoluteDocumentPath? _PathToGraph;
+      private GraphViewLayout? _GraphController;
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -133,9 +138,9 @@ namespace Altaxo.Graph.Gdi
         }
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (GraphViewLayout)o : new GraphViewLayout();
+        var s = (GraphViewLayout?)o ?? new GraphViewLayout(info);
 
         var surr = new XmlSerializationSurrogate1
         {
@@ -156,8 +161,8 @@ namespace Altaxo.Graph.Gdi
 
       private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
       {
-        var o = AbsoluteDocumentPath.GetObject(_PathToGraph, documentRoot);
-        if (o is GraphDocument)
+        var o = AbsoluteDocumentPath.GetObject(_PathToGraph!, documentRoot);
+        if (o is GraphDocument gd && _GraphController is not null)
         {
           _GraphController._graphDocument = (GraphDocument)o;
           info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -35,6 +36,7 @@ using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Graph.Graph3D
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Main.Properties;
   using Axis;
   using Data;
@@ -112,9 +114,9 @@ namespace Altaxo.Graph.Graph3D
         info.AddValue("Plots", s._plotItems);
       }
 
-      protected virtual XYZPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual XYZPlotLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (XYZPlotLayer)o ?? new XYZPlotLayer(info);
+        var s = (XYZPlotLayer?)o ?? new XYZPlotLayer(info);
 
         info.GetBaseValueEmbedded(s, typeof(HostLayer), parent);
 
@@ -139,7 +141,7 @@ namespace Altaxo.Graph.Graph3D
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         info.DeserializationFinished += s.EhDeserializationFinished;
@@ -179,10 +181,12 @@ namespace Altaxo.Graph.Graph3D
     /// The copy constructor.
     /// </summary>
     /// <param name="from"></param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public XYZPlotLayer(XYZPlotLayer from)
       : base(from)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>
     /// Internal copy from operation. It is presumed, that the events are already suspended. Additionally,
@@ -194,8 +198,7 @@ namespace Altaxo.Graph.Graph3D
     {
       base.InternalCopyFrom(obj, options); // base copy, but keep in mind that InternalCopyGraphItems is overridden in this class
 
-      var from = obj as XYZPlotLayer;
-      if (null == from)
+      if (!(obj is XYZPlotLayer from))
         return;
 
       if (0 != (options & Gdi.GraphCopyOptions.CopyLayerScales))
@@ -221,7 +224,7 @@ namespace Altaxo.Graph.Graph3D
       // Plot items
       if (0 != (options & Gdi.GraphCopyOptions.CopyLayerPlotItems))
       {
-        PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems, true);
+        PlotItems = new PlotItemCollection(this, from._plotItems, true);
       }
       else if (0 != (options & Gdi.GraphCopyOptions.CopyLayerPlotStyles))
       {
@@ -260,6 +263,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Constructor for deserialization purposes only.
     /// </summary>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected XYZPlotLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(info)
     {
@@ -272,6 +276,7 @@ namespace Altaxo.Graph.Graph3D
         new GridPlane(CSPlaneID.Front)
       };
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     public XYZPlotLayer(HostLayer parentLayer)
       : this(parentLayer, GetChildLayerDefaultLocation(), new CS.G3DCartesicCoordinateSystem())
@@ -389,10 +394,11 @@ namespace Altaxo.Graph.Graph3D
       {
         return _axisStyles;
       }
+      [MemberNotNull(nameof(_axisStyles))]
       protected set
       {
-        AxisStyleCollection oldvalue = _axisStyles;
-        _axisStyles = value;
+        var oldvalue = _axisStyles;
+        _axisStyles = value ?? throw new ArgumentNullException(nameof(AxisStyles));
         value.ParentObject = this;
         value.UpdateCoordinateSystem(CoordinateSystem);
 
@@ -409,47 +415,43 @@ namespace Altaxo.Graph.Graph3D
       {
         return _scales;
       }
+      [MemberNotNull(nameof(_scales))]
       protected set
       {
         if (object.ReferenceEquals(value, _scales))
           return;
 
-        ScaleCollection oldscales = _scales;
-        _scales = value;
-
-        if (null != _scales)
-        {
-          _scales.ParentObject = this;
-        }
+        var oldscales = _scales;
+        _scales = value ?? throw new ArgumentNullException(nameof(Scales));
+        _scales.ParentObject = this;
 
         using (var suspendToken = SuspendGetToken())
         {
           for (int i = 0; i < _scales.Count; i++)
           {
-            Scale oldScale = oldscales == null ? null : oldscales[i];
+            Scale? oldScale = oldscales is null ? null : oldscales[i];
             Scale newScale = _scales[i];
             if (!object.ReferenceEquals(oldScale, newScale))
               EhSelfChanged(new ScaleInstanceChangedEventArgs(oldScale, newScale) { ScaleIndex = i });
           }
 
-          if (null != oldscales)
-            oldscales.Dispose();
+          oldscales?.Dispose();
 
           suspendToken.Resume();
         }
       }
     }
 
-    public TextGraphic Legend
+    public TextGraphic? Legend
     {
       get
       {
-        return (LegendText)_graphObjects.FirstOrDefault(item => item is LegendText);
+        return (LegendText?)_graphObjects.FirstOrDefault(item => item is LegendText);
       }
       set
       {
         var idx = _graphObjects.IndexOfFirst(item => item is LegendText);
-        TextGraphic oldvalue = idx >= 0 ? (TextGraphic)_graphObjects[idx] : null;
+        TextGraphic? oldvalue = idx >= 0 ? (TextGraphic)_graphObjects[idx] : null;
 
         if (value != null)
         {
@@ -491,12 +493,10 @@ namespace Altaxo.Graph.Graph3D
       {
         return _plotItems;
       }
+      [MemberNotNull(nameof(_plotItems))]
       protected set
       {
-        if (null == value)
-          throw new ArgumentNullException("value");
-
-        if (ChildSetMember(ref _plotItems, value))
+        if (ChildSetMember(ref _plotItems, value ?? throw new ArgumentNullException(nameof(PlotItems))))
           EhSelfChanged(EventArgs.Empty);
       }
     }
@@ -700,9 +700,10 @@ namespace Altaxo.Graph.Graph3D
       {
         return _gridPlanes;
       }
+      [MemberNotNull(nameof(_gridPlanes))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         if (ChildSetMember(ref _gridPlanes, value))
@@ -710,16 +711,16 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
-    private string GetAxisTitleString(CSLineID id)
+    private string? GetAxisTitleString(CSLineID id)
     {
-      return _axisStyles[id] != null && _axisStyles[id].Title != null ? _axisStyles[id].Title.Text : null;
+      return _axisStyles[id]?.Title?.Text;
     }
 
     private void SetAxisTitleString(CSLineID id, string value)
     {
-      AxisStyle style = _axisStyles[id];
-      string oldtitle = (style == null || style.Title == null) ? null : style.Title.Text;
-      string newtitle = (value == null || value == string.Empty) ? null : value;
+      var style = _axisStyles[id];
+      string? oldtitle = (style is null || style.Title is null) ? null : style.Title.Text;
+      string? newtitle = string.IsNullOrEmpty(value) ? null : value;
 
       if (newtitle != oldtitle)
       {
@@ -728,9 +729,9 @@ namespace Altaxo.Graph.Graph3D
           if (style != null)
             style.Title = null;
         }
-        else if (_axisStyles.AxisStyleEnsured(id).Title != null)
+        else if (_axisStyles.AxisStyleEnsured(id)?.Title is { } title)
         {
-          _axisStyles[id].Title.Text = newtitle;
+          title.Text = newtitle;
         }
         else
         {
@@ -781,13 +782,13 @@ namespace Altaxo.Graph.Graph3D
       axisTitle.Location.ParentAnchorZ = RADouble.NewRel(location.Z / Size.Z); // set the z anchor of the parent
 
       double distance = 0;
-      AxisStyle axisStyle = _axisStyles[id];
-      if (null != axisStyle.AxisLineStyle)
+      var axisStyle = _axisStyles[id];
+      if (axisStyle?.AxisLineStyle is not null)
         distance += axisStyle.AxisLineStyle.GetOuterDistance(info.PreferredLabelSide);
       double labelFontSize = 0;
-      if (axisStyle.AreMajorLabelsEnabled)
+      if (axisStyle?.MajorLabelStyle is not null)
         labelFontSize = Math.Max(labelFontSize, axisStyle.MajorLabelStyle.FontSize);
-      if (axisStyle.AreMinorLabelsEnabled)
+      if (axisStyle?.MinorLabelStyle is not null)
         labelFontSize = Math.Max(labelFontSize, axisStyle.MinorLabelStyle.FontSize);
 
       axisTitle.RotationX = 90; // Font height now is z, Font depth is y and x remains x
@@ -807,6 +808,7 @@ namespace Altaxo.Graph.Graph3D
       axisTitle.Location.PositionZ = RADouble.NewAbs(distance * normDirection.Z);
     }
 
+    [MaybeNull]
     public string DefaultYAxisTitleString
     {
       get
@@ -819,6 +821,7 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    [MaybeNull]
     public string DefaultXAxisTitleString
     {
       get
@@ -883,9 +886,9 @@ namespace Altaxo.Graph.Graph3D
       base.PaintPostprocessing();
     }
 
-    protected override IHitTestObject HitTestWithLocalCoordinates(HitTestPointData localCoord, bool plotItemsOnly)
+    protected override IHitTestObject? HitTestWithLocalCoordinates(HitTestPointData localCoord, bool plotItemsOnly)
     {
-      IHitTestObject hit = null;
+      IHitTestObject? hit = null;
 
       if (!plotItemsOnly)
       {
@@ -907,17 +910,16 @@ namespace Altaxo.Graph.Graph3D
 
     #region Editor methods
 
-    public static DoubleClickHandler AxisScaleEditorMethod;
-    public static DoubleClickHandler AxisStyleEditorMethod;
-    public static DoubleClickHandler AxisLabelMajorStyleEditorMethod;
-    public static DoubleClickHandler AxisLabelMinorStyleEditorMethod;
-    public static DoubleClickHandler PlotItemEditorMethod;
+    public static DoubleClickHandler? AxisScaleEditorMethod;
+    public static DoubleClickHandler? AxisStyleEditorMethod;
+    public static DoubleClickHandler? AxisLabelMajorStyleEditorMethod;
+    public static DoubleClickHandler? AxisLabelMinorStyleEditorMethod;
+    public static DoubleClickHandler? PlotItemEditorMethod;
 
     private bool EhAxisLabelMajorStyleRemove(IHitTestObject o)
     {
       var als = o.HittedObject as AxisLabelStyle;
-      AxisStyle axisStyle = als == null ? null : als.ParentObject as AxisStyle;
-      if (axisStyle != null)
+      if (als?.ParentObject is AxisStyle axisStyle)
       {
         axisStyle.HideMajorLabels();
         return true;
@@ -928,8 +930,7 @@ namespace Altaxo.Graph.Graph3D
     private bool EhAxisLabelMinorStyleRemove(IHitTestObject o)
     {
       var als = o.HittedObject as AxisLabelStyle;
-      AxisStyle axisStyle = als == null ? null : als.ParentObject as AxisStyle;
-      if (axisStyle != null)
+      if (als?.ParentObject is AxisStyle axisStyle)
       {
         axisStyle.HideMinorLabels();
         return true;
@@ -944,7 +945,7 @@ namespace Altaxo.Graph.Graph3D
     protected override void OnCachedResultingSizeChanged()
     {
       // first update out direct childs
-      if (null != CoordinateSystem)
+      if (_coordinateSystem is not null)
         _coordinateSystem = _coordinateSystem.WithLayerSize(Size);
 
       base.OnCachedResultingSizeChanged();
@@ -966,7 +967,7 @@ namespace Altaxo.Graph.Graph3D
 
     #region Handler of child events
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _coordinateSystem))
         OnCoordinateSystemChanged();
@@ -1260,7 +1261,7 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     /// <param name="name">The objects name.</param>
     /// <returns>The object with the specified name.</returns>
-    public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
+    public override Main.IDocumentLeafNode? GetChildObjectNamed(string name)
     {
       if (name == "PlotItems")
         return _plotItems;
@@ -1273,7 +1274,7 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     /// <param name="o">The object for which the name should be found.</param>
     /// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
-    public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
+    public override string? GetNameOfChildObject(Main.IDocumentLeafNode o)
     {
       if (object.ReferenceEquals(_plotItems, o))
         return "PlotItems";
@@ -1305,10 +1306,10 @@ namespace Altaxo.Graph.Graph3D
     {
       if (isDisposing)
       {
-        ChildDisposeMember(ref _scales);
-        ChildDisposeMember(ref _plotItems);
-        ChildDisposeMember(ref _axisStyles);
-        ChildDisposeMember(ref _gridPlanes);
+        ChildDisposeMember(ref _scales!);
+        ChildDisposeMember(ref _plotItems!);
+        ChildDisposeMember(ref _axisStyles!);
+        ChildDisposeMember(ref _gridPlanes!);
       }
       base.Dispose(isDisposing);
     }
@@ -1325,9 +1326,10 @@ namespace Altaxo.Graph.Graph3D
       {
         return _coordinateSystem;
       }
+      [MemberNotNull(nameof(_coordinateSystem))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         if (object.ReferenceEquals(_coordinateSystem, value))
@@ -1359,13 +1361,13 @@ namespace Altaxo.Graph.Graph3D
         public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           var s = (LegendText)obj;
-          info.AddBaseValueEmbedded(s, typeof(LegendText).BaseType);
+          info.AddBaseValueEmbedded(s, typeof(LegendText).BaseType!);
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
           var s = null != o ? (LegendText)o : new LegendText(info);
-          info.GetBaseValueEmbedded(s, typeof(LegendText).BaseType, this);
+          info.GetBaseValueEmbedded(s, typeof(LegendText).BaseType!, this);
           return s;
         }
       }

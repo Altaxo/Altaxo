@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -36,7 +38,7 @@ namespace Altaxo.Graph.Gdi
   {
     private ImageFormat _imageFormat;
     private PixelFormat _pixelFormat;
-    private BrushX _backgroundBrush;
+    private BrushX? _backgroundBrush;
     private double _sourceDpiResolution;
     private double _destinationDpiResolution;
 
@@ -54,18 +56,18 @@ namespace Altaxo.Graph.Gdi
 
         info.AddValue("ImageFormat", s._imageFormat);
         info.AddEnum("PixelFormat", s._pixelFormat);
-        info.AddValue("Background", s._backgroundBrush);
+        info.AddValueOrNull("Background", s._backgroundBrush);
         info.AddValue("SourceResolution", s._sourceDpiResolution);
         info.AddValue("DestinationResolution", s._destinationDpiResolution);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (GraphExportOptions)o : new GraphExportOptions();
+        var s = (GraphExportOptions?)o ?? new GraphExportOptions();
 
         s._imageFormat = (ImageFormat)info.GetValue("ImageFormat", s);
         s._pixelFormat = (PixelFormat)info.GetEnum("PixelFormat", typeof(PixelFormat));
-        s.BackgroundBrush = (BrushX)info.GetValue("Background", s);
+        s.BackgroundBrush = info.GetValueOrNull<BrushX>("Background", s);
         s._sourceDpiResolution = info.GetDouble("SourceResolution");
         s._destinationDpiResolution = info.GetDouble("DestinationResolution");
 
@@ -75,20 +77,24 @@ namespace Altaxo.Graph.Gdi
 
     #endregion Serialization
 
+    [MemberNotNull(nameof(_imageFormat))]
+    protected void CopyFrom(GraphExportOptions from)
+    {
+      _imageFormat = from.ImageFormat;
+      _pixelFormat = from.PixelFormat;
+      _backgroundBrush = from._backgroundBrush;
+      SourceDpiResolution = from.SourceDpiResolution;
+      DestinationDpiResolution = from.DestinationDpiResolution;
+    }
+
     public virtual bool CopyFrom(object obj)
     {
       if (object.ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as GraphExportOptions;
-
-      if (null != from)
+      if (obj is GraphExportOptions from)
       {
-        _imageFormat = from.ImageFormat;
-        _pixelFormat = from.PixelFormat;
-        _backgroundBrush = from._backgroundBrush;
-        SourceDpiResolution = from.SourceDpiResolution;
-        DestinationDpiResolution = from.DestinationDpiResolution;
+        CopyFrom(from);
         return true;
       }
 
@@ -123,7 +129,7 @@ namespace Altaxo.Graph.Gdi
 
     public PixelFormat PixelFormat { get { return _pixelFormat; } }
 
-    public BrushX BackgroundBrush
+    public BrushX? BackgroundBrush
     {
       get
       {
@@ -176,7 +182,7 @@ namespace Altaxo.Graph.Gdi
       return true;
     }
 
-    public BrushX GetDefaultBrush()
+    public BrushX? GetDefaultBrush()
     {
       if (IsVectorFormat(_imageFormat) || HasPixelFormatAlphaChannel(_pixelFormat))
         return null;
@@ -184,9 +190,9 @@ namespace Altaxo.Graph.Gdi
         return new BrushX(NamedColors.White);
     }
 
-    public BrushX GetBrushOrDefaultBrush()
+    public BrushX? GetBrushOrDefaultBrush()
     {
-      if (null != _backgroundBrush)
+      if (_backgroundBrush is not null)
         return _backgroundBrush;
       else
         return GetDefaultBrush();

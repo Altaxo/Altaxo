@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -46,27 +47,27 @@ namespace Altaxo.Graph.Gdi
 
     private void SetupOldAxis(int idx, Altaxo.Graph.Scales.Deprecated.Scale axis, bool isLinked, double orgA, double orgB, double endA, double endB)
     {
-      Scale transScale = null;
+      Scale? transScale = null;
       if (axis is Altaxo.Graph.Scales.Deprecated.TextScale)
         transScale = new TextScale();
       else if (axis is Altaxo.Graph.Scales.Deprecated.DateTimeScale)
         transScale = new DateTimeScale();
       else if (axis is Altaxo.Graph.Scales.Deprecated.Log10Scale)
         transScale = new Log10Scale();
-      else if (axis is Altaxo.Graph.Scales.Deprecated.AngularScale)
-        transScale = (axis as Altaxo.Graph.Scales.Deprecated.AngularScale).UseDegrees ? new AngularDegreeScale() : (Scale)new AngularRadianScale();
+      else if (axis is Altaxo.Graph.Scales.Deprecated.AngularScale angularScale)
+        transScale = angularScale.UseDegrees ? new AngularDegreeScale() : (Scale)new AngularRadianScale();
       else if (axis is Altaxo.Graph.Scales.Deprecated.LinearScale)
         transScale = new LinearScale();
       else
         throw new ArgumentException("Axis type unknown");
 
-      if (transScale.RescalingObject is IUnboundNumericScaleRescaleConditions)
-        (transScale.RescalingObject as IUnboundNumericScaleRescaleConditions).SetUserParameters(BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.Absolute, axis.OrgAsVariant, BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.Absolute, axis.EndAsVariant);
+      if (transScale.RescalingObject is IUnboundNumericScaleRescaleConditions unboundRecaleConditions)
+        unboundRecaleConditions.SetUserParameters(BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.Absolute, axis.OrgAsVariant, BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.Absolute, axis.EndAsVariant);
 
-      if (transScale.RescalingObject is Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions &&
-        axis.RescalingObject is Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions)
+      if (transScale.RescalingObject is NumericScaleRescaleConditions &&
+        axis.RescalingObject is NumericScaleRescaleConditions)
       {
-        ((Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions)transScale.RescalingObject).CopyFrom((Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions)axis.RescalingObject);
+        ((NumericScaleRescaleConditions)transScale.RescalingObject).CopyFrom((NumericScaleRescaleConditions)axis.RescalingObject);
       }
 
       if (isLinked)
@@ -165,7 +166,7 @@ namespace Altaxo.Graph.Gdi
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         XYPlotLayer s = SDeserialize(o, info, parent);
         s.CalculateMatrix();
@@ -173,9 +174,9 @@ namespace Altaxo.Graph.Gdi
         return s;
       }
 
-      protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual XYPlotLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        XYPlotLayer s = null != o ? (XYPlotLayer)o : new XYPlotLayer(info);
+        var s = (XYPlotLayer?)o ?? new XYPlotLayer(info);
 
         bool fillLayerArea = info.GetBoolean("FillLayerArea");
         var layerAreaFillBrush = (BrushX)info.GetValue("LayerAreaFillBrush", s);
@@ -300,7 +301,7 @@ namespace Altaxo.Graph.Gdi
                 */
       }
 
-      protected override XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected override XYPlotLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         XYPlotLayer s = base.SDeserialize(o, info, parent);
 
@@ -356,7 +357,7 @@ namespace Altaxo.Graph.Gdi
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         XYPlotLayer s = SDeserialize(o, info, parent);
         s.CalculateMatrix();
@@ -364,9 +365,9 @@ namespace Altaxo.Graph.Gdi
         return s;
       }
 
-      protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual XYPlotLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
+        var s = (XYPlotLayer?)o ?? new XYPlotLayer(info);
         int count;
 
         // Background
@@ -474,9 +475,9 @@ namespace Altaxo.Graph.Gdi
                 */
       }
 
-      protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual XYPlotLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
+        var s = (XYPlotLayer?)o ?? new XYPlotLayer(info);
         int count;
 
         // size, position, rotation and scale
@@ -529,7 +530,7 @@ namespace Altaxo.Graph.Gdi
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         XYPlotLayer s = SDeserialize(o, info, parent);
         s.CalculateMatrix();
@@ -590,9 +591,9 @@ namespace Altaxo.Graph.Gdi
                 */
       }
 
-      protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual XYPlotLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
+        var s = (XYPlotLayer?)o ?? new XYPlotLayer(info);
         int count;
 
         // size, position, rotation and scale
@@ -645,7 +646,7 @@ namespace Altaxo.Graph.Gdi
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         XYPlotLayer s = SDeserialize(o, info, parent);
         s.CalculateMatrix();
@@ -690,9 +691,9 @@ namespace Altaxo.Graph.Gdi
         info.AddValue("Plots", s._plotItems);
       }
 
-      protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual XYPlotLayer SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
+        var s = (XYPlotLayer?)o ?? new XYPlotLayer(info);
 
         info.GetBaseValueEmbedded(s, typeof(HostLayer), parent);
 
@@ -718,7 +719,7 @@ namespace Altaxo.Graph.Gdi
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         XYPlotLayer s = SDeserialize(o, info, parent);
         info.DeserializationFinished += s.EhDeserializationFinished;

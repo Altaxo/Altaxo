@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,15 +60,15 @@ namespace Altaxo.Graph.Graph3D
         var s = (ItemLocationDirectAspectPreserving)obj;
         info.AddValue("OriginalSize", s._originalItemSize);
         info.AddEnum("AspectPreserving", s._aspectPreserving);
-        info.AddBaseValueEmbedded(obj, typeof(ItemLocationDirectAspectPreserving).BaseType);
+        info.AddBaseValueEmbedded(obj, typeof(ItemLocationDirectAspectPreserving).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (ItemLocationDirectAspectPreserving)o : new ItemLocationDirectAspectPreserving();
+        var s = (ItemLocationDirectAspectPreserving?)o ?? new ItemLocationDirectAspectPreserving();
         s._originalItemSize = (VectorD3D)info.GetValue("OriginalSize", s);
         s._aspectPreserving = (AspectRatioPreservingMode)info.GetEnum("AspectPreserving", s._aspectPreserving.GetType());
-        info.GetBaseValueEmbedded(s, typeof(ItemLocationDirectAspectPreserving).BaseType, parent);
+        info.GetBaseValueEmbedded(s, typeof(ItemLocationDirectAspectPreserving).BaseType!, parent);
         return s;
       }
     }

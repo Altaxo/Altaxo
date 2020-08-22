@@ -22,12 +22,15 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -52,7 +55,7 @@ namespace Altaxo.Graph.Gdi
       {
         var s = (ClipboardRenderingOptions)obj;
 
-        info.AddBaseValueEmbedded(obj, s.GetType().BaseType);
+        info.AddBaseValueEmbedded(obj, s.GetType().BaseType!);
 
         info.AddValue("RenderDropFile", s._renderDropFile);
         if (s._renderDropFile)
@@ -65,11 +68,11 @@ namespace Altaxo.Graph.Gdi
         info.AddValue("RenderLinkedObject", s._renderLinkedObject);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (ClipboardRenderingOptions)o : new ClipboardRenderingOptions();
+        var s = (ClipboardRenderingOptions?)o ?? new ClipboardRenderingOptions();
 
-        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType!, parent);
 
         s._renderDropFile = info.GetBoolean("RenderDropFile");
         if (s._renderDropFile)
@@ -126,9 +129,9 @@ namespace Altaxo.Graph.Gdi
         throw new NotImplementedException();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (ClipboardRenderingOptions)o : new ClipboardRenderingOptions();
+        var s = (ClipboardRenderingOptions?)o ?? new ClipboardRenderingOptions();
 
         var oldBase = new GraphExportOptions();
         info.GetBaseValueEmbedded(oldBase, typeof(GraphExportOptions), parent);
@@ -160,6 +163,25 @@ namespace Altaxo.Graph.Gdi
       _renderDropFileBitmapPixelFormat = PixelFormat.Format32bppArgb;
     }
 
+
+
+    public ClipboardRenderingOptions(ClipboardRenderingOptions from)
+    {
+      CopyFrom(from ?? throw new ArgumentNullException(nameof(from)));
+    }
+
+    [MemberNotNull(nameof(_renderDropFileImageFormat))]
+    protected void CopyFrom(ClipboardRenderingOptions from)
+    {
+      base.CopyFrom(from);
+      _renderDropFile = from._renderDropFile;
+      _renderDropFileImageFormat = from._renderDropFileImageFormat;
+      _renderDropFileBitmapPixelFormat = from._renderDropFileBitmapPixelFormat;
+
+      _renderEmbeddedObject = from._renderEmbeddedObject;
+      _renderLinkedObject = from._renderLinkedObject;
+    }
+
     public override bool CopyFrom(object obj)
     {
       if (object.ReferenceEquals(this, obj))
@@ -169,20 +191,9 @@ namespace Altaxo.Graph.Gdi
       var from = obj as ClipboardRenderingOptions;
       if (null != from)
       {
-        _renderDropFile = from._renderDropFile;
-        _renderDropFileImageFormat = from._renderDropFileImageFormat;
-        _renderDropFileBitmapPixelFormat = from._renderDropFileBitmapPixelFormat;
-
-        _renderEmbeddedObject = from._renderEmbeddedObject;
-        _renderLinkedObject = from._renderLinkedObject;
+        CopyFrom(from);
       }
       return result;
-    }
-
-    public ClipboardRenderingOptions(ClipboardRenderingOptions from)
-      : base(from)
-    {
-      // since CopyFrom is virtual, nothing has to be done here
     }
 
     object ICloneable.Clone()

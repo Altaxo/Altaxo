@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -120,9 +121,9 @@ namespace Altaxo.Graph.Graph3D
         info.AddValue("ForceFitIntoCell", s._forceFitIntoCell);
       }
 
-      protected virtual ItemLocationByGrid SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual ItemLocationByGrid SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (ItemLocationByGrid)o : new ItemLocationByGrid();
+        var s = (ItemLocationByGrid?)o ?? new ItemLocationByGrid();
 
         s._gridPosX = info.GetDouble("PosX");
         s._gridPosY = info.GetDouble("PosY");
@@ -144,7 +145,7 @@ namespace Altaxo.Graph.Graph3D
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -194,9 +195,8 @@ namespace Altaxo.Graph.Graph3D
         EhSelfChanged();
         return true;
       }
-      else if (obj is IItemLocation)
+      else if (obj is IItemLocation from)
       {
-        var from = (IItemLocation)obj;
         _rotationX = from.RotationX;
         _rotationY = from.RotationY;
         _rotationZ = from.RotationZ;

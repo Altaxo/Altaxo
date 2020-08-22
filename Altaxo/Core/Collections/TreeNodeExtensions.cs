@@ -844,10 +844,10 @@ namespace Altaxo.Collections
     /// <returns><c>true</c> if the given index is valid; otherwise, <c>false</c>.</returns>
     public static bool IsValidIndex<T>(this T rootNode, IEnumerable<int> index, [MaybeNullWhen(false)] out T nodeAtIndex) where T : ITreeListNode<T>
     {
-      if (null == rootNode)
+      if (rootNode is null)
         throw new ArgumentNullException(nameof(rootNode));
 
-      if (null == index)
+      if (index is null)
       {
         nodeAtIndex = default;
         return false;

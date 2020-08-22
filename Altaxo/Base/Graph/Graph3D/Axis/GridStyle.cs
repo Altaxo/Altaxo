@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Drawing;
@@ -39,8 +40,8 @@ namespace Altaxo.Graph.Graph3D.Axis
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
     ICloneable
   {
-    private PenX3D _minorPen;
-    private PenX3D _majorPen;
+    private PenX3D? _minorPen;
+    private PenX3D? _majorPen;
     private bool _showGrid;
 
     private bool _showMinor;
@@ -62,33 +63,33 @@ namespace Altaxo.Graph.Graph3D.Axis
         if (s._showGrid)
         {
           info.AddValue("ZeroOnly", s._showZeroOnly);
-          info.AddValue("MajorPen", s._majorPen);
+          info.AddValueOrNull("MajorPen", s._majorPen);
           info.AddValue("ShowMinor", s._showMinor);
           if (s._showMinor)
-            info.AddValue("MinorPen", s._minorPen);
+            info.AddValueOrNull("MinorPen", s._minorPen);
         }
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         GridStyle s = SDeserialize(o, info, parent);
         return s;
       }
 
-      protected virtual GridStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual GridStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        GridStyle s = null != o ? (GridStyle)o : new GridStyle();
+        var s = (GridStyle?)o ?? new GridStyle();
 
         s._showGrid = info.GetBoolean("Visible");
         if (s._showGrid)
         {
           s._showZeroOnly = info.GetBoolean("ZeroOnly");
-          s._majorPen = (PenX3D)info.GetValue("MajorPen", s);
+          s._majorPen = info.GetValueOrNull<PenX3D>("MajorPen", s);
 
           s._showMinor = info.GetBoolean("ShowMinor");
           if (s._showMinor)
           {
-            s._minorPen = (PenX3D)info.GetValue("MinorPen", s);
+            s._minorPen = info.GetValueOrNull<PenX3D>("MinorPen", s);
           }
         }
 
@@ -113,8 +114,8 @@ namespace Altaxo.Graph.Graph3D.Axis
       if (object.ReferenceEquals(this, from))
         return;
 
-      MajorPen = from._majorPen;
-      MinorPen = from._minorPen;
+      _majorPen = from._majorPen;
+      _minorPen = from._minorPen;
       _showGrid = from._showGrid;
       _showMinor = from._showMinor;
       _showZeroOnly = from._showZeroOnly;
@@ -129,18 +130,12 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       get
       {
-        if (null == _majorPen)
-          MajorPen = new PenX3D(NamedColors.Blue, 1);
-        return _majorPen;
+        return _majorPen ??= new PenX3D(NamedColors.Blue, 1);
       }
       set
       {
-        var oldValue = _majorPen;
-        _majorPen = value;
-        if (!object.ReferenceEquals(oldValue, value))
-        {
+        if(ChildSetMemberAlt(ref _majorPen, value))
           EhSelfChanged(EventArgs.Empty);
-        }
       }
     }
 
@@ -148,19 +143,12 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       get
       {
-        if (null == _minorPen)
-          MinorPen = new PenX3D(NamedColors.LightBlue, 1);
-
-        return _minorPen;
+        return _minorPen??= new PenX3D(NamedColors.LightBlue, 1);
       }
       set
       {
-        var oldValue = _majorPen;
-        _minorPen = value;
-        if (!object.ReferenceEquals(oldValue, value))
-        {
+        if (ChildSetMemberAlt(ref _minorPen, value))
           EhSelfChanged(EventArgs.Empty);
-        }
       }
     }
 

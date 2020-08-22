@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -89,7 +90,7 @@ namespace Altaxo.Graph.Gdi
     public static void Print(this GraphDocument doc)
     {
       var printTask = new GraphDocumentPrintTask(doc);
-      Exception ex = null;
+      Exception? ex = null;
       try
       {
         Current.PrintingService.PrintDocument.PrintPage += printTask.EhPrintPage;
@@ -134,15 +135,11 @@ namespace Altaxo.Graph.Gdi
     {
     }
 
-    public GraphDocumentPrintTask(HostLayer rootLayer, SingleGraphPrintOptions options)
+    public GraphDocumentPrintTask(HostLayer rootLayer, SingleGraphPrintOptions? options)
     {
       _layers = rootLayer;
-      _printOptions = options;
-
+      _printOptions = options ?? new SingleGraphPrintOptions();
       _page = 0;
-
-      if (null == _printOptions)
-        _printOptions = new SingleGraphPrintOptions();
     }
 
     /// <summary>
