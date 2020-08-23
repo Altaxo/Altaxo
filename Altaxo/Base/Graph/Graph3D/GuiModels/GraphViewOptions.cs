@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,9 @@ namespace Altaxo.Graph.Graph3D.GuiModels
     }
 
     /// <summary>Private constructor for deserialization.</summary>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     private GraphViewOptions(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
@@ -66,8 +69,8 @@ namespace Altaxo.Graph.Graph3D.GuiModels
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphViewOptions), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      private AbsoluteDocumentPath _pathToGraphDocument;
-      private GraphViewOptions _deserializedObject;
+      private AbsoluteDocumentPath? _pathToGraphDocument;
+      private GraphViewOptions? _deserializedObject;
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -76,9 +79,9 @@ namespace Altaxo.Graph.Graph3D.GuiModels
         info.AddNullableEnum("RootLayerMarkersVisibility", s._rootLayerMarkersVisibility);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (GraphViewOptions)o ?? new GraphViewOptions(info);
+        var s = (GraphViewOptions?)o ?? new GraphViewOptions(info);
 
         var pathToGraph = (AbsoluteDocumentPath)info.GetValue("Graph", s);
         s._rootLayerMarkersVisibility = info.GetNullableEnum<RootLayerMarkersVisibility>("RootLayerMarkersVisibility");
@@ -91,13 +94,13 @@ namespace Altaxo.Graph.Graph3D.GuiModels
 
       private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IDocumentNode documentRoot, bool isFinallyCall)
       {
-        var o = AbsoluteDocumentPath.GetObject(_pathToGraphDocument, documentRoot);
-        if (o is GraphDocument)
+        var o = AbsoluteDocumentPath.GetObject(_pathToGraphDocument!, documentRoot);
+        if (o is GraphDocument gd && _deserializedObject is not null)
         {
-          _deserializedObject._graphDocument = (GraphDocument)o;
+          _deserializedObject._graphDocument = gd;
         }
 
-        if (null != _deserializedObject._graphDocument || isFinallyCall)
+        if (_deserializedObject?._graphDocument is not null || isFinallyCall)
         {
           info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
         }

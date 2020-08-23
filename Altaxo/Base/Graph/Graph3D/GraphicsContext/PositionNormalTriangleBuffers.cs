@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,9 +34,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
   public struct PositionNormalIndexedTriangleBuffers
   {
     public IIndexedTriangleBuffer IndexedTriangleBuffer;
-    public IPositionNormalIndexedTriangleBuffer PositionNormalIndexedTriangleBuffer;
-    public IPositionNormalColorIndexedTriangleBuffer PositionNormalColorIndexedTriangleBuffer;
-    public IPositionNormalUVIndexedTriangleBuffer PositionNormalUVIndexedTriangleBuffer;
+    public IPositionNormalIndexedTriangleBuffer? PositionNormalIndexedTriangleBuffer;
+    public IPositionNormalColorIndexedTriangleBuffer? PositionNormalColorIndexedTriangleBuffer;
+    public IPositionNormalUVIndexedTriangleBuffer? PositionNormalUVIndexedTriangleBuffer;
   }
 
   public struct PositionIndexedTriangleBuffers
