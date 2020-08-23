@@ -89,9 +89,9 @@ namespace Altaxo.Graph.Gdi.GraphTemplates
     /// <param name="anyNameInSameFolder">Any name of an item in the same folder. This name is used to determine the destination folder of the graph.</param>
     /// <param name="includeInProject">If <c>true</c>, the graph is also included into the current project.</param>
     /// <returns>The created graph. The graph is already part of the project. (But no view is created for the graph).</returns>
-    public static GraphDocument CreateGraph(IReadOnlyPropertyBag propertyContext, string preferredGraphName, string anyNameInSameFolder, bool includeInProject)
+    public static GraphDocument CreateGraph(IReadOnlyPropertyBag propertyContext, string? preferredGraphName, string anyNameInSameFolder, bool includeInProject)
     {
-      if (null == propertyContext)
+      if (propertyContext is null)
         propertyContext = PropertyExtensions.GetPropertyContextOfProject();
 
       GraphDocument graph;
