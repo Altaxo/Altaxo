@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
@@ -49,9 +51,9 @@ namespace Altaxo.Graph.Gdi.Background
         var s = (BlackOut)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        BlackOut s = null != o ? (BlackOut)o : new BlackOut();
+        var s = (BlackOut?)o ?? new BlackOut();
 
         return s;
       }
@@ -98,6 +100,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public bool SupportsBrush { get { return false; } }
 
+    [MaybeNull]
     public BrushX Brush
     {
       get

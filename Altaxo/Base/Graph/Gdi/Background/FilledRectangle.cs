@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
@@ -53,9 +55,9 @@ namespace Altaxo.Graph.Gdi.Background
         info.AddValue("Brush", s._brush);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        FilledRectangle s = null != o ? (FilledRectangle)o : new FilledRectangle();
+        var s = (FilledRectangle?)o ?? new FilledRectangle();
         s._brush = (BrushX)info.GetValue("Brush", s);
         return s;
       }
@@ -65,6 +67,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public FilledRectangle()
     {
+      _brush = BrushesX.Black;
     }
 
     public FilledRectangle(NamedColor c)
@@ -82,10 +85,13 @@ namespace Altaxo.Graph.Gdi.Background
       CopyFrom(from);
     }
 
+    [MemberNotNull(nameof(_brush))]
     public void CopyFrom(FilledRectangle from)
     {
       if (object.ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       Brush = from._brush;
     }
@@ -131,6 +137,7 @@ namespace Altaxo.Graph.Gdi.Background
       {
         return _brush;
       }
+      [MemberNotNull(nameof(_brush))]
       set
       {
         if (!(_brush == value))

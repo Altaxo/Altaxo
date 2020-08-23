@@ -652,11 +652,11 @@ namespace Altaxo.Drawing
       return Equals(obj as BrushX);
     }
 
-    public static bool operator ==(BrushX x, BrushX y)
+    public static bool operator ==(BrushX? x, BrushX? y)
     {
       return x is { } _ ? x.Equals(y) : y is { } _ ? y.Equals(x) : true;
     }
-    public static bool operator !=(BrushX x, BrushX y)
+    public static bool operator !=(BrushX? x, BrushX? y)
     {
       return !(x == y);
     }

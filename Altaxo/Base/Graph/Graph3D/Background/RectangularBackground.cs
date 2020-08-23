@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,9 +76,9 @@ namespace Altaxo.Graph.Graph3D.Background
         info.AddValue("CustomThickness", s._customThickness);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (RectangularBackground)o ?? new RectangularBackground();
+        var s = (RectangularBackground?)o ?? new RectangularBackground();
         s._material = (IMaterial)info.GetValue("Material", s);
         s._padding = (Margin2D)info.GetValue("Padding", s);
         s._customDistance = info.GetNullableDouble("CustomDistance");

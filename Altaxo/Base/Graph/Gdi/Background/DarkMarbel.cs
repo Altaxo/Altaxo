@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
@@ -57,9 +59,9 @@ namespace Altaxo.Graph.Gdi.Background
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DarkMarbel s = null != o ? (DarkMarbel)o : new DarkMarbel();
+        var s =  (DarkMarbel?)o ?? new DarkMarbel();
         s.Brush = new BrushX((NamedColor)info.GetValue("Color", s));
         s._shadowLength = info.GetDouble();
 
@@ -78,9 +80,9 @@ namespace Altaxo.Graph.Gdi.Background
         info.AddValue("ShadowLength", s._shadowLength);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DarkMarbel s = null != o ? (DarkMarbel)o : new DarkMarbel();
+        var s = (DarkMarbel?)o ?? new DarkMarbel();
         s.Brush = (BrushX)info.GetValue("Brush", s);
         s._shadowLength = info.GetDouble();
 
@@ -97,7 +99,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public DarkMarbel(NamedColor c)
     {
-      Brush = new BrushX(c);
+     _brush = new BrushX(c);
     }
 
     public DarkMarbel(DarkMarbel from)
@@ -105,13 +107,16 @@ namespace Altaxo.Graph.Gdi.Background
       CopyFrom(from);
     }
 
+    [MemberNotNull(nameof(_brush))]
     public void CopyFrom(DarkMarbel from)
     {
       if (object.ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       _shadowLength = from._shadowLength;
-      Brush = from._brush;
+      _brush = from._brush;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -179,12 +184,14 @@ namespace Altaxo.Graph.Gdi.Background
       }
     }
 
+    [MaybeNull]
     public BrushX Brush
     {
       get
       {
         return _brush;
       }
+      [MemberNotNull(nameof(_brush))]
       set
       {
         if (!(_brush == value))
