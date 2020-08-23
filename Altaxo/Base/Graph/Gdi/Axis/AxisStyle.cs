@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using Altaxo.Geometry;
 using Altaxo.Graph.Gdi.Shapes;
@@ -46,27 +48,27 @@ namespace Altaxo.Graph.Gdi.Axis
     private CSLineID _styleID;
 
     /// <summary>If not <c>null</c>, this is a custom tick spacing for the axis line that overrides the default tick spacing of the scaleWithTicks.</summary>
-    protected TickSpacing _customTickSpacing;
+    protected TickSpacing? _customTickSpacing;
 
     /// <summary>Style of axis. Determines the line width and color of the axis and the ticks.</summary>
-    protected AxisLineStyle _axisLineStyle;
+    protected AxisLineStyle? _axisLineStyle;
 
     /// <summary>
     /// Determines the style of the major labels.
     /// </summary>
-    private AxisLabelStyle _majorLabelStyle;
+    private AxisLabelStyle? _majorLabelStyle;
 
     /// <summary>
     /// Determines the style of the minor labels.
     /// </summary>
-    private AxisLabelStyle _minorLabelStyle;
+    private AxisLabelStyle? _minorLabelStyle;
 
     /// <summary>
     /// The title of the axis.
     /// </summary>
-    private TextGraphic _axisTitle;
+    private TextGraphic? _axisTitle;
 
-    private CSAxisInformation _cachedAxisInfo;
+    private CSAxisInformation? _cachedAxisInfo;
 
     #region Serialization
 
@@ -92,33 +94,33 @@ namespace Altaxo.Graph.Gdi.Axis
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         AxisStyle s = SDeserialize(o, info, parent);
         return s;
       }
 
-      protected virtual AxisStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AxisStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisStyle s = null != o ? (AxisStyle)o : new AxisStyle();
+        var s = (AxisStyle?)o ?? new AxisStyle(info);
 
         // Styles
         bool showAxis = info.GetBoolean("ShowAxis");
         var edge = (EdgeType)info.GetEnum("Edge", typeof(EdgeType));
-        s.AxisLineStyle = (AxisLineStyle)info.GetValue("AxisStyle", s);
+        s.AxisLineStyle = info.GetValueOrNull<AxisLineStyle>("AxisStyle", s);
         bool showMajorLabels = info.GetBoolean("ShowMajorLabels");
         if (showMajorLabels)
-          s.MajorLabelStyle = (AxisLabelStyle)info.GetValue("MajorLabelStyle", s);
+          s.MajorLabelStyle = info.GetValueOrNull<AxisLabelStyle>("MajorLabelStyle", s);
         else
           s.MajorLabelStyle = null;
 
         bool showMinorLabels = info.GetBoolean("ShowMinorLabels");
         if (showMinorLabels)
-          s.MinorLabelStyle = (AxisLabelStyle)info.GetValue("MinorLabelStyle", s);
+          s.MinorLabelStyle = info.GetValueOrNull<AxisLabelStyle>("MinorLabelStyle", s);
         else
           s.MinorLabelStyle = null;
 
-        s.Title = (TextGraphic)info.GetValue("AxisTitle", s);
+        s.Title = info.GetValueOrNull<TextGraphic>("AxisTitle", s);
 
         if (!showAxis)
         {
@@ -165,6 +167,8 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new InvalidOperationException("Serialization of old version");
+        /*
         var s = (AxisStyle)obj;
 
         info.AddValue("StyleID", s._styleID);
@@ -172,24 +176,25 @@ namespace Altaxo.Graph.Gdi.Axis
         info.AddValue("MajorLabelStyle", s._majorLabelStyle);
         info.AddValue("MinorLabelStyle", s._minorLabelStyle);
         info.AddValue("AxisTitle", s._axisTitle);
+        */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         AxisStyle s = SDeserialize(o, info, parent);
         return s;
       }
 
-      protected virtual AxisStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AxisStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisStyle s = null != o ? (AxisStyle)o : new AxisStyle();
+        var s = (AxisStyle?)o ?? new AxisStyle(info);
 
         // Styles
         s._styleID = (CSLineID)info.GetValue("StyleID", s);
-        s.AxisLineStyle = (AxisLineStyle)info.GetValue("AxisStyle", s);
-        s.MajorLabelStyle = (AxisLabelStyle)info.GetValue("MajorLabelStyle", s);
-        s.MinorLabelStyle = (AxisLabelStyle)info.GetValue("MinorLabelStyle", s);
-        s.Title = (TextGraphic)info.GetValue("AxisTitle", s);
+        s.AxisLineStyle = info.GetValueOrNull<AxisLineStyle>("AxisStyle", s);
+        s.MajorLabelStyle = info.GetValueOrNull<AxisLabelStyle>("MajorLabelStyle", s);
+        s.MinorLabelStyle = info.GetValueOrNull<AxisLabelStyle>("MinorLabelStyle", s);
+        s.Title = info.GetValueOrNull<TextGraphic>("AxisTitle", s);
 
         return s;
       }
@@ -204,30 +209,30 @@ namespace Altaxo.Graph.Gdi.Axis
         var s = (AxisStyle)obj;
 
         info.AddValue("StyleID", s._styleID);
-        info.AddValue("TickSpacing", s._customTickSpacing);
-        info.AddValue("AxisStyle", s._axisLineStyle);
-        info.AddValue("MajorLabelStyle", s._majorLabelStyle);
-        info.AddValue("MinorLabelStyle", s._minorLabelStyle);
-        info.AddValue("AxisTitle", s._axisTitle);
+        info.AddValueOrNull("TickSpacing", s._customTickSpacing);
+        info.AddValueOrNull("AxisStyle", s._axisLineStyle);
+        info.AddValueOrNull("MajorLabelStyle", s._majorLabelStyle);
+        info.AddValueOrNull("MinorLabelStyle", s._minorLabelStyle);
+        info.AddValueOrNull("AxisTitle", s._axisTitle);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         AxisStyle s = SDeserialize(o, info, parent);
         return s;
       }
 
-      protected virtual AxisStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AxisStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisStyle s = null != o ? (AxisStyle)o : new AxisStyle();
+       var s = (AxisStyle?)o ?? new AxisStyle(info);
 
         // Styles
         s._styleID = (CSLineID)info.GetValue("StyleID", s);
-        s.TickSpacing = (TickSpacing)info.GetValue("TickSpacing", s);
-        s.AxisLineStyle = (AxisLineStyle)info.GetValue("AxisStyle", s);
-        s.MajorLabelStyle = (AxisLabelStyle)info.GetValue("MajorLabelStyle", s);
-        s.MinorLabelStyle = (AxisLabelStyle)info.GetValue("MinorLabelStyle", s);
-        s.Title = (TextGraphic)info.GetValue("AxisTitle", s);
+        s.TickSpacing = info.GetValueOrNull<TickSpacing>("TickSpacing", s);
+        s.AxisLineStyle = info.GetValueOrNull<AxisLineStyle>("AxisStyle", s);
+        s.MajorLabelStyle = info.GetValueOrNull<AxisLabelStyle>("MajorLabelStyle", s);
+        s.MinorLabelStyle = info.GetValueOrNull<AxisLabelStyle>("MinorLabelStyle", s);
+        s.Title = info.GetValueOrNull<TextGraphic>("AxisTitle", s);
 
         return s;
       }
@@ -235,35 +240,47 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #endregion Serialization
 
-    protected AxisStyle()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    protected AxisStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
+    }
+
+    public AxisStyle(AxisStyle from)
+    {
+      CopyFrom(from);
     }
 
     public bool CopyFrom(object obj)
     {
-      var from = obj as AxisStyle;
-      if (null == from)
-        return false;
-
-      if (!object.ReferenceEquals(this, from))
+      if (object.ReferenceEquals(this, obj))
+        return true;
+      if (obj is AxisStyle from)
       {
-        _styleID = from._styleID; // immutable
-        _cachedAxisInfo = from._cachedAxisInfo; // attention - have to appear _before_ CopyWithoutIdFrom, since the _cachedAxisInfo is used when cloning AxisLineStyle!
-        CopyWithoutIdFrom(from);
+        CopyFrom(from);
+        return true;
       }
-      return true;
+      return false;
+    }
+
+    [MemberNotNull(nameof(_styleID))]
+    public void CopyFrom(AxisStyle from)
+    {
+      _styleID = from._styleID; // immutable
+      _cachedAxisInfo = from._cachedAxisInfo; // attention - have to appear _before_ CopyWithoutIdFrom, since the _cachedAxisInfo is used when cloning AxisLineStyle!
+      CopyWithoutIdFrom(from);
     }
 
     public void CopyWithoutIdFrom(AxisStyle from)
     {
-      TickSpacing = from._customTickSpacing == null ? null : (TickSpacing)from._customTickSpacing.Clone();
-      AxisLineStyle = from._axisLineStyle == null ? null : (AxisLineStyle)from._axisLineStyle.Clone();
-      MajorLabelStyle = from._majorLabelStyle == null ? null : (AxisLabelStyle)from._majorLabelStyle.Clone();
-      MinorLabelStyle = from._minorLabelStyle == null ? null : (AxisLabelStyle)from._minorLabelStyle.Clone();
-      Title = from._axisTitle == null ? null : (TextGraphic)from._axisTitle.Clone();
+      ChildCloneToMember(ref _customTickSpacing, from._customTickSpacing);
+      ChildCloneToMember(ref _axisLineStyle, from._axisLineStyle);
+      ChildCloneToMember(ref _majorLabelStyle, from._majorLabelStyle);
+      ChildCloneToMember(ref _minorLabelStyle, from._minorLabelStyle);
+      ChildCloneToMember(ref _axisTitle, from._axisTitle);
     }
 
-    public AxisStyle(CSLineID id, bool isAxisLineEnabled, bool areMajorTicksEnabled, bool areMinorTicksEnabled, string axisTitleOrNull, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    public AxisStyle(CSLineID id, bool isAxisLineEnabled, bool areMajorTicksEnabled, bool areMinorTicksEnabled, string? axisTitleOrNull, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       _styleID = id;
 
@@ -318,7 +335,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    public CSAxisInformation CachedAxisInformation
+    public CSAxisInformation? CachedAxisInformation
     {
       get
       {
@@ -369,7 +386,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <value>
     /// The tick spacing.
     /// </value>
-    public TickSpacing TickSpacing
+    public TickSpacing? TickSpacing
     {
       get
       {
@@ -404,8 +421,10 @@ namespace Altaxo.Graph.Gdi.Axis
       }
 
       CachedAxisInformation = GetAxisStyleInformation(_styleID);
+      if (_cachedAxisInfo is null)
+        throw new InvalidOperationException($"{nameof(_cachedAxisInfo)} is null");
 
-      if (null != _customTickSpacing)
+      if (_customTickSpacing is not null)
       {
         CSLineID styleID = _cachedAxisInfo.Identifier;
         Scale scale = layer.Scales[styleID.ParallelAxisNumber];
@@ -437,7 +456,10 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public void PaintLine(Graphics g, IPlotArea layer)
     {
-      if (IsAxisLineEnabled)
+      if (_cachedAxisInfo is null)
+        throw new InvalidOperationException($"{nameof(_cachedAxisInfo)} is null");
+
+      if (_axisLineStyle is not null)
       {
         _axisLineStyle.Paint(g, layer, _cachedAxisInfo, _customTickSpacing);
       }
@@ -445,7 +467,10 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public void PaintMajorLabels(Graphics g, IPlotArea layer)
     {
-      if (AreMajorLabelsEnabled)
+      if (_cachedAxisInfo is null)
+        throw new InvalidOperationException($"{nameof(_cachedAxisInfo)} is null");
+
+      if (_majorLabelStyle is not null)
       {
         var labelSide = _majorLabelStyle.PredictLabelSide(_cachedAxisInfo);
         var outerDistance = null == _axisLineStyle ? 0 : _axisLineStyle.GetOuterDistance(labelSide);
@@ -456,7 +481,10 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public void PaintMinorLabels(Graphics g, IPlotArea layer)
     {
-      if (AreMinorLabelsEnabled)
+      if (_cachedAxisInfo is null)
+        throw new InvalidOperationException($"{nameof(_cachedAxisInfo)} is null");
+
+      if (_minorLabelStyle is not null)
       {
         var labelSide = _minorLabelStyle.PredictLabelSide(_cachedAxisInfo);
         var outerDistance = null == _axisLineStyle ? 0 : _axisLineStyle.GetOuterDistance(labelSide);
@@ -467,7 +495,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public void PaintTitle(Graphics g, IPaintContext paintContext, IPlotArea layer)
     {
-      if (IsTitleEnabled)
+      if (_axisTitle is not null)
       {
         _axisTitle.Paint(g, paintContext);
       }
@@ -556,14 +584,13 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    [MemberNotNull(nameof(_axisTitle))]
     public void ShowTitle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (_axisTitle == null)
+      if (_axisTitle is null)
       {
-        Title = new TextGraphic(context)
-        {
-          Text = "axis title"
-        };
+        ChildSetMember(ref _axisTitle, new TextGraphic(context) { Text = "axis title" });
+        EhSelfChanged(EventArgs.Empty);
       }
     }
 
@@ -573,7 +600,7 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
     /// <summary>Style of axis. Determines the line width and color of the axis and the ticks.</summary>
-    public AxisLineStyle AxisLineStyle
+    public AxisLineStyle? AxisLineStyle
     {
       get
       {
@@ -581,17 +608,11 @@ namespace Altaxo.Graph.Gdi.Axis
       }
       set
       {
-        AxisLineStyle oldvalue = _axisLineStyle;
-        _axisLineStyle = value;
-
-        if (null != value)
+        if (ChildSetMember(ref _axisLineStyle, value))
         {
-          value.ParentObject = this;
-          value.CachedAxisInformation = _cachedAxisInfo;
-        }
+          if (_axisLineStyle is not null)
+            _axisLineStyle.CachedAxisInformation = _cachedAxisInfo;
 
-        if (!object.ReferenceEquals(value, oldvalue))
-        {
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -600,7 +621,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>
     /// Determines the style of the major labels.
     /// </summary>
-    public AxisLabelStyle MajorLabelStyle
+    public AxisLabelStyle? MajorLabelStyle
     {
       get
       {
@@ -608,25 +629,15 @@ namespace Altaxo.Graph.Gdi.Axis
       }
       set
       {
-        var oldvalue = _majorLabelStyle;
-        _majorLabelStyle = value;
-
-        if (null != _majorLabelStyle)
-        {
-          _majorLabelStyle.ParentObject = this;
-        }
-
-        if (!object.ReferenceEquals(value, oldvalue))
-        {
+        if (ChildSetMember(ref _majorLabelStyle, value))
           EhSelfChanged(EventArgs.Empty);
-        }
       }
     }
 
     /// <summary>
     /// Determines the style of the minor labels.
     /// </summary>
-    public AxisLabelStyle MinorLabelStyle
+    public AxisLabelStyle? MinorLabelStyle
     {
       get
       {
@@ -634,44 +645,27 @@ namespace Altaxo.Graph.Gdi.Axis
       }
       set
       {
-        var oldvalue = _minorLabelStyle;
-        _minorLabelStyle = value;
-
-        if (null != value)
-          value.ParentObject = this;
-
-        if (!object.ReferenceEquals(value, oldvalue))
-        {
+        if (ChildSetMember(ref _minorLabelStyle, value))
           EhSelfChanged(EventArgs.Empty);
-        }
       }
     }
 
-    public TextGraphic Title
+    public TextGraphic? Title
     {
       get { return _axisTitle; }
       set
       {
-        TextGraphic oldvalue = _axisTitle;
-        _axisTitle = value;
-
-        if (null != value)
-          value.ParentObject = this;
-
-        if (!object.ReferenceEquals(_axisTitle, oldvalue))
-        {
+        if (ChildSetMember(ref _axisTitle, value))
           EhSelfChanged(EventArgs.Empty);
-        }
       }
     }
 
     public string TitleText
     {
-      get { return null == _axisTitle ? string.Empty : _axisTitle.Text; }
+      get { return _axisTitle?.Text ?? string.Empty; }
       set
       {
-        string oldvalue = TitleText;
-        if (value != oldvalue)
+        if (!(TitleText == value))
         {
           if (string.IsNullOrEmpty(value))
           {
@@ -679,14 +673,12 @@ namespace Altaxo.Graph.Gdi.Axis
           }
           else
           {
-            if (_axisTitle == null)
+            if (_axisTitle is null)
             {
-              Title = new TextGraphic(this.GetPropertyContext()) { ParentObject = this };
+              ChildSetMember(ref _axisTitle, new TextGraphic(this.GetPropertyContext()));
             }
-
             _axisTitle.Text = value;
           }
-
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -698,9 +690,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public object Clone()
     {
-      var res = new AxisStyle();
-      res.CopyFrom(this);
-      return res;
+      return new AxisStyle(this);
     }
 
     #endregion ICloneable Members

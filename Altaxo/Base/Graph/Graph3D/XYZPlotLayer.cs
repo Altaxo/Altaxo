@@ -719,8 +719,8 @@ namespace Altaxo.Graph.Graph3D
     private void SetAxisTitleString(CSLineID id, string value)
     {
       var style = _axisStyles[id];
-      string? oldtitle = (style is null || style.Title is null) ? null : style.Title.Text;
-      string? newtitle = string.IsNullOrEmpty(value) ? null : value;
+      var oldtitle = style?.Title?.Text;
+      var newtitle = string.IsNullOrEmpty(value) ? null : value;
 
       if (newtitle != oldtitle)
       {

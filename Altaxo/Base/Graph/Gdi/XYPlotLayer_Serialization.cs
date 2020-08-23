@@ -185,7 +185,7 @@ namespace Altaxo.Graph.Gdi
         {
           if (!s.GridPlanes.Contains(CSPlaneID.Front))
             s.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
-          s.GridPlanes[CSPlaneID.Front].Background = layerAreaFillBrush;
+          s.GridPlanes[CSPlaneID.Front]!.Background = layerAreaFillBrush;
         }
 
         // size, position, rotation and scale
@@ -234,16 +234,16 @@ namespace Altaxo.Graph.Gdi
         s._axisStyles.AxisStyleEnsured(CSLineID.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", s);
         s._axisStyles.AxisStyleEnsured(CSLineID.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", s);
 
-        s._axisStyles[CSLineID.Y0].MajorLabelStyle = (AxisLabelStyle)info.GetValue("LeftLabelStyle", s);
-        s._axisStyles[CSLineID.X0].MajorLabelStyle = (AxisLabelStyle)info.GetValue("BottomLabelStyle", s);
-        s._axisStyles[CSLineID.Y1].MajorLabelStyle = (AxisLabelStyle)info.GetValue("RightLabelStyle", s);
-        s._axisStyles[CSLineID.X1].MajorLabelStyle = (AxisLabelStyle)info.GetValue("TopLabelStyle", s);
+        s._axisStyles[CSLineID.Y0]!.MajorLabelStyle = (AxisLabelStyle)info.GetValue("LeftLabelStyle", s);
+        s._axisStyles[CSLineID.X0]!.MajorLabelStyle = (AxisLabelStyle)info.GetValue("BottomLabelStyle", s);
+        s._axisStyles[CSLineID.Y1]!.MajorLabelStyle = (AxisLabelStyle)info.GetValue("RightLabelStyle", s);
+        s._axisStyles[CSLineID.X1]!.MajorLabelStyle = (AxisLabelStyle)info.GetValue("TopLabelStyle", s);
 
         // Titles and legend
-        s._axisStyles[CSLineID.Y0].Title = (TextGraphic)info.GetValue("LeftAxisTitle", s);
-        s._axisStyles[CSLineID.X0].Title = (TextGraphic)info.GetValue("BottomAxisTitle", s);
-        s._axisStyles[CSLineID.Y1].Title = (TextGraphic)info.GetValue("RightAxisTitle", s);
-        s._axisStyles[CSLineID.X1].Title = (TextGraphic)info.GetValue("TopAxisTitle", s);
+        s._axisStyles[CSLineID.Y0]!.Title = (TextGraphic)info.GetValue("LeftAxisTitle", s);
+        s._axisStyles[CSLineID.X0]!.Title = (TextGraphic)info.GetValue("BottomAxisTitle", s);
+        s._axisStyles[CSLineID.Y1]!.Title = (TextGraphic)info.GetValue("RightAxisTitle", s);
+        s._axisStyles[CSLineID.X1]!.Title = (TextGraphic)info.GetValue("TopAxisTitle", s);
 
         if (!showLeft)
           s._axisStyles.Remove(CSLineID.Y0);
@@ -376,7 +376,7 @@ namespace Altaxo.Graph.Gdi
         {
           if (!s.GridPlanes.Contains(CSPlaneID.Front))
             s.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
-          s.GridPlanes[CSPlaneID.Front].Background = bgs.Brush;
+          s.GridPlanes[CSPlaneID.Front]!.Background = bgs.Brush;
         }
 
         // size, position, rotation and scale

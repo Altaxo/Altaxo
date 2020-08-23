@@ -692,7 +692,7 @@ namespace Altaxo.Graph.Gdi
 
     private void SetAxisTitleString(CSLineID id, string value)
     {
-      AxisStyle style = _axisStyles[id];
+      var style = _axisStyles[id];
       var oldtitle = style?.Title?.Text;
       var newtitle = string.IsNullOrEmpty(value) ? null : value;
 
@@ -703,9 +703,9 @@ namespace Altaxo.Graph.Gdi
           if (style != null)
             style.Title = null;
         }
-        else if (_axisStyles.AxisStyleEnsured(id).Title != null)
+        else if (_axisStyles.AxisStyleEnsured(id).Title is { } title)
         {
-          _axisStyles[id].Title.Text = newtitle;
+          title.Text = newtitle;
         }
         else
         {
@@ -738,13 +738,13 @@ namespace Altaxo.Graph.Gdi
       axisTitle.Location.ParentAnchorY = RADouble.NewRel(location.Y / Size.Y); // set the y anchor of the parent
 
       double distance = 0;
-      AxisStyle axisStyle = _axisStyles[id];
-      if (null != axisStyle.AxisLineStyle)
+      var axisStyle = _axisStyles[id];
+      if (axisStyle?.AxisLineStyle is not null)
         distance += axisStyle.AxisLineStyle.GetOuterDistance(info.PreferredLabelSide);
       double labelFontSize = 0;
-      if (axisStyle.AreMajorLabelsEnabled)
+      if (axisStyle?.MajorLabelStyle is not null)
         labelFontSize = Math.Max(labelFontSize, axisStyle.MajorLabelStyle.FontSize);
-      if (axisStyle.AreMinorLabelsEnabled)
+      if (axisStyle?.MinorLabelStyle is not null)
         labelFontSize = Math.Max(labelFontSize, axisStyle.MinorLabelStyle.FontSize);
       const double scaleFontWidth = 4;
       const double scaleFontHeight = 1.5;
@@ -1505,7 +1505,7 @@ namespace Altaxo.Graph.Gdi
         var prop = AxisStyle(id);
         if (prop is null)
         {
-          prop = new AxisStyle(id, false, false, false, null, null);
+          prop = new AxisStyle(id, false, false, false, null, PropertyExtensions.GetPropertyContextOfProject());
           // prop.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(id);
           AddAxisStyle(prop);
         }
@@ -1844,7 +1844,7 @@ namespace Altaxo.Graph.Gdi
         if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
         {
           var axisStyle = layer._axisStyles.ItemAt(Index);
-          if (axisStyle.IsAxisLineEnabled && null != (hit = axisStyle.AxisLineStyle.HitTest(layer, hitData.GetHittedPointInWorldCoord(), false)))
+          if (axisStyle.IsAxisLineEnabled && null != (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData.GetHittedPointInWorldCoord(), false)))
           {
             hit.DoubleClick = AxisScaleEditorMethod;
             return hit;
@@ -1852,7 +1852,7 @@ namespace Altaxo.Graph.Gdi
 
           // hit testing the axes - secondly now with the ticks
           // in this case the TitleAndFormat editor for the axis should be shown
-          if (axisStyle.IsAxisLineEnabled && null != (hit = axisStyle.AxisLineStyle.HitTest(layer, hitData.GetHittedPointInWorldCoord(), true)))
+          if (axisStyle?.IsAxisLineEnabled==true && null != (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData.GetHittedPointInWorldCoord(), true)))
           {
             hit.DoubleClick = AxisStyleEditorMethod;
             return hit;
@@ -1868,7 +1868,7 @@ namespace Altaxo.Graph.Gdi
         if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
         {
           var axisStyle = layer._axisStyles.ItemAt(Index);
-          if (axisStyle.IsAxisLineEnabled && null != (hit = axisStyle.AxisLineStyle.HitTest(layer, hitData, false)))
+          if (axisStyle.IsAxisLineEnabled && null != (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData, false)))
           {
             hit.DoubleClick = AxisScaleEditorMethod;
             return hit;
@@ -1876,7 +1876,7 @@ namespace Altaxo.Graph.Gdi
 
           // hit testing the axes - secondly now with the ticks
           // in this case the TitleAndFormat editor for the axis should be shown
-          if (axisStyle.IsAxisLineEnabled && null != (hit = axisStyle.AxisLineStyle.HitTest(layer, hitData, true)))
+          if (axisStyle?.IsAxisLineEnabled==true && null != (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData, true)))
           {
             hit.DoubleClick = AxisStyleEditorMethod;
             return hit;
@@ -1942,7 +1942,7 @@ namespace Altaxo.Graph.Gdi
         if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
         {
           var axisStyle = layer._axisStyles.ItemAt(Index);
-          if (axisStyle.AreMajorLabelsEnabled && null != (hit = axisStyle.MajorLabelStyle.HitTest(layer, hitData.GetHittedPointInWorldCoord())))
+          if (axisStyle.AreMajorLabelsEnabled && null != (hit = axisStyle.MajorLabelStyle?.HitTest(layer, hitData.GetHittedPointInWorldCoord())))
           {
             hit.DoubleClick = AxisLabelMajorStyleEditorMethod;
             hit.Remove = layer.EhAxisLabelMajorStyleRemove;
@@ -1959,7 +1959,7 @@ namespace Altaxo.Graph.Gdi
         if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
         {
           var axisStyle = layer._axisStyles.ItemAt(Index);
-          if (axisStyle.AreMajorLabelsEnabled && null != (hit = axisStyle.MajorLabelStyle.HitTest(layer, hitData)))
+          if (axisStyle.AreMajorLabelsEnabled && null != (hit = axisStyle.MajorLabelStyle?.HitTest(layer, hitData)))
           {
             hit.DoubleClick = AxisLabelMajorStyleEditorMethod;
             hit.Remove = layer.EhAxisLabelMajorStyleRemove;
@@ -2036,7 +2036,7 @@ namespace Altaxo.Graph.Gdi
         if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
         {
           var axisStyle = layer._axisStyles.ItemAt(Index);
-          if (axisStyle.AreMinorLabelsEnabled && null != (hit = axisStyle.MinorLabelStyle.HitTest(layer, hitData.GetHittedPointInWorldCoord())))
+          if (axisStyle.AreMinorLabelsEnabled && null != (hit = axisStyle.MinorLabelStyle?.HitTest(layer, hitData.GetHittedPointInWorldCoord())))
           {
             hit.DoubleClick = AxisLabelMinorStyleEditorMethod;
             hit.Remove = layer.EhAxisLabelMinorStyleRemove;
@@ -2053,7 +2053,7 @@ namespace Altaxo.Graph.Gdi
         if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
         {
           var axisStyle = layer._axisStyles.ItemAt(Index);
-          if (axisStyle.AreMinorLabelsEnabled && null != (hit = axisStyle.MinorLabelStyle.HitTest(layer, hitData)))
+          if (axisStyle.AreMinorLabelsEnabled && null != (hit = axisStyle.MinorLabelStyle?.HitTest(layer, hitData)))
           {
             hit.DoubleClick = AxisLabelMinorStyleEditorMethod;
             hit.Remove = layer.EhAxisLabelMinorStyleRemove;
@@ -2208,8 +2208,8 @@ namespace Altaxo.Graph.Gdi
         get
         {
           var layer = ParentObject as XYPlotLayer;
-          if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
-            return layer._axisStyles.ItemAt(Index).Title.Position;
+          if (layer is not null && Index >= 0 && Index < layer._axisStyles.Count)
+            return layer._axisStyles.ItemAt(Index)?.Title?.Position ?? PointD2D.Empty;
           else
             return PointD2D.Empty;
         }
