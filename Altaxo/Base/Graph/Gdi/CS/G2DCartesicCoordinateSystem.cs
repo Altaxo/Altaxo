@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -83,9 +84,9 @@ namespace Altaxo.Graph.Gdi.CS
         info.AddValue("YReverse", s._isYreverse);
       }
 
-      protected virtual G2DCartesicCoordinateSystem SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual G2DCartesicCoordinateSystem SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        G2DCartesicCoordinateSystem s = (o == null ? new G2DCartesicCoordinateSystem() : (G2DCartesicCoordinateSystem)o);
+        var s = (G2DCartesicCoordinateSystem?)o ?? new G2DCartesicCoordinateSystem();
 
         s.IsXYInterchanged = info.GetBoolean("XYInterchanged");
         s._isXreverse = info.GetBoolean("XReverse");
@@ -94,7 +95,7 @@ namespace Altaxo.Graph.Gdi.CS
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         G2DCartesicCoordinateSystem s = SDeserialize(o, info, parent);
         return s;
