@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Collections;
@@ -56,9 +58,9 @@ typeof(object),
     /// </summary>
     /// <param name="propertyContext">The property context. Can be retrieved for instance from the table the plot is initiated or the folder.</param>
     /// <returns>The created graph.</returns>
-    private static GraphDocument CreateBuiltinGraph(IReadOnlyPropertyBag propertyContext)
+    private static GraphDocument CreateBuiltinGraph(IReadOnlyPropertyBag? propertyContext)
     {
-      if (null == propertyContext)
+      if (propertyContext is null)
         propertyContext = PropertyExtensions.GetPropertyContextOfProject();
 
       var graph = new GraphDocument();
@@ -68,10 +70,10 @@ typeof(object),
       graph.RootLayer.Location.CopyFrom(propertyContext.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize));
       var layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer);
       layer.CreateDefaultAxes(propertyContext);
-      layer.AxisStyles[CSLineID.X0].AxisLineStyle.FirstUpMajorTicks = false;
-      layer.AxisStyles[CSLineID.X0].AxisLineStyle.FirstUpMinorTicks = false;
-      layer.AxisStyles[CSLineID.Y0].AxisLineStyle.FirstUpMajorTicks = false;
-      layer.AxisStyles[CSLineID.Y0].AxisLineStyle.FirstUpMinorTicks = false;
+      layer.AxisStyles[CSLineID.X0]!.AxisLineStyle!.FirstUpMajorTicks = false;
+      layer.AxisStyles[CSLineID.X0]!.AxisLineStyle!.FirstUpMinorTicks = false;
+      layer.AxisStyles[CSLineID.Y0]!.AxisLineStyle!.FirstUpMajorTicks = false;
+      layer.AxisStyles[CSLineID.Y0]!.AxisLineStyle!.FirstUpMinorTicks = false;
       graph.RootLayer.Layers.Add(layer);
 
       return graph;
@@ -114,7 +116,7 @@ typeof(object),
       return graph;
     }
 
-    public static bool IsGraphTemplateSuitable(GraphDocument graphTemplate, out string problemDescription)
+    public static bool IsGraphTemplateSuitable(GraphDocument graphTemplate, [MaybeNullWhen(true)] out string problemDescription)
     {
       // Make sure that the graph contains an XYPlotLayer
 
@@ -124,7 +126,7 @@ typeof(object),
         return false;
       }
 
-      var xylayer = (XYPlotLayer)TreeNodeExtensions.AnyBetweenHereAndLeaves<HostLayer>(graphTemplate.RootLayer, x => x is XYPlotLayer);
+      var xylayer = (XYPlotLayer?)TreeNodeExtensions.AnyBetweenHereAndLeaves<HostLayer>(graphTemplate.RootLayer, x => x is XYPlotLayer);
 
       if (null == xylayer)
       {

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,9 +57,9 @@ namespace Altaxo.Graph.Gdi.GraphTemplates
     /// </summary>
     /// <param name="propertyContext">The property context. Can be retrieved for instance from the table the plot is initiated or the folder.</param>
     /// <returns>The created graph.</returns>
-    private static GraphDocument CreateBuiltinGraph(IReadOnlyPropertyBag propertyContext)
+    private static GraphDocument CreateBuiltinGraph(IReadOnlyPropertyBag? propertyContext)
     {
-      if (null == propertyContext)
+      if (propertyContext is null)
         propertyContext = PropertyExtensions.GetPropertyContextOfProject();
 
       var graph = new Altaxo.Graph.Gdi.GraphDocument();
@@ -70,10 +71,10 @@ namespace Altaxo.Graph.Gdi.GraphTemplates
 
       layer.CreateDefaultAxes(propertyContext);
 
-      layer.AxisStyles[CSLineID.X1].AxisLineStyle.FirstDownMajorTicks = false;
-      layer.AxisStyles[CSLineID.X1].AxisLineStyle.FirstDownMinorTicks = false;
-      layer.AxisStyles[CSLineID.Y0].AxisLineStyle.FirstUpMajorTicks = false;
-      layer.AxisStyles[CSLineID.Y0].AxisLineStyle.FirstUpMinorTicks = false;
+      layer.AxisStyles[CSLineID.X1]!.AxisLineStyle!.FirstDownMajorTicks = false;
+      layer.AxisStyles[CSLineID.X1]!.AxisLineStyle!.FirstDownMinorTicks = false;
+      layer.AxisStyles[CSLineID.Y0]!.AxisLineStyle!.FirstUpMajorTicks = false;
+      layer.AxisStyles[CSLineID.Y0]!.AxisLineStyle!.FirstUpMinorTicks = false;
 
       graph.RootLayer.Layers.Add(layer);
 
@@ -97,7 +98,7 @@ namespace Altaxo.Graph.Gdi.GraphTemplates
       var graphTemplate = propertyContext.GetValue<GraphDocument>(PropertyKeyDefaultTemplate);
       bool isBuiltinPolarPlotTemplate = object.ReferenceEquals(graphTemplate, Current.PropertyService.BuiltinSettings.GetValue<GraphDocument>(PropertyKeyDefaultTemplate));
 
-      GraphDocument graphTemplateCartesic = null;
+      GraphDocument? graphTemplateCartesic = null;
       bool isLineScatterTemplateBuiltin = false;
 
       if (isBuiltinPolarPlotTemplate)
@@ -108,7 +109,7 @@ namespace Altaxo.Graph.Gdi.GraphTemplates
 
       if (!isLineScatterTemplateBuiltin && isBuiltinPolarPlotTemplate)
       {
-        graph = (GraphDocument)graphTemplateCartesic.Clone();
+        graph = (GraphDocument)graphTemplateCartesic!.Clone();
         // because we use the template with cartesic coordinate system here, we have to replace it by a polar coordinate systen
         var layer = graph.RootLayer.Layers.OfType<XYPlotLayer>().First();
 
