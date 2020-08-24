@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,14 +57,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SolidBodyShapeBase)obj;
-        info.AddBaseValueEmbedded(s, typeof(SolidBodyShapeBase).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(SolidBodyShapeBase).BaseType!);
         info.AddValue("Material", s._material);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (SolidBodyShapeBase)o;
-        info.GetBaseValueEmbedded(s, typeof(SolidBodyShapeBase).BaseType, parent);
+        var s = (SolidBodyShapeBase)(o ?? throw new ArgumentNullException(nameof(o)));
+        info.GetBaseValueEmbedded(s, typeof(SolidBodyShapeBase).BaseType!, parent);
         s._material = (IMaterial)info.GetValue("Material", s);
 
         return s;
@@ -80,25 +81,34 @@ namespace Altaxo.Graph.Graph3D.Shapes
     public SolidBodyShapeBase(SolidBodyShapeBase from)
       : base(from)
     {
+      CopyFrom(from, false);
+    }
+
+    protected void CopyFrom(SolidBodyShapeBase from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      _material = from._material;
     }
 
     public override bool CopyFrom(object obj)
     {
       if (object.ReferenceEquals(this, obj))
         return true;
-      if (!base.CopyFrom(obj))
-        return false;
-
-      var from = obj as SolidBodyShapeBase;
-      if (null != from)
+      if (obj is SolidBodyShapeBase from)
       {
-        _material = from._material;
-
-        EhSelfChanged(EventArgs.Empty);
+        using (var suspendToken = SuspendGetToken())
+        {
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
+        }
         return true;
       }
-
-      return false;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     public IMaterial Material
@@ -118,7 +128,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
-    public override IHitTestObject HitTest(HitTestPointData parentHitData)
+    public override IHitTestObject? HitTest(HitTestPointData parentHitData)
     {
       var result = base.HitTest(parentHitData);
       if (null != result)

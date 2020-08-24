@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Drawing;
@@ -49,17 +51,17 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SimpleTextGraphic)obj;
-        info.AddBaseValueEmbedded(s, typeof(SimpleTextGraphic).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(SimpleTextGraphic).BaseType!);
 
         info.AddValue("Text", s._text);
         info.AddValue("Font", s._font);
         info.AddValue("Color", s._color);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        SimpleTextGraphic s = null != o ? (SimpleTextGraphic)o : new SimpleTextGraphic();
-        info.GetBaseValueEmbedded(s, typeof(SimpleTextGraphic).BaseType, parent);
+        var s = (SimpleTextGraphic?)o ?? new SimpleTextGraphic(info);
+        info.GetBaseValueEmbedded(s, typeof(SimpleTextGraphic).BaseType!, parent);
 
         s._text = info.GetString("Text");
         s._font = (FontX)info.GetValue("Font", s);
@@ -72,7 +74,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Constructors
 
-    public SimpleTextGraphic()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    protected SimpleTextGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(new ItemLocationDirectAutoSize())
     {
     }
@@ -81,23 +85,40 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       base(from) // all is done here, since CopyFrom is virtual!
     {
+      CopyFrom(from, false);
+    }
+
+    [MemberNotNull(nameof(_font))]
+    protected void CopyFrom(SimpleTextGraphic from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      _font = from._font;
+      _text = from._text;
+      _color = from._color;
     }
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (object.ReferenceEquals(this, obj))
+        return true;
+      if (obj is SimpleTextGraphic from)
       {
-        var from = obj as SimpleTextGraphic;
-        if (null != from)
+        using (var suspendToken = SuspendGetToken())
         {
-          _font = from._font;
-          _text = from._text;
-          _color = from._color;
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
+
+
 
     public SimpleTextGraphic(PointD2D graphicPosition, string text,
       FontX textFont, Color textColor)
@@ -144,9 +165,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         return _font;
       }
+      [MemberNotNull(nameof(_font))]
       set
       {
-        _font = value;
+        if (ChildSetMemberAlt(ref _font, value))
+          EhSelfChanged(EventArgs.Empty);
       }
     }
 

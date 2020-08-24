@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -113,10 +114,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public BrushX brush;
 
-      public StyleContext(FontX font, BrushX brush)
+      public StyleContext(FontX font, BrushX brush, FontX baseFontId)
       {
         FontId = font;
         this.brush = brush;
+        BaseFontId = baseFontId;
       }
 
       public StyleContext Clone()
@@ -157,6 +159,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       public FontCache FontCache { get; set; }
 
       public double TabStop { get; set; }
+
+      public MeasureContext(FontCache fontCache, object linkedObject, double tabStop)
+      {
+        FontCache = FontCache;
+        LinkedObject = linkedObject;
+        TabStop = tabStop;
+      }
     }
 
     private class DrawContext
@@ -169,6 +178,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public Dictionary<GraphicsPath, IGPlotItem> _cachedSymbolPositions = new Dictionary<GraphicsPath, IGPlotItem>();
       public Matrix transformMatrix;
+
+      public DrawContext(FontCache fontCache, bool isForPreview, object linkedObject, Matrix transformationMatrix, Dictionary<GraphicsPath, IGPlotItem> cachedSymbolPositions)
+      {
+        FontCache = fontCache;
+        bForPreview = isForPreview;
+        LinkedObject = linkedObject;
+        transformMatrix = transformationMatrix;
+        _cachedSymbolPositions = cachedSymbolPositions;
+      }
     }
 
     private class Glyph
@@ -178,7 +196,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       protected static StringFormat _stringFormat;
 
       /// <summary>Parent of this object.</summary>
-      public StructuralGlyph Parent { get; set; }
+      public StructuralGlyph? Parent { get; set; }
 
       /// <summary>Style of this object.</summary>
       public StyleContext Style { get; set; }
@@ -241,12 +259,21 @@ namespace Altaxo.Graph.Gdi.Shapes
         var result = g.MeasureString(text, GdiFontManager.ToGdi(font), PointF.Empty, _stringFormat);
         return new PointD2D(result.Width, result.Height);
       }
+
+      public Glyph(StyleContext styleContext)
+      {
+        Style = styleContext;
+      }
     }
 
     #region Structural glyphs
 
     private class StructuralGlyph : Glyph
     {
+      public StructuralGlyph(StyleContext style) : base(style)
+      {
+      }
+
       public virtual void Add(Glyph g)
       {
       }
@@ -259,6 +286,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     private class MultiChildGlyph : StructuralGlyph
     {
       protected List<Glyph> _childs = new List<Glyph>();
+
+      public MultiChildGlyph(StyleContext style) : base(style)
+      {
+      }
 
       public override void Add(Glyph g)
       {
@@ -282,6 +313,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       public double LineSpacingFactor = 1;
       public bool FixedLineSpacing = false;
+
+      public VerticalStack(StyleContext style) : base(style)
+      {
+      }
 
       private double GetLineSpacing(Glyph line, FontInfo fontInfo)
       {
@@ -344,6 +379,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private class GlyphLine : MultiChildGlyph
     {
+      public GlyphLine(StyleContext style) : base(style)
+      {
+      }
+
       public override void Measure(Graphics g, MeasureContext mc, double x)
       {
         ExtendBelowBaseline = 0;
@@ -371,11 +410,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private class SingleChildGlyph : StructuralGlyph
     {
-      protected Glyph _child;
+      protected Glyph? _child;
+
+      public SingleChildGlyph(StyleContext style) : base(style)
+      {
+      }
 
       public override void Add(Glyph g)
       {
-        if (_child != null)
+        if (_child is not null)
           throw new ArgumentException("child already present");
 
         g.Parent = this;
@@ -395,6 +438,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private class Subscript : SingleChildGlyph
     {
+      public Subscript(StyleContext context) : base(context) { }
+
       public override void Measure(Graphics g, MeasureContext mc, double x)
       {
         ExtendAboveBaseline = 0;
@@ -424,6 +469,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private class Superscript : SingleChildGlyph
     {
+      public Superscript(StyleContext context) : base(context) { }
+
       public override void Measure(Graphics g, MeasureContext mc, double x)
       {
         ExtendAboveBaseline = 0;
@@ -452,6 +499,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private class DotOverGlyph : SingleChildGlyph
     {
+      public DotOverGlyph(StyleContext context) : base(context) { }
       public override void Measure(Graphics g, MeasureContext mc, double x)
       {
         ExtendAboveBaseline = 0;
@@ -485,6 +533,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private class BarOverGlyph : SingleChildGlyph
     {
+      public BarOverGlyph(StyleContext context) : base(context) { }
+
+
       public override void Measure(Graphics g, MeasureContext mc, double x)
       {
         ExtendAboveBaseline = 0;
@@ -515,8 +566,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private class SubSuperScript : StructuralGlyph
     {
-      private Glyph _subscript;
-      private Glyph _superscript;
+      private Glyph? _subscript;
+      private Glyph? _superscript;
+
+      public SubSuperScript(StyleContext context) : base(context)
+      {
+      }
+
 
       public override void Add(Glyph g)
       {
@@ -542,13 +598,13 @@ namespace Altaxo.Graph.Gdi.Shapes
         {
           _subscript = newchildnode;
           newchildnode.Parent = this;
-          presentchildnode = null;
+          presentchildnode.Parent = null;
         }
         else if (_superscript == presentchildnode)
         {
           _superscript = newchildnode;
           newchildnode.Parent = this;
-          presentchildnode = null;
+          presentchildnode.Parent = null;
         }
         else
         {
@@ -563,7 +619,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         Width = 0;
 
         var fontInfo = mc.FontCache.GetFontInfo(g, Style.FontId);
-        if (_subscript != null)
+        if (_subscript is not null)
         {
           _subscript.Measure(g, mc, x);
 
@@ -572,13 +628,13 @@ namespace Altaxo.Graph.Gdi.Shapes
           ExtendAboveBaseline = Math.Max(ExtendAboveBaseline, _subscript.ExtendAboveBaseline - shift);
           Width = Math.Max(Width, _subscript.Width);
         }
-        if (_superscript != null)
+        if (_superscript is not null)
         {
           _superscript.Measure(g, mc, x);
 
           double shift = (0.35 * fontInfo.cyAscent);
-          ExtendBelowBaseline = Math.Max(ExtendBelowBaseline, _subscript.ExtendBelowBaseline - shift);
-          ExtendAboveBaseline = Math.Max(ExtendAboveBaseline, _subscript.ExtendAboveBaseline + shift);
+          ExtendBelowBaseline = Math.Max(ExtendBelowBaseline, _superscript.ExtendBelowBaseline - shift);
+          ExtendAboveBaseline = Math.Max(ExtendAboveBaseline, _superscript.ExtendAboveBaseline + shift);
           Width = Math.Max(Width, _superscript.Width);
         }
       }
@@ -599,12 +655,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private class TextGlyph : Glyph
     {
-      protected string _text;
+      protected string? _text;
 
-      public TextGlyph(string text, StyleContext style)
+      public TextGlyph(string? text, StyleContext style) : base(style)
       {
         _text = text;
-        Style = style;
       }
 
       public override void Measure(Graphics g, MeasureContext mc, double x)
@@ -626,12 +681,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public override string ToString()
       {
-        return _text;
+        return _text ?? string.Empty;
       }
     }
 
     private class TabGlpyh : Glyph
     {
+      public TabGlpyh(StyleContext style) : base(style)
+      {
+
+      }
+
       public override void Measure(Graphics g, MeasureContext mc, double x)
       {
         Height = 0;
@@ -657,7 +717,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       private int _layerNumber;
       private int _plotNumber;
-      private string _plotLabelStyle;
+      private string? _plotLabelStyle;
       private bool _plotLabelStyleIsPropColName;
 
       public PlotName(StyleContext context, int plotNumber)
@@ -698,7 +758,7 @@ namespace Altaxo.Graph.Gdi.Shapes
           layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer;
         if (null == layer)
           return result;
-        IGPlotItem pa = null;
+        IGPlotItem? pa = null;
         if (_plotNumber < layer.PlotItems.Flattened.Length)
         {
           pa = layer.PlotItems.Flattened[_plotNumber];
@@ -719,13 +779,9 @@ namespace Altaxo.Graph.Gdi.Shapes
           if (_plotLabelStyleIsPropColName && _plotLabelStyle != null && pa is XYColumnPlotItem)
           {
             XYColumnPlotData pb = ((XYColumnPlotItem)pa).Data;
-            Data.DataTable tbl = null;
-            if (pb.YColumn is Data.DataColumn)
-              tbl = Data.DataTable.GetParentDataTableOf((Data.DataColumn)pb.YColumn);
-
-            if (tbl != null)
+            if (pb.YColumn is Data.DataColumn ycol && Data.DataTable.GetParentDataTableOf(ycol) is { } tbl)
             {
-              int colNumber = tbl.DataColumns.GetColumnNumber((Data.DataColumn)pb.YColumn);
+              int colNumber = tbl.DataColumns.GetColumnNumber(ycol);
               if (tbl.PropertyColumns.ContainsColumn(_plotLabelStyle))
                 result = tbl.PropertyColumns[_plotLabelStyle][colNumber].ToString();
             }
@@ -759,9 +815,8 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
       }
 
-      public PlotSymbol(StyleContext style, int plotNumber, int layerNumber)
+      public PlotSymbol(StyleContext style, int plotNumber, int layerNumber) : base(style)
       {
-        Style = style;
         _plotNumber = plotNumber;
         _layerNumber = layerNumber;
       }
@@ -860,7 +915,7 @@ namespace Altaxo.Graph.Gdi.Shapes
             {
               if (null != value)
               {
-                var documentCulture = context.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture);
+                var documentCulture = context.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture) ?? throw new InvalidProgramException();
                 _text = string.Format(documentCulture.Culture, "{0}", value);
               }
             }

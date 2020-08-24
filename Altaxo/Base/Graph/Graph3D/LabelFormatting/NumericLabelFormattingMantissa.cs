@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -40,13 +41,13 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NumericLabelFormattingMantissa)obj;
-        info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingMantissa).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingMantissa).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (NumericLabelFormattingMantissa)o ?? new NumericLabelFormattingMantissa();
-        info.GetBaseValueEmbedded(s, typeof(NumericLabelFormattingMantissa), parent);
+        var s = (NumericLabelFormattingMantissa?)o ?? new NumericLabelFormattingMantissa();
+        info.GetBaseValueEmbedded(s, typeof(NumericLabelFormattingMantissa).BaseType!, parent);
         return s;
       }
     }

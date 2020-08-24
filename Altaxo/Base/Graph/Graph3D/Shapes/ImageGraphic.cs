@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -56,14 +57,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ImageGraphic)obj;
-        info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType!);
         info.AddValue("SizeBasedOnSourceSize", s._isSizeCalculationBasedOnSourceSize);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ImageGraphic)o;
-        info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
+        var s = (ImageGraphic)(o ?? throw new ArgumentNullException(nameof(o)));
+        info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType!, parent);
         s._isSizeCalculationBasedOnSourceSize = info.GetBoolean("SizeBasedOnSourceSize");
 
         return s;
@@ -80,23 +81,35 @@ namespace Altaxo.Graph.Graph3D.Shapes
     }
 
     protected ImageGraphic(ImageGraphic from)
-      :
-      base(from) // all is done here, since CopyFrom is virtual!
+      : base(from)
     {
+    }
+
+    protected void CopyFrom(ImageGraphic from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      _isSizeCalculationBasedOnSourceSize = from._isSizeCalculationBasedOnSourceSize;
     }
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (object.ReferenceEquals(this, obj))
+        return true;
+      if (obj is ImageGraphic from)
       {
-        var from = obj as ImageGraphic;
-        if (from != null)
+        using (var suspendToken = SuspendGetToken())
         {
-          _isSizeCalculationBasedOnSourceSize = from._isSizeCalculationBasedOnSourceSize;
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     public override bool AutoSize
@@ -137,10 +150,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     public abstract Image GetImage();
 
-    public override IHitTestObject HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData htd)
     {
-      IHitTestObject result = base.HitTest(htd);
-      if (result != null)
+      var result = base.HitTest(htd);
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
       return result;
     }
@@ -170,7 +183,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       {
       }
 
-      public override IGripManipulationHandle[] GetGrips(int gripLevel)
+      public override IGripManipulationHandle[]? GetGrips(int gripLevel)
       {
         switch (gripLevel)
         {

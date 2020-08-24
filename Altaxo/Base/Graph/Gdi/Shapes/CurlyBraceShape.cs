@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -71,10 +72,10 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (DeprecatedCurlyBraceShape)o : new DeprecatedCurlyBraceShape(info);
-        info.GetBaseValueEmbedded(s, typeof(DeprecatedCurlyBraceShape).BaseType, parent);
+        var s = (DeprecatedCurlyBraceShape?)o ?? new DeprecatedCurlyBraceShape(info);
+        info.GetBaseValueEmbedded(s, typeof(DeprecatedCurlyBraceShape).BaseType!, parent);
 
         var l = new CurlyBraceShape(info);
         l.CopyFrom(s);
@@ -90,13 +91,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (CurlyBraceShape)obj;
-        info.AddBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (CurlyBraceShape)o : new CurlyBraceShape(info);
-        info.GetBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType, parent);
+        var s = (CurlyBraceShape?)o ?? new CurlyBraceShape(info);
+        info.GetBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType!, parent);
 
         return s;
       }
@@ -165,7 +166,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       var path = GetPath();
       g.DrawPath(penGdi, path);
 
-      if (_outlinePen != null && _outlinePen.IsVisible)
+      if (_outlinePen is not null && _outlinePen.IsVisible)
       {
         path.Widen(penGdi);
         using var outlinePenGdi = PenCacheGdi.Instance.BorrowPen(_outlinePen, boundsF, g, Math.Max(ScaleX, ScaleY));
@@ -175,9 +176,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       g.Restore(gs);
     }
 
-    public override IHitTestObject HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData htd)
     {
-      HitTestObjectBase result = null;
+      HitTestObjectBase? result = null;
       GraphicsPath gp = GetPath();
 
       using var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen);

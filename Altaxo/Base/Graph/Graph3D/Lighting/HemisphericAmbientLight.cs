@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,9 +73,9 @@ namespace Altaxo.Graph.Graph3D.Lighting
         info.AddValue("DirectionBelowToAbove", s._directionBelowToAbove);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (HemisphericAmbientLight)o ?? new HemisphericAmbientLight(info);
+        var s = (HemisphericAmbientLight?)o ?? new HemisphericAmbientLight(info);
         s._isAffixedToCamera = info.GetBoolean("IsAffixedToCamera");
         s._lightAmplitude = info.GetDouble("LightAmplitude");
         s._colorBelow = (NamedColor)info.GetValue("ColorBelow", s);

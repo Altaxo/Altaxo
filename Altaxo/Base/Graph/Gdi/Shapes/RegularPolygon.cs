@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -46,15 +47,15 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RegularPolygon)obj;
-        info.AddBaseValueEmbedded(s, typeof(RegularPolygon).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(RegularPolygon).BaseType!);
         info.AddValue("NumberOfVertices", s._vertices);
         info.AddValue("CornerRadius", s._cornerRadius);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        RegularPolygon s = null != o ? (RegularPolygon)o : new RegularPolygon(info);
-        info.GetBaseValueEmbedded(s, typeof(RegularPolygon).BaseType, parent);
+        var s = (RegularPolygon?)o ?? new RegularPolygon(info);
+        info.GetBaseValueEmbedded(s, typeof(RegularPolygon).BaseType!, parent);
 
         s._vertices = info.GetInt32("NumberOfVertices");
         s._cornerRadius = info.GetDouble("CornerRadius");
@@ -80,6 +81,35 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       base(from) // all is done here, since CopyFrom is virtual!
     {
+      CopyFrom(from, false);
+    }
+
+    protected void CopyFrom(RegularPolygon from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      _vertices = from._vertices;
+      _cornerRadius = from._cornerRadius;
+    }
+
+    public override bool CopyFrom(object obj)
+    {
+      if (object.ReferenceEquals(this, obj))
+        return true;
+      if (obj is RegularPolygon from)
+      {
+        using (var suspendToken = SuspendGetToken())
+        {
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
+        }
+        return true;
+      }
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     private static void Exchange(ref double x, ref double y)
@@ -105,20 +135,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return result;
     }
 
-    public override bool CopyFrom(object obj)
-    {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
-      {
-        var from = obj as RegularPolygon;
-        if (null != from)
-        {
-          _vertices = from._vertices;
-          _cornerRadius = from._cornerRadius;
-        }
-      }
-      return isCopied;
-    }
+
 
     #endregion Constructors
 
@@ -301,9 +318,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       return gp;
     }
 
-    public override IHitTestObject HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData htd)
     {
-      HitTestObjectBase result = null;
+      HitTestObjectBase? result = null;
       GraphicsPath gp = GetPath();
 
       using var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen);

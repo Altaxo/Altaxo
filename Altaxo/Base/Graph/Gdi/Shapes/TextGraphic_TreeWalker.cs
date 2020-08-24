@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -112,17 +113,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public StructuralGlyph VisitTree(PegNode root, StyleContext context, double lineSpacingFactor, bool isFixedLineSpacing)
       {
-        var rootGlyph = new VerticalStack
+        var rootGlyph = new VerticalStack(context)
         {
-          Style = context,
           LineSpacingFactor = lineSpacingFactor,
           FixedLineSpacing = isFixedLineSpacing
         };
 
-        var line = new GlyphLine
-        {
-          Style = context
-        };
+        var line = new GlyphLine(context);
 
         rootGlyph.Add(line);
 
@@ -204,7 +201,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         if (_sourceText[node.match_.posBeg_] == '\t')
         {
-          HandleTab(parent);
+          HandleTab(parent, context);
           return parent;
         }
         else // newline
@@ -213,9 +210,9 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
-      private void HandleTab(StructuralGlyph parent)
+      private void HandleTab(StructuralGlyph parent, StyleContext context)
       {
-        parent.Add(new TabGlpyh());
+        parent.Add(new TabGlpyh(context));
       }
 
       private StructuralGlyph HandleNewline(StructuralGlyph parent, StyleContext context)
@@ -226,22 +223,20 @@ namespace Altaxo.Graph.Gdi.Shapes
         {
           if (parent.Parent is VerticalStack)
           {
-            newcontext = new GlyphLine
-            {
-              Style = context
-            };
+            newcontext = new GlyphLine(context);
             parent.Parent.Add(newcontext);
           }
-          else // parent.Parent is not a VerticalStack
+          else if (parent.Parent is not null)
           {
-            var vertStack = new VerticalStack();
+            var vertStack = new VerticalStack(context);
             parent.Parent.Exchange(parent, vertStack);
             vertStack.Add(parent);
-            newcontext = new GlyphLine
-            {
-              Style = context
-            };
+            newcontext = new GlyphLine(context);
             vertStack.Add(newcontext);
+          }
+          else
+          {
+            throw new NotImplementedException();
           }
         }
         else
@@ -253,7 +248,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       private void HandleSentence(PegNode node, StyleContext context, StructuralGlyph parent)
       {
-        var line = new GlyphLine();
+        var line = new GlyphLine(context);
         parent.Add(line);
         if (node.child_ != null)
           VisitNode(node.child_, context, line);
@@ -340,10 +335,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
           case @"\+(":
             {
-              var newParent = new Superscript
-              {
-                Style = context
-              };
+              var newParent = new Superscript(context);
               parent.Add(newParent);
 
               var newContext = context.Clone();
@@ -354,10 +346,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
           case @"\-(":
             {
-              var newParent = new Subscript
-              {
-                Style = context
-              };
+              var newParent = new Subscript(context);
               parent.Add(newParent);
 
               var newContext = context.Clone();
@@ -388,10 +377,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
           case @"\ad(":
             {
-              var newParent = new DotOverGlyph
-              {
-                Style = context
-              };
+              var newParent = new DotOverGlyph(context);
               parent.Add(newParent);
               VisitNode(childNode, context, newParent);
             }
@@ -399,10 +385,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
           case @"\ab(":
             {
-              var newParent = new BarOverGlyph
-              {
-                Style = context
-              };
+              var newParent = new BarOverGlyph(context);
               parent.Add(newParent);
               VisitNode(childNode, context, newParent);
             }
@@ -424,10 +407,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         {
           case @"\=(":
             {
-              var newParent = new SubSuperScript
-              {
-                Style = context
-              };
+              var newParent = new SubSuperScript(context);
               parent.Add(newParent);
 
               var newContext = context.Clone();
@@ -441,7 +421,7 @@ namespace Altaxo.Graph.Gdi.Shapes
               double val;
               string s1 = GetText(childNode).Trim();
               var newContext = context.Clone();
-              string numberString;
+              string? numberString;
 
               if (s1.EndsWith("%"))
               {

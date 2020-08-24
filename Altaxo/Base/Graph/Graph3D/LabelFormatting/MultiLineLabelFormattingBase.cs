@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Data;
 using Altaxo.Drawing;
@@ -47,15 +48,15 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MultiLineLabelFormattingBase)obj;
-        info.AddBaseValueEmbedded(s, typeof(MultiLineLabelFormattingBase).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(MultiLineLabelFormattingBase).BaseType!);
         info.AddValue("LineSpacing", s._relativeLineSpacing);
         info.AddEnum("BlockAlignment", s._textBlockAlignment);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (MultiLineLabelFormattingBase)o;
-        info.GetBaseValueEmbedded(s, typeof(MultiLineLabelFormattingBase).BaseType, parent);
+        var s = (MultiLineLabelFormattingBase)(o ?? throw new ArgumentNullException(nameof(o)));
+        info.GetBaseValueEmbedded(s, typeof(MultiLineLabelFormattingBase).BaseType!, parent);
         s._relativeLineSpacing = info.GetDouble("LineSpacing");
         s._textBlockAlignment = (Alignment)info.GetEnum("BlockAlignment", typeof(Alignment));
 

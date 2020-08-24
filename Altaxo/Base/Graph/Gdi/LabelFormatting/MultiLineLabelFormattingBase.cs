@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using Altaxo.Data;
@@ -51,9 +52,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         info.AddEnum("BlockAlignment", s._textBlockAlignment);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (MultiLineLabelFormattingBase)o;
+        var s = (MultiLineLabelFormattingBase)(o ?? throw new ArgumentNullException(nameof(o)));
         info.GetBaseValueEmbedded(s, typeof(LabelFormattingBase), parent);
         s._relativeLineSpacing = info.GetDouble("LineSpacing");
         s._textBlockAlignment = (StringAlignment)info.GetEnum("BlockAlignment", typeof(StringAlignment));

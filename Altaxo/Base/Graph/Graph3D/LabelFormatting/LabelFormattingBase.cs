@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Data;
 using Altaxo.Geometry;
@@ -57,9 +58,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         info.AddValue("Suffix", s._suffix);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (LabelFormattingBase)o;
+        var s = (LabelFormattingBase)(o ?? throw new ArgumentNullException(nameof(o)));
         s.PrefixText = info.GetString("Prefix");
         s.SuffixText = info.GetString("Suffix");
         return s;

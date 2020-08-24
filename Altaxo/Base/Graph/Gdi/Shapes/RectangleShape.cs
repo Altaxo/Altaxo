@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -40,13 +41,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RectangleShape)obj;
-        info.AddBaseValueEmbedded(s, typeof(RectangleShape).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(RectangleShape).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        RectangleShape s = null != o ? (RectangleShape)o : new RectangleShape(info);
-        info.GetBaseValueEmbedded(s, typeof(RectangleShape).BaseType, parent);
+        var s = (RectangleShape?)o ?? new RectangleShape(info);
+        info.GetBaseValueEmbedded(s, typeof(RectangleShape).BaseType!, parent);
 
         return s;
       }
@@ -68,7 +69,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public RectangleShape(RectangleShape from)
       :
-      base(from) // all is done here, since CopyFrom is virtual!
+      base(from)
     {
     }
 

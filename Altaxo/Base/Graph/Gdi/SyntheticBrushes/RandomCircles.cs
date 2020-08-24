@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -49,17 +50,17 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RandomCircles)obj;
-        info.AddBaseValueEmbedded(obj, s.GetType().BaseType);
+        info.AddBaseValueEmbedded(obj, s.GetType().BaseType!);
 
         info.AddValue("RandomSeed", s._randomSeed);
         info.AddValue("CircleDiameter", s._circleDiameterPt);
         info.AddValue("FillingFactor", s._fillingFactor);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (RandomCircles)o ?? new RandomCircles();
-        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        var s = (RandomCircles?)o ?? new RandomCircles();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType!, parent);
 
         s._randomSeed = info.GetInt32("RandomSeed");
         s._circleDiameterPt = info.GetDouble("CircleDiameter");

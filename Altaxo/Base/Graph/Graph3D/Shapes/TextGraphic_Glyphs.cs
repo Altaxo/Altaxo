@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,12 +73,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
       public FontX3D FontId { get; set; }
 
-      public IMaterial brush;
+      public IMaterial Brush { get; set; }
 
-      public StyleContext(FontX3D font, IMaterial brush)
+      public StyleContext(FontX3D font, IMaterial brush, FontX3D baseFontId)
       {
         FontId = font;
-        this.brush = brush;
+        Brush = brush;
+        BaseFontId = baseFontId;
       }
 
       public StyleContext Clone()
@@ -118,6 +120,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
       public FontCache FontCache { get; set; }
 
       public double TabStop { get; set; }
+
+      public MeasureContext(FontCache fontCache, object linkedObject, double tabStop)
+      {
+        FontCache = FontCache;
+        LinkedObject = linkedObject;
+        TabStop = tabStop;
+      }
     }
 
     private class DrawContext
@@ -130,12 +139,21 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
       public Dictionary<RectangleTransformedD3D, IGPlotItem> _cachedSymbolPositions = new Dictionary<RectangleTransformedD3D, IGPlotItem>();
       public Matrix4x3 transformMatrix;
+
+      public DrawContext(FontCache fontCache, bool isForPreview, object linkedObject, Matrix4x3 transformationMatrix, Dictionary<RectangleTransformedD3D, IGPlotItem> cachedSymbolPositions)
+      {
+        FontCache = fontCache;
+        bForPreview = isForPreview;
+        LinkedObject = linkedObject;
+        transformMatrix = transformationMatrix;
+        _cachedSymbolPositions = cachedSymbolPositions;
+      }
     }
 
     private class Glyph
     {
       /// <summary>Parent of this object.</summary>
-      public StructuralGlyph Parent { get; set; }
+      public StructuralGlyph? Parent { get; set; }
 
       /// <summary>Style of this object.</summary>
       public StyleContext Style { get; set; }
@@ -185,12 +203,22 @@ namespace Altaxo.Graph.Graph3D.Shapes
       {
         return FontManager3D.Instance.MeasureString(text, font);
       }
+
+      public Glyph(StyleContext styleContext)
+      {
+        Style = styleContext;
+      }
     }
 
     #region Structural glyphs
 
     private class StructuralGlyph : Glyph
     {
+      public StructuralGlyph(StyleContext style) : base(style)
+      {
+
+      }
+
       public virtual void Add(Glyph g)
       {
       }
@@ -203,6 +231,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
     private class MultiChildGlyph : StructuralGlyph
     {
       protected List<Glyph> _childs = new List<Glyph>();
+
+      public MultiChildGlyph(StyleContext style) : base(style)
+      {
+
+      }
 
       public override void Add(Glyph g)
       {
@@ -226,6 +259,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
     {
       public double LineSpacingFactor = 1;
       public bool FixedLineSpacing = false;
+
+      public VerticalStack(StyleContext style) : base(style)
+      {
+
+      }
 
       private double GetLineSpacing(Glyph line, FontInfo fontInfo)
       {
@@ -291,6 +329,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     private class GlyphLine : MultiChildGlyph
     {
+      public GlyphLine(StyleContext style) : base(style)
+      {
+
+      }
+
       public override void Measure(MeasureContext mc, double x)
       {
         ExtendBelowBaseline = 0;
@@ -320,11 +363,16 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     private class SingleChildGlyph : StructuralGlyph
     {
-      protected Glyph _child;
+      protected Glyph? _child;
+
+      public SingleChildGlyph(StyleContext style) : base(style)
+      {
+
+      }
 
       public override void Add(Glyph g)
       {
-        if (_child != null)
+        if (_child is not null)
           throw new ArgumentException("child already present");
 
         g.Parent = this;
@@ -344,6 +392,8 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     private class Subscript : SingleChildGlyph
     {
+      public Subscript(StyleContext context) : base(context) { }
+
       public override void Measure(MeasureContext mc, double x)
       {
         ExtendAboveBaseline = 0;
@@ -375,6 +425,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     private class Superscript : SingleChildGlyph
     {
+      public Superscript(StyleContext context) : base(context) { }
+
+
       public override void Measure(MeasureContext mc, double x)
       {
         ExtendAboveBaseline = 0;
@@ -405,6 +458,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     private class DotOverGlyph : SingleChildGlyph
     {
+      public DotOverGlyph(StyleContext context) : base(context) { }
+
+
       public override void Measure(MeasureContext mc, double x)
       {
         ExtendAboveBaseline = 0;
@@ -428,13 +484,16 @@ namespace Altaxo.Graph.Graph3D.Shapes
           _child.Draw(g, dc, xbase, ybase, zbase);
           FontInfo fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
           double psize = FontManager3D.Instance.MeasureString(".", Style.FontId).X;
-          g.DrawString(".", Style.FontId, Style.brush, new PointD3D((xbase + _child.SizeX / 2 - psize / 2), (ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), zbase));
+          g.DrawString(".", Style.FontId, Style.Brush, new PointD3D((xbase + _child.SizeX / 2 - psize / 2), (ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), zbase));
         }
       }
     }
 
     private class BarOverGlyph : SingleChildGlyph
     {
+      public BarOverGlyph(StyleContext context) : base(context) { }
+
+
       public override void Measure(MeasureContext mc, double x)
       {
         ExtendAboveBaseline = 0;
@@ -457,24 +516,27 @@ namespace Altaxo.Graph.Graph3D.Shapes
         {
           _child.Draw(g, dc, xbase, ybase, zbase);
           FontInfo fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
-          g.DrawString("_", Style.FontId, Style.brush, new PointD3D((xbase), (ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), zbase));
+          g.DrawString("_", Style.FontId, Style.Brush, new PointD3D((xbase), (ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), zbase));
         }
       }
     }
 
     private class SubSuperScript : StructuralGlyph
     {
-      private Glyph _subscript;
-      private Glyph _superscript;
+      private Glyph? _subscript;
+      private Glyph? _superscript;
+
+      public SubSuperScript(StyleContext context) : base(context) { }
+
 
       public override void Add(Glyph g)
       {
-        if (_subscript == null)
+        if (_subscript is null)
         {
           _subscript = g;
           g.Parent = this;
         }
-        else if (_superscript == null)
+        else if (_superscript is null)
         {
           _superscript = g;
           g.Parent = this;
@@ -491,13 +553,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
         {
           _subscript = newchildnode;
           newchildnode.Parent = this;
-          presentchildnode = null;
+          presentchildnode.Parent = null;
+
         }
         else if (_superscript == presentchildnode)
         {
           _superscript = newchildnode;
           newchildnode.Parent = this;
-          presentchildnode = null;
+          presentchildnode.Parent = null;
         }
         else
         {
@@ -513,7 +576,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         SizeZ = 0;
 
         var fontInfo = mc.FontCache.GetFontInfo(Style.FontId);
-        if (_subscript != null)
+        if (_subscript is not null)
         {
           _subscript.Measure(mc, x);
 
@@ -523,13 +586,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
           SizeX = Math.Max(SizeX, _subscript.SizeX);
           SizeZ = Math.Max(SizeZ, _subscript.SizeZ);
         }
-        if (_superscript != null)
+        if (_superscript is not null)
         {
           _superscript.Measure(mc, x);
 
           double shift = (0.35 * fontInfo.cyAscent);
-          ExtendBelowBaseline = Math.Max(ExtendBelowBaseline, _subscript.ExtendBelowBaseline - shift);
-          ExtendAboveBaseline = Math.Max(ExtendAboveBaseline, _subscript.ExtendAboveBaseline + shift);
+          ExtendBelowBaseline = Math.Max(ExtendBelowBaseline, _superscript.ExtendBelowBaseline - shift);
+          ExtendAboveBaseline = Math.Max(ExtendAboveBaseline, _superscript.ExtendAboveBaseline + shift);
           SizeX = Math.Max(SizeX, _superscript.SizeX);
           SizeZ = Math.Max(SizeZ, _superscript.SizeZ);
         }
@@ -553,9 +616,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     {
       protected string _text;
 
-      public TextGlyph(string text, StyleContext style)
+      public TextGlyph(string? text, StyleContext style) : base(style)
       {
-        _text = text;
+        _text = text ?? string.Empty;
         Style = style;
       }
 
@@ -572,7 +635,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       public override void Draw(IGraphicsContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
       {
         var fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
-        g.DrawString(_text, Style.FontId, Style.brush, new PointD3D(xbase, (ybase - fontInfo.cyDescent), zbase));
+        g.DrawString(_text, Style.FontId, Style.Brush, new PointD3D(xbase, (ybase - fontInfo.cyDescent), zbase));
       }
 
       public override string ToString()
@@ -583,6 +646,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     private class TabGlpyh : Glyph
     {
+      public TabGlpyh(StyleContext style) : base(style)
+      {
+
+      }
+
+
       public override void Measure(MeasureContext mc, double x)
       {
         SizeY = 0;
@@ -609,7 +678,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     {
       private int _layerNumber;
       private int _plotNumber;
-      private string _plotLabelStyle;
+      private string? _plotLabelStyle;
       private bool _plotLabelStyleIsPropColName;
 
       public PlotName(StyleContext context, int plotNumber)
@@ -650,7 +719,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
           layer = mylayer.SiblingLayers[_layerNumber] as XYZPlotLayer;
         if (null == layer)
           return result;
-        IGPlotItem pa = null;
+        IGPlotItem? pa = null;
         if (_plotNumber < layer.PlotItems.Flattened.Length)
         {
           pa = layer.PlotItems.Flattened[_plotNumber];
@@ -671,15 +740,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
           if (_plotLabelStyleIsPropColName && _plotLabelStyle != null && pa is XYZColumnPlotItem)
           {
             var pb = ((XYZColumnPlotItem)pa).Data;
-            Data.DataTable tbl = null;
-            if (pb.YColumn is Data.DataColumn)
-              tbl = Data.DataTable.GetParentDataTableOf((Data.DataColumn)pb.YColumn);
-
-            if (tbl != null)
+            if (pb.YColumn is Data.DataColumn ycol)
             {
-              int colNumber = tbl.DataColumns.GetColumnNumber((Data.DataColumn)pb.YColumn);
-              if (tbl.PropertyColumns.ContainsColumn(_plotLabelStyle))
-                result = tbl.PropertyColumns[_plotLabelStyle][colNumber].ToString();
+              if (Data.DataTable.GetParentDataTableOf(ycol) is { } tbl)
+              {
+                int colNumber = tbl.DataColumns.GetColumnNumber(ycol);
+                if (tbl.PropertyColumns.ContainsColumn(_plotLabelStyle))
+                  result = tbl.PropertyColumns[_plotLabelStyle][colNumber].ToString();
+              }
             }
           }
         }
@@ -702,9 +770,8 @@ namespace Altaxo.Graph.Graph3D.Shapes
       {
       }
 
-      public PlotSymbol(StyleContext style, int plotNumber, int layerNumber)
+      public PlotSymbol(StyleContext style, int plotNumber, int layerNumber) : base(style)
       {
-        Style = style;
         _plotNumber = plotNumber;
         _layerNumber = layerNumber;
       }
@@ -806,7 +873,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
               if (null != value)
               {
                 var documentCulture = context.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture);
-                _text = string.Format(documentCulture.Culture, "{0}", value);
+                _text = string.Format(documentCulture!.Culture, "{0}", value);
               }
             }
           }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -52,7 +53,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        EmbeddedImageGraphic s = null != o ? (EmbeddedImageGraphic)o : new EmbeddedImageGraphic();
+        var s = (EmbeddedImageGraphic?)o ?? new EmbeddedImageGraphic();
         info.GetBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType!, parent);
         s.Image = info.GetValueOrNull<ImageProxy>("Image", s);
         return s;

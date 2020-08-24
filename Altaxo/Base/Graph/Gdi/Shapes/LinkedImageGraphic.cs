@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Geometry;
@@ -35,7 +37,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     protected string _imagePath;
 
     [NonSerialized()]
-    protected Image _cachedImage;
+    protected Image? _cachedImage;
 
     #region Serialization
 
@@ -46,14 +48,14 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LinkedImageGraphic)obj;
-        info.AddBaseValueEmbedded(s, typeof(LinkedImageGraphic).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(LinkedImageGraphic).BaseType!);
         info.AddValue("ImagePath", s._imagePath);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinkedImageGraphic s = null != o ? (LinkedImageGraphic)o : new LinkedImageGraphic();
-        info.GetBaseValueEmbedded(s, typeof(LinkedImageGraphic).BaseType, parent);
+        var s = (LinkedImageGraphic?)o ?? new LinkedImageGraphic(info);
+        info.GetBaseValueEmbedded(s, typeof(LinkedImageGraphic).BaseType!, parent);
         s._imagePath = info.GetString("ImagePath");
         return s;
       }
@@ -63,15 +65,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Constructors
 
-    public LinkedImageGraphic()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    public LinkedImageGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       :
-      base()
+      base(info)
     {
     }
 
     public LinkedImageGraphic(PointD2D graphicPosition, string ImagePath)
-      :
-      this()
+      : base()
     {
       SetPosition(graphicPosition, Main.EventFiring.Suppressed);
       this.ImagePath = ImagePath;
@@ -138,21 +141,36 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       base(from) // all is done here, since CopyFrom is virtual!
     {
+      CopyFrom(from, false);
+    }
+
+    [MemberNotNull(nameof(_imagePath))]
+    protected void CopyFrom(LinkedImageGraphic from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      _imagePath = from._imagePath;
+      _cachedImage = null == from._cachedImage ? null : (Image)from._cachedImage.Clone();
     }
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (object.ReferenceEquals(this, obj))
+        return true;
+      if (obj is LinkedImageGraphic from)
       {
-        var from = obj as LinkedImageGraphic;
-        if (from != null)
+        using (var suspendToken = SuspendGetToken())
         {
-          _imagePath = from._imagePath;
-          _cachedImage = null == from._cachedImage ? null : (Image)from._cachedImage.Clone();
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     #endregion Constructors
@@ -162,7 +180,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return new LinkedImageGraphic(this);
     }
 
-    public override Image GetImage()
+    public override Image? GetImage()
     {
       try
       {
@@ -183,7 +201,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     public override PointD2D GetImageSizePt()
     {
       var img = GetImage();
-      return new PointD2D(img.Width * 72.0 / img.HorizontalResolution, img.Height * 72.0 / img.VerticalResolution);
+      return img is null ? PointD2D.Empty : new PointD2D(img.Width * 72.0 / img.HorizontalResolution, img.Height * 72.0 / img.VerticalResolution);
     }
 
     public string ImagePath
@@ -192,6 +210,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         return _imagePath;
       }
+      [MemberNotNull(nameof(_imagePath))]
       set
       {
         if (value != _imagePath)
@@ -207,9 +226,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       TransformGraphics(g);
 
-      Image myImage = GetImage();
+      Image? myImage = GetImage();
 
-      if (null != myImage)
+      if (myImage is not null)
       {
         var bounds = Bounds;
         g.DrawImage(myImage, (float)bounds.X, (float)bounds.Y, (float)bounds.Width, (float)bounds.Height);

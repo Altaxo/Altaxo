@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Data;
@@ -50,14 +51,14 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NumericLabelFormattingScientific)obj;
-        info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingScientific).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingScientific).BaseType!);
         info.AddValue("ShowExponentAlways", s._showExponentAlways);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (NumericLabelFormattingScientific)o ?? new NumericLabelFormattingScientific();
-        info.GetBaseValueEmbedded(s, typeof(NumericLabelFormattingScientific).BaseType, parent);
+        var s = (NumericLabelFormattingScientific?)o ?? new NumericLabelFormattingScientific();
+        info.GetBaseValueEmbedded(s, typeof(NumericLabelFormattingScientific).BaseType!, parent);
         s._showExponentAlways = info.GetBoolean("ShowExponentAlways");
         return s;
       }

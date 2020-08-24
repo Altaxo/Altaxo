@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -45,7 +46,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
       private bool _hasMoved;
       private bool _wasActivatedUponCreation;
-      private HitTestPointData _initialMousePosition;
+      private HitTestPointData? _initialMousePosition;
       private PointD3D _initialObjectPosition;
 
       /// <summary>
@@ -54,11 +55,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
       /// <param name="parent">The parent hit test object.</param>
       /// <param name="gripPath">The grip path, i.e. the outline that is used to test whether this grip is hitted with the mouse.</param>
       /// <param name="displayPath">The display path, i.e. the outline that is displayed on the plot.</param>
-      public MovementGripHandle(IHitTestObject parent, IObjectOutline gripPath, IObjectOutline displayPath)
+      public MovementGripHandle(IHitTestObject parent, IObjectOutline gripPath, IObjectOutline? displayPath)
       {
-        if (null == parent)
+        if (parent is null)
           throw new ArgumentNullException(nameof(parent));
-        if (null == gripPath)
+        if (gripPath is null)
           throw new ArgumentNullException(nameof(gripPath));
 
         _parent = parent;
@@ -103,8 +104,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
       public void MoveGrip(HitTestPointData newPosition)
       {
-        var objectToMove = ((GraphicBase)_parent.HittedObject);
+        if (_initialMousePosition is null)
+          throw new InvalidProgramException($"{nameof(_initialMousePosition)} is null, please call {nameof(Activate)} before!");
 
+        var objectToMove = ((GraphicBase)_parent.HittedObject);
         VectorD3D diff = GetMoveVectorInWorldCoordinates(_initialMousePosition, newPosition, _initialObjectPosition);
 
         if (!diff.IsEmpty)

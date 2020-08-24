@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing.Drawing2D;
@@ -118,7 +119,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         return newLevel;
       }
 
-      public override IGripManipulationHandle[] GetGrips(int gripLevel)
+      public override IGripManipulationHandle[]? GetGrips(int gripLevel)
       {
         if (((GraphicBase)_hitobject).AutoSize)
         {

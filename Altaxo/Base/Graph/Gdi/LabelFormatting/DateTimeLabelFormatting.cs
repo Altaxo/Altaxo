@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Data;
@@ -60,9 +61,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         info.AddValue("FormatStringAlternate", s._formatStringAlternate);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DateTimeLabelFormatting s = (DateTimeLabelFormatting)o ?? new DateTimeLabelFormatting();
+        var s = (DateTimeLabelFormatting?)o ?? new DateTimeLabelFormatting();
         info.GetBaseValueEmbedded(s, typeof(MultiLineLabelFormattingBase), parent);
 
         s._timeConversion = (DateTimeLabelFormatting.TimeConversion)info.GetEnum("TimeConversion", typeof(DateTimeLabelFormatting.TimeConversion));

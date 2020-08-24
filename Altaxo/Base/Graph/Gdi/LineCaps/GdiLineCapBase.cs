@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -99,7 +100,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
       var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(GdiLineCapBase));
       foreach (var t in types)
       {
-        var ex = (GdiLineCapBase)Activator.CreateInstance(t);
+        var ex = (GdiLineCapBase)(Activator.CreateInstance(t) ?? throw new InvalidProgramException($"Unable to create type {t} with parameterless constructor"));
         _registeredStyles.Add(ex.ExtendsType, ex);
       }
     }

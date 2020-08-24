@@ -103,7 +103,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="pageScale"></param>
     /// <param name="gripLevel">The grip level. For 0, only the translation grip is shown.</param>
     /// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
-    IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel);
+    IGripManipulationHandle[]? GetGrips(double pageScale, int gripLevel);
 
     /// <summary>
     /// Retrieves the next grip level.

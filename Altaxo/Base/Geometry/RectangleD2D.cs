@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Altaxo.Geometry
 {
@@ -343,6 +344,25 @@ namespace Altaxo.Geometry
       ExpandToInclude(rect.RightTop);
       ExpandToInclude(rect.RightBottom);
     }
+
+    public static RectangleD2D? ExpandToInclude(RectangleD2D? first, RectangleD2D? other)
+    {
+      if (first.HasValue && other.HasValue)
+      {
+        var result = first.Value;
+        result.ExpandToInclude(other.Value);
+        return result;
+      }
+      else if (first is null && other is null)
+        return null;
+      else if (first.HasValue)
+        return first;
+      else if (other.HasValue)
+        return other;
+      else
+        throw new InvalidProgramException();
+    }
+
 
     /// <summary>Expands the rectangle by the specified margin.</summary>
     /// <param name="margin">The margin.</param>

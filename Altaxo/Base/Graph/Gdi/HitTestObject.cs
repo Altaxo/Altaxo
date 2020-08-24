@@ -144,7 +144,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="pageScale"></param>
     /// <param name="gripLevel">The grip level. For 0, only the translation grip is shown.</param>
     /// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
-    public abstract IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel);
+    public abstract IGripManipulationHandle[]? GetGrips(double pageScale, int gripLevel);
 
     public virtual int GetNextGripLevel(int currentGripLevel)
     {
@@ -193,7 +193,7 @@ namespace Altaxo.Graph.Gdi
     /// <returns>False normally, true if the HitTestObject should be removed from the list of selected objects (i.e. because the object was deleted).</returns>
     public virtual bool OnDoubleClick()
     {
-        return DoubleClick?.Invoke(this) ?? false;
+      return DoubleClick?.Invoke(this) ?? false;
     }
 
     private HostLayer? _parentLayer;

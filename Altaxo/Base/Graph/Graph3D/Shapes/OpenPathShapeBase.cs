@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Altaxo.Drawing.D3D;
 
@@ -50,15 +52,15 @@ namespace Altaxo.Graph.Graph3D.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (OpenPathShapeBase)obj;
-        info.AddBaseValueEmbedded(s, typeof(OpenPathShapeBase).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(OpenPathShapeBase).BaseType!);
 
         info.AddValue("LinePen", s._linePen);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (OpenPathShapeBase)o;
-        info.GetBaseValueEmbedded(s, typeof(OpenPathShapeBase).BaseType, parent);
+        var s = (OpenPathShapeBase)(o ?? throw new ArgumentNullException(nameof(o)));
+        info.GetBaseValueEmbedded(s, typeof(OpenPathShapeBase).BaseType!, parent);
 
         s.Pen = (PenX3D)info.GetValue("LinePen", s);
         return s;
@@ -67,40 +69,56 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #endregion Serialization
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected OpenPathShapeBase(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(info)
     {
     }
 
-    protected OpenPathShapeBase(ItemLocationDirect location, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    protected OpenPathShapeBase(ItemLocationDirect location, Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
       : base(location)
     {
-      if (null == context)
+      if (context is null)
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       var penWidth = GraphDocument.GetDefaultPenWidth(context);
       var foreColor = context.GetValue(GraphDocument.PropertyKeyDefaultForeColor);
-      Pen = new PenX3D(foreColor, penWidth);
+      _linePen = new PenX3D(foreColor, penWidth);
     }
 
     public OpenPathShapeBase(OpenPathShapeBase from)
-      :
-      base(from) // all is done here, since CopyFrom is virtual!
+      : base(from)
     {
+      CopyFrom(from, false);
+    }
+
+    [MemberNotNull(nameof(_linePen))]
+    protected void CopyFrom(OpenPathShapeBase from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        CopyFrom(from, withBaseMembers);
+
+      _linePen = from._linePen;
     }
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (object.ReferenceEquals(this, obj))
+        return true;
+      if (obj is OpenPathShapeBase from)
       {
-        var from = obj as OpenPathShapeBase;
-        if (from != null)
+        using (var suspendToken = SuspendGetToken())
         {
-          _linePen = from._linePen;
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
@@ -131,10 +149,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
-    public override IHitTestObject HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData htd)
     {
-      IHitTestObject result = base.HitTest(htd);
-      if (result != null)
+      var result = base.HitTest(htd);
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
       return result;
     }

@@ -22,8 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Geometry;
@@ -73,9 +76,9 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (GraphicBase)o;
+        var s = (GraphicBase)(o ?? throw new ArgumentNullException(nameof(o)));
 
         var position = (PointF)info.GetValue("Position", s);
         var bounds = (RectangleF)info.GetValue("Bounds", s);
@@ -120,9 +123,9 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (GraphicBase)o;
+        var s = (GraphicBase)(o ?? throw new ArgumentNullException(nameof(o)));
 
         var position = (PointF)info.GetValue("Position", s);
         var bounds = (RectangleF)info.GetValue("Bounds", s);
@@ -170,9 +173,9 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (GraphicBase)o;
+        var s = (GraphicBase)(o ?? throw new ArgumentNullException(nameof(o)));
 
         var position = (PointF)info.GetValue("Position", s);
         var bounds = (RectangleF)info.GetValue("Bounds", s);
@@ -229,9 +232,9 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (GraphicBase)o;
+        var s = (GraphicBase)(o ?? throw new ArgumentNullException(nameof(o)));
 
         double w = info.GetDouble("Width");
         double h = info.GetDouble("Height");
@@ -278,9 +281,9 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.AddValue("Location", s._location);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (GraphicBase)o;
+        var s = (GraphicBase)(o ?? throw new ArgumentNullException(nameof(o)));
 
         if (null != s._location)
           s._location.Dispose(); // because location probably is set already in the derived object
@@ -301,8 +304,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// </summary>
     protected GraphicBase(ItemLocationDirect location)
     {
-      if (null == location)
-        throw new ArgumentNullException("location");
+      if (location is null)
+        throw new ArgumentNullException(nameof(location));
 
       _location = location;
       _location.ParentObject = this;
@@ -310,54 +313,51 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected GraphicBase(GraphicBase from)
     {
-      if (null == from)
-        throw new ArgumentNullException("from");
-
-      _location = from._location.Clone();
-      _location.ParentObject = this;
-
-      CopyFrom(from);
+      CopyFrom(from, false);
     }
+
+    [MemberNotNull(nameof(_location))]
+    protected void CopyFrom(GraphicBase from, bool withBaseMembers)
+    {
+      _cachedParentSize = from._cachedParentSize;
+      ChildCopyToMember(ref _location, from._location);
+      UpdateTransformationMatrix();
+    }
+
 
     public virtual bool CopyFrom(object obj)
     {
       if (object.ReferenceEquals(this, obj))
         return true;
-      var from = obj as GraphicBase;
-      if (null == from)
-        return false;
-
-      using (var suspendToken = SuspendGetToken())
+      if (obj is GraphicBase from)
       {
-        _cachedParentSize = from._cachedParentSize;
-        _location.CopyFrom(from._location);
-        bool wasUsed = (null != _parent);
-        //this._parent = from._parent;
-        UpdateTransformationMatrix();
-
-        if (wasUsed)
+        using (var suspendToken = SuspendGetToken())
         {
-          _accumulatedEventData = EventArgs.Empty;
-          suspendToken.Resume();
+          CopyFrom(from, true);
+          if (_parent is not null)
+          {
+            _accumulatedEventData = EventArgs.Empty;
+            suspendToken.Resume();
+          }
+          else
+          {
+            suspendToken.ResumeSilently();
+          }
         }
-        else
-        {
-          suspendToken.ResumeSilently();
-        }
+        return true;
       }
-
-      return true;
+      return false;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (null != _location)
-        yield return new Main.DocumentNodeAndName(_location, () => _location = null, "Location");
+        yield return new Main.DocumentNodeAndName(_location, () => _location = null!, "Location");
     }
 
     #region Suspend/Resume
 
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = EventArgs.Empty;
     }
@@ -794,7 +794,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// </summary>
     /// <param name="hitData">Data containing the position of the click and the transformations.</param>
     /// <returns>Null if the object is not hitted. Otherwise data to further process the hitted object.</returns>
-    public virtual IHitTestObject HitTest(HitTestPointData hitData)
+    public virtual IHitTestObject? HitTest(HitTestPointData hitData)
     {
       var pt = hitData.GetHittedPointInWorldCoord(_transformation);
       if (Bounds.Contains(pt))
@@ -807,7 +807,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
-    public virtual IHitTestObject HitTest(HitTestRectangularData parentHitData)
+    public virtual IHitTestObject? HitTest(HitTestRectangularData parentHitData)
     {
       var localHitData = parentHitData.NewFromAdditionalTransformation(_transformation);
       if (localHitData.IsCovering(Bounds))

@@ -22,12 +22,15 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
+  using System.Diagnostics.CodeAnalysis;
+  using Altaxo.Main;
   using GraphicsContext;
 
   /// <summary>
@@ -55,7 +58,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>Cached matrix which transforms from own coordinates to parent (layer) coordinates.</summary>
     protected Matrix4x3 _transformation = Matrix4x3.Identity;
 
-    protected string _tag;
+    protected string? _tag;
 
     #region Serialization
 
@@ -63,7 +66,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// Deserialization constructor
     /// </summary>
     /// <param name="info">The information.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected GraphicBase(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
@@ -78,9 +83,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
         info.AddValue("Tag", s._tag);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (GraphicBase)o;
+        var s = (GraphicBase)(o ?? throw new ArgumentNullException(nameof(o)));
 
         if (null != s._location)
           throw new InvalidProgramException("_location should be null here. Has the deserialization constructor been used?");
@@ -104,7 +109,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// </summary>
     protected GraphicBase(ItemLocationDirect location)
     {
-      if (null == location)
+      if (location is null)
         throw new ArgumentNullException(nameof(location));
 
       _location = location;
@@ -113,54 +118,52 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     protected GraphicBase(GraphicBase from)
     {
-      if (null == from)
-        throw new ArgumentNullException(nameof(from));
+      CopyFrom(from, false);
+    }
 
-      _location = from._location.Clone();
-      _location.ParentObject = this;
-
-      CopyFrom(from);
+    [MemberNotNull(nameof(_location))]
+    protected void CopyFrom(GraphicBase from, bool withBaseMembers)
+    {
+      _cachedParentSize = from._cachedParentSize;
+      ChildCopyToMember(ref _location, from._location);
+      UpdateTransformationMatrix();
     }
 
     public virtual bool CopyFrom(object obj)
     {
       if (object.ReferenceEquals(this, obj))
         return true;
-      var from = obj as GraphicBase;
-      if (null == from)
-        return false;
-
-      using (var suspendToken = SuspendGetToken())
+      if (obj is GraphicBase from)
       {
-        _cachedParentSize = from._cachedParentSize;
-        _location.CopyFrom(from._location);
-        bool wasUsed = (null != _parent);
-        //this._parent = from._parent;
-        UpdateTransformationMatrix();
+        using (var suspendToken = SuspendGetToken())
+        {
+          CopyFrom(from, true);
+          if (_parent is not null)
+          {
+            _accumulatedEventData = EventArgs.Empty;
+            suspendToken.Resume();
+          }
+          else
+          {
+            suspendToken.ResumeSilently();
+          }
+        }
 
-        if (wasUsed)
-        {
-          _accumulatedEventData = EventArgs.Empty;
-          suspendToken.Resume();
-        }
-        else
-        {
-          suspendToken.ResumeSilently();
-        }
+        return true;
       }
 
-      return true;
+      return false;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (null != _location)
-        yield return new Main.DocumentNodeAndName(_location, () => _location = null, "Location");
+        yield return new Main.DocumentNodeAndName(_location, () => _location = null!, "Location");
     }
 
     #region Suspend/Resume
 
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = EventArgs.Empty;
     }
@@ -220,7 +223,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <value>
     /// The tag of this instance. The default value is null.
     /// </value>
-    public string Tag
+    public string? Tag
     {
       get
       {
@@ -667,8 +670,8 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// Get the object outline for arrangements in coordinates of the parent object (i.e. in most cases the parent layer).
     /// </summary>
     /// <param name="localToWorldTransformation">Transformation from local (i.e. parent layer) coordinates to global coordinates.</param>
-    /// <returns>Object outline for arrangements in parent coordinates</returns>
-    public virtual IObjectOutlineForArrangements GetObjectOutlineForArrangements(Matrix4x3 localToWorldTransformation)
+    /// <returns>Object outline for arrangements in parent coordinates. Can be null, because it is not required that the object provides a outline. In this case the outline will be calculated by the HitObject.</returns>
+    public virtual IObjectOutlineForArrangements? GetObjectOutlineForArrangements(Matrix4x3 localToWorldTransformation)
     {
       return null; // it is not required that the object provides a outline, in this case the outline will be calculated by the HitObject
     }
@@ -688,7 +691,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// </summary>
     /// <param name="parentHitData">Data containing the position of the click and the transformations.</param>
     /// <returns>Null if the object is not hitted. Otherwise data to further process the hitted object.</returns>
-    public virtual IHitTestObject HitTest(HitTestPointData parentHitData)
+    public virtual IHitTestObject? HitTest(HitTestPointData parentHitData)
     {
       var localHitData = parentHitData.NewFromAdditionalTransformation(_transformation);
 

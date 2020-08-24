@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Geometry;
@@ -57,10 +58,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
       protected VectorD3D _initialObjectSize;
 
       /// <summary>Initial mouse position at the time of activation of this handle.</summary>
-      protected HitTestPointData _initialMousePosition;
+      protected HitTestPointData? _initialMousePosition;
 
       /// <summary>When set, this is a custom move action.</summary>
-      private Action<HitTestPointData> _moveAction;
+      private Action<HitTestPointData>? _moveAction;
 
       /// <summary>True if this grip has moved.</summary>
       private bool _hasMoved;
@@ -138,6 +139,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       /// <param name="newPosition">The new position (of the mouse).</param>
       public virtual void MoveGrip(HitTestPointData newPosition)
       {
+        if (_initialMousePosition is null)
+          throw new InvalidProgramException($"{nameof(_initialMousePosition)} is null, please call {nameof(Activate)} before!");
+
         if (_moveAction != null)
         {
           _moveAction(newPosition);

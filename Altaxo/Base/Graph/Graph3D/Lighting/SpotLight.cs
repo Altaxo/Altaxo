@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,9 +75,9 @@ namespace Altaxo.Graph.Graph3D.Lighting
         info.AddValue("InnerConeAngle", s._innerConeAngle);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (SpotLight)o ?? new SpotLight(info);
+        var s = (SpotLight?)o ?? new SpotLight(info);
         s._isAffixedToCamera = info.GetBoolean("IsAffixedToCamera");
         s._lightAmplitude = info.GetDouble("LightAmplitude");
         s._color = (NamedColor)info.GetValue("Color", s);

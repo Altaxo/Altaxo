@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -54,10 +55,10 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ImageGraphic)o;
-        info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
+        var s = (ImageGraphic)(o ?? throw new ArgumentNullException(nameof(o)));
+        info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType!, parent);
 
         s._isSizeCalculationBasedOnSourceSize = false;
         var aspectPreserving = AspectRatioPreservingMode.None;
@@ -83,10 +84,10 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ImageGraphic)o;
-        info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
+        var s = (ImageGraphic)(o ?? throw new ArgumentNullException(nameof(o)));
+        info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType!, parent);
 
         s._isSizeCalculationBasedOnSourceSize = info.GetBoolean("SizeBasedOnSourceSize");
         var aspectPreserving = (AspectRatioPreservingMode)info.GetEnum("AspectPreserving", typeof(AspectRatioPreservingMode));
@@ -105,15 +106,15 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ImageGraphic)obj;
-        info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType!);
 
         info.AddValue("SizeBasedOnSourceSize", s._isSizeCalculationBasedOnSourceSize);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ImageGraphic)o;
-        info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
+        var s = (ImageGraphic)(o ?? throw new ArgumentNullException(nameof(o)));
+        info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType!, parent);
 
         s._isSizeCalculationBasedOnSourceSize = info.GetBoolean("SizeBasedOnSourceSize");
 
@@ -123,31 +124,50 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Serialization
 
+    protected ImageGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+      : base(new ItemLocationDirectAspectPreserving())
+    {
+
+    }
+
     protected ImageGraphic()
       :
       base(new ItemLocationDirectAspectPreserving())
     {
-      _location = new ItemLocationDirectAspectPreserving() { ParentObject = this };
     }
 
     protected ImageGraphic(ImageGraphic from)
       :
       base(from) // all is done here, since CopyFrom is virtual!
     {
+      CopyFrom(from, false);
+    }
+
+    protected void CopyFrom(ImageGraphic from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      _isSizeCalculationBasedOnSourceSize = from._isSizeCalculationBasedOnSourceSize;
     }
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (object.ReferenceEquals(this, obj))
+        return true;
+      if (obj is ImageGraphic from)
       {
-        var from = obj as ImageGraphic;
-        if (from != null)
+        using (var suspendToken = SuspendGetToken())
         {
-          _isSizeCalculationBasedOnSourceSize = from._isSizeCalculationBasedOnSourceSize;
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     public override bool AutoSize
@@ -186,7 +206,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>Get the size of the original image in points (1/72 inch).</summary>
     public abstract PointD2D GetImageSizePt();
 
-    public abstract Image GetImage();
+    public abstract Image? GetImage();
 
     /// <summary>
     /// Get the object outline for arrangements in object world coordinates.
@@ -197,9 +217,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       return GetRectangularObjectOutline();
     }
 
-    public override IHitTestObject HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData htd)
     {
-      IHitTestObject result = base.HitTest(htd);
+      var result = base.HitTest(htd);
       if (result != null)
         result.DoubleClick = EhHitDoubleClick;
       return result;
@@ -229,7 +249,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
       }
 
-      public override IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel)
+      public override IGripManipulationHandle[]? GetGrips(double pageScale, int gripLevel)
       {
         switch (gripLevel)
         {

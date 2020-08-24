@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -41,9 +42,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         info.AddBaseValueEmbedded(s, typeof(LabelFormattingBase));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        NumericLabelFormattingRadian s = null != o ? (NumericLabelFormattingRadian)o : new NumericLabelFormattingRadian();
+        var s = (NumericLabelFormattingRadian?)o ?? new NumericLabelFormattingRadian();
         info.GetBaseValueEmbedded(s, typeof(LabelFormattingBase), parent);
         return s;
       }

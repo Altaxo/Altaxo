@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -48,9 +49,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        NumericLabelFormattingScientific s = null != o ? (NumericLabelFormattingScientific)o : new NumericLabelFormattingScientific();
+        var s = (NumericLabelFormattingScientific?)o ?? new NumericLabelFormattingScientific();
         info.GetBaseValueEmbedded(s, typeof(NumericLabelFormattingBase), parent);
         return s;
       }
@@ -66,9 +67,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         info.AddValue("ShowExponentAlways", s._showExponentAlways);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        NumericLabelFormattingScientific s = null != o ? (NumericLabelFormattingScientific)o : new NumericLabelFormattingScientific();
+        var s = (NumericLabelFormattingScientific?)o ?? new NumericLabelFormattingScientific();
         info.GetBaseValueEmbedded(s, typeof(NumericLabelFormattingBase), parent);
         s._showExponentAlways = info.GetBoolean("ShowExponentAlways");
         return s;

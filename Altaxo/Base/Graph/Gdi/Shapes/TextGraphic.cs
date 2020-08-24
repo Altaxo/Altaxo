@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -30,6 +31,7 @@ using System.Linq;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Drawing;
   using Background;
   using Geometry;
@@ -46,7 +48,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     protected string _text = ""; // the text, which contains the formatting symbols
     protected FontX _font;
     protected BrushX _textBrush = new BrushX(NamedColors.Black);
-    protected IBackgroundStyle _background = null;
+    protected IBackgroundStyle? _background = null;
     protected double _lineSpacingFactor = 1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
 
     #region Cached or temporary variables
@@ -54,7 +56,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>Hashtable where the keys are graphic paths giving the position of a symbol into the list, and the values are the plot items.</summary>
     protected Dictionary<GraphicsPath, IGPlotItem> _cachedSymbolPositions = new Dictionary<GraphicsPath, IGPlotItem>();
 
-    private StructuralGlyph _rootNode;
+    private StructuralGlyph? _rootNode;
     protected bool _isStructureInSync = false; // true when the text was interpretet and the structure created
     protected bool _isMeasureInSync = false; // true when all items are measured
     protected PointD2D _cachedTextOffset; // offset of text to left upper corner of outer rectangle
@@ -85,9 +87,9 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        TextGraphic s = null != o ? (TextGraphic)o : new TextGraphic(info);
+        var s = (TextGraphic?)o ?? new TextGraphic(info);
 #pragma warning disable CS0618 // Type or member is obsolete
         info.GetBaseValueEmbeddedOrNull(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent);
 #pragma warning restore CS0618 // Type or member is obsolete
@@ -132,12 +134,12 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        TextGraphic s = null != o ? (TextGraphic)o : new TextGraphic(info);
+        var s = (TextGraphic?)o ?? new TextGraphic(info);
         if (info.CurrentElementName == "BaseType") // that was included since 2006-06-20
         {
-          info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType, parent);
+          info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType!, parent);
         }
         else
         {
@@ -170,26 +172,26 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TextGraphic)obj;
-        info.AddBaseValueEmbedded(s, typeof(TextGraphic).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(TextGraphic).BaseType!);
 
         info.AddValue("Text", s._text);
         info.AddValue("Font", s._font);
         info.AddValue("Brush", s._textBrush);
-        info.AddValue("BackgroundStyle", s._background);
+        info.AddValueOrNull("BackgroundStyle", s._background);
         info.AddValue("LineSpacing", s._lineSpacingFactor);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (TextGraphic)o : new TextGraphic(info);
+        var s = (TextGraphic?)o ?? new TextGraphic(info);
 
-        info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType, parent);
+        info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType!, parent);
 
         s._text = info.GetString("Text");
         s._font = (FontX)info.GetValue("Font", s);
         s._textBrush = (BrushX)info.GetValue("Brush", s);
 
-        s.Background = (IBackgroundStyle)info.GetValue("BackgroundStyle", s);
+        s.Background = info.GetValueOrNull<IBackgroundStyle>("BackgroundStyle", s);
 
         s._lineSpacingFactor = info.GetSingle("LineSpacing");
         return s;
@@ -204,7 +206,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// Initializes a new instance of the <see cref="TextGraphic"/> class for deserialization purposes.
     /// </summary>
     /// <param name="info">The information.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected TextGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(new ItemLocationDirectAutoSize())
     {
     }
@@ -254,42 +258,51 @@ namespace Altaxo.Graph.Gdi.Shapes
     public TextGraphic(TextGraphic from)
       : base(from) // all is done here, since CopyFrom is virtual!
     {
+      CopyFrom(from, false);
     }
 
     #endregion Constructors
 
     #region Copying
+    [MemberNotNull(nameof(_font))]
+    protected void CopyFrom(TextGraphic from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      _text = from._text;
+      _font = from._font;
+
+      _textBrush = from._textBrush;
+
+      _background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
+      if (null != _background)
+        _background.ParentObject = this;
+
+      _lineSpacingFactor = from._lineSpacingFactor;
+
+      // don't clone the cached items
+      _isStructureInSync = false;
+      _isMeasureInSync = false;
+    }
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (object.ReferenceEquals(this, obj))
+        return true;
+      if (obj is TextGraphic from)
       {
-        var from = obj as TextGraphic;
-        if (from != null)
+        using (var suspendToken = SuspendGetToken())
         {
-          _text = from._text;
-          _font = from._font;
-
-          _textBrush = from._textBrush;
-
-          _background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
-          if (null != _background)
-            _background.ParentObject = this;
-
-          _lineSpacingFactor = from._lineSpacingFactor;
-
-          // don't clone the cached items
-          _isStructureInSync = false;
-          _isMeasureInSync = false;
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
-    }
-
-    public void CopyFrom(TextGraphic from)
-    {
-      CopyFrom((GraphicBase)from);
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     public override object Clone()
@@ -359,7 +372,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       _cachedTextOffset = new PointD2D(distanceXL, distanceYU);
     }
 
-    public IBackgroundStyle Background
+    public IBackgroundStyle? Background
     {
       get
       {
@@ -466,9 +479,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         return _font;
       }
+      [MemberNotNull(nameof(_font))]
       set
       {
-        if (!(_font == value))
+        if (!object.ReferenceEquals(_font, value))
         {
           _font = value;
           _isStructureInSync = false; // since the font is cached in the structure, it must be renewed
@@ -570,10 +584,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       var tree = parser.GetRoot();
 
       var walker = new TreeWalker(_text);
-      var style = new StyleContext(_font, _textBrush)
-      {
-        BaseFontId = _font
-      };
+      var style = new StyleContext(_font, _textBrush, _font);
 
       _rootNode = walker.VisitTree(tree, style, _lineSpacingFactor, true);
     }
@@ -581,11 +592,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     private void MeasureGlyphs(Graphics g, FontCache cache, IPaintContext paintContext)
     {
       var mc = new MeasureContext
-      {
-        FontCache = cache,
-        LinkedObject = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this),
-        TabStop = Glyph.MeasureString(g, "MMMM", _font).X
-      };
+      (
+        fontCache: cache,
+        linkedObject: Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this) ?? throw new InvalidProgramException(),
+        tabStop: Glyph.MeasureString(g, "MMMM", _font).X
+      );
 
       if (null != _rootNode)
         _rootNode.Measure(g, mc, 0);
@@ -593,7 +604,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private void DrawGlyphs(Graphics g, DrawContext dc, double x, double y)
     {
-      _rootNode.Draw(g, dc, x, y + _rootNode.ExtendAboveBaseline);
+      _rootNode?.Draw(g, dc, x, y + _rootNode.ExtendAboveBaseline);
     }
 
     /// <summary>
@@ -612,6 +623,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public void Paint(Graphics g, IPaintContext paintContext, bool bForPreview)
     {
+      if (_rootNode is null)
+        throw new InvalidProgramException($"{nameof(_rootNode)} is null");
+
       //_isStructureInSync = false;
       _isMeasureInSync = false;  // Change: interpret text every time in order to update plot items and \ID
 
@@ -660,13 +674,13 @@ namespace Altaxo.Graph.Gdi.Shapes
         PaintBackground(g);
 
         var dc = new DrawContext
-        {
-          FontCache = fontCache,
-          bForPreview = bForPreview,
-          LinkedObject = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this),
-          transformMatrix = transformmatrix,
-          _cachedSymbolPositions = _cachedSymbolPositions
-        };
+        (
+          fontCache: fontCache,
+          isForPreview: bForPreview,
+          linkedObject: Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this) ?? throw new InvalidProgramException(),
+          transformationMatrix: transformmatrix,
+          cachedSymbolPositions: _cachedSymbolPositions
+        );
         DrawGlyphs(g, dc, _cachedTextOffset.X, _cachedTextOffset.Y);
         g.Restore(gs);
       }
@@ -676,12 +690,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Hit testing and handling
 
-    public static DoubleClickHandler PlotItemEditorMethod;
-    public static DoubleClickHandler TextGraphicsEditorMethod;
+    public static DoubleClickHandler? PlotItemEditorMethod;
+    public static DoubleClickHandler? TextGraphicsEditorMethod;
 
-    public override IHitTestObject HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData htd)
     {
-      IHitTestObject result;
+      IHitTestObject? result;
 
       var pt = htd.GetHittedPointInWorldCoord(_transformation);
 
@@ -727,7 +741,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         // info.SetNodeContent(obj.ToString());
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
         return System.Enum.Parse(typeof(BackgroundStyle), val, true);

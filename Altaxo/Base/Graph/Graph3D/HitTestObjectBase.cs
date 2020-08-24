@@ -132,7 +132,7 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     /// <param name="gripLevel">The grip level. For 0, only the translation grip is shown.</param>
     /// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
-    public abstract IGripManipulationHandle[] GetGrips(int gripLevel);
+    public abstract IGripManipulationHandle[]? GetGrips(int gripLevel);
 
     public virtual int GetNextGripLevel(int currentGripLevel)
     {
