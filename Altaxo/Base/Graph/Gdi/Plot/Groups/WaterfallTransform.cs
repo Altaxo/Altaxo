@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -74,7 +75,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         info.AddValue("YInc", s._yinc);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         WaterfallTransform s = null != o ? (WaterfallTransform)o : new WaterfallTransform();
         s._scaleXInc = info.GetDouble("XScale");
@@ -246,51 +247,61 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     {
       // members that are created at PaintParent and must be released at latest at FinishPainting
       internal System.Drawing.Region[] _clippingColl;
-
       internal Processed2DPlotData[] _plotDataColl;
       internal double[] _xincColl;
       internal double[] _yincColl;
+
+      public CachedPaintData(Region[] clippingColl, Processed2DPlotData[] plotDataColl, double[] xincColl, double[] yincColl)
+      {
+        _clippingColl = clippingColl;
+        _plotDataColl = plotDataColl;
+        _xincColl = xincColl;
+        _yincColl = yincColl;
+      }
     }
 
     public void PaintPreprocessing(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
     {
       var paintData = new CachedPaintData
-      {
-        _clippingColl = new System.Drawing.Region[coll.Count],
-        _plotDataColl = new Processed2DPlotData[coll.Count],
-        _xincColl = new double[coll.Count],
-        _yincColl = new double[coll.Count]
-      };
+      (
+        new System.Drawing.Region[coll.Count],
+        new Processed2DPlotData[coll.Count],
+        new double[coll.Count],
+        new double[coll.Count]
+      );
 
       paintContext.AddValue(this, paintData);
 
       // First prepare
       int idx = -1;
-      Processed2DPlotData previousPlotData = null;
+      Processed2DPlotData? previousPlotData = null;
       for (int i = 0; i < coll.Count; i++)
       {
-        if (coll[i] is G2DPlotItem)
+        if (coll[i] is G2DPlotItem gpi)
         {
           idx++;
           double currxinc = paintData._xincColl[i] = idx * _xinc * _scaleXInc;
           double curryinc = paintData._yincColl[i] = idx * _yinc * _scaleYInc;
 
-          var gpi = coll[i] as G2DPlotItem;
-          Processed2DPlotData plotdata = paintData._plotDataColl[i] = gpi.GetRangesAndPoints(layer);
-          plotdata.PreviousItemData = previousPlotData;
-          previousPlotData = plotdata;
+          var pdata = gpi.GetRangesAndPoints(layer);
+          if (pdata is null || pdata.RangeList is null || pdata.PlotPointsInAbsoluteLayerCoordinates is null)
+            continue;
+
+          paintData._plotDataColl[i] = pdata;
+          pdata.PreviousItemData = previousPlotData;
+          previousPlotData = pdata;
 
           int j = -1;
-          foreach (int rowIndex in plotdata.RangeList.OriginalRowIndices())
+          foreach (int rowIndex in pdata.RangeList.OriginalRowIndices())
           {
             j++;
 
-            AltaxoVariant xx = plotdata.GetXPhysical(rowIndex) + currxinc;
-            AltaxoVariant yy = plotdata.GetYPhysical(rowIndex) + curryinc;
+            AltaxoVariant xx = pdata.GetXPhysical(rowIndex) + currxinc;
+            AltaxoVariant yy = pdata.GetYPhysical(rowIndex) + curryinc;
 
             var rel = new Logical3D(layer.XAxis.PhysicalVariantToNormal(xx), layer.YAxis.PhysicalVariantToNormal(yy));
             layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out var xabs, out var yabs);
-            plotdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
+            pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
           }
 
           // if clipping is used, we must get a clipping region for every plot item
@@ -300,20 +311,20 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
             if (i == 0)
               paintData._clippingColl[i] = g.Clip;
 
-            Plot.Styles.LinePlotStyle linestyle = null;
+            Plot.Styles.LinePlotStyle? linestyle = null;
             foreach (Plot.Styles.IG2DPlotStyle st in gpi.Style)
             {
-              if (st is Plot.Styles.LinePlotStyle)
+              if (st is Plot.Styles.LinePlotStyle lps)
               {
-                linestyle = st as Plot.Styles.LinePlotStyle;
+                linestyle = lps;
                 break;
               }
             }
 
-            if (null != linestyle)
+            if (linestyle is not null)
             {
               var path = new System.Drawing.Drawing2D.GraphicsPath();
-              linestyle.GetFillPath(path, layer, plotdata, CSPlaneID.Bottom);
+              linestyle.GetFillPath(path, layer, pdata, CSPlaneID.Bottom);
               if ((i + 1) < paintData._clippingColl.Length)
               {
                 paintData._clippingColl[i + 1] = paintData._clippingColl[i].Clone();
@@ -666,7 +677,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         {
           get
           {
-            return null;
+            throw new NotImplementedException();
           }
           set
           {

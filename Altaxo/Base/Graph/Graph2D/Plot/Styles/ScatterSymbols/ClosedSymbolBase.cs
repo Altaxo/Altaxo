@@ -171,17 +171,17 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       get { return _frame; }
     }
 
-    public ClosedSymbolBase WithFrame(IScatterSymbolFrame frame)
+    public ClosedSymbolBase WithFrame(IScatterSymbolFrame? frame)
     {
       return WithFrame(frame, null);
     }
 
-    IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame frame)
+    IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame? frame)
     {
       return WithFrame(frame, null);
     }
 
-    public ClosedSymbolBase WithFrame(IScatterSymbolFrame frame, bool? isInfluencedByPlotColor)
+    public ClosedSymbolBase WithFrame(IScatterSymbolFrame? frame, bool? isInfluencedByPlotColor)
     {
       if (object.ReferenceEquals(_frame, frame) && (!isInfluencedByPlotColor.HasValue || _plotColorInfluence.HasFlag(PlotColorInfluence.FrameColorFull) == isInfluencedByPlotColor.Value))
       {
@@ -199,17 +199,17 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     public IScatterSymbolInset? Inset { get { return _inset; } }
 
-    public ClosedSymbolBase WithInset(IScatterSymbolInset inset)
+    public ClosedSymbolBase WithInset(IScatterSymbolInset? inset)
     {
       return WithInset(inset, null);
     }
 
-    IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset inset)
+    IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset? inset)
     {
       return WithInset(inset, null);
     }
 
-    public ClosedSymbolBase WithInset(IScatterSymbolInset inset, bool? isInfluencedByPlotColor)
+    public ClosedSymbolBase WithInset(IScatterSymbolInset? inset, bool? isInfluencedByPlotColor)
     {
       if (object.ReferenceEquals(_inset, inset) && (!isInfluencedByPlotColor.HasValue || _plotColorInfluence.HasFlag(PlotColorInfluence.InsetColorFull) == isInfluencedByPlotColor.Value))
       {

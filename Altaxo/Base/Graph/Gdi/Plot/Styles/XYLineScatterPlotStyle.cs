@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
@@ -80,9 +81,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                  */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        XYLineScatterPlotStyle s = null != o ? (XYLineScatterPlotStyle)o : new XYLineScatterPlotStyle(info);
+        var s = (XYLineScatterPlotStyle?)o ?? new XYLineScatterPlotStyle(info);
         // do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
         s.m_LineStyle = (LinePlotStyle)info.GetValue("XYPlotLineStyle", s);
         // do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
@@ -108,9 +109,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        XYLineScatterPlotStyle s = null != o ? (XYLineScatterPlotStyle)o : new XYLineScatterPlotStyle(info);
+        var s = (XYLineScatterPlotStyle?)o ?? new XYLineScatterPlotStyle(info);
         // do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
         s.m_LineStyle = (LinePlotStyle)info.GetValue("XYPlotLineStyle", s);
         // do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
@@ -141,9 +142,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        XYLineScatterPlotStyle s = null != o ? (XYLineScatterPlotStyle)o : new XYLineScatterPlotStyle(info);
+        var s = (XYLineScatterPlotStyle?)o ?? new XYLineScatterPlotStyle(info);
         // do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
         s.m_LineStyle = (LinePlotStyle)info.GetValue("XYPlotLineStyle", s);
         // do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
@@ -163,7 +164,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #endregion Serialization
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public XYLineScatterPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     {
       var kind = LineScatterPlotStyleKind.LineAndScatter;

@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
@@ -51,7 +53,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         return result;
       }
 
-      public override bool Equals(object obj)
+      public override bool Equals(object? obj)
       {
         if (!(obj is TypeArray))
           return false;
@@ -67,15 +69,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #endregion Inner Classes
 
-    private static Hashtable _NamesByTypeArray;
-    private static Hashtable _CreationProcByName;
-    private static ArrayList _NamesInOrder;
+    private static Dictionary<TypeArray, string> _NamesByTypeArray;
+    private static Dictionary<string, CreateCollectionProcedure> _CreationProcByName;
+    private static List<string> _NamesInOrder;
 
     static G3DPlotStyleCollectionTemplates()
     {
-      _NamesByTypeArray = new Hashtable();
-      _CreationProcByName = new Hashtable();
-      _NamesInOrder = new ArrayList();
+      _NamesByTypeArray = new Dictionary<TypeArray, string>();
+      _CreationProcByName = new Dictionary<string, CreateCollectionProcedure>();
+      _NamesInOrder = new List<string>();
 
       //Add("Line", new CreateCollectionProcedure(CreateLineStyle));
       Add("Scatter", new CreateCollectionProcedure(CreateScatterStyle));
@@ -100,7 +102,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public static string[] GetAvailableNames()
     {
-      return (string[])_NamesInOrder.ToArray(typeof(string));
+      return _NamesInOrder.ToArray();
     }
 
     public static string[] GetAvailableNamesPlusCustom()
@@ -108,7 +110,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       string[] result = new string[_NamesInOrder.Count + 1];
       result[0] = "Custom";
       for (int i = 1; i < result.Length; i++)
-        result[i] = (string)_NamesInOrder[i - 1];
+        result[i] = _NamesInOrder[i - 1];
       return result;
     }
 
@@ -128,18 +130,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return result < 0 ? 0 : result + 1;
     }
 
-    public static G3DPlotStyleCollection GetTemplate(string name, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    public static G3DPlotStyleCollection? GetTemplate(string name, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      var proc = (CreateCollectionProcedure)_CreationProcByName[name];
-      if (null != proc)
+      if (_CreationProcByName.TryGetValue(name, out var proc))
         return proc(context);
       else
         return null;
     }
 
-    public static G3DPlotStyleCollection GetTemplate(int idx, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    public static G3DPlotStyleCollection? GetTemplate(int idx, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      return GetTemplate((string)_NamesInOrder[idx], context);
+      return GetTemplate(_NamesInOrder[idx], context);
     }
 
     public static void Add(string name, CreateCollectionProcedure procedure)
@@ -147,8 +148,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       if (_CreationProcByName.ContainsKey(name))
         throw new Exception(string.Format("Template {0} is already present in the template collection", name));
 
-      var coll = procedure(null);
-      if (coll == null || coll.Count == 0)
+      var coll = procedure(PropertyExtensions.GetPropertyContextOfProject());
+      if (coll is null || coll.Count == 0)
         throw new Exception(string.Format("Procedure for template {0} creates no or an empty collection.", name));
 
       _NamesInOrder.Add(name);

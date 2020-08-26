@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,7 +61,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
       PlotRange range,
       IPlotArea layer,
       PenX3D pen,
-      Func<int, double> symbolGap,
+      Func<int, double>? symbolGap,
       int skipFrequency,
       bool connectCircular);
 
@@ -69,7 +70,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
       return GetType().GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return GetType() == obj?.GetType();
     }

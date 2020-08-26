@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -75,7 +76,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="pdata">The preprocessed plot data used for plotting.</param>
     /// <param name="prevItemData">Plot data of the previous plot item.</param>
     /// <param name="nextItemData">Plot data of the next plot item.</param>
-    void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData);
+    void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData);
 
     /// <summary>
     /// Paints a appropriate symbol in the given rectangle. The width of the rectangle is mandatory, but if the heigth is too small,

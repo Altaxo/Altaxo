@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -63,9 +64,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ScatterSymbolGroupStyle s = null != o ? (ScatterSymbolGroupStyle)o : new ScatterSymbolGroupStyle();
+        var s = (ScatterSymbolGroupStyle?)o ?? new ScatterSymbolGroupStyle();
         s._isStepEnabled = info.GetBoolean("StepEnabled");
         s._listOfValues = ScatterSymbolListManager.Instance.OldSolid;
         s._value = s._listOfValues[0];
@@ -91,9 +92,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         info.AddValue("ListOfValues", s._listOfValues);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ScatterSymbolGroupStyle s = null != o ? (ScatterSymbolGroupStyle)o : new ScatterSymbolGroupStyle();
+        var s = (ScatterSymbolGroupStyle?)o ?? new ScatterSymbolGroupStyle();
         s._isStepEnabled = info.GetBoolean("StepEnabled");
 
         var value = (IScatterSymbol)info.GetValue("Value", s);
@@ -330,7 +331,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         localGroups.Add(new ScatterSymbolGroupStyle());
       }
 
-      ScatterSymbolGroupStyle grpStyle = null;
+      ScatterSymbolGroupStyle? grpStyle = null;
       if (externalGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
         grpStyle = (ScatterSymbolGroupStyle)externalGroups.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle));
       else if (localGroups != null)
@@ -347,16 +348,15 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       IPlotGroupStyleCollection localGroups,
       Setter setter)
     {
-      ScatterSymbolGroupStyle grpStyle = null;
-      IPlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection? grpColl = null;
       if (externalGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
         grpColl = externalGroups;
-      else if (localGroups != null && localGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
+      else if (localGroups is not null && localGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
         grpColl = localGroups;
 
-      if (null != grpColl)
+      if (grpColl is not null)
       {
-        grpStyle = (ScatterSymbolGroupStyle)grpColl.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle));
+        var grpStyle = (ScatterSymbolGroupStyle)grpColl.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle));
         grpColl.OnBeforeApplication(typeof(ScatterSymbolGroupStyle));
         setter(grpStyle.ShapeAndStyle);
       }

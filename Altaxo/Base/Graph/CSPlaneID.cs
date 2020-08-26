@@ -225,25 +225,12 @@ namespace Altaxo.Graph
       return result;
     }
 
-    public static bool operator ==(CSPlaneID a, CSPlaneID b)
+    public static bool operator ==(CSPlaneID? a, CSPlaneID? b)
     {
-      // If both are null, or both are same instance, return true.
-      if (System.Object.ReferenceEquals(a, b))
-      {
-        return true;
-      }
-
-      // If one is null, but not both, return false.
-      if (((object)a == null) || ((object)b == null))
-      {
-        return false;
-      }
-
-      // Return true if the fields match:
-      return a.Equals(b);
+      return ReferenceEquals(a, b) || (a is not null && b is not null && a.Equals(b));
     }
 
-    public static bool operator !=(CSPlaneID x, CSPlaneID y)
+    public static bool operator !=(CSPlaneID? x, CSPlaneID? y)
     {
       return !(x == y);
     }

@@ -1190,18 +1190,18 @@ if (0 != (cp & PenX.Configured.Width))
       return Equals(obj as PenX, true);
     }
 
-    public static bool operator ==(PenX x, PenX y)
+    public static bool operator ==(PenX? x, PenX? y)
     {
-      return x is { } _ ? x.Equals(y, true) : y is { } _ ? y.Equals(x, true) : true;
+      return object.ReferenceEquals(x, y) || (x is not null && y is not null && x.Equals(y, true));
     }
-    public static bool operator !=(PenX x, PenX y)
+    public static bool operator !=(PenX? x, PenX? y)
     {
       return !(x == y);
     }
 
     public static bool AreEqualUnlessWidth(PenX x, PenX y)
     {
-      return x is { } _ ? x.Equals(y, false) : y is { } _ ? y.Equals(x, false) : true;
+      return object.ReferenceEquals(x, y) || (x is not null && y is not null && x.Equals(y, false));
     }
 
     protected int CalculateHash()

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,6 +31,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Main;
   using Collections;
@@ -68,7 +70,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         int count = info.OpenArray();
         var array = new IG3DPlotStyle[count];
@@ -94,10 +96,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region Copying
 
+    [MemberNotNull(nameof(_innerList))]
     public void CopyFrom(G3DPlotStyleCollection from)
     {
       if (object.ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       using (var suspendToken = SuspendGetToken())
       {
@@ -219,7 +224,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public G3DPlotStyleCollection(G3DPlotStyleCollection from)
     {
-      CopyFrom(from, true);
+      CopyFrom(from);
     }
 
     #endregion Construction
@@ -370,12 +375,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       EhSelfChanged(EventArgs.Empty);
     }
 
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = PlotItemStyleChangedEventArgs.Empty;
     }
 
-    public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData prevItemData, Processed3DPlotData nextItemData)
+    public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
       if (null == pdata)
         throw new ArgumentNullException(nameof(pdata));
@@ -530,12 +535,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <inheritdoc/>
     public IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      IReadableColumn? Column, // the column as it was at the time of this call
+      string? ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
-      return null; // no additionally used columns
+      yield break; // no additionally used columns
     }
 
     #endregion IRoutedPropertyReceiver Members

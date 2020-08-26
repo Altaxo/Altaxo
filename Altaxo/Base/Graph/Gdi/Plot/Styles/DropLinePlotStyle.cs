@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -30,6 +31,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.Diagnostics.CodeAnalysis;
   using System.Drawing.Drawing2D;
   using Altaxo.Data;
   using Altaxo.Drawing;
@@ -108,11 +110,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     // cached values:
     /// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
     [field: NonSerialized]
-    protected Func<int, double> _cachedSymbolSizeForIndexFunction;
+    protected Func<int, double>? _cachedSymbolSizeForIndexFunction;
 
     /// <summary>If this function is set, the symbol color is determined by calling this function on the index into the data.</summary>
     [field: NonSerialized]
-    protected Func<int, Color> _cachedColorForIndexFunction;
+    protected Func<int, Color>? _cachedColorForIndexFunction;
 
     /// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
     private double _cachedLogicalShiftX;
@@ -160,9 +162,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("GapAtEndFactor", s._gapAtEndFactor);
       }
 
-      protected virtual DropLinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual DropLinePlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DropLinePlotStyle s = null != o ? (DropLinePlotStyle)o : new DropLinePlotStyle(info);
+        var s = (DropLinePlotStyle?)o ?? new DropLinePlotStyle(info);
 
         s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
         s._skipFrequency = info.GetInt32("SkipFreq");
@@ -194,7 +196,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         DropLinePlotStyle s = SDeserialize(o, info, parent);
 
@@ -209,7 +211,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// Deserialization constructor.
     /// </summary>
     /// <param name="info">The deserialization information.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected DropLinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
@@ -228,10 +232,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return false;
     }
 
+    [MemberNotNull(nameof(_dropTargets), nameof(_pen))]
     public void CopyFrom(DropLinePlotStyle from, Main.EventFiring eventFiring)
     {
       if (object.ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       using (var suspendToken = SuspendGetToken())
       {
@@ -719,7 +726,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #endregion I3DPlotItem Members
 
-    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
+    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       // adjust the skip frequency if it was not set appropriate
       if (_skipFrequency <= 0)
@@ -730,7 +737,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _cachedLogicalShiftX = _cachedLogicalShiftY = 0;
       }
 
-      PlotRangeList rangeList = pdata.RangeList;
+      if (!(pdata.RangeList is { } rangeList))
+        return;
+
 
       if (_ignoreMissingDataPoints)
       {
@@ -802,7 +811,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             {
               gpath.Reset();
               layer.CoordinateSystem.GetIsolineFromPointToPlane(gpath, r3d, id);
-              PointF[] shortenedPathPoints = null;
+              PointF[]? shortenedPathPoints = null;
 
               if (gapStart != 0 || gapEnd != 0)
               {
@@ -828,13 +837,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         {
           var originalRowIndex = range.GetOriginalRowIndexFromPlotPointIndex(j);
           var pen = _pen;
-          if (null == _cachedColorForIndexFunction)
-          {
-            _cachedSymbolSize = _cachedSymbolSizeForIndexFunction(originalRowIndex);
-            double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
-            pen = pen.WithWidth(w1);
-          }
-          else
+          if (_cachedColorForIndexFunction is not null)
           {
             _cachedSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _cachedSymbolSize : _cachedSymbolSizeForIndexFunction(originalRowIndex);
             double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
@@ -844,6 +847,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
               .WithWidth(w1)
               .WithColor(NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B));
           }
+          else if (_cachedSymbolSizeForIndexFunction is not null)
+          {
+            _cachedSymbolSize = _cachedSymbolSizeForIndexFunction(originalRowIndex);
+            double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
+            pen = pen.WithWidth(w1);
+          }
+
 
           var gapStart = 0.5 * (_gapAtStartOffset + _gapAtStartFactor * _cachedSymbolSize);
           var gapEnd = 0.5 * (_gapAtEndOffset + _gapAtEndFactor * _cachedSymbolSize);
@@ -858,7 +868,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             {
               gpath.Reset();
               layer.CoordinateSystem.GetIsolineFromPointToPlane(gpath, r3d, id);
-              PointF[] shortenedPathPoints = null;
+              PointF[]? shortenedPathPoints = null;
 
               if (gapStart != 0 || gapEnd != 0)
               {
@@ -995,12 +1005,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <inheritdoc/>
     public IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      IReadableColumn? Column, // the column as it was at the time of this call
+      string? ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
-      return null; // no additionally used columns
+      yield break; // no additionally used columns
     }
 
     #endregion IDocumentNode Members

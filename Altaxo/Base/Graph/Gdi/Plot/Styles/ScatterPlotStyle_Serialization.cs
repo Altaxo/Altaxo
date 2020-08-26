@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,10 +126,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         const double Sqrt2 = 1.4142135623730950488016887242097;
-        var s = (ScatterPlotStyle)o ?? new ScatterPlotStyle(info);
+        var s = (ScatterPlotStyle?)o ?? new ScatterPlotStyle(info);
 
         var shape = (DeprecatedShape)info.GetValue("Shape", typeof(DeprecatedShape));
         var style = (DeprecatedStyle)info.GetValue("Style", typeof(DeprecatedStyle));
@@ -167,11 +168,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         const double Sqrt2 = 1.4142135623730950488016887242097;
 
-        var s = (ScatterPlotStyle)o ?? new ScatterPlotStyle(info);
+        var s = (ScatterPlotStyle?)o ?? new ScatterPlotStyle(info);
 
         var shape = (DeprecatedShape)info.GetValue("Shape", typeof(DeprecatedShape));
         var style = (DeprecatedStyle)info.GetValue("Style", typeof(DeprecatedStyle));
@@ -220,11 +221,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         const double Sqrt2 = 1.4142135623730950488016887242097;
 
-        var s = (ScatterPlotStyle)o ?? new ScatterPlotStyle(info);
+        var s = (ScatterPlotStyle?)o ?? new ScatterPlotStyle(info);
 
         var shape = (DeprecatedShape)info.GetValue("Shape", s);
         var style = (DeprecatedStyle)info.GetValue("Style", s);
@@ -276,20 +277,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("Color", s._color);
 
         info.AddValue("OverrideFrame", s._overrideFrame);
-        info.AddValue("OverriddenFrame", s._overriddenFrame);
+        info.AddValueOrNull("OverriddenFrame", s._overriddenFrame);
         info.AddValue("OverrideInset", s._overrideInset);
-        info.AddValue("OverriddenInset", s._overriddenInset);
+        info.AddValueOrNull("OverriddenInset", s._overriddenInset);
         info.AddValue("OverriddenStructureWidthOffset", s._overrideStructureWidthOffset);
         info.AddValue("OverriddenStructureWidthFactor", s._overrideStructureWidthFactor);
         info.AddNullableEnum("OverriddenPlotColorInfluence", s._overridePlotColorInfluence);
-        info.AddValue("OverriddenFillColor", s._overrideFillColor);
-        info.AddValue("OverriddenFrameColor", s._overrideFrameColor);
-        info.AddValue("OverriddenInsetColor", s._overrideInsetColor);
+        info.AddValueOrNull("OverriddenFillColor", s._overrideFillColor);
+        info.AddValueOrNull("OverriddenFrameColor", s._overrideFrameColor);
+        info.AddValueOrNull("OverriddenInsetColor", s._overrideInsetColor);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ScatterPlotStyle)o ?? new ScatterPlotStyle(info);
+        var s = (ScatterPlotStyle?)o ?? new ScatterPlotStyle(info);
 
         s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
         s._skipFreq = info.GetInt32("SkipFreq");
@@ -306,15 +307,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._color = (NamedColor)info.GetValue("Color", s);
 
         s._overrideFrame = info.GetBoolean("OverrideFrame");
-        s._overriddenFrame = (IScatterSymbolFrame)info.GetValue("OverriddenFrame", s);
+        s._overriddenFrame = info.GetValueOrNull<IScatterSymbolFrame>("OverriddenFrame", s);
         s._overrideInset = info.GetBoolean("OverrideInset");
-        s._overriddenInset = (IScatterSymbolInset)info.GetValue("OverriddenInset", s);
+        s._overriddenInset = info.GetValue<IScatterSymbolInset>("OverriddenInset", s);
         s._overrideStructureWidthOffset = info.GetNullableDouble("OverriddenStructureWidthOffset");
         s._overrideStructureWidthFactor = info.GetNullableDouble("OverriddenStructureWidthFactor");
         s._overridePlotColorInfluence = info.GetNullableEnum<PlotColorInfluence>("OverriddenPlotColorInfluence");
-        s._overrideFillColor = (NamedColor?)info.GetValue("OverriddenFillColor", s);
-        s._overrideFrameColor = (NamedColor?)info.GetValue("OverriddenFrameColor", s);
-        s._overrideInsetColor = (NamedColor?)info.GetValue("OverriddenInsetColor", s);
+        s._overrideFillColor = info.GetValue<NamedColor?>("OverriddenFillColor", s);
+        s._overrideFrameColor = info.GetValue<NamedColor?>("OverriddenFrameColor", s);
+        s._overrideInsetColor = info.GetValue<NamedColor?>("OverriddenInsetColor", s);
 
         return s;
       }
@@ -349,7 +350,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         // info.SetNodeContent(obj.ToString());
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
         return System.Enum.Parse(typeof(DeprecatedShape), val, true);
@@ -383,7 +384,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         //info.SetNodeContent(obj.ToString());
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
         return System.Enum.Parse(typeof(DeprecatedStyle), val, true);
@@ -416,7 +417,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         // info.SetNodeContent(obj.ToString());
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
         return System.Enum.Parse(typeof(DeprecatedDropLine), val, true);

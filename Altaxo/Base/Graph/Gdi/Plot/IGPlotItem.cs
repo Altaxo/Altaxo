@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -51,7 +52,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <summary>
     /// The collection where this plot item belongs to. Can be null for the root item.
     /// </summary>
-    PlotItemCollection ParentCollection { get; }
+    PlotItemCollection? ParentCollection { get; }
 
     /// <summary>
     /// Collects all possible group styles that can be applied to this plot item in
@@ -107,7 +108,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="previousPlotItem">Previous plot item.</param>
     /// <param name="nextPlotItem">Next plot item. Can be null.</param>
     /// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
-    void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
+    void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem);
 
     /// <summary>
     /// Called after painting has finished. Can be used to release resources.
@@ -128,6 +129,6 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
     /// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
-    IHitTestObject HitTest(IPlotArea layer, PointD2D hitpoint);
+    IHitTestObject? HitTest(IPlotArea layer, PointD2D hitpoint);
   }
 }

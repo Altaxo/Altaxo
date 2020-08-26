@@ -22,12 +22,14 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Main;
   using Drawing;
@@ -139,7 +141,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     /// <summary>If this function is set, the color is determined by calling this function on the index into the data.</summary>
     [field: NonSerialized]
-    protected Func<int, System.Drawing.Color> _cachedColorForIndexFunction;
+    protected Func<int, System.Drawing.Color>? _cachedColorForIndexFunction;
 
     #region Serialization
 
@@ -165,9 +167,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         info.AddValue("OuterGapY", s._relOuterGapY);
       }
 
-      protected virtual BarGraphPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual BarGraphPlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        BarGraphPlotStyle s = null != o ? (BarGraphPlotStyle)o : new BarGraphPlotStyle(info);
+        var s = (BarGraphPlotStyle?)o ?? new BarGraphPlotStyle(info);
 
         s._usePhysicalBaseValue = info.GetBoolean("UsePhysicalBaseValue");
         s._baseValue = (Altaxo.Data.AltaxoVariant)info.GetValue("BaseValue", s);
@@ -187,7 +189,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         BarGraphPlotStyle s = SDeserialize(o, info, parent);
         return s;
@@ -196,35 +198,42 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #endregion Serialization
 
+    [MemberNotNull(nameof(_pen))]
+    protected void CopyFrom(BarGraphPlotStyle from)
+    {
+      _usePhysicalBaseValue = from._usePhysicalBaseValue;
+      _baseValue = from._baseValue;
+      _startAtPreviousItem = from._startAtPreviousItem;
+      _previousItemZGap = from._previousItemZGap;
+
+      _independentColor = from._independentColor;
+      _pen = from._pen;
+      _useUniformCrossSectionThickness = from._useUniformCrossSectionThickness;
+
+      _barShiftStrategy = from._barShiftStrategy;
+      _barShiftMaxNumberOfItemsInOneDirection = from._barShiftMaxNumberOfItemsInOneDirection;
+      _relInnerGapX = from._relInnerGapX;
+      _relOuterGapX = from._relOuterGapX;
+      _relInnerGapY = from._relInnerGapY;
+      _relOuterGapY = from._relOuterGapY;
+
+      _xSizeLogical = from._xSizeLogical;
+      _xOffsetLogical = from._xOffsetLogical;
+      _ySizeLogical = from._ySizeLogical;
+      _yOffsetLogical = from._yOffsetLogical;
+    }
+
+
     public virtual bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (object.ReferenceEquals(this, obj))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return true;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
-      var from = obj as BarGraphPlotStyle;
-      if (null != from)
+      if (obj is BarGraphPlotStyle from)
       {
-        _usePhysicalBaseValue = from._usePhysicalBaseValue;
-        _baseValue = from._baseValue;
-        _startAtPreviousItem = from._startAtPreviousItem;
-        _previousItemZGap = from._previousItemZGap;
-
-        _independentColor = from._independentColor;
-        _pen = from._pen;
-        _useUniformCrossSectionThickness = from._useUniformCrossSectionThickness;
-
-        _barShiftStrategy = from._barShiftStrategy;
-        _barShiftMaxNumberOfItemsInOneDirection = from._barShiftMaxNumberOfItemsInOneDirection;
-        _relInnerGapX = from._relInnerGapX;
-        _relOuterGapX = from._relOuterGapX;
-        _relInnerGapY = from._relInnerGapY;
-        _relOuterGapY = from._relOuterGapY;
-
-        _xSizeLogical = from._xSizeLogical;
-        _xOffsetLogical = from._xOffsetLogical;
-        _ySizeLogical = from._ySizeLogical;
-        _yOffsetLogical = from._yOffsetLogical;
-
+        CopyFrom(from);
         EhSelfChanged();
         return true;
       }
@@ -253,7 +262,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return new BarGraphPlotStyle(this, true);
     }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected BarGraphPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
@@ -265,7 +276,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public BarGraphPlotStyle(BarGraphPlotStyle from, bool copyWithDataReferences)
     {
-      CopyFrom(from, copyWithDataReferences);
+      CopyFrom(from);
     }
 
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -479,7 +490,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       // first, we have to calculate the span of logical values from the minimum logical value to the maximum logical value
       int numberOfItems = 0;
 
-      if (null != pdata)
+      if (pdata?.RangeList is not null)
       {
         double minLogicalX = double.MaxValue;
         double maxLogicalX = double.MinValue;
@@ -504,8 +515,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
         BarSizePosition3DGroupStyle.IntendToApply(externalGroups, localGroups, numberOfItems, minLogicalX, maxLogicalX, minLogicalY, maxLogicalY);
       }
-      BarSizePosition3DGroupStyle bwp = PlotGroupStyle.GetStyleToInitialize<BarSizePosition3DGroupStyle>(externalGroups, localGroups);
-      if (null != bwp)
+      var bwp = PlotGroupStyle.GetStyleToInitialize<BarSizePosition3DGroupStyle>(externalGroups, localGroups);
+      if (bwp is not null)
         bwp.Initialize(_barShiftStrategy, _barShiftMaxNumberOfItemsInOneDirection, _relInnerGapX, _relOuterGapX, _relInnerGapY, _relOuterGapY);
 
       if (!_independentColor) // else if is used here because fill color has precedence over frame color
@@ -517,8 +528,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       _cachedColorForIndexFunction = null;
 
-      BarSizePosition3DGroupStyle bwp = PlotGroupStyle.GetStyleToApply<BarSizePosition3DGroupStyle>(externalGroups, localGroups);
-      if (null != bwp)
+      var bwp = PlotGroupStyle.GetStyleToApply<BarSizePosition3DGroupStyle>(externalGroups, localGroups);
+      if (bwp is not null)
         bwp.Apply(
           out _barShiftStrategy, out _barShiftMaxNumberOfItemsInOneDirection,
           out _relInnerGapX, out _relOuterGapX, out _xSizeLogical, out _xOffsetLogical,
@@ -535,13 +546,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
-    public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData prevItemData, Processed3DPlotData nextItemData)
+    public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
-      if (null == pdata)
-        throw new ArgumentNullException(nameof(pdata));
+      if (pdata is null || !(pdata.RangeList is { } rangeList) || rangeList.Count == 0 || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray))
+        return;
 
-      PlotRangeList rangeList = pdata.RangeList;
-      var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
       layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(0, 0, 0), out var leftFrontBotton);
       layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(1, 1, 1), out var rightBackTop);
 
@@ -557,7 +566,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         globalBaseValue = _baseValue.ToDouble();
       }
 
-      bool useVariableColor = null != _cachedColorForIndexFunction && !_independentColor;
+      bool useVariableColor = _cachedColorForIndexFunction is not null && !_independentColor;
 
       var pen = _pen;
 
@@ -606,7 +615,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         }
 
         if (useVariableColor)
-          pen = pen.WithColor(GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(originalRowIndex), "VariableColor"));
+          pen = pen.WithColor(GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction!(originalRowIndex), "VariableColor"));
 
         var isoLine = layer.CoordinateSystem.GetIsoline(new Logical3D(xLowerLogical, yLowerLogical, zBaseLogical), new Logical3D(xLowerLogical, yLowerLogical, zCenterLogical));
         g.DrawLine(pen, isoLine);
@@ -647,12 +656,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <inheritdoc/>
     public IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      IReadableColumn? Column, // the column as it was at the time of this call
+      string? ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
-      return null;
+      yield break;
     }
 
     #endregion IDocumentNode Members

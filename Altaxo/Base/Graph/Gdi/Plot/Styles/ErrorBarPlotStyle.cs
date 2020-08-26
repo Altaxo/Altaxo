@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -32,6 +33,7 @@ using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Drawing;
   using Altaxo.Graph;
   using Altaxo.Graph.Gdi.Plot.Data;
@@ -62,9 +64,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected bool _useCommonErrorColumn = true;
 
-    private IReadableColumnProxy _commonErrorColumn;
-    private IReadableColumnProxy _positiveErrorColumn;
-    private IReadableColumnProxy _negativeErrorColumn;
+    private IReadableColumnProxy? _commonErrorColumn;
+    private IReadableColumnProxy? _positiveErrorColumn;
+    private IReadableColumnProxy? _negativeErrorColumn;
 
     private ValueInterpretation _meaningOfValues;
 
@@ -142,11 +144,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     /// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
     [field: NonSerialized]
-    protected Func<int, double> _cachedSymbolSizeForIndexFunction;
+    protected Func<int, double>? _cachedSymbolSizeForIndexFunction;
 
     /// <summary>If this function is set, the symbol color is determined by calling this function on the index into the data.</summary>
     [field: NonSerialized]
-    protected Func<int, Color> _cachedColorForIndexFunction;
+    protected Func<int, Color>? _cachedColorForIndexFunction;
 
     #region Serialization
 
@@ -177,7 +179,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
-      protected virtual ErrorBarPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual ErrorBarPlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ErrorBarPlotStyle s; // = null != o ? (ErrorBarPlotStyle)o : new ErrorBarPlotStyle(info);
 
@@ -215,7 +217,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ErrorBarPlotStyle s = SDeserialize(o, info, parent);
 
@@ -235,12 +237,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         if (s._useCommonErrorColumn)
         {
-          info.AddValue("CommonError", s._commonErrorColumn);
+          info.AddValueOrNull("CommonError", s._commonErrorColumn);
         }
         else
         {
-          info.AddValue("PositiveError", s._positiveErrorColumn);
-          info.AddValue("NegativeError", s._negativeErrorColumn);
+          info.AddValueOrNull("PositiveError", s._positiveErrorColumn);
+          info.AddValueOrNull("NegativeError", s._negativeErrorColumn);
         }
         info.AddValue("IndependentSkipFreq", s._independentSkipFrequency);
         info.AddValue("SkipFreq", s._skipFrequency);
@@ -266,28 +268,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("ForceVisibilityOfEndCap", s._forceVisibilityOfEndCap);
       }
 
-      protected virtual ErrorBarPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual ErrorBarPlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ErrorBarPlotStyle)o;
+        var s = (ErrorBarPlotStyle)(o ?? throw new ArgumentNullException(nameof(o)));
 
         s._meaningOfValues = (ValueInterpretation)info.GetEnum("MeaningOfValues", typeof(ValueInterpretation));
         s._useCommonErrorColumn = info.GetBoolean("UseCommonColumn");
 
         if (s._useCommonErrorColumn)
         {
-          s._commonErrorColumn = (IReadableColumnProxy)info.GetValue("CommonError", s);
-          if (null != s._commonErrorColumn)
-            s._commonErrorColumn.ParentObject = s;
+          s.ChildSetMember(ref s._commonErrorColumn, info.GetValueOrNull<IReadableColumnProxy>("CommonError", s));
         }
         else
         {
-          s._positiveErrorColumn = (IReadableColumnProxy)info.GetValue("PositiveError", s);
-          if (null != s._positiveErrorColumn)
-            s._positiveErrorColumn.ParentObject = s;
-
-          s._negativeErrorColumn = (IReadableColumnProxy)info.GetValue("NegativeError", s);
-          if (null != s._negativeErrorColumn)
-            s._negativeErrorColumn.ParentObject = s;
+          s.ChildSetMember(ref s._positiveErrorColumn, info.GetValueOrNull<IReadableColumnProxy>("PositiveError", s));
+          s.ChildSetMember(ref s._negativeErrorColumn, info.GetValueOrNull<IReadableColumnProxy>("NegativeError", s));
         }
 
         s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
@@ -317,7 +312,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ErrorBarPlotStyle s = SDeserialize(o, info, parent);
 
@@ -327,11 +322,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #endregion Serialization
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected ErrorBarPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected ErrorBarPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy posColumnProxy, IReadableColumnProxy negColumnProxy)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
       ChildSetMember(ref _positiveErrorColumn, posColumnProxy);
       ChildSetMember(ref _negativeErrorColumn, negColumnProxy);
@@ -354,48 +353,52 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       CopyFrom(from, copyWithDataReferences);
     }
 
+    [MemberNotNull(nameof(_pen))]
+    protected void CopyFrom(ErrorBarPlotStyle from, bool copyWithDataReferences)
+    {
+      _meaningOfValues = from._meaningOfValues;
+      _useCommonErrorColumn = from._useCommonErrorColumn;
+
+      if (copyWithDataReferences)
+      {
+        ChildCloneToMember(ref _commonErrorColumn, from._commonErrorColumn);
+        ChildCloneToMember(ref _positiveErrorColumn, from._positiveErrorColumn);
+        ChildCloneToMember(ref _negativeErrorColumn, from._negativeErrorColumn);
+      }
+
+      _independentSkipFrequency = from._independentSkipFrequency;
+      _skipFrequency = from._skipFrequency;
+      _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+      _independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+
+      _independentSymbolSize = from._independentSymbolSize;
+      _symbolSize = from._symbolSize;
+
+      _pen = from._pen;
+      _independentColor = from._independentColor;
+      _independentDashPattern = from._independentDashPattern;
+
+      _lineWidth1Offset = from._lineWidth1Offset;
+      _lineWidth1Factor = from._lineWidth1Factor;
+
+      _endCapSizeFactor = from._endCapSizeFactor;
+      _endCapSizeOffset = from._endCapSizeOffset;
+
+      _useSymbolGap = from._useSymbolGap;
+      _symbolGapFactor = from._symbolGapFactor;
+      _symbolGapOffset = from._symbolGapOffset;
+
+      _cachedLogicalShiftX = from._cachedLogicalShiftX;
+      _cachedLogicalShiftY = from._cachedLogicalShiftY;
+    }
+
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
       if (object.ReferenceEquals(this, obj))
         return true;
-      var from = obj as ErrorBarPlotStyle;
-      if (null != from)
+      if (obj is ErrorBarPlotStyle from)
       {
-        _meaningOfValues = from._meaningOfValues;
-        _useCommonErrorColumn = from._useCommonErrorColumn;
-
-        if (copyWithDataReferences)
-        {
-          ChildCloneToMember(ref _commonErrorColumn, from._commonErrorColumn);
-          ChildCloneToMember(ref _positiveErrorColumn, from._positiveErrorColumn);
-          ChildCloneToMember(ref _negativeErrorColumn, from._negativeErrorColumn);
-        }
-
-        _independentSkipFrequency = from._independentSkipFrequency;
-        _skipFrequency = from._skipFrequency;
-        _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
-        _independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
-
-        _independentSymbolSize = from._independentSymbolSize;
-        _symbolSize = from._symbolSize;
-
-        _pen = from._pen;
-        _independentColor = from._independentColor;
-        _independentDashPattern = from._independentDashPattern;
-
-        _lineWidth1Offset = from._lineWidth1Offset;
-        _lineWidth1Factor = from._lineWidth1Factor;
-
-        _endCapSizeFactor = from._endCapSizeFactor;
-        _endCapSizeOffset = from._endCapSizeOffset;
-
-        _useSymbolGap = from._useSymbolGap;
-        _symbolGapFactor = from._symbolGapFactor;
-        _symbolGapOffset = from._symbolGapOffset;
-
-        _cachedLogicalShiftX = from._cachedLogicalShiftX;
-        _cachedLogicalShiftY = from._cachedLogicalShiftY;
-
+        CopyFrom(from, copyWithDataReferences);
         EhSelfChanged();
         return true;
       }
@@ -763,7 +766,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Data that define the error in the positive direction.
     /// </summary>
-    public IReadableColumn CommonErrorColumn
+    public IReadableColumn? CommonErrorColumn
     {
       get
       {
@@ -804,7 +807,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <value>
     /// The name of the common error column if it is a data column. Otherwise, null.
     /// </value>
-    public string CommonErrorColumnDataColumnName
+    public string? CommonErrorColumnDataColumnName
     {
       get
       {
@@ -815,7 +818,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Data that define the error in the positive direction.
     /// </summary>
-    public IReadableColumn PositiveErrorColumn
+    public IReadableColumn? PositiveErrorColumn
     {
       get
       {
@@ -841,7 +844,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <value>
     /// The name of the positive error column if it is a data column. Otherwise, null.
     /// </value>
-    public string PositiveErrorColumnDataColumnName
+    public string? PositiveErrorColumnDataColumnName
     {
       get
       {
@@ -852,7 +855,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Data that define the error in the negative direction.
     /// </summary>
-    public IReadableColumn NegativeErrorColumn
+    public IReadableColumn? NegativeErrorColumn
     {
       get
       {
@@ -878,7 +881,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <value>
     /// The name of the negative error column if it is a data column. Otherwise, null.
     /// </value>
-    public string NegativeErrorColumnDataColumnName
+    public string? NegativeErrorColumnDataColumnName
     {
       get
       {
@@ -981,7 +984,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    public void Paint(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
+    public void Paint(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       // adjust the skip frequency if it was not set appropriate
       if (_skipFrequency <= 0)
@@ -992,7 +995,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _cachedLogicalShiftX = _cachedLogicalShiftY = 0;
       }
 
-      PlotRangeList rangeList = pdata.RangeList;
+      var rangeList = pdata.RangeList;
+      if (rangeList is null)
+        return;
 
       if (_ignoreMissingDataPoints)
       {
@@ -1147,7 +1152,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           {
             errorBarPath.Reset();
             layer.CoordinateSystem.GetIsoline(errorBarPath, logicalMean, logicalNeg);
-            PointF[] shortenedPathPoints = null;
+            PointF[]? shortenedPathPoints = null;
             bool shortenedPathPointsCalculated = false;
             if (_useSymbolGap)
             {
@@ -1184,7 +1189,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           {
             errorBarPath.Reset();
             layer.CoordinateSystem.GetIsoline(errorBarPath, logicalMean, logicalPos);
-            PointF[] shortenedPathPoints = null;
+            PointF[]? shortenedPathPoints = null;
             bool shortenedPathPointsCalculated = false;
 
             if (_useSymbolGap)
@@ -1273,9 +1278,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
     public IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      IReadableColumn? Column, // the column as it was at the time of this call
+      string? ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
       if (_useCommonErrorColumn)
@@ -1329,13 +1334,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ErrorBarXPlotStyle)o ?? new ErrorBarXPlotStyle(info);
-        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        var s = (ErrorBarXPlotStyle?)o ?? new ErrorBarXPlotStyle(info);
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType!, parent);
         return s;
       }
     }
@@ -1396,13 +1401,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ErrorBarYPlotStyle)o ?? new ErrorBarYPlotStyle(info);
-        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        var s = (ErrorBarYPlotStyle?)o ?? new ErrorBarYPlotStyle(info);
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType!, parent);
         return s;
       }
     }

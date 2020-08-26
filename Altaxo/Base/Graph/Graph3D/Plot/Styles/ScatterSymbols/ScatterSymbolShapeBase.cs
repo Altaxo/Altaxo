@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -53,7 +54,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
       }
     }
 
-    protected static TItem DeserializeV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent) where TItem : ScatterSymbolShapeBase
+    protected static TItem DeserializeV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent) where TItem : ScatterSymbolShapeBase
     {
       if (info.CurrentElementName == "Set")
       {
@@ -88,7 +89,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
       return GetType().GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return GetType() == obj?.GetType();
     }

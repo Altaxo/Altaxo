@@ -47,7 +47,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles
     /// </value>
     ScatterSymbols.IScatterSymbolFrame? Frame { get; }
 
-    IScatterSymbol WithFrame(ScatterSymbols.IScatterSymbolFrame frame);
+    IScatterSymbol WithFrame(ScatterSymbols.IScatterSymbolFrame? frame);
 
     /// <summary>
     /// Gets the inset of this symbol, or null if the symbol does not have an inset.
@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles
     /// </value>
     ScatterSymbols.IScatterSymbolInset? Inset { get; }
 
-    IScatterSymbol WithInset(ScatterSymbols.IScatterSymbolInset inset);
+    IScatterSymbol WithInset(ScatterSymbols.IScatterSymbolInset? inset);
 
     NamedColor FillColor { get; }
 

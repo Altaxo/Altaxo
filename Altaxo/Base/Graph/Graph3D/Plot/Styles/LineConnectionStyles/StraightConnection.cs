@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,7 +56,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
       {
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Instance;
       }
@@ -80,11 +81,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
       PlotRange range,
       IPlotArea layer,
       PenX3D pen,
-      Func<int, double> symbolGap,
+      Func<int, double>? symbolGap,
       int skipFrequency,
       bool connectCircular)
     {
-      var linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      if (!(pdata?.PlotPointsInAbsoluteLayerCoordinates is { } linePoints))
+        return;
+
       var linepts = new PointD3D[range.Length + (connectCircular ? 1 : 0)];
       Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
       if (connectCircular)
@@ -122,10 +125,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
             double gapAtStart = symbolGap(originalRowIndex);
             double gapAtEnd = i != range.Length ? symbolGap(originalRowIndex + skipFrequency) : symbolGap(range.OffsetToOriginal);
 
-            IPolylineD3D polyline = SharpPolylineD3D.FromPointsWithPossibleDublettes(linepts.Skip(i).Take(1 + skipFrequency));
+            IPolylineD3D? polyline = SharpPolylineD3D.FromPointsWithPossibleDublettes(linepts.Skip(i).Take(1 + skipFrequency));
             polyline = polyline.ShortenedBy(RADouble.NewAbs(gapAtStart / 2), RADouble.NewAbs(gapAtEnd / 2));
 
-            if (null != polyline)
+            if (polyline is not null)
               g.DrawLine(pen, polyline);
           } // end for.
         }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -39,17 +40,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Data
   public class Processed3DPlotData : I3DPhysicalVariantAccessor
   {
     /// <summary>List of plot ranges of the plot points. This is used to identify contiguous ranges of plot points, so that for instance it can be decided to connect them by a line or not.</summary>
-    public PlotRangeList RangeList;
+    public PlotRangeList? RangeList;
 
     /// <summary>Holds the final coordinates of the plot points in absolute layer coordinates.</summary>
-    public PointD3D[] PlotPointsInAbsoluteLayerCoordinates;
+    public PointD3D[]? PlotPointsInAbsoluteLayerCoordinates;
 
     private IndexedPhysicalValueAccessor _getXPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
     private IndexedPhysicalValueAccessor _getYPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
     private IndexedPhysicalValueAccessor _getZPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
 
     /// <summary>Data of the previous plot item for temporary purposes.</summary>
-    private Processed3DPlotData _previousItemData;
+    private Processed3DPlotData? _previousItemData;
 
     /// <summary>Gets the physical x value at a given original row index.</summary>
     /// <param name="originalRowIndex">Index of the original data row.</param>
@@ -151,7 +152,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Data
     /// <summary>
     /// Gets/sets the processed plot data of a previous plot item for temporary usage.
     /// </summary>
-    public Processed3DPlotData PreviousItemData
+    public Processed3DPlotData? PreviousItemData
     {
       get
       {

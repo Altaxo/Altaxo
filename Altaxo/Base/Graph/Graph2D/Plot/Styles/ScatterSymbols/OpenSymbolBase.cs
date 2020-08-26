@@ -146,14 +146,14 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       get { return null; }
     }
 
-    IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame frame)
+    IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame? frame)
     {
       return this;
     }
 
     public IScatterSymbolInset? Inset { get { return null; } }
 
-    IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset inset)
+    IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset? inset)
     {
       return this;
     }

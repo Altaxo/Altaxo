@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot
 {
+  using System.Diagnostics.CodeAnalysis;
   using Data;
   using Geometry;
   using Graph.Plot.Data;
@@ -43,18 +45,53 @@ namespace Altaxo.Graph.Graph3D.Plot
     protected G3DPlotStyleCollection _plotStyles;
 
     [NonSerialized]
-    private Processed3DPlotData _cachedPlotDataUsedForPainting;
+    private Processed3DPlotData? _cachedPlotDataUsedForPainting;
 
     [NonSerialized]
-    private PlotGroupStyleCollection _localGroups;
+    private PlotGroupStyleCollection? _localGroups;
+
+    protected G3DPlotItem(G3DPlotStyleCollection plotStyles)
+    {
+      ChildSetMember(ref _plotStyles, plotStyles);
+    }
+
+    protected G3DPlotItem(G3DPlotItem from)
+    {
+      CopyFrom(from, false);
+    }
+
+    [MemberNotNull(nameof(_plotStyles))]
+    protected void CopyFrom(G3DPlotItem from, bool withBaseMembers)
+    {
+      ChildCopyToMember(ref _plotStyles, from._plotStyles);
+    }
+
+    public override bool CopyFrom(object obj)
+    {
+      if (object.ReferenceEquals(this, obj))
+        return true;
+      if (obj is G3DPlotItem from)
+      {
+        using (var suspendToken = SuspendGetToken())
+        {
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
+        }
+        return true;
+      }
+      else
+      {
+        return base.CopyFrom(obj);
+      }
+    }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (null != _plotStyles)
-        yield return new Main.DocumentNodeAndName(_plotStyles, () => _plotStyles = null, "Style");
+        yield return new Main.DocumentNodeAndName(_plotStyles, () => _plotStyles = null!, "Style");
 
       if (null != _localGroups)
-        yield return new Main.DocumentNodeAndName(_localGroups, () => _localGroups = null, "LocalPlotGroupStyles");
+        yield return new Main.DocumentNodeAndName(_localGroups, () => _localGroups = null!, "LocalPlotGroupStyles");
     }
 
     public override Main.IDocumentLeafNode StyleObject
@@ -71,8 +108,8 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
       set
       {
-        if (null == value)
-          throw new System.ArgumentNullException();
+        if (value is null)
+          throw new System.ArgumentNullException(nameof(Style));
 
         if (ChildSetMember(ref _plotStyles, value))
         {
@@ -81,29 +118,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
-    public abstract Processed3DPlotData GetRangesAndPoints(IPlotArea layer);
-
-    public void CopyFrom(G3DPlotItem from)
-    {
-      CopyFrom((PlotItem)from);
-    }
-
-    public override bool CopyFrom(object obj)
-    {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-
-      var copied = base.CopyFrom(obj);
-      if (copied)
-      {
-        var from = obj as G3DPlotItem;
-        if (from != null)
-        {
-          Style = from.Style.Clone();
-        }
-      }
-      return copied;
-    }
+    public abstract Processed3DPlotData? GetRangesAndPoints(IPlotArea layer);
 
     #region IPlotItem Members
 
@@ -116,9 +131,9 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
     {
-      Processed3DPlotData pdata = GetRangesAndPoints(layer);
-      if (null == _localGroups)
-        _localGroups = new PlotGroupStyleCollection() { ParentObject = this };
+      var pdata = GetRangesAndPoints(layer);
+
+      _localGroups ??= new PlotGroupStyleCollection() { ParentObject = this };
 
       using (var suspendToken = _localGroups.SuspendGetToken())
       {
@@ -131,7 +146,8 @@ namespace Altaxo.Graph.Graph3D.Plot
         _localGroups.BeginPrepare();
 
         // now prepare the groups
-        _plotStyles.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
+        if (pdata is not null)
+          _plotStyles.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
 
         // for the group styles in the local group, PrepareStep and EndPrepare must be called,
         _localGroups.PrepareStep();
@@ -143,6 +159,9 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
     {
+      if (_localGroups is null)
+        throw new InvalidProgramException($"{nameof(_localGroups)} is null. Call {nameof(PrepareGroupStyles)} before!");
+
       using (var suspendToken = _localGroups.SuspendGetToken())
       {
         // for externalGroups, BeginApply was called already in the PlotItemCollection, for localGroups it has to be called here
@@ -177,21 +196,21 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #endregion IPlotItem Members
 
-    public Processed3DPlotData GetPlotData(IPlotArea layer)
+    public Processed3DPlotData? GetPlotData(IPlotArea layer)
     {
-      if (_cachedPlotDataUsedForPainting == null)
+      if (_cachedPlotDataUsedForPainting is null)
         _cachedPlotDataUsedForPainting = GetRangesAndPoints(layer);
 
       return _cachedPlotDataUsedForPainting;
     }
 
-    public override void Paint(IGraphicsContext3D g, IPaintContext context, IPlotArea layer, IGPlotItem prevPlotItem, IGPlotItem nextPlotItem)
+    public override void Paint(IGraphicsContext3D g, IPaintContext context, IPlotArea layer, IGPlotItem? prevPlotItem, IGPlotItem? nextPlotItem)
     {
-      Processed3DPlotData pdata = GetRangesAndPoints(layer);
+      Processed3DPlotData? pdata = GetRangesAndPoints(layer);
       if (pdata != null)
         Paint(g, layer, pdata,
-          (prevPlotItem is G3DPlotItem) ? ((G3DPlotItem)prevPlotItem).GetPlotData(layer) : null,
-          (nextPlotItem is G3DPlotItem) ? ((G3DPlotItem)nextPlotItem).GetPlotData(layer) : null
+          (prevPlotItem is G3DPlotItem prevPI) ? prevPI.GetPlotData(layer) : null,
+          (nextPlotItem is G3DPlotItem nextPI) ? nextPI.GetPlotData(layer) : null
           );
     }
 
@@ -203,7 +222,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <param name="plotdata">The plot data. Since the data are transformed, you should not rely that the physical values in this item correspond to the area coordinates.</param>
     /// <param name="prevPlotData">Plot data of the previous plot item.</param>
     /// <param name="nextPlotData">Plot data of the next plot item.</param>
-    public virtual void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData plotdata, Processed3DPlotData prevPlotData, Processed3DPlotData nextPlotData)
+    public virtual void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData plotdata, Processed3DPlotData? prevPlotData, Processed3DPlotData? nextPlotData)
     {
       _cachedPlotDataUsedForPainting = plotdata ?? throw new ArgumentNullException(nameof(plotdata));
 
@@ -219,16 +238,10 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
     /// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
-    public override IHitTestObject HitTest(IPlotArea layer, HitTestPointData hitpoint)
+    public override IHitTestObject? HitTest(IPlotArea layer, HitTestPointData hitpoint)
     {
-      Processed3DPlotData pdata = _cachedPlotDataUsedForPainting;
-      if (null == pdata)
-        return null;
-
-      var rangeList = pdata.RangeList;
-      var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-
-      if (ptArray.Length < 2)
+      var pdata = _cachedPlotDataUsedForPainting;
+      if (pdata is null || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray) || ptArray.Length < 2)
         return null;
 
       var hitTransformation = hitpoint.HitTransformation;
@@ -258,13 +271,10 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
     /// <returns>The information about the point that is nearest to the location, or null if it can not be determined.</returns>
-    public XYZScatterPointInformation GetNearestPlotPoint(IPlotArea layer, HitTestPointData hitpoint)
+    public XYZScatterPointInformation? GetNearestPlotPoint(IPlotArea layer, HitTestPointData hitpoint)
     {
-      Processed3DPlotData pdata;
-      if (null != (pdata = _cachedPlotDataUsedForPainting))
+      if (_cachedPlotDataUsedForPainting is { } pdata && pdata.RangeList is { } rangeList && pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray && ptArray.Length > 1)
       {
-        PlotRangeList rangeList = pdata.RangeList;
-        var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
         double mindistance = double.MaxValue;
         int minindex = -1;
         var hitTransformation = hitpoint.HitTransformation;
@@ -298,16 +308,11 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <param name="oldplotindex">Old plot index.</param>
     /// <param name="increment">Increment to the plot index.</param>
     /// <returns>Information about the new plot point find at position (oldplotindex+increment). Returns null if no such point exists.</returns>
-    public XYZScatterPointInformation GetNextPlotPoint(IPlotArea layer, int oldplotindex, int increment)
+    public XYZScatterPointInformation? GetNextPlotPoint(IPlotArea layer, int oldplotindex, int increment)
     {
-      Processed3DPlotData pdata;
-      if (null != (pdata = _cachedPlotDataUsedForPainting))
-      {
-        PlotRangeList rangeList = pdata.RangeList;
-        PointD3D[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-        if (ptArray.Length == 0)
-          return null;
 
+      if (_cachedPlotDataUsedForPainting is { } pdata && pdata.RangeList is { } rangeList && pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray && ptArray.Length > 0)
+      {
         int minindex = oldplotindex + increment;
         minindex = Math.Max(minindex, 0);
         minindex = Math.Min(minindex, ptArray.Length - 1);

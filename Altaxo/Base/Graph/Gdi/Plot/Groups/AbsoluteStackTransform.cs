@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,6 +31,7 @@ using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
+  using Altaxo.Graph.Plot.Data;
   using Plot.Data;
 
   /// <summary>
@@ -50,9 +52,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         var s = (AbsoluteStackTransform)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AbsoluteStackTransform s = null != o ? (AbsoluteStackTransform)o : new AbsoluteStackTransform();
+        var s = (AbsoluteStackTransform?)o ?? new AbsoluteStackTransform();
         return s;
       }
     }
@@ -87,19 +89,18 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       // we put zero into the y-Boundaries, since the addition starts with that value
       pb.Add(new AltaxoVariant(0.0));
 
-      AltaxoVariant[] ySumArray = null;
+      AltaxoVariant[]? ySumArray = null;
 
       int idx = -1;
       foreach (IGPlotItem pi in coll)
       {
-        if (pi is G2DPlotItem)
+        if (pi is G2DPlotItem gpi)
         {
           idx++;
 
-          var gpi = (G2DPlotItem)pi;
           Processed2DPlotData pdata = plotDataList[gpi];
 
-          if (null != pdata)
+          if (pdata is not null && pdata.RangeList is not null)
           {
             // Note: we can not use AddUp function here, since
             // when we have positive/negative items, the intermediate bounds
@@ -144,20 +145,19 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     {
       plotDataList = new Dictionary<G2DPlotItem, Processed2DPlotData>();
 
-      AltaxoVariant[] xArray = null;
+      AltaxoVariant[]? xArray = null;
 
       int idx = -1;
       foreach (IGPlotItem pi in coll)
       {
-        if (pi is G2DPlotItem)
+        if (pi is G2DPlotItem gpi)
         {
           idx++;
-          var gpi = (G2DPlotItem)pi;
-          Processed2DPlotData pdata = gpi.GetRangesAndPoints(layer);
-          plotDataList.Add(gpi, pdata);
+          var pdata = gpi.GetRangesAndPoints(layer);
 
-          if (null != pdata)
+          if (pdata is not null && pdata.RangeList is not null)
           {
+            plotDataList.Add(gpi, pdata);
             if (xArray == null)
             {
               xArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
@@ -194,12 +194,12 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     /// <param name="yArray">The y array to be added to. If null, a new array will be allocated (and filled with the y-values of the plot item).</param>
     /// <param name="pdata">The pdata.</param>
     /// <returns>If the parameter <paramref name="yArray"/> was not null, then that <paramref name="yArray"/> is returned. Otherwise the newly allocated array is returned.</returns>
-    public static AltaxoVariant[] AddUp(AltaxoVariant[] yArray, Processed2DPlotData pdata)
+    public static AltaxoVariant[] AddUp(AltaxoVariant[]? yArray, Processed2DPlotData pdata)
     {
-      if (null == pdata)
+      if (pdata is null || pdata.RangeList is null)
         throw new ArgumentNullException(nameof(pdata));
 
-      if (yArray == null)
+      if (yArray is null)
       {
         yArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
 
@@ -233,19 +233,18 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         paintContext.AddValue(this, plotDataDict);
       }
 
-      AltaxoVariant[] yArray = null;
+      AltaxoVariant[]? yArray = null;
       // First, add up all items since we start always with the last item
       int idx = -1;
-      Processed2DPlotData previousItemData = null;
+      Processed2DPlotData? previousItemData = null;
       foreach (IGPlotItem pi in coll)
       {
-        if (pi is G2DPlotItem)
+        if (pi is G2DPlotItem gpi)
         {
           idx++;
 
-          var gpi = pi as G2DPlotItem;
-          Processed2DPlotData pdata = plotDataDict[gpi];
-          if (null == pdata)
+          var pdata = plotDataDict[gpi];
+          if (pdata is null || pdata.RangeList is null || pdata.PlotPointsInAbsoluteLayerCoordinates is null)
             continue;
 
           yArray = AddUp(yArray, pdata);
@@ -266,7 +265,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
           // we have also to exchange the accessor for the physical y value and replace it by our own one
           var localArray = (AltaxoVariant[])yArray.Clone();
-          var localArrayHolder = new LocalArrayHolder(localArray, pdata);
+          var localArrayHolder = new LocalArrayHolder(localArray, pdata.RangeList);
           pdata.YPhysicalAccessor = localArrayHolder.GetPhysical;
           pdata.PreviousItemData = previousItemData;
           previousItemData = pdata;
@@ -288,18 +287,17 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         return;
       }
 
-      Processed2DPlotData prevPlotData = null;
-      Processed2DPlotData nextPlotData = null;
+      Processed2DPlotData? prevPlotData = null;
+      Processed2DPlotData? nextPlotData = null;
 
-      if ((indexOfChild + 1) < coll.Count && (coll[indexOfChild + 1] is G2DPlotItem))
-        prevPlotData = plotDataDict[coll[indexOfChild + 1] as G2DPlotItem];
+      if ((indexOfChild + 1) < coll.Count && (coll[indexOfChild + 1] is G2DPlotItem keyP1))
+        prevPlotData = plotDataDict[keyP1];
 
-      if (indexOfChild > 0 && (coll[indexOfChild - 1] is G2DPlotItem))
-        nextPlotData = plotDataDict[coll[indexOfChild - 1] as G2DPlotItem];
+      if (indexOfChild > 0 && (coll[indexOfChild - 1] is G2DPlotItem keyM1))
+        nextPlotData = plotDataDict[keyM1];
 
-      if (coll[indexOfChild] is G2DPlotItem)
+      if (coll[indexOfChild] is G2DPlotItem gpi)
       {
-        var gpi = coll[indexOfChild] as G2DPlotItem;
         var pdata = plotDataDict[gpi];
         if (null != pdata)
           gpi.Paint(g, layer, pdata, prevPlotData, nextPlotData);
@@ -403,11 +401,11 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
       /// <summary>Initializes a new instance of the <see cref="LocalArrayHolder"/> class.</summary>
       /// <param name="localArray">The local array of transformed y values. The array length is equal to the number of plot points.</param>
-      /// <param name="pdata">The processed plot data. The plot range member of this instance is used to build a dictionary which associates the original row indices to the indices of the <paramref name="localArray"/>.</param>
-      public LocalArrayHolder(AltaxoVariant[] localArray, Processed2DPlotData pdata)
+      /// <param name="rangeList">The range list of the processed plot data. This instance is used to build a dictionary which associates the original row indices to the indices of the <paramref name="localArray"/>.</param>
+      public LocalArrayHolder(AltaxoVariant[] localArray, PlotRangeList rangeList)
       {
         _localArray = localArray;
-        _originalRowIndexToPlotIndex = pdata.RangeList.GetDictionaryOfOriginalRowIndicesToPlotIndices();
+        _originalRowIndexToPlotIndex = rangeList.GetDictionaryOfOriginalRowIndicesToPlotIndices();
       }
 
       /// <summary>Gets the physical y value for a given original row index.</summary>

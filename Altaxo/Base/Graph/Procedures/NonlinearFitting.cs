@@ -136,7 +136,7 @@ namespace Altaxo.Graph.Procedures
             else
               localdoc = new Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument();
           }
-            
+
 
           return (null, localdoc, null, activeLayer);
         }
@@ -165,7 +165,7 @@ namespace Altaxo.Graph.Procedures
       if (ctrl.CurrentPlotNumber >= 0)
       {
         var plotItem = activeLayer.PlotItems.Flattened[ctrl.CurrentPlotNumber] as XYColumnPlotItem;
-        if(plotItem is not null)
+        if (plotItem is not null)
           return SelectFitDocument(ctrl, plotItem);
       }
 
@@ -195,7 +195,7 @@ namespace Altaxo.Graph.Procedures
         // try to find a nonlinear function plot item whose dependent variable equals to the y of the column plot item
         foreach (var funcItem in TreeNodeExtensions.TakeFromHereToFirstLeaves((IGPlotItem)activeLayer.PlotItems).OfType<XYNonlinearFitFunctionPlotItem>())
         {
-          if (object.ReferenceEquals(columPlotItemDataColumn, funcItem.DependentVariableColumn.GetUnderlyingDataColumnOrDefault()))
+          if (object.ReferenceEquals(columPlotItemDataColumn, funcItem.DependentVariableColumn?.GetUnderlyingDataColumnOrDefault()))
           {
             return (string.Empty, funcItem.FitDocumentCopy, funcItem.FitDocumentIdentifier, activeLayer);
           }

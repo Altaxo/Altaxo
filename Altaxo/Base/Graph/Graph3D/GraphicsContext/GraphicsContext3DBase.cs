@@ -136,7 +136,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
     public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material);
 
-    public abstract IPositionNormalUIndexedTriangleBuffer GetPositionNormalUIndexedTriangleBuffer(IMaterial material, PlaneD3D[] clipPlanes, IColorProvider colorProvider);
+    public abstract IPositionNormalUIndexedTriangleBuffer GetPositionNormalUIndexedTriangleBuffer(IMaterial material, PlaneD3D[]? clipPlanes, IColorProvider colorProvider);
 
     public abstract Matrix4x3 Transformation { get; }
 

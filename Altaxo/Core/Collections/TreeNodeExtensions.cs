@@ -51,7 +51,7 @@ namespace Altaxo.Collections
     /// <value>
     /// The child nodes.
     /// </value>
-    IEnumerable<T> ChildNodes { get; }
+    IEnumerable<T>? ChildNodes { get; }
   }
 
   /// <summary>

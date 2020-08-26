@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -30,6 +31,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Drawing;
   using Altaxo.Main;
@@ -57,10 +59,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.SetNodeContent(obj.ToString());
+        var s = (FillDirection)obj;
+        info.SetNodeContent(s.ToString());
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
         return System.Enum.Parse(typeof(FillDirection), val, true);
@@ -76,7 +79,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         throw new InvalidOperationException("Serialization of old version");
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
         switch (val)
@@ -176,7 +179,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     /// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
     [field: NonSerialized]
-    protected Func<int, double> _cachedSymbolSizeForIndexFunction;
+    protected Func<int, double>? _cachedSymbolSizeForIndexFunction;
 
     /// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
     private double _cachedLogicalShiftX;
@@ -205,15 +208,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
       }
 
-      public virtual object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
+        var s = (LinePlotStyle?)o ?? new LinePlotStyle(info);
 
         s._linePen = (PenX)info.GetValue("Pen", s);
         s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
@@ -249,8 +252,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
           case XYPlotLineStyles.FillDirection.Right:
             return CSPlaneID.Right;
+          default:
+            throw new NotImplementedException();
         }
-        return null;
+
       }
     }
 
@@ -267,9 +272,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
+        var s = (LinePlotStyle?)o ?? new LinePlotStyle(info);
 
         s._linePen = (PenX)info.GetValue("Pen", s);
         s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
@@ -307,7 +312,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
 
@@ -353,9 +358,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
+        var s = (LinePlotStyle?)o ?? new LinePlotStyle(info);
 
         s._linePen = (PenX)info.GetValue("Pen", s);
         s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
@@ -411,9 +416,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("SymbolGapFactor", s._symbolGapFactor);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinePlotStyle s = (LinePlotStyle)o ?? new LinePlotStyle(info);
+        var s = (LinePlotStyle?)o ?? new LinePlotStyle(info);
 
         s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
         s._skipFrequency = info.GetInt32("SkipFreq");
@@ -443,10 +448,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Construction and copying
 
+    [MemberNotNull(nameof(_linePen), nameof(_connectionStyle))]
     public void CopyFrom(LinePlotStyle from, Main.EventFiring eventFiring)
     {
       if (object.ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       using (var suspendToken = SuspendGetToken())
       {
@@ -508,12 +516,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return new LinePlotStyle(this);
     }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected LinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
       _connectionStyle = LineConnectionStyles.StraightConnection.Instance;
     }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     internal LinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, bool oldDeserializationRequiresFullConstruction)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
       var penWidth = 1;
       var color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
@@ -523,8 +535,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _ignoreMissingDataPoints = false;
       _connectionStyle = LineConnectionStyles.StraightConnection.Instance;
       _independentColor = false;
-
-      CreateEventChain();
     }
 
     public LinePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
@@ -536,14 +546,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _ignoreMissingDataPoints = false;
       _connectionStyle = LineConnectionStyles.StraightConnection.Instance;
       _independentColor = false;
-
-      CreateEventChain();
     }
 
     public LinePlotStyle(LinePlotStyle from)
     {
       CopyFrom(from, Main.EventFiring.Suppressed);
-      CreateEventChain();
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -551,9 +558,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       yield break;
     }
 
-    protected virtual void CreateEventChain()
-    {
-    }
 
     #endregion Construction and copying
 
@@ -756,7 +760,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return _linePen; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!(_linePen == value))
@@ -849,9 +853,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return bounds;
     }
 
-    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
+    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       if (_connectionStyle is LineConnectionStyles.NoConnection)
+        return;
+
+      if (!(pdata.RangeList is { } rangeList) || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } plotPositions))
         return;
 
       if (_independentOnShiftingGroupStyles)
@@ -859,14 +866,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _cachedLogicalShiftX = _cachedLogicalShiftY = 0;
       }
 
-      PointF[] plotPositions = pdata.PlotPointsInAbsoluteLayerCoordinates;
-
       if (0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY)
       {
         plotPositions = Processed2DPlotData.GetPlotPointsInAbsoluteLayerCoordinatesWithShift(pdata, layer, _cachedLogicalShiftX, _cachedLogicalShiftY);
       }
 
-      Func<int, double> symbolGapFunction = null;
+      if (plotPositions is null)
+        return;
+
+
+      Func<int, double>? symbolGapFunction = null;
 
       if (_useSymbolGap)
       {
@@ -886,7 +895,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       using var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen);
 
-      PlotRangeList rangeList = pdata.RangeList;
       if (_ignoreMissingDataPoints)
       {
         // in case we ignore the missing points, all ranges can be plotted
@@ -906,13 +914,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void GetFillPath(GraphicsPath gp, IPlotArea layer, Processed2DPlotData pdata, CSPlaneID fillDirection)
     {
-      PointF[] plotPositions = pdata.PlotPointsInAbsoluteLayerCoordinates;
+
+
+      PointF[]? plotPositions = pdata.PlotPointsInAbsoluteLayerCoordinates;
       if (0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY)
       {
         plotPositions = Processed2DPlotData.GetPlotPointsInAbsoluteLayerCoordinatesWithShift(pdata, layer, _cachedLogicalShiftX, _cachedLogicalShiftY);
       }
+      var rangeList = pdata.RangeList;
 
-      PlotRangeList rangeList = pdata.RangeList;
+      if (rangeList is null || plotPositions is null)
+        return;
+
       fillDirection = layer.UpdateCSPlaneID(fillDirection);
 
       int rangelistlen = rangeList.Count;
@@ -1067,12 +1080,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <inheritdoc/>
     public IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      IReadableColumn? Column, // the column as it was at the time of this call
+      string? ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
-      return null; // no additionally used columns
+      yield break; // no additionally used columns
     }
 
     #endregion IDocumentNode Members

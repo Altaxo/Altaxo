@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -96,9 +97,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
         info.AddValue("ColorSteps", s.ColorSteps);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ColorProviderBase)o;
+        var s = (ColorProviderBase)(o ?? throw new ArgumentNullException(nameof(o)));
 
         s._colorBelow = (NamedColor)info.GetValue("ColorBelow", s);
         s._cachedGdiColorBelow = GdiColorHelper.ToGdi(s._colorBelow);
@@ -294,7 +295,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
     /// <returns>A color associated with the relative value.</returns>
     protected abstract Color GetColorFrom0To1Continuously(double relVal);
 
-    public virtual bool Equals(IColorProvider other)
+    public virtual bool Equals(IColorProvider? other)
     {
       if (null == other || other.GetType() != GetType())
         return false;
@@ -309,9 +310,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
         _colorSteps == from._colorSteps;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      return obj is IColorProvider ? Equals((IColorProvider)obj) : false;
+      return obj is IColorProvider from ? Equals(from) : false;
     }
 
     public override int GetHashCode()

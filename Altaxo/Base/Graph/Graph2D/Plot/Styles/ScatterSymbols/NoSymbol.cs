@@ -86,7 +86,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
-    IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame frame)
+    IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame? frame)
     {
       return this;
     }
@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
-    IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset inset)
+    IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset? inset)
     {
       return this;
     }

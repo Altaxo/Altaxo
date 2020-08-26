@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -34,6 +35,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
+  using System.Diagnostics.CodeAnalysis;
   using Graph.Plot.Data;
   using Graph.Plot.Groups;
   using Groups;
@@ -64,19 +66,19 @@ namespace Altaxo.Graph.Gdi.Plot
         info.AddValue("Style", s._plotStyle);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var pa = (XYZMeshedColumnPlotData)info.GetValue("Data", null);
         var ps = (DensityImagePlotStyle)info.GetValue("Style", null);
 
-        if (o == null)
+        if (o is null)
         {
           return new DensityImagePlotItem(pa, ps);
         }
         else
         {
           var s = (DensityImagePlotItem)o;
-          s.Data = pa;
+          s.ChildSetMember(ref s._plotData, pa);
           s.Style = ps;
           return s;
         }
@@ -88,38 +90,49 @@ namespace Altaxo.Graph.Gdi.Plot
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (null != _plotData)
-        yield return new Main.DocumentNodeAndName(_plotData, () => _plotData = null, "Data");
+        yield return new Main.DocumentNodeAndName(_plotData, () => _plotData = null!, "Data");
       if (null != _plotStyle)
-        yield return new Main.DocumentNodeAndName(_plotStyle, () => _plotStyle = null, "Style");
+        yield return new Main.DocumentNodeAndName(_plotStyle, () => _plotStyle = null!, "Style");
     }
 
-    public DensityImagePlotItem(XYZMeshedColumnPlotData pa, DensityImagePlotStyle ps)
+    public DensityImagePlotItem(XYZMeshedColumnPlotData pa, DensityImagePlotStyle ps) 
     {
-      Data = pa;
-      Style = ps;
+      ChildSetMember(ref _plotStyle, ps);
+      ChildSetMember(ref _plotData, pa);
     }
 
     public DensityImagePlotItem(DensityImagePlotItem from)
     {
-      CopyFrom(from);
+      CopyFrom(from, false);
+    }
+
+    [MemberNotNull(nameof(_plotData), nameof(_plotStyle))]
+    protected void CopyFrom(DensityImagePlotItem from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      ChildCopyToMember(ref _plotData, from._plotData);
+      ChildCopyToMember(ref _plotStyle, from._plotStyle);
     }
 
     public override bool CopyFrom(object obj)
     {
       if (object.ReferenceEquals(this, obj))
         return true;
-
-      var copied = base.CopyFrom(obj);
-      if (copied)
+      if (obj is DensityImagePlotItem from)
       {
-        var from = obj as DensityImagePlotItem;
-        if (null != from)
+        using (var suspendToken = SuspendGetToken())
         {
-          Data = from._plotData.Clone();   // also wires the event
-          Style = (DensityImagePlotStyle)from.Style.Clone(); // also wires the event
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return copied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     public override object Clone()
@@ -130,20 +143,6 @@ namespace Altaxo.Graph.Gdi.Plot
     public object Data
     {
       get { return _plotData; }
-      set
-      {
-        if (null == value)
-          throw new System.ArgumentNullException();
-        else if (!(value is XYZMeshedColumnPlotData))
-          throw new System.ArgumentException("The provided data object is not of the type " + _plotData.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
-        else
-        {
-          if (ChildSetMember(ref _plotData, (XYZMeshedColumnPlotData)value))
-          {
-            EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
-          }
-        }
-      }
     }
 
     public override Main.IDocumentLeafNode StyleObject
@@ -160,6 +159,7 @@ namespace Altaxo.Graph.Gdi.Plot
     public DensityImagePlotStyle Style
     {
       get { return _plotStyle; }
+      [MemberNotNull(nameof(_plotStyle))]
       set
       {
         if (null == value)
@@ -186,7 +186,7 @@ namespace Altaxo.Graph.Gdi.Plot
       return GetName(int.MaxValue);
     }
 
-    public override void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
+    public override void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem)
     {
       if (null != _plotStyle)
       {
@@ -284,7 +284,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <returns>Bitmap with the plot image.</returns>
     public Bitmap GetPixelwiseImage()
     {
-      Bitmap result = null;
+      Bitmap? result = null;
       GetPixelwiseImage(ref result);
       return result;
     }
@@ -296,7 +296,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// </summary>
     /// <param name="image">Bitmap to fill with the plot image. If null, a new image is created.</param>
     /// <exception cref="ArgumentException">An exception will be thrown if the provided image is smaller than the required dimensions.</exception>
-    public void GetPixelwiseImage(ref Bitmap image)
+    public void GetPixelwiseImage([AllowNull] ref Bitmap image)
     {
       _plotData.DataTableMatrix.GetWrappers(
         x => x, // transformation function for row header values

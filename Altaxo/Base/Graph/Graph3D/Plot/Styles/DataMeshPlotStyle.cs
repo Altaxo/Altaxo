@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -33,6 +34,7 @@ using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Graph;
   using Altaxo.Graph.Gdi.Plot;
   using Altaxo.Graph.Gdi.Plot.ColorProvider;
@@ -66,7 +68,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// Converts the numerical height values into logical values used for color calculation.
     /// This member can be null. In this case the z-scale of the parent coordinate system is used for coloring.
     /// </summary>
-    private NumericalScale _colorScale;
+    private NumericalScale? _colorScale;
 
     /// <summary>
     /// The material used to show the surface. Here only the specular properties of the material are used, because the color is provided by the color provider
@@ -87,13 +89,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
         info.AddValue("ClipToLayer", s._clipToLayer);
         info.AddValue("Colorization", s._colorProvider);
-        info.AddValue("ColorScale", s._colorScale);
+        info.AddValueOrNull("ColorScale", s._colorScale);
         info.AddValue("Material", s._material);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DataMeshPlotStyle s = null != o ? (DataMeshPlotStyle)o : new DataMeshPlotStyle();
+        var s = (DataMeshPlotStyle?)o ?? new DataMeshPlotStyle();
 
         s._clipToLayer = info.GetBoolean("ClipToLayer");
         s.ColorProvider = (IColorProvider)info.GetValue("Colorization", s);
@@ -118,7 +120,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// </summary>
     public DataMeshPlotStyle()
     {
-      ColorProvider = new ColorProviderBGRY();
+      ChildSetMemberAlt(ref _colorProvider, new ColorProviderBGRY());
       _material = new MaterialWithoutColorOrTexture();
 
       InitializeMembers();
@@ -134,26 +136,32 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       CopyFrom(from);
     }
 
+    [MemberNotNull(nameof(_colorProvider), nameof(_material))]
+    protected void CopyFrom(DataMeshPlotStyle from)
+    {
+      _clipToLayer = from._clipToLayer;
+      _colorProvider = from._colorProvider;
+      ChildCloneToMember(ref _colorScale, from._colorScale);
+      _material = from._material; // Material is immutable
+    }
+
     public bool CopyFrom(object obj)
     {
       if (object.ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as DataMeshPlotStyle;
-      if (null == from)
-        return false;
-
-      using (var suspendToken = SuspendGetToken())
+      if (obj is DataMeshPlotStyle from)
       {
-        _clipToLayer = from._clipToLayer;
-        _colorProvider = from._colorProvider;
-        ChildCloneToMember(ref _colorScale, from._colorScale);
-        _material = from._material; // Material is immutable
-
-        EhSelfChanged();
-        suspendToken.Resume();
+        using (var suspendToken = SuspendGetToken())
+        {
+          CopyFrom(from);
+          EhSelfChanged();
+          suspendToken.Resume();
+        }
+        return true;
       }
-      return true;
+
+      return false;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -171,7 +179,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// Converts the numerical height values into logical values used for color calculation.
     /// This member can be null, in this case the z-scale of the parent coordinate system is used for coloring.
     /// </summary>
-    public NumericalScale ColorScale
+    public NumericalScale? ColorScale
     {
       get
       {
@@ -485,7 +493,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region Changed event handling
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _colorScale))
       {
