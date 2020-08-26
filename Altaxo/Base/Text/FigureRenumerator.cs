@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -216,7 +217,7 @@ namespace Altaxo.Text
         if (null == figureCaptions || 0 == figureCaptions.Length)
           continue;
 
-        Markdig.Extensions.Figures.FigureCaption figureCaption = null;
+        Markdig.Extensions.Figures.FigureCaption? figureCaption = null;
         if (figureCaptions.Length == 1)
         {
           figureCaption = figureCaptions[0];
@@ -269,9 +270,9 @@ namespace Altaxo.Text
       // we consider the first letters, up to the first occurence of a space or a digit, as the figure name
 
       if (words.Count == 0)
-        return ((null, -1, 0), (-1, 0));
+        return ((string.Empty, -1, 0), (-1, 0));
 
-      string figureName = null;
+      string? figureName = null;
 
 
       int i;
@@ -300,7 +301,7 @@ namespace Altaxo.Text
       }
       if (string.IsNullOrEmpty(figureName))
       {
-        return ((null, -1, 0), (-1, 0));
+        return ((string.Empty, -1, 0), (-1, 0));
       }
 
       int namePosition = textPos;
@@ -461,7 +462,7 @@ namespace Altaxo.Text
     /// </summary>
     /// <param name="parent">The markdown object from which to get the childs.</param>
     /// <returns>The childs of the given markdown object, or null.</returns>
-    public static IReadOnlyList<MarkdownObject> GetChilds(MarkdownObject parent)
+    public static IReadOnlyList<MarkdownObject>? GetChilds(MarkdownObject parent)
     {
       if (parent is LeafBlock leafBlock)
         return leafBlock.Inline?.ToArray<MarkdownObject>();

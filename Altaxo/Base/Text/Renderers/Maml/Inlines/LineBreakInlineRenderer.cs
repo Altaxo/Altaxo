@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using Markdig.Syntax.Inlines;
 
 namespace Altaxo.Text.Renderers.Maml.Inlines

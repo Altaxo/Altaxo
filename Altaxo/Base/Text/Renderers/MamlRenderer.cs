@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -115,7 +116,7 @@ namespace Altaxo.Text.Renderers
     /// <summary>
     /// The parsed markdown file.
     /// </summary>
-    private MarkdownDocument _markdownDocument;
+    private MarkdownDocument? _markdownDocument;
 
     /// <summary>
     /// Helper to calculate MD5 hashes.
@@ -234,7 +235,7 @@ namespace Altaxo.Text.Renderers
       BodyTextFontSize = bodyTextFontSize;
       IsIntendedForHelp1File = isIntendedForHelp1File;
 
-      BasePathName = Path.GetDirectoryName(ProjectOrContentFileName);
+      BasePathName = Path.GetDirectoryName(ProjectOrContentFileName) ?? throw new InvalidOperationException($"Can not get directory name of file name {ProjectOrContentFileName}");
 
       // Find a base name for the aml files
       if (Path.GetExtension(ProjectOrContentFileName).ToLowerInvariant() == ".aml")
@@ -285,8 +286,11 @@ namespace Altaxo.Text.Renderers
 
     }
 
-    public (string fileGuid, string address) FindFragmentLink(string url)
+    public (string? fileGuid, string? address) FindFragmentLink(string url)
     {
+      if (_markdownDocument is null)
+        throw new InvalidOperationException("No markdown document yet present. Please parse it before!");
+
       if (url.StartsWith("#"))
         url = url.Substring(1);
 
@@ -314,9 +318,9 @@ namespace Altaxo.Text.Renderers
       return (null, null);
     }
 
-    public override object Render(MarkdownObject markdownObject)
+    public override object? Render(MarkdownObject markdownObject)
     {
-      object result = null;
+      object? result = null;
 
       if (null == markdownObject)
         throw new ArgumentNullException(nameof(markdownObject));
@@ -355,7 +359,7 @@ namespace Altaxo.Text.Renderers
       Push(mamlElement, null);
     }
 
-    public void Push(Maml.MamlElement mamlElement, IEnumerable<KeyValuePair<string, string>> attributes)
+    public void Push(Maml.MamlElement mamlElement, IEnumerable<KeyValuePair<string, string>>? attributes)
     {
       _currentElementStack.Add(mamlElement);
 
@@ -409,7 +413,7 @@ namespace Altaxo.Text.Renderers
 
     public void PopTo(Maml.MamlElement mamlElement)
     {
-      Maml.MamlElement ele = null;
+      Maml.MamlElement? ele = null;
       while (_currentElementStack.Count > 0)
       {
         ele = Pop();

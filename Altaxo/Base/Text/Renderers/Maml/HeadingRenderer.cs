@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,7 +66,7 @@ namespace Altaxo.Text.Renderers.Maml
 
         // Find a unique address in order for AutoOutline to work
         var attr = (Markdig.Renderers.Html.HtmlAttributes)obj.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-        string uniqueAddress = attr?.Id; // this header has a user defined address
+        string? uniqueAddress = attr?.Id; // this header has a user defined address
         if (string.IsNullOrEmpty(uniqueAddress))
           renderer.HeaderGuids.TryGetValue(obj.Span.Start, out uniqueAddress); // use the guid generated from the hierarchy of titles
         if (string.IsNullOrEmpty(uniqueAddress))

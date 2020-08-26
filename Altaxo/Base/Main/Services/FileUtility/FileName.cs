@@ -169,6 +169,18 @@ namespace Altaxo.Main.Services
     {
       return File.Exists(_normalizedPath);
     }
+
+    /// <summary>
+    /// Gets the name of the directory from the given file name.
+    /// Throws an <see cref="InvalidOperationException"/> if a directory name could not be retrieved.
+    /// </summary>
+    /// <param name="fullFileName">Full name of the file.</param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException">Unable to get directory name from file name '{fullFileName}'</exception>
+    public static string GetDirectoryName(string fullFileName)
+    {
+      return Path.GetDirectoryName(fullFileName) ?? throw new InvalidOperationException($"Unable to get directory name from file name '{fullFileName}'");
+    }
   }
 
   public class FileNameConverter : TypeConverter

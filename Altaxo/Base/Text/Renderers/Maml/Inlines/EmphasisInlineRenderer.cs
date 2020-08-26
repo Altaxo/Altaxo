@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using Markdig.Syntax.Inlines;
 
 namespace Altaxo.Text.Renderers.Maml.Inlines
@@ -35,7 +36,7 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
 
     protected override void Write(MamlRenderer renderer, EmphasisInline obj)
     {
-      MamlElement mamlElement = null;
+      MamlElement? mamlElement = null;
 
       switch (obj.DelimiterChar)
       {

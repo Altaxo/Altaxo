@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -90,7 +91,7 @@ namespace Altaxo.Text
         info.AddValue("RenumerateFigures", s.RenumerateFigures);
       }
 
-      public void Deserialize(HtmlExportOptions s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public void Deserialize(HtmlExportOptions s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s.SplitLevel = info.GetInt32("SplitLevel");
         s.ImageFolderName = info.GetString("ImageFolderName");
@@ -112,9 +113,9 @@ namespace Altaxo.Text
           s.RenumerateFigures = info.GetBoolean("RenumerateFigures");
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (HtmlExportOptions)o ?? new HtmlExportOptions();
+        var s = (HtmlExportOptions?)o ?? new HtmlExportOptions();
         Deserialize(s, info, parent);
         return s;
       }
@@ -132,7 +133,7 @@ namespace Altaxo.Text
     /// <summary>
     /// Gets or sets the output file. This is the base name, which is amended with numbers.
     /// </summary>
-    public string OutputFileName { get; set; }
+    public string OutputFileName { get; set; } = string.Empty;
 
     /// <summary>
     /// If set to true, all .html files residing in the output directory will be removed before exporting.
@@ -357,7 +358,7 @@ namespace Altaxo.Text
         throw new ArgumentNullException(nameof(fileName));
       }
 
-      var basePathName = Path.GetDirectoryName(fileName);
+      var basePathName = Path.GetDirectoryName(fileName) ?? throw new InvalidOperationException($"Unable to get directory of file name {fileName}");
 
       if (ExpandChildDocuments)
       {

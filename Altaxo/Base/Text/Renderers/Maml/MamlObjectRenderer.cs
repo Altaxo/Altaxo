@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using Markdig.Renderers;
 using Markdig.Syntax;
 

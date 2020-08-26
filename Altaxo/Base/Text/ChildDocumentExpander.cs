@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace Altaxo.Text
     /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text. In addition, all Altaxo graphs are converted to local images.</returns>
     /// <remarks>Since finding Altaxo graphs embedded in the markdown is depended on the context (location of the TextDocument and location of the graph),
     /// and we somewhat loose this context during the expansion, we convert the graphs to local images before we insert the document into the master document.</remarks>
-    public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, int recursionLevel = 0, List<MarkdownError> errors = null)
+    public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, int recursionLevel = 0, List<MarkdownError>? errors = null)
     {
       return ExpandDocumentToNewDocument(textDocument, true, string.Empty, recursionLevel, errors);
     }
@@ -68,7 +69,7 @@ namespace Altaxo.Text
     /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text. In addition, all Altaxo graphs are converted to local images.</returns>
     /// <remarks>Since finding Altaxo graphs embedded in the markdown is depended on the context (location of the TextDocument and location of the graph),
     /// and we somewhat loose this context during the expansion, we convert the graphs to local images before we insert the document into the master document.</remarks>
-    public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, string targetDocumentFolder, int recursionLevel = 0, List<MarkdownError> errors = null)
+    public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, string targetDocumentFolder, int recursionLevel = 0, List<MarkdownError>? errors = null)
     {
       return ExpandDocumentToNewDocument(textDocument, false, targetDocumentFolder, recursionLevel);
     }
@@ -85,7 +86,7 @@ namespace Altaxo.Text
     /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text. In addition, all Altaxo graphs are converted to local images.</returns>
     /// <remarks>Since finding Altaxo graphs embedded in the markdown is depended on the context (location of the TextDocument and location of the graph),
     /// and we somewhat loose this context during the expansion, we convert the graphs to local images before we insert the document into the master document.</remarks>
-    private static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, bool convertGraphsToImages, string newPath, int recursionLevel = 0, List<MarkdownError> errors = null)
+    private static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, bool convertGraphsToImages, string newPath, int recursionLevel = 0, List<MarkdownError>? errors = null)
     {
       var resultDocument = new TextDocument();
       resultDocument.AddImagesFrom(textDocument);
@@ -140,15 +141,18 @@ namespace Altaxo.Text
                 stream.Seek(0, System.IO.SeekOrigin.Begin);
                 var proxy = MemoryStreamImageProxy.FromStream(stream, streamResult.Extension);
                 resultDocument.AddImage(proxy);
-                documentAsStringBuilder.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.Length);
-                documentAsStringBuilder.Insert(link.UrlSpan.Value.Start, "local:" + proxy.ContentHash);
+                if (link.UrlSpan is not null)
+                {
+                  documentAsStringBuilder.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.Length);
+                  documentAsStringBuilder.Insert(link.UrlSpan.Value.Start, "local:" + proxy.ContentHash);
+                }
               }
             }
           }
           else // keep link to graphs, but change their path
           {
             var newUrl = ConvertGraphUrl(link.Url, textDocument.Name, newPath);
-            if (newUrl != link.Url)
+            if (newUrl != link.Url && link.UrlSpan is not null)
             {
               documentAsStringBuilder.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.Length);
               documentAsStringBuilder.Insert(link.UrlSpan.Value.Start, newUrl);
@@ -169,7 +173,7 @@ namespace Altaxo.Text
 
           if (success)
           {
-            var expandedChild = ExpandDocumentToNewDocument(childTextDocument, convertGraphsToImages, newPath, recursionLevel + 1, errors);
+            var expandedChild = ExpandDocumentToNewDocument(childTextDocument!, convertGraphsToImages, newPath, recursionLevel + 1, errors);
             // exchange the source text
             documentAsStringBuilder.Remove(mdo.Span.Start, mdo.Span.Length);
             documentAsStringBuilder.Insert(mdo.Span.Start, expandedChild.SourceText);

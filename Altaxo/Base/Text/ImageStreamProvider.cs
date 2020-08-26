@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,10 +36,10 @@ namespace Altaxo.Text
   public class ImageRenderToStreamResult
   {
     public bool IsValid { get; private set; }
-    public string NameHint { get; private set; }
-    public string Extension { get; private set; }
+    public string NameHint { get; private set; } = string.Empty;
+    public string Extension { get; private set; } = string.Empty;
 
-    public string ErrorMessage { get; private set; }
+    public string? ErrorMessage { get; private set; }
 
     public double DpiX { get; private set; }
     public double DpiY { get; private set; }
@@ -64,7 +65,7 @@ namespace Altaxo.Text
       PixelsY = pixelsY;
     }
 
-    public ImageRenderToStreamResult(string errorMessage)
+    public ImageRenderToStreamResult(string? errorMessage)
     {
       IsValid = false;
       ErrorMessage = errorMessage;
@@ -155,7 +156,7 @@ namespace Altaxo.Text
         }
         else // If it doesn't work with a stream, we try to get a bitmap
         {
-          System.Drawing.Bitmap bitmap = null;
+          System.Drawing.Bitmap? bitmap = null;
           try { bitmap = Current.ResourceService.GetBitmap(name); } catch { }
 
           if (null != bitmap)
@@ -209,7 +210,7 @@ namespace Altaxo.Text
     /// <param name="url">The original URL.</param>
     /// <param name="AltaxoFolderLocation">The Altaxo folder where the document which includes this Graph in located in.</param>
     /// <returns>Either the found graph (2D or 3D), or null if no graph was found.</returns>
-    public static Altaxo.Graph.GraphDocumentBase FindGraphWithUrl(string url, string AltaxoFolderLocation)
+    public static Altaxo.Graph.GraphDocumentBase? FindGraphWithUrl(string url, string AltaxoFolderLocation)
     {
       bool isAbsolutePath = url.StartsWith(ImagePretext.AbsolutePathPretext);
       foreach (var modifiedUrl in ModifiedUrls(url))

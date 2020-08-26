@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,7 +41,7 @@ namespace Altaxo.Text.Renderers
     /// </summary>
     /// <param name="shfbProjectFileName">Name of the Sandcastle help file builder project file.</param>
     /// <returns>The full name of the content file (if it could be extracted from the project file), or null.</returns>
-    public static string ExtractContentLayoutFileNameFromShfbproj(string shfbProjectFileName)
+    public static string? ExtractContentLayoutFileNameFromShfbproj(string shfbProjectFileName)
     {
       var doc = new XmlDocument();
       //Load the the document with the last book node.
@@ -52,7 +53,7 @@ namespace Altaxo.Text.Renderers
         if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "ContentLayout")
         {
           var clFileName = currNode.FirstChild.Attributes["Include"];
-          return Path.Combine(Path.GetDirectoryName(shfbProjectFileName), clFileName.Value);
+          return Path.Combine(Path.GetDirectoryName(shfbProjectFileName) ?? throw new InvalidOperationException($"Unable to get directory name of file {shfbProjectFileName}"), clFileName.Value);
         }
 
         currNode = currNode.NextSibling;
@@ -71,11 +72,11 @@ namespace Altaxo.Text.Renderers
     /// <param name="imageFileNames">Enumeration of the names of all image files that should be included in the Sandcastle help file builder project.</param>
     public static void UpdateShfbproj(string shfbProjectFileName, string contentLayoutFileName, IEnumerable<string> amlFileNames, IEnumerable<string> imageFileNames)
     {
-      XmlNode contentLayoutNode = null;
-      XmlNode amlFilesNode = null;
-      XmlNode imageFilesNode = null;
+      XmlNode? contentLayoutNode = null;
+      XmlNode? amlFilesNode = null;
+      XmlNode? imageFilesNode = null;
 
-      string projectDirectory = Path.GetDirectoryName(shfbProjectFileName);
+      string projectDirectory = Path.GetDirectoryName(shfbProjectFileName) ?? throw new InvalidOperationException($"Unable to get directory of file name {shfbProjectFileName}");
 
       var doc = new XmlDocument();
       //Load the the document with the last book node.
@@ -185,7 +186,7 @@ namespace Altaxo.Text.Renderers
       if (!Path.IsPathRooted(fullFileName))
         throw new ArgumentException("Path is not rooted", nameof(fullFileName));
 
-      var dir = Path.GetDirectoryName(fullFileName);
+      var dir = Path.GetDirectoryName(fullFileName) ?? throw new InvalidOperationException($"Unable to get directory of file name {fullFileName}");
 
       if (!dir.StartsWith(baseDirectory))
         throw new ArgumentException("File must be in the base directory or in a subdirectory", nameof(fullFileName));

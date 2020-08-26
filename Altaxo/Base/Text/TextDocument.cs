@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -50,7 +51,7 @@ namespace Altaxo.Text
     /// <summary>
     /// The markdown source text.
     /// </summary>
-    private string _sourceText;
+    private string _sourceText = string.Empty;
 
     private bool? _isHyphenationEnabled;
 
@@ -64,18 +65,18 @@ namespace Altaxo.Text
     /// Gets or sets the collection of all referenced image Urls.
     /// We use this only in the serialization code to serialize only those local images which are referenced in the markdown.
     /// </summary>
-    public IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)> ReferencedImageUrls { get; set; }
+    public IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)> ReferencedImageUrls { get; set; } = new (string Url, int urlSpanStart, int urlSpanEnd)[0];
 
     /// <summary>
     /// The name of the style used to visualize the markdown. If this string is null or empty, the current global
     /// defined style of the current Altaxo instance will be used.
     /// </summary>
-    private string _styleName;
+    private string _styleName = string.Empty;
 
     /// <summary>
     /// The name of the document.
     /// </summary>
-    protected string _name;
+    protected string? _name;
 
     /// <summary>
     /// The date/time of creation of this document.
@@ -98,7 +99,7 @@ namespace Altaxo.Text
     /// <remarks>The properties are saved on disc (with exception of those that starts with "tmp/".
     /// If the property you want to store is only temporary, the properties name should therefore
     /// start with "tmp/".</remarks>
-    protected Main.Properties.PropertyBag _documentProperties;
+    protected Main.Properties.PropertyBag? _documentProperties;
 
     #region "Serialization"
 
@@ -113,7 +114,7 @@ namespace Altaxo.Text
         info.AddValue("CreationTime", s._creationTime.ToLocalTime());
         info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
         info.AddValue("Notes", s._notes.Text);
-        info.AddValue("Properties", s._documentProperties);
+        info.AddValueOrNull("Properties", s._documentProperties);
         info.AddValue("StyleName", s._styleName);
         info.AddValue("SourceText", s._sourceText);
         info.AddValue("IsHyphenationEnabled", s._isHyphenationEnabled);
@@ -154,13 +155,13 @@ namespace Altaxo.Text
         info.CommitArray();
       }
 
-      public void Deserialize(TextDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public void Deserialize(TextDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s._name = info.GetString("Name");
         s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
         s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
         s._notes.Text = info.GetString("Notes");
-        s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
+        s.PropertyBag = info.GetValueOrNull<Main.Properties.PropertyBag>("Properties", s);
         s._styleName = info.GetString("StyleName");
         s._sourceText = info.GetString("SourceText");
         s._isHyphenationEnabled = info.GetNullableBoolean("IsHyphenationEnabled");
@@ -181,9 +182,9 @@ namespace Altaxo.Text
         info.CloseArray(count);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (TextDocument)o ?? new TextDocument();
+        var s = (TextDocument?)o ?? new TextDocument();
         Deserialize(s, info, parent);
         return s;
       }
@@ -217,6 +218,30 @@ namespace Altaxo.Text
       }
     }
 
+    [MemberNotNull(nameof(_notes))]
+    protected void CopyFrom(TextDocument from)
+    {
+      ChildCopyToMember(ref _notes, from._notes);
+
+      // Clone also the properties
+      if (from._documentProperties != null && from._documentProperties.Count > 0)
+      {
+        PropertyBagNotNull.CopyFrom(from._documentProperties);
+      }
+      else
+      {
+        _documentProperties = null;
+      }
+
+      _styleName = from._styleName;
+      _sourceText = from._sourceText;
+      _images.Clear();
+      foreach (var entry in from._images)
+      {
+        _images.Add(entry.Key, entry.Value);
+      }
+    }
+
     /// <inheritdoc/>
     public virtual bool CopyFrom(object obj)
     {
@@ -227,29 +252,9 @@ namespace Altaxo.Text
       {
         using (var suspendToken = SuspendGetToken())
         {
-          ChildCopyToMember(ref _notes, from._notes);
-
-          // Clone also the properties
-          if (from._documentProperties != null && from._documentProperties.Count > 0)
-          {
-            PropertyBagNotNull.CopyFrom(from._documentProperties);
-          }
-          else
-          {
-            _documentProperties = null;
-          }
-
-          _styleName = from._styleName;
-          _sourceText = from._sourceText;
-          _images.Clear();
-          foreach (var entry in from._images)
-          {
-            _images.Add(entry.Key, entry.Value);
-          }
-
+          CopyFrom(from);
           EhSelfChanged(EventArgs.Empty);
         }
-
         return true;
       }
       return false;
@@ -332,14 +337,12 @@ namespace Altaxo.Text
     #region IPropertyBagOwner
 
     /// <inheritdoc/>
-    public Main.Properties.PropertyBag PropertyBag
+    public Main.Properties.PropertyBag? PropertyBag
     {
       get { return _documentProperties; }
       protected set
       {
-        _documentProperties = value;
-        if (null != _documentProperties)
-          _documentProperties.ParentObject = this;
+        ChildSetMember(ref _documentProperties, value);
       }
     }
 
@@ -348,8 +351,8 @@ namespace Altaxo.Text
     {
       get
       {
-        if (null == _documentProperties)
-          PropertyBag = new Main.Properties.PropertyBag();
+        if (_documentProperties is null)
+          ChildSetMember(ref _documentProperties, new Main.Properties.PropertyBag());
         return _documentProperties;
       }
     }
@@ -361,7 +364,7 @@ namespace Altaxo.Text
     /// <summary>
     /// Get / sets the parent object of this table.
     /// </summary>
-    public override Main.IDocumentNode ParentObject
+    public override Main.IDocumentNode? ParentObject
     {
       get
       {
@@ -395,7 +398,7 @@ namespace Altaxo.Text
     /// <inheritdoc/>
     public override string Name
     {
-      get { return _name; }
+      get { return _name ?? throw new InvalidProgramException($"The name is not set yet. To text for this condition, use {nameof(TryGetName)} instead."); }
       set
       {
         if (null == value)
@@ -433,7 +436,7 @@ namespace Altaxo.Text
     /// The event arg of the Tunneling event is an instance of <see cref="T:Altaxo.Main.DocumentPathChangedEventArgs"/>.
     /// </summary>
     /// <param name="oldName">The name of the table before it has changed the name.</param>
-    protected virtual void OnNameChanged(string oldName)
+    protected virtual void OnNameChanged(string? oldName)
     {
       EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty);
       EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(this, oldName));
