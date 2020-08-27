@@ -458,7 +458,21 @@ namespace Altaxo.Serialization.Xml
       } // end switch
     }
 
-    public void AddArray(string name, object?[] val, int count)
+    public void AddArray(string name, object[] val, int count)
+    {
+      CreateArray(name, count);
+
+      if (count > 0)
+      {
+        for (int i = 0; i < count; i++)
+        {
+          AddValue("e", val[i]);
+        }
+      } // count>0
+      CommitArray();
+    }
+
+    public void AddArrayOfNullableElements(string name, object?[] val, int count)
     {
       CreateArray(name, count);
 

@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Plot.Data
     System.ICloneable
   {
     /// <summary>Holds a reference to the underlying data table. If the Empty property of the proxy is null, the underlying table must be determined from the column proxies.</summary>
-    protected DataTableProxy _dataTable;
+    protected DataTableProxy? _dataTable;
 
     /// <summary>The group number of the data columns. All data columns should have this group number. Data columns having other group numbers will be marked.</summary>
     protected int _groupNumber;
@@ -311,11 +311,11 @@ namespace Altaxo.Graph.Plot.Data
       {
         var s = (XYColumnPlotData?)o ?? new XYColumnPlotData(info);
 
-        s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
-        s._yColumn = (IReadableColumnProxy)info.GetValue("YColumn", s);
+        s.ChildSetMember(ref s._xColumn, (IReadableColumnProxy)info.GetValue("XColumn", s));
+        s.ChildSetMember(ref s._yColumn, (IReadableColumnProxy)info.GetValue("YColumn", s));
 
-        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
-        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
+        s.ChildSetMember(ref s._xBoundaries, (IPhysicalBoundaries)info.GetValue("XBoundaries", s));
+        s.ChildSetMember(ref s._yBoundaries, (IPhysicalBoundaries)info.GetValue("YBoundaries", s));
 
         return s;
       }
@@ -323,22 +323,7 @@ namespace Altaxo.Graph.Plot.Data
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
-        CreateEventChain(s);
         return s;
-      }
-
-      public virtual void CreateEventChain(XYColumnPlotData s)
-      {
-        if (null != s._xColumn)
-          s._xColumn.ParentObject = s;
-        if (null != s._yColumn)
-          s._yColumn.ParentObject = s;
-
-        if (null != s._xBoundaries)
-          s._xBoundaries.ParentObject = s;
-
-        if (null != s._yBoundaries)
-          s._yBoundaries.ParentObject = s;
       }
     }
 
@@ -372,21 +357,11 @@ namespace Altaxo.Graph.Plot.Data
       {
         XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData(info);
 
-        s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
-        if (null != s._xColumn)
-          s._xColumn.ParentObject = s;
+        s.ChildSetMember(ref s._xColumn, (IReadableColumnProxy)info.GetValue("XColumn", s));
+        s.ChildSetMember(ref s._yColumn, (IReadableColumnProxy)info.GetValue("YColumn", s));
+        s.ChildSetMember(ref s._xBoundaries, (IPhysicalBoundaries)info.GetValue("XBoundaries", s));
+        s.ChildSetMember(ref s._yBoundaries, (IPhysicalBoundaries)info.GetValue("YBoundaries", s));
 
-        s._yColumn = (IReadableColumnProxy)info.GetValue("YColumn", s);
-        if (null != s._yColumn)
-          s._yColumn.ParentObject = s;
-
-        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
-        if (null != s._xBoundaries)
-          s._xBoundaries.ParentObject = s;
-
-        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
-        if (null != s._yBoundaries)
-          s._yBoundaries.ParentObject = s;
 
         int rangeStart = info.GetInt32("RangeStart");
         int rangeLength = info.GetInt32("RangeLength");
@@ -400,23 +375,10 @@ namespace Altaxo.Graph.Plot.Data
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
-        CreateEventChain(s);
         return s;
       }
 
-      public virtual void CreateEventChain(XYColumnPlotData s)
-      {
-        if (null != s._xColumn)
-          s._xColumn.ParentObject = s;
-        if (null != s._yColumn)
-          s._yColumn.ParentObject = s;
 
-        if (null != s._xBoundaries)
-          s._xBoundaries.ParentObject = s;
-
-        if (null != s._yBoundaries)
-          s._yBoundaries.ParentObject = s;
-      }
     }
 
     #endregion Xml 4 und 5
@@ -434,7 +396,7 @@ namespace Altaxo.Graph.Plot.Data
       {
         var s = (XYColumnPlotData)obj;
 
-        info.AddValue("DataTable", s._dataTable);
+        info.AddValueOrNull("DataTable", s._dataTable);
         info.AddValue("GroupNumber", s._groupNumber);
         info.AddValue("RowSelection", s._dataRowSelection);
 
@@ -449,22 +411,13 @@ namespace Altaxo.Graph.Plot.Data
       {
         var s = (XYColumnPlotData?)o ?? new XYColumnPlotData(info);
 
-        s._dataTable = (DataTableProxy)info.GetValue("DataTable", s);
-        if (null != s._dataTable)
-          s._dataTable.ParentObject = s;
+        s.ChildSetMember(ref s._dataTable, info.GetValueOrNull<DataTableProxy>("DataTable", s));
 
         s._groupNumber = info.GetInt32("GroupNumber");
 
         s.ChildSetMember(ref s._dataRowSelection, (IRowSelection)info.GetValue("RowSelection", s));
-
-        s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
-        if (null != s._xColumn)
-          s._xColumn.ParentObject = s;
-
-        s._yColumn = (IReadableColumnProxy)info.GetValue("YColumn", s);
-        if (null != s._yColumn)
-          s._yColumn.ParentObject = s;
-
+        s.ChildSetMember(ref s._xColumn, (IReadableColumnProxy)info.GetValue("XColumn", s));
+        s.ChildSetMember(ref s._yColumn, (IReadableColumnProxy)info.GetValue("YColumn", s));
         s.ChildSetMember(ref s._xBoundaries, info.GetValueOrNull<IPhysicalBoundaries>("XBoundaries", s));
         s.ChildSetMember(ref s._yBoundaries, info.GetValueOrNull<IPhysicalBoundaries>("YBoundaries", s));
 
@@ -474,22 +427,7 @@ namespace Altaxo.Graph.Plot.Data
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
-        CreateEventChain(s);
         return s;
-      }
-
-      public virtual void CreateEventChain(XYColumnPlotData s)
-      {
-        if (null != s._xColumn)
-          s._xColumn.ParentObject = s;
-        if (null != s._yColumn)
-          s._yColumn.ParentObject = s;
-
-        if (null != s._xBoundaries)
-          s._xBoundaries.ParentObject = s;
-
-        if (null != s._yBoundaries)
-          s._yBoundaries.ParentObject = s;
       }
     }
 
@@ -800,7 +738,8 @@ namespace Altaxo.Graph.Plot.Data
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
     public void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
-      Report(_dataTable, this, "DataTable");
+      if (_dataTable is not null)
+        Report(_dataTable, this, "DataTable");
       Report(_xColumn, this, "XColumn");
       Report(_yColumn, this, "YColumn");
 

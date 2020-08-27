@@ -309,13 +309,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._overrideFrame = info.GetBoolean("OverrideFrame");
         s._overriddenFrame = info.GetValueOrNull<IScatterSymbolFrame>("OverriddenFrame", s);
         s._overrideInset = info.GetBoolean("OverrideInset");
-        s._overriddenInset = info.GetValue<IScatterSymbolInset>("OverriddenInset", s);
+        s._overriddenInset = info.GetValueOrNull<IScatterSymbolInset>("OverriddenInset", s);
         s._overrideStructureWidthOffset = info.GetNullableDouble("OverriddenStructureWidthOffset");
         s._overrideStructureWidthFactor = info.GetNullableDouble("OverriddenStructureWidthFactor");
         s._overridePlotColorInfluence = info.GetNullableEnum<PlotColorInfluence>("OverriddenPlotColorInfluence");
-        s._overrideFillColor = info.GetValue<NamedColor?>("OverriddenFillColor", s);
-        s._overrideFrameColor = info.GetValue<NamedColor?>("OverriddenFrameColor", s);
-        s._overrideInsetColor = info.GetValue<NamedColor?>("OverriddenInsetColor", s);
+        s._overrideFillColor = info.GetNullableStruct<NamedColor>("OverriddenFillColor", s);
+        s._overrideFrameColor = info.GetNullableStruct<NamedColor>("OverriddenFrameColor", s);
+        s._overrideInsetColor = info.GetNullableStruct<NamedColor>("OverriddenInsetColor", s);
 
         return s;
       }

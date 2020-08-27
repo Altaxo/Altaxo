@@ -59,10 +59,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private IRowSelection _rangeOfRows;
 
     /// <summary>Array of columns that are used as data source for the independent variables.</summary>
-    private IReadableColumnProxy[] _independentVariables;
+    private IReadableColumnProxy?[] _independentVariables;
 
     /// <summary>Array of columns that are used as data source for the dependent variables.</summary>
-    private IReadableColumnProxy[] _dependentVariables;
+    private IReadableColumnProxy?[] _dependentVariables;
 
     /// <summary>Holds for each dependent variable the kind of error evaluation (i.e. the kind of weighing of the difference between current dependent values and the calculated value of the fitting function)</summary>
     private IVarianceScaling?[] _errorEvaluation;
@@ -137,9 +137,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _independentVariables = new IReadableColumnProxy[arraycount];
       for (int i = 0; i < arraycount; ++i)
       {
-        _independentVariables[i] = (IReadableColumnProxy)info.GetValue("e", this);
-        if (null != _independentVariables[i])
-          _independentVariables[i].ParentObject = this;
+        ChildSetMember(ref _independentVariables[i], info.GetValueOrNull<IReadableColumnProxy>("e", this));
       }
       info.CloseArray(arraycount);
 
@@ -147,9 +145,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _dependentVariables = new IReadableColumnProxy[arraycount];
       for (int i = 0; i < arraycount; ++i)
       {
-        _dependentVariables[i] = (IReadableColumnProxy)info.GetValue("e", this);
-        if (null != _dependentVariables[i])
-          _dependentVariables[i].ParentObject = this;
+        ChildSetMember(ref _dependentVariables[i], info.GetValueOrNull<IReadableColumnProxy>("e", this));
       }
       info.CloseArray(arraycount);
 
@@ -190,9 +186,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.AddValue("GroupNumber", s._groupNumber);
         info.AddValue("RowSelection", s._rangeOfRows);
 
-        info.AddArray("IndependentVariables", s._independentVariables, s._independentVariables.Length);
-        info.AddArray("DependentVariables", s._dependentVariables, s._dependentVariables.Length);
-        info.AddArray("VarianceEvaluation", s._errorEvaluation, s._errorEvaluation.Length);
+        info.AddArrayOfNullableElements("IndependentVariables", s._independentVariables, s._independentVariables.Length);
+        info.AddArrayOfNullableElements("DependentVariables", s._dependentVariables, s._dependentVariables.Length);
+        info.AddArrayOfNullableElements("VarianceEvaluation", s._errorEvaluation, s._errorEvaluation.Length);
         info.AddArray("ParameterNames", s._parameterNames, s._parameterNames.Length);
         info.AddValue("ParameterNameStart", s._parameterNameStart);
       }
@@ -222,9 +218,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _independentVariables = new IReadableColumnProxy[arraycount];
       for (int i = 0; i < arraycount; ++i)
       {
-        _independentVariables[i] = (IReadableColumnProxy)info.GetValue("e", this);
-        if (null != _independentVariables[i])
-          _independentVariables[i].ParentObject = this;
+        ChildSetMember(ref _independentVariables[i], info.GetValueOrNull<IReadableColumnProxy>("e", this));
       }
       info.CloseArray(arraycount);
 
@@ -232,16 +226,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _dependentVariables = new IReadableColumnProxy[arraycount];
       for (int i = 0; i < arraycount; ++i)
       {
-        _dependentVariables[i] = (IReadableColumnProxy)info.GetValue("e", this);
-        if (null != _dependentVariables[i])
-          _dependentVariables[i].ParentObject = this;
+        ChildSetMember(ref _dependentVariables[i], info.GetValueOrNull<IReadableColumnProxy>("e", this));
       }
       info.CloseArray(arraycount);
 
       arraycount = info.OpenArray();
-      _errorEvaluation = new IVarianceScaling[arraycount];
+      _errorEvaluation = new IVarianceScaling?[arraycount];
       for (int i = 0; i < arraycount; ++i)
-        _errorEvaluation[i] = (IVarianceScaling)info.GetValue("e", this);
+        _errorEvaluation[i] = info.GetValueOrNull<IVarianceScaling>("e", this);
       info.CloseArray(arraycount);
 
       info.GetArray("ParameterNames", out _parameterNames);
@@ -716,7 +708,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private void InternalReallocIndependentVariables(int noIndep)
     {
       var oldArr = _independentVariables;
-      var newArr = new IReadableColumnProxy[noIndep];
+      var newArr = new IReadableColumnProxy?[noIndep];
       for (int i = Math.Min(newArr.Length, oldArr.Length) - 1; i >= 0; i--)
         newArr[i] = oldArr[i];
 
@@ -727,7 +719,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       {
         var oldArr = _dependentVariables;
-        var newArr = new IReadableColumnProxy[noDep];
+        var newArr = new IReadableColumnProxy?[noDep];
         for (int i = Math.Min(newArr.Length, oldArr.Length) - 1; i >= 0; i--)
           newArr[i] = oldArr[i];
         _dependentVariables = newArr;
@@ -785,7 +777,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
             len = Math.Min(len, _fitFunction.NumberOfDependentVariables);
 
           for (int i = len - 1; i >= 0; --i)
-            if (_dependentVariables[i] != null && _dependentVariables[i].Document() != null)
+            if (_dependentVariables[i]?.Document() is not null)
               sum++;
         }
         return sum;
@@ -819,7 +811,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       int maxLength = int.MaxValue;
       for (i = 0; i < _independentVariables.Length; i++)
       {
-        cols[i] = _independentVariables[i].Document();
+        cols[i] = _independentVariables[i]?.Document();
         selectedCols.Add(i);
         if (cols[i]?.Count is int cnt)
           maxLength = Math.Min(maxLength, cnt);
@@ -828,9 +820,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       // note: for a fitting session some of the dependent variables can be null
       for (int j = 0; j < _dependentVariables.Length; ++j, ++i)
       {
-        if (_dependentVariables[j] != null && _dependentVariables[j].Document() != null)
+        if (_dependentVariables[j]?.Document() is { } dvj)
         {
-          cols[i] = _dependentVariables[j].Document();
+          cols[i] = dvj;
           selectedCols.Add(i);
           if (cols[i]?.Count is int cnt)
             maxLength = Math.Min(maxLength, cnt);
@@ -875,8 +867,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         for (int i = 0; i < _independentVariables.Length; ++i)
         {
-          if (null != _independentVariables[i])
-            yield return new Main.DocumentNodeAndName(_independentVariables[i], "IndependentVariable" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+          if (_independentVariables[i] is { } ivi)
+            yield return new Main.DocumentNodeAndName(ivi, "IndependentVariable" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
       }
 
@@ -884,8 +876,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         for (int i = 0; i < _dependentVariables.Length; ++i)
         {
-          if (null != _dependentVariables[i])
-            yield return new Main.DocumentNodeAndName(_dependentVariables[i], "DependentVariable" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+          if (_dependentVariables[i] is { } dvi)
+            yield return new Main.DocumentNodeAndName(dvi, "DependentVariable" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
       }
 

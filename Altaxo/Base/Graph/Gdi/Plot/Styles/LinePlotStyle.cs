@@ -314,7 +314,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
+        var s = (LinePlotStyle?)o ?? new LinePlotStyle(info);
 
         s._linePen = (PenX)info.GetValue("Pen", s);
         s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
@@ -322,7 +322,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
         bool fillArea = info.GetBoolean("FillArea");
         var fillBrush = (BrushX)info.GetValue("FillBrush", s);
-        var fillDir = (CSPlaneID)info.GetValue("FillDirection", s);
+        var fillDir = info.GetValueOrNull<CSPlaneID>("FillDirection", s) ?? CSPlaneID.Bottom;
         s._independentColor = info.GetBoolean("IndependentColor");
         var fillColorLinkage = info.GetBoolean("IndependentFillColor") ? ColorLinkage.Independent : ColorLinkage.PreserveAlpha;
         s._connectCircular = info.GetBoolean("ConnectCircular");
@@ -368,7 +368,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
         bool fillArea = info.GetBoolean("FillArea");
         var fillBrush = (BrushX)info.GetValue("FillBrush", s);
-        var fillDir = (CSPlaneID)info.GetValue("FillDirection", s);
+        var fillDir = info.GetValueOrNull<CSPlaneID>("FillDirection", s) ?? CSPlaneID.Bottom;
         s._independentColor = info.GetBoolean("IndependentColor");
         var fillColorLinkage = (ColorLinkage)info.GetEnum("FillColorLinkage", typeof(ColorLinkage));
         s._connectCircular = info.GetBoolean("ConnectCircular");

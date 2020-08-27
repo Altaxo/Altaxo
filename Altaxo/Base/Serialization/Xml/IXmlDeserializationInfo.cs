@@ -132,10 +132,11 @@ namespace Altaxo.Serialization.Xml
 
     object? GetValueOrNull(string name, object? parent);
 
-    T GetValue<T>(string name, object? parentObject);
+    T GetValue<T>(string name, object? parentObject) where T : notnull;
 
     T? GetValueOrNull<T>(string name, object? parentObject) where T : class;
 
+    T? GetNullableStruct<T>(string name, object? parentObject) where T : struct;
 
     object? GetValueOrOuterXml(string name, object parent, out bool returnValueIsOuterXml);
 

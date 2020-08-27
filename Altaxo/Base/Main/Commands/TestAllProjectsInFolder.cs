@@ -38,6 +38,13 @@ namespace Altaxo.Main.Commands
 
     public string ProtocolFileName { get; set; }
 
+    public TestAllProjectsInFolderOptions()
+    {
+      FolderPaths = @"C:\Temp";
+      TestSavingAndReopening = false;
+      ProtocolFileName = @"C:\Temp\AltaxoTestOpeningLog.txt";
+    }
+
     public bool CopyFrom(object obj)
     {
       if (object.ReferenceEquals(this, obj))
@@ -67,7 +74,7 @@ namespace Altaxo.Main.Commands
 
     public class Reporter : Altaxo.Main.Services.TextOutputServiceBase
     {
-      private System.IO.StreamWriter _wr;
+      private System.IO.StreamWriter? _wr;
       private Altaxo.Main.Services.ITextOutputService _previousOutputService;
 
       public Reporter(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ITextOutputService previousOutputService)
@@ -192,7 +199,7 @@ namespace Altaxo.Main.Commands
     private static void InternalVerifyOpeningOfDocumentsWithoutExceptionStart(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor)
     {
       var reporter = new Reporter(testOptions, Current.Console);
-      var oldOutputService = Current.GetService<Services.ITextOutputService>();
+      var oldOutputService = Current.GetRequiredService<Services.ITextOutputService>();
       Current.RemoveService<Services.ITextOutputService>();
       Current.AddService<Services.ITextOutputService>(reporter);
       if (!object.ReferenceEquals(Current.Console, reporter))

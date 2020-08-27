@@ -231,9 +231,7 @@ namespace Altaxo.Data
         s._propertyColumns.ColumnScripts.ParentObject = s;
 
         // new in version 1
-        s._tableScript = (TableScript)info.GetValue("TableScript", s);
-        if (null != s._tableScript)
-          s._tableScript.ParentObject = s;
+        s.ChildSetMember(ref s._tableScript, info.GetValueOrNull<TableScript>("TableScript", s));
 
         // new in version 2 - Add table properties
         int numberproperties = info.OpenArray(); // "TableProperties"
@@ -317,11 +315,9 @@ namespace Altaxo.Data
         s._propertyColumns.ParentObject = s;
         s._propertyColumns.ColumnScripts.ParentObject = s;
 
-        s._tableScript = (TableScript?)info.GetValueOrNull("TableScript", s);
-        if (null != s._tableScript)
-          s._tableScript.ParentObject = s;
+        s.ChildSetMember(ref s._tableScript, info.GetValueOrNull<TableScript>("TableScript", s));
 
-        s.PropertyBag = (Main.Properties.PropertyBag?)info.GetValueOrNull("Properties", s);
+        s.PropertyBag = info.GetValueOrNull<Main.Properties.PropertyBag>("Properties", s);
 
         s._notes.Text = info.GetString("Notes");
         s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
@@ -393,11 +389,8 @@ namespace Altaxo.Data
         s._name = info.GetString("Name");
 
 
-        s._tableScript = (TableScript?)info.GetValueOrNull("TableScript", s);
-        if (null != s._tableScript)
-          s._tableScript.ParentObject = s;
-
-        s.PropertyBag = (Main.Properties.PropertyBag?)info.GetValueOrNull("Properties", s);
+        s.ChildSetMember(ref s._tableScript, info.GetValueOrNull<TableScript>("TableScript", s));
+        s.PropertyBag = info.GetValueOrNull<Main.Properties.PropertyBag>("Properties", s);
 
         s._notes.Text = info.GetString("Notes");
         s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();

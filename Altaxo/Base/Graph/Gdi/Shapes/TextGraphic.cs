@@ -576,6 +576,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Interpreting and Painting
 
+    [MemberNotNull(nameof(_rootNode))]
     private void InterpretText()
     {
       var parser = new Altaxo_LabelV1();
@@ -623,13 +624,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public void Paint(Graphics g, IPaintContext paintContext, bool bForPreview)
     {
-      if (_rootNode is null)
-        throw new InvalidProgramException($"{nameof(_rootNode)} is null");
-
       //_isStructureInSync = false;
       _isMeasureInSync = false;  // Change: interpret text every time in order to update plot items and \ID
 
-      if (!_isStructureInSync)
+      if (_rootNode is null || !_isStructureInSync)
       {
         // this.Interpret(g);
         InterpretText();

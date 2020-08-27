@@ -614,7 +614,7 @@ namespace Altaxo.Serialization.Xml
       return GetValueOrNull(parentobject);
     }
 
-    public T GetValue<T>(string name, object? parentObject)
+    public T GetValue<T>(string name, object? parentObject) where T : notnull
     {
 
 #if !NONULLSTRICTCHECK
@@ -640,6 +640,18 @@ namespace Altaxo.Serialization.Xml
           (o is T result) ?
               result :
               throw new DeserializationException($"Name: {name}, Parent: {parentObject}, Type unexpected: Current: {o?.GetType()} but expected: {typeof(T)}");
+    }
+
+    public T? GetNullableStruct<T>(string name, object? parentObject) where T : struct
+    {
+      var o = GetValueOrNull(parentObject);
+
+      return o switch
+      {
+        null => (T?)null,
+        T t => t,
+        _ => throw new DeserializationException($"Name: {name}, Parent: {parentObject}, Type unexpected: Current: {o?.GetType()} but expected: {typeof(T)}")
+      };
     }
 
 

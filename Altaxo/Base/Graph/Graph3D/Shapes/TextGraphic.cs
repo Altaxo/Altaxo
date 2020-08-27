@@ -416,6 +416,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Interpreting and Painting
 
+    [MemberNotNull(nameof(_rootNode))]
     private void InterpretText()
     {
       var parser = new Altaxo_LabelV1();
@@ -452,13 +453,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     public void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, bool bForPreview)
     {
-      if (_rootNode is null)
-        throw new InvalidProgramException($"{nameof(_rootNode)} is null");
-
       //_isStructureInSync = false;
       _isMeasureInSync = false;  // Change: interpret text every time in order to update plot items and \ID
 
-      if (!_isStructureInSync)
+      if (_rootNode is null || !_isStructureInSync)
       {
         // this.Interpret(g);
         InterpretText();

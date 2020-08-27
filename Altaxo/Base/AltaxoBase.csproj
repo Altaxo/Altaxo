@@ -5,8 +5,9 @@
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <nullable>enable</nullable>
     <NoWarn>1591</NoWarn>
-    <DefineConstants>NONULLSTRICTCHECK</DefineConstants>
+    <DefineConstants></DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">

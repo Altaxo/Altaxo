@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,8 +43,8 @@ namespace Altaxo.Main.Commands
 
     public class ProjectItemClipboardListBase
     {
-      /// <summary>Folder from which the items are copied.</summary>
-      public string BaseFolder { get; set; }
+      /// <summary>Folder from which the items are copied. Can be null if the base folder is unknown.</summary>
+      public string? BaseFolder { get; set; } 
 
       /// <summary>If true, references will be relocated in the same way as the project items will be relocated.</summary>
       /// <value><c>true</c> if references should be relocated, <c>false</c> otherwise</value>
@@ -77,8 +78,9 @@ namespace Altaxo.Main.Commands
       /// <summary>List of project items to serialize/deserialize</summary>
       private List<IProjectItem> _projectItems;
 
-      private ProjectItemClipboardList()
+      private ProjectItemClipboardList(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       {
+        _projectItems = new List<IProjectItem>();
       }
 
       public ProjectItemClipboardList(IEnumerable<Altaxo.Main.IProjectItem> projectItems, string baseFolder)
@@ -94,7 +96,9 @@ namespace Altaxo.Main.Commands
         {
           var s = (ProjectItemClipboardList)obj;
 
-          info.AddValue("BaseFolder", s.BaseFolder);
+          info.AddValue("IsBaseFolderNull", s.BaseFolder is null);
+          if(s.BaseFolder is not null)
+            info.AddValue("BaseFolder", s.BaseFolder);
           info.AddValue("RelocateReferences", s.RelocateReferences);
           info.AddValue("TryToKeepInternalReferences", s.TryToKeepInternalReferences);
           info.CreateArray("Items", s._projectItems.Count);
@@ -103,17 +107,20 @@ namespace Altaxo.Main.Commands
           info.CommitArray();
         }
 
-        public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          ProjectItemClipboardList s = null != o ? (ProjectItemClipboardList)o : new ProjectItemClipboardList();
+          var s = (ProjectItemClipboardList?)o ?? new ProjectItemClipboardList(info);
 
-          s.BaseFolder = info.GetString("BaseFolder");
-
+          if (info.GetBoolean("IsBaseFolderNull"))
+            s.BaseFolder = null;
+          else
+            s.BaseFolder = info.GetString("BaseFolder");
+  
           s.RelocateReferences = info.GetNullableBoolean("RelocateReferences");
           s.TryToKeepInternalReferences = info.GetNullableBoolean("TryToKeepInternalReferences");
 
           int count = info.OpenArray("Items");
-          s._projectItems = new List<IProjectItem>();
+          s._projectItems.Clear();
           for (int i = 0; i < count; ++i)
           {
             s._projectItems.Add((IProjectItem)info.GetValue("e", s));
@@ -151,8 +158,9 @@ namespace Altaxo.Main.Commands
       /// <summary>List of project items to serialize/deserialize</summary>
       private List<DocNodeProxy> _projectItems;
 
-      private ProjectItemReferenceClipboardList()
+      private ProjectItemReferenceClipboardList(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       {
+        _projectItems = new List<DocNodeProxy>();
       }
 
       public ProjectItemReferenceClipboardList(IEnumerable<DocNodeProxy> projectItemReferences, string baseFolder)
@@ -168,7 +176,10 @@ namespace Altaxo.Main.Commands
         {
           var s = (ProjectItemReferenceClipboardList)obj;
 
-          info.AddValue("BaseFolder", s.BaseFolder);
+          info.AddValue("IsBaseFolderNull", s.BaseFolder is null);
+          if (s.BaseFolder is not null)
+            info.AddValue("BaseFolder", s.BaseFolder);
+
           info.AddValue("RelocateReferences", s.RelocateReferences);
           info.AddValue("TryToKeepInternalReferences", s.TryToKeepInternalReferences);
           info.CreateArray("Items", s._projectItems.Count);
@@ -177,17 +188,20 @@ namespace Altaxo.Main.Commands
           info.CommitArray();
         }
 
-        public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = null != o ? (ProjectItemReferenceClipboardList)o : new ProjectItemReferenceClipboardList();
+          var s = (ProjectItemReferenceClipboardList?)o ?? new ProjectItemReferenceClipboardList(info);
 
-          s.BaseFolder = info.GetString("BaseFolder");
+          if (info.GetBoolean("IsBaseFolderNull"))
+            s.BaseFolder = null;
+          else
+            s.BaseFolder = info.GetString("BaseFolder");
 
           s.RelocateReferences = info.GetNullableBoolean("RelocateReferences");
           s.TryToKeepInternalReferences = info.GetNullableBoolean("TryToKeepInternalReferences");
 
           int count = info.OpenArray("Items");
-          s._projectItems = new List<DocNodeProxy>();
+          s._projectItems.Clear();
           for (int i = 0; i < count; ++i)
           {
             s._projectItems.Add((DocNodeProxy)info.GetValue("e", s));
@@ -226,7 +240,8 @@ namespace Altaxo.Main.Commands
     public static void PasteItemsFromClipboard(string baseFolder)
     {
       var list = Altaxo.Serialization.Clipboard.ClipboardSerialization.GetObjectFromClipboard<ProjectItemClipboardList>(ClipboardFormat_ListOfProjectItems);
-      PasteItems(baseFolder, list);
+      if(list is not null)  
+        PasteItems(baseFolder, list);
     }
 
     public static void PasteItems(string targetFolder, ProjectItemClipboardList list)
@@ -278,11 +293,11 @@ namespace Altaxo.Main.Commands
       }
     }
 
-    private static string GetRelocatedName(string name, string oldBaseFolder, string newBaseFolder)
+    private static string GetRelocatedName(string name, string? oldBaseFolder, string newBaseFolder)
     {
       string result = name;
 
-      if ((null != oldBaseFolder) && name.StartsWith(oldBaseFolder))
+      if ((oldBaseFolder is not null) && name.StartsWith(oldBaseFolder))
       {
         result = name.Substring(oldBaseFolder.Length);
         result = newBaseFolder + result;
@@ -327,18 +342,18 @@ namespace Altaxo.Main.Commands
           _projectItemTypeName = _projectItem.GetType().Name;
       }
 
-      public override string Validate(string projectItemName)
+      public override string? Validate(string projectItemName)
       {
-        string err = base.Validate(projectItemName);
-        if (null != err)
+        var err = base.Validate(projectItemName);
+        if (err is not null)
           return err;
 
         if (_projectItem.Name == projectItemName)
           return null; // name is the same => thus no renaming neccessary
 
-        var collection = (IProjectItemCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(_projectItem, typeof(IProjectItemCollection));
+        var collection = (IProjectItemCollection?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(_projectItem, typeof(IProjectItemCollection));
 
-        if (collection == null)
+        if (collection is null)
           return null; // if there is no parent data set we can enter anything
 
         if (collection.ContainsAnyName(projectItemName))

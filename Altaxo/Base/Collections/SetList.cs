@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -32,7 +33,7 @@ namespace Altaxo.Collections
   /// Class which holds unique items in the order in wich they are added (like a List, but with the difference that only unique items could be contained).
   /// </summary>
   /// <typeparam name="T"></typeparam>
-  public class SetList<T> : ICollection<T>, IReadOnlyList<T>
+  public class SetList<T> : ICollection<T>, IReadOnlyList<T> where T: notnull
   {
     private List<T> _itemList = new List<T>();
     private Dictionary<T, int> _itemHash = new Dictionary<T, int>();

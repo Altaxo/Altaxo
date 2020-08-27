@@ -82,7 +82,7 @@ namespace Altaxo.Serialization.Xml
     /// </summary>
     /// <param name="name">The name of the property being deserialized.</param>
     /// <param name="parent">The parent object that holds the property.</param>
-    public DeserializationNullException(string name, object? parent) : base($"Name: {name}, parent:{parent}") { }
+    public DeserializationNullException(string name, object? parent) : base($"Name: {name}, parent:{parent?.GetType()}") { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DeserializationNullException"/> class.
@@ -90,7 +90,7 @@ namespace Altaxo.Serialization.Xml
     /// <param name="name">The name of the property being deserialized.</param>
     /// <param name="parent">The parent object that holds the property.</param>
     /// <param name="inner">The inner exception.</param>
-    public DeserializationNullException(string name, object? parent, Exception inner) : base($"Name: {name}, parent:{parent}", inner) { }
+    public DeserializationNullException(string name, object? parent, Exception inner) : base($"Name: {name}, parent:{parent?.GetType()}", inner) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DeserializationNullException"/> class.
