@@ -38,6 +38,7 @@
 //   We have a lot of Add/Clear methods -- we may prefer to just expose the container
 //   Some self-explanitory methods may deserve commenting anyways
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;

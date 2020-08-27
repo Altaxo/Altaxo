@@ -38,6 +38,7 @@
 //     Bundling everything into an AoS mess?
 //     Hardcode them all as ABC ?
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

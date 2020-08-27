@@ -29,6 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#nullable disable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,17 +44,13 @@ namespace Poly2Tri
     {
       get
       {
-        switch (index)
+        return index switch
         {
-          case 0:
-            return _0;
-          case 1:
-            return _1;
-          case 2:
-            return _2;
-          default:
-            throw new IndexOutOfRangeException();
-        }
+          0 => _0,
+          1 => _1,
+          2 => _2,
+          _ => throw new IndexOutOfRangeException(),
+        };
       }
       set
       {
