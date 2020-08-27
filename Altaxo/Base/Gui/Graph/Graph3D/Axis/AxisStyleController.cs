@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using Altaxo.Graph.Graph3D.Axis;
 using Altaxo.Gui.Graph.Scales.Ticks;

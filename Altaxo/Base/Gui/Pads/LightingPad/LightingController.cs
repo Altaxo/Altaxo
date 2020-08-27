@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.ComponentModel;
 using Altaxo.Graph.Graph3D;

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Drawing.ColorManagement;

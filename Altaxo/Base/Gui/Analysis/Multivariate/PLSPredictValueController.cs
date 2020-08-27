@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 
 namespace Altaxo.Gui.Worksheet
