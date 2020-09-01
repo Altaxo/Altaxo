@@ -69,9 +69,6 @@ namespace Altaxo.Gui.Units
 
     protected override void Initialize(bool initData)
     {
-      if (_doc is null)
-        throw new InvalidOperationException("This controller was not initialized with a document.");
-
       base.Initialize(initData);
 
       if (initData)
@@ -80,6 +77,8 @@ namespace Altaxo.Gui.Units
         GetAvailableUnitsForQuantity(_quantity, _availableUnits);
 
         _includedUnits.Clear();
+        if (_doc is not null)
+        {
         foreach (var unit in _doc.FixedUnits)
         {
           if (unit is UnitWithLimitedPrefixes lpUnit)
@@ -92,6 +91,7 @@ namespace Altaxo.Gui.Units
             _prefixesForUnit[unit] = new List<SIPrefix>(new[] { SIPrefix.None });
             _includedUnits.Add(new SelectableListNode(unit.Name, unit, false));
           }
+        }
         }
 
         UpdateAllPrefixedUnits(_allChoosenPrefixedUnits);

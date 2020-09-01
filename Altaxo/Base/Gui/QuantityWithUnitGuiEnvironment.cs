@@ -58,7 +58,7 @@ namespace Altaxo.Gui
     /// </summary>
     private List<IUnit> _unitsSortedByLengthDescending;
 
-    private IPrefixedUnit _defaultUnit;
+    private IPrefixedUnit? _defaultUnit;
 
     private int _numberOfDisplayedDigits = 5;
 
@@ -98,7 +98,7 @@ namespace Altaxo.Gui
           info.CommitArray();
         }
 
-        info.AddValue("DefaultUnit", s._defaultUnit);
+        info.AddValue("DefaultUnit", s.DefaultUnit);
 
         info.AddValue("NumberOfDisplayedDigits", s._numberOfDisplayedDigits);
       }
@@ -172,8 +172,6 @@ namespace Altaxo.Gui
         DefaultUnit = new PrefixedUnit(SIPrefix.None, firstFixedUnit);
       else if (0 < _additionalUnits.Count)
         DefaultUnit = new PrefixedUnit(SIPrefix.None, _additionalUnits[0]);
-      else
-        throw new InvalidOperationException("Can not evaluate default unit because both fixed units and additional units are empty!");
     }
 
     public QuantityWithUnitGuiEnvironment(QuantityWithUnitGuiEnvironment from, IEnumerable<IUnit> additionalUnits)
@@ -238,7 +236,7 @@ namespace Altaxo.Gui
     {
       get
       {
-        return _defaultUnit;
+        return _defaultUnit ?? throw new InvalidOperationException("This unit environment is in the stage of creation. In this stage it should be used only by the controller that creates it.");
       }
       [MemberNotNull(nameof(_defaultUnit))]
       set
