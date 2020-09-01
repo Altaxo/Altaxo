@@ -340,9 +340,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s.AlignmentY = GdiExtensionMethods.ToAltaxo((System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment)));
         bool attachToAxis = info.GetBoolean("AttachToAxis");
         var attachedAxis = (EdgeType)info.GetValue("AttachedAxis", s);
-        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
-        if (null != s._backgroundStyle)
-          s._backgroundStyle.ParentObject = s;
+        s.ChildSetMember(ref s._backgroundStyle, info.GetValueOrNull<IBackgroundStyle>("Background", s));
 
         s.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)info.GetValue("LabelColumn", s);
 
@@ -406,11 +404,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._rotation = info.GetDouble("Rotation");
         s.AlignmentX = GdiExtensionMethods.ToAltaxo((System.Drawing.StringAlignment)info.GetEnum("HorizontalAlignment", typeof(System.Drawing.StringAlignment)));
         s.AlignmentY = GdiExtensionMethods.ToAltaxo((System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment)));
-        s.AttachedAxis = (CSPlaneID)info.GetValue("AttachedAxis", s);
-        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
-        if (null != s._backgroundStyle)
-          s._backgroundStyle.ParentObject = s;
-
+        s.AttachedAxis = info.GetValueOrNull<CSPlaneID>("AttachedAxis", s);
+        s.ChildSetMember(ref s._backgroundStyle, info.GetValueOrNull<IBackgroundStyle>("Background", s));
         s.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)info.GetValue("LabelColumn", s);
 
         if (nativeCall)
@@ -473,12 +468,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._rotation = info.GetDouble("Rotation");
         s.AlignmentX = GdiExtensionMethods.ToAltaxo((System.Drawing.StringAlignment)info.GetEnum("HorizontalAlignment", typeof(System.Drawing.StringAlignment)));
         s.AlignmentY = GdiExtensionMethods.ToAltaxo((System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment)));
-        s.AttachedAxis = (CSPlaneID)info.GetValue("AttachedAxis", s);
+        s.AttachedAxis = info.GetValueOrNull<CSPlaneID>("AttachedAxis", s);
         s._backgroundColorLinkage = (ColorLinkage)info.GetEnum("BackgroundColorLinkage", typeof(ColorLinkage));
 
-        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
-        if (null != s._backgroundStyle)
-          s._backgroundStyle.ParentObject = s;
+        s.ChildSetMember(ref s._backgroundStyle, info.GetValueOrNull<IBackgroundStyle>("Background", s));
 
         s.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)info.GetValue("LabelColumn", s);
 

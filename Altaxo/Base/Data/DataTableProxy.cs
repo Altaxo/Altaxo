@@ -56,7 +56,15 @@ namespace Altaxo.Data
 
         if (!object.ReferenceEquals(s, baseobj))
         {
-          throw new InvalidProgramException($"What should be returned here? S: {s}, baseobj: {baseobj}");
+          if (baseobj is null)
+          {
+            s.InternalDocumentPath = new AbsoluteDocumentPath(new string[] { "Tables", string.Empty });
+            return s;
+          }
+          else
+          {
+            throw new InvalidProgramException($"What should be returned here? S: {s}, baseobj: {baseobj}");
+          }
           // return null;
         }
 

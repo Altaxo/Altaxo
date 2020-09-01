@@ -129,26 +129,21 @@ namespace Altaxo.Graph.Plot.Data
         bool bNeedsCallback = false;
         XYColumnPlotData s = (XYColumnPlotData?)o ?? new XYColumnPlotData(info);
 
-        object xColumn = info.GetValue("XColumn", s);
-        object yColumn = info.GetValue("YColumn", s);
+        var xColumn = info.GetValueOrNull("XColumn", s) ?? new IndexerColumn();
+        var yColumn = info.GetValueOrNull("YColumn", s) ?? new IndexerColumn();
 
-        if (xColumn is Altaxo.Data.IReadableColumn)
-          s.XColumn = (Altaxo.Data.IReadableColumn)xColumn;
+        if (xColumn is Altaxo.Data.IReadableColumn xReadColumn)
+          s.XColumn = xReadColumn;
         else if (xColumn is Main.AbsoluteDocumentPath)
           bNeedsCallback = true;
 
-        if (yColumn is Altaxo.Data.IReadableColumn)
-          s.YColumn = (Altaxo.Data.IReadableColumn)yColumn;
+        if (yColumn is Altaxo.Data.IReadableColumn yReadColumn)
+          s.YColumn = yReadColumn;
         else if (yColumn is Main.AbsoluteDocumentPath)
           bNeedsCallback = true;
 
-        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
-        if (null != s._xBoundaries)
-          s._xBoundaries.ParentObject = s;
-
-        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
-        if (null != s._yBoundaries)
-          s._yBoundaries.ParentObject = s;
+        s.ChildSetMember(ref s._xBoundaries, info.GetValueOrNull<IPhysicalBoundaries>("XBoundaries", s));
+        s.ChildSetMember(ref s._yBoundaries, info.GetValueOrNull<IPhysicalBoundaries>("YBoundaries", s));
 
         if (bNeedsCallback)
         {
@@ -311,11 +306,11 @@ namespace Altaxo.Graph.Plot.Data
       {
         var s = (XYColumnPlotData?)o ?? new XYColumnPlotData(info);
 
-        s.ChildSetMember(ref s._xColumn, (IReadableColumnProxy)info.GetValue("XColumn", s));
-        s.ChildSetMember(ref s._yColumn, (IReadableColumnProxy)info.GetValue("YColumn", s));
+        s.ChildSetMember(ref s._xColumn, info.GetValueOrNull<IReadableColumnProxy>("XColumn", s) ?? ReadableColumnProxyForStandaloneColumns.FromColumn(new IndexerColumn()));
+        s.ChildSetMember(ref s._yColumn, info.GetValueOrNull<IReadableColumnProxy>("YColumn", s) ?? ReadableColumnProxyForStandaloneColumns.FromColumn(new IndexerColumn()));
 
-        s.ChildSetMember(ref s._xBoundaries, (IPhysicalBoundaries)info.GetValue("XBoundaries", s));
-        s.ChildSetMember(ref s._yBoundaries, (IPhysicalBoundaries)info.GetValue("YBoundaries", s));
+        s.ChildSetMember(ref s._xBoundaries, info.GetValueOrNull<IPhysicalBoundaries>("XBoundaries", s));
+        s.ChildSetMember(ref s._yBoundaries, info.GetValueOrNull<IPhysicalBoundaries>("YBoundaries", s));
 
         return s;
       }
@@ -355,12 +350,12 @@ namespace Altaxo.Graph.Plot.Data
 
       public virtual XYColumnPlotData SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData(info);
+        var s = (XYColumnPlotData?)o ?? new XYColumnPlotData(info);
 
-        s.ChildSetMember(ref s._xColumn, (IReadableColumnProxy)info.GetValue("XColumn", s));
-        s.ChildSetMember(ref s._yColumn, (IReadableColumnProxy)info.GetValue("YColumn", s));
-        s.ChildSetMember(ref s._xBoundaries, (IPhysicalBoundaries)info.GetValue("XBoundaries", s));
-        s.ChildSetMember(ref s._yBoundaries, (IPhysicalBoundaries)info.GetValue("YBoundaries", s));
+        s.ChildSetMember(ref s._xColumn, info.GetValueOrNull<IReadableColumnProxy>("XColumn", s) ?? ReadableColumnProxyForStandaloneColumns.FromColumn(new IndexerColumn()));
+        s.ChildSetMember(ref s._yColumn, info.GetValueOrNull<IReadableColumnProxy>("YColumn", s) ?? ReadableColumnProxyForStandaloneColumns.FromColumn(new IndexerColumn()));
+        s.ChildSetMember(ref s._xBoundaries, info.GetValueOrNull<IPhysicalBoundaries>("XBoundaries", s));
+        s.ChildSetMember(ref s._yBoundaries, info.GetValueOrNull<IPhysicalBoundaries>("YBoundaries", s));
 
 
         int rangeStart = info.GetInt32("RangeStart");

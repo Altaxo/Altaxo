@@ -151,9 +151,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         s._text = info.GetString("Text");
         s._font = (FontX)info.GetValue("Font", s);
         s._textBrush = (BrushX)info.GetValue("Brush", s);
-        s._background = (IBackgroundStyle)info.GetValue("BackgroundStyle", s);
-        if (null != s._background)
-          s._background.ParentObject = s;
+        s.ChildSetMember(ref s._background, info.GetValueOrNull<IBackgroundStyle>("BackgroundStyle", s));
         s._lineSpacingFactor = info.GetSingle("LineSpacing");
         var xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", s);
         var yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", s);

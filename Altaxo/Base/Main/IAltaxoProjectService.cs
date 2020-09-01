@@ -167,6 +167,6 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="item">The item to export, for instance an item of type <see cref="Altaxo.Graph.Gdi.GraphDocument"/> or <see cref="Altaxo.Graph.Graph3D.GraphDocument"/>.</param>
     /// <returns>The image exporter class that can be used to export the item in graphical form, or null if no exporter could be found.</returns>
-    IProjectItemImageExporter GetProjectItemImageExporter(IProjectItem item);
+    IProjectItemImageExporter? GetProjectItemImageExporter(IProjectItem item);
   }
 }

@@ -68,7 +68,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Brush to fill the bar.
     /// </summary>
-    private BrushX _fillBrush = new BrushX(NamedColors.Red);
+    private BrushX? _fillBrush = new BrushX(NamedColors.Red);
 
     /// <summary>
     /// Indicates whether the frame color is dependent (can be set by the ColorGroupStyle) or not.
@@ -121,11 +121,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new InvalidOperationException("Serialization of old version");
+        /*
         var s = (BarGraphPlotStyle)obj;
         info.AddValue("InnerGapWidth", s._relInnerGapX);
         info.AddValue("OuterGapWidth", s._relOuterGapX);
         info.AddValue("IndependentColor", s._independentFillColor);
-        info.AddValue("FillBrush", s._fillBrush);
+        info.AddValueOrNull("FillBrush", s._fillBrush);
         info.AddValueOrNull("FramePen", s._framePen);
         info.AddValue("UsePhysicalBaseValue", s._usePhysicalBaseValue);
         info.AddValue("BaseValue", (object)s._baseValue);
@@ -133,6 +135,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("PreviousItemGap", s._previousItemYGap);
         info.AddValue("ActualWidth", s._xSizeLogical);
         info.AddValue("ActaulPosition", s._xOffsetLogical);
+        */
       }
 
       protected virtual BarGraphPlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -142,7 +145,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._relInnerGapX = info.GetDouble("InnerGapWidth");
         s._relOuterGapX = info.GetDouble("OuterGapWidth");
         s._independentFillColor = info.GetBoolean("IndependentColor");
-        s.FillBrush = (BrushX)info.GetValue("FillBrush", s);
+        s.FillBrush = info.GetValueOrNull<BrushX>("FillBrush", s);
         s.FramePen = info.GetValueOrNull<PenX>("FramePen", s);
         s._usePhysicalBaseValue = info.GetBoolean("UsePhysicalBaseValue");
         s._baseValue = (Altaxo.Data.AltaxoVariant)info.GetValue("BaseValue", s);
@@ -175,7 +178,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("InnerGapWidth", s._relInnerGapX);
         info.AddValue("OuterGapWidth", s._relOuterGapX);
         info.AddValue("IndependentFillColor", s._independentFillColor);
-        info.AddValue("FillBrush", s._fillBrush);
+        info.AddValueOrNull("FillBrush", s._fillBrush);
         info.AddValue("IndependentFrameColor", s._independentFrameColor);
         info.AddValueOrNull("FramePen", s._framePen);
         info.AddValue("UsePhysicalBaseValue", s._usePhysicalBaseValue);
@@ -193,7 +196,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._relInnerGapX = info.GetDouble("InnerGapWidth");
         s._relOuterGapX = info.GetDouble("OuterGapWidth");
         s._independentFillColor = info.GetBoolean("IndependentFillColor");
-        s.FillBrush = (BrushX)info.GetValue("FillBrush", s);
+        s.FillBrush = info.GetValueOrNull<BrushX>("FillBrush", s);
         s._independentFrameColor = info.GetBoolean("IndependentFrameColor");
         s.FramePen = info.GetValueOrNull<PenX>("FramePen", s);
         s._usePhysicalBaseValue = info.GetBoolean("UsePhysicalBaseValue");
@@ -310,14 +313,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    public BrushX FillBrush
+    public BrushX? FillBrush
     {
       get { return _fillBrush; }
       set
       {
-        var oldValue = _fillBrush;
-        _fillBrush = value;
-        if (!object.ReferenceEquals(value, oldValue))
+        if (ChildSetMemberAlt(ref _fillBrush, value))
           EhSelfChanged(EventArgs.Empty);
       }
     }
@@ -453,7 +454,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (bwp is not null)
         bwp.Initialize(_relInnerGapX, _relOuterGapX);
 
-      if (!_independentFillColor && null != _fillBrush)
+      if (!_independentFillColor && _fillBrush is not null)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
         { return _fillBrush.Color; });
       else if (!_independentFrameColor && null != _framePen) // else if is used here because fill color has precedence over frame color
@@ -518,8 +519,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         globalBaseValue = _baseValue.ToDouble();
       }
 
-      bool useVariableFillColor = null != _fillBrush && null != _cachedColorForIndexFunction && !_independentFillColor;
-      bool useVariableFrameColor = null != _framePen && null != _cachedColorForIndexFunction && !_independentFrameColor;
+      bool useVariableFillColor = _fillBrush is not null && _cachedColorForIndexFunction is not null && !_independentFillColor;
+      bool useVariableFrameColor = _framePen is not null && null != _cachedColorForIndexFunction && !_independentFrameColor;
 
       var fillBrush = _fillBrush;
       var framePen = _framePen;

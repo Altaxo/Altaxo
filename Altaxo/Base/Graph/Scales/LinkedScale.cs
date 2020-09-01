@@ -265,7 +265,7 @@ namespace Altaxo.Graph.Scales
         var s = (LinkedScale?)o ?? new LinkedScale(info);
 
         s.WrappedScale = (Scale)info.GetValue("ScaleWrapped", s);
-        s.ChildSetMember(ref s._scaleLinkedToProxy, (Main.RelDocNodeProxy?)info.GetValueOrNull("ScaleLinkedTo", s));
+        s.ChildSetMember(ref s._scaleLinkedToProxy, info.GetValueOrNull<Main.RelDocNodeProxy>("ScaleLinkedTo", s));
         s.LinkParameters = (LinkedScaleParameters)info.GetValue("LinkParameters", s);
 
         return s;
@@ -296,7 +296,7 @@ namespace Altaxo.Graph.Scales
         var s = (LinkedScale?)o ?? new LinkedScale(info);
 
         s.WrappedScale = (Scale)info.GetValue("ScaleWrapped", s);
-        s.ChildSetMember(ref s._scaleLinkedToProxy, (Main.RelDocNodeProxy)info.GetValue("ScaleLinkedTo", s));
+        s.ChildSetMember(ref s._scaleLinkedToProxy, info.GetValueOrNull<Main.RelDocNodeProxy>("ScaleLinkedTo", s));
         s.LinkParameters = (LinkedScaleParameters)info.GetValue("LinkParameters", s);
         s._linkScaleType = info.GetBoolean("LinkScaleType");
         s._linkTickSpacing = info.GetBoolean("LinkTickSpacing");

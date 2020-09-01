@@ -170,9 +170,7 @@ namespace Altaxo.Data
         s._propertyColumns.ColumnScripts.ParentObject = s;
 
         // new in version 1
-        s._tableScript = (TableScript)info.GetValue("TableScript", s);
-        if (null != s._tableScript)
-          s._tableScript.ParentObject = s;
+        s.ChildSetMember(ref s._tableScript, info.GetValueOrNull<TableScript>("TableScript", s));
         return s;
       }
     }
@@ -239,7 +237,7 @@ namespace Altaxo.Data
         {
           info.OpenElement(); // "e"
           string propkey = info.GetString("Key");
-          object propval = info.GetValue("Value", s.PropertyBagNotNull);
+          var propval = info.GetValueOrNull("Value", s.PropertyBagNotNull);
           info.CloseElement(); // "e"
           s.SetTableProperty(propkey, propval);
         }

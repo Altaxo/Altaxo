@@ -1393,7 +1393,7 @@ namespace Altaxo.Graph.Gdi
         {
           var s = (ScaleStyle?)o ?? new ScaleStyle();
 
-          s.GridStyle = (GridStyle)info.GetValue("Grid", s);
+          s.GridStyle = info.GetValueOrNull<GridStyle>("Grid", s);
 
           int count = info.OpenArray();
           //s._edges = new EdgeType[count];
@@ -1440,7 +1440,7 @@ namespace Altaxo.Graph.Gdi
         {
           var s = (ScaleStyle?)o ?? new ScaleStyle();
 
-          s.GridStyle = (GridStyle)info.GetValue("Grid", s);
+          s.GridStyle = info.GetValueOrNull<GridStyle>("Grid", s);
 
           int count = info.OpenArray();
           //s._axisStyles = new XYPlotLayerAxisStyleProperties[count];
@@ -1810,7 +1810,7 @@ namespace Altaxo.Graph.Gdi
 
         public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s =  (AxisStyleLinePlaceHolder?)o ?? new AxisStyleLinePlaceHolder();
+          var s = (AxisStyleLinePlaceHolder?)o ?? new AxisStyleLinePlaceHolder();
           s.Index = info.GetInt32("Index");
           return s;
         }
@@ -1852,7 +1852,7 @@ namespace Altaxo.Graph.Gdi
 
           // hit testing the axes - secondly now with the ticks
           // in this case the TitleAndFormat editor for the axis should be shown
-          if (axisStyle?.IsAxisLineEnabled==true && null != (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData.GetHittedPointInWorldCoord(), true)))
+          if (axisStyle?.IsAxisLineEnabled == true && null != (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData.GetHittedPointInWorldCoord(), true)))
           {
             hit.DoubleClick = AxisStyleEditorMethod;
             return hit;
@@ -1876,7 +1876,7 @@ namespace Altaxo.Graph.Gdi
 
           // hit testing the axes - secondly now with the ticks
           // in this case the TitleAndFormat editor for the axis should be shown
-          if (axisStyle?.IsAxisLineEnabled==true && null != (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData, true)))
+          if (axisStyle?.IsAxisLineEnabled == true && null != (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData, true)))
           {
             hit.DoubleClick = AxisStyleEditorMethod;
             return hit;

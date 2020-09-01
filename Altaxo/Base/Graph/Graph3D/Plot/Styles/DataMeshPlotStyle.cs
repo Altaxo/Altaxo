@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
         s._clipToLayer = info.GetBoolean("ClipToLayer");
         s.ColorProvider = (IColorProvider)info.GetValue("Colorization", s);
-        s.ColorScale = (NumericalScale)info.GetValue("ColorScale", s);
+        s.ColorScale = info.GetValueOrNull<NumericalScale>("ColorScale", s);
         s._material = (IMaterial)info.GetValue("Material", s);
 
         return s;

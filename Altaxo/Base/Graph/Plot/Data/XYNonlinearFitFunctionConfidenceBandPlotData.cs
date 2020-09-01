@@ -58,14 +58,14 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     private int _independentVariableIndex;
 
-    private IVariantToVariantTransformation _independentVariableTransformation;
+    private IVariantToVariantTransformation? _independentVariableTransformation;
 
     /// <summary>
     /// Index of the the dependent variable of the fit element that is shown in this plot item.
     /// </summary>
     private int _dependentVariableIndex;
 
-    private IVariantToVariantTransformation _dependentVariableTransformation;
+    private IVariantToVariantTransformation? _dependentVariableTransformation;
 
     /// <summary>
     /// The number of fit points. Used to calculate the quantile of the student's distribution.
@@ -126,9 +126,9 @@ namespace Altaxo.Graph.Plot.Data
         info.AddValue("FitDocument", s._fitDocument);
         info.AddValue("FitElementIndex", s._fitElementIndex);
         info.AddValue("IndependentVariableIndex", s._dependentVariableIndex);
-        info.AddValue("IndependentVariableTransformation", s._independentVariableTransformation);
+        info.AddValueOrNull("IndependentVariableTransformation", s._independentVariableTransformation);
         info.AddValue("DependentVariableIndex", s._dependentVariableIndex);
-        info.AddValue("DependentVariableTransformation", s._dependentVariableTransformation);
+        info.AddValueOrNull("DependentVariableTransformation", s._dependentVariableTransformation);
         info.AddValue("NumberOfFitPoints", s._numberOfFitPoints);
         info.AddValue("SigmaSquare", s._sigmaSquare);
 
@@ -153,9 +153,9 @@ namespace Altaxo.Graph.Plot.Data
         s.ChildSetMember(ref s._fitDocument, (NonlinearFitDocument)info.GetValue("FitDocument", s));
         s._fitElementIndex = info.GetInt32("FitElementIndex");
         s._independentVariableIndex = info.GetInt32("IndependentVariableIndex");
-        s._independentVariableTransformation = (IVariantToVariantTransformation)info.GetValue("IndependentVariableTransformation", null);
+        s._independentVariableTransformation = info.GetValueOrNull<IVariantToVariantTransformation>("IndependentVariableTransformation", null);
         s._dependentVariableIndex = info.GetInt32("DependentVariableIndex");
-        s._dependentVariableTransformation = (IVariantToVariantTransformation)info.GetValue("DependentVariableTransformation", null);
+        s._dependentVariableTransformation = info.GetValueOrNull<IVariantToVariantTransformation>("DependentVariableTransformation", null);
         s._numberOfFitPoints = info.GetInt32("NumberOfFitPoints");
         s._sigmaSquare = info.GetDouble("SigmaSquare");
         s.IsLowerBand = info.GetBoolean("IsLowerBand");
@@ -313,7 +313,7 @@ namespace Altaxo.Graph.Plot.Data
       CopyFrom(from);
     }
 
-    [MemberNotNull(nameof(_fitDocumentIdentifier), nameof(_fitDocument), nameof(_independentVariableTransformation), nameof(_dependentVariableTransformation), nameof(_cachedFitFunction), nameof(_cachedParameters), nameof(_cachedParametersForJacobianEvaluation), nameof(_cachedJacobian), nameof(_functionValues), nameof(_covarianceMatrix), nameof(_cachedIndicesOfVaryingParametersOfThisFitElement))]
+    [MemberNotNull(nameof(_fitDocumentIdentifier), nameof(_fitDocument), nameof(_cachedFitFunction), nameof(_cachedParameters), nameof(_cachedParametersForJacobianEvaluation), nameof(_cachedJacobian), nameof(_functionValues), nameof(_covarianceMatrix), nameof(_cachedIndicesOfVaryingParametersOfThisFitElement))]
     public void CopyFrom(XYNonlinearFitFunctionConfidenceBandPlotData from)
     {
       _fitDocumentIdentifier = from._fitDocumentIdentifier;

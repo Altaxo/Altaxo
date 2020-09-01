@@ -126,18 +126,11 @@ namespace Altaxo.Graph.Gdi.Shapes
         s._scaleSpanValue = info.GetDouble("ScaleSpanValue");
         s._scaleSegmentType = (ScaleSegmentType)info.GetEnum("ScaleType", typeof(ScaleSegmentType));
 
-        s._tickSpacing = (TickSpacing)info.GetValue("TickSpacing", s);
-        if (null != s._tickSpacing)
-          s._tickSpacing.ParentObject = s;
-
-        s._axisStyle = (AxisStyle)info.GetValue("AxisStyle", s);
-        if (null != s._axisStyle)
-          s._axisStyle.ParentObject = s;
-
-        s._background = (IBackgroundStyle)info.GetValue("Background", s);
-        if (null != s._background)
+        s.ChildSetMember(ref s._tickSpacing, (TickSpacing)info.GetValue("TickSpacing", s));
+        s.ChildSetMember(ref s._axisStyle, (AxisStyle)info.GetValue("AxisStyle", s));
+        s.ChildSetMember(ref s._background, info.GetValueOrNull<IBackgroundStyle>("Background", s));
+        if (s._background is not null)
         {
-          s._background.ParentObject = s;
           s._backgroundPadding = (Margin2D)info.GetValue("BackgroundPadding", s);
         }
 

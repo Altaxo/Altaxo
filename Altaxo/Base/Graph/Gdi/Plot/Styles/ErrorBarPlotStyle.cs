@@ -183,9 +183,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         ErrorBarPlotStyle s; // = null != o ? (ErrorBarPlotStyle)o : new ErrorBarPlotStyle(info);
 
-        var positiveErrorColumn = (Altaxo.Data.IReadableColumnProxy)info.GetValue("PositiveError", null);
+        var positiveErrorColumn = info.GetValueOrNull<IReadableColumnProxy>("PositiveError", null);
 
-        var negativeErrorColumn = (Altaxo.Data.IReadableColumnProxy)info.GetValue("NegativeError", null);
+        var negativeErrorColumn = info.GetValueOrNull<IReadableColumnProxy>("NegativeError", null);
 
         var independentColor = info.GetBoolean("IndependentColor");
 
@@ -329,7 +329,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-    protected ErrorBarPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy posColumnProxy, IReadableColumnProxy negColumnProxy)
+    protected ErrorBarPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy? posColumnProxy, IReadableColumnProxy? negColumnProxy)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
       ChildSetMember(ref _positiveErrorColumn, posColumnProxy);
@@ -1361,7 +1361,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="posErrorColumn">The positive error column.</param>
     /// <param name="negErrorColumn">The negative error column.</param>
     /// <param name="info">The information.</param>
-    public ErrorBarXPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy posErrorColumn, IReadableColumnProxy negErrorColumn) : base(info, posErrorColumn, negErrorColumn)
+    public ErrorBarXPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy? posErrorColumn, IReadableColumnProxy? negErrorColumn) : base(info, posErrorColumn, negErrorColumn)
     {
     }
 
@@ -1428,7 +1428,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="posErrorColumn">The positive error column.</param>
     /// <param name="negErrorColumn">The negative error column.</param>
     /// <param name="info">The information.</param>
-    public ErrorBarYPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy posErrorColumn, IReadableColumnProxy negErrorColumn) : base(info, posErrorColumn, negErrorColumn)
+    public ErrorBarYPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy? posErrorColumn, IReadableColumnProxy? negErrorColumn) : base(info, posErrorColumn, negErrorColumn)
     {
     }
 

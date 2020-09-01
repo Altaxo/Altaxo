@@ -30,6 +30,7 @@ using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Workbench;
 using Altaxo.Gui.Workbench.Commands;
 using Altaxo.Main.Services;
+using Altaxo.Main.Services.ExceptionHandling;
 
 namespace Altaxo.Gui.Startup
 {
@@ -322,11 +323,14 @@ namespace Altaxo.Gui.Startup
       //			container.AddService(typeof(ILoggingService), new log4netLoggingService());
       Current.Services = container;
 
+      var unhandledExceptionHandlerService = new UnhandledExceptionHandlerService();
+      Current.AddService<IUnhandledExceptionHandlerService>(unhandledExceptionHandlerService);
+
       Current.Log.Info("Initialize application...");
       var startup = new CoreStartup(startupSettings.ApplicationName);
       if (startupSettings.UseExceptionBoxForErrorHandler)
       {
-        ExceptionBox.RegisterExceptionBoxForUnhandledExceptions();
+        unhandledExceptionHandlerService.AddHandler(new ExceptionBox.UnhandledHandler(), false);
       }
       string configDirectory = startupSettings.ConfigDirectory;
       string dataDirectory = startupSettings.DataDirectory;

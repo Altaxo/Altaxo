@@ -133,8 +133,8 @@ namespace Altaxo.Graph.Plot.Groups
       {
         var s = (ColorGroupStyle?)o ?? ColorGroupStyle.NewExternalGroupStyle();
         s._isStepEnabled = info.GetBoolean("StepEnabled");
-        var listOfValues = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
-        if (null != listOfValues)
+        var listOfValues = info.GetValueOrNull<Drawing.ColorManagement.IColorSet>("ColorSet", s);
+        if (listOfValues is not null)
         {
           ColorSetManager.Instance.TryRegisterList(info, listOfValues, Main.ItemDefinitionLevel.Project, out s._listOfValues);
         }

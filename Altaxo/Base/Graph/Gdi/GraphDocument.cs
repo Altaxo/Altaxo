@@ -512,7 +512,7 @@ typeof(GraphDocument),
 
       lock (_paintLock)
       {
-        if (!(null == _paintThread))
+        if (_paintThread is not null)
           throw new InvalidProgramException("We waited, thus _paintThread should be null");
 
         _paintThread = System.Threading.Thread.CurrentThread; // Suppress events that are fired during paint
@@ -545,6 +545,9 @@ typeof(GraphDocument),
               }
               catch (Exception)
               {
+                if (IsDisposeInProgress)
+                  return;
+
                 if (ithRetry == MaxFixupRetries)
                 {
                   throw;
@@ -564,6 +567,11 @@ typeof(GraphDocument),
           RootLayer.Paint(g, paintContext);
 
           RootLayer.PaintPostprocessing();
+        }
+        catch
+        {
+          if (!IsDisposeInProgress) // If disposing is in progress, we silently finish this paint task
+            throw;
         }
         finally
         {

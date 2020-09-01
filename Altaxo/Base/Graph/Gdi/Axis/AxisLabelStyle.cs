@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Gdi.Axis
         s._brush = new BrushX(NamedColors.Black);
         s._automaticRotationShift = true;
         s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
-        s._labelFormatting = new Gdi.LabelFormatting.NumericLabelFormattingAuto() { ParentObject = s };
+        s.ChildSetMember(ref s._labelFormatting, new Gdi.LabelFormatting.NumericLabelFormattingAuto());
         s.SetStringFormat();
         return s;
       }
@@ -148,9 +148,7 @@ namespace Altaxo.Graph.Gdi.Axis
         var edge = (Edge)info.GetValue("Edge", s);
         s._font = (FontX)info.GetValue("Font", s);
         s._brush = (BrushX)info.GetValue("Brush", s);
-        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
-        if (null != s._backgroundStyle)
-          s._backgroundStyle.ParentObject = s;
+        s.ChildSetMember(ref s._backgroundStyle, info.GetValueOrNull<IBackgroundStyle>("Background", s));
 
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
@@ -159,8 +157,7 @@ namespace Altaxo.Graph.Gdi.Axis
         s._xOffset = info.GetDouble("XOffset");
         s._yOffset = info.GetDouble("YOffset");
 
-        s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
-        s._labelFormatting.ParentObject = s;
+        s.ChildSetMember(ref s._labelFormatting, (ILabelFormatting)info.GetValue("LabelFormat", s));
 
         s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
 
@@ -201,7 +198,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
         s._font = (FontX)info.GetValue("Font", s);
         s._brush = (BrushX)info.GetValue("Brush", s);
-        s._backgroundStyle = info.GetValueOrNull<IBackgroundStyle>("Background", s);
+        s.ChildSetMember(ref s._backgroundStyle, info.GetValueOrNull<IBackgroundStyle>("Background", s));
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
         s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
@@ -209,8 +206,7 @@ namespace Altaxo.Graph.Gdi.Axis
         s._xOffset = info.GetDouble("XOffset");
         s._yOffset = info.GetDouble("YOffset");
 
-        s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
-        s._labelFormatting.ParentObject = s;
+        s.ChildSetMember(ref s._labelFormatting, (ILabelFormatting)info.GetValue("LabelFormat", s));
 
         s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
 
@@ -258,7 +254,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
         s._font = (FontX)info.GetValue("Font", s);
         s._brush = (BrushX)info.GetValue("Brush", s);
-        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
+        s.ChildSetMember(ref s._backgroundStyle, info.GetValueOrNull<IBackgroundStyle>("Background", s));
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
         s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
@@ -266,14 +262,8 @@ namespace Altaxo.Graph.Gdi.Axis
         s._xOffset = info.GetDouble("XOffset");
         s._yOffset = info.GetDouble("YOffset");
 
-        s._suppressedLabels = (SuppressedTicks)info.GetValue("SuppressedLabels", s);
-        if (s._suppressedLabels != null)
-          s._suppressedLabels.ParentObject = s;
-        else
-          s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
-
-        s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
-        s._labelFormatting.ParentObject = s;
+        s.ChildSetMember(ref s._suppressedLabels, info.GetValueOrNull<SuppressedTicks>("SuppressedLabels", s) ?? new SuppressedTicks());
+        s.ChildSetMember(ref s._labelFormatting, (ILabelFormatting)info.GetValue("LabelFormat", s));
 
         // Modification of StringFormat is necessary to avoid
         // too big spaces between successive words
@@ -325,7 +315,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
         s._font = (FontX)info.GetValue("Font", s);
         s._brush = (BrushX)info.GetValue("Brush", s);
-        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
+        s.ChildSetMember(ref s._backgroundStyle, (IBackgroundStyle)info.GetValue("Background", s));
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
         s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
@@ -333,14 +323,8 @@ namespace Altaxo.Graph.Gdi.Axis
         s._xOffset = info.GetDouble("XOffset");
         s._yOffset = info.GetDouble("YOffset");
 
-        s._suppressedLabels = (SuppressedTicks)info.GetValue("SuppressedLabels", s);
-        if (s._suppressedLabels != null)
-          s._suppressedLabels.ParentObject = s;
-        else
-          s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
-
-        s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
-        s._labelFormatting.ParentObject = s;
+        s.ChildSetMember(ref s._suppressedLabels, info.GetValueOrNull<SuppressedTicks>("SuppressedLabels", s) ?? new SuppressedTicks());
+        s.ChildSetMember(ref s._labelFormatting, (ILabelFormatting)info.GetValue("LabelFormat", s));
 
         s._labelSide = info.GetNullableEnum<CSAxisSide>("LabelSide");
         s._labelFormatting.PrefixText = info.GetString("PrefixText");
@@ -392,7 +376,7 @@ namespace Altaxo.Graph.Gdi.Axis
         s._font = (FontX)info.GetValue("Font", s);
         s._brush = (BrushX)info.GetValue("Brush", s);
 
-        s.BackgroundStyle = info.GetValueOrNull<IBackgroundStyle>("Background", s);
+        s.ChildSetMember(ref s._backgroundStyle, info.GetValueOrNull<IBackgroundStyle>("Background", s));
 
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
@@ -402,9 +386,7 @@ namespace Altaxo.Graph.Gdi.Axis
         s._yOffset = info.GetDouble("YOffset");
 
         s.ChildSetMember(ref s._suppressedLabels, info.GetValueOrNull<SuppressedTicks>("SuppressedLabels", s) ?? new SuppressedTicks());
-
-        s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
-        s._labelFormatting.ParentObject = s;
+        s.ChildSetMember(ref s._labelFormatting, (ILabelFormatting)info.GetValue("LabelFormat", s));
 
         s._labelSide = info.GetNullableEnum<CSAxisSide>("LabelSide");
 
@@ -435,7 +417,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public AxisLabelStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
     {
-        context ??= PropertyExtensions.GetPropertyContextOfProject();
+      context ??= PropertyExtensions.GetPropertyContextOfProject();
 
       _font = context.GetValue(GraphDocument.PropertyKeyDefaultFont);
       var foreColor = context.GetValue(GraphDocument.PropertyKeyDefaultForeColor);
@@ -452,8 +434,8 @@ namespace Altaxo.Graph.Gdi.Axis
       CopyFrom(from);
     }
 
-    [MemberNotNull(nameof(_font), nameof(_stringFormat), nameof(_brush), nameof(_suppressedLabels), nameof(_labelFormatting) )]
-    protected  void CopyFrom(AxisLabelStyle from)
+    [MemberNotNull(nameof(_font), nameof(_stringFormat), nameof(_brush), nameof(_suppressedLabels), nameof(_labelFormatting))]
+    protected void CopyFrom(AxisLabelStyle from)
     {
       using (var suspendToken = SuspendGetToken())
       {

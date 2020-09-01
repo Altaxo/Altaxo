@@ -59,11 +59,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   internal class XYLineScatterPlotStyle
   {
     protected LinePlotStyle m_LineStyle;
-    protected ScatterPlotStyle m_ScatterStyle;
+    protected ScatterPlotStyle? m_ScatterStyle;
     protected bool m_LineSymbolGap;
 
     /// <summary>The label style (is null if there is no label).</summary>
-    protected LabelPlotStyle m_LabelStyle;
+    protected LabelPlotStyle? m_LabelStyle;
 
     #region Serialization
 
@@ -87,7 +87,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         // do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
         s.m_LineStyle = (LinePlotStyle)info.GetValue("XYPlotLineStyle", s);
         // do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
-        s.m_ScatterStyle = (ScatterPlotStyle)info.GetValue("XYPlotScatterStyle", s);
+        s.m_ScatterStyle = info.GetValueOrNull<ScatterPlotStyle>("XYPlotScatterStyle", s);
         s.m_LineSymbolGap = info.GetBoolean("LineSymbolGap");
 
         return s;
@@ -115,9 +115,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         // do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
         s.m_LineStyle = (LinePlotStyle)info.GetValue("XYPlotLineStyle", s);
         // do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
-        s.m_ScatterStyle = (ScatterPlotStyle)info.GetValue("XYPlotScatterStyle", s);
+        s.m_ScatterStyle = info.GetValueOrNull<ScatterPlotStyle>("XYPlotScatterStyle", s);
         s.m_LineSymbolGap = info.GetBoolean("LineSymbolGap");
-        s.m_LabelStyle = (LabelPlotStyle)info.GetValue("XYPlotLabelStyle", s); // new in this version
+        s.m_LabelStyle = info.GetValueOrNull<LabelPlotStyle>("XYPlotLabelStyle", s); // new in this version
 
         return s;
       }
@@ -148,7 +148,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         // do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
         s.m_LineStyle = (LinePlotStyle)info.GetValue("XYPlotLineStyle", s);
         // do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
-        s.m_ScatterStyle = (ScatterPlotStyle)info.GetValue("XYPlotScatterStyle", s);
+        s.m_ScatterStyle = info.GetValueOrNull<ScatterPlotStyle>("XYPlotScatterStyle", s);
         s.m_LineSymbolGap = info.GetBoolean("LineSymbolGap");
 
         int nCount = info.OpenArray(); // OptionalStyles
@@ -215,12 +215,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return m_LineStyle; }
     }
 
-    public ScatterPlotStyle ScatterStyle
+    public ScatterPlotStyle? ScatterStyle
     {
       get { return m_ScatterStyle; }
     }
 
-    public LabelPlotStyle XYPlotLabelStyle
+    public LabelPlotStyle? XYPlotLabelStyle
     {
       get { return m_LabelStyle; }
     }

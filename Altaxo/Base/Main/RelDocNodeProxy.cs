@@ -96,7 +96,7 @@ namespace Altaxo.Main
         if (!(parent is Main.IDocumentNode))
           throw new ArgumentException("Parent should be a valid document node");
 
-        var docNodePath = info.GetValue("Node", null) as RelativeDocumentPath;
+        var docNodePath = info.GetValueOrNull("Node", null) as RelativeDocumentPath;
 
         if (docNodePath is null)
           docNodePath = RelativeDocumentPath.IdentityPath;
@@ -136,7 +136,7 @@ namespace Altaxo.Main
         if (!(parent is Main.IDocumentNode))
           throw new ArgumentException("Parent should be a valid document node");
 
-        var docNodePath = (Main.RelativeDocumentPath)info.GetValue("Node", null);
+        var docNodePath = info.GetValueOrNull<Main.RelativeDocumentPath>("Node", null);
 
         if (docNodePath is null)
         {

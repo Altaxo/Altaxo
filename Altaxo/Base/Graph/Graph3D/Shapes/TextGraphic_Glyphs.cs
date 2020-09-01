@@ -115,15 +115,15 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     private class MeasureContext
     {
-      public object LinkedObject { get; set; }
+      public object LinkedObject { get; }
 
-      public FontCache FontCache { get; set; }
+      public FontCache FontCache { get; }
 
-      public double TabStop { get; set; }
+      public double TabStop { get; }
 
       public MeasureContext(FontCache fontCache, object linkedObject, double tabStop)
       {
-        FontCache = FontCache;
+        FontCache = fontCache;
         LinkedObject = linkedObject;
         TabStop = tabStop;
       }
@@ -131,22 +131,23 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     private class DrawContext
     {
-      public object LinkedObject { get; set; }
+      public object LinkedObject { get; }
 
-      public FontCache FontCache { get; set; }
+      public FontCache FontCache { get; }
 
-      public bool bForPreview { get; set; }
+      public bool IsForPreview { get; }
 
-      public Dictionary<RectangleTransformedD3D, IGPlotItem> _cachedSymbolPositions = new Dictionary<RectangleTransformedD3D, IGPlotItem>();
-      public Matrix4x3 transformMatrix;
+      public Dictionary<RectangleTransformedD3D, IGPlotItem> CachedSymbolPositions { get; }
+
+      public Matrix4x3 TransformationMatrix { get; }
 
       public DrawContext(FontCache fontCache, bool isForPreview, object linkedObject, Matrix4x3 transformationMatrix, Dictionary<RectangleTransformedD3D, IGPlotItem> cachedSymbolPositions)
       {
         FontCache = fontCache;
-        bForPreview = isForPreview;
+        IsForPreview = isForPreview;
         LinkedObject = linkedObject;
-        transformMatrix = transformationMatrix;
-        _cachedSymbolPositions = cachedSymbolPositions;
+        TransformationMatrix = transformationMatrix;
+        CachedSymbolPositions = cachedSymbolPositions;
       }
     }
 
@@ -825,11 +826,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
           symbolRect = symbolRect.WithPadding(0, fontInfo.Size, 0);
           pa.PaintSymbol(g, symbolRect);
 
-          if (!dc.bForPreview)
+          if (!dc.IsForPreview)
           {
             var volume = new RectangleTransformedD3D(
-              new RectangleD3D(symbolpos.X, symbolpos.Y - 0.5 * fontInfo.cyLineSpace, 0, SizeX, fontInfo.cyLineSpace, 0), dc.transformMatrix);
-            dc._cachedSymbolPositions.Add(volume, pa);
+              new RectangleD3D(symbolpos.X, symbolpos.Y - 0.5 * fontInfo.cyLineSpace, 0, SizeX, fontInfo.cyLineSpace, 0), dc.TransformationMatrix);
+            dc.CachedSymbolPositions.Add(volume, pa);
           }
         }
       }

@@ -97,16 +97,23 @@ namespace Altaxo.Main.Services
       // 1st search for all classes that wear the UserControllerForObject attribute
       ReflectionService.IAttributeForClassList list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(typeof(UserControllerForObjectAttribute), creationArgs[0], overrideArg0Type);
 
+      bool canUseConstructor = true;
       var types = new Type[creationArgs.Length];
       for (int i = 0; i < types.Length; ++i)
-        types[i] = creationArgs[i].GetType();
+      {
+        if (creationArgs[i] is { } ca)
+          types[i] = ca.GetType();
+        else
+          canUseConstructor = false;
+
+      }
 
       foreach (Type definedType in list.Types)
       {
         if (typeof(IMVCANController).IsAssignableFrom(definedType) && expectedControllerType.IsAssignableFrom(definedType))
         {
           // First, try to use a suited constructor
-          if (definedType.GetConstructor(types) is { } constructorInfo)
+          if (canUseConstructor && definedType.GetConstructor(types) is { } constructorInfo)
             result = constructorInfo.Invoke(creationArgs);
 
           if (result is null) // else use a constructor with no arguments, and then call InitializeDocument
@@ -151,7 +158,7 @@ namespace Altaxo.Main.Services
     /// <param name="arg">The first argument is the object the controller should manage. Always required.</param>
     /// <param name="args">Additional arguments. May be null, or some of them null.</param>
     /// <returns>The controller for the provided arguments. A control is already set.</returns>
-    public T GetRequiredControllerAndControl<T>(object arg, params object?[]? args) where T: class, IMVCController
+    public T GetRequiredControllerAndControl<T>(object arg, params object?[]? args) where T : class, IMVCController
     {
       if (arg is null)
         throw new ArgumentNullException(nameof(arg));

@@ -229,21 +229,21 @@ namespace Altaxo.Graph.Gdi
         bool showRight = info.GetBoolean("ShowRightAxis");
         bool showTop = info.GetBoolean("ShowTopAxis");
 
-        s._axisStyles.AxisStyleEnsured(CSLineID.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", s);
-        s._axisStyles.AxisStyleEnsured(CSLineID.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", s);
-        s._axisStyles.AxisStyleEnsured(CSLineID.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", s);
-        s._axisStyles.AxisStyleEnsured(CSLineID.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", s);
+        s._axisStyles.AxisStyleEnsured(CSLineID.Y0).AxisLineStyle = info.GetValueOrNull<AxisLineStyle>("LeftAxisStyle", s);
+        s._axisStyles.AxisStyleEnsured(CSLineID.X0).AxisLineStyle = info.GetValueOrNull<AxisLineStyle>("BottomAxisStyle", s);
+        s._axisStyles.AxisStyleEnsured(CSLineID.Y1).AxisLineStyle = info.GetValueOrNull<AxisLineStyle>("RightAxisStyle", s);
+        s._axisStyles.AxisStyleEnsured(CSLineID.X1).AxisLineStyle = info.GetValueOrNull<AxisLineStyle>("TopAxisStyle", s);
 
-        s._axisStyles[CSLineID.Y0]!.MajorLabelStyle = (AxisLabelStyle)info.GetValue("LeftLabelStyle", s);
-        s._axisStyles[CSLineID.X0]!.MajorLabelStyle = (AxisLabelStyle)info.GetValue("BottomLabelStyle", s);
-        s._axisStyles[CSLineID.Y1]!.MajorLabelStyle = (AxisLabelStyle)info.GetValue("RightLabelStyle", s);
-        s._axisStyles[CSLineID.X1]!.MajorLabelStyle = (AxisLabelStyle)info.GetValue("TopLabelStyle", s);
+        s._axisStyles[CSLineID.Y0]!.MajorLabelStyle = info.GetValueOrNull<AxisLabelStyle>("LeftLabelStyle", s);
+        s._axisStyles[CSLineID.X0]!.MajorLabelStyle = info.GetValueOrNull<AxisLabelStyle>("BottomLabelStyle", s);
+        s._axisStyles[CSLineID.Y1]!.MajorLabelStyle = info.GetValueOrNull<AxisLabelStyle>("RightLabelStyle", s);
+        s._axisStyles[CSLineID.X1]!.MajorLabelStyle = info.GetValueOrNull<AxisLabelStyle>("TopLabelStyle", s);
 
         // Titles and legend
-        s._axisStyles[CSLineID.Y0]!.Title = (TextGraphic)info.GetValue("LeftAxisTitle", s);
-        s._axisStyles[CSLineID.X0]!.Title = (TextGraphic)info.GetValue("BottomAxisTitle", s);
-        s._axisStyles[CSLineID.Y1]!.Title = (TextGraphic)info.GetValue("RightAxisTitle", s);
-        s._axisStyles[CSLineID.X1]!.Title = (TextGraphic)info.GetValue("TopAxisTitle", s);
+        s._axisStyles[CSLineID.Y0]!.Title = info.GetValueOrNull<TextGraphic>("LeftAxisTitle", s);
+        s._axisStyles[CSLineID.X0]!.Title = info.GetValueOrNull<TextGraphic>("BottomAxisTitle", s);
+        s._axisStyles[CSLineID.Y1]!.Title = info.GetValueOrNull<TextGraphic>("RightAxisTitle", s);
+        s._axisStyles[CSLineID.X1]!.Title = info.GetValueOrNull<TextGraphic>("TopAxisTitle", s);
 
         if (!showLeft)
           s._axisStyles.Remove(CSLineID.Y0);
@@ -254,10 +254,10 @@ namespace Altaxo.Graph.Gdi
         if (!showTop)
           s._axisStyles.Remove(CSLineID.X1);
 
-        var legend = (TextGraphic)info.GetValue("Legend", s);
+        var legend = info.GetValueOrNull<TextGraphic>("Legend", s);
 
         // XYPlotLayer specific
-        object linkedLayer = info.GetValue("LinkedLayer", s);
+        var linkedLayer = info.GetValueOrNull("LinkedLayer", s);
         if (linkedLayer is Main.AbsoluteDocumentPath)
         {
           ProvideLinkedScalesWithLinkedLayerIndex(s, (Main.AbsoluteDocumentPath)linkedLayer, info);
@@ -272,7 +272,7 @@ namespace Altaxo.Graph.Gdi
         if (null != s._plotItems)
           s._plotItems.ParentObject = s;
 
-        if (null != legend)
+        if (legend is not null)
         {
           var legend1 = new LegendText(legend);
           s._graphObjects.Add(legend1);
@@ -371,8 +371,8 @@ namespace Altaxo.Graph.Gdi
         int count;
 
         // Background
-        var bgs = (IBackgroundStyle)info.GetValue("Background", s);
-        if (null != bgs)
+        var bgs = info.GetValueOrNull<IBackgroundStyle>("Background", s);
+        if (bgs is not null)
         {
           if (!s.GridPlanes.Contains(CSPlaneID.Front))
             s.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
@@ -405,17 +405,17 @@ namespace Altaxo.Graph.Gdi
 
         // Legends
         count = info.OpenArray("Legends");
-        var legend = (TextGraphic)info.GetValue("e", s);
+        var legend = info.GetValueOrNull<TextGraphic>("e", s);
         info.CloseArray(count);
 
         // XYPlotLayer specific
         count = info.OpenArray("LinkedLayers");
-        var linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
+        var linkedLayer = info.GetValueOrNull<Main.RelDocNodeProxy>("e", s);
         info.CloseArray(count);
         ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer, info);
 
         s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphicGlyphs", s));
-        if (null != legend)
+        if (legend is not null)
         {
           var legend1 = new LegendText(legend);
           s.GraphObjects.Add(legend1);
@@ -492,7 +492,7 @@ namespace Altaxo.Graph.Gdi
 
         // linked layers
         count = info.OpenArray("LinkedLayers");
-        var linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
+        var linkedLayer = info.GetValueOrNull<Main.RelDocNodeProxy>("e", s);
         info.CloseArray(count);
 
         // Scales
@@ -514,9 +514,9 @@ namespace Altaxo.Graph.Gdi
 
         foreach (var item in legends)
         {
-          if (item is TextGraphic)
+          if (item is TextGraphic tg)
           {
-            var l = new LegendText((TextGraphic)item);
+            var l = new LegendText(tg);
             s.GraphObjects.Add(l);
           }
         }
@@ -608,7 +608,7 @@ namespace Altaxo.Graph.Gdi
 
         // linked layers
         count = info.OpenArray("LinkedLayers");
-        var linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
+        var linkedLayer = info.GetValueOrNull<Main.RelDocNodeProxy>("e", s);
         info.CloseArray(count);
 
         // Scales
@@ -630,9 +630,9 @@ namespace Altaxo.Graph.Gdi
 
         foreach (var item in legends)
         {
-          if (item is TextGraphic)
+          if (item is TextGraphic tg)
           {
-            var l = new LegendText((TextGraphic)item);
+            var l = new LegendText(tg);
             s.GraphObjects.Add(l);
           }
         }
@@ -749,9 +749,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelDocNodeProxy linkedLayer, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelDocNodeProxy? linkedLayer, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      if (null != linkedLayer)
+      if (linkedLayer is not null)
       {
         ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer.DocumentPath, info);
       }

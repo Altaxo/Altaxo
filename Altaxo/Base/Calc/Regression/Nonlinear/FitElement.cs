@@ -150,9 +150,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       info.CloseArray(arraycount);
 
       arraycount = info.OpenArray();
-      _errorEvaluation = new IVarianceScaling[arraycount];
+      _errorEvaluation = new IVarianceScaling?[arraycount];
       for (int i = 0; i < arraycount; ++i)
-        _errorEvaluation[i] = (IVarianceScaling)info.GetValue("e", this);
+        _errorEvaluation[i] = info.GetValueOrNull<IVarianceScaling>("e", this);
       info.CloseArray(arraycount);
 
       info.GetArray("ParameterNames", out _parameterNames);

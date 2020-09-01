@@ -222,7 +222,7 @@ namespace Altaxo.Data
     protected bool _isDirty;
 
     /// <summary>Holds a reference to the underlying data table. If the Empty property of the proxy is null, the underlying table must be determined from the column proxies.</summary>
-    protected DataTableProxy _dataTable;
+    protected DataTableProxy? _dataTable;
 
     protected List<IReadableColumnProxy> _dataColumns; // the columns that are involved in the matrix
 
@@ -259,7 +259,7 @@ namespace Altaxo.Data
       if (!(obj is DataTableMatrixProxy from))
         return false;
 
-      InternalSetDataTable((DataTableProxy)from._dataTable.Clone());
+      ChildCloneToMember(ref _dataTable, from._dataTable);
       InternalSetDataColumnsWithCloning(from._dataColumns);
       InternalSetRowHeaderColumn((IReadableColumnProxy)from._rowHeaderColumn.Clone());
       InternalSetColumnHeaderColumn((IReadableColumnProxy)from._columnHeaderColumn.Clone());
@@ -307,7 +307,7 @@ namespace Altaxo.Data
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DataTableMatrixProxy)obj;
-        info.AddValue("Table", s._dataTable);
+        info.AddValueOrNull("Table", s._dataTable);
         info.AddValue("Group", s._groupNumber);
         info.AddValue("RowHeaderColumn", s._rowHeaderColumn);
         info.AddValue("ColumnHeaderColumn", s._columnHeaderColumn);
@@ -334,7 +334,7 @@ namespace Altaxo.Data
       {
         var s = (DataTableMatrixProxy?)o ?? new DataTableMatrixProxy();
 
-        s.InternalSetDataTable((DataTableProxy)info.GetValue("Table", s));
+        s.ChildSetMember(ref s._dataTable, info.GetValueOrNull<DataTableProxy>("Table", s));
         s._groupNumber = info.GetInt32("Group");
         s.InternalSetRowHeaderColumn((IReadableColumnProxy)info.GetValue("RowHeaderColumn", s));
         s.InternalSetColumnHeaderColumn((IReadableColumnProxy)info.GetValue("ColumnHeaderColumn", s));
