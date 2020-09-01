@@ -26,7 +26,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Altaxo.Main.Services;
+using Altaxo.Main.Services.ExceptionHandling;
 
 namespace Altaxo.Main.Commands
 {
@@ -108,6 +110,36 @@ namespace Altaxo.Main.Commands
         }
 
         _previousOutputService.Write(text);
+      }
+    }
+
+    public class UnhandledExceptionHandler : IUnhandledExceptionHandler
+    {
+      private Reporter _reporter;
+
+      public int NumberOfExceptionsEncountered { get; private set; }
+
+      public UnhandledExceptionHandler(Reporter reporter)
+      {
+        _reporter = reporter;
+      }
+
+      public void EhCurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+      {
+        ++NumberOfExceptionsEncountered;
+        _reporter.WriteLine($"Unhandled exception in current domain. IsTerminating: {e.IsTerminating}, Exception: {e.ExceptionObject}");
+      }
+
+      public void EhWindowsFormsApplication_ThreadException(object sender, ThreadExceptionEventArgs e)
+      {
+        ++NumberOfExceptionsEncountered;
+        _reporter.WriteLine($"Unhandled exception in WindowsForms. Exception: {e.Exception}");
+      }
+
+      public void EhWpfDispatcher_UnhandledException(object sender, object dispatcher, Exception exception)
+      {
+        ++NumberOfExceptionsEncountered;
+        _reporter.WriteLine($"Unhandled exception in Wpf. Exception: {exception}");
       }
     }
 
@@ -205,13 +237,17 @@ namespace Altaxo.Main.Commands
       if (!object.ReferenceEquals(Current.Console, reporter))
         throw new InvalidProgramException("Current console now should be the reporter! Please debug.");
 
+
       var test = new TestAllProjectsInFolder(reporter, testOptions);
 
       Current.IProjectService.ProjectChanged += test.EhProjectChanged;
 
+      var unhandledExceptionHandler = new UnhandledExceptionHandler(reporter);
+      Current.GetRequiredService<IUnhandledExceptionHandlerService>().AddHandler(unhandledExceptionHandler, true);
+
       try
       {
-        test.InternalVerifyOpeningOfDocumentsWithoutException(testOptions, monitor);
+        test.InternalVerifyOpeningOfDocumentsWithoutException(testOptions, monitor, unhandledExceptionHandler);
       }
       catch (Exception ex)
       {
@@ -227,6 +263,7 @@ namespace Altaxo.Main.Commands
 
         Current.RemoveService<Services.ITextOutputService>();
         Current.AddService<Services.ITextOutputService>(oldOutputService);
+        Current.GetRequiredService<IUnhandledExceptionHandlerService>().RemoveHandler(unhandledExceptionHandler);
       }
     }
 
@@ -236,7 +273,7 @@ namespace Altaxo.Main.Commands
         _reporter.WriteLine("Project changed: Type: {0}; fileName: {1}", e.ProjectEventKind, e.NewName);
     }
 
-    private void InternalVerifyOpeningOfDocumentsWithoutException(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor)
+    private void InternalVerifyOpeningOfDocumentsWithoutException(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor, UnhandledExceptionHandler unhandledExceptionHandler)
     {
       monitor.ReportProgress("Searching Altaxo project files ...", 0);
       var path = testOptions.FolderPaths;
@@ -265,7 +302,10 @@ namespace Altaxo.Main.Commands
             "Currently opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
           ++numberOfProjectsTested;
+          var unhandledExceptionsBefore = unhandledExceptionHandler.NumberOfExceptionsEncountered;
           Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, new Services.FileName(filename), true);
+          if (unhandledExceptionHandler.NumberOfExceptionsEncountered != unhandledExceptionsBefore)
+            ++numberOfProjectsFailedToLoad;
 
           monitor.ReportProgress(string.Format(
             "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
@@ -312,7 +352,10 @@ namespace Altaxo.Main.Commands
               "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
               "Currently saving: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
+            var unhandledExceptionsBefore = unhandledExceptionHandler.NumberOfExceptionsEncountered;
             Current.Dispatcher.InvokeIfRequired(Current.IProjectService.SaveProject, tempFileName);
+            if (unhandledExceptionHandler.NumberOfExceptionsEncountered != unhandledExceptionsBefore)
+              ++numberOfProjectsFailedToLoad;
 
             monitor.ReportProgress(string.Format(
               "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
@@ -347,7 +390,10 @@ namespace Altaxo.Main.Commands
               "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
               "Currently re-opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
+            var unhandledExceptionsBefore = unhandledExceptionHandler.NumberOfExceptionsEncountered;
             Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, new Services.FileName(tempFileName), true);
+            if (unhandledExceptionHandler.NumberOfExceptionsEncountered != unhandledExceptionsBefore)
+              ++numberOfProjectsFailedToLoad;
 
             monitor.ReportProgress(string.Format(
               "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
