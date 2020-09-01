@@ -60,17 +60,24 @@ namespace Altaxo.Main.Services
 
     private void DoShowMessage(string message, string caption, MessageBoxImage icon)
     {
-      var mainWindow = Application.Current?.MainWindow;
 
-      if (null != mainWindow)
+      if (Current.Dispatcher.InvokeRequired)
       {
         Current.Dispatcher.InvokeAndForget(
             () =>
             {
+              var mainWindow = Application.Current?.MainWindow;
+              if (mainWindow is not null)
               MessageBox.Show(mainWindow,
                                                       message, caption ?? DefaultMessageBoxTitle,
                                                       MessageBoxButton.OK, MessageBoxImage.Warning,
                                                       MessageBoxResult.OK, GetOptions(message, caption));
+              else
+                MessageBox.Show(
+                                                       message, caption ?? DefaultMessageBoxTitle,
+                                                       MessageBoxButton.OK, MessageBoxImage.Warning,
+                                                       MessageBoxResult.OK, GetOptions(message, caption));
+
             });
       }
       else

@@ -142,6 +142,9 @@ namespace Altaxo.Gui.Main.Services
 
     private void EhMessageAdded(InfoWarningErrorTextMessageItem msgItem)
     {
+      if (Current.Dispatcher.InvokeRequired)
+        Current.Dispatcher.InvokeAndForget(() => _unreversedDoc.Add(msgItem));
+      else
       _unreversedDoc.Add(msgItem);
     }
 
