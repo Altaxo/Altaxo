@@ -1197,7 +1197,7 @@ namespace Altaxo.Data
     /// <remarks>The properties are saved on disc (with exception of those who's name starts with "tmp/".
     /// If the property you want to store is only temporary, the property name should therefore
     /// start with "tmp/".</remarks>
-    public void SetTableProperty(string key, object val)
+    public void SetTableProperty(string key, object? val)
     {
       PropertyBagNotNull.SetValue(key, val);
     }
@@ -1211,7 +1211,7 @@ namespace Altaxo.Data
     /// start with "tmp/".</remarks>
     public bool RemoveTableProperty(string key)
     {
-      return null == _tableProperties ? false : _tableProperties.RemoveValue(key);
+      return _tableProperties is null ? false : _tableProperties.RemoveValue(key);
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
