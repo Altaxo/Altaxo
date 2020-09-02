@@ -57,9 +57,9 @@ namespace Altaxo.Main.Commands
           items[i].Click += delegate
           {
             if (System.IO.File.Exists(recentProjectFile))
-              Current.IProjectService.OpenProject(new FileName(recentProjectFile), false);
+              Current.IProjectService.OpenProject(new FileName(recentProjectFile), showUserInteraction: true);
             else if (System.IO.Directory.Exists(recentProjectFile))
-              Current.IProjectService.OpenProject(new DirectoryName(recentProjectFile), false);
+              Current.IProjectService.OpenProject(new DirectoryName(recentProjectFile), showUserInteraction: true);
           };
         }
         return items;

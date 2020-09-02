@@ -303,6 +303,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void EhTableDataChanged_Unsynchronized()
     {
+      if (IsDisposeInProgress)
+        return;
+
       if (_numberOfTableRows != DataTable.DataColumns.RowCount)
         SetCachedNumberOfDataRows();
 

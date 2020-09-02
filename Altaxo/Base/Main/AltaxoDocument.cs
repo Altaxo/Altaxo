@@ -254,7 +254,7 @@ namespace Altaxo
       // third, we save all TableLayouts into the TableLayouts subdirectory
       foreach (Altaxo.Worksheet.WorksheetLayout layout in _tableLayouts)
       {
-        if (layout.DataTable == null)
+        if (layout.DataTable is null)
           continue; // dont save orphaned layouts
 
         try
@@ -539,7 +539,7 @@ namespace Altaxo
 
     protected virtual void OnDirtyChanged()
     {
-      if (null != IsDirtyChanged)
+      if (IsDirtyChanged is not null)
         IsDirtyChanged(this, EventArgs.Empty);
     }
 
@@ -567,7 +567,7 @@ namespace Altaxo
     /// <param name="entryNameToItemDictionary">A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</param>
     public void ClearIsDirty(IProjectArchiveManager archiveManager, IDictionary<string, IProjectItem>? entryNameToItemDictionary)
     {
-      if (null != archiveManager && null != entryNameToItemDictionary)
+      if (archiveManager is not null && entryNameToItemDictionary is not null)
       {
         foreach (var entry in entryNameToItemDictionary)
         {
@@ -599,7 +599,7 @@ namespace Altaxo
       }
       set
       {
-        if (null != value)
+        if (value is not null)
           throw new InvalidOperationException("The parent object of AltaxoDocument can not be set and is always null");
       }
     }
@@ -816,7 +816,7 @@ namespace Altaxo
     /// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
     public bool ContainsItem(IProjectItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
       var coll = GetCollectionForProjectItemType(item.GetType());
@@ -833,7 +833,7 @@ namespace Altaxo
     /// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
     public void AddItem(IProjectItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
       if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument propDoc)
@@ -864,7 +864,7 @@ namespace Altaxo
     /// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
     public void AddItemWithThisOrModifiedName(IProjectItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
       if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument propertyDoc)
@@ -882,7 +882,7 @@ namespace Altaxo
       {
         var coll = GetCollectionForProjectItemType(item.GetType());
 
-        if (item.Name == null || item.Name == string.Empty)
+        if (item.Name is null || item.Name == string.Empty)
           item.Name = coll.FindNewItemName();
         else if (coll.ContainsAnyName(item.Name))
           item.Name = coll.FindNewItemName(item.Name);
@@ -901,7 +901,7 @@ namespace Altaxo
     /// <exception cref="System.ArgumentOutOfRangeException"></exception>
     public bool TryGetExistingItemWithSameTypeAndName(IProjectItem item, [MaybeNullWhen(false)] out IProjectItem existingItem)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
       var coll = GetCollectionForProjectItemType(item.GetType());

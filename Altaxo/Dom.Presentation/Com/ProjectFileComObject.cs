@@ -192,7 +192,7 @@ namespace Altaxo.Com
     {
       ComDebug.ReportInfo("{0}.Load filename: {1}", GetType().Name, pszFileName);
 
-      Current.IProjectService.OpenProject(new FileName(pszFileName), false);
+      Current.IProjectService.OpenProject(new FileName(pszFileName), showUserInteraction: true);
     }
 
     public void Save(string pszFileName, bool fRemember)

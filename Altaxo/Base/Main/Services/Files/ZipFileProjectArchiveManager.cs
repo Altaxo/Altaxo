@@ -366,14 +366,15 @@ namespace Altaxo.Main.Services
 
     private string GetClonedFileName(string? originalFileName = null)
     {
-      if (_originalFileStream is null)
-        throw new InvalidProgramException();
+      var effectiveOriginalFileName = originalFileName ?? _originalFileStream?.Name;
+      if (effectiveOriginalFileName is null)
+        throw new InvalidProgramException("Both the file name provided in the argument as well as the existing project file stream are null.");
 
       var instanceStorageService = Current.GetRequiredService<IInstanceStorageService>();
       var path = instanceStorageService.InstanceStoragePath;
       var clonedFileDir = Path.Combine(path, ClonedProjectRelativePath);
       Directory.CreateDirectory(clonedFileDir);
-      var clonedFileName = Path.Combine(clonedFileDir, ClonedProjectFileName + Path.GetExtension(originalFileName ?? _originalFileStream.Name));
+      var clonedFileName = Path.Combine(clonedFileDir, ClonedProjectFileName + Path.GetExtension(effectiveOriginalFileName));
       return clonedFileName;
     }
 

@@ -129,7 +129,7 @@ namespace Altaxo.Main.Commands
 
       if (true == openFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
       {
-        Current.IProjectService.OpenProject(FileName.Create(openFileDialog1.FileName), false);
+        Current.IProjectService.OpenProject(FileName.Create(openFileDialog1.FileName), showUserInteraction: true);
         Current.GetService<IRecentOpen>().AddRecentProject(FileName.Create(openFileDialog1.FileName));
       }
       else // in case the user cancels the open file dialog

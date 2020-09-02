@@ -213,7 +213,7 @@ namespace Altaxo.Gui.Workbench
         {
           if (Current.IProjectService.IsProjectFileExtension(System.IO.Path.GetExtension(file)))
           {
-            Current.IProjectService.OpenProject(new FileName(file), false);
+            Current.IProjectService.OpenProject(new FileName(file), showUserInteraction: true);
             alreadyProcessedFiles.Add(file);
           }
         }

@@ -297,7 +297,7 @@ namespace Altaxo.Serialization.Ascii
     [MemberNotNull(nameof(_lineAnalysisOptionsScoring))]
     private void EvaluateScoringOfAllLineAnalysisOptions()
     {
-      if (_lineAnalysisOptionsToTest is null || _lineAnalysisOfBodyLines is null || _lineAnalysisOptionsScoring is null)
+      if (_lineAnalysisOptionsToTest is null || _lineAnalysisOfBodyLines is null)
         throw new InvalidProgramException();
 
       _lineAnalysisOptionsScoring = new Dictionary<AsciiLineAnalysisOption, NumberAndStructure>();

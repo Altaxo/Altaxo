@@ -160,12 +160,12 @@ namespace Altaxo.Gui
     /// </returns>
     public bool CanExecute(object? parameter)
     {
-      if (parameter is T tpara)
-        return _canExecute?.Invoke(tpara) ?? true;
+      if (_canExecute is null)
+        return true;
+      else if (parameter is T tpara)
+        return _canExecute.Invoke(tpara);
       else
         throw new ArgumentException("Argument is expected to be of type " + typeof(T).ToString(), nameof(parameter));
-
-
     }
 
     /// <summary>

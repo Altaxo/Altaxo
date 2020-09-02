@@ -202,7 +202,7 @@ namespace Altaxo.Dom
 
       if (!object.ReferenceEquals(oldProject, _currentProject)) // Project instance has changed
       {
-        if (null != oldProject)
+        if (oldProject is not null)
         {
           try
           {
@@ -410,10 +410,10 @@ namespace Altaxo.Dom
     /// If the current project is dirty, and <paramref name="withoutUserInteraction"/> is <c>false</c>, the user is ask to save the current project before.
     /// </summary>
     /// <param name="fileOrFolderName">The file name of the project to open.</param>
-    /// <param name="withoutUserInteraction">If <c>false</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see
-    /// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>true</c>, then the old document is forced
+    /// <param name="showUserInteraction">If <c>true</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see
+    /// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>false</c>, then the old document is forced
     /// to close (without saving). If there is a exception during opening, this exception is thrown.</param>
-    public void OpenProject(PathName fileOrFolderName, bool withoutUserInteraction)
+    public void OpenProject(PathName fileOrFolderName, bool showUserInteraction)
     {
       if (fileOrFolderName is null)
         throw new ArgumentNullException(nameof(fileOrFolderName));
@@ -423,7 +423,7 @@ namespace Altaxo.Dom
         return;
       }
 
-      if (CurrentProject != null && CurrentProject.IsDirty && !withoutUserInteraction)
+      if (CurrentProject != null && CurrentProject.IsDirty && showUserInteraction)
       {
         var e = new System.ComponentModel.CancelEventArgs();
         AskForSavingOfProject(e);
@@ -436,14 +436,14 @@ namespace Altaxo.Dom
 
       try
       {
-        LoadProjectFromFileOrFolder(fileOrFolderName);
+        LoadProjectFromFileOrFolder(fileOrFolderName, showUserInteraction);
       }
       catch (Exception ex)
       {
-        if (withoutUserInteraction)
-          throw;
-        else
+        if (showUserInteraction)
           Current.Gui.ErrorMessageBox(string.Concat(ex.Message, "\r\nDetails:\r\n", ex.ToString()));
+        else
+          throw;
       }
 
       Current.StatusBar.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");

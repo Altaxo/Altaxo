@@ -164,13 +164,13 @@ namespace Altaxo.Main
     #region Opening a project
 
     /// <summary>
-    /// Opens a Altaxo project. If the current project is dirty, and <paramref name="withoutUserInteraction"/> is <c>false</c>, the user is ask to save the current project before.
+    /// Opens a Altaxo project. If the current project is dirty, and <paramref name="showUserInteraction"/> is <c>true</c>, the user is ask to save the current project before.
     /// </summary>
     /// <param name="pathName">Can be a <see cref="FileName"/>, if the project is file-based, or a <see cref="DirectoryName"/>, if the project is based on a directory.</param>
-    /// <param name="withoutUserInteraction">If <c>false</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see
-    /// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>true</c>, then the old document is forced
+    /// <param name="showUserInteraction">If <c>true</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see
+    /// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>false</c>, then the old document is forced
     /// to close (without saving). If there is a exception during opening, this exception is thrown.</param>
-    void OpenProject(PathName pathName, bool withoutUserInteraction);
+    void OpenProject(PathName pathName, bool showUserInteraction);
 
     /// <summary>
     /// Opens a project from an archive. This function is intended for opening the project from a COM stream on a freshly started application.
@@ -419,7 +419,7 @@ namespace Altaxo.Main
       throw new NotImplementedException();
     }
 
-    public void OpenProject(PathName pathName, bool withoutUserInteraction)
+    public void OpenProject(PathName pathName, bool showUserInteraction)
     {
       throw new NotImplementedException();
     }

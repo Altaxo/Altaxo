@@ -247,7 +247,7 @@ namespace Altaxo.Main.Commands
 
       try
       {
-        test.InternalVerifyOpeningOfDocumentsWithoutException(testOptions, monitor, unhandledExceptionHandler);
+        test.InternalVerifyOpeningOfDocumentsWithoutException(testOptions, monitor, unhandledExceptionHandler, reporter);
       }
       catch (Exception ex)
       {
@@ -273,7 +273,7 @@ namespace Altaxo.Main.Commands
         _reporter.WriteLine("Project changed: Type: {0}; fileName: {1}", e.ProjectEventKind, e.NewName);
     }
 
-    private void InternalVerifyOpeningOfDocumentsWithoutException(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor, UnhandledExceptionHandler unhandledExceptionHandler)
+    private void InternalVerifyOpeningOfDocumentsWithoutException(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor, UnhandledExceptionHandler unhandledExceptionHandler, Reporter reporter)
     {
       monitor.ReportProgress("Searching Altaxo project files ...", 0);
       var path = testOptions.FolderPaths;
@@ -300,10 +300,10 @@ namespace Altaxo.Main.Commands
           monitor.ReportProgress(string.Format(
             "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
             "Currently opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
-
+          reporter.WriteLine($"---------- {filename} ----------");
           ++numberOfProjectsTested;
           var unhandledExceptionsBefore = unhandledExceptionHandler.NumberOfExceptionsEncountered;
-          Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, new Services.FileName(filename), true);
+          Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, new Services.FileName(filename), false);
           if (unhandledExceptionHandler.NumberOfExceptionsEncountered != unhandledExceptionsBefore)
             ++numberOfProjectsFailedToLoad;
 
@@ -391,7 +391,7 @@ namespace Altaxo.Main.Commands
               "Currently re-opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
             var unhandledExceptionsBefore = unhandledExceptionHandler.NumberOfExceptionsEncountered;
-            Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, new Services.FileName(tempFileName), true);
+            Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, new Services.FileName(tempFileName), false);
             if (unhandledExceptionHandler.NumberOfExceptionsEncountered != unhandledExceptionsBefore)
               ++numberOfProjectsFailedToLoad;
 

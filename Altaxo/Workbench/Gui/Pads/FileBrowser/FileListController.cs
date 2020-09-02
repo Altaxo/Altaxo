@@ -248,7 +248,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
         if (Current.IProjectService.IsProjectFileExtension(fileExtension))
         {
-          Current.IProjectService.OpenProject(new FileName(item.FullName), false);
+          Current.IProjectService.OpenProject(new FileName(item.FullName), showUserInteraction: true);
           break;
         }
 

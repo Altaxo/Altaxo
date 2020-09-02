@@ -78,7 +78,7 @@ namespace Altaxo.Gui.MenuCommands
       {
         var pathName = PathName.CreateFromExisting(recentProjectFile);
         if (null != pathName)
-          Current.IProjectService.OpenProject(pathName, false);
+          Current.IProjectService.OpenProject(pathName, showUserInteraction: true);
       }
     }
   }
