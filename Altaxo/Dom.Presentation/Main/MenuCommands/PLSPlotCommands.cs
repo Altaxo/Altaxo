@@ -36,7 +36,7 @@ namespace Altaxo.Worksheet.Commands
     {
       var selectedData = condition.Properties["ContainsPLSModelData"];
 
-      if (Current.Workbench.ActiveViewContent == null)
+      if (Current.Workbench.ActiveViewContent is null)
       {
         return false;
       }

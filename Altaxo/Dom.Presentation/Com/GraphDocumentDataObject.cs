@@ -59,7 +59,7 @@ namespace Altaxo.Com
 
       _graphExportOptions = graphDocument.GetPropertyValue(ClipboardRenderingOptions.PropertyKeyClipboardRenderingOptions, () => new ClipboardRenderingOptions()).Clone();
       var embeddedRenderingOptions = graphDocument.GetPropertyValue(EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, () => null);
-      if (null != embeddedRenderingOptions)
+      if (embeddedRenderingOptions is not null)
         _graphExportOptions.CopyFrom(embeddedRenderingOptions); // merge embedded rendering options
 
       if ((_graphExportOptions.RenderEnhancedMetafile && _graphExportOptions.RenderEnhancedMetafileAsVectorFormat) ||
@@ -70,7 +70,7 @@ namespace Altaxo.Com
           _graphDocumentMetafileImage = GraphDocumentExportActions.RenderAsEnhancedMetafileVectorFormat((Altaxo.Graph.Gdi.GraphDocument)graphDocument, _graphExportOptions);
       }
 
-      if (null == _graphDocumentMetafileImage ||
+      if (_graphDocumentMetafileImage is null ||
         _graphExportOptions.RenderBitmap ||
         _graphExportOptions.RenderWindowsMetafile ||
         (_graphExportOptions.RenderEnhancedMetafile && !_graphExportOptions.RenderEnhancedMetafileAsVectorFormat) ||
@@ -98,7 +98,7 @@ namespace Altaxo.Com
     {
       ComDebug.ReportInfo("{0} destructor.", GetType().Name);
 
-      if (null != _dataAdviseHolder)
+      if (_dataAdviseHolder is not null)
       {
         _dataAdviseHolder.Dispose();
         _dataAdviseHolder = null;
@@ -113,7 +113,7 @@ namespace Altaxo.Com
       {
         var list = new List<Rendering>();
 
-        if (null != _altaxoMiniProject && _graphExportOptions.RenderEmbeddedObject)
+        if (_altaxoMiniProject is not null && _graphExportOptions.RenderEmbeddedObject)
         {
           list.Add(new Rendering(DataObjectHelper.CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null));
           list.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderEmbeddedObjectDescriptor));
@@ -155,11 +155,11 @@ namespace Altaxo.Com
     {
       var result = new System.Windows.Forms.DataObject();
 
-      if (null != _graphDocumentMetafileImage)
+      if (_graphDocumentMetafileImage is not null)
       {
         result.SetImage(_graphDocumentMetafileImage);
       }
-      else if (null != _graphDocumentBitmapImage)
+      else if (_graphDocumentBitmapImage is not null)
       {
         result.SetImage(_graphDocumentBitmapImage);
       }
@@ -194,7 +194,7 @@ namespace Altaxo.Com
 
       if (_graphExportOptions.DropFileImageFormat == System.Drawing.Imaging.ImageFormat.Emf)
       {
-        if (!(null != _graphDocumentMetafileImage))
+        if (_graphDocumentMetafileImage is null)
           throw new InvalidOperationException(nameof(_graphDocumentMetafileImage) + " should be != null");
 
         var clonedMF = (System.Drawing.Imaging.Metafile)_graphDocumentMetafileImage.Clone(); // have to clone metafile because after calling GetHenhmetafile() metafile would be destroyed
@@ -256,7 +256,7 @@ namespace Altaxo.Com
 
         IMoniker documentMoniker = CreateNewDocumentMoniker();
 
-        if (null != documentMoniker)
+        if (documentMoniker is not null)
         {
           medium.tymed = TYMED.TYMED_ISTREAM;
           medium.pUnkForRelease = null;
@@ -280,12 +280,12 @@ namespace Altaxo.Com
       if (!(tymed == TYMED.TYMED_ENHMF))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_TYMED_ENHMF");
 
-      if (null != _graphDocumentMetafileImage)
+      if (_graphDocumentMetafileImage is not null)
       {
         var mfCloned = (System.Drawing.Imaging.Metafile)_graphDocumentMetafileImage.Clone();
         return mfCloned.GetHenhmetafile();
       }
-      else if (null != _graphDocumentBitmapImage)
+      else if (_graphDocumentBitmapImage is not null)
       {
         var scaledDocSize = _graphDocumentSize * _graphExportOptions.OutputScalingFactor;
         return GraphDocumentExportActions.RenderAsEnhancedMetafileBitmapFormat(_graphDocumentBitmapImage, scaledDocSize).GetHenhmetafile();
@@ -303,7 +303,7 @@ namespace Altaxo.Com
       if (!(tymed == TYMED.TYMED_MFPICT))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_MFPICT");
 
-      if (null != _graphDocumentBitmapImage)
+      if (_graphDocumentBitmapImage is not null)
       {
         using (var rgbBitmap = GraphDocumentExportActions.ConvertBitmapToPixelFormat(_graphDocumentBitmapImage, System.Drawing.Imaging.PixelFormat.Format24bppRgb, _graphExportOptions.BackgroundColorForFormatsWithoutAlphaChannel))
         {
@@ -329,7 +329,7 @@ namespace Altaxo.Com
       if (!(tymed == TYMED.TYMED_GDI))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_GDI");
 
-      if (null != _graphDocumentBitmapImage)
+      if (_graphDocumentBitmapImage is not null)
       {
         using (var convertedBitmap = GraphDocumentExportActions.ConvertBitmapToPixelFormat(_graphDocumentBitmapImage, System.Drawing.Imaging.PixelFormat.Format24bppRgb, _graphExportOptions.BackgroundColorForFormatsWithoutAlphaChannel))
         {
@@ -349,7 +349,7 @@ namespace Altaxo.Com
       if (!(tymed == TYMED.TYMED_HGLOBAL))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_HGLOBAL");
 
-      if (null != _graphDocumentBitmapImage)
+      if (_graphDocumentBitmapImage is not null)
       {
         using (var convertedBitmap = GraphDocumentExportActions.ConvertBitmapToPixelFormat(_graphDocumentBitmapImage, System.Drawing.Imaging.PixelFormat.Format24bppRgb, _graphExportOptions.BackgroundColorForFormatsWithoutAlphaChannel))
         {
@@ -369,7 +369,7 @@ namespace Altaxo.Com
       if (!(tymed == TYMED.TYMED_HGLOBAL))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_HGLOBAL");
 
-      if (null != _graphDocumentBitmapImage)
+      if (_graphDocumentBitmapImage is not null)
       {
         return DataObjectHelper.RenderDIBV5BitmapToHGLOBAL(_graphDocumentBitmapImage);
       }
@@ -530,10 +530,10 @@ namespace Altaxo.Com
 
       var fileMoniker = _comManager.FileComObject.FileMoniker;
 
-      if (null != fileMoniker)
+      if (fileMoniker is not null)
       {
         Ole32Func.CreateItemMoniker("!", DataObjectHelper.NormalStringToMonikerNameString(_graphDocumentName), out var itemMoniker);
-        if (null != itemMoniker)
+        if (itemMoniker is not null)
         {
           fileMoniker.ComposeWith(itemMoniker, false, out documentMoniker);
         }
@@ -580,7 +580,7 @@ namespace Altaxo.Com
           stream.Close();
         }
 
-        if (null != saveEx)
+        if (saveEx is not null)
           throw saveEx;
       }
       catch (Exception ex)

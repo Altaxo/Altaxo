@@ -90,7 +90,7 @@ namespace Altaxo.Com
     public virtual void SendAdvise_Renamed()
     {
       var moniker = _documentMoniker;
-      if (null != moniker)
+      if (moniker is not null)
       {
         _oleAdviseHolder.SendOnRename(moniker);
       }
@@ -102,14 +102,14 @@ namespace Altaxo.Com
     /// </summary>
     public virtual void SendAdvise_SaveObject()
     {
-      if (_isDocumentDirty && null != _clientSite)
+      if (_isDocumentDirty && _clientSite is not null)
       {
         ComDebug.ReportInfo("{0}.SendAdvise.SaveObject -> calling IOleClientSite.SaveObject()", GetType().Name);
         _clientSite.SaveObject();
       }
       else
       {
-        ComDebug.ReportInfo("{0}.SendAdvise.SaveObject -> NOT DONE! isDirty={1}, isClientSiteNull={2} )", GetType().Name, _isDocumentDirty, null == _clientSite);
+        ComDebug.ReportInfo("{0}.SendAdvise.SaveObject -> NOT DONE! isDirty={1}, isClientSiteNull={2} )", GetType().Name, _isDocumentDirty, _clientSite is null);
       }
     }
 
@@ -136,7 +136,7 @@ namespace Altaxo.Com
     public virtual void SendAdvise_ShowWindow()
     {
       ComDebug.ReportInfo("{0}.SendAdvise.ShowWindow -> Calling IOleClientSite.OnShowWindow(true)", GetType().Name);
-      if (null != _clientSite)
+      if (_clientSite is not null)
       {
         _clientSite.OnShowWindow(true);
       }
@@ -151,7 +151,7 @@ namespace Altaxo.Com
       ComDebug.ReportInfo("{0}.SendAdvise.HideWindow -> Calling IOleClientSite.OnShowWindow(false)", GetType().Name);
       try
       {
-        if (null != _clientSite)
+        if (_clientSite is not null)
         {
           _clientSite.OnShowWindow(false);
         }
@@ -176,7 +176,7 @@ namespace Altaxo.Com
     public virtual void SendAdvise_ShowObject()
     {
       ComDebug.ReportInfo("{0}.SendAdvise.ShowObject -> Calling IOleClientSite.ShowObject()", GetType().Name);
-      if (null != _clientSite)
+      if (_clientSite is not null)
         _clientSite.ShowObject();
     }
 
@@ -214,7 +214,7 @@ namespace Altaxo.Com
     {
       // Brockschmidt Inside Ole 2nd ed. page 994
       ComDebug.ReportInfo("{0}.IOleObject.GetMoniker", GetType().Name);
-      if (null != _documentMoniker)
+      if (_documentMoniker is not null)
       {
         moniker = _documentMoniker;
         return ComReturnValue.S_OK;

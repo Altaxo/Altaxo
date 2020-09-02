@@ -151,7 +151,7 @@ namespace Altaxo.Main.Commands
   {
     public override void Execute(object parameter)
     {
-      if (Current.IProjectService.CurrentProjectFileName != null)
+      if (Current.IProjectService.CurrentProjectFileName is not null)
         Current.IProjectService.SaveProject();
       else
         Current.IProjectService.SaveProjectAs();
@@ -235,7 +235,7 @@ namespace Altaxo.Main.Commands
       {
         var viewModel = viewContent.ModelObject as IProjectItemPresentationModel;
         var doc = viewModel?.Document ?? viewContent.ModelObject as IProjectItem;
-        if (null != doc)
+        if (doc is not null)
         {
           var oldName = doc.Name;
           var newDoc = (IProjectItem)doc.Clone();
@@ -289,7 +289,7 @@ namespace Altaxo.Main.Commands
         if (true == openFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject) && openFileDialog1.FileName.Length > 0)
         {
           string result = Altaxo.Serialization.Origin.Importer.Import(openFileDialog1.FileName);
-          if (result != null)
+          if (result is not null)
             Current.Gui.ErrorMessageBox(result);
         }
       }
@@ -302,7 +302,7 @@ namespace Altaxo.Main.Commands
     {
       Altaxo.Scripting.IScriptText script = null; // or load it from somewhere
 
-      if (script == null)
+      if (script is null)
         script = new Altaxo.Scripting.ProgramInstanceScript();
       var options = new Altaxo.Gui.OpenFileOptions
       {
@@ -314,7 +314,7 @@ namespace Altaxo.Main.Commands
       if (Current.Gui.ShowOpenFileDialog(options))
       {
         string err = OpenScriptText(options.FileName, out var scripttext);
-        if (null != err)
+        if (err is not null)
           Current.Gui.ErrorMessageBox(err);
         else
           script.ScriptText = scripttext;
@@ -338,10 +338,10 @@ namespace Altaxo.Main.Commands
           if (Current.Gui.ShowSaveFileDialog(saveOptions))
           {
             errors = SaveScriptText(saveOptions.FileName, script.ScriptText);
-            if (null != errors)
+            if (errors is not null)
               Current.Gui.ErrorMessageBox(errors);
           }
-        } while (null != errors);
+        } while (errors is not null);
       }
     }
 

@@ -160,7 +160,7 @@ namespace Altaxo.Gui.Text.Viewing
         {
         }
 
-        if (null != bitmapSource)
+        if (bitmapSource is not null)
         {
           var image = new Image() { Source = bitmapSource };
 
@@ -177,7 +177,7 @@ namespace Altaxo.Gui.Text.Viewing
       {
         string name = url.Substring(ImagePretext.LocalImagePretext.Length);
 
-        if (null != LocalImages && LocalImages.TryGetValue(name, out var img))
+        if (LocalImages is not null && LocalImages.TryGetValue(name, out var img))
         {
           var stream = img.GetContentStream();
           Image image = GetImageFromStream(stream);

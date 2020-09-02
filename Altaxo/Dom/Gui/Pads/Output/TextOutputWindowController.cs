@@ -64,13 +64,13 @@ namespace Altaxo.Gui.Pads.Output
       var oldTextOutputService = Current.GetService<ITextOutputService>();
       if (oldTextOutputService is TextOutputServiceTemporary tempTextOutputService)
         _initialText = tempTextOutputService.Text;
-      if (null != oldTextOutputService)
+      if (oldTextOutputService is not null)
         Current.RemoveService<ITextOutputService>();
       Current.AddService<ITextOutputService>(this);
 
       // ----------- register also as IInfoWarningErrorTextMessageService if not already registered ----------
       var oldMessageService = Current.GetService<IInfoWarningErrorTextMessageService>();
-      if (null == oldMessageService)
+      if (oldMessageService is null)
       {
         Current.AddService<IInfoWarningErrorTextMessageService>(this);
       }
@@ -102,12 +102,12 @@ namespace Altaxo.Gui.Pads.Output
       {
         if (!object.ReferenceEquals(_view, value))
         {
-          if (null != _view)
+          if (_view is not null)
             DetachView();
 
           _view = value as ITextOutputWindowView;
 
-          if (null != _view)
+          if (_view is not null)
           {
             Initialize(false);
             AttachView();

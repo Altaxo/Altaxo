@@ -88,7 +88,7 @@ namespace Altaxo.Com
 
     public GraphDocumentEmbeddedComObject GetNewEmbeddedGraphDocumentComObject()
     {
-      if (null != _embeddedComObject)
+      if (_embeddedComObject is not null)
         throw new InvalidOperationException("There is already an embedded object present in this application instance!");
 
       return new GraphDocumentEmbeddedComObject(this);
@@ -96,12 +96,12 @@ namespace Altaxo.Com
 
     public GraphDocumentLinkedComObject GetDocumentsComObjectForGraphDocument(GraphDocument doc)
     {
-      if (null == doc)
+      if (doc is null)
         throw new ArgumentNullException();
 
       ComDebug.ReportInfo("{0}.GetDocumentsComObjectForGraphDocument Name={1}", GetType().Name, doc.Name);
 
-      if (null != doc && _linkedDocumentsComObjects.ContainsKey(doc))
+      if (doc is not null && _linkedDocumentsComObjects.ContainsKey(doc))
         return _linkedDocumentsComObjects[doc];
 
       // else we must create a new DocumentComObject
@@ -139,9 +139,9 @@ namespace Altaxo.Com
 
     public void NotifyDocumentOfDocumentsComObjectChanged(GraphDocumentEmbeddedComObject documentComObject, GraphDocumentBase oldDocument, GraphDocumentBase newDocument)
     {
-      if (!(null == oldDocument))
+      if (oldDocument is not null)
         throw new ArgumentException(nameof(oldDocument) + " should be null");
-      if (null == newDocument)
+      if (newDocument is null)
         throw new ArgumentNullException(nameof(newDocument));
 
       _embeddedComObject = documentComObject;
@@ -369,13 +369,13 @@ namespace Altaxo.Com
       keyCLSID.DeleteSubKeyTree(typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant(), false);
       keyApp.DeleteSubKeyTree(typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant(), false);
 
-      if (null != keyApp)
+      if (keyApp is not null)
         keyApp.Close();
-      if (null != keyCLSID)
+      if (keyCLSID is not null)
         keyCLSID.Close();
-      if (null != keyCR)
+      if (keyCR is not null)
         keyCR.Close();
-      if (null != keySW)
+      if (keySW is not null)
         keySW.Close();
     }
 
@@ -518,19 +518,19 @@ namespace Altaxo.Com
       }
       finally
       {
-        if (key4 != null)
+        if (key4 is not null)
           key4.Close();
-        if (key3 != null)
+        if (key3 is not null)
           key3.Close();
-        if (key2 != null)
+        if (key2 is not null)
           key2.Close();
-        if (key1 != null)
+        if (key1 is not null)
           key1.Close();
-        if (null != keyCLSID)
+        if (keyCLSID is not null)
           keyCLSID.Close();
-        if (keyCR != null)
+        if (keyCR is not null)
           keyCR.Close();
-        if (keySW != null)
+        if (keySW is not null)
           keySW.Close();
       }
     }
@@ -629,7 +629,7 @@ namespace Altaxo.Com
 
       DataObjectBase lastUsedDataObject = null;
       // convert the clipboard data object to a permanent .NET data object
-      if (null != _lastUsedDataObject && null != (lastUsedDataObject = _lastUsedDataObject.Target as DataObjectBase))
+      if (_lastUsedDataObject is not null && (lastUsedDataObject = _lastUsedDataObject.Target as DataObjectBase) is not null)
       {
         lastUsedDataObject.ConvertToNetDataObjectAndPutToClipboard();
       }
@@ -649,7 +649,7 @@ namespace Altaxo.Com
     /// </remarks>
     public void EnterLinkedObjectMode()
     {
-      if (null != _classFactoryOfDocumentComObject)
+      if (_classFactoryOfDocumentComObject is not null)
       {
         _classFactoryOfDocumentComObject.RevokeClassObject();
         ComDebug.ReportInfo("{0}.EnterLinkedObjectMode Revoked: {1}", GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
@@ -659,7 +659,7 @@ namespace Altaxo.Com
 
     public void EnterEmbeddedObjectMode()
     {
-      if (null != _classFactoryOfFileComObject)
+      if (_classFactoryOfFileComObject is not null)
       {
         _classFactoryOfFileComObject.RevokeClassObject();
         ComDebug.ReportInfo("{0}.EnterEmbeddedObjectMode Revoked: {1}", GetType().Name, _classFactoryOfFileComObject.GetType().Name);
@@ -697,7 +697,7 @@ namespace Altaxo.Com
     {
       ComDebug.ReportInfo("Stop local server");
 
-      if (null != _embeddedComObject)
+      if (_embeddedComObject is not null)
       {
         _embeddedComObject.Dispose();
         _embeddedComObject = null;
@@ -709,27 +709,27 @@ namespace Altaxo.Com
       }
       _linkedDocumentsComObjects.Clear();
 
-      if (null != _fileComObject)
+      if (_fileComObject is not null)
       {
         _fileComObject.Dispose();
         _fileComObject = null;
       }
 
-      if (null != _classFactoryOfDocumentComObject)
+      if (_classFactoryOfDocumentComObject is not null)
       {
         _classFactoryOfDocumentComObject.RevokeClassObject();
         ComDebug.ReportInfo("{0}.StopLocalServer:{1} Revoked.", GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
         _classFactoryOfDocumentComObject = null;
       }
 
-      if (null != _classFactoryOfFileComObject)
+      if (_classFactoryOfFileComObject is not null)
       {
         _classFactoryOfFileComObject.RevokeClassObject();
         ComDebug.ReportInfo("{0}.StopLocalServer:{1} Revoked.", GetType().Name, _classFactoryOfFileComObject.GetType().Name);
         _classFactoryOfFileComObject = null;
       }
 
-      if (null != _garbageCollector)
+      if (_garbageCollector is not null)
       {
         // Now stop the Garbage Collector thread.
         _garbageCollector.StopThread();

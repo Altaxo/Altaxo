@@ -81,9 +81,9 @@ namespace Altaxo.Gui.Text.Viewing
     {
       _documentName = documentName;
       var folder = Altaxo.Main.ProjectFolder.GetFolderPart(_documentName);
-      if (null == _imageProvider || _imageProvider.AltaxoFolderLocation != folder || _imageProvider.LocalImages != localImages)
+      if (_imageProvider is null || _imageProvider.AltaxoFolderLocation != folder || _imageProvider.LocalImages != localImages)
       {
-        if (null != _imageProvider)
+        if (_imageProvider is not null)
         {
           _imageProvider.ReferencedImageUrlsChanged -= EhImageProvider_ReferencedImageUrlsChanged;
         }

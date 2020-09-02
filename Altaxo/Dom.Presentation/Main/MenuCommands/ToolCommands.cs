@@ -95,7 +95,7 @@ namespace Altaxo.Main.Commands
 
           var dataObject = Current.ComManager.GetDocumentsDataObjectForDocument(doc);
 
-          if (null != dataObject)
+          if (dataObject is not null)
             System.Windows.Clipboard.SetDataObject(dataObject);
         }
       }

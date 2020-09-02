@@ -190,7 +190,7 @@ namespace Altaxo.Main
 
       var oldProject = CurrentOpenProject;
 
-      if (null != oldProject)
+      if (oldProject is not null)
         OnProjectChanged(new ProjectEventArgs(oldProject, oldProject.Name, ProjectEventKind.ProjectClosing));
 
       try
@@ -212,7 +212,7 @@ namespace Altaxo.Main
       }
 
       // Old project is now closed
-      if (null != oldProject)
+      if (oldProject is not null)
         OnProjectChanged(new ProjectEventArgs(oldProject, oldProject.Name, ProjectEventKind.ProjectClosed));
 
       // Now open new project
@@ -299,7 +299,7 @@ namespace Altaxo.Main
             {
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("Model", null);
-              if (readedobject != null)
+              if (readedobject is not null)
               {
                 restoredPadModels.Add(readedobject);
               }
@@ -339,7 +339,7 @@ namespace Altaxo.Main
       foreach (var o in restoredPadModels)
       {
         var content = (IPadContent?)Current.Gui.GetControllerAndControl(new object[] { o }, typeof(IPadContent));
-        if (null != content)
+        if (content is not null)
           Current.Workbench.ShowPad(content, false);
       }
     }
@@ -370,7 +370,7 @@ namespace Altaxo.Main
     {
       if (Current.Project.DataTableCollection.TryGetValue(tableName, out var table))
       {
-        if (null != table.TableScript)
+        if (table.TableScript is not null)
         {
           table.TableScript.Execute(table, new DummyBackgroundMonitor());
         }
@@ -492,7 +492,7 @@ namespace Altaxo.Main
     /// if false, the user is ask before the document is deleted.</param>
     public override void DeleteDocument(Main.IProjectItem document, bool force)
     {
-      if (null == document)
+      if (document is null)
         throw new ArgumentNullException(nameof(document));
 
       Current.Dispatcher.InvokeIfRequired(DeleteDocument_Unsynchronized, document, force);
@@ -550,7 +550,7 @@ namespace Altaxo.Main
 
       // if a content exist that show that graph, activate that content
       var foundContent = GetViewContentsForDocument(document).FirstOrDefault();
-      if (foundContent != null)
+      if (foundContent is not null)
       {
         foundContent.IsActive = true;
         foundContent.IsSelected = true;
@@ -576,7 +576,7 @@ namespace Altaxo.Main
       object? viewContent = null;
       foreach (Type type in types)
       {
-        if (null != (cinfo = type.GetConstructor(new Type[] { document.GetType() })))
+        if ((cinfo = type.GetConstructor(new Type[] { document.GetType() })) is not null)
         {
           var par = cinfo.GetParameters()[0];
           if (par.ParameterType != typeof(object)) // ignore view content which takes the most generic type
@@ -587,13 +587,13 @@ namespace Altaxo.Main
         }
       }
 
-      if (null == viewContent)
+      if (viewContent is null)
       {
         foreach (IProjectItemDisplayBindingDescriptor descriptor in AddInTree.BuildItems<IProjectItemDisplayBindingDescriptor>("/Altaxo/Workbench/ProjectItemDisplayBindings", this, false))
         {
           if (descriptor.ProjectItemType == document.GetType())
           {
-            if (null != (cinfo = descriptor.ViewContentType.GetConstructor(new Type[] { document.GetType() })))
+            if ((cinfo = descriptor.ViewContentType.GetConstructor(new Type[] { document.GetType() })) is not null)
             {
               var par = cinfo.GetParameters()[0];
               if (par.ParameterType != typeof(object)) // ignore view content which takes the most generic type
@@ -674,7 +674,7 @@ namespace Altaxo.Main
 
     private Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet_Unsynchronized(Altaxo.Data.DataTable table)
     {
-      if (table.ParentObject == null)
+      if (table.ParentObject is null)
         CurrentOpenProject.DataTableCollection.Add(table);
 
       return CreateNewWorksheet(table, CurrentOpenProject.CreateNewTableLayout(table));
@@ -704,7 +704,7 @@ namespace Altaxo.Main
       var view = new Altaxo.Gui.Worksheet.Viewing.WorksheetViewWpf();
       ctrl.ViewObject = view;
 
-      if (null != Current.Workbench)
+      if (Current.Workbench is not null)
         Current.Workbench.ShowView(ctrl, true);
 
       return ctrl;
@@ -731,7 +731,7 @@ namespace Altaxo.Main
     {
       // if a content exist that show that table, activate that content
       var foundContent = GetViewContentsForDocument(table).FirstOrDefault();
-      if (foundContent != null)
+      if (foundContent is not null)
       {
         foundContent.IsVisible = true;
         foundContent.IsActive = true;
@@ -805,7 +805,7 @@ namespace Altaxo.Main
         if (descriptor.ProjectItemType == item.GetType())
         {
           System.Reflection.ConstructorInfo cinfo;
-          if (null != (cinfo = descriptor.GraphicalExporterType.GetConstructor(new Type[0])))
+          if ((cinfo = descriptor.GraphicalExporterType.GetConstructor(new Type[0])) is not null)
           {
             result = cinfo.Invoke(new object[0]) as IProjectItemImageExporter;
             if (result is not null)
@@ -907,7 +907,7 @@ namespace Altaxo.Main
     {
       // if a content exist that show that graph, activate that content
       var foundContent = GetViewContentsForDocument(graph).FirstOrDefault();
-      if (foundContent != null)
+      if (foundContent is not null)
       {
         foundContent.IsActive = true;
         foundContent.IsSelected = true;
@@ -987,7 +987,7 @@ namespace Altaxo.Main
     /// <returns>The view content for the newly created graph.</returns>
     public Altaxo.Gui.Graph.Graph3D.Viewing.IGraphController CreateNewGraph3D(Altaxo.Graph.Graph3D.GraphDocument doc)
     {
-      if (null == doc)
+      if (doc is null)
       {
         doc = Altaxo.Graph.Graph3D.Templates.TemplateWithXYZPlotLayerWithG3DCartesicCoordinateSystem.CreateGraph(
             PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName), "GRAPH", ProjectFolder.RootFolderName, false);
@@ -1009,7 +1009,7 @@ namespace Altaxo.Main
     {
       var content = Current.Workbench.ViewContentCollection.FirstOrDefault();
 
-      if (null != content)
+      if (content is not null)
       {
         content.IsActive = true;
         content.IsSelected = true;

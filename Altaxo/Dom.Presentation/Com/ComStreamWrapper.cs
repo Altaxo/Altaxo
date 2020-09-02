@@ -272,7 +272,7 @@ namespace Altaxo.Com
 
     public override void Close()
     {
-      if (null != _istream)
+      if (_istream is not null)
       {
         //_istream.Commit(0);
         if (_isStreamOwner)
@@ -304,7 +304,7 @@ namespace Altaxo.Com
       Marshal.FreeCoTaskMem(_int32Ptr);
       _int32Ptr = IntPtr.Zero;
 
-      if (null != _istream)
+      if (_istream is not null)
       {
         if (_isStreamOwner)
         {

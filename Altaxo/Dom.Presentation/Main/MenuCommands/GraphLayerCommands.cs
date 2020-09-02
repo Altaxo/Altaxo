@@ -167,7 +167,7 @@ namespace Altaxo.Graph.Commands
       var currentLayerNumber = ctrl.CurrentLayerNumber;
       var plotLayer = ctrl.ActiveLayer as XYPlotLayer;
 
-      if (null != plotLayer)
+      if (plotLayer is not null)
       {
         var clonedItems = plotLayer.PlotItems.Clone();
         ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml", clonedItems);
@@ -194,7 +194,7 @@ namespace Altaxo.Graph.Commands
       var currentLayerNumber = ctrl.CurrentLayerNumber;
       var plotLayer = ctrl.ActiveLayer as XYPlotLayer;
 
-      if (null != plotLayer)
+      if (plotLayer is not null)
       {
         object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
         // if at this point obj is a memory stream, you probably have forgotten the deserialization constructor of the class you expect to deserialize here
@@ -244,10 +244,10 @@ namespace Altaxo.Graph.Commands
     public IEnumerable<object> BuildItems(Codon codon, object owner)
     {
       var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.Graph.Gdi.Viewing.GraphController;
-      if (null == ctrl)
+      if (ctrl is null)
         return null;
       var activeLayer = ctrl.ActiveLayer as XYPlotLayer;
-      if (null == activeLayer)
+      if (activeLayer is null)
         return null;
 
       int actPA = ctrl.CurrentPlotNumber;
@@ -272,10 +272,10 @@ namespace Altaxo.Graph.Commands
       int plotItemNumber = (int)dmi.Tag;
 
       var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.Graph.Gdi.Viewing.GraphController;
-      if (null == ctrl)
+      if (ctrl is null)
         return;
       var activeLayer = ctrl.ActiveLayer as XYPlotLayer;
-      if (null == activeLayer)
+      if (activeLayer is null)
         return;
 
       if (!dmi.IsChecked)
@@ -283,7 +283,7 @@ namespace Altaxo.Graph.Commands
         // if the menu item was not checked before, check it now
         // by making the plot association shown by the menu item
         // the actual plot association
-        if (null != activeLayer && plotItemNumber < activeLayer.PlotItems.Flattened.Length)
+        if (activeLayer is not null && plotItemNumber < activeLayer.PlotItems.Flattened.Length)
         {
           dmi.IsChecked = true;
           ctrl.CurrentPlotNumber = plotItemNumber;

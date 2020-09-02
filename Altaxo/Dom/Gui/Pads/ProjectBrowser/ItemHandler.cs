@@ -63,16 +63,16 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       add
       {
-        bool wasEmpty = null == _listChange;
+        bool wasEmpty = _listChange is null;
         _listChange += value;
-        if (wasEmpty && null != _listChange)
+        if (wasEmpty && _listChange is not null)
           BeginTracking();
       }
       remove
       {
-        bool wasEmpty = null == _listChange;
+        bool wasEmpty = _listChange is null;
         _listChange -= value;
-        if (!wasEmpty && null == _listChange)
+        if (!wasEmpty && _listChange is null)
           EndTracking();
       }
     }
@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// </summary>
     protected virtual void OnListChange()
     {
-      if (null != _listChange)
+      if (_listChange is not null)
         _listChange(_list);
     }
 
@@ -127,7 +127,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         return GetBrowserListItem(projectItem, showFullName);
       else if (t is string folder)
         return GetBrowserListItem(folder);
-      else if (null != t)
+      else if (t is not null)
         throw new ApplicationException("Unknown type to list: " + t.GetType().ToString());
       else
         throw new ArgumentNullException("Object to list is null");

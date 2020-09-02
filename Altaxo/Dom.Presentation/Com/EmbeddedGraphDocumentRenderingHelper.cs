@@ -46,11 +46,11 @@ namespace Altaxo.Com
     public static EmbeddedObjectRenderingOptions GetRenderingOptions(GraphDocumentBase document)
     {
       var embe = Altaxo.PropertyExtensions.GetPropertyValue(document, EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, null);
-      if (null != embe)
+      if (embe is not null)
         return embe;
 
       var clip = Altaxo.PropertyExtensions.GetPropertyValue(document, ClipboardRenderingOptions.PropertyKeyClipboardRenderingOptions, null);
-      if (null != clip)
+      if (clip is not null)
         return clip;
 
       return new EmbeddedObjectRenderingOptions();

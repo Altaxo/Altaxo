@@ -98,18 +98,18 @@ namespace Altaxo.Com
     public int Next(int celt, T[] rgelt, int[] pceltFetched)
     {
       // Start with zero fetched, in case we return early
-      if (pceltFetched != null && pceltFetched.Length > 0)
+      if (pceltFetched is not null && pceltFetched.Length > 0)
         pceltFetched[0] = 0;
 
       // Short circuit if they didn't request any elements, or didn't
       // provide room in the return array, or there are not more elements
       // to enumerate.
-      if (celt <= 0 || rgelt == null || _enumerator == null)
+      if (celt <= 0 || rgelt is null || _enumerator is null)
         return ComReturnValue.S_FALSE; // S_FALSE
 
       // If the number of requested elements is not one, then we must
       // be able to tell the caller how many elements were fetched.
-      if ((pceltFetched == null || pceltFetched.Length < 1) && celt != 1)
+      if ((pceltFetched is null || pceltFetched.Length < 1) && celt != 1)
         return ComReturnValue.S_FALSE; // S_FALSE
 
       // If the number of elements in the return array is too small, we
@@ -125,7 +125,7 @@ namespace Altaxo.Com
       }
 
       // Return the number of elements fetched
-      if (pceltFetched != null && pceltFetched.Length > 0)
+      if (pceltFetched is not null && pceltFetched.Length > 0)
         pceltFetched[0] = fetchedCount;
 
       return (fetchedCount == celt) ? ComReturnValue.S_OK : ComReturnValue.S_FALSE; // S_OK : S_FALSE
@@ -133,7 +133,7 @@ namespace Altaxo.Com
 
     public void Dispose()
     {
-      if (null != _enumerator)
+      if (_enumerator is not null)
       {
         _enumerator.Dispose();
         _enumerator = null;

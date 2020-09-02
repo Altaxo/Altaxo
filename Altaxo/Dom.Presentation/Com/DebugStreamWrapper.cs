@@ -146,7 +146,7 @@ namespace Altaxo.Com
       _debugWriter?.Write("StreamWrapper.Read, bufferlength={0}, offset={1}, count={2}", buffer.Length, offset, count);
       var result = _istream.Read(buffer, offset, count);
 
-      if (null != _debugWriter)
+      if (_debugWriter is not null)
       {
         _debugWriter?.Write(".... read: {0} byte", result);
         _debugWriter.Write(" (");
@@ -188,7 +188,7 @@ namespace Altaxo.Com
     /// <inheritdoc/>
     public override void Close()
     {
-      if (null != _istream)
+      if (_istream is not null)
       {
         //_istream.Commit(0);
         if (_isStreamOwner)

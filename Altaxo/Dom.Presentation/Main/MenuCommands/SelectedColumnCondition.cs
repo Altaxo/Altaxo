@@ -39,7 +39,7 @@ namespace Altaxo.Worksheet.Commands
     {
       string selectedData = condition.Properties["selected"].ToLower();
 
-      if (Current.Workbench.ActiveViewContent == null)
+      if (Current.Workbench.ActiveViewContent is null)
         return false;
       if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.IWorksheetController ctrl))
         return false;
@@ -94,7 +94,7 @@ namespace Altaxo.Worksheet.Commands
     {
       string selectedData = condition.Properties["selected"].ToLower();
 
-      if (Current.Workbench.ActiveViewContent == null)
+      if (Current.Workbench.ActiveViewContent is null)
         return false;
       if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl))
         return false;

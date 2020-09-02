@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.ViewOnSelectListNodeOn = false;
-      if (null != IsCheckedChanged)
+      if (IsCheckedChanged is not null)
         IsCheckedChanged(this, EventArgs.Empty);
     }
 
@@ -122,7 +122,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       get
       {
-        if (null != IsCheckedChanged)
+        if (IsCheckedChanged is not null)
           IsCheckedChanged(this, EventArgs.Empty);
         return true;
       }
@@ -141,7 +141,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.ViewOnSelectListNodeOn = true;
-      if (null != IsCheckedChanged)
+      if (IsCheckedChanged is not null)
         IsCheckedChanged(this, EventArgs.Empty);
     }
 
@@ -160,7 +160,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       get
       {
-        if (null != IsCheckedChanged)
+        if (IsCheckedChanged is not null)
           IsCheckedChanged(this, EventArgs.Empty);
         return true;
       }

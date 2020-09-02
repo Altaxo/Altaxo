@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
           relocateOptions = new DocNodePathReplacementOptions();
           relocateOptions.AddPathReplacementsForAllProjectItemTypes(originalFolderName, newFolderName);
         }
-        Current.Project.Folders.CopyItemsToFolder(list, newFolderName, null != relocateOptions ? relocateOptions.Visit : (DocNodeProxyReporter)null, dlgDoc.OverwriteExistingItems);
+        Current.Project.Folders.CopyItemsToFolder(list, newFolderName, relocateOptions is not null ? relocateOptions.Visit : (DocNodeProxyReporter)null, dlgDoc.OverwriteExistingItems);
       }
     }
 
@@ -137,7 +137,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       if (areDocumentsFromOneFolder)
       {
         var relocateData = Current.Gui.YesNoCancelMessageBox("Do you want to relocate the references in the copied plots so that they point to the destination folder?", "Question", null);
-        if (null == relocateData)
+        if (relocateData is null)
           return;
 
         if (true == relocateData)
@@ -147,7 +147,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         }
       }
 
-      Current.Project.Folders.CopyItemsToFolder(list, newFolderName, null != relocateOptions ? relocateOptions.Visit : (DocNodeProxyReporter)null, false);
+      Current.Project.Folders.CopyItemsToFolder(list, newFolderName, relocateOptions is not null ? relocateOptions.Visit : (DocNodeProxyReporter)null, false);
     }
 
     public static void RenameSelectedListItem(this ProjectBrowseController ctrl)

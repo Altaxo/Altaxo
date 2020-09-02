@@ -59,7 +59,7 @@ namespace Altaxo.Main
       var docType = Type.GetType(docTypeString, false, false);
       var exporterType = Type.GetType(exporterTypeString, false, false);
 
-      if (null == docType || null == exporterType)
+      if (docType is null || exporterType is null)
         return null;
 
       if (!(typeof(IProjectItem).IsAssignableFrom(docType)))
@@ -84,7 +84,7 @@ namespace Altaxo.Main
 
       public Graph3DExportBindingDescriptor(Codon codon, Type projectItemType, Type graphicalExporterType)
       {
-        if (codon == null)
+        if (codon is null)
           throw new ArgumentNullException(nameof(codon));
 
         if (!Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(graphicalExporterType, typeof(Altaxo.Main.IProjectItemImageExporter)))

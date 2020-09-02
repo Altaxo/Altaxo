@@ -109,7 +109,7 @@ namespace Altaxo.Gui.Pads.Notes
           IsSelected = true;
 
           // now focus back to the formerly active workbench window.
-          if (null != activeContent)
+          if (activeContent is not null)
           {
             activeContent.IsActive = true;
             activeContent.IsSelected = true;
@@ -155,12 +155,12 @@ namespace Altaxo.Gui.Pads.Notes
       {
         if (!object.ReferenceEquals(_view, value))
         {
-          if (null != _view)
+          if (_view is not null)
             DetachView();
 
           _view = value as INotesView;
 
-          if (null != _view)
+          if (_view is not null)
           {
             Initialize(false);
             AttachView();

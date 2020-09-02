@@ -94,7 +94,7 @@ namespace Altaxo.Gui.Scripting
 
     private static void EhExternalHelpRequired(ExternalHelpItem helpItem)
     {
-      if (null == helpItem.GetOneOfTheseAssembliesOrNull(Altaxo.Settings.Scripting.ReferencedAssemblies.AssembliesIncludedInClassReference))
+      if (helpItem.GetOneOfTheseAssembliesOrNull(Altaxo.Settings.Scripting.ReferencedAssemblies.AssembliesIncludedInClassReference) is null)
       {
         ShowMicrosoftClassReferenceHelp(helpItem);
       }
@@ -155,11 +155,11 @@ namespace Altaxo.Gui.Scripting
 
     protected static void ShowAltaxoClassRefHelpFromChmFile(string chmFileName, string chmTopic)
     {
-      if (null == _helpViewerAppDomain)
+      if (_helpViewerAppDomain is null)
       {
         _helpViewerAppDomain = AppDomain.CreateDomain("AltaxoHelpViewer");
       }
-      if (null == _helpViewerStarter || null == _helpViewerMainThread || !_helpViewerMainThread.IsAlive)
+      if (_helpViewerStarter is null || _helpViewerMainThread is null || !_helpViewerMainThread.IsAlive)
       {
         _helpViewerStarter = (Altaxo.Gui.HelpViewing.HelpViewerStarter)_helpViewerAppDomain.CreateInstanceAndUnwrap("AltaxoHelpViewer", typeof(Altaxo.Gui.HelpViewing.HelpViewerStarter).FullName);
         _helpViewerMainThread = new Thread(_helpViewerStarter.Start);
@@ -190,7 +190,7 @@ namespace Altaxo.Gui.Scripting
       }
       set
       {
-        if (_codeView == null)
+        if (_codeView is null)
         {
           string scriptName = System.Guid.NewGuid().ToString() + ".cs";
           InitializeEditor(value, scriptName);
@@ -251,7 +251,7 @@ namespace Altaxo.Gui.Scripting
       var result = _codeView.Compile(texts => new CodeTextsWithHash(texts).Hash, GetReferencedAssemblies());
       var scriptTextsWithHash = new CodeTextsWithHash(result.CodeText);
 
-      if (result.CompiledAssembly != null)
+      if (result.CompiledAssembly is not null)
       {
         return new ScriptCompilerSuccessfulResult(scriptTextsWithHash, result.CompiledAssembly);
       }
