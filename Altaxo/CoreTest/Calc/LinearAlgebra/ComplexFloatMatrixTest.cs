@@ -477,7 +477,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       ComplexFloatMatrix a = null;
       ComplexFloatMatrix b = a;
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test implicit conversion from Complexfloatmatrix.
@@ -507,7 +507,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       ComplexFloatMatrix a = null;
       var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test implicit conversion from Doublematrix.
@@ -537,7 +537,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       FloatMatrix a = null;
       ComplexFloatMatrix b = a;
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test implicit conversion from floatmatrix.
@@ -567,7 +567,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       FloatMatrix a = null;
       var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test implicit conversion from floatmatrix.
@@ -597,7 +597,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       FloatMatrix a = null;
       ComplexFloatMatrix b = a;
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test implicit conversion from floatmatrix.
@@ -627,7 +627,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       FloatMatrix a = null;
       var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test implicit conversion from ComplexFloat mult dim array.
@@ -670,7 +670,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       ComplexFloat[,] a = null;
       var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test implicit conversion from float mult dim array.
@@ -696,7 +696,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       float[,] a = null;
       var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test implicit conversion from float mult dim array.
@@ -722,7 +722,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       float[,] a = null;
       var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test explicit conversion from ComplexDoubleMatrix
@@ -752,7 +752,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       ComplexDoubleMatrix a = null;
       var b = (ComplexFloatMatrix)a;
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test explicit conversion from ComplexDoubleMatrix
@@ -782,7 +782,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       DoubleMatrix a = null;
       var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test explicit conversion from Complex array
@@ -810,7 +810,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Complex[,] a = null;
       var b = (ComplexFloatMatrix)a;
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test explicit conversion from Complex array
@@ -838,7 +838,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Complex[,] a = null;
       var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test explicit conversion from Jagged Complex array
@@ -847,7 +847,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Complex[,] a = null;
       var b = (ComplexFloatMatrix)a;
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //test equals method

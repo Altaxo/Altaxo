@@ -66,7 +66,7 @@ namespace AltaxoTest.Main
         {
           System.Threading.Thread.Sleep(1);
 
-          if (null == _suspendToken)
+          if (_suspendToken is null)
           {
             _suspendToken = _doc.SuspendGetToken();
           }
@@ -86,7 +86,7 @@ namespace AltaxoTest.Main
           }
         } while ((DateTime.UtcNow - start).TotalSeconds < 1);
 
-        if (null != _suspendToken)
+        if (_suspendToken is not null)
         {
           _suspendToken.Dispose();
           _suspendToken = null;
@@ -127,7 +127,7 @@ namespace AltaxoTest.Main
       public int _NumberOfResumes;
       public int _NumberOfResumesSilently;
 
-      public int NumberOfChildTokens { get { return _suspendTokensOfChilds == null ? 0 : _suspendTokensOfChilds.Count; } }
+      public int NumberOfChildTokens { get { return _suspendTokensOfChilds is null ? 0 : _suspendTokensOfChilds.Count; } }
 
       public TestNodeWithoutChild_SuspendableDocumentNode()
       {
@@ -140,7 +140,7 @@ namespace AltaxoTest.Main
 
       protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
       {
-        if (null != _child)
+        if (_child is not null)
           yield return new DocumentNodeAndName(_child, () => _child = null, "Child");
       }
 

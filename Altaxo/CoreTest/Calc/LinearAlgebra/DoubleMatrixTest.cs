@@ -330,7 +330,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       FloatMatrix a = null;
       DoubleMatrix b = a;
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test implicit conversion from floatmatrix.
@@ -360,7 +360,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       FloatMatrix a = null;
       var b = DoubleMatrix.ToDoubleMatrix(a);
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test implicit conversion from double mult dim array.
@@ -386,7 +386,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       double[,] a = null;
       DoubleMatrix b = a;
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test implicit conversion from double mult dim array.
@@ -412,7 +412,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       double[,] a = null;
       var b = DoubleMatrix.ToDoubleMatrix(a);
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test implicit conversion from float mult dim array.
@@ -438,7 +438,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       float[,] a = null;
       DoubleMatrix b = a;
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //Test implicit conversion from float mult dim array.
@@ -464,7 +464,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       float[,] a = null;
       var b = DoubleMatrix.ToDoubleMatrix(a);
-      Assert.IsTrue(b == null);
+      Assert.IsTrue(b is null);
     }
 
     //test equals method

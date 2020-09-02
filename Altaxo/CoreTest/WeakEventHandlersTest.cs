@@ -48,7 +48,7 @@ namespace Altaxo
 
       public void FireEvent() => Changed?.Invoke(this, EventArgs.Empty);
 
-      public bool AreChangedHandlersAttached => (Changed != null);
+      public bool AreChangedHandlersAttached => (Changed is not null);
     }
 
 
@@ -222,7 +222,7 @@ namespace Altaxo
       public static event EventHandler Changed;
       public static void Fire() => Changed?.Invoke(null, EventArgs.Empty);
 
-      public static bool IsEventAttached => null != Changed;
+      public static bool IsEventAttached => Changed is not null;
     }
 
     [Test]

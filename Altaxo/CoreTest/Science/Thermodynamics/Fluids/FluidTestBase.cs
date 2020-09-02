@@ -186,7 +186,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     public virtual void SublimationLineData_Test()
     {
-      if (null == _testDataSublimationLine)
+      if (_testDataSublimationLine is null)
       {
         Assert.IsFalse(_fluid.IsSublimationPressureCurveImplemented);
         return;

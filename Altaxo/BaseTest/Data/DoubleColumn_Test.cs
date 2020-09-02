@@ -127,7 +127,7 @@ namespace AltaxoTest.Data
 
       public void Resume()
       {
-        if (null != _suspendToken)
+        if (_suspendToken is not null)
         {
           _suspendToken.Resume();
           _suspendToken = null;

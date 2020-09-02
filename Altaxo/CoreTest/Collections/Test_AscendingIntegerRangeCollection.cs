@@ -984,7 +984,7 @@ namespace AltaxoTest.Collections
         coll.RemoveRangeByFirstAndLastInclusive(r, r);
 
         error = AssertEqual(coll, hashSet);
-        if (null != error)
+        if (error is not null)
         {
           indexThatWentWrong = i;
           break;

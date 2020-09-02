@@ -58,7 +58,7 @@ namespace AltaxoTest.Collections.Operations
 
     public void TestSingleAddsWithWindowWidth(int windowWidth)
     {
-      if (null == vals)
+      if (vals is null)
         Initialize();
 
       var min = new Altaxo.Collections.Operations.MinimumOnSlidingWindow<double>(windowWidth, double.PositiveInfinity);
