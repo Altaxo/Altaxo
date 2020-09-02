@@ -74,13 +74,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhSelectLabelColumn_Click(object sender, RoutedEventArgs e)
     {
-      if (null != LabelColumnSelected)
+      if (LabelColumnSelected is not null)
         LabelColumnSelected();
     }
 
     private void EhIndependentColor_CheckChanged(object sender, RoutedEventArgs e)
     {
-      if (null != LabelColorLinkageChanged)
+      if (LabelColorLinkageChanged is not null)
         LabelColorLinkageChanged();
     }
 
@@ -100,7 +100,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public void Init_Transformation(string boxText, string toolTip)
     {
-      if (null == boxText)
+      if (boxText is null)
       {
         _guiLabelTransformation.Visibility = Visibility.Collapsed;
       }
@@ -411,19 +411,19 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhLabelBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != LabelBrushChanged)
+      if (LabelBrushChanged is not null)
         LabelBrushChanged();
     }
 
     private void EhBackgroundBrushChanged(object sender, EventArgs e)
     {
-      if (null != BackgroundBrushChanged)
+      if (BackgroundBrushChanged is not null)
         BackgroundBrushChanged();
     }
 
     private void EhBackgroundColorLinkageChanged()
     {
-      if (null != BackgroundColorLinkageChanged)
+      if (BackgroundColorLinkageChanged is not null)
         BackgroundColorLinkageChanged();
     }
 
@@ -439,7 +439,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhBackgroundStyleInstanceChanged(object sender, EventArgs e)
     {
-      if (null != UseBackgroundChanged)
+      if (UseBackgroundChanged is not null)
         UseBackgroundChanged();
     }
   }

@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Common
     {
       get
       {
-        return _thread != null && _thread.IsAlive;
+        return _thread is not null && _thread.IsAlive;
       }
     }
 
@@ -64,17 +64,17 @@ namespace Altaxo.Gui.Common
 
     public void StartExecution(Action<IProgressReporter> action, int milliSecondsUntilShowUp)
     {
-      if (_thread != null && _thread.IsAlive)
+      if (_thread is not null && _thread.IsAlive)
         throw new ApplicationException("Background thread is still executed");
 
-      if (null != _timer)
+      if (_timer is not null)
         throw new ApplicationException("Timer is still active");
 
       _monitor = new ExternalDrivenBackgroundMonitor();
       _thread = new System.Threading.Thread(() => action(_monitor));
 
-      _btCancel.Visibility = _monitor != null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-      _btInterrupt.Visibility = _monitor == null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+      _btCancel.Visibility = _monitor is not null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+      _btInterrupt.Visibility = _monitor is null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
       _btAbort.Visibility = System.Windows.Visibility.Collapsed;
 
       _showUpDownConter = milliSecondsUntilShowUp / TimerTick_ms;
@@ -103,12 +103,12 @@ namespace Altaxo.Gui.Common
     {
       if (_showUpDownConter == 0)
       {
-        if (null != StartDelayExpired)
+        if (StartDelayExpired is not null)
           StartDelayExpired();
       }
       _showUpDownConter--;
 
-      if (_monitor != null)
+      if (_monitor is not null)
       {
         if (_monitor.HasReportText)
         {
@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Common
         _timer = null;
         _thread = null;
 
-        if (ExecutionFinished != null)
+        if (ExecutionFinished is not null)
           ExecutionFinished(_wasCancelledByUser ? false : true);
       }
     }
@@ -149,7 +149,7 @@ namespace Altaxo.Gui.Common
     private void EhCancelClicked(object sender, RoutedEventArgs e)
     {
       _wasCancelledByUser = true;
-      if (_monitor != null)
+      if (_monitor is not null)
       {
         _monitor.SetCancellationPending();
         _btCancel.Visibility = System.Windows.Visibility.Collapsed;

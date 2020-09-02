@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     private void EhItemListDoubleClick(object sender, MouseButtonEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiShapeGroupItems);
-      if (null != SelectedItemEditing)
+      if (SelectedItemEditing is not null)
         SelectedItemEditing();
     }
   }

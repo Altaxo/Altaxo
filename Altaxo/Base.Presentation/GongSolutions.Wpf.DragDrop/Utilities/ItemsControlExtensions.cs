@@ -109,7 +109,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
         itemsControl => GetSelectedItems((TItemsControl)itemsControl),
         (itemsControl, o) => GetIsItemSelected((TItemsControl)itemsControl, o),
         (itemsControl, o, b) => SetIsItemSelected((TItemsControl)itemsControl, o, b),
-        null == GetOrientation ? (Func<ItemsControl, System.Windows.Controls.Orientation?>)null : (itemsControl => GetOrientation((TItemsControl)itemsControl))
+        GetOrientation is null ? (Func<ItemsControl, System.Windows.Controls.Orientation?>)null : (itemsControl => GetOrientation((TItemsControl)itemsControl))
         );
     }
 
@@ -272,11 +272,11 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     {
       var element = itemsControl.InputHitTest(position) as DependencyObject;
 
-      if (element != null)
+      if (element is not null)
       {
         var groupItem = element.GetVisualAncestor<GroupItem>();
 
-        if (groupItem != null)
+        if (groupItem is not null)
         {
           return groupItem.Content as CollectionViewGroup;
         }
@@ -288,7 +288,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     public static bool CanSelectMultipleItems(this ItemsControl itemsControl)
     {
       var info = FindItemsControlInformation(itemsControl);
-      if (null != info)
+      if (info is not null)
       {
         return info.CanSelectMultipleItems(itemsControl);
       }
@@ -314,7 +314,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     {
       var itemType = GetItemContainerType(itemsControl, out var isItemContainer);
 
-      if (itemType != null)
+      if (itemType is not null)
       {
         return isItemContainer
                  ? (UIElement)child.GetVisualAncestor(itemType, itemsControl)
@@ -329,7 +329,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       var inputElement = itemsControl.InputHitTest(position);
       var uiElement = inputElement as UIElement;
 
-      if (uiElement != null)
+      if (uiElement is not null)
       {
         return GetItemContainer(itemsControl, uiElement);
       }
@@ -373,7 +373,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
                                  var itemContainer = isItemContainer
                                                        ? result.VisualHit.GetVisualAncestor(itemContainerType, itemsControl)
                                                        : result.VisualHit.GetVisualAncestor(itemContainerType);
-                                 if (itemContainer != null && !hits.Contains(itemContainer) && ((UIElement)itemContainer).IsVisible == true)
+                                 if (itemContainer is not null && !hits.Contains(itemContainer) && ((UIElement)itemContainer).IsVisible == true)
                                  {
                                    hits.Add(itemContainer);
                                  }
@@ -390,7 +390,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       // determines if the itemsControl is not a ListView, ListBox or TreeView
       isItemContainer = false;
 
-      if (null != info)
+      if (info is not null)
       {
         return info.ItemContainerType;
       }
@@ -435,7 +435,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
 
           // Ensure that this actually *is* an item container by checking it with
           // ItemContainerGenerator.
-          if (itemContainer != null &&
+          if (itemContainer is not null &&
               itemsControl.ItemContainerGenerator.IndexFromContainer(itemContainer) != -1)
           {
             isItemContainer = true;
@@ -451,12 +451,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     {
       var itemsPresenter = itemsControl.GetVisualDescendent<ItemsPresenter>();
 
-      if (itemsPresenter != null)
+      if (itemsPresenter is not null)
       {
         var itemsPanel = VisualTreeHelper.GetChild(itemsPresenter, 0);
         var orientationProperty = itemsPanel.GetType().GetProperty("Orientation", typeof(Orientation));
 
-        if (orientationProperty != null)
+        if (orientationProperty is not null)
         {
           return (Orientation)orientationProperty.GetValue(itemsPanel, null);
         }
@@ -470,12 +470,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     {
       var itemsPresenter = itemsControl.GetVisualDescendent<ItemsPresenter>();
 
-      if (itemsPresenter != null)
+      if (itemsPresenter is not null)
       {
         var itemsPanel = VisualTreeHelper.GetChild(itemsPresenter, 0);
         var flowDirectionProperty = itemsPanel.GetType().GetProperty("FlowDirection", typeof(FlowDirection));
 
-        if (flowDirectionProperty != null)
+        if (flowDirectionProperty is not null)
         {
           return (FlowDirection)flowDirectionProperty.GetValue(itemsPanel, null);
         }
@@ -513,7 +513,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     {
       ItemsControlInformation info = FindItemsControlInformation(itemsControl);
 
-      if (null != info)
+      if (info is not null)
       {
         return info.GetSelectedItems(itemsControl);
       }
@@ -556,7 +556,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     {
       ItemsControlInformation info = FindItemsControlInformation(itemsControl);
 
-      if (null != info)
+      if (info is not null)
       {
         return info.GetIsItemSelected(itemsControl, item);
       }
@@ -586,7 +586,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     {
       var info = FindItemsControlInformation(itemsControl);
 
-      if (null != info && null != info.SetIsItemSelected)
+      if (info is not null && info.SetIsItemSelected is not null)
       {
         info.SetIsItemSelected(itemsControl, item, value);
       }
@@ -642,19 +642,19 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       var info = FindItemsControlInformation(itemsControl);
 
       Orientation? effectiveSearchDirection = searchDirection;
-      if (null != info && null != info.GetOrientation)
+      if (info is not null && info.GetOrientation is not null)
         effectiveSearchDirection = info.GetOrientation(itemsControl);
 
       foreach (var i in items)
       {
         var uiElement = i as UIElement;
 
-        if (uiElement != null)
+        if (uiElement is not null)
         {
           var p = uiElement.TransformToAncestor(itemsControl).Transform(new Point(0, 0));
           var distance = double.MaxValue;
 
-          if (null == effectiveSearchDirection)
+          if (effectiveSearchDirection is null)
           {
             var xDiff = position.X - p.X;
             var yDiff = position.Y - p.Y;

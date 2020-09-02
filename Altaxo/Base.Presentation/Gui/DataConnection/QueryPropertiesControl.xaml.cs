@@ -47,7 +47,7 @@ namespace Altaxo.Gui.DataConnection
       _chkDistinct.IsChecked = isDistinct;
       _numTopN.Value = topN;
 
-      if (null != groupBy.FirstSelectedNode)
+      if (groupBy.FirstSelectedNode is not null)
       {
         _cmbGroupBy.IsEnabled = true;
         GuiHelper.Initialize(_cmbGroupBy, groupBy);

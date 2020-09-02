@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
       {
-        if (value == null)
+        if (value is null)
           return Binding.DoNothing;
         if (value is string fontFamilyName)
         {
@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Common.Drawing
       {
         get
         {
-          if (null == _imgSource)
+          if (_imgSource is null)
             _imgSource = GetImage((string)Value);
           return _imgSource;
         }
@@ -149,7 +149,7 @@ namespace Altaxo.Gui.Common.Drawing
         if (!typeface.TryGetGlyphTypeface(out var glyphTypeFace))
           glyphTypeFace = null;
 
-        if (null != glyphTypeFace)
+        if (glyphTypeFace is not null)
         {
           var glyphRun = new GlyphRun();
           ((System.ComponentModel.ISupportInitialize)glyphRun).BeginInit();

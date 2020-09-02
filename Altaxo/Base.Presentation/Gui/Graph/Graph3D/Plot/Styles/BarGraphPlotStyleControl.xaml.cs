@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         _penGlue.Pen = value;

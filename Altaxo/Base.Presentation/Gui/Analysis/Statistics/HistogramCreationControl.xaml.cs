@@ -215,14 +215,14 @@ namespace Altaxo.Gui.Analysis.Statistics
       GuiHelper.SynchronizeSelectionFromGui(_guiBinningType);
 
       var ev = BinningTypeChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
     private void EhAutomaticBinningTypeChanged(object sender, RoutedEventArgs e)
     {
       var ev = AutomaticBinningTypeChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
   }

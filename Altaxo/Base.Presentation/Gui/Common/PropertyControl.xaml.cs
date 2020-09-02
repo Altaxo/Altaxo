@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if (value != null && value.Length >= 1)
+        if (value is not null && value.Length >= 1)
           _propertyGrid.Instance = value[0];
         else
           _propertyGrid.Instance = null;

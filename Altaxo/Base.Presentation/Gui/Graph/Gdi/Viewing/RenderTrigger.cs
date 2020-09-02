@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       base.OnRender(drawingContext);
       // Trigger the rendering
       var action = RenderTriggered;
-      if (null != action)
+      if (action is not null)
       {
         //System.Diagnostics.Debug.WriteLine("Before firing event RenderTriggered");
         action(ActualWidth, ActualHeight);

@@ -68,37 +68,37 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhUseFillChanged(object sender, RoutedEventArgs e)
     {
-      if (null != UseFillChanged)
+      if (UseFillChanged is not null)
         UseFillChanged();
     }
 
     private void EhIndependentFillColorChanged(object sender, RoutedEventArgs e)
     {
-      if (null != IndependentFillColorChanged)
+      if (IndependentFillColorChanged is not null)
         IndependentFillColorChanged();
     }
 
     private void EhFillBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != FillBrushChanged)
+      if (FillBrushChanged is not null)
         FillBrushChanged();
     }
 
     private void EhUseFrameChanged(object sender, RoutedEventArgs e)
     {
-      if (null != UseFrameChanged)
+      if (UseFrameChanged is not null)
         UseFrameChanged();
     }
 
     private void EhIndependentFrameColorChanged(object sender, RoutedEventArgs e)
     {
-      if (null != IndependentFrameColorChanged)
+      if (IndependentFrameColorChanged is not null)
         IndependentFrameColorChanged();
     }
 
     private void EhFramePenChanged(object sender, EventArgs e)
     {
-      if (null != FramePenChanged)
+      if (FramePenChanged is not null)
         FramePenChanged();
     }
 
@@ -190,7 +190,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException("FramePen");
         _framePenGlue.Pen = value;
       }

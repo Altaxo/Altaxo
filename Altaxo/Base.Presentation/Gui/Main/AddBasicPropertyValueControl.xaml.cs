@@ -184,7 +184,7 @@ namespace Altaxo.Gui.Main
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiPropertyType);
       var ev = PropertyTypeChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
   }

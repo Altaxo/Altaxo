@@ -58,7 +58,7 @@ namespace Altaxo.Gui.DataConnection
     {
       get
       {
-        if (null == _treeImageConverter)
+        if (_treeImageConverter is null)
         {
           _treeImageConverter = new IndexToImageConverter(
               new string[]{
@@ -82,7 +82,7 @@ namespace Altaxo.Gui.DataConnection
     {
       GuiHelper.SynchronizeSelectionFromGui(_cmbConnString);
       var ev = ConnectionStringSelectedFromList;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }
@@ -93,7 +93,7 @@ namespace Altaxo.Gui.DataConnection
       if (e.Key == Key.Enter)
       {
         var ev = ConnectionStringChangedByUser;
-        if (null != ev)
+        if (ev is not null)
         {
           e.Handled = true;
           ev(_cmbConnString.Text);
@@ -116,7 +116,7 @@ namespace Altaxo.Gui.DataConnection
       GuiHelper.SynchronizeSelectionFromGui(_tab);
 
       var ev = SelectedTabChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
@@ -124,7 +124,7 @@ namespace Altaxo.Gui.DataConnection
     private void _btnConnPicker_Click(object sender, RoutedEventArgs e)
     {
       var ev = CmdChooseConnectionStringFromDialog;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 

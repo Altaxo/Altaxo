@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Drawing.D3D
     public static string GetNameForMaterial(IMaterial material)
     {
       string name;
-      if (material == null)
+      if (material is null)
       {
         name = "<<null>>";
       }

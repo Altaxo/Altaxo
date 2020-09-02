@@ -218,7 +218,7 @@ namespace Altaxo.Gui
           {
             var fileNameForStyle = TryGetPath(altaxoFam[i]);
 
-            if (null != fileNameForStyle)
+            if (fileNameForStyle is not null)
             {
               var fc = new System.Drawing.Text.PrivateFontCollection(); // due to the above mentioned bug, we need to load each individual font file into a separate PrivateFontCollection
               fc.AddFontFile(fileNameForStyle);
@@ -226,7 +226,7 @@ namespace Altaxo.Gui
             }
           }
 
-          if (null != sdFamilies[IdxRegular] || null != sdFamilies[IdxBold] || null != sdFamilies[IdxItalic] || null != sdFamilies[IdxBoldItalic])
+          if (sdFamilies[IdxRegular] is not null || sdFamilies[IdxBold] is not null || sdFamilies[IdxItalic] is not null || sdFamilies[IdxBoldItalic] is not null)
           {
             gdiFontDictionary[altaxoFamilyEntry.Key] = sdFamilies;
           }
@@ -382,16 +382,16 @@ namespace Altaxo.Gui
 
         tf = null;
         var style = font.Style;
-        if (style.HasFlag(FontXStyle.Italic) && style.HasFlag(FontXStyle.Italic) && null == tf)
+        if (style.HasFlag(FontXStyle.Italic) && style.HasFlag(FontXStyle.Italic) && tf is null)
           tf = fam[IdxBoldItalic];
-        if (style.HasFlag(FontXStyle.Bold) && null == tf)
+        if (style.HasFlag(FontXStyle.Bold) && tf is null)
           tf = fam[IdxBold];
-        if (style.HasFlag(FontXStyle.Italic) && null == tf)
+        if (style.HasFlag(FontXStyle.Italic) && tf is null)
           tf = fam[IdxItalic];
-        if (null == tf)
+        if (tf is null)
           tf = fam[IdxRegular];
 
-        if (null != tf)
+        if (tf is not null)
           return tf;
       }
 
@@ -446,7 +446,7 @@ namespace Altaxo.Gui
           }
         }
 
-        if (null != tf)
+        if (tf is not null)
           return tf;
       }
 
@@ -609,7 +609,7 @@ namespace Altaxo.Gui
               break;
             }
           }
-          for (; j < fontList.Count && null != fam[IdxBold] && FontComparerForGroupingIntoAltaxoFontFamilies.IsSameFamilyAndStretchAndWeight(fam[IdxBold], fontList[j]); ++j)
+          for (; j < fontList.Count && fam[IdxBold] is not null && FontComparerForGroupingIntoAltaxoFontFamilies.IsSameFamilyAndStretchAndWeight(fam[IdxBold], fontList[j]); ++j)
           {
             if (fontList[j].Style == FontStyles.Italic || fontList[j].Style == FontStyles.Oblique) // and finally the italic style with heavier weight
             {
@@ -620,7 +620,7 @@ namespace Altaxo.Gui
           }
 
           // if all 4 styles have corresponding typefaces (and only then), we consider this as an AltaxoFontFamily and add it to the collection
-          if (null != fam[IdxItalic] && null != fam[IdxBold] && null != fam[IdxBoldItalic])
+          if (fam[IdxItalic] is not null && fam[IdxBold] is not null && fam[IdxBoldItalic] is not null)
           {
             string familyName = GetFontFamilyName(fam[IdxRegular]);
             if (altaxoFontFamilies.ContainsKey(familyName))
@@ -719,10 +719,10 @@ namespace Altaxo.Gui
           offsetX += geo.AdvanceWidth;
         }
 
-        if (null != geo && geo.RightSideBearing < 0)
+        if (geo is not null && geo.RightSideBearing < 0)
           offsetX += -geo.RightSideBearing;
 
-        return new VectorD3D(offsetX * scale, null == geo ? 0 : geo.LineSpacing * scale, font.Depth);
+        return new VectorD3D(offsetX * scale, geo is null ? 0 : geo.LineSpacing * scale, font.Depth);
       }
 
       /// <summary>

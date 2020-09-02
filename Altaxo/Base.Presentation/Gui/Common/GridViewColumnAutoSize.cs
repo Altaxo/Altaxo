@@ -51,20 +51,20 @@ namespace Altaxo.Gui.Common
     private static void AutoWidthPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
     {
       var grid = sender as ListView;
-      if (grid == null)
+      if (grid is null)
         return;
       grid.SizeChanged += delegate (object listView, SizeChangedEventArgs e)
       {
         var lv = listView as ListView;
-        if (lv == null)
+        if (lv is null)
           return;
         var v = lv.View as GridView;
-        if (v == null)
+        if (v is null)
           return;
         CalculateSizes(v, GetAutoWidth(lv), e.NewSize.Width);
       };
       var view = grid.View as GridView;
-      if (view == null)
+      if (view is null)
         return;
       CalculateSizes(view, args.NewValue as string, grid.ActualWidth);
     }

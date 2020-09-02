@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     {
       _grac = ctrl;
 
-      if (_grac != null)
+      if (_grac is not null)
         _grac.SetPanelCursor(Cursors.Pen);
     }
 
@@ -129,7 +129,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
         if (bShiftKey && _currentPoint > 0)
         {
-          if (_grac.ActiveLayer != null) // with an active layer, we transform to layer coordinates
+          if (_grac.ActiveLayer is not null) // with an active layer, we transform to layer coordinates
           {
             var currMouseLayerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(_positionCurrentMouseInRootLayerCoordinates);
             double x = currMouseLayerCoord.X - _Points[_currentPoint - 1].LayerCoordinates.X;
@@ -173,7 +173,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     {
       if (_currentPoint >= 1)
       {
-        if (null != _grac.ActiveLayer)
+        if (_grac.ActiveLayer is not null)
         {
           g.MultiplyTransform(_cachedActiveLayerTransformationGdi);
           //					g.TranslateTransform((float)_grac.ActiveLayer.Position.X, (float)_grac.ActiveLayer.Position.Y);

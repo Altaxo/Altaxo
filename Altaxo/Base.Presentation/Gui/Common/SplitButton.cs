@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Common
 
     private bool IsOverDropDownArrow(MouseEventArgs e)
     {
-      if (dropDownArrow == null)
+      if (dropDownArrow is null)
         return false;
       return e.GetPosition(dropDownArrow).X >= 0;
     }
@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Common
       if (IsOverDropDownArrow(e))
       {
         e.Handled = true;
-        if (DropDownMenu != null)
+        if (DropDownMenu is not null)
         {
           DropDownMenu.Placement = PlacementMode.Bottom;
           DropDownMenu.PlacementTarget = this;

@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Common
       {
         int sum = 0;
 
-        if (null != _choices)
+        if (_choices is not null)
         {
           foreach (var item in _choices)
           {

@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Common
     {
       if (e.NewValue is Collections.NGTreeNode)
       {
-        if (null != SelectionChanged)
+        if (SelectionChanged is not null)
           SelectionChanged((Collections.NGTreeNode)e.NewValue);
       }
     }

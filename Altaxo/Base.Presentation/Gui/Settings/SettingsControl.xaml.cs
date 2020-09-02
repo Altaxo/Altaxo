@@ -49,13 +49,13 @@ namespace Altaxo.Gui.Settings
 
     private void EhHostControlKeyboardFocused(object sender, KeyboardFocusChangedEventArgs e)
     {
-      if (null != CurrentTopicViewMadeDirty)
+      if (CurrentTopicViewMadeDirty is not null)
         CurrentTopicViewMadeDirty();
     }
 
     private void EhTopicChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
-      if (TopicSelectionChanged != null)
+      if (TopicSelectionChanged is not null)
         TopicSelectionChanged((Collections.NGTreeNode)e.NewValue);
     }
 
@@ -94,7 +94,7 @@ namespace Altaxo.Gui.Settings
     {
       var item = _guiTopics.ItemContainerGenerator.ContainerFromItem(node) as TreeViewItem;
 
-      if (null != item)
+      if (item is not null)
       {
         item.Focus();
         item.IsSelected = true;

@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Pads.LightingPad
       }
       set
       {
-        if (null != value)
+        if (value is not null)
         {
           _lighting = value;
           _guiAmbientControl.SelectedValue = _lighting.AmbientLight;

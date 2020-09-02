@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Common
     protected virtual void SetupBindings()
     {
       _textBox = Template.FindName("_textBox", this) as TextBox;
-      if (null != _textBox)
+      if (_textBox is not null)
       {
         var binding = new Binding
         {
@@ -288,7 +288,7 @@ namespace Altaxo.Gui.Common
     private static void OnIncreaseCommand(object sender, ExecutedRoutedEventArgs e)
     {
       var control = sender as NumericUpDownBase;
-      if (control != null)
+      if (control is not null)
       {
         control.OnIncrease();
       }
@@ -302,7 +302,7 @@ namespace Altaxo.Gui.Common
     private static void OnDecreaseCommand(object sender, ExecutedRoutedEventArgs e)
     {
       var control = sender as NumericUpDownBase;
-      if (control != null)
+      if (control is not null)
       {
         control.OnDecrease();
       }
@@ -316,7 +316,7 @@ namespace Altaxo.Gui.Common
     private static void OnGotoMinimumCommand(object sender, ExecutedRoutedEventArgs e)
     {
       var control = sender as NumericUpDownBase;
-      if (control != null)
+      if (control is not null)
       {
         control.OnGotoMinimum();
       }
@@ -330,7 +330,7 @@ namespace Altaxo.Gui.Common
     private static void OnGotoMaximumCommand(object sender, ExecutedRoutedEventArgs e)
     {
       var control = sender as NumericUpDownBase;
-      if (control != null)
+      if (control is not null)
       {
         control.OnGotoMaximum();
       }

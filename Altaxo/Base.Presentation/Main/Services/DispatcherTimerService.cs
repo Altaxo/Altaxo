@@ -53,18 +53,18 @@ namespace Altaxo.Main.Services
     {
       add
       {
-        bool emptyBefore = null == _tickEvery10ms;
+        bool emptyBefore = _tickEvery10ms is null;
         _tickEvery10ms += value;
-        if (emptyBefore && null != _tickEvery10ms)
+        if (emptyBefore && _tickEvery10ms is not null)
         {
           EhSubscriberAdded(10);
         }
       }
       remove
       {
-        bool populatedBefore = null != _tickEvery10ms;
+        bool populatedBefore = _tickEvery10ms is not null;
         _tickEvery10ms -= value;
-        if (populatedBefore && null == _tickEvery10ms)
+        if (populatedBefore && _tickEvery10ms is null)
         {
           EhSubscriberRemoved(10);
         }
@@ -78,18 +78,18 @@ namespace Altaxo.Main.Services
     {
       add
       {
-        bool emptyBefore = null == _tickEvery100ms;
+        bool emptyBefore = _tickEvery100ms is null;
         _tickEvery100ms += value;
-        if (emptyBefore && null != _tickEvery100ms)
+        if (emptyBefore && _tickEvery100ms is not null)
         {
           EhSubscriberAdded(100);
         }
       }
       remove
       {
-        bool populatedBefore = null != _tickEvery100ms;
+        bool populatedBefore = _tickEvery100ms is not null;
         _tickEvery100ms -= value;
-        if (populatedBefore && null == _tickEvery100ms)
+        if (populatedBefore && _tickEvery100ms is null)
         {
           EhSubscriberRemoved(100);
         }
@@ -103,18 +103,18 @@ namespace Altaxo.Main.Services
     {
       add
       {
-        bool emptyBefore = null == _tickEvery1000ms;
+        bool emptyBefore = _tickEvery1000ms is null;
         _tickEvery1000ms += value;
-        if (emptyBefore && null != _tickEvery1000ms)
+        if (emptyBefore && _tickEvery1000ms is not null)
         {
           EhSubscriberAdded(1000);
         }
       }
       remove
       {
-        bool populatedBefore = null != _tickEvery1000ms;
+        bool populatedBefore = _tickEvery1000ms is not null;
         _tickEvery1000ms -= value;
-        if (populatedBefore && null == _tickEvery1000ms)
+        if (populatedBefore && _tickEvery1000ms is null)
         {
           EhSubscriberRemoved(1000);
         }
@@ -145,7 +145,7 @@ namespace Altaxo.Main.Services
     {
       lock (_timerCreatorLock)
       {
-        if (null == _timer)
+        if (_timer is null)
         {
           _timer = new DispatcherTimer(DispatcherPriority.Normal);
           _timersCurrentIntervalMillisecond = milliSeconds;
@@ -167,20 +167,20 @@ namespace Altaxo.Main.Services
       {
         int neededMilliSeconds = int.MaxValue;
 
-        if (null != _tickEvery10ms)
+        if (_tickEvery10ms is not null)
           neededMilliSeconds = 10;
-        else if (null != _tickEvery100ms)
+        else if (_tickEvery100ms is not null)
           neededMilliSeconds = 100;
 
         if (neededMilliSeconds == int.MaxValue) // then remove the timer
         {
-          if (null != _timer)
+          if (_timer is not null)
           {
             _timer.IsEnabled = false;
             _timer = null;
           }
         }
-        else if (null != _timer && neededMilliSeconds > _timersCurrentIntervalMillisecond)
+        else if (_timer is not null && neededMilliSeconds > _timersCurrentIntervalMillisecond)
         {
           _timersCurrentIntervalMillisecond = milliSeconds;
           _timer.Interval = TimeSpan.FromMilliseconds(_timersCurrentIntervalMillisecond);
@@ -196,7 +196,7 @@ namespace Altaxo.Main.Services
         _tickEvery10ms = null;
         _tickEvery100ms = null;
         _tickEvery1000ms = null;
-        if (null != _timer)
+        if (_timer is not null)
         {
           _timer.IsEnabled = false;
           _timer = null;

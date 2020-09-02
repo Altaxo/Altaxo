@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Common.Drawing
       public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
       {
         var val = (ILineCap)value;
-        if (null == val || val is FlatCap)
+        if (val is null || val is FlatCap)
           return _cb._cachedItems[FlatCap.Instance.Name];
         else
           return _cb._cachedItems[val.Name];
@@ -158,7 +158,7 @@ namespace Altaxo.Gui.Common.Drawing
       const int bmpWidth = 48;
       const double lineWidth = bmpHeight * 0.4;
 
-      if (null == _interopBitmap)
+      if (_interopBitmap is null)
         _interopBitmap = new GdiToWpfBitmap(bmpWidth, bmpHeight);
 
       using (var grfx = _interopBitmap.BeginGdiPainting())

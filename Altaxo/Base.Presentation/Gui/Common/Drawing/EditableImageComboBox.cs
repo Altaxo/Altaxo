@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       base.OnRenderSizeChanged(sizeInfo);
 
-      if (null == _img.Parent)
+      if (_img.Parent is null)
       {
         ImplantImage(sizeInfo.NewSize.Height * _relativeImageWidth, sizeInfo.NewSize.Height);
         SetImageFromContent();

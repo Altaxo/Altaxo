@@ -34,11 +34,11 @@ namespace Altaxo.Gui
     /// having a XAML file as context.</remarks>
     public static void SetValueToExtension(this DependencyObject targetObject, DependencyProperty property, MarkupExtension markupExtension)
     {
-      if (targetObject == null)
+      if (targetObject is null)
         throw new ArgumentNullException("targetObject");
-      if (property == null)
+      if (property is null)
         throw new ArgumentNullException("property");
-      if (markupExtension == null)
+      if (markupExtension is null)
         throw new ArgumentNullException("markupExtension");
 
       var serviceProvider = new SetValueToExtensionServiceProvider(targetObject, property);

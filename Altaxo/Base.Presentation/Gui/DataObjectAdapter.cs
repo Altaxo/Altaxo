@@ -47,7 +47,7 @@ namespace Altaxo.Gui
     public static System.Windows.IDataObject FromAltaxoDataObject(Altaxo.Serialization.Clipboard.IDataObject altaxoDataObject)
     {
       var adapter = altaxoDataObject as DataObjectAdapterWpfToAltaxo;
-      if (null != adapter) // is it an adapter from Altaxo to Wpf
+      if (adapter is not null) // is it an adapter from Altaxo to Wpf
         return adapter.DataObjectWpf; // if yes, then we use the underlying Altaxo data object directly, without wrapping it in another adapter
       else
         return new DataObjectAdapterAltaxoToWpf(altaxoDataObject); // else we have to wrap it in an adapter
@@ -60,7 +60,7 @@ namespace Altaxo.Gui
     /// <exception cref="System.ArgumentNullException">dao</exception>
     public DataObjectAdapterAltaxoToWpf(Altaxo.Serialization.Clipboard.IDataObject dao)
     {
-      if (null == dao)
+      if (dao is null)
         throw new ArgumentNullException("dao");
 
       o = dao;
@@ -227,7 +227,7 @@ namespace Altaxo.Gui
     public static Altaxo.Serialization.Clipboard.IDataObject FromWpfDataObject(System.Windows.IDataObject wpfDo)
     {
       var adapter = wpfDo as DataObjectAdapterAltaxoToWpf;
-      if (null != adapter) // is it an adapter from Altaxo to Wpf
+      if (adapter is not null) // is it an adapter from Altaxo to Wpf
         return adapter.DataObjectAltaxo; // if yes, then we use the underlying Altaxo data object directly, without wrapping it in another adapter
       else
         return new DataObjectAdapterWpfToAltaxo(wpfDo); // else we have to wrap it in an adapter
@@ -242,7 +242,7 @@ namespace Altaxo.Gui
     /// <exception cref="System.ArgumentNullException">dao</exception>
     public DataObjectAdapterWpfToAltaxo(System.Windows.IDataObject dao)
     {
-      if (null == dao)
+      if (dao is null)
         throw new ArgumentNullException("dao");
 
       o = dao;

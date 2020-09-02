@@ -70,13 +70,13 @@ namespace Altaxo.Gui.Common
 
     private void item_GotFocus(object sender, RoutedEventArgs e)
     {
-      if (null != ChildControl_Entered)
+      if (ChildControl_Entered is not null)
         ChildControl_Entered(sender, EventArgs.Empty);
     }
 
     private void item_LostFocus(object sender, RoutedEventArgs e)
     {
-      if (null != ChildControl_Validated)
+      if (ChildControl_Validated is not null)
         ChildControl_Validated(sender, EventArgs.Empty);
     }
 
@@ -84,7 +84,7 @@ namespace Altaxo.Gui.Common
     {
       _tabControl.SelectedIndex = index;
       var selItem = _tabControl.SelectedItem as TabItem;
-      if (selItem != null)
+      if (selItem is not null)
         selItem.Focus();
     }
 

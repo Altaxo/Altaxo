@@ -211,13 +211,13 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
       set
       {
         const double symbolSize = 32;
-        if (_converterBlack_White == null)
+        if (_converterBlack_White is null)
           _converterBlack_White = new ScatterSymbolToImageSourceConverter() { PlotColor = NamedColors.Black, SymbolSize = symbolSize };
 
-        if (_converterBlue_Golden == null)
+        if (_converterBlue_Golden is null)
           _converterBlue_Golden = new ScatterSymbolToImageSourceConverter() { PlotColor = NamedColors.Blue, SymbolSize = symbolSize };
 
-        if (_converterGolden_Blue == null)
+        if (_converterGolden_Blue is null)
           _converterGolden_Blue = new ScatterSymbolToImageSourceConverter() { PlotColor = NamedColors.Goldenrod, SymbolSize = symbolSize };
 
         _guiPreviewBlack_White.Source = (ImageSource)_converterBlack_White.Convert(value, typeof(ImageSource), null, GuiCulture.Instance);

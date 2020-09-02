@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Main
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiPropertyList);
       var ev = ItemEditing;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Main
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiAvailablePropertyKeyList);
       var ev = PropertyCreation;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
@@ -93,14 +93,14 @@ namespace Altaxo.Gui.Main
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiAvailablePropertyKeyList);
       var ev = PropertyCreation;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
     private void EhAddNewBasicProperty(object sender, RoutedEventArgs e)
     {
       var ev = AddNewBasicProperty;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
@@ -108,7 +108,7 @@ namespace Altaxo.Gui.Main
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiPropertyList);
       var ev = ItemEditing;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
@@ -116,21 +116,21 @@ namespace Altaxo.Gui.Main
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiPropertyList);
       var ev = ItemRemoving;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
     private void EhShowEditablePropertiesOnly(object sender, RoutedEventArgs e)
     {
       var ev = ShowAllPropertiesChanged;
-      if (null != ev)
+      if (ev is not null)
         ev(false);
     }
 
     private void EhShowAllProperties(object sender, RoutedEventArgs e)
     {
       var ev = ShowAllPropertiesChanged;
-      if (null != ev)
+      if (ev is not null)
         ev(true);
     }
   }

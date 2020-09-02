@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Common.Drawing
       set
       {
         var quant = new DimensionfulQuantity(value, Degree.Instance);
-        if (null != UnitEnvironment)
+        if (UnitEnvironment is not null)
           quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
         SelectedQuantity = quant;
       }
@@ -71,7 +71,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       base.OnSelectedQuantityChanged(obj, args);
 
-      if (null != _img)
+      if (_img is not null)
       {
         var val = SelectedQuantityAsValueInDegrees;
         _img.Source = GetImage(val);

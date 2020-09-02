@@ -79,14 +79,14 @@ namespace Altaxo.Gui.Common.Drawing
       else if (val > 1)
         error = "Value must be less or equal than 1";
 
-      return error == null ? ValidationResult.ValidResult : new ValidationResult(false, error);
+      return error is null ? ValidationResult.ValidResult : new ValidationResult(false, error);
     }
 
     protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       base.OnSelectedQuantityChanged(obj, args);
 
-      if (null != _img)
+      if (_img is not null)
       {
         var val = SelectedQuantityInSIUnits;
         _img.Source = GetImage(val);

@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Common
 
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
     {
-      if (null != ValidationFunction)
+      if (ValidationFunction is not null)
         return ValidationFunction(value, cultureInfo);
       else
         return ValidationResult.ValidResult;
@@ -75,10 +75,10 @@ namespace Altaxo.Gui.Common
 
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
     {
-      if (null != ValidationFunction)
+      if (ValidationFunction is not null)
       {
         string result = ValidationFunction(value, cultureInfo);
-        return null == result ? ValidationResult.ValidResult : new ValidationResult(false, result);
+        return result is null ? ValidationResult.ValidResult : new ValidationResult(false, result);
       }
       else
       {
@@ -106,11 +106,11 @@ namespace Altaxo.Gui.Common
 
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
     {
-      if (null != ValidationFunction)
+      if (ValidationFunction is not null)
       {
         var result = new System.ComponentModel.CancelEventArgs();
         ValidationFunction(value, cultureInfo, result);
-        return null == result ? ValidationResult.ValidResult : false == result.Cancel ? ValidationResult.ValidResult : new ValidationResult(false, "The value you entered is invalid");
+        return result is null ? ValidationResult.ValidResult : false == result.Cancel ? ValidationResult.ValidResult : new ValidationResult(false, "The value you entered is invalid");
       }
       else
       {

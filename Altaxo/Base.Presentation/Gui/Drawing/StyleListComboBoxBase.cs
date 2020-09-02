@@ -91,27 +91,27 @@ namespace Altaxo.Gui.Drawing
       public override DataTemplate SelectTemplate(object item, DependencyObject container)
       {
         var node = item as NGTreeNode;
-        if (node != null)
+        if (node is not null)
         {
           if (node.Tag is TItem)
           {
-            if (null == _TItemTemplate)
+            if (_TItemTemplate is null)
               _TItemTemplate = (DataTemplate)_parent.TryFindResource("TItemTemplate");
-            if (null != _TItemTemplate)
+            if (_TItemTemplate is not null)
               return _TItemTemplate;
           }
           else if (node.Tag is TList)
           {
-            if (null == _TListTemplate)
+            if (_TListTemplate is null)
               _TListTemplate = (DataTemplate)_parent.TryFindResource("TListTemplate");
-            if (null != _TListTemplate)
+            if (_TListTemplate is not null)
               return _TListTemplate;
           }
           else
           {
-            if (null == _treeOtherTemplate)
+            if (_treeOtherTemplate is null)
               _treeOtherTemplate = (DataTemplate)_parent.TryFindResource("TreeOtherTemplate");
-            if (null != _treeOtherTemplate)
+            if (_treeOtherTemplate is not null)
               return _treeOtherTemplate;
           }
         }
@@ -216,7 +216,7 @@ namespace Altaxo.Gui.Drawing
       var newItem = (TItem)args.NewValue;
 
       // make sure, that the item is part of the data items of the ComboBox
-      if (_styleListManager.GetParentList(newItem) == null)
+      if (_styleListManager.GetParentList(newItem) is null)
       {
         StoreAsLastUsedItem(_lastLocalUsedItems, newItem);
       }
@@ -316,7 +316,7 @@ namespace Altaxo.Gui.Drawing
       var oldSelection = _selectedFromTreeView;
       var newSelection = GuiTreeView.SelectedValue as NGTreeNode;
       _selectedFromTreeView = newSelection;
-      if (null != newSelection && !newSelection.Equals(oldSelection))
+      if (newSelection is not null && !newSelection.Equals(oldSelection))
       {
         if (newSelection.Tag is TItem)
         {
@@ -423,7 +423,7 @@ namespace Altaxo.Gui.Drawing
       GuiTreeView.ItemsSource = null;
       _treeRootNode.FromHereToLeavesDo(node => { node.IsExpanded = false; node.IsSelected = false; }); // deselect and collapse all nodes
 
-      if (_styleListManager.GetParentList(selectedItem) != null)
+      if (_styleListManager.GetParentList(selectedItem) is not null)
       {
         var colorSet = _styleListManager.GetParentList(selectedItem);
         Altaxo.Main.ItemDefinitionLevel level = Altaxo.Main.ItemDefinitionLevel.Project;
@@ -458,7 +458,7 @@ namespace Altaxo.Gui.Drawing
     {
       var selectedItem = InternalSelectedItem;
       var parentList = _styleListManager.GetParentList(selectedItem);
-      return parentList != null ? parentList : _styleListManager.BuiltinDefault;
+      return parentList is not null ? parentList : _styleListManager.BuiltinDefault;
     }
 
     #endregion ComboBox
@@ -467,7 +467,7 @@ namespace Altaxo.Gui.Drawing
 
     protected void UpdateComboBoxSourceSelection(TItem item)
     {
-      if (null != item && object.ReferenceEquals(item, GuiComboBoxSelectedValue))
+      if (item is not null && object.ReferenceEquals(item, GuiComboBoxSelectedValue))
         return;
 
       _filterString = string.Empty;
@@ -507,7 +507,7 @@ namespace Altaxo.Gui.Drawing
         if (known.Count > 0)
         {
           (_comboBoxSeparator2[0] as Separator).Tag = itemList.Name;
-          if (source == null)
+          if (source is null)
             source = _comboBoxSeparator2.Concat(known);
           else
             source = source.Concat(_comboBoxSeparator2).Concat(known);
@@ -575,7 +575,7 @@ namespace Altaxo.Gui.Drawing
         GuiComboBoxSelectedValue = selItem;
       }
 
-      if (GuiComboBoxSelectedValue == null)
+      if (GuiComboBoxSelectedValue is null)
         GuiComboBoxSelectedValue = SelectedItem;
       else
         SelectedItem = GuiComboBoxSelectedValue;
@@ -639,12 +639,12 @@ namespace Altaxo.Gui.Drawing
     protected virtual void EhShowStyleListManagerDialog(object sender, RoutedEventArgs e)
     {
       var itemList = _styleListManager.GetParentList(SelectedItem);
-      if (null == itemList)
+      if (itemList is null)
         itemList = _styleListManager.BuiltinDefault;
 
       var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { itemList }, typeof(IMVCANController));
 
-      if (null == controller || null == controller.ViewObject)
+      if (controller is null || controller.ViewObject is null)
         return;
 
       if (Current.Gui.ShowDialog(controller, "Manage item lists", false))

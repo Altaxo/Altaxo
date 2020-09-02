@@ -56,14 +56,14 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     private void _edTransfoOperation_Changed(object sender, SelectionChangedEventArgs e)
     {
       e.Handled = true;
-      if (null != TransfoOperationChanged)
+      if (TransfoOperationChanged is not null)
         TransfoOperationChanged(_cbTransfoOperation.SelectedIndex == 1);
     }
 
     private void _edDivideBy_Validating(object sender, ValidationEventArgs<string> e)
     {
       var c = new System.ComponentModel.CancelEventArgs();
-      if (null != DivideByValidating)
+      if (DivideByValidating is not null)
         DivideByValidating(_edDivideBy.Text, c);
       if (c.Cancel)
         e.AddError("The provided text can not be converted");

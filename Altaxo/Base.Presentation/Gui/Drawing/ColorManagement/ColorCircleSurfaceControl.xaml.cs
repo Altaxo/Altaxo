@@ -84,7 +84,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
         if (_colorCircleModel.GetType() != value.GetType())
         {
@@ -140,7 +140,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       var numberOfButtons = _colorCircleModel.NumberOfHueValues;
 
-      var hueOfButton0 = null == _hueOfButtons ? 0 : _hueOfButtons[0];
+      var hueOfButton0 = _hueOfButtons is null ? 0 : _hueOfButtons[0];
 
       _hueOfButtons = new double[numberOfButtons];
       _posOfButtons = new Point[numberOfButtons];

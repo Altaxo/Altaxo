@@ -87,7 +87,7 @@ namespace Altaxo.Gui
 
     protected override void OnRender(DrawingContext drawingContext)
     {
-      if (null != _renderMethod)
+      if (_renderMethod is not null)
         _renderMethod(drawingContext);
 
       base.OnRender(drawingContext);

@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Common
 
     private void EhEnabledChanged(object sender, RoutedEventArgs e)
     {
-      if (null != ConditionalViewEnabledChanged)
+      if (ConditionalViewEnabledChanged is not null)
         ConditionalViewEnabledChanged();
     }
 

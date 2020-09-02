@@ -68,7 +68,7 @@ namespace Altaxo.Gui.AddInItems
     /// <returns>The WPF ICommand with the given name, or null if the command was not found.</returns>
     public static System.Windows.Input.ICommand GetKnownCommand(string commandName)
     {
-      if (commandName == null)
+      if (commandName is null)
         throw new ArgumentNullException("commandName");
       lock (knownCommands)
       {
@@ -83,9 +83,9 @@ namespace Altaxo.Gui.AddInItems
     /// </summary>
     public static void RegisterKnownCommand(string name, System.Windows.Input.ICommand command)
     {
-      if (name == null)
+      if (name is null)
         throw new ArgumentNullException("name");
-      if (command == null)
+      if (command is null)
         throw new ArgumentNullException("command");
       lock (knownCommands)
       {
@@ -100,24 +100,24 @@ namespace Altaxo.Gui.AddInItems
     /// <remarks>The workbench calls this function when <see cref="CommandManager.RequerySuggested"/> fires.</remarks>
     public static void UpdateStatus(IEnumerable menuItems)
     {
-      if (menuItems == null)
+      if (menuItems is null)
         return;
       foreach (object o in menuItems)
       {
         var cmi = o as IStatusUpdate;
-        if (cmi != null)
+        if (cmi is not null)
           cmi.UpdateStatus();
       }
     }
 
     public static void UpdateText(IEnumerable menuItems)
     {
-      if (menuItems == null)
+      if (menuItems is null)
         return;
       foreach (object o in menuItems)
       {
         var cmi = o as IStatusUpdate;
-        if (cmi != null)
+        if (cmi is not null)
           cmi.UpdateText();
       }
     }
@@ -211,7 +211,7 @@ namespace Altaxo.Gui.AddInItems
     internal static IList CreateUnexpandedMenuItems(MenuCreateContext context, IEnumerable descriptors)
     {
       var result = new ArrayList();
-      if (descriptors != null)
+      if (descriptors is not null)
       {
         foreach (MenuItemDescriptor descriptor in descriptors)
         {
@@ -227,17 +227,17 @@ namespace Altaxo.Gui.AddInItems
       foreach (object o in input)
       {
         var p = o as MenuItemBuilderPlaceholder;
-        if (p != null)
+        if (p is not null)
         {
           IEnumerable<object> c = p.BuildItems();
-          if (c != null)
+          if (c is not null)
             result.AddRange(c);
         }
         else
         {
           result.Add(o);
           var statusUpdate = o as IStatusUpdate;
-          if (statusUpdate != null)
+          if (statusUpdate is not null)
           {
             statusUpdate.UpdateStatus();
             statusUpdate.UpdateText();
@@ -287,9 +287,9 @@ namespace Altaxo.Gui.AddInItems
         case "Builder":
           var builderObj = codon.AddIn.CreateObject(codon.Properties["class"]);
           var builder = builderObj as IMenuItemBuilder;
-          if (builderObj == null)
+          if (builderObj is null)
             throw new NotSupportedException("Menu item builder " + codon.Properties["class"] + " is unkown. Please check if class name is misspelled.");
-          if (builder == null)
+          if (builder is null)
             throw new NotSupportedException("Menu item builder " + codon.Properties["class"] + " does not implement IMenuItemBuilder");
           return new MenuItemBuilderPlaceholder(builder, descriptor.Codon, descriptor.Parameter);
 
@@ -319,7 +319,7 @@ namespace Altaxo.Gui.AddInItems
     {
       string old = kg.GetDisplayStringForCulture(Thread.CurrentThread.CurrentUICulture);
       string text = KeyCodeConversion.KeyToUnicode(kg.Key).ToString();
-      if (text != null && !text.Any(ch => char.IsWhiteSpace(ch)))
+      if (text is not null && !text.Any(ch => char.IsWhiteSpace(ch)))
       {
         if ((kg.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
           text = StringParser.Format("${res:Global.Shortcuts.Alt}+{0}", text);

@@ -33,18 +33,18 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     public static bool HitTest4Type<T>(object sender, Point elementPosition) where T : UIElement
     {
       var uiElement = GetHitTestElement4Type<T>(sender, elementPosition);
-      return uiElement != null && uiElement.Visibility == Visibility.Visible;
+      return uiElement is not null && uiElement.Visibility == Visibility.Visible;
     }
 
     private static T GetHitTestElement4Type<T>(object sender, Point elementPosition) where T : UIElement
     {
       var visual = sender as Visual;
-      if (visual == null)
+      if (visual is null)
       {
         return null;
       }
       var hit = VisualTreeHelper.HitTest(visual, elementPosition);
-      if (hit == null)
+      if (hit is null)
       {
         return null;
       }
@@ -58,7 +58,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       {
         // no drag&drop for column header
         var columnHeader = GetHitTestElement4Type<GridViewColumnHeader>(sender, elementPosition);
-        if (columnHeader != null && (columnHeader.Role == GridViewColumnHeaderRole.Floating || columnHeader.Visibility == Visibility.Visible))
+        if (columnHeader is not null && (columnHeader.Role == GridViewColumnHeaderRole.Floating || columnHeader.Visibility == Visibility.Visible))
         {
           return true;
         }
@@ -72,19 +72,19 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       {
         // no drag&drop for column header
         var columnHeader = GetHitTestElement4Type<DataGridColumnHeader>(sender, elementPosition);
-        if (columnHeader != null && columnHeader.Visibility == Visibility.Visible)
+        if (columnHeader is not null && columnHeader.Visibility == Visibility.Visible)
         {
           return true;
         }
         // no drag&drop for row header
         var rowHeader = GetHitTestElement4Type<DataGridRowHeader>(sender, elementPosition);
-        if (rowHeader != null && rowHeader.Visibility == Visibility.Visible)
+        if (rowHeader is not null && rowHeader.Visibility == Visibility.Visible)
         {
           return true;
         }
         // drag&drop only for data grid row
         var dataRow = GetHitTestElement4Type<DataGridRow>(sender, elementPosition);
-        return dataRow == null;
+        return dataRow is null;
       }
       return false;
     }
@@ -95,7 +95,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       {
         // no drag&drop on column header
         var columnHeader = GetHitTestElement4Type<DataGridColumnHeader>(sender, elementPosition);
-        if (columnHeader != null && columnHeader.Visibility == Visibility.Visible)
+        if (columnHeader is not null && columnHeader.Visibility == Visibility.Visible)
         {
           return true;
         }
@@ -113,27 +113,27 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     public static bool IsNotPartOfSender(object sender, MouseButtonEventArgs e)
     {
       var visual = e.OriginalSource as Visual;
-      if (visual == null)
+      if (visual is null)
       {
         return false;
       }
       var hit = VisualTreeHelper.HitTest(visual, e.GetPosition((IInputElement)visual));
 
-      if (hit == null)
+      if (hit is null)
       {
         return false;
       }
       else
       {
         var depObj = e.OriginalSource as DependencyObject;
-        if (depObj == null)
+        if (depObj is null)
         {
           return false;
         }
         var item = VisualTreeHelper.GetParent(depObj.FindVisualTreeRoot());
         //var item = VisualTreeHelper.GetParent(e.OriginalSource as DependencyObject);
 
-        while (item != null && item != sender)
+        while (item is not null && item != sender)
         {
           item = VisualTreeHelper.GetParent(item);
         }

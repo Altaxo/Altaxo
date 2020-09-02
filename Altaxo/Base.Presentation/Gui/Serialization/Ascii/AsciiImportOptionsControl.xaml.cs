@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private void EhAnalyzeAscii(object sender, RoutedEventArgs e)
     {
-      if (null != DoAnalyze)
+      if (DoAnalyze is not null)
         DoAnalyze();
     }
 
@@ -136,7 +136,7 @@ namespace Altaxo.Gui.Serialization.Ascii
     private void EhSeparationStrategyChanged(object sender, SelectionChangedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiSeparationStrategy);
-      if (null != SeparationStrategyChanged)
+      if (SeparationStrategyChanged is not null)
         SeparationStrategyChanged();
     }
 

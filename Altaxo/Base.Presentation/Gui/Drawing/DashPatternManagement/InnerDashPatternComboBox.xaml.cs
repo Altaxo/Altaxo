@@ -93,7 +93,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
             valList.Add(val);
         }
 
-        if (valList.Count < 1 && error == null) // only use this error, if there is no other error;
+        if (valList.Count < 1 && error is null) // only use this error, if there is no other error;
           error = "At least one number is neccessary";
 
         return new Custom(valList);
@@ -104,7 +104,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
         string text = (string)value;
         var result = ConvertFromText(text, out var error);
 
-        if (error == null)
+        if (error is null)
           return result;
         else
           return Binding.DoNothing;
@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
         string text = (string)obj;
         var result = ConvertFromText(text, out var error);
 
-        if (null != error)
+        if (error is not null)
         {
           _originalToolTip = _cb.ToolTip;
           _cb.ToolTip = error;
@@ -178,7 +178,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 
     private static object EhDashPatternCoerce(DependencyObject obj, object baseValue)
     {
-      if (null == baseValue)
+      if (baseValue is null)
         return new Solid();
       else
         return baseValue;
@@ -193,7 +193,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 
     protected virtual void EhSelectedDashStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      if (null != _img)
+      if (_img is not null)
       {
         var val = (IDashPattern)args.NewValue;
         _img.Source = GetImage(val);
@@ -205,7 +205,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
       if (e.AddedItems.Count == 1)
       {
         var item = e.AddedItems[0] as ImageComboBoxItem;
-        if (null != item)
+        if (item is not null)
           SelectedDashStyle = item.Value as IDashPattern;
         e.Handled = true;
       }

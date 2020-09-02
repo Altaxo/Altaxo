@@ -68,7 +68,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     {
       e.Handled = true;
       GuiHelper.SynchronizeSelectionFromGui(_guiLabelStyle);
-      if (null != LabelStyleChanged)
+      if (LabelStyleChanged is not null)
         LabelStyleChanged();
     }
 

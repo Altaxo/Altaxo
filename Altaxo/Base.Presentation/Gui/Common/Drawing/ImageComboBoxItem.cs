@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       get
       {
-        return null != Parent ? Parent.GetItemText(Value) : string.Empty;
+        return Parent is not null ? Parent.GetItemText(Value) : string.Empty;
       }
     }
 
@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       get
       {
-        if (null != Parent)
+        if (Parent is not null)
           return Parent.GetItemImage(Value);
         else
           return null;

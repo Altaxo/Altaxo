@@ -86,27 +86,27 @@ namespace Altaxo.Gui.Common.Drawing
       public override DataTemplate SelectTemplate(object item, DependencyObject container)
       {
         var node = item as NGTreeNode;
-        if (node != null)
+        if (node is not null)
         {
           if (node.Tag is NamedColor)
           {
-            if (null == _namedColorTemplate)
+            if (_namedColorTemplate is null)
               _namedColorTemplate = (DataTemplate)_parent.TryFindResource("NamedColorTemplate");
-            if (null != _namedColorTemplate)
+            if (_namedColorTemplate is not null)
               return _namedColorTemplate;
           }
           else if (node.Tag is IColorSet)
           {
-            if (null == _colorSetTemplate)
+            if (_colorSetTemplate is null)
               _colorSetTemplate = (DataTemplate)_parent.TryFindResource("ColorSetTemplate");
-            if (null != _colorSetTemplate)
+            if (_colorSetTemplate is not null)
               return _colorSetTemplate;
           }
           else
           {
-            if (null == _treeOtherTemplate)
+            if (_treeOtherTemplate is null)
               _treeOtherTemplate = (DataTemplate)_parent.TryFindResource("TreeOtherTemplate");
-            if (null != _treeOtherTemplate)
+            if (_treeOtherTemplate is not null)
               return _treeOtherTemplate;
           }
         }
@@ -207,7 +207,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (true == (bool)e.NewValue && false == (bool)e.OldValue) // show only plot colors
       {
         // if the current color is a plot color, we can leave everything as it is, except that we must update the tree view nodes
-        if (InternalSelectedColor.ParentColorSet != null && ColorSetManager.Instance.IsPlotColorSet(InternalSelectedColor.ParentColorSet))
+        if (InternalSelectedColor.ParentColorSet is not null && ColorSetManager.Instance.IsPlotColorSet(InternalSelectedColor.ParentColorSet))
         {
           UpdateTreeViewTreeNodes();
           UpdateTreeViewSelection();
@@ -236,7 +236,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       color = color.CoerceParentColorSetToNullIfNotMember();
 
-      if (ShowPlotColorsOnly && (color.ParentColorSet == null || false == ColorSetManager.Instance.IsPlotColorSet(color.ParentColorSet)))
+      if (ShowPlotColorsOnly && (color.ParentColorSet is null || false == ColorSetManager.Instance.IsPlotColorSet(color.ParentColorSet)))
       {
         return ColorSetManager.Instance.BuiltinDarkPlotColors[0];
       }
@@ -314,7 +314,7 @@ namespace Altaxo.Gui.Common.Drawing
       var oldSelection = _selectedFromTreeView;
       var newSelection = GuiTreeView.SelectedValue as NGTreeNode;
       _selectedFromTreeView = newSelection;
-      if (null != newSelection && !newSelection.Equals(oldSelection))
+      if (newSelection is not null && !newSelection.Equals(oldSelection))
       {
         if (newSelection.Tag is NamedColor)
         {
@@ -430,13 +430,13 @@ namespace Altaxo.Gui.Common.Drawing
       GuiTreeView.ItemsSource = null;
       _treeRootNode.FromHereToLeavesDo(node => { node.IsExpanded = false; node.IsSelected = false; }); // deselect and collapse all nodes
 
-      if (selColor.ParentColorSet != null)
+      if (selColor.ParentColorSet is not null)
       {
         var colorSet = selColor.ParentColorSet;
         Altaxo.Main.ItemDefinitionLevel level = Altaxo.Main.ItemDefinitionLevel.Project;
 
         bool isPlotColorSet = false;
-        if (selColor.ParentColorSet != null && ColorSetManager.Instance.TryGetList(selColor.ParentColorSet.Name, out var colorSetEntry))
+        if (selColor.ParentColorSet is not null && ColorSetManager.Instance.TryGetList(selColor.ParentColorSet.Name, out var colorSetEntry))
         {
           isPlotColorSet = colorSetEntry.IsPlotColorSet;
         }
@@ -470,7 +470,7 @@ namespace Altaxo.Gui.Common.Drawing
     protected virtual IColorSet GetColorSetForComboBox()
     {
       NamedColor selColor = InternalSelectedColor;
-      if (selColor.ParentColorSet != null)
+      if (selColor.ParentColorSet is not null)
         return selColor.ParentColorSet;
       else
         return NamedColors.Instance;

@@ -142,7 +142,7 @@ namespace Altaxo.Gui.Common.Drawing
     /// <param name="args">Property changed event arguments.</param>
     protected virtual void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      if (null != SelectedQuantityChanged)
+      if (SelectedQuantityChanged is not null)
         SelectedQuantityChanged(obj, args);
     }
 
@@ -153,7 +153,7 @@ namespace Altaxo.Gui.Common.Drawing
       get { return SelectedQuantity.AsValueInSIUnits; }
       set
       {
-        if (null == UnitEnvironment)
+        if (UnitEnvironment is null)
           throw new InvalidOperationException("The value can not be set because the unit environment is not initialized yet");
 
         var quant = new DimensionfulQuantity(value, UnitEnvironment.DefaultUnit.Unit.SIUnit);

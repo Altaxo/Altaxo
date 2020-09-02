@@ -134,7 +134,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected virtual void OnSelectedBrushTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      if (null != SelectedBrushTypeChanged)
+      if (SelectedBrushTypeChanged is not null)
         SelectedBrushTypeChanged(obj, args);
     }
 

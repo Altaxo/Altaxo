@@ -69,7 +69,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
 
     protected virtual void OnBackgroundStyleChanged()
     {
-      if (BackgroundStyleChanged != null)
+      if (BackgroundStyleChanged is not null)
         BackgroundStyleChanged(this, EventArgs.Empty);
     }
 
@@ -85,12 +85,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
       get { return _cbStyle; }
       set
       {
-        if (_cbStyle != null)
+        if (_cbStyle is not null)
           _cbStyle.SelectionChanged -= EhStyle_SelectionChangeCommitted;
 
         _cbStyle = value;
 
-        if (_cbStyle != null)
+        if (_cbStyle is not null)
         {
           InitializeBackgroundStyle();
           _cbStyle.SelectionChanged += EhStyle_SelectionChangeCommitted;
@@ -106,7 +106,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
         _doc = null;
 
       // Apply the currently selected brush to the newly created instance
-      if (_doc != null && _cbBrush != null)
+      if (_doc is not null && _cbBrush is not null)
         _doc.Material = _cbBrush.SelectedMaterial;
 
       OnBackgroundStyleChanged();
@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
 
     private void InitializeBackgroundStyle()
     {
-      int sel = Array.IndexOf(_backgroundStyles, _doc == null ? null : _doc.GetType());
+      int sel = Array.IndexOf(_backgroundStyles, _doc is null ? null : _doc.GetType());
       string[] names = Current.Gui.GetUserFriendlyClassName(_backgroundStyles, true);
       _cbStyle.Items.Clear();
       //_cbStyle.Items.Add("<none>");
@@ -136,7 +136,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
 
     protected virtual void OnBackgroundBrushChanged()
     {
-      if (BackgroundBrushChanged != null)
+      if (BackgroundBrushChanged is not null)
         BackgroundBrushChanged(this, EventArgs.Empty);
     }
 
@@ -147,7 +147,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
       get { return _cbBrush; }
       set
       {
-        if (_cbBrush != null)
+        if (_cbBrush is not null)
         {
           _cbBrush.SelectedMaterialChanged -= EhBrush_SelectionChangeCommitted;
         }
@@ -156,10 +156,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
         _cbBrush.ShowPlotColorsOnly = _showPlotColorsOnly;
         _cbBrush.SelectedMaterial = Materials.GetSolidMaterial(NamedColors.Aqua);
 
-        if (_doc != null && _cbBrush != null && _doc.Material != null)
+        if (_doc is not null && _cbBrush is not null && _doc.Material is not null)
           _cbBrush.SelectedMaterial = _doc.Material;
 
-        if (_cbBrush != null)
+        if (_cbBrush is not null)
         {
           _cbBrush.SelectedMaterialChanged += EhBrush_SelectionChangeCommitted;
         }
@@ -170,7 +170,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
 
     private void EhBrush_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (_doc != null)
+      if (_doc is not null)
       {
         _doc.Material = _cbBrush.SelectedMaterial;
         OnBackgroundBrushChanged();
@@ -194,11 +194,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
 
     private void UpdateBrushState()
     {
-      bool vis = _doc != null && _doc.SupportsUserDefinedMaterial;
+      bool vis = _doc is not null && _doc.SupportsUserDefinedMaterial;
 
-      if (_cbBrush != null)
+      if (_cbBrush is not null)
         _cbBrush.IsEnabled = vis;
-      if (_lblBrush != null)
+      if (_lblBrush is not null)
         _lblBrush.IsEnabled = vis;
     }
 
@@ -214,7 +214,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Background
       set
       {
         _showPlotColorsOnly = value;
-        if (null != _cbBrush)
+        if (_cbBrush is not null)
           _cbBrush.ShowPlotColorsOnly = value;
       }
     }

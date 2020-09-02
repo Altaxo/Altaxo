@@ -61,7 +61,7 @@ namespace GongSolutions.Wpf.DragDrop
       {
         // try to find next ItemsControl
         var itemsControl = VisualTreeExtensions.GetVisualAncestor<ItemsControl>(VisualTarget);
-        if (itemsControl != null)
+        if (itemsControl is not null)
         {
           // now check if this ItemsControl is a drop target
           if (DragDrop.GetIsDropTarget(itemsControl))
@@ -71,25 +71,25 @@ namespace GongSolutions.Wpf.DragDrop
         }
       }
       // visual target can be null, so give us a point...
-      DropPosition = VisualTarget != null ? e.GetPosition(VisualTarget) : new Point();
+      DropPosition = VisualTarget is not null ? e.GetPosition(VisualTarget) : new Point();
 
       if (VisualTarget is ItemsControl)
       {
         var itemsControl = (ItemsControl)VisualTarget;
         var item = itemsControl.GetItemContainerAt(DropPosition);
-        var directlyOverItem = item != null;
+        var directlyOverItem = item is not null;
 
         TargetGroup = itemsControl.FindGroup(DropPosition);
         VisualTargetOrientation = itemsControl.GetItemsPanelOrientation();
         VisualTargetFlowDirection = itemsControl.GetItemsPanelFlowDirection();
 
-        if (item == null)
+        if (item is null)
         {
           item = itemsControl.GetItemContainerAt(DropPosition, VisualTargetOrientation);
           directlyOverItem = false;
         }
 
-        if (item != null)
+        if (item is not null)
         {
           var itemParent = ItemsControl.ItemsControlFromItemContainer(item);
 

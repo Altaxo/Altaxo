@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Common
     private static void OnAutoTooltipPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
       var textBlock = d as TextBlock;
-      if (textBlock == null)
+      if (textBlock is null)
         return;
 
       if (e.NewValue.Equals(true))

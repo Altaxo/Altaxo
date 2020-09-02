@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph.Scales
     private void EhScaleSelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_cbScales);
-      if (null != AxisTypeChanged)
+      if (AxisTypeChanged is not null)
         AxisTypeChanged();
     }
 

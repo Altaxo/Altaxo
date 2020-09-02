@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     {
       NextMouseHandlerType = GraphToolType;
 
-      if (_grac != null)
+      if (_grac is not null)
         _grac.SetPanelCursor(Cursors.SizeAll);
     }
 

@@ -28,12 +28,12 @@ namespace GongSolutions.Wpf.DragDrop
     protected override void OnRender(DrawingContext drawingContext)
     {
       var visualTargetItem = DropInfo.VisualTargetItem;
-      if (visualTargetItem != null)
+      if (visualTargetItem is not null)
       {
         var rect = Rect.Empty;
 
         var tvItem = visualTargetItem as TreeViewItem;
-        if (tvItem != null && VisualTreeHelper.GetChildrenCount(tvItem) > 0)
+        if (tvItem is not null && VisualTreeHelper.GetChildrenCount(tvItem) > 0)
         {
           var descendant = VisualTreeHelper.GetDescendantBounds(tvItem);
           rect = new Rect(tvItem.TranslatePoint(new Point(), AdornedElement), new Size(descendant.Width + 4, tvItem.ActualHeight));

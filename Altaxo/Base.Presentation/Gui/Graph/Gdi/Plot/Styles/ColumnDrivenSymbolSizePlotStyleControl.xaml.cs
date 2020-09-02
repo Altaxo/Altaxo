@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public void Init_DataColumnTransformation(string boxText, string toolTip)
     {
-      if (null == boxText)
+      if (boxText is null)
       {
         _guiDataColumnTransformation.Visibility = Visibility.Collapsed;
       }

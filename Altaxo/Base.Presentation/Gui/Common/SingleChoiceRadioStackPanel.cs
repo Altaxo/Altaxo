@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Common
     protected void OnItemsSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       var list = args.NewValue as SelectableListNodeList;
-      if (null != list)
+      if (list is not null)
       {
         SelectedItem = list.FirstSelectedNode;
         Initialize(list);
@@ -98,10 +98,10 @@ namespace Altaxo.Gui.Common
     {
       var list = ItemsSource;
 
-      if (null != list)
+      if (list is not null)
       {
         list.ClearSelectionsAll();
-        if (null != args.NewValue)
+        if (args.NewValue is not null)
           list.SetSelection((node) => object.ReferenceEquals(node, args.NewValue));
       }
     }
@@ -117,7 +117,7 @@ namespace Altaxo.Gui.Common
       }
 
       Children.Clear();
-      if (null != choices)
+      if (choices is not null)
       {
         foreach (var choice in choices)
         {
@@ -145,7 +145,7 @@ namespace Altaxo.Gui.Common
     {
       var rb = (RadioButton)sender;
       var node = rb.Tag as SelectableListNode;
-      if (node != null && (true == rb.IsChecked))
+      if (node is not null && (true == rb.IsChecked))
       {
         SelectedItem = node;
       }

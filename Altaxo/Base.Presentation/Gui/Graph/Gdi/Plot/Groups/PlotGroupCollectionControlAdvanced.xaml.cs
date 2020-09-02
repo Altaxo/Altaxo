@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     private void _cbCoordTransfoStyle_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
     {
-      if (null != CoordinateTransformingGroupStyleChanged)
+      if (CoordinateTransformingGroupStyleChanged is not null)
       {
         GuiHelper.SynchronizeSelectionFromGui(_cbCoordTransfoStyle);
         CoordinateTransformingGroupStyleChanged?.Invoke();

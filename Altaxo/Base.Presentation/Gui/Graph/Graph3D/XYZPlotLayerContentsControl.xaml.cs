@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private void EhPutData_Click(object sender, RoutedEventArgs e)
     {
-      if (null != Controller)
+      if (Controller is not null)
       {
         Controller.AvailableItems_PutDataToPlotItems();
         _guiPlotItemsTree.Focus();
@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private void EhPlotItemsDelete_Click(object sender, RoutedEventArgs e)
     {
-      if (null != Controller)
+      if (Controller is not null)
       {
         Controller.PlotItems_Delete();
       }
@@ -138,7 +138,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private void EhListSelUp_Click(object sender, RoutedEventArgs e)
     {
-      if (null != Controller)
+      if (Controller is not null)
       {
         Controller.PlotItems_MoveUpSelected();
         _guiPlotItemsTree.Focus();
@@ -147,7 +147,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private void EhListSelDown_Click(object sender, RoutedEventArgs e)
     {
-      if (null != Controller)
+      if (Controller is not null)
       {
         Controller.PlotItems_MoveDownSelected();
         _guiPlotItemsTree.Focus();
@@ -156,7 +156,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private void EhPlotAssociations_Click(object sender, RoutedEventArgs e)
     {
-      if (null != Controller)
+      if (Controller is not null)
       {
         Controller.PlotItem_Open();
         _guiPlotItemsTree.Focus();
@@ -165,7 +165,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private void EhGroup_Click(object sender, RoutedEventArgs e)
     {
-      if (null != Controller)
+      if (Controller is not null)
       {
         Controller.PlotItems_GroupClick();
         _guiPlotItemsTree.Focus();
@@ -174,7 +174,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private void EhUngroup_Click(object sender, RoutedEventArgs e)
     {
-      if (null != Controller)
+      if (Controller is not null)
       {
         Controller.PlotItems_UngroupClick();
         _guiPlotItemsTree.Focus();
@@ -183,7 +183,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private void EhEditRange_Click(object sender, RoutedEventArgs e)
     {
-      if (null != Controller)
+      if (Controller is not null)
       {
         Controller.PlotItems_EditRangeClick();
         _guiPlotItemsTree.Focus();
@@ -192,7 +192,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private void EhShowRange_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (null != Controller)
+      if (Controller is not null)
       {
         Controller.PlotItems_ShowRangeChanged(_guiShowRange.IsChecked == true);
       }
@@ -250,7 +250,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private void EhItemMouseDoubleClick(object sender, EventArgs e)
     {
-      if (null != Controller)
+      if (Controller is not null)
       {
         if (_guiPlotItemsTree.SelectedItems.Count == 1)
         {
@@ -268,7 +268,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       get
       {
-        if (null == _plotItemTreeDragHandler)
+        if (_plotItemTreeDragHandler is null)
           _plotItemTreeDragHandler = new PlotItemTree_DragHandler(this);
         return _plotItemTreeDragHandler;
       }
@@ -315,7 +315,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       get
       {
-        if (null == _treeViewDropHandler)
+        if (_treeViewDropHandler is null)
           _treeViewDropHandler = new PlotItemTree_DropHandler(this);
         return _treeViewDropHandler;
       }
@@ -379,7 +379,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       get
       {
-        if (null == _availableItemTreeDragHandler)
+        if (_availableItemTreeDragHandler is null)
           _availableItemTreeDragHandler = new AvailableItemTree_DragHandler(this);
         return _availableItemTreeDragHandler;
       }

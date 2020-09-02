@@ -85,21 +85,21 @@ namespace Altaxo.Gui.Graph
     private void EhChooseTable(object sender, RoutedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiTableList);
-      if (null != ChooseTableForSelectedItems)
+      if (ChooseTableForSelectedItems is not null)
         ChooseTableForSelectedItems();
     }
 
     private void EhChooseFolder(object sender, RoutedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiTableList);
-      if (null != ChooseFolderForSelectedItems)
+      if (ChooseFolderForSelectedItems is not null)
         ChooseFolderForSelectedItems();
     }
 
     private void EhItemsSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiTableList);
-      if (null != TableSelectionChanged)
+      if (TableSelectionChanged is not null)
       {
         TableSelectionChanged();
       }
@@ -108,7 +108,7 @@ namespace Altaxo.Gui.Graph
     private void EhListOfCommonSubstringsSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiListOfCommonSubstrings);
-      if (null != ListOfCommonSubstringsSelectionChanged)
+      if (ListOfCommonSubstringsSelectionChanged is not null)
         ListOfCommonSubstringsSelectionChanged();
     }
 
@@ -116,24 +116,24 @@ namespace Altaxo.Gui.Graph
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiListOfReplacementCandidates);
 
-      if (null != _guiListOfReplacementCandidates.SelectedItem)
+      if (_guiListOfReplacementCandidates.SelectedItem is not null)
         _guiReplacementCandidate.Text = _guiListOfReplacementCandidates.SelectedItem.ToString();
       else
         _guiReplacementCandidate.Text = null;
 
-      if (null != ListOfSubstringReplacementCandidatesSelectionChanged)
+      if (ListOfSubstringReplacementCandidatesSelectionChanged is not null)
         ListOfSubstringReplacementCandidatesSelectionChanged();
     }
 
     private void EhApplyReplacementForCommonSubstring(object sender, RoutedEventArgs e)
     {
-      if (null != ApplySubstringReplacement)
+      if (ApplySubstringReplacement is not null)
         ApplySubstringReplacement();
     }
 
     private void EhCommonSubstringTextChanged(object sender, TextChangedEventArgs e)
     {
-      if (null != CommonSubstringTextChanged)
+      if (CommonSubstringTextChanged is not null)
         CommonSubstringTextChanged();
     }
 
@@ -152,13 +152,13 @@ namespace Altaxo.Gui.Graph
 
     private void EhSearchCommonSubstringCharacterWiseChanged(object sender, RoutedEventArgs e)
     {
-      if (SearchCommonSubstringsCharacterWiseChanged != null)
+      if (SearchCommonSubstringsCharacterWiseChanged is not null)
         SearchCommonSubstringsCharacterWiseChanged();
     }
 
     private void EhCommonSubstringOperations_VisibilityChanged(object sender, RoutedEventArgs e)
     {
-      if (null != CommonSubstringPanelVisibilityChanged)
+      if (CommonSubstringPanelVisibilityChanged is not null)
         CommonSubstringPanelVisibilityChanged();
     }
 

@@ -195,11 +195,11 @@ namespace Altaxo.Gui.Common
     /// <param name="args">Property changed event arguments.</param>
     protected void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      if (null != SelectedQuantityChanged)
+      if (SelectedQuantityChanged is not null)
         SelectedQuantityChanged(obj, args);
-      if (null != DimensionfulQuantityView_QuantityChanged)
+      if (DimensionfulQuantityView_QuantityChanged is not null)
         DimensionfulQuantityView_QuantityChanged();
-      if (null != SelectedQuantityWithUnitEnvironmentChanged)
+      if (SelectedQuantityWithUnitEnvironmentChanged is not null)
         SelectedQuantityWithUnitEnvironmentChanged(obj, args);
     }
 
@@ -238,7 +238,7 @@ namespace Altaxo.Gui.Common
     private static void EhUnitEnvironmentChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       var thiss = (QuantityWithUnitTextBox)obj;
-      if (null != args.NewValue)
+      if (args.NewValue is not null)
         thiss._converter.UnitEnvironment = (QuantityWithUnitGuiEnvironment)args.NewValue;
     }
 

@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Common.Drawing
       /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
       public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
       {
-        if (value != null)
+        if (value is not null)
         {
           var val = (ImageProxy)value;
           if (!_cb._cachedItems.ContainsKey(val.ContentHash))
@@ -79,7 +79,7 @@ namespace Altaxo.Gui.Common.Drawing
       /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
       public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
       {
-        if (null == value)
+        if (value is null)
           return null;
 
         var it = (ImageComboBoxItem)value;
@@ -160,7 +160,7 @@ namespace Altaxo.Gui.Common.Drawing
             brush = Activator.CreateInstance(t) as Altaxo.Graph.Gdi.HatchBrushes.HatchBrushBase;
           }
           catch (Exception) { }
-          if (null != brush)
+          if (brush is not null)
           {
             var pair = new KeyValuePair<string, ImageProxy>(t.Name, brush);
             if (!_cachedItems.TryGetValue(brush.ContentHash, out it))
@@ -186,7 +186,7 @@ namespace Altaxo.Gui.Common.Drawing
             brush = Activator.CreateInstance(t) as Altaxo.Graph.Gdi.SyntheticBrushes.SyntheticBrushBase;
           }
           catch (Exception) { }
-          if (null != brush)
+          if (brush is not null)
           {
             var pair = new KeyValuePair<string, ImageProxy>(t.Name, brush);
             if (!_cachedItems.TryGetValue(brush.ContentHash, out it))
@@ -204,7 +204,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void AddImage(ImageProxy img)
     {
-      if (null == img)
+      if (img is null)
         return;
       if (_cachedItems.ContainsKey(img.ContentHash))
         return;
@@ -255,7 +255,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected virtual void OnTextureImageChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      if (null != TextureImageChanged)
+      if (TextureImageChanged is not null)
         TextureImageChanged(this, args);
     }
 
@@ -263,7 +263,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       SetItemsSourceInDependenceOnTextureType();
 
-      if (null != TextureImageTypeChanged)
+      if (TextureImageTypeChanged is not null)
         TextureImageTypeChanged(this, args);
     }
 

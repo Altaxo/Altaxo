@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       {
         int sel = _tabCtrl.SelectedIndex;
         var tp = (TabItem)_tabCtrl.Items[sel];
-        if (tp.Content != null)
+        if (tp.Content is not null)
           tp.Content = null;
 
         tp.Content = (UIElement)value;
@@ -113,7 +113,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     private void EhSecondChoice_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       e.Handled = true;
-      if (_suppressEventCounter == 0 && null != SecondChoiceChanged)
+      if (_suppressEventCounter == 0 && SecondChoiceChanged is not null)
       {
         GuiHelper.SynchronizeSelectionFromGui(_lbEdges);
         SecondChoiceChanged();
@@ -133,7 +133,7 @@ namespace Altaxo.Gui.Graph.Graph3D
         ++_tabControl_SelectionChanged_Calls;
         bool shouldBeCancelled = false;
 
-        if (e.RemovedItems.Count > 0 && null != TabValidating)
+        if (e.RemovedItems.Count > 0 && TabValidating is not null)
         {
           if (!(e.RemovedItems[0] is TabItem))
           {
@@ -144,7 +144,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
           var tp = (TabItem)e.RemovedItems[0];
           var cancelEventArgs = new System.ComponentModel.CancelEventArgs();
-          if (null != TabValidating)
+          if (TabValidating is not null)
             TabValidating(this, cancelEventArgs);
           shouldBeCancelled = cancelEventArgs.Cancel;
 
@@ -158,7 +158,7 @@ namespace Altaxo.Gui.Graph.Graph3D
             if (it is TabItem)
               ((TabItem)it).Content = null;
 
-          if (null != PageChanged)
+          if (PageChanged is not null)
           {
             var tp = (TabItem)_tabCtrl.SelectedItem;
             PageChanged(tp.Name);
@@ -173,21 +173,21 @@ end_of_function:
     private void EhCreateNewAxis(object sender, RoutedEventArgs e)
     {
       e.Handled = true;
-      if (_suppressEventCounter == 0 && null != CreateOrMoveAxis)
+      if (_suppressEventCounter == 0 && CreateOrMoveAxis is not null)
         CreateOrMoveAxis(false);
     }
 
     private void EhMoveAxis(object sender, RoutedEventArgs e)
     {
       e.Handled = true;
-      if (_suppressEventCounter == 0 && null != CreateOrMoveAxis)
+      if (_suppressEventCounter == 0 && CreateOrMoveAxis is not null)
         CreateOrMoveAxis(true);
     }
 
     private void EhDeleteAxis(object sender, RoutedEventArgs e)
     {
       e.Handled = true;
-      if (_suppressEventCounter == 0 && null != DeleteAxis)
+      if (_suppressEventCounter == 0 && DeleteAxis is not null)
         DeleteAxis();
     }
   }

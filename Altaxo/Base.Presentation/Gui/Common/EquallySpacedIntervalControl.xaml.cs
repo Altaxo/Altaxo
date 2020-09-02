@@ -53,31 +53,31 @@ namespace Altaxo.Gui.Common
       else if (true == _rbStartEndIntv.IsChecked)
         method = EquallySpacedIntervalSpecificationMethod.StartEndInterval;
 
-      if (null != MethodChanged)
+      if (MethodChanged is not null)
         MethodChanged(method);
     }
 
     private void _edStart_TextChanged(object sender, ValidationEventArgs<string> e)
     {
-      if (null != StartChanged)
+      if (StartChanged is not null)
         StartChanged(_edStart.Text);
     }
 
     private void _edEnd_TextChanged(object sender, ValidationEventArgs<string> e)
     {
-      if (null != EndChanged)
+      if (EndChanged is not null)
         EndChanged(_edEnd.Text);
     }
 
     private void _edIntv_TextChanged(object sender, ValidationEventArgs<string> e)
     {
-      if (null != IntervalChanged)
+      if (IntervalChanged is not null)
         IntervalChanged(_edIntv.Text);
     }
 
     private void _edCount_TextChanged(object sender, ValidationEventArgs<string> e)
     {
-      if (null != CountChanged)
+      if (CountChanged is not null)
         CountChanged(_edCount.Text);
     }
 

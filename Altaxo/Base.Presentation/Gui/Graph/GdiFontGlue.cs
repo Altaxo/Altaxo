@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Graph
       {
         var oldValue = _fontSize;
         _fontSize = value;
-        if (_guiFontSize != null && oldValue != value)
+        if (_guiFontSize is not null && oldValue != value)
           _guiFontSize.SelectedQuantityAsValueInPoints = value;
       }
     }
@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Graph
       {
         var oldValue = _fontFamilyName;
         _fontFamilyName = value;
-        if (null != _guiFontFamily && oldValue != value)
+        if (_guiFontFamily is not null && oldValue != value)
           _guiFontFamily.SelectedFontFamilyName = value;
       }
     }
@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Graph
       {
         var oldValue = _fontStyle;
         _fontStyle = value;
-        if (null != _guiFontStyle && oldValue != value)
+        if (_guiFontStyle is not null && oldValue != value)
           _guiFontStyle.SelectedFontStyle = value;
       }
     }
@@ -100,13 +100,13 @@ namespace Altaxo.Gui.Graph
       get { return _guiFontSize; }
       set
       {
-        if (null != _guiFontSize)
+        if (_guiFontSize is not null)
           _guiFontSize.SelectedQuantityChanged -= _guiFontStyle_SelectedFontSizeChanged;
 
         _guiFontSize = value;
         _guiFontSize.SelectedQuantityAsValueInPoints = _fontSize;
 
-        if (null != _guiFontSize)
+        if (_guiFontSize is not null)
           _guiFontSize.SelectedQuantityChanged += _guiFontStyle_SelectedFontSizeChanged;
       }
     }
@@ -118,13 +118,13 @@ namespace Altaxo.Gui.Graph
       get { return _guiFontFamily; }
       set
       {
-        if (null != _guiFontFamily)
+        if (_guiFontFamily is not null)
           _guiFontFamily.SelectedFontFamilyNameChanged -= _guiFontStyle_SelectedFontFamilyNameChanged;
 
         _guiFontFamily = value;
         _guiFontFamily.SelectedFontFamilyName = _fontFamilyName;
 
-        if (null != _guiFontFamily)
+        if (_guiFontFamily is not null)
           _guiFontFamily.SelectedFontFamilyNameChanged += _guiFontStyle_SelectedFontFamilyNameChanged;
       }
     }
@@ -136,13 +136,13 @@ namespace Altaxo.Gui.Graph
       get { return _guiFontStyle; }
       set
       {
-        if (null != _guiFontStyle)
+        if (_guiFontStyle is not null)
           _guiFontStyle.SelectedFontStyleChanged -= _guiFontStyle_SelectedFontStyleChanged;
 
         _guiFontStyle = value;
         _guiFontStyle.SelectedFontStyle = _fontStyle;
 
-        if (null != _guiFontStyle)
+        if (_guiFontStyle is not null)
           _guiFontStyle.SelectedFontStyleChanged += _guiFontStyle_SelectedFontStyleChanged;
       }
     }
@@ -174,7 +174,7 @@ namespace Altaxo.Gui.Graph
 
     protected virtual void OnFontChanged()
     {
-      if (null != SelectedFontChanged)
+      if (SelectedFontChanged is not null)
         SelectedFontChanged(this, EventArgs.Empty);
     }
   }

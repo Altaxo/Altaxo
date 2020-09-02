@@ -50,7 +50,7 @@ namespace Altaxo.Gui
     /// </value>
     public static bool InstanceAvailable
     {
-      get { return null != _resourceService; }
+      get { return _resourceService is not null; }
     }
 
     private static void OnLanguageChanged(object sender, EventArgs e)
@@ -102,7 +102,7 @@ namespace Altaxo.Gui
     /// </exception>
     public static ImageSource GetBitmapSource(string name)
     {
-      if (_resourceService == null)
+      if (_resourceService is null)
       {
         throw new InvalidProgramException(string.Format("Member {0} is null. Did you start the resource service?", nameof(_resourceService)));
       }
@@ -167,7 +167,7 @@ namespace Altaxo.Gui
           var presentation = System.Windows.Markup.XamlReader.Parse(s);
           return (ImageSource)presentation;
         }
-        else if (imageObject != null)
+        else if (imageObject is not null)
         {
           throw new ResourceNotFoundException(string.Format("Resource of type {0} can not be converted in a Wpf image source", imageObject.GetType()));
         }

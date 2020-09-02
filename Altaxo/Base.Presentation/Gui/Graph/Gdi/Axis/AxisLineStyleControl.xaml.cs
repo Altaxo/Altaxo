@@ -72,12 +72,12 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     {
       if (false == _chkCustomMajorColor.IsChecked)
       {
-        if (_majorPenGlue.Pen != null)
+        if (_majorPenGlue.Pen is not null)
           _majorPenGlue.Pen = _majorPenGlue.Pen.WithBrush(_linePenGlue.Pen.Brush);
       }
       if (false == _chkCustomMinorColor.IsChecked)
       {
-        if (_minorPenGlue.Pen != null)
+        if (_minorPenGlue.Pen is not null)
           _minorPenGlue.Pen = _minorPenGlue.Pen.WithBrush(_linePenGlue.Pen.Brush);
       }
 
@@ -190,7 +190,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       set
       {
         _majorPenGlue.Pen = value;
-        if (value != null)
+        if (value is not null)
         {
           CustomMajorColor = !PenX.AreEqualUnlessWidth(value, _linePenGlue.Pen);
           CustomMajorThickness = (value.Width != _linePenGlue.Pen.Width);
@@ -207,7 +207,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       set
       {
         _minorPenGlue.Pen = value;
-        if (value != null)
+        if (value is not null)
         {
           CustomMinorColor = !PenX.AreEqualUnlessWidth(value, _linePenGlue.Pen);
           CustomMinorThickness = (value.Width != _linePenGlue.Pen.Width);

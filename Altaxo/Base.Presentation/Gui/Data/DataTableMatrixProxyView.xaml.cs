@@ -68,59 +68,59 @@ namespace Altaxo.Gui.Data
     private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiAvailableTables);
-      if (null != SelectedTableChanged)
+      if (SelectedTableChanged is not null)
         SelectedTableChanged();
     }
 
     private void EhToX_Click(object sender, RoutedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiAvailableColumnNames);
-      if (null != UseSelectedItemAsXColumn)
+      if (UseSelectedItemAsXColumn is not null)
         UseSelectedItemAsXColumn();
     }
 
     private void EhEraseX_Click(object sender, RoutedEventArgs e)
     {
-      if (null != ClearXColumn)
+      if (ClearXColumn is not null)
         ClearXColumn();
     }
 
     private void EhToY_Click(object sender, RoutedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiAvailableColumnNames);
-      if (null != UseSelectedItemAsYColumn)
+      if (UseSelectedItemAsYColumn is not null)
         UseSelectedItemAsYColumn();
     }
 
     private void EhEraseY_Click(object sender, RoutedEventArgs e)
     {
-      if (null != ClearYColumn)
+      if (ClearYColumn is not null)
         ClearYColumn();
     }
 
     private void EhToV_Click(object sender, RoutedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiAvailableColumnNames);
-      if (null != UseSelectedItemAsVColumns)
+      if (UseSelectedItemAsVColumns is not null)
         UseSelectedItemAsVColumns();
     }
 
     private void EhEraseV_Click(object sender, RoutedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiVColumnNames);
-      if (null != ClearVColumns)
+      if (ClearVColumns is not null)
         ClearVColumns();
     }
 
     private void EhDataColumnsSelected(object sender, RoutedEventArgs e)
     {
-      if (null != SelectedColumnKindChanged)
+      if (SelectedColumnKindChanged is not null)
         SelectedColumnKindChanged();
     }
 
     private void EhPropertyColumnsSelected(object sender, RoutedEventArgs e)
     {
-      if (null != SelectedColumnKindChanged)
+      if (SelectedColumnKindChanged is not null)
         SelectedColumnKindChanged();
     }
 
@@ -164,14 +164,14 @@ namespace Altaxo.Gui.Data
     private void EhUseAllAvailableColumnsOfGroupChanged(object sender, RoutedEventArgs e)
     {
       var ev = UseAllAvailableDataColumnsChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
     private void EhUseAllAvailableDataRowsChanged(object sender, RoutedEventArgs e)
     {
       var ev = UseAllAvailableDataRowsChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
 
       _guiDataRowsHost.Visibility = _guiUseAllAvailableDataRows.IsChecked == true ? Visibility.Hidden : Visibility.Visible;
@@ -180,7 +180,7 @@ namespace Altaxo.Gui.Data
     private void EhGroupNumberChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
     {
       var ev = SelectedGroupNumberChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 

@@ -68,7 +68,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     private void EhUseLineConnectChanged(object sender, RoutedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiLineConnect);
-      if (null != _guiLineConnect.SelectedItem) // null for SelectedItem can happen when the DataSource is chaning
+      if (_guiLineConnect.SelectedItem is not null) // null for SelectedItem can happen when the DataSource is chaning
         UseLineChanged?.Invoke();
     }
 
@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException("FramePen");
         _linePenGlue.Pen = value;
       }

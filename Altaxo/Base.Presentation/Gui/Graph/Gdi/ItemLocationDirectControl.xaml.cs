@@ -228,7 +228,7 @@ namespace Altaxo.Gui.Graph.Gdi
     private void EhSizeXChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       var actn = SizeXChanged;
-      if (null != actn)
+      if (actn is not null)
         actn();
     }
 
@@ -237,7 +237,7 @@ namespace Altaxo.Gui.Graph.Gdi
     private void EhSizeYChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       var actn = SizeYChanged;
-      if (null != actn)
+      if (actn is not null)
         actn();
     }
 
@@ -246,7 +246,7 @@ namespace Altaxo.Gui.Graph.Gdi
     private void EhScaleXChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       var actn = ScaleXChanged;
-      if (null != actn)
+      if (actn is not null)
         actn();
     }
 
@@ -255,7 +255,7 @@ namespace Altaxo.Gui.Graph.Gdi
     private void EhScaleYChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       var actn = ScaleYChanged;
-      if (null != actn)
+      if (actn is not null)
         actn();
     }
   }

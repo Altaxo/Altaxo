@@ -74,12 +74,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     {
       if (false == _chkCustomMajorColor.IsChecked)
       {
-        if (_majorPenGlue.Pen != null)
+        if (_majorPenGlue.Pen is not null)
           _majorPenGlue.Pen = _majorPenGlue.Pen.WithMaterial(_linePenGlue.Pen.Material);
       }
       if (false == _chkCustomMinorColor.IsChecked)
       {
-        if (_minorPenGlue.Pen != null)
+        if (_minorPenGlue.Pen is not null)
           _minorPenGlue.Pen = _minorPenGlue.Pen.WithMaterial(_linePenGlue.Pen.Material);
       }
 
@@ -192,7 +192,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       set
       {
         _majorPenGlue.Pen = value;
-        if (value != null)
+        if (value is not null)
         {
           CustomMajorColor = !PenX3D.AreEqualUnlessThickness(value, _linePenGlue.Pen);
           CustomMajorThickness = (value.Thickness1 != _linePenGlue.Pen.Thickness1);
@@ -209,7 +209,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       set
       {
         _minorPenGlue.Pen = value;
-        if (value != null)
+        if (value is not null)
         {
           CustomMinorColor = !PenX3D.AreEqualUnlessThickness(value, _linePenGlue.Pen);
           CustomMinorThickness = (value.Thickness1 != _linePenGlue.Pen.Thickness1);

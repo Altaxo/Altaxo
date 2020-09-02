@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     protected virtual void OnChoiceChanged()
     {
-      if (null != ChoiceChanged)
+      if (ChoiceChanged is not null)
         ChoiceChanged();
     }
 

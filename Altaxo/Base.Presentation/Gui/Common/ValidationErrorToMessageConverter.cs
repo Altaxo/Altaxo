@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Common
 
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
-      if (_converter == null)
+      if (_converter is null)
       {
         _converter = new ValidationErrorToMessageConverter();
       }
@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Common
           value as ReadOnlyObservableCollection<ValidationError>;
 
       var result = new StringBuilder();
-      if (null != errors)
+      if (errors is not null)
       {
         for (int i = 0; i < errors.Count; i++)
         {

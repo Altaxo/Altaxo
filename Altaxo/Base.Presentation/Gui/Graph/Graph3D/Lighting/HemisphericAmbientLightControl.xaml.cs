@@ -79,7 +79,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         _lock.ExecuteLocked(

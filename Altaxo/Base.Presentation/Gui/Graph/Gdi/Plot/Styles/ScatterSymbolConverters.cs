@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       var symbol = value as IScatterSymbol;
 
-      if (null == symbol)
+      if (symbol is null)
         return null;
       GetPathGeometries(symbol, SymbolSize, out var fill, out var frame, out var inset);
       GetBrushes(symbol, PlotColor, fill, frame, inset, out var fillBrush, out var frameBrush, out var insetBrush);
@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       // draws a transparent outline to fix the borders
       var drawingGroup = new DrawingGroup();
 
-      if (null != fill)
+      if (fill is not null)
       {
         var geometryDrawing = new GeometryDrawing
         {
@@ -67,7 +67,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         drawingGroup.Children.Add(geometryDrawing);
       }
 
-      if (null != frame)
+      if (frame is not null)
       {
         var geometryDrawing = new GeometryDrawing
         {
@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         drawingGroup.Children.Add(geometryDrawing);
       }
 
-      if (null != inset)
+      if (inset is not null)
       {
         var geometryDrawing = new GeometryDrawing
         {
@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private PathFigure GetPathFigure(List<ClipperLib.IntPoint> polygon, double symbolSize)
     {
-      if (null == polygon || polygon.Count <= 2)
+      if (polygon is null || polygon.Count <= 2)
         return null;
 
       return new PathFigure(
@@ -106,16 +106,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private PathGeometry GetPathGeometry(List<List<ClipperLib.IntPoint>> polygon, double symbolSize)
     {
-      return new PathGeometry(polygon.Where(p => p != null && p.Count > 2).Select(p => GetPathFigure(p, symbolSize)));
+      return new PathGeometry(polygon.Where(p => p is not null && p.Count > 2).Select(p => GetPathFigure(p, symbolSize)));
     }
 
     private void GetPathGeometries(IScatterSymbol symbol, double symbolSize, out PathGeometry fill, out PathGeometry frame, out PathGeometry inset)
     {
       symbol.CalculatePolygons(null, out var framePolygon, out var insetPolygon, out var fillPolygon);
 
-      fill = fillPolygon == null ? null : GetPathGeometry(fillPolygon, symbolSize);
-      frame = framePolygon == null ? null : GetPathGeometry(framePolygon, symbolSize);
-      inset = insetPolygon == null ? null : GetPathGeometry(insetPolygon, symbolSize);
+      fill = fillPolygon is null ? null : GetPathGeometry(fillPolygon, symbolSize);
+      frame = framePolygon is null ? null : GetPathGeometry(framePolygon, symbolSize);
+      inset = insetPolygon is null ? null : GetPathGeometry(insetPolygon, symbolSize);
     }
 
     private void GetBrushes(IScatterSymbol scatterSymbol, NamedColor plotColor, PathGeometry fillPath, PathGeometry framePath, PathGeometry insetPath, out Brush fillBrush, out Brush frameBrush, out Brush insetBrush)
@@ -124,7 +124,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
       var plotColorInfluence = scatterSymbol.PlotColorInfluence;
 
-      if (null != insetPath)
+      if (insetPath is not null)
       {
         var insetColor = scatterSymbol.Inset.Color;
         if (plotColorInfluence.HasFlag(PlotColorInfluence.InsetColorFull))
@@ -135,7 +135,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         insetBrush = new SolidColorBrush(GuiHelper.ToWpf(insetColor));
       }
 
-      if (null != fillPath)
+      if (fillPath is not null)
       {
         var fillColor = scatterSymbol.FillColor;
         if (plotColorInfluence.HasFlag(PlotColorInfluence.FillColorFull))
@@ -146,7 +146,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         fillBrush = new SolidColorBrush(GuiHelper.ToWpf(fillColor));
       }
 
-      if (null != framePath)
+      if (framePath is not null)
       {
         var frameColor = scatterSymbol.Frame.Color;
         if (plotColorInfluence.HasFlag(PlotColorInfluence.FrameColorFull))
@@ -182,7 +182,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       var symbolType = value as Type;
 
-      if (null == symbolType)
+      if (symbolType is null)
         return null;
 
       var symbol = (IScatterSymbol)Activator.CreateInstance(symbolType);
@@ -214,7 +214,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var listName = ScatterSymbolListManager.Instance.GetParentList(value as IScatterSymbol)?.Name;
-      if (null != listName)
+      if (listName is not null)
       {
         var entry = ScatterSymbolListManager.Instance.GetEntryValue(listName);
         string levelName = Enum.GetName(typeof(Altaxo.Main.ItemDefinitionLevel), entry.Level);

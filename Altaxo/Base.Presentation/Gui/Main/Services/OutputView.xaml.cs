@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Main.Services
 
     private void EhMenuTextAppendEnabled1(object sender, RoutedEventArgs e)
     {
-      if (null != EnabledChanged)
+      if (EnabledChanged is not null)
         EnabledChanged();
     }
   }

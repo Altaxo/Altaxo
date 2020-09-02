@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
     private void EhRenameTextChanged(object sender, TextChangedEventArgs e)
     {
-      if (RenameStringTemplateChanged != null)
+      if (RenameStringTemplateChanged is not null)
         RenameStringTemplateChanged();
     }
 

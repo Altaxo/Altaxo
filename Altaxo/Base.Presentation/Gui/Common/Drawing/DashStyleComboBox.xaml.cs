@@ -90,7 +90,7 @@ namespace Altaxo.Gui.Common.Drawing
             valList.Add(val);
         }
 
-        if (valList.Count < 1 && error == null) // only use this error, if there is no other error;
+        if (valList.Count < 1 && error is null) // only use this error, if there is no other error;
           error = "At least one number is neccessary";
 
         return new DashStyleEx(valList.ToArray());
@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Common.Drawing
         string text = (string)value;
         var result = ConvertFromText(text, out var error);
 
-        if (error == null)
+        if (error is null)
           return result;
         else
           return Binding.DoNothing;
@@ -112,7 +112,7 @@ namespace Altaxo.Gui.Common.Drawing
         string text = (string)obj;
         var result = ConvertFromText(text, out var error);
 
-        if (null != error)
+        if (error is not null)
         {
           _originalToolTip = _cb.ToolTip;
           _cb.ToolTip = error;
@@ -185,7 +185,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected virtual void EhSelectedDashStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      if (null != _img)
+      if (_img is not null)
       {
         var val = (DashStyleEx)args.NewValue;
         _img.Source = GetImage(val);

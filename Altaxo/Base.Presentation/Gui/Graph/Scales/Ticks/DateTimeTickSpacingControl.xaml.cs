@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     private void _edMajorSpan_Validating(object sender, ValidationEventArgs<string> e)
     {
       var c = new System.ComponentModel.CancelEventArgs();
-      if (null != MajorTicksValidating)
+      if (MajorTicksValidating is not null)
         MajorTicksValidating(_edMajorSpan.Text, c);
       if (c.Cancel)
         e.AddError("The provided text can not be converted");
@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
       set
       {
-        if (value == null)
+        if (value is null)
           _rbMinorTicksAutomatic.IsChecked = true;
         else
         {

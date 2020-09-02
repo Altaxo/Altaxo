@@ -39,7 +39,7 @@ namespace Altaxo.Gui.AddInItems
       CommandParameter = caller;
 
       cmd = CommandWrapper.Unwrap(Command) as ICheckableMenuCommand;
-      if (cmd != null)
+      if (cmd is not null)
       {
         isCheckedChangedHandler = cmd_IsCheckedChanged;
         cmd.IsCheckedChanged += isCheckedChangedHandler;

@@ -111,7 +111,7 @@ namespace Altaxo.Gui.Geometry
 
     private void EhRadioButtonChanged(object sender, RoutedEventArgs e)
     {
-      if (null == _guiCartesian || null == _guiSpherical)
+      if (_guiCartesian is null || _guiSpherical is null)
         return; // Design mode or just during control creation
 
       string tag = (string)((RadioButton)sender).Tag;

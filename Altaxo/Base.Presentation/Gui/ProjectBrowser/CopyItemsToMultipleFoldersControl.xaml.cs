@@ -88,27 +88,27 @@ namespace Altaxo.Gui.ProjectBrowser
 
     private void EhCommand_CopyCanExecute(object sender, CanExecuteRoutedEventArgs e)
     {
-      e.CanExecute = _guiProjectFolders.SelectedTreeViewItems != null && _guiProjectFolders.SelectedTreeViewItems.Count > 0;
+      e.CanExecute = _guiProjectFolders.SelectedTreeViewItems is not null && _guiProjectFolders.SelectedTreeViewItems.Count > 0;
       e.Handled = true;
     }
 
     private void EhCommand_CopyExecuted(object sender, ExecutedRoutedEventArgs e)
     {
       var ev = CopySelectedFolderNames;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
     private void EhCommand_DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e)
     {
-      e.CanExecute = _guiProjectFolders.SelectedTreeViewItems != null && _guiProjectFolders.SelectedTreeViewItems.Count > 0;
+      e.CanExecute = _guiProjectFolders.SelectedTreeViewItems is not null && _guiProjectFolders.SelectedTreeViewItems.Count > 0;
       e.Handled = true;
     }
 
     private void EhCommand_DeleteExecuted(object sender, ExecutedRoutedEventArgs e)
     {
       var ev = UnselectAllFolders;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
   }

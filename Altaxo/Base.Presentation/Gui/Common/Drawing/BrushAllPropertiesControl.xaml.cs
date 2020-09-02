@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhBrushTypeChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != BrushTypeChanged)
+      if (BrushTypeChanged is not null)
         BrushTypeChanged();
     }
 
@@ -73,7 +73,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhForeColorChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != ForeColorChanged)
+      if (ForeColorChanged is not null)
         ForeColorChanged();
     }
 
@@ -98,7 +98,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhBackColorChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != BackColorChanged)
+      if (BackColorChanged is not null)
         BackColorChanged();
     }
 
@@ -123,7 +123,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhExchangeColorsChanged(object sender, RoutedEventArgs e)
     {
-      if (null != ExchangeColorsChanged)
+      if (ExchangeColorsChanged is not null)
         ExchangeColorsChanged();
     }
 
@@ -160,7 +160,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhWrapModeChanged(object sender, SelectionChangedEventArgs e)
     {
-      if (null != WrapModeChanged)
+      if (WrapModeChanged is not null)
         WrapModeChanged();
     }
 
@@ -185,7 +185,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhGradientFocusChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != GradientFocusChanged)
+      if (GradientFocusChanged is not null)
         GradientFocusChanged();
     }
 
@@ -210,7 +210,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhColorScaleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != GradientColorScaleChanged)
+      if (GradientColorScaleChanged is not null)
         GradientColorScaleChanged();
     }
 
@@ -235,7 +235,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhGradientAngleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != GradientAngleChanged)
+      if (GradientAngleChanged is not null)
         GradientAngleChanged();
     }
 
@@ -260,7 +260,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhTextureOffsetXChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != TextureOffsetXChanged)
+      if (TextureOffsetXChanged is not null)
         TextureOffsetXChanged();
     }
 
@@ -285,7 +285,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhTextureOffsetYChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != TextureOffsetYChanged)
+      if (TextureOffsetYChanged is not null)
         TextureOffsetYChanged();
     }
 
@@ -315,7 +315,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhTextureImageChanged(object sender, SelectionChangedEventArgs e)
     {
-      if (null != TextureImageChanged)
+      if (TextureImageChanged is not null)
         TextureImageChanged();
     }
 
@@ -368,7 +368,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (width <= 0)
         width = 64;
 
-      if (null == _previewBitmap)
+      if (_previewBitmap is null)
       {
         _previewBitmap = new GdiToWpfBitmap(width, height);
         _previewPanel.Source = _previewBitmap.WpfBitmap;

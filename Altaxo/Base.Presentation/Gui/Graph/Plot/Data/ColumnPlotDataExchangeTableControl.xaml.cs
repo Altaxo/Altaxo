@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
     {
-      if (null != SelectedTableChanged)
+      if (SelectedTableChanged is not null)
       {
         GuiHelper.SynchronizeSelectionFromGui(_cbTables);
         SelectedTableChanged?.Invoke();
@@ -111,8 +111,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
       _guiDiagnosticsNumberOfSuccessfullyChangedColumns.Text = text2;
       _guiDiagnosticsNumberOfUnsuccessfullyChangedColumns.Text = text3;
 
-      _guiDiagnosticsNumberOfSuccessfullyChangedColumns.Visibility = text2 == null ? Visibility.Hidden : Visibility.Visible;
-      _guiDiagnosticsNumberOfUnsuccessfullyChangedColumns.Visibility = text3 == null ? Visibility.Hidden : Visibility.Visible;
+      _guiDiagnosticsNumberOfSuccessfullyChangedColumns.Visibility = text2 is null ? Visibility.Hidden : Visibility.Visible;
+      _guiDiagnosticsNumberOfUnsuccessfullyChangedColumns.Visibility = text3 is null ? Visibility.Hidden : Visibility.Visible;
     }
   }
 }

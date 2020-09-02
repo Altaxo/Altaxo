@@ -152,25 +152,25 @@ namespace Altaxo.Gui.Worksheet
 
     private void EhCreateSpectrumFrom_Changed(object sender, RoutedEventArgs e)
     {
-      if (null != Change_CreateSpectrumFrom)
+      if (Change_CreateSpectrumFrom is not null)
         Change_CreateSpectrumFrom();
     }
 
     private void EhXValues_Changed(object sender, RoutedEventArgs e)
     {
-      if (null != Change__XValuesFromOption)
+      if (Change__XValuesFromOption is not null)
         Change__XValuesFromOption();
     }
 
     private void EhExtendFileNameBy_Changed(object sender, RoutedEventArgs e)
     {
-      if (null != Change_ExtendFileNameOptions)
+      if (Change_ExtendFileNameOptions is not null)
         Change_ExtendFileNameOptions();
     }
 
     private void EhChooseBasicFileName(object sender, RoutedEventArgs e)
     {
-      if (null != BasicFileNameAndPathChoose)
+      if (BasicFileNameAndPathChoose is not null)
         BasicFileNameAndPathChoose();
     }
   }

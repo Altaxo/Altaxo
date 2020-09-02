@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private void EhDoubleUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
     {
-      if (null != ChoiceChanged)
+      if (ChoiceChanged is not null)
         ChoiceChanged();
     }
   }

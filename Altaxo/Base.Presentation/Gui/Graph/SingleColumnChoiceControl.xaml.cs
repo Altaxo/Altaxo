@@ -47,10 +47,10 @@ namespace Altaxo.Gui.Graph
 
     private void _tvColumns_AfterSelect(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
-      if (_controller != null)
+      if (_controller is not null)
       {
         var selitem = _tvColumns.SelectedItem as NGTreeNode;
-        if (null != selitem)
+        if (selitem is not null)
           _controller.EhView_AfterSelectNode(selitem);
       }
     }

@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private void EhEditText_Click(object sender, RoutedEventArgs e)
     {
-      if (EditText != null)
+      if (EditText is not null)
         EditText(this, e);
     }
 

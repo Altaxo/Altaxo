@@ -69,20 +69,20 @@ namespace GongSolutions.Wpf.DragDrop
 
     public static bool CanAcceptData(IDropInfo dropInfo)
     {
-      if (dropInfo == null || dropInfo.DragInfo == null)
+      if (dropInfo is null || dropInfo.DragInfo is null)
       {
         return false;
       }
 
       if (dropInfo.DragInfo.SourceCollection == dropInfo.TargetCollection)
       {
-        return GetList(dropInfo.TargetCollection) != null;
+        return GetList(dropInfo.TargetCollection) is not null;
       }
       else if (dropInfo.DragInfo.SourceCollection is ItemCollection)
       {
         return false;
       }
-      else if (dropInfo.TargetCollection == null)
+      else if (dropInfo.TargetCollection is null)
       {
         return false;
       }
@@ -127,7 +127,7 @@ namespace GongSolutions.Wpf.DragDrop
     {
       var parent = ItemsControl.ItemsControlFromItemContainer(targetItem);
 
-      while (parent != null)
+      while (parent is not null)
       {
         if (parent == sourceItem)
         {

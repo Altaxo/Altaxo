@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     {
       _grac = view;
 
-      if (_grac != null)
+      if (_grac is not null)
         _grac.SetPanelCursor(Cursors.Pen);
     }
 

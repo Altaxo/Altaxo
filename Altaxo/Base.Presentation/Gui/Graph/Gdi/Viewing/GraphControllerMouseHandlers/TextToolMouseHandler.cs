@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     public TextToolMouseHandler(GraphController grac)
     {
       _grac = grac;
-      if (_grac != null)
+      if (_grac is not null)
         _grac.SetPanelCursor(Cursors.IBeam);
     }
 
@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       if (Current.Gui.ShowDialog(ref tgoo, "Text", false))
       {
         tgo = (TextGraphic)tgoo;
-        if (tgo != null && !tgo.Empty)
+        if (tgo is not null && !tgo.Empty)
         {
           _grac.ActiveLayer.GraphObjects.Add(tgo);
         }

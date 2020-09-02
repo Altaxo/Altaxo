@@ -51,7 +51,7 @@ namespace Altaxo.Gui.DataConnection
     {
       GuiHelper.SynchronizeSelectionFromGui(_cmbOperator);
       var ev = SimpleUpdated;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }
@@ -60,7 +60,7 @@ namespace Altaxo.Gui.DataConnection
     private void _simpleChangedText(object sender, TextChangedEventArgs e)
     {
       var ev = SimpleUpdated;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }
@@ -69,7 +69,7 @@ namespace Altaxo.Gui.DataConnection
     private void _betweenChanged(object sender, TextChangedEventArgs e)
     {
       var ev = IntervalUpdated;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }
@@ -78,7 +78,7 @@ namespace Altaxo.Gui.DataConnection
     private void _btnClear_Click(object sender, RoutedEventArgs e)
     {
       var ev = ClearAll;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }

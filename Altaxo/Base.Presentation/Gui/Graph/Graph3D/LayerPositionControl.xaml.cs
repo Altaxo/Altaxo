@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       var oldValue = _useDirectPositioning;
       _useDirectPositioning = true;
 
-      if (_useDirectPositioning != oldValue && PositioningTypeChanged != null)
+      if (_useDirectPositioning != oldValue && PositioningTypeChanged is not null)
         PositioningTypeChanged();
     }
 
@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       var oldValue = _useDirectPositioning;
       _useDirectPositioning = false;
 
-      if (_useDirectPositioning != oldValue && PositioningTypeChanged != null)
+      if (_useDirectPositioning != oldValue && PositioningTypeChanged is not null)
         PositioningTypeChanged();
     }
 

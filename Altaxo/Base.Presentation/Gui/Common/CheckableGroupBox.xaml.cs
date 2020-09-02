@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Common
       if (EnableContentWithCheck && Content is UIElement)
         (Content as UIElement).IsEnabled = true;
 
-      if (null != Checked)
+      if (Checked is not null)
         Checked(this, e);
     }
 
@@ -98,7 +98,7 @@ namespace Altaxo.Gui.Common
       if (EnableContentWithCheck && Content is UIElement)
         (Content as UIElement).IsEnabled = false;
 
-      if (null != Unchecked)
+      if (Unchecked is not null)
         Unchecked(this, e);
     }
 
@@ -109,7 +109,7 @@ namespace Altaxo.Gui.Common
       if (EnableContentWithCheck)
       {
         var uicontent = newContent as UIElement;
-        if (null != uicontent)
+        if (uicontent is not null)
           uicontent.IsEnabled = IsChecked == true;
       }
     }

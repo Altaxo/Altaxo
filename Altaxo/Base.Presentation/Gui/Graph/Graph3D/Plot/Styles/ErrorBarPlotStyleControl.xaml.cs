@@ -348,7 +348,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     public void Initialize_CommonErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
     {
-      if (null == transformationTextToShow)
+      if (transformationTextToShow is null)
       {
         _guiCommonErrorColumnTransformation.Visibility = Visibility.Collapsed;
       }
@@ -369,7 +369,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     public void Initialize_PositiveErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
     {
-      if (null == transformationTextToShow)
+      if (transformationTextToShow is null)
       {
         _guiPositiveErrorColumnTransformation.Visibility = Visibility.Collapsed;
       }
@@ -390,7 +390,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     public void Initialize_NegativeErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
     {
-      if (null == transformationTextToShow)
+      if (transformationTextToShow is null)
       {
         _guiNegativeErrorColumnTransformation.Visibility = Visibility.Collapsed;
       }

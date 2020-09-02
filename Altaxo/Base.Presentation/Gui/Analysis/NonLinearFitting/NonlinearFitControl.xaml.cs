@@ -44,25 +44,25 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private void _btSelectFitFunc_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_SelectFitFunction();
     }
 
     private void _btNew_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_NewFitFunction();
     }
 
     private void _tsbCopyParameter_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_CopyParameterNV();
     }
 
     private void _tsbCopyParameterAll_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_CopyParameterNVV();
     }
 
@@ -78,37 +78,37 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private void _tsbCopyParameterValueAsCDef_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_CopyParameterVAsCDef();
     }
 
     private void _tsbCopyParameterValue_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_CopyParameterV();
     }
 
     private void _tsbPasteParameterValue_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_PasteParameterV();
     }
 
     private void _btChiSqr_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_EvaluateChiSqr();
     }
 
     private void _btDoFit_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_DoFit();
     }
 
     private void _btDoSimplex_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_DoSimplex();
     }
 
@@ -119,7 +119,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private void _btSimulate_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_DoSimulation(true == _rbFromEquallySpacedInterval.IsChecked, true == _chkUseUnusedDependentVarsAlso.IsChecked);
     }
 

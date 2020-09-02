@@ -140,7 +140,7 @@ namespace Altaxo.Gui.Common
     /// <param name="args">Property changed event arguments.</param>
     protected void OnSelectedValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      if (null != SelectedValueChanged)
+      if (SelectedValueChanged is not null)
         SelectedValueChanged(obj, args);
     }
 

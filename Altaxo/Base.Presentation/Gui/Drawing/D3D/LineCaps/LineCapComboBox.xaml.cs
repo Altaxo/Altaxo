@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Drawing.D3D.LineCaps
       public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
       {
         var val = (ILineCap)value;
-        if (null == val)
+        if (val is null)
           return _cb._cachedItems[Altaxo.Drawing.D3D.LineCaps.Flat.Instance.Name];
         else
           return _cb._cachedItems[val.Name];
@@ -166,7 +166,7 @@ namespace Altaxo.Gui.Drawing.D3D.LineCaps
       const int bmpWidth = 48;
       const double lineWidth = bmpHeight * 0.4;
 
-      if (null == _interopBitmap)
+      if (_interopBitmap is null)
         _interopBitmap = new GdiToWpfBitmap(bmpWidth, bmpHeight);
 
       using (var grfx = _interopBitmap.BeginGdiPainting())

@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       e.Handled = true;
       GuiHelper.SynchronizeSelectionFromGui(_cbMajorTicks);
-      if (null != MajorTicksChanged)
+      if (MajorTicksChanged is not null)
         MajorTicksChanged(sender, e);
     }
 

@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhPredefinedSets_DoubleClick(object sender, MouseButtonEventArgs e)
     {
-      if (PredefinedStyleSelected != null && null != _predefinedSetsAvailable.SelectedItem)
+      if (PredefinedStyleSelected is not null && _predefinedSetsAvailable.SelectedItem is not null)
       {
         GuiHelper.SynchronizeSelectionFromGui(_predefinedSetsAvailable);
         PredefinedStyleSelected?.Invoke();
@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhSingleStylesAvailable_DoubleClick(object sender, MouseButtonEventArgs e)
     {
-      if (RequestAddStyle != null && _singleStylesAvailable.SelectedItem != null)
+      if (RequestAddStyle is not null && _singleStylesAvailable.SelectedItem is not null)
       {
         GuiHelper.SynchronizeSelectionFromGui(_singleStylesAvailable);
         RequestAddStyle?.Invoke();

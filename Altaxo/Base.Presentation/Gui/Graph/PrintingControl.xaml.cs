@@ -145,7 +145,7 @@ namespace Altaxo.Gui.Graph
 
     private void UpdatePreviewPageAndText()
     {
-      if (null == _previewData)
+      if (_previewData is null)
       {
         _edPreviewPageOfPages.Content = null;
       }
@@ -160,7 +160,7 @@ namespace Altaxo.Gui.Graph
 
     private void UpdatePreview()
     {
-      if (null == _previewBitmap || null == _previewData || _previewData.Length == 0)
+      if (_previewBitmap is null || _previewData is null || _previewData.Length == 0)
         return;
 
       // original sizes
@@ -310,14 +310,14 @@ namespace Altaxo.Gui.Graph
 
     private void EhShowPrinterProperties(object sender, RoutedEventArgs e)
     {
-      if (null != EditPrinterProperties)
+      if (EditPrinterProperties is not null)
         EditPrinterProperties();
     }
 
     private void EhPrinterSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_cbAvailablePrinters);
-      if (null != SelectedPrinterChanged)
+      if (SelectedPrinterChanged is not null)
         SelectedPrinterChanged();
 
       var node = (Collections.SelectableListNode)_cbAvailablePrinters.SelectedItem;
@@ -331,7 +331,7 @@ namespace Altaxo.Gui.Graph
     {
       _previewImage.Width = e.NewSize.Width;
       _previewImage.Height = e.NewSize.Height;
-      if (null == _previewBitmap)
+      if (_previewBitmap is null)
       {
         _previewBitmap = new GdiToWpfBitmap((int)e.NewSize.Width, (int)e.NewSize.Height);
         _previewImage.Source = _previewBitmap.WpfBitmap;
@@ -358,32 +358,32 @@ namespace Altaxo.Gui.Graph
 
     private void EhPreviewNextPage(object sender, RoutedEventArgs e)
     {
-      _previewPageNumber = Math.Min(_previewPageNumber + 1, null != _previewData ? _previewData.Length - 1 : 0);
+      _previewPageNumber = Math.Min(_previewPageNumber + 1, _previewData is not null ? _previewData.Length - 1 : 0);
       UpdatePreviewPageAndText();
     }
 
     private void EhPreviewLastPage(object sender, RoutedEventArgs e)
     {
-      _previewPageNumber = null != _previewData ? _previewData.Length - 1 : 0;
+      _previewPageNumber = _previewData is not null ? _previewData.Length - 1 : 0;
       UpdatePreviewPageAndText();
     }
 
     private void EhPaperOrientationPortrait(object sender, RoutedEventArgs e)
     {
-      if (null != PaperOrientationLandscapeChanged)
+      if (PaperOrientationLandscapeChanged is not null)
         PaperOrientationLandscapeChanged(false);
     }
 
     private void EhPaperOrientationLandscape(object sender, RoutedEventArgs e)
     {
-      if (null != PaperOrientationLandscapeChanged)
+      if (PaperOrientationLandscapeChanged is not null)
         PaperOrientationLandscapeChanged(true);
     }
 
     private void EhPaperSizeChanged(object sender, SelectionChangedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiPaperSize);
-      if (null != PaperSizeChanged)
+      if (PaperSizeChanged is not null)
       {
         PaperSizeChanged();
       }
@@ -392,7 +392,7 @@ namespace Altaxo.Gui.Graph
     private void EhPaperSourceChanged(object sender, SelectionChangedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiPaperSource);
-      if (null != PaperSourceChanged)
+      if (PaperSourceChanged is not null)
       {
         PaperSourceChanged();
       }
@@ -401,40 +401,40 @@ namespace Altaxo.Gui.Graph
     private void EhMarginLeftChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       var val = _guiMarginLeft.SelectedQuantity.AsQuantityIn(SIPrefix.Centi, AUL.Inch.Instance).Value;
-      if (null != MarginLeftChanged)
+      if (MarginLeftChanged is not null)
         MarginLeftChanged(val);
     }
 
     private void EhMarginRightChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       var val = _guiMarginRight.SelectedQuantity.AsQuantityIn(SIPrefix.Centi, AUL.Inch.Instance).Value;
-      if (null != MarginRightChanged)
+      if (MarginRightChanged is not null)
         MarginRightChanged(val);
     }
 
     private void EhMarginTopChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       var val = _guiMarginTop.SelectedQuantity.AsQuantityIn(SIPrefix.Centi, AUL.Inch.Instance).Value;
-      if (null != MarginTopChanged)
+      if (MarginTopChanged is not null)
         MarginTopChanged(val);
     }
 
     private void EhMarginBottomChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       var val = _guiMarginBottom.SelectedQuantity.AsQuantityIn(SIPrefix.Centi, AUL.Inch.Instance).Value;
-      if (null != MarginBottomChanged)
+      if (MarginBottomChanged is not null)
         MarginBottomChanged(val);
     }
 
     private void EhNoOfCopiesChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
     {
-      if (null != NumberOfCopiesChanged)
+      if (NumberOfCopiesChanged is not null)
         NumberOfCopiesChanged(_guiNumberOfCopies.Value);
     }
 
     private void EhCollateCopiesChanged(object sender, RoutedEventArgs e)
     {
-      if (null != CollateCopiesChanged)
+      if (CollateCopiesChanged is not null)
         CollateCopiesChanged(_guiCollateCopies.IsChecked == true);
     }
   }

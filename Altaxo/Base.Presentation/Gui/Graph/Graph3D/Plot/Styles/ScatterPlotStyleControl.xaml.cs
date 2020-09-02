@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
     {
-      if (null != IndependentColorChanged)
+      if (IndependentColorChanged is not null)
         IndependentColorChanged();
     }
 

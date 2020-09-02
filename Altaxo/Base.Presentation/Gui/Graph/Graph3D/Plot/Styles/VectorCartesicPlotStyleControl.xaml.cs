@@ -309,7 +309,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
     {
-      if (null != IndependentColorChanged)
+      if (IndependentColorChanged is not null)
         IndependentColorChanged();
     }
 
@@ -322,7 +322,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     public void Initialize_ColumnXTransformation(string transformationTextToShow, string transformationToolTip)
     {
-      if (null == transformationTextToShow)
+      if (transformationTextToShow is null)
       {
         _guiColumnXTransformation.Visibility = Visibility.Collapsed;
       }
@@ -343,7 +343,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     public void Initialize_ColumnYTransformation(string transformationTextToShow, string transformationToolTip)
     {
-      if (null == transformationTextToShow)
+      if (transformationTextToShow is null)
       {
         _guiColumnYTransformation.Visibility = Visibility.Collapsed;
       }
@@ -364,7 +364,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     public void Initialize_ColumnZTransformation(string transformationTextToShow, string transformationToolTip)
     {
-      if (null == transformationTextToShow)
+      if (transformationTextToShow is null)
       {
         _guiColumnZTransformation.Visibility = Visibility.Collapsed;
       }

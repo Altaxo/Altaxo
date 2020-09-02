@@ -74,12 +74,12 @@ namespace Altaxo.Gui.Worksheet
 
     public void SetDetailControl(object detailControl)
     {
-      if (_detailControl != null)
+      if (_detailControl is not null)
         _mainGrid.Children.Remove(_detailControl);
 
       _detailControl = (UIElement)detailControl;
 
-      if (null != _detailControl)
+      if (_detailControl is not null)
       {
         _detailControl.SetValue(Grid.RowProperty, 4);
         _detailControl.SetValue(Grid.ColumnProperty, 2);
@@ -89,19 +89,19 @@ namespace Altaxo.Gui.Worksheet
 
     private void EhValueTo_Validating(object sender, ValidationEventArgs<string> e)
     {
-      if (null != ValidatingTo)
+      if (ValidatingTo is not null)
         ValidatingTo(e);
     }
 
     private void EhValueNumberOfPoints_Validating(object sender, Altaxo.Gui.ValidationEventArgs<string> e)
     {
-      if (null != ValidatingNumberOfPoints)
+      if (ValidatingNumberOfPoints is not null)
         ValidatingNumberOfPoints(e);
     }
 
     private void EhValueFrom_Validating(object sender, Altaxo.Gui.ValidationEventArgs<string> e)
     {
-      if (null != ValidatingFrom)
+      if (ValidatingFrom is not null)
         ValidatingFrom(e);
     }
 
@@ -109,7 +109,7 @@ namespace Altaxo.Gui.Worksheet
     {
       e.Handled = true;
       GuiHelper.SynchronizeSelectionFromGui(_cbInterpolationClass);
-      if (null != ChangedInterpolationMethod)
+      if (ChangedInterpolationMethod is not null)
         ChangedInterpolationMethod();
     }
   }

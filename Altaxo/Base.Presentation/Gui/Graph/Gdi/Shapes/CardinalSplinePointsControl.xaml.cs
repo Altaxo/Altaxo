@@ -147,7 +147,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private void EhCopyCurvePoints(object sender, RoutedEventArgs e)
     {
-      if (null != CurvePointsCopyTriggered)
+      if (CurvePointsCopyTriggered is not null)
         CurvePointsCopyTriggered();
     }
 
@@ -163,7 +163,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private void EhPasteCurvePoints(object sender, RoutedEventArgs e)
     {
-      if (null != CurvePointsPasteTriggered)
+      if (CurvePointsPasteTriggered is not null)
         CurvePointsPasteTriggered();
     }
 

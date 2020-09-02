@@ -88,7 +88,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       // Create up to 6 surrounding nodes.
       for (int i = 0; i < 6; ++i)
       {
-        if (parent.Neighbors[i] == null)
+        if (parent.Neighbors[i] is null)
         {
           var cell = new HexagonButton(FindResource("HexagonButtonStyle") as Style);
           double dx = Canvas.GetLeft(parent) + HexagonButton.Offset * Math.Cos(i * Math.PI / 3d);
@@ -106,7 +106,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       for (int i = 0; i < 6; ++i)
       {
         HexagonButton child = parent.Neighbors[i];
-        if (child != null)
+        if (child is not null)
         {
           int ip3 = (i + 3) % 6;
           child.Neighbors[ip3] = parent;
@@ -147,7 +147,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       for (int i = 0; i < 6; ++i)
       {
         HexagonButton child = parent.Neighbors[i];
-        if (child != null && !child.Visited)
+        if (child is not null && !child.Visited)
         {
           Color c = parent.NominalColor;
           switch (i)
@@ -247,7 +247,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private void FireColorSelected()
     {
-      if (ColorSelected != null)
+      if (ColorSelected is not null)
         ColorSelected(this, new ColorEventArgs(_selectedColor));
     }
   }

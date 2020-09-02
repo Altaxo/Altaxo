@@ -46,19 +46,19 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private void EhEnableCheckChanged(object sender, RoutedEventArgs e)
     {
-      if (null != ShowGridChanged)
+      if (ShowGridChanged is not null)
         ShowGridChanged(true == _chkEnable.IsChecked);
     }
 
     private void EhShowZeroOnlyCheckChanged(object sender, RoutedEventArgs e)
     {
-      if (null != ShowZeroOnlyChanged)
+      if (ShowZeroOnlyChanged is not null)
         ShowZeroOnlyChanged(true == _chkShowZeroOnly.IsChecked);
     }
 
     private void EhShowMinorCheckChanged(object sender, RoutedEventArgs e)
     {
-      if (null != ShowMinorGridChanged)
+      if (ShowMinorGridChanged is not null)
         ShowMinorGridChanged(true == _chkShowMinor.IsChecked);
     }
 

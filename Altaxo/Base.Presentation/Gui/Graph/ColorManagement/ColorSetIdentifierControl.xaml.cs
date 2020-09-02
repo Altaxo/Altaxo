@@ -59,27 +59,27 @@ namespace Altaxo.Gui.Graph.ColorManagement
       public override DataTemplate SelectTemplate(object item, DependencyObject container)
       {
         var node = item as NGTreeNode;
-        if (node != null)
+        if (node is not null)
         {
           if (node.Tag is NamedColor)
           {
-            if (null == _namedColorTemplate)
+            if (_namedColorTemplate is null)
               _namedColorTemplate = (DataTemplate)_parent.TryFindResource("NamedColorTemplate");
-            if (null != _namedColorTemplate)
+            if (_namedColorTemplate is not null)
               return _namedColorTemplate;
           }
           else if (node.Tag is IColorSet)
           {
-            if (null == _colorSetTemplate)
+            if (_colorSetTemplate is null)
               _colorSetTemplate = (DataTemplate)_parent.TryFindResource("ColorSetTemplate");
-            if (null != _colorSetTemplate)
+            if (_colorSetTemplate is not null)
               return _colorSetTemplate;
           }
           else
           {
-            if (null == _treeOtherTemplate)
+            if (_treeOtherTemplate is null)
               _treeOtherTemplate = (DataTemplate)_parent.TryFindResource("TreeOtherTemplate");
-            if (null != _treeOtherTemplate)
+            if (_treeOtherTemplate is not null)
               return _treeOtherTemplate;
           }
         }

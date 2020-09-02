@@ -29,7 +29,7 @@ namespace Altaxo.Gui.Common
     private static Style FindResource(ResourceKey key)
     {
       // don't crash if controls using GlobalStyles are instanciated in unit test mode
-      if (Application.Current == null)
+      if (Application.Current is null)
         return null;
       else
         return (Style)Application.Current.FindResource(key);

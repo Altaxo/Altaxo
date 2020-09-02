@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     private void EhSelectedAxisTemplateChanged(object sender, SelectionChangedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiTemplateAxis);
-      if (null != SelectedAxisTemplateChanged)
+      if (SelectedAxisTemplateChanged is not null)
         SelectedAxisTemplateChanged();
     }
   }

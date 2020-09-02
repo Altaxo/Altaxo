@@ -33,7 +33,7 @@ namespace GongSolutions.Wpf.DragDrop
         dragInfo.Data = TypeUtilities.CreateDynamicallyTypedList(dragInfo.SourceItems);
       }
 
-      dragInfo.Effects = (dragInfo.Data != null) ?
+      dragInfo.Effects = (dragInfo.Data is not null) ?
                            DragDropEffects.Copy | DragDropEffects.Move :
                            DragDropEffects.None;
     }

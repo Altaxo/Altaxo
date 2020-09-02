@@ -168,13 +168,13 @@ namespace Altaxo.Gui
       if (disposing)
       {
         // free managed resources
-        if (_bmp != null)
+        if (_bmp is not null)
         {
           _bmp.Dispose();
           _bmp = null;
         }
 
-        if (_interopBmp != null)
+        if (_interopBmp is not null)
         {
           _interopBmp = null;
         }
@@ -230,7 +230,7 @@ namespace Altaxo.Gui
           () =>
           {
             var bmp = _interopBmp;
-            if (null != bmp)
+            if (bmp is not null)
             {
               bmp.Invalidate();
               OnPropertyChanged(nameof(WpfBitmapSource));
@@ -267,7 +267,7 @@ namespace Altaxo.Gui
       get
       {
         var bmp = _interopBmp;
-        if (null != bmp)
+        if (bmp is not null)
         {
           bmp.Invalidate();
           return (System.Windows.Media.Imaging.BitmapSource)bmp.GetAsFrozen();
@@ -301,7 +301,7 @@ namespace Altaxo.Gui
 
     public virtual void OnPropertyChanged(string name)
     {
-      if (null != PropertyChanged)
+      if (PropertyChanged is not null)
         PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(name));
     }
   }

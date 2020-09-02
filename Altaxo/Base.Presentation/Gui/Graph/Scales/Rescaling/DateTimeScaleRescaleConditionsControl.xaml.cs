@@ -59,14 +59,14 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
     private void _guiOrgValue_SelectedValueChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       var ev = OrgValueChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
     private void _guiEndValue_SelectedValueChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       var ev = EndValueChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
@@ -165,7 +165,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
     {
       GuiHelper.SynchronizeSelectionFromGui((ComboBox)sender);
       var ev = OrgRelativeToChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
@@ -173,7 +173,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
     {
       GuiHelper.SynchronizeSelectionFromGui((ComboBox)sender);
       var ev = EndRelativeToChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
   }

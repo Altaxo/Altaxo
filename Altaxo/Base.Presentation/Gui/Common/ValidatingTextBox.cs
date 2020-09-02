@@ -166,7 +166,7 @@ namespace Altaxo.Gui.Common
     public string EhValidateText(object obj, System.Globalization.CultureInfo info)
     {
       var evt = Validating;
-      if (null != evt)
+      if (evt is not null)
       {
         var e = new ValidationEventArgs<string>((string)GetValue(TextBox.TextProperty), info);
         evt(this, e);

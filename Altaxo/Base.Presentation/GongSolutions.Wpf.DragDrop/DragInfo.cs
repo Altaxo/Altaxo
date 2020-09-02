@@ -60,28 +60,28 @@ namespace GongSolutions.Wpf.DragDrop
         VisualSourceFlowDirection = itemsControl.GetItemsPanelFlowDirection();
 
         var sourceItem = e.OriginalSource as UIElement; // If we can't cast object as a UIElement it might be a FrameworkContentElement, if so try and use its parent.
-        if (sourceItem == null && e.OriginalSource is FrameworkContentElement)
+        if (sourceItem is null && e.OriginalSource is FrameworkContentElement)
         {
           sourceItem = ((FrameworkContentElement)e.OriginalSource).Parent as UIElement;
         }
         UIElement item = null;
-        if (sourceItem != null)
+        if (sourceItem is not null)
         {
           item = itemsControl.GetItemContainer(sourceItem);
         }
-        if (item == null)
+        if (item is null)
         {
           item = itemsControl.GetItemContainerAt(e.GetPosition(itemsControl), itemsControl.GetItemsPanelOrientation());
         }
 
-        if (item != null)
+        if (item is not null)
         {
           // Remember the relative position of the item being dragged
           PositionInDraggedItem = e.GetPosition(item);
 
           var itemParent = ItemsControl.ItemsControlFromItemContainer(item);
 
-          if (itemParent != null)
+          if (itemParent is not null)
           {
             SourceCollection = itemParent.ItemsSource ?? itemParent.Items;
             SourceIndex = itemParent.ItemContainerGenerator.IndexFromContainer(item);
@@ -117,7 +117,7 @@ namespace GongSolutions.Wpf.DragDrop
         }
       }
 
-      if (SourceItems == null)
+      if (SourceItems is null)
       {
         SourceItems = Enumerable.Empty<object>();
       }

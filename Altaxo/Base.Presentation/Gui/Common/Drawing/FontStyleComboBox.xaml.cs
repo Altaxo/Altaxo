@@ -68,7 +68,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected virtual void OnSelectedFontStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      if (null != SelectedFontStyleChanged)
+      if (SelectedFontStyleChanged is not null)
         SelectedFontStyleChanged(obj, args);
 
       using (var token = _eventDisabler.SuspendGetToken())

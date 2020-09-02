@@ -44,61 +44,61 @@ namespace Altaxo.Gui.Worksheet
 
     private void _rbMethodNone_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (MethodChanged != null)
+      if (MethodChanged is not null)
         MethodChanged(SpectralPreprocessingMethod.None);
     }
 
     private void _rbMethodMSC_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (MethodChanged != null)
+      if (MethodChanged is not null)
         MethodChanged(SpectralPreprocessingMethod.MultiplicativeScatteringCorrection);
     }
 
     private void _rbMethodSNV_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (MethodChanged != null)
+      if (MethodChanged is not null)
         MethodChanged(SpectralPreprocessingMethod.StandardNormalVariate);
     }
 
     private void _rbMethod1stDer_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (MethodChanged != null)
+      if (MethodChanged is not null)
         MethodChanged(SpectralPreprocessingMethod.FirstDerivative);
     }
 
     private void _rbMethod2ndDer_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (MethodChanged != null)
+      if (MethodChanged is not null)
         MethodChanged(SpectralPreprocessingMethod.SecondDerivative);
     }
 
     private void _rbDetrendingNone_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (DetrendingChanged != null)
+      if (DetrendingChanged is not null)
         DetrendingChanged(-1);
     }
 
     private void _rbDetrendingZero_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (DetrendingChanged != null)
+      if (DetrendingChanged is not null)
         DetrendingChanged(0);
     }
 
     private void _rbDetrending1st_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (DetrendingChanged != null)
+      if (DetrendingChanged is not null)
         DetrendingChanged(1);
     }
 
     private void _rbDetrending2nd_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (DetrendingChanged != null)
+      if (DetrendingChanged is not null)
         DetrendingChanged(2);
     }
 
     private void _chkEnsembleScale_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (EnsembleScaleChanged != null)
+      if (EnsembleScaleChanged is not null)
         EnsembleScaleChanged(true == _chkEnsembleScale.IsChecked);
     }
 

@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Common
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
-      if (DropDownMenu != null && !IsDropDownMenuOpen)
+      if (DropDownMenu is not null && !IsDropDownMenuOpen)
       {
         DropDownMenu.Placement = PlacementMode.Bottom;
         DropDownMenu.PlacementTarget = this;

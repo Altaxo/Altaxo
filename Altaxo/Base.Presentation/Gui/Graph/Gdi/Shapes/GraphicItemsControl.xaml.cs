@@ -62,19 +62,19 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private void EhSelectedItemsUp_Click(object sender, RoutedEventArgs e)
     {
-      if (null != SelectedItemsUp)
+      if (SelectedItemsUp is not null)
         SelectedItemsUp();
     }
 
     private void EhSelectedItemsDown_Click(object sender, RoutedEventArgs e)
     {
-      if (null != SelectedItemsDown)
+      if (SelectedItemsDown is not null)
         SelectedItemsDown();
     }
 
     private void EhSelectedItemsRemove_Click(object sender, RoutedEventArgs e)
     {
-      if (null != SelectedItemsRemove)
+      if (SelectedItemsRemove is not null)
         SelectedItemsRemove();
     }
   }

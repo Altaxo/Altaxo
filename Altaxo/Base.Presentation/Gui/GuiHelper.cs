@@ -156,7 +156,7 @@ namespace Altaxo.Gui
     /// <returns>The Gdi bitmap.</returns>
     public static System.Drawing.Bitmap ToGdi(System.Windows.Media.Imaging.BitmapSource wpfBitmapSource)
     {
-      if (null == wpfBitmapSource)
+      if (wpfBitmapSource is null)
         throw new ArgumentNullException(nameof(wpfBitmapSource));
 
       var gdiBitmap = new System.Drawing.Bitmap(
@@ -188,7 +188,7 @@ namespace Altaxo.Gui
     /// <returns>A Wpf <see cref="System.Windows.Media.Imaging.BitmapSource"/>.</returns>
     public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource(this System.Drawing.Image gdiImage)
     {
-      if (null == gdiImage)
+      if (gdiImage is null)
         throw new ArgumentNullException(nameof(gdiImage));
 
       System.Windows.Media.Imaging.BitmapSource wpfBitmapSource = null;
@@ -209,7 +209,7 @@ namespace Altaxo.Gui
     /// <returns>A Wpf <see cref="System.Windows.Media.Imaging.BitmapSource"/>.</returns>
     public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource(this System.Drawing.Bitmap gdiBitmap)
     {
-      if (null == gdiBitmap)
+      if (gdiBitmap is null)
         throw new ArgumentNullException(nameof(gdiBitmap));
 
       System.Windows.Media.Imaging.BitmapSource wpfBitmapSource = null;

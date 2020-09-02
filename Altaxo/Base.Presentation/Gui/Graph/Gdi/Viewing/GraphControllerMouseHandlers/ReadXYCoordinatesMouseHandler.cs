@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     {
       _grac = grac;
 
-      if (_grac != null)
+      if (_grac is not null)
         _grac.SetPanelCursor(Cursors.Cross);
     }
 
@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     {
       base.OnMouseDown(position, e);
 
-      if (null != _cachedActiveLayer && (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))) // if M is pressed, we don't move the cross, but instead we display not only the cross coordinates but also the difference
+      if (_cachedActiveLayer is not null && (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))) // if M is pressed, we don't move the cross, but instead we display not only the cross coordinates but also the difference
       {
         var printableCoord = _grac.ConvertMouseToRootLayerCoordinates(position);
         DisplayCrossCoordinatesAndDifference(printableCoord);
@@ -98,7 +98,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     private bool CalculateCrossCoordinates(PointD2D crossRootLayerCoord, out Altaxo.Data.AltaxoVariant x, out Altaxo.Data.AltaxoVariant y)
     {
       var layer = _cachedActiveLayer as XYPlotLayer;
-      if (layer == null)
+      if (layer is null)
       {
         x = new AltaxoVariant();
         y = new AltaxoVariant();

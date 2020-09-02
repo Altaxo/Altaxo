@@ -124,7 +124,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         item.SetValue(Grid.RowSpanProperty, _totalSlots);
 
         string fitFuncName = null;
-        if (_fitElement.FitFunction == null)
+        if (_fitElement.FitFunction is null)
           fitFuncName = "?";
         else if (_fitElement.FitFunction is Altaxo.Scripting.IFitFunctionScriptText ffct)
           fitFuncName = string.Format("{0} (created {1})", ffct.FitFunctionName, ffct.CreationTime.ToString("yyyy-dd-MM HH:mm:ss"));
@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       // internal independent variable names
       for (int i = 0; i < _numberOfX; ++i)
       {
-        string name = null != _fitElement.FitFunction && i < _fitElement.FitFunction.NumberOfIndependentVariables ? _fitElement.FitFunction.IndependentVariableName(i) : string.Empty;
+        string name = _fitElement.FitFunction is not null && i < _fitElement.FitFunction.NumberOfIndependentVariables ? _fitElement.FitFunction.IndependentVariableName(i) : string.Empty;
         var item = new TextBlock() { Text = name };
         item.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
         item.VerticalAlignment = System.Windows.VerticalAlignment.Center;
@@ -247,7 +247,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       // internal dependent variable names
       for (int i = 0; i < _numberOfY; ++i)
       {
-        string name = null != _fitElement.FitFunction && i < _fitElement.FitFunction.NumberOfDependentVariables ? _fitElement.FitFunction.DependentVariableName(i) : string.Empty;
+        string name = _fitElement.FitFunction is not null && i < _fitElement.FitFunction.NumberOfDependentVariables ? _fitElement.FitFunction.DependentVariableName(i) : string.Empty;
         var item = new TextBlock() { Text = name };
         item.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
         item.VerticalAlignment = System.Windows.VerticalAlignment.Center;
@@ -289,7 +289,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       // internal parameter names
       for (int i = 0; i < _numberOfParameter; ++i)
       {
-        string name = null != _fitElement.FitFunction && i < _fitElement.FitFunction.NumberOfParameters ? _fitElement.FitFunction.ParameterName(i) : string.Empty;
+        string name = _fitElement.FitFunction is not null && i < _fitElement.FitFunction.NumberOfParameters ? _fitElement.FitFunction.ParameterName(i) : string.Empty;
         var item = new TextBlock()
         {
           Text = name,
@@ -353,7 +353,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private string GetTextShownForErrorEvaluation(int i)
     {
-      string name = _fitElement.GetErrorEvaluation(i) != null ? _fitElement.GetErrorEvaluation(i).ShortName : string.Empty;
+      string name = _fitElement.GetErrorEvaluation(i) is not null ? _fitElement.GetErrorEvaluation(i).ShortName : string.Empty;
       return name;
     }
 

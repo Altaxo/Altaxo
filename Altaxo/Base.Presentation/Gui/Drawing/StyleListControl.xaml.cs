@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Drawing
     {
       get
       {
-        if (null == _availableItemsDragSource)
+        if (_availableItemsDragSource is null)
           _availableItemsDragSource = new AvailableItems_DragSource(this);
         return _availableItemsDragSource;
       }
@@ -154,7 +154,7 @@ namespace Altaxo.Gui.Drawing
       public void StartDrag(IDragInfo dragInfo)
       {
         var result = _parentControl.AvailableItems_StartDrag?.Invoke(dragInfo.SourceItems);
-        if (null != result)
+        if (result is not null)
         {
           dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
           dragInfo.Data = result.Value.Data;
@@ -185,7 +185,7 @@ namespace Altaxo.Gui.Drawing
     {
       get
       {
-        if (null == _availableItems_DropTarget)
+        if (_availableItems_DropTarget is null)
           _availableItems_DropTarget = new AvailableItems_DropTarget(this);
         return _availableItems_DropTarget;
       }
@@ -218,7 +218,7 @@ namespace Altaxo.Gui.Drawing
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey));
 
-        if (null != result)
+        if (result is not null)
         {
           resultingEffect = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
           adornerType = result.Value.ItemIsSwallowingData ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
@@ -243,7 +243,7 @@ namespace Altaxo.Gui.Drawing
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey)
           );
 
-        if (null != result)
+        if (result is not null)
         {
           dropInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.IsCopy, result.Value.IsMove); // it is important to get back the resulting effect to dropInfo, because dropInfo informs the drag handler about the resulting effect, which can e.g. delete the items after a move operation
         }
@@ -260,7 +260,7 @@ namespace Altaxo.Gui.Drawing
     {
       get
       {
-        if (null == _currentItemsDragSource)
+        if (_currentItemsDragSource is null)
           _currentItemsDragSource = new CurrentItems_DragSource(this);
         return _currentItemsDragSource;
       }
@@ -285,7 +285,7 @@ namespace Altaxo.Gui.Drawing
       {
         GuiHelper.SynchronizeSelectionFromGui(_parentControl._guiCurrentItems);
         var result = _parentControl.CurrentItems_StartDrag?.Invoke(dragInfo.SourceItems);
-        if (null != result)
+        if (result is not null)
         {
           dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
           dragInfo.Data = result.Value.Data;
@@ -314,7 +314,7 @@ namespace Altaxo.Gui.Drawing
     {
       get
       {
-        if (null == _currentItems_DropTarget)
+        if (_currentItems_DropTarget is null)
           _currentItems_DropTarget = new CurrentItems_DropTarget(this);
         return _currentItems_DropTarget;
       }
@@ -347,7 +347,7 @@ namespace Altaxo.Gui.Drawing
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey));
 
-        if (null != result)
+        if (result is not null)
         {
           resultingEffect = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
           adornerType = result.Value.ItemIsSwallowingData ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
@@ -372,7 +372,7 @@ namespace Altaxo.Gui.Drawing
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey)
           );
 
-        if (null != result)
+        if (result is not null)
         {
           dropInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.IsCopy, result.Value.IsMove); // it is important to get back the resulting effect to dropInfo, because dropInfo informs the drag handler about the resulting effect, which can e.g. delete the items after a move operation
         }
@@ -445,7 +445,7 @@ namespace Altaxo.Gui.Drawing
     {
       get
       {
-        if (null == _currentItemsTemplate)
+        if (_currentItemsTemplate is null)
           _currentItemsTemplate = FindResource("CurrentItemsTemplateResource") as DataTemplate;
         return _currentItemsTemplate;
       }
@@ -467,7 +467,7 @@ namespace Altaxo.Gui.Drawing
     {
       get
       {
-        if (null == _availableItemsTemplate)
+        if (_availableItemsTemplate is null)
           _currentItemsTemplate = FindResource("AvailableItemsTemplateResource") as HierarchicalDataTemplate;
         return _availableItemsTemplate;
       }

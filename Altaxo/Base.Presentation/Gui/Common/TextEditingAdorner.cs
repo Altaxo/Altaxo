@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Common
       // Build the text box
       _textBox = new TextBox();
 
-      if (textBoxStyle != null)
+      if (textBoxStyle is not null)
       {
         _textBox.Style = textBoxStyle; // Apply a style to the TextBox, if a style was provided
       }
@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Common
         UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
         Source = this
       };
-      if (null != textBoxValidationRule)
+      if (textBoxValidationRule is not null)
       {
         binding.ValidationRules.Add(textBoxValidationRule); // Add a validation rule if it was provided
       }
@@ -168,7 +168,7 @@ namespace Altaxo.Gui.Common
       if (e.Key == Key.Enter || e.Key == Key.F2)
       {
         var ev = EditingFinished;
-        if (null != ev)
+        if (ev is not null)
           ev(this, e);
         //IsEditing = false;
         //_earliestTimeItemIsEligibleForEditing = DateTime.MaxValue;
@@ -182,13 +182,13 @@ namespace Altaxo.Gui.Common
     {
       var newFocusedElement = e.NewFocus as ContextMenu;
 
-      if (newFocusedElement != null && newFocusedElement.PlacementTarget == (UIElement)sender)
+      if (newFocusedElement is not null && newFocusedElement.PlacementTarget == (UIElement)sender)
       {
       }
       else
       {
         var ev = EditingFinished;
-        if (null != ev)
+        if (ev is not null)
           ev(this, e);
       }
     }
@@ -201,13 +201,13 @@ namespace Altaxo.Gui.Common
     {
       ContextMenu newFocusedElement = null;
 
-      if (newFocusedElement != null && newFocusedElement.PlacementTarget == (UIElement)sender)
+      if (newFocusedElement is not null && newFocusedElement.PlacementTarget == (UIElement)sender)
       {
       }
       else
       {
         var ev = EditingFinished;
-        if (null != ev)
+        if (ev is not null)
           ev(this, e);
       }
     }

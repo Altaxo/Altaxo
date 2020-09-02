@@ -45,20 +45,20 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private void _edNumberOfRows_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhNumberOfRowsChanged(_edNumberOfRows.Value);
     }
 
     private void _edNumberOfColumns_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhNumberOfColumnsChanged(_edNumberOfColumns.Value);
     }
 
     private void _edRowSpacing_Validating(object sender, ValidationEventArgs<string> e)
     {
       bool Cancel = false;
-      if (null != _controller)
+      if (_controller is not null)
         Cancel |= _controller.EhRowSpacingChanged(e.ValueToValidate);
       if (Cancel)
         e.AddError("The provided string could not be converted to a numeric value");
@@ -67,7 +67,7 @@ namespace Altaxo.Gui.Graph.Gdi
     private void _edColumnSpacing_Validating(object sender, ValidationEventArgs<string> e)
     {
       bool Cancel = false;
-      if (null != _controller)
+      if (_controller is not null)
         Cancel |= _controller.EhColumnSpacingChanged(e.ValueToValidate);
       if (Cancel)
         e.AddError("The provided string could not be converted to a numeric value");
@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Graph.Gdi
     private void _edTopMargin_Validating(object sender, ValidationEventArgs<string> e)
     {
       bool Cancel = false;
-      if (_controller != null)
+      if (_controller is not null)
         Cancel |= _controller.EhTopMarginChanged(e.ValueToValidate);
 
       if (Cancel)
@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Graph.Gdi
     private void _edLeftMargin_Validating(object sender, ValidationEventArgs<string> e)
     {
       bool Cancel = false;
-      if (_controller != null)
+      if (_controller is not null)
         Cancel |= _controller.EhLeftMarginChanged(e.ValueToValidate);
 
       if (Cancel)
@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Graph.Gdi
     private void _edBottomMargin_Validating(object sender, ValidationEventArgs<string> e)
     {
       bool Cancel = false;
-      if (_controller != null)
+      if (_controller is not null)
         Cancel |= _controller.EhBottomMarginChanged(e.ValueToValidate);
 
       if (Cancel)
@@ -106,7 +106,7 @@ namespace Altaxo.Gui.Graph.Gdi
     private void _edRightMargin_Validating(object sender, ValidationEventArgs<string> e)
     {
       bool Cancel = false;
-      if (_controller != null)
+      if (_controller is not null)
         Cancel |= _controller.EhRightMarginChanged(e.ValueToValidate);
 
       if (Cancel)
@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private void _cbSuperfluousLayersAction_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhSuperfluousLayersActionChanged((Altaxo.Collections.SelectableListNode)_cbSuperfluousLayersAction.SelectedItem);
     }
 

@@ -195,7 +195,7 @@ namespace Altaxo.Gui.Common
     /// <param name="item"></param>
     internal void OnItemClicked(MultiSelectTreeViewItem item)
     {
-      if (item != null)
+      if (item is not null)
       {
         switch (SelectionMode)
         {
@@ -227,7 +227,7 @@ namespace Altaxo.Gui.Common
 
     protected internal void OnItemDoubleClicked(MultiSelectTreeViewItem item)
     {
-      if (null != item && null != ItemMouseDoubleClick)
+      if (item is not null && ItemMouseDoubleClick is not null)
         ItemMouseDoubleClick(this, EventArgs.Empty);
     }
 
@@ -282,13 +282,13 @@ namespace Altaxo.Gui.Common
 
     private void ManageShiftSelection(MultiSelectTreeViewItem viewItem)
     {
-      if (_lastClickedItem == null)
+      if (_lastClickedItem is null)
         _lastClickedItem = Items[0] as MultiSelectTreeViewItem;
 
-      if (_lastClickedItem == null)
+      if (_lastClickedItem is null)
         return;
 
-      if (_lastClickedItem.ParentMultiSelectTreeView == null)
+      if (_lastClickedItem.ParentMultiSelectTreeView is null)
         return; // seems to be a disconnected item
 
       MultiSelectTreeViewItem.SelectAllNodesInbetween(_lastClickedItem, viewItem, true);

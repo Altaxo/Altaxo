@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Common
           return null;
       }
 
-      if (value == null)
+      if (value is null)
         return null;
       else
         return true;

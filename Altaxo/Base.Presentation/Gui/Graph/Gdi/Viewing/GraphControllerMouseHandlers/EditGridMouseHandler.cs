@@ -93,7 +93,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <exception cref="System.ArgumentNullException">view</exception>
     public EditGridMouseHandler(GraphController view)
     {
-      if (null == view)
+      if (view is null)
         throw new ArgumentNullException("view");
 
       _grac = view;
@@ -104,10 +104,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       _layerToEdit = _grac.ActiveLayer;
 
-      while (_layerToEdit != null && _layerToEdit.Layers.Count == 0)
+      while (_layerToEdit is not null && _layerToEdit.Layers.Count == 0)
         _layerToEdit = _layerToEdit.ParentLayer; // search for a parent layer which has childs
 
-      if (_layerToEdit == null)
+      if (_layerToEdit is null)
         _layerToEdit = _grac.Doc.RootLayer;
 
       if (_layerToEdit.Grid.XPartitioning.Count == 0 && _layerToEdit.Grid.YPartitioning.Count == 0)
@@ -185,12 +185,12 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         GetClosestGridLine(out var minDistanceSquared, out var minIndex, out var minInXGrid);
         if (minDistanceSquared < _catchDistance_RLC * _catchDistance_RLC)
         {
-          if (_grac != null)
+          if (_grac is not null)
             _grac.SetPanelCursor(Cursors.ScrollAll);
         }
         else
         {
-          if (_grac != null)
+          if (_grac is not null)
             _grac.SetPanelCursor(Cursors.Arrow);
         }
       }
@@ -306,10 +306,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       var xpos = grid.XPartitioning.GetPartitionPositions(_layerToEdit.Size.X);
       var ypos = grid.YPartitioning.GetPartitionPositions(_layerToEdit.Size.Y);
 
-      if (null == _xGridLines || _xGridLines.Length != xpos.Length)
+      if (_xGridLines is null || _xGridLines.Length != xpos.Length)
         _xGridLines = new LINE[xpos.Length];
 
-      if (null == _yGridLines || _yGridLines.Length != ypos.Length)
+      if (_yGridLines is null || _yGridLines.Length != ypos.Length)
         _yGridLines = new LINE[ypos.Length];
 
       for (int i = 0; i < xpos.Length; ++i)
