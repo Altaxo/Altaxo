@@ -70,7 +70,7 @@ namespace ICSharpCode.SharpZipLib.Core
     {
       bool result = false;
 
-      if (name != null)
+      if (name is not null)
       {
         string cooked = (name.Length > 0) ? Path.GetFullPath(name) : "";
         result = nameFilter_.IsMatch(cooked);

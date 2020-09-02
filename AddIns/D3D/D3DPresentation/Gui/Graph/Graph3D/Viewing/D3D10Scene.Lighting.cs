@@ -198,7 +198,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         for (int idx = 0; idx < 4; ++idx)
         {
           var l = lightSettings.GetDiscreteLight(idx);
-          if (null == l)
+          if (l is null)
           {
             ClearSingleLight(idx);
           }

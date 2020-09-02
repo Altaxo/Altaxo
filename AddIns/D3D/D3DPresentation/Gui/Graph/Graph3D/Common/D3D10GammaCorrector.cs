@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(gammaCorrectorResourcePath))
       {
-        if (null == stream)
+        if (stream is null)
           throw new InvalidOperationException(string.Format("Compiled shader resource not found: {0}", gammaCorrectorResourcePath));
 
         using (var shaderBytes = ShaderBytecode.FromStream(stream))
@@ -116,7 +116,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       if (_isDisposed)
         throw new ObjectDisposedException(GetType().Name);
 
-      if (device == null)
+      if (device is null)
         return;
 
       if (!object.ReferenceEquals(device, _cachedDevice))

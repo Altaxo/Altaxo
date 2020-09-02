@@ -541,7 +541,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </returns>
     public static string ConvertToString(byte[] data, int count)
     {
-      if (data == null)
+      if (data is null)
       {
         return string.Empty;
       }
@@ -560,7 +560,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </returns>
     public static string ConvertToString(byte[] data)
     {
-      if (data == null)
+      if (data is null)
       {
         return string.Empty;
       }
@@ -580,7 +580,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </returns>
     public static string ConvertToStringExt(int flags, byte[] data, int count)
     {
-      if (data == null)
+      if (data is null)
       {
         return string.Empty;
       }
@@ -607,7 +607,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </returns>
     public static string ConvertToStringExt(int flags, byte[] data)
     {
-      if (data == null)
+      if (data is null)
       {
         return string.Empty;
       }
@@ -631,7 +631,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <returns>Converted array</returns>
     public static byte[] ConvertToArray(string str)
     {
-      if (str == null)
+      if (str is null)
       {
         return new byte[0];
       }
@@ -649,7 +649,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <returns>Converted array</returns>
     public static byte[] ConvertToArray(int flags, string str)
     {
-      if (str == null)
+      if (str is null)
       {
         return new byte[0];
       }

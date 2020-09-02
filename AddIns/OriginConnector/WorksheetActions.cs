@@ -249,7 +249,7 @@ namespace Altaxo.Addins.OriginConnector
     {
       // test if folder with short folderName is existent
       var folder = parentFolder.Folders[folderName];
-      if (null != folder)
+      if (folder is not null)
         return folder;
 
       // else we must iterate through all folders and look for a folder with the same long folder name
@@ -289,14 +289,14 @@ namespace Altaxo.Addins.OriginConnector
     {
       // test if folder with short folderName is existent
       var worksheet = parentFolder.PageBases[worksheetName] as Origin.WorksheetPage;
-      if (null != worksheet)
+      if (worksheet is not null)
         return worksheet;
 
       // else we must iterate through all Pages and look for a worksheetpage with the same long folder name
       for (int i = 0; i < parentFolder.Folders.Count; ++i)
       {
         worksheet = parentFolder.PageBases[i] as Origin.WorksheetPage;
-        if (null != worksheet && worksheet.LongName == worksheetName)
+        if (worksheet is not null && worksheet.LongName == worksheetName)
           return worksheet;
       }
 
@@ -583,7 +583,7 @@ namespace Altaxo.Addins.OriginConnector
           var destColNum = new Altaxo.Data.DoubleColumn();
 
           object[] oarr;
-          if (null != (oarr = data as object[]))
+          if ((oarr = data as object[]) is not null)
           {
             int numberOfNums = 0;
             int numberOfObjects = 0;
@@ -594,7 +594,7 @@ namespace Altaxo.Addins.OriginConnector
                 destColNum[i] = (double)oarr[i];
                 ++numberOfNums;
               }
-              if (oarr[i] != null)
+              if (oarr[i] is not null)
               {
                 destCol[i] = string.Format(culture, "{0}", oarr[i]);
                 ++numberOfObjects;
@@ -613,15 +613,15 @@ namespace Altaxo.Addins.OriginConnector
           string[] sarr;
           object[] oarr;
 
-          if (null != (sarr = data as string[]))
+          if ((sarr = data as string[]) is not null)
           {
             (destCol as TextColumn).Array = sarr;
           }
-          else if (null != (oarr = data as object[]))
+          else if ((oarr = data as object[]) is not null)
           {
             for (int i = 0; i < oarr.Length; ++i)
             {
-              if (null != oarr[i])
+              if (oarr[i] is not null)
               {
                 destCol[i] = string.Format(culture, "{0}", oarr[i]);
               }
@@ -641,7 +641,7 @@ namespace Altaxo.Addins.OriginConnector
 
     public static DataColumnCollection GetPropertyColumns(this Origin.Worksheet wks)
     {
-      if (null == wks)
+      if (wks is null)
         throw new ArgumentNullException("wks");
 
       var result = new DataColumnCollection();
@@ -662,21 +662,21 @@ namespace Altaxo.Addins.OriginConnector
 
         if (!string.IsNullOrEmpty(srcCol.LongName))
         {
-          if (null == destLongNameCol)
+          if (destLongNameCol is null)
             destLongNameCol = result.EnsureExistence("LongName", typeof(TextColumn), ColumnKind.V, 0);
           destLongNameCol[i] = srcCol.LongName;
         }
 
         if (!string.IsNullOrEmpty(srcCol.Units))
         {
-          if (null == destUnitCol)
+          if (destUnitCol is null)
             destUnitCol = result.EnsureExistence("Unit", typeof(TextColumn), ColumnKind.V, 0);
           destUnitCol[i] = srcCol.Units;
         }
 
         if (!string.IsNullOrEmpty(srcCol.Comments))
         {
-          if (null == destCommentCol)
+          if (destCommentCol is null)
             destCommentCol = result.EnsureExistence("Comments", typeof(TextColumn), ColumnKind.V, 0);
           destCommentCol[i] = srcCol.Comments;
         }
@@ -685,7 +685,7 @@ namespace Altaxo.Addins.OriginConnector
         {
           if (!string.IsNullOrEmpty(srcCol.Parameter[nPara]))
           {
-            if (null == paraCol[nPara])
+            if (paraCol[nPara] is null)
               paraCol[nPara] = result.EnsureExistence("Parameter" + nPara.ToString(), typeof(TextColumn), ColumnKind.V, 0);
             paraCol[nPara][i] = srcCol.Parameter[nPara];
           }
@@ -703,7 +703,7 @@ namespace Altaxo.Addins.OriginConnector
       var app = conn.Application;
 
       Origin.WorksheetPage wbk;
-      if (null == (wbk = app.WorksheetPages[originWorksheetName]))
+      if ((wbk = app.WorksheetPages[originWorksheetName]) is null)
       {
         return string.Format("No origin worksheet named {0} found!", originWorksheetName);
       }

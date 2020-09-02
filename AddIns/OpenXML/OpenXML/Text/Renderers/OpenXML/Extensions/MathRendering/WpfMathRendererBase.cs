@@ -66,7 +66,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
     /// <param name="obj">The Markdown object to write to this renderer.</param>
     public void Write<T>(T obj) where T : Atom
     {
-      if (obj == null)
+      if (obj is null)
       {
         return;
       }
@@ -78,7 +78,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
 
       // Handle regular renderers
       IWpfMathAtomRenderer renderer = previousObjectType == objectType ? previousRenderer : null;
-      if (renderer == null && !renderersPerType.TryGetValue(objectType, out renderer))
+      if (renderer is null && !renderersPerType.TryGetValue(objectType, out renderer))
       {
         for (int i = 0; i < ObjectRenderers.Count; i++)
         {
@@ -92,7 +92,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
       }
 
       var writeResult = WriteResult.Completed;
-      if (renderer != null)
+      if (renderer is not null)
       {
         writeResult = renderer.Write(this, obj);
       }

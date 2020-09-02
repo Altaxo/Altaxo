@@ -53,13 +53,13 @@ namespace Altaxo.Text.Renderers
     {
       string styleId = GetIdFromCharacterStyleName(stylename);
 
-      if (null == styleId)
+      if (styleId is null)
         styleId = CreateAndAddCharacterStyle(stylename.Replace(" ", ""), stylename);
 
-      if (run.RunProperties == null)
+      if (run.RunProperties is null)
         run.RunProperties = new RunProperties();
 
-      if (run.RunProperties.RunStyle == null)
+      if (run.RunProperties.RunStyle is null)
         run.RunProperties.RunStyle = new RunStyle() { Val = styleId };
     }
 
@@ -85,7 +85,7 @@ namespace Altaxo.Text.Renderers
           .Where(st => (st.StyleName.Val == styleName) && (st.Type == StyleValues.Character))
           .FirstOrDefault();
 
-      return style == null ? null : style.StyleId;
+      return style is null ? null : style.StyleId;
     }
 
 

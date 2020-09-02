@@ -42,7 +42,7 @@ namespace Altaxo.Addins.OriginConnector
     {
       get
       {
-        if (null == _originApp)
+        if (_originApp is null)
           throw new InvalidOperationException("Not connected to Origin");
 
         return _originApp;
@@ -51,7 +51,7 @@ namespace Altaxo.Addins.OriginConnector
 
     public bool IsConnected()
     {
-      return _originApp != null;
+      return _originApp is not null;
     }
 
     public bool Connect(bool bConnectExisting)

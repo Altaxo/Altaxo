@@ -50,7 +50,7 @@ namespace Altaxo.Graph.Graph3D.Commands
     protected AbstractGraphToolsCommand(Altaxo.Gui.Graph.Graph3D.Viewing.GraphToolType toolType)
     {
       _graphToolType = toolType;
-      if (null != Current.Workbench)
+      if (Current.Workbench is not null)
       {
         Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchContentChanged, Current.Workbench, nameof(Current.Workbench.ActiveViewContentChanged));
         EhWorkbenchContentChanged(this, EventArgs.Empty);
@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Graph3D.Commands
     {
       if (!object.ReferenceEquals(Controller, myCurrentGraphController))
       {
-        if (null != myCurrentGraphController)
+        if (myCurrentGraphController is not null)
         {
           lock (this)
           {
@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Graph3D.Commands
             myCurrentGraphController = null;
           }
         }
-        if (Controller != null)
+        if (Controller is not null)
         {
           lock (this)
           {
@@ -90,11 +90,11 @@ namespace Altaxo.Graph.Graph3D.Commands
     {
       get
       {
-        return null == Controller ? false : _graphToolType == Controller.CurrentGraphTool;
+        return Controller is null ? false : _graphToolType == Controller.CurrentGraphTool;
       }
       set
       {
-        if (value == true && Controller != null)
+        if (value == true && Controller is not null)
         {
           Controller.CurrentGraphTool = _graphToolType;
         }

@@ -51,7 +51,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <param name="baseDirectory"></param>
     public WindowsNameTransform(string baseDirectory)
     {
-      if (baseDirectory == null)
+      if (baseDirectory is null)
       {
         throw new ArgumentNullException("baseDirectory", "Directory name is invalid");
       }
@@ -75,7 +75,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       get { return _baseDirectory; }
       set
       {
-        if (value == null)
+        if (value is null)
         {
           throw new ArgumentNullException("value");
         }
@@ -122,7 +122,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <returns>The transformed name.</returns>
     public string TransformFile(string name)
     {
-      if (name != null)
+      if (name is not null)
       {
         name = MakeValidName(name, _replacementChar);
 
@@ -133,7 +133,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
         // This may exceed windows length restrictions.
         // Combine will throw a PathTooLongException in that case.
-        if (_baseDirectory != null)
+        if (_baseDirectory is not null)
         {
           name = Path.Combine(_baseDirectory, name);
         }
@@ -154,7 +154,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     public static bool IsValidName(string name)
     {
       bool result =
-        (name != null) &&
+        (name is not null) &&
         (name.Length <= MaxPath) &&
         (string.Compare(name, MakeValidName(name, '_')) == 0)
         ;
@@ -191,7 +191,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <returns>Returns a valid name</returns>
     public static string MakeValidName(string name, char replacement)
     {
-      if (name == null)
+      if (name is null)
       {
         throw new ArgumentNullException("name");
       }

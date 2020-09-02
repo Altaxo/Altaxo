@@ -143,7 +143,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       get { return nameTransform_; }
       set
       {
-        if (value == null)
+        if (value is null)
         {
           nameTransform_ = new ZipNameTransform();
         }
@@ -244,7 +244,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         fi = new FileInfo(fileName);
       }
 
-      if ((fi != null) && fi.Exists)
+      if ((fi is not null) && fi.Exists)
       {
         switch (timeSetting_)
         {
@@ -347,7 +347,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         di = new DirectoryInfo(directoryName);
       }
 
-      if ((di != null) && di.Exists)
+      if ((di is not null) && di.Exists)
       {
         switch (timeSetting_)
         {

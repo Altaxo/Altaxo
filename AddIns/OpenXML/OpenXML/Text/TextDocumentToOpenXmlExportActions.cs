@@ -49,7 +49,7 @@ namespace Altaxo.Text
       dlg.AddFilter("*.*", "All files (*.*)");
       dlg.AddExtension = true;
 
-      if (null != oldFileName)
+      if (oldFileName is not null)
       {
         dlg.InitialDirectory = System.IO.Path.GetDirectoryName(oldFileName);
         dlg.FileName = oldFileName;
@@ -71,7 +71,7 @@ namespace Altaxo.Text
       dlg.AddFilter("*.*", "All files (*.*)");
       dlg.Title = "Select a .docx file used as style template";
 
-      if (null != oldFileName)
+      if (oldFileName is not null)
       {
         dlg.InitialDirectory = System.IO.Path.GetDirectoryName(oldFileName);
         dlg.FileName = oldFileName;
@@ -144,7 +144,7 @@ namespace Altaxo.Text
     /// <param name="errors">A list that collects error messages.</param>
     public static void Export(TextDocument document, TextDocumentToOpenXmlExportOptions o, string fileName, List<MarkdownError> errors = null)
     {
-      if (null == document)
+      if (document is null)
         throw new ArgumentNullException(nameof(document));
       if (string.IsNullOrEmpty(fileName))
         throw new ArgumentNullException(nameof(fileName));
@@ -179,7 +179,7 @@ namespace Altaxo.Text
         renderer.MaxImageWidthIn96thInch = o.MaximumImageWidth.Value.AsValueIn(Altaxo.Units.Length.Inch.Instance) * 96.0;
       if (o.MaximumImageHeight.HasValue)
         renderer.MaxImageHeigthIn96thInch = o.MaximumImageHeight.Value.AsValueIn(Altaxo.Units.Length.Inch.Instance) * 96.0;
-      if (null != o.ThemeName)
+      if (o.ThemeName is not null)
         renderer.ThemeName = o.ThemeName;
       renderer.RemoveOldContentsOfTemplateFile = o.RemoveOldContentsOfTemplateFile;
       renderer.ImageResolution = o.ImageResolutionDpi;

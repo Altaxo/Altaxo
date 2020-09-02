@@ -227,7 +227,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
             return;
           }
         }
-        else if (ActiveGrip != null)
+        else if (ActiveGrip is not null)
         {
           ActiveGrip.Activate(hitData, false);
           return;
@@ -237,7 +237,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
         if (!bShiftKey && !bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
           ClearSelections();
 
-        if (null != clickedObject)
+        if (clickedObject is not null)
           AddSelectedObject(hitData, clickedObject);
       }
     }
@@ -267,7 +267,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 
       if (e.ChangedButton == MouseButton.Left)
       {
-        if (ActiveGrip != null)
+        if (ActiveGrip is not null)
         {
           bool bRefresh = _wereObjectsMoved; // repaint the graph when objects were really moved
           bool bRepaint = false;
@@ -277,7 +277,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
           bool chooseNextLevel = ActiveGrip.Deactivate();
           ActiveGrip = null;
 
-          if (chooseNextLevel && null != SingleSelectedHitTestObject)
+          if (chooseNextLevel && SingleSelectedHitTestObject is not null)
           {
             DisplayedGripLevel = SingleSelectedHitTestObject.GetNextGripLevel(DisplayedGripLevel);
             bRepaint = true;
@@ -298,7 +298,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
     {
       base.OnMouseMove(position, e);
 
-      if (null != ActiveGrip)
+      if (ActiveGrip is not null)
       {
         var graphCoord = new HitTestPointData(_grac.Doc.Camera.GetHitRayMatrix(position));
         ActiveGrip.MoveGrip(graphCoord);
@@ -348,10 +348,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
         var graphObject = SelectedObjects[0];
 
         // Set the currently active layer to the layer the clicked object is belonging to.
-        if (graphObject.ParentLayer != null && !object.ReferenceEquals(_grac.ActiveLayer, graphObject.ParentLayer))
+        if (graphObject.ParentLayer is not null && !object.ReferenceEquals(_grac.ActiveLayer, graphObject.ParentLayer))
           _grac.EhView_CurrentLayerChoosen(graphObject.ParentLayer.IndexOf().ToArray(), false); // Sets the current active layer
 
-        if (graphObject.DoubleClick != null)
+        if (graphObject.DoubleClick is not null)
         {
           //EndMovingObjects(); // this will resume the suspended graph so that pressing the "Apply" button in a dialog will result in a visible change
           ClearSelections();  // this will resume the suspended graph so that pressing the "Apply" button in a dialog will result in a visible change
@@ -399,7 +399,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
       if (_selectedObjects.Count == 1) // single object selected
       {
         ActiveGrip = GripHitTest(hitPoint);
-        if (ActiveGrip != null)
+        if (ActiveGrip is not null)
           ActiveGrip.Activate(hitPoint, true);
       }
       else // multiple objects selected
@@ -440,7 +440,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
     /// <returns>The grip which was hitted, or null if no grip was hitted.</returns>
     public IGripManipulationHandle GripHitTest(HitTestPointData pt)
     {
-      if (null == DisplayedGrips || DisplayedGrips.Length == 0)
+      if (DisplayedGrips is null || DisplayedGrips.Length == 0)
         return null;
 
       for (int i = 0; i < DisplayedGrips.Length; i++)
@@ -457,7 +457,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
     /// <param name="g">Graphics context.</param>
     public void DisplayGrips(IOverlayContext3D g)
     {
-      if (null == DisplayedGrips || DisplayedGrips.Length == 0)
+      if (DisplayedGrips is null || DisplayedGrips.Length == 0)
         return;
 
       for (int i = 0; i < DisplayedGrips.Length; i++)

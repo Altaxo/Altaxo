@@ -147,7 +147,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
     /// </param>
     public void Update(byte[] buffer)
     {
-      if (buffer == null)
+      if (buffer is null)
       {
         throw new ArgumentNullException("buffer");
       }
@@ -169,7 +169,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
     /// </param>
     public void Update(byte[] buffer, int offset, int count)
     {
-      if (buffer == null)
+      if (buffer is null)
       {
         throw new ArgumentNullException("buffer");
       }

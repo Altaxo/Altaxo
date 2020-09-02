@@ -85,7 +85,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       bool result = false;
       DirectoryFailureHandler handler = DirectoryFailure;
 
-      if (handler != null)
+      if (handler is not null)
       {
         var args = new ScanFailureEventArgs(directory, e);
         handler(this, args);
@@ -103,7 +103,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     public bool OnFileFailure(string file, Exception e)
     {
       FileFailureHandler handler = FileFailure;
-      bool result = (handler != null);
+      bool result = (handler is not null);
 
       if (result)
       {
@@ -124,7 +124,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       bool result = true;
       ProcessFileHandler handler = ProcessFile;
 
-      if (handler != null)
+      if (handler is not null)
       {
         var args = new ScanEventArgs(file);
         handler(this, args);
@@ -142,7 +142,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     {
       bool result = true;
       CompletedFileHandler handler = CompletedFile;
-      if (handler != null)
+      if (handler is not null)
       {
         var args = new ScanEventArgs(file);
         handler(this, args);
@@ -161,7 +161,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     {
       bool result = true;
       ProcessDirectoryHandler handler = ProcessDirectory;
-      if (handler != null)
+      if (handler is not null)
       {
         var args = new DirectoryEventArgs(directory, hasMatchingFiles);
         handler(this, args);
@@ -284,7 +284,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       get { return entryFactory_; }
       set
       {
-        if (value == null)
+        if (value is null)
         {
           entryFactory_ = new ZipEntryFactory();
         }
@@ -395,7 +395,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       using (outputStream_ = new ZipOutputStream(outputStream))
       {
 #if !NETCF_1_0
-        if (password_ != null)
+        if (password_ is not null)
         {
           outputStream_.Password = password_;
         }
@@ -409,14 +409,14 @@ namespace ICSharpCode.SharpZipLib.Zip
           scanner.ProcessDirectory += new ProcessDirectoryHandler(ProcessDirectory);
         }
 
-        if (events_ != null)
+        if (events_ is not null)
         {
-          if (events_.FileFailure != null)
+          if (events_.FileFailure is not null)
           {
             scanner.FileFailure += events_.FileFailure;
           }
 
-          if (events_.DirectoryFailure != null)
+          if (events_.DirectoryFailure is not null)
           {
             scanner.DirectoryFailure += events_.DirectoryFailure;
           }
@@ -475,7 +475,7 @@ namespace ICSharpCode.SharpZipLib.Zip
              string fileFilter, string directoryFilter, bool restoreDateTime,
              bool isStreamOwner)
     {
-      if ((overwrite == Overwrite.Prompt) && (confirmDelegate == null))
+      if ((overwrite == Overwrite.Prompt) && (confirmDelegate is null))
       {
         throw new ArgumentNullException("confirmDelegate");
       }
@@ -492,7 +492,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       using (zipFile_ = new ZipFile(inputStream))
       {
 #if !NETCF_1_0
-        if (password_ != null)
+        if (password_ is not null)
         {
           zipFile_.Password = password_;
         }
@@ -533,7 +533,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     {
       if (!e.HasMatchingFiles && CreateEmptyDirectories)
       {
-        if (events_ != null)
+        if (events_ is not null)
         {
           events_.OnProcessDirectory(e.Name, e.HasMatchingFiles);
         }
@@ -551,7 +551,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
     private void ProcessFile(object sender, ScanEventArgs e)
     {
-      if ((events_ != null) && (events_.ProcessFile != null))
+      if ((events_ is not null) && (events_.ProcessFile is not null))
       {
         events_.ProcessFile(sender, e);
       }
@@ -572,7 +572,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         }
         catch (Exception ex)
         {
-          if (events_ != null)
+          if (events_ is not null)
           {
             continueRunning_ = events_.OnFileFailure(e.Name, ex);
           }
@@ -587,17 +587,17 @@ namespace ICSharpCode.SharpZipLib.Zip
 
     private void AddFileContents(string name, Stream stream)
     {
-      if (stream == null)
+      if (stream is null)
       {
         throw new ArgumentNullException("stream");
       }
 
-      if (buffer_ == null)
+      if (buffer_ is null)
       {
         buffer_ = new byte[4096];
       }
 
-      if ((events_ != null) && (events_.Progress != null))
+      if ((events_ is not null) && (events_.Progress is not null))
       {
         StreamUtils.Copy(stream, outputStream_, buffer_,
           events_.Progress, events_.ProgressInterval, this, name);
@@ -607,7 +607,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         StreamUtils.Copy(stream, outputStream_, buffer_);
       }
 
-      if (events_ != null)
+      if (events_ is not null)
       {
         continueRunning_ = events_.OnCompletedFile(name);
       }
@@ -620,7 +620,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       {
         if (File.Exists(targetName))
         {
-          if ((overwrite_ == Overwrite.Prompt) && (confirmDelegate_ != null))
+          if ((overwrite_ == Overwrite.Prompt) && (confirmDelegate_ is not null))
           {
             proceed = confirmDelegate_(targetName);
           }
@@ -633,7 +633,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
       if (proceed)
       {
-        if (events_ != null)
+        if (events_ is not null)
         {
           continueRunning_ = events_.OnProcessFile(entry.Name);
         }
@@ -644,11 +644,11 @@ namespace ICSharpCode.SharpZipLib.Zip
           {
             using (FileStream outputStream = File.Create(targetName))
             {
-              if (buffer_ == null)
+              if (buffer_ is null)
               {
                 buffer_ = new byte[4096];
               }
-              if ((events_ != null) && (events_.Progress != null))
+              if ((events_ is not null) && (events_.Progress is not null))
               {
                 StreamUtils.Copy(zipFile_.GetInputStream(entry), outputStream, buffer_,
                   events_.Progress, events_.ProgressInterval, this, entry.Name, entry.Size);
@@ -658,7 +658,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 StreamUtils.Copy(zipFile_.GetInputStream(entry), outputStream, buffer_);
               }
 
-              if (events_ != null)
+              if (events_ is not null)
               {
                 continueRunning_ = events_.OnCompletedFile(entry.Name);
               }
@@ -681,7 +681,7 @@ namespace ICSharpCode.SharpZipLib.Zip
           }
           catch (Exception ex)
           {
-            if (events_ != null)
+            if (events_ is not null)
             {
               continueRunning_ = events_.OnFileFailure(targetName, ex);
             }
@@ -711,7 +711,7 @@ namespace ICSharpCode.SharpZipLib.Zip
           targetName = extractNameTransform_.TransformDirectory(targetName);
         }
 
-        doExtraction = !((targetName == null) || (targetName.Length == 0));
+        doExtraction = !((targetName is null) || (targetName.Length == 0));
       }
 
       // TODO: Fire delegate/throw exception were compression method not supported, or name is invalid?
@@ -741,7 +741,7 @@ namespace ICSharpCode.SharpZipLib.Zip
           catch (Exception ex)
           {
             doExtraction = false;
-            if (events_ != null)
+            if (events_ is not null)
             {
               if (entry.IsDirectory)
               {
@@ -783,7 +783,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
     private static bool NameIsValid(string name)
     {
-      return (name != null) &&
+      return (name is not null) &&
         (name.Length > 0) &&
         (name.IndexOfAny(Path.GetInvalidPathChars()) < 0);
     }

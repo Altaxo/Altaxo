@@ -62,7 +62,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
     {
       get
       {
-        if (null == _positionColorLineListBuffer)
+        if (_positionColorLineListBuffer is null)
           _positionColorLineListBuffer = new D3D.PositionColorLineListBuffer(this);
 
         return _positionColorLineListBuffer;
@@ -95,7 +95,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
     public void RestoreGraphicsState(object graphicsState)
     {
       var gs = graphicsState as GraphicState;
-      if (null != gs)
+      if (gs is not null)
       {
         _transformation = gs.Transformation;
       }

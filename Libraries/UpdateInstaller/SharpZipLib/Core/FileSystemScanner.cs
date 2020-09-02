@@ -391,7 +391,7 @@ namespace ICSharpCode.SharpZipLib.Core
     private bool OnDirectoryFailure(string directory, Exception e)
     {
       DirectoryFailureHandler handler = DirectoryFailure;
-      bool result = (handler != null);
+      bool result = (handler is not null);
       if (result)
       {
         var args = new ScanFailureEventArgs(directory, e);
@@ -410,7 +410,7 @@ namespace ICSharpCode.SharpZipLib.Core
     {
       FileFailureHandler handler = FileFailure;
 
-      bool result = (handler != null);
+      bool result = (handler is not null);
 
       if (result)
       {
@@ -429,7 +429,7 @@ namespace ICSharpCode.SharpZipLib.Core
     {
       ProcessFileHandler handler = ProcessFile;
 
-      if (handler != null)
+      if (handler is not null)
       {
         var args = new ScanEventArgs(file);
         handler(this, args);
@@ -445,7 +445,7 @@ namespace ICSharpCode.SharpZipLib.Core
     {
       CompletedFileHandler handler = CompletedFile;
 
-      if (handler != null)
+      if (handler is not null)
       {
         var args = new ScanEventArgs(file);
         handler(this, args);
@@ -462,7 +462,7 @@ namespace ICSharpCode.SharpZipLib.Core
     {
       ProcessDirectoryHandler handler = ProcessDirectory;
 
-      if (handler != null)
+      if (handler is not null)
       {
         var args = new DirectoryEventArgs(directory, hasMatchingFiles);
         handler(this, args);
@@ -507,7 +507,7 @@ namespace ICSharpCode.SharpZipLib.Core
           {
             try
             {
-              if (fileName != null)
+              if (fileName is not null)
               {
                 OnProcessFile(fileName);
                 if (!alive_)
@@ -541,7 +541,7 @@ namespace ICSharpCode.SharpZipLib.Core
           string[] names = System.IO.Directory.GetDirectories(directory);
           foreach (string fulldir in names)
           {
-            if ((directoryFilter_ == null) || (directoryFilter_.IsMatch(fulldir)))
+            if ((directoryFilter_ is null) || (directoryFilter_.IsMatch(fulldir)))
             {
               ScanDir(fulldir, true);
               if (!alive_)

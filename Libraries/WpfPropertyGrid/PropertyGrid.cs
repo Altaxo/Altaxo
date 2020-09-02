@@ -36,7 +36,7 @@ namespace WPG
             base.OnApplyTemplate();
 
             object myThumb = Template.FindName("PART_Thumb", this);
-            if (myThumb != null && myThumb is Thumb)
+            if (myThumb is not null && myThumb is Thumb)
                 ((Thumb) myThumb).DragDelta += new DragDeltaEventHandler(PART_Thumb_DragDelta);
 
             Refresh();
@@ -56,7 +56,7 @@ namespace WPG
         {
             var OrginalSource = (e.OriginalSource as FrameworkElement);
 
-            if (OrginalSource.DataContext != null && OrginalSource.DataContext.GetType() == typeof(Property))
+            if (OrginalSource.DataContext is not null && OrginalSource.DataContext.GetType() == typeof(Property))
             {
                 //var selectedProperty = (Property)OrginalSource.DataContext;
                 SelectedProperty = (Property)OrginalSource.DataContext;
@@ -80,16 +80,16 @@ namespace WPG
 
         void ClearDescription()
         {
-            if (this.Template != null)
+            if (this.Template is not null)
             {
                 object myDescriptionField = Template.FindName("Part_PropertyName", this);
 
-                if (myDescriptionField != null && myDescriptionField is TextBlock)
+                if (myDescriptionField is not null && myDescriptionField is TextBlock)
                     ((TextBlock)myDescriptionField).Text = "";
 
                 object myNameField = Template.FindName("Part_PropertyDescription", this);
 
-                if (myNameField != null && myNameField is TextBlock)
+                if (myNameField is not null && myNameField is TextBlock)
                     ((TextBlock)myNameField).Text = "";
             }
         }
@@ -99,7 +99,7 @@ namespace WPG
 
         public void Refresh()
         {
-            if (Instance == null)
+            if (Instance is null)
             {
                 Properties = new ObservableCollection<Item>();
             }
@@ -109,14 +109,14 @@ namespace WPG
                                                         Filter.ToLower());
                 Properties = properties.Items;
 
-                if (Instance != null)
+                if (Instance is not null)
                 {
                     /// Fill the Instance type and Name with the Data
-                    if (Template != null)
+                    if (Template is not null)
                     {
                         object myInstanceType = Template.FindName("PART_InstanceType", this);
 
-                        if (myInstanceType != null && myInstanceType is TextBlock)
+                        if (myInstanceType is not null && myInstanceType is TextBlock)
                         {
                             string myType = "";
                             Object[] myAttributes = Instance.GetType().GetCustomAttributes(false);
@@ -140,7 +140,7 @@ namespace WPG
 
                         object myInstanceName = Template.FindName("PART_InstanceName", this);
 
-                        if (myInstanceName != null && myInstanceName is TextBlock)
+                        if (myInstanceName is not null && myInstanceName is TextBlock)
                         {
                             if (Instance is FrameworkElement)
                                 ((TextBlock) myInstanceName).Text = ((FrameworkElement) Instance).Name;
@@ -190,7 +190,7 @@ namespace WPG
         private static object CoerceInstance(DependencyObject d, object value)
         {
             var propertyGrid = d as PropertyGrid;
-            if (value == null)
+            if (value is null)
             {
                 return propertyGrid.NullInstance;
             }
@@ -205,7 +205,7 @@ namespace WPG
 		private void RaiseInstanceChanged()
 		{
 			var handler = InstanceChanged;
-			if (handler != null)
+			if (handler is not null)
 				handler(this, EventArgs.Empty);
 		}
         #endregion

@@ -12,7 +12,7 @@ namespace WPG.Data
 
         private void NotifyPropertyChanged(String info)
         {
-            if (PropertyChanged != null)
+            if (PropertyChanged is not null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(info));
             }
@@ -63,14 +63,14 @@ namespace WPG.Data
 			set
 			{
 				object currentValue = _property.GetValue(_instance);
-				if (value != null && value.Equals(currentValue))
+				if (value is not null && value.Equals(currentValue))
 				{
 					return;
 				}
 				Type propertyType = _property.PropertyType;
 				if (propertyType == typeof(object) ||
-					value == null && propertyType.IsClass ||
-					value != null && propertyType.IsAssignableFrom(value.GetType()))
+										value is null && propertyType.IsClass ||
+										value is not null && propertyType.IsAssignableFrom(value.GetType()))
 				{
 					_property.SetValue(_instance, value);
 				}

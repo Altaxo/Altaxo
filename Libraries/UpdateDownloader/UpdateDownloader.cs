@@ -101,7 +101,7 @@ namespace Altaxo.Serialization.AutoUpdates
           // from all parsed versions, choose that one that matches the requirements
           var parsedVersion = PackageInfo.GetHighestVersion(parsedVersions);
 
-          if (null != parsedVersion)
+          if (parsedVersion is not null)
           {
             Console.WriteLine("The remote package version is: {0}", parsedVersion.Version);
           }

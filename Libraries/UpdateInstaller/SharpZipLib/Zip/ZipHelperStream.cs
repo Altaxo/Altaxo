@@ -212,7 +212,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     {
       Stream toClose = stream_;
       stream_ = null;
-      if (isOwner_ && (toClose != null))
+      if (isOwner_ && (toClose is not null))
       {
         isOwner_ = false;
         toClose.Close();
@@ -252,13 +252,13 @@ namespace ICSharpCode.SharpZipLib.Zip
       }
       else
       {
-        if (patchData != null)
+        if (patchData is not null)
         {
           patchData.CrcPatchOffset = stream_.Position;
         }
         WriteLEInt(0);  // Crc
 
-        if (patchData != null)
+        if (patchData is not null)
         {
           patchData.SizePatchOffset = stream_.Position;
         }
@@ -305,7 +305,7 @@ namespace ICSharpCode.SharpZipLib.Zip
           throw new ZipException("Internal error cant find extra data");
         }
 
-        if (patchData != null)
+        if (patchData is not null)
         {
           patchData.SizePatchOffset = ed.CurrentReadIndex;
         }
@@ -456,7 +456,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         WriteLEInt((int)startOfCentralDirectory);
       }
 
-      int commentLength = (comment != null) ? comment.Length : 0;
+      int commentLength = (comment is not null) ? comment.Length : 0;
 
       if (commentLength > 0xffff)
       {
@@ -594,7 +594,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <returns>Returns the number of descriptor bytes written.</returns>
     public int WriteDataDescriptor(ZipEntry entry)
     {
-      if (entry == null)
+      if (entry is null)
       {
         throw new ArgumentNullException("entry");
       }

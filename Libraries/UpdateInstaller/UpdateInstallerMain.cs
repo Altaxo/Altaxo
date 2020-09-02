@@ -177,11 +177,11 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="installer">The installer program to run..</param>
     private static void StartVisualApp(IUpdateInstaller installer, bool showInstallationWindow, int timeoutAfterSuccessfullInstallation)
     {
-      if (null == app)
+      if (app is null)
       {
         app = new System.Windows.Application();
       }
-      if (null == mainWindow)
+      if (mainWindow is null)
       {
         mainWindow = new InstallerMainWindow(showInstallationWindow, timeoutAfterSuccessfullInstallation)
         {
@@ -196,14 +196,14 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="message">The error message to present.</param>
     private static void StartVisualAppWithErrorMessage(string eventName, string message)
     {
-      if (null != eventName)
+      if (eventName is not null)
         InstallerMethod_BackupInnerDirectory.SetEvent(eventName); // Altaxo is waiting for this event to finish itself
 
-      if (null == app)
+      if (app is null)
       {
         app = new System.Windows.Application();
       }
-      if (null == mainWindow)
+      if (mainWindow is null)
       {
         mainWindow = new InstallerMainWindow(true, int.MaxValue);
         mainWindow.SetErrorMessage(message);

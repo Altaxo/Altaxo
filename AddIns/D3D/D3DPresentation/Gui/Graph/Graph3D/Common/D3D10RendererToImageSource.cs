@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       if (_isDisposed)
         throw new ObjectDisposedException("this");
 
-      if (null == _device)
+      if (_device is null)
       {
         _device = D3D10DeviceFactory.Instance.BorrowDevice();
         // _device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
@@ -157,7 +157,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
     private void EndD3D()
     {
-      if (_renderScene != null)
+      if (_renderScene is not null)
       {
         _renderScene.Detach();
         _isRenderSceneAttached = false;
@@ -241,11 +241,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     private void Render()
     {
       SharpDX.Direct3D10.Device device = _device;
-      if (device == null)
+      if (device is null)
         throw new InvalidOperationException("Rendering failed because 3D device is null");
 
       Texture2D renderTarget = _renderTargetIntermediate;
-      if (renderTarget == null)
+      if (renderTarget is null)
         throw new InvalidOperationException("Rendering failed because renderTarget is null");
 
       int targetWidth = renderTarget.Description.Width;
@@ -259,7 +259,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       device.ClearDepthStencilView(_depthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
 
-      if (Scene == null)
+      if (Scene is null)
       {
         device.ClearRenderTargetView(_renderTargetIntermediateView, _renderTargetClearColor);
       }
@@ -320,7 +320,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         if (ReferenceEquals(_renderScene, value))
           return;
 
-        if (_renderScene != null)
+        if (_renderScene is not null)
           _renderScene.Detach();
 
         _isRenderSceneAttached = false;

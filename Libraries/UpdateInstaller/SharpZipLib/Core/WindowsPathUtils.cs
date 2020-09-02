@@ -57,7 +57,7 @@ namespace ICSharpCode.SharpZipLib.Core
     {
       string result = path;
 
-      if ((path != null) && (path.Length > 0))
+      if ((path is not null) && (path.Length > 0))
       {
         if ((path[0] == '\\') || (path[0] == '/'))
         {

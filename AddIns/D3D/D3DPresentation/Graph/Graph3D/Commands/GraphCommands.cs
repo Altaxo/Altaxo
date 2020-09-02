@@ -347,7 +347,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
       if (true == saveFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
       {
-        if ((myStream = saveFileDialog1.OpenFile()) != null)
+        if ((myStream = saveFileDialog1.OpenFile()) is not null)
         {
           var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
           info.BeginWriting(myStream);
@@ -462,7 +462,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
     protected virtual void OnPropertyChanged(string propertyName)
     {
-      if (null != PropertyChanged)
+      if (PropertyChanged is not null)
         PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
     }
   }
@@ -479,7 +479,7 @@ namespace Altaxo.Graph.Graph3D.Commands
     protected AbstractCameraCommand(Type cameraTypeForThisCommand)
     {
       _cameraTypeForThisCommand = cameraTypeForThisCommand;
-      if (null != Current.Workbench)
+      if (Current.Workbench is not null)
       {
         Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchContentChanged, Current.Workbench, nameof(Current.Workbench.ActiveViewContentChanged));
         EhWorkbenchContentChanged(this, EventArgs.Empty);
@@ -490,7 +490,7 @@ namespace Altaxo.Graph.Graph3D.Commands
     {
       if (!object.ReferenceEquals(Controller, _currentGraphController))
       {
-        if (null != _currentGraphController)
+        if (_currentGraphController is not null)
         {
           lock (this)
           {
@@ -498,7 +498,7 @@ namespace Altaxo.Graph.Graph3D.Commands
             _currentGraphController = null;
           }
         }
-        if (Controller != null)
+        if (Controller is not null)
         {
           lock (this)
           {
@@ -522,11 +522,11 @@ namespace Altaxo.Graph.Graph3D.Commands
     {
       get
       {
-        return null == Controller ? false : _cameraTypeForThisCommand == Controller.Doc.Camera.GetType();
+        return Controller is null ? false : _cameraTypeForThisCommand == Controller.Doc.Camera.GetType();
       }
       set
       {
-        if (value == true && Controller != null && Controller.Doc.Camera.GetType() != _cameraTypeForThisCommand)
+        if (value == true && Controller is not null && Controller.Doc.Camera.GetType() != _cameraTypeForThisCommand)
         {
           InstallCamera();
         }

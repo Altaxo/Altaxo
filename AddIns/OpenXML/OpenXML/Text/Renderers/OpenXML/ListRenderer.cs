@@ -62,7 +62,7 @@ namespace Altaxo.Text.Renderers.OpenXML
       // Get the level of this list block
       int level = 0;
       ContainerBlock b = listBlock;
-      while (null != b)
+      while (b is not null)
       {
         if (b is ListBlock)
           ++level;
@@ -113,7 +113,7 @@ namespace Altaxo.Text.Renderers.OpenXML
       var _wordDocument = renderer._wordDocument;
       // Introduce bulleted numbering in case it will be needed at some point
       NumberingDefinitionsPart numberingPart = _wordDocument.MainDocumentPart.NumberingDefinitionsPart;
-      if (numberingPart == null)
+      if (numberingPart is null)
       {
         numberingPart = _wordDocument.MainDocumentPart.AddNewPart<NumberingDefinitionsPart>("NumberingDefinitionsPart001");
         var element = new Numbering();
@@ -191,7 +191,7 @@ namespace Altaxo.Text.Renderers.OpenXML
 
       var levelDef = GenerateLevel(level, isOrdered);
 
-      if (null != levelDef)
+      if (levelDef is not null)
       {
         _currentAbstractNumberingDefinition.AppendChild(levelDef);
       }

@@ -39,7 +39,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions
   {
     protected override void Write(OpenXMLRenderer renderer, Markdig.Extensions.Figures.FigureCaption obj)
     {
-      if (null != renderer.FigureCaptionList)
+      if (renderer.FigureCaptionList is not null)
       {
         var idx = renderer.FigureCaptionList.FindIndex(x => object.ReferenceEquals(x.FigureCaption, obj));
         if (idx >= 0)

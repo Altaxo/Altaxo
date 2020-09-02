@@ -57,12 +57,12 @@ namespace Altaxo.Gui.Text
 
       if (initData)
       {
-        _applyMaximumImageWidth = _doc.MaximumImageWidth != null;
+        _applyMaximumImageWidth = _doc.MaximumImageWidth is not null;
         _maximumImageWidth = _doc.MaximumImageWidth ?? new DimensionfulQuantity(0, Altaxo.Units.Length.Point.Instance);
-        _applyMaximumImageHeight = _doc.MaximumImageHeight != null;
+        _applyMaximumImageHeight = _doc.MaximumImageHeight is not null;
         _maximumImageHeight = _doc.MaximumImageHeight ?? new DimensionfulQuantity(0, Altaxo.Units.Length.Point.Instance);
       }
-      if (null != _view)
+      if (_view is not null)
       {
       }
     }

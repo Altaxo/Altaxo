@@ -105,7 +105,7 @@ namespace Altaxo.Text.Renderers
 
         using (Stream stream = assembly.GetManifestResourceStream(resourceName))
         {
-          if (null != stream)
+          if (stream is not null)
             part.FeedData(stream);
           else
             throw new ArgumentOutOfRangeException("Resource not found: " + nameOfTheme, nameof(nameOfTheme));

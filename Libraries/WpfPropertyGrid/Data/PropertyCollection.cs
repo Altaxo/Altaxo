@@ -23,10 +23,10 @@ namespace WPG.Data
             bool useCustomTypeConverter = false;
 
             PropertyDescriptorCollection properties;
-            if (instance != null)
+            if (instance is not null)
             {
                 TypeConverter tc = TypeDescriptor.GetConverter(instance);
-                if (tc == null || !tc.GetPropertiesSupported())
+                if (tc is null || !tc.GetPropertiesSupported())
                 {
 
                     if (instance is ICustomTypeDescriptor)
@@ -99,7 +99,7 @@ namespace WPG.Data
         private void CollectProperties(object instance, PropertyDescriptor descriptor, List<Property> propertyCollection, bool automaticlyExpandObjects, string filter)
         {
 
-            if (descriptor.Attributes[typeof(FlatAttribute)] == null)
+            if (descriptor.Attributes[typeof(FlatAttribute)] is null)
             {
                 Property property = new Property(instance, descriptor);
                 if (descriptor.IsBrowsable)

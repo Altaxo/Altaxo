@@ -92,7 +92,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
     {
       base.OnMouseMove(position, e);
 
-      if (null != _cachedActiveLayer)
+      if (_cachedActiveLayer is not null)
       {
         GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _cachedActiveLayer, position, out var hitPointOnLayerPlaneInLayerCoordinates, out var rotationsRadian);
         _positionCurrentMouseInActiveLayerCoordinates = hitPointOnLayerPlaneInLayerCoordinates;

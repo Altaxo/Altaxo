@@ -166,7 +166,7 @@ namespace Altaxo.Graph.Graph3D.Commands
       if (Current.Workbench.ActiveViewContent is Graph3DController ctrl)
       {
         var activeLayer = ctrl.ActiveLayer as XYZPlotLayer;
-        if (null == activeLayer)
+        if (activeLayer is null)
           return null;
 
         int actPA = ctrl.CurrentPlotNumber;
@@ -199,7 +199,7 @@ namespace Altaxo.Graph.Graph3D.Commands
           // if the menu item was not checked before, check it now
           // by making the plot association shown by the menu item
           // the actual plot association
-          if (null != activeLayer && plotItemNumber < activeLayer.PlotItems.Flattened.Length)
+          if (activeLayer is not null && plotItemNumber < activeLayer.PlotItems.Flattened.Length)
           {
             dmi.IsChecked = true;
             ctrl.CurrentPlotNumber = plotItemNumber;

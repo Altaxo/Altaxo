@@ -123,10 +123,10 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <returns>The transformed name.</returns>
     public string TransformFile(string name)
     {
-      if (name != null)
+      if (name is not null)
       {
         string lowerName = name.ToLower();
-        if ((trimPrefix_ != null) && (lowerName.IndexOf(trimPrefix_) == 0))
+        if ((trimPrefix_ is not null) && (lowerName.IndexOf(trimPrefix_) == 0))
         {
           name = name.Substring(trimPrefix_.Length);
         }
@@ -174,7 +174,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       set
       {
         trimPrefix_ = value;
-        if (trimPrefix_ != null)
+        if (trimPrefix_ is not null)
         {
           trimPrefix_ = trimPrefix_.ToLower();
         }
@@ -232,7 +232,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </remarks>
     public static bool IsValidName(string name, bool relaxed)
     {
-      bool result = (name != null);
+      bool result = (name is not null);
 
       if (result)
       {
@@ -266,7 +266,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     public static bool IsValidName(string name)
     {
       bool result =
-        (name != null) &&
+        (name is not null) &&
         (name.IndexOfAny(InvalidEntryChars) < 0) &&
         (name.IndexOf('/') != 0)
         ;

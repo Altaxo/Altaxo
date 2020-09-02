@@ -335,7 +335,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
       var str = new StreamReader(new MemoryStream(buff));
       string line;
-      while (null != (line = str.ReadLine()))
+      while ((line = str.ReadLine()) is not null)
       {
         line = line.Trim();
         if (line.Length == 0)

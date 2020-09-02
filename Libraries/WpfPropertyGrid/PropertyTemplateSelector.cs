@@ -14,12 +14,12 @@ namespace WPG
 		public override DataTemplate SelectTemplate(object item, DependencyObject container)
 		{
 			Property property = item as Property;
-			if (property == null)
+			if (property is null)
 			{
 				throw new ArgumentException("item must be of type Property");
 			}
 			FrameworkElement element = container as FrameworkElement;
-			if (element == null)
+			if (element is null)
 			{
 				return base.SelectTemplate(property.Value, container);
 			}
@@ -37,12 +37,12 @@ namespace WPG
             
 			DataTemplate template = TryFindDataTemplate(element, propertyType);
 
-    		while (template == null && propertyType.BaseType != null)
+    		while (template is null && propertyType.BaseType is not null)
 			{
 				propertyType = propertyType.BaseType;
 				template = TryFindDataTemplate(element, propertyType);
 			}
-			if (template == null)
+			if (template is null)
 			{
 				template = TryFindDataTemplate(element, "default");
 			}
@@ -52,7 +52,7 @@ namespace WPG
 		private static DataTemplate TryFindDataTemplate(FrameworkElement element, object dataTemplateKey)
 		{
 			object dataTemplate = element.TryFindResource(dataTemplateKey);
-			if (dataTemplate == null)
+			if (dataTemplate is null)
 			{
 				dataTemplateKey = new ComponentResourceKey(typeof(PropertyGrid), dataTemplateKey);
 				dataTemplate = element.TryFindResource(dataTemplateKey);

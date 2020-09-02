@@ -128,7 +128,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     {
       get
       {
-        return entries == null;
+        return entries is null;
       }
     }
 
@@ -251,17 +251,17 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </exception>
     public void PutNextEntry(ZipEntry entry)
     {
-      if (entry == null)
+      if (entry is null)
       {
         throw new ArgumentNullException("entry");
       }
 
-      if (entries == null)
+      if (entries is null)
       {
         throw new InvalidOperationException("ZipOutputStream was finished");
       }
 
-      if (curEntry != null)
+      if (curEntry is not null)
       {
         CloseEntry();
       }
@@ -328,7 +328,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         }
       }
 
-      if (Password != null)
+      if (Password is not null)
       {
         entry.IsCrypted = true;
         if (entry.Crc < 0)
@@ -513,7 +513,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </exception>
     public void CloseEntry()
     {
-      if (curEntry == null)
+      if (curEntry is null)
       {
         throw new InvalidOperationException("No open entry");
       }
@@ -698,12 +698,12 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <exception cref="System.InvalidOperationException">No entry is active.</exception>
     public override void Write(byte[] buffer, int offset, int count)
     {
-      if (curEntry == null)
+      if (curEntry is null)
       {
         throw new InvalidOperationException("No open entry.");
       }
 
-      if (buffer == null)
+      if (buffer is null)
       {
         throw new ArgumentNullException("buffer");
       }
@@ -741,7 +741,7 @@ namespace ICSharpCode.SharpZipLib.Zip
           break;
 
         case CompressionMethod.Stored:
-          if (Password != null)
+          if (Password is not null)
           {
             CopyAndEncrypt(buffer, offset, count);
           }
@@ -785,12 +785,12 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </exception>
     public override void Finish()
     {
-      if (entries == null)
+      if (entries is null)
       {
         return;
       }
 
-      if (curEntry != null)
+      if (curEntry is not null)
       {
         CloseEntry();
       }
@@ -873,7 +873,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         byte[] extra = ed.GetEntryData();
 
         byte[] entryComment =
-          (entry.Comment != null) ?
+          (entry.Comment is not null) ?
           ZipConstants.ConvertToArray(entry.Flags, entry.Comment) :
           new byte[0];
 

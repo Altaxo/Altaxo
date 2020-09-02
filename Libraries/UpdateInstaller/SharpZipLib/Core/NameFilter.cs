@@ -101,7 +101,7 @@ namespace ICSharpCode.SharpZipLib.Core
     /// <returns>True if the expression is valid, false otherwise.</returns>
     public static bool IsValidFilterExpression(string toTest)
     {
-      if (toTest == null)
+      if (toTest is null)
       {
         throw new ArgumentNullException("toTest");
       }
@@ -113,7 +113,7 @@ namespace ICSharpCode.SharpZipLib.Core
         string[] items = SplitQuoted(toTest);
         for (int i = 0; i < items.Length; ++i)
         {
-          if ((items[i] != null) && (items[i].Length > 0))
+          if ((items[i] is not null) && (items[i].Length > 0))
           {
             string toCompile;
 
@@ -154,7 +154,7 @@ namespace ICSharpCode.SharpZipLib.Core
 
       var result = new ArrayList();
 
-      if ((original != null) && (original.Length > 0))
+      if ((original is not null) && (original.Length > 0))
       {
         int endIndex = -1;
         var b = new StringBuilder();
@@ -276,7 +276,7 @@ namespace ICSharpCode.SharpZipLib.Core
     {
       // TODO: Check to see if combining RE's makes it faster/smaller.
       // simple scheme would be to have one RE for inclusion and one for exclusion.
-      if (filter_ == null)
+      if (filter_ is null)
       {
         return;
       }
@@ -284,7 +284,7 @@ namespace ICSharpCode.SharpZipLib.Core
       string[] items = SplitQuoted(filter_);
       for (int i = 0; i < items.Length; ++i)
       {
-        if ((items[i] != null) && (items[i].Length > 0))
+        if ((items[i] is not null) && (items[i].Length > 0))
         {
           bool include = (items[i][0] != '-');
           string toCompile;

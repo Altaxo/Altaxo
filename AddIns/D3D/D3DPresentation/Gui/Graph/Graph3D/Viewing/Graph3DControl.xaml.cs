@@ -110,7 +110,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         var oldcontroller = _controller;
         _controller = new WeakReference(value);
 
-        if (null != value)
+        if (value is not null)
         {
           if (_isDisposed)
             throw new ObjectDisposedException(nameof(Graph3DControl));
@@ -128,7 +128,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     {
       get
       {
-        return null == _mouseState ? GraphToolType.None : _mouseState.GraphToolType;
+        return _mouseState is null ? GraphToolType.None : _mouseState.GraphToolType;
       }
       set
       {
@@ -276,7 +276,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       var pos = GetMousePosition(e);
 
       _mouseState?.OnMouseDown(pos, e);
-      if (null != guiController)
+      if (guiController is not null)
       {
         guiController.EhView_GraphPanelMouseDown(pos, GuiHelper.ToAltaxo(e, _d3dCanvas), GuiHelper.ToAltaxo(Keyboard.Modifiers));
         if (e.ClickCount >= 2 && e.LeftButton == MouseButtonState.Pressed)
@@ -308,7 +308,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       if (!(newSize.X > 0 && newSize.Y > 0))
         return;
 
-      if (null == _renderer)
+      if (_renderer is null)
       {
         _d3dCanvas.Source = new D3D10ImageSource(Controller?.Doc?.Name);
         _renderer = new D3D10RendererToImageSource(_scene, (D3D10ImageSource)_d3dCanvas.Source, Controller?.Doc?.Name);
@@ -398,7 +398,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     private void EhLayerButton_Click(object sender, RoutedEventArgs e)
     {
       var gc = Controller;
-      if (null != gc)
+      if (gc is not null)
       {
         var pushedLayerNumber = (int[])((ButtonBase)sender).Tag;
 
@@ -409,7 +409,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     private void EhLayerButton_ContextMenuOpening(object sender, ContextMenuEventArgs e)
     {
       var gc = Controller;
-      if (null != gc)
+      if (gc is not null)
       {
         var i = (int[])((ToggleButton)sender).Tag;
         gc.EhView_ShowDataContextMenu(i, this, new PointD2D(e.CursorLeft, e.CursorTop));
@@ -423,35 +423,35 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     private void EhEnableCmdCopy(object sender, CanExecuteRoutedEventArgs e)
     {
       var gc = Controller;
-      e.CanExecute = null != gc && gc.IsCmdCopyEnabled();
+      e.CanExecute = gc is not null && gc.IsCmdCopyEnabled();
       e.Handled = true;
     }
 
     private void EhEnableCmdCut(object sender, CanExecuteRoutedEventArgs e)
     {
       var gc = Controller;
-      e.CanExecute = null != gc && gc.IsCmdCutEnabled();
+      e.CanExecute = gc is not null && gc.IsCmdCutEnabled();
       e.Handled = true;
     }
 
     private void EhEnableCmdDelete(object sender, CanExecuteRoutedEventArgs e)
     {
       var gc = Controller;
-      e.CanExecute = null != gc && gc.IsCmdDeleteEnabled();
+      e.CanExecute = gc is not null && gc.IsCmdDeleteEnabled();
       e.Handled = true;
     }
 
     private void EhEnableCmdPaste(object sender, CanExecuteRoutedEventArgs e)
     {
       var gc = Controller;
-      e.CanExecute = null != gc && gc.IsCmdPasteEnabled();
+      e.CanExecute = gc is not null && gc.IsCmdPasteEnabled();
       e.Handled = true;
     }
 
     private void EhCmdCopy(object sender, ExecutedRoutedEventArgs e)
     {
       var gc = Controller;
-      if (null != gc)
+      if (gc is not null)
       {
         gc.CopySelectedObjectsToClipboard();
         e.Handled = true;
@@ -461,7 +461,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     private void EhCmdCut(object sender, ExecutedRoutedEventArgs e)
     {
       var gc = Controller;
-      if (null != gc)
+      if (gc is not null)
       {
         gc.CutSelectedObjectsToClipboard();
         e.Handled = true;
@@ -471,7 +471,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     private void EhCmdDelete(object sender, ExecutedRoutedEventArgs e)
     {
       var gc = Controller;
-      if (null != _controller)
+      if (_controller is not null)
       {
         gc.CmdDelete();
         e.Handled = true;
@@ -481,7 +481,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     private void EhCmdPaste(object sender, ExecutedRoutedEventArgs e)
     {
       var gc = Controller;
-      if (null != _controller)
+      if (_controller is not null)
       {
         gc.PasteObjectsFromClipboard();
         e.Handled = true;
@@ -536,7 +536,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// </summary>
     public void TriggerRendering()
     {
-      if (_isGraphVisible && null != _renderer)
+      if (_isGraphVisible && _renderer is not null)
       {
         Current.Dispatcher.InvokeIfRequired(_renderer.TriggerRendering);
       }
@@ -560,7 +560,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     public void SetDrawing(IGraphicsContext3D drawing)
     {
-      if (null == drawing)
+      if (drawing is null)
         throw new ArgumentNullException();
 
       _scene.SetDrawing((D3D10GraphicsContext)drawing);
@@ -573,7 +573,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     public void SetMarkerGeometry(IOverlayContext3D markerGeometry)
     {
-      if (null == markerGeometry)
+      if (markerGeometry is null)
         throw new ArgumentNullException();
 
       _scene.SetMarkerGeometry((D3D10OverlayContext)markerGeometry);
@@ -586,7 +586,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     public void SetOverlayGeometry(IOverlayContext3D overlayGeometry)
     {
-      if (null == overlayGeometry)
+      if (overlayGeometry is null)
         throw new ArgumentNullException();
 
       _scene.SetOverlayGeometry((D3D10OverlayContext)overlayGeometry);

@@ -238,7 +238,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     internal ZipEntry(string name, int versionRequiredToExtract, int madeByInfo,
       CompressionMethod method)
     {
-      if (name == null)
+      if (name is null)
       {
         throw new System.ArgumentNullException("name");
       }
@@ -269,7 +269,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     [Obsolete("Use Clone instead")]
     public ZipEntry(ZipEntry entry)
     {
-      if (entry == null)
+      if (entry is null)
       {
         throw new ArgumentNullException("entry");
       }
@@ -292,7 +292,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
       forceZip64_ = entry.forceZip64_;
 
-      if (entry.extra != null)
+      if (entry.extra is not null)
       {
         extra = new byte[entry.extra.Length];
         Array.Copy(entry.extra, 0, extra, 0, entry.extra.Length);
@@ -952,7 +952,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
       set
       {
-        if (value == null)
+        if (value is null)
         {
           extra = null;
         }
@@ -1225,7 +1225,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         // where there are multi-byte characters
         // The full test is not possible here however as the code page to apply conversions with
         // isnt available.
-        if ((value != null) && (value.Length > 0xffff))
+        if ((value is not null) && (value.Length > 0xffff))
         {
 #if NETCF_1_0
 					throw new ArgumentOutOfRangeException("value");
@@ -1297,7 +1297,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       var result = (ZipEntry)MemberwiseClone();
 
       // Ensure extra data is unique if it exists.
-      if (extra != null)
+      if (extra is not null)
       {
         result.extra = new byte[extra.Length];
         Array.Copy(extra, 0, result.extra, 0, extra.Length);
@@ -1344,7 +1344,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </remarks>
     public static string CleanName(string name)
     {
-      if (name == null)
+      if (name is null)
       {
         return string.Empty;
       }

@@ -110,7 +110,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
     /// </exception>
     public DeflaterOutputStream(Stream baseOutputStream, Deflater deflater, int bufferSize)
     {
-      if (baseOutputStream == null)
+      if (baseOutputStream is null)
       {
         throw new ArgumentNullException("baseOutputStream");
       }
@@ -120,7 +120,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         throw new ArgumentException("Must support writing", "baseOutputStream");
       }
 
-      if (deflater == null)
+      if (deflater is null)
       {
         throw new ArgumentNullException("deflater");
       }
@@ -159,7 +159,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 #if NETCF_1_0
 				if ( keys != null ) {
 #else
-        if (cryptoTransform_ != null)
+        if (cryptoTransform_ is not null)
         {
 #endif
           EncryptBlock(buffer_, 0, len);
@@ -180,7 +180,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 				keys = null;
 			}
 #else
-      if (cryptoTransform_ != null)
+      if (cryptoTransform_ is not null)
       {
 #if !NET_1_1 && !NETCF_2_0
         if (cryptoTransform_ is ZipAESTransform)
@@ -245,7 +245,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
       }
       set
       {
-        if ((value != null) && (value.Length == 0))
+        if ((value is not null) && (value.Length == 0))
         {
           password = null;
         }
@@ -317,7 +317,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
     {
       salt = new byte[entry.AESSaltLen];
       // Salt needs to be cryptographically random, and unique per file
-      if (_aesRnd == null)
+      if (_aesRnd is null)
         _aesRnd = new RNGCryptoServiceProvider();
       _aesRnd.GetBytes(salt);
       int blockSize = entry.AESKeySize / 8; // bits to bytes
@@ -376,7 +376,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 #if NETCF_1_0
 				if (keys != null)
 #else
-        if (cryptoTransform_ != null)
+        if (cryptoTransform_ is not null)
 #endif
         {
           EncryptBlock(buffer_, 0, deflateCount);
@@ -558,7 +558,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 #if NETCF_1_0
 					keys=null;
 #else
-          if (cryptoTransform_ != null)
+          if (cryptoTransform_ is not null)
           {
             GetAuthCodeIfAES();
             cryptoTransform_.Dispose();

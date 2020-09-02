@@ -83,7 +83,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void EhLoaded(object sender, RoutedEventArgs e)
     {
-      if (null != _installer)
+      if (_installer is not null)
       {
         InstallerTaskSetupAndStart();
       }
@@ -122,7 +122,7 @@ namespace Altaxo.Serialization.AutoUpdates
       _installerTask = null;
       _isCancellationRequested = false;
 
-      _installerFinishedSuccessfully = (null == exception);
+      _installerFinishedSuccessfully = (exception is null);
       _btOk.IsEnabled = true;
       _btTryAgain.IsEnabled = !_installerFinishedSuccessfully;
       _btCancel.IsEnabled = false;
@@ -146,7 +146,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="e">A <see cref="T:System.ComponentModel.CancelEventArgs"/> that contains the event data.</param>
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
-      if (_installerTask != null && !_installerTask.IsCompleted)
+      if (_installerTask is not null && !_installerTask.IsCompleted)
       {
         e.Cancel = true;
       }
@@ -179,7 +179,7 @@ namespace Altaxo.Serialization.AutoUpdates
       if (_installerTask.IsCompleted)
       {
         var exception = InstallerTaskCleanup();
-        if (null != exception)
+        if (exception is not null)
         {
           // Set the message and do not start the countdown timer
           SetErrorMessage(UpdateInstallerMain.ErrorIntroduction + exception.ToString());
@@ -264,7 +264,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void EhTryAgain(object sender, RoutedEventArgs e)
     {
-      if (null == _installerTask && null == _timer)
+      if (_installerTask is null && _timer is null)
       {
         InstallerTaskSetupAndStart();
       }

@@ -58,7 +58,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 
       var accentProperties = new AccentProperties();
 
-      if (accentString != null) // for widehat, it seems that Word don't even have an accent char (and for widetilde, it is an empty string !)
+      if (accentString is not null) // for widehat, it seems that Word don't even have an accent char (and for widetilde, it is an empty string !)
         accentProperties.AppendChild(new AccentChar() { Val = accentString });
 
       accentProperties.AppendChild(

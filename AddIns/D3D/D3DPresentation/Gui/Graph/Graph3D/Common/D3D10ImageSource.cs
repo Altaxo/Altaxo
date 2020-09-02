@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       if (_isDisposed)
         throw new ObjectDisposedException(GetType().Name);
 
-      if (_renderTarget != null)
+      if (_renderTarget is not null)
       {
         base.Lock();
         base.AddDirtyRect(new Int32Rect(0, 0, base.PixelWidth, base.PixelHeight));
@@ -132,7 +132,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       // System.Diagnostics.Debug.WriteLine("D3DImageSource.SetRenderTarget Name={0}, Id={1}, renderTarget={2}", Name, InstanceID, renderTarget);
 
-      if (_renderTarget != null)
+      if (_renderTarget is not null)
       {
         Disposer.RemoveAndDispose(ref _renderTarget);
 
@@ -141,7 +141,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         base.Unlock();
       }
 
-      if (renderTarget != null)
+      if (renderTarget is not null)
       {
         if (!IsShareable(renderTarget))
           throw new ArgumentException("Texture must be created with ResourceOptionFlags.Shared");

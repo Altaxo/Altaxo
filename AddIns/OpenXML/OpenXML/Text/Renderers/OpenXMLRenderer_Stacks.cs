@@ -55,7 +55,7 @@ namespace Altaxo.Text.Renderers
     /// <exception cref="ArgumentNullException">element</exception>
     public OpenXmlCompositeElement Push(OpenXmlCompositeElement element)
     {
-      if (null == element)
+      if (element is null)
         throw new ArgumentNullException(nameof(element));
 
       var topElement = _currentElementStack.Count == 0 ? null : _currentElementStack[_currentElementStack.Count - 1];
@@ -109,7 +109,7 @@ namespace Altaxo.Text.Renderers
     /// <exception cref="InvalidOperationException">Could not pop to element " + element.ToString()</exception>
     public void PopTo(OpenXmlCompositeElement element)
     {
-      if (null == element)
+      if (element is null)
         throw new ArgumentNullException(nameof(element));
 
       OpenXmlCompositeElement ele = null;
@@ -133,7 +133,7 @@ namespace Altaxo.Text.Renderers
     /// <exception cref="InvalidOperationException">Could not pop to before element " + element.ToString()</exception>
     public void PopToBefore(OpenXmlCompositeElement element)
     {
-      if (null == element)
+      if (element is null)
         throw new ArgumentNullException(nameof(element));
 
       while (_currentElementStack.Count > 0)
@@ -298,7 +298,7 @@ namespace Altaxo.Text.Renderers
       {
         var paragraphStyleId = GetOrCreateNewParagraphStyleRecursivelyFromParagraphStack();
         var paragraphProperties = new ParagraphProperties { ParagraphStyleId = new ParagraphStyleId() { Val = paragraphStyleId } };
-        if (null != NumberingProperties)
+        if (NumberingProperties is not null)
         {
           paragraphProperties.AppendChild(NumberingProperties);
           NumberingProperties = null;

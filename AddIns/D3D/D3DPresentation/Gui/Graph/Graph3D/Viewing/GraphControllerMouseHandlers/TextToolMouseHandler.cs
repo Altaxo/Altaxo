@@ -80,7 +80,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
       if (Current.Gui.ShowDialog(ref tgoo, "Text", false))
       {
         tgo = (TextGraphic)tgoo;
-        if (tgo != null && !tgo.Empty)
+        if (tgo is not null && !tgo.Empty)
         {
           _grac.ActiveLayer.GraphObjects.Add(tgo);
         }

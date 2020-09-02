@@ -55,7 +55,7 @@ namespace Altaxo.Worksheet.Commands
       string err = comm.GetTable(ctrl.DataTable.Name, ctrl.DataTable);
       comm.Disconnect(false, null, false);
 
-      if (err != null)
+      if (err is not null)
       {
         Current.Gui.ErrorMessageBox(err);
         return;
@@ -88,7 +88,7 @@ namespace Altaxo.Worksheet.Commands
           Name = path + (string.IsNullOrEmpty(lname) ? name : lname)
         };
         string err = WorksheetActions.GetTable(page, newTable);
-        if (null == err)
+        if (err is null)
         {
           Current.ProjectService.CreateNewWorksheet(newTable);
         }

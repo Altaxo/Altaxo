@@ -255,7 +255,7 @@ namespace Altaxo.Text.Renderers
     /// <exception cref="ArgumentNullException">markdownObject</exception>
     public override object Render(MarkdownObject markdownObject)
     {
-      if (null == markdownObject)
+      if (markdownObject is null)
         throw new ArgumentNullException(nameof(markdownObject));
 
       if (markdownObject is MarkdownDocument markdownDocument)
@@ -292,7 +292,7 @@ namespace Altaxo.Text.Renderers
             StyleDefinitionsPart part = _mainDocumentPart.StyleDefinitionsPart;
 
             // If the Styles part does not exist, add it and then add the style.
-            if (part == null)
+            if (part is null)
             {
               part = AddStylesPartToPackage(_wordDocument, ThemeName);
             }
@@ -321,7 +321,7 @@ namespace Altaxo.Text.Renderers
             StyleDefinitionsPart part = _mainDocumentPart.StyleDefinitionsPart;
 
             // If the Styles part does not exist, add it and then add the style.
-            if (part == null)
+            if (part is null)
             {
               part = AddStylesPartToPackage(_wordDocument, ThemeName);
             }
@@ -349,11 +349,11 @@ namespace Altaxo.Text.Renderers
     /// <returns>This instance</returns>
     public OpenXMLRenderer WriteLeafInline(LeafBlock leafBlock)
     {
-      if (leafBlock == null) throw new ArgumentNullException(nameof(leafBlock));
+      if (leafBlock is null) throw new ArgumentNullException(nameof(leafBlock));
       var inline = (Markdig.Syntax.Inlines.Inline)leafBlock.Inline;
-      if (inline != null)
+      if (inline is not null)
       {
-        while (inline != null)
+        while (inline is not null)
         {
           Write(inline);
           inline = inline.NextSibling;

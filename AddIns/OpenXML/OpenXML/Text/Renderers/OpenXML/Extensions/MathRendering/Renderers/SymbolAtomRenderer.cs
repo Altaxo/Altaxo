@@ -44,7 +44,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       bool runCreated = false;
       var run = renderer.Peek() as Run;
 
-      if (run == null)
+      if (run is null)
       {
         runCreated = true;
         run = (Run)renderer.Push(new Run());

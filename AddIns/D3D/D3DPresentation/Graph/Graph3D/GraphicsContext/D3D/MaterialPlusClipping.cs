@@ -38,7 +38,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
     public MaterialKey(IMaterial material)
     {
-      if (null == material)
+      if (material is null)
         throw new ArgumentNullException(nameof(material));
 
       Material = material;
@@ -47,7 +47,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
     public override bool Equals(object obj)
     {
       var from = obj as MaterialKey;
-      return null == from ? false : Material.Equals(from.Material);
+      return from is null ? false : Material.Equals(from.Material);
     }
 
     public override int GetHashCode()
@@ -72,14 +72,14 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
     public override bool Equals(object obj)
     {
       var from = obj as MaterialPlusClippingKey;
-      if (null == from)
+      if (from is null)
         return false;
 
       if (!(Material.Equals(from.Material)))
         return false;
 
-      if (!(ClipPlanes != null && from.ClipPlanes != null))
-        return (ClipPlanes != null) ^ (from.ClipPlanes != null);
+      if (!(ClipPlanes is not null && from.ClipPlanes is not null))
+        return (ClipPlanes is not null) ^ (from.ClipPlanes is not null);
 
       if (ClipPlanes.Length != from.ClipPlanes.Length)
         return false;
@@ -96,7 +96,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
     public override int GetHashCode()
     {
       var result = 17 * Material.GetHashCode();
-      if (null != ClipPlanes && ClipPlanes.Length > 0)
+      if (ClipPlanes is not null && ClipPlanes.Length > 0)
         result = 31 * ClipPlanes[0].GetHashCode();
 
       return result;

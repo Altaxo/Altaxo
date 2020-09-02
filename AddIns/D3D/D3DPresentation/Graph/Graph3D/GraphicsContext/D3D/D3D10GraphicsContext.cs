@@ -199,7 +199,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
     public override void RestoreGraphicsState(object graphicsState)
     {
       var gs = graphicsState as GraphicState;
-      if (null != gs)
+      if (gs is not null)
       {
         _transformation = gs.Transformation;
         _transposedInverseTransformation = gs.TransposedInverseTransformation;

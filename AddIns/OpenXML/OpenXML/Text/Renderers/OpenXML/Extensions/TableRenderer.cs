@@ -76,7 +76,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions
           // Apply horizontal alignment
           var horizontalJustification = JustificationValues.Left;
 
-          if (mdTable.ColumnDefinitions != null)
+          if (mdTable.ColumnDefinitions is not null)
           {
             var columnIndex = mdCell.ColumnIndex < 0 || mdCell.ColumnIndex >= mdTable.ColumnDefinitions.Count
                 ? i

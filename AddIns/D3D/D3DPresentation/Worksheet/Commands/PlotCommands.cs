@@ -99,9 +99,9 @@ namespace Altaxo.Worksheet.Commands
       var plotStyle = new DataMeshPlotStyle();
 
       var assoc = new XYZMeshedColumnPlotData(dg.DataTable, dg.SelectedDataRows, dg.SelectedDataColumns, dg.SelectedPropertyColumns);
-      if (assoc.DataTableMatrix.RowHeaderColumn == null)
+      if (assoc.DataTableMatrix.RowHeaderColumn is null)
         assoc.DataTableMatrix.RowHeaderColumn = new IndexerColumn();
-      if (assoc.DataTableMatrix.ColumnHeaderColumn == null)
+      if (assoc.DataTableMatrix.ColumnHeaderColumn is null)
         assoc.DataTableMatrix.ColumnHeaderColumn = new IndexerColumn();
 
       var pi = new DataMeshPlotItem(assoc, plotStyle);

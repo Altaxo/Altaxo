@@ -54,7 +54,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
     /// <inheritdoc/>
     protected override void Write(OpenXMLRenderer renderer, LinkInline link)
     {
-      var url = link.GetDynamicUrl != null ? link.GetDynamicUrl() ?? link.Url : link.Url;
+      var url = link.GetDynamicUrl is not null ? link.GetDynamicUrl() ?? link.Url : link.Url;
 
       if (link.IsImage)
       {
@@ -81,7 +81,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         }
         else if (!string.IsNullOrEmpty(url) && url.StartsWith("#")) // not a well formed Uri String - then it is probably a fragment reference
         {
-          if (null != renderer.FigureLinkList)
+          if (renderer.FigureLinkList is not null)
           {
             var idx = renderer.FigureLinkList.FindIndex(x => object.ReferenceEquals(x.Link, link));
             if (idx >= 0)
@@ -121,7 +121,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         if (link.ContainsData(typeof(Markdig.Renderers.Html.HtmlAttributes)))
         {
           var htmlAttributes = (Markdig.Renderers.Html.HtmlAttributes)link.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-          if (null != htmlAttributes.Properties)
+          if (htmlAttributes.Properties is not null)
           {
             foreach (var entry in htmlAttributes.Properties)
             {
