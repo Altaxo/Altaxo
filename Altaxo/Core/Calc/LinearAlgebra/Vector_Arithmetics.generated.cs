@@ -255,9 +255,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<returns><c>double</c> results from x dot y.</returns>
 		public Double GetDotProduct( DoubleVector Y)
 		{
-			if (Y == null)
+			if (Y is null)
 			{
-				throw new ArgumentNullException("Vector cannot be null.");
+				throw new ArgumentNullException(nameof(Y));
 			}
 			return Blas.Dot.Compute(this.Length, this._array, 1, Y._array, 1);
 		}
@@ -289,9 +289,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<remarks>Results of computation replace data in this variable</remarks>
 		public void Axpy(Double alpha, DoubleVector X)
 		{
-			if (X == null)
+			if (X is null)
 			{
-				throw new ArgumentNullException("Vector cannot be null.");
+				throw new ArgumentNullException(nameof(X));
 			}
 			Blas.Axpy.Compute(_array.Length, alpha, X._array, 1, this._array, 1);
 		}
@@ -317,9 +317,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<returns><c>DoubleVector</c> with values to negate.</returns>
 		public static DoubleVector Negate(DoubleVector rhs)
 		{
-			if (rhs == null)
+			if (rhs is null)
 			{
-				throw new ArgumentNullException("rhs", "rhs cannot be null");
+				throw new ArgumentNullException(nameof(rhs));
 			}
 			return -rhs;
 		}
@@ -368,9 +368,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<exception cref="ArgumentNullException">Exception thrown if null given as argument.</exception>
 		public void Add(DoubleVector vector)
 		{
-			if (vector == null)
+			if (vector is null)
 			{
-				throw new System.ArgumentNullException("Vector cannot be null.");
+				throw new System.ArgumentNullException(nameof(vector));
 			}
 			Blas.Axpy.Compute(this.Length, 1, vector._array, 1, this._array, 1);
 		}
@@ -381,9 +381,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<exception cref="ArgumentNullException">Exception thrown if null given as argument.</exception>
 		public void AddScaled(DoubleVector vector, Double scale)
 		{
-			if (vector == null)
+			if (vector is null)
 			{
-				throw new System.ArgumentNullException("Vector cannot be null.");
+				throw new System.ArgumentNullException(nameof(vector));
 			}
 			Blas.Axpy.Compute(this.Length, scale, vector._array, 1, this._array, 1);
 		}
@@ -394,9 +394,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<exception cref="ArgumentNullException">Exception thrown if null given as argument.</exception>
 		public void Subtract(DoubleVector vector)
 		{
-			if (vector == null)
+			if (vector is null)
 			{
-				throw new System.ArgumentNullException("Vector cannot be null.");
+				throw new System.ArgumentNullException(nameof(vector));
 			}
 			Blas.Axpy.Compute(this.Length, -1, vector._array, 1, this._array, 1);
 		}
@@ -854,9 +854,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<returns><c>double</c> results from x dot y.</returns>
 		public Single GetDotProduct( FloatVector Y)
 		{
-			if (Y == null)
+			if (Y is null)
 			{
-				throw new ArgumentNullException("Vector cannot be null.");
+				throw new ArgumentNullException(nameof(Y));
 			}
 			return Blas.Dot.Compute(this.Length, this._array, 1, Y._array, 1);
 		}
@@ -888,9 +888,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<remarks>Results of computation replace data in this variable</remarks>
 		public void Axpy(Single alpha, FloatVector X)
 		{
-			if (X == null)
+			if (X is null)
 			{
-				throw new ArgumentNullException("Vector cannot be null.");
+				throw new ArgumentNullException(nameof(X));
 			}
 			Blas.Axpy.Compute(_array.Length, alpha, X._array, 1, this._array, 1);
 		}
@@ -916,9 +916,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<returns><c>DoubleVector</c> with values to negate.</returns>
 		public static FloatVector Negate(FloatVector rhs)
 		{
-			if (rhs == null)
+			if (rhs is null)
 			{
-				throw new ArgumentNullException("rhs", "rhs cannot be null");
+				throw new ArgumentNullException(nameof(rhs));
 			}
 			return -rhs;
 		}
@@ -967,9 +967,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<exception cref="ArgumentNullException">Exception thrown if null given as argument.</exception>
 		public void Add(FloatVector vector)
 		{
-			if (vector == null)
+			if (vector is null)
 			{
-				throw new System.ArgumentNullException("Vector cannot be null.");
+				throw new System.ArgumentNullException(nameof(vector));
 			}
 			Blas.Axpy.Compute(this.Length, 1, vector._array, 1, this._array, 1);
 		}
@@ -980,9 +980,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<exception cref="ArgumentNullException">Exception thrown if null given as argument.</exception>
 		public void AddScaled(FloatVector vector, Single scale)
 		{
-			if (vector == null)
+			if (vector is null)
 			{
-				throw new System.ArgumentNullException("Vector cannot be null.");
+				throw new System.ArgumentNullException(nameof(vector));
 			}
 			Blas.Axpy.Compute(this.Length, scale, vector._array, 1, this._array, 1);
 		}
@@ -993,9 +993,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<exception cref="ArgumentNullException">Exception thrown if null given as argument.</exception>
 		public void Subtract(FloatVector vector)
 		{
-			if (vector == null)
+			if (vector is null)
 			{
-				throw new System.ArgumentNullException("Vector cannot be null.");
+				throw new System.ArgumentNullException(nameof(vector));
 			}
 			Blas.Axpy.Compute(this.Length, -1, vector._array, 1, this._array, 1);
 		}

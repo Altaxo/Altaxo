@@ -423,7 +423,7 @@
 		/// <returns>A wrapper objects with the <see cref="IROVector{<#= scalT #>}" /> returning elements that are inverse to those of the original vector.</returns>
 		public static IROVector<<#= inverseEleT #>> ToInverseROVector(this IReadOnlyList<<#= scalT #>> array)
 		{
-			return null == array ? null : new RO<#= bigScalT #>InverseElementWrapper(array);
+			return array is null ? null : new RO<#= bigScalT #>InverseElementWrapper(array);
 		}
 
 		/// <summary>
@@ -518,7 +518,7 @@
 		/// <returns>A wrapper objects with the <see cref="IROVector{<#= scalT #>}" /> interface that wraps the provided array.</returns>
 		public static <#= roVecT #> ToROVector(this <#= scalT #>[] array)
 		{
-			return null == array ? null : new RO<#= bigScalT #>ArrayWrapper(array);
+			return array is null ? null : new RO<#= bigScalT #>ArrayWrapper(array);
 		}
 
 		/// <summary>
@@ -612,7 +612,7 @@
 		/// <returns>A wrapper objects with the <see cref="IROVector{<#= scalT #>}" /> interface that wraps the provided array.</returns>
 		public static IROVector<Double> ToRODoubleVector(this <#= scalT #>[] array)
 		{
-			return null == array ? null : new RODouble_<#= bigScalT #>ArrayWrapper(array);
+			return array is null ? null : new RODouble_<#= bigScalT #>ArrayWrapper(array);
 		}
 
 		/// <summary>
@@ -832,7 +832,7 @@
 		/// <returns>A wrapper objects with the <see cref="IROVector{<#= scalT #>}" /> interface that wraps the provided array.</returns>
 		public static <#= roVecT #> ToROVectorAmendedShifted(this <#= scalT #>[] array,<#= scalT #> amendedValueAtStart, int amendedValuesAtStartCount, <#= scalT #> amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
-			return null == array ? null : new RO<#= bigScalT #>ArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
+			return array is null ? null : new RO<#= bigScalT #>ArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
 		}
 
 		/// <summary>

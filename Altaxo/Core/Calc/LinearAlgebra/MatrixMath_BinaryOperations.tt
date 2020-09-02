@@ -36,9 +36,9 @@
 		/// <param name="result">Matrix to store the result. This may be the same instance as the source matrix.</param>
 		public static void Map(<#= roMatT #> src1, Func<<#= scalT #>, <#= scalT #>> function, <#= rwMatT #> result)
 		{
-			if (null == src1)
+			if (src1 is null)
 				throw new ArgumentNullException(nameof(src1));
-			if (null == result)
+			if (result is null)
 				throw new ArgumentNullException(nameof(result));
 
 			if (src1.RowCount != result.RowCount || src1.ColumnCount != result.ColumnCount)
@@ -64,11 +64,11 @@
 		/// <param name="result">Matrix to store the result. This may be the same instance as one of the matrices src1 or src2.</param>
 		public static void Map(<#= roMatT #> src1, <#= roMatT #> src2, Func<<#= scalT #>, <#= scalT #>, <#= scalT #>> function, <#= rwMatT #> result)
 		{
-			if (null == src1)
+			if (src1 is null)
 				throw new ArgumentNullException(nameof(src1));
-			if (null == src2)
+			if (src2 is null)
 				throw new ArgumentNullException(nameof(src2));
-			if (null == result)
+			if (result is null)
 				throw new ArgumentNullException(nameof(result));
 
 			if (src1.RowCount != src2.RowCount || src1.ColumnCount != src2.ColumnCount)
@@ -95,9 +95,9 @@
 		/// <param name="result">Matrix to store the result. This may be the same instance as the source matrix.</param>
 		public static void MapIndexed(<#= roMatT #> src1, Func<int, int, <#= scalT #>, <#= scalT #>> function, <#= rwMatT #> result)
 		{
-			if (null == src1)
+			if (src1 is null)
 				throw new ArgumentNullException(nameof(src1));
-			if (null == result)
+			if (result is null)
 				throw new ArgumentNullException(nameof(result));
 
 			if (src1.RowCount != result.RowCount || src1.ColumnCount != result.ColumnCount)
@@ -126,11 +126,11 @@
 		/// <param name="result">Matrix to store the result. This may be the same instance as one of the matrices src1 or src2.</param>
 		public static void MapIndexed(<#= roMatT #> src1, <#= roMatT #> src2, Func<int, int, <#= scalT #>, <#= scalT #>, <#= scalT #>> function, <#= rwMatT #> result)
 		{
-			if (null == src1)
+			if (src1 is null)
 				throw new ArgumentNullException(nameof(src1));
-			if (null == src2)
+			if (src2 is null)
 				throw new ArgumentNullException(nameof(src2));
-			if (null == result)
+			if (result is null)
 				throw new ArgumentNullException(nameof(result));
 
 			if (src1.RowCount != src2.RowCount || src1.ColumnCount != src2.ColumnCount)
@@ -160,9 +160,9 @@
 		/// <param name="result">Matrix to store the result. This may be the same instance as the source matrix.</param>
 		public static void MapIndexed<T1>(<#= roMatT #> src1, T1 parameter1, Func<int, int, <#= scalT #>, T1, <#= scalT #>> function, <#= rwMatT #> result)
 		{
-			if (null == src1)
+			if (src1 is null)
 				throw new ArgumentNullException(nameof(src1));
-			if (null == result)
+			if (result is null)
 				throw new ArgumentNullException(nameof(result));
 
 			if (src1.RowCount != result.RowCount || src1.ColumnCount != result.ColumnCount)

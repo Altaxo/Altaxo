@@ -48,9 +48,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="result">Matrix to store the result. This may be the same instance as the source matrix.</param>
 		public static void Map(IROMatrix<double> src1, Func<Double, Double> function, IMatrix<double> result)
 		{
-			if (null == src1)
+			if (src1 is null)
 				throw new ArgumentNullException(nameof(src1));
-			if (null == result)
+			if (result is null)
 				throw new ArgumentNullException(nameof(result));
 
 			if (src1.RowCount != result.RowCount || src1.ColumnCount != result.ColumnCount)
@@ -76,11 +76,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="result">Matrix to store the result. This may be the same instance as one of the matrices src1 or src2.</param>
 		public static void Map(IROMatrix<double> src1, IROMatrix<double> src2, Func<Double, Double, Double> function, IMatrix<double> result)
 		{
-			if (null == src1)
+			if (src1 is null)
 				throw new ArgumentNullException(nameof(src1));
-			if (null == src2)
+			if (src2 is null)
 				throw new ArgumentNullException(nameof(src2));
-			if (null == result)
+			if (result is null)
 				throw new ArgumentNullException(nameof(result));
 
 			if (src1.RowCount != src2.RowCount || src1.ColumnCount != src2.ColumnCount)
@@ -107,9 +107,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="result">Matrix to store the result. This may be the same instance as the source matrix.</param>
 		public static void MapIndexed(IROMatrix<double> src1, Func<int, int, Double, Double> function, IMatrix<double> result)
 		{
-			if (null == src1)
+			if (src1 is null)
 				throw new ArgumentNullException(nameof(src1));
-			if (null == result)
+			if (result is null)
 				throw new ArgumentNullException(nameof(result));
 
 			if (src1.RowCount != result.RowCount || src1.ColumnCount != result.ColumnCount)
@@ -138,11 +138,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="result">Matrix to store the result. This may be the same instance as one of the matrices src1 or src2.</param>
 		public static void MapIndexed(IROMatrix<double> src1, IROMatrix<double> src2, Func<int, int, Double, Double, Double> function, IMatrix<double> result)
 		{
-			if (null == src1)
+			if (src1 is null)
 				throw new ArgumentNullException(nameof(src1));
-			if (null == src2)
+			if (src2 is null)
 				throw new ArgumentNullException(nameof(src2));
-			if (null == result)
+			if (result is null)
 				throw new ArgumentNullException(nameof(result));
 
 			if (src1.RowCount != src2.RowCount || src1.ColumnCount != src2.ColumnCount)
@@ -172,9 +172,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="result">Matrix to store the result. This may be the same instance as the source matrix.</param>
 		public static void MapIndexed<T1>(IROMatrix<double> src1, T1 parameter1, Func<int, int, Double, T1, Double> function, IMatrix<double> result)
 		{
-			if (null == src1)
+			if (src1 is null)
 				throw new ArgumentNullException(nameof(src1));
-			if (null == result)
+			if (result is null)
 				throw new ArgumentNullException(nameof(result));
 
 			if (src1.RowCount != result.RowCount || src1.ColumnCount != result.ColumnCount)
