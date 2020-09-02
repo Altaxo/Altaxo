@@ -37,7 +37,7 @@ namespace Altaxo.Gui.Markdown
     public static void TrackLinks(MarkdownDocument document, long updateSequenceNumber, IWpfImageProvider imageProvider)
     {
       var urlCollector = imageProvider?.CreateUrlCollector();
-      if (null != urlCollector)
+      if (urlCollector is not null)
       {
         foreach (var element in PositionHelper.EnumerateAllMarkdownObjectsRecursively(document))
         {

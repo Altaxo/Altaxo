@@ -253,12 +253,12 @@ namespace Altaxo.Gui.Markdown
 
       if (firstLevelTextElementsToInsert.Count > 0)
       {
-        if (firstLevelTextElementToInsertAfter != null)
+        if (firstLevelTextElementToInsertAfter is not null)
         {
           for (int i = firstLevelTextElementsToInsert.Count - 1; i >= 0; --i)
             blocks.InsertAfter(firstLevelTextElementToInsertAfter, (System.Windows.Documents.Block)firstLevelTextElementsToInsert[i]);
         }
-        else if (null != firstLevelTextElementToInsertBefore)
+        else if (firstLevelTextElementToInsertBefore is not null)
         {
           for (int i = 0; i < firstLevelTextElementsToInsert.Count; ++i)
             blocks.InsertBefore(firstLevelTextElementToInsertBefore, (System.Windows.Documents.Block)firstLevelTextElementsToInsert[i]);
@@ -272,10 +272,10 @@ namespace Altaxo.Gui.Markdown
 
           var lastToInsert = firstLevelTextElementsToInsert[firstLevelTextElementsToInsert.Count - 1];
           var firstBlock = blocks.FirstBlock;
-          bool isAddedAtStart = firstBlock != null;
+          bool isAddedAtStart = firstBlock is not null;
           var lastToInsertTag = lastToInsert?.Tag as MarkdownObject;
           var firstBlockTag = firstBlock?.Tag as MarkdownObject;
-          isAddedAtStart &= (null != lastToInsertTag && null != firstBlockTag);
+          isAddedAtStart &= (lastToInsertTag is not null && firstBlockTag is not null);
           isAddedAtStart = isAddedAtStart && (lastToInsertTag.Span.End <= firstBlockTag.Span.Start);
 
           if (isAddedAtStart)
@@ -309,9 +309,9 @@ namespace Altaxo.Gui.Markdown
       System.Windows.Documents.Block previousBlockWithTag = null;
       foreach (var blk in FlowDocument.Blocks)
       {
-        if (blk.Tag == null) // blk.Tag==null indicates that this is a block that has been changed and should be removed (during exchanging the of the tags the tag of this block is assigned null)
+        if (blk.Tag is null) // blk.Tag==null indicates that this is a block that has been changed and should be removed (during exchanging the of the tags the tag of this block is assigned null)
         {
-          if (null == firstLevelTextElementToInsertAfter)
+          if (firstLevelTextElementToInsertAfter is null)
           {
             firstLevelTextElementToInsertAfter = previousBlockWithTag;
           }
@@ -320,7 +320,7 @@ namespace Altaxo.Gui.Markdown
         }
         else
         {
-          if (null == firstLevelTextElementToInsertBefore && firstLevelTextElementsToDelete.Count > 0)
+          if (firstLevelTextElementToInsertBefore is null && firstLevelTextElementsToDelete.Count > 0)
           {
             firstLevelTextElementToInsertBefore = blk;
           }
@@ -389,7 +389,7 @@ namespace Altaxo.Gui.Markdown
           return i;
         var childsO = GetChilds(blockO);
         var childsN = GetChilds(blockN);
-        if (null != childsO && null != childsN)
+        if (childsO is not null && childsN is not null)
         {
           if (0 <= TranslateOldToNewFirstPart(dictOldToNew, indexOfFirstDifference, childsO, childsN))
             return i;
@@ -430,7 +430,7 @@ namespace Altaxo.Gui.Markdown
 
         var childsO = GetChilds(blockO);
         var childsN = GetChilds(blockN);
-        if (null != childsO && null != childsN)
+        if (childsO is not null && childsN is not null)
         {
           var (ii, jj) = TranslateOldToNewLastPart(dictOldToNew, indexOfLastDifferenceO, indexOfLastDifferenceN, childsO, childsN);
           if (ii >= 0 || jj >= 0)
@@ -465,7 +465,7 @@ namespace Altaxo.Gui.Markdown
       foreach (TextElement t in textElements)
       {
         var childs = GetChilds(t);
-        if (null != childs)
+        if (childs is not null)
         {
           ExchangeMarkdigTagsInFlowDocument(oldToNewDict, childs);
         }

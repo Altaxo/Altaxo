@@ -61,9 +61,9 @@ namespace Altaxo.Gui.HelpViewing
 
     public void GetState(out bool isDisposed, out bool isLoaded)
     {
-      isDisposed = null == _hiddenMainForm || _hiddenMainForm.IsDisposed;
+      isDisposed = _hiddenMainForm is null || _hiddenMainForm.IsDisposed;
 
-      isLoaded = null != _hiddenMainForm && !_hiddenMainForm.IsDisposed && _hiddenMainForm.IsLoaded;
+      isLoaded = _hiddenMainForm is not null && !_hiddenMainForm.IsDisposed && _hiddenMainForm.IsLoaded;
     }
 
     /// <summary>

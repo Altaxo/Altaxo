@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Markdown
 
     private void EhTextChanged(object sender, EventArgs e)
     {
-      if (null != Viewer && null != _guiRawText)
+      if (Viewer is not null && _guiRawText is not null)
         Viewer.Markdown = _guiRawText.Text;
     }
 
@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Markdown
       var blocks = flowDocument.Blocks;
 
       var textElement = BinarySearchBlocksForLineNumber(flowDocument.Blocks, documentLine - 1);
-      if (null != textElement)
+      if (textElement is not null)
         textElement.BringIntoView();
     }
 
@@ -101,11 +101,11 @@ namespace Altaxo.Gui.Markdown
         {
           return block;
         }
-        else if (mdo.Line > lineNumber && null != previousElement)
+        else if (mdo.Line > lineNumber && previousElement is not null)
         {
           var childBlocks = GetChildBlocks(previousElement);
           TextElement foundResult;
-          if (null != childBlocks && null != (foundResult = SearchBlocksForLineNumber(childBlocks, lineNumber)))
+          if (childBlocks is not null && (foundResult = SearchBlocksForLineNumber(childBlocks, lineNumber)) is not null)
           {
             return foundResult;
           }
@@ -200,14 +200,14 @@ namespace Altaxo.Gui.Markdown
       // our only chance is to search the children of the lowerIdx
 
       var childs = GetChildList((TextElement)blocks[lowerIdx]);
-      if (null == childs)
+      if (childs is null)
       {
         return (TextElement)blocks[upperIdx]; // no childs, then our upperIdx element is the best choice
       }
       else // there are child, so search in them
       {
         var result = BinarySearchBlocksForLineNumber(childs, lineNumber);
-        if (null != result)
+        if (result is not null)
           return result; // we have found a child, so return it
         else
           return (TextElement)blocks[upperIdx]; // no child found, then upperIdx may be the best choice.

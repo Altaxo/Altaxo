@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Markdown
 
       public void TruncateChildNodeCountTo(int count)
       {
-        if (null != _childNodes)
+        if (_childNodes is not null)
         {
           for (int i = _childNodes.Count - 1; i >= count; --i)
             _childNodes.RemoveAt(i);
@@ -228,7 +228,7 @@ namespace Altaxo.Gui.Markdown
       if (_guiOutline.Visibility != System.Windows.Visibility.Visible)
         return;
 
-      if (null == document)
+      if (document is null)
         return;
 
       // Determine the minimum header level of the document.
@@ -296,7 +296,7 @@ namespace Altaxo.Gui.Markdown
     {
       var result = string.Empty;
 
-      if (null == leafBlock.Inline)
+      if (leafBlock.Inline is null)
         return result;
 
       foreach (var il in leafBlock.Inline)
@@ -405,7 +405,7 @@ namespace Altaxo.Gui.Markdown
             {
               if (d)
               {
-                if (null == destinationNodesToDelete)
+                if (destinationNodesToDelete is null)
                   destinationNodesToDelete = new List<(D, D, int)>();
 
                 destinationNodesToDelete.Add((destinationRootNode, destChildEnum.Current, idx));
@@ -419,7 +419,7 @@ namespace Altaxo.Gui.Markdown
         }
       }
 
-      if (null != destinationNodesToDelete)
+      if (destinationNodesToDelete is not null)
       {
         for (int i = destinationNodesToDelete.Count - 1; i >= destinationNodesToDeleteOriginalCount; --i)
         {

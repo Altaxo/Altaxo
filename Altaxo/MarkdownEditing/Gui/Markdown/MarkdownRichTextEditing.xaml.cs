@@ -203,7 +203,7 @@ namespace Altaxo.Gui.Markdown
           _isSpellCheckingEnabled = value;
           _guiViewer.SpellCheck.IsEnabled = value;
           _guiViewer.IsReadOnly = !value; // in order to have spell checking, we have to enable the document
-          if (true == value && null != _guiViewer.Document)
+          if (true == value && _guiViewer.Document is not null)
           {
             _guiViewer.Document.Language = System.Windows.Markup.XmlLanguage.GetLanguage(_documentCulture.IetfLanguageTag);
           }
@@ -218,7 +218,7 @@ namespace Altaxo.Gui.Markdown
         if (!(_isHyphenationEnabled == value))
         {
           _isHyphenationEnabled = value;
-          if (null != _guiViewer.Document)
+          if (_guiViewer.Document is not null)
             _guiViewer.Document.IsHyphenationEnabled = _isHyphenationEnabled;
         }
       }
@@ -228,7 +228,7 @@ namespace Altaxo.Gui.Markdown
     {
       set
       {
-        var oldValue = _foldingManager != null;
+        var oldValue = _foldingManager is not null;
 
         if (!(oldValue == value))
         {
@@ -321,7 +321,7 @@ namespace Altaxo.Gui.Markdown
         if (textElement.Tag is Markdig.Syntax.MarkdownObject mdo)
         {
           var attr = (Markdig.Renderers.Html.HtmlAttributes)mdo.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-          if (null != attr && attr.Id == url)
+          if (attr is not null && attr.Id == url)
           {
             var position = textElement.ContentStart;
             textElement.BringIntoView();
@@ -374,7 +374,7 @@ namespace Altaxo.Gui.Markdown
       _sourceText = _guiEditor.Text;
 
       var pipeline = Pipeline ?? DefaultPipeline;
-      if (forceCompleteRendering || _lastMarkdownDocumentProcessed == null || _lastSourceTextProcessed == null)
+      if (forceCompleteRendering || _lastMarkdownDocumentProcessed is null || _lastSourceTextProcessed is null)
       {
         BeforeCompleteRendering?.Invoke(this, EventArgs.Empty);
 
@@ -498,7 +498,7 @@ namespace Altaxo.Gui.Markdown
         if (_guiEditor.IsKeyboardFocusWithin)
         {
           textPosition = _guiEditor.TextArea.Caret.Position;
-          if (null != textPosition)
+          if (textPosition is not null)
           {
             var sourceLineTopAbs = _guiEditor.TextArea.TextView.GetVisualPosition(textPosition.Value, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.LineTop);
             if (!(sourceLineTopAbs.Y >= _guiEditor.TextArea.TextView.VerticalOffset && sourceLineTopAbs.Y <= (_guiEditor.TextArea.TextView.VerticalOffset + _guiEditor.TextArea.TextView.ActualHeight)))
@@ -509,12 +509,12 @@ namespace Altaxo.Gui.Markdown
         }
 
         var scrollPos = _guiEditor.TextArea.TextView.ScrollOffset;
-        if (null == textPosition)
+        if (textPosition is null)
         {
           textPosition = _guiEditor.TextArea.TextView.GetPosition(new Point(0, _guiEditor.TextArea.TextView.VerticalOffset + _guiEditor.ActualHeight / 2));
         }
 
-        if (null != textPosition)
+        if (textPosition is not null)
         {
           SyncSourceEditorTextPositionToViewer(textPosition.Value);
         }
@@ -542,7 +542,7 @@ namespace Altaxo.Gui.Markdown
             textPosition = null; // Do not use caret position if it is outside the viewport window
         }
 
-        if (null == textPosition)
+        if (textPosition is null)
         {
           textPosition = _guiViewer.GetPositionFromPoint(new Point(0, _guiViewer.ActualHeight / 2), true);
         }
@@ -570,7 +570,7 @@ namespace Altaxo.Gui.Markdown
 
       // search parent or the ancestors of parent for a Markdig tag
       Markdig.Syntax.MarkdownObject markdigTag = null;
-      while (null != parent)
+      while (parent is not null)
       {
         if (parent.Tag is Markdig.Syntax.MarkdownObject mdo)
         {
@@ -580,7 +580,7 @@ namespace Altaxo.Gui.Markdown
         parent = parent.Parent as TextElement;
       }
 
-      if (null != markdigTag)
+      if (markdigTag is not null)
       {
         var rect = textPosition.GetCharacterRect(LogicalDirection.Forward);
         System.Diagnostics.Debug.WriteLine("Scroll to line {0}, Y={1}", markdigTag.Line + 1, rect.Top);
@@ -597,7 +597,7 @@ namespace Altaxo.Gui.Markdown
       var blocks = flowDocument.Blocks;
 
       var textElement = PositionHelper.BinarySearchBlocksForLineNumber(flowDocument.Blocks, sourceLineNumber - 1, 0);
-      if (null != textElement)
+      if (textElement is not null)
         textElement.BringIntoView();
     }
 
@@ -619,7 +619,7 @@ namespace Altaxo.Gui.Markdown
       var textOffset = _guiEditor.Document.GetOffset(sourceTextPosition.Location);
       var (textElementBefore, textElementAfter) = PositionHelper.BinarySearchBlocksForTextOffset(flowDocument.Blocks, textOffset);
       var textElement = PositionHelper.GetTextElementClosestToCursorPosition(textElementBefore, textElementAfter, textOffset);
-      if (null != textElement && textElement.Tag is Markdig.Syntax.MarkdownObject markdigTag)
+      if (textElement is not null && textElement.Tag is Markdig.Syntax.MarkdownObject markdigTag)
       {
         var viewTextPosition = textElement.ElementStart;
 
@@ -650,12 +650,12 @@ namespace Altaxo.Gui.Markdown
 
     private Markdig.Syntax.MarkdownObject GetMarkdownObjectAtViewerPosition(TextPointer textPosition)
     {
-      if (null != textPosition)
+      if (textPosition is not null)
       {
         var parent = textPosition.Parent is TextElement pe ? pe : textPosition.Paragraph;
 
         // search parent or the ancestors of parent for a Markdig tag
-        while (null != parent)
+        while (parent is not null)
         {
           if (parent.Tag is Markdig.Syntax.MarkdownObject mdo)
           {
@@ -686,13 +686,13 @@ namespace Altaxo.Gui.Markdown
         var markdigTag = GetMarkdownObjectAtViewerPosition(textPosition);
         var markdigTagPrev = GetMarkdownObjectAtViewerPosition(textPosition.GetPositionAtOffset(-1));
 
-        if (null != markdigTagPrev && markdigTagPrev.Span.Start > markdigTag.Span.Start)
+        if (markdigTagPrev is not null && markdigTagPrev.Span.Start > markdigTag.Span.Start)
         {
           markdigTag = markdigTagPrev;
           textPosition = textPositionPrev;
         }
 
-        if (null != markdigTag)
+        if (markdigTag is not null)
         {
           int columnOffset = 0;
           var parent = textPosition.Parent is TextElement pe ? pe : textPosition.Paragraph;
@@ -831,7 +831,7 @@ namespace Altaxo.Gui.Markdown
 
       _guiViewer.Focus();
 
-      if (null != textPointer) // && isAccurate -> from editor to viewer we can relax the requirement of being accurate, better to have a position at all
+      if (textPointer is not null) // && isAccurate -> from editor to viewer we can relax the requirement of being accurate, better to have a position at all
       {
         _guiViewer.Selection.Select(textPointer, textPointer);
       }
@@ -928,7 +928,7 @@ namespace Altaxo.Gui.Markdown
       foreach (var textChange in changes)
       {
         var endPos = Viewer_ProcessSingleTextChange(textChange);
-        if (endPos.HasValue && (maxEndPosition == null || endPos.Value > maxEndPosition.Value))
+        if (endPos.HasValue && (maxEndPosition is null || endPos.Value > maxEndPosition.Value))
           maxEndPosition = endPos;
       }
 

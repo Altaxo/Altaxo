@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Markdown
 
     private void EhTextChanged(object sender, TextChangedEventArgs e)
     {
-      if (null != Viewer && null != _guiRawText)
+      if (Viewer is not null && _guiRawText is not null)
         Viewer.Markdown = _guiRawText.Text;
     }
   }

@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Markdown
 
       // search parent or the ancestors of parent for a Markdig tag
       Markdig.Syntax.MarkdownObject markdigTag = null;
-      while (null != parent)
+      while (parent is not null)
       {
         if (parent.Tag is Markdig.Syntax.MarkdownObject mdo)
         {
@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Markdown
         isReturnedPositionAccurate = false; // we have to use the parent of this text element, thus the returned positon may not be accurate
       }
 
-      if (null != markdigTag)
+      if (markdigTag is not null)
       {
         int charOffset = parent.ContentStart.GetOffsetToPosition(textPosition);
         int sourceTextOffset = ContentSpan(markdigTag).Start + charOffset;
@@ -84,7 +84,7 @@ namespace Altaxo.Gui.Markdown
     {
       var (textElementBefore, textElementAfter) = BinarySearchBlocksForTextOffset(blocks, textOffset);
       var textElement = GetTextElementClosestToCursorPosition(textElementBefore, textElementAfter, textOffset);
-      if (null != textElement && textElement.Tag is Markdig.Syntax.MarkdownObject markdigTag)
+      if (textElement is not null && textElement.Tag is Markdig.Syntax.MarkdownObject markdigTag)
       {
         var viewTextPosition = textElement.ContentStart;
 
@@ -241,7 +241,7 @@ namespace Altaxo.Gui.Markdown
       (TextElement childUpperBefore, TextElement childUpperAfter) = (null, null);
 
       var childsLower = GetChildList((TextElement)blocks[lowerIdx]);
-      if (null != childsLower)
+      if (childsLower is not null)
       {
         (childLowerBefore, childLowerAfter) = BinarySearchBlocksForTextOffset(childsLower, cursorPosition);
       }
@@ -249,7 +249,7 @@ namespace Altaxo.Gui.Markdown
       if (upperIdx != lowerIdx)
       {
         var childsUpper = GetChildList((TextElement)blocks[upperIdx]);
-        if (null != childsUpper)
+        if (childsUpper is not null)
         {
           (childUpperBefore, childUpperAfter) = BinarySearchBlocksForTextOffset(childsUpper, cursorPosition);
         }
@@ -272,15 +272,15 @@ namespace Altaxo.Gui.Markdown
       var tagBefore = textElementBefore?.Tag as Markdig.Syntax.MarkdownObject;
       var tagAfter = textElementBefore?.Tag as Markdig.Syntax.MarkdownObject;
 
-      if (null != tagBefore && cursorPosition <= tagBefore.Span.End + 1)
+      if (tagBefore is not null && cursorPosition <= tagBefore.Span.End + 1)
       {
         return textElementBefore;
       }
-      else if (null != tagAfter && cursorPosition >= tagAfter.Span.Start)
+      else if (tagAfter is not null && cursorPosition >= tagAfter.Span.Start)
       {
         return textElementAfter;
       }
-      else if (null != tagBefore && null != tagAfter && cursorPosition > tagBefore.Span.End && cursorPosition < tagAfter.Span.Start)
+      else if (tagBefore is not null && tagAfter is not null && cursorPosition > tagBefore.Span.End && cursorPosition < tagAfter.Span.Start)
       {
         // hmm, this is difficult to decide..
         // the cursor is neither in the element before nor in the element after, but inbetween
@@ -380,14 +380,14 @@ namespace Altaxo.Gui.Markdown
         diveIntoIdx = upperIdx;
 
       var childs = GetChildList((TextElement)blocks[diveIntoIdx]);
-      if (null == childs)
+      if (childs is null)
       {
         return (TextElement)blocks[diveIntoIdx]; // no childs, then diveIntoIdx element is the best choice
       }
       else // there are child, so search in them
       {
         var result = BinarySearchBlocksForLineNumber(childs, lineNumber, columnNumber);
-        if (null != result)
+        if (result is not null)
           return result; // we have found a child, so return it
         else
           return (TextElement)blocks[upperIdx]; // no child found, then upperIdx may be the best choice.
@@ -445,7 +445,7 @@ namespace Altaxo.Gui.Markdown
     /// <returns>Enumeration of all text elements.</returns>
     public static IEnumerable<TextElement> EnumerateAllTextElementsRecursively(IEnumerable<TextElement> toplevelTextElements)
     {
-      if (null != toplevelTextElements)
+      if (toplevelTextElements is not null)
       {
         foreach (var child in toplevelTextElements)
         {
@@ -464,7 +464,7 @@ namespace Altaxo.Gui.Markdown
     {
       yield return startElement;
       var childList = GetChildList(startElement);
-      if (null != childList)
+      if (childList is not null)
       {
         foreach (TextElement child in GetChildList(startElement))
         {
@@ -487,7 +487,7 @@ namespace Altaxo.Gui.Markdown
     {
       yield return startElement;
       var childList = GetChildList(startElement);
-      if (null != childList)
+      if (childList is not null)
       {
         foreach (var child in GetChildList(startElement))
         {
