@@ -40,7 +40,7 @@ namespace MathML.Rendering
 		public override AreaRegion GetRegion(float x, float y, float pointX, float pointY)
 		{
 			AreaRegion region = child.GetRegion (x, y, pointX, pointY);
-			if(region != null && region.Element == null)
+			if(region is not null && region.Element is null)
 			{
 				region = new AreaRegion(this, element, x, y);
 			}
@@ -52,7 +52,7 @@ namespace MathML.Rendering
 			if(element == this.element)
 			{
 				AreaRegion region = child.GetEditRegion(context, x, y, index);
-				if(region != null)
+				if(region is not null)
 				{
 					region.Element = element;
 				}
@@ -72,7 +72,7 @@ namespace MathML.Rendering
     public override AreaRegion GetRegion(IFormattingContext context, float x, float y, Area area, int index)
 		{
 			AreaRegion region = child.GetRegion (context, x, y, area, index);
-			if(region != null && region.Element == null)
+			if(region is not null && region.Element is null)
 			{
 				region.Element = element;				
 			}

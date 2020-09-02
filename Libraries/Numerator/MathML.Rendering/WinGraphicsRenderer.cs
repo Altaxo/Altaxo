@@ -67,7 +67,7 @@ namespace MathML.Rendering
     public Image GetImage(Type type, Graphics gr)
     {
 
-      if (mathElement == null)
+      if (mathElement is null)
         return null;
 
         gr.PageUnit = GraphicsUnit.Pixel;
@@ -97,7 +97,7 @@ namespace MathML.Rendering
         gr.ReleaseHdc(dc);
       }
 
-      if(image != null && area != null)
+      if(image is not null && area is not null)
       {
 
         using (Graphics gi = Graphics.FromImage(image))
@@ -121,7 +121,7 @@ namespace MathML.Rendering
       // clear the background in all cases
       Brush backBrush = null;
       
-      if(BackgroundImage != null)
+      if(BackgroundImage is not null)
       {
         backBrush = new TextureBrush(BackgroundImage);
       }
@@ -133,10 +133,10 @@ namespace MathML.Rendering
     
       Rectangle rect = new Rectangle(0,0,width,height);
 
-      if(backBrush != null)
+      if(backBrush is not null)
         gr.FillRectangle(backBrush, rect);
 
-      if (area != null)
+      if (area is not null)
       {
         area.Render(new WinDrawingContext(gr), scrollPosX, scrollPosY + box.Height);
       }

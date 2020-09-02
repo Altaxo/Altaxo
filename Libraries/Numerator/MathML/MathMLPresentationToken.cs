@@ -168,10 +168,10 @@ namespace MathML
 			get
 			{
 				XmlNode parent = this;
-				while((parent = parent.ParentNode) != null)
+				while((parent = parent.ParentNode) is not null)
 				{
 					MathMLStyleElement style = parent as MathMLStyleElement;
-					if(style != null) return style;
+					if(style is not null) return style;
 				}
 				return null;
 			}

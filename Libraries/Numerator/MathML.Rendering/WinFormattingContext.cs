@@ -58,7 +58,7 @@ namespace MathML.Rendering
         string configDir = System.Configuration.ConfigurationManager.AppSettings.Get("MathMLRenderingConfig");
         string searchDir = null;
 
-        if (configDir == null || configDir.Length == 0)
+        if (configDir is null || configDir.Length == 0)
           searchDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
         else if (Path.IsPathRooted(configDir))
         {
@@ -157,7 +157,7 @@ namespace MathML.Rendering
 
         font = FindFont(height, italic, weight, name);
 
-        if (font == null)
+        if (font is null)
         {
           font = CreateFont(((WinFormattingContext)context)._graphics, height, italic, weight, name);
           fonts.Add(new WeakReference(font));

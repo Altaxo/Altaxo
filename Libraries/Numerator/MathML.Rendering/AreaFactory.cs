@@ -1,4 +1,4 @@
-//This file is part of MathML.Rendering, a library for displaying mathml
+﻿//This file is part of MathML.Rendering, a library for displaying mathml
 //Copyright (C) 2003, Andy Somogyi
 //
 //This library is free software; you can redistribute it and/or
@@ -58,14 +58,14 @@ namespace MathML.Rendering
 				{
 					if(str[i] > '\x7f')
 					{
-						if(list == null) { list = new ArrayList(); }
+						if(list is null) { list = new ArrayList(); }
 						list.Add(new StringArea(context, str.Substring(start, i - start)));
 						list.Add(GlyphFactory.GetGlyph(context, fontSize, str[i]));
 						start = i + 1;
 					}
 				}
 				
-				if(list != null)
+				if(list is not null)
 				{
 					result = Horizontal((Area[])list.ToArray(typeof(Area)));
 				}
@@ -343,25 +343,25 @@ namespace MathML.Rendering
 
 			CalculateScriptShift(context, 
 				baseArea.BoundingBox,
-				subArea != null ? subArea.BoundingBox : BoundingBox.New(), 
+								subArea is not null ? subArea.BoundingBox : BoundingBox.New(), 
 				subMinShift, 
-				superArea != null ? superArea.BoundingBox : BoundingBox.New(), 
+								superArea is not null ? superArea.BoundingBox : BoundingBox.New(), 
 				superMinShift, 
 				out subShift, out superShift);        
 		
 			// the script areas go in an overlap area
-			if(subArea != null && superArea != null) 
+			if(subArea is not null && superArea is not null) 
 			{
 				Area[] overlap = new Area[2];
 				overlap[0] = Shift(-subShift, subArea);
 				overlap[1] = Shift(superShift, superArea);
 				horz[scriptIndex] = Overlap(overlap);
 			}
-			else if(subArea != null) 
+			else if(subArea is not null) 
 			{
 				horz[scriptIndex] = Shift(-subShift, subArea);
 			}
-			else if(superArea != null) 
+			else if(superArea is not null) 
 			{
 				horz[scriptIndex] = Shift(superShift, superArea);
 			}
@@ -426,7 +426,7 @@ namespace MathML.Rendering
 			// negative width, but just in case.....
 			minIndexWidth = radical.LeftEdge < 0.0f ? -radical.LeftEdge : 0.0f;
 
-			if(index == null)
+			if(index is null)
 			{
 				// just make a space to padd the radical
                 index = HorizontalSpace(minIndexWidth);				

@@ -117,7 +117,7 @@ namespace MathML.Rendering.GlyphMapper
 		public Area GetGlyph(IFontHandle fontHandle)
 		{
 			Area result = null;
-			if(glyphArea != null && glyphArea.IsAlive)
+			if(glyphArea is not null && glyphArea.IsAlive)
 			{
 				result = (Area)glyphArea.Target;
 			}

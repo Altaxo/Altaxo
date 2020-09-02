@@ -128,9 +128,9 @@ namespace MathML
 				// get the dsi color attribue 
 				// namespaces suck!!!
 				String color = GetAttribute("color");
-				if(color == null || color.Length == 0) 
+				if(color is null || color.Length == 0) 
 					color = GetAttribute("dsi:color");
-				if(color == null || color.Length == 0) 
+				if(color is null || color.Length == 0) 
 					color = GetAttribute("dsi:dsi:color");
 				return Utility.ParseColor(color); 
 			}
@@ -147,9 +147,9 @@ namespace MathML
 				// get the dsi background attribue 
 				// namespaces suck!!!
 				String color = GetAttribute("background");
-				if(color == null || color.Length == 0) 
+				if(color is null || color.Length == 0) 
 					color = GetAttribute("dsi:background");
-				if(color == null || color.Length == 0) 
+				if(color is null || color.Length == 0) 
 					color = GetAttribute("dsi:dsi:background");
 				return Utility.ParseColor(color); 
 			}

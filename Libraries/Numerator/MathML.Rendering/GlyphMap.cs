@@ -74,8 +74,8 @@ namespace MathML.Rendering.GlyphMapper
 				// check the values of the member varibles, if they have not been
 				// created from the config file, init them to thier default 
 				// values
-				if(stretchyGlyphIndices == null) stretchyGlyphIndices = new StretchyGlyphIndices[0];
-				if(simpleGlyphRanges == null) simpleGlyphRanges = new SimpleGlyphRange[0];
+				if(stretchyGlyphIndices is null) stretchyGlyphIndices = new StretchyGlyphIndices[0];
+				if(simpleGlyphRanges is null) simpleGlyphRanges = new SimpleGlyphRange[0];
 				
 			}
 			catch(System.Exception e)
@@ -100,7 +100,7 @@ namespace MathML.Rendering.GlyphMapper
 			if(fontIndex >= 0)
 			{
 				// first try to find a cached glyph
-				if((result = this.fontInstances[fontIndex].GetCachedArea(c)) != null)
+				if((result = this.fontInstances[fontIndex].GetCachedArea(c)) is not null)
 				{
 					return result;
 				}
@@ -108,7 +108,7 @@ namespace MathML.Rendering.GlyphMapper
 				// look for a glyph in a range
 				for(int i = 0; i < simpleGlyphRanges.Length; i++)
 				{
-					if((result = simpleGlyphRanges[i].GetArea(context, fontInstances[fontIndex].FontHandle, c)) != null)
+					if((result = simpleGlyphRanges[i].GetArea(context, fontInstances[fontIndex].FontHandle, c)) is not null)
 					{
 						fontInstances[fontIndex].CacheGlyphArea(c, result);
 						return result;                        
@@ -117,8 +117,8 @@ namespace MathML.Rendering.GlyphMapper
 
 				// look for the glyph in the maps
 				if((simpleGlyphIndex = this.GetSimpleIndex(c)) >= 0 &&
-					(result = 
-					simpleGlyphs[simpleGlyphIndex].GetArea(context, fontInstances[fontIndex].FontHandle)) != null)
+										(result = 
+					simpleGlyphs[simpleGlyphIndex].GetArea(context, fontInstances[fontIndex].FontHandle)) is not null)
 				{
 					fontInstances[fontIndex].CacheGlyphArea(c, result);
 					return result;
@@ -158,8 +158,8 @@ namespace MathML.Rendering.GlyphMapper
 				}
 			}
 
-			Debug.WriteLineIf(result == null, "stretchy glyph request failed in font " + fontName);
-			Debug.WriteLineIf(result != null, "stretchy glyph request succeeded in " + fontName + " for " + c + ", lineThickness: " + lineThickness);
+			Debug.WriteLineIf(result is null, "stretchy glyph request failed in font " + fontName);
+			Debug.WriteLineIf(result is not null, "stretchy glyph request succeeded in " + fontName + " for " + c + ", lineThickness: " + lineThickness);
 			return result;
 		}
 

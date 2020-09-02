@@ -358,7 +358,7 @@ namespace MathML
 		internal static Align ParseAlign(string s, Align deFault)
 		{
 			Align result = deFault;
-			if(s != null && s.Length > 0)
+			if(s is not null && s.Length > 0)
 			{
 				switch(s)
 				{
@@ -491,7 +491,7 @@ namespace MathML
 		internal static Occurrence ParseOccurrence(String s, Occurrence def)
 		{
 			Occurrence result = def;
-			if(s != null && s.Length > 0)
+			if(s is not null && s.Length > 0)
 			{
 				switch(s)
 				{

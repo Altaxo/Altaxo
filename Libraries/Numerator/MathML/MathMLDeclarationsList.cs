@@ -44,7 +44,7 @@ namespace MathML
 				int count = 0;
 				XmlNode node = parent.FirstChild;
 				
-				while(node != null)
+				while(node is not null)
 				{
 					if(node is MathMLDeclareElement)
 					{
@@ -61,7 +61,7 @@ namespace MathML
 			int i = 0;
 			XmlNode node = parent.FirstChild;
 
-			while(node != null && i < index)
+			while(node is not null && i < index)
 			{
 				if(node is MathMLDeclareElement)
 				{

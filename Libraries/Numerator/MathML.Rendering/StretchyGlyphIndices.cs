@@ -92,7 +92,7 @@ namespace MathML.Rendering.GlyphMapper
 			Char = Utility.ParseChar(node.GetAttribute("char"));
 
 			// simple indices are not required
-			if((index = node.SelectSingleNode("simple") as XmlElement) != null) 
+			if((index = node.SelectSingleNode("simple") as XmlElement) is not null) 
 			{
 				SimpleIndices = Utility.ParseShortArray(index.GetAttribute("index"));
 			}
@@ -102,7 +102,7 @@ namespace MathML.Rendering.GlyphMapper
 			}
 
 			// compound indices are not required
-			if((index = node.SelectSingleNode("compound") as XmlElement) != null) 
+			if((index = node.SelectSingleNode("compound") as XmlElement) is not null) 
 			{
 				CompoundIndices = Utility.ParseShortArray(index.GetAttribute("index"));
 				if(CompoundIndices.Length != 4)

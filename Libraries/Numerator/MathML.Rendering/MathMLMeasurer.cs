@@ -58,10 +58,10 @@ namespace MathML.Rendering
 		public BoundingBox MeasureElement(IFormattingContext ctx, MathMLElement e)
 		{
 			Debug.Assert(ctx.cacheArea == false);
-			if(e != null)
+			if(e is not null)
 			{
 				Area a = Area.GetArea(e);
-				if(a != null) return a.BoundingBox;
+				if(a is not null) return a.BoundingBox;
 
 				if(cache.Contains(e))
 				{
@@ -89,7 +89,7 @@ namespace MathML.Rendering
 			BoundingBox[] boxes = new BoundingBox[elements.Length];
 			for(int i = 0; i < elements.Length; i++)
 			{
-				if(elements[i] != null)
+				if(elements[i] is not null)
 				{
 					boxes[i] = MeasureElement(ctx, elements[i]);
 				}
@@ -140,12 +140,12 @@ namespace MathML.Rendering
 				MathMLElement element = (MathMLElement)arguments[i];
 				MathMLOperatorElement op = element as MathMLOperatorElement;
 
-				if(op == null || op.Stretchy == false)
+				if(op is null || op.Stretchy == false)
 				{
 					//areas[i] = (Area)element.Accept(this, context);
 					extent.Append((BoundingBox)element.Accept(this, context));
 				}	
-				if(op != null && op.Stretchy)
+				if(op is not null && op.Stretchy)
 				{
 					stretchCount++;
 				}
@@ -177,7 +177,7 @@ namespace MathML.Rendering
 				for(int i = 0; i < arguments.Count; i++)
 				{
 					MathMLOperatorElement op = arguments[i] as MathMLOperatorElement;
-					if(op != null && op.Stretchy)
+					if(op is not null && op.Stretchy)
 					{
 						//areas[i] = (Area)op.Accept(this, context);
 						extent.Append((BoundingBox)op.Accept(this, context));
@@ -209,11 +209,11 @@ namespace MathML.Rendering
 
 			if(contents.Count == 1) // create a single string area
 			{
-				if((node = e.FirstChild) != null && node.NodeType == XmlNodeType.Text)
+				if((node = e.FirstChild) is not null && node.NodeType == XmlNodeType.Text)
 				{
 					area = AreaFactory.String(context, node.Value);
 				}
-				else if((element = e.FirstChild as MathMLElement) != null) 
+				else if((element = e.FirstChild as MathMLElement) is not null) 
 				{
 					// sets area to a new glyph area
 					area = (Area)element.Accept(formatter, context);
@@ -233,7 +233,7 @@ namespace MathML.Rendering
 					{
 						area = AreaFactory.String(context, n.Value);
 					}
-					else if((element = n as MathMLElement) != null)
+					else if((element = n as MathMLElement) is not null)
 					{
 						area = (Area)element.Accept(formatter, context);
 					}

@@ -246,8 +246,8 @@ namespace MathML.Rendering
 					content[i] = newChild;
 					return oldChild;
 				}
-				else if((container = content[i] as ContainerArea) != null &&
-					container.ReplaceChild(newChild, oldChild) != null)
+				else if((container = content[i] as ContainerArea) is not null &&
+										container.ReplaceChild(newChild, oldChild) is not null)
 				{
 					return oldChild;
 				}

@@ -89,7 +89,7 @@ namespace MathML.Rendering
 			AreaRegion r = null;
 			for(int i = 0; i < content.Length; i++)
 			{
-				if((r = content[i].GetRegion(x, y, pointX, pointY)) != null) return r;
+				if((r = content[i].GetRegion(x, y, pointX, pointY)) is not null) return r;
 			}
 			return new AreaRegion(this, x, y);
 		}
@@ -99,7 +99,7 @@ namespace MathML.Rendering
 			foreach(Area a in content)
 			{
 				AreaRegion r = a.GetRegion(context, x, y, element, index);
-				if(r != null) return r;
+				if(r is not null) return r;
 			}
 			return null;
 		}
@@ -109,7 +109,7 @@ namespace MathML.Rendering
 			foreach(Area a in content)
 			{
 				AreaRegion r = a.GetEditRegion(context, x, y, index);
-				if(r != null) return r;				
+				if(r is not null) return r;				
 			}
 			return null;
 		}

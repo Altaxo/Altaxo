@@ -204,7 +204,7 @@ namespace MathML
 					{
 						if(c is MathMLOperatorElement)
 						{
-							if(result == null) result = (MathMLOperatorElement)c;
+							if(result is null) result = (MathMLOperatorElement)c;
 							else { result = null; break; }
 						}
 						else if(!(c is MathMLSpaceElement)) break;

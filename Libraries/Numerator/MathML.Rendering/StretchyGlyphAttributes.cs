@@ -59,7 +59,7 @@ namespace MathML.Rendering.GlyphMapper
 		{
 			orientation = indices.Orientation;
 
-			if(indices.SimpleIndices != null)
+			if(indices.SimpleIndices is not null)
 			{
 				simpleGlyphs = new GlyphAttributes[indices.SimpleIndices.Length];
 				for(int i = 0; i < simpleGlyphs.Length; i++)
@@ -73,7 +73,7 @@ namespace MathML.Rendering.GlyphMapper
 				simpleGlyphs = null;
 			}
 
-			if(indices.CompoundIndices != null)
+			if(indices.CompoundIndices is not null)
 			{
 				compoundGlyphs = new GlyphAttributes[indices.CompoundIndices.Length];
 				for(int i = 0; i < compoundGlyphs.Length; i++)
@@ -102,15 +102,15 @@ namespace MathML.Rendering.GlyphMapper
 		public Area GetStretchyArea(IFontHandle fontHandle, BoundingBox desiredSize, out float lineThickness)
 		{
 			Area result = null;
-			if((result = GetSimpleArea(fontHandle, desiredSize)) == null)
+			if((result = GetSimpleArea(fontHandle, desiredSize)) is null)
 			{
-				if((result = GetCompoundArea(fontHandle, desiredSize)) == null)
+				if((result = GetCompoundArea(fontHandle, desiredSize)) is null)
 				{
 					result = GetLargestSimpleArea(fontHandle);
 				}
 			}
 			
-			if(result != null)
+			if(result is not null)
 			{
 				lineThickness = GetLineThickness();
 				result = ShiftArea(result, desiredSize);

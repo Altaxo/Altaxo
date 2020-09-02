@@ -63,7 +63,7 @@ namespace MathML.Rendering
 			string configDir = System.Configuration.ConfigurationManager.AppSettings.Get("MathMLRenderingConfig");
 			string searchDir = null;
 
-			if (configDir == null || configDir.Length == 0)
+			if (configDir is null || configDir.Length == 0)
 				searchDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
 			else if (Path.IsPathRooted(configDir))
 			{
@@ -104,7 +104,7 @@ namespace MathML.Rendering
 		{
 			get
 			{
-				if (_instance == null)
+				if (_instance is null)
 					_instance = new GlyphFactory();
 				return _instance;
 			}
@@ -123,11 +123,11 @@ namespace MathML.Rendering
 			Debug.WriteLine(String.Format("searching for a glyph for character 0x{0:x}", (uint)c));
 			for (int i = 0; i < gf.maps.Length; i++)
 			{
-				if ((result = gf.maps[i].GetGlyph(ctx, pointSize, c)) != null)
+				if ((result = gf.maps[i].GetGlyph(ctx, pointSize, c)) is not null)
 					return result;
 			}
 
-			if (result == null)
+			if (result is null)
 			{
 				Debug.WriteLine("no glyph found, returning default area");
 				result = new StringArea(ctx, "?");
@@ -156,11 +156,11 @@ namespace MathML.Rendering
 			lineThickness = 0;
 			for (int i = 0; i < gf.maps.Length; i++)
 			{
-				if ((result = gf.maps[i].GetStretchyGlyph(context, pointSize, c, desiredSize, out lineThickness)) != null)
+				if ((result = gf.maps[i].GetStretchyGlyph(context, pointSize, c, desiredSize, out lineThickness)) is not null)
 					return result;
 			}
 
-			if (result == null)
+			if (result is null)
 			{
 				Debug.WriteLine("no stretchy glyph found, returning standard glyph area");
 				result = GetGlyph(context, pointSize, c);
