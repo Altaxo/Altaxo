@@ -370,7 +370,7 @@ namespace Altaxo.Main
         throw new ArgumentNullException(nameof(node));
 
       var parent = node.ParentObject;
-      while (null != parent)
+      while (parent is not null)
       {
         node = parent;
         parent = node.ParentObject;
@@ -392,7 +392,7 @@ namespace Altaxo.Main
         return null;
 
       node = node.ParentObject;
-      while (node != null && !type.IsInstanceOfType(node))
+      while (node is not null && !type.IsInstanceOfType(node))
       {
         node = node.ParentObject;
       }
@@ -413,7 +413,7 @@ namespace Altaxo.Main
         return default;
 
       node = node.ParentObject;
-      while (node != null && !(node is T))
+      while (node is not null && !(node is T))
       {
         node = node.ParentObject;
       }
@@ -452,7 +452,7 @@ namespace Altaxo.Main
 
       int depth = 0;
       var parent = node.ParentObject;
-      while (parent != null)
+      while (parent is not null)
       {
         if (depth >= maxDepth)
           break;
@@ -468,7 +468,7 @@ namespace Altaxo.Main
         ++depth;
       }
 
-      if (maxDepth == int.MaxValue && node != null && !(node is IProject))
+      if (maxDepth == int.MaxValue && node is not null && !(node is IProject))
       {
         string msg = string.Format("Document {0} is not rooted. The path so far retrieved is {1}", node, list);
         throw new InvalidOperationException(msg);
@@ -493,7 +493,7 @@ namespace Altaxo.Main
     {
       var retval = GetObject(path, startnode);
 
-      if (retval is null && null != documentRoot)
+      if (retval is null && documentRoot is not null)
         retval = GetObject(path, documentRoot);
 
       return retval;

@@ -52,7 +52,7 @@ namespace Altaxo.Main.Commands
       if (object.ReferenceEquals(this, obj))
         return true;
       var from = obj as TestAllProjectsInFolderOptions;
-      if (null != from)
+      if (from is not null)
       {
         FolderPaths = from.FolderPaths;
         TestSavingAndReopening = from.TestSavingAndReopening;
@@ -103,7 +103,7 @@ namespace Altaxo.Main.Commands
 
       protected override void InternalWrite(string text)
       {
-        if (null != _wr)
+        if (_wr is not null)
         {
           _wr.Write(text);
           _wr.Flush();

@@ -144,7 +144,7 @@ namespace Altaxo.Main
 
         var oldValue = _updateAction;
         _updateAction += value;
-        if (null == oldValue)
+        if (oldValue is null)
           EnsureUpdatedDueTime();
       }
       remove
@@ -311,7 +311,7 @@ namespace Altaxo.Main
     protected virtual void OnUpdate(object timerQueueToken, TimeSpan dueTime)
     {
       var updateAction = _updateAction;
-      if (null == updateAction)
+      if (updateAction is null)
         return;
 
       Exception? exception = null;
@@ -342,7 +342,7 @@ namespace Altaxo.Main
         _updateLock.ExitWriteLock(); // Note that the UpdateLock must be released __before__ the NotificationLock. If the other way around, a notification taking place inbetween the release of NotificationLock and UpdateLock could cause TryEnter(UpdateLock) in (see function Notification) to fail, and the TimerQueue is not updated in this case
       } // ----- Notification time can be changed again -----------------
 
-      if (null != exception)
+      if (exception is not null)
         throw new Exception("Exception during execution of the trigger based update action", exception);
     }
 

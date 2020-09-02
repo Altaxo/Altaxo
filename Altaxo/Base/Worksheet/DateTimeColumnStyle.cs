@@ -47,7 +47,7 @@ namespace Altaxo.Worksheet
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DateTimeColumnStyle s = null != o ? (DateTimeColumnStyle)o : new DateTimeColumnStyle();
+        DateTimeColumnStyle s = o is not null ? (DateTimeColumnStyle)o : new DateTimeColumnStyle();
         info.GetBaseValueEmbedded(s, typeof(DateTimeColumnStyle).BaseType!, parent);
         return s;
       }

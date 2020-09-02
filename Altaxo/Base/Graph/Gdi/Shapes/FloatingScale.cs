@@ -112,7 +112,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.AddValue("AxisStyle", s._axisStyle);
 
         info.AddValueOrNull("Background", s._background);
-        if (null != s._background)
+        if (s._background is not null)
           info.AddValue("BackgroundPadding", s._backgroundPadding);
       }
 
@@ -211,11 +211,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _tickSpacing)
+      if (_tickSpacing is not null)
         yield return new Main.DocumentNodeAndName(_tickSpacing, "TickSpacing");
-      if (null != _axisStyle)
+      if (_axisStyle is not null)
         yield return new Main.DocumentNodeAndName(_axisStyle, "AxisStyle");
-      if (null != _background)
+      if (_background is not null)
         yield return new Main.DocumentNodeAndName(_background, "Background");
     }
 
@@ -226,7 +226,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       base.FixupInternalDataStructures();
 
       var layer = Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
-      if (null == layer)
+      if (layer is null)
       {
         _cachedLayerSegment = null;
 
@@ -320,7 +320,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         _tickSpacing = (TickSpacing)value.Clone();
@@ -416,7 +416,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       var oldPosition = GetPosition();
       base.SetPosition(value, eventFiring);
 
-      if (_axisStyle.Title != null)
+      if (_axisStyle.Title is not null)
       {
         var oldTitlePos = _axisStyle.Title.Position;
         _axisStyle.Title.SilentSetPosition(oldTitlePos + (GetPosition() - oldPosition));
@@ -427,7 +427,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       var oldPosition = GetPosition();
       base.SilentSetPosition(newPosition);
-      if (_axisStyle.Title != null)
+      if (_axisStyle.Title is not null)
       {
         var oldTitlePos = _axisStyle.Title.Position;
         _axisStyle.Title.SilentSetPosition(oldTitlePos + (GetPosition() - oldPosition));
@@ -451,10 +451,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
-      if (_axisStyle.Title != null)
+      if (_axisStyle.Title is not null)
       {
         var titleResult = _axisStyle.Title.HitTest(htd);
-        if (null != titleResult)
+        if (titleResult is not null)
         {
           titleResult.Remove = EhTitleRemove;
           return titleResult;
@@ -469,7 +469,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         result = new MyHitTestObject(this);
       }
 
-      if (result != null)
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
 
       return result;
@@ -546,7 +546,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         ((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds1.Value.Size, false); // size here is important only for selection, thus we set size silently
 
-        if (_background != null)
+        if (_background is not null)
         {
           bounds1.Value.Expand(_backgroundPadding);
           _background.Draw(g, bounds1.Value);
@@ -689,7 +689,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public ScaleSegment(Scale underlyingScale, double relOrg, double relEnd, ScaleSegmentType scaling)
       {
-        if (null == underlyingScale)
+        if (underlyingScale is null)
           throw new ArgumentNullException("underlyingScale");
 
         _underlyingScale = underlyingScale;
@@ -705,7 +705,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
         var from = obj as ScaleSegment;
 
-        if (null == from)
+        if (from is null)
           return false;
 
         using (var suspendToken = SuspendGetToken())

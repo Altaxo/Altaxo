@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
       {
         _textBlockAlignmentChoices = new SelectableListNodeList(_doc.TextBlockAlignment);
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.LineSpacing = _doc.LineSpacing;
         _view.TextBlockAlignement = _textBlockAlignmentChoices;

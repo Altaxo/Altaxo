@@ -52,7 +52,7 @@ namespace Altaxo.Gui.DataConnection
       if (initData)
       {
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetTableSource(dt);
       }
@@ -67,7 +67,7 @@ namespace Altaxo.Gui.DataConnection
       set
       {
         _view = value as IDataPreviewView;
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
         }

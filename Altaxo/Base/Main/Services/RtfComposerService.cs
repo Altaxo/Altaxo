@@ -224,9 +224,9 @@ namespace Altaxo.Main.Services
       }
       finally
       {
-        if (metaFile != null)
+        if (metaFile is not null)
           metaFile.Dispose();
-        if (stream != null)
+        if (stream is not null)
           stream.Close();
       }
     }

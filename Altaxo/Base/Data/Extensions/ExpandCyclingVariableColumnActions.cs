@@ -70,7 +70,7 @@ namespace Altaxo.Data
         {
           error = ex.ToString();
         }
-        if (null != error)
+        if (error is not null)
           Current.Gui.ErrorMessageBox(error);
 
         destTable.Name = srcTable.Name + "_Expanded";

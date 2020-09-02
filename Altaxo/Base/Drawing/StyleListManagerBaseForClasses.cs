@@ -111,7 +111,7 @@ namespace Altaxo.Drawing
     {
       // first have a look in the rename dictionary - maybe our color set has been renamed during deserialization
       var renameDictionary = deserializationInfo?.GetPropertyOrDefault<Dictionary<string, string>>(DeserializationRenameDictionaryKey);
-      if (null != renameDictionary && renameDictionary.ContainsKey(setName))
+      if (renameDictionary is not null && renameDictionary.ContainsKey(setName))
         setName = renameDictionary[setName];
 
 

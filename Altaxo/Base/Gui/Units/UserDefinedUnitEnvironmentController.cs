@@ -133,7 +133,7 @@ namespace Altaxo.Gui.Units
         Current.Gui.ErrorMessageBox("Please enter a name for the unit environment");
         return ApplyEnd(false, disposeController);
       }
-      else if (null != _availableEnvironments &&
+      else if (_availableEnvironments is not null &&
                   _availableEnvironments.TryGetValue(_environmentName, out var alreadyPresentEnvironment) &&
                   alreadyPresentEnvironment.Quantity != quantity)
       {
@@ -150,7 +150,7 @@ namespace Altaxo.Gui.Units
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      if (null != _unitController)
+      if (_unitController is not null)
         yield return new ControllerAndSetNullMethod(_unitController, () => _unitController = null);
     }
 
@@ -183,7 +183,7 @@ namespace Altaxo.Gui.Units
         if (!object.ReferenceEquals(_selectedQuantity, value))
         {
           _selectedQuantity = value;
-          if (_unitController is { } _ && null != _selectedQuantity && !string.IsNullOrEmpty(_selectedQuantity.Tag as string))
+          if (_unitController is { } _ && _selectedQuantity is not null && !string.IsNullOrEmpty(_selectedQuantity.Tag as string))
             _unitController.SetQuantity((string)_selectedQuantity.Tag);
 
           PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedQuantity)));

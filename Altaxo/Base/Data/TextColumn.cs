@@ -84,7 +84,7 @@ namespace Altaxo.Data
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        Altaxo.Data.TextColumn s = null != o ? (Altaxo.Data.TextColumn)o : new Altaxo.Data.TextColumn();
+        Altaxo.Data.TextColumn s = o is not null ? (Altaxo.Data.TextColumn)o : new Altaxo.Data.TextColumn();
 
         // deserialize the base class
         info.GetBaseValueEmbedded(s, typeof(Altaxo.Data.DataColumn), parent);
@@ -92,7 +92,7 @@ namespace Altaxo.Data
         int count = info.GetInt32Attribute("Count");
         s._data = new string[count];
         info.GetArray(s._data, count);
-        s._capacity = null == s._data ? 0 : s._data.Length;
+        s._capacity = s._data is null ? 0 : s._data.Length;
         s._count = s._capacity;
 
         return s;
@@ -187,7 +187,7 @@ namespace Altaxo.Data
         else
         {
           _count = 0;
-          if (o == null)
+          if (o is null)
             throw new ArgumentNullException("o");
           else
             throw new ArgumentException("Try to copy " + o.GetType() + " to " + GetType(), "o"); // throw exception
@@ -202,7 +202,7 @@ namespace Altaxo.Data
 
     private void TrimEmptyElementsAtEnd()
     {
-      for (; _count > 0 && _data[_count - 1] != null; _count--)
+      for (; _count > 0 && _data[_count - 1] is not null; _count--)
         ;
     }
 
@@ -239,7 +239,7 @@ namespace Altaxo.Data
 
     public override bool IsElementEmpty(int i)
     {
-      return i < _count ? (null == _data[i]) : true;
+      return i < _count ? (_data[i] is null) : true;
     }
 
     public override void SetElementEmpty(int i)
@@ -263,7 +263,7 @@ namespace Altaxo.Data
         if (i < 0)
           throw new ArgumentOutOfRangeException(string.Format("Index<0 (i={0}) while trying to set element of column {1} ({2})", i, Name, FullName));
 
-        if (value == null)
+        if (value is null)
         {
           if (i < _count - 1) // i is inside the used range
           {
@@ -271,7 +271,7 @@ namespace Altaxo.Data
           }
           else if (i == (_count - 1)) // m_Count is then decreasing
           {
-            for (_count = i; _count > 0 && (null == _data[_count - 1]); --_count)
+            for (_count = i; _count > 0 && (_data[_count - 1] is null); --_count)
               ;
             bCountDecreased = true;
             ;

@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Common
       {
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.ComboBoxLabel_Initialize(_comboBoxLabelText);
         _view.ComboBox_Initialize(_comboBoxItems, _selectedItem);
@@ -129,7 +129,7 @@ namespace Altaxo.Gui.Common
       get { return _view; }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.IntegerSelectionChanged -= EhView_IntegerChanged;
           _view.ComboBoxSelectionChanged -= EhView_ComboBoxSelectionChanged;
@@ -137,7 +137,7 @@ namespace Altaxo.Gui.Common
 
         _view = value as IIntegerAndComboBoxView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           _view.IntegerSelectionChanged += EhView_IntegerChanged;

@@ -70,7 +70,7 @@ namespace Altaxo.Graph.Gdi
         return true;
 
       var from = obj as ArrangeLayersDocument;
-      if (null != from)
+      if (from is not null)
       {
         NumberOfColumns = from.NumberOfColumns;
         NumberOfRows = from.NumberOfRows;
@@ -216,7 +216,7 @@ namespace Altaxo.Graph.Gdi
           {
             var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(context, Guid.NewGuid().ToString(), "", false);
 
-            if (graph != null && graph.RootLayer.Layers.Count > 0)
+            if (graph is not null && graph.RootLayer.Layers.Count > 0)
             {
               var newLayer = (HostLayer)graph.RootLayer.Layers[0].Clone();
               parentLayer.Layers.Add(newLayer);

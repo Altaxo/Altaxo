@@ -151,7 +151,7 @@ namespace Altaxo.Serialization.Galactic
       }
       finally
       {
-        if (null != stream)
+        if (stream is not null)
           stream.Close();
       }
 
@@ -176,7 +176,7 @@ namespace Altaxo.Serialization.Galactic
       IAscendingIntegerCollection selectedColumns)
     {
       // test that all x and y cells have numeric values
-      var useSel = null != selectedColumns && selectedColumns.Count > 0 ? selectedColumns : null;
+      var useSel = selectedColumns is not null && selectedColumns.Count > 0 ? selectedColumns : null;
       int spectrumlen = useSel is null ? table.DataColumns.ColumnCount : useSel.Count;
 
       int i, j;
@@ -230,7 +230,7 @@ namespace Altaxo.Serialization.Galactic
         return string.Format("Table column[{0}] ({1}) is not a numeric column!", columnnumber, table.DataColumns[columnnumber].FullName);
 
       // test that all x and y cells have numeric values
-      var useSel = null != selectedRows && selectedRows.Count > 0 ? selectedRows : null;
+      var useSel = selectedRows is not null && selectedRows.Count > 0 ? selectedRows : null;
       int spectrumlen = useSel is null ? table.DataColumns[columnnumber].Count : useSel.Count;
 
       int i, j;

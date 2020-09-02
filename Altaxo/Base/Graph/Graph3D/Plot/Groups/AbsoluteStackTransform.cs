@@ -115,7 +115,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
           // when we have positive/negative items, the intermediate bounds
           // might be wider than the bounds of the end result
 
-          if (vSumArray == null)
+          if (vSumArray is null)
           {
             vSumArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
 
@@ -300,7 +300,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     {
       var plotDataDict = paintContext.GetValueOrDefault<Dictionary<G3DPlotItem, Processed3DPlotData>>(this);
 
-      if (null == plotDataDict) // if initializing this dict was not successfull, then make a normal plot
+      if (plotDataDict is null) // if initializing this dict was not successfull, then make a normal plot
       {
         coll[indexOfChild].Paint(g, paintContext, layer, indexOfChild == coll.Count - 1 ? null : coll[indexOfChild + 1], indexOfChild == 0 ? null : coll[indexOfChild - 1]);
         return;

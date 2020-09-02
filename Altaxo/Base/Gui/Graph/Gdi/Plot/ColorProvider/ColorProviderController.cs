@@ -112,7 +112,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     public override bool Apply(bool disposeController)
     {
-      if (null != _detailController)
+      if (_detailController is not null)
       {
         if (!_detailController.Apply(disposeController))
           return false;
@@ -152,7 +152,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
         _view.InitializeAvailableClasses(_availableClasses);
     }
 
@@ -167,7 +167,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
         _detailController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { providerObject }, typeof(IMVCANController), UseDocument.Directly);
 
-        if (null != _detailController && GetType() == _detailController.GetType()) // the returned controller is of this common type here -> thus no specialized controller seems to exist for this type of color provider
+        if (_detailController is not null && GetType() == _detailController.GetType()) // the returned controller is of this common type here -> thus no specialized controller seems to exist for this type of color provider
         {
           _detailController.Dispose();
           _detailController = null;
@@ -176,9 +176,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
         if (_detailController is IMVCANDController)
           ((IMVCANDController)_detailController).MadeDirty += EhDetailsChanged;
       }
-      if (null != _view)
+      if (_view is not null)
       {
-        _detailView = null == _detailController ? null : _detailController.ViewObject;
+        _detailView = _detailController is null ? null : _detailController.ViewObject;
         _view.SetDetailView(_detailView);
       }
     }
@@ -232,9 +232,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     {
       const int previewWidth = 128;
       const int previewHeight = 16;
-      if (null != _view)
+      if (_view is not null)
       {
-        if (null == _previewBitmap)
+        if (_previewBitmap is null)
           _previewBitmap = _view.GetPreviewBitmap(previewWidth, previewHeight); // new Bitmap(previewWidth, previewHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
         for (int i = 0; i < previewWidth; i++)

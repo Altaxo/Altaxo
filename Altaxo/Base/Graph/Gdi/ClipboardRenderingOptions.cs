@@ -189,7 +189,7 @@ namespace Altaxo.Graph.Gdi
 
       var result = base.CopyFrom(obj);
       var from = obj as ClipboardRenderingOptions;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from);
       }
@@ -218,13 +218,13 @@ namespace Altaxo.Graph.Gdi
       get
       {
         var doc = Current.PropertyService.GetValue(PropertyKeyClipboardRenderingOptions, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new ClipboardRenderingOptions());
-        if (!(null != doc))
+        if (doc is null)
           throw new InvalidProgramException();
         return doc;
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         Current.PropertyService.UserSettings.SetValue(PropertyKeyClipboardRenderingOptions, value);

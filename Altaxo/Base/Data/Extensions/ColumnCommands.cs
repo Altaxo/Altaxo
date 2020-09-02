@@ -39,7 +39,7 @@ namespace Altaxo.Data
     public static bool ShowRenameColumnDialog(this DataColumn col)
     {
       var parent = col.ParentObject as DataColumnCollection;
-      if (null == parent)
+      if (parent is null)
       {
         Current.Gui.ErrorMessageBox("Can not rename column since it is not a member of a DataColumnCollection");
         return false;

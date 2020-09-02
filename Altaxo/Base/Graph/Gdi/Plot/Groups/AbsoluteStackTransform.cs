@@ -106,7 +106,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
             // when we have positive/negative items, the intermediate bounds
             // might be wider than the bounds of the end result
 
-            if (ySumArray == null)
+            if (ySumArray is null)
             {
               ySumArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
 
@@ -158,7 +158,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
           if (pdata is not null && pdata.RangeList is not null)
           {
             plotDataList.Add(gpi, pdata);
-            if (xArray == null)
+            if (xArray is null)
             {
               xArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
 
@@ -281,7 +281,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     {
       var plotDataDict = paintContext.GetValueOrDefault<Dictionary<G2DPlotItem, Processed2DPlotData>>(this);
 
-      if (null == plotDataDict) // if initializing this dict was not successfull, then make a normal plot
+      if (plotDataDict is null) // if initializing this dict was not successfull, then make a normal plot
       {
         coll[indexOfChild].Paint(g, paintContext, layer, indexOfChild == coll.Count - 1 ? null : coll[indexOfChild + 1], indexOfChild == 0 ? null : coll[indexOfChild - 1]);
         return;
@@ -299,7 +299,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       if (coll[indexOfChild] is G2DPlotItem gpi)
       {
         var pdata = plotDataDict[gpi];
-        if (null != pdata)
+        if (pdata is not null)
           gpi.Paint(g, layer, pdata, prevPlotData, nextPlotData);
       }
       else

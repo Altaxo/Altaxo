@@ -97,7 +97,7 @@ namespace Altaxo.Worksheet.Commands
 
         var table = DataColumnCollection.GetParentDataColumnCollectionOf(ycol);
         Altaxo.Data.DataColumn? xcol;
-        if (!string.IsNullOrEmpty(xColumnName) && null != table && table.ContainsColumn(xColumnName))
+        if (!string.IsNullOrEmpty(xColumnName) && table is not null && table.ContainsColumn(xColumnName))
           xcol = table[xColumnName];
         else
           xcol = table?.FindXColumnOf(ycol);
@@ -113,9 +113,9 @@ namespace Altaxo.Worksheet.Commands
         else
           throw new InvalidOperationException($"Could not find a parent data table for this plot operation.");
 
-        G2DPlotStyleCollection ps = templatePlotStyle != null ? templatePlotStyle.Clone() : new G2DPlotStyleCollection();
+        G2DPlotStyleCollection ps = templatePlotStyle is not null ? templatePlotStyle.Clone() : new G2DPlotStyleCollection();
 
-        if (null == table)
+        if (table is null)
           continue;
 
         ErrorBarPlotStyle? unpairedPositiveError = null;
@@ -141,7 +141,7 @@ namespace Altaxo.Worksheet.Commands
               break;
 
             case ColumnKind.pErr:
-              if (null != unpairedNegativeError)
+              if (unpairedNegativeError is not null)
               {
                 unpairedNegativeError.PositiveErrorColumn = col as INumericColumn;
                 ;
@@ -156,7 +156,7 @@ namespace Altaxo.Worksheet.Commands
               break;
 
             case ColumnKind.mErr:
-              if (null != unpairedPositiveError)
+              if (unpairedPositiveError is not null)
               {
                 unpairedPositiveError.NegativeErrorColumn = col as INumericColumn;
                 unpairedPositiveError = null;
@@ -397,7 +397,7 @@ namespace Altaxo.Worksheet.Commands
       {
         newPlotGroup.Add(pi);
       }
-      if (groupStyles != null)
+      if (groupStyles is not null)
         newPlotGroup.GroupStyles = groupStyles;
       else
         newPlotGroup.CollectStyles(newPlotGroup.GroupStyles);

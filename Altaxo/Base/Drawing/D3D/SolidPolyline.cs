@@ -76,7 +76,7 @@ namespace Altaxo.Drawing.D3D
         double endIndex = polylinePoints.Count - 1;
 
         // calculate the real start and end of the line, taking the line start and end cap length into account
-        if (null != pen.LineStartCap)
+        if (pen.LineStartCap is not null)
         {
           var v = pen.LineStartCap.GetAbsoluteBaseInset(pen.Thickness1, pen.Thickness2);
 
@@ -93,7 +93,7 @@ namespace Altaxo.Drawing.D3D
           }
         }
 
-        if (null != pen.LineEndCap)
+        if (pen.LineEndCap is not null)
         {
           var v = pen.LineEndCap.GetAbsoluteBaseInset(pen.Thickness1, pen.Thickness2);
           if (v < 0)
@@ -142,7 +142,7 @@ namespace Altaxo.Drawing.D3D
             currentPointList = null;
 
           // if current point list is null, then there is only one segment, namely previousPointList, we have to draw it with start line cap and end line cap.
-          if (currentPointList == null)
+          if (currentPointList is null)
           {
             // note start line cap and end line cap will be overridden for this segment, but only then if the seamless merge with the dash segment
             bool overrideLineStartCap = startCapForwardAndPositionProvided && previousPointList[0].Position == startCapCOS.Position;
@@ -179,7 +179,7 @@ namespace Altaxo.Drawing.D3D
           object? temporaryStorageSpace = null;
 
           // if the start cap was not drawn before, it must be drawn now
-          if (!wasLineStartCapDrawn && null != pen.LineStartCap)
+          if (!wasLineStartCapDrawn && pen.LineStartCap is not null)
           {
             pen.LineStartCap.AddGeometry(
               AddPositionAndNormal,
@@ -197,7 +197,7 @@ namespace Altaxo.Drawing.D3D
           }
 
           // if the end cap was not drawn before, it must be drawn now
-          if (!wasLineEndCapDrawn && null != pen.LineEndCap)
+          if (!wasLineEndCapDrawn && pen.LineEndCap is not null)
           {
             pen.LineEndCap.AddGeometry(
               AddPositionAndNormal,

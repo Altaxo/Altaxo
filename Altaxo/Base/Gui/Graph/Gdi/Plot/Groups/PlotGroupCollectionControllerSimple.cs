@@ -79,7 +79,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
 
         IsSimplePlotGrouping(_doc, out var bSerial, out var color, out var linestyle, out var symbol);
@@ -160,9 +160,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       isGroupedByLineStyle = false;
       isGroupedBySymbolStyle = false;
 
-      if (plotGroupStyles != null)
+      if (plotGroupStyles is not null)
       {
-        if (plotGroupStyles.CoordinateTransformingStyle != null)
+        if (plotGroupStyles.CoordinateTransformingStyle is not null)
           return false;
 
         isGroupedByColor = plotGroupStyles.ContainsType(typeof(ColorGroupStyle));

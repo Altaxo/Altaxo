@@ -334,7 +334,7 @@ typeof(GraphDocument),
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        GraphDocument s = null != o ? (GraphDocument)o : new GraphDocument();
+        GraphDocument s = o is not null ? (GraphDocument)o : new GraphDocument();
         Deserialize(s, info, parent);
         return s;
       }
@@ -384,7 +384,7 @@ typeof(GraphDocument),
         if (0 != (options & GraphCopyOptions.CloneProperties))
         {
           // Clone also the graph properties
-          if (from._graphProperties != null && from._graphProperties.Count > 0)
+          if (from._graphProperties is not null && from._graphProperties.Count > 0)
           {
             PropertyBagNotNull.CopyFrom(from._graphProperties);
           }
@@ -414,13 +414,13 @@ typeof(GraphDocument),
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _rootLayer)
+      if (_rootLayer is not null)
         yield return new Main.DocumentNodeAndName(_rootLayer, () => _rootLayer = null!, "RootLayer");
 
-      if (null != _graphProperties)
+      if (_graphProperties is not null)
         yield return new Main.DocumentNodeAndName(_graphProperties, () => _graphProperties = null, "GraphProperties");
 
-      if (null != _notes)
+      if (_notes is not null)
         yield return new Main.DocumentNodeAndName(_notes, () => _notes = null!, "Notes");
     }
 
@@ -582,7 +582,7 @@ typeof(GraphDocument),
 
     public static FontX GetDefaultFont(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (null != context)
+      if (context is not null)
         return context.GetValue(PropertyKeyDefaultFont);
       else
         return GdiFontManager.GetFontX(GdiFontManager.GenericSansSerifFontFamilyName, 18, FontXStyle.Regular);
@@ -597,7 +597,7 @@ typeof(GraphDocument),
     {
       double result = 1;
 
-      if (null != context)
+      if (context is not null)
       {
         var font = context.GetValue(PropertyKeyDefaultFont);
         using (var path = new GraphicsPath())
@@ -616,7 +616,7 @@ typeof(GraphDocument),
 
     public static NamedColor GetDefaultForeColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (null == context)
+      if (context is null)
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       return context.GetValue<NamedColor>(PropertyKeyDefaultForeColor);
@@ -624,7 +624,7 @@ typeof(GraphDocument),
 
     public static NamedColor GetDefaultBackColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (null == context)
+      if (context is null)
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       return context.GetValue<NamedColor>(PropertyKeyDefaultBackColor);
@@ -632,7 +632,7 @@ typeof(GraphDocument),
 
     public static NamedColor GetDefaultPlotColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (null == context)
+      if (context is null)
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       return context.GetValue<NamedColor>(PropertyKeyDefaultPlotColor);
@@ -647,7 +647,7 @@ typeof(GraphDocument),
     {
       double result = 1;
 
-      if (null != context)
+      if (context is not null)
       {
         var font = context.GetValue(PropertyKeyDefaultFont);
         return font.Size;
@@ -664,7 +664,7 @@ typeof(GraphDocument),
     {
       double result = 8;
 
-      if (null != context)
+      if (context is not null)
       {
         var font = context.GetValue(PropertyKeyDefaultFont);
         using (var path = new GraphicsPath())

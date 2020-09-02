@@ -54,7 +54,7 @@ namespace Altaxo.Geometry
     {
       var mypoints = new List<PointD3D>();
 
-      if (null != points)
+      if (points is not null)
       {
         PointD3D prevPoint = PointD3D.Empty;
 

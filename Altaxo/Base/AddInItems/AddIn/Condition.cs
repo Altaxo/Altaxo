@@ -129,7 +129,7 @@ namespace Altaxo.AddInItems
         }
       }
 exit:
-      if (condition != null)
+      if (condition is not null)
       {
         ConditionFailedAction action = properties.Get("action", ConditionFailedAction.Exclude);
         condition.Action = action;

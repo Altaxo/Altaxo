@@ -283,7 +283,7 @@ namespace Altaxo.Graph.Plot.Data
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData(info);
+        XYZMeshedColumnPlotData s = o is not null ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData(info);
 
         var _xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
         var _yColumn = (IReadableColumnProxy)info.GetValue("YColumn", s);
@@ -332,7 +332,7 @@ namespace Altaxo.Graph.Plot.Data
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData(info);
+        XYZMeshedColumnPlotData s = o is not null ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData(info);
 
         s._matrixProxy = (DataTableMatrixProxy)info.GetValue("MatrixProxy", s);
 
@@ -387,16 +387,16 @@ namespace Altaxo.Graph.Plot.Data
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _matrixProxy)
+      if (_matrixProxy is not null)
         yield return new Main.DocumentNodeAndName(_matrixProxy, "Matrix");
 
-      if (null != _xBoundaries)
+      if (_xBoundaries is not null)
         yield return new Main.DocumentNodeAndName(_xBoundaries, "XBoundaries");
 
-      if (null != _yBoundaries)
+      if (_yBoundaries is not null)
         yield return new Main.DocumentNodeAndName(_yBoundaries, "YBoundaries");
 
-      if (null != _vBoundaries)
+      if (_vBoundaries is not null)
         yield return new Main.DocumentNodeAndName(_vBoundaries, "VBoundaries");
     }
 
@@ -584,7 +584,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       // If it is BoundaryChangedEventArgs, we have to set a flag for which boundary is affected
       var eAsBCEA = e as BoundariesChangedEventArgs;
-      if (null != eAsBCEA)
+      if (eAsBCEA is not null)
       {
         if (object.ReferenceEquals(sender, _xBoundaries))
         {

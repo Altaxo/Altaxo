@@ -55,7 +55,7 @@ namespace Altaxo.Gui.DataConnection
       if (initData)
       {
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetParametersSource(_doc);
       }
@@ -70,7 +70,7 @@ namespace Altaxo.Gui.DataConnection
       set
       {
         _view = value as IParametersView;
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
         }

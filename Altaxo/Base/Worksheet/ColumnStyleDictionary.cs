@@ -178,13 +178,13 @@ namespace Altaxo.Worksheet
         var tmpDefaultColumnStyles = _defaultColumnStyles;
         var tmpColumnStyles = _columnStyles;
 
-        if (null != tmpDefaultColumnStyles || null != tmpColumnStyles)
+        if (tmpDefaultColumnStyles is not null || tmpColumnStyles is not null)
         {
           _defaultColumnStyles = new Dictionary<Type, ColumnStyle>();
           _columnStyles = new Dictionary<DataColumn, ColumnStyle>();
         }
 
-        if (null != tmpDefaultColumnStyles)
+        if (tmpDefaultColumnStyles is not null)
         {
           foreach (var entry in tmpDefaultColumnStyles)
           {
@@ -192,13 +192,13 @@ namespace Altaxo.Worksheet
           }
         }
 
-        if (null != tmpColumnStyles)
+        if (tmpColumnStyles is not null)
         {
           foreach (var entry in tmpColumnStyles)
           {
-            if (null != entry.Key)
+            if (entry.Key is not null)
               DetachKey(entry.Key);
-            if (null != entry.Value)
+            if (entry.Value is not null)
               entry.Value.Dispose();
           }
         }
@@ -221,7 +221,7 @@ namespace Altaxo.Worksheet
       if (e is Main.DisposeEventArgs)
       {
         var c = source as DataColumn;
-        if (c != null)
+        if (c is not null)
           Remove(c); // do not use direct remove, as the event handler has to be detached also
       }
     }
@@ -248,7 +248,7 @@ namespace Altaxo.Worksheet
 
     public void Add(DataColumn key, ColumnStyle value)
     {
-      if (null == value)
+      if (value is null)
         throw new ArgumentNullException("value");
 
       _columnStyles.Add(key, value);

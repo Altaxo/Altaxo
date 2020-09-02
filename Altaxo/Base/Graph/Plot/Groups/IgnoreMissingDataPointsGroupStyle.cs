@@ -201,7 +201,7 @@ namespace Altaxo.Graph.Plot.Groups
       Func<bool> getter)
     {
       if (!externalGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle))
-        && null != localGroups
+        && localGroups is not null
         && !localGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
       {
         localGroups.Add(new IgnoreMissingDataPointsGroupStyle());

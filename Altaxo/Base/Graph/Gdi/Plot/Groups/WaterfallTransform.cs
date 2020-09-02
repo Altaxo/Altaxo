@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        WaterfallTransform s = null != o ? (WaterfallTransform)o : new WaterfallTransform();
+        WaterfallTransform s = o is not null ? (WaterfallTransform)o : new WaterfallTransform();
         s._scaleXInc = info.GetDouble("XScale");
         s._scaleYInc = info.GetDouble("YScale");
         s._useClipping = info.GetBoolean("UseClipping");
@@ -355,7 +355,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         g.Clip = paintData._clippingColl[i];
       }
 
-      if (null == paintData._plotDataColl[i])
+      if (paintData._plotDataColl[i] is null)
       {
         coll[i].Paint(g, paintContext, layer, i == coll.Count - 1 ? null : coll[i - 1], i == 0 ? null : coll[i - 1]);
       }

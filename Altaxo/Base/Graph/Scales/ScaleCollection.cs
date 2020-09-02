@@ -151,7 +151,7 @@ namespace Altaxo.Graph.Scales
 
       var from = obj as ScaleCollection;
 
-      if (null == from)
+      if (from is null)
         return false;
 
       using (var suspendToken = SuspendGetToken())
@@ -170,11 +170,11 @@ namespace Altaxo.Graph.Scales
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _scales)
+      if (_scales is not null)
       {
         for (int i = _scales.Length - 1; i >= 0; --i)
         {
-          if (null != _scales[i])
+          if (_scales[i] is not null)
             yield return new Main.DocumentNodeAndName(_scales[i], "Scale" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
       }
@@ -186,11 +186,11 @@ namespace Altaxo.Graph.Scales
       {
         var scales = _scales;
         _scales = null!;
-        if (null != scales)
+        if (scales is not null)
         {
           for (int i = 0; i < scales.Length; ++i)
           {
-            if (null != scales[i])
+            if (scales[i] is not null)
               scales[i].Dispose();
           }
         }

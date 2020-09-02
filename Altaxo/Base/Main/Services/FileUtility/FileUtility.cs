@@ -70,7 +70,7 @@ namespace Altaxo.Main.Services
 
     public static bool IsUrl(string path)
     {
-      if (path == null)
+      if (path is null)
         throw new ArgumentNullException("path");
       return path.IndexOf("://", StringComparison.Ordinal) > 0;
     }
@@ -219,7 +219,7 @@ namespace Altaxo.Main.Services
     {
       // If Directory.GetFiles() searches the 8.3 name as well as the full name so if the filemask is
       // "*.xpt" it will return "Template.xpt~"
-      bool isExtMatch = filemask != null && Regex.IsMatch(filemask, @"^\*\.[\w\d_]{3}$");
+      bool isExtMatch = filemask is not null && Regex.IsMatch(filemask, @"^\*\.[\w\d_]{3}$");
       string? ext = null;
       if (isExtMatch)
         ext = filemask!.Substring(1);
@@ -259,7 +259,7 @@ namespace Altaxo.Main.Services
         }
         foreach (string f in files)
         {
-          if (ext != null && !f.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
+          if (ext is not null && !f.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
             continue; // file extension didn't match
           if (!ignoreHidden || IsNotHidden(f))
             yield return new FileName(f);
@@ -327,7 +327,7 @@ namespace Altaxo.Main.Services
       // CON, PRN, AUX, NUL, COM1-9 and LPT1-9
 
       string nameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-      if (nameWithoutExtension != null)
+      if (nameWithoutExtension is not null)
       {
         nameWithoutExtension = nameWithoutExtension.ToUpperInvariant();
       }
@@ -563,7 +563,7 @@ namespace Altaxo.Main.Services
           {
             return FileOperationResult.Failed;
           }
-          else if (r.AlternativeFileName != null)
+          else if (r.AlternativeFileName is not null)
           {
             return ObservedSave(saveFileAs, r.AlternativeFileName, message, policy);
           }

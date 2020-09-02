@@ -103,11 +103,11 @@ namespace Altaxo.Main.Services
     /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
     protected virtual void Dispose(bool disposing)
     {
-      if (disposing && null != _thread)
+      if (disposing && _thread is not null)
       {
         Stop();
 
-        if (null != _triggeringEvent)
+        if (_triggeringEvent is not null)
           _triggeringEvent.Dispose();
 
         _triggeringEvent = null;
@@ -167,7 +167,7 @@ namespace Altaxo.Main.Services
 
       evnt.WaitOne();
 
-      if (invokeData.Exception != null)
+      if (invokeData.Exception is not null)
         throw invokeData.Exception;
     }
 
@@ -188,7 +188,7 @@ namespace Altaxo.Main.Services
     {
       while (_invokerQueue.TryDequeue(out var invokeData))
       {
-        if (invokeData.Action != null)
+        if (invokeData.Action is not null)
         {
           try
           {
@@ -199,7 +199,7 @@ namespace Altaxo.Main.Services
             invokeData.Exception = ex;
           }
         }
-        if (invokeData.Event != null)
+        if (invokeData.Event is not null)
         {
           invokeData.Event.Set();
         }
@@ -229,7 +229,7 @@ namespace Altaxo.Main.Services
       ProcessInvokerQueue();
 
       var locTriggerEvent = _triggeringEvent;
-      if (null != locTriggerEvent)
+      if (locTriggerEvent is not null)
       {
         locTriggerEvent.Dispose();
       }

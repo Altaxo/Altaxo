@@ -74,7 +74,7 @@ namespace Altaxo.Serialization.AutoUpdates
       try
       {
         var proc = System.Diagnostics.Process.Start(processInfo);
-        if (proc != null)
+        if (proc is not null)
           proc.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
       }
       catch (Exception ex)

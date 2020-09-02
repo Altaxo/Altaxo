@@ -139,7 +139,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException("The line pen must not be null");
         if (object.ReferenceEquals(_linePen, value))
           return;

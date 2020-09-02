@@ -487,7 +487,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       var plsMemo = GetContentAsMultivariateContentMemento(table);
 
-      if (plsMemo == null)
+      if (plsMemo is null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
 
       IMultivariateCalibrationModel calib = GetCalibrationModel(table);
@@ -622,7 +622,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>The matrix of spectra. In this matrix the spectra are horizonally organized (each row is one spectrum).</returns>
     public static IMatrix<double> GetRawSpectra(Altaxo.Data.DataTable srctable, bool spectrumIsRow, Altaxo.Collections.IAscendingIntegerCollection spectralIndices, Altaxo.Collections.IAscendingIntegerCollection measurementIndices)
     {
-      if (srctable == null)
+      if (srctable is null)
         throw new ArgumentException("Argument srctable may not be null");
 
       var matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(measurementIndices.Count, spectralIndices.Count);
@@ -668,7 +668,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>The x-values corresponding to the first spectrum.</returns>
     public static double[] GetXOfSpectra(Altaxo.Data.DataTable srctable, bool spectrumIsRow, Altaxo.Collections.IAscendingIntegerCollection spectralIndices, Altaxo.Collections.IAscendingIntegerCollection measurementIndices)
     {
-      if (srctable == null)
+      if (srctable is null)
         throw new ArgumentException("Argument srctable may not be null");
 
       int group;
@@ -709,7 +709,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       Altaxo.Data.DataTable srctable = Current.Project.DataTableCollection[tablename];
 
-      if (srctable == null)
+      if (srctable is null)
         throw new ApplicationException(string.Format("Table[{0}] containing original spectral data not found!", tablename));
 
       Altaxo.Data.DataColumnCollection concentration = plsMemo.SpectrumIsRow ? srctable.DataColumns : srctable.PropertyColumns;
@@ -1151,7 +1151,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       if (table.DataColumns.Contains(_NumberOfFactors_ColumnName))
         xNumFactor = table[_NumberOfFactors_ColumnName] as DoubleColumn;
 
-      if (null == xNumFactor)
+      if (xNumFactor is null)
       {
         xNumFactor = new Altaxo.Data.DoubleColumn();
         table.DataColumns.Add(xNumFactor, _NumberOfFactors_ColumnName, Altaxo.Data.ColumnKind.X, _NumberOfFactors_ColumnGroup);
@@ -1193,12 +1193,12 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROVector<double> press;
       double meanNumberOfIncludedSpectra = plsContent.NumberOfMeasurements;
 
-      if (crossPRESSColumn != null && crossPRESSColumn.Count > 0)
+      if (crossPRESSColumn is not null && crossPRESSColumn.Count > 0)
       {
         press = DataColumnWrapper.ToROVector(crossPRESSColumn);
         meanNumberOfIncludedSpectra = plsContent.MeanNumberOfMeasurementsInCrossPRESSCalculation;
       }
-      else if (pressColumn != null && pressColumn.Count > 0)
+      else if (pressColumn is not null && pressColumn.Count > 0)
       {
         press = DataColumnWrapper.ToROVector(pressColumn);
         meanNumberOfIncludedSpectra = plsContent.NumberOfMeasurements;
@@ -1293,7 +1293,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       var plsMemo = GetContentAsMultivariateContentMemento(table);
 
-      if (plsMemo == null)
+      if (plsMemo is null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
 
       IMultivariateCalibrationModel calib = GetCalibrationModel(table);
@@ -1367,7 +1367,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       var plsMemo = GetContentAsMultivariateContentMemento(table);
 
-      if (plsMemo == null)
+      if (plsMemo is null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
 
       IMultivariateCalibrationModel calib = GetCalibrationModel(table);
@@ -1531,7 +1531,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       var plsMemo = GetContentAsMultivariateContentMemento(calibtable);
 
-      if (plsMemo == null)
+      if (plsMemo is null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
 
       IMatrix<double> matrixX = GetRawSpectra(plsMemo);

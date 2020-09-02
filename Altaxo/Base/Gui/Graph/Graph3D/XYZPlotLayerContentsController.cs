@@ -197,7 +197,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
         // Data clipping
         var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYZPlotLayer>(_doc);
-        if (null == layer)
+        if (layer is null)
         {
           _dataClippingChoices = null;
         }
@@ -210,7 +210,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
 
       // Available Items
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializePlotItems(_plotItemsTree);
 
@@ -218,7 +218,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
         _view.ShowRange = _showRange;
 
-        if (null != _dataClippingChoices)
+        if (_dataClippingChoices is not null)
           _view.InitializeDataClipping(_dataClippingChoices);
       }
     }
@@ -232,11 +232,11 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       TreeNodeExtensions.FixAndTestParentChildRelations<IGPlotItem>(_doc, (x, y) => x.ParentObject = (Altaxo.Main.IDocumentNode)y);
 
-      if (null != _dataClippingChoices)
+      if (_dataClippingChoices is not null)
       {
         var selNode = _dataClippingChoices.FirstSelectedNode;
         var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYZPlotLayer>(_doc);
-        if (null != layer && null != selNode)
+        if (layer is not null && selNode is not null)
           layer.ClipDataToFrame = (Altaxo.Graph.LayerDataClipping)selNode.Tag;
       }
 
@@ -269,7 +269,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       // this is because we want to modify properties of the layer, like the clip property
       var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYZPlotLayer>(_doc);
 
-      if (null != layer)
+      if (layer is not null)
         return layer.SuspendGetToken();
       else
         return base.GetSuspendTokenForControllerDocument();
@@ -279,7 +279,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       get
       {
-        if (null != _view)
+        if (_view is not null)
           return _view.PlotItemsSelected.OfType<NGTreeNode>().ToArray();
         else
           return new NGTreeNode[0];
@@ -309,7 +309,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       {
         return "PlotGroup";
       }
-      else if (item != null && item is PlotItem)
+      else if (item is not null && item is PlotItem)
       {
         string name = item.GetName(2);
 
@@ -329,7 +329,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       node.Text = GetNameOfItem(plotItem);
       node.IsExpanded = true;
 
-      if (null != picoll) // Plot item collection
+      if (picoll is not null) // Plot item collection
       {
         node.Tag = plotItem;
         node.Text = GetNameOfItem(plotItem);
@@ -367,7 +367,7 @@ namespace Altaxo.Gui.Graph.Graph3D
         if (pi is PlotItemCollection)
         {
           XYZColumnPlotItem result = FindFirstXYColumnPlotItem(pi as PlotItemCollection);
-          if (result != null)
+          if (result is not null)
             return result;
         }
         else if (pi is XYZColumnPlotItem)
@@ -436,11 +436,11 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private IGPlotItem CreatePlotItem(Altaxo.Data.DataColumn zcol)
     {
-      if (null == zcol)
+      if (zcol is null)
         return null;
 
       var tab = DataTable.GetParentDataTableOf(zcol);
-      if (null == tab)
+      if (tab is null)
         return null;
 
       int groupNumber = tab.DataColumns.GetColumnGroup(zcol);
@@ -452,14 +452,14 @@ namespace Altaxo.Gui.Graph.Graph3D
       // we need this as template style
       XYZColumnPlotItem templatePlotItem = FindFirstXYColumnPlotItem(_doc);
       G3DPlotStyleCollection templatePlotStyle;
-      if (null != templatePlotItem)
+      if (templatePlotItem is not null)
       {
         templatePlotStyle = templatePlotItem.Style.Clone();
       }
       else // there is no item that can be used as template
       {
         int numRows = zcol.Count;
-        if (null != xcol)
+        if (xcol is not null)
           numRows = Math.Min(numRows, xcol.Count);
         if (numRows < 100)
         {
@@ -495,7 +495,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     public void EhView_DataAvailableBeforeExpand(NGTreeNode node)
     {
       DataTable dt = Current.Project.DataTableCollection[node.Text];
-      if (null != dt)
+      if (dt is not null)
       {
         node.Nodes.Clear();
         var toadd = new NGTreeNode[dt.DataColumns.ColumnCount];
@@ -521,7 +521,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       foreach (NGTreeNode sn in validNodes)
       {
         var dataCol = sn.Tag as Altaxo.Data.DataColumn;
-        if (null != dataCol && !columnsAlreadyProcessed.Contains(dataCol))
+        if (dataCol is not null && !columnsAlreadyProcessed.Contains(dataCol))
         {
           columnsAlreadyProcessed.Add(dataCol);
           CreatePlotItemNodeAndAddAtEndOfTree(dataCol);
@@ -555,7 +555,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private NGTreeNode CreatePlotItemNode(IGPlotItem plotItem)
     {
-      if (null == plotItem)
+      if (plotItem is null)
         throw new ArgumentNullException();
 
       var newNode = new NGTreeNode
@@ -569,7 +569,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     private NGTreeNode CreatePlotItemNode(DataColumn dataCol)
     {
       IGPlotItem newItem = CreatePlotItem(dataCol);
-      if (null != newItem)
+      if (newItem is not null)
       {
         return CreatePlotItemNode(newItem);
       }
@@ -582,7 +582,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     private void CreatePlotItemNodeAndAddAtEndOfTree(DataColumn dataCol)
     {
       var node = CreatePlotItemNode(dataCol);
-      if (null != node)
+      if (node is not null)
       {
         _plotItemsTree.Add(node);
         _doc.Add((IGPlotItem)node.Tag);
@@ -726,7 +726,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       {
         var selNode = selNodes[i];
 
-        if (selNode.Nodes.Count == 0 && selNode.ParentNode != null && selNode.ParentNode.ParentNode != null)
+        if (selNode.Nodes.Count == 0 && selNode.ParentNode is not null && selNode.ParentNode.ParentNode is not null)
         {
           NGTreeNode parent = selNode.ParentNode;
           NGTreeNode grandParent = parent.ParentNode;
@@ -742,7 +742,7 @@ namespace Altaxo.Gui.Graph.Graph3D
             ((IGPlotItem)parent.Tag).Remove();
           }
         }
-        else if (selNode.Nodes.Count > 0 && selNode.ParentNode != null)
+        else if (selNode.Nodes.Count > 0 && selNode.ParentNode is not null)
         {
           NGTreeNode parent = selNode.ParentNode;
           while (selNode.Nodes.Count > 0)
@@ -768,7 +768,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     public void EhView_ContentsDoubleClick(NGTreeNode selNode)
     {
       var pi = selNode.Tag as IGPlotItem;
-      if (null != pi)
+      if (pi is not null)
       {
         if (pi is PlotItemCollection)
         {
@@ -805,7 +805,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       foreach (NGTreeNode node in selNodes)
       {
         var pi = node.Tag as XYZColumnPlotItem;
-        if (pi == null)
+        if (pi is null)
           continue;
 
         pi.Data.DataRowSelection = Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(range.Start, range.Count);
@@ -869,7 +869,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       foreach (NGTreeNode node in selNodes)
       {
         var pi = node.Tag as XYZColumnPlotItem;
-        if (pi == null)
+        if (pi is null)
           continue;
 
         if (pi.Data.DataRowSelection.GetSelectedRowIndexSegmentsFromTo(minInclusive, maxExclusive, pi.Data.DataTable?.DataColumns, pi.Data.GetMaximumRowIndexFromDataColumns()).TryGetFirstAndLast(out var firstSeg, out var lastSeg))
@@ -892,7 +892,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     public bool PlotItems_CanDelete()
     {
-      var anySelected = null != _plotItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => node.IsSelected).FirstOrDefault();
+      var anySelected = _plotItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => node.IsSelected).FirstOrDefault() is not null;
       return anySelected;
     }
 
@@ -940,7 +940,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
       var coll = o as PlotItemCollection;
-      return null != coll;
+      return coll is not null;
     }
 
     public void PlotItems_Paste()
@@ -948,7 +948,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
       var coll = o as PlotItemCollection;
       // if at this point obj is a memory stream, you probably have forgotten the deserialization constructor of the class you expect to deserialize here
-      if (null != coll)
+      if (coll is not null)
       {
         foreach (IGPlotItem item in coll) // it is neccessary to add the items to the doc first, because otherwise they don't have names
         {
@@ -995,7 +995,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     public void PlotItems_DropCanAcceptData(object data, NGTreeNode targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
     {
       var nodes = data as IEnumerable<NGTreeNode>;
-      if (null == nodes)
+      if (nodes is null)
       {
         canCopy = false;
         canMove = false;
@@ -1003,7 +1003,7 @@ namespace Altaxo.Gui.Graph.Graph3D
         return;
       }
 
-      if (targetItem != null && targetItem.Tag is PlotItemCollection)
+      if (targetItem is not null && targetItem.Tag is PlotItemCollection)
       {
         foreach (var node in nodes)
         {
@@ -1033,7 +1033,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       isMove = false;
       isCopy = false;
 
-      bool canTargetSwallowNodes = null != targetNode && targetNode.Tag is PlotItemCollection;
+      bool canTargetSwallowNodes = targetNode is not null && targetNode.Tag is PlotItemCollection;
 
       Action<NGTreeNode> AddNodeToTree;
 
@@ -1044,7 +1044,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       {
         AddNodeToTree = node => { targetNode.Nodes.Add(node); ((PlotItemCollection)targetNode.Tag).Add((IGPlotItem)node.Tag); };
       }
-      else if (targetNode == null) // no target node -> add data to the end of the colleciton
+      else if (targetNode is null) // no target node -> add data to the end of the colleciton
       {
         AddNodeToTree = node => { _plotItemsRootNode.Nodes.Add(node); ((PlotItemCollection)_plotItemsRootNode.Tag).Add((IGPlotItem)node.Tag); };
       }
@@ -1129,8 +1129,8 @@ namespace Altaxo.Gui.Graph.Graph3D
       var selNodes = items.OfType<NGTreeNode>();
       var selNotAllowedNodes = selNodes.Where(node => !(node.Tag is Altaxo.Data.DataColumn));
 
-      var isAnythingSelected = selNodes.FirstOrDefault() != null;
-      var isAnythingForbiddenSelected = selNotAllowedNodes.FirstOrDefault() != null;
+      var isAnythingSelected = selNodes.FirstOrDefault() is not null;
+      var isAnythingForbiddenSelected = selNotAllowedNodes.FirstOrDefault() is not null;
 
       // to start a drag, all selected nodes must be on the same level
       return isAnythingSelected && !isAnythingForbiddenSelected;

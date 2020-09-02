@@ -45,7 +45,7 @@ namespace Altaxo.Gui.Drawing.D3D.Material
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.Smoothness = _doc.Smoothness;
         _view.Metalness = _doc.Metalness;

@@ -50,7 +50,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        RelativeStackTransform s = null != o ? (RelativeStackTransform)o : new RelativeStackTransform();
+        RelativeStackTransform s = o is not null ? (RelativeStackTransform)o : new RelativeStackTransform();
         return s;
       }
     }
@@ -158,7 +158,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     public void PaintChild(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll, int indexOfChild)
     {
       var plotDataDict = paintContext.GetValueOrDefault<Dictionary<G2DPlotItem, Processed2DPlotData>>(this);
-      if (null == plotDataDict) // if initializing this dict was not successfull, then make a normal plot
+      if (plotDataDict is null) // if initializing this dict was not successfull, then make a normal plot
       {
         coll[indexOfChild].Paint(g, paintContext, layer, indexOfChild == coll.Count - 1 ? null : coll[indexOfChild + 1], indexOfChild == 0 ? null : coll[indexOfChild - 1]);
         return;

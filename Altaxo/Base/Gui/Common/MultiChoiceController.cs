@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Common
       if (_doc is null)
         throw NoDocumentException;
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeDescription(_doc.Description);
 
@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Common
       set
       {
         _view = value as IMultiChoiceView;
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
         }

@@ -127,7 +127,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataBounds)
+      if (_dataBounds is not null)
         yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
     }
 

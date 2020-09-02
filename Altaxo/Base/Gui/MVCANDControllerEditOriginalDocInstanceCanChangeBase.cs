@@ -95,14 +95,14 @@ namespace Altaxo.Gui
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as TView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
           {
@@ -118,7 +118,7 @@ namespace Altaxo.Gui
     /// </summary>
     protected virtual void OnMadeDirty()
     {
-      if (!_suppressDirtyEvent.IsSuspended && null != MadeDirty)
+      if (!_suppressDirtyEvent.IsSuspended && MadeDirty is not null)
         MadeDirty(this);
     }
 

@@ -127,7 +127,7 @@ namespace Altaxo.Gui.Common
         _count = _doc.Count;
         _interval = _doc.Interval;
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeMethod(_currentMethod);
         EhMethodChanged(_currentMethod);

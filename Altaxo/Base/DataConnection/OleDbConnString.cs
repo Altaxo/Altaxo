@@ -137,7 +137,7 @@ namespace Altaxo.DataConnection
       // get name of ODBC data source
       var match = Regex.Match(connString, "Data Source=(?<ds>[^;]+)", RegexOptions.IgnoreCase);
       string ds = match.Groups["ds"].Value;
-      if (ds == null || ds.Length == 0)
+      if (ds is null || ds.Length == 0)
       {
         return connString;
       }
@@ -146,14 +146,14 @@ namespace Altaxo.DataConnection
       string keyName = @"software\odbc\odbc.ini\" + ds;
       using (var key = Registry.LocalMachine.OpenSubKey(keyName))
       {
-        if (key != null)
+        if (key is not null)
         {
           return TranslateConnectionString(connString, key);
         }
       }
       using (var key = Registry.CurrentUser.OpenSubKey(keyName))
       {
-        if (key != null)
+        if (key is not null)
         {
           return TranslateConnectionString(connString, key);
         }
@@ -169,21 +169,21 @@ namespace Altaxo.DataConnection
       string? driver = key.GetValue("driver") as string;
 
       // translate Access (jet) data sources
-      if (driver != null && driver.ToLower().IndexOf("odbcjt") > -1)
+      if (driver is not null && driver.ToLower().IndexOf("odbcjt") > -1)
       {
         string? mdb = key.GetValue("dbq") as string;
-        if (mdb != null && mdb.ToLower().EndsWith(".mdb"))
+        if (mdb is not null && mdb.ToLower().EndsWith(".mdb"))
         {
           return "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + mdb + ";";
         }
       }
 
       // translate SqlServer data sources
-      if (driver != null && driver.ToLower().IndexOf("sqlsrv") > -1)
+      if (driver is not null && driver.ToLower().IndexOf("sqlsrv") > -1)
       {
         string? server = key.GetValue("server") as string;
         string? dbase = key.GetValue("database") as string;
-        if (server != null && server.Length > 0 && dbase != null && dbase.Length > 0)
+        if (server is not null && server.Length > 0 && dbase is not null && dbase.Length > 0)
         {
           string fmt =
               "Provider=SQLOLEDB.1;Integrated Security=SSPI;" +

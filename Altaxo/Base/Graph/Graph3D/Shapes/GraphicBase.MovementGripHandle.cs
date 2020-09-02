@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       /// thie activation is due to a regular mouse click in this grip.</param>
       public void Activate(HitTestPointData initialPosition, bool isActivatedUponCreation)
       {
-        if (null == initialPosition)
+        if (initialPosition is null)
           throw new ArgumentNullException(nameof(initialPosition));
 
         _wasActivatedUponCreation = isActivatedUponCreation;

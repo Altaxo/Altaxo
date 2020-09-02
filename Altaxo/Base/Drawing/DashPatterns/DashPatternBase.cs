@@ -39,9 +39,9 @@ namespace Altaxo.Drawing.DashPatterns
     protected static void SerializeV0(IDashPattern obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       var parent = DashPatternListManager.Instance.GetParentList(obj);
-      if (null != parent)
+      if (parent is not null)
       {
-        if (null == info.GetProperty(DashPatternList.GetSerializationRegistrationKey(parent)))
+        if (info.GetProperty(DashPatternList.GetSerializationRegistrationKey(parent)) is null)
           info.AddValue("Set", parent);
         else
           info.AddValue("SetName", parent.Name);

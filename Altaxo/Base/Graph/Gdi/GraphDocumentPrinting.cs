@@ -71,7 +71,7 @@ namespace Altaxo.Graph.Gdi
     /// <returns>True if user closed the dialog with OK, false if user cancelled the dialog.</returns>
     public static bool ShowPrintOptionsDialog(this GraphDocument doc)
     {
-      var options = doc.PrintOptions == null ? new SingleGraphPrintOptions() : (SingleGraphPrintOptions)doc.PrintOptions.Clone();
+      var options = doc.PrintOptions is null ? new SingleGraphPrintOptions() : (SingleGraphPrintOptions)doc.PrintOptions.Clone();
       object resultobj = options;
       if (Current.Gui.ShowDialog(ref resultobj, "Set print options"))
       {
@@ -109,7 +109,7 @@ namespace Altaxo.Graph.Gdi
         Current.PrintingService.PrintDocument.QueryPageSettings -= printTask.EhQueryPageSettings;
       }
 
-      if (null != ex)
+      if (ex is not null)
         throw ex;
     }
   }

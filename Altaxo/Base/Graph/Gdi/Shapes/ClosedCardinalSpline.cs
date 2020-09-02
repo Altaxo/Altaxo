@@ -285,7 +285,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
-      if (result != null)
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
 
       return result;
@@ -393,7 +393,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         var obj = (ClosedCardinalSpline)GraphObject;
         newPosition = obj._transformation.InverseTransformPoint(newPosition);
 
-        if (null == _suspendToken)
+        if (_suspendToken is null)
           _suspendToken = obj.SuspendGetToken();
         obj.SetPoint(_pointNumber, newPosition - _offset);
       }

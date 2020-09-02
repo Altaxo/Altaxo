@@ -256,7 +256,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _scale)
+      if (_scale is not null)
         yield return new Main.DocumentNodeAndName(_scale, "Scale");
     }
 
@@ -293,7 +293,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       [MemberNotNull(nameof(_colorProvider))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         if (!object.ReferenceEquals(value, _colorProvider))
@@ -523,7 +523,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       public override bool Equals(object? obj)
       {
         var from = obj as ImageTypeOtherMemento;
-        if (from == null)
+        if (from is null)
           return false;
         else
           return
@@ -645,9 +645,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       dimY = Math.Min(2048, dimY);
 
       // look if the image has the right dimensions
-      if (null == _cachedImage || _cachedImage.Width != dimX || _cachedImage.Height != dimY)
+      if (_cachedImage is null || _cachedImage.Width != dimX || _cachedImage.Height != dimY)
       {
-        if (null != _cachedImage)
+        if (_cachedImage is not null)
           _cachedImage.Dispose();
 
         // please notice: the horizontal direction of the image is related to the row index!!! (this will turn the image in relation to the table)
@@ -754,7 +754,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       _imageType = CachedImageType.LinearEquidistant;
       // look if the image has the right dimensions
-      if (null != _cachedImage && (_cachedImage.Width != matrix.ColumnCount || _cachedImage.Height != matrix.RowCount))
+      if (_cachedImage is not null && (_cachedImage.Width != matrix.ColumnCount || _cachedImage.Height != matrix.RowCount))
       {
         _cachedImage.Dispose();
         _cachedImage = null;
@@ -776,7 +776,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       int numberOfRows = matrix.RowCount;
       int numberOfColumns = matrix.ColumnCount;
 
-      if (null != image && (image.Width < matrix.ColumnCount || image.Height < matrix.RowCount))
+      if (image is not null && (image.Width < matrix.ColumnCount || image.Height < matrix.RowCount))
         throw new ArgumentException("The provided image is smaller than required");
 
       if (image is null)

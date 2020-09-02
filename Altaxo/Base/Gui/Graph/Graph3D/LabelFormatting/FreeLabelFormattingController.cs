@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
         _baseController.InitializeDocument(_doc);
         _textBlockAlignmentChoices = new SelectableListNodeList(_doc.TextBlockAlignment);
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _baseController.ViewObject = _view.MultiLineLabelFormattingBaseView;
         _view.FormatString = _doc.FormatString;

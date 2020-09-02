@@ -445,7 +445,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         ExtendAboveBaseline = 0;
         ExtendBelowBaseline = 0;
         Width = 0;
-        if (_child != null)
+        if (_child is not null)
         {
           _child.Measure(g, mc, x);
 
@@ -459,7 +459,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public override void Draw(Graphics g, DrawContext dc, double xbase, double ybase)
       {
-        if (null != _child)
+        if (_child is not null)
         {
           var fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
           _child.Draw(g, dc, xbase, ybase + 0.35 * fontInfo.cyAscent);
@@ -476,7 +476,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         ExtendAboveBaseline = 0;
         ExtendBelowBaseline = 0;
         Width = 0;
-        if (_child != null)
+        if (_child is not null)
         {
           _child.Measure(g, mc, x);
           var fontInfo = mc.FontCache.GetFontInfo(g, Style.FontId);
@@ -489,7 +489,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public override void Draw(Graphics g, DrawContext dc, double xbase, double ybase)
       {
-        if (_child != null)
+        if (_child is not null)
         {
           var fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
           _child.Draw(g, dc, xbase, ybase - 0.35 * fontInfo.cyAscent);
@@ -505,7 +505,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         ExtendAboveBaseline = 0;
         ExtendBelowBaseline = 0;
         Width = 0;
-        if (_child != null)
+        if (_child is not null)
         {
           _child.Measure(g, mc, x);
           ExtendBelowBaseline = _child.ExtendBelowBaseline;
@@ -516,7 +516,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public override void Draw(Graphics g, DrawContext dc, double xbase, double ybase)
       {
-        if (_child != null)
+        if (_child is not null)
         {
           _child.Draw(g, dc, xbase, ybase);
           FontInfo fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
@@ -541,7 +541,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         ExtendAboveBaseline = 0;
         ExtendBelowBaseline = 0;
         Width = 0;
-        if (_child != null)
+        if (_child is not null)
         {
           _child.Measure(g, mc, x);
           ExtendBelowBaseline = _child.ExtendBelowBaseline;
@@ -552,7 +552,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public override void Draw(Graphics g, DrawContext dc, double xbase, double ybase)
       {
-        if (_child != null)
+        if (_child is not null)
         {
           _child.Draw(g, dc, xbase, ybase);
           FontInfo fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
@@ -576,12 +576,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public override void Add(Glyph g)
       {
-        if (_subscript == null)
+        if (_subscript is null)
         {
           _subscript = g;
           g.Parent = this;
         }
-        else if (_superscript == null)
+        else if (_superscript is null)
         {
           _superscript = g;
           g.Parent = this;
@@ -642,9 +642,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       public override void Draw(Graphics g, DrawContext dc, double xbase, double ybase)
       {
         var fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-        if (_subscript != null)
+        if (_subscript is not null)
           _subscript.Draw(g, dc, xbase, ybase + 0.35 * fontInfo.cyAscent);
-        if (_superscript != null)
+        if (_superscript is not null)
           _superscript.Draw(g, dc, xbase, ybase - 0.35 * fontInfo.cyAscent);
       }
     }
@@ -750,24 +750,24 @@ namespace Altaxo.Graph.Gdi.Shapes
 
         // first of all, retrieve the actual name
         var mylayer = obj as HostLayer;
-        if (null == mylayer)
+        if (mylayer is null)
           return result;
 
         var layer = mylayer as XYPlotLayer;
-        if (_layerNumber >= 0 && mylayer.SiblingLayers != null && _layerNumber < mylayer.SiblingLayers.Count)
+        if (_layerNumber >= 0 && mylayer.SiblingLayers is not null && _layerNumber < mylayer.SiblingLayers.Count)
           layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer;
-        if (null == layer)
+        if (layer is null)
           return result;
         IGPlotItem? pa = null;
         if (_plotNumber < layer.PlotItems.Flattened.Length)
         {
           pa = layer.PlotItems.Flattened[_plotNumber];
         }
-        if (pa != null)
+        if (pa is not null)
         {
           result = pa.GetName(0);
 
-          if (_plotLabelStyle != null && !_plotLabelStyleIsPropColName && pa is XYColumnPlotItem)
+          if (_plotLabelStyle is not null && !_plotLabelStyleIsPropColName && pa is XYColumnPlotItem)
           {
             XYColumnPlotItemLabelTextStyle style = XYColumnPlotItemLabelTextStyle.YS;
             try
@@ -776,7 +776,7 @@ namespace Altaxo.Graph.Gdi.Shapes
             result = ((XYColumnPlotItem)pa).GetName(style);
           }
 
-          if (_plotLabelStyleIsPropColName && _plotLabelStyle != null && pa is XYColumnPlotItem)
+          if (_plotLabelStyleIsPropColName && _plotLabelStyle is not null && pa is XYColumnPlotItem)
           {
             XYColumnPlotData pb = ((XYColumnPlotItem)pa).Data;
             if (pb.YColumn is Data.DataColumn ycol && Data.DataTable.GetParentDataTableOf(ycol) is { } tbl)
@@ -827,13 +827,13 @@ namespace Altaxo.Graph.Gdi.Shapes
         Height = 0;
 
         var mylayer = mc.LinkedObject as HostLayer;
-        if (null == mylayer)
+        if (mylayer is null)
           return;
         var layer = mylayer as XYPlotLayer;
-        if (_layerNumber >= 0 && null != mylayer.SiblingLayers && _layerNumber < mylayer.SiblingLayers.Count)
+        if (_layerNumber >= 0 && mylayer.SiblingLayers is not null && _layerNumber < mylayer.SiblingLayers.Count)
           layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer;
 
-        if (null == layer)
+        if (layer is null)
           return;
 
         if (_plotNumber < layer.PlotItems.Flattened.Length)
@@ -851,10 +851,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
         var layer = mylayer as XYPlotLayer;
 
-        if (_layerNumber >= 0 && mylayer.SiblingLayers != null && _layerNumber < mylayer.SiblingLayers.Count)
+        if (_layerNumber >= 0 && mylayer.SiblingLayers is not null && _layerNumber < mylayer.SiblingLayers.Count)
           layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer;
 
-        if (null == layer)
+        if (layer is null)
           return;
 
         if (_plotNumber < layer.PlotItems.Flattened.Length)
@@ -906,14 +906,14 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         _text = string.Empty;
         var suspObj = mc.LinkedObject as Altaxo.Main.IDocumentLeafNode;
-        if (null != suspObj)
+        if (suspObj is not null)
         {
           var context = Altaxo.PropertyExtensions.GetPropertyContext(suspObj);
-          if (null != context)
+          if (context is not null)
           {
             if (context.TryGetValue<object>(_propertyName, out var value, out var bag, out var info))
             {
-              if (null != value)
+              if (value is not null)
               {
                 var documentCulture = context.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture) ?? throw new InvalidProgramException();
                 _text = string.Format(documentCulture.Culture, "{0}", value);

@@ -95,13 +95,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         _materialController.InitializeDocument(_doc.Material);
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _scaleController.ViewObject = _view.ColorScaleView;
-        _view.IsCustomColorScaleUsed = null != _doc.ColorScale;
+        _view.IsCustomColorScaleUsed = _doc.ColorScale is not null;
         _colorProviderController.ViewObject = _view.ColorProviderView;
 
-        if (null == _materialController.ViewObject)
+        if (_materialController.ViewObject is null)
           _materialController.ViewObject = _view.MaterialViewObject;
 
         _view.ClipToLayer = _doc.ClipToLayer;

@@ -165,7 +165,7 @@ namespace Altaxo.Data
         return true;
 
       var from = obj as ConvertXYVToMatrixOptions;
-      if (null != from)
+      if (from is not null)
       {
         _outputAveraging = from._outputAveraging;
         _outputNaming = from._outputNaming;

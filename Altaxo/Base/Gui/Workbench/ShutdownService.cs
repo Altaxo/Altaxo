@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Workbench
     public bool Shutdown()
     {
       Current.Workbench.Close();
-      return Current.Workbench == null;
+      return Current.Workbench is null;
     }
 
     #region PreventShutdown
@@ -181,7 +181,7 @@ namespace Altaxo.Gui.Workbench
 
     protected virtual void OnClosingStage1_ReasonsPreventingShutdown(CancelEventArgs e)
     {
-      if (CurrentReasonPreventingShutdown != null)
+      if (CurrentReasonPreventingShutdown is not null)
       {
         Current.MessageService.ShowMessage(CurrentReasonPreventingShutdown);
         e.Cancel = true;
@@ -193,7 +193,7 @@ namespace Altaxo.Gui.Workbench
       Current.Workbench.SaveCompleteWorkbenchStateAndLayoutInPropertyService();
 
       var projectService = Altaxo.Current.IProjectService;
-      if (null != projectService && (false == (Current.ComManager?.IsInEmbeddedMode ?? false)))
+      if (projectService is not null && (false == (Current.ComManager?.IsInEmbeddedMode ?? false)))
       {
         if (projectService.CurrentProject?.IsDirty == true)
           projectService.AskForSavingOfProject(e); // Save the project, but leave it open

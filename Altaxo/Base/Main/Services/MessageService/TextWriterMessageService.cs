@@ -32,7 +32,7 @@ namespace Altaxo.Main.Services.Implementation
 
     public TextWriterMessageService(TextWriter writer)
     {
-      if (writer == null)
+      if (writer is null)
         throw new ArgumentNullException("writer");
       this.writer = writer;
       DefaultMessageBoxTitle = ProductName = "SharpDevelop";
@@ -89,11 +89,11 @@ namespace Altaxo.Main.Services.Implementation
 
     public void ShowException(Exception ex, string? message = null)
     {
-      if (message != null)
+      if (message is not null)
       {
         writer.WriteLine(message);
       }
-      if (ex != null)
+      if (ex is not null)
       {
         writer.WriteLine(ex.ToString());
       }
@@ -101,11 +101,11 @@ namespace Altaxo.Main.Services.Implementation
 
     public void ShowHandledException(Exception ex, string? message = null)
     {
-      if (message != null)
+      if (message is not null)
       {
         writer.WriteLine(message);
       }
-      if (ex != null)
+      if (ex is not null)
       {
         writer.WriteLine(ex.Message);
       }
@@ -142,14 +142,14 @@ namespace Altaxo.Main.Services.Implementation
     public void InformSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot)
     {
       writer.WriteLine(dialogName + ": " + message + " (" + fileName + ")");
-      if (exceptionGot != null)
+      if (exceptionGot is not null)
         writer.WriteLine(exceptionGot.ToString());
     }
 
     public ChooseSaveErrorResult ChooseSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
     {
       writer.WriteLine(dialogName + ": " + message + " (" + fileName + ")");
-      if (exceptionGot != null)
+      if (exceptionGot is not null)
         writer.WriteLine(exceptionGot.ToString());
       return ChooseSaveErrorResult.Ignore;
     }

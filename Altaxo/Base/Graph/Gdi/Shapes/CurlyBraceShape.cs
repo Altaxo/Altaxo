@@ -195,7 +195,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
-      if (result != null)
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
 
       return result;

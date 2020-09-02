@@ -66,17 +66,17 @@ namespace Altaxo.Gui.Graph.Gdi
       if (initData)
       {
         // look for coordinate system types
-        if (null == _cosSubTypes)
+        if (_cosSubTypes is null)
           _cosSubTypes = ReflectionService.GetNonAbstractSubclassesOf(typeof(G2DCoordinateSystem));
 
-        if (null == _choiceList)
+        if (_choiceList is null)
           _choiceList = new SelectableListNodeList();
         _choiceList.Clear();
         foreach (Type t in _cosSubTypes)
           _choiceList.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, t == _doc.GetType()));
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         // look for a controller-control
         _view.TypeLabel = "Type:";
@@ -84,10 +84,10 @@ namespace Altaxo.Gui.Graph.Gdi
 
         // To avoid looping when a dedicated controller is unavailable, we first instantiate the controller alone and compare the types
         _instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
-        if (_instanceController != null && (_instanceController.GetType() != GetType()))
+        if (_instanceController is not null && (_instanceController.GetType() != GetType()))
         {
           Current.Gui.FindAndAttachControlTo(_instanceController);
-          if (_instanceController.ViewObject != null)
+          if (_instanceController.ViewObject is not null)
             _view.SetInstanceControl(_instanceController.ViewObject);
         }
         else
@@ -100,7 +100,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public override bool Apply(bool disposeController)
     {
-      bool result = _instanceController == null || _instanceController.Apply(disposeController);
+      bool result = _instanceController is null || _instanceController.Apply(disposeController);
       return ApplyEnd(result, disposeController);
     }
 
@@ -120,7 +120,7 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       var sel = _choiceList.FirstSelectedNode;
 
-      if (sel != null)
+      if (sel is not null)
       {
         var t = (System.Type)sel.Tag;
         if (_doc.GetType() != t)
@@ -129,7 +129,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
           OnMadeDirty(); // chance for controller up in hierarchy to catch new instance
 
-          if (null != _suspendToken)
+          if (_suspendToken is not null)
           {
             _suspendToken.Dispose();
             _suspendToken = _doc.SuspendGetToken();

@@ -70,11 +70,11 @@ namespace Altaxo.Graph.Gdi.Plot
       {
         var pa = (XYColumnPlotData)info.GetValue("Data", null);
         var lsps = (XYLineScatterPlotStyle)info.GetValue("Style", null);
-        if (lsps.XYPlotLineStyle != null)
+        if (lsps.XYPlotLineStyle is not null)
           lsps.XYPlotLineStyle.UseSymbolGap = lsps.LineSymbolGap; // this has changed and is now hosted in the LineStyle itself
 
         var ps = new G2DPlotStyleCollection(new IG2DPlotStyle?[] { lsps.XYPlotLineStyle, lsps.ScatterStyle, lsps.XYPlotLabelStyle });
-        if (lsps.XYPlotLabelStyle != null)
+        if (lsps.XYPlotLabelStyle is not null)
         {
           var surr = new XmlSerializationSurrogate0
           {
@@ -84,7 +84,7 @@ namespace Altaxo.Graph.Gdi.Plot
           info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
         }
 
-        if (null == o)
+        if (o is null)
         {
           return new XYColumnPlotItem(pa, ps);
         }
@@ -123,7 +123,7 @@ namespace Altaxo.Graph.Gdi.Plot
         var pa = (XYColumnPlotData)info.GetValue("Data", null);
         var ps = (G2DPlotStyleCollection)info.GetValue("Style", null);
 
-        if (null == o)
+        if (o is null)
         {
           return new XYColumnPlotItem(pa, ps);
         }
@@ -141,7 +141,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     private System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetLocalDocumentNodeChildrenWithName()
     {
-      if (null != _plotData)
+      if (_plotData is not null)
         yield return new DocumentNodeAndName(_plotData, () => _plotData = null!, "Data");
     }
 
@@ -211,7 +211,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new System.ArgumentNullException();
 
         if (ChildSetMember(ref _plotData, value))
@@ -280,8 +280,8 @@ namespace Altaxo.Graph.Gdi.Plot
       if (col is Altaxo.Data.DataColumn)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
-        string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
+        string tablename = table is null ? string.Empty : table.Name + "\\";
+        string collectionname = table is null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
           return ((DataColumn)col).Name;
         else if (level == 1)
@@ -289,7 +289,7 @@ namespace Altaxo.Graph.Gdi.Plot
         else
           return tablename + collectionname + ((DataColumn)col).Name;
       }
-      else if (col != null)
+      else if (col is not null)
         return col.FullName;
       else
         return string.Empty;
@@ -324,7 +324,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="layer">The plot layer.</param>
     public override void PrepareScales(IPlotArea layer)
     {
-      if (null != _plotData)
+      if (_plotData is not null)
         _plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject);
 
       _plotStyles?.PrepareScales(layer);

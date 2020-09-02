@@ -138,9 +138,9 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataBounds)
+      if (_dataBounds is not null)
         yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
-      if (null != _rescaling)
+      if (_rescaling is not null)
         yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
     }
 
@@ -458,7 +458,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public override void ProcessDataBounds()
     {
-      if (null == _dataBounds || _dataBounds.IsEmpty)
+      if (_dataBounds is null || _dataBounds.IsEmpty)
         SetDefaultAxisValues();
       else
         ProcessDataBounds(_dataBounds.LowerBound, _dataBounds.UpperBound, _rescaling);

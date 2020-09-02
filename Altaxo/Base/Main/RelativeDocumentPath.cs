@@ -259,7 +259,7 @@ namespace Altaxo.Main
 
       var node = startnode;
 
-      for (int i = 0; i < path._numberOfLevelsDown && null != node; ++i)
+      for (int i = 0; i < path._numberOfLevelsDown && node is not null; ++i)
       {
         node = node.ParentNode;
       }
@@ -292,15 +292,15 @@ namespace Altaxo.Main
     /// </exception>
     public static IDocumentLeafNode GetNodeOrLeastResolveableNode(RelativeDocumentPath path, IDocumentLeafNode startnode, out bool pathWasCompletelyResolved)
     {
-      if (null == path)
+      if (path is null)
         throw new ArgumentNullException(nameof(path));
-      if (null == startnode)
+      if (startnode is null)
         throw new ArgumentNullException(nameof(startnode));
 
       var node = startnode;
       var prevNode = startnode;
 
-      for (int i = 0; i < path._numberOfLevelsDown && null != node; ++i)
+      for (int i = 0; i < path._numberOfLevelsDown && node is not null; ++i)
       {
         prevNode = node;
         node = node.ParentNode;
@@ -312,7 +312,7 @@ namespace Altaxo.Main
         return prevNode;
       }
 
-      for (int i = 0; i < path._pathParts.Length && null != node; i++)
+      for (int i = 0; i < path._pathParts.Length && node is not null; i++)
       {
         prevNode = node;
 
@@ -322,7 +322,7 @@ namespace Altaxo.Main
           node = null;
       } // end for
 
-      pathWasCompletelyResolved = null != node;
+      pathWasCompletelyResolved = node is not null;
       return node ?? prevNode;
     }
 
@@ -344,7 +344,7 @@ namespace Altaxo.Main
 
     public static RelativeDocumentPath FromOldDeprecated(AbsoluteDocumentPath absPath)
     {
-      if (null == absPath)
+      if (absPath is null)
         throw new ArgumentNullException(nameof(absPath));
 
       int numberOfLevelsDown = 0;

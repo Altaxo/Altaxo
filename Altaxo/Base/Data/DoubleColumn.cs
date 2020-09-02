@@ -369,7 +369,7 @@ namespace Altaxo.Data
       int oldCount = _count;
       int srcarraycount = 0;
 
-      if (null == srcarray || 0 == (srcarraycount = GetUsedLength(srcarray, Math.Min(srcarray.Length, count))))
+      if (srcarray is null || 0 == (srcarraycount = GetUsedLength(srcarray, Math.Min(srcarray.Length, count))))
       {
         _data = _emptyDoubleArray;
         _capacity = 0;
@@ -449,7 +449,7 @@ namespace Altaxo.Data
       int oldCount = _count;
       int srcarraycount = 0;
 
-      if (null == srcarray || 0 == (srcarraycount = Altaxo.Calc.LinearAlgebra.VectorMath.GetUsedLength(srcarray, Math.Min(srcarray.Count, count))))
+      if (srcarray is null || 0 == (srcarraycount = Altaxo.Calc.LinearAlgebra.VectorMath.GetUsedLength(srcarray, Math.Min(srcarray.Count, count))))
       {
         _data = _emptyDoubleArray;
         _capacity = 0;

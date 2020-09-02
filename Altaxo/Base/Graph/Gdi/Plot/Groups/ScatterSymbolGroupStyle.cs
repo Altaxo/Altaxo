@@ -231,7 +231,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(_listOfValues, value))
@@ -271,13 +271,13 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     public void Initialize(IScatterSymbol value)
     {
-      if (null == value)
+      if (value is null)
         throw new ArgumentNullException(nameof(value));
 
       _isInitialized = true;
 
       var parentList = ScatterSymbolListManager.Instance.GetParentList(value);
-      if (null != parentList)
+      if (parentList is not null)
       {
         _listOfValues = parentList;
       }
@@ -325,7 +325,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       Getter getter)
     {
       if (!externalGroups.ContainsType(typeof(ScatterSymbolGroupStyle))
-        && null != localGroups
+        && localGroups is not null
         && !localGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
       {
         localGroups.Add(new ScatterSymbolGroupStyle());
@@ -334,10 +334,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       ScatterSymbolGroupStyle? grpStyle = null;
       if (externalGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
         grpStyle = (ScatterSymbolGroupStyle)externalGroups.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle));
-      else if (localGroups != null)
+      else if (localGroups is not null)
         grpStyle = (ScatterSymbolGroupStyle)localGroups.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle));
 
-      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+      if (grpStyle is not null && getter is not null && !grpStyle.IsInitialized)
         grpStyle.Initialize(getter());
     }
 

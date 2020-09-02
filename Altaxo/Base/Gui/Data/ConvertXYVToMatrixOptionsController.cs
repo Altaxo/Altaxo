@@ -95,13 +95,13 @@ namespace Altaxo.Gui.Data
 
       base.AttachView();
 
-      if (null != _view)
+      if (_view is not null)
         _view.DataContext = this;
     }
 
     protected override void DetachView()
     {
-      if (null != _view)
+      if (_view is not null)
         _view.DataContext = null;
 
       base.DetachView();
@@ -131,7 +131,7 @@ namespace Altaxo.Gui.Data
         _createStdDevX = _doc.CreateStdDevX;
         _createStdDevY = _doc.CreateStdDevY;
       }
-      if (null != _view)
+      if (_view is not null)
       {
       }
     }

@@ -485,13 +485,13 @@ namespace Altaxo.Graph.Gdi.Axis
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _labelFormatting)
+      if (_labelFormatting is not null)
         yield return new Main.DocumentNodeAndName(_labelFormatting, "LabelFormatting");
 
-      if (null != _backgroundStyle)
+      if (_backgroundStyle is not null)
         yield return new Main.DocumentNodeAndName(_backgroundStyle, "BackgroundStyle");
 
-      if (null != _suppressedLabels)
+      if (_suppressedLabels is not null)
         yield return new Main.DocumentNodeAndName(_suppressedLabels, "SuppressedLabels");
     }
 
@@ -631,7 +631,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         if (object.ReferenceEquals(_labelFormatting, value))
@@ -871,7 +871,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <returns>The side of the axis where the label will be shown.</returns>
     public virtual CSAxisSide PredictLabelSide(CSAxisInformation axisInformation)
     {
-      return null != _labelSide ? _labelSide.Value : axisInformation.PreferredLabelSide;
+      return _labelSide is not null ? _labelSide.Value : axisInformation.PreferredLabelSide;
     }
 
     /// <summary>
@@ -948,7 +948,7 @@ namespace Altaxo.Graph.Gdi.Axis
       IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, _stringFormat, ticks);
 
       double emSize = _font.Size;
-      CSAxisSide labelSide = null != _labelSide ? _labelSide.Value : styleInfo.PreferredLabelSide;
+      CSAxisSide labelSide = _labelSide is not null ? _labelSide.Value : styleInfo.PreferredLabelSide;
       for (int i = 0; i < ticks.Length; i++)
       {
         double r = relpositions[i];
@@ -991,7 +991,7 @@ namespace Altaxo.Graph.Gdi.Axis
         System.Drawing.Drawing2D.GraphicsState gs = g.Save();
         g.MultiplyTransform(math);
 
-        if (_backgroundStyle != null)
+        if (_backgroundStyle is not null)
           _backgroundStyle.Draw(g, new RectangleD2D(PointD2D.Empty, msize));
 
         var envbrush = new BrushXEnv(_brush, new RectangleD2D(PointD2D.Empty, msize), BrushCacheGdi.GetEffectiveMaximumResolution(g, 1));

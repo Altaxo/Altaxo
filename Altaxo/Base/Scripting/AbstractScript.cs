@@ -315,7 +315,7 @@ namespace Altaxo.Scripting
     {
       var stb = new StringBuilder();
 
-      if (null != _errors)
+      if (_errors is not null)
       {
         foreach (var err in _errors)
         {
@@ -364,7 +364,7 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (null == _scriptName)
+        if (_scriptName is null)
           _scriptName = GenerateScriptName();
 
         return _scriptName + ".cs";
@@ -375,7 +375,7 @@ namespace Altaxo.Scripting
     {
       get
       {
-        return _compilerResult != null;
+        return _compilerResult is not null;
       }
     }
 
@@ -386,11 +386,11 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (null != _compilerResult)
+        if (_compilerResult is not null)
         {
           return _compilerResult.ScriptText(0);
         }
-        if (null == _scriptText)
+        if (_scriptText is null)
         {
           _scriptText = CodeHeader + CodeStart + CodeUserDefault + CodeEnd + CodeTail;
         }
@@ -420,11 +420,11 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (null != _compilerResult)
+        if (_compilerResult is not null)
         {
           return _compilerResult.ScriptTextHash;
         }
-        if (null == _scriptText)
+        if (_scriptText is null)
         {
           _scriptText = CodeHeader + CodeStart + CodeUserDefault + CodeEnd + CodeTail;
         }
@@ -451,7 +451,7 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (null == ScriptText)
+        if (ScriptText is null)
           return 0;
 
         int pos = ScriptText.IndexOf(CodeStart);
@@ -516,7 +516,7 @@ namespace Altaxo.Scripting
     /// </summary>
     public void MakeSureWasTriedToCompile()
     {
-      if (null == _scriptObject)
+      if (_scriptObject is null)
       {
         if (!_wasTriedToCompile)
           Compile();
@@ -532,13 +532,13 @@ namespace Altaxo.Scripting
       object? scriptObject = null;
       var assembly = ScriptAssembly;
 
-      if (null != assembly)
+      if (assembly is not null)
       {
         try
         {
           scriptObject = assembly.CreateInstance(ScriptObjectType);
 
-          if (null == scriptObject)
+          if (scriptObject is null)
           {
             _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, string.Format("Unable to create scripting object  (expected type: {0}), please verify namespace and class name!\n", ScriptObjectType)));
           }
@@ -562,7 +562,7 @@ namespace Altaxo.Scripting
     {
       _wasTriedToCompile = true;
 
-      if (_compilerResult != null)
+      if (_compilerResult is not null)
         return true;
 
       var scriptCompilerResult = ScriptCompilerService.Compile(new string[] { ScriptText });

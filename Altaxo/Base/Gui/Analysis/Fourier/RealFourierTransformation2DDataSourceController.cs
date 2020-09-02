@@ -68,11 +68,11 @@ namespace Altaxo.Gui.Analysis.Fourier
         _inputDataController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.InputData }, typeof(IMVCANController), UseDocument.Directly);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetImportOptionsControl(_dataSourceOptionsController.ViewObject);
         _view.SetFourierTransformation2DOptionsControl(_fourierTransformationOptionsController.ViewObject);
-        if (null != _inputDataController)
+        if (_inputDataController is not null)
         {
           _view.SetInputDataControl(_inputDataController.ViewObject);
         }
@@ -91,7 +91,7 @@ namespace Altaxo.Gui.Analysis.Fourier
       if (!result)
         return result;
 
-      if (null != _inputDataController)
+      if (_inputDataController is not null)
       {
         result = _inputDataController.Apply(disposeController);
         if (!result)
@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Analysis.Fourier
       }
 
       var ev = SuccessfullyApplied;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }

@@ -100,9 +100,9 @@ namespace Altaxo.Drawing.D3D
       _crossSectionVertexCount = crossSection.NumberOfVertices;
       _crossSectionNormalCount = crossSection.NumberOfNormals;
       _dashStartCap = startCap;
-      _dashStartCapBaseInsetAbsolute = null == _dashStartCap ? 0 : _dashStartCap.GetAbsoluteBaseInset(thickness1, thickness2);
+      _dashStartCapBaseInsetAbsolute = _dashStartCap is null ? 0 : _dashStartCap.GetAbsoluteBaseInset(thickness1, thickness2);
       _dashEndCap = endCap;
-      _dashEndCapBaseInsetAbsolute = null == _dashEndCap ? 0 : _dashEndCap.GetAbsoluteBaseInset(thickness1, thickness2);
+      _dashEndCapBaseInsetAbsolute = _dashEndCap is null ? 0 : _dashEndCap.GetAbsoluteBaseInset(thickness1, thickness2);
       _westVector = westVector;
       _northVector = northVector;
       _forwardVector = line.LineVectorNormalized;
@@ -129,7 +129,7 @@ namespace Altaxo.Drawing.D3D
       ILineCap? overrideStartCap,
       ILineCap? overrideEndCap)
     {
-      if (null == _lastNormalsTransformed)
+      if (_lastNormalsTransformed is null)
         throw new InvalidProgramException("The structure is not initialized yet. Call Initialize before using it!");
 
       PointD3D lineStart = dashSegment.P0;
@@ -138,7 +138,7 @@ namespace Altaxo.Drawing.D3D
       var lineVector = dashSegment.LineVector;
       double lineLength = lineVector.Length;
 
-      if (null != _dashStartCap && null == overrideStartCap)
+      if (_dashStartCap is not null && overrideStartCap is null)
       {
         if (_dashStartCapBaseInsetAbsolute < 0)
         {
@@ -147,7 +147,7 @@ namespace Altaxo.Drawing.D3D
         }
       }
 
-      if (null != _dashEndCap && null == overrideEndCap)
+      if (_dashEndCap is not null && overrideEndCap is null)
       {
         if (_dashEndCapBaseInsetAbsolute < 0)
         {
@@ -189,7 +189,7 @@ namespace Altaxo.Drawing.D3D
       ILineCap? overrideEndCap
       )
     {
-      if (null == _lastNormalsTransformed)
+      if (_lastNormalsTransformed is null)
         throw new InvalidProgramException("The structure is not initialized yet. Call Initialize before using it!");
 
       var resultingStartCap = overrideStartCap ?? _dashStartCap;
@@ -238,7 +238,7 @@ namespace Altaxo.Drawing.D3D
       }
 
       // now the start cap
-      if (null != resultingStartCap)
+      if (resultingStartCap is not null)
       {
         resultingStartCap.AddGeometry(
           AddPositionAndNormal,
@@ -267,7 +267,7 @@ namespace Altaxo.Drawing.D3D
           );
       }
 
-      if (null != resultingEndCap)
+      if (resultingEndCap is not null)
       {
         resultingEndCap.AddGeometry(
         AddPositionAndNormal,

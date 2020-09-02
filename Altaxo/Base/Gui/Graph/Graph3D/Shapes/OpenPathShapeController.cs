@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
         _locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
         Current.Gui.FindAndAttachControlTo(_locationController);
       }
-      if (_view != null)
+      if (_view is not null)
       {
         _view.DocPen = _doc.Pen;
         _view.LocationView = _locationController.ViewObject;

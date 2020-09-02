@@ -47,7 +47,7 @@ namespace Altaxo.Graph.Graph3D
       }
       set
       {
-        if (null != value)
+        if (value is not null)
           throw new InvalidOperationException("ParentObject of GraphDocumentCollection is fixed and cannot be set");
         base.ParentObject = value; // allow setting to null
       }

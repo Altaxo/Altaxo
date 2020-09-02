@@ -130,7 +130,7 @@ namespace Altaxo.Graph.Graph3D.Background
       if (object.ReferenceEquals(this, obj))
         return true;
       var from = obj as RectangularBackground;
-      if (null != from)
+      if (from is not null)
       {
         _material = from._material;
         _customDistance = from._customDistance;
@@ -156,7 +156,7 @@ namespace Altaxo.Graph.Graph3D.Background
       }
       set
       {
-        if (null == _material)
+        if (_material is null)
           throw new ArgumentNullException(nameof(value));
 
         var oldValue = _material;
@@ -314,7 +314,7 @@ namespace Altaxo.Graph.Graph3D.Background
 
       var buffers = g.GetPositionNormalIndexedTriangleBuffer(material);
 
-      if (null != buffers.PositionNormalColorIndexedTriangleBuffer)
+      if (buffers.PositionNormalColorIndexedTriangleBuffer is not null)
       {
         var c = material.Color.Color;
         var voffs = buffers.PositionNormalColorIndexedTriangleBuffer.VertexCount;
@@ -324,7 +324,7 @@ namespace Altaxo.Graph.Graph3D.Background
           (i1, i2, i3) => buffers.IndexedTriangleBuffer.AddTriangleIndices(i1 + voffs, i2 + voffs, i3 + voffs),
           ref voffs);
       }
-      else if (null != buffers.PositionNormalIndexedTriangleBuffer)
+      else if (buffers.PositionNormalIndexedTriangleBuffer is not null)
       {
         var voffs = buffers.PositionNormalIndexedTriangleBuffer.VertexCount;
         Altaxo.Drawing.D3D.SolidCube.Add(

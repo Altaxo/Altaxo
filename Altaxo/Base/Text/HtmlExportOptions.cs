@@ -348,7 +348,7 @@ namespace Altaxo.Text
     /// <param name="errors">A list that collects error messages.</param>
     public void Export(TextDocument document, string fileName, List<MarkdownError> errors)
     {
-      if (null == document)
+      if (document is null)
       {
         throw new ArgumentNullException(nameof(document));
       }

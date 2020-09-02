@@ -221,7 +221,7 @@ namespace Altaxo.Main
     /// </summary>
     public static NamedObjectCollectionChangedEventArgs FromItemRemoved(INamedObject item, string itemNameOverride)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException("item");
       var result = new NamedObjectCollectionChangedEventArgs(item, newItemName: itemNameOverride, oldItemName: itemNameOverride, operation: NamedObjectCollectionChangeType.ItemRemoved);
       return result;
@@ -253,7 +253,7 @@ namespace Altaxo.Main
     public override void Add(SelfAccumulateableEventArgs e)
     {
       var other = e as NamedObjectCollectionChangedEventArgs;
-      if (other == null)
+      if (other is null)
         throw new ArgumentOutOfRangeException("Argument e should be of type NamedObjectCollectionEventArgs");
       if (!object.ReferenceEquals(_item, other._item))
         throw new ArgumentOutOfRangeException("Argument e has an item which is not identical to this item. This should not happen since Equals and GetHashCode are overriden.");
@@ -308,7 +308,7 @@ namespace Altaxo.Main
     /// </returns>
     public override bool Equals(object? obj)
     {
-      if (null == obj || GetType() != obj.GetType())
+      if (obj is null || GetType() != obj.GetType())
         return false;
 
       var other = (NamedObjectCollectionChangedEventArgs)obj;

@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
       foreach (var axstyle in currentAxisStyles)
       {
-        if (null != axstyle.CachedAxisInformation && !AxisStyles.Contains(axstyle.CachedAxisInformation))
+        if (axstyle.CachedAxisInformation is not null && !AxisStyles.Contains(axstyle.CachedAxisInformation))
         {
           if (!dict.ContainsKey(axstyle.CachedAxisInformation.Identifier))
           {
@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
         }
       }
 
-      if (null != CurrentStyle && !dict.ContainsKey(CurrentStyle))
+      if (CurrentStyle is not null && !dict.ContainsKey(CurrentStyle))
       {
         var info = cs.GetAxisStyleInformation(CurrentStyle);
         AxisStyles.Add(info);
@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     {
       var context = collection.GetPropertyContext();
       var axstyle = new AxisStyle(creationArgs.CurrentStyle, false, false, false, null, context);
-      if (creationArgs.TemplateStyle != null && collection.Contains(creationArgs.TemplateStyle))
+      if (creationArgs.TemplateStyle is not null && collection.Contains(creationArgs.TemplateStyle))
       {
         axstyle.CopyWithoutIdFrom(collection[creationArgs.TemplateStyle]);
         if (creationArgs.MoveAxis)
@@ -152,17 +152,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
           _axisTemplates.Add(node);
         }
         var selNode = _axisTemplates.FirstSelectedNode;
-        if (null == selNode && 0 != _axisTemplates.Count)
+        if (selNode is null && 0 != _axisTemplates.Count)
         {
           selNode = _axisTemplates[0];
           selNode.IsSelected = true;
         }
-        if (null != selNode)
+        if (selNode is not null)
         {
           _doc.TemplateStyle = (selNode.Tag as CSAxisInformation).Identifier;
         }
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.MoveAxis = _doc.MoveAxis;
         _view.InitializeAxisTemplates(_axisTemplates);

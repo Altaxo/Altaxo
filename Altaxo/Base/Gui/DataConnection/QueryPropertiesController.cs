@@ -74,7 +74,7 @@ namespace Altaxo.Gui.DataConnection
         _groupByChoices = new SelectableListNodeList();
         _groupByChoices.FillWithEnumeration(_builder.GroupByExtension);
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _groupByChoices.ClearSelectionsAll();
         if (_builder.GroupBy)
@@ -93,11 +93,11 @@ namespace Altaxo.Gui.DataConnection
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
         }
         _view = value as IQueryPropertiesView;
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
         }

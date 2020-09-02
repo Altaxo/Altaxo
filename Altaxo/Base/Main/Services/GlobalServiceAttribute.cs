@@ -87,7 +87,7 @@ namespace Altaxo.Main.Services
           if (attrs.Length == 1)
           {
             var attr = (GlobalServiceAttribute)attrs[0];
-            if (attr.FallbackImplementation != null)
+            if (attr.FallbackImplementation is not null)
             {
               instance = Activator.CreateInstance(attr.FallbackImplementation);
             }

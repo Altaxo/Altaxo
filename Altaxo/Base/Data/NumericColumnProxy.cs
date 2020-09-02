@@ -131,7 +131,7 @@ namespace Altaxo.Data
 
     public bool IsEmpty
     {
-      get { return null == _column; }
+      get { return _column is null; }
     }
 
     public object Clone()
@@ -232,10 +232,10 @@ namespace Altaxo.Data
 
     public static NumericColumnProxy FromColumn(INumericColumn column)
     {
-      if (null == column)
+      if (column is null)
         throw new ArgumentNullException("column");
       var colAsDocumentNode = column as IDocumentLeafNode;
-      if (null == colAsDocumentNode)
+      if (colAsDocumentNode is null)
         throw new ArgumentException(string.Format("column does not implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
 
       return new NumericColumnProxy(colAsDocumentNode);
@@ -275,7 +275,7 @@ namespace Altaxo.Data
     /// <returns>True if this is a valid document object.</returns>
     protected override bool IsValidDocument(object obj)
     {
-      return ((obj is INumericColumn) && obj is IDocumentLeafNode) || obj == null;
+      return ((obj is INumericColumn) && obj is IDocumentLeafNode) || obj is null;
     }
 
     /// <summary>

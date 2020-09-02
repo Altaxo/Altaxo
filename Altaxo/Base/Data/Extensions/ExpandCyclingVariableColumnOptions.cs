@@ -97,7 +97,7 @@ namespace Altaxo.Data
 
       protected virtual ExpandCyclingVariableColumnOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new ExpandCyclingVariableColumnOptions() : (ExpandCyclingVariableColumnOptions)o);
+        var s = (o is null ? new ExpandCyclingVariableColumnOptions() : (ExpandCyclingVariableColumnOptions)o);
 
         s._destinationX = (DestinationXColumn)info.GetEnum("DestinationX", typeof(DestinationXColumn));
         s._destinationOutput = (OutputFormat)info.GetEnum("DestinationOutput", typeof(OutputFormat));
@@ -140,7 +140,7 @@ namespace Altaxo.Data
         return true;
 
       var from = obj as ExpandCyclingVariableColumnOptions;
-      if (null != from)
+      if (from is not null)
       {
         _destinationX = from._destinationX;
         _destinationOutput = from._destinationOutput;

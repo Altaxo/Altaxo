@@ -163,7 +163,7 @@ namespace Altaxo.Graph.Graph3D
 
     public static FontX3D GetDefaultFont(IReadOnlyPropertyBag context)
     {
-      if (null != context)
+      if (context is not null)
         return context.GetValue(PropertyKeyDefaultFont);
       else
         return new FontX3D(Gdi.GdiFontManager.GetFontXGenericSansSerif(12, FontXStyle.Regular), 12 * 0.0625);
@@ -178,7 +178,7 @@ namespace Altaxo.Graph.Graph3D
     {
       double result = 1;
 
-      if (null != context)
+      if (context is not null)
       {
         var font = context.GetValue(PropertyKeyDefaultFont);
         using (var path = new System.Drawing.Drawing2D.GraphicsPath())
@@ -204,7 +204,7 @@ namespace Altaxo.Graph.Graph3D
     {
       double result = 8;
 
-      if (null != context)
+      if (context is not null)
       {
         var font = context.GetValue(PropertyKeyDefaultFont);
         using (var path = new System.Drawing.Drawing2D.GraphicsPath())
@@ -230,7 +230,7 @@ namespace Altaxo.Graph.Graph3D
     {
       double result = 1;
 
-      if (null != context)
+      if (context is not null)
       {
         var font = context.GetValue(PropertyKeyDefaultFont);
         using (var path = new System.Drawing.Drawing2D.GraphicsPath())
@@ -249,7 +249,7 @@ namespace Altaxo.Graph.Graph3D
 
     public static NamedColor GetDefaultForeColor(IReadOnlyPropertyBag context)
     {
-      if (null == context)
+      if (context is null)
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       return context.GetValue<NamedColor>(PropertyKeyDefaultForeColor);
@@ -364,7 +364,7 @@ namespace Altaxo.Graph.Graph3D
         if (0 != (options & Altaxo.Graph.Gdi.GraphCopyOptions.CloneProperties))
         {
           // Clone also the graph properties
-          if (from._graphProperties != null && from._graphProperties.Count > 0)
+          if (from._graphProperties is not null && from._graphProperties.Count > 0)
           {
             PropertyBagNotNull.CopyFrom(from._graphProperties);
           }
@@ -403,13 +403,13 @@ namespace Altaxo.Graph.Graph3D
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _rootLayer)
+      if (_rootLayer is not null)
         yield return new Main.DocumentNodeAndName(_rootLayer, () => _rootLayer = null!, "RootLayer");
 
-      if (null != _graphProperties)
+      if (_graphProperties is not null)
         yield return new Main.DocumentNodeAndName(_graphProperties, () => _graphProperties = null!, "GraphProperties");
 
-      if (null != _notes)
+      if (_notes is not null)
         yield return new Main.DocumentNodeAndName(_notes, () => _notes = null!, "Notes");
     }
 
@@ -648,7 +648,7 @@ namespace Altaxo.Graph.Graph3D
 
       var orthoCamera = newCamera as Camera.OrthographicCamera;
 
-      if (null != orthoCamera)
+      if (orthoCamera is not null)
       {
         orthoCamera = (Camera.OrthographicCamera)orthoCamera.WithWidthAtZNear(1);
 

@@ -69,7 +69,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     {
       base.Initialize(initData);
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.ShowLine = true;
 
@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
         _view.MinorTickLength = _doc.MinorTickLength;
 
         var list = new List<SelectableListNode>();
-        if (_doc.CachedAxisInformation != null)
+        if (_doc.CachedAxisInformation is not null)
         {
           list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstDownSide, 0, _doc.FirstDownMajorTicks));
           list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstUpSide, 1, _doc.FirstUpMajorTicks));
@@ -92,7 +92,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
         _view.MajorPenTicks = new SelectableListNodeList(list);
 
         list = new List<SelectableListNode>();
-        if (_doc.CachedAxisInformation != null)
+        if (_doc.CachedAxisInformation is not null)
         {
           list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstDownSide, 0, _doc.FirstDownMinorTicks));
           list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstUpSide, 1, _doc.FirstUpMinorTicks));

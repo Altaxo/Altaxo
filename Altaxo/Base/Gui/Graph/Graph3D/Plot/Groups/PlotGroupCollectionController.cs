@@ -76,12 +76,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
       if (initData)
       {
-        if (null != _controllerSimple)
+        if (_controllerSimple is not null)
         {
           _controllerSimple.Dispose();
           _controllerSimple = null;
         }
-        if (null != _controllerAdvanced)
+        if (_controllerAdvanced is not null)
         {
           _controllerAdvanced.Dispose();
           _controllerAdvanced = null;
@@ -101,17 +101,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
-        if (_controllerSimple != null)
+        if (_controllerSimple is not null)
         {
-          if (null == _controllerSimple.ViewObject)
+          if (_controllerSimple.ViewObject is null)
             Current.Gui.FindAndAttachControlTo(_controllerSimple);
           _view.SetSimpleView(_controllerSimple.ViewObject);
         }
-        else if (_controllerAdvanced != null)
+        else if (_controllerAdvanced is not null)
         {
-          if (null == _controllerAdvanced.ViewObject)
+          if (_controllerAdvanced.ViewObject is null)
             Current.Gui.FindAndAttachControlTo(_controllerAdvanced);
           _view.SetAdvancedView(_controllerAdvanced.ViewObject);
         }
@@ -126,14 +126,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
     public override bool Apply(bool disposeController)
     {
       bool result;
-      if (null != _controllerSimple)
+      if (_controllerSimple is not null)
         result = _controllerSimple.Apply(disposeController);
       else
         result = _controllerAdvanced.Apply(disposeController);
 
       if (true == result)
       {
-        if (null != _controllerSimple)
+        if (_controllerSimple is not null)
         {
           _doc = (PlotGroupStyleCollection)_controllerSimple.ModelObject;
         }

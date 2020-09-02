@@ -151,10 +151,10 @@ namespace Altaxo.Data
 
     public static ReadableColumnProxy FromColumn(IReadableColumn column)
     {
-      if (null == column)
+      if (column is null)
         throw new ArgumentNullException(nameof(column));
       var colAsDocumentNode = column as IDocumentLeafNode;
-      if (null == colAsDocumentNode)
+      if (colAsDocumentNode is null)
         throw new ArgumentException(string.Format("column does not implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
 
       return new ReadableColumnProxy(colAsDocumentNode);
@@ -184,7 +184,7 @@ namespace Altaxo.Data
 
     protected override bool IsValidDocument(object obj)
     {
-      return (obj is IReadableColumn) || obj == null;
+      return (obj is IReadableColumn) || obj is null;
     }
 
     public IReadableColumn? Document()
@@ -207,8 +207,8 @@ namespace Altaxo.Data
       if (col is Data.DataColumn datacol)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf(datacol);
-        string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn(datacol) ? "PropCols\\" : "DataCols\\");
+        string tablename = table is null ? string.Empty : table.Name + "\\";
+        string collectionname = table is null ? string.Empty : (table.PropertyColumns.ContainsColumn(datacol) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
           return datacol.Name;
         else if (level == 1)

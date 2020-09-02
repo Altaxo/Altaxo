@@ -210,16 +210,16 @@ namespace Altaxo.Graph.Graph3D
 
       result |= _ambientLight.IsAffixedToCamera;
 
-      if (null != _discreteLight0)
+      if (_discreteLight0 is not null)
         result |= _discreteLight0.IsAffixedToCamera;
 
-      if (null != _discreteLight1)
+      if (_discreteLight1 is not null)
         result |= _discreteLight1.IsAffixedToCamera;
 
-      if (null != _discreteLight2)
+      if (_discreteLight2 is not null)
         result |= _discreteLight2.IsAffixedToCamera;
 
-      if (null != _discreteLight3)
+      if (_discreteLight3 is not null)
         result |= _discreteLight3.IsAffixedToCamera;
 
       _isAnyLightAffixedToCamera = result;

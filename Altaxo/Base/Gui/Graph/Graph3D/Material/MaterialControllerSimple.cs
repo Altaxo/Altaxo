@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Material
     {
       base.Initialize(initData);
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.IsNoMaterialAllowed = IsNoMaterialAllowed;
         _view.SelectedMaterial = _doc;
@@ -74,10 +74,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Material
 
     public override bool Apply(bool disposeController)
     {
-      if (null != _view)
+      if (_view is not null)
         _doc = _view.SelectedMaterial;
 
-      if (IsNoMaterialAllowed && null != _doc && !_doc.IsVisible)
+      if (IsNoMaterialAllowed && _doc is not null && !_doc.IsVisible)
         _doc = null;
 
       return ApplyEnd(true, disposeController);

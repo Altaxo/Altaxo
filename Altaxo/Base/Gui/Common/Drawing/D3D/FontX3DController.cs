@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Common.Drawing.D3D
       if (initData)
       {
       }
-      if (null != _view)
+      if (_view is not null)
       {
         // fill the font name combobox with all fonts
         _view.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(_doc.Font);

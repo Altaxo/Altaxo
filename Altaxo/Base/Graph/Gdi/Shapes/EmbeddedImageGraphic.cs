@@ -147,7 +147,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       if (isCopied && !object.ReferenceEquals(this, obj))
       {
         var from = obj as EmbeddedImageGraphic;
-        if (null != from)
+        if (from is not null)
         {
           Image = from._imageProxy;
         }

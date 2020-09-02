@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Worksheet
 
     public bool InitializeDocument(params object[] args)
     {
-      if (null == args || 0 == args.Length || !(args[0] is SingleTableChoice))
+      if (args is null || 0 == args.Length || !(args[0] is SingleTableChoice))
         return false;
 
       _doc = (SingleTableChoice)args[0];
@@ -124,17 +124,17 @@ namespace Altaxo.Gui.Worksheet
 
         tableCollectionNode.IsExpanded = true;
 
-        if (null != _doc.SelectedTable)
+        if (_doc.SelectedTable is not null)
         {
           var selTableNode = FindTableNode(tableCollectionNode, _doc.SelectedTable);
-          if (selTableNode != null)
+          if (selTableNode is not null)
           {
             selTableNode.IsSelected = true;
           }
         }
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.Initialize(_rootNode.Nodes);
       }
@@ -171,7 +171,7 @@ namespace Altaxo.Gui.Worksheet
       foreach (NGTreeNode node in tableCollectionNode.Nodes)
       {
         result = FindTableNode(node, table);
-        if (null != result)
+        if (result is not null)
           return result;
       }
 
@@ -205,14 +205,14 @@ namespace Altaxo.Gui.Worksheet
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
         {
           _view.SelectionChanged -= EhSelectionChanged;
         }
 
         _view = value as ISingleTreeViewItemChoiceView;
 
-        if (_view != null)
+        if (_view is not null)
         {
           Initialize(false);
 
@@ -239,7 +239,7 @@ namespace Altaxo.Gui.Worksheet
 
     public bool Apply(bool disposeController)
     {
-      if (_selectedTable != null)
+      if (_selectedTable is not null)
       {
         _doc.SelectedTable = _selectedTable;
         return true;
@@ -266,7 +266,7 @@ namespace Altaxo.Gui.Worksheet
 
     protected NGTreeNode GetRootNode(NGTreeNode node)
     {
-      while (node.ParentNode != null)
+      while (node.ParentNode is not null)
         node = node.ParentNode;
 
       return node;

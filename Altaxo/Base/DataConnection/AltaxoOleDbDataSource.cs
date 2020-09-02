@@ -97,7 +97,7 @@ namespace Altaxo.DataConnection
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _importOptions)
+      if (_importOptions is not null)
         yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null!, "ImportOptions");
     }
 
@@ -123,7 +123,7 @@ namespace Altaxo.DataConnection
 
       protected virtual AltaxoOleDbDataSource SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new AltaxoOleDbDataSource(info) : (AltaxoOleDbDataSource)o);
+        var s = (o is null ? new AltaxoOleDbDataSource(info) : (AltaxoOleDbDataSource)o);
 
         s._isDeserializationInProgress = true;
         s._dataQuery = (OleDbDataQuery)info.GetValue("DataQuery", s);
@@ -210,7 +210,7 @@ namespace Altaxo.DataConnection
     /// <param name="destinationTable">The destination table.</param>
     public void FillData(Data.DataTable destinationTable)
     {
-      if (null == destinationTable)
+      if (destinationTable is null)
         throw new ArgumentNullException("destinationTable");
 
       int reentrancyCount = Interlocked.Increment(ref _updateReentrancyCount);
@@ -238,7 +238,7 @@ namespace Altaxo.DataConnection
 
     private void EhUpdateByTimerQueue()
     {
-      if (null != _parent)
+      if (_parent is not null)
       {
         if (!IsSuspended)
         {
@@ -255,7 +255,7 @@ namespace Altaxo.DataConnection
 
       // UpdateWatching should only be called if something concerning the watch (Times etc.) has changed during the suspend phase
       // Otherwise it will cause endless loops because UpdateWatching triggers immediatly an EhUpdateByTimerQueue event, which triggers an UpdateDataSource event, which leads to another Suspend and then Resume, which calls OnResume(). So the loop is closed.
-      if (null == _triggerBasedUpdate)
+      if (_triggerBasedUpdate is null)
         UpdateWatching(); // Compromise - we update only if the watch is off
     }
 
@@ -269,7 +269,7 @@ namespace Altaxo.DataConnection
       if (IsSuspended)
         return; // in update operation - wait until finished
 
-      if (null == _parent)
+      if (_parent is null)
         return; // No listener - no need to watch
 
       if (_importOptions.ImportTriggerSource != ImportTriggerSource.DataSourceChanged)

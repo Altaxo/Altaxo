@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Common
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.UnitEnvironment = UnitEnvironment;
         _view.SelectedQuantity = new DimensionfulQuantity(_doc, UnitOfValue).AsQuantityIn(UnitEnvironment.DefaultUnit);
@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Common
 
     private void GetQuantityFromView()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         var q = _view.SelectedQuantity;
         _doc = q.AsValueIn(UnitOfValue);

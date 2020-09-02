@@ -121,10 +121,10 @@ namespace Altaxo.Gui.Scripting
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args == null || args.Length == 0)
+      if (args is null || args.Length == 0)
         return false;
       var doc = args[0] as IScriptText;
-      if (doc == null)
+      if (doc is null)
         return false;
 
       _doc = doc;
@@ -147,13 +147,13 @@ namespace Altaxo.Gui.Scripting
 
     public void SetText(string text)
     {
-      if (_view != null)
+      if (_view is not null)
         _view.ScriptText = text;
     }
 
     public void Initialize()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.ScriptText = _doc.ScriptText;
         _view.SetCompilerErrors(null);
@@ -188,7 +188,7 @@ namespace Altaxo.Gui.Scripting
     {
       var result = _view?.Compile();
 
-      if (null == result) // compilation must be handled by this controller
+      if (result is null) // compilation must be handled by this controller
       {
         InternalCompiling();
       }
@@ -213,7 +213,7 @@ namespace Altaxo.Gui.Scripting
 
       _tempDoc.ScriptText = _view.ScriptText;
 
-      if (null != _view)
+      if (_view is not null)
         _view.SetCompilerErrors(null);
 
       IScriptText compiledDoc = _tempDoc.CloneForModification();
@@ -239,7 +239,7 @@ namespace Altaxo.Gui.Scripting
     {
       _tempDoc.ScriptText = _view.ScriptText;
 
-      if (null != _compiledDoc && _tempDoc.ScriptText == _compiledDoc.ScriptText)
+      if (_compiledDoc is not null && _tempDoc.ScriptText == _compiledDoc.ScriptText)
       {
         _doc = _compiledDoc;
       }
@@ -265,13 +265,13 @@ namespace Altaxo.Gui.Scripting
 
     public bool HasExecutionErrors()
     {
-      if (null != _doc.Errors && _doc.Errors.Count > 0)
+      if (_doc.Errors is not null && _doc.Errors.Count > 0)
       {
         _view.SetCompilerErrors(_doc.Errors);
         Current.Gui.ErrorMessageBox("There were execution errors");
       }
 
-      return null != _doc.Errors && _doc.Errors.Count > 0;
+      return _doc.Errors is not null && _doc.Errors.Count > 0;
     }
 
     #endregion IScriptController Members
@@ -294,14 +294,14 @@ namespace Altaxo.Gui.Scripting
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as IScriptView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize();
           AttachView();
@@ -322,7 +322,7 @@ namespace Altaxo.Gui.Scripting
       bool applyresult = false;
 
       _tempDoc.ScriptText = _view.ScriptText;
-      if (null != _compiledDoc && _tempDoc.ScriptText == _compiledDoc.ScriptText)
+      if (_compiledDoc is not null && _tempDoc.ScriptText == _compiledDoc.ScriptText)
       {
         _doc = _compiledDoc;
         applyresult = true;
@@ -330,7 +330,7 @@ namespace Altaxo.Gui.Scripting
       else
       {
         Compile();
-        if (null != _compiledDoc)
+        if (_compiledDoc is not null)
         {
           _doc = _compiledDoc;
           applyresult = true;

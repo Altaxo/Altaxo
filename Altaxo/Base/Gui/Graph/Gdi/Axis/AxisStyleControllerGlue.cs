@@ -56,16 +56,16 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     {
       get
       {
-        if (AxisStyleController == null)
+        if (AxisStyleController is null)
           throw new InvalidOperationException("Instance is not initialized!");
 
-        if (null == AxisStyleController.ViewObject)
+        if (AxisStyleController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(AxisStyleController);
         return AxisStyleController.ViewObject;
       }
       set
       {
-        if (AxisStyleController == null)
+        if (AxisStyleController is null)
           throw new InvalidOperationException("Instance is not initialized!");
         AxisStyleController.ViewObject = value;
       }
@@ -75,16 +75,16 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     {
       get
       {
-        if (MajorLabelCondController == null)
+        if (MajorLabelCondController is null)
           throw new InvalidOperationException("Instance is not initialized!");
 
-        if (null == MajorLabelCondController.ViewObject)
+        if (MajorLabelCondController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(MajorLabelCondController);
         return (IConditionalDocumentView)MajorLabelCondController.ViewObject;
       }
       set
       {
-        if (MajorLabelCondController == null)
+        if (MajorLabelCondController is null)
           throw new InvalidOperationException("Instance is not initialized!");
         MajorLabelCondController.ViewObject = value;
       }
@@ -94,16 +94,16 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     {
       get
       {
-        if (MinorLabelCondController == null)
+        if (MinorLabelCondController is null)
           throw new InvalidOperationException("Instance is not initialized!");
 
-        if (null == MinorLabelCondController.ViewObject)
+        if (MinorLabelCondController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(MinorLabelCondController);
         return (IConditionalDocumentView)MinorLabelCondController.ViewObject;
       }
       set
       {
-        if (MinorLabelCondController == null)
+        if (MinorLabelCondController is null)
           throw new InvalidOperationException("Instance is not initialized!");
         MinorLabelCondController.ViewObject = value;
       }

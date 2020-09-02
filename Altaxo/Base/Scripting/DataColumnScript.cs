@@ -50,7 +50,7 @@ namespace Altaxo.Scripting
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DataColumnScript s = null != o ? (DataColumnScript)o : new DataColumnScript();
+        DataColumnScript s = o is not null ? (DataColumnScript)o : new DataColumnScript();
 
         // deserialize the base class
         info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
@@ -240,10 +240,10 @@ namespace Altaxo.Scripting
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public bool Execute(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
     {
-      if (null == _scriptObject && !_wasTriedToCompile)
+      if (_scriptObject is null && !_wasTriedToCompile)
         Compile();
 
-      if (null == _scriptObject)
+      if (_scriptObject is null)
       {
         _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, "Script Object is null"));
         return false;
@@ -294,11 +294,11 @@ namespace Altaxo.Scripting
 
       IDisposable? suspendToken = null;
 
-      if (null != myDataSet)
+      if (myDataSet is not null)
         suspendToken = myDataSet.SuspendGetToken();
-      else if (null != myTable)
+      else if (myTable is not null)
         suspendToken = myTable.SuspendGetToken();
-      else if (null != myColumnCollection)
+      else if (myColumnCollection is not null)
         suspendToken = myColumnCollection.SuspendGetToken();
       else
         suspendToken = myColumn.SuspendGetToken();
@@ -314,7 +314,7 @@ namespace Altaxo.Scripting
       }
       finally
       {
-        if (null != suspendToken)
+        if (suspendToken is not null)
           suspendToken.Dispose();
       }
 

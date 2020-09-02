@@ -245,10 +245,10 @@ namespace Altaxo
     public static object? GetActiveViewContentService(Type type)
     {
       var workbench = instance.GetService(typeof(IWorkbench)) as IWorkbench;
-      if (workbench != null)
+      if (workbench is not null)
       {
         var activeViewContent = workbench.ActiveViewContent;
-        if (activeViewContent != null)
+        if (activeViewContent is not null)
         {
           throw new NotImplementedException();
           //return activeViewContent.GetService(type);

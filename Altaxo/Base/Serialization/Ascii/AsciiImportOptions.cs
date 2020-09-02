@@ -127,7 +127,7 @@ namespace Altaxo.Serialization.Ascii
 
       protected virtual AsciiImportOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new AsciiImportOptions() : (AsciiImportOptions)o);
+        var s = (o is null ? new AsciiImportOptions() : (AsciiImportOptions)o);
 
         s.RenameWorksheet = info.GetBoolean("RenameWorksheet");
         s.RenameColumns = info.GetBoolean("RenameColumns");
@@ -210,12 +210,12 @@ namespace Altaxo.Serialization.Ascii
       get
       {
         return
-          null != _numberOfMainHeaderLines &&
-          null != _indexOfCaptionLine &&
-          null != _separationStrategy &&
-          null != _recognizedStructure &&
-          null != _numberFormatCulture &&
-          null != _dateTimeFormatCulture;
+          _numberOfMainHeaderLines is not null &&
+          _indexOfCaptionLine is not null &&
+          _separationStrategy is not null &&
+          _recognizedStructure is not null &&
+          _numberFormatCulture is not null &&
+          _dateTimeFormatCulture is not null;
       }
     }
 
@@ -225,7 +225,7 @@ namespace Altaxo.Serialization.Ascii
         return true;
 
       var from = obj as AsciiImportOptions;
-      if (null != from)
+      if (from is not null)
       {
         using (var suspendToken = SuspendGetToken())
         {
@@ -237,13 +237,13 @@ namespace Altaxo.Serialization.Ascii
 
           IndexOfCaptionLine = from.IndexOfCaptionLine;
 
-          SeparationStrategy = null == from.SeparationStrategy ? null : (IAsciiSeparationStrategy)from.SeparationStrategy.Clone();
+          SeparationStrategy = from.SeparationStrategy is null ? null : (IAsciiSeparationStrategy)from.SeparationStrategy.Clone();
 
-          NumberFormatCulture = null == from.NumberFormatCulture ? null : (System.Globalization.CultureInfo)from.NumberFormatCulture.Clone();
+          NumberFormatCulture = from.NumberFormatCulture is null ? null : (System.Globalization.CultureInfo)from.NumberFormatCulture.Clone();
 
-          DateTimeFormatCulture = null == from.DateTimeFormatCulture ? null : (System.Globalization.CultureInfo)from.DateTimeFormatCulture.Clone();
+          DateTimeFormatCulture = from.DateTimeFormatCulture is null ? null : (System.Globalization.CultureInfo)from.DateTimeFormatCulture.Clone();
 
-          RecognizedStructure = from.RecognizedStructure == null ? null : from.RecognizedStructure;
+          RecognizedStructure = from.RecognizedStructure is null ? null : from.RecognizedStructure;
 
           ImportMultipleStreamsVertically = from.ImportMultipleStreamsVertically;
 

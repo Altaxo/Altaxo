@@ -52,7 +52,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public XYFunctionPlotDataBase(XYFunctionPlotDataBase from)
     {
-      if (null == from)
+      if (from is null)
         throw new ArgumentNullException(nameof(from));
 
       CopyFrom(from);

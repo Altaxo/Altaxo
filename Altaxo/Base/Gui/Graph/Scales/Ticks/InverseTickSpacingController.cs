@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       base.Initialize(initData);
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.MajorTicks = GUIConversion.ToString(_doc.MajorTickSpan);
         _view.MinorTicks = _doc.MinorTicks;

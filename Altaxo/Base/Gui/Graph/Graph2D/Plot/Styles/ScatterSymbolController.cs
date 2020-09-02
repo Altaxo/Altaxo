@@ -101,13 +101,13 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
         _shapes = new SelectableListNodeList(shapes.Select(tuple => new SelectableListNode(tuple.Item1, tuple.Item2, _doc.GetType() == tuple.Item2)));
 
         _frames = new SelectableListNodeList(frames.Select(tuple => new SelectableListNode(tuple.Item1, tuple.Item2, _doc.Frame?.GetType() == tuple.Item2)));
-        _frames.Insert(0, new SelectableListNode("None", null, _doc.Frame == null));
+        _frames.Insert(0, new SelectableListNode("None", null, _doc.Frame is null));
 
         _insets = new SelectableListNodeList(insets.Select(tuple => new SelectableListNode(tuple.Item1, tuple.Item2, _doc.Inset?.GetType() == tuple.Item2)));
-        _insets.Insert(0, new SelectableListNode("None", null, _doc.Inset == null));
+        _insets.Insert(0, new SelectableListNode("None", null, _doc.Inset is null));
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.ShapeChoices = _shapes;
         _view.FrameChoices = _frames;
@@ -172,7 +172,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     private void EhInsetColorChanged(NamedColor obj)
     {
-      if (null != _doc.Inset)
+      if (_doc.Inset is not null)
       {
         _doc = _doc.WithInset(_doc.Inset.WithColor(obj));
         _view.ScatterSymbolForPreview = _doc;
@@ -181,7 +181,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 
     private void EhFrameColorChanged(NamedColor obj)
     {
-      if (null != _doc.Frame)
+      if (_doc.Frame is not null)
       {
         _doc = _doc.WithFrame(_doc.Frame.WithColor(obj));
         _view.ScatterSymbolForPreview = _doc;
@@ -205,8 +205,8 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
       if (_doc.Inset?.GetType() == obj)
         return;
 
-      var inset = obj == null ? null : (IScatterSymbolInset)Activator.CreateInstance(obj);
-      if (null != inset && null != _doc.Inset)
+      var inset = obj is null ? null : (IScatterSymbolInset)Activator.CreateInstance(obj);
+      if (inset is not null && _doc.Inset is not null)
         inset = inset.WithColor(_doc.Inset.Color);
 
       _doc = _doc.WithInset(inset);
@@ -214,7 +214,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
       // Update Gui
       _insets.ForEachDo(node => node.IsSelected = _doc.Inset?.GetType() == (Type)node.Tag);
       _view.InsetChoices = _insets;
-      if (null != _doc.Inset)
+      if (_doc.Inset is not null)
         _view.InsetColor = _doc.Inset.Color;
 
       _view.ScatterSymbolForPreview = _doc;
@@ -225,8 +225,8 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
       if (_doc.Frame?.GetType() == obj)
         return;
 
-      var frame = obj == null ? null : (IScatterSymbolFrame)Activator.CreateInstance(obj);
-      if (null != frame && null != _doc.Frame)
+      var frame = obj is null ? null : (IScatterSymbolFrame)Activator.CreateInstance(obj);
+      if (frame is not null && _doc.Frame is not null)
         frame = frame.WithColor(_doc.Frame.Color);
 
       _doc = _doc.WithFrame(frame);
@@ -234,7 +234,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
       _frames.ForEachDo(node => node.IsSelected = _doc.Frame?.GetType() == (Type)node.Tag);
       _view.FrameChoices = _frames;
 
-      if (null != _doc.Frame)
+      if (_doc.Frame is not null)
         _view.FrameColor = _doc.Frame.Color;
 
       _view.ScatterSymbolForPreview = _doc;
@@ -248,9 +248,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
         .WithPlotColorInfluence(_doc.PlotColorInfluence)
         .WithFillColor(_doc.FillColor);
 
-      if (_doc.Frame != null)
+      if (_doc.Frame is not null)
         newItem = newItem.WithFrame(_doc.Frame);
-      if (_doc.Inset != null)
+      if (_doc.Inset is not null)
         newItem = newItem.WithInset(_doc.Inset);
 
       _doc = newItem;
@@ -264,9 +264,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
       _view.InsetChoices = _insets;
       _view.PlotColorInfluence = _doc.PlotColorInfluence;
 
-      if (_doc.Frame != null)
+      if (_doc.Frame is not null)
         _view.FrameColor = _doc.Frame.Color;
-      if (_doc.Inset != null)
+      if (_doc.Inset is not null)
         _view.InsetColor = _doc.Inset.Color;
 
       _view.ScatterSymbolForPreview = _doc;

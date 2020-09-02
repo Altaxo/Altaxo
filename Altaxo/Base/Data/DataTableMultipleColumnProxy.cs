@@ -162,7 +162,7 @@ namespace Altaxo.Data
 
       protected virtual DataTableMultipleColumnProxy SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new DataTableMultipleColumnProxy() : (DataTableMultipleColumnProxy)o);
+        var s = (o is null ? new DataTableMultipleColumnProxy() : (DataTableMultipleColumnProxy)o);
 
         s.InternalSetDataTable((DataTableProxy)info.GetValue("Table", s));
         s._groupNumber = info.GetInt32("Group");
@@ -249,7 +249,7 @@ namespace Altaxo.Data
     /// <exception cref="System.ArgumentNullException">table must not be null.</exception>
     public DataTableMultipleColumnProxy(DataTable table, int groupNumber)
     {
-      if (null == table)
+      if (table is null)
         throw new ArgumentNullException("table");
 
       _dataTable = new DataTableProxy(table) { ParentObject = this };
@@ -268,10 +268,10 @@ namespace Altaxo.Data
     /// <exception cref="System.ArgumentNullException">table must not be null.</exception>
     public DataTableMultipleColumnProxy(string identifier, DataTable table, IAscendingIntegerCollection? selectedDataRows, IAscendingIntegerCollection? selectedDataColumns)
     {
-      if (null == identifier)
+      if (identifier is null)
         throw new ArgumentNullException("identifier");
 
-      if (null == table)
+      if (table is null)
         throw new ArgumentNullException("table");
 
       _dataColumnBundles = new Dictionary<string, ColumnBundleInfo>();
@@ -280,14 +280,14 @@ namespace Altaxo.Data
 
       _groupNumber = 0;
 
-      if (null != selectedDataColumns && selectedDataColumns.Count > 0)
+      if (selectedDataColumns is not null && selectedDataColumns.Count > 0)
         _groupNumber = table.DataColumns.GetColumnGroup(table[selectedDataColumns[0]]);
 
       var bundle = new ColumnBundleInfo();
       _dataColumnBundles.Add(identifier, bundle);
 
       int maxRowCount = 0;
-      if (selectedDataColumns != null && selectedDataColumns.Count > 0)
+      if (selectedDataColumns is not null && selectedDataColumns.Count > 0)
       {
         for (int i = 0; i < selectedDataColumns.Count; ++i)
         {
@@ -351,7 +351,7 @@ namespace Altaxo.Data
     /// </summary>
     private void InternalClearDataColumnBundles()
     {
-      if (null == _dataColumnBundles)
+      if (_dataColumnBundles is null)
         return;
 
       var arr = _dataColumnBundles.ToArray();
@@ -382,7 +382,7 @@ namespace Altaxo.Data
     /// <param name="proxy">The proxy.</param>
     private void InternalAddDataColumnNoClone(ColumnBundleInfo info, IReadableColumnProxy proxy)
     {
-      if (null != proxy)
+      if (proxy is not null)
       {
         info.DataColumns.Add(proxy);
         proxy.ParentObject = this;
@@ -398,7 +398,7 @@ namespace Altaxo.Data
     {
       var col = bundle.DataColumns[idx];
       bundle.DataColumns.RemoveAt(idx);
-      if (null != col)
+      if (col is not null)
         col.Dispose();
     }
 
@@ -408,7 +408,7 @@ namespace Altaxo.Data
     /// <param name="fromList">The enumeration of data proxies to clone.</param>
     private void InternalSetDataColumnsWithCloning(Dictionary<string, ColumnBundleInfo> fromList)
     {
-      if (null != _dataColumnBundles)
+      if (_dataColumnBundles is not null)
       {
         InternalClearDataColumnBundles();
       }
@@ -441,7 +441,7 @@ namespace Altaxo.Data
     /// <param name="fromList">The enumeration of data proxies to clone.</param>
     private void InternalSetDataColumnsWithCloning(ColumnBundleInfo bundle, IEnumerable<IReadableColumnProxy> fromList)
     {
-      if (null == bundle)
+      if (bundle is null)
         throw new ArgumentNullException("bundle");
 
       InternalClearDataColumns(bundle);
@@ -505,7 +505,7 @@ namespace Altaxo.Data
 
     public void EnsureExistenceOfIdentifier(string identifier, int maximumNumberOfColumns)
     {
-      if (null == identifier)
+      if (identifier is null)
         throw new ArgumentNullException("identifier");
       if (!_dataColumnBundles.ContainsKey(identifier))
         _dataColumnBundles.Add(identifier, new ColumnBundleInfo(maximumNumberOfColumns));
@@ -523,7 +523,7 @@ namespace Altaxo.Data
     /// <param name="column">Column to add. Must have ColumnKind.V and a group number equal to <see cref="GroupNumber"/>. Otherwise, this column will be removed in the next call to <see cref="Update"/>.</param>
     public void AddDataColumn(string identifier, IReadableColumn column)
     {
-      if (null == identifier)
+      if (identifier is null)
         throw new ArgumentNullException("identifier");
 
       if (identifier == "" && !_dataColumnBundles.ContainsKey(identifier))
@@ -534,7 +534,7 @@ namespace Altaxo.Data
 
       var bundle = _dataColumnBundles[identifier];
 
-      if (null != column)
+      if (column is not null)
       {
         InternalAddDataColumnNoClone(bundle, ReadableColumnProxyBase.FromColumn(column));
         _isDirty = true;
@@ -553,9 +553,9 @@ namespace Altaxo.Data
     /// </exception>
     public void SetDataColumn(string identifier, DataColumn column)
     {
-      if (null == identifier)
+      if (identifier is null)
         throw new ArgumentNullException("identifier");
-      if (null == column)
+      if (column is null)
         throw new ArgumentNullException("column");
 
       SetDataColumns(identifier, new IReadableColumnProxy[] { ReadableColumnProxyBase.FromColumn(column) });
@@ -573,9 +573,9 @@ namespace Altaxo.Data
     /// </exception>
     public void SetDataColumns(string identifier, IEnumerable<DataColumn> columns)
     {
-      if (null == identifier)
+      if (identifier is null)
         throw new ArgumentNullException("identifier");
-      if (null == columns)
+      if (columns is null)
         throw new ArgumentNullException("column");
 
       SetDataColumns(identifier, columns.Select(column => ReadableColumnProxyBase.FromColumn(column)));
@@ -588,7 +588,7 @@ namespace Altaxo.Data
     /// <param name="dataColumnProxies">The enumeration of data column proxies. The proxies will be cloned before they are added to the data column collection.</param>
     public void SetDataColumns(string identifier, IEnumerable<IReadableColumnProxy> dataColumnProxies)
     {
-      if (null == identifier)
+      if (identifier is null)
         throw new ArgumentNullException("identifier");
 
       if (identifier == "" && !_dataColumnBundles.ContainsKey(identifier))
@@ -612,7 +612,7 @@ namespace Altaxo.Data
     /// <exception cref="System.ArgumentNullException"></exception>
     public bool ContainsIdentifier(string identifier)
     {
-      if (null == identifier)
+      if (identifier is null)
         throw new ArgumentNullException();
 
       return _dataColumnBundles.ContainsKey(identifier);
@@ -629,7 +629,7 @@ namespace Altaxo.Data
       if (_isDirty)
         Update();
 
-      if (null == identifier)
+      if (identifier is null)
         throw new ArgumentNullException();
 
       if (!_dataColumnBundles.ContainsKey(identifier))
@@ -648,7 +648,7 @@ namespace Altaxo.Data
       if (_isDirty)
         Update();
 
-      if (null == identifier)
+      if (identifier is null)
         throw new ArgumentNullException();
 
       if (!_dataColumnBundles.ContainsKey(identifier))
@@ -669,7 +669,7 @@ namespace Altaxo.Data
       if (_isDirty)
         Update();
 
-      if (null == identifier)
+      if (identifier is null)
         throw new ArgumentNullException();
       if (!_dataColumnBundles.ContainsKey(identifier))
         throw new InvalidOperationException(string.Format("The identifier {0} is not contained in this collection", identifier));
@@ -691,7 +691,7 @@ namespace Altaxo.Data
       if (_isDirty)
         Update();
 
-      if (null == identifier)
+      if (identifier is null)
         throw new ArgumentNullException();
       if (!_dataColumnBundles.ContainsKey(identifier))
         throw new InvalidOperationException(string.Format("The identifier {0} is not contained in this collection", identifier));
@@ -788,11 +788,11 @@ namespace Altaxo.Data
           }
 
           var c = dataColumns[i].Document() as DataColumn;
-          if (c == null)
+          if (c is null)
             continue; // not yet resolved, leave it as it is
 
           var coll = DataColumnCollection.GetParentDataColumnCollectionOf(c);
-          if (null == coll || !object.ReferenceEquals(coll, tableDataColumns))
+          if (coll is null || !object.ReferenceEquals(coll, tableDataColumns))
           {
             InternalRemoveDataColumnAt(bundle, i);
             continue;
@@ -885,10 +885,10 @@ namespace Altaxo.Data
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataTable)
+      if (_dataTable is not null)
         yield return new Main.DocumentNodeAndName(_dataTable, "DataTable");
 
-      if (null != _dataColumnBundles)
+      if (_dataColumnBundles is not null)
       {
         foreach (var entry in _dataColumnBundles)
         {

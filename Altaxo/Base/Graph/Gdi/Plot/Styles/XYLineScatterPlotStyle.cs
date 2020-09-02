@@ -194,18 +194,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        if (m_LineStyle != null)
+        if (m_LineStyle is not null)
           return m_LineStyle.LinePen.Color;
-        if (m_ScatterStyle != null)
+        if (m_ScatterStyle is not null)
           return m_ScatterStyle.Color;
         else
           return NamedColors.Black;
       }
       set
       {
-        if (m_LineStyle != null)
+        if (m_LineStyle is not null)
           m_LineStyle.LinePen = m_LineStyle.LinePen.WithColor(value);
-        if (m_ScatterStyle != null)
+        if (m_ScatterStyle is not null)
           m_ScatterStyle.Color = value;
       }
     }
@@ -229,7 +229,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return (float)(null == m_ScatterStyle ? 0 : m_ScatterStyle.SymbolSize);
+        return (float)(m_ScatterStyle is null ? 0 : m_ScatterStyle.SymbolSize);
       }
     }
 

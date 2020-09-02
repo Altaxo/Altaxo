@@ -129,7 +129,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
         }
       }
 
-      if (null != symbolGap) // circular with symbol gap
+      if (symbolGap is not null) // circular with symbol gap
       {
         var realSkipFrequency = skipFrequency % 3 == 0 ? skipFrequency : skipFrequency * 3; // least common multiple of skipFrequency and 3
         var skipLinePoints = new PointF[0];
@@ -157,7 +157,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
               shortenedLinePoints = skipLinePoints;
             }
 
-            if (null != shortenedLinePoints)
+            if (shortenedLinePoints is not null)
             {
               g.DrawBeziers(linePen, shortenedLinePoints);
             }

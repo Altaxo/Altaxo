@@ -48,7 +48,7 @@ namespace Altaxo.Main.Services
 
       // entryAssembly == null might happen in unit test mode
       var entryAssembly = Assembly.GetEntryAssembly();
-      if (entryAssembly != null)
+      if (entryAssembly is not null)
       {
         string exeName = entryAssembly.Location;
         dict["exe"] = new PropertyObjectTagProvider(FileVersionInfo.GetVersionInfo(exeName));
@@ -79,7 +79,7 @@ namespace Altaxo.Main.Services
 
     public static void RegisterStringTagProvider(IStringTagProvider tagProvider)
     {
-      if (tagProvider == null)
+      if (tagProvider is null)
         throw new ArgumentNullException("tagProvider");
       stringTagProviders.Push(tagProvider);
     }
@@ -176,7 +176,7 @@ namespace Altaxo.Main.Services
       if (propertyName == "$")
         return "$";
 
-      if (customTags != null)
+      if (customTags is not null)
       {
         foreach (StringTagPair pair in customTags)
         {
@@ -210,7 +210,7 @@ namespace Altaxo.Main.Services
         foreach (IStringTagProvider provider in stringTagProviders)
         {
           var result = provider.ProvideString(propertyName, customTags);
-          if (result != null)
+          if (result is not null)
             return result;
         }
 
@@ -226,7 +226,7 @@ namespace Altaxo.Main.Services
         if (propertyName.StartsWith("res:", StringComparison.OrdinalIgnoreCase))
         {
           var resourceService = Current.ResourceService;
-          if (resourceService == null)
+          if (resourceService is null)
             return null;
           try
           {

@@ -56,7 +56,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ParameterSet s = o != null ? (ParameterSet)o : new ParameterSet();
+        ParameterSet s = o is not null ? (ParameterSet)o : new ParameterSet();
 
         int arraycount = info.OpenArray();
         for (int i = 0; i < arraycount; ++i)

@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Graph.Gdi.CS
     {
       base.Initialize(initData);
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.ExchangeXY = _doc.IsXYInterchanged;
         _view.ReverseX = _doc.IsXReverse;

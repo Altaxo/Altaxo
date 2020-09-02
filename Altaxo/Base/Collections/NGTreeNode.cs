@@ -168,7 +168,7 @@ namespace Altaxo.Collections
         }
 
         // Expand all the way up to the root.
-        if (_isExpanded && _parent != null)
+        if (_isExpanded && _parent is not null)
           _parent.IsExpanded = true;
 
         // Lazy load the child items, if necessary.
@@ -243,7 +243,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        return _nodes != null && _nodes.Count > 0;
+        return _nodes is not null && _nodes.Count > 0;
       }
     }
 
@@ -381,7 +381,7 @@ namespace Altaxo.Collections
       for (int i = 0; i < nodes.Length; i++)
       {
         bool isContained = false;
-        for (var currNode = nodes[i].ParentNode; currNode != null; currNode = currNode.ParentNode)
+        for (var currNode = nodes[i].ParentNode; currNode is not null; currNode = currNode.ParentNode)
         {
           if (hash.Contains(currNode))
           {
@@ -423,7 +423,7 @@ namespace Altaxo.Collections
     public static bool HaveSameParent(IEnumerable<NGTreeNode> nodes)
     {
       var firstNode = nodes.FirstOrDefault();
-      if (firstNode == null)
+      if (firstNode is null)
         return true;
 
       var parent = firstNode.ParentNode;
@@ -487,7 +487,7 @@ namespace Altaxo.Collections
         if (set.Contains(node)) // ignore those nodes that are removed from the set
         {
           var par = node;
-          while (null != (par = FindFirstSelectedNodeParent(par)))
+          while ((par = FindFirstSelectedNodeParent(par)) is not null)
           {
             set.Remove(par);
           }
@@ -560,7 +560,7 @@ namespace Altaxo.Collections
     /// </remarks>
     public static void MoveUpDown(int iDelta, NGTreeNode[] selNodes)
     {
-      if (iDelta == 0 || selNodes == null || selNodes.Length == 0)
+      if (iDelta == 0 || selNodes is null || selNodes.Length == 0)
         return;
 
       selNodes = FilterLowestLevelNodes(selNodes);
@@ -571,7 +571,7 @@ namespace Altaxo.Collections
         throw new InvalidOperationException();
 
       var parent = selNodes[0].ParentNode;
-      if (parent == null)
+      if (parent is null)
         throw new ArgumentException("Parent of the nodes is null");
 
       SortByOrder(selNodes);
@@ -649,7 +649,7 @@ namespace Altaxo.Collections
 
       protected override void InsertItem(int index, NGTreeNode item)
       {
-        if (item._parent != null && !object.ReferenceEquals(item._parent, _parent))
+        if (item._parent is not null && !object.ReferenceEquals(item._parent, _parent))
           throw new ApplicationException("Parent of the node is not null. Please remove the node before adding it");
         item._parent = _parent;
         base.InsertItem(index, item);
@@ -657,7 +657,7 @@ namespace Altaxo.Collections
 
       protected override void SetItem(int index, NGTreeNode item)
       {
-        if (item._parent != null && !object.ReferenceEquals(item._parent, _parent))
+        if (item._parent is not null && !object.ReferenceEquals(item._parent, _parent))
           throw new ApplicationException("Parent of the node is not null. Please remove the node before adding it");
         item._parent = _parent;
         base.SetItem(index, item);

@@ -93,7 +93,7 @@ namespace Altaxo.Main.Properties
     public PropertyKey(string guidString, string propertyName, PropertyLevel applicationLevel, Type? applicationItemType, Func<T>? CreateBuiltinValue)
       : base(typeof(T), guidString, propertyName, applicationLevel, applicationItemType)
     {
-      if (null != CreateBuiltinValue && null != Current.PropertyService)
+      if (CreateBuiltinValue is not null && Current.PropertyService is not null)
       {
         T value = CreateBuiltinValue();
         Current.PropertyService.BuiltinSettings.SetValue(this, value);
@@ -106,7 +106,7 @@ namespace Altaxo.Main.Properties
     /// <param name="value">The property value that should be applied.</param>
     public void ApplyProperty(T value)
     {
-      if (null != _applicationOfProperty)
+      if (_applicationOfProperty is not null)
         _applicationOfProperty(value);
     }
 
@@ -128,7 +128,7 @@ namespace Altaxo.Main.Properties
     /// </value>
     public override bool CanCreateEditingController
     {
-      get { return null != _editingControllerCreation; }
+      get { return _editingControllerCreation is not null; }
     }
 
     /// <summary>
@@ -138,7 +138,7 @@ namespace Altaxo.Main.Properties
     /// <returns>The Gui controller used to edit this value, or null if such a controller could not be created, or the <see cref="EditingControllerCreation"/> value was not set.</returns>
     public virtual Gui.IMVCANController? CreateEditingController(T originalValue)
     {
-      if (null != _editingControllerCreation)
+      if (_editingControllerCreation is not null)
       {
         return _editingControllerCreation(originalValue);
       }
@@ -183,7 +183,7 @@ namespace Altaxo.Main.Properties
         if (value is null)
           throw new ArgumentNullException();
 
-        if (null != _applicationOfProperty)
+        if (_applicationOfProperty is not null)
           throw new InvalidOperationException("Application action was already set. It is not allowed to set it again!");
 
         _applicationOfProperty = value;

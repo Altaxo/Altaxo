@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Main.Services
       {
         _logText.Append(text);
 
-        if (null != _view)
+        if (_view is not null)
           _view.SetText(_logText.ToString());
       }
     }
@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Main.Services
 
     private void Initialize(bool initData)
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.SetText(_logText.ToString());
       }
@@ -115,14 +115,14 @@ namespace Altaxo.Gui.Main.Services
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.EnabledChanged -= EhEnabledChanged;
         }
 
         _view = (IOutputView?)value;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           _view.EnabledChanged += EhEnabledChanged;

@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         if (y.HasValue)
           destinationSizeRootCoord = destinationSizeRootCoord.WithY(y.Value);
 
-        if (null != hit)
+        if (hit is not null)
         {
           if (!hit.AutoSize)
           {

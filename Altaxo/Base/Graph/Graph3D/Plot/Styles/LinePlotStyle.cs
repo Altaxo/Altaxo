@@ -211,7 +211,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       if (object.ReferenceEquals(this, obj))
         return true;
       var from = obj as LinePlotStyle;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, Main.EventFiring.Enabled);
         return true;
@@ -297,7 +297,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       get { return _connectionStyle; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(value, _connectionStyle))
@@ -498,7 +498,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public virtual void PaintLine(IGraphicsContext3D g, PointD3D beg, PointD3D end)
     {
-      if (null != _linePen)
+      if (_linePen is not null)
       {
         g.DrawLine(_linePen, beg, end);
       }
@@ -544,7 +544,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       if (_useSymbolGap)
       {
-        if (null != _cachedSymbolSizeForIndexFunction && !_independentSymbolSize)
+        if (_cachedSymbolSizeForIndexFunction is not null && !_independentSymbolSize)
         {
           symbolGapFunction = (idx) => _symbolGapOffset + _symbolGapFactor * _cachedSymbolSizeForIndexFunction(idx);
         }

@@ -108,7 +108,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       }
       set
       {
-        if (value != null)
+        if (value is not null)
           _getXPhysical = value;
         else
           _getXPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
@@ -125,7 +125,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       }
       set
       {
-        if (value != null)
+        if (value is not null)
           _getYPhysical = value;
         else
           _getYPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
@@ -142,7 +142,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       }
       set
       {
-        if (value != null)
+        if (value is not null)
           _getZPhysical = value;
         else
           _getZPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);

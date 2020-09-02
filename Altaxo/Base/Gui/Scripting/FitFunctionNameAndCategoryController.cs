@@ -132,7 +132,7 @@ namespace Altaxo.Gui.Scripting
     protected override void AttachView()
     {
       base.AttachView();
-      if (null != _innerController)
+      if (_innerController is not null)
       {
         _innerController.ViewObject = _view;
       }
@@ -140,7 +140,7 @@ namespace Altaxo.Gui.Scripting
 
     protected override void DetachView()
     {
-      if (null != _innerController)
+      if (_innerController is not null)
       {
         _innerController.ViewObject = null;
       }

@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       yield return new ControllerAndSetNullMethod(_coordinateController, () => _coordinateController = null);
       yield return new ControllerAndSetNullMethod(_layerPositionController, () => _layerPositionController = null);
 
-      if (null != _axisControl)
+      if (_axisControl is not null)
       {
         foreach (var item in _axisControl.Values)
         {
@@ -119,7 +119,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     public override bool InitializeDocument(params object[] args)
     {
-      if (args != null)
+      if (args is not null)
       {
         if (args.Length > 1 && args[1] is string)
           _currentPageName = (string)args[1];
@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         };
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         // add all necessary Tabs
         _view.AddTab("Scale", "Scale");
@@ -229,7 +229,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
             _view.SelectTab(_currentPageName);
             SetSecondaryChoiceToUnique();
           }
-          if (null == _coordinateController)
+          if (_coordinateController is null)
           {
             _coordinateController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.CoordinateSystem }, typeof(IMVCAController), UseDocument.Directly);
           }
@@ -242,7 +242,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
           {
             _view.SelectTab(_currentPageName);
           }
-          if (null == _layerPositionController)
+          if (_layerPositionController is null)
           {
             _layerPositionController = new ItemLocationDirectController() { UseDocumentCopy = UseDocument.Directly };
             _layerPositionController.InitializeDocument(_doc.Location);
@@ -258,7 +258,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
             _view.SelectTab(_currentPageName);
             SetSecondaryChoiceToScales();
           }
-          if (_axisScaleController == null)
+          if (_axisScaleController is null)
           {
             _axisScaleController = new ScaleWithTicksController(null, true) { UseDocumentCopy = UseDocument.Directly };
             _axisScaleController.InitializeDocument(_doc.ScaleWithTicks);
@@ -420,7 +420,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private bool ApplyCurrentController(bool force)
     {
-      if (_currentController == null)
+      if (_currentController is null)
         return true;
 
       if (!force && object.ReferenceEquals(_currentController, _lastControllerApplied))
@@ -475,7 +475,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     public static bool EhLayerPositionEdit(IHitTestObject hit)
     {
       var layer = hit.HittedObject as DensityImageLegend;
-      if (layer == null)
+      if (layer is null)
         return false;
 
       ShowDialog(layer, "Position");

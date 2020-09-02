@@ -93,7 +93,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       if (isCopied && !object.ReferenceEquals(this, obj))
       {
         var from = obj as DateTimeLabelFormatting;
-        if (null != from)
+        if (from is not null)
         {
           _formatString = from._formatString;
           _formatStringAlternate = from._formatStringAlternate;

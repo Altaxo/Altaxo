@@ -177,7 +177,7 @@ namespace Altaxo.Data
     {
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("MatrixGenerator");
 
         _matrixGenerator = value;
@@ -475,7 +475,7 @@ namespace Altaxo.Data
       if (!_executionDone)
         throw new InvalidOperationException("RowHeaderVector is not known yet, thus row spacing is not known. Please call Execute first.");
 
-      if (null == _rowHeaderVector)
+      if (_rowHeaderVector is null)
       {
         errorMessage = "A row header was not selected, or the selected column is not a numeric column. Thus row spacing could not be evaluated.";
         rowSpacing = double.NaN;
@@ -497,7 +497,7 @@ namespace Altaxo.Data
       if (!_executionDone)
         throw new InvalidOperationException("ColumnHeaderVector is not known yet, thus row spacing is not known. Please call Execute first.");
 
-      if (null == _columnHeaderVector)
+      if (_columnHeaderVector is null)
       {
         errorMessage = "A column header was not selected, or the selected column is not a numeric column. Thus column spacing could not be evaluated.";
         columnSpacing = double.NaN;
@@ -578,7 +578,7 @@ namespace Altaxo.Data
 
       // find out if there is a y property column or not
       _columnHeaderColumn = null;
-      if (null != _selectedPropertyColumns && _selectedPropertyColumns.Count > 0)
+      if (_selectedPropertyColumns is not null && _selectedPropertyColumns.Count > 0)
       {
         // then use the first numeric column as y column that you find
         for (int i = 0; i < _selectedPropertyColumns.Count; i++)
@@ -591,7 +591,7 @@ namespace Altaxo.Data
         }
       }
 
-      if (null != _columnHeaderColumn)
+      if (_columnHeaderColumn is not null)
       {
         double[] arr = new double[_participatingDataColumns.Count];
         for (int i = 0; i < _participatingDataColumns.Count; ++i)
@@ -618,7 +618,7 @@ namespace Altaxo.Data
       DataColumn? xcol = _sourceTable.DataColumns.FindXColumnOfGroup(group);
       _rowHeaderColumn = xcol as INumericColumn;
 
-      if (null != _rowHeaderColumn)
+      if (_rowHeaderColumn is not null)
       {
         double[] arr = new double[_participatingDataRows.Count];
         for (int i = 0; i < _participatingDataRows.Count; ++i)
@@ -681,7 +681,7 @@ namespace Altaxo.Data
     {
       var result = new AscendingIntegerCollection();
 
-      if (null != selectedRows && selectedRows.Count > 0)
+      if (selectedRows is not null && selectedRows.Count > 0)
       {
         result.Add(selectedRows);
       }
@@ -750,7 +750,7 @@ namespace Altaxo.Data
 
       _resultingMatrix = _matrixGenerator(numRows, numColumns);
 
-      if (null == _resultingMatrix || _resultingMatrix.RowCount != numRows || _resultingMatrix.ColumnCount != numColumns)
+      if (_resultingMatrix is null || _resultingMatrix.RowCount != numRows || _resultingMatrix.ColumnCount != numColumns)
         throw new InvalidOperationException("The matrix generator worked not as expected. Either the generated matrix is null, or the dimensions of the returned matrix deviate from the provided dimensions.");
 
       // fill the real part with the table contents

@@ -123,7 +123,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     public static int GetIndexOfAvailableNamesPlusCustom(G3DPlotStyleCollection coll)
     {
       string name = GetName(coll);
-      if (null == name)
+      if (name is null)
         return 0;
 
       int result = _NamesInOrder.IndexOf(name);

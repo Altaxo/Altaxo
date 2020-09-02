@@ -58,11 +58,11 @@ namespace Altaxo.Gui.Common
       Func<TModel> DocumentCreationActionForDisabledState,
       Func<TModel, UseDocument, IMVCANController?> ControllerCreationAction)
     {
-      if (null == DocumentCreationActionForEnabledState)
+      if (DocumentCreationActionForEnabledState is null)
         throw new ArgumentNullException("CreationAction");
-      if (null == DocumentCreationActionForDisabledState)
+      if (DocumentCreationActionForDisabledState is null)
         throw new ArgumentNullException("CreationAction2");
-      if (null == ControllerCreationAction)
+      if (ControllerCreationAction is null)
         throw new ArgumentNullException("ControllerCreationAction");
 
       _documentCreationActionForEnabledState = DocumentCreationActionForEnabledState;
@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Common
       set
       {
         _enablingText = value;
-        if (null != _view && null != _enablingText)
+        if (_view is not null && _enablingText is not null)
           _view.EnablingText = value;
       }
     }
@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Common
     /// </returns>
     public bool InitializeDocument(params object[] args)
     {
-      if (null != args && args.Length >= 1 && null != args[0] && (args[0] is TModel))
+      if (args is not null && args.Length >= 1 && args[0] is not null && (args[0] is TModel))
       {
         _controllerForEnabledState = _controllerCreationAction((TModel)args[0], _useDocumentCopy);
         _isInEnabledState = true;
@@ -113,7 +113,7 @@ namespace Altaxo.Gui.Common
         _isInEnabledState = false;
       }
 
-      if (null != args && args.Length >= 2 && null != args[1] && (args[1] is TModel))
+      if (args is not null && args.Length >= 2 && args[1] is not null && (args[1] is TModel))
       {
         _controllerForDisabledState = _controllerCreationAction((TModel)args[1], _useDocumentCopy);
       }
@@ -127,9 +127,9 @@ namespace Altaxo.Gui.Common
       set
       {
         _useDocumentCopy = value;
-        if (null != _controllerForEnabledState)
+        if (_controllerForEnabledState is not null)
           _controllerForEnabledState.UseDocumentCopy = value;
-        if (null != _controllerForDisabledState)
+        if (_controllerForDisabledState is not null)
           _controllerForDisabledState.UseDocumentCopy = value;
       }
     }
@@ -142,13 +142,13 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
         {
           _view.ConditionalViewEnabledChanged -= EhViewEnabledChanged;
         }
         _view = value as IConditionalDocumentView;
 
-        if (_view != null)
+        if (_view is not null)
         {
           Initialize(false);
           _view.ConditionalViewEnabledChanged += EhViewEnabledChanged;
@@ -177,7 +177,7 @@ namespace Altaxo.Gui.Common
 
     public bool Apply(bool disposeController)
     {
-      if (null != _controllerForEnabledState)
+      if (_controllerForEnabledState is not null)
         return _controllerForEnabledState.Apply(disposeController);
       else
         return true;
@@ -197,9 +197,9 @@ namespace Altaxo.Gui.Common
 
     private void Initialize(bool initData)
     {
-      if (null != _view)
+      if (_view is not null)
       {
-        if (null != _enablingText)
+        if (_enablingText is not null)
           _view.EnablingText = _enablingText;
 
         if (_isInEnabledState)
@@ -217,7 +217,7 @@ namespace Altaxo.Gui.Common
 
     private void EhViewEnabledChanged()
     {
-      if (null != _view)
+      if (_view is not null)
         AnnounceEnabledChanged(_view.IsConditionalViewEnabled);
     }
 
@@ -228,36 +228,36 @@ namespace Altaxo.Gui.Common
 
       if (enableState)
       {
-        if (null != _controllerForEnabledState)
+        if (_controllerForEnabledState is not null)
         {
-          if (null != _view)
+          if (_view is not null)
             _view.ConditionalView = _controllerForEnabledState.ViewObject;
         }
         else // document and controller have to be constructed
         {
           TModel document = _documentCreationActionForEnabledState();
           _controllerForEnabledState = _controllerCreationAction(document, _useDocumentCopy);
-          if (null != _view)
+          if (_view is not null)
             _view.ConditionalView = _controllerForEnabledState?.ViewObject;
         }
       }
       else // disabled
       {
-        if (null != _controllerForDisabledState)
+        if (_controllerForDisabledState is not null)
         {
-          if (null != _view)
+          if (_view is not null)
             _view.ConditionalView = _controllerForDisabledState.ViewObject;
         }
         else // document and controller have to be constructed
         {
           TModel document = _documentCreationActionForDisabledState();
           _controllerForDisabledState = _controllerCreationAction(document, _useDocumentCopy);
-          if (null != _view)
+          if (_view is not null)
             _view.ConditionalView = _controllerForEnabledState?.ViewObject;
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.IsConditionalViewEnabled = enableState;
       }

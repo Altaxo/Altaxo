@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       if (isCopied && !object.ReferenceEquals(this, obj))
       {
         var from = obj as NumericLabelFormattingBase;
-        if (null != from)
+        if (from is not null)
         {
           _decimalPlaces = from._decimalPlaces;
         }

@@ -301,7 +301,7 @@ namespace Altaxo.Data
           return true; // we can create a double from a double (trivial) and from DateTime
         if (_typeOfContent == Content.VString) // if the content is a string, we have to look if it is possible to convert
           return Altaxo.Serialization.NumberConversion.IsNumeric((string?)_object);
-        else if (_object != null)
+        else if (_object is not null)
           return Altaxo.Serialization.NumberConversion.IsNumeric(_object.ToString());
         else
           return false; // it is not possible to convert the contents to a double
@@ -339,7 +339,7 @@ namespace Altaxo.Data
         return ((DateTime)_object!).Ticks / 10000000.0;
       else if (_typeOfContent == Content.VString)
         return System.Convert.ToDouble((string?)_object);
-      else if (_object != null)
+      else if (_object is not null)
         return System.Convert.ToDouble(_object.ToString());
       else
         throw new ApplicationException("Unable to convert the contents of this variant to a number, the contents is: " + ToString());
@@ -360,7 +360,7 @@ namespace Altaxo.Data
       {
         return bool.TryParse(_object as string ?? string.Empty, out var result) ? (bool?)result : null;
       }
-      else if (_object != null)
+      else if (_object is not null)
       {
         return bool.TryParse(_object.ToString(), out var result) ? (bool?)result : null;
       }
@@ -387,7 +387,7 @@ namespace Altaxo.Data
         if (double.TryParse((string?)_object, System.Globalization.NumberStyles.Float, Altaxo.Settings.GuiCulture.Instance, out double result))
           return result;
       }
-      else if (_object != null)
+      else if (_object is not null)
       {
         try
         {
@@ -414,7 +414,7 @@ namespace Altaxo.Data
         return (DateTime)_object!;
       else if (_typeOfContent == Content.VString)
         return System.Convert.ToDateTime((string?)_object);
-      else if (_object != null)
+      else if (_object is not null)
         return System.Convert.ToDateTime(_object.ToString());
       else
         throw new ApplicationException("Unable to convert the contents of this variant to a DateTime, the contents is: " + ToString());
@@ -426,7 +426,7 @@ namespace Altaxo.Data
         return "(null)";
       else if (_typeOfContent == Content.VDouble)
         return _double.ToString();
-      else if (null != _object)
+      else if (_object is not null)
         return _object.ToString() ?? string.Empty;
       else // everything is null
         return "";
@@ -444,7 +444,7 @@ namespace Altaxo.Data
           return ((DateTime)_object!).ToString(formatString, provider);
         else if (_typeOfContent == Content.VString)
           return ((string?)_object)?.ToString(provider) ?? string.Empty;
-        else if (null != _object)
+        else if (_object is not null)
           return _object.ToString() ?? string.Empty;
         else // everything is null
           return "";

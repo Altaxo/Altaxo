@@ -80,7 +80,7 @@ namespace Altaxo.Main.Services
         if (subtype == basetype)
           return true;
         else
-          return null != subtype.GetInterface(basetype.ToString());
+          return subtype.GetInterface(basetype.ToString()) is not null;
         //return Array.IndexOf(subtype.GetInterfaces(),basetype)>=0;
       }
       else
@@ -304,7 +304,7 @@ namespace Altaxo.Main.Services
 
       public int Count
       {
-        get { return _listOfTypes == null ? 0 : _listOfTypes.Count; }
+        get { return _listOfTypes is null ? 0 : _listOfTypes.Count; }
       }
     }
 
@@ -590,7 +590,7 @@ namespace Altaxo.Main.Services
         throw new ArgumentException(string.Format("Parameter {0} ({1}) is not a subclass or implements {2}", nameof(attributeType), attributeType, nameof(IClassForClassAttribute)), nameof(attributeType));
       }
 
-      System.Type myTargetType = overrideObjectType != null ? overrideObjectType : target.GetType();
+      System.Type myTargetType = overrideObjectType is not null ? overrideObjectType : target.GetType();
       return _classesHavingAttributeCollection[attributeType, myTargetType];
     }
 
@@ -685,7 +685,7 @@ namespace Altaxo.Main.Services
       int trueArgLen = creationArgs.Length;
       for (int i = 0; i < creationArgs.Length; i++)
       {
-        if (creationArgs[i] == null)
+        if (creationArgs[i] is null)
         {
           trueArgLen = i;
           break;
@@ -702,7 +702,7 @@ namespace Altaxo.Main.Services
 
         for (int j = trueArgLen; j >= 0; j--)
         {
-          if (creationTypes[j] == null)
+          if (creationTypes[j] is null)
           {
             creationTypes[j] = new Type[j];
             for (int k = j - 1; k >= 0; k--)
@@ -712,7 +712,7 @@ namespace Altaxo.Main.Services
           }
 
           ConstructorInfo? cinfo = definedType.GetConstructor(creationTypes[j]);
-          if (cinfo != null)
+          if (cinfo is not null)
           {
             object[]? chopped = null;
             if (j < creationArgs.Length)
@@ -723,7 +723,7 @@ namespace Altaxo.Main.Services
 
             result = cinfo.Invoke(j == creationArgs.Length ? creationArgs : chopped);
 
-            if (result != null)
+            if (result is not null)
               return result;
           }
         }
@@ -863,7 +863,7 @@ namespace Altaxo.Main.Services
 
       public void Sort()
       {
-        if (_list != null && _list.Count > 1 && _isSortable)
+        if (_list is not null && _list.Count > 1 && _isSortable)
           _list.Sort(new AttributeDictEntryComparer());
       }
 
@@ -897,7 +897,7 @@ namespace Altaxo.Main.Services
       {
         get
         {
-          if (_list != null)
+          if (_list is not null)
           {
             foreach (KeyValuePair<Attribute, Type> entry in _list)
               yield return entry.Value;
@@ -937,7 +937,7 @@ namespace Altaxo.Main.Services
       public IAttributeForClassList GetClassesTargeting(Type myTargetType)
       {
         ClassesHavingCfCAttributeTargetingTypeList list;
-        if (_attributeForClassListCollection == null)
+        if (_attributeForClassListCollection is null)
           _attributeForClassListCollection = new Dictionary<Type, ClassesHavingCfCAttributeTargetingTypeList>();
 
         if (_attributeForClassListCollection.ContainsKey(myTargetType))
@@ -1090,7 +1090,7 @@ namespace Altaxo.Main.Services
       private static bool PropertyKeyFieldForceRegistering(System.Reflection.MemberInfo minfo, object? para)
       {
         var fieldInfo = minfo as System.Reflection.FieldInfo;
-        if (null != fieldInfo)
+        if (fieldInfo is not null)
         {
           if (fieldInfo.FieldType.IsSubclassOf(typeof(Main.Properties.PropertyKeyBase)))
           {

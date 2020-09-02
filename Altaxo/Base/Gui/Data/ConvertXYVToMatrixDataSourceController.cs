@@ -62,11 +62,11 @@ namespace Altaxo.Gui.Data.Foo
         Current.Gui.FindAndAttachControlTo(_processDataController);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetImportOptionsControl(_dataSourceOptionsController.ViewObject);
         _view.SetProcessOptionsControl(_processOptionsController.ViewObject);
-        if (null != _processDataController)
+        if (_processDataController is not null)
         {
           _view.SetProcessDataControl(_processDataController.ViewObject);
         }
@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Data.Foo
       if (!result)
         return result;
 
-      if (null != _processDataController)
+      if (_processDataController is not null)
       {
         result = _processDataController.Apply(disposeController);
         if (!result)

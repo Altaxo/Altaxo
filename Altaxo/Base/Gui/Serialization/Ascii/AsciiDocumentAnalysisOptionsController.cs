@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Serialization.Ascii
             _dateTimeFormatsToAnalyze.Add(item);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.NumberOfLinesToAnalyze = _doc.NumberOfLinesToAnalyze;
         _view.SetNumberFormatsToAnalyze(_availableCultureList, _numberFormatsToAnalyze);
@@ -124,7 +124,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       foreach (var cult in cultures)
         AddCulture(list, cult, false);
 
-      if (null == list.FirstSelectedNode)
+      if (list.FirstSelectedNode is null)
         list[0].IsSelected = true;
     }
 

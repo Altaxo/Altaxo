@@ -171,7 +171,7 @@ namespace Altaxo.Geometry.Int64_2D
         (IntPoint point, int index) bestPoint = default;
         foreach (var np in nearPoints)
         {
-          if (null == boundingBox || boundingBox.Value.IsPointWithin(np.point))
+          if (boundingBox is null || boundingBox.Value.IsPointWithin(np.point))
           {
             var angle1 = Int64LineSegment.GetAngle(selected_edge.P0, selected_edge.P1, np.point);
             var angle2 = Int64LineSegment.GetAngle(selected_edge.P1, np.point, selected_edge.P0);

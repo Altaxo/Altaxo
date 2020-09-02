@@ -92,7 +92,7 @@ namespace Altaxo.Main.Properties
 
     protected PropertyKeyBase(System.Type typeOfProperty, string guidString, string propertyName, PropertyLevel applicationLevel, Type? applicationItemType)
     {
-      if (applicationLevel.HasFlag(PropertyLevel.Document) && applicationItemType == null)
+      if (applicationLevel.HasFlag(PropertyLevel.Document) && applicationItemType is null)
         throw new ArgumentNullException("applicationItemType is mandatory since applicationLevel has flag 'Document'");
 
       _type = typeOfProperty;

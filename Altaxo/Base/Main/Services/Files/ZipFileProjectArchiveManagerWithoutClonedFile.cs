@@ -156,7 +156,7 @@ namespace Altaxo.Main.Services
     {
       if (_isDisposed) throw new ObjectDisposedException(this.GetType().Name);
 
-      if (null == _originalFileStream)
+      if (_originalFileStream is null)
         throw new InvalidOperationException("Save is not possible because no file name was given up to now");
 
       SaveAs(FileName.Create(_originalFileStream.Name), saveProjectAndWindowsState);
@@ -228,7 +228,7 @@ namespace Altaxo.Main.Services
         }
       }
 
-      if (null != savingException)
+      if (savingException is not null)
         throw savingException;
 
       if (isNewDestinationFileName)

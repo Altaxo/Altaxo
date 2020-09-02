@@ -69,7 +69,7 @@ namespace Altaxo.Drawing.DashPatternManagement
 
     {
       Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedDashPatternLists, out var userStyleLists);
-      if (null != userStyleLists)
+      if (userStyleLists is not null)
       {
         foreach (var list in userStyleLists.StyleLists)
         {
@@ -120,7 +120,7 @@ namespace Altaxo.Drawing.DashPatternManagement
         if (value is null)
           throw new ArgumentNullException(nameof(Instance));
 
-        if (null != _instance)
+        if (_instance is not null)
           Current.IProjectService.ProjectClosed -= _instance.EhProjectClosed;
 
         _instance = value;

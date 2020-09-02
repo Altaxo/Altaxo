@@ -115,7 +115,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _linkedScales)
+      if (_linkedScales is not null)
       {
         for (int i = 0; i < _linkedScales.Length; ++i)
         {
@@ -169,9 +169,9 @@ namespace Altaxo.Graph.Scales.Deprecated
 
       if (!object.ReferenceEquals(oldvalue, newvalue))
       {
-        if (null != oldvalue)
+        if (oldvalue is not null)
           oldvalue.LinkPropertiesChanged -= new EventHandler(EhLinkPropertiesChanged);
-        if (null != newvalue)
+        if (newvalue is not null)
           newvalue.LinkPropertiesChanged += new EventHandler(EhLinkPropertiesChanged);
       }
     }

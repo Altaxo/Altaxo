@@ -163,7 +163,7 @@ namespace Altaxo.Data.Transformations
         foreach (var trans in ct._transformations)
           AddTransformationToFlattenedList(trans, list);
       }
-      else if (transformation != null)
+      else if (transformation is not null)
       {
         list.Add(transformation);
       }
@@ -230,7 +230,7 @@ namespace Altaxo.Data.Transformations
 
     public CompoundTransformation WithPrependedTransformation(IVariantToVariantTransformation transformation)
     {
-      if (null == transformation)
+      if (transformation is null)
         throw new ArgumentNullException(nameof(transformation));
 
       var result = new CompoundTransformation
@@ -250,7 +250,7 @@ namespace Altaxo.Data.Transformations
 
     public CompoundTransformation WithAppendedTransformation(IVariantToVariantTransformation transformation)
     {
-      if (null == transformation)
+      if (transformation is null)
         throw new ArgumentNullException(nameof(transformation));
 
       var result = new CompoundTransformation

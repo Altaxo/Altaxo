@@ -186,7 +186,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (object.ReferenceEquals(this, obj))
         return true;
       var from = obj as FillToCurvePlotStyle;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, copyWithDataReferences, Main.EventFiring.Enabled);
         return true;
@@ -387,12 +387,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void Paint(Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
-      if (_fillToPrevPlotItem && null != prevItemData)
+      if (_fillToPrevPlotItem && prevItemData is not null)
       {
         PaintFillToPrevPlotItem(g, layer, pdata, prevItemData);
       }
 
-      if (_fillToNextPlotItem && null != nextItemData)
+      if (_fillToNextPlotItem && nextItemData is not null)
       {
         // ensure that brush and pen are cached
         using var fillBrush = BrushCacheGdi.Instance.BorrowBrush(_fillBrush, new RectangleD2D(PointD2D.Empty, layer.Size), g, 1);

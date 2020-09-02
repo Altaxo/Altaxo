@@ -46,7 +46,7 @@ namespace Altaxo.Text
     /// <returns>The modified pipeline</returns>
     public static MarkdownPipelineBuilder UseSupportedExtensions(this MarkdownPipelineBuilder pipeline)
     {
-      if (pipeline == null)
+      if (pipeline is null)
         throw new ArgumentNullException(nameof(pipeline));
       return pipeline
           .UseEmphasisExtras()

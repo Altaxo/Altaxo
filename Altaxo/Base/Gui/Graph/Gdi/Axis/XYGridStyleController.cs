@@ -84,7 +84,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         _minorController = new ColorTypeThicknessPenController(_doc.MinorPen);
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.InitializeBegin();
 
@@ -128,7 +128,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     public void InitializeElementEnabling()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         bool majorstyle = _doc.ShowGrid;
         bool showzeroonly = _doc.ShowGrid;

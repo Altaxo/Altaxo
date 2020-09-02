@@ -217,7 +217,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
       InternalTryRegisterList(OldBarVert, ItemDefinitionLevel.Builtin, out dummy, false);
 
       Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedScatterSymbolLists, out var userStyleLists);
-      if (null != userStyleLists)
+      if (userStyleLists is not null)
       {
         foreach (var listVar in userStyleLists.StyleLists)
         {

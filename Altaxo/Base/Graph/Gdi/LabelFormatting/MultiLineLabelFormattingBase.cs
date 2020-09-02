@@ -80,7 +80,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       if (isCopied && !object.ReferenceEquals(this, obj))
       {
         var from = obj as MultiLineLabelFormattingBase;
-        if (null != from)
+        if (from is not null)
         {
           _relativeLineSpacing = from._relativeLineSpacing;
           _textBlockAlignment = from._textBlockAlignment;

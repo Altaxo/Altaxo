@@ -87,10 +87,10 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _plotStyles)
+      if (_plotStyles is not null)
         yield return new Main.DocumentNodeAndName(_plotStyles, () => _plotStyles = null!, "Style");
 
-      if (null != _localGroups)
+      if (_localGroups is not null)
         yield return new Main.DocumentNodeAndName(_localGroups, () => _localGroups = null!, "LocalPlotGroupStyles");
     }
 
@@ -207,7 +207,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     public override void Paint(IGraphicsContext3D g, IPaintContext context, IPlotArea layer, IGPlotItem? prevPlotItem, IGPlotItem? nextPlotItem)
     {
       Processed3DPlotData? pdata = GetRangesAndPoints(layer);
-      if (pdata != null)
+      if (pdata is not null)
         Paint(g, layer, pdata,
           (prevPlotItem is G3DPlotItem prevPI) ? prevPI.GetPlotData(layer) : null,
           (nextPlotItem is G3DPlotItem nextPI) ? nextPI.GetPlotData(layer) : null
@@ -226,7 +226,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     {
       _cachedPlotDataUsedForPainting = plotdata ?? throw new ArgumentNullException(nameof(plotdata));
 
-      if (null != _plotStyles)
+      if (_plotStyles is not null)
       {
         _plotStyles.Paint(g, layer, plotdata, prevPlotData, nextPlotData);
       }

@@ -149,7 +149,7 @@ namespace Altaxo.Main.Services
       if (!isDirty)
       {
         isDirty = true;
-        if (_parent != null)
+        if (_parent is not null)
           _parent.MakeDirty();
       }
     }
@@ -302,7 +302,7 @@ namespace Altaxo.Main.Services
         if (_dict.TryGetValue(key, out var val))
         {
           object[]? serializedArray = val as object[];
-          if (serializedArray != null)
+          if (serializedArray is not null)
           {
             try
             {
@@ -339,7 +339,7 @@ namespace Altaxo.Main.Services
     /// <remarks>Passing <c>null</c> or an empty list as value has the same effect as calling <see cref="Remove"/>.</remarks>
     public void SetList<T>(string key, IEnumerable<T> value)
     {
-      if (value == null)
+      if (value is null)
       {
         Remove(key);
         return;
@@ -403,13 +403,13 @@ namespace Altaxo.Main.Services
       if (value is null)
         return null;
       TypeConverter c = TypeDescriptor.GetConverter(sourceType);
-      if (c != null && c.CanConvertTo(typeof(string)) && c.CanConvertFrom(typeof(string)))
+      if (c is not null && c.CanConvertTo(typeof(string)) && c.CanConvertFrom(typeof(string)))
       {
         return c.ConvertToInvariantString(value);
       }
 
       var element = new XElement("SerializedObject");
-      if (key != null)
+      if (key is not null)
       {
         element.Add(new XAttribute("key", key));
       }
@@ -426,7 +426,7 @@ namespace Altaxo.Main.Services
       if (serializedVal is null)
         return null;
       var element = serializedVal as XElement;
-      if (element != null)
+      if (element is not null)
       {
         using (var xmlReader = element.Elements().Single().CreateReader())
         {
@@ -513,7 +513,7 @@ namespace Altaxo.Main.Services
       {
         _dict.TryGetValue(key, out var oldValue);
         result = oldValue as Properties;
-        if (result == null)
+        if (result is null)
         {
           result = new Properties(this);
           _dict[key] = result;
@@ -528,7 +528,7 @@ namespace Altaxo.Main.Services
     private void HandleOldValue(object oldValue)
     {
       var p = oldValue as Properties;
-      if (p != null)
+      if (p is not null)
       {
         Debug.Assert(p._parent == this);
         p._parent = null;
@@ -543,14 +543,14 @@ namespace Altaxo.Main.Services
     /// </summary>
     public void SetNestedProperties(string key, Properties properties)
     {
-      if (properties == null)
+      if (properties is null)
       {
         Remove(key);
         return;
       }
       lock (_syncRoot)
       {
-        for (Properties? ancestor = this; ancestor != null; ancestor = ancestor._parent)
+        for (Properties? ancestor = this; ancestor is not null; ancestor = ancestor._parent)
         {
           if (ancestor == properties)
             throw new InvalidOperationException("Cannot add a properties container to itself.");
@@ -564,7 +564,7 @@ namespace Altaxo.Main.Services
         }
         lock (properties._syncRoot)
         {
-          if (properties._parent != null)
+          if (properties._parent is not null)
             throw new InvalidOperationException("Cannot attach nested properties that already have a parent.");
           MakeDirty();
           properties.SetSyncRoot(_syncRoot);
@@ -601,11 +601,11 @@ namespace Altaxo.Main.Services
 
     private Properties CloneWithParent(Properties? parent)
     {
-      Properties copy = parent != null ? new Properties(parent) : new Properties();
+      Properties copy = parent is not null ? new Properties(parent) : new Properties();
       foreach (var pair in _dict)
       {
         var child = pair.Value as Properties;
-        if (child != null)
+        if (child is not null)
           copy._dict.Add(pair.Key, child.CloneWithParent(copy));
         else
           copy._dict.Add(pair.Key, pair.Value);
@@ -662,7 +662,7 @@ namespace Altaxo.Main.Services
       foreach (var element in elements)
       {
         string key = (string)element.Attribute("key");
-        if (key == null)
+        if (key is null)
           continue;
         switch (element.Name.LocalName)
         {
@@ -730,7 +730,7 @@ namespace Altaxo.Main.Services
       {
         var key = new XAttribute("key", pair.Key);
         var child = pair.Value as Properties;
-        if (child != null)
+        if (child is not null)
         {
           var contents = child.SaveContents();
           if (contents.Count > 0)
@@ -743,11 +743,11 @@ namespace Altaxo.Main.Services
           for (int i = 0; i < array.Length; i++)
           {
             var obj = array[i] as XElement;
-            if (obj != null)
+            if (obj is not null)
             {
               elements[i] = new XElement(obj);
             }
-            else if (array[i] == null)
+            else if (array[i] is null)
             {
               elements[i] = new XElement("Null");
             }

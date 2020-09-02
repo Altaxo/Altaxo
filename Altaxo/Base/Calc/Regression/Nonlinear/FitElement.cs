@@ -263,7 +263,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         _fitFunction = from._fitFunction;
       }
 
-      if (null != _fitFunction)
+      if (_fitFunction is not null)
         _fitFunction.Changed += EhFitFunctionChanged;
 
       ChildCopyToMember<DataTableProxy>(ref _dataTable, from._dataTable);
@@ -415,7 +415,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!_rangeOfRows.Equals(value))
@@ -443,14 +443,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         int k = i;
 
-        string nameOfVariable = null != FitFunction && i < FitFunction.NumberOfIndependentVariables ? FitFunction.IndependentVariableName(i) : string.Empty;
+        string nameOfVariable = FitFunction is not null && i < FitFunction.NumberOfIndependentVariables ? FitFunction.IndependentVariableName(i) : string.Empty;
         yield return new ColumnInformation(
           nameOfVariable,
           _independentVariables[k]?.Document(),
           _independentVariables[k]?.DocumentPath()?.LastPartOrDefault,
           (col, table, group) =>
           {
-            if (table != null)
+            if (table is not null)
             {
               DataTable = table;
               GroupNumber = group;
@@ -468,14 +468,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         int k = i;
 
-        string nameOfVariable = null != FitFunction && k < FitFunction.NumberOfDependentVariables ? FitFunction.DependentVariableName(k) : string.Empty;
+        string nameOfVariable = FitFunction is not null && k < FitFunction.NumberOfDependentVariables ? FitFunction.DependentVariableName(k) : string.Empty;
         yield return new ColumnInformation(
           nameOfVariable,
           _dependentVariables[k]?.Document(),
           _dependentVariables[k]?.DocumentPath()?.LastPartOrDefault,
           (col, table, group) =>
           {
-            if (table != null)
+            if (table is not null)
             {
               DataTable = table;
               GroupNumber = group;
@@ -498,7 +498,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         var column = proxy?.Document();
 
-        if (null != column && column.Count.HasValue)
+        if (column is not null && column.Count.HasValue)
           maxRowIndex = Math.Min(maxRowIndex, column.Count.Value);
       }
       // if both columns are indefinite long, we set the length to zero
@@ -555,7 +555,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         ChildSetMember(ref _dependentVariables[i], ReadableColumnProxyBase.FromColumn(col));
 
-        if (col != null)
+        if (col is not null)
         {
           _errorEvaluation[i] ??= new ConstantVarianceScaling();
         }
@@ -594,12 +594,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       get
       {
-        if (_errorEvaluation == null || _dependentVariables == null)
+        if (_errorEvaluation is null || _dependentVariables is null)
           return false;
 
         for (int i = 0; i < _errorEvaluation.Length; ++i)
         {
-          if (_dependentVariables[i] != null)
+          if (_dependentVariables[i] is not null)
           {
             if (_errorEvaluation[i] is { } errorEvaluation)
             {
@@ -625,7 +625,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         if (!object.ReferenceEquals(_fitFunction, value))
         {
-          if (null != _fitFunction)
+          if (_fitFunction is not null)
           {
             _fitFunction.Changed -= EhFitFunctionChanged;
           }
@@ -643,7 +643,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
           _fitFunction = value;
 
-          if (null != _fitFunction)
+          if (_fitFunction is not null)
           {
             _fitFunction.Changed += EhFitFunctionChanged;
           }
@@ -669,7 +669,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <returns><c>True</c> if any mismatch occurred, so that the array size has changed. Otherwise, <c>False</c> is returned.</returns>
     private bool InternalCheckAndCorrectArraySize(bool throwOnMismatch, bool forceChangedEvent)
     {
-      if (_fitFunction == null)
+      if (_fitFunction is null)
         return false;
 
       bool hasMismatch = false;
@@ -770,10 +770,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
       get
       {
         int sum = 0;
-        if (null != _dependentVariables)
+        if (_dependentVariables is not null)
         {
           int len = _dependentVariables.Length;
-          if (null != _fitFunction)
+          if (_fitFunction is not null)
             len = Math.Min(len, _fitFunction.NumberOfDependentVariables);
 
           for (int i = len - 1; i >= 0; --i)
@@ -857,13 +857,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataTable)
+      if (_dataTable is not null)
         yield return new Main.DocumentNodeAndName(_dataTable, () => _dataTable = null, nameof(DataTable));
 
-      if (null != _rangeOfRows)
+      if (_rangeOfRows is not null)
         yield return new Main.DocumentNodeAndName(_rangeOfRows, () => _rangeOfRows = null!, nameof(DataRowSelection));
 
-      if (null != _independentVariables)
+      if (_independentVariables is not null)
       {
         for (int i = 0; i < _independentVariables.Length; ++i)
         {
@@ -872,7 +872,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         }
       }
 
-      if (null != _dependentVariables)
+      if (_dependentVariables is not null)
       {
         for (int i = 0; i < _dependentVariables.Length; ++i)
         {

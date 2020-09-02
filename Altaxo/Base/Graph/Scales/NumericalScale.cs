@@ -137,7 +137,7 @@ namespace Altaxo.Graph.Scales
     {
       if (Rescaling is { } rescaling)
       {
-        if (null == TickSpacing)
+        if (TickSpacing is null)
         {
           SetScaleOrgEnd(rescaling.ResultingOrg, rescaling.ResultingEnd);
         }

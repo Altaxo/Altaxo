@@ -248,7 +248,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       for (int i = 0; i < fit.Parameter.Length; i++)
         Current.Console.WriteLine("{0,-15} {1,20} {2,20} {3,20} {4,20}",
-          paramNames == null ? string.Format("A{0}", i) : paramNames[i],
+                    paramNames is null ? string.Format("A{0}", i) : paramNames[i],
           fit.Parameter[i],
           fit.StandardErrorOfParameter(i),
           fit.TofParameter(i),

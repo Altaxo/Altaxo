@@ -74,7 +74,7 @@ namespace Altaxo.AddInItems
     /// </summary>
     public void AddAddInsFromDirectory(string addInDir)
     {
-      if (addInDir == null)
+      if (addInDir is null)
         throw new ArgumentNullException(nameof(addInDir));
 
       if (Directory.Exists(addInDir))
@@ -88,7 +88,7 @@ namespace Altaxo.AddInItems
     /// </summary>
     public void AddAddInFile(string addInFile)
     {
-      if (addInFile == null)
+      if (addInFile is null)
         throw new ArgumentNullException(nameof(addInFile));
       _addInFiles.Add(addInFile);
     }
@@ -156,7 +156,7 @@ namespace Altaxo.AddInItems
 
       // perform service registration
       var container = Altaxo.Current.GetService<System.ComponentModel.Design.IServiceContainer>();
-      if (container != null)
+      if (container is not null)
       {
         _addInTree.BuildItems<object>(string.Format("/{0}/Services", _applicationName), container, false);
       }

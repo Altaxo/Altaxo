@@ -55,7 +55,7 @@ namespace Altaxo.Data
     [Obsolete]
     public static void ImportAsciiToMultipleWorksheets(string[] filenames, AsciiImportOptions importOptions)
     {
-      if (null != importOptions)
+      if (importOptions is not null)
         AsciiImporter.ImportFilesIntoSeparateNewTables(Main.ProjectFolder.RootFolder, filenames, true, importOptions);
       else
         AsciiImporter.ImportFilesIntoSeparateNewTables(Main.ProjectFolder.RootFolder, filenames, true, true);
@@ -70,7 +70,7 @@ namespace Altaxo.Data
     [Obsolete]
     public static void ImportAsciiToSingleWorksheetHorizontally(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
     {
-      if (null != importOptions)
+      if (importOptions is not null)
         AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, true, importOptions, out _);
       else
         AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, true, true, out _);
@@ -85,7 +85,7 @@ namespace Altaxo.Data
     [Obsolete]
     public static void ImportAsciiToSingleWorksheetVertically(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
     {
-      if (null != importOptions)
+      if (importOptions is not null)
         AsciiImporter.TryImportFromMultipleAsciiFilesVertically(dataTable, filenames, true, importOptions, out _);
       else
         AsciiImporter.TryImportFromMultipleAsciiFilesVertically(dataTable, filenames, true, true, out _);
@@ -128,7 +128,7 @@ namespace Altaxo.Data
       {
         if (toMultipleWorksheets)
         {
-          if (options.FileNames.Length == 1 && null != dataTable)
+          if (options.FileNames.Length == 1 && dataTable is not null)
           {
             AsciiImporter.ImportFromAsciiFile(dataTable, options.FileName);
           }

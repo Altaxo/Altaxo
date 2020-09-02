@@ -122,7 +122,7 @@ namespace Altaxo.Serialization.Ascii
       bool delOneAtEnd = false;
       stb.AppendFormat("#Lines: {0} ", _numberOfLinesToAnalyze);
 
-      if (null != _numberFormatsToTest)
+      if (_numberFormatsToTest is not null)
       {
         stb.Append("| ");
         var cu = new SortedSet<string>(_numberFormatsToTest.Select(x => x.ThreeLetterISOLanguageName));

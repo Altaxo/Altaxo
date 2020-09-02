@@ -111,7 +111,7 @@ namespace Altaxo.DataConnection
     {
       return (col, idx, obj) =>
         {
-          if (null == obj || obj == System.DBNull.Value)
+          if (obj is null || obj == System.DBNull.Value)
             col.SetElementEmpty(idx);
           else
             col[idx] = new Data.AltaxoVariant(obj);

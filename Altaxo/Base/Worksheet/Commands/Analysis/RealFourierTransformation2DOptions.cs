@@ -185,7 +185,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       protected virtual RealFourierTransformation2DOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new RealFourierTransformation2DOptions() : (RealFourierTransformation2DOptions)o);
+        var s = (o is null ? new RealFourierTransformation2DOptions() : (RealFourierTransformation2DOptions)o);
 
         s._isUserDefinedRowIncrementValue = info.GetBoolean("IsUserDefinedRowIncrementValue");
         s._rowIncrementValue = info.GetDouble("RowIncrementValue");

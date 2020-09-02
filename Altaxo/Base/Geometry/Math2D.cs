@@ -185,9 +185,9 @@ namespace Altaxo.Geometry
       int yUpper = yLower + ySize;
 
       // Test arguments
-      if (null == IsPixelToBeFilled)
+      if (IsPixelToBeFilled is null)
         throw new ArgumentNullException(nameof(IsPixelToBeFilled));
-      if (null == SetPixelToNewValue)
+      if (SetPixelToNewValue is null)
         throw new ArgumentNullException(nameof(SetPixelToNewValue));
       if (!(xLower < xUpper))
         throw new ArgumentException("xSize should be >0", nameof(xSize));
@@ -227,11 +227,11 @@ namespace Altaxo.Geometry
     public static void FloodFill_4Neighbour(int xStart, int yStart, Func<int, int, bool> IsPixelToBeFilled, Action<int, int> SetPixelToNewValue, Func<int, int, bool> IsPixelCoordinateValid)
     {
       // Test arguments
-      if (null == IsPixelToBeFilled)
+      if (IsPixelToBeFilled is null)
         throw new ArgumentNullException(nameof(IsPixelToBeFilled));
-      if (null == SetPixelToNewValue)
+      if (SetPixelToNewValue is null)
         throw new ArgumentNullException(nameof(SetPixelToNewValue));
-      if (null == IsPixelCoordinateValid)
+      if (IsPixelCoordinateValid is null)
         throw new ArgumentNullException(nameof(IsPixelCoordinateValid));
       if (!IsPixelCoordinateValid(xStart, yStart))
         throw new ArgumentException("Coordinates of the start pixel are not valid!");

@@ -131,7 +131,7 @@ namespace Altaxo.Graph
         base.ParentObject = value;
 
         var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
-        if (null != parentAs)
+        if (parentAs is not null)
           parentAs.EhChild_ParentChanged(this, oldParent);
       }
     }
@@ -157,14 +157,14 @@ namespace Altaxo.Graph
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("New name is null");
         if (_name == value)
           return; // nothing changed
 
         var canBeRenamed = true;
         var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
-        if (null != parentAs)
+        if (parentAs is not null)
         {
           canBeRenamed = parentAs.EhChild_CanBeRenamed(this, value);
         }
@@ -174,7 +174,7 @@ namespace Altaxo.Graph
           var oldName = _name;
           _name = value;
 
-          if (null != parentAs)
+          if (parentAs is not null)
             parentAs.EhChild_HasBeenRenamed(this, oldName);
 
           OnNameChanged(oldName);
@@ -289,7 +289,7 @@ namespace Altaxo.Graph
 
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
-      if (null != _paintThread && object.ReferenceEquals(_paintThread, System.Threading.Thread.CurrentThread))
+      if (_paintThread is not null && object.ReferenceEquals(_paintThread, System.Threading.Thread.CurrentThread))
       {
         if (_isFixupInternalDataStructuresActive)
         {
@@ -330,7 +330,7 @@ namespace Altaxo.Graph
 
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
-      if (sender != null && _accumulatedEventData == null)
+      if (sender is not null && _accumulatedEventData is null)
         _accumulatedEventData = EventArgs.Empty;
     }
 
@@ -344,7 +344,7 @@ namespace Altaxo.Graph
       protected set
       {
         _graphProperties = value;
-        if (null != _graphProperties)
+        if (_graphProperties is not null)
           _graphProperties.ParentObject = this;
       }
     }

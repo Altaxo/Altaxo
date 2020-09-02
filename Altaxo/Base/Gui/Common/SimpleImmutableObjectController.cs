@@ -109,13 +109,13 @@ namespace Altaxo.Gui.Common
 
           object? parameterValue = null;
           var getterProp = _doc.GetType().GetProperty(parameterName);
-          if (null != getterProp && getterProp.PropertyType == parameterType)
+          if (getterProp is not null && getterProp.PropertyType == parameterType)
             parameterValue = getterProp.GetValue(_doc, null);
 
           _valueInfo.Add(new ValueInfo(parameterName, parameterType, method, parameterValue));
         }
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.Values_Initialize(_valueInfo.Select(x => new Tuple<string, Type, object?>(x.Name, x.ValueType, x.Value)));
       }

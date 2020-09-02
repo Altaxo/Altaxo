@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     {
       base.Initialize(initData);
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.SetXScaleUnitEnvironment(RelationEnvironment.Instance);
         _view.XScale = new DimensionfulQuantity(_doc.XScale, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelationEnvironment.Instance.DefaultUnit);

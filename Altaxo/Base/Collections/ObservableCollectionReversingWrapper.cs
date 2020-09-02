@@ -48,9 +48,9 @@ namespace Altaxo.Collections
     {
       NotifyCollectionChangedEventArgs result;
 
-      int newStart = e.NewItems != null ? _coll.Count - e.NewStartingIndex - e.NewItems.Count : e.NewStartingIndex;
+      int newStart = e.NewItems is not null ? _coll.Count - e.NewStartingIndex - e.NewItems.Count : e.NewStartingIndex;
 
-      int oldStart = e.OldItems != null ? _coll.Count - e.OldStartingIndex - e.OldItems.Count : e.OldStartingIndex;
+      int oldStart = e.OldItems is not null ? _coll.Count - e.OldStartingIndex - e.OldItems.Count : e.OldStartingIndex;
 
       switch (e.Action)
       {
@@ -78,7 +78,7 @@ namespace Altaxo.Collections
           throw new NotImplementedException(e.Action.ToString());
       }
 
-      if (null != CollectionChanged)
+      if (CollectionChanged is not null)
         CollectionChanged(this, result);
     }
 

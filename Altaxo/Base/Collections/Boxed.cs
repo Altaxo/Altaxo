@@ -61,7 +61,7 @@ namespace Altaxo.Collections
       {
         T oldValue = _value;
         _value = value;
-        if (null != PropertyChanged && !object.Equals(_value, oldValue))
+        if (PropertyChanged is not null && !object.Equals(_value, oldValue))
           PropertyChanged(this, _valueChangedEventArg);
       }
     }

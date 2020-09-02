@@ -46,7 +46,7 @@ namespace Altaxo.DataConnection
     {
       _originalConnectionString = originalConnectionString;
 
-      if (null != credentials && !credentials.AreEmpty)
+      if (credentials is not null && !credentials.AreEmpty)
       {
         var connBuilder = new System.Data.OleDb.OleDbConnectionStringBuilder(_originalConnectionString)
         {
@@ -103,7 +103,7 @@ namespace Altaxo.DataConnection
       if (System.Object.ReferenceEquals(x, y))
         return true;
 
-      if ((null == (object)x) || (null == (object)y))
+      if (((object)x is null) || ((object)y is null))
         return false;
 
       return x._originalConnectionString == y._originalConnectionString && x._connectionStringWithCredentials == y._connectionStringWithCredentials;

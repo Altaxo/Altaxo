@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Graph.Gdi
       if (initData)
       {
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.GridColumn = DocToUserPosition(_doc.GridColumn);
         _view.GridRow = DocToUserPosition(_doc.GridRow);

@@ -67,7 +67,7 @@ namespace Poly2Tri
       }
       protected set
       {
-        if (value && DebugContext == null)
+        if (value && DebugContext is null)
           DebugContext = new DTSweepDebugContext(this);
         base.IsDebugEnabled = value;
       }
@@ -94,7 +94,7 @@ namespace Poly2Tri
 
     private void MeshCleanReq(DelaunayTriangle triangle)
     {
-      if (triangle != null && !triangle.IsInterior)
+      if (triangle is not null && !triangle.IsInterior)
       {
         triangle.IsInterior = true;
         Triangulatable.AddTriangle(triangle);
@@ -167,10 +167,10 @@ namespace Poly2Tri
     public void MapTriangleToNodes(DelaunayTriangle t)
     {
       for (int i = 0; i < 3; i++)
-        if (t.Neighbors[i] == null)
+        if (t.Neighbors[i] is null)
         {
           AdvancingFrontNode n = Front.LocatePoint(t.PointCWFrom(t.Points[i]));
-          if (n != null)
+          if (n is not null)
             n.Triangle = t;
         }
     }

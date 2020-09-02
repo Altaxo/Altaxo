@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Data.Selections
       {
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.MergeAdjoiningSegments = _doc.MergeAdjoinigSegments;
       }

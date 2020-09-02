@@ -51,7 +51,7 @@ namespace Altaxo.Gui.DataConnection
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.Username = _doc.UserName;
         _view.Password = _doc.Password;

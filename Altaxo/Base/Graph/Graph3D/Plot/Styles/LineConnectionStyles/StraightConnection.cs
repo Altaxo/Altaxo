@@ -95,7 +95,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
       int lastIdx = range.Length - 1 + (connectCircular ? 1 : 0);
       var layerSize = layer.Size;
 
-      if (symbolGap != null)
+      if (symbolGap is not null)
       {
         if (skipFrequency <= 1) // skip all scatter symbol gaps -> thus skipOffset can be ignored
         {

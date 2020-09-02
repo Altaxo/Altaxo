@@ -240,7 +240,7 @@ namespace Altaxo.Serialization.Ascii
     {
       get
       {
-        if (null == _columnTypeCollectionWrapper)
+        if (_columnTypeCollectionWrapper is null)
           _columnTypeCollectionWrapper = new CollectionWrapper(this);
         return _columnTypeCollectionWrapper;
       }

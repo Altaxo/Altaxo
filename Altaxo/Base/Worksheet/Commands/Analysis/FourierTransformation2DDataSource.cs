@@ -76,7 +76,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       _inputData = (DataTableMatrixProxy)info.GetValue("InputData", this);
-      if (null != _inputData)
+      if (_inputData is not null)
         _inputData.ParentObject = this;
 
       _transformationOptions = (RealFourierTransformation2DOptions)info.GetValue("TransformationOptions", this);
@@ -176,13 +176,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _inputData)
+      if (_inputData is not null)
         yield return new Main.DocumentNodeAndName(_inputData, () => _inputData = null!, "Data");
 
-      if (null != _transformationOptions)
+      if (_transformationOptions is not null)
         yield return new Main.DocumentNodeAndName(_transformationOptions, () => _transformationOptions = null!, "TransformationOptions");
 
-      if (null != _importOptions)
+      if (_importOptions is not null)
         yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null!, "ImportOptions");
     }
 
@@ -220,7 +220,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       add
       {
-        bool isFirst = null == _dataSourceChanged;
+        bool isFirst = _dataSourceChanged is null;
         _dataSourceChanged += value;
         if (isFirst)
         {
@@ -230,7 +230,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       remove
       {
         _dataSourceChanged -= value;
-        bool isLast = null == _dataSourceChanged;
+        bool isLast = _dataSourceChanged is null;
         if (isLast)
         {
         }
@@ -278,7 +278,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       [MemberNotNull(nameof(_importOptions))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(ImportOptions));
 
         if (ChildSetMember(ref _importOptions, value))
@@ -336,7 +336,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="ReportProxies">The report proxies.</param>
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
-      if (_inputData != null)
+      if (_inputData is not null)
         _inputData.VisitDocumentReferences(ReportProxies);
     }
   }

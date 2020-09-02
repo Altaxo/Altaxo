@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public PadDescriptor(Codon codon)
     {
-      if (codon == null)
+      if (codon is null)
         throw new ArgumentNullException("codon");
       addIn = codon.AddIn;
       shortcut = codon.Properties["shortcut"];
@@ -80,7 +80,7 @@ namespace Altaxo.Gui.Workbench
       // Begin: ModifiedForAltaxo
       // neccessary in order to load some pads on startup (such pads that are services, like the message output pad)
       string precreate = codon.Properties["precreated"];
-      if (precreate != null && precreate.ToLower() == "true")
+      if (precreate is not null && precreate.ToLower() == "true")
         CreatePad();
       // End: ModifiedForAltaxo
     }
@@ -171,7 +171,7 @@ namespace Altaxo.Gui.Workbench
     {
       get
       {
-        if (serviceInterface is null && addIn != null && !string.IsNullOrEmpty(serviceInterfaceName))
+        if (serviceInterface is null && addIn is not null && !string.IsNullOrEmpty(serviceInterfaceName))
         {
           serviceInterface = addIn.FindType(serviceInterfaceName);
         }
@@ -195,7 +195,7 @@ namespace Altaxo.Gui.Workbench
 
     public void Dispose()
     {
-      if (padContent != null)
+      if (padContent is not null)
       {
         padContent.Dispose();
         padContent = null;
@@ -213,17 +213,17 @@ namespace Altaxo.Gui.Workbench
         padContentCreated = true;
         try
         {
-          if (addIn != null)
+          if (addIn is not null)
           {
             Current.Log.Debug("Creating pad " + Class + "...");
             padContent = (IPadContent?)addIn.CreateObject(Class);
-            if (null != padContent)
+            if (padContent is not null)
               padContent.PadDescriptor = this;
           }
-          else if (null != padType)
+          else if (padType is not null)
           {
             padContent = (IPadContent?)Activator.CreateInstance(padType);
-            if (null != padContent)
+            if (padContent is not null)
               padContent.PadDescriptor = this;
           }
 
@@ -242,7 +242,7 @@ namespace Altaxo.Gui.Workbench
     public void BringPadToFront()
     {
       CreatePad();
-      if (padContent != null)
+      if (padContent is not null)
       {
         padContent.IsVisible = true;
       }

@@ -195,7 +195,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 
       if (0 != data)
       {
-        if (null == _accumulatedEventData)
+        if (_accumulatedEventData is null)
           _accumulatedEventData = new BoundariesChangedEventArgs(data);
         else
           _accumulatedEventData.Add(new BoundariesChangedEventArgs(data));

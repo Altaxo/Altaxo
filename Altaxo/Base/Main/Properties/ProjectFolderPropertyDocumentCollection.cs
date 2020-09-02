@@ -41,7 +41,7 @@ namespace Altaxo.Main.Properties
       get { return _parent; }
       set
       {
-        if (null != value)
+        if (value is not null)
           throw new InvalidOperationException("ParentObject of ProjectFolderPropertyDocumentCollection is fixed and cannot be set");
 
         base.ParentObject = value; // allow setting Parent to null (required for dispose)

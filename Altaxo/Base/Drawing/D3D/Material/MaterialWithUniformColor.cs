@@ -170,7 +170,7 @@ namespace Altaxo.Drawing.D3D.Material
     {
       // this material is considered to be equal to another material, if this material has exactly
       var other = obj as MaterialWithUniformColor;
-      if (null != other)
+      if (other is not null)
       {
         return
           _color == other._color &&
@@ -187,7 +187,7 @@ namespace Altaxo.Drawing.D3D.Material
     {
       // this material is considered to be equal to another material, if this material has exactly
       var other = obj as MaterialWithUniformColor;
-      if (null != other)
+      if (other is not null)
       {
         return
           _color == other._color &&

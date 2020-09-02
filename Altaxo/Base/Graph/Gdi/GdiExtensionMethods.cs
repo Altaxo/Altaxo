@@ -195,7 +195,7 @@ namespace Altaxo.Graph.Gdi
     /// <exception cref="ArgumentException">Polyline must have at least 2 points - polyline</exception>
     public static double TotalLineLength(this PointF[] polyline)
     {
-      if (null == polyline)
+      if (polyline is null)
         throw new ArgumentNullException(nameof(polyline));
       if (polyline.Length < 2)
         throw new ArgumentException("Polyline must have at least 2 points", nameof(polyline));
@@ -227,7 +227,7 @@ namespace Altaxo.Graph.Gdi
     /// <exception cref="ArgumentException">Polyline must have at least 2 points - polyline</exception>
     public static double TotalLineLength(this PointF[] polyline, int startIdx, int count)
     {
-      if (null == polyline)
+      if (polyline is null)
         throw new ArgumentNullException(nameof(polyline));
       if (count < 2)
         throw new ArgumentException("Polyline must have at least 2 points", nameof(polyline));
@@ -279,7 +279,7 @@ namespace Altaxo.Graph.Gdi
     /// <returns>A new, shortened polyline. If the shortened line would have zero or negative length, <c>null</c> is returned.</returns>
     public static PointF[]? ShortenedBy(this PointF[] polyline, RADouble marginAtStart, RADouble marginAtEnd)
     {
-      if (null == polyline)
+      if (polyline is null)
         throw new ArgumentNullException(nameof(polyline));
       if (polyline.Length < 2)
         throw new ArgumentException("Polyline must have at least 2 points", nameof(polyline));
@@ -367,7 +367,7 @@ namespace Altaxo.Graph.Gdi
     /// <returns>A new, shortened polyline. If the shortened line would have zero or negative length, <c>null</c> is returned.</returns>
     public static PointF[]? ShortenedBy(this PointF[] polyline, int startIdx, int count, RADouble marginAtStart, RADouble marginAtEnd)
     {
-      if (null == polyline)
+      if (polyline is null)
         throw new ArgumentNullException(nameof(polyline));
       if (count < 2)
         throw new ArgumentException("Polyline must have at least 2 points", nameof(polyline));

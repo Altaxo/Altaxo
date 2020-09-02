@@ -110,10 +110,10 @@ namespace Altaxo.Text
         else if (mdo is CodeBlock blk)
         {
           var attr = (Markdig.Renderers.Html.HtmlAttributes)mdo.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-          if (attr != null && attr.Properties != null && attr.Properties.Count >= 2 && attr.Properties[0].Key == "Altaxo" && attr.Properties[1].Key == "child")
+          if (attr is not null && attr.Properties is not null && attr.Properties.Count >= 2 && attr.Properties[0].Key == "Altaxo" && attr.Properties[1].Key == "child")
           {
             var childDoc = attr.Properties[1].Value;
-            if (null != childDoc)
+            if (childDoc is not null)
             {
               markdownToProcess.Add(mdo);
             }
@@ -136,7 +136,7 @@ namespace Altaxo.Text
             using (var stream = new System.IO.MemoryStream())
             {
               var streamResult = imageStreamProvider.GetImageStream(stream, link.Url, 300, Altaxo.Main.ProjectFolder.GetFolderPart(textDocument.Name), textDocument.Images);
-              if (null == streamResult.ErrorMessage)
+              if (streamResult.ErrorMessage is null)
               {
                 stream.Seek(0, System.IO.SeekOrigin.Begin);
                 var proxy = MemoryStreamImageProxy.FromStream(stream, streamResult.Extension);
@@ -180,7 +180,7 @@ namespace Altaxo.Text
             // insert images
             resultDocument.AddImagesFrom(expandedChild);
           }
-          else if (null != errors) // report an error
+          else if (errors is not null) // report an error
           {
             var error = new MarkdownError()
             {
@@ -225,7 +225,7 @@ namespace Altaxo.Text
       {
         // the graphs reference is a path relative to the text document
         var graph = ImageStreamProvider.FindGraphWithUrl(url, originalTextDocumentPath);
-        if (null == graph)
+        if (graph is null)
         {
           // can't resolve the graph
           /* Commented out because it makes no sense to try to convert Urls that can not be resolved, and the repeated conversion would give nonsense results

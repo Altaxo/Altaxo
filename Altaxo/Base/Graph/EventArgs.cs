@@ -152,7 +152,7 @@ namespace Altaxo.Graph
     public override void Add(Main.SelfAccumulateableEventArgs e)
     {
       var other = e as BoundariesChangedEventArgs;
-      if (other == null)
+      if (other is null)
         throw new ArgumentException(string.Format("Argument e should be of type {0}, but is: {1}", typeof(BoundariesChangedEventArgs), e.GetType()));
 
       _data |= other._data;
@@ -185,7 +185,7 @@ namespace Altaxo.Graph
     public override void Add(Main.SelfAccumulateableEventArgs e)
     {
       var other = e as ScaleInstanceChangedEventArgs;
-      if (null == other)
+      if (other is null)
         throw new ArgumentException("Expect event args of type: " + typeof(ScaleInstanceChangedEventArgs).ToString());
 
       if (ScaleIndex != other.ScaleIndex)

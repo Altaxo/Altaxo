@@ -170,10 +170,10 @@ namespace Altaxo.Data
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _importScript)
+      if (_importScript is not null)
         yield return new Main.DocumentNodeAndName(_importScript, () => _importScript = null!, "ImportScript");
 
-      if (null != _importOptions)
+      if (_importOptions is not null)
         yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null!, "ImportOptions");
     }
 
@@ -185,7 +185,7 @@ namespace Altaxo.Data
 
       // UpdateWatching should only be called if something concerning the watch (Times etc.) has changed during the suspend phase
       // Otherwise it will cause endless loops because UpdateWatching triggers immediatly an EhUpdateByTimerQueue event, which triggers an UpdateDataSource event, which leads to another Suspend and then Resume, which calls OnResume(). So the loop is closed.
-      if (null == _triggerBasedUpdate)
+      if (_triggerBasedUpdate is null)
         UpdateWatching(); // Compromise - we update only if the watch is off
     }
 
@@ -317,7 +317,7 @@ namespace Altaxo.Data
       if (IsSuspended)
         return; // in update operation - wait until finished
 
-      if (null == _parent)
+      if (_parent is null)
         return; // No listener - no need to watch
 
       if (_importOptions.ImportTriggerSource != ImportTriggerSource.DataSourceChanged)
@@ -377,19 +377,19 @@ namespace Altaxo.Data
       for (int i = 0; i < watchers.Length; ++i)
       {
         disp = watchers[i];
-        if (null != disp)
+        if (disp is not null)
           disp.Dispose();
       }
 
       disp = _triggerBasedUpdate;
       _triggerBasedUpdate = null;
-      if (null != disp)
+      if (disp is not null)
         disp.Dispose();
     }
 
     public void EhUpdateByTimerQueue()
     {
-      if (null != _parent)
+      if (_parent is not null)
       {
         if (!IsSuspended) // no events during the suspend phase
         {
@@ -405,7 +405,7 @@ namespace Altaxo.Data
       if (!_resolvedFileNames.Contains(e.FullPath))
         return;
 
-      if (null != _triggerBasedUpdate)
+      if (_triggerBasedUpdate is not null)
       {
         _triggerBasedUpdate.Trigger();
       }

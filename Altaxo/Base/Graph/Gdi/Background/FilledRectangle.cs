@@ -120,7 +120,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public void Draw(System.Drawing.Graphics g, BrushX brush, RectangleD2D innerArea)
     {
-      if (brush != null)
+      if (brush is not null)
       {
         using (var gdibrush = BrushCacheGdi.Instance.BorrowBrush(brush, innerArea, g, 1))
         {

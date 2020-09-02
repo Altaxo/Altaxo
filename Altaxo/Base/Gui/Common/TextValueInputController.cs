@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Common
 
     private void Initialize()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.DescriptionText = _captionText;
         _view.ValueText = _initialContents;
@@ -59,13 +59,13 @@ namespace Altaxo.Gui.Common
       get { return _view; }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.ValueText_Validating -= EhView_ValidatingValue1;
 
         _view = value;
         Initialize();
 
-        if (_view != null)
+        if (_view is not null)
           _view.ValueText_Validating += EhView_ValidatingValue1;
       }
     }
@@ -86,10 +86,10 @@ namespace Altaxo.Gui.Common
     {
       _isContentsValid = true;
       _contents = e.ValueToValidate;
-      if (_validator != null)
+      if (_validator is not null)
       {
         var err = _validator.Validate(_contents);
-        if (null != err)
+        if (err is not null)
         {
           _isContentsValid = false;
           e.AddError(err);
@@ -98,7 +98,7 @@ namespace Altaxo.Gui.Common
       }
       else // if no validating handler, use some default validation
       {
-        if (null == _contents || 0 == _contents.Length)
+        if (_contents is null || 0 == _contents.Length)
         {
           _isContentsValid = false;
           e.AddError("You have to enter a value!");
@@ -161,11 +161,11 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.ValueText_Validating -= EhView_ValidatingValue1;
 
         _view = value as ISingleValueView;
-        if (_view != null)
+        if (_view is not null)
         {
           Initialize();
           _view.ValueText_Validating += EhView_ValidatingValue1;

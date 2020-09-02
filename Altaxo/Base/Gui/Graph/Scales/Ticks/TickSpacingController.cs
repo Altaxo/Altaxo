@@ -69,7 +69,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     public override bool Apply(bool disposeController)
     {
-      if (null != _tickSpacingController && false == _tickSpacingController.Apply(disposeController))
+      if (_tickSpacingController is not null && false == _tickSpacingController.Apply(disposeController))
         return false;
 
       return ApplyEnd(true, disposeController);
@@ -102,7 +102,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
         _view.InitializeTickSpacingType(_tickSpacingTypes);
     }
 
@@ -110,21 +110,21 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       if (bInit)
       {
-        if (_doc != null)
+        if (_doc is not null)
           _tickSpacingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
         else
           _tickSpacingController = null;
       }
-      if (null != _view)
+      if (_view is not null)
       {
-        _view.SetTickSpacingView(null != _tickSpacingController ? _tickSpacingController.ViewObject : null);
+        _view.SetTickSpacingView(_tickSpacingController is not null ? _tickSpacingController.ViewObject : null);
       }
     }
 
     public void EhView_TickSpacingTypeChanged()
     {
       var selNode = _tickSpacingTypes.FirstSelectedNode; // FirstSelectedNode can be null when the content of the box changes
-      if (null == selNode)
+      if (selNode is null)
         return;
 
       var spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Tag;
@@ -136,7 +136,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
       OnMadeDirty(); // this is the chance for the controller above in hierarchy to test for a new document instance and use it
 
-      if (_suspendToken != null)
+      if (_suspendToken is not null)
       {
         _suspendToken.Dispose();
         _suspendToken = _doc.SuspendGetToken(); // now we suspend the new document

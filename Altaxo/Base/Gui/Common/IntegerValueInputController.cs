@@ -68,13 +68,13 @@ namespace Altaxo.Gui.Common
       get { return _view; }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.ValueText_Validating -= EhView_ValidatingValue1;
 
         _view = value;
         Initialize();
 
-        if (_view != null)
+        if (_view is not null)
           _view.ValueText_Validating += EhView_ValidatingValue1;
       }
     }
@@ -98,7 +98,7 @@ namespace Altaxo.Gui.Common
       string? err = null;
       if (Altaxo.Serialization.GUIConversion.IsInteger(value, out _enteredContents))
       {
-        if (null != _validator)
+        if (_validator is not null)
           err = _validator.Validate(_enteredContents);
       }
       else
@@ -106,10 +106,10 @@ namespace Altaxo.Gui.Common
         err = "You must enter a integer value!";
       }
 
-      if (null != err)
+      if (err is not null)
         Current.Gui.ErrorMessageBox(err);
 
-      return null == err;
+      return err is null;
     }
 
     #region ISingleValueFormController Members
@@ -156,11 +156,11 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.ValueText_Validating -= EhView_ValidatingValue1;
 
         _view = value as ISingleValueView;
-        if (_view != null)
+        if (_view is not null)
         {
           Initialize();
           _view.ValueText_Validating += EhView_ValidatingValue1;

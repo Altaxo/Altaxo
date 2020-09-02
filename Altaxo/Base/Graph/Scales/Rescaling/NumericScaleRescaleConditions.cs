@@ -238,7 +238,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       if (object.ReferenceEquals(this, obj))
         return true;
       var from = obj as NumericScaleRescaleConditions;
-      if (null == from)
+      if (from is null)
         return false;
 
       _orgRescaling = from._orgRescaling;

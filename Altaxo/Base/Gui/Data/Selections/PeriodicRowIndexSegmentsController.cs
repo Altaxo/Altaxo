@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Data.Selections
       if (initData)
       {
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.StartIndex = _doc.Start;
         _view.LengthOfPeriod = _doc.LengthOfPeriod;

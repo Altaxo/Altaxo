@@ -62,7 +62,7 @@ namespace Altaxo.Main.Services
           if (instance is ServiceCreatorCallback callback)
           {
             instance = callback(this, serviceType);
-            if (instance != null)
+            if (instance is not null)
             {
               _services[serviceType] = instance;
               OnServiceInitialized(serviceType, instance);
@@ -74,12 +74,12 @@ namespace Altaxo.Main.Services
           }
         }
       }
-      if (instance != null)
+      if (instance is not null)
         return instance;
       foreach (var fallbackProvider in _fallbackServiceProviders)
       {
         instance = fallbackProvider.GetService(serviceType);
-        if (instance != null)
+        if (instance is not null)
           return instance;
       }
       return null;
@@ -103,7 +103,7 @@ namespace Altaxo.Main.Services
           if (_services.TryGetValue(disposableTypes[i], out var serviceInstance))
           {
             disposable = serviceInstance as IDisposable;
-            if (disposable != null)
+            if (disposable is not null)
               _services.Remove(disposableTypes[i]);
           }
         }
@@ -158,7 +158,7 @@ namespace Altaxo.Main.Services
         {
           _services.Remove(serviceType);
           var disposableInstance = instance as IDisposable;
-          if (disposableInstance != null)
+          if (disposableInstance is not null)
             servicesToDispose.Remove(serviceType);
         }
       }

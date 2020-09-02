@@ -167,7 +167,7 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        if (null == _instance._gdiGenericSansSerifFontFamilyName)
+        if (_instance._gdiGenericSansSerifFontFamilyName is null)
           _instance._gdiGenericSansSerifFontFamilyName = _instance.InternalGetFontFamilyNameGenericSansSerif();
 
         return _instance._gdiGenericSansSerifFontFamilyName;
@@ -281,13 +281,13 @@ namespace Altaxo.Graph.Gdi
     protected static FontStylePresence FontFamilyArrayToFontStylePresence(FontFamily[] fontFamilyArray)
     {
       FontStylePresence pres = FontStylePresence.NoStyleAvailable;
-      if (null != fontFamilyArray[IdxRegular])
+      if (fontFamilyArray[IdxRegular] is not null)
         pres |= FontStylePresence.RegularStyleAvailable;
-      if (null != fontFamilyArray[IdxBold])
+      if (fontFamilyArray[IdxBold] is not null)
         pres |= FontStylePresence.BoldStyleAvailable;
-      if (null != fontFamilyArray[IdxItalic])
+      if (fontFamilyArray[IdxItalic] is not null)
         pres |= FontStylePresence.ItalicStyleAvailable;
-      if (null != fontFamilyArray[IdxBoldItalic])
+      if (fontFamilyArray[IdxBoldItalic] is not null)
         pres |= FontStylePresence.BoldAndItalicStyleAvailable;
       return pres;
     }
@@ -504,7 +504,7 @@ namespace Altaxo.Graph.Gdi
       {
         if (_dictWin32FamilyNameToGdiFontFamilyAndPresence.TryGetValue(familyName, out var entryValue))
         {
-          if (null != entryValue[IdxRegular] && null != entryValue[IdxBold] && null != entryValue[IdxItalic] && null != entryValue[IdxBoldItalic])
+          if (entryValue[IdxRegular] is not null && entryValue[IdxBold] is not null && entryValue[IdxItalic] is not null && entryValue[IdxBoldItalic] is not null)
             return familyName;
         }
       }
@@ -513,7 +513,7 @@ namespace Altaxo.Graph.Gdi
 
       foreach (var entry in _dictWin32FamilyNameToGdiFontFamilyAndPresence)
       {
-        if (null != entry.Value[IdxRegular] && null != entry.Value[IdxBold] && null != entry.Value[IdxItalic] && null != entry.Value[IdxBoldItalic])
+        if (entry.Value[IdxRegular] is not null && entry.Value[IdxBold] is not null && entry.Value[IdxItalic] is not null && entry.Value[IdxBoldItalic] is not null)
           return entry.Key;
       }
 

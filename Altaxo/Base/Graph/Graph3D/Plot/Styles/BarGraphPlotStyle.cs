@@ -586,7 +586,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         double zCenterLogical = layer.ZAxis.PhysicalVariantToNormal(pdata.GetZPhysical(originalRowIndex));
         double zBaseLogical = globalBaseValue;
 
-        if (_startAtPreviousItem && pdata.PreviousItemData != null)
+        if (_startAtPreviousItem && pdata.PreviousItemData is not null)
         {
           double prevstart = layer.ZAxis.PhysicalVariantToNormal(pdata.PreviousItemData.GetZPhysical(originalRowIndex));
           if (!double.IsNaN(prevstart))

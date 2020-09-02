@@ -89,7 +89,7 @@ namespace Altaxo.Serialization.Xml
 
     public AssemblyAndTypeSurrogate(object o)
     {
-      if (o == null)
+      if (o is null)
         throw new ArgumentNullException("To determine the type, the argument must not be null");
       _assemblyName = o.GetType().Assembly.FullName ?? throw new InvalidOperationException($"Unable to determine full name of assembly of type {o.GetType()}");
       _typeName = o.GetType().FullName ?? throw new InvalidOperationException($"Unable to determine full name of type {o.GetType()}");

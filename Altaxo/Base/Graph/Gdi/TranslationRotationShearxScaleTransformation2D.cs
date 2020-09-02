@@ -267,17 +267,17 @@ namespace Altaxo.Graph.Gdi
     /// <param name="eventFiring">Designates whether or not the change event should be fired if the value has changed.</param>
     public void SetTranslationRotationShearxScale(double? x, double? y, double? rotation, double? shearX, double? scaleX, double? scaleY, Main.EventFiring eventFiring)
     {
-      if (null != x)
+      if (x is not null)
         _x = (double)x;
-      if (null != y)
+      if (y is not null)
         _y = (double)y;
-      if (null != rotation)
+      if (rotation is not null)
         _rotationDeg = (double)rotation;
-      if (null != shearX)
+      if (shearX is not null)
         _shearX = (double)shearX;
-      if (null != scaleX)
+      if (scaleX is not null)
         _scaleX = (double)scaleX;
-      if (null != scaleY)
+      if (scaleY is not null)
         _scaleY = (double)scaleY;
 
       _transformation.SetTranslationRotationShearxScale(_x, _y, _rotationDeg, _shearX, _scaleX, _scaleY);

@@ -207,10 +207,10 @@ namespace Altaxo.Scripting
         var s = (FitFunctionScript)obj;
 
         // Update the user defined paramter names
-        if (s._scriptObject != null && s.IsUsingUserDefinedParameterNames)
+        if (s._scriptObject is not null && s.IsUsingUserDefinedParameterNames)
         {
           var ff = (IFitFunction)s._scriptObject;
-          if (s._UserDefinedParameterNames == null || s._UserDefinedParameterNames.Length != ff.NumberOfParameters)
+          if (s._UserDefinedParameterNames is null || s._UserDefinedParameterNames.Length != ff.NumberOfParameters)
             s._UserDefinedParameterNames = new string[ff.NumberOfParameters];
           for (int i = 0; i < ff.NumberOfParameters; ++i)
             s._UserDefinedParameterNames[i] = ff.ParameterName(i);
@@ -284,10 +284,10 @@ namespace Altaxo.Scripting
         var s = (FitFunctionScript)obj;
 
         // Update the user defined paramter names
-        if (s._scriptObject != null && s.IsUsingUserDefinedParameterNames)
+        if (s._scriptObject is not null && s.IsUsingUserDefinedParameterNames)
         {
           var ff = (IFitFunction)s._scriptObject;
-          if (s._UserDefinedParameterNames == null || s._UserDefinedParameterNames.Length != ff.NumberOfParameters)
+          if (s._UserDefinedParameterNames is null || s._UserDefinedParameterNames.Length != ff.NumberOfParameters)
             s._UserDefinedParameterNames = new string[ff.NumberOfParameters];
           for (int i = 0; i < ff.NumberOfParameters; ++i)
             s._UserDefinedParameterNames[i] = ff.ParameterName(i);
@@ -453,7 +453,7 @@ namespace Altaxo.Scripting
 
     private static bool ObservedAllocateArray<T>(ref T[] existingArray, int newCount)
     {
-      if (null == existingArray || existingArray.Length != newCount)
+      if (existingArray is null || existingArray.Length != newCount)
       {
         existingArray = new T[newCount];
         return true;
@@ -1056,7 +1056,7 @@ namespace Altaxo.Scripting
     {
       MakeSureWasTriedToCompile();
 
-      if (null == _scriptObject)
+      if (_scriptObject is null)
       {
         _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, "Script Object is null"));
         return double.NaN;
@@ -1078,7 +1078,7 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (_scriptObject != null)
+        if (_scriptObject is not null)
           return ((IFitFunction)_scriptObject).NumberOfIndependentVariables;
         else
           return _IndependentVariablesNames.Length;
@@ -1089,7 +1089,7 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (_scriptObject != null)
+        if (_scriptObject is not null)
           return ((IFitFunction)_scriptObject).NumberOfDependentVariables;
         else
           return _DependentVariablesNames.Length;
@@ -1100,14 +1100,14 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (_scriptObject != null)
+        if (_scriptObject is not null)
           return ((IFitFunction)_scriptObject).NumberOfParameters;
         else
           return _NumberOfParameters;
       }
       set
       {
-        if (_scriptObject != null)
+        if (_scriptObject is not null)
           throw new ApplicationException("Number of parameters can not be changed after successfull compilation");
         else
         {
@@ -1120,7 +1120,7 @@ namespace Altaxo.Scripting
 
     public string IndependentVariableName(int i)
     {
-      if (_scriptObject != null)
+      if (_scriptObject is not null)
         return ((IFitFunction)_scriptObject).IndependentVariableName(i);
       else
         return _IndependentVariablesNames[i];
@@ -1128,7 +1128,7 @@ namespace Altaxo.Scripting
 
     public string DependentVariableName(int i)
     {
-      if (_scriptObject != null)
+      if (_scriptObject is not null)
         return ((IFitFunction)_scriptObject).DependentVariableName(i);
       else
         return _DependentVariablesNames[i];
@@ -1147,7 +1147,7 @@ namespace Altaxo.Scripting
 
       string result;
 
-      if (_scriptObject != null)
+      if (_scriptObject is not null)
       {
         result = ((IFitFunction)_scriptObject).ParameterName(i);
       }
@@ -1167,7 +1167,7 @@ namespace Altaxo.Scripting
 
     public double DefaultParameterValue(int i)
     {
-      if (_scriptObject != null)
+      if (_scriptObject is not null)
         return ((IFitFunction)_scriptObject).DefaultParameterValue(i);
       else
         return 0;
@@ -1175,7 +1175,7 @@ namespace Altaxo.Scripting
 
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
-      if (_scriptObject != null)
+      if (_scriptObject is not null)
         return ((IFitFunction)_scriptObject).DefaultVarianceScaling(i);
       else
         return null;
@@ -1185,7 +1185,7 @@ namespace Altaxo.Scripting
     {
       MakeSureWasTriedToCompile();
 
-      if (null == _scriptObject)
+      if (_scriptObject is null)
       {
         _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, "Script Object is null"));
         return;

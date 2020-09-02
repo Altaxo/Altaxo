@@ -238,7 +238,7 @@ namespace Altaxo.Drawing
     /// </exception>
     public static new MemoryStreamImageProxy FromStream(Stream istr, string name)
     {
-      if (istr == null)
+      if (istr is null)
         throw new ArgumentNullException(nameof(istr));
       if (string.IsNullOrEmpty(name))
         throw new ArgumentNullException(nameof(name), "Name must be provided in order to deduce the file extension");

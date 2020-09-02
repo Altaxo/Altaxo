@@ -56,11 +56,11 @@ namespace Altaxo.Gui.Common
 
     public ConditionalDocumentController(Func<TModel> CreationAction, Action RemovalAction, Func<TModel, UseDocument, IMVCANController?> ControllerCreationAction)
     {
-      if (null == CreationAction)
+      if (CreationAction is null)
         throw new ArgumentNullException("CreationAction");
-      if (null == RemovalAction)
+      if (RemovalAction is null)
         throw new ArgumentNullException("RemovalAction");
-      if (null == ControllerCreationAction)
+      if (ControllerCreationAction is null)
         throw new ArgumentNullException("ControllerCreationAction");
 
       _creationAction = CreationAction;
@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Common
 
     public bool InitializeDocument(params object[] args)
     {
-      if (null == args || args.Length == 0 || !(args[0] is TModel))
+      if (args is null || args.Length == 0 || !(args[0] is TModel))
         return false;
 
       _controller = _controllerCreationAction((TModel)args[0], _useDocumentCopy);
@@ -97,7 +97,7 @@ namespace Altaxo.Gui.Common
       set
       {
         _useDocumentCopy = value;
-        if (null != _controller)
+        if (_controller is not null)
           _controller.UseDocumentCopy = value;
       }
     }
@@ -110,13 +110,13 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
         {
           _view.ConditionalViewEnabledChanged -= EhViewEnabledChanged;
         }
         _view = value as IConditionalDocumentView;
 
-        if (_view != null)
+        if (_view is not null)
         {
           Initialize(false);
           _view.ConditionalViewEnabledChanged += EhViewEnabledChanged;
@@ -135,7 +135,7 @@ namespace Altaxo.Gui.Common
 
     public bool Apply(bool disposeController)
     {
-      if (null != _controller)
+      if (_controller is not null)
         return _controller.Apply(disposeController);
       else
         return true;
@@ -155,9 +155,9 @@ namespace Altaxo.Gui.Common
 
     private void Initialize(bool initData)
     {
-      if (null != _view)
+      if (_view is not null)
       {
-        if (null != _controller)
+        if (_controller is not null)
         {
           _view.IsConditionalViewEnabled = true;
           _view.ConditionalView = _controller.ViewObject;
@@ -180,25 +180,25 @@ namespace Altaxo.Gui.Common
 
     public void AnnounceEnabledChanged(bool enableState)
     {
-      if (true == enableState && null == _controller)
+      if (true == enableState && _controller is null)
       {
-        if (null == _controller)
+        if (_controller is null)
         {
           TModel document = _creationAction();
           _controller = _controllerCreationAction(document, _useDocumentCopy);
-          if (null != _view && null != _controller)
+          if (_view is not null && _controller is not null)
             _view.ConditionalView = _controller.ViewObject;
         }
       }
-      else if (false == enableState && null != _controller) // view is disabled
+      else if (false == enableState && _controller is not null) // view is disabled
       {
         _removalAction();
         _controller = null;
-        if (null != _view)
+        if (_view is not null)
           _view.ConditionalView = null;
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.IsConditionalViewEnabled = enableState;
       }

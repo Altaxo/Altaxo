@@ -241,7 +241,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return true;
 
       var from = obj as BarGraphPlotStyle;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, copyWithDataReferences);
         EhSelfChanged();
@@ -457,7 +457,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!_independentFillColor && _fillBrush is not null)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
         { return _fillBrush.Color; });
-      else if (!_independentFrameColor && null != _framePen) // else if is used here because fill color has precedence over frame color
+      else if (!_independentFrameColor && _framePen is not null) // else if is used here because fill color has precedence over frame color
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
         { return _framePen.Color; });
     }
@@ -484,7 +484,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (!_independentFrameColor)
       {
-        if (null == _framePen)
+        if (_framePen is null)
           _framePen = new PenX(Drawing.ColorManagement.ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
         { _framePen = _framePen.WithColor(c); });
@@ -520,7 +520,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
 
       bool useVariableFillColor = _fillBrush is not null && _cachedColorForIndexFunction is not null && !_independentFillColor;
-      bool useVariableFrameColor = _framePen is not null && null != _cachedColorForIndexFunction && !_independentFrameColor;
+      bool useVariableFrameColor = _framePen is not null && _cachedColorForIndexFunction is not null && !_independentFrameColor;
 
       var fillBrush = _fillBrush;
       var framePen = _framePen;
@@ -537,7 +537,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         double ycn = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(originalRowIndex));
         double ynbase = globalBaseValue;
 
-        if (_startAtPreviousItem && pdata.PreviousItemData != null)
+        if (_startAtPreviousItem && pdata.PreviousItemData is not null)
         {
           double prevstart = layer.YAxis.PhysicalVariantToNormal(pdata.PreviousItemData.GetYPhysical(originalRowIndex));
           if (!double.IsNaN(prevstart))
@@ -554,7 +554,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         layer.CoordinateSystem.GetIsoline(path, new Logical3D(xrn, ynbase), new Logical3D(xln, ynbase));
         path.CloseFigure();
 
-        if (null != fillBrush)
+        if (fillBrush is not null)
         {
           if (useVariableFillColor)
           {
@@ -567,7 +567,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           }
         }
 
-        if (null != framePen)
+        if (framePen is not null)
         {
           if (useVariableFrameColor)
             framePen = framePen.WithColor(GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction!(originalRowIndex), "VariableColor"));
@@ -583,14 +583,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public RectangleF PaintSymbol(Graphics g, RectangleF bounds)
     {
       bounds.Inflate(0, -bounds.Height / 4);
-      if (null != _fillBrush)
+      if (_fillBrush is not null)
       {
         using (var fillBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_fillBrush, bounds, g, 1))
         {
           g.FillRectangle(fillBrushGdi, bounds);
         }
       }
-      if (null != _framePen)
+      if (_framePen is not null)
       {
         using (var framePenGdi = PenCacheGdi.Instance.BorrowPen(_framePen, bounds, g, 1))
         {

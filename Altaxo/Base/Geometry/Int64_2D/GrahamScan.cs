@@ -110,7 +110,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// <returns>The ordered set of points that forms the hull.</returns>
     public static IReadOnlyList<(IntPoint point, int index)> GetConvexHull(IReadOnlyList<IntPoint> points)
     {
-      if (null == points)
+      if (points is null)
       {
         throw new ArgumentNullException(nameof(points));
       }

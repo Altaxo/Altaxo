@@ -124,7 +124,7 @@ namespace Altaxo.Data
         return true;
 
       var from = obj as DecomposeByColumnContentOptions;
-      if (null != from)
+      if (from is not null)
       {
         _destinationOutput = from._destinationOutput;
         _destinationColumnSorting = from._destinationColumnSorting;

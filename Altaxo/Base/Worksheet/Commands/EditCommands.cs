@@ -898,7 +898,7 @@ namespace Altaxo.Worksheet.Commands
     {
       var table = GetTableFromClipboard();
 
-      if (null != table)
+      if (table is not null)
         PasteFromTable(dg, table);
     }
   }

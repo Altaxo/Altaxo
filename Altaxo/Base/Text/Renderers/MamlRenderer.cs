@@ -300,7 +300,7 @@ namespace Altaxo.Text.Renderers
       foreach (var mdo in MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(_markdownDocument))
       {
         var attr = (Markdig.Renderers.Html.HtmlAttributes)mdo.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-        if (null != attr && attr.Id == url)
+        if (attr is not null && attr.Id == url)
         {
           // markdown element found, now we need to know in which file it is
           var prevFile = _amlFileList.First();
@@ -322,7 +322,7 @@ namespace Altaxo.Text.Renderers
     {
       object? result = null;
 
-      if (null == markdownObject)
+      if (markdownObject is null)
         throw new ArgumentNullException(nameof(markdownObject));
 
       if (markdownObject is MarkdownDocument markdownDocument)
@@ -369,7 +369,7 @@ namespace Altaxo.Text.Renderers
       Write("<");
       Write(mamlElement.Name);
 
-      if (null != attributes)
+      if (attributes is not null)
       {
         foreach (var att in attributes)
         {
@@ -565,10 +565,10 @@ namespace Altaxo.Text.Renderers
     /// <returns>This instance</returns>
     public void WriteLeafRawLines(LeafBlock leafBlock, bool writeEndOfLines, bool escape, bool softEscape = false)
     {
-      if (leafBlock == null)
+      if (leafBlock is null)
         throw new ArgumentNullException(nameof(leafBlock));
 
-      if (leafBlock.Lines.Lines != null)
+      if (leafBlock.Lines.Lines is not null)
       {
         var lines = leafBlock.Lines;
         var slices = lines.Lines;
@@ -598,7 +598,7 @@ namespace Altaxo.Text.Renderers
     {
       var result = string.Empty;
 
-      if (null == leafBlock.Inline)
+      if (leafBlock.Inline is null)
         return result;
 
       foreach (var il in leafBlock.Inline)

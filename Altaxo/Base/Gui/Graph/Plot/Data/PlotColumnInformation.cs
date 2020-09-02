@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (null != _transformation && null != _underlyingColumn)
+        if (_transformation is not null && _underlyingColumn is not null)
           return new TransformedReadableColumn(_underlyingColumn, _transformation);
         else
           return _underlyingColumn;
@@ -250,7 +250,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
         hasChanged = true;
       }
 
-      if (null == _underlyingColumn)
+      if (_underlyingColumn is null)
       {
         if (string.IsNullOrEmpty(_nameOfUnderlyingDataColumn))
         {
@@ -283,11 +283,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
         var dcolumn = (DataColumn)_underlyingColumn;
         var parentTable = DataTable.GetParentDataTableOf(dcolumn);
         var parentCollection = DataColumnCollection.GetParentDataColumnCollectionOf(dcolumn);
-        if (null == parentTable)
+        if (parentTable is null)
         {
           hasChanged |= InternalSet(ref _plotColumnToolTip, string.Format("This column is an orphaned data column without a parent data table", _nameOfUnderlyingDataColumn));
           hasChanged |= InternalSet(ref _plotColumnBoxState, PlotColumnControlState.Error);
-          if (parentCollection == null)
+          if (parentCollection is null)
           {
             hasChanged |= InternalSet(ref _plotColumnBoxText, string.Format("Orphaned {0}", dcolumn.GetType().Name));
           }
@@ -333,7 +333,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
 
       // now the transformation
-      if (null != _transformation)
+      if (_transformation is not null)
       {
         hasChanged |= InternalSet(ref _transformationBoxText, _transformation.RepresentationAsOperator ?? _transformation.RepresentationAsFunction);
         hasChanged |= InternalSet(ref _transformationToolTip, string.Format("Transforms the column data by the function f(x)={0}", _transformation.RepresentationAsFunction));

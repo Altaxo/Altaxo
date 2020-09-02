@@ -60,7 +60,7 @@ namespace Altaxo.Data
       public override string? Validate(string wksname)
       {
         string? err = base.Validate(wksname);
-        if (null != err)
+        if (err is not null)
           return err;
 
         if (_table.Name == wksname)

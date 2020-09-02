@@ -453,7 +453,7 @@ namespace Altaxo.Graph.Graph3D
         var idx = _graphObjects.IndexOfFirst(item => item is LegendText);
         TextGraphic? oldvalue = idx >= 0 ? (TextGraphic)_graphObjects[idx] : null;
 
-        if (value != null)
+        if (value is not null)
         {
           if (idx < 0)
             _graphObjects.Add(value);
@@ -535,7 +535,7 @@ namespace Altaxo.Graph.Graph3D
       var existingLegendIndex = GraphObjects.IndexOfFirst(x => x is LegendText);
       var existingLegend = existingLegendIndex >= 0 ? (LegendText)GraphObjects[existingLegendIndex] : null;
 
-      if (existingLegend != null)
+      if (existingLegend is not null)
         tgo = new TextGraphic(existingLegend);
       else
         tgo = new TextGraphic(this.GetPropertyContext());
@@ -548,7 +548,7 @@ namespace Altaxo.Graph.Graph3D
       tgo.Text = strg.ToString();
 
       // if the position of the old legend is outside, use a new position
-      if (null == existingLegend || existingLegend.Position.X < 0 || existingLegend.Position.Y < 0 ||
+      if (existingLegend is null || existingLegend.Position.X < 0 || existingLegend.Position.Y < 0 ||
         existingLegend.Position.X > Size.X || existingLegend.Position.Y > Size.Y)
         tgo.Position = new PointD3D(0.1 * Size.X, 0.1 * Size.Y, 0.1 * Size.Z);
       else
@@ -724,9 +724,9 @@ namespace Altaxo.Graph.Graph3D
 
       if (newtitle != oldtitle)
       {
-        if (newtitle == null)
+        if (newtitle is null)
         {
-          if (style != null)
+          if (style is not null)
             style.Title = null;
         }
         else if (_axisStyles.AxisStyleEnsured(id)?.Title is { } title)
@@ -895,12 +895,12 @@ namespace Altaxo.Graph.Graph3D
         hit = _axisStyles.HitTest(localCoord, AxisScaleEditorMethod, AxisStyleEditorMethod, AxisLabelMajorStyleEditorMethod, AxisLabelMinorStyleEditorMethod);
       }
 
-      if (null == hit)
+      if (hit is null)
       {
         hit = base.HitTestWithLocalCoordinates(localCoord, plotItemsOnly);
       }
 
-      if (null != hit && hit.ParentLayer == null)
+      if (hit is not null && hit.ParentLayer is null)
         hit.ParentLayer = this;
 
       return hit;
@@ -958,7 +958,7 @@ namespace Altaxo.Graph.Graph3D
 
       foreach (var axisStyle in _axisStyles)
       {
-        if (null != axisStyle.Title)
+        if (axisStyle.Title is not null)
           SetDefaultAxisTitlePositionAndOrientation(axisStyle.Title, axisStyle.StyleID, _coordinateSystem.GetAxisStyleInformation(axisStyle.StyleID));
       }
     }
@@ -1015,7 +1015,7 @@ namespace Altaxo.Graph.Graph3D
           foreach (IGPlotItem pa in PlotItems)
           {
             var paXB = pa as IXBoundsHolder;
-            if (null != paXB)
+            if (paXB is not null)
             {
               using (var paToken = pa.SuspendGetToken()) // we have to suspend the plotitem. When the boundary data in the plot item are not uptodate, it would otherwise create new BoundaryChangedEventArgs, which would lead to inefficiency or a stack overflow
               {
@@ -1036,11 +1036,11 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     protected void InitializeXScaleDataBounds()
     {
-      if (null == PlotItems)
+      if (PlotItems is null)
         return; // can happen during deserialization
 
       var scaleBounds = _scales.X.DataBoundsObject;
-      if (null == scaleBounds)
+      if (scaleBounds is null)
         return;
 
       // we have to disable our own Handler since by calling MergeXBoundsInto, it is possible that the type of DataBound of the plot item has to change, and that
@@ -1093,7 +1093,7 @@ namespace Altaxo.Graph.Graph3D
           foreach (IGPlotItem pa in PlotItems)
           {
             var paYB = pa as IYBoundsHolder;
-            if (null != paYB)
+            if (paYB is not null)
             {
               using (var paToken = pa.SuspendGetToken()) // we have to suspend the plotitem. When the boundary data in the plot item are not uptodate, it would otherwise create new BoundaryChangedEventArgs, which would lead to inefficiency or a stack overflow
               {
@@ -1114,12 +1114,12 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     protected void InitializeYScaleDataBounds()
     {
-      if (null == PlotItems)
+      if (PlotItems is null)
         return; // can happen during deserialization
 
       var scaleBounds = _scales.Y.DataBoundsObject;
 
-      if (null == scaleBounds)
+      if (scaleBounds is null)
         return;
       // we have to disable our own Handler since if we change one DataBound of a association,
       //it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary,
@@ -1174,7 +1174,7 @@ namespace Altaxo.Graph.Graph3D
           foreach (IGPlotItem pa in PlotItems)
           {
             var paZB = pa as IZBoundsHolder;
-            if (null != paZB)
+            if (paZB is not null)
             {
               using (var paToken = pa.SuspendGetToken()) // we have to suspend the plotitem. When the boundary data in the plot item are not uptodate, it would otherwise create new BoundaryChangedEventArgs, which would lead to inefficiency or a stack overflow
               {
@@ -1195,12 +1195,12 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     protected void InitializeZScaleDataBounds()
     {
-      if (null == PlotItems)
+      if (PlotItems is null)
         return; // can happen during deserialization
 
       var scaleBounds = _scales[2].DataBoundsObject;
 
-      if (null == scaleBounds)
+      if (scaleBounds is null)
         return;
 
       // we have to disable our own Handler since if we change one DataBound of a association,
@@ -1284,16 +1284,16 @@ namespace Altaxo.Graph.Graph3D
 
     private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
     {
-      if (null != _scales)
+      if (_scales is not null)
         yield return new Main.DocumentNodeAndName(_scales, "Scales");
 
-      if (null != _plotItems)
+      if (_plotItems is not null)
         yield return new Main.DocumentNodeAndName(_plotItems, "PlotItems");
 
-      if (null != _axisStyles)
+      if (_axisStyles is not null)
         yield return new Main.DocumentNodeAndName(_axisStyles, "AxisStyles");
 
-      if (null != _gridPlanes)
+      if (_gridPlanes is not null)
         yield return new Main.DocumentNodeAndName(_gridPlanes, "Grids");
     }
 
@@ -1337,7 +1337,7 @@ namespace Altaxo.Graph.Graph3D
 
         _coordinateSystem = value.WithLayerSize(Size);
 
-        if (null != AxisStyles)
+        if (AxisStyles is not null)
           AxisStyles.UpdateCoordinateSystem(_coordinateSystem);
 
         EhSelfChanged(EventArgs.Empty);
@@ -1366,7 +1366,7 @@ namespace Altaxo.Graph.Graph3D
 
         public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = null != o ? (LegendText)o : new LegendText(info);
+          var s = o is not null ? (LegendText)o : new LegendText(info);
           info.GetBaseValueEmbedded(s, typeof(LegendText).BaseType!, this);
           return s;
         }

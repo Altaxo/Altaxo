@@ -87,11 +87,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
       {
         var s = (GraphicBase)(o ?? throw new ArgumentNullException(nameof(o)));
 
-        if (null != s._location)
+        if (s._location is not null)
           throw new InvalidProgramException("_location should be null here. Has the deserialization constructor been used?");
 
         s._location = (ItemLocationDirect)info.GetValue("Location", s);
-        if (null != s._location)
+        if (s._location is not null)
           s._location.ParentObject = s;
 
         s._tag = info.GetString("Tag");
@@ -157,7 +157,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _location)
+      if (_location is not null)
         yield return new Main.DocumentNodeAndName(_location, () => _location = null!, "Location");
     }
 
@@ -364,7 +364,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <param name="zscale">The zscale ratio.</param>
     public static void ScalePosition(IGraphicBase o, double xscale, double yscale, double zscale)
     {
-      if (o != null)
+      if (o is not null)
       {
         var oldP = o.Position;
         o.Position = new PointD3D((oldP.X * xscale), (oldP.Y * yscale), (oldP.Z * zscale));

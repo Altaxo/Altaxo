@@ -77,7 +77,7 @@ namespace Altaxo.Main
     {
       // resume the suspended childs
       var suspendTokensOfChilds = System.Threading.Interlocked.Exchange<HashSet<ISuspendToken>?>(ref _suspendTokensOfChilds, null);
-      if (null != suspendTokensOfChilds)
+      if (suspendTokensOfChilds is not null)
       {
         foreach (var obj in suspendTokensOfChilds)
           obj.Dispose();
@@ -86,7 +86,7 @@ namespace Altaxo.Main
       // send accumulated data if available and release it thereafter
       if (AccumulatedEventData_HasZeroOrOneEventArg(out var singleArg)) // we have a single event arg accumulated
       {
-        if (null == singleArg) // no events during suspended state
+        if (singleArg is null) // no events during suspended state
         {
           // nothing to do
         }
@@ -95,7 +95,7 @@ namespace Altaxo.Main
           AccumulatedEventData_Clear();
 
           var parent = _parent as Main.IChildChangedEventSink;
-          if (null != parent)
+          if (parent is not null)
           {
             parent.EhChildChanged(this, singleArg);
           }
@@ -116,7 +116,7 @@ namespace Altaxo.Main
         AccumulatedEventData_Clear();
 
         var parent = _parent as Main.IChildChangedEventSink;
-        if (null != parent)
+        if (parent is not null)
         {
           foreach (var eventArg in accumulatedEvents)
             parent.EhChildChanged(this, eventArg);
@@ -142,7 +142,7 @@ namespace Altaxo.Main
     {
       // resume the suspended childs
       var suspendTokensOfChilds = System.Threading.Interlocked.Exchange(ref _suspendTokensOfChilds, null);
-      if (null != suspendTokensOfChilds)
+      if (suspendTokensOfChilds is not null)
       {
         foreach (var obj in suspendTokensOfChilds)
           obj.ResumeSilently();
@@ -277,7 +277,7 @@ namespace Altaxo.Main
           return;
 
         // Notify parent
-        if (null != _parent && !_parent.IsDisposeInProgress)
+        if (_parent is not null && !_parent.IsDisposeInProgress)
         {
           _parent.EhChildChanged(this, eventArgsTransformed); // inform parent with transformed event args. Attention: parent may change our suspend state
         }
@@ -299,7 +299,7 @@ namespace Altaxo.Main
         if (sender is Main.ISuspendableByToken)
         {
           var suspendTokenOfChilds = _suspendTokensOfChilds;
-          if (null == suspendTokenOfChilds)
+          if (suspendTokenOfChilds is null)
             _suspendTokensOfChilds = suspendTokenOfChilds = new HashSet<ISuspendToken>();
           suspendTokenOfChilds.Add(((Main.ISuspendableByToken)sender).SuspendGetToken()); // add sender to suspended child
         }
@@ -326,7 +326,7 @@ namespace Altaxo.Main
       if (!IsSuspendedOrResumeInProgress)
       {
         // Notify parent
-        if (null != _parent && !_parent.IsDisposeInProgress)
+        if (_parent is not null && !_parent.IsDisposeInProgress)
         {
           _parent.EhChildChanged(this, e); // parent may change our suspend state
         }
@@ -404,7 +404,7 @@ namespace Altaxo.Main
     /// <exception cref="System.ArgumentNullException">The specified name was null.</exception>
     public virtual IDocumentLeafNode? GetChildObjectNamed(string name)
     {
-      if (null == name)
+      if (name is null)
         throw new ArgumentNullException("name");
 
       return GetDocumentNodeChildrenWithName().FirstOrDefault(tuple => tuple.Name == name).DocumentNode;
@@ -418,7 +418,7 @@ namespace Altaxo.Main
     /// <exception cref="System.ArgumentNullException">The provided argument docNode was null.</exception>
     public virtual string? GetNameOfChildObject(IDocumentLeafNode docNode)
     {
-      if (null == docNode)
+      if (docNode is null)
         throw new ArgumentNullException("docNode");
 
       return GetDocumentNodeChildrenWithName().FirstOrDefault(tuple => object.ReferenceEquals(tuple.DocumentNode, docNode)).Name;
@@ -497,7 +497,7 @@ namespace Altaxo.Main
       {
         {
           var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentNode?>(ref _parent, null);
-          if (parent != null)
+          if (parent is not null)
           {
             int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
 
@@ -546,7 +546,7 @@ namespace Altaxo.Main
       public void Dispose()
       {
         var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentNode?>(ref _parent, null);
-        if (parent != null)
+        if (parent is not null)
         {
           Exception? exceptionInAboutToBeResumed = null;
           if (1 == parent._suspendLevel)
@@ -578,7 +578,7 @@ namespace Altaxo.Main
             }
           }
 
-          if (null != exceptionInAboutToBeResumed)
+          if (exceptionInAboutToBeResumed is not null)
             throw exceptionInAboutToBeResumed;
         }
       }
@@ -590,7 +590,7 @@ namespace Altaxo.Main
       public IDisposable ResumeCompleteTemporarilyGetToken()
       {
         var parent = _parent;
-        if (null == parent)
+        if (parent is null)
           throw new ObjectDisposedException("This token is already disposed");
 
         var result = new TemporaryResumeToken(parent);
@@ -601,7 +601,7 @@ namespace Altaxo.Main
       public void ResumeCompleteTemporarily()
       {
         var parent = _parent;
-        if (null == parent)
+        if (parent is null)
           throw new ObjectDisposedException("This token is already disposed");
 
         var result = new TemporaryResumeToken(parent);
@@ -688,18 +688,18 @@ namespace Altaxo.Main
         if (!(_numberOfSuspendLevelsAbsorbed >= 0))
           throw new InvalidProgramException();
 
-        if (null != ex1)
+        if (ex1 is not null)
           throw new System.Reflection.TargetInvocationException(ex1);
-        if (null != ex2)
+        if (ex2 is not null)
           throw new System.Reflection.TargetInvocationException(ex2);
-        if (null != ex3)
+        if (ex3 is not null)
           throw new System.Reflection.TargetInvocationException(ex3);
       }
 
       public void Dispose(bool isDisposing)
       {
         var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentNode?>(ref _parent, null);
-        if (parent != null)
+        if (parent is not null)
         {
           if (!(_numberOfSuspendLevelsAbsorbed >= 0))
             throw new InvalidProgramException();
@@ -723,7 +723,7 @@ namespace Altaxo.Main
             }
           }
           // Suspend level is now restored
-          if (exception != null)
+          if (exception is not null)
             throw exception;
         }
       }
@@ -838,7 +838,7 @@ namespace Altaxo.Main
       if (fromAnotherChild is null)
       {
         myChild = default!;
-        if (null != oldChild)
+        if (oldChild is not null)
           oldChild.Dispose();
       }
       else if ((myChild is Main.ICopyFrom) && myChild.GetType() == fromAnotherChild.GetType())
@@ -850,7 +850,7 @@ namespace Altaxo.Main
         myChild = (T)(fromAnotherChild.Clone());
         myChild.ParentObject = this;
 
-        if (null != oldChild)
+        if (oldChild is not null)
           oldChild.Dispose();
       }
 
@@ -871,7 +871,7 @@ namespace Altaxo.Main
     /// <param name="createNew">If the parameter <paramref name="fromAnotherChild"/> is null, the provided function is used to create a new object of type <typeparamref name="T"/>. This object is then used to set the member.</param>
     protected bool ChildCopyToMemberOrCreateNew<T>([AllowNull][NotNull] ref T myChild, T fromAnotherChild, Func<T> createNew) where T : class, IDocumentLeafNode, ICloneable
     {
-      if (null != fromAnotherChild)
+      if (fromAnotherChild is not null)
       {
         return ChildCopyToMember(ref myChild, fromAnotherChild);
       }
@@ -895,20 +895,20 @@ namespace Altaxo.Main
       if (object.ReferenceEquals(myChild, fromAnotherChild))
         return;
 
-      if (null == fromAnotherChild)
+      if (fromAnotherChild is null)
       {
-        if (null != myChild)
+        if (myChild is not null)
           myChild.Dispose();
         myChild = default!;
       }
       else
       {
-        if (null != myChild)
+        if (myChild is not null)
           myChild.Dispose();
         myChild = (T)(fromAnotherChild.Clone());
       }
 
-      if (null != myChild)
+      if (myChild is not null)
         myChild.ParentObject = this;
     }
 
@@ -975,11 +975,11 @@ namespace Altaxo.Main
       }
 
       var pnode = node as SuspendableDocumentNode;
-      if (null != pnode)
+      if (pnode is not null)
       {
         foreach (var entry in pnode.GetDocumentNodeChildrenWithName())
         {
-          if (entry.DocumentNode.ParentObject == null)
+          if (entry.DocumentNode.ParentObject is null)
           {
             Current.InfoTextMessageService.WriteLine(MessageLevel.Error, "ReportParentChildAndDisposedProblems", "Problem detected: Child node {0} of parent {1} has no parent object set!", entry.Name, Main.AbsoluteDocumentPath.GetAbsolutePath(pnode));
             problemsDetected = true;

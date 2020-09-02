@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Worksheet
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args == null || args.Length == 0 || !(args[0] is PlotCommonColumnsCommand))
+      if (args is null || args.Length == 0 || !(args[0] is PlotCommonColumnsCommand))
         return false;
 
       _doc = (PlotCommonColumnsCommand)args[0];
@@ -77,17 +77,17 @@ namespace Altaxo.Gui.Worksheet
         bool isFirst = true;
         foreach (var name in names)
         {
-          _xCommonColumns.Add(new SelectableListNode(name, name, name == _doc.XCommonColumnNameForPlot || (isFirst && null == _doc.XCommonColumnNameForPlot)));
+          _xCommonColumns.Add(new SelectableListNode(name, name, name == _doc.XCommonColumnNameForPlot || (isFirst && _doc.XCommonColumnNameForPlot is null)));
           _yCommonColumns.Add(new SelectableListNode(name, name, false));
           isFirst = false;
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeXCommonColumns(_xCommonColumns);
         _view.InitializeYCommonColumns(_yCommonColumns);
-        _view.UseCurrentXColumn = _doc.XCommonColumnNameForPlot == null;
+        _view.UseCurrentXColumn = _doc.XCommonColumnNameForPlot is null;
       }
     }
 
@@ -99,13 +99,13 @@ namespace Altaxo.Gui.Worksheet
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
         }
 
         _view = value as IPlotCommonColumnsView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
         }
@@ -126,7 +126,7 @@ namespace Altaxo.Gui.Worksheet
       if (_view.UseCurrentXColumn)
         _doc.XCommonColumnNameForPlot = null;
       else
-        _doc.XCommonColumnNameForPlot = _xCommonColumns.FirstSelectedNode == null ? null : (string)_xCommonColumns.FirstSelectedNode.Tag;
+        _doc.XCommonColumnNameForPlot = _xCommonColumns.FirstSelectedNode is null ? null : (string)_xCommonColumns.FirstSelectedNode.Tag;
 
       _doc.YCommonColumnNamesForPlotting.Clear();
       foreach (var node in _yCommonColumns.Where(x => x.IsSelected))

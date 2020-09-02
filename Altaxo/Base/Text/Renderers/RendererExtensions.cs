@@ -42,7 +42,7 @@ namespace Altaxo.Text.Renderers
     {
       var result = string.Empty;
 
-      if (null == leafBlock.Inline)
+      if (leafBlock.Inline is null)
         return result;
 
       foreach (var il in leafBlock.Inline)

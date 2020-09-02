@@ -191,7 +191,7 @@ namespace Altaxo.Serialization.Galactic
       }
       finally
       {
-        if (null != stream)
+        if (stream is not null)
           stream.Close();
       }
 
@@ -241,7 +241,7 @@ namespace Altaxo.Serialization.Galactic
       foreach (string filename in filenames)
       {
         string? error = ToArrays(filename, out var xvalues, out var yvalues);
-        if (null != error)
+        if (error is not null)
         {
           errorList.Append(error);
           continue;
@@ -253,7 +253,7 @@ namespace Altaxo.Serialization.Galactic
 
         // first look if our default xcolumn matches the xvalues
 
-        bool bMatchsXColumn = null != xcol && ValuesMatch(xvalues, xcol);
+        bool bMatchsXColumn = xcol is not null && ValuesMatch(xvalues, xcol);
 
         // if no match, then consider all xcolumns from right to left, maybe some fits
         if (!bMatchsXColumn)
@@ -324,7 +324,7 @@ namespace Altaxo.Serialization.Galactic
 
         string? errors = ImportSpcFiles(filenames, table);
 
-        if (errors != null)
+        if (errors is not null)
         {
           Current.Gui.ErrorMessageBox(errors);
         }

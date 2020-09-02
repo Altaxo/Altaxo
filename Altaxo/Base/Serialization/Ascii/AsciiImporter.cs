@@ -85,7 +85,7 @@ namespace Altaxo.Serialization.Ascii
 
       // in case a structure is provided, allocate already the columsn
 
-      if (null != importOptions.RecognizedStructure)
+      if (importOptions.RecognizedStructure is not null)
       {
         for (int i = 0; i < importOptions.RecognizedStructure.Count; i++)
         {
@@ -140,7 +140,7 @@ namespace Altaxo.Serialization.Ascii
       for (int i = 0; i < importOptions.NumberOfMainHeaderLines; i++)
       {
         sLine = sr.ReadLine();
-        if (null == sLine)
+        if (sLine is null)
           break;
 
         var tokens = new List<string>(importOptions.SeparationStrategy!.GetTokens(sLine));
@@ -192,7 +192,7 @@ namespace Altaxo.Serialization.Ascii
       for (int i = 0; true; i++)
       {
         sLine = sr.ReadLine();
-        if (null == sLine)
+        if (sLine is null)
           break;
         else if ("\0" == sLine) // if pasting from excel, the stream ends with "\0", so we ignore it.
           continue;
@@ -223,7 +223,7 @@ namespace Altaxo.Serialization.Ascii
           {
             ((TextColumn)newcols[k])[i] = token.Trim();
           }
-          else if (null == newcols[k] || newcols[k] is DBNullColumn)
+          else if (newcols[k] is null || newcols[k] is DBNullColumn)
           {
             bool bConverted = false;
             double val = double.NaN;
@@ -328,9 +328,9 @@ namespace Altaxo.Serialization.Ascii
     /// </exception>
     public static void ImportFromAsciiStream(this DataTable dataTable, Stream stream, string streamOriginHint, AsciiImportOptions importOptions)
     {
-      if (importOptions == null)
+      if (importOptions is null)
         throw new ArgumentNullException("Argument importOptions is null");
-      if (null == dataTable)
+      if (dataTable is null)
         throw new ArgumentNullException("Argument table is null");
 
       InternalImportFromAsciiStream(dataTable, stream, streamOriginHint, ref importOptions);
@@ -374,11 +374,11 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="importOptions">The import options. This parameter must not be null.</param>
     public static void ImportFromAsciiFile(this DataTable dataTable, string fileName, AsciiImportOptions importOptions)
     {
-      if (null == dataTable)
+      if (dataTable is null)
         throw new ArgumentNullException("Argument dataTable is null");
       if (string.IsNullOrEmpty(fileName))
         throw new ArgumentNullException("Argument fileName is null or empty");
-      if (importOptions == null)
+      if (importOptions is null)
         throw new ArgumentNullException("Argument importOptions is null");
 
       using (var myStream = GetAsciiInputFileStream(fileName))
@@ -404,7 +404,7 @@ namespace Altaxo.Serialization.Ascii
     /// </exception>
     public static void ImportFromAsciiFile(this DataTable dataTable, string fileName, out AsciiImportOptions importOptions)
     {
-      if (null == dataTable)
+      if (dataTable is null)
         throw new ArgumentNullException("Argument dataTable is null");
       if (string.IsNullOrEmpty(fileName))
         throw new ArgumentNullException("Argument fileName is null or empty");
@@ -431,7 +431,7 @@ namespace Altaxo.Serialization.Ascii
     /// </exception>
     public static void ImportFromAsciiFile(this DataTable dataTable, string fileName)
     {
-      if (null == dataTable)
+      if (dataTable is null)
         throw new ArgumentNullException("Argument dataTable is null");
       if (string.IsNullOrEmpty(fileName))
         throw new ArgumentNullException("Argument fileName is null or empty");
@@ -451,11 +451,11 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="importOptions">The import options. This parameter must not be null, and the options must be fully specified.</param>
     public static void ImportFromAsciiText(this DataTable dataTable, string asciiText, AsciiImportOptions importOptions)
     {
-      if (null == dataTable)
+      if (dataTable is null)
         throw new ArgumentNullException("Argument dataTable is null");
-      if (null == asciiText)
+      if (asciiText is null)
         throw new ArgumentNullException("Argument asciiText is null");
-      if (importOptions == null)
+      if (importOptions is null)
         throw new ArgumentNullException("Argument importOptions is null");
 
       using (var memstream = new MemoryStream())
@@ -479,9 +479,9 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="importOptions">On return, contains the import options that were used to import the Ascii text.</param>
     public static void ImportFromAsciiText(this DataTable dataTable, string asciiText, out AsciiImportOptions importOptions)
     {
-      if (null == dataTable)
+      if (dataTable is null)
         throw new ArgumentNullException("Argument dataTable is null");
-      if (null == asciiText)
+      if (asciiText is null)
         throw new ArgumentNullException("Argument asciiText is null");
 
       using (var memstream = new MemoryStream())
@@ -503,9 +503,9 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="asciiText">The Ascii text that is to be imported.</param>
     public static void ImportFromAsciiText(this DataTable dataTable, string asciiText)
     {
-      if (null == dataTable)
+      if (dataTable is null)
         throw new ArgumentNullException("Argument dataTable is null");
-      if (null == asciiText)
+      if (asciiText is null)
         throw new ArgumentNullException("Argument asciiText is null");
 
       ImportFromAsciiText(dataTable, asciiText, out var importOptions);
@@ -558,7 +558,7 @@ namespace Altaxo.Serialization.Ascii
         {
           ImportFromAsciiFile(srcTable, fileName, out importOptions);
         }
-        else if (null != importOptions && importOptions.IsFullySpecified)
+        else if (importOptions is not null && importOptions.IsFullySpecified)
         {
           ImportFromAsciiFile(srcTable, fileName, importOptions);
         }
@@ -576,7 +576,7 @@ namespace Altaxo.Serialization.Ascii
         bool bMatchsXColumn = false;
 
         // first look if our default xcolumn matches the xvalues
-        if (null != xcol)
+        if (xcol is not null)
           bMatchsXColumn = ValuesMatch(xvalues, xcol);
 
         // if no match, then consider all xcolumns from right to left, maybe some fits
@@ -709,7 +709,7 @@ namespace Altaxo.Serialization.Ascii
         var srcTable = new DataTable();
         if (determineImportOptionsSeparatelyForEachFile)
           ImportFromAsciiFile(srcTable, fileName, out importOptions);
-        else if (null != importOptions && importOptions.IsFullySpecified)
+        else if (importOptions is not null && importOptions.IsFullySpecified)
           ImportFromAsciiFile(srcTable, fileName, importOptions);
         else
           ImportFromAsciiFile(srcTable, fileName, out importOptions);
@@ -834,11 +834,11 @@ namespace Altaxo.Serialization.Ascii
     /// <returns>True if successfull; otherwise, false.</returns>
     public static bool TryImportFromMultipleAsciiFilesHorizontally(this DataTable dataTable, IEnumerable<string> fileNames, bool sortFileNames, [MaybeNullWhen(false)][AllowNull] AsciiImportOptions importOptions, [MaybeNullWhen(true)] out string errors)
     {
-      if (null == dataTable)
+      if (dataTable is null)
         throw new ArgumentNullException("Argument dataTable is null");
-      if (null == fileNames)
+      if (fileNames is null)
         throw new ArgumentNullException("Argument fileNames is null");
-      if (importOptions == null)
+      if (importOptions is null)
         throw new ArgumentNullException("Argument importOptions is null");
       if (!importOptions.IsFullySpecified)
         throw new ArgumentException("Argument importOptions: importOptions must be fully specified, i.e. all elements of importOptions must be valid. Please run a document analysis in-before to get appropriate values.");
@@ -935,7 +935,7 @@ namespace Altaxo.Serialization.Ascii
     {
       if (dataTable is null)
         throw new ArgumentNullException(nameof(dataTable));
-      if (null == fileNames)
+      if (fileNames is null)
         throw new ArgumentNullException(nameof(fileNames));
 
       importOptions = null!;
@@ -999,7 +999,7 @@ namespace Altaxo.Serialization.Ascii
 
         if (determineImportOptionsSeparatelyForEachFile)
           ImportFromAsciiFile(srcTable, fileName);
-        else if (null != importOptions && importOptions.IsFullySpecified)
+        else if (importOptions is not null && importOptions.IsFullySpecified)
           ImportFromAsciiFile(srcTable, fileName, importOptions);
         else
           ImportFromAsciiFile(srcTable, fileName, out importOptions);
@@ -1020,11 +1020,11 @@ namespace Altaxo.Serialization.Ascii
     /// <returns>The list of tables created during the import.</returns>
     public static IList<DataTable> ImportFilesIntoSeparateNewTables(this ProjectFolder projectFolder, IEnumerable<string> fileNames, bool sortFileNames, AsciiImportOptions importOptions)
     {
-      if (null == projectFolder)
+      if (projectFolder is null)
         throw new ArgumentNullException("projectFolder");
-      if (null == fileNames)
+      if (fileNames is null)
         throw new ArgumentNullException("filenames");
-      if (null == importOptions)
+      if (importOptions is null)
         throw new ArgumentNullException("importOptions");
       if (!importOptions.IsFullySpecified)
         throw new ArgumentException("Argument importOptions: importOptions must be fully specified, i.e. all elements of importOptions must be valid. Please run a document analysis in-before to get appropriate values.");
@@ -1043,9 +1043,9 @@ namespace Altaxo.Serialization.Ascii
     /// <returns>The list of tables created during the import.</returns>
     public static IList<DataTable> ImportFilesIntoSeparateNewTables(this ProjectFolder projectFolder, IEnumerable<string> fileNames, bool sortFileNames, out AsciiImportOptions? importOptions)
     {
-      if (null == projectFolder)
+      if (projectFolder is null)
         throw new ArgumentNullException("projectFolder");
-      if (null == fileNames)
+      if (fileNames is null)
         throw new ArgumentNullException("filenames");
 
       AsciiImportOptions? impOptions = null;
@@ -1064,9 +1064,9 @@ namespace Altaxo.Serialization.Ascii
     /// <returns>The list of tables created during the import.</returns>
     public static IList<DataTable> ImportFilesIntoSeparateNewTables(this ProjectFolder projectFolder, IEnumerable<string> fileNames, bool sortFileNames, bool determineImportOptionsSeparatelyForEachFile)
     {
-      if (null == projectFolder)
+      if (projectFolder is null)
         throw new ArgumentNullException("projectFolder");
-      if (null == fileNames)
+      if (fileNames is null)
         throw new ArgumentNullException("filenames");
 
       AsciiImportOptions? importOptions = null;
@@ -1087,7 +1087,7 @@ namespace Altaxo.Serialization.Ascii
     private static DataTable? InternalImportStreamIntoNewTable(Stream stream, string streamOriginHint, AsciiImportOptions? defaultImportOptions)
     {
       var importOptions = AsciiDocumentAnalysis.Analyze(defaultImportOptions ?? new AsciiImportOptions(), stream, GetDefaultAsciiDocumentAnalysisOptions(null));
-      if (importOptions != null)
+      if (importOptions is not null)
       {
         var table = new DataTable();
         ImportFromAsciiStream(table, stream, streamOriginHint, importOptions);
@@ -1234,9 +1234,9 @@ namespace Altaxo.Serialization.Ascii
     private static AsciiDocumentAnalysisOptions GetDefaultAsciiDocumentAnalysisOptions(DataTable? dataTable)
     {
       AsciiDocumentAnalysisOptions? result = null;
-      if (null != dataTable)
+      if (dataTable is not null)
         result = dataTable.GetPropertyValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, null);
-      if (null == result)
+      if (result is null)
         result = Current.PropertyService.GetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
       return result;
     }
@@ -1250,14 +1250,14 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="importOptions">The Ascii import options that were used to import the file.</param>
     private static void AddOrUpdateAsciiImportDataSource(DataTable dataTable, IEnumerable<string> fileNames, AsciiImportOptions importOptions)
     {
-      if (null == fileNames)
+      if (fileNames is null)
         return;
       if (!object.ReferenceEquals(dataTable.ParentObject, Current.Project.DataTableCollection))
         return;
 
       var dataSource = dataTable.DataSource as AsciiImportDataSource;
 
-      if (null != dataSource)
+      if (dataSource is not null)
       {
         dataSource.SourceFileNames = fileNames;
         dataSource.AsciiImportOptions = importOptions;

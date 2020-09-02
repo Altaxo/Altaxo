@@ -176,7 +176,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (object.ReferenceEquals(this, obj))
         return true;
       var from = obj as ScatterPlotStyle;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, Main.EventFiring.Enabled);
         return true;
@@ -269,7 +269,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return _scatterSymbol; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(_scatterSymbol, value))
@@ -690,7 +690,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (_overrideInset)
       {
         var newInset = _overriddenInset;
-        if (newInset != null && scatterSymbol.Inset != null && newInset.Color != scatterSymbol.Inset.Color)
+        if (newInset is not null && scatterSymbol.Inset is not null && newInset.Color != scatterSymbol.Inset.Color)
           newInset = newInset.WithColor(scatterSymbol.Inset.Color);
         scatterSymbol = scatterSymbol.WithInset(newInset);
       }
@@ -726,21 +726,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       scatterSymbol.CalculatePolygons(overrideRelativeStructureWidth, out var framePolygon, out var insetPolygon, out var fillPolygon);
 
       // calculate the path only once
-      if (null != insetPolygon)
+      if (insetPolygon is not null)
       {
         cachedPathData.InsetPath = new GraphicsPath();
         foreach (var list in insetPolygon)
           cachedPathData.InsetPath.AddPolygon(ToPointFArray(list, symbolSize));
       }
 
-      if (null != fillPolygon)
+      if (fillPolygon is not null)
       {
         cachedPathData.FillPath = new GraphicsPath();
         foreach (var list in fillPolygon)
           cachedPathData.FillPath.AddPolygon(ToPointFArray(list, symbolSize));
       }
 
-      if (null != framePolygon)
+      if (framePolygon is not null)
       {
         cachedPathData.FramePath = new GraphicsPath();
         foreach (var list in framePolygon)
@@ -768,7 +768,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       var plotColorInfluence = _overridePlotColorInfluence ?? scatterSymbol.PlotColorInfluence;
 
-      if (null != cachedPathData.InsetPath)
+      if (cachedPathData.InsetPath is not null)
       {
         var insetColor = _overrideInsetColor ?? scatterSymbol.Inset?.Color ?? NamedColors.Transparent;
         if (plotColorInfluence.HasFlag(PlotColorInfluence.InsetColorFull))
@@ -779,7 +779,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         cachedBrushData.InsetBrush = new SolidBrush(insetColor);
       }
 
-      if (null != cachedPathData.FillPath)
+      if (cachedPathData.FillPath is not null)
       {
         var fillColor = _overrideFillColor ?? scatterSymbol.FillColor;
         if (plotColorInfluence.HasFlag(PlotColorInfluence.FillColorFull))
@@ -790,7 +790,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         cachedBrushData.FillBrush = new SolidBrush(fillColor);
       }
 
-      if (null != cachedPathData.FramePath)
+      if (cachedPathData.FramePath is not null)
       {
         var frameColor = _overrideFrameColor ?? scatterSymbol.Frame?.Color ?? NamedColors.Transparent;
         if (plotColorInfluence.HasFlag(PlotColorInfluence.FrameColorFull))
@@ -823,7 +823,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // save the graphics stat since we have to translate the origin
       System.Drawing.Drawing2D.GraphicsState gs = g.Save();
 
-      if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size
+      if (_cachedSymbolSizeForIndexFunction is null && _cachedColorForIndexFunction is null) // using a constant symbol size
       {
         // calculate the path only once
         CalculatePaths(scatterSymbol, _symbolSize, ref cachedPathData);
@@ -837,13 +837,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           ypos = ptArray[plotPointIndex].Y;
           g.TranslateTransform(xdiff, ydiff);
 
-          if (null != cachedPathData.InsetPath)
+          if (cachedPathData.InsetPath is not null)
             g.FillPath(cachedBrushData.InsetBrush, cachedPathData.InsetPath);
 
-          if (null != cachedPathData.FillPath)
+          if (cachedPathData.FillPath is not null)
             g.FillPath(cachedBrushData.FillBrush, cachedPathData.FillPath);
 
-          if (null != cachedPathData.FramePath)
+          if (cachedPathData.FramePath is not null)
             g.FillPath(cachedBrushData.FrameBrush, cachedPathData.FramePath);
         } // end for
       }
@@ -858,7 +858,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
           if (_cachedColorForIndexFunction is not null)
           {
-            double customSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalIndex);
+            double customSymbolSize = _cachedSymbolSizeForIndexFunction is null ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalIndex);
             var customSymbolColor = _cachedColorForIndexFunction(originalIndex);
             CalculatePaths(scatterSymbol, customSymbolSize, ref cachedPathData);
             CalculateBrushes(scatterSymbol, NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B), cachedPathData, ref cachedBrushData);
@@ -876,13 +876,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           ypos = ptArray[plotPointIndex].Y;
           g.TranslateTransform(xdiff, ydiff);
 
-          if (null != cachedPathData.InsetPath)
+          if (cachedPathData.InsetPath is not null)
             g.FillPath(cachedBrushData.InsetBrush, cachedPathData.InsetPath);
 
-          if (null != cachedPathData.FillPath)
+          if (cachedPathData.FillPath is not null)
             g.FillPath(cachedBrushData.FillBrush, cachedPathData.FillPath);
 
-          if (null != cachedPathData.FramePath)
+          if (cachedPathData.FramePath is not null)
             g.FillPath(cachedBrushData.FrameBrush, cachedPathData.FramePath);
         }
       }
@@ -950,13 +950,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       GraphicsState gs = g.Save();
       g.TranslateTransform(bounds.X + 0.5f * bounds.Width, bounds.Y + 0.5f * bounds.Height);
 
-      if (null != cachedPathData.InsetPath)
+      if (cachedPathData.InsetPath is not null)
         g.FillPath(cachedBrushData.InsetBrush, cachedPathData.InsetPath);
 
-      if (null != cachedPathData.FillPath)
+      if (cachedPathData.FillPath is not null)
         g.FillPath(cachedBrushData.FillBrush, cachedPathData.FillPath);
 
-      if (null != cachedPathData.FramePath)
+      if (cachedPathData.FramePath is not null)
         g.FillPath(cachedBrushData.FrameBrush, cachedPathData.FramePath);
 
       cachedBrushData.Clear();
@@ -1068,7 +1068,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!_independentOnShiftingGroupStyles)
       {
         var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYGroupStyle>(externalGroups, localGroups);
-        if (null != shiftStyle)
+        if (shiftStyle is not null)
         {
           shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY);
         }

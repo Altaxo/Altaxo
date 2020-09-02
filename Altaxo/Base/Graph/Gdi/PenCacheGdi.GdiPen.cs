@@ -140,7 +140,7 @@ namespace Altaxo.Graph.Gdi
           if (0 != gdiDashOffset)
             gdiPen.DashOffset = gdiDashOffset;
 
-          if (null != gdiDashPattern)
+          if (gdiDashPattern is not null)
             gdiPen.DashPattern = gdiDashPattern;
         }
 

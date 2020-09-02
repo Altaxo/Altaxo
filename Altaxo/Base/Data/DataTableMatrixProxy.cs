@@ -172,7 +172,7 @@ namespace Altaxo.Data
         var ca = a?.Document() as DataColumn;
         var cb = b?.Document() as DataColumn;
 
-        if (ca != null && cb != null)
+        if (ca is not null && cb is not null)
         {
           int na = _coll.GetColumnNumber(ca);
           int nb = _coll.GetColumnNumber(cb);
@@ -275,20 +275,20 @@ namespace Altaxo.Data
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataTable)
+      if (_dataTable is not null)
         yield return new Main.DocumentNodeAndName(_dataTable, "DataTable");
 
-      if (null != _columnHeaderColumn)
+      if (_columnHeaderColumn is not null)
         yield return new Main.DocumentNodeAndName(_columnHeaderColumn, "ColumnHeaderColumn");
 
-      if (null != _rowHeaderColumn)
+      if (_rowHeaderColumn is not null)
         yield return new Main.DocumentNodeAndName(_rowHeaderColumn, "RowHeaderColumn");
 
-      if (null != _dataColumns)
+      if (_dataColumns is not null)
       {
         for (int i = 0; i < _dataColumns.Count; ++i)
         {
-          if (_dataColumns[i] != null)
+          if (_dataColumns[i] is not null)
             yield return new Main.DocumentNodeAndName(_dataColumns[i], "DataColumn" + i.ToString(System.Globalization.CultureInfo.CurrentCulture));
         }
       }
@@ -417,7 +417,7 @@ namespace Altaxo.Data
     /// <exception cref="System.ArgumentNullException">table must not be null.</exception>
     public DataTableMatrixProxy(DataTable table, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns, IAscendingIntegerCollection selectedPropertyColumns)
     {
-      if (null == table)
+      if (table is null)
         throw new ArgumentNullException("table");
 
       _dataTable = new DataTableProxy(table)
@@ -501,7 +501,7 @@ namespace Altaxo.Data
     {
       using (var suspendToken = SuspendGetToken()) // Suspend important here because otherwise Table reports a changed event, which will delete all column proxies not belonging to the new table
       {
-        if (null != _dataTable)
+        if (_dataTable is not null)
           Report(_dataTable, this, "DataTable");
 
         Report(_rowHeaderColumn, this, "RowHeaderColumn");
@@ -538,7 +538,7 @@ namespace Altaxo.Data
     /// <param name="proxy">The proxy.</param>
     private void InternalAddDataColumnNoClone(IReadableColumnProxy proxy)
     {
-      if (null != proxy)
+      if (proxy is not null)
       {
         _dataColumns.Add(proxy);
         proxy.ParentObject = this;
@@ -553,7 +553,7 @@ namespace Altaxo.Data
     {
       var col = _dataColumns[idx];
       _dataColumns.RemoveAt(idx);
-      if (null != col)
+      if (col is not null)
         col.Dispose();
     }
 
@@ -574,10 +574,10 @@ namespace Altaxo.Data
       }
 
       // dispose old columns __after__ (!) cloning, because it is possible that they are identical to some data column in fromList
-      if (null != oldDataColumns)
+      if (oldDataColumns is not null)
       {
         foreach (var col in oldDataColumns)
-          if (null != col)
+          if (col is not null)
             col.Dispose();
       }
     }
@@ -675,7 +675,7 @@ namespace Altaxo.Data
     /// <param name="column">Column to add. Must have ColumnKind.V and a group number equal to <see cref="GroupNumber"/>. Otherwise, this column will be removed in the next call to <see cref="Update"/>.</param>
     public void AddDataColumn(IReadableColumn column)
     {
-      if (null != column)
+      if (column is not null)
       {
         InternalAddDataColumnNoClone(ReadableColumnProxyBase.FromColumn(column));
         _isDirty = true;
@@ -755,7 +755,7 @@ namespace Altaxo.Data
           Update();
         }
 
-        if (null == _participatingDataColumns)
+        if (_participatingDataColumns is null)
           _participatingDataColumns = new AscendingIntegerCollection();
 
         return _participatingDataColumns;
@@ -846,7 +846,7 @@ namespace Altaxo.Data
         }
 
         var coll = DataColumnCollection.GetParentDataColumnCollectionOf(c);
-        if (null == coll || !object.ReferenceEquals(coll, tableDataColumns))
+        if (coll is null || !object.ReferenceEquals(coll, tableDataColumns))
         {
           InternalRemoveDataColumnAt(i);
           continue;
@@ -868,7 +868,7 @@ namespace Altaxo.Data
     /// <param name="table">The table to search.</param>
     protected virtual void InternalRemoveUnresolvedDataColumnsIfAllDataColumnsShouldBeIncluded(DataTable table)
     {
-      _dataColumns.RemoveAll(proxy => proxy.Document() == null);
+      _dataColumns.RemoveAll(proxy => proxy.Document() is null);
     }
 
     /// <summary>
@@ -958,10 +958,10 @@ namespace Altaxo.Data
       foreach (var colproxy in _dataColumns)
       {
         col = colproxy.Document() as DataColumn;
-        if (null != col)
+        if (col is not null)
         {
           table = DataTable.GetParentDataTableOf(col);
-          if (null != table)
+          if (table is not null)
             _dataTable = new DataTableProxy(table) { ParentObject = this };
         }
       }
@@ -969,10 +969,10 @@ namespace Altaxo.Data
       foreach (var colproxy in new IReadableColumnProxy[] { _rowHeaderColumn, _columnHeaderColumn })
       {
         col = colproxy.Document() as DataColumn;
-        if (null != col)
+        if (col is not null)
         {
           table = DataTable.GetParentDataTableOf(col);
-          if (null != table)
+          if (table is not null)
             _dataTable = new DataTableProxy(table) { ParentObject = this };
         }
       }
@@ -990,10 +990,10 @@ namespace Altaxo.Data
       if (IsDisposeInProgress)
         return;
 
-      if (null == _dataTable)
+      if (_dataTable is null)
         TryGetDataTableProxyFromColumns(); // legacy, for instance from old XYZMeshedColumnPlotData, we have not stored the table reference
 
-      if (null == _dataTable)
+      if (_dataTable is null)
         return;
 
       var table = _dataTable.Document;
@@ -1203,7 +1203,7 @@ namespace Altaxo.Data
 
       var col = _rowHeaderColumn.Document();
 
-      if (null != col)
+      if (col is not null)
       {
         int rowCount = _participatingDataRows.Count;
         for (int r = 0; r < rowCount; ++r)
@@ -1224,7 +1224,7 @@ namespace Altaxo.Data
 
       var col = _columnHeaderColumn.Document();
 
-      if (null != col)
+      if (col is not null)
       {
         int columnCount = _participatingDataColumns.Count;
         for (int c = 0; c < columnCount; ++c)
@@ -1259,14 +1259,14 @@ namespace Altaxo.Data
     {
       incrementValue = 1;
 
-      if (null == proxy || proxy.IsEmpty)
+      if (proxy is null || proxy.IsEmpty)
       {
         errorOrWarningMessage = string.Format("No {0} header column chosen.", rowOrCol);
         return false;
       }
 
       var col = proxy.Document();
-      if (null == col)
+      if (col is null)
       {
         errorOrWarningMessage = string.Format("Link to {0} header column is lost.", rowOrCol);
         return false;

@@ -68,7 +68,7 @@ namespace Altaxo.Gui.Data
 
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
       }
     }

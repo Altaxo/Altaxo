@@ -391,7 +391,7 @@ namespace Altaxo.Graph.Graph3D
       }
 
       CSAxisInformation result;
-      if (nearestInfo == null)
+      if (nearestInfo is null)
       {
         result = CSAxisInformation.NewWithDefaultValues(styleID);
       }
@@ -439,7 +439,7 @@ namespace Altaxo.Graph.Graph3D
         yield return info.Identifier;
       }
 
-      if (list1 != null)
+      if (list1 is not null)
       {
         foreach (CSLineID id in list1)
         {
@@ -451,7 +451,7 @@ namespace Altaxo.Graph.Graph3D
         }
       }
 
-      if (list2 != null)
+      if (list2 is not null)
       {
         foreach (CSLineID id in list2)
         {
@@ -480,7 +480,7 @@ namespace Altaxo.Graph.Graph3D
         }
       }
 
-      if (list1 != null)
+      if (list1 is not null)
       {
         foreach (CSLineID lineID in list1)
         {
@@ -495,7 +495,7 @@ namespace Altaxo.Graph.Graph3D
         }
       }
 
-      if (list2 != null)
+      if (list2 is not null)
       {
         foreach (CSPlaneID planeID in list2)
         {

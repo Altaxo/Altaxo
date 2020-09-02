@@ -488,11 +488,11 @@ namespace Altaxo.Graph.Plot.Groups
       double maximumLogicalYValue
       )
     {
-      if (externalGroups != null && externalGroups.ContainsType(typeof(BarSizePosition3DGroupStyle)))
+      if (externalGroups is not null && externalGroups.ContainsType(typeof(BarSizePosition3DGroupStyle)))
       {
         ((BarSizePosition3DGroupStyle)externalGroups.GetPlotGroupStyle(typeof(BarSizePosition3DGroupStyle))).IntendToApply(numberOfItems, minimumLogicalXValue, maximumLogicalXValue, minimumLogicalYValue, maximumLogicalYValue);
       }
-      else if (localGroups != null && localGroups.ContainsType(typeof(BarSizePosition3DGroupStyle)))
+      else if (localGroups is not null && localGroups.ContainsType(typeof(BarSizePosition3DGroupStyle)))
       {
         ((BarSizePosition3DGroupStyle)localGroups.GetPlotGroupStyle(typeof(BarSizePosition3DGroupStyle))).IntendToApply(numberOfItems, minimumLogicalXValue, maximumLogicalXValue, minimumLogicalYValue, maximumLogicalYValue);
       }

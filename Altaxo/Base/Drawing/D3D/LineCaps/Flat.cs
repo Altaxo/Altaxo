@@ -102,7 +102,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
 
       var capCrossSectionPositions = baseCrossSectionPositions ?? (PointD3D[]?)temporaryStorageSpace ?? (PointD3D[])(temporaryStorageSpace = new PointD3D[crossSectionVertexCount]);
 
-      if (null == baseCrossSectionPositions) // if null the positions were not provided
+      if (baseCrossSectionPositions is null) // if null the positions were not provided
       {
         var matrix = Math3D.Get2DProjectionToPlane(eastVector, northVector, basePoint);
         for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
@@ -133,7 +133,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       VectorD3D forwardVectorNormalized,
       PointD3D[] baseCrossSectionPositions)
     {
-      if (null == baseCrossSectionPositions)
+      if (baseCrossSectionPositions is null)
         throw new ArgumentNullException(nameof(baseCrossSectionPositions));
       // and now the cap
 

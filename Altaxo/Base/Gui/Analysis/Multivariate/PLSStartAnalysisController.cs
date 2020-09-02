@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Worksheet
 
     private void SetElements(bool bInit)
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeNumberOfFactors(_doc.MaxNumberOfFactors);
         _view.InitializeCrossPressCalculation(_doc.CrossPRESSCalculation);
@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Worksheet
       get { return _view; }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.AnalysisMethodChanged -= EhView_AnalysisMethodChanged;
           _view.CrossValidationSelected -= EhView_CrossValidationSelected;
@@ -87,7 +87,7 @@ namespace Altaxo.Gui.Worksheet
 
         _view = value;
 
-        if (null != _view)
+        if (_view is not null)
         {
           SetElements(false); // set only the view elements, dont't initialize the variables
 
@@ -155,7 +155,7 @@ namespace Altaxo.Gui.Worksheet
           }
         } // end foreach type
       } // end foreach assembly
-      if (_view != null)
+      if (_view is not null)
         _view.InitializeAnalysisMethod((string[])nameList.ToArray(typeof(string)), 0);
       _doc.AnalysisMethod = (System.Type)_methoddictionary[0];
     }

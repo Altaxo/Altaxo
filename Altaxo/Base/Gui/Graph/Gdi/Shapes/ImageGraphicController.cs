@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         _locationController.ShowSizeElements(true, !_doc.IsSizeCalculationBasedOnSourceSize);
         _locationController.ShowScaleElements(true, _doc.IsSizeCalculationBasedOnSourceSize);
       }
-      if (_view != null)
+      if (_view is not null)
       {
         _view.SourceSize = _srcSize;
         _view.AspectPreserving = _doc.AspectRatioPreserving;

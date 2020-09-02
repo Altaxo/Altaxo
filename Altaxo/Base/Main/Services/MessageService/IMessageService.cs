@@ -146,7 +146,7 @@ namespace Altaxo.Main.Services
   {
     public bool IsRetry { get; private set; }
     public bool IsIgnore { get; private set; }
-    public bool IsSaveAlternative { get { return AlternativeFileName != null; } }
+    public bool IsSaveAlternative { get { return AlternativeFileName is not null; } }
     public PathName? AlternativeFileName { get; private set; }
 
     private ChooseSaveErrorResult()
@@ -161,7 +161,7 @@ namespace Altaxo.Main.Services
 
     public static ChooseSaveErrorResult SaveAlternative(PathName alternativeFileName)
     {
-      if (alternativeFileName == null)
+      if (alternativeFileName is null)
         throw new ArgumentNullException("alternativeFileName");
       return new ChooseSaveErrorResult { AlternativeFileName = alternativeFileName };
     }

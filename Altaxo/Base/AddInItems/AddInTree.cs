@@ -77,7 +77,7 @@ namespace Altaxo.AddInItems
       conditionEvaluators.TryAdd("Compare", new CompareConditionEvaluator());
       conditionEvaluators.TryAdd("Ownerstate", new OwnerStateConditionEvaluator());
 
-      if (applicationStateService != null)
+      if (applicationStateService is not null)
         applicationStateService.RegisterStateGetter("Installed 3rd party AddIns", GetInstalledThirdPartyAddInsListAsString);
     }
 
@@ -94,7 +94,7 @@ namespace Altaxo.AddInItems
           sb.Append(", ");
         sb.Append("[");
         sb.Append(addIn.Name);
-        if (addIn.Version != null)
+        if (addIn.Version is not null)
         {
           sb.Append(' ');
           sb.Append(addIn.Version.ToString());
@@ -360,7 +360,7 @@ namespace Altaxo.AddInItems
         catch (AddInLoadException ex)
         {
           Current.Log.Error(ex);
-          if (ex.InnerException != null)
+          if (ex.InnerException is not null)
           {
             MessageService.ShowError("Error loading AddIn " + fileName + ":\n"
                                                              + ex.InnerException.Message);
@@ -382,7 +382,7 @@ namespace Altaxo.AddInItems
           continue;
         }
         addIn.Enabled = true;
-        if (disabledAddIns != null && disabledAddIns.Count > 0)
+        if (disabledAddIns is not null && disabledAddIns.Count > 0)
         {
           foreach (string name in addIn.Manifest.Identities.Keys)
           {
@@ -437,7 +437,7 @@ checkDependencies:
         {
           if (!reference.Check(dict, out versionFound))
           {
-            if (versionFound != null)
+            if (versionFound is not null)
             {
               MessageService.ShowError(addIn.Name + " has not been loaded because it requires "
                                                                + reference.ToString() + ", but version "

@@ -59,7 +59,7 @@ namespace Altaxo.Main
     /// </summary>
     protected override void OnResume()
     {
-      if (_reenablingEventHandler != null)
+      if (_reenablingEventHandler is not null)
         _reenablingEventHandler();
     }
   }

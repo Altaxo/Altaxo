@@ -93,7 +93,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       if (isCopied && !object.ReferenceEquals(this, obj))
       {
         var from = obj as NumericLabelFormattingScientific;
-        if (null != from)
+        if (from is not null)
         {
           _showExponentAlways = from._showExponentAlways;
         }

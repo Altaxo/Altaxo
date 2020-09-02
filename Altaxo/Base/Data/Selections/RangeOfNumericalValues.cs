@@ -138,7 +138,7 @@ namespace Altaxo.Data.Selections
     {
       var column = _columnProxy?.Document();
 
-      if (null == column)
+      if (column is null)
         yield break;
 
       int endExclusive = Math.Min(maxIndexExclusive, totalRowCount);
@@ -187,7 +187,7 @@ namespace Altaxo.Data.Selections
 
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _columnProxy)
+      if (_columnProxy is not null)
         yield return new DocumentNodeAndName(_columnProxy, () => _columnProxy = null, "Column");
     }
 
@@ -205,7 +205,7 @@ namespace Altaxo.Data.Selections
         var oldValue = _columnProxy?.Document();
         if (!object.ReferenceEquals(value, oldValue))
         {
-          ChildSetMember(ref _columnProxy, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
+          ChildSetMember(ref _columnProxy, value is null ? null : ReadableColumnProxyBase.FromColumn(value));
           EhSelfChanged(EventArgs.Empty);
         }
       }

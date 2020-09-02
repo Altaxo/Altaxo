@@ -41,7 +41,7 @@ namespace Altaxo.Worksheet.Commands
     public static void ShowDataSourceEditor(WorksheetController ctrl)
     {
       var table = ctrl.DataTable;
-      if (null == table || null == table.DataSource)
+      if (table is null || table.DataSource is null)
         return;
 
       bool sourceIsChanged = false;
@@ -58,7 +58,7 @@ namespace Altaxo.Worksheet.Commands
 
       var controllerAsSupportApplyCallback = dataSourceController as Altaxo.Gui.IMVCSupportsApplyCallback;
 
-      if (null != controllerAsSupportApplyCallback)
+      if (controllerAsSupportApplyCallback is not null)
       {
         controllerAsSupportApplyCallback.SuccessfullyApplied += () => { sourceIsChanged = true; table.DataSource = dataSource; RequeryTableDataSource(ctrl); };
       }
@@ -97,7 +97,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="table">The table that holds the data source.</param>
     public static void RequeryTableDataSource(DataTable table)
     {
-      if (null == table || null == table.DataSource)
+      if (table is null || table.DataSource is null)
         return;
 
       using (var suspendToken = table.SuspendGetToken())
@@ -113,10 +113,10 @@ namespace Altaxo.Worksheet.Commands
           table.Notes.WriteLine(ex.ToString());
         }
 
-        if (!(null != table.DataSource))
+        if (table.DataSource is null)
           throw new InvalidProgramException("table.DataSource.FillData should never set the data source to zero!");
 
-        if (table.DataSource.ImportOptions.ExecuteTableScriptAfterImport && null != table.TableScript)
+        if (table.DataSource.ImportOptions.ExecuteTableScriptAfterImport && table.TableScript is not null)
         {
           try
           {

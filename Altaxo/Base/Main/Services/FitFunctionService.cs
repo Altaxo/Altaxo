@@ -332,7 +332,7 @@ namespace Altaxo.Main.Services
           }
         }
 
-        if (stb != null)
+        if (stb is not null)
         {
           Current.Console.WriteLine("Exception(s) thrown in " + GetType().ToString() + " during parsing of fit functions, details will follow:");
           Current.Console.WriteLine(stb.ToString());
@@ -346,7 +346,7 @@ namespace Altaxo.Main.Services
       /// <returns></returns>
       public FileBasedFitFunctionInformation[] GetFitFunctions()
       {
-        if (null == _userDefinedFunctions)
+        if (_userDefinedFunctions is null)
           return new FileBasedFitFunctionInformation[] { };
 
         while (_threadIsWorking)
@@ -369,7 +369,7 @@ namespace Altaxo.Main.Services
       /// <returns>True if the function is saved, otherwise (error or user action) returns false.</returns>
       public bool SaveFitFunction(Altaxo.Scripting.FitFunctionScript doc)
       {
-        if (doc.ScriptObject == null)
+        if (doc.ScriptObject is null)
         {
           Current.Gui.ErrorMessageBox("Only a successfully compiled fit function can be saved in the user fit function directory!");
           return false;

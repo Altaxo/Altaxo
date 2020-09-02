@@ -112,7 +112,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         _colorProviderController.InitializeDocument(_doc.ColorProvider);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _scaleController.ViewObject = _view.ScaleView;
         _colorProviderController.ViewObject = _view.ColorProviderView;

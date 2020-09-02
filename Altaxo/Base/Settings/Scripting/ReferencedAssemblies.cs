@@ -193,7 +193,7 @@ namespace Altaxo.Settings.Scripting
 
     private static void OnAssemblyAdded(Assembly asm)
     {
-      if (null != AssemblyAdded)
+      if (AssemblyAdded is not null)
       {
         AssemblyAdded(asm);
       }

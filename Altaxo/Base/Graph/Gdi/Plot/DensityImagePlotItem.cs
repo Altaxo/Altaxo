@@ -89,9 +89,9 @@ namespace Altaxo.Graph.Gdi.Plot
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _plotData)
+      if (_plotData is not null)
         yield return new Main.DocumentNodeAndName(_plotData, () => _plotData = null!, "Data");
-      if (null != _plotStyle)
+      if (_plotStyle is not null)
         yield return new Main.DocumentNodeAndName(_plotStyle, () => _plotStyle = null!, "Style");
     }
 
@@ -162,7 +162,7 @@ namespace Altaxo.Graph.Gdi.Plot
       [MemberNotNull(nameof(_plotStyle))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new System.ArgumentNullException();
         if (ChildSetMember(ref _plotStyle, value))
         {
@@ -188,7 +188,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public override void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem)
     {
-      if (null != _plotStyle)
+      if (_plotStyle is not null)
       {
         _plotStyle.Paint(g, layer, _plotData);
       }
@@ -202,11 +202,11 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="layer">The plot layer.</param>
     public override void PrepareScales(IPlotArea layer)
     {
-      if (null != _plotData)
+      if (_plotData is not null)
       {
         _plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject);
 
-        if (null != _plotStyle)
+        if (_plotStyle is not null)
           _plotStyle.PrepareScales(layer, _plotData);
       }
     }
@@ -216,7 +216,7 @@ namespace Altaxo.Graph.Gdi.Plot
       if (e is PlotItemDataChangedEventArgs)
       {
         // first inform our AbstractXYPlotStyle of the change, so it can invalidate its cached data
-        if (null != _plotStyle)
+        if (_plotStyle is not null)
           _plotStyle.EhDataChanged(this);
       }
 

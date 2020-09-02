@@ -165,7 +165,7 @@ namespace Altaxo.Data.Selections
     public override bool Equals(object? obj)
     {
       var from = obj as RangeOfRowIndices;
-      if (null != from)
+      if (from is not null)
         return _firstRowIndexInclusive == from._firstRowIndexInclusive && _lastRowIndexInclusive == from._lastRowIndexInclusive;
       else
         return false;

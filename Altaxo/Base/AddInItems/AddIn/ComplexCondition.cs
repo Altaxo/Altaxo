@@ -55,7 +55,7 @@ namespace Altaxo.AddInItems
 
     public NegatedCondition(ICondition condition)
     {
-      Debug.Assert(condition != null);
+      Debug.Assert(condition is not null);
       this._condition = condition;
     }
 

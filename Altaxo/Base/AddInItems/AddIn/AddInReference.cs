@@ -69,7 +69,7 @@ namespace Altaxo.AddInItems
       [MemberNotNull(nameof(_name))]
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException("name");
         if (value.Length == 0)
           throw new ArgumentException("name cannot be an empty string", "name");
@@ -124,7 +124,7 @@ namespace Altaxo.AddInItems
     {
       var reference = new AddInReference(properties["addin"]);
       string version = properties["version"];
-      if (version != null && version.Length > 0)
+      if (version is not null && version.Length > 0)
       {
         int pos = version.IndexOf('-');
         if (pos > 0)
@@ -155,17 +155,17 @@ namespace Altaxo.AddInItems
 
     internal static Version ParseVersion(string version, string? hintPath)
     {
-      if (version == null || version.Length == 0)
+      if (version is null || version.Length == 0)
         return new Version(0, 0, 0, 0);
       if (version.StartsWith("@"))
       {
         if (version == "@SharpDevelopCoreVersion")
         {
-          if (_entryVersion == null)
+          if (_entryVersion is null)
             _entryVersion = new Version(RevisionClass.Major + "." + RevisionClass.Minor + "." + RevisionClass.Build + "." + RevisionClass.Revision);
           return _entryVersion;
         }
-        if (hintPath != null)
+        if (hintPath is not null)
         {
           string fileName = Path.Combine(hintPath, version.Substring(1));
           try
@@ -197,9 +197,9 @@ namespace Altaxo.AddInItems
     public AddInReference(string name, Version minimumVersion, Version maximumVersion)
     {
       Name = name;
-      if (minimumVersion == null)
+      if (minimumVersion is null)
         throw new ArgumentNullException("minimumVersion");
-      if (maximumVersion == null)
+      if (maximumVersion is null)
         throw new ArgumentNullException("maximumVersion");
 
       this._minimumVersion = minimumVersion;

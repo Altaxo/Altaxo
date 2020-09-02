@@ -125,7 +125,7 @@ namespace Altaxo.Graph.Plot.Data
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _function && Function is Main.IDocumentLeafNode)
+      if (_function is not null && Function is Main.IDocumentLeafNode)
         yield return new Main.DocumentNodeAndName((Main.IDocumentLeafNode)_function, "Function");
     }
 
@@ -133,7 +133,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public override string ToString()
     {
-      if (_function != null)
+      if (_function is not null)
         return "Function: " + _function.ToString();
       else
         return base.ToString() ?? string.Empty;
@@ -163,7 +163,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public override double Evaluate(double x)
     {
-      return _function == null ? 0 : _function.Evaluate(x);
+      return _function is null ? 0 : _function.Evaluate(x);
     }
 
     #endregion IScalarFunctionDD Members
@@ -254,7 +254,7 @@ namespace Altaxo.Graph.Plot.Data
       }
       set
       {
-        if (value != null)
+        if (value is not null)
         {
           _coefficients = (double[])value.Clone();
           EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
@@ -266,7 +266,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return _coefficients == null ? 0 : _coefficients.Length - 1;
+        return _coefficients is null ? 0 : _coefficients.Length - 1;
       }
     }
 
@@ -275,7 +275,7 @@ namespace Altaxo.Graph.Plot.Data
       var stb = new System.Text.StringBuilder();
       stb.AppendFormat("Polynomial (order {0})", Order);
 
-      if (_coefficients != null && _coefficients.Length > 0)
+      if (_coefficients is not null && _coefficients.Length > 0)
       {
         stb.Append(" [");
 
@@ -301,7 +301,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>The value of the polynomial, a0+a1*x+a2*x^2+...</returns>
     public double Evaluate(double x)
     {
-      if (null == _coefficients)
+      if (_coefficients is null)
         return 0;
 
       double result = 0;
@@ -421,7 +421,7 @@ namespace Altaxo.Graph.Plot.Data
       }
       set
       {
-        if (value != null)
+        if (value is not null)
         {
           if (value is ICloneable)
             _baseFunction = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)value).Clone();
@@ -435,7 +435,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public override string ToString()
     {
-      if (_baseFunction != null)
+      if (_baseFunction is not null)
         return "Sqrt(" + _baseFunction.ToString() + ")";
       else
         return "Sqrt(InvalidFunction)";
@@ -585,7 +585,7 @@ namespace Altaxo.Graph.Plot.Data
       }
       set
       {
-        if (value != null)
+        if (value is not null)
         {
           _coefficients = (double[])value.Clone();
           EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
@@ -607,7 +607,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>The value of the polynomial, a0+a1*x+a2*x^2+...</returns>
     public double Evaluate(double x)
     {
-      if (null == _coefficients)
+      if (_coefficients is null)
         return 0;
 
       double result = 0;
@@ -750,7 +750,7 @@ namespace Altaxo.Graph.Plot.Data
       }
       set
       {
-        if (value != null)
+        if (value is not null)
         {
           _coefficients = (double[])value.Clone();
           EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
@@ -772,7 +772,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>The value of the polynomial, a0+a1*x+a2*x^2+...</returns>
     public double Evaluate(double x)
     {
-      if (null == _coefficients)
+      if (_coefficients is null)
         return 0;
 
       double result = 1;

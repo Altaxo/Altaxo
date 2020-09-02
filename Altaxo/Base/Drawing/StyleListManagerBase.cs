@@ -62,7 +62,7 @@ namespace Altaxo.Drawing
 
     public StyleListManagerBaseEntryValue(TList list, Main.ItemDefinitionLevel level)
     {
-      if (null == list)
+      if (list is null)
         throw new ArgumentNullException(nameof(list));
 
       List = list;
@@ -239,7 +239,7 @@ namespace Altaxo.Drawing
     /// <returns>True if the list was new and thus was added to the collection; false if the list has already existed.</returns>
     public bool TryRegisterList(TList instance, Main.ItemDefinitionLevel level, out TList storedList)
     {
-      if (null == instance)
+      if (instance is null)
         throw new ArgumentNullException(nameof(instance));
 
       return InternalTryRegisterList(instance, level, out storedList, true);
@@ -259,7 +259,7 @@ namespace Altaxo.Drawing
       var result = InternalTryRegisterList(instance, level, out storedList, true);
 
       var renameDictionary = deserializationInfo?.GetPropertyOrDefault<Dictionary<string, string>>(DeserializationRenameDictionaryKey);
-      if (null != renameDictionary)
+      if (renameDictionary is not null)
         renameDictionary[instance.Name] = storedList.Name;
 
       return result;
@@ -410,7 +410,7 @@ namespace Altaxo.Drawing
     {
       get
       {
-        if (null == _deserializationRenameDictionaryKey)
+        if (_deserializationRenameDictionaryKey is null)
           _deserializationRenameDictionaryKey = GetType().FullName + "_RenameDictionary";
         return _deserializationRenameDictionaryKey;
       }

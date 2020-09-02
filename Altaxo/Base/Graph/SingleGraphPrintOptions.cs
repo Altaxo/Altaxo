@@ -115,7 +115,7 @@ namespace Altaxo.Graph
 
     protected virtual void OnPropertyChanged(string propertyName)
     {
-      if (null != PropertyChanged)
+      if (PropertyChanged is not null)
         PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
     }
 

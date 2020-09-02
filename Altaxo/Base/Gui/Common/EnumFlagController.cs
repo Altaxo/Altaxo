@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Common
         }
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         if (_list is null) throw NotInitializedException;
         _view.Initialize(_list);
@@ -176,7 +176,7 @@ namespace Altaxo.Gui.Common
       {
         _view = value as IEnumFlagView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
         }

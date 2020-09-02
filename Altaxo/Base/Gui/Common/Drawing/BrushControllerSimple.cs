@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       base.Initialize(initData);
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.Brush = _doc;
       }

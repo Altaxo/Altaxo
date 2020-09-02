@@ -244,7 +244,7 @@ namespace Altaxo.Graph.Scales.Rescaling
         return true;
 
       var from = obj as DateTimeScaleRescaleConditions;
-      if (null == from)
+      if (from is null)
         return false;
 
       _orgRescaling = from._orgRescaling;

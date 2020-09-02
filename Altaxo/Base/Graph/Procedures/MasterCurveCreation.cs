@@ -63,7 +63,7 @@ namespace Altaxo.Graph.Procedures
       for (int i = 0; i < doc.RootLayer.Layers.Count; i++)
       {
         var xylayer = doc.RootLayer.Layers[i] as XYPlotLayer;
-        if (null != xylayer)
+        if (xylayer is not null)
           FillDataListFromLayer(xylayer, groupList);
       }
 

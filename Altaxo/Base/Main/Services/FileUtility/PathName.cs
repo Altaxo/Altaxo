@@ -32,7 +32,7 @@ namespace Altaxo.Main.Services
 
     protected PathName(string path)
     {
-      if (path == null)
+      if (path is null)
         throw new ArgumentNullException(nameof(path));
       if (path.Length == 0)
         throw new ArgumentException("The empty string is not a valid path");
@@ -41,7 +41,7 @@ namespace Altaxo.Main.Services
 
     protected PathName(PathName path)
     {
-      if (path == null)
+      if (path is null)
         throw new ArgumentNullException("path");
       _normalizedPath = path._normalizedPath;
     }

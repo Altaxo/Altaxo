@@ -101,9 +101,9 @@ namespace Altaxo.AddInItems
 
     public Codon(AddIn addIn, string name, Properties properties, IReadOnlyList<ICondition> conditions)
     {
-      if (name == null)
+      if (name is null)
         throw new ArgumentNullException("name");
-      if (properties == null)
+      if (properties is null)
         throw new ArgumentNullException("properties");
       this._addIn = addIn;
       this._name = name;

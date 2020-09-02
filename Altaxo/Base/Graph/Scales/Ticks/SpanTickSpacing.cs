@@ -97,7 +97,7 @@ namespace Altaxo.Graph.Scales.Ticks
         return true;
 
       var from = obj as SpanTickSpacing;
-      if (null == from)
+      if (from is null)
         return false;
 
       using (var suspendToken = SuspendGetToken())

@@ -192,7 +192,7 @@ namespace Altaxo.Worksheet
 
       public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
       {
-        if (_pathToTable != null && _worksheetLayout!.DataTable == null)
+        if (_pathToTable is not null && _worksheetLayout!.DataTable is null)
         {
           object? tableObj = Main.AbsoluteDocumentPath.GetObject(_pathToTable, _worksheetLayout, documentRoot);
           if (tableObj is Altaxo.Data.DataTable table)
@@ -217,7 +217,7 @@ namespace Altaxo.Worksheet
           _colStyles.Remove(resstyle);
 
         // if all columns have resolved, we can close the event link
-        if (_colStyles.Count == 0 && _pathToTable == null)
+        if (_colStyles.Count == 0 && _pathToTable is null)
           info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
       }
     }
@@ -396,7 +396,7 @@ namespace Altaxo.Worksheet
         if (value is null)
           throw new ArgumentNullException(nameof(DataTable));
 
-        if (null != _dataTable && !object.ReferenceEquals(_dataTable, value))
+        if (_dataTable is not null && !object.ReferenceEquals(_dataTable, value))
           throw new InvalidOperationException("This instance is already bound to a data table. It is not allowed to assign another data table to it");
 
         _dataTable = value;
@@ -497,19 +497,19 @@ namespace Altaxo.Worksheet
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _columnHeaderStyle)
+      if (_columnHeaderStyle is not null)
         yield return new Main.DocumentNodeAndName(_columnHeaderStyle, () => _columnHeaderStyle = null!, "ColumnHeaderStyle");
 
-      if (null != _rowHeaderStyle)
+      if (_rowHeaderStyle is not null)
         yield return new Main.DocumentNodeAndName(_rowHeaderStyle, () => _rowHeaderStyle = null!, "RowHeaderStyle");
 
-      if (null != _propertyColumnHeaderStyle)
+      if (_propertyColumnHeaderStyle is not null)
         yield return new Main.DocumentNodeAndName(_propertyColumnHeaderStyle, () => _propertyColumnHeaderStyle = null!, "PropertyColumnHeaderStyle");
 
-      if (null != _dataColumnStyles)
+      if (_dataColumnStyles is not null)
         yield return new Main.DocumentNodeAndName(_dataColumnStyles, () => _dataColumnStyles = null!, "DataColumnStyles");
 
-      if (null != _propertyColumnStyles)
+      if (_propertyColumnStyles is not null)
         yield return new Main.DocumentNodeAndName(_propertyColumnStyles, () => _propertyColumnStyles = null!, "PropertyColumnStyles");
     }
 
@@ -517,7 +517,7 @@ namespace Altaxo.Worksheet
 
     protected override void Dispose(bool isDisposing)
     {
-      if (null != _parent)
+      if (_parent is not null)
       {
         _weakEventHandlerForTable_TunneledEvent?.Remove();
         _weakEventHandlerForTable_TunneledEvent = null;

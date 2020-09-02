@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Main.Services
       _shutDownService.StartCaching();
 
       var memento = Current.PropertyService.GetValue(PropertyKeyMessageControlState, RuntimePropertyKind.UserAndApplicationAndBuiltin, null);
-      if (null != memento)
+      if (memento is not null)
         SetMemento(memento);
 
 
@@ -116,7 +116,7 @@ namespace Altaxo.Gui.Main.Services
     {
       Current.ServiceChanged -= EhServiceChanged;
 
-      if (_cachedService != null)
+      if (_cachedService is not null)
       {
         _cachedService.MessageAdded -= EhMessageAdded;
         _cachedService = null;
@@ -127,14 +127,14 @@ namespace Altaxo.Gui.Main.Services
 
     private void EhServiceChanged()
     {
-      if (null != _cachedService)
+      if (_cachedService is not null)
       {
         _cachedService.MessageAdded -= EhMessageAdded;
       }
 
       _cachedService = Current.GetService<IInfoWarningErrorTextMessageService>();
 
-      if (null != _cachedService)
+      if (_cachedService is not null)
       {
         _cachedService.MessageAdded += EhMessageAdded;
       }
@@ -154,9 +154,9 @@ namespace Altaxo.Gui.Main.Services
       {
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
-        if (_columnWidths != null)
+        if (_columnWidths is not null)
         {
           _view.ColumnWidths = _columnWidths;
           _columnWidths = null;
@@ -213,12 +213,12 @@ namespace Altaxo.Gui.Main.Services
       get { return _view; }
       set
       {
-        if (null != _view)
+        if (_view is not null)
           DetachView();
 
         _view = value as IInfoWarningErrorMessageView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           AttachView();
@@ -244,7 +244,7 @@ namespace Altaxo.Gui.Main.Services
         _columnWidths[i] = tr.ReadElementContentAsInt("Width", string.Empty);
       if (count > 0)
         tr.ReadEndElement(); // ColumnWidths
-      if (null != _view)
+      if (_view is not null)
       {
         _view.ColumnWidths = _columnWidths;
         _columnWidths = null;
@@ -261,7 +261,7 @@ namespace Altaxo.Gui.Main.Services
       tw.WriteElementString("DirectionRecentFirst", System.Xml.XmlConvert.ToString(_viewDirectionRecentIsFirst));
 
       tw.WriteStartElement("ColumnWidths");
-      var colWidths = null != _view ? _view.ColumnWidths : new double[0];
+      var colWidths = _view is not null ? _view.ColumnWidths : new double[0];
       tw.WriteAttributeString("Count", XmlConvert.ToString(colWidths.Length));
       for (int i = 0; i < colWidths.Length; i++)
         tw.WriteElementString("Width", XmlConvert.ToString(colWidths[i]));
@@ -369,7 +369,7 @@ namespace Altaxo.Gui.Main.Services
 
     public object CreateMemento()
     {
-      if (null != _view)
+      if (_view is not null)
         _columnWidths = _view.ColumnWidths;
       return new StateMemento(_columnWidths ?? new double[0]);
     }
@@ -378,7 +378,7 @@ namespace Altaxo.Gui.Main.Services
     {
       if (memento is StateMemento m)
         _columnWidths = m.ColumnWidths;
-      if (null != _view && _columnWidths is { } cw && cw.Length > 0)
+      if (_view is not null && _columnWidths is { } cw && cw.Length > 0)
         _view.ColumnWidths = cw;
     }
 

@@ -105,7 +105,7 @@ namespace Altaxo.Graph.Procedures
     {
       foreach (var doc in PropertyExtensions.GetProjectFolderPropertyDocuments(oldGraph))
       {
-        if (doc.PropertyBag != null && doc.PropertyBag.Count > 0)
+        if (doc.PropertyBag is not null && doc.PropertyBag.Count > 0)
         {
           var bagclone = doc.Clone();
           _document.ProjectFolderProperties.Add(bagclone);
@@ -199,7 +199,7 @@ namespace Altaxo.Graph.Procedures
       else if (proxy.DocumentObject() is Altaxo.Data.DataColumnCollection dataColumnCollection)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataColumnCollection);
-        if (table != null)
+        if (table is not null)
         {
           var tablePath = AbsoluteDocumentPath.GetAbsolutePath(table);
           if (!_tablesToChange.ContainsKey(tablePath))

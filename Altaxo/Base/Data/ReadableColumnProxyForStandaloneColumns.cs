@@ -85,7 +85,7 @@ namespace Altaxo.Data
 
     public bool IsEmpty
     {
-      get { return null == _column; }
+      get { return _column is null; }
     }
 
     public string GetName(int level)

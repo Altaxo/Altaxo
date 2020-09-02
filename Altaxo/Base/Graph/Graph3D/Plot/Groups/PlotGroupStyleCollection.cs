@@ -86,7 +86,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
       var from = obj as PlotGroupStyleCollection;
 
-      if (null != from)
+      if (from is not null)
       {
         using (var suspendToken = SuspendGetToken())
         {

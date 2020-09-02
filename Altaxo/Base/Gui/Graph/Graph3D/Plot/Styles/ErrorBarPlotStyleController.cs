@@ -177,7 +177,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
         _meaningOfValues = new SelectableListNodeList(_doc.MeaningOfValues);
       }
-      if (_view != null)
+      if (_view is not null)
       {
         _view.IndependentColor = _doc.IndependentColor;
         _view.IndependentDashPattern = _doc.IndependentDashPattern;
@@ -379,7 +379,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhIndependentColorChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentColor = _view.IndependentColor;
         _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
@@ -388,7 +388,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhIndependentDashPatternChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentDashPattern = _view.IndependentDashPattern;
       }

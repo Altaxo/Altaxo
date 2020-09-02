@@ -215,7 +215,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       if (object.ReferenceEquals(this, obj))
         return true;
       var from = obj as DropLinePlotStyle;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, Main.EventFiring.Enabled);
         return true;
@@ -336,7 +336,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       get { return _pen; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(_pen, value))
@@ -584,7 +584,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(value, _dropTargets))
@@ -721,7 +721,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       PointD3D pos = PointD3D.Empty;
 
-      if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size and constant color
+      if (_cachedSymbolSizeForIndexFunction is null && _cachedColorForIndexFunction is null) // using a constant symbol size and constant color
       {
         var pen = _pen;
         // update pen widths
@@ -747,7 +747,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
               if (gapStart != 0 || gapEnd != 0)
                 isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
 
-              if (null != isoLine)
+              if (isoLine is not null)
                 g.DrawLine(pen, isoLine);
             }
           }
@@ -766,7 +766,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
             var pen = _pen;
             if (_cachedColorForIndexFunction is not null)
             {
-              _cachedSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _cachedSymbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
+              _cachedSymbolSize = _cachedSymbolSizeForIndexFunction is null ? _cachedSymbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
               double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
               double w2 = _lineWidth2Offset + _lineWidth2Factor * _cachedSymbolSize;
 
@@ -792,7 +792,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
               if (gapStart != 0 || gapEnd != 0)
                 isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
-              if (null != isoLine)
+              if (isoLine is not null)
                 g.DrawLine(pen, isoLine);
             }
           }

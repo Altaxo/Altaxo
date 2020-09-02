@@ -125,13 +125,13 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       colname = WorksheetAnalysis.GetXMean_ColumnName();
       col = _table.DataColumns.TryGetColumn(colname) as Altaxo.Data.DoubleColumn;
-      if (null == col)
+      if (col is null)
         NotFound(colname);
       WriteVector(writer, "XMean", col, _numberOfX);
 
       colname = WorksheetAnalysis.GetXScale_ColumnName();
       col = _table.DataColumns.TryGetColumn(colname) as Altaxo.Data.DoubleColumn;
-      if (null == col)
+      if (col is null)
         NotFound(colname);
       WriteVector(writer, "XScale", col, _numberOfX);
 
@@ -148,13 +148,13 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       colname = WorksheetAnalysis.GetYMean_ColumnName();
       col = _table.DataColumns.TryGetColumn(colname) as Altaxo.Data.DoubleColumn;
-      if (null == col)
+      if (col is null)
         NotFound(colname);
       WriteVector(writer, "YMean", col, _numberOfY);
 
       colname = WorksheetAnalysis.GetYScale_ColumnName();
       col = _table.DataColumns.TryGetColumn(colname) as Altaxo.Data.DoubleColumn;
-      if (null == col)
+      if (col is null)
         NotFound(colname);
       WriteVector(writer, "YScale", col, _numberOfY);
 

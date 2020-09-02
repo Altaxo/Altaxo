@@ -137,7 +137,7 @@ namespace Altaxo.Gui.Graph.Graph3D
         foreach (var zp in _doc.ZPartitioning)
           _zPartitionValues.Add(zp.IsAbsolute ? new DimensionfulQuantity(zp.Value, AUL.Point.Instance) : new DimensionfulQuantity(zp.Value * 100, _percentLayerZSizeUnit));
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.XPartitionEnvironment = _xSizeEnvironment;
         _view.YPartitionEnvironment = _ySizeEnvironment;

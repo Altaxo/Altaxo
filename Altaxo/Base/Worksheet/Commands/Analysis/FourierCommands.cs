@@ -82,7 +82,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       {
         proxy = new DataTableMatrixProxy(table, selectedDataRows, selectedDataColumns, selectedPropertyColumns);
 
-        options = null != _lastUsedOptions ? (RealFourierTransformation2DOptions)_lastUsedOptions.Clone() : new RealFourierTransformation2DOptions();
+        options = _lastUsedOptions is not null ? (RealFourierTransformation2DOptions)_lastUsedOptions.Clone() : new RealFourierTransformation2DOptions();
         proxy.TryGetRowHeaderIncrement(out var rowIncrementValue, out var rowIncrementMessage);
         proxy.TryGetColumnHeaderIncrement(out var columnIncrementValue, out var columnIncrementMessage);
 
@@ -186,7 +186,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if (options.ReplacementValueForInfiniteMatrixElements.HasValue)
         Altaxo.Calc.LinearAlgebra.MatrixMath.ReplaceNaNAndInfiniteElementsWith(matrix, options.ReplacementValueForInfiniteMatrixElements.Value);
 
-      if (options.FourierWindow != null)
+      if (options.FourierWindow is not null)
       {
         fft.DataPretreatment += options.FourierWindow.Apply;
       }

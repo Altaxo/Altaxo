@@ -108,11 +108,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         var s = (ColumnDrivenColorPlotStyle?)o ?? new ColumnDrivenColorPlotStyle();
 
         s._dataColumnProxy = (IReadableColumnProxy)info.GetValue("DataColumn", s);
-        if (null != s._dataColumnProxy)
+        if (s._dataColumnProxy is not null)
           s._dataColumnProxy.ParentObject = s;
 
         s._scale = (NumericalScale)info.GetValue("Scale", s);
-        if (null != s._scale)
+        if (s._scale is not null)
           s._scale.ParentObject = s;
 
         s._colorProvider = (IColorProvider)info.GetValue("ColorProvider", s);
@@ -210,9 +210,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataColumnProxy)
+      if (_dataColumnProxy is not null)
         yield return new DocumentNodeAndName(_dataColumnProxy, "Data");
-      if (null != _scale)
+      if (_scale is not null)
         yield return new DocumentNodeAndName(_scale, "Scale");
     }
 
@@ -336,7 +336,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("Scale");
 
         InternalSetScale(value);
@@ -349,7 +349,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return _colorProvider; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(value, _colorProvider))
@@ -370,7 +370,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private Color GetColor(int idx)
     {
       var dataColumn = DataColumn;
-      if (null != dataColumn)
+      if (dataColumn is not null)
       {
         return _colorProvider.GetColor(_scale.PhysicalToNormal(dataColumn[idx]));
       }
@@ -449,7 +449,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void PrepareScales(IPlotArea layer)
     {
       var dataColumn = DataColumn;
-      if (null != dataColumn)
+      if (dataColumn is not null)
       {
         if (_doesScaleNeedsDataUpdate)
           InternalUpdateScaleWithNewData();
@@ -463,7 +463,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void PrepareScales(Graph3D.IPlotArea layer)
     {
       var dataColumn = DataColumn;
-      if (null != dataColumn)
+      if (dataColumn is not null)
       {
         if (_doesScaleNeedsDataUpdate)
           InternalUpdateScaleWithNewData();

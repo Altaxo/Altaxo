@@ -89,7 +89,7 @@ namespace Altaxo.Worksheet
 
       private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
       {
-        if (null != _pathToLayout)
+        if (_pathToLayout is not null)
         {
           var o = AbsoluteDocumentPath.GetObject(_pathToLayout, documentRoot);
           if (o is Altaxo.Worksheet.WorksheetLayout layout)

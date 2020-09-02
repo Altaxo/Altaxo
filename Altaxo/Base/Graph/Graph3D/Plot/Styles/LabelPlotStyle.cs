@@ -420,10 +420,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _backgroundStyle)
+      if (_backgroundStyle is not null)
         yield return new Main.DocumentNodeAndName(_backgroundStyle, "Background");
 
-      if (null != _labelColumnProxy)
+      if (_labelColumnProxy is not null)
         yield return new Main.DocumentNodeAndName(_labelColumnProxy, "LabelColumn");
     }
 
@@ -438,7 +438,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       {
         if (ChildSetMember(ref _labelColumnProxy, value))
         {
-          if (null != _labelColumnProxy)
+          if (_labelColumnProxy is not null)
             EhChildChanged(_labelColumnProxy, EventArgs.Empty);
           else
             EhSelfChanged(EventArgs.Empty);
@@ -450,7 +450,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return _labelColumnProxy == null ? null : _labelColumnProxy.Document();
+        return _labelColumnProxy is null ? null : _labelColumnProxy.Document();
       }
       set
       {
@@ -540,7 +540,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       get { return _font; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
         var oldValue = _font;
         _font = value;
@@ -617,7 +617,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(value, _material))
@@ -999,7 +999,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       var zpos = _offsetZ_Points + (_offsetZ_EmUnits * fontSize) + (_offsetZ_SymbolSizeUnits * symbolSize / 2);
       var stringsize = g.MeasureString(label, _font, new PointD3D(xpos, ypos, zpos));
 
-      if (_backgroundStyle != null)
+      if (_backgroundStyle is not null)
       {
         var x = xpos;
         var y = ypos;
@@ -1026,7 +1026,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
             y -= stringsize.Y;
             break;
         }
-        if (null == variableBackBrush)
+        if (variableBackBrush is null)
         {
           _backgroundStyle.Draw(g, new RectangleD3D(x, y, z, stringsize.X, stringsize.Y, stringsize.Z));
         }
@@ -1036,7 +1036,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         }
       }
 
-      var brush = null != variableTextBrush ? variableTextBrush : _material;
+      var brush = variableTextBrush is not null ? variableTextBrush : _material;
       g.DrawString(label, _font, brush, new PointD3D(xpos, ypos, zpos), _alignmentX, _alignmentY, _alignmentZ);
     }
 
@@ -1050,9 +1050,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       if (_attachedPlane is not null)
         _attachedPlane = layer.UpdateCSPlaneID(_attachedPlane);
 
-      bool isUsingVariableColorForLabelText = null != _cachedColorForIndexFunction && IsColorReceiver;
-      bool isUsingVariableColorForLabelBackground = null != _cachedColorForIndexFunction &&
-        (null != _backgroundStyle && _backgroundStyle.SupportsUserDefinedMaterial && (_backgroundColorLinkage == ColorLinkage.Dependent || _backgroundColorLinkage == ColorLinkage.PreserveAlpha));
+      bool isUsingVariableColorForLabelText = _cachedColorForIndexFunction is not null && IsColorReceiver;
+      bool isUsingVariableColorForLabelBackground = _cachedColorForIndexFunction is not null &&
+        (_backgroundStyle is not null && _backgroundStyle.SupportsUserDefinedMaterial && (_backgroundColorLinkage == ColorLinkage.Dependent || _backgroundColorLinkage == ColorLinkage.PreserveAlpha));
       bool isUsingVariableColor = isUsingVariableColorForLabelText || isUsingVariableColorForLabelBackground;
       IMaterial clonedTextBrush = _material;
       IMaterial? clonedBackBrush = null;
@@ -1097,7 +1097,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
             continue;
 
           double localSymbolSize = _symbolSize;
-          if (null != _cachedSymbolSizeForIndexFunction)
+          if (_cachedSymbolSizeForIndexFunction is not null)
           {
             localSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
           }
@@ -1313,7 +1313,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       if (!_independentOnShiftingGroupStyles)
       {
         var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYZGroupStyle>(externalGroups, localGroups);
-        if (null != shiftStyle)
+        if (shiftStyle is not null)
         {
           shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY, out _cachedLogicalShiftZ);
         }

@@ -382,7 +382,7 @@ namespace Altaxo.Drawing.ColorManagement
 
     public bool IsStructuralEquivalentTo(IEnumerable<NamedColor> l1)
     {
-      if (l1 == null)
+      if (l1 is null)
         return false;
 
       var l2 = this;

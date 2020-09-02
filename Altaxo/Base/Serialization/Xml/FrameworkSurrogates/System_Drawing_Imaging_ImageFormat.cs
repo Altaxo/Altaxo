@@ -55,7 +55,7 @@ namespace Altaxo.Serialization.Xml.FrameworkSurrogates
 
         var s = ImageFormats.FirstOrDefault(x => x.Guid == guid);
 
-        if (null == s)
+        if (s is null)
           s = new ImageFormat(guid);
 
         return s;

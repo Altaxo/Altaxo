@@ -191,11 +191,11 @@ namespace Altaxo.Graph.Scales
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataBounds)
+      if (_dataBounds is not null)
         yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null!, "DataBounds");
-      if (null != _rescaling)
+      if (_rescaling is not null)
         yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null!, "Rescaling");
-      if (null != _tickSpacing)
+      if (_tickSpacing is not null)
         yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null!, "TickSpacing");
     }
 
@@ -329,7 +329,7 @@ namespace Altaxo.Graph.Scales
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
         if (!(value is Ticks.DateTimeTickSpacing))
           throw new ArgumentException("Value must be of type DateTimeTickSpacing");
@@ -438,7 +438,7 @@ namespace Altaxo.Graph.Scales
       DateTime org = Rescaling.ResultingOrg, end = Rescaling.ResultingEnd;
       AdjustResultingOrgEndToValidValues(ref org, ref end);
 
-      if (null == TickSpacing)
+      if (TickSpacing is null)
       {
         SetScaleOrgEnd(org, end);
       }

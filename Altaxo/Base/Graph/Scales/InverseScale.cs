@@ -218,11 +218,11 @@ namespace Altaxo.Graph.Scales
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataBounds)
+      if (_dataBounds is not null)
         yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null!, "DataBounds");
-      if (null != _rescaling)
+      if (_rescaling is not null)
         yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null!, "Rescaling");
-      if (null != _tickSpacing)
+      if (_tickSpacing is not null)
         yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null!, "TickSpacing");
     }
 
@@ -273,7 +273,7 @@ namespace Altaxo.Graph.Scales
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         if (ChildSetMember(ref _tickSpacing, (Ticks.NumericTickSpacing)value))

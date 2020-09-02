@@ -353,11 +353,11 @@ namespace Altaxo.Graph.Plot.Groups
       double maximumLogicalXValue
       )
     {
-      if (externalGroups != null && externalGroups.ContainsType(typeof(BarSizePosition2DGroupStyle)))
+      if (externalGroups is not null && externalGroups.ContainsType(typeof(BarSizePosition2DGroupStyle)))
       {
         ((BarSizePosition2DGroupStyle)externalGroups.GetPlotGroupStyle(typeof(BarSizePosition2DGroupStyle))).IntendToApply(numberOfItems, minimumLogicalXValue, maximumLogicalXValue);
       }
-      else if (localGroups != null && localGroups.ContainsType(typeof(BarSizePosition2DGroupStyle)))
+      else if (localGroups is not null && localGroups.ContainsType(typeof(BarSizePosition2DGroupStyle)))
       {
         ((BarSizePosition2DGroupStyle)localGroups.GetPlotGroupStyle(typeof(BarSizePosition2DGroupStyle))).IntendToApply(numberOfItems, minimumLogicalXValue, maximumLogicalXValue);
       }

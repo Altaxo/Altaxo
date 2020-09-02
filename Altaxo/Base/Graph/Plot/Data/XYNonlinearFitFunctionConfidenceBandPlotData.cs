@@ -261,9 +261,9 @@ namespace Altaxo.Graph.Plot.Data
         double sigmaSquare,
         double[] covarianceMatrixTimesSigmaSquare)
     {
-      if (null == fitDocumentIdentifier)
+      if (fitDocumentIdentifier is null)
         throw new ArgumentNullException(nameof(fitDocumentIdentifier));
-      if (null == fitDocument)
+      if (fitDocument is null)
         throw new ArgumentNullException(nameof(fitDocument));
       if (!(confidenceLevel > 0 && confidenceLevel < 1))
         throw new ArgumentOutOfRangeException("Confidence level must be > 0 and < 1", nameof(confidenceLevel));
@@ -359,7 +359,7 @@ namespace Altaxo.Graph.Plot.Data
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _fitDocument)
+      if (_fitDocument is not null)
         yield return new Main.DocumentNodeAndName(_fitDocument, () => _fitDocument = null!, "FitDocument");
     }
 
@@ -501,7 +501,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns></returns>
     public override double Evaluate(double x)
     {
-      if (null != _independentVariableTransformation)
+      if (_independentVariableTransformation is not null)
         x = _independentVariableTransformation.Transform(x);
 
       var y = EvaluateFunctionValueAndJacobian(x, _cachedJacobian);
@@ -533,7 +533,7 @@ namespace Altaxo.Graph.Plot.Data
       var h = _cachedQuantileOfStudentsDistribution * Math.Sqrt(jacCovJac);
       var result = IsLowerBand ? y - h : y + h;
 
-      if (null != _dependentVariableTransformation)
+      if (_dependentVariableTransformation is not null)
         return _dependentVariableTransformation.Transform(result);
       else
         return result;

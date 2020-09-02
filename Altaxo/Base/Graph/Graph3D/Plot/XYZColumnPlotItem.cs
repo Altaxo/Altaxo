@@ -89,7 +89,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     private System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetLocalDocumentNodeChildrenWithName()
     {
-      if (null != _plotData)
+      if (_plotData is not null)
         yield return new DocumentNodeAndName(_plotData, () => _plotData = null!, "Data");
     }
 
@@ -159,7 +159,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new System.ArgumentNullException();
 
         if (ChildSetMember(ref _plotData, value))
@@ -222,8 +222,8 @@ namespace Altaxo.Graph.Graph3D.Plot
       if (col is Altaxo.Data.DataColumn)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
-        string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
+        string tablename = table is null ? string.Empty : table.Name + "\\";
+        string collectionname = table is null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
           return ((DataColumn)col).Name;
         else if (level == 1)
@@ -231,7 +231,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         else
           return tablename + collectionname + ((DataColumn)col).Name;
       }
-      else if (col != null)
+      else if (col is not null)
         return col.FullName;
       else
         return string.Empty;
@@ -266,7 +266,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <param name="layer">The plot layer.</param>
     public override void PrepareScales(IPlotArea layer)
     {
-      if (null != _plotData)
+      if (_plotData is not null)
         _plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject, layer.ZAxis.DataBoundsObject);
 
       _plotStyles.PrepareScales(layer);

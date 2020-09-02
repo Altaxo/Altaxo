@@ -78,7 +78,7 @@ namespace Altaxo.Collections
 
       public bool IsAlive
       {
-        get { return handle.IsAllocated && handle.Target != null; }
+        get { return handle.IsAllocated && handle.Target is not null; }
       }
 
       public object? Target

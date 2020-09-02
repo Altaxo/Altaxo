@@ -490,7 +490,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (object.ReferenceEquals(this, obj))
         return true;
       var from = obj as LinePlotStyle;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, Main.EventFiring.Enabled);
         return true;
@@ -625,7 +625,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return _connectionStyle; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!(_connectionStyle.Equals(value)))
@@ -879,7 +879,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (_useSymbolGap)
       {
-        if (null != _cachedSymbolSizeForIndexFunction && !_independentSymbolSize)
+        if (_cachedSymbolSizeForIndexFunction is not null && !_independentSymbolSize)
         {
           symbolGapFunction = (idx) => _symbolGapOffset + _symbolGapFactor * _cachedSymbolSizeForIndexFunction(idx);
         }
@@ -1057,7 +1057,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!_independentOnShiftingGroupStyles)
       {
         var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYGroupStyle>(externalGroups, localGroups);
-        if (null != shiftStyle)
+        if (shiftStyle is not null)
         {
           shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY);
         }

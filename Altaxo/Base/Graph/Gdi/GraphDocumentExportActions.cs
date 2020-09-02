@@ -392,7 +392,7 @@ namespace Altaxo.Graph.Gdi
     /// </remarks>
     public static (int pixelsX, int pixelsY) RenderAsEnhancedMetafileToStream(Action<Graphics> renderingProc, System.IO.Stream stream, PointD2D docSize, double sourceDpiResolution, double outputScalingFactor, PixelFormat pixelFormat = PixelFormat.Format32bppArgb)
     {
-      if (stream == null)
+      if (stream is null)
         throw new ArgumentNullException("stream");
       if (!stream.CanWrite)
         throw new ArgumentException("stream is not writeable");
@@ -540,7 +540,7 @@ namespace Altaxo.Graph.Gdi
       }
       finally
       {
-        if (null == stream) // only if stream is null, i.e. we had created a new Memorystream
+        if (stream is null) // only if stream is null, i.e. we had created a new Memorystream
           mystream.Dispose(); // we should dispose this MemoryStream
       }
     }
@@ -606,7 +606,7 @@ namespace Altaxo.Graph.Gdi
       }
       finally
       {
-        if (null == stream) // only if stream is null, i.e. we had created a new Memorystream
+        if (stream is null) // only if stream is null, i.e. we had created a new Memorystream
           mystream.Dispose(); // we should dispose this MemoryStream
       }
     }

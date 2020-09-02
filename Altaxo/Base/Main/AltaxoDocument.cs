@@ -704,28 +704,28 @@ namespace Altaxo
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataTables)
+      if (_dataTables is not null)
         yield return new Main.DocumentNodeAndName(_dataTables, () => _dataTables = null!, "Tables");
 
-      if (null != _graphs)
+      if (_graphs is not null)
         yield return new Main.DocumentNodeAndName(_graphs, () => _graphs = null!, "Graphs");
 
-      if (null != _graphs3D)
+      if (_graphs3D is not null)
         yield return new Main.DocumentNodeAndName(_graphs3D, () => _graphs3D = null!, "Graphs3D");
 
-      if (null != _textDocuments)
+      if (_textDocuments is not null)
         yield return new Main.DocumentNodeAndName(_textDocuments, () => _textDocuments = null!, "Text");
 
-      if (null != _tableLayouts)
+      if (_tableLayouts is not null)
         yield return new Main.DocumentNodeAndName(_tableLayouts, () => _tableLayouts = null!, "TableLayouts");
 
-      if (null != _fitFunctionScripts)
+      if (_fitFunctionScripts is not null)
         yield return new Main.DocumentNodeAndName(_fitFunctionScripts, () => _fitFunctionScripts = null!, "FitFunctionScripts");
 
-      if (null != _projectFolderProperties)
+      if (_projectFolderProperties is not null)
         yield return new Main.DocumentNodeAndName(_projectFolderProperties, () => _projectFolderProperties = null!, "FolderProperties");
 
-      if (null != _projectFolders)
+      if (_projectFolders is not null)
         yield return new Main.DocumentNodeAndName(_projectFolders, () => _projectFolders = null!, "ProjectFolders");
     }
 
@@ -801,7 +801,7 @@ namespace Altaxo
     /// <exception cref="System.ArgumentNullException">item</exception>
     public AbsoluteDocumentPath GetDocumentPathForProjectItem(IProjectItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException("item");
 
       return GetRootPathForProjectItemType(item.GetType()).Append(item.Name);

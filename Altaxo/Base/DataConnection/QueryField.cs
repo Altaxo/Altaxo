@@ -143,7 +143,7 @@ namespace Altaxo.DataConnection
     /// </summary>
     public string Alias
     {
-      get { return _alias != null ? _alias : string.Empty; }
+      get { return _alias is not null ? _alias : string.Empty; }
       set
       {
         if (_alias != value)
@@ -215,7 +215,7 @@ namespace Altaxo.DataConnection
     /// </summary>
     public string Filter
     {
-      get { return _filter != null ? _filter : string.Empty; }
+      get { return _filter is not null ? _filter : string.Empty; }
       set
       {
         if (_filter != value)

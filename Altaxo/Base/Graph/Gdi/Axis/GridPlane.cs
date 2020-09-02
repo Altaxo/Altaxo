@@ -69,8 +69,8 @@ namespace Altaxo.Graph.Gdi.Axis
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       _planeID = from._planeID;
-      GridStyleFirst = from._grid1 == null ? null : (GridStyle)from._grid1.Clone();
-      GridStyleSecond = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();
+      GridStyleFirst = from._grid1 is null ? null : (GridStyle)from._grid1.Clone();
+      GridStyleSecond = from._grid2 is null ? null : (GridStyle)from._grid2.Clone();
       Background = from._background;
     }
 
@@ -94,7 +94,7 @@ namespace Altaxo.Graph.Gdi.Axis
       protected virtual GridPlane SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var id = (CSPlaneID)info.GetValue("ID", null);
-        GridPlane s = (o == null ? new GridPlane(id) : (GridPlane)o);
+        GridPlane s = (o is null ? new GridPlane(id) : (GridPlane)o);
         s.GridStyleFirst = info.GetValueOrNull<GridStyle>("Grid1", s);
         s.GridStyleSecond = info.GetValueOrNull<GridStyle>("Grid2", s);
         s.Background = info.GetValueOrNull<BrushX>("Background", s);
@@ -127,9 +127,9 @@ namespace Altaxo.Graph.Gdi.Axis
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _grid1)
+      if (_grid1 is not null)
         yield return new Main.DocumentNodeAndName(_grid1, "Grid1");
-      if (null != _grid2)
+      if (_grid2 is not null)
         yield return new Main.DocumentNodeAndName(_grid2, "Grid2");
     }
 
@@ -220,9 +220,9 @@ namespace Altaxo.Graph.Gdi.Axis
       Region region = layer.CoordinateSystem.GetRegion();
       Region oldClipRegion = g.Clip;
       g.Clip = region;
-      if (null != _grid1)
+      if (_grid1 is not null)
         _grid1.Paint(g, layer, _planeID.InPlaneAxisNumber1);
-      if (null != _grid2)
+      if (_grid2 is not null)
         _grid2.Paint(g, layer, _planeID.InPlaneAxisNumber2);
       g.Clip = oldClipRegion;
     }

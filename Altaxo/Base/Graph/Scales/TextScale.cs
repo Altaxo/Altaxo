@@ -191,11 +191,11 @@ namespace Altaxo.Graph.Scales
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataBounds)
+      if (_dataBounds is not null)
         yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null!, "DataBounds");
-      if (null != _rescaling)
+      if (_rescaling is not null)
         yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null!, "Rescaling");
-      if (null != _tickSpacing)
+      if (_tickSpacing is not null)
         yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null!, "TickSpacing");
     }
 
@@ -247,7 +247,7 @@ namespace Altaxo.Graph.Scales
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         if (ChildSetMember(ref _tickSpacing, value))
@@ -315,7 +315,7 @@ namespace Altaxo.Graph.Scales
       {
         double xorg = 0;
         double xend = 1;
-        if (null != _dataBounds && !_dataBounds.IsEmpty)
+        if (_dataBounds is not null && !_dataBounds.IsEmpty)
         {
           xorg = 0.5;
           xend = _dataBounds.NumberOfItems + 0.5;
@@ -346,7 +346,7 @@ namespace Altaxo.Graph.Scales
 
     protected void UpdateTicksAndOrgEndUsingRescalingObject()
     {
-      if (null == TickSpacing)
+      if (TickSpacing is null)
       {
         SetScaleOrgEnd(_rescaling.ResultingOrg, _rescaling.ResultingEnd);
       }

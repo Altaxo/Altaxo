@@ -74,13 +74,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
     {
       bool result = true;
 
-      if (_styleController != null)
+      if (_styleController is not null)
       {
         if (!_styleController.Apply(disposeController))
           return false;
       }
 
-      if (_dataController != null)
+      if (_dataController is not null)
       {
         if (!_dataController.Apply(disposeController))
           return false;
@@ -92,13 +92,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
     protected override void AttachView()
     {
       base.AttachView();
-      if (null != _innerController)
+      if (_innerController is not null)
         _innerController.ViewObject = _view;
     }
 
     protected override void DetachView()
     {
-      if (null != _innerController)
+      if (_innerController is not null)
         _innerController.ViewObject = null;
       base.DetachView();
     }

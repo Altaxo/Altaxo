@@ -247,7 +247,7 @@ namespace Altaxo.Main.Commands
     public static void PasteItems(string targetFolder, ProjectItemClipboardList list)
     {
       // first we have to make sure that list has values set for TryToKeepInternalReferences and RelocateReferences -- otherwise we have to show a dialog
-      if (list.TryToKeepInternalReferences == null || list.RelocateReferences == null)
+      if (list.TryToKeepInternalReferences is null || list.RelocateReferences is null)
       {
         var options = new ProjectItemsPasteOptions { TryToKeepInternalReferences = list.TryToKeepInternalReferences, RelocateReferences = list.RelocateReferences };
 
@@ -280,7 +280,7 @@ namespace Altaxo.Main.Commands
         }
       }
 
-      if (list.RelocateReferences.Value && targetFolder != null)
+      if (list.RelocateReferences.Value && targetFolder is not null)
       {
         string sourceFolder = list.BaseFolder ?? ProjectFolder.RootFolderName;
         relocationData.AddPathReplacementsForAllProjectItemTypes(sourceFolder, targetFolder);
@@ -333,12 +333,12 @@ namespace Altaxo.Main.Commands
       public RenameValidator(IProjectItem projectItem, string projectItemTypeName)
         : base(string.Format("The {0} name must not be empty! Please enter a valid name.", projectItemTypeName))
       {
-        if (null == projectItem)
+        if (projectItem is null)
           throw new ArgumentNullException(nameof(projectItem));
 
         _projectItem = projectItem;
         _projectItemTypeName = projectItemTypeName;
-        if (null == projectItemTypeName)
+        if (projectItemTypeName is null)
           _projectItemTypeName = _projectItem.GetType().Name;
       }
 

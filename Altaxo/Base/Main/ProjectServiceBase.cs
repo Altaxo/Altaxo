@@ -236,13 +236,13 @@ namespace Altaxo.Dom
       string? caption = Current.ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Caption");
       bool? dlgresult = Current.Gui.YesNoCancelMessageBox(text, caption, null);
 
-      if (null == dlgresult) // Cancel
+      if (dlgresult is null) // Cancel
       {
         e.Cancel = true;
       }
       else if (true == dlgresult) // Yes
       {
-        if (CurrentProjectFileName != null)
+        if (CurrentProjectFileName is not null)
           SaveProject();
         else
           SaveProjectAs();
@@ -423,7 +423,7 @@ namespace Altaxo.Dom
         return;
       }
 
-      if (CurrentProject != null && CurrentProject.IsDirty && showUserInteraction)
+      if (CurrentProject is not null && CurrentProject.IsDirty && showUserInteraction)
       {
         var e = new System.ComponentModel.CancelEventArgs();
         AskForSavingOfProject(e);
@@ -469,7 +469,7 @@ namespace Altaxo.Dom
 
       var recentService = Current.GetService<IRecentOpen>();
 
-      if (recentService != null)
+      if (recentService is not null)
         recentService.AddRecentProject(filename);
     }
 
@@ -512,13 +512,13 @@ namespace Altaxo.Dom
       var oldProject = _currentProject;
       var oldProjectName = CurrentProjectFileName;
 
-      if (oldProject != null)
+      if (oldProject is not null)
         OnProjectChanged(new ProjectEventArgs(oldProject, oldProjectName, ProjectEventKind.ProjectClosing));
 
       Current.Workbench.CloseAllViews();
       SetCurrentProject(null, asUnnamedProject: true);
 
-      if (oldProject != null)
+      if (oldProject is not null)
         OnProjectChanged(new ProjectEventArgs(oldProject, oldProjectName, ProjectEventKind.ProjectClosed));
 
       // now create a new project
@@ -533,7 +533,7 @@ namespace Altaxo.Dom
 
     public virtual void CreateInitialProject()
     {
-      if (null != _currentProject)
+      if (_currentProject is not null)
         throw new InvalidOperationException("There should be no document before creating the initial document");
 
       OnProjectChanged(new ProjectEventArgs(null, null, ProjectEventKind.ProjectOpening));
@@ -556,7 +556,7 @@ namespace Altaxo.Dom
     /// <inheritdoc/>
     public virtual string GetMainWindowTitle()
     {
-      if (Current.ComManager is { } comManager && comManager.IsInEmbeddedMode && null != comManager.EmbeddedObject)
+      if (Current.ComManager is { } comManager && comManager.IsInEmbeddedMode && comManager.EmbeddedObject is not null)
         return GetMainWindowTitleWithComManagerInEmbeddedMode();
       else
         return GetMainWindowTitleWithoutComManagerInEmbeddedMode();
@@ -582,7 +582,7 @@ namespace Altaxo.Dom
     protected virtual string GetMainWindowTitleWithComManagerInEmbeddedMode()
     {
       var comManager = Current.ComManager;
-      if (!(comManager != null && comManager.IsInEmbeddedMode && null != comManager.EmbeddedObject))
+      if (!(comManager is not null && comManager.IsInEmbeddedMode && comManager.EmbeddedObject is not null))
         throw new InvalidProgramException("This function must be called only if Current.ComManager is in embedded mode and has an embedded object");
 
       _applicationName = StringParser.Parse("${AppName}");
@@ -600,7 +600,7 @@ namespace Altaxo.Dom
         title.Append(projectItem.Name);
       }
 
-      if (Altaxo.Current.IProjectService.CurrentProject != null && Altaxo.Current.IProjectService.CurrentProject.IsDirty)
+      if (Altaxo.Current.IProjectService.CurrentProject is not null && Altaxo.Current.IProjectService.CurrentProject.IsDirty)
         title.Append("*");
 
       title.Append(" in ");
@@ -642,12 +642,12 @@ namespace Altaxo.Dom
     {
       var viewcontent = Current.Workbench.GetViewModel<IViewContent>(document); // search for an already present view content
 
-      if (null == viewcontent) // if not found, try to create a new viewcontent
+      if (viewcontent is null) // if not found, try to create a new viewcontent
       {
         viewcontent = (IViewContent?)Current.Gui.GetControllerAndControl(new object[] { document }, typeof(IViewContent));
       }
 
-      if (null != viewcontent)
+      if (viewcontent is not null)
       {
         Current.Workbench.ShowView(viewcontent, true);
       }

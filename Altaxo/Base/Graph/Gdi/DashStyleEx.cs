@@ -136,7 +136,7 @@ namespace Altaxo.Graph.Gdi
 
     public override int GetHashCode()
     {
-      if (IsCustomStyle && _customStyle != null)
+      if (IsCustomStyle && _customStyle is not null)
         return _customStyle.GetHashCode();
       else
         return _knownStyle.GetHashCode();
@@ -190,7 +190,7 @@ namespace Altaxo.Graph.Gdi
 
     private static bool IsEqual(float[] a, float[] b)
     {
-      if (a == null || b == null)
+      if (a is null || b is null)
         return false;
       if (a.Length != b.Length)
         return false;

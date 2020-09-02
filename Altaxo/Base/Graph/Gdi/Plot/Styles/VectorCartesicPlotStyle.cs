@@ -187,11 +187,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._meaningOfValues = (ValueInterpretation)info.GetEnum("MeaningOfValues", typeof(ValueInterpretation));
 
         s._columnX = (IReadableColumnProxy)info.GetValue("ColumnX", s);
-        if (null != s._columnX)
+        if (s._columnX is not null)
           s._columnX.ParentObject = s;
 
         s._columnY = (IReadableColumnProxy)info.GetValue("ColumnY", s);
-        if (null != s._columnY)
+        if (s._columnY is not null)
           s._columnY.ParentObject = s;
 
         s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
@@ -339,10 +339,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _columnX)
+      if (_columnX is not null)
         yield return new Main.DocumentNodeAndName(_columnX, nameof(ColumnX));
 
-      if (null != _columnY)
+      if (_columnY is not null)
         yield return new Main.DocumentNodeAndName(_columnY, nameof(ColumnY));
     }
 
@@ -378,7 +378,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         var oldValue = _columnX?.Document();
         if (!object.ReferenceEquals(value, oldValue))
         {
-          ChildSetMember(ref _columnX, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
+          ChildSetMember(ref _columnX, value is null ? null : ReadableColumnProxyBase.FromColumn(value));
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -412,7 +412,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         var oldValue = _columnY?.Document();
         if (!object.ReferenceEquals(value, oldValue))
         {
-          ChildSetMember(ref _columnY, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
+          ChildSetMember(ref _columnY, value is null ? null : ReadableColumnProxyBase.FromColumn(value));
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -810,7 +810,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!_independentOnShiftingGroupStyles)
       {
         var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYGroupStyle>(externalGroups, localGroups);
-        if (null != shiftStyle)
+        if (shiftStyle is not null)
         {
           shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY);
         }
@@ -858,7 +858,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var columnX = ColumnX;
       var columnY = ColumnY;
 
-      if (columnX == null || columnY == null)
+      if (columnX is null || columnY is null)
         return; // nothing to do if both error columns are null
 
       if (!typeof(double).IsAssignableFrom(columnX.ItemType) || !typeof(double).IsAssignableFrom(columnY.ItemType))
@@ -874,11 +874,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         for (int j = lower; j < upper; j += _skipFrequency)
         {
           int originalRowIndex = range.GetOriginalRowIndexFromPlotPointIndex(j);
-          double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalRowIndex);
+          double symbolSize = _cachedSymbolSizeForIndexFunction is null ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalRowIndex);
 
           strokePen = strokePen.WithWidth(_lineWidth1Offset + _lineWidth1Factor * symbolSize);
 
-          if (null != _cachedColorForIndexFunction)
+          if (_cachedColorForIndexFunction is not null)
             strokePen = strokePen.WithColor(GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(originalRowIndex), "VariableColor"));
 
           if (!(strokePen.EndCap is LineCaps.FlatCap))
@@ -953,7 +953,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
           if (_useSymbolGap)
           {
-            if (null == isoLinePathPoints)
+            if (isoLinePathPoints is null)
             {
               isoLine.Flatten();
               isoLinePathPoints = isoLine.PathPoints;
@@ -969,7 +969,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           }
           using (var strokePenGdi = PenCacheGdi.Instance.BorrowPen(strokePen))
           {
-            if (null != isoLinePathPoints)
+            if (isoLinePathPoints is not null)
               g.DrawLines(strokePenGdi, isoLinePathPoints);
             else
               g.DrawPath(strokePenGdi, isoLine);
@@ -1001,11 +1001,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var xColumn = ColumnX;
       var yColumn = ColumnY;
 
-      if (xColumn == null)
+      if (xColumn is null)
       {
 
       }
-      if (yColumn == null)
+      if (yColumn is null)
       {
 
       }
@@ -1022,9 +1022,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
     public void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
-      if (null != _columnX)
+      if (_columnX is not null)
         Report(_columnX, this, nameof(ColumnX));
-      if (null != _columnY)
+      if (_columnY is not null)
         Report(_columnY, this, nameof(ColumnY));
     }
 

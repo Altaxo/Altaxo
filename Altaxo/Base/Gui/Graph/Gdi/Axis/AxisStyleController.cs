@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       {
         _context = _doc.GetPropertyContext();
 
-        if (_doc.AxisLineStyle != null)
+        if (_doc.AxisLineStyle is not null)
         {
           _axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
         }
@@ -94,7 +94,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
           _axisLineStyleController = null;
         }
 
-        if (_doc.TickSpacing != null)
+        if (_doc.TickSpacing is not null)
         {
           _tickSpacingController = new TickSpacingController() { UseDocumentCopy = UseDocument.Directly };
           _tickSpacingController.InitializeDocument(_doc.TickSpacing);
@@ -102,15 +102,15 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         }
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.AxisTitle = _doc.TitleText;
         _view.ShowAxisLine = _doc.IsAxisLineEnabled;
         _view.ShowMajorLabels = _doc.AreMajorLabelsEnabled;
         _view.ShowMinorLabels = _doc.AreMinorLabelsEnabled;
-        _view.LineStyleView = _axisLineStyleController == null ? null : _axisLineStyleController.ViewObject;
-        _view.ShowCustomTickSpacing = _doc.TickSpacing != null;
-        _view.TickSpacingView = _tickSpacingController != null ? _tickSpacingController.ViewObject : null;
+        _view.LineStyleView = _axisLineStyleController is null ? null : _axisLineStyleController.ViewObject;
+        _view.ShowCustomTickSpacing = _doc.TickSpacing is not null;
+        _view.TickSpacingView = _tickSpacingController is not null ? _tickSpacingController.ViewObject : null;
       }
     }
 
@@ -119,7 +119,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       // read axis title
       _doc.TitleText = _view.AxisTitle;
 
-      if (null != _axisLineStyleController)
+      if (_axisLineStyleController is not null)
       {
         if (!_axisLineStyleController.Apply(disposeController))
           return false;
@@ -137,9 +137,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       else
         _doc.HideMinorLabels();
 
-      if (_tickSpacingController != null && !_tickSpacingController.Apply(disposeController))
+      if (_tickSpacingController is not null && !_tickSpacingController.Apply(disposeController))
         return false;
-      if (_view.ShowCustomTickSpacing && null != _tickSpacingController)
+      if (_view.ShowCustomTickSpacing && _tickSpacingController is not null)
         _doc.TickSpacing = (Altaxo.Graph.Scales.Ticks.TickSpacing)_tickSpacingController.ModelObject;
 
       return ApplyEnd(true, disposeController); // all ok
@@ -169,7 +169,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     /// the state of the checkboxes for major and minor labels in the view that is controlled by this controller.</summary>
     public void AnnounceExternalChangeOfMajorOrMinorLabelState()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _view.ShowMajorLabels = _doc.AreMajorLabelsEnabled;
         _view.ShowMinorLabels = _doc.AreMinorLabelsEnabled;
@@ -182,16 +182,16 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
       if (isShown)
       {
-        if (_tickSpacingController == null)
+        if (_tickSpacingController is null)
         {
-          if (_doc.TickSpacing == null)
+          if (_doc.TickSpacing is null)
           {
             _doc.TickSpacing = new Altaxo.Graph.Scales.Ticks.LinearTickSpacing();
           }
           _tickSpacingController = new TickSpacingController() { UseDocumentCopy = UseDocument.Directly };
           _tickSpacingController.InitializeDocument(_doc.TickSpacing);
           Current.Gui.FindAndAttachControlTo(_tickSpacingController);
-          if (null != _view)
+          if (_view is not null)
             _view.TickSpacingView = _tickSpacingController.ViewObject;
         }
       }
@@ -206,7 +206,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     private void EhShowAxisLineChanged()
     {
       var oldValue = _doc.IsAxisLineEnabled;
-      if (_view.ShowAxisLine && null == _doc.AxisLineStyle)
+      if (_view.ShowAxisLine && _doc.AxisLineStyle is null)
       {
         _doc.ShowAxisLine(_context);
         _axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);

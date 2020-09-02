@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     private void EhCurvePointsPasteTriggered()
     {
       Altaxo.Data.DataTable table = Altaxo.Worksheet.Commands.EditCommands.GetTableFromClipboard();
-      if (null == table)
+      if (table is null)
         return;
       Altaxo.Data.DoubleColumn xcol = null;
       Altaxo.Data.DoubleColumn ycol = null;
@@ -108,7 +108,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
 
-      if (!(xcol != null && ycol != null))
+      if (!(xcol is not null && ycol is not null))
         return;
 
       int len = Math.Min(xcol.Count, ycol.Count);
@@ -128,7 +128,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     {
       var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_doc);
 
-      if (null == layer)
+      if (layer is null)
       {
         Current.Gui.ErrorMessageBox("Could not find a parent X-Y layer. Thus, the calculation of physical coordinates is not possible!");
         return;
@@ -137,7 +137,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       var cachedTransformation = _doc.TransformationFromHereToParent(layer);
 
       Altaxo.Data.DataTable table = Altaxo.Worksheet.Commands.EditCommands.GetTableFromClipboard();
-      if (null == table)
+      if (table is null)
         return;
       Altaxo.Data.DoubleColumn xcol = null;
       Altaxo.Data.DoubleColumn ycol = null;
@@ -160,7 +160,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
 
-      if (!(xcol != null && ycol != null))
+      if (!(xcol is not null && ycol is not null))
         return;
 
       int len = Math.Min(xcol.Count, ycol.Count);
@@ -188,7 +188,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     {
       var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_doc);
 
-      if (null == layer)
+      if (layer is null)
       {
         Current.Gui.ErrorMessageBox("Could not find a parent X-Y layer. Thus, the calculation of physical coordinates is not possible!");
         return;
@@ -197,7 +197,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       var cachedTransformation = _doc.TransformationFromHereToParent(layer);
 
       Altaxo.Data.DataTable table = Altaxo.Worksheet.Commands.EditCommands.GetTableFromClipboard();
-      if (null == table)
+      if (table is null)
         return;
       Altaxo.Data.DoubleColumn xcol = null;
       Altaxo.Data.DoubleColumn ycol = null;
@@ -220,7 +220,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
 
-      if (!(xcol != null && ycol != null))
+      if (!(xcol is not null && ycol is not null))
         return;
 
       int len = Math.Min(xcol.Count, ycol.Count);
@@ -264,7 +264,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     {
       var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_doc);
 
-      if (null == layer)
+      if (layer is null)
       {
         Current.Gui.ErrorMessageBox("Could not find a parent X-Y layer. Thus, the calculation of physical coordinates is not possible!");
         return;
@@ -299,7 +299,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     {
       var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_doc);
 
-      if (null == layer)
+      if (layer is null)
       {
         Current.Gui.ErrorMessageBox("Could not find a parent X-Y layer. Thus, the calculation of logical coordinates is not possible!");
         return;

@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.ColorBelow = _doc.ColorBelow;
         _view.ColorAbove = _doc.ColorAbove;

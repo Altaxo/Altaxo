@@ -63,7 +63,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
         var info = PackageInfo.GetPresentDownloadedPackage(versionFileStream, downloadFolder, out packageStream);
 
-        if (null == info || null == packageStream)
+        if (info is null || packageStream is null)
           return false;
 
         var entryAssembly = System.Reflection.Assembly.GetEntryAssembly() ?? throw new InvalidOperationException("Unable to get entry assembly");
@@ -109,7 +109,7 @@ namespace Altaxo.Serialization.AutoUpdates
           updateSettings.InstallationWindowClosingTime,
           isAltaxoCurrentlyStarting ? 1 : 0,
           entryAssembly.Location);
-        if (isAltaxoCurrentlyStarting && commandLineArgs != null && commandLineArgs.Length > 0)
+        if (isAltaxoCurrentlyStarting && commandLineArgs is not null && commandLineArgs.Length > 0)
         {
           foreach (var s in commandLineArgs)
             stb.AppendFormat("\t\"{0}\"", s);
@@ -121,7 +121,7 @@ namespace Altaxo.Serialization.AutoUpdates
         // Start the updater program
         var process = System.Diagnostics.Process.Start(processInfo);
 
-        if (null != process)
+        if (process is not null)
         {
           for (; ; )
           {
@@ -141,9 +141,9 @@ namespace Altaxo.Serialization.AutoUpdates
       }
       finally
       {
-        if (null != packageStream)
+        if (packageStream is not null)
           packageStream.Close();
-        if (null != versionFileStream)
+        if (versionFileStream is not null)
           versionFileStream.Close();
       }
     }

@@ -220,7 +220,7 @@ namespace Altaxo.Graph.Plot.Groups
       Func<Tuple<ILineConnectionStyle, bool>> getter)
     {
       if (!externalGroups.ContainsType(typeof(LineConnection2DGroupStyle))
-        && null != localGroups
+        && localGroups is not null
         && !localGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
       {
         localGroups.Add(new LineConnection2DGroupStyle());
@@ -257,7 +257,7 @@ namespace Altaxo.Graph.Plot.Groups
       else if (localGroups is not null && localGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
         grpColl = localGroups;
 
-      if (null != grpColl)
+      if (grpColl is not null)
       {
         var grpStyle = (LineConnection2DGroupStyle)grpColl.GetPlotGroupStyle(typeof(LineConnection2DGroupStyle));
         grpColl.OnBeforeApplication(typeof(LineConnection2DGroupStyle));

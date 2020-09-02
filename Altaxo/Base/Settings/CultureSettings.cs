@@ -142,7 +142,7 @@ namespace Altaxo.Settings
       if (object.ReferenceEquals(obj, this))
         return true;
       var from = obj as CultureSettings;
-      if (null != from)
+      if (from is not null)
       {
         _cultureID = from._cultureID;
         _cultureName = from._cultureName;
@@ -267,7 +267,7 @@ namespace Altaxo.Settings
     {
       get
       {
-        if (LicenseManager.UsageMode == LicenseUsageMode.Designtime || Current.PropertyService == null)
+        if (LicenseManager.UsageMode == LicenseUsageMode.Designtime || Current.PropertyService is null)
           return System.Globalization.CultureInfo.CurrentUICulture;
         else
           return Current.PropertyService.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyUICulture, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin).Culture ?? System.Globalization.CultureInfo.CurrentUICulture;
@@ -299,7 +299,7 @@ namespace Altaxo.Settings
       }
       set
       {
-        if (null != _startupDocumentCultureInfo)
+        if (_startupDocumentCultureInfo is not null)
           throw new InvalidOperationException("Value already set, but it can be set only once at startup");
 
         _startupDocumentCultureInfo = (CultureInfo)value.Clone();
@@ -322,7 +322,7 @@ namespace Altaxo.Settings
       }
       set
       {
-        if (null != _startupUICultureInfo)
+        if (_startupUICultureInfo is not null)
           throw new InvalidOperationException("Value already set, but it can be set only once at startup");
         _startupUICultureInfo = (CultureInfo)value.Clone();
       }

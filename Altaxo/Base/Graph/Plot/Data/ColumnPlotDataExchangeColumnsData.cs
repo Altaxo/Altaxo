@@ -96,7 +96,7 @@ namespace Altaxo.Graph.Plot.Data
       // collect all column names from those plot items
       foreach (var plotItem in PlotItems)
       {
-        if (plotItem.DataObject is IColumnPlotData columnPlotData && columnPlotData.DataTable != null)
+        if (plotItem.DataObject is IColumnPlotData columnPlotData && columnPlotData.DataTable is not null)
         {
           dataTables.Add(columnPlotData.DataTable);
 
@@ -169,7 +169,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       foreach (var plotItem in PlotItems)
       {
-        if (plotItem.DataObject is IColumnPlotData columnPlotData && columnPlotData.DataTable != null)
+        if (plotItem.DataObject is IColumnPlotData columnPlotData && columnPlotData.DataTable is not null)
         {
           foreach (var columnInfo in ColumnPlotDataExchangeTableData.EnumerateAllDataColumnsOfPlotItem(plotItem, (info) => true))
           {

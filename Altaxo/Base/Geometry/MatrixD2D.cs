@@ -100,7 +100,7 @@ namespace Altaxo.Geometry
         return true;
 
       var from = o as MatrixD2D;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from);
         return true;

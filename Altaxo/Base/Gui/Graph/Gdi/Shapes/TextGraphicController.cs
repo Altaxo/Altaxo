@@ -124,7 +124,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         Current.Gui.FindAndAttachControlTo(_locationController);
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.BeginUpdate();
 

@@ -94,7 +94,7 @@ namespace Altaxo.Data
 
     public void AddMatrixRowHeaderData(IReadOnlyList<double> vector, string name)
     {
-      if (null == vector)
+      if (vector is null)
         throw new ArgumentNullException("vector");
       if (string.IsNullOrEmpty(name))
         throw new ArgumentNullException("name");
@@ -106,7 +106,7 @@ namespace Altaxo.Data
 
     public void AddMatrixColumnHeaderData(IReadOnlyList<double> vector, string name)
     {
-      if (null == vector)
+      if (vector is null)
         throw new ArgumentNullException("vector");
       if (string.IsNullOrEmpty(name))
         throw new ArgumentNullException("name");
@@ -155,7 +155,7 @@ namespace Altaxo.Data
         for (int i = 0; i < _sourceMatrix.ColumnCount; ++i)
         {
           string columnName;
-          if (null != ColumnNameGenerator)
+          if (ColumnNameGenerator is not null)
             columnName = ColumnNameGenerator(i);
           else
             columnName = string.Format("{0}{1}", string.IsNullOrEmpty(_columnNameBase) ? DefaultColumnBaseName : _columnNameBase, i);

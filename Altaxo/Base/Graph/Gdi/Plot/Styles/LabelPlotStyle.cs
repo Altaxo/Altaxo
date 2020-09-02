@@ -711,10 +711,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _backgroundStyle)
+      if (_backgroundStyle is not null)
         yield return new Main.DocumentNodeAndName(_backgroundStyle, "Background");
 
-      if (null != _labelColumnProxy)
+      if (_labelColumnProxy is not null)
         yield return new Main.DocumentNodeAndName(_labelColumnProxy, "LabelColumn");
     }
 
@@ -729,7 +729,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         if (ChildSetMember(ref _labelColumnProxy, value))
         {
-          if (null != _labelColumnProxy)
+          if (_labelColumnProxy is not null)
             EhChildChanged(_labelColumnProxy, EventArgs.Empty);
           else
             EhSelfChanged(EventArgs.Empty);
@@ -1249,9 +1249,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return;
 
 
-      bool isUsingVariableColorForLabelText = null != _cachedColorForIndexFunction && IsColorReceiver;
-      bool isUsingVariableColorForLabelBackground = null != _cachedColorForIndexFunction &&
-        (null != _backgroundStyle && _backgroundStyle.SupportsBrush && (_backgroundColorLinkage == ColorLinkage.Dependent || _backgroundColorLinkage == ColorLinkage.PreserveAlpha));
+      bool isUsingVariableColorForLabelText = _cachedColorForIndexFunction is not null && IsColorReceiver;
+      bool isUsingVariableColorForLabelBackground = _cachedColorForIndexFunction is not null &&
+        (_backgroundStyle is not null && _backgroundStyle.SupportsBrush && (_backgroundColorLinkage == ColorLinkage.Dependent || _backgroundColorLinkage == ColorLinkage.PreserveAlpha));
       bool isUsingVariableColor = isUsingVariableColorForLabelText || isUsingVariableColorForLabelBackground;
       BrushX? clonedTextBrush = null;
       BrushX? clonedBackBrush = null;
@@ -1270,7 +1270,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       bool isFormatStringContainingBraces = _labelFormatString?.IndexOf('{') >= 0;
       var culture = System.Threading.Thread.CurrentThread.CurrentCulture;
 
-      bool mustUseLogicalCoordinates = null != _attachedPlane || 0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY;
+      bool mustUseLogicalCoordinates = _attachedPlane is not null || 0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY;
 
       int lower = range.LowerBound;
       int upper = range.UpperBound;
@@ -1296,7 +1296,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           continue;
 
         double localSymbolSize = _symbolSize;
-        if (null != _cachedSymbolSizeForIndexFunction)
+        if (_cachedSymbolSizeForIndexFunction is not null)
         {
           localSymbolSize = _cachedSymbolSizeForIndexFunction(originalRowIndex);
         }
@@ -1332,7 +1332,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           r3d.RX += _cachedLogicalShiftX;
           r3d.RY += _cachedLogicalShiftY;
 
-          if (null != _attachedPlane)
+          if (_attachedPlane is not null)
           {
             var pp = layer.CoordinateSystem.GetPointOnPlane(_attachedPlane, r3d);
             xpre = pp.X;
@@ -1384,7 +1384,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var gdiFont = GdiFontManager.ToGdi(_font);
       SizeF stringsize = g.MeasureString(label, gdiFont, PointF.Empty, _cachedStringFormat);
 
-      if (_backgroundStyle != null)
+      if (_backgroundStyle is not null)
       {
         var x = xpos;
         var y = ypos;
@@ -1438,7 +1438,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       // Make sure to pre-load the label-column here.
       var labelColumn = this.LabelColumn;
-      if (null == labelColumn)
+      if (labelColumn is null)
       {
 
       }
@@ -1467,7 +1467,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get
       {
         return
-          _backgroundStyle != null &&
+                    _backgroundStyle is not null &&
           _backgroundStyle.SupportsBrush &&
           _backgroundColorLinkage == ColorLinkage.Dependent;
       }
@@ -1485,7 +1485,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get
       {
         return
-          _backgroundStyle != null &&
+                    _backgroundStyle is not null &&
           _backgroundStyle.SupportsBrush &&
           (_backgroundColorLinkage == ColorLinkage.Dependent || _backgroundColorLinkage == ColorLinkage.PreserveAlpha);
       }
@@ -1584,7 +1584,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!_independentOnShiftingGroupStyles)
       {
         var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYGroupStyle>(externalGroups, localGroups);
-        if (null != shiftStyle)
+        if (shiftStyle is not null)
         {
           shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY);
         }

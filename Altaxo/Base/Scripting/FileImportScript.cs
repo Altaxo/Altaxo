@@ -236,10 +236,10 @@ namespace Altaxo.Scripting
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public bool Execute(Altaxo.Data.DataTable myTable, string[] fileNames, IProgressReporter reporter, bool catchExceptionsAndStoreThemInThisScript)
     {
-      if (null == _scriptObject && !_wasTriedToCompile)
+      if (_scriptObject is null && !_wasTriedToCompile)
         Compile();
 
-      if (null == _scriptObject)
+      if (_scriptObject is null)
       {
         if (catchExceptionsAndStoreThemInThisScript)
         {
@@ -248,7 +248,7 @@ namespace Altaxo.Scripting
         }
         else
         {
-          if (null != _errors && _errors.Count > 0)
+          if (_errors is not null && _errors.Count > 0)
           {
             throw new InvalidOperationException("The script object is null because of compilation errors:\r\n" + GetErrorsAsString());
           }
@@ -309,7 +309,7 @@ namespace Altaxo.Scripting
 
       IDisposable? suspendToken = null;
 
-      if (null != myDataSet)
+      if (myDataSet is not null)
         suspendToken = myDataSet.SuspendGetToken();
       else
         suspendToken = myTable.SuspendGetToken();
@@ -325,7 +325,7 @@ namespace Altaxo.Scripting
       }
       finally
       {
-        if (null != suspendToken)
+        if (suspendToken is not null)
           suspendToken.Dispose();
       }
 
@@ -347,7 +347,7 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (null == _scriptObject && !_wasTriedToCompile)
+        if (_scriptObject is null && !_wasTriedToCompile)
           Compile();
 
         try

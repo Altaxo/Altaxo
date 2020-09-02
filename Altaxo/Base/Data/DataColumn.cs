@@ -217,7 +217,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return null == Name ? GetType().ToString() : GetType().ToString() + "(\"" + Name + "\")";
+        return Name is null ? GetType().ToString() : GetType().ToString() + "(\"" + Name + "\")";
       }
     }
 
@@ -266,10 +266,10 @@ namespace Altaxo.Data
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       var ea = e as DataColumnChangedEventArgs;
-      if (null == ea)
+      if (ea is null)
         throw new ArgumentException("ChangeEventArgs expected in argument e");
 
-      if (_accumulatedEventData == null)
+      if (_accumulatedEventData is null)
         _accumulatedEventData = ea;
       else
         ((DataColumnChangedEventArgs)_accumulatedEventData).Accumulate(ea.MinRowChanged, ea.MaxRowChanged, ea.HasRowCountDecreased);
@@ -284,7 +284,7 @@ namespace Altaxo.Data
     /// <remarks>In case the object in which to accumulate the change data is actually null, a new change data object is created.</remarks>
     protected void AccumulateChangeData(int minRow, int maxRow, bool rowCountDecreased)
     {
-      if (_accumulatedEventData == null)
+      if (_accumulatedEventData is null)
         _accumulatedEventData = new DataColumnChangedEventArgs(minRow, maxRow, rowCountDecreased);
       else
         ((DataColumnChangedEventArgs)_accumulatedEventData).Accumulate(minRow, maxRow, rowCountDecreased); // AccumulateNotificationData
@@ -329,7 +329,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return null != _accumulatedEventData;
+        return _accumulatedEventData is not null;
       }
     }
 
@@ -406,13 +406,13 @@ namespace Altaxo.Data
     public static DataColumn CreateColumnOfSelectedRows(Altaxo.Data.DataColumn? x, Altaxo.Collections.IAscendingIntegerCollection? selectedRows, int numrows)
     {
       Altaxo.Data.DataColumn result;
-      if (x != null)
+      if (x is not null)
       {
         result = (Altaxo.Data.DataColumn)x.Clone();
         result.Clear();
         for (int j = 0; j < numrows; j++)
         {
-          int rowidx = selectedRows != null ? selectedRows[j] : j;
+          int rowidx = selectedRows is not null ? selectedRows[j] : j;
           result[j] = x[rowidx];
         }
       }
@@ -421,7 +421,7 @@ namespace Altaxo.Data
         result = new Altaxo.Data.DoubleColumn();
         for (int j = 0; j < numrows; j++)
         {
-          int rowidx = selectedRows != null ? selectedRows[j] : j;
+          int rowidx = selectedRows is not null ? selectedRows[j] : j;
           result[j] = rowidx;
         }
       }
@@ -439,9 +439,9 @@ namespace Altaxo.Data
     public static DataColumn CreateColumnOfSelectedRows(Altaxo.Data.DataColumn? x, Altaxo.Collections.IAscendingIntegerCollection? selectedRows)
     {
       int numrows = 0;
-      if (selectedRows != null)
+      if (selectedRows is not null)
         numrows = selectedRows.Count;
-      else if (x != null)
+      else if (x is not null)
         numrows = x.Count;
 
       return CreateColumnOfSelectedRows(x, selectedRows, numrows);
@@ -513,7 +513,7 @@ namespace Altaxo.Data
       if (0 == Count)
         return;
 
-      if (null == array)
+      if (array is null)
         throw new ArgumentNullException("array");
       if (!((arrayIndex + Count) < array.Length))
         throw new ArgumentException("array to short");

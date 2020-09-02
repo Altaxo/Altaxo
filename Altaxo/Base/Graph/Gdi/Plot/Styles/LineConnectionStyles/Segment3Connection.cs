@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       // to the exclusion criteria that a line only appears between two symbols (rel<0.5)
       // if the symbols do not overlap. So for a big array of points it is very likely
       // that the symbols overlap and no line between the symbols needs to be plotted
-      if (null != symbolGap)
+      if (symbolGap is not null)
       {
         float startx, starty, stopx, stopy;
         for (i = 0; i < subLinePoints.Length - 1; ++i)

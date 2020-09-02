@@ -77,7 +77,7 @@ namespace Altaxo.Gui.DataConnection
 
         _connectionString = value;
 
-        if (null == _connectionString || _connectionString.IsEmpty)
+        if (_connectionString is null || _connectionString.IsEmpty)
         {
           Reset();
         }
@@ -101,10 +101,10 @@ namespace Altaxo.Gui.DataConnection
     {
       if (initData)
       {
-        if (null != _connectionString && !_connectionString.IsEmpty)
+        if (_connectionString is not null && !_connectionString.IsEmpty)
           _schema.ConnectionString = _connectionString.ConnectionStringWithTemporaryCredentials;
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetTreeSource(_treeRootNode);
       }
@@ -125,7 +125,7 @@ namespace Altaxo.Gui.DataConnection
       var ndProcs = new NGTreeNodeWithImageIndex() { Text = Current.ResourceService.GetString("Gui.DataConnection.StoredProcedures"), ImageIndex = 2, SelectedImageIndex = 2 };
 
       // populate using current schema
-      if (_schema != null)
+      if (_schema is not null)
       {
         // populate the tree
         foreach (System.Data.DataTable dt in _schema.Tables)
@@ -173,7 +173,7 @@ namespace Altaxo.Gui.DataConnection
         ndTables.IsExpanded = true;
 
         // done
-        if (null != _view)
+        if (_view is not null)
         {
           _view.SetTreeSource(_treeRootNode);
         }
@@ -201,7 +201,7 @@ namespace Altaxo.Gui.DataConnection
     {
       _selectionStatement = string.Empty;
       var selNode = _treeRootNode.AnyBetweenHereAndLeaves(x => x.IsSelected);
-      if (null == selNode)
+      if (selNode is null)
         return;
 
       if (selNode.Tag is System.Data.DataTable)
@@ -224,12 +224,12 @@ namespace Altaxo.Gui.DataConnection
 
       // get table/view name
       var selNode = _treeRootNode.AnyBetweenHereAndLeaves(x => x.IsSelected);
-      var table = selNode == null ? null : selNode.Tag as System.Data.DataTable;
+      var table = selNode is null ? null : selNode.Tag as System.Data.DataTable;
       dt.TableName = table.TableName;
 
       // get view parameters if necessary
       var parms = OleDbSchema.GetTableParameters(table);
-      if (parms != null && parms.Count > 0)
+      if (parms is not null && parms.Count > 0)
       {
         var ctrl = new ParametersController(parms);
         if (!Current.Gui.ShowDialog(ctrl, "Parameter", false))
@@ -278,14 +278,14 @@ namespace Altaxo.Gui.DataConnection
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as IEntireTableQueryView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           AttachView();

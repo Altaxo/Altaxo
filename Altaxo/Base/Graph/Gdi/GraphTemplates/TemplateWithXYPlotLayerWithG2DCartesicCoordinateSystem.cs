@@ -95,7 +95,7 @@ typeof(object),
       GraphDocument graph;
       var graphTemplate = propertyContext.GetValue<GraphDocument>(PropertyKeyDefaultTemplate);
       var isBuiltinTemplate = object.ReferenceEquals(graphTemplate, Current.PropertyService.BuiltinSettings.GetValue<GraphDocument>(PropertyKeyDefaultTemplate));
-      if (null != graphTemplate && !isBuiltinTemplate)
+      if (graphTemplate is not null && !isBuiltinTemplate)
         graph = (GraphDocument)graphTemplate.Clone();
       else
         graph = CreateBuiltinGraph(propertyContext);
@@ -128,7 +128,7 @@ typeof(object),
 
       var xylayer = (XYPlotLayer?)TreeNodeExtensions.AnyBetweenHereAndLeaves<HostLayer>(graphTemplate.RootLayer, x => x is XYPlotLayer);
 
-      if (null == xylayer)
+      if (xylayer is null)
       {
         problemDescription = "The graph does not contain any x-y plot layer.";
         return false;

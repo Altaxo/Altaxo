@@ -96,7 +96,7 @@ namespace Altaxo.Graph.Plot.Groups
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DashPatternGroupStyle s = null != o ? (DashPatternGroupStyle)o : new DashPatternGroupStyle();
+        DashPatternGroupStyle s = o is not null ? (DashPatternGroupStyle)o : new DashPatternGroupStyle();
         s._isStepEnabled = info.GetBoolean("StepEnabled");
 
         var value = (IDashPattern)info.GetValue("Value", s);
@@ -232,7 +232,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(_listOfValues, value))
@@ -272,13 +272,13 @@ namespace Altaxo.Graph.Plot.Groups
 
     public void Initialize(IDashPattern value)
     {
-      if (null == value)
+      if (value is null)
         throw new ArgumentNullException(nameof(value));
 
       _isInitialized = true;
 
       var parentList = DashPatternListManager.Instance.GetParentList(value);
-      if (null != parentList)
+      if (parentList is not null)
       {
         _listOfValues = parentList;
       }
@@ -314,7 +314,7 @@ namespace Altaxo.Graph.Plot.Groups
       Getter getter)
     {
       if (!externalGroups.ContainsType(typeof(DashPatternGroupStyle))
-        && null != localGroups
+        && localGroups is not null
         && !localGroups.ContainsType(typeof(DashPatternGroupStyle)))
       {
         localGroups.Add(new DashPatternGroupStyle());

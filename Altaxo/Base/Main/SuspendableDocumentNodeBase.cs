@@ -272,7 +272,7 @@ namespace Altaxo.Main
         if (base.TryGetValue(item, out var containedItem))
         {
           var containedAsSelf = containedItem as SelfAccumulateableEventArgs;
-          if (null != containedAsSelf)
+          if (containedAsSelf is not null)
             containedAsSelf.Add((SelfAccumulateableEventArgs)item);
         }
         else // not in the collection already
@@ -491,12 +491,12 @@ namespace Altaxo.Main
       var oldValue = memberVariable;
       memberVariable = value;
 
-      if (oldValue != null && value != null)
+      if (oldValue is not null && value is not null)
       {
         if (!oldValue.Equals(value))
           EhSelfChanged(EventArgs.Empty);
       }
-      else if (oldValue != null || value != null)
+      else if (oldValue is not null || value is not null)
       {
         EhSelfChanged(EventArgs.Empty);
       }
@@ -516,12 +516,12 @@ namespace Altaxo.Main
       var oldValue = memberVariable;
       memberVariable = value;
 
-      if (oldValue != null && value != null)
+      if (oldValue is not null && value is not null)
       {
         if (!oldValue.Value.Equals(value.Value))
           EhSelfChanged(EventArgs.Empty);
       }
-      else if (oldValue != null || value != null)
+      else if (oldValue is not null || value is not null)
       {
         EhSelfChanged(EventArgs.Empty);
       }
@@ -541,12 +541,12 @@ namespace Altaxo.Main
       var oldValue = memberVariable;
       memberVariable = value;
 
-      if (oldValue != null && value != null)
+      if (oldValue is not null && value is not null)
       {
         if (!oldValue.Equals(value))
           EhSelfChanged(EventArgs.Empty);
       }
-      else if (oldValue != null || value != null)
+      else if (oldValue is not null || value is not null)
       {
         EhSelfChanged(EventArgs.Empty);
       }

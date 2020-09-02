@@ -224,7 +224,7 @@ namespace Altaxo.DataConnection
     private string BuildSqlStatement()
     {
       // sanity
-      if (QueryFields.Count == 0 || _schema == null)
+      if (QueryFields.Count == 0 || _schema is null)
       {
         _tableCount = 0;
         _missingJoins = false;
@@ -325,7 +325,7 @@ namespace Altaxo.DataConnection
       {
         string tableName = field.Table;
         DataTable table = _schema.Tables[tableName];
-        if (table != null && !tables.Contains(table))
+        if (table is not null && !tables.Contains(table))
         {
           tables.Add(table);
         }
@@ -425,10 +425,10 @@ namespace Altaxo.DataConnection
       for (int index = 0; index <= list.Count; index++)
       {
         // related to table before?
-        bool before = index == 0 || GetRelation(dt, list[index - 1]) != null;
+        bool before = index == 0 || GetRelation(dt, list[index - 1]) is not null;
 
         // related to table after?
-        bool after = index == list.Count || GetRelation(dt, list[index]) != null;
+        bool after = index == list.Count || GetRelation(dt, list[index]) is not null;
 
         // found a good insertion point, move on
         if (before && after)

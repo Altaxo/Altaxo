@@ -92,7 +92,7 @@ namespace Altaxo.Main.Services
     [return: NotNullIfNotNull("relativeFileName")]
     public FileName? CombineFile(string? relativeFileName)
     {
-      if (relativeFileName == null)
+      if (relativeFileName is null)
         return null;
       return FileName.Create(Path.Combine(_normalizedPath, relativeFileName));
     }

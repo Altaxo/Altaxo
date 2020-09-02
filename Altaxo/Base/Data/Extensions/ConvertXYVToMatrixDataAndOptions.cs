@@ -73,7 +73,7 @@ namespace Altaxo.Data
     /// <param name="throwIfNonCoherent">If true, an exception is thrown if any problems are detected. If false, it is tried to rectify the problem by making some assumtions.</param>
     public static void EnsureCoherence(DataTableMultipleColumnProxy data, bool throwIfNonCoherent)
     {
-      if (null == data.DataTable) // this is mandatory, thus an exception is always thrown
+      if (data.DataTable is null) // this is mandatory, thus an exception is always thrown
       {
         throw new ArgumentNullException("SourceTable is null, it must be set before");
       }
@@ -88,26 +88,26 @@ namespace Altaxo.Data
           throw new ArgumentException(!data.ContainsIdentifier(ColumnV) ? "ColumnsToProcess is not set" : "ColumnsToProcess is empty");
       }
 
-      if (data.GetDataColumnOrNull(ColumnX) == null)
+      if (data.GetDataColumnOrNull(ColumnX) is null)
       {
         if (throwIfNonCoherent)
           throw new ArgumentException("X column  not included in columnsToProcess");
         else
         {
           var col = data.GetDataColumns(ColumnV).FirstOrDefault();
-          if (null != col)
+          if (col is not null)
             data.SetDataColumn(ColumnX, col);
         }
       }
 
-      if (data.GetDataColumnOrNull(ColumnY) == null)
+      if (data.GetDataColumnOrNull(ColumnY) is null)
       {
         if (throwIfNonCoherent)
           throw new ArgumentException("Y column  not included in columnsToProcess");
         else
         {
           var col = data.GetDataColumns(ColumnV).FirstOrDefault();
-          if (null != col)
+          if (col is not null)
             data.SetDataColumn(ColumnY, col);
         }
       }

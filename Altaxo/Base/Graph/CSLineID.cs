@@ -507,7 +507,7 @@ namespace Altaxo.Graph
       }
 
       // If one is null, but not both, return false.
-      if (((object)a == null) || ((object)b == null))
+      if (((object)a is null) || ((object)b is null))
       {
         return false;
       }

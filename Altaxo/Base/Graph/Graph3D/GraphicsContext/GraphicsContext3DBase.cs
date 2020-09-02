@@ -42,7 +42,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
     {
       var vertexIndexOffset = buffers.IndexedTriangleBuffer.VertexCount;
 
-      if (null != buffers.PositionNormalIndexedTriangleBuffer)
+      if (buffers.PositionNormalIndexedTriangleBuffer is not null)
       {
         var buf = buffers.PositionNormalIndexedTriangleBuffer;
         /*
@@ -71,7 +71,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
             }
             */
       }
-      else if (null != buffers.PositionNormalColorIndexedTriangleBuffer)
+      else if (buffers.PositionNormalColorIndexedTriangleBuffer is not null)
       {
         var polylinePoints = new[] { p0, p1 };
         var buf = buffers.PositionNormalColorIndexedTriangleBuffer;
@@ -89,7 +89,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
         pen,
         polylinePoints);
       }
-      else if (null != buffers.PositionNormalUVIndexedTriangleBuffer)
+      else if (buffers.PositionNormalUVIndexedTriangleBuffer is not null)
       {
         throw new NotImplementedException("Texture on a line is not supported yet");
       }
@@ -150,7 +150,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
       var offset = buffers.IndexedTriangleBuffer.VertexCount;
 
-      if (null != buffers.PositionNormalColorIndexedTriangleBuffer)
+      if (buffers.PositionNormalColorIndexedTriangleBuffer is not null)
       {
         var buf = buffers.PositionNormalColorIndexedTriangleBuffer;
         var color = material.Color.Color;
@@ -181,7 +181,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
     {
       var asStraightLine = path as StraightLineAsPolylineD3D;
 
-      if (null != asStraightLine)
+      if (asStraightLine is not null)
       {
         DrawLine(pen, asStraightLine.GetPoint(0), asStraightLine.GetPoint(1));
         return;
@@ -196,7 +196,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
       var buffers = GetPositionNormalIndexedTriangleBuffer(pen.Material);
       var offset = buffers.IndexedTriangleBuffer.VertexCount;
 
-      if (null != buffers.PositionNormalIndexedTriangleBuffer)
+      if (buffers.PositionNormalIndexedTriangleBuffer is not null)
       {
         var buf = buffers.PositionNormalIndexedTriangleBuffer;
         var solidPolyline = new SolidPolyline();
@@ -207,7 +207,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
         pen,
         path.Points);
       }
-      else if (null != buffers.PositionNormalColorIndexedTriangleBuffer)
+      else if (buffers.PositionNormalColorIndexedTriangleBuffer is not null)
       {
         var buf = buffers.PositionNormalColorIndexedTriangleBuffer;
         var color = pen.Color.Color;
@@ -224,7 +224,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
         pen,
         path.Points);
       }
-      else if (null != buffers.PositionNormalUVIndexedTriangleBuffer)
+      else if (buffers.PositionNormalUVIndexedTriangleBuffer is not null)
       {
         throw new NotImplementedException("Texture on a line is not supported yet");
       }
@@ -367,7 +367,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
       var buffers = GetPositionNormalIndexedTriangleBuffer(brush);
       var offset = buffers.IndexedTriangleBuffer.VertexCount;
 
-      if (null != buffers.PositionNormalIndexedTriangleBuffer)
+      if (buffers.PositionNormalIndexedTriangleBuffer is not null)
       {
         var buf = buffers.PositionNormalIndexedTriangleBuffer;
         txt.AddWithNormals(
@@ -376,7 +376,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
         (i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
         ref offset);
       }
-      else if (null != buffers.PositionNormalColorIndexedTriangleBuffer)
+      else if (buffers.PositionNormalColorIndexedTriangleBuffer is not null)
       {
         var buf = buffers.PositionNormalColorIndexedTriangleBuffer;
         var color = brush.Color.Color;
@@ -391,7 +391,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
         (i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
         ref offset);
       }
-      else if (null != buffers.PositionNormalUVIndexedTriangleBuffer)
+      else if (buffers.PositionNormalUVIndexedTriangleBuffer is not null)
       {
         throw new NotImplementedException("Texture on a text is not supported yet");
       }

@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Graph
       {
       }
 
-      if (null != View)
+      if (View is not null)
       {
         View.Order = _Order;
         View.FitCurveXmin = _FitCurveXmin;
@@ -120,7 +120,7 @@ namespace Altaxo.Gui.Graph
       {
         _View = value;
 
-        if (null != _View)
+        if (_View is not null)
         {
           SetElements(false); // set only the view elements, dont't initialize the variables
         }
@@ -133,7 +133,7 @@ namespace Altaxo.Gui.Graph
 
     public bool Apply(bool disposeController)
     {
-      if (null != View)
+      if (View is not null)
       {
         _Order = View.Order;
         _FitCurveXmin = View.FitCurveXmin;

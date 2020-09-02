@@ -125,7 +125,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       var contourZScale = 0.5 * Math.Max(lineCrossSection.Size1, lineCrossSection.Size2);
 
       // do we need a flat end at the beginning of the cap?
-      if (null == crossSectionPositions && // if lineCrossSectionPositions are null, it means that our cap is not connected to the line and needs a flat end
+      if (crossSectionPositions is null && // if lineCrossSectionPositions are null, it means that our cap is not connected to the line and needs a flat end
             capContour.Vertices(0) == _pointD2D_0_1) // furthermore the cap assumes to be started at the cross section
       {
         // the parameter isStartCap must be negated, because this flat cap is the "counterpart" of our cap to draw

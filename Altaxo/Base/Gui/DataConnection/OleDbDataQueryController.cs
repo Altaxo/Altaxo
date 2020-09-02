@@ -172,18 +172,18 @@ namespace Altaxo.Gui.DataConnection
 
         ConnectionString = connectionString;
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetConnectionListSource(_connectionStringList, ConnectionString.OriginalConnectionString);
         _view.SetConnectionStatus(_connectionStringValidIndicator.IsConnectionStringValid);
 
-        if (null == _entireTableQueryController.ViewObject)
+        if (_entireTableQueryController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_entireTableQueryController);
 
-        if (null == _queryDesignerController.ViewObject)
+        if (_queryDesignerController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_queryDesignerController);
 
-        if (null == _arbitrarySqlQueryController.ViewObject)
+        if (_arbitrarySqlQueryController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_arbitrarySqlQueryController);
 
         _view.SetTabItemsSource(_tabItemList);
@@ -198,7 +198,7 @@ namespace Altaxo.Gui.DataConnection
       }
       protected set
       {
-        if (null == value || value.IsEmpty)
+        if (value is null || value.IsEmpty)
           return;
 
         var oldValue = _doc.ConnectionString;
@@ -240,10 +240,10 @@ namespace Altaxo.Gui.DataConnection
     {
       string error;
 
-      if (null == connString || connString.IsEmpty)
+      if (connString is null || connString.IsEmpty)
         return false;
 
-      if (null == (error = CanEstablishConnectionWithConnectionString(connString.ConnectionStringWithTemporaryCredentials)))
+      if ((error = CanEstablishConnectionWithConnectionString(connString.ConnectionStringWithTemporaryCredentials)) is null)
         return true;
 
       for (; ; )
@@ -271,7 +271,7 @@ namespace Altaxo.Gui.DataConnection
 
         connString = new AltaxoOleDbConnectionString(connString.OriginalConnectionString, credentials);
 
-        if (null == (error = CanEstablishConnectionWithConnectionString(connString.ConnectionStringWithTemporaryCredentials)))
+        if ((error = CanEstablishConnectionWithConnectionString(connString.ConnectionStringWithTemporaryCredentials)) is null)
           return true;
       }
     }
@@ -353,7 +353,7 @@ namespace Altaxo.Gui.DataConnection
       _queryDesignerController.ConnectionString = controllerConnectionString;
       _arbitrarySqlQueryController.ConnectionString = controllerConnectionString;
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetConnectionListSource(_connectionStringList, ConnectionString.OriginalConnectionString);
         _view.SetConnectionStatus(_connectionStringValidIndicator.IsConnectionStringValid);
@@ -380,10 +380,10 @@ namespace Altaxo.Gui.DataConnection
     {
       var applyResult = false;
       var oldController = _currentlySelectedController;
-      if (null != oldController)
+      if (oldController is not null)
         applyResult = oldController.Apply(false);
 
-      _currentlySelectedController = _tabItemList.FirstSelectedNode == null ? null : _tabItemList.FirstSelectedNode.Tag as IMVCAController;
+      _currentlySelectedController = _tabItemList.FirstSelectedNode is null ? null : _tabItemList.FirstSelectedNode.Tag as IMVCAController;
 
       if (_currentlySelectedController is ArbitrarySqlQueryController && applyResult == true)
       {
@@ -403,7 +403,7 @@ namespace Altaxo.Gui.DataConnection
       // get starting connection string
       // (if empty or no provider, start with SQL source as default)
       var connectionChoice = _connectionStringList.FirstSelectedNode;
-      AltaxoOleDbConnectionString axoConnString = null != connectionChoice ? (AltaxoOleDbConnectionString)connectionChoice.Tag : AltaxoOleDbConnectionString.Empty;
+      AltaxoOleDbConnectionString axoConnString = connectionChoice is not null ? (AltaxoOleDbConnectionString)connectionChoice.Tag : AltaxoOleDbConnectionString.Empty;
 
       var connString = axoConnString.OriginalConnectionString;
       if (string.IsNullOrEmpty(connString) || connString.IndexOf("provider=", StringComparison.OrdinalIgnoreCase) < 0)
@@ -423,7 +423,7 @@ namespace Altaxo.Gui.DataConnection
     private void EhConnectionStringSelectedFromList()
     {
       var node = _connectionStringList.FirstSelectedNode;
-      if (node != null)
+      if (node is not null)
         ConnectionString = (AltaxoOleDbConnectionString)node.Tag;
     }
 
@@ -444,9 +444,9 @@ namespace Altaxo.Gui.DataConnection
       bool result = false;
 
       var node = _tabItemList.FirstSelectedNode;
-      _currentlySelectedController = node == null ? null : node.Tag as IMVCAController;
+      _currentlySelectedController = node is null ? null : node.Tag as IMVCAController;
 
-      if (null != _currentlySelectedController)
+      if (_currentlySelectedController is not null)
       {
         result = _currentlySelectedController.Apply(disposeController);
       }
@@ -468,7 +468,7 @@ namespace Altaxo.Gui.DataConnection
       if (_connectionStringValidIndicator.IsConnectionStringValid)
         InsertConnectionStringAtBeginningOfList(_staticConnectionStringList, ConnectionString);
 
-      bool isValid = null != _doc.ConnectionString && !_doc.ConnectionString.IsEmpty && !string.IsNullOrEmpty(_doc.SelectionStatement);
+      bool isValid = _doc.ConnectionString is not null && !_doc.ConnectionString.IsEmpty && !string.IsNullOrEmpty(_doc.SelectionStatement);
 
       return ApplyEnd(isValid, disposeController);
     }

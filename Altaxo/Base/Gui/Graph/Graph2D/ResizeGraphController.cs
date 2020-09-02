@@ -118,7 +118,7 @@ namespace Altaxo.Gui.Graph.Graph2D
         _reportOfOldValues = stb.ToString();
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetReportOfOldValues(_reportOfOldValues);
         _view.SetOldRootLayerSize(_doc.OldRootLayerSize);
@@ -227,7 +227,7 @@ namespace Altaxo.Gui.Graph.Graph2D
     /// <param name="doc">The graph document to resize.</param>
     public static void ShowResizeGraphDialog(Altaxo.Graph.Gdi.GraphDocument doc)
     {
-      var resizeOptions = null == _lastUsedInstance ? new ResizeGraphOptions() : (ResizeGraphOptions)_lastUsedInstance.Clone();
+      var resizeOptions = _lastUsedInstance is null ? new ResizeGraphOptions() : (ResizeGraphOptions)_lastUsedInstance.Clone();
 
       resizeOptions.InitializeOldValues(doc);
 
@@ -249,7 +249,7 @@ namespace Altaxo.Gui.Graph.Graph2D
     /// <remarks>The old values shown in the dialog are taken from the first graph in the enumeration.</remarks>
     public static bool ShowResizeGraphDialog(IEnumerable<Altaxo.Graph.Gdi.GraphDocument> docs)
     {
-      var resizeOptions = null == _lastUsedInstance ? new ResizeGraphOptions() : (ResizeGraphOptions)_lastUsedInstance.Clone();
+      var resizeOptions = _lastUsedInstance is null ? new ResizeGraphOptions() : (ResizeGraphOptions)_lastUsedInstance.Clone();
 
       var docEnum = docs.GetEnumerator();
 

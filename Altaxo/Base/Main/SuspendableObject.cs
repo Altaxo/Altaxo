@@ -177,7 +177,7 @@ namespace Altaxo.Main
       public void ResumeSilently()
       {
         var parent = System.Threading.Interlocked.Exchange<SuspendableObject?>(ref _parent, null);
-        if (parent != null)
+        if (parent is not null)
         {
           int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
 
@@ -223,7 +223,7 @@ namespace Altaxo.Main
       public IDisposable ResumeCompleteTemporarilyGetToken()
       {
         var parent = _parent;
-        if (null == parent)
+        if (parent is null)
           throw new ObjectDisposedException("This token is already disposed");
 
         var result = new TemporaryResumeToken(parent);
@@ -234,7 +234,7 @@ namespace Altaxo.Main
       public void ResumeCompleteTemporarily()
       {
         var parent = _parent;
-        if (null == parent)
+        if (parent is null)
           throw new ObjectDisposedException("This token is already disposed");
 
         var result = new TemporaryResumeToken(parent);
@@ -247,7 +247,7 @@ namespace Altaxo.Main
       public void Dispose()
       {
         var parent = System.Threading.Interlocked.Exchange<SuspendableObject?>(ref _parent, null);
-        if (parent != null)
+        if (parent is not null)
         {
           Exception? exceptionInAboutToBeResumed = null;
           if (1 == parent._suspendLevel)
@@ -279,7 +279,7 @@ namespace Altaxo.Main
             throw new ApplicationException("Fatal programming error - suppress level has fallen down to negative values");
           }
 
-          if (null != exceptionInAboutToBeResumed)
+          if (exceptionInAboutToBeResumed is not null)
             throw new System.Reflection.TargetInvocationException(exceptionInAboutToBeResumed);
         }
       }
@@ -359,11 +359,11 @@ namespace Altaxo.Main
           }
         }
 
-        if (null != ex1)
+        if (ex1 is not null)
           throw ex1;
-        if (null != ex2)
+        if (ex2 is not null)
           throw ex2;
-        if (null != ex3)
+        if (ex3 is not null)
           throw ex3;
       }
 
@@ -397,7 +397,7 @@ namespace Altaxo.Main
         }
 
         // Suspend level is now restored
-        if (exception != null)
+        if (exception is not null)
           throw exception;
       }
     }

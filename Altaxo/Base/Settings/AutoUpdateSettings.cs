@@ -152,7 +152,7 @@ namespace Altaxo.Settings
         return true;
 
       var from = obj as AutoUpdateSettings;
-      if (null != from)
+      if (from is not null)
       {
         EnableAutoUpdates = from.EnableAutoUpdates;
         DownloadUnstableVersion = from.DownloadUnstableVersion;

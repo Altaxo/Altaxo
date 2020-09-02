@@ -224,7 +224,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (object.ReferenceEquals(this, obj))
         return true;
       var from = obj as DropLinePlotStyle;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, Main.EventFiring.Enabled);
         return true;
@@ -303,7 +303,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public DropLinePlotStyle(CSPlaneID planeID, PenX pen)
     {
-      if (null == pen)
+      if (pen is null)
         throw new ArgumentNullException(nameof(pen));
 
       _pen = pen;
@@ -315,7 +315,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public DropLinePlotStyle(IEnumerable<CSPlaneID> planeIDs, PenX pen)
     {
-      if (null == pen)
+      if (pen is null)
         throw new ArgumentNullException(nameof(pen));
 
       _pen = pen;
@@ -355,7 +355,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return _pen; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!(_pen == value))
@@ -617,7 +617,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(value, _dropTargets))
@@ -784,7 +784,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       PointD3D pos = PointD3D.Empty;
       var gpath = new GraphicsPath();
 
-      if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size and constant color
+      if (_cachedSymbolSizeForIndexFunction is null && _cachedColorForIndexFunction is null) // using a constant symbol size and constant color
       {
         // update pen widths
         var pen = _pen;
@@ -818,7 +818,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 gpath.Flatten();
                 var pathPoints = gpath.PathPoints;
                 shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
-                if (null != shortenedPathPoints)
+                if (shortenedPathPoints is not null)
                   g.DrawLines(penGdi, shortenedPathPoints);
               }
               else
@@ -839,7 +839,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           var pen = _pen;
           if (_cachedColorForIndexFunction is not null)
           {
-            _cachedSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _cachedSymbolSize : _cachedSymbolSizeForIndexFunction(originalRowIndex);
+            _cachedSymbolSize = _cachedSymbolSizeForIndexFunction is null ? _cachedSymbolSize : _cachedSymbolSizeForIndexFunction(originalRowIndex);
             double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
 
             var customSymbolColor = _cachedColorForIndexFunction(originalRowIndex);
@@ -875,7 +875,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 gpath.Flatten();
                 var pathPoints = gpath.PathPoints;
                 shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
-                if (null != shortenedPathPoints)
+                if (shortenedPathPoints is not null)
                   g.DrawLines(penGdi, shortenedPathPoints);
               }
               else
@@ -982,7 +982,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!_independentOnShiftingGroupStyles)
       {
         var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYGroupStyle>(externalGroups, localGroups);
-        if (null != shiftStyle)
+        if (shiftStyle is not null)
         {
           shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY);
         }

@@ -84,7 +84,7 @@ namespace Altaxo.Gui.Worksheet
 
     private void Initialize()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.InitializeNumberOfPoints(_numberOfPoints, int.MaxValue);
         _view.InitializePolynomialOrder(_polynomialOrder, _numberOfPoints);
@@ -94,7 +94,7 @@ namespace Altaxo.Gui.Worksheet
 
     public bool Apply(bool disposeController)
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _doc.NumberOfPoints = _numberOfPoints;
         _doc.DerivativeOrder = _derivativeOrder;
@@ -129,14 +129,14 @@ namespace Altaxo.Gui.Worksheet
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = null;
 
         _view = value as ISavitzkyGolayParameterView;
 
         Initialize();
 
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = this;
       }
     }

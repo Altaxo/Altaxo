@@ -156,7 +156,7 @@ namespace Altaxo.Graph.Gdi
         throw new ArgumentNullException(nameof(proxy));
 
       var stream = proxy.GetContentStream();
-      if (stream == null)
+      if (stream is null)
         throw new InvalidOperationException("The stream of the proxy is null");
       stream.Seek(0, SeekOrigin.Begin);
       return Image.FromStream(stream);
@@ -171,7 +171,7 @@ namespace Altaxo.Graph.Gdi
     /// <exception cref="ArgumentNullException">stream</exception>
     public static Image GetImage(Stream stream, bool disposeStream = true)
     {
-      if (stream == null)
+      if (stream is null)
         throw new ArgumentNullException(nameof(stream));
 
       try

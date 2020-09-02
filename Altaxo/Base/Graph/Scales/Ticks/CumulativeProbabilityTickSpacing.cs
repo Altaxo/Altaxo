@@ -295,7 +295,7 @@ namespace Altaxo.Graph.Scales.Ticks
         return true;
 
       var from = obj as CumulativeProbabilityTickSpacing;
-      if (null == from)
+      if (from is null)
         return false;
 
       using (var suspendToken = SuspendGetToken())
@@ -331,14 +331,14 @@ namespace Altaxo.Graph.Scales.Ticks
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _suppressedMajorTicks)
+      if (_suppressedMajorTicks is not null)
         yield return new Main.DocumentNodeAndName(_suppressedMajorTicks, "SuppressedMajorTicks");
-      if (null != _suppressedMinorTicks)
+      if (_suppressedMinorTicks is not null)
         yield return new Main.DocumentNodeAndName(_suppressedMinorTicks, "SuppressedMinorTicks");
 
-      if (null != _additionalMajorTicks)
+      if (_additionalMajorTicks is not null)
         yield return new Main.DocumentNodeAndName(_additionalMajorTicks, "AdditionalMajorTicks");
-      if (null != _additionalMinorTicks)
+      if (_additionalMinorTicks is not null)
         yield return new Main.DocumentNodeAndName(_additionalMinorTicks, "AdditionalMinorTicks");
     }
 
@@ -713,12 +713,12 @@ namespace Altaxo.Graph.Scales.Ticks
       double dorg = org;
       double dend = end;
 
-      if (_cachedMajorMinor == null || _cachedMajorMinor.Org != dorg || _cachedMajorMinor.End != dend)
+      if (_cachedMajorMinor is null || _cachedMajorMinor.Org != dorg || _cachedMajorMinor.End != dend)
       {
         InternalPreProcessScaleBoundaries(ref dorg, ref dend, false, false); // make sure that _cachedMajorMinor is valid now
       }
 
-      if (!(null != _cachedMajorMinor))
+      if (_cachedMajorMinor is null)
         throw new InvalidProgramException();
 
       _majorTicks.Clear();
@@ -1047,7 +1047,7 @@ namespace Altaxo.Graph.Scales.Ticks
           rawMinorTicks2ndGen = currList;
           prevCount = currCount;
         }
-        if (null != rawMinorTicks2ndGen)
+        if (rawMinorTicks2ndGen is not null)
           rawMinorTicks1stGen.AddRange(rawMinorTicks2ndGen);
       }
       return rawMinorTicks1stGen;

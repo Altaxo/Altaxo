@@ -122,10 +122,10 @@ namespace Altaxo.Main
 
         var node = s.InternalDocumentNode;
 
-        if (null != node && !node.IsDisposeInProgress)
+        if (node is not null && !node.IsDisposeInProgress)
           s.InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(node);
 
-        if (!(null != s._docNodePath))
+        if (s._docNodePath is null)
           throw new InvalidProgramException();
 
         info.AddValue("Path", s._docNodePath);
@@ -139,7 +139,7 @@ namespace Altaxo.Main
 
         s.InternalDocumentPath = nodePath;
 
-        if (!(null != s._docNodePath))
+        if (s._docNodePath is null)
           throw new InvalidProgramException();
 
         // create a callback to resolve the instance as early as possible
@@ -194,7 +194,7 @@ namespace Altaxo.Main
       if (from.IsDisposeInProgress)
         throw new ObjectDisposedException(nameof(from));
 
-      if (null != from.InternalDocumentNode)
+      if (from.InternalDocumentNode is not null)
       {
         InternalSetDocNode(from.InternalDocumentNode, true); // than the new Proxy refers to the same document node
       }
@@ -234,7 +234,7 @@ namespace Altaxo.Main
     {
       get
       {
-        if (!(_docNodePath != null || IsDisposeInProgress))
+        if (!(_docNodePath is not null || IsDisposeInProgress))
           throw new InvalidProgramException();
         return false;
       }
@@ -331,12 +331,12 @@ namespace Altaxo.Main
 			_debug.Enqueue("START InternalSetDocNode");
 #endif
 
-      if (null != _weakDocNodeChangedHandler)
+      if (_weakDocNodeChangedHandler is not null)
       {
         _weakDocNodeChangedHandler.Remove();
         _weakDocNodeChangedHandler = null;
       }
-      if (null != _weakDocNodeTunneledEventHandler)
+      if (_weakDocNodeTunneledEventHandler is not null)
       {
         _weakDocNodeTunneledEventHandler.Remove();
         _weakDocNodeTunneledEventHandler = null;
@@ -346,7 +346,7 @@ namespace Altaxo.Main
 			_debug.Enqueue("MIDDL InternalSetDocNode EventHandlers removed");
 #endif
 
-      if (oldValue != null)
+      if (oldValue is not null)
       {
         ClearDocNode();
       }
@@ -421,13 +421,13 @@ namespace Altaxo.Main
 
       OnBeforeClearDocNode();
 
-      if (null != _weakDocNodeTunneledEventHandler)
+      if (_weakDocNodeTunneledEventHandler is not null)
       {
         _weakDocNodeTunneledEventHandler.Remove();
         _weakDocNodeTunneledEventHandler = null;
       }
 
-      if (null != _weakDocNodeChangedHandler)
+      if (_weakDocNodeChangedHandler is not null)
       {
         _weakDocNodeChangedHandler.Remove();
         _weakDocNodeChangedHandler = null;
@@ -443,13 +443,13 @@ namespace Altaxo.Main
 #if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("DocNodeProxy.ClearWatch: path={0}", _docNodePath.ToString());
 #endif
-      if (null != _weakDocNodeTunneledEventHandler)
+      if (_weakDocNodeTunneledEventHandler is not null)
       {
         _weakDocNodeTunneledEventHandler.Remove();
         _weakDocNodeTunneledEventHandler = null;
       }
 
-      if (null != _weakDocNodeChangedHandler)
+      if (_weakDocNodeChangedHandler is not null)
       {
         _weakDocNodeChangedHandler.Remove();
         _weakDocNodeChangedHandler = null;
@@ -504,7 +504,7 @@ namespace Altaxo.Main
       }
       else if (e is DocumentPathChangedEventArgs)
       {
-        if (null != InternalDocumentNode)
+        if (InternalDocumentNode is not null)
         {
           InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(InternalDocumentNode);
           InternalCheckAbsolutePath();
@@ -556,7 +556,7 @@ namespace Altaxo.Main
 			Current.Console.WriteLine("DocNodeProxy.EhDocNode_Changed: sender={0}, e={1}", sender, e);
 #endif
       var iNode = InternalDocumentNode;
-      if (null != iNode && !iNode.IsDisposeInProgress)
+      if (iNode is not null && !iNode.IsDisposeInProgress)
       {
         OnDocNode_Changed(sender, e);
 
@@ -637,7 +637,7 @@ namespace Altaxo.Main
     {
 
       var docNode = InternalDocumentNode;
-      if (null != docNode)
+      if (docNode is not null)
       {
         InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(docNode);
       }
@@ -705,12 +705,12 @@ namespace Altaxo.Main
       if (node is null)
         throw new ArgumentNullException(nameof(node));
 
-      if (null != _weakDocNodeChangedHandler)
+      if (_weakDocNodeChangedHandler is not null)
       {
         _weakDocNodeChangedHandler.Remove();
         _weakDocNodeChangedHandler = null;
       }
-      if (null != _weakDocNodeTunneledEventHandler)
+      if (_weakDocNodeTunneledEventHandler is not null)
       {
         _weakDocNodeTunneledEventHandler.Remove();
         _weakDocNodeTunneledEventHandler = null;
@@ -828,7 +828,7 @@ namespace Altaxo.Main
 
     protected void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
     {
-      if (null != ResolveDocumentObject(documentRoot) || isFinallyCall)
+      if (ResolveDocumentObject(documentRoot) is not null || isFinallyCall)
         info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhXmlDeserializationFinished);
     }
 

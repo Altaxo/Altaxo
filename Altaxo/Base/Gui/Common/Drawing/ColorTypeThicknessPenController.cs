@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     public ColorTypeThicknessPenController(PenX doc)
     {
-      if (doc == null)
+      if (doc is null)
         throw new ArgumentNullException("doc");
       _doc = doc;
       _tempDoc = doc;
@@ -71,7 +71,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void Initialize()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.DocPen = _tempDoc;
         _view.SetShowPlotColorsOnly(_showPlotColorsOnly);
@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Common.Drawing
     public void SetShowPlotColorsOnly(bool showPlotColorsOnly)
     {
       _showPlotColorsOnly = showPlotColorsOnly;
-      if (null != _view)
+      if (_view is not null)
         _view.SetShowPlotColorsOnly(_showPlotColorsOnly);
     }
 
@@ -91,7 +91,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       var ctrl = new PenAllPropertiesController(_tempDoc);
       Current.Gui.ShowDialog(ctrl, "Pen properties");
-      if (null != _view)
+      if (_view is not null)
         _view.DocPen = _tempDoc;
     }
 
@@ -107,14 +107,14 @@ namespace Altaxo.Gui.Common.Drawing
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = null;
 
         _view = value as IColorTypeThicknessPenView;
 
         Initialize();
 
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = this;
       }
     }

@@ -165,7 +165,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (object.ReferenceEquals(this, obj))
         return true;
       var from = obj as DropAreaPlotStyle;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, Main.EventFiring.Enabled);
         return true;
@@ -240,7 +240,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return _connectionStyle; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!(_connectionStyle.Equals(value)))
@@ -371,7 +371,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return _framePen; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!(_framePen == value))
@@ -458,7 +458,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
       }
 
-      if (null != _fillBrush)
+      if (_fillBrush is not null)
       {
         using (var fillBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_fillBrush, new RectangleD2D(PointD2D.Empty, layer.Size), g, 1))
         {
@@ -498,10 +498,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
-      if (_fillColorLinkage == ColorLinkage.Dependent && _fillBrush != null)
+      if (_fillColorLinkage == ColorLinkage.Dependent && _fillBrush is not null)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
         { return _fillBrush.Color; });
-      else if (_frameColorLinkage == ColorLinkage.Dependent && _framePen != null)
+      else if (_frameColorLinkage == ColorLinkage.Dependent && _framePen is not null)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
         { return _framePen.Color; });
 
@@ -546,7 +546,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!_independentOnShiftingGroupStyles)
       {
         var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYGroupStyle>(externalGroups, localGroups);
-        if (null != shiftStyle)
+        if (shiftStyle is not null)
         {
           shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY);
         }

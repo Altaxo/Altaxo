@@ -157,7 +157,7 @@ namespace Altaxo.Serialization.Ascii
         _numberOfMainHeaderLines = importOptions.NumberOfMainHeaderLines.Value;
 
       // get the index of the caption line
-      if (null == importOptions.IndexOfCaptionLine)
+      if (importOptions.IndexOfCaptionLine is null)
         EvaluateIndexOfCaptionLine();
       else
         _indexOfCaptionLine = importOptions.IndexOfCaptionLine.Value;
@@ -189,7 +189,7 @@ namespace Altaxo.Serialization.Ascii
         for (int i = 0; i < numHeaderLines; ++i)
         {
           sLine = sr.ReadLine();
-          if (null == sLine)
+          if (sLine is null)
           {
             reachingEOF = true;
             break;
@@ -203,7 +203,7 @@ namespace Altaxo.Serialization.Ascii
         for (int i = 0; i < numberOfLinesToAnalyze; i++)
         {
           sLine = sr.ReadLine();
-          if (null == sLine)
+          if (sLine is null)
             break;
           _bodyLines.Add(sLine);
         }
@@ -221,7 +221,7 @@ namespace Altaxo.Serialization.Ascii
       var separationStrategiesToTest = new List<IAsciiSeparationStrategy>();
 
       // all number formats to test
-      if (null != importOptions.NumberFormatCulture)
+      if (importOptions.NumberFormatCulture is not null)
       {
         numberFormatsToTest.Add(importOptions.NumberFormatCulture);
       }
@@ -233,7 +233,7 @@ namespace Altaxo.Serialization.Ascii
       }
 
       // all DateTime formats to test
-      if (null != importOptions.DateTimeFormatCulture)
+      if (importOptions.DateTimeFormatCulture is not null)
       {
         dateTimeFormatsToTest.Add(importOptions.DateTimeFormatCulture);
       }
@@ -245,7 +245,7 @@ namespace Altaxo.Serialization.Ascii
       }
 
       // all separation strategies to test
-      if (importOptions.SeparationStrategy != null) // if a separation strategy is given use only this
+      if (importOptions.SeparationStrategy is not null) // if a separation strategy is given use only this
       {
         separationStrategiesToTest.Add(importOptions.SeparationStrategy);
       }
@@ -257,7 +257,7 @@ namespace Altaxo.Serialization.Ascii
           separationStrategiesToTest.Add(new SingleCharSeparationStrategy(','));
         if (_globalStructure.ContainsSemicolons)
           separationStrategiesToTest.Add(new SingleCharSeparationStrategy(';'));
-        if (_globalStructure.FixedBoundaries != null)
+        if (_globalStructure.FixedBoundaries is not null)
         {
           if (_globalStructure.RecognizedTabSize == 1)
             separationStrategiesToTest.Add(new FixedColumnWidthWithoutTabSeparationStrategy(_globalStructure.FixedBoundaries));
@@ -306,7 +306,7 @@ namespace Altaxo.Serialization.Ascii
       foreach (var analysisOption in _lineAnalysisOptionsToTest)
       {
         CalculateScoreOfLineAnalysisOption(analysisOption, _lineAnalysisOfBodyLines, out var maxNumberOfEqualLines, out var mostFrequentLineStructure);
-        if (null != mostFrequentLineStructure)
+        if (mostFrequentLineStructure is not null)
           _lineAnalysisOptionsScoring.Add(analysisOption, new NumberAndStructure() { NumberOfLines = maxNumberOfEqualLines, LineStructure = mostFrequentLineStructure });
       }
     }
@@ -454,7 +454,7 @@ namespace Altaxo.Serialization.Ascii
       {
         int lineStructureHash = dictEntry.Key;
 
-        if (null != excludeLineStructureHashes && excludeLineStructureHashes.Contains(lineStructureHash))
+        if (excludeLineStructureHashes is not null && excludeLineStructureHashes.Contains(lineStructureHash))
           continue;
 
         int numberOfLines = dictEntry.Value;
@@ -483,15 +483,15 @@ namespace Altaxo.Serialization.Ascii
 
       // if the bestLine is a line with a column count of zero, we should use the next best line
       // we achieve this by adding the best hash to a list of excluded hashes and call the function again
-      if (bestLine != null && bestLine.Count == 0)
+      if (bestLine is not null && bestLine.Count == 0)
       {
-        if (null != excludeLineStructureHashes && !excludeLineStructureHashes.Contains(hashOfMostFrequentStructure))
+        if (excludeLineStructureHashes is not null && !excludeLineStructureHashes.Contains(hashOfMostFrequentStructure))
         {
           excludeLineStructureHashes.Add(hashOfMostFrequentStructure);
           CalculateScoreOfLineAnalysisOption(analysisOption, result, excludeLineStructureHashes, out maxNumberOfEqualLines, out bestLine);
           return;
         }
-        else if (null == excludeLineStructureHashes)
+        else if (excludeLineStructureHashes is null)
         {
           excludeLineStructureHashes = new HashSet<int>() { hashOfMostFrequentStructure };
           CalculateScoreOfLineAnalysisOption(analysisOption, result, excludeLineStructureHashes, out maxNumberOfEqualLines, out bestLine);

@@ -45,7 +45,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SelectedItem = _doc;
       }

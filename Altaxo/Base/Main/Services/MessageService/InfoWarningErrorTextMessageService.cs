@@ -45,12 +45,12 @@ namespace Altaxo.Main.Services
     {
       add
       {
-        bool wasEmptyBefore = null == _messageAdded;
+        bool wasEmptyBefore = _messageAdded is null;
 
         _messageAdded += value;
 
         var list = _startupListOfItems;
-        if (wasEmptyBefore && null != _messageAdded && null != list)
+        if (wasEmptyBefore && _messageAdded is not null && list is not null)
         {
           _startupListOfItems = null;
           foreach (var item in list)
@@ -73,11 +73,11 @@ namespace Altaxo.Main.Services
 
       var act = _messageAdded;
 
-      if (null != act)
+      if (act is not null)
       {
         _messageAdded?.Invoke(msg);
       }
-      else if (_startupListOfItems != null)
+      else if (_startupListOfItems is not null)
       {
         _startupListOfItems.Add(msg);
       }

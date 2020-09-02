@@ -117,7 +117,7 @@ namespace Altaxo.Text.Renderers
     {
       if (_indexOfAmlFile < 0 || (_indexOfAmlFile + 1 < _amlFileList.Count && _amlFileList[_indexOfAmlFile + 1].spanStart == headingBlock.Span.Start))
       {
-        if (null != Writer)
+        if (Writer is not null)
         {
           CloseCurrentMamlFile();
         }
@@ -173,7 +173,7 @@ namespace Altaxo.Text.Renderers
 
     public void CloseCurrentMamlFile()
     {
-      if (null != Writer && _currentElementStack.Count > 0)
+      if (Writer is not null && _currentElementStack.Count > 0)
       {
         if (EnableLinkToNextSection && (_indexOfAmlFile + 1) < _amlFileList.Count)
         {

@@ -144,7 +144,7 @@ namespace Altaxo.Graph.Gdi.CS
       int vertAx = 1;
       int deptAx = 2;
 
-      if (null == _axisStyleInformation)
+      if (_axisStyleInformation is null)
         _axisStyleInformation = new List<CSAxisInformation>();
       else
         _axisStyleInformation.Clear();

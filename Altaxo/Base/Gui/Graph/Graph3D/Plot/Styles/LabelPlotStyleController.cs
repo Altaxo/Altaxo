@@ -264,7 +264,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         InitializeAttachmentDirectionChoices();
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         // Data
 
@@ -291,7 +291,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         _view.Init_AlignmentX(_alignmentXChoices);
         _view.Init_AlignmentY(_alignmentYChoices);
         _view.Init_AlignmentZ(_alignmentZChoices);
-        _view.AttachToAxis = _doc.AttachedPlane != null;
+        _view.AttachToAxis = _doc.AttachedPlane is not null;
         _view.Init_AttachedAxis(_attachmentDirectionChoices);
         _view.SelectedRotationX = _doc.RotationX;
         _view.SelectedRotationY = _doc.RotationY;
@@ -324,7 +324,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
       _doc.LabelFormatString = _view.LabelFormatString;
 
-      if (_view.AttachToAxis && null != _attachmentDirectionChoices.FirstSelectedNode)
+      if (_view.AttachToAxis && _attachmentDirectionChoices.FirstSelectedNode is not null)
         _doc.AttachedPlane = (CSPlaneID)_attachmentDirectionChoices.FirstSelectedNode.Tag;
       else
         _doc.AttachedPlane = null;
@@ -391,7 +391,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
       _attachmentDirectionChoices = new SelectableListNodeList();
 
-      if (layer != null)
+      if (layer is not null)
       {
         foreach (CSPlaneInformation info in layer.CoordinateSystem.PlaneStyles)
         {
@@ -459,7 +459,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhColorGroupStyleAddedOrRemoved()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.BackgroundColorLinkage = (ColorLinkage)_backgroundColorLinkageChoices.FirstSelectedNode.Tag;
         _doc.IndependentColor = _view.IndependentColor;
@@ -472,7 +472,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhLabelColorLinkageChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentColor = _view.IndependentColor;
         _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
@@ -481,7 +481,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhBackgroundColorLinkageChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.BackgroundStyle = _view.Background;
         _doc.BackgroundColorLinkage = (ColorLinkage)_backgroundColorLinkageChoices.FirstSelectedNode.Tag;
@@ -498,7 +498,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhBackgroundBrushChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.BackgroundStyle = _view.Background;
         if (_doc.IsBackgroundColorProvider)
@@ -511,7 +511,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhLabelBrushChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.BackgroundStyle = _view.Background;
 
@@ -528,7 +528,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     private void EhUseBackgroundChanged()
     {
       _doc.BackgroundStyle = _view.Background;
-      var newValue = _doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsUserDefinedMaterial;
+      var newValue = _doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsUserDefinedMaterial;
 
       if (true == newValue)
       {
@@ -544,7 +544,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// </summary>
     private void InternalSetBackgroundColorToLabelColor()
     {
-      if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsUserDefinedMaterial)
+      if (_doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsUserDefinedMaterial)
       {
         var newBrush = _doc.BackgroundStyle.Material;
         newBrush = newBrush.WithColor(_view.LabelBrush.Color);
@@ -558,7 +558,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// </summary>
     private void InternalSetBackgroundColorRGBToLabelColor()
     {
-      if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsUserDefinedMaterial)
+      if (_doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsUserDefinedMaterial)
       {
         var newBrush = _doc.BackgroundStyle.Material;
         var c = _view.LabelBrush.Color.NewWithAlphaValue(newBrush.Color.Color.A);
@@ -574,7 +574,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// </summary>
     private void InternalSetLabelColorToBackgroundColor()
     {
-      if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsUserDefinedMaterial)
+      if (_doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsUserDefinedMaterial)
       {
         var newBrush = _view.LabelBrush;
         newBrush = newBrush.WithColor(_view.Background.Material.Color);

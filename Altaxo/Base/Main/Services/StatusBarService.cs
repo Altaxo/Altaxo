@@ -149,10 +149,10 @@ namespace Altaxo.Main.Services
 
     public void AddProgress(ProgressCollector progress)
     {
-      if (progress == null)
+      if (progress is null)
         throw new ArgumentNullException(nameof(progress));
       Current.Dispatcher.VerifyAccess();
-      if (_currentProgress != null)
+      if (_currentProgress is not null)
       {
         _currentProgress.ProgressMonitorDisposed -= progress_ProgressMonitorDisposed;
         _currentProgress.PropertyChanged -= EhProgress_PropertyChanged;

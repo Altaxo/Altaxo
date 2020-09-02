@@ -76,7 +76,7 @@ namespace Altaxo.Gui
       if (IsDisposed)
         throw new ObjectDisposedException(GetType().FullName);
 
-      if (null == args || 0 == args.Length || !(args[0] is TModel))
+      if (args is null || 0 == args.Length || !(args[0] is TModel))
         return false;
 
 
@@ -123,7 +123,7 @@ namespace Altaxo.Gui
 
       if (initData)
       {
-        if (_useDocumentCopy && null == _suspendToken)
+        if (_useDocumentCopy && _suspendToken is null)
           _suspendToken = GetSuspendTokenForControllerDocument();
       }
     }
@@ -172,7 +172,7 @@ namespace Altaxo.Gui
         }
         else
         {
-          if (null != _suspendToken)
+          if (_suspendToken is not null)
           {
             _suspendToken.ResumeCompleteTemporarily();
           }
@@ -194,7 +194,7 @@ namespace Altaxo.Gui
 
       foreach (var subControllerItem in GetSubControllers())
       {
-        if (null != subControllerItem.Controller)
+        if (subControllerItem.Controller is not null)
           subControllerItem.Controller.Revert(disposeController);
       }
 
@@ -257,14 +257,14 @@ namespace Altaxo.Gui
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as TView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           AttachView();
@@ -310,15 +310,15 @@ namespace Altaxo.Gui
       {
         foreach (var subControllerItem in GetSubControllers())
         {
-          if (null != subControllerItem.Controller)
+          if (subControllerItem.Controller is not null)
             subControllerItem.Controller.Dispose();
-          if (null != subControllerItem.SetMemberToNullAction)
+          if (subControllerItem.SetMemberToNullAction is not null)
             subControllerItem.SetMemberToNullAction();
         }
 
         ViewObject = null;
 
-        if (null != _suspendToken)
+        if (_suspendToken is not null)
         {
           _suspendToken.Dispose();
           _suspendToken = null;
@@ -343,7 +343,7 @@ namespace Altaxo.Gui
     /// <param name="objectToDispose">The object to dispose.</param>
     protected static void DisposeAndSetToNull<T>(ref T? objectToDispose) where T : class, IDisposable
     {
-      if (null != objectToDispose)
+      if (objectToDispose is not null)
       {
         objectToDispose.Dispose();
         objectToDispose = null;

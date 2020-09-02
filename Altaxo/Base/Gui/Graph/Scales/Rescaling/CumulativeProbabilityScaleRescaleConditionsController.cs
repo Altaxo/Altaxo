@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
         _endRelativeToChoices = new SelectableListNodeList(_doc.EndRelativeTo);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.OrgRescaling = _orgRescalingChoices;
         _view.EndRescaling = _endRescalingChoices;
@@ -194,7 +194,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
           }
         }
 
-        if (null != _view)
+        if (_view is not null)
           _view.OrgRescaling = _orgRescalingChoices;
       }
     }
@@ -215,7 +215,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
           }
         }
 
-        if (null != _view)
+        if (_view is not null)
           _view.EndRescaling = _endRescalingChoices;
       }
     }

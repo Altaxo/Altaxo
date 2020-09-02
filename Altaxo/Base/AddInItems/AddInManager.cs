@@ -468,7 +468,7 @@ namespace Altaxo.AddInItems
             if (reader.Name == "AddIn")
             {
               string fileName = reader.GetAttribute("file");
-              if (fileName != null && fileName.Length > 0)
+              if (fileName is not null && fileName.Length > 0)
               {
                 addInFiles.Add(fileName);
               }
@@ -476,7 +476,7 @@ namespace Altaxo.AddInItems
             else if (reader.Name == "Disable")
             {
               string addIn = reader.GetAttribute("addin");
-              if (addIn != null && addIn.Length > 0)
+              if (addIn is not null && addIn.Length > 0)
               {
                 disabledAddIns.Add(addIn);
               }

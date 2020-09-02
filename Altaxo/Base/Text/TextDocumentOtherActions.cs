@@ -59,12 +59,12 @@ namespace Altaxo.Text
       public override string? Validate(string name)
       {
         var err = base.Validate(name);
-        if (null != err)
+        if (err is not null)
           return err;
 
         if (_doc.Name == name)
           return null;
-        else if (TextDocumentCollection.GetParentTextDocumentCollectionOf(_doc) == null)
+        else if (TextDocumentCollection.GetParentTextDocumentCollectionOf(_doc) is null)
           return null; // if there is no parent data set we can enter anything
         else if (TextDocumentCollection.GetParentTextDocumentCollectionOf(_doc)?.ContainsAnyName(name) ?? false)
           return "This text document name already exists, please choose another name!";

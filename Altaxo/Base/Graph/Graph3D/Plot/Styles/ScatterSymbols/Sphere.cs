@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
       var radius = symbolSize / 2;
       var buffers = g.GetPositionNormalIndexedTriangleBuffer(material);
 
-      if (null != buffers.PositionNormalIndexedTriangleBuffer)
+      if (buffers.PositionNormalIndexedTriangleBuffer is not null)
       {
         var buffer = buffers.PositionNormalIndexedTriangleBuffer;
         var offs = buffer.VertexCount;

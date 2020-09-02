@@ -176,9 +176,9 @@ namespace Altaxo.Data.Selections
             enumerator.Dispose();
             enumerator = null;
           }
-        } while (enumerator != null && enumerator.Current.endExclusive <= startIndex);
+        } while (enumerator is not null && enumerator.Current.endExclusive <= startIndex);
 
-        if (null != enumerator)
+        if (enumerator is not null)
           _enumerators.Add(enumerator);
       }
 

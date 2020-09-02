@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Common
 
     protected virtual void Initialize()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _view.DescriptionText = _descriptionText;
         _view.ValueText = _value1StringTemporary;
@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Common
       set
       {
         _descriptionText = value;
-        if (null != _view)
+        if (_view is not null)
         {
           _view.DescriptionText = _descriptionText;
         }
@@ -99,12 +99,12 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.ValueText_Validating -= EhView_ValidatingValue1;
 
         _view = value as ISingleValueView;
 
-        if (_view != null)
+        if (_view is not null)
         {
           Initialize();
           _view.ValueText_Validating += EhView_ValidatingValue1;

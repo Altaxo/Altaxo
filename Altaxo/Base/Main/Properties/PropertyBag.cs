@@ -141,7 +141,7 @@ namespace Altaxo.Main.Properties
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (PropertyBag)o : new PropertyBag();
+        var s = o is not null ? (PropertyBag)o : new PropertyBag();
         Deserialize(s, info, parent);
         return s;
       }
@@ -195,7 +195,7 @@ namespace Altaxo.Main.Properties
           {
             value = ((ICloneable)entry.Value).Clone();
             var propValAsNode = value as IDocumentLeafNode;
-            if (null != propValAsNode)
+            if (propValAsNode is not null)
               propValAsNode.ParentObject = this;
           }
           else
@@ -215,7 +215,7 @@ namespace Altaxo.Main.Properties
       foreach (var entry in _properties)
       {
         var doc = entry.Value as Main.IDocumentLeafNode;
-        if (null != doc)
+        if (doc is not null)
           yield return new Main.DocumentNodeAndName(doc, entry.Key);
       }
     }
@@ -558,7 +558,7 @@ namespace Altaxo.Main.Properties
     /// </summary>
     protected override void Dispose(bool isDisposing)
     {
-      if (null != _parent)
+      if (_parent is not null)
       {
         foreach (var pr in _properties)
         {

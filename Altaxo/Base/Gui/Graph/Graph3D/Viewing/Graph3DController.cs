@@ -139,7 +139,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <param name="graphdoc">The graph which holds the graphical elements.</param>
     public Graph3DController(GraphDocument graphdoc)
     {
-      if (null == graphdoc)
+      if (graphdoc is null)
         throw new ArgumentNullException("Leaving the graphdoc null in constructor is not supported here");
 
       InitTriggerBasedUpdate();
@@ -149,7 +149,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     public bool InitializeDocument(params object[] args)
     {
-      if (null == args || args.Length == 0)
+      if (args is null || args.Length == 0)
         return false;
       if (args[0] is GraphDocument)
       {
@@ -159,7 +159,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       {
         var o = (Altaxo.Graph.Graph3D.GuiModels.GraphViewOptions)args[0];
         _rootLayerMarkersVisibility = o.RootLayerMarkersVisibility;
-        if (_doc == null)
+        if (_doc is null)
         {
           InternalInitializeGraphDocument(o.GraphDocument);
         }
@@ -189,7 +189,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         InitLayerStructure();
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetCamera(_doc.Camera, _doc.Lighting);
 
@@ -199,7 +199,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         // Calculate the zoom if Autozoom is on - simulate a SizeChanged event of the view to force calculation of new zoom factor
         EhView_GraphPanelSizeChanged();
 
-        if (null != _drawing)
+        if (_drawing is not null)
         {
           _view.SetDrawing(_drawing);
           _view.TriggerRendering();
@@ -267,9 +267,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     private void InternalInitializeGraphDocument(GraphDocument doc)
     {
-      if (_doc != null)
+      if (_doc is not null)
         throw new ApplicationException(nameof(_doc) + " is already initialized");
-      if (doc == null)
+      if (doc is null)
         throw new ArgumentNullException(nameof(doc));
 
       _doc = doc;
@@ -299,7 +299,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     {
       // remove the weak event handlers from doc
       var wev = _weakEventHandlersForDoc;
-      if (null != wev)
+      if (wev is not null)
       {
         foreach (var ev in wev)
           ev.Remove();
@@ -328,12 +328,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = null;
 
         _view = value as IGraph3DView;
 
-        if (_view != null)
+        if (_view is not null)
         {
           _view.Controller = this;
           Initialize(false);
@@ -388,7 +388,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       set
       {
         // negative values are only accepted if there is no layer
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException("CurrentLayerNumber");
 
         if (!_doc.RootLayer.IsValidIndex(value))
@@ -402,7 +402,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         if (isDifferent)
         {
           // reflect the change in layer number in the layer tool bar
-          if (_view != null)
+          if (_view is not null)
             _view.CurrentLayer = _currentLayerNumber.ToArray();
         }
       }
@@ -430,10 +430,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       {
         var layer = ActiveLayer as XYZPlotLayer;
 
-        if (null != layer && 0 != layer.PlotItems.Flattened.Length && value < 0)
+        if (layer is not null && 0 != layer.PlotItems.Flattened.Length && value < 0)
           throw new ArgumentOutOfRangeException("CurrentPlotNumber", value, "CurrentPlotNumber has to be greater or equal than zero");
 
-        if (null != layer && value >= layer.PlotItems.Flattened.Length)
+        if (layer is not null && value >= layer.PlotItems.Flattened.Length)
           throw new ArgumentOutOfRangeException("CurrentPlotNumber", value, "CurrentPlotNumber has to  be lesser than actual count: " + layer.PlotItems.Flattened.Length.ToString());
 
         _currentPlotNumber = value < 0 ? -1 : value;
@@ -449,7 +449,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       var layer = EnsureValidityOfCurrentLayerNumber() as XYZPlotLayer;
 
       // if XYPlotLayer don't exist anymore, correct CurrentLayerNumber and ActualPlotAssocitation
-      if (null != layer) // if the ActiveLayer exists
+      if (layer is not null) // if the ActiveLayer exists
       {
         // if the XYColumnPlotData don't exist anymore, correct it
         if (layer.PlotItems.Flattened.Length > 0) // if at least one plotitem exists
@@ -483,7 +483,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       CurrentLayerNumber = new List<int>(currLayer);
 
       // if we have clicked the button already down then open the layer dialog
-      if (null != ActiveLayer && System.Linq.Enumerable.SequenceEqual(_currentLayerNumber, oldCurrLayer) && false == bAlternative)
+      if (ActiveLayer is not null && System.Linq.Enumerable.SequenceEqual(_currentLayerNumber, oldCurrLayer) && false == bAlternative)
       {
         var activeLayer = ActiveLayer;
         if (activeLayer is XYZPlotLayer)
@@ -588,7 +588,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
           try
           {
             img = ImageProxy.FromFile(filename);
-            if (img != null)
+            if (img is not null)
             {
               var size = ActiveLayer.Size / 2;
 
@@ -614,7 +614,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       if (dao.GetDataPresent(typeof(System.Drawing.Imaging.Metafile)))
       {
         var img = dao.GetData(typeof(System.Drawing.Imaging.Metafile)) as System.Drawing.Imaging.Metafile;
-        if (img != null)
+        if (img is not null)
         {
           var size = (0.5 * ActiveLayer.Size).WithZ(0);
           var item = new EmbeddedImageGraphic(PointD3D.Empty, size, Altaxo.Graph.Gdi.SystemDrawingImageProxyExtensions.GetImageProxyFromImage(img));
@@ -625,7 +625,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       if (dao.ContainsImage())
       {
         Image img = dao.GetImage();
-        if (img != null)
+        if (img is not null)
         {
           var size = 0.5 * ActiveLayer.Size.WithZ(0);
           var item = new EmbeddedImageGraphic(PointD3D.Empty, size, Altaxo.Graph.Gdi.SystemDrawingImageProxyExtensions.GetImageProxyFromImage(img));
@@ -655,7 +655,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     public void RemoveSelectedObjects()
     {
-      if (null == SelectedObjects || SelectedObjects.Count == 0)
+      if (SelectedObjects is null || SelectedObjects.Count == 0)
         return;
 
       using (var token = Doc.SuspendGetToken())
@@ -664,7 +664,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
         foreach (IHitTestObject o in SelectedObjects)
         {
-          if (o.Remove != null)
+          if (o.Remove is not null)
           {
             if (true == o.Remove(o))
               removedObjects.Add(o);
@@ -699,7 +699,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     public void ViewToRootLayerCenter(VectorD3D toEyeVector, VectorD3D cameraUpVector)
     {
       double aspectRatio = 1;
-      if (null != _view)
+      if (_view is not null)
       {
         var viewportSize = _view.ViewportSizeInPoints;
         aspectRatio = viewportSize.Y / viewportSize.X;
@@ -1049,7 +1049,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     {
       foundObject = Doc.RootLayer.HitTest(hitData, plotItemsOnly);
 
-      if (null != foundObject && null != foundObject.ParentLayer)
+      if (foundObject is not null && foundObject.ParentLayer is not null)
       {
         foundInLayerNumber = foundObject.ParentLayer.IndexOf().ToArray();
         return true;
@@ -1070,7 +1070,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     protected void EhGraph_Changed(object sender, System.EventArgs e)
     {
       var eAsNOC = e as Altaxo.Main.NamedObjectCollectionChangedEventArgs;
-      if (null != eAsNOC && eAsNOC.WasItemRenamed)
+      if (eAsNOC is not null && eAsNOC.WasItemRenamed)
       {
         Current.Dispatcher.InvokeIfRequired(EhGraphDocumentNameChanged_Unsynchronized, (GraphDocument)sender, eAsNOC.OldName);
         return;
@@ -1095,7 +1095,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       EnsureValidityOfCurrentLayerNumber();
       EnsureValidityOfCurrentPlotNumber();
 
-      if (null != _view)
+      if (_view is not null)
       {
         var newDrawing = _view.GetGraphicContext();
         _doc.Paint(newDrawing);
@@ -1140,7 +1140,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     protected void EhGraph_BoundsChanged_Unsynchronized()
     {
       var view = _view;
-      if (null != view)
+      if (view is not null)
       {
         var g = view.GetGraphicContextForMarkers();
         DrawRootLayerMarkers(g);
@@ -1171,7 +1171,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       // make sure the view knows about when the number of layers changed
       InitLayerStructure();
-      if (_view != null)
+      if (_view is not null)
       {
         _view.SetLayerStructure(_layerStructure, _currentLayerNumber.ToArray());
       }
@@ -1221,9 +1221,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       if (Current.Gui.ShowDialog(ref tgoo, "Edit text", true))
       {
         tg = (TextGraphic)tgoo;
-        if (tg == null || tg.Empty)
+        if (tg is null || tg.Empty)
         {
-          if (null != hit.Remove)
+          if (hit.Remove is not null)
             shouldDeleted = hit.Remove(hit);
           else
             shouldDeleted = false;
@@ -1270,7 +1270,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       CurrentLayerNumber = new List<int>(currLayer);
 
-      if (null != ActiveLayer)
+      if (ActiveLayer is not null)
       {
         Current.Gui.ShowContextMenu(parent, parent, "/Altaxo/Views/Graph3D/LayerButton/ContextMenu", pt.X, pt.Y);
       }
@@ -1278,7 +1278,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     public virtual void EhView_CurrentGraphToolChanged()
     {
-      if (null != CurrentGraphToolChanged)
+      if (CurrentGraphToolChanged is not null)
         CurrentGraphToolChanged(this, EventArgs.Empty);
     }
 
@@ -1331,7 +1331,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       {
         _middleButtonPressed_InitialCamera = null;
       }
-      else if (null != _middleButtonPressed_InitialCamera)
+      else if (_middleButtonPressed_InitialCamera is not null)
       {
         switch (_middleButtonCurrentAction)
         {
@@ -1370,7 +1370,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.CurrentGraphTool = value;
         }
@@ -1498,10 +1498,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       foreach (IHitTestObject o in SelectedObjects)
       {
         var layer = AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>((IDocumentLeafNode)o.HittedObject);
-        if (layer == null)
+        if (layer is null)
           continue;
 
-        if (layer4all == null)
+        if (layer4all is null)
           layer4all = layer;
         else if (!object.ReferenceEquals(layer, layer4all))
           return null;

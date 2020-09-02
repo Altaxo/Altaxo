@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Graph.Plot.Groups
         _listController.InitializeDocument(_doc.ListOfValues);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _listController.ViewObject = _view;
       }

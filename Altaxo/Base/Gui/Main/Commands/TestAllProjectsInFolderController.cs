@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Common.Tools
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.FolderPaths = _doc.FolderPaths;
         _view.TestSavingAndReopening = _doc.TestSavingAndReopening;

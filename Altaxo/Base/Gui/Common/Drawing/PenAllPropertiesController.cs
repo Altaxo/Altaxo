@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void Initialize(bool initData)
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.ShowPlotColorsOnly = _showPlotColorsOnly;
         _view.Pen = _doc;
@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Common.Drawing
       set
       {
         _showPlotColorsOnly = value;
-        if (null != _view)
+        if (_view is not null)
           _view.ShowPlotColorsOnly = value;
       }
     }
@@ -91,7 +91,7 @@ namespace Altaxo.Gui.Common.Drawing
       {
         _view = value as IPenAllPropertiesView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
         }

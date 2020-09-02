@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       if (initData)
       {
       }
-      if (_view != null)
+      if (_view is not null)
       {
         _view.InitializeFunctionText(GetDescriptionText(), false);
       }

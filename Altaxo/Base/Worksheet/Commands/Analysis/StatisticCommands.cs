@@ -60,7 +60,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       var table = Altaxo.Analysis.Statistics.Histograms.HistogramCreation.CreateHistogramOnColumns(ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, Gui.UserInteractionLevel.InteractAlways);
 
-      if (null != table && !Current.Project.DataTableCollection.Contains(table))
+      if (table is not null && !Current.Project.DataTableCollection.Contains(table))
       {
         Current.Project.DataTableCollection.Add(table);
 

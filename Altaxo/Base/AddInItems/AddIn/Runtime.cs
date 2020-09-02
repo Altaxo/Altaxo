@@ -48,7 +48,7 @@ namespace Altaxo.AddInItems
       {
         lock (_lockObj)
         {
-          if (_conditions != null)
+          if (_conditions is not null)
           {
             _isActive = Condition.GetFailedAction(_conditions, this) == ConditionFailedAction.Nothing;
             _conditions = null;
@@ -62,7 +62,7 @@ namespace Altaxo.AddInItems
     {
       if (addInTree is null)
         throw new ArgumentNullException(nameof(addInTree));
-      if (assembly == null)
+      if (assembly is null)
         throw new ArgumentNullException(nameof(assembly));
       _addInTree = addInTree;
       _assembly = assembly;
@@ -118,7 +118,7 @@ namespace Altaxo.AddInItems
                   break;
                 }
               }
-              if (_loadedAssembly == null)
+              if (_loadedAssembly is null)
               {
                 throw new FileNotFoundException("Could not find referenced AddIn " + referencedAddIn);
               }

@@ -79,7 +79,7 @@ namespace Altaxo.Graph.Graph3D.Commands
         (layer) =>
         {
           var xylayer = layer as XYZPlotLayer;
-          if (null != xylayer)
+          if (xylayer is not null)
           {
             xylayer.OnUserRescaledAxes();
           }

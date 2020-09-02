@@ -153,7 +153,7 @@ namespace Altaxo.Graph.Scales.Ticks
         {
           _majorTicks.Add(majortick);
           int item = (int)(majortick - 1);
-          if (textBounds != null && item >= 0 && item < textBounds.NumberOfItems)
+          if (textBounds is not null && item >= 0 && item < textBounds.NumberOfItems)
             _majorTextTicks.Add(textBounds.GetItem(item));
           else
             _majorTextTicks.Add(majortick);

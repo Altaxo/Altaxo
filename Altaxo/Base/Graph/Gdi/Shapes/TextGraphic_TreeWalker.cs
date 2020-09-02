@@ -123,7 +123,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
         rootGlyph.Add(line);
 
-        if (null != root && null != root.child_)
+        if (root is not null && root.child_ is not null)
           VisitNode(root.child_, context, line);
 
         return rootGlyph;
@@ -163,7 +163,7 @@ namespace Altaxo.Graph.Gdi.Shapes
             break;
         }
 
-        if (null != node.next_)
+        if (node.next_ is not null)
           nextparent = VisitNode(node.next_, context, nextparent);
 
         return nextparent;
@@ -176,7 +176,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         var childNode = node.child_;
 
         string str = string.Empty;
-        if (null == childNode) // no escape sequences
+        if (childNode is null) // no escape sequences
         {
           str = _sourceText.Substring(posBeg, posEnd - posBeg);
         }
@@ -184,13 +184,13 @@ namespace Altaxo.Graph.Gdi.Shapes
         {
           int beg = posBeg;
           int end = childNode.match_.posBeg_;
-          while (childNode != null)
+          while (childNode is not null)
           {
             str += _sourceText.Substring(beg, end - beg);
             str += _sourceText.Substring(childNode.match_.posBeg_ + 1, 1);
             beg = childNode.match_.posEnd_;
             childNode = childNode.next_;
-            end = null != childNode ? childNode.match_.posBeg_ : posEnd;
+            end = childNode is not null ? childNode.match_.posBeg_ : posEnd;
           }
           str += _sourceText.Substring(beg, end - beg);
         }
@@ -250,7 +250,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         var line = new GlyphLine(context);
         parent.Add(line);
-        if (node.child_ != null)
+        if (node.child_ is not null)
           VisitNode(node.child_, context, line);
       }
 
@@ -259,7 +259,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         int posBeg = node.match_.posBeg_;
         var childNode = node.child_;
 
-        if (childNode == null)
+        if (childNode is null)
           throw new ArgumentNullException("childNode");
 
         string escHeader = _sourceText.Substring(posBeg, childNode.match_.posBeg_ - posBeg);
@@ -398,7 +398,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         int posBeg = node.match_.posBeg_;
         var childNode = node.child_;
 
-        if (childNode == null)
+        if (childNode is null)
           throw new ArgumentNullException("childNode");
 
         string escHeader = _sourceText.Substring(posBeg, childNode.match_.posBeg_ - posBeg);
@@ -525,7 +525,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         int posBeg = node.match_.posBeg_;
         var childNode = node.child_;
 
-        if (childNode == null)
+        if (childNode is null)
           throw new ArgumentNullException("childNode");
 
         string escHeader = _sourceText.Substring(posBeg, childNode.match_.posBeg_ - posBeg);

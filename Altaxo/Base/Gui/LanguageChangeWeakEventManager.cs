@@ -53,14 +53,14 @@ namespace Altaxo.Gui
 
     private static void EhServiceChanged()
     {
-      if (null != _resourceService)
+      if (_resourceService is not null)
       {
         _resourceService.LanguageChanged -= EhLanguageChanged;
       }
 
       _resourceService = Altaxo.Current.GetService<IResourceService>();
 
-      if (null != _resourceService)
+      if (_resourceService is not null)
       {
         _resourceService.LanguageChanged += EhLanguageChanged;
       }

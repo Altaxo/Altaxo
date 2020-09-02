@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Data.Selections
       if (initData)
       {
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.RangeStart = _doc.Start;
         _view.RangeEndInclusive = _doc.LastInclusive;

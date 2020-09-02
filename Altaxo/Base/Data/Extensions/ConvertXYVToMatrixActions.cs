@@ -64,7 +64,7 @@ namespace Altaxo.Data
           }
         }
 
-        if (xcol == null || ycol == null)
+        if (xcol is null || ycol is null)
           return "The selected columns must be a x-column, a y-column, and one or more value columns";
       }
       else
@@ -142,7 +142,7 @@ namespace Altaxo.Data
         {
           error = ex.ToString();
         }
-        if (null != error)
+        if (error is not null)
           Current.Gui.ErrorMessageBox(error);
 
         destTable.Name = srcTable.Name + "_Decomposed";
@@ -212,7 +212,7 @@ namespace Altaxo.Data
       srcColumnsToProcess.Remove(srcXCol);
       srcColumnsToProcess.Remove(srcYCol);
 
-      int xOffset = 1 + (clusterStdDevY != null ? 1 : 0);
+      int xOffset = 1 + (clusterStdDevY is not null ? 1 : 0);
       // the only property column that is now useful is that with the repeated values
       var destXCol = destTable.PropCols.EnsureExistence(srcTable.DataColumns.GetColumnName(srcXCol), srcXCol.GetType(), ColumnKind.X, 0);
       for (int i = 0; i < xOffset; ++i)
@@ -220,7 +220,7 @@ namespace Altaxo.Data
       for (int i = 0; i < clusterValuesX.Count; ++i)
         destXCol[i + xOffset] = clusterValuesX[i]; // leave index 0 and maybe 1for the y-column
 
-      if (clusterStdDevX != null)
+      if (clusterStdDevX is not null)
       {
         var stdXCol = destTable.PropCols.EnsureExistence(srcTable.DataColumns.GetColumnName(srcXCol) + "_StdDev", srcXCol.GetType(), ColumnKind.Err, 0);
         for (int i = 0; i < xOffset; ++i)
@@ -233,7 +233,7 @@ namespace Altaxo.Data
       for (int i = 0; i < clusterValuesY.Count; ++i)
         destYCol[i] = clusterValuesY[i]; // leave index 0 for the y-column
 
-      if (clusterStdDevY != null)
+      if (clusterStdDevY is not null)
       {
         var stdYCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(srcYCol) + "_StdDev", srcYCol.GetType(), ColumnKind.Err, 0);
         for (int i = 0; i < clusterStdDevY.Count; ++i)

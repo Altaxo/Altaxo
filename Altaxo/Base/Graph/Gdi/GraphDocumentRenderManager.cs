@@ -84,7 +84,7 @@ namespace Altaxo.Graph.Gdi
       public override bool Equals(object? obj)
       {
         var from = obj as GraphDocumentRenderTask;
-        if (null != from)
+        if (from is not null)
           return Owner.Equals(from.Owner);
         else
           return false;
@@ -102,13 +102,13 @@ namespace Altaxo.Graph.Gdi
         Action<GraphDocument, object> renderingAction
         )
       {
-        if (null == parent)
+        if (parent is null)
           throw new ArgumentNullException(nameof(parent));
-        if (null == token)
+        if (token is null)
           throw new ArgumentNullException(nameof(token));
-        if (null == doc)
+        if (doc is null)
           throw new ArgumentNullException(nameof(doc));
-        if (null == renderingAction)
+        if (renderingAction is null)
           throw new ArgumentNullException(nameof(renderingAction));
 
         _parent = parent;
@@ -136,7 +136,7 @@ namespace Altaxo.Graph.Gdi
       {
         get
         {
-          if (_timeOfFirstRenderingException == null)
+          if (_timeOfFirstRenderingException is null)
             return true; // not even a rendering exception encountered
           return _trialCountDown > 0 && ((Current.HighResolutionClock.CurrentTime - _timeOfFirstRenderingException.Value) <= _maximumTrialTimeAllowed);
         }
@@ -156,7 +156,7 @@ namespace Altaxo.Graph.Gdi
         }
         catch (Exception ex)
         {
-          if (null == _timeOfFirstRenderingException)
+          if (_timeOfFirstRenderingException is null)
             _timeOfFirstRenderingException = Current.HighResolutionClock.CurrentTime;
 
           if (!Document.IsDisposeInProgress && !MoreTrialsAllowed)
@@ -207,7 +207,7 @@ namespace Altaxo.Graph.Gdi
       var projService = Current.IProjectService;
       projService.ProjectClosed += EhProjectClosed;
       projService.ProjectOpened += EhProjectOpened;
-      _isEnabled = null != Current.Project;
+      _isEnabled = Current.Project is not null;
     }
 
     private void EhProjectOpened(object sender, Main.ProjectEventArgs e)

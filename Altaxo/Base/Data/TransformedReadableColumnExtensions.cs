@@ -41,7 +41,7 @@ namespace Altaxo.Data
       }
       else if (c is ITransformedReadableColumn it)
       {
-        while (null != it)
+        while (it is not null)
         {
           if (it.UnderlyingReadableColumn is DataColumn itdc)
             return itdc;

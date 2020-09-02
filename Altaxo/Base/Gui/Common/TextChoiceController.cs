@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Common
       if (_doc is null)
         throw NoDocumentException;
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetDescription(_doc.Description);
         _view.SetChoices(_doc.Choices, _doc.SelectedIndex, _doc.AllowFreeText);
@@ -172,11 +172,11 @@ namespace Altaxo.Gui.Common
         throw NoDocumentException;
 
       string? validationResult = null;
-      if (null != _doc.TextValidationFunction)
+      if (_doc.TextValidationFunction is not null)
       {
         validationResult = _doc.TextValidationFunction(text);
       }
-      if (null == validationResult)
+      if (validationResult is null)
       {
         _doc.Text = text;
         _doc.SelectedIndex = -1;
@@ -191,7 +191,7 @@ namespace Altaxo.Gui.Common
 
     public bool InitializeDocument(params object[] args)
     {
-      if (null == args || 0 == args.Length || !(args[0] is TextChoice))
+      if (args is null || 0 == args.Length || !(args[0] is TextChoice))
         return false;
 
       _doc = (TextChoice)args[0];
@@ -215,7 +215,7 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.SelectionChangeCommitted -= EhSelectionChangeCommitted;
           _view.TextValidating -= EhTextValidating;
@@ -223,7 +223,7 @@ namespace Altaxo.Gui.Common
 
         _view = value as IFreeTextChoiceView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           _view.SelectionChangeCommitted += EhSelectionChangeCommitted;

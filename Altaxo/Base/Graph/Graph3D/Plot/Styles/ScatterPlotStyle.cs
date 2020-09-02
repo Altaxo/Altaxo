@@ -150,7 +150,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       if (object.ReferenceEquals(this, obj))
         return true;
       var from = obj as ScatterPlotStyle;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, Main.EventFiring.Enabled);
         return true;
@@ -212,7 +212,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public ScatterPlotStyle(IScatterSymbol symbol, double size, double penWidth, NamedColor penColor)
     {
-      if (null == symbol)
+      if (symbol is null)
         throw new ArgumentNullException(nameof(symbol));
 
       _symbolShape = symbol;
@@ -251,7 +251,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       get { return _symbolShape; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(_symbolShape, value))
@@ -278,7 +278,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       get { return _material; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(_material, value))
@@ -421,7 +421,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       {
         PointD3D pos = PointD3D.Empty;
 
-        if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size
+        if (_cachedSymbolSizeForIndexFunction is null && _cachedColorForIndexFunction is null) // using a constant symbol size
         {
           for (int r = 0; r < rangeList.Count; r++)
           {

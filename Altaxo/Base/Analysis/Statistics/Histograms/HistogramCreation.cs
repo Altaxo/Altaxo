@@ -69,7 +69,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
       {
         get
         {
-          if (null != _col)
+          if (_col is not null)
             return _col[_selectedRows[_nRow]];
           else
             throw new InvalidOperationException("Before or behind enumeration");
@@ -85,7 +85,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
       {
         get
         {
-          if (null != _col)
+          if (_col is not null)
             return _col[_selectedRows[_nRow]];
           else
             throw new InvalidOperationException("Before or behind enumeration");
@@ -94,7 +94,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
 
       public bool MoveNext()
       {
-        if (null != _col)
+        if (_col is not null)
         {
           if (_nRow < _selectedRows.Count - 1)
           {

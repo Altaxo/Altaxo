@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
       }
     }

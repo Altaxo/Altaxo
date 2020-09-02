@@ -104,7 +104,7 @@ namespace Altaxo.Gui.Graph.Gdi.Background
         _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         InitializeBackgroundStyle();
       }
@@ -131,15 +131,15 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
     private void InitializeBackgroundStyle()
     {
-      int sel = Array.IndexOf(_backgroundStyles, _doc == null ? null : _doc.GetType());
+      int sel = Array.IndexOf(_backgroundStyles, _doc is null ? null : _doc.GetType());
       _view.BackgroundStyle_Initialize(Current.Gui.GetUserFriendlyClassName(_backgroundStyles, true), sel + 1);
 
-      if (_doc != null && _doc.SupportsBrush)
+      if (_doc is not null && _doc.SupportsBrush)
         _view.BackgroundBrush_Initialize(_doc.Brush);
       else
         _view.BackgroundBrush_Initialize(new BrushX(NamedColors.Transparent));
 
-      _view.BackgroundBrushEnable_Initialize(_doc != null && _doc.SupportsBrush);
+      _view.BackgroundBrushEnable_Initialize(_doc is not null && _doc.SupportsBrush);
     }
 
     public object TemporaryModelObject
@@ -154,7 +154,7 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
     public void EhView_BackgroundBrushChanged(BrushX brush)
     {
-      if (_doc != null && _doc.SupportsBrush)
+      if (_doc is not null && _doc.SupportsBrush)
       {
         _doc.Brush = brush;
         OnMadeDirty();
@@ -179,7 +179,7 @@ namespace Altaxo.Gui.Graph.Gdi.Background
         _doc = null;
       }
 
-      if (_doc != null && _doc.SupportsBrush)
+      if (_doc is not null && _doc.SupportsBrush)
       {
         _view.BackgroundBrush_Initialize(backgroundColor);
         _view.BackgroundBrushEnable_Initialize(true);

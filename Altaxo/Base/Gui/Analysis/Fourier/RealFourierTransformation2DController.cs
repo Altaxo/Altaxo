@@ -105,7 +105,7 @@ namespace Altaxo.Gui.Analysis.Fourier
         _fourierWindowChoice = GetFourierWindowChoice(_doc.FourierWindow);
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.IsUserDefinedXIncrement = _doc.IsUserDefinedRowIncrementValue;
         _view.XIncrement = _doc.RowIncrementValue;
@@ -148,9 +148,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
       var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.Fourier.Windows.IWindows2D));
 
-      result.Add(new SelectableListNode("None", null, currentWindowChoice == null));
+      result.Add(new SelectableListNode("None", null, currentWindowChoice is null));
 
-      var currentType = null != currentWindowChoice ? currentWindowChoice.GetType() : null;
+      var currentType = currentWindowChoice is not null ? currentWindowChoice.GetType() : null;
 
       foreach (var type in types)
       {

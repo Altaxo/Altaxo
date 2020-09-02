@@ -184,13 +184,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
         int numVariablesUsed = 0;
         for (int j = 0; j < fitEle.NumberOfDependentVariables; ++j)
         {
-          if (fitEle.DependentVariables(j) != null)
+          if (fitEle.DependentVariables(j) is not null)
             ++numVariablesUsed;
         }
         var dependentVariablesInUse = new int[numVariablesUsed];
         for (int j = 0, used = 0; j < fitEle.NumberOfDependentVariables; ++j)
         {
-          if (fitEle.DependentVariables(j) != null)
+          if (fitEle.DependentVariables(j) is not null)
             dependentVariablesInUse[used++] = j;
         }
 
@@ -376,7 +376,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       EvaluateFitValues(parameter, ys, false);
 
-      if (_cachedWeights == null)
+      if (_cachedWeights is null)
       {
         for (int i = ys.Length - 1; i >= 0; --i)
         {
@@ -516,7 +516,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
           throw new InvalidOperationException($"FitFunction of FitElement[{ele}] must be implementing {nameof(IFitFunctionWithGradient)}");
 
         // make sure, that the dimension of the DYs is ok
-        if (info.DYs == null || info.DYs.Length != fitEle.NumberOfDependentVariables || info.DYs[0].Length != fitEle.NumberOfParameters)
+        if (info.DYs is null || info.DYs.Length != fitEle.NumberOfDependentVariables || info.DYs[0].Length != fitEle.NumberOfParameters)
           info.DYs = LinearAlgebra.JaggedArrayMath.GetMatrixArray(fitEle.NumberOfDependentVariables, fitEle.NumberOfParameters);
 
         // copy of the parameter to the temporary array
@@ -607,7 +607,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       for (int i = 0; i < _fitEnsemble.Count; i++)
       {
-        if (_fitEnsemble[i].FitFunction != null && !(_fitEnsemble[i].FitFunction is IFitFunctionWithGradient))
+        if (_fitEnsemble[i].FitFunction is not null && !(_fitEnsemble[i].FitFunction is IFitFunctionWithGradient))
           return false;
       }
       return true;
@@ -695,7 +695,7 @@ else
         if (pset[i].Vary)
         {
           pset[i].Parameter = _cachedVaryingParameters[varyingPara];
-          pset[i].Variance = _resultingCovariances == null ? 0 : Math.Sqrt(_resultingCovariances[varyingPara + varyingPara * _cachedVaryingParameters.Length]);
+          pset[i].Variance = _resultingCovariances is null ? 0 : Math.Sqrt(_resultingCovariances[varyingPara + varyingPara * _cachedVaryingParameters.Length]);
           varyingPara++;
         }
         else

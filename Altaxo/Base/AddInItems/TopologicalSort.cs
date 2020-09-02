@@ -65,7 +65,7 @@ namespace Altaxo.AddInItems
           if (!string.IsNullOrEmpty(codon.Id))
             nameToNodeDict[codon.Id] = node;
           // add implicit edges
-          if (previous != null)
+          if (previous is not null)
             node._previous.Add(previous);
 
           allNodes.Add(node);

@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Common.BasicTypes
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SelectedValue = _doc;
       }

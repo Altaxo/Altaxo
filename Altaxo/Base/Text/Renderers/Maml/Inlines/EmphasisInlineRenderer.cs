@@ -70,10 +70,10 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
           break;
       }
 
-      if (null != mamlElement)
+      if (mamlElement is not null)
         renderer.Push(mamlElement);
       renderer.WriteChildren(obj);
-      if (null != mamlElement)
+      if (mamlElement is not null)
         renderer.PopTo(mamlElement);
     }
   }

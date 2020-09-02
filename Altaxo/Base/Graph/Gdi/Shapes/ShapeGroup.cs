@@ -245,7 +245,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       var result = base.HitTest(htd);
-      if (result != null)
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
       return result;
     }

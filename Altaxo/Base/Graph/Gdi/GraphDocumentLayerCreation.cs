@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Gdi
       var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out var oldLayer);
       var linkedLayerAsXYPlotLayer = oldLayer as XYPlotLayer;
 
-      if (null != linkedLayerAsXYPlotLayer)
+      if (linkedLayerAsXYPlotLayer is not null)
       {
         // create a linked x axis of the same type than in the linked layer
         var scaleLinkedTo = linkedLayerAsXYPlotLayer.Scales.X;

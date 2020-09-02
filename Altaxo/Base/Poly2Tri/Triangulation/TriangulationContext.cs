@@ -68,7 +68,7 @@ namespace Poly2Tri
     public virtual void Clear()
     {
       Points.Clear();
-      if (DebugContext != null)
+      if (DebugContext is not null)
         DebugContext.Clear();
       StepCount = 0;
     }

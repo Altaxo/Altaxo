@@ -111,7 +111,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       foreach (var plane in _innerList)
       {
         ++i;
-        if (null != plane)
+        if (plane is not null)
           yield return new Main.DocumentNodeAndName(plane, i.ToString(System.Globalization.CultureInfo.InvariantCulture));
       }
     }
@@ -161,14 +161,14 @@ namespace Altaxo.Graph.Graph3D.Axis
           }
         }
         // if not found, we add the value to the collection
-        if (null != value)
+        if (value is not null)
           Add(value);
       }
     }
 
     public void Add(GridPlane plane)
     {
-      if (null == plane)
+      if (plane is null)
         throw new ArgumentNullException(nameof(plane));
 
       plane.ParentObject = this;

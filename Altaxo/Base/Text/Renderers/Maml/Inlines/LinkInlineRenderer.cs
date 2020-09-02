@@ -38,7 +38,7 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
     /// <inheritdoc/>
     protected override void Write(MamlRenderer renderer, LinkInline link)
     {
-      var url = link.GetDynamicUrl != null ? link.GetDynamicUrl() ?? link.Url : link.Url;
+      var url = link.GetDynamicUrl is not null ? link.GetDynamicUrl() ?? link.Url : link.Url;
 
       if (link.IsImage)
       {
@@ -63,7 +63,7 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
           // the challenge here is to find out where (in which file) our target is. The file might even not be defined in the moment
           var (fileGuid, localUrl) = renderer.FindFragmentLink(url);
           string totalAddress = string.Empty;
-          if (null != fileGuid && null != localUrl)
+          if (fileGuid is not null && localUrl is not null)
           {
             totalAddress = fileGuid + "#" + localUrl;
           }
@@ -82,7 +82,7 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
       if (link.ContainsData(typeof(Markdig.Renderers.Html.HtmlAttributes)))
       {
         var htmlAttributes = (Markdig.Renderers.Html.HtmlAttributes)link.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-        if (null != htmlAttributes.Properties)
+        if (htmlAttributes.Properties is not null)
         {
           foreach (var entry in htmlAttributes.Properties)
           {
@@ -100,10 +100,10 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
         }
       }
 
-      if (null != renderer.OldToNewImageUris && renderer.OldToNewImageUris.ContainsKey(url))
+      if (renderer.OldToNewImageUris is not null && renderer.OldToNewImageUris.ContainsKey(url))
         url = renderer.OldToNewImageUris[url];
 
-      if (width == null && height == null) // if we include the image in its native resolution, we do not need a link to the native resolution image
+      if (width is null && height is null) // if we include the image in its native resolution, we do not need a link to the native resolution image
       {
         string localUrl = System.IO.Path.GetFileNameWithoutExtension(url);
 

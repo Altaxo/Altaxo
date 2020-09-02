@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Gdi
       base.InternalCopyFrom(obj, options); // base copy, but keep in mind that InternalCopyGraphItems is overridden in this class
 
       var from = obj as XYPlotLayer;
-      if (null == from)
+      if (from is null)
         return;
 
       if (0 != (options & GraphCopyOptions.CopyLayerScales))
@@ -262,7 +262,7 @@ namespace Altaxo.Graph.Gdi
 
         // remove superfluous place holders
         int maxCount = _axisStyles.Count;
-        _graphObjects.RemoveWhere(x => { var s = x as AxisStylePlaceHolderBase; return null != s && s.Index > maxCount; });
+        _graphObjects.RemoveWhere(x => { var s = x as AxisStylePlaceHolderBase; return s is not null && s.Index > maxCount; });
 
         suspendToken.ResumeSilently();
       }
@@ -399,7 +399,7 @@ namespace Altaxo.Graph.Gdi
               EhSelfChanged(new ScaleInstanceChangedEventArgs(oldScale, newScale) { ScaleIndex = i });
           }
 
-          if (null != oldscales)
+          if (oldscales is not null)
             oldscales.Dispose();
 
           suspendToken.Resume();
@@ -418,7 +418,7 @@ namespace Altaxo.Graph.Gdi
         var idx = _graphObjects.IndexOfFirst(item => item is LegendText);
         TextGraphic? oldvalue = idx >= 0 ? (TextGraphic)_graphObjects[idx] : null;
 
-        if (value != null)
+        if (value is not null)
         {
           if (idx < 0)
             _graphObjects.Add(value);
@@ -450,12 +450,12 @@ namespace Altaxo.Graph.Gdi
     {
       base.OnGraphObjectsCollectionInstanceInitialized();
 
-      if (null != _placeHolders)
+      if (_placeHolders is not null)
       {
       }
       _placeHolders = _graphObjects.CreatePartialViewOfType<PlaceHolder>();
       _plotItemPlaceHolders = _graphObjects.CreatePartialViewOfType<PlotItemPlaceHolder>();
-      if (null != _placeHolders)
+      if (_placeHolders is not null)
       {
       }
     }
@@ -469,7 +469,7 @@ namespace Altaxo.Graph.Gdi
       [MemberNotNull(nameof(_plotItems))]
       protected set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         if (ChildSetMember(ref _plotItems, value))
@@ -511,7 +511,7 @@ namespace Altaxo.Graph.Gdi
       var existingLegendIndex = GraphObjects.IndexOfFirst(x => x is LegendText);
       var existingLegend = existingLegendIndex >= 0 ? (LegendText)GraphObjects[existingLegendIndex] : null;
 
-      if (existingLegend != null)
+      if (existingLegend is not null)
         tgo = new TextGraphic(existingLegend);
       else
         tgo = new TextGraphic(this.GetPropertyContext());
@@ -524,7 +524,7 @@ namespace Altaxo.Graph.Gdi
       tgo.Text = strg.ToString();
 
       // if the position of the old legend is outside, use a new position
-      if (null == existingLegend || existingLegend.Position.X < 0 || existingLegend.Position.Y < 0 ||
+      if (existingLegend is null || existingLegend.Position.X < 0 || existingLegend.Position.Y < 0 ||
         existingLegend.Position.X > Size.X || existingLegend.Position.Y > Size.Y)
         tgo.Position = new PointD2D(0.1 * Size.X, 0.1 * Size.Y);
       else
@@ -700,7 +700,7 @@ namespace Altaxo.Graph.Gdi
       {
         if (newtitle is null)
         {
-          if (style != null)
+          if (style is not null)
             style.Title = null;
         }
         else if (_axisStyles.AxisStyleEnsured(id).Title is { } title)
@@ -938,7 +938,7 @@ namespace Altaxo.Graph.Gdi
       IHitTestObject? hit;
 
       // first test the items in the child layers, since they are plotted on top of our own items
-      if (null != (hit = base.HitTest(parentHitTestData, plotItemsOnly)))
+      if ((hit = base.HitTest(parentHitTestData, plotItemsOnly)) is not null)
         return hit;
 
       /*
@@ -966,11 +966,11 @@ namespace Altaxo.Graph.Gdi
         for (int i = _graphObjects.Count - 1; i >= 0; --i)
         {
           var plotItemPlaceHolder = _graphObjects[i] as PlotItemPlaceHolder;
-          if (null == plotItemPlaceHolder)
+          if (plotItemPlaceHolder is null)
             continue;
 
           hit = plotItemPlaceHolder.HitTest(localCoord);
-          if (null != hit)
+          if (hit is not null)
           {
             hit.ParentLayer = this;
             return ForwardTransform(hit);
@@ -1007,7 +1007,7 @@ namespace Altaxo.Graph.Gdi
     {
       var als = o.HittedObject as AxisLabelStyle;
       var axisStyle = als?.ParentObject as AxisStyle;
-      if (axisStyle != null)
+      if (axisStyle is not null)
       {
         axisStyle.HideMinorLabels();
         return true;
@@ -1033,7 +1033,7 @@ namespace Altaxo.Graph.Gdi
 
       foreach (var axisStyle in _axisStyles)
       {
-        if (null != axisStyle.Title)
+        if (axisStyle.Title is not null)
           SetDefaultAxisTitlePositionAndOrientation(axisStyle.Title, axisStyle.StyleID, _coordinateSystem.GetAxisStyleInformation(axisStyle.StyleID));
       }
     }
@@ -1090,7 +1090,7 @@ namespace Altaxo.Graph.Gdi
           foreach (IGPlotItem pa in PlotItems)
           {
             var paXB = pa as IXBoundsHolder;
-            if (null != paXB)
+            if (paXB is not null)
             {
               using (var paToken = pa.SuspendGetToken()) // we have to suspend the plotitem. When the boundary data in the plot item are not uptodate, it would otherwise create new BoundaryChangedEventArgs, which would lead to inefficiency or a stack overflow
               {
@@ -1111,11 +1111,11 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     protected void InitializeXScaleDataBounds()
     {
-      if (null == PlotItems)
+      if (PlotItems is null)
         return; // can happen during deserialization
 
       var scaleBounds = _scales.X.DataBoundsObject;
-      if (null == scaleBounds)
+      if (scaleBounds is null)
         return;
 
       // we have to disable our own Handler since by calling MergeXBoundsInto, it is possible that the type of DataBound of the plot item has to change, and that
@@ -1169,7 +1169,7 @@ namespace Altaxo.Graph.Gdi
           foreach (IGPlotItem pa in PlotItems)
           {
             var paYB = pa as IYBoundsHolder;
-            if (null != paYB)
+            if (paYB is not null)
             {
               using (var paToken = pa.SuspendGetToken()) // we have to suspend the plotitem. When the boundary data in the plot item are not uptodate, it would otherwise create new BoundaryChangedEventArgs, which would lead to inefficiency or a stack overflow
               {
@@ -1190,12 +1190,12 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     protected void InitializeYScaleDataBounds()
     {
-      if (null == PlotItems)
+      if (PlotItems is null)
         return; // can happen during deserialization
 
       var scaleBounds = _scales.Y.DataBoundsObject;
 
-      if (null == scaleBounds)
+      if (scaleBounds is null)
         return;
 
       // we have to disable our own Handler since if we change one DataBound of a association,
@@ -1277,19 +1277,19 @@ namespace Altaxo.Graph.Gdi
 
     private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
     {
-      if (null != _scales)
+      if (_scales is not null)
         yield return new Main.DocumentNodeAndName(_scales, "Scales");
 
-      if (null != _plotItems)
+      if (_plotItems is not null)
         yield return new Main.DocumentNodeAndName(_plotItems, "PlotItems");
 
-      if (null != _axisStyles)
+      if (_axisStyles is not null)
         yield return new Main.DocumentNodeAndName(_axisStyles, "AxisStyles");
 
-      if (null != _gridPlanes)
+      if (_gridPlanes is not null)
         yield return new Main.DocumentNodeAndName(_gridPlanes, "Grids");
 
-      if (null != _coordinateSystem)
+      if (_coordinateSystem is not null)
         yield return new Main.DocumentNodeAndName(_coordinateSystem, "CoordinateSystem");
     }
 
@@ -1337,7 +1337,7 @@ namespace Altaxo.Graph.Gdi
 
         _coordinateSystem.UpdateAreaSize(Size);
 
-        if (null != AxisStyles)
+        if (AxisStyles is not null)
           AxisStyles.UpdateCoordinateSystem(value);
 
         EhSelfChanged(EventArgs.Empty);
@@ -1478,7 +1478,7 @@ namespace Altaxo.Graph.Gdi
 
       public void AddAxisStyle(AxisStyle value)
       {
-        if (value != null)
+        if (value is not null)
         {
           _axisStyles.Add(value);
         }
@@ -1514,7 +1514,7 @@ namespace Altaxo.Graph.Gdi
 
       public bool ContainsAxisStyle(CSLineID id)
       {
-        return null != AxisStyle(id);
+        return AxisStyle(id) is not null;
       }
 
       public AxisStyle? AxisStyle(CSLineID id)
@@ -1751,7 +1751,7 @@ namespace Altaxo.Graph.Gdi
         if (object.ReferenceEquals(this, obj))
           return true;
         var from = obj as PlaceHolder;
-        if (null != from)
+        if (from is not null)
         {
           //this.ParentObject = from.ParentObject;
           return true;
@@ -1772,7 +1772,7 @@ namespace Altaxo.Graph.Gdi
           return false;
 
         var from = obj as AxisStylePlaceHolderBase;
-        if (null != from)
+        if (from is not null)
           Index = from.Index;
 
         return true;
@@ -1833,7 +1833,7 @@ namespace Altaxo.Graph.Gdi
       public override void Paint(Graphics g, IPaintContext paintContext)
       {
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+        if (layer is not null && Index >= 0 && Index < layer._axisStyles.Count)
           layer._axisStyles.ItemAt(Index).PaintLine(g, layer);
       }
 
@@ -1841,10 +1841,10 @@ namespace Altaxo.Graph.Gdi
       {
         IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+        if (layer is not null && Index >= 0 && Index < layer._axisStyles.Count)
         {
           var axisStyle = layer._axisStyles.ItemAt(Index);
-          if (axisStyle.IsAxisLineEnabled && null != (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData.GetHittedPointInWorldCoord(), false)))
+          if (axisStyle.IsAxisLineEnabled && (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData.GetHittedPointInWorldCoord(), false)) is not null)
           {
             hit.DoubleClick = AxisScaleEditorMethod;
             return hit;
@@ -1852,7 +1852,7 @@ namespace Altaxo.Graph.Gdi
 
           // hit testing the axes - secondly now with the ticks
           // in this case the TitleAndFormat editor for the axis should be shown
-          if (axisStyle?.IsAxisLineEnabled == true && null != (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData.GetHittedPointInWorldCoord(), true)))
+          if (axisStyle?.IsAxisLineEnabled == true && (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData.GetHittedPointInWorldCoord(), true)) is not null)
           {
             hit.DoubleClick = AxisStyleEditorMethod;
             return hit;
@@ -1865,10 +1865,10 @@ namespace Altaxo.Graph.Gdi
       {
         IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+        if (layer is not null && Index >= 0 && Index < layer._axisStyles.Count)
         {
           var axisStyle = layer._axisStyles.ItemAt(Index);
-          if (axisStyle.IsAxisLineEnabled && null != (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData, false)))
+          if (axisStyle.IsAxisLineEnabled && (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData, false)) is not null)
           {
             hit.DoubleClick = AxisScaleEditorMethod;
             return hit;
@@ -1876,7 +1876,7 @@ namespace Altaxo.Graph.Gdi
 
           // hit testing the axes - secondly now with the ticks
           // in this case the TitleAndFormat editor for the axis should be shown
-          if (axisStyle?.IsAxisLineEnabled == true && null != (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData, true)))
+          if (axisStyle?.IsAxisLineEnabled == true && (hit = axisStyle?.AxisLineStyle?.HitTest(layer, hitData, true)) is not null)
           {
             hit.DoubleClick = AxisStyleEditorMethod;
             return hit;
@@ -1939,10 +1939,10 @@ namespace Altaxo.Graph.Gdi
       {
         IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+        if (layer is not null && Index >= 0 && Index < layer._axisStyles.Count)
         {
           var axisStyle = layer._axisStyles.ItemAt(Index);
-          if (axisStyle.AreMajorLabelsEnabled && null != (hit = axisStyle.MajorLabelStyle?.HitTest(layer, hitData.GetHittedPointInWorldCoord())))
+          if (axisStyle.AreMajorLabelsEnabled && (hit = axisStyle.MajorLabelStyle?.HitTest(layer, hitData.GetHittedPointInWorldCoord())) is not null)
           {
             hit.DoubleClick = AxisLabelMajorStyleEditorMethod;
             hit.Remove = layer.EhAxisLabelMajorStyleRemove;
@@ -1956,10 +1956,10 @@ namespace Altaxo.Graph.Gdi
       {
         IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+        if (layer is not null && Index >= 0 && Index < layer._axisStyles.Count)
         {
           var axisStyle = layer._axisStyles.ItemAt(Index);
-          if (axisStyle.AreMajorLabelsEnabled && null != (hit = axisStyle.MajorLabelStyle?.HitTest(layer, hitData)))
+          if (axisStyle.AreMajorLabelsEnabled && (hit = axisStyle.MajorLabelStyle?.HitTest(layer, hitData)) is not null)
           {
             hit.DoubleClick = AxisLabelMajorStyleEditorMethod;
             hit.Remove = layer.EhAxisLabelMajorStyleRemove;
@@ -1972,7 +1972,7 @@ namespace Altaxo.Graph.Gdi
       public override void Paint(Graphics g, IPaintContext paintContext)
       {
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer)
+        if (layer is not null)
         {
           if (Index >= 0 && Index < layer._axisStyles.Count)
             layer._axisStyles.ItemAt(Index).PaintMajorLabels(g, layer);
@@ -2033,10 +2033,10 @@ namespace Altaxo.Graph.Gdi
       {
         IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+        if (layer is not null && Index >= 0 && Index < layer._axisStyles.Count)
         {
           var axisStyle = layer._axisStyles.ItemAt(Index);
-          if (axisStyle.AreMinorLabelsEnabled && null != (hit = axisStyle.MinorLabelStyle?.HitTest(layer, hitData.GetHittedPointInWorldCoord())))
+          if (axisStyle.AreMinorLabelsEnabled && (hit = axisStyle.MinorLabelStyle?.HitTest(layer, hitData.GetHittedPointInWorldCoord())) is not null)
           {
             hit.DoubleClick = AxisLabelMinorStyleEditorMethod;
             hit.Remove = layer.EhAxisLabelMinorStyleRemove;
@@ -2050,10 +2050,10 @@ namespace Altaxo.Graph.Gdi
       {
         IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+        if (layer is not null && Index >= 0 && Index < layer._axisStyles.Count)
         {
           var axisStyle = layer._axisStyles.ItemAt(Index);
-          if (axisStyle.AreMinorLabelsEnabled && null != (hit = axisStyle.MinorLabelStyle?.HitTest(layer, hitData)))
+          if (axisStyle.AreMinorLabelsEnabled && (hit = axisStyle.MinorLabelStyle?.HitTest(layer, hitData)) is not null)
           {
             hit.DoubleClick = AxisLabelMinorStyleEditorMethod;
             hit.Remove = layer.EhAxisLabelMinorStyleRemove;
@@ -2066,7 +2066,7 @@ namespace Altaxo.Graph.Gdi
       public override void Paint(Graphics g, IPaintContext paintContext)
       {
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer)
+        if (layer is not null)
         {
           if (Index >= 0 && Index < layer._axisStyles.Count)
             layer._axisStyles.ItemAt(Index).PaintMinorLabels(g, layer);
@@ -2130,12 +2130,12 @@ namespace Altaxo.Graph.Gdi
       public override void SetParentSize(PointD2D parentSize, bool isTriggeringChangedEvent)
       {
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer && null != layer._axisStyles)
+        if (layer is not null && layer._axisStyles is not null)
         {
           if (Index >= 0 && Index < layer._axisStyles.Count)
           {
             var title = layer._axisStyles.ItemAt(Index).Title;
-            if (null != title)
+            if (title is not null)
               title.SetParentSize(parentSize, isTriggeringChangedEvent);
           }
         }
@@ -2145,12 +2145,12 @@ namespace Altaxo.Graph.Gdi
       {
         IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+        if (layer is not null && Index >= 0 && Index < layer._axisStyles.Count)
         {
           var axisStyle = layer._axisStyles.ItemAt(Index);
-          if (null != axisStyle && null != axisStyle.Title && null != (hit = axisStyle.Title.HitTest(hitData)))
+          if (axisStyle is not null && axisStyle.Title is not null && (hit = axisStyle.Title.HitTest(hitData)) is not null)
           {
-            if (null == hit.Remove)
+            if (hit.Remove is null)
               hit.Remove = EhRemoveAxisStyleTitle;
             return hit;
           }
@@ -2162,12 +2162,12 @@ namespace Altaxo.Graph.Gdi
       {
         IHitTestObject? hit = null;
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+        if (layer is not null && Index >= 0 && Index < layer._axisStyles.Count)
         {
           var axisStyle = layer._axisStyles.ItemAt(Index);
-          if (null != axisStyle && null != axisStyle.Title && null != (hit = axisStyle.Title.HitTest(hitData)))
+          if (axisStyle is not null && axisStyle.Title is not null && (hit = axisStyle.Title.HitTest(hitData)) is not null)
           {
-            if (null == hit.Remove)
+            if (hit.Remove is null)
               hit.Remove = EhRemoveAxisStyleTitle;
             return hit;
           }
@@ -2179,7 +2179,7 @@ namespace Altaxo.Graph.Gdi
       {
         var go = (GraphicBase)o.HittedObject;
         var layer = o.ParentLayer as XYPlotLayer;
-        if (null != layer)
+        if (layer is not null)
         {
           foreach (AxisStyle style in layer._axisStyles)
           {
@@ -2196,7 +2196,7 @@ namespace Altaxo.Graph.Gdi
       public override void Paint(Graphics g, IPaintContext paintContext)
       {
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer)
+        if (layer is not null)
         {
           if (Index >= 0 && Index < layer._axisStyles.Count)
             layer._axisStyles.ItemAt(Index).PaintTitle(g, paintContext, layer);
@@ -2251,7 +2251,7 @@ namespace Altaxo.Graph.Gdi
       public override void Paint(Graphics g, IPaintContext paintContext)
       {
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer)
+        if (layer is not null)
         {
           layer._gridPlanes.PaintGrid(g, layer);
         }
@@ -2299,7 +2299,7 @@ namespace Altaxo.Graph.Gdi
           return false;
 
         var from = obj as PlotItemPlaceHolder;
-        if (null != from)
+        if (from is not null)
         {
           PlotItemParent = from.PlotItemParent;
           PlotItemIndex = from.PlotItemIndex;
@@ -2310,7 +2310,7 @@ namespace Altaxo.Graph.Gdi
 
       public override string ToString()
       {
-        if (null == PlotItemParent)
+        if (PlotItemParent is null)
         {
           return "Plot item collection (root)";
         }
@@ -2331,16 +2331,16 @@ namespace Altaxo.Graph.Gdi
       public override void Paint(Graphics g, IPaintContext paintContext)
       {
         var layer = ParentObject as XYPlotLayer;
-        if (null != layer)
+        if (layer is not null)
         {
           if (layer.ClipDataToFrame == LayerDataClipping.StrictToCS)
           {
             g.Clip = layer.CoordinateSystem.GetRegion();
           }
 
-          if (null == PlotItemParent) // this is the root plot item of the layer
+          if (PlotItemParent is null) // this is the root plot item of the layer
           {
-            if (layer._plotItems == null)
+            if (layer._plotItems is null)
             {
               throw new InvalidOperationException("The member _plotItems is null on this layer!");
             }
@@ -2368,16 +2368,16 @@ namespace Altaxo.Graph.Gdi
 
       public override IHitTestObject? HitTest(HitTestPointData hitData)
       {
-        if (null == PlotItemParent)
+        if (PlotItemParent is null)
           return null;
         if (PlotItemIndex < 0 || PlotItemIndex >= PlotItemParent.Count)
           return null;
         var layer = ParentObject as IPlotArea;
-        if (null == layer)
+        if (layer is null)
           return null;
 
         var xylayer = layer as XYPlotLayer;
-        if (null != xylayer && xylayer.ClipDataToFrame != LayerDataClipping.None) // if data are clipped, we search only if clicked inside the layer
+        if (xylayer is not null && xylayer.ClipDataToFrame != LayerDataClipping.None) // if data are clipped, we search only if clicked inside the layer
         {
           var region = layer.CoordinateSystem.GetRegion();
           var pt = hitData.GetHittedPointInWorldCoord();
@@ -2386,11 +2386,11 @@ namespace Altaxo.Graph.Gdi
         }
 
         var result = PlotItemParent[PlotItemIndex].HitTest(layer, hitData.GetHittedPointInWorldCoord());
-        if (null != result)
+        if (result is not null)
         {
-          if (null == result.DoubleClick)
+          if (result.DoubleClick is null)
             result.DoubleClick = PlotItemEditorMethod;
-          if (null == result.Remove)
+          if (result.Remove is null)
             result.Remove = PlotItemParent.EhHitTestObject_Remove;
         }
 

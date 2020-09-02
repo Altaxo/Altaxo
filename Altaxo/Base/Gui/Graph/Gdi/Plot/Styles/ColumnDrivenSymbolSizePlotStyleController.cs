@@ -116,7 +116,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         _scaleController.InitializeDocument(_doc.Scale);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _scaleController.ViewObject = _view.ScaleView;
         InitializeDataColumnText();

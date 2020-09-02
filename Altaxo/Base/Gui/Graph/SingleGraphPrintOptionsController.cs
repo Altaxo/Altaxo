@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Graph
       {
         _printLocationList = new SelectableListNodeList(_doc.PrintLocation);
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.Init_PrintLocation(_printLocationList);
         _view.Init_FitGraphToPrintIfLarger(_doc.FitGraphToPrintIfLarger);
@@ -142,7 +142,7 @@ namespace Altaxo.Gui.Graph
 
     public bool InitializeDocument(params object[] args)
     {
-      if (null == args || args.Length == 0 || !(args[0] is SingleGraphPrintOptions))
+      if (args is null || args.Length == 0 || !(args[0] is SingleGraphPrintOptions))
         return false;
 
       _originalDoc = (SingleGraphPrintOptions)args[0];
@@ -169,7 +169,7 @@ namespace Altaxo.Gui.Graph
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.PrintLocationChanged -= EhPrintLocationChanged;
           _view.FitGraphToPrintIfLargerChanged -= EhFitGraphToPrintIfLargerChanged;
@@ -183,7 +183,7 @@ namespace Altaxo.Gui.Graph
 
         _view = value as ISingleGraphPrintOptionsView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
 

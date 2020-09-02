@@ -45,7 +45,7 @@ namespace Altaxo.Gui.Common
 
     private void Initialize()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.SelectedObjectsToView = new object[] { _doc };
       }

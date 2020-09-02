@@ -81,7 +81,7 @@ namespace Altaxo.Graph.Gdi.Shapes
           ((GraphicBase)_parent.HittedObject).EhSelfChanged(EventArgs.Empty);
 
         var ht = _parent as GraphicBaseHitTestObject;
-        if (null != ht && !_hasMoved && !_wasActivatedUponCreation)
+        if (ht is not null && !_hasMoved && !_wasActivatedUponCreation)
           return true;
         else
           return false;

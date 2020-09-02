@@ -101,7 +101,7 @@ namespace Altaxo.Serialization
         return true;
 
       var from = obj as AbsoluteAndRelativeFileName;
-      if (null != from)
+      if (from is not null)
       {
         _absoluteFileName = from._absoluteFileName;
         _relativeFileName = from._relativeFileName;

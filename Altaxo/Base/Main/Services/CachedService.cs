@@ -72,7 +72,7 @@ namespace Altaxo.Main.Services
 
     private void EhServiceChanged()
     {
-      if (null != _instance)
+      if (_instance is not null)
       {
         _serviceDetached?.Invoke(_instance);
       }
@@ -141,7 +141,7 @@ namespace Altaxo.Main.Services
     /// the methods to attach the service and detach the service should be called.</summary>
     public void StartCaching()
     {
-      if (null == _instance && !_instanceRetrievalTried)
+      if (_instance is null && !_instanceRetrievalTried)
       {
         EhServiceChanged();
       }

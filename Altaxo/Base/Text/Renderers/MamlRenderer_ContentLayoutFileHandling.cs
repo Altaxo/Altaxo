@@ -66,7 +66,7 @@ namespace Altaxo.Text.Renderers
     /// </summary>
     public void WriteContentLayoutFile()
     {
-      if (null != Writer)
+      if (Writer is not null)
       {
         CloseCurrentMamlFile();
       }

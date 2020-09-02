@@ -144,7 +144,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       var fitFunction = new DummyFitFunc(fitFunc, parameter);
       if (dataTable is null && xCol is null && yCol is null)
         _fitEle = new FitElement(fitFunction, Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(start, count));
-      else if (null != dataTable && null != xCol && null != yCol)
+      else if (dataTable is not null && xCol is not null && yCol is not null)
         _fitEle = new FitElement(fitFunction, dataTable, groupNumber, Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(start, count), xCol, yCol);
       else
         throw new ArgumentException($"Either all three arguments {nameof(dataTable)}, {nameof(xCol)}, {nameof(yCol)} must be null or not null!");

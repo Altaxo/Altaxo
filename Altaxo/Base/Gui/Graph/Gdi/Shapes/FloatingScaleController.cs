@@ -80,7 +80,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     {
       yield return new ControllerAndSetNullMethod(_tickSpacingController, () => _tickSpacingController = null);
 
-      if (null != _axisStyleControllerGlue)
+      if (_axisStyleControllerGlue is not null)
       {
         yield return new ControllerAndSetNullMethod(_axisStyleControllerGlue.AxisStyleController, null);
         yield return new ControllerAndSetNullMethod(_axisStyleControllerGlue.MajorLabelCondController, null);
@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
         _axisStyleControllerGlue = new AxisStyleControllerGlue(_doc.AxisStyle);
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.DocPosition = _doc.Position;
         _view.ScaleNumber = _doc.ScaleNumber;
@@ -145,7 +145,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
       // Scale/ticks
       _doc.ScaleType = _view.ScaleSegmentType;
-      if (null != _tickSpacingController && false == _tickSpacingController.Apply(disposeController))
+      if (_tickSpacingController is not null && false == _tickSpacingController.Apply(disposeController))
         return false;
       _doc.TickSpacing = _tempTickSpacing;
 
@@ -153,10 +153,10 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       if (false == _axisStyleControllerGlue.AxisStyleController.Apply(disposeController))
         return false;
 
-      if (null != _axisStyleControllerGlue.MajorLabelCondController && false == _axisStyleControllerGlue.MajorLabelCondController.Apply(disposeController))
+      if (_axisStyleControllerGlue.MajorLabelCondController is not null && false == _axisStyleControllerGlue.MajorLabelCondController.Apply(disposeController))
         return false;
 
-      if (null != _axisStyleControllerGlue.MinorLabelCondController && false == _axisStyleControllerGlue.MinorLabelCondController.Apply(disposeController))
+      if (_axisStyleControllerGlue.MinorLabelCondController is not null && false == _axisStyleControllerGlue.MinorLabelCondController.Apply(disposeController))
         return false;
 
       _doc.BackgroundPadding = _view.BackgroundPadding;
@@ -179,21 +179,21 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     {
       if (bInit)
       {
-        if (_tempTickSpacing != null)
+        if (_tempTickSpacing is not null)
           _tickSpacingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempTickSpacing }, typeof(IMVCAController), UseDocument.Directly);
         else
           _tickSpacingController = null;
       }
-      if (null != _view)
+      if (_view is not null)
       {
-        _view.TickSpacingView = null != _tickSpacingController ? _tickSpacingController.ViewObject : null;
+        _view.TickSpacingView = _tickSpacingController is not null ? _tickSpacingController.ViewObject : null;
       }
     }
 
     private void EhTickSpacingTypeChanged()
     {
       var selNode = _tickSpacingTypes.FirstSelectedNode; // FirstSelectedNode can be null when the content of the box changes
-      if (null == selNode)
+      if (selNode is null)
         return;
 
       var spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Tag;

@@ -159,7 +159,7 @@ namespace Altaxo.Gui
 
     public QuantityWithUnitGuiEnvironment(IEnumerable<IUnit>? fixedUnits, IEnumerable<IUnit>? additionalUnits)
     {
-      if (null != fixedUnits)
+      if (fixedUnits is not null)
         _fixedUnits = fixedUnits.ToArray();
       else
         _fixedUnits = _emptyUnitList;
@@ -328,7 +328,7 @@ namespace Altaxo.Gui
 
         var prefix = SIPrefix.TryGetPrefixFromShortcut(prefixString);
 
-        if (null != prefix) // we found a prefix, thus we can return prefix + unit
+        if (prefix is not null) // we found a prefix, thus we can return prefix + unit
         {
           result = new PrefixedUnit(prefix, u);
           return true;

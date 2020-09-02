@@ -53,7 +53,7 @@ namespace Altaxo.Scripting
       foreach (var entry in _innerList.Keys)
       {
         var asNode = entry as Main.IDocumentLeafNode;
-        if (null != asNode)
+        if (asNode is not null)
           yield return new Main.DocumentNodeAndName(asNode, entry.CreationTime.ToUniversalTime().ToString(System.Globalization.CultureInfo.InvariantCulture));
       }
     }
@@ -61,7 +61,7 @@ namespace Altaxo.Scripting
     protected override void Dispose(bool isDisposing)
     {
       var list = _innerList;
-      if (null != list && list.Count > 0)
+      if (list is not null && list.Count > 0)
       {
         _innerList = new Dictionary<FitFunctionScript, FitFunctionScript>();
         foreach (var item in list.Keys)
@@ -77,9 +77,9 @@ namespace Altaxo.Scripting
 
       foreach (FitFunctionScript script in this)
       {
-        if (name != null && script.FitFunctionName != name)
+        if (name is not null && script.FitFunctionName != name)
           continue;
-        if (category != null && script.FitFunctionCategory != category)
+        if (category is not null && script.FitFunctionCategory != category)
           continue;
         result.Add(script);
       }
@@ -102,7 +102,7 @@ namespace Altaxo.Scripting
     /// Otherwise, the existing script with the same properties is returned.</returns>
     public FitFunctionScript Add(FitFunctionScript script)
     {
-      if (null == script)
+      if (script is null)
         throw new ArgumentNullException();
 
       if (!_innerList.TryGetValue(script, out var returnValue))
@@ -169,7 +169,7 @@ namespace Altaxo.Scripting
     public void Clear()
     {
       var list = _innerList;
-      if (null != list && list.Count > 0)
+      if (list is not null && list.Count > 0)
       {
         _innerList = new Dictionary<FitFunctionScript, FitFunctionScript>();
         foreach (var item in list.Keys)

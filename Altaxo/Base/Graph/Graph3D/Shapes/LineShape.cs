@@ -136,7 +136,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         result = GetNewHitTestObject(parentHitData.WorldTransformation);
       }
 
-      if (result != null)
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
 
       return result;

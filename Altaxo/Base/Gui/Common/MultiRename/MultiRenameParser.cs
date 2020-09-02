@@ -41,8 +41,8 @@ namespace Altaxo.Gui.Common.MultiRename
     {
       public int Compare(string? x, string? y)
       {
-        int lenx = null == x ? 0 : x.Length;
-        int leny = null == y ? 0 : y.Length;
+        int lenx = x is null ? 0 : x.Length;
+        int leny = y is null ? 0 : y.Length;
 
         if (lenx != leny) // make sorting so that the longest strings come first
           return lenx < leny ? 1 : -1;

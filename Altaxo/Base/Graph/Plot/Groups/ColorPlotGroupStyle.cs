@@ -263,7 +263,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     public int Step(int step)
     {
-      if (_listOfValues == null)
+      if (_listOfValues is null)
         return 0;
 
       _colorIndex = ColorSetExtensions.GetNextPlotColorIndex(_listOfValues, _colorIndex, step, out var wraps);
@@ -303,7 +303,7 @@ namespace Altaxo.Graph.Plot.Groups
       // we will not accept the known color set here
       // this has historical reasons: until 2012 we don't even have the concept of color sets
       // thus all plot colors were part of the know color set, and we could not distinguish between known colors and plot colors
-      if (null != c.ParentColorSet &&
+      if (c.ParentColorSet is not null &&
           !object.ReferenceEquals(c.ParentColorSet, ColorSetManager.Instance.BuiltinKnownColors)
         )
       {
@@ -335,7 +335,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         // we will not accept the known color set here
@@ -367,7 +367,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     private NamedColor InternalGetColorFromColorSetAndIndex()
     {
-      if (_listOfValues != null && _listOfValues.Count > 0)
+      if (_listOfValues is not null && _listOfValues.Count > 0)
       {
         if (_colorIndex < 0)
           _colorIndex = 0;
@@ -410,7 +410,7 @@ namespace Altaxo.Graph.Plot.Groups
       Getter getter)
     {
       if (!externalGroups.ContainsType(typeof(ColorGroupStyle))
-        && null != localGroups
+        && localGroups is not null
         && !localGroups.ContainsType(typeof(ColorGroupStyle)))
       {
         localGroups.Add(ColorGroupStyle.NewLocalGroupStyle());
@@ -419,10 +419,10 @@ namespace Altaxo.Graph.Plot.Groups
       ColorGroupStyle? grpStyle = null;
       if (externalGroups.ContainsType(typeof(ColorGroupStyle)))
         grpStyle = (ColorGroupStyle)externalGroups.GetPlotGroupStyle(typeof(ColorGroupStyle));
-      else if (localGroups != null)
+      else if (localGroups is not null)
         grpStyle = (ColorGroupStyle)localGroups.GetPlotGroupStyle(typeof(ColorGroupStyle));
 
-      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+      if (grpStyle is not null && getter is not null && !grpStyle.IsInitialized)
         grpStyle.Initialize(getter());
     }
 

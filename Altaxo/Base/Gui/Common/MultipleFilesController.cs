@@ -79,7 +79,7 @@ namespace Altaxo.Gui.Common
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.FileNames = _fileNames;
       }
@@ -157,7 +157,7 @@ namespace Altaxo.Gui.Common
     {
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(FileFilters));
 
         _fileFilters = value.ToArray();
@@ -167,7 +167,7 @@ namespace Altaxo.Gui.Common
     private void EhBrowseFileName()
     {
       var node = _fileNames.FirstSelectedNode;
-      if (null == node)
+      if (node is null)
         return;
 
       var options = new OpenFileOptions();
@@ -187,7 +187,7 @@ namespace Altaxo.Gui.Common
       var options = new OpenFileOptions();
       options.AddFilter("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)");
       options.AddFilter("*.*", "All files (*.*)");
-      if (null != node)
+      if (node is not null)
         options.InitialDirectory = System.IO.Path.GetDirectoryName((string)node.Tag!);
       options.Multiselect = true;
       if (Current.Gui.ShowOpenFileDialog(options))

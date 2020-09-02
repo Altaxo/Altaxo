@@ -129,7 +129,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _scale)
+      if (_scale is not null)
         yield return new Main.DocumentNodeAndName(_scale, "Scale");
     }
 
@@ -248,12 +248,12 @@ namespace Altaxo.Graph.Scales.Deprecated
         _scale = value;
         if (!object.ReferenceEquals(value, oldvalue))
         {
-          if (null != oldvalue)
+          if (oldvalue is not null)
           {
             oldvalue.Changed -= new EventHandler(EhScaleChanged);
             oldvalue.IsLinked = false;
           }
-          if (null != value)
+          if (value is not null)
           {
             value.Changed += new EventHandler(EhScaleChanged);
           }

@@ -659,7 +659,7 @@ namespace Altaxo.Serialization.Xml
     {
       string type = _xmlReader.GetAttribute("Type");
 
-      if (null != type)
+      if (type is not null)
       {
         if ("UndefinedValue" == type)
         {
@@ -710,7 +710,7 @@ namespace Altaxo.Serialization.Xml
       returnValueIsOuterXml = false;
       string type = _xmlReader.GetAttribute("Type");
 
-      if (null != type)
+      if (type is not null)
       {
         if ("UndefinedValue" == type)
         {

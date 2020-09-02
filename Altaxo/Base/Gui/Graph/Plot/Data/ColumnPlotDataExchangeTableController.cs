@@ -130,13 +130,13 @@ namespace Altaxo.Gui.Graph.Plot.Data
         DataTable tg = _doc.OriginalTable;
         foreach (var tableName in tables)
         {
-          _availableTables.Add(new SelectableListNode(tableName, Current.Project.DataTableCollection[tableName], tg != null && tg.Name == tableName));
+          _availableTables.Add(new SelectableListNode(tableName, Current.Project.DataTableCollection[tableName], tg is not null && tg.Name == tableName));
         }
 
         TriggerUpdateOfMatchingTables();
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.AvailableTables_Initialize(_availableTables);
         _view.MatchingTables_Initialize(_matchingTables);
@@ -176,7 +176,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       var node = _availableTables.FirstSelectedNode;
       var tg = node?.Tag as DataTable;
 
-      if (null == tg || object.ReferenceEquals(_doc.NewTable, tg))
+      if (tg is null || object.ReferenceEquals(_doc.NewTable, tg))
         return;
 
       _doc.NewTable = tg;
@@ -195,7 +195,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public void EhView_MatchingTableSelectionChanged()
     {
       var node = _matchingTables.FirstSelectedNode;
-      if (null == node)
+      if (node is null)
         return; // no node selected
 
       var tag = (DataTable)node.Tag;
@@ -255,7 +255,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
       foreach (var columnNames in groupsOfColumnNames)
       {
-        if (result == null)
+        if (result is null)
         {
           result = new HashSet<DataTable>(GetTablesWithGroupThatFitExistingPlotColumns(columnNames, cancellationToken).Select(n => n.dataTable));
         }

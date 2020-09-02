@@ -122,7 +122,7 @@ namespace Altaxo.Text
         // we need to calculate in advance the number of referenced local images
 
         HashSet<string> allNames;
-        if (null != s.ReferencedImageUrls)
+        if (s.ReferencedImageUrls is not null)
         {
           allNames = new HashSet<string>();
           foreach (var entry in s.ReferencedImageUrls)
@@ -224,7 +224,7 @@ namespace Altaxo.Text
       ChildCopyToMember(ref _notes, from._notes);
 
       // Clone also the properties
-      if (from._documentProperties != null && from._documentProperties.Count > 0)
+      if (from._documentProperties is not null && from._documentProperties.Count > 0)
       {
         PropertyBagNotNull.CopyFrom(from._documentProperties);
       }
@@ -401,14 +401,14 @@ namespace Altaxo.Text
       get { return _name ?? throw new InvalidProgramException($"The name is not set yet. To text for this condition, use {nameof(TryGetName)} instead."); }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("New name is null");
         if (_name == value)
           return; // nothing changed
 
         var canBeRenamed = true;
         var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
-        if (null != parentAs)
+        if (parentAs is not null)
         {
           canBeRenamed = parentAs.EhChild_CanBeRenamed(this, value);
         }
@@ -418,7 +418,7 @@ namespace Altaxo.Text
           var oldName = _name;
           _name = value;
 
-          if (null != parentAs)
+          if (parentAs is not null)
             parentAs.EhChild_HasBeenRenamed(this, oldName);
 
           OnNameChanged(oldName);
@@ -534,7 +534,7 @@ namespace Altaxo.Text
     /// <exception cref="ArgumentNullException">image</exception>
     public string AddImage(MemoryStreamImageProxy image)
     {
-      if (null == image)
+      if (image is null)
         throw new ArgumentNullException(nameof(image));
 
       if (!_images.ContainsKey(image.ContentHash))

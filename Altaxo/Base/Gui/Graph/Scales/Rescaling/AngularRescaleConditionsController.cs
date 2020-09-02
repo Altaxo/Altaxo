@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
         BuildOriginList();
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.Origin = _originList;
       }

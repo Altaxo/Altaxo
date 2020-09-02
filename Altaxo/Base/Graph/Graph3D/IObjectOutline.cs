@@ -158,7 +158,7 @@ namespace Altaxo.Graph.Graph3D
       // Replace the original outline object with new one that contain the transformation from local (layer) to world coordinates (root layer).
       for (int i = 0; i < _outlines.Length; ++i)
       {
-        if (null != _outlines[i])
+        if (_outlines[i] is not null)
           _outlines[i] = _outlines[i].WithAdditionalTransformation(localToWorldTransformation);
       }
     }
@@ -192,7 +192,7 @@ namespace Altaxo.Graph.Graph3D
 
     public MultiRectangularObjectOutline(IEnumerable<RectangleD3D> rectangles, Matrix4x3 transformation)
     {
-      if (null == rectangles)
+      if (rectangles is null)
         throw new ArgumentNullException(nameof(rectangles));
 
       _rectangles = rectangles.ToArray();
@@ -250,7 +250,7 @@ namespace Altaxo.Graph.Graph3D
     {
       get
       {
-        if (null == _points || _points.Length < 2)
+        if (_points is null || _points.Length < 2)
           yield break;
 
         PointD3D prevPoint = PointD3D.Empty;
@@ -302,7 +302,7 @@ namespace Altaxo.Graph.Graph3D
     {
       get
       {
-        if (null == _lines || _lines.Length < 1)
+        if (_lines is null || _lines.Length < 1)
           yield break;
 
         foreach (var line in _lines)

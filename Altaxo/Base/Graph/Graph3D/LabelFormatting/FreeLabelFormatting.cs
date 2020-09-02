@@ -74,7 +74,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       if (isCopied && !object.ReferenceEquals(this, obj))
       {
         var from = obj as FreeLabelFormatting;
-        if (null != from)
+        if (from is not null)
         {
           _formatString = from._formatString;
         }

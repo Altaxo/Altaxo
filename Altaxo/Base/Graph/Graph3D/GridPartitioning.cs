@@ -65,15 +65,15 @@ namespace Altaxo.Graph.Graph3D
         var s = (GridPartitioning?)o ?? new GridPartitioning();
 
         s._xPartitioning = (LinearPartitioning)info.GetValue("XPartitioning", s);
-        if (null != s._xPartitioning)
+        if (s._xPartitioning is not null)
           s._xPartitioning.ParentObject = s;
 
         s._yPartitioning = (LinearPartitioning)info.GetValue("YPartitioning", s);
-        if (null != s._yPartitioning)
+        if (s._yPartitioning is not null)
           s._yPartitioning.ParentObject = s;
 
         s._zPartitioning = (LinearPartitioning)info.GetValue("ZPartitioning", s);
-        if (null != s._zPartitioning)
+        if (s._zPartitioning is not null)
           s._zPartitioning.ParentObject = s;
 
         return s;
@@ -111,7 +111,7 @@ namespace Altaxo.Graph.Graph3D
         return true;
 
       var from = obj as GridPartitioning;
-      if (null != from)
+      if (from is not null)
       {
         using (var suspendToken = SuspendGetToken())
         {
@@ -135,9 +135,9 @@ namespace Altaxo.Graph.Graph3D
     {
       if (_xPartitioning is not null)
         yield return new Main.DocumentNodeAndName(_xPartitioning, () => _xPartitioning = null!, "XPartitioning");
-      if (null != _yPartitioning)
+      if (_yPartitioning is not null)
         yield return new Main.DocumentNodeAndName(_yPartitioning, () => _yPartitioning = null!, "YPartitioning");
-      if (null != _zPartitioning)
+      if (_zPartitioning is not null)
         yield return new Main.DocumentNodeAndName(_zPartitioning, () => _zPartitioning = null!, "ZPartitioning");
     }
 

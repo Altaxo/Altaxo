@@ -95,7 +95,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
 
       public FileHash(byte[] hash, int len)
       {
-        if (hash == null)
+        if (hash is null)
         {
           Lo = 0;
           Hi = 0;

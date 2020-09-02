@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Data
         _choicesDestinationRowSort = new SelectableListNodeList();
         _choicesDestinationRowSort.FillWithEnumeration(_doc.DestinationRowSorting);
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeDestinationOutputFormat(_choicesDestinationOutputFormat);
         _view.InitializeDestinationX(_choicesDestinationX);

@@ -50,7 +50,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
     /// <returns>True if successful; otherwise false (if it is already present).</returns>
     public bool TryAdd(IScriptCompilerResult result)
     {
-      if (null == result)
+      if (result is null)
         throw new ArgumentNullException(nameof(result));
 
       _lock.EnterUpgradeableReadLock();
@@ -114,7 +114,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
     /// <returns>True if the compulation result corresponding to this assembly could be found, otherwise, false.</returns>
     public bool TryGetValue(Assembly assembly, [MaybeNullWhen(false)] out ScriptCompilerSuccessfulResult result)
     {
-      if (null == assembly)
+      if (assembly is null)
         throw new ArgumentNullException(nameof(assembly));
 
       _lock.EnterReadLock();

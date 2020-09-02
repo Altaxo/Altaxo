@@ -201,7 +201,7 @@ namespace Altaxo.Graph.Plot.Groups
       Func<int, double> getter)
     {
       if (!externalGroups.ContainsType(MyType)
-        && null != localGroups
+        && localGroups is not null
         && !localGroups.ContainsType(MyType))
       {
         localGroups.Add(new VariableSymbolSizeGroupStyle());
@@ -232,10 +232,10 @@ namespace Altaxo.Graph.Plot.Groups
       IPlotGroupStyleCollection? grpColl = null;
       if (externalGroups.ContainsType(MyType))
         grpColl = externalGroups;
-      else if (localGroups != null && localGroups.ContainsType(MyType))
+      else if (localGroups is not null && localGroups.ContainsType(MyType))
         grpColl = localGroups;
 
-      if (null != grpColl)
+      if (grpColl is not null)
       {
         var grpStyle = (VariableSymbolSizeGroupStyle)grpColl.GetPlotGroupStyle(MyType);
         grpColl.OnBeforeApplication(MyType);

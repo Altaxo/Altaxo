@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Data
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.DataColumnsMoveToPropertyColumns = _doc.DataColumnsMoveToPropertyColumns;
         _view.PropertyColumnsMoveToDataColumns = _doc.PropertyColumnsMoveToDataColumns;

@@ -110,11 +110,11 @@ namespace Altaxo.Graph.Gdi.Axis
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _axisStyles)
+      if (_axisStyles is not null)
       {
         for (int i = 0; i < _axisStyles.Count; ++i)
         {
-          if (null != _axisStyles[i])
+          if (_axisStyles[i] is not null)
             yield return new Main.DocumentNodeAndName(_axisStyles[i], "Style" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
       }
@@ -144,10 +144,10 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public void Add(AxisStyle value)
     {
-      if (value != null)
+      if (value is not null)
       {
         value.ParentObject = this;
-        if (_cachedCoordinateSystem != null)
+        if (_cachedCoordinateSystem is not null)
           value.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(value.StyleID);
 
         _axisStyles.Add(value);
@@ -228,7 +228,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public bool Contains(CSLineID id)
     {
-      return null != this[id];
+      return this[id] is not null;
     }
 
     public IEnumerable<CSLineID> AxisStyleIDs
@@ -251,7 +251,7 @@ namespace Altaxo.Graph.Gdi.Axis
     public bool Remove(GraphicBase go)
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
-        if (_axisStyles[i] != null && _axisStyles[i].Remove(go))
+        if (_axisStyles[i] is not null && _axisStyles[i].Remove(go))
           return true;
 
       return false;

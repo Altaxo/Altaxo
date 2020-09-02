@@ -162,7 +162,7 @@ namespace Altaxo.Gui.Workbench
       {
         if (!(Category == value))
         {
-          if (null != _padDescriptor)
+          if (_padDescriptor is not null)
             _padDescriptor.Category = value;
           else
             _category = value;
@@ -199,7 +199,7 @@ namespace Altaxo.Gui.Workbench
       {
         if (!(Shortcut == value))
         {
-          if (null != _padDescriptor)
+          if (_padDescriptor is not null)
             _padDescriptor.Shortcut = value;
           else
             _shortCut = value;

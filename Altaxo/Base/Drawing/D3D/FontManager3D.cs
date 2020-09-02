@@ -57,7 +57,7 @@ namespace Altaxo.Drawing.D3D
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         _instance = value;
@@ -247,7 +247,7 @@ namespace Altaxo.Drawing.D3D
 
     private static void ClipperPolyTreeToPolygonListRecursively(ClipperLib.PolyNode node, HashSet<ClipperLib.IntPoint> sharpPoints, HashSet<ClipperLib.IntPoint> allPoints, List<PolygonClosedD2D> polygonList, IDictionary<ClipperLib.PolyNode, PolygonClosedD2D> dictClipperNodeToNode)
     {
-      if (node.Contour != null && node.Contour.Count != 0)
+      if (node.Contour is not null && node.Contour.Count != 0)
       {
         var pointsInThisPolygon = node.Contour.Select(clipperPt => new PointD2D(clipperPt.X / 65536.0, clipperPt.Y / 65536.0));
         var sharpPointsInThisPolygon = node.Contour.Where(clipperPt => sharpPoints.Contains(clipperPt)).Select(clipperPt => new PointD2D(clipperPt.X / 65536.0, clipperPt.Y / 65536.0));

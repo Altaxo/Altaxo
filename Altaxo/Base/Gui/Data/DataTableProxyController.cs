@@ -48,14 +48,14 @@ namespace Altaxo.Gui.Data
 
       if (initData)
       {
-        if (null == _availableTables)
+        if (_availableTables is null)
           _availableTables = new SelectableListNodeList();
 
         foreach (var table in Current.Project.DataTableCollection)
           _availableTables.Add(new SelectableListNode(table.Name, table, object.ReferenceEquals(table, _doc.Document)));
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeTables(_availableTables);
       }
@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Data
     {
       var selNode = _availableTables.FirstSelectedNode;
 
-      if (null == selNode)
+      if (selNode is null)
       {
         return ApplyEnd(false, disposeController);
       }

@@ -184,7 +184,7 @@ namespace Altaxo.Graph.Gdi
         return true;
 
       var from = obj as HostLayer;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, GraphCopyOptions.All);
         return true;
@@ -212,7 +212,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="options">Copy options.</param>
     protected virtual void InternalCopyFrom(HostLayer from, GraphCopyOptions options)
     {
-      if (null == _parent)
+      if (_parent is null)
       {
         //this._parent = from._parent; // necessary in order to set Location to GridLocation, where a parent layer is required
         _cachedLayerNumber = from._cachedLayerNumber; // is important when the layer dialog is open: this number must be identical to that of the cloned layer
@@ -283,7 +283,7 @@ namespace Altaxo.Graph.Gdi
         if (fromObj is HostLayer)
         {
           var layerToRecycle = layersToRecycle.FirstOrDefault(x => x.GetType() == fromObj.GetType());
-          if (null != layerToRecycle)
+          if (layerToRecycle is not null)
           {
             layersToRecycle.Remove(layerToRecycle); // this layer is now recycled, thus it is no longer available for another recycling
             thisObj = (IGraphicBase)layerToRecycle.Clone(); // we have nevertheless to clone, since true recycling is dangerous, because the layer is still in our own collection
@@ -291,7 +291,7 @@ namespace Altaxo.Graph.Gdi
           }
         }
 
-        if (null == thisObj) // if not otherwise retrieved, simply clone the fromObj
+        if (thisObj is null) // if not otherwise retrieved, simply clone the fromObj
           thisObj = (IGraphicBase)pwFrom[j].Clone();
 
         pwThis[i++] = thisObj; // include in our own collection
@@ -350,7 +350,7 @@ namespace Altaxo.Graph.Gdi
     {
       Grid = new GridPartitioning();
 
-      if (null != parentLayer) // this helps to get the real layer size from the beginning
+      if (parentLayer is not null) // this helps to get the real layer size from the beginning
       {
         ParentLayer = parentLayer;
         _cachedParentLayerSize = parentLayer.Size;
@@ -418,7 +418,7 @@ namespace Altaxo.Graph.Gdi
       [MemberNotNull(nameof(_location))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(Location));
 
         if (ChildSetMember(ref _location, value))
@@ -485,7 +485,7 @@ namespace Altaxo.Graph.Gdi
       set
       {
         var ls = _location as ItemLocationDirect;
-        if (null != ls)
+        if (ls is not null)
         {
           if (ls.PositionX.IsAbsolute)
             ls.PositionX = RADouble.NewAbs(value.X);
@@ -506,7 +506,7 @@ namespace Altaxo.Graph.Gdi
       set
       {
         var ls = _location as ItemLocationDirect;
-        if (null != ls)
+        if (ls is not null)
         {
           if (ls.SizeX.IsAbsolute)
             ls.SizeX = RADouble.NewAbs(value.X);
@@ -711,7 +711,7 @@ namespace Altaxo.Graph.Gdi
     {
       RectangleD2D newRect;
 
-      if (null == _location)
+      if (_location is null)
       {
         return; // location is only null during deserialization
       }
@@ -721,7 +721,7 @@ namespace Altaxo.Graph.Gdi
       }
       else if (_location is ItemLocationByGrid gps)
       {
-        if (ParentLayer != null)
+        if (ParentLayer is not null)
         {
           var gridRect = newRect = gps.GetAbsolute(ParentLayer._grid, _cachedParentLayerSize);
 
@@ -806,7 +806,7 @@ namespace Altaxo.Graph.Gdi
     {
       const int RelValueRoundFraction = 1024 * 1024;
 
-      if (null != _grid && !_grid.IsEmpty)
+      if (_grid is not null && !_grid.IsEmpty)
         return;
 
       var xPositions = new HashSet<double>();
@@ -1059,11 +1059,11 @@ namespace Altaxo.Graph.Gdi
         }
       }
 
-      if (null != LayerCollectionChanged)
+      if (LayerCollectionChanged is not null)
         LayerCollectionChanged(this, EventArgs.Empty);
 
       var pl = ParentLayer;
-      if (null != pl)
+      if (pl is not null)
       {
         pl.EhChildLayers_CollectionChanged(sender, e); // DODO is this not an endless loop?
       }
@@ -1187,12 +1187,12 @@ namespace Altaxo.Graph.Gdi
         for (int i = _graphObjects.Count - 1; i >= 0; --i)
         {
           hit = _graphObjects[i].HitTest(localCoord);
-          if (null != hit)
+          if (hit is not null)
           {
-            if (null == hit.ParentLayer)
+            if (hit.ParentLayer is null)
               hit.ParentLayer = this;
 
-            if (null == hit.Remove && (hit.HittedObject is IGraphicBase))
+            if (hit.Remove is null && (hit.HittedObject is IGraphicBase))
               hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
             return ForwardTransform(hit);
           }
@@ -1223,12 +1223,12 @@ namespace Altaxo.Graph.Gdi
         for (int i = _graphObjects.Count - 1; i >= 0; --i)
         {
           var layer = _graphObjects[i] as HostLayer;
-          if (null == layer)
+          if (layer is null)
             continue;
           hit = layer.HitTest(localCoord, plotItemsOnly);
-          if (null != hit)
+          if (hit is not null)
           {
-            if (!(hit.ParentLayer != null))
+            if (hit.ParentLayer is null)
               throw new InvalidProgramException("Parent layer must be set, because the hitted plot item originates from another layer!");
             return ForwardTransform(hit);
           }
@@ -1263,12 +1263,12 @@ namespace Altaxo.Graph.Gdi
       for (int i = _graphObjects.Count - 1; i >= 0; --i)
       {
         var hit = _graphObjects[i].HitTest(localHitData);
-        if (null != hit)
+        if (hit is not null)
         {
-          if (null == hit.ParentLayer)
+          if (hit.ParentLayer is null)
             hit.ParentLayer = this;
 
-          if (null == hit.Remove && (hit.HittedObject is IGraphicBase))
+          if (hit.Remove is null && (hit.HittedObject is IGraphicBase))
             hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
 
           hit.Transform(localHitData.Transformation); // ins Root-System transformieren
@@ -1308,14 +1308,14 @@ namespace Altaxo.Graph.Gdi
     protected virtual void OnCachedResultingSizeChanged()
     {
       // first inform our childs
-      if (null != _childLayers)
+      if (_childLayers is not null)
       {
         foreach (var layer in _childLayers)
           layer.SetParentSize(Size, false); // Do not raise change events here, it is only the cached size that changed
       }
 
       // now inform other listeners
-      if (null != SizeChanged)
+      if (SizeChanged is not null)
         SizeChanged(this, new System.EventArgs());
     }
 
@@ -1325,7 +1325,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     protected void OnCachedResultingPositionChanged()
     {
-      if (null != PositionChanged)
+      if (PositionChanged is not null)
         PositionChanged(this, new System.EventArgs());
     }
 
@@ -1383,7 +1383,7 @@ namespace Altaxo.Graph.Gdi
     {
       // despite the fact that _childLayers is only a partial view of _graphObjects, we use it here because if it is found here, it is never searched for in _graphObjects
       // note also that Disposed is overridden, so that we not use this function for dispose purposes
-      if (null != _childLayers)
+      if (_childLayers is not null)
       {
         for (int i = 0; i < _childLayers.Count; ++i)
         {
@@ -1391,21 +1391,21 @@ namespace Altaxo.Graph.Gdi
         }
       }
 
-      if (null != _graphObjects)
+      if (_graphObjects is not null)
       {
         for (int i = 0; i < _graphObjects.Count; ++i)
         {
-          if (null != _graphObjects[i])
+          if (_graphObjects[i] is not null)
             yield return new Main.DocumentNodeAndName(_graphObjects[i], "GraphObject" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
       }
 
-      if (null != _location)
+      if (_location is not null)
       {
         yield return new Main.DocumentNodeAndName(_location, "Location");
       }
 
-      if (null != _grid)
+      if (_grid is not null)
       {
         yield return new Main.DocumentNodeAndName(_grid, "Grid");
       }
@@ -1413,13 +1413,13 @@ namespace Altaxo.Graph.Gdi
 
     protected override void Dispose(bool isDisposing)
     {
-      if (null != _graphObjects)
+      if (_graphObjects is not null)
       {
         var graphObjects = _graphObjects;
         _graphObjects = null!;
         for (int i = 0; i < graphObjects.Count; ++i)
         {
-          if (null != graphObjects[i])
+          if (graphObjects[i] is not null)
             graphObjects[i].Dispose();
         }
       }

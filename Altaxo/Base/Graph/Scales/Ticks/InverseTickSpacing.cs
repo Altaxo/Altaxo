@@ -158,7 +158,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
       protected virtual InverseTickSpacing SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        InverseTickSpacing s = null != o ? (InverseTickSpacing)o : new InverseTickSpacing();
+        InverseTickSpacing s = o is not null ? (InverseTickSpacing)o : new InverseTickSpacing();
         s._orgGrace = info.GetDouble("MinGrace");
         s._endGrace = info.GetDouble("MaxGrace");
         s._snapOrgToTick = (BoundaryTickSnapping)info.GetEnum("SnapOrgToTick", typeof(BoundaryTickSnapping));
@@ -258,14 +258,14 @@ namespace Altaxo.Graph.Scales.Ticks
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _suppressedMajorTicks)
+      if (_suppressedMajorTicks is not null)
         yield return new Main.DocumentNodeAndName(_suppressedMajorTicks, "SuppressedMajorTicks");
-      if (null != _suppressedMinorTicks)
+      if (_suppressedMinorTicks is not null)
         yield return new Main.DocumentNodeAndName(_suppressedMinorTicks, "SuppressedMinorTicks");
 
-      if (null != _additionalMajorTicks)
+      if (_additionalMajorTicks is not null)
         yield return new Main.DocumentNodeAndName(_additionalMajorTicks, "AdditionalMajorTicks");
-      if (null != _additionalMinorTicks)
+      if (_additionalMinorTicks is not null)
         yield return new Main.DocumentNodeAndName(_additionalMinorTicks, "AdditionalMinorTicks");
     }
 
@@ -907,7 +907,7 @@ namespace Altaxo.Graph.Scales.Ticks
       propOrg = scaleOrg;
       propEnd = scaleEnd;
 
-      if (null != _userDefinedMajorSpan)
+      if (_userDefinedMajorSpan is not null)
       {
         majorSpan = Math.Abs(_userDefinedMajorSpan.Value);
       }
@@ -916,7 +916,7 @@ namespace Altaxo.Graph.Scales.Ticks
         majorSpan = CalculateMajorSpan(overriddenScaleSpan, _targetNumberOfMajorTicks);
       }
 
-      if (null != _userDefinedMinorTicks)
+      if (_userDefinedMinorTicks is not null)
       {
         minorTicks = Math.Abs(_userDefinedMinorTicks.Value);
       }

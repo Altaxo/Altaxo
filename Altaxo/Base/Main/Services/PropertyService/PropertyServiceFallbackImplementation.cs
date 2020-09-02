@@ -73,7 +73,7 @@ namespace Altaxo.Main.Services
         return result;
       else if (BuiltinSettings.TryGetValue<T>(p, out result))
         return result;
-      else if (null != ValueCreationIfNotFound)
+      else if (ValueCreationIfNotFound is not null)
         return ValueCreationIfNotFound();
       else
         return default;

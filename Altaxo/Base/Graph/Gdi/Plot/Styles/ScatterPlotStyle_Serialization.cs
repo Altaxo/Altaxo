@@ -241,7 +241,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
         s._skipFreq = info.GetInt32("SkipFreq");
 
-        if (dropLineTargets != null && dropLineTargets.Count != 0)
+        if (dropLineTargets is not null && dropLineTargets.Count != 0)
         {
           return new object[] { s, new DropLinePlotStyle(dropLineTargets, pen) };
         }

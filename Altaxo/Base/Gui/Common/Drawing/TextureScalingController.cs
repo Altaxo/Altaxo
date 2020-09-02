@@ -71,7 +71,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.ScalingMode = _doc.ScalingMode;
         _view.AspectPreserving = _doc.SourceAspectRatioPreserving;
@@ -200,7 +200,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (_doc.ScalingMode == TextureScalingMode.Absolute)
       {
         _doc = _doc.WithX(_view.XSize);
-        if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None && null != _sourceTextureSize)
+        if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None && _sourceTextureSize is not null)
         {
           _doc = _doc.WithY(_doc.X * _sourceTextureSize.Value.Y / _sourceTextureSize.Value.X);
           _view.YSize = _doc.Y;
@@ -226,7 +226,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (_doc.ScalingMode == TextureScalingMode.Absolute)
       {
         _doc = _doc.WithY(_view.YSize);
-        if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None && null != _sourceTextureSize)
+        if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None && _sourceTextureSize is not null)
         {
           _doc = _doc.WithX(_doc.Y * _sourceTextureSize.Value.X / _sourceTextureSize.Value.Y);
           _view.XSize = _doc.X;

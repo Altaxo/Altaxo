@@ -202,7 +202,7 @@ namespace Altaxo.Graph.Plot.Groups
       Func<int, Color> getter)
     {
       if (!externalGroups.ContainsType(MyType)
-        && null != localGroups
+        && localGroups is not null
         && !localGroups.ContainsType(MyType))
       {
         localGroups.Add(new VariableColorGroupStyle());

@@ -88,10 +88,10 @@ namespace Altaxo.Graph.Gdi.Plot
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _plotStyles)
+      if (_plotStyles is not null)
         yield return new Main.DocumentNodeAndName(_plotStyles, () => _plotStyles = null!, "Style");
 
-      if (null != _localGroups)
+      if (_localGroups is not null)
         yield return new Main.DocumentNodeAndName(_localGroups, () => _localGroups = null!, "LocalPlotGroupStyles");
     }
 
@@ -226,7 +226,7 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       _cachedPlotDataUsedForPainting = plotdata ?? throw new ArgumentNullException(nameof(plotdata));
 
-      if (null != _plotStyles)
+      if (_plotStyles is not null)
       {
         _plotStyles.Paint(g, layer, plotdata, prevPlotData, nextPlotData);
       }

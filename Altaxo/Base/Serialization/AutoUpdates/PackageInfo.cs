@@ -226,7 +226,7 @@ namespace Altaxo.Serialization.AutoUpdates
     public static PackageInfo? GetPresentDownloadedPackage(Stream fs, string storagePath)
     {
       var result = GetPresentDownloadedPackage(fs, storagePath, out var packageStream);
-      if (null != packageStream)
+      if (packageStream is not null)
         packageStream.Close();
 
       return result;

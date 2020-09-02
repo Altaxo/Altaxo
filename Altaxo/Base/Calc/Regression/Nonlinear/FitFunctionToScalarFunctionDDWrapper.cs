@@ -118,7 +118,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.AddValueOrNull("DependentVariableTransformation", s._dependentVariableTransformation);
         info.AddArray("ParameterValues", s._parameter, s._parameter.Length);
 
-        if (s._fitFunction == null || info.IsSerializable(s._fitFunction))
+        if (s._fitFunction is null || info.IsSerializable(s._fitFunction))
           info.AddValueOrNull("FitFunction", s._fitFunction);
         else
           info.AddValue("FitFunction", new Altaxo.Serialization.Xml.AssemblyAndTypeSurrogate(s._fitFunction));
@@ -194,7 +194,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       _fitFunction = fitFunction;
 
-      if (_fitFunction != null)
+      if (_fitFunction is not null)
       {
         _x = new double[_fitFunction.NumberOfIndependentVariables];
         _y = new double[_fitFunction.NumberOfDependentVariables];
@@ -281,16 +281,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public double Evaluate(double x)
     {
-      if (_fitFunction != null)
+      if (_fitFunction is not null)
       {
-        if (null != _independentVariableTransformation)
+        if (_independentVariableTransformation is not null)
           _x[_independentVariable] = _independentVariableTransformation.Transform(x);
         else
           _x[_independentVariable] = x;
 
         _fitFunction.Evaluate(_x, _parameter, _y);
 
-        if (null != _dependentVariableTransformation)
+        if (_dependentVariableTransformation is not null)
           return _dependentVariableTransformation.Transform(_y[_dependentVariable]);
         else
           return _y[_dependentVariable];

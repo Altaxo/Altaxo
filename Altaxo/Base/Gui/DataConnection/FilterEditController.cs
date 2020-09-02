@@ -81,7 +81,7 @@ namespace Altaxo.Gui.DataConnection
 
         _value = _field.Filter;
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetOperatorChoices(_operatorChoices);
 
@@ -125,14 +125,14 @@ namespace Altaxo.Gui.DataConnection
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.SimpleUpdated -= UpdateSimple;
           _view.IntervalUpdated -= UpdateBetween;
           _view.ClearAll -= ClearAll;
         }
         _view = value as IFilterEditView;
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
 
@@ -173,7 +173,7 @@ namespace Altaxo.Gui.DataConnection
     private string GetOperatorText()
     {
       var node = _operatorChoices.FirstSelectedNode;
-      return null == node ? null : (string)node.Tag;
+      return node is null ? null : (string)node.Tag;
     }
 
     private void SetOperatorText(string op)
@@ -187,7 +187,7 @@ namespace Altaxo.Gui.DataConnection
           break;
         }
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetOperatorChoices(_operatorChoices);
       }
@@ -199,7 +199,7 @@ namespace Altaxo.Gui.DataConnection
       {
         var parm = GetParameter(_view.SingleValueText);
         _value = string.Format("{0} {1}", GetOperatorText(), parm);
-        if (null != _view)
+        if (_view is not null)
           _view.SetValueText(_value);
       }
     }
@@ -211,7 +211,7 @@ namespace Altaxo.Gui.DataConnection
         var parmFrom = GetParameter(_view.IntervalFromText);
         var parmTo = GetParameter(_view.intervalToText);
         _value = string.Format("BETWEEN {0} AND {1}", parmFrom, parmTo);
-        if (null != _view)
+        if (_view is not null)
           _view.SetValueText(_value);
       }
     }

@@ -86,9 +86,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         _customColorController.InitializeDocument(NamedColors.White);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
-        if (null == _customColorController.ViewObject)
+        if (_customColorController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_customColorController);
         ((IColorListView)_view).SetCustomColorView(_customColorController.ViewObject);
       }
@@ -275,7 +275,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     protected override void Controller_AvailableItems_Initialize()
     {
-      if (null == _availableItemsRootNode)
+      if (_availableItemsRootNode is null)
         _availableItemsRootNode = new NGTreeNode();
       else
         _availableItemsRootNode.Nodes.Clear();
@@ -308,7 +308,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     protected override void Controller_CurrentItems_Initialize()
     {
-      if (null == _currentItems)
+      if (_currentItems is null)
         _currentItems = new SelectableListNodeList();
       else
         _currentItems.Clear();
@@ -332,7 +332,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     protected override bool IsItemEditable(Altaxo.Main.IImmutable item)
     {
-      if (null == item)
+      if (item is null)
         return false;
 
       return true;

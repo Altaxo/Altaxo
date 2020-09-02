@@ -61,9 +61,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
         // try to find a controller for the underlying function
         _functionController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.Function }, typeof(IMVCAController), UseDocument.Directly);
       }
-      if (_view != null)
+      if (_view is not null)
       {
-        bool editable = null != _functionController;
+        bool editable = _functionController is not null;
         string text;
         if (_doc.Function is Altaxo.Scripting.IScriptText)
           text = ((Altaxo.Scripting.IScriptText)_doc.Function).ScriptText;

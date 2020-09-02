@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       base.Initialize(initData);
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.MajorTicks = ToString(_doc.MajorTickSpan);
         _view.MinorTicks = _doc.MinorTicks;
@@ -311,7 +311,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
           break;
       }
 
-      if (null != result)
+      if (result is not null)
       {
         span = result;
         return true;

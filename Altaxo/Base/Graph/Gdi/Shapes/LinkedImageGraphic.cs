@@ -151,7 +151,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         base.CopyFrom(from, withBaseMembers);
 
       _imagePath = from._imagePath;
-      _cachedImage = null == from._cachedImage ? null : (Image)from._cachedImage.Clone();
+      _cachedImage = from._cachedImage is null ? null : (Image)from._cachedImage.Clone();
     }
 
     public override bool CopyFrom(object obj)
@@ -184,7 +184,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       try
       {
-        if (_cachedImage == null)
+        if (_cachedImage is null)
         {
           _cachedImage = new Bitmap(_imagePath);
           ((ItemLocationDirectAspectPreserving)_location).OriginalItemSize = new PointD2D(72.0 * _cachedImage.Width / _cachedImage.HorizontalResolution, 72.0 * _cachedImage.Height / _cachedImage.HorizontalResolution);

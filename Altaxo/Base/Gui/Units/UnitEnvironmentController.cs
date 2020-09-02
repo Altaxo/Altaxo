@@ -112,7 +112,7 @@ namespace Altaxo.Gui.Units
 
     private void EhRemoveFromIncludedUnits()
     {
-      if (null != SelectedIncludedUnit)
+      if (SelectedIncludedUnit is not null)
       {
         _includedUnits.Remove(SelectedIncludedUnit);
       }
@@ -120,7 +120,7 @@ namespace Altaxo.Gui.Units
 
     private void EhAddToIncludedUnits()
     {
-      if (null != SelectedAvailableUnit && !IncludedUnits.Any(x => x.Tag == SelectedAvailableUnit.Tag))
+      if (SelectedAvailableUnit is not null && !IncludedUnits.Any(x => x.Tag == SelectedAvailableUnit.Tag))
       {
         var newNode = new SelectableListNode(SelectedAvailableUnit.Text ?? string.Empty, SelectedAvailableUnit.Tag, false);
         _includedUnits.Add(newNode);
@@ -201,7 +201,7 @@ namespace Altaxo.Gui.Units
       {
         var propInfo = ty.GetProperty("Instance");
         var propMethod = propInfo?.GetGetMethod();
-        if (null != propMethod)
+        if (propMethod is not null)
         {
           var instance = (IUnit)propMethod.Invoke(null, null)!;
           result.Add(new SelectableListNode(instance.Name, instance, false));
@@ -219,7 +219,7 @@ namespace Altaxo.Gui.Units
 
     private void StoreSelectedPrefixes()
     {
-      if (null != SelectedIncludedUnit)
+      if (SelectedIncludedUnit is not null)
       {
         var unit = (IUnit)SelectedIncludedUnit.Tag!;
         var list = new List<SIPrefix>(Prefixes.Where(x => x.IsSelected).Select(x => (SIPrefix)x.Tag!));
@@ -240,7 +240,7 @@ namespace Altaxo.Gui.Units
 
       foreach (var prefix in unit.Prefixes)
       {
-        bool isSelected = null != previouslySelectedPrefixes ? previouslySelectedPrefixes.Contains(prefix) : string.IsNullOrEmpty(prefix.Name);
+        bool isSelected = previouslySelectedPrefixes is not null ? previouslySelectedPrefixes.Contains(prefix) : string.IsNullOrEmpty(prefix.Name);
         string name = prefix.Name;
         if (string.IsNullOrEmpty(prefix.Name))
           name = "<< without prefix >>";

@@ -238,7 +238,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       {
         get
         {
-          if (null == _toolTip)
+          if (_toolTip is null)
           {
             _toolTip = string.Empty;
             Task.Factory.StartNew(() => EvaluateToolTip());
@@ -418,13 +418,13 @@ namespace Altaxo.Gui.Graph.Plot.Data
             if (docDataTable is null)
             {
               docDataTable = DataTable.GetParentDataTableOf(entry.Column as DataColumn);
-              if (null != docDataTable && docDataTable.DataColumns.ContainsColumn((DataColumn)entry.Column))
+              if (docDataTable is not null && docDataTable.DataColumns.ContainsColumn((DataColumn)entry.Column))
                 docGroupNumber = docDataTable.DataColumns.GetColumnGroup((DataColumn)entry.Column);
             }
           }
         }
 
-        if (null != docDataTable)
+        if (docDataTable is not null)
         {
           _doc.DataTable = docDataTable;
           _doc.GroupNumber = docGroupNumber;
@@ -440,7 +440,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
         // initialize group 0
 
-        if (null == _columnGroup)
+        if (_columnGroup is null)
           _columnGroup = new List<GroupInfo>();
 
         if (_columnGroup.Count <= IndexGroupRowSelection)
@@ -492,11 +492,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
         DataTable tg = _doc.DataTable;
         foreach (var tableName in tables)
         {
-          _availableTables.Add(new SelectableListNode(tableName, Current.Project.DataTableCollection[tableName], tg != null && tg.Name == tableName));
+          _availableTables.Add(new SelectableListNode(tableName, Current.Project.DataTableCollection[tableName], tg is not null && tg.Name == tableName));
         }
 
         // Group number
-        _groupNumbersAll = null != tg ? tg.DataColumns.GetGroupNumbersAll() : new SortedSet<int>();
+        _groupNumbersAll = tg is not null ? tg.DataColumns.GetGroupNumbersAll() : new SortedSet<int>();
 
         // Initialize columns
         Controller_AvailableDataColumns_Initialize();
@@ -509,7 +509,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
         TriggerUpdateOfMatchingTables();
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.AvailableTables_Initialize(_availableTables);
         _view.GroupNumber_Initialize(_groupNumbersAll, _doc.GroupNumber, _groupNumbersAll.Count > 1 || (_groupNumbersAll.Count == 1 && _doc.GroupNumber != _groupNumbersAll.Min));
@@ -570,9 +570,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
       {
         IReadableColumnExtensions.GetCommonDataTableAndGroupNumberFromColumns(GetEnumerationOfAllColumns(), out var dataTableIsNotUniform, out var resultingTable, out var groupNumberIsNotUniform, out var resultingGroupNumber);
 
-        if (null != resultingTable && !dataTableIsNotUniform)
+        if (resultingTable is not null && !dataTableIsNotUniform)
           _doc.DataTable = resultingTable;
-        if (null != resultingGroupNumber && !groupNumberIsNotUniform)
+        if (resultingGroupNumber is not null && !groupNumberIsNotUniform)
           _doc.GroupNumber = resultingGroupNumber.Value;
       }
 
@@ -747,7 +747,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       var node = _availableTables.FirstSelectedNode;
       var tg = node?.Tag as DataTable;
 
-      if (null == tg || object.ReferenceEquals(_doc.DataTable, tg))
+      if (tg is null || object.ReferenceEquals(_doc.DataTable, tg))
         return;
 
       _doc.DataTable = tg;
@@ -755,7 +755,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
       // If data table has changed, try to choose a group number that matches as many as possible columns
       _doc.GroupNumber = ChooseBestMatchingGroupNumber(tg.DataColumns);
-      if (_view != null)
+      if (_view is not null)
         _view.GroupNumber_Initialize(_groupNumbersAll, _doc.GroupNumber, _groupNumbersAll.Count > 1 || (_groupNumbersAll.Count == 1 && _groupNumbersAll.Min != _doc.GroupNumber));
 
       ReplaceColumnsWithColumnsFromNewTableGroupAndUpdateColumnState();
@@ -817,7 +817,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       _view?.AvailableTableColumns_Initialize(_availableDataColumns.Nodes);
 
       var dataTable = _doc.DataTable;
-      if (null != dataTable)
+      if (dataTable is not null)
       {
         // now try to exchange the data columns with columns from the new group
         var colDict = dataTable.DataColumns.GetNameDictionaryOfColumnsWithGroupNumber(_doc.GroupNumber);
@@ -848,7 +848,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       _availableDataColumns.Nodes.Clear();
       var dataTable = _doc.DataTable;
-      if (null == dataTable)
+      if (dataTable is null)
         return;
 
       var columns = dataTable.DataColumns.GetListOfColumnsWithGroupNumber(_doc.GroupNumber);
@@ -885,7 +885,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public void EhView_MatchingTableSelectionChanged()
     {
       var node = _matchingTables.FirstSelectedNode;
-      if (null == node)
+      if (node is null)
         return; // no node selected
 
       var tag = ((DataTable, int))node.Tag;
@@ -976,7 +976,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public void EhView_PlotColumnAddTo(PlotColumnTag tag)
     {
       var node = _view?.AvailableTableColumns_SelectedItem as NGTreeNode;
-      if (null != node)
+      if (node is not null)
       {
         SetDirty();
         var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
@@ -1051,7 +1051,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
         if ((prop is bool?) && true == (bool?)prop)
         {
           var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { newlyCreatedColumn }, typeof(IMVCANController));
-          if (null != controller && null != controller.ViewObject)
+          if (controller is not null && controller.ViewObject is not null)
           {
             if (Current.Gui.ShowDialog(controller, "Edit " + newlyCreatedColumn.GetType().Name))
             {
@@ -1068,7 +1068,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public void EhView_OtherAvailableColumnAddTo(PlotColumnTag tag)
     {
       var node = _otherAvailableColumns.FirstSelectedNode;
-      if (null != node)
+      if (node is not null)
       {
         SetDirty();
         var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
@@ -1083,7 +1083,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
           Current.Gui.ErrorMessageBox("This column could not be created, message: " + ex.ToString(), "Error");
         }
 
-        if (null != createdObj)
+        if (createdObj is not null)
         {
           info.UnderlyingColumn = EditOtherAvailableColumn(createdObj, out var wasEdited);
           info.Update(_doc.DataTable, _doc.GroupNumber);
@@ -1120,10 +1120,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
     private static IVariantToVariantTransformation EditAvailableTransformation(IVariantToVariantTransformation createdTransformation, out bool wasEdited)
     {
       wasEdited = false;
-      if (null != createdTransformation && createdTransformation.IsEditable)
+      if (createdTransformation is not null && createdTransformation.IsEditable)
       {
         var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { createdTransformation }, typeof(IMVCANController));
-        if (null != controller && null != controller.ViewObject)
+        if (controller is not null && controller.ViewObject is not null)
         {
           if (Current.Gui.ShowDialog(controller, "Edit " + createdTransformation.GetType().Name))
           {
@@ -1162,7 +1162,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
         case 1: // prepend
           if (info.Transformation is Altaxo.Data.Transformations.CompoundTransformation)
             info.Transformation = (info.Transformation as Altaxo.Data.Transformations.CompoundTransformation).WithPrependedTransformation(createdTransformation);
-          else if (info.Transformation != null)
+          else if (info.Transformation is not null)
             info.Transformation = new Altaxo.Data.Transformations.CompoundTransformation(new[] { info.Transformation, createdTransformation });
           else
             info.Transformation = createdTransformation;
@@ -1171,7 +1171,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
         case 2: // append
           if (info.Transformation is Altaxo.Data.Transformations.CompoundTransformation)
             info.Transformation = (info.Transformation as Altaxo.Data.Transformations.CompoundTransformation).WithAppendedTransformation(createdTransformation);
-          else if (info.Transformation != null)
+          else if (info.Transformation is not null)
             info.Transformation = new Altaxo.Data.Transformations.CompoundTransformation(new[] { createdTransformation, info.Transformation });
           else
             info.Transformation = createdTransformation;
@@ -1188,10 +1188,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public void EhView_TransformationAddTo(PlotColumnTag tag)
     {
       var node = _availableTransformations.FirstSelectedNode;
-      if (null != node)
+      if (node is not null)
       {
         var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
-        if (info.Transformation == null)
+        if (info.Transformation is null)
         {
           EhTransformation_AddMultiple(tag, (Type)node.Tag, 0);
         }
@@ -1205,7 +1205,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public void EhView_TransformationAddAsSingle(PlotColumnTag tag)
     {
       var node = _availableTransformations.FirstSelectedNode;
-      if (null != node)
+      if (node is not null)
       {
         EhTransformation_AddMultiple(tag, (Type)node.Tag, 0);
       }
@@ -1214,7 +1214,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public void EhView_TransformationAddAsPrepending(PlotColumnTag tag)
     {
       var node = _availableTransformations.FirstSelectedNode;
-      if (null != node)
+      if (node is not null)
       {
         EhTransformation_AddMultiple(tag, (Type)node.Tag, 1);
       }
@@ -1223,7 +1223,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public void EhView_TransformationAddAsAppending(PlotColumnTag tag)
     {
       var node = _availableTransformations.FirstSelectedNode;
-      if (null != node)
+      if (node is not null)
       {
         EhTransformation_AddMultiple(tag, (Type)node.Tag, 2);
       }
@@ -1231,7 +1231,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     public void EhView_TransformationEdit(PlotColumnTag tag)
     {
-      if (tag == null)
+      if (tag is null)
         return;
 
       var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
@@ -1262,14 +1262,14 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       var selNode = items.OfType<NGTreeNode>().FirstOrDefault();
       // to start a drag, at least one item must be selected
-      return selNode != null && (selNode.Tag is DataColumn);
+      return selNode is not null && (selNode.Tag is DataColumn);
     }
 
     private StartDragData EhAvailableDataColumns_StartDrag(IEnumerable items)
     {
       var node = items.OfType<NGTreeNode>().FirstOrDefault();
 
-      if (node != null && node.Tag is DataColumn)
+      if (node is not null && node.Tag is DataColumn)
       {
         return new StartDragData
         {
@@ -1301,7 +1301,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
       // to start a drag, at least one item must be selected
-      return selNode != null;
+      return selNode is not null;
     }
 
     private StartDragData EhOtherAvailableItems_StartDrag(IEnumerable items)
@@ -1333,7 +1333,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
       // to start a drag, at least one item must be selected
-      return selNode != null;
+      return selNode is not null;
     }
 
     private StartDragData EhAvailableTransformations_StartDrag(IEnumerable items)
@@ -1385,7 +1385,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public DropReturnData EhColumnDrop(object data, object nonGuiTargetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
     {
       var tag = nonGuiTargetItem as PlotColumnTag;
-      if (null == tag)
+      if (tag is null)
         return new DropReturnData { IsCopy = false, IsMove = false };
 
       _isDirty = true;
@@ -1413,7 +1413,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
         {
           _availableTransformations.ClearSelectionsAll(); // we artificially select the node that holds that type
           var nodeToSelect = _availableTransformations.FirstOrDefault(node => (Type)node.Tag == (Type)data);
-          if (null != nodeToSelect)
+          if (nodeToSelect is not null)
           {
             nodeToSelect.IsSelected = true;
             EhView_TransformationAddTo(tag);
@@ -1489,7 +1489,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
 
       // and finally update the view
-      if (null != _view)
+      if (_view is not null)
       {
         View_PlotColumns_Initialize();
         View_PlotColumns_UpdateAll();

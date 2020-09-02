@@ -276,7 +276,7 @@ namespace Altaxo.Data
           var kind = (ColumnKind)info.GetInt32("Kind");
           int group = info.GetInt32("Group");
           var col = (DataColumn)info.GetValue("Data", s);
-          if (col != null)
+          if (col is not null)
             s.Add(col, new DataColumnInfo(name, kind, group));
 
           info.CloseElement(); // Column
@@ -371,7 +371,7 @@ namespace Altaxo.Data
             var kind = (ColumnKind)info.GetInt32("Kind");
             int group = info.GetInt32("Group");
             var col = (DataColumn)info.GetValue("Data", s);
-            if (col != null)
+            if (col is not null)
               s.Add(col, new DataColumnInfo(name, kind, group));
 
             info.CloseElement(); // Column
@@ -395,7 +395,7 @@ namespace Altaxo.Data
         }
 
         s._deferredDataLoader = info.GetPropertyOrDefault<object>(DeserialiationInfoProperty_DeferredDataDeserialization);
-        if (null != s._deferredDataLoader)
+        if (s._deferredDataLoader is not null)
         {
           s._numberOfRows = numberOfRows;
           s._hasNumberOfRowsDecreased = false;
@@ -568,7 +568,7 @@ namespace Altaxo.Data
           _archiveMemento = value;
         }
 
-        if (null != value)
+        if (value is not null)
           _isDataDirty = false;
       }
     }
@@ -578,7 +578,7 @@ namespace Altaxo.Data
     /// </summary>
     public void EnsureDeferredDataAreLoaded()
     {
-      if (null != _deferredDataLoader)
+      if (_deferredDataLoader is not null)
         TryLoadDeferredData();
     }
 
@@ -588,7 +588,7 @@ namespace Altaxo.Data
       object? deferredDataLoader = null;
       lock (_deferredLock)
       {
-        if (null != _deferredDataLoader)
+        if (_deferredDataLoader is not null)
         {
           deferredDataLoader = _deferredDataLoader;
           _deferredDataLoader = new object();
@@ -757,7 +757,7 @@ namespace Altaxo.Data
     {
       get
       {
-        if (null != _deferredDataLoader)
+        if (_deferredDataLoader is not null)
           TryLoadDeferredData();
 
         foreach (var c in _columnsByNumber)
@@ -804,7 +804,7 @@ namespace Altaxo.Data
     /// <param name="groupNumber">The group number of the column.</param>
     public void Add(Altaxo.Data.DataColumn datac, string name, ColumnKind kind, int groupNumber)
     {
-      if (name == null)
+      if (name is null)
         name = FindNewColumnName();
       else if (_columnsByName.ContainsKey(name))
         name = FindUniqueColumnName(name);
@@ -819,14 +819,14 @@ namespace Altaxo.Data
     /// <param name="info">The DataColumnInfo object for the column to add.</param>
     private void Add(Altaxo.Data.DataColumn datac, DataColumnInfo info)
     {
-      if (null != _deferredDataLoader)
+      if (_deferredDataLoader is not null)
         TryLoadDeferredData();
 
 
       if (!(ContainsColumn(datac) == false))
         throw new ArgumentException(nameof(datac) + " is already contained in this collection");
 
-      if (!(datac.ParentObject == null))
+      if (datac.ParentObject is not null)
         throw new ArgumentException(nameof(datac) + " already has a parent. This private function should be only called with fresh DataColumns, if not, alter the behaviour of the calling function");
 
       if (!(false == _columnsByName.ContainsKey(info.Name)))
@@ -1025,13 +1025,13 @@ namespace Altaxo.Data
         else
         {
           // if the column to add has a parent, we can not add the column directly (we are then not the owner), so we clone it
-          Replace(index, datac.ParentObject == null ? datac : (DataColumn)datac.Clone());
+          Replace(index, datac.ParentObject is null ? datac : (DataColumn)datac.Clone());
         }
       }
       else
       {
         // if the column to add has a parent, we can not add the column directly (we are then not the owner), so we clone it
-        Add(datac.ParentObject == null ? datac : (DataColumn)datac.Clone(), name);
+        Add(datac.ParentObject is null ? datac : (DataColumn)datac.Clone(), name);
       }
     }
 
@@ -1057,12 +1057,12 @@ namespace Altaxo.Data
     {
       if (index >= ColumnCount)
         throw new System.IndexOutOfRangeException(string.Format("Index ({0})for replace operation was outside the bounds, the actual column count is {1}", index, ColumnCount));
-      if (null == newCol)
+      if (newCol is null)
         throw new ArgumentNullException("newCol");
       if (newCol.IsSomeoneListeningToChanges)
         throw new ArgumentException("The column provided in the argument is not a fresh column, because someone is listening already to this column");
 
-      if (null != _deferredDataLoader)
+      if (_deferredDataLoader is not null)
         TryLoadDeferredData();
 
       DataColumn oldCol = this[index];
@@ -1078,7 +1078,7 @@ namespace Altaxo.Data
       _columnInfoByColumn.Remove(oldCol);
       _columnInfoByColumn.Add(newCol, info);
 
-      if (null != oldColumnScript)
+      if (oldColumnScript is not null)
       {
         _columnScripts.Remove(oldCol);
         _columnScripts.Add(newCol, oldColumnScript);
@@ -1299,7 +1299,7 @@ namespace Altaxo.Data
 
     public void RemoveColumns(IAscendingIntegerCollection selectedColumns)
     {
-      if (null != _deferredDataLoader)
+      if (_deferredDataLoader is not null)
         TryLoadDeferredData();
 
 
@@ -1351,7 +1351,7 @@ namespace Altaxo.Data
     /// <param name="selectedColumns">The indices of the column of the source collection that are moved.</param>
     public void MoveColumnsTo(DataColumnCollection destination, int destindex, IAscendingIntegerCollection selectedColumns)
     {
-      if (null != _deferredDataLoader)
+      if (_deferredDataLoader is not null)
         TryLoadDeferredData();
 
       int nOriginalColumnCount = ColumnCount;
@@ -1378,7 +1378,7 @@ namespace Altaxo.Data
       // Move the column scripts also
       for (int i = 0; i < numberMoved; i++)
       {
-        if (tmpScript[i] != null)
+        if (tmpScript[i] is not null)
           destination._columnScripts.Add(tmpColumn[i], tmpScript[i]);
       }
     }
@@ -1407,7 +1407,7 @@ namespace Altaxo.Data
       if (doCopyProperties)
       {
         from.ColumnScripts.TryGetValue(from[idx], out var script);
-        if (null != script)
+        if (script is not null)
           ColumnScripts.Add(newCol, (IColumnScriptText)script.Clone());
       }
 
@@ -1750,7 +1750,7 @@ namespace Altaxo.Data
       bool Y_present = false;
       bool Z_present = false;
 
-      if (exceptThisColumn != null)
+      if (exceptThisColumn is not null)
       {
         switch (GetColumnInfo(exceptThisColumn).Kind)
         {
@@ -2038,7 +2038,7 @@ namespace Altaxo.Data
     /// <remarks>An exception is thrown if newPosition is negative or higher than possible.</remarks>
     public void ChangeColumnPosition(Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int newPosition)
     {
-      if (null != _deferredDataLoader)
+      if (_deferredDataLoader is not null)
         TryLoadDeferredData();
 
       int numberSelected = selectedColumns.Count;
@@ -2194,7 +2194,7 @@ namespace Altaxo.Data
         if (!_columnsByName.TryGetValue(s, out var result))
           throw new ArgumentOutOfRangeException(string.Format("The column \"{0}\" in \"{1}\" does not exist.", s, Main.AbsoluteDocumentPath.GetPathString(this, 2)));
 
-        if (null != _deferredDataLoader)
+        if (_deferredDataLoader is not null)
         {
           TryLoadDeferredData();
           result = _columnsByName[s];
@@ -2222,7 +2222,7 @@ namespace Altaxo.Data
       if (!_columnsByName.TryGetValue(s, out var result))
         return null;
 
-      if (null != _deferredDataLoader)
+      if (_deferredDataLoader is not null)
       {
         TryLoadDeferredData();
         result = _columnsByName[s];
@@ -2239,7 +2239,7 @@ namespace Altaxo.Data
     {
       get
       {
-        if (null != _deferredDataLoader)
+        if (_deferredDataLoader is not null)
           TryLoadDeferredData();
 
         try
@@ -2253,7 +2253,7 @@ namespace Altaxo.Data
       }
       set
       {
-        if (null != _deferredDataLoader)
+        if (_deferredDataLoader is not null)
           TryLoadDeferredData();
 
         // setting a column should not change its name nor its other properties
@@ -2421,7 +2421,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return null != _accumulatedEventData;
+        return _accumulatedEventData is not null;
       }
     }
 
@@ -2543,7 +2543,7 @@ namespace Altaxo.Data
     /// observed only until one column is reached, which has the same value of the row count as this collection.</param>
     public void RefreshRowCount(bool bSearchOnlyUntilOldRowCountReached)
     {
-      if (null != _deferredDataLoader)
+      if (_deferredDataLoader is not null)
         TryLoadDeferredData();
 
       int rowCount = 0;
@@ -2646,7 +2646,7 @@ namespace Altaxo.Data
           return tryName;
 
         // then try it with all names from A-ZZ
-        for (tryName = "A"; tryName != null; tryName = GetNextColumnName(tryName))
+        for (tryName = "A"; tryName is not null; tryName = GetNextColumnName(tryName))
         {
           if (!_columnsByName.ContainsKey(tryName))
             return tryName;
@@ -2673,7 +2673,7 @@ namespace Altaxo.Data
 
       // then try it with all names from A-ZZ
 
-      for (string? tryAppendix = "A"; tryAppendix != null; tryAppendix = GetNextColumnName(tryAppendix))
+      for (string? tryAppendix = "A"; tryAppendix is not null; tryAppendix = GetNextColumnName(tryAppendix))
       {
         if (!_columnsByName.ContainsKey(sbase + tryAppendix))
           return sbase + tryAppendix;
@@ -2711,7 +2711,7 @@ namespace Altaxo.Data
     {
       if (_columnsByName.TryGetValue(name, out var col))
       {
-        if (null != _deferredDataLoader)
+        if (_deferredDataLoader is not null)
           TryLoadDeferredData();
 
         return col;

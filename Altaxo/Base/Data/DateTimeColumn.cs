@@ -199,7 +199,7 @@ namespace Altaxo.Data
         else
         {
           _count = 0;
-          if (o == null)
+          if (o is null)
             throw new ArgumentNullException("o");
           else
             throw new ArgumentException("Try to copy " + o.GetType() + " to " + GetType(), "o"); // throw exception

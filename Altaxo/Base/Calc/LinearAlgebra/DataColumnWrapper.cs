@@ -114,9 +114,9 @@ namespace Altaxo.Calc.LinearAlgebra
       #region IROVector Members
 
       /// <summary>The number of elements of this vector.</summary>
-      public int Length { get {; return _rows == null ? 0 : _rows.Count; } }
+      public int Length { get {; return _rows is null ? 0 : _rows.Count; } }
 
-      public int Count { get {; return _rows == null ? 0 : _rows.Count; } }
+      public int Count { get {; return _rows is null ? 0 : _rows.Count; } }
 
       /// <summary>
       /// Element accessor.
@@ -233,9 +233,9 @@ namespace Altaxo.Calc.LinearAlgebra
       #region IROVector Members
 
       /// <summary>The number of elements of this vector.</summary>
-      public int Length { get {; return _rows == null ? 0 : _rows.Count; } }
+      public int Length { get {; return _rows is null ? 0 : _rows.Count; } }
 
-      public int Count { get {; return _rows == null ? 0 : _rows.Count; } }
+      public int Count { get {; return _rows is null ? 0 : _rows.Count; } }
 
       /// <summary>
       /// Element accessor.

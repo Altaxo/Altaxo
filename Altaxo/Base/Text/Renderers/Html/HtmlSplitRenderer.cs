@@ -545,7 +545,7 @@ namespace Altaxo.Text.Renderers.Html
       foreach (var mdo in MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(_markdownDocument))
       {
         var attr = (Markdig.Renderers.Html.HtmlAttributes)mdo.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-        if (null != attr && attr.Id == url)
+        if (attr is not null && attr.Id == url)
         {
           // markdown element found, now we need to know in which file it is
           var prevFile = _htmlFileList.First();
@@ -584,7 +584,7 @@ namespace Altaxo.Text.Renderers.Html
         if (link.ContainsData(typeof(Markdig.Renderers.Html.HtmlAttributes)))
         {
           var htmlAttributes = (Markdig.Renderers.Html.HtmlAttributes)link.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-          if (null != htmlAttributes.Properties)
+          if (htmlAttributes.Properties is not null)
           {
             for (var i = 0; i < htmlAttributes.Properties.Count; ++i)
             {
@@ -713,7 +713,7 @@ namespace Altaxo.Text.Renderers.Html
           // the challenge here is to find out where (in which file) our target is.
           var (fileGuid, localUrl) = SplitRenderer.FindFragmentLink(url);
           var totalAddress = string.Empty;
-          if (null != fileGuid && null != localUrl)
+          if (fileGuid is not null && localUrl is not null)
           {
             fileGuid = System.IO.Path.GetFileName(fileGuid);
             url = "./" + fileGuid + "#" + localUrl;

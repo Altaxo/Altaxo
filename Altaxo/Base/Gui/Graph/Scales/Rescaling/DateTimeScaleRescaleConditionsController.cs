@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
         _endRelativeToChoices = new SelectableListNodeList(_doc.EndRelativeTo);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.OrgRescaling = _orgRescalingChoices;
         _view.EndRescaling = _endRescalingChoices;
@@ -276,7 +276,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
           }
         }
 
-        if (null != _view)
+        if (_view is not null)
           _view.OrgRescaling = _orgRescalingChoices;
       }
     }
@@ -297,14 +297,14 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
           }
         }
 
-        if (null != _view)
+        if (_view is not null)
           _view.EndRescaling = _endRescalingChoices;
       }
     }
 
     private void EhOrgRelativeToChanged()
     {
-      if (null == _orgRelativeToChoices.FirstSelectedNode)
+      if (_orgRelativeToChoices.FirstSelectedNode is null)
         return;
 
       var orgRelativeTo = (BoundariesRelativeTo)_orgRelativeToChoices.FirstSelectedNode.Tag;
@@ -317,7 +317,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private void EhEndRelativeToChanged()
     {
-      if (null == _orgRelativeToChoices.FirstSelectedNode)
+      if (_orgRelativeToChoices.FirstSelectedNode is null)
         return;
 
       var endRelativeTo = (BoundariesRelativeTo)_endRelativeToChoices.FirstSelectedNode.Tag;

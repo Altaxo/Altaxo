@@ -61,12 +61,12 @@ namespace Altaxo.AddInItems
       Codon codon = args.Codon;
       string item = codon.Properties["item"];
       string path = codon.Properties["path"];
-      if (item != null && item.Length > 0)
+      if (item is not null && item.Length > 0)
       {
         // include item
         return args.AddInTree.BuildItem(item, args.Parameter, args.Conditions);
       }
-      else if (path != null && path.Length > 0)
+      else if (path is not null && path.Length > 0)
       {
         // include path (=multiple items)
         AddInTreeNode? node = args.AddInTree.GetTreeNode(path);

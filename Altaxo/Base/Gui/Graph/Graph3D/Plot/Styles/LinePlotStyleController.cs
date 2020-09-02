@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         InitializeLineConnectionChoices();
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         // Line properties
         _view.InitializeLineConnect(_lineConnectChoices);
@@ -146,7 +146,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void InitializeLineConnectionChoices()
     {
-      if (null == _lineConnectChoices)
+      if (_lineConnectChoices is null)
         _lineConnectChoices = new SelectableListNodeList();
       else
         _lineConnectChoices.Clear();
@@ -213,7 +213,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhColorGroupStyleAddedOrRemoved()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentLineColor = _view.IndependentLineColor;
         _view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
@@ -222,7 +222,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhIndependentLineColorChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentLineColor = _view.IndependentLineColor;
         _view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);

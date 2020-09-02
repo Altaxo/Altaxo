@@ -119,7 +119,7 @@ namespace Altaxo.Gui.Graph
         foreach (var yp in _doc.YPartitioning)
           _rowCollection.Add(yp.IsAbsolute ? new DimensionfulQuantity(yp.Value, AUL.Point.Instance) : new DimensionfulQuantity(yp.Value * 100, _percentLayerYSizeUnit));
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.XPartitionEnvironment = _xSizeEnvironment;
         _view.YPartitionEnvironment = _ySizeEnvironment;

@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
           _itemsList.Add(node);
         }
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.ItemsList = _itemsList;
       }

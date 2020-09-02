@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Data
         for (int i = 0; i < _doc.ColumnCount; ++i)
         {
           var col = _doc.GetDataColumnProxy(i);
-          _valueColumns.Add(new SelectableListNode(col.Document() != null ? col.Document().FullName : "Unresolved column", col, false));
+          _valueColumns.Add(new SelectableListNode(col.Document() is not null ? col.Document().FullName : "Unresolved column", col, false));
         }
 
         CalcMaxPossiblePlotRangeTo();
@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Data
         _rowsController.InitializeDocument(_doc.ParticipatingDataRows.Clone());
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         EhSelectedColumnKindChanged(); // ask view which column kind is now selected
         UpdateButtonEnablingInView(); // do that in every case, even if nothing has changed
@@ -160,12 +160,12 @@ namespace Altaxo.Gui.Data
         _view.UseAllAvailableDataColumns = _doc.UseAllAvailableDataColumnsOfGroup;
         _view.UseAllAvailableDataRows = _doc.UseAllAvailableDataRows;
 
-        _view.Initialize_XColumn(_xColumn == null ? string.Empty : _xColumn.FullName);
-        _view.Initialize_YColumn(_yColumn == null ? string.Empty : _yColumn.FullName);
+        _view.Initialize_XColumn(_xColumn is null ? string.Empty : _xColumn.FullName);
+        _view.Initialize_YColumn(_yColumn is null ? string.Empty : _yColumn.FullName);
         _view.Initialize_VColumns(_valueColumns);
         CalcMaxPossiblePlotRangeTo();
 
-        if (_rowsController.ViewObject == null)
+        if (_rowsController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_rowsController);
         _view.Initialize_DataRowsControl(_rowsController.ViewObject);
       }
@@ -241,9 +241,9 @@ namespace Altaxo.Gui.Data
       _availableColumns.Clear();
 
       var node = _availableTables.FirstSelectedNode;
-      DataTable tg = node == null ? null : node.Tag as DataTable;
+      DataTable tg = node is null ? null : node.Tag as DataTable;
 
-      if (null != tg)
+      if (tg is not null)
       {
         if (_areDataColumnsShown)
         {
@@ -257,7 +257,7 @@ namespace Altaxo.Gui.Data
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeAvailableColumns(_availableColumns);
       }
@@ -265,7 +265,7 @@ namespace Altaxo.Gui.Data
 
     private void UpdateButtonEnablingInView()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _view.EnableUseButtons(_areDataColumnsShown, !_areDataColumnsShown, _areDataColumnsShown);
       }
@@ -290,18 +290,18 @@ namespace Altaxo.Gui.Data
     private void EhUseSelectedItemAsXColumn()
     {
       var node = _availableColumns.FirstSelectedNode;
-      _xColumn = node == null ? null : node.Tag as DataColumn;
-      if (null != _view)
-        _view.Initialize_XColumn(_xColumn == null ? string.Empty : _xColumn.FullName);
+      _xColumn = node is null ? null : node.Tag as DataColumn;
+      if (_view is not null)
+        _view.Initialize_XColumn(_xColumn is null ? string.Empty : _xColumn.FullName);
     }
 
     private void EhUseSelectedItemAsYColumn()
     {
       var node = _availableColumns.FirstSelectedNode;
-      _yColumn = node == null ? null : node.Tag as DataColumn;
+      _yColumn = node is null ? null : node.Tag as DataColumn;
 
-      if (null != _view)
-        _view.Initialize_YColumn(_yColumn == null ? string.Empty : _yColumn.FullName);
+      if (_view is not null)
+        _view.Initialize_YColumn(_yColumn is null ? string.Empty : _yColumn.FullName);
     }
 
     private void EhUseSelectedItemAsVColumns()
@@ -309,7 +309,7 @@ namespace Altaxo.Gui.Data
       foreach (var node in _availableColumns.Where(n => n.IsSelected))
       {
         var colToAdd = node.Tag as IReadableColumn;
-        if (colToAdd == null)
+        if (colToAdd is null)
           continue;
 
         // before adding this node, check that it is not already present
@@ -324,20 +324,20 @@ namespace Altaxo.Gui.Data
     private void EhClearXColumn()
     {
       _xColumn = null;
-      if (null != _view)
-        _view.Initialize_XColumn(_xColumn == null ? string.Empty : _xColumn.FullName);
+      if (_view is not null)
+        _view.Initialize_XColumn(_xColumn is null ? string.Empty : _xColumn.FullName);
     }
 
     private void EhClearYColumn()
     {
       _yColumn = null;
-      if (null != _view)
-        _view.Initialize_YColumn(_yColumn == null ? string.Empty : _yColumn.FullName);
+      if (_view is not null)
+        _view.Initialize_YColumn(_yColumn is null ? string.Empty : _yColumn.FullName);
     }
 
     private void EhClearVColumns()
     {
-      if (null != _valueColumns.FirstSelectedNode) // if anything selected, clear only the selected nodes
+      if (_valueColumns.FirstSelectedNode is not null) // if anything selected, clear only the selected nodes
       {
         _valueColumns.RemoveSelectedItems();
       }

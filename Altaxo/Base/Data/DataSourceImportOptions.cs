@@ -110,7 +110,7 @@ namespace Altaxo.Data
         return true;
 
       var from = obj as DataSourceImportOptions;
-      if (null != from)
+      if (from is not null)
       {
         _importTriggerSource = from._importTriggerSource;
         _doNotSaveCachedTableData = from._doNotSaveCachedTableData;
@@ -152,7 +152,7 @@ namespace Altaxo.Data
 
       protected virtual DataSourceImportOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new DataSourceImportOptions() : (DataSourceImportOptions)o);
+        var s = (o is null ? new DataSourceImportOptions() : (DataSourceImportOptions)o);
 
         s._importTriggerSource = (Data.ImportTriggerSource)info.GetEnum("ImportTriggerSource", s._importTriggerSource.GetType());
         s._executeTableScriptAfterImport = info.GetBoolean("ExecuteTableScriptAfterImport");

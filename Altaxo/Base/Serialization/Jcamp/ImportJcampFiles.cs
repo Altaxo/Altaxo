@@ -143,17 +143,17 @@ namespace Altaxo.Serialization.Jcamp
           yScale = 1;
 
         DateTime combinedTime = DateTime.MinValue;
-        if (dateValue != null)
+        if (dateValue != DateTime.MinValue)
           combinedTime = dateValue;
-        if (timeValue != null)
+        if (timeValue != DateTime.MinValue)
           combinedTime = combinedTime.Add(timeValue.TimeOfDay);
 
         if (line.StartsWith(XYBlockHeader))
         {
           var xCol = new DoubleColumn();
           var yCol = new DoubleColumn();
-          table.DataColumns.Add(xCol, xLabel == null ? "X" : xLabel, ColumnKind.X);
-          table.DataColumns.Add(yCol, yLabel == null ? "Y" : yLabel, ColumnKind.V);
+          table.DataColumns.Add(xCol, xLabel is null ? "X" : xLabel, ColumnKind.X);
+          table.DataColumns.Add(yCol, yLabel is null ? "Y" : yLabel, ColumnKind.V);
 
           if (combinedTime != DateTime.MinValue)
           {
@@ -161,14 +161,14 @@ namespace Altaxo.Serialization.Jcamp
             table.PropCols["Date"][1] = combinedTime;
           }
 
-          if (xUnit != null || yUnit != null)
+          if (xUnit is not null || yUnit is not null)
           {
             table.PropCols.Add(new TextColumn(), "Unit", ColumnKind.V);
             table.PropCols["Unit"][0] = xUnit;
             table.PropCols["Unit"][1] = yUnit;
           }
 
-          if (xLabel != null || yLabel != null)
+          if (xLabel is not null || yLabel is not null)
           {
             table.PropCols.Add(new TextColumn(), "Label", ColumnKind.V);
             table.PropCols["Label"][0] = xLabel;
@@ -180,7 +180,7 @@ namespace Altaxo.Serialization.Jcamp
             line = tr.ReadLine();
             lineCounter++;
 
-            if (line == null || line.StartsWith(BlockEndHeader))
+            if (line is null || line.StartsWith(BlockEndHeader))
               break;
             string[] tokens = line.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
             if (tokens.Length == 0)
@@ -257,7 +257,7 @@ namespace Altaxo.Serialization.Jcamp
         string? error = ToDataTable(stream, out var localTable);
         stream.Close();
 
-        if (null != error)
+        if (error is not null)
         {
           errorList.Append(error);
           continue;
@@ -283,7 +283,7 @@ namespace Altaxo.Serialization.Jcamp
         bool bMatchsXColumn = false;
 
         // first look if our default xcolumn matches the xvalues
-        if (null != xcol)
+        if (xcol is not null)
           bMatchsXColumn = ValuesMatch(xvalues, xcol);
 
         // if no match, then consider all xcolumns from right to left, maybe some fits
@@ -363,7 +363,7 @@ namespace Altaxo.Serialization.Jcamp
 
         string? errors = ImportJcampFiles(filenames, table);
 
-        if (errors != null)
+        if (errors is not null)
         {
           Current.Gui.ErrorMessageBox(errors, "Some errors occured during import!");
         }

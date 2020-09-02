@@ -55,7 +55,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        KohlrauschModulusRetardation s = o != null ? (KohlrauschModulusRetardation)o : new KohlrauschModulusRetardation();
+        KohlrauschModulusRetardation s = o is not null ? (KohlrauschModulusRetardation)o : new KohlrauschModulusRetardation();
         s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
         s._useFlowTerm = info.GetBoolean("FlowTerm");
         //s._isDielectricData = info.GetBoolean("IsDielectric");
@@ -77,7 +77,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        KohlrauschModulusRetardation s = o != null ? (KohlrauschModulusRetardation)o : new KohlrauschModulusRetardation();
+        KohlrauschModulusRetardation s = o is not null ? (KohlrauschModulusRetardation)o : new KohlrauschModulusRetardation();
         s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
         s._useFlowTerm = info.GetBoolean("FlowTerm");
         s._logarithmizeResults = info.GetBoolean("LogarithmizeResults");

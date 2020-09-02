@@ -390,11 +390,11 @@ namespace Altaxo.Gui.Common.MultiRename
     /// be closed, and the items which remain should be renamed in a second step then.</returns>
     public bool DoRename()
     {
-      if (null != _renameActionHandler)
+      if (_renameActionHandler is not null)
       {
         var list = _renameActionHandler(this);
 
-        if (list != null && list.Count != 0)
+        if (list is not null && list.Count != 0)
         {
           _objectsToRename.Clear();
           AddObjectsToRename(list);

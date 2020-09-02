@@ -58,7 +58,7 @@ namespace Altaxo.AddInItems
     public object? CreateObject(string className)
     {
       Type? t = FindType(className);
-      if (t != null)
+      if (t is not null)
         return Activator.CreateInstance(t);
       else
         return null;
@@ -75,7 +75,7 @@ namespace Altaxo.AddInItems
           LoadDependencies();
         }
         Type? t = runtime.FindType(className);
-        if (t != null)
+        if (t is not null)
         {
           return t;
         }
@@ -99,10 +99,10 @@ namespace Altaxo.AddInItems
       foreach (Runtime runtime in _runtimes)
       {
         Assembly? assembly = runtime.LoadedAssembly;
-        if (assembly != null)
+        if (assembly is not null)
         {
           Stream? s = assembly.GetManifestResourceStream(resourceName);
-          if (s != null)
+          if (s is not null)
           {
             return s;
           }
@@ -175,7 +175,7 @@ namespace Altaxo.AddInItems
       get { return customErrorMessage; }
       internal set
       {
-        if (value != null)
+        if (value is not null)
         {
           Enabled = false;
           Action = AddInAction.CustomError;
@@ -296,7 +296,7 @@ namespace Altaxo.AddInItems
               {
                 throw new AddInLoadException("Include nodes must be empty!");
               }
-              if (hintPath == null)
+              if (hintPath is null)
               {
                 throw new AddInLoadException("Cannot use include nodes when hintPath was not specified (e.g. when AddInManager reads a .addin file)!");
               }

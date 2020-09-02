@@ -85,7 +85,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         var rotation = -info.GetSingle("Rotation"); // meaning of rotation reversed in version 2
 
         var locationAsAutoSized = s._location as ItemLocationDirectAutoSize;
-        if (null != locationAsAutoSized)
+        if (locationAsAutoSized is not null)
         {
           locationAsAutoSized.SetSizeInAutoSizeMode(new PointD2D(bounds.Width, bounds.Height));
         }
@@ -132,7 +132,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         var rotation = info.GetSingle("Rotation");
 
         var locationAsAutoSized = s._location as ItemLocationDirectAutoSize;
-        if (null != locationAsAutoSized)
+        if (locationAsAutoSized is not null)
         {
           locationAsAutoSized.SetSizeInAutoSizeMode(new PointD2D(bounds.Width, bounds.Height));
         }
@@ -185,7 +185,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         var shear = info.GetSingle("Shear");
 
         var locationAsAutoSized = s._location as ItemLocationDirectAutoSize;
-        if (null != locationAsAutoSized)
+        if (locationAsAutoSized is not null)
         {
           locationAsAutoSized.SetSizeInAutoSizeMode(new PointD2D(bounds.Width, bounds.Height));
         }
@@ -248,7 +248,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         var scaleY = info.GetSingle("ScaleY");
         var shear = info.GetSingle("Shear");
         var locationAsAutoSized = s._location as ItemLocationDirectAutoSize;
-        if (null != locationAsAutoSized)
+        if (locationAsAutoSized is not null)
         {
           locationAsAutoSized.SetSizeInAutoSizeMode(new PointD2D(w, h));
         }
@@ -285,10 +285,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         var s = (GraphicBase)(o ?? throw new ArgumentNullException(nameof(o)));
 
-        if (null != s._location)
+        if (s._location is not null)
           s._location.Dispose(); // because location probably is set already in the derived object
         s._location = (ItemLocationDirect)info.GetValue("Location", s);
-        if (null != s._location)
+        if (s._location is not null)
           s._location.ParentObject = s;
 
         s.UpdateTransformationMatrix();
@@ -351,7 +351,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _location)
+      if (_location is not null)
         yield return new Main.DocumentNodeAndName(_location, () => _location = null!, "Location");
     }
 
@@ -519,7 +519,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="yscale">The yscale ratio.</param>
     public static void ScalePosition(IGraphicBase o, double xscale, double yscale)
     {
-      if (o != null)
+      if (o is not null)
       {
         PointD2D oldP = o.Position;
         o.Position = new PointD2D((oldP.X * xscale), (oldP.Y * yscale));
@@ -708,7 +708,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         if (object.ReferenceEquals(node, parent))
           break;
 
-        if (null == node)
+        if (node is null)
           throw new InvalidOperationException("The parent given in the argument is not an ancestor node of this instance");
 
         if (node is GraphicBase gb)

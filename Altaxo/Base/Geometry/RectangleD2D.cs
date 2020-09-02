@@ -81,7 +81,7 @@ namespace Altaxo.Geometry
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        RectangleD2D s = null != o ? (RectangleD2D)o : new RectangleD2D();
+        RectangleD2D s = o is not null ? (RectangleD2D)o : new RectangleD2D();
         s.X = info.GetDouble("X");
         s.Y = info.GetDouble("Y");
         s.Width = info.GetDouble("Width");

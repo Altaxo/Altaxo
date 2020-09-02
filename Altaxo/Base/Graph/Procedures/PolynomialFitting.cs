@@ -58,18 +58,18 @@ namespace Altaxo.Graph.Procedures
       ctrl.EnsureValidityOfCurrentLayerNumber();
       ctrl.EnsureValidityOfCurrentPlotNumber();
       var xylayer = ctrl.ActiveLayer as XYPlotLayer;
-      if (null == xylayer || ctrl.CurrentPlotNumber < 0)
+      if (xylayer is null || ctrl.CurrentPlotNumber < 0)
         return "No active plot available";
 
       IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
       var xyPlotItem = plotItem as XYColumnPlotItem;
 
-      if (xyPlotItem == null)
+      if (xyPlotItem is null)
         return "No active plot!";
 
       XYColumnPlotData data = xyPlotItem.XYColumnPlotData;
-      if (data == null)
+      if (data is null)
         return "Active plot item has no data";
 
       if (!(data.XColumn is Altaxo.Data.INumericColumn) || !(data.YColumn is Altaxo.Data.INumericColumn))
@@ -108,14 +108,14 @@ namespace Altaxo.Graph.Procedures
       string[] result = new string[2] { string.Empty, string.Empty };
 
       var xylayer = ctrl.ActiveLayer as XYPlotLayer;
-      if (null == xylayer || ctrl.CurrentPlotNumber < 0)
+      if (xylayer is null || ctrl.CurrentPlotNumber < 0)
         return result;
 
       IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
       var xyPlotItem = plotItem as XYColumnPlotItem;
 
-      if (xyPlotItem == null)
+      if (xyPlotItem is null)
         return result;
 
       XYColumnPlotData data = xyPlotItem.XYColumnPlotData;
@@ -243,7 +243,7 @@ namespace Altaxo.Graph.Procedures
       var fittedCurve = new XYFunctionPlotItem(new XYFunctionPlotData(plotfunction), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, ctrl.Doc.GetPropertyContext()));
 
       var xylayer = ctrl.ActiveLayer as XYPlotLayer;
-      if (null != xylayer)
+      if (xylayer is not null)
         xylayer.PlotItems.Add(fittedCurve);
 
       return null;

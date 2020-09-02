@@ -214,7 +214,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     public TextGraphic(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirectAutoSize())
     {
-      if (null == context)
+      if (context is null)
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       _font = context.GetValue(GraphDocument.PropertyKeyDefaultFont);
@@ -273,8 +273,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       _textBrush = from._textBrush;
 
-      _background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
-      if (null != _background)
+      _background = from._background is null ? null : (IBackgroundStyle)from._background.Clone();
+      if (_background is not null)
         _background.ParentObject = this;
 
       _lineSpacingFactor = from._lineSpacingFactor;
@@ -313,7 +313,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
     {
 
-      if (null != _background)
+      if (_background is not null)
         yield return new Main.DocumentNodeAndName(_background, "Background");
     }
 
@@ -336,7 +336,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       double distanceYU = 0;   // upper y distance bounding rectangle-string
       double distanceYL = 0; // lower y distance
 
-      if (_background != null)
+      if (_background is not null)
       {
         // the distance to the sides should be like the character n
         distanceXL = 0.25 * widthOfOne_n; // left distance bounds-text
@@ -349,7 +349,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       _cachedExtendedTextBounds = new RectangleD2D(PointD2D.Empty, size);
       var textRectangle = new RectangleD2D(new PointD2D(-distanceXL, -distanceYU), size);
 
-      if (_background != null)
+      if (_background is not null)
       {
         var backgroundRect = _background.MeasureItem(g, textRectangle);
         _cachedExtendedTextBounds.Offset(textRectangle.X - backgroundRect.X, textRectangle.Y - backgroundRect.Y);
@@ -393,7 +393,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       get
       {
-        if (null == _background)
+        if (_background is null)
           return BackgroundStyle.None;
         else if (_background is BlackLine)
           return BackgroundStyle.BlackLine;
@@ -450,7 +450,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       if (!_isMeasureInSync)
         return;
 
-      if (_background != null)
+      if (_background is not null)
         _background.Draw(g, _cachedExtendedTextBounds);
     }
 
@@ -492,7 +492,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public bool Empty
     {
-      get { return _text == null || _text.Length == 0; }
+      get { return _text is null || _text.Length == 0; }
     }
 
     public string Text
@@ -597,7 +597,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         tabStop: Glyph.MeasureString(g, "MMMM", _font).X
       );
 
-      if (null != _rootNode)
+      if (_rootNode is not null)
         _rootNode.Measure(g, mc, 0);
     }
 
@@ -708,7 +708,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
 
       result = base.HitTest(htd);
-      if (null != result)
+      if (result is not null)
         result.DoubleClick = TextGraphicsEditorMethod;
       return result;
     }

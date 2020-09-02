@@ -62,9 +62,9 @@ namespace Altaxo.Graph.Gdi.Plot
         var lsps = (XYLineScatterPlotStyle)info.GetValue("Style", null);
 
         var ps = new G2DPlotStyleCollection();
-        if (null != lsps.ScatterStyle)
+        if (lsps.ScatterStyle is not null)
           ps.Add(new ScatterPlotStyle(lsps.ScatterStyle));
-        if (null != lsps.XYPlotLineStyle)
+        if (lsps.XYPlotLineStyle is not null)
           ps.Add(new LinePlotStyle(lsps.XYPlotLineStyle));
 
         if (o is null)
@@ -115,7 +115,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     private System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetLocalDocumentNodeChildrenWithName()
     {
-      if (null != _plotData)
+      if (_plotData is not null)
         yield return new Main.DocumentNodeAndName(_plotData, () => _plotData = null!, "Data");
     }
 

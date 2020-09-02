@@ -285,7 +285,7 @@ namespace Altaxo.Graph.Graph3D
         if (fromObj is HostLayer)
         {
           var layerToRecycle = layersToRecycle.FirstOrDefault(x => x.GetType() == fromObj.GetType());
-          if (null != layerToRecycle)
+          if (layerToRecycle is not null)
           {
             layersToRecycle.Remove(layerToRecycle); // this layer is now recycled, thus it is no longer available for another recycling
             thisObj = (IGraphicBase)layerToRecycle.Clone(); // we have nevertheless to clone, since true recycling is dangerous, because the layer is still in our own collection
@@ -293,7 +293,7 @@ namespace Altaxo.Graph.Graph3D
           }
         }
 
-        if (null == thisObj) // if not otherwise retrieved, simply clone the fromObj
+        if (thisObj is null) // if not otherwise retrieved, simply clone the fromObj
           thisObj = (IGraphicBase)pwFrom[j].Clone();
 
         pwThis[i++] = thisObj; // include in our own collection
@@ -418,7 +418,7 @@ namespace Altaxo.Graph.Graph3D
     {
       const int RelValueRoundFraction = 1024 * 1024;
 
-      if (null != _grid && !_grid.IsEmpty)
+      if (_grid is not null && !_grid.IsEmpty)
         return;
 
       var xPositions = new HashSet<double>();
@@ -565,7 +565,7 @@ namespace Altaxo.Graph.Graph3D
     {
       // despite the fact that _childLayers is only a partial view of _graphObjects, we use it here because if it is found here, it is never searched for in _graphObjects
       // note also that Disposed is overridden, so that we not use this function for dispose purposes
-      if (null != _childLayers)
+      if (_childLayers is not null)
       {
         for (int i = 0; i < _childLayers.Count; ++i)
         {
@@ -573,21 +573,21 @@ namespace Altaxo.Graph.Graph3D
         }
       }
 
-      if (null != _graphObjects)
+      if (_graphObjects is not null)
       {
         for (int i = 0; i < _graphObjects.Count; ++i)
         {
-          if (null != _graphObjects[i])
+          if (_graphObjects[i] is not null)
             yield return new Main.DocumentNodeAndName(_graphObjects[i], "GraphObject" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
       }
 
-      if (null != _location)
+      if (_location is not null)
       {
         yield return new Main.DocumentNodeAndName(_location, "Location");
       }
 
-      if (null != _grid)
+      if (_grid is not null)
       {
         yield return new Main.DocumentNodeAndName(_grid, "Grid");
       }
@@ -810,7 +810,7 @@ namespace Altaxo.Graph.Graph3D
       set
       {
         var ls = _location as ItemLocationDirect;
-        if (null != ls)
+        if (ls is not null)
         {
           if (ls.PositionX.IsAbsolute)
             ls.PositionX = RADouble.NewAbs(value.X);
@@ -836,7 +836,7 @@ namespace Altaxo.Graph.Graph3D
       set
       {
         var ls = _location as ItemLocationDirect;
-        if (null != ls)
+        if (ls is not null)
         {
           if (ls.SizeX.IsAbsolute)
             ls.SizeX = RADouble.NewAbs(value.X);
@@ -1113,7 +1113,7 @@ namespace Altaxo.Graph.Graph3D
       }
       else if (_location is ItemLocationByGrid gps)
       {
-        if (ParentLayer != null)
+        if (ParentLayer is not null)
         {
           var gridRect = newRect = gps.GetAbsolute(ParentLayer._grid, _cachedParentLayerSize);
 
@@ -1165,14 +1165,14 @@ namespace Altaxo.Graph.Graph3D
     protected virtual void OnCachedResultingSizeChanged()
     {
       // first inform our childs
-      if (null != _childLayers)
+      if (_childLayers is not null)
       {
         foreach (var layer in _childLayers)
           layer.SetParentSize(Size, false); // Do not raise change events here, it is only the cached size that changed
       }
 
       // now inform other listeners
-      if (null != SizeChanged)
+      if (SizeChanged is not null)
         SizeChanged(this, new System.EventArgs());
     }
 
@@ -1182,7 +1182,7 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     protected void OnCachedResultingPositionChanged()
     {
-      if (null != PositionChanged)
+      if (PositionChanged is not null)
         PositionChanged(this, new System.EventArgs());
     }
 
@@ -1267,9 +1267,9 @@ namespace Altaxo.Graph.Graph3D
     [MemberNotNull(nameof(_graphObjects), nameof(_childLayers))]
     private void InternalInitializeGraphObjectsCollection()
     {
-      if (null != _graphObjects)
+      if (_graphObjects is not null)
         throw new InvalidOperationException("_graphObjects was already set!");
-      if (null != _childLayers)
+      if (_childLayers is not null)
         throw new InvalidOperationException("_childLayers was already set!");
 
       _graphObjects = new GraphicCollection(x => { x.ParentObject = this; x.SetParentSize(Size, false); });
@@ -1326,11 +1326,11 @@ namespace Altaxo.Graph.Graph3D
         }
       }
 
-      if (null != LayerCollectionChanged)
+      if (LayerCollectionChanged is not null)
         LayerCollectionChanged(this, EventArgs.Empty);
 
       var pl = ParentLayer;
-      if (null != pl)
+      if (pl is not null)
       {
         pl.EhChildLayers_CollectionChanged(sender, e); // DODO is this not an endless loop?
       }
@@ -1415,12 +1415,12 @@ namespace Altaxo.Graph.Graph3D
         for (int i = _graphObjects.Count - 1; i >= 0; --i)
         {
           hit = _graphObjects[i].HitTest(localCoord);
-          if (null != hit)
+          if (hit is not null)
           {
-            if (null == hit.ParentLayer)
+            if (hit.ParentLayer is null)
               hit.ParentLayer = this;
 
-            if (null == hit.Remove && (hit.HittedObject is IGraphicBase))
+            if (hit.Remove is null && (hit.HittedObject is IGraphicBase))
               hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
 
             return hit;

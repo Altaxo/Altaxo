@@ -102,7 +102,7 @@ namespace Altaxo.AddInItems
         if (result is null)
           continue;
         var mod = result as IBuildItemsModifier;
-        if (mod != null)
+        if (mod is not null)
         {
           mod.Apply(items);
         }

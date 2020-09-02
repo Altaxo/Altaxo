@@ -45,9 +45,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
     protected static void SerializeV0(IScatterSymbol obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       var parent = ScatterSymbolListManager.Instance.GetParentList(obj);
-      if (null != parent)
+      if (parent is not null)
       {
-        if (null == info.GetProperty(ScatterSymbolList.GetSerializationRegistrationKey(parent)))
+        if (info.GetProperty(ScatterSymbolList.GetSerializationRegistrationKey(parent)) is null)
           info.AddValue("Set", parent);
         else
           info.AddValue("SetName", parent.Name);

@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
       if (initData)
       {
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.ShowPlotColorsOnly = ShowPlotColorsOnly;
         _view.SelectedColor = _doc;
@@ -66,13 +66,13 @@ namespace Altaxo.Gui.Graph.ColorManagement
     {
       _doc = _view.SelectedColor;
 
-      if (ShowPlotColorsOnly && _doc.ParentColorSet == null)
+      if (ShowPlotColorsOnly && _doc.ParentColorSet is null)
       {
         Current.Gui.ErrorMessageBox("You have chosen a custom color, but a plot color is required. Please choose one of the defined plot colors.", "Custom colors not allowed");
         return false;
       }
 
-      if (_doc.ParentColorSet == null)
+      if (_doc.ParentColorSet is null)
       {
         if (!Current.Gui.YesNoMessageBox(
           "You have chosen a custom color. This is not recommended, because a custom color does not belong to a color set.\r\n" +

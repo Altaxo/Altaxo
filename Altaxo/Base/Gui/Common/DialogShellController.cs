@@ -105,7 +105,7 @@ namespace Altaxo.Gui.Common
       get { return _view; }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.ButtonOKPressed -= EhOK;
           _view.ButtonCancelPressed -= EhCancel;
@@ -114,7 +114,7 @@ namespace Altaxo.Gui.Common
 
         _view = value;
 
-        if (null != _view)
+        if (_view is not null)
         {
           SetElements(false);
           _view.ButtonOKPressed += EhOK;
@@ -126,7 +126,7 @@ namespace Altaxo.Gui.Common
 
     private void SetElements(bool bInit)
     {
-      if (null != View)
+      if (View is not null)
       {
         View.Title = _title;
         View.ApplyVisible = _isApplyVisible;

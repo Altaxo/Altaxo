@@ -47,7 +47,7 @@ namespace Altaxo.Worksheet
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DoubleColumnStyle s = null != o ? (DoubleColumnStyle)o : new DoubleColumnStyle();
+        DoubleColumnStyle s = o is not null ? (DoubleColumnStyle)o : new DoubleColumnStyle();
         info.GetBaseValueEmbedded(s, typeof(DoubleColumnStyle).BaseType!, parent);
         return s;
       }

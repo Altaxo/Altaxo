@@ -183,7 +183,7 @@ namespace Altaxo.Graph.Graph3D
     /// <returns>False normally, true if the HitTestObject should be removed from the list of selected objects (i.e. because the object was deleted).</returns>
     public virtual bool OnDoubleClick()
     {
-      if (DoubleClick != null)
+      if (DoubleClick is not null)
         return DoubleClick(this);
       else
         return false;

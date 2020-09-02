@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Graph.Scales
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.OrgA = _doc.OrgA;
         _view.OrgB = _doc.OrgB;

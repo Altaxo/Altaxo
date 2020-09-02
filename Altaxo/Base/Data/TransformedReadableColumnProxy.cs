@@ -89,10 +89,10 @@ namespace Altaxo.Data
 
     public static TransformedReadableColumnProxy FromColumn(ITransformedReadableColumn column)
     {
-      if (null == column)
+      if (column is null)
         throw new ArgumentNullException(nameof(column));
       var colAsDocumentNode = column.UnderlyingReadableColumn as IDocumentLeafNode;
-      if (null == colAsDocumentNode)
+      if (colAsDocumentNode is null)
         throw new ArgumentException(string.Format("column does not implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
 
       return new TransformedReadableColumnProxy(column);
@@ -126,7 +126,7 @@ namespace Altaxo.Data
 
     protected override bool IsValidDocument(object obj)
     {
-      return (obj is IReadableColumn) || obj == null;
+      return (obj is IReadableColumn) || obj is null;
     }
 
     public IReadableColumn? Document()

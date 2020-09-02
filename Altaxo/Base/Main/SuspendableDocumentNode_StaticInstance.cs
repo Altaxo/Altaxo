@@ -91,7 +91,7 @@ namespace Altaxo.Main
 
       public string GetNameOfChildObject(IDocumentLeafNode o)
       {
-        if (null != o)
+        if (o is not null)
           return "Infrastructure object of type " + o.GetType().FullName;
         else
           return "<<null>>";

@@ -126,7 +126,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
           if (isCurrentlySelected)
             newNode.IsExpanded = true;
         }
-        else if (parentColorSetOfColor != null && object.ReferenceEquals(set, parentColorSetOfColor))
+        else if (parentColorSetOfColor is not null && object.ReferenceEquals(set, parentColorSetOfColor))
         {
           newNode.IsExpanded = true;
 

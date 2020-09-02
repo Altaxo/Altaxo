@@ -73,12 +73,12 @@ namespace Altaxo.Main
 
       public bool Success
       {
-        get { return _objectList != null; }
+        get { return _objectList is not null; }
       }
 
       public void Dispose()
       {
-        if (_objectList != null)
+        if (_objectList is not null)
         {
           _objectList.RemoveAt(_objectList.Count - 1);
         }

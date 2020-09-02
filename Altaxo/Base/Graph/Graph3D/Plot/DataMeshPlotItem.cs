@@ -94,9 +94,9 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _plotData)
+      if (_plotData is not null)
         yield return new Main.DocumentNodeAndName(_plotData, () => _plotData = null!, "Data");
-      if (null != _plotStyle)
+      if (_plotStyle is not null)
         yield return new Main.DocumentNodeAndName(_plotStyle, () => _plotStyle = null!, "Style");
     }
 
@@ -150,7 +150,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       get { return _plotData; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new System.ArgumentNullException();
         else if (!(value is XYZMeshedColumnPlotData))
           throw new System.ArgumentException("The provided data object is not of the type " + _plotData.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
@@ -180,7 +180,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       get { return _plotStyle; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new System.ArgumentNullException();
         if (ChildSetMember(ref _plotStyle, value))
         {
@@ -201,7 +201,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public override void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext context, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem)
     {
-      if (null != _plotStyle)
+      if (_plotStyle is not null)
       {
         _plotStyle.Paint(g, layer, _plotData);
       }
@@ -215,7 +215,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <param name="layer">The plot layer.</param>
     public override void PrepareScales(IPlotArea layer)
     {
-      if (null != _plotData)
+      if (_plotData is not null)
       {
         _plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject, layer.ZAxis.DataBoundsObject);
 
@@ -229,7 +229,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       if (e is PlotItemDataChangedEventArgs)
       {
         // first inform our AbstractXYPlotStyle of the change, so it can invalidate its cached data
-        if (null != _plotStyle)
+        if (_plotStyle is not null)
           _plotStyle.EhDataChanged(this);
       }
 

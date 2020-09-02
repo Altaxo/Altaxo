@@ -88,7 +88,7 @@ namespace Altaxo.Gui.DataConnection
       get { return _connectionString; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("ConnectionString");
 
         var oldValue = _connectionString;
@@ -125,7 +125,7 @@ namespace Altaxo.Gui.DataConnection
         _builder = new QueryBuilder(new OleDbSchema());
         _builder.QueryFields.ListChanged += QueryFields_ListChanged;
       }
-      if (null != _view)
+      if (_view is not null)
       {
         // bind grid
         _view.SetDataGridDataSource(_builder.QueryFields, _builder.GroupBy);
@@ -171,7 +171,7 @@ namespace Altaxo.Gui.DataConnection
     private void EhRelatedTableNameChosen(string tableName)
     {
       var node = FindNode(tableName);
-      if (node != null)
+      if (node is not null)
       {
         node.IsExpanded = true;
       }
@@ -184,7 +184,7 @@ namespace Altaxo.Gui.DataConnection
 
     private void EhHideTableChosen(NGTreeNode node)
     {
-      if (null != node && node.Tag is System.Data.DataTable)
+      if (node is not null && node.Tag is System.Data.DataTable)
       {
         node.Remove();
       }
@@ -193,9 +193,9 @@ namespace Altaxo.Gui.DataConnection
     private void EhRelatedTablesRequired(NGTreeNode nd, List<string> resultingList)
     {
       resultingList.Clear();
-      System.Data.DataTable dt = nd == null ? null : nd.Tag as System.Data.DataTable;
+      System.Data.DataTable dt = nd is null ? null : nd.Tag as System.Data.DataTable;
 
-      if (null == dt)
+      if (dt is null)
         return;
       var list = new List<string>();
       foreach (System.Data.DataRelation dr in _builder.Schema.Relations)
@@ -212,7 +212,7 @@ namespace Altaxo.Gui.DataConnection
       list.Sort();
       foreach (string tableName in list)
       {
-        if (FindNode(tableName) != null)
+        if (FindNode(tableName) is not null)
         {
           resultingList.Add(tableName);
         }
@@ -221,7 +221,7 @@ namespace Altaxo.Gui.DataConnection
 
     private void EhTreeNodeMouseDoubleClick(NGTreeNode node)
     {
-      if (null != node && (node.Tag is System.Data.DataColumn))
+      if (node is not null && (node.Tag is System.Data.DataColumn))
       {
         AddField(node.Tag);
       }
@@ -299,7 +299,7 @@ namespace Altaxo.Gui.DataConnection
 
     private void QueryFields_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
     {
-      if (null != _view)
+      if (_view is not null)
         _view.UpdateSqlDisplay(_builder.Sql, _builder.MissingJoins);
     }
 
@@ -312,7 +312,7 @@ namespace Altaxo.Gui.DataConnection
       var ndViews = new NGTreeNodeWithImageIndex { Text = Current.ResourceService.GetString("Gui.DataConnection.Views"), ImageIndex = 1, SelectedImageIndex = 1 };
 
       // populate using current schema
-      if (Schema != null)
+      if (Schema is not null)
       {
         // populate the tree
         foreach (System.Data.DataTable dt in Schema.Tables)
@@ -352,7 +352,7 @@ namespace Altaxo.Gui.DataConnection
         ndTables.IsExpanded = true;
 
         _treeTableNodes = rootNode;
-        if (null != _view)
+        if (_view is not null)
           _view.SetTableTreeDataSource(_treeTableNodes);
       }
     }
@@ -387,12 +387,12 @@ namespace Altaxo.Gui.DataConnection
     private void AddField(object element)
     {
       var dt = element as System.Data.DataTable;
-      if (dt != null)
+      if (dt is not null)
       {
         AddTable(dt);
       }
       var dc = element as System.Data.DataColumn;
-      if (dc != null)
+      if (dc is not null)
       {
         AddColumn(dc);
       }
@@ -417,14 +417,14 @@ namespace Altaxo.Gui.DataConnection
       {
         // check this node
         var dt = node.Tag as System.Data.DataTable;
-        if (dt != null && dt.TableName == text)
+        if (dt is not null && dt.TableName == text)
         {
           return node;
         }
 
         // and check child nodes
         var child = FindNode(node, text);
-        if (child != null)
+        if (child is not null)
         {
           return child;
         }
@@ -442,14 +442,14 @@ namespace Altaxo.Gui.DataConnection
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as IQueryDesignerView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           AttachView();

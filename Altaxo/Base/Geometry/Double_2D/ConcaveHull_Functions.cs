@@ -161,7 +161,7 @@ namespace Altaxo.Geometry.Double_2D
         }
         count++;
       }
-      if (middle_point == null)
+      if (middle_point is null)
       {
         concave.Add(line);
       }

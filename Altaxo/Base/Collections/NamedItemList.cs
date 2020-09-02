@@ -102,7 +102,7 @@ namespace Altaxo.Collections
       _list.Add(item);
       _nameToIndex.Add(item.Name, _list.Count - 1);
 
-      if (null != CollectionChanged)
+      if (CollectionChanged is not null)
       {
         OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
       }

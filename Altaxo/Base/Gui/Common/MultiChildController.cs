@@ -123,7 +123,7 @@ namespace Altaxo.Gui.Common
 
     protected virtual void Initialize()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeBegin();
 
@@ -157,7 +157,7 @@ namespace Altaxo.Gui.Common
       set
       {
         _descriptionText = value;
-        if (null != _view)
+        if (_view is not null)
         {
           _view.InitializeDescription(_descriptionText);
         }
@@ -187,7 +187,7 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
         {
           _view.ChildControlEntered -= EhView_ChildControlEntered;
           _view.ChildControlValidated -= EhView_ChildControlValidated;
@@ -197,7 +197,7 @@ namespace Altaxo.Gui.Common
 
         Initialize();
 
-        if (_view != null)
+        if (_view is not null)
         {
           _view.ChildControlEntered += EhView_ChildControlEntered;
           _view.ChildControlValidated += EhView_ChildControlValidated;
@@ -225,7 +225,7 @@ namespace Altaxo.Gui.Common
     {
       for (int i = 0; i < _childController.Length; i++)
       {
-        if (null != _childController[i].Controller && false == _childController[i].Controller.Apply(disposeController))
+        if (_childController[i].Controller is not null && false == _childController[i].Controller.Apply(disposeController))
         {
           return false;
         }

@@ -67,7 +67,7 @@ namespace Altaxo.Main
     {
       get
       {
-        if (null != _accumulatedEventData)
+        if (_accumulatedEventData is not null)
           yield return _accumulatedEventData;
       }
     }
@@ -87,7 +87,7 @@ namespace Altaxo.Main
     /// <exception cref="System.ArgumentOutOfRangeException">Not possible to set more than one event arg here.</exception>
     protected override void AccumulatedChangeData_SetBackAfterResumeAndSuspend(params EventArgs[] e)
     {
-      if (!(_accumulatedEventData == null))
+      if (_accumulatedEventData is not null)
         throw new InvalidProgramException();
 
       if (e.Length > 1)
@@ -105,12 +105,12 @@ namespace Altaxo.Main
     /// <exception cref="System.ArgumentException"></exception>
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
-      if (null == e)
+      if (e is null)
         throw new ArgumentNullException("Argument e is null");
       if (!(e is T))
         throw new ArgumentException(string.Format("Argument e has the wrong type. Type expected: {0}, actual type of e: {1}", typeof(T), e.GetType()));
 
-      if (null == _accumulatedEventData)
+      if (_accumulatedEventData is null)
       {
         _accumulatedEventData = (T)e;
       }

@@ -166,7 +166,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _colorScale)
+      if (_colorScale is not null)
         yield return new Main.DocumentNodeAndName(_colorScale, "ColorScale");
     }
 
@@ -189,10 +189,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       {
         if (ChildSetMember(ref _colorScale, value))
         {
-          if (null != _colorScale && !(_colorScale.TickSpacing is NoTickSpacing))
+          if (_colorScale is not null && !(_colorScale.TickSpacing is NoTickSpacing))
             _colorScale.TickSpacing = new NoTickSpacing(); // strip the old tickspacing, use NoTickspacing, since Ticks are not needed in the density image plot style
 
-          if (null != _colorScale)
+          if (_colorScale is not null)
             EhChildChanged(_colorScale, EventArgs.Empty);
           else
             EhSelfChanged(EventArgs.Empty);
@@ -205,7 +205,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       get { return _colorProvider; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         if (!object.ReferenceEquals(value, _colorProvider))
@@ -270,7 +270,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <param name="plotData">The plot data.</param>
     public void PrepareScales(IPlotArea layer, XYZMeshedColumnPlotData plotData)
     {
-      if (_colorScale != null)
+      if (_colorScale is not null)
       {
         // in case we use our own scale for coloring, we need to calculate the data bounds
         NumericalBoundaries pb = _colorScale.DataBounds;
@@ -459,7 +459,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
             }
 
             var normal = VectorD3D.CrossProduct(vec1, vec2).Normalized;
-            double lz = null != _colorScale ? _colorScale.PhysicalVariantToNormal(matrix[i, j]) : zScale.PhysicalVariantToNormal(matrix[i, j]);
+            double lz = _colorScale is not null ? _colorScale.PhysicalVariantToNormal(matrix[i, j]) : zScale.PhysicalVariantToNormal(matrix[i, j]);
             buf.AddTriangleVertex(pm.X, pm.Y, pm.Z, normal.X, normal.Y, normal.Z, lz);
             buf.AddTriangleVertex(pm.X, pm.Y, pm.Z, -normal.X, -normal.Y, -normal.Z, lz);
           }

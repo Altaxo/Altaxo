@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Gdi.Axis
         }
 
         double offset = 0;
-        if (s.AxisLineStyle != null && s.AxisLineStyle.Position.IsRelative)
+        if (s.AxisLineStyle is not null && s.AxisLineStyle.Position.IsRelative)
         {
           offset = s.AxisLineStyle.Position.Value;
           // Note here: Absolute values are no longer supported
@@ -299,7 +299,7 @@ namespace Altaxo.Graph.Gdi.Axis
         ShowMinorLabels(context);
       }
 
-      if (null != axisTitleOrNull)
+      if (axisTitleOrNull is not null)
       {
         ShowTitle(context);
         _axisTitle.Text = axisTitleOrNull;
@@ -308,19 +308,19 @@ namespace Altaxo.Graph.Gdi.Axis
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _axisLineStyle)
+      if (_axisLineStyle is not null)
         yield return new Main.DocumentNodeAndName(_axisLineStyle, "LineStyle");
 
-      if (null != _majorLabelStyle)
+      if (_majorLabelStyle is not null)
         yield return new Main.DocumentNodeAndName(_majorLabelStyle, "MajorLabelStyle");
 
-      if (null != _minorLabelStyle)
+      if (_minorLabelStyle is not null)
         yield return new Main.DocumentNodeAndName(_minorLabelStyle, "MinorLabelStyle");
 
-      if (null != _axisTitle)
+      if (_axisTitle is not null)
         yield return new Main.DocumentNodeAndName(_axisTitle, "Title");
 
-      if (null != _customTickSpacing)
+      if (_customTickSpacing is not null)
         yield return new Main.DocumentNodeAndName(_customTickSpacing, "CustomTickSpacing");
     }
 
@@ -344,7 +344,7 @@ namespace Altaxo.Graph.Gdi.Axis
       set
       {
         _cachedAxisInfo = value;
-        if (_axisLineStyle != null)
+        if (_axisLineStyle is not null)
           _axisLineStyle.CachedAxisInformation = value;
         if (_majorLabelStyle is AxisLabelStyle)
           _majorLabelStyle.CachedAxisInformation = value;
@@ -433,7 +433,7 @@ namespace Altaxo.Graph.Gdi.Axis
         _customTickSpacing.FinalProcessScaleBoundaries(org, end, scale);
       }
 
-      if (null != _axisTitle)
+      if (_axisTitle is not null)
         _axisTitle.SetParentSize(layer.Size, false);
     }
 
@@ -473,7 +473,7 @@ namespace Altaxo.Graph.Gdi.Axis
       if (_majorLabelStyle is not null)
       {
         var labelSide = _majorLabelStyle.PredictLabelSide(_cachedAxisInfo);
-        var outerDistance = null == _axisLineStyle ? 0 : _axisLineStyle.GetOuterDistance(labelSide);
+        var outerDistance = _axisLineStyle is null ? 0 : _axisLineStyle.GetOuterDistance(labelSide);
         var scaleWithTicks = layer.Scales[_cachedAxisInfo.Identifier.ParallelAxisNumber];
         _majorLabelStyle.Paint(g, layer.CoordinateSystem, scaleWithTicks, _customTickSpacing ?? scaleWithTicks.TickSpacing, _cachedAxisInfo, outerDistance, false);
       }
@@ -487,7 +487,7 @@ namespace Altaxo.Graph.Gdi.Axis
       if (_minorLabelStyle is not null)
       {
         var labelSide = _minorLabelStyle.PredictLabelSide(_cachedAxisInfo);
-        var outerDistance = null == _axisLineStyle ? 0 : _axisLineStyle.GetOuterDistance(labelSide);
+        var outerDistance = _axisLineStyle is null ? 0 : _axisLineStyle.GetOuterDistance(labelSide);
         var scaleWithTicks = layer.Scales[_cachedAxisInfo.Identifier.ParallelAxisNumber];
         _minorLabelStyle.Paint(g, layer.CoordinateSystem, scaleWithTicks, _customTickSpacing ?? scaleWithTicks.TickSpacing, _cachedAxisInfo, outerDistance, true);
       }
@@ -514,13 +514,13 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       get
       {
-        return _axisLineStyle != null;
+        return _axisLineStyle is not null;
       }
     }
 
     public void ShowAxisLine(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (_axisLineStyle == null)
+      if (_axisLineStyle is null)
         AxisLineStyle = new AxisLineStyle(context);
     }
 
@@ -536,13 +536,13 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       get
       {
-        return _majorLabelStyle != null;
+        return _majorLabelStyle is not null;
       }
     }
 
     public void ShowMajorLabels(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (_majorLabelStyle == null)
+      if (_majorLabelStyle is null)
         MajorLabelStyle = new AxisLabelStyle(context) { CachedAxisInformation = _cachedAxisInfo };
     }
 
@@ -558,13 +558,13 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       get
       {
-        return _minorLabelStyle != null;
+        return _minorLabelStyle is not null;
       }
     }
 
     public void ShowMinorLabels(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (_minorLabelStyle == null)
+      if (_minorLabelStyle is null)
         MinorLabelStyle = new AxisLabelStyle(context) { CachedAxisInformation = _cachedAxisInfo };
     }
 
@@ -580,7 +580,7 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       get
       {
-        return _axisTitle != null;
+        return _axisTitle is not null;
       }
     }
 

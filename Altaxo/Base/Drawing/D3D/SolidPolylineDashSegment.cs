@@ -191,9 +191,9 @@ namespace Altaxo.Drawing.D3D
       _miterLimitDotThreshold = Math.Cos(Math.PI - 2 * Math.Asin(1 / miterLimit));
 
       _dashStartCap = startCap;
-      _dashStartCapBaseInsetAbsolute = null == _dashStartCap ? 0 : _dashStartCap.GetAbsoluteBaseInset(thickness1, thickness2);
+      _dashStartCapBaseInsetAbsolute = _dashStartCap is null ? 0 : _dashStartCap.GetAbsoluteBaseInset(thickness1, thickness2);
       _dashEndCap = endCap;
-      _dashEndCapBaseInsetAbsolute = null == _dashEndCap ? 0 : _dashEndCap.GetAbsoluteBaseInset(thickness1, thickness2);
+      _dashEndCapBaseInsetAbsolute = _dashEndCap is null ? 0 : _dashEndCap.GetAbsoluteBaseInset(thickness1, thickness2);
 
       _positionsTransformedStartCurrent = new PointD3D[_crossSectionVertexCount];
       _positionsTransformedEndCurrent = new PointD3D[_crossSectionVertexCount];
@@ -222,7 +222,7 @@ namespace Altaxo.Drawing.D3D
   ILineCap? overrideStartCap,
   ILineCap? overrideEndCap)
     {
-      if (null == _normalsTransformedCurrent)
+      if (_normalsTransformedCurrent is null)
         throw new InvalidProgramException("The structure is not initialized yet. Call Initialize before using it!");
 
       _polylineIndexAtStartCapBase = 0;
@@ -233,7 +233,7 @@ namespace Altaxo.Drawing.D3D
       _endCapForwardAndPositionProvided = false;
       _endCapNeedsJoiningSegment = false;
 
-      if (null != _dashStartCap && null == overrideStartCap)
+      if (_dashStartCap is not null && overrideStartCap is null)
       {
         if (_dashStartCapBaseInsetAbsolute < 0)
         {
@@ -246,7 +246,7 @@ namespace Altaxo.Drawing.D3D
         }
       }
 
-      if (null != _dashEndCap && null == overrideEndCap)
+      if (_dashEndCap is not null && overrideEndCap is null)
       {
         if (_dashEndCapBaseInsetAbsolute < 0)
         {
@@ -312,7 +312,7 @@ namespace Altaxo.Drawing.D3D
     ILineCap? overrideStartCap,
     ILineCap? overrideEndCap)
     {
-      if (null == _normalsTransformedCurrent)
+      if (_normalsTransformedCurrent is null)
         throw new InvalidProgramException("The structure is not initialized yet. Call Initialize before using it!");
 
       _polylineIndexAtStartCapBase = 0;
@@ -323,7 +323,7 @@ namespace Altaxo.Drawing.D3D
       _endCapForwardAndPositionProvided = false;
       _endCapNeedsJoiningSegment = false;
 
-      if (null != _dashStartCap && null == overrideStartCap)
+      if (_dashStartCap is not null && overrideStartCap is null)
       {
         if (_dashStartCapBaseInsetAbsolute < 0)
         {
@@ -336,7 +336,7 @@ namespace Altaxo.Drawing.D3D
         }
       }
 
-      if (null != _dashEndCap && null == overrideEndCap)
+      if (_dashEndCap is not null && overrideEndCap is null)
       {
         if (_dashEndCapBaseInsetAbsolute < 0)
         {
@@ -405,7 +405,7 @@ namespace Altaxo.Drawing.D3D
       }
 
       // now the start cap
-      if (null != resultingStartCap)
+      if (resultingStartCap is not null)
       {
         resultingStartCap.AddGeometry(
           AddPositionAndNormal,
@@ -450,7 +450,7 @@ namespace Altaxo.Drawing.D3D
         ref _startCapTemporaryStorageSpace);
       }
 
-      if (null != resultingEndCap)
+      if (resultingEndCap is not null)
       {
         resultingEndCap.AddGeometry(
         AddPositionAndNormal,

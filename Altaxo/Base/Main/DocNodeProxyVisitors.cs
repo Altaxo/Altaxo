@@ -75,7 +75,7 @@ namespace Altaxo.Main
       var docPath = proxy.DocumentPath();
 
       // the _itemRelocationDictionary has first priority
-      if (_itemRelocationDictionary != null && _itemRelocationDictionary.Count > 0)
+      if (_itemRelocationDictionary is not null && _itemRelocationDictionary.Count > 0)
       {
         for (int i = docPath.Count; i >= 2; --i)
         {
@@ -116,15 +116,15 @@ namespace Altaxo.Main
     /// <param name="newItemNamePart">The new item name part. Usually, this is the subfolder part of the new item name. </param>
     public void AddPathReplacementsForAllProjectItemTypes(string originalItemNamePart, string newItemNamePart)
     {
-      if (null == originalItemNamePart)
+      if (originalItemNamePart is null)
         throw new NullReferenceException("originalItemPart");
-      if (null == newItemNamePart)
+      if (newItemNamePart is null)
         throw new NullReferenceException("newItemPart");
 
       int level = 0;
 
       var currentProject = Current.IProjectService.CurrentProject;
-      if (null == currentProject)
+      if (currentProject is null)
         return;
 
       while (originalItemNamePart != newItemNamePart)

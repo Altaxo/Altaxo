@@ -59,17 +59,17 @@ namespace Altaxo.Data
           var dataTable = DataTable.GetParentDataTableOf(colColl);
           int? groupNumber = colColl?.GetColumnGroup(ucDC);
 
-          if (null != dataTable)
+          if (dataTable is not null)
           {
-            if (null == commonDataTable)
+            if (commonDataTable is null)
               commonDataTable = dataTable;
             else if (!object.ReferenceEquals(commonDataTable, dataTable))
               dataTableIsNotUniform = true;
           }
 
-          if (null != groupNumber)
+          if (groupNumber is not null)
           {
-            if (null == commonGroupNumber)
+            if (commonGroupNumber is null)
               commonGroupNumber = groupNumber;
             else if (!(commonGroupNumber == groupNumber))
               groupNumberIsNotUniform = true;

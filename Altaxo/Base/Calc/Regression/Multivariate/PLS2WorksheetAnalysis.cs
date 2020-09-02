@@ -62,7 +62,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     private static int GetNumberOfX(Altaxo.Data.DataTable table)
     {
       var col = table.DataColumns.TryGetColumn(GetXLoad_ColumnName(0));
-      if (col == null)
+      if (col is null)
         NotFound(GetXLoad_ColumnName(0));
       return col.Count;
     }
@@ -70,7 +70,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     private static int GetNumberOfY(Altaxo.Data.DataTable table)
     {
       var col = table.DataColumns.TryGetColumn(GetYLoad_ColumnName(0));
-      if (col == null)
+      if (col is null)
         NotFound(GetYLoad_ColumnName(0));
       return col.Count;
     }
@@ -78,7 +78,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     private static int GetNumberOfFactors(Altaxo.Data.DataTable table)
     {
       var col = table.DataColumns.TryGetColumn(GetCrossProduct_ColumnName());
-      if (col == null)
+      if (col is null)
         NotFound(GetCrossProduct_ColumnName());
       return col.Count;
     }
@@ -178,7 +178,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       };
       var preprocessSet = new MultivariatePreprocessingModel();
       var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo != null)
+      if (plsMemo is not null)
         preprocessSet.PreprocessOptions = plsMemo.SpectralPreprocessing;
       calibrationSet.SetPreprocessingModel(preprocessSet);
 
@@ -191,25 +191,25 @@ namespace Altaxo.Calc.Regression.Multivariate
       preprocessSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col, numberOfX);
 
       col = table.DataColumns.TryGetColumn(GetXMean_ColumnName());
-      if (col == null)
+      if (col is null)
         NotFound(GetXMean_ColumnName());
       preprocessSet.XMean = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col, numberOfX);
 
       col = table.DataColumns.TryGetColumn(GetXScale_ColumnName());
-      if (col == null)
+      if (col is null)
         NotFound(GetXScale_ColumnName());
       preprocessSet.XScale = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col, numberOfX);
 
       sel.Clear();
       col = table.DataColumns.TryGetColumn(GetYMean_ColumnName());
-      if (col == null)
+      if (col is null)
         NotFound(GetYMean_ColumnName());
       sel.Add(table.DataColumns.GetColumnNumber(col));
       preprocessSet.YMean = DataColumnWrapper.ToROVector(col, numberOfY);
 
       sel.Clear();
       col = table.DataColumns.TryGetColumn(GetYScale_ColumnName());
-      if (col == null)
+      if (col is null)
         NotFound(GetYScale_ColumnName());
       sel.Add(table.DataColumns.GetColumnNumber(col));
       preprocessSet.YScale = DataColumnWrapper.ToROVector(col, numberOfY);
@@ -219,7 +219,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         string colname = GetXWeight_ColumnName(i);
         col = table.DataColumns.TryGetColumn(colname);
-        if (col == null)
+        if (col is null)
           NotFound(colname);
         sel.Add(table.DataColumns.GetColumnNumber(col));
       }
@@ -230,7 +230,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         string colname = GetXLoad_ColumnName(i);
         col = table.DataColumns.TryGetColumn(colname);
-        if (col == null)
+        if (col is null)
           NotFound(colname);
         sel.Add(table.DataColumns.GetColumnNumber(col));
       }
@@ -241,7 +241,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         string colname = GetYLoad_ColumnName(i);
         col = table.DataColumns.TryGetColumn(colname);
-        if (col == null)
+        if (col is null)
           NotFound(colname);
         sel.Add(table.DataColumns.GetColumnNumber(col));
       }
@@ -249,7 +249,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       sel.Clear();
       col = table.DataColumns.TryGetColumn(GetCrossProduct_ColumnName());
-      if (col == null)
+      if (col is null)
         NotFound(GetCrossProduct_ColumnName());
       sel.Add(table.DataColumns.GetColumnNumber(col));
       calibrationSet.CrossProduct = DataTableWrapper.ToRORowMatrix(table.DataColumns, sel, numberOfFactors);

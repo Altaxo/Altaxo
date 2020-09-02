@@ -80,7 +80,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     public virtual bool CopyFrom(object obj)
     {
       var from = obj as LabelFormattingBase;
-      if (null != from)
+      if (from is not null)
       {
         using (var suspendToken = SuspendGetToken())
         {

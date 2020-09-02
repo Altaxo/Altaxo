@@ -173,7 +173,7 @@ namespace Altaxo.Graph.Plot.Data
               _plotAssociation.XColumn = readableColum;
           }
 
-          if (_yColumn != null)
+          if (_yColumn is not null)
           {
             var yColumn = Main.AbsoluteDocumentPath.GetObject(_yColumn, _plotAssociation, documentRoot);
             bAllResolved &= (yColumn is not null);
@@ -467,10 +467,10 @@ namespace Altaxo.Graph.Plot.Data
 
       // cached or temporary data
 
-      if (null != from._xBoundaries)
+      if (from._xBoundaries is not null)
         ChildCopyToMember(ref _xBoundaries, from._xBoundaries);
 
-      if (null != from._yBoundaries)
+      if (from._yBoundaries is not null)
         ChildCopyToMember(ref _yBoundaries, from._yBoundaries);
 
       _pointCount = from._pointCount;
@@ -480,22 +480,22 @@ namespace Altaxo.Graph.Plot.Data
 
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataTable)
+      if (_dataTable is not null)
         yield return new DocumentNodeAndName(_dataTable, "DataTable");
 
-      if (null != _dataRowSelection)
+      if (_dataRowSelection is not null)
         yield return new DocumentNodeAndName(_dataRowSelection, nameof(DataRowSelection));
 
-      if (null != _xColumn)
+      if (_xColumn is not null)
         yield return new Main.DocumentNodeAndName(_xColumn, "XColumn");
 
-      if (null != _yColumn)
+      if (_yColumn is not null)
         yield return new Main.DocumentNodeAndName(_yColumn, "YColumn");
 
-      if (null != _xBoundaries)
+      if (_xBoundaries is not null)
         yield return new Main.DocumentNodeAndName(_xBoundaries, "XBoundaries");
 
-      if (null != _yBoundaries)
+      if (_yBoundaries is not null)
         yield return new Main.DocumentNodeAndName(_yBoundaries, "YBoundaries");
     }
 
@@ -578,7 +578,7 @@ namespace Altaxo.Graph.Plot.Data
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!_dataRowSelection.Equals(value))
@@ -601,8 +601,8 @@ namespace Altaxo.Graph.Plot.Data
       if (col is Altaxo.Data.DataColumn dataCol)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataCol);
-        string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
+        string tablename = table is null ? string.Empty : table.Name + "\\";
+        string collectionname = table is null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
           return dataCol.Name;
         else if (level == 1)
@@ -635,8 +635,8 @@ namespace Altaxo.Graph.Plot.Data
       if (col is Altaxo.Data.DataColumn dataCol)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataCol);
-        string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
+        string tablename = table is null ? string.Empty : table.Name + "\\";
+        string collectionname = table is null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
           return dataCol.Name;
         else if (level == 1)
@@ -758,8 +758,8 @@ namespace Altaxo.Graph.Plot.Data
     /// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
     private IEnumerable<ColumnInformation> GetColumns()
     {
-      yield return new ColumnInformation("X", XColumn, _xColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { XColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
-      yield return new ColumnInformation("Y", YColumn, _yColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { YColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
+      yield return new ColumnInformation("X", XColumn, _xColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { XColumn = col; if (table is not null) { DataTable = table; GroupNumber = group; } });
+      yield return new ColumnInformation("Y", YColumn, _yColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { YColumn = col; if (table is not null) { DataTable = table; GroupNumber = group; } });
     }
 
     [MaybeNull]
@@ -837,13 +837,13 @@ namespace Altaxo.Graph.Plot.Data
       if (IsDisposeInProgress)
         return;
 
-      if (_xBoundaries == null || (xBounds != null && _xBoundaries.GetType() != xBounds.GetType()))
+      if (_xBoundaries is null || (xBounds is not null && _xBoundaries.GetType() != xBounds.GetType()))
       {
         _isCachedDataValidX = false;
         SetXBoundsFromTemplate(xBounds);
       }
 
-      if (_yBoundaries == null || (yBounds != null && _yBoundaries.GetType() != yBounds.GetType()))
+      if (_yBoundaries is null || (yBounds is not null && _yBoundaries.GetType() != yBounds.GetType()))
       {
         _isCachedDataValidY = false;
         SetYBoundsFromTemplate(yBounds);
@@ -864,7 +864,7 @@ namespace Altaxo.Graph.Plot.Data
 
       int maxRowIndex;
 
-      if (xColumn == null || yColumn == null)
+      if (xColumn is null || yColumn is null)
       {
         maxRowIndex = 0;
       }
@@ -920,8 +920,8 @@ namespace Altaxo.Graph.Plot.Data
         }
 
         // now the cached data are valid
-        _isCachedDataValidX = null != _xBoundaries;
-        _isCachedDataValidY = null != _yBoundaries;
+        _isCachedDataValidX = _xBoundaries is not null;
+        _isCachedDataValidY = _yBoundaries is not null;
 
         // now when the cached data are valid, we can reenable the events
       }
@@ -981,7 +981,7 @@ namespace Altaxo.Graph.Plot.Data
       // allocate an array PointF to hold the line points
       // _tlsBufferedPlotData is a static buffer that is allocated per thread
       // and thus is only used temporary here in this routine
-      if (null == _tlsBufferedPlotData)
+      if (_tlsBufferedPlotData is null)
         _tlsBufferedPlotData = new List<PointF>();
       else
         _tlsBufferedPlotData.Clear();
@@ -1095,7 +1095,7 @@ namespace Altaxo.Graph.Plot.Data
 
       // If it is BoundaryChangedEventArgs, we have to set a flag for which boundary is affected
       var eAsBCEA = e as BoundariesChangedEventArgs;
-      if (null != eAsBCEA)
+      if (eAsBCEA is not null)
       {
         if (object.ReferenceEquals(sender, _xBoundaries))
         {

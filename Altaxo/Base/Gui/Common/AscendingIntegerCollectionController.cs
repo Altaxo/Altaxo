@@ -97,7 +97,7 @@ namespace Altaxo.Gui.Common
       private void OnPropertyChanged(string name)
       {
         var ev = PropertyChanged;
-        if (null != ev)
+        if (ev is not null)
           ev(this, new System.ComponentModel.PropertyChangedEventArgs(name));
       }
 
@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Common
 
       public void CancelEdit()
       {
-        if (null != _savedRange)
+        if (_savedRange is not null)
         {
           From = _savedRange.From;
           To = _savedRange.To;
@@ -134,7 +134,7 @@ namespace Altaxo.Gui.Common
         var savedRange = _savedRange;
         _savedRange = null;
 
-        if (null != savedRange && (To != savedRange.To || From != savedRange.From))
+        if (savedRange is not null && (To != savedRange.To || From != savedRange.From))
         {
           Parent?.NormalizeRanges();
         }
@@ -204,9 +204,9 @@ namespace Altaxo.Gui.Common
         foreach (var range in this)
         {
           range.Exclude(excludedRange, out var leftRange, out var rightRange);
-          if (null != leftRange)
+          if (leftRange is not null)
             list.Add(leftRange);
-          if (null != rightRange)
+          if (rightRange is not null)
             list.Add(rightRange);
         }
 
@@ -232,7 +232,7 @@ namespace Altaxo.Gui.Common
       {
         InitRanges();
       }
-      if (null != _view)
+      if (_view is not null)
       {
         if (_ranges.Count > 1)
         {
@@ -326,7 +326,7 @@ namespace Altaxo.Gui.Common
 
     private void EhInitializingNewRangeItem(object obj)
     {
-      if (null == obj)
+      if (obj is null)
         return;
       if (_ranges.Count < 2)
         return;
@@ -357,7 +357,7 @@ namespace Altaxo.Gui.Common
         _ranges.Add(new MyRange { From = range.Start, To = range.LastInclusive });
       }
 
-      if (null != _view)
+      if (_view is not null)
         _view.SetRangeListSource(_ranges);
     }
   }

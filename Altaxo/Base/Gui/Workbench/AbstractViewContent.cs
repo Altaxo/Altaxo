@@ -217,7 +217,7 @@ namespace Altaxo.Gui.Workbench
       }
       set
       {
-        if (null != _titleToBeLocalized)
+        if (_titleToBeLocalized is not null)
         {
           _titleToBeLocalized.ValueChanged -= EhTitleLocalizationChanged;
           _titleToBeLocalized = null;
@@ -283,18 +283,18 @@ namespace Altaxo.Gui.Workbench
 
         // Get the project item, either directly or via its presentation model
         var projectItem = model as IProjectItem;
-        if (null == projectItem && model is IProjectItemPresentationModel pipModel)
+        if (projectItem is null && model is IProjectItemPresentationModel pipModel)
         {
           projectItem = pipModel.Document;
         }
 
-        if (null != projectItem)
+        if (projectItem is not null)
         {
           var name = Altaxo.Main.AbsoluteDocumentPath.GetPathString(projectItem, 16);
           System.Diagnostics.Debug.WriteLine("GetName: " + name);
           return name;
         }
-        else if (model != null)
+        else if (model is not null)
         {
           return "ContentHash:" + RuntimeHelpers.GetHashCode(model).ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
@@ -363,7 +363,7 @@ namespace Altaxo.Gui.Workbench
       get { return _infoTip; }
       set
       {
-        if (null != _infoTipToBeLocalized)
+        if (_infoTipToBeLocalized is not null)
         {
           _infoTipToBeLocalized.ValueChanged -= EhInfoTipLocalizationChanged;
           _infoTipToBeLocalized = null;
@@ -483,7 +483,7 @@ namespace Altaxo.Gui.Workbench
     {
       var obj = _services?.GetService(serviceType);
 
-      if (obj != null)
+      if (obj is not null)
         return obj;
 
       if (serviceType.IsInstanceOfType(this))

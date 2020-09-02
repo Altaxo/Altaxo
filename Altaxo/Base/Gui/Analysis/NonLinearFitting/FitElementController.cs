@@ -90,7 +90,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void Initialize(bool initData)
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.Initialize(_doc);
       }
@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       set
       {
-        if (null != _view)
+        if (_view is not null)
           _view.FitFunctionSelected = value;
       }
     }
@@ -211,14 +211,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as IFitElementView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           AttachView();

@@ -64,7 +64,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     protected bool _isMeasureInSync = false; // true when all items are measured
 
     /// <summary>The size of the text rectangle as is - i.e. without padding, background, etc.</summary>
-    protected VectorD3D CachedTextSizeWithoutPadding { get { return _rootNode != null ? new VectorD3D(_rootNode.SizeX, _rootNode.SizeY, _rootNode.SizeZ) : VectorD3D.Empty; } }
+    protected VectorD3D CachedTextSizeWithoutPadding { get { return _rootNode is not null ? new VectorD3D(_rootNode.SizeX, _rootNode.SizeY, _rootNode.SizeZ) : VectorD3D.Empty; } }
 
     protected Margin2D _cachedTextPadding;
     protected PointD3D _cachedTextOffset; // offset from the lower left corner of the background or drawing origin to the lower left corner of the unpadded text rectangle
@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     public TextGraphic(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirectAutoSize())
     {
-      if (null == context)
+      if (context is null)
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       _font = GraphDocument.GetDefaultFont(context);
@@ -201,7 +201,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
     {
-      if (null != _background)
+      if (_background is not null)
         yield return new Main.DocumentNodeAndName(_background, "Background");
     }
 
@@ -219,7 +219,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       double widthOfOne_n = Glyph.MeasureString("n", _font).X;
       double widthOfThree_M = Glyph.MeasureString("MMM", _font).X;
 
-      if (_background != null)
+      if (_background is not null)
       {
         _cachedTextPadding = new Margin2D(
           0.25 * widthOfOne_n,
@@ -236,7 +236,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       var paddedTextSize = new VectorD3D((itemSizeX + _cachedTextPadding.Left + _cachedTextPadding.Right), (itemSizeY + _cachedTextPadding.Bottom + _cachedTextPadding.Top), itemSizeZ);
       var textRectangle = new RectangleD3D(PointD3D.Empty, paddedTextSize); // the origin of the padded text rectangle is always 0
 
-      if (_background != null)
+      if (_background is not null)
       {
         var backgroundRect = _background.Measure(textRectangle);
         _cachedExtendedTextBounds = backgroundRect.WithRectangleIncluded(textRectangle); //  _cachedExtendedTextBounds.WithOffset(textRectangle.X - backgroundRect.X, textRectangle.Y - backgroundRect.Y, 0);
@@ -280,7 +280,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       if (!_isMeasureInSync)
         return;
 
-      if (_background != null)
+      if (_background is not null)
       {
         var textSizeWithPadding = CachedTextSizeWithoutPadding + new VectorD3D(_cachedTextPadding.Left + _cachedTextPadding.Right, _cachedTextPadding.Top + _cachedTextPadding.Bottom, 0);
 
@@ -326,7 +326,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     public bool Empty
     {
-      get { return _text == null || _text.Length == 0; }
+      get { return _text is null || _text.Length == 0; }
     }
 
     public string Text
@@ -375,7 +375,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException();
         var oldValue = _textBrush;
         _textBrush = value;

@@ -126,7 +126,7 @@ namespace Altaxo.Graph.Plot.Data
         var s = (XYZColumnPlotData?)o ?? new XYZColumnPlotData(info);
 
         s._dataTable = (DataTableProxy)info.GetValue("DataTable", s);
-        if (null != s._dataTable)
+        if (s._dataTable is not null)
           s._dataTable.ParentObject = s;
 
         s._groupNumber = info.GetInt32("GroupNumber");
@@ -134,15 +134,15 @@ namespace Altaxo.Graph.Plot.Data
         s.ChildSetMember(ref s._dataRowSelection, (IRowSelection)info.GetValue("RowSelection", s));
 
         s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
-        if (null != s._xColumn)
+        if (s._xColumn is not null)
           s._xColumn.ParentObject = s;
 
         s._yColumn = (IReadableColumnProxy)info.GetValue("YColumn", s);
-        if (null != s._yColumn)
+        if (s._yColumn is not null)
           s._yColumn.ParentObject = s;
 
         s._zColumn = (IReadableColumnProxy)info.GetValue("ZColumn", s);
-        if (null != s._zColumn)
+        if (s._zColumn is not null)
           s._zColumn.ParentObject = s;
 
         s.ChildSetMember(ref s._xBoundaries, info.GetValueOrNull<IPhysicalBoundaries>("XBoundaries", s));
@@ -189,13 +189,13 @@ namespace Altaxo.Graph.Plot.Data
 
       // cached or temporary data
 
-      if (null != from._xBoundaries)
+      if (from._xBoundaries is not null)
         ChildCopyToMember(ref _xBoundaries, from._xBoundaries);
 
-      if (null != from._yBoundaries)
+      if (from._yBoundaries is not null)
         ChildCopyToMember(ref _yBoundaries, from._yBoundaries);
 
-      if (null != from._zBoundaries)
+      if (from._zBoundaries is not null)
         ChildCopyToMember(ref _zBoundaries, from._zBoundaries);
 
       _pointCount = from._pointCount;
@@ -284,7 +284,7 @@ namespace Altaxo.Graph.Plot.Data
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!_dataRowSelection.Equals(value))
@@ -307,8 +307,8 @@ namespace Altaxo.Graph.Plot.Data
       if (col is Altaxo.Data.DataColumn dataCol)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataCol);
-        string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
+        string tablename = table is null ? string.Empty : table.Name + "\\";
+        string collectionname = table is null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
           return dataCol.Name;
         else if (level == 1)
@@ -337,8 +337,8 @@ namespace Altaxo.Graph.Plot.Data
       if (col is Altaxo.Data.DataColumn dataCol)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataCol);
-        string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
+        string tablename = table is null ? string.Empty : table.Name + "\\";
+        string collectionname = table is null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
           return dataCol.Name;
         else if (level == 1)
@@ -367,8 +367,8 @@ namespace Altaxo.Graph.Plot.Data
       if (col is Altaxo.Data.DataColumn dataCol)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataCol);
-        string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
+        string tablename = table is null ? string.Empty : table.Name + "\\";
+        string collectionname = table is null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
           return dataCol.Name;
         else if (level == 1)
@@ -388,7 +388,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
-      if (null == _xBoundaries || pb.GetType() != _xBoundaries.GetType())
+      if (_xBoundaries is null || pb.GetType() != _xBoundaries.GetType())
         SetXBoundsFromTemplate(pb);
 
       if (!_isCachedDataValidX)
@@ -403,7 +403,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
-      if (null == _yBoundaries || pb.GetType() != _yBoundaries.GetType())
+      if (_yBoundaries is null || pb.GetType() != _yBoundaries.GetType())
         SetYBoundsFromTemplate(pb);
 
       if (!_isCachedDataValidY)
@@ -520,9 +520,9 @@ namespace Altaxo.Graph.Plot.Data
     /// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
     private IEnumerable<ColumnInformation> GetColumns()
     {
-      yield return new ColumnInformation("X", XColumn, _xColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { if (col is not null) XColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
-      yield return new ColumnInformation("Y", YColumn, _yColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { if (col is not null) YColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
-      yield return new ColumnInformation("Z", ZColumn, _zColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { if (col is not null) ZColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
+      yield return new ColumnInformation("X", XColumn, _xColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { if (col is not null) XColumn = col; if (table is not null) { DataTable = table; GroupNumber = group; } });
+      yield return new ColumnInformation("Y", YColumn, _yColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { if (col is not null) YColumn = col; if (table is not null) { DataTable = table; GroupNumber = group; } });
+      yield return new ColumnInformation("Z", ZColumn, _zColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { if (col is not null) ZColumn = col; if (table is not null) { DataTable = table; GroupNumber = group; } });
     }
 
     /// <summary>
@@ -572,7 +572,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return _yColumn == null ? null : _yColumn.Document();
+        return _yColumn is null ? null : _yColumn.Document();
       }
       [MemberNotNull(nameof(_yColumn))]
       set
@@ -692,7 +692,7 @@ namespace Altaxo.Graph.Plot.Data
         return;
 
       // we can calulate the bounds only if they are set before
-      if (null == _xBoundaries && null == _yBoundaries && null == _zBoundaries)
+      if (_xBoundaries is null && _yBoundaries is null && _zBoundaries is null)
         return;
 
 
@@ -726,9 +726,9 @@ namespace Altaxo.Graph.Plot.Data
         }
 
         // now the cached data are valid
-        _isCachedDataValidX = null != _xBoundaries;
-        _isCachedDataValidY = null != _yBoundaries;
-        _isCachedDataValidZ = null != _zBoundaries;
+        _isCachedDataValidX = _xBoundaries is not null;
+        _isCachedDataValidY = _yBoundaries is not null;
+        _isCachedDataValidZ = _zBoundaries is not null;
 
         // now when the cached data are valid, we can reenable the events
       }
@@ -798,7 +798,7 @@ namespace Altaxo.Graph.Plot.Data
       // allocate an array PointF to hold the line points
       // _tlsBufferedPlotData is a static buffer that is allocated per thread
       // and thus is only used temporary here in this routine
-      if (null == _tlsBufferedPlotData)
+      if (_tlsBufferedPlotData is null)
         _tlsBufferedPlotData = new List<PointD3D>();
       else
         _tlsBufferedPlotData.Clear();
@@ -902,7 +902,7 @@ namespace Altaxo.Graph.Plot.Data
 
       // If it is BoundaryChangedEventArgs, we have to set a flag for which boundary is affected
       var eAsBCEA = e as BoundariesChangedEventArgs;
-      if (null != eAsBCEA)
+      if (eAsBCEA is not null)
       {
         if (object.ReferenceEquals(sender, _xBoundaries))
         {

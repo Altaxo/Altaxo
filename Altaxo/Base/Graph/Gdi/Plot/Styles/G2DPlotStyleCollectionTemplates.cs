@@ -123,7 +123,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public static int GetIndexOfAvailableNamesPlusCustom(G2DPlotStyleCollection coll)
     {
       string name = GetName(coll);
-      if (null == name)
+      if (name is null)
         return 0;
 
       int result = _NamesInOrder.IndexOf(name);
@@ -149,7 +149,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         throw new Exception(string.Format("Template {0} is already present in the template collection", name));
 
       G2DPlotStyleCollection coll = procedure(PropertyExtensions.GetPropertyContextOfProject());
-      if (coll == null || coll.Count == 0)
+      if (coll is null || coll.Count == 0)
         throw new Exception(string.Format("Procedure for template {0} creates no or an empty collection.", name));
 
       _NamesInOrder.Add(name);

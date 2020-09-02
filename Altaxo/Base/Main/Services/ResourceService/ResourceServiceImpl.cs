@@ -242,7 +242,7 @@ namespace Altaxo.Main.Services
         }
 
         _localIcons = Load(imageResources, language);
-        if (_localIcons == null && language.IndexOf('-') > 0)
+        if (_localIcons is null && language.IndexOf('-') > 0)
         {
           _localIcons = Load(imageResources, language.Split('-')[0]);
         }
@@ -314,7 +314,7 @@ namespace Altaxo.Main.Services
             }
             catch (Exception) { }
 
-            if (s != null)
+            if (s is not null)
             {
               break;
             }
@@ -333,14 +333,14 @@ namespace Altaxo.Main.Services
                 }
                 catch (Exception) { }
 
-                if (s != null)
+                if (s is not null)
                 {
                   break;
                 }
               }
             }
           }
-          if (s == null)
+          if (s is null)
           {
             // throw an exception if not found
             throw new ResourceNotFoundException("string >" + name + "<");
@@ -392,7 +392,7 @@ namespace Altaxo.Main.Services
                 System.Diagnostics.Debug.WriteLine($"Exception in GetImageResource, Message: {ex.Message}");
               }
 
-              if (iconobj != null)
+              if (iconobj is not null)
               {
                 break;
               }
@@ -423,7 +423,7 @@ namespace Altaxo.Main.Services
         foreach ((string prefix, ResourceManager resourceManger) in _localIconsResMgrs)
         {
           resourceStream = resourceManger.GetStream(name);
-          if (resourceStream != null)
+          if (resourceStream is not null)
           {
             break;
           }
@@ -439,7 +439,7 @@ namespace Altaxo.Main.Services
             }
             catch (Exception) { }
 
-            if (resourceStream != null)
+            if (resourceStream is not null)
             {
               break;
             }
@@ -489,13 +489,13 @@ namespace Altaxo.Main.Services
         string currentLanguage = _service._currentLanguage;
         string logMessage = "Loading resources " + _baseResourceName + "." + currentLanguage + ": ";
         ResourceManager? manager = null;
-        if (_assembly.GetManifestResourceInfo(_baseResourceName + "." + currentLanguage + ".resources") != null)
+        if (_assembly.GetManifestResourceInfo(_baseResourceName + "." + currentLanguage + ".resources") is not null)
         {
           Current.Log.Info(logMessage + " loading from main assembly");
           manager = new ResourceManager(_baseResourceName + "." + currentLanguage, _assembly);
         }
         else if (currentLanguage.IndexOf('-') > 0
-                                         && _assembly.GetManifestResourceInfo(_baseResourceName + "." + currentLanguage.Split('-')[0] + ".resources") != null)
+                                         && _assembly.GetManifestResourceInfo(_baseResourceName + "." + currentLanguage.Split('-')[0] + ".resources") is not null)
         {
           Current.Log.Info(logMessage + " loading from main assembly (no country match)");
           manager = new ResourceManager(_baseResourceName + "." + currentLanguage.Split('-')[0], _assembly);
@@ -504,12 +504,12 @@ namespace Altaxo.Main.Services
         {
           // try satellite assembly
           manager = TrySatellite(currentLanguage);
-          if (manager == null && currentLanguage.IndexOf('-') > 0)
+          if (manager is null && currentLanguage.IndexOf('-') > 0)
           {
             manager = TrySatellite(currentLanguage.Split('-')[0]);
           }
         }
-        if (manager == null)
+        if (manager is null)
         {
           Current.Log.Warn(logMessage + "NOT FOUND");
         }
@@ -534,7 +534,7 @@ namespace Altaxo.Main.Services
     private HashSet<string>? _stringKeysForLogging;
     private void LogStringResource(string name, string value, Assembly callingAssembly)
     {
-      if (null == _stringKeysForLogging)
+      if (_stringKeysForLogging is null)
         _stringKeysForLogging = new HashSet<string>();
 
       if (!_stringKeysForLogging.Contains(name))
@@ -562,7 +562,7 @@ namespace Altaxo.Main.Services
     private HashSet<string>? _imageKeysForLogging;
     private void LogImageResource(string name, Assembly callingAssembly)
     {
-      if (null == _imageKeysForLogging)
+      if (_imageKeysForLogging is null)
         _imageKeysForLogging = new HashSet<string>();
 
       if (!_imageKeysForLogging.Contains(name))

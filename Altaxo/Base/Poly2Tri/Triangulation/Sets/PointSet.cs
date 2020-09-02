@@ -64,7 +64,7 @@ namespace Poly2Tri
 
     public virtual void Prepare(TriangulationContext tcx)
     {
-      if (Triangles == null)
+      if (Triangles is null)
       {
         Triangles = new List<DelaunayTriangle>(Points.Count);
       }

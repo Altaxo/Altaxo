@@ -606,7 +606,7 @@ namespace Altaxo.Graph.Gdi.Axis
       _cachedAxisStyleInfo = styleInfo;
       Scale axis = layer.Scales[styleID.ParallelAxisNumber];
 
-      TickSpacing ticking = null != customTickSpacing ? customTickSpacing : layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
+      TickSpacing ticking = customTickSpacing is not null ? customTickSpacing : layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
 
       Logical3D r0 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisOrg);
       Logical3D r1 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisEnd);

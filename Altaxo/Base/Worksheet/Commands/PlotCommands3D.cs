@@ -125,7 +125,7 @@ namespace Altaxo.Worksheet.Commands
             ycol ?? (IReadableColumn)new ConstantDoubleColumn(0),
             vcol);
 
-        var ps = templatePlotStyle != null ? templatePlotStyle.Clone() : new G3DPlotStyleCollection();
+        var ps = templatePlotStyle is not null ? templatePlotStyle.Clone() : new G3DPlotStyleCollection();
 
 
 
@@ -153,7 +153,7 @@ namespace Altaxo.Worksheet.Commands
               break;
 
             case ColumnKind.pErr:
-              if (null != unpairedNegativeError)
+              if (unpairedNegativeError is not null)
               {
                 unpairedNegativeError.PositiveErrorColumn = col as INumericColumn;
                 ;
@@ -169,7 +169,7 @@ namespace Altaxo.Worksheet.Commands
               break;
 
             case ColumnKind.mErr:
-              if (null != unpairedPositiveError)
+              if (unpairedPositiveError is not null)
               {
                 unpairedPositiveError.NegativeErrorColumn = col as INumericColumn;
                 unpairedPositiveError = null;
@@ -405,7 +405,7 @@ namespace Altaxo.Worksheet.Commands
       {
         newPlotGroup.Add(pi);
       }
-      if (groupStyles != null)
+      if (groupStyles is not null)
         newPlotGroup.GroupStyles = groupStyles;
       else
         newPlotGroup.CollectStyles(newPlotGroup.GroupStyles);

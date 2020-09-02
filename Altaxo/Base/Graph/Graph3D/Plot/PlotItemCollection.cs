@@ -97,7 +97,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         info.CloseArray(count);
 
         s._plotGroupStyles = (PlotGroupStyleCollection)info.GetValue("GroupStyles", s);
-        if (null != s._plotGroupStyles)
+        if (s._plotGroupStyles is not null)
           s._plotGroupStyles.ParentObject = s;
 
         return s;
@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         var s = (PlotItemCollection?)o ?? new PlotItemCollection(info);
 
         s._plotGroupStyles = (PlotGroupStyleCollection)info.GetValue("GroupStyles", s);
-        if (null != s._plotGroupStyles)
+        if (s._plotGroupStyles is not null)
           s._plotGroupStyles.ParentObject = s;
 
         int count = info.OpenArray();
@@ -200,7 +200,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     {
       get
       {
-        if (_cachedPlotItemsFlattened == null)
+        if (_cachedPlotItemsFlattened is null)
         {
           var list = new List<IGPlotItem>();
           FillPlotItemList(list);
@@ -327,7 +327,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         ++index;
       }
 
-      if (null != _plotGroupStyles)
+      if (_plotGroupStyles is not null)
       {
         yield return new Main.DocumentNodeAndName(_plotGroupStyles, () => _plotGroupStyles = null!, "PlotGroupStyles");
       }
@@ -335,7 +335,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     protected override void Dispose(bool isDisposing)
     {
-      if (null != _plotItems)
+      if (_plotItems is not null)
       {
         _plotItems.CollectionChanged -= EhPlotItemsCollectionChanged;
         var oldColl = _plotItems;
@@ -371,7 +371,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException();
 
         ChildSetMember(ref _plotGroupStyles, value);
@@ -673,7 +673,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     protected void ApplyStylesBackward_HierarchyUpOnly(PlotGroupStyleCollection styles)
     {
       if ( //transferToLocalStyles
-        styles != null &&
+                styles is not null &&
         styles.Count != 0 &&
         styles.DistributeToChildGroups &&
         _plotGroupStyles.InheritFromParentGroups
@@ -755,7 +755,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         return true;
 
       var from = obj as PlotItemCollection;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, Gdi.GraphCopyOptions.All);
       }
@@ -837,7 +837,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
       for (int i = 0; i < _plotItems.Count; ++i)
       {
-        if (null != coordinateTransformingStyle)
+        if (coordinateTransformingStyle is not null)
         {
           coordinateTransformingStyle.PaintChild(g, context, layer, this, i);
         }
@@ -865,7 +865,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public void Add(IGPlotItem item)
     {
-      if (item == null)
+      if (item is null)
         throw new ArgumentNullException();
 
       item.ParentObject = this;

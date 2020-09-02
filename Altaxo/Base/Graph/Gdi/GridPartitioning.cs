@@ -100,7 +100,7 @@ namespace Altaxo.Graph
         return true;
 
       var from = obj as GridPartitioning;
-      if (null != from)
+      if (from is not null)
       {
         using (var suspendToken = SuspendGetToken())
         {

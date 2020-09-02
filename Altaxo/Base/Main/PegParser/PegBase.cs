@@ -75,7 +75,7 @@ namespace Altaxo.Main.PegParser
     {
       src = null;
       Encoding textEncoding = FileEncodingToTextEncoding();
-      if (textEncoding == null)
+      if (textEncoding is null)
       {
         if (encoding_ == FileEncoding.binary)
           return false;
@@ -320,12 +320,12 @@ namespace Altaxo.Main.PegParser
     protected void CloneSubTrees(PegNode clone)
     {
       PegNode child = null, next = null;
-      if (child_ != null)
+      if (child_ is not null)
       {
         child = child_.Clone();
         child.parent_ = clone;
       }
-      if (next_ != null)
+      if (next_ is not null)
       {
         next = next_.Clone();
         next.parent_ = clone;
@@ -428,7 +428,7 @@ namespace Altaxo.Main.PegParser
           DetermineLineLength(parent, nOffsetLineBeg) > LenMaxLine();
       PrintNodeBeg(parent, bAlignVertical, ref nOffsetLineBeg, nLevel);
       int nOffset = nOffsetLineBeg;
-      for (PegNode p = parent.child_; p != null; p = p.next_)
+      for (PegNode p = parent.child_; p is not null; p = p.next_)
       {
         if (IsSkip(p))
           continue;
@@ -445,10 +445,10 @@ namespace Altaxo.Main.PegParser
         {
           nOffsetLineBeg = nOffset;
         }
-        while (p.next_ != null && IsSkip(p.next_))
+        while (p.next_ is not null && IsSkip(p.next_))
           p = p.next_;
 
-        if (p.next_ != null)
+        if (p.next_ is not null)
         {
           PrintDistNext(p, bAlignVertical, ref nOffsetLineBeg, nLevel);
         }
@@ -461,7 +461,7 @@ namespace Altaxo.Main.PegParser
     {
       int nLen = LenNodeBeg(parent);
       PegNode p;
-      for (p = parent.child_; p != null; p = p.next_)
+      for (p = parent.child_; p is not null; p = p.next_)
       {
         if (IsSkip(p))
           continue;
@@ -556,7 +556,7 @@ namespace Altaxo.Main.PegParser
 
     public override bool IsLeaf(PegNode p)
     {
-      return p.child_ == null;
+      return p.child_ is null;
     }
 
     public override void
@@ -679,7 +679,7 @@ namespace Altaxo.Main.PegParser
 
     public void SetErrorDestination(TextWriter errOut)
     {
-      errOut_ = errOut == null ? new StreamWriter(System.Console.OpenStandardError())
+      errOut_ = errOut is null ? new StreamWriter(System.Console.OpenStandardError())
           : errOut;
     }
 
@@ -703,7 +703,7 @@ namespace Altaxo.Main.PegParser
     {
       if (bMute_)
         return;
-      if (tree.root_ == null)
+      if (tree.root_ is null)
       {
         tree.root_ = tree.cur_ = createNode(ePhase, tree.cur_, nId);
       }
@@ -722,7 +722,7 @@ namespace Altaxo.Main.PegParser
     {
       if (bMute_)
         return;
-      if (prevCur == null)
+      if (prevCur is null)
       {
         tree.root_ = null;
       }
@@ -809,7 +809,7 @@ namespace Altaxo.Main.PegParser
       bool bMatches = TreeNT(nodeCreator, nRuleId, toMatch);
       if (bMatches)
       {
-        if (tree.cur_.child_ != null && tree.cur_.child_.next_ == null && tree.cur_.parent_ != null)
+        if (tree.cur_.child_ is not null && tree.cur_.child_.next_ is null && tree.cur_.parent_ is not null)
         {
           if (tree.cur_.parent_.child_ == tree.cur_)
           {
@@ -820,10 +820,10 @@ namespace Altaxo.Main.PegParser
           else
           {
             PegNode prev;
-            for (prev = tree.cur_.parent_.child_; prev != null && prev.next_ != tree.cur_; prev = prev.next_)
+            for (prev = tree.cur_.parent_.child_; prev is not null && prev.next_ != tree.cur_; prev = prev.next_)
             {
             }
-            if (prev != null)
+            if (prev is not null)
             {
               prev.next_ = tree.cur_.child_;
               tree.cur_.child_.parent_ = tree.cur_.parent_;
@@ -862,7 +862,7 @@ namespace Altaxo.Main.PegParser
 
     public void SetNodeCreator(Creator nodeCreator)
     {
-      if (!(nodeCreator != null))
+      if (nodeCreator is null)
         throw new InvalidProgramException();
 
       nodeCreator_ = nodeCreator;
@@ -1042,16 +1042,16 @@ namespace Altaxo.Main.PegParser
       public BytesetData(Range[] r, byte[] c, bool bNegated)
       {
         int max = 0;
-        if (r != null)
+        if (r is not null)
           foreach (Range val in r)
             if (val.high > max)
               max = val.high;
-        if (c != null)
+        if (c is not null)
           foreach (int val in c)
             if (val > max)
               max = val;
         charSet_ = new System.Collections.BitArray(max + 1, false);
-        if (r != null)
+        if (r is not null)
         {
           foreach (Range val in r)
           {
@@ -1061,7 +1061,7 @@ namespace Altaxo.Main.PegParser
             }
           }
         }
-        if (c != null)
+        if (c is not null)
           foreach (int val in c)
             charSet_[val] = true;
         bNegated_ = bNegated;
@@ -1157,7 +1157,7 @@ namespace Altaxo.Main.PegParser
 
     public void SetSource(byte[] src)
     {
-      if (src == null)
+      if (src is null)
         src = new byte[0];
       src_ = src;
       srcLen_ = src.Length;
@@ -1825,16 +1825,16 @@ namespace Altaxo.Main.PegParser
       public OptimizedCharset(Range[] r, char[] c, bool bNegated)
       {
         int max = 0;
-        if (r != null)
+        if (r is not null)
           foreach (Range val in r)
             if (val.high > max)
               max = val.high;
-        if (c != null)
+        if (c is not null)
           foreach (int val in c)
             if (val > max)
               max = val;
         charSet_ = new System.Collections.BitArray(max + 1, false);
-        if (r != null)
+        if (r is not null)
         {
           foreach (Range val in r)
           {
@@ -1844,7 +1844,7 @@ namespace Altaxo.Main.PegParser
             }
           }
         }
-        if (c != null)
+        if (c is not null)
           foreach (int val in c)
             charSet_[val] = true;
         bNegated_ = bNegated;
@@ -1873,7 +1873,7 @@ namespace Altaxo.Main.PegParser
 
           foreach (string literal in literals)
           {
-            if (literal == null || nIndex > literal.Length)
+            if (literal is null || nIndex > literal.Length)
               continue;
             if (nIndex == literal.Length)
             {
@@ -1978,7 +1978,7 @@ namespace Altaxo.Main.PegParser
 
     public void SetSource(string src)
     {
-      if (src == null)
+      if (src is null)
         src = "";
       src_ = src;
       srcLen_ = src.Length;
@@ -2514,9 +2514,9 @@ namespace Altaxo.Main.PegParser
         if (node.bLitEnd_)
           matchPos = pos;
         char c = src_[pos];
-        if (node.children_ == null
+        if (node.children_ is null
             || c < node.cMin_ || c > node.cMin_ + node.children_.Length - 1
-            || node.children_[c - node.cMin_] == null)
+            || node.children_[c - node.cMin_] is null)
         {
           break;
         }

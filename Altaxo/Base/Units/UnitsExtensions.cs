@@ -65,7 +65,7 @@ namespace Altaxo.Units
     /// <returns>Enumeration of all defined quantities in alphabetical order.</returns>
     public static IEnumerable<string> GetAllDefinedQuantities(IReadOnlyDictionary<Type, UnitDescriptionAttribute>? allDefinedUnits = null)
     {
-      if (null == allDefinedUnits)
+      if (allDefinedUnits is null)
       {
         allDefinedUnits = GetAllDefinedUnits();
       }
@@ -110,7 +110,7 @@ namespace Altaxo.Units
     /// <returns>All unit instances of the given quantity.</returns>
     public static IEnumerable<IUnit> GetAvailableUnitsForQuantity(string quantity, IReadOnlyDictionary<Type, UnitDescriptionAttribute>? allDefinedUnits = null)
     {
-      if (null == allDefinedUnits)
+      if (allDefinedUnits is null)
       {
         allDefinedUnits = GetAllDefinedUnits();
       }

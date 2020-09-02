@@ -119,7 +119,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
         var oldValue = _material;
         _material = value;
@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     public override IHitTestObject? HitTest(HitTestPointData parentHitData)
     {
       var result = base.HitTest(parentHitData);
-      if (null != result)
+      if (result is not null)
       {
         result.DoubleClick = EhHitDoubleClick;
       }

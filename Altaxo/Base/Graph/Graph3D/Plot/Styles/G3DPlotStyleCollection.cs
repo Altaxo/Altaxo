@@ -78,7 +78,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
           array[i] = (IG3DPlotStyle)info.GetValue("e", null);
         info.CloseArray(count);
 
-        if (o == null)
+        if (o is null)
         {
           return new G3DPlotStyleCollection(array);
         }
@@ -168,7 +168,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       if (object.ReferenceEquals(this, obj))
         return true;
       var from = obj as G3DPlotStyleCollection;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from);
         return true;
@@ -218,7 +218,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       _innerList = new List<IG3DPlotStyle>();
       for (int i = 0; i < styles.Length; ++i)
-        if (styles[i] != null)
+        if (styles[i] is not null)
           Add(styles[i], false);
     }
 
@@ -231,11 +231,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _innerList)
+      if (_innerList is not null)
       {
         for (int i = _innerList.Count - 1; i >= 0; --i)
         {
-          if (null != _innerList[i])
+          if (_innerList[i] is not null)
             yield return new Main.DocumentNodeAndName(_innerList[i], "Style" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
       }
@@ -297,7 +297,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     protected void Add(IG3DPlotStyle toadd, bool withReorganizationAndEvents)
     {
-      if (toadd != null)
+      if (toadd is not null)
       {
         _innerList.Add(toadd);
         toadd.ParentObject = this;
@@ -311,7 +311,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     protected void Replace(IG3DPlotStyle ps, int idx, bool withReorganizationAndEvents)
     {
-      if (ps != null)
+      if (ps is not null)
       {
         _innerList[idx] = ps;
         ps.ParentObject = this;
@@ -325,7 +325,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public void AddRange(IG3DPlotStyle[] toadd)
     {
-      if (toadd != null)
+      if (toadd is not null)
       {
         for (int i = 0; i < toadd.Length; i++)
         {
@@ -339,7 +339,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public void Insert(int whichposition, IG3DPlotStyle toinsert)
     {
-      if (toinsert != null)
+      if (toinsert is not null)
       {
         _innerList.Insert(whichposition, toinsert);
         toinsert.ParentObject = this;
@@ -350,7 +350,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public void Clear()
     {
-      if (_innerList != null)
+      if (_innerList is not null)
       {
         _innerList.Clear();
 
@@ -382,7 +382,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
-      if (null == pdata)
+      if (pdata is null)
         throw new ArgumentNullException(nameof(pdata));
 
       for (int i = _innerList.Count - 1; i >= 0; i--)

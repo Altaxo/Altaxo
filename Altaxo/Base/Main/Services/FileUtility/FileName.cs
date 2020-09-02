@@ -83,7 +83,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     public bool HasExtension(string extension)
     {
-      if (extension == null)
+      if (extension is null)
         throw new ArgumentNullException(nameof(extension));
       if (extension.Length == 0 || extension[0] != '.')
         throw new ArgumentException("extension must start with '.'");

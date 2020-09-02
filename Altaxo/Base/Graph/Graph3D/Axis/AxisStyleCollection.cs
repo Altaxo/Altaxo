@@ -114,11 +114,11 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _axisStyles)
+      if (_axisStyles is not null)
       {
         for (int i = 0; i < _axisStyles.Count; ++i)
         {
-          if (null != _axisStyles[i])
+          if (_axisStyles[i] is not null)
             yield return new Main.DocumentNodeAndName(_axisStyles[i], "Style" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
       }
@@ -148,10 +148,10 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public void Add(AxisStyle value)
     {
-      if (value != null)
+      if (value is not null)
       {
         value.ParentObject = this;
-        if (_cachedCoordinateSystem != null)
+        if (_cachedCoordinateSystem is not null)
           value.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(value.StyleID);
 
         _axisStyles.Add(value);
@@ -289,9 +289,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       Func<CSLineID, CSLineID> GetNewAxisLineIDFromOldAxisLineID,
       Func<CSLineID, CSAxisSide, CSLineID, CSAxisSide?> GetNewAxisSideFromOldAxisSide)
     {
-      if (null == newSystem)
+      if (newSystem is null)
         throw new ArgumentNullException(nameof(newSystem));
-      if (null == GetNewAxisLineIDFromOldAxisLineID)
+      if (GetNewAxisLineIDFromOldAxisLineID is null)
         throw new ArgumentNullException(nameof(GetNewAxisLineIDFromOldAxisLineID));
 
       foreach (var axisStyle in _axisStyles)
@@ -311,7 +311,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     public bool Remove(IGraphicBase go)
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
-        if (_axisStyles[i] != null && _axisStyles[i].Remove(go))
+        if (_axisStyles[i] is not null && _axisStyles[i].Remove(go))
           return true;
 
       return false;

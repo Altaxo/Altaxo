@@ -148,7 +148,7 @@ namespace Altaxo.Serialization.Xml
 
     public void AddValue(string name, bool? val)
     {
-      if (null == val)
+      if (val is null)
         _writer.WriteElementString(name, string.Empty);
       else
         _writer.WriteElementString(name, XmlConvert.ToString(val.Value));
@@ -166,7 +166,7 @@ namespace Altaxo.Serialization.Xml
 
     public void AddValue(string name, int? val)
     {
-      if (null == val)
+      if (val is null)
         _writer.WriteElementString(name, string.Empty);
       else
         _writer.WriteElementString(name, XmlConvert.ToString((int)val));
@@ -205,7 +205,7 @@ namespace Altaxo.Serialization.Xml
 
     public void AddValue(string name, double? val)
     {
-      if (null == val)
+      if (val is null)
         _writer.WriteElementString(name, string.Empty);
       else
         _writer.WriteElementString(name, XmlConvert.ToString((double)val));
@@ -224,7 +224,7 @@ namespace Altaxo.Serialization.Xml
     public void AddValue(string name, System.IO.MemoryStream stream)
     {
       _writer.WriteStartElement(name);
-      if (stream == null)
+      if (stream is null)
         _writer.WriteAttributeString("Length", XmlConvert.ToString(0));
       else
       {
@@ -242,7 +242,7 @@ namespace Altaxo.Serialization.Xml
 
     public void AddNullableEnum<T>(string name, T? val) where T : struct
     {
-      if (null == val)
+      if (val is null)
         _writer.WriteElementString(name, string.Empty);
       else
         _writer.WriteElementString(name, val.Value.ToString());
@@ -498,12 +498,12 @@ namespace Altaxo.Serialization.Xml
 
     public bool IsSerializable(object? o)
     {
-      return o is null || null != _surrogateSelector.GetSurrogate(o.GetType());
+      return o is null || _surrogateSelector.GetSurrogate(o.GetType()) is not null;
     }
 
     public bool IsSerializableType(System.Type type)
     {
-      return null != _surrogateSelector.GetSurrogate(type);
+      return _surrogateSelector.GetSurrogate(type) is not null;
     }
 
     public void AddValue(string name, object o)
@@ -518,7 +518,7 @@ namespace Altaxo.Serialization.Xml
 
     public void AddValueOrNull(string name, object? o)
     {
-      if (null != o)
+      if (o is not null)
       {
         if (_surrogateSelector.GetSurrogate(o.GetType()) is { } ss)
         {

@@ -187,7 +187,7 @@ namespace Altaxo.Graph
 
       var exporter = Current.ProjectService.GetProjectItemImageExporter(doc);
 
-      if (null == exporter)
+      if (exporter is null)
         throw new ArgumentException("Did not find exporter for document of type " + doc?.GetType().ToString() ?? string.Empty, nameof(doc));
 
       using (Stream myStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read))

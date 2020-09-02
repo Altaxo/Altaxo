@@ -98,18 +98,18 @@ namespace Altaxo.Graph.Plot.Groups
 
         foreach (System.Type t in s._typeToInstance.Keys)
         {
-          if (s._typeToInfo[t].ParentGroupType != null)
+          if (s._typeToInfo[t].ParentGroupType is not null)
             continue;
 
           info.AddValue("Style", s._typeToInstance[t]);
-          info.AddValue("HasChild", null != s._typeToInfo[t].ChildGroupType);
+          info.AddValue("HasChild", s._typeToInfo[t].ChildGroupType is not null);
           savedStyles++;
 
           System.Type? childtype = t;
-          while (null != (childtype = s._typeToInfo[childtype].ChildGroupType))
+          while ((childtype = s._typeToInfo[childtype].ChildGroupType) is not null)
           {
             info.AddValue("Style", s._typeToInstance[childtype]);
-            info.AddValue("HasChild", null != s._typeToInfo[childtype].ChildGroupType);
+            info.AddValue("HasChild", s._typeToInfo[childtype].ChildGroupType is not null);
             savedStyles++;
           }
         }
@@ -238,7 +238,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _typeToInstance)
+      if (_typeToInstance is not null)
       {
         foreach (var instance in _typeToInstance.Values)
           yield return new Main.DocumentNodeAndName(instance, instance.GetType().FullName ?? instance.GetType().Name); // FullName of the instance should be sufficient to identify the item
@@ -247,7 +247,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     protected override void Dispose(bool isDisposing)
     {
-      if (null != _typeToInstance)
+      if (_typeToInstance is not null)
       {
         var oldColl = _typeToInstance;
         _typeToInstance = new Dictionary<Type, IPlotGroupStyle>();
@@ -255,7 +255,7 @@ namespace Altaxo.Graph.Plot.Groups
 
         foreach (var inst in oldColl.Values)
         {
-          if (null != inst)
+          if (inst is not null)
             inst.Dispose();
         }
       }
@@ -352,7 +352,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       int result = 0;
       System.Type? t = groupStyleType;
-      while (null != (t = _typeToInfo[t].ParentGroupType))
+      while ((t = _typeToInfo[t].ParentGroupType) is not null)
         ++result;
 
       return result;
@@ -385,7 +385,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <param name="parentGroupStyleType">Type of the parent group style.</param>
     public void Add(IPlotGroupStyle groupStyle, System.Type? parentGroupStyleType)
     {
-      if (parentGroupStyleType != null)
+      if (parentGroupStyleType is not null)
       {
         if (!_typeToInstance.ContainsKey(parentGroupStyleType))
           throw new ArgumentException(string.Format("The parent group style (of type: {0}) can not be found in this collection", parentGroupStyleType));
@@ -398,7 +398,7 @@ namespace Altaxo.Graph.Plot.Groups
         }
       }
 
-      if (groupStyle == null)
+      if (groupStyle is null)
         throw new ArgumentNullException("Try to add a null value to this group style collection");
 
       if (_typeToInstance.ContainsKey(groupStyle.GetType()))
@@ -412,12 +412,12 @@ namespace Altaxo.Graph.Plot.Groups
       };
       _typeToInfo.Add(groupStyle.GetType(), groupInfo);
 
-      if (parentGroupStyleType != null)
+      if (parentGroupStyleType is not null)
       {
         System.Type? oldChildType = _typeToInfo[parentGroupStyleType].ChildGroupType;
         _typeToInfo[parentGroupStyleType].ChildGroupType = groupStyle.GetType();
         groupInfo.ChildGroupType = oldChildType;
-        if (oldChildType != null)
+        if (oldChildType is not null)
           _typeToInfo[oldChildType].ParentGroupType = groupStyle.GetType();
       }
 
@@ -432,13 +432,13 @@ namespace Altaxo.Graph.Plot.Groups
     /// <param name="childGroupStyleType">Type of group style, which should be the child of the added group style.</param>
     public void Insert(IPlotGroupStyle groupStyle, System.Type childGroupStyleType)
     {
-      if (groupStyle == null)
+      if (groupStyle is null)
         throw new ArgumentNullException("Try to add a null value to this group style collection");
 
       if (_typeToInstance.ContainsKey(groupStyle.GetType()))
         throw new ArgumentException(string.Format("The group style type <<{0}>> is already present in this group style collection", groupStyle.GetType()));
 
-      if (childGroupStyleType != null && !_typeToInstance.ContainsKey(childGroupStyleType))
+      if (childGroupStyleType is not null && !_typeToInstance.ContainsKey(childGroupStyleType))
         throw new ArgumentException(string.Format("The child group style (of type: {0}) can not be found in this collection", childGroupStyleType));
 
       groupStyle.ParentObject = this;
@@ -449,12 +449,12 @@ namespace Altaxo.Graph.Plot.Groups
       };
       _typeToInfo.Add(groupStyle.GetType(), groupInfo);
 
-      if (childGroupStyleType != null)
+      if (childGroupStyleType is not null)
       {
         System.Type? oldParentType = _typeToInfo[childGroupStyleType].ParentGroupType;
         _typeToInfo[childGroupStyleType].ParentGroupType = groupStyle.GetType();
         groupInfo.ParentGroupType = oldParentType;
-        if (oldParentType != null)
+        if (oldParentType is not null)
           _typeToInfo[oldParentType].ChildGroupType = groupStyle.GetType();
       }
 
@@ -475,14 +475,14 @@ namespace Altaxo.Graph.Plot.Groups
       System.Type? parentGroupType = groupInfo.ParentGroupType;
       System.Type? childGroupType = groupInfo.ChildGroupType;
 
-      if (parentGroupType != null) // then append my current child directly to the parent
+      if (parentGroupType is not null) // then append my current child directly to the parent
       {
         GroupInfo parentGroupInfo = _typeToInfo[parentGroupType];
         parentGroupInfo.ChildGroupType = groupInfo.ChildGroupType;
-        if (parentGroupInfo.ChildGroupType != null)
+        if (parentGroupInfo.ChildGroupType is not null)
           _typeToInfo[parentGroupInfo.ChildGroupType].ParentGroupType = groupInfo.ParentGroupType;
       }
-      else if (childGroupType != null) // then set the parent of the child to null
+      else if (childGroupType is not null) // then set the parent of the child to null
       {
         _typeToInfo[childGroupType].ParentGroupType = null;
       }
@@ -557,14 +557,14 @@ namespace Altaxo.Graph.Plot.Groups
         IPlotGroupStyle groupStyle = entry.Value;
         GroupInfo groupInfo = _typeToInfo[groupType];
 
-        if (groupInfo.ParentGroupType == null
+        if (groupInfo.ParentGroupType is null
           && groupInfo.WasApplied
           && groupStyle.IsStepEnabled
           )
         {
           int subStep = groupStyle.Step(step);
           GroupInfo subGroupInfo = groupInfo;
-          for (Type? subGroupType = subGroupInfo.ChildGroupType; subGroupType != null && subStep != 0; subGroupType = subGroupInfo.ChildGroupType)
+          for (Type? subGroupType = subGroupInfo.ChildGroupType; subGroupType is not null && subStep != 0; subGroupType = subGroupInfo.ChildGroupType)
           {
             subGroupInfo = _typeToInfo[subGroupType];
             IPlotGroupStyle subGroupStyle = _typeToInstance[subGroupType];
@@ -587,7 +587,7 @@ namespace Altaxo.Graph.Plot.Groups
         IPlotGroupStyle groupStyle = entry.Value;
         GroupInfo groupInfo = _typeToInfo[groupType];
 
-        if (groupInfo.ParentGroupType == null
+        if (groupInfo.ParentGroupType is null
           && groupInfo.WasApplied
           && groupStyle.IsStepEnabled
           && foreignStyles.ContainsType(groupType)
@@ -612,7 +612,7 @@ namespace Altaxo.Graph.Plot.Groups
         IPlotGroupStyle groupStyle = entry.Value;
         GroupInfo groupInfo = _typeToInfo[groupType];
 
-        if (groupInfo.ParentGroupType == null
+        if (groupInfo.ParentGroupType is null
           && groupInfo.WasApplied
           && groupStyle.IsStepEnabled
           && foreignStyles.ContainsType(groupType)
@@ -621,7 +621,7 @@ namespace Altaxo.Graph.Plot.Groups
         {
           int subStep = groupStyle.Step(step);
           GroupInfo subGroupInfo = groupInfo;
-          for (Type? subGroupType = subGroupInfo.ChildGroupType; subGroupType != null && subStep != 0; subGroupType = subGroupInfo.ChildGroupType)
+          for (Type? subGroupType = subGroupInfo.ChildGroupType; subGroupType is not null && subStep != 0; subGroupType = subGroupInfo.ChildGroupType)
           {
             subGroupInfo = _typeToInfo[subGroupType];
             IPlotGroupStyle subGroupStyle = _typeToInstance[subGroupType];
@@ -701,7 +701,7 @@ namespace Altaxo.Graph.Plot.Groups
       // add the items, which have no parent, and sort them
       foreach (var entry in _typeToInfo)
       {
-        if (entry.Value.ParentGroupType == null)
+        if (entry.Value.ParentGroupType is null)
           result.Add(_typeToInstance[entry.Key]);
       }
       // now order them by whatever ordering
@@ -713,7 +713,7 @@ namespace Altaxo.Graph.Plot.Groups
       {
         var info = _typeToInfo[result[i].GetType()];
         int insertPoint = i + 1;
-        while (info.ChildGroupType != null)
+        while (info.ChildGroupType is not null)
         {
           result.Insert(insertPoint, _typeToInstance[info.ChildGroupType]);
           ++insertPoint;

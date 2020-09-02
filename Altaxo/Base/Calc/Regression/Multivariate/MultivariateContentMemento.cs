@@ -325,12 +325,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       get
       {
-        if (_InstanceOfAnalysisClass != null)
+        if (_InstanceOfAnalysisClass is not null)
           return _InstanceOfAnalysisClass;
-        else if (_ClassNameOfAnalysisClass != null)
+        else if (_ClassNameOfAnalysisClass is not null)
         {
           var clstype = System.Type.GetType(_ClassNameOfAnalysisClass);
-          if (clstype == null)
+          if (clstype is null)
             throw new ApplicationException("Can not found the class used to analyse the data, the class type is: " + _ClassNameOfAnalysisClass);
 
           object? instance = System.Activator.CreateInstance(clstype);

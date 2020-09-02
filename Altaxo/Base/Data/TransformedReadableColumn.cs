@@ -125,7 +125,7 @@ namespace Altaxo.Data
       }
       else
       {
-        if (null == originalReadableColumn)
+        if (originalReadableColumn is null)
           throw new ArgumentNullException(nameof(originalReadableColumn));
         var result = (TransformedReadableColumn)MemberwiseClone();
         result._originalColumn = originalReadableColumn;

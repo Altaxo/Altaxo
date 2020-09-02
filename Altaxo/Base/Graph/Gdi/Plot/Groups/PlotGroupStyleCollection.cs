@@ -60,7 +60,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         info.GetBaseValueEmbedded(s, s.GetType().BaseType!, parent);
 
         s._coordinateTransformingStyle = info.GetValueOrNull<ICoordinateTransformingGroupStyle>("TransformingStyle", s);
-        if (null != s._coordinateTransformingStyle)
+        if (s._coordinateTransformingStyle is not null)
           s._coordinateTransformingStyle.ParentObject = s;
 
         return s;
@@ -87,7 +87,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
       var from = obj as PlotGroupStyleCollection;
 
-      if (null != from)
+      if (from is not null)
       {
         using (var suspendToken = SuspendGetToken())
         {

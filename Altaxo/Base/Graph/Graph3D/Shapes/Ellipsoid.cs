@@ -93,7 +93,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     {
       var buffers = g.GetPositionNormalIndexedTriangleBuffer(_material);
 
-      if (null != buffers.PositionNormalIndexedTriangleBuffer)
+      if (buffers.PositionNormalIndexedTriangleBuffer is not null)
       {
         var buffer = buffers.PositionNormalIndexedTriangleBuffer;
 

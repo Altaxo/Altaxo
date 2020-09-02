@@ -70,7 +70,7 @@ namespace Altaxo.Geometry
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (Margin2D)o : new Margin2D();
+        var s = o is not null ? (Margin2D)o : new Margin2D();
 
         s.Left = info.GetDouble("Left");
         s.Top = info.GetDouble("Top");

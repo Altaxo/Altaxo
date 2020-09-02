@@ -200,7 +200,7 @@ if (0 != (cp & PenHolder.Configured.Width))
 
       public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (PenX)o : new PenX();
+        var s = o is not null ? (PenX)o : new PenX();
 
         var cp = (Configured)info.GetInt32("Configured");
 
@@ -330,7 +330,7 @@ if (0 != (cp & PenX.Configured.Width))
 
       public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (PenX)o : new PenX();
+        var s = o is not null ? (PenX)o : new PenX();
 
         var cp = (Configured)info.GetInt32("Configured");
 
@@ -465,7 +465,7 @@ if (0 != (cp & PenX.Configured.Width))
 
       public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (PenX)o : new PenX();
+        var s = o is not null ? (PenX)o : new PenX();
 
         var cp = (Configured)info.GetInt32("Configured");
 
@@ -611,7 +611,7 @@ if (0 != (cp & PenX.Configured.Width))
 
       public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (PenX)o : new PenX();
+        var s = o is not null ? (PenX)o : new PenX();
 
         var cp = (Configured)info.GetInt32("Configured");
 
@@ -719,7 +719,7 @@ if (0 != (cp & PenX.Configured.Width))
 
         // Note: we must even save the solid pattern if it belongs to another list than the BuiltinDefault list,
         // otherwise when deserializing we wouldn't know to which list the solid dash pattern belongs to.
-        if (null != s._dashPattern && (!Solid.Instance.Equals(s._dashPattern) || !ReferenceEquals(DashPatternListManager.Instance.BuiltinDefault, DashPatternListManager.Instance.GetParentList(s._dashPattern))))
+        if (s._dashPattern is not null && (!Solid.Instance.Equals(s._dashPattern) || !ReferenceEquals(DashPatternListManager.Instance.BuiltinDefault, DashPatternListManager.Instance.GetParentList(s._dashPattern))))
         {
           info.AddValue("DashPattern", s._dashPattern);
 
@@ -1036,7 +1036,7 @@ if (0 != (cp & PenX.Configured.Width))
 
     public PenX WithDashPattern(IDashPattern value)
     {
-      if (null == value)
+      if (value is null)
         throw new ArgumentNullException();
 
       if (!ReferenceEquals(_dashPattern, value)) // use ReferenceEquals because the reference determines to which DashPatternList the DashPattern belongs
@@ -1250,9 +1250,9 @@ if (0 != (cp & PenX.Configured.Width))
 
     private static bool AreEqual(double[]? x1, double[]? x2)
     {
-      if (x1 == null && x2 == null)
+      if (x1 is null && x2 is null)
         return true;
-      if (x1 == null || x2 == null)
+      if (x1 is null || x2 is null)
         return false;
       if (x1.Length != x2.Length)
         return false;

@@ -555,13 +555,13 @@ namespace Altaxo.Graph.Scales.Ticks
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _suppressedMajorTicks)
+      if (_suppressedMajorTicks is not null)
         yield return new Main.DocumentNodeAndName(_suppressedMajorTicks, "SuppressedMajorTicks");
-      if (null != _suppressedMinorTicks)
+      if (_suppressedMinorTicks is not null)
         yield return new Main.DocumentNodeAndName(_suppressedMinorTicks, "SuppressedMinorTicks");
-      if (null != _additionalMajorTicks)
+      if (_additionalMajorTicks is not null)
         yield return new Main.DocumentNodeAndName(_additionalMajorTicks, "AdditionalMajorTicks");
-      if (null != _additionalMinorTicks)
+      if (_additionalMinorTicks is not null)
         yield return new Main.DocumentNodeAndName(_additionalMinorTicks, "AdditionalMinorTicks");
     }
 
@@ -855,12 +855,12 @@ namespace Altaxo.Graph.Scales.Ticks
     {
       ConvertOrgEndToDateTimeValues(org, end, out var dorg, out var dend);
 
-      if (_cachedMajorMinor == null || _cachedMajorMinor.Org != dorg || _cachedMajorMinor.End != dend)
+      if (_cachedMajorMinor is null || _cachedMajorMinor.Org != dorg || _cachedMajorMinor.End != dend)
       {
         InternalPreProcessScaleBoundaries(ref dorg, ref dend, false, false); // make sure that _cachedMajorMinor is valid now
       }
 
-      if (!(null != _cachedMajorMinor))
+      if (_cachedMajorMinor is null)
         throw new InvalidProgramException();
 
       _majorTicks.Clear();
@@ -1056,7 +1056,7 @@ namespace Altaxo.Graph.Scales.Ticks
       propOrg = scaleOrg;
       propEnd = scaleEnd;
 
-      if (null != _userDefinedMajorSpan)
+      if (_userDefinedMajorSpan is not null)
       {
         majorSpan = _userDefinedMajorSpan.Value;
       }
@@ -1066,7 +1066,7 @@ namespace Altaxo.Graph.Scales.Ticks
       }
 
       minorTicks = majorSpan;
-      if (null != _userDefinedMinorTicks)
+      if (_userDefinedMinorTicks is not null)
       {
         var mticks = Math.Abs(_userDefinedMinorTicks.Value);
         if (mticks > 0)

@@ -86,11 +86,11 @@ namespace Altaxo.Gui.Settings
         AddToCultureList(CultureInfo.InvariantCulture, CultureInfo.InvariantCulture.LCID == _doc.CultureID);
         foreach (var cult in cultures)
           AddToCultureList(cult, cult.LCID == _doc.CultureID);
-        if (null == _availableCulturesList.FirstSelectedNode)
+        if (_availableCulturesList.FirstSelectedNode is null)
           _availableCulturesList[0].IsSelected = true;
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeCultureFormatList(_availableCulturesList);
 
@@ -134,7 +134,7 @@ namespace Altaxo.Gui.Settings
     private void EhCultureChanged()
     {
       var node = _availableCulturesList.FirstSelectedNode;
-      if (node != null)
+      if (node is not null)
       {
         var c = (CultureInfo)node.Tag;
         _doc = new CultureSettings(c);

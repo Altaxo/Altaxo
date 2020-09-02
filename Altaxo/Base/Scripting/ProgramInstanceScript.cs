@@ -163,7 +163,7 @@ namespace Altaxo.Scripting
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public bool Execute(IProgressReporter reporter)
     {
-      if (null == _scriptObject)
+      if (_scriptObject is null)
       {
         _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, "Script Object is null"));
         return false;

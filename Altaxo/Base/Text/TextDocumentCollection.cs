@@ -51,7 +51,7 @@ namespace Altaxo.Text
       }
       set
       {
-        if (null != value)
+        if (value is not null)
           throw new InvalidOperationException("ParentObject of TextDocumentCollection is fixed and cannot be set");
         base.ParentObject = value; // allow setting to null
       }

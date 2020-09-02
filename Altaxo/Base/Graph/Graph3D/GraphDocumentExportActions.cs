@@ -70,7 +70,7 @@ namespace Altaxo.Graph.Graph3D
     public static (int pixelsX, int pixelsY) RenderToStream(this GraphDocument doc, System.IO.Stream stream, Altaxo.Graph.Gdi.GraphExportOptions exportOptions)
     {
       var imageExporter = Current.ProjectService.GetProjectItemImageExporter(doc);
-      if (null == imageExporter)
+      if (imageExporter is null)
         return (0, 0);
       else
         return imageExporter.ExportAsImageToStream(doc, exportOptions, stream);

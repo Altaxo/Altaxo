@@ -109,11 +109,11 @@ namespace Altaxo.Graph.Gdi.Plot
             ps
             )
     {
-      if (null == fitDocumentIdentifier)
+      if (fitDocumentIdentifier is null)
         throw new ArgumentNullException(nameof(fitDocumentIdentifier));
-      if (null == fitDocument)
+      if (fitDocument is null)
         throw new ArgumentNullException(nameof(fitDocument));
-      if (null == ps)
+      if (ps is null)
         throw new ArgumentNullException(nameof(ps));
     }
 

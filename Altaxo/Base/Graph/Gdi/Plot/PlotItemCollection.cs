@@ -130,7 +130,7 @@ namespace Altaxo.Graph.Gdi.Plot
           }
           else
           {
-            if (plotGroups[foundidx].PlotItemCollection == null)
+            if (plotGroups[foundidx].PlotItemCollection is null)
             {
               var newColl = new PlotItemCollection();
               plotGroups[foundidx].PlotItemCollection = newColl;
@@ -148,13 +148,13 @@ namespace Altaxo.Graph.Gdi.Plot
               {
                 prev = curr;
                 curr = new DashPatternGroupStyle();
-                newColl.GroupStyles.Add(curr, serial ? (prev == null ? null : prev.GetType()) : null);
+                newColl.GroupStyles.Add(curr, serial ? (prev is null ? null : prev.GetType()) : null);
               }
               if (0 != (plotGroups[foundidx].PlotGroup._plotGroupStyle & Version0PlotGroupStyle.Symbol))
               {
                 prev = curr;
                 curr = new ScatterSymbolGroupStyle();
-                newColl.GroupStyles.Add(curr, serial ? (prev == null ? null : prev.GetType()) : null);
+                newColl.GroupStyles.Add(curr, serial ? (prev is null ? null : prev.GetType()) : null);
               }
             }
             // now add the item to this collection
@@ -228,7 +228,7 @@ namespace Altaxo.Graph.Gdi.Plot
         var s = (PlotItemCollection?)o ?? new PlotItemCollection(info);
 
         s._plotGroupStyles = (PlotGroupStyleCollection)info.GetValue("GroupStyles", s);
-        if (null != s._plotGroupStyles)
+        if (s._plotGroupStyles is not null)
           s._plotGroupStyles.ParentObject = s;
 
         int count = info.OpenArray();
@@ -329,7 +329,7 @@ namespace Altaxo.Graph.Gdi.Plot
         return true;
 
       var from = obj as PlotItemCollection;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, GraphCopyOptions.All);
       }
@@ -398,7 +398,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException();
 
         ChildSetMember(ref _plotGroupStyles, value);
@@ -568,7 +568,7 @@ namespace Altaxo.Graph.Gdi.Plot
     protected void PrepareStylesBackward_HierarchyUpOnly(PlotGroupStyleCollection styles, IPlotArea layer)
     {
       if ( // transferToLocalStyles
-        styles != null &&
+                styles is not null &&
         styles.Count != 0 &&
         styles.DistributeToChildGroups &&
         _plotGroupStyles.InheritFromParentGroups
@@ -805,7 +805,7 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       get
       {
-        if (null != _plotGroupStyles.CoordinateTransformingStyle)
+        if (_plotGroupStyles.CoordinateTransformingStyle is not null)
           return IndexDirection.Descending;
         else
           return IndexDirection.Ascending;
@@ -862,9 +862,9 @@ namespace Altaxo.Graph.Gdi.Plot
       foreach (IGPlotItem pi in _plotItems)
       {
         result = pi.HitTest(layer, hitpoint);
-        if (null != result)
+        if (result is not null)
         {
-          if (result.Remove == null)
+          if (result.Remove is null)
             result.Remove = new DoubleClickHandler(EhHitTestObject_Remove);
 
           return result;
@@ -925,7 +925,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public void Add(IGPlotItem item)
     {
-      if (item == null)
+      if (item is null)
         throw new ArgumentNullException();
 
       item.ParentObject = this;
@@ -945,9 +945,9 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <exception cref="ArgumentException">OldItem is not member of the collection - oldItem</exception>
     public void Replace(IGPlotItem oldItem, IGPlotItem newItem)
     {
-      if (null == oldItem)
+      if (oldItem is null)
         throw new ArgumentNullException(nameof(oldItem));
-      if (null == newItem)
+      if (newItem is null)
         throw new ArgumentNullException(nameof(newItem));
 
       var idx = _plotItems.IndexOf(oldItem);
@@ -961,7 +961,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public void AddRange(IEnumerable<IGPlotItem> items)
     {
-      if (items == null)
+      if (items is null)
         throw new ArgumentNullException();
 
       foreach (var item in items)
@@ -1030,7 +1030,7 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       get
       {
-        if (_cachedPlotItemsFlattened == null)
+        if (_cachedPlotItemsFlattened is null)
         {
           var list = new List<IGPlotItem>();
           FillPlotItemList(list);
@@ -1090,7 +1090,7 @@ namespace Altaxo.Graph.Gdi.Plot
         ++index;
       }
 
-      if (null != _plotGroupStyles)
+      if (_plotGroupStyles is not null)
       {
         yield return new Main.DocumentNodeAndName(_plotGroupStyles, () => _plotGroupStyles = null!, "PlotGroupStyles");
       }
@@ -1098,7 +1098,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     protected override void Dispose(bool isDisposing)
     {
-      if (null != _plotItems)
+      if (_plotItems is not null)
       {
         _plotItems.CollectionChanged -= EhPlotItemsCollectionChanged;
         var oldColl = _plotItems;
@@ -1106,7 +1106,7 @@ namespace Altaxo.Graph.Gdi.Plot
         foreach (var item in oldColl)
           item.Dispose();
       }
-      if (null != _plotGroupStyles)
+      if (_plotGroupStyles is not null)
       {
         _plotGroupStyles.Dispose();
         _plotGroupStyles = null!;
@@ -1160,7 +1160,7 @@ namespace Altaxo.Graph.Gdi.Plot
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       var e1 = e as SimpleCollectionChangedEventArgs;
-      if (null != e1)
+      if (e1 is not null)
       {
         // if in items above the collection has changed, the flattened plot items get invalid
         _cachedPlotItemsFlattened = null;

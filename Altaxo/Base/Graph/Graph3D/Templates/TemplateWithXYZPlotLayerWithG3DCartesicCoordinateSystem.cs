@@ -63,7 +63,7 @@ typeof(object),
     {
       if (propertyContext is null)
       {
-        if (null != folderName)
+        if (folderName is not null)
           propertyContext = Altaxo.PropertyExtensions.GetPropertyContextOfProjectFolder(folderName);
         else
           propertyContext = PropertyExtensions.GetPropertyContextOfProject();
@@ -92,7 +92,7 @@ typeof(object),
     /// <returns>The created graph. The graph is already part of the project. (But no view is created for the graph).</returns>
     public static GraphDocument CreateGraph(IReadOnlyPropertyBag propertyContext, string? preferredGraphName, string? anyNameInSameFolder, bool includeInProject)
     {
-      var folderName = null == anyNameInSameFolder ? null : Altaxo.Main.ProjectFolder.GetFolderPart(anyNameInSameFolder);
+      var folderName = anyNameInSameFolder is null ? null : Altaxo.Main.ProjectFolder.GetFolderPart(anyNameInSameFolder);
 
       if (propertyContext is null)
       {
@@ -105,7 +105,7 @@ typeof(object),
       GraphDocument graph;
       var graphTemplate = propertyContext.GetValue<GraphDocument>(PropertyKeyDefaultTemplate);
       var isBuiltinTemplate = object.ReferenceEquals(graphTemplate, Current.PropertyService.BuiltinSettings.GetValue<GraphDocument>(PropertyKeyDefaultTemplate));
-      if (null != graphTemplate && !isBuiltinTemplate)
+      if (graphTemplate is not null && !isBuiltinTemplate)
         graph = (GraphDocument)graphTemplate.Clone();
       else
         graph = CreateBuiltinGraph(propertyContext, folderName);

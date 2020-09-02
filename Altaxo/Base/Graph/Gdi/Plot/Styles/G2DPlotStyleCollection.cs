@@ -77,7 +77,7 @@ info.CommitArray();
           array[i] = (IG2DPlotStyle)info.GetValue("e", null);
         info.CloseArray(count);
 
-        if (o == null)
+        if (o is null)
         {
           return new G2DPlotStyleCollection(array);
         }
@@ -208,7 +208,7 @@ info.CommitArray();
       if (object.ReferenceEquals(this, obj))
         return true;
       var from = obj as G2DPlotStyleCollection;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from);
         return true;
@@ -222,7 +222,7 @@ info.CommitArray();
       if (object.ReferenceEquals(this, obj))
         return true;
       var from = obj as G2DPlotStyleCollection;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from);
         return true;
@@ -326,11 +326,11 @@ info.CommitArray();
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _innerList)
+      if (_innerList is not null)
       {
         for (int i = _innerList.Count - 1; i >= 0; --i)
         {
-          if (null != _innerList[i])
+          if (_innerList[i] is not null)
             yield return new Main.DocumentNodeAndName(_innerList[i], "Style" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
       }
@@ -377,7 +377,7 @@ info.CommitArray();
 
     protected void Add(IG2DPlotStyle toadd, bool withReorganizationAndEvents)
     {
-      if (toadd != null)
+      if (toadd is not null)
       {
         _innerList.Add(toadd);
         toadd.ParentObject = this;
@@ -391,7 +391,7 @@ info.CommitArray();
 
     protected void Replace(IG2DPlotStyle ps, int idx, bool withReorganizationAndEvents)
     {
-      if (ps != null)
+      if (ps is not null)
       {
         _innerList[idx] = ps;
         ps.ParentObject = this;
@@ -405,7 +405,7 @@ info.CommitArray();
 
     public void AddRange(IG2DPlotStyle[] toadd)
     {
-      if (toadd != null)
+      if (toadd is not null)
       {
         for (int i = 0; i < toadd.Length; i++)
         {
@@ -419,7 +419,7 @@ info.CommitArray();
 
     public void Insert(int whichposition, IG2DPlotStyle toinsert)
     {
-      if (toinsert != null)
+      if (toinsert is not null)
       {
         _innerList.Insert(whichposition, toinsert);
         toinsert.ParentObject = this;
@@ -430,7 +430,7 @@ info.CommitArray();
 
     public void Clear()
     {
-      if (_innerList != null)
+      if (_innerList is not null)
       {
         _innerList.Clear();
 
@@ -462,7 +462,7 @@ info.CommitArray();
 
     public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
-      if (null == pdata)
+      if (pdata is null)
         throw new ArgumentNullException(nameof(pdata));
 
       for (int i = _innerList.Count - 1; i >= 0; i--)

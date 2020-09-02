@@ -297,7 +297,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
     public virtual bool Equals(IColorProvider? other)
     {
-      if (null == other || other.GetType() != GetType())
+      if (other is null || other.GetType() != GetType())
         return false;
 
       var from = (ColorProviderBase)other;

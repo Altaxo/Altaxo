@@ -224,7 +224,7 @@ namespace Altaxo.Main.Services
           catch (Exception)
           {
           }
-          if (rawtext != null && rawtext.Length > 0)
+          if (rawtext is not null && rawtext.Length > 0)
             stb.Append(rawtext);
         }
       }

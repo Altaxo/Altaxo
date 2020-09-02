@@ -45,10 +45,10 @@ namespace Altaxo.AddInItems
     public object? BuildItem(BuildItemArgs args)
     {
       var container = (IServiceContainer)args.Parameter;
-      if (container == null)
+      if (container is null)
         throw new InvalidOperationException("Expected the parameter to be a service container");
       Type? interfaceType = args.AddIn.FindType(args.Codon.Id);
-      if (interfaceType != null)
+      if (interfaceType is not null)
       {
         string className = args.Codon.Properties["class"];
         bool serviceLoading = false;
@@ -76,7 +76,7 @@ namespace Altaxo.AddInItems
         if (string.IsNullOrEmpty(otherInterface))
           break;
         Type? otherInterfaceType = args.AddIn.FindType(otherInterface);
-        if (null != otherInterfaceType)
+        if (otherInterfaceType is not null)
         {
           bool service1Loading = false;
           // Use ServiceCreatorCallback to lazily create the service

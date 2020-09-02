@@ -105,7 +105,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
         indexBasePlotPoints = range.LowerBound;
       }
 
-      if (null != symbolGap)
+      if (symbolGap is not null)
       {
         foreach (var segmentRange in GetSegmentRanges(range, symbolGap, skipFrequency, connectCircular))
         {
@@ -142,7 +142,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
             int plotIndexAtEnd = segmentRange.IndexAtSubRangeEnd + indexBasePlotPoints;
             var shortenedPolyline = circularLinePoints.ShortenPartialPolylineByDistanceFromStartAndEnd(plotIndexAtStart, plotIndexAtEnd, segmentRange.GapAtSubRangeStart / 2, segmentRange.GapAtSubRangeEnd / 2);
 
-            if (null != shortenedPolyline)
+            if (shortenedPolyline is not null)
               g.DrawLines(linePen, shortenedPolyline);
           }
         } // end for

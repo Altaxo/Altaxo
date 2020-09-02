@@ -235,7 +235,7 @@ namespace Altaxo.Main.Services
           typeof(UserControlForControllerAttribute),
           new Type[] { guiControlType, expectedType },
           new object[] { controller });
-        if (null != result)
+        if (result is not null)
           break;
       }
       return result;
@@ -250,7 +250,7 @@ namespace Altaxo.Main.Services
       foreach (var guiType in RegisteredGuiTechnologies)
       {
         InternalFindAndAttachControlUsingGuiType(controller, guiType);
-        if (controller.ViewObject != null)
+        if (controller.ViewObject is not null)
           break;
       }
     }
@@ -267,12 +267,12 @@ namespace Altaxo.Main.Services
         if (ReflectionService.IsSubClassOfOrImplements(viewTemplate.GetType(), guiType))
         {
           InternalFindAndAttachControlUsingGuiType(controller, guiType);
-          if (controller.ViewObject != null)
+          if (controller.ViewObject is not null)
             return;
         }
       }
 
-      if (controller.ViewObject == null)
+      if (controller.ViewObject is null)
         FindAndAttachControlTo(controller);
     }
 
@@ -286,12 +286,12 @@ namespace Altaxo.Main.Services
       // if the controller has
       System.Type ct = controller.GetType();
       object[] viewattributes = ct.GetCustomAttributes(typeof(ExpectedTypeOfViewAttribute), false);
-      if (null == viewattributes || viewattributes.Length == 0)
+      if (viewattributes is null || viewattributes.Length == 0)
         viewattributes = ct.GetCustomAttributes(typeof(ExpectedTypeOfViewAttribute), true);
 
       bool isInvokeRequired = Current.Dispatcher.InvokeRequired;
 
-      if (viewattributes != null && viewattributes.Length > 0)
+      if (viewattributes is not null && viewattributes.Length > 0)
       {
         if (viewattributes.Length > 1)
         {
@@ -309,7 +309,7 @@ namespace Altaxo.Main.Services
             for (int i = 0; i < controltypes.Length; ++i)
             {
               object[] pattributes = controltypes[i].GetCustomAttributes(typeof(UserControlPriorityAttribute), false);
-              if (null != pattributes && pattributes.Length > 0)
+              if (pattributes is not null && pattributes.Length > 0)
                 priorities[i] = -((UserControlPriorityAttribute)pattributes[0]).Priority;
             }
             Array.Sort(priorities, controltypes); // the negation of priority (see above) ensures that the sorting is priority descending
@@ -458,7 +458,7 @@ namespace Altaxo.Main.Services
       finally
       {
         var c = System.Threading.Interlocked.Exchange(ref controller, null);
-        if (null != c)
+        if (c is not null)
           c.Dispose();
       }
     }
@@ -667,7 +667,7 @@ namespace Altaxo.Main.Services
       catch (Exception)
       {
       }
-      if (result != null)
+      if (result is not null)
         return result;
 
       Attribute[] attributes = Attribute.GetCustomAttributes(definedtype, typeof(System.ComponentModel.DescriptionAttribute));
@@ -717,7 +717,7 @@ namespace Altaxo.Main.Services
       catch (Exception)
       {
       }
-      if (null != result)
+      if (result is not null)
         return result;
 
       try

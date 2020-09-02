@@ -61,9 +61,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         _lineCtrl = new OpenPathShapeController() { UseDocumentCopy = UseDocument.Directly };
         _lineCtrl.InitializeDocument(_doc);
       }
-      if (null != _view)
+      if (_view is not null)
       {
-        if (null == _lineCtrl.ViewObject)
+        if (_lineCtrl.ViewObject is null)
           _lineCtrl.ViewObject = _view.LineGraphicView;
 
         _splinePointsCtrl = new CardinalSplinePointsController(_view.SplinePointsView, _doc.CurvePoints, _doc.Tension, _doc);

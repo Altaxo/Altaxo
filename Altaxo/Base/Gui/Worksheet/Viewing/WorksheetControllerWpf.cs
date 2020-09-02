@@ -322,7 +322,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       if (VerticalScrollPosition >= _numberOfTableRows)
         VerticalScrollPosition = _numberOfTableRows > 0 ? _numberOfTableRows - 1 : 0;
 
-      if (_view != null)
+      if (_view is not null)
         _view.TableArea_TriggerRedrawing();
     }
 
@@ -333,7 +333,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       if (HorzScrollPos + 1 > _numberOfTableCols)
         HorzScrollPos = _numberOfTableCols > 0 ? _numberOfTableCols - 1 : 0;
 
-      if (_view != null)
+      if (_view is not null)
       {
         AdjustXScrollBarViewPortSize();
         _view.TableArea_TriggerRedrawing();
@@ -345,7 +345,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// the total width of all data columns.</summary>
     public void AdjustXScrollBarViewPortSize()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         if (_numberOfTableCols > 0)
         {
@@ -982,7 +982,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
             ReadCellEditContentAndHide();
           }
 
-          if (_view != null)
+          if (_view is not null)
           {
             _view.TableViewHorzScrollValue = value;
             _view?.TableArea_TriggerRedrawing();
@@ -1018,7 +1018,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
           // The value of the ScrollBar in the view has an offset, since he
           // can not have negative values;
-          if (_view != null)
+          if (_view is not null)
           {
             newValue += TotalEnabledPropertyColumns;
             _view.TableViewVertScrollValue = newValue;
@@ -1035,7 +1035,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       set
       {
         _scrollHorzMax = value;
-        if (_view != null)
+        if (_view is not null)
           _view.TableViewHorzScrollMaximum = value;
       }
     }
@@ -1047,7 +1047,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       {
         _scrollVertMax = value;
 
-        if (_view != null)
+        if (_view is not null)
           _view.TableViewVertScrollMaximum = value + TotalEnabledPropertyColumns;
       }
     }
@@ -1408,7 +1408,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       if (_view is null)
         return;
 
-      if (null != DataRowHeaderRightClicked)
+      if (DataRowHeaderRightClicked is not null)
         DataRowHeaderRightClicked(this, clickedCell);
 
       if (!(SelectedDataRows.Contains(clickedCell.RowNumber)))
@@ -1590,7 +1590,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void Cut()
     {
-      if (_view != null && _cellEdit_IsArmed)
+      if (_view is not null && _cellEdit_IsArmed)
       {
         _view.CellEdit_Cut();
       }
@@ -1603,7 +1603,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void Copy()
     {
-      if (_view != null && _cellEdit_IsArmed)
+      if (_view is not null && _cellEdit_IsArmed)
       {
         _view.CellEdit_Copy();
       }
@@ -1616,7 +1616,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void Paste()
     {
-      if (_view != null && _cellEdit_IsArmed)
+      if (_view is not null && _cellEdit_IsArmed)
       {
         _view.CellEdit_Paste();
       }
@@ -1628,7 +1628,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void Delete()
     {
-      if (_view != null && _cellEdit_IsArmed)
+      if (_view is not null && _cellEdit_IsArmed)
       {
         _view.CellEdit_Clear();
       }
@@ -1649,7 +1649,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       {
         SelectedDataColumns.Select(0, false, false);
         SelectedDataColumns.Select(DataTable.DataColumns.ColumnCount - 1, true, false);
-        if (_view != null)
+        if (_view is not null)
           _view.TableArea_TriggerRedrawing();
       }
     }

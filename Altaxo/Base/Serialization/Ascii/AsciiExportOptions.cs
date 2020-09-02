@@ -138,10 +138,10 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="stringConverter">The converter function, which converts an AltaxoVariant into a string.</param>
     public void SetConverter(System.Type columnType, Func<Altaxo.Data.AltaxoVariant, string> stringConverter)
     {
-      if (columnType == null)
+      if (columnType is null)
         throw new ArgumentNullException("columnType");
 
-      if (stringConverter != null)
+      if (stringConverter is not null)
         _typeConverters[columnType] = stringConverter;
       else // stringConverter is null, try to get the default converter
         _typeConverters[columnType] = GetDefaultConverter(columnType);

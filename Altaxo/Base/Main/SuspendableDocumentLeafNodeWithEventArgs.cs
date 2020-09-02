@@ -34,7 +34,7 @@ namespace Altaxo.Main
   {
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
-      if (null != e)
+      if (e is not null)
         _accumulatedEventData = e;
       else
         _accumulatedEventData = EventArgs.Empty;

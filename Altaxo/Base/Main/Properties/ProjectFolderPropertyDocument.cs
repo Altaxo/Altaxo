@@ -73,7 +73,7 @@ namespace Altaxo.Main.Properties
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (ProjectFolderPropertyDocument)o : new ProjectFolderPropertyDocument(string.Empty);
+        var s = o is not null ? (ProjectFolderPropertyDocument)o : new ProjectFolderPropertyDocument(string.Empty);
         Deserialize(s, info, parent);
         return s;
       }
@@ -115,12 +115,12 @@ namespace Altaxo.Main.Properties
         return true;
 
       var from = (ProjectFolderPropertyDocument)obj;
-      if (null != from)
+      if (from is not null)
       {
         _name = from._name;
         _changeTimeUtc = from._changeTimeUtc;
         _propertyBag = null;
-        if (null != from._propertyBag)
+        if (from._propertyBag is not null)
         {
           _propertyBag = PropertyBagNotNull;
           _propertyBag.Clear();
@@ -182,7 +182,7 @@ namespace Altaxo.Main.Properties
 
         var canBeRenamed = true;
         var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
-        if (null != parentAs)
+        if (parentAs is not null)
         {
           canBeRenamed = parentAs.EhChild_CanBeRenamed(this, value);
         }
@@ -192,7 +192,7 @@ namespace Altaxo.Main.Properties
           var oldName = _name!;
           _name = value;
 
-          if (null != parentAs)
+          if (parentAs is not null)
             parentAs.EhChild_HasBeenRenamed(this, oldName);
 
           OnNameChanged(oldName);
@@ -280,7 +280,7 @@ namespace Altaxo.Main.Properties
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _propertyBag)
+      if (_propertyBag is not null)
         yield return new Main.DocumentNodeAndName(_propertyBag, () => _propertyBag = null, "PropertyBag");
     }
 

@@ -66,10 +66,10 @@ namespace Altaxo.Main
         var s = (DocNodeProxy2ndLevel)obj;
 
         var node = s.InternalDocumentNode;
-        if (null != node && !node.IsDisposeInProgress)
+        if (node is not null && !node.IsDisposeInProgress)
           s.InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(node);
 
-        if (!(null != s._docNodePath))
+        if (s._docNodePath is null)
           throw new InvalidProgramException();
 
         info.AddValue("Path", (s._childName is null) ? s._docNodePath : s._docNodePath.Append(s._childName));
@@ -84,7 +84,7 @@ namespace Altaxo.Main
         s._childName = nodePath.LastPart;
         s.InternalDocumentPath = nodePath.ParentPath;
 
-        if (!(null != s._docNodePath))
+        if (s._docNodePath is null)
           throw new InvalidProgramException();
 
         // create a callback to resolve the instance as early as possible
@@ -179,7 +179,7 @@ namespace Altaxo.Main
     protected override bool OnDocNode_TunnelingEvent(object sender, object source, Main.TunnelingEventArgs e)
     {
       bool shouldFireChangedEvent = false;
-      if (e is NameChangedEventArgs ncea && null != _childName) // if we currently track the parent node (childName is not null), then we watch NameChanged events
+      if (e is NameChangedEventArgs ncea && _childName is not null) // if we currently track the parent node (childName is not null), then we watch NameChanged events
       {
         if (ncea.OldName == _childName)
         {
@@ -199,10 +199,10 @@ namespace Altaxo.Main
     {
       var result = base.DocumentObject();
 
-      if (null != _childName && result is IDocumentNode parentNode)
+      if (_childName is not null && result is IDocumentNode parentNode)
       {
         var child = parentNode.GetChildObjectNamed(_childName);
-        if (null != child)
+        if (child is not null)
         {
           _childName = null;
           InternalSetDocNode(child, isCalledFromConstructor: false, doNotTriggerChangedEvent: true); // we are tracking the child now
@@ -220,7 +220,7 @@ namespace Altaxo.Main
     public override Main.AbsoluteDocumentPath DocumentPath()
     {
       var docNode = InternalDocumentNode;
-      if (null != docNode)
+      if (docNode is not null)
       {
         InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(docNode);
       }

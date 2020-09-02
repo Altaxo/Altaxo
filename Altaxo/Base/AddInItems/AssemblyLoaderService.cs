@@ -56,12 +56,12 @@ namespace Altaxo.AddInItems
     {
       // First of all, we look if such an assembly is already loaded 
       var result = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.GetName().Name == assemblyString).FirstOrDefault();
-      if (null != result)
+      if (result is not null)
         return result;
 
       FileInfo? resolvedFile = null;
       assemblyString += ".dll";
-      if (null != hintPath && Directory.Exists(hintPath))
+      if (hintPath is not null && Directory.Exists(hintPath))
       {
         var dirInfo = new DirectoryInfo(hintPath);
         resolvedFile = dirInfo.GetFiles(assemblyString, SearchOption.AllDirectories).FirstOrDefault();

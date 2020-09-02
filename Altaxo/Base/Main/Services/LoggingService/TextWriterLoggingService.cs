@@ -31,7 +31,7 @@ namespace Altaxo.Main.Services
 
     public TextWriterLoggingService(TextWriter writer)
     {
-      if (writer == null)
+      if (writer is null)
         throw new ArgumentNullException("writer");
       this.writer = writer;
       IsFatalEnabled = true;
@@ -43,11 +43,11 @@ namespace Altaxo.Main.Services
 
     private void Write(object message, Exception? exception)
     {
-      if (message != null)
+      if (message is not null)
       {
         writer.WriteLine(message.ToString());
       }
-      if (exception != null)
+      if (exception is not null)
       {
         writer.WriteLine(exception.ToString());
       }

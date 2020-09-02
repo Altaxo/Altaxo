@@ -79,7 +79,7 @@ namespace Altaxo.Drawing.DashPatterns
 
     public Custom(IEnumerable<double> dashPattern)
     {
-      if (null == dashPattern)
+      if (dashPattern is null)
         throw new ArgumentNullException(nameof(dashPattern));
 
       _customDashPattern = dashPattern.ToArray();
@@ -90,7 +90,7 @@ namespace Altaxo.Drawing.DashPatterns
 
     public Custom(IEnumerable<double> dashPattern, double dashOffset)
     {
-      if (null == dashPattern)
+      if (dashPattern is null)
         throw new ArgumentNullException(nameof(dashPattern));
 
       _customDashPattern = dashPattern.ToArray();

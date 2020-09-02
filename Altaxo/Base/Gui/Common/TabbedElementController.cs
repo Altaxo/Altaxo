@@ -123,7 +123,7 @@ namespace Altaxo.Gui.Common
     public void BringTabToFront(int i)
     {
       _frontTabIndex = i;
-      if (_view != null)
+      if (_view is not null)
         _view.BringTabToFront(i);
     }
 
@@ -164,7 +164,7 @@ namespace Altaxo.Gui.Common
       get { return _view; }
       set
       {
-        if (_view != null)
+        if (_view is not null)
         {
           _view.ChildControl_Entered -= EhView_ChildControlEntered;
           _view.ChildControl_Validated -= EhView_ChildControlValidated;
@@ -174,7 +174,7 @@ namespace Altaxo.Gui.Common
 
         SetElements(false);
 
-        if (_view != null)
+        if (_view is not null)
         {
           _view.ChildControl_Entered += EhView_ChildControlEntered;
           _view.ChildControl_Validated += EhView_ChildControlValidated;
@@ -196,7 +196,7 @@ namespace Altaxo.Gui.Common
 
     protected void SetElements(bool bInit)
     {
-      if (null != View)
+      if (View is not null)
       {
         View.ClearTabs();
         for (int i = 0; i < _tabs.Count; i++)

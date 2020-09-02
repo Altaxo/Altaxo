@@ -95,7 +95,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public virtual void MoveGrip(PointD2D newPosition)
       {
-        if (_moveAction != null)
+        if (_moveAction is not null)
         {
           _moveAction(newPosition);
         }

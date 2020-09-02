@@ -48,7 +48,7 @@ namespace Altaxo.Text.Renderers
       doc.Load(shfbProjectFileName);
 
       XmlNode currNode = doc.DocumentElement.FirstChild;
-      while (null != currNode)
+      while (currNode is not null)
       {
         if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "ContentLayout")
         {
@@ -83,7 +83,7 @@ namespace Altaxo.Text.Renderers
       doc.Load(shfbProjectFileName);
 
       XmlNode currNode = doc.DocumentElement.FirstChild;
-      while (null != currNode)
+      while (currNode is not null)
       {
         if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "ContentLayout")
         {
@@ -101,7 +101,7 @@ namespace Altaxo.Text.Renderers
         currNode = currNode.NextSibling;
       }
 
-      if (null == contentLayoutNode)
+      if (contentLayoutNode is null)
       {
         var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
 
@@ -109,21 +109,21 @@ namespace Altaxo.Text.Renderers
         contentLayoutNode = itemGroup;
       }
 
-      if (null == amlFilesNode && amlFileNames.Any())
+      if (amlFilesNode is null && amlFileNames.Any())
       {
         var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
         doc.DocumentElement.AppendChild(itemGroup);
         amlFilesNode = itemGroup;
       }
 
-      if (null == imageFilesNode && imageFileNames.Any())
+      if (imageFilesNode is null && imageFileNames.Any())
       {
         var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
         doc.DocumentElement.AppendChild(itemGroup);
         imageFilesNode = itemGroup;
       }
 
-      if (null != contentLayoutNode)
+      if (contentLayoutNode is not null)
       {
         contentLayoutNode.RemoveAll();
 
@@ -134,7 +134,7 @@ namespace Altaxo.Text.Renderers
         contentLayoutNode.AppendChild(layoutNode);
       }
 
-      if (null != amlFilesNode)
+      if (amlFilesNode is not null)
       {
         amlFilesNode.RemoveAll();
 
@@ -148,7 +148,7 @@ namespace Altaxo.Text.Renderers
         }
       }
 
-      if (null != imageFilesNode)
+      if (imageFilesNode is not null)
       {
         imageFilesNode.RemoveAll();
 

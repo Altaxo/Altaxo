@@ -210,7 +210,7 @@ namespace Altaxo.Graph.Gdi.CS
         horzRev = _isXreverse;
       }
 
-      if (null != _axisStyleInformation)
+      if (_axisStyleInformation is not null)
         _axisStyleInformation.Clear();
       else
         _axisStyleInformation = new List<CSAxisInformation>();

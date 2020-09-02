@@ -68,7 +68,7 @@ namespace Altaxo.AddInItems
             if (System.IO.File.Exists(fileName))
             {
               var assembly = Assembly.LoadFile(fileName);
-              if (null != assembly)
+              if (assembly is not null)
                 return assembly;
             }
           }

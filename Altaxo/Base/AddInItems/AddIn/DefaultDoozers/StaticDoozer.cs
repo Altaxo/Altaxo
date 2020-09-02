@@ -53,14 +53,14 @@ namespace Altaxo.AddInItems
     {
       Codon codon = args.Codon;
       Type? type = codon.AddIn.FindType(codon.Properties["class"]);
-      if (type == null)
+      if (type is null)
         return null;
       var memberName = codon.Properties["member"];
       var field = type.GetField(memberName);
-      if (field != null)
+      if (field is not null)
         return field.GetValue(null);
       var property = type.GetProperty(memberName);
-      if (property != null)
+      if (property is not null)
         return property.GetValue(null);
       throw new MissingFieldException("Field or property '" + memberName + "' not found in type " + type.FullName);
     }

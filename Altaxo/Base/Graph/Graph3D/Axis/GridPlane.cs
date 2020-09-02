@@ -97,7 +97,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       protected virtual GridPlane SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var id = (CSPlaneID)info.GetValue("ID", null);
-        GridPlane s = (o == null ? new GridPlane(id) : (GridPlane)o);
+        GridPlane s = (o is null ? new GridPlane(id) : (GridPlane)o);
         s.GridStyleFirst = info.GetValueOrNull<GridStyle>("Grid1", s);
         s.GridStyleSecond = info.GetValueOrNull<GridStyle>("Grid2", s);
         s.Background = info.GetValueOrNull<IMaterial>("Background", s);
@@ -130,9 +130,9 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _grid1)
+      if (_grid1 is not null)
         yield return new Main.DocumentNodeAndName(_grid1, "Grid1");
-      if (null != _grid2)
+      if (_grid2 is not null)
         yield return new Main.DocumentNodeAndName(_grid2, "Grid2");
     }
 
@@ -201,13 +201,13 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       get
       {
-        return _grid1 != null || _grid2 != null || _background != null;
+        return _grid1 is not null || _grid2 is not null || _background is not null;
       }
     }
 
     public void PaintBackground(IGraphicsContext3D g, IPlotArea layer)
     {
-      if (null == _background)
+      if (_background is null)
         return;
 
       var cs = layer.CoordinateSystem;
@@ -223,7 +223,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
         var buffer = g.GetPositionNormalIndexedTriangleBuffer(_background);
 
-        if (null != buffer.PositionNormalIndexedTriangleBuffer)
+        if (buffer.PositionNormalIndexedTriangleBuffer is not null)
         {
           // front faces
           var offs = buffer.IndexedTriangleBuffer.VertexCount;
@@ -252,9 +252,9 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public void PaintGrid(IGraphicsContext3D g, IPlotArea layer)
     {
-      if (null != _grid1)
+      if (_grid1 is not null)
         _grid1.Paint(g, layer, _planeID, _planeID.InPlaneAxisNumber1);
-      if (null != _grid2)
+      if (_grid2 is not null)
         _grid2.Paint(g, layer, _planeID, _planeID.InPlaneAxisNumber2);
     }
 

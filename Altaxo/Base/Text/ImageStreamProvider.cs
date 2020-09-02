@@ -134,7 +134,7 @@ namespace Altaxo.Text
         string name = url.Substring(ImagePretext.ResourceImagePretext.Length);
         var inStream = Current.ResourceService.GetResourceStream(name);
 
-        if (null != inStream)
+        if (inStream is not null)
         {
           string extension;
           int pixelsX, pixelsY;
@@ -159,7 +159,7 @@ namespace Altaxo.Text
           System.Drawing.Bitmap? bitmap = null;
           try { bitmap = Current.ResourceService.GetBitmap(name); } catch { }
 
-          if (null != bitmap)
+          if (bitmap is not null)
           {
             bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
             return new ImageRenderToStreamResult(url, ".png", bitmap.HorizontalResolution, bitmap.VerticalResolution, bitmap.Width, bitmap.Height);
@@ -174,7 +174,7 @@ namespace Altaxo.Text
       {
         string name = url.Substring(ImagePretext.LocalImagePretext.Length);
 
-        if (null != localImages && localImages.TryGetValue(name, out var localImageStreamProxy))
+        if (localImages is not null && localImages.TryGetValue(name, out var localImageStreamProxy))
         {
           var inStream = localImageStreamProxy.GetContentStream();
           var extension = localImageStreamProxy.Extension;

@@ -197,7 +197,7 @@ namespace Altaxo.Graph.Plot.Groups
       Int32FunctionValueGetter getter)
     {
       if (!externalGroups.ContainsType(typeof(SkipFrequencyGroupStyle))
-        && null != localGroups
+        && localGroups is not null
         && !localGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
       {
         localGroups.Add(new SkipFrequencyGroupStyle());
@@ -230,7 +230,7 @@ namespace Altaxo.Graph.Plot.Groups
       IPlotGroupStyleCollection? grpColl = null;
       if (externalGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
         grpColl = externalGroups;
-      else if (localGroups != null && localGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
+      else if (localGroups is not null && localGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
         grpColl = localGroups;
 
       if (grpColl is not null)

@@ -64,7 +64,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     public ColorTypeThicknessPenController(PenX3D doc)
     {
-      if (doc == null)
+      if (doc is null)
         throw new ArgumentNullException("doc");
       _doc = doc;
       _tempDoc = _doc;
@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private void Initialize()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.DocPen = _tempDoc;
         _view.SetShowPlotColorsOnly(_showPlotColorsOnly);
@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     public void SetShowPlotColorsOnly(bool showPlotColorsOnly)
     {
       _showPlotColorsOnly = showPlotColorsOnly;
-      if (null != _view)
+      if (_view is not null)
         _view.SetShowPlotColorsOnly(_showPlotColorsOnly);
     }
 
@@ -92,7 +92,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       var ctrl = new PenAllPropertiesController(_tempDoc);
       Current.Gui.ShowDialog(ctrl, "Pen properties");
-      if (null != _view)
+      if (_view is not null)
         _view.DocPen = _tempDoc;
     }
 
@@ -108,14 +108,14 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = null;
 
         _view = value as IColorTypeThicknessPenView;
 
         Initialize();
 
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = this;
       }
     }

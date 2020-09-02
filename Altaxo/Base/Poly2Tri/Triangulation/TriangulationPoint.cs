@@ -56,11 +56,11 @@ namespace Poly2Tri
 
     public void AddEdge(DTSweepConstraint e)
     {
-      if (Edges == null)
+      if (Edges is null)
         Edges = new List<DTSweepConstraint>();
       Edges.Add(e);
     }
 
-    public bool HasEdges { get { return Edges != null; } }
+    public bool HasEdges { get { return Edges is not null; } }
   }
 }

@@ -204,7 +204,7 @@ namespace Altaxo.Graph.Plot.Groups
       SymbolSizeGetter getter)
     {
       if (!externalGroups.ContainsType(typeof(SymbolSizeGroupStyle))
-        && null != localGroups
+        && localGroups is not null
         && !localGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
       {
         localGroups.Add(new SymbolSizeGroupStyle());

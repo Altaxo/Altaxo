@@ -357,7 +357,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       get { return _axisPen; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         var oldValue = _axisPen;
@@ -375,7 +375,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       get { return _majorTickPen; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         var oldValue = _majorTickPen;
@@ -393,7 +393,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       get { return _minorTickPen; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         var oldValue = _minorTickPen;
@@ -659,7 +659,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       _cachedAxisStyleInfo = styleInfo;
       Scale axis = layer.Scales[styleID.ParallelAxisNumber];
 
-      TickSpacing ticking = null != customTickSpacing ? customTickSpacing : layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
+      TickSpacing ticking = customTickSpacing is not null ? customTickSpacing : layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
 
       Logical3D r0 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisOrg);
       Logical3D r1 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisEnd);
@@ -764,7 +764,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       if (!testTickLines)
       {
         var mainAxisPoints = _cachedMainLinePointsUsedForHitTesting;
-        if (null != mainAxisPoints)
+        if (mainAxisPoints is not null)
         {
           if (hitData.IsHit(mainAxisPoints, _axisPen.Thickness1, _axisPen.Thickness2))
             return new HitTestObject(
@@ -776,7 +776,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       else // Test Tick lines
       {
         // test major ticks for hit
-        if (null != _cachedMajorTickLinesUsedForHitTesting)
+        if (_cachedMajorTickLinesUsedForHitTesting is not null)
         {
           foreach (var line in _cachedMajorTickLinesUsedForHitTesting)
           {
@@ -788,7 +788,7 @@ namespace Altaxo.Graph.Graph3D.Axis
           }
         }
         // test minor ticks for hit
-        if (null != _cachedMinorTickLinesUsedForHitTesting)
+        if (_cachedMinorTickLinesUsedForHitTesting is not null)
         {
           foreach (var line in _cachedMinorTickLinesUsedForHitTesting)
           {

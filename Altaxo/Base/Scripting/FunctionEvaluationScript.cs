@@ -192,10 +192,10 @@ namespace Altaxo.Scripting
     /// <returns></returns>
     public double Evaluate(double x)
     {
-      if (null == _scriptObject && !_wasTriedToCompile)
+      if (_scriptObject is null && !_wasTriedToCompile)
         Compile();
 
-      if (null == _scriptObject)
+      if (_scriptObject is null)
       {
         _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, "Script Object is null"));
         return double.NaN;

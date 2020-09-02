@@ -269,7 +269,7 @@ namespace Altaxo.Graph.Gdi
         s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphObjects", s));
 
         s._plotItems = (PlotItemCollection)info.GetValue("Plots", s);
-        if (null != s._plotItems)
+        if (s._plotItems is not null)
           s._plotItems.ParentObject = s;
 
         if (legend is not null)
@@ -759,7 +759,7 @@ namespace Altaxo.Graph.Gdi
 
     private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.AbsoluteDocumentPath path, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      if (null != path && path.Count > 0)
+      if (path is not null && path.Count > 0)
       {
         var pathend = path[path.Count - 1];
         // extract layer number
@@ -774,7 +774,7 @@ namespace Altaxo.Graph.Gdi
 
     private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelativeDocumentPath path, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      if (null != path && path.Count > 0)
+      if (path is not null && path.Count > 0)
       {
         var pathend = path[path.Count - 1];
         // extract layer number

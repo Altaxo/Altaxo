@@ -55,7 +55,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        NonlinearFitDocument s = o != null ? (NonlinearFitDocument)o : new NonlinearFitDocument();
+        NonlinearFitDocument s = o is not null ? (NonlinearFitDocument)o : new NonlinearFitDocument();
 
         s._fitEnsemble = (FitEnsemble)info.GetValue("FitEnsemble", s);
         s._fitEnsemble.ParentObject = s;
@@ -121,7 +121,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     public void SetDefaultParametersForFitElement(int idx)
     {
       FitElement fitele = _fitEnsemble[idx];
-      if (fitele.FitFunction == null)
+      if (fitele.FitFunction is null)
         return;
 
       var byName = new Dictionary<string, int>();
@@ -183,7 +183,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _fitEnsemble)
+      if (_fitEnsemble is not null)
       {
         yield return new Main.DocumentNodeAndName(_fitEnsemble, "FitEnsemble");
       }

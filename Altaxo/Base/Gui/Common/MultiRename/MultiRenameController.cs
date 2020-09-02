@@ -133,7 +133,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
         var newName = _data.GetNewNameForObject((int)_tag!);
 
-        if (null != fkt)
+        if (fkt is not null)
           return fkt(_data.GetObjectToRename((int)_tag), newName);
         else
           return newName;
@@ -178,7 +178,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args == null || args.Length == 0 || !(args[0] is MultiRenameData))
+      if (args is null || args.Length == 0 || !(args[0] is MultiRenameData))
         return false;
 
       _doc = (MultiRenameData)args[0];
@@ -221,7 +221,7 @@ namespace Altaxo.Gui.Common.MultiRename
           _shortcutDescriptionList.Add(new DescriptionNode("Array", s, _doc.GetShortcutDescription(s)));
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.IsBaseDirectoryButtonVisible = _doc.IsRenameOperationFileSystemBased;
         _view.RenameStringTemplate = _doc.DefaultPatternString;
@@ -244,14 +244,14 @@ namespace Altaxo.Gui.Common.MultiRename
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.RenameStringTemplateChanged -= EhRenameStringTemplateChanged;
           _view.BaseDirectoryChosen -= EhBaseDirectoryChosen;
         }
         _view = value as IMultiRenameView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           _view.RenameStringTemplateChanged += EhRenameStringTemplateChanged;
           _view.BaseDirectoryChosen += EhBaseDirectoryChosen;

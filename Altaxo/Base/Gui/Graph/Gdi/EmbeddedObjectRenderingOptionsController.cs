@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Graph.Gdi
         _sourceDpi = GetResolutions(_doc.SourceDpiResolution);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetSourceDpi(_sourceDpi);
         _view.OutputScaling = _doc.OutputScalingFactor;

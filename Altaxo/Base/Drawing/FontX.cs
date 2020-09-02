@@ -126,7 +126,7 @@ namespace Altaxo.Drawing
       _invariantDescriptionString = GetInvariantDescriptionString(fontFamilyName, size, style);
 
       var creationEv = FontConstructed;
-      if (null != creationEv)
+      if (creationEv is not null)
         creationEv(_invariantDescriptionString);
     }
 
@@ -136,7 +136,7 @@ namespace Altaxo.Drawing
       GetFamilyNameSizeStyleFromInvariantDescriptionString(_invariantDescriptionString, out _fontFamilyName, out _size, out _style);
 
       var creationEv = FontConstructed;
-      if (null != creationEv)
+      if (creationEv is not null)
         creationEv(_invariantDescriptionString);
     }
 
@@ -147,7 +147,7 @@ namespace Altaxo.Drawing
     ~FontX()
     {
       var destructEv = FontDestructed;
-      if (null != destructEv)
+      if (destructEv is not null)
         destructEv(_invariantDescriptionString);
     }
 
@@ -251,7 +251,7 @@ namespace Altaxo.Drawing
     /// <param name="style">On return, contains the font style.</param>
     public static void GetFamilyNameSizeStyleFromInvariantDescriptionString(string fontID, out string familyName, out double size, out FontXStyle style)
     {
-      if (null == fontID)
+      if (fontID is null)
         throw new ArgumentNullException("fontID");
 
       int idx1 = fontID.IndexOf(','); // first comma after the font name
@@ -354,7 +354,7 @@ namespace Altaxo.Drawing
       if (object.ReferenceEquals(x, y))
         return true;
       // If one is null, but not both, return false.
-      if (null == (object)x || null == (object)y)
+      if ((object)x is null || (object)y is null)
         return false;
 
       return x.InvariantDescriptionString == y.InvariantDescriptionString;

@@ -137,7 +137,7 @@ namespace Altaxo.Gui.Graph.Gdi
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.EmbeddedRenderingOptionsView = _embeddedController.ViewObject;
 

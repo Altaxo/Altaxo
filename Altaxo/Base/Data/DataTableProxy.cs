@@ -68,7 +68,7 @@ namespace Altaxo.Data
           // return null;
         }
 
-        if (!(null != s.InternalDocumentPath))
+        if (s.InternalDocumentPath is null)
           throw new InvalidOperationException();
         return s;
       }
@@ -90,7 +90,7 @@ namespace Altaxo.Data
         var s = (DataTableProxy?)o ?? new DataTableProxy(info);
         info.GetBaseValueEmbedded(s, s.GetType().BaseType!, parent);         // deserialize the base class
 
-        if (!(null != s.InternalDocumentPath))
+        if (s.InternalDocumentPath is null)
           throw new InvalidOperationException();
 
         return s;
@@ -123,7 +123,7 @@ namespace Altaxo.Data
 
     protected override bool IsValidDocument(object obj)
     {
-      return (obj is DataTable) || obj == null;
+      return (obj is DataTable) || obj is null;
     }
 
     public DataTable? Document
@@ -142,7 +142,7 @@ namespace Altaxo.Data
     public string GetName(int level)
     {
       var table = Document; // this may have the side effect that the object is tried to resolve, is this o.k.?
-      if (null != table)
+      if (table is not null)
       {
         return table.Name;
       }

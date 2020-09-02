@@ -102,14 +102,14 @@ namespace Altaxo.Gui.Main
 
           var node = new MyListNode(key, key)
           {
-            Text1a = value == null ? "n.a." : value.GetType().Name,
-            Text2a = value == null ? "null" : value.ToString()
+            Text1a = value is null ? "n.a." : value.GetType().Name,
+            Text2a = value is null ? "null" : value.ToString()
           };
 
           _propertyList.Add(node);
         }
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.PropertyList = _propertyList;
       }

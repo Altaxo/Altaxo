@@ -147,7 +147,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       {
         get
         {
-          if (null == _toolTip)
+          if (_toolTip is null)
           {
             _toolTip = string.Empty;
             Task.Factory.StartNew(() => EvaluateToolTip());
@@ -255,7 +255,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
         // initialize group 0
 
-        if (null == _columnGroup)
+        if (_columnGroup is null)
           _columnGroup = new List<GroupInfo>();
 
         string previousColumnGroup = null;
@@ -285,7 +285,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
         Controller_AvailableDataColumns_Initialize();
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.GroupNumber_Initialize(_groupNumbersAll, _doc.GroupNumber, _groupNumbersAll.Count > 1 || (_groupNumbersAll.Count == 1 && _doc.GroupNumber != _groupNumbersAll.Min));
         _view.AvailableTableColumns_Initialize(_availableDataColumns.Nodes);
@@ -345,7 +345,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
         list.Add((new PlotColumnTag(_doc.GroupNumber, columnNumber), info.ColumnLabel));
       }
 
-      if (null != list && list.Count > 0)
+      if (list is not null && list.Count > 0)
         yield return (currentColumnGroup, list);
     }
 
@@ -446,7 +446,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public void EhView_PlotColumnAddTo(PlotColumnTag tag)
     {
       var node = _view?.AvailableTableColumns_SelectedItem as NGTreeNode;
-      if (null != node)
+      if (node is not null)
       {
         SetDirty();
         var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
@@ -473,14 +473,14 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       var selNode = items.OfType<NGTreeNode>().FirstOrDefault();
       // to start a drag, at least one item must be selected
-      return selNode != null && (selNode.Tag is DataColumn);
+      return selNode is not null && (selNode.Tag is DataColumn);
     }
 
     private StartDragData EhAvailableDataColumns_StartDrag(IEnumerable items)
     {
       var node = items.OfType<NGTreeNode>().FirstOrDefault();
 
-      if (node != null && node.Tag is DataColumn)
+      if (node is not null && node.Tag is DataColumn)
       {
         return new StartDragData
         {
@@ -532,7 +532,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public DropReturnData EhColumnDrop(object data, object nonGuiTargetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
     {
       var tag = nonGuiTargetItem as PlotColumnTag;
-      if (null == tag)
+      if (tag is null)
         return new DropReturnData { IsCopy = false, IsMove = false };
 
       _isDirty = true;

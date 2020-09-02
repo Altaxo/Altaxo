@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Graph.Gdi
           _graphsInProject.Add(new SelectableListNode(graph.Name, graph, false));
         }
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.GraphsInProject = _graphsInProject;
         RenderPreview(_doc);
@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Graph.Gdi
     private void EhGraphFromProjectSelected()
     {
       var node = _graphsInProject.FirstSelectedNode;
-      if (null == node)
+      if (node is null)
         return;
 
       if (!IsGraphAppropriate((GraphDocument)node.Tag))
@@ -137,10 +137,10 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private void RenderPreview(GraphDocument doc)
     {
-      if (null == _view)
+      if (_view is null)
         return;
 
-      if (null != doc)
+      if (doc is not null)
       {
         using (var bmp = GraphDocumentExportActions.RenderAsBitmap(doc, null, null, System.Drawing.Imaging.PixelFormat.Format32bppArgb, 150, 150))
         {

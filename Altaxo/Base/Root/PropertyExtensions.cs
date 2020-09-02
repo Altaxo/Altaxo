@@ -45,7 +45,7 @@ namespace Altaxo
     /// <returns>Enumeration of the property bags in the project hierarchy.</returns>
     public static IEnumerable<PropertyBagWithInformation> GetPropertyBags(this IPropertyBagOwner? owner)
     {
-      if (null != owner && !(owner is ProjectFolderPropertyDocument)) // Project folder bags are handled further down
+      if (owner is not null && !(owner is ProjectFolderPropertyDocument)) // Project folder bags are handled further down
       {
         var bagInfo = new PropertyBagInformation(owner.GetType().Name, PropertyLevel.Document, owner.GetType());
         yield return new PropertyBagWithInformation(bagInfo, owner.PropertyBagNotNull);
@@ -54,12 +54,12 @@ namespace Altaxo
       var namedOwner = owner as Main.INameOwner;
       var proj = Current.Project;
       ProjectFolderPropertyDocument? bag;
-      if (proj is not null && null != namedOwner && namedOwner.TryGetName(out var namedOwnerName))
+      if (proj is not null && namedOwner is not null && namedOwner.TryGetName(out var namedOwnerName))
       {
         var folder = Main.ProjectFolder.GetFolderPart(namedOwnerName);
         while (!string.IsNullOrEmpty(folder))
         {
-          if (proj.ProjectFolderProperties.TryGetValue(folder, out bag) && bag.PropertyBag != null)
+          if (proj.ProjectFolderProperties.TryGetValue(folder, out bag) && bag.PropertyBag is not null)
           {
             var bagInfo = new PropertyBagInformation(string.Format("Folder \"{0}\"", folder), PropertyLevel.ProjectFolder);
             yield return new PropertyBagWithInformation(bagInfo, bag.PropertyBag);
@@ -68,7 +68,7 @@ namespace Altaxo
         }
       }
       // now return the project's property bag even for unnamed items
-      if (proj is not null && proj.ProjectFolderProperties.TryGetValue(string.Empty, out bag) && bag.PropertyBag != null)
+      if (proj is not null && proj.ProjectFolderProperties.TryGetValue(string.Empty, out bag) && bag.PropertyBag is not null)
       {
         var bagInfo = new PropertyBagInformation("Project (RootFolder)", PropertyLevel.Project);
         yield return new PropertyBagWithInformation(bagInfo, bag.PropertyBag);
@@ -105,7 +105,7 @@ namespace Altaxo
       ProjectFolderPropertyDocument? bag;
       while (!string.IsNullOrEmpty(folder))
       {
-        if (proj.ProjectFolderProperties.TryGetValue(folder, out bag) && bag.PropertyBag != null)
+        if (proj.ProjectFolderProperties.TryGetValue(folder, out bag) && bag.PropertyBag is not null)
         {
           var bagInfo = new PropertyBagInformation(string.Format("Folder \"{0}\"", folder), PropertyLevel.ProjectFolder);
           yield return new PropertyBagWithInformation(bagInfo, bag.PropertyBag);
@@ -114,7 +114,7 @@ namespace Altaxo
       }
 
       // now return the project's property bag even for unnamed items
-      if (proj.ProjectFolderProperties.TryGetValue(string.Empty, out bag) && bag.PropertyBag != null)
+      if (proj.ProjectFolderProperties.TryGetValue(string.Empty, out bag) && bag.PropertyBag is not null)
       {
         var bagInfo = new PropertyBagInformation("Project (RootFolder)", PropertyLevel.Project);
         yield return new PropertyBagWithInformation(bagInfo, bag.PropertyBag);
@@ -255,7 +255,7 @@ namespace Altaxo
 
       ProjectFolderPropertyDocument? bag;
 
-      if (null != namedOwner)
+      if (namedOwner is not null)
       {
         var folder = Main.ProjectFolder.GetFolderPart(namedOwner.Name);
         while (!string.IsNullOrEmpty(folder))

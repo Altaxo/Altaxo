@@ -109,7 +109,7 @@ namespace Altaxo.Graph.Scales
         s.WrappedScale = (Scale)info.GetValue("ScaleWrapped", s);
 
         s._linkParameters = (LinkedScaleParameters)info.GetValue("LinkParameters", s);
-        if (null != s._linkParameters)
+        if (s._linkParameters is not null)
           s._linkParameters.ParentObject = s;
 
 #pragma warning disable CS0612 // Type or member is obsolete
@@ -129,7 +129,7 @@ namespace Altaxo.Graph.Scales
     [Obsolete]
     private void EhXmlDeserializationFinished_UseLinkedScaleAndLayerIndex(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
     {
-      if (null != _linkedScaleIndex && null != _linkedLayerIndex)
+      if (_linkedScaleIndex is not null && _linkedLayerIndex is not null)
       {
         int linkedScaleIndex = _linkedScaleIndex.Value;
         int linkedLayerIndex = _linkedLayerIndex.Value;
@@ -137,24 +137,24 @@ namespace Altaxo.Graph.Scales
         // Retrieve the document
         Scale? scale = null;
         var layer = AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.HostLayer>(this);
-        if (null != layer)
+        if (layer is not null)
         {
           var parentLayer = layer.ParentLayer;
-          if (null != parentLayer)
+          if (parentLayer is not null)
           {
             var sibling = parentLayer.Layers[linkedLayerIndex] as Altaxo.Graph.Gdi.XYPlotLayer;
-            if (null != sibling)
+            if (sibling is not null)
             {
               scale = sibling.Scales[linkedScaleIndex];
             }
           }
         }
 
-        if (null != scale)
+        if (scale is not null)
           ScaleLinkedTo = scale;
       }
 
-      if (ScaleLinkedTo != null || isFinallyCall)
+      if (ScaleLinkedTo is not null || isFinallyCall)
         info.DeserializationFinished -= EhXmlDeserializationFinished_UseLinkedScaleAndLayerIndex;
     }
 
@@ -223,13 +223,13 @@ namespace Altaxo.Graph.Scales
         // Retrieve the document
         Scale? scale = null;
         var layer = AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.HostLayer>(_instance);
-        if (null != layer)
+        if (layer is not null)
         {
           var parentLayer = layer.ParentLayer;
-          if (null != parentLayer)
+          if (parentLayer is not null)
           {
             var sibling = parentLayer.Layers[_linkedLayerIndex] as Altaxo.Graph.Gdi.XYPlotLayer;
-            if (null != sibling)
+            if (sibling is not null)
             {
               scale = sibling.Scales[_linkedScaleIndex];
             }
@@ -369,13 +369,13 @@ namespace Altaxo.Graph.Scales
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _scaleWrapped)
+      if (_scaleWrapped is not null)
         yield return new Main.DocumentNodeAndName(_scaleWrapped, () => _scaleWrapped = null!, "ScaleWrapped");
 
-      if (null != _linkParameters)
+      if (_linkParameters is not null)
         yield return new Main.DocumentNodeAndName(_linkParameters, () => _linkParameters = null!, "LinkParameters");
 
-      if (null != _scaleLinkedToProxy)
+      if (_scaleLinkedToProxy is not null)
         yield return new Main.DocumentNodeAndName(_scaleLinkedToProxy, () => _scaleLinkedToProxy = null!, "ScaleLinkedTo");
     }
 
@@ -389,8 +389,8 @@ namespace Altaxo.Graph.Scales
     {
       get
       {
-        var scaleLinkedTo = _scaleLinkedToProxy != null ? (_scaleLinkedToProxy.Document as Scale) : null;
-        if (null != scaleLinkedTo && !object.ReferenceEquals(scaleLinkedTo, _cachedResolvedScaleLinkedToWeak.Target)) // seems to be a newly resolved instance
+        var scaleLinkedTo = _scaleLinkedToProxy is not null ? (_scaleLinkedToProxy.Document as Scale) : null;
+        if (scaleLinkedTo is not null && !object.ReferenceEquals(scaleLinkedTo, _cachedResolvedScaleLinkedToWeak.Target)) // seems to be a newly resolved instance
         {
           // then we have to test whether this instance is circular dependent
           _cachedResolvedScaleLinkedToWeak = new WeakReference(scaleLinkedTo);
@@ -401,7 +401,7 @@ namespace Altaxo.Graph.Scales
       }
       set
       {
-        if (object.ReferenceEquals(value, _scaleLinkedToProxy != null ? (_scaleLinkedToProxy.Document as Scale) : null))
+        if (object.ReferenceEquals(value, _scaleLinkedToProxy is not null ? (_scaleLinkedToProxy.Document as Scale) : null))
           return;
 
         if (ChildSetMember(ref _scaleLinkedToProxy, new RelDocNodeProxy(value, this)))
@@ -433,7 +433,7 @@ namespace Altaxo.Graph.Scales
         return true; // Scale are identical, thus they are really dependent on each other
 
       var linkedScale = scaleToTest as LinkedScale;
-      while (null != linkedScale)
+      while (linkedScale is not null)
       {
         if (object.ReferenceEquals(scaleThatWouldBecomeALinkedScale, linkedScale))
           return true;  // this means a direct circular dependency (we are at the original scale), so return true
@@ -648,7 +648,7 @@ namespace Altaxo.Graph.Scales
     {
       var scaleLinkedTo = ScaleLinkedTo;
 
-      if (null != scaleLinkedTo)
+      if (scaleLinkedTo is not null)
         scaleLinkedTo.OnUserRescaled();
     }
 
@@ -661,7 +661,7 @@ namespace Altaxo.Graph.Scales
     {
       var scaleLinkedTo = ScaleLinkedTo;
 
-      if (null != scaleLinkedTo)
+      if (scaleLinkedTo is not null)
       {
         if (!IsStraightLink)
         {
@@ -700,7 +700,7 @@ namespace Altaxo.Graph.Scales
     {
       // calculate the new bounds
       var scaleLinkedTo = ScaleLinkedTo;
-      if (null != scaleLinkedTo)
+      if (scaleLinkedTo is not null)
       {
         // Test if the type of wrapped scale matches
         if (_linkScaleType && scaleLinkedTo.GetType() != WrappedScale.GetType())

@@ -124,18 +124,18 @@ namespace Altaxo.Graph
     protected override void OnChanged(EventArgs e)
     {
       var e1 = e as NotifyCollectionChangedEventArgs;
-      if (null != e1)
+      if (e1 is not null)
       {
         var ev = CollectionChanged;
-        if (null != ev)
+        if (ev is not null)
           ev(this, e1);
       }
 
       var e2 = e as PropertyChangedEventArgs;
-      if (null != e2)
+      if (e2 is not null)
       {
         var ev = PropertyChanged;
-        if (null != ev)
+        if (ev is not null)
           ev(this, e2);
       }
 

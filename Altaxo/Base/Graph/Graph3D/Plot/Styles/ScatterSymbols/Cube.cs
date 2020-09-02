@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
       var size = symbolSize * Sqrt1By3; // size of the cube
       var sizeBy2 = size * 0.5;
       var buffers = g.GetPositionNormalIndexedTriangleBuffer(material);
-      if (null != buffers.PositionNormalIndexedTriangleBuffer)
+      if (buffers.PositionNormalIndexedTriangleBuffer is not null)
       {
         var buf = buffers.PositionNormalIndexedTriangleBuffer;
         var voffs = buffers.PositionNormalIndexedTriangleBuffer.VertexCount;

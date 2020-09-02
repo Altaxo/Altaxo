@@ -121,7 +121,7 @@ namespace Altaxo.Drawing.D3D.Material
     {
       // this material is considered to be equal to another material, if this material has exactly
       var other = obj as MaterialWithoutColorOrTexture;
-      if (null != other)
+      if (other is not null)
       {
         return
 
@@ -137,7 +137,7 @@ namespace Altaxo.Drawing.D3D.Material
     {
       // this material is considered to be equal to another material, if this material has exactly
       var other = obj as MaterialWithoutColorOrTexture;
-      if (null != other)
+      if (other is not null)
       {
         return
           _smoothness == other._smoothness &&

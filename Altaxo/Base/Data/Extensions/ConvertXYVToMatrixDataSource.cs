@@ -211,7 +211,7 @@ namespace Altaxo.Data
     {
       add
       {
-        bool isFirst = null == _dataSourceChanged;
+        bool isFirst = _dataSourceChanged is null;
         _dataSourceChanged += value;
         if (isFirst)
         {
@@ -221,7 +221,7 @@ namespace Altaxo.Data
       remove
       {
         _dataSourceChanged -= value;
-        bool isLast = null == _dataSourceChanged;
+        bool isLast = _dataSourceChanged is null;
         if (isLast)
         {
         }
@@ -320,11 +320,11 @@ namespace Altaxo.Data
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _processData)
+      if (_processData is not null)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
-      if (null != _processOptions)
+      if (_processOptions is not null)
         yield return new Main.DocumentNodeAndName(_processOptions, "ProcessOptions");
-      if (null != _importOptions)
+      if (_importOptions is not null)
         yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
     }
 

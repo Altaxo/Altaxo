@@ -70,7 +70,7 @@ namespace Altaxo.Data
         s._data = new BitArray(count);
         s._inUse = new BitArray(count);
         info.GetArray(s._data, s._inUse, count);
-        s._capacity = null == s._data ? 0 : s._data.Length;
+        s._capacity = s._data is null ? 0 : s._data.Length;
         s._count = s._capacity;
 
         return s;
@@ -364,7 +364,7 @@ namespace Altaxo.Data
         else
         {
           _count = 0;
-          if (o == null)
+          if (o is null)
             throw new ArgumentNullException("o");
           else
             throw new ArgumentException("Try to copy " + o.GetType() + " to " + GetType(), "o"); // throw exception

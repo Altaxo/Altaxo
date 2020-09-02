@@ -176,7 +176,7 @@ namespace Altaxo.Main
     {
       get
       {
-        return _accumulatedEventData != null;
+        return _accumulatedEventData is not null;
       }
     }
 
@@ -230,7 +230,7 @@ namespace Altaxo.Main
     /// <returns>True if the collection contains any project item with the specified name.</returns>
     public bool ContainsAnyName(string itemName)
     {
-      return null != itemName && _itemsByName.ContainsKey(itemName);
+      return itemName is not null && _itemsByName.ContainsKey(itemName);
     }
 
     /// <summary>
@@ -240,7 +240,7 @@ namespace Altaxo.Main
     /// <returns>True if the collection contains any project item with the specified name.</returns>
     public bool Contains(string itemName)
     {
-      return null != itemName && _itemsByName.TryGetValue(itemName, out var result) && result is TItem;
+      return itemName is not null && _itemsByName.TryGetValue(itemName, out var result) && result is TItem;
     }
 
     public IEnumerable<string> Names
@@ -519,7 +519,7 @@ namespace Altaxo.Main
     {
       if (projectItem is TItem titem)
         Add(titem);
-      else if (null != projectItem)
+      else if (projectItem is not null)
         throw new ArgumentException("Item is not of expected type " + typeof(TItem).Name, nameof(projectItem));
       else
         throw new ArgumentNullException(nameof(projectItem));
@@ -529,7 +529,7 @@ namespace Altaxo.Main
     {
       if (projectItem is TItem titem)
         return Remove(titem);
-      else if (null != projectItem)
+      else if (projectItem is not null)
         throw new ArgumentException("Item is not of expected type " + typeof(TItem).GetType(), nameof(projectItem));
       else
         throw new ArgumentNullException(nameof(projectItem));

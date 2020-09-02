@@ -187,7 +187,7 @@ namespace Altaxo.DataConnection
 
       // get schema name
       var schema = table.ExtendedProperties[TABLE_SCHEMA] as string;
-      if (schema != null)
+      if (schema is not null)
       {
         sb.AppendFormat("{0}.", schema);
       }
@@ -521,7 +521,7 @@ namespace Altaxo.DataConnection
     private void GetAccessParameters(DataRow dr, List<OleDbParameter> list)
     {
       var procDef = dr[PROCEDURE_DEFINITION] as string;
-      if (procDef != null && procDef.StartsWith(PARAMETERS, StringComparison.OrdinalIgnoreCase))
+      if (procDef is not null && procDef.StartsWith(PARAMETERS, StringComparison.OrdinalIgnoreCase))
       {
         int pos = procDef.IndexOf(';');
         if (pos > -1)
@@ -563,7 +563,7 @@ namespace Altaxo.DataConnection
         {
           Value = parm[PARAMETER_DEFAULT] as string
         };
-        if (p.Value == null)
+        if (p.Value is null)
         {
           p.Value = string.Empty;
         }
@@ -670,7 +670,7 @@ namespace Altaxo.DataConnection
 
       // get Sql server type parameters
       var parms = table.ExtendedProperties[PROCEDURE_PARAMETERS] as List<OleDbParameter>;
-      if (parms != null)
+      if (parms is not null)
       {
         foreach (OleDbParameter parm in parms)
         {

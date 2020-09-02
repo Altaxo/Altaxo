@@ -36,11 +36,11 @@ namespace Altaxo.Data
 
     public static TransformedReadableColumnProxyForStandaloneColumns FromColumn(ITransformedReadableColumn column)
     {
-      if (null == column)
+      if (column is null)
         throw new ArgumentNullException(nameof(column));
 
       var colAsDocumentNode = column.UnderlyingReadableColumn as IDocumentLeafNode;
-      if (null != colAsDocumentNode)
+      if (colAsDocumentNode is not null)
         throw new ArgumentException(string.Format("Column does implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
 
       return new TransformedReadableColumnProxyForStandaloneColumns(column);
@@ -84,7 +84,7 @@ namespace Altaxo.Data
         var s = (TransformedReadableColumnProxyForStandaloneColumns?)o ?? new TransformedReadableColumnProxyForStandaloneColumns(info);
         s._underlyingColumn = (IReadableColumn?)info.GetValueOrNull("Column", s);
         s._transformation = (IVariantToVariantTransformation)info.GetValue("Transformation", s);
-        if (null != s._underlyingColumn)
+        if (s._underlyingColumn is not null)
           s._cachedResultingColumn = new TransformedReadableColumn(s._underlyingColumn, s._transformation);
 
         return s;
@@ -105,7 +105,7 @@ namespace Altaxo.Data
 
     public bool IsEmpty
     {
-      get { return null == _underlyingColumn; }
+      get { return _underlyingColumn is null; }
     }
 
     public string GetName(int level)

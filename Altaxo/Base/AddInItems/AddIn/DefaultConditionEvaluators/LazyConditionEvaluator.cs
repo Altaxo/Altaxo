@@ -41,7 +41,7 @@ namespace Altaxo.AddInItems
 
     public LazyConditionEvaluator(AddIn addIn, Properties properties)
     {
-      if (addIn == null)
+      if (addIn is null)
         throw new ArgumentNullException("addIn");
       this.addIn = addIn;
       name = properties["name"];

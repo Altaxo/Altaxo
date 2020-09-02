@@ -114,14 +114,14 @@ namespace Altaxo.Main.Services
         sb.Append(entry.Key);
         sb.Append(": ");
 
-        if (entry.Value == null)
+        if (entry.Value is null)
         {
           sb.AppendLine("<null>");
         }
         else
         {
           var f = entry.Value as IFormattable;
-          if (f != null)
+          if (f is not null)
           {
             try
             {

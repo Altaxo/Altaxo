@@ -242,13 +242,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
       List<List<ClipperLib.IntPoint>>? innerFramePolygon = null;
       double relativeStructureWidth = overrideRelativeStructureWidth ?? _relativeStructureWidth;
-      if (null != _frame && relativeStructureWidth > 0)
+      if (_frame is not null && relativeStructureWidth > 0)
       {
         // get frame polygon
         innerFramePolygon = _frame.GetCopyOfClipperPolygon(relativeStructureWidth, outerPolygon);
       }
 
-      if (null != _inset)
+      if (_inset is not null)
       {
         // get inset polygon
         insetPolygon = _inset.GetCopyOfClipperPolygon(relativeStructureWidth);
@@ -257,7 +257,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       // if null != insetPolygon
       // clip with innerPolygon ?? outerPolygon;
       // store clipped inset polygon / draw it with inset color
-      if (null != insetPolygon)
+      if (insetPolygon is not null)
       {
         var clipper = new ClipperLib.Clipper();
         var solution = new List<List<ClipperLib.IntPoint>>();
@@ -270,7 +270,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       // if null != framePolygon
       // clip with outer polygon ????
       // draw combined path of outer polygon and frame polygon as a hole with frame color
-      if (null != innerFramePolygon)
+      if (innerFramePolygon is not null)
       {
         var clipper = new ClipperLib.Clipper();
         clipper.AddPaths(outerPolygon, ClipperLib.PolyType.ptSubject, true);
@@ -285,7 +285,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       // or else use (framePolygon ?? outerPolygon ) directly
       // draw result with fillColor
 
-      if (null != insetPolygon)
+      if (insetPolygon is not null)
       {
         var clipper = new ClipperLib.Clipper();
         clipper.AddPaths(innerFramePolygon ?? outerPolygon, ClipperLib.PolyType.ptSubject, true);

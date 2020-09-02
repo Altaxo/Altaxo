@@ -103,7 +103,7 @@ namespace Poly2Tri
       AdvancingFrontNode node = FindSearchNode(x);
       if (x < node.Value)
       {
-        while ((node = node.Prev) != null)
+        while ((node = node.Prev) is not null)
           if (x >= node.Value)
           {
             Search = node;
@@ -112,7 +112,7 @@ namespace Poly2Tri
       }
       else
       {
-        while ((node = node.Next) != null)
+        while ((node = node.Next) is not null)
           if (x < node.Value)
           {
             Search = node.Prev;
@@ -152,13 +152,13 @@ namespace Poly2Tri
       }
       else if (px < nx)
       {
-        while ((node = node.Prev) != null)
+        while ((node = node.Prev) is not null)
           if (point == node.Point)
             break;
       }
       else
       {
-        while ((node = node.Next) != null)
+        while ((node = node.Next) is not null)
           if (point == node.Point)
             break;
       }

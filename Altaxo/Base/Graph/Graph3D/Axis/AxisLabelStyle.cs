@@ -139,7 +139,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle(info);
+        AxisLabelStyle s = o is not null ? (AxisLabelStyle)o : new AxisLabelStyle(info);
 
         s._font = (FontX3D)info.GetValue("Font", s);
         s._brush = (IMaterial)info.GetValue("Brush", s);
@@ -264,13 +264,13 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _labelFormatting)
+      if (_labelFormatting is not null)
         yield return new Main.DocumentNodeAndName(_labelFormatting, "LabelFormatting");
 
-      if (null != _backgroundStyle)
+      if (_backgroundStyle is not null)
         yield return new Main.DocumentNodeAndName(_backgroundStyle, "BackgroundStyle");
 
-      if (null != _suppressedLabels)
+      if (_suppressedLabels is not null)
         yield return new Main.DocumentNodeAndName(_suppressedLabels, "SuppressedLabels");
     }
 
@@ -282,7 +282,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       get { return _font; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         var oldValue = _font;
@@ -376,7 +376,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         if (object.ReferenceEquals(_labelFormatting, value))
@@ -669,7 +669,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <returns>The side of the axis where the label will be shown.</returns>
     public virtual CSAxisSide PredictLabelSide(CSAxisInformation axisInformation)
     {
-      return null != _labelSide ? _labelSide.Value : axisInformation.PreferredLabelSide;
+      return _labelSide is not null ? _labelSide.Value : axisInformation.PreferredLabelSide;
     }
 
     /// <summary>
@@ -733,7 +733,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, ticks);
 
       double emSize = _font.Size;
-      CSAxisSide labelSide = null != _labelSide ? _labelSide.Value : styleInfo.PreferredLabelSide;
+      CSAxisSide labelSide = _labelSide is not null ? _labelSide.Value : styleInfo.PreferredLabelSide;
       var labelOutlines = new RectangularObjectOutline[ticks.Length];
       for (int i = 0; i < ticks.Length; i++)
       {
@@ -800,7 +800,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         var gs = g.SaveGraphicsState();
         g.PrependTransform(math);
 
-        if (_backgroundStyle != null)
+        if (_backgroundStyle is not null)
         {
           var itemRectangle = new RectangleD3D(PointD3D.Empty, msize);
           _backgroundStyle.Measure(itemRectangle);

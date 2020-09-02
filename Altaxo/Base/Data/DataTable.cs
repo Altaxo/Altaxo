@@ -278,7 +278,7 @@ namespace Altaxo.Data
         info.AddValue("Name", s._name); // name of the Table
 
         string? originalSaveAsTemplateOption = null;
-        bool saveDataAsTemplateRequired = null != s._tableDataSource && s._tableDataSource.ImportOptions.DoNotSaveCachedTableData;
+        bool saveDataAsTemplateRequired = s._tableDataSource is not null && s._tableDataSource.ImportOptions.DoNotSaveCachedTableData;
         if (saveDataAsTemplateRequired)
         {
           originalSaveAsTemplateOption = info.GetProperty(SerializationInfoProperty_SaveAsTemplate);
@@ -298,7 +298,7 @@ namespace Altaxo.Data
         info.AddValue("Notes", s._notes.Text);
         info.AddValue("CreationTime", s._creationTime.ToLocalTime());
         info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
-        if (null != s._tableDataSource)
+        if (s._tableDataSource is not null)
           info.AddValue("TableDataSource", s._tableDataSource);
       }
 
@@ -323,7 +323,7 @@ namespace Altaxo.Data
         if (info.CurrentElementName == "TableDataSource")
         {
           s._tableDataSource = (IAltaxoTableDataSource)info.GetValue("TableDataSource", s);
-          if (null != s._tableDataSource)
+          if (s._tableDataSource is not null)
           {
             s._tableDataSource.ParentObject = s;
             s._tableDataSource.OnAfterDeserialization();
@@ -355,7 +355,7 @@ namespace Altaxo.Data
         info.AddValue("Notes", s._notes.Text);
         info.AddValue("CreationTime", s._creationTime.ToLocalTime());
         info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
-        if (null != s._tableDataSource)
+        if (s._tableDataSource is not null)
           info.AddValue("TableDataSource", s._tableDataSource);
 
         // Always save the properties
@@ -365,7 +365,7 @@ namespace Altaxo.Data
         string? originalSaveAsTemplateOption = info.GetProperty(SerializationInfoProperty_SaveAsTemplate);
 
         bool saveDataAsTemplateRequired =
-          (null != s._tableDataSource && s._tableDataSource.ImportOptions.DoNotSaveCachedTableData) ||
+          (s._tableDataSource is not null && s._tableDataSource.ImportOptions.DoNotSaveCachedTableData) ||
           ("true" == info.GetProperty(SerializationInfoProperty_SupportsSeparatedData));
 
         if (saveDataAsTemplateRequired)
@@ -396,7 +396,7 @@ namespace Altaxo.Data
         if (info.CurrentElementName == "TableDataSource")
         {
           s._tableDataSource = (IAltaxoTableDataSource)info.GetValue("TableDataSource", s);
-          if (null != s._tableDataSource)
+          if (s._tableDataSource is not null)
           {
             s._tableDataSource.ParentObject = s;
             s._tableDataSource.OnAfterDeserialization();
@@ -571,12 +571,12 @@ namespace Altaxo.Data
     {
       _parent = null; // do not clone the parent
       _name = from._name;
-      _tableScript = null == from._tableScript ? null : (TableScript)from._tableScript.Clone();
+      _tableScript = from._tableScript is null ? null : (TableScript)from._tableScript.Clone();
       _creationTime = _lastChangeTime = DateTime.UtcNow;
       ChildCopyToMember(ref _notes, from._notes);
 
       // Clone also the table properties (deep copy)
-      if (from._tableProperties != null && from._tableProperties.Count > 0)
+      if (from._tableProperties is not null && from._tableProperties.Count > 0)
       {
         PropertyBagNotNull.CopyFrom(from._tableProperties);
       }
@@ -721,7 +721,7 @@ namespace Altaxo.Data
         {
           var canBeRenamed = true;
           var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
-          if (null != parentAs)
+          if (parentAs is not null)
           {
             canBeRenamed = parentAs.EhChild_CanBeRenamed(this, value);
           }
@@ -731,7 +731,7 @@ namespace Altaxo.Data
             var oldName = _name;
             _name = value;
 
-            if (null != parentAs)
+            if (parentAs is not null)
               parentAs.EhChild_HasBeenRenamed(this, oldName);
 
             OnNameChanged(oldName);
@@ -853,7 +853,7 @@ namespace Altaxo.Data
     /// </summary>
     public void UpdateTableFromTableDataSource()
     {
-      if (null == _tableDataSource)
+      if (_tableDataSource is null)
         return;
 
       using (var suspendToken = SuspendGetToken())
@@ -864,7 +864,7 @@ namespace Altaxo.Data
 
           try
           {
-            if (_tableDataSource.ImportOptions.ExecuteTableScriptAfterImport && null != _tableScript)
+            if (_tableDataSource.ImportOptions.ExecuteTableScriptAfterImport && _tableScript is not null)
               _tableScript.ExecuteWithoutExceptionCatching(this, new Main.Services.DummyBackgroundMonitor());
           }
           catch (Exception ex)
@@ -1185,7 +1185,7 @@ namespace Altaxo.Data
     public object? GetTableProperty(string key)
     {
       object? result = null;
-      if (_tableProperties != null)
+      if (_tableProperties is not null)
         _tableProperties.TryGetValue(key, out result);
 
       return result;
@@ -1216,28 +1216,28 @@ namespace Altaxo.Data
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataColumns)
+      if (_dataColumns is not null)
         yield return new Main.DocumentNodeAndName(_dataColumns, () => _dataColumns = null!, "DataCols");
 
-      if (null != _propertyColumns)
+      if (_propertyColumns is not null)
         yield return new Main.DocumentNodeAndName(_propertyColumns, () => _propertyColumns = null!, "PropCols");
 
-      if (null != _tableDataSource)
+      if (_tableDataSource is not null)
         yield return new Main.DocumentNodeAndName(_tableDataSource, () => _tableDataSource = null!, "DataSource");
 
-      if (null != _tableProperties)
+      if (_tableProperties is not null)
         yield return new Main.DocumentNodeAndName(_tableProperties, () => _tableProperties = null!, "PropertyBag");
 
-      if (null != _tableScript)
+      if (_tableScript is not null)
         yield return new Main.DocumentNodeAndName(_tableScript, () => _tableScript = null!, "TableScript");
 
-      if (null != _notes)
+      if (_notes is not null)
         yield return new Main.DocumentNodeAndName(_notes, () => _notes = null!, "Notes");
 
-      if (null != _dataColumns && null != _dataColumns.ColumnScripts)
+      if (_dataColumns is not null && _dataColumns.ColumnScripts is not null)
         yield return new Main.DocumentNodeAndName(_dataColumns.ColumnScripts, "DataColumnScripts");
 
-      if (null != _propertyColumns && null != _propertyColumns.ColumnScripts)
+      if (_propertyColumns is not null && _propertyColumns.ColumnScripts is not null)
         yield return new Main.DocumentNodeAndName(_propertyColumns.ColumnScripts, "PropertyColumnScripts");
     }
 
@@ -1327,7 +1327,7 @@ namespace Altaxo.Data
     /// <param name="ProxyProcessing">Function that processes  the found <see cref="T:Altaxo.Main.DocNodeProxy" /> instances.</param>
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ProxyProcessing)
     {
-      if (_tableDataSource != null)
+      if (_tableDataSource is not null)
       {
         _tableDataSource.VisitDocumentReferences(ProxyProcessing);
       }

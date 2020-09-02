@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Text
           }
         }
       }
-      if (null != _view)
+      if (_view is not null)
       {
       }
     }

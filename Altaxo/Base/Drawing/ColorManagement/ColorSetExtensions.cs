@@ -63,7 +63,7 @@ namespace Altaxo.Drawing.ColorManagement
     public static NamedColor GetNextPlotColor(this NamedColor c, int step, out int wraps)
     {
       var colorSet = c.ParentColorSet;
-      if (colorSet == null)
+      if (colorSet is null)
       {
         wraps = 0;
         return c;
@@ -93,7 +93,7 @@ namespace Altaxo.Drawing.ColorManagement
     /// <returns>The index in the plot color set that is the specified number of steps away of the specified color index in the set.</returns>
     public static int GetNextPlotColorIndex(this IColorSet colorSet, int idx, int step, out int wraps)
     {
-      if (colorSet == null)
+      if (colorSet is null)
       {
         wraps = 0;
         return idx;

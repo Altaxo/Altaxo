@@ -73,7 +73,7 @@ namespace Altaxo.Gui
       if (IsDisposed)
         throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);
 
-      if (null == args || 0 == args.Length || !(args[0] is TModel))
+      if (args is null || 0 == args.Length || !(args[0] is TModel))
         return false;
 
       _doc = _originalDoc = (TModel)args[0];
@@ -203,14 +203,14 @@ namespace Altaxo.Gui
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as TView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           AttachView();
@@ -249,9 +249,9 @@ namespace Altaxo.Gui
       {
         foreach (var subControllerItem in GetSubControllers())
         {
-          if (null != subControllerItem.Controller)
+          if (subControllerItem.Controller is not null)
             subControllerItem.Controller.Dispose();
-          if (null != subControllerItem.SetMemberToNullAction)
+          if (subControllerItem.SetMemberToNullAction is not null)
             subControllerItem.SetMemberToNullAction();
         }
 

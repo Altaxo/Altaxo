@@ -128,7 +128,7 @@ namespace Altaxo.Gui.Common
 
     protected virtual void Initialize()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeDescription(_descriptionText);
         _view.InitializeChoice(_values, _choice);
@@ -144,7 +144,7 @@ namespace Altaxo.Gui.Common
       set
       {
         _descriptionText = value;
-        if (null != _view)
+        if (_view is not null)
         {
           _view.InitializeDescription(_descriptionText);
         }
@@ -161,14 +161,14 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = null;
 
         _view = value as ISingleChoiceView;
 
         Initialize();
 
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = this;
       }
     }

@@ -203,7 +203,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <inheritdoc />
     public void CalculateBinPositionsFromSortedList(IReadOnlyList<double> list)
     {
-      if (null == list)
+      if (list is null)
         throw new ArgumentNullException();
       if (list.Count == 0)
         throw new ArgumentException("list is empty");

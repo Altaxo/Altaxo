@@ -44,7 +44,7 @@ namespace Altaxo.Serialization
     static GUIConversion()
     {
       _cultureSettings = System.Globalization.CultureInfo.InvariantCulture;
-      if (null != Current.PropertyService)
+      if (Current.PropertyService is not null)
       {
         Current.PropertyService.PropertyChanged += EhPropertyService_PropertyChanged;
         EhPropertyService_PropertyChanged(null, new PropertyChangedEventArgs(Altaxo.Settings.CultureSettings.PropertyKeyUICulture.GuidString));
@@ -67,7 +67,7 @@ namespace Altaxo.Serialization
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
         _cultureSettings = value;
       }
@@ -121,7 +121,7 @@ namespace Altaxo.Serialization
           break;
       }
 
-      if (pre == null)
+      if (pre is null)
         return number.ToString() + " " + unit;
 
       double m = number / Math.Pow(10, 3 * l);
@@ -266,7 +266,7 @@ namespace Altaxo.Serialization
 
     public static string ToString(double? val)
     {
-      if (val == null)
+      if (val is null)
         return string.Empty;
       else
         return ((double)val).ToString(_cultureSettings);
@@ -355,7 +355,7 @@ namespace Altaxo.Serialization
 
     public static string ToString(int? val)
     {
-      if (val == null)
+      if (val is null)
         return string.Empty;
       else
         return ((int)val).ToString(_cultureSettings);

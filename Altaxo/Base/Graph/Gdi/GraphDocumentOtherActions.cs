@@ -79,7 +79,7 @@ namespace Altaxo.Graph.Gdi
         (layer) =>
         {
           var xylayer = layer as XYPlotLayer;
-          if (null != xylayer)
+          if (xylayer is not null)
           {
             xylayer.OnUserRescaledAxes();
           }

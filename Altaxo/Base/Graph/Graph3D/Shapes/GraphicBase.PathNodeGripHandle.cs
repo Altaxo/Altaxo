@@ -142,7 +142,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         if (_initialMousePosition is null)
           throw new InvalidProgramException($"{nameof(_initialMousePosition)} is null, please call {nameof(Activate)} before!");
 
-        if (_moveAction != null)
+        if (_moveAction is not null)
         {
           _moveAction(newPosition);
         }

@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public bool InitializeDocument(params object[] args)
     {
-      if (null == args || args.Length == 0)
+      if (args is null || args.Length == 0)
         return false;
       if (args[0] is WorksheetLayout)
         WorksheetLayout = (WorksheetLayout)args[0];
@@ -96,13 +96,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
     [MemberNotNull(nameof(_worksheetLayout), nameof(_table))]
     protected virtual void InternalInitializeWorksheetLayout(WorksheetLayout value)
     {
-      if (null != _worksheetLayout)
+      if (_worksheetLayout is not null)
         throw new ApplicationException("This controller is already controlling a layout");
-      if (null != _table)
+      if (_table is not null)
         throw new ApplicationException("This controller is already controlling a table");
-      if (null == value)
+      if (value is null)
         throw new ArgumentNullException("value");
-      if (null == value.DataTable)
+      if (value.DataTable is null)
         throw new ApplicationException("The DataTable of the WorksheetLayout is null");
 
       _worksheetLayout = value;
@@ -251,14 +251,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
       {
         if (!object.ReferenceEquals(_view, value))
         {
-          if (null != _view)
+          if (_view is not null)
           {
             DetachView();
           }
 
           _view = value as IWorksheetView;
 
-          if (null != _view)
+          if (_view is not null)
           {
             AttachView();
 

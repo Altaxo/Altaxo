@@ -79,7 +79,7 @@ namespace Altaxo.Graph.Scales.Rescaling
         return true;
 
       var from = obj as AngularRescaleConditions;
-      if (null == from)
+      if (from is null)
         return false;
 
       _scaleOrigin = from._scaleOrigin;

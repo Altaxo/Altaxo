@@ -258,7 +258,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         {
           int colidx = usedSelectedColumns is null ? i : usedSelectedColumns[i];
           var col = srctable[colidx] as Altaxo.Data.INumericColumn;
-          if (null != col)
+          if (col is not null)
           {
             for (int j = 0; j < numrows; j++)
             {
@@ -277,7 +277,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         {
           int colidx = usedSelectedColumns is null ? i : usedSelectedColumns[i];
           var col = srctable[colidx] as Altaxo.Data.INumericColumn;
-          if (null != col)
+          if (col is not null)
           {
             for (int j = 0; j < numrows; j++)
             {
@@ -390,7 +390,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       var analysis = (WorksheetAnalysis)(System.Activator.CreateInstance(options.AnalysisMethod) ?? throw new InvalidProgramException($"Unable to create instance of type {options.AnalysisMethod}. Is a constructor missing?"));
 
       var err = analysis.ExecuteAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, ctrl.SelectedPropertyColumns, false, options, preprocessOptions);
-      if (null != err)
+      if (err is not null)
         Current.Gui.ErrorMessageBox(err, "An error occured");
     }
 
@@ -422,11 +422,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="spectrumIsRow">If true, the spectra is horizontally oriented, else it is vertically oriented.</param>
     public static void PredictValues(IWorksheetController ctrl, bool spectrumIsRow)
     {
-      if (false == QuestCalibrationModelAndDestinationTable(out var modelName, out var destName) || null == modelName)
+      if (false == QuestCalibrationModelAndDestinationTable(out var modelName, out var destName) || modelName is null)
         return; // Cancelled by user
 
       Altaxo.Data.DataTable modelTable = Current.Project.DataTableCollection[modelName];
-      Altaxo.Data.DataTable destTable = (null == destName ? new Altaxo.Data.DataTable() : Current.Project.DataTableCollection[destName]);
+      Altaxo.Data.DataTable destTable = (destName is null ? new Altaxo.Data.DataTable() : Current.Project.DataTableCollection[destName]);
 
       if (modelTable is null)
         throw new ArgumentNullException(nameof(modelTable));
@@ -437,14 +437,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       var memento = modelTable.GetTableProperty("Content") as MultivariateContentMemento;
 
-      if (memento != null)
+      if (memento is not null)
         numberOfFactors = memento.PreferredNumberOfFactors;
 
       if (numberOfFactors == 0)
       {
         QuestPreferredNumberOfFactors(modelTable);
         memento = modelTable.GetTableProperty("Content") as MultivariateContentMemento;
-        if (memento != null)
+        if (memento is not null)
           numberOfFactors = memento.PreferredNumberOfFactors;
       }
 
@@ -460,7 +460,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
           destTable);
 
         // if destTable is new, show it
-        if (destTable.ParentObject == null)
+        if (destTable.ParentObject is null)
         {
           Current.Project.DataTableCollection.Add(destTable);
           Current.ProjectService.OpenOrCreateWorksheetForTable(destTable);
@@ -517,7 +517,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
 
-      if (plsMemo == null)
+      if (plsMemo is null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
 
       return plsMemo.Analysis;
@@ -797,7 +797,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void QuestPreferredNumberOfFactors(Altaxo.Data.DataTable table)
     {
       var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo == null)
+      if (plsMemo is null)
         return;
 
       QuestPreferredNumberOfFactors(plsMemo);
@@ -823,7 +823,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PlotYResiduals(Altaxo.Data.DataTable table)
     {
       var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo == null)
+      if (plsMemo is null)
         return;
       if (plsMemo.PreferredNumberOfFactors <= 0)
         QuestPreferredNumberOfFactors(plsMemo);
@@ -843,7 +843,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PlotYCrossResiduals(Altaxo.Data.DataTable table)
     {
       var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo == null)
+      if (plsMemo is null)
         return;
       if (plsMemo.PreferredNumberOfFactors <= 0)
         QuestPreferredNumberOfFactors(plsMemo);
@@ -863,7 +863,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PlotPredictedVersusActualY(Altaxo.Data.DataTable table)
     {
       var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo == null)
+      if (plsMemo is null)
         return;
       if (plsMemo.PreferredNumberOfFactors <= 0)
         QuestPreferredNumberOfFactors(plsMemo);
@@ -936,7 +936,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PlotXResiduals(Altaxo.Data.DataTable table)
     {
       var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo == null)
+      if (plsMemo is null)
         return;
       if (plsMemo.PreferredNumberOfFactors <= 0)
         QuestPreferredNumberOfFactors(plsMemo);
@@ -956,7 +956,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PlotXCrossResiduals(Altaxo.Data.DataTable table)
     {
       var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo == null)
+      if (plsMemo is null)
         return;
       if (plsMemo.PreferredNumberOfFactors <= 0)
         QuestPreferredNumberOfFactors(plsMemo);
@@ -1070,7 +1070,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PlotXLeverage(Altaxo.Data.DataTable table)
     {
       var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo == null)
+      if (plsMemo is null)
         return;
       if (plsMemo.PreferredNumberOfFactors <= 0)
         QuestPreferredNumberOfFactors(plsMemo);

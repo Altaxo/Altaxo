@@ -65,7 +65,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       {
         var hit = _hitobject as GraphicBase;
 
-        if (null != hit)
+        if (hit is not null)
         {
           var deltaSize = _matrix.InverseTransform(new VectorD3D(x ?? 0, y ?? 0, z ?? 0)); // Transform to the object's parent coordinates
           hit.Size += deltaSize;
@@ -101,7 +101,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
           var ho = (GraphicBase)_hitobject;
 
           var result = ho.GetObjectOutlineForArrangements(_matrix);
-          if (null != result)
+          if (result is not null)
             return result; // if the hitted object provides an outline, it is used
 
           // the result has to be in root layer coordinates, but we must also take into account the object's own transformation

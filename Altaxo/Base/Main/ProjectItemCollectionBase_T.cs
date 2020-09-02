@@ -156,7 +156,7 @@ namespace Altaxo.Main
 
     protected override void OnChanged(EventArgs e)
     {
-      if (null != CollectionChanged && (e is Main.NamedObjectCollectionChangedEventArgs))
+      if (CollectionChanged is not null && (e is Main.NamedObjectCollectionChangedEventArgs))
       {
         CollectionChanged(this, (Main.NamedObjectCollectionChangedEventArgs)e);
       }
@@ -170,7 +170,7 @@ namespace Altaxo.Main
     {
       get
       {
-        return _accumulatedEventData != null;
+        return _accumulatedEventData is not null;
       }
     }
 
@@ -213,7 +213,7 @@ namespace Altaxo.Main
     /// <returns>True if the collection contains any project item with the specified name.</returns>
     public bool ContainsAnyName(string itemName)
     {
-      return null != itemName && _itemsByName.ContainsKey(itemName);
+      return itemName is not null && _itemsByName.ContainsKey(itemName);
     }
 
     /// <summary>
@@ -223,7 +223,7 @@ namespace Altaxo.Main
     /// <returns>True if the collection contains any project item with the specified name.</returns>
     public bool Contains(string itemName)
     {
-      return null != itemName && _itemsByName.ContainsKey(itemName);
+      return itemName is not null && _itemsByName.ContainsKey(itemName);
     }
 
     public IEnumerable<string> Names
@@ -266,7 +266,7 @@ namespace Altaxo.Main
     /// <returns>True if the item was found in the collection and thus removed successfully.</returns>
     public virtual bool Remove(TItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
       bool success = false;
@@ -429,7 +429,7 @@ namespace Altaxo.Main
     {
       var oldName = child.Name;
 
-      if (null == newName)
+      if (newName is null)
         throw new ArgumentNullException(nameof(newName), string.Format("New name of {0} is null (the old name was: {1})", child?.GetType(), oldName));
 
       if (newName == oldName)
@@ -491,7 +491,7 @@ namespace Altaxo.Main
     {
       if (projectItem is TItem titem)
         Add(titem);
-      else if (null != projectItem)
+      else if (projectItem is not null)
         throw new ArgumentException("Item is not of expected type " + typeof(TItem).Name, nameof(projectItem));
       else
         throw new ArgumentNullException(nameof(projectItem));
@@ -501,7 +501,7 @@ namespace Altaxo.Main
     {
       if (projectItem is TItem titem)
         return Remove(titem);
-      else if (null != projectItem)
+      else if (projectItem is not null)
         throw new ArgumentException("Item is not of expected type " + typeof(TItem).GetType(), nameof(projectItem));
       else
         throw new ArgumentNullException(nameof(projectItem));

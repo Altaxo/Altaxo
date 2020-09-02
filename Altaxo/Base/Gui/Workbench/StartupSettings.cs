@@ -174,7 +174,7 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public void AddAddInsFromDirectory(string addInDir)
     {
-      if (addInDir == null)
+      if (addInDir is null)
         throw new ArgumentNullException(nameof(addInDir));
       _addInDirectories.Add(addInDir);
     }
@@ -184,7 +184,7 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public void AddAddInFile(string addInFile)
     {
-      if (addInFile == null)
+      if (addInFile is null)
         throw new ArgumentNullException(nameof(addInFile));
       _addInFiles.Add(addInFile);
     }

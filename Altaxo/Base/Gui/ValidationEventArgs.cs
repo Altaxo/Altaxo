@@ -48,7 +48,7 @@ namespace Altaxo.Gui
 
     public void AddError(string format, params object[] args)
     {
-      if (_errors == null)
+      if (_errors is null)
         _errors = string.Format(format, args);
       else
         _errors += "\n" + string.Format(format, args);
@@ -66,7 +66,7 @@ namespace Altaxo.Gui
     {
       get
       {
-        return null != _errors;
+        return _errors is not null;
       }
     }
 
@@ -74,7 +74,7 @@ namespace Altaxo.Gui
     {
       get
       {
-        return null != _errors;
+        return _errors is not null;
       }
     }
 

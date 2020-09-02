@@ -214,7 +214,7 @@ namespace Altaxo.Text
       {
         var figureCaptions = MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(figure).OfType<Markdig.Extensions.Figures.FigureCaption>().ToArray();
 
-        if (null == figureCaptions || 0 == figureCaptions.Length)
+        if (figureCaptions is null || 0 == figureCaptions.Length)
           continue;
 
         Markdig.Extensions.Figures.FigureCaption? figureCaption = null;
@@ -231,7 +231,7 @@ namespace Altaxo.Text
             ExtractTextContentFrom(figCaption, words);
             if (words.Count > 0)
             {
-              if (null == figureCaption)
+              if (figureCaption is null)
               {
                 figureCaption = figCaption;
                 break;
@@ -240,7 +240,7 @@ namespace Altaxo.Text
           }
         }
 
-        if (null == figureCaption)
+        if (figureCaption is null)
           continue;
 
         var (category, digits) = ExtractCategoryAndNumber(figureCaption);
@@ -482,7 +482,7 @@ namespace Altaxo.Text
     /// <exception cref="NotImplementedException"></exception>
     public static void ExtractTextContentFrom(Markdig.Syntax.LeafBlock leafBlock, List<(string Text, int Position)> result)
     {
-      if (null == leafBlock.Inline)
+      if (leafBlock.Inline is null)
         return;
 
       foreach (var il in leafBlock.Inline)
