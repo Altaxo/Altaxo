@@ -56,12 +56,12 @@ namespace Altaxo.Gui.Workbench
     {
       get
       {
-        if (_optionPanelPath != null)
+        if (_optionPanelPath is not null)
         {
           if (_optionPanel is null)
           {
             _optionPanel = (IOptionPanel?)_addin?.CreateObject(_optionPanelPath);
-            if (_optionPanel != null)
+            if (_optionPanel is not null)
             {
               _optionPanel.Initialize(_owner);
             }
@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Workbench
     {
       get
       {
-        return _optionPanelPath != null;
+        return _optionPanelPath is not null;
       }
     }
 

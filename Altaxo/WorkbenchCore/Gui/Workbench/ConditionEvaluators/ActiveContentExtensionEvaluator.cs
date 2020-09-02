@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Workbench
     public bool IsValid(object caller, Condition condition)
     {
       var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
-      if (workbench == null || workbench.ActiveViewContent == null)
+      if (workbench is null || workbench.ActiveViewContent is null)
       {
         return false;
       }

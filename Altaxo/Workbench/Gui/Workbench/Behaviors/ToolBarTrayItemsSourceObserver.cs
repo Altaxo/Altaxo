@@ -107,7 +107,7 @@ namespace Altaxo.Gui.Workbench
 
       frameworkElement.ToolBars.Clear();
 
-      if (toolBars != null)
+      if (toolBars is not null)
       {
         foreach (var tb in toolBars)
           frameworkElement.ToolBars.Add(tb);

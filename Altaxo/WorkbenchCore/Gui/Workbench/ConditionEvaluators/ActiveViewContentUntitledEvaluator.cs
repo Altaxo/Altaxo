@@ -38,13 +38,13 @@ namespace Altaxo.Gui.Workbench
     public bool IsValid(object caller, Condition condition)
     {
       var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
-      if (workbench == null)
+      if (workbench is null)
       {
         return false;
       }
 
       var viewContent = workbench.ActiveViewContent as IFileViewContent;
-      if (viewContent == null || viewContent.PrimaryFile == null)
+      if (viewContent is null || viewContent.PrimaryFile is null)
       {
         return false;
       }

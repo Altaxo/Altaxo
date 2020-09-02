@@ -112,13 +112,13 @@ namespace Altaxo.Gui.Workbench
       var uiElement = sender as UIElement;
 
       // Sanity check just in case this was somehow send by something else
-      if (uiElement == null)
+      if (uiElement is null)
         return;
 
       ICommand dropCommand = FileDropCommand.GetDropCommand(uiElement);
 
       // There may not be a command bound to this after all
-      if (dropCommand == null)
+      if (dropCommand is null)
         return;
 
       if (e.Data.GetDataPresent(DataFormats.FileDrop))

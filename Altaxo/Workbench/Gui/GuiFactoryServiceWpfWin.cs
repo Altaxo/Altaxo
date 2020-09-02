@@ -72,7 +72,7 @@ namespace Altaxo.Gui
       {
         var visual = (System.Windows.Media.Visual)Current.Workbench.ViewObject;
         var wnd = System.Windows.PresentationSource.FromVisual(visual) as System.Windows.Interop.IWin32Window;
-        if (wnd != null)
+        if (wnd is not null)
           return wnd.Handle;
         else
           return IntPtr.Zero;
@@ -114,7 +114,7 @@ namespace Altaxo.Gui
 
     internal bool? InternalShowModalWindow(System.Windows.Window window)
     {
-      if (null == window)
+      if (window is null)
         throw new ArgumentNullException(nameof(window));
 
       window.Owner = TopmostModalWindow;
@@ -138,10 +138,10 @@ namespace Altaxo.Gui
       {
         if (_screenResolution.IsEmpty)
         {
-          if (null == Current.Workbench.ViewObject)
+          if (Current.Workbench.ViewObject is null)
             return new PointD2D(96, 96); // until we have a workbench, we assume 96 dpi
           var MainWindowPresentationSource = System.Windows.PresentationSource.FromVisual((System.Windows.Window)Current.Workbench.ViewObject);
-          if (null == MainWindowPresentationSource)
+          if (MainWindowPresentationSource is null)
             return new PointD2D(96, 96); // until we have a valid presentation source, we assume 96 dpi
           var m = MainWindowPresentationSource.CompositionTarget.TransformToDevice;
           _screenResolution = new PointD2D(96 * m.M11, 96 * m.M22);
@@ -183,12 +183,12 @@ namespace Altaxo.Gui
     /// <returns>True if the object was successfully configured, false otherwise.</returns>
     private bool InternalShowDialog(IMVCAController controller, string title, bool showApplyButton)
     {
-      if (controller.ViewObject == null)
+      if (controller.ViewObject is null)
       {
         FindAndAttachControlTo(controller);
       }
 
-      if (controller.ViewObject == null)
+      if (controller.ViewObject is null)
         throw new ArgumentException("Can't find a view object for controller of type " + controller.GetType());
 
       double startLocationLeft, startLocationTop;
@@ -279,7 +279,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
     /// <returns>True if the user answered with Yes, otherwise false.</returns>
     public override bool YesNoMessageBox(string txt, string caption, bool defaultanswer)
     {
-      if (null != Current.Workbench)
+      if (Current.Workbench is not null)
         return System.Windows.MessageBoxResult.Yes == Current.Dispatcher.InvokeIfRequired(System.Windows.MessageBox.Show, txt, caption, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, defaultanswer ? System.Windows.MessageBoxResult.OK : System.Windows.MessageBoxResult.No);
       else
         return System.Windows.MessageBoxResult.Yes == System.Windows.MessageBox.Show(txt, caption, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, defaultanswer ? System.Windows.MessageBoxResult.OK : System.Windows.MessageBoxResult.No);
@@ -295,7 +295,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
     public override bool? YesNoCancelMessageBox(string text, string caption, bool? defaultAnswer)
     {
       var defaultButton = System.Windows.MessageBoxResult.Cancel;
-      if (defaultAnswer != null)
+      if (defaultAnswer is not null)
         defaultButton = ((bool)defaultAnswer) ? System.Windows.MessageBoxResult.Yes : System.Windows.MessageBoxResult.No;
 
       var result = Current.Dispatcher.InvokeIfRequired(System.Windows.MessageBox.Show, text, caption, System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Question, defaultButton);
@@ -337,9 +337,9 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
         FilterIndex = options.FilterIndex,
         Multiselect = options.Multiselect
       };
-      if (options.Title != null)
+      if (options.Title is not null)
         dlg.Title = options.Title;
-      if (options.InitialDirectory != null && System.IO.Directory.Exists(options.InitialDirectory))
+      if (options.InitialDirectory is not null && System.IO.Directory.Exists(options.InitialDirectory))
         dlg.InitialDirectory = options.InitialDirectory;
       dlg.RestoreDirectory = options.RestoreDirectory;
 
@@ -366,9 +366,9 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
         FilterIndex = options.FilterIndex
       };
       //dlg.Multiselect = options.Multiselect;
-      if (options.Title != null)
+      if (options.Title is not null)
         dlg.Title = options.Title;
-      if (options.InitialDirectory != null && System.IO.Directory.Exists(options.InitialDirectory))
+      if (options.InitialDirectory is not null && System.IO.Directory.Exists(options.InitialDirectory))
         dlg.InitialDirectory = options.InitialDirectory;
       dlg.RestoreDirectory = options.RestoreDirectory;
       dlg.OverwritePrompt = options.OverwritePrompt;

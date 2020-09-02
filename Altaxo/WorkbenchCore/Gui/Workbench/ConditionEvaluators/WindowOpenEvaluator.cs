@@ -55,12 +55,12 @@ namespace Altaxo.Gui.Workbench
       }
 
       // ask the active view content, if it has a sub-content of the given window type
-      if (null != activeViewContent?.GetService(openWindowType))
+      if (activeViewContent?.GetService(openWindowType) is not null)
         return true;
 
       if (openWindow == "*")
       {
-        return activeViewContent != null;
+        return activeViewContent is not null;
       }
 
       foreach (IViewContent view in workbench.ViewContentCollection)

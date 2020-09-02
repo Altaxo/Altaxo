@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Startup
       {
         using (var g = Graphics.FromImage(bitmap))
         {
-          if (null != font)
+          if (font is not null)
           {
             g.DrawString(versionText, font, Brushes.Black, 230 - 3 * versionText.Length, 14);
             font.Dispose();
@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Startup
     {
       if (disposing)
       {
-        if (bitmap != null)
+        if (bitmap is not null)
         {
           bitmap.Dispose();
           bitmap = null;

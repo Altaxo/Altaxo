@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Workbench
     {
       get
       {
-        if (_codon != null && _binding == null)
+        if (_codon is not null && _binding is null)
         {
           _binding = _codon.AddIn.CreateObject(_codon.Properties["class"]);
         }
@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Workbench
     {
       get
       {
-        if (_codon != null && _binding == null)
+        if (_codon is not null && _binding is null)
         {
           _binding = _codon.AddIn.CreateObject(_codon.Properties["class"]);
         }

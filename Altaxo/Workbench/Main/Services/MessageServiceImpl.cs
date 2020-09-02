@@ -51,7 +51,7 @@ namespace Altaxo.Main.Services
       Current.Log.Error(message, ex);
       Current.Log.Warn("Stack trace of last exception log:\n" + Environment.StackTrace);
       message = StringParser.Parse(message);
-      if (ex != null)
+      if (ex is not null)
       {
         message += "\n\nException occurred: " + ex.ToString();
       }
@@ -245,7 +245,7 @@ restartlabel:
     {
       Current.Log.Error(message, ex);
       Current.Log.Warn("Stack trace of last exception log:\n" + Environment.StackTrace);
-      if (message == null)
+      if (message is null)
       {
         message = ex.Message;
       }

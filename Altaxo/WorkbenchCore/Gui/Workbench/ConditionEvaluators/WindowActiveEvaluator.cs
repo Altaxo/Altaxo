@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Workbench
       string activeWindow = condition.Properties["activewindow"];
       if (activeWindow == "*")
       {
-        return activeViewContent != null;
+        return activeViewContent is not null;
       }
 
       var activeWindowType = condition.AddIn.FindType(activeWindow);
@@ -61,10 +61,10 @@ namespace Altaxo.Gui.Workbench
       }
 
       // ask the active view content, if it has a sub-content of the given window type
-      if (null != activeViewContent?.GetService(activeWindowType))
+      if (activeViewContent?.GetService(activeWindowType) is not null)
         return true;
 
-      if (activeViewContent == null)
+      if (activeViewContent is null)
         return false;
 
       Type? currentType = activeViewContent.GetType();
@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Workbench
         if (interf.FullName == activeWindow)
           return true;
       }
-      while ((currentType = currentType.BaseType) != null)
+      while ((currentType = currentType.BaseType) is not null)
       {
         if (currentType.FullName == activeWindow)
           return true;

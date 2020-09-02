@@ -126,11 +126,11 @@ namespace Altaxo.Main
 
       private void TaskCompleted(Task task)
       {
-        if (childProgressMonitor != null)
+        if (childProgressMonitor is not null)
           childProgressMonitor.Dispose();
-        if (progressMonitor != null)
+        if (progressMonitor is not null)
           progressMonitor.Dispose();
-        if (task.Exception != null)
+        if (task.Exception is not null)
           observer.OnError(task.Exception.InnerExceptions[0]);
         else
           observer.OnCompleted();
@@ -217,7 +217,7 @@ namespace Altaxo.Main
       {
         await gate.WaitAsync(cancellationToken).ConfigureAwait(false);
       }
-      if (ex != null)
+      if (ex is not null)
         throw ex;
       if (isEmpty && throwIfEmpty)
         throw new InvalidOperationException("Sequence contains no elements.");
@@ -258,7 +258,7 @@ namespace Altaxo.Main
       {
         await gate.WaitAsync(cancellationToken).ConfigureAwait(false);
       }
-      if (ex != null)
+      if (ex is not null)
         throw ex;
       if (isEmpty && throwIfEmpty)
         throw new InvalidOperationException("Sequence contains no elements.");
@@ -347,11 +347,11 @@ namespace Altaxo.Main
 
       public AnonymousObserver(Action<T> onNext, Action<Exception> onError, Action onCompleted)
       {
-        if (onNext == null)
+        if (onNext is null)
           throw new ArgumentNullException("onNext");
-        if (onError == null)
+        if (onError is null)
           throw new ArgumentNullException("onError");
-        if (onCompleted == null)
+        if (onCompleted is null)
           throw new ArgumentNullException("onCompleted");
         this.onNext = onNext;
         this.onError = onError;

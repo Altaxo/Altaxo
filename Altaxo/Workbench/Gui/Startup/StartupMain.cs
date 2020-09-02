@@ -167,7 +167,7 @@ namespace Altaxo.Gui.Startup
       }
       finally
       {
-        if (SplashScreenForm.SplashScreen != null)
+        if (SplashScreenForm.SplashScreen is not null)
         {
           SplashScreenForm.SplashScreen.Dispose();
         }
@@ -269,7 +269,7 @@ namespace Altaxo.Gui.Startup
         }
 
         updateInstaller = Altaxo.Current.GetService<Altaxo.Main.Services.IAutoUpdateInstallationService>();
-        if (null != updateInstaller)
+        if (updateInstaller is not null)
         {
           if (updateInstaller.Run(true, startupArguments.StartupArgs))
             return;
@@ -277,7 +277,7 @@ namespace Altaxo.Gui.Startup
 
         // Start Com
         var comManager = Altaxo.Current.GetService<Altaxo.Main.IComManager>();
-        if (null != comManager)
+        if (comManager is not null)
         {
           if (!comManager.ProcessStartupArguments(startupArguments.StartupArgs))
             return;
@@ -288,7 +288,7 @@ namespace Altaxo.Gui.Startup
                     () =>
                     {
                       var splashScreen = SplashScreenForm.SplashScreen;
-                      if (splashScreen != null)
+                      if (splashScreen is not null)
                       {
                         splashScreen.BeginInvoke(new MethodInvoker(splashScreen.Dispose));
                         SplashScreenForm.SplashScreen = null;
@@ -335,7 +335,7 @@ namespace Altaxo.Gui.Startup
       string configDirectory = startupSettings.ConfigDirectory;
       string dataDirectory = startupSettings.DataDirectory;
       string propertiesName;
-      if (startupSettings.PropertiesName != null)
+      if (startupSettings.PropertiesName is not null)
       {
         propertiesName = startupSettings.PropertiesName;
       }
@@ -344,12 +344,12 @@ namespace Altaxo.Gui.Startup
         propertiesName = startupSettings.ApplicationName + "Properties";
       }
 
-      if (startupSettings.ApplicationRootPath != null)
+      if (startupSettings.ApplicationRootPath is not null)
       {
         FileUtility.ApplicationRootPath = startupSettings.ApplicationRootPath;
       }
 
-      if (configDirectory == null)
+      if (configDirectory is null)
         configDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                                                                      startupSettings.ApplicationName);
 
@@ -439,7 +439,7 @@ namespace Altaxo.Gui.Startup
       }
       Current.Log.Info("Finished running workbench.");
       WorkbenchClosed?.Invoke();
-      if (exception != null)
+      if (exception is not null)
       {
         const string errorText = "Unhandled exception terminated the workbench";
         Current.Log.Fatal(exception);
@@ -456,7 +456,7 @@ namespace Altaxo.Gui.Startup
 
     private static void RunWorkbenchInitializedCommands()
     {
-      if (Current.ComManager != null && Current.ComManager.ApplicationWasStartedWithEmbeddingArg)
+      if (Current.ComManager is not null && Current.ComManager.ApplicationWasStartedWithEmbeddingArg)
       {
         Current.ComManager.StartLocalServer();
       }

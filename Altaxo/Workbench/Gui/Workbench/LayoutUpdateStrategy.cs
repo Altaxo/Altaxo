@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Workbench
     {
       if (anchorableToShow.Content is IPadContent padContent)
       {
-        if (destinationContainer?.FindParent<LayoutFloatingWindow>() != null)
+        if (destinationContainer?.FindParent<LayoutFloatingWindow>() is not null)
           return false; // we do not handle bringing pads in a floating layout
 
         var defaultPosition = padContent.DefaultPosition;
@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Workbench
         LayoutAnchorablePane destinationPane = null;
 
         AnchorSide? anchorSide = DefaultPadPosition_To_AnchorSide(defaultPosition);
-        if (anchorSide.HasValue && (null != (destinationPane = layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(p => p.GetSide() == anchorSide.Value))))
+        if (anchorSide.HasValue && ((destinationPane = layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(p => p.GetSide() == anchorSide.Value)) is not null))
         {
           destinationPane.Children.Add(anchorableToShow);
           return true;

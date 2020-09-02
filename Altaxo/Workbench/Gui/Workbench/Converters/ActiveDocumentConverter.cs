@@ -45,7 +45,7 @@ namespace Altaxo.Gui.Workbench
         return value;
       else if (value is IPadContent padContent)
         return padContent.PadDescriptor;
-      else if (value == null)
+      else if (value is null)
         return null;
 
       return Binding.DoNothing;
@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Workbench
         return value;
       else if (value is PadDescriptor padDescriptor)
         return padDescriptor.PadContent;
-      else if (value == null)
+      else if (value is null)
         return null;
       else
         return Binding.DoNothing;

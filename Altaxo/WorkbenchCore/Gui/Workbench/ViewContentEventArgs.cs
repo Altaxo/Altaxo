@@ -35,7 +35,7 @@ namespace Altaxo.Gui.Workbench
 
     public ViewContentEventArgs(IViewContent content)
     {
-      if (content == null)
+      if (content is null)
         throw new ArgumentNullException("content");
       this.content = content;
     }

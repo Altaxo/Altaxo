@@ -55,7 +55,7 @@ namespace Altaxo.Workbench
 
     private void OnPropertyChanged(string propertyName)
     {
-      if (PropertyChanged != null)
+      if (PropertyChanged is not null)
       {
         PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
       }
@@ -199,7 +199,7 @@ namespace Altaxo.Workbench
           if (_rootMonitorIsDisposed) // ignore double dispose
             return;
           _rootMonitorIsDisposed = true;
-          if (ProgressMonitorDisposed != null)
+          if (ProgressMonitorDisposed is not null)
           {
             ProgressMonitorDisposed(this, EventArgs.Empty);
           }
@@ -238,7 +238,7 @@ namespace Altaxo.Workbench
         // (which is not allowed according to IProgressMonitor thread-safety documentation)
         _namedMonitors.Remove(nameEntry);
         if (wasFirst)
-          SetTaskName(_namedMonitors.First != null ? _namedMonitors.First.Value : null);
+          SetTaskName(_namedMonitors.First is not null ? _namedMonitors.First.Value : null);
       }
     }
 
@@ -281,16 +281,16 @@ namespace Altaxo.Workbench
       {
         get
         {
-          if (_nameEntry != null)
+          if (_nameEntry is not null)
             return _nameEntry.Value;
           else
             return null;
         }
         set
         {
-          if (_nameEntry != null)
+          if (_nameEntry is not null)
           {
-            if (value == null)
+            if (value is null)
             {
               _collector.UnregisterNamedMonitor(_nameEntry);
               _nameEntry = null;
@@ -303,7 +303,7 @@ namespace Altaxo.Workbench
           }
           else
           {
-            if (value != null)
+            if (value is not null)
               _nameEntry = _collector.RegisterNamedMonitor(value);
           }
         }
@@ -333,7 +333,7 @@ namespace Altaxo.Workbench
 
       private void UpdateProgress(double progress)
       {
-        if (_parent != null)
+        if (_parent is not null)
           _parent.UpdateProgress(_parent.currentProgress + (progress - currentProgress) * _scaleFactor);
         else
           _collector.SetProgress(progress);
@@ -367,7 +367,7 @@ namespace Altaxo.Workbench
           currentStatus = localStatus;
         if (oldStatus != currentStatus)
         {
-          if (_parent != null)
+          if (_parent is not null)
           {
             if (oldStatus == OperationStatus.Warning)
               _parent.childrenWithWarnings--;
@@ -401,7 +401,7 @@ namespace Altaxo.Workbench
       public void Dispose()
       {
         TaskName = null;
-        if (_parent == null)
+        if (_parent is null)
           _collector.OnRootMonitorDisposed();
       }
     }

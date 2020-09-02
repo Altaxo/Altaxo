@@ -144,7 +144,7 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public virtual void ForceInitializeView(IFileViewContent view)
     {
-      if (view == null)
+      if (view is null)
         throw new ArgumentNullException("view");
 
       bool success = false;
@@ -152,7 +152,7 @@ namespace Altaxo.Gui.Workbench
       {
         if (_currentView != view)
         {
-          if (_currentView == null)
+          if (_currentView is null)
           {
             SwitchedToView(view);
           }
@@ -211,7 +211,7 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public virtual Stream OpenRead()
     {
-      if (_fileData != null)
+      if (_fileData is not null)
       {
         return new MemoryStream(_fileData, false);
       }
@@ -233,7 +233,7 @@ namespace Altaxo.Gui.Workbench
     /// </remarks>
     public virtual void SetData(byte[] fileData)
     {
-      if (fileData == null)
+      if (fileData is null)
         throw new ArgumentNullException("fileData");
       if (_inLoadOperation)
         throw new InvalidOperationException("SetData cannot be used while loading");
@@ -265,11 +265,11 @@ namespace Altaxo.Gui.Workbench
           // and reading our new file as soon as we're done writing.
           // TODO Lellid: is this neccessary for Altaxo ?   --  NativeMethods.SetFileCreationTime(fs.SafeFileHandle, File.GetCreationTimeUtc(FileName));
         }
-        if (_currentView != null)
+        if (_currentView is not null)
         {
           SaveCurrentViewToStream(fs);
         }
-        else if (_fileData != null)
+        else if (_fileData is not null)
         {
           fs.Write(_fileData, 0, _fileData.Length);
         }
@@ -310,7 +310,7 @@ namespace Altaxo.Gui.Workbench
       _inSaveOperation = true;
       try
       {
-        if (null != _currentView)
+        if (_currentView is not null)
           _currentView.Save(this, stream);
       }
       finally
@@ -332,11 +332,11 @@ namespace Altaxo.Gui.Workbench
 
     public void SwitchedToView(IFileViewContent newView)
     {
-      if (newView == null)
+      if (newView is null)
         throw new ArgumentNullException("newView");
       if (_currentView == newView)
         return;
-      if (_currentView != null)
+      if (_currentView is not null)
       {
         if (newView.SupportsSwitchToThisWithoutSaveLoad(this, _currentView)
                 || _currentView.SupportsSwitchFromThisWithoutSaveLoad(this, newView))
@@ -394,7 +394,7 @@ namespace Altaxo.Gui.Workbench
       var r = FileUtility.ObservedLoad(ReloadFromDiskInternal, FileName);
       if (r == FileOperationResult.Failed)
       {
-        if (_currentView != null)
+        if (_currentView is not null)
         {
           _currentView.CloseCommand.Execute(_currentView);
         }
@@ -404,7 +404,7 @@ namespace Altaxo.Gui.Workbench
     private void ReloadFromDiskInternal()
     {
       _fileData = null;
-      if (_currentView != null)
+      if (_currentView is not null)
       {
         try
         {
@@ -431,7 +431,7 @@ namespace Altaxo.Gui.Workbench
 
     private static void RestoreMemento(IFileViewContent viewContent, object? memento)
     {
-      if (memento != null)
+      if (memento is not null)
       {
         ((IMementoCapable)viewContent).SetMemento(memento);
       }

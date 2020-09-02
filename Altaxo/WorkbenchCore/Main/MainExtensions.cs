@@ -52,7 +52,7 @@ namespace Altaxo.Main
     [Obsolete("Use 'event EventHandler MyEvent = delegate{};' instead")]
     public static void RaiseEvent(this EventHandler eventHandler, object sender, EventArgs e)
     {
-      if (eventHandler != null)
+      if (eventHandler is not null)
       {
         eventHandler(sender, e);
       }
@@ -72,7 +72,7 @@ namespace Altaxo.Main
     [Obsolete("Use 'event EventHandler MyEvent = delegate{};' instead")]
     public static void RaiseEvent<T>(this EventHandler<T> eventHandler, object sender, T e) where T : EventArgs
     {
-      if (eventHandler != null)
+      if (eventHandler is not null)
       {
         eventHandler(sender, e);
       }
@@ -92,7 +92,7 @@ namespace Altaxo.Main
       task.ContinueWith(
         t =>
         {
-          if (t.Exception != null)
+          if (t.Exception is not null)
           {
             if (t.Exception.InnerExceptions.Count == 1)
               MessageService.ShowException(t.Exception.InnerExceptions[0]);
@@ -138,7 +138,7 @@ namespace Altaxo.Main
     //[Obsolete("Please use a regular foreach loop instead. ForEach() is executed for its side-effects, and side-effects mix poorly with a functional programming style.")]
     public static void ForEach<T>(this IEnumerable<T> input, Action<T> action)
     {
-      if (input == null)
+      if (input is null)
         throw new ArgumentNullException("input");
       foreach (T element in input)
       {
@@ -196,7 +196,7 @@ namespace Altaxo.Main
     /// index where the element could be inserted while maintaining the order.</returns>
     public static int BinarySearch<T, K>(this IList<T> list, int index, int length, K key, Func<T, K> keySelector, IComparer<K>? keyComparer = null)
     {
-      if (keyComparer == null)
+      if (keyComparer is null)
         keyComparer = Comparer<K>.Default;
       int low = index;
       int high = index + length - 1;
@@ -256,7 +256,7 @@ namespace Altaxo.Main
     /// </summary>
     public static T[] Splice<T>(this T[] array, int startIndex)
     {
-      if (array == null)
+      if (array is null)
         throw new ArgumentNullException("array");
       return Splice(array, startIndex, array.Length - startIndex);
     }
@@ -266,7 +266,7 @@ namespace Altaxo.Main
     /// </summary>
     public static T[] Splice<T>(this T[] array, int startIndex, int length)
     {
-      if (array == null)
+      if (array is null)
         throw new ArgumentNullException("array");
       if (startIndex < 0 || startIndex > array.Length)
         throw new ArgumentOutOfRangeException("startIndex", startIndex, "Value must be between 0 and " + array.Length);
@@ -346,11 +346,11 @@ namespace Altaxo.Main
     /// <exception cref="InvalidOperationException">The input sequence is empty</exception>
     public static T MaxBy<T, K>(this IEnumerable<T> source, Func<T, K> keySelector, IComparer<K> keyComparer)
     {
-      if (source == null)
+      if (source is null)
         throw new ArgumentNullException("source");
-      if (keySelector == null)
+      if (keySelector is null)
         throw new ArgumentNullException("selector");
-      if (keyComparer == null)
+      if (keyComparer is null)
         keyComparer = Comparer<K>.Default;
       using (var enumerator = source.GetEnumerator())
       {
@@ -407,13 +407,13 @@ namespace Altaxo.Main
     /// </summary>
     public static void AddIfNotNull<T>(this IList<T> list, T itemToAdd) where T : class
     {
-      if (itemToAdd != null)
+      if (itemToAdd is not null)
         list.Add(itemToAdd);
     }
 
     public static void RemoveAll<T>(this IList<T> list, Predicate<T> condition)
     {
-      if (list == null)
+      if (list is null)
         throw new ArgumentNullException("list");
       int i = 0;
       while (i < list.Count)
@@ -537,9 +537,9 @@ namespace Altaxo.Main
 
     public static string Replace(this string original, string pattern, string replacement, StringComparison comparisonType)
     {
-      if (original == null)
+      if (original is null)
         throw new ArgumentNullException("original");
-      if (pattern == null)
+      if (pattern is null)
         throw new ArgumentNullException("pattern");
       if (pattern.Length == 0)
         throw new ArgumentException("String cannot be of zero length.", "pattern");
@@ -568,7 +568,7 @@ namespace Altaxo.Main
     {
       byte[] encodedText = encoding.GetBytes(text);
       byte[] bom = encoding.GetPreamble();
-      if (bom != null && bom.Length > 0)
+      if (bom is not null && bom.Length > 0)
       {
         byte[] result = new byte[bom.Length + encodedText.Length];
         bom.CopyTo(result, 0);
@@ -583,9 +583,9 @@ namespace Altaxo.Main
 
     public static int IndexOfAny(this string haystack, IEnumerable<string> needles, int startIndex, out int matchLength)
     {
-      if (haystack == null)
+      if (haystack is null)
         throw new ArgumentNullException("haystack");
-      if (needles == null)
+      if (needles is null)
         throw new ArgumentNullException("needles");
       int index = -1;
       matchLength = 0;
@@ -603,9 +603,9 @@ namespace Altaxo.Main
 
     public static bool ContainsAny(this string haystack, IEnumerable<string> needles, int startIndex, [MaybeNullWhen(false)] out string match)
     {
-      if (haystack == null)
+      if (haystack is null)
         throw new ArgumentNullException("haystack");
-      if (needles == null)
+      if (needles is null)
         throw new ArgumentNullException("needles");
       int index = -1;
       match = null;
@@ -618,7 +618,7 @@ namespace Altaxo.Main
           match = needle;
         }
       }
-      return index > -1 && match != null;
+      return index > -1 && match is not null;
     }
 
     /// <summary>

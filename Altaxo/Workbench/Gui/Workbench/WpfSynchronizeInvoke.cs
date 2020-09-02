@@ -20,7 +20,7 @@ namespace Altaxo.Gui.Workbench
 
     public WpfSynchronizeInvoke(Dispatcher dispatcher)
     {
-      if (dispatcher == null)
+      if (dispatcher is null)
         throw new ArgumentNullException("dispatcher");
       this.dispatcher = dispatcher;
     }
@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Workbench
     public IAsyncResult BeginInvoke(Delegate method, object[] args)
     {
       DispatcherOperation op;
-      if (args == null || args.Length == 0)
+      if (args is null || args.Length == 0)
         op = dispatcher.BeginInvoke(DispatcherPriority.Normal, method);
       else if (args.Length == 1)
         op = dispatcher.BeginInvoke(DispatcherPriority.Normal, method, args[0]);
@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Workbench
         {
           lock (lockObj)
           {
-            if (resetEvent == null)
+            if (resetEvent is null)
             {
               op.Completed += op_Completed;
               resetEvent = new ManualResetEvent(false);
@@ -104,7 +104,7 @@ namespace Altaxo.Gui.Workbench
     public object EndInvoke(IAsyncResult result)
     {
       var r = result as AsyncResult;
-      if (r == null)
+      if (r is null)
         throw new ArgumentException("result must be the return value of a WpfSynchronizeInvoke.BeginInvoke call!");
       r.op.Wait();
       return r.op.Result;
@@ -128,7 +128,7 @@ namespace Altaxo.Gui.Workbench
             }
           });
       // if an exception occurred, re-throw it on the calling thread
-      if (exception != null)
+      if (exception is not null)
         throw new TargetInvocationException(exception);
       return result;
     }

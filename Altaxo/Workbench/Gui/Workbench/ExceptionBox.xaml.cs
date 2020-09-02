@@ -145,7 +145,7 @@ namespace Altaxo.Gui.Workbench
       _isCurrentlyShowingBox = true;
       try
       {
-        if (exception != null)
+        if (exception is not null)
         {
           try
           {
@@ -164,7 +164,7 @@ namespace Altaxo.Gui.Workbench
       {
         Current.Log.Warn("Error showing ExceptionBox", ex);
         MessageBox.Show(
-            exception != null ? exception.ToString() : "Error",
+                        exception is not null ? exception.ToString() : "Error",
             message,
             MessageBoxButton.OK,
             MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
@@ -252,11 +252,11 @@ namespace Altaxo.Gui.Workbench
 
       sb.AppendLine();
 
-      if (_message != null)
+      if (_message is not null)
       {
         sb.AppendLine(_message);
       }
-      if (_exceptionThrown != null)
+      if (_exceptionThrown is not null)
       {
         sb.AppendLine("Exception thrown:");
         sb.AppendLine(_exceptionThrown.ToString());

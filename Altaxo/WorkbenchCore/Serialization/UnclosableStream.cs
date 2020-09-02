@@ -30,7 +30,7 @@ namespace Altaxo.Serialization
 
     public UnclosableStream(Stream baseStream)
     {
-      if (baseStream == null)
+      if (baseStream is null)
         throw new ArgumentNullException("baseStream");
       this.baseStream = baseStream;
     }

@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Workbench
       try
       {
         bmp = FileIconService.GetBitmap(name);
-        if (bmp == null)
+        if (bmp is null)
         {
           bmp = Altaxo.Current.ResourceService.GetBitmap(name);
         }
@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Workbench
       {
         Current.Log.Warn(ex);
       }
-      if (bmp != null)
+      if (bmp is not null)
       {
         return bmp;
       }
@@ -114,7 +114,7 @@ namespace Altaxo.Gui.Workbench
         Current.Log.Warn(ex);
         img = null;
       }
-      if (img != null)
+      if (img is not null)
       {
         return img;
       }
@@ -158,9 +158,9 @@ namespace Altaxo.Gui.Workbench
 
       foreach (IconDescriptor iconCodon in treeNode.BuildChildItems<IconDescriptor>(null))
       {
-        string imageName = iconCodon.Resource != null ? iconCodon.Resource : iconCodon.Id;
+        string imageName = iconCodon.Resource is not null ? iconCodon.Resource : iconCodon.Id;
 
-        if (iconCodon.Extensions != null)
+        if (iconCodon.Extensions is not null)
         {
           foreach (string ext in iconCodon.Extensions)
           {
@@ -168,7 +168,7 @@ namespace Altaxo.Gui.Workbench
           }
         }
 
-        if (iconCodon.Language != null)
+        if (iconCodon.Language is not null)
         {
           projectFileHashtable[iconCodon.Language] = imageName;
         }

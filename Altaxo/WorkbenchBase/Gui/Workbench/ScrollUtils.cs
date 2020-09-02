@@ -35,7 +35,7 @@ namespace Altaxo.Gui.Workbench
     public static ScrollViewer GetScrollViewer(this DependencyObject o)
     {
       var scrollViewer = o as ScrollViewer;
-      if (scrollViewer != null)
+      if (scrollViewer is not null)
       {
         return scrollViewer;
       }
@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Workbench
       {
         var child = VisualTreeHelper.GetChild(o, i);
         var result = GetScrollViewer(child);
-        if (result != null)
+        if (result is not null)
         {
           return result;
         }
@@ -82,9 +82,9 @@ namespace Altaxo.Gui.Workbench
 
     public static void SynchronizeScroll(this ScrollViewer target, ScrollViewer source, ScrollSyncOption option, bool proportional = true)
     {
-      if (source == null)
+      if (source is null)
         throw new ArgumentNullException("source");
-      if (target == null)
+      if (target is null)
         throw new ArgumentNullException("target");
       double newScrollOffset;
       switch (option)

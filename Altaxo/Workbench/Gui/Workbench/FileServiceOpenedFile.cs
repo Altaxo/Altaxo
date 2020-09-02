@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Workbench
 
     public override void ForceInitializeView(IFileViewContent view)
     {
-      if (view == null)
+      if (view is null)
         throw new ArgumentNullException("view");
       if (!registeredViews.Contains(view))
         throw new ArgumentException("registeredViews must contain view");
@@ -73,14 +73,14 @@ namespace Altaxo.Gui.Workbench
 
     public override void RegisterView(IFileViewContent view)
     {
-      if (view == null)
+      if (view is null)
         throw new ArgumentNullException("view");
       if (registeredViews.Contains(view))
         throw new ArgumentException("registeredViews already contains view");
 
       registeredViews.Add(view);
 
-      if (Altaxo.Current.GetService<IWorkbench>() != null)
+      if (Altaxo.Current.GetService<IWorkbench>() is not null)
       {
         Altaxo.Current.GetRequiredService<IWorkbenchEx>().ActiveViewContentChanged += WorkbenchActiveViewContentChanged;
         if (Altaxo.Current.Workbench.ActiveViewContent == view)
@@ -95,11 +95,11 @@ namespace Altaxo.Gui.Workbench
 
     public override void UnregisterView(IFileViewContent view)
     {
-      if (view == null)
+      if (view is null)
         throw new ArgumentNullException("view");
       Debug.Assert(registeredViews.Contains(view));
 
-      if (Altaxo.Current.GetService<IWorkbench>() != null)
+      if (Altaxo.Current.GetService<IWorkbench>() is not null)
       {
         Altaxo.Current.GetRequiredService<IWorkbenchEx>().ActiveViewContentChanged -= WorkbenchActiveViewContentChanged;
       }

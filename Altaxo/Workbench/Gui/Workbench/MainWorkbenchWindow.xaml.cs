@@ -157,10 +157,10 @@ namespace Altaxo.Gui.Workbench
     {
       try
       {
-        if (data != null && data.GetDataPresent(DataFormats.FileDrop))
+        if (data is not null && data.GetDataPresent(DataFormats.FileDrop))
         {
           string[] files = (string[])data.GetData(DataFormats.FileDrop);
-          if (files != null)
+          if (files is not null)
           {
             foreach (string file in files)
             {
@@ -184,11 +184,11 @@ namespace Altaxo.Gui.Workbench
       try
       {
         base.OnDrop(e);
-        if (!e.Handled && e.Data != null && e.Data.GetDataPresent(DataFormats.FileDrop))
+        if (!e.Handled && e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop))
         {
           e.Handled = true;
           string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-          if (files == null)
+          if (files is null)
             return;
           // Handle opening the files outside the drop event, so that the drag source doesn't think
           // the operation is still in progress while we're showing a "file cannot be opened" error message.
@@ -237,7 +237,7 @@ namespace Altaxo.Gui.Workbench
         if (!alreadyProcessedFiles.Contains(file) && System.IO.File.Exists(file))
         {
           var fileService = Altaxo.Current.GetService<IFileService>();
-          if (null != fileService)
+          if (fileService is not null)
           {
             alreadyProcessedFiles.Add(file);
             fileService.OpenFile(FileName.Create(file));

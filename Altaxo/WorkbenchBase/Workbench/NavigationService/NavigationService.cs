@@ -78,7 +78,7 @@ namespace Altaxo.Workbench
 
       if (!_serviceInitialized)
       {
-        if (workbench == null)
+        if (workbench is null)
         {
           throw new InvalidOperationException("Initializing the NavigationService requires that the WorkbenchSingleton has already created a Workbench.");
         }
@@ -109,7 +109,7 @@ namespace Altaxo.Workbench
     /// </summary>
     public static bool CanNavigateBack
     {
-      get { return _currentNode != _history.First && _currentNode != null; }
+      get { return _currentNode != _history.First && _currentNode is not null; }
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ namespace Altaxo.Workbench
     /// </summary>
     public static bool CanNavigateForwards
     {
-      get { return _currentNode != _history.Last && _currentNode != null; }
+      get { return _currentNode != _history.Last && _currentNode is not null; }
     }
 
     /// <summary>
@@ -141,7 +141,7 @@ namespace Altaxo.Workbench
     {
       get
       {
-        return _currentNode == null ? null : _currentNode.Value;
+        return _currentNode is null ? null : _currentNode.Value;
       }
       set
       {
@@ -187,7 +187,7 @@ namespace Altaxo.Workbench
     /// <param name="vc"></param>
     public static void Log(IViewContent vc)
     {
-      if (vc == null)
+      if (vc is null)
         return;
       Log(vc.BuildNavPoint());
     }
@@ -219,13 +219,13 @@ namespace Altaxo.Workbench
     /// </remarks>
     private static void LogInternal(INavigationPoint p)
     {
-      if (p == null
+      if (p is null
               || string.IsNullOrEmpty(p.FileName)
            )
       {
         return;
       }
-      if (_currentNode == null)
+      if (_currentNode is null)
       {
         _currentNode = _history.AddFirst(p);
       }
@@ -328,14 +328,14 @@ namespace Altaxo.Workbench
     /// <param name="target">The <see cref="INavigationPoint"/> to jump</param>
     public static void Go(INavigationPoint target)
     {
-      if (target == null)
+      if (target is null)
       {
         return;
       }
 
       LinkedListNode<INavigationPoint> targetNode;
       targetNode = _history.Find(target);
-      if (targetNode != null)
+      if (targetNode is not null)
       {
         _currentNode = targetNode;
       }
@@ -360,7 +360,7 @@ namespace Altaxo.Workbench
     private static void SyncViewWithModel()
     {
       SuspendLogging();
-      if (CurrentPosition != null)
+      if (CurrentPosition is not null)
       {
         CurrentPosition.JumpTo();
       }
@@ -409,7 +409,7 @@ namespace Altaxo.Workbench
     private static void ActiveViewContentChanged(object sender, EventArgs e)
     {
       IViewContent vc = Altaxo.Current.GetRequiredService<IWorkbench>().ActiveViewContent;
-      if (vc == null)
+      if (vc is null)
         return;
       Current.Log.DebugFormatted("NavigationService\n\tActiveViewContent: {0}\n\t          Subview: {1}",
                                                                   vc.Title,

@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Workbench
     private void RaiseInternal(string propertyName)
     {
       var handler = PropertyChanged;
-      if (handler != null)
+      if (handler is not null)
       {
         handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
       }
@@ -111,19 +111,19 @@ namespace Altaxo.Gui.Workbench
 
     private static string ExtractPropertyName<T>(Expression<Func<T>> propertyExpresssion)
     {
-      if (propertyExpresssion == null)
+      if (propertyExpresssion is null)
       {
         throw new ArgumentNullException("propertyExpresssion");
       }
 
       var memberExpression = propertyExpresssion.Body as MemberExpression;
-      if (memberExpression == null)
+      if (memberExpression is null)
       {
         throw new ArgumentException("The expression is not a member access expression.", "propertyExpresssion");
       }
 
       var property = memberExpression.Member as PropertyInfo;
-      if (property == null)
+      if (property is null)
       {
         throw new ArgumentException("The member access expression does not access a property.", "propertyExpresssion");
       }

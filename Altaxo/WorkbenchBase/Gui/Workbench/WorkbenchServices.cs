@@ -44,10 +44,10 @@ namespace Altaxo.Gui.Workbench
     public static object GetActiveViewContentService(Type type)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
-      if (workbench != null)
+      if (workbench is not null)
       {
         var activeViewContent = workbench.ActiveViewContent;
-        if (activeViewContent != null)
+        if (activeViewContent is not null)
         {
           return activeViewContent.GetService(type);
         }

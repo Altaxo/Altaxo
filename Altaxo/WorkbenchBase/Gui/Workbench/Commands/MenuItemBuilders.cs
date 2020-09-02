@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Workbench.Commands
 
       foreach (INavigationPoint p in points)
       {
-        if (p.FileName == null)
+        if (p.FileName is null)
         {
           throw new ApplicationException("should not get here!");
         }
@@ -346,7 +346,7 @@ namespace Altaxo.Gui.Workbench.Commands
       var list = new List<object>();
       foreach (IPadContent padContent in workbench.PadContentCollection)
       {
-        if (padContent.Category == Category && null != padContent.PadDescriptor)
+        if (padContent.Category == Category && padContent.PadDescriptor is not null)
         {
           var item = new System.Windows.Controls.MenuItem
           {

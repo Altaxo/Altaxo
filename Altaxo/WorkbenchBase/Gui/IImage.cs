@@ -60,7 +60,7 @@ namespace Altaxo.Gui
     [Obsolete("Use SD.ResourceService.GetImage() instead")]
     public ResourceServiceImage(string resourceName)
     {
-      if (resourceName == null)
+      if (resourceName is null)
         throw new ArgumentNullException("resourceName");
       this.resourceName = resourceName;
     }

@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Workbench
       var workbench = Altaxo.Current.GetRequiredService<Workbench.IWorkbenchEx>();
 
       var activeWorkbenchWindow = workbench.ActiveViewContent;
-      if (activeWorkbenchWindow == null)
+      if (activeWorkbenchWindow is null)
       {
         return false;
       }
@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Workbench
       if (viewContent is null)
         return false;
       OpenedFile file = viewContent.PrimaryFile;
-      if (file == null)
+      if (file is null)
         return false;
       else
         return file.IsUntitled;
@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Workbench
 
     private static bool IsViewOnly(IViewContent viewContent)
     {
-      return viewContent != null && viewContent.IsViewOnly;
+      return viewContent is not null && viewContent.IsViewOnly;
     }
   }
 }

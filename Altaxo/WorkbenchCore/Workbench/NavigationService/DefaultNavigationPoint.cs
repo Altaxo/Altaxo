@@ -43,7 +43,7 @@ namespace Altaxo.Workbench
 
     public DefaultNavigationPoint(string fileName, object? data)
     {
-      this._fileName = fileName == null ? string.Empty : fileName;
+      this._fileName = fileName is null ? string.Empty : fileName;
       this._data = data;
     }
 
@@ -129,7 +129,7 @@ namespace Altaxo.Workbench
 
     public void FileNameChanged(string newName)
     {
-      _fileName = newName == null ? string.Empty : newName;
+      _fileName = newName is null ? string.Empty : newName;
     }
 
     public virtual void ContentChanging(object sender, EventArgs e)

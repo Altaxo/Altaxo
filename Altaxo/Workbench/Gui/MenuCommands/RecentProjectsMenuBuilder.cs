@@ -44,7 +44,7 @@ namespace Altaxo.Gui.MenuCommands
       // search either as part of IFileService or directly as service IRecentOpen
       var recentOpen = Altaxo.Current.GetService<IFileService>()?.RecentOpen ?? Altaxo.Current.GetService<IRecentOpen>();
 
-      if (null != recentOpen && recentOpen.RecentProjects.Count > 0)
+      if (recentOpen is not null && recentOpen.RecentProjects.Count > 0)
       {
         var items = new System.Windows.Controls.MenuItem[recentOpen.RecentProjects.Count];
 
@@ -77,7 +77,7 @@ namespace Altaxo.Gui.MenuCommands
       if (sender is FrameworkElement ele && ele.Tag is string recentProjectFile)
       {
         var pathName = PathName.CreateFromExisting(recentProjectFile);
-        if (null != pathName)
+        if (pathName is not null)
           Current.IProjectService.OpenProject(pathName, showUserInteraction: true);
       }
     }

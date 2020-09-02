@@ -274,7 +274,7 @@ namespace Altaxo.Gui.Workbench
       var statusBarService = Current.GetService<IStatusBarService>();
       if (statusBarService is IMVCController statusBarController)
       {
-        if (statusBarController.ViewObject == null)
+        if (statusBarController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(statusBarController);
         _statusBarView = statusBarController.ViewObject;
       }
@@ -671,7 +671,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
           OnPropertyChanged(nameof(ActiveViewContent));
           ActiveViewContentChanged?.Invoke(this, EventArgs.Empty);
         }
-        if (null != value)
+        if (value is not null)
           ActiveContent = value;
       }
     }
@@ -687,7 +687,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       if (_documentCollection.Count == 0)
         return;
 
-      if (ActiveViewContent != null)
+      if (ActiveViewContent is not null)
       {
         var storeActiveViewContent = ActiveViewContent;
         ActiveViewContent = null;
@@ -843,13 +843,13 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 
     public void ShowPad(IPadContent content, bool switchToPad)
     {
-      if (null == content)
+      if (content is null)
         throw new ArgumentNullException(nameof(content));
 
       if (!_padContentCollection.Contains(content))
         _padContentCollection.Add(content);
 
-      if (content.ViewObject == null)
+      if (content.ViewObject is null)
         Current.Gui.FindAndAttachControlTo(content);
 
       content.IsVisible = true;
@@ -867,7 +867,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     /// <exception cref="ArgumentNullException">content</exception>
     public void ClosePad(IPadContent content)
     {
-      if (null == content)
+      if (content is null)
         throw new ArgumentNullException(nameof(content));
 
       if (content.PadDescriptor is null) // this is a document in the pad area
@@ -893,7 +893,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 
       LoadViewContentMemento(content);
 
-      if (content.ViewObject == null)
+      if (content.ViewObject is null)
         Current.Gui.FindAndAttachControlTo(content);
 
       if (switchToOpenedView)
@@ -911,10 +911,10 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       {
         ShowView(viewContent, selectView);
       }
-      else if (content is IProjectItemPresentationModel pm && pm.Document != null)
+      else if (content is IProjectItemPresentationModel pm && pm.Document is not null)
       {
         var ctrl = (IViewContent)Current.Gui.GetController(new object[] { content }, typeof(IViewContent));
-        if (null != ctrl)
+        if (ctrl is not null)
           ShowView(ctrl, selectView);
       }
     }
@@ -937,7 +937,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     /// <exception cref="ArgumentNullException">type</exception>
     public PadDescriptor GetPad(Type type)
     {
-      if (type == null)
+      if (type is null)
         throw new ArgumentNullException(nameof(type));
 
       foreach (PadDescriptor pad in PadContentCollection)
@@ -956,7 +956,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     /// <param name="content"></param>
     public void ActivatePad(PadDescriptor content)
     {
-      if (null == content.PadContent)
+      if (content.PadContent is null)
         content.CreatePad();
 
       content.PadContent.IsVisible = true;

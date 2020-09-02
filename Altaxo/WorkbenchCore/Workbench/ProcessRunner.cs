@@ -261,7 +261,7 @@ namespace Altaxo.Workbench
       RedirectStandardOutputAndErrorToSingleStream = true;
       Start(program, arguments);
       var printedCommandLine = new StringBuilder();
-      if (WorkingDirectory != null)
+      if (WorkingDirectory is not null)
       {
         printedCommandLine.Append(WorkingDirectory);
         printedCommandLine.Append("> ");
@@ -335,7 +335,7 @@ namespace Altaxo.Workbench
     {
       var commandLine = new StringBuilder();
       AppendArgument(commandLine, program);
-      if (arguments != null)
+      if (arguments is not null)
       {
         for (int i = 0; i < arguments.Length; i++)
         {
@@ -388,7 +388,7 @@ namespace Altaxo.Workbench
       if (RedirectStandardOutputAndErrorToSingleStream)
       {
         _standardError = _standardOutput;
-        if (null != _standardError)
+        if (_standardError is not null)
           startupInfo.hStdError = _standardError.ClientSafePipeHandle;
       }
       else if (RedirectStandardError)
@@ -404,7 +404,7 @@ namespace Altaxo.Workbench
       uint flags = (uint)CreationFlags;
 
       string? environmentBlock = null;
-      if (_environmentVariables != null)
+      if (_environmentVariables is not null)
       {
         environmentBlock = BuildEnvironmentBlock(_environmentVariables);
         flags |= CREATE_UNICODE_ENVIRONMENT;
@@ -434,12 +434,12 @@ namespace Altaxo.Workbench
         if (!_wasStarted)
         {
           // In case of error, dispose the server side of the pipes as well
-          if (_standardOutput != null)
+          if (_standardOutput is not null)
           {
             _standardOutput.Dispose();
             _standardOutput = null;
           }
-          if (_standardError != null)
+          if (_standardError is not null)
           {
             _standardError.Dispose();
             _standardError = null;
@@ -485,11 +485,11 @@ namespace Altaxo.Workbench
 
     public void Dispose()
     {
-      if (_safeProcessHandle != null)
+      if (_safeProcessHandle is not null)
         _safeProcessHandle.Dispose();
-      if (_standardOutput != null)
+      if (_standardOutput is not null)
         _standardOutput.Dispose();
-      if (_standardError != null)
+      if (_standardError is not null)
         _standardError.Dispose();
     }
 
@@ -598,7 +598,7 @@ namespace Altaxo.Workbench
         throw new ObjectDisposedException("ProcessRunner");
       lock (_lockObj)
       {
-        if (_waitForExitTCS == null)
+        if (_waitForExitTCS is null)
         {
           _waitForExitTCS = new TaskCompletionSource<object?>();
           _waitForExitAsyncWaitHandle = new ProcessWaitHandle(_safeProcessHandle);
@@ -633,7 +633,7 @@ namespace Altaxo.Workbench
     {
       get
       {
-        if (_standardOutput == null)
+        if (_standardOutput is null)
           throw new InvalidOperationException(_wasStarted ? "stdout was not redirected" : "Process not yet started");
         return _standardOutput;
       }
@@ -643,7 +643,7 @@ namespace Altaxo.Workbench
     {
       get
       {
-        if (_standardError == null)
+        if (_standardError is null)
           throw new InvalidOperationException(_wasStarted ? "stderr was not redirected" : "Process not yet started");
         return _standardError;
       }
