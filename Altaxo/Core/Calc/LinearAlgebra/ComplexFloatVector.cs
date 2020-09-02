@@ -77,7 +77,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'value' parameter.</exception>
     public ComplexFloatVector(ComplexFloat[] values)
     {
-      if (values == null)
+      if (values is null)
       {
         throw new ArgumentNullException("Array cannot be null");
       }
@@ -93,7 +93,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'values' parameter.</exception>
     public ComplexFloatVector(IList values)
     {
-      if (values == null)
+      if (values is null)
       {
         throw new ArgumentNullException("IList cannot be null");
       }
@@ -109,7 +109,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'src' parameter.</exception>
     public ComplexFloatVector(ComplexFloatVector src)
     {
-      if (src == null)
+      if (src is null)
       {
         throw new ArgumentNullException("ComplexFloatVector cannot be null");
       }
@@ -253,7 +253,7 @@ namespace Altaxo.Calc.LinearAlgebra
     [return: NotNullIfNotNull("src")]
     public static implicit operator ComplexFloatVector?(float[] src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }
@@ -269,7 +269,7 @@ namespace Altaxo.Calc.LinearAlgebra
     [return: NotNullIfNotNull("src")]
     public static ComplexFloatVector? ToComplexFloatVector(float[]? src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }
@@ -285,7 +285,7 @@ namespace Altaxo.Calc.LinearAlgebra
     [return: NotNullIfNotNull("src")]
     public static explicit operator ComplexFloatVector?(ComplexDoubleVector? src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }
@@ -301,7 +301,7 @@ namespace Altaxo.Calc.LinearAlgebra
     [return: NotNullIfNotNull("src")]
     public static ComplexFloatVector? ToComplexFloatVector(ComplexDoubleVector? src)
     {
-      if (src == null)
+      if (src is null)
       {
         return null;
       }
@@ -381,7 +381,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="src"><c>ComplexFloatVector</c> to deepcopy this <c>ComplexFloatVector</c> into.</param>
     public void Copy(ComplexFloatVector src)
     {
-      if (src == null)
+      if (src is null)
       {
         throw new System.ArgumentNullException("CfVector cannot be null.");
       }
@@ -393,7 +393,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="src"><c>ComplexFloatVector</c> to swap data with.</param>
     public void Swap(ComplexFloatVector src)
     {
-      if (src == null)
+      if (src is null)
       {
         throw new System.ArgumentNullException("CfVector cannot be null.");
       }
@@ -412,7 +412,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>ComplexFloat</c> results from x^Ty.</returns>
     public ComplexFloat GetDotProduct(ComplexFloatVector Y)
     {
-      if (Y == null)
+      if (Y is null)
       {
         throw new System.ArgumentNullException("ComplexFloatVector cannot be null.");
       }
@@ -431,7 +431,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>ComplexFloat</c> results from x^Hy.</returns>
     public ComplexFloat GetConjugateDotProduct(ComplexFloatVector Y)
     {
-      if (Y == null)
+      if (Y is null)
       {
         throw new System.ArgumentNullException("ComplexFloatVector cannot be null.");
       }
@@ -507,7 +507,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<remarks>Results of computation replace data in this variable</remarks>
     public void Axpy(ComplexFloat alpha, ComplexFloatVector X)
     {
-      if (X == null)
+      if (X is null)
       {
         throw new System.ArgumentNullException("ComplexFloatVector cannot be null.");
       }
@@ -543,7 +543,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>ComplexFloatVector</c> with values to negate.</returns>
     public static ComplexFloatVector Negate(ComplexFloatVector rhs)
     {
-      if (rhs == null)
+      if (rhs is null)
       {
         throw new ArgumentNullException("rhs", "rhs cannot be null");
       }
@@ -594,7 +594,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null given as argument.</exception>
     public void Add(ComplexFloatVector vector)
     {
-      if (vector == null)
+      if (vector is null)
       {
         throw new System.ArgumentNullException("ComplexFloatVector cannot be null.");
       }
@@ -606,7 +606,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null given as argument.</exception>
     public void Subtract(ComplexFloatVector vector)
     {
-      if (vector == null)
+      if (vector is null)
       {
         throw new System.ArgumentNullException("ComplexFloatVector cannot be null.");
       }
@@ -962,7 +962,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'src' parameter.</exception>
     public ComplexFloatVector(IROComplexFloatVector src)
     {
-      if (src == null)
+      if (src is null)
       {
         throw new ArgumentNullException("IROComplexFloatVector cannot be null");
       }

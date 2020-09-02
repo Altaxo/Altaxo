@@ -41,9 +41,9 @@ namespace Altaxo.Calc.Ode
     /// <param name="n">Length of the vector</param>
     public SparseVector(double[] items, int[] indices, int n)
     {
-      if (items == null)
+      if (items is null)
         throw new ArgumentNullException("items");
-      if (indices == null)
+      if (indices is null)
         throw new ArgumentNullException("indices");
       this.items = items;
       this.indices = indices;

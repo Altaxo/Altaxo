@@ -1258,9 +1258,9 @@ namespace Altaxo.Calc.Fourier
       double[] scratchreal, double[] scratchimag,
       int n)
     {
-      if (null == scratchreal || scratchreal.Length < n)
+      if (scratchreal is null || scratchreal.Length < n)
         scratchreal = new double[n];
-      if (null == scratchimag || scratchimag.Length < n)
+      if (scratchimag is null || scratchimag.Length < n)
         scratchimag = new double[n];
 
       // First copy the arrays data and response to result and scratch,
@@ -1345,9 +1345,9 @@ namespace Altaxo.Calc.Fourier
       ref double[]? scratchreal, ref double[]? scratchimag
       )
     {
-      if (null == scratchreal || scratchreal.Length < n)
+      if (scratchreal is null || scratchreal.Length < n)
         scratchreal = new double[n];
-      if (null == scratchimag || scratchimag.Length < n)
+      if (scratchimag is null || scratchimag.Length < n)
         scratchimag = new double[n];
 
       // First copy the arrays data and response to result and scratch,

@@ -388,7 +388,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public FloatLevinson(IReadOnlyList<float> col, IReadOnlyList<float> row)
     {
       // check parameters
-      if (col == null)
+      if (col is null)
       {
         throw new System.ArgumentNullException("col");
       }
@@ -396,7 +396,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new RankException("The length of col is zero.");
       }
-      else if (row == null)
+      else if (row is null)
       {
         throw new System.ArgumentNullException("row");
       }
@@ -453,7 +453,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public FloatLevinson(float[] col, float[] row)
     {
       // check parameters
-      if (col == null)
+      if (col is null)
       {
         throw new System.ArgumentNullException("col");
       }
@@ -461,7 +461,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new RankException("The length of col is zero.");
       }
-      else if (row == null)
+      else if (row is null)
       {
         throw new System.ArgumentNullException("row");
       }
@@ -813,7 +813,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int i, j;
 
       // check parameters
-      if (Y == null)
+      if (Y is null)
       {
         throw new System.ArgumentNullException("Y");
       }
@@ -885,7 +885,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int i, j;
 
       // check parameters
-      if (Y == null)
+      if (Y is null)
       {
         throw new System.ArgumentNullException("Y");
       }
@@ -957,7 +957,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int i, j, l;
 
       // check parameters
-      if (Y == null)
+      if (Y is null)
       {
         throw new System.ArgumentNullException("Y");
       }
@@ -1047,7 +1047,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public static FloatMatrix Inverse(IReadOnlyList<float> col, IReadOnlyList<float> row)
     {
       // check parameters
-      if (col == null)
+      if (col is null)
       {
         throw new System.ArgumentNullException("col");
       }
@@ -1055,7 +1055,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new RankException("The length of col is zero.");
       }
-      else if (row == null)
+      else if (row is null)
       {
         throw new System.ArgumentNullException("row");
       }
@@ -1247,7 +1247,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public static FloatVector Solve(IReadOnlyList<float> col, IReadOnlyList<float> row, IReadOnlyList<float> Y)
     {
       // check parameters
-      if (col == null)
+      if (col is null)
       {
         throw new System.ArgumentNullException("col");
       }
@@ -1255,7 +1255,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new RankException("The length of col is zero.");
       }
-      else if (row == null)
+      else if (row is null)
       {
         throw new System.ArgumentNullException("row");
       }
@@ -1267,7 +1267,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArithmeticException("The values of the first element of col and row are not equal.");
       }
-      else if (Y == null)
+      else if (Y is null)
       {
         throw new System.ArgumentNullException("Y");
       }
@@ -1413,7 +1413,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public static FloatMatrix Solve(IReadOnlyList<float> col, IReadOnlyList<float> row, IROMatrix<float> Y)
     {
       // check parameters
-      if (col == null)
+      if (col is null)
       {
         throw new System.ArgumentNullException("col");
       }
@@ -1421,7 +1421,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new RankException("The length of col is zero.");
       }
-      else if (row == null)
+      else if (row is null)
       {
         throw new System.ArgumentNullException("row");
       }
@@ -1433,7 +1433,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArithmeticException("The values of the first element of col and row are not equal.");
       }
-      else if (Y == null)
+      else if (Y is null)
       {
         throw new System.ArgumentNullException("Y");
       }

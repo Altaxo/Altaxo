@@ -1104,7 +1104,7 @@ namespace Altaxo.Calc.Probability
                     new double[] { Math.Log(xm), Math.Log(Math.PI) }, 2,
                     0, precision, 100, out var resultRight, out var abserrRight, ref tempStorage);
 
-        if (null != error1)
+        if (error1 is not null)
           resultRight = double.NaN;
 
         return prefactorApplied ? OneByPrefactorOffset * (resultLeft + resultRight) : (resultLeft + resultRight);
@@ -1138,7 +1138,7 @@ namespace Altaxo.Calc.Probability
                       new double[] { 0, xm }, 2,
                       0, precision, 100, out resultLeft, out abserrLeft, ref tempStorage);
           }
-          if (null != error)
+          if (error is not null)
           {
             resultLeft = double.NaN;
           }
@@ -1167,7 +1167,7 @@ namespace Altaxo.Calc.Probability
                         new double[] { Math.Log(xincrement), Math.Log(UpperIntegrationLimit - _x0) }, 2,
                         0, precision, 200, out var result2, out var abserr2, ref tempStorage);
 
-            if (null == error1 && null == error2)
+            if (error1 is null && error2 is null)
               return result1 + result2;
             else
               return double.NaN;
@@ -1179,7 +1179,7 @@ namespace Altaxo.Calc.Probability
                         new double[] { 0, xm, UpperIntegrationLimit }, 3,
                         0, precision, 200, out var result, out var abserr, ref tempStorage);
 
-            if (null == error)
+            if (error is null)
               return result;
             else
               return double.NaN;
@@ -1351,7 +1351,7 @@ namespace Altaxo.Calc.Probability
           }
         }
 
-        if (error1 == null && error2 == null)
+        if (error1 is null && error2 is null)
           return result1 + result2;
         else
           return double.NaN;
@@ -1427,7 +1427,7 @@ namespace Altaxo.Calc.Probability
                       0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
         }
 
-        if (null != error1)
+        if (error1 is not null)
           return double.NaN;
         else
           return resultRight;
@@ -1685,7 +1685,7 @@ namespace Altaxo.Calc.Probability
                       0, precision, 100, out result, out abserr, ref tempStorage);
         }
 
-        if (null != error1 && error1.Number != GSL_ERR.GSL_EROUND) // ignore rounding errors here because rounding errors are possible due to the high power alpha/(1-alpha)
+        if (error1 is not null && error1.Number != GSL_ERR.GSL_EROUND) // ignore rounding errors here because rounding errors are possible due to the high power alpha/(1-alpha)
           result = double.NaN;
 
         logPdfPrefactor = orgPrefactor;
@@ -1795,7 +1795,7 @@ namespace Altaxo.Calc.Probability
                PDFFunc,
                new double[] { 0, xm }, 2,
                0, precision, 100, out result, out abserr, ref tempStorage);
-            if (error == null)
+            if (error is null)
             {
               error = Calc.Integration.QagpIntegration.Integration(
                PDFFuncLogInt,
@@ -1812,7 +1812,7 @@ namespace Altaxo.Calc.Probability
              new double[] { 0, xm, x1 }, 3,
              0, precision, 100, out result, out abserr, ref tempStorage);
           }
-          if (null != error)
+          if (error is not null)
             result = double.NaN;
 
           return result;
@@ -1871,7 +1871,7 @@ namespace Altaxo.Calc.Probability
                       0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
         }
 
-        if (null != error1)
+        if (error1 is not null)
           return double.NaN;
         else
           return resultRight;
@@ -2074,7 +2074,7 @@ namespace Altaxo.Calc.Probability
                PDFFunc,
                new double[] { 0, xm }, 2,
                0, precision, 100, out result, out abserr, ref tempStorage);
-            if (error == null)
+            if (error is null)
             {
               error = Calc.Integration.QagpIntegration.Integration(
                PDFFuncLogInt,
@@ -2091,7 +2091,7 @@ namespace Altaxo.Calc.Probability
              new double[] { 0, xm, x1 }, 3,
              0, precision, 100, out result, out abserr, ref tempStorage);
           }
-          if (null != error)
+          if (error is not null)
             result = double.NaN;
 
           return result;
@@ -2165,7 +2165,7 @@ namespace Altaxo.Calc.Probability
                       0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
         }
 
-        if (null != error1)
+        if (error1 is not null)
           return double.NaN;
         else
           return resultRight;
@@ -2367,7 +2367,7 @@ namespace Altaxo.Calc.Probability
                PDFFunc,
                new double[] { 0, xm }, 2,
                0, precision, 100, out result, out abserr, ref tempStorage);
-            if (error == null)
+            if (error is null)
             {
               error = Calc.Integration.QagpIntegration.Integration(
                         PDFFuncLogInt,
@@ -2384,7 +2384,7 @@ namespace Altaxo.Calc.Probability
                       new double[] { 0, xm, x1 }, 3,
                       0, precision, 100, out result, out abserr, ref tempStorage);
           }
-          if (null != error)
+          if (error is not null)
             result = double.NaN;
 
           return result;
@@ -2443,7 +2443,7 @@ namespace Altaxo.Calc.Probability
                       0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
         }
 
-        if (null != error1)
+        if (error1 is not null)
           return double.NaN;
         else
           return resultRight;
@@ -2685,7 +2685,7 @@ namespace Altaxo.Calc.Probability
                new double[] { Math.Log(xwidth), Math.Log(xm + xwidth) }, 2,
                0, precision, 100, out result, out abserr, ref tempStorage);
 
-            if (error == null)
+            if (error is null)
             {
               _x0 = xm - xwidth;
               error = Calc.Integration.QagpIntegration.Integration(
@@ -2703,7 +2703,7 @@ namespace Altaxo.Calc.Probability
                new double[] { 0, xm }, 2,
                0, precision, 100, out result, out abserr, ref tempStorage);
 
-            if (error == null)
+            if (error is null)
             {
               error = Calc.Integration.QagpIntegration.Integration(
                PDFFuncLogInt,
@@ -2720,7 +2720,7 @@ namespace Altaxo.Calc.Probability
              new double[] { 0, xm, x1 }, 3,
              0, precision, 100, out result, out abserr, ref tempStorage);
           }
-          if (null != error)
+          if (error is not null)
             result = double.NaN;
 
           return result;
@@ -2744,7 +2744,7 @@ namespace Altaxo.Calc.Probability
               new double[] { 0, xm }, 2,
               0, precision, 100, out var result, out var abserr, ref tempStorage);
 
-          if (error == null)
+          if (error is null)
           {
             error = Calc.Integration.QagpIntegration.Integration(
              PDFFuncLogInt,
@@ -2754,7 +2754,7 @@ namespace Altaxo.Calc.Probability
             result += result1;
           }
 
-          if (null != error)
+          if (error is not null)
             result = double.NaN;
 
           return result;
@@ -2826,7 +2826,7 @@ namespace Altaxo.Calc.Probability
    new double[] { 0, UpperIntegrationLimit }, 2, 0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
         }
 
-        if (null != error1)
+        if (error1 is not null)
           return double.NaN;
         else
           return resultRight;
@@ -2939,7 +2939,7 @@ namespace Altaxo.Calc.Probability
                new double[] { Math.Log(xwidth), Math.Log(xm + xwidth) }, 2,
                0, precision, 100, out result, out abserr, ref tempStorage);
 
-            if (error == null)
+            if (error is null)
             {
               _x0 = xm - xwidth;
               error = Calc.Integration.QagpIntegration.Integration(
@@ -2956,7 +2956,7 @@ namespace Altaxo.Calc.Probability
                PDFFunc,
                new double[] { 0, xm }, 2,
                0, precision, 100, out result, out abserr, ref tempStorage);
-            if (error == null)
+            if (error is null)
             {
               error = Calc.Integration.QagpIntegration.Integration(
                PDFFuncLogInt,
@@ -2973,7 +2973,7 @@ namespace Altaxo.Calc.Probability
              new double[] { 0, xm, x1 }, 3,
              0, precision, 100, out result, out abserr, ref tempStorage);
           }
-          if (null != error)
+          if (error is not null)
             result = double.NaN;
 
           return result;
@@ -3042,7 +3042,7 @@ namespace Altaxo.Calc.Probability
    new double[] { 0, UpperIntegrationLimit }, 2, 0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
         }
 
-        if (null != error1)
+        if (error1 is not null)
           return double.NaN;
         else
           return resultRight;
@@ -3146,7 +3146,7 @@ namespace Altaxo.Calc.Probability
                         new double[] { Math.Log(xincrement), Math.Log(UpperIntegrationLimit - _x0) }, 2,
                         0, precision, 200, out var result2, out var abserr2, ref tempStorage);
 
-            if (null == error1 && null == error2)
+            if (error1 is null && error2 is null)
               return result1 + result2;
             else
               return double.NaN;
@@ -3158,7 +3158,7 @@ namespace Altaxo.Calc.Probability
                         new double[] { 0, xm, UpperIntegrationLimit }, 3,
                         0, precision, 200, out var result, out var abserr, ref tempStorage);
 
-            if (null == error)
+            if (error is null)
               return result;
             else
               return double.NaN;
@@ -3233,7 +3233,7 @@ namespace Altaxo.Calc.Probability
                       0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
         }
 
-        if (null != error1)
+        if (error1 is not null)
           return double.NaN;
         else
           return resultRight;
@@ -3330,7 +3330,7 @@ namespace Altaxo.Calc.Probability
                         new double[] { Math.Log(xincrement), Math.Log(UpperIntegrationLimit - _x0) }, 2,
                         0, precision, 200, out var result2, out var abserr2, ref tempStorage);
 
-            if (null == error1 && null == error2)
+            if (error1 is null && error2 is null)
               return result1 + result2;
             else
               return double.NaN;
@@ -3342,7 +3342,7 @@ namespace Altaxo.Calc.Probability
                         new double[] { 0, xm, UpperIntegrationLimit }, 3,
                         0, precision, 200, out var result, out var abserr, ref tempStorage);
 
-            if (null == error)
+            if (error is null)
               return result;
             else
               return double.NaN;
@@ -3410,7 +3410,7 @@ namespace Altaxo.Calc.Probability
                       0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
         }
 
-        if (null != error1)
+        if (error1 is not null)
           return double.NaN;
         else
           return resultRight;
@@ -3505,7 +3505,7 @@ namespace Altaxo.Calc.Probability
                         new double[] { Math.Log(xincrement), Math.Log(UpperIntegrationLimit - _x0) }, 2,
                         0, precision, 200, out var result2, out var abserr2, ref tempStorage);
 
-            if (null == error1 && null == error2)
+            if (error1 is null && error2 is null)
               return result1 + result2;
             else
               return double.NaN;
@@ -3517,7 +3517,7 @@ namespace Altaxo.Calc.Probability
                         new double[] { 0, xm, UpperIntegrationLimit }, 3,
                         0, precision, 200, out var result, out var abserr, ref tempStorage);
 
-            if (null == error)
+            if (error is null)
               return result;
             else
               return double.NaN;
@@ -3585,7 +3585,7 @@ namespace Altaxo.Calc.Probability
                       0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
         }
 
-        if (null != error1)
+        if (error1 is not null)
           return double.NaN;
         else
           return resultRight;
@@ -3680,7 +3680,7 @@ namespace Altaxo.Calc.Probability
                         new double[] { Math.Log(xincrement), Math.Log(UpperIntegrationLimit - _x0) }, 2,
                         0, precision, 200, out var result2, out var abserr2, ref tempStorage);
 
-            if (null == error1 && null == error2)
+            if (error1 is null && error2 is null)
               return result1 + result2;
             else
               return double.NaN;
@@ -3692,7 +3692,7 @@ namespace Altaxo.Calc.Probability
                         new double[] { 0, xm, UpperIntegrationLimit }, 3,
                         0, precision, 200, out var result, out var abserr, ref tempStorage);
 
-            if (null == error)
+            if (error is null)
               return result;
             else
               return double.NaN;
@@ -3760,7 +3760,7 @@ namespace Altaxo.Calc.Probability
                       0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
         }
 
-        if (null != error1)
+        if (error1 is not null)
           return double.NaN;
         else
           return resultRight;

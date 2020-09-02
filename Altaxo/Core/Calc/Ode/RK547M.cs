@@ -330,7 +330,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>Endless sequence of solution points</returns>
     public static IEnumerable<SolutionPoint> RK547M(double tstart, double tfinal, Vector x0, Func<double, Vector, Vector> f, Options opts)
     {
-      if (opts == null)
+      if (opts is null)
         throw new ArgumentException("opts");
 
       if (opts.MaxStep == double.MaxValue)
@@ -345,7 +345,7 @@ namespace Altaxo.Calc.Ode
     /// <param name="k">Runge-Kutta points</param>
     public static Vector[] RKinterp(Vector s, Vector y, Vector[] k)
     {
-      if (k == null)
+      if (k is null)
         throw new ArgumentNullException("k");
       int n = y.Length;
       int nk = k.Length;

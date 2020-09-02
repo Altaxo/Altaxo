@@ -112,7 +112,7 @@ namespace Altaxo.Calc.Integration
        gsl_integration_rule integrationRule, bool debug,
        out double result, out double abserr)
     {
-      if (null == _workSpace || limit > _workSpace.limit)
+      if (_workSpace is null || limit > _workSpace.limit)
         _workSpace = new gsl_integration_workspace(limit);
 
       return gsl_integration_qagiu(f, a, epsabs, epsrel, limit, _workSpace, out result, out abserr, integrationRule, debug);
@@ -162,7 +162,7 @@ namespace Altaxo.Calc.Integration
           ref object? tempStorage)
     {
       var algo = tempStorage as QagiuIntegration;
-      if (null == algo)
+      if (algo is null)
         tempStorage = algo = new QagiuIntegration(integrationRule, debug);
       return algo.Integrate(f, a, epsabs, epsrel, limit, integrationRule, debug, out result, out abserr);
     }
@@ -189,7 +189,7 @@ namespace Altaxo.Calc.Integration
           )
     {
       var algo = tempStorage as QagiuIntegration;
-      if (null == algo)
+      if (algo is null)
         tempStorage = algo = new QagiuIntegration();
       return algo.Integrate(f, a, epsabs, epsrel, limit, out result, out abserr);
     }

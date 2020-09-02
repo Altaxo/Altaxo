@@ -65,7 +65,7 @@ namespace Altaxo.Calc.LinearAlgebra
       // format long;
       // Check the input matrix
 
-      if (null == A)
+      if (A is null)
         throw new ArgumentNullException(nameof(A));
 
       if (MatrixMath.Min(A) < 0)
@@ -77,33 +77,33 @@ namespace Altaxo.Calc.LinearAlgebra
 
       //if ˜exist(’r’)
 
-      if (null == B0)
+      if (B0 is null)
       {
         B0 = DoubleMatrix.Random(m, r);
       }
 
-      if (null == C0)
+      if (C0 is null)
       {
         C0 = DoubleMatrix.Random(r, n);
       }
 
-      if (null == oldalpha)
+      if (oldalpha is null)
       {
         oldalpha = new DoubleVector(n);
       }
 
-      if (null == oldbeta)
+      if (oldbeta is null)
       {
         oldbeta = new DoubleVector(m);
       }
 
-      if (null == gammaB)
+      if (gammaB is null)
       {
         gammaB = new DoubleMatrix(m, 1);
         gammaB.SetMatrixElements(0.1);    // small values lead to better convergence property
       }
 
-      if (null == gammaC)
+      if (gammaC is null)
       {
         gammaC = new DoubleMatrix(n, 1);
         gammaC.SetMatrixElements(0.1); // small values lead	to better convergence property

@@ -276,7 +276,7 @@ namespace Altaxo.Calc.Fourier
 
       // allocate the scratch array
       //bool auto_scratch = false;
-      if (null == scratch)
+      if (scratch is null)
       {
         scratch = new double[size];
         //auto_scratch = true;
@@ -560,9 +560,9 @@ ErrorExit:
 
       // allocate the scratch array
       //bool auto_scratch = false;
-      if (null == scratchre)
+      if (scratchre is null)
         scratchre = new double[size];
-      if (null == scratchim)
+      if (scratchim is null)
         scratchim = new double[size];
 
       //---------------------------------------------------------------------------//
@@ -745,9 +745,9 @@ ErrorExit:
         size = row_order ? (dim[0] * dim[1] * id) : (id * dim[1] * dim[2]);
       }
 
-      if (null == scratchreal || scratchreal.Length < n)
+      if (scratchreal is null || scratchreal.Length < n)
         scratchreal = new double[size];
-      if (null == scratchimag || scratchimag.Length < n)
+      if (scratchimag is null || scratchimag.Length < n)
         scratchimag = new double[size];
 
       // First copy the arrays data and response to result and scratch,
@@ -794,7 +794,7 @@ ErrorExit:
 
       // allocate the scratch array
       //bool auto_scratch = false;
-      if (null == scratch)
+      if (scratch is null)
       {
         scratch = new double[size];
         //auto_scratch = true;

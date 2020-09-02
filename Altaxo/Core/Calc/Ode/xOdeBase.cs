@@ -173,7 +173,7 @@ namespace Altaxo.Calc.Ode
       get { return _RelTolArray; }
       set
       {
-        if (value == null || value.Length != _NEquations)
+        if (value is null || value.Length != _NEquations)
         {
           throw new ArgumentException("RelTolArray.Length is invalid, RelTolArray.Length must be equal to the number of equations.");
         }
@@ -230,7 +230,7 @@ namespace Altaxo.Calc.Ode
       get { return _AbsTolArray; }
       set
       {
-        if (value == null || value.Length != _NEquations)
+        if (value is null || value.Length != _NEquations)
         {
           throw new ArgumentException("AbsTolArray.Length is invalid, AbsTolArray.Length must be equal to the number of equations.");
         }
@@ -341,7 +341,7 @@ namespace Altaxo.Calc.Ode
 
     protected void CheckTArray(double[] tspan)
     {
-      if (tspan == null)
+      if (tspan is null)
         throw new ArgumentException("tspan = null");
       if (tspan.Length < 2)
         throw new ArgumentException("tspan.Length<2, deltaT=0, deltaT must be different of zero");

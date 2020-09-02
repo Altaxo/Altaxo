@@ -197,12 +197,12 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     private void UpdateHelpers()
     {
-      if (null == chiSquareDistributionAlpha)
+      if (chiSquareDistributionAlpha is null)
         chiSquareDistributionAlpha = new ChiSquareDistribution(alpha, generator);
       else
         chiSquareDistributionAlpha.Alpha = alpha;
 
-      if (null == chiSquareDistributionBeta)
+      if (chiSquareDistributionBeta is null)
         chiSquareDistributionBeta = new ChiSquareDistribution(beta, generator);
       else
         chiSquareDistributionBeta.Alpha = beta;

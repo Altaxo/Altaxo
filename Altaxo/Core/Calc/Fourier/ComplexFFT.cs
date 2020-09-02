@@ -260,7 +260,7 @@ namespace Altaxo.Calc.Fourier
         throw new InvalidProgramException();
       if (!(numberOfBits <= cMaxBits))
         throw new InvalidProgramException();
-      if (_reversedBits[numberOfBits - 1] == null)
+      if (_reversedBits[numberOfBits - 1] is null)
       {
         int maxBits = ComplexFFT.Pow2(numberOfBits);
         int[] reversedBits = new int[maxBits];
@@ -284,7 +284,7 @@ namespace Altaxo.Calc.Fourier
 
     private static void ReorderArray(float[] data)
     {
-      if (!(data != null))
+      if (data is null)
         throw new InvalidProgramException();
 
       int length = data.Length / 2;
@@ -310,7 +310,7 @@ namespace Altaxo.Calc.Fourier
 
     private static void ReorderArray(double[] data)
     {
-      if (!(data != null))
+      if (data is null)
         throw new InvalidProgramException();
 
       int length = data.Length / 2;
@@ -336,7 +336,7 @@ namespace Altaxo.Calc.Fourier
 
     private static void ReorderArray(Complex[] data)
     {
-      if (!(data != null))
+      if (data is null)
         throw new InvalidProgramException();
 
       int length = data.Length;
@@ -363,7 +363,7 @@ namespace Altaxo.Calc.Fourier
 
     private static void ReorderArray(ComplexFloat[] data)
     {
-      if (!(data != null))
+      if (data is null)
         throw new InvalidProgramException();
 
       int length = data.Length;
@@ -551,7 +551,7 @@ namespace Altaxo.Calc.Fourier
 
     private static void LinearFFT(float[] data, int start, int inc, int length, FourierDirection direction)
     {
-      if (!(data != null))
+      if (data is null)
         throw new InvalidProgramException();
       if (!(start >= 0))
         throw new InvalidProgramException();
@@ -646,7 +646,7 @@ namespace Altaxo.Calc.Fourier
 
     private static void LinearFFT(ComplexFloat[] data, int start, int inc, int length, FourierDirection direction)
     {
-      if (!(data != null))
+      if (data is null)
         throw new InvalidProgramException();
       if (!(start >= 0))
         throw new InvalidProgramException();
@@ -741,7 +741,7 @@ namespace Altaxo.Calc.Fourier
 
     private static void LinearFFT(Complex[] data, int start, int inc, int length, FourierDirection direction)
     {
-      if (!(data != null))
+      if (data is null)
         throw new InvalidProgramException();
       if (!(start >= 0))
         throw new InvalidProgramException();
@@ -813,7 +813,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="direction"></param>
     public static void FFT(float[] data, int length, FourierDirection direction)
     {
-      if (!(data != null))
+      if (data is null)
         throw new ArgumentNullException(nameof(data));
       if (!(data.Length >= length * 2))
         throw new ArgumentException(nameof(data) + " length should be >= length");
@@ -940,7 +940,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="direction"></param>
     public static void FFT(ComplexFloat[] data, int length, FourierDirection direction)
     {
-      if (data == null)
+      if (data is null)
       {
         throw new ArgumentNullException("data");
       }
@@ -1078,7 +1078,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="direction"></param>
     public static void FFT(ComplexFloat[] data, FourierDirection direction)
     {
-      if (data == null)
+      if (data is null)
       {
         throw new ArgumentNullException("data");
       }
@@ -1093,7 +1093,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="direction"></param>
     public static void FFT(Complex[] data, int length, FourierDirection direction)
     {
-      if (data == null)
+      if (data is null)
       {
         throw new ArgumentNullException("data");
       }
@@ -1231,7 +1231,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="direction"></param>
     public static void RFFT(float[] data, FourierDirection direction)
     {
-      if (data == null)
+      if (data is null)
       {
         throw new ArgumentNullException("data");
       }
@@ -1246,7 +1246,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="direction"></param>
     public static void RFFT(float[] data, int length, FourierDirection direction)
     {
-      if (data == null)
+      if (data is null)
       {
         throw new ArgumentNullException("data");
       }
@@ -1320,7 +1320,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="direction"></param>
     public static void FFT2(float[] data, int xLength, int yLength, FourierDirection direction)
     {
-      if (data == null)
+      if (data is null)
       {
         throw new ArgumentNullException("data");
       }
@@ -1370,7 +1370,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="direction"></param>
     public static void FFT2(ComplexFloat[] data, int xLength, int yLength, FourierDirection direction)
     {
-      if (data == null)
+      if (data is null)
       {
         throw new ArgumentNullException("data");
       }
@@ -1420,7 +1420,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="direction"></param>
     public static void FFT2(Complex[] data, int xLength, int yLength, FourierDirection direction)
     {
-      if (data == null)
+      if (data is null)
       {
         throw new ArgumentNullException("data");
       }
@@ -1471,7 +1471,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="direction"></param>
     public static void FFT3(ComplexFloat[] data, int xLength, int yLength, int zLength, FourierDirection direction)
     {
-      if (data == null)
+      if (data is null)
       {
         throw new ArgumentNullException("data");
       }
@@ -1546,7 +1546,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="direction"></param>
     public static void FFT3(Complex[] data, int xLength, int yLength, int zLength, FourierDirection direction)
     {
-      if (data == null)
+      if (data is null)
       {
         throw new ArgumentNullException("data");
       }

@@ -30,11 +30,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="x">Vector to store the result, i.e. the solution to the problem a x = b.</param>
     public void SolveDestructive(IMatrix<double> A, double[] b, double[] x)
     {
-      if (A == null)
+      if (A is null)
         throw new ArgumentNullException(nameof(A));
-      if (b == null)
+      if (b is null)
         throw new ArgumentNullException(nameof(b));
-      if (x == null)
+      if (x is null)
         throw new ArgumentException(nameof(x));
 
       switch (A)
@@ -65,11 +65,11 @@ namespace Altaxo.Calc.LinearAlgebra
     public void SolveDestructive(MatrixWrapperStructForLeftSpineJaggedArray<double> A, double[] b, double[] x)
     {
       var a = A.Array;
-      if (a == null)
+      if (a is null)
         throw new ArgumentNullException(nameof(A));
-      if (b == null)
+      if (b is null)
         throw new ArgumentNullException(nameof(b));
-      if (x == null)
+      if (x is null)
         throw new ArgumentException(nameof(x));
 
       int n = A.RowCount;
@@ -158,11 +158,11 @@ namespace Altaxo.Calc.LinearAlgebra
     public void SolveDestructive(IMatrix<double> A, IVector<double> b, IVector<double> x)
     {
       var a = A;
-      if (a == null)
+      if (a is null)
         throw new ArgumentNullException(nameof(A));
-      if (b == null)
+      if (b is null)
         throw new ArgumentNullException(nameof(b));
-      if (x == null)
+      if (x is null)
         throw new ArgumentException(nameof(x));
 
       int n = A.RowCount;
@@ -285,11 +285,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="x">Vector to store the solution.</param>
     public void SolveDestructive(SparseDoubleMatrix A, double[] b, double[] x)
     {
-      if (A == null)
+      if (A is null)
         throw new ArgumentNullException(nameof(A));
-      if (b == null)
+      if (b is null)
         throw new ArgumentNullException(nameof(b));
-      if (x == null)
+      if (x is null)
         throw new ArgumentNullException(nameof(x));
       int n = A.RowCount;
       if (!(n == b.Length))
@@ -375,11 +375,11 @@ namespace Altaxo.Calc.LinearAlgebra
     public void SolveDestructiveBanded(MatrixWrapperStructForLeftSpineJaggedArray<double> A, int lowerBandwidth, int upperBandwidth, double[] b, double[] x)
     {
       var a = A.Array;
-      if (a == null)
+      if (a is null)
         throw new ArgumentNullException(nameof(A));
-      if (b == null)
+      if (b is null)
         throw new ArgumentNullException(nameof(b));
-      if (x == null)
+      if (x is null)
         throw new ArgumentException(nameof(x));
 
       int n = A.RowCount;

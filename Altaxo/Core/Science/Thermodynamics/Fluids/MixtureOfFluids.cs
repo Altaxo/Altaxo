@@ -182,7 +182,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
       for (int i = 0; i < _fluidsAndMoleFractions.Length; ++i)
       {
-        if (fluidsAndMoleFractions[i].pureFluid == null)
+        if (fluidsAndMoleFractions[i].pureFluid is null)
           throw new ArgumentNullException(string.Format("Fluid at index {0} is null!", i));
 
         if (!(0 <= fluidsAndMoleFractions[i].moleFraction && fluidsAndMoleFractions[i].moleFraction <= 1))

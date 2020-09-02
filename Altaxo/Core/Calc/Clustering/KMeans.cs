@@ -221,7 +221,7 @@ namespace Altaxo.Calc.Clustering
     /// <returns>True if successful; otherwise, false.</returns>
     public bool TryEvaluate(IEnumerable<TData> data, int numberOfClusters)
     {
-      if (data == null)
+      if (data is null)
         throw new ArgumentNullException(nameof(data));
       _pointsData = data.ToArray();
 

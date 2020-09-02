@@ -598,7 +598,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex Parse(string s)
     {
-      if (s == null)
+      if (s is null)
       {
         throw new ArgumentNullException(s, "s cannot be null.");
       }

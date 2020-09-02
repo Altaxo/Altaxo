@@ -70,7 +70,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="cols">Number of columns.</param>
     public MatrixWrapperStructForLeftSpineJaggedArray(T[][] array, int rows, int cols)
     {
-      if (null == array)
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
       if (rows < 0 || rows > array.Length)
         throw new ArgumentOutOfRangeException(nameof(rows), "Provided array is shorter than number of rows");
@@ -170,7 +170,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="cols">Number of columns.</param>
     public MatrixWrapperStructForTopSpineJaggedArray(T[][] array, int rows, int cols)
     {
-      if (null == array)
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
       if (cols < 0 || cols > array.Length)
         throw new ArgumentOutOfRangeException(nameof(rows), "Provided array is shorter than number of columns");
@@ -271,7 +271,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="cols">Number of columns.</param>
     public MatrixWrapperStructForColumnMajorOrderLinearArray(T[] array, int rows, int cols)
     {
-      if (null == array)
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
       if (rows < 0)
         throw new ArgumentOutOfRangeException(nameof(rows), "Provided array is shorter than number of rows");
@@ -366,7 +366,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="cols">Number of columns.</param>
     public MatrixWrapperStructForRowMajorOrderLinearArray(T[] array, int rows, int cols)
     {
-      if (null == array)
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
       if (rows < 0)
         throw new ArgumentOutOfRangeException(nameof(rows), "Provided array is shorter than number of rows");

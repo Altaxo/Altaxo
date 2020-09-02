@@ -48,11 +48,11 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
     {
       // no exception throwing on n - according to the MKL doc - if n is not positive, parameters will remain unaltered
       // equally tested this on the ATLAS dll - same result when n < 0
-      if (X == null)
+      if (X is null)
       {
         throw new ArgumentException("X cannot be null.", "X");
       }
-      if (Y == null)
+      if (Y is null)
       {
         throw new ArgumentException("Y cannot be null.", "Y");
       }

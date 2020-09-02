@@ -142,7 +142,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public ComplexDoubleSVDDecomp(IROComplexDoubleMatrix matrix, bool computeVectors)
     {
-      if (matrix == null)
+      if (matrix is null)
       {
         throw new System.ArgumentNullException("matrix cannot be null.");
       }
@@ -155,7 +155,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public ComplexDoubleSVDDecomp(IROComplexDoubleMatrix matrix)
     {
-      if (matrix == null)
+      if (matrix is null)
       {
         throw new System.ArgumentNullException("matrix cannot be null.");
       }

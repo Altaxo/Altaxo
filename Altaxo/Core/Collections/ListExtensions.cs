@@ -81,7 +81,7 @@ namespace Altaxo.Collections
         throw new ArgumentException("destinationIndex>=Count");
 
       var oc = list as System.Collections.ObjectModel.ObservableCollection<T>; // special case list is an observable collection, which has an own Move operation
-      if (null != oc)
+      if (oc is not null)
       {
         oc.Move(originalIndex, destinationIndex);
         return;

@@ -636,9 +636,9 @@ namespace Altaxo.Calc.Interpolation
 
     public void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
-      if (null == _x)
+      if (_x is null)
         _x = new DoubleVector();
-      if (null == _y)
+      if (_y is null)
         _y = new DoubleVector();
 
       _x.CopyFrom(xvec);

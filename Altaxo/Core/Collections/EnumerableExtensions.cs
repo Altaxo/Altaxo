@@ -90,7 +90,7 @@ namespace Altaxo.Collections
     /// <returns>First value of the enumeration, or, if the enumeration is empty, the other value provided in the arguments.</returns>
     public static T FirstOr<T>(this IEnumerable<T> org, T otherValue)
     {
-      if (null == org)
+      if (org is null)
         throw new ArgumentNullException(nameof(org));
 
       using (var it = org.GetEnumerator())
@@ -111,7 +111,7 @@ namespace Altaxo.Collections
     /// <returns>Last value of the enumeration, or, if the enumeration is empty, the other value provided in the arguments.</returns>
     public static T LastOr<T>(this IEnumerable<T> org, T otherValue)
     {
-      if (null == org)
+      if (org is null)
         throw new ArgumentNullException(nameof(org));
 
       T result = otherValue;
@@ -135,7 +135,7 @@ namespace Altaxo.Collections
     /// <returns>True if successful; otherwise false.</returns>
     public static bool TryGetFirstAndLast<T>(this IEnumerable<T> org, [MaybeNullWhen(false)] out T first, [MaybeNullWhen(false)] out T last)
     {
-      if (null == org)
+      if (org is null)
         throw new ArgumentNullException(nameof(org));
 
       using (var it = org.GetEnumerator())
@@ -165,7 +165,7 @@ namespace Altaxo.Collections
     /// <exception cref="System.ArgumentNullException">The original enumeration was <c>null</c>.</exception>
     public static IEnumerable<T> TakeAllButLast<T>(this IEnumerable<T> org)
     {
-      if (null == org)
+      if (org is null)
         throw new ArgumentNullException("org");
 
       using (var it = org.GetEnumerator())
@@ -193,7 +193,7 @@ namespace Altaxo.Collections
     /// <exception cref="System.ArgumentNullException">The enumeration to test is <c>null</c>.</exception>
     public static bool IsEmpty<T>(this IEnumerable<T> org)
     {
-      if (null == org)
+      if (org is null)
         throw new ArgumentNullException("org");
 
       bool result;
@@ -340,7 +340,7 @@ namespace Altaxo.Collections
     /// <returns></returns>
     public static IEnumerable<T> TakeFromUpperIndexInclusiveDownToLowerIndexInclusive<T>(this IList<T> list, int upperIndexInclusive, int lowerIndexInclusive)
     {
-      if (null == list)
+      if (list is null)
         throw new ArgumentNullException("list");
       if (!(upperIndexInclusive >= lowerIndexInclusive))
         throw new ArgumentException("upperIndexInclusive should be >= lowerIndexInclusive");
@@ -359,7 +359,7 @@ namespace Altaxo.Collections
     /// <returns>All elements of a list, starting from index <paramref name="upperIndexExclusive"/> - 1 down to the index <paramref name="lowerIndexInclusive"/>.</returns>
     public static IEnumerable<T> TakeFromUpperIndexExclusiveDownToLowerIndexInclusive<T>(this IList<T> list, int upperIndexExclusive, int lowerIndexInclusive)
     {
-      if (null == list)
+      if (list is null)
         throw new ArgumentNullException(nameof(list));
       if (lowerIndexInclusive < 0)
         throw new ArgumentOutOfRangeException(nameof(lowerIndexInclusive) + " should be >= 0");

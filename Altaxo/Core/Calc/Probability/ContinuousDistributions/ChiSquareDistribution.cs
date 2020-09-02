@@ -95,7 +95,7 @@ namespace Altaxo.Calc.Probability
         throw new ArgumentOutOfRangeException("F is out of range (has to be positive)");
 
       this.F = F;
-      if (gamma == null)
+      if (gamma is null)
         gamma = new GammaDistribution(0.5 * F, 1);
       else
         gamma.Initialize(0.5 * F, 1);

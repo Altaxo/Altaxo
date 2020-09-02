@@ -204,7 +204,7 @@ namespace Altaxo.Collections.Text
       ISet<T> sSet;
       if (useSortedMapping)
       {
-        sSet = null != customSortingComparer ? new SortedSet<T>(customSortingComparer) : new SortedSet<T>();
+        sSet = customSortingComparer is not null ? new SortedSet<T>(customSortingComparer) : new SortedSet<T>();
       }
       else
       {

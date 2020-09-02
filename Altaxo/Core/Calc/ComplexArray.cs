@@ -152,7 +152,7 @@ namespace Altaxo.Calc
     /// <param name="offset"></param>
     public static void Shift(Complex[] array, int offset)
     {
-      if (!(array != null))
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
       if (!(offset >= 0))
         throw new ArgumentOutOfRangeException(nameof(offset) + " should be >= 0");
@@ -184,7 +184,7 @@ namespace Altaxo.Calc
     /// <param name="offset"></param>
     public static void Shift(ComplexFloat[] array, int offset)
     {
-      if (!(array != null))
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
       if (!(offset >= 0))
         throw new ArgumentOutOfRangeException(nameof(offset) + " should be >= 0");
@@ -398,7 +398,7 @@ namespace Altaxo.Calc
     /// <param name="scale"></param>
     public static void Scale(Complex[] array, double scale)
     {
-      if (!(array != null))
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
 
       int length = array.Length;
@@ -417,7 +417,7 @@ namespace Altaxo.Calc
     /// <param name="length"></param>
     public static void Scale(Complex[] array, double scale, int start, int length)
     {
-      if (!(array != null))
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
       if (!(start >= 0))
         throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
@@ -439,7 +439,7 @@ namespace Altaxo.Calc
     /// <param name="scale"></param>
     public static void Scale(Complex[] array, Complex scale)
     {
-      if (!(array != null))
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
 
       int length = array.Length;
@@ -458,7 +458,7 @@ namespace Altaxo.Calc
     /// <param name="length"></param>
     public static void Scale(Complex[] array, Complex scale, int start, int length)
     {
-      if (!(array != null))
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
       if (!(start >= 0))
         throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
@@ -480,7 +480,7 @@ namespace Altaxo.Calc
     /// <param name="scale"></param>
     public static void Scale(ComplexFloat[] array, float scale)
     {
-      if (!(array != null))
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
 
       int length = array.Length;
@@ -499,7 +499,7 @@ namespace Altaxo.Calc
     /// <param name="length"></param>
     public static void Scale(ComplexFloat[] array, float scale, int start, int length)
     {
-      if (!(array != null))
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
       if (!(start >= 0))
         throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
@@ -521,7 +521,7 @@ namespace Altaxo.Calc
     /// <param name="scale"></param>
     public static void Scale(ComplexFloat[] array, ComplexFloat scale)
     {
-      if (!(array != null))
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
 
       int length = array.Length;
@@ -540,7 +540,7 @@ namespace Altaxo.Calc
     /// <param name="length"></param>
     public static void Scale(ComplexFloat[] array, ComplexFloat scale, int start, int length)
     {
-      if (!(array != null))
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
       if (!(start >= 0))
         throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
@@ -576,11 +576,11 @@ namespace Altaxo.Calc
     /// <param name="result"></param>
     public static void Multiply(Complex[] lhs, Complex[] rhs, Complex[] result)
     {
-      if (!(lhs != null))
+      if (lhs is null)
         throw new ArgumentNullException(nameof(lhs));
-      if (!(rhs != null))
+      if (rhs is null)
         throw new ArgumentNullException(nameof(rhs));
-      if (!(result != null))
+      if (result is null)
         throw new ArgumentNullException(nameof(result));
       if (!(lhs.Length == rhs.Length))
         throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
@@ -613,11 +613,11 @@ namespace Altaxo.Calc
     /// <param name="result"></param>
     public static void Multiply(ComplexFloat[] lhs, ComplexFloat[] rhs, ComplexFloat[] result)
     {
-      if (!(lhs != null))
+      if (lhs is null)
         throw new ArgumentNullException(nameof(lhs));
-      if (!(rhs != null))
+      if (rhs is null)
         throw new ArgumentNullException(nameof(rhs));
-      if (!(result != null))
+      if (result is null)
         throw new ArgumentNullException(nameof(result));
       if (!(lhs.Length == rhs.Length))
         throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
@@ -652,11 +652,11 @@ namespace Altaxo.Calc
     /// <param name="result"></param>
     public static void Divide(Complex[] lhs, Complex[] rhs, Complex[] result)
     {
-      if (!(lhs != null))
+      if (lhs is null)
         throw new ArgumentNullException(nameof(lhs));
-      if (!(rhs != null))
+      if (rhs is null)
         throw new ArgumentNullException(nameof(rhs));
-      if (!(result != null))
+      if (result is null)
         throw new ArgumentNullException(nameof(result));
       if (!(lhs.Length == rhs.Length))
         throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
@@ -689,11 +689,11 @@ namespace Altaxo.Calc
     /// <param name="result"></param>
     public static void Divide(ComplexFloat[] lhs, ComplexFloat[] rhs, ComplexFloat[] result)
     {
-      if (!(lhs != null))
+      if (lhs is null)
         throw new ArgumentNullException(nameof(lhs));
-      if (!(rhs != null))
+      if (rhs is null)
         throw new ArgumentNullException(nameof(rhs));
-      if (!(result != null))
+      if (result is null)
         throw new ArgumentNullException(nameof(result));
       if (!(lhs.Length == rhs.Length))
         throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
@@ -747,9 +747,9 @@ namespace Altaxo.Calc
     /// <param name="source"></param>
     public static void Copy(Complex[] dest, Complex[] source)
     {
-      if (!(dest != null))
+      if (dest is null)
         throw new ArgumentNullException(nameof(dest));
-      if (!(source != null))
+      if (source is null)
         throw new ArgumentNullException(nameof(source));
       if (!(dest.Length == source.Length))
         throw new ArgumentException("Length of " + nameof(dest) + " and " + nameof(source) + " are different");
@@ -766,9 +766,9 @@ namespace Altaxo.Calc
     /// <param name="source"></param>
     public static void Copy(ComplexFloat[] dest, ComplexFloat[] source)
     {
-      if (!(dest != null))
+      if (dest is null)
         throw new ArgumentNullException(nameof(dest));
-      if (!(source != null))
+      if (source is null)
         throw new ArgumentNullException(nameof(source));
       if (!(dest.Length == source.Length))
         throw new ArgumentException("Length of " + nameof(dest) + " and " + nameof(source) + " are different");

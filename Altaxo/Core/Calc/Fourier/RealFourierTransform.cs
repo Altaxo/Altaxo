@@ -132,7 +132,7 @@ namespace Altaxo.Calc.Fourier
             }
             else
             {
-              if (null == _tempArr1N)
+              if (_tempArr1N is null)
                 _tempArr1N = new double[_numberOfData];
 
               _tempArr1N[0] = 0;
@@ -171,7 +171,7 @@ namespace Altaxo.Calc.Fourier
 
     private double[] NullifyTempArrN1()
     {
-      if (null == _tempArr1N)
+      if (_tempArr1N is null)
       {
         _tempArr1N = new double[_numberOfData];
       }

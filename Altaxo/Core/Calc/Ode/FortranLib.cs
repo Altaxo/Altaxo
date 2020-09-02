@@ -35,7 +35,7 @@ namespace Altaxo.Calc.Ode
     /// <returns></returns>
     public static int LEN_TRIM(string s)
     {
-      if (s == null)
+      if (s is null)
         return 0;
 
       int lentrim = s.Length;

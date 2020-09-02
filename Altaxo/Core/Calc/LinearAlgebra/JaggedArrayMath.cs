@@ -84,12 +84,12 @@ namespace Altaxo.Calc.LinearAlgebra
 
       public TransposedROMatrix(double[][] arr, int rows, int cols)
       {
-        if (arr == null)
+        if (arr is null)
           throw new ArgumentNullException("arr");
         if (arr.Length < cols)
           throw new ArgumentException("Number of columns bigger than length of array");
         for (int i = 0; i < arr.Length; i++)
-          if (arr[i] == null || arr[i].Length < rows)
+          if (arr[i] is null || arr[i].Length < rows)
             throw new ArgumentException("Number of rows bigger than subarray at index " + i.ToString());
 
         _arr = arr;

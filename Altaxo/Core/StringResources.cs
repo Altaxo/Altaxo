@@ -114,10 +114,10 @@ namespace Altaxo
 
       string? result;
       mgr = _resourceManagersByLanguage[cu];
-      if (null != mgr && null != (result = mgr.GetString(resourceKey.Key)))
+      if (mgr is not null && (result = mgr.GetString(resourceKey.Key)) is not null)
         return result;
 
-      if (null != (result = _defaultResourceMgr.GetString(resourceKey.Key)))
+      if ((result = _defaultResourceMgr.GetString(resourceKey.Key)) is not null)
         return result;
 
       return resourceKey.ExampleStringValue;

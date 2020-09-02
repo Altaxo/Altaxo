@@ -103,7 +103,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         _calib.XWeights[i] = cal.XWeights;
         _calib.CrossProduct[i] = cal.CrossProduct;
 
-        if (_PRESS == null)
+        if (_PRESS is null)
           _PRESS = VectorMath.CreateExtensibleVector<double>(r.PRESS.Length);
         VectorMath.Add(_PRESS, r.PRESS, _PRESS);
       }

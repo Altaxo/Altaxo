@@ -40,7 +40,7 @@ namespace Altaxo.Calc.RootFinding
     /// <returns>All the real and complex roots that are found are returned in a list of complex numbers. The list is not neccessarily sorted.</returns>
     public static List<Complex> FindRoots(params double[] Input)
     {
-      if (null == Input)
+      if (Input is null)
         throw new ArgumentNullException("Input");
 
       //Actual degree calculated from the items in the Input ParamArray

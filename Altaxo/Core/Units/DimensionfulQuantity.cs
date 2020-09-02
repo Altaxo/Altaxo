@@ -127,7 +127,7 @@ namespace Altaxo.Units
     {
       get
       {
-        return _unit == null;
+        return _unit is null;
       }
     }
 
@@ -175,13 +175,13 @@ namespace Altaxo.Units
         if (double.IsNaN(_value))
           return _value;
 
-        if (null == _unit)
+        if (_unit is null)
           throw new InvalidOperationException("This instance is empty");
 
         double result = _value;
-        if (null != _prefix)
+        if (_prefix is not null)
           result = _prefix.ToSIUnit(result);
-        if (null != _unit)
+        if (_unit is not null)
           result = _unit.ToSIUnit(result);
         return result;
       }
@@ -271,7 +271,7 @@ namespace Altaxo.Units
     /// <returns>The value is 1, if this quantity is greater than the other quantity; 0 if both quantities are equal, and -1 if this quantity is less than the other quantity.</returns>
     public int CompareTo(DimensionfulQuantity other)
     {
-      if (null == _unit || null == other._unit || _unit.SIUnit != other._unit.SIUnit)
+      if (_unit is null || other._unit is null || _unit.SIUnit != other._unit.SIUnit)
         throw new ArgumentException($"Incompatible units in comparison of a quantity in {_unit?.Name} with a quantity in {other._unit?.Name}");
 
       double thisval = AsValueIn(_unit.SIUnit);

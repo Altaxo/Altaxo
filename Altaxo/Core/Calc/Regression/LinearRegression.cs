@@ -553,9 +553,9 @@ namespace Altaxo.Calc.Regression
     /// <returns>The fit.</returns>
     public static LinearFitBySvd FitPolymomial(int order, IReadOnlyList<double> xValues, IReadOnlyList<double> yValues, int start, int count, bool doRemoveNaNValues)
     {
-      if (!(xValues != null))
+      if (xValues is null)
         throw new ArgumentNullException(nameof(xValues));
-      if (!(yValues != null))
+      if (yValues is null)
         throw new ArgumentNullException(nameof(yValues));
       if (!(start >= 0))
         throw new ArgumentOutOfRangeException(nameof(count), "must be >=0");
@@ -613,9 +613,9 @@ namespace Altaxo.Calc.Regression
     /// <returns>The fit.</returns>
     public static LinearFitBySvd FitPolymomialDestructive(int order, double[] xValues, double[] yValues, double[]? errorValues, int count)
     {
-      if (!(xValues != null))
+      if (xValues is null)
         throw new ArgumentNullException(nameof(xValues));
-      if (!(yValues != null))
+      if (yValues is null)
         throw new ArgumentNullException(nameof(yValues));
       if (!(count > 0))
         throw new ArgumentOutOfRangeException(nameof(count), "must be >0");
@@ -623,7 +623,7 @@ namespace Altaxo.Calc.Regression
         throw new ArgumentOutOfRangeException(nameof(count), "exceeds capacity of array " + nameof(xValues));
       if (!(count <= yValues.Length))
         throw new ArgumentOutOfRangeException(nameof(count), "exceeds capacity of array " + nameof(yValues));
-      if (null != errorValues && !(count <= errorValues.Length))
+      if (errorValues is not null && !(count <= errorValues.Length))
         throw new ArgumentOutOfRangeException(nameof(count), "exceeds capacity of array " + nameof(errorValues));
 
       var xarr = xValues;

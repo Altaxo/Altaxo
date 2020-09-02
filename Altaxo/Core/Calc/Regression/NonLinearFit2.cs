@@ -180,12 +180,12 @@ namespace Altaxo.Calc.Regression
         throw new ArithmeticException(string.Format("Cannot solve a problem with fewer measurements {0} than unknowns {1}", n, m));
       }
 
-      if (null == jacf)
+      if (jacf is null)
       {
         throw new ArgumentException("No function specified for computing the jacobian. If no such function is available, use LEVMAR_DIF instead");
       }
 
-      if (null != opts)
+      if (opts is not null)
       {
         tau = opts[0];
         eps1 = opts[1];
@@ -204,7 +204,7 @@ namespace Altaxo.Calc.Regression
 
       /* set up work arrays */
       var work = workingmemory as WorkArrays;
-      if (null == work)
+      if (work is null)
       {
         work = new WorkArrays(n, m);
         workingmemory = work;
@@ -223,7 +223,7 @@ namespace Altaxo.Calc.Regression
       /* compute e=x - f(p) and its L2 norm */
       func(p, hx, adata);
       nfev = 1;
-      if (weights == null)
+      if (weights is null)
       {
         for (i = 0, p_eL2 = 0.0; i < n; ++i)
         {
@@ -282,7 +282,7 @@ namespace Altaxo.Calc.Regression
             {
               int lm;
 
-              if (weights == null)
+              if (weights is null)
               {
                 for (l = 0, tmp = 0.0; l < n; ++l)
                 {
@@ -417,7 +417,7 @@ if(!(k%100)){
 
             func(pDp, hx, adata);
             ++nfev; /* evaluate function at p + Dp */
-            if (weights == null)
+            if (weights is null)
             {
               for (i = 0, pDp_eL2 = 0.0; i < n; ++i)
               { /* compute ||e(pDp)||_2 */
@@ -480,7 +480,7 @@ if(!(k%100)){
       for (i = 0; i < m; ++i) /* restore diagonal J^T J entries */
         jacTjac[i * m + i] = diag_jacTjac[i];
 
-      if (null != info)
+      if (info is not null)
       {
         info[0] = init_p_eL2;
         info[1] = p_eL2;
@@ -497,7 +497,7 @@ if(!(k%100)){
       }
 
       /* covariance matrix */
-      if (null != covar)
+      if (covar is not null)
       {
         LEVMAR_COVAR(jacTjac, covar, p_eL2, m, n);
       }
@@ -583,7 +583,7 @@ if(!(k%100)){
         throw new ArithmeticException(string.Format("Cannot solve a problem with fewer measurements {0} than unknowns {1}", n, m));
       }
 
-      if (opts != null)
+      if (opts is not null)
       {
         tau = opts[0];
         eps1 = opts[1];
@@ -609,7 +609,7 @@ if(!(k%100)){
       }
 
       var work = workingmemory as WorkArrays;
-      if (null == work)
+      if (work is null)
       {
         work = new WorkArrays(n, m);
         workingmemory = work;
@@ -889,7 +889,7 @@ if(!(k%100)){
       for (i = 0; i < m; ++i) /* restore diagonal J^T J entries */
         jacTjac[i * m + i] = diag_jacTjac[i];
 
-      if (info != null)
+      if (info is not null)
       {
         info[0] = init_p_eL2;
         info[1] = p_eL2;
@@ -906,7 +906,7 @@ if(!(k%100)){
       }
 
       /* covariance matrix */
-      if (covar != null)
+      if (covar is not null)
       {
         LEVMAR_COVAR(jacTjac, covar, p_eL2, m, n);
       }
@@ -1030,7 +1030,7 @@ if(!(k%100)){
             for (j = Math.Max(jj, i); j < Math.Min(jj + bsize, m); ++j)
             {
               sum = 0.0;
-              if (null == weights)
+              if (weights is null)
               {
                 for (k = kk; k < Math.Min(kk + bsize, n); ++k)
                 {

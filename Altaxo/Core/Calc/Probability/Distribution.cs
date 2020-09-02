@@ -106,7 +106,7 @@ namespace Altaxo.Calc.Probability
     /// </exception>
     protected Distribution(Generator generator)
     {
-      if (generator == null)
+      if (generator is null)
       {
         string message = string.Format(null, ExceptionMessages.ArgumentNull, "generator");
         throw new ArgumentNullException("generator", message);

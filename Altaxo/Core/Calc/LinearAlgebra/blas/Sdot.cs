@@ -48,11 +48,11 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       {
         throw new ArgumentException("n must be zero or greater", "n");
       }
-      if (X == null)
+      if (X is null)
       {
         throw new ArgumentNullException("X", "X cannot be null.");
       }
-      if (Y == null)
+      if (Y is null)
       {
         throw new ArgumentNullException("Y", "Y cannot be null.");
       }
@@ -97,11 +97,11 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       {
         throw new ArgumentException("n must be zero or greater", "n");
       }
-      if (X == null)
+      if (X is null)
       {
         throw new ArgumentNullException("X cannot be null.", "X");
       }
-      if (Y == null)
+      if (Y is null)
       {
         throw new ArgumentNullException("Y cannot be null.", "Y");
       }

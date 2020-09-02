@@ -49,7 +49,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       {
         return 0;
       }
-      if (X == null)
+      if (X is null)
       {
         throw new ArgumentNullException("X", "X cannot be null.");
       }
@@ -87,7 +87,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       {
         return 0;
       }
-      if (X == null)
+      if (X is null)
       {
         throw new ArgumentNullException("X", "X cannot be null.");
       }
@@ -125,7 +125,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       {
         return 0;
       }
-      if (X == null)
+      if (X is null)
       {
         throw new ArgumentNullException("X", "X cannot be null.");
       }
@@ -163,7 +163,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       {
         return 0;
       }
-      if (X == null)
+      if (X is null)
       {
         throw new ArgumentNullException("X", "X cannot be null.");
       }

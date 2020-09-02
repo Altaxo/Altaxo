@@ -100,13 +100,13 @@ namespace Altaxo.Calc.Integration
       bool debug,
       out double result, out double abserr)
     {
-      if (null == _workSpace || limit > _workSpace.limit)
+      if (_workSpace is null || limit > _workSpace.limit)
         _workSpace = new gsl_integration_workspace(limit);
 
-      if (null == _cycleWorkspace || limit > _cycleWorkspace.limit)
+      if (_cycleWorkspace is null || limit > _cycleWorkspace.limit)
         _cycleWorkspace = new gsl_integration_workspace(limit);
 
-      if (null == _qawoTable)
+      if (_qawoTable is null)
       {
         _qawoTable = new gsl_integration_qawo_table(omega, 1, oscTerm == OscillatoryTerm.Cosine ? gsl_integration_qawo_enum.GSL_INTEG_COSINE : gsl_integration_qawo_enum.GSL_INTEG_SINE, _defaultOscTableLength);
       }
@@ -129,7 +129,7 @@ namespace Altaxo.Calc.Integration
           )
     {
       var algo = tempStorage as QawfIntegration;
-      if (null == algo)
+      if (algo is null)
         tempStorage = algo = new QawfIntegration();
       return algo.Integrate(f, a, oscTerm, omega, epsabs, limit, out result, out abserr);
     }
@@ -286,12 +286,12 @@ namespace Altaxo.Calc.Integration
           correc = error1;
         }
 
-        if (null != status)
+        if (status is not null)
         {
           eps = Math.Max(initial_eps, correc * (1.0 - p));
         }
 
-        if (null != status && total_error < 10 * correc && iteration > 3)
+        if (status is not null && total_error < 10 * correc && iteration > 3)
         {
           goto compute_result;
         }

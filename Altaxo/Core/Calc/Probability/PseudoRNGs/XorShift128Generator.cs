@@ -550,7 +550,7 @@ namespace Altaxo.Calc.Probability
     /// </exception>
     public override void NextBytes(byte[] buffer)
     {
-      if (buffer == null)
+      if (buffer is null)
       {
         string message = string.Format(null, ExceptionMessages.ArgumentNull, "buffer");
         throw new ArgumentNullException("buffer", message);

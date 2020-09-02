@@ -151,7 +151,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
     public DoubleMatrix(DoubleMatrix source)
     {
-      if (source == null)
+      if (source is null)
       {
         throw new ArgumentNullException("source", "The input DoubleMatrix cannot be null.");
       }
@@ -183,7 +183,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
     public DoubleMatrix(FloatMatrix source)
     {
-      if (source == null)
+      if (source is null)
       {
         throw new ArgumentNullException("source", "The input FloatMatrix cannot be null.");
       }
@@ -215,7 +215,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException"><c>values</c> is null.</exception>
     public DoubleMatrix(double[,] values)
     {
-      if (values == null)
+      if (values is null)
       {
         throw new ArgumentNullException("values", "The input matrix cannot be null.");
       }
@@ -249,7 +249,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException"><c>values</c> is null.</exception>
     public DoubleMatrix(float[,] values)
     {
-      if (values == null)
+      if (values is null)
       {
         throw new ArgumentNullException("values", "The input matrix cannot be null.");
       }
@@ -309,7 +309,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="source"><c>FloatMatrix</c> to make a deep copy conversion from.</param>
     public static implicit operator DoubleMatrix?(FloatMatrix? source)
     {
-      if (source == null)
+      if (source is null)
       {
         return null;
       }
@@ -373,7 +373,7 @@ namespace Altaxo.Calc.LinearAlgebra
     [return: NotNullIfNotNull("source")]
     public static implicit operator DoubleMatrix?(double[,]? source)
     {
-      if (source == null)
+      if (source is null)
       {
         return null;
       }
@@ -385,7 +385,7 @@ namespace Altaxo.Calc.LinearAlgebra
     [return: NotNullIfNotNull("source")]
     public static DoubleMatrix? ToDoubleMatrix(double[,]? source)
     {
-      if (source == null)
+      if (source is null)
       {
         return null;
       }
@@ -397,7 +397,7 @@ namespace Altaxo.Calc.LinearAlgebra
     [return: NotNullIfNotNull("source")]
     public static implicit operator DoubleMatrix?(float[,]? source)
     {
-      return source == null ? null : new DoubleMatrix(source);
+      return source is null ? null : new DoubleMatrix(source);
     }
 
     ///<summary>Implicit conversion from <c>float</c> array</summary>
@@ -405,7 +405,7 @@ namespace Altaxo.Calc.LinearAlgebra
     [return: NotNullIfNotNull("source")]
     public static DoubleMatrix? ToDoubleMatrix(float[,]? source)
     {
-      return source == null ? null : new DoubleMatrix(source);
+      return source is null ? null : new DoubleMatrix(source);
     }
 
     ///<summary>Creates an identity matrix.</summary>
@@ -441,9 +441,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public static DoubleMatrix FromProductOf(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
-      if (null == x)
+      if (x is null)
         throw new ArgumentNullException(nameof(x));
-      if (null == y)
+      if (y is null)
         throw new ArgumentNullException(nameof(y));
 
       var xl = x.Count;
@@ -830,7 +830,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentOutOfRangeException(nameof(columnNumber), "column must be greater than or equal to zero and less than ColumnLength.");
       }
-      if (null == destinationVector)
+      if (destinationVector is null)
         throw new ArgumentNullException(nameof(destinationVector));
       if (destinationVector.Count != RowCount)
         throw new RankException("destinationVector.Length is not equal to matrix.Rows");
@@ -864,7 +864,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="data">The data to file the row with.</param>
     public void SetRow(int row, DoubleVector data)
     {
-      if (data == null)
+      if (data is null)
       {
         throw new ArgumentNullException("data", "The data vector cannot be null.");
       }
@@ -890,7 +890,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="data">The data to file the row with.</param>
     public void SetRow(int row, double[] data)
     {
-      if (data == null)
+      if (data is null)
       {
         throw new ArgumentNullException("data", "The data array cannot be null.");
       }
@@ -916,7 +916,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="data">The data to file the column with.</param>
     public void SetColumn(int column, DoubleVector data)
     {
-      if (data == null)
+      if (data is null)
       {
         throw new ArgumentNullException("data", "The data vector cannot be null.");
       }
@@ -945,7 +945,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="data">The data to file the column with.</param>
     public void SetColumn(int column, double[] data)
     {
-      if (data == null)
+      if (data is null)
       {
         throw new ArgumentNullException("data", "The data vector cannot be null.");
       }
@@ -1146,7 +1146,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix operator -(DoubleMatrix a)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1172,7 +1172,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix Negate(DoubleMatrix a)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1186,7 +1186,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">either matrix is null.</exception>
     public static DoubleMatrix operator -(DoubleMatrix a, DoubleMatrix b)
     {
-      if (a == null || b == null)
+      if (a is null || b is null)
       {
         throw new ArgumentNullException("Matrices cannot be null");
       }
@@ -1218,7 +1218,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix operator -(double a, DoubleMatrix b)
     {
-      if (b == null)
+      if (b is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1246,7 +1246,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix operator -(DoubleMatrix a, double b)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1274,7 +1274,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">either matrix is null.</exception>
     public static DoubleMatrix Subtract(DoubleMatrix a, DoubleMatrix b)
     {
-      if (a == null || b == null)
+      if (a is null || b is null)
       {
         throw new ArgumentNullException("Matrices cannot be null");
       }
@@ -1289,7 +1289,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix Subtract(double a, DoubleMatrix b)
     {
-      if (b == null)
+      if (b is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1304,7 +1304,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix Subtract(DoubleMatrix a, double b)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1317,7 +1317,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public void Subtract(DoubleMatrix a)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1365,7 +1365,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix operator +(DoubleMatrix a)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1380,7 +1380,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">either matrix is null.</exception>
     public static DoubleMatrix operator +(DoubleMatrix a, DoubleMatrix b)
     {
-      if (a == null || b == null)
+      if (a is null || b is null)
       {
         throw new ArgumentNullException("Matrices cannot be null");
       }
@@ -1413,7 +1413,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix operator +(double a, DoubleMatrix b)
     {
-      if (b == null)
+      if (b is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1441,7 +1441,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix operator +(DoubleMatrix a, double b)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1469,7 +1469,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">either matrix is null.</exception>
     public static DoubleMatrix Add(DoubleMatrix a, DoubleMatrix b)
     {
-      if (a == null || b == null)
+      if (a is null || b is null)
       {
         throw new ArgumentNullException("Matrices cannot be null");
       }
@@ -1483,7 +1483,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix Add(double a, DoubleMatrix b)
     {
-      if (b == null)
+      if (b is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1497,7 +1497,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix Add(DoubleMatrix a, double b)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1510,7 +1510,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public void Add(DoubleMatrix a)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1559,7 +1559,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix operator /(DoubleMatrix a, double b)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1585,7 +1585,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix Divide(DoubleMatrix a, double b)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1616,7 +1616,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix operator *(double a, DoubleMatrix b)
     {
-      if (b == null)
+      if (b is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1642,7 +1642,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix operator *(DoubleMatrix a, double b)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1656,7 +1656,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix Multiply(double a, DoubleMatrix b)
     {
-      if (b == null)
+      if (b is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1670,7 +1670,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public static DoubleMatrix Multiply(DoubleMatrix a, double b)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
@@ -1702,11 +1702,11 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">either matrix or vector is null.</exception>
     public static DoubleVector operator *(DoubleMatrix a, DoubleVector b)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      if (b == null)
+      if (b is null)
       {
         throw new ArgumentNullException("Vector cannot be null");
       }
@@ -1740,11 +1740,11 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">either matrix or vector is null.</exception>
     public static DoubleVector Multiply(DoubleMatrix a, DoubleVector b)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      if (b == null)
+      if (b is null)
       {
         throw new ArgumentNullException("Vector cannot be null");
       }
@@ -1757,7 +1757,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException"><c>x</c> is null.</exception>
     public void Multiply(DoubleVector a)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("a", "Vector cannot be null");
       }
@@ -1794,7 +1794,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">either matrix is null.</exception>
     public static DoubleMatrix operator *(DoubleMatrix a, DoubleMatrix b)
     {
-      if (a == null || b == null)
+      if (a is null || b is null)
       {
         throw new ArgumentNullException("Matrices cannot be null");
       }
@@ -1837,7 +1837,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">either matrix is null.</exception>
     public static DoubleMatrix Multiply(DoubleMatrix a, DoubleMatrix b)
     {
-      if (a == null || b == null)
+      if (a is null || b is null)
       {
         throw new ArgumentNullException("Matrices cannot be null");
       }
@@ -1855,7 +1855,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException"><c>x</c> is null.</exception>
     public void Multiply(DoubleMatrix a)
     {
-      if (a == null)
+      if (a is null)
       {
         throw new ArgumentNullException("a", "Matrix cannot be null");
       }
@@ -1900,7 +1900,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public void Copy(DoubleMatrix x)
     {
-      if (x == null)
+      if (x is null)
       {
         throw new ArgumentNullException("x", "Matrix cannot be null");
       }
@@ -2154,7 +2154,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
     public DoubleMatrix(IROMatrix<double> source)
     {
-      if (source == null)
+      if (source is null)
       {
         throw new ArgumentNullException("source", "The input ComplexDoubleMatrix cannot be null.");
       }

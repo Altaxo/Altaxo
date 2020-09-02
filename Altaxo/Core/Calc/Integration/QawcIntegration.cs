@@ -74,7 +74,7 @@ namespace Altaxo.Calc.Integration
        bool debug,
        out double result, out double abserr)
     {
-      if (null == _workSpace || limit > _workSpace.limit)
+      if (_workSpace is null || limit > _workSpace.limit)
         _workSpace = new gsl_integration_workspace(limit);
 
       return gsl_integration_qawc(f, a, b, c, epsabs, epsrel, limit, _workSpace, out result, out abserr, debug);
@@ -99,7 +99,7 @@ namespace Altaxo.Calc.Integration
           ref object? tempStorage)
     {
       var algo = tempStorage as QawcIntegration;
-      if (null == algo)
+      if (algo is null)
         tempStorage = algo = new QawcIntegration(debug);
       return algo.Integrate(f, a, b, c, epsabs, epsrel, limit, debug, out result, out abserr);
     }
@@ -114,7 +114,7 @@ namespace Altaxo.Calc.Integration
           )
     {
       var algo = tempStorage as QawcIntegration;
-      if (null == algo)
+      if (algo is null)
         tempStorage = algo = new QawcIntegration();
       return algo.Integrate(f, a, b, c, epsabs, epsrel, limit, out result, out abserr);
     }

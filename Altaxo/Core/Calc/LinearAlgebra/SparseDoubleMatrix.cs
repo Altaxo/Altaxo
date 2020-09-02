@@ -141,13 +141,13 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>The result A + B</returns>
     public SparseDoubleMatrix plus(SparseDoubleMatrix B)
     {
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException("B");
       var C = new SparseDoubleMatrix(m, n);
 
       for (int i = 0; i < m; i++)
       {
-        if (indices[i] != null && indices[i].Length > 0)
+        if (indices[i] is not null && indices[i].Length > 0)
         {
           C.indices[i] = new int[count[i]];
           C.items[i] = new double[count[i]];
@@ -169,9 +169,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>     A + B</returns>
     public static SparseDoubleMatrix operator +(SparseDoubleMatrix A, SparseDoubleMatrix B)
     {
-      if (A == null)
+      if (A is null)
         throw new ArgumentNullException(nameof(A));
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException(nameof(B));
       return A.plus(B);
     }
@@ -181,13 +181,13 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>The result A - B</returns>
     public SparseDoubleMatrix minus(SparseDoubleMatrix B)
     {
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException("B");
       var C = new SparseDoubleMatrix(m, n);
 
       for (int i = 0; i < m; i++)
       {
-        if (indices[i] != null && indices[i].Length > 0)
+        if (indices[i] is not null && indices[i].Length > 0)
         {
           C.indices[i] = new int[count[i]];
           C.items[i] = new double[count[i]];
@@ -209,9 +209,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>The result A - B</returns>
     public static SparseDoubleMatrix operator -(SparseDoubleMatrix A, SparseDoubleMatrix B)
     {
-      if (A == null)
+      if (A is null)
         throw new ArgumentNullException("A");
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException("B");
       return A.minus(B);
     }
@@ -225,7 +225,7 @@ namespace Altaxo.Calc.LinearAlgebra
       unchecked // Turns off integral overflow checking: small speedup
       {
         for (int i = 0; i < m; i++)
-          if (indices[i] != null && indices[i].Length > 0)
+          if (indices[i] is not null && indices[i].Length > 0)
           {
             double s = 0;
             for (int k = 0; k < count[i]; k++)
@@ -242,9 +242,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns></returns>
     public static DoubleVector operator *(SparseDoubleMatrix m, IReadOnlyList<double> v)
     {
-      if (m == null)
+      if (m is null)
         throw new ArgumentNullException("m");
-      if ((double[])v == null)
+      if ((double[])v is null)
         throw new ArgumentNullException("v");
       return m.times(v);
     }
@@ -258,7 +258,7 @@ namespace Altaxo.Calc.LinearAlgebra
       unchecked // Turns off integral overflow checking: small speedup
       {
         for (int i = 0; i < n; i++)
-          if (indices[i] != null && indices[i].Length > 0)
+          if (indices[i] is not null && indices[i].Length > 0)
           {
             for (int k = 0; k < count[i]; k++)
               result[indices[i][k]] += v[i] * items[i][k];
@@ -273,9 +273,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns></returns>
     public static DoubleVector operator *(IReadOnlyList<double> v, SparseDoubleMatrix m)
     {
-      if (m == null)
+      if (m is null)
         throw new ArgumentNullException("m");
-      if ((double[])v == null)
+      if ((double[])v is null)
         throw new ArgumentNullException("v");
       return m.timesRight(v);
     }
@@ -289,7 +289,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (int i = 0; i < m; i++)
       {
-        if (indices[i] != null && indices[i].Length > 0)
+        if (indices[i] is not null && indices[i].Length > 0)
         {
           B.indices[i] = new int[count[i]];
           B.items[i] = new double[count[i]];
@@ -310,7 +310,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>Scaled sparse matrix</returns>
     public static SparseDoubleMatrix operator *(SparseDoubleMatrix A, double s)
     {
-      if (A == null)
+      if (A is null)
         throw new ArgumentNullException("A");
       return A.times(s);
     }
@@ -335,7 +335,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>A * B where A is current sparce matrix</returns>
     public SparseDoubleMatrix times(SparseDoubleMatrix B)
     {
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException("B");
       if (B.m != n)
       {
@@ -346,13 +346,13 @@ namespace Altaxo.Calc.LinearAlgebra
       int idx, ii;
       for (int i = 0; i < m; i++)
       {
-        if (indices[i] != null && indices[i].Length > 0)
+        if (indices[i] is not null && indices[i].Length > 0)
           for (int j = 0; j < B.n; j++)
           {
             for (int jj = 0; jj < count[i]; jj++)
             {
               ii = indices[i][jj];
-              if (B.indices[ii] != null && B.indices[ii].Length > 0)
+              if (B.indices[ii] is not null && B.indices[ii].Length > 0)
               {
                 idx = Array.BinarySearch(B.indices[ii], 0, B.count[ii], j);
                 if (idx >= 0)
@@ -367,9 +367,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public static SparseDoubleMatrix operator *(SparseDoubleMatrix A, SparseDoubleMatrix B)
     {
-      if (A == null)
+      if (A is null)
         throw new ArgumentNullException("A");
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException("B");
       return A.times(B);
     }

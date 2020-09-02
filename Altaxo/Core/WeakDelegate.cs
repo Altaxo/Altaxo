@@ -87,7 +87,7 @@ namespace Altaxo
         {
           var weakReference = methodTarget.Reference;
           //     Static target      ||    alive instance target
-          if (null == weakReference || null != weakReference.Target)
+          if (weakReference is null || weakReference.Target is not null)
           {
             var newDelegate = Delegate.CreateDelegate(typeof(TDelegate), weakReference?.Target, methodTarget.Method);
 

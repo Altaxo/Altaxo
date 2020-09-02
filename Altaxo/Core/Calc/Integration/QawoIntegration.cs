@@ -104,9 +104,9 @@ namespace Altaxo.Calc.Integration
       bool debug,
       out double result, out double abserr)
     {
-      if (null == _workSpace || limit > _workSpace.limit)
+      if (_workSpace is null || limit > _workSpace.limit)
         _workSpace = new gsl_integration_workspace(limit);
-      if (null == _qawoTable)
+      if (_qawoTable is null)
       {
         _qawoTable = new gsl_integration_qawo_table(omega, b - a, oscTerm == OscillatoryTerm.Cosine ? gsl_integration_qawo_enum.GSL_INTEG_COSINE : gsl_integration_qawo_enum.GSL_INTEG_SINE, _defaultOscTableLength);
       }
@@ -130,7 +130,7 @@ namespace Altaxo.Calc.Integration
           )
     {
       var algo = tempStorage as QawoIntegration;
-      if (null == algo)
+      if (algo is null)
         tempStorage = algo = new QawoIntegration();
       return algo.Integrate(f, a, b, oscTerm, omega, epsabs, epsrel, limit, out result, out abserr);
     }

@@ -158,7 +158,7 @@ namespace Altaxo.Collections.Text
       current = current.Previous;
       int list_pos = 1;
 
-      while (null != current && current.IntervalEnd.Lcp >= lcp_i)
+      while (current is not null && current.IntervalEnd.Lcp >= lcp_i)
       {
         current = current.IntervalEnd;
         last_updated = current;

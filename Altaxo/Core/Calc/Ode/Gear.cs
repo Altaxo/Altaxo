@@ -367,7 +367,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>Sequence of infinite number of solution points.</returns>
     public static IEnumerable<SolutionPoint> GearBDF(double tstart, double tfinal, Vector x0, Func<double, Vector, Vector> f, Options opts)
     {
-      if (opts == null)
+      if (opts is null)
         throw new ArgumentNullException("opts");
       if (opts.MaxStep == double.MaxValue)
         opts.MaxStep = (tfinal - tstart) * 1e-2;
@@ -433,9 +433,9 @@ namespace Altaxo.Calc.Ode
       var deltaE = Vector.Zeros(n);
       var M = Matrix.Identity(n, qmax - 1);
 
-      if (opts.SparseJacobian == null)
+      if (opts.SparseJacobian is null)
       {
-        Matrix J = opts.Jacobian == null ? NordsieckState.Jacobian(f, xcurr, t + dt) : opts.Jacobian;
+        Matrix J = opts.Jacobian is null ? NordsieckState.Jacobian(f, xcurr, t + dt) : opts.Jacobian;
         Matrix P = Matrix.Identity(n, n) - J * dt * b[qcurr - 1];
 
         do

@@ -123,13 +123,13 @@ namespace Altaxo.Collections.Text
     /// <param name="alphabetSize">Size of the alphabet. This is the number of unique characters (or objects) of the original text. If the text was separated into words, the numberOfWords is added, since each separator is a unique character.</param>
     protected GeneralizedSuffixArray(int[] textWithPadding, int textLength, int numberOfWords, int[] wordStartPositions, int alphabetSize)
     {
-      if (null == textWithPadding)
+      if (textWithPadding is null)
         throw new ArgumentNullException("stringWithPadding is null");
       if (textWithPadding.Length < (textLength + RequiredTextPadding))
         throw new ArgumentNullException("array textWithPadding has to be at least 3 elements longer than the number of data (stringLength)");
       if (numberOfWords > 1)
       {
-        if (null == wordStartPositions)
+        if (wordStartPositions is null)
           throw new ArgumentNullException("wordBegins is null");
         if (wordStartPositions.Length < numberOfWords + 1)
           throw new ArgumentException("wordBegins must have at least (numberOfWords+1) elements");

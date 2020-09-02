@@ -217,7 +217,7 @@ namespace Altaxo.Calc.Probability
     /// </exception>
     public MT19937Generator(int[] seedArray)
     {
-      if (seedArray == null)
+      if (seedArray is null)
       {
         string message = string.Format(null, ExceptionMessages.ArgumentNull, "seedArray");
         throw new ArgumentNullException("seedArray", message);
@@ -245,7 +245,7 @@ namespace Altaxo.Calc.Probability
 
     public MT19937Generator(uint[] seedArray)
     {
-      if (seedArray == null)
+      if (seedArray is null)
       {
         string message = string.Format(null, ExceptionMessages.ArgumentNull, "seedArray");
         throw new ArgumentNullException("seedArray", message);
@@ -276,7 +276,7 @@ namespace Altaxo.Calc.Probability
       }
 
       // If the object was instanciated with a seed array do some further (re)initialisation.
-      if (seedArray != null)
+      if (seedArray is not null)
       {
         ResetBySeedArray();
       }
@@ -735,7 +735,7 @@ namespace Altaxo.Calc.Probability
     /// </exception>
     public override void NextBytes(byte[] buffer)
     {
-      if (buffer == null)
+      if (buffer is null)
       {
         string message = string.Format(null, ExceptionMessages.ArgumentNull, "buffer");
         throw new ArgumentNullException("buffer", message);

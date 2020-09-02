@@ -137,7 +137,7 @@ namespace Altaxo.Calc.Probability
         throw new ArgumentOutOfRangeException("Nu out of range (must be positive");
 
       this.nu = nu;
-      if (null == chiSquareDistribution)
+      if (chiSquareDistribution is null)
         chiSquareDistribution = new ChiSquareDistribution(nu);
       else
         chiSquareDistribution.Alpha = this.nu;

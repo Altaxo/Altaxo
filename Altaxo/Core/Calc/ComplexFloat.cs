@@ -351,7 +351,7 @@ namespace Altaxo.Calc
     ///<remarks>The <c>obj</c> parameter is converted into a <c>ComplexFloat</c> variable before comparing with the current <c>ComplexFloat</c>.</remarks>
     public override bool Equals(object? obj)
     {
-      if (obj == null)
+      if (obj is null)
       {
         return false;
       }
@@ -381,7 +381,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public int CompareTo(object? o)
     {
-      if (o == null)
+      if (o is null)
       {
         return 1;  // null sorts before current
       }
@@ -591,7 +591,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static ComplexFloat Parse(string s)
     {
-      if (s == null)
+      if (s is null)
       {
         throw new ArgumentNullException(s, "s cannot be null.");
       }

@@ -495,7 +495,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="src"><c>ComplexDoubleVector</c> to deepcopy this <c>ComplexDoubleVector</c> into.</param>
     public void Copy(ComplexDoubleVector src)
     {
-      if (src == null)
+      if (src is null)
       {
         throw new System.ArgumentNullException("ComplexDoubleVector cannot be null.");
       }
@@ -506,7 +506,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="src"><c>ComplexDoubleVector</c> to swap data with.</param>
     public void Swap(ComplexDoubleVector src)
     {
-      if (src == null)
+      if (src is null)
       {
         throw new System.ArgumentNullException("ComplexDoubleVector cannot be null.");
       }
@@ -525,7 +525,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>Complex</c> results from x^Ty.</returns>
     public Complex GetDotProduct(ComplexDoubleVector Y)
     {
-      if (Y == null)
+      if (Y is null)
       {
         throw new System.ArgumentNullException("ComplexDoubleVector cannot be null.");
       }
@@ -544,7 +544,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>Complex</c> results from x^Hy.</returns>
     public Complex GetConjugateDotProduct(ComplexDoubleVector Y)
     {
-      if (Y == null)
+      if (Y is null)
       {
         throw new System.ArgumentNullException("ComplexDoubleVector cannot be null.");
       }
@@ -620,7 +620,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<remarks>Results of computation replace data in this variable</remarks>
     public void Axpy(Complex alpha, ComplexDoubleVector X)
     {
-      if (X == null)
+      if (X is null)
       {
         throw new System.ArgumentNullException("ComplexDoubleVector cannot be null.");
       }
@@ -656,7 +656,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>ComplexDoubleVector</c> with values to negate.</returns>
     public static ComplexDoubleVector Negate(ComplexDoubleVector rhs)
     {
-      if (rhs == null)
+      if (rhs is null)
       {
         throw new ArgumentNullException("rhs", "rhs cannot be null");
       }
@@ -707,7 +707,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null given as argument.</exception>
     public void Add(ComplexDoubleVector vector)
     {
-      if (vector == null)
+      if (vector is null)
       {
         throw new System.ArgumentNullException("ComplexDoubleVector cannot be null.");
       }
@@ -719,7 +719,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null given as argument.</exception>
     public void Subtract(ComplexDoubleVector vector)
     {
-      if (vector == null)
+      if (vector is null)
       {
         throw new System.ArgumentNullException("ComplexDoubleVector cannot be null.");
       }

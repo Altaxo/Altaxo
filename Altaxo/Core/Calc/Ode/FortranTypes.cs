@@ -210,7 +210,7 @@ namespace Altaxo.Calc.Ode
 
     public Characters(char[] sourceChars, bool copy)
     {
-      if (sourceChars == null)
+      if (sourceChars is null)
       {
         return;
       }
