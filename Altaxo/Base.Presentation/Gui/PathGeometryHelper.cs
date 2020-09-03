@@ -118,20 +118,12 @@ namespace Altaxo.Gui
 
     public static void GetStartAndEndVector(Point startPoint, PathSegment seg, out Point endPoint, out Vector startVector, out Vector endVector)
     {
-      ArcSegment arcSegment;
-      BezierSegment bezierSegment;
-      LineSegment lineSegment;
-      PolyBezierSegment polyBezierSegment;
-      PolyLineSegment polyLineSegment;
-      PolyQuadraticBezierSegment polyQuadraticBezierSegment;
-      QuadraticBezierSegment quadraticBezierSegment;
-
-      if ((lineSegment = (seg as LineSegment)) is not null)
+      if (seg is LineSegment lineSegment)
       {
         startVector = endVector = lineSegment.Point - startPoint;
         endPoint = lineSegment.Point;
       }
-      else if ((polyLineSegment = (seg as PolyLineSegment)) is not null)
+      else if (seg is PolyLineSegment polyLineSegment)
       {
         var pts = polyLineSegment.Points;
         var len = pts.Count;
@@ -141,13 +133,13 @@ namespace Altaxo.Gui
         endVector = pts[len - 1] - startPoint;
         endPoint = pts[len - 1];
       }
-      else if ((bezierSegment = (seg as BezierSegment)) is not null)
+      else if (seg is BezierSegment bezierSegment)
       {
         startVector = bezierSegment.Point1 - startPoint;
         endVector = bezierSegment.Point3 - bezierSegment.Point2;
         endPoint = bezierSegment.Point3;
       }
-      else if ((polyBezierSegment = (seg as PolyBezierSegment)) is not null)
+      else if (seg is PolyBezierSegment polyBezierSegment)
       {
         var pts = polyBezierSegment.Points;
         var len = pts.Count;

@@ -244,7 +244,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
           }
           else
           {
-            throw new NotImplementedException(string.Format("The type of lighting ({0}) is not implemented here."));
+            throw new NotImplementedException($"The type of lighting ({l?.GetType()}) is not implemented here.");
           }
         }
 
