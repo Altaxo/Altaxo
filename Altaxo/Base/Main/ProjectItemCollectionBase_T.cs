@@ -380,7 +380,7 @@ namespace Altaxo.Main
 
     void Main.IParentOfINameOwnerChildNodes.EhChild_ParentChanged(Main.INameOwner childNode, Main.IDocumentNode? oldParent)
     {
-      if (object.ReferenceEquals(this, oldParent) && _itemsByName.ContainsKey(childNode.Name))
+      if (ReferenceEquals(this, oldParent) && _itemsByName.ContainsKey(childNode.Name))
         throw new InvalidProgramException(string.Format("Unauthorized change of the {0}'s parent", typeof(TItem).Name));
     }
 

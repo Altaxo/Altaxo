@@ -89,16 +89,18 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+
+      if (base.CopyFrom(obj))
       {
-        var from = obj as NumericLabelFormattingScientific;
-        if (from is not null)
+        if (obj is NumericLabelFormattingScientific from)
         {
           _showExponentAlways = from._showExponentAlways;
         }
+        return true;
       }
-      return isCopied;
+      return false;
     }
 
     public override object Clone()

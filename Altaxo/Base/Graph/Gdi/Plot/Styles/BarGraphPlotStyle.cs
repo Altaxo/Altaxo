@@ -237,7 +237,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <inheritdoc/>
     public virtual bool CopyFrom(object obj, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as BarGraphPlotStyle;
@@ -253,7 +253,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <inheritdoc/>
     public virtual bool CopyFrom(object obj)
     {
-      return CopyFrom(obj, true);
+      if (ReferenceEquals(this, obj))
+        return true;
+
+        return CopyFrom(obj, true);
     }
 
     /// <inheritdoc/>

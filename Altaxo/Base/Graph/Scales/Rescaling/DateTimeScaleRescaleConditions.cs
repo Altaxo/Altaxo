@@ -240,7 +240,7 @@ namespace Altaxo.Graph.Scales.Rescaling
     /// <param name="obj">The object to copy the data from.</param>
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as DateTimeScaleRescaleConditions;

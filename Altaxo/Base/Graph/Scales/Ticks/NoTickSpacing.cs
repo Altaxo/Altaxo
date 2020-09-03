@@ -42,6 +42,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
     public override bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
+
       return obj is NoTickSpacing;
     }
 

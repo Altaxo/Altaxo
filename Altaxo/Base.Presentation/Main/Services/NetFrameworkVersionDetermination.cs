@@ -30,13 +30,31 @@ using Microsoft.Win32;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Class responsible for determining which .NET framework version is currently installed.
+  /// </summary>
+  /// <seealso cref="Altaxo.Serialization.AutoUpdates.INetFrameworkVersionDetermination" />
   public class NetFrameworkVersionDetermination : Serialization.AutoUpdates.INetFrameworkVersionDetermination
   {
+    /// <summary>
+    /// Determines whether a specified version of the .NET framework is installed.
+    /// </summary>
+    /// <param name="version">The version. Examples are 4.0, 4.6, 4.7.1 etc.</param>
+    /// <returns>
+    ///   <c>true</c> if the specified version of the .NET framework is installed; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsVersionInstalled(string version)
     {
       return IsVersionInstalledHere(version);
     }
 
+    /// <summary>
+    /// Determines whether a specified version of the .NET framework is installed.
+    /// </summary>
+    /// <param name="version">The version. Examples are 4.0, 4.6, 4.7.1 etc.</param>
+    /// <returns>
+    ///   <c>true</c> if the specified version of the .NET framework is installed; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsVersionInstalledHere(string version)
     {
       version = version.ToUpperInvariant();
@@ -81,6 +99,10 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Reads from the registry the .NET framework release number (working for framework versions &gt;=4.5).
+    /// </summary>
+    /// <returns>The framework release number.</returns>
     public static int? GetFramework45ReleaseNumber()
     {
       try
@@ -98,134 +120,124 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Determines whether .NET framework version 4.5 (or greater) is installed.
+    /// </summary>
+    /// <returns>
+    ///   <c>true</c> if version 4.5 (or greater) is installed; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsVersion45Installed()
     {
       var release = GetFramework45ReleaseNumber();
-      if (!release.HasValue)
-      {
-        return false;
-      }
-      else
-      {
-        return true;
-      }
+      return release.HasValue;
     }
 
+    /// <summary>
+    /// Determines whether .NET framework version 4.5.1 (or greater) is installed.
+    /// </summary>
+    /// <returns>
+    ///   <c>true</c> if version 4.5.1 (or greater) is installed; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsVersion451Installed()
     {
       var release = GetFramework45ReleaseNumber();
-      if (!release.HasValue)
-      {
-        return false;
-      }
-      else
-      {
-        return release >= 378675;
-      }
+      return release.HasValue && release >= 378675;
     }
 
+    /// <summary>
+    /// Determines whether .NET framework version 4.5.2 (or greater) is installed.
+    /// </summary>
+    /// <returns>
+    ///   <c>true</c> if version 4.5.2 (or greater) is installed; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsVersion452Installed()
     {
       var release = GetFramework45ReleaseNumber();
-      if (!release.HasValue)
-      {
-        return false;
-      }
-      else
-      {
-        return release >= 379893;
-      }
+      return release.HasValue && release >= 379893;
     }
 
+    /// <summary>
+    /// Determines whether .NET framework version 4.6 (or greater) is installed.
+    /// </summary>
+    /// <returns>
+    ///   <c>true</c> if version 4.6 (or greater) is installed; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsVersion46Installed()
     {
       var release = GetFramework45ReleaseNumber();
-      if (!release.HasValue)
-      {
-        return false;
-      }
-      else
-      {
-        return release >= 393273;
-      }
+      return release.HasValue && release >= 393273;
     }
 
+    /// <summary>
+    /// Determines whether .NET framework version 4.6.1 (or greater) is installed.
+    /// </summary>
+    /// <returns>
+    ///   <c>true</c> if version 4.6.1 (or greater) is installed; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsVersion461Installed()
     {
       var release = GetFramework45ReleaseNumber();
-      if (!release.HasValue)
-      {
-        return false;
-      }
-      else
-      {
-        return release >= 394254;
-      }
+      return release.HasValue && release >= 394254;
     }
 
+    /// <summary>
+    /// Determines whether .NET framework version 4.6.2 (or greater) is installed.
+    /// </summary>
+    /// <returns>
+    ///   <c>true</c> if version 4.6.2 (or greater) is installed; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsVersion462Installed()
     {
       var release = GetFramework45ReleaseNumber();
-      if (!release.HasValue)
-      {
-        return false;
-      }
-      else
-      {
-        return release >= 394802;
-      }
+      return release.HasValue && release >= 394802;
     }
 
+    /// <summary>
+    /// Determines whether .NET framework version 4.7 (or greater) is installed.
+    /// </summary>
+    /// <returns>
+    ///   <c>true</c> if version 4.7 (or greater) is installed; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsVersion47Installed()
     {
       var release = GetFramework45ReleaseNumber();
-      if (!release.HasValue)
-      {
-        return false;
-      }
-      else
-      {
-        return release >= 460798;
-      }
+      return release.HasValue && release >= 460798;
     }
 
+    /// <summary>
+    /// Determines whether .NET framework version 4.7.1 (or greater) is installed.
+    /// </summary>
+    /// <returns>
+    ///   <c>true</c> if version 4.7.1 (or greater) is installed; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsVersion471Installed()
     {
       var release = GetFramework45ReleaseNumber();
-      if (!release.HasValue)
-      {
-        return false;
-      }
-      else
-      {
-        return release >= 461308;
-      }
+      return release.HasValue && release >= 461308;
     }
 
+    /// <summary>
+    /// Determines whether .NET framework version 4.7.2 (or greater) is installed.
+    /// </summary>
+    /// <returns>
+    ///   <c>true</c> if version 4.7.2 (or greater) is installed; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsVersion472Installed()
     {
       var release = GetFramework45ReleaseNumber();
-      if (!release.HasValue)
-      {
-        return false;
-      }
-      else
-      {
-        return release >= 461808;
-      }
+      return release.HasValue && release >= 461808;
     }
 
+    /// <summary>
+    /// Determines whether .NET framework version 4.8 (or greater) is installed.
+    /// </summary>
+    /// <returns>
+    ///   <c>true</c> if version 4.8 (or greater) is installed; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsVersion48Installed()
     {
       var release = GetFramework45ReleaseNumber();
-      if (!release.HasValue)
-      {
-        return false;
-      }
-      else
-      {
-        return release >= 528040;
-      }
+      return release.HasValue && release >= 528040;
     }
 
   }

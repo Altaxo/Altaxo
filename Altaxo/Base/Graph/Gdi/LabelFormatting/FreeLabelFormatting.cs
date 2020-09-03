@@ -70,6 +70,8 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     public override bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
       var isCopied = base.CopyFrom(obj);
       if (isCopied && !object.ReferenceEquals(this, obj))
       {

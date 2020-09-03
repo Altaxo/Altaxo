@@ -123,7 +123,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       if (obj is DataMeshPlotItem from)
       {

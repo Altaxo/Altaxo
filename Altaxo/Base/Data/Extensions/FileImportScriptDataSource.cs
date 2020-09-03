@@ -131,7 +131,7 @@ namespace Altaxo.Data
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is FileImportScriptDataSource from)

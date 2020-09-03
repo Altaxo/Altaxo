@@ -354,7 +354,7 @@ namespace Altaxo.Graph.Scales
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is LinkedScale from)
@@ -616,7 +616,7 @@ namespace Altaxo.Graph.Scales
       {
         var scaleLinkedTo = ScaleLinkedTo;
 
-        if (object.ReferenceEquals(this, scaleLinkedTo))
+        if (ReferenceEquals(this, scaleLinkedTo))
           throw new InvalidProgramException("_scaleLinkedTo is reference equal to this scale. Please report this error to the forum");
 
         // it is not possible for a this scale to act back to the scale which is linked

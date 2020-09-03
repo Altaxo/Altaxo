@@ -68,13 +68,18 @@ namespace Altaxo.DataConnection
     [MemberNotNull(nameof(_dataQuery), nameof(_importOptions))]
     public virtual void CopyFrom(AltaxoOleDbDataSource from)
     {
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+        return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+
       ChildCopyToMember(ref _importOptions, from._importOptions);
       CopyHelper.CopyImmutable(ref _dataQuery, from._dataQuery);
     }
 
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is AltaxoOleDbDataSource from)

@@ -771,15 +771,18 @@ namespace Altaxo.Data
     /// <param name="datac"></param>
     public void Add(Altaxo.Data.DataColumn datac)
     {
-      Add(datac, datac.Name);
+      if (datac.TryGetName(out var name))
+        Add(datac, name);
+      else
+        Add(datac, (string?)null);
     }
 
     /// <summary>
     /// Add a column under the name <code>name</code>.
     /// </summary>
-    /// <param name="datac">The column to add.</param>
+    /// <param name="datac">The column to add. Provide null if a name is not known yet. In this case a new name will be found.</param>
     /// <param name="name">The name under which the column to add.</param>
-    public void Add(Altaxo.Data.DataColumn datac, string name)
+    public void Add(Altaxo.Data.DataColumn datac, string? name)
     {
       Add(datac, name, ColumnKind.V);
     }
@@ -788,9 +791,9 @@ namespace Altaxo.Data
     /// Adds a column with a given name and kind.
     /// </summary>
     /// <param name="datac">The column to add.</param>
-    /// <param name="name">The name of the column.</param>
+    /// <param name="name">The name of the column. Provide null if a name is not known yet. In this case a new name will be found.</param>
     /// <param name="kind">The kind of the column.</param>
-    public void Add(Altaxo.Data.DataColumn datac, string name, ColumnKind kind)
+    public void Add(Altaxo.Data.DataColumn datac, string? name, ColumnKind kind)
     {
       Add(datac, name, kind, 0);
     }
@@ -799,10 +802,10 @@ namespace Altaxo.Data
     /// Add a column with a given name, kind, and group number.
     /// </summary>
     /// <param name="datac">The column to add.</param>
-    /// <param name="name">The name of the column.</param>
+    /// <param name="name">The name of the column. Provide null if a name is not known yet. In this case a new name will be found.</param>
     /// <param name="kind">The kind of the column.</param>
     /// <param name="groupNumber">The group number of the column.</param>
-    public void Add(Altaxo.Data.DataColumn datac, string name, ColumnKind kind, int groupNumber)
+    public void Add(Altaxo.Data.DataColumn datac, string? name, ColumnKind kind, int groupNumber)
     {
       if (name is null)
         name = FindNewColumnName();
@@ -2485,9 +2488,9 @@ namespace Altaxo.Data
     {
       if (e is Main.ParentChangedEventArgs parentChangedEventArgs && sender is DataColumn column)
       {
-        if (object.ReferenceEquals(this, parentChangedEventArgs.OldParent) && ContainsColumn(column))
+        if (ReferenceEquals(this, parentChangedEventArgs.OldParent) && ContainsColumn(column))
           RemoveColumn((DataColumn)sender);
-        else if (object.ReferenceEquals(this, parentChangedEventArgs.NewParent) && !ContainsColumn(column))
+        else if (ReferenceEquals(this, parentChangedEventArgs.NewParent) && !ContainsColumn(column))
           throw new ApplicationException("Not allowed to set child's parent to this collection before adding it to the collection");
 
         return true;

@@ -371,7 +371,7 @@ typeof(GraphDocument),
 
     public void CopyFrom(GraphDocument from, GraphCopyOptions options)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       using (var suspendToken = SuspendGetToken())

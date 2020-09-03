@@ -203,7 +203,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as Log10TickSpacing;
@@ -264,7 +264,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
     public override bool Equals(object? obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       else if (!(obj is Log10TickSpacing))
         return false;

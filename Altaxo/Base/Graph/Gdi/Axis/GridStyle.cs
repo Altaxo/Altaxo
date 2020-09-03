@@ -112,7 +112,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public void CopyFrom(GridStyle from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       using (var token = SuspendGetToken())

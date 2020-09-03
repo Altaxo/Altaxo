@@ -157,7 +157,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <returns><c>True</c> if anything could be copied from the object, otherwise <c>false</c>.</returns>
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is FourierTransformation2DDataSource from)

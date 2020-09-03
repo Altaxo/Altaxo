@@ -132,7 +132,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [MemberNotNull(nameof(_scatterSymbol))]
     public void CopyFrom(ScatterPlotStyle from, Main.EventFiring eventFiring)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.
@@ -173,7 +173,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <inheritdoc/>
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       var from = obj as ScatterPlotStyle;
       if (from is not null)
@@ -187,6 +187,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
+
       return CopyFrom(obj, true);
     }
 

@@ -157,7 +157,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         s._offsetY = info.GetDouble("OffsetY");
         s._offsetZ = info.GetDouble("OffsetZ");
 
-        s.ChildSetMember(ref s._suppressedLabels, info.GetValueOrNull<SuppressedTicks>("SuppressedLabels", s) ?? new SuppressedTicks()); 
+        s.ChildSetMember(ref s._suppressedLabels, info.GetValueOrNull<SuppressedTicks>("SuppressedLabels", s) ?? new SuppressedTicks());
         s.ChildSetMember(ref s._labelFormatting, (ILabelFormatting)info.GetValue("LabelFormat", s));
 
         s._labelSide = info.GetNullableEnum<CSAxisSide>("LabelSide");
@@ -211,9 +211,14 @@ namespace Altaxo.Graph.Graph3D.Axis
       CopyFrom(from);
     }
 
-    [MemberNotNull(nameof(_font), nameof(_brush), nameof(_suppressedLabels), nameof(_labelFormatting)) ]
+    [MemberNotNull(nameof(_font), nameof(_brush), nameof(_suppressedLabels), nameof(_labelFormatting))]
     public void CopyFrom(AxisLabelStyle from)
     {
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+        return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+
       using (var suspendToken = SuspendGetToken())
       {
         _cachedAxisStyleInfo = from._cachedAxisStyleInfo;
@@ -246,7 +251,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       if (obj is AxisLabelStyle from)
       {

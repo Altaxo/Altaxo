@@ -308,7 +308,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       if (obj is VectorCartesicPlotStyle from)
       {
@@ -326,6 +326,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <returns>True if data was copied, otherwise false.</returns>
     public bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
+
       return CopyFrom(obj, true);
     }
 

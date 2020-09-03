@@ -1049,12 +1049,12 @@ namespace Altaxo.Main
 			foreach (var node in AllDocumentNodes)
 			{
 				var parent = node.ParentObject as SuspendableDocumentNode;
-				if (null == parent)
+				if (parent is null)
 					continue;
 
 				var tuple = parent.GetDocumentNodeChildrenWithName().FirstOrDefault(x => object.ReferenceEquals(node, x.DocumentNode));
 
-				if (tuple.DocumentNode == null)
+				if (tuple.DocumentNode is null)
 				{
 					childListErrors.Add(string.Format("Parent of type {0} did not list child node of type {1}, which was constructed {2}", parent.GetType().FullName, node.GetType().FullName, node.ConstructedBy));
 					areThereAnyProblems = true;
@@ -1062,7 +1062,7 @@ namespace Altaxo.Main
 				else
 				{
 					var nameOfNode1 = tuple.Name;
-					if (null == nameOfNode1)
+					if (nameOfNode1 is null)
 					{
 						Current.Console.WriteLine("Parent of type {0} lists child node of type {1}, but without a name", parent.GetType().FullName, node.GetType().FullName);
 						areThereAnyProblems = true;
@@ -1110,7 +1110,7 @@ namespace Altaxo.Main
 
 					if (!object.ReferenceEquals(child.ParentObject, parentNode))
 					{
-						errors.Add(string.Format("Parent of type {0} has child node of type {1} whose ParentObject (type {2}) is not identical with the Parent", parentNode.GetType().FullName, child.GetType().FullName, child.ParentObject == null ? "<<NULL>>" : child.ParentObject.GetType().FullName));
+						errors.Add(string.Format("Parent of type {0} has child node of type {1} whose ParentObject (type {2}) is not identical with the Parent", parentNode.GetType().FullName, child.GetType().FullName, child.ParentObject is null ? "<<NULL>>" : child.ParentObject.GetType().FullName));
 						areThereAnyProblems = true;
 					}
 				}

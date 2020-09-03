@@ -81,7 +81,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as PlotGroupStyleCollection;

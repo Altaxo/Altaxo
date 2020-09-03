@@ -159,7 +159,7 @@ namespace Altaxo.Serialization.Ascii
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       if (obj is SingleCharSeparationStrategy from)
       {
@@ -261,7 +261,7 @@ namespace Altaxo.Serialization.Ascii
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       if (obj is FixedColumnWidthWithoutTabSeparationStrategy from)
       {
@@ -389,7 +389,7 @@ namespace Altaxo.Serialization.Ascii
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       if (obj is FixedColumnWidthWithTabSeparationStrategy from)
       {
@@ -447,7 +447,7 @@ namespace Altaxo.Serialization.Ascii
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       if (obj is SkipWhiteSpaceSeparationStrategy from)
       {

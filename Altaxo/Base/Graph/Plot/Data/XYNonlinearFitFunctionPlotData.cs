@@ -134,7 +134,7 @@ namespace Altaxo.Graph.Plot.Data
     }
 
     [MemberNotNull(nameof(_fitDocumentIdentifier), nameof(_fitDocument))]
-    public void CopyFrom(XYNonlinearFitFunctionPlotData from)
+    protected void CopyFrom(XYNonlinearFitFunctionPlotData from)
     {
       base.CopyFrom(from);
       _fitDocumentIdentifier = from._fitDocumentIdentifier;
@@ -145,7 +145,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is XYFunctionPlotData from)

@@ -63,7 +63,7 @@ namespace Altaxo.Graph.Gdi.Axis
     [MemberNotNull(nameof(_planeID))]
     private void CopyFrom(GridPlane from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.

@@ -80,31 +80,31 @@ namespace Altaxo.Main
       set
       {
 #if DEBUG && TRACEDOCUMENTNODES
-				if (null != _parent && null != value && !object.ReferenceEquals(_parent, value))
-					throw new InvalidProgramException(string.Format("Try to give object of type {0} a new parent object. Old parent: {1}, New parent {2}", this.GetType(), _parent.GetType(), value.GetType()));
+        if (_parent is not null && value is not null && !object.ReferenceEquals(_parent, value))
+          throw new InvalidProgramException(string.Format("Try to give object of type {0} a new parent object. Old parent: {1}, New parent {2}", this.GetType(), _parent.GetType(), value.GetType()));
 
-				if (null != _parent && null == value)
-				{
-					var stb = new System.Text.StringBuilder();
-					var st = new System.Diagnostics.StackTrace(true);
+        if (_parent is not null && value is null)
+        {
+          var stb = new System.Text.StringBuilder();
+          var st = new System.Diagnostics.StackTrace(true);
 
-					var len = Math.Min(11, st.FrameCount);
-					for (int i = 1; i < len; ++i)
-					{
-						var frame = st.GetFrame(i);
-						var method = frame.GetMethod();
+          var len = Math.Min(11, st.FrameCount);
+          for (int i = 1; i < len; ++i)
+          {
+            var frame = st.GetFrame(i);
+            var method = frame.GetMethod();
 
-						if (i > 2) stb.Append("\r\n\tin ");
+            if (i > 2) stb.Append("\r\n\tin ");
 
-						stb.Append(method.DeclaringType.FullName);
-						stb.Append("|");
-						stb.Append(method.Name);
-						stb.Append("(L");
-						stb.Append(frame.GetFileLineNumber());
-						stb.Append(")");
-					}
-					_releasedBy = stb.ToString();
-				}
+            stb.Append(method.DeclaringType.FullName);
+            stb.Append("|");
+            stb.Append(method.Name);
+            stb.Append("(L");
+            stb.Append(frame.GetFileLineNumber());
+            stb.Append(")");
+          }
+          _releasedBy = stb.ToString();
+        }
 #endif
 
         _parent = value;
@@ -140,7 +140,8 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Gets the name of this document node. The set accessor will for most nodes throw a <see cref="InvalidOperationException"/>, since the name can only be set on <see cref="IProjectItem"/>s.
+    /// Gets the name of this document node. Null is returned if the name is not set or unknown.
+    /// The set accessor will for most nodes throw a <see cref="InvalidOperationException"/>, since the name can only be set on <see cref="IProjectItem"/>s.
     /// </summary>
     /// <value>
     /// The name of this instance.
@@ -149,12 +150,23 @@ namespace Altaxo.Main
     {
       get
       {
-        return _parent?.GetNameOfChildObject(this) ?? string.Empty;
+        return _parent?.GetNameOfChildObject(this) ?? throw new InvalidOperationException($"The name is not known yet. To avoid this exception, use TryGetName instead.");
       }
       set
       {
         throw new InvalidOperationException("The name of this node cannot be set. The node type is: " + GetType().FullName);
       }
+    }
+
+    /// <summary>
+    /// Test if this item already has a name.
+    /// </summary>
+    /// <param name="name">On success, returns the name of the item.</param>
+    /// <returns>True if the item already has a name; otherwise false.</returns>
+    public virtual bool TryGetName([MaybeNullWhen(false)] out string name)
+    {
+      name = _parent?.GetNameOfChildObject(this);
+      return name is not null;
     }
 
     #endregion Document functions
@@ -360,16 +372,16 @@ namespace Altaxo.Main
     ~SuspendableDocumentNodeBase()
     {
 #if DEBUG && TRACEDOCUMENTNODES
-			if (!IsDisposed && null != _parent)
-			{
-				string msg;
-				if (null == this._releasedBy)
-					msg = string.Format("Error: not disposed DocumentNode {2}\r\n{0}, constructed\r\n\tby {1}", this.GetType().FullName, this._constructedBy, this.Debug_AbsolutePath);
-				else
-					msg = string.Format("Error: not disposed DocumentNode {3}\r\n{0}, constructed\r\n\tby {1}\r\nreleased by\r\n\t{2}", this.GetType().FullName, this._constructedBy, this._releasedBy, this.Debug_AbsolutePath);
+      if (!IsDisposed && _parent is not null)
+      {
+        string msg;
+        if (this._releasedBy is null)
+          msg = string.Format("Error: not disposed DocumentNode {2}\r\n{0}, constructed\r\n\tby {1}", this.GetType().FullName, this._constructedBy, this.Debug_AbsolutePath);
+        else
+          msg = string.Format("Error: not disposed DocumentNode {3}\r\n{0}, constructed\r\n\tby {1}\r\nreleased by\r\n\t{2}", this.GetType().FullName, this._constructedBy, this._releasedBy, this.Debug_AbsolutePath);
 
-				System.Diagnostics.Debug.WriteLine(msg); // we may not have console in this moment, as such failures arise often while closing the application
-			}
+        System.Diagnostics.Debug.WriteLine(msg); // we may not have console in this moment, as such failures arise often while closing the application
+      }
 #endif
 
       Dispose(false);
@@ -573,113 +585,113 @@ namespace Altaxo.Main
 
 #if DEBUG && TRACEDOCUMENTNODES
 
-		protected static LinkedList<WeakReference> _allDocumentNodes = new LinkedList<WeakReference>();
+    protected static LinkedList<WeakReference> _allDocumentNodes = new LinkedList<WeakReference>();
 
-		private static int _nextID;
-		private string _constructedBy;
-		private string _releasedBy;
-		private int _instanceID = _nextID++;
+    private static int _nextID;
+    private string _constructedBy;
+    private string _releasedBy;
+    private int _instanceID = _nextID++;
 
-		public string ConstructedBy { get { return _constructedBy; } }
+    public string ConstructedBy { get { return _constructedBy; } }
 
-		public string ReleasedBy { get { return _releasedBy; } }
+    public string ReleasedBy { get { return _releasedBy; } }
 
-		public SuspendableDocumentNodeBase()
-		{
-			_allDocumentNodes.AddLast(new WeakReference(this));
+    public SuspendableDocumentNodeBase()
+    {
+      _allDocumentNodes.AddLast(new WeakReference(this));
 
-			var stb = new System.Text.StringBuilder();
-			var st = new System.Diagnostics.StackTrace(true);
+      var stb = new System.Text.StringBuilder();
+      var st = new System.Diagnostics.StackTrace(true);
 
-			var len = Math.Min(11, st.FrameCount);
-			for (int i = 2; i < len; ++i)
-			{
-				var frame = st.GetFrame(i);
-				var method = frame.GetMethod();
+      var len = Math.Min(11, st.FrameCount);
+      for (int i = 2; i < len; ++i)
+      {
+        var frame = st.GetFrame(i);
+        var method = frame.GetMethod();
 
-				if (i > 2) stb.Append("\r\n\tin ");
+        if (i > 2) stb.Append("\r\n\tin ");
 
-				stb.Append(method.DeclaringType.FullName);
-				stb.Append("|");
-				stb.Append(method.Name);
-				stb.Append("(L");
-				stb.Append(frame.GetFileLineNumber());
-				stb.Append(")");
-			}
-			_constructedBy = stb.ToString();
-		}
+        stb.Append(method.DeclaringType.FullName);
+        stb.Append("|");
+        stb.Append(method.Name);
+        stb.Append("(L");
+        stb.Append(frame.GetFileLineNumber());
+        stb.Append(")");
+      }
+      _constructedBy = stb.ToString();
+    }
 
-		public static IEnumerable<SuspendableDocumentNodeBase> AllDocumentNodes
-		{
-			get
-			{
-				if (_allDocumentNodes.Count != 0)
-				{
-					var lnode = _allDocumentNodes.First;
-					while (null != lnode)
-					{
-						var nextNode = lnode.Next;
-						var target = lnode.Value.Target as SuspendableDocumentNodeBase;
-						if (null != target)
-							yield return target;
-						else
-							_allDocumentNodes.Remove(lnode);
+    public static IEnumerable<SuspendableDocumentNodeBase> AllDocumentNodes
+    {
+      get
+      {
+        if (_allDocumentNodes.Count != 0)
+        {
+          var lnode = _allDocumentNodes.First;
+          while (lnode is not null)
+          {
+            var nextNode = lnode.Next;
+            var target = lnode.Value.Target as SuspendableDocumentNodeBase;
+            if (target is not null)
+              yield return target;
+            else
+              _allDocumentNodes.Remove(lnode);
 
-						lnode = nextNode;
-					}
-				}
-			}
-		}
+            lnode = nextNode;
+          }
+        }
+      }
+    }
 
 #endif
 
 #if DEBUG && TRACEDOCUMENTNODES
 
-		/// <summary>
-		/// Reports not connected document nodes, i.e. child nodes having no parent.
-		/// </summary>
-		/// <param name="showStatistics">If set to <c>true</c> a line with statistic information is printed into Altaxo's console.</param>
-		/// <returns>True if there were not connected documen nodes; otherwise false.</returns>
-		public static bool ReportNotConnectedDocumentNodes(bool showStatistics)
-		{
-			int numberOfNodes = 0;
-			int numberOfNotConnectedNodes = 0;
-			GC.Collect();
+    /// <summary>
+    /// Reports not connected document nodes, i.e. child nodes having no parent.
+    /// </summary>
+    /// <param name="showStatistics">If set to <c>true</c> a line with statistic information is printed into Altaxo's console.</param>
+    /// <returns>True if there were not connected documen nodes; otherwise false.</returns>
+    public static bool ReportNotConnectedDocumentNodes(bool showStatistics)
+    {
+      int numberOfNodes = 0;
+      int numberOfNotConnectedNodes = 0;
+      GC.Collect();
 
-			var msgDict = new SortedDictionary<string, int>(); // Key is the message, value the number of nodes
+      var msgDict = new SortedDictionary<string, int>(); // Key is the message, value the number of nodes
 
-			foreach (var node in AllDocumentNodes)
-			{
-				if (node.ParentObject == null && !object.ReferenceEquals(node, Current.Project))
-				{
-					string msg;
-					if (null == node._releasedBy)
-						msg = string.Format("{0}, constructed\r\n\tby {1}", node.GetType().FullName, node._constructedBy);
-					else
-						msg = string.Format("{0}, constructed\r\n\tby {1}\r\nreleased by\r\n\t{2}", node.GetType().FullName, node._constructedBy, node._releasedBy);
+      foreach (var node in AllDocumentNodes)
+      {
+        if (node.ParentObject is null && !object.ReferenceEquals(node, Current.Project))
+        {
+          string msg;
+          if (node._releasedBy is null)
+            msg = string.Format("{0}, constructed\r\n\tby {1}", node.GetType().FullName, node._constructedBy);
+          else
+            msg = string.Format("{0}, constructed\r\n\tby {1}\r\nreleased by\r\n\t{2}", node.GetType().FullName, node._constructedBy, node._releasedBy);
 
-					int count;
-					if (msgDict.TryGetValue(msg, out count))
-						msgDict[msg] = count + 1;
-					else
-						msgDict.Add(msg, 1);
+          int count;
+          if (msgDict.TryGetValue(msg, out count))
+            msgDict[msg] = count + 1;
+          else
+            msgDict.Add(msg, 1);
 
-					++numberOfNotConnectedNodes;
-				}
+          ++numberOfNotConnectedNodes;
+        }
 
-				++numberOfNodes;
-			}
+        ++numberOfNodes;
+      }
 
-			foreach (var entry in msgDict)
-			{
-				Current.Console.WriteLine("Found {0} not connected document node(s) of type {1}", entry.Value, entry.Key);
-				Current.Console.WriteLine();
-			}
+      foreach (var entry in msgDict)
+      {
+        Current.Console.WriteLine("Found {0} not connected document node(s) of type {1}", entry.Value, entry.Key);
+        Current.Console.WriteLine();
+      }
 
-			if (showStatistics)
-				Current.Console.WriteLine("Tested {0} nodes, {1} not connected", numberOfNodes, numberOfNotConnectedNodes);
-			return 0 != numberOfNotConnectedNodes;
-		}
+      if (showStatistics)
+        Current.Console.WriteLine("Tested {0} nodes, {1} not connected", numberOfNodes, numberOfNotConnectedNodes);
+      return 0 != numberOfNotConnectedNodes;
+    }
 
 #else
 

@@ -147,7 +147,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       var from = obj as ScatterPlotStyle;
       if (from is not null)
@@ -161,7 +161,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     [MemberNotNull(nameof(_symbolShape), nameof(_material))]
     public void CopyFrom(ScatterPlotStyle from, Main.EventFiring eventFiring)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.
@@ -190,6 +190,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <returns>True if data was copied, otherwise false.</returns>
     public bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
+
       return CopyFrom(obj, true);
     }
 

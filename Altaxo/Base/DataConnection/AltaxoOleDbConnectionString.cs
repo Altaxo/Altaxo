@@ -100,13 +100,7 @@ namespace Altaxo.DataConnection
 
     public static bool operator ==(AltaxoOleDbConnectionString x, AltaxoOleDbConnectionString y)
     {
-      if (System.Object.ReferenceEquals(x, y))
-        return true;
-
-      if (((object)x is null) || ((object)y is null))
-        return false;
-
-      return x._originalConnectionString == y._originalConnectionString && x._connectionStringWithCredentials == y._connectionStringWithCredentials;
+      return ReferenceEquals(x,y) || (x is not null && y is not null && x._originalConnectionString == y._originalConnectionString && x._connectionStringWithCredentials == y._connectionStringWithCredentials);
     }
 
     public static bool operator !=(AltaxoOleDbConnectionString x, AltaxoOleDbConnectionString y)

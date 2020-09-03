@@ -106,11 +106,10 @@ namespace Altaxo.Data
 
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as DataSourceImportOptions;
-      if (from is not null)
+      if (obj is DataSourceImportOptions from)
       {
         _importTriggerSource = from._importTriggerSource;
         _doNotSaveCachedTableData = from._doNotSaveCachedTableData;

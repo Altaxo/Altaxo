@@ -89,11 +89,11 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (base.CopyFrom(obj))
       {
-        var from = obj as DateTimeLabelFormatting;
-        if (from is not null)
+        if (obj is DateTimeLabelFormatting from)
         {
           _formatString = from._formatString;
           _formatStringAlternate = from._formatStringAlternate;
@@ -101,8 +101,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
           _showAlternateFormattingAtNoon = from._showAlternateFormattingAtNoon;
           _timeConversion = from._timeConversion;
         }
+        return true;
       }
-      return isCopied;
+      return false;
     }
 
     public override object Clone()

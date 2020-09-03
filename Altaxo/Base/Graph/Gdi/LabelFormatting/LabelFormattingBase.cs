@@ -79,6 +79,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     public virtual bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
+
       var from = obj as LabelFormattingBase;
       if (from is not null)
       {

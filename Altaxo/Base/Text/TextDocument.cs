@@ -245,7 +245,7 @@ namespace Altaxo.Text
     /// <inheritdoc/>
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is TextDocument from)
@@ -389,7 +389,7 @@ namespace Altaxo.Text
     /// <returns>
     /// True if the item already has a name; otherwise false.
     /// </returns>
-    public bool TryGetName([MaybeNullWhen(false)] out string name)
+    public override bool TryGetName([MaybeNullWhen(false)] out string name)
     {
       name = _name;
       return !(name is null);

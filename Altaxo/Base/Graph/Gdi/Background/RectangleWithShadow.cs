@@ -114,7 +114,7 @@ namespace Altaxo.Graph.Gdi.Background
     [MemberNotNull(nameof(_brush))]
     public void CopyFrom(RectangleWithShadow from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.

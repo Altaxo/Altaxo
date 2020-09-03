@@ -43,7 +43,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
       {
         case '*':
         case '_':
-          if (obj.IsDouble)
+          if (obj.DelimiterCount==2)
           {
             renderer.PushInlineFormat(OpenXMLRenderer.InlineFormat.Bold);
             ++nPushed;
@@ -56,7 +56,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
           break;
 
         case '~':
-          if (obj.IsDouble)
+          if (obj.DelimiterCount==2)
           {
             renderer.PushInlineFormat(OpenXMLRenderer.InlineFormat.Strikethrough);
             ++nPushed;

@@ -92,7 +92,7 @@ namespace Altaxo.Graph.Scales
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is LinkedScaleParameters from)

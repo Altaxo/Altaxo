@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Gdi
     
     private void CopyFrom(LayerBackground from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       ChildCloneToMember(ref _background, from._background);

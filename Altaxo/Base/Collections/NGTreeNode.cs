@@ -487,7 +487,7 @@ namespace Altaxo.Collections
         if (set.Contains(node)) // ignore those nodes that are removed from the set
         {
           var par = node;
-          while ((par = FindFirstSelectedNodeParent(par)) is not null)
+          while ((par = FindFirstSelectedNodeParent(par!)) is not null)
           {
             set.Remove(par);
           }

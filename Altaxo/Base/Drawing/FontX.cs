@@ -348,16 +348,9 @@ namespace Altaxo.Drawing
     /// <returns>
     /// The result of the operator.
     /// </returns>
-    public static bool operator ==(FontX x, FontX y)
+    public static bool operator ==(FontX? x, FontX? y)
     {
-      // If both are null, or both are same instance, return true.
-      if (object.ReferenceEquals(x, y))
-        return true;
-      // If one is null, but not both, return false.
-      if ((object)x is null || (object)y is null)
-        return false;
-
-      return x.InvariantDescriptionString == y.InvariantDescriptionString;
+      return ReferenceEquals(x,y) || (x is not null && y is not null && x.InvariantDescriptionString == y.InvariantDescriptionString);
     }
 
     /// <summary>

@@ -42,6 +42,13 @@ namespace Altaxo.Main
     /// The name of this instance.
     /// </value>
     string Name { get; }
+
+    /// <summary>
+    /// Test if this item already has a name.
+    /// </summary>
+    /// <param name="name">On success, returns the name of the item.</param>
+    /// <returns>True if the item already has a name; otherwise false.</returns>
+    bool TryGetName([MaybeNullWhen(false)] out string name);
   }
 
   /// <summary>
@@ -51,16 +58,9 @@ namespace Altaxo.Main
   public interface INameOwner : INamedObject
   {
     /// <summary>The name of the name owner.
-    /// The get operation will throw an <see cref="InvalidOperationException"/> if the name is not still set (use <see cref="TryGetName(out string)"/> to test for this condition).
+    /// The get operation will throw an <see cref="InvalidOperationException"/> if the name is not still set (use <see cref="INamedObject.TryGetName(out string)"/> to test for this condition).
     /// The set operation can throw an InvalidOperation exception if it is not allowed to set the name.</summary>
     new string Name { get; set; }
-
-    /// <summary>
-    /// Test if this item already has a name.
-    /// </summary>
-    /// <param name="name">On success, returns the name of the item.</param>
-    /// <returns>True if the item already has a name; otherwise false.</returns>
-    bool TryGetName([MaybeNullWhen(false)] out string name);
   }
 
   /// <summary>

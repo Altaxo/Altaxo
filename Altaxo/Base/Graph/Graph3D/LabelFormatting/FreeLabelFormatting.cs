@@ -70,16 +70,18 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+
+      if (base.CopyFrom(obj))
       {
-        var from = obj as FreeLabelFormatting;
-        if (from is not null)
+        if (obj is FreeLabelFormatting from)
         {
           _formatString = from._formatString;
         }
+        return true;
       }
-      return isCopied;
+      return false;
     }
 
     public override object Clone()

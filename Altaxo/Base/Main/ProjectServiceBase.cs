@@ -407,7 +407,7 @@ namespace Altaxo.Dom
 
     /// <summary>
     /// Opens a project.
-    /// If the current project is dirty, and <paramref name="withoutUserInteraction"/> is <c>false</c>, the user is ask to save the current project before.
+    /// If the current project is dirty, and <paramref name="showUserInteraction"/> is <c>true</c>, the user is ask to save the current project before.
     /// </summary>
     /// <param name="fileOrFolderName">The file name of the project to open.</param>
     /// <param name="showUserInteraction">If <c>true</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see

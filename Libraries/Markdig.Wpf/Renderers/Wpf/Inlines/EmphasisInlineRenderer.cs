@@ -24,12 +24,12 @@ namespace Markdig.Renderers.Wpf.Inlines
             {
                 case '*':
                 case '_':
-                    span = obj.IsDouble ? (Span)new Bold() : new Italic();
+                    span = obj.DelimiterCount==2 ? (Span)new Bold() : new Italic();
                     break;
 
                 case '~':
                     span = new Span();
-                    if (obj.IsDouble)
+                    if (obj.DelimiterCount == 2)
                     {
                         renderer.Styles.ApplyStrikeThroughStyle(span);
                     }
@@ -57,7 +57,7 @@ namespace Markdig.Renderers.Wpf.Inlines
                     break;
             }
 
-            if (span != null)
+            if (span is not null)
             {
                 span.Tag = obj;
                 renderer.Push(span);

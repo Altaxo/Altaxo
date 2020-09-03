@@ -254,23 +254,26 @@ namespace Altaxo.Data
     /// <returns><c>True</c> if any data could be copyied.</returns>
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
-      if (!(obj is DataTableMatrixProxy from))
-        return false;
 
-      ChildCloneToMember(ref _dataTable, from._dataTable);
-      InternalSetDataColumnsWithCloning(from._dataColumns);
-      InternalSetRowHeaderColumn((IReadableColumnProxy)from._rowHeaderColumn.Clone());
-      InternalSetColumnHeaderColumn((IReadableColumnProxy)from._columnHeaderColumn.Clone());
-      _groupNumber = from._groupNumber;
-      _useAllAvailableColumnsOfGroup = from._useAllAvailableColumnsOfGroup;
-      _useAllAvailableDataRows = from._useAllAvailableDataRows;
-      _participatingDataRows = (AscendingIntegerCollection)from._participatingDataRows.Clone();
-      _participatingDataColumns = (AscendingIntegerCollection)from._participatingDataColumns.Clone();
-      _isDirty = from._isDirty;
+      if (obj is DataTableMatrixProxy from)
+      {
+        ChildCloneToMember(ref _dataTable, from._dataTable);
+        InternalSetDataColumnsWithCloning(from._dataColumns);
+        InternalSetRowHeaderColumn((IReadableColumnProxy)from._rowHeaderColumn.Clone());
+        InternalSetColumnHeaderColumn((IReadableColumnProxy)from._columnHeaderColumn.Clone());
+        _groupNumber = from._groupNumber;
+        _useAllAvailableColumnsOfGroup = from._useAllAvailableColumnsOfGroup;
+        _useAllAvailableDataRows = from._useAllAvailableDataRows;
+        _participatingDataRows = (AscendingIntegerCollection)from._participatingDataRows.Clone();
+        _participatingDataColumns = (AscendingIntegerCollection)from._participatingDataColumns.Clone();
+        _isDirty = from._isDirty;
 
-      return true;
+        return true;
+      }
+
+      return false;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()

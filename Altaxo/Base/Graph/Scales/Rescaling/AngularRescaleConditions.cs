@@ -75,7 +75,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as AngularRescaleConditions;

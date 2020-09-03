@@ -95,7 +95,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     private void CopyFrom(AxisStyleCollection from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       _axisStyles.Clear();

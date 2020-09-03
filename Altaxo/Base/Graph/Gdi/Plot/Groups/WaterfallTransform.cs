@@ -630,6 +630,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
         public override bool CopyFrom(object obj)
         {
+          if (ReferenceEquals(this, obj))
+            return true;
+
           throw new NotImplementedException();
         }
 

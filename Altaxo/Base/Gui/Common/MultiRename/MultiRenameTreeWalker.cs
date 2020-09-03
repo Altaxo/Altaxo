@@ -109,7 +109,7 @@ namespace Altaxo.Gui.Common.MultiRename
       int offset = 0;
       int step = 1;
 
-      while ((childNode = childNode.next_) is not null)
+      while ((childNode = childNode!.next_) is not null)
       {
         switch (childNode.id_)
         {
@@ -140,7 +140,7 @@ namespace Altaxo.Gui.Common.MultiRename
       int start = 0;
       int last = -1;
 
-      while ((childNode = childNode.next_) is not null)
+      while ((childNode = childNode!.next_) is not null)
       {
         switch (childNode.id_)
         {
@@ -170,7 +170,7 @@ namespace Altaxo.Gui.Common.MultiRename
         throw new ArgumentNullException("childNode");
       string shortCut = _sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length);
 
-      while ((childNode = childNode.next_) is not null)
+      while ((childNode = childNode!.next_) is not null)
       {
         switch (childNode.id_)
         {
@@ -198,7 +198,7 @@ namespace Altaxo.Gui.Common.MultiRename
       int last = -1;
       string separator = "\\";
 
-      while ((childNode = childNode.next_) is not null)
+      while ((childNode = childNode!.next_) is not null)
       {
         switch (childNode.id_)
         {

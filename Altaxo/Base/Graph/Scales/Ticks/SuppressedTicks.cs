@@ -116,7 +116,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is SuppressedTicks from)
@@ -135,7 +135,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
     public override bool Equals(object? obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       else if (!(obj is SuppressedTicks ticks))
         return false;

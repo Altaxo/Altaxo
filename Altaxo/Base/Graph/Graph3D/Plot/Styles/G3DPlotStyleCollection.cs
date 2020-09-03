@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     [MemberNotNull(nameof(_innerList))]
     public void CopyFrom(G3DPlotStyleCollection from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.
@@ -126,7 +126,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// are tried to reuse from the old styles. If this is not possible, the data references will be left empty.</returns>
     public bool CopyFromTemplateCollection(G3DPlotStyleCollection from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return true;
 
       using (var suspendToken = SuspendGetToken())
@@ -165,7 +165,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       var from = obj as G3DPlotStyleCollection;
       if (from is not null)
@@ -183,6 +183,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <returns>True if data was copied, otherwise false.</returns>
     public bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
+
       return CopyFrom(obj, true);
     }
 

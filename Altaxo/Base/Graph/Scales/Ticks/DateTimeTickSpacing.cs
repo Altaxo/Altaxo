@@ -515,7 +515,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is DateTimeTickSpacing from)
@@ -572,7 +572,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
     public override bool Equals(object? obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       else if (!(obj is DateTimeTickSpacing))
         return false;

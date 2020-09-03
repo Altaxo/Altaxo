@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -54,6 +55,17 @@ namespace Altaxo.Main
       public string Name
       {
         get { return "DocumentNodeStaticInstance"; }
+      }
+
+      /// <summary>
+      /// Test if this item already has a name.
+      /// </summary>
+      /// <param name="name">On success, returns the name of the item.</param>
+      /// <returns>True if the item already has a name; otherwise false.</returns>
+      public virtual bool TryGetName([MaybeNullWhen(false)] out string name)
+      {
+        name = Name;
+        return name is not null;
       }
 
       public event EventHandler? Changed;

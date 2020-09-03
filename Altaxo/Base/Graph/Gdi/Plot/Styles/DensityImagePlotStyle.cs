@@ -236,7 +236,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is DensityImagePlotStyle from)

@@ -124,6 +124,11 @@ namespace Altaxo.Graph.Graph3D.Axis
     [MemberNotNull(nameof(_styleID))]
     public void CopyFrom(AxisStyle from)
     {
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+        return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+
       _styleID = from._styleID; // immutable
       _cachedAxisInfo = from._cachedAxisInfo; // attention - have to appear _before_ CopyWithoutIdFrom, since the _cachedAxisInfo is used when cloning AxisLineStyle!
       CopyWithoutIdFrom(from);
@@ -141,7 +146,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       if (obj is AxisStyle from)
       {

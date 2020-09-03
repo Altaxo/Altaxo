@@ -60,7 +60,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is XYFunctionPlotDataBase from)

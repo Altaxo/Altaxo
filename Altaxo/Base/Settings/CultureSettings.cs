@@ -139,10 +139,10 @@ namespace Altaxo.Settings
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(obj, this))
+      if (ReferenceEquals(this, obj))
         return true;
-      var from = obj as CultureSettings;
-      if (from is not null)
+
+      if (obj is CultureSettings from)
       {
         _cultureID = from._cultureID;
         _cultureName = from._cultureName;

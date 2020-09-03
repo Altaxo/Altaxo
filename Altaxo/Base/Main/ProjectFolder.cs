@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -49,6 +50,17 @@ namespace Altaxo.Main
 
     /// <summary>Gets the full folder name. The root folder is represented by an empty string. All other returned names end with an <see cref="DirectorySeparatorChar"/>.</summary>
     public string Name { get; private set; }
+
+    /// <summary>
+    /// Test if this item already has a name.
+    /// </summary>
+    /// <param name="name">On success, returns the name of the item.</param>
+    /// <returns>True if the item already has a name; otherwise false.</returns>
+    public virtual bool TryGetName([MaybeNullWhen(false)] out string name)
+    {
+      name = Name;
+      return name is not null;
+    }
 
     /// <summary>Returns true if the folder name is the root folder (empty string).</summary>
     public bool IsRootFolder

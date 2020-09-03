@@ -106,7 +106,7 @@ namespace Altaxo.Graph.Plot.Groups
           savedStyles++;
 
           System.Type? childtype = t;
-          while ((childtype = s._typeToInfo[childtype].ChildGroupType) is not null)
+          while ((childtype = s._typeToInfo[childtype!].ChildGroupType) is not null)
           {
             info.AddValue("Style", s._typeToInstance[childtype]);
             info.AddValue("HasChild", s._typeToInfo[childtype].ChildGroupType is not null);
@@ -184,6 +184,11 @@ namespace Altaxo.Graph.Plot.Groups
     [MemberNotNull(nameof(_typeToInfo), nameof(_typeToInstance))]
     public void CopyFrom(PlotGroupStyleCollectionBase from)
     {
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+        return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+
       using (var suspendToken = SuspendGetToken())
       {
         _typeToInstance = new Dictionary<Type, IPlotGroupStyle>();
@@ -207,7 +212,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
 
@@ -352,7 +357,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       int result = 0;
       System.Type? t = groupStyleType;
-      while ((t = _typeToInfo[t].ParentGroupType) is not null)
+      while ((t = _typeToInfo[t!].ParentGroupType) is not null)
         ++result;
 
       return result;

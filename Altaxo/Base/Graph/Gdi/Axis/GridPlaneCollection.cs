@@ -41,7 +41,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     private void CopyFrom(GridPlaneCollection from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       Clear();

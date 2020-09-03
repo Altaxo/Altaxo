@@ -122,7 +122,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       if (obj is ShapeGroup from)
       {

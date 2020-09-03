@@ -103,20 +103,22 @@ namespace Altaxo.Data
     /// <returns><c>True</c> if any data could be copyied.</returns>
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
-      if (!(obj is DataTableMultipleColumnProxy from))
-        return false;
+      if (obj is DataTableMultipleColumnProxy from)
+      {
+        InternalSetDataTable((DataTableProxy)from._dataTable.Clone());
+        InternalSetDataColumnsWithCloning(from._dataColumnBundles);
+        _groupNumber = from._groupNumber;
+        _useAllAvailableDataRows = from._useAllAvailableDataRows;
+        _participatingDataRows = (AscendingIntegerCollection)from._participatingDataRows.Clone();
 
-      InternalSetDataTable((DataTableProxy)from._dataTable.Clone());
-      InternalSetDataColumnsWithCloning(from._dataColumnBundles);
-      _groupNumber = from._groupNumber;
-      _useAllAvailableDataRows = from._useAllAvailableDataRows;
-      _participatingDataRows = (AscendingIntegerCollection)from._participatingDataRows.Clone();
+        _isDirty = from._isDirty;
 
-      _isDirty = from._isDirty;
+        return true;
+      }
 
-      return true;
+      return false;
     }
 
     #region Serialization

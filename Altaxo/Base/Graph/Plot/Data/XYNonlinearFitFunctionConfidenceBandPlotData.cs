@@ -314,7 +314,7 @@ namespace Altaxo.Graph.Plot.Data
     }
 
     [MemberNotNull(nameof(_fitDocumentIdentifier), nameof(_fitDocument), nameof(_cachedFitFunction), nameof(_cachedParameters), nameof(_cachedParametersForJacobianEvaluation), nameof(_cachedJacobian), nameof(_functionValues), nameof(_covarianceMatrix), nameof(_cachedIndicesOfVaryingParametersOfThisFitElement))]
-    public void CopyFrom(XYNonlinearFitFunctionConfidenceBandPlotData from)
+    protected void CopyFrom(XYNonlinearFitFunctionConfidenceBandPlotData from)
     {
       _fitDocumentIdentifier = from._fitDocumentIdentifier;
       ChildCopyToMember(ref _fitDocument, from._fitDocument);
@@ -336,7 +336,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (!base.CopyFrom(obj))

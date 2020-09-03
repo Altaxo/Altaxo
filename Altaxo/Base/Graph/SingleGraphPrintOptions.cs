@@ -93,7 +93,7 @@ namespace Altaxo.Graph
 
     public void CopyFrom(SingleGraphPrintOptions from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       _fitGraphToPrintIfSmaller = from._fitGraphToPrintIfSmaller;

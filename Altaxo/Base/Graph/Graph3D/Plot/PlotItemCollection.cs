@@ -724,7 +724,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public void CopyFrom(PlotItemCollection from, Gdi.GraphCopyOptions options)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       if (Gdi.GraphCopyOptions.CopyLayerPlotStyles == (Gdi.GraphCopyOptions.CopyLayerPlotStyles & options))
@@ -751,7 +751,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as PlotItemCollection;

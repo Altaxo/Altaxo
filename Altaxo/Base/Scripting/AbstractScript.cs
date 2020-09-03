@@ -279,7 +279,7 @@ namespace Altaxo.Scripting
     /// the compiled assembly is not copied, so that the script text can be modified.</param>
     public void CopyFrom(AbstractScript from, bool forModification)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       var oldScriptText = _scriptText;

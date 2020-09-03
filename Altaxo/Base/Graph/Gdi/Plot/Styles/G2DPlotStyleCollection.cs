@@ -138,7 +138,7 @@ info.CommitArray();
     [MemberNotNull(nameof(_innerList))]
     public void CopyFrom(G2DPlotStyleCollection from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.
@@ -165,7 +165,7 @@ info.CommitArray();
     /// are tried to reuse from the old styles. If this is not possible, the data references will be left empty.</returns>
     public bool CopyFromTemplateCollection(G2DPlotStyleCollection from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return true;
 
       using (var suspendToken = SuspendGetToken())
@@ -205,7 +205,7 @@ info.CommitArray();
     /// <inheritdoc/>
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       var from = obj as G2DPlotStyleCollection;
       if (from is not null)
@@ -219,7 +219,7 @@ info.CommitArray();
     /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       var from = obj as G2DPlotStyleCollection;
       if (from is not null)

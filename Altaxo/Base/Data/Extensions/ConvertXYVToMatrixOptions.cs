@@ -161,11 +161,10 @@ namespace Altaxo.Data
 
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as ConvertXYVToMatrixOptions;
-      if (from is not null)
+      if (obj is ConvertXYVToMatrixOptions from)
       {
         _outputAveraging = from._outputAveraging;
         _outputNaming = from._outputNaming;

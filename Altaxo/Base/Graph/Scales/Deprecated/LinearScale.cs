@@ -217,7 +217,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public virtual void CopyFrom(LinearScale from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       _cachedAxisEnd = from._cachedAxisEnd;

@@ -77,17 +77,19 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+
+      if (base.CopyFrom(obj))
       {
-        var from = obj as MultiLineLabelFormattingBase;
-        if (from is not null)
+        if (obj is MultiLineLabelFormattingBase from)
         {
           _relativeLineSpacing = from._relativeLineSpacing;
           _textBlockAlignment = from._textBlockAlignment;
         }
+        return true;
       }
-      return isCopied;
+      return false;
     }
 
     public double LineSpacing

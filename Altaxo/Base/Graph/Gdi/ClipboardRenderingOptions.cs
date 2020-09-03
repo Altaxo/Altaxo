@@ -184,7 +184,7 @@ namespace Altaxo.Graph.Gdi
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var result = base.CopyFrom(obj);

@@ -180,7 +180,7 @@ namespace Altaxo.Graph.Gdi
 
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as HostLayer;
@@ -194,7 +194,7 @@ namespace Altaxo.Graph.Gdi
 
     public virtual void CopyFrom(HostLayer from, GraphCopyOptions options)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       using (var suspendToken = SuspendGetToken())
@@ -956,7 +956,7 @@ namespace Altaxo.Graph.Gdi
         {
           var childLayers = hl._childLayers;
           for (int i = 0; i < childLayers.Count; ++i)
-            if (object.ReferenceEquals(this, childLayers[i]))
+            if (ReferenceEquals(this, childLayers[i]))
               return i;
         }
         return 0;

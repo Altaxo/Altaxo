@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     private void CopyFrom(AxisStyleCollection from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       _axisStyles.Clear();

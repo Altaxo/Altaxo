@@ -82,7 +82,7 @@ namespace Altaxo.Graph.Scales.Ticks
     }
 
     [MemberNotNull(nameof(_additionalTicks))]
-    public void CopyFrom(AdditionalTicks from)
+    protected void CopyFrom(AdditionalTicks from)
     {
       _additionalTicks = new List<AltaxoVariant>(from._additionalTicks);
       EhSelfChanged();
@@ -90,7 +90,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is AdditionalTicks from)
@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
     public override bool Equals(object? obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       else if (!(obj is AdditionalTicks ticks))
         return false;

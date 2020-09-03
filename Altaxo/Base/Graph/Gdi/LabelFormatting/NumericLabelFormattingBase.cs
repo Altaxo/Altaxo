@@ -69,16 +69,18 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+
+      if (base.CopyFrom(obj))
       {
-        var from = obj as NumericLabelFormattingBase;
-        if (from is not null)
+        if (obj is NumericLabelFormattingBase from)
         {
           _decimalPlaces = from._decimalPlaces;
         }
+        return true;
       }
-      return isCopied;
+      return false;
     }
   }
 }

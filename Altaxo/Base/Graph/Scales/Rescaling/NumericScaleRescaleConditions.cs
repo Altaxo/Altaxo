@@ -235,33 +235,34 @@ namespace Altaxo.Graph.Scales.Rescaling
     /// <returns>True if at least some data could be copied.</returns>
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
-      var from = obj as NumericScaleRescaleConditions;
-      if (from is null)
-        return false;
+      if (obj is NumericScaleRescaleConditions from)
+      {
+        _orgRescaling = from._orgRescaling;
+        _endRescaling = from._endRescaling;
 
-      _orgRescaling = from._orgRescaling;
-      _endRescaling = from._endRescaling;
+        _userProvidedOrgRelativeTo = from._userProvidedOrgRelativeTo;
+        _userProvidedEndRelativeTo = from._userProvidedEndRelativeTo;
 
-      _userProvidedOrgRelativeTo = from._userProvidedOrgRelativeTo;
-      _userProvidedEndRelativeTo = from._userProvidedEndRelativeTo;
+        _userProvidedOrgValue = from._userProvidedOrgValue;
+        _userProvidedEndValue = from._userProvidedEndValue;
 
-      _userProvidedOrgValue = from._userProvidedOrgValue;
-      _userProvidedEndValue = from._userProvidedEndValue;
+        _dataBoundsOrg = from._dataBoundsOrg;
+        _dataBoundsEnd = from._dataBoundsEnd;
 
-      _dataBoundsOrg = from._dataBoundsOrg;
-      _dataBoundsEnd = from._dataBoundsEnd;
+        _resultingOrg = from._resultingOrg;
+        _resultingEnd = from._resultingEnd;
 
-      _resultingOrg = from._resultingOrg;
-      _resultingEnd = from._resultingEnd;
+        _resultingMinOrg = from._resultingMinOrg;
+        _resultingMaxEnd = from._resultingMaxEnd;
 
-      _resultingMinOrg = from._resultingMinOrg;
-      _resultingMaxEnd = from._resultingMaxEnd;
+        EhSelfChanged(EventArgs.Empty);
 
-      EhSelfChanged(EventArgs.Empty);
+        return true;
+      }
 
-      return true;
+      return false;
     }
 
     public abstract object Clone();

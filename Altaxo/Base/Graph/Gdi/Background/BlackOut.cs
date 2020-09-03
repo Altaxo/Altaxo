@@ -72,7 +72,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public void CopyFrom(BlackOut from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
     }
 

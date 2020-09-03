@@ -96,12 +96,17 @@ namespace Altaxo.Graph.Plot.Data
     [MemberNotNull(nameof(_function))]
     public void CopyFrom(XYFunctionPlotData from)
     {
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+        return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+
       ChildCloneToMemberAlt(ref _function, from._function);
     }
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (!base.CopyFrom(obj))

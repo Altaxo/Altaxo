@@ -347,7 +347,7 @@ namespace Altaxo.Graph.Graph3D
     public void CopyFrom(GraphDocument from, Altaxo.Graph.Gdi.GraphCopyOptions options)
     {
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.
 

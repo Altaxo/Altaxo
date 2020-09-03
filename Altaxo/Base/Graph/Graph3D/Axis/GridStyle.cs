@@ -111,7 +111,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public void CopyFrom(GridStyle from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       _majorPen = from._majorPen;

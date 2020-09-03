@@ -67,7 +67,7 @@ namespace Altaxo.Data
     }
 
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
-    void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       ChildSetMember(ref _processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this));
       ChildSetMember(ref _processOptions, (ConvertXYVToMatrixOptions)info.GetValue("ProcessOptions", this));
@@ -137,6 +137,11 @@ namespace Altaxo.Data
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     public void CopyFrom(ConvertXYVToMatrixDataSource from)
     {
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+        return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+
       using (var token = SuspendGetToken())
       {
         ConvertXYVToMatrixOptions? dataSourceOptions = null;
@@ -160,7 +165,7 @@ namespace Altaxo.Data
     /// <returns><c>True</c> if anything could be copied from the object, otherwise <c>false</c>.</returns>
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is ConvertXYVToMatrixDataSource from)

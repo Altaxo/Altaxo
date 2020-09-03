@@ -394,7 +394,7 @@ namespace Altaxo.Scripting
 
     public void CopyFrom(FitFunctionScript from, bool forModification)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       base.CopyFrom(from, forModification);

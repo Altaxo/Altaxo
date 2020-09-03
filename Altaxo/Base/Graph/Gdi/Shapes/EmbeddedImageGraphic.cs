@@ -143,16 +143,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+
+      if (base.CopyFrom(obj))
       {
-        var from = obj as EmbeddedImageGraphic;
-        if (from is not null)
+        if (obj is EmbeddedImageGraphic from)
         {
           Image = from._imageProxy;
         }
+        return true;
       }
-      return isCopied;
+      return false;
     }
 
     #endregion Constructors

@@ -293,6 +293,11 @@ namespace AltaxoTest.Data
         get { throw new NotImplementedException(); }
       }
 
+      public bool TryGetName(out string name)
+      {
+        throw new NotImplementedException();
+      }
+
       public event EventHandler Changed;
 
       public Altaxo.Main.ISuspendToken SuspendGetToken()

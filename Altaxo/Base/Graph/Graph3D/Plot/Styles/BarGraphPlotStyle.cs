@@ -226,7 +226,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public virtual bool CopyFrom(object obj, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return true;
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.
@@ -247,6 +247,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <returns>True if data was copied, otherwise false.</returns>
     public bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
+
       return CopyFrom(obj, true);
     }
 

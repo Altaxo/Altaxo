@@ -253,7 +253,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       if (obj is AxisStyle from)
       {
@@ -264,7 +264,7 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
     [MemberNotNull(nameof(_styleID))]
-    public void CopyFrom(AxisStyle from)
+    protected void CopyFrom(AxisStyle from)
     {
       _styleID = from._styleID; // immutable
       _cachedAxisInfo = from._cachedAxisInfo; // attention - have to appear _before_ CopyWithoutIdFrom, since the _cachedAxisInfo is used when cloning AxisLineStyle!

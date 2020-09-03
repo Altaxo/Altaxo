@@ -82,8 +82,10 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     public virtual bool CopyFrom(object obj)
     {
-      var from = obj as LabelFormattingBase;
-      if (from is not null)
+      if (ReferenceEquals(this, obj))
+        return true;
+
+      if (obj is LabelFormattingBase from)
       {
         using (var suspendToken = SuspendGetToken())
         {

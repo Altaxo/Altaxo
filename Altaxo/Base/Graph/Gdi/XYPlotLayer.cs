@@ -1464,7 +1464,7 @@ namespace Altaxo.Graph.Gdi
 
       private void CopyFrom(ScaleStyle from)
       {
-        if (object.ReferenceEquals(this, from))
+        if (ReferenceEquals(this, from))
           return;
 
         GridStyle = (GridStyle?)from._gridStyle?.Clone();
@@ -1748,7 +1748,7 @@ namespace Altaxo.Graph.Gdi
 
       public virtual bool CopyFrom(object obj)
       {
-        if (object.ReferenceEquals(this, obj))
+        if (ReferenceEquals(this, obj))
           return true;
         var from = obj as PlaceHolder;
         if (from is not null)
@@ -1768,14 +1768,19 @@ namespace Altaxo.Graph.Gdi
 
       public override bool CopyFrom(object obj)
       {
-        if (!base.CopyFrom(obj))
-          return false;
+        if (ReferenceEquals(this, obj))
+          return true;
 
-        var from = obj as AxisStylePlaceHolderBase;
-        if (from is not null)
-          Index = from.Index;
+        if (base.CopyFrom(obj))
+        {
+          if (obj is AxisStylePlaceHolderBase from)
+          {
+            Index = from.Index;
+          }
 
-        return true;
+          return true;
+        }
+        return false;
       }
 
       /// <summary>
@@ -2295,17 +2300,19 @@ namespace Altaxo.Graph.Gdi
 
       public override bool CopyFrom(object obj)
       {
-        if (!base.CopyFrom(obj))
-          return false;
+        if (ReferenceEquals(this, obj))
+          return true;
 
-        var from = obj as PlotItemPlaceHolder;
-        if (from is not null)
+        if (base.CopyFrom(obj))
         {
-          PlotItemParent = from.PlotItemParent;
-          PlotItemIndex = from.PlotItemIndex;
+          if (obj is PlotItemPlaceHolder from)
+          {
+            PlotItemParent = from.PlotItemParent;
+            PlotItemIndex = from.PlotItemIndex;
+          }
+          return true;
         }
-
-        return true;
+        return false;
       }
 
       public override string ToString()

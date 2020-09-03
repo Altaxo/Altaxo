@@ -132,7 +132,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     private void CopyFrom(BarSizePosition3DGroupStyle from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       _isStepEnabled = from._isStepEnabled;

@@ -1231,6 +1231,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       public bool CopyFrom(object obj)
       {
+        if (ReferenceEquals(this, obj))
+          return true;
+
         throw new NotImplementedException();
       }
 

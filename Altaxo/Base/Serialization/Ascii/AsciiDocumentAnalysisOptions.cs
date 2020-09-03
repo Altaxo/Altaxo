@@ -178,7 +178,7 @@ namespace Altaxo.Serialization.Ascii
     /// <returns>True if anything has been copied. Otherwise, the return value is false.</returns>
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       if (obj is AsciiDocumentAnalysisOptions from)
       {

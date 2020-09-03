@@ -163,6 +163,11 @@ namespace Altaxo.Graph.Gdi.Plot
     [MemberNotNull(nameof(_plotData))]
     public void CopyFrom(XYColumnPlotItem from, bool withBaseMembers)
     {
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+        return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+
       if (withBaseMembers)
         base.CopyFrom(from, withBaseMembers);
 
@@ -171,7 +176,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       if (obj is XYColumnPlotItem from)
       {

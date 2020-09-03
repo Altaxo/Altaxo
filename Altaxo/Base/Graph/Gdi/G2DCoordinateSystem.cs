@@ -50,7 +50,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="from">The coordinate system to copy from.</param>
     public virtual void CopyFrom(G2DCoordinateSystem from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       _layerWidth = from._layerWidth;

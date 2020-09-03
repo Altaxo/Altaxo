@@ -49,7 +49,7 @@ namespace Altaxo.Main.Commands
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       var from = obj as TestAllProjectsInFolderOptions;
       if (from is not null)
