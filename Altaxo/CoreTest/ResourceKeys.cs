@@ -35,6 +35,7 @@ namespace AltaxoTest
     [Test]
     public void TestAllKeysPresent()
     {
+      // Choose the AltaxoCore assembly
       var assemblyToTest = System.Reflection.Assembly.GetAssembly(typeof(Altaxo.Calc.Complex));
 
       foreach (System.Type typeInAssembly in assemblyToTest.GetTypes())

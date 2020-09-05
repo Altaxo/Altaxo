@@ -75,8 +75,9 @@ namespace Altaxo.Gui.Workbench
         if (interf.FullName == activeWindow)
           return true;
       }
-      while ((currentType = currentType.BaseType) is not null)
+      while (currentType.BaseType is { } currentBaseType)
       {
+        currentType = currentBaseType;
         if (currentType.FullName == activeWindow)
           return true;
       }

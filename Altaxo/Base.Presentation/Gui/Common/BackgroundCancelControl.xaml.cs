@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Common
   public partial class BackgroundCancelControl : UserControl
   {
     private const int TimerTick_ms = 100;
-    private System.Exception _threadException;
+    //private System.Exception _threadException;
     private System.Threading.Thread _thread;
     private IExternalDrivenBackgroundMonitor _monitor;
     private bool _wasCancelledByUser;
@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Common
     {
       get
       {
-        return _threadException;
+        return null;
       }
     }
 

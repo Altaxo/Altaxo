@@ -58,7 +58,7 @@ namespace Altaxo.Calc.Probability
 
     /// <summary>Calculates the quantile of the distribution function.</summary>
     /// <param name="p">The probability p.</param>
-    /// <returns>The point x at which the cumulative distribution function <see cref="CDF"/>() of argument x is equal to <paramref name="p"/>.</returns>
+    /// <returns>The point x at which the cumulative distribution function <see cref="CDF(double)"/> of argument x is equal to <paramref name="p"/>.</returns>
     public virtual double Quantile(double p)
     {
       throw new NotImplementedException();

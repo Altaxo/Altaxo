@@ -40,6 +40,15 @@ namespace AltaxoTest.Calc.Probability
     private double[] _a;
     private ContinuousDistribution _dist;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ContDistTester"/> class.
+    /// </summary>
+    /// <param name="a">The parameter array. a0 and a1 are parameters used to create the distribution.
+    /// a2 is the quantile at p=0.25.
+    /// a3 is the PDF at the quantile at p=0.25,
+    /// a4 ist the quantile at p=0.95, and
+    /// a5 ist the PDF at the quantile at p=0.95.</param>
+    /// <param name="creator">The creator.</param>
     public ContDistTester(double[] a, ContDistCreator creator)
     {
       Assert.AreEqual(6, a.Length, "Unexpected length of parameter array");
@@ -450,8 +459,11 @@ new double[]{1.5, 1.75, 1.768010430487225851453548, 0.742359873769694378113828, 
     [Test]
     public void TestPowerDistribution()
     {
+      Assert.AreEqual(1.7677669529663688110, PowerDistribution.PDF(0.25, 2, 2.5));
+      Assert.AreEqual(0.17677669529663688110, PowerDistribution.CDF(0.25, 2, 2.5));
+
       double[][] para = {
-new double[]{}
+        new double[]{2, 2.5, 0.28717458874925875170, 2.1763764082403103478, 0.48984586513311492984, 4.8484639129384037291 }
       };
       for (int i = 0; i < para.Length; i++)
       {
@@ -459,8 +471,8 @@ new double[]{}
         {
           var ret = new PowerDistribution
           {
-            Alpha = a,
-            Beta = b
+            K = a,
+            A = b
           };
           return ret;
         }
@@ -582,13 +594,13 @@ new double[]{1.5, 0, 1.137791424661398198866648, 0.379263808220466066288883, 3.6
     public void TestTriangularDistribution()
     {
       double[][] para = {
-new double[]{}
+new double[]{-66, 77, -15.441865145161852005 , 0.0098896053312803849567, 54.389714729796087776, 0.0044227659582774536112 }
       };
       for (int i = 0; i < para.Length; i++)
       {
         var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          var ret = new TriangularDistribution(a, 0.5 * (a + b), b);
+          var ret = new TriangularDistribution(a, b, 0.5 * (a + b));
           return ret;
         }
           );
