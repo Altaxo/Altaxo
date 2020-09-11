@@ -709,7 +709,7 @@ namespace Altaxo.Graph.Plot.Data
 
         _pointCount = GetMaximumRowIndexFromDataColumns();
 
-        if (XColumn is { } xColumn && YColumn is { } yColumn && ZColumn is { } zColumn && _dataTable?.Document is { } dataTable)
+        if (XColumn is { } xColumn && YColumn is { } yColumn && ZColumn is { } zColumn && DataTable is { } dataTable)
         {
           foreach (var segment in _dataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, _pointCount, dataTable.DataColumns, _pointCount))
           {
@@ -820,7 +820,7 @@ namespace Altaxo.Graph.Plot.Data
       int maxRowIndex = GetMaximumRowIndexFromDataColumns();
       int plotArrayIdx = 0;
 
-      if (_dataTable.Document is { } dataTable)
+      if (DataTable is { } dataTable)
       {
         foreach ((int start, int endExclusive) in _dataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, maxRowIndex, dataTable.DataColumns, maxRowIndex))
         {

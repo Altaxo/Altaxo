@@ -182,6 +182,14 @@ namespace Altaxo.Graph.Plot.Data
           }
         }
 
+        if (isFinallyCall && (_plotAssociation._xColumn is null || _plotAssociation._yColumn is null))
+        {
+          if (_plotAssociation._xColumn is null)
+            _plotAssociation.XColumn = new IndexerColumn();
+          if (_plotAssociation._yColumn is null)
+            _plotAssociation.YColumn = new IndexerColumn();
+        }
+
         if (bAllResolved)
           info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
       }
@@ -272,6 +280,14 @@ namespace Altaxo.Graph.Plot.Data
             if (labelColumn is Altaxo.Data.IReadableColumn)
               _plotAssociation._deprecatedLabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
           }
+        }
+
+        if (isFinallyCall && (_plotAssociation._xColumn is null || _plotAssociation._yColumn is null))
+        {
+          if (_plotAssociation._xColumn is null)
+            _plotAssociation.XColumn = new IndexerColumn();
+          if (_plotAssociation._yColumn is null)
+            _plotAssociation.YColumn = new IndexerColumn();
         }
 
         if (bAllResolved)
@@ -904,7 +920,7 @@ namespace Altaxo.Graph.Plot.Data
 
         _pointCount = GetMaximumRowIndexFromDataColumns();
 
-        if (XColumn is { } xColumn && YColumn is { } yColumn && _dataTable?.Document is { } dataTable)
+        if (XColumn is { } xColumn && YColumn is { } yColumn && DataTable is { } dataTable)
         {
           foreach (var segment in _dataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, _pointCount, dataTable.DataColumns, _pointCount))
           {
@@ -1003,7 +1019,7 @@ namespace Altaxo.Graph.Plot.Data
 
       int plotArrayIdx = 0;
 
-      if (_dataTable?.Document is { } dataTable)
+      if (DataTable is { } dataTable)
       {
         foreach ((int start, int endExclusive) in _dataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, maxRowIndex, dataTable.DataColumns, maxRowIndex))
         {

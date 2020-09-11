@@ -369,11 +369,14 @@ namespace Altaxo.Main
       if (node is null)
         throw new ArgumentNullException(nameof(node));
 
+      int maxdepth = 65536;
       var parent = node.ParentObject;
       while (parent is not null)
       {
         node = parent;
         parent = node.ParentObject;
+        if (--maxdepth == 0)
+          throw new InvalidProgramException("Detected unusual deep hierarchy.");
       }
 
       return node;
