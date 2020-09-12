@@ -92,7 +92,7 @@ namespace Altaxo.AddInItems
     /// </summary>
     /// <param name="parameter">A parameter that gets passed into the doozer and condition evaluators.</param>
     /// <param name="additionalConditions">Additional conditions applied to the node.</param>
-    public List<T> BuildChildItems<T>(object parameter, IEnumerable<ICondition>? additionalConditions = null)
+    public List<T> BuildChildItems<T>(object? parameter, IEnumerable<ICondition>? additionalConditions = null)
     {
       var codons = Codons;
       var items = new List<T>(codons.Count);
@@ -120,7 +120,7 @@ namespace Altaxo.AddInItems
       return items;
     }
 
-    public object? BuildChildItem(Codon codon, object parameter, IEnumerable<ICondition>? additionalConditions = null)
+    public object? BuildChildItem(Codon codon, object? parameter, IEnumerable<ICondition>? additionalConditions = null)
     {
       if (codon is null)
         throw new ArgumentNullException(nameof(codon));
@@ -149,7 +149,7 @@ namespace Altaxo.AddInItems
     /// <exception cref="TreePathNotFoundException">
     /// Occurs when <paramref name="childItemID"/> does not exist in this path.
     /// </exception>
-    public object? BuildChildItem(string childItemID, object parameter, IEnumerable<ICondition>? additionalConditions = null)
+    public object? BuildChildItem(string childItemID, object? parameter, IEnumerable<ICondition>? additionalConditions = null)
     {
       foreach (Codon codon in Codons)
       {

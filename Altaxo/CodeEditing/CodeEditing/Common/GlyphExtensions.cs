@@ -23,7 +23,7 @@ namespace Altaxo.CodeEditing.Common
         var obj = Application.Current.TryFindResource(new ComponentResourceKey(typeof(Altaxo.CodeEditing.Common.Glyph), (Altaxo.CodeEditing.Common.Glyph)glyph));
         return obj as ImageSource;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
       }
       return null;

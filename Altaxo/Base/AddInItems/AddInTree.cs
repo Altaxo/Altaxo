@@ -193,12 +193,12 @@ namespace Altaxo.AddInItems
     /// <param name="parameter">A parameter that gets passed into the doozer and condition evaluators.</param>
     /// <exception cref="TreePathNotFoundException">The path does not
     /// exist or does not point to an item.</exception>
-    public object BuildItem(string path, object parameter)
+    public object BuildItem(string path, object? parameter)
     {
       return BuildItem(path, parameter, null);
     }
 
-    public object BuildItem(string path, object parameter, IEnumerable<ICondition>? additionalConditions)
+    public object BuildItem(string path, object? parameter, IEnumerable<ICondition>? additionalConditions)
     {
       int pos = path.LastIndexOf('/');
       string parent = path.Substring(0, pos);

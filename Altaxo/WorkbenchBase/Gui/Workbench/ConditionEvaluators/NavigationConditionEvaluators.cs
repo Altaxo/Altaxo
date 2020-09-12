@@ -31,7 +31,7 @@ namespace Altaxo.Gui.Workbench
   /// </example>
   public class CanNavigateBackConditionEvaluator : IConditionEvaluator
   {
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object? caller, Condition condition)
     {
       return NavigationService.CanNavigateBack || NavigationService.CanNavigateForwards;
     }
@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Workbench
   /// </example>
   public class CanNavigateForwardConditionEvaluator : IConditionEvaluator
   {
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object? caller, Condition condition)
     {
       return NavigationService.CanNavigateForwards;
     }

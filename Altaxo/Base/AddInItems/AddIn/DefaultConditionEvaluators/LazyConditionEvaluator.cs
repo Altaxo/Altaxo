@@ -48,7 +48,7 @@ namespace Altaxo.AddInItems
       className = properties["class"];
     }
 
-    public bool IsValid(object parameter, Condition condition)
+    public bool IsValid(object? parameter, Condition condition)
     {
       var evaluator = (IConditionEvaluator?)addIn.CreateObject(className);
       if (evaluator is null)

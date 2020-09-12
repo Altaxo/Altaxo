@@ -93,12 +93,12 @@ namespace Altaxo.AddInItems
   /// </summary>
   public sealed class MenuItemDescriptor
   {
-    public readonly object Parameter;
+    public readonly object? Parameter;
     public readonly Codon Codon;
     public readonly IList SubItems;
     public readonly IReadOnlyCollection<ICondition> Conditions;
 
-    public MenuItemDescriptor(object parameter, Codon codon, IList subItems, IReadOnlyCollection<ICondition> conditions)
+    public MenuItemDescriptor(object? parameter, Codon codon, IList subItems, IReadOnlyCollection<ICondition> conditions)
     {
       Parameter = parameter;
       Codon = codon ?? throw new ArgumentNullException(nameof(codon));

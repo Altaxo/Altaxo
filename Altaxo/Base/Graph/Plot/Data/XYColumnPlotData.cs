@@ -180,14 +180,15 @@ namespace Altaxo.Graph.Plot.Data
             if (yColumn is Altaxo.Data.IReadableColumn readableColum)
               _plotAssociation.YColumn = readableColum;
           }
-        }
 
-        if (isFinallyCall && (_plotAssociation._xColumn is null || _plotAssociation._yColumn is null))
-        {
-          if (_plotAssociation._xColumn is null)
-            _plotAssociation.XColumn = new IndexerColumn();
-          if (_plotAssociation._yColumn is null)
-            _plotAssociation.YColumn = new IndexerColumn();
+
+          if (isFinallyCall && (_plotAssociation._xColumn is null || _plotAssociation._yColumn is null))
+          {
+            if (_plotAssociation._xColumn is null)
+              _plotAssociation.XColumn = new IndexerColumn();
+            if (_plotAssociation._yColumn is null)
+              _plotAssociation.YColumn = new IndexerColumn();
+          }
         }
 
         if (bAllResolved)
@@ -280,14 +281,15 @@ namespace Altaxo.Graph.Plot.Data
             if (labelColumn is Altaxo.Data.IReadableColumn)
               _plotAssociation._deprecatedLabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
           }
-        }
 
-        if (isFinallyCall && (_plotAssociation._xColumn is null || _plotAssociation._yColumn is null))
-        {
-          if (_plotAssociation._xColumn is null)
-            _plotAssociation.XColumn = new IndexerColumn();
-          if (_plotAssociation._yColumn is null)
-            _plotAssociation.YColumn = new IndexerColumn();
+
+          if (isFinallyCall && (_plotAssociation._xColumn is null || _plotAssociation._yColumn is null))
+          {
+            if (_plotAssociation._xColumn is null)
+              _plotAssociation.XColumn = new IndexerColumn();
+            if (_plotAssociation._yColumn is null)
+              _plotAssociation.YColumn = new IndexerColumn();
+          }
         }
 
         if (bAllResolved)

@@ -25,7 +25,7 @@ namespace Altaxo.Gui.Workbench.Commands
 {
   public class SelectNextWindow : SimpleCommand
   {
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
 
@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Workbench.Commands
 
   public class SelectPrevWindow : SimpleCommand
   {
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
       if (!(parameter is IViewContent thisWindow))
@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Workbench.Commands
 
   public class CloseAllWindows : SimpleCommand
   {
-    public override void Execute(object _)
+    public override void Execute(object? _)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
       workbench.CloseAllViews();
@@ -67,7 +67,7 @@ namespace Altaxo.Gui.Workbench.Commands
 
   public class CloseFileTab : SimpleCommand
   {
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
       if (!(parameter is IViewContent thisWindow))
@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Workbench.Commands
 
   public class CloseAllButThisFileTab : SimpleCommand
   {
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
 
@@ -105,7 +105,7 @@ namespace Altaxo.Gui.Workbench.Commands
 
   public class DeleteThisFileTab : SimpleCommand
   {
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
 

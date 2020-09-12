@@ -90,7 +90,7 @@ namespace Altaxo.CodeEditing.Completion
           }
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
 
       }

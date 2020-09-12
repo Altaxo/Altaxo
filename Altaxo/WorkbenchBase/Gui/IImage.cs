@@ -79,12 +79,30 @@ namespace Altaxo.Gui
       }
     }
 
+    static Bitmap? _defaultErrorBitmap;
+
     /// <inheritdoc/>
     public Bitmap Bitmap
     {
       get
       {
-        return Altaxo.Current.ResourceService.GetBitmap(resourceName);
+        var result = Altaxo.Current.ResourceService.GetBitmap(resourceName);
+
+        if (result is not null)
+          return result;
+
+        if (_defaultErrorBitmap is not null)
+          return _defaultErrorBitmap;
+
+        var bmp = new Bitmap(16, 16);
+        using (var g = Graphics.FromImage(bmp))
+        {
+          g.DrawLine(Pens.Red, 0, 0, 16, 16);
+          g.DrawLine(Pens.Red, 0, 16, 16, 0);
+        }
+
+        System.Threading.Interlocked.Exchange(ref _defaultErrorBitmap, bmp);
+        return bmp;
       }
     }
 
@@ -97,9 +115,9 @@ namespace Altaxo.Gui
       }
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      return obj is ResourceServiceImage other ? resourceName == other.resourceName : false;
+      return obj is ResourceServiceImage other && resourceName == other.resourceName;
     }
 
     public override int GetHashCode()

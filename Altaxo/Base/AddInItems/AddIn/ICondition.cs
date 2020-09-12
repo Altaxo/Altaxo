@@ -53,6 +53,6 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Returns true, when the condition is valid otherwise false.
     /// </summary>
-    bool IsValid(object parameter);
+    bool IsValid(object? parameter);
   }
 }

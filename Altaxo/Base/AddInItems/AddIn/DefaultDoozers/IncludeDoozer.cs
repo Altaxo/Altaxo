@@ -84,10 +84,10 @@ namespace Altaxo.AddInItems
     private sealed class IncludeReturnItem : IBuildItemsModifier
     {
       private readonly AddInTreeNode _node;
-      private readonly object _parameter;
+      private readonly object? _parameter;
       private readonly IEnumerable<ICondition>? _additionalConditions;
 
-      public IncludeReturnItem(AddInTreeNode node, object parameter, IEnumerable<ICondition>? additionalConditions)
+      public IncludeReturnItem(AddInTreeNode node, object? parameter, IEnumerable<ICondition>? additionalConditions)
       {
         this._node = node;
         this._parameter = parameter;

@@ -54,20 +54,20 @@ namespace Altaxo.Gui.Workbench
       element.SetValue(RememberFocusedChildProperty, value);
     }
 
-    public static IInputElement GetFocusedChild(UIElement element)
+    public static IInputElement? GetFocusedChild(UIElement element)
     {
       if (element is null)
-        throw new ArgumentNullException("element");
+        throw new ArgumentNullException(nameof(element));
       var r = (WeakReference)element.GetValue(FocusedChildProperty);
       if (r is not null)
-        return (IInputElement)r.Target;
+        return (IInputElement?)r.Target;
       else
         return null;
     }
 
     public static void SetFocusToRememberedChild(UIElement element)
     {
-      IInputElement focusedChild = GetFocusedChild(element);
+      var focusedChild = GetFocusedChild(element);
       Current.Log.Debug("Restoring focus for " + element + " to " + focusedChild);
       if (focusedChild is not null)
         Keyboard.Focus(focusedChild);

@@ -93,7 +93,7 @@ namespace Altaxo.Gui.Workbench
       _optionPanelDescriptors = dialogPanelDescriptors;
     }
 
-    public DefaultOptionPanelDescriptor(string id, string label, AddIn addin, object owner, string optionPanelPath)
+    public DefaultOptionPanelDescriptor(string id, string label, AddIn addin, object? owner, string optionPanelPath)
       : this(id, label)
     {
       this._addin = addin;

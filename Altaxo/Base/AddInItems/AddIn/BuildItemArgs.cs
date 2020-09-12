@@ -28,12 +28,12 @@ namespace Altaxo.AddInItems
   /// </summary>
   public class BuildItemArgs
   {
-    private object _parameter;
+    private object? _parameter;
     private Codon _codon;
     private IReadOnlyCollection<ICondition> _conditions;
     private AddInTreeNode? _subItemNode;
 
-    public BuildItemArgs(object parameter, Codon codon, IReadOnlyCollection<ICondition> conditions, AddInTreeNode? subItemNode)
+    public BuildItemArgs(object? parameter, Codon codon, IReadOnlyCollection<ICondition> conditions, AddInTreeNode? subItemNode)
     {
       if (codon is null)
         throw new ArgumentNullException(nameof(codon));
@@ -46,7 +46,7 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// The parameter passed to <see cref="IAddInTree.BuildItem(string,object)"/>.
     /// </summary>
-    public object Parameter
+    public object? Parameter
     {
       get { return _parameter; }
     }

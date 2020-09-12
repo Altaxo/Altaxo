@@ -80,7 +80,7 @@ namespace Altaxo.AddInItems
       _action = properties.Get("action", ConditionFailedAction.Exclude);
     }
 
-    public bool IsValid(object parameter)
+    public bool IsValid(object? parameter)
     {
       try
       {
@@ -181,7 +181,7 @@ exit:
       return conditions.ToArray();
     }
 
-    public static ConditionFailedAction GetFailedAction(IEnumerable<ICondition> conditionList, object parameter)
+    public static ConditionFailedAction GetFailedAction(IEnumerable<ICondition> conditionList, object? parameter)
     {
       ConditionFailedAction action = ConditionFailedAction.Nothing;
       foreach (ICondition condition in conditionList)

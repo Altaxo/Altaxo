@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Windows;
@@ -33,7 +34,7 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public class OptionPanel : UserControl, IOptionPanel, IOptionBindingContainer, INotifyPropertyChanged
   {
-    public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
     static OptionPanel()
     {
@@ -55,7 +56,7 @@ namespace Altaxo.Gui.Workbench
       Resources.Add(typeof(RadioButton), GlobalStyles.WordWrapCheckBoxStyle);
     }
 
-    public virtual object Owner { get; set; }
+    public virtual object? Owner { get; set; }
 
     private readonly List<OptionBinding> bindings = new List<OptionBinding>();
 
@@ -113,22 +114,26 @@ namespace Altaxo.Gui.Workbench
     {
       if (propertyExpresssion is null)
       {
-        throw new ArgumentNullException("propertyExpresssion");
+        throw new ArgumentNullException(nameof(propertyExpresssion));
       }
 
-      var memberExpression = propertyExpresssion.Body as MemberExpression;
-      if (memberExpression is null)
+      if (!(propertyExpresssion.Body is MemberExpression memberExpression))
       {
-        throw new ArgumentException("The expression is not a member access expression.", "propertyExpresssion");
+        throw new ArgumentException("The expression is not a member access expression.", nameof(propertyExpresssion));
       }
 
-      var property = memberExpression.Member as PropertyInfo;
-      if (property is null)
+      if (!(memberExpression.Member is PropertyInfo property))
       {
-        throw new ArgumentException("The member access expression does not access a property.", "propertyExpresssion");
+        throw new ArgumentException("The member access expression does not access a property.", nameof(propertyExpresssion));
       }
 
       var getMethod = property.GetGetMethod(true);
+
+      if(getMethod is null)
+      {
+        throw new ArgumentException("The referenced property has no getter.", nameof(propertyExpresssion));
+      }
+
       if (getMethod.IsStatic)
       {
         throw new ArgumentException("The referenced property is a static property.", "propertyExpresssion");
@@ -137,7 +142,7 @@ namespace Altaxo.Gui.Workbench
       return memberExpression.Member.Name;
     }
 
-    public void Initialize(object optionPanelOwner)
+    public void Initialize(object? optionPanelOwner)
     {
       throw new NotImplementedException();
     }

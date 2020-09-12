@@ -82,12 +82,12 @@ namespace Altaxo.AddInItems
   /// </summary>
   public sealed class ToolbarItemDescriptor
   {
-    public readonly object Parameter;
+    public readonly object? Parameter;
     public readonly Codon Codon;
     public readonly IList SubItems;
     public readonly IReadOnlyCollection<ICondition> Conditions;
 
-    public ToolbarItemDescriptor(object parameter, Codon codon, IList subItems, IReadOnlyCollection<ICondition> conditions)
+    public ToolbarItemDescriptor(object? parameter, Codon codon, IList subItems, IReadOnlyCollection<ICondition> conditions)
     {
       Parameter = parameter;
       Codon = codon;

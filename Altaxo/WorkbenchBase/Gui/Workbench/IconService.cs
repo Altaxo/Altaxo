@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Workbench
 
     public static Bitmap GetBitmap(string name)
     {
-      Bitmap bmp = null;
+      Bitmap? bmp = null;
       try
       {
         bmp = FileIconService.GetBitmap(name);
@@ -99,12 +99,32 @@ namespace Altaxo.Gui.Workbench
       {
         return bmp;
       }
-      return Altaxo.Current.ResourceService.GetBitmap("Icons.16x16.MiscFiles");
+      return Altaxo.Current.ResourceService.GetBitmap("Icons.16x16.MiscFiles") ?? GetDefaultBitmap();
+    }
+
+    private static Bitmap? _defaultBitmap;
+    public static Bitmap GetDefaultBitmap()
+    {
+      if (_defaultBitmap is { } defBmp)
+      {
+        return defBmp;
+      }
+      else
+      {
+        var bmp = new Bitmap(16, 16);
+        using (var g = Graphics.FromImage(bmp))
+        {
+          g.DrawLine(Pens.Red, 0, 0, 16, 16);
+          g.DrawLine(Pens.Red, 0, 16, 16, 0);
+        }
+        System.Threading.Interlocked.Exchange(ref _defaultBitmap, bmp);
+        return bmp;
+      }
     }
 
     public static System.Windows.Media.ImageSource GetImageSource(string name)
     {
-      System.Windows.Media.ImageSource img;
+      System.Windows.Media.ImageSource? img;
       try
       {
         img = Altaxo.Current.ResourceService.GetImageSource(name);

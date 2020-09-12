@@ -59,9 +59,9 @@ namespace Altaxo.AddInItems
     /// <param name="parameter">A parameter that gets passed into the doozer and condition evaluators.</param>
     /// <exception cref="TreePathNotFoundException">The path does not
     /// exist or does not point to an item.</exception>
-    object BuildItem(string path, object parameter);
+    object BuildItem(string path, object? parameter);
 
-    object BuildItem(string path, object parameter, IEnumerable<ICondition> additionalConditions);
+    object BuildItem(string path, object? parameter, IEnumerable<ICondition> additionalConditions);
 
     /// <summary>
     /// Gets the <see cref="AddInTreeNode"/> representing the specified path.

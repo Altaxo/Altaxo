@@ -59,7 +59,7 @@ namespace Altaxo.AddInItems
       this._condition = condition;
     }
 
-    public bool IsValid(object parameter)
+    public bool IsValid(object? parameter)
     {
       return !_condition.IsValid(parameter);
     }
@@ -114,7 +114,7 @@ namespace Altaxo.AddInItems
       this._conditions = conditions;
     }
 
-    public bool IsValid(object parameter)
+    public bool IsValid(object? parameter)
     {
       foreach (ICondition condition in _conditions)
       {
@@ -176,7 +176,7 @@ namespace Altaxo.AddInItems
       this._conditions = conditions;
     }
 
-    public bool IsValid(object parameter)
+    public bool IsValid(object? parameter)
     {
       foreach (ICondition condition in _conditions)
       {

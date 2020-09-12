@@ -36,7 +36,7 @@ namespace Altaxo.AddInItems
   /// </summary>
   public class OwnerStateConditionEvaluator : IConditionEvaluator
   {
-    public bool IsValid(object parameter, Condition condition)
+    public bool IsValid(object? parameter, Condition condition)
     {
       if (parameter is IOwnerState)
       {

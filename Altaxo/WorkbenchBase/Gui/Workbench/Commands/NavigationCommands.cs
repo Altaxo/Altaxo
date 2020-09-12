@@ -24,18 +24,18 @@ namespace Altaxo.Gui.Workbench.Commands
 {
   public class NavigateBack : ICommand
   {
-    public event EventHandler CanExecuteChanged
+    public event EventHandler? CanExecuteChanged
     {
       add { CommandManager.RequerySuggested += value; }
       remove { CommandManager.RequerySuggested -= value; }
     }
 
-    public bool CanExecute(object parameter)
+    public bool CanExecute(object? parameter)
     {
       return NavigationService.CanNavigateBack;
     }
 
-    public void Execute(object parameter)
+    public void Execute(object? parameter)
     {
       NavigationService.Go(-1);
     }
@@ -49,12 +49,12 @@ namespace Altaxo.Gui.Workbench.Commands
       remove { CommandManager.RequerySuggested -= value; }
     }
 
-    public bool CanExecute(object parameter)
+    public bool CanExecute(object? parameter)
     {
       return NavigationService.CanNavigateForwards;
     }
 
-    public void Execute(object parameter)
+    public void Execute(object? parameter)
     {
       NavigationService.Go(+1);
     }

@@ -44,9 +44,9 @@ namespace Altaxo.AddInItems
 
     public object? BuildItem(BuildItemArgs args)
     {
-      var container = (IServiceContainer)args.Parameter;
-      if (container is null)
+      if(!(args.Parameter is IServiceContainer container))
         throw new InvalidOperationException("Expected the parameter to be a service container");
+
       Type? interfaceType = args.AddIn.FindType(args.Codon.Id);
       if (interfaceType is not null)
       {

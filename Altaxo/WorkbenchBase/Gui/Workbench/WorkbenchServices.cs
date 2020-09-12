@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Workbench
     /// but does not throw a NullReferenceException when ActiveViewContent is null.
     /// (instead, null is returned).
     /// </summary>
-    public static object GetActiveViewContentService(Type type)
+    public static object? GetActiveViewContentService(Type type)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
       if (workbench is not null)
@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Workbench
       get { return Altaxo.Current.GetRequiredService<IStatusBarService>(); }
     }
 
-    public static event Action WorkbenchCreated;
+    public static event Action? WorkbenchCreated;
 
     public static void OnWorkbenchCreated()
     {

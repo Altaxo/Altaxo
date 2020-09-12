@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public class ActiveWindowStateConditionEvaluator : IConditionEvaluator
   {
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object? caller, Condition condition)
     {
       var workbench = Altaxo.Current.GetRequiredService<Workbench.IWorkbenchEx>();
 

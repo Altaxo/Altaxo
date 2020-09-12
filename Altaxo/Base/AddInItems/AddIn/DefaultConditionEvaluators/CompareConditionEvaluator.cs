@@ -44,7 +44,7 @@ namespace Altaxo.AddInItems
   /// </example>
   public class CompareConditionEvaluator : IConditionEvaluator
   {
-    public bool IsValid(object parameter, Condition condition)
+    public bool IsValid(object? parameter, Condition condition)
     {
       string comparisonTypeText = condition.Properties["comparisonType"];
       StringComparison comparisonType;

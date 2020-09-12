@@ -26,6 +26,6 @@ namespace Altaxo.AddInItems
   /// </summary>
   public interface IConditionEvaluator
   {
-    bool IsValid(object parameter, Condition condition);
+    bool IsValid(object? parameter, Condition condition);
   }
 }

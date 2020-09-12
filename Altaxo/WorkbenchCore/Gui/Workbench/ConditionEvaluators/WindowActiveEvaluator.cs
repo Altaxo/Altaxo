@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Workbench
   /// </example>
   public class WindowActiveConditionEvaluator : IConditionEvaluator
   {
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object? caller, Condition condition)
     {
       if (!(caller is IViewContent activeViewContent)) // active view content is coming from the data context of the menu
       {
