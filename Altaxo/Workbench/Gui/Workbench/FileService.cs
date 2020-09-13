@@ -48,13 +48,13 @@ namespace Altaxo.Gui.Workbench
       get { return (FileService)Altaxo.Current.GetRequiredService<IFileService>(); }
     }
 
-    private IRecentOpen recentOpen;
+    private IRecentOpen? _recentOpen;
 
     public IRecentOpen RecentOpen
     {
       get
       {
-        return LazyInitializer.EnsureInitialized(ref recentOpen, () => new RecentOpen());
+        return LazyInitializer.EnsureInitialized(ref _recentOpen, () => new RecentOpen());
       }
     }
 
@@ -124,7 +124,7 @@ namespace Altaxo.Gui.Workbench
 
     #region BrowseForFolder
 
-    public string BrowseForFolder(string description, string selectedPath)
+    public string? BrowseForFolder(string description, string? selectedPath)
     {
       using (var dialog = new FolderBrowserDialog())
       {
@@ -162,16 +162,16 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <inheritdoc/>
-    public OpenedFile GetOpenedFile(string fileName)
+    public OpenedFile? GetOpenedFile(string fileName)
     {
       return GetOpenedFile(FileName.Create(fileName));
     }
 
     /// <inheritdoc/>
-    public OpenedFile GetOpenedFile(FileName fileName)
+    public OpenedFile? GetOpenedFile(FileName fileName)
     {
       if (fileName is null)
-        throw new ArgumentNullException("fileName");
+        throw new ArgumentNullException(nameof(fileName));
 
       Altaxo.Current.Dispatcher.VerifyAccess();
 
@@ -279,19 +279,19 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <inheritdoc/>
-    public IFileViewContent OpenFile(FileName fileName)
+    public IFileViewContent? OpenFile(FileName fileName)
     {
       return OpenFile(fileName, true);
     }
 
     /// <inheritdoc/>
-    public IFileViewContent OpenFile(FileName fileName, bool switchToOpenedView)
+    public IFileViewContent? OpenFile(FileName fileName, bool switchToOpenedView)
     {
       if (fileName is null)
         throw new ArgumentNullException("fileName");
       Current.Log.Info("Open file " + fileName);
 
-      IFileViewContent viewContent = GetOpenFile(fileName);
+      var viewContent = GetOpenFile(fileName);
       if (viewContent is not null)
       {
         if (switchToOpenedView)
@@ -315,7 +315,7 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <inheritdoc/>
-    public IFileViewContent OpenFileWith(FileName fileName, IDisplayBinding displayBinding, bool switchToOpenedView)
+    public IFileViewContent? OpenFileWith(FileName fileName, IDisplayBinding displayBinding, bool switchToOpenedView)
     {
       if (displayBinding is null)
         throw new ArgumentNullException("displayBinding");
@@ -342,7 +342,7 @@ namespace Altaxo.Gui.Workbench
         OpenedFile file = Altaxo.Current.GetRequiredService<IFileService>().GetOrCreateOpenedFile(fileName);
         try
         {
-          IViewContent newContent = binding.CreateContentForFile(file);
+          var newContent = binding.CreateContentForFile(file);
           if (newContent is not null)
           {
             Altaxo.Current.GetRequiredService<IDisplayBindingService>().AttachSubWindows(newContent, false);
@@ -357,13 +357,13 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <inheritdoc/>
-    public IFileViewContent NewFile(string defaultName, string content)
+    public IFileViewContent? NewFile(string defaultName, string content)
     {
       return NewFile(defaultName, DefaultFileEncoding.GetBytesWithPreamble(content));
     }
 
     /// <inheritdoc/>
-    public IFileViewContent NewFile(string defaultName, byte[] content)
+    public IFileViewContent? NewFile(string defaultName, byte[] content)
     {
       if (defaultName is null)
         throw new ArgumentNullException("defaultName");
@@ -379,7 +379,7 @@ namespace Altaxo.Gui.Workbench
       }
       OpenedFile file = CreateUntitledOpenedFile(defaultName, content);
 
-      var newContent = (IFileViewContent)binding.CreateContentForFile(file);
+      var newContent = (IFileViewContent?)binding.CreateContentForFile(file);
       if (newContent is null)
       {
         Current.Log.Warn("Created view content was null - DefaultName:" + defaultName);
@@ -410,7 +410,7 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <inheritdoc/>
-    public IFileViewContent GetOpenFile(FileName fileName)
+    public IFileViewContent? GetOpenFile(FileName fileName)
     {
       if (fileName is not null)
       {
@@ -458,7 +458,7 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <inheritdoc/>
-    public IFileViewContent JumpToFilePosition(FileName fileName, int line, int column)
+    public IFileViewContent? JumpToFilePosition(FileName fileName, int line, int column)
     {
       Current.Log.InfoFormatted("FileService\n\tJumping to File Position:  [{0} : {1}x{2}]", fileName, line, column);
 
@@ -476,7 +476,10 @@ namespace Altaxo.Gui.Workbench
 
         NavigationService.ResumeLogging();
         loggingResumed = true;
-        NavigationService.Log(content);
+        if (content is not null)
+        {
+          NavigationService.Log(content);
+        }
 
         return content;
       }
@@ -692,17 +695,17 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    public event EventHandler<FileRenamingEventArgs> FileRenaming;
+    public event EventHandler<FileRenamingEventArgs>? FileRenaming;
 
-    public event EventHandler<FileRenameEventArgs> FileRenamed;
+    public event EventHandler<FileRenameEventArgs>? FileRenamed;
 
-    public event EventHandler<FileRenamingEventArgs> FileCopying;
+    public event EventHandler<FileRenamingEventArgs>? FileCopying;
 
-    public event EventHandler<FileRenameEventArgs> FileCopied;
+    public event EventHandler<FileRenameEventArgs>? FileCopied;
 
-    public event EventHandler<FileCancelEventArgs> FileRemoving;
+    public event EventHandler<FileCancelEventArgs>? FileRemoving;
 
-    public event EventHandler<FileEventArgs> FileRemoved;
+    public event EventHandler<FileEventArgs>? FileRemoved;
 
     #endregion Remove/Rename/Copy
 
@@ -750,11 +753,11 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    public event EventHandler<FileEventArgs> FileCreated;
+    public event EventHandler<FileEventArgs>? FileCreated;
 
-    public event EventHandler<FileCancelEventArgs> FileReplacing;
+    public event EventHandler<FileCancelEventArgs>? FileReplacing;
 
-    public event EventHandler<FileEventArgs> FileReplaced;
+    public event EventHandler<FileEventArgs>? FileReplaced;
 
     #endregion FileCreated/Replaced
   }

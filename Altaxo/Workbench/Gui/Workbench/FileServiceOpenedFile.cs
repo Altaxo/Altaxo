@@ -25,19 +25,19 @@ namespace Altaxo.Gui.Workbench
 {
   internal sealed class FileServiceOpenedFile : OpenedFile
   {
-    private readonly FileService fileService;
-    private List<IFileViewContent> registeredViews = new List<IFileViewContent>();
+    private readonly FileService _fileService;
+    private List<IFileViewContent> _registeredViews = new List<IFileViewContent>();
     //private FileChangeWatcher fileChangeWatcher;
 
     protected override void ChangeFileName(FileName newValue)
     {
-      fileService.OpenedFileFileNameChange(this, FileName, newValue);
+      _fileService.OpenedFileFileNameChange(this, FileName, newValue);
       base.ChangeFileName(newValue);
     }
 
     internal FileServiceOpenedFile(FileService fileService, FileName fileName)
     {
-      this.fileService = fileService;
+      this._fileService = fileService;
       FileName = fileName;
       IsUntitled = false;
       //fileChangeWatcher = new FileChangeWatcher(this);
@@ -45,8 +45,7 @@ namespace Altaxo.Gui.Workbench
 
     internal FileServiceOpenedFile(FileService fileService, byte[] fileData)
     {
-      this.fileService = fileService;
-      FileName = null;
+      this._fileService = fileService;
       SetData(fileData);
       IsUntitled = true;
       MakeDirty();
@@ -58,14 +57,14 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public override IList<IFileViewContent> RegisteredViewContents
     {
-      get { return registeredViews.AsReadOnly(); }
+      get { return _registeredViews.AsReadOnly(); }
     }
 
     public override void ForceInitializeView(IFileViewContent view)
     {
       if (view is null)
         throw new ArgumentNullException("view");
-      if (!registeredViews.Contains(view))
+      if (!_registeredViews.Contains(view))
         throw new ArgumentException("registeredViews must contain view");
 
       base.ForceInitializeView(view);
@@ -75,10 +74,10 @@ namespace Altaxo.Gui.Workbench
     {
       if (view is null)
         throw new ArgumentNullException("view");
-      if (registeredViews.Contains(view))
+      if (_registeredViews.Contains(view))
         throw new ArgumentException("registeredViews already contains view");
 
-      registeredViews.Add(view);
+      _registeredViews.Add(view);
 
       if (Altaxo.Current.GetService<IWorkbench>() is not null)
       {
@@ -97,7 +96,7 @@ namespace Altaxo.Gui.Workbench
     {
       if (view is null)
         throw new ArgumentNullException("view");
-      Debug.Assert(registeredViews.Contains(view));
+      Debug.Assert(_registeredViews.Contains(view));
 
       if (Altaxo.Current.GetService<IWorkbench>() is not null)
       {
@@ -107,8 +106,8 @@ namespace Altaxo.Gui.Workbench
       view.Disposed -= ViewDisposed;
 #endif
 
-      registeredViews.Remove(view);
-      if (registeredViews.Count > 0)
+      _registeredViews.Remove(view);
+      if (_registeredViews.Count > 0)
       {
         if (_currentView == view)
         {
@@ -125,29 +124,29 @@ namespace Altaxo.Gui.Workbench
 
     public override void CloseIfAllViewsClosed()
     {
-      if (registeredViews.Count == 0)
+      if (_registeredViews.Count == 0)
       {
         bool wasDirty = IsDirty;
-        fileService.OpenedFileClosed(this);
+        _fileService.OpenedFileClosed(this);
 
-        FileClosed(this, EventArgs.Empty);
+        FileClosed?.Invoke(this, EventArgs.Empty);
       }
     }
 
 #if DEBUG
 
-    private void ViewDisposed(object sender, EventArgs e)
+    private void ViewDisposed(object? sender, EventArgs e)
     {
       Debug.Fail("View was disposed while still registered with OpenedFile!");
     }
 
 #endif
 
-    private void WorkbenchActiveViewContentChanged(object sender, EventArgs e)
+    private void WorkbenchActiveViewContentChanged(object? sender, EventArgs e)
     {
       var newView = Altaxo.Current.GetRequiredService<IWorkbench>().ActiveViewContent as IFileViewContent;
 
-      if (!registeredViews.Contains(newView))
+      if (newView is null || !_registeredViews.Contains(newView))
         return;
 
       SwitchedToView(newView);
@@ -164,6 +163,6 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    public override event EventHandler FileClosed = delegate { };
+    public override event EventHandler? FileClosed;
   }
 }

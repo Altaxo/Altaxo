@@ -29,12 +29,10 @@ namespace Altaxo.Gui.Workbench.Commands
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
 
-      if (!(parameter is IViewContent thisWindow))
-        thisWindow = workbench.ActiveViewContent;
-
+      var thisWindow = (parameter as IViewContent) ?? workbench.ActiveViewContent;
       if (thisWindow is not null)
       {
-        int index = workbench.ViewContentCollection.IndexOf(workbench.ActiveViewContent);
+        int index = workbench.ViewContentCollection.IndexOf(thisWindow);
         workbench.ViewContentCollection[(index + 1) % workbench.ViewContentCollection.Count].IsSelected = true;
       }
     }
@@ -45,12 +43,10 @@ namespace Altaxo.Gui.Workbench.Commands
     public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
-      if (!(parameter is IViewContent thisWindow))
-        thisWindow = workbench.ActiveViewContent;
-
+      var thisWindow = (parameter as IViewContent) ?? workbench.ActiveViewContent;
       if (thisWindow is not null)
       {
-        int index = workbench.ViewContentCollection.IndexOf(workbench.ActiveViewContent);
+        int index = workbench.ViewContentCollection.IndexOf(thisWindow);
         workbench.ViewContentCollection[(index + workbench.ViewContentCollection.Count - 1) % workbench.ViewContentCollection.Count].IsSelected = true;
       }
     }
@@ -70,9 +66,7 @@ namespace Altaxo.Gui.Workbench.Commands
     public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
-      if (!(parameter is IViewContent thisWindow))
-        thisWindow = workbench.ActiveViewContent;
-
+      var thisWindow = (parameter as IViewContent) ?? workbench.ActiveViewContent;
       if (thisWindow is not null)
       {
         workbench.CloseContent(thisWindow);
@@ -85,10 +79,7 @@ namespace Altaxo.Gui.Workbench.Commands
     public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
-
-      if (!(parameter is IViewContent thisWindow))
-        thisWindow = workbench.ActiveViewContent;
-
+      var thisWindow = (parameter as IViewContent) ?? workbench.ActiveViewContent;
       if (thisWindow is not null)
       {
         for (int i = workbench.ViewContentCollection.Count - 1; i >= 0; --i)
@@ -108,10 +99,7 @@ namespace Altaxo.Gui.Workbench.Commands
     public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
-
-      if (!(parameter is IViewContent thisWindow))
-        thisWindow = workbench.ActiveViewContent;
-
+      var thisWindow = (parameter as IViewContent) ?? workbench.ActiveViewContent;
       if (thisWindow is not null)
       {
         var currentProjectService = Current.GetRequiredService<IProjectService>();

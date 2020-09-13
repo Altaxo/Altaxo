@@ -69,7 +69,7 @@ namespace Altaxo.Gui.Workbench
         }
 
         // search for the appropriate LayoutAnchorablePane
-        LayoutAnchorablePane destinationPane = null;
+        LayoutAnchorablePane? destinationPane = null;
 
         AnchorSide? anchorSide = DefaultPadPosition_To_AnchorSide(defaultPosition);
         if (anchorSide.HasValue && ((destinationPane = layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(p => p.GetSide() == anchorSide.Value)) is not null))

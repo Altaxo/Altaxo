@@ -72,7 +72,7 @@ namespace Altaxo.Gui
     /// </summary>
     /// <param name="sender">The sender (unused).</param>
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data (unused).</param>
-    public void EhRequerySuggested(object sender, EventArgs e)
+    public void EhRequerySuggested(object? sender, EventArgs e)
     {
       OnCanExecuteChanged();
     }
@@ -146,7 +146,7 @@ namespace Altaxo.Gui
     /// </summary>
     /// <param name="sender">The sender (unused).</param>
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data (unused).</param>
-    public void EhRequerySuggested(object sender, EventArgs e)
+    public void EhRequerySuggested(object? sender, EventArgs e)
     {
       OnCanExecuteChanged();
     }

@@ -45,14 +45,11 @@ namespace Altaxo.Gui.Common
     private int cancelButton;
     private int acceptButton;
 
-    private Button AcceptButton;
+    private Button? AcceptButton;
 
-    private Button CancelButton;
+    private Button? CancelButton;
 
-    public CustomDialog()
-    {
-      InitializeComponent();
-    }
+   
 
     public CustomDialog(string caption, string message, int acceptButton, int cancelButton, string[] buttonLabels)
     {

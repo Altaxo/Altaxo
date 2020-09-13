@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Workbench
 
     private AltaxoWorkbench _workbench;
 
-    public void InitializeWorkbench()
+    public WorkbenchStartup()
     {
       _application = new App();
 

@@ -37,8 +37,8 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class SaveErrorChooseDialog : Window
   {
-    private string displayMessage;
-    private Exception exceptionGot;
+    private string? displayMessage;
+    private Exception? exceptionGot;
 
     public SaveErrorChooseDialogResult DetailedDialogResult { get; private set; }
 
@@ -77,9 +77,9 @@ namespace Altaxo.Gui.Common
       displayMessage = StringParser.Parse(
           message,
           new StringTagPair("FileName", fileName),
-          new StringTagPair("Path", System.IO.Path.GetDirectoryName(fileName)),
+          new StringTagPair("Path", FileName.GetDirectoryName(fileName)),
           new StringTagPair("FileNameWithoutPath", System.IO.Path.GetFileName(fileName)),
-          new StringTagPair("Exception", exceptionGot.GetType().FullName)
+          new StringTagPair("Exception", exceptionGot.GetType().FullName ?? exceptionGot.GetType().Name)
       );
 
       descriptionTextBox.Text = StringParser.Parse(displayMessage);
@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Common
 
     private void EhShowException(object sender, RoutedEventArgs e)
     {
-      MessageService.ShowMessage(exceptionGot.ToString(), StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.ExceptionGotDescription}"));
+      MessageService.ShowMessage(exceptionGot?.ToString() ?? string.Empty, StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.ExceptionGotDescription}"));
     }
 
     private void EhRetryButton_Clicked(object sender, RoutedEventArgs e)

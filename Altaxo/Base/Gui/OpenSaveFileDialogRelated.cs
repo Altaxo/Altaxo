@@ -113,7 +113,7 @@ namespace Altaxo.Gui
     public string[] FileNames { get; set; } = _emptyStringArray;
 
     private static readonly string[] _emptyStringArray = new string[0];
-
+    public static string[] EmptyStringArray => _emptyStringArray;
     /// <summary>
     /// Gets or sets the name of the file the user has chosen.
     /// </summary>

@@ -90,8 +90,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
             return (string)_tag;
           }
           else
-
-            return null;
+          {
+            return string.Empty;
+          }
         }
       }
 
@@ -160,11 +161,11 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #endregion TreeNode
 
-    private IFileTreeView _view;
+    private IFileTreeView? _view;
     private NGTreeNode _rootNode;
     private NGTreeNodeCollection Nodes;
 
-    public event Action<string> SelectedPathChanged;
+    public event Action<string>? SelectedPathChanged;
 
     public FileSystemTreeController()
     {
@@ -297,7 +298,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       }
     }
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {
@@ -323,7 +324,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
     private void EhView_FolderTreeNodeSelected(NGTreeNode obj)
     {
       var node = obj as TreeNode;
-      string path = node is null ? null : node.FullPath;
+      string? path = node?.FullPath;
 
       if (SelectedPathChanged is not null && path is not null)
         SelectedPathChanged(path);

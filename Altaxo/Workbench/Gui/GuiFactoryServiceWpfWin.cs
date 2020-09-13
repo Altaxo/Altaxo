@@ -49,7 +49,7 @@ namespace Altaxo.Gui
     }
 
     /// <inheritdoc/>
-    public override ICommand NewRelayCommand(Action execute, Func<bool> canExecute = null)
+    public override ICommand NewRelayCommand(Action execute, Func<bool>? canExecute = null)
     {
       var result = new RelayCommand(execute, canExecute);
       CommandManager.RequerySuggested += result.EhRequerySuggested; // use the CommandManager instead our own event, because CommandManager maintains a weak reference only
@@ -57,7 +57,7 @@ namespace Altaxo.Gui
     }
 
     /// <inheritdoc/>
-    public override ICommand NewRelayCommand(Action<object> execute, Predicate<object> canExecute = null)
+    public override ICommand NewRelayCommand(Action<object> execute, Predicate<object>? canExecute = null)
     {
       var result = new RelayCommand<object>(execute, canExecute);
       CommandManager.RequerySuggested += result.EhRequerySuggested; // use the CommandManager instead our own event, because CommandManager maintains a weak reference only
@@ -209,7 +209,9 @@ namespace Altaxo.Gui
 
       if (controller.ViewObject is IViewRequiresSpecialShellWindow specialView)
       {
-        var dlgctrl = (System.Windows.Window)Activator.CreateInstance(specialView.TypeOfShellWindowRequired, controller);
+        var dlgctrl = (System.Windows.Window?)Activator.CreateInstance(specialView.TypeOfShellWindowRequired, controller) ??
+                      throw new InvalidOperationException($"Unable to create instance of type {specialView.TypeOfShellWindowRequired}");
+
         dlgctrl.Owner = TopmostModalWindow;
         dlgctrl.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
         dlgctrl.Top = startLocationTop;
@@ -384,8 +386,8 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
       }
       else
       {
-        options.FileName = null;
-        options.FileNames = null;
+        options.FileName = string.Empty;
+        options.FileNames = SaveFileOptions.EmptyStringArray;
         return false;
       }
     }
@@ -501,7 +503,7 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
         return _dao.ContainsImage();
       }
 
-      public System.Drawing.Image GetImage()
+      public System.Drawing.Image? GetImage()
       {
         try
         {
@@ -519,7 +521,7 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
         return null;
       }
 
-      public (System.IO.Stream, string fileExtension) GetBitmapImageAsOptimizedMemoryStream()
+      public (System.IO.Stream? Stream, string? FileExtension) GetBitmapImageAsOptimizedMemoryStream()
       {
         {
           if (_dao.GetData("PNG", false) is System.IO.MemoryStream stream)
@@ -616,7 +618,7 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
       //var dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
       //return new ClipGetDataWrapper(dao);
 
-      var dao = System.Windows.Clipboard.GetDataObject() as System.Windows.DataObject;
+      var dao = (System.Windows.DataObject)System.Windows.Clipboard.GetDataObject();
       return new WpfClipGetDataWrapper(dao);
     }
 

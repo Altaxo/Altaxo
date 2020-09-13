@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Workbench
   /// <seealso cref="IValueConverter" />
   internal class ActiveDocumentConverter : IValueConverter
   {
-    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    public object? Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       if (value is IViewContent)
         return value;
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Workbench
       return Binding.DoNothing;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    public object? ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       if (value is IViewContent)
         return value;

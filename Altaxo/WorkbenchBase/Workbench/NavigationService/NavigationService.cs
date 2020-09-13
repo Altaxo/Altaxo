@@ -409,7 +409,7 @@ namespace Altaxo.Workbench
     /// </summary>
     private static void ActiveViewContentChanged(object? sender, EventArgs e)
     {
-      IViewContent vc = Altaxo.Current.GetRequiredService<IWorkbench>().ActiveViewContent;
+      var vc = Altaxo.Current.GetRequiredService<IWorkbench>().ActiveViewContent;
       if (vc is null)
         return;
       Current.Log.Debug($"NavigationService\n\tActiveViewContent: {vc.Title}\n\t          Subview: {vc.Title}");

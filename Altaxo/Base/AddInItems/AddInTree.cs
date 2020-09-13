@@ -32,7 +32,7 @@ namespace Altaxo.AddInItems
   /// </summary>
   public static class AddInTree
   {
-    public static List<T> BuildItems<T>(string path, object parameter, bool throwOnNotFound = true)
+    public static List<T> BuildItems<T>(string path, object? parameter, bool throwOnNotFound = true)
     {
       var addInTree = Altaxo.Current.GetRequiredService<IAddInTree>();
       return addInTree.BuildItems<T>(path, parameter, throwOnNotFound).ToList();
@@ -219,7 +219,7 @@ namespace Altaxo.AddInItems
     /// <param name="throwOnNotFound">If true, throws a <see cref="TreePathNotFoundException"/>
     /// if the path is not found. If false, an empty ArrayList is returned when the
     /// path is not found.</param>
-    public IReadOnlyList<T> BuildItems<T>(string path, object parameter, bool throwOnNotFound = true)
+    public IReadOnlyList<T> BuildItems<T>(string path, object? parameter, bool throwOnNotFound = true)
     {
       var node = GetTreeNode(path, throwOnNotFound);
       if (node is null)

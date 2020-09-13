@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Workbench
     /// <param name="e">DependencyPropertyChangedEventArgs concerning the drop command property.</param>
     private static void OnDropCommandChange(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-      var uiElement = d as UIElement;     // Remove the handler if it exist to avoid memory leaks
+      var uiElement = (UIElement)d;     // Remove the handler if it exist to avoid memory leaks
       uiElement.Drop -= UIElement_Drop;
 
       if (e.NewValue is ICommand command)
@@ -123,21 +123,21 @@ namespace Altaxo.Gui.Workbench
 
       if (e.Data.GetDataPresent(DataFormats.FileDrop))
       {
-        string[] droppedFilePaths =
-        e.Data.GetData(DataFormats.FileDrop, true) as string[];
-
-        foreach (string droppedFilePath in droppedFilePaths)
+        if(e.Data.GetData(DataFormats.FileDrop, true) is string[] droppedFilePaths)
         {
-          // Check whether this attached behaviour is bound to a RoutedCommand
-          if (dropCommand is RoutedCommand)
+          foreach (string droppedFilePath in droppedFilePaths)
           {
-            // Execute the routed command
-            (dropCommand as RoutedCommand).Execute(droppedFilePath, uiElement);
-          }
-          else
-          {
-            // Execute the Command as bound delegate
-            dropCommand.Execute(droppedFilePath);
+            // Check whether this attached behaviour is bound to a RoutedCommand
+            if (dropCommand is RoutedCommand rcmd)
+            {
+              // Execute the routed command
+              rcmd.Execute(droppedFilePath, uiElement);
+            }
+            else
+            {
+              // Execute the Command as bound delegate
+              dropCommand.Execute(droppedFilePath);
+            }
           }
         }
       }

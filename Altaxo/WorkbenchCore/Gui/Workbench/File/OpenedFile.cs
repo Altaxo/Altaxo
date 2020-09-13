@@ -92,10 +92,12 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Gets the name of the file.
     /// </summary>
-    [MaybeNull]
     public FileName FileName
     {
-      get { return _fileName; }
+      get
+      {
+        return _fileName ?? throw new InvalidOperationException($"A file name was not yet set.");
+      }
       set
       {
         if (_fileName is null || _fileName != value)
@@ -145,7 +147,7 @@ namespace Altaxo.Gui.Workbench
     public virtual void ForceInitializeView(IFileViewContent view)
     {
       if (view is null)
-        throw new ArgumentNullException("view");
+        throw new ArgumentNullException(nameof(view));
 
       bool success = false;
       try

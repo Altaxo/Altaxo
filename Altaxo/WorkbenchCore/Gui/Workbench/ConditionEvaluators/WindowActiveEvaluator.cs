@@ -41,7 +41,8 @@ namespace Altaxo.Gui.Workbench
   {
     public bool IsValid(object? caller, Condition condition)
     {
-      if (!(caller is IViewContent activeViewContent)) // active view content is coming from the data context of the menu
+      IViewContent? activeViewContent = caller as IViewContent;
+      if (activeViewContent is null) // active view content is probably coming from the data context of the menu
       {
         var workbench = Altaxo.Current.GetRequiredService<Workbench.IWorkbenchEx>();
         activeViewContent = workbench.ActiveViewContent; // else active view content is retrieved from the workbench

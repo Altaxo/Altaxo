@@ -65,20 +65,20 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// The active view content inside the active workbench window.
     /// </summary>
-    IViewContent ActiveViewContent { get; }
+    IViewContent? ActiveViewContent { get; }
 
     /// <summary>
     /// Occurs when the active view content changed. When active view content changed, first, the PropertyChanged event
     /// will be raised. Only after that, the event here will be raised.
     /// </summary>
-    event EventHandler ActiveViewContentChanged;
+    event EventHandler? ActiveViewContentChanged;
 
     /// <summary>
     /// The active content, depending on where the focus currently is.
     /// If a document is currently active, this will be equal to ActiveViewContent,
     /// if a pad has the focus, this property will return the IPadContent instance.
     /// </summary>
-    IWorkbenchContent ActiveContent
+    IWorkbenchContent? ActiveContent
     {
       get;
     }

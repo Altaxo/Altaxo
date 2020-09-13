@@ -41,8 +41,8 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public partial class ExceptionBox : Window
   {
-    private Exception _exceptionThrown;
-    private string _message;
+    private Exception? _exceptionThrown;
+    private string _message = string.Empty;
 
     public ExceptionBox()
     {
@@ -109,7 +109,7 @@ namespace Altaxo.Gui.Workbench
     private static void EhFormsApplication_ThreadException(object sender, ThreadExceptionEventArgs e)
     {
       Current.Log.Error("ThreadException caught", e.Exception);
-      ShowErrorBox(e.Exception, null);
+      ShowErrorBox(e.Exception, string.Empty);
     }
 
     [SuppressMessage("Microsoft.Globalization", "CA1303:DoNotPassLiteralsAsLocalizedParameters")]
@@ -119,6 +119,8 @@ namespace Altaxo.Gui.Workbench
       Current.Log.Fatal("UnhandledException caught", ex);
       if (e.IsTerminating)
         Current.Log.Fatal("Runtime is terminating because of unhandled exception.");
+      if (ex is null)
+        ex = new Exception($"{e.ExceptionObject}");
       ShowErrorBox(ex, "Unhandled exception", e.IsTerminating);
     }
 
@@ -145,8 +147,6 @@ namespace Altaxo.Gui.Workbench
       _isCurrentlyShowingBox = true;
       try
       {
-        if (exception is not null)
-        {
           try
           {
           }
@@ -154,7 +154,7 @@ namespace Altaxo.Gui.Workbench
           {
             Current.Log.Warn("Error tracking exception", ex);
           }
-        }
+        
         var box = new ExceptionBox(exception, message, mustTerminate);
         {
           box.ShowDialog();
@@ -245,7 +245,7 @@ namespace Altaxo.Gui.Workbench
     {
       var sb = new StringBuilder();
 
-      Version version = Assembly.GetEntryAssembly().GetName().Version;
+      var version = Assembly.GetEntryAssembly()?.GetName()?.Version ?? new Version(0,0,0,0);
       string versionText = string.Format("Altaxo {0}.{1} build {2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
 
       sb.Append(versionText);

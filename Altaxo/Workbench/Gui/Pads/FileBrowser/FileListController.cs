@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -54,7 +55,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       private string _text1;
       private string _text2;
 
-      public string FullName { get { return (string)Tag; } }
+      public string FullName { get { return (string?)Tag ?? string.Empty; } }
 
       public FileListItem(string fullPath)
           : base(Path.GetFileName(fullPath), fullPath, false)
@@ -74,6 +75,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
         InternalUpdate(true);
       }
 
+      [MemberNotNull(nameof(_text1), nameof(_text2))]
       private void InternalUpdate(bool triggerEvents)
       {
         var info = new FileInfo(FullName);
@@ -86,6 +88,8 @@ namespace Altaxo.Gui.Pads.FileBrowser
         catch (IOException)
         {
           // ignore IO errors
+          _text1??="<<Error>>";
+          _text2??="<<Error>>";
         }
         if (triggerEvents)
         {
@@ -125,9 +129,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #endregion FileItem
 
-    private IFileListView _view;
-    private FileSystemWatcher watcher;
-    private List<string> _columnNames;
+    private IFileListView? _view;
+    private FileSystemWatcher? _watcher;
+    private List<string> _columnNames = new List<string>();
 
     private SelectableListNodeList _fileList = new SelectableListNodeList();
 
@@ -140,28 +144,29 @@ namespace Altaxo.Gui.Pads.FileBrowser
     {
       if (initData)
       {
-        _columnNames = new List<string>
+        _columnNames.Clear();
+        _columnNames.AddRange(new []
         {
           Current.ResourceService.GetString("CompilerResultView.FileText"),
           Current.ResourceService.GetString("MainWindow.Windows.FileScout.Size"),
           Current.ResourceService.GetString("MainWindow.Windows.FileScout.LastModified")
-        };
+        });
 
         try
         {
-          watcher = new FileSystemWatcher();
+          _watcher = new FileSystemWatcher();
         }
         catch { }
 
-        if (watcher is not null)
+        if (_watcher is not null)
         {
-          watcher.NotifyFilter = NotifyFilters.FileName;
-          watcher.EnableRaisingEvents = false;
+          _watcher.NotifyFilter = NotifyFilters.FileName;
+          _watcher.EnableRaisingEvents = false;
 
-          watcher.Renamed += new RenamedEventHandler(fileRenamed);
-          watcher.Deleted += new FileSystemEventHandler(fileDeleted);
-          watcher.Created += new FileSystemEventHandler(fileCreated);
-          watcher.Changed += new FileSystemEventHandler(fileChanged);
+          _watcher.Renamed += new RenamedEventHandler(fileRenamed);
+          _watcher.Deleted += new FileSystemEventHandler(fileDeleted);
+          _watcher.Created += new FileSystemEventHandler(fileCreated);
+          _watcher.Changed += new FileSystemEventHandler(fileChanged);
         }
       }
 
@@ -297,8 +302,11 @@ namespace Altaxo.Gui.Pads.FileBrowser
         return;
       }
 
-      watcher.Path = path;
-      watcher.EnableRaisingEvents = true;
+      if (_watcher is not null)
+      {
+        _watcher.Path = path;
+        _watcher.EnableRaisingEvents = true;
+      }
 
       foreach (string file in files)
       {
@@ -308,7 +316,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #endregion User handlers
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {

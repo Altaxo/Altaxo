@@ -33,7 +33,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    public IAsyncResult BeginInvoke(Delegate method, object[] args)
+    public IAsyncResult BeginInvoke(Delegate method, object?[]? args)
     {
       DispatcherOperation op;
       if (args is null || args.Length == 0)
@@ -47,20 +47,20 @@ namespace Altaxo.Gui.Workbench
 
     private sealed class AsyncResult : IAsyncResult
     {
-      internal readonly DispatcherOperation op;
-      private readonly object lockObj = new object();
-      private ManualResetEvent resetEvent;
+      internal readonly DispatcherOperation _dispatcherOperation;
+      private readonly object _lockObj = new object();
+      private ManualResetEvent? _resetEvent;
 
       public AsyncResult(DispatcherOperation op)
       {
-        this.op = op;
+        this._dispatcherOperation = op;
       }
 
       public bool IsCompleted
       {
         get
         {
-          return op.Status == DispatcherOperationStatus.Completed;
+          return _dispatcherOperation.Status == DispatcherOperationStatus.Completed;
         }
       }
 
@@ -68,29 +68,29 @@ namespace Altaxo.Gui.Workbench
       {
         get
         {
-          lock (lockObj)
+          lock (_lockObj)
           {
-            if (resetEvent is null)
+            if (_resetEvent is null)
             {
-              op.Completed += op_Completed;
-              resetEvent = new ManualResetEvent(false);
+              _dispatcherOperation.Completed += op_Completed;
+              _resetEvent = new ManualResetEvent(false);
               if (IsCompleted)
-                resetEvent.Set();
+                _resetEvent.Set();
             }
-            return resetEvent;
+            return _resetEvent;
           }
         }
       }
 
-      private void op_Completed(object sender, EventArgs e)
+      private void op_Completed(object? sender, EventArgs e)
       {
-        lock (lockObj)
+        lock (_lockObj)
         {
-          resetEvent.Set();
+          _resetEvent?.Set();
         }
       }
 
-      public object AsyncState
+      public object? AsyncState
       {
         get { return null; }
       }
@@ -106,14 +106,14 @@ namespace Altaxo.Gui.Workbench
       var r = result as AsyncResult;
       if (r is null)
         throw new ArgumentException("result must be the return value of a WpfSynchronizeInvoke.BeginInvoke call!");
-      r.op.Wait();
-      return r.op.Result;
+      r._dispatcherOperation.Wait();
+      return r._dispatcherOperation.Result;
     }
 
-    public object Invoke(Delegate method, object[] args)
+    public object? Invoke(Delegate method, object?[]? args)
     {
-      object result = null;
-      Exception exception = null;
+      object? result = null;
+      Exception? exception = null;
       dispatcher.Invoke(
           DispatcherPriority.Normal,
           (Action)delegate

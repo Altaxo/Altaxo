@@ -50,7 +50,7 @@ namespace Altaxo.AddInItems
     /// <param name="throwOnNotFound">If true, throws a <see cref="TreePathNotFoundException"/>
     /// if the path is not found. If false, an empty list is returned when the
     /// path is not found.</param>
-    IReadOnlyList<T> BuildItems<T>(string path, object parameter, bool throwOnNotFound = true);
+    IReadOnlyList<T> BuildItems<T>(string path, object? parameter, bool throwOnNotFound = true);
 
     /// <summary>
     /// Builds a single item in the addin tree.

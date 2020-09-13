@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    private void EhWorkbenchPropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void EhWorkbenchPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
       if (e.PropertyName == nameof(AltaxoWorkbench.IsLayoutSerializationRequired))
       {
@@ -87,9 +87,9 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-    private void EhAfterLoaded(object sender, EventArgs e)
+    private void EhAfterLoaded(object? sender, EventArgs e)
     {
-      ((DispatcherTimer)sender).Stop();
+      ((DispatcherTimer?)sender)?.Stop();
 
       if (DataContext is AltaxoWorkbench wb)
       {
@@ -250,7 +250,7 @@ namespace Altaxo.Gui.Workbench
 
     #region Status of Menu and Toolbar
 
-    private void EhCommandManager_RequerySuggested(object sender, EventArgs e)
+    private void EhCommandManager_RequerySuggested(object? sender, EventArgs e)
     {
       UpdateMenu();
     }

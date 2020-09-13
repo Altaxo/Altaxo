@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Startup
     /// <returns>Application name.</returns>
     private static string FindApplicationName()
     {
-      var assName = Assembly.GetEntryAssembly().GetName().Name;
+      var assName = Assembly.GetEntryAssembly()?.GetName().Name ?? throw new InvalidOperationException("Unable to get name of entry assembly");
       var assNameInvar = assName.ToLowerInvariant();
       string appName;
       foreach (var end in _possibleStartupAssemblyNameEnds)
@@ -217,7 +217,7 @@ namespace Altaxo.Gui.Startup
 #endif
 
       Current.Log.Info(string.Format("Starting {0}...", startupArguments.ApplicationName));
-      Altaxo.Main.Services.IAutoUpdateInstallationService updateInstaller = null;
+      Altaxo.Main.Services.IAutoUpdateInstallationService? updateInstaller = null;
       try
       {
         var startupSettings = new StartupSettings(startupArguments.ApplicationName, startupArguments.StartupArgs, startupArguments.RequestedFileList, startupArguments.ParameterList);
@@ -226,14 +226,15 @@ namespace Altaxo.Gui.Startup
         startupSettings.UseExceptionBoxForErrorHandler = UseExceptionBox(startupArguments.StartupArgs);
 #endif
 
-        Assembly thisAssembly = typeof(StartupMain).Assembly;
-        startupSettings.ApplicationRootPath = Path.Combine(Path.GetDirectoryName(thisAssembly.Location), "..");
+        var thisAssemblyLocation = typeof(StartupMain).Assembly.Location ?? throw new InvalidOperationException("Unable to get the location of this assembly");
+        var thisAssemblyPath = Path.GetDirectoryName(thisAssemblyLocation) ?? throw new InvalidOperationException("Unable to get path of this assembly");
+        startupSettings.ApplicationRootPath = Path.Combine(thisAssemblyPath, "..");
         startupSettings.AllowUserAddIns = true;
 
-        string configDirectory = System.Configuration.ConfigurationManager.AppSettings["settingsPath"];
+        var configDirectory = System.Configuration.ConfigurationManager.AppSettings["settingsPath"];
         if (string.IsNullOrEmpty(configDirectory))
         {
-          string relativeConfigDirectory = System.Configuration.ConfigurationManager.AppSettings["relativeSettingsPath"];
+          var relativeConfigDirectory = System.Configuration.ConfigurationManager.AppSettings["relativeSettingsPath"];
           if (string.IsNullOrEmpty(relativeConfigDirectory))
             startupSettings.ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), startupArguments.ApplicationName);
           else
@@ -241,7 +242,7 @@ namespace Altaxo.Gui.Startup
         }
         else
         {
-          startupSettings.ConfigDirectory = Path.Combine(Path.GetDirectoryName(thisAssembly.Location), configDirectory);
+          startupSettings.ConfigDirectory = Path.Combine(thisAssemblyPath, configDirectory);
         }
 
         startupSettings.AddAddInsFromDirectory(Path.Combine(startupSettings.ApplicationRootPath, "AddIns"));
@@ -332,8 +333,8 @@ namespace Altaxo.Gui.Startup
       {
         unhandledExceptionHandlerService.AddHandler(new ExceptionBox.UnhandledHandler(), false);
       }
-      string configDirectory = startupSettings.ConfigDirectory;
-      string dataDirectory = startupSettings.DataDirectory;
+      var configDirectory = startupSettings.ConfigDirectory;
+      var dataDirectory = startupSettings.DataDirectory;
       string propertiesName;
       if (startupSettings.PropertiesName is not null)
       {
@@ -404,16 +405,15 @@ namespace Altaxo.Gui.Startup
     /// <param name="WorkbenchClosed">Action(s) that are executed immediatly after the workbench has closed. May be null.</param>
     /// <exception cref="RunWorkbenchException"></exception>
     [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-    private static void RunWorkbench(StartupSettings wbSettings, Action BeforeRunWorkbench, Action WorkbenchClosed)
+    private static void RunWorkbench(StartupSettings wbSettings, Action BeforeRunWorkbench, Action? WorkbenchClosed)
     {
-      var wbc = new WorkbenchStartup();
       Current.Log.Info("Initializing workbench...");
-      wbc.InitializeWorkbench();
+      var wbc = new WorkbenchStartup();
 
       RunWorkbenchInitializedCommands();
 
       Current.Log.Info("Starting workbench...");
-      Exception exception = null;
+      Exception? exception = null;
       // finally start the workbench.
       try
       {

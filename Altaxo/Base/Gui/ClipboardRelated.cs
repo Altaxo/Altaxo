@@ -64,13 +64,17 @@ namespace Altaxo.Gui
 
     bool ContainsImage();
 
-    System.Drawing.Image GetImage();
+    /// <summary>
+    /// Gets the image (or null if no image is present).
+    /// </summary>
+    /// <returns>The image that the clipboard contains; or null.</returns>
+    System.Drawing.Image? GetImage();
 
     /// <summary>
     /// Gets the bitmap image on the clipboard as optimized memory stream. Optimized means that it will be tested whether compression
     /// with jpeg or with png is more efficient, and the stream that is smaller in size will be returned.
     /// </summary>
     /// <returns>If successfull, the stream and the file extension that describes the kind of stream. If unsuccessfull, the tuple (null, null) is returned.</returns>
-    (System.IO.Stream, string fileExtension) GetBitmapImageAsOptimizedMemoryStream();
+    (System.IO.Stream? Stream, string? FileExtension) GetBitmapImageAsOptimizedMemoryStream();
   }
 }
