@@ -29,19 +29,19 @@ using System.IO.Compression;
 namespace Altaxo.Main.Services.Files
 {
   /// <summary>
-  /// Wraps a <see cref="ZipArchiveEntryAxo"/> to implement <see cref="IProjectArchiveEntry"/>.
+  /// Wraps a <see cref="ZipArchiveEntry"/> to implement <see cref="IProjectArchiveEntry"/>.
   /// </summary>
   /// <seealso cref="IProjectArchiveEntry" />
-  public class ZipEntryAsProjectArchiveEntry : IProjectArchiveEntry
+  public class ZipEntryAsProjectArchiveEntryNative : IProjectArchiveEntry
   {
-    private ZipArchiveEntryAxo _entry;
+    private ZipArchiveEntry _entry;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ZipEntryAsProjectArchiveEntry"/> class.
     /// </summary>
     /// <param name="entry">The zip archive entry to wrap.</param>
     /// <exception cref="ArgumentNullException">entry</exception>
-    public ZipEntryAsProjectArchiveEntry(ZipArchiveEntryAxo entry)
+    public ZipEntryAsProjectArchiveEntryNative(ZipArchiveEntry entry)
     {
       _entry = entry ?? throw new ArgumentNullException(nameof(entry));
     }

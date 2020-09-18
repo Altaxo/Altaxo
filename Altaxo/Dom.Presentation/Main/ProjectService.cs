@@ -175,10 +175,20 @@ namespace Altaxo.Main
 
     #region Project opening
 
+
     protected override IFileBasedProjectArchiveManager InternalCreateProjectArchiveManagerFromFileOrFolderLocation(PathName fileOrFolderName)
     {
+      var context = Current.Project.GetPropertyContext();
+
+      var storageSettings = context.GetValue(Altaxo.Serialization.StorageSettings.PropertyKeyStorageSettings);
+
       if (fileOrFolderName is FileName)
-        return new ZipFileProjectArchiveManager();
+      {
+        if (storageSettings.AllowProgressiveStorage)
+          return new ZipFileProjectArchiveManager();
+        else
+          return new ZipFileProjectArchiveManagerNative();
+      }
 
       return null;
     }
