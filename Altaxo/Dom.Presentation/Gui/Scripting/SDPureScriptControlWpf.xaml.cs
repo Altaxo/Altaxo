@@ -90,7 +90,8 @@ namespace Altaxo.Gui.Scripting
 
     private void UninitializeEditor()
     {
-      _codeView.Adapter.ExternalHelpRequired -= EhExternalHelpRequired;
+      if (_codeView?.Adapter is { } adapter)
+        adapter.ExternalHelpRequired -= EhExternalHelpRequired;
       _factory?.Uninitialize(_codeView);
       _codeView = null;
       Content = null;
