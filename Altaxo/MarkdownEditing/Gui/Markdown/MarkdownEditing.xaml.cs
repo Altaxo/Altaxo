@@ -34,8 +34,6 @@ namespace Altaxo.Gui.Markdown
   /// </summary>
   public partial class MarkdownEditing : UserControl
   {
-    private bool useExtensions = true;
-
     public MarkdownEditing()
     {
       InitializeComponent();
@@ -50,7 +48,7 @@ namespace Altaxo.Gui.Markdown
 
     private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
     {
-      Process.Start(e.Parameter.ToString());
+      Process.Start($"{e.Parameter}");
     }
 
     private void ToggleExtensionsButton_OnClick(object sender, RoutedEventArgs e)
@@ -69,7 +67,7 @@ namespace Altaxo.Gui.Markdown
         Viewer.Markdown = _guiRawText.Text;
     }
 
-    private void EhTextEditor_ScrollOffsetChanged(object sender, EventArgs e)
+    private void EhTextEditor_ScrollOffsetChanged(object? sender, EventArgs e)
     {
       var scrollPos = _guiRawText.TextArea.TextView.ScrollOffset;
       var dl = _guiRawText.TextArea.TextView.GetDocumentLineByVisualTop(scrollPos.Y);
@@ -89,9 +87,9 @@ namespace Altaxo.Gui.Markdown
         textElement.BringIntoView();
     }
 
-    private TextElement SearchBlocksForLineNumber(IEnumerable<TextElement> blocks, int lineNumber)
+    private TextElement? SearchBlocksForLineNumber(IEnumerable<TextElement> blocks, int lineNumber)
     {
-      TextElement previousElement = null;
+      TextElement? previousElement = null;
       foreach (var block in blocks)
       {
         if (!(block.Tag is Markdig.Syntax.MarkdownObject mdo))
@@ -104,7 +102,7 @@ namespace Altaxo.Gui.Markdown
         else if (mdo.Line > lineNumber && previousElement is not null)
         {
           var childBlocks = GetChildBlocks(previousElement);
-          TextElement foundResult;
+          TextElement? foundResult;
           if (childBlocks is not null && (foundResult = SearchBlocksForLineNumber(childBlocks, lineNumber)) is not null)
           {
             return foundResult;
@@ -123,7 +121,7 @@ namespace Altaxo.Gui.Markdown
     /// <param name="blocks">The list of <see cref="TextElement"/>s. Most of them should be tagged with the corresponding a <see cref="Markdig.Syntax.MarkdownObject"/> from which they are created.</param>
     /// <param name="lineNumber">The line number in the source markdown text to be searched for.</param>
     /// <returns>The <see cref="TextElement"/> which corresponds to a line number equal to or greater than the searched line number.</returns>
-    private TextElement BinarySearchBlocksForLineNumber(System.Collections.IList blocks, int lineNumber)
+    private TextElement? BinarySearchBlocksForLineNumber(System.Collections.IList blocks, int lineNumber)
     {
       var count = blocks.Count;
       if (0 == count)
@@ -133,10 +131,10 @@ namespace Altaxo.Gui.Markdown
       int lowerIdx;
       for (lowerIdx = 0; lowerIdx < count; ++lowerIdx)
       {
-        if (((TextElement)blocks[lowerIdx]).Tag is Markdig.Syntax.MarkdownObject lowerMdo)
+        if (((TextElement)blocks[lowerIdx]!).Tag is Markdig.Syntax.MarkdownObject lowerMdo)
         {
           if (lowerMdo.Line >= lineNumber)
-            return (TextElement)blocks[lowerIdx];
+            return (TextElement)blocks[lowerIdx]!;
           else
             break;
         }
@@ -149,10 +147,10 @@ namespace Altaxo.Gui.Markdown
       int upperIdx;
       for (upperIdx = count - 1; upperIdx >= lowerIdx; --upperIdx)
       {
-        if (((TextElement)blocks[upperIdx]).Tag is Markdig.Syntax.MarkdownObject upperMdo)
+        if (((TextElement)blocks[upperIdx]!).Tag is Markdig.Syntax.MarkdownObject upperMdo)
         {
           if (upperMdo.Line == lineNumber)
-            return (TextElement)blocks[upperIdx];
+            return (TextElement)blocks[upperIdx]!;
           else
             break;
         }
@@ -172,23 +170,23 @@ namespace Altaxo.Gui.Markdown
 
         for (int offs = 0; !(middleIdx + offs > upperIdx && middleIdx - offs < lowerIdx); ++offs)
         {
-          if ((middleIdx + offs < upperIdx) && ((TextElement)blocks[middleIdx + offs]).Tag is Markdig.Syntax.MarkdownObject)
+          if ((middleIdx + offs < upperIdx) && ((TextElement)blocks[middleIdx + offs]!).Tag is Markdig.Syntax.MarkdownObject)
           {
             middleIdx = middleIdx + offs;
             break;
           }
-          else if ((middleIdx - offs > lowerIdx) && ((TextElement)blocks[middleIdx - offs]).Tag is Markdig.Syntax.MarkdownObject)
+          else if ((middleIdx - offs > lowerIdx) && ((TextElement)blocks[middleIdx - offs]!).Tag is Markdig.Syntax.MarkdownObject)
           {
             middleIdx = middleIdx - offs;
             break;
           }
         }
 
-        if (!(((TextElement)blocks[middleIdx]).Tag is Markdig.Syntax.MarkdownObject middleMdo))
+        if (!(((TextElement)blocks[middleIdx]!).Tag is Markdig.Syntax.MarkdownObject middleMdo))
           break;
 
         if (middleMdo.Line == lineNumber)
-          return (TextElement)blocks[middleIdx];
+          return (TextElement)blocks[middleIdx]!;
         else if (middleMdo.Line > lineNumber)
           upperIdx = middleIdx;
         else
@@ -199,10 +197,10 @@ namespace Altaxo.Gui.Markdown
       // and upperIdx should have a lineNumber greater than our searched line number
       // our only chance is to search the children of the lowerIdx
 
-      var childs = GetChildList((TextElement)blocks[lowerIdx]);
+      var childs = GetChildList((TextElement)blocks[lowerIdx]!);
       if (childs is null)
       {
-        return (TextElement)blocks[upperIdx]; // no childs, then our upperIdx element is the best choice
+        return (TextElement)blocks[upperIdx]!; // no childs, then our upperIdx element is the best choice
       }
       else // there are child, so search in them
       {
@@ -210,11 +208,11 @@ namespace Altaxo.Gui.Markdown
         if (result is not null)
           return result; // we have found a child, so return it
         else
-          return (TextElement)blocks[upperIdx]; // no child found, then upperIdx may be the best choice.
+          return (TextElement)blocks[upperIdx]!; // no child found, then upperIdx may be the best choice.
       }
     }
 
-    private System.Collections.IList GetChildList(TextElement parent)
+    private System.Collections.IList? GetChildList(TextElement parent)
     {
       if (parent is Paragraph para)
       {
@@ -239,7 +237,7 @@ namespace Altaxo.Gui.Markdown
       return null;
     }
 
-    private IEnumerable<TextElement> GetChildBlocks(TextElement parent)
+    private IEnumerable<TextElement>? GetChildBlocks(TextElement parent)
     {
       if (parent is Paragraph para)
       {

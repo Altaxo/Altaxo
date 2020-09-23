@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Markdown
 
     private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
     {
-      Process.Start(e.Parameter.ToString());
+      Process.Start($"{e.Parameter}");
     }
 
     private void ToggleExtensionsButton_OnClick(object sender, RoutedEventArgs e)

@@ -5,11 +5,10 @@ namespace System.IO.Compression
   [TestFixture]
   public class ZipCopyTest : ZipTestBase
   {
-    const int _numberOfEntries = 16;
-    int _bufferSize = 1024 * 8;
-
-    string _zipFile1Name;
-    string _zipFile2Name;
+    private const int _numberOfEntries = 16;
+    private int _bufferSize = 1024 * 8;
+    private string _zipFile1Name;
+    private string _zipFile2Name;
 
     [SetUp]
     public void Setup()
@@ -45,7 +44,7 @@ namespace System.IO.Compression
       {
         File.Delete(_zipFile1Name);
       }
-      catch (Exception e)
+      catch (Exception)
       {
 
       }
@@ -54,7 +53,7 @@ namespace System.IO.Compression
       {
         File.Delete(_zipFile2Name);
       }
-      catch (Exception e)
+      catch (Exception)
       {
 
       }

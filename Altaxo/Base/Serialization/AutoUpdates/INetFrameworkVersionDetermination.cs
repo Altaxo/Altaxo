@@ -31,6 +31,9 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
+  /// <summary>
+  /// Interface to a class that is able to determine whether a given version of .NET framework is installed.
+  /// </summary>
   public interface INetFrameworkVersionDetermination
   {
     /// <summary>

@@ -49,6 +49,9 @@ namespace Altaxo.Serialization.AutoUpdates
 
     private Dictionary<string, string> _properties = new Dictionary<string, string>();
 
+    /// <summary>
+    /// A key-value dictionary of properties.
+    /// </summary>
     public Dictionary<string, string> Properties { get { return _properties; } }
 
     /// <summary>Name (without path) of the version file, both at the remote location and on the local hard disk.</summary>
@@ -78,6 +81,13 @@ namespace Altaxo.Serialization.AutoUpdates
       return resultList.ToArray();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PackageInfo"/> class.
+    /// </summary>
+    /// <param name="isUnstableVersion">If set to <c>true</c>, the package represents an unstable version; otherwise, it represents a stable version.</param>
+    /// <param name="version">The version of Altaxo in this package.</param>
+    /// <param name="fileLength">Length of the package file.</param>
+    /// <param name="hash">The hash of the package file.</param>
     protected PackageInfo(bool isUnstableVersion, Version version, long fileLength, string hash)
     {
       IsUnstableVersion = isUnstableVersion;

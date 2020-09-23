@@ -50,7 +50,6 @@ namespace Altaxo.Gui.Text.Viewing
     private ImageProvider _imageProvider;
     private ITextDocumentController _controller;
     private string _documentName;
-    private bool _isInInitializationStage;
 
     public TextDocumentControl()
     {

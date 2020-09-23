@@ -90,7 +90,7 @@ namespace Altaxo.Gui.HelpViewing
         _hiddenMainForm.Hide();
         System.Windows.Forms.Help.ShowHelp(_hiddenMainForm, helpFileName, topic);
       }
-      catch (Exception ex)
+      catch (Exception)
       {
       }
     }

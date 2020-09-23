@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net48;net5.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
+    <nullable>enable</nullable>
     <UseWPF>true</UseWPF>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>

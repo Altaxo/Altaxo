@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       public Buffer IndexBuffer;
       public int VertexCount;
       public int IndexCount;
-      public float[] UColor;
+      
 
 
       #region IDisposable Support

@@ -56,7 +56,12 @@ namespace Altaxo.Gui.Scripting
     /// <summary>
     /// Not used here because this is handled by the view.
     /// </summary>
-    public event Action<string> CompilerMessageClicked;
+    public event Action<string> CompilerMessageClicked
+    {
+      add { }
+      remove { }
+    }
+
 
     static SDPureScriptControlWpf()
     {
@@ -88,7 +93,6 @@ namespace Altaxo.Gui.Scripting
       _codeView.Adapter.ExternalHelpRequired -= EhExternalHelpRequired;
       _factory?.Uninitialize(_codeView);
       _codeView = null;
-      CompilerMessageClicked = null;
       Content = null;
     }
 

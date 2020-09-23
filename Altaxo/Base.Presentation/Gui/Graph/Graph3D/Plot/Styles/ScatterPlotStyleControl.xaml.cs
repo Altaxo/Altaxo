@@ -43,9 +43,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   {
     public event Action IndependentColorChanged;
 
-    private bool _enableDisableAll = false;
-    private int _suppressEvents = 0;
-
     public ScatterPlotStyleControl()
     {
       InitializeComponent();

@@ -40,18 +40,18 @@ namespace Altaxo.Gui.Markdown
   public partial class MarkdownRichTextEditing : UserControl
   {
     private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().UseFencedCodeBlockLineTaggingPostProcessor().Build();
-    private MarkdownPipeline Pipeline { get; set; }
+    private MarkdownPipeline? Pipeline { get; set; }
 
-    private string _sourceText;
+    private string? _sourceText;
     private long _sourceTextUsn;
-    private string _styleName;
+    private string? _styleName;
     private IStyles _currentStyle = DynamicStyles.Instance;
 
     private System.Globalization.CultureInfo _documentCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
     private bool _isSpellCheckingEnabled;
     private bool _isHyphenationEnabled;
-    private ICSharpCode.AvalonEdit.Folding.FoldingManager _foldingManager;
-    private SyntaxTreeFoldingStrategy _foldingStrategy;
+    private ICSharpCode.AvalonEdit.Folding.FoldingManager? _foldingManager;
+    private SyntaxTreeFoldingStrategy? _foldingStrategy;
     private bool _isInInitializationMode;
 
     /// <summary>
@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Markdown
     /// If the caret position of the source text has changed, but the flow document is not yet updated with the new source text,
     /// here we store temporarily the caret position and the serial number of the source text this caret position corresponds to.
     /// </summary>
-    private StorageOfPositionAndUsn _pendingSynchroniationOfSourceTextCursorPositionToPreviewPosition;
+    private StorageOfPositionAndUsn? _pendingSynchroniationOfSourceTextCursorPositionToPreviewPosition;
     // private (ICSharpCode.AvalonEdit.TextViewPosition CaretPosition, long SourceTextUsn)? _pendingSynchroniationOfSourceTextCursorPositionToPreviewPosition;
 
     public ICSharpCode.AvalonEdit.TextEditor Editor { get { return _guiEditor; } }
@@ -91,7 +91,7 @@ namespace Altaxo.Gui.Markdown
     /// Occurs before a complete rendering takes place. This event can be used to set properties that will influence the rendering, e.g. document language, hyphenation etc. that
     /// may have changed outside this control.
     /// </summary>
-    public event EventHandler BeforeCompleteRendering;
+    public event EventHandler? BeforeCompleteRendering;
 
     public bool IsInInitializationMode
     {
@@ -113,7 +113,7 @@ namespace Altaxo.Gui.Markdown
       }
     }
 
-    public string SourceText
+    public string? SourceText
     {
       get
       {
@@ -126,7 +126,7 @@ namespace Altaxo.Gui.Markdown
       }
     }
 
-    public string StyleName
+    public string? StyleName
     {
       get
       {
@@ -236,7 +236,10 @@ namespace Altaxo.Gui.Markdown
           {
             _foldingManager = ICSharpCode.AvalonEdit.Folding.FoldingManager.Install(_guiEditor.TextArea);
             _foldingStrategy = new SyntaxTreeFoldingStrategy();
-            _foldingManager.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
+            if (_lastMarkdownDocumentProcessed is not null)
+            {
+              _foldingManager.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
+            }
           }
           else
           {
@@ -247,6 +250,13 @@ namespace Altaxo.Gui.Markdown
       }
     }
 
+    /// <summary>
+    /// Sets the highlighting style. If the value is null or empty, highlighting is disabled.
+    /// The value 'default' designates the default hightlighting style.
+    /// </summary>
+    /// <value>
+    /// The highlighting style.
+    /// </value>
     public string HighlightingStyle
     {
       set
@@ -273,13 +283,13 @@ namespace Altaxo.Gui.Markdown
     /// <value>
     /// The image provider.
     /// </value>
-    public IWpfImageProvider ImageProvider { get; set; }
+    public IWpfImageProvider? ImageProvider { get; set; }
 
     /// <summary>
     /// Occurs when the source text has been changed from inside the editor, but not if it has been changed programmatrically
     /// by using the <see cref="SourceText"/> property.
     /// </summary>
-    public event EventHandler SourceTextChanged;
+    public event EventHandler? SourceTextChanged;
 
     public MarkdownRichTextEditing()
     {
@@ -289,7 +299,7 @@ namespace Altaxo.Gui.Markdown
       _guiEditor.TextArea.Caret.PositionChanged += EhEditor_CaretPositionChanged;
     }
 
-    private void EhLoaded(object sender, RoutedEventArgs e)
+    private void EhLoaded(object? sender, RoutedEventArgs e)
     {
     }
 
@@ -297,7 +307,7 @@ namespace Altaxo.Gui.Markdown
     {
       try
       {
-        Process.Start(e.Parameter.ToString());
+        Process.Start($"{e.Parameter}");
       }
       catch (Exception ex)
       {
@@ -309,7 +319,7 @@ namespace Altaxo.Gui.Markdown
 
     private void JumpToFragmentLink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
     {
-      string url = e.Parameter.ToString();
+      string url = $"{e.Parameter}";
       if (url.StartsWith("#"))
         url = url.Substring(1);
 
@@ -335,10 +345,10 @@ namespace Altaxo.Gui.Markdown
 
     #region Rendering
 
-    private string _lastSourceTextProcessed = null;
+    private string? _lastSourceTextProcessed = null;
     private long _lastSourceTextProcessedUsn;
-    private Markdig.Syntax.MarkdownDocument _lastMarkdownDocumentProcessed = null;
-    private System.Threading.CancellationTokenSource _lastCancellationTokenSource = null;
+    private Markdig.Syntax.MarkdownDocument? _lastMarkdownDocumentProcessed = null;
+    private System.Threading.CancellationTokenSource? _lastCancellationTokenSource = null;
 
     private void EhEditor_TextChanged(object sender, EventArgs e)
     {
@@ -352,7 +362,7 @@ namespace Altaxo.Gui.Markdown
 
     private void EhRefreshViewer(object sender, ExecutedRoutedEventArgs e)
     {
-      ImageProvider.ClearCache();
+      ImageProvider?.ClearCache();
       RenderDocument(true);
     }
 
@@ -402,7 +412,8 @@ namespace Altaxo.Gui.Markdown
         _lastSourceTextProcessed = _sourceText;
         _lastSourceTextProcessedUsn = _sourceTextUsn;
         _lastMarkdownDocumentProcessed = markdownDocument;
-        _foldingManager?.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
+        if (_foldingManager is not null && _foldingStrategy is not null)
+          _foldingManager.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
         HandlePendingSynchroniationOfSourceTextCursorPositionToPreviewPosition();
         UpdateOutline(_lastMarkdownDocumentProcessed);
       }
@@ -424,7 +435,8 @@ namespace Altaxo.Gui.Markdown
             _lastSourceTextProcessed = newText;
             _lastSourceTextProcessedUsn = newTextUsn;
             _lastMarkdownDocumentProcessed = newDocument;
-            _foldingManager?.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
+            if (_foldingManager is not null && _foldingStrategy is not null)
+              _foldingManager.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
             HandlePendingSynchroniationOfSourceTextCursorPositionToPreviewPosition();
             UpdateOutline(_lastMarkdownDocumentProcessed);
           },
@@ -485,7 +497,7 @@ namespace Altaxo.Gui.Markdown
 
     #region Scroll handler (for source and viewer)
 
-    private void EhEditor_ScrollOffsetChanged(object sender, EventArgs e)
+    private void EhEditor_ScrollOffsetChanged(object? sender, EventArgs e)
     {
       System.Diagnostics.Debug.WriteLine("SourceScrollChanged, lastActivated={0}", _lastScrollActivatedWindow);
 
@@ -530,7 +542,7 @@ namespace Altaxo.Gui.Markdown
     {
       System.Diagnostics.Debug.WriteLine("LastActivated={0}", _lastScrollActivatedWindow);
 
-      TextPointer textPosition = null;
+      TextPointer? textPosition = null;
 
       if (_lastScrollActivatedWindow == LastActivatedWindow.Viewer)
       {
@@ -562,14 +574,14 @@ namespace Altaxo.Gui.Markdown
     /// <param name="textPosition">The text position in the viewer.</param>
     public void SyncViewersTextPositionToSourceEditor(TextPointer textPosition)
     {
-      TextElement parent;
+      TextElement? parent;
       if (textPosition.Parent is TextElement pe)
         parent = pe;
       else
         parent = textPosition.Paragraph;
 
       // search parent or the ancestors of parent for a Markdig tag
-      Markdig.Syntax.MarkdownObject markdigTag = null;
+      Markdig.Syntax.MarkdownObject? markdigTag = null;
       while (parent is not null)
       {
         if (parent.Tag is Markdig.Syntax.MarkdownObject mdo)
@@ -648,7 +660,7 @@ namespace Altaxo.Gui.Markdown
 
     #region Caret handling / synchronization
 
-    private Markdig.Syntax.MarkdownObject GetMarkdownObjectAtViewerPosition(TextPointer textPosition)
+    private Markdig.Syntax.MarkdownObject? GetMarkdownObjectAtViewerPosition(TextPointer textPosition)
     {
       if (textPosition is not null)
       {
@@ -686,7 +698,7 @@ namespace Altaxo.Gui.Markdown
         var markdigTag = GetMarkdownObjectAtViewerPosition(textPosition);
         var markdigTagPrev = GetMarkdownObjectAtViewerPosition(textPosition.GetPositionAtOffset(-1));
 
-        if (markdigTagPrev is not null && markdigTagPrev.Span.Start > markdigTag.Span.Start)
+        if (markdigTag is not null && markdigTagPrev is not null && markdigTagPrev.Span.Start > markdigTag.Span.Start)
         {
           markdigTag = markdigTagPrev;
           textPosition = textPositionPrev;
@@ -715,7 +727,7 @@ namespace Altaxo.Gui.Markdown
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-    private void EhEditor_CaretPositionChanged(object sender, EventArgs e)
+    private void EhEditor_CaretPositionChanged(object? sender, EventArgs e)
     {
       var sourceTextPosition = _guiEditor.TextArea.Caret.Position;
 
@@ -1003,7 +1015,7 @@ namespace Altaxo.Gui.Markdown
 
     private bool _isViewerSelected;
 
-    public event EventHandler IsViewerSelectedChanged;
+    public event EventHandler? IsViewerSelectedChanged;
 
     public bool IsViewerSelected
     {
@@ -1027,7 +1039,7 @@ namespace Altaxo.Gui.Markdown
 
     #region FractionOfEditor
 
-    public event EventHandler FractionOfEditorChanged;
+    public event EventHandler? FractionOfEditorChanged;
 
     public double FractionOfEditorWindow
     {
@@ -1142,7 +1154,7 @@ namespace Altaxo.Gui.Markdown
     private ViewingConfiguration _privatViewingConfiguration = ViewingConfiguration.ConfigurationEditorLeftViewerRight;
     private double _privateFractionOfEditor;
 
-    public event Action<object, ViewingConfiguration> ViewingConfigurationChanged;
+    public event Action<object, ViewingConfiguration>? ViewingConfigurationChanged;
 
     private void InternalSetViewingConfiguration(ViewingConfiguration value)
     {
@@ -1189,7 +1201,7 @@ namespace Altaxo.Gui.Markdown
       }
     }
 
-    private void EhSwitchToConfigurationEditorLeftViewerRight(object sender, ExecutedRoutedEventArgs e)
+    private void EhSwitchToConfigurationEditorLeftViewerRight(object sender, ExecutedRoutedEventArgs? e)
     {
       _guiTabControl.Visibility = Visibility.Collapsed;
       _guiColumnGridSplitter.Visibility = Visibility.Visible;
@@ -1214,7 +1226,7 @@ namespace Altaxo.Gui.Markdown
       e.Handled = true;
     }
 
-    private void EhSwitchToConfigurationEditorRightViewerLeft(object sender, ExecutedRoutedEventArgs e)
+    private void EhSwitchToConfigurationEditorRightViewerLeft(object sender, ExecutedRoutedEventArgs? e)
     {
       _guiTabControl.Visibility = Visibility.Collapsed;
       _guiColumnGridSplitter.Visibility = Visibility.Visible;
@@ -1239,7 +1251,7 @@ namespace Altaxo.Gui.Markdown
       e.Handled = true;
     }
 
-    private void EhSwitchToConfigurationEditorTopViewerBottom(object sender, ExecutedRoutedEventArgs e)
+    private void EhSwitchToConfigurationEditorTopViewerBottom(object sender, ExecutedRoutedEventArgs? e)
     {
       _guiTabControl.Visibility = Visibility.Collapsed;
       _guiColumnGridSplitter.Visibility = Visibility.Hidden;
@@ -1264,7 +1276,7 @@ namespace Altaxo.Gui.Markdown
       e.Handled = true;
     }
 
-    private void EhSwitchToConfigurationEditorBottomViewerTop(object sender, ExecutedRoutedEventArgs e)
+    private void EhSwitchToConfigurationEditorBottomViewerTop(object sender, ExecutedRoutedEventArgs? e)
     {
       _guiTabControl.Visibility = Visibility.Collapsed;
       _guiColumnGridSplitter.Visibility = Visibility.Hidden;
@@ -1289,7 +1301,7 @@ namespace Altaxo.Gui.Markdown
       e.Handled = true;
     }
 
-    private void EhSwitchToConfigurationTabbedEditorAndViewer(object sender, ExecutedRoutedEventArgs e)
+    private void EhSwitchToConfigurationTabbedEditorAndViewer(object sender, ExecutedRoutedEventArgs? e)
     {
       _guiTabControl.Visibility = Visibility.Visible;
       _guiColumnGridSplitter.Visibility = Visibility.Hidden;

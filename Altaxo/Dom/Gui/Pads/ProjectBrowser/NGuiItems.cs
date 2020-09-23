@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
     }
 
-    public ProjectBrowseItemImage Image;
+    public new ProjectBrowseItemImage Image;
 
     public override int ImageIndex
     {

@@ -53,7 +53,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public event Action CellEdit_TextChanged;
 
+#pragma warning disable IDE0052 // Remove unread private members
     private bool _cellEdit_IsArmed;
+#pragma warning restore IDE0052 // Remove unread private members
 
     private void InitializeCellEditControl()
     {

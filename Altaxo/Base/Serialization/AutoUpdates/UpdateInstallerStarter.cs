@@ -40,7 +40,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="isAltaxoCurrentlyStarting">If set to <c>true</c>, Altaxo will be restarted after the installation is done.</param>
     /// <param name="commandLineArgs">Original command line arguments. Can be <c>null</c> when calling this function on shutdown.</param>
     /// <returns>True if the installer program was started. Then Altaxo have to be shut down immediately. Returns <c>false</c> if the installer program was not started.</returns>
-    public bool Run(bool isAltaxoCurrentlyStarting, string[] commandLineArgs)
+    public bool Run(bool isAltaxoCurrentlyStarting, string[]? commandLineArgs)
     {
       var updateSettings = Current.PropertyService.GetValue(Altaxo.Settings.AutoUpdateSettings.PropertyKeyAutoUpdate, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new Altaxo.Settings.AutoUpdateSettings());
 

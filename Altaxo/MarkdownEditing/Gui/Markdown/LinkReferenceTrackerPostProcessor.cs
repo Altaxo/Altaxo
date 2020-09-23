@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Markdown
     /// <param name="document">The document.</param>
     /// <param name="updateSequenceNumber">A number that is increased every time the source document changed.</param>
     /// <param name="imageProvider">The image provider. Can be null (in this case nothing is tracked).</param>
-    public static void TrackLinks(MarkdownDocument document, long updateSequenceNumber, IWpfImageProvider imageProvider)
+    public static void TrackLinks(MarkdownDocument document, long updateSequenceNumber, IWpfImageProvider? imageProvider)
     {
       var urlCollector = imageProvider?.CreateUrlCollector();
       if (urlCollector is not null)
@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Markdown
           }
         }
         urlCollector.Freeze(); // announce that the collection proccess has finished
-        imageProvider.UpdateUrlCollector(urlCollector, updateSequenceNumber);
+        imageProvider?.UpdateUrlCollector(urlCollector, updateSequenceNumber);
       }
     }
   }

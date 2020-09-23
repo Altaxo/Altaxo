@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,11 +31,11 @@ namespace Altaxo.Gui.Markdown
     /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
     public class OutlineTreeNode : INotifyPropertyChanged
     {
-      private string _text;
-      private ObservableCollection<OutlineTreeNode> _childNodes;
-      public event PropertyChangedEventHandler PropertyChanged;
+      private string? _text;
+      private ObservableCollection<OutlineTreeNode>? _childNodes;
+      public event PropertyChangedEventHandler? PropertyChanged;
 
-      public string Text
+      public string? Text
       {
         get => _text;
         set
@@ -55,7 +56,8 @@ namespace Altaxo.Gui.Markdown
       /// </value>
       public int Line { get; set; }
 
-      public ObservableCollection<OutlineTreeNode> ChildNodes
+      [MaybeNull]
+      public ObservableCollection<OutlineTreeNode>? ChildNodes
       {
         get => _childNodes;
         set
@@ -94,7 +96,7 @@ namespace Altaxo.Gui.Markdown
         if (_childNodes is null)
           ChildNodes = new ObservableCollection<OutlineTreeNode>();
 
-        for (int i = _childNodes.Count; i <= index; ++i)
+        for (int i = _childNodes!.Count; i <= index; ++i)
           _childNodes.Add(new OutlineTreeNode());
 
         return _childNodes[index];
@@ -133,7 +135,7 @@ namespace Altaxo.Gui.Markdown
           _guiOutlineGridSplitter.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
           _guiOutline.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
 
-          if (value)
+          if (value && _lastMarkdownDocumentProcessed is not null)
           {
             UpdateOutline(_lastMarkdownDocumentProcessed);
           }
@@ -242,7 +244,7 @@ namespace Altaxo.Gui.Markdown
         return;
       }
 
-      List<(OutlineTreeNode parent, OutlineTreeNode child, int index)> nodesToDelete = null;
+      List<(OutlineTreeNode parent, OutlineTreeNode child, int index)>? nodesToDelete = null;
 
       (Markdig.Syntax.MarkdownDocument Document, int Level, int Index, bool IsVirtualNode) sourceRootNode = (document, minLevel - 1, 0, true);
       ProjectTreeToTree(
@@ -266,7 +268,7 @@ namespace Altaxo.Gui.Markdown
           }
         },
         (parent) => parent.AddNewChildNode(),
-        (parent, child, index) => parent.ChildNodes.RemoveAt(index),
+        (parent, child, index) => parent.ChildNodes?.RemoveAt(index),
         ref nodesToDelete
         );
 
@@ -361,11 +363,11 @@ namespace Altaxo.Gui.Markdown
       S sourceRootNode,
       D destinationRootNode,
       Func<S, IEnumerator<S>> getSourceChildEnumerator,
-      Func<D, IEnumerator<D>> getDestinationChildEnumerator,
+      Func<D, IEnumerator<D>?> getDestinationChildEnumerator,
       Action<S, D> updateDestinationNodeFromSourceNode,
       Func<D, D> createDestinationNode,
       Action<D, D, int> deleteDestinationNode,
-      ref List<(D ParentNode, D ChildNode, int Index)> destinationNodesToDelete)
+      ref List<(D ParentNode, D ChildNode, int Index)>? destinationNodesToDelete)
     {
       updateDestinationNodeFromSourceNode(sourceRootNode, destinationRootNode);
 
@@ -376,23 +378,23 @@ namespace Altaxo.Gui.Markdown
       {
         using (var destChildEnum = getDestinationChildEnumerator(destinationRootNode))
         {
-          bool s = !(sourceChildEnum is null);
-          bool d = !(destChildEnum is null);
+          bool s = sourceChildEnum is not null;
+          bool d = destChildEnum is not null;
           for (int idx = 0; ; ++idx)
           {
             if (s)
-              s = sourceChildEnum.MoveNext();
+              s = sourceChildEnum!.MoveNext();
 
             if (d)
-              d = destChildEnum.MoveNext();
+              d = destChildEnum!.MoveNext();
             else
               destChildEnum?.Dispose(); // allows addition of elements without complaining
 
             if (s)
             {
-              var destChildNode = d ? destChildEnum.Current : createDestinationNode(destinationRootNode);
+              var destChildNode = d ? destChildEnum!.Current : createDestinationNode(destinationRootNode);
               ProjectTreeToTree(
-                sourceChildEnum.Current,
+                sourceChildEnum!.Current,
                 destChildNode,
                 getSourceChildEnumerator,
                 getDestinationChildEnumerator,
@@ -408,7 +410,7 @@ namespace Altaxo.Gui.Markdown
                 if (destinationNodesToDelete is null)
                   destinationNodesToDelete = new List<(D, D, int)>();
 
-                destinationNodesToDelete.Add((destinationRootNode, destChildEnum.Current, idx));
+                destinationNodesToDelete.Add((destinationRootNode, destChildEnum!.Current, idx));
               }
               else
               {

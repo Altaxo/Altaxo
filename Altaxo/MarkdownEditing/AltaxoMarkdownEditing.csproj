@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="GenAssInfo">
   <PropertyGroup>
     <TargetFrameworks>net48;net5.0</TargetFrameworks>
-    <UseWPF>true</UseWPF>
     <LangVersion>preview</LangVersion>
+    <nullable>enable</nullable>
+    <UseWPF>true</UseWPF>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
@@ -13,6 +14,7 @@
     <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj" />
     <ProjectReference Include="..\..\Libraries\Markdig\Markdig.csproj" />
     <ProjectReference Include="..\..\Libraries\Markdig.Wpf\Markdig.Wpf.csproj" />
+    <ProjectReference Include="..\Core\AltaxoCore.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">

@@ -67,8 +67,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     private volatile bool _isGraphVisible;
 
-    private volatile bool _isGraphUpToDate;
-
     /// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
     protected MouseStateHandler _mouseState;
 

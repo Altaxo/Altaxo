@@ -149,7 +149,7 @@ namespace Altaxo.CodeEditing.Completion
     {
       return triggerChar != null
           ? CompletionTrigger.CreateInsertionTrigger(triggerChar.Value)
-          : CompletionTrigger.Default;
+          : CompletionTrigger.Invoke;
     }
   }
 }

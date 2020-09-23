@@ -53,7 +53,7 @@ namespace Altaxo.Main
     {
       get
       {
-        return (Altaxo.AltaxoDocument)_currentProject;
+        return (Altaxo.AltaxoDocument)(_currentProject ?? throw new InvalidOperationException("No project currently available (can happen during transitions from one to another project)."));
       }
     }
 
@@ -477,7 +477,7 @@ namespace Altaxo.Main
       }
       else
       {
-        var projectItem = (T)System.Activator.CreateInstance(typeof(T));
+        var projectItem = (T)System.Activator.CreateInstance(typeof(T)) ?? throw new InvalidOperationException($"Unable to create type {typeof(T)} via parameterless constructor!");
         projectItem.Name = itemName;
         collection.Add(projectItem);
         return projectItem;
@@ -804,7 +804,7 @@ namespace Altaxo.Main
       {
         if (descriptor.ProjectItemType == item.GetType())
         {
-          System.Reflection.ConstructorInfo cinfo;
+          System.Reflection.ConstructorInfo? cinfo;
           if ((cinfo = descriptor.GraphicalExporterType.GetConstructor(new Type[0])) is not null)
           {
             result = cinfo.Invoke(new object[0]) as IProjectItemImageExporter;

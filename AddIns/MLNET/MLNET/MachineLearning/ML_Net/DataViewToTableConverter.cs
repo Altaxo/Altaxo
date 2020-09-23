@@ -27,9 +27,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Data;
 using Microsoft.ML;
 using Microsoft.ML.Data;
-using Altaxo.Data;
 
 namespace Altaxo.MachineLearning.ML_Net
 {
@@ -255,7 +255,7 @@ namespace Altaxo.MachineLearning.ML_Net
             schemaCol.GetKeyValues<float>(ref keyValues);
             act += new Action(() => KeySingleGetter(cursor, c, keyValues.DenseValues().ToArray(), cursor.GetGetter<UInt32>(schemaCol), FuncCursorToOriginal));
           }
-          catch (Exception ex)
+          catch (Exception)
           {
             act += new Action(() => UInt32Minus1Getter(cursor, c, cursor.GetGetter<UInt32>(schemaCol), FuncCursorToOriginal));
           }
@@ -407,7 +407,7 @@ namespace Altaxo.MachineLearning.ML_Net
             schemaCol.GetKeyValues<float>(ref keyValues);
             act += new Action(() => KeySingleGetter(cursor, c, keyValues.DenseValues().ToArray(), cursor.GetGetter<UInt32>(schemaCol)));
           }
-          catch (Exception ex)
+          catch (Exception)
           {
             act += new Action(() => UInt32Minus1Getter(cursor, c, cursor.GetGetter<UInt32>(schemaCol)));
           }
@@ -445,14 +445,14 @@ namespace Altaxo.MachineLearning.ML_Net
         act();
     }
 
-    static void DoubleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<double> getter)
+    private static void DoubleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<double> getter)
     {
       double value = default;
       getter(ref value);
       c[(int)cursor.Position] = value;
     }
 
-    static void DoubleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<double> getter, Func<long, int> positionToIndex)
+    private static void DoubleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<double> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -463,14 +463,14 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void SingleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<float> getter)
+    private static void SingleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<float> getter)
     {
       float value = default;
       getter(ref value);
       c[(int)cursor.Position] = value;
     }
 
-    static void SingleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<float> getter, Func<long, int> positionToIndex)
+    private static void SingleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<float> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -481,14 +481,14 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void Int64Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Int64> getter)
+    private static void Int64Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Int64> getter)
     {
       Int64 value = default;
       getter(ref value);
       c[(int)cursor.Position] = value;
     }
 
-    static void Int64Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Int64> getter, Func<long, int> positionToIndex)
+    private static void Int64Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Int64> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -499,14 +499,14 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void Int32Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Int32> getter)
+    private static void Int32Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Int32> getter)
     {
       Int32 value = default;
       getter(ref value);
       c[(int)cursor.Position] = value;
     }
 
-    static void Int32Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Int32> getter, Func<long, int> positionToIndex)
+    private static void Int32Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Int32> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -517,14 +517,14 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void Int16Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Int16> getter)
+    private static void Int16Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Int16> getter)
     {
       Int16 value = default;
       getter(ref value);
       c[(int)cursor.Position] = value;
     }
 
-    static void Int16Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Int16> getter, Func<long, int> positionToIndex)
+    private static void Int16Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Int16> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -535,14 +535,14 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void SByteGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<SByte> getter)
+    private static void SByteGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<SByte> getter)
     {
       SByte value = default;
       getter(ref value);
       c[(int)cursor.Position] = value;
     }
 
-    static void SByteGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<SByte> getter, Func<long, int> positionToIndex)
+    private static void SByteGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<SByte> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -553,14 +553,14 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void UInt64Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt64> getter)
+    private static void UInt64Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt64> getter)
     {
       UInt64 value = default;
       getter(ref value);
       c[(int)cursor.Position] = value;
     }
 
-    static void UInt64Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt64> getter, Func<long, int> positionToIndex)
+    private static void UInt64Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt64> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -571,13 +571,14 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void UInt32Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt32> getter)
+    private static void UInt32Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt32> getter)
     {
       UInt32 value = default;
       getter(ref value);
       c[(int)cursor.Position] = value;
     }
-    static void UInt32Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt32> getter, Func<long, int> positionToIndex)
+
+    private static void UInt32Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt32> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -588,13 +589,14 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void UInt32Minus1Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt32> getter)
+    private static void UInt32Minus1Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt32> getter)
     {
       UInt32 value = default;
       getter(ref value);
       c[(int)cursor.Position] = value - 1.0;
     }
-    static void UInt32Minus1Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt32> getter, Func<long, int> positionToIndex)
+
+    private static void UInt32Minus1Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt32> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -605,14 +607,14 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void UInt16Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt16> getter)
+    private static void UInt16Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt16> getter)
     {
       UInt16 value = default;
       getter(ref value);
       c[(int)cursor.Position] = value;
     }
 
-    static void UInt16Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt16> getter, Func<long, int> positionToIndex)
+    private static void UInt16Getter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<UInt16> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -623,14 +625,14 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void ByteGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Byte> getter)
+    private static void ByteGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Byte> getter)
     {
       Byte value = default;
       getter(ref value);
       c[(int)cursor.Position] = value;
     }
 
-    static void ByteGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Byte> getter, Func<long, int> positionToIndex)
+    private static void ByteGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, ValueGetter<Byte> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -641,14 +643,14 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void BooleanGetter(DataViewRowCursor cursor, Altaxo.Data.BooleanColumn c, ValueGetter<bool> getter)
+    private static void BooleanGetter(DataViewRowCursor cursor, Altaxo.Data.BooleanColumn c, ValueGetter<bool> getter)
     {
       bool value = default;
       getter(ref value);
       c[(int)cursor.Position] = value;
     }
 
-    static void BooleanGetter(DataViewRowCursor cursor, Altaxo.Data.BooleanColumn c, ValueGetter<bool> getter, Func<long, int> positionToIndex)
+    private static void BooleanGetter(DataViewRowCursor cursor, Altaxo.Data.BooleanColumn c, ValueGetter<bool> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -659,14 +661,14 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void DateTimeGetter(DataViewRowCursor cursor, Altaxo.Data.DateTimeColumn c, ValueGetter<DateTime> getter)
+    private static void DateTimeGetter(DataViewRowCursor cursor, Altaxo.Data.DateTimeColumn c, ValueGetter<DateTime> getter)
     {
       DateTime value = default;
       getter(ref value);
       c[(int)cursor.Position] = value;
     }
 
-    static void DateTimeGetter(DataViewRowCursor cursor, Altaxo.Data.DateTimeColumn c, ValueGetter<DateTime> getter, Func<long, int> positionToIndex)
+    private static void DateTimeGetter(DataViewRowCursor cursor, Altaxo.Data.DateTimeColumn c, ValueGetter<DateTime> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -677,14 +679,14 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void TextGetter(DataViewRowCursor cursor, Altaxo.Data.TextColumn c, ValueGetter<ReadOnlyMemory<char>> getter)
+    private static void TextGetter(DataViewRowCursor cursor, Altaxo.Data.TextColumn c, ValueGetter<ReadOnlyMemory<char>> getter)
     {
       ReadOnlyMemory<char> value = default;
       getter(ref value);
       c[(int)cursor.Position] = value.ToString();
     }
 
-    static void TextGetter(DataViewRowCursor cursor, Altaxo.Data.TextColumn c, ValueGetter<ReadOnlyMemory<char>> getter, Func<long, int> positionToIndex)
+    private static void TextGetter(DataViewRowCursor cursor, Altaxo.Data.TextColumn c, ValueGetter<ReadOnlyMemory<char>> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -695,7 +697,7 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void Vector1DSingleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn[] c, ValueGetter<VBuffer<float>> getter)
+    private static void Vector1DSingleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn[] c, ValueGetter<VBuffer<float>> getter)
     {
       VBuffer<float> value = default;
       getter(ref value);
@@ -708,7 +710,7 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void Vector1DSingleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn[] c, ValueGetter<VBuffer<float>> getter, Func<long, int> positionToIndex)
+    private static void Vector1DSingleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn[] c, ValueGetter<VBuffer<float>> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -724,7 +726,7 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void Vector1DDoubleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn[] c, ValueGetter<VBuffer<double>> getter)
+    private static void Vector1DDoubleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn[] c, ValueGetter<VBuffer<double>> getter)
     {
       VBuffer<double> value = default;
       getter(ref value);
@@ -736,7 +738,8 @@ namespace Altaxo.MachineLearning.ML_Net
         ++i;
       }
     }
-    static void Vector1DDoubleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn[] c, ValueGetter<VBuffer<double>> getter, Func<long, int> positionToIndex)
+
+    private static void Vector1DDoubleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn[] c, ValueGetter<VBuffer<double>> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)
@@ -752,14 +755,14 @@ namespace Altaxo.MachineLearning.ML_Net
       }
     }
 
-    static void KeySingleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, float[] keys, ValueGetter<UInt32> getter)
+    private static void KeySingleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, float[] keys, ValueGetter<UInt32> getter)
     {
       UInt32 value = default;
       getter(ref value);
       c[(int)cursor.Position] = keys[value - 1];
     }
 
-    static void KeySingleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, float[] keys, ValueGetter<UInt32> getter, Func<long, int> positionToIndex)
+    private static void KeySingleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn c, float[] keys, ValueGetter<UInt32> getter, Func<long, int> positionToIndex)
     {
       var idx = positionToIndex(cursor.Position);
       if (idx >= 0)

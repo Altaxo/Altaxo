@@ -256,12 +256,12 @@ namespace Altaxo.Gui.Workbench
     [MemberNotNull(nameof(_mainWindow), nameof(_mainWindowTitle), nameof(_mainWindowIconResource), nameof(_mainMenuItemsSource),
       nameof(_toolBarTrayItemsSource), nameof(_documentContextMenuItemsSource))]
     public void Initialize(object mainWindow)
-    {/*
+    {
       if (mainWindow is null)
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.
-      */
+
 
       var startupSettings = Current.GetRequiredService<StartupSettings>();
       string appNamePrefix = "/" + startupSettings.ApplicationName;
@@ -624,8 +624,8 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 
     public void StoreWorkbenchStateInPropertyService()
     {
-      if(WorkbenchState is not null)
-      Current.PropertyService.SetValue(PropertyKeyWorkbenchState, WorkbenchState);
+      if (WorkbenchState is not null)
+        Current.PropertyService.SetValue(PropertyKeyWorkbenchState, WorkbenchState);
     }
 
     public void RestoreWorkbenchStateFromPropertyService()
@@ -982,7 +982,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       if (content.PadContent is null)
         content.CreatePad();
 
-      if(content.PadContent is { } padContent)
+      if (content.PadContent is { } padContent)
         padContent.IsVisible = true;
     }
 

@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Pads.Output
 
     private string _initialText;
 
-    public event Action<InfoWarningErrorTextMessageItem> MessageAdded;
+    public event Action<InfoWarningErrorTextMessageItem> MessageAdded { add { } remove { } }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TextOutputWindowController"/> class.

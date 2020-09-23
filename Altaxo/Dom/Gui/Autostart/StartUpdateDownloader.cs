@@ -33,7 +33,7 @@ namespace Altaxo.Gui.Autostart
 {
   public class StartUpdateDownloader : ICommand
   {
-    public event EventHandler CanExecuteChanged;
+    public event EventHandler CanExecuteChanged { add { } remove { } }
 
     public bool CanExecute(object parameter)
     {

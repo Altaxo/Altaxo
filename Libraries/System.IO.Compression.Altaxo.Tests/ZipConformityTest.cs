@@ -63,7 +63,7 @@ namespace System.IO.Compression
       {
         File.Delete(_zipFile1Name);
       }
-      catch (Exception e)
+      catch (Exception)
       {
 
       }
@@ -72,7 +72,7 @@ namespace System.IO.Compression
       {
         File.Delete(_zipFile2Name);
       }
-      catch (Exception e)
+      catch (Exception)
       {
 
       }

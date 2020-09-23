@@ -270,7 +270,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
         if (ActiveGrip is not null)
         {
           bool bRefresh = _wereObjectsMoved; // repaint the graph when objects were really moved
-          bool bRepaint = false;
+          
           _wereObjectsMoved = false;
           _grac.Doc.Resume(ref _graphDocumentChangedSuppressor);
 
@@ -280,7 +280,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
           if (chooseNextLevel && SingleSelectedHitTestObject is not null)
           {
             DisplayedGripLevel = SingleSelectedHitTestObject.GetNextGripLevel(DisplayedGripLevel);
-            bRepaint = true;
+            
           }
 
           _grac?.View?.RenderOverlay();

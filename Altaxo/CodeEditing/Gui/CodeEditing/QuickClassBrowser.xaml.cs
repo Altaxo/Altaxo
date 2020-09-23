@@ -125,7 +125,6 @@ namespace Altaxo.Gui.CodeEditing
       public SyntaxItem(SyntaxNode syntax)
       {
         SyntaxNode = syntax;
-        var glyph = Glyph.FieldPublic;
 
         int modifierIndex = 0;
 

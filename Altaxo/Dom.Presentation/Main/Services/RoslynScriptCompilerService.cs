@@ -53,7 +53,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
       }
     }
 
-    public IScriptCompilerSuccessfulResult GetCompilerResult(Assembly ass)
+    public IScriptCompilerSuccessfulResult? GetCompilerResult(Assembly ass)
     {
       if (_compilerResults.TryGetValue(ass, out var result))
         return result;
