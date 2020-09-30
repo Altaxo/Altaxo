@@ -12,8 +12,8 @@
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.ML" Version="1.5.1" />
-    <PackageReference Include="Microsoft.ML.TimeSeries" Version="1.5.1" />
+    <PackageReference Include="Microsoft.ML" Version="1.5.2" />
+    <PackageReference Include="Microsoft.ML.TimeSeries" Version="1.5.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Altaxo\Base\AltaxoBase.csproj" />
