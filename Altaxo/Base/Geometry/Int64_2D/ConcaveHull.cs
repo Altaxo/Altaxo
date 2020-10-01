@@ -175,7 +175,7 @@ namespace Altaxo.Geometry.Int64_2D
           {
             var angle1 = Int64LineSegment.GetAngle(selected_edge.P0, selected_edge.P1, np.point);
             var angle2 = Int64LineSegment.GetAngle(selected_edge.P1, np.point, selected_edge.P0);
-            var maxAngle = Math.Max(angle1, angle2);
+            var maxAngle = Math.Max(Math.Abs(angle1), Math.Abs(angle2));
             if (maxAngle >= 0 && maxAngle < bestAngle)
             {
               bestAngle = maxAngle;

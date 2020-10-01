@@ -419,6 +419,11 @@ namespace ClipperLib
       return base.GetHashCode();
     }
 
+    public override string ToString()
+    {
+      return $"X={X}, Y={Y}";
+    }
+
   }// end struct IntPoint
 
   public struct IntRect
