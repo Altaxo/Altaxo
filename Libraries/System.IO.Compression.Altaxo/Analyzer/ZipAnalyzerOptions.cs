@@ -31,28 +31,33 @@ using System.Threading.Tasks;
 
 namespace System.IO.Compression
 {
+  /// <summary>
+  /// Designates options the Zip analyzer should check.
+  /// </summary>
+  [Flags]
+  public enum ZipAnalyzerOptions
+  {
     /// <summary>
-    /// Designates options the Zip analyzer should check.
+    /// Tests, whether or not the central directory contains records with the same file name.
     /// </summary>
-    [Flags]
-    public enum ZipAnalyzerOptions
-    {
-        /// <summary>
-        /// Tests, whether or not the central directory contains records with the same file name.
-        /// </summary>
-        TestCentralDirectoryForNameDublettes = 0x01,
+    TestCentralDirectoryForNameDublettes = 0x01,
 
-        /// <summary>
-        /// Tests if the local file headers starts at position 0, ends at the position where the central directory starts,
-        /// and are exactly in the same order as the central directory entries. Furthermore, no extra space between local file headers is allowed.
-        /// </summary>
-        TestStrictOrderOfLocalFileHeaders = 0x02,
+    /// <summary>
+    /// Tests if the local file headers starts at position 0, ends at the position where the central directory starts,
+    /// and are exactly in the same order as the central directory entries. Furthermore, no extra space between local file headers is allowed.
+    /// </summary>
+    TestStrictOrderOfLocalFileHeaders = 0x02,
 
-        /// <summary>
-        /// Tests the existence of the local file headers. For each record in the central directory it is checked, if the corresponding local
-        /// file header exists, and if it has the same data as the central directory record. Note: in order to save time, the equality of the file
-        /// names is not checked.
-        /// </summary>
-        TestExistenceOfTheLocalFileHeaders = 0x04,
-    }
+    /// <summary>
+    /// Tests the existence of the local file headers. For each record in the central directory it is checked, if the corresponding local
+    /// file header exists, and if it has the same data as the central directory record. Note: in order to save time, the equality of the file
+    /// names is not checked.
+    /// </summary>
+    TestExistenceOfTheLocalFileHeaders = 0x04,
+
+    /// <summary>
+    /// Checks the CRC checksum of all items
+    /// </summary>
+    CheckCrcOfItems = 0x08,
+  }
 }

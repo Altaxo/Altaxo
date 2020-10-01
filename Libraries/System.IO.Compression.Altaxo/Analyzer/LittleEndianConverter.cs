@@ -20,7 +20,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#endregion Copyright
+#endregion Copyright 
 
 #nullable enable
 using System;
@@ -31,63 +31,63 @@ using System.Threading.Tasks;
 
 namespace System.IO.Compression
 {
-    class LittleEndianConverter
+  internal class LittleEndianConverter
+  {
+    /// <summary>
+    /// Converts a <see cref="UInt16"/> value and stores its byte representation in a buffer.
+    /// </summary>
+    /// <param name="value">The value to convert.</param>
+    /// <param name="buffer">The buffer.</param>
+    /// <param name="offset">The storage position in the buffer .</param>
+    public static void ToBuffer(Int16 value, byte[] buffer, int offset)
     {
-        /// <summary>
-        /// Converts a <see cref="UInt16"/> value and stores its byte representation in a buffer.
-        /// </summary>
-        /// <param name="value">The value to convert.</param>
-        /// <param name="buffer">The buffer.</param>
-        /// <param name="offset">The storage position in the buffer .</param>
-        public static void ToBuffer(Int16 value, byte[] buffer, int offset)
-        {
-            buffer[offset + 0] = (byte)((value) & 0xFF);
-            buffer[offset + 1] = (byte)((value >> 8) & 0xFF);
-        }
-
-        /// <summary>
-        /// Converts a <see cref="UInt16"/> value and stores its byte representation in a buffer.
-        /// </summary>
-        /// <param name="value">The value to convert.</param>
-        /// <param name="buffer">The buffer.</param>
-        /// <param name="offset">The storage position in the buffer .</param>
-        public static void ToBuffer(UInt16 value, byte[] buffer, int offset)
-        {
-            buffer[offset + 0] = (byte)((value) & 0xFF); 
-            buffer[offset + 1] = (byte)((value >> 8) & 0xFF);
-        }
-
-        /// <summary>
-        /// Converts a <see cref="UInt32"/> value and stores its byte representation in a buffer.
-        /// </summary>
-        /// <param name="value">The value to convert.</param>
-        /// <param name="buffer">The buffer.</param>
-        /// <param name="offset">The storage position in the buffer .</param>
-        public static void ToBuffer(UInt32 value, byte[] buffer, int offset)
-        {
-            buffer[offset + 0] = (byte)((value) & 0xFF);
-            buffer[offset + 1] = (byte)((value >> 8) & 0xFF);
-            buffer[offset + 2] = (byte)((value >> 16) & 0xFF);
-            buffer[offset + 3] = (byte)((value >> 24) & 0xFF);
-        }
-
-        /// <summary>
-        /// Converts a <see cref="UInt64"/> value and stores its byte representation in a buffer.
-        /// </summary>
-        /// <param name="value">The value to convert.</param>
-        /// <param name="buffer">The buffer.</param>
-        /// <param name="offset">The storage position in the buffer .</param>
-        public static void ToBuffer(UInt64 value, byte[] buffer, int offset)
-        {
-            buffer[offset + 0] = (byte)((value) & 0xFF);
-            buffer[offset + 1] = (byte)((value >> 8) & 0xFF);
-            buffer[offset + 2] = (byte)((value >> 16) & 0xFF);
-            buffer[offset + 3] = (byte)((value >> 24) & 0xFF);
-            buffer[offset + 4] = (byte)((value >> 32) & 0xFF);
-            buffer[offset + 5] = (byte)((value >> 40) & 0xFF);
-            buffer[offset + 6] = (byte)((value >> 48) & 0xFF);
-            buffer[offset + 7] = (byte)((value >> 56) & 0xFF);
-        }
-
+      buffer[offset + 0] = (byte)((value) & 0xFF);
+      buffer[offset + 1] = (byte)((value >> 8) & 0xFF);
     }
+
+    /// <summary>
+    /// Converts a <see cref="UInt16"/> value and stores its byte representation in a buffer.
+    /// </summary>
+    /// <param name="value">The value to convert.</param>
+    /// <param name="buffer">The buffer.</param>
+    /// <param name="offset">The storage position in the buffer .</param>
+    public static void ToBuffer(UInt16 value, byte[] buffer, int offset)
+    {
+      buffer[offset + 0] = (byte)((value) & 0xFF);
+      buffer[offset + 1] = (byte)((value >> 8) & 0xFF);
+    }
+
+    /// <summary>
+    /// Converts a <see cref="UInt32"/> value and stores its byte representation in a buffer.
+    /// </summary>
+    /// <param name="value">The value to convert.</param>
+    /// <param name="buffer">The buffer.</param>
+    /// <param name="offset">The storage position in the buffer .</param>
+    public static void ToBuffer(UInt32 value, byte[] buffer, int offset)
+    {
+      buffer[offset + 0] = (byte)((value) & 0xFF);
+      buffer[offset + 1] = (byte)((value >> 8) & 0xFF);
+      buffer[offset + 2] = (byte)((value >> 16) & 0xFF);
+      buffer[offset + 3] = (byte)((value >> 24) & 0xFF);
+    }
+
+    /// <summary>
+    /// Converts a <see cref="UInt64"/> value and stores its byte representation in a buffer.
+    /// </summary>
+    /// <param name="value">The value to convert.</param>
+    /// <param name="buffer">The buffer.</param>
+    /// <param name="offset">The storage position in the buffer .</param>
+    public static void ToBuffer(UInt64 value, byte[] buffer, int offset)
+    {
+      buffer[offset + 0] = (byte)((value) & 0xFF);
+      buffer[offset + 1] = (byte)((value >> 8) & 0xFF);
+      buffer[offset + 2] = (byte)((value >> 16) & 0xFF);
+      buffer[offset + 3] = (byte)((value >> 24) & 0xFF);
+      buffer[offset + 4] = (byte)((value >> 32) & 0xFF);
+      buffer[offset + 5] = (byte)((value >> 40) & 0xFF);
+      buffer[offset + 6] = (byte)((value >> 48) & 0xFF);
+      buffer[offset + 7] = (byte)((value >> 56) & 0xFF);
+    }
+
+  }
 }

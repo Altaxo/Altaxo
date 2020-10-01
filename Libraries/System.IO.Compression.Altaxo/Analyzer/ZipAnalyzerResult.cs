@@ -31,22 +31,22 @@ using System.Threading.Tasks;
 
 namespace System.IO.Compression
 {
-    public class ZipAnalyzerResult
-    {
-        public bool EndOfCentralDirectoryNotFound { get; set; }
-        public bool CentralDirectoryCorrupt { get; set; }
+  public class ZipAnalyzerResult
+  {
+    public bool EndOfCentralDirectoryNotFound { get; set; }
+    public bool CentralDirectoryCorrupt { get; set; }
 
-        public bool CentralDirectoryContainsDublettes { get; set; }
+    public bool CentralDirectoryContainsDublettes { get; set; }
 
-        public bool AreLocalFileHeadersMissing { get; set; }
+    public bool AreLocalFileHeadersMissing { get; set; }
 
-        public List<CentralDirectoryRecord> MissingLocalFileHeaders { get; } = new List<CentralDirectoryRecord>();
+    public List<CentralDirectoryRecord> MissingLocalFileHeaders { get; } = new List<CentralDirectoryRecord>();
 
-        public bool AreLocalFileHeadersCorrupt => CorruptLocalFileHeaders.Count > 0;
+    public bool AreLocalFileHeadersCorrupt => CorruptLocalFileHeaders.Count > 0;
 
-        public List<(CentralDirectoryRecord CDE, LocalFileHeader LFH)> CorruptLocalFileHeaders { get; } = new List<(CentralDirectoryRecord CDE, LocalFileHeader LFH)>();
+    public List<(CentralDirectoryRecord CDE, LocalFileHeader LFH)> CorruptLocalFileHeaders { get; } = new List<(CentralDirectoryRecord CDE, LocalFileHeader LFH)>();
 
-        public string ErrorMessage { get; set; } = string.Empty;
+    public string ErrorMessage { get; set; } = string.Empty;
 
-    }
+  }
 }

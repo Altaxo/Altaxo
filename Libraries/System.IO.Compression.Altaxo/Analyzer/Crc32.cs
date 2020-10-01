@@ -20,31 +20,31 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#endregion Copyright
+#endregion Copyright 
 
 #nullable enable
 using System;
 namespace System.IO.Compression
 {
 
-    /// <summary>
-    /// Calculates the CRC32 checksum of data.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// The functions <see cref="UpdateChecksum(uint, byte)"/> and <see cref="UpdateChecksum(uint, byte[], int, int)"/> work
-    /// directly on the checksum value, which must be initialized with 0 (zero).
-    /// </para>
-    /// <para>
-    /// In contrast, the <see cref="UpdateInverseChecksum(uint, byte)"/> function works on the inverse checksum. For this function,
-    /// the checksum value must be initialized with 0xFFFFFFFF, and at the end of calculation,
-    /// the real checksum value must be calculated by checksum = inversechecksum ^ 0xFFFFFFFF.
-    /// </para>
-    /// </remarks>
-    public sealed class Crc32
-    {
+  /// <summary>
+  /// Calculates the CRC32 checksum of data.
+  /// </summary>
+  /// <remarks>
+  /// <para>
+  /// The functions <see cref="UpdateChecksum(uint, byte)"/> and <see cref="UpdateChecksum(uint, byte[], int, int)"/> work
+  /// directly on the checksum value, which must be initialized with 0 (zero).
+  /// </para>
+  /// <para>
+  /// In contrast, the <see cref="UpdateInverseChecksum(uint, byte)"/> function works on the inverse checksum. For this function,
+  /// the checksum value must be initialized with 0xFFFFFFFF, and at the end of calculation,
+  /// the real checksum value must be calculated by checksum = inversechecksum ^ 0xFFFFFFFF.
+  /// </para>
+  /// </remarks>
+  public sealed class Crc32
+  {
 
-        private static readonly uint[] crcTable = {
+    private static readonly uint[] crcTable = {
             0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419,
             0x706AF48F, 0xE963A535, 0x9E6495A3, 0x0EDB8832, 0x79DCB8A4,
             0xE0D5E91E, 0x97D2D988, 0x09B64C2B, 0x7EB17CBD, 0xE7B82D07,
@@ -99,27 +99,27 @@ namespace System.IO.Compression
             0x2D02EF8D
         };
 
-        public static UInt32 UpdateChecksum(UInt32 checksum, byte[] buffer, int offset, int count)
-        {
-            checksum ^= 0xFFFFFFFF;
-            var last = offset + count;
-            for (int i = offset; i < last; ++i)
-            {
-                checksum = (crcTable[(checksum ^ buffer[i]) & 0xFF] ^ (checksum >> 8));
-            }
-            return checksum ^ 0xFFFFFFFF;
-        }
-
-        public static UInt32 UpdateChecksum(UInt32 checksum, byte item)
-        {
-            checksum ^= 0xFFFFFFFF;
-            checksum = (crcTable[(checksum ^ item) & 0xFF] ^ (checksum >> 8));
-            return checksum ^ 0xFFFFFFFF;
-        }
-
-        public static UInt32 UpdateInverseChecksum(UInt32 inverseChecksum, byte item)
-        {
-            return (crcTable[(inverseChecksum ^ item) & 0xFF] ^ (inverseChecksum >> 8));
-        }
+    public static UInt32 UpdateChecksum(UInt32 checksum, byte[] buffer, int offset, int count)
+    {
+      checksum ^= 0xFFFFFFFF;
+      var last = offset + count;
+      for (int i = offset; i < last; ++i)
+      {
+        checksum = (crcTable[(checksum ^ buffer[i]) & 0xFF] ^ (checksum >> 8));
+      }
+      return checksum ^ 0xFFFFFFFF;
     }
+
+    public static UInt32 UpdateChecksum(UInt32 checksum, byte item)
+    {
+      checksum ^= 0xFFFFFFFF;
+      checksum = (crcTable[(checksum ^ item) & 0xFF] ^ (checksum >> 8));
+      return checksum ^ 0xFFFFFFFF;
+    }
+
+    public static UInt32 UpdateInverseChecksum(UInt32 inverseChecksum, byte item)
+    {
+      return (crcTable[(inverseChecksum ^ item) & 0xFF] ^ (inverseChecksum >> 8));
+    }
+  }
 }

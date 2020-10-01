@@ -32,112 +32,112 @@ using System.Threading.Tasks;
 
 namespace System.IO.Compression
 {
-    public class ReadOnlyPartialStreamView : System.IO.Stream
+  public class ReadOnlyPartialStreamView : System.IO.Stream
+  {
+    private Stream _stream;
+    private long _offset;
+    private long _streamLength;
+    private long _myPosition;
+    public bool IsStreamOwner { get; set; }
+    public bool IsClosedDisposed { get; private set; }
+
+
+    public ReadOnlyPartialStreamView(Stream stream, long offset, long count)
     {
-        private Stream _stream;
-        private long _offset;
-        private long _streamLength;
-        private long _myPosition;
-        public bool IsStreamOwner { get; set; }
-        public bool IsClosedDisposed { get; private set; }
-
-
-        public ReadOnlyPartialStreamView(Stream stream, long offset, long count)
-        {
-            _stream = stream;
-            _offset = offset;
-            _streamLength = count;
-            _myPosition = 0;
-            _stream.Seek(_offset, SeekOrigin.Begin);
-        }
-
-        public override bool CanRead => _stream.CanRead;
-
-        public override bool CanSeek => _stream.CanSeek;
-
-        public override bool CanWrite => false;
-
-        public override long Length => _stream.Length;
-
-        public override long Position
-        {
-            get => _stream.Position - _offset;
-            set
-            {
-                if (value < 0 || value > _streamLength)
-                    throw new InvalidOperationException();
-                _myPosition = value;
-                _stream.Position = value + _offset;
-            }
-        }
-
-
-        public override void Flush()
-        {
-            _stream.Flush();
-        }
-
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            if (IsClosedDisposed)
-                throw new ObjectDisposedException(nameof(ReadOnlyPartialStreamView));
-
-            if (_stream.Position != _myPosition + _offset)
-                throw new InvalidOperationException("Underlying stream was manipulated");
-
-            var maxRead = (int)Math.Min(count, _streamLength - _myPosition);
-            var result = _stream.Read(buffer, offset, maxRead);
-            _myPosition += result;
-            return result;
-        }
-
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            switch (origin)
-            {
-                case SeekOrigin.Begin:
-                    if (offset < 0 || offset > _streamLength)
-                        throw new InvalidOperationException();
-                    _myPosition = offset;
-                    return _stream.Seek(offset, origin) - _offset;
-
-                case SeekOrigin.Current:
-                    throw new NotImplementedException();
-                case SeekOrigin.End:
-                    throw new NotImplementedException();
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
-        public override void SetLength(long value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Close()
-        {
-            if (IsClosedDisposed)
-                return;
-            IsClosedDisposed = true;
-
-            base.Close();
-            if (IsStreamOwner)
-            {
-                _stream.Close();
-                _stream.Dispose();
-                _stream = Stream.Null;
-            }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            Close();
-        }
+      _stream = stream;
+      _offset = offset;
+      _streamLength = count;
+      _myPosition = 0;
+      _stream.Seek(_offset, SeekOrigin.Begin);
     }
+
+    public override bool CanRead => _stream.CanRead;
+
+    public override bool CanSeek => _stream.CanSeek;
+
+    public override bool CanWrite => false;
+
+    public override long Length => _stream.Length;
+
+    public override long Position
+    {
+      get => _stream.Position - _offset;
+      set
+      {
+        if (value < 0 || value > _streamLength)
+          throw new InvalidOperationException();
+        _myPosition = value;
+        _stream.Position = value + _offset;
+      }
+    }
+
+
+    public override void Flush()
+    {
+      _stream.Flush();
+    }
+
+    public override int Read(byte[] buffer, int offset, int count)
+    {
+      if (IsClosedDisposed)
+        throw new ObjectDisposedException(nameof(ReadOnlyPartialStreamView));
+
+      if (_stream.Position != _myPosition + _offset)
+        throw new InvalidOperationException("Underlying stream was manipulated");
+
+      var maxRead = (int)Math.Min(count, _streamLength - _myPosition);
+      var result = _stream.Read(buffer, offset, maxRead);
+      _myPosition += result;
+      return result;
+    }
+
+    public override long Seek(long offset, SeekOrigin origin)
+    {
+      switch (origin)
+      {
+        case SeekOrigin.Begin:
+          if (offset < 0 || offset > _streamLength)
+            throw new InvalidOperationException();
+          _myPosition = offset;
+          return _stream.Seek(offset, origin) - _offset;
+
+        case SeekOrigin.Current:
+          throw new NotImplementedException();
+        case SeekOrigin.End:
+          throw new NotImplementedException();
+        default:
+          throw new NotImplementedException();
+      }
+    }
+
+    public override void SetLength(long value)
+    {
+      throw new NotImplementedException();
+    }
+
+    public override void Write(byte[] buffer, int offset, int count)
+    {
+      throw new NotImplementedException();
+    }
+
+    public override void Close()
+    {
+      if (IsClosedDisposed)
+        return;
+      IsClosedDisposed = true;
+
+      base.Close();
+      if (IsStreamOwner)
+      {
+        _stream.Close();
+        _stream.Dispose();
+        _stream = Stream.Null;
+      }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+      Close();
+    }
+  }
 }
