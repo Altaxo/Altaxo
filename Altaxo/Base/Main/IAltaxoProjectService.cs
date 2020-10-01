@@ -35,6 +35,9 @@ namespace Altaxo.Main
   {
     AltaxoDocument CurrentOpenProject { get; }
 
+    AltaxoDocument? CurrentOpenProjectOrNull { get; }
+
+
     /// <summary>
     /// This function will delete a data table and close the corresponding views.
     /// </summary>

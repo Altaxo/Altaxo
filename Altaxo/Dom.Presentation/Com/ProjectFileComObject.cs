@@ -95,7 +95,7 @@ namespace Altaxo.Com
       if (e?.ProjectEventKind == Main.ProjectEventKind.ProjectRenamed)
         EhCurrentProjectFileNameChanged(e.NewName);
 
-      if (object.ReferenceEquals(Current.Project, _currentProject))
+      if (object.ReferenceEquals(Current.ProjectOrNull, _currentProject))
         return;
 
       ComDebug.ReportInfo("{0}.EhCurrentProjectInstanceChanged", GetType().Name);
@@ -105,7 +105,7 @@ namespace Altaxo.Com
         _currentProject.GraphDocumentCollection.CollectionChanged -= EhGraphDocumentRenamed;
       }
 
-      _currentProject = Current.Project;
+      _currentProject = Current.ProjectOrNull;
 
       if (_currentProject is not null)
       {

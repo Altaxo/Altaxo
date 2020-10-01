@@ -41,11 +41,32 @@ namespace Altaxo
       }
     }
 
+    /// <summary>
+    /// Gets the current open project. If the application is in a transition state between two projects, a <see cref="InvalidOperationException"/> is thrown.
+    /// </summary>
+    /// <value>
+    /// The project.
+    /// </value>
     public static Altaxo.AltaxoDocument Project
     {
       get
       {
         return ProjectService.CurrentOpenProject;
+      }
+    }
+
+    /// <summary>
+    /// Gets the current open project. If the application is in a transition state between two projects,
+    /// null is returned.
+    /// </summary>
+    /// <value>
+    /// The project or null.
+    /// </value>
+    public static Altaxo.AltaxoDocument? ProjectOrNull
+    {
+      get
+      {
+        return ProjectService.CurrentOpenProjectOrNull;
       }
     }
 

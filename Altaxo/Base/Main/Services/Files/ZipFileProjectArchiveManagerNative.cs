@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -46,7 +47,7 @@ namespace Altaxo.Main.Services
     private const string ClonedProjectFileName = "CurrProj";
     private bool _isDisposed;
 
-    public event EventHandler<NameChangedEventArgs> FileOrFolderNameChanged;
+    public event EventHandler<NameChangedEventArgs>? FileOrFolderNameChanged;
 
     /// <summary>
     /// The stream of the original project file that is kept open in order to prevent modifications.

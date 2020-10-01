@@ -409,7 +409,7 @@ namespace Altaxo.Worksheet
     {
       if (e is DisposeEventArgs && object.ReferenceEquals(originalSource, _dataTable))
       {
-        if (!Current.Project?.TableLayouts?.Remove(this) ?? true)
+        if (!Current.ProjectOrNull?.TableLayouts?.Remove(this) ?? true)
           Dispose();
       }
     }

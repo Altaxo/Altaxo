@@ -47,13 +47,24 @@ namespace Altaxo.Main
   public class ProjectService : Altaxo.Dom.ProjectServiceBase, IAltaxoProjectService
   {
     /// <summary>
-    /// The currently open Altaxo project.
+    /// The currently open Altaxo project. If the application is in a transition state between two projects, an <see cref="InvalidOperationException"/> is thrown.
     /// </summary>
     public Altaxo.AltaxoDocument CurrentOpenProject
     {
       get
       {
         return (Altaxo.AltaxoDocument)(_currentProject ?? throw new InvalidOperationException("No project currently available (can happen during transitions from one to another project)."));
+      }
+    }
+
+    /// <summary>
+    /// The currently open Altaxo project. If the application is in a transition state between two projects, null is returned.
+    /// </summary>
+    public Altaxo.AltaxoDocument? CurrentOpenProjectOrNull
+    {
+      get
+      {
+        return (Altaxo.AltaxoDocument?)_currentProject;
       }
     }
 
@@ -178,10 +189,21 @@ namespace Altaxo.Main
 
     protected override IFileBasedProjectArchiveManager InternalCreateProjectArchiveManagerFromFileOrFolderLocation(PathName fileOrFolderName)
     {
+      var context = Current.Project.GetPropertyContext();
+
+      var storageSettings = context.GetValue(Altaxo.Serialization.StorageSettings.PropertyKeyStorageSettings);
+
       if (fileOrFolderName is FileName)
-        return new ZipFileProjectArchiveManager();
+      {
+        if (storageSettings.AllowProgressiveStorage)
+          return new ZipFileProjectArchiveManager();
+        else
+          return new ZipFileProjectArchiveManagerNative();
+      }
       else
+      {
         throw new NotImplementedException();
+      }
     }
 
     protected override void InternalLoadProjectAndWindowsStateFromArchive(IProjectArchive projectArchive)

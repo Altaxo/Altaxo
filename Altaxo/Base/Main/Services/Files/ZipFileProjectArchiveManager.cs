@@ -247,6 +247,10 @@ namespace Altaxo.Main.Services
           {
             dictionaryResult = saveProjectAndWindowsState(newProjectArchive, oldProjectArchive);
           }
+          if (!ZipAnalyzerAxo.IsZipFileOkay(newProjectArchiveFileStream ?? _originalFileStream, ZipAnalyzerOptions.TestCentralDirectoryForNameDublettes | ZipAnalyzerOptions.TestStrictOrderOfLocalFileHeaders | ZipAnalyzerOptions.TestExistenceOfTheLocalFileHeaders, out string errorMessage))
+          {
+            savingException = new InvalidDataException($"Project file that was just saved is corrupt! Details: {errorMessage}. Switching off progressive saving might help.");
+          }
         }
         catch (Exception ex)
         {
@@ -286,7 +290,7 @@ namespace Altaxo.Main.Services
           _originalFileStream = orgFileStream;
         }
       }
-      else // exceptions suring saving have occured !!!
+      else // exceptions during saving have occured !!!
       {
         // if saving has failed, we have to restore the old state
         if (isNewDestinationFileName)
@@ -347,20 +351,38 @@ namespace Altaxo.Main.Services
         var cancellationToken = _cloneTaskCancel.Token;
         var clonedFileStream = new FileStream(clonedFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
         var orgStream = new FileStream(_originalFileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-        _cloneTask = orgStream.CopyToAsync(clonedFileStream, 81920, cancellationToken)
-          .ContinueWith(async (task1) =>
+
+        _cloneTask = Task.Run(async () =>
+        {
+          try
           {
+            await orgStream.CopyToAsync(clonedFileStream, 81920, cancellationToken);
             await clonedFileStream.FlushAsync(cancellationToken);
-          }, cancellationToken, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default)
-          .ContinueWith((task2) =>
-          {
-            orgStream.Close();
+            if (!ZipAnalyzerAxo.IsZipFileOkay(clonedFileStream, ZipAnalyzerOptions.TestCentralDirectoryForNameDublettes | ZipAnalyzerOptions.TestStrictOrderOfLocalFileHeaders | ZipAnalyzerOptions.TestExistenceOfTheLocalFileHeaders, out string errorMessage))
+            {
+              Current.Console.WriteLine($"Error: Clone of original project file {orgStream.Name} not used because it is corrupt.");
+              Current.Console.WriteLine($"Details: {errorMessage}");
+              throw new InvalidDataException("Cloned project file is corrupt");
+            }
             orgStream.Dispose();
-            if (task2.Status == TaskStatus.RanToCompletion)
-              _clonedFileStream = clonedFileStream;
-            else
+            _clonedFileStream = clonedFileStream;
+          }
+          catch (Exception) // catches all exception inclusive the TaskCancelledException
+          {
+            try
+            {
+              var fn = clonedFileStream?.Name;
               clonedFileStream?.Dispose();
-          });
+              if (!string.IsNullOrEmpty(fn))
+                File.Delete(fn);
+            }
+            catch
+            {
+
+            }
+          }
+        }, cancellationToken
+        );
       }
     }
 
@@ -379,13 +401,14 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// If the clone task is still active, cancels the clone task and invalidates the clone stream.
+    /// If the clone task is still active, cancels the clone task.
+    /// Invalidates the clone stream in any case.
     /// </summary>
     private void CloneTask_CancelAndClearAll()
     {
       try
       {
-        if (!(_cloneTask is null))
+        if (_cloneTask is not null)
         {
           _cloneTaskCancel?.Cancel();
           if (_cloneTask?.Status == TaskStatus.Running)
@@ -411,18 +434,20 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// Tests the state of the clone task. If it is finished, the call returns. If it is yet not finished, the task is cancelled, and the cloned stream is disposed.
+    /// Tests the state of the clone task.
+    /// If it is finished, the call returns.
+    /// If it is yet not finished, the task is cancelled, and the cloned stream is disposed.
     /// </summary>
     private void TryFinishCloneTask()
     {
-      if (!(_cloneTask is null))
+      if (_cloneTask is not null)
       {
         if (!_cloneTask.IsCompleted)
         {
           _cloneTaskCancel?.Cancel();
           if (_cloneTask?.Status == TaskStatus.Running)
           {
-            _cloneTask.Wait();
+            _cloneTask?.Wait();
           }
 
           // System.Diagnostics.Debug.WriteLine($"Status of clone task is {_cloneTask.Status}");
@@ -445,7 +470,7 @@ namespace Altaxo.Main.Services
         }
         else // Clone task runs to completion
         {
-          if (!(_cloneTask.Exception is null))
+          if (_cloneTask.Exception is not null) // Dispose the cloned stream if there was an exception
           {
             _cloneTask?.Dispose();
             _cloneTask = null;
