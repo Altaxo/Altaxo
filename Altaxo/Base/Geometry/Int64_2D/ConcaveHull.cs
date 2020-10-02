@@ -168,8 +168,8 @@ namespace Altaxo.Geometry.Int64_2D
         {
           if (null == boundingBox || boundingBox.Value.IsPointWithin(np.point))
           {
-            var angle1 = Int64LineSegment.GetAngle(selected_edge.P0, selected_edge.P1, np.point);
-            var angle2 = Int64LineSegment.GetAngle(selected_edge.P1, np.point, selected_edge.P0);
+            var angle1 = Int64LineSegment.GetAngle(selected_edge.P0, selected_edge.P1, np.point, returnPositiveValueIf180Degrees: true);
+            var angle2 = Int64LineSegment.GetAngle(selected_edge.P1, np.point, selected_edge.P0, returnPositiveValueIf180Degrees: true);
             var maxAngle = Math.Max(angle1, angle2);
             if (maxAngle >= 0 && maxAngle < bestAngle)
             {
