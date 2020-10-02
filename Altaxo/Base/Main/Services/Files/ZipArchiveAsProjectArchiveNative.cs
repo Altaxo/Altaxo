@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,12 +42,12 @@ namespace Altaxo.Main.Services.Files
   public class ZipArchiveAsProjectArchiveNative : IProjectArchive
   {
     private bool _isDisposed;
-    private Stream _stream;
+    private Stream? _stream;
     private ZipArchive _zipArchive;
     private bool _leaveOpen;
 
     /// <inheritdoc/>
-    public PathName FileName
+    public PathName? FileName
     {
       get
       {
@@ -61,7 +62,7 @@ namespace Altaxo.Main.Services.Files
     public bool IsDisposed => _isDisposed;
 
     /// <inheritdoc/>
-    public IProjectArchiveManager ArchiveManager { get; set; }
+    public IProjectArchiveManager? ArchiveManager { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ZipArchiveAsProjectArchive"/> class.
@@ -86,7 +87,7 @@ namespace Altaxo.Main.Services.Files
     /// <param name="leaveOpen">If true, the stream will be left open, even if this instance is disposed.</param>
     /// <param name="archiveManager">The archive manager managing this archive.</param>
     /// <exception cref="ArgumentNullException">zipArchive</exception>
-    public ZipArchiveAsProjectArchiveNative(Stream stream, ZipArchiveMode mode, bool leaveOpen, IProjectArchiveManager archiveManager)
+    public ZipArchiveAsProjectArchiveNative(Stream stream, ZipArchiveMode mode, bool leaveOpen, IProjectArchiveManager? archiveManager)
     {
       _stream = stream ?? throw new ArgumentNullException(nameof(stream));
       _zipArchive = new ZipArchive(stream, mode, leaveOpen);
@@ -115,33 +116,43 @@ namespace Altaxo.Main.Services.Files
       _zipArchive = new ZipArchive(_stream, mode, _leaveOpen);
     }
 
-    /// <summary>
-    /// Gets a value indicating whether entries in this archive can be opened simultaneously.
-    /// For this instance, the return value is always false.
-    /// </summary>
-    /// <value>
-    ///   <c>False</c> (this type of archive does not support deferred loading).</c>.
-    /// </value>
+    private void ThrowOnDisposed()
+    {
+      if (IsDisposed)
+        throw new ObjectDisposedException($"{this} already disposed");
+    }
+
+    /// <inheritdoc/>
     public bool SupportsDeferredLoading
     {
       get
       {
+        ThrowOnDisposed();
         return false;
       }
     }
 
     /// <inheritdoc/>
-    public IEnumerable<IProjectArchiveEntry> Entries => _zipArchive.Entries.Select(entry => new ZipEntryAsProjectArchiveEntryNative(entry));
+    public IEnumerable<IProjectArchiveEntry> Entries
+    {
+      get
+      {
+        ThrowOnDisposed();
+        return _zipArchive.Entries.Select(entry => new ZipEntryAsProjectArchiveEntryNative(entry));
+      }
+    }
 
     /// <inheritdoc/>
     public IProjectArchiveEntry CreateEntry(string name)
     {
+      ThrowOnDisposed();
       return new ZipEntryAsProjectArchiveEntryNative(_zipArchive.CreateEntry(name));
     }
 
     /// <inheritdoc/>
-    public IProjectArchiveEntry GetEntry(string entryName)
+    public IProjectArchiveEntry? GetEntry(string entryName)
     {
+      ThrowOnDisposed();
       var e = _zipArchive.GetEntry(entryName);
       return e is null ? null : new ZipEntryAsProjectArchiveEntryNative(e);
     }
@@ -149,6 +160,7 @@ namespace Altaxo.Main.Services.Files
     /// <inheritdoc/>
     public bool ContainsEntry(string entryName)
     {
+      ThrowOnDisposed();
       return !(_zipArchive.GetEntry(entryName) is null);
     }
 
@@ -160,7 +172,7 @@ namespace Altaxo.Main.Services.Files
       if (!_isDisposed)
       {
         _zipArchive?.Dispose(); // dispose the zip archive __before__ flushing the stream!
-        _zipArchive = null;
+
         if (!_leaveOpen)
         {
           _stream?.Close();
@@ -178,7 +190,7 @@ namespace Altaxo.Main.Services.Files
 
 
     /// <inheritdoc/>
-    public IProjectArchiveEntryMemento GetEntryMemento(string entryName)
+    public IProjectArchiveEntryMemento? GetEntryMemento(string entryName)
     {
       if (_stream is FileStream fs)
       {

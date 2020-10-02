@@ -183,7 +183,7 @@ namespace Altaxo.Gui.Drawing.D3D
       UpdatePreviewPanel();
     }
 
-    private WeakEventHandler _weakPenChangedHandler;
+    // private WeakEventHandler _weakPenChangedHandler;
 
     private void EhPenChanged(object sender, EventArgs e)
     {
@@ -1060,7 +1060,6 @@ namespace Altaxo.Gui.Drawing.D3D
     #region Preview
 
     private Image _previewPanel;
-    private GdiToWpfBitmap _previewBitmap;
 
     public Image PreviewPanel
     {

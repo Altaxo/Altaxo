@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
     /// <summary>
     /// Provides public access to the <see cref="DataTemplateSelector"/> that selected the data template for different nodes of the TreeView.
     /// </summary>
-    public DataTemplateSelector TreeViewItemTemplateSelector
+    public new DataTemplateSelector TreeViewItemTemplateSelector
     {
       get
       {

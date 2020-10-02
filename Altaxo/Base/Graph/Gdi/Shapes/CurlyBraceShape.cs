@@ -119,8 +119,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public CurlyBraceShape(CurlyBraceShape from)
       :
-      base(from) // all is done here, since CopyFrom is virtual!
+      base(from)
     {
+      // No extra members to copy here
     }
 
     public static CurlyBraceShape FromLTRB(double left, double top, double right, double bottom, Altaxo.Main.Properties.IReadOnlyPropertyBag context)

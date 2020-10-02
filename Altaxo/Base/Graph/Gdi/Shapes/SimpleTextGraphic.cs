@@ -83,7 +83,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public SimpleTextGraphic(SimpleTextGraphic from)
       :
-      base(from) // all is done here, since CopyFrom is virtual!
+      base(from)
     {
       CopyFrom(from, false);
     }

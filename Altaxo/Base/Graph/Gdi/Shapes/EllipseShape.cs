@@ -69,8 +69,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public EllipseShape(EllipseShape from)
       :
-      base(from) // all is done here, since CopyFrom is virtual!
+      base(from)
     {
+      // No extra members to copy here!
     }
 
     #endregion Constructors

@@ -27,12 +27,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Altaxo.Main.Services.Files;
-using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Main.Services
 {
@@ -52,14 +49,14 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// The stream of the original project file that is kept open in order to prevent modifications.
     /// </summary>
-    private FileStream _originalFileStream;
+    private FileStream? _originalFileStream;
 
     /// <summary>
     /// The stream of a copy of the original project file. Is also kept open to prevent modifications.
     /// </summary>
-    private FileStream _clonedFileStream;
-    private Task _cloneTask;
-    private CancellationTokenSource _cloneTaskCancel;
+    private FileStream? _clonedFileStream;
+    private Task? _cloneTask;
+    private CancellationTokenSource? _cloneTaskCancel;
 
     /// <summary>
     /// Gets the name of the file or folder. Can be null if no file or folder is set (up to now).
@@ -67,7 +64,7 @@ namespace Altaxo.Main.Services
     /// <value>
     /// The name of the file or folder, if known. Otherwise, null is returned.
     /// </value>
-    public PathName FileOrFolderName => FileName.Create(_originalFileStream?.Name);
+    public PathName? FileOrFolderName => FileName.Create(_originalFileStream?.Name);
 
     /// <inheritdoc/>
     public bool IsDisposed => _isDisposed;
@@ -197,6 +194,7 @@ namespace Altaxo.Main.Services
     /// <exception cref="ObjectDisposedException"></exception>
     public IDictionary<string, IProjectItem> SaveAs(FileName destinationFileName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState)
     {
+#nullable disable
       if (_isDisposed) throw new ObjectDisposedException(this.GetType().Name);
 
       IDictionary<string, IProjectItem> dictionaryResult = null;
@@ -249,6 +247,10 @@ namespace Altaxo.Main.Services
           using (var newProjectArchive = new Services.Files.ZipArchiveAsProjectArchiveNative(newProjectArchiveFileStream ?? _originalFileStream, ZipArchiveMode.Create, leaveOpen: true, archiveManager: this))
           {
             dictionaryResult = saveProjectAndWindowsState(newProjectArchive, oldProjectArchive);
+          }
+          if (!ZipAnalyzerAxo.IsZipFileOkay(newProjectArchiveFileStream ?? _originalFileStream, ZipAnalyzerOptions.TestCentralDirectoryForNameDublettes | ZipAnalyzerOptions.TestStrictOrderOfLocalFileHeaders | ZipAnalyzerOptions.TestExistenceOfTheLocalFileHeaders, out string errorMessage))
+          {
+            savingException = new InvalidDataException($"Project file that was just saved is corrupt! Details: {errorMessage}. Switching off progressive saving might help.");
           }
         }
         catch (Exception ex)
@@ -329,7 +331,7 @@ namespace Altaxo.Main.Services
 
       return dictionaryResult;
     }
-
+#nullable enable
     #region Clone task
 
     /// <summary>
@@ -337,6 +339,9 @@ namespace Altaxo.Main.Services
     /// </summary>
     private void StartCloneTask()
     {
+      if (_originalFileStream is null)
+        throw new InvalidProgramException();
+
       _clonedFileStream?.Dispose(); // Close/dispose old cloned stream
       _clonedFileStream = null;
 
@@ -347,48 +352,71 @@ namespace Altaxo.Main.Services
         var cancellationToken = _cloneTaskCancel.Token;
         var clonedFileStream = new FileStream(clonedFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
         var orgStream = new FileStream(_originalFileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-        _cloneTask = orgStream.CopyToAsync(clonedFileStream, 81920, cancellationToken)
-          .ContinueWith(async (task1) =>
+
+        _cloneTask = Task.Run(async () =>
+        {
+          try
           {
+            await orgStream.CopyToAsync(clonedFileStream, 81920, cancellationToken);
             await clonedFileStream.FlushAsync(cancellationToken);
-          }, cancellationToken, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default)
-          .ContinueWith((task2) =>
-          {
-            orgStream.Close();
+            if (!ZipAnalyzerAxo.IsZipFileOkay(clonedFileStream, ZipAnalyzerOptions.TestCentralDirectoryForNameDublettes | ZipAnalyzerOptions.TestStrictOrderOfLocalFileHeaders | ZipAnalyzerOptions.TestExistenceOfTheLocalFileHeaders, out string errorMessage))
+            {
+              Current.Console.WriteLine($"Error: Clone of original project file {orgStream.Name} not used because it is corrupt.");
+              Current.Console.WriteLine($"Details: {errorMessage}");
+              throw new InvalidDataException("Cloned project file is corrupt");
+            }
             orgStream.Dispose();
-            if (task2.Status == TaskStatus.RanToCompletion)
-              _clonedFileStream = clonedFileStream;
-            else
+            _clonedFileStream = clonedFileStream;
+          }
+          catch (Exception) // catches all exception inclusive the TaskCancelledException
+          {
+            try
+            {
+              var fn = clonedFileStream?.Name;
               clonedFileStream?.Dispose();
-          });
+              if (!string.IsNullOrEmpty(fn))
+                File.Delete(fn);
+            }
+            catch
+            {
+
+            }
+          }
+        }, cancellationToken
+        );
       }
     }
 
-    private string GetClonedFileName(string originalFileName = null)
+    private string GetClonedFileName(string? originalFileName = null)
     {
-      var instanceStorageService = Current.GetService<IInstanceStorageService>();
+      var effectiveOriginalFileName = originalFileName ?? _originalFileStream?.Name;
+      if (effectiveOriginalFileName is null)
+        throw new InvalidProgramException("Both the file name provided in the argument as well as the existing project file stream are null.");
+
+      var instanceStorageService = Current.GetRequiredService<IInstanceStorageService>();
       var path = instanceStorageService.InstanceStoragePath;
       var clonedFileDir = Path.Combine(path, ClonedProjectRelativePath);
       Directory.CreateDirectory(clonedFileDir);
-      var clonedFileName = Path.Combine(clonedFileDir, ClonedProjectFileName + Path.GetExtension(originalFileName ?? _originalFileStream.Name));
+      var clonedFileName = Path.Combine(clonedFileDir, ClonedProjectFileName + Path.GetExtension(effectiveOriginalFileName));
       return clonedFileName;
     }
 
     /// <summary>
-    /// If the clone task is still active, cancels the clone task and invalidates the clone stream.
+    /// If the clone task is still active, cancels the clone task.
+    /// Invalidates the clone stream in any case.
     /// </summary>
     private void CloneTask_CancelAndClearAll()
     {
       try
       {
-        if (null != _cloneTask)
+        if (_cloneTask is not null)
         {
           _cloneTaskCancel?.Cancel();
-          if (null != _cloneTask && _cloneTask.Status == TaskStatus.Running)
+          if (_cloneTask?.Status == TaskStatus.Running)
           {
             _cloneTask.Wait();
           }
-          while (!(_cloneTask.Status == TaskStatus.RanToCompletion || _cloneTask.Status == TaskStatus.Faulted || _cloneTask.Status == TaskStatus.Canceled))
+          while (_cloneTask is { } cloneTask && !(cloneTask.Status == TaskStatus.RanToCompletion || cloneTask.Status == TaskStatus.Faulted || cloneTask.Status == TaskStatus.Canceled))
           {
             System.Threading.Thread.Sleep(1);
           }
@@ -407,7 +435,9 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// Tests the state of the clone task. If it is finished, the call returns. If it is yet not finished, the task is cancelled, and the cloned stream is disposed.
+    /// Tests the state of the clone task.
+    /// If it is finished, the call returns.
+    /// If it is yet not finished, the task is cancelled, and the cloned stream is disposed.
     /// </summary>
     private void TryFinishCloneTask()
     {
@@ -415,16 +445,16 @@ namespace Altaxo.Main.Services
       {
         if (!_cloneTask.IsCompleted)
         {
-          _cloneTaskCancel.Cancel();
-          if (null != _cloneTask && _cloneTask.Status == TaskStatus.Running)
+          _cloneTaskCancel?.Cancel();
+          if (_cloneTask?.Status == TaskStatus.Running)
           {
-            _cloneTask.Wait();
+            _cloneTask?.Wait();
           }
 
           // System.Diagnostics.Debug.WriteLine($"Status of clone task is {_cloneTask.Status}");
 
           // int slept = 0;
-          while (!(_cloneTask.Status == TaskStatus.RanToCompletion || _cloneTask.Status == TaskStatus.Faulted || _cloneTask.Status == TaskStatus.Canceled))
+          while (_cloneTask is { } cloneTask && !(cloneTask.Status == TaskStatus.RanToCompletion || cloneTask.Status == TaskStatus.Faulted || cloneTask.Status == TaskStatus.Canceled))
           {
             System.Threading.Thread.Sleep(1);
             // slept += 1;
@@ -432,16 +462,16 @@ namespace Altaxo.Main.Services
 
           // System.Diagnostics.Debug.WriteLine($"Status of clone task is now {_cloneTask.Status}, slept {slept} ms");
 
-          _cloneTask.Dispose();
+          _cloneTask?.Dispose();
           _cloneTask = null;
-          _cloneTaskCancel.Dispose();
+          _cloneTaskCancel?.Dispose();
           _cloneTaskCancel = null;
           _clonedFileStream?.Dispose();
           _clonedFileStream = null;
         }
         else // Clone task runs to completion
         {
-          if (!(_cloneTask.Exception is null))
+          if (_cloneTask.Exception is not null) // Dispose the cloned stream if there was an exception
           {
             _cloneTask?.Dispose();
             _cloneTask = null;
@@ -465,7 +495,7 @@ namespace Altaxo.Main.Services
     /// </returns>
     public IProjectArchive GetArchiveReadOnlyThreadSave(object claimer)
     {
-      var name = _clonedFileStream?.Name ?? _originalFileStream?.Name;
+      var name = _clonedFileStream?.Name ?? _originalFileStream?.Name ?? throw new InvalidProgramException($"This call should happen only if a file name is already given to the project");
       var stream = new FileStream(name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
       var archive = new ZipArchiveAsProjectArchiveNative(stream, ZipArchiveMode.Read, leaveOpen: false, archiveManager: this);
       return archive;
@@ -477,7 +507,7 @@ namespace Altaxo.Main.Services
     /// <param name="claimer">The claimer. This parameter should be identical to that used in the call to <see cref="GetArchiveReadOnlyThreadSave(object)" /></param>
     /// <param name="archive">The archive to release.</param>
     /// .
-    public void ReleaseArchiveThreadSave(object claimer, ref IProjectArchive archive)
+    public void ReleaseArchiveThreadSave(object claimer, ref IProjectArchive? archive)
     {
       archive?.Dispose();
       archive = null;

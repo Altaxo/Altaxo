@@ -42,11 +42,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   {
     private PenControlsGlue _framePenGlue;
 
-    public event Action IndependentLineColorChanged;
+    public event Action IndependentLineColorChanged { add { } remove { } }
 
     public event Action UseLineChanged;
 
-    public event Action LinePenChanged;
+    public event Action LinePenChanged { add { } remove { } }
 
     public event Action FillColorLinkageChanged;
 

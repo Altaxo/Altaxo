@@ -35,6 +35,7 @@ namespace Altaxo.Main.Services
 {
   /// <summary>
   /// Manages the permanent storage of projects into Zip files, including cloning to, and maintaining a safety copy.
+  /// This manager uses Zip files zipped with the Altaxo provided Zip routines. This, progressive storage is supported, but the risk of data failures is higher.
   /// </summary>
   /// <seealso cref="Altaxo.Main.Services.IFileBasedProjectArchiveManager" />
   public class ZipFileProjectArchiveManager : IFileBasedProjectArchiveManager

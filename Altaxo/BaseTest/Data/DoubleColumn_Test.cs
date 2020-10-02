@@ -298,7 +298,7 @@ namespace AltaxoTest.Data
         throw new NotImplementedException();
       }
 
-      public event EventHandler Changed;
+      public event EventHandler Changed { add { } remove { } }
 
       public Altaxo.Main.ISuspendToken SuspendGetToken()
       {
@@ -335,7 +335,7 @@ namespace AltaxoTest.Data
         throw new NotImplementedException();
       }
 
-      public event Action<object, object, TunnelingEventArgs> TunneledEvent;
+      public event Action<object, object, TunnelingEventArgs> TunneledEvent { add { } remove { } }
 
       public System.Collections.Generic.IEnumerable<IDocumentLeafNode> ChildNodes
       {

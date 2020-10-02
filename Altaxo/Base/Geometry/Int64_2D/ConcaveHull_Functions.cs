@@ -71,11 +71,14 @@ namespace Altaxo.Geometry.Int64_2D
     /// <summary>
     /// Gets the angle between the lines pivot-a and pivot-b
     /// </summary>
-    /// <param name="pivot">The pivot.</param>
-    /// <param name="a">a.</param>
-    /// <param name="b">The b.</param>
-    /// <returns></returns>
-    public static double GetAngle(IntPoint pivot, IntPoint a, IntPoint b)
+    /// <param name="pivot">The pivot point.</param>
+    /// <param name="a">The first point.</param>
+    /// <param name="b">The second point.</param>
+    /// <param name="returnPositiveValueIf180Degrees">If both lines are antiparallel (180 degrees), the angle is not unique (can be -Pi or +Pi).
+    /// Per default a negative angle (-Pi) is returned, but
+    /// if this parameter is set to true, then a positive angle (+Pi) will be returned.</param>
+    /// <returns>The angle between the two lines.</returns>
+    public static double GetAngle(IntPoint pivot, IntPoint a, IntPoint b, bool returnPositiveValueIf180Degrees)
     {
       var aX = (double)(a.X - pivot.X);
       var aY = (double)(a.Y - pivot.Y);
@@ -83,7 +86,11 @@ namespace Altaxo.Geometry.Int64_2D
       var bY = (double)(b.Y - pivot.Y);
       var d1 = aX * bY - aY * bX;
       var d2 = aX * bX + aY * bY;
-      return Math.Atan2(d1, d2);
+
+      if (d1 == 0 && d2 < 0 && returnPositiveValueIf180Degrees)
+        return Math.PI;
+      else
+        return Math.Atan2(d1, d2);
     }
 
 

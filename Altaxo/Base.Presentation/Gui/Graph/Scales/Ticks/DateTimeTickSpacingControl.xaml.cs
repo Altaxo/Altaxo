@@ -216,11 +216,11 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     public event Action<string, System.ComponentModel.CancelEventArgs> MajorTicksValidating;
 
-    public event Action<string, System.ComponentModel.CancelEventArgs> DivideByValidating;
+    public event Action<string, System.ComponentModel.CancelEventArgs> DivideByValidating { add { } remove { } }
 
-    public event Action<string, System.ComponentModel.CancelEventArgs> TransfoOffsetValidating;
+    public event Action<string, System.ComponentModel.CancelEventArgs> TransfoOffsetValidating { add { } remove { } }
 
-    public event Action<bool> TransfoOperationChanged;
+    public event Action<bool> TransfoOperationChanged { add { } remove { } }
 
     #endregion ILinearTickSpacingView
   }

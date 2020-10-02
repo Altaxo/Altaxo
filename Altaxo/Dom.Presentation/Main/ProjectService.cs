@@ -191,7 +191,7 @@ namespace Altaxo.Main
     {
       var context = Current.Project.GetPropertyContext();
 
-      var storageSettings = context.GetValue(Altaxo.Serialization.StorageSettings.PropertyKeyStorageSettings);
+      var storageSettings = context.GetValue(Altaxo.Serialization.StorageSettings.PropertyKeyStorageSettings, new Serialization.StorageSettings());
 
       if (fileOrFolderName is FileName)
       {

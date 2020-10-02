@@ -151,6 +151,7 @@ namespace Altaxo.Main.Properties
     /// <param name="defaultValue">The default value. This value is returned if the property hierarchy does not contain the property value.</param>
     /// <returns>The property value if found in this hierarchy, or the provided default value.</returns>
     [return: MaybeNull]
+    [return: NotNullIfNotNull("defaultValue")]
     public T GetValue<T>(PropertyKey<T> p, [MaybeNull] T defaultValue)
     {
       if (TryGetValue(p, out var result, out var bag, out var info))

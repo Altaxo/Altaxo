@@ -160,19 +160,25 @@ namespace Altaxo.Geometry.Int64_2D
       var arr = new IntPoint[9];
 
       arr[0] = new IntPoint(-10, 10);
-      arr[1] = new IntPoint(9, 10);
-      arr[2] = new IntPoint(8, 10); // the first three points are colinear
+      arr[1] = new IntPoint(-9, 10);
+      arr[2] = new IntPoint(-8, 10); // the first three points are colinear
       arr[3] = new IntPoint(0, 9);  // a little concaveness in the middle
       arr[4] = new IntPoint(8, 10);  // the next three points are also colinear
       arr[5] = new IntPoint(9, 10);
       arr[6] = new IntPoint(10, 10);
       arr[7] = new IntPoint(10, -10);
       arr[8] = new IntPoint(-10, -10);
-      var concaveCalc = new ConcaveHull(arr, 0.5, 2);
+      var concaveCalc = new ConcaveHull(arr, 0.707, 5);
 
-      // will the points 500, -10 and -500, -10 be found?
       Assert.AreEqual(4, concaveCalc.ConvexHullPoints.Count);
-      Assert.AreEqual(5, concaveCalc.ConcaveHullPoints.Count);
+      Assert.GreaterOrEqual(concaveCalc.ConcaveHullPoints.Count, 7);
+
+      var l = new List<IntPoint>(concaveCalc.ConcaveHullPoints.Select(x => x.point));
+      var c = l.Count;
+      int idx = l.IndexOf(arr[3]); // Point (0 , 9) has to be included
+      Assert.GreaterOrEqual(idx, 0);
+      Assert.AreEqual(l[idx - 1], arr[4]); // and the neighbouring points are (8,10)
+      Assert.AreEqual(l[idx + 1], arr[2]); // and (-8, 10)
 
       IncludenessTest(concaveCalc.ConvexHullPoints, arr);
       IncludenessTest(concaveCalc.ConcaveHullPoints, arr);

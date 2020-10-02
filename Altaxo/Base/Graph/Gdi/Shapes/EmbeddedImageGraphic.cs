@@ -139,22 +139,34 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       base(from) // all is done here, since CopyFrom is virtual!
     {
+      CopyFrom(from, false);
+    }
+
+    protected void CopyFrom(EmbeddedImageGraphic from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      Image = from._imageProxy;
     }
 
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
         return true;
-
-      if (base.CopyFrom(obj))
+      if (obj is ImageGraphic from)
       {
-        if (obj is EmbeddedImageGraphic from)
+        using (var suspendToken = SuspendGetToken())
         {
-          Image = from._imageProxy;
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
         return true;
       }
-      return false;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     #endregion Constructors

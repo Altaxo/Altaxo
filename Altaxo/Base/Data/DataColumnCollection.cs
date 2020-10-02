@@ -601,7 +601,14 @@ namespace Altaxo.Data
       }
       else if (deferredDataLoader is IProjectArchiveEntryMemento tp)
       {
-        LoadDeferredData(tp);
+        try
+        {
+          LoadDeferredData(tp);
+        }
+        catch (Exception ex)
+        {
+          Current.Console.WriteLine($"Exception during deferred loading of data for table {DataTable.GetParentDataTableOf(this)?.Name}, Details: {ex.Message}");
+        }
         var newMemento = tp.Clone();
         tp?.Dispose();
         lock (_deferredLock)

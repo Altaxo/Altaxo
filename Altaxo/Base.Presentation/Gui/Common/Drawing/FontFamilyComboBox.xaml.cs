@@ -151,7 +151,7 @@ namespace Altaxo.Gui.Common.Drawing
 
         if (glyphTypeFace is not null)
         {
-          var glyphRun = new GlyphRun();
+          var glyphRun = new GlyphRun(1);
           ((System.ComponentModel.ISupportInitialize)glyphRun).BeginInit();
           glyphRun.GlyphTypeface = glyphTypeFace;
           glyphRun.FontRenderingEmSize = fontSize;

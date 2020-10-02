@@ -54,7 +54,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     private System.Drawing.Size _cachedGraphSize_Pixels;
 
     /// <summary>Used for debugging the number of updates to the graph.</summary>
+#pragma warning disable CS0169
     private int _updateCount;
+#pragma warning restore CS0169 
 
     private static Altaxo.Collections.CachedObjectManagerByMaximumNumberOfItems<System.Drawing.Size, GdiToWpfBitmap> _gdiWpfBitmapManager = new CachedObjectManagerByMaximumNumberOfItems<System.Drawing.Size, GdiToWpfBitmap>(16);
 
@@ -825,7 +827,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       var font = new Typeface("Arial");
       if (font.TryGetGlyphTypeface(out var glyphFace))
       {
-        glyphs = new GlyphRun();
+        glyphs = new GlyphRun(1);
         System.ComponentModel.ISupportInitialize isi = glyphs;
         isi.BeginInit();
         glyphs.GlyphTypeface = glyphFace;

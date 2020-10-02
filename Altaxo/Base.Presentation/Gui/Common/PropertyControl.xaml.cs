@@ -36,37 +36,17 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class PropertyControl : UserControl, IPropertyView
   {
-#if NETFRAMEWORK
     private WPG.PropertyGrid _propertyGrid;
-#endif
-
 
     public PropertyControl()
     {
       InitializeComponent();
 
-#if NETFRAMEWORK
-      _guiGrid.Children.Add(new WPG.PropertyGrid());
-#endif
+      _propertyGrid = new WPG.PropertyGrid();
+      _guiGrid.Children.Add(_propertyGrid);
     }
 
-#if !NETFRAMEWORK
-    private object _instance;
-    public object[] SelectedObjectsToView
-    {
-      get
-      {
-        return new object[1] { _instance };
-      }
-      set
-      {
-        if (value is not null && value.Length >= 1)
-          _instance = value[0];
-        else
-          _instance = null;
-      }
-    }
-#else
+
     public object[] SelectedObjectsToView
     {
       get
@@ -81,6 +61,5 @@ namespace Altaxo.Gui.Common
           _propertyGrid.Instance = null;
       }
     }
-#endif
   }
 }

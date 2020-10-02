@@ -34,7 +34,9 @@ using System.Threading.Tasks;
 namespace Altaxo.Main.Services.Files
 {
   /// <summary>
-  /// Wraps a <see cref="ZipArchive"/> to implement <see cref="IProjectArchive"/>
+  /// Wraps a <see cref="ZipArchive"/> to implement <see cref="IProjectArchive"/>.
+  /// With this class, the Altaxo provided Zip-Routines are used. Thus,
+  /// this type of archive supports deferred loading.
   /// </summary>
   /// <seealso cref="IProjectArchive" />
   public class ZipArchiveAsProjectArchive : IProjectArchive

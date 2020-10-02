@@ -63,8 +63,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     private void _edDivideBy_Validating(object sender, ValidationEventArgs<string> e)
     {
       var c = new System.ComponentModel.CancelEventArgs();
-      if (DivideByValidating is not null)
-        DivideByValidating(_edDivideBy.Text, c);
+      DivideByValidating?.Invoke(_edDivideBy.Text, c);
       if (c.Cancel)
         e.AddError("The provided text can not be converted");
     }
@@ -199,11 +198,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
     }
 
-    public event Action<string, System.ComponentModel.CancelEventArgs> MajorTicksValidating;
-
     public event Action<string, System.ComponentModel.CancelEventArgs> DivideByValidating;
-
-    public event Action<string, System.ComponentModel.CancelEventArgs> TransfoOffsetValidating;
 
     public event Action<bool> TransfoOperationChanged;
 

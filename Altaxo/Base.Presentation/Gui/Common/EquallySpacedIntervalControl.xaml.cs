@@ -93,9 +93,9 @@ namespace Altaxo.Gui.Common
 
     public event Action<string> IntervalChanged;
 
-    public event Action<System.ComponentModel.CancelEventArgs> CountValidating;
+    public event Action<System.ComponentModel.CancelEventArgs> CountValidating { add { } remove { } }
 
-    public event Action<System.ComponentModel.CancelEventArgs> IntervalValidating;
+    public event Action<System.ComponentModel.CancelEventArgs> IntervalValidating { add { } remove { } }
 
     public void EnableEditBoxes(bool start, bool end, bool count, bool interval)
     {

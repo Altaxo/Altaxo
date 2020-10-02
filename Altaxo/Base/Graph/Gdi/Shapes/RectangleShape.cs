@@ -71,6 +71,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       base(from)
     {
+      // No extra members to copy here!
     }
 
     private static void Exchange(ref double x, ref double y)

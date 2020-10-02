@@ -103,7 +103,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// </summary>
     /// <param name="from">Another shape group to copy from. The objects of this shape group are cloned before added to the new group.</param>
     public ShapeGroup(ShapeGroup from)
-      : base(from) // all is done here, since CopyFrom is virtual!
+      : base(from)
     {
       CopyFrom(from, false);
     }

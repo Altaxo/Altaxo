@@ -103,9 +103,9 @@ namespace Altaxo.Serialization
         info.AddValue("CompressionLevel", s.CompressionLevel);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (StorageSettings)o ?? new StorageSettings();
+        var s = (StorageSettings?)o ?? new StorageSettings();
 
         s.AllowProgressiveStorage = info.GetBoolean("AllowProgressiveStorage");
         s.CompressionLevel = info.GetInt32("CompressionLevel");

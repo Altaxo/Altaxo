@@ -139,7 +139,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public LinkedImageGraphic(LinkedImageGraphic from)
       :
-      base(from) // all is done here, since CopyFrom is virtual!
+      base(from)
     {
       CopyFrom(from, false);
     }

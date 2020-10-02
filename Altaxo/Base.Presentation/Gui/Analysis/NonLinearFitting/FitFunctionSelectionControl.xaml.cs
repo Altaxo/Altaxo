@@ -176,8 +176,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       InitializeComponent();
     }
 
-    private System.Drawing.Graphics _rtfGraphics;
-
     private void EhFitFunctions_AfterSelect(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
       var node = e.NewValue as NGTreeNode;
