@@ -179,7 +179,7 @@ namespace Altaxo.Main.Services
     {
       if (_isDisposed) throw new ObjectDisposedException(this.GetType().Name);
 
-      if (null == _originalFileStream)
+      if (_originalFileStream is null)
         throw new InvalidOperationException("Save is not possible because no file name was given up to now");
 
       SaveAs(FileName.Create(_originalFileStream.Name), saveProjectAndWindowsState);
@@ -203,7 +203,7 @@ namespace Altaxo.Main.Services
       bool isNewDestinationFileName = originalFileName != (string)destinationFileName;
 
       TryFinishCloneTask();  // Force decision whether we have a cloned file of the original file or not
-      bool useClonedStreamAsBackup = _clonedFileStream != null;
+      bool useClonedStreamAsBackup = _clonedFileStream is not null;
 
       // Open the old archive, either using the copied stream or the original stream
       _clonedFileStream?.Seek(0, SeekOrigin.Begin);
@@ -237,7 +237,7 @@ namespace Altaxo.Main.Services
 
       using (var oldProjectArchive = useClonedStreamAsBackup ?
                 new Services.Files.ZipArchiveAsProjectArchiveNative(_clonedFileStream, ZipArchiveMode.Read, leaveOpen: true, archiveManager: this) :
-                _originalFileStream != null ?
+                _originalFileStream is not null ?
                   new Services.Files.ZipArchiveAsProjectArchiveNative(_originalFileStream, ZipArchiveMode.Read, leaveOpen: true, archiveManager: this) : null
             )
       {
@@ -259,7 +259,7 @@ namespace Altaxo.Main.Services
         }
       }
 
-      if (null == savingException)
+      if (savingException is null)
       {
         // if saving was successfull, we can now clone the data from the new project archive again....
         if (isNewDestinationFileName)
@@ -291,7 +291,7 @@ namespace Altaxo.Main.Services
           _originalFileStream = orgFileStream;
         }
       }
-      else // exceptions suring saving have occured !!!
+      else // exceptions during saving have occured !!!
       {
         // if saving has failed, we have to restore the old state
         if (isNewDestinationFileName)
@@ -323,7 +323,7 @@ namespace Altaxo.Main.Services
         }
       }
 
-      if (null != savingException)
+      if (savingException is not null)
         throw savingException;
 
       if (isNewDestinationFileName)
@@ -441,7 +441,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     private void TryFinishCloneTask()
     {
-      if (null != _cloneTask)
+      if (_cloneTask is not null)
       {
         if (!_cloneTask.IsCompleted)
         {

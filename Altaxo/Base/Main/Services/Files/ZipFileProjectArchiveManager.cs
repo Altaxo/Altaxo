@@ -89,7 +89,7 @@ namespace Altaxo.Main.Services
       try
       {
         // Open the stream for reading ...
-        _originalFileStream = new FileStream(fileName.ToString(), FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+        _originalFileStream = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
       }
       catch (Exception ex1)
       {
@@ -97,7 +97,7 @@ namespace Altaxo.Main.Services
         FileStream roFileStream;
         try
         {
-          roFileStream = new FileStream(fileName.ToString(), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+          roFileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         }
         catch (Exception)
         {
