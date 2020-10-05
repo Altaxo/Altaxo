@@ -27,16 +27,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Geometry.Double_2D
 {
-  [TestFixture]
+  
   public class ConcaveHull_Test : PolygonTestBase
   {
     private Random _random = new Random(1);
 
-    [Test]
+    [Fact]
     public void Test_Includeness()
     {
       var hash = new HashSet<(int, int)>();

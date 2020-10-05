@@ -26,11 +26,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Main
 {
-  [TestFixture]
+
   public class ProjectFolder_Test
   {
     // 1st: fullName, 2nd: directoryPart, 3rd: name part
@@ -50,7 +50,7 @@ namespace Altaxo.Main
       {@"\",@"\",""}
      };
 
-    [Test]
+    [Fact]
     public void TestSplitNames()
     {
       string result;
@@ -64,16 +64,16 @@ namespace Altaxo.Main
         string namepart = _testNames[i, 2];
 
         result = ProjectFolder.GetFolderPart(fullname);
-        Assert.That(result == dirpart, ReportNameError("GetDirectoryPart", i));
+        Assert.True(result == dirpart, ReportNameError("GetDirectoryPart", i));
 
         result = ProjectFolder.GetNamePart(fullname);
-        Assert.That(result == namepart, ReportNameError("GetNamePart", i));
+        Assert.True(result == namepart, ReportNameError("GetNamePart", i));
 
         ProjectFolder.SplitIntoFolderAndNamePart(fullname, out result, out var result1);
-        Assert.That(result == dirpart && result1 == namepart, ReportNameError("SplitIntoFolderAndNamePart", i));
+        Assert.True(result == dirpart && result1 == namepart, ReportNameError("SplitIntoFolderAndNamePart", i));
 
         result = ProjectFolder.Combine(result, result1);
-        Assert.That(result == fullname, ReportNameError("Combine", i));
+        Assert.True(result == fullname, ReportNameError("Combine", i));
       }
     }
 
@@ -97,7 +97,7 @@ namespace Altaxo.Main
       {@"\",@""}
      };
 
-    [Test]
+    [Fact]
     public void TestFoldersParentFolder()
     {
       string result;
@@ -110,7 +110,7 @@ namespace Altaxo.Main
         string parentFolderName = _testParentFolderData1[i, 1];
 
         result = ProjectFolder.GetFoldersParentFolder(folderName);
-        Assert.That(result == parentFolderName, ReportNameError("GetFoldersParentFolder", _testParentFolderData1, i));
+        Assert.True(result == parentFolderName, ReportNameError("GetFoldersParentFolder", _testParentFolderData1, i));
       }
     }
   }

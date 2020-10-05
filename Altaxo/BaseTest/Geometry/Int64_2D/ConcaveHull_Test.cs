@@ -28,16 +28,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ClipperLib;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Geometry.Int64_2D
 {
-  [TestFixture]
+
   public class ConcaveHull_Test : PolygonTestBase
   {
     private Random _random = new Random(1);
 
-    [Test]
+    [Fact]
     public void Test1()
     {
       const int numberOfPoints = 5;
@@ -63,7 +63,7 @@ namespace Altaxo.Geometry.Int64_2D
       IncludenessTest(concaveCalc.ConcaveHullPoints, arr);
     }
 
-    [Test]
+    [Fact]
     public void Test_Includeness()
     {
       var hash = new HashSet<(int, int)>();
@@ -101,7 +101,7 @@ namespace Altaxo.Geometry.Int64_2D
       }
     }
 
-    [Test]
+    [Fact]
     public void Test_FivePoints()
     {
       var arr = new IntPoint[5];
@@ -116,7 +116,7 @@ namespace Altaxo.Geometry.Int64_2D
       IncludenessTest(concaveCalc.ConcaveHullPoints, arr);
     }
 
-    [Test]
+    [Fact]
     public void Test_FivePoints2()
     {
       var arr = new IntPoint[5];
@@ -129,10 +129,10 @@ namespace Altaxo.Geometry.Int64_2D
       var concaveCalc = new ConcaveHull(arr, Math.Cos(Math.PI / 8), 2);
       IncludenessTest(concaveCalc.ConvexHullPoints, arr);
       IncludenessTest(concaveCalc.ConcaveHullPoints, arr);
-      Assert.AreEqual(5, concaveCalc.ConcaveHullPoints.Count);
+      Assert.Equal(5, concaveCalc.ConcaveHullPoints.Count);
     }
 
-    [Test]
+    [Fact]
     public void Test_ColinearPointsHorizontal()
     {
       var arr = new IntPoint[7];
@@ -147,14 +147,14 @@ namespace Altaxo.Geometry.Int64_2D
       var concaveCalc = new ConcaveHull(arr, 0, 2);
 
       // will the points 500, -10 and -500, -10 be found?
-      Assert.AreEqual(4, concaveCalc.ConvexHullPoints.Count);
-      Assert.AreEqual(7, concaveCalc.ConcaveHullPoints.Count);
+      Assert.Equal(4, concaveCalc.ConvexHullPoints.Count);
+      Assert.Equal(7, concaveCalc.ConcaveHullPoints.Count);
 
       IncludenessTest(concaveCalc.ConvexHullPoints, arr);
       IncludenessTest(concaveCalc.ConcaveHullPoints, arr);
     }
 
-    [Test]
+    [Fact]
     public void Test_MultipleColinearPointsHorizontal()
     {
       var arr = new IntPoint[9];
@@ -170,21 +170,21 @@ namespace Altaxo.Geometry.Int64_2D
       arr[8] = new IntPoint(-10, -10);
       var concaveCalc = new ConcaveHull(arr, 0.707, 5);
 
-      Assert.AreEqual(4, concaveCalc.ConvexHullPoints.Count);
-      Assert.GreaterOrEqual(concaveCalc.ConcaveHullPoints.Count, 7);
+      Assert.Equal(4, concaveCalc.ConvexHullPoints.Count);
+      Assert.True(concaveCalc.ConcaveHullPoints.Count >= 7);
 
       var l = new List<IntPoint>(concaveCalc.ConcaveHullPoints.Select(x => x.point));
       var c = l.Count;
       int idx = l.IndexOf(arr[3]); // Point (0 , 9) has to be included
-      Assert.GreaterOrEqual(idx, 0);
-      Assert.AreEqual(l[idx - 1], arr[4]); // and the neighbouring points are (8,10)
-      Assert.AreEqual(l[idx + 1], arr[2]); // and (-8, 10)
+      Assert.True(idx >= 0);
+      Assert.Equal(l[idx - 1], arr[4]); // and the neighbouring points are (8,10)
+      Assert.Equal(l[idx + 1], arr[2]); // and (-8, 10)
 
       IncludenessTest(concaveCalc.ConvexHullPoints, arr);
       IncludenessTest(concaveCalc.ConcaveHullPoints, arr);
     }
 
-    [Test]
+    [Fact]
     public void Test_ForbiddenPointOnHull()
     {
       var arr = new IntPoint[5];
@@ -197,13 +197,13 @@ namespace Altaxo.Geometry.Int64_2D
       var concaveCalc = new ConcaveHull(arr, 0, 2);
 
       // convex and concave hull may contain 0,0, but only as part of the upper horizontal line
-      Assert.AreEqual(4, concaveCalc.ConvexHullPoints.Count);
+      Assert.Equal(4, concaveCalc.ConvexHullPoints.Count);
 
       IncludenessTest(concaveCalc.ConvexHullPoints, arr);
       IncludenessTest(concaveCalc.ConcaveHullPoints, arr);
     }
 
-    [Test]
+    [Fact]
     public void Test_Polygon_Area()
     {
       var arr = new IntPoint[4];
@@ -214,10 +214,10 @@ namespace Altaxo.Geometry.Int64_2D
       arr[3] = new IntPoint(-200, 100);
 
       var area = PolygonMath.GetClosedPolygonArea(arr);
-      Assert.AreEqual(60000, area); // counterclockwise should give positive area
+      Assert.Equal(60000, area); // counterclockwise should give positive area
     }
 
-    [Test]
+    [Fact]
     public void Test_Polygon_Centroid()
     {
       var arr = new IntPoint[4];
@@ -236,10 +236,10 @@ namespace Altaxo.Geometry.Int64_2D
       }
 
       var area = PolygonMath.GetClosedPolygonArea(arr);
-      Assert.AreEqual(80000, area); // counterclockwise should give positive area
+      Assert.Equal(80000, area); // counterclockwise should give positive area
       var centroid = PolygonMath.GetClosedPolygonCentroid(arr);
-      Assert.AreEqual(x, centroid.X);
-      Assert.AreEqual(y, centroid.Y);
+      Assert.Equal(x, centroid.X);
+      Assert.Equal(y, centroid.Y);
     }
   }
 }

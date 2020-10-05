@@ -27,14 +27,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Altaxo.Geometry;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Graph.Graph3D.Camera
 {
-  [TestFixture]
+
   public class TestPerspectiveCamera
   {
-    [Test]
+    [Fact]
     public void TestZoom1_XOnly_ZDirection()
     {
       double aspectRatio = 1.0;
@@ -51,23 +51,23 @@ namespace Altaxo.Graph.Graph3D.Camera
       PointD3D cameraPosition = targetPosition + targetToEye;
       PointD3D worldPoint = targetPosition + targetToWorldPoint;
 
-      Assert.AreEqual(0, VectorD3D.DotProduct(targetToEye, targetToWorldPoint), "The test must be set up in a way that targetToEye and targetToWorldPoint are perpendicular to each other");
+      Assert.Equal(0, VectorD3D.DotProduct(targetToEye, targetToWorldPoint)); // "The test must be set up in a way that targetToEye and targetToWorldPoint are perpendicular to each other");
 
       var cameraO = new PerspectiveCamera(cameraUpVector, cameraPosition, targetPosition, zNear, zFar, widthByZNear * zNear);
 
       var screenO = cameraO.GetViewProjectionMatrix(aspectRatio).Transform(worldPoint);
 
-      Assert.AreEqual(0.0, screenO.Y, "Test must be set up so that screen.Y is always zero");
+      Assert.Equal(0.0, screenO.Y); // "Test must be set up so that screen.Y is always zero");
 
       var cameraN = cameraO.ZoomByGettingCloserToTarget(distanceFactor, screenO.X, screenO.Y, aspectRatio);
 
       var screenN = cameraN.GetViewProjectionMatrix(aspectRatio).Transform(worldPoint);
 
-      Assert.AreEqual(screenO.X, screenN.X, 1E-3);
-      Assert.AreEqual(screenO.Y, screenN.Y, 1E-3);
+      Assert.Equal(screenO.X, screenN.X, 3);
+      Assert.Equal(screenO.Y, screenN.Y, 3);
     }
 
-    [Test]
+    [Fact]
     public void TestZoom1_XOnly_XDirection()
     {
       double aspectRatio = 1.0;
@@ -84,23 +84,23 @@ namespace Altaxo.Graph.Graph3D.Camera
       PointD3D cameraPosition = targetPosition + targetToEye;
       PointD3D worldPoint = targetPosition + targetToWorldPoint;
 
-      Assert.AreEqual(0, VectorD3D.DotProduct(targetToEye, targetToWorldPoint), "The test must be set up in a way that targetToEye and targetToWorldPoint are perpendicular to each other");
+      Assert.Equal(0, VectorD3D.DotProduct(targetToEye, targetToWorldPoint)); // "The test must be set up in a way that targetToEye and targetToWorldPoint are perpendicular to each other");
 
       var cameraO = new PerspectiveCamera(cameraUpVector, cameraPosition, targetPosition, zNear, zFar, widthByZNear * zNear);
 
       var screenO = cameraO.GetViewProjectionMatrix(aspectRatio).Transform(worldPoint);
 
-      Assert.AreEqual(0.0, screenO.Y, "Test must be set up so that screen.Y is always zero");
+      Assert.Equal(0.0, screenO.Y); // "Test must be set up so that screen.Y is always zero");
 
       var cameraN = cameraO.ZoomByGettingCloserToTarget(distanceFactor, screenO.X, screenO.Y, aspectRatio);
 
       var screenN = cameraN.GetViewProjectionMatrix(aspectRatio).Transform(worldPoint);
 
-      Assert.AreEqual(screenO.X, screenN.X, 1E-3);
-      Assert.AreEqual(screenO.Y, screenN.Y, 1E-3);
+      Assert.Equal(screenO.X, screenN.X, 3);
+      Assert.Equal(screenO.Y, screenN.Y, 3);
     }
 
-    [Test]
+    [Fact]
     public void TestZoom1_XOnly_WithOffset()
     {
       double aspectRatio = 1.0;
@@ -121,11 +121,11 @@ namespace Altaxo.Graph.Graph3D.Camera
 
       var screenN = cameraN.GetViewProjectionMatrix(aspectRatio).Transform(worldPoint);
 
-      Assert.AreEqual(screenO.X, screenN.X, 1E-3);
-      Assert.AreEqual(screenO.Y, screenN.Y, 1E-3);
+      Assert.Equal(screenO.X, screenN.X, 3);
+      Assert.Equal(screenO.Y, screenN.Y, 3);
     }
 
-    [Test]
+    [Fact]
     public void TestZoom1_XY()
     {
       double aspectRatio = 1.0;
@@ -146,8 +146,8 @@ namespace Altaxo.Graph.Graph3D.Camera
 
       var screenN = cameraN.GetViewProjectionMatrix(aspectRatio).Transform(worldPoint);
 
-      Assert.AreEqual(screenO.X, screenN.X, 1E-3);
-      Assert.AreEqual(screenO.Y, screenN.Y, 1E-3);
+      Assert.Equal(screenO.X, screenN.X, 3);
+      Assert.Equal(screenO.Y, screenN.Y, 3);
     }
   }
 }

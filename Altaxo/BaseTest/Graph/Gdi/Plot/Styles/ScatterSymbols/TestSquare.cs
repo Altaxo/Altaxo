@@ -30,14 +30,14 @@ using Altaxo.Geometry;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
 {
-  [TestFixture]
+
   public class TestSquare
   {
-    [Test]
+    [Fact]
     public void TestGeneratedPolygons_WOFrame_WOInset()
     {
 
@@ -45,12 +45,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
 
       square.CalculatePolygons(null, out var framePolygon, out var insetPolygon, out var fillPolygon);
 
-      Assert.IsNull(framePolygon);
-      Assert.IsNull(insetPolygon);
-      Assert.IsNotNull(fillPolygon);
+      Assert.Null(framePolygon);
+      Assert.Null(insetPolygon);
+      Assert.NotNull(fillPolygon);
     }
 
-    [Test]
+    [Fact]
     public void TestGeneratedPolygons_WithFrame_WOInset()
     {
 
@@ -58,12 +58,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
 
       square.CalculatePolygons(null, out var framePolygon, out var insetPolygon, out var fillPolygon);
 
-      Assert.IsNotNull(framePolygon);
-      Assert.IsNull(insetPolygon);
-      Assert.IsNotNull(fillPolygon);
+      Assert.NotNull(framePolygon);
+      Assert.Null(insetPolygon);
+      Assert.NotNull(fillPolygon);
     }
 
-    [Test]
+    [Fact]
     public void TestGeneratedPolygons_WOFrame_WithInset()
     {
 
@@ -71,12 +71,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
 
       square.CalculatePolygons(null, out var framePolygon, out var insetPolygon, out var fillPolygon);
 
-      Assert.IsNull(framePolygon);
-      Assert.IsNotNull(insetPolygon);
-      Assert.IsNotNull(fillPolygon);
+      Assert.Null(framePolygon);
+      Assert.NotNull(insetPolygon);
+      Assert.NotNull(fillPolygon);
     }
 
-    [Test]
+    [Fact]
     public void TestGeneratedPolygons_WithFrame_WithInset()
     {
 
@@ -87,12 +87,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
 
       square.CalculatePolygons(null, out var framePolygon, out var insetPolygon, out var fillPolygon);
 
-      Assert.IsNotNull(framePolygon);
-      Assert.IsNotNull(insetPolygon);
-      Assert.IsNotNull(fillPolygon);
+      Assert.NotNull(framePolygon);
+      Assert.NotNull(insetPolygon);
+      Assert.NotNull(fillPolygon);
     }
 
-    [Test]
+    [Fact]
     public void TestGeneratedPolygons_WithFrame_WithSquarePointInset()
     {
 
@@ -103,9 +103,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
 
       square.CalculatePolygons(null, out var framePolygon, out var insetPolygon, out var fillPolygon);
 
-      Assert.IsNotNull(framePolygon);
-      Assert.IsNotNull(insetPolygon);
-      Assert.IsNotNull(fillPolygon);
+      Assert.NotNull(framePolygon);
+      Assert.NotNull(insetPolygon);
+      Assert.NotNull(fillPolygon);
     }
   }
 }

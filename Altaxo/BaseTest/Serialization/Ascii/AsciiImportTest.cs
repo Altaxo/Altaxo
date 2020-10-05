@@ -26,13 +26,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using Xunit;
 
 namespace BaseTest.Serialization.Ascii
 {
   using Altaxo.Serialization.Ascii;
 
-  [TestFixture]
+
   public class AsciiImportTest
   {
     public class AsciiTestInputBase
@@ -60,31 +60,31 @@ namespace BaseTest.Serialization.Ascii
         var analysis = AsciiDocumentAnalysis.Analyze(null, new System.IO.MemoryStream(bytes), options);
         var separation = analysis.SeparationStrategy;
 
-        Assert.AreEqual(MaxLines, LineList.Count, "Test does not produce expected number of lines");
+        Assert.Equal(MaxLines, LineList.Count); // "Test does not produce expected number of lines");
 
         for (int iLine = 0; iLine < MaxLines; ++iLine)
         {
           var expectedTokens = TokenList[iLine];
-          Assert.AreEqual(MaxColumns, expectedTokens.Count, string.Format("Test does not produce expected number of tokens in line {0}", iLine));
+          Assert.Equal(MaxColumns, expectedTokens.Count); // string.Format("Test does not produce expected number of tokens in line {0}", iLine));
           var currentTokens = separation.GetTokens(LineList[iLine]).ToArray();
-          Assert.AreEqual(MaxColumns, currentTokens.Length, string.Format("SeparationStrategy (of type {0}) returns too less or too many tokens in line {1}, ColumnMode={2}", separation.GetType(), iLine, testComment));
+          Assert.Equal(MaxColumns, currentTokens.Length); // string.Format("SeparationStrategy (of type {0}) returns too less or too many tokens in line {1}, ColumnMode={2}", separation.GetType(), iLine, testComment));
 
           for (int iColumn = 0; iColumn < MaxColumns; ++iColumn)
           {
             var expectedToken = expectedTokens[iColumn].Trim();
             var currentToken = currentTokens[iColumn].Trim();
-            Assert.AreEqual(expectedToken, currentToken, string.Format("Tokens are different in line {0}, column {1}, ColumnMode={2}, SeparationStrategy={3}", iLine, iColumn, testComment, separation.GetType()));
+            Assert.Equal(expectedToken, currentToken); // string.Format("Tokens are different in line {0}, column {1}, ColumnMode={2}, SeparationStrategy={3}", iLine, iColumn, testComment, separation.GetType()));
           }
         }
 
         var structure = analysis.RecognizedStructure;
 
-        Assert.AreEqual(MaxColumns, structure.Count);
+        Assert.Equal(MaxColumns, structure.Count);
 
         for (int iColumn = 0; iColumn < MaxColumns; ++iColumn)
         {
           AsciiColumnInfo info = structure[iColumn];
-          Assert.AreEqual(AsciiColumnType.Int64, info.ColumnType);
+          Assert.Equal(AsciiColumnType.Int64, info.ColumnType);
         }
       }
 
@@ -291,7 +291,7 @@ namespace BaseTest.Serialization.Ascii
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test01_NoTabs()
     {
       for (int iColumnMode = 0; iColumnMode < 81; ++iColumnMode)
@@ -302,7 +302,7 @@ namespace BaseTest.Serialization.Ascii
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test02_TabSize4()
     {
       for (int iColumnMode = 0; iColumnMode < 81; ++iColumnMode)
@@ -313,7 +313,7 @@ namespace BaseTest.Serialization.Ascii
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test03_TabSize8()
     {
       for (int iColumnMode = 0; iColumnMode < 81; ++iColumnMode)
@@ -324,7 +324,7 @@ namespace BaseTest.Serialization.Ascii
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test04_SingleCharTab()
     {
       for (int iColumnMode = 0; iColumnMode < 81; ++iColumnMode)
@@ -335,7 +335,7 @@ namespace BaseTest.Serialization.Ascii
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test05_SingleCharSemicolon()
     {
       for (int iColumnMode = 0; iColumnMode < 81; ++iColumnMode)
@@ -346,7 +346,7 @@ namespace BaseTest.Serialization.Ascii
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test06_SingleCharComma()
     {
       for (int iColumnMode = 0; iColumnMode < 81; ++iColumnMode)
@@ -357,7 +357,7 @@ namespace BaseTest.Serialization.Ascii
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test04_SingleCharTabGermanCulture()
     {
       for (int iColumnMode = 0; iColumnMode < 81; ++iColumnMode)
@@ -368,7 +368,7 @@ namespace BaseTest.Serialization.Ascii
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test05_SingleCharTabGermanCulture2()
     {
       var GermanCulture = System.Globalization.CultureInfo.GetCultureInfo("de");
@@ -394,11 +394,11 @@ namespace BaseTest.Serialization.Ascii
       var analysis = AsciiDocumentAnalysis.Analyze(null, new System.IO.MemoryStream(bytes), options);
       var separation = analysis.SeparationStrategy;
 
-      Assert.AreEqual(2, analysis.RecognizedStructure.Count);
-      Assert.IsTrue(AsciiColumnType.Double == analysis.RecognizedStructure[0].ColumnType);
-      Assert.IsTrue(AsciiColumnType.Double == analysis.RecognizedStructure[1].ColumnType);
+      Assert.Equal(2, analysis.RecognizedStructure.Count);
+      Assert.True(AsciiColumnType.Double == analysis.RecognizedStructure[0].ColumnType);
+      Assert.True(AsciiColumnType.Double == analysis.RecognizedStructure[1].ColumnType);
 
-      Assert.IsTrue("de" == analysis.NumberFormatCulture.TwoLetterISOLanguageName);
+      Assert.True("de" == analysis.NumberFormatCulture.TwoLetterISOLanguageName);
     }
   }
 }

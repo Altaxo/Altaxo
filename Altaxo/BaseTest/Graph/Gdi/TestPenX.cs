@@ -33,35 +33,35 @@ using Altaxo.Drawing.DashPatternManagement;
 using Altaxo.Geometry;
 using Altaxo.Main;
 using Altaxo.Main.Services;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Drawing
 {
-  [TestFixture]
-  internal class TestPenX
+
+  public class TestPenX
   {
 
 
     public void Tester(PenX pen1, PenX pen2, string comment)
     {
-      Assert.IsTrue(pen1 == pen2, comment);
-      Assert.IsFalse(pen1 != pen2, comment);
-      Assert.IsTrue(pen1.Equals(pen2), comment);
-      Assert.IsTrue(pen2.Equals(pen1), comment);
-      Assert.IsTrue(object.Equals(pen1, pen2), comment);
-      Assert.IsFalse(object.ReferenceEquals(pen1, pen2), comment);
-      Assert.AreEqual(pen1.GetHashCode(), pen2.GetHashCode(), comment);
+      Assert.True(pen1 == pen2, comment);
+      Assert.False(pen1 != pen2, comment);
+      Assert.True(pen1.Equals(pen2), comment);
+      Assert.True(pen2.Equals(pen1), comment);
+      Assert.True(object.Equals(pen1, pen2), comment);
+      Assert.False(object.ReferenceEquals(pen1, pen2), comment);
+      Assert.Equal(pen1.GetHashCode(), pen2.GetHashCode());
     }
 
     public void Tester(PenXEnv pen1, PenXEnv pen2, string comment)
     {
-      Assert.IsTrue(pen1 == pen2, comment);
-      Assert.IsFalse(pen1 != pen2, comment);
-      Assert.IsTrue(pen1.Equals(pen2), comment);
-      Assert.IsTrue(pen2.Equals(pen1), comment);
-      Assert.IsTrue(object.Equals(pen1, pen2), comment);
-      Assert.IsFalse(object.ReferenceEquals(pen1, pen2), comment);
-      Assert.AreEqual(pen1.GetHashCode(), pen2.GetHashCode(), comment);
+      Assert.True(pen1 == pen2, comment);
+      Assert.False(pen1 != pen2, comment);
+      Assert.True(pen1.Equals(pen2), comment);
+      Assert.True(pen2.Equals(pen1), comment);
+      Assert.True(object.Equals(pen1, pen2), comment);
+      Assert.False(object.ReferenceEquals(pen1, pen2), comment);
+      Assert.Equal(pen1.GetHashCode(), pen2.GetHashCode());
     }
 
 
@@ -88,7 +88,7 @@ namespace Altaxo.Drawing
       yield return (pen1, pen2, "SolidPen_WithTransform");
     }
 
-    [Test]
+    [Fact]
     public void TestHash_PenX()
     {
       foreach (var entry in TestGenerator())
@@ -97,7 +97,7 @@ namespace Altaxo.Drawing
       }
     }
 
-    [Test]
+    [Fact]
     public void TestHash_PenXEnv()
     {
       foreach (var entry in TestGenerator())
