@@ -421,6 +421,10 @@ namespace Altaxo.Text
     private (Dictionary<string, string> oldToNewImageUrl, HashSet<string> listOfReferencedImageFileNames)
           ExportImages(TextDocument document, string basePathName)
     {
+      if (document.ReferencedImageUrls is null)
+        throw new InvalidProgramException("document.ReferencedImageUrls must be evaluated before this call");
+
+
       var imagePath = GetImagePath(basePathName);
 
       var list = new List<(string Url, int urlSpanStart, int urlSpanEnd)>(document.ReferencedImageUrls);

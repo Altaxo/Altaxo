@@ -63,9 +63,10 @@ namespace Altaxo.Text
 
     /// <summary>
     /// Gets or sets the collection of all referenced image Urls.
+    /// A value of null means that the markdown text is not parsed and thus we do not have references evaluated.
     /// We use this only in the serialization code to serialize only those local images which are referenced in the markdown.
     /// </summary>
-    public IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)> ReferencedImageUrls { get; set; } = new (string Url, int urlSpanStart, int urlSpanEnd)[0];
+    public IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)>? ReferencedImageUrls { get; set; }
 
     /// <summary>
     /// The name of the style used to visualize the markdown. If this string is null or empty, the current global
