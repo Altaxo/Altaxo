@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Gdi
 
   public class TestBrushX
   {
-    public void Tester(BrushX brush1, BrushX brush2, string comment)
+    protected void Tester(BrushX brush1, BrushX brush2, string comment)
     {
       Assert.True(brush1 == brush2, comment);
       Assert.False(brush1 != brush2, comment);

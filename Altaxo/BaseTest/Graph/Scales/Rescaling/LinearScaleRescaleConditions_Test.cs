@@ -32,7 +32,7 @@ namespace AltaxoTest.Graph.Scales.Rescaling
   /// <summary>
   /// Summary description for DoubleColumn_Test.
   /// </summary>
-  
+
   public class LinearScaleRescaleConditions_Test
   {
     #region Tests for RelativeTo = Absolute
@@ -44,26 +44,27 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.OnDataBoundsChanged(1000, 4000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(4000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+
+      Assert.False(s.IsResultingEndFixed);
 
       s.OnDataBoundsChanged(-1000, -500);
       Assert.Equal(-1000, s.ResultingOrg);
       Assert.Equal(-500, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.OnUserZoomed(100, 200);
       Assert.Equal(100, s.ResultingOrg);
       Assert.Equal(200, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.AutoTempFixed, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.AutoTempFixed, s.EndRescaling);
       Assert.Equal(100, s.UserProvidedOrgValue);
@@ -73,8 +74,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(-1000, s.ResultingOrg);
       Assert.Equal(-500, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
 
@@ -82,8 +83,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(-1000, s.ResultingOrg);
       Assert.Equal(-500, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
 
@@ -91,8 +92,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.Auto, 5000, BoundaryRescaling.Auto, 6000);
       Assert.Equal(-1000, s.ResultingOrg);
       Assert.Equal(-500, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
     }
@@ -104,14 +105,14 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.SetUserParameters(BoundaryRescaling.AutoTempFixed, 0, BoundaryRescaling.AutoTempFixed, 3000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
 
       // Expected when data changed: recalculation of bounds according to data, fall back to auto rescaling
       s.OnDataBoundsChanged(1000, 2000);
@@ -119,21 +120,21 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       Assert.Equal(2000, s.ResultingEnd);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.SetUserParameters(BoundaryRescaling.AutoTempFixed, 0, BoundaryRescaling.AutoTempFixed, 3000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
 
       // Expected when zoomed by user: use zoom values as values in AutoTempFixed user parameters
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.AutoTempFixed, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.AutoTempFixed, s.EndRescaling);
       Assert.Equal(1500, s.UserProvidedOrgValue);
@@ -145,8 +146,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       Assert.Equal(2000, s.ResultingEnd);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
     }
 
     [Fact]
@@ -156,21 +157,21 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.SetUserParameters(BoundaryRescaling.Fixed, 0, BoundaryRescaling.Fixed, 3000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
 
       // Expected when data changed: no change
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Fixed, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Fixed, s.EndRescaling);
 
@@ -178,8 +179,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Fixed, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Fixed, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -189,8 +190,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Fixed, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Fixed, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -204,21 +205,21 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.SetUserParameters(BoundaryRescaling.FixedManually, 0, BoundaryRescaling.FixedManually, 3000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
 
       // Expected when data changed: no change
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedManually, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedManually, s.EndRescaling);
 
@@ -226,8 +227,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedManually, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedManually, s.EndRescaling);
       Assert.Equal(1500, s.UserProvidedOrgValue);
@@ -237,8 +238,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedManually, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedManually, s.EndRescaling);
       Assert.Equal(1500, s.UserProvidedOrgValue);
@@ -256,15 +257,15 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.FixedZoomable, 0, BoundaryRescaling.FixedZoomable, 3000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
 
       // Expected when data changed: no change
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.EndRescaling);
 
@@ -272,8 +273,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -283,8 +284,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -302,15 +303,15 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.GreaterOrEqual, 1000, BoundaryRescaling.GreaterOrEqual, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       // Expected when data changed: recalculation of result according to data and user parameters
       s.OnDataBoundsChanged(1200, 2000);
       Assert.Equal(1200, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed); // can go down to 1000
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed); // can go down to 1000
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
 
@@ -318,8 +319,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(800, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
 
@@ -327,8 +328,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 1800);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
 
@@ -336,8 +337,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2200);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2200, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
 
@@ -348,8 +349,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(1100, s.UserProvidedOrgValue);
@@ -363,8 +364,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2200, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed); // because ResultingOrg can go down to 800
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed); // because ResultingOrg can go down to 800
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(800, s.UserProvidedOrgValue);
@@ -378,8 +379,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(1200, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(1200, s.UserProvidedOrgValue);
@@ -402,8 +403,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(800, 2000);
       Assert.Equal(800, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
 
@@ -411,8 +412,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1200, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
 
@@ -420,8 +421,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 1800);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(1800, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed); // not fixed because it can go up to 2000
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed); // not fixed because it can go up to 2000
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
 
@@ -429,8 +430,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2200);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
 
@@ -441,8 +442,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 4000);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(4000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(800, s.UserProvidedOrgValue);
@@ -456,8 +457,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(800, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed); // because ResultingEnd can go up to 2200
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed); // because ResultingEnd can go up to 2200
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(800, s.UserProvidedOrgValue);
@@ -471,8 +472,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(1800, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(1200, s.UserProvidedOrgValue);
@@ -491,26 +492,26 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.OnDataBoundsChanged(1000, 4000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(4000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.OnDataBoundsChanged(-1000, -500);
       Assert.Equal(-1000, s.ResultingOrg);
       Assert.Equal(-500, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.OnUserZoomed(100, 200);
       Assert.Equal(100, s.ResultingOrg);
       Assert.Equal(200, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(1100, s.UserProvidedOrgValue);
       Assert.Equal(1200, s.UserProvidedEndValue);
       Assert.Equal(BoundaryRescaling.AutoTempFixed, s.OrgRescaling);
@@ -520,8 +521,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(-1000, s.ResultingOrg);
       Assert.Equal(-500, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
 
@@ -529,8 +530,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(-1000, s.ResultingOrg);
       Assert.Equal(-500, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
 
@@ -538,8 +539,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.Auto, BoundariesRelativeTo.RelativeToDataBoundsOrg, 5000, BoundaryRescaling.Auto, BoundariesRelativeTo.RelativeToDataBoundsOrg, 6000);
       Assert.Equal(-1000, s.ResultingOrg);
       Assert.Equal(-500, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
     }
@@ -551,14 +552,14 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.SetUserParameters(BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.RelativeToDataBoundsOrg, -1000, BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.RelativeToDataBoundsOrg, 2000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
       Assert.Equal(2000, s.UserProvidedEndValue);
 
@@ -568,14 +569,14 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       Assert.Equal(2000, s.ResultingEnd);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.SetUserParameters(BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.RelativeToDataBoundsOrg, -1000, BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.RelativeToDataBoundsOrg, 2000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
       Assert.Equal(2000, s.UserProvidedEndValue);
 
@@ -583,8 +584,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.AutoTempFixed, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.AutoTempFixed, s.EndRescaling);
       Assert.Equal(500, s.UserProvidedOrgValue);
@@ -596,8 +597,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       Assert.Equal(2000, s.ResultingEnd);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
     }
 
     [Fact]
@@ -607,14 +608,14 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.SetUserParameters(BoundaryRescaling.Fixed, BoundariesRelativeTo.RelativeToDataBoundsOrg, -1000, BoundaryRescaling.Fixed, BoundariesRelativeTo.RelativeToDataBoundsOrg, 2000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
       Assert.Equal(2000, s.UserProvidedEndValue);
 
@@ -622,8 +623,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Fixed, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Fixed, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -633,8 +634,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Fixed, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Fixed, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -644,8 +645,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Fixed, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Fixed, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -659,14 +660,14 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.SetUserParameters(BoundaryRescaling.FixedManually, BoundariesRelativeTo.RelativeToDataBoundsOrg, -1000, BoundaryRescaling.FixedManually, BoundariesRelativeTo.RelativeToDataBoundsOrg, 2000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
       Assert.Equal(2000, s.UserProvidedEndValue);
 
@@ -674,8 +675,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedManually, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedManually, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -685,8 +686,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedManually, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedManually, s.EndRescaling);
       Assert.Equal(500, s.UserProvidedOrgValue);
@@ -696,8 +697,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedManually, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedManually, s.EndRescaling);
       Assert.Equal(500, s.UserProvidedOrgValue);
@@ -715,8 +716,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.FixedZoomable, BoundariesRelativeTo.RelativeToDataBoundsOrg, -1000, BoundaryRescaling.FixedZoomable, BoundariesRelativeTo.RelativeToDataBoundsOrg, 2000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
       Assert.Equal(2000, s.UserProvidedEndValue);
 
@@ -724,8 +725,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -735,8 +736,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -746,8 +747,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -765,8 +766,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 0, BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 1000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(0, s.UserProvidedOrgValue);
       Assert.Equal(1000, s.UserProvidedEndValue);
 
@@ -774,8 +775,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1200, 2000);
       Assert.Equal(1200, s.ResultingOrg);
       Assert.Equal(2200, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -785,8 +786,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(800, 2000);
       Assert.Equal(800, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -796,8 +797,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 1800);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -807,8 +808,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2200);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2200, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
 
@@ -819,8 +820,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, -200, BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 1000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed); // can go down to 800
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed); // can go down to 800
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(-200, s.UserProvidedOrgValue);
@@ -829,8 +830,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 200, BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 1000);
       Assert.Equal(1200, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(200, s.UserProvidedOrgValue);
@@ -839,8 +840,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 0, BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 800);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -849,8 +850,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 0, BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 1200);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2200, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -866,7 +867,7 @@ namespace AltaxoTest.Graph.Scales.Rescaling
           Assert.Equal(Math.Max(1000, 1000 + i), s.ResultingOrg);
           Assert.Equal(Math.Max(2000, 2000 + j), s.ResultingEnd);
           Assert.Equal(!(i < 0), s.IsResultingOrgFixed); // can go up only if i<0
-          Assert.Equal(false, s.IsResultingEndFixed);
+          Assert.False(s.IsResultingEndFixed);
           Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
           Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
           Assert.Equal(i, s.UserProvidedOrgValue);
@@ -884,8 +885,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(100, s.UserProvidedOrgValue);
@@ -899,8 +900,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2200, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed); // because ResultingOrg can go down to 800
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed); // because ResultingOrg can go down to 800
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(-200, s.UserProvidedOrgValue);
@@ -914,8 +915,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(1200, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(200, s.UserProvidedOrgValue);
@@ -933,8 +934,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 0, BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 1000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(0, s.UserProvidedOrgValue);
       Assert.Equal(1000, s.UserProvidedEndValue);
 
@@ -942,8 +943,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(800, 2000);
       Assert.Equal(800, s.ResultingOrg);
       Assert.Equal(1800, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -953,8 +954,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1200, 2000);
       Assert.Equal(1200, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed); // because it can go up to 2200
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed); // because it can go up to 2200
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -964,8 +965,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 1800);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(1800, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed); // because it can go up to 2000
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed); // because it can go up to 2000
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -975,8 +976,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2200);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -989,8 +990,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, -200, BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 1000);
       Assert.Equal(800, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed); // can go down to 800
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed); // can go down to 800
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(-200, s.UserProvidedOrgValue);
@@ -999,8 +1000,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 200, BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 1000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(200, s.UserProvidedOrgValue);
@@ -1009,8 +1010,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 0, BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 800);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(1800, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -1019,8 +1020,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 0, BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsOrg, 1200);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed); // can go up to 2200
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed); // can go up to 2200
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(0, s.UserProvidedOrgValue);
@@ -1035,7 +1036,7 @@ namespace AltaxoTest.Graph.Scales.Rescaling
 
           Assert.Equal(Math.Min(1000, 1000 + i), s.ResultingOrg);
           Assert.Equal(Math.Min(2000, 2000 + j), s.ResultingEnd);
-          Assert.Equal(false, s.IsResultingOrgFixed);
+          Assert.False(s.IsResultingOrgFixed);
           Assert.Equal(!(j > 0), s.IsResultingEndFixed); // can go down only if j>0
           Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
           Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
@@ -1055,8 +1056,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 4000);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(4000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(800, s.UserProvidedOrgValue);
@@ -1070,8 +1071,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(800, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed); // because ResultingEnd can go up to 2200
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed); // because ResultingEnd can go up to 2200
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(-200, s.UserProvidedOrgValue);
@@ -1085,8 +1086,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(1800, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(200, s.UserProvidedOrgValue);
@@ -1105,26 +1106,26 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.OnDataBoundsChanged(1000, 4000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(4000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.OnDataBoundsChanged(-1000, -500);
       Assert.Equal(-1000, s.ResultingOrg);
       Assert.Equal(-500, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.OnUserZoomed(100, 200);
       Assert.Equal(100, s.ResultingOrg);
       Assert.Equal(200, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(600, s.UserProvidedOrgValue);
       Assert.Equal(700, s.UserProvidedEndValue);
       Assert.Equal(BoundaryRescaling.AutoTempFixed, s.OrgRescaling);
@@ -1134,8 +1135,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(-1000, s.ResultingOrg);
       Assert.Equal(-500, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
 
@@ -1143,8 +1144,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(-1000, s.ResultingOrg);
       Assert.Equal(-500, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
 
@@ -1152,8 +1153,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.Auto, BoundariesRelativeTo.RelativeToDataBoundsEnd, 5000, BoundaryRescaling.Auto, BoundariesRelativeTo.RelativeToDataBoundsEnd, 6000);
       Assert.Equal(-1000, s.ResultingOrg);
       Assert.Equal(-500, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
     }
@@ -1165,14 +1166,14 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.SetUserParameters(BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.RelativeToDataBoundsEnd, -2000, BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.RelativeToDataBoundsEnd, 1000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(-2000, s.UserProvidedOrgValue);
       Assert.Equal(1000, s.UserProvidedEndValue);
 
@@ -1182,14 +1183,14 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       Assert.Equal(2000, s.ResultingEnd);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.SetUserParameters(BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.RelativeToDataBoundsEnd, -2000, BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.RelativeToDataBoundsEnd, 1000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(-2000, s.UserProvidedOrgValue);
       Assert.Equal(1000, s.UserProvidedEndValue);
 
@@ -1197,8 +1198,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.AutoTempFixed, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.AutoTempFixed, s.EndRescaling);
       Assert.Equal(-500, s.UserProvidedOrgValue);
@@ -1210,8 +1211,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       Assert.Equal(2000, s.ResultingEnd);
       Assert.Equal(BoundaryRescaling.Auto, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Auto, s.EndRescaling);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
     }
 
     [Fact]
@@ -1221,14 +1222,14 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.SetUserParameters(BoundaryRescaling.Fixed, BoundariesRelativeTo.RelativeToDataBoundsEnd, -2000, BoundaryRescaling.Fixed, BoundariesRelativeTo.RelativeToDataBoundsEnd, 1000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(-2000, s.UserProvidedOrgValue);
       Assert.Equal(1000, s.UserProvidedEndValue);
 
@@ -1236,8 +1237,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Fixed, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Fixed, s.EndRescaling);
       Assert.Equal(-2000, s.UserProvidedOrgValue);
@@ -1247,8 +1248,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Fixed, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Fixed, s.EndRescaling);
       Assert.Equal(-2000, s.UserProvidedOrgValue);
@@ -1258,8 +1259,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.Fixed, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.Fixed, s.EndRescaling);
       Assert.Equal(-2000, s.UserProvidedOrgValue);
@@ -1273,14 +1274,14 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
 
       s.SetUserParameters(BoundaryRescaling.FixedManually, BoundariesRelativeTo.RelativeToDataBoundsEnd, -2000, BoundaryRescaling.FixedManually, BoundariesRelativeTo.RelativeToDataBoundsEnd, 1000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(-2000, s.UserProvidedOrgValue);
       Assert.Equal(1000, s.UserProvidedEndValue);
 
@@ -1288,8 +1289,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedManually, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedManually, s.EndRescaling);
       Assert.Equal(-2000, s.UserProvidedOrgValue);
@@ -1299,8 +1300,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedManually, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedManually, s.EndRescaling);
       Assert.Equal(-500, s.UserProvidedOrgValue);
@@ -1310,8 +1311,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedManually, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedManually, s.EndRescaling);
       Assert.Equal(-500, s.UserProvidedOrgValue);
@@ -1329,8 +1330,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.FixedZoomable, BoundariesRelativeTo.RelativeToDataBoundsEnd, -2000, BoundaryRescaling.FixedZoomable, BoundariesRelativeTo.RelativeToDataBoundsEnd, 1000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(-2000, s.UserProvidedOrgValue);
       Assert.Equal(1000, s.UserProvidedEndValue);
 
@@ -1338,8 +1339,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2000);
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.EndRescaling);
       Assert.Equal(-2000, s.UserProvidedOrgValue);
@@ -1349,8 +1350,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.EndRescaling);
       Assert.Equal(-2000, s.UserProvidedOrgValue);
@@ -1360,8 +1361,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(0, s.ResultingOrg);
       Assert.Equal(3000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.FixedZoomable, s.EndRescaling);
       Assert.Equal(-2000, s.UserProvidedOrgValue);
@@ -1379,8 +1380,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, -1000, BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, 0);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
       Assert.Equal(0, s.UserProvidedEndValue);
 
@@ -1388,8 +1389,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1200, 2000);
       Assert.Equal(1200, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed); // can go down to 1000
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed); // can go down to 1000
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -1399,8 +1400,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(800, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -1410,8 +1411,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 1800);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(1800, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed); // can go down to 800
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed); // can go down to 800
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -1421,8 +1422,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2200);
       Assert.Equal(1200, s.ResultingOrg);
       Assert.Equal(2200, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
 
@@ -1433,8 +1434,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, -1200, BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, 0);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed); // can go down to 800
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed); // can go down to 800
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(-1200, s.UserProvidedOrgValue);
@@ -1443,8 +1444,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, -800, BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, 0);
       Assert.Equal(1200, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(-800, s.UserProvidedOrgValue);
@@ -1453,8 +1454,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, -1000, BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, -200);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -1463,8 +1464,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, -1000, BoundaryRescaling.GreaterOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, 200);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2200, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -1480,7 +1481,7 @@ namespace AltaxoTest.Graph.Scales.Rescaling
           Assert.Equal(Math.Max(1000, 1000 + i), s.ResultingOrg);
           Assert.Equal(Math.Max(2000, 2000 + j), s.ResultingEnd);
           Assert.Equal(!(i < 0), s.IsResultingOrgFixed); // can go up only if i<0
-          Assert.Equal(false, s.IsResultingEndFixed);
+          Assert.False(s.IsResultingEndFixed);
           Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
           Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
           Assert.Equal(-1000 + i, s.UserProvidedOrgValue);
@@ -1494,8 +1495,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 1600);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(1600, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(-900, s.UserProvidedOrgValue);
@@ -1509,8 +1510,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2200, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed); // because ResultingOrg can go down to 800
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed); // because ResultingOrg can go down to 800
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(-1200, s.UserProvidedOrgValue);
@@ -1524,8 +1525,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(1200, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.GreaterOrEqual, s.EndRescaling);
       Assert.Equal(-800, s.UserProvidedOrgValue);
@@ -1543,8 +1544,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, -1000, BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, 0);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
       Assert.Equal(0, s.UserProvidedEndValue);
 
@@ -1552,8 +1553,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(800, 2000);
       Assert.Equal(800, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -1563,8 +1564,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1200, 2000);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -1574,8 +1575,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 1800);
       Assert.Equal(800, s.ResultingOrg);
       Assert.Equal(1800, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -1585,8 +1586,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnDataBoundsChanged(1000, 2200);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2200, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -1599,8 +1600,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, -1200, BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, 0);
       Assert.Equal(800, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed); // can go down to 800
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed); // can go down to 800
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(-1200, s.UserProvidedOrgValue);
@@ -1609,8 +1610,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, -800, BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, 0);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(-800, s.UserProvidedOrgValue);
@@ -1619,8 +1620,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, -1000, BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, -200);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(1800, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -1629,8 +1630,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.SetUserParameters(BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, -1000, BoundaryRescaling.LessOrEqual, BoundariesRelativeTo.RelativeToDataBoundsEnd, 200);
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed); // can go up to 2200
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed); // can go up to 2200
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(-1000, s.UserProvidedOrgValue);
@@ -1645,7 +1646,7 @@ namespace AltaxoTest.Graph.Scales.Rescaling
 
           Assert.Equal(Math.Min(1000, 1000 + i), s.ResultingOrg);
           Assert.Equal(Math.Min(2000, 2000 + j), s.ResultingEnd);
-          Assert.Equal(false, s.IsResultingOrgFixed);
+          Assert.False(s.IsResultingOrgFixed);
           Assert.Equal(!(j > 0), s.IsResultingEndFixed); // can go down only if j>0
           Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
           Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
@@ -1665,8 +1666,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserZoomed(1500, 4000);
       Assert.Equal(1500, s.ResultingOrg);
       Assert.Equal(4000, s.ResultingEnd);
-      Assert.Equal(true, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.True(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(-200, s.UserProvidedOrgValue);
@@ -1680,8 +1681,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(800, s.ResultingOrg);
       Assert.Equal(2000, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(false, s.IsResultingEndFixed); // because ResultingEnd can go up to 2200
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.False(s.IsResultingEndFixed); // because ResultingEnd can go up to 2200
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(-1200, s.UserProvidedOrgValue);
@@ -1695,8 +1696,8 @@ namespace AltaxoTest.Graph.Scales.Rescaling
       s.OnUserRescaled();
       Assert.Equal(1000, s.ResultingOrg);
       Assert.Equal(1800, s.ResultingEnd);
-      Assert.Equal(false, s.IsResultingOrgFixed);
-      Assert.Equal(true, s.IsResultingEndFixed);
+      Assert.False(s.IsResultingOrgFixed);
+      Assert.True(s.IsResultingEndFixed);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.OrgRescaling);
       Assert.Equal(BoundaryRescaling.LessOrEqual, s.EndRescaling);
       Assert.Equal(-800, s.UserProvidedOrgValue);

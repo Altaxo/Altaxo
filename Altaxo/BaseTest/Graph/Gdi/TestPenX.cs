@@ -40,9 +40,7 @@ namespace Altaxo.Drawing
 
   public class TestPenX
   {
-
-
-    public void Tester(PenX pen1, PenX pen2, string comment)
+    protected void Tester(PenX pen1, PenX pen2, string comment)
     {
       Assert.True(pen1 == pen2, comment);
       Assert.False(pen1 != pen2, comment);
@@ -53,7 +51,7 @@ namespace Altaxo.Drawing
       Assert.Equal(pen1.GetHashCode(), pen2.GetHashCode());
     }
 
-    public void Tester(PenXEnv pen1, PenXEnv pen2, string comment)
+    protected void Tester(PenXEnv pen1, PenXEnv pen2, string comment)
     {
       Assert.True(pen1 == pen2, comment);
       Assert.False(pen1 != pen2, comment);
