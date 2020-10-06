@@ -1,17 +1,17 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 
 namespace System.IO.Compression
 {
-  [TestFixture]
-  public class ZipConformityTest : ZipTestBase
+
+  public class ZipConformityTest : ZipTestBase, IDisposable
   {
     private const int _numberOfEntries = 16;
     private int _bufferSize = 1024 * 8;
     private string _zipFile1Name;
     private string _zipFile2Name;
 
-    [SetUp]
-    public void Setup()
+
+    public ZipConformityTest()
     {
       _zipFile1Name = Path.GetTempFileName();
       _zipFile2Name = Path.GetTempFileName();
@@ -56,8 +56,8 @@ namespace System.IO.Compression
       }
     }
 
-    [TearDown]
-    public void Teardown()
+    // [TearDown]
+    public void Dispose()
     {
       try
       {
@@ -79,7 +79,7 @@ namespace System.IO.Compression
     }
 
 
-    [Test]
+    [Fact]
     public void Test_BothAreTheSame()
     {
       CompareArchives_UsingOriginal(_zipFile1Name, _zipFile2Name, _numberOfEntries);
