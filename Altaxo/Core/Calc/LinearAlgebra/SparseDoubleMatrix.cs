@@ -18,8 +18,8 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <summary>Sparse matrix class</summary>
   public class SparseDoubleMatrix : IROSparseMatrix<double>, IMatrix<double>
   {
-    private static int[] _emptyIntArray = new int[0];
-    private static double[] _emptyDoubleArray = new double[0];
+    private static readonly int[] _emptyIntArray = new int[0];
+    private static readonly double[] _emptyDoubleArray = new double[0];
     private const int Delta = 1;
     private int n, m;
     private double[][] items;

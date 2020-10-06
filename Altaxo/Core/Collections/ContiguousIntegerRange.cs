@@ -285,8 +285,11 @@ namespace Altaxo.Collections
     {
       var lastInclusive = LastInclusive;
 
-      for (int i = _start; i <= lastInclusive; ++i)
+      for (int i = _start; i < lastInclusive; ++i) // use < instead of <= in order to avoid problems if lastInclusive==int.MaxValue
         yield return i;
+
+      if (_start <= lastInclusive)
+        yield return lastInclusive;
     }
 
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()

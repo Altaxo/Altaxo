@@ -53,7 +53,7 @@ namespace Altaxo.Calc.RootFinding
 
     protected static string MessageInadequateAlgorithm { get { return StringResources.AltaxoCore.GetString(SRK_InadequateAlgorithm); } }
 
-    protected static double double_Accuracy = 9.99200722162641E-16;
+    protected const double double_Accuracy = 9.99200722162641E-16;
 
     #endregion Constants
 

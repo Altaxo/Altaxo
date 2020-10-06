@@ -25,6 +25,8 @@
  */
 
 using System;
+using System.Threading;
+using Altaxo.Units.Length;
 
 namespace Altaxo.Calc.Probability
 {
@@ -39,7 +41,7 @@ namespace Altaxo.Calc.Probability
     /// generated numbers of different distribution instances are independent from each other. (Many generators with the same seed value
     /// will create the same numbers).
     /// </summary>
-    private static Generator _defaultGenerator = new StandardGenerator();
+    private static readonly ThreadLocal<Generator> _defaultGenerator = new ThreadLocal<Generator>(() => new StandardGenerator());
 
     #region instance fields
 
@@ -67,7 +69,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return _defaultGenerator;
+        return _defaultGenerator.Value!;
       }
     }
 

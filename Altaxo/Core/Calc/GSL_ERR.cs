@@ -74,7 +74,7 @@ namespace Altaxo.Calc
 
     #region Fixed static values
 
-    private static GSL_ERROR _sSuccess = new GSL_ERROR("Success", GSL_ERR.GSL_SUCCESS, false);
+    private static readonly GSL_ERROR _sSuccess = new GSL_ERROR("Success", GSL_ERR.GSL_SUCCESS, false);
 
     public static GSL_ERROR SUCCESS
     {
@@ -84,7 +84,7 @@ namespace Altaxo.Calc
       }
     }
 
-    private static GSL_ERROR _sContinue = new GSL_ERROR("Continue", GSL_ERR.GSL_CONTINUE, false);
+    private static readonly GSL_ERROR _sContinue = new GSL_ERROR("Continue", GSL_ERR.GSL_CONTINUE, false);
 
     public static GSL_ERROR CONTINUE
     {

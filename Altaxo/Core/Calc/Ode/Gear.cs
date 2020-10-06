@@ -174,7 +174,7 @@ namespace Altaxo.Calc.Ode
     }
 
     // Vector l for Nordsieck algorithm (orders 1 to 5)
-    private static double[][] l = new double[6][] {
+    private static readonly double[][] l = new double[6][] {
             new double[] { 1, 1 },
             new double[] { 2 / 3d, 1, 1 / 3d },
             new double[] { 6 / 11d, 1, 6 / 11d, 1 / 11d },
@@ -185,7 +185,7 @@ namespace Altaxo.Calc.Ode
 
     // Vector Beta for Nordsieck algorithm (orders 1 to 5)
     //private static double[] b = new double[] { 720 / 1764d, 1, 1624 / 1764d, 735 / 1764d, 175 / 1764d, 21 / 1764d, 1/1764d };
-    private static double[] b = new double[] { 1.0d, 2.0d / 3.0d, 6.0d / 11.0d, 24.0d / 50.0d, 120.0d / 274.0d, 720.0 / 1764.0d };
+    private static readonly double[] b = new double[] { 1.0d, 2.0d / 3.0d, 6.0d / 11.0d, 24.0d / 50.0d, 120.0d / 274.0d, 720.0 / 1764.0d };
 
     /// <summary>
     /// Implementation of Gear's BDF method with dynamically changed step size and order. Order changes between 1 and 3.

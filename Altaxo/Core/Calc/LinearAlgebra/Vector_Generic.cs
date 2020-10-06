@@ -37,7 +37,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <typeparam name="T"></typeparam>
   public class Vector<T> : ICloneable, IFormattable, IVector<T> where T : IEquatable<T>
   {
-    private static T[] _emptyArray = new T[0];
+    private static readonly T[] _emptyArray = new T[0];
     protected T[] _array;
 
     #region Constructors

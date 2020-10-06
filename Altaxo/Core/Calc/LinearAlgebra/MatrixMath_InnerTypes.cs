@@ -1090,7 +1090,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     public class LeftSpineJaggedArrayMatrix<T> : IMatrix<T>, IBottomExtensibleMatrix<T> where T : struct
     {
-      private static T[][] _emptyArray = new T[0][];
+      private static readonly T[][] _emptyArray = new T[0][];
       /// <summary>The rows of the matrix = number of double[] arrays in it.</summary>
       private int _rows;
 

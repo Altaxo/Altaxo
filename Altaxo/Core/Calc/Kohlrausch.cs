@@ -26,6 +26,7 @@ using System;
 
 namespace Altaxo.Calc
 {
+  using System.Threading;
   using LinearAlgebra;
 
   /// <summary>
@@ -625,8 +626,8 @@ namespace Altaxo.Calc
 
     #region Interpolation
 
-    private static System.Threading.ThreadLocal<Interpolation.BivariateAkimaSpline> _imspline = new System.Threading.ThreadLocal<Interpolation.BivariateAkimaSpline>(CreateImaginaryPartSpline);
-    private static System.Threading.ThreadLocal<Interpolation.BivariateAkimaSpline> _respline = new System.Threading.ThreadLocal<Interpolation.BivariateAkimaSpline>(CreateRealPartSpline);
+    private static readonly ThreadLocal<Interpolation.BivariateAkimaSpline> _imspline = new ThreadLocal<Interpolation.BivariateAkimaSpline>(CreateImaginaryPartSpline);
+    private static readonly ThreadLocal<Interpolation.BivariateAkimaSpline> _respline = new ThreadLocal<Interpolation.BivariateAkimaSpline>(CreateRealPartSpline);
 
     private static Interpolation.BivariateAkimaSpline CreateImaginaryPartSpline()
     {
@@ -656,7 +657,7 @@ namespace Altaxo.Calc
     /// re is the real part of the fourier transformed negative first derivative of the Kohlrausch function.
     /// (in Mathematica notation): Re[Integrate[-D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]].
     /// </summary>
-    private static double[][] _redata = new double[][]{
+    private static readonly double[][] _redata = new double[][]{
 new double[]{
 -148.4131591025766,-146.11222634120347,-143.84696623584259,-141.61682573322432,-139.42126035437516,-137.25973406168575,-135.13171912803952,-133.03669600797051,-130.9741532108186,-128.94358717585138,-126.94450214932196,-124.97641006343288,
 -123.03883041717654,-121.13129015902297,-119.25332357142641,-117.40447215712239,-115.58428452718766,-113.7923162908356,-112.02812994692015,-110.29129477712178,-108.5813867407896,-106.89798837141365,-105.24068867470233,
@@ -1792,7 +1793,7 @@ new double[]{
     /// (in Mathematica notation): Im[Integrate[D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]].
     /// </summary>
 
-    private static double[][] _imdata = new double[][]{
+    private static readonly double[][] _imdata = new double[][]{
 new double[]{
 -142.96157639728716,-140.676268635914,-138.42663353055315,-136.21211802793485,-134.03217764908573,-131.88627635639631,-129.77388642275008,-127.69448830268105,-125.64757050552915,-123.63262947056194,-121.64916944403251,-119.69670235814343,
 -117.77474771188709,-115.88283245373351,-114.02049086613695,-112.18726445183293,-110.38270182189821,-108.60635858554615,-106.85779724163069,-105.13658707183232,-103.44230403550014,-101.77453066612419,-100.13285596941287,

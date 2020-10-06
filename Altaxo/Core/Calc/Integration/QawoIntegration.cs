@@ -60,7 +60,7 @@ namespace Altaxo.Calc.Integration
   {
     #region offical C# interface
 
-    protected static int _defaultOscTableLength = 20;
+    protected const int _defaultOscTableLength = 20;
     protected bool _debug;
     protected gsl_integration_workspace? _workSpace;
     protected gsl_integration_qawo_table? _qawoTable;

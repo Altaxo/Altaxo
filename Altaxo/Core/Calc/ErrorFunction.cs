@@ -303,7 +303,7 @@ namespace Altaxo.Calc
       /// <summary>
       /// Number of terms for the Erf function
       /// </summary>
-      private static int nterf = initds(erfcs, 21, 0.5 * DBL_EPSILON * 0.1);
+      private static readonly int nterf = initds(erfcs, 21, 0.5 * DBL_EPSILON * 0.1);
 
       /// <summary>
       /// Erf(x) calculates the double precision error function for double
@@ -795,7 +795,7 @@ L40:
       // static double MAXNUM = double.NaN;
 
       /* sqrt(2pi) */
-      private static double s2pi = 2.50662827463100050242E0;
+      private static readonly double s2pi = 2.50662827463100050242E0;
 
       /* approximation for 0 <= |y - 0.5| <= 3/8 */
 
@@ -977,7 +977,7 @@ L40:
       //----------------------------------------------------------------------
       // Coefficients for R(9,9) approximation for  |x| < 2.5
       //----------------------------------------------------------------------
-      private static double[] p1 =
+      private static readonly double[] p1 =
   {
     -2.6902039878870478241e-12, 4.18572065374337710778e-10,
     -1.34848304455939419963e-8, 9.28264872583444852976e-7,
@@ -986,7 +986,7 @@ L40:
     -0.138868086253931995101,   1.00000000000000000004
   };
 
-      private static double[] q1 =
+      private static readonly double[] q1 =
   {
     1.71257170854690554214e-10, 1.19266846372297253797e-8,
     4.32287827678631772231e-7,  1.03867633767414421898e-5,
@@ -999,7 +999,7 @@ L40:
       // for  x in [2.5, 3.5)
       //----------------------------------------------------------------------
 
-      private static double[] p2 =
+      private static readonly double[] p2 =
   {
     -1.7095380470085549493,  -37.9258977271042880786,
     26.1935631268825992835,   12.5808703738951251885,
@@ -1008,7 +1008,7 @@ L40:
     -17.3717177843672791149,    0.500260183622027967838
   };
 
-      private static double[] q2 =
+      private static readonly double[] q2 =
   {
     1.82180093313514478378, 1100.67081034515532891,
     -7.08465686676573000364,  453.642111102577727153,
@@ -1022,7 +1022,7 @@ L40:
       // for  x in [3.5, 5.0]
       //----------------------------------------------------------------------
 
-      private static double[] p3 =
+      private static readonly double[] p3 =
   {
     -4.55169503255094815112,  -18.6647123338493852582,
     -7.36315669126830526754,  -66.8407240337696756838,
@@ -1031,7 +1031,7 @@ L40:
     -1.48432341823343965307,    0.499999810924858824981
   };
 
-      private static double[] q3 =
+      private static readonly double[] q3 =
   {
     44.7820908025971749852,    99.8607198039452081913,
     14.0238373126149385228,  3488.17758822286353588,
@@ -1045,7 +1045,7 @@ L40:
       // for  |x| > 5.0
       //----------------------------------------------------------------------
 
-      private static double[] p4 =
+      private static readonly double[] p4 =
   {
     -8.11753647558432685797,  -38.404388247745445343,
     -22.3787669028751886675,   -28.8301992467056105854,
@@ -1054,7 +1054,7 @@ L40:
     -2.50000000088955834952,    0.5000000000000004884
   };
 
-      private static double[] q4 =
+      private static readonly double[] q4 =
   {
     269.382300417238816428,     50.4198958742465752861,
     61.1539671480115846173,   208.210246935564547889,

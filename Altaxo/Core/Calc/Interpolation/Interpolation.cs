@@ -134,7 +134,7 @@ namespace Altaxo.Calc.Interpolation
 
   public static class EmptyArrays
   {
-    private static ConcurrentDictionary<Type, object> _dict = new ConcurrentDictionary<Type, object>();
+    private static readonly ConcurrentDictionary<Type, object> _dict = new ConcurrentDictionary<Type, object>();
     public static T[] Empty<T>()
     {
       if (_dict.TryGetValue(typeof(T), out var o))

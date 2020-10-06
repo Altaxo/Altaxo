@@ -55,6 +55,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Altaxo.Calc
 {
@@ -118,30 +119,25 @@ namespace Altaxo.Calc
 
     //---------------------------------------------------------------------------------------------
 
-    private static bool _workspaceFLocked = false;
-    private static ComplexFloat[] _workspaceF = new ComplexFloat[0];
+    private static readonly ThreadLocal<ComplexFloat[]> _workspaceF = new ThreadLocal<ComplexFloat[]>();
 
     private static ComplexFloat[] LockWorkspaceF(int length)
     {
-      if (!(_workspaceFLocked == false))
-        throw new InvalidProgramException();
-      _workspaceFLocked = true;
-      if (length >= _workspaceF.Length)
+      if (_workspaceF.IsValueCreated)
       {
-        _workspaceF = new ComplexFloat[length];
+        if (length > _workspaceF.Value!.Length)
+        {
+          _workspaceF.Value = new ComplexFloat[length];
+        }
       }
-      return _workspaceF;
+      else
+      {
+        _workspaceF.Value = new ComplexFloat[length];
+      }
+      return _workspaceF.Value;
     }
 
-    private static void UnlockWorkspaceF(ref ComplexFloat[]? workspace)
-    {
-      if (!(_workspaceF == workspace))
-        throw new InvalidProgramException();
-      if (!(_workspaceFLocked == true))
-        throw new InvalidProgramException();
-      _workspaceFLocked = false;
-      workspace = null;
-    }
+
 
     //---------------------------------------------------------------------------------------------
 
@@ -207,8 +203,6 @@ namespace Altaxo.Calc
       {
         array[i] = workspace[i];
       }
-
-      ComplexArray.UnlockWorkspaceF(ref workspace);
     }
 
     //---------------------------------------------------------------------------------------------

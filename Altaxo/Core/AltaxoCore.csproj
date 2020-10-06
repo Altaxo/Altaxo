@@ -20,6 +20,13 @@
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Analyzer\NullComparisonAnalyzer\NullComparisonAnalyzer.csproj"
+                      PrivateAssets="all"
+                      ReferenceOutputAssembly="false"
+                      OutputItemType="Analyzer"
+                      />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="Calc\LinearAlgebra\MatrixMath_BinaryOperations.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>MatrixMath_BinaryOperations.generated.cs</LastGenOutput>
