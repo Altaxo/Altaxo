@@ -24,17 +24,17 @@
 
 using System;
 using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
-  [TestFixture]
+
   public class FloatCholeskyDecompTest
   {
-    private static FloatCholeskyDecomp cd;
-    private const double TOLERENCE = 0.001;
+    private FloatCholeskyDecomp cd;
+    private const double TOLERANCE = 0.001;
 
-    static FloatCholeskyDecompTest()
+    public FloatCholeskyDecompTest()
     {
       var a = new FloatMatrix(3)
       {
@@ -51,41 +51,41 @@ namespace AltaxoTest.Calc.LinearAlgebra
       cd = new FloatCholeskyDecomp(a);
     }
 
-    [Test]
+    [Fact]
     public void CDWide()
     {
-      Assert.Throws(typeof(NotSquareMatrixException), () =>
+      Assert.Throws<NotSquareMatrixException>(() =>
       {
         var wm = new FloatMatrix(2, 3);
         var wcd = new FloatCholeskyDecomp(wm);
       });
     }
 
-    [Test]
+    [Fact]
     public void CDLong()
     {
-      Assert.Throws(typeof(NotSquareMatrixException), () =>
+      Assert.Throws<NotSquareMatrixException>(() =>
       {
         var lm = new FloatMatrix(3, 2);
         var lcd = new FloatCholeskyDecomp(lm);
       });
     }
 
-    [Test]
+    [Fact]
     public void FactorTest()
     {
-      Assert.AreEqual(cd.Factor[0, 0], 1.414, TOLERENCE);
-      Assert.AreEqual(cd.Factor[0, 1], 0.000, TOLERENCE);
-      Assert.AreEqual(cd.Factor[0, 2], 0.000, TOLERENCE);
-      Assert.AreEqual(cd.Factor[1, 0], 0.707, TOLERENCE);
-      Assert.AreEqual(cd.Factor[1, 1], 1.225, TOLERENCE);
-      Assert.AreEqual(cd.Factor[1, 2], 0.000, TOLERENCE);
-      Assert.AreEqual(cd.Factor[2, 0], 0.000, TOLERENCE);
-      Assert.AreEqual(cd.Factor[2, 1], 0.000, TOLERENCE);
-      Assert.AreEqual(cd.Factor[2, 2], 1.732, TOLERENCE);
+      AssertEx.Equal(cd.Factor[0, 0], 1.414, TOLERANCE);
+      AssertEx.Equal(cd.Factor[0, 1], 0.000, TOLERANCE);
+      AssertEx.Equal(cd.Factor[0, 2], 0.000, TOLERANCE);
+      AssertEx.Equal(cd.Factor[1, 0], 0.707, TOLERANCE);
+      AssertEx.Equal(cd.Factor[1, 1], 1.225, TOLERANCE);
+      AssertEx.Equal(cd.Factor[1, 2], 0.000, TOLERANCE);
+      AssertEx.Equal(cd.Factor[2, 0], 0.000, TOLERANCE);
+      AssertEx.Equal(cd.Factor[2, 1], 0.000, TOLERANCE);
+      AssertEx.Equal(cd.Factor[2, 2], 1.732, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void NonSymmFactorTest()
     {
       var b = new FloatMatrix(3)
@@ -101,21 +101,21 @@ namespace AltaxoTest.Calc.LinearAlgebra
         [2, 2] = 3
       };
       var dcd = new FloatCholeskyDecomp(b);
-      Assert.AreEqual(dcd.Factor[0, 0], 1.414, TOLERENCE);
-      Assert.AreEqual(dcd.Factor[0, 1], 0.000, TOLERENCE);
-      Assert.AreEqual(dcd.Factor[0, 2], 0.000, TOLERENCE);
-      Assert.AreEqual(dcd.Factor[1, 0], 0.707, TOLERENCE);
-      Assert.AreEqual(dcd.Factor[1, 1], 1.225, TOLERENCE);
-      Assert.AreEqual(dcd.Factor[1, 2], 0.000, TOLERENCE);
-      Assert.AreEqual(dcd.Factor[2, 0], 0.000, TOLERENCE);
-      Assert.AreEqual(dcd.Factor[2, 1], 0.000, TOLERENCE);
-      Assert.AreEqual(dcd.Factor[2, 2], 1.732, TOLERENCE);
+      AssertEx.Equal(dcd.Factor[0, 0], 1.414, TOLERANCE);
+      AssertEx.Equal(dcd.Factor[0, 1], 0.000, TOLERANCE);
+      AssertEx.Equal(dcd.Factor[0, 2], 0.000, TOLERANCE);
+      AssertEx.Equal(dcd.Factor[1, 0], 0.707, TOLERANCE);
+      AssertEx.Equal(dcd.Factor[1, 1], 1.225, TOLERANCE);
+      AssertEx.Equal(dcd.Factor[1, 2], 0.000, TOLERANCE);
+      AssertEx.Equal(dcd.Factor[2, 0], 0.000, TOLERANCE);
+      AssertEx.Equal(dcd.Factor[2, 1], 0.000, TOLERANCE);
+      AssertEx.Equal(dcd.Factor[2, 2], 1.732, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void IsPositiveDefiniteTest()
     {
-      Assert.IsTrue(cd.IsPositiveDefinite);
+      Assert.True(cd.IsPositiveDefinite);
       var b = new FloatMatrix(3)
       {
         [0, 0] = -2,
@@ -129,17 +129,17 @@ namespace AltaxoTest.Calc.LinearAlgebra
         [2, 2] = 3
       };
       var dcd = new FloatCholeskyDecomp(b);
-      Assert.IsFalse(dcd.IsPositiveDefinite);
+      Assert.False(dcd.IsPositiveDefinite);
     }
 
-    [Test]
+    [Fact]
     public void GetDeterminantTest()
     {
       double det = cd.GetDeterminant();
-      Assert.AreEqual(det, 9, TOLERENCE);
+      AssertEx.Equal(det, 9, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void SolveMatrix()
     {
       var b = new FloatMatrix(3)
@@ -155,15 +155,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
         [2, 2] = 25
       };
       FloatMatrix x = cd.Solve(b);
-      Assert.AreEqual(x[0, 0], -3.000, TOLERENCE);
-      Assert.AreEqual(x[0, 1], -3.000, TOLERENCE);
-      Assert.AreEqual(x[0, 2], -3.000, TOLERENCE);
-      Assert.AreEqual(x[1, 0], 8.000, TOLERENCE);
-      Assert.AreEqual(x[1, 1], 8.000, TOLERENCE);
-      Assert.AreEqual(x[1, 2], 8.000, TOLERENCE);
-      Assert.AreEqual(x[2, 0], 8.333, TOLERENCE);
-      Assert.AreEqual(x[2, 1], 8.333, TOLERENCE);
-      Assert.AreEqual(x[2, 2], 8.333, TOLERENCE);
+      AssertEx.Equal(x[0, 0], -3.000, TOLERANCE);
+      AssertEx.Equal(x[0, 1], -3.000, TOLERANCE);
+      AssertEx.Equal(x[0, 2], -3.000, TOLERANCE);
+      AssertEx.Equal(x[1, 0], 8.000, TOLERANCE);
+      AssertEx.Equal(x[1, 1], 8.000, TOLERANCE);
+      AssertEx.Equal(x[1, 2], 8.000, TOLERANCE);
+      AssertEx.Equal(x[2, 0], 8.333, TOLERANCE);
+      AssertEx.Equal(x[2, 1], 8.333, TOLERANCE);
+      AssertEx.Equal(x[2, 2], 8.333, TOLERANCE);
 
       b = new FloatMatrix(3, 2)
       {
@@ -175,12 +175,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
         [2, 1] = 25
       };
       x = cd.Solve(b);
-      Assert.AreEqual(x[0, 0], -3.000, TOLERENCE);
-      Assert.AreEqual(x[0, 1], -3.000, TOLERENCE);
-      Assert.AreEqual(x[1, 0], 8.000, TOLERENCE);
-      Assert.AreEqual(x[1, 1], 8.000, TOLERENCE);
-      Assert.AreEqual(x[2, 0], 8.333, TOLERENCE);
-      Assert.AreEqual(x[2, 1], 8.333, TOLERENCE);
+      AssertEx.Equal(x[0, 0], -3.000, TOLERANCE);
+      AssertEx.Equal(x[0, 1], -3.000, TOLERANCE);
+      AssertEx.Equal(x[1, 0], 8.000, TOLERANCE);
+      AssertEx.Equal(x[1, 1], 8.000, TOLERANCE);
+      AssertEx.Equal(x[2, 0], 8.333, TOLERANCE);
+      AssertEx.Equal(x[2, 1], 8.333, TOLERANCE);
 
       b = new FloatMatrix(3, 4)
       {
@@ -198,21 +198,21 @@ namespace AltaxoTest.Calc.LinearAlgebra
         [2, 3] = 25
       };
       x = cd.Solve(b);
-      Assert.AreEqual(x[0, 0], -3, TOLERENCE);
-      Assert.AreEqual(x[0, 1], -3, TOLERENCE);
-      Assert.AreEqual(x[0, 2], -3, TOLERENCE);
-      Assert.AreEqual(x[0, 3], -3, TOLERENCE);
-      Assert.AreEqual(x[1, 0], 8, TOLERENCE);
-      Assert.AreEqual(x[1, 1], 8, TOLERENCE);
-      Assert.AreEqual(x[1, 2], 8, TOLERENCE);
-      Assert.AreEqual(x[1, 3], 8, TOLERENCE);
-      Assert.AreEqual(x[2, 0], 8.333, TOLERENCE);
-      Assert.AreEqual(x[2, 1], 8.333, TOLERENCE);
-      Assert.AreEqual(x[2, 2], 8.333, TOLERENCE);
-      Assert.AreEqual(x[2, 3], 8.333, TOLERENCE);
+      AssertEx.Equal(x[0, 0], -3, TOLERANCE);
+      AssertEx.Equal(x[0, 1], -3, TOLERANCE);
+      AssertEx.Equal(x[0, 2], -3, TOLERANCE);
+      AssertEx.Equal(x[0, 3], -3, TOLERANCE);
+      AssertEx.Equal(x[1, 0], 8, TOLERANCE);
+      AssertEx.Equal(x[1, 1], 8, TOLERANCE);
+      AssertEx.Equal(x[1, 2], 8, TOLERANCE);
+      AssertEx.Equal(x[1, 3], 8, TOLERANCE);
+      AssertEx.Equal(x[2, 0], 8.333, TOLERANCE);
+      AssertEx.Equal(x[2, 1], 8.333, TOLERANCE);
+      AssertEx.Equal(x[2, 2], 8.333, TOLERANCE);
+      AssertEx.Equal(x[2, 3], 8.333, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void SolveVector()
     {
       var b = new FloatVector(3)
@@ -222,30 +222,30 @@ namespace AltaxoTest.Calc.LinearAlgebra
         [2] = 25
       };
       FloatVector x = cd.Solve(b);
-      Assert.AreEqual(x[0], -3, TOLERENCE);
-      Assert.AreEqual(x[1], 8, TOLERENCE);
-      Assert.AreEqual(x[2], 8.333, TOLERENCE);
+      AssertEx.Equal(x[0], -3, TOLERANCE);
+      AssertEx.Equal(x[1], 8, TOLERANCE);
+      AssertEx.Equal(x[2], 8.333, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void GetInverseTest()
     {
       FloatMatrix inv = cd.GetInverse();
-      Assert.AreEqual(inv[0, 0], 0.666667, TOLERENCE);
-      Assert.AreEqual(inv[0, 1], -0.333333, TOLERENCE);
-      Assert.AreEqual(inv[0, 2], 0);
-      Assert.AreEqual(inv[1, 0], -0.333333, TOLERENCE);
-      Assert.AreEqual(inv[1, 1], 0.666667, TOLERENCE);
-      Assert.AreEqual(inv[1, 2], 0);
-      Assert.AreEqual(inv[2, 0], 0);
-      Assert.AreEqual(inv[2, 1], 0);
-      Assert.AreEqual(inv[2, 2], 0.333333, TOLERENCE);
+      AssertEx.Equal(inv[0, 0], 0.666667, TOLERANCE);
+      AssertEx.Equal(inv[0, 1], -0.333333, TOLERANCE);
+      Assert.Equal(0, inv[0, 2]);
+      AssertEx.Equal(inv[1, 0], -0.333333, TOLERANCE);
+      AssertEx.Equal(inv[1, 1], 0.666667, TOLERANCE);
+      Assert.Equal(0, inv[1, 2]);
+      Assert.Equal(0, inv[2, 0]);
+      Assert.Equal(0, inv[2, 1]);
+      AssertEx.Equal(inv[2, 2], 0.333333, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void GetInverseNotPositiveDefiniteTest()
     {
-      Assert.Throws(typeof(NotPositiveDefiniteException), () =>
+      Assert.Throws<NotPositiveDefiniteException>(() =>
       {
         var a = new FloatMatrix(3, 3);
         var dcd = new FloatCholeskyDecomp(a);

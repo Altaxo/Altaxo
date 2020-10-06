@@ -24,11 +24,11 @@
 
 using System;
 using Altaxo.Calc.Fourier;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Fourier
 {
-  [TestFixture]
+
   public class TestChirpCorrelationCyclicSplittedComplex
   {
     private const int nLowerLimit = 4;
@@ -41,56 +41,56 @@ namespace AltaxoTest.Calc.Fourier
       _test = new SplittedComplexCorrelationTests(new SplittedComplexCorrelationTests.CorrelationRoutine(ChirpFFT.CyclicCorrelation));
     }
 
-    [Test]
+    [Fact]
     public void Test01BothZero()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestBothZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test02OneZero()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestOneZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test03ReOne_ZeroPos()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestReOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test04OneReOne_OtherRandom()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestOneReOne_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test05OneImOne_OtherRandom()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestOneImOne_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test06ReOne_OnePos_OtherRandom()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestReOne_OnePos_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test07ImOne_OnePos_OtherRandom()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestImOne_OnePos_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test08BothRandom()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
@@ -98,7 +98,7 @@ namespace AltaxoTest.Calc.Fourier
     }
   }
 
-  [TestFixture]
+
   public class TestChirpCorrelationCyclicReal
   {
     private const int nLowerLimit = 4;
@@ -111,42 +111,42 @@ namespace AltaxoTest.Calc.Fourier
       _test = new RealCorrelationTests(new RealCorrelationTests.CorrelationRoutine(ChirpFFT.CyclicCorrelation));
     }
 
-    [Test]
+    [Fact]
     public void Test01BothZero()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestBothZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test02OneZero()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestOneZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test03ReOne_ZeroPos()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestReOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test04OneReOne_OtherRandom()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestOneReOne_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test05ReOne_OnePos_OtherRandom()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestReOne_OnePos_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test06BothRandom()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)

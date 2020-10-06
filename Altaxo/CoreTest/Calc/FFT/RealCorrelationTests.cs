@@ -24,7 +24,7 @@
 
 using System;
 using Altaxo.Calc.Fourier;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Fourier
 {
@@ -80,7 +80,7 @@ namespace AltaxoTest.Calc.Fourier
 
       for (int i = 0; i < n; i++)
       {
-        Assert.AreEqual(0, re[i], max_corr_error(n), "Correlation of zero should give re=0");
+        AssertEx.Equal(0, re[i], max_corr_error(n), "Correlation of zero should give re=0");
       }
     }
 
@@ -106,7 +106,7 @@ namespace AltaxoTest.Calc.Fourier
 
       for (int i = 0; i < n; i++)
       {
-        Assert.AreEqual(0, re[i], max_corr_error(n), "Correlation with array 1 zero should give re=0");
+        AssertEx.Equal(0, re[i], max_corr_error(n), "Correlation with array 1 zero should give re=0");
       }
 
       for (int i = 0; i < n; i++)
@@ -119,7 +119,7 @@ namespace AltaxoTest.Calc.Fourier
 
       for (int i = 0; i < n; i++)
       {
-        Assert.AreEqual(0, re[i], max_corr_error(n), "Correlation with array 2 zero should give re=0");
+        AssertEx.Equal(0, re[i], max_corr_error(n), "Correlation with array 2 zero should give re=0");
       }
     }
 
@@ -138,11 +138,11 @@ namespace AltaxoTest.Calc.Fourier
       {
         if (i == 0)
         {
-          Assert.AreEqual(1, re[i], max_corr_error(n), "Correlation should give re=1 at pos 0");
+          AssertEx.Equal(1, re[i], max_corr_error(n), "Correlation should give re=1 at pos 0");
         }
         else
         {
-          Assert.AreEqual(0, re[i], max_corr_error(n), "Correlation should give re=0 at pos " + i.ToString());
+          AssertEx.Equal(0, re[i], max_corr_error(n), "Correlation should give re=0 at pos " + i.ToString());
         }
       }
     }
@@ -167,7 +167,7 @@ namespace AltaxoTest.Calc.Fourier
 
       for (int i = 0; i < n; i++)
       {
-        Assert.AreEqual(re2[i], re[i], max_corr_error(n), "Correlation should give re=re2 at pos " + i.ToString());
+        AssertEx.Equal(re2[i], re[i], max_corr_error(n), "Correlation should give re=re2 at pos " + i.ToString());
       }
 
       for (int i = 0; i < n; i++)
@@ -182,7 +182,7 @@ namespace AltaxoTest.Calc.Fourier
 
       for (int i = 0; i < n; i++)
       {
-        Assert.AreEqual(re1[(n - i) % n], re[i], max_corr_error(n), "Correlation should give re=re1 at pos " + i.ToString());
+        AssertEx.Equal(re1[(n - i) % n], re[i], max_corr_error(n), "Correlation should give re=re1 at pos " + i.ToString());
       }
     }
 
@@ -205,7 +205,7 @@ namespace AltaxoTest.Calc.Fourier
 
       for (int i = 0; i < n; i++)
       {
-        Assert.AreEqual(re2[i], re[i], max_corr_error(n), "Correlation should give re=re2[i+1] at pos " + i.ToString());
+        AssertEx.Equal(re2[i], re[i], max_corr_error(n), "Correlation should give re=re2[i+1] at pos " + i.ToString());
       }
 
       for (int i = 0; i < n; i++)
@@ -221,7 +221,7 @@ namespace AltaxoTest.Calc.Fourier
 
       for (int i = 0; i < n; i++)
       {
-        Assert.AreEqual(re1[(n - i) % n], re[i], max_corr_error(n), "Correlation should give re=re1[i-1] at pos " + i.ToString());
+        AssertEx.Equal(re1[(n - i) % n], re[i], max_corr_error(n), "Correlation should give re=re1[i-1] at pos " + i.ToString());
       }
     }
 
@@ -245,7 +245,7 @@ namespace AltaxoTest.Calc.Fourier
 
       for (int i = 0; i < n; i++)
       {
-        Assert.AreEqual(re2[(n + i + 1) % n], re[i], max_corr_error(n), "Correlation should give re=re2[i-1] at pos " + i.ToString());
+        AssertEx.Equal(re2[(n + i + 1) % n], re[i], max_corr_error(n), "Correlation should give re=re2[i-1] at pos " + i.ToString());
       }
 
       for (int i = 0; i < n; i++)
@@ -260,7 +260,7 @@ namespace AltaxoTest.Calc.Fourier
 
       for (int i = 0; i < n; i++)
       {
-        Assert.AreEqual(re1[(n - i + 1) % n], re[i], max_corr_error(n), "Correlation should give re=re1[i-1] at pos " + i.ToString());
+        AssertEx.Equal(re1[(n - i + 1) % n], re[i], max_corr_error(n), "Correlation should give re=re1[i-1] at pos " + i.ToString());
       }
     }
 
@@ -286,7 +286,7 @@ namespace AltaxoTest.Calc.Fourier
 
       for (int i = 0; i < n; i++)
       {
-        Assert.AreEqual(recmp[i], re[i], max_corr_error(n), "Correlation should give re=recmp at pos " + i.ToString());
+        AssertEx.Equal(recmp[i], re[i], max_corr_error(n), "Correlation should give re=recmp at pos " + i.ToString());
       }
     }
   }

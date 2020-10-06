@@ -7,14 +7,14 @@
 #endregion Copyright
 
 using System;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Calc.Ode
 {
-  [TestFixture]
+  
   public class MatrixTests
   {
-    [Test]
+    [Fact]
     public void SubmatrixTest()
     {
       var A = new Matrix(new double[][] { new double [] {1.0, 2.0, 3.0},
@@ -32,7 +32,7 @@ namespace Altaxo.Calc.Ode
       AssertMatrixEqualsEps(D, new Matrix(new double[][] { new double[] { 4.0, 5.0, 6.0 } }));
     }
 
-    [Test]
+    [Fact]
     public void MultiplyTest()
     {
       var A = new Matrix(new double[][] { new double[] { 1.0, 0.25 }, new double[] { 0.25, 1.0 } });
@@ -44,7 +44,7 @@ namespace Altaxo.Calc.Ode
       AssertMatrixEqualsEps(A.times(2.0), AMult);
     }
 
-    [Test]
+    [Fact]
     public void CholeskyTest()
     {
       var A = new Matrix(new double[][] { new double[] { 1.0, 0.25 }, new double[] { 0.25, 1.0 } });
@@ -55,7 +55,7 @@ namespace Altaxo.Calc.Ode
       AssertMatrixEqualsEps(A, L * Lt);
     }
 
-    [Test]
+    [Fact]
     public void CholeskySolveTest()
     {
       var A = new Matrix(new double[][] { new double[] { 1.0, 0.25 }, new double[] { 0.25, 1.0 } });
@@ -69,7 +69,7 @@ namespace Altaxo.Calc.Ode
       AssertEqualsEps((result - x).EuclideanNorm, 0.0);
     }
 
-    [Test]
+    [Fact]
     public void GaussianEliminationTest()
     {
       var A = new Matrix(new double[][] { new double[] { -1.0, 0.5 }, new double[] { 1.0, -1.0 } });
@@ -79,7 +79,7 @@ namespace Altaxo.Calc.Ode
       AssertEqualsEps((A.SolveGE(b) - x).EuclideanNorm, 0.0);
     }
 
-    [Test]
+    [Fact]
     public void InverseLowerTest()
     {
       var A = new Matrix(new double[][] { new double[] { -1.0, 0.5, 0.0 }, new double[] { -1.0, 1.0, -1.0 }, new double[] { -2.0, -1.0, 1.0 } });
@@ -89,7 +89,7 @@ namespace Altaxo.Calc.Ode
       var result = L * iL;
     }
 
-    [Test]
+    [Fact]
     // Here we compare the dense matrix and sparse matrix usages of solveLower
     public void solveLowerTest()
     {
@@ -106,7 +106,7 @@ namespace Altaxo.Calc.Ode
       AssertEqualsEps((xs - xd).EuclideanNorm, 0.0);
     }
 
-    [Test]
+    [Fact]
     public void SparseMatrixMultiplicationTest()
     {
       var v = new Vector(new double[] { 0.0975, 0.2785, 0.5469, 0.9575, 0.9649 });
@@ -124,7 +124,7 @@ namespace Altaxo.Calc.Ode
 
     private void AssertEqualsEps(double a, double b)
     {
-      Assert.IsTrue(Math.Abs(a - b) < 1e-10);
+      Assert.True(Math.Abs(a - b) < 1e-10);
     }
 
     private void AssertMatrixEqualsEps(Matrix A, Matrix B)

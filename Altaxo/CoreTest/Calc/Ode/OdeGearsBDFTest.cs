@@ -26,11 +26,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Calc.Ode
 {
-  [TestFixture]
+
   public class OdeGearsBDFTest1
   {
     private const double lambda1 = -1;
@@ -44,7 +44,7 @@ namespace Altaxo.Calc.Ode
       dydt[1] = lambda1MinusLambda2By2 * y[0] + lambda1PlusLambda2By2 * y[1];
     }
 
-    public void JacRateEquations(double t, double[] y, double[,] jacobian)
+    private void JacRateEquations(double t, double[] y, double[,] jacobian)
     {
       jacobian[0, 0] = lambda1PlusLambda2By2;
       jacobian[0, 1] = lambda1MinusLambda2By2;
@@ -52,7 +52,7 @@ namespace Altaxo.Calc.Ode
       jacobian[1, 1] = lambda1PlusLambda2By2;
     }
 
-    [Test]
+    [Fact]
     public void Test1_WithoutJacobian()
     {
       const double C1 = 1;
@@ -79,12 +79,12 @@ namespace Altaxo.Calc.Ode
         var y0_expected = C1 * Math.Exp(lambda1 * time) + C2 * Math.Exp(lambda2 * time);
         var y1_expected = C1 * Math.Exp(lambda1 * time) - C2 * Math.Exp(lambda2 * time);
 
-        Assert.AreEqual(y0_expected, y[0], 1E-3 * y0_expected + 1E-4);
-        Assert.AreEqual(y1_expected, y[1], 1E-3 * y1_expected + 1E-4);
+        AssertEx.Equal(y0_expected, y[0], 1E-3 * y0_expected + 1E-4);
+        AssertEx.Equal(y1_expected, y[1], 1E-3 * y1_expected + 1E-4);
       }
     }
 
-    [Test]
+    [Fact]
     public void Test2_WithJacobian()
     {
       const double C1 = 1;
@@ -111,8 +111,8 @@ namespace Altaxo.Calc.Ode
         var y0_expected = C1 * Math.Exp(lambda1 * time) + C2 * Math.Exp(lambda2 * time);
         var y1_expected = C1 * Math.Exp(lambda1 * time) - C2 * Math.Exp(lambda2 * time);
 
-        Assert.AreEqual(y0_expected, y[0], 1E-4 * y0_expected + 1E-7);
-        Assert.AreEqual(y1_expected, y[1], 1E-4 * y1_expected + 1E-7);
+        AssertEx.Equal(y0_expected, y[0], 1E-4 * y0_expected + 1E-7);
+        AssertEx.Equal(y1_expected, y[1], 1E-4 * y1_expected + 1E-7);
       }
     }
   }

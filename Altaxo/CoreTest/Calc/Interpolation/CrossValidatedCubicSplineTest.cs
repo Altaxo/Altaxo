@@ -25,7 +25,7 @@
 using System;
 using Altaxo.Calc.Interpolation;
 using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Interpolation
 {
@@ -36,7 +36,7 @@ namespace AltaxoTest.Calc.Interpolation
   /// which was amended to output the test results in a file.
   /// Note that tau in original 642.f was replaced with the more accurate tau=1.6180339887498948482045868343656.
   /// </remarks>
-  [TestFixture]
+
   public class TestCrossValidatedCubicSpline
   {
     /// <summary>
@@ -499,7 +499,7 @@ new double[]{  0.99295634E+00,  -0.12715313E+01,  -0.71666212E+00,   0.28007023E
       }
 
       if (!passes)
-        Assert.Fail("Value {0} is not in the interval [{1},{2}], ({3})", current, min, max, msg);
+        Assert.True(false, $"Value {current} is not in the interval [{min},{max}], ({msg})");
     }
 
     public static double GGRAND(ref double DSEED)
@@ -524,7 +524,7 @@ new double[]{  0.99295634E+00,  -0.12715313E+01,  -0.71666212E+00,   0.28007023E
       return result;
     }
 
-    [Test]
+    [Fact]
     public void TestBasic()
     {
       const int N = 50;
@@ -591,7 +591,7 @@ new double[]{  0.99295634E+00,  -0.12715313E+01,  -0.71666212E+00,   0.28007023E
       }
     }
 
-    [Test]
+    [Fact]
     public void TestScaledY()
     {
       const int N = 50;
@@ -673,7 +673,7 @@ new double[]{  0.99295634E+00,  -0.12715313E+01,  -0.71666212E+00,   0.28007023E
       }
     }
 
-    [Test]
+    [Fact]
     public void TestScaledX()
     {
       const int N = 50;

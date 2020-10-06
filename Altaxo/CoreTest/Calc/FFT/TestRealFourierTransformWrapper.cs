@@ -25,11 +25,11 @@
 using System;
 using Altaxo.Calc.Fourier;
 using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Fourier
 {
-  [TestFixture]
+
   public class TestRealFourierTransformWrapper
   {
     private class InternalTestClass
@@ -59,21 +59,21 @@ namespace AltaxoTest.Calc.Fourier
         var realpart = wrapper.RealPart;
         for (int i = 0; i < realpart.Length; i++)
         {
-          Assert.AreEqual(re[i], realpart[i], tol, string.Format("Testing realpart (len={0}, i={1})", arr.Length, i));
+          AssertEx.Equal(re[i], realpart[i], tol, string.Format("Testing realpart (len={0}, i={1})", arr.Length, i));
         }
         // now the imaginary part
         var imagpart = wrapper.ImaginaryPart;
         for (int i = 0; i < imagpart.Length; i++)
         {
-          Assert.AreEqual(im[i], imagpart[i], tol, string.Format("Testing imagpart (len={0}, i={1})", arr.Length, i));
+          AssertEx.Equal(im[i], imagpart[i], tol, string.Format("Testing imagpart (len={0}, i={1})", arr.Length, i));
         }
 
         // now the complex result
         IROComplexDoubleVector reimpart = wrapper.ComplexResult;
         for (int i = 0; i < reimpart.Length; i++)
         {
-          Assert.AreEqual(re[i], reimpart[i].Re, tol, string.Format("Testing ComplexResult.Re (len={0}, i={1})", arr.Length, i));
-          Assert.AreEqual(im[i], reimpart[i].Im, tol, string.Format("Testing ComplexResult.Im (len={0}, i={1})", arr.Length, i));
+          AssertEx.Equal(re[i], reimpart[i].Re, tol, string.Format("Testing ComplexResult.Re (len={0}, i={1})", arr.Length, i));
+          AssertEx.Equal(im[i], reimpart[i].Im, tol, string.Format("Testing ComplexResult.Im (len={0}, i={1})", arr.Length, i));
         }
 
         // now the amplitude part
@@ -81,7 +81,7 @@ namespace AltaxoTest.Calc.Fourier
         for (int i = 0; i < imagpart.Length; i++)
         {
           double expected = Altaxo.Calc.RMath.Hypot(re[i], im[i]);
-          Assert.AreEqual(expected, amppart[i], tol, string.Format("Testing amplitude (len={0}, i={1})", arr.Length, i));
+          AssertEx.Equal(expected, amppart[i], tol, string.Format("Testing amplitude (len={0}, i={1})", arr.Length, i));
         }
 
         // now the phase part
@@ -94,7 +94,7 @@ namespace AltaxoTest.Calc.Fourier
           double expected = Math.Atan2(im[i], re[i]);
           double actual = phasepart[i];
           if (Math.Abs(Math.Sin(expected) - Math.Sin(actual)) > tol2 || Math.Abs(Math.Cos(expected) - Math.Cos(actual)) > tol2)
-            Assert.Fail(string.Format("Testing phase (len={0}, i={1}, Expected={2}, Actual={3})", arr.Length, i, expected, actual));
+            Assert.True(false, string.Format("Testing phase (len={0}, i={1}, Expected={2}, Actual={3})", arr.Length, i, expected, actual));
         }
       }
 
@@ -156,42 +156,42 @@ namespace AltaxoTest.Calc.Fourier
 
     private InternalTestClass _test = new InternalTestClass();
 
-    [Test]
+    [Fact]
     public void Test01Zero()
     {
       foreach (int i in _testLengths)
         _test.TestZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test02ReOne_ZeroPos()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test03ReOne_OnePos()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_OnePos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test04ReOne_AllPos()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_AllPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test05ReOne_RandomPos()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_RandomPos(i, 5);
     }
 
-    [Test]
+    [Fact]
     public void Test06ReRandomValues()
     {
       foreach (int i in _testLengths)

@@ -23,11 +23,11 @@
 #endregion Copyright
 
 using System;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Regression
 {
-  [TestFixture]
+
   public class TestNonlinearFit2
   {
     private const double ROSD = 105.0;
@@ -57,7 +57,7 @@ namespace AltaxoTest.Calc.Regression
       }
     }
 
-    [Test]
+    [Fact]
     public void Rosenbrock_Der()
     {
       const double LM_INIT_MU = 1E-3;
@@ -87,8 +87,8 @@ namespace AltaxoTest.Calc.Regression
         new Altaxo.Calc.Regression.NonLinearFit2.JacobianFunction(jacros),
         p, x, null, 1000, opts, info, ref tempstorage, null, null); // with analytic jacobian
                                                                     //ret=dlevmar_dif(modros, p, x, m, n, 1000, opts, info, NULL, NULL, NULL);  // no jacobian
-      Assert.AreEqual(1, p[0], 0.1);
-      Assert.AreEqual(1, p[1], 0.12);
+      AssertEx.Equal(1, p[0], 0.1);
+      AssertEx.Equal(1, p[1], 0.12);
     }
 
     /// <summary>
@@ -139,7 +139,7 @@ namespace AltaxoTest.Calc.Regression
       }
     }
 
-    [Test]
+    [Fact]
     public void Polynom2Der()
     {
       const double LM_INIT_MU = 1E-3;
@@ -180,16 +180,16 @@ namespace AltaxoTest.Calc.Regression
         p, x, null, 1000, opts, info, ref tempstorage, covar, null); // with analytic jacobian
                                                                      //ret=dlevmar_dif(modros, p, x, m, n, 1000, opts, info, NULL, NULL, NULL);  // no jacobian
 
-      Assert.AreEqual(0.11111111, p[0], 0.001);
-      Assert.AreEqual(1, p[1], 0.001);
+      AssertEx.Equal(0.11111111, p[0], 0.001);
+      AssertEx.Equal(1, p[1], 0.001);
 
-      Assert.AreEqual(0.670194, covar[0], 0.001);
-      Assert.AreEqual(-0.10582, covar[1], 0.001);
-      Assert.AreEqual(-0.10582, covar[2], 0.001);
-      Assert.AreEqual(0.021164, covar[3], 0.001);
+      AssertEx.Equal(0.670194, covar[0], 0.001);
+      AssertEx.Equal(-0.10582, covar[1], 0.001);
+      AssertEx.Equal(-0.10582, covar[2], 0.001);
+      AssertEx.Equal(0.021164, covar[3], 0.001);
     }
 
-    [Test]
+    [Fact]
     public void Polynom2Diff()
     {
       const double LM_INIT_MU = 1E-3;
@@ -229,13 +229,13 @@ namespace AltaxoTest.Calc.Regression
         p, x, 1000, opts, info, ref tempstorage, covar, null); // with analytic jacobian
                                                                //ret=dlevmar_dif(modros, p, x, m, n, 1000, opts, info, NULL, NULL, NULL);  // no jacobian
 
-      Assert.AreEqual(0.11111111, p[0], 0.001);
-      Assert.AreEqual(1, p[1], 0.001);
+      AssertEx.Equal(0.11111111, p[0], 0.001);
+      AssertEx.Equal(1, p[1], 0.001);
 
-      Assert.AreEqual(0.670194, covar[0], 0.001);
-      Assert.AreEqual(-0.10582, covar[1], 0.001);
-      Assert.AreEqual(-0.10582, covar[2], 0.001);
-      Assert.AreEqual(0.021164, covar[3], 0.001);
+      AssertEx.Equal(0.670194, covar[0], 0.001);
+      AssertEx.Equal(-0.10582, covar[1], 0.001);
+      AssertEx.Equal(-0.10582, covar[2], 0.001);
+      AssertEx.Equal(0.021164, covar[3], 0.001);
     }
 
     /// <summary>
@@ -267,7 +267,7 @@ namespace AltaxoTest.Calc.Regression
     }
 
     /*
-		[Test]
+		[Fact]
 		public void Polynom3Diff()
 		{
 			const double LM_INIT_MU = 1E-3;
@@ -294,13 +294,13 @@ namespace AltaxoTest.Calc.Regression
 				p, x, 1000, opts, info, ref tempstorage, covar, null); // with analytic jacobian
 			//ret=dlevmar_dif(modros, p, x, m, n, 1000, opts, info, NULL, NULL, NULL);  // no jacobian
 
-			Assert.AreEqual(0.11111111, p[0], 0.001);
-			Assert.AreEqual(1, p[1], 0.001);
+			Assert.Equal(0.11111111, p[0], 0.001);
+			Assert.Equal(1, p[1], 0.001);
 
-			Assert.AreEqual(0.670194,covar[0],0.001);
-			Assert.AreEqual(-0.10582,covar[1],0.001);
-			Assert.AreEqual(-0.10582,covar[2],0.001);
-			Assert.AreEqual(0.021164,covar[3],0.001);
+			Assert.Equal(0.670194,covar[0],0.001);
+			Assert.Equal(-0.10582,covar[1],0.001);
+			Assert.Equal(-0.10582,covar[2],0.001);
+			Assert.Equal(0.021164,covar[3],0.001);
 		}
 		*/
   }

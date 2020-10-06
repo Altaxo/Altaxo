@@ -28,7 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Altaxo.Science.Thermodynamics.Fluids;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
@@ -107,16 +107,16 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
         double pressure_here = mixture.Pressure_FromMoleDensityAndTemperature(moleDensity, temperature);
         double pressureDeviation = GetRelativeErrorBetween(pressure, pressure_here);
-        Assert.AreEqual(pressure, pressure_here, GetAllowedError(pressure, 1E-4, 0), string.Format("Pressure at T={0} K and rho={1} mol/m³:", temperature, moleDensity));
+        AssertEx.Equal(pressure, pressure_here, GetAllowedError(pressure, 1E-4, 0), $"Pressure at T={temperature} K and rho={moleDensity} mol/m³:");
 
         double deltaPhiR_delta_here = delta * mixture.PhiR_delta_OfReducedVariables(delta, tau);
         relativeDeviation = GetRelativeErrorBetween(deltaPhiR_delta, deltaPhiR_delta_here);
         maxDeviationdeltaPhiR_delta = Math.Max(maxDeviationdeltaPhiR_delta, relativeDeviation);
-        Assert.AreEqual(deltaPhiR_delta, deltaPhiR_delta_here, GetAllowedError(deltaPhiR_delta, 1E-4, 0), string.Format("Delta_PhiR_delta at T={0} K and rho={1} mol/m³:", temperature, moleDensity));
+        AssertEx.Equal(deltaPhiR_delta, deltaPhiR_delta_here, GetAllowedError(deltaPhiR_delta, 1E-4, 0), $"Delta_PhiR_delta at T={temperature} K and rho={moleDensity} mol/m³:");
 
         double cv_here = mixture.MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature(moleDensity, temperature);
 
-        Assert.AreEqual(cv, cv_here, GetAllowedError(cv, 1E-4, 1E-2), string.Format("Isochoric heat capacity at T={0} K and rho={1} mol/m³:", temperature, moleDensity));
+        AssertEx.Equal(cv, cv_here, GetAllowedError(cv, 1E-4, 1E-2), $"Isochoric heat capacity at T={temperature} K and rho={moleDensity} mol/m³:");
       }
     }
   }

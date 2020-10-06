@@ -25,17 +25,17 @@
 using System;
 using System.Collections;
 using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
-  [TestFixture]
+  
   public class FloatVectorEnumeratorTest
   {
-    private const double TOLERENCE = 0.001;
+    private const double TOLERANCE = 0.001;
 
     //Test Current Method
-    [Test]
+    [Fact]
     public void Current()
     {
       var test = new FloatVector(new float[2] { 1f, 2f });
@@ -43,35 +43,35 @@ namespace AltaxoTest.Calc.LinearAlgebra
       bool movenextresult;
 
       movenextresult = enumerator.MoveNext();
-      Assert.IsTrue(movenextresult);
-      Assert.AreEqual(enumerator.Current, test[0]);
+      Assert.True(movenextresult);
+      Assert.Equal(enumerator.Current, test[0]);
 
       movenextresult = enumerator.MoveNext();
-      Assert.IsTrue(movenextresult);
-      Assert.AreEqual(enumerator.Current, test[1]);
+      Assert.True(movenextresult);
+      Assert.Equal(enumerator.Current, test[1]);
 
       movenextresult = enumerator.MoveNext();
-      Assert.IsFalse(movenextresult);
+      Assert.False(movenextresult);
     }
 
     //Test foreach
-    [Test]
+    [Fact]
     public void ForEach()
     {
       var test = new FloatVector(new float[2] { 1f, 2f });
       foreach (float f in test)
-        Assert.IsTrue(test.Contains(f));
+        Assert.True(test.Contains(f));
     }
 
     //Test Current Exception with index>length
-    [Test]
+    [Fact]
     public void CurrentException2()
     {
       var test = new FloatVector(new float[2] { 1f, 2f });
       IEnumerator enumerator = test.GetEnumerator();
-      Assert.IsTrue(enumerator.MoveNext());
-      Assert.IsTrue(enumerator.MoveNext());
-      Assert.IsFalse(enumerator.MoveNext());
+      Assert.True(enumerator.MoveNext());
+      Assert.True(enumerator.MoveNext());
+      Assert.False(enumerator.MoveNext());
     }
   }
 }

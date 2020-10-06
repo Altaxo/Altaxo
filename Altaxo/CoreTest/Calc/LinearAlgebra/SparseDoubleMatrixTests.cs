@@ -8,16 +8,16 @@
 
 using System;
 using System.Diagnostics;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  [TestFixture]
+
   public class SparseDoubleMatrixTests
   {
     private const double Eps = 1e-10;
 
-    [Test]
+    [Fact]
     public void plusTest()
     {
       const int N = 50;
@@ -39,7 +39,7 @@ namespace Altaxo.Calc.LinearAlgebra
       AssertMatrixEqualsEps(C, Zeros);
     }
 
-    [Test]
+    [Fact]
     public void minusTest()
     {
       const int N = 50;
@@ -61,7 +61,7 @@ namespace Altaxo.Calc.LinearAlgebra
       AssertMatrixEqualsEps(C, Zeros);
     }
 
-    [Test]
+    [Fact]
     public void isLowerTriangularTest()
     {
       const int N = 50;
@@ -69,14 +69,14 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < N; i++)
         A[i, i] = i % 5 == 0 ? 1.0 : 0.0;
 
-      Assert.AreEqual(A.IsLowerTriangular(), true);
+      Assert.True(A.IsLowerTriangular());
       A[45, 40] = 1.0;
-      Assert.AreEqual(A.IsLowerTriangular(), true);
+      Assert.True(A.IsLowerTriangular());
       A[40, 45] = 1.0;
-      Assert.AreEqual(A.IsLowerTriangular(), false);
+      Assert.False(A.IsLowerTriangular());
     }
 
-    [Test]
+    [Fact]
     public void TimesEqualsTest()
     {
       const int N = 50;
@@ -94,7 +94,7 @@ namespace Altaxo.Calc.LinearAlgebra
       AssertMatrixEqualsEps(B, D);
     }
 
-    [Test]
+    [Fact]
     public void TimesTest()
     {
       const int N = 50;
@@ -116,7 +116,7 @@ namespace Altaxo.Calc.LinearAlgebra
       AssertVectorEqualsEps(B, C);
     }
 
-    [Test]
+    [Fact]
     public void SolveGETest()
     {
       const int N = 50;
@@ -156,10 +156,10 @@ namespace Altaxo.Calc.LinearAlgebra
       var b2 = ainit * x;
 
       // Verify result is the same
-      Assert.IsTrue(VectorMath.LInfinityNorm(binit, b2) < 1e-6);
+      Assert.True(VectorMath.LInfinityNorm(binit, b2) < 1e-6);
     }
 
-    [Test]
+    [Fact]
     public void MapTest1()
     {
       int N = 6;
@@ -172,7 +172,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (int i = 0; i < m2.RowCount; ++i)
         for (int j = 0; j < m2.ColumnCount; ++j)
-          Assert.AreEqual(i == j ? 66 : 0, m2[i, j]);
+          Assert.Equal(i == j ? 66 : 0, m2[i, j]);
 
       // the same should work with the now already used matrix
       // fill diagonal now with 77
@@ -180,10 +180,10 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (int i = 0; i < m2.RowCount; ++i)
         for (int j = 0; j < m2.ColumnCount; ++j)
-          Assert.AreEqual(i == j ? 77 : 0, m2[i, j]);
+          Assert.Equal(i == j ? 77 : 0, m2[i, j]);
     }
 
-    [Test]
+    [Fact]
     public void MapTest2()
     {
       int N = 6;
@@ -200,7 +200,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (int i = 0; i < m2.RowCount; ++i)
         for (int j = 0; j < m2.ColumnCount; ++j)
-          Assert.AreEqual(i == j ? 66 : 0, m2[i, j]);
+          Assert.Equal(i == j ? 66 : 0, m2[i, j]);
 
       // the same should work with the now already used matrix
       // fill diagonal now with 77
@@ -208,10 +208,10 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (int i = 0; i < m2.RowCount; ++i)
         for (int j = 0; j < m2.ColumnCount; ++j)
-          Assert.AreEqual(i == j ? 77 : 0, m2[i, j]);
+          Assert.Equal(i == j ? 77 : 0, m2[i, j]);
     }
 
-    [Test]
+    [Fact]
     public void MapTest3()
     {
       int N = 6;
@@ -228,7 +228,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (int i = 0; i < m2.RowCount; ++i)
         for (int j = 0; j < m2.ColumnCount; ++j)
-          Assert.AreEqual(i == j ? 66 : 0, m2[i, j]);
+          Assert.Equal(i == j ? 66 : 0, m2[i, j]);
 
       // the same should work with the now already used matrix
       // fill diagonal now with 77
@@ -236,10 +236,10 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (int i = 0; i < m2.RowCount; ++i)
         for (int j = 0; j < m2.ColumnCount; ++j)
-          Assert.AreEqual(i == j ? 77 : 0, m2[i, j]);
+          Assert.Equal(i == j ? 77 : 0, m2[i, j]);
     }
 
-    [Test]
+    [Fact]
     public void MapTest4()
     {
       int N = 6;
@@ -263,7 +263,7 @@ namespace Altaxo.Calc.LinearAlgebra
             expected = 66;
           else if (i - 1 == j)
             expected = i * 13 * 3;
-          Assert.AreEqual(expected, m2[i, j]);
+          Assert.Equal(expected, m2[i, j]);
         }
       }
 
@@ -280,12 +280,12 @@ namespace Altaxo.Calc.LinearAlgebra
             expected = 77;
           else if (i - 1 == j)
             expected = i * 13 * 5;
-          Assert.AreEqual(expected, m2[i, j]);
+          Assert.Equal(expected, m2[i, j]);
         }
       }
     }
 
-    [Test]
+    [Fact]
     public void MapTest5()
     {
       int N = 6;
@@ -309,7 +309,7 @@ namespace Altaxo.Calc.LinearAlgebra
             expected = 66;
           else if (i + 1 == j)
             expected = i * 13 * 3;
-          Assert.AreEqual(expected, m2[i, j]);
+          Assert.Equal(expected, m2[i, j]);
         }
       }
 
@@ -326,7 +326,7 @@ namespace Altaxo.Calc.LinearAlgebra
             expected = 77;
           else if (i + 1 == j)
             expected = i * 13 * 5;
-          Assert.AreEqual(expected, m2[i, j]);
+          Assert.Equal(expected, m2[i, j]);
         }
       }
     }
@@ -339,12 +339,12 @@ namespace Altaxo.Calc.LinearAlgebra
         sum += A[i] - B[i];
       }
 
-      Assert.AreEqual(sum, 0.0, 1e-10);
+      AssertEx.Equal(sum, 0.0, 1e-10);
     }
 
     private void AssertEqualsEps(double a, double b)
     {
-      Assert.IsTrue(Math.Abs(a - b) < 1e-10);
+      Assert.True(Math.Abs(a - b) < 1e-10);
     }
 
     private void AssertMatrixEqualsEps(SparseDoubleMatrix A, SparseDoubleMatrix B)

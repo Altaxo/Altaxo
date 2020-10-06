@@ -24,7 +24,7 @@
 
 using System;
 using Altaxo.Calc.Interpolation;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Interpolation
 {
@@ -36,7 +36,7 @@ namespace AltaxoTest.Calc.Interpolation
   /// <para>"Algorithm 474: Bivariate Interpolation and smooth surface fitting based on local procedures"</para>
   /// <para>Communications of the ACM, vol.17 (Jan.1974), Number 1</para>
   /// </remarks>
-  [TestFixture]
+
   public class TestBivariateAkima
   {
     private double[][] _testvals = {
@@ -72,7 +72,7 @@ namespace AltaxoTest.Calc.Interpolation
     private double[] _testx = new double[] { 0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0 };
     private double[] _testy = new double[] { 0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0 };
 
-    [Test]
+    [Fact]
     public void Test1()
     {
       double[] z = new double[_testx.Length * _testy.Length];
@@ -94,7 +94,7 @@ namespace AltaxoTest.Calc.Interpolation
           v[0] = _testy[iy];
 
           BivariateAkimaSpline.Interpolate(_testx, _testy, z, u, v, w);
-          Assert.AreEqual(_testvals[ix][iy], w[0], 1E-2);
+          AssertEx.Equal(_testvals[ix][iy], w[0], 1E-2, "");
         }
       }
 
@@ -106,7 +106,7 @@ namespace AltaxoTest.Calc.Interpolation
           v[0] = _refy[iy];
 
           BivariateAkimaSpline.Interpolate(_testx, _testy, z, u, v, w);
-          Assert.AreEqual(_refvals[ix][iy], w[0], 1E-2, string.Format("ix={0}, iy={1} u={2}, v={3}", ix, iy, u[0], v[0]));
+          AssertEx.Equal(_refvals[ix][iy], w[0], 1E-2, string.Format("ix={0}, iy={1} u={2}, v={3}", ix, iy, u[0], v[0]));
         }
       }
     }

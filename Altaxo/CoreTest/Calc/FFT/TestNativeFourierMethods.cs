@@ -24,11 +24,11 @@
 
 using System;
 using Altaxo.Calc.Fourier;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Fourier
 {
-  [TestFixture]
+  
   public class TestNativeFFT
   {
     private const int nLowerLimit = 5;
@@ -37,42 +37,42 @@ namespace AltaxoTest.Calc.Fourier
 
     private SplittedComplexFFTTests _test = new SplittedComplexFFTTests(new SplittedComplexFFTTests.FFTRoutine(NativeFourierMethods.FourierTransformation));
 
-    [Test]
+    [Fact]
     public void TestZero()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestZero(i);
     }
 
-    [Test]
+    [Fact]
     public void TestReOne_ZeroPos()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestReOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void TestImOne_ZeroPos()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestImOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void TestReOne_OnePos()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestReOne_OnePos(i);
     }
 
-    [Test]
+    [Fact]
     public void TestImOne_OnePos()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestImOne_OnePos(i);
     }
 
-    [Test]
+    [Fact]
     public void TestReImOne_RandomPos()
     {
       double oldTolerance = _test.SetTolerance(1E-14);
@@ -84,7 +84,7 @@ namespace AltaxoTest.Calc.Fourier
     }
   }
 
-  [TestFixture]
+  
   public class TestNativeRealFFT
   {
     private const int nLowerLimit = 5;
@@ -93,28 +93,28 @@ namespace AltaxoTest.Calc.Fourier
 
     private RealFFTTests _test = new RealFFTTests(new RealFFTTests.FFTRoutine(NativeFourierMethods.FourierTransformation));
 
-    [Test]
+    [Fact]
     public void Test01Zero()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test02ReOne_ZeroPos()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestReOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test03ReOne_OnePos()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestReOne_OnePos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test04ReOne_RandomPos()
     {
       double oldTolerance = _test.SetTolerance(1E-14);
@@ -125,7 +125,7 @@ namespace AltaxoTest.Calc.Fourier
       _test.SetTolerance(oldTolerance);
     }
 
-    [Test]
+    [Fact]
     public void Test05ReRandomValues()
     {
       double oldTolerance = _test.SetTolerance(1E-14);

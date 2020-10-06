@@ -25,21 +25,21 @@
 using System;
 using Altaxo.Calc;
 using Altaxo.Calc.Integration;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Integration
 {
-  [TestFixture]
+
   public class QAWCTests
   {
-    [Test]
+    [Fact]
     public void TestSqrt()
     {
       const double expected = 1.0656799507071;
       GSL_ERROR error;
       error = QawcIntegration.Integration(z => Math.Sqrt(z), 0, 2, 1, 0, 1E-6, 100, out var result, out var abserr);
 
-      NUnit.Framework.Assert.AreEqual(expected, result, expected * 1E-6);
+      AssertEx.Equal(expected, result, expected * 1E-6);
     }
   }
 }

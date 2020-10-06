@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
@@ -40,7 +40,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
   /// <para>The test data was created automatically using calls into the TREND.DLL of the following software:</para>
   /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
   /// </remarks>
-  [TestFixture]
+  
   public class Test_Mixture_Propane_Hydrogen : MixtureTestBase
   {
 
@@ -215,31 +215,31 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       };
     }
 
-    [Test]
+    [Fact]
     public override void CASNumberAttribute_Test()
     {
       base.CASNumberAttribute_Test();
     }
 
-    [Test]
+    [Fact]
     public override void Constants_Test()
     {
       base.Constants_Test();
     }
 
-    [Test]
+    [Fact]
     public override void DeltaPhiRDelta_001_999_Test()
     {
       base.DeltaPhiRDelta_001_999_Test();
     }
 
-    [Test]
+    [Fact]
     public override void DeltaPhiRDelta_500_500_Test()
     {
       base.DeltaPhiRDelta_500_500_Test();
     }
 
-    [Test]
+    [Fact]
     public override void DeltaPhiRDelta_999_001_Test()
     {
       base.DeltaPhiRDelta_999_001_Test();

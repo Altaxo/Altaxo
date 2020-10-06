@@ -27,14 +27,14 @@
 using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
+using Xunit;
 
 #endregion Using Directives
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
   // suite of tests for complex double symmetric algorithm
-  [TestFixture]
+
   public class ComplexDoubleSymmetricLevinsonTest
   {
     #region Fields
@@ -98,8 +98,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
     #region Text Fixture Setup
 
-    [OneTimeSetUp]
-    public void SetupTestCases()
+    // [OneTimeSetUp]
+    public ComplexDoubleSymmetricLevinsonTest()
     {
       // unit testing values - order 1
 
@@ -407,10 +407,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Null Parameter Tests for Constructor
 
     // Test constructor with a null parameter
-    [Test]
+    [Fact]
     public void NullParameterTestforConstructor()
     {
-      Assert.Throws(typeof(System.ArgumentNullException), () =>
+      Assert.Throws<System.ArgumentNullException>(() =>
       {
         var cdsl = new ComplexDoubleSymmetricLevinson(null as ComplexDoubleVector);
       });
@@ -421,10 +421,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Zero Length Vector Tests for Constructor
 
     // Test constructor with a zero length vector parameter
-    [Test]
+    [Fact]
     public void ZeroLengthVectorTestsforConstructor1()
     {
-      Assert.Throws(typeof(System.RankException), () =>
+      Assert.Throws<System.RankException>(() =>
       {
         var cdv = new ComplexDoubleVector(1, 0.0);
         cdv.RemoveAt(0);
@@ -437,12 +437,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region GetVector Member Test
 
     // check get vector
-    [Test]
+    [Fact]
     public void GetVectorMemberTest()
     {
       var cdsl = new ComplexDoubleSymmetricLevinson(T5);
       ComplexDoubleVector TT = cdsl.GetVector();
-      Assert.IsTrue(T5.Equals(TT));
+      Assert.True(T5.Equals(TT));
     }
 
     #endregion GetVector Member Test
@@ -450,7 +450,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region GetMatrix Member Test
 
     // check get matrix
-    [Test]
+    [Fact]
     public void GetMatrixMemberTest()
     {
       var cdsl = new ComplexDoubleSymmetricLevinson(T5);
@@ -461,11 +461,11 @@ namespace AltaxoTest.Calc.LinearAlgebra
         {
           if (column < row)
           {
-            Assert.IsTrue(cdsldm[row, column] == T5[row - column]);
+            Assert.True(cdsldm[row, column] == T5[row - column]);
           }
           else
           {
-            Assert.IsTrue(cdsldm[row, column] == T5[column - row]);
+            Assert.True(cdsldm[row, column] == T5[column - row]);
           }
         }
       }
@@ -476,11 +476,11 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Order Property Test
 
     // test order property
-    [Test]
+    [Fact]
     public void OrderPropertyTest()
     {
       var cdsl = new ComplexDoubleSymmetricLevinson(T5);
-      Assert.IsTrue(cdsl.Order == 5);
+      Assert.True(cdsl.Order == 5);
     }
 
     #endregion Order Property Test
@@ -488,7 +488,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Decomposition Test 1
 
     // test the UDL factorisation for case 1
-    [Test]
+    [Fact]
     public void DecompositionTest1()
     {
       int i, j;
@@ -499,7 +499,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       ComplexDoubleMatrix L = cdsl.L;
 
       // check U is the transpose of L
-      Assert.IsTrue(U.Equals(L.GetTranspose()));
+      Assert.True(U.Equals(L.GetTranspose()));
 
       // check the lower triangle
       me = 0.0;
@@ -514,7 +514,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance1, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance1, "Maximum Error = " + me.ToString());
 
       // check the diagonal
       me = 0.0;
@@ -527,7 +527,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
         }
       }
 
-      Assert.IsTrue(me < Tolerance1, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance1, "Maximum Error = " + me.ToString());
     }
 
     #endregion Decomposition Test 1
@@ -535,7 +535,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Decomposition Test 2
 
     // test the UDL factorisation for case 2
-    [Test]
+    [Fact]
     public void DecompositionTest2()
     {
       int i, j;
@@ -546,7 +546,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       ComplexDoubleMatrix L = cdsl.L;
 
       // check U is the transpose of L
-      Assert.IsTrue(U.Equals(L.GetTranspose()));
+      Assert.True(U.Equals(L.GetTranspose()));
 
       // check the lower triangle
       me = 0.0;
@@ -561,7 +561,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance2, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance2, "Maximum Error = " + me.ToString());
 
       // check the diagonal
       me = 0.0;
@@ -574,7 +574,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
         }
       }
 
-      Assert.IsTrue(me < Tolerance2, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance2, "Maximum Error = " + me.ToString());
     }
 
     #endregion Decomposition Test 2
@@ -582,7 +582,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Decomposition Test 3
 
     // test the UDL factorisation for case 3
-    [Test]
+    [Fact]
     public void DecompositionTest3()
     {
       int i, j;
@@ -593,7 +593,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       ComplexDoubleMatrix L = cdsl.L;
 
       // check U is the transpose of L
-      Assert.IsTrue(U.Equals(L.GetTranspose()));
+      Assert.True(U.Equals(L.GetTranspose()));
 
       // check the lower triangle
       me = 0.0;
@@ -608,7 +608,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance3, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance3, "Maximum Error = " + me.ToString());
 
       // check the diagonal
       me = 0.0;
@@ -621,7 +621,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
         }
       }
 
-      Assert.IsTrue(me < Tolerance3, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance3, "Maximum Error = " + me.ToString());
     }
 
     #endregion Decomposition Test 3
@@ -629,7 +629,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Decomposition Test 4
 
     // test the UDL factorisation for case 4
-    [Test]
+    [Fact]
     public void DecompositionTest4()
     {
       int i, j;
@@ -640,7 +640,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       ComplexDoubleMatrix L = cdsl.L;
 
       // check U is the transpose of L
-      Assert.IsTrue(U.Equals(L.GetTranspose()));
+      Assert.True(U.Equals(L.GetTranspose()));
 
       // check the lower triangle
       me = 0.0;
@@ -655,7 +655,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance4, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance4, "Maximum Error = " + me.ToString());
 
       // check the diagonal
       me = 0.0;
@@ -668,7 +668,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
         }
       }
 
-      Assert.IsTrue(me < Tolerance4, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance4, "Maximum Error = " + me.ToString());
     }
 
     #endregion Decomposition Test 4
@@ -676,7 +676,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Decomposition Test 5
 
     // test the UDL factorisation for case 5
-    [Test]
+    [Fact]
     public void DecompositionTest5()
     {
       int i, j;
@@ -687,7 +687,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       ComplexDoubleMatrix L = cdsl.L;
 
       // check U is the transpose of L
-      Assert.IsTrue(U.Equals(L.GetTranspose()));
+      Assert.True(U.Equals(L.GetTranspose()));
 
       // check the lower triangle
       me = 0.0;
@@ -702,7 +702,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance5, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance5, "Maximum Error = " + me.ToString());
 
       // check the diagonal
       me = 0.0;
@@ -715,7 +715,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
         }
       }
 
-      Assert.IsTrue(me < Tolerance5, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance5, "Maximum Error = " + me.ToString());
     }
 
     #endregion Decomposition Test 5
@@ -723,11 +723,11 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Singularity Property Test 1
 
     // check that singular matrix is detected
-    [Test]
+    [Fact]
     public void SingularityPropertyTest1()
     {
       var cdsl = new ComplexDoubleSymmetricLevinson(T1);
-      Assert.IsFalse(cdsl.IsSingular);
+      Assert.False(cdsl.IsSingular);
     }
 
     #endregion Singularity Property Test 1
@@ -735,11 +735,11 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Singularity Property Test 2
 
     // check that singular matrix is detected
-    [Test]
+    [Fact]
     public void SingularityPropertyTest2()
     {
       var cdsl = new ComplexDoubleSymmetricLevinson(T2);
-      Assert.IsFalse(cdsl.IsSingular);
+      Assert.False(cdsl.IsSingular);
     }
 
     #endregion Singularity Property Test 2
@@ -747,11 +747,11 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Singularity Property Test 3
 
     // check that singular matrix is detected
-    [Test]
+    [Fact]
     public void SingularityPropertyTest3()
     {
       var cdsl = new ComplexDoubleSymmetricLevinson(T3);
-      Assert.IsFalse(cdsl.IsSingular);
+      Assert.False(cdsl.IsSingular);
     }
 
     #endregion Singularity Property Test 3
@@ -759,11 +759,11 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Singularity Property Test 4
 
     // check that singular matrix is detected
-    [Test]
+    [Fact]
     public void SingularityPropertyTest4()
     {
       var cdsl = new ComplexDoubleSymmetricLevinson(T4);
-      Assert.IsFalse(cdsl.IsSingular);
+      Assert.False(cdsl.IsSingular);
     }
 
     #endregion Singularity Property Test 4
@@ -771,11 +771,11 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Singularity Property Test 5
 
     // check that singular matrix is detected
-    [Test]
+    [Fact]
     public void SingularityPropertyTest5()
     {
       var cdsl = new ComplexDoubleSymmetricLevinson(T5);
-      Assert.IsFalse(cdsl.IsSingular);
+      Assert.False(cdsl.IsSingular);
     }
 
     #endregion Singularity Property Test 5
@@ -783,7 +783,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Singularity Property Test - Negative Case
 
     // check that singular matrix is detected
-    [Test]
+    [Fact]
     public void SingularityPropertyTest()
     {
       var T = new ComplexDoubleVector(10);
@@ -794,7 +794,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       T[0] = new Complex(2.0, 2.0);
 
       var cdsl = new ComplexDoubleSymmetricLevinson(T);
-      Assert.IsTrue(cdsl.IsSingular);
+      Assert.True(cdsl.IsSingular);
     }
 
     #endregion Singularity Property Test - Negative Case
@@ -802,7 +802,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region GetDeterminant Method Test 1
 
     // Test the Determinant
-    [Test]
+    [Fact]
     public void GetDeterminantMethodTest1()
     {
       // calculate determinant from diagonal
@@ -810,7 +810,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
       // check results match
       double e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det1) / Det1);
-      Assert.IsTrue(e < Tolerance1);
+      Assert.True(e < Tolerance1);
     }
 
     #endregion GetDeterminant Method Test 1
@@ -818,7 +818,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region GetDeterminant Method Test 2
 
     // Test the Determinant
-    [Test]
+    [Fact]
     public void GetDeterminantMethodTest2()
     {
       // calculate determinant from diagonal
@@ -826,7 +826,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
       // check results match
       double e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det2) / Det2);
-      Assert.IsTrue(e < Tolerance2);
+      Assert.True(e < Tolerance2);
     }
 
     #endregion GetDeterminant Method Test 2
@@ -834,7 +834,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region GetDeterminant Method Test 3
 
     // Test the Determinant
-    [Test]
+    [Fact]
     public void GetDeterminantMethodTest3()
     {
       // calculate determinant from diagonal
@@ -842,7 +842,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
       // check results match
       double e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det3) / Det3);
-      Assert.IsTrue(e < Tolerance3);
+      Assert.True(e < Tolerance3);
     }
 
     #endregion GetDeterminant Method Test 3
@@ -850,7 +850,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region GetDeterminant Method Test 4
 
     // Test the Determinant
-    [Test]
+    [Fact]
     public void GetDeterminantMethodTest4()
     {
       // calculate determinant from diagonal
@@ -858,7 +858,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
       // check results match
       double e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det4) / Det4);
-      Assert.IsTrue(e < Tolerance4);
+      Assert.True(e < Tolerance4);
     }
 
     #endregion GetDeterminant Method Test 4
@@ -866,7 +866,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region GetDeterminant Method Test 5
 
     // Test the Determinant
-    [Test]
+    [Fact]
     public void GetDeterminantMethodTest5()
     {
       // calculate determinant from diagonal
@@ -874,17 +874,17 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
       // check results match
       double e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det5) / Det5);
-      Assert.IsTrue(e < Tolerance5);
+      Assert.True(e < Tolerance5);
     }
 
     #endregion GetDeterminant Method Test 5
 
     #region Null Parameter Test for SolveVector
 
-    [Test]
+    [Fact]
     public void NullParameterTestforSolveVector()
     {
-      Assert.Throws(typeof(System.ArgumentNullException), () =>
+      Assert.Throws<System.ArgumentNullException>(() =>
       {
         var cdsl = new ComplexDoubleSymmetricLevinson(T5);
         ComplexDoubleVector X = cdsl.Solve(null as ComplexDoubleVector);
@@ -895,10 +895,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
     #region Mismatch Rows Test for SolveVector
 
-    [Test]
+    [Fact]
     public void MismatchRowsTestforSolveVector()
     {
-      Assert.Throws(typeof(System.RankException), () =>
+      Assert.Throws<System.RankException>(() =>
       {
         var cdsl = new ComplexDoubleSymmetricLevinson(T4);
         ComplexDoubleVector X = cdsl.Solve(X5);
@@ -910,7 +910,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region SolveVector 1
 
     // Test solving a linear system
-    [Test]
+    [Fact]
     public void SolveVector1()
     {
       int i;
@@ -928,7 +928,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           me = e;
         }
       }
-      Assert.IsTrue(me < Tolerance1, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance1, "Maximum Error = " + me.ToString());
     }
 
     #endregion SolveVector 1
@@ -936,7 +936,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region SolveVector 2
 
     // Test solving a linear system
-    [Test]
+    [Fact]
     public void SolveVector2()
     {
       int i;
@@ -954,7 +954,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           me = e;
         }
       }
-      Assert.IsTrue(me < Tolerance2, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance2, "Maximum Error = " + me.ToString());
     }
 
     #endregion SolveVector 2
@@ -962,7 +962,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region SolveVector 3
 
     // Test solving a linear system
-    [Test]
+    [Fact]
     public void SolveVector3()
     {
       int i;
@@ -980,7 +980,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           me = e;
         }
       }
-      Assert.IsTrue(me < Tolerance3, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance3, "Maximum Error = " + me.ToString());
     }
 
     #endregion SolveVector 3
@@ -988,7 +988,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region SolveVector 4
 
     // Test solving a linear system
-    [Test]
+    [Fact]
     public void SolveVector4()
     {
       int i;
@@ -1006,7 +1006,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           me = e;
         }
       }
-      Assert.IsTrue(me < Tolerance4, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance4, "Maximum Error = " + me.ToString());
     }
 
     #endregion SolveVector 4
@@ -1014,7 +1014,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region SolveVector 5
 
     // Test solving a linear system
-    [Test]
+    [Fact]
     public void SolveVector5()
     {
       int i;
@@ -1032,17 +1032,17 @@ namespace AltaxoTest.Calc.LinearAlgebra
           me = e;
         }
       }
-      Assert.IsTrue(me < Tolerance5, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance5, "Maximum Error = " + me.ToString());
     }
 
     #endregion SolveVector 5
 
     #region Null Parameter Test for SolveMatrix
 
-    [Test]
+    [Fact]
     public void NullParameterTestforSolveMatrix()
     {
-      Assert.Throws(typeof(System.ArgumentNullException), () =>
+      Assert.Throws<System.ArgumentNullException>(() =>
       {
         var cdsl = new ComplexDoubleSymmetricLevinson(T5);
         ComplexDoubleMatrix X = cdsl.Solve(null as ComplexDoubleMatrix);
@@ -1053,10 +1053,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
     #region Mismatch Rows Test for SolveMatrix
 
-    [Test]
+    [Fact]
     public void MismatchRowsTestforSolveMatrix()
     {
-      Assert.Throws(typeof(System.RankException), () =>
+      Assert.Throws<System.RankException>(() =>
       {
         var cdsl = new ComplexDoubleSymmetricLevinson(T4);
         ComplexDoubleMatrix X = cdsl.Solve(I5);
@@ -1068,7 +1068,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Solve Matrix 1
 
     // calculate inverse by solving linear equations with identity RHS
-    [Test]
+    [Fact]
     public void SolveMatrix1()
     {
       int i, j;
@@ -1089,7 +1089,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance1, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance1, "Maximum Error = " + me.ToString());
     }
 
     #endregion Solve Matrix 1
@@ -1097,7 +1097,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Solve Matrix 2
 
     // calculate inverse by solving linear equations with identity RHS
-    [Test]
+    [Fact]
     public void SolveMatrix2()
     {
       int i, j;
@@ -1118,7 +1118,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance2, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance2, "Maximum Error = " + me.ToString());
     }
 
     #endregion Solve Matrix 2
@@ -1126,7 +1126,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Solve Matrix 3
 
     // calculate inverse by solving linear equations with identity RHS
-    [Test]
+    [Fact]
     public void SolveMatrix3()
     {
       int i, j;
@@ -1147,7 +1147,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance3, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance3, "Maximum Error = " + me.ToString());
     }
 
     #endregion Solve Matrix 3
@@ -1155,7 +1155,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Solve Matrix 4
 
     // calculate inverse by solving linear equations with identity RHS
-    [Test]
+    [Fact]
     public void SolveMatrix4()
     {
       int i, j;
@@ -1176,7 +1176,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance4, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance4, "Maximum Error = " + me.ToString());
     }
 
     #endregion Solve Matrix 4
@@ -1184,7 +1184,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Solve Matrix 5
 
     // calculate inverse by solving linear equations with identity RHS
-    [Test]
+    [Fact]
     public void SolveMatrix5()
     {
       int i, j;
@@ -1205,7 +1205,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance5, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance5, "Maximum Error = " + me.ToString());
     }
 
     #endregion Solve Matrix 5
@@ -1213,7 +1213,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Get Inverse 1
 
     // calculate inverse using GetInverse member
-    [Test]
+    [Fact]
     public void GetInverse1()
     {
       int i, j;
@@ -1234,7 +1234,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance1, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance1, "Maximum Error = " + me.ToString());
     }
 
     #endregion Get Inverse 1
@@ -1242,7 +1242,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Get Inverse 2
 
     // calculate inverse using GetInverse member
-    [Test]
+    [Fact]
     public void GetInverse2()
     {
       int i, j;
@@ -1263,7 +1263,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance2, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance2, "Maximum Error = " + me.ToString());
     }
 
     #endregion Get Inverse 2
@@ -1271,7 +1271,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Get Inverse 3
 
     // calculate inverse using GetInverse member
-    [Test]
+    [Fact]
     public void GetInverse3()
     {
       int i, j;
@@ -1292,7 +1292,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance3, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance3, "Maximum Error = " + me.ToString());
     }
 
     #endregion Get Inverse 3
@@ -1300,7 +1300,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Get Inverse 4
 
     // calculate inverse using GetInverse member
-    [Test]
+    [Fact]
     public void GetInverse4()
     {
       int i, j;
@@ -1321,7 +1321,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance4, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance4, "Maximum Error = " + me.ToString());
     }
 
     #endregion Get Inverse 4
@@ -1329,7 +1329,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Get Inverse 5
 
     // calculate inverse using GetInverse member
-    [Test]
+    [Fact]
     public void GetInverse5()
     {
       int i, j;
@@ -1350,7 +1350,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance5, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance5, "Maximum Error = " + me.ToString());
     }
 
     #endregion Get Inverse 5
@@ -1358,10 +1358,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Null Parameter Test 1 for Static SolveVector
 
     // test null parameter
-    [Test]
+    [Fact]
     public void NullParameterTestforStaticSolveVector1()
     {
-      Assert.Throws(typeof(ArgumentNullException), () =>
+      Assert.Throws<ArgumentNullException>(() =>
       {
         ComplexDoubleVector X = ComplexDoubleSymmetricLevinson.Solve(null, X5);
       });
@@ -1372,10 +1372,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Null Parameter Test for 2 Static SolveVector
 
     // test null parameter
-    [Test]
+    [Fact]
     public void NullParameterTestforStaticSolveVector2()
     {
-      Assert.Throws(typeof(ArgumentNullException), () =>
+      Assert.Throws<ArgumentNullException>(() =>
       {
         ComplexDoubleVector X = ComplexDoubleSymmetricLevinson.Solve(T5, null as ComplexDoubleVector);
       });
@@ -1386,10 +1386,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Row Mismatch Test for Static SolveVector
 
     // test mismatching dimensions
-    [Test]
+    [Fact]
     public void RowMismatchTestforStaticSolveVector()
     {
-      Assert.Throws(typeof(RankException), () =>
+      Assert.Throws<RankException>(() =>
       {
         ComplexDoubleVector X = ComplexDoubleSymmetricLevinson.Solve(T5, Y4);
       });
@@ -1400,10 +1400,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Singular Test for Static SolveVector
 
     // test with Toeplitz matrix which has a singular principal sub-matrix
-    [Test]
+    [Fact]
     public void SingularTestforStaticSolveVector()
     {
-      Assert.Throws(typeof(SingularMatrixException), () =>
+      Assert.Throws<SingularMatrixException>(() =>
       {
         var T = new ComplexDoubleVector(3);
         T[2] = T[1] = T[0] = new Complex(1.0, 1.0);
@@ -1415,7 +1415,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
     #region Static Solve Vector 1
 
-    [Test]
+    [Fact]
     public void StaticSolveVector1()
     {
       int i;
@@ -1432,14 +1432,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
           me = e;
         }
       }
-      Assert.IsTrue(me < Tolerance1, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance1, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Solve Vector 1
 
     #region Static Solve Vector 2
 
-    [Test]
+    [Fact]
     public void StaticSolveVector2()
     {
       int i;
@@ -1456,14 +1456,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
           me = e;
         }
       }
-      Assert.IsTrue(me < Tolerance2, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance2, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Solve Vector 2
 
     #region Static Solve Vector 3
 
-    [Test]
+    [Fact]
     public void StaticSolveVector3()
     {
       int i;
@@ -1480,14 +1480,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
           me = e;
         }
       }
-      Assert.IsTrue(me < Tolerance3, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance3, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Solve Vector 3
 
     #region Static Solve Vector 4
 
-    [Test]
+    [Fact]
     public void StaticSolveVector4()
     {
       int i;
@@ -1504,14 +1504,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
           me = e;
         }
       }
-      Assert.IsTrue(me < Tolerance4, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance4, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Solve Vector 4
 
     #region Static Solve Vector 5
 
-    [Test]
+    [Fact]
     public void StaticSolveVector5()
     {
       int i;
@@ -1528,7 +1528,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           me = e;
         }
       }
-      Assert.IsTrue(me < Tolerance5, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance5, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Solve Vector 5
@@ -1536,10 +1536,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Null Parameter Test 1 for Static SolveMatrix
 
     // test null parameter
-    [Test]
+    [Fact]
     public void NullParameterTestforStaticSolveMatrix1()
     {
-      Assert.Throws(typeof(ArgumentNullException), () =>
+      Assert.Throws<ArgumentNullException>(() =>
       {
         ComplexDoubleMatrix X = ComplexDoubleSymmetricLevinson.Solve(null, L2);
       });
@@ -1550,10 +1550,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Null Parameter Test 2 for Static SolveMatrix
 
     // test null parameter
-    [Test]
+    [Fact]
     public void NullParameterTestforStaticSolveMatrix2()
     {
-      Assert.Throws(typeof(ArgumentNullException), () =>
+      Assert.Throws<ArgumentNullException>(() =>
       {
         ComplexDoubleMatrix Y = ComplexDoubleSymmetricLevinson.Solve(T2, null as ComplexDoubleMatrix);
       });
@@ -1564,10 +1564,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Row Mismatch Test for Static SolveMatrix
 
     // test mismatching dimensions
-    [Test]
+    [Fact]
     public void RowMismatchTestforStaticSolveMatrix()
     {
-      Assert.Throws(typeof(RankException), () =>
+      Assert.Throws<RankException>(() =>
       {
         ComplexDoubleMatrix X = ComplexDoubleSymmetricLevinson.Solve(T2, L3);
       });
@@ -1578,10 +1578,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Singular Test for Static SolveMatrix
 
     // test with Toeplitz matrix which has a singular principal sub-matrix
-    [Test]
+    [Fact]
     public void SingularTestforStaticSolveMatrix()
     {
-      Assert.Throws(typeof(SingularMatrixException), () =>
+      Assert.Throws<SingularMatrixException>(() =>
       {
         var T = new ComplexDoubleVector(3);
         T[2] = T[1] = T[0] = new Complex(1.0, 1.0);
@@ -1594,7 +1594,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Static Solve Matrix 1
 
     // calculate inverse by solving linear system with identity RHS
-    [Test]
+    [Fact]
     public void StaticSolveMatrix1()
     {
       int i, j;
@@ -1616,7 +1616,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance1, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance1, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Solve Matrix 1
@@ -1624,7 +1624,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Static Solve Matrix 2
 
     // calculate inverse by solving linear system with identity RHS
-    [Test]
+    [Fact]
     public void StaticSolveMatrix2()
     {
       int i, j;
@@ -1646,7 +1646,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance2, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance2, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Solve Matrix 2
@@ -1654,7 +1654,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Static Solve Matrix 3
 
     // calculate inverse by solving linear system with identity RHS
-    [Test]
+    [Fact]
     public void StaticSolveMatrix3()
     {
       int i, j;
@@ -1676,7 +1676,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance3, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance3, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Solve Matrix 3
@@ -1684,7 +1684,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Static Solve Matrix 4
 
     // calculate inverse by solving linear system with identity RHS
-    [Test]
+    [Fact]
     public void StaticSolveMatrix4()
     {
       int i, j;
@@ -1706,7 +1706,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance4, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance4, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Solve Matrix 4
@@ -1714,7 +1714,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Static Solve Matrix 5
 
     // calculate inverse by solving linear system with identity RHS
-    [Test]
+    [Fact]
     public void StaticSolveMatrix5()
     {
       int i, j;
@@ -1736,7 +1736,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance5, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance5, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Solve Matrix 5
@@ -1744,10 +1744,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Null Parameter Test for Static YuleWalker
 
     // test Yule-Walker with a null reference
-    [Test]
+    [Fact]
     public void NullParameterTestforStaticYuleWalker()
     {
-      Assert.Throws(typeof(ArgumentNullException), () =>
+      Assert.Throws<ArgumentNullException>(() =>
       {
         ComplexDoubleVector Y = ComplexDoubleSymmetricLevinson.YuleWalker(null);
       });
@@ -1758,10 +1758,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Row Test for Static YuleWalker
 
     // test Yule-Walker with order 1 matrix
-    [Test]
+    [Fact]
     public void RowTestforStaticYuleWalker()
     {
-      Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+      Assert.Throws<ArgumentOutOfRangeException>(() =>
       {
         var T = new ComplexDoubleVector(1)
         {
@@ -1776,10 +1776,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     #region Singular Test for Static YuleWalker
 
     // test Yule-Walker with matrix with singular principal sub-matrix
-    [Test]
+    [Fact]
     public void SingularTestforStaticYuleWalker()
     {
-      Assert.Throws(typeof(SingularMatrixException), () =>
+      Assert.Throws<SingularMatrixException>(() =>
       {
         var T = new ComplexDoubleVector(3);
         T[2] = T[1] = T[0] = new Complex(1.0, 1.0);
@@ -1791,7 +1791,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
     #region Static Yule Walker 2
 
-    [Test]
+    [Fact]
     public void StaticYuleWalker2()
     {
       int i;
@@ -1809,14 +1809,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
           me = e;
         }
       }
-      Assert.IsTrue(me < Tolerance2, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance2, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Yule Walker 2
 
     #region Static Yule Walker 3
 
-    [Test]
+    [Fact]
     public void StaticYuleWalker3()
     {
       int i;
@@ -1834,14 +1834,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
           me = e;
         }
       }
-      Assert.IsTrue(me < Tolerance3, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance3, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Yule Walker 3
 
     #region Static Yule Walker 4
 
-    [Test]
+    [Fact]
     public void StaticYuleWalker4()
     {
       int i;
@@ -1859,14 +1859,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
           me = e;
         }
       }
-      Assert.IsTrue(me < Tolerance4, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance4, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Yule Walker 4
 
     #region Static Yule Walker 5
 
-    [Test]
+    [Fact]
     public void StaticYuleWalker5()
     {
       int i;
@@ -1884,17 +1884,17 @@ namespace AltaxoTest.Calc.LinearAlgebra
           me = e;
         }
       }
-      Assert.IsTrue(me < Tolerance5, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance5, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Yule Walker 5
 
     #region Null Prameter Test for Static Inverse
 
-    [Test]
+    [Fact]
     public void NullPrameterTestforStaticInverse()
     {
-      Assert.Throws(typeof(System.ArgumentNullException), () =>
+      Assert.Throws<System.ArgumentNullException>(() =>
       {
         ComplexDoubleMatrix Y = ComplexDoubleSymmetricLevinson.Inverse(null);
       });
@@ -1904,10 +1904,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
     #region Singular Test for Static Inverse
 
-    [Test]
+    [Fact]
     public void SingularTestforStaticInverse()
     {
-      Assert.Throws(typeof(SingularMatrixException), () =>
+      Assert.Throws<SingularMatrixException>(() =>
       {
         // setup an ill-conditioned system (second order principal submatrix is singular)
         var T = new ComplexDoubleVector(3)
@@ -1925,7 +1925,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
     #region Static Inverse 1
 
-    [Test]
+    [Fact]
     public void StaticInverse1()
     {
       int i, j;
@@ -1947,14 +1947,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance1, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance1, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Inverse 1
 
     #region Static Inverse 2
 
-    [Test]
+    [Fact]
     public void StaticInverse2()
     {
       int i, j;
@@ -1976,14 +1976,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance2, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance2, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Inverse 2
 
     #region Static Inverse 3
 
-    [Test]
+    [Fact]
     public void StaticInverse3()
     {
       int i, j;
@@ -2005,14 +2005,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance3, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance3, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Inverse 3
 
     #region Static Inverse 4
 
-    [Test]
+    [Fact]
     public void StaticInverse4()
     {
       int i, j;
@@ -2034,14 +2034,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance4, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance4, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Inverse 4
 
     #region Static Inverse 5
 
-    [Test]
+    [Fact]
     public void StaticInverse5()
     {
       int i, j;
@@ -2063,7 +2063,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < Tolerance5, "Maximum Error = " + me.ToString());
+      Assert.True(me < Tolerance5, "Maximum Error = " + me.ToString());
     }
 
     #endregion Static Inverse 5

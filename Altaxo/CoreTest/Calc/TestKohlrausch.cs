@@ -24,47 +24,47 @@
 
 using System;
 using Altaxo.Calc;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc
 {
-  [TestFixture]
+  
   public class TestKohlrausch
   {
-    [Test]
+    [Fact]
     public void TestIm1()
     {
       double result = Kohlrausch.Im1(1.0 + 4 / 32.0, 1);
     }
 
-    [Test]
+    [Fact]
     public void TestIm2()
     {
       double beta = 63 / 32.0;
       double result = Kohlrausch.Im2(beta, Math.Exp(2.65625 / beta));
     }
 
-    [Test]
+    [Fact]
     public void TestIm()
     {
       double beta = 1 / 32.0;
       double result = Kohlrausch.Im(beta, Math.Exp(-5 / beta));
     }
 
-    [Test]
+    [Fact]
     public void TestIm2SmallBeta()
     {
       double beta = 1 / 32.0;
       double result = Kohlrausch.Im2SmallBeta(beta, Math.Exp(-5 / beta));
     }
 
-    [Test]
+    [Fact]
     public void TestRe1()
     {
       double result = Kohlrausch.Re1(0.5, 1024);
     }
 
-    [Test]
+    [Fact]
     public void TestRe2()
     {
       double result = Kohlrausch.Re(0.03125, Math.Exp(-5 / 0.03125));

@@ -25,23 +25,23 @@
 using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
-  [TestFixture]
+  
   public class ComplexFloatQRDecompTest
   {
-    [Test]
+    [Fact]
     public void NullTest()
     {
-      Assert.Throws(typeof(ArgumentNullException), () =>
+      Assert.Throws<ArgumentNullException>(() =>
       {
         var test = new ComplexFloatQRDecomp(null);
       });
     }
 
-    [Test]
+    [Fact]
     public void SquareDecomp()
     {
       var a = new ComplexFloatMatrix(3)
@@ -76,7 +76,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
         }
       }
 
-      Assert.IsTrue(MaxError < 1.0E-6);
+      Assert.True(MaxError < 1.0E-6);
 
       MaxError = 0.0;
       for (int i = 0; i < 3; i++)
@@ -91,10 +91,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
         }
       }
 
-      Assert.IsTrue(MaxError < 2.4E-6);
+      Assert.True(MaxError < 2.4E-6);
     }
 
-    [Test]
+    [Fact]
     public void WideDecomp()
     {
       var a = new ComplexFloatMatrix(2, 4)
@@ -127,7 +127,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(MaxError < 1.0E-6);
+      Assert.True(MaxError < 1.0E-6);
 
       MaxError = 0.0;
       for (int i = 0; i < 2; i++)
@@ -141,10 +141,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(MaxError < 2.8E-6);
+      Assert.True(MaxError < 2.8E-6);
     }
 
-    [Test]
+    [Fact]
     public void LongDecomp()
     {
       var a = new ComplexFloatMatrix(4, 2)
@@ -177,7 +177,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(MaxError < 1.0E-6);
+      Assert.True(MaxError < 1.0E-6);
       MaxError = 0.0;
       for (int i = 0; i < 4; i++)
       {
@@ -190,10 +190,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(MaxError < 1.0E-5);
+      Assert.True(MaxError < 1.0E-5);
     }
 
-    [Test]
+    [Fact]
     public void SolveMatrix()
     {
       var a = new ComplexFloatMatrix(3)
@@ -225,15 +225,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
       ComplexFloatMatrix X = qr.Solve(b);
 
-      Assert.IsTrue(Comparer.AreEqual(X[0, 0], new ComplexFloat(-0.57f, 1.14f), .01));
-      Assert.IsTrue(Comparer.AreEqual(X[0, 1], new ComplexFloat(-0.57f, 1.14f), .01));
-      Assert.IsTrue(Comparer.AreEqual(X[0, 2], new ComplexFloat(-0.57f, 1.14f), .01));
-      Assert.IsTrue(Comparer.AreEqual(X[1, 0], new ComplexFloat(1.03f, -0.16f), .01));
-      Assert.IsTrue(Comparer.AreEqual(X[1, 1], new ComplexFloat(1.03f, -0.16f), .01));
-      Assert.IsTrue(Comparer.AreEqual(X[1, 2], new ComplexFloat(1.03f, -0.16f), .01));
-      Assert.IsTrue(Comparer.AreEqual(X[2, 0], new ComplexFloat(0.16f, -0.52f), .01));
-      Assert.IsTrue(Comparer.AreEqual(X[2, 1], new ComplexFloat(0.16f, -0.52f), .01));
-      Assert.IsTrue(Comparer.AreEqual(X[2, 2], new ComplexFloat(0.16f, -0.52f), .01));
+      Assert.True(Comparer.AreEqual(X[0, 0], new ComplexFloat(-0.57f, 1.14f), .01));
+      Assert.True(Comparer.AreEqual(X[0, 1], new ComplexFloat(-0.57f, 1.14f), .01));
+      Assert.True(Comparer.AreEqual(X[0, 2], new ComplexFloat(-0.57f, 1.14f), .01));
+      Assert.True(Comparer.AreEqual(X[1, 0], new ComplexFloat(1.03f, -0.16f), .01));
+      Assert.True(Comparer.AreEqual(X[1, 1], new ComplexFloat(1.03f, -0.16f), .01));
+      Assert.True(Comparer.AreEqual(X[1, 2], new ComplexFloat(1.03f, -0.16f), .01));
+      Assert.True(Comparer.AreEqual(X[2, 0], new ComplexFloat(0.16f, -0.52f), .01));
+      Assert.True(Comparer.AreEqual(X[2, 1], new ComplexFloat(0.16f, -0.52f), .01));
+      Assert.True(Comparer.AreEqual(X[2, 2], new ComplexFloat(0.16f, -0.52f), .01));
 
       a = new ComplexFloatMatrix(3, 2)
       {
@@ -261,12 +261,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
       X = qr.Solve(b);
 
-      Assert.IsTrue(Comparer.AreEqual(X[0, 0], new ComplexFloat(-0.344f, 0.410f), .01));
-      Assert.IsTrue(Comparer.AreEqual(X[0, 1], new ComplexFloat(-0.344f, 0.410f), .01));
-      Assert.IsTrue(Comparer.AreEqual(X[0, 2], new ComplexFloat(-0.344f, 0.410f), .01));
-      Assert.IsTrue(Comparer.AreEqual(X[1, 0], new ComplexFloat(1.01f, -0.170f), .01));
-      Assert.IsTrue(Comparer.AreEqual(X[1, 1], new ComplexFloat(1.01f, -0.170f), .01));
-      Assert.IsTrue(Comparer.AreEqual(X[1, 2], new ComplexFloat(1.01f, -0.170f), .01));
+      Assert.True(Comparer.AreEqual(X[0, 0], new ComplexFloat(-0.344f, 0.410f), .01));
+      Assert.True(Comparer.AreEqual(X[0, 1], new ComplexFloat(-0.344f, 0.410f), .01));
+      Assert.True(Comparer.AreEqual(X[0, 2], new ComplexFloat(-0.344f, 0.410f), .01));
+      Assert.True(Comparer.AreEqual(X[1, 0], new ComplexFloat(1.01f, -0.170f), .01));
+      Assert.True(Comparer.AreEqual(X[1, 1], new ComplexFloat(1.01f, -0.170f), .01));
+      Assert.True(Comparer.AreEqual(X[1, 2], new ComplexFloat(1.01f, -0.170f), .01));
     }
   }
 }

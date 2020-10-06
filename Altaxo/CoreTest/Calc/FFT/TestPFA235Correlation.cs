@@ -24,12 +24,12 @@
 
 using System;
 using Altaxo.Calc.Fourier;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Fourier
 {
 #if Ready
-  [TestFixture]
+  
   public class TestPFA235CorrelationReal1D
   {
     const int nLowerLimit=4;
@@ -50,42 +50,42 @@ namespace AltaxoTest.Calc.Fourier
       conv.Convolute(re1,re2,re,null,FourierDirection.Forward);
     }
 
-    [Test]
+    [Fact]
     public void Test01BothZero()
     {
       foreach(int i in _testLengths)
         _test.TestBothZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test02OneZero()
     {
       foreach(int i in _testLengths)
         _test.TestOneZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test03ReOne_ZeroPos()
     {
       foreach(int i in _testLengths)
         _test.TestReOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test04OneReOne_OtherRandom()
     {
       foreach(int i in _testLengths)
         _test.TestOneReOne_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test05ReOne_OnePos_OtherRandom()
     {
       foreach(int i in _testLengths)
         _test.TestReOne_OnePos_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test06BothRandom()
     {
       foreach(int i in _testLengths)
@@ -95,7 +95,7 @@ namespace AltaxoTest.Calc.Fourier
 
 #endif
 
-  [TestFixture]
+  
   public class TestPFA235CorrelationSplittedComplex1D
   {
     private const int nLowerLimit = 4;
@@ -115,56 +115,56 @@ namespace AltaxoTest.Calc.Fourier
       conv.CyclicCorrelation(re1, im1, re2, im2, re, im, n);
     }
 
-    [Test]
+    [Fact]
     public void Test01BothZero()
     {
       foreach (int i in _testLengths)
         _test.TestBothZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test02OneZero()
     {
       foreach (int i in _testLengths)
         _test.TestOneZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test03ReOne_ZeroPos()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test04OneReOne_OtherRandom()
     {
       foreach (int i in _testLengths)
         _test.TestOneReOne_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test05OneImOne_OtherRandom()
     {
       foreach (int i in _testLengths)
         _test.TestOneImOne_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test06ReOne_OnePos_OtherRandom()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_OnePos_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test07ImOne_OnePos_OtherRandom()
     {
       foreach (int i in _testLengths)
         _test.TestImOne_OnePos_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test08BothRandom()
     {
       foreach (int i in _testLengths)
@@ -172,7 +172,7 @@ namespace AltaxoTest.Calc.Fourier
     }
   }
 
-  [TestFixture]
+  
   public class TestPFA235CorrelationReal1D
   {
     private const int nLowerLimit = 4;
@@ -193,49 +193,49 @@ namespace AltaxoTest.Calc.Fourier
       conv.CyclicCorrelation(re1, re2, re, n, null);
     }
 
-    [Test]
+    [Fact]
     public void Test01BothZero()
     {
       foreach (int i in _testLengths)
         _test.TestBothZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test02OneZero()
     {
       foreach (int i in _testLengths)
         _test.TestOneZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test03ReOne_ZeroPos()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test04ReOne_ReOne_OnePos()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_ReOne_OnePos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test05OneReOne_OtherRandom()
     {
       foreach (int i in _testLengths)
         _test.TestOneReOne_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test06ReOne_OnePos_OtherRandom()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_OnePos_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test07BothRandom()
     {
       foreach (int i in _testLengths)

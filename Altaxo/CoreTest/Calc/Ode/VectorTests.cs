@@ -9,16 +9,16 @@
 using System;
 using System.Globalization;
 using System.Threading;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Calc.Ode
 {
-  [TestFixture]
+
   public class VectorTests
   {
     private const double Eps = 1e-10;
 
-    [Test]
+    [Fact]
     public void MulAddTest()
     {
       var x = new Vector(1.0, 0.0, 1.0);
@@ -27,51 +27,51 @@ namespace Altaxo.Calc.Ode
       AssertVectorEqualsEps(x, new Vector(2.0, 1.0, 0.0));
     }
 
-    [Test]
+    [Fact]
     public void LerpTest()
     {
       var v0 = new Vector(-1);
       var v1 = new Vector(1);
-      Assert.AreEqual(Vector.Lerp(0, 0, v0, 1, v1)[0], -1, Eps);
-      Assert.AreEqual(Vector.Lerp(1 / 3.0, 0, v0, 1, v1)[0], -1 / 3.0, Eps);
-      Assert.AreEqual(Vector.Lerp(2 / 3.0, 0, v0, 1, v1)[0], 1 / 3.0, Eps);
-      Assert.AreEqual(Vector.Lerp(1, 0, v0, 1, v1)[0], 1, Eps);
+      AssertEx.Equal(Vector.Lerp(0, 0, v0, 1, v1)[0], -1, Eps);
+      AssertEx.Equal(Vector.Lerp(1 / 3.0, 0, v0, 1, v1)[0], -1 / 3.0, Eps);
+      AssertEx.Equal(Vector.Lerp(2 / 3.0, 0, v0, 1, v1)[0], 1 / 3.0, Eps);
+      AssertEx.Equal(Vector.Lerp(1, 0, v0, 1, v1)[0], 1, Eps);
     }
 
-    [Test]
+    [Fact]
     public void AbsTest()
     {
       Vector v = new Vector(-1, 1, -0.5).Abs();
-      Assert.AreEqual(v[0], 1);
-      Assert.AreEqual(v[1], 1);
-      Assert.AreEqual(v[2], 0.5);
+      Assert.Equal(1, v[0]);
+      Assert.Equal(1, v[1]);
+      Assert.Equal(0.5, v[2]);
     }
 
-    [Test]
+    [Fact]
     public void EuclideanNormTest()
     {
-      Assert.AreEqual(new Vector(-1, 2, -3).EuclideanNorm, Math.Sqrt(14), Eps);
-      Assert.AreEqual(Vector.GetEuclideanNorm(new Vector(-1, 2, -3), new Vector(1, -1, 2)), Math.Sqrt(38));
+      AssertEx.Equal(new Vector(-1, 2, -3).EuclideanNorm, Math.Sqrt(14), Eps);
+      Assert.Equal(Vector.GetEuclideanNorm(new Vector(-1, 2, -3), new Vector(1, -1, 2)), Math.Sqrt(38));
     }
 
-    [Test]
+    [Fact]
     public void MaxTest()
     {
       var m = Vector.Max(new Vector(-2, 1, 3), new Vector(3, -2, 3));
-      Assert.AreEqual(m[0], 3);
-      Assert.AreEqual(m[1], 1);
-      Assert.AreEqual(m[2], 3);
+      Assert.Equal(3, m[0]);
+      Assert.Equal(1, m[1]);
+      Assert.Equal(3, m[2]);
     }
 
-    [Test]
+    [Fact]
     public void ToStringTest()
     {
       var ci = Thread.CurrentThread.CurrentCulture;
       Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
       try
       {
-        Assert.AreEqual(new Vector(1.5).ToString(), "[1.5]");
-        Assert.AreEqual(new Vector(1.2, -2.3).ToString(), "[1.2, -2.3]");
+        Assert.Equal("[1.5]", new Vector(1.5).ToString());
+        Assert.Equal("[1.2, -2.3]", new Vector(1.2, -2.3).ToString());
       }
       finally
       {
@@ -79,13 +79,13 @@ namespace Altaxo.Calc.Ode
       }
     }
 
-    [Test]
+    [Fact]
     public void SumTest()
     {
-      Assert.AreEqual(new Vector(-1.0, 3.0, -2.0).Sum, 0.0, Eps);
+      AssertEx.Equal(new Vector(-1.0, 3.0, -2.0).Sum, 0.0, Eps);
     }
 
-    [Test]
+    [Fact]
     public void ArithmeticTest()
     {
       // Element-wise operations
@@ -93,35 +93,35 @@ namespace Altaxo.Calc.Ode
       var b = new Vector(3, -4);
 
       var sum = a + b;
-      Assert.AreEqual(sum[0], 2, Eps);
-      Assert.AreEqual(sum[1], -2, Eps);
+      AssertEx.Equal(sum[0], 2, Eps);
+      AssertEx.Equal(sum[1], -2, Eps);
 
       var diff = a - b;
-      Assert.AreEqual(diff[0], -4, Eps);
-      Assert.AreEqual(diff[1], 6, Eps);
+      AssertEx.Equal(diff[0], -4, Eps);
+      AssertEx.Equal(diff[1], 6, Eps);
 
       var div = a / b;
-      Assert.AreEqual(div[0], -1 / 3.0, Eps);
-      Assert.AreEqual(div[1], -0.5, Eps);
+      AssertEx.Equal(div[0], -1 / 3.0, Eps);
+      AssertEx.Equal(div[1], -0.5, Eps);
 
       // (Vector, scalar) operations
       var prod = a * 2.5;
-      Assert.AreEqual(prod[0], -2.5, Eps);
-      Assert.AreEqual(prod[1], 5, Eps);
+      AssertEx.Equal(prod[0], -2.5, Eps);
+      AssertEx.Equal(prod[1], 5, Eps);
 
       var div2 = a / 3.0;
-      Assert.AreEqual(div2[0], -1 / 3.0, Eps);
-      Assert.AreEqual(div2[1], 2 / 3.0, Eps);
+      AssertEx.Equal(div2[0], -1 / 3.0, Eps);
+      AssertEx.Equal(div2[1], 2 / 3.0, Eps);
 
       var sum2 = a + 3.0;
-      Assert.AreEqual(sum2[0], 2.0, Eps);
-      Assert.AreEqual(sum2[1], 5.0, Eps);
+      AssertEx.Equal(sum2[0], 2.0, Eps);
+      AssertEx.Equal(sum2[1], 5.0, Eps);
 
       // Dot product
-      Assert.AreEqual(a * b, -11, Eps);
+      AssertEx.Equal(a * b, -11, Eps);
     }
 
-    [Test]
+    [Fact]
     public void VectorMatrixMultiplyTest()
     {
       var v = new Vector(-1, 1);
@@ -132,18 +132,18 @@ namespace Altaxo.Calc.Ode
             });
 
       Vector vm = m * v;
-      Assert.AreEqual(vm[0], 5, Eps);
-      Assert.AreEqual(vm[1], -7, Eps);
-      Assert.AreEqual(vm[2], 1, Eps);
+      AssertEx.Equal(vm[0], 5, Eps);
+      AssertEx.Equal(vm[1], -7, Eps);
+      AssertEx.Equal(vm[2], 1, Eps);
 
       var m2 = m.Transpose(); // 2x3 matrix
       vm = v * m2;
-      Assert.AreEqual(vm[0], 5, Eps);
-      Assert.AreEqual(vm[1], -7, Eps);
-      Assert.AreEqual(vm[2], 1, Eps);
+      AssertEx.Equal(vm[0], 5, Eps);
+      AssertEx.Equal(vm[1], -7, Eps);
+      AssertEx.Equal(vm[2], 1, Eps);
     }
 
-    [Test]
+    [Fact]
     public void EqualsTest()
     {
       var v1 = new Vector(-1, 2);
@@ -151,10 +151,10 @@ namespace Altaxo.Calc.Ode
       var v3 = new Vector(-1, 2);
       var v4 = new Vector(3, 2, 10);
 
-      Assert.IsTrue(v1.Equals(v3));
-      Assert.IsTrue(v2.Equals(v2));
-      Assert.IsFalse(v2.Equals(v4));
-      Assert.IsFalse(v1.Equals(v2));
+      Assert.True(v1.Equals(v3));
+      Assert.True(v2.Equals(v2));
+      Assert.False(v2.Equals(v4));
+      Assert.False(v1.Equals(v2));
     }
 
     private void AssertVectorEqualsEps(Vector A, Vector B)
@@ -165,7 +165,7 @@ namespace Altaxo.Calc.Ode
         sum += A[i] - B[i];
       }
 
-      Assert.AreEqual(sum, 0.0, Eps);
+      AssertEx.Equal(sum, 0.0, Eps);
     }
   }
 }

@@ -24,14 +24,14 @@
 
 using System;
 using Altaxo.Calc.Probability;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Probability
 {
-  [TestFixture]
+
   public class RandomnessTests
   {
-    [Test]
+    [Fact]
     public void TestSystemRandom()
     {
       var rand = new System.Random();
@@ -44,10 +44,10 @@ namespace AltaxoTest.Calc.Probability
       }
 
       EntCalc.EntCalcResult result = calc.EndCalculation();
-      Assert.Less(result.ChiProbability, 0.01, "ChiProbability is too high, thus System.Random is not really random");
+      AssertEx.Less(result.ChiProbability, 0.01, "ChiProbability is too high, thus System.Random is not really random");
     }
 
-    [Test]
+    [Fact]
     public void TestMT19937Generator()
     {
       var rand = new MT19937Generator();
@@ -60,10 +60,10 @@ namespace AltaxoTest.Calc.Probability
       }
 
       EntCalc.EntCalcResult result = calc.EndCalculation();
-      Assert.Less(result.ChiProbability, 0.01, "ChiProbability is too high, thus MT19937 Generator is not really random");
+      AssertEx.Less(result.ChiProbability, 0.01, "ChiProbability is too high, thus MT19937 Generator is not really random");
     }
 
-    [Test]
+    [Fact]
     public void TestNotRandomSequence()
     {
       var calc = new EntCalc(false);
@@ -74,7 +74,7 @@ namespace AltaxoTest.Calc.Probability
       }
 
       EntCalc.EntCalcResult result = calc.EndCalculation();
-      Assert.Less(result.ChiProbability, 0.01, "ChiProbability is too high, thus MT19937 Generator is not really random");
+      AssertEx.Less(result.ChiProbability, 0.01, "ChiProbability is too high, thus MT19937 Generator is not really random");
     }
   }
 
@@ -92,13 +92,13 @@ namespace AltaxoTest.Calc.Probability
 
   public class EntCalc
   {
-    private static double[,] chsqt = new double[2, 10]
+    private double[,] chsqt = new double[2, 10]
       {
         {0.5, 0.25, 0.1, 0.05, 0.025, 0.01, 0.005, 0.001, 0.0005, 0.0001},
         {0.0, 0.6745, 1.2816, 1.6449, 1.9600, 2.3263, 2.5758, 3.0902, 3.2905, 3.7190}
       };
 
-    private static int MONTEN = 6;        /* Bytes used as Monte Carlo co-ordinates
+    private const int MONTEN = 6;        /* Bytes used as Monte Carlo co-ordinates
 													 * This should be no more bits than the mantissa
 													 * of your "double" floating point type. */
 
@@ -343,34 +343,6 @@ namespace AltaxoTest.Calc.Probability
     private static double log2(double x)
     {
       return Math.Log(x, 2);    //can use this in C#
-    }
-  }
-
-  public class EntFileCalc
-  {
-    public static EntCalc.EntCalcResult CalculateFile(ref System.IO.FileStream inStream)
-    {
-      var entCalc = new EntCalc(false);
-      while (inStream.Position < inStream.Length)
-      {
-        entCalc.AddSample((byte)inStream.ReadByte(), false);
-      }
-
-      return entCalc.EndCalculation();
-    }
-
-    public static EntCalc.EntCalcResult CalculateFile(string inFileName)
-    {
-      var instream = new System.IO.FileStream(inFileName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.None)
-      {
-        Position = 0
-      };
-
-      EntCalc.EntCalcResult tmpRes = CalculateFile(ref instream);
-
-      instream.Close();
-
-      return tmpRes;
     }
   }
 

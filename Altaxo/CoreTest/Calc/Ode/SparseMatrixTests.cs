@@ -8,16 +8,16 @@
 
 using System;
 using System.Diagnostics;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Calc.Ode
 {
-  [TestFixture]
+
   public class SparseMatrixTests
   {
     private const double Eps = 1e-10;
 
-    [Test]
+    [Fact]
     public void plusTest()
     {
       const int N = 50;
@@ -39,7 +39,7 @@ namespace Altaxo.Calc.Ode
       AssertMatrixEqualsEps(C, Zeros);
     }
 
-    [Test]
+    [Fact]
     public void minusTest()
     {
       const int N = 50;
@@ -61,7 +61,7 @@ namespace Altaxo.Calc.Ode
       AssertMatrixEqualsEps(C, Zeros);
     }
 
-    [Test]
+    [Fact]
     public void isLowerTriangularTest()
     {
       const int N = 50;
@@ -69,14 +69,14 @@ namespace Altaxo.Calc.Ode
       for (int i = 0; i < N; i++)
         A[i, i] = i % 5 == 0 ? 1.0 : 0.0;
 
-      Assert.AreEqual(A.IsLowerTriangular(), true);
+      Assert.True(A.IsLowerTriangular());
       A[45, 40] = 1.0;
-      Assert.AreEqual(A.IsLowerTriangular(), true);
+      Assert.True(A.IsLowerTriangular());
       A[40, 45] = 1.0;
-      Assert.AreEqual(A.IsLowerTriangular(), false);
+      Assert.False(A.IsLowerTriangular());
     }
 
-    [Test]
+    [Fact]
     public void TimesEqualsTest()
     {
       const int N = 50;
@@ -94,7 +94,7 @@ namespace Altaxo.Calc.Ode
       AssertMatrixEqualsEps(B, D);
     }
 
-    [Test]
+    [Fact]
     public void TimesTest()
     {
       const int N = 50;
@@ -116,7 +116,7 @@ namespace Altaxo.Calc.Ode
       AssertVectorEqualsEps(B, C);
     }
 
-    [Test]
+    [Fact]
     public void SolveGETest()
     {
       const int N = 50;
@@ -155,7 +155,7 @@ namespace Altaxo.Calc.Ode
       Vector b2 = ainit * x;
 
       // Verify result is the same
-      Assert.IsTrue(Vector.GetLInfinityNorm(binit, b2) < 1e-6);
+      Assert.True(Vector.GetLInfinityNorm(binit, b2) < 1e-6);
     }
 
     private void AssertVectorEqualsEps(Vector A, Vector B)
@@ -166,12 +166,12 @@ namespace Altaxo.Calc.Ode
         sum += A[i] - B[i];
       }
 
-      Assert.AreEqual(sum, 0.0, 1e-10);
+      AssertEx.Equal(sum, 0.0, 1e-10);
     }
 
     private void AssertEqualsEps(double a, double b)
     {
-      Assert.IsTrue(Math.Abs(a - b) < 1e-10);
+      Assert.True(Math.Abs(a - b) < 1e-10);
     }
 
     private void AssertMatrixEqualsEps(SparseMatrix A, SparseMatrix B)

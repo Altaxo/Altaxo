@@ -26,14 +26,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Collections;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Collections
 {
-  [TestFixture]
-  internal class TestPriorityQueue_Key
+
+  public class TestPriorityQueue_Key
   {
-    [Test]
+    [Fact]
     public void TestOrder()
     {
       const int numberOfElements = 10000;
@@ -44,17 +44,17 @@ namespace AltaxoTest.Collections
       for (int i = 0; i < numberOfElements; ++i)
         queue.Enqueue(100 + rnd.Next(numberOfElements));
 
-      Assert.AreEqual(numberOfElements, queue.Count);
+      Assert.Equal(numberOfElements, queue.Count);
 
       int previous = int.MinValue;
       for (int i = 0; i < numberOfElements; ++i)
       {
         int curr = queue.Dequeue();
-        Assert.GreaterOrEqual(curr, previous);
+        AssertEx.GreaterOrEqual(curr, previous);
         previous = curr;
       }
 
-      Assert.AreEqual(0, queue.Count);
+      Assert.Equal(0, queue.Count);
     }
   }
 }

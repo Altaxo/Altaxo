@@ -28,11 +28,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Altaxo.Collections;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Collections
 {
-  [TestFixture]
+
   public class TestConcurrentPriorityQueue
   {
     #region Helpers
@@ -60,7 +60,7 @@ namespace AltaxoTest.Collections
 
     #endregion Helpers
 
-    public void TestOrder(int? capacity)
+    private void TestOrderExecute(int? capacity)
     {
       const int numberOfElements = 10000;
       var rnd = new System.Random();
@@ -75,30 +75,30 @@ namespace AltaxoTest.Collections
       for (int i = 0; i < numberOfElements; ++i)
         queue.Enqueue(100 + rnd.Next(numberOfElements), 23);
 
-      Assert.AreEqual(numberOfElements, queue.Count);
+      Assert.Equal(numberOfElements, queue.Count);
 
       int previous = int.MinValue;
       for (int i = 0; i < numberOfElements; ++i)
       {
         var result = queue.TryDequeue(out var curr, out var val);
-        Assert.GreaterOrEqual(curr, previous);
-        Assert.AreEqual(23, val);
+        AssertEx.GreaterOrEqual(curr, previous);
+        Assert.Equal(23, val);
         previous = curr;
       }
 
-      Assert.AreEqual(0, queue.Count);
+      Assert.Equal(0, queue.Count);
     }
 
-    [Test]
+    [Fact]
     public void TestOrder()
     {
-      TestOrder(null);
-      TestOrder(13);
-      TestOrder(22);
-      TestOrder(65353);
+      TestOrderExecute(null);
+      TestOrderExecute(13);
+      TestOrderExecute(22);
+      TestOrderExecute(65353);
     }
 
-    [Test]
+    [Fact]
     public void Test002_Concurrency()
     {
       const int numberOfItems = 100000;
@@ -136,7 +136,7 @@ namespace AltaxoTest.Collections
             {
             while(queueToTest.TryDequeue(out var key, out var value))
             {
-              Assert.AreEqual(key + 13, value);
+              Assert.Equal(key + 13, value);
               destinationItems.Add(key);
               counter = 0;
             }
@@ -152,7 +152,7 @@ namespace AltaxoTest.Collections
             {
             while(queueToTest.TryDequeue(out var key, out var value))
             {
-              Assert.AreEqual(key + 13, value);
+              Assert.Equal(key + 13, value);
               destinationItems.Add(key);
               counter = 0;
             }
@@ -162,16 +162,16 @@ namespace AltaxoTest.Collections
           }
       });
 
-      Assert.AreEqual(0, sourceItems.Count, "All source items should be moved into the queueToTest and then to the destinationItems collection");
-      Assert.AreEqual(0, queueToTest.Count, "Queue should be empty, all items should be moved into the destinationItems collection");
-      Assert.AreEqual(numberOfItems, destinationItems.Count);
+      AssertEx.Equal(0, sourceItems.Count, "All source items should be moved into the queueToTest and then to the destinationItems collection");
+      AssertEx.Equal(0, queueToTest.Count, "Queue should be empty, all items should be moved into the destinationItems collection");
+      Assert.Equal(numberOfItems, destinationItems.Count);
       var list = new List<int>(destinationItems);
 
       list.Sort();
 
       for (int i = 0; i < numberOfItems; ++i)
       {
-        Assert.AreEqual(sourceItemsSorted[i], list[i]);
+        Assert.Equal(sourceItemsSorted[i], list[i]);
       }
     }
   }

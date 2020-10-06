@@ -27,14 +27,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Calc.Ode
 {
-  [TestFixture]
+
   public class GearsBDFTest
   {
-    [Test]
+    [Fact]
     public void GearTest2a()
     {
       const double lambda1 = -1;
@@ -75,27 +75,27 @@ namespace Altaxo.Calc.Ode
         var spulse = pulseit.Current;
         ode.Evaluate(out var tres, sp);
 
-        Assert.AreEqual(spulse.T, tres);
-        Assert.AreEqual(spulse.X[0], sp[0]);
-        Assert.AreEqual(spulse.X[1], sp[1]);
+        Assert.Equal(spulse.T, tres);
+        Assert.Equal(spulse.X[0], sp[0]);
+        Assert.Equal(spulse.X[1], sp[1]);
 
         double t = spulse.T;
         var y0_expected = C1 * Math.Exp(lambda1 * t) + C2 * Math.Exp(lambda2 * t);
         var y1_expected = C1 * Math.Exp(lambda1 * t) - C2 * Math.Exp(lambda2 * t);
-        Assert.AreEqual(y0_expected, spulse.X[0], 1E-7 * y0_expected + 1E-8);
-        Assert.AreEqual(y1_expected, spulse.X[1], 6E-7 * y1_expected + 1E-8);
+        AssertEx.Equal(y0_expected, spulse.X[0], 1E-7 * y0_expected + 1E-8);
+        AssertEx.Equal(y1_expected, spulse.X[1], 6E-7 * y1_expected + 1E-8);
 
         t = tres;
         y0_expected = C1 * Math.Exp(lambda1 * t) + C2 * Math.Exp(lambda2 * t);
         y1_expected = C1 * Math.Exp(lambda1 * t) - C2 * Math.Exp(lambda2 * t);
-        Assert.AreEqual(y0_expected, sp[0], 1E-7 * y0_expected + 1E-8);
-        Assert.AreEqual(y1_expected, sp[1], 6E-7 * y1_expected + 1E-8);
+        AssertEx.Equal(y0_expected, sp[0], 1E-7 * y0_expected + 1E-8);
+        AssertEx.Equal(y1_expected, sp[1], 6E-7 * y1_expected + 1E-8);
 
         ++nCounter;
       }
     }
 
-    [Test]
+    [Fact]
     public void GearTest3a()
     {
       Vector fuu(double t, Vector y)
@@ -123,15 +123,15 @@ namespace Altaxo.Calc.Ode
         double t = spulse.T;
         ode.Evaluate(out var tsp, sp);
 
-        Assert.AreEqual(t, tsp, 1e-4);
+        AssertEx.Equal(t, tsp, 1e-4);
 
         var y0_expected = t;
 
-        Assert.AreEqual(y0_expected, sp[0], 1E-3 * y0_expected + 1E-4);
+        AssertEx.Equal(y0_expected, sp[0], 1E-3 * y0_expected + 1E-4);
       }
     }
 
-    [Test]
+    [Fact]
     public void GearTest4a()
     {
       // evaluating y' = 2 y/ t  solution y = t²
@@ -150,11 +150,11 @@ namespace Altaxo.Calc.Ode
         ode.Evaluate(out tres, sp);
         var y0_expected = tres * tres;
 
-        Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
+        AssertEx.Equal(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
       } while (tres < 1e6);
     }
 
-    [Test]
+    [Fact]
     public void GearTest5a()
     {
       // evaluating y' = 3 y/ t  solution y = t³
@@ -173,7 +173,7 @@ namespace Altaxo.Calc.Ode
         ode.Evaluate(out tres, sp);
         var y0_expected = tres * tres * tres;
 
-        Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
+        AssertEx.Equal(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
       } while (tres < 1e6);
     }
 
@@ -181,7 +181,7 @@ namespace Altaxo.Calc.Ode
     /// Tests the equations y' = exponent * y/ t, which should give the solution y = t^exponent,
     /// with step size evaluated by the ODE solver.
     /// </summary>
-    [Test]
+    [Fact]
     public void GearTest6a()
     {
       for (int exponent = 2; exponent <= 5; exponent++)
@@ -202,7 +202,7 @@ namespace Altaxo.Calc.Ode
           ode.Evaluate(out tres, sp);
           var y0_expected = RMath.Pow(tres, exponent);
 
-          Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
+          AssertEx.Equal(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
         } while (tres < 1e6);
       }
     }
@@ -211,7 +211,7 @@ namespace Altaxo.Calc.Ode
     /// Tests the equations y' = exponent * y/ t, which should give the solution y = t^exponent,
     /// with time points provided externally.
     /// </summary>
-    [Test]
+    [Fact]
     public void GearTest6b()
     {
       for (int exponent = 2; exponent <= 5; exponent++)
@@ -226,21 +226,20 @@ namespace Altaxo.Calc.Ode
         new GearsBDFOptions { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
 
         var sp = new double[1];
-        double tres;
         for (double time = 1; time < 1000; time += 1)
         {
           ode.Evaluate(time, sp);
 
           var y0_expected = RMath.Pow(time, exponent);
-          Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
+          AssertEx.Equal(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
         }
         for (double time = 1000; time <= 1000000; time += 1000)
         {
           ode.Evaluate(time, sp);
-          Assert.AreEqual(time, time, 1e-8);
+          AssertEx.Equal(time, time, 1e-8);
 
           var y0_expected = RMath.Pow(time, exponent);
-          Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
+          AssertEx.Equal(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
         }
       }
     }
@@ -249,7 +248,7 @@ namespace Altaxo.Calc.Ode
     /// Tests the equations y' = exponent * y/ t, which should give the solution y = t^exponent,
     /// with time points provided externally, with logarithmic spacing from 1 to 1e6.
     /// </summary>
-    [Test]
+    [Fact]
     public void GearTest6c()
     {
       for (int exponent = 2; exponent <= 5; exponent++)
@@ -264,14 +263,13 @@ namespace Altaxo.Calc.Ode
         new GearsBDFOptions { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
 
         var sp = new double[1];
-        double tres;
         for (double ii = 0; ii <= 6000; ii += 1)
         {
           double time = Math.Pow(10, ii / 1000.0);
           ode.Evaluate(time, sp);
 
           var y0_expected = RMath.Pow(time, exponent);
-          Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
+          AssertEx.Equal(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
         }
       }
     }
@@ -280,7 +278,7 @@ namespace Altaxo.Calc.Ode
     /// Tests the equations y' = 1/y, y[t=0]==1/64, which should give the solution y=Sqrt(1+8192*t)/64
     /// with step size evaluated by the ODE solver.
     /// </summary>
-    [Test]
+    [Fact]
     public void GearTest7a()
     {
       // evaluating y' = 1/y, y[0]=1/64
@@ -299,7 +297,7 @@ namespace Altaxo.Calc.Ode
         ode.Evaluate(out tres, sp);
         var y0_expected = Math.Sqrt(1 + 8192 * tres) / 64;
 
-        Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
+        AssertEx.Equal(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
       } while (tres < 1e6);
     }
 
@@ -307,7 +305,7 @@ namespace Altaxo.Calc.Ode
     /// Tests the equations y' = y², y[t=0]==1/64, which should give the solution y=1/(64-t)
     /// with step size evaluated by the ODE solver.
     /// </summary>
-    [Test]
+    [Fact]
     public void GearTest7b()
     {
       Vector fuu(double t, Vector y)
@@ -335,20 +333,20 @@ namespace Altaxo.Calc.Ode
       foreach (var spulse in pulse.SolveTo(32))
       {
         ode.Evaluate(out var tres, sp);
-        Assert.AreEqual(spulse.T, tres);
-        Assert.AreEqual(spulse.X[0], sp[0]);
+        Assert.Equal(spulse.T, tres);
+        Assert.Equal(spulse.X[0], sp[0]);
 
         var y0_expected = 1 / (64 - tres);
 
-        Assert.AreEqual(y0_expected, spulse.X[0], 1E-6 * y0_expected + 1E-7);
-        Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
+        AssertEx.Equal(y0_expected, spulse.X[0], 1E-6 * y0_expected + 1E-7);
+        AssertEx.Equal(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
       };
     }
 
     /// <summary>
     /// Same test as above, but now with a sparse matrix
     /// </summary>
-    [Test]
+    [Fact]
     public void GearTestSparse01()
     {
       const double lambda1 = -1;
@@ -379,8 +377,8 @@ namespace Altaxo.Calc.Ode
         double t = tres;
         var y0_expected = C1 * Math.Exp(lambda1 * t) + C2 * Math.Exp(lambda2 * t);
         var y1_expected = C1 * Math.Exp(lambda1 * t) - C2 * Math.Exp(lambda2 * t);
-        Assert.AreEqual(y0_expected, sp[0], 1E-7 * y0_expected + 1E-8);
-        Assert.AreEqual(y1_expected, sp[1], 6E-7 * y1_expected + 1E-8);
+        AssertEx.Equal(y0_expected, sp[0], 1E-7 * y0_expected + 1E-8);
+        AssertEx.Equal(y1_expected, sp[1], 6E-7 * y1_expected + 1E-8);
 
         ++nCounter;
       }
@@ -389,7 +387,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// Same test as above, but now with 100 same and independent systems
     /// </summary>
-    [Test]
+    [Fact]
     public void GearTestSparse02()
     {
       const double lambda1 = -1;
@@ -443,8 +441,8 @@ namespace Altaxo.Calc.Ode
 
         for (int i = 0; i < numberOfCells; ++i)
         {
-          Assert.AreEqual(y0_expected, sp[i * 2 + 0], 1E-7 * y0_expected + 1E-8);
-          Assert.AreEqual(y1_expected, sp[i * 2 + 1], 6E-7 * y1_expected + 1E-8);
+          AssertEx.Equal(y0_expected, sp[i * 2 + 0], 1E-7 * y0_expected + 1E-8);
+          AssertEx.Equal(y1_expected, sp[i * 2 + 1], 6E-7 * y1_expected + 1E-8);
         }
 
         ++nCounter;
@@ -454,7 +452,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// Solve a simple diffusion problem with 100 cells
     /// </summary>
-    [Test]
+    [Fact]
     public void GearTestSparse03()
     {
       var ode = new GearsBDF();
@@ -504,7 +502,7 @@ namespace Altaxo.Calc.Ode
         double t = tres;
         for (int i = 0; i < numberOfCells; ++i)
         {
-          Assert.AreEqual(sp[i], sp[numberOfCells - 1 - i], 1E-7 * sp[i] + 1E-8); // test for symmetry of the solution
+          AssertEx.Equal(sp[i], sp[numberOfCells - 1 - i], 1E-7 * sp[i] + 1E-8); // test for symmetry of the solution
         }
 
         ++nCounter;
@@ -514,7 +512,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// Solve a simple diffusion problem with 100 cells
     /// </summary>
-    [Test]
+    [Fact]
     public void GearTestSparse03b()
     {
       var ode = new GearsBDF();
@@ -562,7 +560,7 @@ namespace Altaxo.Calc.Ode
         double t = tres;
         for (int i = 0; i < numberOfCells; ++i)
         {
-          Assert.AreEqual(sp[i], sp[numberOfCells - 1 - i], 1E-7 * sp[i] + 1E-8); // test for symmetry of the solution
+          AssertEx.Equal(sp[i], sp[numberOfCells - 1 - i], 1E-7 * sp[i] + 1E-8); // test for symmetry of the solution
         }
 
         ++nCounter;

@@ -24,221 +24,221 @@
 
 using System;
 using Altaxo.Calc.Optimization;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Optimization
 {
-  [TestFixture]
+  
   public class EndCriteriaTest
   {
     //Test Method Iteration Counter and associated Functionality
-    [Test]
+    [Fact]
     public void TestIterationCounter()
     {
       int maxiter = 2;
       var ec = new EndCriteria(maxiter, 1e-8, 100, 100);
-      Assert.AreEqual(ec.maxIteration, maxiter);
+      Assert.Equal(ec.maxIteration, maxiter);
 
       ec.iterationCounter++;
 
-      Assert.IsTrue(!ec.CheckIterations());
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.True(!ec.CheckIterations());
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
 
       ec.iterationCounter++;
 
-      Assert.IsTrue(ec.CheckIterations());
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.MaximumIteration);
+      Assert.True(ec.CheckIterations());
+      Assert.Equal(EndCriteria.CriteriaType.MaximumIteration, ec.Criteria);
 
       ec.Reset();
-      Assert.AreEqual(ec.iterationCounter, 0);
-      Assert.IsTrue(!ec.CheckIterations());
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.Equal(0, ec.iterationCounter);
+      Assert.True(!ec.CheckIterations());
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
     }
 
     //Test Function Evaluation Counter and associated Functionality
-    [Test]
+    [Fact]
     public void TestFunctionEvaluationCounter()
     {
       int maxeval = 2;
       var ec = new EndCriteria(100, 1e-8, maxeval, 100);
-      Assert.AreEqual(ec.maxFunctionEvaluation, maxeval);
+      Assert.Equal(ec.maxFunctionEvaluation, maxeval);
 
       ec.functionEvaluationCounter++;
 
-      Assert.IsTrue(!ec.CheckFunctionEvaluations());
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.True(!ec.CheckFunctionEvaluations());
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
 
       ec.functionEvaluationCounter++;
 
-      Assert.IsTrue(ec.CheckFunctionEvaluations());
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.MaximumFunctionEvaluation);
+      Assert.True(ec.CheckFunctionEvaluations());
+      Assert.Equal(EndCriteria.CriteriaType.MaximumFunctionEvaluation, ec.Criteria);
 
       ec.Reset();
-      Assert.AreEqual(ec.functionEvaluationCounter, 0);
-      Assert.IsTrue(!ec.CheckFunctionEvaluations());
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.Equal(0, ec.functionEvaluationCounter);
+      Assert.True(!ec.CheckFunctionEvaluations());
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
     }
 
     //Test Gradient Evaluation Counter and associated Functionality
-    [Test]
+    [Fact]
     public void TestGradientEvaluationCounter()
     {
       int maxeval = 2;
       var ec = new EndCriteria(100, 1e-8, maxeval, 100);
-      Assert.AreEqual(ec.maxGradientEvaluation, maxeval);
+      Assert.Equal(ec.maxGradientEvaluation, maxeval);
 
       ec.gradientEvaluationCounter++;
 
-      Assert.IsTrue(!ec.CheckGradientEvaluations());
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.True(!ec.CheckGradientEvaluations());
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
 
       ec.gradientEvaluationCounter++;
 
-      Assert.IsTrue(ec.CheckGradientEvaluations());
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.MaximumGradientEvaluation);
+      Assert.True(ec.CheckGradientEvaluations());
+      Assert.Equal(EndCriteria.CriteriaType.MaximumGradientEvaluation, ec.Criteria);
 
       ec.Reset();
-      Assert.AreEqual(ec.gradientEvaluationCounter, 0);
-      Assert.IsTrue(!ec.CheckGradientEvaluations());
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.Equal(0, ec.gradientEvaluationCounter);
+      Assert.True(!ec.CheckGradientEvaluations());
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
     }
 
     //Test Hessian Evaluation Counter and associated Functionality
-    [Test]
+    [Fact]
     public void TestHessianEvaluationCounter()
     {
       int maxeval = 2;
       var ec = new EndCriteria(100, 1e-8, maxeval, 100);
-      Assert.AreEqual(ec.maxHessianEvaluation, maxeval);
+      Assert.Equal(ec.maxHessianEvaluation, maxeval);
 
       ec.hessianEvaluationCounter++;
 
-      Assert.IsTrue(!ec.CheckHessianEvaluations());
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.True(!ec.CheckHessianEvaluations());
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
 
       ec.hessianEvaluationCounter++;
 
-      Assert.IsTrue(ec.CheckHessianEvaluations());
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.MaximumHessianEvaluation);
+      Assert.True(ec.CheckHessianEvaluations());
+      Assert.Equal(EndCriteria.CriteriaType.MaximumHessianEvaluation, ec.Criteria);
 
       ec.Reset();
-      Assert.AreEqual(ec.hessianEvaluationCounter, 0);
-      Assert.IsTrue(!ec.CheckHessianEvaluations());
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.Equal(0, ec.hessianEvaluationCounter);
+      Assert.True(!ec.CheckHessianEvaluations());
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
     }
 
     //Test Stationary Point Counter and associated Functionality
-    [Test]
+    [Fact]
     public void TestStationaryPointCounter()
     {
       int maxstationarypoint = 1;
       var ec = new EndCriteria(100, 1e-8, 100, maxstationarypoint);
-      Assert.AreEqual(ec.maxStationaryPointIterations, maxstationarypoint);
+      Assert.Equal(ec.maxStationaryPointIterations, maxstationarypoint);
 
-      Assert.IsTrue(!ec.CheckStationaryPoint(1.0, 1.0));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.True(!ec.CheckStationaryPoint(1.0, 1.0));
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
 
-      Assert.IsTrue(ec.CheckStationaryPoint(1.0, 1.0));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.StationaryPoint);
+      Assert.True(ec.CheckStationaryPoint(1.0, 1.0));
+      Assert.Equal(EndCriteria.CriteriaType.StationaryPoint, ec.Criteria);
 
       ec.Reset();
-      Assert.AreEqual(ec.stationaryPointIterationsCounter, 0);
-      Assert.IsTrue(!ec.CheckStationaryPoint(1.0, 1.0));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.Equal(0, ec.stationaryPointIterationsCounter);
+      Assert.True(!ec.CheckStationaryPoint(1.0, 1.0));
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
     }
 
     //Test Stationary Gradient Counter and associated Functionality
-    [Test]
+    [Fact]
     public void TestStationaryGradientCounter()
     {
       int maxstationarypoint = 1;
       var ec = new EndCriteria(100, 1e-8, 100, maxstationarypoint);
-      Assert.AreEqual(ec.maxStationaryGradientIterations, maxstationarypoint);
+      Assert.Equal(ec.maxStationaryGradientIterations, maxstationarypoint);
 
-      Assert.IsTrue(!ec.CheckStationaryGradient(1.0, 1.0));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.True(!ec.CheckStationaryGradient(1.0, 1.0));
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
 
-      Assert.IsTrue(ec.CheckStationaryGradient(1.0, 1.0));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.StationaryGradient);
+      Assert.True(ec.CheckStationaryGradient(1.0, 1.0));
+      Assert.Equal(EndCriteria.CriteriaType.StationaryGradient, ec.Criteria);
 
       ec.Reset();
-      Assert.AreEqual(ec.stationaryGradientIterationsCounter, 0);
-      Assert.IsTrue(!ec.CheckStationaryGradient(1.0, 1.0));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.Equal(0, ec.stationaryGradientIterationsCounter);
+      Assert.True(!ec.CheckStationaryGradient(1.0, 1.0));
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
     }
 
     //Test Stationary Hessian Counter and associated Functionality
-    [Test]
+    [Fact]
     public void TestStationaryHessianCounter()
     {
       int maxstationarypoint = 1;
       var ec = new EndCriteria(100, 1e-8, 100, maxstationarypoint);
-      Assert.AreEqual(ec.maxStationaryHessianIterations, maxstationarypoint);
+      Assert.Equal(ec.maxStationaryHessianIterations, maxstationarypoint);
 
-      Assert.IsTrue(!ec.CheckStationaryHessian(1.0, 1.0));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.True(!ec.CheckStationaryHessian(1.0, 1.0));
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
 
-      Assert.IsTrue(ec.CheckStationaryHessian(1.0, 1.0));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.StationaryHessian);
+      Assert.True(ec.CheckStationaryHessian(1.0, 1.0));
+      Assert.Equal(EndCriteria.CriteriaType.StationaryHessian, ec.Criteria);
 
       ec.Reset();
-      Assert.AreEqual(ec.stationaryHessianIterationsCounter, 0);
-      Assert.IsTrue(!ec.CheckStationaryHessian(1.0, 1.0));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.Equal(0, ec.stationaryHessianIterationsCounter);
+      Assert.True(!ec.CheckStationaryHessian(1.0, 1.0));
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
     }
 
     //Test Function Epsilon and associated Functionality
-    [Test]
+    [Fact]
     public void TestFunctionEpsilon()
     {
       double functionepsilon = 1e-8;
       var ec = new EndCriteria(100, functionepsilon, 100, 100);
-      Assert.AreEqual(ec.minFunctionEpsilon, functionepsilon);
+      Assert.Equal(ec.minFunctionEpsilon, functionepsilon);
 
-      Assert.IsTrue(!ec.CheckFunctionEpsilon(functionepsilon * 2));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.True(!ec.CheckFunctionEpsilon(functionepsilon * 2));
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
 
-      Assert.IsTrue(ec.CheckFunctionEpsilon(functionepsilon / 2));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.FunctionEpsilon);
+      Assert.True(ec.CheckFunctionEpsilon(functionepsilon / 2));
+      Assert.Equal(EndCriteria.CriteriaType.FunctionEpsilon, ec.Criteria);
 
       ec.Reset();
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
     }
 
     //Test Gradient Epsilon and associated Functionality
-    [Test]
+    [Fact]
     public void TestGradientEpsilon()
     {
       double functionepsilon = 1e-8;
       var ec = new EndCriteria(100, functionepsilon, 100, 100);
-      Assert.AreEqual(ec.minGradientEpsilon, functionepsilon);
+      Assert.Equal(ec.minGradientEpsilon, functionepsilon);
 
-      Assert.IsTrue(!ec.CheckGradientEpsilon(functionepsilon * 2));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.True(!ec.CheckGradientEpsilon(functionepsilon * 2));
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
 
-      Assert.IsTrue(ec.CheckGradientEpsilon(functionepsilon / 2));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.GradientEpsilon);
+      Assert.True(ec.CheckGradientEpsilon(functionepsilon / 2));
+      Assert.Equal(EndCriteria.CriteriaType.GradientEpsilon, ec.Criteria);
 
       ec.Reset();
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
     }
 
     //Test Hessian Epsilon and associated Functionality
-    [Test]
+    [Fact]
     public void TestHessianEpsilon()
     {
       double functionepsilon = 1e-8;
       var ec = new EndCriteria(100, functionepsilon, 100, 100);
-      Assert.AreEqual(ec.minHessianEpsilon, functionepsilon);
+      Assert.Equal(ec.minHessianEpsilon, functionepsilon);
 
-      Assert.IsTrue(!ec.CheckHessianEpsilon(functionepsilon * 2));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.True(!ec.CheckHessianEpsilon(functionepsilon * 2));
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
 
-      Assert.IsTrue(ec.CheckHessianEpsilon(functionepsilon / 2));
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.HessianEpsilon);
+      Assert.True(ec.CheckHessianEpsilon(functionepsilon / 2));
+      Assert.Equal(EndCriteria.CriteriaType.HessianEpsilon, ec.Criteria);
 
       ec.Reset();
-      Assert.AreEqual(ec.Criteria, EndCriteria.CriteriaType.None);
+      Assert.Equal(EndCriteria.CriteriaType.None, ec.Criteria);
     }
   }
 }

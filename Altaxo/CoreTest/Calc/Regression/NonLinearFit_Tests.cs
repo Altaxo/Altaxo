@@ -25,24 +25,24 @@
 using System;
 using Altaxo.Calc;
 using Altaxo.Calc.Regression;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Regression
 {
-  [TestFixture]
+
   public class Test_enorm
   {
     protected double[] arr = new double[90001];
 
-    [Test]
+    [Fact]
     public void ZeroElements()
     {
       arr[0] = 1;
       double r = NLFit.enorm(0, arr);
-      NUnit.Framework.Assert.AreEqual(0.0, r, 0);
+      Assert.Equal(0.0, r, 0);
     }
 
-    [Test]
+    [Fact]
     public void OneElement()
     {
       for (int i = 0; i < arr.Length; i++)
@@ -51,11 +51,11 @@ namespace AltaxoTest.Calc.Regression
       for (int i = 0; i < arr.Length; i++)
       {
         double r = NLFit.enorm(1, arr, i);
-        NUnit.Framework.Assert.AreEqual(i + 1, r, 0);
+        Assert.Equal(i + 1, r, 0);
       }
     }
 
-    [Test]
+    [Fact]
     public void NormalElements()
     {
       // we use the law 3^2 + 4^2 = 5^2
@@ -64,10 +64,10 @@ namespace AltaxoTest.Calc.Regression
       for (int i = 1; i < 90001; i++)
         arr[i] = 1;
       double r = NLFit.enorm(90001, arr);
-      NUnit.Framework.Assert.AreEqual(500, r, 0);
+      Assert.Equal(500, r, 0);
     }
 
-    [Test]
+    [Fact]
     public void NormalAndBigElements()
     {
       // we use the law 3^2 + 4^2 = 5^2
@@ -76,10 +76,10 @@ namespace AltaxoTest.Calc.Regression
       for (int i = 1; i < 90001; i++)
         arr[i] = 1E19;
       double r = NLFit.enorm(90001, arr);
-      NUnit.Framework.Assert.AreEqual(500E19, r, 100E10);
+      AssertEx.Equal(500E19, r, 100E10);
     }
 
-    [Test]
+    [Fact]
     public void NormalAndSmallElements()
     {
       // we use the law 3^2 + 4^2 = 5^2
@@ -88,17 +88,17 @@ namespace AltaxoTest.Calc.Regression
       for (int i = 1; i < 90001; i++)
         arr[i] = 1E-20;
       double r = NLFit.enorm(90001, arr);
-      NUnit.Framework.Assert.AreEqual(500E-20, r, 0);
+      Assert.Equal(500E-20, r, 0);
     }
   }
 
-  [TestFixture]
+
   public class Test_LevenbergMarquardtFit
   {
-    public void FitFunction2plus5x(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info)
+    private void FitFunction2plus5x(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info)
     {
-      Assert.IsTrue(numberOfParameter == 2, "NumberOfParameter must be 2 in this test.");
-      Assert.IsTrue(parameter.Length == 2, "Length of parameter array must be 2 in this test.");
+      Assert.True(numberOfParameter == 2, "NumberOfParameter must be 2 in this test.");
+      Assert.True(parameter.Length == 2, "Length of parameter array must be 2 in this test.");
 
       // we use the simplest model y=a+bx in the range -10 ..10 with step size of 1 to
       // calculate the delta
@@ -112,10 +112,10 @@ namespace AltaxoTest.Calc.Regression
       }
     }
 
-    public void FitFunction2plus5xMod(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info)
+    private void FitFunction2plus5xMod(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info)
     {
-      Assert.IsTrue(numberOfParameter == 2, "NumberOfParameter must be 2 in this test.");
-      Assert.IsTrue(parameter.Length == 2, "Length of parameter array must be 2 in this test.");
+      Assert.True(numberOfParameter == 2, "NumberOfParameter must be 2 in this test.");
+      Assert.True(parameter.Length == 2, "Length of parameter array must be 2 in this test.");
 
       // we use the simplest model y=a+bx in the range -10 ..10 with step size of 1 to
       // calculate the delta
@@ -129,7 +129,7 @@ namespace AltaxoTest.Calc.Regression
       }
     }
 
-    [Test]
+    [Fact]
     public void Test_2plus5x()
     {
       double[] param = new double[2];
@@ -140,11 +140,11 @@ namespace AltaxoTest.Calc.Regression
 
       NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(FitFunction2plus5x), param, ys, 1E-10, ref info);
 
-      Assert.AreEqual(2, param[0], 1E-5, "Fit parameter 0 should be 2 in this model");
-      Assert.AreEqual(5, param[1], 1E-5, "Fit parameter 1 should be 5 in this model");
+      AssertEx.Equal(2, param[0], 1E-5, "Fit parameter 0 should be 2 in this model");
+      AssertEx.Equal(5, param[1], 1E-5, "Fit parameter 1 should be 5 in this model");
     }
 
-    [Test]
+    [Fact]
     public void Test_2plus5xMod()
     {
       double[] param = new double[2];
@@ -155,15 +155,15 @@ namespace AltaxoTest.Calc.Regression
 
       NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(FitFunction2plus5xMod), param, ys, 1E-10, ref info);
 
-      Assert.AreEqual(0, info, "Info should be 0 due to inappropriate length of ys in this model");
+      AssertEx.Equal(0, info, "Info should be 0 due to inappropriate length of ys in this model");
     }
 
-    public void FitFunction7malCos3xplus1(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info)
+    protected void FitFunction7malCos3xplus1(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info)
     {
-      Assert.IsTrue(numberOfParameter == 3, "NumberOfParameter must be 3 in this test.");
-      Assert.IsTrue(numberOfYs == 3, "NumberOfYs must be 3 in this test.");
-      Assert.IsTrue(parameter.Length == 3, "Length of parameter array must be 3 in this test.");
-      Assert.IsTrue(ys.Length == 3, "Length of ys array must be 3 in this test.");
+      Assert.True(numberOfParameter == 3, "NumberOfParameter must be 3 in this test.");
+      Assert.True(numberOfYs == 3, "NumberOfYs must be 3 in this test.");
+      Assert.True(parameter.Length == 3, "Length of parameter array must be 3 in this test.");
+      Assert.True(ys.Length == 3, "Length of ys array must be 3 in this test.");
 
       // we use the simplest model y=a+bx in the range -10 ..10 with step size of 1 to
       // calculate the delta
@@ -181,7 +181,7 @@ namespace AltaxoTest.Calc.Regression
       ys[2] = 0;
     }
 
-    [Test]
+    [Fact]
     public void Test_7malCos3xplus1()
     {
       double[] param = new double[3];
@@ -194,17 +194,17 @@ namespace AltaxoTest.Calc.Regression
 
       NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(FitFunction7malCos3xplus1), param, ys, 1E-10, ref info);
 
-      Assert.AreEqual(7, param[0], 1E-4, "Fit parameter 0 should be 7 in this model");
-      Assert.AreEqual(3, param[1], 1E-4, "Fit parameter 1 should be 3 in this model");
-      Assert.AreEqual(1, param[2], 1E-4, "Fit parameter 2 should be 1 in this model");
+      AssertEx.Equal(7, param[0], 1E-4, "Fit parameter 0 should be 7 in this model");
+      AssertEx.Equal(3, param[1], 1E-4, "Fit parameter 1 should be 3 in this model");
+      AssertEx.Equal(1, param[2], 1E-4, "Fit parameter 2 should be 1 in this model");
     }
 
-    public void FitFunction7malCos3xplus1Mod(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info)
+    private void FitFunction7malCos3xplus1Mod(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info)
     {
-      Assert.IsTrue(numberOfParameter == 3, "NumberOfParameter must be 3 in this test.");
-      Assert.IsTrue(numberOfYs == 21, "NumberOfYs must be 21 in this test.");
-      Assert.IsTrue(parameter.Length == 3, "Length of parameter array must be 3 in this test.");
-      Assert.IsTrue(ys.Length == 21, "Length of ys array must be 21 in this test.");
+      Assert.True(numberOfParameter == 3, "NumberOfParameter must be 3 in this test.");
+      Assert.True(numberOfYs == 21, "NumberOfYs must be 21 in this test.");
+      Assert.True(parameter.Length == 3, "Length of parameter array must be 3 in this test.");
+      Assert.True(ys.Length == 21, "Length of ys array must be 21 in this test.");
 
       // we use the simplest model y=a+bx in the range -10 ..10 with step size of 1 to
       // calculate the delta
@@ -216,7 +216,7 @@ namespace AltaxoTest.Calc.Regression
         ys[i + 10] = NLFit.sqr((a * Math.Cos(b * i + c)) - (7 * Math.Cos(3 * i + 1)));
     }
 
-    [Test]
+    [Fact]
     public void Test_7malCos3xplus1Mod()
     {
       double[] param = new double[3];
@@ -232,9 +232,9 @@ namespace AltaxoTest.Calc.Regression
         NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(FitFunction7malCos3xplus1Mod), param, ys, 1E-10, ref info);
       } while (info == 5);
 
-      Assert.AreEqual(7, param[0], 1E-4, "Fit parameter 0 should be 7 in this model");
-      Assert.AreEqual(3, param[1], 1E-4, "Fit parameter 1 should be 3 in this model");
-      Assert.AreEqual(1, param[2], 1E-4, "Fit parameter 2 should be 1 in this model");
+      AssertEx.Equal(7, param[0], 1E-4, "Fit parameter 0 should be 7 in this model");
+      AssertEx.Equal(3, param[1], 1E-4, "Fit parameter 1 should be 3 in this model");
+      AssertEx.Equal(1, param[2], 1E-4, "Fit parameter 2 should be 1 in this model");
     }
 
     /// <summary>
@@ -247,8 +247,8 @@ namespace AltaxoTest.Calc.Regression
     /// <param name="info"></param>
     private void poly2(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
     {
-      Assert.IsTrue(p.Length == 2);
-      Assert.IsTrue(x.Length == 9);
+      Assert.True(p.Length == 2);
+      Assert.True(x.Length == 9);
 
       double[] y = { 2, 1, 4, 3, 6, 5, 8, 7, 10 };
 
@@ -256,7 +256,7 @@ namespace AltaxoTest.Calc.Regression
         x[i] = p[0] + p[1] * (i + 1) - y[i];
     }
 
-    [Test]
+    [Fact]
     public void Test_Poly2()
     {
       double[] param = new double[2];
@@ -271,15 +271,15 @@ namespace AltaxoTest.Calc.Regression
         NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(poly2), param, ys, 1E-10, ref info);
       } while (info == 5);
 
-      Assert.AreEqual(0.1111111, param[0], 1E-4, "Fit parameter 0 should be 0.11111 in this model");
-      Assert.AreEqual(1, param[1], 1E-4, "Fit parameter 1 should be 1 in this model");
+      AssertEx.Equal(0.1111111, param[0], 1E-4, "Fit parameter 0 should be 0.11111 in this model");
+      AssertEx.Equal(1, param[1], 1E-4, "Fit parameter 1 should be 1 in this model");
 
       double[] covar = new double[2 * 2];
       NLFit.ComputeCovariances(new NLFit.LMFunction(poly2), param, 9, 2, covar, out var chisqr, out var sigmaSquare);
-      Assert.AreEqual(0.670194, covar[0], 0.001);
-      Assert.AreEqual(-0.10582, covar[1], 0.001);
-      Assert.AreEqual(-0.10582, covar[2], 0.001);
-      Assert.AreEqual(0.021164, covar[3], 0.001);
+      AssertEx.Equal(0.670194, covar[0], 0.001);
+      AssertEx.Equal(-0.10582, covar[1], 0.001);
+      AssertEx.Equal(-0.10582, covar[2], 0.001);
+      AssertEx.Equal(0.021164, covar[3], 0.001);
     }
 
     /// <summary>
@@ -312,7 +312,7 @@ namespace AltaxoTest.Calc.Regression
       System.Diagnostics.Debug.WriteLine(string.Format("p[0]={0}, p[1]={1}, sum={2}", p[0], p[1], sum));
     }
 
-    [Test]
+    [Fact]
     public void Test_Poly3()
     {
       double[] param = new double[2];
@@ -327,8 +327,8 @@ namespace AltaxoTest.Calc.Regression
         NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(poly3), param, ys, 1E-10, ref info);
       } while (info == 5);
 
-      Assert.AreEqual(0.1111111, param[0], 1E-4, "Fit parameter 0 should be 0.11111 in this model");
-      Assert.AreEqual(1, param[1], 1E-4, "Fit parameter 1 should be 1 in this model");
+      AssertEx.Equal(0.1111111, param[0], 1E-4, "Fit parameter 0 should be 0.11111 in this model");
+      AssertEx.Equal(1, param[1], 1E-4, "Fit parameter 1 should be 1 in this model");
 
       double[] covar = new double[2 * 2];
       NLFit.ComputeCovariances(new NLFit.LMFunction(poly3), param, 2, 2, covar, out var chisqr, out var sigmaSquare);
@@ -344,8 +344,8 @@ namespace AltaxoTest.Calc.Regression
     /// <param name="info"></param>
     private void poly4(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
     {
-      Assert.IsTrue(p.Length == 2);
-      Assert.IsTrue(x.Length == 10);
+      Assert.True(p.Length == 2);
+      Assert.True(x.Length == 10);
 
       double[] y = new double[10];
       for (int i = 0; i < 10; i++)
@@ -358,7 +358,7 @@ namespace AltaxoTest.Calc.Regression
     /// <summary>
     /// This tests the fitting when the parameters have very different dimensions.
     /// </summary>
-    [Test]
+    [Fact]
     public void Test_Poly4()
     {
       double[] param = new double[2];
@@ -373,18 +373,18 @@ namespace AltaxoTest.Calc.Regression
         NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(poly4), param, ys, 1E-10, ref info);
       } while (info == 5);
 
-      Assert.AreEqual(1.08222543840634, param[0], 1E-4, "Fit parameter 0 should be 1.08222543840634 in this model");
-      Assert.AreEqual(86441011642265, param[1], 1E4, "Fit parameter 1 should be 86441011642265 in this model");
+      AssertEx.Equal(1.08222543840634, param[0], 1E-4, "Fit parameter 0 should be 1.08222543840634 in this model");
+      AssertEx.Equal(86441011642265, param[1], 1E4, "Fit parameter 1 should be 86441011642265 in this model");
 
       double[] covar = new double[2 * 2];
       NLFit.ComputeCovariances(new NLFit.LMFunction(poly4), param, 10, 2, covar, out var chisqr, out var sigmaSquare);
       // Expected error for parameter1 is: 0.115944838291204
       // Expected error for parameter2 is: 14249106469708
-      Assert.AreEqual(0.115944838291204, Math.Sqrt(covar[0]), 1E-5, "Square root of covariance of parameter0 should be 0.115944838291204");
-      Assert.AreEqual(14249106469708, Math.Sqrt(covar[3]), 142491064, "Square root of covariance of parameter1 should be 14249106469708");
+      AssertEx.Equal(0.115944838291204, Math.Sqrt(covar[0]), 1E-5, "Square root of covariance of parameter0 should be 0.115944838291204");
+      AssertEx.Equal(14249106469708, Math.Sqrt(covar[3]), 142491064, "Square root of covariance of parameter1 should be 14249106469708");
       // Origin calculates a dependence value of 0.92115 out here
       double dependency = (covar[1] * covar[1]) / (covar[0] * covar[3]);
-      Assert.AreEqual(0.92115, dependency, 1E-4, "Dependency should be around 0.92115");
+      AssertEx.Equal(0.92115, dependency, 1E-4, "Dependency should be around 0.92115");
     }
 
     /// <summary>
@@ -398,8 +398,8 @@ namespace AltaxoTest.Calc.Regression
     /// <param name="info"></param>
     private void poly5(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
     {
-      Assert.IsTrue(p.Length == 3);
-      Assert.IsTrue(x.Length == 10);
+      Assert.True(p.Length == 3);
+      Assert.True(x.Length == 10);
 
       double[] y = new double[10];
       for (int i = 0; i < 10; i++)
@@ -412,7 +412,7 @@ namespace AltaxoTest.Calc.Regression
     /// <summary>
     /// This tests the fitting when the parameters have very different dimensions.
     /// </summary>
-    [Test]
+    [Fact]
     public void Test_Poly5()
     {
       double[] param = new double[3];
@@ -428,33 +428,33 @@ namespace AltaxoTest.Calc.Regression
         NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(poly5), param, ys, 1E-10, ref info);
       } while (info == 5);
 
-      Assert.AreEqual(1.13158682895444, param[0], 1E-4, "Fit parameter 0 should be 1.13158682895444 in this model");
-      Assert.AreEqual(0.00823465185064109, param[1], 1E-6, "Fit parameter 1 should be 0.00823465185064109 in this model");
-      Assert.AreEqual(-1.14393644797462, param[2], 1E-4, "Fit parameter 1 should be -1.14393644797462 in this model");
+      AssertEx.Equal(1.13158682895444, param[0], 1E-4, "Fit parameter 0 should be 1.13158682895444 in this model");
+      AssertEx.Equal(0.00823465185064109, param[1], 1E-6, "Fit parameter 1 should be 0.00823465185064109 in this model");
+      AssertEx.Equal(-1.14393644797462, param[2], 1E-4, "Fit parameter 1 should be -1.14393644797462 in this model");
 
       double[] covar = new double[3 * 3];
       NLFit.ComputeCovariances(new NLFit.LMFunction(poly5), param, 10, 3, covar, out var chisqr, out var sigmaSquare);
       // Expected error for parameter1 is: 0.115944838291204
       // Expected error for parameter2 is: 14249106469708
-      Assert.AreEqual(0.19511, Math.Sqrt(covar[0]), 1e-4, "Square root of covariance of parameter0 should be 0.19511");
-      Assert.AreEqual(0.00197, Math.Sqrt(covar[3 * 1 + 1]), 1e-5, "Square root of covariance of parameter1 should be 0.00197");
-      Assert.AreEqual(3.50947, Math.Sqrt(covar[3 * 2 + 2]), 1e-4, "Square root of covariance of parameter1 should be 3.50947");
+      AssertEx.Equal(0.19511, Math.Sqrt(covar[0]), 1e-4, "Square root of covariance of parameter0 should be 0.19511");
+      AssertEx.Equal(0.00197, Math.Sqrt(covar[3 * 1 + 1]), 1e-5, "Square root of covariance of parameter1 should be 0.00197");
+      AssertEx.Equal(3.50947, Math.Sqrt(covar[3 * 2 + 2]), 1e-4, "Square root of covariance of parameter1 should be 3.50947");
 
       double dep;
       double dep01 = (covar[3 * 0 + 1] * covar[3 * 1 + 0]) / (covar[3 * 0 + 0] * covar[3 * 1 + 1]);
       double dep02 = (covar[3 * 0 + 2] * covar[3 * 2 + 0]) / (covar[3 * 0 + 0] * covar[3 * 2 + 2]);
       dep = 1 - (1 - dep01) * (1 - dep02);
-      Assert.AreEqual(0.96865, dep, 1E-2, "Dependency should be around 0.97");
+      AssertEx.Equal(0.96865, dep, 1E-2, "Dependency should be around 0.97");
 
       double dep10 = (covar[3 * 1 + 0] * covar[3 * 0 + 1]) / (covar[3 * 1 + 1] * covar[3 * 0 + 0]);
       double dep12 = (covar[3 * 1 + 2] * covar[3 * 2 + 1]) / (covar[3 * 1 + 1] * covar[3 * 2 + 2]);
       dep = 1 - (1 - dep10) * (1 - dep12);
-      Assert.AreEqual(0.95335, dep, 1E-2, "Dependency should be around 0.95");
+      AssertEx.Equal(0.95335, dep, 1E-2, "Dependency should be around 0.95");
 
       double dep20 = (covar[3 * 2 + 0] * covar[3 * 0 + 2]) / (covar[3 * 2 + 2] * covar[3 * 0 + 0]);
       double dep21 = (covar[3 * 2 + 1] * covar[3 * 1 + 2]) / (covar[3 * 2 + 2] * covar[3 * 1 + 1]);
       dep = 1 - (1 - dep20) * (1 - dep21);
-      Assert.AreEqual(0.755, dep, 1E-2, "Dependency should be around 0.755");
+      AssertEx.Equal(0.755, dep, 1E-2, "Dependency should be around 0.755");
     }
   }
 }

@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
@@ -40,7 +40,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
   /// <para>The test data was created automatically using calls into the TREND.DLL of the following software:</para>
   /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
   /// </remarks>
-  [TestFixture]
+  
   public class Test_Fluid_1_2_dichloro_1_1_2_2_tetrafluoroethane : FluidTestBase
   {
 
@@ -180,49 +180,49 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       };
     }
 
-    [Test]
+    [Fact]
     public override void CASNumberAttribute_Test()
     {
       base.CASNumberAttribute_Test();
     }
 
-    [Test]
+    [Fact]
     public override void ConstantsAndCharacteristicPoints_Test()
     {
       base.ConstantsAndCharacteristicPoints_Test();
     }
 
-    [Test]
+    [Fact]
     public override void EquationOfState_Test()
     {
       base.EquationOfState_Test();
     }
 
-    [Test]
+    [Fact]
     public override void SaturatedVaporPressure_TestMonotony()
     {
       base.SaturatedVaporPressure_TestMonotony();
     }
 
-    [Test]
+    [Fact]
     public override void SaturatedVaporPressure_TestInverseIteration()
     {
       base.SaturatedVaporPressure_TestInverseIteration();
     }
 
-    [Test]
+    [Fact]
     public override void SaturatedVaporProperties_TestData()
     {
       base.SaturatedVaporProperties_TestData();
     }
 
-    [Test]
+    [Fact]
     public override void MeltingPressure_TestImplemented()
     {
       base.MeltingPressure_TestImplemented();
     }
 
-    [Test]
+    [Fact]
     public override void SublimationPressure_TestImplemented()
     {
       base.SublimationPressure_TestImplemented();

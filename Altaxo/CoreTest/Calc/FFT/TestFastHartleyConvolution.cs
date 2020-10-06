@@ -24,11 +24,11 @@
 
 using System;
 using Altaxo.Calc.Fourier;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Fourier
 {
-  [TestFixture]
+  
   public class TestFastHartleyConvolutionSplittedComplex
   {
     private const int nLowerLimit = 4;
@@ -46,56 +46,56 @@ namespace AltaxoTest.Calc.Fourier
       FastHartleyTransform.CyclicConvolution(re1, im1, re2, im2, re, im, null, null, n);
     }
 
-    [Test]
+    [Fact]
     public void Test01BothZero()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i *= 2)
         _test.TestBothZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test02OneZero()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i *= 2)
         _test.TestOneZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test03ReOne_ZeroPos()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i *= 2)
         _test.TestReOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test04OneReOne_OtherRandom()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i *= 2)
         _test.TestOneReOne_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test05OneImOne_OtherRandom()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i *= 2)
         _test.TestOneImOne_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test06ReOne_OnePos_OtherRandom()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i *= 2)
         _test.TestReOne_OnePos_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test07ImOne_OnePos_OtherRandom()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i *= 2)
         _test.TestImOne_OnePos_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test08BothRandom()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i *= 2)
@@ -103,7 +103,7 @@ namespace AltaxoTest.Calc.Fourier
     }
   }
 
-  [TestFixture]
+  
   public class TestFastHartleyDestructiveCyclicRealConvolution
   {
     private const int nLowerLimit = 4;
@@ -127,42 +127,42 @@ namespace AltaxoTest.Calc.Fourier
       FastHartleyTransform.CyclicDestructiveConvolution(inp1, inp2, re, n);
     }
 
-    [Test]
+    [Fact]
     public void Test01BothZero()
     {
       foreach (int i in _testLengths)
         _test.TestBothZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test02OneZero()
     {
       foreach (int i in _testLengths)
         _test.TestOneZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test03ReOne_ZeroPos()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test04OneReOne_OtherRandom()
     {
       foreach (int i in _testLengths)
         _test.TestOneReOne_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test05ReOne_OnePos_OtherRandom()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_OnePos_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test06BothRandom()
     {
       foreach (int i in _testLengths)
@@ -170,7 +170,7 @@ namespace AltaxoTest.Calc.Fourier
     }
   }
 
-  [TestFixture]
+  
   public class TestFastHartleyRealCyclicConvolution
   {
     private const int nLowerLimit = 4;
@@ -190,42 +190,42 @@ namespace AltaxoTest.Calc.Fourier
       FastHartleyTransform.CyclicRealConvolution(re1, re2, re, n);
     }
 
-    [Test]
+    [Fact]
     public void Test01BothZero()
     {
       foreach (int i in _testLengths)
         _test.TestBothZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test02OneZero()
     {
       foreach (int i in _testLengths)
         _test.TestOneZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test03ReOne_ZeroPos()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test04OneReOne_OtherRandom()
     {
       foreach (int i in _testLengths)
         _test.TestOneReOne_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test05ReOne_OnePos_OtherRandom()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_OnePos_OtherRandom(i);
     }
 
-    [Test]
+    [Fact]
     public void Test06BothRandom()
     {
       foreach (int i in _testLengths)
