@@ -303,11 +303,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
         throw new ArgumentNullException(nameof(fitFunction));
       ChildSetMemberAlt(ref _fitFunction, fitFunction);
 
-      _independentVariables = new IReadableColumnProxy[0];
+      _independentVariables = new IReadableColumnProxy[fitFunction.NumberOfIndependentVariables];
 
-      _dependentVariables = new IReadableColumnProxy[0];
+      _dependentVariables = new IReadableColumnProxy[fitFunction.NumberOfDependentVariables];
 
-      _errorEvaluation = new IVarianceScaling[0];
+      _errorEvaluation = new IVarianceScaling[fitFunction.NumberOfDependentVariables];
+
+      _parameterNames = new string[fitFunction.NumberOfParameters];
 
       _rangeOfRows = rowSelection is null ? new AllRows() : (IRowSelection)(rowSelection.Clone());
     }
@@ -323,14 +325,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _groupNumber = groupNumber;
       ChildCloneToMember(ref _rangeOfRows, rowSelection);
 
-      _independentVariables = new IReadableColumnProxy[1];
+      _independentVariables = new IReadableColumnProxy[_fitFunction.NumberOfIndependentVariables];
       ChildSetMember(ref _independentVariables[0], ReadableColumnProxyBase.FromColumn(xColumn));
 
-      _dependentVariables = new IReadableColumnProxy[1];
+      _dependentVariables = new IReadableColumnProxy[_fitFunction.NumberOfDependentVariables];
       ChildSetMember(ref _dependentVariables[0], ReadableColumnProxyBase.FromColumn(yColumn));
 
-      _errorEvaluation = new IVarianceScaling[1];
+      _errorEvaluation = new IVarianceScaling[_fitFunction.NumberOfDependentVariables];
       _errorEvaluation[0] = new ConstantVarianceScaling();
+
+      _parameterNames = new string[_fitFunction.NumberOfParameters];
     }
 
     /// <summary>
@@ -641,8 +645,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
             _fitFunction = value;
           }
 
-          _fitFunction = value;
-
           if (_fitFunction is not null)
           {
             _fitFunction.Changed += EhFitFunctionChanged;
@@ -727,7 +729,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         // do the same also with the error scaling
 
-        IVarianceScaling?[] oldArr = _errorEvaluation;
+        var oldArr = _errorEvaluation;
         var newArr = new IVarianceScaling?[noDep];
         for (int i = Math.Min(newArr.Length, oldArr.Length) - 1; i >= 0; i--)
           newArr[i] = oldArr[i];
