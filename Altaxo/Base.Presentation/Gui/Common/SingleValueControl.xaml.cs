@@ -65,8 +65,7 @@ namespace Altaxo.Gui.Common
 
     private void EhValidating(object sender, ValidationEventArgs<string> e)
     {
-      if (ValueText_Validating is not null)
-        ValueText_Validating(e);
+      ValueText_Validating?.Invoke(e);
     }
   }
 }
