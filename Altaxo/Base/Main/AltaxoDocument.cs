@@ -277,14 +277,13 @@ namespace Altaxo
       }
 
       // 4th, we save all FitFunctions into the FitFunctions subdirectory
+      int index = 0;
       foreach (var fit in _fitFunctionScripts)
       {
         try
         {
-          var zipEntry = archiveToSaveTo.CreateEntry("FitFunctionScripts/" + fit.CreationTime.ToString() + ".xml");
-          //ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
-          //zippedStream.PutNextEntry(ZipEntry);
-          //zippedStream.SetLevel(0);
+          var zipEntry = archiveToSaveTo.CreateEntry($"FitFunctionScripts/Script{index}.xml");
+          ++index;
           using (var zs = zipEntry.OpenForWriting())
           {
             info.BeginWriting(zs);
