@@ -301,6 +301,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       if (fitFunction is null)
         throw new ArgumentNullException(nameof(fitFunction));
+
       ChildSetMemberAlt(ref _fitFunction, fitFunction);
 
       _independentVariables = new IReadableColumnProxy[fitFunction.NumberOfIndependentVariables];
@@ -316,6 +317,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public FitElement(IFitFunction fitFunction, DataTable table, int groupNumber, IRowSelection rowSelection, IReadableColumn xColumn, IReadableColumn yColumn)
     {
+      if (fitFunction is null)
+        throw new ArgumentNullException(nameof(fitFunction));
+
       ChildSetMemberAlt(ref _fitFunction, fitFunction);
 
       if (rowSelection is null)
@@ -335,6 +339,27 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _errorEvaluation[0] = new ConstantVarianceScaling();
 
       _parameterNames = new string[_fitFunction.NumberOfParameters];
+    }
+
+    public FitElement(DataTable table, int groupNumber, IRowSelection rowSelection, IReadableColumn xColumn, IReadableColumn yColumn)
+    {
+      if (rowSelection is null)
+        throw new ArgumentNullException(nameof(rowSelection));
+
+      ChildSetMember<DataTableProxy>(ref _dataTable, new DataTableProxy(table));
+      _groupNumber = groupNumber;
+      ChildCloneToMember(ref _rangeOfRows, rowSelection);
+
+      _independentVariables = new IReadableColumnProxy[1];
+      ChildSetMember(ref _independentVariables[0], ReadableColumnProxyBase.FromColumn(xColumn));
+
+      _dependentVariables = new IReadableColumnProxy[1];
+      ChildSetMember(ref _dependentVariables[0], ReadableColumnProxyBase.FromColumn(yColumn));
+
+      _errorEvaluation = new IVarianceScaling[1];
+      _errorEvaluation[0] = new ConstantVarianceScaling();
+
+      _parameterNames = new string[0];
     }
 
     /// <summary>

@@ -234,7 +234,6 @@ namespace Altaxo.Graph.Procedures
       if (localdoc.FitEnsemble.Count == 0) // if there was no fit before
       {
         var fitele = new Altaxo.Calc.Regression.Nonlinear.FitElement(
-          fitFunction: null!,
           xyPlotItem.Data.DataTable!,
           xyPlotItem.Data.GroupNumber,
           xyPlotItem.Data.DataRowSelection,
