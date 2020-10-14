@@ -498,6 +498,9 @@ namespace Altaxo.Text
           case Markdig.Syntax.Inlines.LiteralInline literalInline:
             result.Add((literalInline.Content.ToString(), literalInline.Span.Start));
             break;
+          case Markdig.Extensions.Mathematics.MathInline mathInline:
+            result.Add((mathInline.Content.ToString(), mathInline.Span.Start));
+            break;
           default:
             throw new NotImplementedException();
         }
