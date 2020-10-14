@@ -24,8 +24,11 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services.Files
 {
@@ -35,13 +38,13 @@ namespace Altaxo.Main.Services.Files
   /// </summary>
   /// <seealso cref="Altaxo.Main.Services.IProjectArchiveEntryMemento" />
   /// <seealso cref="System.IDisposable" />
-  public class ProjectArchiveEntryMemento : IProjectArchiveEntryMemento, IDisposable
+  public class FileSystemFileAsProjectArchiveMemento : IProjectArchiveEntryMemento, IDisposable
   {
     // fixed data
     private readonly string _entryName;
 
     // either archiveFileName or archiveManager is not null
-    private readonly string? _archiveFileName;
+    private readonly string? _archiveFolderName;
     private readonly IProjectArchiveManager? _archiveManager;
 
     // operational data
@@ -53,15 +56,15 @@ namespace Altaxo.Main.Services.Files
     /// </summary>
     /// <param name="entryName">Name of the entry.</param>
     /// <param name="archiveManager">The archive manager.</param>
-    /// <param name="archiveFileName">Name of the archive file. This parameter is used only if the provided <paramref name="archiveManager"/> is null or invalid.</param>
-    public ProjectArchiveEntryMemento(string entryName, IProjectArchiveManager? archiveManager, string? archiveFileName)
+    /// <param name="archiveFolderName">Name of the archive file. This parameter is used only if the provided <paramref name="archiveManager"/> is null or invalid.</param>
+    public FileSystemFileAsProjectArchiveMemento(string entryName, IProjectArchiveManager? archiveManager, string? archiveFolderName)
     {
-      if (archiveManager is null && string.IsNullOrEmpty(archiveFileName))
-        throw new ArgumentNullException(nameof(archiveFileName), $"If {nameof(archiveManager)} is null, then the {nameof(archiveFileName)} must be provided!");
+      if (archiveManager is null && string.IsNullOrEmpty(archiveFolderName))
+        throw new ArgumentNullException(nameof(archiveFolderName), $"If {nameof(archiveManager)} is null, then the {nameof(archiveFolderName)} must be provided!");
 
       _entryName = entryName;
       _archiveManager = archiveManager;
-      _archiveFileName = archiveFileName;
+      _archiveFolderName = archiveFolderName;
     }
 
     /// <inheritdoc/>
@@ -82,13 +85,13 @@ namespace Altaxo.Main.Services.Files
       if (_entryName == newName)
         return this;
 
-      return new ProjectArchiveEntryMemento(newName, _archiveManager, _archiveFileName);
+      return new FileSystemFileAsProjectArchiveMemento(newName, _archiveManager, _archiveFolderName);
     }
 
     /// <inheritdoc/>
     public IProjectArchiveEntryMemento Clone()
     {
-      return new ProjectArchiveEntryMemento(_entryName, _archiveManager, _archiveFileName);
+      return new FileSystemFileAsProjectArchiveMemento(_entryName, _archiveManager, _archiveFolderName);
     }
 
     /// <summary>
@@ -99,7 +102,7 @@ namespace Altaxo.Main.Services.Files
     /// </returns>
     public IProjectArchiveEntry GetArchiveEntry()
     {
-      if (!(_archiveManager is null))
+      if (_archiveManager is not null)
       {
         if (_archiveManager.IsDisposed)
           throw new ObjectDisposedException(nameof(_archiveManager));
@@ -110,18 +113,14 @@ namespace Altaxo.Main.Services.Files
           throw new InvalidDataException($"Archive {_archive} seems not to contain entry {_entryName} any more!");
         return entry;
       }
-      else if (!(_archiveFileName is null))
+      else if (_archiveFolderName is not null)
       {
-        var stream = new FileStream(_archiveFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-        _archive = new ZipArchiveAsProjectArchive(stream, ZipArchiveMode.Read, false);
-        var entry = _archive.GetEntry(_entryName);
-        if (entry is null)
-          throw new InvalidDataException($"Archive {_archiveFileName} seems not to contain entry {_entryName} any more!");
-        return entry;
+        var finalName = Path.Combine(_archiveFolderName, _entryName);
+        return new FileSystemFileAsProjectArchiveEntry(_entryName, finalName);
       }
       else
       {
-        throw new InvalidProgramException($"Either {nameof(_archiveManager)} or {nameof(_archiveFileName)} should not be null here!");
+        throw new InvalidProgramException($"Either {nameof(_archiveManager)} or {nameof(_archiveFolderName)} should not be null here!");
       }
     }
 
