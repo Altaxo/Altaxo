@@ -39,7 +39,8 @@ namespace System.IO.Compression
   public struct LocalFileHeaderStruct
   {
     public const int MinimumSizeOfStructure = 30;
-
+    public const int MaximumSizeOfStructure = MinimumSizeOfStructure + 65535 + 65535;
+    public const int Zip64ExtraFieldSignature = 0x0001; // 0x0001 is signature
     public const int LocalFileHeaderSignature = 0x04034b50; // Position 0
 
     private UInt16 _versionNeeded; // Position 4
@@ -52,9 +53,9 @@ namespace System.IO.Compression
 
     private UInt32 _crc; // Position 14
 
-    private UInt32 _compressedSize; // Position 18
+    private long _compressedSize; // Position 18
 
-    private UInt32 _uncompressedSize; // Position 22
+    private long _uncompressedSize; // Position 22
 
     private UInt16 _fileNameLength; // Position 26
 
@@ -116,9 +117,26 @@ namespace System.IO.Compression
       if (result.FileNameLength != cde.FileNameLength)
         throw new InvalidOperationException("File name length of local header and central directory entry differ.");
 
+
+      // Test for Zip64 Extra Field extension
+      if (result.ExtraFieldLength != 0 && result.CompressedSize == 0xFFFFFFFF && result.UncompressedSize == 0xFFFFFFFF)
+      {
+        var offset = MinimumSizeOfStructure + result.FileNameLength;
+        if (BitConverter.ToInt16(buffer, offset + 0) != Zip64ExtraFieldSignature) // Extra field offset 0
+          throw new IOException($"No Zip64 extra field signature at stream position {originalStreamPosition + offset}");
+        var dataLength = BitConverter.ToInt16(buffer, offset + 2);
+        if (dataLength + 4 > result.ExtraFieldLength)
+          throw new IOException($"Extrafield length ({result.ExtraFieldLength}) is smaller than extra field really needs ({dataLength + 4}) at stream position 0x{(originalStreamPosition + offset):X}");
+        if (dataLength < 8)
+          throw new IOException($"Unexpected small data length ({dataLength}) in Zip64 extension at stream position 0x{(originalStreamPosition + offset):X}");
+
+        offset += 4;
+        result._uncompressedSize = (long)BitConverter.ToUInt64(buffer, offset + 0);
+        result._compressedSize = (long)BitConverter.ToUInt64(buffer, offset + 8);
+      }
+
       return result;
     }
-
 
     public LocalFileHeaderStruct(string fileName)
     {
@@ -136,14 +154,14 @@ namespace System.IO.Compression
 
     internal void WriteSizesAndCrc(Stream zipArchiveStream, long localFileHeaderStreamPosition, long compressedSize, long uncompressedSize, uint crc)
     {
-      _compressedSize = (UInt32)compressedSize;
-      _uncompressedSize = (UInt32)uncompressedSize;
+      _compressedSize = compressedSize;
+      _uncompressedSize = uncompressedSize;
       _crc = crc;
 
       var buffer = new byte[12];
       LittleEndianConverter.ToBuffer(_crc, buffer, 0);
-      LittleEndianConverter.ToBuffer(_compressedSize, buffer, 4);
-      LittleEndianConverter.ToBuffer(_uncompressedSize, buffer, 8);
+      LittleEndianConverter.ToBuffer((uint)_compressedSize, buffer, 4);
+      LittleEndianConverter.ToBuffer((uint)_uncompressedSize, buffer, 8);
 
       var currentPosition = zipArchiveStream.Position;
       zipArchiveStream.Seek(localFileHeaderStreamPosition + 14, SeekOrigin.Begin);

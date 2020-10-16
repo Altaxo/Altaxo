@@ -312,7 +312,7 @@ namespace System.IO.Compression
               ErrorMessage = $"Local file header[{i}] expected at position {expectedPosition:X}, but is at {centralDirectory[i].RelativeOffsetToLocalFileHeader:X}";
               return false;
             }
-            expectedPosition += centralDirectory[i].FileNameLength + centralDirectory[i].CompressedSize + LocalFileHeader.MinimumSizeOfStructure;
+            expectedPosition += centralDirectory[i].FileNameLength + centralDirectory[i].ExtraFieldLength + centralDirectory[i].CompressedSize + LocalFileHeader.MinimumSizeOfStructure;
           }
           if (!(expectedPosition == endOfCentralDirectory.PositionOfCentralDirectory))
           {
@@ -324,13 +324,14 @@ namespace System.IO.Compression
 
         if (options.HasFlag(ZipAnalyzerOptions.TestExistenceOfTheLocalFileHeaders))
         {
-          var lfhbuffer = new byte[LocalFileHeaderStruct.MinimumSizeOfStructure];
+          var lfhbuffer = new byte[LocalFileHeaderStruct.MaximumSizeOfStructure];
           // now, get all the local files listed in the central directory
           for (int i = 0; i < centralDirectory.Count; ++i)
           {
             var entry = centralDirectory[i];
             str.Seek(entry.RelativeOffsetToLocalFileHeader, SeekOrigin.Begin);
-            if (lfhbuffer.Length != str.Read(lfhbuffer, 0, lfhbuffer.Length))
+            var expectedSizeOfLocalFileHeader = LocalFileHeaderStruct.MinimumSizeOfStructure + entry.FileNameLength + entry.ExtraFieldLength;
+            if (expectedSizeOfLocalFileHeader != str.Read(lfhbuffer, 0, expectedSizeOfLocalFileHeader))
             {
               ErrorMessage = "Unexpected end of file reading local file header at stream position 0x{entry.RelativeOffsetToLocalFileHeader:X}";
               return false;
@@ -419,7 +420,7 @@ namespace System.IO.Compression
           {
             stb.AppendLine($"Local file header[{i}] expected at position {expectedPosition:X}, but is at {listCentralDirectory[i].RelativeOffsetToLocalFileHeader:X}");
           }
-          expectedPosition += listCentralDirectory[i].FileNameLength + listCentralDirectory[i].CompressedSize + LocalFileHeader.MinimumSizeOfStructure;
+          expectedPosition += listCentralDirectory[i].FileNameLength + listCentralDirectory[i].ExtraFieldLength + listCentralDirectory[i].CompressedSize + LocalFileHeader.MinimumSizeOfStructure;
         }
         if (!(expectedPosition == endOfCentralDirectory.PositionOfCentralDirectory))
         {
@@ -447,12 +448,13 @@ namespace System.IO.Compression
 
       // now, get all the local files listed in the central directory
       var commonList = new List<(CentralDirectoryRecord CDE, LocalFileHeaderStruct LFH)>();
-      var lfhbuffer = new byte[LocalFileHeader.MinimumSizeOfStructure];
+      var lfhbuffer = new byte[LocalFileHeaderStruct.MaximumSizeOfStructure];
       for (int i = 0; i < listCentralDirectory.Count; ++i)
       {
         var entry = listCentralDirectory[i];
         str.Seek(entry.RelativeOffsetToLocalFileHeader, SeekOrigin.Begin);
-        if (lfhbuffer.Length != str.Read(lfhbuffer, 0, lfhbuffer.Length))
+        var expectedSizeOfLocalFileHeader = LocalFileHeaderStruct.MinimumSizeOfStructure + entry.FileNameLength + entry.ExtraFieldLength;
+        if (expectedSizeOfLocalFileHeader != str.Read(lfhbuffer, 0, expectedSizeOfLocalFileHeader))
         {
           stb.AppendLine("Unexpected end of file reading local file header at stream position 0x{entry.RelativeOffsetToLocalFileHeader:X}");
           continue;

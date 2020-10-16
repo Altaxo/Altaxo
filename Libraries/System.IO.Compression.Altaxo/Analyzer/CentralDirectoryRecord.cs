@@ -39,6 +39,8 @@ namespace System.IO.Compression
     public const int MinimumSizeOfStructure = 46;
     public const int MaximumSizeOfStructure = MinimumSizeOfStructure + 65535 + 65535 + 65535;
 
+    public const int Zip64ExtraFieldSignature = 0x0001; // 0x0001 is signature
+
     public const int CentralDirectoryEntrySignature = 0x02014b50; // Position 0
     public int VersionMadeBy { get; private set; } // Position 4
     public int VersionNeeded { get; private set; } // Position 6
@@ -150,6 +152,36 @@ namespace System.IO.Compression
         }
       }
 
+      // Test for Zip64 Extra Field extension
+      if (result.ExtraFieldLength != 0 && result.CompressedSize == 0xFFFFFFFF && result.UncompressedSize == 0xFFFFFFFF)
+      {
+        if (!readFileName)
+        {
+          str.Seek(originalStreamPosition + MinimumSizeOfStructure + result.FileNameLength, SeekOrigin.Begin);
+        }
+        var streamPositionOfBufferStart = str.Position;
+
+        var toRead = Math.Min(20, result.ExtraFieldLength);
+        if (toRead != str.Read(buffer, 0, toRead))
+          throw new InvalidDataException($"Unexpected end of stream while reading central directory entry, StreamPos=0x{streamPositionOfBufferStart:X}");
+
+        if (BitConverter.ToInt16(buffer, 0) != Zip64ExtraFieldSignature) // Extra field offset 0
+          throw new IOException($"No Zip64 extra field signature at stream position 0x{(streamPositionOfBufferStart):X}");
+        var dataLength = BitConverter.ToInt16(buffer, 2);
+        if (dataLength + 4 > result.ExtraFieldLength)
+          throw new IOException($"Extrafield length ({result.ExtraFieldLength}) is smaller than extra field really needs ({dataLength + 4}) at stream position 0x{(streamPositionOfBufferStart):X}");
+        if (dataLength < 8)
+          throw new IOException($"Unexpected small data length ({dataLength}) in Zip64 extension at stream position 0x{(streamPositionOfBufferStart):X}");
+
+        var offset = 4;
+        result.UncompressedSize = (long)BitConverter.ToUInt64(buffer, offset + 0);
+        result.CompressedSize = (long)BitConverter.ToUInt64(buffer, offset + 8);
+        if (dataLength > 16)
+          result.RelativeOffsetToLocalFileHeader = (long)BitConverter.ToUInt64(buffer, offset + 16);
+        if (dataLength > 24)
+          result.DiskNumberWhereFileStarts = (int)BitConverter.ToUInt32(buffer, offset + 24);
+      }
+
       return result;
     }
 
@@ -163,7 +195,6 @@ namespace System.IO.Compression
     /// <exception cref="IOException">No central directory signature at stream position {streamPositionOfBufferStart + offset}</exception>
     public static CentralDirectoryRecord Create(byte[] buffer, int offset, long streamPositionOfBufferStart)
     {
-
       if (BitConverter.ToInt32(buffer, offset + 0) != CentralDirectoryEntrySignature)
         throw new IOException($"No central directory signature at stream position {streamPositionOfBufferStart + offset}");
 
@@ -194,6 +225,28 @@ namespace System.IO.Compression
       else
       {
         result.FileName = Encoding.GetEncoding(437).GetString(buffer, offset + MinimumSizeOfStructure, result.FileNameLength);
+      }
+
+      // Test for Zip64 Extra Field extension
+      if (result.ExtraFieldLength != 0 && result.CompressedSize == 0xFFFFFFFF && result.UncompressedSize == 0xFFFFFFFF)
+      {
+        var originalOffset = offset;
+        offset += MinimumSizeOfStructure + result.FileNameLength;
+        if (BitConverter.ToInt16(buffer, offset + 0) != Zip64ExtraFieldSignature) // Extra field offset 0
+          throw new IOException($"No Zip64 extra field signature at stream position {streamPositionOfBufferStart + offset}");
+        var dataLength = BitConverter.ToInt16(buffer, offset + 2);
+        if (dataLength + 4 > result.ExtraFieldLength)
+          throw new IOException($"Extrafield length ({result.ExtraFieldLength}) is smaller than extra field really needs ({dataLength + 4}) at stream position 0x{(streamPositionOfBufferStart + offset):X}");
+        if (dataLength < 8)
+          throw new IOException($"Unexpected small data length ({dataLength}) in Zip64 extension at stream position 0x{(streamPositionOfBufferStart + offset):X}");
+
+        offset += 4;
+        result.UncompressedSize = (long)BitConverter.ToUInt64(buffer, offset + 0);
+        result.CompressedSize = (long)BitConverter.ToUInt64(buffer, offset + 8);
+        if (dataLength > 16)
+          result.RelativeOffsetToLocalFileHeader = (long)BitConverter.ToUInt64(buffer, offset + 16);
+        if (dataLength > 24)
+          result.DiskNumberWhereFileStarts = (int)BitConverter.ToUInt32(buffer, offset + 24);
       }
 
       return result;
