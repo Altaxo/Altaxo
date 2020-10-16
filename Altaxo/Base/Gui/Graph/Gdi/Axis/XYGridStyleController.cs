@@ -24,6 +24,7 @@
 
 #nullable disable
 using System;
+using Altaxo.Drawing;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Gui.Common.Drawing;
 
@@ -103,9 +104,15 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     {
       if (!_majorController.Apply(disposeController))
         return false;
+      else
+        _doc.MajorPen = (PenX)_majorController.ModelObject;
+
 
       if (!_minorController.Apply(disposeController))
         return false;
+      else
+        _doc.MinorPen = (PenX)_minorController.ModelObject;
+
 
       return ApplyEnd(true, disposeController);
     }
