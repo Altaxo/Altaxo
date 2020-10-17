@@ -116,6 +116,48 @@ namespace Altaxo
                                       originalArchive.GetType() == archiveToSaveTo.GetType() &&
                                       archiveToSaveTo.SupportsCopyEntryFrom(originalArchive);
 
+
+      // -------------------------------------------------------------------------------------------------
+      // Save the Document identifier
+      // -------------------------------------------------------------------------------------------------
+      {
+        var zipEntry = archiveToSaveTo.CreateEntry("DocumentInformation.xml");
+        using (var zs = zipEntry.OpenForWriting())
+        {
+          info.BeginWriting(zs);
+          info.AddValue("DocumentInformation", _documentInformation);
+          info.EndWriting();
+        }
+      }
+
+
+      // -------------------------------------------------------------------------------------------------
+      // Save all folder properties, because during deserialization we may need them for tables, graphs etc.
+      // -----------------------------------------------------------------------------------------------------------
+      foreach (var folderProperty in _projectFolderProperties)
+      {
+        try
+        {
+          var zipEntry = archiveToSaveTo.CreateEntry("FolderProperties/" + folderProperty.Name + ".xml");
+          //ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
+          //zippedStream.PutNextEntry(ZipEntry);
+          //zippedStream.SetLevel(0);
+          using (var zs = zipEntry.OpenForWriting())
+          {
+            info.BeginWriting(zs);
+            info.AddValue("FolderProperty", folderProperty);
+            info.EndWriting();
+          }
+        }
+        catch (Exception exc)
+        {
+          errorText.Append(exc.ToString());
+        }
+      }
+
+      // -------------------------------------------------------------------------------------------------
+      // Save all tables into the tables subdirectory
+      // ---------------------------------------------------------------------------------------------------
       if (supportsSeparateDataStorage)
       {
         info.SetProperty(Altaxo.Data.DataTable.SerializationInfoProperty_SupportsSeparatedData, "true");
@@ -188,7 +230,9 @@ namespace Altaxo
         info.SetProperty(Altaxo.Data.DataColumnCollection.SerialiationInfoProperty_StoreDataOnly, orginalValue_StoreDataOnly);
       }
 
-      // second, we save all graphs into the Graphs subdirectory
+      // -------------------------------------------------------------------------------------------------
+      // Save all 2D graphs into the Graphs subdirectory
+      // -------------------------------------------------------------------------------------------------
       foreach (Graph.Gdi.GraphDocument graph in _graphs)
       {
         try
@@ -210,7 +254,9 @@ namespace Altaxo
         }
       }
 
-      // second, we save all graphs into the Graphs3D subdirectory
+      // -------------------------------------------------------------------------------------------------
+      // Save all 3D graphs into the Graphs3D subdirectory
+      // -------------------------------------------------------------------------------------------------
       foreach (Graph.Graph3D.GraphDocument graph in _graphs3D)
       {
         try
@@ -232,7 +278,9 @@ namespace Altaxo
         }
       }
 
-      // next, we save all notes documents
+      // -------------------------------------------------------------------------------------------------
+      // Save all notes (markdown) documents
+      // -------------------------------------------------------------------------------------------------
       foreach (var item in _textDocuments)
       {
         try
@@ -251,7 +299,9 @@ namespace Altaxo
         }
       }
 
-      // third, we save all TableLayouts into the TableLayouts subdirectory
+      // -------------------------------------------------------------------------------------------------
+      // Save all TableLayouts into the TableLayouts subdirectory
+      // -------------------------------------------------------------------------------------------------
       foreach (Altaxo.Worksheet.WorksheetLayout layout in _tableLayouts)
       {
         if (layout.DataTable is null)
@@ -276,7 +326,9 @@ namespace Altaxo
         }
       }
 
-      // 4th, we save all FitFunctions into the FitFunctions subdirectory
+      // -------------------------------------------------------------------------------------------------
+      // Save all FitFunctions into the FitFunctions subdirectory
+      // -------------------------------------------------------------------------------------------------
       int index = 0;
       foreach (var fit in _fitFunctionScripts)
       {
@@ -296,40 +348,7 @@ namespace Altaxo
           errorText.Append(exc.ToString());
         }
       }
-      {
-        // 5th, we save all folder properties
-        foreach (var folderProperty in _projectFolderProperties)
-        {
-          try
-          {
-            var zipEntry = archiveToSaveTo.CreateEntry("FolderProperties/" + folderProperty.Name + ".xml");
-            //ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
-            //zippedStream.PutNextEntry(ZipEntry);
-            //zippedStream.SetLevel(0);
-            using (var zs = zipEntry.OpenForWriting())
-            {
-              info.BeginWriting(zs);
-              info.AddValue("FolderProperty", folderProperty);
-              info.EndWriting();
-            }
-          }
-          catch (Exception exc)
-          {
-            errorText.Append(exc.ToString());
-          }
-        }
-      }
 
-      {
-        // nun noch den DocumentIdentifier abspeichern
-        var zipEntry = archiveToSaveTo.CreateEntry("DocumentInformation.xml");
-        using (var zs = zipEntry.OpenForWriting())
-        {
-          info.BeginWriting(zs);
-          info.AddValue("DocumentInformation", _documentInformation);
-          info.EndWriting();
-        }
-      }
       //  Current.Console.WriteLine("Saving took {0} sec.", (DateTime.UtcNow - time1).TotalSeconds);
 
       if (errorText.Length != 0)
