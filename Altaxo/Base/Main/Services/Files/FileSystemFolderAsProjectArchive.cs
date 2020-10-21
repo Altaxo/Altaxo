@@ -62,6 +62,7 @@ namespace Altaxo.Main.Services.Files
       foreach (var file in _files)
       {
         var name = file.FullName.Substring(_baseFolder.Length);
+        name = name.Replace('\\', '/'); // we try to name the entries exactly equal to the entries in the Zip file
         _entryHash.Add(name);
       }
     }
@@ -77,7 +78,18 @@ namespace Altaxo.Main.Services.Files
       }
     }
 
-    public bool SupportsDeferredLoading => true;
+    /// <summary>
+    /// Returns false. See remarks why this is so.
+    /// </summary>
+    /// <remarks>
+    /// We can not support deferred loading here, because the class <see cref="FileSystemFolderProjectArchiveManager"/> currently can
+    /// not save copy the entire project folder to another location. But this is required because of the following scenario:
+    /// - Altaxo loads a project from a folder, the table data are not deserialized if not needed
+    /// - Before Altaxo saves the project again into the same folder, it must delete all files in it
+    /// - During saving, the memento tries to copy the data from the old location to the new location
+    /// - Because the old file was deleted prior to saving, the memento will not find its data => ERROR
+    /// </remarks>
+    public bool SupportsDeferredLoading => false;
 
     public bool ContainsEntry(string entryName)
     {
@@ -122,12 +134,14 @@ namespace Altaxo.Main.Services.Files
 
     public IProjectArchiveEntryMemento? GetEntryMemento(string entryName)
     {
-      throw new NotImplementedException();
+      throw new NotSupportedException(); // see property SupportsDeferredLoading why this is not supported yet.
+      // return new FileSystemFileAsProjectArchiveMemento(entryName, null, _baseFolder);
     }
 
     public bool SupportsCopyEntryFrom(IProjectArchive archive)
     {
-      return archive is not null;
+      return archive is not FileSystemFolderAsProjectArchive ||
+            (archive is FileSystemFolderAsProjectArchive arch && arch._baseFolder != this._baseFolder);
     }
   }
 }

@@ -170,6 +170,63 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// This commands open an Altaxo project from a directory, in which the files must have the
+  /// same structure as in the Zip-File which is usually used for project storage.
+  /// </summary>
+  /// <seealso cref="Altaxo.Gui.SimpleCommand" />
+  public class FileOpenFromDirectory : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      if (Current.Project.IsDirty)
+      {
+        var cancelargs = new System.ComponentModel.CancelEventArgs();
+        Current.IProjectService.AskForSavingOfProject(cancelargs);
+        if (cancelargs.Cancel)
+          return;
+      }
+
+      bool saveDirtyState = Current.Project.IsDirty; // save the dirty state of the project in case the user cancels the open file dialog
+      Current.Project.IsDirty = false; // set document to non-dirty
+
+      var dlg = new System.Windows.Forms.FolderBrowserDialog()
+      {
+        ShowNewFolderButton = false,
+        Description = "Choose folder in which the project is located",
+      };
+      if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+      {
+        Current.IProjectService.OpenProject(DirectoryName.Create(dlg.SelectedPath), showUserInteraction: true);
+        // Can not add this to recent open because it is no file name
+        // Current.GetService<IRecentOpen>().AddRecentProject(FileName.Create(openFileDialog1.FileName));
+      }
+      else // in case the user cancels the open file dialog
+      {
+        Current.Project.IsDirty = saveDirtyState; // restore the dirty state of the current project
+      }
+    }
+  }
+
+  public class FileSaveAsToDirectory : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var dlg = new System.Windows.Forms.FolderBrowserDialog()
+      {
+        ShowNewFolderButton = true,
+        Description = "Choose folder in which the project should be stored",
+      };
+
+
+      if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+      {
+        Current.IProjectService.SaveProject(new DirectoryName(dlg.SelectedPath));
+      }
+    }
+  }
+
+
   public class FileImportAscii : SimpleCommand
   {
     public override void Execute(object parameter)

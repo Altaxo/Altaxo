@@ -89,6 +89,10 @@ namespace Altaxo.Serialization.Xml
     public void BeginReading(System.IO.Stream stream)
     {
       _xmlReader = new XmlTextReader(stream);
+      if (_propertyDictionary.ContainsKey(Altaxo.Serialization.Xml.XmlStreamSerializationInfo.UseXmlIndentation))
+      {
+        _xmlReader.WhitespaceHandling = WhitespaceHandling.Significant;
+      }
       _xmlReader.MoveToContent();
     }
 

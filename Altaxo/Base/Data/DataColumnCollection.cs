@@ -30,6 +30,7 @@ using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Main;
 using Altaxo.Main.Services;
+using Altaxo.Main.Services.Files;
 using Altaxo.Scripting;
 
 namespace Altaxo.Data
@@ -631,6 +632,7 @@ namespace Altaxo.Data
       {
         var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
         info.PropertyDictionary[DeserialiationInfoProperty_RestoreDataOnly] = "true";
+        info.PropertyDictionary[Altaxo.Serialization.Xml.XmlStreamSerializationInfo.UseXmlIndentation] = memento is FileSystemFileAsProjectArchiveMemento ? "true" : null;
         info.BeginReading(zipinpstream);
         object readedobject = info.GetValue("TableData", null);
         try

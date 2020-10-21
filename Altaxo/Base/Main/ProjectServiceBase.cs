@@ -184,7 +184,7 @@ namespace Altaxo.Dom
     {
       var oldProject = _currentProject;
 
-      if (!(_currentProject is null))
+      if (_currentProject is not null)
       {
         _currentProject.IsDirtyChanged -= EhProjectDirtyChanged;
       }
@@ -195,7 +195,7 @@ namespace Altaxo.Dom
         CurrentProjectArchiveManager = new UnnamedProjectArchiveManager();
       }
 
-      if (!(_currentProject is null))
+      if (_currentProject is not null)
       {
         _currentProject.IsDirtyChanged += EhProjectDirtyChanged;
       }
@@ -484,7 +484,7 @@ namespace Altaxo.Dom
     /// </summary>
     /// <param name="fileOrFolderName">Name of the file or folder.</param>
     /// <returns></returns>
-    protected abstract IFileBasedProjectArchiveManager InternalCreateProjectArchiveManagerFromFileOrFolderLocation(PathName fileOrFolderName);
+    protected abstract IProjectArchiveManager InternalCreateProjectArchiveManagerFromFileOrFolderLocation(PathName fileOrFolderName);
 
     /// <inheritdoc/>
     public abstract bool TryOpenProjectItemFile(FileName fileName, bool forceTrialRegardlessOfExtension);
@@ -516,7 +516,7 @@ namespace Altaxo.Dom
         OnProjectChanged(new ProjectEventArgs(oldProject, oldProjectName, ProjectEventKind.ProjectClosing));
 
       Current.Workbench.CloseAllViews();
-      SetCurrentProject(null, asUnnamedProject: true);
+      // SetCurrentProject(null, asUnnamedProject: true);
 
       if (oldProject is not null)
         OnProjectChanged(new ProjectEventArgs(oldProject, oldProjectName, ProjectEventKind.ProjectClosed));
@@ -550,7 +550,7 @@ namespace Altaxo.Dom
 
     public void DisposeProjectAndSetToNull()
     {
-      SetCurrentProject(null, asUnnamedProject: true);
+      SetCurrentProject(InternalCreateNewProject(), asUnnamedProject: true);
     }
 
     /// <inheritdoc/>

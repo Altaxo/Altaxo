@@ -98,6 +98,10 @@ namespace Altaxo.Main
     public override IDictionary<string, IProjectItem> SaveProjectAndWindowsState(IProjectArchive archiveToSaveTo, IProjectArchive? archiveToCopyFrom)
     {
       var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+
+      if (archiveToSaveTo is FileSystemFolderAsProjectArchive)
+        info.SetProperty(Altaxo.Serialization.Xml.XmlStreamSerializationInfo.UseXmlIndentation, "Yes");
+
       var result = CurrentOpenProject.SaveToArchive(archiveToSaveTo, info, archiveToCopyFrom);
 
       if (!Current.Dispatcher.InvokeRequired)
@@ -187,10 +191,9 @@ namespace Altaxo.Main
 
     #region Project opening
 
-    protected override IFileBasedProjectArchiveManager InternalCreateProjectArchiveManagerFromFileOrFolderLocation(PathName fileOrFolderName)
+    protected override IProjectArchiveManager InternalCreateProjectArchiveManagerFromFileOrFolderLocation(PathName fileOrFolderName)
     {
       var context = Current.Project.GetPropertyContext();
-
       var storageSettings = context.GetValue(Altaxo.Serialization.StorageSettings.PropertyKeyStorageSettings, new Serialization.StorageSettings());
 
       if (fileOrFolderName is FileName)
@@ -199,6 +202,10 @@ namespace Altaxo.Main
           return new ZipFileProjectArchiveManager();
         else
           return new ZipFileProjectArchiveManagerNative();
+      }
+      else if (fileOrFolderName is DirectoryName)
+      {
+        return new FileSystemFolderProjectArchiveManager();
       }
       else
       {
@@ -226,7 +233,7 @@ namespace Altaxo.Main
 
       try
       {
-        SetCurrentProject(null, asUnnamedProject: false);
+        SetCurrentProject(new AltaxoDocument(), asUnnamedProject: false);
       }
       catch (Exception exc)
       {
@@ -247,7 +254,10 @@ namespace Altaxo.Main
       try
       {
         newdocument = new AltaxoDocument();
+        SetCurrentProject(newdocument, asUnnamedProject: false);
         info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
+        if (projectArchive is FileSystemFolderAsProjectArchive)
+          info.PropertyDictionary.Add(Altaxo.Serialization.Xml.XmlStreamSerializationInfo.UseXmlIndentation, new object());
       }
       catch (Exception exc)
       {
@@ -269,8 +279,6 @@ namespace Altaxo.Main
 
       try
       {
-        SetCurrentProject(newdocument, asUnnamedProject: false);
-
         RestoreWindowStateFromZippedFile(projectArchive, info, newdocument);
         info.AnnounceDeserializationEnd(newdocument, true); // Final call to deserialization end
 

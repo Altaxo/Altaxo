@@ -45,6 +45,7 @@ namespace Altaxo.Main.Services.Files
     private Stream? _stream;
     private ZipArchiveAxo _zipArchive;
     private bool _leaveOpen;
+    public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Fastest;
 
     /// <inheritdoc/>
     public PathName? FileName
@@ -146,7 +147,7 @@ namespace Altaxo.Main.Services.Files
     public IProjectArchiveEntry CreateEntry(string name)
     {
       ThrowOnDisposed();
-      return new ZipEntryAsProjectArchiveEntry(_zipArchive.CreateEntry(name));
+      return new ZipEntryAsProjectArchiveEntry(_zipArchive.CreateEntry(name, CompressionLevel));
     }
 
     /// <inheritdoc/>

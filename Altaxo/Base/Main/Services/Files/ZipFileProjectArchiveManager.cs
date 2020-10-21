@@ -30,6 +30,7 @@ using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
 using Altaxo.Main.Services.Files;
+using Altaxo.Serialization;
 
 namespace Altaxo.Main.Services
 {
@@ -55,7 +56,14 @@ namespace Altaxo.Main.Services
 
     private IProjectArchive InternalCreateProjectArchive(Stream stream, ZipArchiveMode zipArchiveMode, bool leaveOpen, IFileBasedProjectArchiveManager archiveManager)
     {
-      return new Services.Files.ZipArchiveAsProjectArchive(stream, zipArchiveMode, leaveOpen: leaveOpen, archiveManager);
+      var result = new Services.Files.ZipArchiveAsProjectArchive(stream, zipArchiveMode, leaveOpen: leaveOpen, archiveManager);
+
+      if (_storageSettings is { } ss)
+      {
+        result.CompressionLevel = ss.ZipCompressionLevel;
+      }
+
+      return result;
     }
   }
 }

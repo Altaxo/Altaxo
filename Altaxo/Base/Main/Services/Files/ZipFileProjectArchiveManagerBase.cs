@@ -30,6 +30,7 @@ using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
 using Altaxo.Main.Services.Files;
+using Altaxo.Serialization;
 
 namespace Altaxo.Main.Services
 {
@@ -43,6 +44,7 @@ namespace Altaxo.Main.Services
     private const string ClonedProjectRelativePath = "CurrProj";
     private const string ClonedProjectFileName = "CurrProj";
     private bool _isDisposed;
+    protected StorageSettings? _storageSettings;
 
     /// <summary>
     /// Function delegate to create a new project archive.
@@ -212,6 +214,9 @@ namespace Altaxo.Main.Services
     {
 #nullable disable
       if (_isDisposed) throw new ObjectDisposedException(this.GetType().Name);
+
+      var context = Current.Project.GetPropertyContext();
+      var storageSettings = context.GetValue(Altaxo.Serialization.StorageSettings.PropertyKeyStorageSettings, new Serialization.StorageSettings());
 
       IDictionary<string, IProjectItem> dictionaryResult = null;
 

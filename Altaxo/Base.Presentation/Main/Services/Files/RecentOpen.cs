@@ -33,7 +33,9 @@ namespace Altaxo.Main.Services
     public override void AddRecentProject(PathName name)
     {
       base.AddRecentProject(name);
-      JumpList.AddToRecentCategory(name);
+
+      if (name is FileName fn)
+        JumpList.AddToRecentCategory(fn);
     }
   }
 }

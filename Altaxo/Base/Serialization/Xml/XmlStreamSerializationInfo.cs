@@ -25,6 +25,7 @@
 #nullable enable
 
 using System;
+using System.Text;
 using System.Xml;
 
 namespace Altaxo.Serialization.Xml
@@ -34,6 +35,7 @@ namespace Altaxo.Serialization.Xml
   /// </summary>
   public class XmlStreamSerializationInfo : IXmlSerializationInfo
   {
+    public const string UseXmlIndentation = "UseXmlIndentation";
     private static readonly XmlWriter _nullWriter = new XmlTextWriter(System.IO.Stream.Null, System.Text.Encoding.UTF8);
 
     private XmlWriter _writer;
@@ -67,7 +69,21 @@ namespace Altaxo.Serialization.Xml
 
     public void BeginWriting(System.IO.Stream stream)
     {
-      _writer = new XmlTextWriter(stream, System.Text.Encoding.UTF8);
+      if (string.IsNullOrEmpty(_properties[Altaxo.Serialization.Xml.XmlStreamSerializationInfo.UseXmlIndentation]))
+      {
+        _writer = new XmlTextWriter(stream, System.Text.Encoding.UTF8);
+      }
+      else
+      {
+        var settings = new XmlWriterSettings
+        {
+          Encoding = Encoding.UTF8,
+          NewLineOnAttributes = false,
+          Indent = true
+        };
+        _writer = XmlWriter.Create(stream, settings);
+      }
+
       _isWriterCreatedHere = true;
       _writer.WriteStartDocument();
     }

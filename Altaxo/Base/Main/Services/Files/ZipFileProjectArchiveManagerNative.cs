@@ -55,7 +55,14 @@ namespace Altaxo.Main.Services
 
     private IProjectArchive InternalCreateProjectArchive(Stream stream, ZipArchiveMode zipArchiveMode, bool leaveOpen, IFileBasedProjectArchiveManager archiveManager)
     {
-      return new Services.Files.ZipArchiveAsProjectArchiveNative(stream, zipArchiveMode, leaveOpen: leaveOpen, archiveManager);
+      var result = new Services.Files.ZipArchiveAsProjectArchiveNative(stream, zipArchiveMode, leaveOpen: leaveOpen, archiveManager);
+
+      if (_storageSettings is { } ss)
+      {
+        result.CompressionLevel = ss.ZipCompressionLevel;
+      }
+
+      return result;
     }
   }
 }

@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using Altaxo.Main;
 using Altaxo.Main.Properties;
 
 namespace Altaxo
@@ -52,7 +53,7 @@ namespace Altaxo
       }
 
       var namedOwner = owner as Main.INameOwner;
-      var proj = Current.Project;
+      var proj = owner is IDocumentLeafNode leafNode && AbsoluteDocumentPath.GetRootNode(leafNode) is AltaxoDocument doc ? doc : Current.Project;
       ProjectFolderPropertyDocument? bag;
       if (proj is not null && namedOwner is not null && namedOwner.TryGetName(out var namedOwnerName))
       {

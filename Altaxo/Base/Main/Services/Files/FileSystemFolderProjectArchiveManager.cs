@@ -49,16 +49,29 @@ namespace Altaxo.Main.Services.Files
     }
 
 
+    /// <summary>
+    /// Loads a project from a folder. The files in this folder represent the project items.
+    /// </summary>
+    /// <param name="folderName">Name of the folder.</param>
+    /// <param name="restoreProjectAndWindowsState">Delegate that is used to deserialize and restore the project and the windows state.</param>
     public void LoadFromFolder(DirectoryName folderName, RestoreProjectAndWindowsState restoreProjectAndWindowsState)
     {
+      var oldName = _folderName;
+      _folderName = folderName;
       using (var archive = new FileSystemFolderAsProjectArchive(folderName))
       {
         restoreProjectAndWindowsState(archive);
+      }
+
+      if (!(oldName == _folderName))
+      {
+        FileOrFolderNameChanged?.Invoke(this, new NameChangedEventArgs(this, oldName, _folderName));
       }
     }
 
     public void Save(SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState)
     {
+      EnsureDirectoryCreatedAndEmpty(_folderName);
       using (var archive = new FileSystemFolderAsProjectArchive(_folderName))
       {
         saveProjectAndWindowsState(archive, null);
@@ -68,11 +81,24 @@ namespace Altaxo.Main.Services.Files
 
     public IDictionary<string, IProjectItem> SaveAs(DirectoryName folderName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState)
     {
+      var oldName = _folderName;
       _folderName = folderName;
+
+      EnsureDirectoryCreatedAndEmpty(_folderName);
+
+
+      IDictionary<string, IProjectItem>? dictionaryResult = null;
       using (var archive = new FileSystemFolderAsProjectArchive(_folderName))
       {
-        return saveProjectAndWindowsState(archive, null);
+        dictionaryResult = saveProjectAndWindowsState(archive, null);
       }
+
+      if (!(oldName == _folderName))
+      {
+        FileOrFolderNameChanged?.Invoke(this, new NameChangedEventArgs(this, oldName, _folderName));
+      }
+
+      return dictionaryResult;
     }
 
     public IProjectArchive GetArchiveReadOnlyThreadSave(object claimer)
@@ -86,7 +112,7 @@ namespace Altaxo.Main.Services.Files
       archive?.Dispose();
     }
 
-    private void EnsureDirectoryCreatedAndEmpty(DirectoryName folderName)
+    private static void EnsureDirectoryCreatedAndEmpty(DirectoryName folderName)
     {
       var dir = new DirectoryInfo(folderName);
       if (!dir.Exists)
@@ -103,7 +129,7 @@ namespace Altaxo.Main.Services.Files
         var files = dir.GetFiles("*.*", SearchOption.AllDirectories);
         if (files.Length != 0)
         {
-          var isDocumentIdentfierPresent = files.Any((x) => x.Name.ToLowerInvariant() == "documentidentifier.xml");
+          var isDocumentIdentfierPresent = files.Any((x) => x.Name.ToLowerInvariant() == "documentinformation.xml");
 
           if (isDocumentIdentfierPresent)
           {
@@ -111,18 +137,18 @@ namespace Altaxo.Main.Services.Files
             {
               subdir.Delete(recursive: true);
             }
+
+            foreach (var file in dir.GetFiles())
+            {
+              file.Delete();
+            }
           }
           else
           {
             throw new InvalidOperationException($"To protect your data, the directory {folderName} can not be used as a project storage because it may contain files that are important for you.");
           }
-
         }
-
       }
-
     }
-
-
   }
 }
