@@ -135,6 +135,7 @@ namespace Altaxo.Data
         s._dataColumns.ColumnScripts.ParentObject = s;
 
         s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
+        s._propertyColumns.MarkAsPropertyCollection();
         s._propertyColumns.ParentObject = s;
         s._propertyColumns.ColumnScripts.ParentObject = s;
 
@@ -166,6 +167,7 @@ namespace Altaxo.Data
         s._dataColumns.ColumnScripts.ParentObject = s;
 
         s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
+        s._propertyColumns.MarkAsPropertyCollection();
         s._propertyColumns.ParentObject = s;
         s._propertyColumns.ColumnScripts.ParentObject = s;
 
@@ -225,6 +227,7 @@ namespace Altaxo.Data
         s._dataColumns.ColumnScripts.ParentObject = s;
 
         s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
+        s._propertyColumns.MarkAsPropertyCollection();
         s._propertyColumns.ParentObject = s;
         s._propertyColumns.ColumnScripts.ParentObject = s;
 
@@ -310,6 +313,7 @@ namespace Altaxo.Data
         s._dataColumns.ColumnScripts.ParentObject = s;
 
         s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
+        s._propertyColumns.MarkAsPropertyCollection();
         s._propertyColumns.ParentObject = s;
         s._propertyColumns.ColumnScripts.ParentObject = s;
 
@@ -407,6 +411,7 @@ namespace Altaxo.Data
         object deferredDataObject = info.GetPropertyOrDefault<object>(Altaxo.Data.DataColumnCollection.DeserialiationInfoProperty_DeferredDataDeserialization);
         info.PropertyDictionary.Remove(Altaxo.Data.DataColumnCollection.DeserialiationInfoProperty_DeferredDataDeserialization);
         s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
+        s._propertyColumns.MarkAsPropertyCollection();
         s._propertyColumns.ParentObject = s;
         s._propertyColumns.ColumnScripts.ParentObject = s;
         info.PropertyDictionary[Altaxo.Data.DataColumnCollection.DeserialiationInfoProperty_DeferredDataDeserialization] = deferredDataObject;
@@ -599,7 +604,7 @@ namespace Altaxo.Data
       _dataColumns.ParentObject = this;
       _dataColumns.ColumnScripts.ParentObject = this;
 
-      _propertyColumns = propcoll;
+      _propertyColumns = propcoll.MarkAsPropertyCollection();
       _propertyColumns.ParentObject = this; // set the parent of the cloned PropertyColumns
       _propertyColumns.ColumnScripts.ParentObject = this;
 
@@ -645,7 +650,7 @@ namespace Altaxo.Data
         // Note: we update the data table here (and not in HandleLowPriorityChildChangeCases)
         // the reason is that we first want to see whether the parent is suspending us
         // if OnChange is called, the parent has not suspended us, thus we can update from the table data source
-        // Disadvantage: the parent sees to change events: (i) the event with TableDataSourceChangeEventArgs, and (ii) the change event that is caused by the updated table
+        // Disadvantage: the parent sees two change events: (i) the event with TableDataSourceChangeEventArgs, and (ii) the change event that is caused by the updated table
         UpdateTableFromTableDataSource();
       }
       else

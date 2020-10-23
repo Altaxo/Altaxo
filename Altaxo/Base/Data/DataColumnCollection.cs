@@ -36,7 +36,7 @@ using Altaxo.Scripting;
 namespace Altaxo.Data
 {
   public class DataColumnCollection :
-    Main.SuspendableDocumentNodeWithSingleAccumulatedData<DataColumnCollectionChangedEventArgs>,
+    Main.SuspendableDocumentNodeWithSingleAccumulatedData<BaseColumnCollectionChangedEventArgs>,
     IList<DataRow>,
     IDisposable,
     ICloneable
@@ -217,6 +217,11 @@ namespace Altaxo.Data
     /// is stored in <see cref="_deferredDataLoader"/>).
     /// </summary>
     protected IProjectArchiveEntryMemento? _archiveMemento;
+
+    /// <summary>
+    /// Gets a value indicating whether this instance acts as the property column collection of a table (true) or not (false).
+    /// </summary>
+    internal bool IsPropertyColumnCollection { get; private set; }
 
     #endregion Member data
 
@@ -694,6 +699,7 @@ namespace Altaxo.Data
     /// <param name="from">The column collection to copy this data column collection from.</param>
     public DataColumnCollection(DataColumnCollection from)
     {
+      IsPropertyColumnCollection = from.IsPropertyColumnCollection;
       _nameOfLastColumnAdded = from._nameOfLastColumnAdded;
       _lastColumnNameGenerated = from._lastColumnNameGenerated;
 
@@ -857,7 +863,7 @@ namespace Altaxo.Data
       if (info.IsIndependentVariable)
         EnsureUniqueColumnKindsForIndependentVariables(info.Group, datac);
 
-      EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnAddArgs(info.Number, datac.Count));
+      EhChildChanged(null, BaseColumnCollectionChangedEventArgs.CreateColumnAddArgs(IsPropertyColumnCollection, info.Name, info.Number, datac.Count));
     }
 
     /// <summary>
@@ -1099,7 +1105,7 @@ namespace Altaxo.Data
       newCol.ParentObject = this;
       oldCol.Dispose();
 
-      EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnCopyOrReplaceArgs(index, oldRowCount, newCol.Count));
+      EhChildChanged(null, BaseColumnCollectionChangedEventArgs.CreateColumnCopyOrReplaceArgs(IsPropertyColumnCollection, info.Name, index, oldRowCount, newCol.Count));
     }
 
     /// <summary>
@@ -1318,6 +1324,7 @@ namespace Altaxo.Data
       int nOriginalColumnCount = ColumnCount;
       int lastRangeStart = 0;
       var colsToDispose = new List<DataColumn>(selectedColumns.Count);
+      var columnNames = new List<string>(selectedColumns.Count);
 
       foreach (var range in selectedColumns.RangesDescending)
       {
@@ -1330,6 +1337,7 @@ namespace Altaxo.Data
           _columnInfoByColumn.Remove(colToRemove);
           _columnsByName.Remove(colName);
           colsToDispose.Add(colToRemove); // dont dispose column here directly, because it may trigger some events, and the handlers want to access this DataColumnCollection, which is now in an undefined state
+          columnNames.Add(colName);
         }
         _columnsByNumber.RemoveRange(range.Start, range.Count);
         lastRangeStart = range.Start;
@@ -1349,7 +1357,7 @@ namespace Altaxo.Data
         col.Dispose();
 
       // raise datachange event that some columns have changed
-      EhSelfChanged(DataColumnCollectionChangedEventArgs.CreateColumnRemoveArgs(lastRangeStart, nOriginalColumnCount, _numberOfRows));
+      EhSelfChanged(BaseColumnCollectionChangedEventArgs.CreateColumnRemoveArgs(IsPropertyColumnCollection, columnNames, lastRangeStart, nOriginalColumnCount, _numberOfRows));
 
       // reset the TriedOutRegularNaming flag, maybe one of the regular column names is now free again
       _triedOutRegularNaming = false;
@@ -1596,7 +1604,7 @@ namespace Altaxo.Data
           _columnsByName.Remove(oldName);
           _columnsByName.Add(newName, datac);
 
-          EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnRenameArgs(GetColumnNumber(datac)));
+          EhChildChanged(null, BaseColumnCollectionChangedEventArgs.CreateColumnRenameArgs(IsPropertyColumnCollection, oldName, newName, GetColumnNumber(datac)));
 
 
           EhSelfTunnelingEventHappened(new NameChangedEventArgs(datac, oldName, newName));
@@ -2039,7 +2047,7 @@ namespace Altaxo.Data
       _columnInfoByColumn[coli].Number = j;
       _columnInfoByColumn[colj].Number = i;
 
-      EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnMoveArgs(Math.Min(i, j), Math.Max(i, j)));
+      EhChildChanged(null, BaseColumnCollectionChangedEventArgs.CreateColumnMoveArgs(IsPropertyColumnCollection, Math.Min(i, j), Math.Max(i, j)));
     }
 
     /// <summary>
@@ -2106,7 +2114,7 @@ namespace Altaxo.Data
         _columnsByNumber[newPosition + i] = columnsMoved[i];
 
       RefreshColumnIndices();
-      EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnMoveArgs(firstAffectedColumn, maxAffectedColumn));
+      EhChildChanged(null, BaseColumnCollectionChangedEventArgs.CreateColumnMoveArgs(IsPropertyColumnCollection, firstAffectedColumn, maxAffectedColumn));
     }
 
     /// <summary>
@@ -2177,7 +2185,7 @@ namespace Altaxo.Data
         for (int i = 0; i < numberSelected; i++)
           thiscolumn[newPosition + i] = tempMoved[i];
       }
-      EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateRowMoveArgs(ColumnCount, firstAffected, maxAffected));
+      EhChildChanged(null, BaseColumnCollectionChangedEventArgs.CreateRowMoveArgs(IsPropertyColumnCollection, ColumnCount, firstAffected, maxAffected));
     }
 
     /// <summary>
@@ -2286,6 +2294,18 @@ namespace Altaxo.Data
     #endregion Indexer
 
     #region Collection Properties
+
+
+    /// <summary>
+    /// Infrastruture only. Do not use it unless you know what you are doing.
+    /// Marks this collection as being a property collection. 
+    /// </summary>
+    /// <returns>The collection itself.</returns>
+    internal DataColumnCollection MarkAsPropertyCollection()
+    {
+      IsPropertyColumnCollection = true;
+      return this;
+    }
 
     /// <summary>
     /// Is true if any data in a child DataColumn has changed since the last saving of the project.
@@ -2443,7 +2463,7 @@ namespace Altaxo.Data
     /// <param name="sender">One of the columns of this collection.</param>
     /// <param name="e">The change details.</param>
     /// <param name="accumulatedEventData">The instance were the event arg e is accumulated. If this parameter is <c>null</c>, a new instance of <see cref="DataColumnCollectionChangedEventArgs"/> is created and returned into this parameter.</param>
-    protected void AccumulateChangeData(object? sender, EventArgs e, [NotNull] ref DataColumnCollectionChangedEventArgs? accumulatedEventData)
+    protected void AccumulateChangeData(object? sender, EventArgs e, [NotNull] ref BaseColumnCollectionChangedEventArgs? accumulatedEventData)
     {
       if (sender is DataColumn senderAsDataColumn) // ChangeEventArgs from a DataColumn
       {
@@ -2454,9 +2474,16 @@ namespace Altaxo.Data
           int rowCountOfSender = senderAsDataColumn.Count;
 
           if (accumulatedEventData is null)
-            accumulatedEventData = new DataColumnCollectionChangedEventArgs(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.HasRowCountDecreased);
+          {
+            if (IsPropertyColumnCollection)
+              accumulatedEventData = new DataColumnCollectionChangedEventArgs(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.HasRowCountDecreased);
+            else
+              accumulatedEventData = new DataColumnCollectionChangedEventArgs(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.HasRowCountDecreased);
+          }
           else
+          {
             accumulatedEventData.Accumulate(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.HasRowCountDecreased);
+          }
 
           // update the row count
           if (_numberOfRows < rowCountOfSender)
@@ -2464,7 +2491,7 @@ namespace Altaxo.Data
           _hasNumberOfRowsDecreased |= dataColumnChangeEventArgs.HasRowCountDecreased;
         }
       }
-      else if (e is DataColumnCollectionChangedEventArgs dataColumnCollectionChangeEventArgs) // ChangeEventArgs from a DataColumnCollection, i.e. from myself
+      else if (e is BaseColumnCollectionChangedEventArgs dataColumnCollectionChangeEventArgs) // ChangeEventArgs from a DataColumnCollection, i.e. from myself
       {
         _isDataDirty = true;
         if (accumulatedEventData is null)
@@ -2521,7 +2548,7 @@ namespace Altaxo.Data
     /// </remarks>
     protected override bool HandleLowPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
-      DataColumnCollectionChangedEventArgs? result = null;
+      BaseColumnCollectionChangedEventArgs? result = null;
       AccumulateChangeData(sender, e, ref result); // Get ChangeEventArgs in the result.
       e = result;
 
@@ -2878,6 +2905,18 @@ namespace Altaxo.Data
         return parentColl;
       else
         return (DataColumnCollection?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(column, typeof(DataColumnCollection));
+    }
+
+    /// <summary>
+    /// Gets the parent data column collection of a child object.
+    /// </summary>
+    /// <param name="child">The child object for which the parent table should be found.</param>
+    public static Altaxo.Data.DataColumnCollection? GetParentDataColumnCollectionOf(Main.IDocumentLeafNode? child)
+    {
+      if (child is null)
+        return null;
+      else
+        return (DataColumnCollection?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(DataColumnCollection));
     }
   } // end class Altaxo.Data.DataColumnCollection
 }
