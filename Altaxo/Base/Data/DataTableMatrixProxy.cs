@@ -1242,9 +1242,27 @@ namespace Altaxo.Data
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       _isDirty = true;
-      return base.HandleHighPriorityChildChangeCases(sender, ref e);
+
+      // Ignore all child changes from the column proxies - that are handled already by the table
+      // Only take into account 
+      if (object.ReferenceEquals(sender, _dataTable))
+        return base.HandleHighPriorityChildChangeCases(sender, ref e);
+      else
+        return true;
     }
 
+    protected override bool HandleLowPriorityChildChangeCases(object? sender, ref EventArgs e)
+    {
+      // Ignore all child changes from the column proxies - that are handled already by the table
+      // Only take into account
+
+      // Ignore all child changes from the column proxies - that are handled already by the table
+      // Only take into account 
+      if (object.ReferenceEquals(sender, _dataTable))
+        return base.HandleLowPriorityChildChangeCases(sender, ref e);
+      else
+        return true;
+    }
     #endregion Changed event handling
 
     #region Public helper functions
