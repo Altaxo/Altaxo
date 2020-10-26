@@ -3,6 +3,7 @@
     <TargetFrameworks>net48; net5.0</TargetFrameworks>
     <AssemblyName>OpenXMLAddin.Presentation</AssemblyName>
     <LangVersion>preview</LangVersion>
+    <nullable>enable</nullable>
     <UseWPF>true</UseWPF>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>

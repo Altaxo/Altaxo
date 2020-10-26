@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net48;net5.0</TargetFrameworks>
     <LangVersion>preview</LangVersion>
+    <nullable>enable</nullable>
     <RootNamespace>Altaxo</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>

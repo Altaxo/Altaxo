@@ -56,8 +56,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       double sourceDpi = options.SourceDpiResolution;
 
-      Viewing.D3D10Scene scene = null;
-      D3D10GraphicsContext g = null;
+      Viewing.D3D10Scene? scene = null;
+      D3D10GraphicsContext? g = null;
       try
       {
         scene = new Viewing.D3D10Scene();
@@ -128,12 +128,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
     public void Export(int sizeX, int sizeY, ID3D10Scene scene, Altaxo.Graph.Gdi.GraphExportOptions options, System.IO.Stream toStream)
     {
-      Device device = null;
-      Texture2D renderTarget = null;
-      Texture2D renderTarget2 = null;
-      Texture2D depthStencil = null;
-      RenderTargetView renderTargetView = null;
-      DepthStencilView depthStencilView = null;
+      Device? device = null;
+      Texture2D? renderTarget = null;
+      Texture2D? renderTarget2 = null;
+      Texture2D? depthStencil = null;
+      RenderTargetView? renderTargetView = null;
+      DepthStencilView? depthStencilView = null;
 
       try
       {
@@ -236,7 +236,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         Disposer.RemoveAndDispose(ref renderTarget);
         Disposer.RemoveAndDispose(ref depthStencil);
 
-        device.ClearState();
+        device?.ClearState();
         D3D10DeviceFactory.Instance.PassbackDevice(ref device);
         //device.QueryInterface<DeviceDebug>().ReportLiveDeviceObjects(ReportingLevel.Summary)
         // Disposer.RemoveAndDispose(ref device);

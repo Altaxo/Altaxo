@@ -272,7 +272,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
     private PositionNormalColorIndexedTriangleBuffer InternalGetPositionNormalColorIndexedTriangleBuffer(IMaterial material)
     {
-      var key = new MaterialPlusClippingKey(material, null);
+      var key = new MaterialPlusClippingKey(material, clipPlanes: null);
       if (!_positionNormalColorIndexedTriangleBuffers.TryGetValue(key, out var result))
       {
         result = new PositionNormalColorIndexedTriangleBuffer(this);
@@ -387,7 +387,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return result;
     }
 
-    public override IPositionNormalUIndexedTriangleBuffer GetPositionNormalUIndexedTriangleBuffer(IMaterial material, PlaneD3D[] clipPlanes, Gdi.Plot.IColorProvider colorProvider)
+    public override IPositionNormalUIndexedTriangleBuffer GetPositionNormalUIndexedTriangleBuffer(IMaterial material, PlaneD3D[]? clipPlanes, Gdi.Plot.IColorProvider colorProvider)
     {
       // Transform the clip planes to our coordinate system
 

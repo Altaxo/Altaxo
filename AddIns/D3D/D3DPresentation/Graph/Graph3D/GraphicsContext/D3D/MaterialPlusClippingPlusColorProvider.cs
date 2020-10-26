@@ -48,13 +48,10 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       ColorProvider = colorProvider;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var from = obj as MaterialPlusClippingPlusColorProviderKey;
-      if (from is null)
-        return false;
-
-      return base.Equals(from) && ColorProvider.Equals(from.ColorProvider);
+      return obj is MaterialPlusClippingPlusColorProviderKey from
+             && base.Equals(from) && ColorProvider.Equals(from.ColorProvider);
     }
 
     public override int GetHashCode()

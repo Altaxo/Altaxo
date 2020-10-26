@@ -63,10 +63,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// <param name="toStream">The stream to save the texture to.</param>
     public static void SaveToStream(this Texture2D texture, System.Drawing.Imaging.ImageFormat imageFormat, double imageResolutionInDpi, System.IO.Stream toStream)
     {
-      Texture2D textureCopy = null;
-      ImagingFactory imagingFactory = null;
-      Bitmap bitmap = null;
-      BitmapEncoder bitmapEncoder = null;
+      Texture2D? textureCopy = null;
+      ImagingFactory? imagingFactory = null;
+      Bitmap? bitmap = null;
+      BitmapEncoder? bitmapEncoder = null;
 
       try
       {

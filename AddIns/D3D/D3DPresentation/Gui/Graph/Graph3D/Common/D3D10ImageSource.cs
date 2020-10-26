@@ -57,10 +57,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     private static extern IntPtr GetDesktopWindow();
 
     private static int _numberOfActiveClients;
-    private static Direct3DEx _d3DContext;
-    private static DeviceEx _d3DDevice;
+    private static Direct3DEx? _d3DContext;
+    private static DeviceEx? _d3DDevice;
 
-    private Texture _renderTarget;
+    private Texture? _renderTarget;
 
     public string Name { get; private set; }
     public int InstanceID { get; private set; }
@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       // System.Diagnostics.Debug.WriteLine("D3DImageSource.InvalidateD3DImage Name={0}, Id={1}", Name, InstanceID);
     }
 
-    public void SetRenderTargetDX10(SharpDX.Direct3D10.Texture2D renderTarget)
+    public void SetRenderTargetDX10(SharpDX.Direct3D10.Texture2D? renderTarget)
     {
       if (_isDisposed)
         throw new ObjectDisposedException(GetType().Name);
@@ -146,7 +146,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         if (!IsShareable(renderTarget))
           throw new ArgumentException("Texture must be created with ResourceOptionFlags.Shared");
 
-        Format format = D3D10ImageSource.TranslateFormat(renderTarget);
+        Format format = TranslateFormat(renderTarget);
         if (format == Format.Unknown)
           throw new ArgumentException("Texture format is not compatible with OpenSharedResource");
 
@@ -154,7 +154,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         if (handle == IntPtr.Zero)
           throw new ArgumentNullException("Handle");
 
-        _renderTarget = new Texture(D3D10ImageSource._d3DDevice, renderTarget.Description.Width, renderTarget.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
+        _renderTarget = new Texture(_d3DDevice, renderTarget.Description.Width, renderTarget.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
         using (Surface surface = _renderTarget.GetSurfaceLevel(0))
         {
           base.Lock();

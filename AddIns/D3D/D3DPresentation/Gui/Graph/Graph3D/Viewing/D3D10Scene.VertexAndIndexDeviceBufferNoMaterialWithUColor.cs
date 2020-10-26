@@ -32,11 +32,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   {
     internal class VertexAndIndexDeviceBufferNoMaterialWithUColor : IDisposable
     {
-      public Buffer VertexBuffer;
-      public Buffer IndexBuffer;
+      public Buffer? VertexBuffer;
+      public Buffer? IndexBuffer;
       public int VertexCount;
       public int IndexCount;
-      
+
 
 
       #region IDisposable Support

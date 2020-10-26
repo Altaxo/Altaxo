@@ -32,9 +32,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   {
     internal class RenderLayout : IDisposable
     {
-      InputLayout _vertexLayout;
-      EffectTechnique _technique;
-      EffectPass _pass;
+      private InputLayout _vertexLayout;
+      private EffectTechnique _technique;
+      private EffectPass _pass;
 
 
       public InputLayout VertexLayout => _vertexLayout;
@@ -58,10 +58,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       {
         if (!_isDisposed)
         {
-          Disposer.RemoveAndDispose(ref _vertexLayout);
-          Disposer.RemoveAndDispose(ref _technique);
-          Disposer.RemoveAndDispose(ref _pass);
-
+          Disposer.RemoveAndDispose(ref _vertexLayout!);
+          Disposer.RemoveAndDispose(ref _technique!);
+          Disposer.RemoveAndDispose(ref _pass!);
           _isDisposed = true;
         }
       }

@@ -167,7 +167,7 @@ namespace Altaxo.Graph.Graph3D.Commands
       {
         var activeLayer = ctrl.ActiveLayer as XYZPlotLayer;
         if (activeLayer is null)
-          return null;
+          return Enumerable.Empty<object>();
 
         int actPA = ctrl.CurrentPlotNumber;
         int len = activeLayer.PlotItems.Flattened.Length;
@@ -184,7 +184,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
         return items;
       }
-      return null;
+      return Enumerable.Empty<object>();
     }
 
     private void EhWpfMenuItem_Clicked(object sender, System.Windows.RoutedEventArgs e)

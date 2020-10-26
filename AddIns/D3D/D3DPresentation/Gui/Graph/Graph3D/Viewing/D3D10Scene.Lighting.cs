@@ -130,23 +130,23 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       {
         if (!_isDisposed)
         {
-          Disposer.RemoveAndDispose(ref SpotCosInnerConeRcp);
-          Disposer.RemoveAndDispose(ref SpotCosOuterCone);
-          Disposer.RemoveAndDispose(ref CapsuleLen);
-          Disposer.RemoveAndDispose(ref LightRangeRcp);
-          Disposer.RemoveAndDispose(ref LightColorB);
-          Disposer.RemoveAndDispose(ref LightColorG);
-          Disposer.RemoveAndDispose(ref LightColorR);
-          Disposer.RemoveAndDispose(ref LightDirZ);
-          Disposer.RemoveAndDispose(ref LightDirY);
-          Disposer.RemoveAndDispose(ref LightDirX);
-          Disposer.RemoveAndDispose(ref LightPosZ);
-          Disposer.RemoveAndDispose(ref LightPosY);
-          Disposer.RemoveAndDispose(ref LightPosX);
-          Disposer.RemoveAndDispose(ref HemisphericLightBelowToAboveVector);
-          Disposer.RemoveAndDispose(ref HemisphericLightColorAbove);
-          Disposer.RemoveAndDispose(ref HemisphericLightColorBelow);
-          Disposer.RemoveAndDispose(ref _cbLighting);
+          Disposer.RemoveAndDispose(ref SpotCosInnerConeRcp!);
+          Disposer.RemoveAndDispose(ref SpotCosOuterCone!);
+          Disposer.RemoveAndDispose(ref CapsuleLen!);
+          Disposer.RemoveAndDispose(ref LightRangeRcp!);
+          Disposer.RemoveAndDispose(ref LightColorB!);
+          Disposer.RemoveAndDispose(ref LightColorG!);
+          Disposer.RemoveAndDispose(ref LightColorR!);
+          Disposer.RemoveAndDispose(ref LightDirZ!);
+          Disposer.RemoveAndDispose(ref LightDirY!);
+          Disposer.RemoveAndDispose(ref LightDirX!);
+          Disposer.RemoveAndDispose(ref LightPosZ!);
+          Disposer.RemoveAndDispose(ref LightPosY!);
+          Disposer.RemoveAndDispose(ref LightPosX!);
+          Disposer.RemoveAndDispose(ref HemisphericLightBelowToAboveVector!);
+          Disposer.RemoveAndDispose(ref HemisphericLightColorAbove!);
+          Disposer.RemoveAndDispose(ref HemisphericLightColorBelow!);
+          Disposer.RemoveAndDispose(ref _cbLighting!);
 
           _isDisposed = true;
         }

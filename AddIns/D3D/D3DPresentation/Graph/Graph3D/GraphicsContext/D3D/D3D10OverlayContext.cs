@@ -37,7 +37,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
   public class D3D10OverlayContext : GraphicsContextD3DPrimitivesBase, IOverlayContext3D, IDisposable
   {
     protected PositionColorIndexedTriangleBuffer _positionColorIndexedTriangleBuffer;
-    protected PositionColorLineListBuffer _positionColorLineListBuffer;
+    protected PositionColorLineListBuffer? _positionColorLineListBuffer;
 
     private Matrix4x3 _transformation = Matrix4x3.Identity;
 

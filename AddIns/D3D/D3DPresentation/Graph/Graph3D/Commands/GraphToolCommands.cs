@@ -44,10 +44,10 @@ namespace Altaxo.Graph.Graph3D.Commands
   /// </summary>
   public abstract class AbstractGraphToolsCommand : AbstractCheckableGraphControllerCommand
   {
-    private Graph3DController myCurrentGraphController;
-    private Altaxo.Gui.Graph.Graph3D.Viewing.GraphToolType _graphToolType;
+    private Graph3DController? _myCurrentGraphController;
+    private GraphToolType _graphToolType;
 
-    protected AbstractGraphToolsCommand(Altaxo.Gui.Graph.Graph3D.Viewing.GraphToolType toolType)
+    protected AbstractGraphToolsCommand(GraphToolType toolType)
     {
       _graphToolType = toolType;
       if (Current.Workbench is not null)
@@ -57,31 +57,31 @@ namespace Altaxo.Graph.Graph3D.Commands
       }
     }
 
-    protected void EhWorkbenchContentChanged(object o, System.EventArgs e)
+    protected void EhWorkbenchContentChanged(object? o, System.EventArgs e)
     {
-      if (!object.ReferenceEquals(Controller, myCurrentGraphController))
+      if (!object.ReferenceEquals(Controller, _myCurrentGraphController))
       {
-        if (myCurrentGraphController is not null)
+        if (_myCurrentGraphController is not null)
         {
           lock (this)
           {
-            myCurrentGraphController.CurrentGraphToolChanged -= new EventHandler(EhGraphToolChanged);
-            myCurrentGraphController = null;
+            _myCurrentGraphController.CurrentGraphToolChanged -= new EventHandler(EhGraphToolChanged);
+            _myCurrentGraphController = null;
           }
         }
         if (Controller is not null)
         {
           lock (this)
           {
-            myCurrentGraphController = Controller;
-            myCurrentGraphController.CurrentGraphToolChanged += new EventHandler(EhGraphToolChanged);
+            _myCurrentGraphController = Controller;
+            _myCurrentGraphController.CurrentGraphToolChanged += new EventHandler(EhGraphToolChanged);
           }
         }
         OnPropertyChanged("IsChecked");
       }
     }
 
-    protected void EhGraphToolChanged(object o, EventArgs e)
+    protected void EhGraphToolChanged(object? o, EventArgs e)
     {
       OnPropertyChanged("IsChecked");
     }

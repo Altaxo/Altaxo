@@ -35,14 +35,19 @@ namespace Altaxo.Graph.Graph3D.Commands
   {
     public override void Run(Graph3DController ctrl)
     {
-      var doc = ctrl.Doc;
 
-      var comManager = (Com.ComManager)Current.ComManager;
+      if (Current.ComManager is not null)
+      {
+        var doc = ctrl.Doc;
+        var dataObject = Current.ComManager.GetDocumentsDataObjectForDocument(doc);
 
-      var dataObject = Current.ComManager.GetDocumentsDataObjectForDocument(doc);
-
-      if (dataObject is not null)
-        System.Windows.Clipboard.SetDataObject(dataObject);
+        if (dataObject is not null)
+          System.Windows.Clipboard.SetDataObject(dataObject);
+      }
+      else
+      {
+        Current.Gui.ErrorMessageBox("Sorry, but the Com manager is not available", "Command not available");
+      }
     }
   }
 }

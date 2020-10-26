@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -119,7 +120,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
         return false;
       }
 
-      public bool GetHittedElement(HitTestPointData point, out IGripManipulationHandle gripHandle, out IHitTestObject hitObject)
+      public bool GetHittedElement(HitTestPointData point, [MaybeNullWhen(false)] out IGripManipulationHandle gripHandle, [MaybeNullWhen(false)] out IHitTestObject hitObject)
       {
         for (int i = GripList.Count - 1; i >= 0; i--)
         {
@@ -156,13 +157,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
     protected int DisplayedGripLevel;
 
     /// <summary>Grips that are displayed on the screen.</summary>
-    protected IGripManipulationHandle[] DisplayedGrips;
+    protected IGripManipulationHandle[]? DisplayedGrips;
 
     /// <summary>Grip that is currently dragged.</summary>
-    protected IGripManipulationHandle ActiveGrip;
+    protected IGripManipulationHandle? ActiveGrip;
 
     /// <summary>Locker to suppress changed events during moving of objects.</summary>
-    private Altaxo.Main.ISuspendToken _graphDocumentChangedSuppressor;
+    private Altaxo.Main.ISuspendToken? _graphDocumentChangedSuppressor;
 
     public ObjectPointerMouseHandler(Graph3DController grac)
     {
@@ -186,7 +187,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
     /// <summary>
     /// Returns the hit test object belonging to the selected object if and only if one single object is selected, else null is returned.
     /// </summary>
-    public IHitTestObject SingleSelectedHitTestObject
+    public IHitTestObject? SingleSelectedHitTestObject
     {
       get
       {
@@ -217,9 +218,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
         bool bShiftKey = keyboardModifiers.HasFlag(ModifierKeys.Shift);
 
         ActiveGrip = GripHitTest(hitData);
-        if ((ActiveGrip is SuperGrip) && (bShiftKey || bControlKey))
+        if ((ActiveGrip is SuperGrip superGrip) && (bShiftKey || bControlKey))
         {
-          var superGrip = ActiveGrip as SuperGrip;
           if (superGrip.GetHittedElement(hitData, out var gripHandle, out var hitTestObj))
           {
             _selectedObjects.Remove(hitTestObj);
@@ -270,7 +270,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
         if (ActiveGrip is not null)
         {
           bool bRefresh = _wereObjectsMoved; // repaint the graph when objects were really moved
-          
+
           _wereObjectsMoved = false;
           _grac.Doc.Resume(ref _graphDocumentChangedSuppressor);
 
@@ -280,7 +280,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
           if (chooseNextLevel && SingleSelectedHitTestObject is not null)
           {
             DisplayedGripLevel = SingleSelectedHitTestObject.GetNextGripLevel(DisplayedGripLevel);
-            
+
           }
 
           _grac?.View?.RenderOverlay();
@@ -402,7 +402,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
         if (ActiveGrip is not null)
           ActiveGrip.Activate(hitPoint, true);
       }
-      else // multiple objects selected
+      else if (_selectedObjects.Count > 1 && DisplayedGrips is not null) // multiple objects selected
       {
         ActiveGrip = DisplayedGrips[0]; // this is our SuperGrip
         DisplayedGrips[0].Activate(hitPoint, true);
@@ -411,7 +411,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
       _grac.View?.RenderOverlay();
     }
 
-    private IGripManipulationHandle[] GetGripsFromSelectedObjects()
+    private IGripManipulationHandle[]? GetGripsFromSelectedObjects()
     {
       if (_selectedObjects.Count == 1) // single object selected
       {
@@ -425,7 +425,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
         foreach (var sel in _selectedObjects)
         {
           var grips = sel.GetGrips(0);
-          if (grips.Length > 0)
+          if (grips?.Length > 0)
             superGrip.Add(grips[0], sel);
         }
 
@@ -438,7 +438,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="pt">Mouse location.</param>
     /// <returns>The grip which was hitted, or null if no grip was hitted.</returns>
-    public IGripManipulationHandle GripHitTest(HitTestPointData pt)
+    public IGripManipulationHandle? GripHitTest(HitTestPointData pt)
     {
       if (DisplayedGrips is null || DisplayedGrips.Length == 0)
         return null;

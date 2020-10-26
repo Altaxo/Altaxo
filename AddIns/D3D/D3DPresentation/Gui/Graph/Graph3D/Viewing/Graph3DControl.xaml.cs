@@ -58,12 +58,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     private D3D10Scene _scene;
 
-    private int[] _cachedCurrentLayer = null;
+    private int[]? _cachedCurrentLayer = null;
 
     private PointD2D _cachedGraphSize_96thInch;
     private System.Drawing.Size _cachedGraphSize_Pixels;
 
-    private D3D10RendererToImageSource _renderer;
+    private D3D10RendererToImageSource? _renderer;
 
     private volatile bool _isGraphVisible;
 
@@ -79,6 +79,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       InitializeComponent();
 
       _scene = new D3D10Scene();
+      _mouseState = null!; // set when controller is set.
     }
 
     public virtual void Dispose()
@@ -87,17 +88,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       _controller = new WeakReference(null);
       _renderer?.Dispose();
       var imgSource = _d3dCanvas?.Source as D3D10ImageSource;
-      _d3dCanvas.Source = null;
+      if (_d3dCanvas is not null)
+        _d3dCanvas.Source = null;
       imgSource?.Dispose();
-      _scene = null;
-      _mouseState = null;
+      _scene = null!;
+      _mouseState = null!;
     }
 
     private Graph3DController Controller
     {
       get
       {
-        return (Graph3DController)_controller.Target;
+        return (Graph3DController)(_controller.Target ?? throw new InvalidOperationException($"Controller not available. IsDisposed: {_isDisposed}"));
       }
     }
 
@@ -136,7 +138,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
           switch (value)
           {
             case GraphToolType.None:
-              _mouseState = null;
+              _mouseState = new GraphControllerMouseHandlers.ObjectPointerMouseHandler(Controller);
               break;
 
             case GraphToolType.ObjectPointer:
@@ -273,7 +275,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       Keyboard.Focus(_guiCanvas);
       var pos = GetMousePosition(e);
 
-      _mouseState?.OnMouseDown(pos, e);
+      _mouseState.OnMouseDown(pos, e);
       if (guiController is not null)
       {
         guiController.EhView_GraphPanelMouseDown(pos, GuiHelper.ToAltaxo(e, _d3dCanvas), GuiHelper.ToAltaxo(Keyboard.Modifiers));
@@ -308,8 +310,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       if (_renderer is null)
       {
-        _d3dCanvas.Source = new D3D10ImageSource(Controller?.Doc?.Name);
-        _renderer = new D3D10RendererToImageSource(_scene, (D3D10ImageSource)_d3dCanvas.Source, Controller?.Doc?.Name);
+        _d3dCanvas.Source = new D3D10ImageSource(Controller.Doc.Name);
+        _renderer = new D3D10RendererToImageSource(_scene, (D3D10ImageSource)_d3dCanvas.Source, Controller.Doc.Name);
         // invalidate the cached graph sizes in order to force a new rendering
         _cachedGraphSize_Pixels = new System.Drawing.Size(0, 0);
         _cachedGraphSize_96thInch = new PointD2D(0, 0);
@@ -349,7 +351,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
-    public static void DisposeObject(ref IDisposable obj)
+    public static void DisposeObject(ref IDisposable? obj)
     {
       var tempObj = obj;
       obj = null;
@@ -371,7 +373,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         newbutton.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
         newbutton.Click += new RoutedEventHandler(EhLayerButton_Click);
         newbutton.ContextMenuOpening += new ContextMenuEventHandler(EhLayerButton_ContextMenuOpening);
-        newbutton.IsChecked = System.Linq.Enumerable.SequenceEqual((int[])(node.Tag), currentLayerNumber);
+        newbutton.IsChecked = System.Linq.Enumerable.SequenceEqual((int[])(node.Tag!), currentLayerNumber);
 
         _layerToolBar.Children.Add(newbutton);
       }

@@ -3,6 +3,7 @@
     <AssemblyName>OpenXMLAddin</AssemblyName>
     <TargetFrameworks>net48;net5.0</TargetFrameworks>
     <LangVersion>preview</LangVersion>
+    <nullable>enable</nullable>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>

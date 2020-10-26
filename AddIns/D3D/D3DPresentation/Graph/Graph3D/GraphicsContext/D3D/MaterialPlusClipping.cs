@@ -44,10 +44,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       Material = material;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var from = obj as MaterialKey;
-      return from is null ? false : Material.Equals(from.Material);
+      return obj is MaterialKey from && Material.Equals(from.Material);
     }
 
     public override int GetHashCode()
@@ -61,18 +60,17 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
   /// </summary>
   public class MaterialPlusClippingKey : MaterialKey
   {
-    public PlaneD3D[] ClipPlanes { get; private set; }
+    public PlaneD3D[]? ClipPlanes { get; private set; }
 
-    public MaterialPlusClippingKey(IMaterial material, PlaneD3D[] clipPlanes)
+    public MaterialPlusClippingKey(IMaterial material, PlaneD3D[]? clipPlanes)
       : base(material)
     {
       ClipPlanes = clipPlanes;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var from = obj as MaterialPlusClippingKey;
-      if (from is null)
+      if (!(obj is MaterialPlusClippingKey from))
         return false;
 
       if (!(Material.Equals(from.Material)))

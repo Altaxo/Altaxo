@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net48;net5.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
+    <nullable>enable</nullable>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="xcopy $(SolutionDir)Content\data\*.* $(SolutionDir)rt$(TargetFramework)\data /E /I /Y&#xD;&#xA;xcopy $(SolutionDir)Content\doc\*.* $(SolutionDir)rt$(TargetFramework)\doc /E /I /Y" />

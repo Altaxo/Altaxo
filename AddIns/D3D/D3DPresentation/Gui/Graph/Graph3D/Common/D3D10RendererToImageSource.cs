@@ -48,23 +48,23 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
   /// <seealso cref="System.IDisposable" />
   public class D3D10RendererToImageSource : IDisposable
   {
-    private Device _device;
+    private Device? _device;
 
-    private Texture2D _depthStencil;
-    private DepthStencilView _depthStencilView;
+    private Texture2D? _depthStencil;
+    private DepthStencilView? _depthStencilView;
 
-    private Texture2D _renderTarget;
-    private RenderTargetView _renderTargetView;
+    private Texture2D? _renderTarget;
+    private RenderTargetView? _renderTargetView;
 
-    private Texture2D _renderTargetIntermediate;
-    private RenderTargetView _renderTargetIntermediateView;
-    private ShaderResourceView _renderTargetIntermediateShaderResourceView;
+    private Texture2D? _renderTargetIntermediate;
+    private RenderTargetView? _renderTargetIntermediateView;
+    private ShaderResourceView? _renderTargetIntermediateShaderResourceView;
 
     private D3D10ImageSource _d3dImageSource;
 
-    private IScene _renderScene;
+    private IScene? _renderScene;
     private bool _isRenderSceneAttached;
-    private D3D10GammaCorrector _gammaCorrector;
+    private D3D10GammaCorrector? _gammaCorrector;
 
     public Color4 _renderTargetClearColor = SharpDX.Color.White;
 
@@ -108,8 +108,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       {
         EndD3D();
         _d3dImageSource.IsFrontBufferAvailableChanged -= EhIsFrontBufferAvailableChanged;
-        _d3dImageSource = null;
-
+        _d3dImageSource = null!;
         _isDisposed = true;
       }
     }
@@ -225,6 +224,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
           ArraySize = 1,
         };
 
+        if (_device is null)
+          throw new InvalidOperationException("Binding to 3D device fails because device is null");
+
         _renderTarget = new Texture2D(_device, colordesc);
         _renderTargetIntermediate = new Texture2D(_device, colordesc);
         _depthStencil = new Texture2D(_device, depthdesc);
@@ -240,11 +242,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
     private void Render()
     {
-      SharpDX.Direct3D10.Device device = _device;
+      SharpDX.Direct3D10.Device? device = _device;
       if (device is null)
         throw new InvalidOperationException("Rendering failed because 3D device is null");
 
-      Texture2D renderTarget = _renderTargetIntermediate;
+      Texture2D? renderTarget = _renderTargetIntermediate;
       if (renderTarget is null)
         throw new InvalidOperationException("Rendering failed because renderTarget is null");
 
@@ -268,7 +270,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         if (!_isRenderSceneAttached)
         {
           _isRenderSceneAttached = true;
-          _renderScene.Attach(_device, new PointD2D(renderTarget.Description.Width, renderTarget.Description.Height));
+          Scene.Attach(device, new PointD2D(renderTarget.Description.Width, renderTarget.Description.Height));
         }
 
         // Attention: it is now the Render function of the scene that is responsible for clearing the render target
@@ -289,7 +291,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       device.OutputMerger.SetTargets(_renderTargetView);
       device.Rasterizer.SetViewports(new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f));
       device.ClearRenderTargetView(_renderTargetView, SharpDX.Color.Black);
-      _gammaCorrector.Render(_device, _renderTargetIntermediateShaderResourceView);
+      _gammaCorrector!.Render(device, _renderTargetIntermediateShaderResourceView!);
 
       device.Flush(); // make final render target valid
     }
@@ -312,7 +314,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// <value>
     /// The rendering scene.
     /// </value>
-    public IScene Scene
+    public IScene? Scene
     {
       get { return _renderScene; }
       private set
