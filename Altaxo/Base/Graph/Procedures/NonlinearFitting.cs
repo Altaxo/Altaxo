@@ -247,7 +247,7 @@ namespace Altaxo.Graph.Procedures
         bool hasColumnsChanged = false;
 
         hasColumnsChanged |= !(object.ReferenceEquals(localdoc.FitEnsemble[0].DataTable, xyPlotItem.Data.DataTable));
-        hasColumnsChanged |= !(object.ReferenceEquals(localdoc.FitEnsemble[0].GroupNumber, xyPlotItem.Data.GroupNumber));
+        hasColumnsChanged |= !(object.Equals(localdoc.FitEnsemble[0].GroupNumber, xyPlotItem.Data.GroupNumber));
         hasColumnsChanged |= !(object.ReferenceEquals(localdoc.FitEnsemble[0].IndependentVariables(0), xColumn));
         hasColumnsChanged |= !(object.ReferenceEquals(localdoc.FitEnsemble[0].DependentVariables(0), yColumn));
 
