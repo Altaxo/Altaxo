@@ -49,7 +49,7 @@ namespace Altaxo.Main.Services.Files
       if (folderName is null)
         throw new ArgumentNullException(nameof(folderName));
 
-      var dir = new DirectoryInfo(folderName);
+      var dir = new DirectoryInfo(folderName.ToString());
 
       _baseFolder = dir.FullName;
       if (_baseFolder[_baseFolder.Length - 1] != Path.DirectorySeparatorChar)
@@ -101,6 +101,9 @@ namespace Altaxo.Main.Services.Files
       var destEntry = CreateEntry(destinationEntryName);
       var sourceEntry = sourceArchive.GetEntry(sourceEntryName);
 
+      if (sourceEntry is null)
+        throw new InvalidOperationException($"Entry \"{sourceEntryName}\" was not found in {sourceArchive}");
+
       using var srcStream = sourceEntry.OpenForReading();
       using var destStream = destEntry.OpenForWriting();
       srcStream.CopyTo(destStream);
@@ -108,7 +111,7 @@ namespace Altaxo.Main.Services.Files
 
     public IProjectArchiveEntry CreateEntry(string name)
     {
-      name = name?.Trim();
+      name = name.Trim();
       if (string.IsNullOrEmpty(name))
         throw new ArgumentNullException();
 

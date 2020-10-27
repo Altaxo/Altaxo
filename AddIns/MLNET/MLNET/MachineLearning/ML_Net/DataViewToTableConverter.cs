@@ -126,9 +126,9 @@ namespace Altaxo.MachineLearning.ML_Net
         {
           if (!tc.IsElementEmpty(i))
           {
-            if (dict.ContainsKey(tc[i]))
-              throw new Exception($"The keys in the key columns are not unique. Duplicates detected at positions {i} and {dict[tc[i]]}");
-            dict.Add(tc[i], i);
+            if (dict.ContainsKey(tc[i]!))
+              throw new Exception($"The keys in the key columns are not unique. Duplicates detected at positions {i} and {dict[tc[i]!]}");
+            dict.Add(tc[i]!, i);
           }
         }
         var textGetter = cursor.GetGetter<ReadOnlyMemory<char>>(keyColumnView.Value);

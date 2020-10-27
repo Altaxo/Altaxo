@@ -81,12 +81,12 @@ namespace Altaxo.MachineLearning.ML_Net
       return _table.DataRowCount;
     }
 
-    public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+    public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random? rand = null)
     {
       return new RowCursor(this, columnsNeeded, rand);
     }
 
-    public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
+    public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random? rand = null)
     {
       return new DataViewRowCursor[] { GetRowCursor(columnsNeeded, rand) };
     }

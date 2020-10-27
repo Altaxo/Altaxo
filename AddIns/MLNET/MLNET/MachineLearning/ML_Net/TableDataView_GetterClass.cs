@@ -41,7 +41,7 @@ namespace Altaxo.MachineLearning.ML_Net
 
       public void TextGetterImplementation(ref ReadOnlyMemory<char> value)
       {
-        var s = (string)_column[_cursor.CurrentRowIndex];
+        var s = (string?)_column[_cursor.CurrentRowIndex];
         value = s.AsMemory();
       }
 

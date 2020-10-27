@@ -766,8 +766,8 @@ namespace Altaxo.Calc.Fourier
       if (!IsPowerOfTwo(n))
         throw new ArgumentException("Invalid n, n is not a power of two!");
 
-      var coswrk = _coswrk.Value;
-      var sinwrk = _sinwrk.Value;
+      var coswrk = _coswrk.Value ?? throw new InvalidProgramException("Thread local variable {nameof(_coswrk)} was not initialized");
+      var sinwrk = _sinwrk.Value ?? throw new InvalidProgramException("Thread local variable {nameof(_sinwrk)} was not initialized");
 
       int i, k, k1, k2, k3, k4, kx;
       //double *fi,*fn,*gi;

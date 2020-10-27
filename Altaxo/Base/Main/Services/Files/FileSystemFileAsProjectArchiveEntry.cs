@@ -66,7 +66,7 @@ namespace Altaxo.Main.Services.Files
     public Stream OpenForWriting()
     {
       var finalName = Path.Combine(_baseFolder, _name);
-      Directory.CreateDirectory(Path.GetDirectoryName(finalName));
+      Directory.CreateDirectory(FileName.GetDirectoryName(finalName));
       return new FileStream(finalName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
     }
 
