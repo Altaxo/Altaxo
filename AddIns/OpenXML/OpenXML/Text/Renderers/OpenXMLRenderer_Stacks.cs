@@ -112,7 +112,7 @@ namespace Altaxo.Text.Renderers
       if (element is null)
         throw new ArgumentNullException(nameof(element));
 
-      OpenXmlCompositeElement ele = null;
+      OpenXmlCompositeElement? ele = null;
       while (_currentElementStack.Count > 0)
       {
         ele = Pop();
@@ -259,7 +259,7 @@ namespace Altaxo.Text.Renderers
     /// <value>
     /// The numbering properties to set for the next <see cref="Paragraph"/> created.
     /// </value>
-    public NumberingProperties NumberingProperties { get; set; }
+    public NumberingProperties? NumberingProperties { get; set; }
 
     /// <summary>
     /// Pushes a paragraph <see cref="FormatStyle"/> onto the stack.
@@ -314,9 +314,9 @@ namespace Altaxo.Text.Renderers
     /// the current paragraph stack.
     /// </summary>
     /// <returns>The id of the retrieved or newly created paragraph style. If the paragraph style stack is empty, the return value is null.</returns>
-    private string GetOrCreateNewParagraphStyleRecursivelyFromParagraphStack()
+    private string? GetOrCreateNewParagraphStyleRecursivelyFromParagraphStack()
     {
-      string styleid = null;
+      string? styleid = null;
       if (_currentParagraphFormatStack.Count >= 0)
       {
 
@@ -430,7 +430,7 @@ namespace Altaxo.Text.Renderers
       // Text markers
       // Find a unique address in order for AutoOutline to work
       var attr = (Markdig.Renderers.Html.HtmlAttributes)obj.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-      string uniqueAddress = attr?.Id; // this header has a user defined address
+      string? uniqueAddress = attr?.Id; // this header has a user defined address
       if (!string.IsNullOrEmpty(uniqueAddress))
       {
         var bookmarkId = "bkm" + GetNextBookmarkId().ToString(System.Globalization.CultureInfo.InvariantCulture);

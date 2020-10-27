@@ -241,7 +241,7 @@ namespace Altaxo.Text.Renderers
     public void Dispose()
     {
       _wordDocument?.Dispose();
-      _wordDocument = null;
+      _wordDocument = null!;
     }
 
 

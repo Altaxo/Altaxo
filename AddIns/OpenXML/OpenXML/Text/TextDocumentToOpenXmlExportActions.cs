@@ -42,7 +42,7 @@ namespace Altaxo.Text
     /// Gets the output file by showing a save file dialog.
     /// </summary>
     /// <returns></returns>
-    public static (bool dialogResult, string outputFileName) ShowGetOutputFileDialog(string oldFileName = null)
+    public static (bool dialogResult, string outputFileName) ShowGetOutputFileDialog(string? oldFileName = null)
     {
       var dlg = new SaveFileOptions();
       dlg.AddFilter("*.docx", "Docx files (*.docx)");
@@ -64,7 +64,7 @@ namespace Altaxo.Text
     /// Gets the template file by showing a open file dialog.
     /// </summary>
     /// <returns></returns>
-    public static (bool dialogResult, string templateFileName) ShowGetTemplateFileDialog(string oldFileName = null)
+    public static (bool dialogResult, string templateFileName) ShowGetTemplateFileDialog(string? oldFileName = null)
     {
       var dlg = new OpenFileOptions();
       dlg.AddFilter("*.docx", "Docx files (*.docx)");
@@ -108,6 +108,9 @@ namespace Altaxo.Text
 
     private static void SaveOptionsAndExport(TextDocument document, TextDocumentToOpenXmlExportOptionsAndData exportOptions)
     {
+      if (exportOptions.OutputFileName is null)
+        throw new ArgumentNullException(nameof(exportOptions.OutputFileName));
+
       document.PropertyBagNotNull.SetValue(TextDocumentToOpenXmlExportOptionsAndData.PropertyKeyTextDocumentToOpenXMLExportOptionsAndData, (TextDocumentToOpenXmlExportOptionsAndData)exportOptions.Clone());
       Current.PropertyService.ApplicationSettings.SetValue(TextDocumentToOpenXmlExportOptionsAndData.PropertyKeyTextDocumentToOpenXMLExportOptionsAndData, (TextDocumentToOpenXmlExportOptionsAndData)exportOptions.Clone());
 
@@ -142,7 +145,7 @@ namespace Altaxo.Text
     /// <param name="fileName">Full name of the Maml file to export to. Note that if exporting to multiple Maml files,
     /// this is the base file name only; the file names will be derived from this name.</param>
     /// <param name="errors">A list that collects error messages.</param>
-    public static void Export(TextDocument document, TextDocumentToOpenXmlExportOptions o, string fileName, List<MarkdownError> errors = null)
+    public static void Export(TextDocument document, TextDocumentToOpenXmlExportOptions o, string fileName, List<MarkdownError>? errors = null)
     {
       if (document is null)
         throw new ArgumentNullException(nameof(document));

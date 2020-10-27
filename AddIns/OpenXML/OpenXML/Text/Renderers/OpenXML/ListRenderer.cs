@@ -43,7 +43,7 @@ namespace Altaxo.Text.Renderers.OpenXML
     /// Can be thought of as a list class that holds a certain style of a list. This list class can have multiple instances,
     /// but here we define one list class for one instance.
     /// </summary>
-    private AbstractNum _currentAbstractNumberingDefinition;
+    private AbstractNum? _currentAbstractNumberingDefinition;
 
     /// <summary>
     /// The current nonabstract numbering identifier. Can be thought of as identifier for this <b>instance</b> of the list, inclusive all sublevels.

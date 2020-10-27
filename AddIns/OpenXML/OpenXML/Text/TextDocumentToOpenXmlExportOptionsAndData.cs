@@ -49,8 +49,8 @@ namespace Altaxo.Text
         var s = (TextDocumentToOpenXmlExportOptionsAndData)obj;
 
         info.AddValue("ExpandChildDocuments", s.ExpandChildDocuments);
-        info.AddValue("MaxImageWidth", s.MaximumImageWidth);
-        info.AddValue("MaxImageHeight", s.MaximumImageHeight);
+        info.AddValueOrNull("MaxImageWidth", s.MaximumImageWidth);
+        info.AddValueOrNull("MaxImageHeight", s.MaximumImageHeight);
         info.AddValue("ImageResolution", s.ImageResolutionDpi);
 
         info.AddValue("ThemeName", s.ThemeName);
@@ -64,11 +64,11 @@ namespace Altaxo.Text
         info.AddValue("ShiftSolitaryHeader1ToTitle", s.ShiftSolitaryHeader1ToTitle);
       }
 
-      public void Deserialize(TextDocumentToOpenXmlExportOptionsAndData s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public void Deserialize(TextDocumentToOpenXmlExportOptionsAndData s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s.ExpandChildDocuments = info.GetBoolean("ExpandChildDocuments");
-        s.MaximumImageWidth = (Altaxo.Units.DimensionfulQuantity?)info.GetValue("MaxImageWidth", s);
-        s.MaximumImageHeight = (Altaxo.Units.DimensionfulQuantity?)info.GetValue("MaxImageHeight", s);
+        s.MaximumImageWidth = (Altaxo.Units.DimensionfulQuantity?)info.GetValueOrNull("MaxImageWidth", s);
+        s.MaximumImageHeight = (Altaxo.Units.DimensionfulQuantity?)info.GetValueOrNull("MaxImageHeight", s);
         //if (info.CurrentElementName == "ImageResolution")
         s.ImageResolutionDpi = info.GetInt32("ImageResolution");
 
@@ -90,9 +90,9 @@ namespace Altaxo.Text
         }
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (TextDocumentToOpenXmlExportOptionsAndData)o ?? new TextDocumentToOpenXmlExportOptionsAndData();
+        var s = (TextDocumentToOpenXmlExportOptionsAndData?)o ?? new TextDocumentToOpenXmlExportOptionsAndData();
         Deserialize(s, info, parent);
         return s;
       }
@@ -108,7 +108,7 @@ namespace Altaxo.Text
     /// <summary>
     /// Gets or sets the output file. This is preferably a Sandcastle help file builder project file, but can also be a layout content file (.content) or a Maml file (.aml).
     /// </summary>
-    public string OutputFileName { get; set; }
+    public string? OutputFileName { get; set; }
 
 
     /// <summary>

@@ -51,7 +51,7 @@ namespace Altaxo.Text.Renderers
     /// <param name="run">The <see cref="Run"/> the style should be applied to.</param>
     public void ApplyStyleToRun(string stylename, Run run)
     {
-      string styleId = GetIdFromCharacterStyleName(stylename);
+      var styleId = GetIdFromCharacterStyleName(stylename);
 
       if (styleId is null)
         styleId = CreateAndAddCharacterStyle(stylename.Replace(" ", ""), stylename);
@@ -70,7 +70,7 @@ namespace Altaxo.Text.Renderers
     /// </summary>
     /// <param name="styleName">Style name.</param>
     /// <returns>The character style identifier, or null, if no style with the given name was found.</returns>
-    public string GetIdFromCharacterStyleName(string styleName)
+    public string? GetIdFromCharacterStyleName(string styleName)
     {
       // Get access to the Styles element for this document.
       Styles s = _wordDocument.MainDocumentPart.StyleDefinitionsPart.Styles;

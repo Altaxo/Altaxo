@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Text
   [UserControllerForObject(typeof(TextDocumentToOpenXmlExportOptionsAndData))]
   public class OpenXMLExportOptionsController : MVCANControllerEditOriginalDocBase<TextDocumentToOpenXmlExportOptions, IOpenXMLExportOptionsView>, INotifyPropertyChanged
   {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public OpenXMLExportOptionsController()
     {
@@ -167,13 +167,13 @@ namespace Altaxo.Gui.Text
 
     protected override void AttachView()
     {
-      _view.DataContext = this;
+      _view!.DataContext = this;
       base.AttachView();
     }
 
     protected override void DetachView()
     {
-      _view.DataContext = null;
+      _view!.DataContext = null;
       base.DetachView();
     }
   }
