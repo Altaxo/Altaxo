@@ -37,19 +37,19 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class MultipleFilesControl : UserControl, IMultipleFilesView
   {
-    public event Action BrowseSelectedFileName;
+    public event Action? BrowseSelectedFileName;
 
-    public event Action DeleteSelectedFileName;
+    public event Action? DeleteSelectedFileName;
 
-    public event Action MoveUpSelectedFileName;
+    public event Action? MoveUpSelectedFileName;
 
-    public event Action MoveDownSelectedFileName;
+    public event Action? MoveDownSelectedFileName;
 
-    public event Action AddNewFileName;
+    public event Action? AddNewFileName;
 
-    public event Action NewFileNameExclusively;
+    public event Action? NewFileNameExclusively;
 
-    public event Action SortFileNamesAscending;
+    public event Action? SortFileNamesAscending;
 
     public MultipleFilesControl()
     {

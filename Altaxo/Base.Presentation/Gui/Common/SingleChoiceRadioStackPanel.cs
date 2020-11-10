@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Common
 {
   public class SingleChoiceRadioStackPanel : StackPanel
   {
-    public event Action SelectionChanged;
+    public event Action? SelectionChanged;
 
     #region Dependency property
 

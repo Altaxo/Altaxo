@@ -135,11 +135,11 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    public event Action<System.ComponentModel.CancelEventArgs> ButtonOKPressed;
+    public event Action<System.ComponentModel.CancelEventArgs>? ButtonOKPressed;
 
-    public event Action ButtonCancelPressed;
+    public event Action? ButtonCancelPressed;
 
-    public event Action ButtonApplyPressed;
+    public event Action? ButtonApplyPressed;
 
     #endregion IDialogShellView
 

@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Common.Drawing
     private Dictionary<BrushType, ImageComboBoxItem> _cachedItems = new Dictionary<BrushType, ImageComboBoxItem>();
 
     /// <summary>Occurs when the selected type of brush changed.</summary>
-    public event DependencyPropertyChangedEventHandler SelectedBrushTypeChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedBrushTypeChanged;
 
     static BrushTypeComboBox()
     {

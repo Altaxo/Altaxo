@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Graph.Gdi
   /// </summary>
   public partial class DefaultLineScatterGraphDocumentControl : UserControl, IDefaultLineScatterGraphDocumentView, Altaxo.Gui.Graph.Graph3D.Templates.IDefaultCartesicPlotTemplateView
   {
-    public event Action GraphFromProjectSelected;
+    public event Action? GraphFromProjectSelected;
 
     public DefaultLineScatterGraphDocumentControl()
     {

@@ -48,9 +48,9 @@ namespace Altaxo.Gui.Common
   typeof(CheckableGroupBox)
   );
 
-    public event RoutedEventHandler Checked;
+    public event RoutedEventHandler? Checked;
 
-    public event RoutedEventHandler Unchecked;
+    public event RoutedEventHandler? Unchecked;
 
     public CheckableGroupBox()
     {

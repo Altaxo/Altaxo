@@ -138,21 +138,21 @@ namespace Altaxo.Gui.Graph
       _edZoomFactor.SelectedQuantityInSIUnits = val;
     }
 
-    public event Action PrintLocationChanged;
+    public event Action? PrintLocationChanged;
 
-    public event Action<bool> FitGraphToPrintIfLargerChanged;
+    public event Action<bool>? FitGraphToPrintIfLargerChanged;
 
-    public event Action<bool> FitGraphToPrintIfSmallerChanged;
+    public event Action<bool>? FitGraphToPrintIfSmallerChanged;
 
-    public event Action<bool> PrintCropMarksChanged;
+    public event Action<bool>? PrintCropMarksChanged;
 
-    public event Action<bool> RotatePageAutomaticallyChanged;
+    public event Action<bool>? RotatePageAutomaticallyChanged;
 
-    public event Action<bool> TilePagesChanged;
+    public event Action<bool>? TilePagesChanged;
 
-    public event Action<bool> UseFixedZoomFactorChanged;
+    public event Action<bool>? UseFixedZoomFactorChanged;
 
-    public event Action<double> ZoomFactorChanged;
+    public event Action<double>? ZoomFactorChanged;
 
     #endregion ISingleGraphPrintOptionsView
   }

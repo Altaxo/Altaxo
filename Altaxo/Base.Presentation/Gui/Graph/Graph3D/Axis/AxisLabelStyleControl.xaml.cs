@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       };
     }
 
-    public event Action LabelStyleChanged;
+    public event Action? LabelStyleChanged;
 
     private void m_cbLabelStyle_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
     {

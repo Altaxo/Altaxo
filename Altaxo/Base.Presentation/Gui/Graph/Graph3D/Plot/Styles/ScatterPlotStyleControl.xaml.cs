@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   /// </summary>
   public partial class ScatterPlotStyleControl : UserControl, IScatterPlotStyleView
   {
-    public event Action IndependentColorChanged;
+    public event Action? IndependentColorChanged;
 
     public ScatterPlotStyleControl()
     {

@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
       _previewBitmap.EndGdiPainting();
     }
 
-    public event Action ColorProviderChanged;
+    public event Action? ColorProviderChanged;
 
     #endregion
   }

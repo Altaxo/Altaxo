@@ -151,7 +151,7 @@ namespace Altaxo.MachineLearning.ML_Net
 
       int FuncCursorToOriginal(long cursorPos)
       {
-        return cursorPos < 0 || cursorPos >= cursorPosToOriginalPosDictionary.Count ? -1 : cursorPosToOriginalPosDictionary[(int)cursorPos];
+        return cursorPos < 0 || cursorPos >= cursorPosToOriginalPosDictionary!.Count ? -1 : cursorPosToOriginalPosDictionary[(int)cursorPos];
       }
 
       cursor?.Dispose(); // dispose the cursor used to build the index and

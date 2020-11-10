@@ -38,9 +38,9 @@ namespace Altaxo.Gui.Serialization.Ascii
   /// </summary>
   public partial class AsciiImportOptionsControl : UserControl, IAsciiImportOptionsView
   {
-    public event Action DoAnalyze;
+    public event Action? DoAnalyze;
 
-    public event Action SeparationStrategyChanged;
+    public event Action? SeparationStrategyChanged;
 
     public AsciiImportOptionsControl()
     {

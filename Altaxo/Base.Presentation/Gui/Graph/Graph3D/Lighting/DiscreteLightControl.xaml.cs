@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
   {
     private IDiscreteLightControl _control;
 
-    public event EventHandler SelectedValueChanged;
+    public event EventHandler? SelectedValueChanged;
 
     private GuiChangeLocker _lock;
 
@@ -184,7 +184,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
         _control.SelectedValueChanged += EhSelectedValueChanged;
     }
 
-    private void EhSelectedValueChanged(object sender, EventArgs e)
+    private void EhSelectedValueChanged(object? sender, EventArgs e)
     {
       if (_lock.IsNotLocked)
         SelectedValueChanged?.Invoke(this, e);

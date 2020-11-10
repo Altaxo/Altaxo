@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       set { GuiHelper.Initialize(_cbMinorTicks, value); }
     }
 
-    public event EventHandler MajorTicksChanged;
+    public event EventHandler? MajorTicksChanged;
   }
 
   #endregion IAngularTickSpacingView

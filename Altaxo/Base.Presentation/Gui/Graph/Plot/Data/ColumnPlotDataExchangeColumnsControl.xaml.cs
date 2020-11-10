@@ -48,59 +48,59 @@ namespace Altaxo.Gui.Graph.Plot.Data
   /// </summary>
   public partial class ColumnPlotDataExchangeColumnsControl : UserControl, IColumnPlotDataExchangeColumnsView
   {
-    public event Action SelectedTableChanged { add { } remove { } }
+    public event Action? SelectedTableChanged { add { } remove { } }
 
-    public event Action<PlotColumnTag> PlotItemColumn_AddTo;
+    public event Action<PlotColumnTag>? PlotItemColumn_AddTo;
 
-    public event Action<PlotColumnTag> PlotItemColumn_Edit;
+    public event Action<PlotColumnTag>? PlotItemColumn_Edit;
 
-    public event Action<PlotColumnTag> PlotItemColumn_Erase;
+    public event Action<PlotColumnTag>? PlotItemColumn_Erase;
 
-    public event Action<PlotColumnTag> OtherAvailableColumn_AddTo { add { } remove { } }
+    public event Action<PlotColumnTag>? OtherAvailableColumn_AddTo { add { } remove { } }
 
-    public event Action<PlotColumnTag> Transformation_AddTo { add { } remove { } }
+    public event Action<PlotColumnTag>? Transformation_AddTo { add { } remove { } }
 
-    public event Action<PlotColumnTag> Transformation_AddAsSingle { add { } remove { } }
+    public event Action<PlotColumnTag>? Transformation_AddAsSingle { add { } remove { } }
 
-    public event Action<PlotColumnTag> Transformation_AddAsPrepending { add { } remove { } }
+    public event Action<PlotColumnTag>? Transformation_AddAsPrepending { add { } remove { } }
 
-    public event Action<PlotColumnTag> Transformation_AddAsAppending { add { } remove { } }
+    public event Action<PlotColumnTag>? Transformation_AddAsAppending { add { } remove { } }
 
-    public event Action<PlotColumnTag> Transformation_Edit { add { } remove { } }
+    public event Action<PlotColumnTag>? Transformation_Edit { add { } remove { } }
 
-    public event Action<PlotColumnTag> Transformation_Erase { add { } remove { } }
+    public event Action<PlotColumnTag>? Transformation_Erase { add { } remove { } }
 
-    public event Action<int> SelectedGroupNumberChanged;
+    public event Action<int>? SelectedGroupNumberChanged;
 
-    public event Action SelectedMatchingTableChanged { add { } remove { } }
+    public event Action? SelectedMatchingTableChanged { add { } remove { } }
 
-    public event CanStartDragDelegate AvailableTableColumns_CanStartDrag;
+    public event CanStartDragDelegate? AvailableTableColumns_CanStartDrag;
 
-    public event StartDragDelegate AvailableTableColumns_StartDrag;
+    public event StartDragDelegate? AvailableTableColumns_StartDrag;
 
-    public event DragEndedDelegate AvailableTableColumns_DragEnded;
+    public event DragEndedDelegate? AvailableTableColumns_DragEnded;
 
-    public event DragCancelledDelegate AvailableTableColumns_DragCancelled;
+    public event DragCancelledDelegate? AvailableTableColumns_DragCancelled;
 
-    public event CanStartDragDelegate OtherAvailableItems_CanStartDrag { add { } remove { } }
+    public event CanStartDragDelegate? OtherAvailableItems_CanStartDrag { add { } remove { } }
 
-    public event StartDragDelegate OtherAvailableItems_StartDrag { add { } remove { } }
+    public event StartDragDelegate? OtherAvailableItems_StartDrag { add { } remove { } }
 
-    public event DragEndedDelegate OtherAvailableItems_DragEnded { add { } remove { } }
+    public event DragEndedDelegate? OtherAvailableItems_DragEnded { add { } remove { } }
 
-    public event DragCancelledDelegate OtherAvailableItems_DragCancelled { add { } remove { } }
+    public event DragCancelledDelegate? OtherAvailableItems_DragCancelled { add { } remove { } }
 
-    public event CanStartDragDelegate AvailableTransformations_CanStartDrag { add { } remove { } }
+    public event CanStartDragDelegate? AvailableTransformations_CanStartDrag { add { } remove { } }
 
-    public event StartDragDelegate AvailableTransformations_StartDrag { add { } remove { } }
+    public event StartDragDelegate? AvailableTransformations_StartDrag { add { } remove { } }
 
-    public event DragEndedDelegate AvailableTransformations_DragEnded { add { } remove { } }
+    public event DragEndedDelegate? AvailableTransformations_DragEnded { add { } remove { } }
 
-    public event DragCancelledDelegate AvailableTransformations_DragCancelled { add { } remove { } }
+    public event DragCancelledDelegate? AvailableTransformations_DragCancelled { add { } remove { } }
 
-    public event DropCanAcceptDataDelegate PlotItemColumn_DropCanAcceptData;
+    public event DropCanAcceptDataDelegate? PlotItemColumn_DropCanAcceptData;
 
-    public event DropDelegate PlotItemColumn_Drop;
+    public event DropDelegate? PlotItemColumn_Drop;
 
     private ItemsControl _guiAvailableTableColumnsCurrentlyActive;
 

@@ -43,13 +43,13 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
   /// </summary>
   public partial class DateTimeScaleRescaleConditionsControl : UserControl, IDateTimeScaleRescaleConditionsView
   {
-    public event Action OrgValueChanged;
+    public event Action? OrgValueChanged;
 
-    public event Action EndValueChanged;
+    public event Action? EndValueChanged;
 
-    public event Action OrgRelativeToChanged;
+    public event Action? OrgRelativeToChanged;
 
-    public event Action EndRelativeToChanged;
+    public event Action? EndRelativeToChanged;
 
     public DateTimeScaleRescaleConditionsControl()
     {

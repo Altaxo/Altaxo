@@ -35,7 +35,7 @@ namespace Altaxo.Gui.Settings
   /// </summary>
   public partial class CultureSettingsControl : UserControl, ICultureSettingsView
   {
-    public event Action CultureChanged;
+    public event Action? CultureChanged;
 
     public CultureSettingsControl()
     {

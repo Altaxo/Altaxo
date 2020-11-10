@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Drawing.D3D
 
     public static readonly DependencyProperty IsNoMaterialAllowedProperty;
 
-    public event DependencyPropertyChangedEventHandler SelectedMaterialChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedMaterialChanged;
 
     private List<IMaterial> _lastLocalUsedItems = new List<IMaterial>();
 

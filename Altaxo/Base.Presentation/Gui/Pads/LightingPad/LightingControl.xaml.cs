@@ -35,7 +35,7 @@ namespace Altaxo.Gui.Pads.LightingPad
   /// </summary>
   public partial class LightingControl : UserControl, ILightingView
   {
-    public event EventHandler LightingChanged;
+    public event EventHandler? LightingChanged;
 
     private Altaxo.Graph.Graph3D.LightSettings _lighting = new Altaxo.Graph.Graph3D.LightSettings();
 

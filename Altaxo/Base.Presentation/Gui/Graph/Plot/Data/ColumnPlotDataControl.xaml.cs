@@ -48,59 +48,59 @@ namespace Altaxo.Gui.Graph.Plot.Data
   /// </summary>
   public partial class ColumnPlotDataControl : UserControl, IColumnPlotDataView
   {
-    public event Action SelectedTableChanged;
+    public event Action? SelectedTableChanged;
 
-    public event Action<PlotColumnTag> PlotItemColumn_AddTo;
+    public event Action<PlotColumnTag>? PlotItemColumn_AddTo;
 
-    public event Action<PlotColumnTag> PlotItemColumn_Edit;
+    public event Action<PlotColumnTag>? PlotItemColumn_Edit;
 
-    public event Action<PlotColumnTag> PlotItemColumn_Erase;
+    public event Action<PlotColumnTag>? PlotItemColumn_Erase;
 
-    public event Action<PlotColumnTag> OtherAvailableColumn_AddTo;
+    public event Action<PlotColumnTag>? OtherAvailableColumn_AddTo;
 
-    public event Action<PlotColumnTag> Transformation_AddTo;
+    public event Action<PlotColumnTag>? Transformation_AddTo;
 
-    public event Action<PlotColumnTag> Transformation_AddAsSingle;
+    public event Action<PlotColumnTag>? Transformation_AddAsSingle;
 
-    public event Action<PlotColumnTag> Transformation_AddAsPrepending;
+    public event Action<PlotColumnTag>? Transformation_AddAsPrepending;
 
-    public event Action<PlotColumnTag> Transformation_AddAsAppending;
+    public event Action<PlotColumnTag>? Transformation_AddAsAppending;
 
-    public event Action<PlotColumnTag> Transformation_Edit;
+    public event Action<PlotColumnTag>? Transformation_Edit;
 
-    public event Action<PlotColumnTag> Transformation_Erase;
+    public event Action<PlotColumnTag>? Transformation_Erase;
 
-    public event Action<int> SelectedGroupNumberChanged;
+    public event Action<int>? SelectedGroupNumberChanged;
 
-    public event Action SelectedMatchingTableChanged;
+    public event Action? SelectedMatchingTableChanged;
 
-    public event CanStartDragDelegate AvailableTableColumns_CanStartDrag;
+    public event CanStartDragDelegate? AvailableTableColumns_CanStartDrag;
 
-    public event StartDragDelegate AvailableTableColumns_StartDrag;
+    public event StartDragDelegate? AvailableTableColumns_StartDrag;
 
-    public event DragEndedDelegate AvailableTableColumns_DragEnded;
+    public event DragEndedDelegate? AvailableTableColumns_DragEnded;
 
-    public event DragCancelledDelegate AvailableTableColumns_DragCancelled;
+    public event DragCancelledDelegate? AvailableTableColumns_DragCancelled;
 
-    public event CanStartDragDelegate OtherAvailableItems_CanStartDrag;
+    public event CanStartDragDelegate? OtherAvailableItems_CanStartDrag;
 
-    public event StartDragDelegate OtherAvailableItems_StartDrag;
+    public event StartDragDelegate? OtherAvailableItems_StartDrag;
 
-    public event DragEndedDelegate OtherAvailableItems_DragEnded;
+    public event DragEndedDelegate? OtherAvailableItems_DragEnded;
 
-    public event DragCancelledDelegate OtherAvailableItems_DragCancelled;
+    public event DragCancelledDelegate? OtherAvailableItems_DragCancelled;
 
-    public event CanStartDragDelegate AvailableTransformations_CanStartDrag;
+    public event CanStartDragDelegate? AvailableTransformations_CanStartDrag;
 
-    public event StartDragDelegate AvailableTransformations_StartDrag;
+    public event StartDragDelegate? AvailableTransformations_StartDrag;
 
-    public event DragEndedDelegate AvailableTransformations_DragEnded;
+    public event DragEndedDelegate? AvailableTransformations_DragEnded;
 
-    public event DragCancelledDelegate AvailableTransformations_DragCancelled;
+    public event DragCancelledDelegate? AvailableTransformations_DragCancelled;
 
-    public event DropCanAcceptDataDelegate PlotItemColumn_DropCanAcceptData;
+    public event DropCanAcceptDataDelegate? PlotItemColumn_DropCanAcceptData;
 
-    public event DropDelegate PlotItemColumn_Drop;
+    public event DropDelegate? PlotItemColumn_Drop;
 
     private ItemsControl _guiAvailableTableColumnsCurrentlyActive;
 

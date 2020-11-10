@@ -43,9 +43,9 @@ namespace Altaxo.Gui.ProjectBrowser
   /// </summary>
   public partial class CopyItemsToMultipleFolderControl : UserControl, ICopyItemsToMultipleFolderView
   {
-    public event Action CopySelectedFolderNames;
+    public event Action? CopySelectedFolderNames;
 
-    public event Action UnselectAllFolders;
+    public event Action? UnselectAllFolders;
 
     public CopyItemsToMultipleFolderControl()
     {

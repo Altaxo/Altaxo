@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
   /// </summary>
   public partial class PointLightControl : UserControl, IDiscreteLightControl
   {
-    public event EventHandler SelectedValueChanged;
+    public event EventHandler? SelectedValueChanged;
 
     private double _lightAmplitude;
 

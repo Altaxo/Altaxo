@@ -41,27 +41,27 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public partial class PrintingControl : UserControl, IPrintingView
   {
-    public event Action SelectedPrinterChanged;
+    public event Action? SelectedPrinterChanged;
 
-    public event Action EditPrinterProperties;
+    public event Action? EditPrinterProperties;
 
-    public event Action<bool> PaperOrientationLandscapeChanged;
+    public event Action<bool>? PaperOrientationLandscapeChanged;
 
-    public event Action PaperSizeChanged;
+    public event Action? PaperSizeChanged;
 
-    public event Action PaperSourceChanged;
+    public event Action? PaperSourceChanged;
 
-    public event Action<double> MarginLeftChanged;
+    public event Action<double>? MarginLeftChanged;
 
-    public event Action<double> MarginRightChanged;
+    public event Action<double>? MarginRightChanged;
 
-    public event Action<double> MarginTopChanged;
+    public event Action<double>? MarginTopChanged;
 
-    public event Action<double> MarginBottomChanged;
+    public event Action<double>? MarginBottomChanged;
 
-    public event Action<int> NumberOfCopiesChanged;
+    public event Action<int>? NumberOfCopiesChanged;
 
-    public event Action<bool> CollateCopiesChanged;
+    public event Action<bool>? CollateCopiesChanged;
 
     private GdiToWpfBitmap _previewBitmap;
     private System.Drawing.Printing.PreviewPageInfo[] _previewData;

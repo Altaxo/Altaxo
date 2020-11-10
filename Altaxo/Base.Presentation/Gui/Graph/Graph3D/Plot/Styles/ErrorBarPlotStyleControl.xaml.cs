@@ -43,11 +43,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   {
     private PenControlsGlue _strokePenGlue;
 
-    public event Action IndependentColorChanged;
+    public event Action? IndependentColorChanged;
 
-    public event Action IndependentDashPatternChanged;
+    public event Action? IndependentDashPatternChanged;
 
-    public event Action<bool> UseCommonErrorColumnChanged;
+    public event Action<bool>? UseCommonErrorColumnChanged;
 
     public ErrorBarPlotStyleControl()
     {

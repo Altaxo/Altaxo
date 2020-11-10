@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public partial class FontStyleComboBox : UserControl
   {
-    public event DependencyPropertyChangedEventHandler SelectedFontStyleChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedFontStyleChanged;
 
     private Altaxo.Main.TemporaryDisabler _eventDisabler = new Altaxo.Main.TemporaryDisabler(EhEventsReenabled);
 

@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     #region IColorProviderBaseView Members
 
-    public event Action ChoiceChanged;
+    public event Action? ChoiceChanged;
 
     public NamedColor ColorBelow
     {

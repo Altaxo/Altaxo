@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Common.Drawing
   {
     protected QuantityWithUnitConverter _converter;
 
-    public event DependencyPropertyChangedEventHandler SelectedQuantityChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedQuantityChanged;
 
     static DimensionfulQuantityImageComboBox()
     {
@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Common.Drawing
       var childs = LogicalChildren;
     }
 
-    private void QuantityWithUnitTextBox_TextChanged(object sender, EventArgs e)
+    private void QuantityWithUnitTextBox_TextChanged(object? sender, EventArgs e)
     {
       _converter.BindingExpression.ValidateWithoutUpdate();
     }

@@ -59,7 +59,7 @@ namespace Altaxo.Main
         var exportOptions = Current.PropertyService.UserSettings.GetValue(TextDocumentToOpenXmlExportOptions.PropertyKeyTextDocumentToOpenXmlExportOptions, new TextDocumentToOpenXmlExportOptions());
         if (true != Current.Gui.ShowDialog(ref exportOptions, "Export options for text documents", false))
           return;
-        Current.PropertyService.UserSettings.SetValue(TextDocumentToOpenXmlExportOptions.PropertyKeyTextDocumentToOpenXmlExportOptions, exportOptions);
+        Current.PropertyService.UserSettings.SetValue(TextDocumentToOpenXmlExportOptions.PropertyKeyTextDocumentToOpenXmlExportOptions, exportOptions!);
       }
 
 
@@ -127,7 +127,7 @@ namespace Altaxo.Main
         try
         {
           // Create the directory, if not already present
-          var dir = System.IO.Path.GetDirectoryName(fileName);
+          var dir = System.IO.Path.GetDirectoryName(fileName) ?? throw new InvalidOperationException($"Can not get directory name from file name {fileName}");
           if (!System.IO.Directory.Exists(dir))
             System.IO.Directory.CreateDirectory(dir);
 

@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private string _labelText;
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public string LabelText
     {

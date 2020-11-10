@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   {
     private BackgroundControlsGlue _backgroundGlue;
 
-    public event Action TickSpacingTypeChanged;
+    public event Action? TickSpacingTypeChanged;
 
     public FloatingScaleControl()
     {

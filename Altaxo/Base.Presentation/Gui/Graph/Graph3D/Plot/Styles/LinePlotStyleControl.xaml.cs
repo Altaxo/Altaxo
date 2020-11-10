@@ -42,17 +42,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   {
     private PenControlsGlue _linePenGlue;
 
-    public event Action IndependentFillColorChanged;
+    public event Action? IndependentFillColorChanged;
 
-    public event Action IndependentLineColorChanged;
+    public event Action? IndependentLineColorChanged;
 
-    public event Action UseFillChanged;
+    public event Action? UseFillChanged;
 
-    public event Action UseLineChanged;
+    public event Action? UseLineChanged;
 
-    public event Action FillBrushChanged;
+    public event Action? FillBrushChanged;
 
-    public event Action LinePenChanged;
+    public event Action? LinePenChanged;
 
     public LinePlotStyleControl()
     {
@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         IndependentLineColorChanged();
     }
 
-    private void EhLinePenChanged(object sender, EventArgs e)
+    private void EhLinePenChanged(object? sender, EventArgs e)
     {
       if (LinePenChanged is not null)
         LinePenChanged();

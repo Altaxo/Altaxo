@@ -102,7 +102,7 @@ namespace Altaxo.Graph.Plot.Data
     private double[] _cachedJacobian;
     private double[] _independentVariable = new double[1];
     private double[] _functionValues;
-    private IFitFunction _cachedFitFunction;
+    private IFitFunction? _cachedFitFunction;
     private double _cachedQuantileOfStudentsDistribution;
 
     /// <summary>
@@ -194,7 +194,7 @@ namespace Altaxo.Graph.Plot.Data
 
 
 
-    [MemberNotNull(nameof(_cachedFitFunction), nameof(_cachedParameters), nameof(_cachedParametersForJacobianEvaluation), nameof(_cachedJacobian), nameof(_functionValues), nameof(_covarianceMatrix), nameof(_cachedIndicesOfVaryingParametersOfThisFitElement))]
+    [MemberNotNull(nameof(_cachedParameters), nameof(_cachedParametersForJacobianEvaluation), nameof(_cachedJacobian), nameof(_functionValues), nameof(_covarianceMatrix), nameof(_cachedIndicesOfVaryingParametersOfThisFitElement))]
     private (List<string> allVaryingParameterNames, int[] indicesOfThisFitElementsVaryingParametersInAllVaryingParameters) CreateCachedMembers()
     {
       var fitElement = _fitDocument.FitEnsemble[_fitElementIndex];
@@ -203,7 +203,7 @@ namespace Altaxo.Graph.Plot.Data
       _cachedParameters = _fitDocument.GetParametersForFitElement(_fitElementIndex);
       _cachedParametersForJacobianEvaluation = _fitDocument.GetParametersForFitElement(_fitElementIndex);
       _cachedJacobian = new double[_cachedParameters.Length];
-      _functionValues = new double[_cachedFitFunction.NumberOfDependentVariables];
+      _functionValues = new double[fitElement.NumberOfDependentVariables];
 
       // CovarianceMatrix: we have to pick exactly the varying parameters of this fitelement!
 
@@ -313,7 +313,7 @@ namespace Altaxo.Graph.Plot.Data
       CopyFrom(from);
     }
 
-    [MemberNotNull(nameof(_fitDocumentIdentifier), nameof(_fitDocument), nameof(_cachedFitFunction), nameof(_cachedParameters), nameof(_cachedParametersForJacobianEvaluation), nameof(_cachedJacobian), nameof(_functionValues), nameof(_covarianceMatrix), nameof(_cachedIndicesOfVaryingParametersOfThisFitElement))]
+    [MemberNotNull(nameof(_fitDocumentIdentifier), nameof(_fitDocument), nameof(_cachedParameters), nameof(_cachedParametersForJacobianEvaluation), nameof(_cachedJacobian), nameof(_functionValues), nameof(_covarianceMatrix), nameof(_cachedIndicesOfVaryingParametersOfThisFitElement))]
     protected void CopyFrom(XYNonlinearFitFunctionConfidenceBandPlotData from)
     {
       _fitDocumentIdentifier = from._fitDocumentIdentifier;
@@ -444,9 +444,16 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns></returns>
     private double EvaluateFitFunctionValue(double x, double[] parameters)
     {
-      _independentVariable[0] = x;
-      _cachedFitFunction.Evaluate(_independentVariable, parameters, _functionValues);
-      return _functionValues[_dependentVariableIndex];
+      if (_cachedFitFunction is { } fitFunction)
+      {
+        _independentVariable[0] = x;
+        fitFunction.Evaluate(_independentVariable, parameters, _functionValues);
+        return _functionValues[_dependentVariableIndex];
+      }
+      else
+      {
+        return double.NaN;
+      }
     }
 
     private const double DBL_EPSILON = 2.2204460492503131e-016;

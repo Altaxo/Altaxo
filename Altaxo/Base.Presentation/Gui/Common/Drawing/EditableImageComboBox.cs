@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Common.Drawing
       dpd.AddValueChanged(this, EhTextChanged);
     }
 
-    protected virtual void EhTextChanged(object sender, EventArgs e)
+    protected virtual void EhTextChanged(object? sender, EventArgs e)
     {
       SetImageFromContent();
     }

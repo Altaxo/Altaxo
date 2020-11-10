@@ -97,7 +97,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    protected virtual void EhTextChanged(object sender, EventArgs e)
+    protected virtual void EhTextChanged(object? sender, EventArgs e)
     {
       _isInitialTextModified = true;
     }
@@ -105,7 +105,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Is called when the content of the TextBox needs validation.
     /// </summary>
-    public event ValidatingStringEventHandler Validating;
+    public event ValidatingStringEventHandler? Validating;
 
     public string EhValidateText(object obj, System.Globalization.CultureInfo info)
     {

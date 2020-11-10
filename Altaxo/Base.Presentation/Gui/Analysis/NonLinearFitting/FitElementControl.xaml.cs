@@ -42,17 +42,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   {
     #region events to controller
 
-    public event Action<int> ChooseErrorFunction;
+    public event Action<int>? ChooseErrorFunction;
 
-    public event Action ChooseFitFunction;
+    public event Action? ChooseFitFunction;
 
-    public event Action<int> ChooseExternalParameter;
+    public event Action<int>? ChooseExternalParameter;
 
-    public event Action SetupVariablesAndRange;
+    public event Action? SetupVariablesAndRange;
 
-    public event Action EditFitFunction;
+    public event Action? EditFitFunction;
 
-    public event Action DeleteThisFitElement;
+    public event Action? DeleteThisFitElement;
 
     #endregion events to controller
 

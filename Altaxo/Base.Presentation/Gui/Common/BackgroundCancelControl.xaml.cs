@@ -45,9 +45,9 @@ namespace Altaxo.Gui.Common
     private System.Windows.Threading.DispatcherTimer _timer;
     private int _showUpDownConter;
 
-    public event Action<bool> ExecutionFinished;
+    public event Action<bool>? ExecutionFinished;
 
-    public event Action StartDelayExpired;
+    public event Action? StartDelayExpired;
 
     public bool ExecutionInProgress
     {
@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    private void EhTimer(object sender, EventArgs e)
+    private void EhTimer(object? sender, EventArgs e)
     {
       if (_showUpDownConter == 0)
       {

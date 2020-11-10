@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
       _tabControl.SelectedIndex = index;
     }
 
-    public event EventHandler<Altaxo.Main.InstanceChangedEventArgs> SelectedPage_Changed;
+    public event EventHandler<Altaxo.Main.InstanceChangedEventArgs>? SelectedPage_Changed;
 
     public void SetPlotStyleView(object view)
     {

@@ -267,7 +267,7 @@ namespace Altaxo.Gui.Common
       _adorner.EditingFinished += EhEditingFinished;
     }
 
-    private void EhEditingFinished(object sender, EventArgs e)
+    private void EhEditingFinished(object? sender, EventArgs e)
     {
       if (e is KeyboardEventArgs)
         _earliestTimeItemIsEligibleForEditing = DateTime.MaxValue;
@@ -500,7 +500,7 @@ namespace Altaxo.Gui.Common
     /// </summary>
     /// <param name="sender">The source of the event (the timer).</param>
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-    private void EhMouseWaitTimer_Elapsed(object sender, EventArgs e)
+    private void EhMouseWaitTimer_Elapsed(object? sender, EventArgs e)
     {
       var timer = (DispatcherTimer)sender;
       timer.Tick -= EhMouseWaitTimer_Elapsed;

@@ -142,13 +142,13 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
-    public event Action BasicFileNameAndPathChoose;
+    public event Action? BasicFileNameAndPathChoose;
 
-    public event Action Change_CreateSpectrumFrom;
+    public event Action? Change_CreateSpectrumFrom;
 
-    public event Action Change__XValuesFromOption;
+    public event Action? Change__XValuesFromOption;
 
-    public event Action Change_ExtendFileNameOptions;
+    public event Action? Change_ExtendFileNameOptions;
 
     private void EhCreateSpectrumFrom_Changed(object sender, RoutedEventArgs e)
     {

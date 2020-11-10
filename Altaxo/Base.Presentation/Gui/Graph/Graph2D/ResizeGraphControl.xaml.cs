@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Graph.Graph2D
   /// </summary>
   public partial class ResizeGraphControl : UserControl, IResizeGraphView
   {
-    public event Action FontChanged;
+    public event Action? FontChanged;
 
     public ResizeGraphControl()
     {

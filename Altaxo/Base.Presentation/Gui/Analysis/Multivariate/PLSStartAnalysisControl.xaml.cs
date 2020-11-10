@@ -115,11 +115,11 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
-    public event Action<int> MaxNumberOfFactorsChanged;
+    public event Action<int>? MaxNumberOfFactorsChanged;
 
-    public event Action<Calc.Regression.Multivariate.CrossPRESSCalculationType> CrossValidationSelected;
+    public event Action<Calc.Regression.Multivariate.CrossPRESSCalculationType>? CrossValidationSelected;
 
-    public event Action<int> AnalysisMethodChanged;
+    public event Action<int>? AnalysisMethodChanged;
 
     #endregion IPLSStartAnalysisView
   }

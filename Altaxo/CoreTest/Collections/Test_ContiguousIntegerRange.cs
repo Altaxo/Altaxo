@@ -221,7 +221,10 @@ namespace AltaxoTest.Collections
     {
       var r = ContiguousIntegerRange.FromFirstAndLastInclusive(int.MinValue, int.MinValue);
       Assert.False(r.IsEmpty);
+#pragma warning disable xUnit2013 // Do not use equality check to check for collection size.
       Assert.Equal(1, r.Count);
+#pragma warning restore xUnit2013 // Do not use equality check to check for collection size.
+      Assert.Single(r); // we check both the count (previous statement), and here if there is really only one element.
       Assert.Equal(1, r.LongCount);
       Assert.Equal(int.MinValue, r.Start);
       Assert.Equal(int.MinValue, r.LastInclusive);

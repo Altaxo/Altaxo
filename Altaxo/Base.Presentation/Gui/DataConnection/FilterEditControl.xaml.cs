@@ -36,11 +36,11 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class FilterEditControl : UserControl, IFilterEditView
   {
-    public event Action SimpleUpdated;
+    public event Action? SimpleUpdated;
 
-    public event Action IntervalUpdated;
+    public event Action? IntervalUpdated;
 
-    public event Action ClearAll;
+    public event Action? ClearAll;
 
     public FilterEditControl()
     {

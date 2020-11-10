@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Drawing
       }
     }
 
-    public event EventHandler SelectedFontChanged;
+    public event EventHandler? SelectedFontChanged;
 
     protected virtual void OnSelectedFontChanged()
     {
@@ -110,7 +110,7 @@ namespace Altaxo.Gui.Drawing
       }
     }
 
-    private void EhFontFamily_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhFontFamily_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (FontX is not null)
       {
@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Drawing
       }
     }
 
-    private void EhFontStyle_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhFontStyle_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (FontX is not null)
       {

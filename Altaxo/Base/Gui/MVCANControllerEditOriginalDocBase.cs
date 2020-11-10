@@ -63,6 +63,10 @@ namespace Altaxo.Gui
     /// </summary>
     protected Altaxo.Main.ISuspendToken? _suspendToken;
 
+    /// <summary>Gets the current document of this controller. If the document is null, an <see cref="InvalidOperationException"/> is thrown. To check whether
+    /// the document is null, check on the member <see cref="_doc"/> directly.</summary>
+    public TModel Doc => _doc ?? throw new InvalidOperationException($"This controller ({this}) is yet not initialized with a document");
+
     /// <summary>
     /// Initialize the controller with the document. If successfull, the function has to return true.
     /// </summary>

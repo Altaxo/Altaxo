@@ -38,13 +38,13 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class ConvertXYVToMatrixDataControl : UserControl, IConvertXYVToMatrixDataView
   {
-    public event Action SelectedTableChanged;
+    public event Action? SelectedTableChanged;
 
-    public event Action SelectedGroupNumberChanged;
+    public event Action? SelectedGroupNumberChanged;
 
-    public event Action UseSelectedAvailableColumnsAsParticipatingColumns;
+    public event Action? UseSelectedAvailableColumnsAsParticipatingColumns;
 
-    public event Action DeleteSelectedParticipatingColumn;
+    public event Action? DeleteSelectedParticipatingColumn;
 
     public ConvertXYVToMatrixDataControl()
     {

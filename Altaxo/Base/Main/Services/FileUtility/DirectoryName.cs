@@ -167,13 +167,9 @@ namespace Altaxo.Main.Services
       return StringComparer.OrdinalIgnoreCase.GetHashCode(_normalizedPath);
     }
 
-    public static bool operator ==(DirectoryName left, DirectoryName right)
+    public static bool operator ==(DirectoryName? left, DirectoryName? right)
     {
-      if (ReferenceEquals(left, right))
-        return true;
-      if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
-        return false;
-      return left.Equals(right);
+      return ReferenceEquals(left, right) || (left is not null && right is not null && left.Equals(right));
     }
 
     public static bool operator !=(DirectoryName left, DirectoryName right)

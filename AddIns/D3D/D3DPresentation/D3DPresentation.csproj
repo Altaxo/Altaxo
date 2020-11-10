@@ -9,6 +9,14 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <NoWarn>
+      1591;
+      8600;8601;8602;8603;8604;8618;8625;8764;8766;8767;8768
+    </NoWarn>
+  </PropertyGroup>
+  
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>

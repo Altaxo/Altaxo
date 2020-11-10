@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Common
 {
   public class SingleChoiceRadioWrapPanel : WrapPanel
   {
-    public event Action SelectionChanged;
+    public event Action? SelectionChanged;
 
     private SelectableListNodeList _choices;
 

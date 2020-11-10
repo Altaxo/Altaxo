@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Geometry
 
     private GuiChangeLocker _lock;
 
-    public event EventHandler SelectedValueChanged;
+    public event EventHandler? SelectedValueChanged;
 
     public Direction3DControl()
     {

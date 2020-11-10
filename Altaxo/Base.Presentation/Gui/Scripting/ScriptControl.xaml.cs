@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Scripting
   /// </summary>
   public partial class ScriptControl : UserControl, IScriptView
   {
-    public event Action<string> CompilerMessageClicked;
+    public event Action<string>? CompilerMessageClicked;
 
     private IPureScriptView _scriptView;
 

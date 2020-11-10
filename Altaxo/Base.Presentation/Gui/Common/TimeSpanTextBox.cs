@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Common
 {
   public class TimeSpanTextBox : TextBox
   {
-    public event DependencyPropertyChangedEventHandler SelectedValueChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedValueChanged;
 
     private TimeSpanConverter _converter;
 

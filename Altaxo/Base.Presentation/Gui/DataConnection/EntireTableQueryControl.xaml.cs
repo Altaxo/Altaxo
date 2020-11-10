@@ -39,12 +39,12 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class EntireTableQueryControl : UserControl, IEntireTableQueryView
   {
-    public event Action ViewResults;
+    public event Action? ViewResults;
 
     /// <summary>
     /// Occurs when the selected tree node of the schema tree changed.
     /// </summary>
-    public event Action SelectedSchemaNodeChanged;
+    public event Action? SelectedSchemaNodeChanged;
 
     public EntireTableQueryControl()
     {

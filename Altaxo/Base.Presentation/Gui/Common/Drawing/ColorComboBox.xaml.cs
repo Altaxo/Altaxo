@@ -43,9 +43,9 @@ namespace Altaxo.Gui.Common.Drawing
   {
     private List<NamedColor> _lastLocalUsedItems = new List<NamedColor>();
 
-    public event DependencyPropertyChangedEventHandler SelectedColorChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedColorChanged;
 
-    private event Action ViewEvent_SelectedColorChanged;
+    private event Action? ViewEvent_SelectedColorChanged;
 
     event Action Altaxo.Gui.Common.Drawing.INamedColorView.SelectedItemChanged
     {

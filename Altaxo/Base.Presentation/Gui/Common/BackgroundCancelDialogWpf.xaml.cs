@@ -111,7 +111,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    private void EhTimer(object sender, EventArgs e)
+    private void EhTimer(object? sender, EventArgs e)
     {
       _timerCounter++;
 

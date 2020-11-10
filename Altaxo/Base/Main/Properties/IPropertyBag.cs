@@ -52,6 +52,7 @@ namespace Altaxo.Main.Properties
     /// <param name="defaultValue">Default value that is returned if no property value is found in the bag.</param>
     /// <returns>The property.</returns>
     [return: MaybeNull]
+    [return: NotNullIfNotNull("defaultValue")]
     T GetValue<T>(PropertyKey<T> p, [MaybeNull] T defaultValue);
 
     /// <summary>

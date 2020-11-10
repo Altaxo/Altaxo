@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   /// </summary>
   public partial class DropLinePlotStyleControl : UserControl, IDropLinePlotStyleView
   {
-    public event Action IndependentColorChanged;
+    public event Action? IndependentColorChanged;
 
     private PenControlsGlue _penGlue;
 

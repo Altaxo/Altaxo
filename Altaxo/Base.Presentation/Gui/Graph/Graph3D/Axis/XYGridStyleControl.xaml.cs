@@ -64,11 +64,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     #region IXYGridStyleView
 
-    public event Action<bool> ShowGridChanged;
+    public event Action<bool>? ShowGridChanged;
 
-    public event Action<bool> ShowMinorGridChanged;
+    public event Action<bool>? ShowMinorGridChanged;
 
-    public event Action<bool> ShowZeroOnlyChanged;
+    public event Action<bool>? ShowZeroOnlyChanged;
 
     public void InitializeBegin()
     {

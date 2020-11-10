@@ -37,23 +37,23 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public partial class ExchangeTablesOfPlotItemsControl : UserControl, IExchangeTablesOfPlotItemsView
   {
-    public event Action ChooseTableForSelectedItems;
+    public event Action? ChooseTableForSelectedItems;
 
-    public event Action ChooseFolderForSelectedItems;
+    public event Action? ChooseFolderForSelectedItems;
 
-    public event Action TableSelectionChanged;
+    public event Action? TableSelectionChanged;
 
-    public event Action ListOfCommonSubstringsSelectionChanged;
+    public event Action? ListOfCommonSubstringsSelectionChanged;
 
-    public event Action ApplySubstringReplacement;
+    public event Action? ApplySubstringReplacement;
 
-    public event Action CommonSubstringTextChanged;
+    public event Action? CommonSubstringTextChanged;
 
-    public event Action ListOfSubstringReplacementCandidatesSelectionChanged;
+    public event Action? ListOfSubstringReplacementCandidatesSelectionChanged;
 
-    public event Action SearchCommonSubstringsCharacterWiseChanged;
+    public event Action? SearchCommonSubstringsCharacterWiseChanged;
 
-    public event Action CommonSubstringPanelVisibilityChanged;
+    public event Action? CommonSubstringPanelVisibilityChanged;
 
     public ExchangeTablesOfPlotItemsControl()
     {

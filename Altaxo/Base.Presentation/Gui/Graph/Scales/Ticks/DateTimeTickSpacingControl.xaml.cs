@@ -214,7 +214,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
     }
 
-    public event Action<string, System.ComponentModel.CancelEventArgs> MajorTicksValidating;
+    public event Action<string, System.ComponentModel.CancelEventArgs>? MajorTicksValidating;
 
     public event Action<string, System.ComponentModel.CancelEventArgs> DivideByValidating { add { } remove { } }
 

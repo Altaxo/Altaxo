@@ -217,6 +217,19 @@ namespace Altaxo.Gui.Common.MultiRename
       return _objectsToRename[i].NewName ?? throw new InvalidOperationException($"New name was not set for object {_objectsToRename[i].NewName} (OldName: {_objectsToRename[i].OldName})");
     }
 
+    /// <summary>
+    /// Gets the proposed new name for the object at position <paramref name="i"/>. If a new name was not already set,
+    /// the return value is null.
+    /// </summary>
+    /// <param name="i">Index of the object in the internal list.</param>
+    /// <returns>The proposed new name of the object at index i. If the new name is not already set, the return value is null.</returns>
+    public string? GetNewNameForObjectOrNull(int i)
+    {
+      return _objectsToRename[i].NewName;
+    }
+
+
+
     /// <summary>Gets the integer value of a integer shortcut.</summary>
     /// <param name="shortcut">The shortcut (has to be registered as integer shortcut before).</param>
     /// <param name="originalListIndex">Index of the object in the internal list.</param>

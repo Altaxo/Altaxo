@@ -182,7 +182,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    private void EhDefaultUnitChanged(object sender, EventArgs e)
+    private void EhDefaultUnitChanged(object? sender, EventArgs e)
     {
       if (_parent is not null && _quantityGetSetProperty is not null && _unitEnvironment is not null)
       {
@@ -192,7 +192,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    private void EhNumberOfDisplayedDigitsChanged(object sender, EventArgs e)
+    private void EhNumberOfDisplayedDigitsChanged(object? sender, EventArgs e)
     {
       EhNumberOfDisplayedDigitsChanged();
     }

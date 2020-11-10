@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Fired when a mouse double click on any item occurs.
     /// </summary>
-    public event EventHandler ItemMouseDoubleClick;
+    public event EventHandler? ItemMouseDoubleClick;
 
     public MultiSelectTreeView()
     {

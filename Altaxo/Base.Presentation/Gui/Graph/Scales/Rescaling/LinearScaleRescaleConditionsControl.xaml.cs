@@ -43,9 +43,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
   /// </summary>
   public partial class LinearScaleRescaleConditionsControl : UserControl, ILinearScaleRescaleConditionsView
   {
-    public event Action OrgValueChanged;
+    public event Action? OrgValueChanged;
 
-    public event Action EndValueChanged;
+    public event Action? EndValueChanged;
 
     public LinearScaleRescaleConditionsControl()
     {

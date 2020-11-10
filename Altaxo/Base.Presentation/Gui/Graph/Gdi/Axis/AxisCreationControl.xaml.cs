@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
   /// </summary>
   public partial class AxisCreationControl : UserControl, IAxisCreationView
   {
-    public event Action SelectedAxisTemplateChanged;
+    public event Action? SelectedAxisTemplateChanged;
 
     public AxisCreationControl()
     {

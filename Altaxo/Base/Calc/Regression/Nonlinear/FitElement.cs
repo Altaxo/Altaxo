@@ -47,7 +47,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     ICloneable
   {
     /// <summary>Fitting function. Can be null if no fitting function is actually choosen.</summary>
-    private IFitFunction _fitFunction;
+    private IFitFunction? _fitFunction;
 
     /// <summary>Holds a reference to the underlying data table. </summary>
     protected DataTableProxy? _dataTable;
@@ -644,7 +644,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Gets / sets the fitting function.
     /// </summary>
-    public IFitFunction FitFunction
+    public IFitFunction? FitFunction
     {
       get
       {

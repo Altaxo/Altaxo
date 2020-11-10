@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Common
 {
   public class DateTimeTextBox : TextBox, Altaxo.Gui.Common.BasicTypes.IDateTimeNakedControl
   {
-    public event DependencyPropertyChangedEventHandler SelectedValueChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedValueChanged;
 
     private DateTimeConverter _converter;
 

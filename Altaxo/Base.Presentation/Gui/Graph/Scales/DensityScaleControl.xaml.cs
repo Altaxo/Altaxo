@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Graph.Scales
       _scaleViewHost.Child = guiobject as UIElement;
     }
 
-    public event Action AxisTypeChanged;
+    public event Action? AxisTypeChanged;
 
     #endregion IDensityScaleView Members
   }

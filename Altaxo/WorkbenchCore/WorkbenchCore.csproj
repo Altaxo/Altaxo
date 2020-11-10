@@ -2,11 +2,11 @@
   <PropertyGroup>
     <TargetFrameworks>net48;net5.0</TargetFrameworks>
     <LangVersion>preview</LangVersion>
+    <nullable>enable</nullable>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DefineConstants>PUBLICINTERPROCESS</DefineConstants>
-    <nullable>enable</nullable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1701;1702;1591</NoWarn>

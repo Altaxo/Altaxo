@@ -41,10 +41,9 @@ namespace Altaxo.Text.Commands
     /// <param name="parameter">The parameter (context of the command).</param>
     /// <returns>True if either the <paramref name="parameter"/> or the ActiveViewContent of the workbench is a <see cref="Altaxo.Gui.Text.Viewing.TextDocumentController"/>.
     /// </returns>
-    public override bool CanExecute(object parameter)
+    public override bool CanExecute(object? parameter)
     {
-      if (!(parameter is IViewContent viewContent))
-        viewContent = Current.Workbench.ActiveViewContent;
+      var viewContent = parameter as IViewContent ?? Current.Workbench.ActiveViewContent;
       return viewContent is Altaxo.Gui.Text.Viewing.TextDocumentController;
     }
 
@@ -52,11 +51,9 @@ namespace Altaxo.Text.Commands
     /// Determines the currently active worksheet and issues the command to that text document controller by calling
     /// Run with the text document controller as a parameter.
     /// </summary>
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
-      if (!(parameter is IViewContent activeViewContent))
-        activeViewContent = Current.Workbench.ActiveViewContent;
-
+      var activeViewContent = parameter as IViewContent ?? Current.Workbench.ActiveViewContent;
       if (activeViewContent is TextDocumentController ctrl)
         Run(ctrl);
     }

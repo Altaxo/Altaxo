@@ -36,15 +36,15 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class AscendingIntegerCollectionControl : UserControl, IAscendingIntegerCollectionView
   {
-    public event Action SwitchToAdvandedView;
+    public event Action? SwitchToAdvandedView;
 
-    public event Action<object> InitializingNewRangeItem;
+    public event Action<object>? InitializingNewRangeItem;
 
-    public event Action<int, int> AdvancedAddRange;
+    public event Action<int, int>? AdvancedAddRange;
 
-    public event Action<int, int> AdvancedRemoveRange;
+    public event Action<int, int>? AdvancedRemoveRange;
 
-    private IEnumerable<object> _ranges;
+    private IEnumerable<object>? _ranges;
 
     public AscendingIntegerCollectionControl()
     {

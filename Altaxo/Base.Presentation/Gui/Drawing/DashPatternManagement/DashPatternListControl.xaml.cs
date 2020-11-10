@@ -344,7 +344,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 
     #region New Interface
 
-    public event Action<IDashPattern> UserRequest_AddCustomColorToList;
+    public event Action<IDashPattern>? UserRequest_AddCustomColorToList;
 
     #endregion New Interface
 

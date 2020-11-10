@@ -37,13 +37,13 @@ namespace Altaxo.Gui.Worksheet
   /// </summary>
   public partial class InterpolationControl : UserControl, IInterpolationParameterView
   {
-    public event Action<ValidationEventArgs<string>> ValidatingFrom;
+    public event Action<ValidationEventArgs<string>>? ValidatingFrom;
 
-    public event Action<ValidationEventArgs<string>> ValidatingTo;
+    public event Action<ValidationEventArgs<string>>? ValidatingTo;
 
-    public event Action<ValidationEventArgs<string>> ValidatingNumberOfPoints;
+    public event Action<ValidationEventArgs<string>>? ValidatingNumberOfPoints;
 
-    public event Action ChangedInterpolationMethod;
+    public event Action? ChangedInterpolationMethod;
 
     public InterpolationControl()
     {

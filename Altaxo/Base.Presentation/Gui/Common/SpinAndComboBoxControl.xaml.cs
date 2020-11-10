@@ -55,9 +55,9 @@ namespace Altaxo.Gui.Common
 
     #region IIntegerAndComboBoxView
 
-    public event Action<Collections.SelectableListNode> ComboBoxSelectionChanged;
+    public event Action<Collections.SelectableListNode>? ComboBoxSelectionChanged;
 
-    public event Action<int> IntegerSelectionChanged;
+    public event Action<int>? IntegerSelectionChanged;
 
     public void ComboBox_Initialize(Collections.SelectableListNodeList items, Collections.SelectableListNode defaultItem)
     {

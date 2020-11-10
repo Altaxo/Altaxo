@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       InitializeComponent();
     }
 
-    public event Action TickSpacingTypeChanged;
+    public event Action? TickSpacingTypeChanged;
 
     public void InitializeTickSpacingType(Collections.SelectableListNodeList names)
     {

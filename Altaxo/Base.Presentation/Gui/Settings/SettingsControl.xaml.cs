@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Settings
   public partial class SettingsControl : UserControl, ISettingsView
   {
     /// <summary>Occurs when the current topic view was entered.</summary>
-    public event Action CurrentTopicViewMadeDirty;
+    public event Action? CurrentTopicViewMadeDirty;
 
     public SettingsControl()
     {
@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Settings
         TopicSelectionChanged((Collections.NGTreeNode)e.NewValue);
     }
 
-    public event Action<Collections.NGTreeNode> TopicSelectionChanged;
+    public event Action<Collections.NGTreeNode>? TopicSelectionChanged;
 
     public void InitializeTopics(Collections.NGTreeNodeCollection topics)
     {

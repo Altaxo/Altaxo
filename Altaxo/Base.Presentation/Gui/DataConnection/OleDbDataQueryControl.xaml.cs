@@ -39,13 +39,13 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class OleDbDataQueryControl : UserControl, IOleDbDataQueryView
   {
-    public event Action SelectedTabChanged;
+    public event Action? SelectedTabChanged;
 
-    public event Action CmdChooseConnectionStringFromDialog;
+    public event Action? CmdChooseConnectionStringFromDialog;
 
-    public event Action ConnectionStringSelectedFromList;
+    public event Action? ConnectionStringSelectedFromList;
 
-    public event Action<string> ConnectionStringChangedByUser;
+    public event Action<string>? ConnectionStringChangedByUser;
 
     public OleDbDataQueryControl()
     {

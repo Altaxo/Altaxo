@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
   /// </summary>
   public partial class HemisphericAmbientLightControl : UserControl
   {
-    public event EventHandler ValueChanged;
+    public event EventHandler? ValueChanged;
 
     private double _lightAmplitude;
 

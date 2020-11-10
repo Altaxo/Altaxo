@@ -197,7 +197,7 @@ namespace Altaxo.Gui.Common.Drawing
     private static List<FontComboBoxItem> _allItems = new List<FontComboBoxItem>();
     private static Dictionary<string, FontComboBoxItem> _cachedItems = new Dictionary<string, FontComboBoxItem>();
 
-    public event DependencyPropertyChangedEventHandler SelectedFontFamilyNameChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedFontFamilyNameChanged;
 
     static FontFamilyComboBox()
     {

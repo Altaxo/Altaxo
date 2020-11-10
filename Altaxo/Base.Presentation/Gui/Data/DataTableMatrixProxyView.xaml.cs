@@ -38,27 +38,27 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class DataTableMatrixProxyView : UserControl, IDataTableMatrixProxyView
   {
-    public event Action SelectedTableChanged;
+    public event Action? SelectedTableChanged;
 
-    public event Action SelectedColumnKindChanged;
+    public event Action? SelectedColumnKindChanged;
 
-    public event Action UseSelectedItemAsXColumn;
+    public event Action? UseSelectedItemAsXColumn;
 
-    public event Action UseSelectedItemAsYColumn;
+    public event Action? UseSelectedItemAsYColumn;
 
-    public event Action UseSelectedItemAsVColumns;
+    public event Action? UseSelectedItemAsVColumns;
 
-    public event Action SelectedGroupNumberChanged;
+    public event Action? SelectedGroupNumberChanged;
 
-    public event Action UseAllAvailableDataColumnsChanged;
+    public event Action? UseAllAvailableDataColumnsChanged;
 
-    public event Action UseAllAvailableDataRowsChanged;
+    public event Action? UseAllAvailableDataRowsChanged;
 
-    public event Action ClearXColumn;
+    public event Action? ClearXColumn;
 
-    public event Action ClearYColumn;
+    public event Action? ClearYColumn;
 
-    public event Action ClearVColumns;
+    public event Action? ClearVColumns;
 
     public DataTableMatrixProxyView()
     {

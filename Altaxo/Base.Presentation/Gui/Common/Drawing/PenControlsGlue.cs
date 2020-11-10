@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Common.Drawing
       _userChangedRelEndCapSize = false;
     }
 
-    public event EventHandler PenChanged;
+    public event EventHandler? PenChanged;
 
     protected virtual void OnPenChanged()
     {
@@ -219,7 +219,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    private void EhBrush_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhBrush_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (_pen is not null)
       {
@@ -253,7 +253,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    private void EhDashPattern_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhDashPattern_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (_pen is not null)
       {
@@ -283,7 +283,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    private void EhDashCap_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhDashCap_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (_pen is not null)
       {
@@ -349,7 +349,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    private void EhStartCap_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhStartCap_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (_pen is not null)
       {
@@ -470,7 +470,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    private void EhEndCap_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhEndCap_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (_pen is not null)
       {
@@ -589,7 +589,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    private void EhLineJoin_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhLineJoin_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (_pen is not null)
       {

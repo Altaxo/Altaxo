@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       m_pnPreview.Source = _previewBitmap.WpfBitmap;
     }
 
-    private void EhBackgroundStyleChanged(object sender, EventArgs e)
+    private void EhBackgroundStyleChanged(object? sender, EventArgs e)
     {
       if (_controller is not null)
         _controller.EhView_BackgroundStyleChanged();

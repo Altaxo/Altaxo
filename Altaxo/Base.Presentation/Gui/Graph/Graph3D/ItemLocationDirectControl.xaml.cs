@@ -330,7 +330,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
-    public event Action SizeXChanged;
+    public event Action? SizeXChanged;
 
     private void EhSizeXChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
@@ -339,7 +339,7 @@ namespace Altaxo.Gui.Graph.Graph3D
         actn();
     }
 
-    public event Action SizeYChanged;
+    public event Action? SizeYChanged;
 
     private void EhSizeYChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
@@ -348,7 +348,7 @@ namespace Altaxo.Gui.Graph.Graph3D
         actn();
     }
 
-    public event Action SizeZChanged;
+    public event Action? SizeZChanged;
 
     private void EhSizeZChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
@@ -357,7 +357,7 @@ namespace Altaxo.Gui.Graph.Graph3D
         actn();
     }
 
-    public event Action ScaleXChanged;
+    public event Action? ScaleXChanged;
 
     private void EhScaleXChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
@@ -366,7 +366,7 @@ namespace Altaxo.Gui.Graph.Graph3D
         actn();
     }
 
-    public event Action ScaleYChanged;
+    public event Action? ScaleYChanged;
 
     private void EhScaleYChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
@@ -375,7 +375,7 @@ namespace Altaxo.Gui.Graph.Graph3D
         actn();
     }
 
-    public event Action ScaleZChanged;
+    public event Action? ScaleZChanged;
 
     private void EhScaleZChanged(object sender, DependencyPropertyChangedEventArgs e)
     {

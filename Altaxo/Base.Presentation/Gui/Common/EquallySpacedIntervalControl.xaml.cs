@@ -83,19 +83,19 @@ namespace Altaxo.Gui.Common
 
     #region IEquallySpacedIntervalView
 
-    public event Action<EquallySpacedIntervalSpecificationMethod> MethodChanged;
+    public event Action<EquallySpacedIntervalSpecificationMethod>? MethodChanged;
 
-    public event Action<string> StartChanged;
+    public event Action<string>? StartChanged;
 
-    public event Action<string> EndChanged;
+    public event Action<string>? EndChanged;
 
-    public event Action<string> CountChanged;
+    public event Action<string>? CountChanged;
 
-    public event Action<string> IntervalChanged;
+    public event Action<string>? IntervalChanged;
 
-    public event Action<System.ComponentModel.CancelEventArgs> CountValidating { add { } remove { } }
+    public event Action<System.ComponentModel.CancelEventArgs>? CountValidating { add { } remove { } }
 
-    public event Action<System.ComponentModel.CancelEventArgs> IntervalValidating { add { } remove { } }
+    public event Action<System.ComponentModel.CancelEventArgs>? IntervalValidating { add { } remove { } }
 
     public void EnableEditBoxes(bool start, bool end, bool count, bool interval)
     {

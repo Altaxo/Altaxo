@@ -42,11 +42,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   {
     private PenControlsGlue _linePenGlue;
 
-    public event Action IndependentLineColorChanged;
+    public event Action? IndependentLineColorChanged;
 
-    public event Action UseLineChanged;
+    public event Action? UseLineChanged;
 
-    public event Action LinePenChanged;
+    public event Action? LinePenChanged;
 
     public LinePlotStyleControl()
     {
@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       IndependentLineColorChanged?.Invoke();
     }
 
-    private void EhLinePenChanged(object sender, EventArgs e)
+    private void EhLinePenChanged(object? sender, EventArgs e)
     {
       LinePenChanged?.Invoke();
     }

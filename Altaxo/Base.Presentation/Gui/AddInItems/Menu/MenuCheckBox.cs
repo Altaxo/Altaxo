@@ -54,7 +54,7 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
-    private void cmd_IsCheckedChanged(object sender, EventArgs e)
+    private void cmd_IsCheckedChanged(object? sender, EventArgs e)
     {
       IsChecked = cmd.IsChecked(_caller);
     }

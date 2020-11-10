@@ -107,11 +107,11 @@ namespace Altaxo.Text.Renderers
     /// <summary>
     /// The word document
     /// </summary>
-    public WordprocessingDocument _wordDocument { get; private set; }
+    public WordprocessingDocument? _wordDocument { get; private set; }
     /// <summary>
     /// The main document part of the word document.
     /// </summary>
-    private MainDocumentPart _mainDocumentPart;
+    private MainDocumentPart? _mainDocumentPart;
 
     /// <summary>
     /// Gets the body.
@@ -119,7 +119,7 @@ namespace Altaxo.Text.Renderers
     /// <value>
     /// The body.
     /// </value>
-    protected Body Body { get; private set; }
+    protected Body? Body { get; private set; }
 
 
 
@@ -161,17 +161,17 @@ namespace Altaxo.Text.Renderers
     /// <summary>
     /// This of the figure captions that needs to be replaced by automatic figure numbers.
     /// </summary>
-    public List<((string Name, int Position, int Count) Category, (int Position, int Count) Number, Figure Figure, FigureCaption FigureCaption)> FigureCaptionList { get; private set; }
+    public List<((string Name, int Position, int Count) Category, (int Position, int Count) Number, Figure Figure, FigureCaption FigureCaption)>? FigureCaptionList { get; private set; }
 
     /// <summary>
     /// Gets the list of the figure numbers for each figure in the <see cref="FigureCaptionList"/>.
     /// </summary>
-    public List<int> FigureCaptionIndices { get; private set; }
+    public List<int>? FigureCaptionIndices { get; private set; }
 
     /// <summary>
     /// Gets a list of links which point to figures in the <see cref="FigureCaptionList"/>
     /// </summary>
-    public List<(int CaptionListIndex, (int Position, int Count) Number, LinkInline Link)> FigureLinkList { get; private set; }
+    public List<(int CaptionListIndex, (int Position, int Count) Number, LinkInline Link)>? FigureLinkList { get; private set; }
     public int FigureLinkRandom { get; private set; }
 
     /// <summary>
@@ -331,10 +331,10 @@ namespace Altaxo.Text.Renderers
           }
         }
       }
-      else
+      else // this is a subobject, thus Body should be already initialized.
       {
         Write(markdownObject);
-        return Body;
+        return Body!;
       }
       return Body;
     }

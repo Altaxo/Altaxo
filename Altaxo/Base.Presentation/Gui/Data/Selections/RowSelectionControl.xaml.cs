@@ -46,15 +46,15 @@ namespace Altaxo.Gui.Data.Selections
   /// </summary>
   public partial class RowSelectionControl : UserControl, IRowSelectionView
   {
-    public event Action<int, Type> SelectionTypeChanged;
+    public event Action<int, Type>? SelectionTypeChanged;
 
-    public event Action<int> CmdAddNewSelection;
+    public event Action<int>? CmdAddNewSelection;
 
-    public event Action<int> CmdRemoveSelection;
+    public event Action<int>? CmdRemoveSelection;
 
-    public event Action<int> CmdIndentSelection;
+    public event Action<int>? CmdIndentSelection;
 
-    public event Action<int> CmdUnindentSelection;
+    public event Action<int>? CmdUnindentSelection;
 
     private List<RSEntry> _rowSelections;
 

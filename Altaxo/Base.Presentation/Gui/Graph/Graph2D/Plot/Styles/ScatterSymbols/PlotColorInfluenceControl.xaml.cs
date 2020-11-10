@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles.ScatterSymbols
   /// </summary>
   public partial class PlotColorInfluenceControl : UserControl
   {
-    public event EventHandler SelectedValueChanged;
+    public event EventHandler? SelectedValueChanged;
 
     public PlotColorInfluenceControl()
     {

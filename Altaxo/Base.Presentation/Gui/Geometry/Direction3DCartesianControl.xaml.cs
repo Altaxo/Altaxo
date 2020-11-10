@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Geometry
   {
     private double[] _direction = new double[3];
 
-    public event EventHandler SelectedValueChanged;
+    public event EventHandler? SelectedValueChanged;
 
     private Common.NumericDoubleTextBox[] _guiDirectionBoxes;
 

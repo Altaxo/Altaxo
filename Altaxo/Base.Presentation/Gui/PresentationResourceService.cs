@@ -53,7 +53,7 @@ namespace Altaxo.Gui
       get { return _resourceService is not null; }
     }
 
-    private static void OnLanguageChanged(object sender, EventArgs e)
+    private static void OnLanguageChanged(object? sender, EventArgs e)
     {
       lock (_bitmapCache)
       {

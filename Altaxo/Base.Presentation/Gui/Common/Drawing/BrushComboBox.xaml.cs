@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Common.Drawing
   {
     public static readonly DependencyProperty SelectedBrushProperty;
 
-    public event DependencyPropertyChangedEventHandler SelectedBrushChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedBrushChanged;
 
     private List<BrushX> _lastLocalUsedItems = new List<BrushX>();
 

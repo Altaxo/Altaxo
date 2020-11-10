@@ -88,8 +88,8 @@ namespace Altaxo.Gui.Common
         selItem.Focus();
     }
 
-    public event EventHandler ChildControl_Entered;
+    public event EventHandler? ChildControl_Entered;
 
-    public event EventHandler ChildControl_Validated;
+    public event EventHandler? ChildControl_Validated;
   }
 }

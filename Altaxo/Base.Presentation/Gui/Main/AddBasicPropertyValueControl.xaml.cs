@@ -178,7 +178,7 @@ namespace Altaxo.Gui.Main
       }
     }
 
-    public event Action PropertyTypeChanged;
+    public event Action? PropertyTypeChanged;
 
     private void EhPropertyTypeChanged(object sender, SelectionChangedEventArgs e)
     {

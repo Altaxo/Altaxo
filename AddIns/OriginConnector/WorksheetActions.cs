@@ -148,7 +148,7 @@ namespace Altaxo.Addins.OriginConnector
     public static DataColumn GetAltaxoColumnFromOriginDataFormat(COLDATAFORMAT originColDataFormat)
     {
       // create a column
-      Altaxo.Data.DataColumn destCol = null;
+      Altaxo.Data.DataColumn? destCol = null;
 
       switch (originColDataFormat)
       {
@@ -344,7 +344,7 @@ namespace Altaxo.Addins.OriginConnector
 
       // for every group in our worksheet, make a separate origin worksheet
 
-      var wks = wbk.Layers[0] as Origin.Worksheet;
+      var wks = (Origin.Worksheet)wbk.Layers[0];
       wks.ClearData();
       wks.Cols = 0;
       wks.set_LabelVisible(Origin.LABELTYPEVALS.LT_LONG_NAME, true);
@@ -359,20 +359,20 @@ namespace Altaxo.Addins.OriginConnector
         Origin.Column col = wks.Columns.Add(srcTable.DataColumns.GetColumnName(i));
         col.LongName = srcTable.DataColumns.GetColumnName(i);
 
-        if (srcCol is DoubleColumn)
+        if (srcCol is DoubleColumn dblCol)
         {
           col.DataFormat = COLDATAFORMAT.DF_DOUBLE;
-          col.SetData((srcCol as DoubleColumn).Array);
+          col.SetData(dblCol.Array);
         }
-        else if (srcCol is DateTimeColumn)
+        else if (srcCol is DateTimeColumn dtCol)
         {
           col.DataFormat = COLDATAFORMAT.DF_DATE;
-          col.SetData((srcCol as DateTimeColumn).Array);
+          col.SetData(dtCol.Array);
         }
-        else if (srcCol is TextColumn)
+        else if (srcCol is TextColumn textCol)
         {
           col.DataFormat = COLDATAFORMAT.DF_TEXT;
-          col.SetData((srcCol as TextColumn).Array);
+          col.SetData(textCol.Array);
         }
         else
         {
@@ -561,10 +561,10 @@ namespace Altaxo.Addins.OriginConnector
         if (altaxoColumnKind == Altaxo.Data.ColumnKind.X)
           groupNumber++;
 
-        if (destCol is DoubleColumn)
+        if (destCol is DoubleColumn dblCol)
         {
           var data = srcCol.GetData(Origin.ARRAYDATAFORMAT.ARRAY1D_NUMERIC, 0, -1, 0);
-          (destCol as DoubleColumn).Array = (double[])data;
+          dblCol.Array = (double[])data;
         }
         else if (destCol is DateTimeColumn)
         {
@@ -582,7 +582,7 @@ namespace Altaxo.Addins.OriginConnector
 
           var destColNum = new Altaxo.Data.DoubleColumn();
 
-          object[] oarr;
+          object[]? oarr;
           if ((oarr = data as object[]) is not null)
           {
             int numberOfNums = 0;
@@ -607,15 +607,15 @@ namespace Altaxo.Addins.OriginConnector
             }
           }
         }
-        else if (destCol is TextColumn)
+        else if (destCol is TextColumn textCol)
         {
           var data = srcCol.GetData(Origin.ARRAYDATAFORMAT.ARRAY1D_TEXT, 0, -1, 0);
-          string[] sarr;
-          object[] oarr;
+          string[]? sarr;
+          object[]? oarr;
 
           if ((sarr = data as string[]) is not null)
           {
-            (destCol as TextColumn).Array = sarr;
+            textCol.Array = sarr;
           }
           else if ((oarr = data as object[]) is not null)
           {
@@ -651,7 +651,7 @@ namespace Altaxo.Addins.OriginConnector
 
       var labelCols = new Dictionary<string, Altaxo.Data.TextColumn>();
 
-      DataColumn destLongNameCol = null, destUnitCol = null, destCommentCol = null;
+      DataColumn? destLongNameCol = null, destUnitCol = null, destCommentCol = null;
       var paraCol = new DataColumn[20];
 
       var srcDataCols = wks.Cols;
@@ -695,7 +695,7 @@ namespace Altaxo.Addins.OriginConnector
       return result;
     }
 
-    public static string GetTable(this OriginConnection conn, string originWorksheetName, Altaxo.Data.DataTable destTable)
+    public static string? GetTable(this OriginConnection conn, string originWorksheetName, Altaxo.Data.DataTable destTable)
     {
       if (!conn.IsConnected())
         return "Not connected to Origin";
@@ -711,9 +711,9 @@ namespace Altaxo.Addins.OriginConnector
       return GetTable(wbk, destTable);
     }
 
-    public static string GetTable(Origin.WorksheetPage wbk, Altaxo.Data.DataTable destTable)
+    public static string? GetTable(Origin.WorksheetPage wbk, Altaxo.Data.DataTable destTable)
     {
-      var wks = wbk.Layers[0] as Origin.Worksheet;
+      var wks = (Origin.Worksheet)wbk.Layers[0];
 
       var dataTemplate = GetDataColumns(wks);
       var propCols = GetPropertyColumns(wks);

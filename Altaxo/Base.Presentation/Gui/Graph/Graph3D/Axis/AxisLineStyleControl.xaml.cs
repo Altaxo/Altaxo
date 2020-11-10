@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       _linePenGlue.PenChanged += new EventHandler(EhLinePen_Changed);
     }
 
-    private void EhLinePen_Changed(object sender, EventArgs e)
+    private void EhLinePen_Changed(object? sender, EventArgs e)
     {
       if (false == _chkCustomMajorColor.IsChecked)
       {

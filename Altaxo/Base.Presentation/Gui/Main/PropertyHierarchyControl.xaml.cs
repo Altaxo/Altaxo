@@ -37,15 +37,15 @@ namespace Altaxo.Gui.Main
   /// </summary>
   public partial class PropertyHierarchyControl : UserControl, IPropertyHierarchyView
   {
-    public event Action ItemEditing;
+    public event Action? ItemEditing;
 
-    public event Action ItemRemoving;
+    public event Action? ItemRemoving;
 
-    public event Action PropertyCreation;
+    public event Action? PropertyCreation;
 
-    public event Action AddNewBasicProperty;
+    public event Action? AddNewBasicProperty;
 
-    public event Action<bool> ShowAllPropertiesChanged;
+    public event Action<bool>? ShowAllPropertiesChanged;
 
     public PropertyHierarchyControl()
     {

@@ -55,9 +55,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     #region IDensityImagePlotItemOptionView
 
-    public event Action CopyImageToClipboard;
+    public event Action? CopyImageToClipboard;
 
-    public event Action SaveImageToDisc;
+    public event Action? SaveImageToDisc;
 
     #endregion IDensityImagePlotItemOptionView
   }

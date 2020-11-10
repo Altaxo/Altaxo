@@ -43,9 +43,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
   /// </summary>
   public partial class CumulativeProbabilityScaleRescaleConditionsControl : UserControl, ICumulativeProbabilityScaleRescaleConditionsView
   {
-    public event Action OrgValueChanged;
+    public event Action? OrgValueChanged;
 
-    public event Action EndValueChanged;
+    public event Action? EndValueChanged;
 
     public CumulativeProbabilityScaleRescaleConditionsControl()
     {

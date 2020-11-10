@@ -99,9 +99,9 @@ namespace Altaxo.Gui.Common.Drawing
     private ObservableCollection<ImageComboBoxItem> _syntheticItems = new ObservableCollection<ImageComboBoxItem>();
     private ObservableCollection<ImageComboBoxItem> _currentItemsSource;
 
-    public event DependencyPropertyChangedEventHandler TextureImageChanged;
+    public event DependencyPropertyChangedEventHandler? TextureImageChanged;
 
-    public event DependencyPropertyChangedEventHandler TextureImageTypeChanged;
+    public event DependencyPropertyChangedEventHandler? TextureImageTypeChanged;
 
     static TextureImageComboBox()
     {

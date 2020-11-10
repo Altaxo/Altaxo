@@ -257,9 +257,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
     }
 
-    public event Action<string, System.ComponentModel.CancelEventArgs> DivideByValidating;
+    public event Action<string, System.ComponentModel.CancelEventArgs>? DivideByValidating;
 
-    public event Action<bool> TransfoOperationChanged;
+    public event Action<bool>? TransfoOperationChanged;
 
     #endregion ILinearTickSpacingView
 

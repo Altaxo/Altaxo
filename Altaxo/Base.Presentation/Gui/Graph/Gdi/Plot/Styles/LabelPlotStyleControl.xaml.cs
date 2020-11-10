@@ -48,17 +48,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private BackgroundControlsGlue _backgroundGlue;
 
-    public event Action LabelColumnSelected;
+    public event Action? LabelColumnSelected;
 
-    public event Action LabelColorLinkageChanged;
+    public event Action? LabelColorLinkageChanged;
 
-    public event Action BackgroundColorLinkageChanged;
+    public event Action? BackgroundColorLinkageChanged;
 
-    public event Action LabelBrushChanged;
+    public event Action? LabelBrushChanged;
 
-    public event Action BackgroundBrushChanged;
+    public event Action? BackgroundBrushChanged;
 
-    public event Action UseBackgroundChanged;
+    public event Action? UseBackgroundChanged;
 
     public LabelPlotStyleControl()
     {
@@ -415,7 +415,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         LabelBrushChanged();
     }
 
-    private void EhBackgroundBrushChanged(object sender, EventArgs e)
+    private void EhBackgroundBrushChanged(object? sender, EventArgs e)
     {
       if (BackgroundBrushChanged is not null)
         BackgroundBrushChanged();
@@ -437,7 +437,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       set { _backgroundGlue.ShowPlotColorsOnly = value; }
     }
 
-    private void EhBackgroundStyleInstanceChanged(object sender, EventArgs e)
+    private void EhBackgroundStyleInstanceChanged(object? sender, EventArgs e)
     {
       if (UseBackgroundChanged is not null)
         UseBackgroundChanged();

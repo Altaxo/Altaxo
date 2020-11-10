@@ -41,17 +41,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   {
     private PenControlsGlue _framePenGlue;
 
-    public event Action IndependentFillColorChanged;
+    public event Action? IndependentFillColorChanged;
 
-    public event Action IndependentFrameColorChanged;
+    public event Action? IndependentFrameColorChanged;
 
-    public event Action UseFillChanged;
+    public event Action? UseFillChanged;
 
-    public event Action UseFrameChanged;
+    public event Action? UseFrameChanged;
 
-    public event Action FillBrushChanged;
+    public event Action? FillBrushChanged;
 
-    public event Action FramePenChanged;
+    public event Action? FramePenChanged;
 
     public BarGraphPlotStyleControl()
     {
@@ -265,7 +265,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         FillBrushChanged();
     }
 
-    private void EhFramePenChanged(object sender, EventArgs e)
+    private void EhFramePenChanged(object? sender, EventArgs e)
     {
       if (FramePenChanged is not null)
         FramePenChanged();

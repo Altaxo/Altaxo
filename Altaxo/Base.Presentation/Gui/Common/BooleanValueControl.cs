@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Common
       IsChecked = value;
     }
 
-    public event Action<bool> Bool1Changed;
+    public event Action<bool>? Bool1Changed;
 
     protected override void OnChecked(System.Windows.RoutedEventArgs e)
     {

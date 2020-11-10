@@ -113,9 +113,9 @@ namespace Altaxo.Gui.Common
 
     #region IFreeTextChoiceView
 
-    public event Action<int> SelectionChangeCommitted;
+    public event Action<int>? SelectionChangeCommitted;
 
-    public event Action<string, System.ComponentModel.CancelEventArgs> TextValidating;
+    public event Action<string, System.ComponentModel.CancelEventArgs>? TextValidating;
 
     public void SetDescription(string value)
     {

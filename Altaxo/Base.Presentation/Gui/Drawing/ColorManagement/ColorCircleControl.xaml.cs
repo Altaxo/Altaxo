@@ -47,23 +47,23 @@ namespace Altaxo.Gui.Drawing.ColorManagement
   /// </summary>
   public partial class ColorCircleControl : UserControl, IColorCircleView
   {
-    public event Action ColorModelSelectionChanged;
+    public event Action? ColorModelSelectionChanged;
 
-    public event Action TextOnlyColorModelSelectionChanged;
+    public event Action? TextOnlyColorModelSelectionChanged;
 
-    public event Action<AxoColor> CurrentColorChanged;
+    public event Action<AxoColor>? CurrentColorChanged;
 
-    public event Action ColorCircleModelChanged;
+    public event Action? ColorCircleModelChanged;
 
-    public event Action ColorVariationModelChanged;
+    public event Action? ColorVariationModelChanged;
 
     /// <summary>
     /// Occurs when at least one of the hue values of the color circle has changed. Argument is the list of hue values of the circle, with the first item
     /// always representing the main hue value.
     /// </summary>
-    public event Action<IReadOnlyList<double>> HueValuesChanged;
+    public event Action<IReadOnlyList<double>>? HueValuesChanged;
 
-    public event Action<int> NumberOfColorShadesChanged;
+    public event Action<int>? NumberOfColorShadesChanged;
 
     private DecimalUpDown[] _guiComponents = new DecimalUpDown[4];
     private TextBox[] _guiAltComponents = new TextBox[4];

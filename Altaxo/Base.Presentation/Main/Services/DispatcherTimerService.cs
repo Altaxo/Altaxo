@@ -36,12 +36,12 @@ namespace Altaxo.Main.Services
   /// <seealso cref="Altaxo.Main.Services.IGuiTimerService" />
   public class DispatcherTimerService : IGuiTimerService
   {
-    private DispatcherTimer _timer;
+    private DispatcherTimer? _timer;
     private int _timersCurrentIntervalMillisecond;
-    private GuiTimerServiceHandler _tickEvery10ms;
-    private GuiTimerServiceHandler _tickEvery100ms;
+    private GuiTimerServiceHandler? _tickEvery10ms;
+    private GuiTimerServiceHandler? _tickEvery100ms;
     private int _tick100ms_Milliseconds_till_Tick;
-    private GuiTimerServiceHandler _tickEvery1000ms;
+    private GuiTimerServiceHandler? _tickEvery1000ms;
     private int _tick1000ms_Milliseconds_till_Tick;
 
     private object _timerCreatorLock = new object();
@@ -49,7 +49,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// A Gui timer tick that occurs every 10 ms.
     /// </summary>
-    public event GuiTimerServiceHandler TickEvery10ms
+    public event GuiTimerServiceHandler? TickEvery10ms
     {
       add
       {
@@ -74,7 +74,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// A Gui timer tick that occurs every 100 ms.
     /// </summary>
-    public event GuiTimerServiceHandler TickEvery100ms
+    public event GuiTimerServiceHandler? TickEvery100ms
     {
       add
       {
@@ -99,7 +99,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// A Gui timer tick that occurs every 1000 ms.
     /// </summary>
-    public event GuiTimerServiceHandler TickEvery1000ms
+    public event GuiTimerServiceHandler? TickEvery1000ms
     {
       add
       {
@@ -121,7 +121,7 @@ namespace Altaxo.Main.Services
       }
     }
 
-    private void EhTimerTick(object sender, EventArgs e)
+    private void EhTimerTick(object? sender, EventArgs e)
     {
       var utcNow = DateTime.UtcNow;
       _tickEvery10ms?.Invoke(utcNow);

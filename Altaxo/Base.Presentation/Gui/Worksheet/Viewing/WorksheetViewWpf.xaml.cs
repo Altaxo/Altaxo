@@ -47,11 +47,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     #region Cell edit
 
-    public event Action CellEdit_LostFocus;
+    public event Action? CellEdit_LostFocus;
 
-    public event Action<AltaxoKeyboardKey, HandledEventArgs> CellEdit_PreviewKeyPressed;
+    public event Action<AltaxoKeyboardKey, HandledEventArgs>? CellEdit_PreviewKeyPressed;
 
-    public event Action CellEdit_TextChanged;
+    public event Action? CellEdit_TextChanged;
 
 #pragma warning disable CS0414 // Remove unread private members
     private bool _cellEdit_IsArmed;

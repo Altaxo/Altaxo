@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Common
       _instanceHost.Child = instanceControl as UIElement;
     }
 
-    public event EventHandler TypeChoiceChanged;
+    public event EventHandler? TypeChoiceChanged;
   }
 
   #endregion ITypeAndInstanceView

@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
   /// </summary>
   public partial class ColorProviderAHSBGradientControl : UserControl, IColorProviderAHSBGradientView
   {
-    public event Action ChoiceChanged;
+    public event Action? ChoiceChanged;
 
     public ColorProviderAHSBGradientControl()
     {

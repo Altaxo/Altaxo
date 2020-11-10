@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    public event Action ScalingModeChanged;
+    public event Action? ScalingModeChanged;
 
     public AspectRatioPreservingMode AspectPreserving
     {
@@ -127,7 +127,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    public event Action AspectPreservingChanged;
+    public event Action? AspectPreservingChanged;
 
     public double XScale
     {
@@ -177,9 +177,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    public event Action XChanged;
+    public event Action? XChanged;
 
-    public event Action YChanged;
+    public event Action? YChanged;
 
     public bool ShowSizeNotScale
     {

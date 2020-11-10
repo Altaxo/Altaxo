@@ -36,23 +36,23 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
   /// </summary>
   public partial class PlotGroupCollectionControlAdvanced : UserControl, IPlotGroupCollectionViewAdvanced, Altaxo.Gui.Graph.Graph3D.Plot.Groups.IPlotGroupCollectionViewAdvanced
   {
-    public event Action CoordinateTransformingGroupStyleChanged;
+    public event Action? CoordinateTransformingGroupStyleChanged;
 
-    public event Action RequestCoordinateTransformingGroupStyleEdit;
+    public event Action? RequestCoordinateTransformingGroupStyleEdit;
 
-    public event Action RequestAddNormalGroupStyle;
+    public event Action? RequestAddNormalGroupStyle;
 
-    public event Action RequestRemoveNormalGroupStyle;
+    public event Action? RequestRemoveNormalGroupStyle;
 
-    public event Action RequestIndentGroupStyle;
+    public event Action? RequestIndentGroupStyle;
 
-    public event Action RequestUnindentGroupStyle;
+    public event Action? RequestUnindentGroupStyle;
 
-    public event Action RequestMoveUpGroupStyle;
+    public event Action? RequestMoveUpGroupStyle;
 
-    public event Action RequestMoveDownGroupStyle;
+    public event Action? RequestMoveDownGroupStyle;
 
-    public event Action RequestGroupStyleDoubleClick;
+    public event Action? RequestGroupStyleDoubleClick;
 
     public PlotGroupCollectionControlAdvanced()
     {

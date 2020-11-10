@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #region IFunctionPlotDataView Members
 
-    public event EventHandler EditText;
+    public event EventHandler? EditText;
 
     public void InitializeFunctionText(string text, bool editable)
     {

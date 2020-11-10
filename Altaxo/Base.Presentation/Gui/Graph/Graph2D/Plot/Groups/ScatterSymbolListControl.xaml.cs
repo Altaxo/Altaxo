@@ -342,21 +342,21 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
     #region New Interface
 
-    public event Action<double> StructureWithForAllSelected;
+    public event Action<double>? StructureWithForAllSelected;
 
-    public event Action<Type> ShapeForAllSelected;
+    public event Action<Type>? ShapeForAllSelected;
 
-    public event Action<Type> FrameForAllSelected;
+    public event Action<Type>? FrameForAllSelected;
 
-    public event Action<Type> InsetForAllSelected;
+    public event Action<Type>? InsetForAllSelected;
 
-    public event Action<PlotColorInfluence> PlotColorInfluenceForAllSelected;
+    public event Action<PlotColorInfluence>? PlotColorInfluenceForAllSelected;
 
-    public event Action<NamedColor> FillColorForAllSelected;
+    public event Action<NamedColor>? FillColorForAllSelected;
 
-    public event Action<NamedColor> FrameColorForAllSelected;
+    public event Action<NamedColor>? FrameColorForAllSelected;
 
-    public event Action<NamedColor> InsetColorForAllSelected;
+    public event Action<NamedColor>? InsetColorForAllSelected;
 
     #endregion New Interface
 

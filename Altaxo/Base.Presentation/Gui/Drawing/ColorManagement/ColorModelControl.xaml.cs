@@ -60,11 +60,11 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     public AxoColor CurrentColor { get { return _currentColor; } }
 
-    public event Action ColorModelSelectionChanged;
+    public event Action? ColorModelSelectionChanged;
 
-    public event Action TextOnlyColorModelSelectionChanged;
+    public event Action? TextOnlyColorModelSelectionChanged;
 
-    public event Action<AxoColor> CurrentColorChanged;
+    public event Action<AxoColor>? CurrentColorChanged;
 
     public bool _isLoaded;
 

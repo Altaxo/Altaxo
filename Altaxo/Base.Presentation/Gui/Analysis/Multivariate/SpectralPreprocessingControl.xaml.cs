@@ -157,11 +157,11 @@ namespace Altaxo.Gui.Worksheet
       _chkEnsembleScale.IsChecked = ensScale;
     }
 
-    public event Action<SpectralPreprocessingMethod> MethodChanged;
+    public event Action<SpectralPreprocessingMethod>? MethodChanged;
 
-    public event Action<int> DetrendingChanged;
+    public event Action<int>? DetrendingChanged;
 
-    public event Action<bool> EnsembleScaleChanged;
+    public event Action<bool>? EnsembleScaleChanged;
 
     #endregion ISpectralPreprocessingView
   }

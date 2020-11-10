@@ -111,11 +111,11 @@ namespace Altaxo.Gui.Graph.Scales
       _tickSpacingGroupBox.Content = guiobject as UIElement;
     }
 
-    public event Action ScaleTypeChanged;
+    public event Action? ScaleTypeChanged;
 
-    public event Action TickSpacingTypeChanged;
+    public event Action? TickSpacingTypeChanged;
 
-    public event Action LinkTargetChanged;
+    public event Action? LinkTargetChanged;
 
     #endregion IAxisScaleView
 

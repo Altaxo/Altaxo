@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Occurs when editing is finished.
     /// </summary>
-    public event EventHandler EditingFinished;
+    public event EventHandler? EditingFinished;
 
     #endregion Member variables
 
@@ -114,7 +114,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// When the layout has finished, update the focus status and the selection of the TextBox
     /// </summary>
-    private void EhTextBox_LayoutUpdated(object sender, EventArgs e)
+    private void EhTextBox_LayoutUpdated(object? sender, EventArgs e)
     {
       _textBox.LayoutUpdated -= EhTextBox_LayoutUpdated;
       _textBox.Focus();

@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Common
       ComputeAutoTooltip(textBlock);
     }
 
-    private static void EhTextBlockTextChanged(object sender, EventArgs e)
+    private static void EhTextBlockTextChanged(object? sender, EventArgs e)
     {
       var textBlock = sender as TextBlock;
       ComputeAutoTooltip(textBlock);

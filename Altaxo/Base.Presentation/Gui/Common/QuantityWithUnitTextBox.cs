@@ -39,9 +39,9 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class QuantityWithUnitTextBox : TextBox, IDimensionfulQuantityView
   {
-    public event DependencyPropertyChangedEventHandler SelectedQuantityChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedQuantityChanged;
 
-    public event DependencyPropertyChangedEventHandler SelectedQuantityWithUnitEnvironmentChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedQuantityWithUnitEnvironmentChanged;
 
     private QuantityWithUnitConverter _converter;
 
@@ -246,9 +246,9 @@ namespace Altaxo.Gui.Common
 
     #region IDimensionfulQuantityView
 
-    private event Action DimensionfulQuantityView_QuantityChanged;
+    private event Action? DimensionfulQuantityView_QuantityChanged;
 
-    event Action IDimensionfulQuantityView.SelectedQuantityChanged
+    event Action? IDimensionfulQuantityView.SelectedQuantityChanged
     {
       add { DimensionfulQuantityView_QuantityChanged += value; }
       remove { DimensionfulQuantityView_QuantityChanged -= value; }

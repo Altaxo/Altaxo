@@ -36,9 +36,9 @@ namespace Altaxo.Gui.Graph.Graph3D
   /// </summary>
   public partial class HostLayerControl : UserControl, IHostLayerView
   {
-    public event Action<string> PageChanged;
+    public event Action<string>? PageChanged;
 
-    public event System.ComponentModel.CancelEventHandler TabValidating;
+    public event System.ComponentModel.CancelEventHandler? TabValidating;
 
     public HostLayerControl()
     {

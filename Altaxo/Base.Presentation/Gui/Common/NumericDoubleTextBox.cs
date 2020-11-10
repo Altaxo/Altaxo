@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Common
 {
   public class NumericDoubleTextBox : TextBox
   {
-    public event DependencyPropertyChangedEventHandler SelectedValueChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedValueChanged;
 
     private NumericDoubleConverter _converter;
 

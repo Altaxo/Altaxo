@@ -45,15 +45,15 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// </summary>
   public partial class FitFunctionSelectionControl : UserControl, IFitFunctionSelectionView
   {
-    public event Action<IFitFunctionInformation> SelectionChanged;
+    public event Action<IFitFunctionInformation>? SelectionChanged;
 
-    public event Action<IFitFunctionInformation> ItemDoubleClicked;
+    public event Action<IFitFunctionInformation>? ItemDoubleClicked;
 
-    public event Action<IFitFunctionInformation> EditItem;
+    public event Action<IFitFunctionInformation>? EditItem;
 
-    public event Action<IFitFunctionInformation> EditCopyOfItem;
+    public event Action<IFitFunctionInformation>? EditCopyOfItem;
 
-    public event Action<IFitFunctionInformation> RemoveItem;
+    public event Action<IFitFunctionInformation>? RemoveItem;
 
     #region Node classes
 

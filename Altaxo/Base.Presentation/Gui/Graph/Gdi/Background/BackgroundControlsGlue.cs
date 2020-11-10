@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Graph.Gdi.Background
     /// <summary>
     /// Occurs when the background style instance changed to another instance. This event is <b>not</b> fired when only members of the background style changed (e.g. the brush).
     /// </summary>
-    public event EventHandler BackgroundStyleChanged;
+    public event EventHandler? BackgroundStyleChanged;
 
     protected virtual void OnBackgroundStyleChanged()
     {
@@ -128,7 +128,7 @@ namespace Altaxo.Gui.Graph.Gdi.Background
     /// <summary>
     /// Occurs when the background brush changed.
     /// </summary>
-    public event EventHandler BackgroundBrushChanged;
+    public event EventHandler? BackgroundBrushChanged;
 
     protected virtual void OnBackgroundBrushChanged()
     {

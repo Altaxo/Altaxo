@@ -41,17 +41,17 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   /// </summary>
   public partial class CardinalSplinePointsControl : UserControl, ICardinalSplinePointsView
   {
-    public event Action CurvePointsCopyTriggered;
+    public event Action? CurvePointsCopyTriggered;
 
-    public event Action CurvePointsCopyAsPhysicalTriggered;
+    public event Action? CurvePointsCopyAsPhysicalTriggered;
 
-    public event Action CurvePointsCopyAsLogicalTriggered;
+    public event Action? CurvePointsCopyAsLogicalTriggered;
 
-    public event Action CurvePointsPasteTriggered;
+    public event Action? CurvePointsPasteTriggered;
 
-    public event Action CurvePointsPastePhysicalTriggered;
+    public event Action? CurvePointsPastePhysicalTriggered;
 
-    public event Action CurvePointsPasteLogicalTriggered;
+    public event Action? CurvePointsPasteLogicalTriggered;
 
     public CardinalSplinePointsControl()
     {

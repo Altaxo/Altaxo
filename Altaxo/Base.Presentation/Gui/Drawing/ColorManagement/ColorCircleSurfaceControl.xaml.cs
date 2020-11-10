@@ -64,7 +64,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     /// Occurs when at least one of the hue values of the color circle has changed. Argument is the list of hue values of the circle, with the first item
     /// always representing the main hue value.
     /// </summary>
-    public event Action<IReadOnlyList<double>> HueValuesChanged;
+    public event Action<IReadOnlyList<double>>? HueValuesChanged;
 
     public ColorCircleSurfaceControl()
     {

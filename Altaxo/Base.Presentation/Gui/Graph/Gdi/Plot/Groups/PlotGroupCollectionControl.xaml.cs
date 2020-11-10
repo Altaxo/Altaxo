@@ -55,9 +55,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     #region IPlotGroupCollectionView
 
-    public event Action GotoAdvanced;
+    public event Action? GotoAdvanced;
 
-    public event Action GotoSimple;
+    public event Action? GotoSimple;
 
     public void SetSimpleView(object viewObject)
     {

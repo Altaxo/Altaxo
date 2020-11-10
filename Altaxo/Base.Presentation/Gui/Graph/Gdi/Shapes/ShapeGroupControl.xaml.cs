@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       GuiHelper.Initialize(_guiShapeGroupItems, list);
     }
 
-    public event Action SelectedItemEditing;
+    public event Action? SelectedItemEditing;
 
     private void EhItemListDoubleClick(object sender, MouseButtonEventArgs e)
     {

@@ -91,13 +91,13 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
-    public event Action ShowAxisLineChanged;
+    public event Action? ShowAxisLineChanged;
 
-    public event Action ShowMajorLabelsChanged;
+    public event Action? ShowMajorLabelsChanged;
 
-    public event Action ShowMinorLabelsChanged;
+    public event Action? ShowMinorLabelsChanged;
 
-    public event Action ShowCustomTickSpacingChanged;
+    public event Action? ShowCustomTickSpacingChanged;
 
     public object LineStyleView
     {

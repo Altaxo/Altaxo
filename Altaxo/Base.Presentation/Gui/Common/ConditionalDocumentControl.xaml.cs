@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    public event Action ConditionalViewEnabledChanged;
+    public event Action? ConditionalViewEnabledChanged;
 
     public object ConditionalView
     {

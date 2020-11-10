@@ -43,9 +43,9 @@ namespace Altaxo.Gui.Analysis.Statistics
   /// </summary>
   public partial class HistogramCreationControl : UserControl, IHistogramCreationView
   {
-    public event Action BinningTypeChanged;
+    public event Action? BinningTypeChanged;
 
-    public event Action AutomaticBinningTypeChanged;
+    public event Action? AutomaticBinningTypeChanged;
 
     public HistogramCreationControl()
     {

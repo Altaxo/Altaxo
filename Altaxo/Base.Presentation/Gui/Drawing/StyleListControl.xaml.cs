@@ -45,47 +45,47 @@ namespace Altaxo.Gui.Drawing
   /// </summary>
   public partial class StyleListControl : UserControl, IStyleListView
   {
-    public event Action<NGTreeNode> AvailableLists_SelectionChanged;
+    public event Action<NGTreeNode>? AvailableLists_SelectionChanged;
 
-    public event Action CurrentItemListName_Changed;
+    public event Action? CurrentItemListName_Changed;
 
-    public event CanStartDragDelegate AvailableItems_CanStartDrag;
+    public event CanStartDragDelegate? AvailableItems_CanStartDrag;
 
-    public event StartDragDelegate AvailableItems_StartDrag;
+    public event StartDragDelegate? AvailableItems_StartDrag;
 
-    public event DragEndedDelegate AvailableItems_DragEnded;
+    public event DragEndedDelegate? AvailableItems_DragEnded;
 
-    public event DragCancelledDelegate AvailableItems_DragCancelled;
+    public event DragCancelledDelegate? AvailableItems_DragCancelled;
 
-    public event DropCanAcceptDataDelegate AvailableItems_DropCanAcceptData;
+    public event DropCanAcceptDataDelegate? AvailableItems_DropCanAcceptData;
 
-    public event DropDelegate AvailableItems_Drop;
+    public event DropDelegate? AvailableItems_Drop;
 
-    public event CanStartDragDelegate CurrentItems_CanStartDrag;
+    public event CanStartDragDelegate? CurrentItems_CanStartDrag;
 
-    public event StartDragDelegate CurrentItems_StartDrag;
+    public event StartDragDelegate? CurrentItems_StartDrag;
 
-    public event DragEndedDelegate CurrentItems_DragEnded;
+    public event DragEndedDelegate? CurrentItems_DragEnded;
 
-    public event DragCancelledDelegate CurrentItems_DragCancelled;
+    public event DragCancelledDelegate? CurrentItems_DragCancelled;
 
-    public event DropCanAcceptDataDelegate CurrentItems_DropCanAcceptData;
+    public event DropCanAcceptDataDelegate? CurrentItems_DropCanAcceptData;
 
-    public event DropDelegate CurrentItems_Drop;
+    public event DropDelegate? CurrentItems_Drop;
 
     public bool StoreInUserSettings { get { return true == _guiStoreInUserSettings.IsChecked; } set { _guiStoreInUserSettings.IsChecked = value; } }
 
-    public event Action AvailableItem_AddToCurrent;
+    public event Action? AvailableItem_AddToCurrent;
 
-    public event Action CurrentItem_MoveUp;
+    public event Action? CurrentItem_MoveUp;
 
-    public event Action CurrentItem_MoveDown;
+    public event Action? CurrentItem_MoveDown;
 
-    public event Action CurrentItem_Remove;
+    public event Action? CurrentItem_Remove;
 
-    public event Action CurrentItem_Edit;
+    public event Action? CurrentItem_Edit;
 
-    public event Action CurrentList_Store;
+    public event Action? CurrentList_Store;
 
     public StyleListControl()
     {

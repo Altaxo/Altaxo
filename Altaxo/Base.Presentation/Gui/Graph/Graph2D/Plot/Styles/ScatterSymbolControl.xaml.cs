@@ -143,21 +143,21 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
       }
     }
 
-    public event Action<NamedColor> FillColorChanged;
+    public event Action<NamedColor>? FillColorChanged;
 
-    public event Action<Type> FrameChanged;
+    public event Action<Type>? FrameChanged;
 
-    public event Action<NamedColor> FrameColorChanged;
+    public event Action<NamedColor>? FrameColorChanged;
 
-    public event Action<Type> InsetChanged;
+    public event Action<Type>? InsetChanged;
 
-    public event Action<NamedColor> InsetColorChanged;
+    public event Action<NamedColor>? InsetColorChanged;
 
-    public event Action<PlotColorInfluence> PlotColorInfluenceChanged;
+    public event Action<PlotColorInfluence>? PlotColorInfluenceChanged;
 
-    public event Action<double> RelativeStructureWidthChanged;
+    public event Action<double>? RelativeStructureWidthChanged;
 
-    public event Action<Type> ShapeChanged;
+    public event Action<Type>? ShapeChanged;
 
     private void EhShapeChanged(object sender, SelectionChangedEventArgs e)
     {

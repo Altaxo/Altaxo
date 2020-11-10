@@ -42,19 +42,19 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   {
     private PenControlsGlue _framePenGlue;
 
-    public event Action IndependentLineColorChanged { add { } remove { } }
+    public event Action? IndependentLineColorChanged { add { } remove { } }
 
-    public event Action UseLineChanged;
+    public event Action? UseLineChanged;
 
-    public event Action LinePenChanged { add { } remove { } }
+    public event Action? LinePenChanged { add { } remove { } }
 
-    public event Action FillColorLinkageChanged;
+    public event Action? FillColorLinkageChanged;
 
-    public event Action FrameColorLinkageChanged;
+    public event Action? FrameColorLinkageChanged;
 
-    public event Action FillBrushChanged;
+    public event Action? FillBrushChanged;
 
-    public event Action FramePenChanged;
+    public event Action? FramePenChanged;
 
     public DropAreaPlotStyleControl()
     {
@@ -168,7 +168,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
-    private void EhFramePenChanged(object sender, EventArgs e)
+    private void EhFramePenChanged(object? sender, EventArgs e)
     {
       FramePenChanged?.Invoke();
     }

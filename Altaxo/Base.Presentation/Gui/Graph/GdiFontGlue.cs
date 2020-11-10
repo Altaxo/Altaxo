@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public event EventHandler SelectedFontChanged;
+    public event EventHandler? SelectedFontChanged;
 
     public FontX SelectedFont
     {

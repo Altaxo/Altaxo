@@ -297,7 +297,7 @@ namespace Altaxo.Gui
 
     #endregion IDisposable Members
 
-    public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
     public virtual void OnPropertyChanged(string name)
     {

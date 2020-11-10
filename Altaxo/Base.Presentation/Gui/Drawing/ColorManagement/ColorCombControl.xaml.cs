@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       { _selectedColor = value; }
     }
 
-    public event EventHandler<ColorEventArgs> ColorSelected;
+    public event EventHandler<ColorEventArgs>? ColorSelected;
 
     //
     // Implementation

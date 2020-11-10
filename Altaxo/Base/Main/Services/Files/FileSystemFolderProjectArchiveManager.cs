@@ -34,7 +34,7 @@ namespace Altaxo.Main.Services.Files
 {
   public class FileSystemFolderProjectArchiveManager : IFolderBasedProjectArchiveManager
   {
-    private DirectoryName _folderName;
+    private DirectoryName? _folderName;
     private bool _isDisposed;
 
     public PathName? FileOrFolderName => _folderName;
@@ -71,6 +71,9 @@ namespace Altaxo.Main.Services.Files
 
     public void Save(SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState)
     {
+      if (_folderName is null)
+        throw new InvalidOperationException("FolderName is not yet set. Please use SaveAs in this case.");
+
       EnsureDirectoryCreatedAndEmpty(_folderName);
       using (var archive = new FileSystemFolderAsProjectArchive(_folderName))
       {
@@ -103,6 +106,9 @@ namespace Altaxo.Main.Services.Files
 
     public IProjectArchive GetArchiveReadOnlyThreadSave(object claimer)
     {
+      if (_folderName is null)
+        throw new InvalidProgramException();
+
       return new FileSystemFolderAsProjectArchive(_folderName);
     }
 

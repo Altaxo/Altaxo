@@ -44,13 +44,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   /// </summary>
   public partial class ScatterPlotStyleControl : UserControl, IScatterPlotStyleView
   {
-    public event Action IndependentColorChanged;
+    public event Action? IndependentColorChanged;
 
-    public event Action ScatterSymbolChanged;
+    public event Action? ScatterSymbolChanged;
 
-    public event Action CreateNewSymbolSetFromOverrides;
+    public event Action? CreateNewSymbolSetFromOverrides;
 
-    public event Action SimilarSymbolSetChosen;
+    public event Action? SimilarSymbolSetChosen;
 
     public ScatterPlotStyleControl()
     {

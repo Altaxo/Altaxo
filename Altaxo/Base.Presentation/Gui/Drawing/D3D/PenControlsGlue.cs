@@ -173,7 +173,7 @@ namespace Altaxo.Gui.Drawing.D3D
       _userChangedRelLineEndCapSize = false;
     }
 
-    public event EventHandler PenChanged;
+    public event EventHandler? PenChanged;
 
     protected virtual void OnPenChanged()
     {
@@ -244,7 +244,7 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
-    private void EhBrush_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhBrush_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (_pen is not null)
       {
@@ -294,7 +294,7 @@ namespace Altaxo.Gui.Drawing.D3D
       GuiHelper.Initialize(_cbCrossSection, _crossSectionChoices);
     }
 
-    private void EhCrossSection_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhCrossSection_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (_pen is not null)
       {
@@ -337,7 +337,7 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
-    private void EhDashPattern_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhDashPattern_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (_pen is not null)
       {
@@ -483,7 +483,7 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
-    private void EhLineStartCap_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhLineStartCap_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (_pen is not null)
       {
@@ -613,7 +613,7 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
-    private void EhLineEndCap_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhLineEndCap_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (_pen is not null)
       {
@@ -739,7 +739,7 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
-    private void EhDashStartCap_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhDashStartCap_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (_pen is not null)
       {
@@ -869,7 +869,7 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
-    private void EhDashEndCap_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhDashEndCap_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (_pen is not null)
       {
@@ -995,7 +995,7 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
-    private void EhLineJoin_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhLineJoin_SelectionChangeCommitted(object? sender, EventArgs e)
     {
       if (_pen is not null)
       {

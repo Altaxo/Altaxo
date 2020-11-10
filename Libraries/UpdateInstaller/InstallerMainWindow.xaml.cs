@@ -43,13 +43,13 @@ namespace Altaxo.Serialization.AutoUpdates
   /// </summary>
   public partial class InstallerMainWindow : Window
   {
-    public IUpdateInstaller _installer;
-    private System.Threading.Tasks.Task _installerTask;
+    public IUpdateInstaller? _installer;
+    private System.Threading.Tasks.Task? _installerTask;
 
     public double _progress;
     public string _message = string.Empty;
     public MessageKind _messageKind;
-    private System.Windows.Threading.DispatcherTimer _timer;
+    private System.Windows.Threading.DispatcherTimer? _timer;
     private Brush _normalBackground;
     private bool _isCancellationRequested = false;
     private bool _installerFinishedSuccessfully = false;
@@ -111,14 +111,17 @@ namespace Altaxo.Serialization.AutoUpdates
 
     /// <summary>Cleans up the timer and the installer task after the task is finished.</summary>
     /// <returns>If the task has thrown an exception, this exeption is returned. Otherwise, the return value is <c>null</c>.</returns>
-    private AggregateException InstallerTaskCleanup()
+    private AggregateException? InstallerTaskCleanup()
     {
-      _timer.Tick -= EhInstallationTimerTick;
-      _timer.Stop();
-      _timer = null;
+      if (_timer is not null)
+      {
+        _timer.Tick -= EhInstallationTimerTick;
+        _timer.Stop();
+        _timer = null;
+      }
 
-      var exception = _installerTask.Exception;
-      _installerTask.Dispose();
+      var exception = _installerTask?.Exception;
+      _installerTask?.Dispose();
       _installerTask = null;
       _isCancellationRequested = false;
 
@@ -157,7 +160,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>Called when the timer event occured.</summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-    private void EhInstallationTimerTick(object sender, EventArgs e)
+    private void EhInstallationTimerTick(object? sender, EventArgs e)
     {
       _guiProgress.Value = _progress;
       _guiProgressText.Content = string.Format("{0:F1}% completed", _progress);
@@ -176,7 +179,7 @@ namespace Altaxo.Serialization.AutoUpdates
           break;
       }
 
-      if (_installerTask.IsCompleted)
+      if (_installerTask is not null && _installerTask.IsCompleted)
       {
         var exception = InstallerTaskCleanup();
         if (exception is not null)
@@ -215,11 +218,11 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>Called when the timer event occured.</summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-    private void EhCountDownTimerTick(object sender, EventArgs e)
+    private void EhCountDownTimerTick(object? sender, EventArgs e)
     {
       --_timeLeftBeforeClosing;
 
-      if (_timeLeftBeforeClosing <= 0)
+      if (_timeLeftBeforeClosing <= 0 && _timer is not null)
       {
         _timer.Tick -= EhCountDownTimerTick;
         _timer.Stop();
@@ -248,7 +251,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>Entry point for the task that runs the installer.</summary>
     private void RunInstaller()
     {
-      _installer.Run(ReportProgressAsync);
+      _installer?.Run(ReportProgressAsync);
     }
 
     /// <summary>Called when the OK button was pressed.</summary>

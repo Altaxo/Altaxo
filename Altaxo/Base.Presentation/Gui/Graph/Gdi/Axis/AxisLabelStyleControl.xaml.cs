@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       };
     }
 
-    public event Action LabelStyleChanged;
+    public event Action? LabelStyleChanged;
 
     private void m_cbLabelStyle_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
     {

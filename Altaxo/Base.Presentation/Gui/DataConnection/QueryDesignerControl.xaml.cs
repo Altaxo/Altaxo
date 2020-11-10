@@ -40,27 +40,27 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class QueryDesignerControl : UserControl, IQueryDesignerView
   {
-    public event Action ChooseConnectionString;
+    public event Action? ChooseConnectionString;
 
-    public event Action<bool> GroupByChanged;
+    public event Action<bool>? GroupByChanged;
 
-    public event Action ChooseProperties;
+    public event Action? ChooseProperties;
 
-    public event Action CheckSql;
+    public event Action? CheckSql;
 
-    public event Action ViewResults;
+    public event Action? ViewResults;
 
-    public event Action ClearQuery;
+    public event Action? ClearQuery;
 
-    public event Action<NGTreeNode> TreeNodeMouseDoubleClick;
+    public event Action<NGTreeNode>? TreeNodeMouseDoubleClick;
 
-    public event Action<NGTreeNode, List<string>> RelatedTablesRequired;
+    public event Action<NGTreeNode, List<string>>? RelatedTablesRequired;
 
-    public event Action<NGTreeNode> HideTableChosen;
+    public event Action<NGTreeNode>? HideTableChosen;
 
-    public event Action ShowTablesAllChosen;
+    public event Action? ShowTablesAllChosen;
 
-    public event Action<string> RelatedTableNameChosen;
+    public event Action<string>? RelatedTableNameChosen;
 
     public QueryDesignerControl()
     {
@@ -88,7 +88,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
-    private void EhGrid_Loading_Row(object sender, DataGridRowEventArgs e)
+    private void EhGrid_Loading_Row(object? sender, DataGridRowEventArgs e)
     {
       UpdateGridColumns(_btnGroupBy.IsChecked == true);
     }

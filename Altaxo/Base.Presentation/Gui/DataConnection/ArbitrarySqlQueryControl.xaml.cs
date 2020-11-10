@@ -36,13 +36,13 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class ArbitrarySqlQueryControl : UserControl, IArbitrarySqlQueryView
   {
-    public event Action CheckSql;
+    public event Action? CheckSql;
 
-    public event Action ViewResults;
+    public event Action? ViewResults;
 
-    public event Action ClearQuery;
+    public event Action? ClearQuery;
 
-    public event Action SqlTextChanged;
+    public event Action? SqlTextChanged;
 
     public ArbitrarySqlQueryControl()
     {

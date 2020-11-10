@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph.Gdi
       InitializeComponent();
     }
 
-    public event Action PositioningTypeChanged;
+    public event Action? PositioningTypeChanged;
 
     private bool _useDirectPositioning;
 

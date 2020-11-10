@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   {
     private PenControlsGlue _strokePenGlue;
 
-    public event Action IndependentColorChanged;
+    public event Action? IndependentColorChanged;
 
     public VectorCartesicPlotStyleControl()
     {

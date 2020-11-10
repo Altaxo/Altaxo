@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Common.MultiRename
         }
         set
         {
-          var oldName = _data.GetNewNameForObject((int)_tag!);
+          var oldName = _data.GetNewNameForObjectOrNull((int)_tag!);
           if (oldName != value)
           {
             _data.SetNewNameForObject((int)_tag, value);

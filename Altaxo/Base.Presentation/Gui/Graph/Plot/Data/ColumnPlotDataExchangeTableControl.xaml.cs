@@ -48,9 +48,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
   /// </summary>
   public partial class ColumnPlotDataExchangeTableControl : UserControl, IColumnPlotDataExchangeTableView
   {
-    public event Action SelectedTableChanged;
+    public event Action? SelectedTableChanged;
 
-    public event Action SelectedMatchingTableChanged;
+    public event Action? SelectedMatchingTableChanged;
 
     public ColumnPlotDataExchangeTableControl()
     {

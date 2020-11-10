@@ -38,13 +38,13 @@ namespace Altaxo.Gui.Graph.Gdi
   {
     private int _suppressEventCounter = 0;
 
-    public event Action<bool> CreateOrMoveAxis;
+    public event Action<bool>? CreateOrMoveAxis;
 
-    public event Action DeleteAxis;
+    public event Action? DeleteAxis;
 
-    public event Action SecondChoiceChanged;
+    public event Action? SecondChoiceChanged;
 
-    public event Action<string> PageChanged;
+    public event Action<string>? PageChanged;
 
     public XYPlotLayerControl()
     {
@@ -106,7 +106,7 @@ namespace Altaxo.Gui.Graph.Gdi
       --_suppressEventCounter;
     }
 
-    public event System.ComponentModel.CancelEventHandler TabValidating;
+    public event System.ComponentModel.CancelEventHandler? TabValidating;
 
     #endregion ILayerView Members
 

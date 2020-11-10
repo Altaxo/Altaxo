@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Main.Services
   /// </summary>
   public partial class OutputView : UserControl, IOutputView
   {
-    public event Action EnabledChanged;
+    public event Action? EnabledChanged;
 
     public OutputView()
     {
