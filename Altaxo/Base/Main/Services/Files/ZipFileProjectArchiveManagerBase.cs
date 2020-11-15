@@ -121,7 +121,9 @@ namespace Altaxo.Main.Services
         {
           // open as readonly has failed too, so we have to throw..
           _originalFileStream = null;
+#pragma warning disable CA2200 // Rethrow to preserve stack details
           throw ex1;
+#pragma warning restore CA2200 // Rethrow to preserve stack details
         }
 
 

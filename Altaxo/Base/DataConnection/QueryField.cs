@@ -104,7 +104,7 @@ namespace Altaxo.DataConnection
 
     public QueryField(DataColumn col)
     {
-      _table = col.Table;
+      _table = col.Table ?? throw new InvalidOperationException($"Table of column {col} is null!");
       _column = col.ColumnName;
       _output = true;
     }

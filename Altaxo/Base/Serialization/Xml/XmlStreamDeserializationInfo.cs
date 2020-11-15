@@ -280,7 +280,7 @@ namespace Altaxo.Serialization.Xml
 
     public System.IO.MemoryStream? GetMemoryStream(string name)
     {
-      int length = XmlConvert.ToInt32(_xmlReader["Length"]);
+      int length = XmlConvert.ToInt32(_xmlReader["Length"]!);
       if (length == 0)
       {
         _xmlReader.ReadStartElement();
@@ -329,12 +329,12 @@ namespace Altaxo.Serialization.Xml
 
     public int GetInt32Attribute(string name)
     {
-      return XmlConvert.ToInt32(_xmlReader[name]);
+      return XmlConvert.ToInt32(_xmlReader[name]??string.Empty);
     }
 
     public string GetStringAttribute(string name)
     {
-      return _xmlReader[name];
+      return _xmlReader[name] ?? throw new InvalidOperationException($"Attribute {name} is missing.");
     }
 
     public void GetArrayOfPrimitiveTypeBase64(System.Array val, int count, int sizeOfElement)
@@ -371,7 +371,7 @@ namespace Altaxo.Serialization.Xml
 
     public int OpenArray()
     {
-      int count = XmlConvert.ToInt32(_xmlReader["Count"]);
+      int count = XmlConvert.ToInt32(_xmlReader["Count"]!);
 
       if (count > 0)
         _xmlReader.ReadStartElement();
@@ -381,7 +381,7 @@ namespace Altaxo.Serialization.Xml
 
     public int OpenArray(string name)
     {
-      int count = XmlConvert.ToInt32(_xmlReader["Count"]);
+      int count = XmlConvert.ToInt32(_xmlReader["Count"]!);
 
       if (count > 0)
         _xmlReader.ReadStartElement();
@@ -661,7 +661,7 @@ namespace Altaxo.Serialization.Xml
 
     public object? GetValueOrNull(object? parentobject)
     {
-      string type = _xmlReader.GetAttribute("Type");
+      var type = _xmlReader.GetAttribute("Type");
 
       if (type is not null)
       {
@@ -712,7 +712,7 @@ namespace Altaxo.Serialization.Xml
     public object? GetValueOrOuterXml(string name, object parentobject, out bool returnValueIsOuterXml)
     {
       returnValueIsOuterXml = false;
-      string type = _xmlReader.GetAttribute("Type");
+      var type = _xmlReader.GetAttribute("Type");
 
       if (type is not null)
       {

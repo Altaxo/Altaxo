@@ -47,12 +47,14 @@ namespace Altaxo.Text.Renderers
       //Load the the document with the last book node.
       doc.Load(shfbProjectFileName);
 
-      XmlNode currNode = doc.DocumentElement.FirstChild;
+      var currNode = doc.DocumentElement?.FirstChild;
       while (currNode is not null)
       {
         if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "ContentLayout")
         {
-          var clFileName = currNode.FirstChild.Attributes["Include"];
+          var clFileName = currNode.FirstChild.Attributes?["Include"];
+          if (clFileName?.Value is null)
+            throw new InvalidOperationException("Can not get file name from SHFB project");
           return Path.Combine(Path.GetDirectoryName(shfbProjectFileName) ?? throw new InvalidOperationException($"Unable to get directory name of file {shfbProjectFileName}"), clFileName.Value);
         }
 
@@ -82,7 +84,7 @@ namespace Altaxo.Text.Renderers
       //Load the the document with the last book node.
       doc.Load(shfbProjectFileName);
 
-      XmlNode currNode = doc.DocumentElement.FirstChild;
+      var currNode = doc.DocumentElement?.FirstChild;
       while (currNode is not null)
       {
         if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "ContentLayout")
@@ -103,7 +105,7 @@ namespace Altaxo.Text.Renderers
 
       if (contentLayoutNode is null)
       {
-        var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
+        var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement!.NamespaceURI);
 
         doc.DocumentElement.AppendChild(itemGroup);
         contentLayoutNode = itemGroup;
@@ -111,14 +113,14 @@ namespace Altaxo.Text.Renderers
 
       if (amlFilesNode is null && amlFileNames.Any())
       {
-        var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
+        var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement!.NamespaceURI);
         doc.DocumentElement.AppendChild(itemGroup);
         amlFilesNode = itemGroup;
       }
 
       if (imageFilesNode is null && imageFileNames.Any())
       {
-        var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
+        var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement!.NamespaceURI);
         doc.DocumentElement.AppendChild(itemGroup);
         imageFilesNode = itemGroup;
       }
@@ -127,7 +129,7 @@ namespace Altaxo.Text.Renderers
       {
         contentLayoutNode.RemoveAll();
 
-        var layoutNode = doc.CreateElement("ContentLayout", doc.DocumentElement.NamespaceURI);
+        var layoutNode = doc.CreateElement("ContentLayout", doc.DocumentElement!.NamespaceURI);
         var inclAttr = doc.CreateAttribute("Include");
         inclAttr.Value = GetFileNameRelativeTo(contentLayoutFileName, projectDirectory);
         layoutNode.Attributes.Append(inclAttr);
@@ -140,7 +142,7 @@ namespace Altaxo.Text.Renderers
 
         foreach (var amlFileName in amlFileNames)
         {
-          var noneNode = doc.CreateElement("None", doc.DocumentElement.NamespaceURI);
+          var noneNode = doc.CreateElement("None", doc.DocumentElement!.NamespaceURI);
           var inclAttr = doc.CreateAttribute("Include");
           inclAttr.Value = GetFileNameRelativeTo(amlFileName, projectDirectory);
           noneNode.Attributes.Append(inclAttr);
@@ -154,7 +156,7 @@ namespace Altaxo.Text.Renderers
 
         foreach (var imageFileName in imageFileNames)
         {
-          var imgNode = doc.CreateElement("Image", doc.DocumentElement.NamespaceURI);
+          var imgNode = doc.CreateElement("Image", doc.DocumentElement!.NamespaceURI);
           var inclAttr = doc.CreateAttribute("Include");
           inclAttr.Value = GetFileNameRelativeTo(imageFileName, projectDirectory);
           imgNode.Attributes.Append(inclAttr);

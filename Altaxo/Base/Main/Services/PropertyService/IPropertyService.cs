@@ -119,7 +119,7 @@ namespace Altaxo.Main.Services
     /// <returns></returns>
     [return: NotNullIfNotNull("ValueCreationIfNotFound")]
     [return: MaybeNull]
-    T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound);
+    T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound) where T : notnull;
 
     /// <summary>
     /// Sets a value associated with a property key.

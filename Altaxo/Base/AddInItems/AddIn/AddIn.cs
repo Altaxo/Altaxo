@@ -266,7 +266,8 @@ namespace Altaxo.AddInItems
                 throw new AddInLoadException("BitmapResources requires ONE attribute.");
               }
 
-              var filename = StringParser.Parse(reader.GetAttribute("file"));
+              var filename = reader.GetAttribute("file") ?? throw new InvalidOperationException($"Attribute 'file' is mandatory here!");
+              filename = StringParser.Parse(filename);
 
 
               if (reader.LocalName == "BitmapResources")

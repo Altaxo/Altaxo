@@ -187,9 +187,9 @@ namespace Altaxo.Graph.Scales
         _cachedAxisSpanInv = from._cachedAxisSpanInv;
         _cachedOneByAxisSpanInv = from._cachedOneByAxisSpanInv;
 
-        ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
-        ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new InverseScaleRescaleConditions());
-        ChildCopyToMemberOrCreateNew(ref _tickSpacing, from._tickSpacing, () => new Ticks.InverseTickSpacing());
+        ChildCopyToMemberOrCreateNew<NumericalBoundaries>(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
+        ChildCopyToMemberOrCreateNew<InverseScaleRescaleConditions>(ref _rescaling, from._rescaling, () => new InverseScaleRescaleConditions());
+        ChildCopyToMemberOrCreateNew<Ticks.TickSpacing>(ref _tickSpacing, from._tickSpacing, () => new Ticks.InverseTickSpacing());
 
         EhSelfChanged(EventArgs.Empty);
         suspendToken.Resume();

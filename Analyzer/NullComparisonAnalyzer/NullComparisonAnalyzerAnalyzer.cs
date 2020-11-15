@@ -1,12 +1,12 @@
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Diagnostics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace NullComparisonAnalyzer
 {
@@ -27,11 +27,13 @@ namespace NullComparisonAnalyzer
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
 
         public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterSemanticModelAction(EhAnalyzeSemanticModel);
-        }
+    {
+      context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+      context.EnableConcurrentExecution();
+      context.RegisterSemanticModelAction(EhAnalyzeSemanticModel);
+    }
 
-        private void EhAnalyzeSemanticModel(SemanticModelAnalysisContext semanticModelContext)
+    private void EhAnalyzeSemanticModel(SemanticModelAnalysisContext semanticModelContext)
         {
             var model = semanticModelContext.SemanticModel;
 

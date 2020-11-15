@@ -237,7 +237,7 @@ namespace Altaxo.Gui.Main.Services
 
       _viewDirectionRecentIsFirst = tr.ReadElementContentAsBoolean("DirectionRecentFirst", string.Empty);
 
-      count = XmlConvert.ToInt32(tr.GetAttribute("Count"));
+      count = XmlConvert.ToInt32(tr.GetAttribute("Count") ?? throw new InvalidOperationException($"Attribute 'Count' is mandatory here!"));
       tr.ReadStartElement("ColumnWidths");
       _columnWidths = new double[count];
       for (int i = 0; i < count; i++)

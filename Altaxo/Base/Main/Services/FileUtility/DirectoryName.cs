@@ -51,7 +51,7 @@ namespace Altaxo.Main.Services
     public static DirectoryName? Create(string directoryName)
     {
       if (string.IsNullOrEmpty(directoryName))
-        return null;
+        return null!;
       else
         return new DirectoryName(directoryName);
     }

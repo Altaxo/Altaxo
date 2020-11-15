@@ -65,7 +65,7 @@ namespace Altaxo.Main.Services
     /// <inheritdoc/>
     [return: NotNullIfNotNull("ValueCreationIfNotFound")]
     [return: MaybeNull]
-    public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound)
+    public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound) where T: notnull
     {
       if (kind == RuntimePropertyKind.UserAndApplicationAndBuiltin && UserSettings.TryGetValue<T>(p, out var result))
         return result;

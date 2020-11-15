@@ -574,6 +574,8 @@ namespace Altaxo.DataConnection
       return returnsValue;
     }
 
+#nullable disable
+
     // get relations from schema
     private void GetRelations(OleDbConnection conn)
     {
@@ -616,8 +618,8 @@ namespace Altaxo.DataConnection
       foreach (DataRow dr in dt.Rows)
       {
         // get primary key info
-        string? tableName = dr[TABLE_NAME].ToString();
-        string? columnName = dr[COLUMN_NAME].ToString();
+        var tableName = dr[TABLE_NAME].ToString();
+        var columnName = dr[COLUMN_NAME].ToString();
 
         if (tableName is null || columnName is null)
           continue;

@@ -173,9 +173,9 @@ namespace Altaxo.Graph.Scales
         _cachedAxisSpan = from._cachedAxisSpan;
         _cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
-        ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
-        ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new LinearScaleRescaleConditions());
-        ChildCopyToMemberOrCreateNew(ref _tickSpacing, from._tickSpacing, () => new Ticks.LinearTickSpacing());
+        ChildCopyToMemberOrCreateNew<NumericalBoundaries>(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
+        ChildCopyToMemberOrCreateNew<NumericScaleRescaleConditions>(ref _rescaling, from._rescaling, () => new LinearScaleRescaleConditions());
+        ChildCopyToMemberOrCreateNew<Ticks.TickSpacing>(ref _tickSpacing, from._tickSpacing, () => new Ticks.LinearTickSpacing());
 
         EhSelfChanged(EventArgs.Empty);
         suspendToken.Resume();

@@ -33,7 +33,7 @@ namespace Altaxo.Gui
   /// </summary>
   public abstract class SimpleCommand : ICommand
   {
-    public virtual event EventHandler CanExecuteChanged { add { } remove { } }
+    public virtual event EventHandler? CanExecuteChanged { add { } remove { } }
 
     public virtual bool CanExecute(object? parameter)
     {

@@ -869,7 +869,7 @@ namespace Altaxo.Main
     /// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
     /// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
     /// <param name="createNew">If the parameter <paramref name="fromAnotherChild"/> is null, the provided function is used to create a new object of type <typeparamref name="T"/>. This object is then used to set the member.</param>
-    protected bool ChildCopyToMemberOrCreateNew<T>([AllowNull][NotNull] ref T myChild, T fromAnotherChild, Func<T> createNew) where T : class, IDocumentLeafNode, ICloneable
+    protected bool ChildCopyToMemberOrCreateNew<T>([AllowNull][NotNull] ref T myChild, [AllowNull] T fromAnotherChild, Func<T> createNew) where T : class, IDocumentLeafNode, ICloneable
     {
       if (fromAnotherChild is not null)
       {

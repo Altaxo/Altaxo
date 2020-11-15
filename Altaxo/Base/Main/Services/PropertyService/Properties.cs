@@ -647,7 +647,7 @@ namespace Altaxo.Main.Services
 
     public static Properties Load(FileName fileName)
     {
-      return Load(XDocument.Load(fileName).Root);
+      return Load(XDocument.Load(fileName).Root!);
     }
 
     public static Properties Load(XElement element)
@@ -661,7 +661,7 @@ namespace Altaxo.Main.Services
     {
       foreach (var element in elements)
       {
-        string key = (string)element.Attribute("key");
+        var key = (string?)element.Attribute("key");
         if (key is null)
           continue;
         switch (element.Name.LocalName)

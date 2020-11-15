@@ -74,7 +74,7 @@ namespace Altaxo.DataConnection
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       ChildCopyToMember(ref _importOptions, from._importOptions);
-      CopyHelper.CopyImmutable(ref _dataQuery, from._dataQuery);
+      CopyHelper.CopyImmutable<OleDbDataQuery>(ref _dataQuery, from._dataQuery);
     }
 
     public virtual bool CopyFrom(object obj)

@@ -323,8 +323,8 @@ namespace Altaxo.DataConnection
       var tables = new List<DataTable>();
       foreach (QueryField field in QueryFields)
       {
-        string tableName = field.Table;
-        DataTable table = _schema.Tables[tableName];
+        var tableName = field.Table;
+        var table = _schema.Tables[tableName];
         if (table is not null && !tables.Contains(table))
         {
           tables.Add(table);
