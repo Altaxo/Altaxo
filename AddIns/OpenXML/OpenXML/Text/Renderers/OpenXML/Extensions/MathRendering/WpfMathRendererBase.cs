@@ -43,19 +43,19 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
   internal abstract class WpfMathRendererBase : IWpfMathRenderer
   {
     private readonly Dictionary<Type, IWpfMathAtomRenderer> renderersPerType = new Dictionary<Type, IWpfMathAtomRenderer>();
-    private IWpfMathAtomRenderer previousRenderer;
-    private Type previousObjectType;
+    private IWpfMathAtomRenderer? previousRenderer;
+    private Type? previousObjectType;
     public ObjectRendererCollection ObjectRenderers { get; } = new ObjectRendererCollection();
 
     /// <summary>
     /// Occurs when before writing an object.
     /// </summary>
-    public event Action<IWpfMathRenderer, Atom> ObjectWriteBefore;
+    public event Action<IWpfMathRenderer, Atom>? ObjectWriteBefore;
 
     /// <summary>
     /// Occurs when after writing an object.
     /// </summary>
-    public event Action<IWpfMathRenderer, Atom> ObjectWriteAfter;
+    public event Action<IWpfMathRenderer, Atom>? ObjectWriteAfter;
 
     public abstract object Render(Atom atom);
 
@@ -77,7 +77,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
       ObjectWriteBefore?.Invoke(this, obj);
 
       // Handle regular renderers
-      IWpfMathAtomRenderer renderer = previousObjectType == objectType ? previousRenderer : null;
+      IWpfMathAtomRenderer? renderer = previousObjectType == objectType ? previousRenderer : null;
       if (renderer is null && !renderersPerType.TryGetValue(objectType, out renderer))
       {
         for (int i = 0; i < ObjectRenderers.Count; i++)

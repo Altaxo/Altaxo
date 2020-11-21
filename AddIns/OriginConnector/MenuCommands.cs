@@ -28,7 +28,6 @@ using System.Linq;
 using System.Text;
 using Altaxo.Addins.OriginConnector;
 using Altaxo.Gui;
-using Altaxo.Gui.AddInItems;
 
 namespace Altaxo.Worksheet.Commands
 {

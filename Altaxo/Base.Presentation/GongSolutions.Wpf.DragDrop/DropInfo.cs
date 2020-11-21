@@ -12,6 +12,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections;
 using System.Windows;

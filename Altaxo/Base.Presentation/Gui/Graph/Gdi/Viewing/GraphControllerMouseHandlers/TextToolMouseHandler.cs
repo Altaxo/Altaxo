@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Drawing.Drawing2D;
 using System.Windows.Input;

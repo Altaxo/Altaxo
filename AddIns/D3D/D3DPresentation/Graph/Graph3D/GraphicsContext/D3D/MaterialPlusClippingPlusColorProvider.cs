@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
   {
     public Gdi.Plot.IColorProvider ColorProvider { get; private set; }
 
-    public MaterialPlusClippingPlusColorProviderKey(IMaterial material, PlaneD3D[] clipPlanes, Gdi.Plot.IColorProvider colorProvider)
+    public MaterialPlusClippingPlusColorProviderKey(IMaterial material, PlaneD3D[]? clipPlanes, Gdi.Plot.IColorProvider colorProvider)
       : base(material, clipPlanes)
     {
       if (colorProvider is null)

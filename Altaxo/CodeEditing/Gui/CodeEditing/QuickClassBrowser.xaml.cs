@@ -463,7 +463,7 @@ namespace Altaxo.Gui.CodeEditing
 
     private void JumpTo(TextSpan location)
     {
-      if (null != location)
+      if (!location.IsEmpty)
       {
         JumpAction?.Invoke(location.Start);
       }

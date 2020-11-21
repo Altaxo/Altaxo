@@ -321,7 +321,7 @@ namespace Altaxo.Gui.Workbench.Commands
         this.padDescriptor = padDescriptor;
       }
 
-      public event EventHandler CanExecuteChanged { add { } remove { } }
+      public event EventHandler? CanExecuteChanged { add { } remove { } }
 
       public void Execute(object? parameter)
       {
@@ -350,7 +350,7 @@ namespace Altaxo.Gui.Workbench.Commands
         {
           var item = new System.Windows.Controls.MenuItem
           {
-            Header = MenuService.ConvertLabel(StringParser.Parse(padContent.Title))
+            Header = MenuService.ConvertLabel(StringParser.Parse(padContent.Title ?? string.Empty))
           };
           if (!string.IsNullOrEmpty(padContent.IconSource))
           {

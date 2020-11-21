@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace Altaxo.Gui.Common
     {
       get
       {
-        return _thread is not null && _thread.IsAlive;
+        return _thread?.IsAlive == true;
       }
     }
 
@@ -64,7 +65,7 @@ namespace Altaxo.Gui.Common
 
     public void StartExecution(Action<IProgressReporter> action, int milliSecondsUntilShowUp)
     {
-      if (_thread is not null && _thread.IsAlive)
+      if (ExecutionInProgress)
         throw new ApplicationException("Background thread is still executed");
 
       if (_timer is not null)
@@ -122,7 +123,7 @@ namespace Altaxo.Gui.Common
         _monitor.SetShouldReportNow();
       }
 
-      if (!_thread.IsAlive)
+      if (!ExecutionInProgress)
       {
         var timer = (System.Windows.Threading.DispatcherTimer)sender;
         timer.Tick -= EhTimer;
@@ -130,20 +131,8 @@ namespace Altaxo.Gui.Common
         _timer = null;
         _thread = null;
 
-        if (ExecutionFinished is not null)
-          ExecutionFinished(_wasCancelledByUser ? false : true);
+        ExecutionFinished?.Invoke(_wasCancelledByUser ? false : true);
       }
-    }
-
-    private void EhInterruptClicked(object sender, RoutedEventArgs e)
-    {
-      if (_thread.IsAlive)
-      {
-        _wasCancelledByUser = true;
-        _thread.Interrupt();
-      }
-      _btInterrupt.Visibility = System.Windows.Visibility.Collapsed;
-      _btAbort.Visibility = System.Windows.Visibility.Visible;
     }
 
     private void EhCancelClicked(object sender, RoutedEventArgs e)
@@ -163,9 +152,22 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    private void EhInterruptClicked(object sender, RoutedEventArgs e)
+    {
+      if (ExecutionInProgress)
+      {
+        _wasCancelledByUser = true;
+        _thread.Interrupt();
+      }
+      _btInterrupt.Visibility = System.Windows.Visibility.Collapsed;
+      _btAbort.Visibility = System.Windows.Visibility.Visible;
+    }
+
+    
+
     private void EhAbortClicked(object sender, RoutedEventArgs e)
     {
-      if (_thread.IsAlive)
+      if (ExecutionInProgress)
       {
         _wasCancelledByUser = true;
         _thread.Abort();

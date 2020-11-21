@@ -140,9 +140,9 @@ namespace Altaxo.Graph.Scales
         _cachedAxisQuantileOrg = from._cachedAxisQuantileOrg;
         _cachedAxisQuantileSpan = from._cachedAxisQuantileSpan;
 
-        ChildCopyToMemberOrCreateNew<NumericalBoundaries>(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
-        ChildCopyToMemberOrCreateNew<CumulativeProbabilityScaleRescaleConditions>(ref _rescaling, from._rescaling, () => new CumulativeProbabilityScaleRescaleConditions());
-        ChildCopyToMemberOrCreateNew<Ticks.TickSpacing>(ref _tickSpacing, from._tickSpacing, () => new Ticks.CumulativeProbabilityTickSpacing());
+        ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
+        ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new CumulativeProbabilityScaleRescaleConditions());
+        ChildCopyToMemberOrCreateNew(ref _tickSpacing, from._tickSpacing, () => new Ticks.CumulativeProbabilityTickSpacing());
 
         EhSelfChanged(EventArgs.Empty);
         suspendToken.Resume();

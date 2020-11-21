@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System.Windows;
 using System.Windows.Media;
 using Altaxo.Collections;

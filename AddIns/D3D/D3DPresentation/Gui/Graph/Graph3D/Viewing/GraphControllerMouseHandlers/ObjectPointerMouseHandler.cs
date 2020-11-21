@@ -168,9 +168,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
     public ObjectPointerMouseHandler(Graph3DController grac)
     {
       _grac = grac;
-
-      _grac?.View?.SetPanelCursor(Cursors.Arrow);
-
+      _grac.View?.SetPanelCursor(Cursors.Arrow);
       _selectedObjects = new List<IHitTestObject>();
     }
 

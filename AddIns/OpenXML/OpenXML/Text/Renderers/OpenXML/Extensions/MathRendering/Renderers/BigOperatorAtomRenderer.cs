@@ -191,7 +191,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
     {
       private OpenXMLWpfMathRenderer _renderer;
       private Atom _atom; // The original atom that this BigOperatorAtom is rendering, for example the integral \int
-      private Atom _atomToPopAfter; // the inner atom, for example, all the parts the belong to the integral
+      private Atom? _atomToPopAfter; // the inner atom, for example, all the parts the belong to the integral
       private OpenXmlCompositeElement _elementToPopTo;
 
       public CallbackPopAfterNextElement(OpenXMLWpfMathRenderer renderer, Atom atom, OpenXmlCompositeElement elementToPopTo)

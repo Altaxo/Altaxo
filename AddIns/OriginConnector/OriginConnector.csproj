@@ -1,11 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="GenAssInfo">
+﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFrameworks>net48;net5.0-windows</TargetFrameworks>
+    <TargetFrameworks>net48;net5.0</TargetFrameworks>
     <LangVersion>preview</LangVersion>
     <nullable>enable</nullable>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <NoWarn>CA1416</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
@@ -20,7 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Altaxo\Base\AltaxoBase.csproj" />
-    <ProjectReference Include="..\..\Altaxo\Dom.Presentation\AltaxoDom.Presentation.csproj" />
+    <ProjectReference Include="..\..\Altaxo\Dom\AltaxoDom.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Interop.Origin">

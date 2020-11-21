@@ -140,7 +140,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
       if (element is null)
         throw new ArgumentNullException(nameof(element));
 
-      OpenXmlCompositeElement ele = null;
+      OpenXmlCompositeElement? ele = null;
       while (_currentElementStack.Count > 0)
       {
         ele = Pop();

@@ -99,18 +99,15 @@ namespace Altaxo.Text.Renderers
       }
       else // Path is not rooted, so this is probably the name of a resource
       {
-        var assembly = Assembly.GetExecutingAssembly();
+        var assembly = Assembly.GetExecutingAssembly() ?? throw new InvalidOperationException("Unable to get executing assembly");
         var resourceName = string.Format("Altaxo.Text.OpenXMLStyles.{0}.xml", nameOfTheme);
 
 
-        using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+        using (Stream stream = assembly.GetManifestResourceStream(resourceName) ??
+                               throw new ArgumentOutOfRangeException("Resource not found: " + nameOfTheme, nameof(nameOfTheme)))
         {
-          if (stream is not null)
             part.FeedData(stream);
-          else
-            throw new ArgumentOutOfRangeException("Resource not found: " + nameOfTheme, nameof(nameOfTheme));
         }
-
       }
       return part;
     }
@@ -127,7 +124,10 @@ namespace Altaxo.Text.Renderers
     /// <returns>The style identifier of the paragraph style, or null if there is no match.</returns>
     public string GetIdFromParagraphStyleName(string styleName)
     {
-      StyleDefinitionsPart stylePart = _wordDocument.MainDocumentPart.StyleDefinitionsPart;
+      if (_wordDocument is null)
+        throw new InvalidOperationException($"{nameof(_wordDocument)} is null");
+
+      var stylePart = _wordDocument.MainDocumentPart.StyleDefinitionsPart;
       string styleId = stylePart.Styles.Descendants<StyleName>()
           .Where(s => s.Val.Value.Equals(styleName) &&
               (((Style)s.Parent).Type == StyleValues.Paragraph))

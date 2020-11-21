@@ -391,7 +391,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
     {
       // Transform the clip planes to our coordinate system
 
-      var clipPlanesTransformed = clipPlanes.Select(plane => _transformation.Transform(plane)).ToArray();
+      var clipPlanesTransformed = clipPlanes is null ? null : clipPlanes.Select(plane => _transformation.Transform(plane)).ToArray();
 
       var key = new MaterialPlusClippingPlusColorProviderKey(material, clipPlanesTransformed, colorProvider);
       if (!_positionNormalUIndexedTriangleBuffers.TryGetValue(key, out var result))

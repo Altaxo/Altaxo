@@ -256,7 +256,7 @@ namespace Altaxo.Serialization.AutoUpdates
             ReportProgress(0, string.Format("Failed to delete orphaned directory '{0}' ({1}. try), Message: {2}. Please close all explorer windows or other programs that currently access this directory.", dir.FullName, i, ex.Message));
             System.Threading.Thread.Sleep(1000);
             if (j == 0)
-              throw ex;
+              throw;
           }
         }
       }

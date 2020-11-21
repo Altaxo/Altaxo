@@ -158,6 +158,92 @@ namespace Altaxo.Main.Services
       throw new NotImplementedException();
     }
 
-    #endregion IBackgroundMonitor Members
+    #endregion
+
+
+    private class SubTask : IProgressReporter
+    {
+      private IProgressReporter _parent;
+      private CancellationToken? _cancellationToken;
+      private double _progress;
+      private double _progressOffset;
+      private double _progressSpan;
+
+      public SubTask(IProgressReporter parent, double workSpan)
+      {
+        _parent = parent;
+        _progressOffset = parent.Progress;
+        _progressSpan = workSpan;
+      }
+
+      public SubTask(IProgressReporter parent, double workSpan, CancellationToken cancellationToken)
+      {
+        _parent = parent;
+        _progressOffset = parent.Progress;
+        _progressSpan = workSpan;
+        _cancellationToken = cancellationToken;
+      }
+
+
+      public double Progress {
+        get => _progress;
+        set
+        {
+          _progress = value;
+          _parent.Report(_progressOffset + _progressSpan * value);
+        }
+      }
+      public OperationStatus Status
+      {
+        get => _parent.Status;
+        set
+        {
+          if ((int)value > (int)(_parent.Status))
+            _parent.Status =value;
+        }
+      }
+      public string TaskName
+      {
+        get => _parent.TaskName;
+        set => _parent.TaskName = value; }
+
+      public CancellationToken CancellationToken => _cancellationToken ?? _parent.CancellationToken;
+
+      public bool ShouldReportNow => _parent.ShouldReportNow;
+
+      public bool CancellationPending => _parent.CancellationPending;
+
+      public IProgressReporter CreateSubTask(double workAmount)
+      {
+        return new SubTask(this, workAmount);
+      }
+
+      public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationToken)
+      {
+        return new SubTask(this, workAmount, cancellationToken);
+      }
+
+      public void Dispose()
+      {
+        _parent = null!;
+      }
+
+      public void Report(double value)
+      {
+        Progress = value;
+      }
+
+      public void ReportProgress(string text)
+      {
+        _parent.ReportProgress(text);
+      }
+
+      public void ReportProgress(string text, double progressValue)
+      {
+        Progress = progressValue;
+        _parent.ReportProgress(text);
+      }
+    }
+
   }
 }

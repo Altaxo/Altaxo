@@ -53,8 +53,13 @@ namespace Altaxo.Gui.Workbench
         using (var ctrl = new System.Windows.Forms.Control()) // trick: create a windows forms control to make sure we have a synchronization context
         {
           synchronizationContext = SynchronizationContext.Current;
+
+          if (synchronizationContext is null)
+            throw new InvalidProgramException("Trick to force creation of SynchronizationContext seems not to work anymore");
         }
       }
+
+
 
       Current.AddService<IDispatcherMessageLoop, IDispatcherMessageLoopWpf>(new DispatcherMessageLoop(_application.Dispatcher, synchronizationContext));
 

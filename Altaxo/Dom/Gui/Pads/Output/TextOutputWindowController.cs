@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main.Services;

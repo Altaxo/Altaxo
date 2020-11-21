@@ -263,7 +263,10 @@ namespace Altaxo.Gui.Workbench
         AddInItems.ToolBarService.UpdateStatus(tb.ItemsSource);
       }
 
-      AddInItems.MenuService.UpdateStatus(_dockManager.DocumentContextMenu?.ItemsSource);
+      if (_dockManager.DocumentContextMenu?.ItemsSource is { } documentContextMenu)
+      {
+        AddInItems.MenuService.UpdateStatus(documentContextMenu);
+      }
     }
 
     #endregion Status of Menu and Toolbar

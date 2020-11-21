@@ -157,8 +157,8 @@ namespace Altaxo.Graph.Scales
         _cachedAxisSpan = from._cachedAxisSpan;
         _cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
-        ChildCopyToMemberOrCreateNew<NumericalBoundaries>(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
-        ChildCopyToMemberOrCreateNew<AngularRescaleConditions>(ref _rescaling, from._rescaling, () => new AngularRescaleConditions());
+        ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
+        ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new AngularRescaleConditions());
         ChildCopyToMember(ref _tickSpacing, from._tickSpacing);
 
         EhSelfChanged(EventArgs.Empty);

@@ -72,6 +72,9 @@ namespace Altaxo.Text.Renderers
     /// <returns>The character style identifier, or null, if no style with the given name was found.</returns>
     public string? GetIdFromCharacterStyleName(string styleName)
     {
+      if (_wordDocument is null)
+        throw new InvalidOperationException($"{nameof(_wordDocument)} is null!");
+
       // Get access to the Styles element for this document.
       Styles s = _wordDocument.MainDocumentPart.StyleDefinitionsPart.Styles;
 
@@ -81,11 +84,11 @@ namespace Altaxo.Text.Renderers
         return null;
 
       // Look for a match on styleid.
-      Style style = s.Elements<Style>()
+      var style = s.Elements<Style>()
           .Where(st => (st.StyleName.Val == styleName) && (st.Type == StyleValues.Character))
           .FirstOrDefault();
 
-      return style is null ? null : style.StyleId;
+      return style?.StyleId;
     }
 
 
@@ -98,9 +101,11 @@ namespace Altaxo.Text.Renderers
     /// <param name="stylename">The style name of the new character style.</param>
     /// <param name="aliases">The aliases.</param>
     /// <returns>The style Id of the newly created character style.</returns>
-    public string CreateAndAddCharacterStyle(
-        string styleid, string stylename, string aliases = "")
+    public string CreateAndAddCharacterStyle(string styleid, string stylename, string aliases = "")
     {
+      if (_mainDocumentPart is null)
+        throw new InvalidOperationException($"{nameof(_mainDocumentPart)} is null!");
+
       // Get access to the root element of the styles part.
       Styles styles = _mainDocumentPart.StyleDefinitionsPart.Styles;
 

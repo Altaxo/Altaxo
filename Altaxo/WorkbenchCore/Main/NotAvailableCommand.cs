@@ -28,7 +28,7 @@ namespace Altaxo.Main
   {
     public static readonly ICommand Instance = new NotAvailableCommand();
 
-    public event EventHandler CanExecuteChanged { add { } remove { } }
+    public event EventHandler? CanExecuteChanged { add { } remove { } }
 
     public bool CanExecute(object? parameter)
     {

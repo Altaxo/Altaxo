@@ -46,7 +46,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions
       if (string.IsNullOrEmpty(text))
         return;
 
-      TexFormula formula = null;
+      TexFormula? formula = null;
       try
       {
         formula = _formulaParser.Parse(text);

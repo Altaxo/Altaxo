@@ -110,12 +110,13 @@ namespace Altaxo.Text.Renderers.OpenXML
     /// <returns>The abstract numbering definition.</returns>
     private AbstractNum AddAbstractNumberingDefinition(OpenXMLRenderer renderer)
     {
-      var _wordDocument = renderer._wordDocument;
+      var wordDocument = renderer._wordDocument ?? throw new ArgumentException("Render document is null");
+
       // Introduce bulleted numbering in case it will be needed at some point
-      NumberingDefinitionsPart numberingPart = _wordDocument.MainDocumentPart.NumberingDefinitionsPart;
+      NumberingDefinitionsPart numberingPart = wordDocument.MainDocumentPart.NumberingDefinitionsPart;
       if (numberingPart is null)
       {
-        numberingPart = _wordDocument.MainDocumentPart.AddNewPart<NumberingDefinitionsPart>("NumberingDefinitionsPart001");
+        numberingPart = wordDocument.MainDocumentPart.AddNewPart<NumberingDefinitionsPart>("NumberingDefinitionsPart001");
         var element = new Numbering();
         element.Save(numberingPart);
       }
@@ -150,10 +151,12 @@ namespace Altaxo.Text.Renderers.OpenXML
     /// <returns>The unique identifer. Is used afterwards in the list.</returns>
     public int AddNonabstractNumberId(OpenXMLRenderer renderer)
     {
-      var _wordDocument = renderer._wordDocument;
-      NumberingDefinitionsPart numberingPart = _wordDocument.MainDocumentPart.NumberingDefinitionsPart;
+      var wordDocument = renderer._wordDocument ?? throw new ArgumentException("Render document is null");
+      var currentAbstractNumberingDefinition = _currentAbstractNumberingDefinition ?? throw new ArgumentException("Current numbering definition is null");
 
-      var abstractNumberId = _currentAbstractNumberingDefinition.AbstractNumberId;
+      NumberingDefinitionsPart numberingPart = wordDocument.MainDocumentPart.NumberingDefinitionsPart;
+
+      var abstractNumberId = currentAbstractNumberingDefinition.AbstractNumberId;
 
       // Insert an NumberingInstance into the numbering part numbering list.  The order seems to matter or it will not pass the
       // Open XML SDK Productity Tools validation test.  AbstractNum comes first and then NumberingInstance and we want to
@@ -185,6 +188,9 @@ namespace Altaxo.Text.Renderers.OpenXML
     /// <param name="isOrdered">If set to <c>true</c>, the list items will start with a number. If set to false, the items will start with a bullet.</param>
     private void AddLevelToAbstractNumberingDefinition(OpenXMLRenderer renderer, int level, bool isOrdered)
     {
+      if (_currentAbstractNumberingDefinition is null)
+        throw new ArgumentException($"{nameof(_currentAbstractNumberingDefinition)} is null");
+
       var presentLevels = _currentAbstractNumberingDefinition.ChildElements.OfType<Level>().Count();
       if (level <= presentLevels)
         return;

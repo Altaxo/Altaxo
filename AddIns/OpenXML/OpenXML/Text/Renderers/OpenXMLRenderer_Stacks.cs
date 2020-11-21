@@ -344,6 +344,9 @@ namespace Altaxo.Text.Renderers
     /// <param name="stylename">The name of the style this style is based on.</param>
     public void AddNewEmptyParagraphStyle(string stylename, string basedOnStyleName = "Normal")
     {
+      if (_mainDocumentPart is null)
+        throw new InvalidOperationException($"{nameof(_mainDocumentPart)} is null!");
+
       var basedOnStyleId = GetIdFromParagraphStyleName(basedOnStyleName);
       if (string.IsNullOrEmpty(basedOnStyleId))
         throw new ArgumentOutOfRangeException(string.Format("Based on style {0} is not found in the document", basedOnStyleName), nameof(basedOnStyleName));

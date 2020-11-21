@@ -42,7 +42,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
     protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, AccentedAtom item)
     {
 
-      string accentString = string.Empty;
+      string? accentString = string.Empty;
 
       if (item.AccentAtom is SymbolAtom symAtom)
       {

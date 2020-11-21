@@ -65,12 +65,16 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 
     public static bool TryConvert(string symbolName, out string textString)
     {
-      var result = _nameToSymbol.TryGetValue(symbolName, out textString);
-
-      if (!result)
+      if(_nameToSymbol.TryGetValue(symbolName, out var t))
+        {
+        textString = t;
+        return true;
+      }
+      else
+      {
         textString = symbolName;
-
-      return result;
+        return false;
+      }
     }
 
 

@@ -58,7 +58,6 @@ namespace Altaxo.Drawing
       Assert.True(pen1.Equals(pen2), comment);
       Assert.True(pen2.Equals(pen1), comment);
       Assert.True(object.Equals(pen1, pen2), comment);
-      Assert.False(object.ReferenceEquals(pen1, pen2), comment);
       Assert.Equal(pen1.GetHashCode(), pen2.GetHashCode());
     }
 
