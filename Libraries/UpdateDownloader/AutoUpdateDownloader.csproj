@@ -12,6 +12,12 @@
     <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
     <OutputPath>..\..\rt$(TargetFramework)\bin</OutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <OutputPath>..\..\rt$(TargetFramework)\bin</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' != 'net48' ">
+    <OutputPath>..\..\rtnet5.0-windows\bin</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>

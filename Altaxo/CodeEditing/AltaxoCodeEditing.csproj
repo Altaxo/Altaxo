@@ -22,7 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj" />
   </ItemGroup>
-  
   <ItemGroup>
      <Reference Include="Microsoft.CodeAnalysis">
       <HintPath>LibrariesBin\Microsoft.CodeAnalysis.dll</HintPath>
