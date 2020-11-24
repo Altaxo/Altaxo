@@ -107,7 +107,7 @@ namespace Altaxo.Main.Properties
 
       public void Deserialize(PropertyBag s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var assemblyVersionString = info.GetStringAttribute("AssemblyVersion");
+        var assemblyVersionString = info.GetStringAttributeOrNull("AssemblyVersion");
         if (!string.IsNullOrEmpty(assemblyVersionString))
           s.AssemblyVersionLoadedFrom = Version.Parse(assemblyVersionString);
 

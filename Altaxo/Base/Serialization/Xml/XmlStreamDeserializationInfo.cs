@@ -332,9 +332,14 @@ namespace Altaxo.Serialization.Xml
       return XmlConvert.ToInt32(_xmlReader[name]??string.Empty);
     }
 
+    public string? GetStringAttributeOrNull(string name)
+    {
+      return _xmlReader[name];
+    }
+
     public string GetStringAttribute(string name)
     {
-      return _xmlReader[name] ?? throw new InvalidOperationException($"Attribute {name} is missing.");
+      return _xmlReader[name] ?? throw new InvalidOperationException($"String attribute \"{name}\" is missing");
     }
 
     public void GetArrayOfPrimitiveTypeBase64(System.Array val, int count, int sizeOfElement)

@@ -79,6 +79,8 @@ namespace Altaxo.Serialization.Xml
 
     int GetInt32Attribute(string name);
 
+    string? GetStringAttributeOrNull(string name);
+
     string GetStringAttribute(string name);
 
     int OpenArray(); // get Number of Array elements
