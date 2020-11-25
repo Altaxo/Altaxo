@@ -82,7 +82,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static ComplexFloat Sum(ComplexFloat[] data)
     {
-      if (!(data != null))
+      if (data is null)
         throw new ArgumentNullException(nameof(data));
       return SumRecursion(data, 0, data.Length);
     }
@@ -118,7 +118,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex Sum(Complex[] data)
     {
-      if (!(data != null))
+      if (data is null)
         throw new ArgumentNullException(nameof(data));
       return SumRecursion(data, 0, data.Length);
     }
@@ -158,7 +158,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static ComplexFloat SumOfSquares(ComplexFloat[] data)
     {
-      if (!(data != null))
+      if (data is null)
         throw new ArgumentNullException(nameof(data));
       return SumOfSquaresRecursion(data, 0, data.Length);
     }
@@ -195,7 +195,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex SumOfSquares(Complex[] data)
     {
-      if (!(data != null))
+      if (data is null)
         throw new ArgumentNullException(nameof(data));
       return SumOfSquaresRecursion(data, 0, data.Length);
     }
@@ -255,7 +255,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static ComplexFloat Variance(ComplexFloat[] data)
     {
-      if (!(data != null))
+      if (data is null)
         throw new ArgumentNullException(nameof(data));
       if (data.Length == 0)
       {
@@ -271,7 +271,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex Variance(Complex[] data)
     {
-      if (!(data != null))
+      if (data is null)
         throw new ArgumentNullException(nameof(data));
       if (data.Length == 0)
       {
@@ -287,7 +287,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static ComplexFloat StdDev(ComplexFloat[] data)
     {
-      if (!(data != null))
+      if (data is null)
         throw new ArgumentNullException(nameof(data));
       if (data.Length == 0)
       {
@@ -303,7 +303,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex StdDev(Complex[] data)
     {
-      if (!(data != null))
+      if (data is null)
         throw new ArgumentNullException(nameof(data));
       if (data.Length == 0)
       {
@@ -323,9 +323,9 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static float RMSError(ComplexFloat[] alpha, ComplexFloat[] beta)
     {
-      if (!(alpha != null))
+      if (alpha is null)
         throw new ArgumentNullException(nameof(alpha));
-      if (!(beta != null))
+      if (beta is null)
         throw new ArgumentNullException(nameof(beta));
       if (!(beta.Length == alpha.Length))
         throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " should be equal");
@@ -369,9 +369,9 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static double RMSError(Complex[] alpha, Complex[] beta)
     {
-      if (!(alpha != null))
+      if (alpha is null)
         throw new ArgumentNullException(nameof(alpha));
-      if (!(beta != null))
+      if (beta is null)
         throw new ArgumentNullException(nameof(beta));
       if (!(alpha.Length == beta.Length))
         throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " are different");

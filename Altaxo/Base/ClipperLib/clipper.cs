@@ -47,7 +47,7 @@
 
 //use_lines: Enables open path clipping. Adds a very minor cost to performance.
 #define use_lines
-
+#nullable disable
 
 using System;
 using System.Collections.Generic;
@@ -140,7 +140,7 @@ namespace ClipperLib
     {
       bool result = true;
       PolyNode node = m_Parent;
-      while (node != null)
+      while (node is not null)
       {
         result = !result;
         node = node.m_Parent;
@@ -176,7 +176,7 @@ namespace ClipperLib
 
     internal PolyNode GetNextSiblingUp()
     {
-      if (m_Parent == null)
+      if (m_Parent is null)
         return null;
       else if (m_Index == m_Parent.m_Childs.Count - 1)
         return m_Parent.GetNextSiblingUp();
@@ -243,7 +243,7 @@ namespace ClipperLib
     public static bool operator ==(Int128 val1, Int128 val2)
     {
       if ((object)val1 == (object)val2) return true;
-      else if ((object)val1 == null || (object)val2 == null) return false;
+      else if ((object)val1 is null || (object)val2 is null) return false;
       return (val1.hi == val2.hi && val1.lo == val2.lo);
     }
 
@@ -254,7 +254,7 @@ namespace ClipperLib
 
     public override bool Equals(object obj)
     {
-      if (obj == null || !(obj is Int128))
+      if (obj is null || !(obj is Int128))
         return false;
       var i128 = (Int128)obj;
       return (i128.hi == hi && i128.lo == lo);
@@ -404,7 +404,7 @@ namespace ClipperLib
 
     public override bool Equals(object obj)
     {
-      if (obj == null) return false;
+      if (obj is null) return false;
       if (obj is IntPoint)
       {
         var a = (IntPoint)obj;
@@ -417,6 +417,11 @@ namespace ClipperLib
     {
       //simply prevents a compiler warning
       return base.GetHashCode();
+    }
+
+    public override string ToString()
+    {
+      return $"X={X}, Y={Y}";
     }
 
   }// end struct IntPoint
@@ -696,7 +701,7 @@ namespace ClipperLib
 
     private void DisposeLocalMinimaList()
     {
-      while (m_MinimaList != null)
+      while (m_MinimaList is not null)
       {
         LocalMinima tmpLm = m_MinimaList.Next;
         m_MinimaList = null;
@@ -1010,7 +1015,7 @@ namespace ClipperLib
       {
         E = FindNextLocMin(E);
         if (E == EMin) break;
-        else if (EMin == null) EMin = E;
+        else if (EMin is null) EMin = E;
 
         //E and E.Prev now share a local minima (left aligned if horizontal).
         //Compare their slopes to find which starts which bound ...
@@ -1098,7 +1103,7 @@ namespace ClipperLib
 
     private void InsertLocalMinima(LocalMinima newLm)
     {
-      if (m_MinimaList == null)
+      if (m_MinimaList is null)
       {
         m_MinimaList = newLm;
       }
@@ -1110,7 +1115,7 @@ namespace ClipperLib
       else
       {
         LocalMinima tmpLm = m_MinimaList;
-        while (tmpLm.Next != null && (newLm.Y < tmpLm.Next.Y))
+        while (tmpLm.Next is not null && (newLm.Y < tmpLm.Next.Y))
           tmpLm = tmpLm.Next;
         newLm.Next = tmpLm.Next;
         tmpLm.Next = newLm;
@@ -1121,7 +1126,7 @@ namespace ClipperLib
     internal bool PopLocalMinima(cInt Y, out LocalMinima current)
     {
       current = m_CurrentLM;
-      if (m_CurrentLM != null && m_CurrentLM.Y == Y)
+      if (m_CurrentLM is not null && m_CurrentLM.Y == Y)
       {
         m_CurrentLM = m_CurrentLM.Next;
         return true;
@@ -1145,22 +1150,22 @@ namespace ClipperLib
     internal virtual void Reset()
     {
       m_CurrentLM = m_MinimaList;
-      if (m_CurrentLM == null) return; //ie nothing to process
+      if (m_CurrentLM is null) return; //ie nothing to process
 
       //reset all edges ...
       m_Scanbeam = null;
       LocalMinima lm = m_MinimaList;
-      while (lm != null)
+      while (lm is not null)
       {
         InsertScanbeam(lm.Y);
         TEdge e = lm.LeftBound;
-        if (e != null)
+        if (e is not null)
         {
           e.Curr = e.Bot;
           e.OutIdx = Unassigned;
         }
         e = lm.RightBound;
-        if (e != null)
+        if (e is not null)
         {
           e.Curr = e.Bot;
           e.OutIdx = Unassigned;
@@ -1198,7 +1203,7 @@ namespace ClipperLib
     internal void InsertScanbeam(cInt Y)
     {
       //single-linked list: sorted descending, ignoring dups.
-      if (m_Scanbeam == null)
+      if (m_Scanbeam is null)
       {
         m_Scanbeam = new Scanbeam
         {
@@ -1218,7 +1223,7 @@ namespace ClipperLib
       else
       {
         Scanbeam sb2 = m_Scanbeam;
-        while (sb2.Next != null && (Y <= sb2.Next.Y)) sb2 = sb2.Next;
+        while (sb2.Next is not null && (Y <= sb2.Next.Y)) sb2 = sb2.Next;
         if (Y == sb2.Y) return; //ie ignores duplicates
         var newSb = new Scanbeam
         {
@@ -1232,7 +1237,7 @@ namespace ClipperLib
 
     internal bool PopScanbeam(out cInt Y)
     {
-      if (m_Scanbeam == null)
+      if (m_Scanbeam is null)
       {
         Y = 0;
         return false;
@@ -1245,7 +1250,7 @@ namespace ClipperLib
 
     internal bool LocalMinimaPending()
     {
-      return (m_CurrentLM != null);
+      return (m_CurrentLM is not null);
     }
     //------------------------------------------------------------------------------
 
@@ -1278,15 +1283,15 @@ namespace ClipperLib
 
     internal void UpdateEdgeIntoAEL(ref TEdge e)
     {
-      if (e.NextInLML == null)
+      if (e.NextInLML is null)
         throw new ClipperException("UpdateEdgeIntoAEL: invalid call");
       TEdge AelPrev = e.PrevInAEL;
       TEdge AelNext = e.NextInAEL;
       e.NextInLML.OutIdx = e.OutIdx;
-      if (AelPrev != null)
+      if (AelPrev is not null)
         AelPrev.NextInAEL = e.NextInLML;
       else m_ActiveEdges = e.NextInLML;
-      if (AelNext != null)
+      if (AelNext is not null)
         AelNext.PrevInAEL = e.NextInLML;
       e.NextInLML.Side = e.Side;
       e.NextInLML.WindDelta = e.WindDelta;
@@ -1309,10 +1314,10 @@ namespace ClipperLib
       if (edge1.NextInAEL == edge2)
       {
         TEdge next = edge2.NextInAEL;
-        if (next != null)
+        if (next is not null)
           next.PrevInAEL = edge1;
         TEdge prev = edge1.PrevInAEL;
-        if (prev != null)
+        if (prev is not null)
           prev.NextInAEL = edge2;
         edge2.PrevInAEL = prev;
         edge2.NextInAEL = edge1;
@@ -1322,10 +1327,10 @@ namespace ClipperLib
       else if (edge2.NextInAEL == edge1)
       {
         TEdge next = edge1.NextInAEL;
-        if (next != null)
+        if (next is not null)
           next.PrevInAEL = edge2;
         TEdge prev = edge2.PrevInAEL;
-        if (prev != null)
+        if (prev is not null)
           prev.NextInAEL = edge1;
         edge1.PrevInAEL = prev;
         edge1.NextInAEL = edge2;
@@ -1337,22 +1342,22 @@ namespace ClipperLib
         TEdge next = edge1.NextInAEL;
         TEdge prev = edge1.PrevInAEL;
         edge1.NextInAEL = edge2.NextInAEL;
-        if (edge1.NextInAEL != null)
+        if (edge1.NextInAEL is not null)
           edge1.NextInAEL.PrevInAEL = edge1;
         edge1.PrevInAEL = edge2.PrevInAEL;
-        if (edge1.PrevInAEL != null)
+        if (edge1.PrevInAEL is not null)
           edge1.PrevInAEL.NextInAEL = edge1;
         edge2.NextInAEL = next;
-        if (edge2.NextInAEL != null)
+        if (edge2.NextInAEL is not null)
           edge2.NextInAEL.PrevInAEL = edge2;
         edge2.PrevInAEL = prev;
-        if (edge2.PrevInAEL != null)
+        if (edge2.PrevInAEL is not null)
           edge2.PrevInAEL.NextInAEL = edge2;
       }
 
-      if (edge1.PrevInAEL == null)
+      if (edge1.PrevInAEL is null)
         m_ActiveEdges = edge1;
-      else if (edge2.PrevInAEL == null)
+      else if (edge2.PrevInAEL is null)
         m_ActiveEdges = edge2;
     }
     //------------------------------------------------------------------------------
@@ -1361,12 +1366,12 @@ namespace ClipperLib
     {
       TEdge AelPrev = e.PrevInAEL;
       TEdge AelNext = e.NextInAEL;
-      if (AelPrev == null && AelNext == null && (e != m_ActiveEdges))
+      if (AelPrev is null && AelNext is null && (e != m_ActiveEdges))
         return; //already deleted
-      if (AelPrev != null)
+      if (AelPrev is not null)
         AelPrev.NextInAEL = AelNext;
       else m_ActiveEdges = AelNext;
-      if (AelNext != null)
+      if (AelNext is not null)
         AelNext.PrevInAEL = AelPrev;
       e.NextInAEL = null;
       e.PrevInAEL = null;
@@ -1427,7 +1432,7 @@ namespace ClipperLib
       {
         X = X
       };
-      if (m_Maxima == null)
+      if (m_Maxima is null)
       {
         m_Maxima = newMax;
         m_Maxima.Next = null;
@@ -1442,12 +1447,12 @@ namespace ClipperLib
       else
       {
         Maxima m = m_Maxima;
-        while (m.Next != null && (X >= m.Next.X)) m = m.Next;
+        while (m.Next is not null && (X >= m.Next.X)) m = m.Next;
         if (X == m.X) return; //ie ignores duplicates (& CG to clean up newMax)
                               //insert newMax between m and m.Next ...
         newMax.Next = m.Next;
         newMax.Prev = m;
-        if (m.Next != null) m.Next.Prev = newMax;
+        if (m.Next is not null) m.Next.Prev = newMax;
         m.Next = newMax;
       }
     }
@@ -1539,12 +1544,12 @@ namespace ClipperLib
     {
       //skip if an outermost polygon or
       //already already points to the correct FirstLeft ...
-      if (outRec.FirstLeft == null ||
+      if (outRec.FirstLeft is null ||
             (outRec.IsHole != outRec.FirstLeft.IsHole &&
-            outRec.FirstLeft.Pts != null)) return;
+                        outRec.FirstLeft.Pts is not null)) return;
 
       OutRec orfl = outRec.FirstLeft;
-      while (orfl != null && ((orfl.IsHole == outRec.IsHole) || orfl.Pts == null))
+      while (orfl is not null && ((orfl.IsHole == outRec.IsHole) || orfl.Pts is null))
         orfl = orfl.FirstLeft;
       outRec.FirstLeft = orfl;
     }
@@ -1572,7 +1577,7 @@ namespace ClipperLib
         //fix orientations ...
         foreach (OutRec outRec in m_PolyOuts)
         {
-          if (outRec.Pts == null || outRec.IsOpen) continue;
+          if (outRec.Pts is null || outRec.IsOpen) continue;
           if ((outRec.IsHole ^ ReverseSolution) == (Area(outRec) > 0))
             ReversePolyPtLinks(outRec.Pts);
         }
@@ -1581,7 +1586,7 @@ namespace ClipperLib
 
         foreach (OutRec outRec in m_PolyOuts)
         {
-          if (outRec.Pts == null)
+          if (outRec.Pts is null)
             continue;
           else if (outRec.IsOpen)
             FixupOutPolyline(outRec);
@@ -1652,14 +1657,14 @@ namespace ClipperLib
         TEdge rb = lm.RightBound;
 
         OutPt Op1 = null;
-        if (lb == null)
+        if (lb is null)
         {
           InsertEdgeIntoAEL(rb, null);
           SetWindingCount(rb);
           if (IsContributing(rb))
             Op1 = AddOutPt(rb, rb.Bot);
         }
-        else if (rb == null)
+        else if (rb is null)
         {
           InsertEdgeIntoAEL(lb, null);
           SetWindingCount(lb);
@@ -1679,11 +1684,11 @@ namespace ClipperLib
           InsertScanbeam(lb.Top.Y);
         }
 
-        if (rb != null)
+        if (rb is not null)
         {
           if (IsHorizontal(rb))
           {
-            if (rb.NextInLML != null)
+            if (rb.NextInLML is not null)
               InsertScanbeam(rb.NextInLML.Top.Y);
             AddEdgeToSEL(rb);
           }
@@ -1691,10 +1696,10 @@ namespace ClipperLib
             InsertScanbeam(rb.Top.Y);
         }
 
-        if (lb == null || rb == null) continue;
+        if (lb is null || rb is null) continue;
 
         //if output polygons share an Edge with a horizontal rb, they'll need joining later ...
-        if (Op1 != null && IsHorizontal(rb) &&
+        if (Op1 is not null && IsHorizontal(rb) &&
           m_GhostJoins.Count > 0 && rb.WindDelta != 0)
         {
           for (int i = 0; i < m_GhostJoins.Count; i++)
@@ -1707,7 +1712,7 @@ namespace ClipperLib
           }
         }
 
-        if (lb.OutIdx >= 0 && lb.PrevInAEL != null &&
+        if (lb.OutIdx >= 0 && lb.PrevInAEL is not null &&
           lb.PrevInAEL.Curr.X == lb.Bot.X &&
           lb.PrevInAEL.OutIdx >= 0 &&
           SlopesEqual(lb.PrevInAEL.Curr, lb.PrevInAEL.Top, lb.Curr, lb.Top, m_UseFullRange) &&
@@ -1729,7 +1734,7 @@ namespace ClipperLib
           }
 
           TEdge e = lb.NextInAEL;
-          if (e != null)
+          if (e is not null)
             while (e != rb)
             {
               //nb: For calculating winding counts etc, IntersectEdges() assumes
@@ -1744,13 +1749,13 @@ namespace ClipperLib
 
     private void InsertEdgeIntoAEL(TEdge edge, TEdge startEdge)
     {
-      if (m_ActiveEdges == null)
+      if (m_ActiveEdges is null)
       {
         edge.PrevInAEL = null;
         edge.NextInAEL = null;
         m_ActiveEdges = edge;
       }
-      else if (startEdge == null && E2InsertsBeforeE1(m_ActiveEdges, edge))
+      else if (startEdge is null && E2InsertsBeforeE1(m_ActiveEdges, edge))
       {
         edge.PrevInAEL = null;
         edge.NextInAEL = m_ActiveEdges;
@@ -1759,12 +1764,12 @@ namespace ClipperLib
       }
       else
       {
-        if (startEdge == null) startEdge = m_ActiveEdges;
-        while (startEdge.NextInAEL != null &&
+        if (startEdge is null) startEdge = m_ActiveEdges;
+        while (startEdge.NextInAEL is not null &&
           !E2InsertsBeforeE1(startEdge.NextInAEL, edge))
           startEdge = startEdge.NextInAEL;
         edge.NextInAEL = startEdge.NextInAEL;
-        if (startEdge.NextInAEL != null) startEdge.NextInAEL.PrevInAEL = edge;
+        if (startEdge.NextInAEL is not null) startEdge.NextInAEL.PrevInAEL = edge;
         edge.PrevInAEL = startEdge;
         startEdge.NextInAEL = edge;
       }
@@ -1902,8 +1907,8 @@ namespace ClipperLib
     {
       TEdge e = edge.PrevInAEL;
       //find the edge of the same polytype that immediately preceeds 'edge' in AEL
-      while (e != null && ((e.PolyTyp != edge.PolyTyp) || (e.WindDelta == 0))) e = e.PrevInAEL;
-      if (e == null)
+      while (e is not null && ((e.PolyTyp != edge.PolyTyp) || (e.WindDelta == 0))) e = e.PrevInAEL;
+      if (e is null)
       {
         PolyFillType pft;
         pft = (edge.PolyTyp == PolyType.ptSubject ? m_SubjFillType : m_ClipFillType);
@@ -1926,7 +1931,7 @@ namespace ClipperLib
           //are we inside a subj polygon ...
           bool Inside = true;
           TEdge e2 = e.PrevInAEL;
-          while (e2 != null)
+          while (e2 is not null)
           {
             if (e2.PolyTyp == e.PolyTyp && e2.WindDelta != 0)
               Inside = !Inside;
@@ -2004,7 +2009,7 @@ namespace ClipperLib
       //SEL pointers in PEdge are use to build transient lists of horizontal edges.
       //However, since we don't need to worry about processing order, all additions
       //are made to the front of the list ...
-      if (m_SortedEdges == null)
+      if (m_SortedEdges is null)
       {
         m_SortedEdges = edge;
         edge.PrevInSEL = null;
@@ -2024,10 +2029,10 @@ namespace ClipperLib
     {
       //Pop edge from front of SEL (ie SEL is a FILO list)
       e = m_SortedEdges;
-      if (e == null) return false;
+      if (e is null) return false;
       TEdge oldE = e;
       m_SortedEdges = e.NextInSEL;
-      if (m_SortedEdges != null) m_SortedEdges.PrevInSEL = null;
+      if (m_SortedEdges is not null) m_SortedEdges.PrevInSEL = null;
       oldE.NextInSEL = null;
       oldE.PrevInSEL = null;
       return true;
@@ -2038,7 +2043,7 @@ namespace ClipperLib
     {
       TEdge e = m_ActiveEdges;
       m_SortedEdges = e;
-      while (e != null)
+      while (e is not null)
       {
         e.PrevInSEL = e.PrevInAEL;
         e.NextInSEL = e.NextInAEL;
@@ -2049,18 +2054,18 @@ namespace ClipperLib
 
     private void SwapPositionsInSEL(TEdge edge1, TEdge edge2)
     {
-      if (edge1.NextInSEL == null && edge1.PrevInSEL == null)
+      if (edge1.NextInSEL is null && edge1.PrevInSEL is null)
         return;
-      if (edge2.NextInSEL == null && edge2.PrevInSEL == null)
+      if (edge2.NextInSEL is null && edge2.PrevInSEL is null)
         return;
 
       if (edge1.NextInSEL == edge2)
       {
         TEdge next = edge2.NextInSEL;
-        if (next != null)
+        if (next is not null)
           next.PrevInSEL = edge1;
         TEdge prev = edge1.PrevInSEL;
-        if (prev != null)
+        if (prev is not null)
           prev.NextInSEL = edge2;
         edge2.PrevInSEL = prev;
         edge2.NextInSEL = edge1;
@@ -2070,10 +2075,10 @@ namespace ClipperLib
       else if (edge2.NextInSEL == edge1)
       {
         TEdge next = edge1.NextInSEL;
-        if (next != null)
+        if (next is not null)
           next.PrevInSEL = edge2;
         TEdge prev = edge2.PrevInSEL;
-        if (prev != null)
+        if (prev is not null)
           prev.NextInSEL = edge1;
         edge1.PrevInSEL = prev;
         edge1.NextInSEL = edge2;
@@ -2085,22 +2090,22 @@ namespace ClipperLib
         TEdge next = edge1.NextInSEL;
         TEdge prev = edge1.PrevInSEL;
         edge1.NextInSEL = edge2.NextInSEL;
-        if (edge1.NextInSEL != null)
+        if (edge1.NextInSEL is not null)
           edge1.NextInSEL.PrevInSEL = edge1;
         edge1.PrevInSEL = edge2.PrevInSEL;
-        if (edge1.PrevInSEL != null)
+        if (edge1.PrevInSEL is not null)
           edge1.PrevInSEL.NextInSEL = edge1;
         edge2.NextInSEL = next;
-        if (edge2.NextInSEL != null)
+        if (edge2.NextInSEL is not null)
           edge2.NextInSEL.PrevInSEL = edge2;
         edge2.PrevInSEL = prev;
-        if (edge2.PrevInSEL != null)
+        if (edge2.PrevInSEL is not null)
           edge2.PrevInSEL.NextInSEL = edge2;
       }
 
-      if (edge1.PrevInSEL == null)
+      if (edge1.PrevInSEL is null)
         m_SortedEdges = edge1;
-      else if (edge2.PrevInSEL == null)
+      else if (edge2.PrevInSEL is null)
         m_SortedEdges = edge2;
     }
     //------------------------------------------------------------------------------
@@ -2151,7 +2156,7 @@ namespace ClipperLib
           prevE = e.PrevInAEL;
       }
 
-      if (prevE != null && prevE.OutIdx >= 0 && prevE.Top.Y < pt.Y && e.Top.Y < pt.Y)
+      if (prevE is not null && prevE.OutIdx >= 0 && prevE.Top.Y < pt.Y && e.Top.Y < pt.Y)
       {
         cInt xPrev = TopX(prevE, pt.Y);
         cInt xE = TopX(e, pt.Y);
@@ -2237,11 +2242,11 @@ namespace ClipperLib
     {
       TEdge e2 = e.PrevInAEL;
       TEdge eTmp = null;
-      while (e2 != null)
+      while (e2 is not null)
       {
         if (e2.OutIdx >= 0 && e2.WindDelta != 0)
         {
-          if (eTmp == null)
+          if (eTmp is null)
             eTmp = e2;
           else if (eTmp.OutIdx == e2.OutIdx)
             eTmp = null; //paired
@@ -2249,7 +2254,7 @@ namespace ClipperLib
         e2 = e2.PrevInAEL;
       }
 
-      if (eTmp == null)
+      if (eTmp is null)
       {
         outRec.FirstLeft = null;
         outRec.IsHole = false;
@@ -2318,7 +2323,7 @@ namespace ClipperLib
         }
         p = p.Next;
       }
-      if (dups != null)
+      if (dups is not null)
       {
         //there appears to be at least 2 vertices at bottomPt so ...
         while (dups != p)
@@ -2335,9 +2340,9 @@ namespace ClipperLib
     private OutRec GetLowermostRec(OutRec outRec1, OutRec outRec2)
     {
       //work out which polygon fragment has the correct hole state ...
-      if (outRec1.BottomPt == null)
+      if (outRec1.BottomPt is null)
         outRec1.BottomPt = GetBottomPt(outRec1.Pts);
-      if (outRec2.BottomPt == null)
+      if (outRec2.BottomPt is null)
         outRec2.BottomPt = GetBottomPt(outRec2.Pts);
       OutPt bPt1 = outRec1.BottomPt;
       OutPt bPt2 = outRec2.BottomPt;
@@ -2359,7 +2364,7 @@ namespace ClipperLib
       {
         outRec1 = outRec1.FirstLeft;
         if (outRec1 == outRec2) return true;
-      } while (outRec1 != null);
+      } while (outRec1 is not null);
       return false;
     }
     //------------------------------------------------------------------------------
@@ -2456,7 +2461,7 @@ namespace ClipperLib
       e2.OutIdx = Unassigned;
 
       TEdge e = m_ActiveEdges;
-      while (e != null)
+      while (e is not null)
       {
         if (e.OutIdx == ObsoleteIdx)
         {
@@ -2472,7 +2477,7 @@ namespace ClipperLib
 
     private void ReversePolyPtLinks(OutPt pp)
     {
-      if (pp == null) return;
+      if (pp is null) return;
       OutPt pp1;
       OutPt pp2;
       pp1 = pp;
@@ -2708,12 +2713,12 @@ namespace ClipperLib
     {
       TEdge SelPrev = e.PrevInSEL;
       TEdge SelNext = e.NextInSEL;
-      if (SelPrev == null && SelNext == null && (e != m_SortedEdges))
+      if (SelPrev is null && SelNext is null && (e != m_SortedEdges))
         return; //already deleted
-      if (SelPrev != null)
+      if (SelPrev is not null)
         SelPrev.NextInSEL = SelNext;
       else m_SortedEdges = SelNext;
-      if (SelNext != null)
+      if (SelNext is not null)
         SelNext.PrevInSEL = SelPrev;
       e.NextInSEL = null;
       e.PrevInSEL = null;
@@ -2753,25 +2758,25 @@ namespace ClipperLib
       GetHorzDirection(horzEdge, out var dir, out var horzLeft, out var horzRight);
 
       TEdge eLastHorz = horzEdge, eMaxPair = null;
-      while (eLastHorz.NextInLML != null && IsHorizontal(eLastHorz.NextInLML))
+      while (eLastHorz.NextInLML is not null && IsHorizontal(eLastHorz.NextInLML))
         eLastHorz = eLastHorz.NextInLML;
-      if (eLastHorz.NextInLML == null)
+      if (eLastHorz.NextInLML is null)
         eMaxPair = GetMaximaPair(eLastHorz);
 
       Maxima currMax = m_Maxima;
-      if (currMax != null)
+      if (currMax is not null)
       {
         //get the first maxima in range (X) ...
         if (dir == Direction.dLeftToRight)
         {
-          while (currMax != null && currMax.X <= horzEdge.Bot.X)
+          while (currMax is not null && currMax.X <= horzEdge.Bot.X)
             currMax = currMax.Next;
-          if (currMax != null && currMax.X >= eLastHorz.Top.X)
+          if (currMax is not null && currMax.X >= eLastHorz.Top.X)
             currMax = null;
         }
         else
         {
-          while (currMax.Next != null && currMax.Next.X < horzEdge.Bot.X)
+          while (currMax.Next is not null && currMax.Next.X < horzEdge.Bot.X)
             currMax = currMax.Next;
           if (currMax.X <= eLastHorz.Top.X) currMax = null;
         }
@@ -2782,17 +2787,17 @@ namespace ClipperLib
       {
         bool IsLastHorz = (horzEdge == eLastHorz);
         TEdge e = GetNextInAEL(horzEdge, dir);
-        while (e != null)
+        while (e is not null)
         {
 
           //this code block inserts extra coords into horizontal edges (in output
           //polygons) whereever maxima touch these horizontal edges. This helps
           //'simplifying' polygons (ie if the Simplify property is set).
-          if (currMax != null)
+          if (currMax is not null)
           {
             if (dir == Direction.dLeftToRight)
             {
-              while (currMax != null && currMax.X < e.Curr.X)
+              while (currMax is not null && currMax.X < e.Curr.X)
               {
                 if (horzEdge.OutIdx >= 0 && !IsOpen)
                   AddOutPt(horzEdge, new IntPoint(currMax.X, horzEdge.Bot.Y));
@@ -2801,7 +2806,7 @@ namespace ClipperLib
             }
             else
             {
-              while (currMax != null && currMax.X > e.Curr.X)
+              while (currMax is not null && currMax.X > e.Curr.X)
               {
                 if (horzEdge.OutIdx >= 0 && !IsOpen)
                   AddOutPt(horzEdge, new IntPoint(currMax.X, horzEdge.Bot.Y));
@@ -2815,7 +2820,7 @@ namespace ClipperLib
 
           //Also break if we've got to the end of an intermediate horizontal edge ...
           //nb: Smaller Dx's are to the right of larger Dx's ABOVE the horizontal.
-          if (e.Curr.X == horzEdge.Top.X && horzEdge.NextInLML != null &&
+          if (e.Curr.X == horzEdge.Top.X && horzEdge.NextInLML is not null &&
             e.Dx < horzEdge.NextInLML.Dx) break;
 
           if (horzEdge.OutIdx >= 0 && !IsOpen)  //note: may be done multiple times
@@ -2827,7 +2832,7 @@ namespace ClipperLib
 
             op1 = AddOutPt(horzEdge, e.Curr);
             TEdge eNextHorz = m_SortedEdges;
-            while (eNextHorz != null)
+            while (eNextHorz is not null)
             {
               if (eNextHorz.OutIdx >= 0 &&
                 HorzSegmentsOverlap(horzEdge.Bot.X,
@@ -2868,7 +2873,7 @@ namespace ClipperLib
         } //end while(e != null)
 
         //Break out of loop if HorzEdge.NextInLML is not also horizontal ...
-        if (horzEdge.NextInLML == null || !IsHorizontal(horzEdge.NextInLML)) break;
+        if (horzEdge.NextInLML is null || !IsHorizontal(horzEdge.NextInLML)) break;
 
         UpdateEdgeIntoAEL(ref horzEdge);
         if (horzEdge.OutIdx >= 0) AddOutPt(horzEdge, horzEdge.Bot);
@@ -2876,11 +2881,11 @@ namespace ClipperLib
 
       } //end for (;;)
 
-      if (horzEdge.OutIdx >= 0 && op1 == null)
+      if (horzEdge.OutIdx >= 0 && op1 is null)
       {
         op1 = GetLastOutPt(horzEdge);
         TEdge eNextHorz = m_SortedEdges;
-        while (eNextHorz != null)
+        while (eNextHorz is not null)
         {
           if (eNextHorz.OutIdx >= 0 &&
             HorzSegmentsOverlap(horzEdge.Bot.X,
@@ -2894,7 +2899,7 @@ namespace ClipperLib
         AddGhostJoin(op1, horzEdge.Top);
       }
 
-      if (horzEdge.NextInLML != null)
+      if (horzEdge.NextInLML is not null)
       {
         if (horzEdge.OutIdx >= 0)
         {
@@ -2905,7 +2910,7 @@ namespace ClipperLib
           //nb: HorzEdge is no longer horizontal here
           TEdge ePrev = horzEdge.PrevInAEL;
           TEdge eNext = horzEdge.NextInAEL;
-          if (ePrev != null && ePrev.Curr.X == horzEdge.Bot.X &&
+          if (ePrev is not null && ePrev.Curr.X == horzEdge.Bot.X &&
             ePrev.Curr.Y == horzEdge.Bot.Y && ePrev.WindDelta != 0 &&
             (ePrev.OutIdx >= 0 && ePrev.Curr.Y > ePrev.Top.Y &&
             SlopesEqual(horzEdge, ePrev, m_UseFullRange)))
@@ -2913,7 +2918,7 @@ namespace ClipperLib
             OutPt op2 = AddOutPt(ePrev, horzEdge.Bot);
             AddJoin(op1, op2, horzEdge.Top);
           }
-          else if (eNext != null && eNext.Curr.X == horzEdge.Bot.X &&
+          else if (eNext is not null && eNext.Curr.X == horzEdge.Bot.X &&
             eNext.Curr.Y == horzEdge.Bot.Y && eNext.WindDelta != 0 &&
             eNext.OutIdx >= 0 && eNext.Curr.Y > eNext.Top.Y &&
             SlopesEqual(horzEdge, eNext, m_UseFullRange))
@@ -2941,27 +2946,27 @@ namespace ClipperLib
 
     private bool IsMinima(TEdge e)
     {
-      return e != null && (e.Prev.NextInLML != e) && (e.Next.NextInLML != e);
+      return e is not null && (e.Prev.NextInLML != e) && (e.Next.NextInLML != e);
     }
     //------------------------------------------------------------------------------
 
     private bool IsMaxima(TEdge e, double Y)
     {
-      return (e != null && e.Top.Y == Y && e.NextInLML == null);
+      return (e is not null && e.Top.Y == Y && e.NextInLML is null);
     }
     //------------------------------------------------------------------------------
 
     private bool IsIntermediate(TEdge e, double Y)
     {
-      return (e.Top.Y == Y && e.NextInLML != null);
+      return (e.Top.Y == Y && e.NextInLML is not null);
     }
     //------------------------------------------------------------------------------
 
     internal TEdge GetMaximaPair(TEdge e)
     {
-      if ((e.Next.Top == e.Top) && e.Next.NextInLML == null)
+      if ((e.Next.Top == e.Top) && e.Next.NextInLML is null)
         return e.Next;
-      else if ((e.Prev.Top == e.Top) && e.Prev.NextInLML == null)
+      else if ((e.Prev.Top == e.Top) && e.Prev.NextInLML is null)
         return e.Prev;
       else
         return null;
@@ -2972,7 +2977,7 @@ namespace ClipperLib
     {
       //as above but returns null if MaxPair isn't in AEL (unless it's horizontal)
       TEdge result = GetMaximaPair(e);
-      if (result == null || result.OutIdx == Skip ||
+      if (result is null || result.OutIdx == Skip ||
         ((result.NextInAEL == result.PrevInAEL) && !IsHorizontal(result))) return null;
       return result;
     }
@@ -2980,7 +2985,7 @@ namespace ClipperLib
 
     private bool ProcessIntersections(cInt topY)
     {
-      if (m_ActiveEdges == null) return true;
+      if (m_ActiveEdges is null) return true;
       try
       {
         BuildIntersectList(topY);
@@ -3003,12 +3008,12 @@ namespace ClipperLib
 
     private void BuildIntersectList(cInt topY)
     {
-      if (m_ActiveEdges == null) return;
+      if (m_ActiveEdges is null) return;
 
       //prepare for sorting ...
       TEdge e = m_ActiveEdges;
       m_SortedEdges = e;
-      while (e != null)
+      while (e is not null)
       {
         e.PrevInSEL = e.PrevInAEL;
         e.NextInSEL = e.NextInAEL;
@@ -3018,11 +3023,11 @@ namespace ClipperLib
 
       //bubblesort ...
       bool isModified = true;
-      while (isModified && m_SortedEdges != null)
+      while (isModified && m_SortedEdges is not null)
       {
         isModified = false;
         e = m_SortedEdges;
-        while (e.NextInSEL != null)
+        while (e.NextInSEL is not null)
         {
           TEdge eNext = e.NextInSEL;
           if (e.Curr.X > eNext.Curr.X)
@@ -3044,7 +3049,7 @@ namespace ClipperLib
           else
             e = eNext;
         }
-        if (e.PrevInSEL != null) e.PrevInSEL.NextInSEL = null;
+        if (e.PrevInSEL is not null) e.PrevInSEL.NextInSEL = null;
         else break;
       }
       m_SortedEdges = null;
@@ -3200,7 +3205,7 @@ namespace ClipperLib
     private void ProcessEdgesAtTopOfScanbeam(cInt topY)
     {
       TEdge e = m_ActiveEdges;
-      while (e != null)
+      while (e is not null)
       {
         //1. process maxima, treating them as if they're 'bent' horizontal edges,
         //   but exclude maxima with horizontal edges. nb: e can't be a horizontal.
@@ -3209,7 +3214,7 @@ namespace ClipperLib
         if (IsMaximaEdge)
         {
           TEdge eMaxPair = GetMaximaPairEx(e);
-          IsMaximaEdge = (eMaxPair == null || !IsHorizontal(eMaxPair));
+          IsMaximaEdge = (eMaxPair is null || !IsHorizontal(eMaxPair));
         }
 
         if (IsMaximaEdge)
@@ -3217,7 +3222,7 @@ namespace ClipperLib
           if (StrictlySimple) InsertMaxima(e.Top.X);
           TEdge ePrev = e.PrevInAEL;
           DoMaxima(e);
-          if (ePrev == null) e = m_ActiveEdges;
+          if (ePrev is null) e = m_ActiveEdges;
           else e = ePrev.NextInAEL;
         }
         else
@@ -3245,7 +3250,7 @@ namespace ClipperLib
           if (StrictlySimple)
           {
             TEdge ePrev = e.PrevInAEL;
-            if ((e.OutIdx >= 0) && (e.WindDelta != 0) && ePrev != null &&
+            if ((e.OutIdx >= 0) && (e.WindDelta != 0) && ePrev is not null &&
               (ePrev.OutIdx >= 0) && (ePrev.Curr.X == e.Curr.X) &&
               (ePrev.WindDelta != 0))
             {
@@ -3269,7 +3274,7 @@ namespace ClipperLib
 
       //4. Promote intermediate vertices ...
       e = m_ActiveEdges;
-      while (e != null)
+      while (e is not null)
       {
         if (IsIntermediate(e, topY))
         {
@@ -3281,8 +3286,8 @@ namespace ClipperLib
           //if output polygons share an edge, they'll need joining later ...
           TEdge ePrev = e.PrevInAEL;
           TEdge eNext = e.NextInAEL;
-          if (ePrev != null && ePrev.Curr.X == e.Bot.X &&
-            ePrev.Curr.Y == e.Bot.Y && op != null &&
+          if (ePrev is not null && ePrev.Curr.X == e.Bot.X &&
+            ePrev.Curr.Y == e.Bot.Y && op is not null &&
             ePrev.OutIdx >= 0 && ePrev.Curr.Y > ePrev.Top.Y &&
             SlopesEqual(e.Curr, e.Top, ePrev.Curr, ePrev.Top, m_UseFullRange) &&
             (e.WindDelta != 0) && (ePrev.WindDelta != 0))
@@ -3290,8 +3295,8 @@ namespace ClipperLib
             OutPt op2 = AddOutPt(ePrev, e.Bot);
             AddJoin(op, op2, e.Top);
           }
-          else if (eNext != null && eNext.Curr.X == e.Bot.X &&
-            eNext.Curr.Y == e.Bot.Y && op != null &&
+          else if (eNext is not null && eNext.Curr.X == e.Bot.X &&
+            eNext.Curr.Y == e.Bot.Y && op is not null &&
             eNext.OutIdx >= 0 && eNext.Curr.Y > eNext.Top.Y &&
             SlopesEqual(e.Curr, e.Top, eNext.Curr, eNext.Top, m_UseFullRange) &&
             (e.WindDelta != 0) && (eNext.WindDelta != 0))
@@ -3308,7 +3313,7 @@ namespace ClipperLib
     private void DoMaxima(TEdge e)
     {
       TEdge eMaxPair = GetMaximaPairEx(e);
-      if (eMaxPair == null)
+      if (eMaxPair is null)
       {
         if (e.OutIdx >= 0)
           AddOutPt(e, e.Top);
@@ -3317,7 +3322,7 @@ namespace ClipperLib
       }
 
       TEdge eNext = e.NextInAEL;
-      while (eNext != null && eNext != eMaxPair)
+      while (eNext is not null && eNext != eMaxPair)
       {
         IntersectEdges(e, eNext, e.Top);
         SwapPositionsInAEL(e, eNext);
@@ -3371,7 +3376,7 @@ namespace ClipperLib
 
     private int PointCount(OutPt pts)
     {
-      if (pts == null) return 0;
+      if (pts is null) return 0;
       int result = 0;
       OutPt p = pts;
       do
@@ -3391,7 +3396,7 @@ namespace ClipperLib
       for (int i = 0; i < m_PolyOuts.Count; i++)
       {
         OutRec outRec = m_PolyOuts[i];
-        if (outRec.Pts == null) continue;
+        if (outRec.Pts is null) continue;
         OutPt p = outRec.Pts.Prev;
         int cnt = PointCount(p);
         if (cnt < 2) continue;
@@ -3436,14 +3441,14 @@ namespace ClipperLib
       for (int i = 0; i < m_PolyOuts.Count; i++)
       {
         OutRec outRec = m_PolyOuts[i];
-        if (outRec.PolyNode == null) continue;
+        if (outRec.PolyNode is null) continue;
         else if (outRec.IsOpen)
         {
           outRec.PolyNode.IsOpen = true;
           polytree.AddChild(outRec.PolyNode);
         }
-        else if (outRec.FirstLeft != null &&
-          outRec.FirstLeft.PolyNode != null)
+        else if (outRec.FirstLeft is not null &&
+                    outRec.FirstLeft.PolyNode is not null)
           outRec.FirstLeft.PolyNode.AddChild(outRec.PolyNode);
         else
           polytree.AddChild(outRec.PolyNode);
@@ -3499,7 +3504,7 @@ namespace ClipperLib
         else if (pp == lastOK) break;
         else
         {
-          if (lastOK == null) lastOK = pp;
+          if (lastOK is null) lastOK = pp;
           pp = pp.Next;
         }
       }
@@ -3916,7 +3921,7 @@ namespace ClipperLib
       foreach (OutRec outRec in m_PolyOuts)
       {
         OutRec firstLeft = ParseFirstLeft(outRec.FirstLeft);
-        if (outRec.Pts != null && firstLeft == OldOutRec)
+        if (outRec.Pts is not null && firstLeft == OldOutRec)
         {
           if (Poly2ContainsPoly1(outRec.Pts, NewOutRec.Pts))
             outRec.FirstLeft = NewOutRec;
@@ -3934,7 +3939,7 @@ namespace ClipperLib
       OutRec orfl = outerOutRec.FirstLeft;
       foreach (OutRec outRec in m_PolyOuts)
       {
-        if (outRec.Pts == null || outRec == outerOutRec || outRec == innerOutRec)
+        if (outRec.Pts is null || outRec == outerOutRec || outRec == innerOutRec)
           continue;
         OutRec firstLeft = ParseFirstLeft(outRec.FirstLeft);
         if (firstLeft != orfl && firstLeft != innerOutRec && firstLeft != outerOutRec)
@@ -3955,7 +3960,7 @@ namespace ClipperLib
       foreach (OutRec outRec in m_PolyOuts)
       {
         OutRec firstLeft = ParseFirstLeft(outRec.FirstLeft);
-        if (outRec.Pts != null && firstLeft == OldOutRec)
+        if (outRec.Pts is not null && firstLeft == OldOutRec)
           outRec.FirstLeft = NewOutRec;
       }
     }
@@ -3963,7 +3968,7 @@ namespace ClipperLib
 
     private static OutRec ParseFirstLeft(OutRec FirstLeft)
     {
-      while (FirstLeft != null && FirstLeft.Pts == null)
+      while (FirstLeft is not null && FirstLeft.Pts is null)
         FirstLeft = FirstLeft.FirstLeft;
       return FirstLeft;
     }
@@ -3978,7 +3983,7 @@ namespace ClipperLib
         OutRec outRec1 = GetOutRec(join.OutPt1.Idx);
         OutRec outRec2 = GetOutRec(join.OutPt2.Idx);
 
-        if (outRec1.Pts == null || outRec2.Pts == null) continue;
+        if (outRec1.Pts is null || outRec2.Pts is null) continue;
         if (outRec1.IsOpen || outRec2.IsOpen) continue;
 
         //get the polygon fragment with the correct hole state (FirstLeft)
@@ -4078,7 +4083,7 @@ namespace ClipperLib
       {
         OutRec outrec = m_PolyOuts[i++];
         OutPt op = outrec.Pts;
-        if (op == null || outrec.IsOpen) continue;
+        if (op is null || outrec.IsOpen) continue;
         do //for each Pt in Polygon until duplicate found do ...
         {
           OutPt op2 = op.Next;
@@ -4156,7 +4161,7 @@ namespace ClipperLib
     internal double Area(OutPt op)
     {
       OutPt opFirst = op;
-      if (op == null) return 0;
+      if (op is null) return 0;
       double a = 0;
       do
       {

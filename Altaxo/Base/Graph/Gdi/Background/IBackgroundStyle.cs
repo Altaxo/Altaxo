@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
@@ -64,8 +66,9 @@ namespace Altaxo.Graph.Gdi.Background
     bool SupportsBrush { get; }
 
     /// <summary>
-    /// Get/sets the color.
+    /// Get/sets the color. Can be null if this instance does not support a brush.
     /// </summary>
+    [MaybeNull]
     BrushX Brush { get; set; }
   }
 }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using Markdig.Syntax.Inlines;
 
 namespace Altaxo.Text.Renderers.Maml.Inlines
@@ -35,20 +36,20 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
 
     protected override void Write(MamlRenderer renderer, EmphasisInline obj)
     {
-      MamlElement mamlElement = null;
+      MamlElement? mamlElement = null;
 
       switch (obj.DelimiterChar)
       {
         case '*':
         case '_':
-          if (obj.IsDouble)
+          if (obj.DelimiterCount == 2)
             mamlElement = MamlElements.legacyBold;
           else
             mamlElement = MamlElements.legacyItalic;
           break;
 
         case '~':
-          if (obj.IsDouble)
+          if (obj.DelimiterCount == 2)
             mamlElement = MamlElements.legacyStrikethrough;
           else
             mamlElement = MamlElements.subscript;
@@ -69,10 +70,10 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
           break;
       }
 
-      if (null != mamlElement)
+      if (mamlElement is not null)
         renderer.Push(mamlElement);
       renderer.WriteChildren(obj);
-      if (null != mamlElement)
+      if (mamlElement is not null)
         renderer.PopTo(mamlElement);
     }
   }

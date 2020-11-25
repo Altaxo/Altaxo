@@ -22,7 +22,7 @@
 
 #endregion Copyright
 
-using System;
+#nullable enable
 
 namespace Altaxo.Gui.Common
 {
@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Sets the controller.
     /// </summary>
-    ISingleChoiceViewEventSink Controller { set; }
+    ISingleChoiceViewEventSink? Controller { set; }
 
     /// <summary>
     /// Initializes a descriptive text.
@@ -104,8 +104,8 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class SingleChoiceController : IMVCAController, ISingleChoiceViewEventSink
   {
-    protected ISingleChoiceView _view;
-    protected string[] _values;
+    protected ISingleChoiceView? _view;
+    protected string[] _values = new string[0];
     protected int _choice;
     protected int _choiceTemp;
 
@@ -128,7 +128,7 @@ namespace Altaxo.Gui.Common
 
     protected virtual void Initialize()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeDescription(_descriptionText);
         _view.InitializeChoice(_values, _choice);
@@ -144,7 +144,7 @@ namespace Altaxo.Gui.Common
       set
       {
         _descriptionText = value;
-        if (null != _view)
+        if (_view is not null)
         {
           _view.InitializeDescription(_descriptionText);
         }
@@ -153,7 +153,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
-    public virtual object ViewObject
+    public virtual object? ViewObject
     {
       get
       {
@@ -161,14 +161,14 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = null;
 
         _view = value as ISingleChoiceView;
 
         Initialize();
 
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = this;
       }
     }

@@ -22,17 +22,18 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Altaxo.Main;
 
 namespace Altaxo.Data
 {
   /// <summary>
   /// Used for notifying receivers about what columns in this collection have changed.
   /// </summary>
-  public class DataColumnCollectionChangedEventArgs : Main.SelfAccumulateableEventArgs
+  public abstract class BaseColumnCollectionChangedEventArgs : Main.SelfAccumulateableEventArgs
   {
     protected int _minColChanged;
     protected int _maxColChanged;
@@ -41,13 +42,19 @@ namespace Altaxo.Data
     protected bool _hasRowCountDecreased;
 
     /// <summary>
+    /// Stores column name changed, or deletions and additions of columns. The oldest name change is at the bottom of the list at index 0.
+    /// For deletion, the NewName field is set to null. For addition, the OldName field is set to null.
+    /// </summary>
+    private List<(string? OldName, string? NewName)>? _columnNameChanges;
+
+    /// <summary>
     /// Constructor.
     /// </summary>
     /// <param name="columnNumber">The number of the column that has changed.</param>
     /// <param name="minRow">The first number of row that has changed.</param>
     /// <param name="maxRow">The last number of row (plus one) that has changed.</param>
     /// <param name="rowCountDecreased">If true, in one of the columns the row count has decreased, so a complete recalculation of the row count of the collection is neccessary.</param>
-    public DataColumnCollectionChangedEventArgs(int columnNumber, int minRow, int maxRow, bool rowCountDecreased)
+    public BaseColumnCollectionChangedEventArgs(int columnNumber, int minRow, int maxRow, bool rowCountDecreased)
     {
       _minColChanged = columnNumber;
       _maxColChanged = columnNumber;
@@ -80,7 +87,7 @@ namespace Altaxo.Data
     /// Accumulate the change state by adding another change state.
     /// </summary>
     /// <param name="args">The other change state to be added.</param>
-    public void Accumulate(DataColumnCollectionChangedEventArgs args)
+    public void Accumulate(BaseColumnCollectionChangedEventArgs args)
     {
       if (args._minColChanged < _minColChanged)
         _minColChanged = args._minColChanged;
@@ -95,87 +102,149 @@ namespace Altaxo.Data
         _maxRowChanged = args._maxRowChanged;
 
       _hasRowCountDecreased |= args._hasRowCountDecreased;
+
+      if (args._columnNameChanges is { } list)
+      {
+        _columnNameChanges ??= new List<(string? OldName, string? NewName)>();
+        _columnNameChanges.AddRange(list);
+      }
     }
 
     /// <summary>
     /// Creates a change state that reflects the removal of some columns.
     /// </summary>
+    /// <param name="isPropertyColumn">True if the call comes from a collection of property columns; false if the call comes from a collection of data columns.</param>
+    /// <param name="columnNames">The names of the columns that were removed.</param>
     /// <param name="firstColumnNumber">The first column number that was removed.</param>
     /// <param name="originalNumberOfColumns">The number of columns in the collection before the removal.</param>
     /// <param name="maxRowCountOfRemovedColumns">The maximum row count of the removed columns.</param>
     /// <returns>The change state that reflects the removal.</returns>
-    public static DataColumnCollectionChangedEventArgs CreateColumnRemoveArgs(int firstColumnNumber, int originalNumberOfColumns, int maxRowCountOfRemovedColumns)
+    public static BaseColumnCollectionChangedEventArgs CreateColumnRemoveArgs(bool isPropertyColumn, IEnumerable<string> columnNames, int firstColumnNumber, int originalNumberOfColumns, int maxRowCountOfRemovedColumns)
     {
-      var args = new DataColumnCollectionChangedEventArgs(firstColumnNumber, 0, maxRowCountOfRemovedColumns, true);
+      BaseColumnCollectionChangedEventArgs args;
+      if (isPropertyColumn)
+        args = new PropertyColumnCollectionChangedEventArgs(firstColumnNumber, 0, maxRowCountOfRemovedColumns, true);
+      else
+        args = new DataColumnCollectionChangedEventArgs(firstColumnNumber, 0, maxRowCountOfRemovedColumns, true);
+
+
       if (originalNumberOfColumns > args._maxColChanged)
         args._maxColChanged = originalNumberOfColumns;
+
+      args._columnNameChanges ??= new List<(string? OldName, string? NewName)>();
+      foreach (var name in columnNames)
+      {
+        args._columnNameChanges.Add((name, null));
+      }
+
       return args;
     }
 
     /// <summary>
     /// Creates a change state that reflects the move of some columns.
     /// </summary>
+    /// <param name="isPropertyColumn">True if the call comes from a collection of property columns; false if the call comes from a collection of data columns.</param>
     /// <param name="firstColumnNumber">The first column number that was removed.</param>
     /// <param name="maxColumnNumber">One more than the last affected column.</param>
     /// <returns>The change state that reflects the move.</returns>
-    public static DataColumnCollectionChangedEventArgs CreateColumnMoveArgs(int firstColumnNumber, int maxColumnNumber)
+    public static BaseColumnCollectionChangedEventArgs CreateColumnMoveArgs(bool isPropertyColumn, int firstColumnNumber, int maxColumnNumber)
     {
-      var args = new DataColumnCollectionChangedEventArgs(firstColumnNumber, 0, 0, false)
-      {
-        _maxColChanged = maxColumnNumber
-      };
+      BaseColumnCollectionChangedEventArgs args;
+      if (isPropertyColumn)
+        args = new PropertyColumnCollectionChangedEventArgs(firstColumnNumber, 0, 0, false);
+      else
+        args = new DataColumnCollectionChangedEventArgs(firstColumnNumber, 0, 0, false);
+
+
+      args._maxColChanged = maxColumnNumber;
       return args;
     }
 
     /// <summary>
     /// Creates a change state that reflects the move of some rows (in all columns).
     /// </summary>
+    /// <param name="isPropertyColumn">True if the call comes from a collection of property columns; false if the call comes from a collection of data columns.</param>
     /// <param name="numberOfColumns">The number of columns in the table.</param>
     /// <param name="firstRowNumber">The first row number that was affected.</param>
     /// <param name="maxRowNumber">One more than the last affected row number.</param>
     /// <returns>The change state that reflects the move.</returns>
-    public static DataColumnCollectionChangedEventArgs CreateRowMoveArgs(int numberOfColumns, int firstRowNumber, int maxRowNumber)
+    public static BaseColumnCollectionChangedEventArgs CreateRowMoveArgs(bool isPropertyColumn, int numberOfColumns, int firstRowNumber, int maxRowNumber)
     {
-      var args = new DataColumnCollectionChangedEventArgs(0, firstRowNumber, maxRowNumber, false)
-      {
-        _maxColChanged = numberOfColumns
-      };
+      BaseColumnCollectionChangedEventArgs args;
+      if (isPropertyColumn)
+        args = new PropertyColumnCollectionChangedEventArgs(0, firstRowNumber, maxRowNumber, false);
+      else
+        args = new DataColumnCollectionChangedEventArgs(0, firstRowNumber, maxRowNumber, false);
+
+      args._maxColChanged = numberOfColumns;
+
       return args;
     }
 
     /// <summary>
     /// Create the change state that reflects the addition of one column.
     /// </summary>
+    /// <param name="isPropertyColumn">True if the call comes from a collection of property columns; false if the call comes from a collection of data columns.</param>
+    /// <param name="columnName">Name of the freshly added column.</param>
     /// <param name="columnIndex">The index of the added column.</param>
     /// <param name="rowCountOfAddedColumn">The row count of the added column.</param>
     /// <returns>The newly created ChangeEventArgs for this case.</returns>
-    public static DataColumnCollectionChangedEventArgs CreateColumnAddArgs(int columnIndex, int rowCountOfAddedColumn)
+    public static BaseColumnCollectionChangedEventArgs CreateColumnAddArgs(bool isPropertyColumn, string columnName, int columnIndex, int rowCountOfAddedColumn)
     {
-      var args = new DataColumnCollectionChangedEventArgs(columnIndex, 0, rowCountOfAddedColumn, false);
+      BaseColumnCollectionChangedEventArgs args;
+      if (isPropertyColumn)
+        args = new PropertyColumnCollectionChangedEventArgs(columnIndex, 0, rowCountOfAddedColumn, false);
+      else
+        args = new DataColumnCollectionChangedEventArgs(columnIndex, 0, rowCountOfAddedColumn, false);
+
+      args._columnNameChanges ??= new List<(string? OldName, string? NewName)>();
+      args._columnNameChanges.Add((null, columnName));
       return args;
     }
 
     /// <summary>
     /// Create the change state that reflects the renaming of one column.
     /// </summary>
+    /// <param name="isPropertyColumn">True if the call comes from a collection of property columns; false if the call comes from a collection of data columns.</param>
+    /// <param name="oldName">The name of the column before it was renamed.</param>
+    /// <param name="newName">The new name of the column.</param>
     /// <param name="columnIndex">The index of the renamed column.</param>
     /// <returns>The newly created ChangeEventArgs for this case.</returns>
-    public static DataColumnCollectionChangedEventArgs CreateColumnRenameArgs(int columnIndex)
+    public static BaseColumnCollectionChangedEventArgs CreateColumnRenameArgs(bool isPropertyColumn, string oldName, string newName, int columnIndex)
     {
-      var args = new DataColumnCollectionChangedEventArgs(columnIndex, 0, 0, false);
+      BaseColumnCollectionChangedEventArgs args;
+      if (isPropertyColumn)
+        args = new PropertyColumnCollectionChangedEventArgs(columnIndex, 0, 0, false);
+      else
+        args = new DataColumnCollectionChangedEventArgs(columnIndex, 0, 0, false);
+
+      args._columnNameChanges ??= new List<(string? OldName, string? NewName)>();
+      args._columnNameChanges.Add((oldName, newName));
       return args;
     }
 
     /// <summary>
     /// Create the change state that reflects the replace of one column by another (or copying data).
     /// </summary>
+    /// <param name="isPropertyColumn">True if the call comes from a collection of property columns; false if the call comes from a collection of data columns.</param>
+    /// <param name="columnName">The name of the column that was replaced.</param>
     /// <param name="columnIndex">The index of the column to replace.</param>
     /// <param name="oldRowCount">The row count of the old (replaced) column.</param>
     /// <param name="newRowCount">The row count of the new column.</param>
     /// <returns>The newly created ChangeEventArgs for this case.</returns>
-    public static DataColumnCollectionChangedEventArgs CreateColumnCopyOrReplaceArgs(int columnIndex, int oldRowCount, int newRowCount)
+    public static BaseColumnCollectionChangedEventArgs CreateColumnCopyOrReplaceArgs(bool isPropertyColumn, string columnName, int columnIndex, int oldRowCount, int newRowCount)
     {
-      var args = new DataColumnCollectionChangedEventArgs(columnIndex, 0, Math.Max(oldRowCount, newRowCount), newRowCount < oldRowCount);
+      BaseColumnCollectionChangedEventArgs args;
+      if (isPropertyColumn)
+        args = new PropertyColumnCollectionChangedEventArgs(columnIndex, 0, Math.Max(oldRowCount, newRowCount), newRowCount < oldRowCount);
+      else
+        args = new DataColumnCollectionChangedEventArgs(columnIndex, 0, Math.Max(oldRowCount, newRowCount), newRowCount < oldRowCount);
+
+      // we treat replace as remove and add
+      args._columnNameChanges ??= new List<(string? OldName, string? NewName)>();
+      args._columnNameChanges.Add((columnName, null));
+      args._columnNameChanges.Add((null, columnName));
+
       return args;
     }
 
@@ -219,9 +288,62 @@ namespace Altaxo.Data
       get { return _hasRowCountDecreased; }
     }
 
+
+
+
+    /// <summary>
+    /// Gets the column addition, deletion, and rename operations.
+    /// For additions, the OldName field in the tuple is null, and the NewName field contains the name of the added column.
+    /// For deletions, the NewName field of the tuple is null, and the OldName field contains the name of the deleted column.
+    /// For renamings, the OldName filed of the tuple contains the old name of the column, and the NewName field contains the new name.
+    /// </summary>
+    public IEnumerable<(string? OldName, string? NewName)> ColumnAdditionDeletionRenameOperations
+    {
+      get
+      {
+        return _columnNameChanges ?? Enumerable.Empty<(string? OldName, string? NewName)>();
+      }
+    }
+  }
+
+  public class DataColumnCollectionChangedEventArgs : BaseColumnCollectionChangedEventArgs
+  {
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="columnNumber">The number of the column that has changed.</param>
+    /// <param name="minRow">The first number of row that has changed.</param>
+    /// <param name="maxRow">The last number of row (plus one) that has changed.</param>
+    /// <param name="rowCountDecreased">If true, in one of the columns the row count has decreased, so a complete recalculation of the row count of the collection is neccessary.</param>
+    public DataColumnCollectionChangedEventArgs(int columnNumber, int minRow, int maxRow, bool rowCountDecreased)
+      : base(columnNumber, minRow, maxRow, rowCountDecreased)
+    {
+    }
+
     public override void Add(Main.SelfAccumulateableEventArgs e)
     {
       Accumulate((DataColumnCollectionChangedEventArgs)e);
+    }
+  }
+
+  public class PropertyColumnCollectionChangedEventArgs
+        : BaseColumnCollectionChangedEventArgs
+  {
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="columnNumber">The number of the column that has changed.</param>
+    /// <param name="minRow">The first number of row that has changed.</param>
+    /// <param name="maxRow">The last number of row (plus one) that has changed.</param>
+    /// <param name="rowCountDecreased">If true, in one of the columns the row count has decreased, so a complete recalculation of the row count of the collection is neccessary.</param>
+    public PropertyColumnCollectionChangedEventArgs(int columnNumber, int minRow, int maxRow, bool rowCountDecreased)
+      : base(columnNumber, minRow, maxRow, rowCountDecreased)
+    {
+    }
+
+    public override void Add(Main.SelfAccumulateableEventArgs e)
+    {
+      Accumulate((PropertyColumnCollectionChangedEventArgs)e);
     }
   }
 }

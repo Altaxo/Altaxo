@@ -1,2 +1,2 @@
-call clean-Temporary-VSStudio-Files.cmd
+call clean-Temporary-Files.cmd
 Altaxo.sln

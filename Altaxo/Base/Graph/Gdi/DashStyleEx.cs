@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing.Drawing2D;
 
@@ -32,8 +33,10 @@ namespace Altaxo.Graph.Gdi
   [Serializable]
   public class DashStyleEx : Main.IImmutable, IEquatable<DashStyleEx>
   {
+    private static readonly float[] _emptyArrayFloat = new float[0];
     private DashStyle _knownStyle;
-    private float[] _customStyle;
+
+    private float[] _customStyle = _emptyArrayFloat;
 
     public DashStyleEx(DashStyle style)
     {
@@ -86,7 +89,7 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        return (float[])_customStyle?.Clone();
+        return (float[])_customStyle.Clone();
       }
     }
 
@@ -94,7 +97,7 @@ namespace Altaxo.Graph.Gdi
 
 
 
-    public bool Equals(DashStyleEx from)
+    public bool Equals(DashStyleEx? from)
     {
       if (from is null)
       {
@@ -111,7 +114,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return Equals(obj as DashStyleEx);
     }
@@ -133,7 +136,7 @@ namespace Altaxo.Graph.Gdi
 
     public override int GetHashCode()
     {
-      if (IsCustomStyle && _customStyle != null)
+      if (IsCustomStyle && _customStyle is not null)
         return _customStyle.GetHashCode();
       else
         return _knownStyle.GetHashCode();
@@ -187,7 +190,7 @@ namespace Altaxo.Graph.Gdi
 
     private static bool IsEqual(float[] a, float[] b)
     {
-      if (a == null || b == null)
+      if (a is null || b is null)
         return false;
       if (a.Length != b.Length)
         return false;

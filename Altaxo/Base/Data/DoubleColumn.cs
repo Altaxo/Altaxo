@@ -22,9 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Data
 {
@@ -37,8 +39,9 @@ namespace Altaxo.Data
     INumericColumn,
     Altaxo.Calc.LinearAlgebra.IROVector<double>
   {
-    private double[] _data;
-    private int _capacity; // shortcut to m_Array.Length;
+    static readonly double[] _emptyDoubleArray = new double[0];
+    private double[] _data = _emptyDoubleArray;
+    private int _capacity; // shortcut to _data.Length;
     private int _count;
     public static readonly double NullValue = double.NaN;
     // private const int MaxCount = 256 * 1024 * 1024 - 8; // this is the maximum possible number of double elements in 64-bit mode currently (Framework 4.0).
@@ -143,45 +146,41 @@ namespace Altaxo.Data
       var oldCount = _count;
       _count = 0;
 
-      if (o is DoubleColumn)
+      if (o is DoubleColumn dcol)
       {
-        var src = (DoubleColumn)o;
-        _data = null == src._data ? null : (double[])src._data.Clone();
+        _data = dcol._data.Length == 0 ? _emptyDoubleArray : (double[])dcol._data.Clone();
         _capacity = _data?.Length ?? 0;
-        _count = src._count;
+        _count = dcol._count;
       }
       else
       {
-        if (o is ICollection)
-          Realloc((o as ICollection).Count); // Prealloc the array if count of the collection is known beforehand
+        if (o is ICollection ocoll)
+          Realloc(ocoll.Count); // Prealloc the array if count of the collection is known beforehand
 
-        if (o is IEnumerable<double>)
+        if (o is IEnumerable<double> srcd)
         {
-          var src = (IEnumerable<double>)o;
           _count = 0;
-          foreach (var it in src)
+          foreach (var it in srcd)
           {
             if (_count >= _capacity)
               Realloc(_count);
             _data[_count++] = it;
           }
         }
-        else if (o is IEnumerable<float>)
+        else if (o is IEnumerable<float> srcf)
         {
-          var src = (IEnumerable<float>)o;
           _count = 0;
-          foreach (var it in src)
+          foreach (var it in srcf)
           {
             if (_count >= _capacity)
               Realloc(_count);
             _data[_count++] = it;
           }
         }
-        else if (o is IEnumerable<int>)
+        else if (o is IEnumerable<int> srci)
         {
-          var src = (IEnumerable<int>)o;
           _count = 0;
-          foreach (var it in src)
+          foreach (var it in srci)
           {
             if (_count >= _capacity)
               Realloc(_count);
@@ -200,11 +199,10 @@ namespace Altaxo.Data
             ;
           }
         }
-        else if (o is IEnumerable<AltaxoVariant>)
+        else if (o is IEnumerable<AltaxoVariant> srcv)
         {
-          var src = (IEnumerable<AltaxoVariant>)o;
           _count = 0;
-          foreach (var it in src)
+          foreach (var it in srcv)
           {
             if (_count >= _capacity)
               Realloc(_count);
@@ -214,7 +212,7 @@ namespace Altaxo.Data
         else
         {
           _count = 0;
-          if (o == null)
+          if (o is null)
             throw new ArgumentNullException("o");
           else
             throw new ArgumentException("Try to copy " + o.GetType() + " to " + GetType(), "o"); // throw exception
@@ -255,7 +253,7 @@ namespace Altaxo.Data
     {
       _count = from._count;
       _capacity = from._capacity;
-      _data = null == from._data ? null : (double[])from._data.Clone();
+      _data = from._data.Length == 0 ? _emptyDoubleArray : (double[])from._data.Clone();
     }
 
     #region "Serialization"
@@ -275,17 +273,17 @@ namespace Altaxo.Data
           info.AddArray("Data", s._data, s._count);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        Altaxo.Data.DoubleColumn s = null != o ? (Altaxo.Data.DoubleColumn)o : new Altaxo.Data.DoubleColumn();
+        var s = (Altaxo.Data.DoubleColumn?)o ?? new Altaxo.Data.DoubleColumn();
 
         // deserialize the base class
         info.GetBaseValueEmbedded(s, typeof(Altaxo.Data.DataColumn), parent);
 
         int count = info.GetInt32Attribute("Count");
-        s._data = new double[count];
+        s._data = count == 0 ? _emptyDoubleArray : new double[count];
         info.GetArray(s._data, count);
-        s._capacity = null == s._data ? 0 : s._data.Length;
+        s._capacity = s._data.Length;
         s._count = s._capacity;
 
         return s;
@@ -371,9 +369,9 @@ namespace Altaxo.Data
       int oldCount = _count;
       int srcarraycount = 0;
 
-      if (null == srcarray || 0 == (srcarraycount = GetUsedLength(srcarray, Math.Min(srcarray.Length, count))))
+      if (srcarray is null || 0 == (srcarraycount = GetUsedLength(srcarray, Math.Min(srcarray.Length, count))))
       {
-        _data = null;
+        _data = _emptyDoubleArray;
         _capacity = 0;
         _count = 0;
       }
@@ -451,9 +449,9 @@ namespace Altaxo.Data
       int oldCount = _count;
       int srcarraycount = 0;
 
-      if (null == srcarray || 0 == (srcarraycount = Altaxo.Calc.LinearAlgebra.VectorMath.GetUsedLength(srcarray, Math.Min(srcarray.Count, count))))
+      if (srcarray is null || 0 == (srcarraycount = Altaxo.Calc.LinearAlgebra.VectorMath.GetUsedLength(srcarray, Math.Min(srcarray.Count, count))))
       {
-        _data = null;
+        _data = _emptyDoubleArray;
         _capacity = 0;
         _count = 0;
       }
@@ -702,7 +700,7 @@ namespace Altaxo.Data
       return c1 + c2;
     }
 
-    public override bool vop_Addition(DataColumn c2, out DataColumn c3)
+    public override bool vop_Addition(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -713,12 +711,12 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Addition_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_Addition_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       return vop_Addition(c2, out c3);
     }
 
-    public override bool vop_Addition(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Addition(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -730,7 +728,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Addition_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Addition_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       return vop_Addition(c2, out c3);
     }
@@ -773,7 +771,7 @@ namespace Altaxo.Data
       return c3;
     }
 
-    public override bool vop_Subtraction(DataColumn c2, out DataColumn c3)
+    public override bool vop_Subtraction(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -784,7 +782,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Subtraction_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_Subtraction_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -795,7 +793,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Subtraction(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Subtraction(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -807,7 +805,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Subtraction_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Subtraction_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -894,7 +892,7 @@ namespace Altaxo.Data
       return c3;
     }
 
-    public override bool vop_Multiplication(DataColumn c2, out DataColumn c3)
+    public override bool vop_Multiplication(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -905,12 +903,12 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Multiplication_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_Multiplication_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       return vop_Multiplication(c2, out c3);
     }
 
-    public override bool vop_Multiplication(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Multiplication(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -922,7 +920,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Multiplication_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Multiplication_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       return vop_Multiplication(c2, out c3);
     }
@@ -965,7 +963,7 @@ namespace Altaxo.Data
       return c3;
     }
 
-    public override bool vop_Division(DataColumn c2, out DataColumn c3)
+    public override bool vop_Division(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -976,7 +974,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Division_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_Division_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -987,7 +985,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Division(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Division(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -999,7 +997,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Division_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Division_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1048,7 +1046,7 @@ namespace Altaxo.Data
       return c3;
     }
 
-    public override bool vop_Modulo(DataColumn c2, out DataColumn c3)
+    public override bool vop_Modulo(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1059,7 +1057,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Modulo_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_Modulo_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1070,7 +1068,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Modulo(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Modulo(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1082,7 +1080,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Modulo_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Modulo_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1129,7 +1127,7 @@ namespace Altaxo.Data
       return c3;
     }
 
-    public override bool vop_And(DataColumn c2, out DataColumn c3)
+    public override bool vop_And(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1140,7 +1138,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_And_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_And_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1151,7 +1149,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_And(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_And(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1163,7 +1161,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_And_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_And_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1210,7 +1208,7 @@ namespace Altaxo.Data
       return c3;
     }
 
-    public override bool vop_Or(DataColumn c2, out DataColumn c3)
+    public override bool vop_Or(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1221,7 +1219,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Or_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_Or_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1232,7 +1230,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Or(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Or(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1244,7 +1242,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Or_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Or_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1291,7 +1289,7 @@ namespace Altaxo.Data
       return c3;
     }
 
-    public override bool vop_Xor(DataColumn c2, out DataColumn c3)
+    public override bool vop_Xor(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1302,7 +1300,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Xor_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_Xor_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1313,7 +1311,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Xor(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Xor(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1325,7 +1323,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Xor_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Xor_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1349,7 +1347,7 @@ namespace Altaxo.Data
       return c3;
     }
 
-    public override bool vop_ShiftLeft(DataColumn c2, out DataColumn c3)
+    public override bool vop_ShiftLeft(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1369,7 +1367,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_ShiftLeft_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_ShiftLeft_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1390,7 +1388,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_ShiftLeft(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_ShiftLeft(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1402,7 +1400,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_ShiftLeft_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_ShiftLeft_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1432,7 +1430,7 @@ namespace Altaxo.Data
       return c3;
     }
 
-    public override bool vop_ShiftRight(DataColumn c2, out DataColumn c3)
+    public override bool vop_ShiftRight(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1452,7 +1450,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_ShiftRight_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_ShiftRight_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1472,7 +1470,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_ShiftRight(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_ShiftRight(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1490,7 +1488,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_ShiftRight_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_ShiftRight_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1541,7 +1539,7 @@ namespace Altaxo.Data
       return c3;
     }
 
-    public override bool vop_Lesser(DataColumn c2, out DataColumn c3)
+    public override bool vop_Lesser(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1552,7 +1550,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Lesser_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_Lesser_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1563,7 +1561,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Lesser(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Lesser(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1575,7 +1573,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Lesser_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Lesser_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1620,7 +1618,7 @@ namespace Altaxo.Data
       return c3;
     }
 
-    public override bool vop_Greater(DataColumn c2, out DataColumn c3)
+    public override bool vop_Greater(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1631,7 +1629,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Greater_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_Greater_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1642,7 +1640,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Greater(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Greater(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1654,7 +1652,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_Greater_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_Greater_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1699,7 +1697,7 @@ namespace Altaxo.Data
       return c3;
     }
 
-    public override bool vop_LesserOrEqual(DataColumn c2, out DataColumn c3)
+    public override bool vop_LesserOrEqual(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1710,7 +1708,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_LesserOrEqual_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_LesserOrEqual_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1721,7 +1719,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_LesserOrEqual(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_LesserOrEqual(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1733,7 +1731,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_LesserOrEqual_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_LesserOrEqual_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1778,7 +1776,7 @@ namespace Altaxo.Data
       return c3;
     }
 
-    public override bool vop_GreaterOrEqual(DataColumn c2, out DataColumn c3)
+    public override bool vop_GreaterOrEqual(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1789,7 +1787,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_GreaterOrEqual_Rev(DataColumn c2, out DataColumn c3)
+    public override bool vop_GreaterOrEqual_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2 is Altaxo.Data.DoubleColumn)
       {
@@ -1800,7 +1798,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_GreaterOrEqual(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_GreaterOrEqual(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {
@@ -1812,7 +1810,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    public override bool vop_GreaterOrEqual_Rev(AltaxoVariant c2, out DataColumn c3)
+    public override bool vop_GreaterOrEqual_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
     {
       if (c2.IsType(AltaxoVariant.Content.VDouble))
       {

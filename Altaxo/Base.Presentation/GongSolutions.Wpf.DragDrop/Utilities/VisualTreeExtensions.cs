@@ -12,6 +12,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       var current = d;
       var result = d;
 
-      while (current != null)
+      while (current is not null)
       {
         result = current;
         if (current is Visual || current is Visual3D)
@@ -52,10 +53,10 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     {
       var item = VisualTreeHelper.GetParent(d.FindVisualTreeRoot());
 
-      while (item != null)
+      while (item is not null)
       {
         var itemAsT = item as T;
-        if (itemAsT != null)
+        if (itemAsT is not null)
         {
           return itemAsT;
         }
@@ -69,7 +70,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     {
       var item = VisualTreeHelper.GetParent(d.FindVisualTreeRoot());
 
-      while (item != null && type != null)
+      while (item is not null && type is not null)
       {
         if (item.GetType() == type || item.GetType().IsSubclassOf(type))
         {
@@ -89,7 +90,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       var item = VisualTreeHelper.GetParent(d.FindVisualTreeRoot());
       DependencyObject lastFoundItemByType = null;
 
-      while (item != null && type != null)
+      while (item is not null && type is not null)
       {
         if (item == itemsControl)
         {

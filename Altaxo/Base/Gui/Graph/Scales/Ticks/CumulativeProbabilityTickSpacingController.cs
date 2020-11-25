@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -96,7 +97,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       base.Initialize(initData);
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.MinGrace = _doc.OrgGrace;
         _view.MaxGrace = _doc.EndGrace;

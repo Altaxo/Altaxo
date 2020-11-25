@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +51,6 @@ namespace Altaxo.Gui.Text.Viewing
     private ImageProvider _imageProvider;
     private ITextDocumentController _controller;
     private string _documentName;
-    private bool _isInInitializationStage;
 
     public TextDocumentControl()
     {
@@ -81,9 +81,9 @@ namespace Altaxo.Gui.Text.Viewing
     {
       _documentName = documentName;
       var folder = Altaxo.Main.ProjectFolder.GetFolderPart(_documentName);
-      if (null == _imageProvider || _imageProvider.AltaxoFolderLocation != folder || _imageProvider.LocalImages != localImages)
+      if (_imageProvider is null || _imageProvider.AltaxoFolderLocation != folder || _imageProvider.LocalImages != localImages)
       {
-        if (null != _imageProvider)
+        if (_imageProvider is not null)
         {
           _imageProvider.ReferencedImageUrlsChanged -= EhImageProvider_ReferencedImageUrlsChanged;
         }

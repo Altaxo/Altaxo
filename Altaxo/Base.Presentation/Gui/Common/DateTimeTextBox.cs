@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Common
 {
   public class DateTimeTextBox : TextBox, Altaxo.Gui.Common.BasicTypes.IDateTimeNakedControl
   {
-    public event DependencyPropertyChangedEventHandler SelectedValueChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedValueChanged;
 
     private DateTimeConverter _converter;
 
@@ -124,7 +124,7 @@ namespace Altaxo.Gui.Common
     /// <param name="args">Property changed event arguments.</param>
     protected void OnSelectedValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      if (null != SelectedValueChanged)
+      if (SelectedValueChanged is not null)
         SelectedValueChanged(obj, args);
     }
 

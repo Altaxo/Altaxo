@@ -420,7 +420,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Double}" /> returning elements that are inverse to those of the original vector.</returns>
 		public static IROVector<Double> ToInverseROVector(this IReadOnlyList<Double> array)
 		{
-			return null == array ? null : new RODoubleInverseElementWrapper(array);
+			return array is null ? null : new RODoubleInverseElementWrapper(array);
 		}
 
 		/// <summary>
@@ -515,7 +515,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Double}" /> interface that wraps the provided array.</returns>
 		public static IROVector<Double> ToROVector(this Double[] array)
 		{
-			return null == array ? null : new RODoubleArrayWrapper(array);
+			return array is null ? null : new RODoubleArrayWrapper(array);
 		}
 
 		/// <summary>
@@ -609,7 +609,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Double}" /> interface that wraps the provided array.</returns>
 		public static IROVector<Double> ToRODoubleVector(this Double[] array)
 		{
-			return null == array ? null : new RODouble_DoubleArrayWrapper(array);
+			return array is null ? null : new RODouble_DoubleArrayWrapper(array);
 		}
 
 		/// <summary>
@@ -829,7 +829,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Double}" /> interface that wraps the provided array.</returns>
 		public static IROVector<Double> ToROVectorAmendedShifted(this Double[] array,Double amendedValueAtStart, int amendedValuesAtStartCount, Double amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
-			return null == array ? null : new RODoubleArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
+			return array is null ? null : new RODoubleArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
 		}
 
 		/// <summary>
@@ -1584,7 +1584,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Single}" /> returning elements that are inverse to those of the original vector.</returns>
 		public static IROVector<Single> ToInverseROVector(this IReadOnlyList<Single> array)
 		{
-			return null == array ? null : new ROFloatInverseElementWrapper(array);
+			return array is null ? null : new ROFloatInverseElementWrapper(array);
 		}
 
 		/// <summary>
@@ -1679,7 +1679,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Single}" /> interface that wraps the provided array.</returns>
 		public static IROVector<Single> ToROVector(this Single[] array)
 		{
-			return null == array ? null : new ROFloatArrayWrapper(array);
+			return array is null ? null : new ROFloatArrayWrapper(array);
 		}
 
 		/// <summary>
@@ -1773,7 +1773,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Single}" /> interface that wraps the provided array.</returns>
 		public static IROVector<Double> ToRODoubleVector(this Single[] array)
 		{
-			return null == array ? null : new RODouble_FloatArrayWrapper(array);
+			return array is null ? null : new RODouble_FloatArrayWrapper(array);
 		}
 
 		/// <summary>
@@ -1993,7 +1993,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Single}" /> interface that wraps the provided array.</returns>
 		public static IROVector<Single> ToROVectorAmendedShifted(this Single[] array,Single amendedValueAtStart, int amendedValuesAtStartCount, Single amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
-			return null == array ? null : new ROFloatArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
+			return array is null ? null : new ROFloatArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
 		}
 
 		/// <summary>
@@ -2748,7 +2748,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Int32}" /> returning elements that are inverse to those of the original vector.</returns>
 		public static IROVector<Double> ToInverseROVector(this IReadOnlyList<Int32> array)
 		{
-			return null == array ? null : new ROIntInverseElementWrapper(array);
+			return array is null ? null : new ROIntInverseElementWrapper(array);
 		}
 
 		/// <summary>
@@ -2843,7 +2843,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Int32}" /> interface that wraps the provided array.</returns>
 		public static IROVector<Int32> ToROVector(this Int32[] array)
 		{
-			return null == array ? null : new ROIntArrayWrapper(array);
+			return array is null ? null : new ROIntArrayWrapper(array);
 		}
 
 		/// <summary>
@@ -2937,7 +2937,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Int32}" /> interface that wraps the provided array.</returns>
 		public static IROVector<Double> ToRODoubleVector(this Int32[] array)
 		{
-			return null == array ? null : new RODouble_IntArrayWrapper(array);
+			return array is null ? null : new RODouble_IntArrayWrapper(array);
 		}
 
 		/// <summary>
@@ -3157,7 +3157,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Int32}" /> interface that wraps the provided array.</returns>
 		public static IROVector<Int32> ToROVectorAmendedShifted(this Int32[] array,Int32 amendedValueAtStart, int amendedValuesAtStartCount, Int32 amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
-			return null == array ? null : new ROIntArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
+			return array is null ? null : new ROIntArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
 		}
 
 		/// <summary>
@@ -3912,7 +3912,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Int16}" /> returning elements that are inverse to those of the original vector.</returns>
 		public static IROVector<Double> ToInverseROVector(this IReadOnlyList<Int16> array)
 		{
-			return null == array ? null : new ROShortInverseElementWrapper(array);
+			return array is null ? null : new ROShortInverseElementWrapper(array);
 		}
 
 		/// <summary>
@@ -4007,7 +4007,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Int16}" /> interface that wraps the provided array.</returns>
 		public static IROVector<Int16> ToROVector(this Int16[] array)
 		{
-			return null == array ? null : new ROShortArrayWrapper(array);
+			return array is null ? null : new ROShortArrayWrapper(array);
 		}
 
 		/// <summary>
@@ -4101,7 +4101,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Int16}" /> interface that wraps the provided array.</returns>
 		public static IROVector<Double> ToRODoubleVector(this Int16[] array)
 		{
-			return null == array ? null : new RODouble_ShortArrayWrapper(array);
+			return array is null ? null : new RODouble_ShortArrayWrapper(array);
 		}
 
 		/// <summary>
@@ -4321,7 +4321,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{Int16}" /> interface that wraps the provided array.</returns>
 		public static IROVector<Int16> ToROVectorAmendedShifted(this Int16[] array,Int16 amendedValueAtStart, int amendedValuesAtStartCount, Int16 amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
-			return null == array ? null : new ROShortArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
+			return array is null ? null : new ROShortArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
 		}
 
 		/// <summary>
@@ -5076,7 +5076,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{SByte}" /> returning elements that are inverse to those of the original vector.</returns>
 		public static IROVector<Double> ToInverseROVector(this IReadOnlyList<SByte> array)
 		{
-			return null == array ? null : new ROSByteInverseElementWrapper(array);
+			return array is null ? null : new ROSByteInverseElementWrapper(array);
 		}
 
 		/// <summary>
@@ -5171,7 +5171,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{SByte}" /> interface that wraps the provided array.</returns>
 		public static IROVector<SByte> ToROVector(this SByte[] array)
 		{
-			return null == array ? null : new ROSByteArrayWrapper(array);
+			return array is null ? null : new ROSByteArrayWrapper(array);
 		}
 
 		/// <summary>
@@ -5265,7 +5265,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{SByte}" /> interface that wraps the provided array.</returns>
 		public static IROVector<Double> ToRODoubleVector(this SByte[] array)
 		{
-			return null == array ? null : new RODouble_SByteArrayWrapper(array);
+			return array is null ? null : new RODouble_SByteArrayWrapper(array);
 		}
 
 		/// <summary>
@@ -5485,7 +5485,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector{SByte}" /> interface that wraps the provided array.</returns>
 		public static IROVector<SByte> ToROVectorAmendedShifted(this SByte[] array,SByte amendedValueAtStart, int amendedValuesAtStartCount, SByte amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
-			return null == array ? null : new ROSByteArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
+			return array is null ? null : new ROSByteArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
 		}
 
 		/// <summary>

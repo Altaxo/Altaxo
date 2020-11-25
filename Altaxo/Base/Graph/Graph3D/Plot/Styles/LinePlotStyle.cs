@@ -22,11 +22,13 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Main;
   using Drawing;
@@ -97,7 +99,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     /// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
     [field: NonSerialized]
-    protected Func<int, double> _cachedSymbolSizeForIndexFunction;
+    protected Func<int, double>? _cachedSymbolSizeForIndexFunction;
 
     #region Serialization
 
@@ -130,9 +132,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         info.AddValue("KeepWestNorth", s._keepWestNorthThroughSymbolGap);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
+        var s = (LinePlotStyle?)o ?? new LinePlotStyle(info);
 
         s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
         s._skipFreq = info.GetInt32("SkipFreq");
@@ -159,7 +161,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// Deserialization constructor.
     /// </summary>
     /// <param name="info">The deserialization information.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected LinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
@@ -167,10 +171,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region Construction and copying
 
+    [MemberNotNull(nameof(_linePen), nameof(_connectionStyle))]
     public void CopyFrom(LinePlotStyle from, Main.EventFiring eventFiring)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       using (var suspendToken = SuspendGetToken())
       {
@@ -179,7 +186,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
         _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
         _connectCircular = from._connectCircular;
-        Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
+        _connectionStyle = from._connectionStyle; 
 
         _linePen = from._linePen; // immutable
         _independentDashStyle = from._independentDashStyle;
@@ -201,10 +208,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <inheritdoc/>
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       var from = obj as LinePlotStyle;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, Main.EventFiring.Enabled);
         return true;
@@ -215,6 +222,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
+
       return CopyFrom(obj, true);
     }
 
@@ -290,7 +300,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       get { return _connectionStyle; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(value, _connectionStyle))
@@ -491,7 +501,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public virtual void PaintLine(IGraphicsContext3D g, PointD3D beg, PointD3D end)
     {
-      if (null != _linePen)
+      if (_linePen is not null)
       {
         g.DrawLine(_linePen, beg, end);
       }
@@ -522,18 +532,22 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return bounds;
     }
 
-    public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData prevItemData, Processed3DPlotData nextItemData)
+    public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
       var linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
       var rangeList = pdata.RangeList;
       var symbolGap = _symbolSize;
+
+      if (rangeList is null || rangeList.Count == 0)
+        return;
+
       int rangelistlen = rangeList.Count;
 
-      Func<int, double> symbolGapFunction = null;
+      Func<int, double>? symbolGapFunction = null;
 
       if (_useSymbolGap)
       {
-        if (null != _cachedSymbolSizeForIndexFunction && !_independentSymbolSize)
+        if (_cachedSymbolSizeForIndexFunction is not null && !_independentSymbolSize)
         {
           symbolGapFunction = (idx) => _symbolGapOffset + _symbolGapFactor * _cachedSymbolSizeForIndexFunction(idx);
         }
@@ -691,12 +705,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <inheritdoc/>
     public IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      IReadableColumn? Column, // the column as it was at the time of this call
+      string? ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
-      return null; // no additionally used columns
+      yield break; // no additionally used columns
     }
 
     #endregion IRoutedPropertyReceiver Members

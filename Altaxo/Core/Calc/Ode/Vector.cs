@@ -21,7 +21,7 @@ namespace Altaxo.Calc.Ode
     /// <exception cref="NullReferenceException">Thrown when vector constructed by default constructor and not assigned yet</exception>
     public int Length
     {
-      get { return v == null ? 0 : v.Length; }
+      get { return v is null ? 0 : v.Length; }
     }
 
     /// <summary>Constructs vector from array of arguments</summary>
@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Ode
     /// </example>
     public Vector(params double[] elts)
     {
-      if (elts == null)
+      if (elts is null)
         throw new ArgumentNullException("elts");
       v = elts;
     }
@@ -59,7 +59,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>Copy of vector passes as parameter</returns>
     public Vector Clone()
     {
-      return v == null ? new Vector() : new Vector((double[])v.Clone());
+      return v is null ? new Vector() : new Vector((double[])v.Clone());
     }
 
     /// <summary>
@@ -76,9 +76,9 @@ namespace Altaxo.Calc.Ode
     /// <param name="dst">Vector to copy results</param>
     public static void Copy(Vector src, Vector dst)
     {
-      if (src.v == null)
+      if (src.v is null)
         throw new ArgumentNullException("src");
-      if (dst.v == null)
+      if (dst.v is null)
         throw new ArgumentNullException("dst");
       int n = src.v.Length;
       if (dst.v.Length != n)
@@ -144,9 +144,9 @@ namespace Altaxo.Calc.Ode
     {
       double[] av1 = v1.v;
       double[] av2 = v2.v;
-      if (av1 == null)
+      if (av1 is null)
         throw new ArgumentNullException("v1");
-      if (av2 == null)
+      if (av2 is null)
         throw new ArgumentNullException("v2");
       if (av1.Length != av2.Length)
         throw new ArgumentException("Vector lenghtes do not match");
@@ -165,9 +165,9 @@ namespace Altaxo.Calc.Ode
     {
       double[] av1 = v1.v;
       double[] av2 = v2.v;
-      if (av1 == null)
+      if (av1 is null)
         throw new ArgumentNullException("v1");
-      if (av2 == null)
+      if (av2 is null)
         throw new ArgumentNullException("v2");
       if (av1.Length != av2.Length)
         throw new ArgumentException("Vector lenghtes do not match");
@@ -217,7 +217,7 @@ namespace Altaxo.Calc.Ode
     public static implicit operator double(Vector v)
     {
       double[] av = v;
-      if (av == null)
+      if (av is null)
         throw new ArgumentNullException("v");
       if (av.Length != 1)
         throw new InvalidOperationException("Cannot convert multi-element vector to scalar");
@@ -246,7 +246,7 @@ namespace Altaxo.Calc.Ode
     public void MulAdd(Vector v1, double factor)
     {
       double[] av1 = v1.v;
-      if (av1 == null)
+      if (av1 is null)
         throw new ArgumentNullException("v1");
       if (Length != av1.Length)
         throw new InvalidOperationException("Cannot add vectors of different length");
@@ -306,7 +306,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>Product of <see cref="Vector"/> and matrix</returns>
     public static Vector operator *(Matrix m, Vector v)
     {
-      if (m == null)
+      if (m is null)
         throw new ArgumentNullException("m");
       if (v.Length != m.ColumnDimension)
         throw new ArgumentException("Dimensions of vector and matrix do not match");
@@ -338,7 +338,7 @@ namespace Altaxo.Calc.Ode
     public static Vector operator *(Vector v, Matrix m)
     {
       double[] av = v;
-      if (m == null)
+      if (m is null)
         throw new ArgumentNullException("m");
       if (v.Length != m.RowDimension)
         throw new ArgumentException("Dimensions of matrix and vector do not match");
@@ -463,9 +463,9 @@ namespace Altaxo.Calc.Ode
       double[] av1 = v1.v;
       double[] av2 = v2.v;
 
-      if (av1 == null)
+      if (av1 is null)
         throw new ArgumentNullException("v1");
-      if (av2 == null)
+      if (av2 is null)
         throw new ArgumentNullException("v2");
 
       if (av1.Length != av2.Length)
@@ -483,7 +483,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>Vector v1 such that for each i = 0...dim(v) v1[i] = |v[i]|</returns>
     public Vector Abs()
     {
-      if (v == null)
+      if (v is null)
         return new Vector();
 
       int n = v.Length;
@@ -499,7 +499,7 @@ namespace Altaxo.Calc.Ode
     {
       var sb = new StringBuilder();
       sb.Append("[");
-      if (v != null)
+      if (v is not null)
         for (int i = 0; i < v.Length; i++)
         {
           if (i > 0)
@@ -528,7 +528,7 @@ namespace Altaxo.Calc.Ode
 
     public override int GetHashCode()
     {
-      return v == null ? base.GetHashCode() : v.GetHashCode();
+      return v is null ? base.GetHashCode() : v.GetHashCode();
     }
   }
 }

@@ -22,9 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Data;
@@ -59,15 +61,9 @@ namespace Altaxo.Graph.Scales.Ticks
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        SuppressedTicks s = SDeserialize(o, info, parent);
-        return s;
-      }
-
-      protected virtual SuppressedTicks SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        SuppressedTicks s = null != o ? (SuppressedTicks)o : new SuppressedTicks();
+        var s =  (SuppressedTicks?)o ?? new SuppressedTicks();
 
         int count;
 
@@ -83,6 +79,8 @@ namespace Altaxo.Graph.Scales.Ticks
 
         return s;
       }
+
+      
     }
 
     #endregion Serialization
@@ -96,7 +94,7 @@ namespace Altaxo.Graph.Scales.Ticks
       _suppressedTickValues.CollectionChanged += EhCollectionChanged;
     }
 
-    private void EhCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private void EhCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
       EhSelfChanged();
     }
@@ -106,22 +104,28 @@ namespace Altaxo.Graph.Scales.Ticks
       CopyFrom(from);
     }
 
-    public virtual bool CopyFrom(object obj)
+    [MemberNotNull(nameof(_suppressedTickValues), nameof(_suppressedTicksByNumber))]
+    protected void CopyFrom(SuppressedTicks from)
     {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-
-      var from = obj as SuppressedTicks;
-      if (null == from)
-        return false;
-
       _suppressedTickValues = new ObservableCollection<AltaxoVariant>(from._suppressedTickValues);
       _suppressedTicksByNumber = new ObservableCollection<int>(from._suppressedTicksByNumber);
       _suppressedTicksByNumber.CollectionChanged += EhCollectionChanged;
       _suppressedTickValues.CollectionChanged += EhCollectionChanged;
       EhSelfChanged();
+    }
 
-      return true;
+    public virtual bool CopyFrom(object obj)
+    {
+      if (ReferenceEquals(this, obj))
+        return true;
+
+      if (obj is SuppressedTicks from)
+      {
+        CopyFrom(from);
+        return true;
+      }
+
+      return false;
     }
 
     public object Clone()
@@ -129,15 +133,15 @@ namespace Altaxo.Graph.Scales.Ticks
       return new SuppressedTicks(this);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
-      else if (!(obj is SuppressedTicks))
+      else if (!(obj is SuppressedTicks ticks))
         return false;
       else
       {
-        var from = (SuppressedTicks)obj;
+        var from = ticks;
         if (!_suppressedTicksByNumber.SequenceEqual(from._suppressedTicksByNumber))
           return false;
 

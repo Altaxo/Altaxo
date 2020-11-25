@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace Altaxo.Units
       info.AddValue("DenominatorUnit", s.DenominatorUnit);
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       var nomPrefix = (SIPrefix)info.GetValue("NominatorPrefix", null);
       var nomUnit = (IUnit)info.GetValue("NominatorUnit", null);

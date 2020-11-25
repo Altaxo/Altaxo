@@ -42,17 +42,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   {
     private PenControlsGlue _linePenGlue;
 
-    public event Action IndependentFillColorChanged;
+    public event Action? IndependentFillColorChanged;
 
-    public event Action IndependentLineColorChanged;
+    public event Action? IndependentLineColorChanged;
 
-    public event Action UseFillChanged;
+    public event Action? UseFillChanged;
 
-    public event Action UseLineChanged;
+    public event Action? UseLineChanged;
 
-    public event Action FillBrushChanged;
+    public event Action? FillBrushChanged;
 
-    public event Action LinePenChanged;
+    public event Action? LinePenChanged;
 
     public LinePlotStyleControl()
     {
@@ -70,13 +70,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhUseFillChanged(object sender, RoutedEventArgs e)
     {
-      if (null != UseFillChanged)
+      if (UseFillChanged is not null)
         UseFillChanged();
     }
 
     private void EhIndependentFillColorChanged()
     {
-      if (null != IndependentFillColorChanged)
+      if (IndependentFillColorChanged is not null)
         IndependentFillColorChanged();
     }
 
@@ -86,26 +86,26 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhFillBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != FillBrushChanged)
+      if (FillBrushChanged is not null)
         FillBrushChanged();
     }
 
     private void EhUseLineConnectChanged(object sender, RoutedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiLineConnect);
-      if (null != _guiLineConnect.SelectedItem && null != UseLineChanged) // null for SelectedItem can happen when the DataSource is chaning
+      if (_guiLineConnect.SelectedItem is not null && UseLineChanged is not null) // null for SelectedItem can happen when the DataSource is chaning
         UseLineChanged();
     }
 
     private void EhIndependentLineColorChanged(object sender, RoutedEventArgs e)
     {
-      if (null != IndependentLineColorChanged)
+      if (IndependentLineColorChanged is not null)
         IndependentLineColorChanged();
     }
 
-    private void EhLinePenChanged(object sender, EventArgs e)
+    private void EhLinePenChanged(object? sender, EventArgs e)
     {
-      if (null != LinePenChanged)
+      if (LinePenChanged is not null)
         LinePenChanged();
     }
 
@@ -152,7 +152,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException("FramePen");
         _linePenGlue.Pen = value;
       }

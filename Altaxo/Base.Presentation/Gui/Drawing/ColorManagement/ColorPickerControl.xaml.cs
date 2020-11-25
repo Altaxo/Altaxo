@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,7 +35,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
   {
     private AxoColor _oldColor, _newColor;
 
-    public event Action<AxoColor> CurrentColorChanged;
+    public event Action<AxoColor>? CurrentColorChanged;
 
     //
     // Initialization
@@ -135,7 +136,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     //
     // Event Handlers
 
-    private void EhColorCombControl_ColorSelected(object sender, ColorEventArgs e)
+    private void EhColorCombControl_ColorSelected(object? sender, ColorEventArgs e)
     {
       if (_notUserInitiated)
         return;

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -60,7 +61,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         {
           _controller = value;
 
-          if (null != _controller)
+          if (_controller is not null)
           {
             ContextMenu mnu1 = MenuService.CreateContextMenu(_controller, "/Altaxo/Pads/ProjectBrowser/ItemList/ContextMenu");
             _listView.ContextMenu = mnu1;
@@ -76,7 +77,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private void EhTreeNodeAfterSelect(object sender, RoutedEventArgs e)
     {
-      if (null != _controller)
+      if (_controller is not null)
       {
         _controller.EhTreeNodeAfterSelect((NGBrowserTreeNode)_treeView.SelectedValue);
       }
@@ -136,14 +137,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     private void EhListViewItemDoubleClick(object sender, MouseButtonEventArgs e)
     {
       SynchronizeListSelection();
-      if (null != _controller)
+      if (_controller is not null)
         _controller.EhListViewDoubleClick();
     }
 
     private void EhListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       SynchronizeListSelection();
-      if (null != _controller)
+      if (_controller is not null)
         _controller.EhListViewAfterSelect();
     }
 
@@ -177,7 +178,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private void EhListViewCopyCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
     {
-      if (null != _controller)
+      if (_controller is not null)
       {
         e.CanExecute = _listView.SelectedItems.Count > 0;
         e.Handled = true;
@@ -186,7 +187,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private void EhListViewCopyCommandExecuted(object sender, ExecutedRoutedEventArgs e)
     {
-      if (null != _controller)
+      if (_controller is not null)
       {
         _controller.CopySelectedListItemsToClipboard();
         e.Handled = true;
@@ -195,7 +196,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private void EhListViewPasteCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
     {
-      if (null != _controller)
+      if (_controller is not null)
       {
         e.CanExecute = _controller.CanPasteItemsFromClipboard();
         e.Handled = true;
@@ -204,7 +205,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private void EhListViewPasteCommandExecuted(object sender, ExecutedRoutedEventArgs e)
     {
-      if (null != _controller)
+      if (_controller is not null)
       {
         _controller.PasteItemsFromClipboard();
         e.Handled = true;
@@ -218,19 +219,19 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private void EhListView_OneFolderUp(object sender, RoutedEventArgs e)
     {
-      if (null != _controller)
+      if (_controller is not null)
         _controller.EhListView_OneFolderUp();
     }
 
     private void EhNavigateBackward(object sender, RoutedEventArgs e)
     {
-      if (null != _controller)
+      if (_controller is not null)
         _controller.EhNavigateBackward();
     }
 
     private void EhNavigateForward(object sender, RoutedEventArgs e)
     {
-      if (null != _controller)
+      if (_controller is not null)
         _controller.EhNavigateForward();
     }
 
@@ -242,7 +243,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private void SetSortAdorner(Visual visual, ref Adorner adorner, bool isSorted, bool isDescendingSort, bool isSecondaryAdorner)
     {
-      if (null != adorner)
+      if (adorner is not null)
       {
         AdornerLayer.GetAdornerLayer(visual)?.Remove(adorner);
         adorner = null;
@@ -252,7 +253,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       {
         adorner = new Common.SortAdorner((UIElement)visual, isDescendingSort ? ListSortDirection.Descending : ListSortDirection.Ascending, isSecondaryAdorner);
         var adornerLayer = AdornerLayer.GetAdornerLayer(visual); // adornerLayer is valid only after the visual was visible for the first time
-        if (null != adornerLayer)
+        if (adornerLayer is not null)
           adornerLayer.Add(adorner);
       }
     }
@@ -273,13 +274,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private void EhListView_ColumnHeaderClicked_Name(object sender, RoutedEventArgs e)
     {
-      if (null != _controller)
+      if (_controller is not null)
         _controller.EhToggleListSort_Name();
     }
 
     private void EhListView_ColumnHeaderClicked_CreationDate(object sender, RoutedEventArgs e)
     {
-      if (null != _controller)
+      if (_controller is not null)
         _controller.EhToggleListSort_CreationDate();
     }
 
@@ -303,9 +304,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       bool clickedOnSecondarySortColumn = columnHeaderClicked.Equals(_currentSecondarySortedColumnHeader);
 
       _listView.Items.SortDescriptions.Clear();
-      if (null != _currentSecondarySortedColumnHeader)
+      if (_currentSecondarySortedColumnHeader is not null)
         AdornerLayer.GetAdornerLayer(_currentSecondarySortedColumnHeader).Remove(_currentSecondarySortAdorner);
-      if (null != _currentPrimarySortedColumnHeader)
+      if (_currentPrimarySortedColumnHeader is not null)
         AdornerLayer.GetAdornerLayer(_currentPrimarySortedColumnHeader).Remove(_currentPrimarySortAdorner);
 
       ListSortDirection newDir = ListSortDirection.Ascending;
@@ -328,7 +329,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
       else // clicked in any other column
       {
-        if (null != _currentPrimarySortedColumnHeader)
+        if (_currentPrimarySortedColumnHeader is not null)
         {
           _currentSecondarySortAdorner = new Common.SortAdorner(_currentPrimarySortedColumnHeader, _currentPrimarySortAdorner.Direction, true);
           _currentSecondarySortedColumnHeader = _currentPrimarySortedColumnHeader;
@@ -341,7 +342,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       AdornerLayer.GetAdornerLayer(_currentPrimarySortedColumnHeader).Add(_currentPrimarySortAdorner);
       _listView.Items.SortDescriptions.Add(new SortDescription(_currentPrimarySortedColumnHeader.Tag as string, _currentPrimarySortAdorner.Direction));
 
-      if (null != _currentSecondarySortedColumnHeader)
+      if (_currentSecondarySortedColumnHeader is not null)
       {
         AdornerLayer.GetAdornerLayer(_currentSecondarySortedColumnHeader).Add(_currentSecondarySortAdorner);
         _listView.Items.SortDescriptions.Add(new SortDescription(_currentSecondarySortAdorner.Tag as string, _currentSecondarySortAdorner.Direction));
@@ -364,7 +365,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       get
       {
-        if (null == _listViewDragHandler)
+        if (_listViewDragHandler is null)
           _listViewDragHandler = new ListView_DragHandler(this);
         return _listViewDragHandler;
       }
@@ -376,7 +377,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       get
       {
-        if (null == _listViewDropHandler)
+        if (_listViewDropHandler is null)
           _listViewDropHandler = new ListView_DropHandler(this);
         return _listViewDropHandler;
       }
@@ -392,7 +393,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       get
       {
-        if (null == _treeViewDragHandler)
+        if (_treeViewDragHandler is null)
           _treeViewDragHandler = new TreeView_DragHandler(this);
         return _treeViewDragHandler;
       }
@@ -404,7 +405,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       get
       {
-        if (null == _treeViewDropHandler)
+        if (_treeViewDropHandler is null)
           _treeViewDropHandler = new TreeView_DropHandler(this);
         return _treeViewDropHandler;
       }

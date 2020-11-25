@@ -1,14 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
+    <TargetFrameworks>net48;net5.0</TargetFrameworks>
+    <LangVersion>preview</LangVersion>
+    <nullable>enable</nullable>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
-    <OutputPath>..\..\rt$(TargetFramework)\bin</OutputPath>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -53,9 +54,9 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        IList<IGraphicBase> s = null != o ? (IList<IGraphicBase>)o : new List<IGraphicBase>();
+        var s = (IList<IGraphicBase>?)o ?? new List<IGraphicBase>();
 
         int count = info.OpenArray();
         for (int i = 0; i < count; i++)

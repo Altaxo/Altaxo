@@ -28,25 +28,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Altaxo.Drawing;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Graph.Gdi
 {
-  [TestFixture]
-  internal class TestBrushX
+
+  public class TestBrushX
   {
-    public void Tester(BrushX brush1, BrushX brush2, string comment)
+    protected void Tester(BrushX brush1, BrushX brush2, string comment)
     {
-      Assert.IsTrue(brush1 == brush2, comment);
-      Assert.IsFalse(brush1 != brush2, comment);
-      Assert.IsTrue(brush1.Equals(brush2), comment);
-      Assert.IsTrue(brush2.Equals(brush1), comment);
-      Assert.IsTrue(object.Equals(brush1, brush2), comment);
-      Assert.IsFalse(object.ReferenceEquals(brush1, brush2), comment);
-      Assert.AreEqual(brush1.GetHashCode(), brush2.GetHashCode(), comment);
+      Assert.True(brush1 == brush2, comment);
+      Assert.False(brush1 != brush2, comment);
+      Assert.True(brush1.Equals(brush2), comment);
+      Assert.True(brush2.Equals(brush1), comment);
+      Assert.True(object.Equals(brush1, brush2), comment);
+      Assert.False(object.ReferenceEquals(brush1, brush2), comment);
+      Assert.Equal(brush1.GetHashCode(), brush2.GetHashCode());
     }
 
-    [Test]
+    [Fact]
     public void TestHash_SolidBrush()
     {
       var brush1 = new BrushX(NamedColors.Green);
@@ -54,7 +54,7 @@ namespace Altaxo.Graph.Gdi
       Tester(brush1, brush2, nameof(TestHash_SolidBrush));
     }
 
-    [Test]
+    [Fact]
     public void TestHash_LinearGradientBrush()
     {
       var brush1 = new BrushX(BrushType.LinearGradientBrush).WithColor(NamedColors.AliceBlue).WithBackColor(NamedColors.Red);

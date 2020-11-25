@@ -26,6 +26,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -83,12 +84,12 @@ namespace Altaxo.DataConnection
     #region ** fields
 
     private string _column; // column name (or expression)
-    private string _alias;    // alias for this field (optional)
+    private string? _alias;    // alias for this field (optional)
     private DataTable _table;   // source table
     private bool _output; // include in SELECT clause
     private Aggregate _groupBy; // GROUP BY clause
     private Sort _sort;   // ORDER BY clause
-    private string _filter; // WHERE clause
+    private string? _filter; // WHERE clause
 
     // for parsing filter statements
     private static Regex _rx1 = new Regex(@"^([^<>=]*)\s*(<|>|=|<>|<=|>=)\s*([^<>=]+)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -103,7 +104,7 @@ namespace Altaxo.DataConnection
 
     public QueryField(DataColumn col)
     {
-      _table = col.Table;
+      _table = col.Table ?? throw new InvalidOperationException($"Table of column {col} is null!");
       _column = col.ColumnName;
       _output = true;
     }
@@ -142,7 +143,7 @@ namespace Altaxo.DataConnection
     /// </summary>
     public string Alias
     {
-      get { return _alias != null ? _alias : string.Empty; }
+      get { return _alias is not null ? _alias : string.Empty; }
       set
       {
         if (_alias != value)
@@ -214,7 +215,7 @@ namespace Altaxo.DataConnection
     /// </summary>
     public string Filter
     {
-      get { return _filter != null ? _filter : string.Empty; }
+      get { return _filter is not null ? _filter : string.Empty; }
       set
       {
         if (_filter != value)
@@ -281,7 +282,7 @@ namespace Altaxo.DataConnection
     /// <summary>
     /// Fires when a property changes.
     /// </summary>
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// Raise the <see cref="PropertyChanged"/> event.
@@ -289,10 +290,7 @@ namespace Altaxo.DataConnection
     /// <param name="e"><see cref="PropertyChangedEventArgs"/> that contains the event data.</param>
     protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
     {
-      if (PropertyChanged != null)
-      {
-        PropertyChanged(this, e);
-      }
+      PropertyChanged?.Invoke(this, e);
     }
 
     // shorthand

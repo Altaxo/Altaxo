@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -59,9 +60,9 @@ namespace Altaxo.Graph
         info.AddValue("YPartitioning", s._yPartitioning);
       }
 
-      protected virtual GridPartitioning SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual GridPartitioning SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new GridPartitioning() : (GridPartitioning)o);
+        var s = (GridPartitioning?)o ?? new GridPartitioning();
 
         s.ChildSetMember(ref s._xPartitioning, (LinearPartitioning)info.GetValue("XPartitioning", s));
         s.ChildSetMember(ref s._yPartitioning, (LinearPartitioning)info.GetValue("YPartitioning", s));
@@ -69,7 +70,7 @@ namespace Altaxo.Graph
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -95,11 +96,11 @@ namespace Altaxo.Graph
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as GridPartitioning;
-      if (null != from)
+      if (from is not null)
       {
         using (var suspendToken = SuspendGetToken())
         {
@@ -120,10 +121,10 @@ namespace Altaxo.Graph
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _xPartitioning)
-        yield return new Main.DocumentNodeAndName(_xPartitioning, () => _xPartitioning = null, "XPartitioning");
-      if (null != _yPartitioning)
-        yield return new Main.DocumentNodeAndName(_yPartitioning, () => _yPartitioning = null, "YPartitioning");
+      if (_xPartitioning is not null)
+        yield return new Main.DocumentNodeAndName(_xPartitioning, () => _xPartitioning = null!, "XPartitioning");
+      if (_yPartitioning is not null)
+        yield return new Main.DocumentNodeAndName(_yPartitioning, () => _yPartitioning = null!, "YPartitioning");
     }
 
     public LinearPartitioning XPartitioning { get { return _xPartitioning; } }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace Altaxo.Main.Properties
     /// <value>
     /// The property bag, or <c>null</c> if there is no property bag.
     /// </value>
-    PropertyBag PropertyBag { get; }
+    PropertyBag? PropertyBag { get; }
 
     /// <summary>
     /// Gets the property bag. If there is no property bag, a new bag is created and then returned.

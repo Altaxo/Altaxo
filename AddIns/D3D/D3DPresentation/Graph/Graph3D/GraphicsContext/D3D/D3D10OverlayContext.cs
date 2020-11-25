@@ -37,7 +37,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
   public class D3D10OverlayContext : GraphicsContextD3DPrimitivesBase, IOverlayContext3D, IDisposable
   {
     protected PositionColorIndexedTriangleBuffer _positionColorIndexedTriangleBuffer;
-    protected PositionColorLineListBuffer _positionColorLineListBuffer;
+    protected PositionColorLineListBuffer? _positionColorLineListBuffer;
 
     private Matrix4x3 _transformation = Matrix4x3.Identity;
 
@@ -62,7 +62,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
     {
       get
       {
-        if (null == _positionColorLineListBuffer)
+        if (_positionColorLineListBuffer is null)
           _positionColorLineListBuffer = new D3D.PositionColorLineListBuffer(this);
 
         return _positionColorLineListBuffer;
@@ -95,7 +95,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
     public void RestoreGraphicsState(object graphicsState)
     {
       var gs = graphicsState as GraphicState;
-      if (null != gs)
+      if (gs is not null)
       {
         _transformation = gs.Transformation;
       }

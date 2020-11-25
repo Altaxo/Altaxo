@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using Altaxo.Calc.Regression.Nonlinear;
@@ -64,7 +65,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private void Uninitialize()
     {
-      if (_fitEleController != null)
+      if (_fitEleController is not null)
       {
         for (int i = 0; i < _fitEleController.Count; i++)
         {
@@ -90,7 +91,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           AttachFitElementController(_fitEleController[i]);
         }
       }
-      if (_view != null)
+      if (_view is not null)
       {
         _view.Initialize(_doc, _fitEleControls);
       }
@@ -167,14 +168,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as IFitEnsembleView;
 
-        if (_view != null)
+        if (_view is not null)
         {
           Initialize(false);
 

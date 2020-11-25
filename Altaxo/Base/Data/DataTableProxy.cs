@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Main;
 
@@ -46,17 +47,28 @@ namespace Altaxo.Data
                 */
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (DataTableProxy)o ?? new DataTableProxy(info);
-        var baseobj = info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
+        var s = (DataTableProxy?)o ?? new DataTableProxy(info);
+#pragma warning disable CS0618 // Type or member is obsolete
+        var baseobj = info.GetBaseValueEmbeddedOrNull(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
+#pragma warning restore CS0618 // Type or member is obsolete
 
         if (!object.ReferenceEquals(s, baseobj))
         {
-          return null;
+          if (baseobj is null)
+          {
+            s.InternalDocumentPath = new AbsoluteDocumentPath(new string[] { "Tables", string.Empty });
+            return s;
+          }
+          else
+          {
+            throw new InvalidProgramException($"What should be returned here? S: {s}, baseobj: {baseobj}");
+          }
+          // return null;
         }
 
-        if (!(null != s.InternalDocumentPath))
+        if (s.InternalDocumentPath is null)
           throw new InvalidOperationException();
         return s;
       }
@@ -70,15 +82,15 @@ namespace Altaxo.Data
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType); // serialize the base class
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!); // serialize the base class
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (DataTableProxy)o ?? new DataTableProxy(info);
-        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);         // deserialize the base class
+        var s = (DataTableProxy?)o ?? new DataTableProxy(info);
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType!, parent);         // deserialize the base class
 
-        if (!(null != s.InternalDocumentPath))
+        if (s.InternalDocumentPath is null)
           throw new InvalidOperationException();
 
         return s;
@@ -111,14 +123,14 @@ namespace Altaxo.Data
 
     protected override bool IsValidDocument(object obj)
     {
-      return (obj is DataTable) || obj == null;
+      return (obj is DataTable) || obj is null;
     }
 
-    public DataTable Document
+    public DataTable? Document
     {
       get
       {
-        return (DataTable)base.DocumentObject();
+        return (DataTable?)base.DocumentObject();
       }
     }
 
@@ -130,7 +142,7 @@ namespace Altaxo.Data
     public string GetName(int level)
     {
       var table = Document; // this may have the side effect that the object is tried to resolve, is this o.k.?
-      if (null != table)
+      if (table is not null)
       {
         return table.Name;
       }

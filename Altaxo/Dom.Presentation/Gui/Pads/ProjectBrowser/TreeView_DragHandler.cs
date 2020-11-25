@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
         dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
 
-        if (null != dao)
+        if (dao is not null)
           dragInfo.DataObject = GuiHelper.ToWpf(dao);
       }
 

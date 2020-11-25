@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace Altaxo.Main
 
     public void Dispose()
     {
-      Interlocked.Exchange(ref _action, null)?.Invoke();
+      Interlocked.Exchange(ref _action, null!)?.Invoke();
     }
 
   }
@@ -63,33 +64,33 @@ namespace Altaxo.Main
     {
       public static readonly BusyLock Failed = new BusyLock(null);
 
-      private readonly List<object> objectList;
+      private readonly List<object>? _objectList;
 
-      internal BusyLock(List<object> objectList)
+      internal BusyLock(List<object>? objectList)
       {
-        this.objectList = objectList;
+        this._objectList = objectList;
       }
 
       public bool Success
       {
-        get { return objectList != null; }
+        get { return _objectList is not null; }
       }
 
       public void Dispose()
       {
-        if (objectList != null)
+        if (_objectList is not null)
         {
-          objectList.RemoveAt(objectList.Count - 1);
+          _objectList.RemoveAt(_objectList.Count - 1);
         }
       }
     }
 
-    [ThreadStatic] private static List<object> _activeObjects;
+    [ThreadStatic] private static List<object>? _activeObjects;
 
     public static BusyLock Enter(object obj)
     {
-      List<object> activeObjects = _activeObjects;
-      if (activeObjects == null)
+      var activeObjects = _activeObjects;
+      if (activeObjects is null)
         activeObjects = _activeObjects = new List<object>();
       for (int i = 0; i < activeObjects.Count; i++)
       {

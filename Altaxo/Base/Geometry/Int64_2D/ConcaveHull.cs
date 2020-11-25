@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ClipperLib;
 
@@ -46,7 +48,8 @@ namespace Altaxo.Geometry.Int64_2D
     /// <summary>
     /// Gets the points that form the convex hull.
     /// </summary>
-    public IReadOnlyList<(IntPoint point, int index)> ConvexHullPoints { get; private set; }
+    public IReadOnlyList<(IntPoint point, int index)> ConvexHullPoints => _convexHullPoints;
+    private IReadOnlyList<(IntPoint point, int index)> _convexHullPoints;
 
     /// <summary>
     /// Gets the points that are not part of the convex hull.
@@ -56,7 +59,8 @@ namespace Altaxo.Geometry.Int64_2D
     /// <summary>
     /// Gets the points that form the concave hull.
     /// </summary>
-    public IReadOnlyList<(IntPoint point, int index)> ConcaveHullPoints { get; private set; }
+    public IReadOnlyList<(IntPoint point, int index)> ConcaveHullPoints => _concaveHullPoints;
+    private IReadOnlyList<(IntPoint point, int index)> _concaveHullPoints;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConcaveHull"/> class.
@@ -71,7 +75,7 @@ namespace Altaxo.Geometry.Int64_2D
     {
       concavity = Math.Min(1, Math.Max(concavity, -1));
 
-      ConvexHullPoints = GrahamScan.GetConvexHull(points);
+      _convexHullPoints = GrahamScan.GetConvexHull(points);
       _hull_convex_edges = CalculateConvexHullAsLineList(points);
 
       var pointsNotOnConvexHull = new List<(IntPoint point, int index)>();
@@ -101,6 +105,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// Thus a value of 1 is the limit case of a convex hull, a value of -1 allows sharp and deep bends.
     /// </param>
     /// <param name="minimalEdgeLength">The minimal length of an edge of the hull that is considered as a candidate edge for having a concave bend.</param>
+    [MemberNotNull(nameof(_concaveHullPoints))]
     public void CalculateConcaveHull(double concavity, double minimalEdgeLength)
     {
       concavity = Math.Min(1, Math.Max(concavity, -1));
@@ -109,7 +114,7 @@ namespace Altaxo.Geometry.Int64_2D
       if (!(concavity < 1))
       {
         // if concavity is 1, the concave hull is equal to the convex hull
-        ConcaveHullPoints = ConvexHullPoints;
+        _concaveHullPoints = ConvexHullPoints;
         return;
       }
 
@@ -166,7 +171,7 @@ namespace Altaxo.Geometry.Int64_2D
         (IntPoint point, int index) bestPoint = default;
         foreach (var np in nearPoints)
         {
-          if (null == boundingBox || boundingBox.Value.IsPointWithin(np.point))
+          if (boundingBox is null || boundingBox.Value.IsPointWithin(np.point))
           {
             var angle1 = Int64LineSegment.GetAngle(selected_edge.P0, selected_edge.P1, np.point, returnPositiveValueIf180Degrees: true);
             var angle2 = Int64LineSegment.GetAngle(selected_edge.P1, np.point, selected_edge.P0, returnPositiveValueIf180Degrees: true);
@@ -230,7 +235,7 @@ namespace Altaxo.Geometry.Int64_2D
       hull_concave_edges_final.AddRange(hull_concave_edges_temp);
 
       // calculate the hull points from the edges
-      ConcaveHullPoints = GetHullPoints(hull_concave_edges_final);
+      _concaveHullPoints = GetHullPoints(hull_concave_edges_final);
     }
 
 

@@ -43,21 +43,21 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     private void EhGotoAdvanced(object sender, RoutedEventArgs e)
     {
-      if (null != GotoAdvanced)
+      if (GotoAdvanced is not null)
         GotoAdvanced();
     }
 
     private void EhGotoSimple(object sender, RoutedEventArgs e)
     {
-      if (null != GotoSimple)
+      if (GotoSimple is not null)
         GotoSimple();
     }
 
     #region IPlotGroupCollectionView
 
-    public event Action GotoAdvanced;
+    public event Action? GotoAdvanced;
 
-    public event Action GotoSimple;
+    public event Action? GotoSimple;
 
     public void SetSimpleView(object viewObject)
     {

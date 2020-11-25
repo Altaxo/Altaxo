@@ -36,6 +36,7 @@
  * @author Thomas Åhlén, thahlen@gmail.com
  */
 
+#nullable disable
 namespace Poly2Tri
 {
   public class TriangulationConstraint

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace Altaxo.Graph.Graph3D
       _itemsByName = commonDictionaryForGraphs ?? throw new ArgumentNullException(nameof(commonDictionaryForGraphs));
     }
 
-    public override Main.IDocumentNode ParentObject
+    public override Main.IDocumentNode? ParentObject
     {
       get
       {
@@ -46,7 +47,7 @@ namespace Altaxo.Graph.Graph3D
       }
       set
       {
-        if (null != value)
+        if (value is not null)
           throw new InvalidOperationException("ParentObject of GraphDocumentCollection is fixed and cannot be set");
         base.ParentObject = value; // allow setting to null
       }
@@ -59,9 +60,9 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     /// <param name="child">A graph for which the parent collection is searched.</param>
     /// <returns>The parent GraphDocumentCollection, if it exists, or null otherwise.</returns>
-    public static GraphDocumentCollection GetParentGraphDocumentCollectionOf(Main.IDocumentLeafNode child)
+    public static GraphDocumentCollection? GetParentGraphDocumentCollectionOf(Main.IDocumentLeafNode child)
     {
-      return (GraphDocumentCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(GraphDocumentCollection));
+      return (GraphDocumentCollection?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(GraphDocumentCollection));
     }
   }
 }

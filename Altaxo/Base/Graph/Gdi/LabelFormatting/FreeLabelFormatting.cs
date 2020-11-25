@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Data;
@@ -47,9 +48,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         info.AddValue("FormatString", s._formatString);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        FreeLabelFormatting s = (FreeLabelFormatting)o ?? new FreeLabelFormatting();
+        var s = (FreeLabelFormatting?)o ?? new FreeLabelFormatting();
         info.GetBaseValueEmbedded(s, typeof(MultiLineLabelFormattingBase), parent);
         s._formatString = info.GetString("FormatString");
         return s;
@@ -69,11 +70,13 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     public override bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
       var isCopied = base.CopyFrom(obj);
       if (isCopied && !object.ReferenceEquals(this, obj))
       {
         var from = obj as FreeLabelFormatting;
-        if (null != from)
+        if (from is not null)
         {
           _formatString = from._formatString;
         }

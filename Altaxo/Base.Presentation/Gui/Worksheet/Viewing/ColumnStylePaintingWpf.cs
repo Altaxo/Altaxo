@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,7 +77,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
       FormattedText t;
 
-      t = new FormattedText(text, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush)
+      t = new FormattedText(text, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush, 1)
       {
         MaxTextWidth = cellRectangle.Width,
         TextAlignment = TextAlignment.Center
@@ -107,21 +108,21 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
       FormattedText t;
 
-      t = new FormattedText(columnnumber, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush)
+      t = new FormattedText(columnnumber, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush, 1)
       {
         MaxTextWidth = numRectangle.Width,
         TextAlignment = TextAlignment.Left
       };
       dc.DrawText(t, numRectangle.Location);
 
-      t = new FormattedText(kindandgroup, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush)
+      t = new FormattedText(kindandgroup, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush, 1)
       {
         MaxTextWidth = numRectangle.Width,
         TextAlignment = TextAlignment.Right
       };
       dc.DrawText(t, numRectangle.Location);
 
-      t = new FormattedText(data.Name, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush)
+      t = new FormattedText(data.Name, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush, 1)
       {
         MaxTextWidth = nameRectangle.Width,
         TextAlignment = TextAlignment.Center
@@ -170,7 +171,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       var txtBrush = bSelected ? thiss.DefaultSelectedTextBrush.ToWpf() : thiss.TextBrush.ToWpf();
 
       FormattedText t;
-      t = new FormattedText(textToDraw, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush)
+      t = new FormattedText(textToDraw, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush, 1)
       {
         MaxTextWidth = cellRect.Width,
         TextAlignment = alignment,

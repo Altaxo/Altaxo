@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   {
     private PenControlsGlue _strokePenGlue;
 
-    public event Action IndependentColorChanged;
+    public event Action? IndependentColorChanged;
 
     public VectorCartesicPlotStyleControl()
     {
@@ -289,7 +289,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
     {
-      if (null != IndependentColorChanged)
+      if (IndependentColorChanged is not null)
         IndependentColorChanged();
     }
 
@@ -302,7 +302,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public void Initialize_ColumnXTransformation(string transformationTextToShow, string transformationToolTip)
     {
-      if (null == transformationTextToShow)
+      if (transformationTextToShow is null)
       {
         _guiColumnXTransformation.Visibility = Visibility.Collapsed;
       }
@@ -323,7 +323,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public void Initialize_ColumnYTransformation(string transformationTextToShow, string transformationToolTip)
     {
-      if (null == transformationTextToShow)
+      if (transformationTextToShow is null)
       {
         _guiColumnYTransformation.Visibility = Visibility.Collapsed;
       }

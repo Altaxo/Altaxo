@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -126,7 +127,7 @@ namespace Altaxo.Gui.Drawing
         Controller_CurrentItems_Initialize();
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         View_AvailableLists_Initialize();
         View_AvailableItems_Initialize();
@@ -326,7 +327,7 @@ namespace Altaxo.Gui.Drawing
 
     protected virtual void Controller_CurrentItems_Initialize()
     {
-      if (null == _currentItems)
+      if (_currentItems is null)
         _currentItems = new SelectableListNodeList();
       else
         _currentItems.Clear();
@@ -409,10 +410,10 @@ namespace Altaxo.Gui.Drawing
 
     protected virtual bool IsItemEditable(Altaxo.Main.IImmutable item)
     {
-      if (null == item)
+      if (item is null)
         return false;
       var prop = item.GetType().GetProperty("IsEditable", typeof(bool));
-      if (null == prop)
+      if (prop is null)
         return false;
       return (bool)prop.GetValue(item, null);
     }
@@ -425,11 +426,11 @@ namespace Altaxo.Gui.Drawing
         return;
 
       var item = (TItem)(node?.Tag);
-      if (null == item)
+      if (item is null)
         return;
 
       var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { item }, typeof(IMVCANController));
-      if (null == controller || null == controller.ViewObject)
+      if (controller is null || controller.ViewObject is null)
         return;
 
       if (true == Current.Gui.ShowDialog(controller, "Edit item"))
@@ -472,7 +473,7 @@ namespace Altaxo.Gui.Drawing
     protected virtual void EhAvailableItem_AddToCurrent()
     {
       var avNode = _availableItemsRootNode.FirstSelectedNode;
-      if (null == avNode)
+      if (avNode is null)
         return;
       var newItem = default(TItem);
       try
@@ -484,7 +485,7 @@ namespace Altaxo.Gui.Drawing
         Current.Gui.ErrorMessageBox("The new item could not be created, message: " + ex.Message);
       }
 
-      if (null != newItem)
+      if (newItem is not null)
       {
         _currentItems.Add(new SelectableListNode(ToDisplayName(newItem), newItem, false));
         SetListDirty();
@@ -518,7 +519,7 @@ namespace Altaxo.Gui.Drawing
 
           if (false == hasToBeStored)
             return true; // true means we can discard the list
-          if (null == hasToBeStored)
+          if (hasToBeStored is null)
             return false; // Cancel will end this action unsuccessful
           if (true == TryToStoreList())
             return true;
@@ -577,7 +578,7 @@ namespace Altaxo.Gui.Drawing
 
     private void EhCurrentItems_DragEnded(bool isCopy, bool isMove)
     {
-      if (isMove && _draggedNode != null)
+      if (isMove && _draggedNode is not null)
       {
         _currentItems.Remove(_draggedNode);
         SetListDirty();
@@ -604,7 +605,7 @@ namespace Altaxo.Gui.Drawing
     {
       var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
       // to start a drag, at least one item must be selected
-      return selNode != null;
+      return selNode is not null;
     }
 
     #endregion Drag current items
@@ -728,7 +729,7 @@ namespace Altaxo.Gui.Drawing
     {
       var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
       // to start a drag, at least one item must be selected
-      return selNode != null;
+      return selNode is not null;
     }
 
     #endregion Drag Available items

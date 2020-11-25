@@ -1,12 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="GenAssInfo">
   <PropertyGroup>
     <AssemblyName>OpenXMLAddin</AssemblyName>
-    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
+    <TargetFrameworks>net48;net5.0-windows</TargetFrameworks>
+    <LangVersion>preview</LangVersion>
+    <nullable>enable</nullable>
+    <UseWPF>true</UseWPF>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <NoWarn>
+      1591;
+      8600;8601;8602;8603;8604;8618;8625;8764;8766;8767;8768
+    </NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
@@ -25,8 +35,8 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
-    <PackageReference Include="DocumentFormat.OpenXml" Version="2.11.0" />
-    <PackageReference Include="System.IO.Compression" Version="4.3.0"/>
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.11.3" />
+    <PackageReference Include="System.IO.Compression" Version="4.3.0" />
   </ItemGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\..\MSBuildVersioning.dll" />
   <Target Name="GenAssInfo">

@@ -25,6 +25,7 @@
 // The following code was translated using Matpack sources (http://www.matpack.de) (Author B.Gammel)
 
 using System;
+using System.Threading;
 
 namespace Altaxo.Calc.Fourier
 {
@@ -293,8 +294,11 @@ namespace Altaxo.Calc.Fourier
     // CForm[Table[N[Cos[Pi/(2^n)],50],{n,1,60}]]
     //----------------------------------------------------------------------------//
 
-    private static readonly double[] coswrk =
-  {
+
+
+    private static readonly ThreadLocal<double[]> _coswrk = new ThreadLocal<double[]>(() =>
+    new double[]
+ {
     0.0,
     0.70710678118654752440084436210484903928483593768847,
     0.92387953251128675612818318939678828682241662586364,
@@ -355,7 +359,8 @@ namespace Altaxo.Calc.Fourier
     0.9999999999999999999999999999999999405994792021436,
     0.9999999999999999999999999999999999851498698005359,
     0.99999999999999999999999999999999999628746745013398
-  };
+  });
+
 
     //----------------------------------------------------------------------------//
     // table containing sin[pi/(2^n)], n=0,1,2,...[
@@ -363,7 +368,8 @@ namespace Altaxo.Calc.Fourier
     // CForm[Table[N[Sin[Pi/(2^n)],50],{n,1,60}]]
     //----------------------------------------------------------------------------//
 
-    private static readonly double[] sinwrk =
+    private static readonly ThreadLocal<double[]> _sinwrk = new ThreadLocal<double[]>(() =>
+    new double[]
   {
     1.0,
     0.70710678118654752440084436210484903928483593768847,
@@ -425,7 +431,7 @@ namespace Altaxo.Calc.Fourier
     1.08995890562769746858726278268530388778949687113896e-17,
     5.4497945281384873429363139134265195198776426588784e-18,
     2.7248972640692436714681569567132597700550911173371e-18
-  };
+  });
 
     /*-----------------------------------------------------------------------------*\
         | Fast Fourier Transform based on Fast Hartley Transform              fhtfft.cc |
@@ -759,6 +765,9 @@ namespace Altaxo.Calc.Fourier
         throw new ArgumentException("Invalid n, n is less than 4!");
       if (!IsPowerOfTwo(n))
         throw new ArgumentException("Invalid n, n is not a power of two!");
+
+      var coswrk = _coswrk.Value ?? throw new InvalidProgramException("Thread local variable {nameof(_coswrk)} was not initialized");
+      var sinwrk = _sinwrk.Value ?? throw new InvalidProgramException("Thread local variable {nameof(_sinwrk)} was not initialized");
 
       int i, k, k1, k2, k3, k4, kx;
       //double *fi,*fn,*gi;
@@ -1258,9 +1267,9 @@ namespace Altaxo.Calc.Fourier
       double[] scratchreal, double[] scratchimag,
       int n)
     {
-      if (null == scratchreal || scratchreal.Length < n)
+      if (scratchreal is null || scratchreal.Length < n)
         scratchreal = new double[n];
-      if (null == scratchimag || scratchimag.Length < n)
+      if (scratchimag is null || scratchimag.Length < n)
         scratchimag = new double[n];
 
       // First copy the arrays data and response to result and scratch,
@@ -1345,9 +1354,9 @@ namespace Altaxo.Calc.Fourier
       ref double[]? scratchreal, ref double[]? scratchimag
       )
     {
-      if (null == scratchreal || scratchreal.Length < n)
+      if (scratchreal is null || scratchreal.Length < n)
         scratchreal = new double[n];
-      if (null == scratchimag || scratchimag.Length < n)
+      if (scratchimag is null || scratchimag.Length < n)
         scratchimag = new double[n];
 
       // First copy the arrays data and response to result and scratch,

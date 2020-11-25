@@ -22,12 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Gui
 {
@@ -36,17 +35,21 @@ namespace Altaxo.Gui
   /// </summary>
   /// <typeparam name="TModel">The type of the document to edit.</typeparam>
   /// <typeparam name="TView">The type of the view.</typeparam>
-  public abstract class MVCANControllerEditImmutableDocBase<TModel, TView> : IMVCANController, INotifyPropertyChanged
+  public abstract class MVCANControllerEditImmutableDocBase<TModel, TView> : ControllerBase, IMVCANController, INotifyPropertyChanged
     where TView : class
   {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
     /// <summary>The document to edit. If <see cref="_useDocumentCopy"/> is true, this is a copy of the original document; otherwise, it is the original document itself.</summary>
     protected TModel _doc;
 
     /// <summary>The original document. If <see cref="_useDocumentCopy"/> is false, it maybe has been edited by this controller.</summary>
     protected TModel _originalDoc;
 
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
     /// <summary>The Gui view of this controller</summary>
-    protected TView _view;
+    protected TView? _view;
 
     /// <summary>If true, a copy of the document is made before editing; this copy can later be used to revert the state of the document to the original state.</summary>
     protected bool _useDocumentCopy;
@@ -54,7 +57,7 @@ namespace Altaxo.Gui
     /// <summary>Set to true if this controller is already disposed.</summary>
     private bool _isDisposed;
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// Enumerates the sub controllers. This function is called on <see cref="Dispose(bool)"/> of this controller to dispose the subcontrollers too.
@@ -75,13 +78,22 @@ namespace Altaxo.Gui
       if (IsDisposed)
         throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);
 
-      if (null == args || 0 == args.Length || !(args[0] is TModel))
+      if (args is null || 0 == args.Length || !(args[0] is TModel))
         return false;
 
       _doc = _originalDoc = (TModel)args[0];
 
       Initialize(true);
       return true;
+    }
+
+    /// <summary>Throws an exception if the controller is not initialized with a document.</summary>
+    /// <exception cref="InvalidOperationException">Controller was not initialized with a document</exception>
+    [MemberNotNull(nameof(_originalDoc), nameof(_doc))]
+    protected void ThrowIfNotInitialized()
+    {
+      if (_originalDoc is null || _doc is null)
+        throw NoDocumentException;
     }
 
     /// <summary>
@@ -92,7 +104,7 @@ namespace Altaxo.Gui
     /// <exception cref="System.ObjectDisposedException">The controller was already disposed.</exception>
     protected virtual void Initialize(bool initData)
     {
-      if (null == _doc)
+      if (_doc is null)
         throw new InvalidOperationException("This controller was not initialized with a document.");
       if (IsDisposed)
         throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);
@@ -160,6 +172,8 @@ namespace Altaxo.Gui
     /// </returns>
     public virtual bool Revert(bool disposeController)
     {
+      ThrowIfNotInitialized();
+
       _doc = _originalDoc;
 
       if (disposeController)
@@ -193,7 +207,7 @@ namespace Altaxo.Gui
     /// <summary>
     /// Returns the Gui element that shows the model to the user.
     /// </summary>
-    public virtual object ViewObject
+    public virtual object? ViewObject
     {
       get
       {
@@ -201,14 +215,14 @@ namespace Altaxo.Gui
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as TView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           AttachView();
@@ -221,7 +235,11 @@ namespace Altaxo.Gui
     /// </summary>
     public virtual object ModelObject
     {
-      get { return _doc; }
+      get
+      {
+        ThrowIfNotInitialized();
+        return _doc;
+      }
     }
 
     /// <summary>
@@ -243,9 +261,9 @@ namespace Altaxo.Gui
       {
         foreach (var subControllerItem in GetSubControllers())
         {
-          if (null != subControllerItem.Controller)
+          if (subControllerItem.Controller is not null)
             subControllerItem.Controller.Dispose();
-          if (null != subControllerItem.SetMemberToNullAction)
+          if (subControllerItem.SetMemberToNullAction is not null)
             subControllerItem.SetMemberToNullAction();
         }
 

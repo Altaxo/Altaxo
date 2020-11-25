@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +47,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
   {
     private IDiscreteLightControl _control;
 
-    public event EventHandler SelectedValueChanged;
+    public event EventHandler? SelectedValueChanged;
 
     private GuiChangeLocker _lock;
 
@@ -59,7 +60,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
     {
       get
       {
-        return _control == null ? null : _control.SelectedValueAsIDiscreteLight;
+        return _control is null ? null : _control.SelectedValueAsIDiscreteLight;
       }
       set
       {
@@ -114,7 +115,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
 
     private void ChangeHostControlAccordingToNewLight(IDiscreteLight newLightValue)
     {
-      if (null == newLightValue)
+      if (newLightValue is null)
       {
         ChangeHostControl(null);
       }
@@ -150,7 +151,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
 
     private void SetRadioButtonAccordingToNewLight(IDiscreteLight newLightValue)
     {
-      if (newLightValue == null)
+      if (newLightValue is null)
       {
         _guiNotUsed.IsChecked = true;
       }
@@ -174,17 +175,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
 
     private void ChangeHostControl(IDiscreteLightControl newControl)
     {
-      if (null != _control)
+      if (_control is not null)
         _control.SelectedValueChanged -= EhSelectedValueChanged;
 
       _control = newControl;
       _guiControlHost.Child = (UIElement)_control;
 
-      if (null != _control)
+      if (_control is not null)
         _control.SelectedValueChanged += EhSelectedValueChanged;
     }
 
-    private void EhSelectedValueChanged(object sender, EventArgs e)
+    private void EhSelectedValueChanged(object? sender, EventArgs e)
     {
       if (_lock.IsNotLocked)
         SelectedValueChanged?.Invoke(this, e);

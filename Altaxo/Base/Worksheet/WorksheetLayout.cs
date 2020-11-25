@@ -22,11 +22,13 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
 namespace Altaxo.Worksheet
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Main;
 
@@ -96,25 +98,27 @@ namespace Altaxo.Worksheet
     /// </summary>
     protected bool _doShowPropertyColumns;
 
-    protected WeakActionHandler<object, object, TunnelingEventArgs> _weakEventHandlerForTable_TunneledEvent;
+    protected WeakActionHandler<object, object, TunnelingEventArgs>? _weakEventHandlerForTable_TunneledEvent;
 
     #endregion Member variables
 
     #region Serialization
 
+    #region Version 0
+
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetLayout), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      protected WorksheetLayout _worksheetLayout;
-      protected System.Collections.Hashtable _colStyles;
-      protected Main.AbsoluteDocumentPath _pathToTable;
+      protected WorksheetLayout? _worksheetLayout;
+      protected Dictionary<Main.AbsoluteDocumentPath, object>? _colStyles;
+      protected Main.AbsoluteDocumentPath? _pathToTable;
 
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (WorksheetLayout)obj;
 
         info.AddValue("Guid", System.Xml.XmlConvert.ToString(s._guid));
-        info.AddValue("Table", Main.AbsoluteDocumentPath.GetAbsolutePath(s._dataTable));
+        info.AddValueOrNull("Table", s._dataTable is null ? null : Main.AbsoluteDocumentPath.GetAbsolutePath(s._dataTable));
         info.AddValue("RowHeaderStyle", s._rowHeaderStyle);
         info.AddValue("ColumnHeaderStyle", s._columnHeaderStyle);
         info.AddValue("PropertyColumnHeaderStyle", s._propertyColumnHeaderStyle);
@@ -135,24 +139,26 @@ namespace Altaxo.Worksheet
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        WorksheetLayout s = null != o ? (WorksheetLayout)o : new WorksheetLayout();
+        WorksheetLayout s = (WorksheetLayout?)o ?? new WorksheetLayout(info);
         Deserialize(s, info, parent);
         return s;
       }
 
-      protected virtual void Deserialize(WorksheetLayout s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual void Deserialize(WorksheetLayout s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var surr = new XmlSerializationSurrogate0
         {
-          _colStyles = new System.Collections.Hashtable(),
+          _colStyles = new Dictionary<Main.AbsoluteDocumentPath, object>(),
           _worksheetLayout = s
         };
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+        info.DeserializationFinished += surr.EhDeserializationFinished;
 
         s._guid = System.Xml.XmlConvert.ToGuid(info.GetString("Guid"));
-        surr._pathToTable = (Main.AbsoluteDocumentPath)info.GetValue("Table", s);
+        surr._pathToTable = (Main.AbsoluteDocumentPath?)info.GetValueOrNull("Table", s);
         s.RowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle", s);
         s.ColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("ColumnHeaderStyle", s);
         s.PropertyColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("PropertyColumnHeaderStyle", s);
@@ -186,35 +192,39 @@ namespace Altaxo.Worksheet
 
       public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
       {
-        if (_pathToTable != null && _worksheetLayout.DataTable == null)
+        if (_pathToTable is not null && _worksheetLayout!.DataTable is null)
         {
-          object table = Main.AbsoluteDocumentPath.GetObject(_pathToTable, _worksheetLayout, documentRoot);
-          if (table is Altaxo.Data.DataTable)
+          object? tableObj = Main.AbsoluteDocumentPath.GetObject(_pathToTable, _worksheetLayout, documentRoot);
+          if (tableObj is Altaxo.Data.DataTable table)
           {
-            _worksheetLayout.DataTable = (Altaxo.Data.DataTable)table;
+            _worksheetLayout.DataTable = table;
             _pathToTable = null;
           }
         }
 
-        var resolvedStyles = new System.Collections.ArrayList();
-        foreach (System.Collections.DictionaryEntry entry in _colStyles)
+        var resolvedStyles = new HashSet<AbsoluteDocumentPath>();
+        foreach (var entry in _colStyles!)
         {
-          object resolvedobj = Main.AbsoluteDocumentPath.GetObject((Main.AbsoluteDocumentPath)entry.Key, _worksheetLayout, documentRoot);
-          if (null != resolvedobj)
+          object? resolvedobj = Main.AbsoluteDocumentPath.GetObject((Main.AbsoluteDocumentPath)entry.Key, _worksheetLayout!, documentRoot);
+          if (!(resolvedobj is null))
           {
-            _worksheetLayout.DataColumnStyles.Add((DataColumn)resolvedobj, (ColumnStyle)entry.Value);
+            _worksheetLayout!.DataColumnStyles.Add((DataColumn)resolvedobj, (ColumnStyle)entry.Value);
             resolvedStyles.Add(entry.Key);
           }
         }
 
-        foreach (object resstyle in resolvedStyles)
+        foreach (var resstyle in resolvedStyles)
           _colStyles.Remove(resstyle);
 
         // if all columns have resolved, we can close the event link
-        if (_colStyles.Count == 0 && _pathToTable == null)
+        if (_colStyles.Count == 0 && _pathToTable is null)
           info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
       }
     }
+
+    #endregion Version 0
+
+    #region Version 1
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetLayout), 1)]
     private class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
@@ -230,7 +240,7 @@ namespace Altaxo.Worksheet
         info.CommitArray();
       }
 
-      protected override void Deserialize(WorksheetLayout s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected override void Deserialize(WorksheetLayout s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         base.Deserialize(s, info, parent);
 
@@ -243,6 +253,8 @@ namespace Altaxo.Worksheet
         info.CloseArray(count);
       }
     }
+
+    #endregion Version 1
 
     // TODO (Wpf) Uncomment the next serialization if this is also implemented in Altaxo3
     /*
@@ -314,10 +326,23 @@ namespace Altaxo.Worksheet
 
     #endregion Serialization
 
+    protected WorksheetLayout(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+      : this(null!, true)
+    {
+    }
+
     #region Constructors
 
-    protected WorksheetLayout()
+    public WorksheetLayout(Altaxo.Data.DataTable table)
+      : this(table, false)
     {
+    }
+
+    protected WorksheetLayout(Altaxo.Data.DataTable table, bool isTableNullAllowed)
+    {
+      if (table is null && !isTableNullAllowed)
+        throw new ArgumentNullException(nameof(table));
+
       _guid = System.Guid.NewGuid();
 
       // m_ColumnStyles stores the column styles for each data column individually,
@@ -335,14 +360,14 @@ namespace Altaxo.Worksheet
       _propertyColumnHeaderStyle = new ColumnHeaderStyle() { ParentObject = this };
 
       _doShowPropertyColumns = true;
+
+      if (!(table is null))
+        DataTable = table;
+      else
+        _dataTable = null!;
     }
 
-    public WorksheetLayout(Altaxo.Data.DataTable table)
-      : this()
-    {
-      if (null != table)
-        DataTable = table;
-    }
+
 
     #endregion Constructors
 
@@ -361,29 +386,22 @@ namespace Altaxo.Worksheet
       _guid = System.Guid.NewGuid();
     }
 
+
     public Altaxo.Data.DataTable DataTable
     {
       get { return _dataTable; }
+      [MemberNotNull(nameof(_dataTable))]
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("DataTable is null");
+        if (value is null)
+          throw new ArgumentNullException(nameof(DataTable));
 
-        if (object.ReferenceEquals(_dataTable, value))
-          return;
-
-        if (null != _dataTable)
+        if (_dataTable is not null && !object.ReferenceEquals(_dataTable, value))
           throw new InvalidOperationException("This instance is already bound to a data table. It is not allowed to assign another data table to it");
 
         _dataTable = value;
-
-        {
-          var table = _dataTable;
-
-          // use LOCAL variables only to connect to weak event handlers!
-          _weakEventHandlerForTable_TunneledEvent?.Remove();
-          table.TunneledEvent += (_weakEventHandlerForTable_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhDataTableTunneledEvent, table, nameof(table.TunneledEvent)));
-        }
+        _weakEventHandlerForTable_TunneledEvent?.Remove();
+        _dataTable.TunneledEvent += (_weakEventHandlerForTable_TunneledEvent = new WeakActionHandler<object, object, TunnelingEventArgs>(EhDataTableTunneledEvent, _dataTable, nameof(_dataTable.TunneledEvent)));
       }
     }
 
@@ -391,7 +409,7 @@ namespace Altaxo.Worksheet
     {
       if (e is DisposeEventArgs && object.ReferenceEquals(originalSource, _dataTable))
       {
-        if (!Current.Project?.TableLayouts?.Remove(this) ?? true)
+        if (!Current.ProjectOrNull?.TableLayouts?.Remove(this) ?? true)
           Dispose();
       }
     }
@@ -479,33 +497,33 @@ namespace Altaxo.Worksheet
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _columnHeaderStyle)
-        yield return new Main.DocumentNodeAndName(_columnHeaderStyle, () => _columnHeaderStyle = null, "ColumnHeaderStyle");
+      if (_columnHeaderStyle is not null)
+        yield return new Main.DocumentNodeAndName(_columnHeaderStyle, () => _columnHeaderStyle = null!, "ColumnHeaderStyle");
 
-      if (null != _rowHeaderStyle)
-        yield return new Main.DocumentNodeAndName(_rowHeaderStyle, () => _rowHeaderStyle = null, "RowHeaderStyle");
+      if (_rowHeaderStyle is not null)
+        yield return new Main.DocumentNodeAndName(_rowHeaderStyle, () => _rowHeaderStyle = null!, "RowHeaderStyle");
 
-      if (null != _propertyColumnHeaderStyle)
-        yield return new Main.DocumentNodeAndName(_propertyColumnHeaderStyle, () => _propertyColumnHeaderStyle = null, "PropertyColumnHeaderStyle");
+      if (_propertyColumnHeaderStyle is not null)
+        yield return new Main.DocumentNodeAndName(_propertyColumnHeaderStyle, () => _propertyColumnHeaderStyle = null!, "PropertyColumnHeaderStyle");
 
-      if (null != _dataColumnStyles)
-        yield return new Main.DocumentNodeAndName(_dataColumnStyles, () => _dataColumnStyles = null, "DataColumnStyles");
+      if (_dataColumnStyles is not null)
+        yield return new Main.DocumentNodeAndName(_dataColumnStyles, () => _dataColumnStyles = null!, "DataColumnStyles");
 
-      if (null != _propertyColumnStyles)
-        yield return new Main.DocumentNodeAndName(_propertyColumnStyles, () => _propertyColumnStyles = null, "PropertyColumnStyles");
+      if (_propertyColumnStyles is not null)
+        yield return new Main.DocumentNodeAndName(_propertyColumnStyles, () => _propertyColumnStyles = null!, "PropertyColumnStyles");
     }
 
     #endregion Document node functions
 
     protected override void Dispose(bool isDisposing)
     {
-      if (null != _parent)
+      if (_parent is not null)
       {
         _weakEventHandlerForTable_TunneledEvent?.Remove();
         _weakEventHandlerForTable_TunneledEvent = null;
 
         base.Dispose(isDisposing);
-        _dataTable = null;
+        _dataTable = null!;
       }
     }
   }

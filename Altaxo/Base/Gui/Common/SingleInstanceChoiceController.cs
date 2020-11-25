@@ -22,14 +22,16 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Gui.Common
 {
   public class SingleInstanceChoice
   {
     private System.Type _instanceType;
-    private object _instance;
+    private object? _instance;
 
     public System.Type InstanceType
     {
@@ -39,7 +41,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    public object Instance
+    public object? Instance
     {
       get
       {
@@ -48,7 +50,7 @@ namespace Altaxo.Gui.Common
 
       set
       {
-        if (null != value && !Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(value.GetType(), _instanceType))
+        if (value is not null && !Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(value.GetType(), _instanceType))
           throw new ArgumentException("The provided instance object is not a subclass (or implements) type instanceType");
         _instance = value;
       }
@@ -59,11 +61,12 @@ namespace Altaxo.Gui.Common
       Initialize(instanceType, instance);
     }
 
+    [MemberNotNull(nameof(_instanceType))]
     public void Initialize(System.Type instanceType, object instance)
     {
-      if (instanceType == null)
+      if (instanceType is null)
         throw new ArgumentException("instanceType must not be null");
-      if (null != instance && !Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(instance.GetType(), instanceType))
+      if (instance is not null && !Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(instance.GetType(), instanceType))
         throw new ArgumentException("The provided instance object is not a subclass (or implements) type instanceType");
 
       _instanceType = instanceType;
@@ -90,7 +93,7 @@ namespace Altaxo.Gui.Common
       for (int i = 0; i < _types.Length; i++)
       {
         choices[i] = Current.Gui.GetUserFriendlyClassName(_types[i]);
-        if (_doc.Instance != null && _doc.Instance.GetType() == _types[i])
+        if (_doc.Instance is not null && _doc.Instance.GetType() == _types[i])
           selectedIndex = i;
       }
 
@@ -111,12 +114,12 @@ namespace Altaxo.Gui.Common
         return false;
 
       int selected = base._choice;
-      if (_doc.Instance != null && _doc.Instance.GetType() == _types[selected])
+      if (_doc.Instance is not null && _doc.Instance.GetType() == _types[selected])
         return true;
       else
       {
-        object current = System.Activator.CreateInstance(_types[selected]);
-        if (current != null)
+        object? current = System.Activator.CreateInstance(_types[selected]);
+        if (current is not null)
         {
           _doc.Instance = current;
           return true;

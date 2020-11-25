@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
@@ -34,27 +34,27 @@ namespace Altaxo.Gui.Common
   {
     SelectableListNodeList FileNames { set; }
 
-    event Action BrowseSelectedFileName;
+    event Action? BrowseSelectedFileName;
 
-    event Action DeleteSelectedFileName;
+    event Action? DeleteSelectedFileName;
 
-    event Action MoveUpSelectedFileName;
+    event Action? MoveUpSelectedFileName;
 
-    event Action MoveDownSelectedFileName;
+    event Action? MoveDownSelectedFileName;
 
-    event Action AddNewFileName;
+    event Action? AddNewFileName;
 
-    event Action NewFileNameExclusively;
+    event Action? NewFileNameExclusively;
 
-    event Action SortFileNamesAscending;
+    event Action? SortFileNamesAscending;
   }
 
   [ExpectedTypeOfView(typeof(IMultipleFilesView))]
   public class MultipleFilesController : MVCANControllerEditImmutableDocBase<IEnumerable<string>, IMultipleFilesView>, IMVCSupportsApplyCallback
   {
-    private SelectableListNodeList _fileNames;
+    private SelectableListNodeList _fileNames = new SelectableListNodeList();
 
-    public event Action SuccessfullyApplied;
+    public event Action? SuccessfullyApplied;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -63,6 +63,9 @@ namespace Altaxo.Gui.Common
 
     protected override void Initialize(bool initData)
     {
+      if (_doc is null)
+        throw NoDocumentException;
+
       base.Initialize(initData);
 
       if (initData)
@@ -76,7 +79,7 @@ namespace Altaxo.Gui.Common
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.FileNames = _fileNames;
       }
@@ -84,7 +87,7 @@ namespace Altaxo.Gui.Common
 
     public override bool Apply(bool disposeController)
     {
-      _doc = _fileNames.Select(x => (string)x.Tag).ToArray();
+      _doc = _fileNames.Select(x => (string)x.Tag!).ToArray();
 
       SuccessfullyApplied?.Invoke();
       return ApplyEnd(true, disposeController);
@@ -92,6 +95,9 @@ namespace Altaxo.Gui.Common
 
     protected override void AttachView()
     {
+      if (_view is null)
+        throw NoViewException;
+
       base.AttachView();
       _view.BrowseSelectedFileName += EhBrowseFileName;
       _view.DeleteSelectedFileName += EhDeleteFileName;
@@ -104,6 +110,9 @@ namespace Altaxo.Gui.Common
 
     protected override void DetachView()
     {
+      if (_view is null)
+        throw NoViewException;
+
       _view.BrowseSelectedFileName -= EhBrowseFileName;
       _view.DeleteSelectedFileName -= EhDeleteFileName;
       _view.MoveUpSelectedFileName -= EhMoveUpFileName;
@@ -124,13 +133,19 @@ namespace Altaxo.Gui.Common
     private void EhMoveUpFileName()
     {
       _fileNames.MoveSelectedItemsUp();
-      _view.FileNames = _fileNames;
+      if (_view is { } view)
+      {
+        view.FileNames = _fileNames;
+      }
     }
 
     private void EhMoveDownFileName()
     {
       _fileNames.MoveSelectedItemsDown();
-      _view.FileNames = _fileNames;
+      if (_view is { } view)
+      {
+        view.FileNames = _fileNames;
+      }
     }
 
     private (string Filter, string Description)[] _fileFilters = new[] { ("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)"), ("*.*", "All files (*.*)") };
@@ -142,7 +157,7 @@ namespace Altaxo.Gui.Common
     {
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(FileFilters));
 
         _fileFilters = value.ToArray();
@@ -152,13 +167,13 @@ namespace Altaxo.Gui.Common
     private void EhBrowseFileName()
     {
       var node = _fileNames.FirstSelectedNode;
-      if (null == node)
+      if (node is null)
         return;
 
       var options = new OpenFileOptions();
       foreach (var tuple in _fileFilters)
         options.AddFilter(tuple.Filter, tuple.Description);
-      options.InitialDirectory = System.IO.Path.GetDirectoryName((string)node.Tag);
+      options.InitialDirectory = System.IO.Path.GetDirectoryName((string)node.Tag!);
 
       if (Current.Gui.ShowOpenFileDialog(options))
       {
@@ -172,8 +187,8 @@ namespace Altaxo.Gui.Common
       var options = new OpenFileOptions();
       options.AddFilter("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)");
       options.AddFilter("*.*", "All files (*.*)");
-      if (null != node)
-        options.InitialDirectory = System.IO.Path.GetDirectoryName((string)node.Tag);
+      if (node is not null)
+        options.InitialDirectory = System.IO.Path.GetDirectoryName((string)node.Tag!);
       options.Multiselect = true;
       if (Current.Gui.ShowOpenFileDialog(options))
       {
@@ -199,7 +214,7 @@ namespace Altaxo.Gui.Common
 
     private void EhSortFileNamesAscending()
     {
-      var listOfNamesSorted = new List<string>(_fileNames.OrderBy(x => (string)x.Tag).Select(x => (string)x.Tag));
+      var listOfNamesSorted = new List<string>(_fileNames.OrderBy(x => (string)x.Tag!).Select(x => (string)x.Tag!));
       _fileNames.Clear();
       foreach (var name in listOfNamesSorted)
         _fileNames.Add(new SelectableListNode(name, name, false));

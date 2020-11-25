@@ -22,12 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using Altaxo.Data;
 
 namespace Altaxo.Gui.Common
 {
@@ -37,7 +36,7 @@ namespace Altaxo.Gui.Common
     /// Initializes the view's values. Item1 is the Name of the value to set; Item2 is the value type, and Item3 is the value itself.
     /// </summary>
     /// <param name="values">The values.</param>
-    void Values_Initialize(IEnumerable<Tuple<string, Type, object>> values);
+    void Values_Initialize(IEnumerable<Tuple<string, Type, object?>> values);
 
     /// <summary>
     /// Gets the value at index idx.
@@ -58,16 +57,29 @@ namespace Altaxo.Gui.Common
   {
     private class ValueInfo
     {
-      public string Name;
-      public object Value;
-      public Type ValueType;
-      public MethodInfo SetterMethod;
+      public string Name { get; }
+      public object? Value { get; }
+      public Type ValueType { get; }
+      public MethodInfo SetterMethod { get; }
+
+      public ValueInfo(string name, Type valueType, MethodInfo method, object? value)
+      {
+        Name = name;
+        ValueType = valueType;
+        SetterMethod = method;
+        Value = value;
+      }
     }
 
-    private List<ValueInfo> _valueInfo;
+    private List<ValueInfo> _valueInfo = new List<ValueInfo>();
+
+
 
     protected override void Initialize(bool initData)
     {
+      if (_doc is null)
+        throw NoDocumentException;
+
       base.Initialize(initData);
 
       if (initData)
@@ -90,28 +102,35 @@ namespace Altaxo.Gui.Common
             continue;
 
           var parameterName = methodParameters[0].Name;
+          if (parameterName is null)
+            continue;
+
           parameterName = parameterName.Substring(0, 1).ToUpperInvariant() + parameterName.Substring(1); // Capitalize parameter name
 
-          object parameterValue = null;
+          object? parameterValue = null;
           var getterProp = _doc.GetType().GetProperty(parameterName);
-          if (null != getterProp && getterProp.PropertyType == parameterType)
+          if (getterProp is not null && getterProp.PropertyType == parameterType)
             parameterValue = getterProp.GetValue(_doc, null);
 
-          _valueInfo.Add(new ValueInfo() { Name = parameterName, ValueType = parameterType, SetterMethod = method, Value = parameterValue });
+          _valueInfo.Add(new ValueInfo(parameterName, parameterType, method, parameterValue));
         }
       }
-      if (null != _view)
+      if (_view is not null)
       {
-        _view.Values_Initialize(_valueInfo.Select(x => new Tuple<string, Type, object>(x.Name, x.ValueType, x.Value)));
+        _view.Values_Initialize(_valueInfo.Select(x => new Tuple<string, Type, object?>(x.Name, x.ValueType, x.Value)));
       }
     }
 
     public override bool Apply(bool disposeController)
     {
+      if (_view is null)
+        throw NoViewException;
+
       for (int i = 0; i < _valueInfo.Count; ++i)
       {
         var value = _view.Value_Get(i);
-        _doc = (TObject)_valueInfo[i].SetterMethod.Invoke(_doc, new[] { value });
+        if (_valueInfo[i].SetterMethod.Invoke(_doc, new[] { value }) is TObject newdoc)
+          _doc = newdoc;
       }
 
       return ApplyEnd(true, disposeController);

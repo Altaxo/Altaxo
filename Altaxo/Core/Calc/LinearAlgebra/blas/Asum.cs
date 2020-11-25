@@ -47,7 +47,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
     ///<summary>Check arguments so that errors don't occur in native code</summary>
     private static void ArgumentCheck(int n, object X, int incx, int lenX)
     {
-      if (X == null)
+      if (X is null)
       {
         throw new ArgumentNullException("X", "X cannot be null.");
       }

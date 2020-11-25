@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph.Scales
     private void EhAxisType_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
     {
       e.Handled = true;
-      if (null != ScaleTypeChanged)
+      if (ScaleTypeChanged is not null)
       {
         GuiHelper.SynchronizeSelectionFromGui(m_Scale_cbType);
         ScaleTypeChanged();
@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Graph.Scales
     private void EhLinkTarget_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
     {
       e.Handled = true;
-      if (null != LinkTargetChanged)
+      if (LinkTargetChanged is not null)
       {
         GuiHelper.SynchronizeSelectionFromGui(_cbLinkTarget);
         LinkTargetChanged();
@@ -64,7 +64,7 @@ namespace Altaxo.Gui.Graph.Scales
     private void EhTickSpacingType_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
     {
       e.Handled = true;
-      if (null != TickSpacingTypeChanged)
+      if (TickSpacingTypeChanged is not null)
       {
         var _cbTickSpacingType = (ComboBox)sender;
         GuiHelper.SynchronizeSelectionFromGui(_cbTickSpacingType);
@@ -111,11 +111,11 @@ namespace Altaxo.Gui.Graph.Scales
       _tickSpacingGroupBox.Content = guiobject as UIElement;
     }
 
-    public event Action ScaleTypeChanged;
+    public event Action? ScaleTypeChanged;
 
-    public event Action TickSpacingTypeChanged;
+    public event Action? TickSpacingTypeChanged;
 
-    public event Action LinkTargetChanged;
+    public event Action? LinkTargetChanged;
 
     #endregion IAxisScaleView
 

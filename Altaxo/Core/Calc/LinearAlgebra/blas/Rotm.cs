@@ -52,11 +52,11 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       {
         throw new ArgumentException("n must be zero or greater.", "n");
       }
-      if (X == null)
+      if (X is null)
       {
         throw new ArgumentNullException("X", "X cannot be null.");
       }
-      if (Y == null)
+      if (Y is null)
       {
         throw new ArgumentNullException("Y", "Y cannot be null.");
       }
@@ -78,7 +78,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       {
         throw new ArgumentException("The dimension of Y must be a least 1 + (n-1) * incy.");
       }
-      if (P == null)
+      if (P is null)
       {
         throw new ArgumentNullException("P", "P cannot be null.");
       }
@@ -125,11 +125,11 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       {
         throw new ArgumentException("n must be zero or greater.", "n");
       }
-      if (X == null)
+      if (X is null)
       {
         throw new ArgumentNullException("X", "X cannot be null.");
       }
-      if (Y == null)
+      if (Y is null)
       {
         throw new ArgumentNullException("Y", "Y cannot be null.");
       }
@@ -151,7 +151,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       {
         throw new ArgumentException("The dimension of Y must be a least 1 + (n-1) * incy.");
       }
-      if (P == null)
+      if (P is null)
       {
         throw new ArgumentNullException("P", "P cannot be null.");
       }

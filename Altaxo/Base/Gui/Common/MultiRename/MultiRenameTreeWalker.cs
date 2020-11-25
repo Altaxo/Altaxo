@@ -22,9 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Altaxo.Main.PegParser;
 
@@ -54,7 +53,7 @@ namespace Altaxo.Gui.Common.MultiRename
       var child = _tree.child_;
       int startLiteral = 0;
 
-      while (null != child)
+      while (child is not null)
       {
         int startChild = child.match_.posBeg_;
         if (startChild > startLiteral)
@@ -103,14 +102,14 @@ namespace Altaxo.Gui.Common.MultiRename
     private IMultiRenameElement HandleIntegerTemplate(PegNode node)
     {
       var childNode = node.child_;
-      if (childNode == null)
+      if (childNode is null)
         throw new ArgumentNullException("childNode");
       string shortCut = _sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length);
       int numberOfDigits = 0;
       int offset = 0;
       int step = 1;
 
-      while (null != (childNode = childNode.next_))
+      while ((childNode = childNode!.next_) is not null)
       {
         switch (childNode.id_)
         {
@@ -134,14 +133,14 @@ namespace Altaxo.Gui.Common.MultiRename
     private IMultiRenameElement HandleStringTemplate(PegNode node)
     {
       var childNode = node.child_;
-      if (childNode == null)
+      if (childNode is null)
         throw new ArgumentNullException("childNode");
       string shortCut = _sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length);
 
       int start = 0;
       int last = -1;
 
-      while (null != (childNode = childNode.next_))
+      while ((childNode = childNode!.next_) is not null)
       {
         switch (childNode.id_)
         {
@@ -164,14 +163,14 @@ namespace Altaxo.Gui.Common.MultiRename
 
     private IMultiRenameElement HandleDateTimeTemplate(PegNode node)
     {
-      string dateTimeFormat = null;
+      string? dateTimeFormat = null;
       bool useUtcTime = false;
       var childNode = node.child_;
-      if (childNode == null)
+      if (childNode is null)
         throw new ArgumentNullException("childNode");
       string shortCut = _sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length);
 
-      while (null != (childNode = childNode.next_))
+      while ((childNode = childNode!.next_) is not null)
       {
         switch (childNode.id_)
         {
@@ -191,7 +190,7 @@ namespace Altaxo.Gui.Common.MultiRename
     private IMultiRenameElement HandleArrayTemplate(PegNode node)
     {
       var childNode = node.child_;
-      if (childNode == null)
+      if (childNode is null)
         throw new ArgumentNullException("childNode");
       string shortCut = _sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length);
 
@@ -199,7 +198,7 @@ namespace Altaxo.Gui.Common.MultiRename
       int last = -1;
       string separator = "\\";
 
-      while (null != (childNode = childNode.next_))
+      while ((childNode = childNode!.next_) is not null)
       {
         switch (childNode.id_)
         {

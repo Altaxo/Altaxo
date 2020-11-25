@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.Serialization;
 using Altaxo.Drawing;
@@ -44,7 +46,7 @@ namespace Altaxo.Graph.Gdi.Background
     protected double _shadowLength = 5;
 
     [NonSerialized]
-    protected BrushX _cachedShadowBrush;
+    protected BrushX? _cachedShadowBrush;
 
     #region Serialization
 
@@ -61,9 +63,9 @@ namespace Altaxo.Graph.Gdi.Background
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
+        var s = (RectangleWithShadow?)o ?? new RectangleWithShadow();
         s.Brush = new BrushX((NamedColor)info.GetValue("Color", s));
         s._shadowLength = info.GetDouble();
 
@@ -82,9 +84,9 @@ namespace Altaxo.Graph.Gdi.Background
         info.AddValue("ShadowLength", s._shadowLength);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
+        var s = (RectangleWithShadow?)o ?? new RectangleWithShadow();
         s.Brush = (BrushX)info.GetValue("Brush", s);
         s._shadowLength = info.GetDouble();
 
@@ -109,10 +111,13 @@ namespace Altaxo.Graph.Gdi.Background
       CopyFrom(from);
     }
 
+    [MemberNotNull(nameof(_brush))]
     public void CopyFrom(RectangleWithShadow from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       Brush = from._brush;
     }
@@ -134,7 +139,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     private static BrushX GetShadowBrush(BrushX mainBrush)
     {
-      BrushX cachedShadowBrush = null;
+      BrushX? cachedShadowBrush = null;
       switch (mainBrush.BrushType)
       {
         default:
@@ -175,7 +180,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public void Draw(System.Drawing.Graphics g, BrushX brush, RectangleD2D innerArea)
     {
-      BrushX shadowBrush = null;
+      BrushX? shadowBrush = null;
       if (object.ReferenceEquals(brush, _brush))
       {
         if (_cachedShadowBrush is null)
@@ -226,6 +231,7 @@ namespace Altaxo.Graph.Gdi.Background
       {
         return _brush;
       }
+      [MemberNotNull(nameof(_brush))]
       set
       {
         if (!(_brush == value))

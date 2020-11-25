@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
 
@@ -35,11 +34,11 @@ namespace Altaxo.Gui.Common.Drawing
   {
     TextureScalingMode ScalingMode { get; set; }
 
-    event Action ScalingModeChanged;
+    event Action? ScalingModeChanged;
 
     AspectRatioPreservingMode AspectPreserving { get; set; }
 
-    event Action AspectPreservingChanged;
+    event Action? AspectPreservingChanged;
 
     double XScale { get; set; }
 
@@ -49,9 +48,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     double YSize { get; set; }
 
-    event Action XChanged;
+    event Action? XChanged;
 
-    event Action YChanged;
+    event Action? YChanged;
 
     bool ShowSizeNotScale { set; }
   }
@@ -72,7 +71,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.ScalingMode = _doc.ScalingMode;
         _view.AspectPreserving = _doc.SourceAspectRatioPreserving;
@@ -102,6 +101,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected override void AttachView()
     {
+      if (_view is null)
+        throw NoViewException;
+
       _view.ScalingModeChanged += EhScalingModeChanged;
       _view.AspectPreservingChanged += EhAspectPreservingChanged;
       _view.XChanged += EhXChanged;
@@ -112,6 +114,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected override void DetachView()
     {
+      if (_view is null)
+        throw NoViewException;
+
       _view.ScalingModeChanged -= EhScalingModeChanged;
       _view.AspectPreservingChanged -= EhAspectPreservingChanged;
       _view.XChanged -= EhXChanged;
@@ -130,8 +135,12 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+
+
     private void EhScalingModeChanged()
     {
+      if (_view is null)
+        throw NoViewException;
       _doc = _doc.WithScalingMode(_view.ScalingMode);
       using (var supp = _suppressDirtyEvent.SuspendGetToken())
       {
@@ -144,21 +153,26 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhAspectPreservingChanged()
     {
+      if (_view is null)
+        throw NoViewException;
       _doc = _doc.WithSourceAspectRatioPreserving(_view.AspectPreserving);
 
       if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None)
       {
         if (_doc.ScalingMode == TextureScalingMode.Absolute)
         {
-          if (_doc.SourceAspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority && null != _sourceTextureSize)
+          if (_sourceTextureSize.HasValue)
           {
-            _doc = _doc.WithY(_doc.X * _sourceTextureSize.Value.Y / _sourceTextureSize.Value.X);
-            _view.YSize = _doc.Y;
-          }
-          else
-          {
-            _doc = _doc.WithX(_doc.Y * _sourceTextureSize.Value.X / _sourceTextureSize.Value.Y);
-            _view.XSize = _doc.X;
+            if (_doc.SourceAspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority)
+            {
+              _doc = _doc.WithY(_doc.X * _sourceTextureSize.Value.Y / _sourceTextureSize.Value.X);
+              _view.YSize = _doc.Y;
+            }
+            else
+            {
+              _doc = _doc.WithX(_doc.Y * _sourceTextureSize.Value.X / _sourceTextureSize.Value.Y);
+              _view.XSize = _doc.X;
+            }
           }
         }
         else
@@ -181,10 +195,12 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhXChanged()
     {
+      if (_view is null)
+        throw NoViewException;
       if (_doc.ScalingMode == TextureScalingMode.Absolute)
       {
         _doc = _doc.WithX(_view.XSize);
-        if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None && null != _sourceTextureSize)
+        if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None && _sourceTextureSize is not null)
         {
           _doc = _doc.WithY(_doc.X * _sourceTextureSize.Value.Y / _sourceTextureSize.Value.X);
           _view.YSize = _doc.Y;
@@ -205,10 +221,12 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhYChanged()
     {
+      if (_view is null)
+        throw NoViewException;
       if (_doc.ScalingMode == TextureScalingMode.Absolute)
       {
         _doc = _doc.WithY(_view.YSize);
-        if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None && null != _sourceTextureSize)
+        if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None && _sourceTextureSize is not null)
         {
           _doc = _doc.WithX(_doc.Y * _sourceTextureSize.Value.X / _sourceTextureSize.Value.Y);
           _view.XSize = _doc.X;

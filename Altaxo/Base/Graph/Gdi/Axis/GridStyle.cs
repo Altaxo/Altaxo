@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -40,8 +41,8 @@ namespace Altaxo.Graph.Gdi.Axis
     IRoutedPropertyReceiver,
     ICloneable
   {
-    private PenX _minorPen;
-    private PenX _majorPen;
+    private PenX? _minorPen;
+    private PenX? _majorPen;
     private bool _showGrid;
 
     private bool _showMinor;
@@ -61,34 +62,34 @@ namespace Altaxo.Graph.Gdi.Axis
         if (s._showGrid)
         {
           info.AddValue("ZeroOnly", s._showZeroOnly);
-          info.AddValue("MajorPen", s._majorPen);
+          info.AddValueOrNull("MajorPen", s._majorPen);
           info.AddValue("ShowMinor", s._showMinor);
           if (s._showMinor)
-            info.AddValue("MinorPen", s._minorPen);
+            info.AddValueOrNull("MinorPen", s._minorPen);
         }
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         GridStyle s = SDeserialize(o, info, parent);
         return s;
       }
 
-      protected virtual GridStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual GridStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        GridStyle s = null != o ? (GridStyle)o : new GridStyle();
+        var s = (GridStyle?)o ?? new GridStyle();
 
         s._showGrid = info.GetBoolean("Visible");
         if (s._showGrid)
         {
           s._showZeroOnly = info.GetBoolean("ZeroOnly");
-          s._majorPen = (PenX)info.GetValue("MajorPen", s);
+          s._majorPen = info.GetValueOrNull<PenX>("MajorPen", s);
 
 
           s._showMinor = info.GetBoolean("ShowMinor");
           if (s._showMinor)
           {
-            s._minorPen = (PenX)info.GetValue("MinorPen", s);
+            s._minorPen = info.GetValueOrNull<PenX>("MinorPen", s);
 
           }
         }
@@ -111,16 +112,16 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public void CopyFrom(GridStyle from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       using (var token = SuspendGetToken())
       {
-        MajorPen = from._majorPen;
-        MinorPen = from._minorPen;
-        ShowGrid = from._showGrid;
-        ShowMinor = from._showMinor;
-        ShowZeroOnly = from._showZeroOnly;
+        _majorPen = from._majorPen;
+        _minorPen = from._minorPen;
+        _showGrid = from._showGrid;
+        _showMinor = from._showMinor;
+        _showZeroOnly = from._showZeroOnly;
       }
     }
 
@@ -133,18 +134,12 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       get
       {
-        if (null == _majorPen)
-          MajorPen = new PenX(NamedColors.Blue);
-        return _majorPen;
+        return _majorPen ??= new PenX(NamedColors.Blue);
       }
       set
       {
-        value ??= new PenX(NamedColors.Blue);
-        if (!(_majorPen == value))
-        {
-          _majorPen = value;
+        if (ChildSetMemberAlt(ref _majorPen, value))
           EhSelfChanged(EventArgs.Empty);
-        }
       }
     }
 
@@ -152,19 +147,12 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       get
       {
-        if (null == _minorPen)
-          MinorPen = new PenX(NamedColors.LightBlue);
-
-        return _minorPen;
+        return _minorPen ??= new PenX(NamedColors.LightBlue);
       }
       set
       {
-        value ??= new PenX(NamedColors.LightBlue);
-        if (!(_minorPen == value))
-        {
-          _minorPen = value;
+        if (ChildSetMemberAlt(ref _minorPen, value))
           EhSelfChanged(EventArgs.Empty);
-        }
       }
     }
 
@@ -221,7 +209,7 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         var var = new Altaxo.Data.AltaxoVariant(0.0);
         double rel = axis.PhysicalVariantToNormal(var);
-        using (var majorPenGdi = PenCacheGdi.Instance.BorrowPen(_majorPen, layerRect, g, 1))
+        using (var majorPenGdi = PenCacheGdi.Instance.BorrowPen(MajorPen, layerRect, g, 1))
         {
           if (rel >= 0 && rel <= 1)
           {
@@ -240,7 +228,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
         if (_showMinor)
         {
-          using (var minorPenGdi = PenCacheGdi.Instance.BorrowPen(_minorPen, layerRect, g, 1))
+          using (var minorPenGdi = PenCacheGdi.Instance.BorrowPen(MinorPen, layerRect, g, 1))
           {
             ticks = ticking.GetMinorTicksNormal(axis);
             for (int i = 0; i < ticks.Length; ++i)
@@ -255,7 +243,7 @@ namespace Altaxo.Graph.Gdi.Axis
           }
         }
 
-        using (var majorPenGdi = PenCacheGdi.Instance.BorrowPen(_majorPen, layerRect, g, 1))
+        using (var majorPenGdi = PenCacheGdi.Instance.BorrowPen(MajorPen, layerRect, g, 1))
         {
           ticks = ticking.GetMajorTicksNormal(axis);
           for (int i = 0; i < ticks.Length; ++i)
@@ -287,9 +275,9 @@ namespace Altaxo.Graph.Gdi.Axis
       switch (propertyName)
       {
         case "StrokeWidth":
-          if (null != _majorPen)
+          if (_majorPen is not null)
             yield return (propertyName, _majorPen.Width, (value) => _majorPen = _majorPen.WithWidth((double)value));
-          if (null != _minorPen)
+          if ( _minorPen is not null)
             yield return (propertyName, _minorPen.Width, (value) => _minorPen = _minorPen.WithWidth((double)value));
 
           break;

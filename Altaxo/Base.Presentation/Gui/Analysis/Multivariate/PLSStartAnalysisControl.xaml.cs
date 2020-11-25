@@ -44,37 +44,37 @@ namespace Altaxo.Gui.Worksheet
 
     private void cbAnalysisMethod_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
     {
-      if (null != AnalysisMethodChanged)
+      if (AnalysisMethodChanged is not null)
         AnalysisMethodChanged(cbAnalysisMethod.SelectedIndex);
     }
 
     private void edMaxNumFactors_ValueChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
     {
-      if (MaxNumberOfFactorsChanged != null)
+      if (MaxNumberOfFactorsChanged is not null)
         MaxNumberOfFactorsChanged(edMaxNumFactors.Value);
     }
 
     private void rbCrossValidationNone_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (CrossValidationSelected != null)
+      if (CrossValidationSelected is not null)
         CrossValidationSelected(CrossPRESSCalculationType.None);
     }
 
     private void rbCrossValidationEvery_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (CrossValidationSelected != null)
+      if (CrossValidationSelected is not null)
         CrossValidationSelected(CrossPRESSCalculationType.ExcludeEveryMeasurement);
     }
 
     private void rbCrossValidationGroups_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (CrossValidationSelected != null)
+      if (CrossValidationSelected is not null)
         CrossValidationSelected(CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements);
     }
 
     private void rbCrossValidationHalfEnsemble_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (CrossValidationSelected != null)
+      if (CrossValidationSelected is not null)
         CrossValidationSelected(CrossPRESSCalculationType.ExcludeHalfEnsemblyOfMeasurements);
     }
 
@@ -115,11 +115,11 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
-    public event Action<int> MaxNumberOfFactorsChanged;
+    public event Action<int>? MaxNumberOfFactorsChanged;
 
-    public event Action<Calc.Regression.Multivariate.CrossPRESSCalculationType> CrossValidationSelected;
+    public event Action<Calc.Regression.Multivariate.CrossPRESSCalculationType>? CrossValidationSelected;
 
-    public event Action<int> AnalysisMethodChanged;
+    public event Action<int>? AnalysisMethodChanged;
 
     #endregion IPLSStartAnalysisView
   }

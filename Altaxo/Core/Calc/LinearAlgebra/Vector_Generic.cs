@@ -37,7 +37,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <typeparam name="T"></typeparam>
   public class Vector<T> : ICloneable, IFormattable, IVector<T> where T : IEquatable<T>
   {
-    private static T[] _emptyArray = new T[0];
+    private static readonly T[] _emptyArray = new T[0];
     protected T[] _array;
 
     #region Constructors
@@ -84,7 +84,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'src' parameter.</exception>
     public Vector(Vector<T> src)
     {
-      if (src == null)
+      if (src is null)
       {
         throw new ArgumentNullException(nameof(src));
       }
@@ -97,7 +97,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'value' parameter.</exception>
     public Vector(T[] values)
     {
-      if (values == null)
+      if (values is null)
       {
         throw new ArgumentNullException(nameof(values));
       }
@@ -110,7 +110,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'value' parameter.</exception>
     public Vector(IReadOnlyList<T> values)
     {
-      if (values == null)
+      if (values is null)
       {
         throw new ArgumentNullException(nameof(values));
       }
@@ -132,7 +132,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'values' parameter.</exception>
     public Vector(IList values)
     {
-      if (values == null)
+      if (values is null)
       {
         throw new ArgumentNullException(nameof(values));
       }
@@ -200,7 +200,7 @@ namespace Altaxo.Calc.LinearAlgebra
       if (length < 0)
         throw new ArgumentOutOfRangeException("Length must be nonnegative");
 
-      if (_array == null || length != _array.Length)
+      if (_array is null || length != _array.Length)
       {
         _array = new T[length];
       }
@@ -324,7 +324,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="src">Vector to copy from..</param>
     public void CopyFrom(IReadOnlyList<T> src)
     {
-      if (src == null)
+      if (src is null)
       {
         throw new System.ArgumentNullException(nameof(src));
       }
@@ -349,7 +349,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="src">Vector to swap data with.</param>
     public void Swap(Vector<T> src)
     {
-      if (src == null)
+      if (src is null)
         throw new System.ArgumentNullException(nameof(src));
       if (src.Length != Length)
         throw new ArgumentException("Length of source vector must be equal to length of this vector", nameof(src));

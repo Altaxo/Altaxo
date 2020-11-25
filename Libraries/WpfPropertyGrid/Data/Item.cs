@@ -11,7 +11,7 @@ namespace WPG.Data
 
 		protected void NotifyPropertyChanged(string property)
 		{
-			if (PropertyChanged != null)
+			if (PropertyChanged is not null)
 			{
 				PropertyChanged(this, new PropertyChangedEventArgs(property));
 			}

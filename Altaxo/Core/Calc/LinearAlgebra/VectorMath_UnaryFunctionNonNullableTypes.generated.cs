@@ -49,7 +49,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if the <paramref name="vector"/> contains any element; false otherwise, or if the vector is null.</returns>
     public static bool Any(this double[] vector)
     {
-      return vector != null && vector.Length > 0;
+      return vector is not null && vector.Length > 0;
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if any element of the <paramref name="vector"/> satisfies the condition; false otherwise, or if the vector is null.</returns>
     public static bool Any(this double[] vector, Func<double, bool> predicate)
     {
-      if (null != vector)
+      if (vector is not null)
       {
         for (int i = 0; i < vector.Length; ++i)
         {
@@ -80,7 +80,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if any element of the <paramref name="vector"/> satisfies the condition; false otherwise, or if the vector is null.</returns>
     public static bool Any(this double[] vector, Func<double, bool> predicate, out int atIndex)
     {
-      if (null != vector)
+      if (vector is not null)
       {
         for (int i = 0; i < vector.Length; ++i)
         {
@@ -735,7 +735,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if the <paramref name="vector"/> contains any element; false otherwise, or if the vector is null.</returns>
     public static bool Any(this float[] vector)
     {
-      return vector != null && vector.Length > 0;
+      return vector is not null && vector.Length > 0;
     }
 
     /// <summary>
@@ -746,7 +746,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if any element of the <paramref name="vector"/> satisfies the condition; false otherwise, or if the vector is null.</returns>
     public static bool Any(this float[] vector, Func<float, bool> predicate)
     {
-      if (null != vector)
+      if (vector is not null)
       {
         for (int i = 0; i < vector.Length; ++i)
         {
@@ -766,7 +766,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if any element of the <paramref name="vector"/> satisfies the condition; false otherwise, or if the vector is null.</returns>
     public static bool Any(this float[] vector, Func<float, bool> predicate, out int atIndex)
     {
-      if (null != vector)
+      if (vector is not null)
       {
         for (int i = 0; i < vector.Length; ++i)
         {
@@ -1421,7 +1421,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if the <paramref name="vector"/> contains any element; false otherwise, or if the vector is null.</returns>
     public static bool Any(this int[] vector)
     {
-      return vector != null && vector.Length > 0;
+      return vector is not null && vector.Length > 0;
     }
 
     /// <summary>
@@ -1432,7 +1432,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if any element of the <paramref name="vector"/> satisfies the condition; false otherwise, or if the vector is null.</returns>
     public static bool Any(this int[] vector, Func<int, bool> predicate)
     {
-      if (null != vector)
+      if (vector is not null)
       {
         for (int i = 0; i < vector.Length; ++i)
         {
@@ -1452,7 +1452,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if any element of the <paramref name="vector"/> satisfies the condition; false otherwise, or if the vector is null.</returns>
     public static bool Any(this int[] vector, Func<int, bool> predicate, out int atIndex)
     {
-      if (null != vector)
+      if (vector is not null)
       {
         for (int i = 0; i < vector.Length; ++i)
         {
@@ -2103,7 +2103,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if the <paramref name="vector"/> contains any element; false otherwise, or if the vector is null.</returns>
     public static bool Any(this IReadOnlyList<double> vector)
     {
-      return vector != null && vector.Count > 0;
+      return vector is not null && vector.Count > 0;
     }
 
     /// <summary>
@@ -2114,7 +2114,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if any element of the <paramref name="vector"/> satisfies the condition; false otherwise, or if the vector is null.</returns>
     public static bool Any(this IReadOnlyList<double> vector, Func<double, bool> predicate)
     {
-      if (null != vector)
+      if (vector is not null)
       {
         for (int i = 0; i < vector.Count; ++i)
         {
@@ -2134,7 +2134,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if any element of the <paramref name="vector"/> satisfies the condition; false otherwise, or if the vector is null.</returns>
     public static bool Any(this IReadOnlyList<double> vector, Func<double, bool> predicate, out int atIndex)
     {
-      if (null != vector)
+      if (vector is not null)
       {
         for (int i = 0; i < vector.Count; ++i)
         {
@@ -2789,7 +2789,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if the <paramref name="vector"/> contains any element; false otherwise, or if the vector is null.</returns>
     public static bool Any(this IReadOnlyList<float> vector)
     {
-      return vector != null && vector.Count > 0;
+      return vector is not null && vector.Count > 0;
     }
 
     /// <summary>
@@ -2800,7 +2800,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if any element of the <paramref name="vector"/> satisfies the condition; false otherwise, or if the vector is null.</returns>
     public static bool Any(this IReadOnlyList<float> vector, Func<float, bool> predicate)
     {
-      if (null != vector)
+      if (vector is not null)
       {
         for (int i = 0; i < vector.Count; ++i)
         {
@@ -2820,7 +2820,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>True if any element of the <paramref name="vector"/> satisfies the condition; false otherwise, or if the vector is null.</returns>
     public static bool Any(this IReadOnlyList<float> vector, Func<float, bool> predicate, out int atIndex)
     {
-      if (null != vector)
+      if (vector is not null)
       {
         for (int i = 0; i < vector.Count; ++i)
         {

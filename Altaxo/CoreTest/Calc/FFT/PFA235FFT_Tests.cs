@@ -24,11 +24,11 @@
 
 using System;
 using Altaxo.Calc.Fourier;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Fourier
 {
-  [TestFixture]
+
   public class TestPFA235FFT_1D
   {
     private SplittedComplexFFTTests _test;
@@ -45,49 +45,49 @@ namespace AltaxoTest.Calc.Fourier
       fft.FFT(real, imag, direction);
     }
 
-    [Test]
+    [Fact]
     public void Test01Zero()
     {
       foreach (int i in _testLengths)
         _test.TestZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test02ReOne_ZeroPos()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test03ImOne_ZeroPos()
     {
       foreach (int i in _testLengths)
         _test.TestImOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test04ReOne_OnePos()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_OnePos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test05ImOne_OnePos()
     {
       foreach (int i in _testLengths)
         _test.TestImOne_OnePos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test06ReImOne_RandomPos()
     {
       foreach (int i in _testLengths)
         _test.TestReImOne_RandomPos(i, 10);
     }
 
-    [Test]
+    [Fact]
     public void Test07ReImRandomValues()
     {
       foreach (int i in _testLengths)
@@ -95,12 +95,12 @@ namespace AltaxoTest.Calc.Fourier
     }
   }
 
-  [TestFixture]
+
   public class TestPFA235FFT_2D_Inverse
   {
-    private static System.Random rnd = new System.Random();
+    private System.Random rnd = new System.Random();
 
-    private static int GetRandomN(int max)
+    private int GetRandomN(int max)
     {
       int[] pqr = new int[3];
 
@@ -113,7 +113,7 @@ namespace AltaxoTest.Calc.Fourier
       return n;
     }
 
-    [Test]
+    [Fact]
     public void TestZero2N()
     {
       // Testing 2^n
@@ -121,7 +121,7 @@ namespace AltaxoTest.Calc.Fourier
         zzTestZero(i, i);
     }
 
-    [Test]
+    [Fact]
     public void TestZero3N()
     {
       // Testing 3^n
@@ -129,7 +129,7 @@ namespace AltaxoTest.Calc.Fourier
         zzTestZero(i, i);
     }
 
-    [Test]
+    [Fact]
     public void TestZero5N()
     {
       // Testing 5^n
@@ -137,7 +137,7 @@ namespace AltaxoTest.Calc.Fourier
         zzTestZero(i, i);
     }
 
-    [Test]
+    [Fact]
     public void TestZero10N()
     {
       // Testing 5^n
@@ -145,7 +145,7 @@ namespace AltaxoTest.Calc.Fourier
         zzTestZero(i, i);
     }
 
-    [Test]
+    [Fact]
     public void TestZeroRandomN()
     {
       // Testing 10 times random dimensions
@@ -169,12 +169,12 @@ namespace AltaxoTest.Calc.Fourier
 
       for (int i = 0; i < n; i++)
       {
-        Assert.AreEqual(0, re[i], 0, "FFT of zero should give re=0");
-        Assert.AreEqual(0, im[i], 0, "FFT of zero should give im=0");
+        AssertEx.Equal(0, re[i], 0, "FFT of zero should give re=0");
+        AssertEx.Equal(0, im[i], 0, "FFT of zero should give im=0");
       }
     }
 
-    [Test]
+    [Fact]
     public void TestReOne_OnePos1stDimRandomN()
     {
       // Testing 10 times random dimensions
@@ -202,13 +202,13 @@ namespace AltaxoTest.Calc.Fourier
       {
         for (int j = 0; j < v; j++)
         {
-          Assert.AreEqual(Math.Cos((2 * Math.PI * j) / v), re[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]", u, v, i, j));
-          Assert.AreEqual(-Math.Sin((2 * Math.PI * j) / v), im[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]", u, v, i, j));
+          AssertEx.Equal(Math.Cos((2 * Math.PI * j) / v), re[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]", u, v, i, j));
+          AssertEx.Equal(-Math.Sin((2 * Math.PI * j) / v), im[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]", u, v, i, j));
         }
       }
     }
 
-    [Test]
+    [Fact]
     public void TestReOne_OnePos2ndDimRandomN()
     {
       // Testing 10 times random dimensions
@@ -236,13 +236,13 @@ namespace AltaxoTest.Calc.Fourier
       {
         for (int j = 0; j < v; j++)
         {
-          Assert.AreEqual(Math.Cos((2 * Math.PI * i) / u), re[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]", u, v, i, j));
-          Assert.AreEqual(-Math.Sin((2 * Math.PI * i) / u), im[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]", u, v, i, j));
+          AssertEx.Equal(Math.Cos((2 * Math.PI * i) / u), re[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]", u, v, i, j));
+          AssertEx.Equal(-Math.Sin((2 * Math.PI * i) / u), im[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]", u, v, i, j));
         }
       }
     }
 
-    [Test]
+    [Fact]
     public void TestReOne_OnePosBothDimRandomN()
     {
       // Testing 10 times random dimensions
@@ -270,13 +270,13 @@ namespace AltaxoTest.Calc.Fourier
       {
         for (int j = 0; j < v; j++)
         {
-          Assert.AreEqual(Math.Cos(2 * Math.PI * (((double)i) / u + ((double)j) / v)), re[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]", u, v, i, j));
-          Assert.AreEqual(-Math.Sin(2 * Math.PI * (((double)i) / u + ((double)j) / v)), im[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]", u, v, i, j));
+          AssertEx.Equal(Math.Cos(2 * Math.PI * (((double)i) / u + ((double)j) / v)), re[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]", u, v, i, j));
+          AssertEx.Equal(-Math.Sin(2 * Math.PI * (((double)i) / u + ((double)j) / v)), im[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]", u, v, i, j));
         }
       }
     }
 
-    [Test]
+    [Fact]
     public void TestReOne_ArbPosBothDimRandomN()
     {
       // Testing 10 times random dimensions
@@ -288,7 +288,7 @@ namespace AltaxoTest.Calc.Fourier
       }
     }
 
-    private static void zzTestReOne_ArbPosBothDim(int u, int v)
+    private void zzTestReOne_ArbPosBothDim(int u, int v)
     {
       int upos = rnd.Next(u);
       int vpos = rnd.Next(v);
@@ -307,13 +307,13 @@ namespace AltaxoTest.Calc.Fourier
       {
         for (int j = 0; j < v; j++)
         {
-          Assert.AreEqual(Math.Cos(2 * Math.PI * (((double)i) * upos / u + ((double)j) * vpos / v)), re[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]", u, v, i, j));
-          Assert.AreEqual(-Math.Sin(2 * Math.PI * (((double)i) * upos / u + ((double)j) * vpos / v)), im[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]", u, v, i, j));
+          AssertEx.Equal(Math.Cos(2 * Math.PI * (((double)i) * upos / u + ((double)j) * vpos / v)), re[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]", u, v, i, j));
+          AssertEx.Equal(-Math.Sin(2 * Math.PI * (((double)i) * upos / u + ((double)j) * vpos / v)), im[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]", u, v, i, j));
         }
       }
     }
 
-    [Test]
+    [Fact]
     public void TestImOne_ArbPosBothDimRandomN()
     {
       // Testing 10 times random dimensions
@@ -325,7 +325,7 @@ namespace AltaxoTest.Calc.Fourier
       }
     }
 
-    private static void zzTestImOne_ArbPosBothDim(int u, int v)
+    private void zzTestImOne_ArbPosBothDim(int u, int v)
     {
       int upos = rnd.Next(u);
       int vpos = rnd.Next(v);
@@ -344,14 +344,14 @@ namespace AltaxoTest.Calc.Fourier
       {
         for (int j = 0; j < v; j++)
         {
-          Assert.AreEqual(Math.Sin(2 * Math.PI * (((double)i) * upos / u + ((double)j) * vpos / v)), re[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]", u, v, i, j));
-          Assert.AreEqual(Math.Cos(2 * Math.PI * (((double)i) * upos / u + ((double)j) * vpos / v)), im[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]", u, v, i, j));
+          AssertEx.Equal(Math.Sin(2 * Math.PI * (((double)i) * upos / u + ((double)j) * vpos / v)), re[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]", u, v, i, j));
+          AssertEx.Equal(Math.Cos(2 * Math.PI * (((double)i) * upos / u + ((double)j) * vpos / v)), im[i * v + j], n * 1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]", u, v, i, j));
         }
       }
     }
   }
 
-  [TestFixture]
+
   public class TestPfa235FFTRealFFT
   {
     private const int nLowerLimit = 5;
@@ -393,7 +393,7 @@ namespace AltaxoTest.Calc.Fourier
       fft.RealFFT(real2, real1, dir);
     }
 
-    [Test]
+    [Fact]
     public void Test01Zero()
     {
       foreach (int i in _testLengths)
@@ -403,7 +403,7 @@ namespace AltaxoTest.Calc.Fourier
       }
     }
 
-    [Test]
+    [Fact]
     public void Test02ReOne_ZeroPos()
     {
       foreach (int i in _testLengths)
@@ -413,7 +413,7 @@ namespace AltaxoTest.Calc.Fourier
       }
     }
 
-    [Test]
+    [Fact]
     public void Test03ReOne_OnePos()
     {
       foreach (int i in _testLengths)
@@ -423,7 +423,7 @@ namespace AltaxoTest.Calc.Fourier
       }
     }
 
-    [Test]
+    [Fact]
     public void Test04ReOne_RandomPos()
     {
       double oldTolerance = _test.SetTolerance(1E-14);
@@ -437,7 +437,7 @@ namespace AltaxoTest.Calc.Fourier
       _test.SetTolerance(oldTolerance);
     }
 
-    [Test]
+    [Fact]
     public void Test05ReRandomValues()
     {
       double oldTolerance = _test.SetTolerance(1E-14);

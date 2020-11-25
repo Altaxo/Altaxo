@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,7 +65,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       base.OnSelectedQuantityChanged(obj, args);
 
-      if (null != _img)
+      if (_img is not null)
       {
         var val = SelectedQuantityInSIUnits;
         _img.Source = GetImage(val);

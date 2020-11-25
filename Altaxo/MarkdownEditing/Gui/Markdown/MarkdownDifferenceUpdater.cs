@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Markdown
     /// <summary>
     /// The markdown document of the new source text.
     /// </summary>
-    public MarkdownDocument NewDocument { get; private set; }
+    public MarkdownDocument? NewDocument { get; private set; }
 
     /// <summary>
     /// Gets the markdown pipeline used for parsing the source text.
@@ -69,7 +69,7 @@ namespace Altaxo.Gui.Markdown
     /// </value>
     protected IStyles Styles { get; private set; }
 
-    protected IWpfImageProvider ImageProvider { get; private set; }
+    protected IWpfImageProvider? ImageProvider { get; private set; }
 
     /// <summary>
     /// The flow document to change.
@@ -137,7 +137,7 @@ namespace Altaxo.Gui.Markdown
     /// Argument is a flag that tells if the update of the flow document is in progress now.
     /// </param>
     /// <param name="cancellationToken">Cancellation token that can be used to cancel the update, e.g. if the user has entered new text.</param>
-    public MarkdownDifferenceUpdater(string oldSourceText, MarkdownDocument oldDocument, MarkdownPipeline pipeline, IStyles styles, IWpfImageProvider imageProvider, string newSourceText, long newSourceTextUsn, FlowDocument flowDocument, Dispatcher dispatcher, Action<string, long, MarkdownDocument> newDocumentSetter, Action<bool> setFlowDocumentUpdateInProgressFlag, CancellationToken cancellationToken)
+    public MarkdownDifferenceUpdater(string oldSourceText, MarkdownDocument oldDocument, MarkdownPipeline pipeline, IStyles styles, IWpfImageProvider? imageProvider, string newSourceText, long newSourceTextUsn, FlowDocument flowDocument, Dispatcher dispatcher, Action<string, long, MarkdownDocument> newDocumentSetter, Action<bool> setFlowDocumentUpdateInProgressFlag, CancellationToken cancellationToken)
     {
       OldSourceText = oldSourceText;
       OldDocument = oldDocument;
@@ -151,6 +151,8 @@ namespace Altaxo.Gui.Markdown
       NewTextAndDocumentSetter = newDocumentSetter;
       SetFlowDocumentUpdateInProgressFlag = setFlowDocumentUpdateInProgressFlag;
       _cancellationToken = cancellationToken;
+      _dictionaryOldToNew = new Dictionary<MarkdownObject, MarkdownObject>();
+      _listOfChangedMarkdig = new List<MarkdownObject>();
     }
 
     /// <summary>
@@ -235,7 +237,7 @@ namespace Altaxo.Gui.Markdown
       SetFlowDocumentUpdateInProgressFlag?.Invoke(false);
 
       // exchange the current source text and parsed markdig in the text editor
-      NewTextAndDocumentSetter(NewSourceText, NewSourceTextUsn, NewDocument);
+      NewTextAndDocumentSetter(NewSourceText, NewSourceTextUsn, NewDocument!);
     }
 
     /// <summary>
@@ -245,7 +247,7 @@ namespace Altaxo.Gui.Markdown
     /// <param name="firstLevelTextElementsToInsert">The first level text elements to insert in <see cref="FlowDocument"/>. The insert position depends on the next two parameters</param>
     /// <param name="firstLevelTextElementToInsertBefore">The first level text element to insert before. Can be null.</param>
     /// <param name="firstLevelTextElementToInsertAfter">The first level text element to insert after. Can be null.</param>
-    private void DeleteOldAndInsertNewElementsInFlowDocument(List<System.Windows.Documents.Block> firstLevelTextElementsToDelete, IList<TextElement> firstLevelTextElementsToInsert, System.Windows.Documents.Block firstLevelTextElementToInsertBefore, System.Windows.Documents.Block firstLevelTextElementToInsertAfter)
+    private void DeleteOldAndInsertNewElementsInFlowDocument(List<System.Windows.Documents.Block> firstLevelTextElementsToDelete, IList<TextElement> firstLevelTextElementsToInsert, System.Windows.Documents.Block? firstLevelTextElementToInsertBefore, System.Windows.Documents.Block? firstLevelTextElementToInsertAfter)
     {
       var blocks = FlowDocument.Blocks;
       foreach (var textEle in firstLevelTextElementsToDelete)
@@ -253,12 +255,12 @@ namespace Altaxo.Gui.Markdown
 
       if (firstLevelTextElementsToInsert.Count > 0)
       {
-        if (firstLevelTextElementToInsertAfter != null)
+        if (firstLevelTextElementToInsertAfter is not null)
         {
           for (int i = firstLevelTextElementsToInsert.Count - 1; i >= 0; --i)
             blocks.InsertAfter(firstLevelTextElementToInsertAfter, (System.Windows.Documents.Block)firstLevelTextElementsToInsert[i]);
         }
-        else if (null != firstLevelTextElementToInsertBefore)
+        else if (firstLevelTextElementToInsertBefore is not null)
         {
           for (int i = 0; i < firstLevelTextElementsToInsert.Count; ++i)
             blocks.InsertBefore(firstLevelTextElementToInsertBefore, (System.Windows.Documents.Block)firstLevelTextElementsToInsert[i]);
@@ -272,14 +274,15 @@ namespace Altaxo.Gui.Markdown
 
           var lastToInsert = firstLevelTextElementsToInsert[firstLevelTextElementsToInsert.Count - 1];
           var firstBlock = blocks.FirstBlock;
-          bool isAddedAtStart = firstBlock != null;
           var lastToInsertTag = lastToInsert?.Tag as MarkdownObject;
           var firstBlockTag = firstBlock?.Tag as MarkdownObject;
-          isAddedAtStart &= (null != lastToInsertTag && null != firstBlockTag);
-          isAddedAtStart = isAddedAtStart && (lastToInsertTag.Span.End <= firstBlockTag.Span.Start);
 
-          if (isAddedAtStart)
+          if (lastToInsertTag is not null &&
+              firstBlockTag is not null &&
+              (lastToInsertTag!.Span.End <= firstBlockTag.Span.Start)
+            )
           {
+            // is added at start
             for (int i = 0; i < firstLevelTextElementsToInsert.Count; ++i)
               blocks.InsertBefore(firstBlock, (System.Windows.Documents.Block)firstLevelTextElementsToInsert[i]);
           }
@@ -296,22 +299,22 @@ namespace Altaxo.Gui.Markdown
     /// Gets the insertion and deletion positions of the top level blocks of <see cref="FlowDocument"/>.
     /// </summary>
     /// <returns>A tuple, consisting of positions either to insert before, to insert after, and the top level blocks to delete.</returns>
-    private (System.Windows.Documents.Block firstLevelTextElementToInsertBefore,
-              System.Windows.Documents.Block firstLevelTextElementToInsertAfter,
+    private (System.Windows.Documents.Block? firstLevelTextElementToInsertBefore,
+              System.Windows.Documents.Block? firstLevelTextElementToInsertAfter,
               List<System.Windows.Documents.Block> firstLevelTextElementsToDelete
             ) GetTextElementInsertionAndDeletionPositions()
     {
       // find the first block in FlowDocument that has to be exchanged
 
       var firstLevelTextElementsToDelete = new List<System.Windows.Documents.Block>();
-      System.Windows.Documents.Block firstLevelTextElementToInsertBefore = null;
-      System.Windows.Documents.Block firstLevelTextElementToInsertAfter = null;
-      System.Windows.Documents.Block previousBlockWithTag = null;
+      System.Windows.Documents.Block? firstLevelTextElementToInsertBefore = null;
+      System.Windows.Documents.Block? firstLevelTextElementToInsertAfter = null;
+      System.Windows.Documents.Block? previousBlockWithTag = null;
       foreach (var blk in FlowDocument.Blocks)
       {
-        if (blk.Tag == null) // blk.Tag==null indicates that this is a block that has been changed and should be removed (during exchanging the of the tags the tag of this block is assigned null)
+        if (blk.Tag is null) // blk.Tag==null indicates that this is a block that has been changed and should be removed (during exchanging the of the tags the tag of this block is assigned null)
         {
-          if (null == firstLevelTextElementToInsertAfter)
+          if (firstLevelTextElementToInsertAfter is null)
           {
             firstLevelTextElementToInsertAfter = previousBlockWithTag;
           }
@@ -320,7 +323,7 @@ namespace Altaxo.Gui.Markdown
         }
         else
         {
-          if (null == firstLevelTextElementToInsertBefore && firstLevelTextElementsToDelete.Count > 0)
+          if (firstLevelTextElementToInsertBefore is null && firstLevelTextElementsToDelete.Count > 0)
           {
             firstLevelTextElementToInsertBefore = blk;
           }
@@ -389,7 +392,7 @@ namespace Altaxo.Gui.Markdown
           return i;
         var childsO = GetChilds(blockO);
         var childsN = GetChilds(blockN);
-        if (null != childsO && null != childsN)
+        if (childsO is not null && childsN is not null)
         {
           if (0 <= TranslateOldToNewFirstPart(dictOldToNew, indexOfFirstDifference, childsO, childsN))
             return i;
@@ -430,7 +433,7 @@ namespace Altaxo.Gui.Markdown
 
         var childsO = GetChilds(blockO);
         var childsN = GetChilds(blockN);
-        if (null != childsO && null != childsN)
+        if (childsO is not null && childsN is not null)
         {
           var (ii, jj) = TranslateOldToNewLastPart(dictOldToNew, indexOfLastDifferenceO, indexOfLastDifferenceN, childsO, childsN);
           if (ii >= 0 || jj >= 0)
@@ -465,7 +468,7 @@ namespace Altaxo.Gui.Markdown
       foreach (TextElement t in textElements)
       {
         var childs = GetChilds(t);
-        if (null != childs)
+        if (childs is not null)
         {
           ExchangeMarkdigTagsInFlowDocument(oldToNewDict, childs);
         }
@@ -489,7 +492,7 @@ namespace Altaxo.Gui.Markdown
     /// </summary>
     /// <param name="parent">The markdown object from which to get the childs.</param>
     /// <returns>The childs of the given markdown object, or null.</returns>
-    public static IReadOnlyList<MarkdownObject> GetChilds(MarkdownObject parent)
+    public static IReadOnlyList<MarkdownObject>? GetChilds(MarkdownObject parent)
     {
       if (parent is LeafBlock leafBlock)
         return leafBlock.Inline?.ToArray<MarkdownObject>();
@@ -510,7 +513,7 @@ namespace Altaxo.Gui.Markdown
     /// </summary>
     /// <param name="parent">The <see cref="TextElement"/> from which to get the childs.</param>
     /// <returns>The childs of the given <see cref="TextElement"/>, or null.</returns>
-    public static System.Collections.IList GetChilds(TextElement parent)
+    public static System.Collections.IList? GetChilds(TextElement parent)
     {
       if (parent is Paragraph para)
       {
@@ -542,7 +545,7 @@ namespace Altaxo.Gui.Markdown
     /// <param name="pipeline">The pipeline used for the conversion.</param>
     /// <returns>The list of (top level) <see cref="TextElement"/>s as the result of the conversion.</returns>
     /// <exception cref="System.ArgumentNullException">if markdown variable is null</exception>
-    public static IList<TextElement> ListOfMarkdownObjectsToListOfTextElements(IList<MarkdownObject> markdownObjects, MarkdownPipeline pipeline, IStyles styles, IWpfImageProvider imageProvider)
+    public static IList<TextElement> ListOfMarkdownObjectsToListOfTextElements(IList<MarkdownObject> markdownObjects, MarkdownPipeline pipeline, IStyles styles, IWpfImageProvider? imageProvider)
     {
       var p = new Paragraph();
       styles.ApplyParagraphStyle(p);

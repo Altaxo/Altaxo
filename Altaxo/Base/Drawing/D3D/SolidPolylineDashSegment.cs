@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,13 +54,13 @@ namespace Altaxo.Drawing.D3D
     private int _crossSectionNormalCount;
 
     /// <summary>The dash start cap of the pen. In some calls, it can be overridden by the line start cap of the pen.</summary>
-    private ILineCap _dashStartCap;
+    private ILineCap? _dashStartCap;
 
     /// <summary>The absolute base inset of the dash start cap of the pen. Here, absolute means absolute units, not relative units.</summary>
     private double _dashStartCapBaseInsetAbsolute;
 
     /// <summary>The dash end cap of the pen. In some calls, it can be overridden by the line end cap of the pen.</summary>
-    private ILineCap _dashEndCap;
+    private ILineCap? _dashEndCap;
 
     /// <summary>The absolute base inset of the dash end cap of the pen. Here, absolute means absolute units, not relative units.</summary>
     private double _dashEndCapBaseInsetAbsolute;
@@ -117,10 +118,10 @@ namespace Altaxo.Drawing.D3D
     #region local variables, i.e. variables that change with every dash segment
 
     /// <summary>Temporary storage needed by the start cap drawing routine.</summary>
-    private object _startCapTemporaryStorageSpace;
+    private object? _startCapTemporaryStorageSpace;
 
     /// <summary>Temporary storage needed by the end cap drawing routine.</summary>
-    private object _endCapTemporaryStorageSpace;
+    private object? _endCapTemporaryStorageSpace;
 
     /// <summary>Transformed positions for the start of the current segment.</summary>
     private PointD3D[] _positionsTransformedStartCurrent;
@@ -177,8 +178,8 @@ namespace Altaxo.Drawing.D3D
     double thickness2,
     PenLineJoin lineJoin,
     double miterLimit,
-    ILineCap startCap,
-    ILineCap endCap)
+    ILineCap? startCap,
+    ILineCap? endCap)
     {
       _crossSection = crossSection;
       _crossSectionVertexCount = crossSection.NumberOfVertices;
@@ -190,9 +191,9 @@ namespace Altaxo.Drawing.D3D
       _miterLimitDotThreshold = Math.Cos(Math.PI - 2 * Math.Asin(1 / miterLimit));
 
       _dashStartCap = startCap;
-      _dashStartCapBaseInsetAbsolute = null == _dashStartCap ? 0 : _dashStartCap.GetAbsoluteBaseInset(thickness1, thickness2);
+      _dashStartCapBaseInsetAbsolute = _dashStartCap is null ? 0 : _dashStartCap.GetAbsoluteBaseInset(thickness1, thickness2);
       _dashEndCap = endCap;
-      _dashEndCapBaseInsetAbsolute = null == _dashEndCap ? 0 : _dashEndCap.GetAbsoluteBaseInset(thickness1, thickness2);
+      _dashEndCapBaseInsetAbsolute = _dashEndCap is null ? 0 : _dashEndCap.GetAbsoluteBaseInset(thickness1, thickness2);
 
       _positionsTransformedStartCurrent = new PointD3D[_crossSectionVertexCount];
       _positionsTransformedEndCurrent = new PointD3D[_crossSectionVertexCount];
@@ -218,10 +219,10 @@ namespace Altaxo.Drawing.D3D
   Action<int, int, int, bool> AddIndices,
   ref int vertexIndexOffset,
   IList<PolylinePointD3D> polylinePoints,
-  ILineCap overrideStartCap,
-  ILineCap overrideEndCap)
+  ILineCap? overrideStartCap,
+  ILineCap? overrideEndCap)
     {
-      if (null == _normalsTransformedCurrent)
+      if (_normalsTransformedCurrent is null)
         throw new InvalidProgramException("The structure is not initialized yet. Call Initialize before using it!");
 
       _polylineIndexAtStartCapBase = 0;
@@ -232,7 +233,7 @@ namespace Altaxo.Drawing.D3D
       _endCapForwardAndPositionProvided = false;
       _endCapNeedsJoiningSegment = false;
 
-      if (null != _dashStartCap && null == overrideStartCap)
+      if (_dashStartCap is not null && overrideStartCap is null)
       {
         if (_dashStartCapBaseInsetAbsolute < 0)
         {
@@ -245,7 +246,7 @@ namespace Altaxo.Drawing.D3D
         }
       }
 
-      if (null != _dashEndCap && null == overrideEndCap)
+      if (_dashEndCap is not null && overrideEndCap is null)
       {
         if (_dashEndCapBaseInsetAbsolute < 0)
         {
@@ -308,10 +309,10 @@ namespace Altaxo.Drawing.D3D
     VectorD3D westVector,
     VectorD3D northVector,
     VectorD3D forwardVector,
-    ILineCap overrideStartCap,
-    ILineCap overrideEndCap)
+    ILineCap? overrideStartCap,
+    ILineCap? overrideEndCap)
     {
-      if (null == _normalsTransformedCurrent)
+      if (_normalsTransformedCurrent is null)
         throw new InvalidProgramException("The structure is not initialized yet. Call Initialize before using it!");
 
       _polylineIndexAtStartCapBase = 0;
@@ -322,7 +323,7 @@ namespace Altaxo.Drawing.D3D
       _endCapForwardAndPositionProvided = false;
       _endCapNeedsJoiningSegment = false;
 
-      if (null != _dashStartCap && null == overrideStartCap)
+      if (_dashStartCap is not null && overrideStartCap is null)
       {
         if (_dashStartCapBaseInsetAbsolute < 0)
         {
@@ -335,7 +336,7 @@ namespace Altaxo.Drawing.D3D
         }
       }
 
-      if (null != _dashEndCap && null == overrideEndCap)
+      if (_dashEndCap is not null && overrideEndCap is null)
       {
         if (_dashEndCapBaseInsetAbsolute < 0)
         {
@@ -387,11 +388,11 @@ namespace Altaxo.Drawing.D3D
       ref int vertexIndexOffset,
       IEnumerable<PolylinePointD3D> polylinePoints,
       bool drawLine,
-      ILineCap overrideStartCap,
-      ILineCap overrideEndCap
+      ILineCap? overrideStartCap,
+      ILineCap? overrideEndCap
       )
     {
-      if (null == _normalsTransformedCurrent)
+      if (_normalsTransformedCurrent is null)
         throw new InvalidProgramException("The structure is not initialized yet. Call Initialize before using it!");
 
       var resultingStartCap = overrideStartCap ?? _dashStartCap;
@@ -404,7 +405,7 @@ namespace Altaxo.Drawing.D3D
       }
 
       // now the start cap
-      if (null != resultingStartCap)
+      if (resultingStartCap is not null)
       {
         resultingStartCap.AddGeometry(
           AddPositionAndNormal,
@@ -449,7 +450,7 @@ namespace Altaxo.Drawing.D3D
         ref _startCapTemporaryStorageSpace);
       }
 
-      if (null != resultingEndCap)
+      if (resultingEndCap is not null)
       {
         resultingEndCap.AddGeometry(
         AddPositionAndNormal,

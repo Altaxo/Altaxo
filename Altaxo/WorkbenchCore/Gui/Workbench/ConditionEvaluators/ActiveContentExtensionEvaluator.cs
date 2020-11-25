@@ -33,10 +33,10 @@ namespace Altaxo.Gui.Workbench
   /// </example>
   public class ActiveContentExtensionConditionEvaluator : IConditionEvaluator
   {
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object? caller, Condition condition)
     {
       var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
-      if (workbench == null || workbench.ActiveViewContent == null)
+      if (workbench is null || workbench.ActiveViewContent is null)
       {
         return false;
       }
@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Workbench
       {
         string name = fileViewContent.PrimaryFileName;
 
-        if (name == null)
+        if (name is null)
         {
           return false;
         }

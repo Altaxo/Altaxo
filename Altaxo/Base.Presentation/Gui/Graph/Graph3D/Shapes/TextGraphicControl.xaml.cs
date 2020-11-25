@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,93 +60,93 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       m_pnPreview.Source = _previewBitmap.WpfBitmap;
     }
 
-    private void EhBackgroundStyleChanged(object sender, EventArgs e)
+    private void EhBackgroundStyleChanged(object? sender, EventArgs e)
     {
-      if (null != _controller)
+      if (_controller is not null)
         _controller.EhView_BackgroundStyleChanged();
     }
 
     private void EhLineSpacingChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != _controller)
+      if (_controller is not null)
         _controller.EhView_LineSpacingChanged();
     }
 
     private void EhFontFamilyChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_FontFamilyChanged();
     }
 
     private void EhFontSize_Changed(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_FontSizeChanged();
     }
 
     private void EhFontDepth_Changed(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_FontDepthChanged();
     }
 
     private void EhTextBrush_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_TextFillBrushChanged();
     }
 
     private void EhNormal_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_NormalClick();
     }
 
     private void EhBold_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_BoldClick();
     }
 
     private void EhItalic_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_ItalicClick();
     }
 
     private void EhUnderline_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_UnderlineClick();
     }
 
     private void EhStrikeout_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_StrikeoutClick();
     }
 
     private void EhSupIndex_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_SupIndexClick();
     }
 
     private void EhSubIndex_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_SubIndexClick();
     }
 
     private void EhGreek_Click(object sender, RoutedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_GreekClick();
     }
 
     private void EhEditText_TextChanged(object sender, TextChangedEventArgs e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_EditTextChanged();
     }
 
@@ -275,7 +276,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     public void InvalidatePreviewPanel()
     {
-      if (_controller != null)
+      if (_controller is not null)
       {
         using (var grfx = _previewBitmap.BeginGdiPainting())
         {
@@ -295,7 +296,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
     private void EhMoreModifiersClicked(object sender, RoutedEventArgs e)
     {
       var menu = sender as MenuItem;
-      if (null != menu && menu.Tag is string)
+      if (menu is not null && menu.Tag is string)
       {
         m_edText.AppendText((string)menu.Tag);
       }

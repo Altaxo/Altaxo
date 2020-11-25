@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -69,9 +70,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
         info.AddValue("Brightness", s._brightness);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (VisibleLightSpectrum)o : new VisibleLightSpectrum();
+        var s = (VisibleLightSpectrum?)o ?? new VisibleLightSpectrum();
         info.GetBaseValueEmbedded(s, typeof(ColorProviderBase), parent);
         s._gamma = info.GetDouble("Gramma");
         s._brightness = info.GetDouble("Brightness");
@@ -81,7 +82,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
     #endregion Serialization
 
-    public override bool Equals(IColorProvider other)
+    public override bool Equals(IColorProvider? other)
     {
       if (!base.Equals(other))
         return false;

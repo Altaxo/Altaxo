@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using Altaxo.Collections;
@@ -47,12 +48,15 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// Initializes the name of the label column.
     /// </summary>
     /// <param name="labelColumnAsText">Label column's name.</param>
+    /// <param name="toolTip"></param>
+    /// <param name="status"></param>
     void Init_LabelColumn(string labelColumnAsText, string toolTip, int status);
 
     /// <summary>
     /// Initializes the transformation text.
     /// </summary>
     /// <param name="text">Text for the transformation</param>
+    /// <param name="toolTip"></param>
     void Init_Transformation(string text, string toolTip);
 
     bool IndependentSymbolSize { get; set; }
@@ -233,7 +237,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         InitializeAttachmentDirectionChoices();
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         // Data
 
@@ -259,7 +263,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         _view.LabelBrush = _doc.LabelBrush;
         _view.Init_AlignmentX(_alignmentXChoices);
         _view.Init_AlignmentY(_alignmentYChoices);
-        _view.AttachToAxis = _doc.AttachedAxis != null;
+        _view.AttachToAxis = _doc.AttachedAxis is not null;
         _view.Init_AttachedAxis(_attachmentDirectionChoices);
         _view.SelectedRotation = _doc.Rotation;
 
@@ -286,7 +290,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
       _doc.LabelFormatString = _view.LabelFormatString;
 
-      if (_view.AttachToAxis && null != _attachmentDirectionChoices.FirstSelectedNode)
+      if (_view.AttachToAxis && _attachmentDirectionChoices.FirstSelectedNode is not null)
         _doc.AttachedAxis = (CSPlaneID)_attachmentDirectionChoices.FirstSelectedNode.Tag;
       else
         _doc.AttachedAxis = null;
@@ -347,7 +351,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
       _attachmentDirectionChoices = new SelectableListNodeList();
 
-      if (layer != null)
+      if (layer is not null)
       {
         foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _doc.AttachedAxis }))
         {
@@ -394,7 +398,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhColorGroupStyleAddedOrRemoved()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.BackgroundColorLinkage = (ColorLinkage)_backgroundColorLinkageChoices.FirstSelectedNode.Tag;
         _doc.IndependentColor = _view.IndependentColor;
@@ -407,7 +411,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhLabelColorLinkageChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentColor = _view.IndependentColor;
         _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
@@ -416,7 +420,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhBackgroundColorLinkageChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.BackgroundStyle = _view.Background;
         _doc.BackgroundColorLinkage = (ColorLinkage)_backgroundColorLinkageChoices.FirstSelectedNode.Tag;
@@ -433,7 +437,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhBackgroundBrushChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.BackgroundStyle = _view.Background;
         if (_doc.IsBackgroundColorProvider)
@@ -446,7 +450,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhLabelBrushChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.BackgroundStyle = _view.Background;
 
@@ -463,7 +467,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     private void EhUseBackgroundChanged()
     {
       _doc.BackgroundStyle = _view.Background;
-      var newValue = _doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush;
+      var newValue = _doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsBrush;
 
       if (true == newValue)
       {
@@ -479,7 +483,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private void InternalSetBackgroundColorToLabelColor()
     {
-      if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush)
+      if (_doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsBrush)
       {
         var newBrush = _doc.BackgroundStyle.Brush.WithColor(_view.LabelBrush.Color);
         _doc.BackgroundStyle.Brush = newBrush;
@@ -492,7 +496,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private void InternalSetBackgroundColorRGBToLabelColor()
     {
-      if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush)
+      if (_doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsBrush)
       {
         var newBrush = _doc.BackgroundStyle.Brush;
         var c = _view.LabelBrush.Color.NewWithAlphaValue(newBrush.Color.Color.A);
@@ -508,7 +512,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private void InternalSetLabelColorToBackgroundColor()
     {
-      if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush)
+      if (_doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsBrush)
       {
         _view.LabelBrush = _view.LabelBrush.WithColor(_view.Background.Brush.Color);
       }

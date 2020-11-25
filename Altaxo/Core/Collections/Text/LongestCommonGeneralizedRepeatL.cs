@@ -130,7 +130,7 @@ namespace Altaxo.Collections.Text
 
       public void AddLast(DDLElement node)
       {
-        if (null == _last)
+        if (_last is null)
         {
           _last = node;
           _first = node;
@@ -152,12 +152,12 @@ namespace Altaxo.Collections.Text
         var prev = node.Previous;
         var next = node.Next;
 
-        if (null != prev)
+        if (prev is not null)
           prev.Next = next;
         else
           _first = next;
 
-        if (null != next)
+        if (next is not null)
           next.Previous = prev;
         else
           _last = prev;
@@ -485,7 +485,7 @@ namespace Altaxo.Collections.Text
 
       current = current.Previous;
 
-      while (null != current && current.IntervalEnd.Lcp >= lcp_i)
+      while (current is not null && current.IntervalEnd.Lcp >= lcp_i)
       {
         current = current.IntervalEnd;
         last_updated = current;

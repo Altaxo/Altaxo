@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Scripting;
 
 namespace Altaxo.Data
@@ -40,7 +42,7 @@ namespace Altaxo.Data
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _innerDict)
+      if (_innerDict is not null)
       {
         foreach (var item in _innerDict)
         {
@@ -52,7 +54,7 @@ namespace Altaxo.Data
     protected override void Dispose(bool isDisposing)
     {
       var d = _innerDict;
-      if (null != d && d.Count > 0)
+      if (d is not null && d.Count > 0)
       {
         _innerDict = new Dictionary<DataColumn, IColumnScriptText>();
 
@@ -97,7 +99,7 @@ namespace Altaxo.Data
       }
     }
 
-    public bool TryGetValue(DataColumn key, out IColumnScriptText value)
+    public bool TryGetValue(DataColumn key, [MaybeNullWhen(false)] out IColumnScriptText value)
     {
       return _innerDict.TryGetValue(key, out value);
     }
@@ -115,7 +117,7 @@ namespace Altaxo.Data
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         _innerDict.TryGetValue(key, out var oldValue);
@@ -126,7 +128,7 @@ namespace Altaxo.Data
         _innerDict[key] = value;
         value.ParentObject = this;
 
-        if (null != oldValue)
+        if (oldValue is not null)
           oldValue.Dispose();
       }
     }

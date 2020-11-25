@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,20 +78,22 @@ namespace Altaxo.DataConnection
       var schemaTable = reader.GetSchemaTable();
       int currentPosition = -1;
 
-      foreach (System.Data.DataRow row in schemaTable.Rows)
+      if (schemaTable is not null)
       {
-        ++currentPosition;
+        foreach (System.Data.DataRow row in schemaTable.Rows)
+        {
+          ++currentPosition;
 
-        var ct = (Type)row["DataType"];
+          var ct = (Type)row["DataType"];
 
-        var axoColType = GetAltaxoColumnType(ct);
-        var axoColName = (string)row["ColumnName"];
+          var axoColType = GetAltaxoColumnType(ct);
+          var axoColName = (string)row["ColumnName"];
 
-        var axoColumn = _table.DataColumns.EnsureExistence(axoColName, axoColType, Data.ColumnKind.V, 0);
+          var axoColumn = _table.DataColumns.EnsureExistence(axoColName, axoColType, Data.ColumnKind.V, 0);
 
-        mapping.Add(new AltaxoColumnMapping() { AltaxoColumn = axoColumn, AltaxoColumnItemSetter = GetColumnItemSetter(ct) });
+          mapping.Add(new AltaxoColumnMapping() { AltaxoColumn = axoColumn, AltaxoColumnItemSetter = GetColumnItemSetter(ct) });
+        }
       }
-
       // clear all mapped columns
       foreach (var item in mapping)
         item.AltaxoColumn.Clear();
@@ -110,7 +113,7 @@ namespace Altaxo.DataConnection
     {
       return (col, idx, obj) =>
         {
-          if (null == obj || obj == System.DBNull.Value)
+          if (obj is null || obj == System.DBNull.Value)
             col.SetElementEmpty(idx);
           else
             col[idx] = new Data.AltaxoVariant(obj);

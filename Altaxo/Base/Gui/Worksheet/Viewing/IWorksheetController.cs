@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,7 +36,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 {
   public interface IWorksheetView
   {
-    Altaxo.Gui.Worksheet.Viewing.IWorksheetController Controller { set; }
+    Altaxo.Gui.Worksheet.Viewing.IWorksheetController? Controller { set; }
 
     void Cursor_SetToArrow();
 

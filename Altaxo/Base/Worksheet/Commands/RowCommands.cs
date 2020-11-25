@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Worksheet.Viewing;
@@ -39,7 +40,8 @@ namespace Altaxo.Worksheet.Commands
     /// Moves the selected row(s) to a new position. The new position must be entered by the user.
     /// </summary>
     /// <param name="ctrl">The worksheet controller for the table.</param>
-    public static string SetSelectedRowPosition(IWorksheetController ctrl)
+    /// <returns>Null if command was successful; otherwise, an error message.</returns>
+    public static string? SetSelectedRowPosition(IWorksheetController ctrl)
     {
       if (ctrl.SelectedDataRows.Count == 0)
         return null; // nothing to do

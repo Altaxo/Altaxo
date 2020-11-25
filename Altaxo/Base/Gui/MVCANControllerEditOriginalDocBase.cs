@@ -22,11 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Gui
 {
@@ -35,18 +34,22 @@ namespace Altaxo.Gui
   /// </summary>
   /// <typeparam name="TModel">The type of the document to edit.</typeparam>
   /// <typeparam name="TView">The type of the view.</typeparam>
-  public abstract class MVCANControllerEditOriginalDocBase<TModel, TView> : IMVCANController
+  public abstract class MVCANControllerEditOriginalDocBase<TModel, TView> : ControllerBase, IMVCANController
     where TView : class
     where TModel : ICloneable
   {
     /// <summary>The document to edit.</summary>
-    protected TModel _doc;
+    [MaybeNull]
+    [AllowNull]
+    protected TModel _doc = default;
 
     /// <summary>Cloned copy of the document (is null if  <see cref="_useDocumentCopy"/> is false). Used to revert the edited document to the state before editing.</summary>
-    protected TModel _clonedCopyOfDoc;
+    [MaybeNull]
+    [AllowNull]
+    protected TModel _clonedCopyOfDoc = default;
 
     /// <summary>The Gui view of this controller</summary>
-    protected TView _view;
+    protected TView? _view;
 
     /// <summary>If true, a copy of the document is made before editing; this copy can later be used to revert the state of the document to the original state.</summary>
     protected bool _useDocumentCopy;
@@ -58,7 +61,11 @@ namespace Altaxo.Gui
     /// The suspend token of the document being edited. If <see cref="_useDocumentCopy"/> is false, we assume that a controller higher in hierarchy has made a copy
     /// of the document, thus we do not use a suspendToken for the document.
     /// </summary>
-    protected Altaxo.Main.ISuspendToken _suspendToken;
+    protected Altaxo.Main.ISuspendToken? _suspendToken;
+
+    /// <summary>Gets the current document of this controller. If the document is null, an <see cref="InvalidOperationException"/> is thrown. To check whether
+    /// the document is null, check on the member <see cref="_doc"/> directly.</summary>
+    public TModel Doc => _doc ?? throw new InvalidOperationException($"This controller ({this}) is yet not initialized with a document");
 
     /// <summary>
     /// Initialize the controller with the document. If successfull, the function has to return true.
@@ -73,8 +80,10 @@ namespace Altaxo.Gui
       if (IsDisposed)
         throw new ObjectDisposedException(GetType().FullName);
 
-      if (null == args || 0 == args.Length || !(args[0] is TModel))
+      if (args is null || 0 == args.Length || !(args[0] is TModel))
         return false;
+
+
 
       _doc = (TModel)args[0];
 
@@ -85,6 +94,23 @@ namespace Altaxo.Gui
       return true;
     }
 
+    protected InvalidOperationException CreateNotInitializedException =>
+      new InvalidOperationException($"Controller {GetType()} was not initialized with a document");
+
+    protected InvalidOperationException CreateNoViewException =>
+      new InvalidOperationException($"Controller {GetType()} has no view currently.");
+
+
+    /// <summary>Throws an exception if the controller is not initialized with a document.</summary>
+    /// <exception cref="InvalidOperationException">Controller was not initialized with a document</exception>
+    [MemberNotNull(nameof(_doc))]
+    protected void ThrowIfNotInitialized()
+    {
+      if (_doc is null)
+        throw CreateNotInitializedException;
+    }
+
+
     /// <summary>
     /// Basic initialization of the document.
     /// Here, it is tried to suspend the event handling of the documnt by calling <see cref="GetSuspendTokenForControllerDocument"/> (but only if <see cref="_useDocumentCopy"/> is <c>true</c>).
@@ -94,14 +120,14 @@ namespace Altaxo.Gui
     /// <exception cref="System.ObjectDisposedException">The controller was already disposed.</exception>
     protected virtual void Initialize(bool initData)
     {
-      if (null == _doc)
-        throw new InvalidOperationException("This controller was not initialized with a document.");
       if (IsDisposed)
         throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);
+      if (_doc is null)
+        throw new InvalidOperationException("This controller was not initialized with a document.");
 
       if (initData)
       {
-        if (_useDocumentCopy && null == _suspendToken)
+        if (_useDocumentCopy && _suspendToken is null)
           _suspendToken = GetSuspendTokenForControllerDocument();
       }
     }
@@ -150,7 +176,7 @@ namespace Altaxo.Gui
         }
         else
         {
-          if (null != _suspendToken)
+          if (_suspendToken is not null)
           {
             _suspendToken.ResumeCompleteTemporarily();
           }
@@ -168,14 +194,16 @@ namespace Altaxo.Gui
     /// </returns>
     public virtual bool Revert(bool disposeController)
     {
+      ThrowIfNotInitialized();
+
       foreach (var subControllerItem in GetSubControllers())
       {
-        if (null != subControllerItem.Controller)
+        if (subControllerItem.Controller is not null)
           subControllerItem.Controller.Revert(disposeController);
       }
 
       bool reverted = false;
-      if (null != _clonedCopyOfDoc && !object.ReferenceEquals(_doc, _clonedCopyOfDoc))
+      if (!(_clonedCopyOfDoc is null) && !object.ReferenceEquals(_doc, _clonedCopyOfDoc))
       {
         CopyHelper.Copy(ref _doc, _clonedCopyOfDoc);
         reverted = true;
@@ -201,7 +229,7 @@ namespace Altaxo.Gui
     /// By overriding this function you can suspend parent nodes in case it is neccessary to modify nodes at lower levels of the hierarchy.
     /// </summary>
     /// <returns>The suspend token, provided by the document.</returns>
-    protected virtual Altaxo.Main.ISuspendToken GetSuspendTokenForControllerDocument()
+    protected virtual Altaxo.Main.ISuspendToken? GetSuspendTokenForControllerDocument()
     {
       if (_doc is Altaxo.Main.ISuspendableByToken)
         return ((Altaxo.Main.ISuspendableByToken)_doc).SuspendGetToken();
@@ -225,7 +253,7 @@ namespace Altaxo.Gui
     /// <summary>
     /// Returns the Gui element that shows the model to the user.
     /// </summary>
-    public virtual object ViewObject
+    public virtual object? ViewObject
     {
       get
       {
@@ -233,14 +261,14 @@ namespace Altaxo.Gui
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as TView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           AttachView();
@@ -253,7 +281,11 @@ namespace Altaxo.Gui
     /// </summary>
     public virtual object ModelObject
     {
-      get { return _doc; }
+      get
+      {
+        ThrowIfNotInitialized();
+        return _doc;
+      }
     }
 
     /// <summary>
@@ -282,15 +314,15 @@ namespace Altaxo.Gui
       {
         foreach (var subControllerItem in GetSubControllers())
         {
-          if (null != subControllerItem.Controller)
+          if (subControllerItem.Controller is not null)
             subControllerItem.Controller.Dispose();
-          if (null != subControllerItem.SetMemberToNullAction)
+          if (subControllerItem.SetMemberToNullAction is not null)
             subControllerItem.SetMemberToNullAction();
         }
 
         ViewObject = null;
 
-        if (null != _suspendToken)
+        if (_suspendToken is not null)
         {
           _suspendToken.Dispose();
           _suspendToken = null;
@@ -299,7 +331,7 @@ namespace Altaxo.Gui
         if ((_clonedCopyOfDoc is IDisposable) && !object.ReferenceEquals(_doc, _clonedCopyOfDoc))
         {
           ((IDisposable)_clonedCopyOfDoc).Dispose();
-          _clonedCopyOfDoc = default(TModel);
+          _clonedCopyOfDoc = default;
         }
 
         _isDisposed = true;
@@ -313,9 +345,9 @@ namespace Altaxo.Gui
     /// </summary>
     /// <typeparam name="T">Type of the object to dispose.</typeparam>
     /// <param name="objectToDispose">The object to dispose.</param>
-    protected static void DisposeAndSetToNull<T>(ref T objectToDispose) where T : class, IDisposable
+    protected static void DisposeAndSetToNull<T>(ref T? objectToDispose) where T : class, IDisposable
     {
-      if (null != objectToDispose)
+      if (objectToDispose is not null)
       {
         objectToDispose.Dispose();
         objectToDispose = null;

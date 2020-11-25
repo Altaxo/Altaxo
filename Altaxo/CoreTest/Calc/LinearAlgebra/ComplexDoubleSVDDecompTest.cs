@@ -25,11 +25,11 @@
 using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
-  [TestFixture]
+
   public class ComplexDoubleSVDDecompTest
   {
     private ComplexDoubleMatrix a;
@@ -38,10 +38,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     private ComplexDoubleSVDDecomp svd;
     private ComplexDoubleSVDDecomp lsvd;
     private ComplexDoubleSVDDecomp wsvd;
-    private const double TOLERENCE = 2.000E-014;
+    private const double TOLERANCE = 2.000E-014;
 
-    [OneTimeSetUp]
-    public void SetupTestCases()
+    // [OneTimeSetUp]
+    public ComplexDoubleSVDDecompTest()
     {
       a = new ComplexDoubleMatrix(3)
       {
@@ -84,7 +84,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       lsvd = new ComplexDoubleSVDDecomp(la, true);
     }
 
-    [Test]
+    [Fact]
     public void Test()
     {
       ComplexDoubleMatrix test = svd.U * svd.W * svd.V.GetConjugateTranspose();
@@ -102,10 +102,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < TOLERENCE, "Maximum Error = " + me.ToString());
+      Assert.True(me < TOLERANCE, "Maximum Error = " + me.ToString());
     }
 
-    [Test]
+    [Fact]
     public void LTest()
     {
       ComplexDoubleMatrix test = lsvd.U * lsvd.W * lsvd.V.GetConjugateTranspose();
@@ -122,10 +122,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < TOLERENCE, "Maximum Error = " + me.ToString());
+      Assert.True(me < TOLERANCE, "Maximum Error = " + me.ToString());
     }
 
-    [Test]
+    [Fact]
     public void WTest()
     {
       ComplexDoubleMatrix test = wsvd.U * wsvd.W * wsvd.V.GetConjugateTranspose();
@@ -142,61 +142,61 @@ namespace AltaxoTest.Calc.LinearAlgebra
           }
         }
       }
-      Assert.IsTrue(me < TOLERENCE, "Maximum Error = " + me.ToString());
+      Assert.True(me < TOLERANCE, "Maximum Error = " + me.ToString());
     }
 
-    [Test]
+    [Fact]
     public void RankTest()
     {
-      Assert.AreEqual(svd.Rank, 3);
+      Assert.Equal(3, svd.Rank);
     }
 
-    [Test]
+    [Fact]
     public void ConditionTest()
     {
-      Assert.AreEqual(svd.Condition, 14.650, .001);
+      AssertEx.Equal(svd.Condition, 14.650, .001);
     }
 
-    [Test]
+    [Fact]
     public void NormTest()
     {
-      Assert.AreEqual(svd.Norm2, 23.088, .001);
+      AssertEx.Equal(svd.Norm2, 23.088, .001);
     }
 
-    [Test]
+    [Fact]
     public void LRankTest()
     {
-      Assert.AreEqual(lsvd.Rank, 2);
+      Assert.Equal(2, lsvd.Rank);
     }
 
-    [Test]
+    [Fact]
     public void LConditionTest()
     {
-      Assert.AreEqual(lsvd.Condition, 22.764, .001);
+      AssertEx.Equal(lsvd.Condition, 22.764, .001);
     }
 
-    [Test]
+    [Fact]
     public void LNormTest()
     {
-      Assert.AreEqual(lsvd.Norm2, 22.198, .001);
+      AssertEx.Equal(lsvd.Norm2, 22.198, .001);
     }
 
-    [Test]
+    [Fact]
     public void WRankTest()
     {
-      Assert.AreEqual(wsvd.Rank, 2);
+      Assert.Equal(2, wsvd.Rank);
     }
 
-    [Test]
+    [Fact]
     public void WConditionTest()
     {
-      Assert.AreEqual(wsvd.Condition, 11.316, .001);
+      AssertEx.Equal(wsvd.Condition, 11.316, .001);
     }
 
-    [Test]
+    [Fact]
     public void WNormTest()
     {
-      Assert.AreEqual(wsvd.Norm2, 22.133, .001);
+      AssertEx.Equal(wsvd.Norm2, 22.133, .001);
     }
   }
 }

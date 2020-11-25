@@ -16,9 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
@@ -46,7 +48,7 @@ namespace Altaxo.Main.Services
 
       // entryAssembly == null might happen in unit test mode
       var entryAssembly = Assembly.GetEntryAssembly();
-      if (entryAssembly != null)
+      if (entryAssembly is not null)
       {
         string exeName = entryAssembly.Location;
         dict["exe"] = new PropertyObjectTagProvider(FileVersionInfo.GetVersionInfo(exeName));
@@ -60,7 +62,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     public static string Escape(string input)
     {
-      if (input == null)
+      if (input is null)
         throw new ArgumentNullException("input");
       return input.Replace("${", "${$}{");
     }
@@ -68,24 +70,26 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Expands ${xyz} style property values.
     /// </summary>
-    public static string Parse(string input)
+    [return: MaybeNull]
+    [return: NotNullIfNotNull("input")]
+    public static string Parse(string? input)
     {
       return Parse(input, null);
     }
 
     public static void RegisterStringTagProvider(IStringTagProvider tagProvider)
     {
-      if (tagProvider == null)
+      if (tagProvider is null)
         throw new ArgumentNullException("tagProvider");
       stringTagProviders.Push(tagProvider);
     }
 
     public static void RegisterStringTagProvider(string prefix, IStringTagProvider tagProvider)
     {
-      if (prefix == null)
-        throw new ArgumentNullException("prefix");
-      if (tagProvider == null)
-        throw new ArgumentNullException("tagProvider");
+      if (prefix is null)
+        throw new ArgumentNullException(nameof(prefix));
+      if (tagProvider is null)
+        throw new ArgumentNullException(nameof(tagProvider));
       prefixedStringTagProviders[prefix] = tagProvider;
     }
 
@@ -94,19 +98,20 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Expands ${xyz} style property values.
     /// </summary>
-    public static string Parse(string input, params StringTagPair[] customTags)
+    [return: NotNullIfNotNull("input")]
+    public static string? Parse(string? input, params StringTagPair[]? customTags)
     {
-      if (input == null)
+      if (input is null)
         return null;
       int pos = 0;
-      StringBuilder output = null; // don't use StringBuilder if input is a single property
+      StringBuilder? output = null; // don't use StringBuilder if input is a single property
       do
       {
         int oldPos = pos;
         pos = input.IndexOf("${", pos, StringComparison.Ordinal);
         if (pos < 0)
         {
-          if (output == null)
+          if (output is null)
           {
             return input;
           }
@@ -120,7 +125,7 @@ namespace Altaxo.Main.Services
             return output.ToString();
           }
         }
-        if (output == null)
+        if (output is null)
         {
           if (pos == 0)
             output = new StringBuilder();
@@ -144,8 +149,8 @@ namespace Altaxo.Main.Services
         else
         {
           string property = input.Substring(pos + 2, end - pos - 2);
-          string val = GetValue(property, customTags);
-          if (val == null)
+          string? val = GetValue(property, customTags);
+          if (val is null)
           {
             output.Append("${");
             output.Append(property);
@@ -164,14 +169,14 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Evaluates a property using the StringParser. Equivalent to StringParser.Parse("${" + propertyName + "}");
     /// </summary>
-    public static string GetValue(string propertyName, params StringTagPair[] customTags)
+    public static string? GetValue(string propertyName, params StringTagPair[]? customTags)
     {
-      if (propertyName == null)
-        throw new ArgumentNullException("propertyName");
+      if (propertyName is null)
+        throw new ArgumentNullException(nameof(propertyName));
       if (propertyName == "$")
         return "$";
 
-      if (customTags != null)
+      if (customTags is not null)
       {
         foreach (StringTagPair pair in customTags)
         {
@@ -204,8 +209,8 @@ namespace Altaxo.Main.Services
 
         foreach (IStringTagProvider provider in stringTagProviders)
         {
-          string result = provider.ProvideString(propertyName, customTags);
-          if (result != null)
+          var result = provider.ProvideString(propertyName, customTags);
+          if (result is not null)
             return result;
         }
 
@@ -221,7 +226,7 @@ namespace Altaxo.Main.Services
         if (propertyName.StartsWith("res:", StringComparison.OrdinalIgnoreCase))
         {
           var resourceService = Current.ResourceService;
-          if (resourceService == null)
+          if (resourceService is null)
             return null;
           try
           {
@@ -263,8 +268,8 @@ namespace Altaxo.Main.Services
             return GetProperty(propertyName);
 
           default:
-            IStringTagProvider provider;
-            if (prefixedStringTagProviders.TryGetValue(prefix, out provider))
+
+            if (prefixedStringTagProviders.TryGetValue(prefix, out var provider))
               return provider.ProvideString(propertyName, customTags);
             else
               return null;
@@ -283,7 +288,8 @@ namespace Altaxo.Main.Services
     {
       try
       {
-        return string.Format(StringParser.Parse(formatstring), formatitems);
+        var fmt = StringParser.Parse(formatstring);
+        return string.Format(fmt, formatitems);
       }
       catch (FormatException ex)
       {
@@ -316,27 +322,23 @@ namespace Altaxo.Main.Services
 
   public struct StringTagPair
   {
-    private readonly string tag;
-    private readonly string value;
+    private readonly string _tag;
+    private readonly string _value;
 
     public string Tag
     {
-      get { return tag; }
+      get { return _tag; }
     }
 
     public string Value
     {
-      get { return value; }
+      get { return _value; }
     }
 
     public StringTagPair(string tag, string value)
     {
-      if (tag == null)
-        throw new ArgumentNullException("tag");
-      if (value == null)
-        throw new ArgumentNullException("value");
-      this.tag = tag;
-      this.value = value;
+      this._tag = tag ?? throw new ArgumentNullException(nameof(tag));
+      this._value = value ?? throw new ArgumentNullException(nameof(value));
     }
   }
 }

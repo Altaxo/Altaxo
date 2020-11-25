@@ -27,13 +27,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Main
 {
   using Altaxo.Main;
 
-  [TestFixture]
+  
   public class SuspendableDocumentNode_Test
   {
     private class SuspendTester
@@ -66,7 +66,7 @@ namespace AltaxoTest.Main
         {
           System.Threading.Thread.Sleep(1);
 
-          if (null == _suspendToken)
+          if (_suspendToken is null)
           {
             _suspendToken = _doc.SuspendGetToken();
           }
@@ -86,7 +86,7 @@ namespace AltaxoTest.Main
           }
         } while ((DateTime.UtcNow - start).TotalSeconds < 1);
 
-        if (null != _suspendToken)
+        if (_suspendToken is not null)
         {
           _suspendToken.Dispose();
           _suspendToken = null;
@@ -127,7 +127,7 @@ namespace AltaxoTest.Main
       public int _NumberOfResumes;
       public int _NumberOfResumesSilently;
 
-      public int NumberOfChildTokens { get { return _suspendTokensOfChilds == null ? 0 : _suspendTokensOfChilds.Count; } }
+      public int NumberOfChildTokens { get { return _suspendTokensOfChilds is null ? 0 : _suspendTokensOfChilds.Count; } }
 
       public TestNodeWithoutChild_SuspendableDocumentNode()
       {
@@ -140,7 +140,7 @@ namespace AltaxoTest.Main
 
       protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
       {
-        if (null != _child)
+        if (_child is not null)
           yield return new DocumentNodeAndName(_child, () => _child = null, "Child");
       }
 
@@ -166,7 +166,7 @@ namespace AltaxoTest.Main
     /// <summary>
     /// Test a model suspendable document node for multiple suspend/resume actions.
     /// </summary>
-    [Test]
+    [Fact]
     public void Test001_MultipleSuspendThreads_SuspendableDocumentNode()
     {
       const int NumberOfRuns = 5;
@@ -184,18 +184,18 @@ namespace AltaxoTest.Main
 
         Parallel.ForEach(tester, test => test.Worker());
 
-        Assert.IsFalse(node.IsSuspended);
-        Assert.IsFalse(node.IsSuspendedOrResumeInProgress);
-        Assert.IsTrue(node._NumberOfSuspended > 0);
-        Assert.IsTrue(node._NumberOfResumesSilently == 0);
-        Assert.AreEqual(node._NumberOfSuspended, node._NumberOfResumes);
+        Assert.False(node.IsSuspended);
+        Assert.False(node.IsSuspendedOrResumeInProgress);
+        Assert.True(node._NumberOfSuspended > 0);
+        Assert.True(node._NumberOfResumesSilently == 0);
+        Assert.Equal(node._NumberOfSuspended, node._NumberOfResumes);
       }
     }
 
     /// <summary>
     /// Test a model suspendable document leaf node for multiple suspend/resume actions.
     /// </summary>
-    [Test]
+    [Fact]
     public void Test002_MultipleSuspendThreads_SuspendableDocumentLeafNode()
     {
       const int NumberOfRuns = 5;
@@ -213,17 +213,17 @@ namespace AltaxoTest.Main
 
         Parallel.ForEach(tester, test => test.Worker());
 
-        Assert.IsFalse(node.IsSuspended);
-        Assert.IsTrue(node._NumberOfSuspended > 0);
-        Assert.IsTrue(node._NumberOfResumesSilently == 0);
-        Assert.AreEqual(node._NumberOfSuspended, node._NumberOfResumes);
+        Assert.False(node.IsSuspended);
+        Assert.True(node._NumberOfSuspended > 0);
+        Assert.True(node._NumberOfResumesSilently == 0);
+        Assert.Equal(node._NumberOfSuspended, node._NumberOfResumes);
       }
     }
 
     /// <summary>
     /// Test a model suspendable document node with one child for multiple suspend/resume actions of the child.
     /// </summary>
-    [Test]
+    [Fact]
     public void Test003_MultipleSuspendThreads_SuspendableDocumentLeafNode()
     {
       const int NumberOfRuns = 5;
@@ -244,30 +244,30 @@ namespace AltaxoTest.Main
 
           Parallel.ForEach(tester, test => test.Worker());
 
-          Assert.IsTrue(parentNode.IsSuspended);
-          Assert.IsTrue(parentNode._NumberOfSuspended > 0);
-          Assert.IsTrue(parentNode._NumberOfResumesSilently == 0);
-          Assert.AreEqual(parentNode._NumberOfSuspended - 1, parentNode._NumberOfResumes);
+          Assert.True(parentNode.IsSuspended);
+          Assert.True(parentNode._NumberOfSuspended > 0);
+          Assert.True(parentNode._NumberOfResumesSilently == 0);
+          Assert.Equal(parentNode._NumberOfSuspended - 1, parentNode._NumberOfResumes);
 
           parentSuspendToken.Resume();
         }
 
-        Assert.IsFalse(childNode.IsSuspended);
-        Assert.IsTrue(childNode._NumberOfSuspended > 0);
-        Assert.IsTrue(childNode._NumberOfResumesSilently == 0);
-        Assert.AreEqual(childNode._NumberOfSuspended, childNode._NumberOfResumes);
+        Assert.False(childNode.IsSuspended);
+        Assert.True(childNode._NumberOfSuspended > 0);
+        Assert.True(childNode._NumberOfResumesSilently == 0);
+        Assert.Equal(childNode._NumberOfSuspended, childNode._NumberOfResumes);
 
-        Assert.IsFalse(parentNode.IsSuspended);
-        Assert.IsTrue(parentNode._NumberOfSuspended > 0);
-        Assert.IsTrue(parentNode._NumberOfResumesSilently == 0);
-        Assert.AreEqual(parentNode._NumberOfSuspended, parentNode._NumberOfResumes);
+        Assert.False(parentNode.IsSuspended);
+        Assert.True(parentNode._NumberOfSuspended > 0);
+        Assert.True(parentNode._NumberOfResumesSilently == 0);
+        Assert.Equal(parentNode._NumberOfSuspended, parentNode._NumberOfResumes);
       }
     }
 
     /// <summary>
     /// Test a model suspendable document node with one child for multiple suspend/resume actions of the child and of the parent.
     /// </summary>
-    [Test]
+    [Fact]
     public void Test004_MultipleSuspendThreads_SuspendableDocumentLeafNode()
     {
       const int NumberOfRuns = 5;
@@ -288,24 +288,24 @@ namespace AltaxoTest.Main
 
           Parallel.ForEach(tester, test => test.Worker());
 
-          Assert.IsTrue(parentNode.IsSuspended);
-          Assert.IsTrue(parentNode._NumberOfSuspended > 0);
-          Assert.IsTrue(parentNode._NumberOfResumesSilently == 0);
-          Assert.AreEqual(parentNode._NumberOfSuspended - 1, parentNode._NumberOfResumes);
+          Assert.True(parentNode.IsSuspended);
+          Assert.True(parentNode._NumberOfSuspended > 0);
+          Assert.True(parentNode._NumberOfResumesSilently == 0);
+          Assert.Equal(parentNode._NumberOfSuspended - 1, parentNode._NumberOfResumes);
 
           parentSuspendToken.Resume();
         }
 
-        Assert.IsFalse(childNode.IsSuspended);
-        Assert.IsTrue(childNode._NumberOfSuspended > 0);
-        Assert.IsTrue(childNode._NumberOfResumesSilently == 0);
-        Assert.AreEqual(childNode._NumberOfSuspended, childNode._NumberOfResumes);
+        Assert.False(childNode.IsSuspended);
+        Assert.True(childNode._NumberOfSuspended > 0);
+        Assert.True(childNode._NumberOfResumesSilently == 0);
+        Assert.Equal(childNode._NumberOfSuspended, childNode._NumberOfResumes);
 
-        Assert.IsFalse(parentNode.IsSuspended);
-        Assert.IsTrue(parentNode._NumberOfSuspended > 0);
-        Assert.IsTrue(parentNode._NumberOfResumesSilently == 0);
-        Assert.AreEqual(parentNode._NumberOfSuspended, parentNode._NumberOfResumes);
-        Assert.AreEqual(0, parentNode.NumberOfChildTokens);
+        Assert.False(parentNode.IsSuspended);
+        Assert.True(parentNode._NumberOfSuspended > 0);
+        Assert.True(parentNode._NumberOfResumesSilently == 0);
+        Assert.Equal(parentNode._NumberOfSuspended, parentNode._NumberOfResumes);
+        Assert.Equal(0, parentNode.NumberOfChildTokens);
       }
     }
   }

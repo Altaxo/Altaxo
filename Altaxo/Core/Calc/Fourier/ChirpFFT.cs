@@ -341,7 +341,7 @@ namespace Altaxo.Calc.Fourier
 
       int msize = GetNecessaryTransformationSize(arrsize);
 
-      if (s == null || arrsize != s._arrSize || direction != s._direction)
+      if (s is null || arrsize != s._arrSize || direction != s._direction)
       {
         s = new ChirpNativeFFTStorage(msize, arrsize, direction);
       }

@@ -42,7 +42,7 @@ namespace Altaxo.Serialization.Xml
 
     private XmlSurrogateSelector _surrogateSelector;
     private System.Text.StringBuilder _stringBuilder = new System.Text.StringBuilder();
-    private Dictionary<string, object> _propertyDictionary = new Dictionary<string, object>();
+    private Dictionary<string, object?> _propertyDictionary = new Dictionary<string, object?>();
 
     private byte[] _buffer;
     private int _bufferSize;
@@ -89,6 +89,10 @@ namespace Altaxo.Serialization.Xml
     public void BeginReading(System.IO.Stream stream)
     {
       _xmlReader = new XmlTextReader(stream);
+      if (_propertyDictionary.ContainsKey(Altaxo.Serialization.Xml.XmlStreamSerializationInfo.UseXmlIndentation))
+      {
+        _xmlReader.WhitespaceHandling = WhitespaceHandling.Significant;
+      }
       _xmlReader.MoveToContent();
     }
 
@@ -139,9 +143,10 @@ namespace Altaxo.Serialization.Xml
     /// <value>
     /// The property dictionary.
     /// </value>
-    public IDictionary<string, object> PropertyDictionary { get { return _propertyDictionary; } }
+    public IDictionary<string, object?> PropertyDictionary { get { return _propertyDictionary; } }
 
     /// <inheritdoc />
+    [return: MaybeNull]
     public T GetPropertyOrDefault<T>(string propertyKey)
     {
       if (_propertyDictionary.TryGetValue(propertyKey, out var result))
@@ -151,7 +156,7 @@ namespace Altaxo.Serialization.Xml
       else
       {
 #nullable disable
-        return default(T);
+        return default;
 #nullable enable
       }
     }
@@ -275,7 +280,7 @@ namespace Altaxo.Serialization.Xml
 
     public System.IO.MemoryStream? GetMemoryStream(string name)
     {
-      int length = XmlConvert.ToInt32(_xmlReader["Length"]);
+      int length = XmlConvert.ToInt32(_xmlReader["Length"]!);
       if (length == 0)
       {
         _xmlReader.ReadStartElement();
@@ -324,12 +329,17 @@ namespace Altaxo.Serialization.Xml
 
     public int GetInt32Attribute(string name)
     {
-      return XmlConvert.ToInt32(_xmlReader[name]);
+      return XmlConvert.ToInt32(_xmlReader[name]??string.Empty);
+    }
+
+    public string? GetStringAttributeOrNull(string name)
+    {
+      return _xmlReader[name];
     }
 
     public string GetStringAttribute(string name)
     {
-      return _xmlReader[name];
+      return _xmlReader[name] ?? throw new InvalidOperationException($"String attribute \"{name}\" is missing");
     }
 
     public void GetArrayOfPrimitiveTypeBase64(System.Array val, int count, int sizeOfElement)
@@ -366,7 +376,7 @@ namespace Altaxo.Serialization.Xml
 
     public int OpenArray()
     {
-      int count = XmlConvert.ToInt32(_xmlReader["Count"]);
+      int count = XmlConvert.ToInt32(_xmlReader["Count"]!);
 
       if (count > 0)
         _xmlReader.ReadStartElement();
@@ -376,7 +386,7 @@ namespace Altaxo.Serialization.Xml
 
     public int OpenArray(string name)
     {
-      int count = XmlConvert.ToInt32(_xmlReader["Count"]);
+      int count = XmlConvert.ToInt32(_xmlReader["Count"]!);
 
       if (count > 0)
         _xmlReader.ReadStartElement();
@@ -536,7 +546,7 @@ namespace Altaxo.Serialization.Xml
       GetArray(val, count);
     }
 
-    public void GetArray(string[] val, int count)
+    public void GetArray(string?[] val, int count)
     {
       // Attribute must be readed before ReadStartElement
       if (count > 0)
@@ -604,7 +614,7 @@ namespace Altaxo.Serialization.Xml
 #if !NONULLSTRICTCHECK
       return GetValueOrNull(parentobject) ?? throw new DeserializationNullException(name, parentobject);
 #else
-      return GetValueOrNull(parentobject);
+      return GetValueOrNull(parentobject)!;
 #endif
     }
 
@@ -613,7 +623,7 @@ namespace Altaxo.Serialization.Xml
       return GetValueOrNull(parentobject);
     }
 
-    public T GetValue<T>(string name, object? parentObject)
+    public T GetValue<T>(string name, object? parentObject) where T : notnull
     {
 
 #if !NONULLSTRICTCHECK
@@ -641,12 +651,24 @@ namespace Altaxo.Serialization.Xml
               throw new DeserializationException($"Name: {name}, Parent: {parentObject}, Type unexpected: Current: {o?.GetType()} but expected: {typeof(T)}");
     }
 
+    public T? GetNullableStruct<T>(string name, object? parentObject) where T : struct
+    {
+      var o = GetValueOrNull(parentObject);
+
+      return o switch
+      {
+        null => (T?)null,
+        T t => t,
+        _ => throw new DeserializationException($"Name: {name}, Parent: {parentObject}, Type unexpected: Current: {o?.GetType()} but expected: {typeof(T)}")
+      };
+    }
+
 
     public object? GetValueOrNull(object? parentobject)
     {
-      string type = _xmlReader.GetAttribute("Type");
+      var type = _xmlReader.GetAttribute("Type");
 
-      if (null != type)
+      if (type is not null)
       {
         if ("UndefinedValue" == type)
         {
@@ -695,9 +717,9 @@ namespace Altaxo.Serialization.Xml
     public object? GetValueOrOuterXml(string name, object parentobject, out bool returnValueIsOuterXml)
     {
       returnValueIsOuterXml = false;
-      string type = _xmlReader.GetAttribute("Type");
+      var type = _xmlReader.GetAttribute("Type");
 
-      if (null != type)
+      if (type is not null)
       {
         if ("UndefinedValue" == type)
         {
@@ -737,7 +759,7 @@ namespace Altaxo.Serialization.Xml
 
 
 
-    public void GetBaseValueEmbedded(object instance, System.Type basetype, object parent)
+    public void GetBaseValueEmbedded(object instance, System.Type basetype, object? parent)
     {
       if ("BaseType" == CurrentElementName)
       {
@@ -757,11 +779,12 @@ namespace Altaxo.Serialization.Xml
       }
     }
 
+
     /// <summary>Deserializes the embedded base type.</summary>
     /// <param name="instance">The instance of the object to deserialize.</param>
     /// <param name="fullyQualifiedBaseTypeName">Fully qualified base type name. It is the short name of the assembly, comma, the full type name, comma, and the version. The string must not contain whitespaces. Example: 'AltaxoBase,SampleFileRenamer.Main.DocumentPath,0'.</param>
     /// <param name="parent">The parent object of the current object to deserialize.</param>
-    public object GetBaseValueEmbedded(object instance, string fullyQualifiedBaseTypeName, object parent)
+    public object? GetBaseValueEmbeddedOrNull(object instance, string fullyQualifiedBaseTypeName, object? parent)
     {
       object? obj;
       if ("BaseType" == CurrentElementName)
@@ -780,13 +803,11 @@ namespace Altaxo.Serialization.Xml
           throw new DeserializationException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", fullyQualifiedBaseTypeName));
       }
 
-      if (obj is null)
-        throw new DeserializationException($"{nameof(GetBaseValueEmbedded)} with Type={fullyQualifiedBaseTypeName} resulted in deserializing null");
 
       return obj;
     }
 
-    public void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent)
+    public void GetBaseValueStandalone(string name, object instance, System.Type basetype, object? parent)
     {
       if (_surrogateSelector.GetSurrogate(basetype) is { } ss)
       {

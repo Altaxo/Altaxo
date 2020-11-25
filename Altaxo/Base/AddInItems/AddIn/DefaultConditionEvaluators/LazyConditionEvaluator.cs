@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using Altaxo.Main.Services;
 
@@ -40,17 +41,17 @@ namespace Altaxo.AddInItems
 
     public LazyConditionEvaluator(AddIn addIn, Properties properties)
     {
-      if (addIn == null)
+      if (addIn is null)
         throw new ArgumentNullException("addIn");
       this.addIn = addIn;
       name = properties["name"];
       className = properties["class"];
     }
 
-    public bool IsValid(object parameter, Condition condition)
+    public bool IsValid(object? parameter, Condition condition)
     {
-      var evaluator = (IConditionEvaluator)addIn.CreateObject(className);
-      if (evaluator == null)
+      var evaluator = (IConditionEvaluator?)addIn.CreateObject(className);
+      if (evaluator is null)
         return false;
       addIn.AddInTree.ConditionEvaluators[name] = evaluator;
       return evaluator.IsValid(parameter, condition);

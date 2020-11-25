@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -194,7 +195,7 @@ namespace Altaxo.Graph.Gdi
     /// <exception cref="ArgumentException">Polyline must have at least 2 points - polyline</exception>
     public static double TotalLineLength(this PointF[] polyline)
     {
-      if (null == polyline)
+      if (polyline is null)
         throw new ArgumentNullException(nameof(polyline));
       if (polyline.Length < 2)
         throw new ArgumentException("Polyline must have at least 2 points", nameof(polyline));
@@ -226,7 +227,7 @@ namespace Altaxo.Graph.Gdi
     /// <exception cref="ArgumentException">Polyline must have at least 2 points - polyline</exception>
     public static double TotalLineLength(this PointF[] polyline, int startIdx, int count)
     {
-      if (null == polyline)
+      if (polyline is null)
         throw new ArgumentNullException(nameof(polyline));
       if (count < 2)
         throw new ArgumentException("Polyline must have at least 2 points", nameof(polyline));
@@ -276,9 +277,9 @@ namespace Altaxo.Graph.Gdi
     /// <param name="marginAtStart">The margin at start. Either an absolute value, or relative to the total length of the polyline.</param>
     /// <param name="marginAtEnd">The margin at end. Either an absolute value, or relative to the total length of the polyline.</param>
     /// <returns>A new, shortened polyline. If the shortened line would have zero or negative length, <c>null</c> is returned.</returns>
-    public static PointF[] ShortenedBy(this PointF[] polyline, RADouble marginAtStart, RADouble marginAtEnd)
+    public static PointF[]? ShortenedBy(this PointF[] polyline, RADouble marginAtStart, RADouble marginAtEnd)
     {
-      if (null == polyline)
+      if (polyline is null)
         throw new ArgumentNullException(nameof(polyline));
       if (polyline.Length < 2)
         throw new ArgumentException("Polyline must have at least 2 points", nameof(polyline));
@@ -364,9 +365,9 @@ namespace Altaxo.Graph.Gdi
     /// <param name="marginAtStart">The margin at start. Either an absolute value, or relative to the total length of the polyline.</param>
     /// <param name="marginAtEnd">The margin at end. Either an absolute value, or relative to the total length of the polyline.</param>
     /// <returns>A new, shortened polyline. If the shortened line would have zero or negative length, <c>null</c> is returned.</returns>
-    public static PointF[] ShortenedBy(this PointF[] polyline, int startIdx, int count, RADouble marginAtStart, RADouble marginAtEnd)
+    public static PointF[]? ShortenedBy(this PointF[] polyline, int startIdx, int count, RADouble marginAtStart, RADouble marginAtEnd)
     {
-      if (null == polyline)
+      if (polyline is null)
         throw new ArgumentNullException(nameof(polyline));
       if (count < 2)
         throw new ArgumentException("Polyline must have at least 2 points", nameof(polyline));
@@ -566,7 +567,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="distanceFromStart">The distance of the start of the shortened polyline to the first point of the original polyline (at index 0).</param>
     /// <param name="distanceFromEnd">The distance of the end of the shortened polyline to the last point of the original polyline (at index <paramref name="points"/>.Length-1).</param>
     /// <returns>The shortened polyline, or null if the polyline was shortened to zero length.</returns>
-    public static PointF[] ShortenPolylineByDistanceFromStartAndEnd(this PointF[] points, double distanceFromStart, double distanceFromEnd)
+    public static PointF[]? ShortenPolylineByDistanceFromStartAndEnd(this PointF[] points, double distanceFromStart, double distanceFromEnd)
     {
       return ShortenPartialPolylineByDistanceFromStartAndEnd(points, 0, points.Length - 1, distanceFromStart, distanceFromEnd);
     }
@@ -581,7 +582,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="distanceFromStart">The distance of the start of the shortened polyline to the first point of the original polyline (at index 0).</param>
     /// <param name="distanceFromEnd">The distance of the end of the shortened polyline to the last point of the original polyline (at index <paramref name="points"/>.Length-1).</param>
     /// <returns>The shortened polyline, or null if the polyline was shortened to zero length.</returns>
-    public static PointF[] ShortenPartialPolylineByDistanceFromStartAndEnd(this PointF[] points, int startIndex, int endIndex, double distanceFromStart, double distanceFromEnd)
+    public static PointF[]? ShortenPartialPolylineByDistanceFromStartAndEnd(this PointF[] points, int startIndex, int endIndex, double distanceFromStart, double distanceFromEnd)
     {
       var fractionalIndexStart = GetFractionalIndexFromDistanceFromStartOfPartialPolylineCurve(points, startIndex, endIndex, distanceFromStart);
       if (double.IsNaN(fractionalIndexStart))
@@ -630,7 +631,7 @@ namespace Altaxo.Graph.Gdi
 
     #endregion Polyline constituted by an array of PointF
 
-    #region String Alignement
+    #region String Alignment
 
     public static Altaxo.Drawing.Alignment ToAltaxo(System.Drawing.StringAlignment alignment)
     {
@@ -1074,7 +1075,7 @@ namespace Altaxo.Graph.Gdi
       return double.NaN;
     }
 
-    public static PointF[] ShortenBezierCurve(PointF[] points, double distanceFromStart, double distanceFromEnd)
+    public static PointF[]? ShortenBezierCurve(PointF[] points, double distanceFromStart, double distanceFromEnd)
     {
       int totalSegments = (points.Length - 1) / 3;
       double fractionalIndexStart = 0;

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -31,6 +32,7 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Plot
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Main;
   using Graph;
   using Graph.Plot.Groups;
@@ -44,15 +46,17 @@ namespace Altaxo.Graph.Graph3D.Plot
     IGPlotItem,
     Main.INamedObjectCollection
   {
+    protected void CopyFrom(PlotItem from, bool withBaseMembers)
+    {
+    }
+
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
-
-      var from = obj as PlotItem;
-      if (null != from)
+      if(obj is PlotItem from)
       {
-        //this._parent = from._parent;
+        CopyFrom(from, true);
         return true;
       }
       return false;
@@ -91,7 +95,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <param name="previousPlotItem">Previous plot item.</param>
     /// <param name="nextPlotItem">Next plot item.</param>
     /// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
-    public abstract void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
+    public abstract void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext context, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem);
 
     /// <summary>
     /// Called after painting has finished. Can be used to release resources. Must be overridden by a derived class.
@@ -115,7 +119,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <remarks>The data (DataColumns which belongs to a table in the document's DataTableCollection) are not cloned, only the reference to this columns is cloned.</remarks>
     public abstract object Clone();
 
-    public virtual PlotItemCollection ParentCollection
+    public virtual PlotItemCollection? ParentCollection
     {
       get
       {
@@ -123,6 +127,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    [MaybeNull]
     IGPlotItem INodeWithParentNode<IGPlotItem>.ParentNode
     {
       get
@@ -131,15 +136,16 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
     }
 
+    static readonly IList<IGPlotItem> _emptyChildList = new List<IGPlotItem>().AsReadOnly();
     IList<IGPlotItem> ITreeListNode<IGPlotItem>.ChildNodes
     {
       get
       {
-        return null; // PlotItems don't have parent nodes.
+        return _emptyChildList; // PlotItems don't have parent nodes.
       }
     }
 
-    IEnumerable<IGPlotItem> ITreeNode<IGPlotItem>.ChildNodes
+    IEnumerable<IGPlotItem>? ITreeNode<IGPlotItem>.ChildNodes
     {
       get
       {
@@ -157,7 +163,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// True if the event will not change the state of the object and the handling of the event is completely done. Thus, if returning <c>true</c>, the object is considered as 'not changed'.
     /// If in doubt, return <c>false</c>. This will allow the further processing of the event.
     /// </returns>
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, StyleObject) && e == EventArgs.Empty)
         e = PlotItemStyleChangedEventArgs.Empty;
@@ -174,7 +180,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
     /// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
-    public virtual IHitTestObject HitTest(IPlotArea layer, HitTestPointData hitpoint)
+    public virtual IHitTestObject? HitTest(IPlotArea layer, HitTestPointData hitpoint)
     {
       return null;
     }

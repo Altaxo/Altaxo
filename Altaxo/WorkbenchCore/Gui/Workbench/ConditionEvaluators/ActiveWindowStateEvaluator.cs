@@ -36,12 +36,12 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public class ActiveWindowStateConditionEvaluator : IConditionEvaluator
   {
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object? caller, Condition condition)
     {
-      var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
+      var workbench = Altaxo.Current.GetRequiredService<Workbench.IWorkbenchEx>();
 
       var activeWorkbenchWindow = workbench.ActiveViewContent;
-      if (activeWorkbenchWindow == null)
+      if (activeWorkbenchWindow is null)
       {
         return false;
       }
@@ -90,12 +90,12 @@ namespace Altaxo.Gui.Workbench
       return isWindowStateOk;
     }
 
-    private static bool IsUntitled(IFileViewContent viewContent)
+    private static bool IsUntitled(IFileViewContent? viewContent)
     {
-      if (viewContent == null)
+      if (viewContent is null)
         return false;
       OpenedFile file = viewContent.PrimaryFile;
-      if (file == null)
+      if (file is null)
         return false;
       else
         return file.IsUntitled;
@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Workbench
 
     private static bool IsViewOnly(IViewContent viewContent)
     {
-      return viewContent != null && viewContent.IsViewOnly;
+      return viewContent is not null && viewContent.IsViewOnly;
     }
   }
 }

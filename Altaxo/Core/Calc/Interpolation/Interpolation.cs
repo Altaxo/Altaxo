@@ -134,7 +134,7 @@ namespace Altaxo.Calc.Interpolation
 
   public static class EmptyArrays
   {
-    private static ConcurrentDictionary<Type, object> _dict = new ConcurrentDictionary<Type, object>();
+    private static readonly ConcurrentDictionary<Type, object> _dict = new ConcurrentDictionary<Type, object>();
     public static T[] Empty<T>()
     {
       if (_dict.TryGetValue(typeof(T), out var o))
@@ -636,9 +636,9 @@ namespace Altaxo.Calc.Interpolation
 
     public void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
-      if (null == _x)
+      if (_x is null)
         _x = new DoubleVector();
-      if (null == _y)
+      if (_y is null)
         _y = new DoubleVector();
 
       _x.CopyFrom(xvec);

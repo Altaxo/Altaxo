@@ -125,7 +125,6 @@ namespace Altaxo.Gui.CodeEditing
       public SyntaxItem(SyntaxNode syntax)
       {
         SyntaxNode = syntax;
-        var glyph = Glyph.FieldPublic;
 
         int modifierIndex = 0;
 
@@ -464,7 +463,7 @@ namespace Altaxo.Gui.CodeEditing
 
     private void JumpTo(TextSpan location)
     {
-      if (null != location)
+      if (!location.IsEmpty)
       {
         JumpAction?.Invoke(location.Start);
       }

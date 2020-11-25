@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,25 +28,23 @@ namespace Altaxo.AddInItems
 {
   public sealed class AddIn
   {
-    private IAddInTree addInTree;
-    private Properties properties = new Properties();
-    private List<Runtime> runtimes = new List<Runtime>();
-    private List<string> bitmapResources = new List<string>();
-    private List<string> stringResources = new List<string>();
+    private IAddInTree _addInTree;
+    private Properties _properties = new Properties();
+    private List<Runtime> _runtimes = new List<Runtime>();
+    private List<string> _bitmapResources = new List<string>();
+    private List<string> _stringResources = new List<string>();
 
-    internal string addInFileName = null;
-    private AddInManifest manifest = new AddInManifest();
-    private Dictionary<string, ExtensionPath> paths = new Dictionary<string, ExtensionPath>();
-    private AddInAction action = AddInAction.Disable;
-    private bool enabled;
+    internal string? _addInFileName = null;
+    private AddInManifest _manifest = new AddInManifest();
+    private Dictionary<string, ExtensionPath> _paths = new Dictionary<string, ExtensionPath>();
+    private AddInAction _action = AddInAction.Disable;
+    private bool _enabled;
 
-    private static bool hasShownErrorMessage = false;
+    private static bool _hasShownErrorMessage = false;
 
     internal AddIn(IAddInTree addInTree)
     {
-      if (addInTree == null)
-        throw new ArgumentNullException("addInTree");
-      this.addInTree = addInTree;
+      _addInTree = addInTree ?? throw new ArgumentNullException(nameof(addInTree));
     }
 
     /// <summary>
@@ -53,21 +52,21 @@ namespace Altaxo.AddInItems
     /// </summary>
     public IAddInTree AddInTree
     {
-      get { return addInTree; }
+      get { return _addInTree; }
     }
 
-    public object CreateObject(string className)
+    public object? CreateObject(string className)
     {
-      Type t = FindType(className);
-      if (t != null)
+      Type? t = FindType(className);
+      if (t is not null)
         return Activator.CreateInstance(t);
       else
         return null;
     }
 
-    public Type FindType(string className)
+    public Type? FindType(string className)
     {
-      foreach (Runtime runtime in runtimes)
+      foreach (Runtime runtime in _runtimes)
       {
         if (!runtime.IsHostApplicationAssembly)
         {
@@ -75,35 +74,35 @@ namespace Altaxo.AddInItems
           // This allows looking in host assemblies for service IDs.
           LoadDependencies();
         }
-        Type t = runtime.FindType(className);
-        if (t != null)
+        Type? t = runtime.FindType(className);
+        if (t is not null)
         {
           return t;
         }
       }
-      if (hasShownErrorMessage)
+      if (_hasShownErrorMessage)
       {
         Current.Log.Error("Cannot find class: " + className);
       }
       else
       {
-        hasShownErrorMessage = true;
+        _hasShownErrorMessage = true;
         var messageService = Altaxo.Current.GetRequiredService<IMessageService>();
         messageService.ShowError("Cannot find class: " + className + "\nFuture missing objects will not cause an error message.");
       }
       return null;
     }
 
-    public Stream GetManifestResourceStream(string resourceName)
+    public Stream? GetManifestResourceStream(string resourceName)
     {
       LoadDependencies();
-      foreach (Runtime runtime in runtimes)
+      foreach (Runtime runtime in _runtimes)
       {
-        Assembly assembly = runtime.LoadedAssembly;
-        if (assembly != null)
+        Assembly? assembly = runtime.LoadedAssembly;
+        if (assembly is not null)
         {
-          Stream s = assembly.GetManifestResourceStream(resourceName);
-          if (s != null)
+          Stream? s = assembly.GetManifestResourceStream(resourceName);
+          if (s is not null)
           {
             return s;
           }
@@ -115,7 +114,7 @@ namespace Altaxo.AddInItems
     public void LoadRuntimeAssemblies()
     {
       LoadDependencies();
-      foreach (Runtime runtime in runtimes)
+      foreach (Runtime runtime in _runtimes)
       {
         if (runtime.IsActive)
           runtime.Load();
@@ -136,7 +135,7 @@ namespace Altaxo.AddInItems
         Current.Log.Info("Loading addin " + Name);
 
         AssemblyLocator.Init();
-        foreach (AddInReference r in manifest.Dependencies)
+        foreach (AddInReference r in _manifest.Dependencies)
         {
           if (r.RequirePreload)
           {
@@ -164,19 +163,19 @@ namespace Altaxo.AddInItems
       return "[AddIn: " + Name + "]";
     }
 
-    private string customErrorMessage;
+    private string? customErrorMessage;
 
     /// <summary>
     /// Gets the message of a custom load error. Used only when AddInAction is set to CustomError.
     /// Settings this property to a non-null value causes Enabled to be set to false and
     /// Action to be set to AddInAction.CustomError.
     /// </summary>
-    public string CustomErrorMessage
+    public string? CustomErrorMessage
     {
       get { return customErrorMessage; }
       internal set
       {
-        if (value != null)
+        if (value is not null)
         {
           Enabled = false;
           Action = AddInAction.CustomError;
@@ -190,69 +189,69 @@ namespace Altaxo.AddInItems
     /// </summary>
     public AddInAction Action
     {
-      get { return action; }
-      set { action = value; }
+      get { return _action; }
+      set { _action = value; }
     }
 
     public IReadOnlyList<Runtime> Runtimes
     {
-      get { return runtimes; }
+      get { return _runtimes; }
     }
 
-    public Version Version
+    public Version? Version
     {
-      get { return manifest.PrimaryVersion; }
+      get { return _manifest.PrimaryVersion; }
     }
 
-    public string FileName
+    public string? FileName
     {
-      get { return addInFileName; }
-      set { addInFileName = value; }
+      get { return _addInFileName; }
+      set { _addInFileName = value; }
     }
 
     public string Name
     {
-      get { return properties["name"]; }
+      get { return _properties["name"]; }
     }
 
     public AddInManifest Manifest
     {
-      get { return manifest; }
+      get { return _manifest; }
     }
 
     public Dictionary<string, ExtensionPath> Paths
     {
-      get { return paths; }
+      get { return _paths; }
     }
 
     public Properties Properties
     {
-      get { return properties; }
+      get { return _properties; }
     }
 
     public List<string> BitmapResources
     {
-      get { return bitmapResources; }
-      set { bitmapResources = value; }
+      get { return _bitmapResources; }
+      set { _bitmapResources = value; }
     }
 
     public List<string> StringResources
     {
-      get { return stringResources; }
-      set { stringResources = value; }
+      get { return _stringResources; }
+      set { _stringResources = value; }
     }
 
     public bool Enabled
     {
-      get { return enabled; }
+      get { return _enabled; }
       set
       {
-        enabled = value;
+        _enabled = value;
         Action = value ? AddInAction.Enable : AddInAction.Disable;
       }
     }
 
-    private static void SetupAddIn(XmlReader reader, AddIn addIn, string hintPath)
+    private static void SetupAddIn(XmlReader reader, AddIn addIn, string? hintPath)
     {
       while (reader.Read())
       {
@@ -267,7 +266,9 @@ namespace Altaxo.AddInItems
                 throw new AddInLoadException("BitmapResources requires ONE attribute.");
               }
 
-              string filename = StringParser.Parse(reader.GetAttribute("file"));
+              var filename = reader.GetAttribute("file") ?? throw new InvalidOperationException($"Attribute 'file' is mandatory here!");
+              filename = StringParser.Parse(filename);
+
 
               if (reader.LocalName == "BitmapResources")
               {
@@ -277,12 +278,13 @@ namespace Altaxo.AddInItems
               {
                 addIn.StringResources.Add(filename);
               }
+
               break;
 
             case "Runtime":
               if (!reader.IsEmptyElement)
               {
-                addIn.runtimes.AddRange(Runtime.ReadSection(reader, addIn, hintPath));
+                addIn._runtimes.AddRange(Runtime.ReadSection(reader, addIn, hintPath));
               }
               break;
 
@@ -295,7 +297,7 @@ namespace Altaxo.AddInItems
               {
                 throw new AddInLoadException("Include nodes must be empty!");
               }
-              if (hintPath == null)
+              if (hintPath is null)
               {
                 throw new AddInLoadException("Cannot use include nodes when hintPath was not specified (e.g. when AddInManager reads a .addin file)!");
               }
@@ -307,7 +309,7 @@ namespace Altaxo.AddInItems
               };
               using (XmlReader includeReader = XmlTextReader.Create(fileName, xrs))
               {
-                SetupAddIn(includeReader, addIn, Path.GetDirectoryName(fileName));
+                SetupAddIn(includeReader, addIn, Path.GetDirectoryName(fileName) ?? throw new InvalidOperationException());
               }
               break;
 
@@ -337,16 +339,16 @@ namespace Altaxo.AddInItems
 
     public ExtensionPath GetExtensionPath(string pathName)
     {
-      if (!paths.ContainsKey(pathName))
+      if (!_paths.ContainsKey(pathName))
       {
-        return paths[pathName] = new ExtensionPath(pathName, this);
+        return _paths[pathName] = new ExtensionPath(pathName, this);
       }
-      return paths[pathName];
+      return _paths[pathName];
     }
 
-    public static AddIn Load(IAddInTree addInTree, TextReader textReader, string hintPath = null, XmlNameTable nameTable = null)
+    public static AddIn Load(IAddInTree addInTree, TextReader textReader, string? hintPath = null, XmlNameTable? nameTable = null)
     {
-      if (nameTable == null)
+      if (nameTable is null)
         nameTable = new NameTable();
       try
       {
@@ -360,7 +362,7 @@ namespace Altaxo.AddInItems
               switch (reader.LocalName)
               {
                 case "AddIn":
-                  addIn.properties = Properties.ReadFromAttributes(reader);
+                  addIn._properties = Properties.ReadFromAttributes(reader);
                   SetupAddIn(reader, addIn, hintPath);
                   break;
 
@@ -378,14 +380,14 @@ namespace Altaxo.AddInItems
       }
     }
 
-    public static AddIn Load(IAddInTree addInTree, string fileName, XmlNameTable nameTable = null)
+    public static AddIn Load(IAddInTree addInTree, string fileName, XmlNameTable? nameTable = null)
     {
       try
       {
         using (TextReader textReader = File.OpenText(fileName))
         {
           AddIn addIn = Load(addInTree, textReader, Path.GetDirectoryName(fileName), nameTable);
-          addIn.addInFileName = fileName;
+          addIn._addInFileName = fileName;
           return addIn;
         }
       }
@@ -406,7 +408,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        if (FileUtility.IsBaseDirectory(FileUtility.ApplicationRootPath, FileName))
+        if (!string.IsNullOrEmpty(FileName) && FileUtility.IsBaseDirectory(FileUtility.ApplicationRootPath, FileName))
         {
           string hidden = Properties["addInManagerHidden"];
           return string.Equals(hidden, "true", StringComparison.OrdinalIgnoreCase)

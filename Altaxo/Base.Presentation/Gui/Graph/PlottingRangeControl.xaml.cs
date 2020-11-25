@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,13 +45,13 @@ namespace Altaxo.Gui.Graph
 
     private void _edFrom_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_Changed(_edFrom.Value, _edTo.Value);
     }
 
     private void _edTo_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
     {
-      if (_controller != null)
+      if (_controller is not null)
         _controller.EhView_Changed(_edFrom.Value, _edTo.Value);
     }
 

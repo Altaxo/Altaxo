@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -168,7 +169,7 @@ namespace Altaxo.Main.Services
           {
             if (_items.TryDequeue(out var dueTime, out var action, out var token))
             {
-              if (null != action)
+              if (action is not null)
                 Task.Factory.StartNew(() => action(token, dueTime)); // Execute the action in a new task
             }
           }

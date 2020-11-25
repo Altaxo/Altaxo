@@ -29,7 +29,8 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public static class FileIconService
   {
-    private static Dictionary<string, Bitmap> bitmapCache = new Dictionary<string, Bitmap>();
+    private static Dictionary<string, Bitmap> _bitmapCache = new Dictionary<string, Bitmap>();
+    private static Bitmap? _defaultBitmap;
 
     /// <summary>
     /// Returns a bitmap from the file system. Placeholders like ${SharpDevelopBinPath}
@@ -45,19 +46,38 @@ namespace Altaxo.Gui.Workbench
     /// </param>
     public static Bitmap GetBitmap(string name)
     {
-      Bitmap bmp = null;
+      Bitmap? bmp = null;
       if (IsFileImage(name))
       {
-        lock (bitmapCache)
+        lock (_bitmapCache)
         {
-          if (bitmapCache.TryGetValue(name, out bmp))
+          if (_bitmapCache.TryGetValue(name, out bmp))
             return bmp;
           string fileName = StringParser.Parse(name.Substring(5, name.Length - 5));
           bmp = (Bitmap)Image.FromFile(fileName);
-          bitmapCache[name] = bmp;
+          _bitmapCache[name] = bmp;
         }
       }
-      return bmp;
+      return bmp ?? GetDefaultBitmap();
+    }
+
+    public static Bitmap GetDefaultBitmap()
+    {
+      if (_defaultBitmap is { } defBmp)
+      {
+        return defBmp;
+      }
+      else
+      {
+        var bmp = new Bitmap(16, 16);
+        using (var g = Graphics.FromImage(bmp))
+        {
+          g.DrawLine(Pens.Red, 0, 0, 16, 16);
+          g.DrawLine(Pens.Red, 0, 16, 16, 0);
+        }
+        System.Threading.Interlocked.Exchange(ref _defaultBitmap, bmp);
+        return bmp;
+      }
     }
 
     public static bool IsFileImage(string name)

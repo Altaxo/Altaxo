@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,7 +69,7 @@ namespace Altaxo.Com
 
       Document = graphDocument;
 
-      if (null != fileComObject)
+      if (fileComObject is not null)
       {
         fileComObject.FileMonikerChanged += EhFileMonikerChanged;
         EhFileMonikerChanged(fileComObject.FileMoniker);
@@ -124,7 +125,7 @@ namespace Altaxo.Com
         if (object.ReferenceEquals(_document, value))
           return;
 
-        if (null != _document)
+        if (_document is not null)
         {
           _document.Changed -= EhDocumentChanged;
         }
@@ -132,7 +133,7 @@ namespace Altaxo.Com
         var oldValue = _document;
         _document = value;
 
-        if (null != _document)
+        if (_document is not null)
         {
           _document.Changed += EhDocumentChanged;
         }
@@ -164,7 +165,7 @@ namespace Altaxo.Com
 
     private void EhFileMonikerChanged(IMoniker fileMoniker)
     {
-      if (null == _document)
+      if (_document is null)
         return;
 
       // see Brockschmidt, Inside Ole 2nd ed., p.998
@@ -173,14 +174,14 @@ namespace Altaxo.Com
       RunningObjectTableHelper.ROTUnregister(ref _documentMonikerRotCookie);
       _documentMoniker = null;
 
-      if (null != fileMoniker)
+      if (fileMoniker is not null)
       {
         Ole32Func.CreateItemMoniker("!", DataObjectHelper.NormalStringToMonikerNameString(_document.Name), out var itemMoniker);
 
-        if (null != itemMoniker)
+        if (itemMoniker is not null)
         {
           fileMoniker.ComposeWith(itemMoniker, false, out var compositeMoniker);
-          if (null != compositeMoniker)
+          if (compositeMoniker is not null)
           {
             _documentMoniker = compositeMoniker;
             RunningObjectTableHelper.ROTRegisterAsRunning(_documentMoniker, this, ref _documentMonikerRotCookie, typeof(IOleObject));
@@ -239,7 +240,7 @@ namespace Altaxo.Com
         }
 
         // Allow linking, where we have a moniker.
-        if (Moniker != null)
+        if (Moniker is not null)
         {
           renderings.Add(new Rendering(DataObjectHelper.CF_LINKSOURCE, TYMED.TYMED_ISTREAM, RenderLink));
           renderings.Add(new Rendering(DataObjectHelper.CF_LINKSRCDESCRIPTOR, TYMED.TYMED_HGLOBAL, GraphDocumentDataObject.RenderLinkedObjectDescriptor));
@@ -298,7 +299,7 @@ namespace Altaxo.Com
       if (format.cfFormat == DataObjectHelper.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0)
       {
         var moniker = Moniker;
-        if (null != moniker)
+        if (moniker is not null)
         {
           medium.tymed = TYMED.TYMED_ISTREAM;
           medium.pUnkForRelease = null;
@@ -417,7 +418,7 @@ namespace Altaxo.Com
             if ((int)OLEIVERB.OLEIVERB_OPEN == iVerb)
               ComDebug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_OPEN", GetType().Name);
             _comManager.ApplicationAdapter.ShowMainWindow();
-            if (pActiveSite != null)
+            if (pActiveSite is not null)
             {
               ComDebug.ReportInfo("{0}.IOleObject.DoVerb -> calling ClientSite.ShowObject()", GetType().Name);
               try

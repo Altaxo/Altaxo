@@ -70,7 +70,7 @@ namespace Altaxo.Main
 
       public Graph3DDisplayBindingDescriptor(Codon codon, Type projectItemType, Type viewContentType)
       {
-        if (codon == null)
+        if (codon is null)
           throw new ArgumentNullException(nameof(codon));
 
         _codon = codon;

@@ -22,21 +22,21 @@
 
 #endregion Copyright
 
-using System;
+#nullable enable
 
 namespace Altaxo.Gui.Common
 {
   [ExpectedTypeOfView(typeof(ISingleValueView))]
   public class TextValueInputController : IMVCAController
   {
-    private ISingleValueView _view;
+    private ISingleValueView? _view;
     private string _captionText;
 
     private string _initialContents;
     private string _contents;
     private bool _isContentsValid = true;
 
-    private IStringValidator _validator;
+    private IStringValidator? _validator;
 
     public TextValueInputController(string initialcontents, string description)
     {
@@ -47,25 +47,25 @@ namespace Altaxo.Gui.Common
 
     private void Initialize()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.DescriptionText = _captionText;
         _view.ValueText = _initialContents;
       }
     }
 
-    private ISingleValueView View
+    private ISingleValueView? View
     {
       get { return _view; }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.ValueText_Validating -= EhView_ValidatingValue1;
 
         _view = value;
         Initialize();
 
-        if (_view != null)
+        if (_view is not null)
           _view.ValueText_Validating += EhView_ValidatingValue1;
       }
     }
@@ -86,10 +86,10 @@ namespace Altaxo.Gui.Common
     {
       _isContentsValid = true;
       _contents = e.ValueToValidate;
-      if (_validator != null)
+      if (_validator is not null)
       {
-        string err = _validator.Validate(_contents);
-        if (null != err)
+        var err = _validator.Validate(_contents);
+        if (err is not null)
         {
           _isContentsValid = false;
           e.AddError(err);
@@ -98,7 +98,7 @@ namespace Altaxo.Gui.Common
       }
       else // if no validating handler, use some default validation
       {
-        if (null == _contents || 0 == _contents.Length)
+        if (_contents is null || 0 == _contents.Length)
         {
           _isContentsValid = false;
           e.AddError("You have to enter a value!");
@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Common
       /// </summary>
       /// <param name="txt">The text entered by the user.</param>
       /// <returns>Null if this input is valid, error message else.</returns>
-      string Validate(string txt);
+      string? Validate(string txt);
     }
 
     /// <summary>
@@ -140,9 +140,9 @@ namespace Altaxo.Gui.Common
         m_EmptyMessage = errmsg;
       }
 
-      public virtual string Validate(string txt)
+      public virtual string? Validate(string txt)
       {
-        if (txt == null || txt.Trim().Length == 0)
+        if (txt is null || txt.Trim().Length == 0)
           return m_EmptyMessage;
         else
           return null;
@@ -153,7 +153,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {
@@ -161,11 +161,11 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.ValueText_Validating -= EhView_ValidatingValue1;
 
         _view = value as ISingleValueView;
-        if (_view != null)
+        if (_view is not null)
         {
           Initialize();
           _view.ValueText_Validating += EhView_ValidatingValue1;

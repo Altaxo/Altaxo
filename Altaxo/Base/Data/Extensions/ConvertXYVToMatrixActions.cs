@@ -22,12 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Altaxo.Collections;
-using Altaxo.Gui.Worksheet.Viewing;
 
 namespace Altaxo.Data
 {
@@ -37,11 +36,12 @@ namespace Altaxo.Data
     /// <summary>
     /// Creates a matrix from three selected columns. This must be a x-column, a y-column, and a value column.
     /// </summary>
-    /// <param name="ctrl">Controller where the columns are selected in.</param>
+    /// <param name="srcTable">The source table containing the columns.</param>
+    /// <param name="selectedDataColumns">Indices of the data columns that should be used.</param>
     /// <returns>Null if no error occurs, or an error message.</returns>
-    public static string DoMakeActionWithoutDialog(this DataTable srcTable, IAscendingIntegerCollection selectedDataColumns)
+    public static string? DoMakeActionWithoutDialog(this DataTable srcTable, IAscendingIntegerCollection selectedDataColumns)
     {
-      DataColumn xcol = null, ycol = null, vcol = null;
+      DataColumn? xcol = null, ycol = null, vcol = null;
 
       // for this command to work, there must be exactly 3 data columns selected
       int nCols = selectedDataColumns.Count;
@@ -64,7 +64,7 @@ namespace Altaxo.Data
           }
         }
 
-        if (xcol == null || ycol == null)
+        if (xcol is null || ycol is null)
           return "The selected columns must be a x-column, a y-column, and one or more value columns";
       }
       else
@@ -107,8 +107,8 @@ namespace Altaxo.Data
 
     public static void ShowActionDialog(this DataTable srcTable, IAscendingIntegerCollection selectedDataColumns)
     {
-      DataTableMultipleColumnProxy proxy = null;
-      ConvertXYVToMatrixOptions options = null;
+      DataTableMultipleColumnProxy? proxy = null;
+      ConvertXYVToMatrixOptions? options = null;
 
       try
       {
@@ -133,7 +133,7 @@ namespace Altaxo.Data
         proxy = dataAndOptions.Data;
         options = dataAndOptions.Options;
 
-        string error = null;
+        string? error = null;
         try
         {
           error = ConvertXYVToMatrix(dataAndOptions.Data, dataAndOptions.Options, destTable);
@@ -142,7 +142,7 @@ namespace Altaxo.Data
         {
           error = ex.ToString();
         }
-        if (null != error)
+        if (error is not null)
           Current.Gui.ErrorMessageBox(error);
 
         destTable.Name = srcTable.Name + "_Decomposed";
@@ -164,9 +164,11 @@ namespace Altaxo.Data
     /// <param name="options">The settings for decomposing.</param>
     /// <param name="destTable">The destination table. Any data will be removed before filling with the new data.</param>
     /// <returns>Null if the method finishes successfully, or an error information.</returns>
-    public static string ConvertXYVToMatrix(DataTableMultipleColumnProxy inputData, ConvertXYVToMatrixOptions options, DataTable destTable)
+    public static string? ConvertXYVToMatrix(DataTableMultipleColumnProxy inputData, ConvertXYVToMatrixOptions options, DataTable destTable)
     {
       var srcTable = inputData.DataTable;
+      if (srcTable is null) throw new InvalidOperationException($"No source table available for {nameof(ConvertXYVToMatrix)}");
+
 
       try
       {
@@ -180,13 +182,15 @@ namespace Altaxo.Data
       destTable.DataColumns.RemoveColumnsAll();
       destTable.PropCols.RemoveColumnsAll();
 
-      DataColumn srcXCol = inputData.GetDataColumnOrNull(ConvertXYVToMatrixDataAndOptions.ColumnX);
-      DataColumn srcYCol = inputData.GetDataColumnOrNull(ConvertXYVToMatrixDataAndOptions.ColumnY);
+      var srcXCol = inputData.GetDataColumnOrNull(ConvertXYVToMatrixDataAndOptions.ColumnX);
+      if (srcXCol is null) throw new InvalidOperationException($"No X-column available for {nameof(ConvertXYVToMatrix)}");
+      var srcYCol = inputData.GetDataColumnOrNull(ConvertXYVToMatrixDataAndOptions.ColumnY);
+      if (srcYCol is null) throw new InvalidOperationException($"No Y-column available for {nameof(ConvertXYVToMatrix)}");
 
       // X-Values
       IReadOnlyList<AltaxoVariant> clusterValuesX;
       IReadOnlyList<int> clusterIndicesX;
-      IReadOnlyList<double> clusterStdDevX = null;
+      IReadOnlyList<double>? clusterStdDevX = null;
       if (options.UseClusteringForX && options.NumberOfClustersX.HasValue && srcXCol is DoubleColumn srcXDbl)
         (clusterValuesX, clusterStdDevX, clusterIndicesX) = ClusterValuesByKMeans(srcXDbl, options.NumberOfClustersX.Value, options.DestinationXColumnSorting, options.CreateStdDevX);
       else
@@ -195,7 +199,7 @@ namespace Altaxo.Data
       // Y-Values
       IReadOnlyList<AltaxoVariant> clusterValuesY;
       IReadOnlyList<int> clusterIndicesY;
-      IReadOnlyList<double> clusterStdDevY = null;
+      IReadOnlyList<double>? clusterStdDevY = null;
       if (options.UseClusteringForY && options.NumberOfClustersY.HasValue && srcYCol is DoubleColumn srcYDbl)
         (clusterValuesY, clusterStdDevY, clusterIndicesY) = ClusterValuesByKMeans(srcYDbl, options.NumberOfClustersY.Value, options.DestinationYColumnSorting, options.CreateStdDevY);
       else
@@ -208,7 +212,7 @@ namespace Altaxo.Data
       srcColumnsToProcess.Remove(srcXCol);
       srcColumnsToProcess.Remove(srcYCol);
 
-      int xOffset = 1 + (clusterStdDevY != null ? 1 : 0);
+      int xOffset = 1 + (clusterStdDevY is not null ? 1 : 0);
       // the only property column that is now useful is that with the repeated values
       var destXCol = destTable.PropCols.EnsureExistence(srcTable.DataColumns.GetColumnName(srcXCol), srcXCol.GetType(), ColumnKind.X, 0);
       for (int i = 0; i < xOffset; ++i)
@@ -216,7 +220,7 @@ namespace Altaxo.Data
       for (int i = 0; i < clusterValuesX.Count; ++i)
         destXCol[i + xOffset] = clusterValuesX[i]; // leave index 0 and maybe 1for the y-column
 
-      if (clusterStdDevX != null)
+      if (clusterStdDevX is not null)
       {
         var stdXCol = destTable.PropCols.EnsureExistence(srcTable.DataColumns.GetColumnName(srcXCol) + "_StdDev", srcXCol.GetType(), ColumnKind.Err, 0);
         for (int i = 0; i < xOffset; ++i)
@@ -229,7 +233,7 @@ namespace Altaxo.Data
       for (int i = 0; i < clusterValuesY.Count; ++i)
         destYCol[i] = clusterValuesY[i]; // leave index 0 for the y-column
 
-      if (clusterStdDevY != null)
+      if (clusterStdDevY is not null)
       {
         var stdYCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(srcYCol) + "_StdDev", srcYCol.GetType(), ColumnKind.Err, 0);
         for (int i = 0; i < clusterStdDevY.Count; ++i)
@@ -295,14 +299,23 @@ namespace Altaxo.Data
       return null;
     }
 
-    public static (IReadOnlyList<AltaxoVariant> ClusterValues, IReadOnlyList<double> ClusterStdDev, IReadOnlyList<int> ClusterIndices) ClusterValuesByKMeans(DoubleColumn col, int numberOfClusters, SortDirection sortDirection, bool createStdDev)
+    /// <summary>
+    /// Clusters values by the k-means algorithm.
+    /// </summary>
+    /// <param name="col">The column containing the data to be clustered.</param>
+    /// <param name="numberOfClusters">The number of clusters to create.</param>
+    /// <param name="sortDirection">The sort direction of the cluster's centroids.</param>
+    /// <param name="createStdDev">If set to <c>true</c>, the standard deviation of each cluster will be calculated.</param>
+    /// <returns>A tuple containing i) the cluster centroid values, ii) the cluster's standard deviation (if calculated; otherwise null), and
+    /// iii) for each row of the source data column the index of the cluster.</returns>
+    public static (IReadOnlyList<AltaxoVariant> ClusterValues, IReadOnlyList<double>? ClusterStdDev, IReadOnlyList<int> ClusterIndices) ClusterValuesByKMeans(DoubleColumn col, int numberOfClusters, SortDirection sortDirection, bool createStdDev)
     {
       var clustering = new Altaxo.Calc.Clustering.KMeans_Double1D() { SortingOfClusterValues = sortDirection };
       clustering.Evaluate(col.ToROVector(), numberOfClusters);
       var resultList = new List<AltaxoVariant>(clustering.ClusterMeans.Select(x => new AltaxoVariant(x)));
       var resultIndices = clustering.ClusterIndices;
 
-      IReadOnlyList<double> resultStdDev = null;
+      IReadOnlyList<double>? resultStdDev = null;
       if (createStdDev)
       {
         resultStdDev = clustering.EvaluateClustersStandardDeviation();

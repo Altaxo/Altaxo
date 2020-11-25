@@ -22,8 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
+#nullable enable
 using System.IO;
 
 namespace Altaxo.Serialization.Ascii

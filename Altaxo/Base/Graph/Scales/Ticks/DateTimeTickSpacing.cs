@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Calc;
@@ -271,9 +273,19 @@ namespace Altaxo.Graph.Scales.Ticks
         return _unit == other._unit && _span == other._span;
       }
 
-      bool IEquatable<object>.Equals(object other)
+      bool IEquatable<object>.Equals(object? other)
       {
-        return (other is TimeSpanEx) ? Equals((TimeSpanEx)other) : false;
+        return (other is TimeSpanEx timeSpanEx) && Equals(timeSpanEx);
+      }
+
+      public override bool Equals(object? obj)
+      {
+        return obj is TimeSpanEx other && Equals(other);
+      }
+
+      public override int GetHashCode()
+      {
+        return _span.GetHashCode() + 13 * _unit.GetHashCode();
       }
 
       public static bool operator ==(TimeSpanEx x, TimeSpanEx y)
@@ -460,7 +472,7 @@ namespace Altaxo.Graph.Scales.Ticks
     private List<AltaxoVariant> _minorTicks;
 
     // Cached values
-    private CachedMajorMinor _cachedMajorMinor;
+    private CachedMajorMinor? _cachedMajorMinor;
 
     #region Serialization
 
@@ -472,18 +484,14 @@ namespace Altaxo.Graph.Scales.Ticks
         var s = (DateTimeTickSpacing)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DateTimeTickSpacing s = SDeserialize(o, info, parent);
-        return s;
-      }
-
-      protected virtual DateTimeTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        DateTimeTickSpacing s = null != o ? (DateTimeTickSpacing)o : new DateTimeTickSpacing();
+       var s = (DateTimeTickSpacing?)o ?? new DateTimeTickSpacing();
 
         return s;
       }
+
+      
     }
 
     #endregion Serialization
@@ -498,59 +506,62 @@ namespace Altaxo.Graph.Scales.Ticks
       _additionalMinorTicks = new AdditionalTicks() { ParentObject = this };
     }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public DateTimeTickSpacing(DateTimeTickSpacing from)
       : base(from) // everything is done here, since CopyFrom is virtual!
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as DateTimeTickSpacing;
-      if (null == from)
-        return false;
-
-      using (var suspendToken = SuspendGetToken())
+      if (obj is DateTimeTickSpacing from)
       {
-        CopyHelper.Copy(ref _cachedMajorMinor, from._cachedMajorMinor);
+        using (var suspendToken = SuspendGetToken())
+        {
+          CopyHelper.Copy(ref _cachedMajorMinor, from._cachedMajorMinor);
 
-        _userDefinedMajorSpan = from._userDefinedMajorSpan;
-        _userDefinedMinorTicks = from._userDefinedMinorTicks;
+          _userDefinedMajorSpan = from._userDefinedMajorSpan;
+          _userDefinedMinorTicks = from._userDefinedMinorTicks;
 
-        _targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
-        _targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
+          _targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
+          _targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
 
-        _orgGrace = from._orgGrace;
-        _endGrace = from._endGrace;
+          _orgGrace = from._orgGrace;
+          _endGrace = from._endGrace;
 
-        _snapOrgToTick = from._snapOrgToTick;
-        _snapEndToTick = from._snapEndToTick;
+          _snapOrgToTick = from._snapOrgToTick;
+          _snapEndToTick = from._snapEndToTick;
 
-        ChildCopyToMember(ref _suppressedMajorTicks, from._suppressedMajorTicks);
-        ChildCopyToMember(ref _suppressedMinorTicks, from._suppressedMinorTicks);
-        ChildCopyToMember(ref _additionalMajorTicks, from._additionalMajorTicks);
-        ChildCopyToMember(ref _additionalMinorTicks, from._additionalMinorTicks);
+          ChildCopyToMember(ref _suppressedMajorTicks, from._suppressedMajorTicks);
+          ChildCopyToMember(ref _suppressedMinorTicks, from._suppressedMinorTicks);
+          ChildCopyToMember(ref _additionalMajorTicks, from._additionalMajorTicks);
+          ChildCopyToMember(ref _additionalMinorTicks, from._additionalMinorTicks);
 
-        _majorTicks = new List<AltaxoVariant>(from._majorTicks);
-        _minorTicks = new List<AltaxoVariant>(from._minorTicks);
+          _majorTicks = new List<AltaxoVariant>(from._majorTicks);
+          _minorTicks = new List<AltaxoVariant>(from._minorTicks);
 
-        EhSelfChanged();
-        suspendToken.Resume();
+          EhSelfChanged();
+          suspendToken.Resume();
+        }
+        return true;
       }
-      return true;
+
+      return false;
     }
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _suppressedMajorTicks)
+      if (_suppressedMajorTicks is not null)
         yield return new Main.DocumentNodeAndName(_suppressedMajorTicks, "SuppressedMajorTicks");
-      if (null != _suppressedMinorTicks)
+      if (_suppressedMinorTicks is not null)
         yield return new Main.DocumentNodeAndName(_suppressedMinorTicks, "SuppressedMinorTicks");
-      if (null != _additionalMajorTicks)
+      if (_additionalMajorTicks is not null)
         yield return new Main.DocumentNodeAndName(_additionalMajorTicks, "AdditionalMajorTicks");
-      if (null != _additionalMinorTicks)
+      if (_additionalMinorTicks is not null)
         yield return new Main.DocumentNodeAndName(_additionalMinorTicks, "AdditionalMinorTicks");
     }
 
@@ -559,9 +570,9 @@ namespace Altaxo.Graph.Scales.Ticks
       return new DateTimeTickSpacing(this);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       else if (!(obj is DateTimeTickSpacing))
         return false;
@@ -733,35 +744,59 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    [AllowNull]
     public SuppressedTicks SuppressedMajorTicks
     {
       get
       {
         return _suppressedMajorTicks;
       }
+      protected set
+      {
+        _suppressedMajorTicks = value ?? new SuppressedTicks();
+        _suppressedMajorTicks.ParentObject = this;
+      }
     }
 
+    [AllowNull]
     public SuppressedTicks SuppressedMinorTicks
     {
       get
       {
         return _suppressedMinorTicks;
       }
+      protected set
+      {
+        _suppressedMinorTicks = value ?? new SuppressedTicks();
+        _suppressedMinorTicks.ParentObject = this;
+      }
     }
 
+    [AllowNull]
     public AdditionalTicks AdditionalMajorTicks
     {
       get
       {
         return _additionalMajorTicks;
       }
+      protected set
+      {
+        _additionalMajorTicks = value ?? new AdditionalTicks();
+        _additionalMajorTicks.ParentObject = this;
+      }
     }
 
+    [AllowNull]
     public AdditionalTicks AdditionalMinorTicks
     {
       get
       {
         return _additionalMinorTicks;
+      }
+      protected set
+      {
+        _additionalMinorTicks = value ?? new AdditionalTicks();
+        _additionalMinorTicks.ParentObject = this;
       }
     }
 
@@ -820,12 +855,12 @@ namespace Altaxo.Graph.Scales.Ticks
     {
       ConvertOrgEndToDateTimeValues(org, end, out var dorg, out var dend);
 
-      if (_cachedMajorMinor == null || _cachedMajorMinor.Org != dorg || _cachedMajorMinor.End != dend)
+      if (_cachedMajorMinor is null || _cachedMajorMinor.Org != dorg || _cachedMajorMinor.End != dend)
       {
         InternalPreProcessScaleBoundaries(ref dorg, ref dend, false, false); // make sure that _cachedMajorMinor is valid now
       }
 
-      if (!(null != _cachedMajorMinor))
+      if (_cachedMajorMinor is null)
         throw new InvalidProgramException();
 
       _majorTicks.Clear();
@@ -1021,7 +1056,7 @@ namespace Altaxo.Graph.Scales.Ticks
       propOrg = scaleOrg;
       propEnd = scaleEnd;
 
-      if (null != _userDefinedMajorSpan)
+      if (_userDefinedMajorSpan is not null)
       {
         majorSpan = _userDefinedMajorSpan.Value;
       }
@@ -1031,7 +1066,7 @@ namespace Altaxo.Graph.Scales.Ticks
       }
 
       minorTicks = majorSpan;
-      if (null != _userDefinedMinorTicks)
+      if (_userDefinedMinorTicks is not null)
       {
         var mticks = Math.Abs(_userDefinedMinorTicks.Value);
         if (mticks > 0)

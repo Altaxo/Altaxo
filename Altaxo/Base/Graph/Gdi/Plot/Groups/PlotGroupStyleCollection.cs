@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -37,7 +38,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     PlotGroupStyleCollectionBase,
     ICloneable // is already implemented in base but is hidden because of inheritance
   {
-    private ICoordinateTransformingGroupStyle _coordinateTransformingStyle;
+    private ICoordinateTransformingGroupStyle? _coordinateTransformingStyle;
 
     #region Serialization
 
@@ -47,19 +48,19 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PlotGroupStyleCollection)obj;
-        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
 
-        info.AddValue("TransformingStyle", s._coordinateTransformingStyle);
+        info.AddValueOrNull("TransformingStyle", s._coordinateTransformingStyle);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        PlotGroupStyleCollection s = null != o ? (PlotGroupStyleCollection)o : new PlotGroupStyleCollection();
+        var s = (PlotGroupStyleCollection?)o ?? new PlotGroupStyleCollection();
 
-        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType!, parent);
 
-        s._coordinateTransformingStyle = (ICoordinateTransformingGroupStyle)info.GetValue("TransformingStyle", s);
-        if (null != s._coordinateTransformingStyle)
+        s._coordinateTransformingStyle = info.GetValueOrNull<ICoordinateTransformingGroupStyle>("TransformingStyle", s);
+        if (s._coordinateTransformingStyle is not null)
           s._coordinateTransformingStyle.ParentObject = s;
 
         return s;
@@ -81,12 +82,12 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as PlotGroupStyleCollection;
 
-      if (null != from)
+      if (from is not null)
       {
         using (var suspendToken = SuspendGetToken())
         {
@@ -137,7 +138,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     /// <summary>
     /// Gets/sets the coordinate transforming style.
     /// </summary>
-    public ICoordinateTransformingGroupStyle CoordinateTransformingStyle
+    public ICoordinateTransformingGroupStyle? CoordinateTransformingStyle
     {
       get
       {

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace Altaxo.Graph.Graph2D
     /// <value>
     /// The standard font family (before resizing).
     /// </value>
-    public string OldStandardFontFamily { get; set; }
+    public string? OldStandardFontFamily { get; set; }
 
     /// <summary>
     /// Gets or sets the standard font size (before resizing).
@@ -107,7 +108,7 @@ namespace Altaxo.Graph.Graph2D
     /// <value>
     /// The new standard font family (after resizing).
     /// </value>
-    public string NewStandardFontFamily { get; set; }
+    public string? NewStandardFontFamily { get; set; }
 
     /// <summary>
     /// Gets or sets the new standard font size (after resizing).
@@ -201,7 +202,7 @@ namespace Altaxo.Graph.Graph2D
     {
       var context = doc.GetPropertyHierarchy();
 
-      var oldFont = context.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultFont);
+      var oldFont = context.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultFont) ?? throw new InvalidProgramException(); ;
 
       // calculate new line thickness
       var oldLineThickness = Altaxo.Graph.Gdi.GraphDocument.GetDefaultPenWidth(doc.GetPropertyHierarchy());

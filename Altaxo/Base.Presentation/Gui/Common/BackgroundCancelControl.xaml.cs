@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,22 +39,22 @@ namespace Altaxo.Gui.Common
   public partial class BackgroundCancelControl : UserControl
   {
     private const int TimerTick_ms = 100;
-    private System.Exception _threadException;
+    //private System.Exception _threadException;
     private System.Threading.Thread _thread;
     private IExternalDrivenBackgroundMonitor _monitor;
     private bool _wasCancelledByUser;
     private System.Windows.Threading.DispatcherTimer _timer;
     private int _showUpDownConter;
 
-    public event Action<bool> ExecutionFinished;
+    public event Action<bool>? ExecutionFinished;
 
-    public event Action StartDelayExpired;
+    public event Action? StartDelayExpired;
 
     public bool ExecutionInProgress
     {
       get
       {
-        return _thread != null && _thread.IsAlive;
+        return _thread?.IsAlive == true;
       }
     }
 
@@ -64,17 +65,17 @@ namespace Altaxo.Gui.Common
 
     public void StartExecution(Action<IProgressReporter> action, int milliSecondsUntilShowUp)
     {
-      if (_thread != null && _thread.IsAlive)
+      if (ExecutionInProgress)
         throw new ApplicationException("Background thread is still executed");
 
-      if (null != _timer)
+      if (_timer is not null)
         throw new ApplicationException("Timer is still active");
 
       _monitor = new ExternalDrivenBackgroundMonitor();
       _thread = new System.Threading.Thread(() => action(_monitor));
 
-      _btCancel.Visibility = _monitor != null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-      _btInterrupt.Visibility = _monitor == null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+      _btCancel.Visibility = _monitor is not null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+      _btInterrupt.Visibility = _monitor is null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
       _btAbort.Visibility = System.Windows.Visibility.Collapsed;
 
       _showUpDownConter = milliSecondsUntilShowUp / TimerTick_ms;
@@ -95,20 +96,20 @@ namespace Altaxo.Gui.Common
     {
       get
       {
-        return _threadException;
+        return null;
       }
     }
 
-    private void EhTimer(object sender, EventArgs e)
+    private void EhTimer(object? sender, EventArgs e)
     {
       if (_showUpDownConter == 0)
       {
-        if (null != StartDelayExpired)
+        if (StartDelayExpired is not null)
           StartDelayExpired();
       }
       _showUpDownConter--;
 
-      if (_monitor != null)
+      if (_monitor is not null)
       {
         if (_monitor.HasReportText)
         {
@@ -122,7 +123,7 @@ namespace Altaxo.Gui.Common
         _monitor.SetShouldReportNow();
       }
 
-      if (!_thread.IsAlive)
+      if (!ExecutionInProgress)
       {
         var timer = (System.Windows.Threading.DispatcherTimer)sender;
         timer.Tick -= EhTimer;
@@ -130,26 +131,14 @@ namespace Altaxo.Gui.Common
         _timer = null;
         _thread = null;
 
-        if (ExecutionFinished != null)
-          ExecutionFinished(_wasCancelledByUser ? false : true);
+        ExecutionFinished?.Invoke(_wasCancelledByUser ? false : true);
       }
-    }
-
-    private void EhInterruptClicked(object sender, RoutedEventArgs e)
-    {
-      if (_thread.IsAlive)
-      {
-        _wasCancelledByUser = true;
-        _thread.Interrupt();
-      }
-      _btInterrupt.Visibility = System.Windows.Visibility.Collapsed;
-      _btAbort.Visibility = System.Windows.Visibility.Visible;
     }
 
     private void EhCancelClicked(object sender, RoutedEventArgs e)
     {
       _wasCancelledByUser = true;
-      if (_monitor != null)
+      if (_monitor is not null)
       {
         _monitor.SetCancellationPending();
         _btCancel.Visibility = System.Windows.Visibility.Collapsed;
@@ -163,9 +152,22 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    private void EhInterruptClicked(object sender, RoutedEventArgs e)
+    {
+      if (ExecutionInProgress)
+      {
+        _wasCancelledByUser = true;
+        _thread.Interrupt();
+      }
+      _btInterrupt.Visibility = System.Windows.Visibility.Collapsed;
+      _btAbort.Visibility = System.Windows.Visibility.Visible;
+    }
+
+    
+
     private void EhAbortClicked(object sender, RoutedEventArgs e)
     {
-      if (_thread.IsAlive)
+      if (ExecutionInProgress)
       {
         _wasCancelledByUser = true;
         _thread.Abort();

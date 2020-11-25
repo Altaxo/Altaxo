@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -66,7 +67,7 @@ namespace Altaxo.Main
     /// <value>
     /// The project.
     /// </value>
-    public IProject Project { get; private set; }
+    public IProject? Project { get; private set; }
 
     /// <summary>
     /// Gets the kind of the project event.
@@ -76,8 +77,8 @@ namespace Altaxo.Main
     /// </value>
     public ProjectEventKind ProjectEventKind { get; private set; }
 
-    /// <summary>The name of the project after renaming.</summary>
-    public string NewName { get; private set; }
+    /// <summary>The name of the project after renaming. Null if no name is yet attached.</summary>
+    public string? NewName { get; private set; }
 
     /// <summary>
     /// Constructor.
@@ -85,7 +86,7 @@ namespace Altaxo.Main
     /// <param name="project">The project which was changed.</param>
     /// <param name="fileName">The file name of the project.</param>
     /// <param name="eventKind">The kind of the event.</param>
-    public ProjectEventArgs(IProject project, string fileName, ProjectEventKind eventKind)
+    public ProjectEventArgs(IProject? project, string? fileName, ProjectEventKind eventKind)
     {
       Project = project;
       NewName = fileName;
@@ -104,9 +105,9 @@ namespace Altaxo.Main
   public class ProjectRenamedEventArgs : ProjectEventArgs
   {
     /// <summary>
-    /// The name of the project before renaming.
+    /// The name of the project before renaming. Null if the project 
     /// </summary>
-    public string OldName { get; private set; }
+    public string? OldName { get; private set; }
 
     /// <summary>
     /// Constructor.
@@ -114,7 +115,7 @@ namespace Altaxo.Main
     /// <param name="renamedProject">The project renamed.</param>
     /// <param name="oldName">The old name of the project.</param>
     /// <param name="newName">The new name of the project.</param>
-    public ProjectRenamedEventArgs(IProject renamedProject, string oldName, string newName)
+    public ProjectRenamedEventArgs(IProject renamedProject, string? oldName, string? newName)
         : base(renamedProject, newName, ProjectEventKind.ProjectRenamed)
     {
       OldName = oldName;
@@ -130,12 +131,12 @@ namespace Altaxo.Main
     /// <summary>
     /// Getter / setter for the currently open project.
     /// </summary>
-    IProject CurrentProject { get; }
+    IProject? CurrentProject { get; }
 
     /// <summary>
     /// Gets the file name for the currently open project. Is null if the project has not got a file name for now.
     /// </summary>
-    PathName CurrentProjectFileName { get; }
+    PathName? CurrentProjectFileName { get; }
 
     /// <summary>
     /// Gets the object that represents the storage of the current project on disk. If the current project was opened as a COM object, the value is null.
@@ -143,7 +144,7 @@ namespace Altaxo.Main
     /// <value>
     /// The current project storage, if the project was opened from the file system. The value is null if the project was opened from a COM stream.
     /// </value>
-    IProjectArchiveManager CurrentProjectArchiveManager { get; }
+    IProjectArchiveManager? CurrentProjectArchiveManager { get; }
 
     /// <summary>
     /// Exchanges the current project archive manager without disposing the old manager. This function is intended to be used twice in succession:
@@ -151,7 +152,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="newManager">The new manager that becomes the current manager after this call.</param>
     /// <returns>The archive manager that is currently set.</returns>
-    IProjectArchiveManager ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(IProjectArchiveManager newManager);
+    IProjectArchiveManager? ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(IProjectArchiveManager? newManager);
 
 
 
@@ -163,13 +164,13 @@ namespace Altaxo.Main
     #region Opening a project
 
     /// <summary>
-    /// Opens a Altaxo project. If the current project is dirty, and <paramref name="withoutUserInteraction"/> is <c>false</c>, the user is ask to save the current project before.
+    /// Opens a Altaxo project. If the current project is dirty, and <paramref name="showUserInteraction"/> is <c>true</c>, the user is ask to save the current project before.
     /// </summary>
     /// <param name="pathName">Can be a <see cref="FileName"/>, if the project is file-based, or a <see cref="DirectoryName"/>, if the project is based on a directory.</param>
-    /// <param name="withoutUserInteraction">If <c>false</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see
-    /// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>true</c>, then the old document is forced
+    /// <param name="showUserInteraction">If <c>true</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see
+    /// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>false</c>, then the old document is forced
     /// to close (without saving). If there is a exception during opening, this exception is thrown.</param>
-    void OpenProject(PathName pathName, bool withoutUserInteraction);
+    void OpenProject(PathName pathName, bool showUserInteraction);
 
     /// <summary>
     /// Opens a project from an archive. This function is intended for opening the project from a COM stream on a freshly started application.
@@ -350,11 +351,13 @@ namespace Altaxo.Main
 
     public IEnumerable<string> ProjectFileExtensions => throw new NotImplementedException();
 
-    public event ProjectEventHandler ProjectOpened;
-    public event ProjectEventHandler ProjectClosed;
-    public event ProjectRenameEventHandler ProjectRenamed;
-    public event ProjectEventHandler ProjectDirtyChanged;
-    public event ProjectEventHandler ProjectChanged;
+#pragma warning disable CS0067
+    public event ProjectEventHandler? ProjectOpened;
+    public event ProjectEventHandler? ProjectClosed;
+    public event ProjectRenameEventHandler? ProjectRenamed;
+    public event ProjectEventHandler? ProjectDirtyChanged;
+    public event ProjectEventHandler? ProjectChanged;
+#pragma warning restore CS0067
 
     public void AskForSavingOfProject(CancelEventArgs e)
     {
@@ -386,7 +389,7 @@ namespace Altaxo.Main
       throw new NotImplementedException();
     }
 
-    public IProjectArchiveManager ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(IProjectArchiveManager newManager)
+    public IProjectArchiveManager? ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(IProjectArchiveManager? newManager)
     {
       throw new NotImplementedException();
     }
@@ -416,7 +419,7 @@ namespace Altaxo.Main
       throw new NotImplementedException();
     }
 
-    public void OpenProject(PathName pathName, bool withoutUserInteraction)
+    public void OpenProject(PathName pathName, bool showUserInteraction)
     {
       throw new NotImplementedException();
     }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +47,7 @@ namespace Altaxo.Gui.Common
     {
       var val = (DateTime)value;
 
-      if (null != _lastConvertedString && val == _lastConvertedValue)
+      if (_lastConvertedString is not null && val == _lastConvertedValue)
       {
         return _lastConvertedString;
       }
@@ -82,7 +83,7 @@ namespace Altaxo.Gui.Common
     {
       var s = (string)value;
 
-      if (null != _lastConvertedValue && s == _lastConvertedString)
+      if (_lastConvertedValue is not null && s == _lastConvertedString)
       {
         result = (DateTime)_lastConvertedValue;
         return ValidateSuccessfullyConvertedValue(result);

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace System.Drawing
@@ -42,7 +43,7 @@ namespace System.Drawing
             */
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       string val = info.GetNodeContent();
       var c = (Color)sm_Converter.ConvertFromInvariantString(val);
@@ -62,7 +63,7 @@ namespace System.Drawing
       info.AddValue("Height", s.Height);
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       float w = info.GetSingle("Width");
       float h = info.GetSingle("Height");
@@ -82,7 +83,7 @@ namespace System.Drawing
       info.AddValue("Y", s.Y);
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       float x = info.GetSingle("X");
       float y = info.GetSingle("Y");
@@ -104,7 +105,7 @@ namespace System.Drawing
       info.AddValue("Height", s.Height);
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       float x = info.GetSingle("X");
       float y = info.GetSingle("Y");

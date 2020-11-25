@@ -26,50 +26,50 @@ namespace Altaxo.Gui.Workbench
 {
   public class DefaultOptionPanelDescriptor : IOptionPanelDescriptor
   {
-    private string id = string.Empty;
-    private List<IOptionPanelDescriptor> optionPanelDescriptors = null;
-    private IOptionPanel optionPanel = null;
+    private string _id = string.Empty;
+    private List<IOptionPanelDescriptor>? _optionPanelDescriptors = null;
+    private IOptionPanel? _optionPanel = null;
 
     public string ID
     {
       get
       {
-        return id;
+        return _id;
       }
     }
 
     public string Label { get; set; }
 
-    public IEnumerable<IOptionPanelDescriptor> ChildOptionPanelDescriptors
+    public IEnumerable<IOptionPanelDescriptor>? ChildOptionPanelDescriptors
     {
       get
       {
-        return optionPanelDescriptors;
+        return _optionPanelDescriptors;
       }
     }
 
-    private AddIn addin;
-    private object owner;
-    private string optionPanelPath;
+    private AddIn? _addin;
+    private object? _owner;
+    private string? _optionPanelPath;
 
-    public IOptionPanel OptionPanel
+    public IOptionPanel? OptionPanel
     {
       get
       {
-        if (optionPanelPath != null)
+        if (_optionPanelPath is not null)
         {
-          if (optionPanel == null)
+          if (_optionPanel is null)
           {
-            optionPanel = (IOptionPanel)addin.CreateObject(optionPanelPath);
-            if (optionPanel != null)
+            _optionPanel = (IOptionPanel?)_addin?.CreateObject(_optionPanelPath);
+            if (_optionPanel is not null)
             {
-              optionPanel.Initialize(owner);
+              _optionPanel.Initialize(_owner);
             }
           }
-          optionPanelPath = null;
-          addin = null;
+          _optionPanelPath = null;
+          _addin = null;
         }
-        return optionPanel;
+        return _optionPanel;
       }
     }
 
@@ -77,28 +77,28 @@ namespace Altaxo.Gui.Workbench
     {
       get
       {
-        return optionPanelPath != null;
+        return _optionPanelPath is not null;
       }
     }
 
     public DefaultOptionPanelDescriptor(string id, string label)
     {
-      this.id = id;
+      this._id = id;
       Label = label;
     }
 
     public DefaultOptionPanelDescriptor(string id, string label, List<IOptionPanelDescriptor> dialogPanelDescriptors)
       : this(id, label)
     {
-      optionPanelDescriptors = dialogPanelDescriptors;
+      _optionPanelDescriptors = dialogPanelDescriptors;
     }
 
-    public DefaultOptionPanelDescriptor(string id, string label, AddIn addin, object owner, string optionPanelPath)
+    public DefaultOptionPanelDescriptor(string id, string label, AddIn addin, object? owner, string optionPanelPath)
       : this(id, label)
     {
-      this.addin = addin;
-      this.owner = owner;
-      this.optionPanelPath = optionPanelPath;
+      this._addin = addin;
+      this._owner = owner;
+      this._optionPanelPath = optionPanelPath;
     }
   }
 }

@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,15 +30,15 @@ namespace Altaxo.AddInItems
   /// </summary>
   public class ExtensionPath
   {
-    private string name;
-    private AddIn addIn;
-    private List<List<Codon>> codons = new List<List<Codon>>();
+    private string _name;
+    private AddIn _addIn;
+    private List<List<Codon>> _codons = new List<List<Codon>>();
 
     public AddIn AddIn
     {
       get
       {
-        return addIn;
+        return _addIn;
       }
     }
 
@@ -45,7 +46,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return name;
+        return _name;
       }
     }
 
@@ -54,7 +55,7 @@ namespace Altaxo.AddInItems
       get
       {
         return
-          from list in codons
+          from list in _codons
           from c in list
           select c;
       }
@@ -69,19 +70,19 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return codons.AsReadOnly();
+        return _codons.AsReadOnly();
       }
     }
 
     public ExtensionPath(string name, AddIn addIn)
     {
-      this.addIn = addIn;
-      this.name = name;
+      this._addIn = addIn;
+      this._name = name;
     }
 
     public static void SetUp(ExtensionPath extensionPath, XmlReader reader, string endElement)
     {
-      extensionPath.DoSetUp(reader, endElement, extensionPath.addIn);
+      extensionPath.DoSetUp(reader, endElement, extensionPath._addIn);
     }
 
     private void DoSetUp(XmlReader reader, string endElement, AddIn addIn)
@@ -100,7 +101,7 @@ namespace Altaxo.AddInItems
             else if (reader.LocalName == endElement)
             {
               if (innerCodons.Count > 0)
-                codons.Add(innerCodons);
+                _codons.Add(innerCodons);
               return;
             }
             break;
@@ -113,7 +114,9 @@ namespace Altaxo.AddInItems
             }
             else if (elementName == "ComplexCondition")
             {
-              conditionStack.Push(Condition.ReadComplexCondition(reader, addIn));
+              var cc = Condition.ReadComplexCondition(reader, addIn);
+              if (!(cc is null))
+                conditionStack.Push(cc);
             }
             else
             {
@@ -129,7 +132,7 @@ namespace Altaxo.AddInItems
         }
       }
       if (innerCodons.Count > 0)
-        codons.Add(innerCodons);
+        _codons.Add(innerCodons);
     }
   }
 }

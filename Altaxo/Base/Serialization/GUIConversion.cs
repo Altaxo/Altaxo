@@ -22,9 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -41,14 +43,15 @@ namespace Altaxo.Serialization
 
     static GUIConversion()
     {
-      if (null != Current.PropertyService)
+      _cultureSettings = System.Globalization.CultureInfo.InvariantCulture;
+      if (Current.PropertyService is not null)
       {
         Current.PropertyService.PropertyChanged += EhPropertyService_PropertyChanged;
         EhPropertyService_PropertyChanged(null, new PropertyChangedEventArgs(Altaxo.Settings.CultureSettings.PropertyKeyUICulture.GuidString));
       }
     }
 
-    private static void EhPropertyService_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    private static void EhPropertyService_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
       if (e.PropertyName == Altaxo.Settings.CultureSettings.PropertyKeyUICulture.GuidString)
       {
@@ -64,7 +67,7 @@ namespace Altaxo.Serialization
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
         _cultureSettings = value;
       }
@@ -74,7 +77,7 @@ namespace Altaxo.Serialization
     {
       int l = (int)Math.Floor(Math.Log10(Math.Abs(number)) / 3);
 
-      string pre = null;
+      string? pre = null;
       switch (l)
       {
         case -5:
@@ -118,14 +121,14 @@ namespace Altaxo.Serialization
           break;
       }
 
-      if (pre == null)
+      if (pre is null)
         return number.ToString() + " " + unit;
 
       double m = number / Math.Pow(10, 3 * l);
       return m.ToString(_cultureSettings) + " " + pre + unit;
     }
 
-    public static string ToNumberStringNullIfNaN(double val)
+    public static string? ToNumberStringNullIfNaN(double val)
     {
       if (double.IsNaN(val))
         return null;
@@ -263,7 +266,7 @@ namespace Altaxo.Serialization
 
     public static string ToString(double? val)
     {
-      if (val == null)
+      if (val is null)
         return string.Empty;
       else
         return ((double)val).ToString(_cultureSettings);
@@ -303,7 +306,7 @@ namespace Altaxo.Serialization
       return stb.ToString().TrimEnd();
     }
 
-    public static bool TryParseMultipleDouble(string s, out double[] vals)
+    public static bool TryParseMultipleDouble(string s, [MaybeNullWhen(false)] out double[] vals)
     {
       vals = null;
       bool failed = false;
@@ -320,10 +323,14 @@ namespace Altaxo.Serialization
       }
 
       if (failed)
+      {
         return false;
-
-      vals = result;
-      return true;
+      }
+      else
+      {
+        vals = result;
+        return true;
+      }
     }
 
     #endregion Double
@@ -348,7 +355,7 @@ namespace Altaxo.Serialization
 
     public static string ToString(int? val)
     {
-      if (val == null)
+      if (val is null)
         return string.Empty;
       else
         return ((int)val).ToString(_cultureSettings);
@@ -376,7 +383,7 @@ namespace Altaxo.Serialization
       return stb.ToString().TrimEnd();
     }
 
-    public static bool TryParseMultipleInt32(string s, out int[] vals)
+    public static bool TryParseMultipleInt32(string s, [MaybeNullWhen(false)] out int[] vals)
     {
       vals = null;
       bool failed = false;
@@ -454,7 +461,7 @@ namespace Altaxo.Serialization
     {
       var list = new Altaxo.Collections.SelectableListNodeList();
       Type enumtype = value.GetType();
-      foreach (Enum v in Enum.GetValues(enumtype))
+      foreach (var v in Enum.GetValues(enumtype).OfType<Enum>())
       {
         string name = Current.Gui.GetUserFriendlyName(v);
         list.Add(new Altaxo.Collections.SelectableListNode(name, v, Enum.Equals(v, value)));

@@ -43,21 +43,21 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     private void EhCopyImageToClipboard(object sender, RoutedEventArgs e)
     {
-      if (null != CopyImageToClipboard)
+      if (CopyImageToClipboard is not null)
         CopyImageToClipboard();
     }
 
     private void EhSaveImageToDisc(object sender, RoutedEventArgs e)
     {
-      if (null != SaveImageToDisc)
+      if (SaveImageToDisc is not null)
         SaveImageToDisc();
     }
 
     #region IDensityImagePlotItemOptionView
 
-    public event Action CopyImageToClipboard;
+    public event Action? CopyImageToClipboard;
 
-    public event Action SaveImageToDisc;
+    public event Action? SaveImageToDisc;
 
     #endregion IDensityImagePlotItemOptionView
   }

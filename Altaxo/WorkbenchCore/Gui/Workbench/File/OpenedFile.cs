@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Altaxo.Main;
 using Altaxo.Main.Services;
@@ -29,38 +30,35 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public abstract class OpenedFile : ICanBeDirty
   {
-    protected IFileViewContent currentView;
-    private bool inLoadOperation;
-    private bool inSaveOperation;
+    protected IFileViewContent? _currentView;
+    private bool _inLoadOperation;
+    private bool _inSaveOperation;
 
     /// <summary>
     /// holds unsaved file content in memory when view containing the file was closed but no other view
     /// activated
     /// </summary>
-    private byte[] fileData;
+    private byte[]? _fileData;
 
     #region IsDirty
 
-    private bool isDirty;
+    private bool _isDirty;
 
-    public event EventHandler IsDirtyChanged;
+    public event EventHandler? IsDirtyChanged;
 
     /// <summary>
     /// Gets/sets if the file is has unsaved changes.
     /// </summary>
     public bool IsDirty
     {
-      get { return isDirty; }
+      get { return _isDirty; }
       set
       {
-        if (isDirty != value)
+        if (_isDirty != value)
         {
-          isDirty = value;
+          _isDirty = value;
 
-          if (IsDirtyChanged != null)
-          {
-            IsDirtyChanged(this, EventArgs.Empty);
-          }
+          IsDirtyChanged?.Invoke(this, EventArgs.Empty);
         }
       }
     }
@@ -70,7 +68,7 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public virtual void MakeDirty()
     {
-      if (!inLoadOperation)
+      if (!_inLoadOperation)
       {
         IsDirty = true;
       }
@@ -78,28 +76,31 @@ namespace Altaxo.Gui.Workbench
 
     #endregion IsDirty
 
-    private bool isUntitled;
+    private bool _isUntitled;
 
     /// <summary>
     /// Gets if the file is untitled. Untitled files show a "Save as" dialog when they are saved.
     /// </summary>
     public bool IsUntitled
     {
-      get { return isUntitled; }
-      protected set { isUntitled = value; }
+      get { return _isUntitled; }
+      protected set { _isUntitled = value; }
     }
 
-    private FileName fileName;
+    private FileName? _fileName;
 
     /// <summary>
     /// Gets the name of the file.
     /// </summary>
     public FileName FileName
     {
-      get { return fileName; }
+      get
+      {
+        return _fileName ?? throw new InvalidOperationException($"A file name was not yet set.");
+      }
       set
       {
-        if (fileName != value)
+        if (_fileName is null || _fileName != value)
         {
           ChangeFileName(value);
         }
@@ -110,20 +111,17 @@ namespace Altaxo.Gui.Workbench
     {
       Altaxo.Current.Dispatcher.VerifyAccess();
 
-      fileName = newValue;
+      _fileName = newValue;
 
-      if (FileNameChanged != null)
-      {
-        FileNameChanged(this, EventArgs.Empty);
-      }
+      FileNameChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
     /// Occurs when the file name has changed.
     /// </summary>
-    public event EventHandler FileNameChanged;
+    public event EventHandler? FileNameChanged;
 
-    public abstract event EventHandler FileClosed;
+    public abstract event EventHandler? FileClosed;
 
     /// <summary>
     /// Use this method to save the file to disk using a new name.
@@ -148,15 +146,15 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public virtual void ForceInitializeView(IFileViewContent view)
     {
-      if (view == null)
-        throw new ArgumentNullException("view");
+      if (view is null)
+        throw new ArgumentNullException(nameof(view));
 
       bool success = false;
       try
       {
-        if (currentView != view)
+        if (_currentView != view)
         {
-          if (currentView == null)
+          if (_currentView is null)
           {
             SwitchedToView(view);
           }
@@ -164,7 +162,7 @@ namespace Altaxo.Gui.Workbench
           {
             try
             {
-              inLoadOperation = true;
+              _inLoadOperation = true;
               using (Stream sourceStream = OpenRead())
               {
                 view.Load(this, sourceStream);
@@ -172,7 +170,7 @@ namespace Altaxo.Gui.Workbench
             }
             finally
             {
-              inLoadOperation = false;
+              _inLoadOperation = false;
             }
           }
         }
@@ -205,9 +203,9 @@ namespace Altaxo.Gui.Workbench
     /// content was closed. In that case, the file is stored in-memory and loaded when one of the
     /// registered view contents becomes active.
     /// </summary>
-    public IFileViewContent CurrentView
+    public IFileViewContent? CurrentView
     {
-      get { return currentView; }
+      get { return _currentView; }
     }
 
     /// <summary>
@@ -215,9 +213,9 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public virtual Stream OpenRead()
     {
-      if (fileData != null)
+      if (_fileData is not null)
       {
-        return new MemoryStream(fileData, false);
+        return new MemoryStream(_fileData, false);
       }
       else
       {
@@ -237,14 +235,14 @@ namespace Altaxo.Gui.Workbench
     /// </remarks>
     public virtual void SetData(byte[] fileData)
     {
-      if (fileData == null)
+      if (fileData is null)
         throw new ArgumentNullException("fileData");
-      if (inLoadOperation)
+      if (_inLoadOperation)
         throw new InvalidOperationException("SetData cannot be used while loading");
-      if (inSaveOperation)
+      if (_inSaveOperation)
         throw new InvalidOperationException("SetData cannot be used while saving");
 
-      this.fileData = fileData;
+      this._fileData = fileData;
     }
 
     /// <summary>
@@ -269,13 +267,13 @@ namespace Altaxo.Gui.Workbench
           // and reading our new file as soon as we're done writing.
           // TODO Lellid: is this neccessary for Altaxo ?   --  NativeMethods.SetFileCreationTime(fs.SafeFileHandle, File.GetCreationTimeUtc(FileName));
         }
-        if (currentView != null)
+        if (_currentView is not null)
         {
           SaveCurrentViewToStream(fs);
         }
-        else
+        else if (_fileData is not null)
         {
-          fs.Write(fileData, 0, fileData.Length);
+          fs.Write(_fileData, 0, _fileData.Length);
         }
       }
       if (safeSaving)
@@ -311,14 +309,15 @@ namespace Altaxo.Gui.Workbench
     {
       //			if (SavingCurrentView != null)
       //				SavingCurrentView(this, EventArgs.Empty);
-      inSaveOperation = true;
+      _inSaveOperation = true;
       try
       {
-        currentView.Save(this, stream);
+        if (_currentView is not null)
+          _currentView.Save(this, stream);
       }
       finally
       {
-        inSaveOperation = false;
+        _inSaveOperation = false;
       }
       //			if (SavedCurrentView != null)
       //				SavedCurrentView(this, EventArgs.Empty);
@@ -329,44 +328,44 @@ namespace Altaxo.Gui.Workbench
       using (var memoryStream = new MemoryStream())
       {
         SaveCurrentViewToStream(memoryStream);
-        fileData = memoryStream.ToArray();
+        _fileData = memoryStream.ToArray();
       }
     }
 
     public void SwitchedToView(IFileViewContent newView)
     {
-      if (newView == null)
+      if (newView is null)
         throw new ArgumentNullException("newView");
-      if (currentView == newView)
+      if (_currentView == newView)
         return;
-      if (currentView != null)
+      if (_currentView is not null)
       {
-        if (newView.SupportsSwitchToThisWithoutSaveLoad(this, currentView)
-                || currentView.SupportsSwitchFromThisWithoutSaveLoad(this, newView))
+        if (newView.SupportsSwitchToThisWithoutSaveLoad(this, _currentView)
+                || _currentView.SupportsSwitchFromThisWithoutSaveLoad(this, newView))
         {
           // switch without Save/Load
-          currentView.SwitchFromThisWithoutSaveLoad(this, newView);
-          newView.SwitchToThisWithoutSaveLoad(this, currentView);
+          _currentView.SwitchFromThisWithoutSaveLoad(this, newView);
+          newView.SwitchToThisWithoutSaveLoad(this, _currentView);
 
-          currentView = newView;
+          _currentView = newView;
           return;
         }
         SaveCurrentView();
       }
       try
       {
-        inLoadOperation = true;
+        _inLoadOperation = true;
         var memento = GetMemento(newView);
         using (Stream sourceStream = OpenRead())
         {
-          var oldView = currentView;
+          var oldView = _currentView;
           bool success = false;
           try
           {
-            currentView = newView;
+            _currentView = newView;
             // don't reset fileData if the file is untitled, because OpenRead() wouldn't be able to read it otherwise
             if (IsUntitled == false)
-              fileData = null;
+              _fileData = null;
             newView.Load(this, sourceStream);
             success = true;
           }
@@ -377,7 +376,7 @@ namespace Altaxo.Gui.Workbench
             if (!success)
             {
               // stay with old view in case of exceptions
-              currentView = oldView;
+              _currentView = oldView;
             }
           }
         }
@@ -385,53 +384,56 @@ namespace Altaxo.Gui.Workbench
       }
       finally
       {
-        inLoadOperation = false;
+        _inLoadOperation = false;
       }
     }
 
     public virtual void ReloadFromDisk()
     {
+      if (FileName is null)
+        throw new InvalidOperationException($"{nameof(FileName)} is null");
+
       var r = FileUtility.ObservedLoad(ReloadFromDiskInternal, FileName);
       if (r == FileOperationResult.Failed)
       {
-        if (currentView != null)
+        if (_currentView is not null)
         {
-          currentView.CloseCommand.Execute(currentView);
+          _currentView.CloseCommand.Execute(_currentView);
         }
       }
     }
 
     private void ReloadFromDiskInternal()
     {
-      fileData = null;
-      if (currentView != null)
+      _fileData = null;
+      if (_currentView is not null)
       {
         try
         {
-          inLoadOperation = true;
-          var memento = GetMemento(currentView);
+          _inLoadOperation = true;
+          var memento = GetMemento(_currentView);
           using (Stream sourceStream = OpenRead())
           {
-            currentView.Load(this, sourceStream);
+            _currentView.Load(this, sourceStream);
           }
           IsDirty = false;
-          RestoreMemento(currentView, memento);
+          RestoreMemento(_currentView, memento);
         }
         finally
         {
-          inLoadOperation = false;
+          _inLoadOperation = false;
         }
       }
     }
 
-    private static object GetMemento(IFileViewContent viewContent)
+    private static object? GetMemento(IFileViewContent viewContent)
     {
       return viewContent.GetService<IMementoCapable>()?.CreateMemento();
     }
 
-    private static void RestoreMemento(IFileViewContent viewContent, object memento)
+    private static void RestoreMemento(IFileViewContent viewContent, object? memento)
     {
-      if (memento != null)
+      if (memento is not null)
       {
         ((IMementoCapable)viewContent).SetMemento(memento);
       }

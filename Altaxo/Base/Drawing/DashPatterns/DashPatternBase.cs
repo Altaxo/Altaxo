@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,16 +39,16 @@ namespace Altaxo.Drawing.DashPatterns
     protected static void SerializeV0(IDashPattern obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       var parent = DashPatternListManager.Instance.GetParentList(obj);
-      if (null != parent)
+      if (parent is not null)
       {
-        if (null == info.GetProperty(DashPatternList.GetSerializationRegistrationKey(parent)))
+        if (info.GetProperty(DashPatternList.GetSerializationRegistrationKey(parent)) is null)
           info.AddValue("Set", parent);
         else
           info.AddValue("SetName", parent.Name);
       }
     }
 
-    protected static TItem DeserializeV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent) where TItem : IDashPattern
+    protected static TItem DeserializeV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent) where TItem : IDashPattern
     {
       if (info.CurrentElementName == "Set")
       {
@@ -91,12 +92,12 @@ namespace Altaxo.Drawing.DashPatterns
         yield return this[i];
     }
 
-    public virtual bool Equals(IDashPattern other)
+    public virtual bool Equals(IDashPattern? other)
     {
       if (other is null)
         return false;
 
-      if (object.ReferenceEquals(this, other))
+      if (ReferenceEquals(this, other))
         return true;
 
       if (this.GetType() != other.GetType())
@@ -132,7 +133,7 @@ namespace Altaxo.Drawing.DashPatterns
       return this.GetType().GetHashCode() + 5 * Count.GetHashCode() + 7 * DashOffset.GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return Equals(obj as DashPatternBase);
     }

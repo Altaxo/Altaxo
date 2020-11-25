@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -31,6 +32,8 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
+  using System.Diagnostics.CodeAnalysis;
+  using System.Security.Policy;
   using Background;
   using Drawing;
   using Drawing.D3D;
@@ -45,10 +48,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
   [Serializable]
   public partial class TextGraphic : GraphicBase, IRoutedPropertyReceiver
   {
-    protected string _text = ""; // the text, which contains the formatting symbols
+    protected string _text = string.Empty; // the text, which contains the formatting symbols
     protected FontX3D _font;
     protected IMaterial _textBrush = Materials.GetSolidMaterial(NamedColors.Black);
-    protected IBackgroundStyle _background = null;
+    protected IBackgroundStyle? _background = null;
     protected double _lineSpacingFactor = 1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
 
     #region Cached or temporary variables
@@ -56,12 +59,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>Hashtable where the keys are graphic paths giving the position of a symbol into the list, and the values are the plot items.</summary>
     protected Dictionary<RectangleTransformedD3D, IGPlotItem> _cachedSymbolPositions = new Dictionary<RectangleTransformedD3D, IGPlotItem>();
 
-    private StructuralGlyph _rootNode;
+    private StructuralGlyph? _rootNode;
     protected bool _isStructureInSync = false; // true when the text was interpretet and the structure created
     protected bool _isMeasureInSync = false; // true when all items are measured
 
     /// <summary>The size of the text rectangle as is - i.e. without padding, background, etc.</summary>
-    protected VectorD3D CachedTextSizeWithoutPadding { get { return _rootNode != null ? new VectorD3D(_rootNode.SizeX, _rootNode.SizeY, _rootNode.SizeZ) : VectorD3D.Empty; } }
+    protected VectorD3D CachedTextSizeWithoutPadding { get { return _rootNode is not null ? new VectorD3D(_rootNode.SizeX, _rootNode.SizeY, _rootNode.SizeZ) : VectorD3D.Empty; } }
 
     protected Margin2D _cachedTextPadding;
     protected PointD3D _cachedTextOffset; // offset from the lower left corner of the background or drawing origin to the lower left corner of the unpadded text rectangle
@@ -81,24 +84,24 @@ namespace Altaxo.Graph.Graph3D.Shapes
       {
         var s = (TextGraphic)obj;
 
-        info.AddBaseValueEmbedded(s, typeof(TextGraphic).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(TextGraphic).BaseType!);
         info.AddValue("Text", s._text);
         info.AddValue("Font", s._font);
         info.AddValue("Brush", s._textBrush);
-        info.AddValue("BackgroundStyle", s._background);
+        info.AddValueOrNull("BackgroundStyle", s._background);
         info.AddValue("LineSpacing", s._lineSpacingFactor);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (TextGraphic)o ?? new TextGraphic(info);
+        var s = (TextGraphic?)o ?? new TextGraphic(info);
 
-        info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType, parent);
+        info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType!, parent);
 
         s._text = info.GetString("Text");
         s._font = (FontX3D)info.GetValue("Font", s);
         s._textBrush = (IMaterial)info.GetValue("Brush", s);
-        s.Background = (IBackgroundStyle)info.GetValue("BackgroundStyle", s);
+        s.Background = info.GetValueOrNull<IBackgroundStyle>("BackgroundStyle", s);
         s._lineSpacingFactor = info.GetSingle("LineSpacing");
 
         s.UpdateTransformationMatrix();
@@ -115,7 +118,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// Initializes a new instance of the <see cref="TextGraphic"/> class for deserialization purposes.
     /// </summary>
     /// <param name="info">The information.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected TextGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(info)
     {
     }
@@ -123,7 +128,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     public TextGraphic(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirectAutoSize())
     {
-      if (null == context)
+      if (context is null)
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       _font = GraphDocument.GetDefaultFont(context);
@@ -142,43 +147,50 @@ namespace Altaxo.Graph.Graph3D.Shapes
     public TextGraphic(TextGraphic from)
       : base(from) // all is done here, since CopyFrom is virtual!
     {
+      CopyFrom(from, false);
     }
 
     #endregion Constructors
 
     #region Copying
+    [MemberNotNull(nameof(_font))]
+    protected void CopyFrom(TextGraphic from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      _text = from._text;
+      _font = from._font;
+
+      _textBrush = from._textBrush;
+      ChildCloneToMember(ref _background, from._background);
+      _lineSpacingFactor = from._lineSpacingFactor;
+
+      // don't clone the cached items
+      _isStructureInSync = false;
+      _isMeasureInSync = false;
+    }
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (obj is TextGraphic from)
       {
-        var from = obj as TextGraphic;
-        if (from != null)
+        using (var suspendToken = SuspendGetToken())
         {
-          _text = from._text;
-          _font = from._font;
-
-          _textBrush = from._textBrush;
-
-          _background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
-          if (null != _background)
-            _background.ParentObject = this;
-
-          _lineSpacingFactor = from._lineSpacingFactor;
-
-          // don't clone the cached items
-          _isStructureInSync = false;
-          _isMeasureInSync = false;
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
-    public void CopyFrom(TextGraphic from)
-    {
-      CopyFrom((GraphicBase)from);
-    }
+
 
     public override object Clone()
     {
@@ -189,7 +201,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
     {
-      if (null != _background)
+      if (_background is not null)
         yield return new Main.DocumentNodeAndName(_background, "Background");
     }
 
@@ -207,7 +219,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       double widthOfOne_n = Glyph.MeasureString("n", _font).X;
       double widthOfThree_M = Glyph.MeasureString("MMM", _font).X;
 
-      if (_background != null)
+      if (_background is not null)
       {
         _cachedTextPadding = new Margin2D(
           0.25 * widthOfOne_n,
@@ -224,7 +236,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       var paddedTextSize = new VectorD3D((itemSizeX + _cachedTextPadding.Left + _cachedTextPadding.Right), (itemSizeY + _cachedTextPadding.Bottom + _cachedTextPadding.Top), itemSizeZ);
       var textRectangle = new RectangleD3D(PointD3D.Empty, paddedTextSize); // the origin of the padded text rectangle is always 0
 
-      if (_background != null)
+      if (_background is not null)
       {
         var backgroundRect = _background.Measure(textRectangle);
         _cachedExtendedTextBounds = backgroundRect.WithRectangleIncluded(textRectangle); //  _cachedExtendedTextBounds.WithOffset(textRectangle.X - backgroundRect.X, textRectangle.Y - backgroundRect.Y, 0);
@@ -240,7 +252,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
     }
 
-    public IBackgroundStyle Background
+    public IBackgroundStyle? Background
     {
       get
       {
@@ -268,7 +280,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       if (!_isMeasureInSync)
         return;
 
-      if (_background != null)
+      if (_background is not null)
       {
         var textSizeWithPadding = CachedTextSizeWithoutPadding + new VectorD3D(_cachedTextPadding.Left + _cachedTextPadding.Right, _cachedTextPadding.Top + _cachedTextPadding.Bottom, 0);
 
@@ -299,6 +311,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       {
         return _font;
       }
+      [MemberNotNull(nameof(_font))]
       set
       {
         if (!object.ReferenceEquals(_font, value))
@@ -313,7 +326,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     public bool Empty
     {
-      get { return _text == null || _text.Length == 0; }
+      get { return _text is null || _text.Length == 0; }
     }
 
     public string Text
@@ -362,7 +375,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException();
         var oldValue = _textBrush;
         _textBrush = value;
@@ -403,6 +416,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Interpreting and Painting
 
+    [MemberNotNull(nameof(_rootNode))]
     private void InterpretText()
     {
       var parser = new Altaxo_LabelV1();
@@ -411,30 +425,25 @@ namespace Altaxo.Graph.Graph3D.Shapes
       var tree = parser.GetRoot();
 
       var walker = new TreeWalker(_text);
-      var style = new StyleContext(_font, _textBrush)
-      {
-        BaseFontId = _font
-      };
-
+      var style = new StyleContext(_font, _textBrush, baseFontId: _font);
       _rootNode = walker.VisitTree(tree, style, _lineSpacingFactor, true);
     }
 
     private void MeasureGlyphs(IGraphicsContext3D g, FontCache cache, Altaxo.Graph.IPaintContext paintContext)
     {
       var mc = new MeasureContext
-      {
-        FontCache = cache,
-        LinkedObject = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this),
-        TabStop = Glyph.MeasureString("MMMM", _font).X
-      };
+      (
+        fontCache: cache,
+        linkedObject: Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this) ?? throw new InvalidProgramException(),
+        tabStop: Glyph.MeasureString("MMMM", _font).X
+      );
 
-      if (null != _rootNode)
-        _rootNode.Measure(mc, 0);
+      _rootNode?.Measure(mc, 0);
     }
 
     private void DrawGlyphs(IGraphicsContext3D g, DrawContext dc, double x, double y, double z)
     {
-      _rootNode.Draw(g, dc, x, y + _rootNode.ExtendBelowBaseline, z);
+      _rootNode?.Draw(g, dc, x, y + _rootNode.ExtendBelowBaseline, z);
     }
 
     public override void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext)
@@ -447,7 +456,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       //_isStructureInSync = false;
       _isMeasureInSync = false;  // Change: interpret text every time in order to update plot items and \ID
 
-      if (!_isStructureInSync)
+      if (_rootNode is null || !_isStructureInSync)
       {
         // this.Interpret(g);
         InterpretText();
@@ -491,13 +500,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
         PaintBackground(g);
 
         var dc = new DrawContext
-        {
-          FontCache = fontCache,
-          bForPreview = bForPreview,
-          LinkedObject = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this),
-          transformMatrix = transformmatrix,
-          _cachedSymbolPositions = _cachedSymbolPositions
-        };
+        (
+          fontCache: fontCache,
+          isForPreview: bForPreview,
+          linkedObject: Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this) ?? throw new InvalidProgramException(),
+          transformationMatrix: transformmatrix,
+          cachedSymbolPositions: _cachedSymbolPositions
+        );
         DrawGlyphs(g, dc, _cachedTextOffset.X, _cachedTextOffset.Y, _cachedTextOffset.Z);
         g.RestoreGraphicsState(gs);
       }
@@ -507,10 +516,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Hit testing and handling
 
-    public static DoubleClickHandler PlotItemEditorMethod;
-    public static DoubleClickHandler TextGraphicsEditorMethod;
+    public static DoubleClickHandler? PlotItemEditorMethod;
+    public static DoubleClickHandler? TextGraphicsEditorMethod;
 
-    public override IHitTestObject HitTest(HitTestPointData parentHitData)
+    public override IHitTestObject? HitTest(HitTestPointData parentHitData)
     {
       //			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, ScaleX, ScaleY, ShearX);
       var localHitData = parentHitData.NewFromAdditionalTransformation(_transformation);
@@ -551,7 +560,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         // info.SetNodeContent(obj.ToString());
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string val = info.GetNodeContent();
         return System.Enum.Parse(typeof(BackgroundStyle), val, true);

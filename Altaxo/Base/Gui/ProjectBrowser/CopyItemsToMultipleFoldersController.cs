@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,7 +86,7 @@ namespace Altaxo.Gui.ProjectBrowser
         CreateDirectoryNode(ProjectFolder.RootFolderName, _projectFolders);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeFolderTree(_projectFolders);
         _view.RelocateReferences = _doc.RelocateReferences;

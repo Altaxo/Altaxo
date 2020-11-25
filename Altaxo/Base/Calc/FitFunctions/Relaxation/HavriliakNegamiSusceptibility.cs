@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.ComponentModel;
 using Altaxo.Calc.Regression.Nonlinear;
@@ -52,7 +53,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         throw new NotImplementedException();
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = new HavriliakNegamiSusceptibility
         {
@@ -76,9 +77,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
                 */
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
+        HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility?)o ?? new HavriliakNegamiSusceptibility();
         s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
         info.GetBoolean("NegImSign");
         s._useFlowTerm = !info.GetBoolean("ExcludeConductivity");
@@ -101,9 +102,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
                 */
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
+        HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility?)o ?? new HavriliakNegamiSusceptibility();
         s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
         s._useFlowTerm = info.GetBoolean("FlowTerm");
         s._isDielectricData = info.GetBoolean("IsDielectric");
@@ -123,9 +124,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         info.AddValue("NumberOfTerms", s._numberOfTerms);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
+        var s = (HavriliakNegamiSusceptibility?)o ?? new HavriliakNegamiSusceptibility();
         s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
         s._useFlowTerm = info.GetBoolean("FlowTerm");
         s._isDielectricData = info.GetBoolean("IsDielectric");
@@ -153,9 +154,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         info.AddValue("LogarithmizeResults", s._logarithmizeResults);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
+        var s = (HavriliakNegamiSusceptibility?)o ?? new HavriliakNegamiSusceptibility();
         s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
         s._useFlowTerm = info.GetBoolean("FlowTerm");
         s._isDielectricData = info.GetBoolean("IsDielectric");
@@ -436,7 +437,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         return 0;
     }
 
-    public IVarianceScaling DefaultVarianceScaling(int i)
+    public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
@@ -446,14 +447,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     /// </summary>
     protected virtual void OnChanged()
     {
-      if (null != Changed)
-        Changed(this, EventArgs.Empty);
+      Changed?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
     /// Fired when the fit function changed.
     /// </summary>
-    public event EventHandler Changed;
+    public event EventHandler? Changed;
 
     #endregion parameter definition
 

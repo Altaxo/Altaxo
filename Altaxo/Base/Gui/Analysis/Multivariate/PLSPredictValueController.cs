@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 
 namespace Altaxo.Gui.Worksheet
@@ -59,7 +60,7 @@ namespace Altaxo.Gui.Worksheet
       _calibrationTables = Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.GetAvailablePLSCalibrationTables();
       _destinationTables = GetAvailableDestinationTables();
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeCalibrationModelTables(_calibrationTables);
         _view.InitializeDestinationTables(_destinationTables);
@@ -85,7 +86,7 @@ namespace Altaxo.Gui.Worksheet
       {
         _view = value;
 
-        if (null != _view)
+        if (_view is not null)
         {
           SetElements(false); // set only the view elements, dont't initialize the variables
         }

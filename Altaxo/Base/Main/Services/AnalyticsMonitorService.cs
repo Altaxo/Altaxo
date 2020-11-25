@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 
 namespace Altaxo.Main.Services
@@ -38,7 +39,7 @@ namespace Altaxo.Main.Services
     /// <param name="featureName">Name of the feature</param>
     /// <param name="activationMethod">Method used to 'activate' the feature (e.g. Menu, Toolbar, Shortcut, etc.)</param>
     /// <returns>Object that can be used to 'end' the feature use, if measuring time spans is desired.</returns>
-    IAnalyticsMonitorTrackedFeature TrackFeature(string featureName, string activationMethod = null);
+    IAnalyticsMonitorTrackedFeature TrackFeature(string featureName, string? activationMethod = null);
 
     /// <summary>
     /// Tracks a feature use.
@@ -47,7 +48,7 @@ namespace Altaxo.Main.Services
     /// <param name="featureName">Name of the feature</param>
     /// <param name="activationMethod">Method used to 'activate' the feature (e.g. Menu, Toolbar, Shortcut, etc.)</param>
     /// <returns>Object that can be used to 'end' the feature use, if measuring time spans is desired.</returns>
-    IAnalyticsMonitorTrackedFeature TrackFeature(Type featureClass, string featureName = null, string activationMethod = null);
+    IAnalyticsMonitorTrackedFeature TrackFeature(Type featureClass, string? featureName = null, string? activationMethod = null);
   }
 
   /// <summary>
@@ -65,12 +66,12 @@ namespace Altaxo.Main.Services
     {
     }
 
-    public IAnalyticsMonitorTrackedFeature TrackFeature(string featureName, string activationMethod)
+    public IAnalyticsMonitorTrackedFeature TrackFeature(string featureName, string? activationMethod)
     {
       return this;
     }
 
-    public IAnalyticsMonitorTrackedFeature TrackFeature(Type featureClass, string featureName, string activationMethod)
+    public IAnalyticsMonitorTrackedFeature TrackFeature(Type featureClass, string? featureName, string? activationMethod)
     {
       return this;
     }

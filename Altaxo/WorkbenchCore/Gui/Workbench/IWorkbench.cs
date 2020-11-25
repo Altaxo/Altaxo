@@ -66,9 +66,9 @@ namespace Altaxo.Gui.Workbench
     void ActivatePad(PadDescriptor content);
 
     /// <summary>
-    /// Returns a pad from a specific type.
+    /// Returns a pad from a specific type. Null is retured if a pad of that type is not found.
     /// </summary>
-    PadDescriptor GetPad(Type type);
+    PadDescriptor? GetPad(Type type);
 
     /// <summary>
     /// 	Closes all views related to current solution.

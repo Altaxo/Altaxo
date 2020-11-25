@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -56,7 +57,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
         SerializeV0((IScatterSymbol)obj, info);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return DeserializeV0(Instance, info, parent);
       }
@@ -72,7 +73,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
       var size = symbolSize * Sqrt1By3; // size of the cube
       var sizeBy2 = size * 0.5;
       var buffers = g.GetPositionNormalIndexedTriangleBuffer(material);
-      if (null != buffers.PositionNormalIndexedTriangleBuffer)
+      if (buffers.PositionNormalIndexedTriangleBuffer is not null)
       {
         var buf = buffers.PositionNormalIndexedTriangleBuffer;
         var voffs = buffers.PositionNormalIndexedTriangleBuffer.VertexCount;

@@ -22,10 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Altaxo.Serialization;
 
 namespace Altaxo.Main
 {
@@ -46,7 +47,7 @@ namespace Altaxo.Main
     /// Arguments are the type of change, the item that changed, the old name (if renamed), and the new name (if renamed).
     /// This event can not be suspended.
     /// </summary>
-    public event EventHandler<Main.NamedObjectCollectionChangedEventArgs> CollectionChanged;
+    public event EventHandler<Main.NamedObjectCollectionChangedEventArgs>? CollectionChanged;
 
     #region Abstract members
 
@@ -100,7 +101,7 @@ namespace Altaxo.Main
 
     public bool Contains(TItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
       if (_itemsByName.TryGetValue(item.Name, out var foundItem))
@@ -109,11 +110,11 @@ namespace Altaxo.Main
         return false;
     }
 
-    bool IProjectItemCollection.TryGetValue(string projectItemName, out IProjectItem projectItem)
+    bool IProjectItemCollection.TryGetValue(string projectItemName, [MaybeNullWhen(false)] out IProjectItem projectItem)
     {
       var result = _itemsByName.TryGetValue(projectItemName, out var item);
       projectItem = item;
-      return result;
+      return result && !(projectItem is null);
     }
 
     public void CopyTo(TItem[] array, int arrayIndex)
@@ -161,9 +162,9 @@ namespace Altaxo.Main
 
     protected override void OnChanged(EventArgs e)
     {
-      if (null != CollectionChanged && (e is Main.NamedObjectCollectionChangedEventArgs))
+      if (e is Main.NamedObjectCollectionChangedEventArgs nocc)
       {
-        CollectionChanged(this, (Main.NamedObjectCollectionChangedEventArgs)e);
+        CollectionChanged?.Invoke(this, nocc);
       }
 
       base.OnChanged(e);
@@ -175,7 +176,7 @@ namespace Altaxo.Main
     {
       get
       {
-        return _accumulatedEventData != null;
+        return _accumulatedEventData is not null;
       }
     }
 
@@ -206,7 +207,7 @@ namespace Altaxo.Main
       }
     }
 
-    public bool TryGetValue(string name, out TItem item)
+    public bool TryGetValue(string name, [MaybeNullWhen(false)] out TItem item)
     {
       if (_itemsByName.TryGetValue(name, out var result) && result is TItem item1)
       {
@@ -215,7 +216,7 @@ namespace Altaxo.Main
       }
       else
       {
-        item = default(TItem);
+        item = default;
         return false;
       }
     }
@@ -229,7 +230,7 @@ namespace Altaxo.Main
     /// <returns>True if the collection contains any project item with the specified name.</returns>
     public bool ContainsAnyName(string itemName)
     {
-      return null != itemName && _itemsByName.ContainsKey(itemName);
+      return itemName is not null && _itemsByName.ContainsKey(itemName);
     }
 
     /// <summary>
@@ -239,7 +240,7 @@ namespace Altaxo.Main
     /// <returns>True if the collection contains any project item with the specified name.</returns>
     public bool Contains(string itemName)
     {
-      return null != itemName && _itemsByName.TryGetValue(itemName, out var result) && result is TItem;
+      return itemName is not null && _itemsByName.TryGetValue(itemName, out var result) && result is TItem;
     }
 
     public IEnumerable<string> Names
@@ -252,10 +253,10 @@ namespace Altaxo.Main
 
     public virtual void Add(TItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
-      if (null == item.Name) // if no name provided (an empty string is a valid name)
+      if (item.Name is null) // if no name provided (an empty string is a valid name)
         item.Name = FindNewItemName();                 // find a new one
       else if (_itemsByName.ContainsKey(item.Name)) // else if this name is already in use
         item.Name = FindNewItemName(item.Name); // find a new  name based on the original name
@@ -281,7 +282,7 @@ namespace Altaxo.Main
     /// <returns>True if the item was found in the collection and thus removed successfully.</returns>
     public virtual bool Remove(TItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
       bool success = false;
@@ -370,7 +371,7 @@ namespace Altaxo.Main
         return true;
     }
 
-    void Main.IParentOfINameOwnerChildNodes.EhChild_HasBeenRenamed(Main.INameOwner item, string oldName)
+    void Main.IParentOfINameOwnerChildNodes.EhChild_HasBeenRenamed(Main.INameOwner item, string? oldName)
     {
       if (_itemsByName.ContainsKey(item.Name))
       {
@@ -380,7 +381,7 @@ namespace Altaxo.Main
           throw new ApplicationException(string.Format("{0} with name " + item.Name + " already exists!", typeof(TItem).Name));
       }
 
-      if (_itemsByName.ContainsKey(oldName))
+      if (!(oldName is null) && _itemsByName.ContainsKey(oldName))
       {
         if (!object.ReferenceEquals(_itemsByName[oldName], item))
           throw new ApplicationException(string.Format("Names between parent collection and {0} not in sync", typeof(TItem).Name));
@@ -396,9 +397,9 @@ namespace Altaxo.Main
       }
     }
 
-    void Main.IParentOfINameOwnerChildNodes.EhChild_ParentChanged(Main.INameOwner childNode, Main.IDocumentNode oldParent)
+    void Main.IParentOfINameOwnerChildNodes.EhChild_ParentChanged(Main.INameOwner childNode, Main.IDocumentNode? oldParent)
     {
-      if (object.ReferenceEquals(this, oldParent) && _itemsByName.ContainsKey(childNode.Name))
+      if (ReferenceEquals(this, oldParent) && _itemsByName.ContainsKey(childNode.Name))
         throw new InvalidProgramException(string.Format("Unauthorized change of the {0}'s parent", typeof(TItem).Name));
     }
 
@@ -408,7 +409,7 @@ namespace Altaxo.Main
     /// <returns>A new project item name that is unique in this collection.</returns>
     public string FindNewItemName()
     {
-      return FindNewItemNameInFolder(null);
+      return FindNewItemNameInFolder(string.Empty);
     }
 
     /// <summary>
@@ -447,7 +448,7 @@ namespace Altaxo.Main
     {
       var oldName = child.Name;
 
-      if (null == newName)
+      if (newName is null)
         throw new ArgumentNullException(nameof(newName), string.Format("New name of {0} is null (the old name was: {1})", child?.GetType(), oldName));
 
       if (newName == oldName)
@@ -470,7 +471,7 @@ namespace Altaxo.Main
       }
     }
 
-    public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
+    public override Main.IDocumentLeafNode? GetChildObjectNamed(string name)
     {
       if (_itemsByName.TryGetValue(name, out var result))
         return result;
@@ -478,7 +479,7 @@ namespace Altaxo.Main
       return null;
     }
 
-    public override string GetNameOfChildObject(Main.IDocumentLeafNode obj)
+    public override string? GetNameOfChildObject(Main.IDocumentLeafNode obj)
     {
       if (obj is TItem item)
       {
@@ -518,7 +519,7 @@ namespace Altaxo.Main
     {
       if (projectItem is TItem titem)
         Add(titem);
-      else if (null != projectItem)
+      else if (projectItem is not null)
         throw new ArgumentException("Item is not of expected type " + typeof(TItem).Name, nameof(projectItem));
       else
         throw new ArgumentNullException(nameof(projectItem));
@@ -528,7 +529,7 @@ namespace Altaxo.Main
     {
       if (projectItem is TItem titem)
         return Remove(titem);
-      else if (null != projectItem)
+      else if (projectItem is not null)
         throw new ArgumentException("Item is not of expected type " + typeof(TItem).GetType(), nameof(projectItem));
       else
         throw new ArgumentNullException(nameof(projectItem));

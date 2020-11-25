@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,14 +73,14 @@ namespace Altaxo.Gui.Pads.FileBrowser
       {
         if (!object.ReferenceEquals(_view, value))
         {
-          if (null != _view)
+          if (_view is not null)
           {
             DetachView();
           }
 
           _view = value as IFileBrowserView;
 
-          if (null != _view)
+          if (_view is not null)
           {
             AttachView();
           }

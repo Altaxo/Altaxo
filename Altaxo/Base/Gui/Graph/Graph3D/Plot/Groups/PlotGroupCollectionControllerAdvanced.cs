@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -126,7 +127,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
     public override bool InitializeDocument(params object[] args)
     {
-      if (args != null && args.Length > 1 && args[1] is IGPlotItem)
+      if (args is not null && args.Length > 1 && args[1] is IGPlotItem)
         _parent = (IGPlotItem)args[1];
 
       return base.InitializeDocument(args);
@@ -145,15 +146,15 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
         Type[] types;
         // Transfo-Styles
-        _currentTransfoStyle = _doc.CoordinateTransformingStyle == null ? null : (ICoordinateTransformingGroupStyle)_doc.CoordinateTransformingStyle.Clone();
+        _currentTransfoStyle = _doc.CoordinateTransformingStyle is null ? null : (ICoordinateTransformingGroupStyle)_doc.CoordinateTransformingStyle.Clone();
         _availableTransfoStyles = new SelectableListNodeList
         {
-          new SelectableListNode("None", null, null == _currentTransfoStyle)
+          new SelectableListNode("None", null, _currentTransfoStyle is null)
         };
         types = ReflectionService.GetNonAbstractSubclassesOf(typeof(ICoordinateTransformingGroupStyle));
         foreach (Type t in types)
         {
-          Type currentStyleType = _currentTransfoStyle == null ? null : _currentTransfoStyle.GetType();
+          Type currentStyleType = _currentTransfoStyle is null ? null : _currentTransfoStyle.GetType();
           ICoordinateTransformingGroupStyle style;
           if (t == currentStyleType)
             style = _currentTransfoStyle;
@@ -165,7 +166,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
         // Normal Styles
         _availableNormalStyles = new SelectableListNodeList();
-        if (_parent != null) // if possible, collect only those styles that are applicable
+        if (_parent is not null) // if possible, collect only those styles that are applicable
         {
           var avstyles = new PlotGroupStyleCollection();
           _parent.CollectStyles(avstyles);
@@ -200,7 +201,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
         UpdateCurrentNormalIndentation();
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.InitializeAvailableCoordinateTransformingGroupStyles(_availableTransfoStyles);
         _view.InitializeAvailableNormalGroupStyles(_availableNormalStyles);
@@ -339,10 +340,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
         CheckableSelectableListNode node = _currentNormalStyles[i];
         style = _doc.GetPlotGroupStyle((Type)node.Tag);
 
-        if (previousStyle != null)
+        if (previousStyle is not null)
         {
           Type prevchildtype = _doc.GetTypeOfChild(previousStyle.GetType());
-          if (prevchildtype != null)
+          if (prevchildtype is not null)
           {
             if (prevchildtype != style.GetType())
             {
@@ -354,8 +355,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
         }
 
         Type parenttype = _doc.GetParentTypeOf(style.GetType());
-        if (parenttype != null &&
-          (previousStyle == null || previousStyle.GetType() != parenttype))
+        if (parenttype is not null &&
+          (previousStyle is null || previousStyle.GetType() != parenttype))
         {
           int pi = _currentNormalStyles.IndexOfObject(parenttype);
           _currentNormalStyles.Exchange(i, pi);
@@ -390,7 +391,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
         }
       }
 
-      if (null != _currentTransfoStyle)
+      if (_currentTransfoStyle is not null)
         Current.Gui.ShowDialog(new object[] { _currentTransfoStyle }, "Edit transformation style");
     }
 
@@ -405,7 +406,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
           break;
         }
       }
-      if (null != selected)
+      if (selected is not null)
       {
         _availableNormalStyles.Remove(selected);
 
@@ -464,7 +465,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
         if (!selected.IsSelected)
           continue;
 
-        if (null != _doc.GetParentTypeOf((Type)selected.Tag))
+        if (_doc.GetParentTypeOf((Type)selected.Tag) is not null)
           continue; // only ident those items who dont have a parent
 
         IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
@@ -486,7 +487,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
         if (!selected.IsSelected)
           continue;
 
-        if (null != _doc.GetParentTypeOf((Type)selected.Tag))
+        if (_doc.GetParentTypeOf((Type)selected.Tag) is not null)
         {
           IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
           _doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
@@ -514,7 +515,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
         IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
         Type parenttype = _doc.GetParentTypeOf(style.GetType());
         _doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
-        if (parenttype == null)
+        if (parenttype is null)
         {
           _doc.Add(style);
         }
@@ -543,7 +544,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
         IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
         Type childtype = _doc.GetTypeOfChild(style.GetType());
         _doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
-        if (childtype == null)
+        if (childtype is null)
         {
           _doc.Add(style);
         }
@@ -561,14 +562,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
     public void EhView_EditGroupStyle()
     {
       var selNode = _currentNormalStyles.FirstOrDefault(x => x.IsSelected);
-      if (null == selNode)
+      if (selNode is null)
         return;
 
       IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selNode.Tag);
 
       var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { style }, typeof(IMVCANController));
 
-      if (null != controller && null != controller.ViewObject)
+      if (controller is not null && controller.ViewObject is not null)
       {
         if (Current.Gui.ShowDialog(controller, "Edit style"))
         {

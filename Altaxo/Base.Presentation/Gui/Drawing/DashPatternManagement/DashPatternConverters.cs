@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +57,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       string result;
-      if (null == value)
+      if (value is null)
       {
         result = string.Empty;
       }
@@ -89,7 +90,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
       string text = (string)value;
       var result = ConvertFromText(text, out var error);
 
-      if (error == null)
+      if (error is null)
         return result; // Ok conversion to a custom Dash pattern was possible
       else
         return Binding.DoNothing; // For all other cases: do nothing, since we can not deduce from the name only to which dash pattern list the item belongs.
@@ -121,10 +122,10 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
           valList.Add(val);
       }
 
-      if (valList.Count < 1 && error == null) // only use this error, if there is no other error;
+      if (valList.Count < 1 && error is null) // only use this error, if there is no other error;
         error = "At least one number is neccessary";
 
-      return null != error ? null : new Altaxo.Drawing.DashPatterns.Custom(valList);
+      return error is not null ? null : new Altaxo.Drawing.DashPatterns.Custom(valList);
     }
 
     public string EhValidateText(object obj, System.Globalization.CultureInfo info)
@@ -132,9 +133,9 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
       string text = (string)obj;
       var result = ConvertFromText(text, out var error);
 
-      if (null != _comboBox)
+      if (_comboBox is not null)
       {
-        if (null != error)
+        if (error is not null)
         {
           _originalToolTip = _comboBox.ToolTip;
           _comboBox.ToolTip = error;
@@ -191,7 +192,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
           dashStyle = DashStyles.DashDotDot;
       }
 
-      if (null == dashStyle)
+      if (dashStyle is null)
         return null;
 
       // draws a transparent outline to fix the borders
@@ -226,7 +227,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var listName = DashPatternListManager.Instance.GetParentList(value as IDashPattern)?.Name;
-      if (null != listName)
+      if (listName is not null)
       {
         var entry = DashPatternListManager.Instance.GetEntryValue(listName);
         string levelName = Enum.GetName(typeof(Altaxo.Main.ItemDefinitionLevel), entry.Level);

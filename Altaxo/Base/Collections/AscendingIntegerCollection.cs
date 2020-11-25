@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -32,7 +33,7 @@ namespace Altaxo.Collections
   /// </summary>
   public class AscendingIntegerCollection : IAscendingIntegerCollection, System.ICloneable
   {
-    protected System.Collections.Generic.SortedList<int, object> _list = new System.Collections.Generic.SortedList<int, object>();
+    protected System.Collections.Generic.SortedList<int, object?> _list = new System.Collections.Generic.SortedList<int, object?>();
 
     #region Serialization
 
@@ -55,9 +56,9 @@ namespace Altaxo.Collections
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AscendingIntegerCollection s = null != o ? (AscendingIntegerCollection)o : new AscendingIntegerCollection();
+        var s = (AscendingIntegerCollection?)o ?? new AscendingIntegerCollection();
 
         int count = info.OpenArray();
 
@@ -89,7 +90,7 @@ namespace Altaxo.Collections
     /// <param name="from"></param>
     public AscendingIntegerCollection(AscendingIntegerCollection from)
     {
-      _list = new System.Collections.Generic.SortedList<int, object>(from._list);
+      _list = new System.Collections.Generic.SortedList<int, object?>(from._list);
     }
 
     /// <summary>

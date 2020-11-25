@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Drawing;
@@ -39,7 +41,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Serialization
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected EmbeddedImageGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     :
     base(info)
     {
@@ -54,14 +58,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (EmbeddedImageGraphic)obj;
-        info.AddBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType!);
         info.AddValue("Image", s._imageProxy);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (EmbeddedImageGraphic)o ?? new EmbeddedImageGraphic(info);
-        info.GetBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType, parent);
+        var s = (EmbeddedImageGraphic?)o ?? new EmbeddedImageGraphic(info);
+        info.GetBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType!, parent);
         s.Image = (ImageProxy)info.GetValue("Image", s);
         return s;
       }
@@ -71,15 +75,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     #region Constructors
 
-    public EmbeddedImageGraphic()
-      :
-      base()
-    {
-    }
+
 
     public EmbeddedImageGraphic(PointD3D graphicPosition, ImageProxy startingImage)
       :
-      this()
+      base()
     {
       SetPosition(graphicPosition, Main.EventFiring.Suppressed);
       Image = startingImage;
@@ -143,23 +143,37 @@ namespace Altaxo.Graph.Graph3D.Shapes
     }
 
     public EmbeddedImageGraphic(EmbeddedImageGraphic from)
-      :
-      base(from) // all is done here, since CopyFrom is virtual!
+      : base(from)
     {
+      CopyFrom(from, false);
+    }
+
+    [MemberNotNull(nameof(_imageProxy))]
+    protected void CopyFrom(EmbeddedImageGraphic from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      Image = from._imageProxy;
     }
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (obj is EmbeddedImageGraphic from)
       {
-        var from = obj as EmbeddedImageGraphic;
-        if (null != from)
+        using (var suspendToken = SuspendGetToken())
         {
-          Image = from._imageProxy;
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     #endregion Constructors
@@ -175,10 +189,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
       {
         return _imageProxy;
       }
+      [MemberNotNull(nameof(_imageProxy))]
       set
       {
-        _imageProxy = value;
-        var originalItemSize = _imageProxy is null ? new VectorD2D(10, 10) : _imageProxy.Size;
+        _imageProxy = value ?? throw new ArgumentNullException(nameof(Image));
+        var originalItemSize = _imageProxy.Size;
         ((ItemLocationDirectAspectPreserving)_location).OriginalItemSize = new VectorD3D(originalItemSize.X, originalItemSize.Y, 0);
       }
     }
@@ -190,15 +205,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     public override Image GetImage()
     {
-      if (_imageProxy is { } imgproxy)
-      {
-        var str = imgproxy.GetContentStream();
-        return SystemDrawingImageProxyExtensions.GetImage(str, disposeStream: true);
-      }
-      else
-      {
-        return null;
-      }
+      var str = _imageProxy.GetContentStream();
+      return SystemDrawingImageProxyExtensions.GetImage(str, disposeStream: true);
+
     }
 
     public override void Paint(IGraphicsContext3D g, IPaintContext context)

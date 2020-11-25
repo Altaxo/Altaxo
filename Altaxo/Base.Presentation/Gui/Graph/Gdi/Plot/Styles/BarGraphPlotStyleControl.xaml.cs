@@ -41,17 +41,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   {
     private PenControlsGlue _framePenGlue;
 
-    public event Action IndependentFillColorChanged;
+    public event Action? IndependentFillColorChanged;
 
-    public event Action IndependentFrameColorChanged;
+    public event Action? IndependentFrameColorChanged;
 
-    public event Action UseFillChanged;
+    public event Action? UseFillChanged;
 
-    public event Action UseFrameChanged;
+    public event Action? UseFrameChanged;
 
-    public event Action FillBrushChanged;
+    public event Action? FillBrushChanged;
 
-    public event Action FramePenChanged;
+    public event Action? FramePenChanged;
 
     public BarGraphPlotStyleControl()
     {
@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhIndependentFrameColorChanged(object sender, RoutedEventArgs e)
     {
-      if (null != IndependentFrameColorChanged)
+      if (IndependentFrameColorChanged is not null)
         IndependentFrameColorChanged();
     }
 
@@ -151,7 +151,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException("FramePen");
         _framePenGlue.Pen = value;
       }
@@ -243,31 +243,31 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhIndependentFillColorChanged(object sender, RoutedEventArgs e)
     {
-      if (null != IndependentFillColorChanged)
+      if (IndependentFillColorChanged is not null)
         IndependentFillColorChanged();
     }
 
     private void EhUseFillChanged(object sender, RoutedEventArgs e)
     {
-      if (null != UseFillChanged)
+      if (UseFillChanged is not null)
         UseFillChanged();
     }
 
     private void EhUseFrameChanged(object sender, RoutedEventArgs e)
     {
-      if (null != UseFrameChanged)
+      if (UseFrameChanged is not null)
         UseFrameChanged();
     }
 
     private void EhFillBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != FillBrushChanged)
+      if (FillBrushChanged is not null)
         FillBrushChanged();
     }
 
-    private void EhFramePenChanged(object sender, EventArgs e)
+    private void EhFramePenChanged(object? sender, EventArgs e)
     {
-      if (null != FramePenChanged)
+      if (FramePenChanged is not null)
         FramePenChanged();
     }
   }

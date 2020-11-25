@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +50,7 @@ namespace Altaxo.Com
     {
       ComDebug.ReportInfo("{0}.Unadvise cookie={1}", GetType().Name, dwConnection);
       int idx = dwConnection - 1; // we have to reverse incrementation, see Advise function
-      if (!(_advises[idx] != null))
+      if (_advises[idx] is null)
         throw new InvalidOperationException(nameof(_advises) + "[idx] should be != null");
 
       _advises[idx] = null;
@@ -64,7 +65,7 @@ namespace Altaxo.Com
     public void SendOnRename(IMoniker pmk)
     {
       ComDebug.ReportInfo("{0}.SendOnRename calling (for all sinks) IAdviseSink.OnRename(Moniker)", GetType().Name);
-      foreach (IAdviseSink sink in new List<IAdviseSink>(_advises.Where(x => null != x))) // new List is neccessary because the original list might be modified during the operation
+      foreach (IAdviseSink sink in new List<IAdviseSink>(_advises.Where(x => x is not null))) // new List is neccessary because the original list might be modified during the operation
         sink.OnRename(pmk);
     }
 
@@ -72,14 +73,14 @@ namespace Altaxo.Com
     {
       ComDebug.ReportInfo("{0}.SendOnSave calling (for all sinks) IAdviseSink.OnSave()", GetType().Name);
       // note we don't have an IOleAdviseHolder for this, we use a list of sinks
-      foreach (var sink in _advises.Where(x => null != x))
+      foreach (var sink in _advises.Where(x => x is not null))
         sink.OnSave();
     }
 
     public void SendOnClose()
     {
       ComDebug.ReportInfo("{0}.SendOnClose calling (for all sinks) IAdviseSink.OnClose()", GetType().Name);
-      foreach (var sink in new List<IAdviseSink>(_advises.Where(x => null != x))) // new List is neccessary because the original list might be modified during the operation
+      foreach (var sink in new List<IAdviseSink>(_advises.Where(x => x is not null))) // new List is neccessary because the original list might be modified during the operation
         sink.OnClose();
     }
 
@@ -92,7 +93,7 @@ namespace Altaxo.Com
     private class EnumSTATDATA : ManagedEnumBase<STATDATA>, IEnumSTATDATA
     {
       public EnumSTATDATA(IList<IAdviseSink> list)
-        : base(list.Where((x) => null != x).Select((x, i) => new STATDATA { advSink = x, connection = i + 1 }))
+        : base(list.Where((x) => x is not null).Select((x, i) => new STATDATA { advSink = x, connection = i + 1 }))
       {
       }
 

@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
   /// </summary>
   public partial class AxisCreationControl : UserControl, IAxisCreationView
   {
-    public event Action SelectedAxisTemplateChanged;
+    public event Action? SelectedAxisTemplateChanged;
 
     public AxisCreationControl()
     {
@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     private void EhSelectedAxisTemplateChanged(object sender, SelectionChangedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiTemplateAxis);
-      if (null != SelectedAxisTemplateChanged)
+      if (SelectedAxisTemplateChanged is not null)
         SelectedAxisTemplateChanged();
     }
   }

@@ -38,16 +38,15 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
     public MaterialKey(IMaterial material)
     {
-      if (null == material)
+      if (material is null)
         throw new ArgumentNullException(nameof(material));
 
       Material = material;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var from = obj as MaterialKey;
-      return null == from ? false : Material.Equals(from.Material);
+      return obj is MaterialKey from && Material.Equals(from.Material);
     }
 
     public override int GetHashCode()
@@ -61,25 +60,24 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
   /// </summary>
   public class MaterialPlusClippingKey : MaterialKey
   {
-    public PlaneD3D[] ClipPlanes { get; private set; }
+    public PlaneD3D[]? ClipPlanes { get; private set; }
 
-    public MaterialPlusClippingKey(IMaterial material, PlaneD3D[] clipPlanes)
+    public MaterialPlusClippingKey(IMaterial material, PlaneD3D[]? clipPlanes)
       : base(material)
     {
       ClipPlanes = clipPlanes;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var from = obj as MaterialPlusClippingKey;
-      if (null == from)
+      if (!(obj is MaterialPlusClippingKey from))
         return false;
 
       if (!(Material.Equals(from.Material)))
         return false;
 
-      if (!(ClipPlanes != null && from.ClipPlanes != null))
-        return (ClipPlanes != null) ^ (from.ClipPlanes != null);
+      if (!(ClipPlanes is not null && from.ClipPlanes is not null))
+        return (ClipPlanes is not null) ^ (from.ClipPlanes is not null);
 
       if (ClipPlanes.Length != from.ClipPlanes.Length)
         return false;
@@ -96,7 +94,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
     public override int GetHashCode()
     {
       var result = 17 * Material.GetHashCode();
-      if (null != ClipPlanes && ClipPlanes.Length > 0)
+      if (ClipPlanes is not null && ClipPlanes.Length > 0)
         result = 31 * ClipPlanes[0].GetHashCode();
 
       return result;

@@ -32,28 +32,28 @@ namespace Altaxo.Main
   public class SimpleTaskScheduler : TaskScheduler, IDisposable
   {
     [ThreadStatic]
-    private static SimpleTaskScheduler activeScheduler;
+    private static SimpleTaskScheduler? _activeScheduler;
 
-    private BlockingCollection<Task> queue = new BlockingCollection<Task>();
+    private BlockingCollection<Task> _queue = new BlockingCollection<Task>();
 
     protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
     {
-      return activeScheduler == this && base.TryExecuteTask(task);
+      return _activeScheduler == this && base.TryExecuteTask(task);
     }
 
     protected override void QueueTask(Task task)
     {
-      queue.Add(task);
+      _queue.Add(task);
     }
 
     protected override IEnumerable<Task> GetScheduledTasks()
     {
-      return queue;
+      return _queue;
     }
 
     protected int ScheduledTaskCount
     {
-      get { return queue.Count; }
+      get { return _queue.Count; }
     }
 
     /// <summary>
@@ -64,13 +64,13 @@ namespace Altaxo.Main
     /// waiting for a task to become available. It cannot be used to cancel task execution!</param>
     public void RunNextTask(CancellationToken cancellationToken = default(CancellationToken))
     {
-      Task task = queue.Take(cancellationToken);
+      Task task = _queue.Take(cancellationToken);
       RunTask(task);
     }
 
     public bool TryRunNextTask()
     {
-      if (queue.TryTake(out var task))
+      if (_queue.TryTake(out var task))
       {
         RunTask(task);
         return true;
@@ -83,21 +83,21 @@ namespace Altaxo.Main
 
     private void RunTask(Task task)
     {
-      var oldActiveScheduler = activeScheduler;
-      activeScheduler = this;
+      var oldActiveScheduler = _activeScheduler;
+      _activeScheduler = this;
       try
       {
         base.TryExecuteTask(task);
       }
       finally
       {
-        activeScheduler = oldActiveScheduler;
+        _activeScheduler = oldActiveScheduler;
       }
     }
 
     public virtual void Dispose()
     {
-      queue.Dispose();
+      _queue.Dispose();
     }
   }
 }

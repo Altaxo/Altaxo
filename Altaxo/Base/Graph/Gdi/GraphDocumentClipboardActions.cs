@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -125,10 +126,10 @@ namespace Altaxo.Graph.Gdi
     /// <param name="options">The options used for paste into that graph.</param>
     public static void PasteFromClipboard(this GraphDocument doc, GraphCopyOptions options)
     {
-      object from = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphDocumentAsXml");
-      if (from is GraphDocument)
+      var from = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphDocumentAsXml");
+      if (from is GraphDocument gd)
       {
-        doc.CopyFrom((GraphDocument)from, options);
+        doc.CopyFrom(gd, options);
         doc.OnUserRescaledAxes();
       }
     }
@@ -140,8 +141,8 @@ namespace Altaxo.Graph.Gdi
     /// <param name="showOptionsDialog">If <c>true</c>, shows the user an option dialog for choise of specific items to paste.</param>
     public static void PasteFromClipboardAsGraphStyle(this GraphDocument doc, bool showOptionsDialog)
     {
-      object from = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphDocumentAsXml");
-      if (from is GraphDocument)
+      var from = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphDocumentAsXml");
+      if (from is GraphDocument gd)
       {
         GraphCopyOptions options = DefaultGraphDocumentPasteOptions;
         if (showOptionsDialog)
@@ -168,11 +169,10 @@ namespace Altaxo.Graph.Gdi
 
     public static void PasteFromClipboardAsTemplateForLayer(GraphDocument doc, IEnumerable<int> layerNumber, GraphCopyOptions options)
     {
-      object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
-      if (null == o)
+      var o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
+      if (o is null)
         return;
-      var layer = o as XYPlotLayer;
-      if (null != layer)
+      if (o is XYPlotLayer layer)
       {
         doc.RootLayer.ElementAt(layerNumber).CopyFrom(layer, options);
         doc.OnUserRescaledAxes();
@@ -201,9 +201,8 @@ namespace Altaxo.Graph.Gdi
 
     public static void PasteFromClipboardAsNewLayer(this GraphDocument doc)
     {
-      object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
-      var layer = o as XYPlotLayer;
-      if (null != layer)
+      var o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
+      if (o is XYPlotLayer layer)
         doc.RootLayer.Layers.Add(layer);
     }
 
@@ -214,9 +213,8 @@ namespace Altaxo.Graph.Gdi
     /// <param name="currentActiveLayerNumber">Index of the layer follows after the pasted layer.</param>
     public static void PasteFromClipboardAsNewLayerBeforeLayerNumber(this GraphDocument doc, IEnumerable<int> currentActiveLayerNumber)
     {
-      object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
-      var layer = o as XYPlotLayer;
-      if (null != layer)
+      var o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
+      if (o is XYPlotLayer layer)
       {
         doc.RootLayer.Insert(currentActiveLayerNumber, layer);
       }
@@ -229,9 +227,8 @@ namespace Altaxo.Graph.Gdi
     /// <param name="currentActiveLayerNumber">Index of the layer after which to paste the layer from the clipboard.</param>
     public static void PasteFromClipboardAsNewLayerAfterLayerNumber(this GraphDocument doc, IEnumerable<int> currentActiveLayerNumber)
     {
-      object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
-      var layer = o as XYPlotLayer;
-      if (null != layer)
+      var o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
+      if (o is XYPlotLayer layer)
       {
         doc.RootLayer.InsertAfter(currentActiveLayerNumber, layer);
       }
@@ -244,9 +241,8 @@ namespace Altaxo.Graph.Gdi
     /// <param name="currentActiveLayerNumber">Index of the layer after which to paste the layer from the clipboard.</param>
     public static void PasteFromClipboardAsNewChildLayerOfLayerNumber(this GraphDocument doc, IEnumerable<int> currentActiveLayerNumber)
     {
-      object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
-      var layer = o as XYPlotLayer;
-      if (null != layer)
+      var o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
+      if (o is XYPlotLayer layer)
       {
         var parentLayer = doc.RootLayer.ElementAt(currentActiveLayerNumber);
         parentLayer.Layers.Insert(0, layer);

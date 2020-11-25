@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
       {
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Instance;
       }
@@ -85,7 +86,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
       PlotRange range,
       IPlotArea layer,
       PenX3D pen,
-      Func<int, double> symbolGap,
+      Func<int, double>? symbolGap,
       int skipFrequency,
       bool connectCircular)
     {

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,14 +64,14 @@ namespace Altaxo.Gui.Data.Selections
     {
       set
       {
-        if (null != _selectionDetailControl)
+        if (_selectionDetailControl is not null)
         {
           Children.Remove(_selectionDetailControl);
         }
 
         _selectionDetailControl = value as FrameworkElement;
 
-        if (null != _selectionDetailControl)
+        if (_selectionDetailControl is not null)
         {
           _selectionDetailControl.SetValue(Grid.ColumnProperty, 1);
           Children.Add(_selectionDetailControl);

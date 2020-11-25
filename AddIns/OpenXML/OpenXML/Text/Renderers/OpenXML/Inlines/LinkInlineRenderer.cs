@@ -54,7 +54,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
     /// <inheritdoc/>
     protected override void Write(OpenXMLRenderer renderer, LinkInline link)
     {
-      var url = link.GetDynamicUrl != null ? link.GetDynamicUrl() ?? link.Url : link.Url;
+      var wordDocument = renderer._wordDocument ?? throw new ArgumentException("Render document is null");
+      var url = link.GetDynamicUrl is not null ? link.GetDynamicUrl() ?? link.Url : link.Url;
 
       if (link.IsImage)
       {
@@ -68,7 +69,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
           ++_linkIndex;
           //var nextId = renderer._wordDocument.MainDocumentPart.Parts.Count() + 1;
           var rId = "lkId" + _linkIndex.ToString(System.Globalization.CultureInfo.InvariantCulture);
-          renderer._wordDocument.MainDocumentPart.AddHyperlinkRelationship(new System.Uri(url, System.UriKind.Absolute), true, rId);
+          wordDocument.MainDocumentPart.AddHyperlinkRelationship(new System.Uri(url, System.UriKind.Absolute), true, rId);
 
           var hyperlink = new Hyperlink() { Id = rId };
           renderer.Push(hyperlink);
@@ -81,7 +82,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         }
         else if (!string.IsNullOrEmpty(url) && url.StartsWith("#")) // not a well formed Uri String - then it is probably a fragment reference
         {
-          if (null != renderer.FigureLinkList)
+          if (renderer.FigureLinkList is not null)
           {
             var idx = renderer.FigureLinkList.FindIndex(x => object.ReferenceEquals(x.Link, link));
             if (idx >= 0)
@@ -106,13 +107,15 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
 
     private void RenderImage(OpenXMLRenderer renderer, LinkInline link, string url)
     {
+      var wordDocument = renderer._wordDocument ?? throw new ArgumentException("Render document is null");
+
       using (var imageStream = new MemoryStream())
       {
         var streamResult = renderer.ImageProvider.GetImageStream(imageStream, url, renderer.ImageResolution, renderer.TextDocumentFolderLocation, renderer.LocalImages);
 
         if (!streamResult.IsValid)
         {
-          Current.Console.WriteLine("Error resolving image url {0}: {1}", url, streamResult.ErrorMessage);
+          Current.Console.WriteLine($"Error resolving image url {url}: {streamResult.ErrorMessage}");
           return;
         }
 
@@ -121,7 +124,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         if (link.ContainsData(typeof(Markdig.Renderers.Html.HtmlAttributes)))
         {
           var htmlAttributes = (Markdig.Renderers.Html.HtmlAttributes)link.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-          if (null != htmlAttributes.Properties)
+          if (htmlAttributes.Properties is not null)
           {
             foreach (var entry in htmlAttributes.Properties)
             {
@@ -176,8 +179,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         }
 
 
-        MainDocumentPart mainPart = renderer._wordDocument.MainDocumentPart;
-        ImagePart imagePart = mainPart.AddImagePart(imgPartType);
+        var mainPart = wordDocument.MainDocumentPart;
+        var imagePart = mainPart.AddImagePart(imgPartType);
 
         imageStream.Seek(0, SeekOrigin.Begin);
         imagePart.FeedData(imageStream);

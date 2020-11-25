@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,7 +103,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     public bool GetDataPresent(string format, bool autoConvert)
     {
-      if (null == _availableFormats)
+      if (_availableFormats is null)
         SetFormats();
 
       return _availableFormats.Contains(format);
@@ -115,7 +116,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     public string[] GetFormats(bool autoConvert)
     {
-      if (null == _availableFormats)
+      if (_availableFormats is null)
         SetFormats();
 
       return _availableFormats.ToArray();
@@ -130,7 +131,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       _availableFormats = new List<string>();
 
-      if (null != FolderName)
+      if (FolderName is not null)
         _availableFormats.Add(Format_ProjectFolder);
 
       _availableFormats.Add(Format_ApplicationInstanceGuid);

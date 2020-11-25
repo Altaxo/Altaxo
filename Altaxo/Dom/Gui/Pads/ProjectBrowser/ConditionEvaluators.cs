@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -111,7 +112,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
       var type = Type.GetType(expectedItemType, false, false);
 
-      if (type != null)
+      if (type is not null)
       {
         foreach (object item in selItems)
           if (!(type.IsAssignableFrom(item.GetType())))

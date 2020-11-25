@@ -59,14 +59,13 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    public event Action<ValidationEventArgs<string>> ValueText_Validating;
+    public event Action<ValidationEventArgs<string>>? ValueText_Validating;
 
     #endregion ISingleValueView
 
     private void EhValidating(object sender, ValidationEventArgs<string> e)
     {
-      if (null != ValueText_Validating)
-        ValueText_Validating(e);
+      ValueText_Validating?.Invoke(e);
     }
   }
 }

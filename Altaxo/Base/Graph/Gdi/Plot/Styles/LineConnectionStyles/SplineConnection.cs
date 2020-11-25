@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -55,7 +56,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       {
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Instance;
       }
@@ -82,7 +83,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       IPlotRange range,
       IPlotArea layer,
       PenCacheGdi.GdiPen linePen,
-      Func<int, double> symbolGap,
+      Func<int, double>? symbolGap,
       int skipFrequency,
       bool connectCircular,
       LinePlotStyle linePlotStyle)
@@ -105,7 +106,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
       if (connectCircular)
       {
-        if (null != symbolGap)
+        if (symbolGap is not null)
         {
           // convert points to bezier segments
           var bezierSegments = GdiExtensionMethods.ClosedCardinalSplineToBezierSegments(subLinePoints, subLinePoints.Length);
@@ -126,7 +127,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
               Array.Copy(bezierSegments, segmentRange.IndexAtSubRangeStart * 3, subBezierSegments, 0, subBezierLength);
               var shortenedBezierSegments = GdiExtensionMethods.ShortenBezierCurve(subBezierSegments, segmentRange.GapAtSubRangeStart / 2, segmentRange.GapAtSubRangeEnd / 2);
 
-              if (null != shortenedBezierSegments)
+              if (shortenedBezierSegments is not null)
               {
                 g.DrawBeziers(linePen, shortenedBezierSegments);
               }
@@ -140,7 +141,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       }
       else // not circular
       {
-        if (symbolGap != null)
+        if (symbolGap is not null)
         {
           // convert points to bezier segments
           var bezierSegments = GdiExtensionMethods.OpenCardinalSplineToBezierSegments(subLinePoints, subLinePoints.Length);
@@ -162,7 +163,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
               Array.Copy(bezierSegments, segmentRange.IndexAtSubRangeStart * 3, subBezierSegments, 0, subBezierLength);
               var shortenedBezierSegments = GdiExtensionMethods.ShortenBezierCurve(subBezierSegments, segmentRange.GapAtSubRangeStart / 2, segmentRange.GapAtSubRangeEnd / 2);
 
-              if (null != shortenedBezierSegments)
+              if (shortenedBezierSegments is not null)
               {
                 g.DrawBeziers(linePen, shortenedBezierSegments);
               }

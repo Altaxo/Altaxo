@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,9 +40,10 @@ namespace Altaxo.Main
   [Serializable]
   public sealed class AbsoluteDocumentPath : System.ICloneable
   {
+    private static readonly string[] _emptyStringArray = new string[0];
     public static readonly AbsoluteDocumentPath DocumentPathOfRootNode = new AbsoluteDocumentPath(new string[0]);
 
-    private string[] _pathParts;
+    private string[] _pathParts = _emptyStringArray;
 
     #region Serialization
 
@@ -62,7 +65,7 @@ namespace Altaxo.Main
                  */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var isAbsolutePath = info.GetBoolean("IsAbsolute");
 
@@ -109,7 +112,7 @@ namespace Altaxo.Main
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         int count = info.OpenArray();
         var arr = new string[count];
@@ -161,16 +164,16 @@ namespace Altaxo.Main
       return stringBuilder.ToString();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (!(obj is AbsoluteDocumentPath o))
+      if (!(obj is AbsoluteDocumentPath from))
         return false;
-      if (Count != o.Count)
+      if (Count != from.Count)
         return false;
 
       for (int i = Count - 1; i >= 0; --i)
       {
-        if (!(this[i] == o[i]))
+        if (!(this[i] == from[i]))
           return false;
       }
       return true;
@@ -244,7 +247,7 @@ namespace Altaxo.Main
     /// <value>
     /// The last part.
     /// </value>
-    public string LastPartOrDefault
+    public string? LastPartOrDefault
     {
       get
       {
@@ -257,8 +260,8 @@ namespace Altaxo.Main
 
     public AbsoluteDocumentPath Append(AbsoluteDocumentPath other)
     {
-      if (null == other)
-        throw new ArgumentNullException("other");
+      if (other is null)
+        throw new ArgumentNullException(nameof(other));
 
       var arr = new string[_pathParts.Length + other._pathParts.Length];
       Array.Copy(_pathParts, arr, _pathParts.Length);
@@ -269,8 +272,8 @@ namespace Altaxo.Main
 
     public AbsoluteDocumentPath Append(string other)
     {
-      if (null == other)
-        throw new ArgumentNullException("other");
+      if (other is null)
+        throw new ArgumentNullException(nameof(other));
 
       var arr = new string[_pathParts.Length + 1];
       Array.Copy(_pathParts, arr, _pathParts.Length);
@@ -363,14 +366,17 @@ namespace Altaxo.Main
     /// either has not implemented the <see cref="IDocumentLeafNode"/> interface or has no parent</returns>
     public static IDocumentLeafNode GetRootNode(IDocumentLeafNode node)
     {
-      if (null == node)
+      if (node is null)
         throw new ArgumentNullException(nameof(node));
 
+      int maxdepth = 65536;
       var parent = node.ParentObject;
-      while (null != parent)
+      while (parent is not null)
       {
         node = parent;
         parent = node.ParentObject;
+        if (--maxdepth == 0)
+          throw new InvalidProgramException("Detected unusual deep hierarchy.");
       }
 
       return node;
@@ -383,13 +389,13 @@ namespace Altaxo.Main
     /// <param name="type">The type to search for.</param>
     /// <returns>The first parental node that implements the type <code>type.</code>
     /// </returns>
-    public static IDocumentLeafNode GetRootNodeImplementing(IDocumentLeafNode node, System.Type type)
+    public static IDocumentLeafNode? GetRootNodeImplementing(IDocumentLeafNode? node, System.Type type)
     {
-      if (null == node)
+      if (node is null)
         return null;
 
       node = node.ParentObject;
-      while (node != null && !type.IsInstanceOfType(node))
+      while (node is not null && !type.IsInstanceOfType(node))
       {
         node = node.ParentObject;
       }
@@ -403,18 +409,19 @@ namespace Altaxo.Main
     /// <typeparam name="T">The type to search for.</typeparam>
     /// <param name="node">The node from where the search begins.</param>
     /// <returns>The first parental node that implements the type <code>T</code>.</returns>
-    public static T GetRootNodeImplementing<T>(IDocumentLeafNode node)
+    [return: MaybeNull]
+    public static T GetRootNodeImplementing<T>(IDocumentLeafNode? node)
     {
-      if (null == node)
-        return default(T);
+      if (node is null)
+        return default;
 
       node = node.ParentObject;
-      while (node != null && !(node is T))
+      while (node is not null && !(node is T))
       {
         node = node.ParentObject;
       }
 
-      return (node is T) ? (T)node : default(T);
+      return (node is T tnode) ? tnode : default;
     }
 
     /// <summary>
@@ -439,8 +446,8 @@ namespace Altaxo.Main
     /// </returns>
     public static AbsoluteDocumentPath GetPath(IDocumentLeafNode node, int maxDepth)
     {
-      if (null == node)
-        throw new ArgumentNullException("node");
+      if (node is null)
+        throw new ArgumentNullException(nameof(node));
       if (maxDepth <= 0)
         throw new ArgumentOutOfRangeException("maxDepth should be > 0");
 
@@ -448,14 +455,14 @@ namespace Altaxo.Main
 
       int depth = 0;
       var parent = node.ParentObject;
-      while (parent != null)
+      while (parent is not null)
       {
         if (depth >= maxDepth)
           break;
 
-        string name = parent.GetNameOfChildObject(node);
+        var name = parent.GetNameOfChildObject(node);
 
-        if (null == name) // an empty string is a valid name, e.g. for a folder text document located in the root folder
+        if (name is null) // an empty string is a valid name, e.g. for a folder text document located in the root folder
           throw new InvalidOperationException(string.Format("Parent node (type:{0}) of node (type: {1}) did not return a valid name for the child node!", parent.GetType(), node.GetType()));
 
         list.Add(name);
@@ -464,7 +471,7 @@ namespace Altaxo.Main
         ++depth;
       }
 
-      if (maxDepth == int.MaxValue && node != null && !(node is IProject))
+      if (maxDepth == int.MaxValue && node is not null && !(node is IProject))
       {
         string msg = string.Format("Document {0} is not rooted. The path so far retrieved is {1}", node, list);
         throw new InvalidOperationException(msg);
@@ -485,40 +492,38 @@ namespace Altaxo.Main
     /// <param name="startnode">The node object which is considered as the starting point of the path.</param>
     /// <param name="documentRoot">An alternative node which is used as starting point of the path if the first try failed.</param>
     /// <returns>The resolved object. If the resolving process failed, the return value is null.</returns>
-    public static IDocumentLeafNode GetObject(AbsoluteDocumentPath path, IDocumentLeafNode startnode, IDocumentNode documentRoot)
+    public static IDocumentLeafNode? GetObject(AbsoluteDocumentPath path, IDocumentLeafNode startnode, IDocumentNode documentRoot)
     {
       var retval = GetObject(path, startnode);
 
-      if (null == retval && null != documentRoot)
+      if (retval is null && documentRoot is not null)
         retval = GetObject(path, documentRoot);
 
       return retval;
     }
 
-    public static IDocumentLeafNode GetObject(AbsoluteDocumentPath path, IDocumentLeafNode startnode)
+    public static IDocumentLeafNode? GetObject(AbsoluteDocumentPath path, IDocumentLeafNode startnode)
     {
-      if (null == path)
-        throw new ArgumentNullException("path");
-      if (null == startnode)
-        throw new ArgumentNullException("startnode");
+      if (path is null)
+        throw new ArgumentNullException(nameof(path));
+      if (startnode is null)
+        throw new ArgumentNullException(nameof(startnode));
 
-      var node = startnode;
-
-      node = GetRootNode(node);
+      IDocumentLeafNode? node = GetRootNode(startnode);
 
       for (int i = 0; i < path.Count; i++)
       {
         if (path[i] == "..")
         {
-          if (null != node)
-            node = node.ParentObject;
-          else
+          if (node is null)
             return null;
+          else
+            node = node.ParentObject;
         }
         else
         {
-          if (node is Main.IDocumentNode)
-            node = ((Main.IDocumentNode)node).GetChildObjectNamed(path[i]);
+          if (node is Main.IDocumentNode docnode)
+            node = docnode.GetChildObjectNamed(path[i]);
           else
             return null;
         }
@@ -540,15 +545,15 @@ namespace Altaxo.Main
     /// </exception>
     public static IDocumentLeafNode GetNodeOrLeastResolveableNode(AbsoluteDocumentPath path, IDocumentLeafNode startnode, out bool pathWasCompletelyResolved)
     {
-      if (null == path)
-        throw new ArgumentNullException("path");
-      if (null == startnode)
-        throw new ArgumentNullException("startnode");
+      if (path is null)
+        throw new ArgumentNullException(nameof(path));
+      if (startnode is null)
+        throw new ArgumentNullException(nameof(startnode));
 
       var node = startnode;
 
       node = GetRootNode(node);
-      if (null == node)
+      if (node is null)
         throw new InvalidProgramException("startnote is not rooted");
 
       var prevNode = node;
@@ -563,13 +568,13 @@ namespace Altaxo.Main
         }
         else
         {
-          if (node is Main.IDocumentNode)
-            node = ((Main.IDocumentNode)node).GetChildObjectNamed(path[i]);
+          if (node is Main.IDocumentNode docnode)
+            node = docnode.GetChildObjectNamed(path[i]);
           else
             node = null;
         }
 
-        if (node == null)
+        if (node is null)
         {
           pathWasCompletelyResolved = false;
           break;

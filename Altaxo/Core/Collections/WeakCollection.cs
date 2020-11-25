@@ -44,7 +44,7 @@ namespace Altaxo.Collections
     /// </summary>
     public void Add(T item)
     {
-      if (item == null)
+      if (item is null)
         throw new ArgumentNullException("item");
       CheckNoEnumerator();
       if (innerList.Count == innerList.Capacity || (innerList.Count % 32) == 31)
@@ -69,7 +69,7 @@ namespace Altaxo.Collections
     /// </summary>
     public bool Remove(T item)
     {
-      if (item == null)
+      if (item is null)
         return false;
       CheckNoEnumerator();
       var comparer = EqualityComparer<T>.Default;

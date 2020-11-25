@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -119,9 +120,9 @@ namespace Altaxo.Graph.Plot.Groups
         info.AddValue("StepEnabled", s._isStepEnabled);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (BarSizePosition3DGroupStyle)o ?? new BarSizePosition3DGroupStyle();
+        var s = (BarSizePosition3DGroupStyle?)o ?? new BarSizePosition3DGroupStyle();
         s._isStepEnabled = info.GetBoolean("StepEnabled");
         return s;
       }
@@ -131,7 +132,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     private void CopyFrom(BarSizePosition3DGroupStyle from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       _isStepEnabled = from._isStepEnabled;
@@ -487,11 +488,11 @@ namespace Altaxo.Graph.Plot.Groups
       double maximumLogicalYValue
       )
     {
-      if (externalGroups != null && externalGroups.ContainsType(typeof(BarSizePosition3DGroupStyle)))
+      if (externalGroups is not null && externalGroups.ContainsType(typeof(BarSizePosition3DGroupStyle)))
       {
         ((BarSizePosition3DGroupStyle)externalGroups.GetPlotGroupStyle(typeof(BarSizePosition3DGroupStyle))).IntendToApply(numberOfItems, minimumLogicalXValue, maximumLogicalXValue, minimumLogicalYValue, maximumLogicalYValue);
       }
-      else if (localGroups != null && localGroups.ContainsType(typeof(BarSizePosition3DGroupStyle)))
+      else if (localGroups is not null && localGroups.ContainsType(typeof(BarSizePosition3DGroupStyle)))
       {
         ((BarSizePosition3DGroupStyle)localGroups.GetPlotGroupStyle(typeof(BarSizePosition3DGroupStyle))).IntendToApply(numberOfItems, minimumLogicalXValue, maximumLogicalXValue, minimumLogicalYValue, maximumLogicalYValue);
       }

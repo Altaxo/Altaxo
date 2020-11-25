@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Calc;
@@ -47,28 +48,28 @@ namespace Altaxo.Graph.Procedures
     /// <param name="xarr">The array of the data point's x values.</param>
     /// <param name="yarr">The array of the data point's y values.</param>
     /// <returns>Null if all is ok, or error message if not.</returns>
-    public static string GetActivePlotPoints(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl, out double[] xarr, out double[] yarr)
+    public static string? GetActivePlotPoints(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl, out double[] xarr, out double[] yarr)
     {
       var xlist = new List<double>();
       var ylist = new List<double>();
 
-      xarr = yarr = null;
+      xarr = yarr = new double[0];
 
       ctrl.EnsureValidityOfCurrentLayerNumber();
       ctrl.EnsureValidityOfCurrentPlotNumber();
       var xylayer = ctrl.ActiveLayer as XYPlotLayer;
-      if (null == xylayer || ctrl.CurrentPlotNumber < 0)
+      if (xylayer is null || ctrl.CurrentPlotNumber < 0)
         return "No active plot available";
 
       IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
       var xyPlotItem = plotItem as XYColumnPlotItem;
 
-      if (xyPlotItem == null)
+      if (xyPlotItem is null)
         return "No active plot!";
 
       XYColumnPlotData data = xyPlotItem.XYColumnPlotData;
-      if (data == null)
+      if (data is null)
         return "Active plot item has no data";
 
       if (!(data.XColumn is Altaxo.Data.INumericColumn) || !(data.YColumn is Altaxo.Data.INumericColumn))
@@ -107,22 +108,22 @@ namespace Altaxo.Graph.Procedures
       string[] result = new string[2] { string.Empty, string.Empty };
 
       var xylayer = ctrl.ActiveLayer as XYPlotLayer;
-      if (null == xylayer || ctrl.CurrentPlotNumber < 0)
+      if (xylayer is null || ctrl.CurrentPlotNumber < 0)
         return result;
 
       IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
       var xyPlotItem = plotItem as XYColumnPlotItem;
 
-      if (xyPlotItem == null)
+      if (xyPlotItem is null)
         return result;
 
       XYColumnPlotData data = xyPlotItem.XYColumnPlotData;
-      if (data == null)
+      if (data is null)
         return result;
 
-      result[0] = data.XColumn.FullName;
-      result[1] = data.YColumn.FullName;
+      result[0] = data.XColumn?.FullName ?? string.Empty;
+      result[1] = data.YColumn?.FullName ?? string.Empty;
 
       return result;
     }
@@ -169,13 +170,12 @@ namespace Altaxo.Graph.Procedures
       return LinearFitBySvd.FitPolymomialDestructive(order, xarr, yarr, earr, numberOfDataPoints);
     }
 
-    public static string Fit(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl, int order, double fitCurveXmin, double fitCurveXmax, bool showFormulaOnGraph)
+    public static string? Fit(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl, int order, double fitCurveXmin, double fitCurveXmax, bool showFormulaOnGraph)
     {
-      string error;
-      error = GetActivePlotPoints(ctrl, out var xarr, out var yarr);
+      var error = GetActivePlotPoints(ctrl, out var xarr, out var yarr);
       int numberOfDataPoints = xarr.Length;
 
-      if (null != error)
+      if (error is not null)
         return error;
 
       string[] plotNames = GetActivePlotName(ctrl);
@@ -243,7 +243,7 @@ namespace Altaxo.Graph.Procedures
       var fittedCurve = new XYFunctionPlotItem(new XYFunctionPlotData(plotfunction), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, ctrl.Doc.GetPropertyContext()));
 
       var xylayer = ctrl.ActiveLayer as XYPlotLayer;
-      if (null != xylayer)
+      if (xylayer is not null)
         xylayer.PlotItems.Add(fittedCurve);
 
       return null;

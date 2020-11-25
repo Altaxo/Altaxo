@@ -25,28 +25,28 @@ namespace Altaxo.Gui.Startup
 {
   internal sealed class SplashScreenForm : Form
   {
-    private static SplashScreenForm splashScreen;
-    private static List<string> requestedFileList = new List<string>();
-    private static List<string> parameterList = new List<string>();
-    private Bitmap bitmap;
+    private static SplashScreenForm? _splashScreen;
+    private static List<string> _requestedFileList = new List<string>();
+    private static List<string> _parameterList = new List<string>();
+    private Bitmap? _bitmap;
 
-    public static SplashScreenForm SplashScreen
+    public static SplashScreenForm? SplashScreen
     {
       get
       {
-        return splashScreen;
+        return _splashScreen;
       }
       set
       {
-        splashScreen = value;
+        _splashScreen = value;
       }
     }
 
     public SplashScreenForm(string applicationName)
     {
       var startass = System.Reflection.Assembly.GetExecutingAssembly();
-      Version version = startass.GetName().Version;
-      string versionText = string.Format("{0} {1}.{2} build {3}.{4}", applicationName, version.Major, version.Minor, version.Build, version.Revision);
+      var version = startass.GetName().Version ?? new Version(0,0,0,0);
+      string versionText = $"{applicationName} {version.Major}.{version.Minor} build {version.Build}.{version.Revision}";
 #if DEBUG
       versionText += " (debug)";
 #endif
@@ -56,12 +56,14 @@ namespace Altaxo.Gui.Startup
       ShowInTaskbar = false;
       // Stream must be kept open for the lifetime of the bitmap
       // use the image from the startup assembly, if not there, then from this assembly
-      bitmap = new Bitmap(
-        System.Reflection.Assembly.GetEntryAssembly().GetManifestResourceStream("Altaxo.Resources.SplashScreen.jpg")
-        ?? typeof(SplashScreenForm).Assembly.GetManifestResourceStream("Altaxo.Resources.SplashScreen.jpg"));
-      ClientSize = bitmap.Size;
+      _bitmap = new Bitmap(
+        System.Reflection.Assembly.GetEntryAssembly()?.GetManifestResourceStream("Altaxo.Resources.SplashScreen.jpg") ??
+        typeof(SplashScreenForm).Assembly.GetManifestResourceStream("Altaxo.Resources.SplashScreen.jpg") ??
+        throw new InvalidProgramException("ManifestResourceStream Altaxo.Resources.SplashScreen.jpg is neither found in entry assembly nor in this assembly.")
+        );
+      ClientSize = _bitmap.Size;
 
-      Font font = null;
+      Font? font = null;
       foreach (string fontFamilyName in new[] { "Microsoft Sans Serif", "Liberation Sans", "Verdana", "Arial", "Helvetica" })
       {
         try
@@ -74,51 +76,48 @@ namespace Altaxo.Gui.Startup
       }
 
       {
-        using (var g = Graphics.FromImage(bitmap))
+        using (var g = Graphics.FromImage(_bitmap))
         {
-          if (null != font)
+          if (font is not null)
           {
             g.DrawString(versionText, font, Brushes.Black, 230 - 3 * versionText.Length, 14);
             font.Dispose();
           }
         }
       }
-      BackgroundImage = bitmap;
+      BackgroundImage = _bitmap;
     }
 
     public static void ShowSplashScreen(string applicationName)
     {
-      splashScreen = new SplashScreenForm(applicationName);
-      splashScreen.Show();
+      _splashScreen = new SplashScreenForm(applicationName);
+      _splashScreen.Show();
     }
 
     protected override void Dispose(bool disposing)
     {
       if (disposing)
       {
-        if (bitmap != null)
-        {
-          bitmap.Dispose();
-          bitmap = null;
-        }
+          _bitmap?.Dispose();
+          _bitmap = null;
       }
       base.Dispose(disposing);
     }
 
     public static string[] GetParameterList()
     {
-      return parameterList.ToArray();
+      return _parameterList.ToArray();
     }
 
     public static string[] GetRequestedFileList()
     {
-      return requestedFileList.ToArray();
+      return _requestedFileList.ToArray();
     }
 
     public static void SetCommandLineArgs(string[] args)
     {
-      requestedFileList.Clear();
-      parameterList.Clear();
+      _requestedFileList.Clear();
+      _parameterList.Clear();
 
       foreach (string arg in args)
       {
@@ -139,11 +138,11 @@ namespace Altaxo.Gui.Startup
           // with a backslash:
           if (param.EndsWith("\"", StringComparison.Ordinal))
             param = param.Substring(0, param.Length - 1) + "\\";
-          parameterList.Add(param);
+          _parameterList.Add(param);
         }
         else
         {
-          requestedFileList.Add(arg);
+          _requestedFileList.Add(arg);
         }
       }
     }

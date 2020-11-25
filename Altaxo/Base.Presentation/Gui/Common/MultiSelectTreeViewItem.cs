@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,10 +66,10 @@ namespace Altaxo.Gui.Common
     {
       get
       {
-        for (ItemsControl container = ParentItemsControl; container != null; container = ItemsControl.ItemsControlFromItemContainer(container))
+        for (ItemsControl container = ParentItemsControl; container is not null; container = ItemsControl.ItemsControlFromItemContainer(container))
         {
           var view = container as MultiSelectTreeView;
-          if (view != null)
+          if (view is not null)
           {
             return view;
           }
@@ -118,7 +119,7 @@ namespace Altaxo.Gui.Common
       base.OnMouseDown(e);
 
       var tw = ParentMultiSelectTreeView;
-      if (null != tw)
+      if (tw is not null)
       {
         tw.OnViewItemMouseDown(this, e);
       }
@@ -136,7 +137,7 @@ namespace Altaxo.Gui.Common
       _timeStampLastMouseUp = e.Timestamp;
 
       var tw = ParentMultiSelectTreeView;
-      if (null != tw)
+      if (tw is not null)
       {
         if (diff < GuiHelper.DoubleClickTime)
         {
@@ -202,11 +203,11 @@ namespace Altaxo.Gui.Common
           {
             itemToSelect = GetNextNodeAtSameLevel(this);
 
-            if (itemToSelect == null) // current node has no subsequent node at the same level
+            if (itemToSelect is null) // current node has no subsequent node at the same level
             {
               MultiSelectTreeViewItem tmp = ParentMultiSelectTreeViewItem;
 
-              while (itemToSelect == null && tmp != null) // searhing for the first parent that has a subsequent node at the same level
+              while (itemToSelect is null && tmp is not null) // searhing for the first parent that has a subsequent node at the same level
               {
                 itemToSelect = GetNextNodeAtSameLevel(tmp);
                 tmp = tmp.ParentMultiSelectTreeViewItem;
@@ -216,7 +217,7 @@ namespace Altaxo.Gui.Common
           e.Handled = true;
         }
 
-        if (itemToSelect != null)
+        if (itemToSelect is not null)
         {
           itemToSelect.Focus();
           itemToSelect.IsSelected = true;
@@ -229,7 +230,7 @@ namespace Altaxo.Gui.Common
     protected override void OnSelected(RoutedEventArgs e)
     {
       var parent = ParentMultiSelectTreeView;
-      if (null != parent)
+      if (parent is not null)
         parent.OnSelectionStateChanged(this, true);
 
       base.OnSelected(e);
@@ -238,7 +239,7 @@ namespace Altaxo.Gui.Common
     protected override void OnUnselected(RoutedEventArgs e)
     {
       var parent = ParentMultiSelectTreeView;
-      if (null != parent)
+      if (parent is not null)
         parent.OnSelectionStateChanged(this, false);
 
       base.OnUnselected(e);
@@ -258,7 +259,7 @@ namespace Altaxo.Gui.Common
       MultiSelectTreeViewItem lastVisibleNode = item;
 
       // Retrieving last child of last expanded node
-      while (lastVisibleNode != null && lastVisibleNode.Items.Count > 0 && lastVisibleNode.IsExpanded)
+      while (lastVisibleNode is not null && lastVisibleNode.Items.Count > 0 && lastVisibleNode.IsExpanded)
         lastVisibleNode = lastVisibleNode.ItemContainerGenerator.ContainerFromIndex(lastVisibleNode.Items.Count - 1) as MultiSelectTreeViewItem;
 
       return lastVisibleNode;
@@ -271,13 +272,13 @@ namespace Altaxo.Gui.Common
     /// <returns>Null if there is no previous node at the same level.</returns>
     public static MultiSelectTreeViewItem GetPreviousNodeAtSameLevel(MultiSelectTreeViewItem item)
     {
-      if (item == null)
+      if (item is null)
         return null;
 
       MultiSelectTreeViewItem previousNodeAtSameLevel = null;
 
       ItemsControl parentControl = item.ParentItemsControl;
-      if (parentControl != null)
+      if (parentControl is not null)
       {
         int index = parentControl.ItemContainerGenerator.IndexFromContainer(item);
         if (index != 0) // if this is not the last item
@@ -296,13 +297,13 @@ namespace Altaxo.Gui.Common
     /// <returns>Null if there is no subsequent node at the same level.</returns>
     public static MultiSelectTreeViewItem GetNextNodeAtSameLevel(MultiSelectTreeViewItem item)
     {
-      if (item == null)
+      if (item is null)
         return null;
 
       MultiSelectTreeViewItem nextNodeAtSameLevel = null;
 
       ItemsControl parentControl = item.ParentItemsControl;
-      if (parentControl != null)
+      if (parentControl is not null)
       {
         int index = parentControl.ItemContainerGenerator.IndexFromContainer(item);
         if (index != parentControl.Items.Count - 1) // if this is not the last item
@@ -325,7 +326,7 @@ namespace Altaxo.Gui.Common
       for (int i = idx1; i <= idx2; ++i)
       {
         var node = parent.ItemContainerGenerator.ContainerFromIndex(i) as MultiSelectTreeViewItem;
-        if (null != node)
+        if (node is not null)
         {
           node.IsSelected = true;
         }
@@ -493,7 +494,7 @@ namespace Altaxo.Gui.Common
     {
       var parent = ParentMultiSelectTreeViewItem;
       int result = 0;
-      while (parent != null)
+      while (parent is not null)
       {
         ++result;
         parent = parent.ParentMultiSelectTreeViewItem;

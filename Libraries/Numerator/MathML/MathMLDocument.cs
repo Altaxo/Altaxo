@@ -432,7 +432,7 @@ namespace MathML
 				{
 					XmlNodeList list = element.GetElementsByTagName("math");
 					XmlNode math = null;
-					if(list.Count > 0 && (math = list.Item(0)) != null && math is MathMLElement)
+					if(list.Count > 0 && (math = list.Item(0)) is not null && math is MathMLElement)
 					{
 						return (MathMLElement)math;
 					}

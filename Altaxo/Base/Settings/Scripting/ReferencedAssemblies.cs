@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace Altaxo.Settings.Scripting
     private static readonly List<Assembly> _additionalReferencedAssemblies = new List<Assembly>();
     private static readonly List<Assembly> _assemblyIncludedInClassReference;
 
-    public static AssemblyAddedEventHandler AssemblyAdded;
+    public static AssemblyAddedEventHandler? AssemblyAdded;
 
     static ReferencedAssemblies()
     {
@@ -85,12 +86,12 @@ namespace Altaxo.Settings.Scripting
       // try to load some assemblies given in the .addin file(s)
       // TODO the following code does not work properly, make it work!
       var addInPath = Altaxo.Main.Services.StringParser.Parse("/${AppName}/CodeEditing/AdditionalAssemblyReferences");
-      IList<string> additionalUserAssemblyNames = AddInTree.BuildItems<string>(addInPath, null, false);
+      IList<string> additionalUserAssemblyNames = AddInTree.BuildItems<string>(addInPath, addInPath, false);
       var additionalReferencedAssemblies = new HashSet<Assembly>();
       foreach (var additionalUserAssemblyName in additionalUserAssemblyNames)
       {
-        Assembly additionalAssembly = null;
-        Exception exception = null;
+        Assembly? additionalAssembly = null;
+        Exception? exception = null;
         try
         {
           // try to load the assembly with its long name from GAC
@@ -102,7 +103,7 @@ namespace Altaxo.Settings.Scripting
           exception = ex;
         }
 
-        if (additionalAssembly == null)
+        if (additionalAssembly is null)
         {
           try
           {
@@ -112,7 +113,7 @@ namespace Altaxo.Settings.Scripting
             {
               // if the path was a relative path, make sure
               // that we create a absolute path, starting from the entry assembly
-              var path = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+              var path = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location) ?? string.Empty;
               resolvedFileName = System.IO.Path.Combine(path, resolvedFileName);
             }
 
@@ -127,9 +128,9 @@ namespace Altaxo.Settings.Scripting
           }
         }
 
-        if (null == exception)
+        if (exception is null)
         {
-          additionalReferencedAssemblies.Add(additionalAssembly);
+          additionalReferencedAssemblies.Add(additionalAssembly!);
         }
         else
         {
@@ -141,13 +142,13 @@ namespace Altaxo.Settings.Scripting
 
       // try to load the assemblies that are covered by the class reference file
       addInPath = Altaxo.Main.Services.StringParser.Parse("/${AppName}/CodeEditing/AssembliesIncludedInClassReference");
-      IList<string> namesOfAssembliesIncludedInClassReference = AddInTree.BuildItems<string>(addInPath, null, false);
+      IList<string> namesOfAssembliesIncludedInClassReference = AddInTree.BuildItems<string>(addInPath, addInPath, false);
       var hash = new HashSet<string>(namesOfAssembliesIncludedInClassReference.Select(s => s.ToUpperInvariant()));
 
       var list = new List<Assembly>();
       foreach (var ass in All)
       {
-        if (hash.Contains(ass.GetName().Name.ToUpperInvariant()))
+        if (ass.GetName().Name is { } assName && hash.Contains(assName.ToUpperInvariant()))
         {
           list.Add(ass);
         }
@@ -156,7 +157,7 @@ namespace Altaxo.Settings.Scripting
       _assemblyIncludedInClassReference = list;
     }
 
-    private static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
+    private static void CurrentDomain_AssemblyLoad(object? sender, AssemblyLoadEventArgs args)
     {
       var asm = args.LoadedAssembly;
 
@@ -192,7 +193,7 @@ namespace Altaxo.Settings.Scripting
 
     private static void OnAssemblyAdded(Assembly asm)
     {
-      if (null != AssemblyAdded)
+      if (AssemblyAdded is not null)
       {
         AssemblyAdded(asm);
       }
@@ -218,7 +219,8 @@ namespace Altaxo.Settings.Scripting
           // and thus altering the content of _startupAssemblies
           foreach (var ass in _startupAssemblies)
           {
-            if (!(ass.GetName().Name.ToUpperInvariant().StartsWith("SYSTEM.VALUETUPLE")))
+            var assName = ass.GetName().Name;
+            if (assName is null || !(assName.ToUpperInvariant().StartsWith("SYSTEM.VALUETUPLE")))
               list.Add(ass);
           }
         }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -140,7 +141,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
         InitializeDropLineChoices();
       }
-      if (_view != null)
+      if (_view is not null)
       {
         _view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
         _view.SkipFrequency = _doc.SkipFrequency;
@@ -243,7 +244,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhIndependentColorChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentColor = _view.IndependentColor;
         _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);

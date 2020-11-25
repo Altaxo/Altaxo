@@ -22,13 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Gui;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
@@ -40,19 +38,19 @@ namespace Altaxo.Dom
   {
     protected string _applicationName = "Application";
 
-    protected IProject _currentProject;
+    protected IProject? _currentProject;
 
     protected IProjectArchiveManager _currentProjectArchiveManager = new UnnamedProjectArchiveManager();
 
-    public event ProjectEventHandler ProjectOpened;
+    public event ProjectEventHandler? ProjectOpened;
 
-    public event ProjectEventHandler ProjectClosed;
+    public event ProjectEventHandler? ProjectClosed;
 
-    public event ProjectRenameEventHandler ProjectRenamed;
+    public event ProjectRenameEventHandler? ProjectRenamed;
 
-    public event ProjectEventHandler ProjectDirtyChanged;
+    public event ProjectEventHandler? ProjectDirtyChanged;
 
-    public event ProjectEventHandler ProjectChanged;
+    public event ProjectEventHandler? ProjectChanged;
 
     #region Current project and project file name handling
 
@@ -98,13 +96,13 @@ namespace Altaxo.Dom
     /// Returns the currently open project.
     /// For setting, call <see cref="SetCurrentProject(IProject, bool)"/>.
     /// </summary>
-    public IProject CurrentProject { get => _currentProject; }
+    public IProject? CurrentProject { get => _currentProject; }
 
     /// <summary>
     /// Gets the file name for the currently open project. Is null if the project has not got a file name for now.
     /// For setting, call <see cref="SetCurrentProject(IProject, bool)"/>.
     /// </summary>
-    public virtual PathName CurrentProjectFileName
+    public virtual PathName? CurrentProjectFileName
     {
       get { return _currentProjectArchiveManager.FileOrFolderName; }
     }
@@ -129,23 +127,25 @@ namespace Altaxo.Dom
 
         if (!object.ReferenceEquals(_currentProjectArchiveManager, value))
         {
-          string oldFileName = null;
-          string newFileName = null;
-          if (null != _currentProjectArchiveManager)
+          string? oldFileName = null;
+          string? newFileName = null;
+          if (!(_currentProjectArchiveManager is null))
           {
-            oldFileName = _currentProjectArchiveManager?.FileOrFolderName;
+            oldFileName = _currentProjectArchiveManager.FileOrFolderName;
             _currentProjectArchiveManager.FileOrFolderNameChanged -= EhFileOrFolderNameChanged;
-            _currentProjectArchiveManager?.Dispose();
+            _currentProjectArchiveManager.Dispose();
           }
 
           _currentProjectArchiveManager = value;
 
-          if (null != _currentProjectArchiveManager)
+          if (!(_currentProjectArchiveManager is null))
           {
             _currentProjectArchiveManager.FileOrFolderNameChanged += EhFileOrFolderNameChanged;
             newFileName = _currentProjectArchiveManager.FileOrFolderName;
           }
-          OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, oldFileName, newFileName));
+
+          if (!(_currentProject is null))
+            OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, oldFileName, newFileName));
         }
       }
     }
@@ -156,16 +156,21 @@ namespace Altaxo.Dom
     /// </summary>
     /// <param name="newManager">The new manager that becomes the current manager after this call.</param>
     /// <returns>The archive manager that is currently set.</returns>
-    public IProjectArchiveManager ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(IProjectArchiveManager newManager)
+    public IProjectArchiveManager? ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(IProjectArchiveManager? newManager)
     {
-      var oldManager = _currentProjectArchiveManager;
-      _currentProjectArchiveManager = newManager;
-      OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, oldManager?.FileOrFolderName, newManager?.FileOrFolderName));
+      if (_currentProject is null)
+        throw new InvalidProgramException();
+
+      var oldManager = _currentProjectArchiveManager ?? throw new InvalidProgramException($"{nameof(_currentProjectArchiveManager)} should never be null");
+      _currentProjectArchiveManager = newManager ?? throw new ArgumentNullException(nameof(newManager));
+      OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, oldManager.FileOrFolderName, newManager.FileOrFolderName));
       return oldManager;
     }
 
-    private void EhFileOrFolderNameChanged(object sender, NameChangedEventArgs e)
+    private void EhFileOrFolderNameChanged(object? sender, NameChangedEventArgs e)
     {
+      if (_currentProject is null)
+        throw new InvalidProgramException();
       OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, e.OldName, e.NewName));
     }
 
@@ -175,11 +180,11 @@ namespace Altaxo.Dom
     /// </summary>
     /// <param name="project">The new project to be set. The file name of this project will be null (thus the project is considered unnamed).</param>
     /// <param name="asUnnamedProject">If true, the current <see cref="CurrentProjectArchiveManager"/> is replaced by a dummy project archive manager that represents an unnamed project.</param>
-    protected void SetCurrentProject(IProject project, bool asUnnamedProject)
+    protected void SetCurrentProject(IProject? project, bool asUnnamedProject)
     {
       var oldProject = _currentProject;
 
-      if (null != _currentProject)
+      if (_currentProject is not null)
       {
         _currentProject.IsDirtyChanged -= EhProjectDirtyChanged;
       }
@@ -190,14 +195,14 @@ namespace Altaxo.Dom
         CurrentProjectArchiveManager = new UnnamedProjectArchiveManager();
       }
 
-      if (_currentProject != null)
+      if (_currentProject is not null)
       {
         _currentProject.IsDirtyChanged += EhProjectDirtyChanged;
       }
 
       if (!object.ReferenceEquals(oldProject, _currentProject)) // Project instance has changed
       {
-        if (null != oldProject)
+        if (oldProject is not null)
         {
           try
           {
@@ -212,7 +217,7 @@ namespace Altaxo.Dom
       }
     }
 
-    private void EhProjectDirtyChanged(object sender, EventArgs e)
+    private void EhProjectDirtyChanged(object? sender, EventArgs e)
     {
       OnProjectChanged(new Altaxo.Main.ProjectEventArgs(_currentProject, _currentProject?.Name, ProjectEventKind.ProjectDirtyChanged));
     }
@@ -227,22 +232,22 @@ namespace Altaxo.Dom
     /// <inheritdoc/>
     public void AskForSavingOfProject(CancelEventArgs e)
     {
-      string text = Current.ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Text");
-      string caption = Current.ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Caption");
+      string? text = Current.ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Text");
+      string? caption = Current.ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Caption");
       bool? dlgresult = Current.Gui.YesNoCancelMessageBox(text, caption, null);
 
-      if (null == dlgresult) // Cancel
+      if (dlgresult is null) // Cancel
       {
         e.Cancel = true;
       }
       else if (true == dlgresult) // Yes
       {
-        if (CurrentProjectFileName != null)
+        if (CurrentProjectFileName is not null)
           SaveProject();
         else
           SaveProjectAs();
 
-        if (CurrentProject.IsDirty)
+        if (_currentProject?.IsDirty ?? false)
           e.Cancel = true; // Cancel if the saving was not successfull
       }
     }
@@ -252,6 +257,9 @@ namespace Altaxo.Dom
     /// </summary>
     public void SaveProject()
     {
+      if (CurrentProjectFileName is null)
+        throw new InvalidOperationException("The current project has not file name yet.");
+
       SaveProject(CurrentProjectFileName);
     }
 
@@ -262,7 +270,10 @@ namespace Altaxo.Dom
     /// <param name="fileOrFolderName">If the project should be saved into a file, is should be a <see cref="FileName"/>. If the project should be saved into a folder, use a <see cref="DirectoryName"/> instead.</param>
     public virtual void SaveProject(PathName fileOrFolderName)
     {
-      string oldFileName = CurrentProjectFileName;
+      if (_currentProject is null)
+        throw new InvalidProgramException();
+
+      var oldFileName = CurrentProjectFileName;
       var currentProjectFileName = fileOrFolderName; // set file name silently
       if (oldFileName != fileOrFolderName)
       {
@@ -270,7 +281,7 @@ namespace Altaxo.Dom
       }
 
       FileUtility.ObservedSave(new NamedFileOrFolderOperationDelegate(InternalSave),
-          FileName.Create(fileOrFolderName),
+          fileOrFolderName,
           Current.ResourceService.GetString("Altaxo.Project.CantSaveProjectErrorText"),
           FileErrorPolicy.ProvideAlternative);
     }
@@ -291,7 +302,7 @@ namespace Altaxo.Dom
       {
         var filename = new FileName(options.FileName);
         SaveProject(filename);
-        Current.GetService<IRecentOpen>()?.AddRecentProject(new FileName(filename));
+        Current.GetService<IRecentOpen>()?.AddRecentProject(filename);
         Current.StatusBar.SetMessage(filename + ": " + Current.ResourceService.GetString("Altaxo.Project.ProjectSavedMessage"));
       }
     }
@@ -319,8 +330,7 @@ namespace Altaxo.Dom
             Current.ResourceService.GetString("Altaxo.Project.CantSaveProjectErrorText"),
             FileErrorPolicy.ProvideAlternative);
 
-        var recentService = Current.GetService<IRecentOpen>();
-        if (null == recentService)
+        if (Current.GetService<IRecentOpen>() is { } recentService)
           recentService.AddRecentProject(FileName.Create(filename));
       }
     }
@@ -331,8 +341,11 @@ namespace Altaxo.Dom
     /// <param name="filename"></param>
     protected virtual void InternalSave(PathName filename)
     {
+      if (_currentProject is null)
+        throw new InvalidProgramException();
+
       // a dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling)
-      IDictionary<string, IProjectItem> entryNameItemDictionary = null;
+      IDictionary<string, IProjectItem>? entryNameItemDictionary = null;
 
       if (!filename.Equals(CurrentProjectArchiveManager?.FileOrFolderName))
       {
@@ -370,7 +383,7 @@ namespace Altaxo.Dom
     /// <param name="archiveToCopyFrom">The project archive that represents the last state of saving before this saving Can be used to copy some of the data,
     /// that were not changed inbetween savings. This parameter can be null, for instance, if no such archive exists.</param>
     /// <returns>A dictionary where the keys are the entrynames that where used to store the project items that are the values.</returns>
-    public abstract IDictionary<string, IProjectItem> SaveProjectAndWindowsState(IProjectArchive archiveToSaveTo, IProjectArchive archiveToCopyFrom);
+    public abstract IDictionary<string, IProjectItem> SaveProjectAndWindowsState(IProjectArchive archiveToSaveTo, IProjectArchive? archiveToCopyFrom);
 
     /// <summary>
     /// Saves a project.
@@ -394,13 +407,13 @@ namespace Altaxo.Dom
 
     /// <summary>
     /// Opens a project.
-    /// If the current project is dirty, and <paramref name="withoutUserInteraction"/> is <c>false</c>, the user is ask to save the current project before.
+    /// If the current project is dirty, and <paramref name="showUserInteraction"/> is <c>true</c>, the user is ask to save the current project before.
     /// </summary>
     /// <param name="fileOrFolderName">The file name of the project to open.</param>
-    /// <param name="withoutUserInteraction">If <c>false</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see
-    /// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>true</c>, then the old document is forced
+    /// <param name="showUserInteraction">If <c>true</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see
+    /// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>false</c>, then the old document is forced
     /// to close (without saving). If there is a exception during opening, this exception is thrown.</param>
-    public void OpenProject(PathName fileOrFolderName, bool withoutUserInteraction)
+    public void OpenProject(PathName fileOrFolderName, bool showUserInteraction)
     {
       if (fileOrFolderName is null)
         throw new ArgumentNullException(nameof(fileOrFolderName));
@@ -410,7 +423,7 @@ namespace Altaxo.Dom
         return;
       }
 
-      if (CurrentProject != null && CurrentProject.IsDirty && !withoutUserInteraction)
+      if (CurrentProject is not null && CurrentProject.IsDirty && showUserInteraction)
       {
         var e = new System.ComponentModel.CancelEventArgs();
         AskForSavingOfProject(e);
@@ -423,14 +436,14 @@ namespace Altaxo.Dom
 
       try
       {
-        LoadProjectFromFileOrFolder(fileOrFolderName);
+        LoadProjectFromFileOrFolder(fileOrFolderName, showUserInteraction);
       }
       catch (Exception ex)
       {
-        if (withoutUserInteraction)
-          throw;
-        else
+        if (showUserInteraction)
           Current.Gui.ErrorMessageBox(string.Concat(ex.Message, "\r\nDetails:\r\n", ex.ToString()));
+        else
+          throw;
       }
 
       Current.StatusBar.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
@@ -456,7 +469,7 @@ namespace Altaxo.Dom
 
       var recentService = Current.GetService<IRecentOpen>();
 
-      if (recentService != null)
+      if (recentService is not null)
         recentService.AddRecentProject(filename);
     }
 
@@ -471,7 +484,7 @@ namespace Altaxo.Dom
     /// </summary>
     /// <param name="fileOrFolderName">Name of the file or folder.</param>
     /// <returns></returns>
-    protected abstract IFileBasedProjectArchiveManager InternalCreateProjectArchiveManagerFromFileOrFolderLocation(PathName fileOrFolderName);
+    protected abstract IProjectArchiveManager InternalCreateProjectArchiveManagerFromFileOrFolderLocation(PathName fileOrFolderName);
 
     /// <inheritdoc/>
     public abstract bool TryOpenProjectItemFile(FileName fileName, bool forceTrialRegardlessOfExtension);
@@ -488,7 +501,7 @@ namespace Altaxo.Dom
 
     public virtual bool CloseProject(bool forceClose)
     {
-      if (CurrentProject != null && _currentProject.IsDirty && !forceClose)
+      if (!(_currentProject is null) && _currentProject.IsDirty && !forceClose)
       {
         var e = new CancelEventArgs();
         AskForSavingOfProject(e);
@@ -499,13 +512,13 @@ namespace Altaxo.Dom
       var oldProject = _currentProject;
       var oldProjectName = CurrentProjectFileName;
 
-      if (oldProject != null)
+      if (oldProject is not null)
         OnProjectChanged(new ProjectEventArgs(oldProject, oldProjectName, ProjectEventKind.ProjectClosing));
 
       Current.Workbench.CloseAllViews();
-      SetCurrentProject(null, asUnnamedProject: true);
+      // SetCurrentProject(null, asUnnamedProject: true);
 
-      if (oldProject != null)
+      if (oldProject is not null)
         OnProjectChanged(new ProjectEventArgs(oldProject, oldProjectName, ProjectEventKind.ProjectClosed));
 
       // now create a new project
@@ -520,7 +533,7 @@ namespace Altaxo.Dom
 
     public virtual void CreateInitialProject()
     {
-      if (null != _currentProject)
+      if (_currentProject is not null)
         throw new InvalidOperationException("There should be no document before creating the initial document");
 
       OnProjectChanged(new ProjectEventArgs(null, null, ProjectEventKind.ProjectOpening));
@@ -537,14 +550,13 @@ namespace Altaxo.Dom
 
     public void DisposeProjectAndSetToNull()
     {
-      SetCurrentProject(null, asUnnamedProject: true);
+      SetCurrentProject(InternalCreateNewProject(), asUnnamedProject: true);
     }
 
     /// <inheritdoc/>
     public virtual string GetMainWindowTitle()
     {
-      var comManager = Current.ComManager;
-      if (comManager != null && comManager.IsInEmbeddedMode && null != comManager.EmbeddedObject)
+      if (Current.ComManager is { } comManager && comManager.IsInEmbeddedMode && comManager.EmbeddedObject is not null)
         return GetMainWindowTitleWithComManagerInEmbeddedMode();
       else
         return GetMainWindowTitleWithoutComManagerInEmbeddedMode();
@@ -570,7 +582,7 @@ namespace Altaxo.Dom
     protected virtual string GetMainWindowTitleWithComManagerInEmbeddedMode()
     {
       var comManager = Current.ComManager;
-      if (!(comManager != null && comManager.IsInEmbeddedMode && null != comManager.EmbeddedObject))
+      if (!(comManager is not null && comManager.IsInEmbeddedMode && comManager.EmbeddedObject is not null))
         throw new InvalidProgramException("This function must be called only if Current.ComManager is in embedded mode and has an embedded object");
 
       _applicationName = StringParser.Parse("${AppName}");
@@ -588,7 +600,7 @@ namespace Altaxo.Dom
         title.Append(projectItem.Name);
       }
 
-      if (Altaxo.Current.IProjectService.CurrentProject != null && Altaxo.Current.IProjectService.CurrentProject.IsDirty)
+      if (Altaxo.Current.IProjectService.CurrentProject is not null && Altaxo.Current.IProjectService.CurrentProject.IsDirty)
         title.Append("*");
 
       title.Append(" in ");
@@ -630,12 +642,12 @@ namespace Altaxo.Dom
     {
       var viewcontent = Current.Workbench.GetViewModel<IViewContent>(document); // search for an already present view content
 
-      if (null == viewcontent) // if not found, try to create a new viewcontent
+      if (viewcontent is null) // if not found, try to create a new viewcontent
       {
-        viewcontent = (IViewContent)Current.Gui.GetControllerAndControl(new object[] { document }, typeof(IViewContent));
+        viewcontent = (IViewContent?)Current.Gui.GetControllerAndControl(new object[] { document }, typeof(IViewContent));
       }
 
-      if (null != viewcontent)
+      if (viewcontent is not null)
       {
         Current.Workbench.ShowView(viewcontent, true);
       }

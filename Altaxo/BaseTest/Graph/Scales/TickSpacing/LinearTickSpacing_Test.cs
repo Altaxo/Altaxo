@@ -26,17 +26,17 @@ using System;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
 using Altaxo.Main;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Graph.Scales.Ticks
 {
   /// <summary>
   /// Summary description for DoubleColumn_Test.
   /// </summary>
-  [TestFixture]
+  
   public class LinearTickSpacing_Test
   {
-    [Test]
+    [Fact]
     public void T001_MajorTicksSpacedOne()
     {
       var scale = new LinearScale();
@@ -55,15 +55,15 @@ namespace AltaxoTest.Graph.Scales.Ticks
 
         var majorTicks = s.GetMajorTicks();
 
-        Assert.IsNotNull(majorTicks);
-        Assert.AreEqual(tmt, majorTicks.Length);
+        Assert.NotNull(majorTicks);
+        Assert.Equal(tmt, majorTicks.Length);
 
         for (int i = 0; i <= tmt - 1; ++i)
-          Assert.AreEqual(majorTicks[i], i);
+          Assert.Equal(majorTicks[i], i);
       }
     }
 
-    [Test]
+    [Fact]
     public void T002_TestZeroLever()
     {
       var scale = new LinearScale();
@@ -83,9 +83,9 @@ namespace AltaxoTest.Graph.Scales.Ticks
         end = i + 100; // Span now is 100
 
         s.PreProcessScaleBoundaries(ref org, ref end, true, true);
-        Assert.AreEqual(i <= 25 ? 0 : i, org.ToDouble());
+        Assert.Equal(i <= 25 ? 0 : i, org.ToDouble());
 
-        Assert.AreEqual(i + 100, end.ToDouble());
+        Assert.Equal(i + 100, end.ToDouble());
       }
     }
   }

@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.IO;
 using System.Text;
@@ -160,7 +161,7 @@ namespace Altaxo.Main.Services
 
     public static bool IsBaseDirectory(string baseDirectory, string testDirectory)
     {
-      if (baseDirectory == null || testDirectory == null)
+      if (baseDirectory is null || testDirectory is null)
         return false;
       baseDirectory = NormalizePath(baseDirectory);
       if (baseDirectory == ".")

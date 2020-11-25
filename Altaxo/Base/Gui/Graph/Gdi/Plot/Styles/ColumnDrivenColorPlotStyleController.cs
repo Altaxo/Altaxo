@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,12 +48,15 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// Initializes the name of the label column.
     /// </summary>
     /// <param name="columnAsText">Label column's name.</param>
+    /// <param name="toolTip"></param>
+    /// <param name="status"></param>
     void Init_DataColumn(string columnAsText, string toolTip, int status);
 
     /// <summary>
     /// Initializes the transformation text.
     /// </summary>
     /// <param name="text">Text for the transformation</param>
+    /// <param name="toolTip"></param>
     void Init_DataColumnTransformation(string text, string toolTip);
   }
 
@@ -108,7 +112,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         _colorProviderController.InitializeDocument(_doc.ColorProvider);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _scaleController.ViewObject = _view.ScaleView;
         _colorProviderController.ViewObject = _view.ColorProviderView;

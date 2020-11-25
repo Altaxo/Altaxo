@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Workbench
 
     public object BuildItem(BuildItemArgs args)
     {
-      return Path.Combine(Path.GetDirectoryName(args.AddIn.FileName), args.Codon["path"]);
+      return Path.Combine(Path.GetDirectoryName(args.AddIn.FileName) ?? string.Empty, args.Codon["path"]);
     }
   }
 }

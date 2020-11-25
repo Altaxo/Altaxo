@@ -24,16 +24,16 @@
 
 using System;
 using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
-  [TestFixture]
+
   public class TestSingularValueDecomposition
   {
     private const double accuracy = 1E-14;
 
-    [Test]
+    [Fact]
     public void Test01_3x3Matrix()
     {
       double[][] x = new double[][]
@@ -67,21 +67,21 @@ namespace AltaxoTest.Calc.LinearAlgebra
       // Test singular values
       for (int i = 0; i < 3; i++)
       {
-        Assert.AreEqual(expectedSingularValues[i], decomp.Diagonal[i], accuracy, "SingularValue_" + i.ToString());
+        AssertEx.Equal(expectedSingularValues[i], decomp.Diagonal[i], accuracy, "SingularValue_" + i.ToString());
       }
 
       // Test the U Matrix
       for (int i = 0; i < expectedU.Length; i++)
         for (int j = 0; j < expectedU[0].Length; j++)
-          Assert.AreEqual(expectedU[i][j], decomp.U[i][j], accuracy, string.Format("U[{0}][{1}]", i, j));
+          AssertEx.Equal(expectedU[i][j], decomp.U[i][j], accuracy, string.Format("U[{0}][{1}]", i, j));
 
       // Test the V Matrix
       for (int i = 0; i < expectedV.Length; i++)
         for (int j = 0; j < expectedV[0].Length; j++)
-          Assert.AreEqual(expectedV[i][j], decomp.V[i][j], accuracy, string.Format("V[{0}][{1}]", i, j));
+          AssertEx.Equal(expectedV[i][j], decomp.V[i][j], accuracy, string.Format("V[{0}][{1}]", i, j));
     }
 
-    [Test]
+    [Fact]
     public void Test02_4x3Matrix()
     {
       double[][] x = new double[4][]{
@@ -114,21 +114,21 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
       for (int i = 0; i < 3; i++)
       {
-        Assert.AreEqual(expectedSingularValues[i], decomp.Diagonal[i], accuracy, "SingularValue_" + i.ToString());
+        AssertEx.Equal(expectedSingularValues[i], decomp.Diagonal[i], accuracy, "SingularValue_" + i.ToString());
       }
 
       // Test the U Matrix
       for (int i = 0; i < expectedU.Length; i++)
         for (int j = 0; j < expectedU[0].Length; j++)
-          Assert.AreEqual(Math.Abs(expectedU[i][j]), Math.Abs(decomp.U[i][j]), accuracy, string.Format("U[{0}][{1}]", i, j));
+          AssertEx.Equal(Math.Abs(expectedU[i][j]), Math.Abs(decomp.U[i][j]), accuracy, string.Format("U[{0}][{1}]", i, j));
 
       // Test the V Matrix
       for (int i = 0; i < expectedV.Length; i++)
         for (int j = 0; j < expectedV[0].Length; j++)
-          Assert.AreEqual(Math.Abs(expectedV[i][j]), Math.Abs(decomp.V[i][j]), accuracy, string.Format("V[{0}][{1}]", i, j));
+          AssertEx.Equal(Math.Abs(expectedV[i][j]), Math.Abs(decomp.V[i][j]), accuracy, string.Format("V[{0}][{1}]", i, j));
     }
 
-    [Test]
+    [Fact]
     public void Test03_3x4Matrix()
     {
       double[][] x = new double[3][]{
@@ -161,18 +161,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
       double[] calculatedSingularValues = decomp.Diagonal;
       for (int i = 0; i < 4; i++)
       {
-        Assert.AreEqual(expectedSingularValues[i], calculatedSingularValues[i], accuracy, "SingularValue_" + i.ToString());
+        AssertEx.Equal(expectedSingularValues[i], calculatedSingularValues[i], accuracy, "SingularValue_" + i.ToString());
       }
 
       // Test the U Matrix
       for (int i = 0; i < expectedU.Length; i++)
         for (int j = 0; j < expectedU[0].Length; j++)
-          Assert.AreEqual(Math.Abs(expectedU[i][j]), Math.Abs(decomp.U[i][j]), accuracy, string.Format("U[{0}][{1}]", i, j));
+          AssertEx.Equal(Math.Abs(expectedU[i][j]), Math.Abs(decomp.U[i][j]), accuracy, string.Format("U[{0}][{1}]", i, j));
 
       // Test the V Matrix
       for (int i = 0; i < expectedV.Length; i++)
         for (int j = 0; j < expectedV[0].Length; j++)
-          Assert.AreEqual(Math.Abs(expectedV[i][j]), Math.Abs(decomp.V[i][j]), accuracy, string.Format("V[{0}][{1}]", i, j));
+          AssertEx.Equal(Math.Abs(expectedV[i][j]), Math.Abs(decomp.V[i][j]), accuracy, string.Format("V[{0}][{1}]", i, j));
     }
   }
 }

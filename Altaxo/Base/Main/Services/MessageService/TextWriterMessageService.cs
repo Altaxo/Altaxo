@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.IO;
 
@@ -31,7 +32,7 @@ namespace Altaxo.Main.Services.Implementation
 
     public TextWriterMessageService(TextWriter writer)
     {
-      if (writer == null)
+      if (writer is null)
         throw new ArgumentNullException("writer");
       this.writer = writer;
       DefaultMessageBoxTitle = ProductName = "SharpDevelop";
@@ -86,25 +87,25 @@ namespace Altaxo.Main.Services.Implementation
       writer.WriteLine(message);
     }
 
-    public void ShowException(Exception ex, string message = null)
+    public void ShowException(Exception ex, string? message = null)
     {
-      if (message != null)
+      if (message is not null)
       {
         writer.WriteLine(message);
       }
-      if (ex != null)
+      if (ex is not null)
       {
         writer.WriteLine(ex.ToString());
       }
     }
 
-    public void ShowHandledException(Exception ex, string message = null)
+    public void ShowHandledException(Exception ex, string? message = null)
     {
-      if (message != null)
+      if (message is not null)
       {
         writer.WriteLine(message);
       }
-      if (ex != null)
+      if (ex is not null)
       {
         writer.WriteLine(ex.Message);
       }
@@ -115,9 +116,9 @@ namespace Altaxo.Main.Services.Implementation
       writer.WriteLine(message);
     }
 
-    public bool AskQuestion(string question, string caption)
+    public bool AskQuestion(string question, string? caption)
     {
-      writer.WriteLine(caption + ": " + question);
+      writer.WriteLine((caption ?? string.Empty) + ": " + question);
       return false;
     }
 
@@ -133,22 +134,22 @@ namespace Altaxo.Main.Services.Implementation
       return defaultValue;
     }
 
-    public void ShowMessage(string message, string caption)
+    public void ShowMessage(string message, string? caption)
     {
-      writer.WriteLine(caption + ": " + message);
+      writer.WriteLine((caption ?? string.Empty) + ": " + message);
     }
 
     public void InformSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot)
     {
       writer.WriteLine(dialogName + ": " + message + " (" + fileName + ")");
-      if (exceptionGot != null)
+      if (exceptionGot is not null)
         writer.WriteLine(exceptionGot.ToString());
     }
 
     public ChooseSaveErrorResult ChooseSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
     {
       writer.WriteLine(dialogName + ": " + message + " (" + fileName + ")");
-      if (exceptionGot != null)
+      if (exceptionGot is not null)
         writer.WriteLine(exceptionGot.ToString());
       return ChooseSaveErrorResult.Ignore;
     }
@@ -163,7 +164,7 @@ namespace Altaxo.Main.Services.Implementation
       writer.WriteLine(StringParser.Format(formatstring, formatitems));
     }
 
-    public void ShowMessageFormatted(string formatstring, string caption, params object[] formatitems)
+    public void ShowMessageFormatted(string formatstring, string? caption, params object[] formatitems)
     {
       writer.WriteLine(StringParser.Format(formatstring, formatitems));
     }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Linq;
 using Altaxo.Calc.Regression.Nonlinear;
@@ -38,21 +39,17 @@ namespace Altaxo.Graph.Procedures
   public class NonlinearFitting
   {
     private const string FitDocumentPropertyName = "NonlinearFitDocument";
-    private static NonlinearFitDocument _lastFitDocument;
+    private static NonlinearFitDocument? _lastFitDocument;
 
-    public static string ShowFitDialog(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
+    public static string? ShowFitDialog(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
     {
-      var tuple = SelectFitDocument(ctrl);
+      var (error, fitDocument, fitDocumentIdentifier, activeLayer) = SelectFitDocument(ctrl);
 
-      if (!string.IsNullOrEmpty(tuple.Item1))
-        return tuple.Item1;
-
-      var fitDocument = tuple.Item2;
-      var fitDocumentIdentifier = tuple.Item3;
-      var activeLayer = tuple.Item4;
+      if (!string.IsNullOrEmpty(error))
+        return error;
 
       // we assume we have a fit document by now
-      if (null == tuple.Item2)
+      if (fitDocument is null)
         throw new InvalidProgramException("At this place, fit document should always be != null");
 
       if (!string.IsNullOrEmpty(fitDocumentIdentifier))
@@ -65,13 +62,13 @@ namespace Altaxo.Graph.Procedures
           "Do you want to keep the previous fit function plot item(s) ?",
           "Keep previous fit function plot items?", false);
 
-        if (null == answer)
+        if (answer is null)
           return null;
         if (true == answer)
           fitDocumentIdentifier = null; // by setting the identifier to null, we will keep the old fit functions
       }
 
-      var fitController = (Gui.IMVCANController)Current.Gui.GetControllerAndControl(new object[] { fitDocument, fitDocumentIdentifier, activeLayer }, typeof(Gui.IMVCANController));
+      var fitController = Current.Gui.GetRequiredControllerAndControl<Gui.IMVCANController>(fitDocument, fitDocumentIdentifier, activeLayer);
 
       // before showing the fit dialog, deselect all objects selected
       if (!ctrl.SelectedObjects.IsReadOnly) // with some graph tools, this is a read-only collection, which can not be cleared
@@ -81,30 +78,32 @@ namespace Altaxo.Graph.Procedures
       {
         var localdoc = fitController.ModelObject as NonlinearFitDocument;
         // store the fit document in the graphs property
-        ctrl.Doc.SetGraphProperty(FitDocumentPropertyName, localdoc);
-
-        _lastFitDocument = (Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument)localdoc.Clone();
+        if (localdoc is not null)
+        {
+          ctrl.Doc.SetGraphProperty(FitDocumentPropertyName, localdoc);
+          _lastFitDocument = (Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument)localdoc.Clone();
+        }
       }
 
       return null;
     }
 
-    private static Tuple<string, NonlinearFitDocument, string, XYPlotLayer> SelectFitDocument(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
+    private static (string? Error, NonlinearFitDocument? FitDocument, string? FitDocumentIdentifier, XYPlotLayer? ActiveLayer) SelectFitDocument(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
     {
-      XYPlotLayer activeLayer = null;
+      XYPlotLayer? activeLayer = null;
 
       // is a nonlinear fit function plot item selected ?
       var funcPlotItem = ctrl.SelectedRealObjects.OfType<XYNonlinearFitFunctionPlotItem>().FirstOrDefault();
-      if (null != funcPlotItem)
+      if (funcPlotItem is not null)
       {
         activeLayer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(funcPlotItem);
-        return new Tuple<string, NonlinearFitDocument, string, XYPlotLayer>(string.Empty, funcPlotItem.FitDocumentCopy, funcPlotItem.FitDocumentIdentifier, activeLayer); // if a fit function plot item was selected, then use the fit document of this item
+        return (string.Empty, funcPlotItem.FitDocumentCopy, funcPlotItem.FitDocumentIdentifier, activeLayer); // if a fit function plot item was selected, then use the fit document of this item
       }
 
       // is a normal plot item selected ?
       // ------------------------------------------------------------------------------------
       var columnPlotItem = ctrl.SelectedRealObjects.OfType<XYColumnPlotItem>().FirstOrDefault();
-      if (null != columnPlotItem)
+      if (columnPlotItem is not null)
       {
         return SelectFitDocument(ctrl, columnPlotItem);
       }
@@ -112,46 +111,52 @@ namespace Altaxo.Graph.Procedures
       // is the active layer an XY-plot layer ? Or do we have any XY-plot-layer ?
       // ------------------------------------------------------------------------------------
       activeLayer = (ctrl.ActiveLayer as XYPlotLayer);
-      if (null != activeLayer)
+      if (activeLayer is not null)
       {
         var result = SelectFitDocument(ctrl, activeLayer);
-        if (result.Item2 != null)
+        if (result.Item2 is not null)
           return result;
       } // null != activeLayer
 
       activeLayer = TreeNodeExtensions.TakeFromHereToFirstLeaves(ctrl.Doc.RootLayer).OfType<XYPlotLayer>().FirstOrDefault();
-      if (null != activeLayer)
+      if (activeLayer is not null)
       {
         var result = SelectFitDocument(ctrl, activeLayer);
-        if (result.Item2 != null)
+        if (result.Item2 is not null)
         {
           return result;
         }
         else
         {
-          var localdoc = (ctrl.Doc.GetGraphProperty(FitDocumentPropertyName) as Calc.Regression.Nonlinear.NonlinearFitDocument) ??
-                    (Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument)_lastFitDocument?.Clone() ??
-                    new Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument();
+          var localdoc = (ctrl.Doc.GetGraphProperty(FitDocumentPropertyName) as Calc.Regression.Nonlinear.NonlinearFitDocument);
+          if (localdoc is null)
+          {
+            if (_lastFitDocument is not null)
+              localdoc = (Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument)_lastFitDocument.Clone();
+            else
+              localdoc = new Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument();
+          }
 
-          return new Tuple<string, NonlinearFitDocument, string, XYPlotLayer>(null, localdoc, null, activeLayer);
+
+          return (null, localdoc, null, activeLayer);
         }
       } // null != activeLayer
 
       // no idea what to fit - there is not even an XY plot layer
-      return new Tuple<string, NonlinearFitDocument, string, XYPlotLayer>("The graph has no XYPlotLayer to host any fit function", null, null, null);
+      return ("The graph has no XYPlotLayer to host any fit function", null, null, null);
     }
 
-    private static Tuple<string, NonlinearFitDocument, string, XYPlotLayer> SelectFitDocument(Gui.Graph.Gdi.Viewing.IGraphController ctrl, XYPlotLayer activeLayer)
+    private static (string? Error, NonlinearFitDocument? FitDocument, string? FitDocumentIdentifier, XYPlotLayer? ActiveLayer) SelectFitDocument(Gui.Graph.Gdi.Viewing.IGraphController ctrl, XYPlotLayer activeLayer)
     {
-      if (null == activeLayer)
+      if (activeLayer is null)
         throw new ArgumentNullException(nameof(activeLayer));
 
       // try to use the first nonlinear function plot item of the active layer
       // ------------------------------------------------------------------------------------
       {
         var plotItem = TreeNodeExtensions.TakeFromHereToFirstLeaves((IGPlotItem)activeLayer.PlotItems).OfType<XYNonlinearFitFunctionPlotItem>().FirstOrDefault();
-        if (null != plotItem)
-          return new Tuple<string, NonlinearFitDocument, string, XYPlotLayer>(string.Empty, plotItem.FitDocumentCopy, plotItem.FitDocumentIdentifier, activeLayer);
+        if (plotItem is not null)
+          return (string.Empty, plotItem.FitDocumentCopy, plotItem.FitDocumentIdentifier, activeLayer);
       }
 
       // try to use the active plot item of the active layer
@@ -160,35 +165,39 @@ namespace Altaxo.Graph.Procedures
       if (ctrl.CurrentPlotNumber >= 0)
       {
         var plotItem = activeLayer.PlotItems.Flattened[ctrl.CurrentPlotNumber] as XYColumnPlotItem;
-        return SelectFitDocument(ctrl, plotItem);
+        if (plotItem is not null)
+          return SelectFitDocument(ctrl, plotItem);
       }
 
       // try to use the first plot item of the active layer
       // ------------------------------------------------------------------------------------
       {
         var plotItem = TreeNodeExtensions.TakeFromHereToFirstLeaves((IGPlotItem)activeLayer.PlotItems).OfType<XYColumnPlotItem>().FirstOrDefault();
-        if (null != plotItem)
+        if (plotItem is not null)
           return SelectFitDocument(ctrl, plotItem);
       }
 
-      return new Tuple<string, NonlinearFitDocument, string, XYPlotLayer>(null, null, null, null);
+      return (null, null, null, null);
     }
 
-    private static Tuple<string, NonlinearFitDocument, string, XYPlotLayer> SelectFitDocument(Gui.Graph.Gdi.Viewing.IGraphController ctrl, XYColumnPlotItem columnPlotItem)
+    private static (string? Error, NonlinearFitDocument? FitDocument, string? FitDocumentIdentifier, XYPlotLayer? ActiveLayer) SelectFitDocument(Gui.Graph.Gdi.Viewing.IGraphController ctrl, XYColumnPlotItem columnPlotItem)
     {
-      if (null == columnPlotItem)
+      if (columnPlotItem is null)
         throw new ArgumentNullException(nameof(columnPlotItem));
 
       var activeLayer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(columnPlotItem);
-      DataColumn columPlotItemDataColumn = columnPlotItem.Data.YColumn.GetUnderlyingDataColumnOrDefault();
-      if (null != columPlotItemDataColumn)
+      if (activeLayer is null)
+        throw new NotImplementedException($"{nameof(columnPlotItem)} {columnPlotItem.Name} seems not to belong to an {nameof(XYPlotLayer)}. Are there other layers implemented?");
+
+      var columPlotItemDataColumn = columnPlotItem.Data.YColumn?.GetUnderlyingDataColumnOrDefault();
+      if (columPlotItemDataColumn is not null)
       {
         // try to find a nonlinear function plot item whose dependent variable equals to the y of the column plot item
         foreach (var funcItem in TreeNodeExtensions.TakeFromHereToFirstLeaves((IGPlotItem)activeLayer.PlotItems).OfType<XYNonlinearFitFunctionPlotItem>())
         {
-          if (object.ReferenceEquals(columPlotItemDataColumn, funcItem.DependentVariableColumn.GetUnderlyingDataColumnOrDefault()))
+          if (object.ReferenceEquals(columPlotItemDataColumn, funcItem.DependentVariableColumn?.GetUnderlyingDataColumnOrDefault()))
           {
-            return new Tuple<string, NonlinearFitDocument, string, XYPlotLayer>(string.Empty, funcItem.FitDocumentCopy, funcItem.FitDocumentIdentifier, activeLayer);
+            return (string.Empty, funcItem.FitDocumentCopy, funcItem.FitDocumentIdentifier, activeLayer);
           }
         }
       }
@@ -203,29 +212,29 @@ namespace Altaxo.Graph.Procedures
     /// <param name="ctrl">The control.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException">xyPlotItem</exception>
-    private static Tuple<string, NonlinearFitDocument, string, XYPlotLayer> GetNewFitDocumentFor(XYColumnPlotItem xyPlotItem, Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
+    private static (string? Error, NonlinearFitDocument? FitDocument, string? FitDocumentIdentifier, XYPlotLayer? ActiveLayer) GetNewFitDocumentFor(XYColumnPlotItem xyPlotItem, Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
     {
-      if (null == xyPlotItem)
+      if (xyPlotItem is null)
         throw new ArgumentNullException(nameof(xyPlotItem));
 
       var activeLayer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(xyPlotItem);
       var xColumn = xyPlotItem.XYColumnPlotData.XColumn;
       var yColumn = xyPlotItem.XYColumnPlotData.YColumn;
 
-      if (xColumn == null || xColumn.ItemType != typeof(double))
-        return new Tuple<string, NonlinearFitDocument, string, XYPlotLayer>("The x-column is not numeric", null, null, activeLayer);
+      if (xColumn is null || xColumn.ItemType != typeof(double))
+        return ("The x-column is not numeric", null, null, activeLayer);
 
-      if (yColumn == null || yColumn.ItemType != typeof(double))
-        return new Tuple<string, NonlinearFitDocument, string, XYPlotLayer>("The y-column is not numeric", null, null, activeLayer);
+      if (yColumn is null || yColumn.ItemType != typeof(double))
+        return ("The y-column is not numeric", null, null, activeLayer);
 
       var localdoc = (ctrl.Doc.GetGraphProperty(FitDocumentPropertyName) as Calc.Regression.Nonlinear.NonlinearFitDocument) ??
-                      (Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument)_lastFitDocument?.Clone() ??
+                      (Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument?)_lastFitDocument?.Clone() ??
                       new Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument();
 
       if (localdoc.FitEnsemble.Count == 0) // if there was no fit before
       {
         var fitele = new Altaxo.Calc.Regression.Nonlinear.FitElement(
-          xyPlotItem.Data.DataTable,
+          xyPlotItem.Data.DataTable!,
           xyPlotItem.Data.GroupNumber,
           xyPlotItem.Data.DataRowSelection,
           xColumn,
@@ -238,7 +247,7 @@ namespace Altaxo.Graph.Procedures
         bool hasColumnsChanged = false;
 
         hasColumnsChanged |= !(object.ReferenceEquals(localdoc.FitEnsemble[0].DataTable, xyPlotItem.Data.DataTable));
-        hasColumnsChanged |= !(object.ReferenceEquals(localdoc.FitEnsemble[0].GroupNumber, xyPlotItem.Data.GroupNumber));
+        hasColumnsChanged |= !(object.Equals(localdoc.FitEnsemble[0].GroupNumber, xyPlotItem.Data.GroupNumber));
         hasColumnsChanged |= !(object.ReferenceEquals(localdoc.FitEnsemble[0].IndependentVariables(0), xColumn));
         hasColumnsChanged |= !(object.ReferenceEquals(localdoc.FitEnsemble[0].DependentVariables(0), yColumn));
 
@@ -251,7 +260,7 @@ namespace Altaxo.Graph.Procedures
         }
       }
 
-      return new Tuple<string, NonlinearFitDocument, string, XYPlotLayer>(string.Empty, localdoc, null, activeLayer);
+      return (null, localdoc, null, activeLayer);
     }
   }
 }

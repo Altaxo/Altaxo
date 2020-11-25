@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,7 @@ namespace Altaxo.Graph.Plot.Data
   /// </summary>
   public class ColumnPlotDataExchangeColumnsData : ColumnPlotDataExchangeDataBase, ICloneable
   {
-    protected List<(string ColumnGroup, string ColumnLabel, string ColumnName, string NewColumnName)> _columns = new List<(string ColumnGroup, string ColumnLabel, string ColumnName, string NewColumnName)>();
+    protected List<(string ColumnGroup, string ColumnLabel, string? ColumnName, string? NewColumnName)> _columns = new List<(string ColumnGroup, string ColumnLabel, string? ColumnName, string? NewColumnName)>();
 
     /// <summary>
     /// Gets the columns with common column group, column label, and column name for all plot items. After processing the data by a user dialog,
@@ -45,7 +46,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <value>
     /// The columns with common column group, column label, and column name.
     /// </value>
-    public IReadOnlyList<(string ColumnGroup, string ColumnLabel, string ColumnName, string NewColumnName)> Columns { get { return _columns; } }
+    public IReadOnlyList<(string ColumnGroup, string ColumnLabel, string? ColumnName, string? NewColumnName)> Columns { get { return _columns; } }
 
     protected List<DataTable> _tables = new List<DataTable>();
 
@@ -89,24 +90,24 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     public void CollectCommonColumnNamesAndTablesFromPlotItems()
     {
-      HashSet<(string ColumnGroup, string ColumnLabel, string ColumnName, string NewColumnName)> totalSet = null;
+      HashSet<(string ColumnGroup, string ColumnLabel, string? ColumnName, string? NewColumnName)>? totalSet = null;
       var dataTables = new HashSet<DataTable>();
 
       // collect all column names from those plot items
       foreach (var plotItem in PlotItems)
       {
-        if (plotItem.DataObject is IColumnPlotData columnPlotData && columnPlotData.DataTable != null)
+        if (plotItem.DataObject is IColumnPlotData columnPlotData && columnPlotData.DataTable is not null)
         {
           dataTables.Add(columnPlotData.DataTable);
 
-          var localSet = new HashSet<(string ColumnGroup, string ColumnLabel, string ColumnName, string NewColumnName)>();
+          var localSet = new HashSet<(string ColumnGroup, string ColumnLabel, string? ColumnName, string? NewColumnName)>();
           // collect from the plot item's row selection
           foreach (var columnInfo in ColumnPlotDataExchangeTableData.EnumerateAllDataColumnsOfPlotItem(plotItem, (info) => true))
           {
             localSet.Add((columnInfo.ColumnGroup, columnInfo.ColumnLabel, columnInfo.ColumnName, null));
           }
 
-          if (null == totalSet)
+          if (totalSet is null)
             totalSet = localSet;
           else
             totalSet.IntersectWith(localSet);
@@ -114,7 +115,7 @@ namespace Altaxo.Graph.Plot.Data
       }
 
       _columns.Clear();
-      if (null != totalSet)
+      if (totalSet is not null)
       {
         foreach (var item in totalSet)
           _columns.Add(item);
@@ -168,7 +169,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       foreach (var plotItem in PlotItems)
       {
-        if (plotItem.DataObject is IColumnPlotData columnPlotData && columnPlotData.DataTable != null)
+        if (plotItem.DataObject is IColumnPlotData columnPlotData && columnPlotData.DataTable is not null)
         {
           foreach (var columnInfo in ColumnPlotDataExchangeTableData.EnumerateAllDataColumnsOfPlotItem(plotItem, (info) => true))
           {
@@ -206,18 +207,18 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>Sorted list of group numbers that are common to all underlying tables of the plot items.</returns>
     public SortedSet<int> GetCommonGroupNumbersFromTables()
     {
-      HashSet<int> commonGroupNumbers = null;
+      HashSet<int>? commonGroupNumbers = null;
       foreach (var table in _tables)
       {
         var localGroupNumbers = new HashSet<int>(table.DataColumns.GetGroupNumbersAll());
 
-        if (null == commonGroupNumbers)
+        if (commonGroupNumbers is null)
           commonGroupNumbers = localGroupNumbers;
         else
           commonGroupNumbers.IntersectWith(localGroupNumbers);
       }
 
-      return new SortedSet<int>(commonGroupNumbers);
+      return commonGroupNumbers is not null ? new SortedSet<int>(commonGroupNumbers) : new SortedSet<int>();
     }
 
     /// <summary>
@@ -227,18 +228,18 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>Array of column names common to all underlying tables of the plot items.</returns>
     public string[] GetCommonColumnNames()
     {
-      HashSet<string> commonColumnNames = null;
+      HashSet<string>? commonColumnNames = null;
       foreach (var table in _tables)
       {
         var localHashSet = new HashSet<string>(table.DataColumns.GetColumnNames());
 
-        if (null == commonColumnNames)
+        if (commonColumnNames is null)
           commonColumnNames = localHashSet;
         else
           commonColumnNames.IntersectWith(localHashSet);
       }
 
-      var result = commonColumnNames.ToArray();
+      var result = commonColumnNames?.ToArray() ?? new string[0];
       Array.Sort(result);
       return result;
     }
@@ -250,18 +251,18 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>Array of column names common to all underlying tables of the plot items, which have the provided group number.</returns>
     public List<string> GetCommonColumnNamesWithGroupNumber(int groupNumber)
     {
-      HashSet<string> commonColumnNames = null;
+      HashSet<string>? commonColumnNames = null;
       foreach (var table in _tables)
       {
         var localHashSet = new HashSet<string>(table.DataColumns.GetNamesOfColumnsWithGroupNumber(groupNumber));
 
-        if (null == commonColumnNames)
+        if (commonColumnNames is null)
           commonColumnNames = localHashSet;
         else
           commonColumnNames.IntersectWith(localHashSet);
       }
 
-      var result = new List<string>(commonColumnNames);
+      var result = commonColumnNames is not null ? new List<string>(commonColumnNames) : new List<string>();
       return result;
     }
   }

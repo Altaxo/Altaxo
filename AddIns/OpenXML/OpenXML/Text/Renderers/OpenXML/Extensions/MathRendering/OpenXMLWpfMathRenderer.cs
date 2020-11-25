@@ -81,7 +81,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
     /// <exception cref="ArgumentNullException">element</exception>
     public OpenXmlCompositeElement Push(OpenXmlCompositeElement element)
     {
-      if (null == element)
+      if (element is null)
         throw new ArgumentNullException(nameof(element));
 
       var topElement = _currentElementStack.Count == 0 ? null : _currentElementStack[_currentElementStack.Count - 1];
@@ -137,10 +137,10 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
     /// <exception cref="InvalidOperationException">Could not pop to element " + element.ToString()</exception>
     public void PopTo(OpenXmlCompositeElement element)
     {
-      if (null == element)
+      if (element is null)
         throw new ArgumentNullException(nameof(element));
 
-      OpenXmlCompositeElement ele = null;
+      OpenXmlCompositeElement? ele = null;
       while (_currentElementStack.Count > 0)
       {
         ele = Pop();
@@ -161,7 +161,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
     /// <exception cref="InvalidOperationException">Could not pop to before element " + element.ToString()</exception>
     public void PopToBefore(OpenXmlCompositeElement element)
     {
-      if (null == element)
+      if (element is null)
         throw new ArgumentNullException(nameof(element));
 
       while (_currentElementStack.Count > 0)

@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Data;
 
 namespace Altaxo.Calc.Regression.Nonlinear
@@ -35,15 +37,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
     IScalarFunctionDD
   {
-    private IFitFunction _fitFunction;
+    private IFitFunction? _fitFunction;
 
     private double[] _y;
     private double[] _x;
     private double[] _parameter;
     private int _independentVariable;
-    private IVariantToVariantTransformation _independentVariableTransformation;
+    private IVariantToVariantTransformation? _independentVariableTransformation;
     private int _dependentVariable;
-    private IVariantToVariantTransformation _dependentVariableTransformation;
+    private IVariantToVariantTransformation? _dependentVariableTransformation;
 
     #region Serialization
 
@@ -67,19 +69,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
                     */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         int independentVariable = info.GetInt32("IndependentVariable");
         int dependentVariable = info.GetInt32("DependentVariable");
         info.GetArray("ParameterValues", out double[] parameter);
 
-        object fo = info.GetValue("FitFunction", null);
+        object? fo = info.GetValueOrNull("FitFunction", null);
 
-        if (fo is Altaxo.Serialization.Xml.AssemblyAndTypeSurrogate)
-          fo = ((Altaxo.Serialization.Xml.AssemblyAndTypeSurrogate)fo).CreateInstance();
+        if (fo is Altaxo.Serialization.Xml.AssemblyAndTypeSurrogate ats)
+          fo = ats.CreateInstance();
 
         FitFunctionToScalarFunctionDDWrapper s;
-        if (o == null)
+        if (o is null)
         {
           s = new FitFunctionToScalarFunctionDDWrapper(fo as IFitFunction, dependentVariable, independentVariable, parameter);
         }
@@ -111,33 +113,33 @@ namespace Altaxo.Calc.Regression.Nonlinear
         var s = (FitFunctionToScalarFunctionDDWrapper)obj;
 
         info.AddValue("IndependentVariable", s._independentVariable);
-        info.AddValue("IndependentVariableTransformation", s._independentVariableTransformation);
+        info.AddValueOrNull("IndependentVariableTransformation", s._independentVariableTransformation);
         info.AddValue("DependentVariable", s._dependentVariable);
-        info.AddValue("DependentVariableTransformation", s._dependentVariableTransformation);
+        info.AddValueOrNull("DependentVariableTransformation", s._dependentVariableTransformation);
         info.AddArray("ParameterValues", s._parameter, s._parameter.Length);
 
-        if (s._fitFunction == null || info.IsSerializable(s._fitFunction))
-          info.AddValue("FitFunction", s._fitFunction);
+        if (s._fitFunction is null || info.IsSerializable(s._fitFunction))
+          info.AddValueOrNull("FitFunction", s._fitFunction);
         else
           info.AddValue("FitFunction", new Altaxo.Serialization.Xml.AssemblyAndTypeSurrogate(s._fitFunction));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         int independentVariable = info.GetInt32("IndependentVariable");
-        var independentVariableTransformation = (IVariantToVariantTransformation)info.GetValue("IndependentVariableTransformation", null);
+        var independentVariableTransformation = (IVariantToVariantTransformation?)info.GetValueOrNull("IndependentVariableTransformation", null);
         int dependentVariable = info.GetInt32("DependentVariable");
-        var dependentVariableTransformation = (IVariantToVariantTransformation)info.GetValue("DependentVariableTransformation", null);
+        var dependentVariableTransformation = (IVariantToVariantTransformation?)info.GetValueOrNull("DependentVariableTransformation", null);
 
         info.GetArray("ParameterValues", out double[] parameter);
 
-        object fo = info.GetValue("FitFunction", null);
+        object? fo = info.GetValueOrNull("FitFunction", null);
 
-        if (fo is Altaxo.Serialization.Xml.AssemblyAndTypeSurrogate)
-          fo = ((Altaxo.Serialization.Xml.AssemblyAndTypeSurrogate)fo).CreateInstance();
+        if (fo is Altaxo.Serialization.Xml.AssemblyAndTypeSurrogate ats)
+          fo = ats.CreateInstance();
 
         FitFunctionToScalarFunctionDDWrapper s;
-        if (o == null)
+        if (o is null)
         {
           s = new FitFunctionToScalarFunctionDDWrapper(fo as IFitFunction, dependentVariable, dependentVariableTransformation, independentVariable, independentVariableTransformation, parameter);
         }
@@ -161,22 +163,22 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #endregion Serialization
 
-    public FitFunctionToScalarFunctionDDWrapper(IFitFunction fitFunction, int dependentVariable, IVariantToVariantTransformation dependentVariableTransformation, int independentVariable, IVariantToVariantTransformation independentVariableTransformation, double[] parameter)
+    public FitFunctionToScalarFunctionDDWrapper(IFitFunction? fitFunction, int dependentVariable, IVariantToVariantTransformation? dependentVariableTransformation, int independentVariable, IVariantToVariantTransformation? independentVariableTransformation, double[] parameter)
     {
       Initialize(fitFunction, dependentVariable, dependentVariableTransformation, independentVariable, independentVariableTransformation, parameter);
     }
 
-    public FitFunctionToScalarFunctionDDWrapper(IFitFunction fitFunction, int dependentVariable, int independentVariable, double[] parameter)
+    public FitFunctionToScalarFunctionDDWrapper(IFitFunction? fitFunction, int dependentVariable, int independentVariable, double[] parameter)
     {
       Initialize(fitFunction, dependentVariable, null, independentVariable, null, parameter);
     }
 
-    public FitFunctionToScalarFunctionDDWrapper(IFitFunction fitFunction, int dependentVariable, IVariantToVariantTransformation dependentVariableTransformation, double[] parameter)
+    public FitFunctionToScalarFunctionDDWrapper(IFitFunction? fitFunction, int dependentVariable, IVariantToVariantTransformation? dependentVariableTransformation, double[] parameter)
     {
       Initialize(fitFunction, dependentVariable, dependentVariableTransformation, 0, null, parameter);
     }
 
-    public FitFunctionToScalarFunctionDDWrapper(IFitFunction fitFunction, int dependentVariable, double[] parameter)
+    public FitFunctionToScalarFunctionDDWrapper(IFitFunction? fitFunction, int dependentVariable, double[] parameter)
     {
       Initialize(fitFunction, dependentVariable, null, 0, null, parameter);
     }
@@ -187,18 +189,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
         yield return new Main.DocumentNodeAndName((Main.IDocumentLeafNode)_fitFunction, () => _fitFunction = null, "WrappedFitFunction");
     }
 
-    public void Initialize(IFitFunction fitFunction, int dependentVariable, IVariantToVariantTransformation dependentVariableTransformation, int independentVariable, IVariantToVariantTransformation independentVariableTransformation, double[] parameter)
+    [MemberNotNull(nameof(_x), nameof(_y), nameof(_parameter))]
+    public void Initialize(IFitFunction? fitFunction, int dependentVariable, IVariantToVariantTransformation? dependentVariableTransformation, int independentVariable, IVariantToVariantTransformation? independentVariableTransformation, double[] parameter)
     {
       _fitFunction = fitFunction;
 
-      if (_fitFunction != null)
+      if (_fitFunction is not null)
       {
         _x = new double[_fitFunction.NumberOfIndependentVariables];
         _y = new double[_fitFunction.NumberOfDependentVariables];
         _parameter = new double[Math.Max(_fitFunction.NumberOfParameters, parameter.Length)];
 
         if (_fitFunction is Main.IDocumentLeafNode && !(_fitFunction is Altaxo.Scripting.FitFunctionScript))
-          ((Main.IDocumentLeafNode)fitFunction).ParentObject = this;
+          ((Main.IDocumentLeafNode)_fitFunction).ParentObject = this;
       }
       else
       {
@@ -246,7 +249,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
-    public IVariantToVariantTransformation DependentVariableTransformation
+    public IVariantToVariantTransformation? DependentVariableTransformation
     {
       get
       {
@@ -266,7 +269,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
-    public IVariantToVariantTransformation IndependentVariableTransformation
+    public IVariantToVariantTransformation? IndependentVariableTransformation
     {
       get
       {
@@ -278,16 +281,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public double Evaluate(double x)
     {
-      if (_fitFunction != null)
+      if (_fitFunction is not null)
       {
-        if (null != _independentVariableTransformation)
+        if (_independentVariableTransformation is not null)
           _x[_independentVariable] = _independentVariableTransformation.Transform(x);
         else
           _x[_independentVariable] = x;
 
         _fitFunction.Evaluate(_x, _parameter, _y);
 
-        if (null != _dependentVariableTransformation)
+        if (_dependentVariableTransformation is not null)
           return _dependentVariableTransformation.Transform(_y[_dependentVariable]);
         else
           return _y[_dependentVariable];

@@ -56,15 +56,14 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     private void _edTransfoOperation_Changed(object sender, SelectionChangedEventArgs e)
     {
       e.Handled = true;
-      if (null != TransfoOperationChanged)
+      if (TransfoOperationChanged is not null)
         TransfoOperationChanged(_cbTransfoOperation.SelectedIndex == 1);
     }
 
     private void _edDivideBy_Validating(object sender, ValidationEventArgs<string> e)
     {
       var c = new System.ComponentModel.CancelEventArgs();
-      if (null != DivideByValidating)
-        DivideByValidating(_edDivideBy.Text, c);
+      DivideByValidating?.Invoke(_edDivideBy.Text, c);
       if (c.Cancel)
         e.AddError("The provided text can not be converted");
     }
@@ -199,13 +198,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
     }
 
-    public event Action<string, System.ComponentModel.CancelEventArgs> MajorTicksValidating;
+    public event Action<string, System.ComponentModel.CancelEventArgs>? DivideByValidating;
 
-    public event Action<string, System.ComponentModel.CancelEventArgs> DivideByValidating;
-
-    public event Action<string, System.ComponentModel.CancelEventArgs> TransfoOffsetValidating;
-
-    public event Action<bool> TransfoOperationChanged;
+    public event Action<bool>? TransfoOperationChanged;
 
     #endregion IProbabilityTickSpacingView
   }

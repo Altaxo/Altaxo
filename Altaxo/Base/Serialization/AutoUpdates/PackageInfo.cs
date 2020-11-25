@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Altaxo.Serialization.AutoUpdates
@@ -49,6 +49,9 @@ namespace Altaxo.Serialization.AutoUpdates
 
     private Dictionary<string, string> _properties = new Dictionary<string, string>();
 
+    /// <summary>
+    /// A key-value dictionary of properties.
+    /// </summary>
     public Dictionary<string, string> Properties { get { return _properties; } }
 
     /// <summary>Name (without path) of the version file, both at the remote location and on the local hard disk.</summary>
@@ -60,11 +63,11 @@ namespace Altaxo.Serialization.AutoUpdates
     public static PackageInfo[] FromStream(Stream fs)
     {
       var sr = new StreamReader(fs, true);
-      string line;
+
       var resultList = new List<PackageInfo>();
 
       int lineNumber = 0;
-      while (null != (line = sr.ReadLine()))
+      while (sr.ReadLine() is string line)
       {
         ++lineNumber;
         line = line.Trim();
@@ -77,6 +80,22 @@ namespace Altaxo.Serialization.AutoUpdates
 
       return resultList.ToArray();
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PackageInfo"/> class.
+    /// </summary>
+    /// <param name="isUnstableVersion">If set to <c>true</c>, the package represents an unstable version; otherwise, it represents a stable version.</param>
+    /// <param name="version">The version of Altaxo in this package.</param>
+    /// <param name="fileLength">Length of the package file.</param>
+    /// <param name="hash">The hash of the package file.</param>
+    protected PackageInfo(bool isUnstableVersion, Version version, long fileLength, string hash)
+    {
+      IsUnstableVersion = isUnstableVersion;
+      Version = version;
+      FileLength = fileLength;
+      Hash = hash;
+    }
+
 
     /// <summary>
     /// Create a package info from a single line.
@@ -93,14 +112,18 @@ namespace Altaxo.Serialization.AutoUpdates
       if (entries.Length < 4)
         throw new InvalidOperationException(string.Format("Line number {0} of the package info file doesn't contain at least 4 words, separated by tabulators", lineNumber));
 
-      var result = new PackageInfo();
+
 
       if (!IsValidStableIdentifier(entries[0].Trim(), out var isUnstableVersion))
         throw new InvalidOperationException(string.Format("First item in line number {0} of the package info file is neither 'stable' nor 'unstable'", lineNumber));
-      result.IsUnstableVersion = isUnstableVersion;
-      result.Version = new Version(entries[1].Trim());
-      result.FileLength = long.Parse(entries[2].Trim());
-      result.Hash = entries[3].Trim();
+
+      var result = new PackageInfo(
+        isUnstableVersion: isUnstableVersion,
+        version: new Version(entries[1].Trim()),
+        fileLength: long.Parse(entries[2].Trim()),
+      hash: entries[3].Trim());
+
+
 
       // All other entries should be in the form PropertyName = PropertyValue
 
@@ -125,10 +148,15 @@ namespace Altaxo.Serialization.AutoUpdates
       return result;
     }
 
-    public static PackageInfo GetHighestVersion(PackageInfo[] packageInfos)
+    /// <summary>
+    /// Gets the highest version that is possible to install; or null, if such a version does not exist.
+    /// </summary>
+    /// <param name="packageInfos">The package infos.</param>
+    /// <returns></returns>
+    public static PackageInfo? GetHighestVersion(PackageInfo[] packageInfos)
     {
       // from all parsed versions, choose that one that matches the requirements
-      PackageInfo parsedVersion = null;
+      PackageInfo? parsedVersion = null;
       for (int i = packageInfos.Length - 1; i >= 0; --i) // from higher indices to lower indices in order to download the most advanced version that can be used by this system
       {
         if (SystemRequirements.MatchesRequirements(packageInfos[i]))
@@ -205,10 +233,10 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="fs">Stream to read the version info from. This must be the opened stream of the VersionInfo.txt file in the download directory.</param>
     /// <param name="storagePath">Path to the directory that stores the downloaded package.</param>
     /// <returns>The info for the already present package in the download directory. If anything is invalid, the return value is null.</returns>
-    public static PackageInfo GetPresentDownloadedPackage(Stream fs, string storagePath)
+    public static PackageInfo? GetPresentDownloadedPackage(Stream fs, string storagePath)
     {
       var result = GetPresentDownloadedPackage(fs, storagePath, out var packageStream);
-      if (null != packageStream)
+      if (packageStream is not null)
         packageStream.Close();
 
       return result;
@@ -220,14 +248,16 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="storagePath">Path to the directory that stores the downloaded package.</param>
     /// <param name="packageFile">On successfull return, the opened <see cref="FileStream"/> of the package file is provided here. You are responsible for closing the stream!</param>
     /// <returns>The info for the already present package in the download directory. If anything is invalid, the return value is null.</returns>
-    public static PackageInfo GetPresentDownloadedPackage(Stream fs, string storagePath, out FileStream packageFile)
+    public static PackageInfo? GetPresentDownloadedPackage(Stream fs, string storagePath, out FileStream? packageFile)
     {
-      PackageInfo packageInfo = null;
+      PackageInfo? packageInfo = null;
       packageFile = null;
       try
       {
         var packageInfos = PackageInfo.FromStream(fs);
         packageInfo = PackageInfo.GetHighestVersion(packageInfos);
+        if (packageInfo is null)
+          return null; // there is currently no version that can be installed on this system.
 
         // test, if the file exists and has the right Hash
         var fileInfo = new FileInfo(Path.Combine(storagePath, GetPackageFileName(packageInfo.Version)));

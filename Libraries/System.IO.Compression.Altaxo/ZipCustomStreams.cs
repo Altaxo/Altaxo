@@ -397,7 +397,7 @@ namespace System.IO.Compression
         _checksum = 0;
       }
 
-      _checksum = Crc32.Update(_checksum, buffer, offset, count);
+      _checksum = Crc32.UpdateChecksum(_checksum, buffer, offset, count);
       _baseStream.Write(buffer, offset, count);
       _position += count;
     }

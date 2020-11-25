@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Graph.Scales.Boundaries
@@ -113,13 +114,13 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #region Changed event handling
 
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       var eAsBCEA = e as BoundariesChangedEventArgs;
-      if (null == eAsBCEA)
+      if (eAsBCEA is null)
         throw new ArgumentOutOfRangeException(string.Format("Argument e should be of type {0}, but is {1}", typeof(BoundariesChangedEventArgs), e.GetType()));
 
-      if (null == _accumulatedEventData)
+      if (_accumulatedEventData is null)
         _accumulatedEventData = eAsBCEA;
       else
         _accumulatedEventData.Add(eAsBCEA);

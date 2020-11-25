@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -45,26 +46,26 @@ namespace Altaxo.Gui.Workbench
 
     protected bool _isVisible = true;
 
-    protected string _title;
+    protected string? _title;
 
-    protected LanguageDependentString _titleToBeLocalized;
+    protected LanguageDependentString? _titleToBeLocalized;
 
-    private string _infoTip;
+    private string? _infoTip;
 
-    private LanguageDependentString _infoTipToBeLocalized;
+    private LanguageDependentString? _infoTipToBeLocalized;
 
-    private ICommand _closeCommand;
+    private ICommand? _closeCommand;
 
     private bool _isDirty;
 
-    private IServiceContainer _services;
+    private IServiceContainer? _services;
 
     public bool IsDisposeInProgress { get; private set; }
     private bool _isDisposed;
 
-    public event EventHandler IsDirtyChanged;
+    public event EventHandler? IsDirtyChanged;
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public virtual bool CloseWithSolution
     {
@@ -74,12 +75,12 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    public abstract object ViewObject
+    public abstract object? ViewObject
     {
       get; set;
     }
 
-    public virtual object InitiallyFocusedControl
+    public virtual object? InitiallyFocusedControl
     {
       get { return null; }
     }
@@ -216,7 +217,7 @@ namespace Altaxo.Gui.Workbench
       }
       set
       {
-        if (null != _titleToBeLocalized)
+        if (_titleToBeLocalized is not null)
         {
           _titleToBeLocalized.ValueChanged -= EhTitleLocalizationChanged;
           _titleToBeLocalized = null;
@@ -230,7 +231,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    public virtual string IconSource
+    public virtual string? IconSource
     {
       get
       {
@@ -253,9 +254,9 @@ namespace Altaxo.Gui.Workbench
       EhTitleLocalizationChanged(_titleToBeLocalized, EventArgs.Empty);
     }
 
-    protected virtual void EhTitleLocalizationChanged(object sender, EventArgs e)
+    protected virtual void EhTitleLocalizationChanged(object? sender, EventArgs e)
     {
-      var value = _titleToBeLocalized.Value;
+      var value = _titleToBeLocalized?.Value;
       if (!(_title == value))
       {
         _title = value;
@@ -282,18 +283,18 @@ namespace Altaxo.Gui.Workbench
 
         // Get the project item, either directly or via its presentation model
         var projectItem = model as IProjectItem;
-        if (null == projectItem && model is IProjectItemPresentationModel pipModel)
+        if (projectItem is null && model is IProjectItemPresentationModel pipModel)
         {
           projectItem = pipModel.Document;
         }
 
-        if (null != projectItem)
+        if (projectItem is not null)
         {
           var name = Altaxo.Main.AbsoluteDocumentPath.GetPathString(projectItem, 16);
           System.Diagnostics.Debug.WriteLine("GetName: " + name);
           return name;
         }
-        else if (model != null)
+        else if (model is not null)
         {
           return "ContentHash:" + RuntimeHelpers.GetHashCode(model).ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
@@ -318,7 +319,7 @@ namespace Altaxo.Gui.Workbench
 
     #endregion ContentId
 
-    public virtual INavigationPoint BuildNavPoint()
+    public virtual INavigationPoint? BuildNavPoint()
     {
       return null;
     }
@@ -334,7 +335,7 @@ namespace Altaxo.Gui.Workbench
     {
       get
       {
-        if (_closeCommand == null)
+        if (_closeCommand is null)
         {
           _closeCommand = Current.Gui.NewRelayCommand(OnClose, CanClose);
         }
@@ -357,12 +358,12 @@ namespace Altaxo.Gui.Workbench
 
     #region InfoTip
 
-    public string InfoTip
+    public string? InfoTip
     {
       get { return _infoTip; }
       set
       {
-        if (null != _infoTipToBeLocalized)
+        if (_infoTipToBeLocalized is not null)
         {
           _infoTipToBeLocalized.ValueChanged -= EhInfoTipLocalizationChanged;
           _infoTipToBeLocalized = null;
@@ -387,9 +388,9 @@ namespace Altaxo.Gui.Workbench
       EhInfoTipLocalizationChanged(_infoTipToBeLocalized, EventArgs.Empty);
     }
 
-    private void EhInfoTipLocalizationChanged(object sender, EventArgs e)
+    private void EhInfoTipLocalizationChanged(object? sender, EventArgs e)
     {
-      string value = _infoTipToBeLocalized.Value;
+      var value = _infoTipToBeLocalized?.Value;
       if (!(_infoTip == value))
       {
         _infoTip = value;
@@ -401,7 +402,7 @@ namespace Altaxo.Gui.Workbench
 
     #region IDisposable
 
-    public event EventHandler Disposed;
+    public event EventHandler? Disposed;
 
     public bool IsDisposed
     {
@@ -459,7 +460,7 @@ namespace Altaxo.Gui.Workbench
 
     #region IServiceProvider
 
-    public IServiceContainer Services
+    public IServiceContainer? Services
     {
       get
       {
@@ -475,14 +476,14 @@ namespace Altaxo.Gui.Workbench
 
     public T GetService<T>()
     {
-      return (T)GetService(typeof(T));
+      return (T)(GetService(typeof(T)) ?? throw new InvalidOperationException($"Service of type {typeof(T)} not found on {this}"));
     }
 
-    public object GetService(Type serviceType)
+    public object? GetService(Type serviceType)
     {
-      object obj = _services?.GetService(serviceType);
+      var obj = _services?.GetService(serviceType);
 
-      if (obj != null)
+      if (obj is not null)
         return obj;
 
       if (serviceType.IsInstanceOfType(this))

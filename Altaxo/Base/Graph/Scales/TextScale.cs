@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Data;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
@@ -71,9 +73,9 @@ namespace Altaxo.Graph.Scales
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        TextScale s = null != o ? (TextScale)o : new TextScale(info);
+        var s = (TextScale?)o ?? new TextScale(info);
 
         s._cachedAxisOrg = info.GetDouble("Org");
         s._cachedAxisEnd = info.GetDouble("End");
@@ -108,9 +110,9 @@ namespace Altaxo.Graph.Scales
         info.AddValue("TickSpacing", s._tickSpacing);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        TextScale s = null != o ? (TextScale)o : new TextScale(info);
+        var s = (TextScale?)o ?? new TextScale(info);
 
         s._cachedAxisOrg = info.GetDouble("Org");
         s._cachedAxisEnd = info.GetDouble("End");
@@ -133,9 +135,11 @@ namespace Altaxo.Graph.Scales
     /// For deserialization purposes only: initializes a new instance of the <see cref="TextScale"/> class.
     /// </summary>
     /// <param name="info">The information.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected TextScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     public TextScale()
     {
@@ -150,16 +154,9 @@ namespace Altaxo.Graph.Scales
       CopyFrom(from);
     }
 
-    public override bool CopyFrom(object obj)
+    [MemberNotNull(nameof(_dataBounds), nameof(_rescaling), nameof(_tickSpacing))]
+    protected void CopyFrom(TextScale from)
     {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-
-      var from = obj as TextScale;
-
-      if (null == from)
-        return false;
-
       using (var suspendToken = SuspendGetToken())
       {
         _cachedAxisOrg = from._cachedAxisOrg;
@@ -174,18 +171,32 @@ namespace Altaxo.Graph.Scales
         EhSelfChanged(EventArgs.Empty);
         suspendToken.Resume();
       }
+    }
 
-      return true;
+    public override bool CopyFrom(object obj)
+    {
+      if (ReferenceEquals(this, obj))
+        return true;
+
+
+      if (obj is TextScale from)
+      {
+        CopyFrom(from);
+
+        return true;
+      }
+
+      return false;
     }
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataBounds)
-        yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null, "DataBounds");
-      if (null != _rescaling)
-        yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null, "Rescaling");
-      if (null != _tickSpacing)
-        yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null, "TickSpacing");
+      if (_dataBounds is not null)
+        yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null!, "DataBounds");
+      if (_rescaling is not null)
+        yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null!, "Rescaling");
+      if (_tickSpacing is not null)
+        yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null!, "TickSpacing");
     }
 
     public override object Clone()
@@ -236,7 +247,7 @@ namespace Altaxo.Graph.Scales
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         if (ChildSetMember(ref _tickSpacing, value))
@@ -260,7 +271,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
-    protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+    protected override string? SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
     {
       double o = org.ToDouble();
       double e = end.ToDouble();
@@ -298,13 +309,13 @@ namespace Altaxo.Graph.Scales
 
     #region Changed event handling
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _dataBounds)) // Data bounds have changed
       {
         double xorg = 0;
         double xend = 1;
-        if (null != _dataBounds && !_dataBounds.IsEmpty)
+        if (_dataBounds is not null && !_dataBounds.IsEmpty)
         {
           xorg = 0.5;
           xend = _dataBounds.NumberOfItems + 0.5;
@@ -335,7 +346,7 @@ namespace Altaxo.Graph.Scales
 
     protected void UpdateTicksAndOrgEndUsingRescalingObject()
     {
-      if (null == TickSpacing)
+      if (TickSpacing is null)
       {
         SetScaleOrgEnd(_rescaling.ResultingOrg, _rescaling.ResultingEnd);
       }

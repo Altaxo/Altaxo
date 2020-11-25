@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -42,7 +43,7 @@ namespace Altaxo.Main.Services
     /// <param name="message">The message text.</param>
     /// <param name="highlighted">Whether to highlight the text</param>
     /// <param name="icon">Icon to show next to the text. If this parameter is a string, it will be interpreted as a resource string.</param>
-    void SetMessage(string message, bool highlighted = false, object icon = null);
+    void SetMessage(string message, bool highlighted = false, object? icon = null);
 
     /// <summary>
     /// Creates a new <see cref="IProgressMonitor"/> that can be used to report

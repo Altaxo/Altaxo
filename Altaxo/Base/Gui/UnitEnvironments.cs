@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Main.Properties;
 using Altaxo.Units;
 
@@ -56,7 +54,7 @@ namespace Altaxo.Gui
       }
     }
 
-    private static void EhDefaultUnitChanged(object sender, EventArgs e)
+    private static void EhDefaultUnitChanged(object? sender, EventArgs e)
     {
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
@@ -93,7 +91,7 @@ namespace Altaxo.Gui
       }
     }
 
-    private static void EhDefaultUnitChanged(object sender, EventArgs e)
+    private static void EhDefaultUnitChanged(object? sender, EventArgs e)
     {
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
@@ -130,7 +128,7 @@ namespace Altaxo.Gui
       }
     }
 
-    private static void EhDefaultUnitChanged(object sender, EventArgs e)
+    private static void EhDefaultUnitChanged(object? sender, EventArgs e)
     {
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
@@ -167,7 +165,7 @@ namespace Altaxo.Gui
       }
     }
 
-    private static void EhDefaultUnitChanged(object sender, EventArgs e)
+    private static void EhDefaultUnitChanged(object? sender, EventArgs e)
     {
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
@@ -204,7 +202,7 @@ namespace Altaxo.Gui
       }
     }
 
-    private static void EhDefaultUnitChanged(object sender, EventArgs e)
+    private static void EhDefaultUnitChanged(object? sender, EventArgs e)
     {
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
@@ -241,7 +239,7 @@ namespace Altaxo.Gui
       }
     }
 
-    private static void EhDefaultUnitChanged(object sender, EventArgs e)
+    private static void EhDefaultUnitChanged(object? sender, EventArgs e)
     {
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
@@ -278,7 +276,7 @@ namespace Altaxo.Gui
       }
     }
 
-    private static void EhDefaultUnitChanged(object sender, EventArgs e)
+    private static void EhDefaultUnitChanged(object? sender, EventArgs e)
     {
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
@@ -315,7 +313,7 @@ namespace Altaxo.Gui
       }
     }
 
-    private static void EhDefaultUnitChanged(object sender, EventArgs e)
+    private static void EhDefaultUnitChanged(object? sender, EventArgs e)
     {
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
@@ -352,7 +350,7 @@ namespace Altaxo.Gui
       }
     }
 
-    private static void EhDefaultUnitChanged(object sender, EventArgs e)
+    private static void EhDefaultUnitChanged(object? sender, EventArgs e)
     {
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }
@@ -389,7 +387,7 @@ namespace Altaxo.Gui
       }
     }
 
-    private static void EhDefaultUnitChanged(object sender, EventArgs e)
+    private static void EhDefaultUnitChanged(object? sender, EventArgs e)
     {
       Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
     }

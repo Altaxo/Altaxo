@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,7 +64,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var listName = ScatterSymbolListManager.Instance.GetParentList(value as IScatterSymbol)?.Name;
-      if (null != listName)
+      if (listName is not null)
       {
         var entry = ScatterSymbolListManager.Instance.GetEntryValue(listName);
         string levelName = Enum.GetName(typeof(Altaxo.Main.ItemDefinitionLevel), entry.Level);

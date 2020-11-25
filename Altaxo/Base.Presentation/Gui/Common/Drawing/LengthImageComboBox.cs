@@ -94,7 +94,7 @@ namespace Altaxo.Gui.Common.Drawing
       var value = (double)args.NewValue;
 
       var quant = new DimensionfulQuantity(value, AUL.Point.Instance);
-      if (null != UnitEnvironment)
+      if (UnitEnvironment is not null)
         quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
       SelectedQuantity = quant;
     }

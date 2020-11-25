@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,6 @@ namespace Altaxo.Main.Services
     /// <param name="isApplicationCurrentlyStarting">If set to <c>true</c>, the application will be restarted after the installation is done.</param>
     /// <param name="commandLineArgs">Original command line arguments. Can be <c>null</c> when calling this function on shutdown.</param>
     /// <returns>True if the installer program was started. Then the application have to be shut down immediately. Returns <c>false</c> if the installer program was not started.</returns>
-    bool Run(bool isApplicationCurrentlyStarting, string[] commandLineArgs);
+    bool Run(bool isApplicationCurrentlyStarting, string[]? commandLineArgs);
   }
 }

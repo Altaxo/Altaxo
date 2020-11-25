@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -53,7 +54,7 @@ namespace Altaxo.Graph.Gdi.CS
     /// <param name="fromb">The coordinate system to copy from.</param>
     public override void CopyFrom(G2DCoordinateSystem fromb)
     {
-      if (object.ReferenceEquals(this, fromb))
+      if (ReferenceEquals(this, fromb))
         return;
 
       base.CopyFrom(fromb);
@@ -143,7 +144,7 @@ namespace Altaxo.Graph.Gdi.CS
       int vertAx = 1;
       int deptAx = 2;
 
-      if (null == _axisStyleInformation)
+      if (_axisStyleInformation is null)
         _axisStyleInformation = new List<CSAxisInformation>();
       else
         _axisStyleInformation.Clear();

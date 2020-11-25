@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace Altaxo.Geometry
 
     public IList<PointD2D> FlattenPolyBezierCurve(PointD2D[] bezierPoints)
     {
-      if (null == bezierPoints)
+      if (bezierPoints is null)
         throw new ArgumentNullException(nameof(bezierPoints));
       if (bezierPoints.Length < 4 && 0 != (bezierPoints.Length - 1) % 3)
         throw new ArgumentException("Array length has to be >=4 and has to be expressable as 1+3*k", nameof(bezierPoints));
@@ -76,7 +77,7 @@ namespace Altaxo.Geometry
 
     public void FlattenPolyBezierCurve(PointD2D startPoint, IList<PointD2D> bezierPoints, List<PointD2D> flattenedList)
     {
-      if (null == bezierPoints)
+      if (bezierPoints is null)
         throw new ArgumentNullException(nameof(bezierPoints));
       if (bezierPoints.Count < 3 && 0 != (bezierPoints.Count) % 3)
         throw new ArgumentException("Array length has to be >=4 and has to be expressable as 1+3*k", nameof(bezierPoints));

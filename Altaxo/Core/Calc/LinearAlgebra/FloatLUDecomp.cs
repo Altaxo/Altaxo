@@ -350,7 +350,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentException">The number of rows of A and B must be the same.</exception>
     public FloatMatrix Solve(IROMatrix<float> B)
     {
-      if (B == null)
+      if (B is null)
       {
         throw new System.ArgumentNullException("B cannot be null.");
       }
@@ -415,7 +415,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentException">The number of rows of A and the length of B must be the same.</exception>
     public FloatVector Solve(IReadOnlyList<float> B)
     {
-      if (B == null)
+      if (B is null)
       {
         throw new System.ArgumentNullException("B cannot be null.");
       }

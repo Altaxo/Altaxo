@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using Altaxo.Main.Services;
 
@@ -27,23 +28,23 @@ namespace Altaxo.AddInItems
   /// </summary>
   internal sealed class LazyLoadDoozer : IDoozer
   {
-    private AddIn addIn;
-    private string name;
-    private string className;
+    private AddIn _addIn;
+    private string _name;
+    private string _className;
 
     public string Name
     {
       get
       {
-        return name;
+        return _name;
       }
     }
 
     public LazyLoadDoozer(AddIn addIn, Properties properties)
     {
-      this.addIn = addIn;
-      name = properties["name"];
-      className = properties["class"];
+      this._addIn = addIn;
+      _name = properties["name"];
+      _className = properties["class"];
     }
 
     /// <summary>
@@ -54,32 +55,32 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        var doozer = (IDoozer)addIn.CreateObject(className);
-        if (doozer == null)
+        var doozer = (IDoozer?)_addIn.CreateObject(_className);
+        if (doozer is null)
         {
           return false;
         }
-        addIn.AddInTree.Doozers[name] = doozer;
+        _addIn.AddInTree.Doozers[_name] = doozer;
         return doozer.HandleConditions;
       }
     }
 
-    public object BuildItem(BuildItemArgs args)
+    public object? BuildItem(BuildItemArgs args)
     {
-      var doozer = (IDoozer)addIn.CreateObject(className);
-      if (doozer == null)
+      var doozer = (IDoozer?)_addIn.CreateObject(_className);
+      if (doozer is null)
       {
         return null;
       }
-      addIn.AddInTree.Doozers[name] = doozer;
+      _addIn.AddInTree.Doozers[_name] = doozer;
       return doozer.BuildItem(args);
     }
 
     public override string ToString()
     {
       return string.Format("[LazyLoadDoozer: className = {0}, name = {1}]",
-                           className,
-                           name);
+                           _className,
+                           _name);
     }
   }
 }

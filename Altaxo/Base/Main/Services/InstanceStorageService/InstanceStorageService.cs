@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,7 +42,7 @@ namespace Altaxo.Main.Services
     private Guid _instance;
     private string _localInstancePath;
     private string _lockFilePath;
-    private Stream _lockFile;
+    private Stream? _lockFile;
     private bool _isDisposed;
 
     /// <inheritdoc/>
@@ -49,8 +50,9 @@ namespace Altaxo.Main.Services
 
     public InstanceStorageService()
     {
+      var applicationName = StringParser.Parse("${AppName}") ?? throw new InvalidOperationException("Can not get an application name for this instance");
       var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-      _localAppDataPath = Path.Combine(localAppData, StringParser.Parse("${AppName}"));
+      _localAppDataPath = Path.Combine(localAppData, applicationName);
       if (!(_localAppDataPath.StartsWith("\\")))
         _localAppDataPath = @"\\?\" + _localAppDataPath;
       _instance = Guid.NewGuid();
@@ -86,7 +88,7 @@ namespace Altaxo.Main.Services
       var lockFile = Path.Combine(dir.FullName, LockFileName);
       if (File.Exists(lockFile))
       {
-        FileStream stream = null;
+        FileStream? stream = null;
         try
         {
           stream = new FileStream(lockFile, FileMode.Open, FileAccess.Write, FileShare.None);
@@ -129,7 +131,7 @@ namespace Altaxo.Main.Services
         }
         catch (Exception ex)
         {
-          System.Diagnostics.Debug.WriteLine($"Exception during shutdown of InstanceStorageService\r\nDetails:\r\n{ex.ToString()}");
+          System.Diagnostics.Debug.WriteLine($"Exception during shutdown of InstanceStorageService\r\nDetails:\r\n{ex}");
         }
       }
     }

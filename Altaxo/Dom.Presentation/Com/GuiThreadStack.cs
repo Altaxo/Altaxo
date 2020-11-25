@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -52,9 +53,9 @@ namespace Altaxo.Com
 
     public GuiThreadStack(Func<bool> IsInvokeRequiredForGuiThread, Action<Action> InvokeGuiThread)
     {
-      if (null == IsInvokeRequiredForGuiThread)
+      if (IsInvokeRequiredForGuiThread is null)
         throw new ArgumentNullException("IsInvokeRequiredForGuiThread is null, but it is mandatory.");
-      if (null == InvokeGuiThread)
+      if (InvokeGuiThread is null)
         throw new ArgumentNullException("InvokeGuiThread is null, but it is mandatory.");
 
       _isInvokeRequiredForGuiThread = IsInvokeRequiredForGuiThread;
@@ -88,7 +89,7 @@ namespace Altaxo.Com
         }
       }
 
-      if (null != myEvent) // we pushed the action to the stack, thus we now must wait for the event to be set after the action is executed
+      if (myEvent is not null) // we pushed the action to the stack, thus we now must wait for the event to be set after the action is executed
       {
         myEvent.WaitOne();
       }
@@ -125,7 +126,7 @@ namespace Altaxo.Com
           data.GuiAction = null;
           data.Event = null;
         }
-        if (null != guiAction)
+        if (guiAction is not null)
         {
           guiAction();
           myEvent.Set();
@@ -148,13 +149,13 @@ namespace Altaxo.Com
           }
         }
       }
-      if (null != guiAction)
+      if (guiAction is not null)
       {
         guiAction();
         myEvent.Set();
       }
 
-      if (null != data.Task.Exception)
+      if (data.Task.Exception is not null)
         throw data.Task.Exception;
     }
   }

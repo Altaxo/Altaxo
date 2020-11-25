@@ -40,7 +40,7 @@ namespace Altaxo.MachineLearning.ML_Net
       bool _isDisposed;
       TableDataView _dataView;
       int _position;
-      int[] _randomIndices;
+      int[]? _randomIndices;
 
       /// <summary>
       /// This is incremented when the underlying contents changes, giving clients a way to detect change. It should be
@@ -76,7 +76,7 @@ namespace Altaxo.MachineLearning.ML_Net
       /// </summary>
       private readonly Delegate[] _getters;
 
-      public RowCursor(TableDataView parent, IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand)
+      public RowCursor(TableDataView parent, IEnumerable<DataViewSchema.Column> columnsNeeded, Random? rand)
       {
         _dataView = parent;
         Schema = parent.Schema;

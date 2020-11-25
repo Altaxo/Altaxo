@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Geometry;
 
@@ -128,6 +129,11 @@ namespace Altaxo.Drawing
         EffectiveMaximumResolutionDpi == other.EffectiveMaximumResolutionDpi &&
         BrushBoundingRectangle == other.BrushBoundingRectangle &&
         Equals(BrushX, other.BrushX);
+    }
+
+    public override bool Equals(object? obj)
+    {
+      return obj is BrushXEnv other ? Equals(other) : false;
     }
 
     public static bool operator ==(BrushXEnv x, BrushXEnv y)

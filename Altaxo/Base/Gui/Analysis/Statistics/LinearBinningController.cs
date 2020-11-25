@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,7 +62,7 @@ namespace Altaxo.Gui.Analysis.Statistics
       {
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.IsUserDefinedBinOffset = _doc.IsUserDefinedBinOffset;
         _view.IsUserDefinedBinWidth = _doc.IsUserDefinedBinWidth;

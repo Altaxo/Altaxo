@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace Altaxo.Gui.Main
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      if (null != _controllerList)
+      if (_controllerList is not null)
       {
         foreach (var kvp in _controllerList.Values)
           yield return new ControllerAndSetNullMethod(kvp.Value, null);
@@ -62,7 +63,7 @@ namespace Altaxo.Gui.Main
       if (IsDisposed)
         throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);
 
-      if (null == args || 0 == args.Length)
+      if (args is null || 0 == args.Length)
         return false;
 
       _doc = _originalDoc = args[0];
@@ -98,11 +99,11 @@ namespace Altaxo.Gui.Main
           if (prop.IsWriteable || HasImmutableSetter(prop, _doc.GetType()))
           {
             var displayOrderAttribute = prop.Attributes.OfType<Altaxo.Main.Services.PropertyReflection.DisplayOrderAttribute>().FirstOrDefault();
-            if (null != displayOrderAttribute)
+            if (displayOrderAttribute is not null)
               currentDisplayOrder = displayOrderAttribute.OrderIndex;
 
             var ctrl = GetControllerFor(prop);
-            if (null != ctrl && null != ctrl.ViewObject)
+            if (ctrl is not null && ctrl.ViewObject is not null)
             {
               AddToControllerList(currentDisplayOrder, prop, ctrl);
             }
@@ -110,7 +111,7 @@ namespace Altaxo.Gui.Main
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         var list = new Altaxo.Collections.ListNodeList();
         foreach (var entry in _controllerList.Values)
@@ -192,10 +193,10 @@ namespace Altaxo.Gui.Main
       IMVCAController ctrl = null;
 
       var att = prop.Attributes.OfType<System.ComponentModel.EditorAttribute>().FirstOrDefault();
-      if (null != att)
+      if (att is not null)
       {
         var ctrlType = Type.GetType(att.EditorTypeName, false);
-        if (ctrlType != null)
+        if (ctrlType is not null)
         {
           try
           {
@@ -210,7 +211,7 @@ namespace Altaxo.Gui.Main
         }
       }
 
-      if (null == ctrl)
+      if (ctrl is null)
       {
         ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { prop.Value }, typeof(IMVCAController), UseDocument.Directly);
       }

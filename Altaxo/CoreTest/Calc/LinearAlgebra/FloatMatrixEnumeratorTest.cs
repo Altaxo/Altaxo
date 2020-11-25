@@ -25,17 +25,17 @@
 using System;
 using System.Collections;
 using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
-  [TestFixture]
+  
   public class FloatMatrixEnumeratorTest
   {
-    private const double TOLERENCE = 0.001;
+    private const double TOLERANCE = 0.001;
 
     //Test Current Method
-    [Test]
+    [Fact]
     public void Current()
     {
       var test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
@@ -43,39 +43,39 @@ namespace AltaxoTest.Calc.LinearAlgebra
       bool movenextresult;
 
       movenextresult = enumerator.MoveNext();
-      Assert.IsTrue(movenextresult);
-      Assert.AreEqual(enumerator.Current, test[0, 0]);
+      Assert.True(movenextresult);
+      Assert.Equal(enumerator.Current, test[0, 0]);
 
       movenextresult = enumerator.MoveNext();
-      Assert.IsTrue(movenextresult);
-      Assert.AreEqual(enumerator.Current, test[1, 0]);
+      Assert.True(movenextresult);
+      Assert.Equal(enumerator.Current, test[1, 0]);
 
       movenextresult = enumerator.MoveNext();
-      Assert.IsTrue(movenextresult);
-      Assert.AreEqual(enumerator.Current, test[0, 1]);
+      Assert.True(movenextresult);
+      Assert.Equal(enumerator.Current, test[0, 1]);
 
       movenextresult = enumerator.MoveNext();
-      Assert.IsTrue(movenextresult);
-      Assert.AreEqual(enumerator.Current, test[1, 1]);
+      Assert.True(movenextresult);
+      Assert.Equal(enumerator.Current, test[1, 1]);
 
       movenextresult = enumerator.MoveNext();
-      Assert.IsFalse(movenextresult);
+      Assert.False(movenextresult);
     }
 
     //Test foreach
-    [Test]
+    [Fact]
     public void ForEach()
     {
       var test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
       foreach (float f in test)
-        Assert.IsTrue(test.Contains(f));
+        Assert.True(test.Contains(f));
     }
 
     //Test Current Exception with index=-1.
-    [Test]
+    [Fact]
     public void CurrentException()
     {
-      Assert.Throws(typeof(InvalidOperationException), () =>
+      Assert.Throws<InvalidOperationException>(() =>
       {
         var test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
         IEnumerator enumerator = test.GetEnumerator();
@@ -84,10 +84,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     }
 
     //Test Current Exception with index>length
-    [Test]
+    [Fact]
     public void CurrentException2()
     {
-      Assert.Throws(typeof(InvalidOperationException), () =>
+      Assert.Throws<InvalidOperationException>(() =>
       {
         var test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
         IEnumerator enumerator = test.GetEnumerator();

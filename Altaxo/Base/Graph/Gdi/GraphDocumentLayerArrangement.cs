@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,11 +66,11 @@ namespace Altaxo.Graph.Gdi
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as ArrangeLayersDocument;
-      if (null != from)
+      if (from is not null)
       {
         NumberOfColumns = from.NumberOfColumns;
         NumberOfRows = from.NumberOfRows;
@@ -199,10 +200,10 @@ namespace Altaxo.Graph.Gdi
 
       int additionalLayers = Math.Max(0, numDestLayers - numPresentLayers);
 
-      if (null == parentLayer.Grid)
+      if (parentLayer.Grid is null)
         parentLayer.CreateDefaultGrid();
 
-      ArrangeGrid(arrangement, parentLayer.Grid);
+      ArrangeGrid(arrangement, parentLayer.Grid!);
 
       int nLayer = -1;
       for (int i = 0; i < arrangement.NumberOfRows; ++i)
@@ -215,7 +216,7 @@ namespace Altaxo.Graph.Gdi
           {
             var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(context, Guid.NewGuid().ToString(), "", false);
 
-            if (graph != null && graph.RootLayer.Layers.Count > 0)
+            if (graph is not null && graph.RootLayer.Layers.Count > 0)
             {
               var newLayer = (HostLayer)graph.RootLayer.Layers[0].Clone();
               parentLayer.Layers.Add(newLayer);

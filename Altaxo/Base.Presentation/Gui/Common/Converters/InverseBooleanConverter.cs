@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -52,7 +53,7 @@ namespace Altaxo.Gui.Common
           return null;
       }
 
-      if (value == null)
+      if (value is null)
         return null;
       else
         return true;

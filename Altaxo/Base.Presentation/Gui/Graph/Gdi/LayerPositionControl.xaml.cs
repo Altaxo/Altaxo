@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph.Gdi
       InitializeComponent();
     }
 
-    public event Action PositioningTypeChanged;
+    public event Action? PositioningTypeChanged;
 
     private bool _useDirectPositioning;
 
@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Graph.Gdi
       var oldValue = _useDirectPositioning;
       _useDirectPositioning = true;
 
-      if (_useDirectPositioning != oldValue && PositioningTypeChanged != null)
+      if (_useDirectPositioning != oldValue && PositioningTypeChanged is not null)
         PositioningTypeChanged();
     }
 
@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Graph.Gdi
       var oldValue = _useDirectPositioning;
       _useDirectPositioning = false;
 
-      if (_useDirectPositioning != oldValue && PositioningTypeChanged != null)
+      if (_useDirectPositioning != oldValue && PositioningTypeChanged is not null)
         PositioningTypeChanged();
     }
 

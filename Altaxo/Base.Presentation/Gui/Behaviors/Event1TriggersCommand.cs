@@ -70,10 +70,10 @@ namespace Altaxo.Gui.Behaviors
       var newEvent = e.NewValue as RoutedEvent;
       if (d is FrameworkElement fe)
       {
-        if (null != oldEvent)
+        if (oldEvent is not null)
           fe.RemoveHandler(oldEvent, new RoutedEventHandler(EhEventHandler));
 
-        if (null != newEvent)
+        if (newEvent is not null)
           fe.AddHandler(newEvent, new RoutedEventHandler(EhEventHandler));
       }
     }
@@ -137,7 +137,7 @@ namespace Altaxo.Gui.Behaviors
       var command = GetCommand((FrameworkElement)sender);
       var commandParameter = GetCommandParameter((FrameworkElement)sender);
 
-      if (null != command)
+      if (command is not null)
       {
         if (command.CanExecute(commandParameter))
           command.Execute(commandParameter);

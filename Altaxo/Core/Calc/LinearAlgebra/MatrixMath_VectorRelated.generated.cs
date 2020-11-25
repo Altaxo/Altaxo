@@ -50,7 +50,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			if (columnNumber < 0 || columnNumber >= sourceMatrix.ColumnCount)
 				throw new ArgumentOutOfRangeException(nameof(columnNumber), "column must be greater than or equal to zero and less than ColumnLength.");
-			if (null == destinationVector)
+			if (destinationVector is null)
 				throw new ArgumentNullException(nameof(destinationVector));
 			if (destinationVector.Length != sourceMatrix.RowCount)
 				throw new RankException("Length of destinationVector does not match number of rows of source matrix");
@@ -74,7 +74,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			if (columnNumber < 0 || columnNumber >= sourceMatrix.ColumnCount)
 				throw new ArgumentOutOfRangeException(nameof(columnNumber), "column must be greater than or equal to zero and less than ColumnLength.");
-			if (null == destinationVector)
+			if (destinationVector is null)
 				throw new ArgumentNullException(nameof(destinationVector));
 			if (destinationVector.Count != sourceMatrix.RowCount)
 				throw new RankException("Length of destinationVector does not match number of rows of source matrix");

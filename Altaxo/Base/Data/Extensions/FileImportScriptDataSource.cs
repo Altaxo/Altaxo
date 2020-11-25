@@ -22,11 +22,12 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using Altaxo.Data;
+using Altaxo.Main.Services;
 using Altaxo.Scripting;
 using Altaxo.Serialization;
 
@@ -46,7 +47,7 @@ namespace Altaxo.Data
 
     protected System.IO.FileSystemWatcher[] _fileSystemWatchers = new System.IO.FileSystemWatcher[0];
 
-    protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
+    protected Altaxo.Main.TriggerBasedUpdate? _triggerBasedUpdate;
 
     /// <summary>Indicates that serialization of the whole AltaxoDocument (!) is still in progress. Data sources should not be updated during serialization.</summary>
     [NonSerialized]
@@ -71,64 +72,74 @@ namespace Altaxo.Data
         info.AddArray("Files", s._files.ToArray(), s._files.Count);
       }
 
-      protected virtual FileImportScriptDataSource SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new FileImportScriptDataSource() : (FileImportScriptDataSource)o);
-        s._isDeserializationInProgress = true;
-        s.ChildSetMember(ref s._importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", s));
-        s.ChildSetMember(ref s._importScript, (FileImportScript)info.GetValue("ImportScript", s));
-        var count = info.OpenArray("Files");
-        for (int i = 0; i < count; ++i)
-          s._files.Add((AbsoluteAndRelativeFileName)info.GetValue("e", s));
-        info.CloseArray(count);
-
-        info.AfterDeserializationHasCompletelyFinished += s.EhAfterDeserializationHasCompletelyFinished;
-
-        return s;
-      }
-
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        var s = SDeserialize(o, info, parent);
+        if (o is FileImportScriptDataSource s)
+          s.DeserializeSurrogate0(info);
+        else
+          s = new FileImportScriptDataSource(info, 0);
         return s;
       }
     }
 
+    [MemberNotNull(nameof(_importOptions), nameof(_importScript))]
+    void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      _isDeserializationInProgress = true;
+      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+      ChildSetMember(ref _importScript, (FileImportScript)info.GetValue("ImportScript", this));
+      var count = info.OpenArray("Files");
+      for (int i = 0; i < count; ++i)
+        _files.Add((AbsoluteAndRelativeFileName)info.GetValue("e", this));
+      info.CloseArray(count);
+
+      info.AfterDeserializationHasCompletelyFinished += EhAfterDeserializationHasCompletelyFinished;
+    }
+
     #endregion Version 0
+
+    protected FileImportScriptDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
+    {
+      switch (version)
+      {
+        case 0:
+          DeserializeSurrogate0(info);
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(version));
+      }
+    }
 
     #endregion Serialization
 
     #region Construction
 
+    [MemberNotNull(nameof(_files), nameof(_importOptions), nameof(_importScript))]
+    void CopyFrom(FileImportScriptDataSource from)
+    {
+      using (var token = SuspendGetToken())
+      {
+        _files = new List<AbsoluteAndRelativeFileName>(CopyHelper.GetEnumerationMembersNotNullCloned(from._files));
+        ChildSetMember(ref _importOptions, from._importOptions);
+        ChildCopyToMember(ref _importScript, from._importScript);
+
+
+        EhSelfChanged(EventArgs.Empty);
+        token.Resume();
+      }
+    }
+
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as FileImportScriptDataSource;
-      if (null != from)
+      if (obj is FileImportScriptDataSource from)
       {
-        using (var token = SuspendGetToken())
-        {
-          _files = new List<AbsoluteAndRelativeFileName>(CopyHelper.GetEnumerationMembersCloned(from._files));
-          ChildSetMember(ref _importOptions, from._importOptions);
-          ChildCopyToMember(ref _importScript, from._importScript);
-          _files = new List<AbsoluteAndRelativeFileName>(CopyHelper.GetEnumerationMembersCloned(from._files));
-
-          EhSelfChanged(EventArgs.Empty);
-          token.Resume();
-        }
+        CopyFrom(from);
         return true;
       }
       return false;
-    }
-
-    /// <summary>
-    /// Deserialization constructor
-    /// </summary>
-    protected FileImportScriptDataSource()
-    {
-      _files = new List<AbsoluteAndRelativeFileName>();
     }
 
     public FileImportScriptDataSource(string fileName, FileImportScript script)
@@ -159,11 +170,11 @@ namespace Altaxo.Data
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _importScript)
-        yield return new Main.DocumentNodeAndName(_importScript, () => _importScript = null, "ImportScript");
+      if (_importScript is not null)
+        yield return new Main.DocumentNodeAndName(_importScript, () => _importScript = null!, "ImportScript");
 
-      if (null != _importOptions)
-        yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null, "ImportOptions");
+      if (_importOptions is not null)
+        yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null!, "ImportOptions");
     }
 
     #endregion Construction
@@ -174,18 +185,18 @@ namespace Altaxo.Data
 
       // UpdateWatching should only be called if something concerning the watch (Times etc.) has changed during the suspend phase
       // Otherwise it will cause endless loops because UpdateWatching triggers immediatly an EhUpdateByTimerQueue event, which triggers an UpdateDataSource event, which leads to another Suspend and then Resume, which calls OnResume(). So the loop is closed.
-      if (null == _triggerBasedUpdate)
+      if (_triggerBasedUpdate is null)
         UpdateWatching(); // Compromise - we update only if the watch is off
     }
 
     public void FillData(DataTable destinationTable)
     {
-      var validFileNames = _files.Select(x => x.GetResolvedFileNameOrNull()).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+      var validFileNames = _files.Select(x => x.GetResolvedFileNameOrNull()).OfType<string>().Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
       if (validFileNames.Length == 0)
         return;
 
-      _importScript.ExecuteWithoutExceptionCatching(destinationTable, validFileNames, null);
+      _importScript.ExecuteWithoutExceptionCatching(destinationTable, validFileNames, new DummyBackgroundMonitor());
     }
 
     #region Properties
@@ -201,7 +212,7 @@ namespace Altaxo.Data
       }
       set
       {
-        string oldName = null;
+        string? oldName = null;
         if (_files.Count == 1)
           oldName = SourceFileName;
 
@@ -274,8 +285,8 @@ namespace Altaxo.Data
 
     private void SetAbsoluteRelativeFilePath(AbsoluteAndRelativeFileName value)
     {
-      if (null == value)
-        throw new ArgumentNullException("value");
+      if (value is null)
+        throw new ArgumentNullException(nameof(value));
 
       var oldValue = _files.Count == 1 ? _files[0] : null;
       _files.Clear();
@@ -306,13 +317,13 @@ namespace Altaxo.Data
       if (IsSuspended)
         return; // in update operation - wait until finished
 
-      if (null == _parent)
+      if (_parent is null)
         return; // No listener - no need to watch
 
       if (_importOptions.ImportTriggerSource != ImportTriggerSource.DataSourceChanged)
         return; // DataSource is updated manually
 
-      var validFileNames = _files.Select(x => x.GetResolvedFileNameOrNull()).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+      var validFileNames = _files.Select(x => x.GetResolvedFileNameOrNull()).OfType<string>().Where(x => !string.IsNullOrEmpty(x)).ToArray();
       if (0 == validFileNames.Length)
         return;  // No file name set
 
@@ -334,7 +345,7 @@ namespace Altaxo.Data
 
       _triggerBasedUpdate.UpdateAction += EhUpdateByTimerQueue;
 
-      var directories = new HashSet<string>(validFileNames.Select(x => System.IO.Path.GetDirectoryName(x)));
+      var directories = new HashSet<string>(validFileNames.Select(x => System.IO.Path.GetDirectoryName(x)).Where(y => !string.IsNullOrEmpty(y))!);
       var watchers = new List<System.IO.FileSystemWatcher>();
       foreach (var directory in directories)
       {
@@ -358,7 +369,7 @@ namespace Altaxo.Data
 
     private void SwitchOffWatching()
     {
-      IDisposable disp = null;
+      IDisposable? disp = null;
 
       var watchers = _fileSystemWatchers;
       _fileSystemWatchers = new System.IO.FileSystemWatcher[0];
@@ -366,19 +377,19 @@ namespace Altaxo.Data
       for (int i = 0; i < watchers.Length; ++i)
       {
         disp = watchers[i];
-        if (null != disp)
+        if (disp is not null)
           disp.Dispose();
       }
 
       disp = _triggerBasedUpdate;
       _triggerBasedUpdate = null;
-      if (null != disp)
+      if (disp is not null)
         disp.Dispose();
     }
 
     public void EhUpdateByTimerQueue()
     {
-      if (null != _parent)
+      if (_parent is not null)
       {
         if (!IsSuspended) // no events during the suspend phase
         {
@@ -394,7 +405,7 @@ namespace Altaxo.Data
       if (!_resolvedFileNames.Contains(e.FullPath))
         return;
 
-      if (null != _triggerBasedUpdate)
+      if (_triggerBasedUpdate is not null)
       {
         _triggerBasedUpdate.Trigger();
       }

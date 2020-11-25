@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -32,9 +33,9 @@ namespace Altaxo.Addins.OriginConnector
 {
   public class OriginConnection : IDisposable
   {
-    private Origin.IOApplication _originApp;        // the Origin object reference
+    private Origin.IOApplication? _originApp;        // the Origin object reference
 
-    private string _originSaveProjectFileName;
+    private string? _originSaveProjectFileName;
 
     private const int nWorksheetOriginType = 2;   // 2 internally in Origin indicates worksheet window
 
@@ -42,16 +43,17 @@ namespace Altaxo.Addins.OriginConnector
     {
       get
       {
-        if (null == _originApp)
+        if (_originApp is null)
           throw new InvalidOperationException("Not connected to Origin");
 
         return _originApp;
       }
     }
 
+    [MemberNotNullWhen(true, nameof(_originApp))]
     public bool IsConnected()
     {
-      return _originApp != null;
+      return _originApp is not null;
     }
 
     public bool Connect(bool bConnectExisting)
@@ -123,16 +125,19 @@ namespace Altaxo.Addins.OriginConnector
 
     public double GetDouble(string variableName)
     {
+      EnsureConnected();
       return _originApp.get_LTVar(variableName);
     }
 
     public int GetInt32(string variableName)
     {
+      EnsureConnected();
       return (int)_originApp.get_LTVar(variableName);
     }
 
     public string GetString(string variableName)
     {
+      EnsureConnected();
       return _originApp.get_LTStr(variableName);
     }
 
@@ -171,6 +176,7 @@ namespace Altaxo.Addins.OriginConnector
     /// <returns></returns>
     public List<string> GetExistingWorksheetNames()
     {
+      EnsureConnected();
       var result = new List<string>();
       int cnt = _originApp.WorksheetPages.Count;
       for (int i = 0; i < cnt; i++)
@@ -181,6 +187,8 @@ namespace Altaxo.Addins.OriginConnector
 
     public bool ExistsOriginObject(string objectName, int expectedOriginType)
     {
+      EnsureConnected();
+
       // Check if specified worksheet exists:
       string str = "d=exist(" + objectName + ")";
       int nExists = 0;
@@ -192,6 +200,13 @@ namespace Altaxo.Addins.OriginConnector
       }
 
       return nExists == expectedOriginType;
+    }
+
+    [MemberNotNull(nameof(_originApp))]
+    private void EnsureConnected()
+    {
+      if (_originApp is null)
+        throw new InvalidOperationException($"This operation is only valid if connected to the Origin application");
     }
 
     public void Dispose()

@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
+using Altaxo.Drawing;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Gui.Common.Drawing;
 
@@ -83,7 +85,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         _minorController = new ColorTypeThicknessPenController(_doc.MinorPen);
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.InitializeBegin();
 
@@ -102,9 +104,15 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     {
       if (!_majorController.Apply(disposeController))
         return false;
+      else
+        _doc.MajorPen = (PenX)_majorController.ModelObject;
+
 
       if (!_minorController.Apply(disposeController))
         return false;
+      else
+        _doc.MinorPen = (PenX)_minorController.ModelObject;
+
 
       return ApplyEnd(true, disposeController);
     }
@@ -127,7 +135,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     public void InitializeElementEnabling()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         bool majorstyle = _doc.ShowGrid;
         bool showzeroonly = _doc.ShowGrid;

@@ -22,9 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -96,7 +95,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       /// <summary>
       /// Not used here since this fit function never changed.
       /// </summary>
-      public event EventHandler Changed;
+      public event EventHandler? Changed;
 
       protected virtual void OnChanged()
       {
@@ -110,8 +109,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     private NonlinearFitDocument _fitDoc;
     private FitElement _fitEle;
-    private LevMarAdapter _fitAdapter;
+    private LevMarAdapter? _fitAdapter;
 
+    /*
     /// <summary>
     /// Creates an instance of this class.
     /// </summary>
@@ -123,7 +123,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       : this(fitFunc, parameter, null, 0, null, null, start, count)
     {
     }
-
+    */
     /// <summary>
     /// Creates an instance of this class. This constructor needs either
     /// <paramref name="dataTable"/>, <paramref name="xCol"/> and <paramref name="yCol"/> to be valid, or all to be null.
@@ -141,12 +141,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       _fitDoc = new NonlinearFitDocument();
 
-      if (null == dataTable && null == xCol && null == yCol)
-        _fitEle = new FitElement(Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(start, count));
+      var fitFunction = new DummyFitFunc(fitFunc, parameter);
+      if (dataTable is null && xCol is null && yCol is null)
+        _fitEle = new FitElement(fitFunction, Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(start, count));
+      else if (dataTable is not null && xCol is not null && yCol is not null)
+        _fitEle = new FitElement(fitFunction, dataTable, groupNumber, Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(start, count), xCol, yCol);
       else
-        _fitEle = new FitElement(dataTable, groupNumber, Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(start, count), xCol, yCol);
+        throw new ArgumentException($"Either all three arguments {nameof(dataTable)}, {nameof(xCol)}, {nameof(yCol)} must be null or not null!");
 
-      _fitEle.FitFunction = new DummyFitFunc(fitFunc, parameter);
       _fitDoc.FitEnsemble.Add(_fitEle);
       _fitDoc.SetDefaultParametersForFitElement(0);
     }
@@ -226,6 +228,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       get
       {
+        if (_fitAdapter is null)
+          throw new InvalidOperationException($"Result not available yet. Please call {nameof(Fit)} before trying to access the result.");
         return _fitAdapter.ResultingChiSquare;
       }
     }

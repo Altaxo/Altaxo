@@ -44,7 +44,7 @@ namespace Altaxo.Gui.HelpViewing
   /// </remarks>
   public class HelpViewerStarter : MarshalByRefObject
   {
-    private HiddenMainForm _hiddenMainForm;
+    private HiddenMainForm? _hiddenMainForm;
 
     /// <summary>
     /// Starts the hidden windows form app. You must call this method from another app domain using a separate thread which must have ApartmentState STA.
@@ -61,9 +61,9 @@ namespace Altaxo.Gui.HelpViewing
 
     public void GetState(out bool isDisposed, out bool isLoaded)
     {
-      isDisposed = null == _hiddenMainForm || _hiddenMainForm.IsDisposed;
+      isDisposed = _hiddenMainForm is null || _hiddenMainForm.IsDisposed;
 
-      isLoaded = null != _hiddenMainForm && !_hiddenMainForm.IsDisposed && _hiddenMainForm.IsLoaded;
+      isLoaded = _hiddenMainForm is not null && !_hiddenMainForm.IsDisposed && _hiddenMainForm.IsLoaded;
     }
 
     /// <summary>
@@ -73,7 +73,7 @@ namespace Altaxo.Gui.HelpViewing
     /// <param name="chmTopic">The CHM topic. This is usually a string that starts with 'html/' and ends with '.htm'</param>
     public void ShowHelpTopic(string chmFileName, string chmTopic)
     {
-      if (_hiddenMainForm.InvokeRequired)
+      if (_hiddenMainForm!.InvokeRequired)
       {
         _hiddenMainForm.BeginInvoke(new Action(() => InternalShowHelpTopic(chmFileName, chmTopic)));
       }
@@ -87,10 +87,10 @@ namespace Altaxo.Gui.HelpViewing
     {
       try
       {
-        _hiddenMainForm.Hide();
+        _hiddenMainForm!.Hide();
         System.Windows.Forms.Help.ShowHelp(_hiddenMainForm, helpFileName, topic);
       }
-      catch (Exception ex)
+      catch (Exception)
       {
       }
     }

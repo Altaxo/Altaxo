@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Workbench.Commands
 
       foreach (INavigationPoint p in points)
       {
-        if (p.FileName == null)
+        if (p.FileName is null)
         {
           throw new ApplicationException("should not get here!");
         }
@@ -80,8 +80,8 @@ namespace Altaxo.Gui.Workbench.Commands
 
       fileNames.Sort();
 
-      MenuItem containerItem = null;
-      MenuItem cmd = null;
+      MenuItem? containerItem = null;
+      MenuItem? cmd = null;
 
       foreach (string fname in fileNames)
       {
@@ -147,7 +147,7 @@ namespace Altaxo.Gui.Workbench.Commands
       }
 
       // default is to disable the dropdown feature...
-      return null;
+      return System.Linq.Enumerable.Empty<object>();
     }
 
     public void NavigateTo(object sender, EventArgs e)
@@ -161,7 +161,7 @@ namespace Altaxo.Gui.Workbench.Commands
   {
     public IEnumerable<object> BuildItems(Codon codon, object owner)
     {
-      var workbench = Altaxo.Current.GetService<IWorkbench>();
+      var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
 
       int windowCount = workbench.ViewContentCollection.Count;
       if (windowCount == 0)
@@ -177,7 +177,7 @@ namespace Altaxo.Gui.Workbench.Commands
         {
           IsChecked = workbench.ActiveViewContent == window,
           IsCheckable = true,
-          Header = StringParser.Parse(window.Title).Replace("_", "__")
+          Header = StringParser.Parse(window.Title ?? string.Empty).Replace("_", "__")
         };
         item.Click += delegate
         {
@@ -321,14 +321,14 @@ namespace Altaxo.Gui.Workbench.Commands
         this.padDescriptor = padDescriptor;
       }
 
-      public event EventHandler CanExecuteChanged { add { } remove { } }
+      public event EventHandler? CanExecuteChanged { add { } remove { } }
 
-      public void Execute(object parameter)
+      public void Execute(object? parameter)
       {
         padDescriptor.BringPadToFront();
       }
 
-      public bool CanExecute(object parameter)
+      public bool CanExecute(object? parameter)
       {
         return true;
       }
@@ -341,16 +341,16 @@ namespace Altaxo.Gui.Workbench.Commands
 
     public IEnumerable<object> BuildItems(Codon codon, object owner)
     {
-      var workbench = Altaxo.Current.GetService<IWorkbench>();
+      var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
 
       var list = new List<object>();
       foreach (IPadContent padContent in workbench.PadContentCollection)
       {
-        if (padContent.Category == Category && null != padContent.PadDescriptor)
+        if (padContent.Category == Category && padContent.PadDescriptor is not null)
         {
           var item = new System.Windows.Controls.MenuItem
           {
-            Header = MenuService.ConvertLabel(StringParser.Parse(padContent.Title))
+            Header = MenuService.ConvertLabel(StringParser.Parse(padContent.Title ?? string.Empty))
           };
           if (!string.IsNullOrEmpty(padContent.IconSource))
           {

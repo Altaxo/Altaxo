@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -102,7 +103,7 @@ namespace Altaxo.Drawing.LineCaps
     {
       if (other is null)
         return false;
-      if (object.ReferenceEquals(this, other))
+      if (ReferenceEquals(this, other))
         return true;
 
       return
@@ -114,9 +115,9 @@ namespace Altaxo.Drawing.LineCaps
 
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      return Equals(obj as ILineCap);
+      return obj is ILineCap lc && Equals(lc);
     }
 
     public override int GetHashCode()
@@ -206,7 +207,7 @@ namespace Altaxo.Drawing.LineCaps
 
 
 
-    bool IEquatable<ILineCap>.Equals(ILineCap other)
+    bool IEquatable<ILineCap>.Equals(ILineCap? other)
     {
       throw new NotImplementedException();
     }
@@ -222,35 +223,35 @@ namespace Altaxo.Drawing.LineCaps
           case LineCap.AnchorMask:
           case LineCap.Flat:
           case LineCap.NoAnchor:
-            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), FlatCap.Instance);
+            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap)!, FlatCap.Instance);
             break;
 
           case LineCap.Square:
-            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), new LineCaps.SquareFLineCap(0, 1));
+            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap)!, new LineCaps.SquareFLineCap(0, 1));
             break;
 
           case LineCap.Round:
-            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), new LineCaps.CircleFLineCap(0, 1));
+            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap)!, new LineCaps.CircleFLineCap(0, 1));
             break;
 
           case LineCap.Triangle:
-            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), new LineCaps.DiamondFLineCap(0, 1));
+            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap)!, new LineCaps.DiamondFLineCap(0, 1));
             break;
 
           case LineCap.ArrowAnchor:
-            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), new LineCaps.ArrowF10LineCap(0, 2));
+            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap)!, new LineCaps.ArrowF10LineCap(0, 2));
             break;
 
           case LineCap.SquareAnchor:
-            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), new LineCaps.SquareFLineCap(0, 1.5));
+            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap)!, new LineCaps.SquareFLineCap(0, 1.5));
             break;
 
           case LineCap.RoundAnchor:
-            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), new LineCaps.CircleFLineCap(0, 2));
+            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap)!, new LineCaps.CircleFLineCap(0, 2));
             break;
 
           case LineCap.DiamondAnchor:
-            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), new LineCaps.DiamondFLineCap(0, 2));
+            _deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap)!, new LineCaps.DiamondFLineCap(0, 2));
             break;
         }
       }
@@ -260,8 +261,9 @@ namespace Altaxo.Drawing.LineCaps
       var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ILineCap));
       foreach (var t in types)
       {
-        var ex = (ILineCap)Activator.CreateInstance(t);
-        _registeredStyles.Add(ex.Name, ex);
+        var ex = (ILineCap?)Activator.CreateInstance(t);
+        if (ex is not null)
+          _registeredStyles.Add(ex.Name, ex);
       }
 
       // now sort them by name

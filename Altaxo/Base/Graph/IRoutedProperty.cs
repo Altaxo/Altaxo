@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -47,7 +49,7 @@ namespace Altaxo.Graph
 
     System.Type TypeOfValue { get; }
 
-    object ValueAsObject { get; }
+    object? ValueAsObject { get; }
   }
 
   public interface IRoutedGetterProperty
@@ -77,7 +79,7 @@ namespace Altaxo.Graph
 
     public bool InheritToChilds { get { return _inheritToChilds; } set { _inheritToChilds = value; } }
 
-    public object ValueAsObject
+    public object? ValueAsObject
     {
       get
       {
@@ -97,7 +99,20 @@ namespace Altaxo.Graph
 
     public System.Type TypeOfValue { get { return typeof(T); } }
 
-    public T Value { get; private set; }
+    [AllowNull]
+    [MaybeNull]
+    private T _value;
+
+    [AllowNull]
+    [MaybeNull]
+    public T Value
+    {
+      get => _value;
+      private set
+      {
+        _value = value;
+      }
+    }
     public bool WasSet { get; private set; }
     public bool DoNotMatch { get; private set; }
 

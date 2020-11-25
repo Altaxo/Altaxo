@@ -71,9 +71,9 @@ namespace Altaxo.Gui
       }
     }
 
-    private event System.ComponentModel.PropertyChangedEventHandler ChangedEvent;
+    private event System.ComponentModel.PropertyChangedEventHandler? ChangedEvent;
 
-    public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged
     {
       add
       {

@@ -63,7 +63,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public void CopyTo(T[] array, int arrayIndex)
     {
-      if (array == null)
+      if (array is null)
         throw new ArgumentNullException(nameof(array));
       if (arrayIndex < 0)
         throw new ArgumentOutOfRangeException(nameof(arrayIndex), "arrayIndex is < 0");

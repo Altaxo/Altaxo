@@ -22,11 +22,13 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,7 +51,7 @@ namespace Altaxo.Graph.Gdi
     protected const double DefaultRootLayerSizeX = 697.68054;
     protected const double DefaultRootLayerSizeY = 451.44;
 
-    private SingleGraphPrintOptions _printOptions;
+    private SingleGraphPrintOptions? _printOptions;
 
     private HostLayer _rootLayer;
 
@@ -69,12 +71,12 @@ namespace Altaxo.Graph.Gdi
       {
         EditingControllerCreation = (doc) =>
         {
-        var ctrl = new ItemLocationDirectController() { UseDocumentCopy = Gui.UseDocument.Copy };
-        ctrl.ShowPositionElements(false, false);
-        ctrl.ShowAnchorElements(false, false);
-        ctrl.InitializeDocument(doc);
-        return ctrl;
-      }
+          var ctrl = new ItemLocationDirectController() { UseDocumentCopy = Gui.UseDocument.Copy };
+          ctrl.ShowPositionElements(false, false);
+          ctrl.ShowAnchorElements(false, false);
+          ctrl.InitializeDocument(doc);
+          return ctrl;
+        }
       };
 
     public static readonly Main.Properties.PropertyKey<FontX> PropertyKeyDefaultFont =
@@ -87,10 +89,10 @@ namespace Altaxo.Graph.Gdi
         {
           EditingControllerCreation = (doc) =>
           {
-          var ctrl = new Gui.Common.Drawing.FontXController { UseDocumentCopy = Gui.UseDocument.Copy };
-          ctrl.InitializeDocument(doc);
-          return ctrl;
-        }
+            var ctrl = new Gui.Common.Drawing.FontXController { UseDocumentCopy = Gui.UseDocument.Copy };
+            ctrl.InitializeDocument(doc);
+            return ctrl;
+          }
         };
 
     public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultForeColor =
@@ -104,10 +106,10 @@ typeof(GraphDocument),
       {
         EditingControllerCreation = (doc) =>
         {
-        var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
-        ctrl.InitializeDocument(doc);
-        return ctrl;
-      }
+          var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
+          ctrl.InitializeDocument(doc);
+          return ctrl;
+        }
       };
 
     public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultBackColor =
@@ -121,10 +123,10 @@ typeof(GraphDocument),
   {
     EditingControllerCreation = (doc) =>
     {
-    var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
-    ctrl.InitializeDocument(doc);
-    return ctrl;
-  }
+      var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
+      ctrl.InitializeDocument(doc);
+      return ctrl;
+    }
   };
 
     public static readonly Main.Properties.PropertyKey<NamedColor> PropertyKeyDefaultPlotColor =
@@ -141,15 +143,15 @@ typeof(GraphDocument),
 {
   EditingControllerCreation = (doc) =>
   {
-  var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy, ShowPlotColorsOnly = true };
-  ctrl.InitializeDocument(doc);
-  return ctrl;
-}
+    var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy, ShowPlotColorsOnly = true };
+    ctrl.InitializeDocument(doc);
+    return ctrl;
+  }
 };
 
     #endregion Property keys
 
-    public SingleGraphPrintOptions PrintOptions
+    public SingleGraphPrintOptions? PrintOptions
     {
       get { return _printOptions; }
       set { _printOptions = value; }
@@ -175,9 +177,9 @@ typeof(GraphDocument),
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        GraphDocument s = null != o ? (GraphDocument)o : new GraphDocument();
+        var s = (GraphDocument?)o ?? new GraphDocument();
 
         //  info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
         s._name = info.GetString("Name");
@@ -229,14 +231,14 @@ typeof(GraphDocument),
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        GraphDocument s = null != o ? (GraphDocument)o : new GraphDocument();
+        var s = (GraphDocument?)o ?? new GraphDocument();
         Deserialize(s, info, parent);
         return s;
       }
 
-      public virtual void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         //  info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
         s._name = info.GetString("Name");
@@ -255,14 +257,17 @@ typeof(GraphDocument),
 
         // new in version 1 - Add graph properties
         int numberproperties = info.OpenArray(); // "GraphProperties"
-        var pb = numberproperties == 0 ? null : s.PropertyBagNotNull;
-        for (int i = 0; i < numberproperties; i++)
+        if (numberproperties > 0)
         {
-          info.OpenElement(); // "e"
-          string propkey = info.GetString("Key");
-          object propval = info.GetValue("Value", s.PropertyBagNotNull);
-          info.CloseElement(); // "e"
-          pb.SetValue(propkey, propval);
+          var pb = s.PropertyBagNotNull;
+          for (int i = 0; i < numberproperties; i++)
+          {
+            info.OpenElement(); // "e"
+            string propkey = info.GetString("Key");
+            object propval = info.GetValue("Value", s.PropertyBagNotNull);
+            info.CloseElement(); // "e"
+            pb.SetValue(propkey, propval);
+          }
         }
         info.CloseArray(numberproperties);
       }
@@ -285,7 +290,7 @@ typeof(GraphDocument),
                 */
       }
 
-      public override void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public override void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         base.Deserialize(s, info, parent);
         s._graphIdentifier = info.GetString("GraphIdentifier");
@@ -313,23 +318,23 @@ typeof(GraphDocument),
         info.AddValue("Notes", s._notes.Text);
         info.AddValue("RootLayer", s._rootLayer);
 
-        info.AddValue("Properties", s._graphProperties);
+        info.AddValueOrNull("Properties", s._graphProperties);
       }
 
-      public void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s._name = info.GetString("Name");
         s._graphIdentifier = info.GetString("GraphIdentifier");
         s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
         s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
         s._notes.Text = info.GetString("Notes");
-        s.RootLayer = (HostLayer)info.GetValue("RootLayer", s);
-        s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
+        s.ChildSetMember(ref s._rootLayer, (HostLayer)info.GetValue("RootLayer", s));
+        s.ChildSetMember(ref s._graphProperties, info.GetValueOrNull<Main.Properties.PropertyBag>("Properties", s));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        GraphDocument s = null != o ? (GraphDocument)o : new GraphDocument();
+        GraphDocument s = o is not null ? (GraphDocument)o : new GraphDocument();
         Deserialize(s, info, parent);
         return s;
       }
@@ -342,8 +347,8 @@ typeof(GraphDocument),
     /// </summary>
     public GraphDocument()
     {
-      RootLayer = new HostLayer() { ParentObject = this };
-      RootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY) };
+      ChildSetMember(ref _rootLayer, new HostLayer());
+      _rootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY) };
     }
 
     private void EhNotesChanged(object sender, PropertyChangedEventArgs e)
@@ -356,7 +361,7 @@ typeof(GraphDocument),
       using (var suppressToken = SuspendGetToken())
       {
         _creationTime = _lastChangeTime = DateTime.UtcNow;
-        RootLayer = new HostLayer(null, new ItemLocationDirect { SizeX = RADouble.NewAbs(814), SizeY = RADouble.NewAbs(567) });
+        ChildSetMember(ref _rootLayer, new HostLayer(null, new ItemLocationDirect { SizeX = RADouble.NewAbs(814), SizeY = RADouble.NewAbs(567) }));
 
         CopyFrom(from, GraphCopyOptions.All);
 
@@ -366,7 +371,7 @@ typeof(GraphDocument),
 
     public void CopyFrom(GraphDocument from, GraphCopyOptions options)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       using (var suspendToken = SuspendGetToken())
@@ -379,7 +384,7 @@ typeof(GraphDocument),
         if (0 != (options & GraphCopyOptions.CloneProperties))
         {
           // Clone also the graph properties
-          if (from._graphProperties != null && from._graphProperties.Count > 0)
+          if (from._graphProperties is not null && from._graphProperties.Count > 0)
           {
             PropertyBagNotNull.CopyFrom(from._graphProperties);
           }
@@ -401,7 +406,7 @@ typeof(GraphDocument),
           // don't clone the layers, but copy the style of each each of the souce layers to the destination layers - this has to be done recursively
           newRootLayer.CopyFrom(from._rootLayer, options);
         }
-        RootLayer = newRootLayer;
+        ChildSetMember(ref _rootLayer, newRootLayer);
 
         suspendToken.Resume();
       }
@@ -409,14 +414,14 @@ typeof(GraphDocument),
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _rootLayer)
-        yield return new Main.DocumentNodeAndName(_rootLayer, () => _rootLayer = null, "RootLayer");
+      if (_rootLayer is not null)
+        yield return new Main.DocumentNodeAndName(_rootLayer, () => _rootLayer = null!, "RootLayer");
 
-      if (null != _graphProperties)
+      if (_graphProperties is not null)
         yield return new Main.DocumentNodeAndName(_graphProperties, () => _graphProperties = null, "GraphProperties");
 
-      if (null != _notes)
-        yield return new Main.DocumentNodeAndName(_notes, () => _notes = null, "Notes");
+      if (_notes is not null)
+        yield return new Main.DocumentNodeAndName(_notes, () => _notes = null!, "Notes");
     }
 
     public override object Clone()
@@ -486,10 +491,6 @@ typeof(GraphDocument),
     public HostLayer RootLayer
     {
       get { return _rootLayer; }
-      private set
-      {
-        ChildSetMember(ref _rootLayer, value);
-      }
     }
 
     private object _paintLock = new object();
@@ -511,7 +512,7 @@ typeof(GraphDocument),
 
       lock (_paintLock)
       {
-        if (!(null == _paintThread))
+        if (_paintThread is not null)
           throw new InvalidProgramException("We waited, thus _paintThread should be null");
 
         _paintThread = System.Threading.Thread.CurrentThread; // Suppress events that are fired during paint
@@ -519,7 +520,8 @@ typeof(GraphDocument),
         try
         {
           // First set the current thread's document culture
-          _paintThread.CurrentCulture = GetPropertyValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, null).Culture;
+          if (GetPropertyValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, null)?.Culture is { } culture)
+            _paintThread.CurrentCulture = culture;
 
           try
           {
@@ -543,6 +545,9 @@ typeof(GraphDocument),
               }
               catch (Exception)
               {
+                if (IsDisposeInProgress)
+                  return;
+
                 if (ithRetry == MaxFixupRetries)
                 {
                   throw;
@@ -563,6 +568,11 @@ typeof(GraphDocument),
 
           RootLayer.PaintPostprocessing();
         }
+        catch
+        {
+          if (!IsDisposeInProgress) // If disposing is in progress, we silently finish this paint task
+            throw;
+        }
         finally
         {
           _paintThread = null;
@@ -572,7 +582,7 @@ typeof(GraphDocument),
 
     public static FontX GetDefaultFont(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (null != context)
+      if (context is not null)
         return context.GetValue(PropertyKeyDefaultFont);
       else
         return GdiFontManager.GetFontX(GdiFontManager.GenericSansSerifFontFamilyName, 18, FontXStyle.Regular);
@@ -587,7 +597,7 @@ typeof(GraphDocument),
     {
       double result = 1;
 
-      if (null != context)
+      if (context is not null)
       {
         var font = context.GetValue(PropertyKeyDefaultFont);
         using (var path = new GraphicsPath())
@@ -606,7 +616,7 @@ typeof(GraphDocument),
 
     public static NamedColor GetDefaultForeColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (null == context)
+      if (context is null)
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       return context.GetValue<NamedColor>(PropertyKeyDefaultForeColor);
@@ -614,7 +624,7 @@ typeof(GraphDocument),
 
     public static NamedColor GetDefaultBackColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (null == context)
+      if (context is null)
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       return context.GetValue<NamedColor>(PropertyKeyDefaultBackColor);
@@ -622,7 +632,7 @@ typeof(GraphDocument),
 
     public static NamedColor GetDefaultPlotColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      if (null == context)
+      if (context is null)
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       return context.GetValue<NamedColor>(PropertyKeyDefaultPlotColor);
@@ -637,7 +647,7 @@ typeof(GraphDocument),
     {
       double result = 1;
 
-      if (null != context)
+      if (context is not null)
       {
         var font = context.GetValue(PropertyKeyDefaultFont);
         return font.Size;
@@ -654,7 +664,7 @@ typeof(GraphDocument),
     {
       double result = 8;
 
-      if (null != context)
+      if (context is not null)
       {
         var font = context.GetValue(PropertyKeyDefaultFont);
         using (var path = new GraphicsPath())

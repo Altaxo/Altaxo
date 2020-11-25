@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -156,7 +157,7 @@ namespace Altaxo.Drawing
 
     public static bool AreListsStructuralEquivalent(IReadOnlyList<T> l1, IReadOnlyList<T> l2)
     {
-      if (l1 == null || l2 == null)
+      if (l1 is null || l2 is null)
         return false;
 
       if (l1.Count != l2.Count)
@@ -173,7 +174,7 @@ namespace Altaxo.Drawing
 
     public bool IsStructuralEquivalentTo(IEnumerable<T> l1)
     {
-      if (l1 == null)
+      if (l1 is null)
         return false;
 
       var l2 = this;

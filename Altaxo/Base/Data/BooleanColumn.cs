@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,8 +31,9 @@ namespace Altaxo.Data
 {
   public class BooleanColumn : DataColumn, Altaxo.Calc.LinearAlgebra.IROVector<bool?>
   {
-    private BitArray _data;
-    private BitArray _inUse;
+    static readonly BitArray _emptyBitArray = new BitArray(0);
+    private BitArray _data = _emptyBitArray;
+    private BitArray _inUse = _emptyBitArray;
     private int _capacity;
     private int _count;
     private const int MaxCount = 268435455 * 8;
@@ -57,7 +59,7 @@ namespace Altaxo.Data
           info.AddArray("Data", s._data, s._inUse, s._count);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o as BooleanColumn ?? new Altaxo.Data.BooleanColumn();
 
@@ -68,7 +70,7 @@ namespace Altaxo.Data
         s._data = new BitArray(count);
         s._inUse = new BitArray(count);
         info.GetArray(s._data, s._inUse, count);
-        s._capacity = null == s._data ? 0 : s._data.Length;
+        s._capacity = s._data is null ? 0 : s._data.Length;
         s._count = s._capacity;
 
         return s;
@@ -97,8 +99,8 @@ namespace Altaxo.Data
     {
       _count = from._count;
       _capacity = from._capacity;
-      _inUse = null == from._inUse ? null : (BitArray)from._inUse.Clone();
-      _data = null == from._data ? null : (BitArray)from._data.Clone();
+      _inUse = (BitArray)from._inUse.Clone();
+      _data = (BitArray)from._data.Clone();
     }
 
     #endregion
@@ -255,7 +257,7 @@ namespace Altaxo.Data
 
     public override bool IsElementEmpty(int i)
     {
-      return i < _inUse.Length ? _inUse[i] : true;
+      return i >= _inUse.Length || !_inUse[i];
     }
 
     public override void SetElementEmpty(int i)
@@ -322,15 +324,15 @@ namespace Altaxo.Data
 
       if (o is BooleanColumn src)
       {
-        _inUse = null == src._inUse ? null : (BitArray)src._inUse.Clone();
-        _data = null == src._data ? null : (BitArray)src._data.Clone();
+        _inUse = (BitArray)src._inUse.Clone();
+        _data = (BitArray)src._data.Clone();
         _capacity = _data?.Length ?? 0;
         _count = src._count;
       }
       else
       {
-        if (o is ICollection)
-          Realloc((o as ICollection).Count); // Prealloc the array if count of the collection is known beforehand
+        if (o is ICollection ocoll)
+          Realloc(ocoll.Count); // Prealloc the array if count of the collection is known beforehand
 
         if (o is IEnumerable<bool> srcBool)
         {
@@ -362,7 +364,7 @@ namespace Altaxo.Data
         else
         {
           _count = 0;
-          if (o == null)
+          if (o is null)
             throw new ArgumentNullException("o");
           else
             throw new ArgumentException("Try to copy " + o.GetType() + " to " + GetType(), "o"); // throw exception

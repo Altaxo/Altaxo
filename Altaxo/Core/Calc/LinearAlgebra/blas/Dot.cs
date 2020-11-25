@@ -47,11 +47,11 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
     private static void ArgumentCheck(int n, object X, int lenX, ref int incx, object Y, int lenY, ref int incy)
     {
       // no exception throwing for n
-      if (X == null)
+      if (X is null)
       {
         throw new ArgumentNullException("X cannot be null.", "X");
       }
-      if (Y == null)
+      if (Y is null)
       {
         throw new ArgumentNullException("Y", "Y cannot be null.");
       }

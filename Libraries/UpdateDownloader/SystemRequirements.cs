@@ -30,10 +30,21 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
+  /// <summary>
+  /// Represents the system requirements needed for a given package.
+  /// </summary>
   public static class SystemRequirements
   {
+    /// <summary>
+    /// The property key: .NET framework version
+    /// </summary>
     public const string PropertyKeyNetFrameworkVersion = "RequiredNetFrameworkVersion";
 
+    /// <summary>
+    /// Determines if this system is matching the requirements of the package.
+    /// </summary>
+    /// <param name="packageInfo">The information about the package.</param>
+    /// <returns>True if the system is matching the requirements of the package; otherwise, false.</returns>
     public static bool MatchesRequirements(PackageInfo packageInfo)
     {
       var properties = packageInfo.Properties;

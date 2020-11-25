@@ -107,11 +107,11 @@ namespace Altaxo.Text.Renderers
     /// <summary>
     /// The word document
     /// </summary>
-    public WordprocessingDocument _wordDocument { get; private set; }
+    public WordprocessingDocument? _wordDocument { get; private set; }
     /// <summary>
     /// The main document part of the word document.
     /// </summary>
-    private MainDocumentPart _mainDocumentPart;
+    private MainDocumentPart? _mainDocumentPart;
 
     /// <summary>
     /// Gets the body.
@@ -119,7 +119,7 @@ namespace Altaxo.Text.Renderers
     /// <value>
     /// The body.
     /// </value>
-    protected Body Body { get; private set; }
+    protected Body? Body { get; private set; }
 
 
 
@@ -161,17 +161,17 @@ namespace Altaxo.Text.Renderers
     /// <summary>
     /// This of the figure captions that needs to be replaced by automatic figure numbers.
     /// </summary>
-    public List<((string Name, int Position, int Count) Category, (int Position, int Count) Number, Figure Figure, FigureCaption FigureCaption)> FigureCaptionList { get; private set; }
+    public List<((string Name, int Position, int Count) Category, (int Position, int Count) Number, Figure Figure, FigureCaption FigureCaption)>? FigureCaptionList { get; private set; }
 
     /// <summary>
     /// Gets the list of the figure numbers for each figure in the <see cref="FigureCaptionList"/>.
     /// </summary>
-    public List<int> FigureCaptionIndices { get; private set; }
+    public List<int>? FigureCaptionIndices { get; private set; }
 
     /// <summary>
     /// Gets a list of links which point to figures in the <see cref="FigureCaptionList"/>
     /// </summary>
-    public List<(int CaptionListIndex, (int Position, int Count) Number, LinkInline Link)> FigureLinkList { get; private set; }
+    public List<(int CaptionListIndex, (int Position, int Count) Number, LinkInline Link)>? FigureLinkList { get; private set; }
     public int FigureLinkRandom { get; private set; }
 
     /// <summary>
@@ -241,7 +241,7 @@ namespace Altaxo.Text.Renderers
     public void Dispose()
     {
       _wordDocument?.Dispose();
-      _wordDocument = null;
+      _wordDocument = null!;
     }
 
 
@@ -255,7 +255,7 @@ namespace Altaxo.Text.Renderers
     /// <exception cref="ArgumentNullException">markdownObject</exception>
     public override object Render(MarkdownObject markdownObject)
     {
-      if (null == markdownObject)
+      if (markdownObject is null)
         throw new ArgumentNullException(nameof(markdownObject));
 
       if (markdownObject is MarkdownDocument markdownDocument)
@@ -292,7 +292,7 @@ namespace Altaxo.Text.Renderers
             StyleDefinitionsPart part = _mainDocumentPart.StyleDefinitionsPart;
 
             // If the Styles part does not exist, add it and then add the style.
-            if (part == null)
+            if (part is null)
             {
               part = AddStylesPartToPackage(_wordDocument, ThemeName);
             }
@@ -321,7 +321,7 @@ namespace Altaxo.Text.Renderers
             StyleDefinitionsPart part = _mainDocumentPart.StyleDefinitionsPart;
 
             // If the Styles part does not exist, add it and then add the style.
-            if (part == null)
+            if (part is null)
             {
               part = AddStylesPartToPackage(_wordDocument, ThemeName);
             }
@@ -331,10 +331,10 @@ namespace Altaxo.Text.Renderers
           }
         }
       }
-      else
+      else // this is a subobject, thus Body should be already initialized.
       {
         Write(markdownObject);
-        return Body;
+        return Body!;
       }
       return Body;
     }
@@ -349,11 +349,11 @@ namespace Altaxo.Text.Renderers
     /// <returns>This instance</returns>
     public OpenXMLRenderer WriteLeafInline(LeafBlock leafBlock)
     {
-      if (leafBlock == null) throw new ArgumentNullException(nameof(leafBlock));
+      if (leafBlock is null) throw new ArgumentNullException(nameof(leafBlock));
       var inline = (Markdig.Syntax.Inlines.Inline)leafBlock.Inline;
-      if (inline != null)
+      if (inline is not null)
       {
-        while (inline != null)
+        while (inline is not null)
         {
           Write(inline);
           inline = inline.NextSibling;

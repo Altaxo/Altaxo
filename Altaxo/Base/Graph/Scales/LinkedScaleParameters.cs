@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,15 +62,9 @@ namespace Altaxo.Graph.Scales
         info.AddValue("EndB", s._endB);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinkedScaleParameters s = SDeserialize(o, info, parent);
-        return s;
-      }
-
-      protected virtual LinkedScaleParameters SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        LinkedScaleParameters s = null != o ? (LinkedScaleParameters)o : new LinkedScaleParameters();
+        var s = (LinkedScaleParameters?)o ?? new LinkedScaleParameters();
 
         s._orgA = info.GetDouble("OrgA");
         s._orgB = info.GetDouble("OrgB");
@@ -97,17 +92,17 @@ namespace Altaxo.Graph.Scales
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as LinkedScaleParameters;
-      if (null == from)
-        return false;
+      if (obj is LinkedScaleParameters from)
+      {
+        // this call has the advantage, that a change event is raised when the parameter really change
+        SetTo(from._orgA, from._orgB, from._endA, from.EndB);
+        return true;
+      }
 
-      // this call has the advantage, that a change event is raised when the parameter really change
-      SetTo(from._orgA, from._orgB, from._endA, from.EndB);
-
-      return true;
+      return false;
     }
 
     public object Clone()

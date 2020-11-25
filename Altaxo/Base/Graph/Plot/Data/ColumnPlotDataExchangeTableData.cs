@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,7 +55,13 @@ namespace Altaxo.Graph.Plot.Data
     /// <value>
     /// The new table.
     /// </value>
-    public DataTable NewTable { get; set; }
+    public DataTable? NewTable { get; set; }
+
+    public ColumnPlotDataExchangeTableData(IEnumerable<IGPlotItem> plotItems, DataTable originalTable)
+    {
+      PlotItems = plotItems;
+      OriginalTable = originalTable;
+    }
 
     /// <inheritdoc/>
     public object Clone()
@@ -73,14 +80,16 @@ namespace Altaxo.Graph.Plot.Data
     public static bool CanChangeTableForPlotItems(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems)
     {
       var firstSelectedPlotItem = plotItems.FirstOrDefault();
-      if (null == firstSelectedPlotItem)
+      if (firstSelectedPlotItem is null)
         return false;
 
-      var table = ((IColumnPlotData)firstSelectedPlotItem.DataObject).DataTable;
+      var table = ((IColumnPlotData?)firstSelectedPlotItem.DataObject)?.DataTable;
+      if (table is null)
+        return false;
 
       foreach (var node in plotItems)
       {
-        if (!object.ReferenceEquals(table, ((IColumnPlotData)node.DataObject).DataTable))
+        if (!object.ReferenceEquals(table, ((IColumnPlotData?)node.DataObject)?.DataTable))
           return false;
       }
 
@@ -98,15 +107,11 @@ namespace Altaxo.Graph.Plot.Data
         return false;
 
       // get all selected plot items with IColumnPlotData
-      var firstSelectedPlotItem = plotItems.FirstOrDefault();
-      if (null == firstSelectedPlotItem)
+      var firstTable = plotItems.Select(pi => ((IColumnPlotData?)pi.DataObject)?.DataTable).FirstOrDefault(t => t is not null);
+      if (firstTable is null)
         return false;
 
-      var exchangeTableData = new ColumnPlotDataExchangeTableData
-      {
-        PlotItems = plotItems,
-        OriginalTable = ((IColumnPlotData)firstSelectedPlotItem.DataObject).DataTable
-      };
+      var exchangeTableData = new ColumnPlotDataExchangeTableData(plotItems: plotItems, originalTable: firstTable);
 
       exchangeTableData.CollectColumnNamesFromPlotItems(plotItems);
 
@@ -132,6 +137,9 @@ namespace Altaxo.Graph.Plot.Data
     /// <param name="plotItems">The plot items for which to change the underlying data table.</param>
     public void ChangeTableForPlotItems(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems)
     {
+      if (NewTable is null)
+        throw new InvalidOperationException($"{nameof(NewTable)} is null!");
+
       ChangeTableForPlotItems(plotItems, NewTable);
     }
 
@@ -150,12 +158,12 @@ namespace Altaxo.Graph.Plot.Data
           continue;
 
         var columnNames = new List<string>();
-        ColumnNames.Add((plotItem.ToString(), columnNames));
+        ColumnNames.Add((plotItem.Name, columnNames));
 
         // collect from the plot item's row selection
-        foreach (var columnInfo in EnumerateAllDataColumnsOfPlotItem(plotItem, (info) => OriginalTable.DataColumns.Contains(info.Column)))
+        foreach (var columnInfo in EnumerateAllDataColumnsOfPlotItem(plotItem, (info) => info.ColumnName is not null && info.Column is not null && OriginalTable.DataColumns.Contains(info.Column)))
         {
-          columnNames.Add(columnInfo.ColumnName);
+          columnNames.Add(columnInfo.ColumnName!);
         }
       }
     }
@@ -174,8 +182,12 @@ namespace Altaxo.Graph.Plot.Data
     /// Tests to changes the underlying table for the plot items, and output a statistics.
     /// </summary>
     /// <returns>A statistics with the number of plot items for which the table could be changed, the number of successfully exchanged columns, and the number of unsuccessfully changed columns.</returns>
-    public (int NumberOfPlotItemsChanged, int NumberOfSuccessFullyChangedColumns, int NumberOfUnsuccessfullyChangedColumns) TestChangeTableForPlotItems()
+    public (int NumberOfPlotItemsChanged, int NumberOfSuccessFullyChangedColumns, int NumberOfUnsuccessfullyChangedColumns)
+      TestChangeTableForPlotItems()
     {
+      if (NewTable is null)
+        throw new InvalidOperationException($"{nameof(NewTable)} is null!");
+
       return TestChangeTableForPlotItems(PlotItems, NewTable);
     }
 
@@ -196,7 +208,8 @@ namespace Altaxo.Graph.Plot.Data
     /// <param name="plotItems">The plot items for which to change the underlying data table.</param>
     /// <param name="newTable">The new table.</param>
     /// <param name="isForStatisticsOnly">If true, the exchange of columns is not really done, but statistics only is provided.</param>
-    private static (int NumberOfPlotItemsChanged, int NumberOfSuccessFullyChangedColumns, int NumberOfUnsuccessfullyChangedColumns) ChangeTableForPlotItems(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems, DataTable newTable, bool isForStatisticsOnly)
+    private static (int NumberOfPlotItemsChanged, int NumberOfSuccessFullyChangedColumns, int NumberOfUnsuccessfullyChangedColumns)
+      ChangeTableForPlotItems(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems, DataTable newTable, bool isForStatisticsOnly)
     {
       int numberOfPlotItemsChanged = 0;
       int numberOfSuccessfullyChangedColumns = 0;
@@ -210,7 +223,7 @@ namespace Altaxo.Graph.Plot.Data
 
         foreach (var columnInfo in EnumerateAllDataColumnsOfPlotItem(plotItem, (dataColumn) => true))
         {
-          if (newTable.DataColumns.Contains(columnInfo.ColumnName))
+          if (columnInfo.ColumnName is not null && newTable.DataColumns.Contains(columnInfo.ColumnName))
           {
             var newDataCol = newTable.DataColumns[columnInfo.ColumnName];
             int newGroup = newTable.DataColumns.GetColumnGroup(newDataCol);

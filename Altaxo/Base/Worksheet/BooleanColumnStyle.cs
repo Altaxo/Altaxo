@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -41,13 +42,13 @@ namespace Altaxo.Worksheet
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (BooleanColumnStyle)obj;
-        info.AddBaseValueEmbedded(s, typeof(BooleanColumnStyle).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(BooleanColumnStyle).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        BooleanColumnStyle s = null != o ? (BooleanColumnStyle)o : new BooleanColumnStyle();
-        info.GetBaseValueEmbedded(s, typeof(BooleanColumnStyle).BaseType, parent);
+        BooleanColumnStyle s = o is not null ? (BooleanColumnStyle)o : new BooleanColumnStyle();
+        info.GetBaseValueEmbedded(s, typeof(BooleanColumnStyle).BaseType!, parent);
         return s;
       }
     }
@@ -102,7 +103,13 @@ namespace Altaxo.Worksheet
     {
       PaintBackground(dc, cellRectangle, bSelected);
 
-      string myString = ((Altaxo.Data.TextColumn)data)[nRow];
+      bool? b = ((Altaxo.Data.BooleanColumn)data)[nRow];
+      var myString = b switch
+      {
+        true => "true",
+        false => "false",
+        null => "",
+      };
 
       var brush = bSelected ? _defaultSelectedTextBrush : TextBrush;
 

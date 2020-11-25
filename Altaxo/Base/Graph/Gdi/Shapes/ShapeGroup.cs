@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Geometry;
@@ -46,7 +48,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ShapeGroup)obj;
-        info.AddBaseValueEmbedded(s, typeof(ShapeGroup).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(ShapeGroup).BaseType!);
 
         info.CreateArray("Elements", s._groupedObjects.Count);
         foreach (var e in s._groupedObjects)
@@ -54,10 +56,10 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (ShapeGroup)o : new ShapeGroup();
-        info.GetBaseValueEmbedded(s, typeof(ShapeGroup).BaseType, parent);
+        var s = (ShapeGroup?)o ?? new ShapeGroup();
+        info.GetBaseValueEmbedded(s, typeof(ShapeGroup).BaseType!, parent);
 
         int count = info.OpenArray("Elements");
         s._groupedObjects = new List<GraphicBase>(count);
@@ -101,26 +103,43 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// </summary>
     /// <param name="from">Another shape group to copy from. The objects of this shape group are cloned before added to the new group.</param>
     public ShapeGroup(ShapeGroup from)
-      : base(from) // all is done here, since CopyFrom is virtual!
+      : base(from)
     {
+      CopyFrom(from, false);
+    }
+
+    [MemberNotNull(nameof(_groupedObjects))]
+    protected void CopyFrom(ShapeGroup from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      // deep copy of the objects
+      _groupedObjects = new List<GraphicBase>(from._groupedObjects.Count);
+      foreach (GraphicBase go in from._groupedObjects)
+        _groupedObjects.Add((GraphicBase)go.Clone());
     }
 
     public override bool CopyFrom(object obj)
     {
-      bool isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (obj is ShapeGroup from)
       {
-        var from = obj as ShapeGroup;
-        if (null != from)
+        using (var suspendToken = SuspendGetToken())
         {
-          // deep copy of the objects
-          _groupedObjects = new List<GraphicBase>(from._groupedObjects.Count);
-          foreach (GraphicBase go in from._groupedObjects)
-            _groupedObjects.Add((GraphicBase)go.Clone());
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
+
+
 
     /// <summary>
     /// Clones the shape group.
@@ -223,10 +242,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       return gp;
     }
 
-    public override IHitTestObject HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData htd)
     {
-      IHitTestObject result = base.HitTest(htd);
-      if (result != null)
+      var result = base.HitTest(htd);
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
       return result;
     }

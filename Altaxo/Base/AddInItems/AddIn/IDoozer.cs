@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 
 namespace Altaxo.AddInItems
@@ -40,6 +41,6 @@ namespace Altaxo.AddInItems
     /// May return an object implementing <see cref="IBuildItemsModifier"/> for returning
     /// multiple arguments.
     /// </returns>
-    object BuildItem(BuildItemArgs args);
+    object? BuildItem(BuildItemArgs args);
   }
 }

@@ -22,9 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Graph;
@@ -76,7 +78,7 @@ namespace Altaxo.Drawing.ColorManagement
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string colorSetName = info.GetString("Name");
         var colorSetLevel = (Altaxo.Main.ItemDefinitionLevel)info.GetEnum("Level", typeof(Altaxo.Main.ItemDefinitionLevel));
@@ -126,7 +128,7 @@ namespace Altaxo.Drawing.ColorManagement
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new ColorSet(info);
       }
@@ -166,6 +168,7 @@ namespace Altaxo.Drawing.ColorManagement
       InitLazyVariables();
     }
 
+    [MemberNotNull(nameof(_nameToIndexDictionary), nameof(_colorToIndexDictionary), nameof(_namecolorToIndexDictionary))]
     private void InitLazyVariables()
     {
       _nameToIndexDictionary = new Lazy<Dictionary<string, int>>(BuildNameToIndexDict);
@@ -379,7 +382,7 @@ namespace Altaxo.Drawing.ColorManagement
 
     public bool IsStructuralEquivalentTo(IEnumerable<NamedColor> l1)
     {
-      if (l1 == null)
+      if (l1 is null)
         return false;
 
       var l2 = this;

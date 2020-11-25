@@ -22,10 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#nullable enable
 
 namespace Altaxo.Serialization.Xml
 {
@@ -39,7 +36,7 @@ namespace Altaxo.Serialization.Xml
     private static Altaxo.Serialization.Xml.XmlStreamSerializationInfo _xmlWriting = new XmlStreamSerializationInfo();
     private static Altaxo.Serialization.Xml.XmlStreamDeserializationInfo _xmlReading = new XmlStreamDeserializationInfo();
 
-    private object _wrappedObject;
+    private object? _wrappedObject;
 
     /// <summary>
     /// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute" /> to the class.
@@ -47,7 +44,7 @@ namespace Altaxo.Serialization.Xml
     /// <returns>
     /// An <see cref="T:System.Xml.Schema.XmlSchema" /> that describes the XML representation of the object that is produced by the <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)" /> method and consumed by the <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)" /> method.
     /// </returns>
-    public System.Xml.Schema.XmlSchema GetSchema()
+    public System.Xml.Schema.XmlSchema? GetSchema()
     {
       return null;
     }
@@ -60,7 +57,7 @@ namespace Altaxo.Serialization.Xml
     {
       reader.ReadStartElement();
       _xmlReading.BeginReading(reader);
-      _wrappedObject = _xmlReading.GetValue("WrappedObject", null);
+      _wrappedObject = _xmlReading.GetValueOrNull("WrappedObject", null);
       _xmlReading.EndReading();
       reader.ReadEndElement();
     }
@@ -72,7 +69,7 @@ namespace Altaxo.Serialization.Xml
     public void WriteXml(System.Xml.XmlWriter writer)
     {
       _xmlWriting.BeginWriting(writer);
-      _xmlWriting.AddValue("WrappedObject", _wrappedObject);
+      _xmlWriting.AddValueOrNull("WrappedObject", _wrappedObject);
       _xmlWriting.EndWriting();
     }
 
@@ -99,7 +96,7 @@ namespace Altaxo.Serialization.Xml
     /// <value>
     /// The wrapped object.
     /// </value>
-    public object WrappedObject
+    public object? WrappedObject
     {
       get
       {

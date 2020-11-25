@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -113,14 +114,14 @@ namespace Altaxo.Main.Services
         sb.Append(entry.Key);
         sb.Append(": ");
 
-        if (entry.Value == null)
+        if (entry.Value is null)
         {
           sb.AppendLine("<null>");
         }
         else
         {
           var f = entry.Value as IFormattable;
-          if (f != null)
+          if (f is not null)
           {
             try
             {

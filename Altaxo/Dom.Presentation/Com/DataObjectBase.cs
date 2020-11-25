@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,7 +87,7 @@ namespace Altaxo.Com
 
     public virtual void SendAdvise_DataChanged()
     {
-      if (null != DataAdviseHolder)
+      if (DataAdviseHolder is not null)
       {
         ComDebug.ReportInfo("{0}.SendAdvise.DataChanged -> Calling _dataAdviseHolder.SendOnDataChange()", GetType().Name);
         DataAdviseHolder.SendOnDataChange((IDataObject)this, 0, 0);
@@ -99,7 +100,7 @@ namespace Altaxo.Com
 
     public int DAdvise(ref FORMATETC pFormatetc, ADVF advf, IAdviseSink adviseSink, out int connection)
     {
-      if (null == DataAdviseHolder)
+      if (DataAdviseHolder is null)
       {
         ComDebug.ReportInfo("{0}.IDataObject.DAdvise -> not implemented!", GetType().Name);
         connection = 0;
@@ -135,7 +136,7 @@ namespace Altaxo.Com
 
     public void DUnadvise(int connection)
     {
-      if (null == DataAdviseHolder)
+      if (DataAdviseHolder is null)
       {
         ComDebug.ReportInfo("{0}.IDataObject.DUnadvise connection={1} -> not implemented!", GetType().Name, connection);
         return;
@@ -157,7 +158,7 @@ namespace Altaxo.Com
 
     public int EnumDAdvise(out IEnumSTATDATA enumAdvise)
     {
-      if (null == DataAdviseHolder)
+      if (DataAdviseHolder is null)
       {
         ComDebug.ReportInfo("{0}.IDataObject.EnumAdvise -> not implemented!", GetType().Name);
         enumAdvise = null;
@@ -210,7 +211,7 @@ namespace Altaxo.Com
           if ((rendering.format.tymed & format.tymed) > 0
               && rendering.format.dwAspect == format.dwAspect
               && rendering.format.cfFormat == format.cfFormat
-              && rendering.renderer != null)
+              && rendering.renderer is not null)
           {
             // Found it. Return a copy of the data.
 

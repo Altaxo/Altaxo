@@ -41,9 +41,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   {
     private PenControlsGlue _penGlue;
 
-    public event Action IndependentColorChanged;
+    public event Action? IndependentColorChanged;
 
-    public event Action BarShiftStrategyChanged;
+    public event Action? BarShiftStrategyChanged;
 
     public BarGraphPlotStyleControl()
     {
@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         _penGlue.Pen = value;

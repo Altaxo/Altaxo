@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Markdown
 
     private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
     {
-      Process.Start(e.Parameter.ToString());
+      Process.Start($"{e.Parameter}");
     }
 
     private void ToggleExtensionsButton_OnClick(object sender, RoutedEventArgs e)
@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Markdown
 
     private void EhTextChanged(object sender, TextChangedEventArgs e)
     {
-      if (null != Viewer && null != _guiRawText)
+      if (Viewer is not null && _guiRawText is not null)
         Viewer.Markdown = _guiRawText.Text;
     }
   }

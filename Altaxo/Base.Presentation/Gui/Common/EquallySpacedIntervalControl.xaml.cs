@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,49 +54,49 @@ namespace Altaxo.Gui.Common
       else if (true == _rbStartEndIntv.IsChecked)
         method = EquallySpacedIntervalSpecificationMethod.StartEndInterval;
 
-      if (null != MethodChanged)
+      if (MethodChanged is not null)
         MethodChanged(method);
     }
 
     private void _edStart_TextChanged(object sender, ValidationEventArgs<string> e)
     {
-      if (null != StartChanged)
+      if (StartChanged is not null)
         StartChanged(_edStart.Text);
     }
 
     private void _edEnd_TextChanged(object sender, ValidationEventArgs<string> e)
     {
-      if (null != EndChanged)
+      if (EndChanged is not null)
         EndChanged(_edEnd.Text);
     }
 
     private void _edIntv_TextChanged(object sender, ValidationEventArgs<string> e)
     {
-      if (null != IntervalChanged)
+      if (IntervalChanged is not null)
         IntervalChanged(_edIntv.Text);
     }
 
     private void _edCount_TextChanged(object sender, ValidationEventArgs<string> e)
     {
-      if (null != CountChanged)
+      if (CountChanged is not null)
         CountChanged(_edCount.Text);
     }
 
     #region IEquallySpacedIntervalView
 
-    public event Action<EquallySpacedIntervalSpecificationMethod> MethodChanged;
+    public event Action<EquallySpacedIntervalSpecificationMethod>? MethodChanged;
 
-    public event Action<string> StartChanged;
+    public event Action<string>? StartChanged;
 
-    public event Action<string> EndChanged;
+    public event Action<string>? EndChanged;
 
-    public event Action<string> CountChanged;
+    public event Action<string>? CountChanged;
 
-    public event Action<string> IntervalChanged;
+    public event Action<string>? IntervalChanged;
 
-    public event Action<System.ComponentModel.CancelEventArgs> CountValidating;
+    public event Action<System.ComponentModel.CancelEventArgs>? CountValidating { add { } remove { } }
 
-    public event Action<System.ComponentModel.CancelEventArgs> IntervalValidating;
+    public event Action<System.ComponentModel.CancelEventArgs>? IntervalValidating { add { } remove { } }
 
     public void EnableEditBoxes(bool start, bool end, bool count, bool interval)
     {

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -78,9 +79,9 @@ namespace Altaxo.Graph.Plot.Groups
         info.AddValue("StepEnabled", s._isStepEnabled);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
+        var s = (ColorGroupStyle?)o ?? ColorGroupStyle.NewExternalGroupStyle();
         s._isStepEnabled = info.GetBoolean("StepEnabled");
         return s;
       }
@@ -99,9 +100,9 @@ namespace Altaxo.Graph.Plot.Groups
         info.AddValue("ColorSet", s._listOfValues);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
+        var s = (ColorGroupStyle?)o ?? ColorGroupStyle.NewExternalGroupStyle();
         s._isStepEnabled = info.GetBoolean("StepEnabled");
         s._listOfValues = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
         ColorSetManager.Instance.TryRegisterList(info, s._listOfValues, Main.ItemDefinitionLevel.Project, out s._listOfValues);
@@ -128,12 +129,12 @@ namespace Altaxo.Graph.Plot.Groups
           throw new ArgumentOutOfRangeException("Trying to serialize a local ColorPlotGroupStyle is not allowed. Please report this bug to the forum.");
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
+        var s = (ColorGroupStyle?)o ?? ColorGroupStyle.NewExternalGroupStyle();
         s._isStepEnabled = info.GetBoolean("StepEnabled");
-        var listOfValues = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
-        if (null != listOfValues)
+        var listOfValues = info.GetValueOrNull<Drawing.ColorManagement.IColorSet>("ColorSet", s);
+        if (listOfValues is not null)
         {
           ColorSetManager.Instance.TryRegisterList(info, listOfValues, Main.ItemDefinitionLevel.Project, out s._listOfValues);
         }
@@ -262,7 +263,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     public int Step(int step)
     {
-      if (_listOfValues == null)
+      if (_listOfValues is null)
         return 0;
 
       _colorIndex = ColorSetExtensions.GetNextPlotColorIndex(_listOfValues, _colorIndex, step, out var wraps);
@@ -302,7 +303,7 @@ namespace Altaxo.Graph.Plot.Groups
       // we will not accept the known color set here
       // this has historical reasons: until 2012 we don't even have the concept of color sets
       // thus all plot colors were part of the know color set, and we could not distinguish between known colors and plot colors
-      if (null != c.ParentColorSet &&
+      if (c.ParentColorSet is not null &&
           !object.ReferenceEquals(c.ParentColorSet, ColorSetManager.Instance.BuiltinKnownColors)
         )
       {
@@ -334,7 +335,7 @@ namespace Altaxo.Graph.Plot.Groups
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         // we will not accept the known color set here
@@ -366,7 +367,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     private NamedColor InternalGetColorFromColorSetAndIndex()
     {
-      if (_listOfValues != null && _listOfValues.Count > 0)
+      if (_listOfValues is not null && _listOfValues.Count > 0)
       {
         if (_colorIndex < 0)
           _colorIndex = 0;
@@ -409,19 +410,19 @@ namespace Altaxo.Graph.Plot.Groups
       Getter getter)
     {
       if (!externalGroups.ContainsType(typeof(ColorGroupStyle))
-        && null != localGroups
+        && localGroups is not null
         && !localGroups.ContainsType(typeof(ColorGroupStyle)))
       {
         localGroups.Add(ColorGroupStyle.NewLocalGroupStyle());
       }
 
-      ColorGroupStyle grpStyle = null;
+      ColorGroupStyle? grpStyle = null;
       if (externalGroups.ContainsType(typeof(ColorGroupStyle)))
         grpStyle = (ColorGroupStyle)externalGroups.GetPlotGroupStyle(typeof(ColorGroupStyle));
-      else if (localGroups != null)
+      else if (localGroups is not null)
         grpStyle = (ColorGroupStyle)localGroups.GetPlotGroupStyle(typeof(ColorGroupStyle));
 
-      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+      if (grpStyle is not null && getter is not null && !grpStyle.IsInitialized)
         grpStyle.Initialize(getter());
     }
 
@@ -432,14 +433,14 @@ namespace Altaxo.Graph.Plot.Groups
       IPlotGroupStyleCollection localGroups,
       Setter setter)
     {
-      ColorGroupStyle grpStyle = null;
-      IPlotGroupStyleCollection grpColl = null;
+      ColorGroupStyle? grpStyle = null;
+      IPlotGroupStyleCollection? grpColl = null;
       if (externalGroups.ContainsType(typeof(ColorGroupStyle)))
         grpColl = externalGroups;
-      else if (localGroups != null && localGroups.ContainsType(typeof(ColorGroupStyle)))
+      else if (localGroups is not null && localGroups.ContainsType(typeof(ColorGroupStyle)))
         grpColl = localGroups;
 
-      if (null != grpColl)
+      if (grpColl is not null)
       {
         grpStyle = (ColorGroupStyle)grpColl.GetPlotGroupStyle(typeof(ColorGroupStyle));
         grpColl.OnBeforeApplication(typeof(ColorGroupStyle));

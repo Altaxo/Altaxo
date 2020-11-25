@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -67,9 +68,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
         info.AddValue("ListOfValues", s._listOfValues);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ScatterSymbolGroupStyle s = null != o ? (ScatterSymbolGroupStyle)o : new ScatterSymbolGroupStyle();
+        var s = (ScatterSymbolGroupStyle?)o ?? new ScatterSymbolGroupStyle();
         s._isStepEnabled = info.GetBoolean("StepEnabled");
 
         var value = (IScatterSymbol)info.GetValue("Value", s);
@@ -206,7 +207,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(_listOfValues, value))
@@ -246,13 +247,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     public void Initialize(IScatterSymbol value)
     {
-      if (null == value)
+      if (value is null)
         throw new ArgumentNullException(nameof(value));
 
       _isInitialized = true;
 
       var parentList = ScatterSymbolListManager.Instance.GetParentList(value);
-      if (null != parentList)
+      if (parentList is not null)
       {
         _listOfValues = parentList;
       }
@@ -300,19 +301,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       Getter getter)
     {
       if (!externalGroups.ContainsType(typeof(ScatterSymbolGroupStyle))
-        && null != localGroups
+        && localGroups is not null
         && !localGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
       {
         localGroups.Add(new ScatterSymbolGroupStyle());
       }
 
-      ScatterSymbolGroupStyle grpStyle = null;
+      ScatterSymbolGroupStyle? grpStyle = null;
       if (externalGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
         grpStyle = (ScatterSymbolGroupStyle)externalGroups.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle));
-      else if (localGroups != null)
+      else if (localGroups is not null)
         grpStyle = (ScatterSymbolGroupStyle)localGroups.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle));
 
-      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+      if (grpStyle is not null && getter is not null && !grpStyle.IsInitialized)
         grpStyle.Initialize(getter());
     }
 
@@ -323,16 +324,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       IPlotGroupStyleCollection localGroups,
       Setter setter)
     {
-      ScatterSymbolGroupStyle grpStyle = null;
-      IPlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection? grpColl = null;
       if (externalGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
         grpColl = externalGroups;
-      else if (localGroups != null && localGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
+      else if (localGroups is not null && localGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
         grpColl = localGroups;
 
-      if (null != grpColl)
+      if (grpColl is not null)
       {
-        grpStyle = (ScatterSymbolGroupStyle)grpColl.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle));
+        var grpStyle = (ScatterSymbolGroupStyle)grpColl.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle));
         grpColl.OnBeforeApplication(typeof(ScatterSymbolGroupStyle));
         setter(grpStyle.ShapeAndStyle);
       }

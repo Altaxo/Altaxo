@@ -62,7 +62,7 @@ namespace Altaxo.Calc.Fourier
     /// <exception cref="System.ArgumentNullException">SourceMatrix must not be null</exception>
     public RealFourierTransformation2D(IMatrix<double> sourceMatrix, bool allowOverwriting)
     {
-      if (null == sourceMatrix)
+      if (sourceMatrix is null)
         throw new ArgumentNullException("SourceMatrix must not be null");
 
       if (sourceMatrix.RowCount < 2 || sourceMatrix.ColumnCount < 2)
@@ -86,7 +86,7 @@ namespace Altaxo.Calc.Fourier
     /// <exception cref="System.ArgumentNullException">SourceMatrix must not be null</exception>
     public RealFourierTransformation2D(IROMatrix<double> sourceMatrix)
     {
-      if (null == sourceMatrix)
+      if (sourceMatrix is null)
         throw new ArgumentNullException("SourceMatrix must not be null");
 
       if (sourceMatrix.RowCount < 2 || sourceMatrix.ColumnCount < 2)

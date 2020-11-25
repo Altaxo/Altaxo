@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,7 +126,7 @@ namespace Altaxo.Gui.Worksheet
     /// </summary>
     public void InitializeElements()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         m_CreateSpectrumFrom = CreateSpectrumFrom.Row;
         _view.CreateSpectrumFromRow = true;
@@ -288,7 +289,7 @@ namespace Altaxo.Gui.Worksheet
         if (m_XValuesFrom == XValuesFrom.Column)
         {
           string colname = _view.XValuesColumnName;
-          if (null == colname)
+          if (colname is null)
           {
             Current.Gui.ErrorMessageBox("No x-column selected");
             return false;
@@ -306,7 +307,7 @@ namespace Altaxo.Gui.Worksheet
           extFileNameCol = m_Table[_view.ExtFileNameColumnName];
 
         int i, j;
-        bool bUseRowSel = (null != m_SelectedRows && m_SelectedRows.Count > 0);
+        bool bUseRowSel = (m_SelectedRows is not null && m_SelectedRows.Count > 0);
         int numOfSpectra = bUseRowSel ? m_SelectedRows.Count : m_Table.DataColumns.RowCount;
 
         for (j = 0; j < numOfSpectra; j++)
@@ -315,14 +316,14 @@ namespace Altaxo.Gui.Worksheet
 
           string filename = _view.BasicFileName;
 
-          if (null != extFileNameCol)
+          if (extFileNameCol is not null)
             filename += "_" + extFileNameCol[i].ToString();
           else
             filename += "_" + j.ToString();
 
           string error = Export.FromRow(filename, m_Table, i, xcol, m_SelectedColumns);
 
-          if (null != error)
+          if (error is not null)
           {
             Current.Gui.ErrorMessageBox(string.Format("There were error(s) during export: {0}", error));
             return false;
@@ -337,7 +338,7 @@ namespace Altaxo.Gui.Worksheet
         if (m_XValuesFrom == XValuesFrom.Column)
         {
           string colname = _view.XValuesColumnName;
-          if (null == colname)
+          if (colname is null)
           {
             Current.Gui.ErrorMessageBox("No x-column selected");
             return false;
@@ -355,7 +356,7 @@ namespace Altaxo.Gui.Worksheet
           extFileNameCol = m_Table.PropCols[_view.ExtFileNameColumnName];
 
         int i, j;
-        bool bUseColSel = (null != m_SelectedColumns && m_SelectedColumns.Count > 0);
+        bool bUseColSel = (m_SelectedColumns is not null && m_SelectedColumns.Count > 0);
         int numOfSpectra = bUseColSel ? m_SelectedColumns.Count : m_Table.DataColumns.ColumnCount;
 
         for (j = 0; j < numOfSpectra; j++)
@@ -364,14 +365,14 @@ namespace Altaxo.Gui.Worksheet
 
           string filename = _view.BasicFileName;
 
-          if (null != extFileNameCol)
+          if (extFileNameCol is not null)
             filename += extFileNameCol[i].ToString();
           else
             filename += j.ToString() + ".spc";
 
           string error = Export.FromColumn(filename, m_Table, i, xcol, m_SelectedRows);
 
-          if (null != error)
+          if (error is not null)
           {
             Current.Gui.ErrorMessageBox(string.Format("There were error(s) during export: {0}", error));
             return false;
@@ -405,7 +406,7 @@ namespace Altaxo.Gui.Worksheet
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.BasicFileNameAndPathChoose -= ChooseBasicFileNameAndPath;
           _view.Change_ExtendFileNameOptions -= EhChange_ExtendFileNameOptions;
@@ -415,7 +416,7 @@ namespace Altaxo.Gui.Worksheet
 
         _view = value as IExportGalacticSpcFileView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           InitializeElements();
 

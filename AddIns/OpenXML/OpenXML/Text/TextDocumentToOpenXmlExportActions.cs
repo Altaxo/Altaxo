@@ -42,14 +42,14 @@ namespace Altaxo.Text
     /// Gets the output file by showing a save file dialog.
     /// </summary>
     /// <returns></returns>
-    public static (bool dialogResult, string outputFileName) ShowGetOutputFileDialog(string oldFileName = null)
+    public static (bool dialogResult, string outputFileName) ShowGetOutputFileDialog(string? oldFileName = null)
     {
       var dlg = new SaveFileOptions();
       dlg.AddFilter("*.docx", "Docx files (*.docx)");
       dlg.AddFilter("*.*", "All files (*.*)");
       dlg.AddExtension = true;
 
-      if (null != oldFileName)
+      if (oldFileName is not null)
       {
         dlg.InitialDirectory = System.IO.Path.GetDirectoryName(oldFileName);
         dlg.FileName = oldFileName;
@@ -64,14 +64,14 @@ namespace Altaxo.Text
     /// Gets the template file by showing a open file dialog.
     /// </summary>
     /// <returns></returns>
-    public static (bool dialogResult, string templateFileName) ShowGetTemplateFileDialog(string oldFileName = null)
+    public static (bool dialogResult, string templateFileName) ShowGetTemplateFileDialog(string? oldFileName = null)
     {
       var dlg = new OpenFileOptions();
       dlg.AddFilter("*.docx", "Docx files (*.docx)");
       dlg.AddFilter("*.*", "All files (*.*)");
       dlg.Title = "Select a .docx file used as style template";
 
-      if (null != oldFileName)
+      if (oldFileName is not null)
       {
         dlg.InitialDirectory = System.IO.Path.GetDirectoryName(oldFileName);
         dlg.FileName = oldFileName;
@@ -108,6 +108,9 @@ namespace Altaxo.Text
 
     private static void SaveOptionsAndExport(TextDocument document, TextDocumentToOpenXmlExportOptionsAndData exportOptions)
     {
+      if (exportOptions.OutputFileName is null)
+        throw new ArgumentNullException(nameof(exportOptions.OutputFileName));
+
       document.PropertyBagNotNull.SetValue(TextDocumentToOpenXmlExportOptionsAndData.PropertyKeyTextDocumentToOpenXMLExportOptionsAndData, (TextDocumentToOpenXmlExportOptionsAndData)exportOptions.Clone());
       Current.PropertyService.ApplicationSettings.SetValue(TextDocumentToOpenXmlExportOptionsAndData.PropertyKeyTextDocumentToOpenXMLExportOptionsAndData, (TextDocumentToOpenXmlExportOptionsAndData)exportOptions.Clone());
 
@@ -142,9 +145,9 @@ namespace Altaxo.Text
     /// <param name="fileName">Full name of the Maml file to export to. Note that if exporting to multiple Maml files,
     /// this is the base file name only; the file names will be derived from this name.</param>
     /// <param name="errors">A list that collects error messages.</param>
-    public static void Export(TextDocument document, TextDocumentToOpenXmlExportOptions o, string fileName, List<MarkdownError> errors = null)
+    public static void Export(TextDocument document, TextDocumentToOpenXmlExportOptions o, string fileName, List<MarkdownError>? errors = null)
     {
-      if (null == document)
+      if (document is null)
         throw new ArgumentNullException(nameof(document));
       if (string.IsNullOrEmpty(fileName))
         throw new ArgumentNullException(nameof(fileName));
@@ -179,7 +182,7 @@ namespace Altaxo.Text
         renderer.MaxImageWidthIn96thInch = o.MaximumImageWidth.Value.AsValueIn(Altaxo.Units.Length.Inch.Instance) * 96.0;
       if (o.MaximumImageHeight.HasValue)
         renderer.MaxImageHeigthIn96thInch = o.MaximumImageHeight.Value.AsValueIn(Altaxo.Units.Length.Inch.Instance) * 96.0;
-      if (null != o.ThemeName)
+      if (o.ThemeName is not null)
         renderer.ThemeName = o.ThemeName;
       renderer.RemoveOldContentsOfTemplateFile = o.RemoveOldContentsOfTemplateFile;
       renderer.ImageResolution = o.ImageResolutionDpi;

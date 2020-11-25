@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Calc.Interpolation
 {
-  [TestFixture]
+
   public class AkimaCubicSpline_Test
   {
     /// <summary>
     /// Splines a strongly monotonic increasing function and tests whether the derivatives are (i) not zero and ii) positive and iii) are decreasing
     /// </summary>
-    [Test]
+    [Fact]
     public void Test1()
     {
       var x = new double[100];
@@ -32,8 +32,8 @@ namespace Altaxo.Calc.Interpolation
       for (int i = 0; i < x.Length; ++i)
       {
         var deriv = spline.GetY1stDerivativeOfX(x[i]);
-        Assert.Greater(deriv, 0, $"Derivative is 0 at x={x[i]}");
-        Assert.AreEqual(7 / 2.0, deriv, 0);
+        AssertEx.Greater(deriv, 0, $"Derivative is 0 at x={x[i]}");
+        Assert.Equal(7 / 2.0, deriv, 0);
       }
     }
 
@@ -41,7 +41,7 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Splines a strongly monotonic increasing function and tests whether the derivatives are (i) not zero and ii) positive and iii) are decreasing
     /// </summary>
-    [Test]
+    [Fact]
     public void Test2()
     {
       double offset = 0.0164719554599108;
@@ -66,7 +66,7 @@ namespace Altaxo.Calc.Interpolation
       for (int i = 0; i < x.Length; ++i)
       {
         var deriv = spline.GetY1stDerivativeOfX(x[i]);
-        Assert.Greater(deriv, 0, $"Derivative is 0 at x={x[i]}");
+        AssertEx.Greater(deriv, 0, $"Derivative is 0 at x={x[i]}");
       }
 
     }

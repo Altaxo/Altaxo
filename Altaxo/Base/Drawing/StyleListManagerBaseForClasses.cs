@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -48,7 +50,7 @@ namespace Altaxo.Drawing
 
     private class ReferenceEqualityComparer : IEqualityComparer<TItem>
     {
-      public bool Equals(TItem x, TItem y)
+      public bool Equals(TItem? x, TItem? y)
       {
         return object.ReferenceEquals(x, y);
       }
@@ -82,7 +84,7 @@ namespace Altaxo.Drawing
       base.OnListAdded(list, level);
     }
 
-    protected override void OnListChanged(TList list, ItemDefinitionLevel level)
+    protected override void OnListChanged([AllowNull] TList list, ItemDefinitionLevel level)
     {
       RebuildListEntryToListDictionary();
       base.OnListChanged(list, level);
@@ -93,9 +95,10 @@ namespace Altaxo.Drawing
     /// </summary>
     /// <param name="item">The item.</param>
     /// <returns>The parent list of an item, or null if no parent list is found.</returns>
+    [return: MaybeNull]
     public override TList GetParentList(TItem item)
     {
-      if (null == item)
+      if (item is null)
         return default(TList);
 
       if (_dictListEntryToList.TryGetValue(item, out var result))
@@ -108,7 +111,7 @@ namespace Altaxo.Drawing
     {
       // first have a look in the rename dictionary - maybe our color set has been renamed during deserialization
       var renameDictionary = deserializationInfo?.GetPropertyOrDefault<Dictionary<string, string>>(DeserializationRenameDictionaryKey);
-      if (null != renameDictionary && renameDictionary.ContainsKey(setName))
+      if (renameDictionary is not null && renameDictionary.ContainsKey(setName))
         setName = renameDictionary[setName];
 
 
@@ -130,7 +133,7 @@ namespace Altaxo.Drawing
       return instanceTemplate;
     }
 
-    public bool TryFindListContaining(TItem item, out TList list, out TItem foundItem)
+    public bool TryFindListContaining(TItem item, [MaybeNullWhen(false)] out TList list, [MaybeNullWhen(false)] out TItem foundItem)
     {
       int idx;
 
@@ -150,8 +153,8 @@ namespace Altaxo.Drawing
         }
       }
 
-      list = default(TList);
-      foundItem = default(TItem);
+      list = default;
+      foundItem = default;
       return false;
     }
   }

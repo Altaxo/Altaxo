@@ -22,9 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Collections;
 using Altaxo.Geometry;
 using Altaxo.Gui.Workbench;
@@ -115,12 +117,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
     protected bool _cellEdit_IsModified;
     private AreaInfo _cellEdit_EditedCell;
 
-    protected WeakEventHandler _weakEventHandlerDataColumnChanged;
-    protected WeakEventHandler _weakEventHandlerPropertyColumnChanged;
+    protected WeakEventHandler? _weakEventHandlerDataColumnChanged;
+    protected WeakEventHandler? _weakEventHandlerPropertyColumnChanged;
 
     /// <summary>
     /// Set the member variables to default values. Intended only for use in constructors and deserialization code.
     /// </summary>
+    [MemberNotNull(nameof(_selectedDataColumns), nameof(_selectedDataRows), nameof(_selectedPropertyColumns), nameof(_selectedPropertyRows), nameof(_cellEdit_EditedCell))]
     protected virtual void SetMemberVariablesToDefault()
     {
       // The main menu of this controller.
@@ -177,13 +180,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public double TableAreaWidth
     {
-      get { return _view.TableArea_Size.X; }
+      get { return _view?.TableArea_Size.X ?? 0; }
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public double TableAreaHeight
     {
-      get { return _view.TableArea_Size.Y; }
+      get { return _view?.TableArea_Size.Y ?? 0; }
     }
 
     #endregion public properties
@@ -293,13 +296,16 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     #region Data event handlers
 
-    public void EhTableDataChanged(object sender, EventArgs e)
+    public void EhTableDataChanged(object? sender, EventArgs e)
     {
       Current.Dispatcher.InvokeAndForget(EhTableDataChanged_Unsynchronized);
     }
 
     private void EhTableDataChanged_Unsynchronized()
     {
+      if (IsDisposeInProgress)
+        return;
+
       if (_numberOfTableRows != DataTable.DataColumns.RowCount)
         SetCachedNumberOfDataRows();
 
@@ -316,7 +322,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       if (VerticalScrollPosition >= _numberOfTableRows)
         VerticalScrollPosition = _numberOfTableRows > 0 ? _numberOfTableRows - 1 : 0;
 
-      if (_view != null)
+      if (_view is not null)
         _view.TableArea_TriggerRedrawing();
     }
 
@@ -327,7 +333,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       if (HorzScrollPos + 1 > _numberOfTableCols)
         HorzScrollPos = _numberOfTableCols > 0 ? _numberOfTableCols - 1 : 0;
 
-      if (_view != null)
+      if (_view is not null)
       {
         AdjustXScrollBarViewPortSize();
         _view.TableArea_TriggerRedrawing();
@@ -339,7 +345,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// the total width of all data columns.</summary>
     public void AdjustXScrollBarViewPortSize()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         if (_numberOfTableCols > 0)
         {
@@ -406,12 +412,12 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
-    public void EhPropertyDataChanged(object sender, EventArgs e)
+    public void EhPropertyDataChanged(object? sender, EventArgs e)
     {
       Current.Dispatcher.InvokeIfRequired(EhPropertyDataChanged_Unsynchronized, sender, e);
     }
 
-    private void EhPropertyDataChanged_Unsynchronized(object sender, EventArgs e)
+    private void EhPropertyDataChanged_Unsynchronized(object? sender, EventArgs e)
     {
       if (_numberOfPropertyCols != DataTable.PropCols.ColumnCount)
         SetCachedNumberOfPropertyColumns();
@@ -432,6 +438,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void EhCellEditControl_PreviewKeyDown(AltaxoKeyboardKey eKey, HandledEventArgs e)
     {
+      if (_view is null)
+        return;
+
       if (eKey == AltaxoKeyboardKey.Left)
       {
         // Navigate to the left if the cursor is already left
@@ -512,12 +521,18 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void ShowCellEditControl()
     {
+      if (_view is null)
+        return;
+
       _view.CellEdit_Show();
       _cellEdit_IsArmed = true;
     }
 
     private void ReadCellEditContentAndHide()
     {
+      if (_view is null)
+        return;
+
       if (_cellEdit_IsArmed)
       {
         if (_cellEdit_IsModified)
@@ -537,6 +552,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void SetCellEditContentAndShow()
     {
+      if (_view is null)
+        return;
+
       if (_cellEdit_EditedCell.AreaType == AreaType.DataCell)
       {
         _view.CellEdit_Text = GetDataColumnStyle(_cellEdit_EditedCell.ColumnNumber).GetColumnValueAtRow(_cellEdit_EditedCell.RowNumber, DataTable[_cellEdit_EditedCell.ColumnNumber]);
@@ -582,6 +600,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <returns>True when the cell was moved to a new position, false if moving was not possible.</returns>
     protected bool NavigateTableCellEdit(int dx, int dy)
     {
+      if (_view is null)
+        return false;
+
       bool bScrolled = false;
 
       // Calculate the position of the new cell
@@ -661,6 +682,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <returns>True when the cell was moved to a new position, false if moving was not possible.</returns>
     protected bool NavigatePropertyCellEdit(int dx, int dy)
     {
+      if (_view is null)
+        return false;
+
       bool bScrolled = false;
 
       // 2. look whether the new cell coordinates lie inside the client area, if
@@ -958,7 +982,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
             ReadCellEditContentAndHide();
           }
 
-          if (_view != null)
+          if (_view is not null)
           {
             _view.TableViewHorzScrollValue = value;
             _view?.TableArea_TriggerRedrawing();
@@ -994,7 +1018,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
           // The value of the ScrollBar in the view has an offset, since he
           // can not have negative values;
-          if (_view != null)
+          if (_view is not null)
           {
             newValue += TotalEnabledPropertyColumns;
             _view.TableViewVertScrollValue = newValue;
@@ -1011,7 +1035,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       set
       {
         _scrollHorzMax = value;
-        if (_view != null)
+        if (_view is not null)
           _view.TableViewHorzScrollMaximum = value;
       }
     }
@@ -1023,7 +1047,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       {
         _scrollVertMax = value;
 
-        if (_view != null)
+        if (_view is not null)
           _view.TableViewVertScrollMaximum = value + TotalEnabledPropertyColumns;
       }
     }
@@ -1068,18 +1092,20 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void EhView_TableAreaMouseUp(PointD2D position)
     {
+      if (_view is null)
+        return;
+
       if (_dragColumnWidth_InCapture)
       {
         double sizediff = position.X - _dragColumnWidth_OriginalPos;
-        Altaxo.Worksheet.ColumnStyle cs;
+        Altaxo.Worksheet.ColumnStyle? cs;
         if (-1 == _dragColumnWidth_ColumnNumber)
         {
           cs = _worksheetLayout.RowHeaderStyle;
         }
         else
         {
-          _worksheetLayout.DataColumnStyles.TryGetValue(DataTable[_dragColumnWidth_ColumnNumber], out cs);
-          if (null == cs)
+          if (!_worksheetLayout.DataColumnStyles.TryGetValue(DataTable[_dragColumnWidth_ColumnNumber], out cs))
           {
             Altaxo.Worksheet.ColumnStyle template = GetDataColumnStyle(_dragColumnWidth_ColumnNumber);
             cs = (Altaxo.Worksheet.ColumnStyle)template.Clone();
@@ -1101,6 +1127,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void EhView_TableAreaMouseDown(PointD2D position)
     {
+      if (_view is null)
+        return;
+
       // base.OnMouseDown(e);
       _mouseDownPosition = position;
       ReadCellEditContentAndHide();
@@ -1126,6 +1155,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void EhView_TableAreaMouseMove(PointD2D position)
     {
+      if (_view is null)
+        return;
+
       var Y = position.Y;
       var X = position.X;
 
@@ -1133,7 +1165,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       {
         var sizediff = X - _dragColumnWidth_OriginalPos;
 
-        Altaxo.Worksheet.ColumnStyle cs;
+        Altaxo.Worksheet.ColumnStyle? cs;
         if (-1 == _dragColumnWidth_ColumnNumber)
           cs = _worksheetLayout.RowHeaderStyle;
         else
@@ -1187,6 +1219,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     protected virtual void OnLeftClickDataCell(AreaInfo clickedCell)
     {
+      if (_view is null)
+        return;
+
       _cellEdit_EditedCell = clickedCell;
       _view.CellEdit_Location = clickedCell.AreaRectangle;
       SetCellEditContentAndShow();
@@ -1194,6 +1229,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     protected virtual void OnLeftClickPropertyCell(AreaInfo clickedCell)
     {
+      if (_view is null)
+        return;
+
       _cellEdit_EditedCell = clickedCell;
       _view.CellEdit_Location = clickedCell.AreaRectangle;
       SetCellEditContentAndShow();
@@ -1201,6 +1239,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     protected virtual void OnLeftClickDataColumnHeader(AreaInfo clickedCell, AltaxoKeyboardModifierKeys modifierKeys)
     {
+      if (_view is null)
+        return;
+
       if (!_dragColumnWidth_InCapture)
       {
         bool bControlKey = modifierKeys.HasFlag(AltaxoKeyboardModifierKeys.Control); // Control pressed
@@ -1245,6 +1286,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     protected virtual void OnLeftClickDataRowHeader(AreaInfo clickedCell, AltaxoKeyboardModifierKeys modifierKeys)
     {
+      if (_view is null)
+        return;
+
       bool bControlKey = modifierKeys.HasFlag(AltaxoKeyboardModifierKeys.Control); // Control pressed
       bool bShiftKey = modifierKeys.HasFlag(AltaxoKeyboardModifierKeys.Shift);
 
@@ -1281,6 +1325,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     protected virtual void OnLeftClickPropertyColumnHeader(AreaInfo clickedCell, AltaxoKeyboardModifierKeys modifierKeys)
     {
+      if (_view is null)
+        return;
+
       bool bControlKey = modifierKeys.HasFlag(AltaxoKeyboardModifierKeys.Control); // Control pressed
       bool bShiftKey = modifierKeys.HasFlag(AltaxoKeyboardModifierKeys.Shift);
 
@@ -1302,48 +1349,46 @@ namespace Altaxo.Gui.Worksheet.Viewing
     }
 
     [field: NonSerialized]
-    public event Action<object, AreaInfo> TableHeaderLeftClicked;
+    public event Action<object, AreaInfo>? TableHeaderLeftClicked;
 
     protected virtual void OnLeftClickTableHeader(AreaInfo clickedCell)
     {
-      if (null != TableHeaderLeftClicked)
-        TableHeaderLeftClicked(this, clickedCell);
+      TableHeaderLeftClicked?.Invoke(this, clickedCell);
     }
 
     [field: NonSerialized]
-    public event Action<object, AreaInfo> OutsideAllLeftClicked;
+    public event Action<object, AreaInfo>? OutsideAllLeftClicked;
 
     protected virtual void OnLeftClickOutsideAll(AreaInfo clickedCell)
     {
-      if (null != OutsideAllLeftClicked)
-        OutsideAllLeftClicked(this, clickedCell);
+      OutsideAllLeftClicked?.Invoke(this, clickedCell);
     }
 
     [field: NonSerialized]
-    public event Action<object, AreaInfo> DataCellRightClicked;
+    public event Action<object, AreaInfo>? DataCellRightClicked;
 
     protected virtual void OnRightClickDataCell(AreaInfo clickedCell)
     {
-      if (null != DataCellRightClicked)
-        DataCellRightClicked(this, clickedCell);
+      DataCellRightClicked?.Invoke(this, clickedCell);
     }
 
     [field: NonSerialized]
-    public event Action<object, AreaInfo> PropertyCellRightClicked;
+    public event Action<object, AreaInfo>? PropertyCellRightClicked;
 
     protected virtual void OnRightClickPropertyCell(AreaInfo clickedCell)
     {
-      if (null != PropertyCellRightClicked)
-        PropertyCellRightClicked(this, clickedCell);
+      PropertyCellRightClicked?.Invoke(this, clickedCell);
     }
 
     [field: NonSerialized]
-    public event Action<object, AreaInfo> DataColumnHeaderRightClicked;
+    public event Action<object, AreaInfo>? DataColumnHeaderRightClicked;
 
     protected virtual void OnRightClickDataColumnHeader(AreaInfo clickedCell)
     {
-      if (null != DataColumnHeaderRightClicked)
-        DataColumnHeaderRightClicked(this, clickedCell);
+      if (_view is null)
+        return;
+
+      DataColumnHeaderRightClicked?.Invoke(this, clickedCell);
 
       if (!(SelectedDataColumns.Contains(clickedCell.ColumnNumber)) &&
               !(SelectedPropertyRows.Contains(clickedCell.ColumnNumber)))
@@ -1356,11 +1401,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
     }
 
     [field: NonSerialized]
-    public event Action<object, AreaInfo> DataRowHeaderRightClicked;
+    public event Action<object, AreaInfo>? DataRowHeaderRightClicked;
 
     protected virtual void OnRightClickDataRowHeader(AreaInfo clickedCell)
     {
-      if (null != DataRowHeaderRightClicked)
+      if (_view is null)
+        return;
+
+      if (DataRowHeaderRightClicked is not null)
         DataRowHeaderRightClicked(this, clickedCell);
 
       if (!(SelectedDataRows.Contains(clickedCell.RowNumber)))
@@ -1373,12 +1421,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
     }
 
     [field: NonSerialized]
-    public event Action<object, AreaInfo> PropertyColumnHeaderRightClicked;
+    public event Action<object, AreaInfo>? PropertyColumnHeaderRightClicked;
 
     protected virtual void OnRightClickPropertyColumnHeader(AreaInfo clickedCell)
     {
-      if (null != PropertyColumnHeaderRightClicked)
-        PropertyColumnHeaderRightClicked(this, clickedCell);
+      if (_view is null)
+        return;
+
+      PropertyColumnHeaderRightClicked?.Invoke(this, clickedCell);
 
       if (!(SelectedPropertyColumns.Contains(clickedCell.ColumnNumber)))
       {
@@ -1390,23 +1440,27 @@ namespace Altaxo.Gui.Worksheet.Viewing
     }
 
     [field: NonSerialized]
-    public event Action<object, AreaInfo> TableHeaderRightClicked;
+    public event Action<object, AreaInfo>? TableHeaderRightClicked;
 
     protected virtual void OnRightClickTableHeader(AreaInfo clickedCell)
     {
-      if (null != TableHeaderRightClicked)
-        TableHeaderRightClicked(this, clickedCell);
+      if (_view is null)
+        return;
+
+      TableHeaderRightClicked?.Invoke(this, clickedCell);
 
       Current.Gui.ShowContextMenu(_view, _view, "/Altaxo/Views/Worksheet/DataTableHeader/ContextMenu", clickedCell.AreaRectangle.X, clickedCell.AreaRectangle.Y);
     }
 
     [field: NonSerialized]
-    public event Action<object, AreaInfo> OutsideAllRightClicked;
+    public event Action<object, AreaInfo>? OutsideAllRightClicked;
 
     protected virtual void OnRightClickOutsideAll(AreaInfo clickedCell)
     {
-      if (null != OutsideAllRightClicked)
-        OutsideAllRightClicked(this, clickedCell);
+      if (_view is null)
+        return;
+
+      OutsideAllRightClicked?.Invoke(this, clickedCell);
 
       Current.Gui.ShowContextMenu(_view, _view, "/Altaxo/Views/Worksheet/OutsideAll/ContextMenu", clickedCell.AreaRectangle.X, clickedCell.AreaRectangle.Y);
     }
@@ -1494,6 +1548,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void TableArea_TriggerRedrawing()
     {
+      if (_view is null)
+        return;
+
       _view.TableArea_TriggerRedrawing();
     }
 
@@ -1533,7 +1590,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void Cut()
     {
-      if (_cellEdit_IsArmed)
+      if (_view is not null && _cellEdit_IsArmed)
       {
         _view.CellEdit_Cut();
       }
@@ -1546,7 +1603,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void Copy()
     {
-      if (_cellEdit_IsArmed)
+      if (_view is not null && _cellEdit_IsArmed)
       {
         _view.CellEdit_Copy();
       }
@@ -1559,7 +1616,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void Paste()
     {
-      if (_cellEdit_IsArmed)
+      if (_view is not null && _cellEdit_IsArmed)
       {
         _view.CellEdit_Paste();
       }
@@ -1571,7 +1628,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void Delete()
     {
-      if (_cellEdit_IsArmed)
+      if (_view is not null && _cellEdit_IsArmed)
       {
         _view.CellEdit_Clear();
       }
@@ -1592,7 +1649,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       {
         SelectedDataColumns.Select(0, false, false);
         SelectedDataColumns.Select(DataTable.DataColumns.ColumnCount - 1, true, false);
-        if (_view != null)
+        if (_view is not null)
           _view.TableArea_TriggerRedrawing();
       }
     }

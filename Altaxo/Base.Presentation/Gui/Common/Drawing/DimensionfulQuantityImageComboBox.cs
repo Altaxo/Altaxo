@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace Altaxo.Gui.Common.Drawing
   {
     protected QuantityWithUnitConverter _converter;
 
-    public event DependencyPropertyChangedEventHandler SelectedQuantityChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedQuantityChanged;
 
     static DimensionfulQuantityImageComboBox()
     {
@@ -74,7 +75,7 @@ namespace Altaxo.Gui.Common.Drawing
       var childs = LogicalChildren;
     }
 
-    private void QuantityWithUnitTextBox_TextChanged(object sender, EventArgs e)
+    private void QuantityWithUnitTextBox_TextChanged(object? sender, EventArgs e)
     {
       _converter.BindingExpression.ValidateWithoutUpdate();
     }
@@ -142,7 +143,7 @@ namespace Altaxo.Gui.Common.Drawing
     /// <param name="args">Property changed event arguments.</param>
     protected virtual void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      if (null != SelectedQuantityChanged)
+      if (SelectedQuantityChanged is not null)
         SelectedQuantityChanged(obj, args);
     }
 
@@ -153,7 +154,7 @@ namespace Altaxo.Gui.Common.Drawing
       get { return SelectedQuantity.AsValueInSIUnits; }
       set
       {
-        if (null == UnitEnvironment)
+        if (UnitEnvironment is null)
           throw new InvalidOperationException("The value can not be set because the unit environment is not initialized yet");
 
         var quant = new DimensionfulQuantity(value, UnitEnvironment.DefaultUnit.Unit.SIUnit);

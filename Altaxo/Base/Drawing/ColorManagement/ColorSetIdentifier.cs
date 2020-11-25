@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,7 +55,7 @@ namespace Altaxo.Drawing.ColorManagement
         info.AddValue("Name", s.Name);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var colorSetLevel = (Altaxo.Main.ItemDefinitionLevel)info.GetEnum("Level", typeof(Altaxo.Main.ItemDefinitionLevel));
         string colorSetName = info.GetString("Name");
@@ -94,29 +95,24 @@ namespace Altaxo.Drawing.ColorManagement
       return _level.GetHashCode() * 29 + _name.GetHashCode() * 31;
     }
 
-    public bool Equals(ColorSetIdentifier other)
+    public bool Equals(ColorSetIdentifier? other)
     {
-      return _level == other._level && 0 == string.Compare(_name, other._name);
+      return other is not null && _level == other._level && 0 == string.Compare(_name, other._name);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (obj is ColorSetIdentifier)
-      {
-        var other = (ColorSetIdentifier)obj;
-        return _level == other._level && 0 == string.Compare(_name, other._name);
-      }
-      return false;
+      return obj is ColorSetIdentifier other ? _level == other._level && 0 == string.Compare(_name, other._name) : false;
     }
 
-    public int CompareTo(ColorSetIdentifier other)
+    public int CompareTo(ColorSetIdentifier? other)
     {
+      if (other is null)
+        throw new ArgumentNullException(nameof(other));
+
       int result;
       result = Comparer<int>.Default.Compare((int)_level, (int)other._level);
-      if (0 != result)
-        return result;
-      else
-        return string.Compare(_name, other._name);
+      return 0 != result ? result : string.Compare(_name, other._name);
     }
 
     public override string ToString()

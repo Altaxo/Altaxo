@@ -16,8 +16,10 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 
@@ -39,7 +41,8 @@ namespace Altaxo.Main.Services
     /// Creates a FileName instance from the string.
     /// It is valid to pass null or an empty string to this method (in that case, a null reference will be returned).
     /// </summary>
-    public static FileName Create(string fileName)
+    [return: NotNullIfNotNull("fileName")]
+    public static FileName? Create(string? fileName)
     {
       if (string.IsNullOrEmpty(fileName))
         return null;
@@ -47,6 +50,11 @@ namespace Altaxo.Main.Services
         return new FileName(fileName);
     }
 
+    [return: NotNullIfNotNull("path")]
+    public static explicit operator string?(FileName? path)
+    {
+      return path?._normalizedPath;
+    }
 
     /// <summary>
     /// Gets the file name (not the full path).
@@ -75,7 +83,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     public bool HasExtension(string extension)
     {
-      if (extension == null)
+      if (extension is null)
         throw new ArgumentNullException(nameof(extension));
       if (extension.Length == 0 || extension[0] != '.')
         throw new ArgumentException("extension must start with '.'");
@@ -95,17 +103,17 @@ namespace Altaxo.Main.Services
 
     #region Equals and GetHashCode implementation
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return Equals(obj as FileName);
     }
 
-    public bool Equals(FileName other)
+    public bool Equals(FileName? other)
     {
-      if (other != null)
-        return string.Equals(_normalizedPath, other._normalizedPath, StringComparison.OrdinalIgnoreCase);
-      else
+      if (other is null)
         return false;
+      else
+        return string.Equals(_normalizedPath, other._normalizedPath, StringComparison.OrdinalIgnoreCase);
     }
 
     public override int GetHashCode()
@@ -130,25 +138,25 @@ namespace Altaxo.Main.Services
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator ==(FileName left, string right)
     {
-      return (string)left == right;
+      return (string?)left == right;
     }
 
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator !=(FileName left, string right)
     {
-      return (string)left != right;
+      return (string?)left != right;
     }
 
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator ==(string left, FileName right)
     {
-      return left == (string)right;
+      return left == (string?)right;
     }
 
     [ObsoleteAttribute("Warning: comparing FileName with string results in case-sensitive comparison")]
     public static bool operator !=(string left, FileName right)
     {
-      return left != (string)right;
+      return left != (string?)right;
     }
 
     #endregion Equals and GetHashCode implementation
@@ -160,6 +168,18 @@ namespace Altaxo.Main.Services
     public override bool Exists()
     {
       return File.Exists(_normalizedPath);
+    }
+
+    /// <summary>
+    /// Gets the name of the directory from the given file name.
+    /// Throws an <see cref="InvalidOperationException"/> if a directory name could not be retrieved.
+    /// </summary>
+    /// <param name="fullFileName">Full name of the file.</param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException">Unable to get directory name from file name '{fullFileName}'</exception>
+    public static string GetDirectoryName(string fullFileName)
+    {
+      return Path.GetDirectoryName(fullFileName) ?? throw new InvalidOperationException($"Unable to get directory name from file name '{fullFileName}'");
     }
   }
 
@@ -175,11 +195,11 @@ namespace Altaxo.Main.Services
       return destinationType == typeof(FileName) || base.CanConvertTo(context, destinationType);
     }
 
-    public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+    public override object? ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
     {
-      if (value is string)
+      if (value is string s)
       {
-        return FileName.Create((string)value);
+        return FileName.Create(s);
       }
       return base.ConvertFrom(context, culture, value);
     }
@@ -189,7 +209,7 @@ namespace Altaxo.Main.Services
     {
       if (destinationType == typeof(string))
       {
-        return value.ToString();
+        return value.ToString() ?? string.Empty;
       }
       return base.ConvertTo(context, culture, value, destinationType);
     }

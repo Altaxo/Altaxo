@@ -38,7 +38,7 @@ namespace Altaxo.Text.Renderers.OpenXML
     {
       var paragraph = renderer.PushNewParagraph();
       var paraProperties = paragraph.ChildElements.FirstOrDefault() as ParagraphProperties;
-      if (null == paraProperties)
+      if (paraProperties is null)
         paraProperties = paragraph.AppendChild(new ParagraphProperties());
 
       var paraBorders = new ParagraphBorders();

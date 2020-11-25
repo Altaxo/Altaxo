@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -75,11 +76,13 @@ namespace Altaxo.Graph.Gdi.Shapes
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (DeprecatedLineShape)o : new DeprecatedLineShape(info);
+        var s = (DeprecatedLineShape?)o ?? new DeprecatedLineShape(info);
 
-        info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent);
+#pragma warning disable CS0618 // Type or member is obsolete
+        info.GetBaseValueEmbeddedOrNull(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent);
+#pragma warning restore CS0618 // Type or member is obsolete
 
         if (info.CurrentElementName == "LinePen")// 2012-06-18 bugfix: the next three lines are in some cases deserialized in ClosedPathShapeBase
         {
@@ -102,13 +105,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LineShape)obj;
-        info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (LineShape)o : new LineShape(info);
-        info.GetBaseValueEmbedded(s, typeof(LineShape).BaseType, parent);
+        var s = (LineShape?)o ?? new LineShape(info);
+        info.GetBaseValueEmbedded(s, typeof(LineShape).BaseType!, parent);
 
         return s;
       }
@@ -129,11 +132,12 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     public LineShape(LineShape from)
-      : base(from) // all is done here, since CopyFrom is virtual!
+      : base(from)
     {
+      // No extra members to copy here!
     }
 
-    public LineShape(PointD2D startPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    public LineShape(PointD2D startPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
       : base(new ItemLocationDirect(), context)
     {
       Position = startPosition;
@@ -144,7 +148,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
     }
 
-    public LineShape(PointD2D startPosition, PointD2D endPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    public LineShape(PointD2D startPosition, PointD2D endPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
       :
       this(startPosition, context)
     {
@@ -221,9 +225,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       return gp;
     }
 
-    public override IHitTestObject HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData htd)
     {
-      HitTestObjectBase result = null;
+      HitTestObjectBase? result = null;
       GraphicsPath gp = GetPath();
       using (var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen))
       {
@@ -241,7 +245,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
-      if (result != null)
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
 
       return result;
@@ -265,13 +269,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         g.DrawLine(penGdi, (float)bounds.X, (float)bounds.Y, (float)bounds.Right, (float)bounds.Bottom);
 
-        if (_outlinePen != null && _outlinePen.IsVisible)
+        if (_outlinePen is not null && _outlinePen.IsVisible)
         {
           var p = new GraphicsPath();
           p.AddLine((float)bounds.X, (float)bounds.Y, (float)bounds.Right, (float)bounds.Bottom);
           p.Widen(penGdi);
 
-          using (var outlinePenGdi = PenCacheGdi.Instance.BorrowPen(OutlinePen, bounds, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY))))
+          using (var outlinePenGdi = PenCacheGdi.Instance.BorrowPen(_outlinePen, bounds, BrushCacheGdi.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY))))
           {
             g.DrawPath(outlinePenGdi, p);
           }
@@ -288,7 +292,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
       }
 
-      public override IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel)
+      public override IGripManipulationHandle[]? GetGrips(double pageScale, int gripLevel)
       {
         if (gripLevel <= 1)
         {

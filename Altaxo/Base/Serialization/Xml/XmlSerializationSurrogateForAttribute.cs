@@ -87,7 +87,7 @@ namespace Altaxo.Serialization.Xml
     {
       get
       {
-        if (null != _serializationType)
+        if (_serializationType is not null)
         {
           if (_serializationType.Assembly.FullName is { } fullName)
             return (_serializationType.Assembly.FullName.Split(new char[] { ',' }, 2))[0];

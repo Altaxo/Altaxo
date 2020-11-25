@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
     protected PointD3D _positionLastMouseDownInMouseCoordinates;
 
     /// <summary>Active layer at the time of using the tool.</summary>
-    protected HostLayer _cachedActiveLayer;
+    protected HostLayer? _cachedActiveLayer;
 
     /// <summary>Transformation that can be used to transform root layer coordinates into the coordinates of the cached active layer.</summary>
     protected Matrix4x3 _cachedActiveLayerTransformation;

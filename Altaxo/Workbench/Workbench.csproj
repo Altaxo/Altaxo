@@ -1,13 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
+    <TargetFrameworks>net48;net5.0-windows</TargetFrameworks>
+    <LangVersion>preview</LangVersion>
+    <nullable>enable</nullable>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <NoWarn>CA1416</NoWarn>
   </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <NoWarn>
+      1591;
+      8600;8601;8602;8603;8604;8618;8625;8764;8766;8767;8768
+    </NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
@@ -33,8 +43,8 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0"/>
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0"/>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
   </ItemGroup>
   
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />

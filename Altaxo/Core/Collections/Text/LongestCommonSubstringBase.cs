@@ -290,10 +290,10 @@ namespace Altaxo.Collections.Text
       int substringLength = _lcsOfNumberOfWords[numberOfWordsWithCommonSubstring];
       if (substringLength > 0)
       {
-        if (null != _verboseResultsOfNumberOfWords)
+        if (_verboseResultsOfNumberOfWords is not null)
         {
           var list = _verboseResultsOfNumberOfWords[numberOfWordsWithCommonSubstring];
-          if (null != list)
+          if (list is not null)
           {
             foreach (var ele in list)
             {
@@ -301,7 +301,7 @@ namespace Altaxo.Collections.Text
             }
           }
         }
-        else if (null != _singleResultOfNumberOfWords)
+        else if (_singleResultOfNumberOfWords is not null)
         {
           var ele = _singleResultOfNumberOfWords[numberOfWordsWithCommonSubstring];
           yield return new CommonSubstring(substringLength, ele.Begin, ele.End, _suffixArray, _wordIndices, _wordStartPositions);
@@ -320,7 +320,7 @@ namespace Altaxo.Collections.Text
         throw new InvalidProgramException();
 
       var list = _verboseResultsOfNumberOfWords[list_pos];
-      if (list == null)
+      if (list is null)
         _verboseResultsOfNumberOfWords[list_pos] = list = new List<SuffixArrayRegion>();
       else if (lcslIsReallyGreaterThanBefore)
         list.Clear();

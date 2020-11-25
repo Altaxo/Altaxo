@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     private SetList<string> _itemList;
 
     [NonSerialized]
-    protected string[] _savedItems;
+    protected string[]? _savedItems;
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextBoundaries), 10)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -50,9 +51,9 @@ namespace Altaxo.Graph.Scales.Boundaries
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        TextBoundaries s = null != o ? (TextBoundaries)o : new TextBoundaries();
+        var s = (TextBoundaries?)o ?? new TextBoundaries();
 
         int count = info.OpenArray("Items");
         for (int i = 0; i < count; i++)
@@ -217,25 +218,27 @@ namespace Altaxo.Graph.Scales.Boundaries
     {
       BoundariesChangedData data = 0;
       // if anything changed in the meantime, fire the event
-      if (!EnumerableExtensions.AreStructurallyEqual(_savedItems, _itemList))
+      if (_savedItems is null || !EnumerableExtensions.AreStructurallyEqual(_savedItems, _itemList))
       {
         data |= BoundariesChangedData.ComplexChange;
       }
 
       if (0 != data)
+      {
         _accumulatedEventData = new BoundariesChangedEventArgs(data);
+      }
 
       _savedItems = null;
       base.OnResume();
     }
 
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       var eAsBCEA = e as BoundariesChangedEventArgs;
-      if (null == eAsBCEA)
+      if (eAsBCEA is null)
         throw new ArgumentOutOfRangeException(string.Format("Argument e should be of type {0}, but is {1}", typeof(BoundariesChangedEventArgs), e.GetType()));
 
-      if (null == _accumulatedEventData)
+      if (_accumulatedEventData is null)
         _accumulatedEventData = eAsBCEA;
       else
         _accumulatedEventData.Add(eAsBCEA);

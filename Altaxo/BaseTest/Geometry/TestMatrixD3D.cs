@@ -28,11 +28,11 @@ using System.Linq;
 using System.Text;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Geometry
 {
-  [TestFixture]
+  
   public class TestMatrixD3D
   {
     private static System.Random _random = new Random(432);
@@ -55,7 +55,7 @@ namespace Altaxo.Geometry
       return new VectorD3D(r(), r(), r());
     }
 
-    [Test]
+    [Fact]
     public static void Test_AppendTransformMatrix_WithPoints()
     {
       for (int i = 0; i < 5; ++i)
@@ -74,13 +74,13 @@ namespace Altaxo.Geometry
 
         var p3s = m3.Transform(p1);
 
-        Assert.AreEqual(p3.X, p3s.X, 0);
-        Assert.AreEqual(p3.Y, p3s.Y, 0);
-        Assert.AreEqual(p3.Z, p3s.Z, 0);
+        Assert.Equal(p3.X, p3s.X, 0);
+        Assert.Equal(p3.Y, p3s.Y, 0);
+        Assert.Equal(p3.Z, p3s.Z, 0);
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test_PrependTransformMatrix_WithPoints()
     {
       for (int i = 0; i < 5; ++i)
@@ -99,13 +99,13 @@ namespace Altaxo.Geometry
 
         var p3s = m3.Transform(p1);
 
-        Assert.AreEqual(p3.X, p3s.X, 0);
-        Assert.AreEqual(p3.Y, p3s.Y, 0);
-        Assert.AreEqual(p3.Z, p3s.Z, 0);
+        Assert.Equal(p3.X, p3s.X, 0);
+        Assert.Equal(p3.Y, p3s.Y, 0);
+        Assert.Equal(p3.Z, p3s.Z, 0);
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test_AppendTransformMatrix_WithVectors()
     {
       for (int i = 0; i < 5; ++i)
@@ -124,13 +124,13 @@ namespace Altaxo.Geometry
 
         var p3s = m3.Transform(p1);
 
-        Assert.AreEqual(p3.X, p3s.X, 0);
-        Assert.AreEqual(p3.Y, p3s.Y, 0);
-        Assert.AreEqual(p3.Z, p3s.Z, 0);
+        Assert.Equal(p3.X, p3s.X, 0);
+        Assert.Equal(p3.Y, p3s.Y, 0);
+        Assert.Equal(p3.Z, p3s.Z, 0);
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test_PrependTransformMatrix_WithVectors()
     {
       for (int i = 0; i < 5; ++i)
@@ -149,9 +149,9 @@ namespace Altaxo.Geometry
 
         var p3s = m3.Transform(p1);
 
-        Assert.AreEqual(p3.X, p3s.X, 0);
-        Assert.AreEqual(p3.Y, p3s.Y, 0);
-        Assert.AreEqual(p3.Z, p3s.Z, 0);
+        Assert.Equal(p3.X, p3s.X, 0);
+        Assert.Equal(p3.Y, p3s.Y, 0);
+        Assert.Equal(p3.Z, p3s.Z, 0);
       }
     }
   }

@@ -109,7 +109,7 @@ namespace MathML
 			get 
 			{
 				XmlNode parent = ParentNode;
-				while(parent != null)
+				while(parent is not null)
 				{
 					if(parent is MathMLMathElement) 
 					{
@@ -239,7 +239,7 @@ namespace MathML
 		/// <returns>The first child node matching the tag name, null otherwise</returns>
 		internal XmlNode SelectChildNode(string tagName)
 		{
-			for(XmlNode node = FirstChild; node != null; node = node.NextSibling)
+			for(XmlNode node = FirstChild; node is not null; node = node.NextSibling)
 			{
 				if(node.Name == tagName)
 				{

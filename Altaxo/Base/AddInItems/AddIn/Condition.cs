@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Xml;
@@ -26,9 +27,9 @@ namespace Altaxo.AddInItems
 {
   public class Condition : ICondition
   {
-    private string name;
-    private Properties properties;
-    private ConditionFailedAction action;
+    private string _name;
+    private Properties _properties;
+    private ConditionFailedAction _action;
 
     public AddIn AddIn { get; private set; }
 
@@ -39,11 +40,11 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return action;
+        return _action;
       }
       set
       {
-        action = value;
+        _action = value;
       }
     }
 
@@ -51,7 +52,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return name;
+        return _name;
       }
     }
 
@@ -59,7 +60,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return properties[key];
+        return _properties[key];
       }
     }
 
@@ -67,28 +68,28 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return properties;
+        return _properties;
       }
     }
 
     public Condition(string name, Properties properties, AddIn addIn)
     {
       AddIn = addIn;
-      this.name = name;
-      this.properties = properties;
-      action = properties.Get("action", ConditionFailedAction.Exclude);
+      this._name = name;
+      this._properties = properties;
+      _action = properties.Get("action", ConditionFailedAction.Exclude);
     }
 
-    public bool IsValid(object parameter)
+    public bool IsValid(object? parameter)
     {
       try
       {
         var addInTree = Altaxo.Current.GetRequiredService<IAddInTree>();
-        return addInTree.ConditionEvaluators[name].IsValid(parameter, this);
+        return addInTree.ConditionEvaluators[_name].IsValid(parameter, this);
       }
       catch (KeyNotFoundException)
       {
-        throw new BaseException("Condition evaluator " + name + " not found!");
+        throw new BaseException("Condition evaluator " + _name + " not found!");
       }
     }
 
@@ -99,11 +100,11 @@ namespace Altaxo.AddInItems
       return new Condition(conditionName, properties, addIn);
     }
 
-    public static ICondition ReadComplexCondition(XmlReader reader, AddIn addIn)
+    public static ICondition? ReadComplexCondition(XmlReader reader, AddIn addIn)
     {
       var properties = Properties.ReadFromAttributes(reader);
       reader.Read();
-      ICondition condition = null;
+      ICondition? condition = null;
       while (reader.Read())
       {
         switch (reader.NodeType)
@@ -128,7 +129,7 @@ namespace Altaxo.AddInItems
         }
       }
 exit:
-      if (condition != null)
+      if (condition is not null)
       {
         ConditionFailedAction action = properties.Get("action", ConditionFailedAction.Exclude);
         condition.Action = action;
@@ -180,7 +181,7 @@ exit:
       return conditions.ToArray();
     }
 
-    public static ConditionFailedAction GetFailedAction(IEnumerable<ICondition> conditionList, object parameter)
+    public static ConditionFailedAction GetFailedAction(IEnumerable<ICondition> conditionList, object? parameter)
     {
       ConditionFailedAction action = ConditionFailedAction.Nothing;
       foreach (ICondition condition in conditionList)

@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Common
 
     private void EhSelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
     {
-      if (null != SelectionChangeCommitted)
+      if (SelectionChangeCommitted is not null)
         SelectionChangeCommitted(_cbChoice.SelectedIndex);
     }
 
@@ -90,7 +90,7 @@ namespace Altaxo.Gui.Common
 
       public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
       {
-        if (null != _parent.TextValidating)
+        if (_parent.TextValidating is not null)
         {
           var cea = new System.ComponentModel.CancelEventArgs();
           _parent.TextValidating((string)value, cea);
@@ -113,9 +113,9 @@ namespace Altaxo.Gui.Common
 
     #region IFreeTextChoiceView
 
-    public event Action<int> SelectionChangeCommitted;
+    public event Action<int>? SelectionChangeCommitted;
 
-    public event Action<string, System.ComponentModel.CancelEventArgs> TextValidating;
+    public event Action<string, System.ComponentModel.CancelEventArgs>? TextValidating;
 
     public void SetDescription(string value)
     {

@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Altaxo.Serialization.AutoUpdates
@@ -41,7 +40,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="isAltaxoCurrentlyStarting">If set to <c>true</c>, Altaxo will be restarted after the installation is done.</param>
     /// <param name="commandLineArgs">Original command line arguments. Can be <c>null</c> when calling this function on shutdown.</param>
     /// <returns>True if the installer program was started. Then Altaxo have to be shut down immediately. Returns <c>false</c> if the installer program was not started.</returns>
-    public bool Run(bool isAltaxoCurrentlyStarting, string[] commandLineArgs)
+    public bool Run(bool isAltaxoCurrentlyStarting, string[]? commandLineArgs)
     {
       var updateSettings = Current.PropertyService.GetValue(Altaxo.Settings.AutoUpdateSettings.PropertyKeyAutoUpdate, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new Altaxo.Settings.AutoUpdateSettings());
 
@@ -51,8 +50,8 @@ namespace Altaxo.Serialization.AutoUpdates
 
       bool loadUnstable = updateSettings.DownloadUnstableVersion;
 
-      FileStream versionFileStream = null;
-      FileStream packageStream = null;
+      FileStream? versionFileStream = null;
+      FileStream? packageStream = null;
 
       // try to lock the version file in the download directory, thus no other process can modify it
       try
@@ -64,10 +63,10 @@ namespace Altaxo.Serialization.AutoUpdates
 
         var info = PackageInfo.GetPresentDownloadedPackage(versionFileStream, downloadFolder, out packageStream);
 
-        if (null == info || null == packageStream)
+        if (info is null || packageStream is null)
           return false;
 
-        var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
+        var entryAssembly = System.Reflection.Assembly.GetEntryAssembly() ?? throw new InvalidOperationException("Unable to get entry assembly");
         var entryAssemblyVersion = entryAssembly.GetName().Version;
 
         if (info.Version <= entryAssemblyVersion)
@@ -86,7 +85,7 @@ namespace Altaxo.Serialization.AutoUpdates
         }
 
         // copy the Updater executable to the download folder
-        var entryAssemblyFolder = Path.GetDirectoryName(entryAssembly.Location);
+        var entryAssemblyFolder = Path.GetDirectoryName(entryAssembly.Location) ?? throw new InvalidOperationException("Unable to get directory of entry assembly");
         var installerFullSrcName = Path.Combine(entryAssemblyFolder, UpdateInstallerFileName);
         var installerFullDestName = Path.Combine(downloadFolder, UpdateInstallerFileName);
         File.Copy(installerFullSrcName, installerFullDestName, true);
@@ -110,7 +109,7 @@ namespace Altaxo.Serialization.AutoUpdates
           updateSettings.InstallationWindowClosingTime,
           isAltaxoCurrentlyStarting ? 1 : 0,
           entryAssembly.Location);
-        if (isAltaxoCurrentlyStarting && commandLineArgs != null && commandLineArgs.Length > 0)
+        if (isAltaxoCurrentlyStarting && commandLineArgs is not null && commandLineArgs.Length > 0)
         {
           foreach (var s in commandLineArgs)
             stb.AppendFormat("\t\"{0}\"", s);
@@ -122,13 +121,16 @@ namespace Altaxo.Serialization.AutoUpdates
         // Start the updater program
         var process = System.Diagnostics.Process.Start(processInfo);
 
-        for (; ; )
+        if (process is not null)
         {
-          // we wait until the update program signals that it has now taken the VersionInfo file
-          if (waitForRemoteStartSignal.WaitOne(100))
-            break;
-          if (process.HasExited)
-            return false; // then something has gone wrong or the user has closed the window
+          for (; ; )
+          {
+            // we wait until the update program signals that it has now taken the VersionInfo file
+            if (waitForRemoteStartSignal.WaitOne(100))
+              break;
+            if (process.HasExited)
+              return false; // then something has gone wrong or the user has closed the window
+          }
         }
 
         return true;
@@ -139,9 +141,9 @@ namespace Altaxo.Serialization.AutoUpdates
       }
       finally
       {
-        if (null != packageStream)
+        if (packageStream is not null)
           packageStream.Close();
-        if (null != versionFileStream)
+        if (versionFileStream is not null)
           versionFileStream.Close();
       }
     }

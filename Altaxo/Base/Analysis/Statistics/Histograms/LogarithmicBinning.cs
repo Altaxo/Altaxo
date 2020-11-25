@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Calc;
 
 namespace Altaxo.Analysis.Statistics.Histograms
@@ -204,7 +203,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <inheritdoc />
     public void CalculateBinPositionsFromSortedList(IReadOnlyList<double> list)
     {
-      if (null == list)
+      if (list is null)
         throw new ArgumentNullException();
       if (list.Count == 0)
         throw new ArgumentException("list is empty");

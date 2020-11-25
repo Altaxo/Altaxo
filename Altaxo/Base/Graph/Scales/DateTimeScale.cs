@@ -22,11 +22,13 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales
 {
+  using System.Diagnostics.CodeAnalysis;
   using Boundaries;
   using Rescaling;
 
@@ -68,9 +70,9 @@ namespace Altaxo.Graph.Scales
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DateTimeScale s = null != o ? (DateTimeScale)o : new DateTimeScale(info);
+        var s = (DateTimeScale?)o ?? new DateTimeScale(info);
 
         s._axisOrg = info.GetDateTime("Org");
         s._axisEnd = info.GetDateTime("End");
@@ -101,9 +103,9 @@ namespace Altaxo.Graph.Scales
         info.AddValue("TickSpacing", s._tickSpacing);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DateTimeScale s = null != o ? (DateTimeScale)o : new DateTimeScale(info);
+        var s = (DateTimeScale?)o ?? new DateTimeScale(info);
 
         s._axisOrg = info.GetDateTime("Org");
         s._axisEnd = info.GetDateTime("End");
@@ -121,15 +123,14 @@ namespace Altaxo.Graph.Scales
 
     #region ICloneable Members
 
-    public override bool CopyFrom(object obj)
+    public DateTimeScale(DateTimeScale from)
     {
-      if (object.ReferenceEquals(this, obj))
-        return true;
+      CopyFrom(from);
+    }
 
-      var from = obj as DateTimeScale;
-      if (null == from)
-        return false;
-
+    [MemberNotNull(nameof(_dataBounds), nameof(_rescaling), nameof(_tickSpacing))]
+    protected void CopyFrom(DateTimeScale from)
+    {
       using (var suspendToken = SuspendGetToken())
       {
         _axisOrg = from._axisOrg;
@@ -142,15 +143,30 @@ namespace Altaxo.Graph.Scales
         EhSelfChanged(EventArgs.Empty);
         suspendToken.Resume();
       }
-      return true;
+    }
+
+    public override bool CopyFrom(object obj)
+    {
+      if (ReferenceEquals(this, obj))
+        return true;
+
+      if (obj is DateTimeScale from)
+      {
+        CopyFrom(from);
+        return true;
+      }
+
+      return false;
     }
 
     /// <summary>
     /// Constructor for deserialization only.
     /// </summary>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected DateTimeScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     public DateTimeScale()
     {
@@ -160,10 +176,7 @@ namespace Altaxo.Graph.Scales
       UpdateTicksAndOrgEndUsingRescalingObject();
     }
 
-    public DateTimeScale(DateTimeScale from)
-    {
-      CopyFrom(from);
-    }
+
 
     /// <summary>
     /// Creates a copy of the axis.
@@ -178,12 +191,12 @@ namespace Altaxo.Graph.Scales
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataBounds)
-        yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null, "DataBounds");
-      if (null != _rescaling)
-        yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null, "Rescaling");
-      if (null != _tickSpacing)
-        yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null, "TickSpacing");
+      if (_dataBounds is not null)
+        yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null!, "DataBounds");
+      if (_rescaling is not null)
+        yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null!, "Rescaling");
+      if (_tickSpacing is not null)
+        yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null!, "TickSpacing");
     }
 
     /// <summary>
@@ -261,7 +274,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
-    protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+    protected override string? SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
     {
       var o = (DateTime)org;
       var e = (DateTime)end;
@@ -316,7 +329,7 @@ namespace Altaxo.Graph.Scales
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
         if (!(value is Ticks.DateTimeTickSpacing))
           throw new ArgumentException("Value must be of type DateTimeTickSpacing");
@@ -376,7 +389,7 @@ namespace Altaxo.Graph.Scales
       _rescaling.OnUserZoomed(newZoomOrg, newZoomEnd);
     }
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, DataBounds)) // Data bounds have changed
       {
@@ -425,7 +438,7 @@ namespace Altaxo.Graph.Scales
       DateTime org = Rescaling.ResultingOrg, end = Rescaling.ResultingEnd;
       AdjustResultingOrgEndToValidValues(ref org, ref end);
 
-      if (null == TickSpacing)
+      if (TickSpacing is null)
       {
         SetScaleOrgEnd(org, end);
       }

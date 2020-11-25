@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -108,7 +109,7 @@ namespace Altaxo.Graph.Scales.Ticks
       return result;
     }
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       _updateSequenceNumber = _nextUpdateSequenceNumber++;
       return base.HandleHighPriorityChildChangeCases(sender, ref e);

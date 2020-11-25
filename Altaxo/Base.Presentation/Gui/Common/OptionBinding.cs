@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable disable warnings
 using System;
 using System.ComponentModel;
 using System.Globalization;
@@ -93,16 +94,16 @@ namespace Altaxo.Gui.Common
     {
       var service = (IProvideValueTarget)provider.GetService(typeof(IProvideValueTarget));
 
-      if (service == null)
+      if (service is null)
         return null;
 
       target = service.TargetObject as DependencyObject;
       dp = service.TargetProperty as DependencyProperty;
 
-      if (target == null || dp == null)
+      if (target is null || dp is null)
         return null;
 
-      if (FullPropertyName != null)
+      if (FullPropertyName is not null)
       {
         string[] name = FullPropertyName.Split('.');
         var typeResolver = provider.GetService(typeof(IXamlTypeResolver)) as IXamlTypeResolver;
@@ -111,14 +112,14 @@ namespace Altaxo.Gui.Common
       }
 
       propertyInfo = propertyDeclaringType.GetProperty(propertyName);
-      if (propertyInfo != null)
+      if (propertyInfo is not null)
       {
         isStatic = (propertyInfo as PropertyInfo).GetGetMethod().IsStatic;
       }
       else
       {
         propertyInfo = propertyDeclaringType.GetField(propertyName);
-        if (propertyInfo != null)
+        if (propertyInfo is not null)
         {
           isStatic = (propertyInfo as FieldInfo).IsStatic;
         }
@@ -130,7 +131,7 @@ namespace Altaxo.Gui.Common
 
       IOptionBindingContainer container = TryFindContainer(target as FrameworkElement);
 
-      if (container == null)
+      if (container is null)
         throw new InvalidOperationException("This extension can be used in OptionPanels only!");
 
       container.AddBinding(this);
@@ -165,17 +166,17 @@ namespace Altaxo.Gui.Common
     private static object FetchInstance(Type type)
     {
       PropertyInfo instanceProp = type.GetProperty("Instance", type);
-      if (instanceProp != null)
+      if (instanceProp is not null)
         return instanceProp.GetValue(null, null);
       FieldInfo instanceField = type.GetField("Instance");
-      if (instanceField != null)
+      if (instanceField is not null)
         return instanceField.GetValue(null);
       throw new ArgumentException("Type " + type.FullName + " has no 'Instance' property. Only singletons can be used with OptionBinding.");
     }
 
     private object ConvertOnDemand(object result, Type returnType, bool convertBack = false)
     {
-      if (Converter != null)
+      if (Converter is not null)
       {
         if (convertBack)
           result = Converter.ConvertBack(result, returnType, ConverterParameter, ConverterCulture ?? CultureInfo.CurrentCulture);
@@ -202,10 +203,10 @@ namespace Altaxo.Gui.Common
 
     private IOptionBindingContainer TryFindContainer(DependencyObject start)
     {
-      if (start == null)
+      if (start is null)
         return null;
 
-      while (start != null && !(start is IOptionBindingContainer))
+      while (start is not null && !(start is IOptionBindingContainer))
         start = LogicalTreeHelper.GetParent(start);
 
       return start as IOptionBindingContainer;
@@ -222,7 +223,7 @@ namespace Altaxo.Gui.Common
       if (propertyInfo is FieldInfo)
         returnType = (propertyInfo as FieldInfo).FieldType;
 
-      if (returnType == null)
+      if (returnType is null)
         return false;
 
       value = ConvertOnDemand(value, returnType, true);

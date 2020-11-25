@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using Altaxo.Graph.Graph3D;
 
@@ -98,7 +99,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       if (initData)
       {
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.GridPosX = DocToUserPosition(_doc.GridPosX);
         _view.GridPosY = DocToUserPosition(_doc.GridPosY);

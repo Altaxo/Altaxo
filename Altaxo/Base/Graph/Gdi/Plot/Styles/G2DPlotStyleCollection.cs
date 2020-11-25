@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,6 +31,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Main;
   using Collections;
@@ -67,7 +69,7 @@ info.CommitArray();
 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         int count = info.OpenArray();
         var array = new IG2DPlotStyle[count];
@@ -75,7 +77,7 @@ info.CommitArray();
           array[i] = (IG2DPlotStyle)info.GetValue("e", null);
         info.CloseArray(count);
 
-        if (o == null)
+        if (o is null)
         {
           return new G2DPlotStyleCollection(array);
         }
@@ -105,9 +107,9 @@ info.CommitArray();
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (G2DPlotStyleCollection)o ?? new G2DPlotStyleCollection();
+        var s = (G2DPlotStyleCollection?)o ?? new G2DPlotStyleCollection();
 
         int count = info.OpenArray();
         for (int i = 0; i < count; i++)
@@ -133,10 +135,13 @@ info.CommitArray();
 
     #region Copying
 
+    [MemberNotNull(nameof(_innerList))]
     public void CopyFrom(G2DPlotStyleCollection from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       using (var suspendToken = SuspendGetToken())
       {
@@ -160,7 +165,7 @@ info.CommitArray();
     /// are tried to reuse from the old styles. If this is not possible, the data references will be left empty.</returns>
     public bool CopyFromTemplateCollection(G2DPlotStyleCollection from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return true;
 
       using (var suspendToken = SuspendGetToken())
@@ -200,10 +205,10 @@ info.CommitArray();
     /// <inheritdoc/>
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       var from = obj as G2DPlotStyleCollection;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from);
         return true;
@@ -214,10 +219,10 @@ info.CommitArray();
     /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       var from = obj as G2DPlotStyleCollection;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from);
         return true;
@@ -252,12 +257,12 @@ info.CommitArray();
       _innerList = new List<IG2DPlotStyle>();
     }
 
-    public G2DPlotStyleCollection(IG2DPlotStyle[] styles)
+    public G2DPlotStyleCollection(IG2DPlotStyle?[] styles)
     {
       _innerList = new List<IG2DPlotStyle>();
       for (int i = 0; i < styles.Length; ++i)
-        if (styles[i] != null)
-          Add(styles[i], false);
+        if (styles[i] is { } style)
+          Add(style, false);
     }
 
     public G2DPlotStyleCollection(G2DPlotStyleCollection from)
@@ -321,11 +326,11 @@ info.CommitArray();
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _innerList)
+      if (_innerList is not null)
       {
         for (int i = _innerList.Count - 1; i >= 0; --i)
         {
-          if (null != _innerList[i])
+          if (_innerList[i] is not null)
             yield return new Main.DocumentNodeAndName(_innerList[i], "Style" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
       }
@@ -333,12 +338,12 @@ info.CommitArray();
 
     public IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      IReadableColumn? Column, // the column as it was at the time of this call
+      string? ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
-      return null; // no additionally used columns
+      yield break; // no additionally used columns
     }
 
     public IG2DPlotStyle this[int i]
@@ -372,7 +377,7 @@ info.CommitArray();
 
     protected void Add(IG2DPlotStyle toadd, bool withReorganizationAndEvents)
     {
-      if (toadd != null)
+      if (toadd is not null)
       {
         _innerList.Add(toadd);
         toadd.ParentObject = this;
@@ -386,7 +391,7 @@ info.CommitArray();
 
     protected void Replace(IG2DPlotStyle ps, int idx, bool withReorganizationAndEvents)
     {
-      if (ps != null)
+      if (ps is not null)
       {
         _innerList[idx] = ps;
         ps.ParentObject = this;
@@ -400,7 +405,7 @@ info.CommitArray();
 
     public void AddRange(IG2DPlotStyle[] toadd)
     {
-      if (toadd != null)
+      if (toadd is not null)
       {
         for (int i = 0; i < toadd.Length; i++)
         {
@@ -414,7 +419,7 @@ info.CommitArray();
 
     public void Insert(int whichposition, IG2DPlotStyle toinsert)
     {
-      if (toinsert != null)
+      if (toinsert is not null)
       {
         _innerList.Insert(whichposition, toinsert);
         toinsert.ParentObject = this;
@@ -425,7 +430,7 @@ info.CommitArray();
 
     public void Clear()
     {
-      if (_innerList != null)
+      if (_innerList is not null)
       {
         _innerList.Clear();
 
@@ -450,14 +455,14 @@ info.CommitArray();
       EhSelfChanged(EventArgs.Empty);
     }
 
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = PlotItemStyleChangedEventArgs.Empty;
     }
 
-    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
+    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
-      if (null == pdata)
+      if (pdata is null)
         throw new ArgumentNullException(nameof(pdata));
 
       for (int i = _innerList.Count - 1; i >= 0; i--)

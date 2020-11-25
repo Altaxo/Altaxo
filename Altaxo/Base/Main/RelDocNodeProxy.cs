@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Main
 {
@@ -40,7 +42,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Holds a weak reference to the docNode being proxied.
     /// </summary>
-    private WeakReference _docNodeRef;
+    private WeakReference? _docNodeRef;
 
     /// <summary>
     /// The relative path from our parent object to the docNode being proxied.
@@ -51,17 +53,17 @@ namespace Altaxo.Main
     /// Weak handler that is called when the docNode has changed, or if there is no resolved docNode, when the watched node changed.
     /// </summary>
     [NonSerialized]
-    protected WeakEventHandler _weakDocNodeChangedHandler;
+    protected WeakEventHandler? _weakDocNodeChangedHandler;
 
     /// <summary>
     /// Weak handler that is called when the docNode has a TunneledEvent, or if there is no resolved docNode, when the watched node has a Tunneled event.
     /// </summary>	[NonSerialized]
-    protected WeakActionHandler<object, object, TunnelingEventArgs> _weakDocNodeTunneledEventHandler;
+    protected WeakActionHandler<object, object, TunnelingEventArgs>? _weakDocNodeTunneledEventHandler;
 
     /// <summary>
     /// Fired if the document instance changed, (from null to some value, from a value to null, or from a value to another value).
     /// </summary>
-    public event EventHandler<Main.InstanceChangedEventArgs> DocumentInstanceChanged;
+    public event EventHandler<Main.InstanceChangedEventArgs>? DocumentInstanceChanged;
 
     #endregion Members
 
@@ -89,17 +91,17 @@ namespace Altaxo.Main
                 */
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (!(parent is Main.IDocumentNode))
           throw new ArgumentException("Parent should be a valid document node");
 
-        var docNodePath = info.GetValue("Node", null) as RelativeDocumentPath;
+        var docNodePath = info.GetValueOrNull("Node", null) as RelativeDocumentPath;
 
-        if (null == docNodePath || docNodePath.IsIdentity)
-          return null;
+        if (docNodePath is null)
+          docNodePath = RelativeDocumentPath.IdentityPath;
 
-        var s = (RelDocNodeProxy)o ?? new RelDocNodeProxy(docNodePath, (IDocumentNode)parent);
+        var s = (RelDocNodeProxy?)o ?? new RelDocNodeProxy(docNodePath, (IDocumentNode)parent);
 
         // create a callback to resolve the instance as early as possible
         info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
@@ -117,32 +119,31 @@ namespace Altaxo.Main
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RelDocNodeProxy)obj;
-        if (!(s._parent != null))
+        if (s._parent is null)
           throw new InvalidProgramException();
-        Main.RelativeDocumentPath path;
-        var docNode = s.InternalDocNode;
-        if (null != docNode)
+        Main.RelativeDocumentPath path = s._docNodePath;
+
+        if (s.InternalDocNode is { } docNode &&
+             Main.RelativeDocumentPath.GetRelativePathFromTo(s._parent, docNode) is { } newPath)
         {
-          path = Main.RelativeDocumentPath.GetRelativePathFromTo(s._parent, docNode);
-        }
-        else
-        {
-          path = s._docNodePath;
+          path = newPath;
         }
         info.AddValue("Node", path);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (!(parent is Main.IDocumentNode))
           throw new ArgumentException("Parent should be a valid document node");
 
-        var docNodePath = (Main.RelativeDocumentPath)info.GetValue("Node", null);
+        var docNodePath = info.GetValueOrNull<Main.RelativeDocumentPath>("Node", null);
 
-        if (null == docNodePath || docNodePath.IsIdentity)
-          return null;
+        if (docNodePath is null)
+        {
+          docNodePath = RelativeDocumentPath.IdentityPath;
+        }
 
-        var s = (RelDocNodeProxy)o ?? new RelDocNodeProxy(docNodePath, (Main.IDocumentNode)parent);
+        var s = (RelDocNodeProxy?)o ?? new RelDocNodeProxy(docNodePath, (Main.IDocumentNode)parent);
 
         // create a callback to resolve the instance as early as possible
         info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
@@ -153,7 +154,7 @@ namespace Altaxo.Main
 
     private void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
     {
-      if (Document != null || isFinallyCall)
+      if (Document is not null || isFinallyCall)
         info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhXmlDeserializationFinished);
     }
 
@@ -173,9 +174,9 @@ namespace Altaxo.Main
     /// </exception>
     protected RelDocNodeProxy(Main.RelativeDocumentPath docNodePath, Main.IDocumentNode parentNode)
     {
-      if (null == docNodePath)
+      if (docNodePath is null)
         throw new ArgumentNullException(nameof(docNodePath));
-      if (null == parentNode)
+      if (parentNode is null)
         throw new ArgumentNullException(nameof(parentNode));
 
       _parent = parentNode;
@@ -184,18 +185,20 @@ namespace Altaxo.Main
 
     public RelDocNodeProxy(Main.IDocumentLeafNode docNode, Main.IDocumentNode parentNode)
     {
-      if (null == docNode)
+      if (docNode is null)
         throw new ArgumentNullException(nameof(docNode));
-      if (null == parentNode)
+      if (parentNode is null)
         throw new ArgumentNullException(nameof(parentNode));
       var docNodeRoot = Main.AbsoluteDocumentPath.GetRootNode(docNode);
       var parentNodeRoot = Main.AbsoluteDocumentPath.GetRootNode(parentNode);
       if (!object.ReferenceEquals(docNodeRoot, parentNodeRoot))
         throw new ArgumentException(string.Format("parentNode (type: {0}) and docNode (type: {1}) have no common root. This suggests that one of the items is not rooted. Please report this error! The type of the parent node's root is {2}. The type of the docNode's root is {3}.", parentNode.GetType(), docNode.GetType(), parentNodeRoot.GetType(), docNodeRoot.GetType()));
 
+      _docNodePath = null!;
+
       InternalSetDocNode(docNode, parentNode);
 
-      if (!(_docNodePath != null))
+      if (_docNodePath is null)
         throw new InvalidProgramException(); // because we tested above that both nodes have a common root
 
       _parent = parentNode;
@@ -213,7 +216,7 @@ namespace Altaxo.Main
       _parent = parentNode;
       _docNodePath = from._docNodePath.Clone();
 
-      if (!copyPathOnly && null != from.Document)
+      if (!copyPathOnly && from.Document is not null)
         InternalSetDocNode(from.Document, parentNode);
 
       ResolveDocumentObject();
@@ -241,6 +244,7 @@ namespace Altaxo.Main
     /// Gets/sets the document node that is held by this proxy. If the stored doc node is null, it is tried to resolve the stored document path.
     /// If that fails too, null is returned.
     /// </summary>
+    [MaybeNull]
     public IDocumentLeafNode Document
     {
       get
@@ -251,7 +255,7 @@ namespace Altaxo.Main
       {
         if (!IsValidDocument(value))
           throw new ArgumentException("This type of document is not allowed for the proxy of type " + GetType().ToString());
-        if (null == _parent)
+        if (_parent is null)
           throw new InvalidOperationException("Parent of this node must be set in order to set the docnode.");
         InternalSetDocNode(value, _parent);
       }
@@ -293,23 +297,15 @@ namespace Altaxo.Main
     /// </summary>
     protected void ClearDocNode()
     {
-      if (_docNodeRef == null)
+      if (_docNodeRef is null)
         return;
 
       OnBeforeClearDocNode();
 
-      if (null != _weakDocNodeTunneledEventHandler)
-      {
-        _weakDocNodeTunneledEventHandler.Remove();
-        _weakDocNodeTunneledEventHandler = null;
-      }
-
-      if (null != _weakDocNodeChangedHandler)
-      {
-        _weakDocNodeChangedHandler.Remove();
-        _weakDocNodeChangedHandler = null;
-      }
-
+      _weakDocNodeTunneledEventHandler?.Remove();
+      _weakDocNodeTunneledEventHandler = null;
+      _weakDocNodeChangedHandler?.Remove();
+      _weakDocNodeChangedHandler = null;
       _docNodeRef = null;
     }
 
@@ -318,13 +314,13 @@ namespace Altaxo.Main
     /// </summary>
     protected void ClearWatch()
     {
-      if (null != _weakDocNodeTunneledEventHandler)
+      if (_weakDocNodeTunneledEventHandler is not null)
       {
         _weakDocNodeTunneledEventHandler.Remove();
         _weakDocNodeTunneledEventHandler = null;
       }
 
-      if (null != _weakDocNodeChangedHandler)
+      if (_weakDocNodeChangedHandler is not null)
       {
         _weakDocNodeChangedHandler.Remove();
         _weakDocNodeChangedHandler = null;
@@ -341,32 +337,28 @@ namespace Altaxo.Main
     {
       if (!IsValidDocument(value))
         throw new ArgumentException("This type of document is not allowed for the proxy of type " + GetType().ToString());
-      if (null == parentNode)
+      if (parentNode is null)
         throw new InvalidOperationException("Parent of this node must be set in order to set the docnode.");
 
       var oldValue = InternalDocNode;
       if (object.ReferenceEquals(oldValue, value))
         return; // Nothing to do
 
-      if (null != _weakDocNodeChangedHandler)
-      {
-        _weakDocNodeChangedHandler.Remove();
-        _weakDocNodeChangedHandler = null;
-      }
-      if (null != _weakDocNodeTunneledEventHandler)
-      {
-        _weakDocNodeTunneledEventHandler.Remove();
-        _weakDocNodeTunneledEventHandler = null;
-      }
+      _weakDocNodeChangedHandler?.Remove();
+      _weakDocNodeChangedHandler = null;
+      _weakDocNodeTunneledEventHandler?.Remove();
+      _weakDocNodeTunneledEventHandler = null;
 
-      if (null != oldValue)
+      if (oldValue is not null)
       {
         ClearDocNode();
       }
 
       var newPath = RelativeDocumentPath.GetRelativePathFromTo(parentNode, value);
-      if (null != newPath)
+      if (newPath is not null)
+      {
         InternalDocumentPath = newPath; // especially in dispose situations, the new path can be null. In this case we leave the path as it was
+      }
 
       _docNodeRef = new WeakReference(value);
 
@@ -376,7 +368,7 @@ namespace Altaxo.Main
 
       value.TunneledEvent += (_weakDocNodeTunneledEventHandler = new WeakActionHandler<object, object, TunnelingEventArgs>(EhDocNode_TunneledEvent, value, nameof(value.TunneledEvent)));
 
-      if (null != _docNodePath && !_docNodePath.IsIdentity) // it does not make sense to watch the changed event of our target node is our parent because the parent can handle the Changed event itself
+      if (_docNodePath is not null && !_docNodePath.IsIdentity) // it does not make sense to watch the changed event of our target node is our parent because the parent can handle the Changed event itself
       {
         value.Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhDocNode_Changed, value, nameof(value.Changed)));
       }
@@ -392,11 +384,11 @@ namespace Altaxo.Main
     /// <value>
     /// The internal document node.
     /// </value>
-    protected IDocumentLeafNode InternalDocNode
+    protected IDocumentLeafNode? InternalDocNode
     {
       get
       {
-        return (_docNodeRef == null ? null : _docNodeRef.Target) as IDocumentLeafNode;
+        return (_docNodeRef?.Target) as IDocumentLeafNode;
       }
     }
 
@@ -406,11 +398,11 @@ namespace Altaxo.Main
     /// <value>
     /// The internal document node.
     /// </value>
-    protected virtual IDocumentLeafNode InternalDocumentObject
+    protected virtual IDocumentLeafNode? InternalDocumentObject
     {
       get
       {
-        return (_docNodeRef == null ? null : _docNodeRef.Target) as IDocumentLeafNode;
+        return (_docNodeRef?.Target) as IDocumentLeafNode;
       }
     }
 
@@ -422,26 +414,25 @@ namespace Altaxo.Main
       }
       set
       {
-        if (null == value)
-          throw new ArgumentNullException(nameof(value));
-
-        _docNodePath = value;
+        _docNodePath = value ?? throw new ArgumentNullException(nameof(value));
       }
     }
 
-    protected virtual IDocumentLeafNode ResolveDocumentObject()
+    protected virtual IDocumentLeafNode? ResolveDocumentObject()
     {
       if (IsDisposeInProgress)
         return null;
+      if (_parent is null)
+        throw new InvalidProgramException($"{nameof(_parent)} should not be null here.");
 
-      if (!(_docNodePath != null))
+      if (_docNodePath is null)
         throw new InvalidProgramException();
 
       var docNode = InternalDocNode;
-      if (docNode == null)
+      if (docNode is null)
       {
         var node = Main.RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, _parent, out var wasCompletelyResolved);
-        if (null == node)
+        if (node is null)
         {
           // this can happen only if we dived to deep with our relative path, in this case we should use the root node, which should be of type AltaxoDocument
           node = Altaxo.Main.AbsoluteDocumentPath.GetRootNode(_parent);
@@ -476,14 +467,16 @@ namespace Altaxo.Main
     {
       if (IsDisposeInProgress)
         return;
+      if (_parent is null)
+        throw new InvalidProgramException($"{nameof(_parent)} should not be null here.");
+
 
 #if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("RelDocNodeProxy.EhDocNode_TunneledEvent: sender={0}, source={1} e={2}", sender, source, e);
 #endif
 
       bool shouldFireChangedEvent = false;
-      var senderAsNode = source as IDocumentLeafNode;
-      if (!(senderAsNode != null))
+      if (!(source is IDocumentLeafNode senderAsNode))
         throw new InvalidProgramException();
 
       if (e is DisposeEventArgs)
@@ -514,9 +507,11 @@ namespace Altaxo.Main
       }
       else if (e is DocumentPathChangedEventArgs)
       {
-        if (null != InternalDocNode)
+        if (InternalDocNode is not null)
         {
-          InternalDocumentPath = RelativeDocumentPath.GetRelativePathFromTo(_parent, InternalDocNode);
+          var path = RelativeDocumentPath.GetRelativePathFromTo(_parent, InternalDocNode);
+          if (!(path is null))
+            InternalDocumentPath = path;
         }
 
         shouldFireChangedEvent = true;
@@ -532,18 +527,22 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void EhDocNode_Changed(object sender, EventArgs e)
+    private void EhDocNode_Changed(object? sender, EventArgs e)
     {
       if (IsDisposeInProgress)
         return;
+      if (_parent is null)
+        throw new InvalidProgramException($"{nameof(_parent)} should not be null here.");
+
 
 #if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("DocNodeProxy.EhDocNode_Changed: sender={0}, e={1}", sender, e);
 #endif
 
-      if (null != InternalDocNode)
+      if (InternalDocNode is not null)
       {
-        _docNodePath = RelativeDocumentPath.GetRelativePathFromTo(_parent, InternalDocNode);
+        if (RelativeDocumentPath.GetRelativePathFromTo(_parent, InternalDocNode) is { } validPath)
+          _docNodePath = validPath;
       }
 
       EhSelfChanged(EventArgs.Empty);
@@ -559,15 +558,15 @@ namespace Altaxo.Main
     /// <param name="node">The node to watch.</param>
     protected virtual void SetWatchOnNode(IDocumentLeafNode node)
     {
-      if (null == node)
+      if (node is null)
         throw new ArgumentNullException(nameof(node));
 
-      if (null != _weakDocNodeChangedHandler)
+      if (_weakDocNodeChangedHandler is not null)
       {
         _weakDocNodeChangedHandler.Remove();
         _weakDocNodeChangedHandler = null;
       }
-      if (null != _weakDocNodeTunneledEventHandler)
+      if (_weakDocNodeTunneledEventHandler is not null)
       {
         _weakDocNodeTunneledEventHandler.Remove();
         _weakDocNodeTunneledEventHandler = null;
@@ -591,15 +590,16 @@ namespace Altaxo.Main
     {
       if (IsDisposeInProgress)
         return;
+      if (_parent is null)
+        throw new InvalidProgramException($"{nameof(_parent)} should not be null here.");
 
-      if (!(_docNodeRef == null))
-        throw new InvalidProgramException();
-      var senderAsDocNode = sender as IDocumentLeafNode;
-      var sourceAsDocNode = source as IDocumentLeafNode;
 
-      if (!(senderAsDocNode != null))
+      if (!(_docNodeRef is null))
         throw new InvalidProgramException();
-      if (!(sourceAsDocNode != null))
+
+      if (!(sender is IDocumentLeafNode senderAsDocNode))
+        throw new InvalidProgramException();
+      if (!(source is IDocumentLeafNode sourceAsDocNode))
         throw new InvalidProgramException();
 
       // then we try to resolve the path again
@@ -610,7 +610,7 @@ namespace Altaxo.Main
 #endif
 
         var node = RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, sourceAsDocNode, out var wasResolvedCompletely);
-        if (null == node)
+        if (node is null)
           throw new InvalidProgramException(nameof(node) + " should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
 
         if (wasResolvedCompletely)
@@ -635,24 +635,26 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void EhWatchedNode_Changed(object sender, EventArgs e)
+    private void EhWatchedNode_Changed(object? sender, EventArgs e)
     {
       if (IsDisposeInProgress)
         return;
+      if (_parent is null)
+        throw new InvalidProgramException($"{nameof(_parent)} should not be null here.");
+
 
 #if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_Changed: sender={0}, e={1}", sender, e);
 #endif
 
-      if (!(_docNodeRef == null))
+      if (!(_docNodeRef is null))
         throw new InvalidProgramException();
-      var senderAsDocNode = sender as IDocumentLeafNode;
-      if (!(senderAsDocNode != null))
+      if (!(sender is IDocumentLeafNode senderAsDocNode))
         throw new InvalidProgramException();
 
 
       var node = RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsDocNode, out var wasResolvedCompletely);
-      if (null == node)
+      if (node is null)
         throw new InvalidProgramException("node should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
 
       if (wasResolvedCompletely)
@@ -674,7 +676,7 @@ namespace Altaxo.Main
 
     #region Disposing, event handling of our own instance
 
-    public override IDocumentNode ParentObject
+    public override IDocumentNode? ParentObject
     {
       get
       {
@@ -682,7 +684,7 @@ namespace Altaxo.Main
       }
       set
       {
-        if (null != _parent && null != value && !object.ReferenceEquals(_parent, value))
+        if (_parent is not null && value is not null && !object.ReferenceEquals(_parent, value))
           throw new InvalidOperationException("A RelDocNodeProxy's parent should never change.");
 
         base.ParentObject = value;
@@ -696,36 +698,36 @@ namespace Altaxo.Main
     /// <param name="isDisposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
     protected override void Dispose(bool isDisposing)
     {
-      if (null != _weakDocNodeChangedHandler)
-      {
-        _weakDocNodeChangedHandler.Remove();
-        _weakDocNodeChangedHandler = null;
-      }
-      if (null != _weakDocNodeTunneledEventHandler)
-      {
-        _weakDocNodeTunneledEventHandler.Remove();
-        _weakDocNodeTunneledEventHandler = null;
-      }
+      _weakDocNodeChangedHandler?.Remove();
+      _weakDocNodeChangedHandler = null;
+      _weakDocNodeTunneledEventHandler?.Remove();
+      _weakDocNodeTunneledEventHandler = null;
       _docNodeRef = null;
 
 #if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("DocNodeProxy.Dispose, path was >>>{0}<<<", _docNodePath);
 #endif
 
-      _docNodePath = null;
+      _docNodePath = RelativeDocumentPath.IdentityPath;
 
       base.Dispose(isDisposing);
     }
 
     public override void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
     {
-      // since we deal with relative path, we have to watch changes to our path too
-      if (e is Main.DocumentPathChangedEventArgs)
+      if (!IsDisposeInProgress)
       {
-        var node = InternalDocNode;
-        if (null != node)
+        if (_parent is null)
+          throw new InvalidProgramException($"{nameof(_parent)} should not be null here.");
+
+        // since we deal with relative path, we have to watch changes to our path too
+        if (e is Main.DocumentPathChangedEventArgs)
         {
-          _docNodePath = RelativeDocumentPath.GetRelativePathFromTo(_parent, node);
+          if (InternalDocNode is { } node)
+          {
+            if (RelativeDocumentPath.GetRelativePathFromTo(_parent, node) is { } validPath)
+              _docNodePath = validPath;
+          }
         }
       }
 
@@ -738,9 +740,9 @@ namespace Altaxo.Main
     /// </summary>
     protected override void OnChanged(EventArgs e)
     {
-      if (e is Main.InstanceChangedEventArgs && null != DocumentInstanceChanged)
+      if (e is Main.InstanceChangedEventArgs icea)
       {
-        DocumentInstanceChanged(this, (Main.InstanceChangedEventArgs)e); // fire this event if somebody has subscribed to it
+        DocumentInstanceChanged?.Invoke(this, icea); // fire this event if somebody has subscribed to it
       }
 
       base.OnChanged(e);

@@ -50,7 +50,7 @@ namespace MathML
 			current = parent is MathMLApplyElement ? parent.FirstChild.NextSibling : parent.FirstChild;
 
 			// move the node the the first VALID position
-			while (current != null && InvalidType(current))
+			while (current is not null && InvalidType(current))
 			{
 				current = current.NextSibling; 
 			} 
@@ -72,15 +72,15 @@ namespace MathML
 			{ 
 				MoveFirst();
 			}
-			else if(current != null)
+			else if(current is not null)
 			{
 				do 
 				{ 
 					current = current.NextSibling; 
 				} 
-				while (current != null && InvalidType(current));
+				while (current is not null && InvalidType(current));
 			}
-			return current != null;
+			return current is not null;
 		}
 
 		/// <summary>
@@ -109,7 +109,7 @@ namespace MathML
 			current = parent is MathMLApplyElement ? parent.FirstChild.NextSibling : parent.FirstChild;
 
 			// move the node the the first VALID position
-			while (current != null && InvalidType(current))
+			while (current is not null && InvalidType(current))
 			{
 				current = current.NextSibling; 
 			} 

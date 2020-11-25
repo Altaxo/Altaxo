@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Main
@@ -46,7 +47,7 @@ namespace Altaxo.Main
     /// <value>
     /// The old name of the instance that was renamed.
     /// </value>
-    public string OldName { get; private set; }
+    public string? OldName { get; private set; }
 
     /// <summary>
     /// Gets the new name of the instance that was renamed.
@@ -54,7 +55,7 @@ namespace Altaxo.Main
     /// <value>
     /// The new name of the instance that was renamed.
     /// </value>
-    public string NewName { get; private set; }
+    public string? NewName { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NameChangedEventArgs"/> class.
@@ -62,7 +63,7 @@ namespace Altaxo.Main
     /// <param name="source">The source of the event, i.e. the instance whose name has changed.</param>
     /// <param name="oldName">The old name of that instance.</param>
     /// <param name="newName">The new name of that instance.</param>
-    public NameChangedEventArgs(object source, string oldName, string newName)
+    public NameChangedEventArgs(object source, string? oldName, string? newName)
     {
       Source = source;
       OldName = oldName;

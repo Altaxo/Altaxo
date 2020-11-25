@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -39,7 +40,7 @@ namespace Altaxo.Gui.AddInItems
       CommandParameter = caller;
 
       cmd = CommandWrapper.Unwrap(Command) as ICheckableMenuCommand;
-      if (cmd != null)
+      if (cmd is not null)
       {
         isCheckedChangedHandler = cmd_IsCheckedChanged;
         cmd.IsCheckedChanged += isCheckedChangedHandler;
@@ -54,7 +55,7 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
-    private void cmd_IsCheckedChanged(object sender, EventArgs e)
+    private void cmd_IsCheckedChanged(object? sender, EventArgs e)
     {
       IsChecked = cmd.IsChecked(_caller);
     }

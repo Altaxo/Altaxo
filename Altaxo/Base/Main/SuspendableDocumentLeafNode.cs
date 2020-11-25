@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -107,7 +108,7 @@ namespace Altaxo.Main
     {
       if (AccumulatedEventData_HasZeroOrOneEventArg(out var singleArg)) // we have a single event arg accumulated
       {
-        if (null == singleArg) // no events during suspended state
+        if (singleArg is null) // no events during suspended state
         {
           // nothing to do
         }
@@ -116,7 +117,7 @@ namespace Altaxo.Main
           AccumulatedEventData_Clear();
 
           var parent = _parent as Main.IChildChangedEventSink;
-          if (null != parent)
+          if (parent is not null)
           {
             parent.EhChildChanged(this, singleArg);
           }
@@ -136,7 +137,7 @@ namespace Altaxo.Main
         AccumulatedEventData_Clear();
 
         var parent = _parent as Main.IChildChangedEventSink;
-        if (null != parent)
+        if (parent is not null)
         {
           foreach (var eventArg in accumulatedEvents)
             parent.EhChildChanged(this, eventArg);
@@ -188,7 +189,7 @@ namespace Altaxo.Main
       if (!IsSuspended)
       {
         // Notify parent
-        if (null != _parent && !_parent.IsDisposeInProgress)
+        if (_parent is not null && !_parent.IsDisposeInProgress)
         {
           _parent.EhChildChanged(this, e); // parent may change our suspend state
         }
@@ -210,7 +211,7 @@ namespace Altaxo.Main
 
     private class SuspendToken : ISuspendToken
     {
-      private SuspendableDocumentLeafNode _parent;
+      private SuspendableDocumentLeafNode? _parent;
 
       internal SuspendToken(SuspendableDocumentLeafNode parent)
       {
@@ -242,8 +243,8 @@ namespace Altaxo.Main
       /// </summary>
       public void ResumeSilently()
       {
-        var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentLeafNode>(ref _parent, null);
-        if (parent != null)
+        var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentLeafNode?>(ref _parent, null);
+        if (parent is not null)
         {
           int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
 
@@ -286,10 +287,10 @@ namespace Altaxo.Main
 
       public void Dispose()
       {
-        var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentLeafNode>(ref _parent, null);
-        if (parent != null)
+        var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentLeafNode?>(ref _parent, null);
+        if (parent is not null)
         {
-          Exception exceptionInAboutToBeResumed = null;
+          Exception? exceptionInAboutToBeResumed = null;
           if (1 == parent._suspendLevel)
           {
             try
@@ -315,7 +316,7 @@ namespace Altaxo.Main
             }
           }
 
-          if (null != exceptionInAboutToBeResumed)
+          if (exceptionInAboutToBeResumed is not null)
             throw exceptionInAboutToBeResumed;
         }
       }
@@ -327,7 +328,7 @@ namespace Altaxo.Main
       public IDisposable ResumeCompleteTemporarilyGetToken()
       {
         var parent = _parent;
-        if (null == parent)
+        if (parent is null)
           throw new ObjectDisposedException("This token is already disposed");
 
         var result = new TemporaryResumeToken(parent);
@@ -338,7 +339,7 @@ namespace Altaxo.Main
       public void ResumeCompleteTemporarily()
       {
         var parent = _parent;
-        if (null == parent)
+        if (parent is null)
           throw new ObjectDisposedException("This token is already disposed");
 
         var result = new TemporaryResumeToken(parent);
@@ -355,12 +356,12 @@ namespace Altaxo.Main
     /// </summary>
     private class TemporaryResumeToken : IDisposable
     {
-      private SuspendableDocumentLeafNode _parent;
+      private SuspendableDocumentLeafNode? _parent;
       private int _numberOfSuspendLevelsAbsorbed;
 
       internal TemporaryResumeToken(SuspendableDocumentLeafNode parent)
       {
-        _parent = parent;
+        _parent = parent ?? throw new ArgumentException(nameof(parent));
       }
 
       ~TemporaryResumeToken()
@@ -376,9 +377,12 @@ namespace Altaxo.Main
 
       internal void ResumeTemporarily()
       {
-        Exception ex1 = null;
-        Exception ex2 = null;
-        Exception ex3 = null;
+        if (_parent is null)
+          throw new ObjectDisposedException(nameof(TemporaryResumeToken));
+
+        Exception? ex1 = null;
+        Exception? ex2 = null;
+        Exception? ex3 = null;
 
         // Try to bring the suspend level to 0
         int suspendLevel = _parent._suspendLevel;
@@ -412,20 +416,20 @@ namespace Altaxo.Main
           }
         }
 
-        if (null != ex1)
+        if (ex1 is not null)
           throw ex1;
-        if (null != ex2)
+        if (ex2 is not null)
           throw ex2;
-        if (null != ex3)
+        if (ex3 is not null)
           throw ex3;
       }
 
       public void Dispose(bool isDisposing)
       {
-        var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentLeafNode>(ref _parent, null);
-        if (parent != null)
+        var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentLeafNode?>(ref _parent, null);
+        if (parent is not null)
         {
-          Exception exception = null;
+          Exception? exception = null;
           while (_numberOfSuspendLevelsAbsorbed > 0)
           {
             int suspendLevel = System.Threading.Interlocked.Increment(ref parent._suspendLevel);
@@ -448,7 +452,7 @@ namespace Altaxo.Main
           }
 
           // Suspend level is now restored
-          if (exception != null)
+          if (exception is not null)
             throw exception;
         }
       }

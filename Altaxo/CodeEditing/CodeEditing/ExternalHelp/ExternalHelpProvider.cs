@@ -45,7 +45,7 @@ namespace Altaxo.CodeEditing.ExternalHelp
       var tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
       var token = await tree.GetTouchingTokenAsync(position, cancellationToken, findInsideTrivia: false).ConfigureAwait(false);
 
-      if (null == token || !token.Span.IntersectsWith(position))
+      if (!token.Span.IntersectsWith(position))
         return null; // nothing found
 
       var model = await BindTokenAsync(document, token, cancellationToken);

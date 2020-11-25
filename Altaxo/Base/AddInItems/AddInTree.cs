@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -31,13 +32,19 @@ namespace Altaxo.AddInItems
   /// </summary>
   public static class AddInTree
   {
-    public static List<T> BuildItems<T>(string path, object parameter, bool throwOnNotFound = true)
+    public static List<T> BuildItems<T>(string path, object? parameter, bool throwOnNotFound = true)
     {
       var addInTree = Altaxo.Current.GetRequiredService<IAddInTree>();
       return addInTree.BuildItems<T>(path, parameter, throwOnNotFound).ToList();
     }
 
-    public static AddInTreeNode GetTreeNode(string path, bool throwOnNotFound = true)
+    public static AddInTreeNode GetTreeNode(string path)
+    {
+      var addInTree = Altaxo.Current.GetRequiredService<IAddInTree>();
+      return addInTree.GetTreeNode(path, true)!;
+    }
+
+    public static AddInTreeNode? GetTreeNode(string path, bool throwOnNotFound = true)
     {
       var addInTree = Altaxo.Current.GetRequiredService<IAddInTree>();
       return addInTree.GetTreeNode(path, throwOnNotFound);
@@ -70,7 +77,7 @@ namespace Altaxo.AddInItems
       conditionEvaluators.TryAdd("Compare", new CompareConditionEvaluator());
       conditionEvaluators.TryAdd("Ownerstate", new OwnerStateConditionEvaluator());
 
-      if (applicationStateService != null)
+      if (applicationStateService is not null)
         applicationStateService.RegisterStateGetter("Installed 3rd party AddIns", GetInstalledThirdPartyAddInsListAsString);
     }
 
@@ -87,7 +94,7 @@ namespace Altaxo.AddInItems
           sb.Append(", ");
         sb.Append("[");
         sb.Append(addIn.Name);
-        if (addIn.Version != null)
+        if (addIn.Version is not null)
         {
           sb.Append(' ');
           sb.Append(addIn.Version.ToString());
@@ -141,6 +148,15 @@ namespace Altaxo.AddInItems
     }
 
     /// <summary>
+    /// Gets the <see cref="AddInTreeNode"/> representing the specified path. An exception will be thrown if the node is not found.
+    /// </summary>
+    /// <param name="path">The path of the AddIn tree node</param>
+    public AddInTreeNode GetTreeNode(string path)
+    {
+      return GetTreeNode(path, true)!;
+    }
+
+    /// <summary>
     /// Gets the <see cref="AddInTreeNode"/> representing the specified path.
     /// </summary>
     /// <param name="path">The path of the AddIn tree node</param>
@@ -149,14 +165,14 @@ namespace Altaxo.AddInItems
     /// <see cref="TreePathNotFoundException"/> when the path does not exist.
     /// If set to <c>false</c>, <c>null</c> is returned for non-existing paths.
     /// </param>
-    public AddInTreeNode GetTreeNode(string path, bool throwOnNotFound = true)
+    public AddInTreeNode? GetTreeNode(string path, bool throwOnNotFound)
     {
-      if (path == null || path.Length == 0)
+      if (path is null || path.Length == 0)
       {
         return rootNode;
       }
       string[] splittedPath = path.Split('/');
-      AddInTreeNode curPath = rootNode;
+      AddInTreeNode? curPath = rootNode;
       for (int i = 0; i < splittedPath.Length; i++)
       {
         if (!curPath.ChildNodes.TryGetValue(splittedPath[i], out curPath))
@@ -177,18 +193,22 @@ namespace Altaxo.AddInItems
     /// <param name="parameter">A parameter that gets passed into the doozer and condition evaluators.</param>
     /// <exception cref="TreePathNotFoundException">The path does not
     /// exist or does not point to an item.</exception>
-    public object BuildItem(string path, object parameter)
+    public object BuildItem(string path, object? parameter)
     {
       return BuildItem(path, parameter, null);
     }
 
-    public object BuildItem(string path, object parameter, IEnumerable<ICondition> additionalConditions)
+    public object BuildItem(string path, object? parameter, IEnumerable<ICondition>? additionalConditions)
     {
       int pos = path.LastIndexOf('/');
       string parent = path.Substring(0, pos);
       string child = path.Substring(pos + 1);
-      AddInTreeNode node = GetTreeNode(parent);
-      return node.BuildChildItem(child, parameter, additionalConditions);
+      var node = GetTreeNode(parent);
+      var result = node.BuildChildItem(child, parameter, additionalConditions);
+      if (result is null)
+        throw new TreePathNotFoundException(path);
+
+      return result;
     }
 
     /// <summary>
@@ -199,10 +219,10 @@ namespace Altaxo.AddInItems
     /// <param name="throwOnNotFound">If true, throws a <see cref="TreePathNotFoundException"/>
     /// if the path is not found. If false, an empty ArrayList is returned when the
     /// path is not found.</param>
-    public IReadOnlyList<T> BuildItems<T>(string path, object parameter, bool throwOnNotFound = true)
+    public IReadOnlyList<T> BuildItems<T>(string path, object? parameter, bool throwOnNotFound = true)
     {
-      AddInTreeNode node = GetTreeNode(path, throwOnNotFound);
-      if (node == null)
+      var node = GetTreeNode(path, throwOnNotFound);
+      if (node is null)
         return new List<T>();
       else
         return node.BuildChildItems<T>(parameter);
@@ -210,7 +230,7 @@ namespace Altaxo.AddInItems
 
     private AddInTreeNode CreatePath(AddInTreeNode localRoot, string path)
     {
-      if (path == null || path.Length == 0)
+      if (path is null || path.Length == 0)
       {
         return localRoot;
       }
@@ -269,18 +289,18 @@ namespace Altaxo.AddInItems
           }
         }
 
-        string addInRoot = Path.GetDirectoryName(addIn.FileName);
+        var addInRoot = Path.GetDirectoryName(addIn.FileName) ?? string.Empty;
         foreach (string bitmapResource in addIn.BitmapResources)
         {
-          string path = Path.Combine(addInRoot, bitmapResource);
-          var resourceManager = ResourceManager.CreateFileBasedResourceManager(Path.GetFileNameWithoutExtension(path), Path.GetDirectoryName(path), null);
+          var path = Path.Combine(addInRoot, bitmapResource);
+          var resourceManager = ResourceManager.CreateFileBasedResourceManager(Path.GetFileNameWithoutExtension(path), Path.GetDirectoryName(path) ?? string.Empty, null);
           Altaxo.Current.GetRequiredService<IResourceService>().RegisterNeutralImages(resourceManager);
         }
 
         foreach (string stringResource in addIn.StringResources)
         {
           string path = Path.Combine(addInRoot, stringResource);
-          var resourceManager = ResourceManager.CreateFileBasedResourceManager(Path.GetFileNameWithoutExtension(path), Path.GetDirectoryName(path), null);
+          var resourceManager = ResourceManager.CreateFileBasedResourceManager(Path.GetFileNameWithoutExtension(path), Path.GetDirectoryName(path) ?? string.Empty, null);
           Altaxo.Current.GetRequiredService<IResourceService>().RegisterNeutralStrings(resourceManager);
         }
       }
@@ -340,7 +360,7 @@ namespace Altaxo.AddInItems
         catch (AddInLoadException ex)
         {
           Current.Log.Error(ex);
-          if (ex.InnerException != null)
+          if (ex.InnerException is not null)
           {
             MessageService.ShowError("Error loading AddIn " + fileName + ":\n"
                                                              + ex.InnerException.Message);
@@ -352,7 +372,7 @@ namespace Altaxo.AddInItems
           }
           addIn = new AddIn(this)
           {
-            addInFileName = fileName,
+            _addInFileName = fileName,
             CustomErrorMessage = ex.Message
           };
         }
@@ -362,7 +382,7 @@ namespace Altaxo.AddInItems
           continue;
         }
         addIn.Enabled = true;
-        if (disabledAddIns != null && disabledAddIns.Count > 0)
+        if (disabledAddIns is not null && disabledAddIns.Count > 0)
         {
           foreach (string name in addIn.Manifest.Identities.Keys)
           {
@@ -401,7 +421,7 @@ checkDependencies:
         if (!addIn.Enabled)
           continue;
 
-        Version versionFound;
+        Version? versionFound;
 
         foreach (AddInReference reference in addIn.Manifest.Conflicts)
         {
@@ -417,7 +437,7 @@ checkDependencies:
         {
           if (!reference.Check(dict, out versionFound))
           {
-            if (versionFound != null)
+            if (versionFound is not null)
             {
               MessageService.ShowError(addIn.Name + " has not been loaded because it requires "
                                                                + reference.ToString() + ", but version "

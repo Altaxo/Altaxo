@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Common
       {
         string result = _validationFunc(value, cultureInfo);
 
-        if (null == result)
+        if (result is null)
           return ValidationResult.ValidResult;
         else
           return new ValidationResult(false, result);

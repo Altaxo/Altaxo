@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable disable warnings
 using System;
 using System.Windows;
 
@@ -29,7 +30,7 @@ namespace Altaxo.Gui.Common
     private static Style FindResource(ResourceKey key)
     {
       // don't crash if controls using GlobalStyles are instanciated in unit test mode
-      if (Application.Current == null)
+      if (Application.Current is null)
         return null;
       else
         return (Style)Application.Current.FindResource(key);

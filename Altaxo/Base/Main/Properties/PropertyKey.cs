@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -38,12 +40,12 @@ namespace Altaxo.Main.Properties
     /// <summary>
     /// Procedure to apply the property value.
     /// </summary>
-    protected Action<T> _applicationOfProperty;
+    protected Action<T>? _applicationOfProperty;
 
     /// <summary>
     /// If not null, this function is called if the property needs to be edited. The argument is the original property value, the return al
     /// </summary>
-    protected Func<T, Gui.IMVCANController> _editingControllerCreation;
+    protected Func<T, Gui.IMVCANController>? _editingControllerCreation;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PropertyKey{T}"/> class.
@@ -88,10 +90,10 @@ namespace Altaxo.Main.Properties
     /// <param name="applicationLevel">The application level of this property.</param>
     /// <param name="applicationItemType">Type of the application item (only useful if the application level contains <see cref="PropertyLevel.Document"/>). Can be <c>null</c> otherwise.</param>
     /// <param name="CreateBuiltinValue">Procedure to create the value that is stored in the BuiltinSettings when this constructor is called.</param>
-    public PropertyKey(string guidString, string propertyName, PropertyLevel applicationLevel, Type applicationItemType, Func<T> CreateBuiltinValue)
+    public PropertyKey(string guidString, string propertyName, PropertyLevel applicationLevel, Type? applicationItemType, Func<T>? CreateBuiltinValue)
       : base(typeof(T), guidString, propertyName, applicationLevel, applicationItemType)
     {
-      if (null != CreateBuiltinValue && null != Current.PropertyService)
+      if (CreateBuiltinValue is not null && Current.PropertyService is not null)
       {
         T value = CreateBuiltinValue();
         Current.PropertyService.BuiltinSettings.SetValue(this, value);
@@ -104,7 +106,7 @@ namespace Altaxo.Main.Properties
     /// <param name="value">The property value that should be applied.</param>
     public void ApplyProperty(T value)
     {
-      if (null != _applicationOfProperty)
+      if (_applicationOfProperty is not null)
         _applicationOfProperty(value);
     }
 
@@ -126,7 +128,7 @@ namespace Altaxo.Main.Properties
     /// </value>
     public override bool CanCreateEditingController
     {
-      get { return null != _editingControllerCreation; }
+      get { return _editingControllerCreation is not null; }
     }
 
     /// <summary>
@@ -134,9 +136,9 @@ namespace Altaxo.Main.Properties
     /// </summary>
     /// <param name="originalValue">The orignal property value.</param>
     /// <returns>The Gui controller used to edit this value, or null if such a controller could not be created, or the <see cref="EditingControllerCreation"/> value was not set.</returns>
-    public virtual Gui.IMVCANController CreateEditingController(T originalValue)
+    public virtual Gui.IMVCANController? CreateEditingController(T originalValue)
     {
-      if (null != _editingControllerCreation)
+      if (_editingControllerCreation is not null)
       {
         return _editingControllerCreation(originalValue);
       }
@@ -151,7 +153,7 @@ namespace Altaxo.Main.Properties
     /// </summary>
     /// <param name="originalValue">The orignal property value.</param>
     /// <returns>The Gui controller used to edit this value, or null if such a controller could not be created, or the <see cref="EditingControllerCreation"/> value was not set.</returns>
-    public override Gui.IMVCANController CreateEditingController(object originalValue)
+    public override Gui.IMVCANController? CreateEditingController(object originalValue)
     {
       return CreateEditingController((T)originalValue);
     }
@@ -170,7 +172,7 @@ namespace Altaxo.Main.Properties
       }
     }
 
-    public Action<T> ApplicationAction
+    public Action<T>? ApplicationAction
     {
       get
       {
@@ -178,10 +180,10 @@ namespace Altaxo.Main.Properties
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
-        if (null != _applicationOfProperty)
+        if (_applicationOfProperty is not null)
           throw new InvalidOperationException("Application action was already set. It is not allowed to set it again!");
 
         _applicationOfProperty = value;

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,9 +52,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
         info.AddValue("Color", s._color);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (InsetBase)o;
+        var s = (InsetBase)(o ?? throw new ArgumentNullException(nameof(o)));
         s._color = (NamedColor)info.GetValue("Color", s);
         return s;
       }
@@ -90,7 +91,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
       return WithColor(color);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return GetType() == obj?.GetType() && _color == ((InsetBase)obj)._color;
     }

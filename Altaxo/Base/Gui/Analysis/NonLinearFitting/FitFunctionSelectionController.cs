@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Text;
 using Altaxo.Calc.Regression.Nonlinear;
@@ -222,7 +223,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         AddFitFunctionList(_nodeProject, Current.FitFunctionService.GetDocumentFitFunctions(), FitFunctionContextMenuStyle.EditAndDelete);
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.SetFitFunctions(_fitFunctionsRoot.Nodes);
       }
@@ -240,7 +241,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         for (int j = 0; j < path.Length; j++)
         {
           var node = GetPathNode(where, path[j]);
-          if (node == null)
+          if (node is null)
           {
             node = new CategoryNode(path[j]);
             where.Add(node);
@@ -251,7 +252,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         var creationTime = entry.CreationTime;
         var nodeText = entry.Name;
 
-        if (null != creationTime)
+        if (creationTime is not null)
         {
           nodeText += " (" + creationTime.Value.ToString("yyyy-MM-dd HH:mm:ss") + ")";
         }
@@ -282,7 +283,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       foreach (NGTreeNode node in coll)
       {
-        if (node.Text == path && node.Tag == null)
+        if (node.Text == path && node.Tag is null)
           return node;
       }
       return null;
@@ -292,7 +293,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       var selNode = (FitFunctionLeafNode)TreeNodeExtensions.AnyBetweenHereAndLeaves(_fitFunctionsRoot, (node) => node is FitFunctionLeafNode dln && dln.FunctionType is DocumentFitFunctionInformation dffi && func.Equals(dffi.FitFunction));
 
-      if (null != selNode)
+      if (selNode is not null)
       {
         selNode.IsExpanded = true;
         selNode.IsSelected = true;
@@ -328,15 +329,15 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         func = Altaxo.Main.Services.FitFunctionService.ReadUserDefinedFitFunction(selectedtag as Altaxo.Main.Services.FileBasedFitFunctionInformation);
       }
 
-      if (null != func)
+      if (func is not null)
       {
         var editedFunc = Edit(func, editItemCopy);
 
-        if (null != editedFunc)
+        if (editedFunc is not null)
         {
           var selNode = SelectFitFunction(editedFunc);
 
-          if (null != selNode)
+          if (selNode is not null)
             FitFunctionSelected((IFitFunctionInformation)selNode.Tag);
         }
       }
@@ -344,7 +345,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private FitFunctionScript Edit(IFitFunction func, bool editItemCopy)
     {
-      if (null != func)
+      if (func is not null)
       {
         if (func is FitFunctionScript)
           editItemCopy = true; // for scripts, we always edit a copy
@@ -406,14 +407,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           DetachView();
 
         _view = value as IFitFunctionSelectionView;
 
         Initialize(false);
 
-        if (_view != null)
+        if (_view is not null)
           AttachView();
       }
     }
@@ -436,7 +437,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public bool Apply(bool disposeController)
     {
-      if (_tempdoc == null) // nothing selected, so return the original doc
+      if (_tempdoc is null) // nothing selected, so return the original doc
         return true;
 
       try

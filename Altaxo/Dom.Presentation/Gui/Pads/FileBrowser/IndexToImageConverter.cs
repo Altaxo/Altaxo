@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
-      if (null == _imageList)
+      if (_imageList is null)
         Initialize(); // this late initialization is done here to avoid errors during xaml browsing
 
       if (value is int)

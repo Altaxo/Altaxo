@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.IO;
 using Altaxo.Geometry;
@@ -68,13 +69,13 @@ namespace Altaxo.Drawing
         info.AddValue("Name", s._name);
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
       }
 
-      public virtual ResourceImageProxy SDeserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual ResourceImageProxy SDeserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var url = info.GetString("Url");
         var name = info.GetString("Name");

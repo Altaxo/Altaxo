@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,7 +56,7 @@ namespace Altaxo.Gui.Worksheet
         Current.Gui.FindAndAttachControlTo(_dataController);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeDataTab(_dataController.ViewObject);
       }
@@ -63,7 +64,7 @@ namespace Altaxo.Gui.Worksheet
 
     public bool InitializeDocument(params object[] args)
     {
-      if (null == args || 0 == args.Length || !(args[0] is MasterCurveCreation.Options))
+      if (args is null || 0 == args.Length || !(args[0] is MasterCurveCreation.Options))
         return false;
 
       _doc = args[0] as MasterCurveCreation.Options;
@@ -86,7 +87,7 @@ namespace Altaxo.Gui.Worksheet
       {
         _view = value as IMasterCurveCreationMainView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
         }

@@ -105,7 +105,7 @@ namespace Altaxo.Gui.Behaviors
       {
         SetSelectedItemsEx(lb, lb.SelectedItems);
         var command = GetSelectionChangedCommand(lb);
-        if (null != command)
+        if (command is not null)
         {
           command.Execute(lb.SelectionMode == SelectionMode.Single ? lb.SelectedItem : lb.SelectedItems);
         }

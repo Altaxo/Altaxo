@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,15 +37,16 @@ namespace Altaxo.DataConnection
   {
     private AltaxoOleDbConnectionString _connectionString;
     private string _selectionStatement;
-    private static OleDbDataQuery _emptyInstance = new OleDbDataQuery(null, null);
+    private static OleDbDataQuery _emptyInstance = new OleDbDataQuery(string.Empty, null);
 
-    public OleDbDataQuery(string selectionStatement, AltaxoOleDbConnectionString connectionString)
+    public OleDbDataQuery(string selectionStatement, AltaxoOleDbConnectionString? connectionString)
     {
       _selectionStatement = selectionStatement;
-      _connectionString = connectionString;
 
-      if (null == _connectionString)
+      if (connectionString is null)
         _connectionString = AltaxoOleDbConnectionString.Empty;
+      else
+        _connectionString = connectionString;
     }
 
     #region Version 0
@@ -63,14 +65,14 @@ namespace Altaxo.DataConnection
         info.AddValue("Statement", s._selectionStatement);
       }
 
-      protected virtual OleDbDataQuery SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual OleDbDataQuery SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         string connectionString = info.GetString("Connection");
         string selectionStatement = info.GetString("Statement");
         return new OleDbDataQuery(selectionStatement, new AltaxoOleDbConnectionString(connectionString, null));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;

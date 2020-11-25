@@ -25,16 +25,17 @@
 using System;
 using System.Collections.Generic;
 using Altaxo;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest
 {
-  [TestFixture]
-  internal class ResourceKeys
+
+  public class ResourceKeys
   {
-    [Test]
+    [Fact]
     public void TestAllKeysPresent()
     {
+      // Choose the AltaxoCore assembly
       var assemblyToTest = System.Reflection.Assembly.GetAssembly(typeof(Altaxo.Calc.Complex));
 
       foreach (System.Type typeInAssembly in assemblyToTest.GetTypes())
@@ -61,7 +62,7 @@ namespace AltaxoTest
 
             string resourceString = StringResources.AltaxoCore.GetString(resourceKey, false);
 
-            Assert.That(!string.IsNullOrEmpty(resourceString), string.Format("The resource string for the resource key '{0}' is null or empty", resourceKey));
+            Assert.False(string.IsNullOrEmpty(resourceString), $"The resource string for the resource key '{resourceKey}' is null or empty");
           }
         }
       }

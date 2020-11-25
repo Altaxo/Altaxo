@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Common
 {
@@ -59,7 +58,7 @@ namespace Altaxo.Gui.Common
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.UnitEnvironment = UnitEnvironment;
         _view.SelectedQuantity = new DimensionfulQuantity(_doc, UnitOfValue).AsQuantityIn(UnitEnvironment.DefaultUnit);
@@ -74,20 +73,27 @@ namespace Altaxo.Gui.Common
 
     protected override void AttachView()
     {
+      if (_view is null) throw new InvalidProgramException();
+
       _view.SelectedQuantityChanged += EhQuantityChanged;
       base.AttachView();
     }
 
     protected override void DetachView()
     {
+      if (_view is null) throw new InvalidProgramException();
+
       _view.SelectedQuantityChanged -= EhQuantityChanged;
       base.DetachView();
     }
 
     private void GetQuantityFromView()
     {
-      var q = _view.SelectedQuantity;
-      _doc = q.AsValueIn(UnitOfValue);
+      if (_view is not null)
+      {
+        var q = _view.SelectedQuantity;
+        _doc = q.AsValueIn(UnitOfValue);
+      }
     }
 
     private void EhQuantityChanged()

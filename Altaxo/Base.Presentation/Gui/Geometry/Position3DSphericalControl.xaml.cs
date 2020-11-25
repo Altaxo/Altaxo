@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Geometry
     private double _elevationAngleDegrees;
     private double _distance;
 
-    public event EventHandler SelectedValueChanged;
+    public event EventHandler? SelectedValueChanged;
 
     private GuiChangeLocker _lock;
 

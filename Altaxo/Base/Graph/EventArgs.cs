@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -151,7 +152,7 @@ namespace Altaxo.Graph
     public override void Add(Main.SelfAccumulateableEventArgs e)
     {
       var other = e as BoundariesChangedEventArgs;
-      if (other == null)
+      if (other is null)
         throw new ArgumentException(string.Format("Argument e should be of type {0}, but is: {1}", typeof(BoundariesChangedEventArgs), e.GetType()));
 
       _data |= other._data;
@@ -166,16 +167,16 @@ namespace Altaxo.Graph
   public class ScaleInstanceChangedEventArgs : Main.SelfAccumulateableEventArgs
   {
     private int _scaleIndex = -1;
-    private Altaxo.Graph.Scales.Scale _oldScale;
+    private Altaxo.Graph.Scales.Scale? _oldScale;
     private Altaxo.Graph.Scales.Scale _newScale;
 
     public int ScaleIndex { get { return _scaleIndex; } set { _scaleIndex = value; } }
 
-    public Altaxo.Graph.Scales.Scale OldScale { get { return _oldScale; } }
+    public Altaxo.Graph.Scales.Scale? OldScale { get { return _oldScale; } }
 
     public Altaxo.Graph.Scales.Scale NewScale { get { return _newScale; } }
 
-    public ScaleInstanceChangedEventArgs(Altaxo.Graph.Scales.Scale oldScale, Altaxo.Graph.Scales.Scale newScale)
+    public ScaleInstanceChangedEventArgs(Altaxo.Graph.Scales.Scale? oldScale, Altaxo.Graph.Scales.Scale newScale)
     {
       _oldScale = oldScale;
       _newScale = newScale;
@@ -184,7 +185,7 @@ namespace Altaxo.Graph
     public override void Add(Main.SelfAccumulateableEventArgs e)
     {
       var other = e as ScaleInstanceChangedEventArgs;
-      if (null == other)
+      if (other is null)
         throw new ArgumentException("Expect event args of type: " + typeof(ScaleInstanceChangedEventArgs).ToString());
 
       if (ScaleIndex != other.ScaleIndex)
@@ -211,13 +212,9 @@ namespace Altaxo.Graph
     /// <returns>
     ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
     /// </returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var other = obj as ScaleInstanceChangedEventArgs;
-      if (null == other)
-        return false;
-      else
-        return _scaleIndex == other._scaleIndex;
+      return obj is ScaleInstanceChangedEventArgs other && _scaleIndex == other._scaleIndex;
     }
   }
 }

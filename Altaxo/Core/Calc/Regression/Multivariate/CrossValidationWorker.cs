@@ -75,7 +75,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     public void EhCrossPRESS(int[] group, IMatrix<double> XX, IMatrix<double> YY, IMatrix<double> XU, IMatrix<double> YU)
     {
-      if (_predictedY == null || _predictedY.RowCount != YU.RowCount || _predictedY.ColumnCount != YU.ColumnCount)
+      if (_predictedY is null || _predictedY.RowCount != YU.RowCount || _predictedY.ColumnCount != YU.ColumnCount)
         _predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(YU.RowCount, YU.ColumnCount);
 
       MultivariateRegression.PreprocessForAnalysis(_preprocessOptions, _spectralRegions, XX, YY, out var meanX, out var scaleX, out var meanY, out var scaleY);
@@ -85,7 +85,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression.PreprocessSpectraForPrediction(_preprocessOptions, XU, meanX, scaleX);
 
       // allocate the crossPRESS vector here, since now we know about the number of factors a bit more
-      if (null == _crossPRESS)
+      if (_crossPRESS is null)
         _crossPRESS = new double[_numFactors + 1]; // one more since we want to have the value at factors=0 (i.e. the variance of the y-matrix)
 
       // for all factors do now a prediction of the remaining spectra
@@ -121,7 +121,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     public void EhYCrossPredicted(int[] group, IMatrix<double> XX, IMatrix<double> YY, IMatrix<double> XU, IMatrix<double> YU)
     {
-      if (_predictedY == null || _predictedY.RowCount != YU.RowCount || _predictedY.ColumnCount != YU.ColumnCount)
+      if (_predictedY is null || _predictedY.RowCount != YU.RowCount || _predictedY.ColumnCount != YU.ColumnCount)
         _predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(YU.RowCount, YU.ColumnCount);
 
       MultivariateRegression.PreprocessForAnalysis(_preprocessOptions, _spectralRegions, XX, YY,
@@ -172,7 +172,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression.PreprocessSpectraForPrediction(_preprocessOptions, XU, meanX, scaleX);
       IROMatrix<double> xResidual = _analysis.SpectralResidualsFromPreprocessed(XU, _numFactors);
 
-      if (_XCrossResiduals == null)
+      if (_XCrossResiduals is null)
         _XCrossResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_numberOfPoints, xResidual.ColumnCount);
 
       for (int i = 0; i < group.Length; i++)
@@ -212,9 +212,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       MultivariateRegression.PreprocessSpectraForPrediction(_preprocessOptions, XU, meanX, scaleX);
 
-      if (_predictedY == null || _predictedY.RowCount != YU.RowCount || _predictedY.ColumnCount != YU.ColumnCount)
+      if (_predictedY is null || _predictedY.RowCount != YU.RowCount || _predictedY.ColumnCount != YU.ColumnCount)
         _predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(YU.RowCount, YU.ColumnCount);
-      if (_spectralResidual == null || _spectralResidual.RowCount != XU.RowCount || _spectralResidual.ColumnCount != _analysis.NumberOfSpectralResiduals)
+      if (_spectralResidual is null || _spectralResidual.RowCount != XU.RowCount || _spectralResidual.ColumnCount != _analysis.NumberOfSpectralResiduals)
         _spectralResidual = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, _analysis.NumberOfSpectralResiduals);
 
       for (int nFactor = 0; nFactor <= _numFactors; nFactor++)

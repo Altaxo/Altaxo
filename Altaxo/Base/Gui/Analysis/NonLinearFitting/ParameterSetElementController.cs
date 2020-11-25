@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using Altaxo.Calc.Regression.Nonlinear;
 
@@ -66,7 +67,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     protected void Initialize()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.Initialize(_tempdoc.Name,
           Altaxo.Serialization.GUIConversion.ToString(_tempdoc.Parameter),
@@ -128,14 +129,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = null;
 
         _view = value as IParameterSetElementView;
 
         Initialize();
 
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = this;
       }
     }

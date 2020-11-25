@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -60,9 +61,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         _shapeCtrl = new ClosedPathShapeController() { UseDocumentCopy = UseDocument.Directly };
         _shapeCtrl.InitializeDocument(_doc);
       }
-      if (null != _view)
+      if (_view is not null)
       {
-        if (null == _shapeCtrl.ViewObject)
+        if (_shapeCtrl.ViewObject is null)
           _shapeCtrl.ViewObject = _view.ShapeGraphicView;
 
         _splinePointsCtrl = new CardinalSplinePointsController(_view.SplinePointsView, _doc.CurvePoints, _doc.Tension, _doc);

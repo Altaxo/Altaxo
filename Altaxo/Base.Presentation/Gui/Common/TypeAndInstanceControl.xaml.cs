@@ -45,7 +45,7 @@ namespace Altaxo.Gui.Common
     {
       e.Handled = true;
       GuiHelper.SynchronizeSelectionFromGui(_cbTypeChoice);
-      if (null != TypeChoiceChanged)
+      if (TypeChoiceChanged is not null)
         TypeChoiceChanged(this, EventArgs.Empty);
     }
 
@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Common
       _instanceHost.Child = instanceControl as UIElement;
     }
 
-    public event EventHandler TypeChoiceChanged;
+    public event EventHandler? TypeChoiceChanged;
   }
 
   #endregion ITypeAndInstanceView

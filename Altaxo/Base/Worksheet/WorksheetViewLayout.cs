@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,8 +49,8 @@ namespace Altaxo.Worksheet
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetViewLayout), 0)] // since 2012-02-01 buid 744
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      private AbsoluteDocumentPath _PathToLayout;
-      private WorksheetViewLayout _TableController;
+      private AbsoluteDocumentPath? _pathToLayout;
+      private WorksheetViewLayout? _tableController;
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -57,28 +58,28 @@ namespace Altaxo.Worksheet
         info.AddValue("Layout", AbsoluteDocumentPath.GetAbsolutePath(s.WorksheetLayout));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (WorksheetViewLayout)o : new WorksheetViewLayout();
+        var s = (WorksheetViewLayout?)o ?? new WorksheetViewLayout(info);
 
         var surr = new XmlSerializationSurrogate0
         {
-          _TableController = s
+          _tableController = s
         };
         if (info.CurrentElementName == "Controller")
         {
           info.OpenElement();
-          surr._PathToLayout = (AbsoluteDocumentPath)info.GetValue("Layout", s);
+          surr._pathToLayout = (AbsoluteDocumentPath)info.GetValue("Layout", s);
           info.CloseElement();
         }
         else if (info.CurrentElementName == "BaseType")
         {
           info.GetString("BaseType");
-          surr._PathToLayout = (AbsoluteDocumentPath)info.GetValue("Layout", s);
+          surr._pathToLayout = (AbsoluteDocumentPath)info.GetValue("Layout", s);
         }
         else
         {
-          surr._PathToLayout = (AbsoluteDocumentPath)info.GetValue("Layout", s);
+          surr._pathToLayout = (AbsoluteDocumentPath)info.GetValue("Layout", s);
         }
 
         info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
@@ -88,22 +89,28 @@ namespace Altaxo.Worksheet
 
       private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
       {
-        if (null != _PathToLayout)
+        if (_pathToLayout is not null)
         {
-          var o = AbsoluteDocumentPath.GetObject(_PathToLayout, documentRoot);
-          if (o is Altaxo.Worksheet.WorksheetLayout)
+          var o = AbsoluteDocumentPath.GetObject(_pathToLayout, documentRoot);
+          if (o is Altaxo.Worksheet.WorksheetLayout layout)
           {
-            _TableController._worksheetLayout = (Altaxo.Worksheet.WorksheetLayout)o;
-            _PathToLayout = null;
+            _tableController!._worksheetLayout = layout;
+            _pathToLayout = null;
           }
         }
 
-        if (null == _PathToLayout)
+        if (_pathToLayout is null)
         {
           info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
         }
       }
     }
+
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    private WorksheetViewLayout(Altaxo.Serialization.Xml.IXmlDeserializationInfo _)
+    {
+    }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     #endregion Serialization
 
@@ -112,9 +119,7 @@ namespace Altaxo.Worksheet
       _worksheetLayout = worksheetLayout;
     }
 
-    private WorksheetViewLayout()
-    {
-    }
+
 
     public WorksheetLayout WorksheetLayout
     {
@@ -128,7 +133,7 @@ namespace Altaxo.Worksheet
     {
       get
       {
-        return _worksheetLayout?.DataTable;
+        return _worksheetLayout.DataTable;
       }
     }
   }

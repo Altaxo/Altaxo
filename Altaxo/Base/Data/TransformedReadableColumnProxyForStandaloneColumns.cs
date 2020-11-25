@@ -22,27 +22,25 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Main;
 
 namespace Altaxo.Data
 {
   internal class TransformedReadableColumnProxyForStandaloneColumns : Main.SuspendableDocumentLeafNodeWithEventArgs, IReadableColumnProxy
   {
-    private IReadableColumn _underlyingColumn;
+    private IReadableColumn? _underlyingColumn;
     private IVariantToVariantTransformation _transformation;
-    private IReadableColumn _cachedResultingColumn;
+    private IReadableColumn? _cachedResultingColumn;
 
     public static TransformedReadableColumnProxyForStandaloneColumns FromColumn(ITransformedReadableColumn column)
     {
-      if (null == column)
+      if (column is null)
         throw new ArgumentNullException(nameof(column));
 
       var colAsDocumentNode = column.UnderlyingReadableColumn as IDocumentLeafNode;
-      if (null != colAsDocumentNode)
+      if (colAsDocumentNode is not null)
         throw new ArgumentException(string.Format("Column does implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
 
       return new TransformedReadableColumnProxyForStandaloneColumns(column);
@@ -60,9 +58,11 @@ namespace Altaxo.Data
       _cachedResultingColumn = column;
     }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected TransformedReadableColumnProxyForStandaloneColumns(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     #region Serialization
 
@@ -75,16 +75,16 @@ namespace Altaxo.Data
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TransformedReadableColumnProxyForStandaloneColumns)obj;
-        info.AddValue("Column", s._underlyingColumn);
+        info.AddValueOrNull("Column", s._underlyingColumn);
         info.AddValue("Transformation", s._transformation);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (TransformedReadableColumnProxyForStandaloneColumns)o ?? new TransformedReadableColumnProxyForStandaloneColumns(info);
-        s._underlyingColumn = (IReadableColumn)info.GetValue("Column", s);
+        var s = (TransformedReadableColumnProxyForStandaloneColumns?)o ?? new TransformedReadableColumnProxyForStandaloneColumns(info);
+        s._underlyingColumn = (IReadableColumn?)info.GetValueOrNull("Column", s);
         s._transformation = (IVariantToVariantTransformation)info.GetValue("Transformation", s);
-        if (null != s._underlyingColumn)
+        if (s._underlyingColumn is not null)
           s._cachedResultingColumn = new TransformedReadableColumn(s._underlyingColumn, s._transformation);
 
         return s;
@@ -93,7 +93,7 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
-    public IReadableColumn Document()
+    public IReadableColumn? Document()
     {
       return _cachedResultingColumn;
     }
@@ -105,18 +105,18 @@ namespace Altaxo.Data
 
     public bool IsEmpty
     {
-      get { return null == _underlyingColumn; }
+      get { return _underlyingColumn is null; }
     }
 
     public string GetName(int level)
     {
-      if (null == _underlyingColumn)
+      if (_underlyingColumn is null)
         return string.Empty;
       else
         return (_transformation.RepresentationAsOperator ?? _transformation.RepresentationAsFunction) + " " + _underlyingColumn.FullName;
     }
 
-    public object DocumentObject()
+    public object? DocumentObject()
     {
       return _cachedResultingColumn;
     }

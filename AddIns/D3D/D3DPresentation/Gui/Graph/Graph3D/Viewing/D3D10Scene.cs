@@ -49,29 +49,29 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// The _this triangle buffers. These buffers are used for current rendering
     /// 0: Position, 1: PositionColor, 2: PositionUV, 3: PositionNormal, 4: PositionNormalColor, 5: PositionNormalUV
     /// </summary>
-    private List<VertexAndIndexDeviceBuffer>[] _thisTriangleDeviceBuffers = new List<VertexAndIndexDeviceBuffer>[7];
+    private List<VertexAndIndexDeviceBuffer>?[] _thisTriangleDeviceBuffers = new List<VertexAndIndexDeviceBuffer>?[7];
 
-    private List<VertexAndIndexDeviceBuffer>[] _nextTriangleDeviceBuffers = new List<VertexAndIndexDeviceBuffer>[7];
+    private List<VertexAndIndexDeviceBuffer>?[] _nextTriangleDeviceBuffers = new List<VertexAndIndexDeviceBuffer>?[7];
 
-    private VertexAndIndexDeviceBufferNoMaterial _markerGeometryTriangleDeviceBuffer;
-    private VertexBufferNoMaterial _markerGeometryLineListBuffer;
-    private VertexAndIndexDeviceBufferNoMaterial _overlayGeometryTriangleDeviceBuffer;
-    private VertexBufferNoMaterial _overlayGeometryLineListBuffer;
+    private VertexAndIndexDeviceBufferNoMaterial? _markerGeometryTriangleDeviceBuffer;
+    private VertexBufferNoMaterial? _markerGeometryLineListBuffer;
+    private VertexAndIndexDeviceBufferNoMaterial? _overlayGeometryTriangleDeviceBuffer;
+    private VertexBufferNoMaterial? _overlayGeometryLineListBuffer;
 
 
 
     /// <summary>
     /// The cached D3D device. Do not dispose this device when disposing this class!
     /// </summary>
-    private Device _cachedDevice;
+    private Device? _cachedDevice;
 
     private PointD2D _hostSize;
 
-    protected Buffer _constantBuffer;
+    protected Buffer? _constantBuffer;
 
-    protected Buffer _constantBufferForColor;
+    protected Buffer? _constantBufferForColor;
 
-    protected Buffer _constantBufferForSixPlanes;
+    protected Buffer? _constantBufferForSixPlanes;
 
     private int _renderCounter;
 
@@ -85,37 +85,37 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     // Effect variables
 
     // Transformation variables
-    private EffectConstantBuffer _cbViewTransformation;
+    private EffectConstantBuffer? _cbViewTransformation;
 
-    private EffectMatrixVariable _evWorldViewProj;
-    private EffectVectorVariable _evEyePosition;
+    private EffectMatrixVariable? _evWorldViewProj;
+    private EffectVectorVariable? _evEyePosition;
 
     // Materials
-    private EffectConstantBuffer _cbMaterial;
+    private EffectConstantBuffer? _cbMaterial;
 
-    private EffectVectorVariable _evMaterialDiffuseColor;
-    private EffectScalarVariable _evMaterialSpecularExponent;
-    private EffectScalarVariable _evMaterialSpecularIntensity;
-    private EffectScalarVariable _evMaterialDiffuseIntensity;
-    private EffectScalarVariable _evMaterialMetalnessValue;
+    private EffectVectorVariable? _evMaterialDiffuseColor;
+    private EffectScalarVariable? _evMaterialSpecularExponent;
+    private EffectScalarVariable? _evMaterialSpecularIntensity;
+    private EffectScalarVariable? _evMaterialDiffuseIntensity;
+    private EffectScalarVariable? _evMaterialMetalnessValue;
 
     // Texture for color providers to colorize a mesh by its height
     private Texture1DDescription _descriptionTextureFor1DColorProvider;
 
-    private Texture1D _textureFor1DColorProvider;
-    private ShaderResourceView _textureFor1DColorProviderView;
-    private EffectVariable _textureFor1DColorProviderVariable;
-    private EffectShaderResourceVariable _textureFor1DColorProviderShaderResourceVariable;
+    private Texture1D? _textureFor1DColorProvider;
+    private ShaderResourceView? _textureFor1DColorProviderView;
+    private EffectVariable? _textureFor1DColorProviderVariable;
+    private EffectShaderResourceVariable? _textureFor1DColorProviderShaderResourceVariable;
 
     // Clip planes
-    private EffectConstantBuffer _cbClipPlanes;
+    private EffectConstantBuffer? _cbClipPlanes;
 
     private EffectVectorVariable[] _evClipPlanes = new EffectVectorVariable[6];
 
     // Lighting
-    private Lighting _lighting;
+    private Lighting? _lighting;
 
-    private Effect _lightingEffect;
+    private Effect? _lightingEffect;
 
 
 
@@ -127,25 +127,25 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <summary>
     /// The geometry to render, i.e. the scene itself.
     /// </summary>
-    private D3D10GraphicsContext _altaxoDrawingGeometry;
+    private D3D10GraphicsContext? _altaxoDrawingGeometry;
 
     /// <summary>
     /// Helper geometry that draws X-Y-Z arrows for better orientation.
     /// </summary>
-    private D3D10OverlayContext _altaxoMarkerGeometry;
+    private D3D10OverlayContext? _altaxoMarkerGeometry;
 
     /// <summary>
     /// Geometry that is used temporarily, e.g. to show boxes when objects are moved or selected.
     /// </summary>
-    private D3D10OverlayContext _altaxoOverlayGeometry;
+    private D3D10OverlayContext? _altaxoOverlayGeometry;
 
     /// <summary>
     /// The camera associated with the scene
     /// </summary>
-    private CameraBase _altaxoCamera;
+    private CameraBase? _altaxoCamera;
 
     /// <summary>The light settings from AltaxoBase</summary>
-    private LightSettings _altaxoLightSettings;
+    private LightSettings? _altaxoLightSettings;
 
     #endregion
 
@@ -160,7 +160,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <param name="hostSize">The size of the device.</param>
     public void Attach(Device device, PointD2D hostSize)
     {
-      if (null != _cachedDevice)
+      if (_cachedDevice is not null)
         throw new InvalidOperationException("Try to attach to device without deattach former device!");
 
       _cachedDevice = device ?? throw new ArgumentNullException(nameof(device));
@@ -168,7 +168,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Altaxo.CompiledShaders.Effects.Lighting.cso"))
       {
-        if (null == stream)
+        if (stream is null)
           throw new InvalidOperationException(string.Format("Compiled shader resource not found: {0}", "Altaxo.CompiledShaders.Effects.Lighting.cso"));
 
         using (var shaderBytes = ShaderBytecode.FromStream(stream))
@@ -183,11 +183,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       {
         string techniqueName = "Shade_" + _layoutNames[i];
         var technique = _lightingEffect.GetTechniqueByName(techniqueName);
-        if (null == technique || !technique.IsValid)
+        if (technique is null || !technique.IsValid)
           throw new InvalidProgramException(string.Format("Technique {0} was not found or is invalid", techniqueName));
 
         var pass = technique.GetPassByIndex(0);
-        if (null == pass || !pass.IsValid)
+        if (pass is null || !pass.IsValid)
           throw new InvalidProgramException(string.Format("Pass[0] of technique {0} was not found or is invalid", techniqueName));
 
         InputLayout inputLayout;
@@ -283,19 +283,19 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       // -------------------- now draw the scene again with the new attached device --------------
 
-      if (null != _altaxoCamera && null != _altaxoLightSettings)
+      if (_altaxoCamera is not null && _altaxoLightSettings is not null)
       {
-        if (_altaxoDrawingGeometry != null)
+        if (_altaxoDrawingGeometry is not null)
         {
           BringDrawingIntoBuffers(_altaxoDrawingGeometry);
         }
 
-        if (null != _altaxoMarkerGeometry)
+        if (_altaxoMarkerGeometry is not null)
         {
           BringMarkerGeometryIntoDeviceBuffers(_altaxoMarkerGeometry);
         }
 
-        if (null != _altaxoOverlayGeometry)
+        if (_altaxoOverlayGeometry is not null)
         {
           BringOverlayGeometryIntoDeviceBuffers(_altaxoOverlayGeometry);
         }
@@ -308,13 +308,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     public void Detach()
     {
       // Dispose all buffers
-      if (null != _nextTriangleDeviceBuffers)
+      if (_nextTriangleDeviceBuffers is not null)
       {
         for (int i = _nextTriangleDeviceBuffers.Length - 1; i >= 0; --i)
         {
-          if (null != _nextTriangleDeviceBuffers[i])
+          if (_nextTriangleDeviceBuffers[i] is { } nextTriangleDeviceBuffers_i)
           {
-            foreach (var ele in _nextTriangleDeviceBuffers[i])
+            foreach (var ele in nextTriangleDeviceBuffers_i)
             {
               ele.Dispose();
             }
@@ -323,13 +323,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         }
       }
 
-      if (null != _thisTriangleDeviceBuffers)
+      if (_thisTriangleDeviceBuffers is not null)
       {
         for (int i = _thisTriangleDeviceBuffers.Length - 1; i >= 0; --i)
         {
-          if (null != _thisTriangleDeviceBuffers[i])
+          if (_thisTriangleDeviceBuffers[i] is { } thisTriangleDeviceBuffers_i)
           {
-            foreach (var ele in _thisTriangleDeviceBuffers[i])
+            foreach (var ele in thisTriangleDeviceBuffers_i)
             {
               ele.Dispose();
             }
@@ -351,7 +351,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       for (int i = 0; i < _evClipPlanes.Length; ++i)
       {
-        Disposer.RemoveAndDispose(ref _evClipPlanes[i]);
+        Disposer.RemoveAndDispose(ref _evClipPlanes[i]!);
       }
       Disposer.RemoveAndDispose(ref _cbClipPlanes);
       ReleaseTextureFor1DColorProviders();
@@ -394,7 +394,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
           _altaxoLightSettings = null;
         }
 
-        if (null != _cachedDevice)
+        if (_cachedDevice is not null)
         {
           Detach();
         }
@@ -455,7 +455,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     public void SetCamera(CameraBase camera)
     {
-      if (null == camera)
+      if (camera is null)
         throw new ArgumentNullException(nameof(camera));
 
       _altaxoCamera = camera;
@@ -463,7 +463,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     public void SetLighting(LightSettings lightSettings)
     {
-      if (null == lightSettings)
+      if (lightSettings is null)
         throw new ArgumentNullException(nameof(lightSettings));
 
       _altaxoLightSettings = lightSettings;
@@ -473,12 +473,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     {
       for (int i = 0; i < _nextTriangleDeviceBuffers.Length; ++i)
       {
-        if (null != _nextTriangleDeviceBuffers[i])
+        if (_nextTriangleDeviceBuffers[i] is not null)
         {
           var oldBuffers = _thisTriangleDeviceBuffers[i];
           _thisTriangleDeviceBuffers[i] = System.Threading.Interlocked.Exchange(ref _nextTriangleDeviceBuffers[i], null);
 
-          if (null != oldBuffers)
+          if (oldBuffers is not null)
           {
             foreach (var entry in oldBuffers)
               entry.Dispose();
@@ -486,6 +486,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         }
       }
     }
+
+#nullable disable
 
     private void BindTextureFor1DColorProviders()
     {
@@ -520,8 +522,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     private void BringDrawingIntoBuffers(D3D10GraphicsContext altaxoDrawingGeometry)
     {
-      Device device = _cachedDevice;
-      if (device == null || device.IsDisposed)
+      var device = _cachedDevice;
+      if (device is null || device.IsDisposed)
         return;
 
       var altaxoBuffersOfType =
@@ -568,7 +570,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
           if (altaxoBuffer.Key is MaterialPlusClippingKey)
           {
             var axoClipPlanes = ((MaterialPlusClippingKey)altaxoBuffer.Key).ClipPlanes;
-            if (null != axoClipPlanes)
+            if (axoClipPlanes is not null)
               clipPlanes = axoClipPlanes.Select(axoPlane => new Plane((float)axoPlane.X, (float)axoPlane.Y, (float)axoPlane.Z, (float)-axoPlane.W)).ToArray();
           }
 
@@ -591,8 +593,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     private void BringMarkerGeometryIntoDeviceBuffers(D3D10OverlayContext overlayGeometry)
     {
-      Device device = _cachedDevice;
-      if (device == null || device.IsDisposed)
+      var device = _cachedDevice;
+      if (device is null || device.IsDisposed)
         return;
 
       // ------------------  Triangle buffer ------------------------------------
@@ -647,8 +649,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     private void BringOverlayGeometryIntoDeviceBuffers(D3D10OverlayContext overlayGeometry)
     {
-      Device device = _cachedDevice;
-      if (device == null || device.IsDisposed)
+      var device = _cachedDevice;
+      if (device is null || device.IsDisposed)
         return;
 
       // ------------------  Triangle buffer ------------------------------------
@@ -712,14 +714,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     void IScene.Render()
     {
-      Device device = _cachedDevice;
-      if (device == null)
+      var device = _cachedDevice;
+      if (device is null)
         throw new InvalidOperationException("Rendering failed because device is null");
       if (device.IsDisposed)
         throw new InvalidOperationException("Rendering failed because device is disposed");
-      if (_altaxoCamera == null)
+      if (_altaxoCamera is null)
         throw new InvalidOperationException("Rendering failed because camera is null");
-      if (_altaxoDrawingGeometry == null)
+      if (_altaxoDrawingGeometry is null)
         throw new InvalidOperationException("Rendering failed because drawing is null");
 
       UseNextTriangleDeviceBuffers();
@@ -729,7 +731,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       Matrix worldViewProjTr; // world-view matrix, transposed
 
-      if (null != _altaxoCamera)
+      if (_altaxoCamera is not null)
       {
         var cam = _altaxoCamera;
         var eye = cam.EyePosition;
@@ -791,11 +793,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       // ------------------ start of marker geometry drawing ----------------------------------
 
       var markerTriangles = _markerGeometryTriangleDeviceBuffer;
-      if (null != markerTriangles)
+      if (markerTriangles is not null)
         DrawPositionColorIndexedTriangleBufferNoMaterial(device, markerTriangles, worldViewProjTr);
 
       var markerLines = _markerGeometryLineListBuffer;
-      if (null != markerLines && markerLines.VertexCount > 0)
+      if (markerLines is not null && markerLines.VertexCount > 0)
         DrawPositionColorLineListBufferNoMaterial(device, markerLines, worldViewProjTr);
 
       // ------------------ end of marker geometry drawing ----------------------------------
@@ -803,11 +805,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       // ------------------ start of overlay geometry drawing ----------------------------------
 
       var overlayTriangles = _overlayGeometryTriangleDeviceBuffer;
-      if (null != overlayTriangles)
+      if (overlayTriangles is not null)
         DrawPositionColorIndexedTriangleBufferNoMaterial(device, overlayTriangles, worldViewProjTr);
 
       var overlayLines = _overlayGeometryLineListBuffer;
-      if (null != overlayLines && overlayLines.VertexCount > 0)
+      if (overlayLines is not null && overlayLines.VertexCount > 0)
         DrawPositionColorLineListBufferNoMaterial(device, overlayLines, worldViewProjTr);
 
       // ------------------ end of overlay geometry drawing ----------------------------------
@@ -902,7 +904,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       SetShaderMaterialVariables(deviceBuffers.Material);
 
       var planes = new SixPlanes();
-      if (null != deviceBuffers.ClipPlanes)
+      if (deviceBuffers.ClipPlanes is not null)
       {
         for (int i = 0; i < Math.Min(6, deviceBuffers.ClipPlanes.Length); ++i)
         {
@@ -923,7 +925,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       device.InputAssembler.InputLayout = _renderLayouts[layoutNumber].VertexLayout;
       device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
 
-      if (null != deviceBuffers.ClipPlanes)
+      if (deviceBuffers.ClipPlanes is not null)
       {
         for (int i = 0; i < Math.Min(6, deviceBuffers.ClipPlanes.Length); ++i)
         {
@@ -939,7 +941,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       _renderLayouts[layoutNumber].Pass.Apply();
       device.DrawIndexed(deviceBuffers.IndexCount, 0, 0);
 
-      if (null != deviceBuffers.ClipPlanes)
+      if (deviceBuffers.ClipPlanes is not null)
       {
         var emptyPlane = new Plane();
         for (int i = 0; i < Math.Min(6, deviceBuffers.ClipPlanes.Length); ++i)
@@ -956,7 +958,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
 
       // set clip planes
-      if (null != deviceBuffers.ClipPlanes)
+      if (deviceBuffers.ClipPlanes is not null)
       {
         for (int i = 0; i < Math.Min(6, deviceBuffers.ClipPlanes.Length); ++i)
         {
@@ -983,7 +985,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       device.DrawIndexed(deviceBuffers.IndexCount, 0, 0);
 
       // clear clip planes afterwards
-      if (null != deviceBuffers.ClipPlanes)
+      if (deviceBuffers.ClipPlanes is not null)
       {
         var emptyPlane = new Plane();
         for (int i = 0; i < Math.Min(6, deviceBuffers.ClipPlanes.Length); ++i)

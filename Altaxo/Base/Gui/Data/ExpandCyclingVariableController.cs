@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,7 +66,7 @@ namespace Altaxo.Gui.Data
         Current.Gui.FindAndAttachControlTo(_dataController);
         Current.Gui.FindAndAttachControlTo(_optionsController);
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetDataControl(_dataController.ViewObject);
         _view.SetOptionsControl(_optionsController.ViewObject);

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +57,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       var insetType = value as Type;
 
-      if (null == insetType)
+      if (insetType is null)
         return null;
 
       var inset = (IScatterSymbolInset)Activator.CreateInstance(insetType);
@@ -68,7 +69,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private PathFigure GetPathFigure(List<ClipperLib.IntPoint> polygon, double symbolSize)
     {
-      if (null == polygon || polygon.Count <= 2)
+      if (polygon is null || polygon.Count <= 2)
         return null;
 
       return new PathFigure(
@@ -78,7 +79,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private PathGeometry GetPathGeometry(List<List<ClipperLib.IntPoint>> polygon, double symbolSize)
     {
-      return new PathGeometry(polygon.Where(p => p != null && p.Count > 2).Select(p => GetPathFigure(p, symbolSize)));
+      return new PathGeometry(polygon.Where(p => p is not null && p.Count > 2).Select(p => GetPathFigure(p, symbolSize)));
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

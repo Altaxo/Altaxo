@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,47 +46,47 @@ namespace Altaxo.Gui.Drawing
   /// </summary>
   public partial class StyleListControl : UserControl, IStyleListView
   {
-    public event Action<NGTreeNode> AvailableLists_SelectionChanged;
+    public event Action<NGTreeNode>? AvailableLists_SelectionChanged;
 
-    public event Action CurrentItemListName_Changed;
+    public event Action? CurrentItemListName_Changed;
 
-    public event CanStartDragDelegate AvailableItems_CanStartDrag;
+    public event CanStartDragDelegate? AvailableItems_CanStartDrag;
 
-    public event StartDragDelegate AvailableItems_StartDrag;
+    public event StartDragDelegate? AvailableItems_StartDrag;
 
-    public event DragEndedDelegate AvailableItems_DragEnded;
+    public event DragEndedDelegate? AvailableItems_DragEnded;
 
-    public event DragCancelledDelegate AvailableItems_DragCancelled;
+    public event DragCancelledDelegate? AvailableItems_DragCancelled;
 
-    public event DropCanAcceptDataDelegate AvailableItems_DropCanAcceptData;
+    public event DropCanAcceptDataDelegate? AvailableItems_DropCanAcceptData;
 
-    public event DropDelegate AvailableItems_Drop;
+    public event DropDelegate? AvailableItems_Drop;
 
-    public event CanStartDragDelegate CurrentItems_CanStartDrag;
+    public event CanStartDragDelegate? CurrentItems_CanStartDrag;
 
-    public event StartDragDelegate CurrentItems_StartDrag;
+    public event StartDragDelegate? CurrentItems_StartDrag;
 
-    public event DragEndedDelegate CurrentItems_DragEnded;
+    public event DragEndedDelegate? CurrentItems_DragEnded;
 
-    public event DragCancelledDelegate CurrentItems_DragCancelled;
+    public event DragCancelledDelegate? CurrentItems_DragCancelled;
 
-    public event DropCanAcceptDataDelegate CurrentItems_DropCanAcceptData;
+    public event DropCanAcceptDataDelegate? CurrentItems_DropCanAcceptData;
 
-    public event DropDelegate CurrentItems_Drop;
+    public event DropDelegate? CurrentItems_Drop;
 
     public bool StoreInUserSettings { get { return true == _guiStoreInUserSettings.IsChecked; } set { _guiStoreInUserSettings.IsChecked = value; } }
 
-    public event Action AvailableItem_AddToCurrent;
+    public event Action? AvailableItem_AddToCurrent;
 
-    public event Action CurrentItem_MoveUp;
+    public event Action? CurrentItem_MoveUp;
 
-    public event Action CurrentItem_MoveDown;
+    public event Action? CurrentItem_MoveDown;
 
-    public event Action CurrentItem_Remove;
+    public event Action? CurrentItem_Remove;
 
-    public event Action CurrentItem_Edit;
+    public event Action? CurrentItem_Edit;
 
-    public event Action CurrentList_Store;
+    public event Action? CurrentList_Store;
 
     public StyleListControl()
     {
@@ -130,7 +131,7 @@ namespace Altaxo.Gui.Drawing
     {
       get
       {
-        if (null == _availableItemsDragSource)
+        if (_availableItemsDragSource is null)
           _availableItemsDragSource = new AvailableItems_DragSource(this);
         return _availableItemsDragSource;
       }
@@ -154,7 +155,7 @@ namespace Altaxo.Gui.Drawing
       public void StartDrag(IDragInfo dragInfo)
       {
         var result = _parentControl.AvailableItems_StartDrag?.Invoke(dragInfo.SourceItems);
-        if (null != result)
+        if (result is not null)
         {
           dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
           dragInfo.Data = result.Value.Data;
@@ -185,7 +186,7 @@ namespace Altaxo.Gui.Drawing
     {
       get
       {
-        if (null == _availableItems_DropTarget)
+        if (_availableItems_DropTarget is null)
           _availableItems_DropTarget = new AvailableItems_DropTarget(this);
         return _availableItems_DropTarget;
       }
@@ -218,7 +219,7 @@ namespace Altaxo.Gui.Drawing
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey));
 
-        if (null != result)
+        if (result is not null)
         {
           resultingEffect = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
           adornerType = result.Value.ItemIsSwallowingData ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
@@ -243,7 +244,7 @@ namespace Altaxo.Gui.Drawing
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey)
           );
 
-        if (null != result)
+        if (result is not null)
         {
           dropInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.IsCopy, result.Value.IsMove); // it is important to get back the resulting effect to dropInfo, because dropInfo informs the drag handler about the resulting effect, which can e.g. delete the items after a move operation
         }
@@ -260,7 +261,7 @@ namespace Altaxo.Gui.Drawing
     {
       get
       {
-        if (null == _currentItemsDragSource)
+        if (_currentItemsDragSource is null)
           _currentItemsDragSource = new CurrentItems_DragSource(this);
         return _currentItemsDragSource;
       }
@@ -285,7 +286,7 @@ namespace Altaxo.Gui.Drawing
       {
         GuiHelper.SynchronizeSelectionFromGui(_parentControl._guiCurrentItems);
         var result = _parentControl.CurrentItems_StartDrag?.Invoke(dragInfo.SourceItems);
-        if (null != result)
+        if (result is not null)
         {
           dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
           dragInfo.Data = result.Value.Data;
@@ -314,7 +315,7 @@ namespace Altaxo.Gui.Drawing
     {
       get
       {
-        if (null == _currentItems_DropTarget)
+        if (_currentItems_DropTarget is null)
           _currentItems_DropTarget = new CurrentItems_DropTarget(this);
         return _currentItems_DropTarget;
       }
@@ -347,7 +348,7 @@ namespace Altaxo.Gui.Drawing
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey));
 
-        if (null != result)
+        if (result is not null)
         {
           resultingEffect = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
           adornerType = result.Value.ItemIsSwallowingData ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
@@ -372,7 +373,7 @@ namespace Altaxo.Gui.Drawing
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey)
           );
 
-        if (null != result)
+        if (result is not null)
         {
           dropInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.IsCopy, result.Value.IsMove); // it is important to get back the resulting effect to dropInfo, because dropInfo informs the drag handler about the resulting effect, which can e.g. delete the items after a move operation
         }
@@ -445,7 +446,7 @@ namespace Altaxo.Gui.Drawing
     {
       get
       {
-        if (null == _currentItemsTemplate)
+        if (_currentItemsTemplate is null)
           _currentItemsTemplate = FindResource("CurrentItemsTemplateResource") as DataTemplate;
         return _currentItemsTemplate;
       }
@@ -467,7 +468,7 @@ namespace Altaxo.Gui.Drawing
     {
       get
       {
-        if (null == _availableItemsTemplate)
+        if (_availableItemsTemplate is null)
           _currentItemsTemplate = FindResource("AvailableItemsTemplateResource") as HierarchicalDataTemplate;
         return _availableItemsTemplate;
       }

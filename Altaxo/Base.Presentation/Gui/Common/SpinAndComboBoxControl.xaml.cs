@@ -43,21 +43,21 @@ namespace Altaxo.Gui.Common
 
     private void EhIntegerUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
     {
-      if (null != IntegerSelectionChanged)
+      if (IntegerSelectionChanged is not null)
         IntegerSelectionChanged(_edIntegerUpDown.Value);
     }
 
     private void EhComboBox_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
     {
-      if (null != ComboBoxSelectionChanged)
+      if (ComboBoxSelectionChanged is not null)
         ComboBoxSelectionChanged((Collections.SelectableListNode)_cbComboBox.SelectedItem);
     }
 
     #region IIntegerAndComboBoxView
 
-    public event Action<Collections.SelectableListNode> ComboBoxSelectionChanged;
+    public event Action<Collections.SelectableListNode>? ComboBoxSelectionChanged;
 
-    public event Action<int> IntegerSelectionChanged;
+    public event Action<int>? IntegerSelectionChanged;
 
     public void ComboBox_Initialize(Collections.SelectableListNodeList items, Collections.SelectableListNode defaultItem)
     {

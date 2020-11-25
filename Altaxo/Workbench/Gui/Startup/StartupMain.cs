@@ -30,6 +30,7 @@ using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Workbench;
 using Altaxo.Gui.Workbench.Commands;
 using Altaxo.Main.Services;
+using Altaxo.Main.Services.ExceptionHandling;
 
 namespace Altaxo.Gui.Startup
 {
@@ -62,7 +63,7 @@ namespace Altaxo.Gui.Startup
     /// <returns>Application name.</returns>
     private static string FindApplicationName()
     {
-      var assName = Assembly.GetEntryAssembly().GetName().Name;
+      var assName = Assembly.GetEntryAssembly()?.GetName().Name ?? throw new InvalidOperationException("Unable to get name of entry assembly");
       var assNameInvar = assName.ToLowerInvariant();
       string appName;
       foreach (var end in _possibleStartupAssemblyNameEnds)
@@ -166,7 +167,7 @@ namespace Altaxo.Gui.Startup
       }
       finally
       {
-        if (SplashScreenForm.SplashScreen != null)
+        if (SplashScreenForm.SplashScreen is not null)
         {
           SplashScreenForm.SplashScreen.Dispose();
         }
@@ -216,7 +217,7 @@ namespace Altaxo.Gui.Startup
 #endif
 
       Current.Log.Info(string.Format("Starting {0}...", startupArguments.ApplicationName));
-      Altaxo.Main.Services.IAutoUpdateInstallationService updateInstaller = null;
+      Altaxo.Main.Services.IAutoUpdateInstallationService? updateInstaller = null;
       try
       {
         var startupSettings = new StartupSettings(startupArguments.ApplicationName, startupArguments.StartupArgs, startupArguments.RequestedFileList, startupArguments.ParameterList);
@@ -225,14 +226,15 @@ namespace Altaxo.Gui.Startup
         startupSettings.UseExceptionBoxForErrorHandler = UseExceptionBox(startupArguments.StartupArgs);
 #endif
 
-        Assembly thisAssembly = typeof(StartupMain).Assembly;
-        startupSettings.ApplicationRootPath = Path.Combine(Path.GetDirectoryName(thisAssembly.Location), "..");
+        var thisAssemblyLocation = typeof(StartupMain).Assembly.Location ?? throw new InvalidOperationException("Unable to get the location of this assembly");
+        var thisAssemblyPath = Path.GetDirectoryName(thisAssemblyLocation) ?? throw new InvalidOperationException("Unable to get path of this assembly");
+        startupSettings.ApplicationRootPath = Path.Combine(thisAssemblyPath, "..");
         startupSettings.AllowUserAddIns = true;
 
-        string configDirectory = System.Configuration.ConfigurationManager.AppSettings["settingsPath"];
+        var configDirectory = System.Configuration.ConfigurationManager.AppSettings["settingsPath"];
         if (string.IsNullOrEmpty(configDirectory))
         {
-          string relativeConfigDirectory = System.Configuration.ConfigurationManager.AppSettings["relativeSettingsPath"];
+          var relativeConfigDirectory = System.Configuration.ConfigurationManager.AppSettings["relativeSettingsPath"];
           if (string.IsNullOrEmpty(relativeConfigDirectory))
             startupSettings.ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), startupArguments.ApplicationName);
           else
@@ -240,7 +242,7 @@ namespace Altaxo.Gui.Startup
         }
         else
         {
-          startupSettings.ConfigDirectory = Path.Combine(Path.GetDirectoryName(thisAssembly.Location), configDirectory);
+          startupSettings.ConfigDirectory = Path.Combine(thisAssemblyPath, configDirectory);
         }
 
         startupSettings.AddAddInsFromDirectory(Path.Combine(startupSettings.ApplicationRootPath, "AddIns"));
@@ -268,7 +270,7 @@ namespace Altaxo.Gui.Startup
         }
 
         updateInstaller = Altaxo.Current.GetService<Altaxo.Main.Services.IAutoUpdateInstallationService>();
-        if (null != updateInstaller)
+        if (updateInstaller is not null)
         {
           if (updateInstaller.Run(true, startupArguments.StartupArgs))
             return;
@@ -276,7 +278,7 @@ namespace Altaxo.Gui.Startup
 
         // Start Com
         var comManager = Altaxo.Current.GetService<Altaxo.Main.IComManager>();
-        if (null != comManager)
+        if (comManager is not null)
         {
           if (!comManager.ProcessStartupArguments(startupArguments.StartupArgs))
             return;
@@ -287,7 +289,7 @@ namespace Altaxo.Gui.Startup
                     () =>
                     {
                       var splashScreen = SplashScreenForm.SplashScreen;
-                      if (splashScreen != null)
+                      if (splashScreen is not null)
                       {
                         splashScreen.BeginInvoke(new MethodInvoker(splashScreen.Dispose));
                         SplashScreenForm.SplashScreen = null;
@@ -313,6 +315,8 @@ namespace Altaxo.Gui.Startup
     /// <param name="startupSettings">The settings used for startup of the application.</param>
     public static void InitializeApplication(StartupSettings startupSettings)
     {
+      Current.IsInDesignMode = false; // we are not in design mode
+
       // Initialize the most important services:
       var container = new AltaxoServiceContainer();
       container.AddFallbackProvider(Current.FallbackServiceProvider);
@@ -320,16 +324,19 @@ namespace Altaxo.Gui.Startup
       //			container.AddService(typeof(ILoggingService), new log4netLoggingService());
       Current.Services = container;
 
+      var unhandledExceptionHandlerService = new UnhandledExceptionHandlerService();
+      Current.AddService<IUnhandledExceptionHandlerService>(unhandledExceptionHandlerService);
+
       Current.Log.Info("Initialize application...");
       var startup = new CoreStartup(startupSettings.ApplicationName);
       if (startupSettings.UseExceptionBoxForErrorHandler)
       {
-        ExceptionBox.RegisterExceptionBoxForUnhandledExceptions();
+        unhandledExceptionHandlerService.AddHandler(new ExceptionBox.UnhandledHandler(), false);
       }
-      string configDirectory = startupSettings.ConfigDirectory;
-      string dataDirectory = startupSettings.DataDirectory;
+      var configDirectory = startupSettings.ConfigDirectory;
+      var dataDirectory = startupSettings.DataDirectory;
       string propertiesName;
-      if (startupSettings.PropertiesName != null)
+      if (startupSettings.PropertiesName is not null)
       {
         propertiesName = startupSettings.PropertiesName;
       }
@@ -338,12 +345,12 @@ namespace Altaxo.Gui.Startup
         propertiesName = startupSettings.ApplicationName + "Properties";
       }
 
-      if (startupSettings.ApplicationRootPath != null)
+      if (startupSettings.ApplicationRootPath is not null)
       {
         FileUtility.ApplicationRootPath = startupSettings.ApplicationRootPath;
       }
 
-      if (configDirectory == null)
+      if (configDirectory is null)
         configDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                                                                      startupSettings.ApplicationName);
 
@@ -398,16 +405,15 @@ namespace Altaxo.Gui.Startup
     /// <param name="WorkbenchClosed">Action(s) that are executed immediatly after the workbench has closed. May be null.</param>
     /// <exception cref="RunWorkbenchException"></exception>
     [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-    private static void RunWorkbench(StartupSettings wbSettings, Action BeforeRunWorkbench, Action WorkbenchClosed)
+    private static void RunWorkbench(StartupSettings wbSettings, Action BeforeRunWorkbench, Action? WorkbenchClosed)
     {
-      var wbc = new WorkbenchStartup();
       Current.Log.Info("Initializing workbench...");
-      wbc.InitializeWorkbench();
+      var wbc = new WorkbenchStartup();
 
       RunWorkbenchInitializedCommands();
 
       Current.Log.Info("Starting workbench...");
-      Exception exception = null;
+      Exception? exception = null;
       // finally start the workbench.
       try
       {
@@ -433,7 +439,7 @@ namespace Altaxo.Gui.Startup
       }
       Current.Log.Info("Finished running workbench.");
       WorkbenchClosed?.Invoke();
-      if (exception != null)
+      if (exception is not null)
       {
         const string errorText = "Unhandled exception terminated the workbench";
         Current.Log.Fatal(exception);
@@ -450,7 +456,7 @@ namespace Altaxo.Gui.Startup
 
     private static void RunWorkbenchInitializedCommands()
     {
-      if (Current.ComManager != null && Current.ComManager.ApplicationWasStartedWithEmbeddingArg)
+      if (Current.ComManager is not null && Current.ComManager.ApplicationWasStartedWithEmbeddingArg)
       {
         Current.ComManager.StartLocalServer();
       }

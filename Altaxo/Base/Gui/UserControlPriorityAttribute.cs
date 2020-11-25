@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui
 {
@@ -64,11 +62,13 @@ namespace Altaxo.Gui
     /// </summary>
     /// <param name="obj">The other priority attribute.</param>
     /// <returns>1 if the other priority attribute has higher priority than this attribute, -1 if this attribute has higher priority than the other; otherwise 0.</returns>
-    public int CompareTo(object obj)
+    public int CompareTo(object? obj)
     {
       // Attention - we sort the items so that the item with the highest priority value is the first (!) entry in a sorted list
-      var to = (UserControlPriorityAttribute)obj;
-      return _priority == to._priority ? 0 : (_priority > to._priority ? -1 : 1);
+      if (obj is UserControlPriorityAttribute to)
+        return _priority == to._priority ? 0 : (_priority > to._priority ? -1 : 1);
+      else
+        throw new InvalidOperationException($"Can not compare {this.GetType()} with {obj}");
     }
 
     #endregion IComparable Members

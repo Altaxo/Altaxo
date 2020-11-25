@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -45,7 +46,7 @@ namespace Altaxo.Drawing.LineCaps
 
     public string Name => "Flat";
 
-    public bool Equals(ILineCap other)
+    public bool Equals(ILineCap? other)
     {
       return other is FlatCap;
     }

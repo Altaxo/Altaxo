@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Data;
@@ -45,11 +47,19 @@ namespace Altaxo.Graph.Procedures
     /// </summary>
     private AltaxoDocument _document;
 
-    private Dictionary<AbsoluteDocumentPath, DataTable> _tablesToChange;
-    private Dictionary<DataColumn, DataTable> _columnsToChange;
+    private Dictionary<AbsoluteDocumentPath, DataTable?> _tablesToChange;
+    private Dictionary<DataColumn, DataTable?> _columnsToChange;
 
-    public MiniProjectBuilder()
+    protected MiniProjectBuilder(GraphDocumentBase graph, bool ensureEmbeddedObjectRenderingOptionsStoredInGraph)
     {
+      Initialize();
+
+      _graph = graph;
+      CollectAllDataColumnReferences();
+      CopyReferencedColumnsToNewProject();
+      CopyGraphToNewDocument(_graph, ensureEmbeddedObjectRenderingOptionsStoredInGraph);
+      CopyFolderPropertiesOf(_graph);
+      CopyDocumentInformation(_graph);
     }
 
     /// <summary>
@@ -60,25 +70,18 @@ namespace Altaxo.Graph.Procedures
     /// <param name="ensureEmbeddedObjectRenderingOptionsStoredInGraph">If set to <c>true</c>, the current embedded rendering options are stored as property in the graph document of the mini project.
     /// This ensures that later on the graph is rendered in the client document exactly as it was chosen to be in the current project. If the mini project is not used for COM, leave that flag to <c>false.</c></param>
     /// <returns>The mini project containing the cloned graph and all related data.</returns>
-    public AltaxoDocument GetMiniProject(GraphDocumentBase graph, bool ensureEmbeddedObjectRenderingOptionsStoredInGraph)
+    public static AltaxoDocument CreateMiniProject(GraphDocumentBase graph, bool ensureEmbeddedObjectRenderingOptionsStoredInGraph)
     {
-      Initialize();
-
-      _graph = graph;
-      CollectAllDataColumnReferences();
-      CopyReferencedColumnsToNewProject();
-      CopyGraphToNewDocument(_graph, ensureEmbeddedObjectRenderingOptionsStoredInGraph);
-      CopyFolderPropertiesOf(_graph);
-      CopyDocumentInformation(_graph);
-
-      return _document;
+      var pb = new MiniProjectBuilder(graph, ensureEmbeddedObjectRenderingOptionsStoredInGraph);
+      return pb._document;
     }
 
+    [MemberNotNull(nameof(_document), nameof(_tablesToChange), nameof(_columnsToChange))]
     protected void Initialize()
     {
       _document = new AltaxoDocument();
-      _tablesToChange = new Dictionary<AbsoluteDocumentPath, DataTable>();
-      _columnsToChange = new Dictionary<DataColumn, DataTable>();
+      _tablesToChange = new Dictionary<AbsoluteDocumentPath, DataTable?>();
+      _columnsToChange = new Dictionary<DataColumn, DataTable?>();
     }
 
     protected void CopyGraphToNewDocument(GraphDocumentBase oldGraph, bool ensureEmbeddedObjectRenderingOptionsStoredInGraph)
@@ -90,10 +93,10 @@ namespace Altaxo.Graph.Procedures
       if (ensureEmbeddedObjectRenderingOptionsStoredInGraph)
       {
         var clipboardRenderingOptions = Altaxo.PropertyExtensions.GetPropertyValue(oldGraph, ClipboardRenderingOptions.PropertyKeyClipboardRenderingOptions, () => new ClipboardRenderingOptions());
-        var embeddedRenderingOptions = Altaxo.PropertyExtensions.GetPropertyValue(oldGraph, EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, () => null);
+        var embeddedRenderingOptions = Altaxo.PropertyExtensions.GetPropertyValue(oldGraph, EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, null);
 
         // if embeddedRenderingOptions exists explicitely, they should be used. Else the clipboard options can be used.
-        var clonedOptions = null != embeddedRenderingOptions ? embeddedRenderingOptions.Clone() : new EmbeddedObjectRenderingOptions(clipboardRenderingOptions);
+        var clonedOptions = embeddedRenderingOptions is not null ? embeddedRenderingOptions.Clone() : new EmbeddedObjectRenderingOptions(clipboardRenderingOptions);
         newGraph.PropertyBagNotNull.SetValue(EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, clonedOptions);
       }
     }
@@ -102,7 +105,7 @@ namespace Altaxo.Graph.Procedures
     {
       foreach (var doc in PropertyExtensions.GetProjectFolderPropertyDocuments(oldGraph))
       {
-        if (doc.PropertyBag != null && doc.PropertyBag.Count > 0)
+        if (doc.PropertyBag is not null && doc.PropertyBag.Count > 0)
         {
           var bagclone = doc.Clone();
           _document.ProjectFolderProperties.Add(bagclone);
@@ -112,9 +115,9 @@ namespace Altaxo.Graph.Procedures
 
     private void CopyDocumentInformation(GraphDocumentBase graph)
     {
-      var sourceDocument = (AltaxoDocument)Main.AbsoluteDocumentPath.GetRootNodeImplementing(graph, typeof(AltaxoDocument));
+      var sourceDocument = (AltaxoDocument?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(graph, typeof(AltaxoDocument));
 
-      if (null != sourceDocument)
+      if (sourceDocument is not null)
       {
         _document.DocumentIdentifier = sourceDocument.DocumentIdentifier;
       }
@@ -135,8 +138,10 @@ namespace Altaxo.Graph.Procedures
 
         foreach (var col in columnList)
           _columnsToChange.Remove(col);
-
-        BuildNewTableWithColumns(table, columnList);
+        if (table is not null)
+        {
+          BuildNewTableWithColumns(table, columnList);
+        }
       }
     }
 
@@ -180,7 +185,7 @@ namespace Altaxo.Graph.Procedures
     /// <param name="propertyName">Name of the property in the owner class that will return the proxy.</param>
     private void CollectDataColumnsFromProxyVisit(IProxy proxy, object owner, string propertyName)
     {
-      if (null == proxy || proxy.IsEmpty)
+      if (proxy is null || proxy.IsEmpty)
       {
       }
       else if (proxy.DocumentObject() is Altaxo.Data.DataColumn dataColumn)
@@ -194,7 +199,7 @@ namespace Altaxo.Graph.Procedures
       else if (proxy.DocumentObject() is Altaxo.Data.DataColumnCollection dataColumnCollection)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataColumnCollection);
-        if (table != null)
+        if (table is not null)
         {
           var tablePath = AbsoluteDocumentPath.GetAbsolutePath(table);
           if (!_tablesToChange.ContainsKey(tablePath))

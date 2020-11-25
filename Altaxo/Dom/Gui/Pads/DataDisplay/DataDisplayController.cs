@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using Altaxo.Gui.Workbench;
 
@@ -70,12 +71,12 @@ namespace Altaxo.Gui.Pads.DataDisplay
       {
         if (!object.ReferenceEquals(_view, value))
         {
-          if (null != _view)
+          if (_view is not null)
             DetachView();
 
           _view = value as IDataDisplayView;
 
-          if (null != _view)
+          if (_view is not null)
             AttachView();
         }
       }

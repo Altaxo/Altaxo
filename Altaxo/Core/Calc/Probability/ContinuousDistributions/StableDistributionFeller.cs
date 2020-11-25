@@ -664,8 +664,8 @@ namespace Altaxo.Calc.Probability
       if (QuickRootFinding.BracketRootByExtensionOnly(delegate (double x)
       { return CDF(x, alpha, gamma, aga, ref temp, precision) - p; }, 0, ref x0, ref x1))
       {
-        if (null != QuickRootFinding.ByBrentsAlgorithm(delegate (double x)
-        { return CDF(x, alpha, gamma, aga, ref temp, precision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+        if (QuickRootFinding.ByBrentsAlgorithm(delegate (double x)
+        { return CDF(x, alpha, gamma, aga, ref temp, precision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root) is not null)
           root = double.NaN;
       }
       tempStorage = temp;
@@ -709,8 +709,8 @@ namespace Altaxo.Calc.Probability
       if (QuickRootFinding.BracketRootByExtensionOnly(delegate (double x)
       { return CCDF(x, alpha, gamma, aga, ref temp, precision) - q; }, 0, ref x0, ref x1))
       {
-        if (null != QuickRootFinding.ByBrentsAlgorithm(delegate (double x)
-        { return CCDF(x, alpha, gamma, aga, ref temp, precision) - q; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+        if (QuickRootFinding.ByBrentsAlgorithm(delegate (double x)
+        { return CCDF(x, alpha, gamma, aga, ref temp, precision) - q; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root) is not null)
           root = double.NaN;
       }
       tempStorage = temp;

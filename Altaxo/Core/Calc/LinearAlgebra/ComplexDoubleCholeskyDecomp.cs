@@ -57,7 +57,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///upper triangle.</remarks>
     public ComplexDoubleCholeskyDecomp(IROComplexDoubleMatrix matrix)
     {
-      if (matrix == null)
+      if (matrix is null)
       {
         throw new System.ArgumentNullException("matrix cannot be null.");
       }

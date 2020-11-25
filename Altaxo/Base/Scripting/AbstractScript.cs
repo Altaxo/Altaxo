@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -56,7 +57,7 @@ namespace Altaxo.Scripting
       get;
     }
 
-    object ScriptObject
+    object? ScriptObject
     {
       get;
     }
@@ -178,13 +179,13 @@ namespace Altaxo.Scripting
     /// <summary>
     /// The text of the column script.
     /// </summary>
-    public string _scriptText; // the text of the script
+    public string? _scriptText; // the text of the script
 
     /// <summary>
     /// The result of the successfull compiler run. After this variable is set, the script text must not be changed!
     /// </summary>
     [NonSerialized()]
-    public IScriptCompilerResult _compilerResult;
+    public IScriptCompilerResult? _compilerResult;
 
     /// <summary>
     /// True when the text changed from last time this flag was reseted.
@@ -202,13 +203,13 @@ namespace Altaxo.Scripting
     /// The script object. This is a instance of the newly created script class.
     /// </summary>
     [NonSerialized()]
-    protected object _scriptObject; // the compiled and created script object
+    protected object? _scriptObject; // the compiled and created script object
 
     /// <summary>
     /// The name of the script. This is set to a arbitrary unique name ending in ".cs".
     /// </summary>
     [NonSerialized()]
-    protected string _scriptName;
+    protected string? _scriptName;
 
     /// <summary>
     /// Holds error messages created by the compiler.
@@ -233,9 +234,9 @@ namespace Altaxo.Scripting
         info.AddValue("Text", s._scriptText);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (AbstractScript)o;
+        var s = (AbstractScript)(o ?? new ArgumentNullException(nameof(o)));
         s._scriptText = info.GetString("Text");
         return s;
       }
@@ -278,7 +279,7 @@ namespace Altaxo.Scripting
     /// the compiled assembly is not copied, so that the script text can be modified.</param>
     public void CopyFrom(AbstractScript from, bool forModification)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       var oldScriptText = _scriptText;
@@ -314,7 +315,7 @@ namespace Altaxo.Scripting
     {
       var stb = new StringBuilder();
 
-      if (null != _errors)
+      if (_errors is not null)
       {
         foreach (var err in _errors)
         {
@@ -329,7 +330,7 @@ namespace Altaxo.Scripting
       _errors = ImmutableArray<ICompilerDiagnostic>.Empty;
     }
 
-    public Assembly ScriptAssembly
+    public Assembly? ScriptAssembly
     {
       get
       {
@@ -337,7 +338,7 @@ namespace Altaxo.Scripting
       }
     }
 
-    public object ScriptObject
+    public object? ScriptObject
     {
       get
       {
@@ -363,7 +364,7 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (null == _scriptName)
+        if (_scriptName is null)
           _scriptName = GenerateScriptName();
 
         return _scriptName + ".cs";
@@ -374,7 +375,7 @@ namespace Altaxo.Scripting
     {
       get
       {
-        return _compilerResult != null;
+        return _compilerResult is not null;
       }
     }
 
@@ -385,11 +386,11 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (null != _compilerResult)
+        if (_compilerResult is not null)
         {
           return _compilerResult.ScriptText(0);
         }
-        if (null == _scriptText)
+        if (_scriptText is null)
         {
           _scriptText = CodeHeader + CodeStart + CodeUserDefault + CodeEnd + CodeTail;
         }
@@ -419,11 +420,11 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (null != _compilerResult)
+        if (_compilerResult is not null)
         {
           return _compilerResult.ScriptTextHash;
         }
-        if (null == _scriptText)
+        if (_scriptText is null)
         {
           _scriptText = CodeHeader + CodeStart + CodeUserDefault + CodeEnd + CodeTail;
         }
@@ -431,7 +432,7 @@ namespace Altaxo.Scripting
       }
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return obj is AbstractScript from && this.ScriptText == from.ScriptText;
     }
@@ -450,7 +451,7 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (null == ScriptText)
+        if (ScriptText is null)
           return 0;
 
         int pos = ScriptText.IndexOf(CodeStart);
@@ -515,7 +516,7 @@ namespace Altaxo.Scripting
     /// </summary>
     public void MakeSureWasTriedToCompile()
     {
-      if (null == _scriptObject)
+      if (_scriptObject is null)
       {
         if (!_wasTriedToCompile)
           Compile();
@@ -526,18 +527,18 @@ namespace Altaxo.Scripting
     /// Creates a new script object from the compiled assembly.
     /// </summary>
     /// <returns>The new script object. If creation fails, an error is set.</returns>
-    private object CreateNewScriptObject()
+    private object? CreateNewScriptObject()
     {
-      object scriptObject = null;
+      object? scriptObject = null;
       var assembly = ScriptAssembly;
 
-      if (null != assembly)
+      if (assembly is not null)
       {
         try
         {
           scriptObject = assembly.CreateInstance(ScriptObjectType);
 
-          if (null == scriptObject)
+          if (scriptObject is null)
           {
             _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, string.Format("Unable to create scripting object  (expected type: {0}), please verify namespace and class name!\n", ScriptObjectType)));
           }
@@ -561,7 +562,7 @@ namespace Altaxo.Scripting
     {
       _wasTriedToCompile = true;
 
-      if (_compilerResult != null)
+      if (_compilerResult is not null)
         return true;
 
       var scriptCompilerResult = ScriptCompilerService.Compile(new string[] { ScriptText });

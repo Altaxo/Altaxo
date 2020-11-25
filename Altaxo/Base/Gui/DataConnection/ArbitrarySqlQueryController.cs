@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,7 +80,7 @@ namespace Altaxo.Gui.DataConnection
 
         _connectionString = value;
 
-        if (null == _connectionString || _connectionString.IsEmpty)
+        if (_connectionString is null || _connectionString.IsEmpty)
         {
           Reset();
         }
@@ -101,7 +102,7 @@ namespace Altaxo.Gui.DataConnection
         var oldValue = _selectionStatement;
         _selectionStatement = value;
 
-        if (null != _view)
+        if (_view is not null)
         {
           _view.SqlText = _selectionStatement;
         }
@@ -118,7 +119,7 @@ namespace Altaxo.Gui.DataConnection
       if (initData)
       {
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SqlText = _selectionStatement;
       }
@@ -209,14 +210,14 @@ namespace Altaxo.Gui.DataConnection
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as IArbitrarySqlQueryView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           AttachView();
@@ -236,7 +237,7 @@ namespace Altaxo.Gui.DataConnection
 
     public bool Apply(bool disposeController)
     {
-      return null != _connectionString && !_connectionString.IsEmpty && !string.IsNullOrEmpty(_selectionStatement);
+      return _connectionString is not null && !_connectionString.IsEmpty && !string.IsNullOrEmpty(_selectionStatement);
     }
 
     /// <summary>

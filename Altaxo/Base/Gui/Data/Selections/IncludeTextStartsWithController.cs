@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,7 +66,7 @@ namespace Altaxo.Gui.Data.Selections
       if (initData)
       {
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.Value = _doc.Value;
         _view.IgnoreCase = _doc.IgnoreCase;
@@ -87,7 +88,7 @@ namespace Altaxo.Gui.Data.Selections
     {
       var column = _doc.Column;
 
-      if (null == column)
+      if (column is null)
       {
         Current.Gui.ErrorMessageBox(
           "No column is set in the range of numerical values that is part of the plot range selection.\r\n" +

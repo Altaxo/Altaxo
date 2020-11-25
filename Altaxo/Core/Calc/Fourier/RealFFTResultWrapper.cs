@@ -104,7 +104,7 @@ namespace Altaxo.Calc.Fourier
     {
       get
       {
-        if (null == _amplitudeWrapper)
+        if (_amplitudeWrapper is null)
           _amplitudeWrapper = new AmplitudeWrapper(_fftresult);
         return _amplitudeWrapper;
       }
@@ -178,7 +178,7 @@ namespace Altaxo.Calc.Fourier
     {
       get
       {
-        if (null == _realPartWrapper)
+        if (_realPartWrapper is null)
           _realPartWrapper = new RealPartWrapper(_fftresult);
         return _realPartWrapper;
       }
@@ -252,7 +252,7 @@ namespace Altaxo.Calc.Fourier
     {
       get
       {
-        if (null == _imagPartWrapper)
+        if (_imagPartWrapper is null)
           _imagPartWrapper = new ImaginaryPartWrapper(_fftresult);
         return _imagPartWrapper;
       }
@@ -326,7 +326,7 @@ namespace Altaxo.Calc.Fourier
     {
       get
       {
-        if (null == _complexPartWrapper)
+        if (_complexPartWrapper is null)
           _complexPartWrapper = new ComplexPartWrapper(_fftresult);
         return _complexPartWrapper;
       }
@@ -383,7 +383,7 @@ namespace Altaxo.Calc.Fourier
     {
       get
       {
-        if (null == _phaseWrapper)
+        if (_phaseWrapper is null)
           _phaseWrapper = new PhaseWrapper(_fftresult);
         return _phaseWrapper;
       }

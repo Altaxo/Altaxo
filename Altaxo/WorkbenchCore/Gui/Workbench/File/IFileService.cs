@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Workbench
     /// <param name="description">Description shown in the dialog.</param>
     /// <param name="selectedPath">Optional: Initially selected folder.</param>
     /// <returns>The selected folder; or <c>null</c> if the user cancelled the dialog.</returns>
-    string BrowseForFolder(string description, string selectedPath = null);
+    string? BrowseForFolder(string description, string? selectedPath = null);
 
     #endregion BrowseForFolder
 
@@ -73,12 +73,12 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Gets an opened file, or returns null if the file is not opened.
     /// </summary>
-    OpenedFile GetOpenedFile(FileName fileName);
+    OpenedFile? GetOpenedFile(FileName fileName);
 
     /// <summary>
     /// Gets an opened file, or returns null if the file is not opened.
     /// </summary>
-    OpenedFile GetOpenedFile(string fileName);
+    OpenedFile? GetOpenedFile(string fileName);
 
     /// <summary>
     /// Gets or creates an opened file.
@@ -136,7 +136,7 @@ namespace Altaxo.Gui.Workbench
     /// <param name="fileName">The name of the file to open.</param>
     /// <param name="switchToOpenedView">Specifies whether to switch to the view for the specified file.</param>
     /// <returns>The existing or opened <see cref="IViewContent"/> for the specified file.</returns>
-    IFileViewContent OpenFile(FileName fileName, bool switchToOpenedView = true);
+    IFileViewContent? OpenFile(FileName fileName, bool switchToOpenedView = true);
 
     /// <summary>
     /// Opens a view content for the specified file using the specified display binding.
@@ -145,7 +145,7 @@ namespace Altaxo.Gui.Workbench
     /// <param name="displayBinding">The display binding to use for opening the file.</param>
     /// <param name="switchToOpenedView">Specifies whether to switch to the view for the specified file.</param>
     /// <returns>The existing or opened <see cref="IViewContent"/> for the specified file.</returns>
-    IFileViewContent OpenFileWith(FileName fileName, IDisplayBinding displayBinding, bool switchToOpenedView = true);
+    IFileViewContent? OpenFileWith(FileName fileName, IDisplayBinding displayBinding, bool switchToOpenedView = true);
 
     /// <summary>
     /// Shows the 'Open With' dialog, allowing the user to pick a display binding for opening the specified files.
@@ -157,14 +157,14 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     /// <param name="defaultName">The (unsaved) name of the to open</param>
     /// <param name="content">Content of the file to create</param>
-    IFileViewContent NewFile(string defaultName, string content);
+    IFileViewContent? NewFile(string defaultName, string content);
 
     /// <summary>
     /// Opens a new unsaved file.
     /// </summary>
     /// <param name="defaultName">The (unsaved) name of the to open</param>
     /// <param name="content">Content of the file to create</param>
-    IFileViewContent NewFile(string defaultName, byte[] content);
+    IFileViewContent? NewFile(string defaultName, byte[] content);
 
     /// <summary>
     /// Gets a list of the names of the files that are open as primary files
@@ -175,13 +175,13 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Gets the IViewContent for a fileName. Returns null if the file is not opened currently.
     /// </summary>
-    IFileViewContent GetOpenFile(FileName fileName);
+    IFileViewContent? GetOpenFile(FileName fileName);
 
     /// <summary>
     /// Opens the specified file and jumps to the specified file position.
     /// Line and column start counting at 1.
     /// </summary>
-    IFileViewContent JumpToFilePosition(FileName fileName, int line, int column);
+    IFileViewContent? JumpToFilePosition(FileName fileName, int line, int column);
 
     #endregion OpenFile (ViewContent)
 

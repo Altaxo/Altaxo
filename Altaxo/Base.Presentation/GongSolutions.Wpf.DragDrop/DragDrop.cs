@@ -12,6 +12,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections;
 using System.Linq;
@@ -102,7 +103,7 @@ namespace GongSolutions.Wpf.DragDrop
     {
       var template = (DataTemplate)target.GetValue(EffectNoneAdornerTemplateProperty);
 
-      if (template == null)
+      if (template is null)
       {
         if (!GetUseDefaultEffectDataTemplate(target))
         {
@@ -135,7 +136,7 @@ namespace GongSolutions.Wpf.DragDrop
     {
       var template = (DataTemplate)target.GetValue(EffectCopyAdornerTemplateProperty);
 
-      if (template == null)
+      if (template is null)
       {
         template = CreateDefaultEffectDataTemplate(target, IconFactory.EffectCopy, "Copy to", destinationText);
       }
@@ -155,7 +156,7 @@ namespace GongSolutions.Wpf.DragDrop
     {
       var template = (DataTemplate)target.GetValue(EffectMoveAdornerTemplateProperty);
 
-      if (template == null)
+      if (template is null)
       {
         template = CreateDefaultEffectDataTemplate(target, IconFactory.EffectMove, "Move to", destinationText);
       }
@@ -175,7 +176,7 @@ namespace GongSolutions.Wpf.DragDrop
     {
       var template = (DataTemplate)target.GetValue(EffectLinkAdornerTemplateProperty);
 
-      if (template == null)
+      if (template is null)
       {
         template = CreateDefaultEffectDataTemplate(target, IconFactory.EffectLink, "Link to", destinationText);
       }
@@ -307,7 +308,7 @@ namespace GongSolutions.Wpf.DragDrop
     {
       get
       {
-        if (m_DefaultDragHandler == null)
+        if (m_DefaultDragHandler is null)
         {
           m_DefaultDragHandler = new DefaultDragHandler();
         }
@@ -321,7 +322,7 @@ namespace GongSolutions.Wpf.DragDrop
     {
       get
       {
-        if (m_DefaultDropHandler == null)
+        if (m_DefaultDropHandler is null)
         {
           m_DefaultDropHandler = new DefaultDropHandler();
         }
@@ -412,7 +413,7 @@ namespace GongSolutions.Wpf.DragDrop
 
       var useDefaultDragAdorner = GetUseDefaultDragAdorner(m_DragInfo.VisualSource);
 
-      if (template == null && templateSelector == null && useDefaultDragAdorner)
+      if (template is null && templateSelector is null && useDefaultDragAdorner)
       {
         template = new DataTemplate();
 
@@ -432,7 +433,7 @@ namespace GongSolutions.Wpf.DragDrop
         template.VisualTree = factory;
       }
 
-      if (template != null || templateSelector != null)
+      if (template is not null || templateSelector is not null)
       {
         if (m_DragInfo.Data is IEnumerable && !(m_DragInfo.Data is string))
         {
@@ -466,7 +467,7 @@ namespace GongSolutions.Wpf.DragDrop
         }
       }
 
-      if (adornment != null)
+      if (adornment is not null)
       {
         if (useDefaultDragAdorner)
         {
@@ -474,8 +475,8 @@ namespace GongSolutions.Wpf.DragDrop
         }
 
         var parentWindow = m_DragInfo.VisualSource.GetVisualAncestor<Window>();
-        var rootElement = parentWindow != null ? parentWindow.Content as UIElement : null;
-        if (rootElement == null && Application.Current != null && Application.Current.MainWindow != null)
+        var rootElement = parentWindow is not null ? parentWindow.Content as UIElement : null;
+        if (rootElement is null && Application.Current is not null && Application.Current.MainWindow is not null)
         {
           rootElement = (UIElement)Application.Current.MainWindow.Content;
         }
@@ -484,7 +485,7 @@ namespace GongSolutions.Wpf.DragDrop
         //                    var elementHost = m_DragInfo.VisualSource.GetVisualAncestor<ElementHost>();
         //                    rootElement = elementHost != null ? elementHost.Child : null;
         //                }
-        if (rootElement == null)
+        if (rootElement is null)
         {
           rootElement = m_DragInfo.VisualSource.GetVisualAncestor<UserControl>();
         }
@@ -497,7 +498,7 @@ namespace GongSolutions.Wpf.DragDrop
     // somewhere. -- Chris Bordeman cbordeman@gmail.com
     private static BitmapSource CaptureScreen(Visual target, FlowDirection flowDirection, double dpiX = 96.0, double dpiY = 96.0)
     {
-      if (target == null)
+      if (target is null)
       {
         return null;
       }
@@ -533,7 +534,7 @@ namespace GongSolutions.Wpf.DragDrop
     {
       var template = GetEffectAdornerTemplate(m_DragInfo.VisualSource, dropInfo.Effects, dropInfo.DestinationText);
 
-      if (template != null)
+      if (template is not null)
       {
         var rootElement = (UIElement)Application.Current.MainWindow.Content;
         UIElement adornment = null;
@@ -642,7 +643,7 @@ namespace GongSolutions.Wpf.DragDrop
     {
       var scrollViewer = o.GetVisualDescendent<ScrollViewer>();
 
-      if (scrollViewer != null)
+      if (scrollViewer is not null)
       {
         var position = e.GetPosition(scrollViewer);
         var scrollMargin = Math.Min(scrollViewer.FontSize * 2, scrollViewer.ActualHeight / 2);
@@ -677,11 +678,11 @@ namespace GongSolutions.Wpf.DragDrop
     private static IDragSource TryGetDragHandler(DragInfo dragInfo, UIElement sender)
     {
       IDragSource dragHandler = null;
-      if (dragInfo != null && dragInfo.VisualSource != null)
+      if (dragInfo is not null && dragInfo.VisualSource is not null)
       {
         dragHandler = GetDragHandler(dragInfo.VisualSource);
       }
-      if (dragHandler == null && sender != null)
+      if (dragHandler is null && sender is not null)
       {
         dragHandler = GetDragHandler(sender);
       }
@@ -697,11 +698,11 @@ namespace GongSolutions.Wpf.DragDrop
     private static IDropTarget TryGetDropHandler(DropInfo dropInfo, UIElement sender)
     {
       IDropTarget dropHandler = null;
-      if (dropInfo != null && dropInfo.VisualTarget != null)
+      if (dropInfo is not null && dropInfo.VisualTarget is not null)
       {
         dropHandler = GetDropHandler(dropInfo.VisualTarget);
       }
-      if (dropHandler == null && sender != null)
+      if (dropHandler is null && sender is not null)
       {
         dropHandler = GetDropHandler(sender);
       }
@@ -740,7 +741,7 @@ namespace GongSolutions.Wpf.DragDrop
       // is made impossible.
       var itemsControl = sender as ItemsControl;
 
-      if (m_DragInfo.VisualSourceItem != null && itemsControl != null && itemsControl.CanSelectMultipleItems())
+      if (m_DragInfo.VisualSourceItem is not null && itemsControl is not null && itemsControl.CanSelectMultipleItems())
       {
         var selectedItems = itemsControl.GetSelectedItems().Cast<object>();
 
@@ -758,7 +759,7 @@ namespace GongSolutions.Wpf.DragDrop
       // by setting 'e.Handled = true' and a drag was not initiated, manually set the selection here.
       var itemsControl = sender as ItemsControl;
 
-      if (itemsControl != null && m_DragInfo != null && m_ClickSupressItem == m_DragInfo.SourceItem)
+      if (itemsControl is not null && m_DragInfo is not null && m_ClickSupressItem == m_DragInfo.SourceItem)
       {
         if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
         {
@@ -770,7 +771,7 @@ namespace GongSolutions.Wpf.DragDrop
         }
       }
 
-      if (m_DragInfo != null)
+      if (m_DragInfo is not null)
       {
         m_DragInfo = null;
       }
@@ -780,7 +781,7 @@ namespace GongSolutions.Wpf.DragDrop
 
     private static void DragSource_PreviewMouseMove(object sender, MouseEventArgs e)
     {
-      if (m_DragInfo != null && !m_DragInProgress)
+      if (m_DragInfo is not null && !m_DragInProgress)
       {
         // do nothing if mouse left button is released
         if (e.LeftButton == MouseButtonState.Released)
@@ -800,15 +801,15 @@ namespace GongSolutions.Wpf.DragDrop
           {
             dragHandler.StartDrag(m_DragInfo);
 
-            if (m_DragInfo.Effects != DragDropEffects.None && (m_DragInfo.Data != null || m_DragInfo.DataObject != null)) /* ModifiedByLellid */
+            if (m_DragInfo.Effects != DragDropEffects.None && (m_DragInfo.Data is not null || m_DragInfo.DataObject is not null)) /* ModifiedByLellid */
             {
               var data = m_DragInfo.DataObject;
 
-              if (data == null)
+              if (data is null)
               {
                 data = new DataObject(DataFormat.Name, m_DragInfo.Data);
               }
-              else if (m_DragInfo.Data != null) /* ModifiedByLellid */
+              else if (m_DragInfo.Data is not null) /* ModifiedByLellid */
               {
                 data.SetData(DataFormat.Name, m_DragInfo.Data);
               }
@@ -895,12 +896,12 @@ namespace GongSolutions.Wpf.DragDrop
 
       dropHandler.DragOver(dropInfo);
 
-      if (DragAdorner == null && m_DragInfo != null)
+      if (DragAdorner is null && m_DragInfo is not null)
       {
         CreateDragAdorner();
       }
 
-      if (DragAdorner != null)
+      if (DragAdorner is not null)
       {
         var tempAdornerPos = e.GetPosition(DragAdorner.AdornedElement);
 
@@ -915,7 +916,7 @@ namespace GongSolutions.Wpf.DragDrop
           _adornerSize = DragAdorner.RenderSize;
         }
 
-        if (m_DragInfo != null)
+        if (m_DragInfo is not null)
         {
           // move the adorner
           var offsetX = _adornerSize.Width * -GetDragMouseAnchorPoint(m_DragInfo.VisualSource).X;
@@ -934,7 +935,7 @@ namespace GongSolutions.Wpf.DragDrop
       }
 
       // If the target is an ItemsControl then update the drop target adorner.
-      if (itemsControl != null)
+      if (itemsControl is not null)
       {
         // Display the adorner in the control's ItemsPresenter. If there is no
         // ItemsPresenter provided by the style, try getting hold of a
@@ -943,9 +944,9 @@ namespace GongSolutions.Wpf.DragDrop
           itemsControl.GetVisualDescendent<ItemsPresenter>() ??
           (UIElement)itemsControl.GetVisualDescendent<ScrollContentPresenter>();
 
-        if (adornedElement != null)
+        if (adornedElement is not null)
         {
-          if (dropInfo.DropTargetAdorner == null)
+          if (dropInfo.DropTargetAdorner is null)
           {
             DropTargetAdorner = null;
           }
@@ -954,7 +955,7 @@ namespace GongSolutions.Wpf.DragDrop
             DropTargetAdorner = DropTargetAdorner.Create(dropInfo.DropTargetAdorner, adornedElement);
           }
 
-          if (DropTargetAdorner != null)
+          if (DropTargetAdorner is not null)
           {
             DropTargetAdorner.DropInfo = dropInfo;
             DropTargetAdorner.InvalidateVisual();
@@ -963,12 +964,12 @@ namespace GongSolutions.Wpf.DragDrop
       }
 
       // Set the drag effect adorner if there is one
-      if (EffectAdorner == null && m_DragInfo != null)
+      if (EffectAdorner is null && m_DragInfo is not null)
       {
         CreateEffectAdorner(dropInfo);
       }
 
-      if (EffectAdorner != null)
+      if (EffectAdorner is not null)
       {
         var adornerPos = e.GetPosition(EffectAdorner.AdornedElement);
         adornerPos.Offset(20, 20);
@@ -1004,7 +1005,7 @@ namespace GongSolutions.Wpf.DragDrop
 
     private static void DropTarget_GiveFeedback(object sender, GiveFeedbackEventArgs e)
     {
-      if (EffectAdorner != null)
+      if (EffectAdorner is not null)
       {
         e.UseDefaultCursors = false;
         e.Handled = true;
@@ -1021,7 +1022,7 @@ namespace GongSolutions.Wpf.DragDrop
       get { return m_DragAdorner; }
       set
       {
-        if (m_DragAdorner != null)
+        if (m_DragAdorner is not null)
         {
           m_DragAdorner.Detatch();
         }
@@ -1035,7 +1036,7 @@ namespace GongSolutions.Wpf.DragDrop
       get { return m_EffectAdorner; }
       set
       {
-        if (m_EffectAdorner != null)
+        if (m_EffectAdorner is not null)
         {
           m_EffectAdorner.Detatch();
         }
@@ -1049,7 +1050,7 @@ namespace GongSolutions.Wpf.DragDrop
       get { return m_DropTargetAdorner; }
       set
       {
-        if (m_DropTargetAdorner != null)
+        if (m_DropTargetAdorner is not null)
         {
           m_DropTargetAdorner.Detatch();
         }

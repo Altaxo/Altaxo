@@ -57,7 +57,7 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       if (rows < 0 && columns < 0)
         throw new ArgumentOutOfRangeException("rows or columns is less than zero.");
-      if (array == null)
+      if (array is null)
         throw new ArgumentNullException("array");
       if (array.Length < rows * columns)
         throw new ArgumentException(string.Format("Length of array {0} is not a multiple of nRows={1}", array.Length, rows));

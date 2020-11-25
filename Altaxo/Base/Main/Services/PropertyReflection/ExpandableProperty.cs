@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -38,7 +39,7 @@ namespace Altaxo.Main.Services.PropertyReflection
   /// </remarks>
   internal class ExpandableProperty : Property
   {
-    private PropertyCollection _propertyCollection;
+    private PropertyCollection? _propertyCollection;
     private bool _automaticlyExpandObjects;
     private string _filter;
 
@@ -53,7 +54,7 @@ namespace Altaxo.Main.Services.PropertyReflection
     {
       get
       {
-        if (_propertyCollection == null)
+        if (_propertyCollection is null)
         {
           //Lazy initialisation prevent from deep search and looping
           _propertyCollection = new PropertyCollection(_property.GetValue(_instance), true, _automaticlyExpandObjects, _filter);

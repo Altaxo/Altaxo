@@ -22,9 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Drawing;
@@ -215,7 +217,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
       InternalTryRegisterList(OldBarVert, ItemDefinitionLevel.Builtin, out dummy, false);
 
       Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedScatterSymbolLists, out var userStyleLists);
-      if (null != userStyleLists)
+      if (userStyleLists is not null)
       {
         foreach (var listVar in userStyleLists.StyleLists)
         {
@@ -232,18 +234,18 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
       {
         return _instance;
       }
+      [MemberNotNull(nameof(_instance))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
-        if (null != _instance)
+        if (_instance is not null)
           Current.IProjectService.ProjectClosed -= _instance.EhProjectClosed;
 
         _instance = value;
 
-        if (null != _instance)
-          Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
+        Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
       }
     }
 
@@ -254,7 +256,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
 
     #region User defined lists
 
-    protected override void OnUserDefinedListAddedChangedRemoved(ScatterSymbolList list)
+    protected override void OnUserDefinedListAddedChangedRemoved(ScatterSymbolList? list)
     {
       var listBag = new ScatterSymbolListBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => entry.List));
       Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedScatterSymbolLists, listBag);

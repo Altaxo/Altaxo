@@ -366,7 +366,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public ComplexFloatSymmetricLevinson(IROComplexFloatVector T)
     {
       // check parameter
-      if (T == null)
+      if (T is null)
       {
         throw new System.ArgumentNullException("T");
       }
@@ -614,7 +614,7 @@ namespace Altaxo.Calc.LinearAlgebra
       ComplexFloatVector X;
 
       // check parameters
-      if (Y == null)
+      if (Y is null)
       {
         throw new System.ArgumentNullException("Y");
       }
@@ -694,7 +694,7 @@ namespace Altaxo.Calc.LinearAlgebra
       ComplexFloatMatrix X;
 
       // check parameters
-      if (Y == null)
+      if (Y is null)
       {
         throw new System.ArgumentNullException("Y");
       }
@@ -922,11 +922,11 @@ namespace Altaxo.Calc.LinearAlgebra
       ComplexFloatVector X;
 
       // check parameters
-      if (T == null)
+      if (T is null)
       {
         throw new System.ArgumentNullException("T");
       }
-      else if (Y == null)
+      else if (Y is null)
       {
         throw new System.ArgumentNullException("Y");
       }
@@ -1040,11 +1040,11 @@ namespace Altaxo.Calc.LinearAlgebra
       ComplexFloatMatrix X;
 
       // check parameters
-      if (T == null)
+      if (T is null)
       {
         throw new System.ArgumentNullException("T");
       }
-      else if (Y == null)
+      else if (Y is null)
       {
         throw new System.ArgumentNullException("Y");
       }
@@ -1179,7 +1179,7 @@ namespace Altaxo.Calc.LinearAlgebra
       ComplexFloatVector a;
 
       // check parameters
-      if (R == null)
+      if (R is null)
       {
         throw new System.ArgumentNullException("R");
       }
@@ -1270,7 +1270,7 @@ namespace Altaxo.Calc.LinearAlgebra
       ComplexFloatMatrix X;
 
       // check parameters
-      if (T == null)
+      if (T is null)
       {
         throw new System.ArgumentNullException("T");
       }

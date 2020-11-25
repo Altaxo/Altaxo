@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -29,10 +30,10 @@ using System.Drawing.Drawing2D;
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using System.Collections.Generic;
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Drawing;
   using Altaxo.Main;
-  using Drawing;
   using Geometry;
   using Graph.Plot.Data;
   using Plot.Data;
@@ -61,7 +62,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Pen to enclose the path. Can be null.
     /// </summary>
-    protected PenX _framePen;
+    protected PenX? _framePen;
 
     private bool _fillToPrevPlotItem = true;
     private bool _fillToNextPlotItem = true;
@@ -83,22 +84,22 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         var s = (FillToCurvePlotStyle)obj;
         info.AddValue("Brush", s._fillBrush);
-        info.AddValue("Pen", s._framePen);
+        info.AddValueOrNull("Pen", s._framePen);
         info.AddValue("FillToPreviousItem", s._fillToPrevPlotItem);
         info.AddValue("FillToNextItem", s._fillToNextPlotItem);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return SDeserialize(o, info, parent);
       }
 
-      public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public static object SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (FillToCurvePlotStyle)o : new FillToCurvePlotStyle(info);
+        var s = (FillToCurvePlotStyle?)o ?? new FillToCurvePlotStyle(info);
 
         s._fillBrush = (BrushX)info.GetValue("Brush", s);
-        s._framePen = (PenX)info.GetValue("Pen", s);
+        s._framePen = info.GetValueOrNull<PenX>("Pen", s);
         s._fillToPrevPlotItem = info.GetBoolean("FillToPreviousItem");
         s._fillToNextPlotItem = info.GetBoolean("FillToNextItem");
 
@@ -126,24 +127,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("IndependentFillColor", s._independentFillColor);
         info.AddValue("FillBrush", s._fillBrush);
         info.AddValue("IndependentFrameColor", s._independentFrameColor);
-        info.AddValue("FramePen", s._framePen);
+        info.AddValueOrNull("FramePen", s._framePen);
         info.AddValue("FillToPreviousItem", s._fillToPrevPlotItem);
         info.AddValue("FillToNextItem", s._fillToNextPlotItem);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return SDeserialize(o, info, parent);
       }
 
-      public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public static object SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (FillToCurvePlotStyle)o : new FillToCurvePlotStyle(info);
+        var s = (FillToCurvePlotStyle?)o ?? new FillToCurvePlotStyle(info);
 
         s._independentFillColor = info.GetBoolean("IndependentFillColor");
         s._fillBrush = (BrushX)info.GetValue("FillBrush", s);
         s._independentFrameColor = info.GetBoolean("IndependentFrameColor");
-        s._framePen = (PenX)info.GetValue("FramePen", s);
+        s._framePen = info.GetValueOrNull<PenX>("FramePen", s);
         s._fillToPrevPlotItem = info.GetBoolean("FillToPreviousItem");
         s._fillToNextPlotItem = info.GetBoolean("FillToNextItem");
 
@@ -154,11 +155,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     #endregion Serialization
 
     #region ICloneable Members
-
+    [MemberNotNull(nameof(_fillBrush))]
     public void CopyFrom(FillToCurvePlotStyle from, bool copyWithDataReferences, Main.EventFiring eventFiring)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       using (var suspendToken = SuspendGetToken())
       {
@@ -180,10 +183,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <inheritdoc/>
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       var from = obj as FillToCurvePlotStyle;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, copyWithDataReferences, Main.EventFiring.Enabled);
         return true;
@@ -194,6 +197,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
+
       return CopyFrom(obj, true);
     }
 
@@ -215,7 +221,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// For deserialization only. Initializes a new instance of the <see cref="FillToCurvePlotStyle"/> class.
     /// </summary>
     /// <param name="info">Deserialization info.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected FillToCurvePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
       _cachedPaintOneRange = StraightConnection_PaintOneRange;
       FillBrush = new BrushX(NamedColors.Aqua);
@@ -263,6 +271,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         return _fillBrush;
       }
+      [MemberNotNull(nameof(_fillBrush))]
       set
       {
         if (!(_fillBrush == value))
@@ -288,7 +297,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    public PenX FramePen
+    public PenX? FramePen
     {
       get { return _framePen; }
       set
@@ -347,12 +356,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <inheritdoc/>
     public IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      IReadableColumn? Column, // the column as it was at the time of this call
+      string? ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
-      return null;
+      yield break;
     }
 
     #endregion IDocumentNode Members
@@ -379,27 +388,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // nothing to collect here
     }
 
-    public void Paint(Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
+    public void Paint(Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
-      if (_fillToPrevPlotItem && null != prevItemData)
+      if (_fillToPrevPlotItem && prevItemData is not null)
       {
         PaintFillToPrevPlotItem(g, layer, pdata, prevItemData);
       }
 
-      if (_fillToNextPlotItem && null != nextItemData)
+      if (_fillToNextPlotItem && nextItemData is not null)
       {
         // ensure that brush and pen are cached
-        using var fillBrush = _fillBrush is null ? null : BrushCacheGdi.Instance.BorrowBrush(_fillBrush, new RectangleD2D(PointD2D.Empty, layer.Size), g, 1);
+        using var fillBrush = BrushCacheGdi.Instance.BorrowBrush(_fillBrush, new RectangleD2D(PointD2D.Empty, layer.Size), g, 1);
 
-        PlotRangeList rangeList = pdata.RangeList;
-        int rangelistlen = rangeList.Count;
-
-        if (rangelistlen > 0)
+        if (pdata.RangeList is { } rangeList && rangeList.Count > 0)
         {
           // we have to ignore the missing points here, thus all ranges can be plotted
           // as one range, i.e. continuously
           // for this, we create the totalRange, which contains all ranges
-          var totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
+          var totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangeList.Count - 1].UpperBound);
           _cachedPaintOneRange(g, pdata, totalRange, layer, nextItemData, fillBrush);
         }
       }
@@ -408,16 +414,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private void PaintFillToPrevPlotItem(Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData prevItemData)
     {
       // ensure that brush and pen are cached
-      using var fillbrush = _fillBrush is null ? null : BrushCacheGdi.Instance.BorrowBrush(_fillBrush, new RectangleD2D(PointD2D.Empty, layer.Size), g, 1);
+      using var fillbrush = BrushCacheGdi.Instance.BorrowBrush(_fillBrush, new RectangleD2D(PointD2D.Empty, layer.Size), g, 1);
 
-      PlotRangeList rangeList = pdata.RangeList;
-      int rangelistlen = rangeList.Count;
+      if (pdata.RangeList is { } rangeList && rangeList.Count > 0)
+      {
 
-      // we have to ignore the missing points here, thus all ranges can be plotted
-      // as one range, i.e. continuously
-      // for this, we create the totalRange, which contains all ranges
-      var totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound, rangeList[0].OffsetToOriginal);
-      _cachedPaintOneRange(g, pdata, totalRange, layer, prevItemData, fillbrush);
+        // we have to ignore the missing points here, thus all ranges can be plotted
+        // as one range, i.e. continuously
+        // for this, we create the totalRange, which contains all ranges
+        var totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangeList.Count - 1].UpperBound, rangeList[0].OffsetToOriginal);
+        _cachedPaintOneRange(g, pdata, totalRange, layer, prevItemData, fillbrush);
+      }
     }
 
     public RectangleF PaintSymbol(Graphics g, RectangleF bounds)
@@ -447,7 +454,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       Processed2DPlotData previousData,
       Brush fillBrush)
     {
-      PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      var linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates ?? throw new ArgumentNullException();
       var linepts = new PointF[range.Length];
       Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
       int lastIdx = range.Length - 1;
@@ -459,20 +466,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       double minDistanceToLast = double.MaxValue;
       int minIdxFirst = -1;
       int minIdxLast = -1;
-      foreach (var rangeP in previousData.RangeList)
+      if (previousData.RangeList is { } previousRangeList)
       {
-        for (int i = rangeP.LowerBound; i < rangeP.UpperBound; ++i)
+        foreach (var rangeP in previousRangeList)
         {
-          double logicalX = layer.XAxis.PhysicalVariantToNormal(previousData.GetXPhysical(i + rangeP.OffsetToOriginal));
-          if (Math.Abs(logicalX - firstLogicalX) < minDistanceToFirst)
+          for (int i = rangeP.LowerBound; i < rangeP.UpperBound; ++i)
           {
-            minDistanceToFirst = Math.Abs(logicalX - firstLogicalX);
-            minIdxFirst = i;
-          }
-          if (Math.Abs(logicalX - lastLogicalX) < minDistanceToLast)
-          {
-            minDistanceToLast = Math.Abs(logicalX - lastLogicalX);
-            minIdxLast = i;
+            double logicalX = layer.XAxis.PhysicalVariantToNormal(previousData.GetXPhysical(i + rangeP.OffsetToOriginal));
+            if (Math.Abs(logicalX - firstLogicalX) < minDistanceToFirst)
+            {
+              minDistanceToFirst = Math.Abs(logicalX - firstLogicalX);
+              minIdxFirst = i;
+            }
+            if (Math.Abs(logicalX - lastLogicalX) < minDistanceToLast)
+            {
+              minDistanceToLast = Math.Abs(logicalX - lastLogicalX);
+              minIdxLast = i;
+            }
           }
         }
       }
@@ -480,11 +490,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // if nothing found, use the outmost boundaries of the plot points of the other data item
       if (minIdxFirst < 0)
         minIdxFirst = 0;
-      if (minIdxLast < 0)
+      if (minIdxLast < 0 && previousData.PlotPointsInAbsoluteLayerCoordinates is not null)
         minIdxLast = previousData.PlotPointsInAbsoluteLayerCoordinates.Length - 1;
 
       var otherLinePoints = new PointF[minIdxLast + 1 - minIdxFirst];
-      Array.Copy(previousData.PlotPointsInAbsoluteLayerCoordinates, minIdxFirst, otherLinePoints, 0, otherLinePoints.Length);
+      if (previousData.PlotPointsInAbsoluteLayerCoordinates is not null)
+        Array.Copy(previousData.PlotPointsInAbsoluteLayerCoordinates, minIdxFirst, otherLinePoints, 0, otherLinePoints.Length);
       Array.Reverse(otherLinePoints);
 
       // now paint this
@@ -502,7 +513,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         g.FillPath(fillBrush, gp);
       }
 
-      if (null != _framePen)
+      if (_framePen is not null)
       {
         using (var framePenGdi = PenCacheGdi.Instance.BorrowPen(_framePen))
         {
@@ -524,7 +535,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       switch (propertyName)
       {
         case "StrokeWidth":
-          yield return (propertyName, _framePen.Width, (w) => _framePen = _framePen.WithWidth((double)w));
+          if (_framePen is not null)
+            yield return (propertyName, _framePen.Width, (w) => _framePen = _framePen.WithWidth((double)w));
           break;
       }
 

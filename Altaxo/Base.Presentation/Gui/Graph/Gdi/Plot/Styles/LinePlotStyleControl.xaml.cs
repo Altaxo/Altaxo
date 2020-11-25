@@ -42,11 +42,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   {
     private PenControlsGlue _linePenGlue;
 
-    public event Action IndependentLineColorChanged;
+    public event Action? IndependentLineColorChanged;
 
-    public event Action UseLineChanged;
+    public event Action? UseLineChanged;
 
-    public event Action LinePenChanged;
+    public event Action? LinePenChanged;
 
     public LinePlotStyleControl()
     {
@@ -68,7 +68,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     private void EhUseLineConnectChanged(object sender, RoutedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiLineConnect);
-      if (null != _guiLineConnect.SelectedItem) // null for SelectedItem can happen when the DataSource is chaning
+      if (_guiLineConnect.SelectedItem is not null) // null for SelectedItem can happen when the DataSource is chaning
         UseLineChanged?.Invoke();
     }
 
@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       IndependentLineColorChanged?.Invoke();
     }
 
-    private void EhLinePenChanged(object sender, EventArgs e)
+    private void EhLinePenChanged(object? sender, EventArgs e)
     {
       LinePenChanged?.Invoke();
     }
@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException("FramePen");
         _linePenGlue.Pen = value;
       }

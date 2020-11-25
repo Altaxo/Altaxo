@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -151,7 +152,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <param name="graphdoc">The graph which holds the graphical elements.</param>
     public GraphController(GraphDocument graphdoc)
     {
-      if (null == graphdoc)
+      if (graphdoc is null)
         throw new ArgumentNullException("Leaving the graphdoc null in constructor is not supported here");
 
       InitTriggerBasedUpdate();
@@ -186,7 +187,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     public bool InitializeDocument(params object[] args)
     {
-      if (null == args || args.Length == 0)
+      if (args is null || args.Length == 0)
         return false;
       if (args[0] is GraphDocument)
       {
@@ -222,7 +223,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         InitLayerStructure();
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         InitLayerStructure();
         _view.SetLayerStructure(_layerStructure, CurrentLayerNumber.ToArray()); // tell the view how many layers we have
@@ -243,7 +244,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     private void InternalInitializeGraphDocument(GraphDocument doc)
     {
-      if (_doc != null)
+      if (_doc is not null)
         throw new ApplicationException(nameof(_doc) + " is already initialized");
       _doc = doc ?? throw new ArgumentNullException(nameof(doc));
 
@@ -273,7 +274,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     {
       // remove the weak event handlers from doc
       var wev = _weakEventHandlersForDoc;
-      if (null != wev)
+      if (wev is not null)
       {
         foreach (var ev in wev)
           ev.Remove();
@@ -374,7 +375,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       {
         var oldVal = _positionOfViewportsUpperLeftCornerInRootLayerCoordinates;
         _positionOfViewportsUpperLeftCornerInRootLayerCoordinates = value;
-        if (oldVal != value && null != _view)
+        if (oldVal != value && _view is not null)
         {
           SetViewsScrollbarParameter();
           _view.InvalidateCachedGraphBitmapAndRepaint();
@@ -581,7 +582,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         _positionOfViewportsUpperLeftCornerInRootLayerCoordinates = new PointD2D((gz.X - vz.X) / 2, (gz.Y - vz.Y) / 2);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         SetViewsScrollbarParameter();
         _view.InvalidateCachedGraphBitmapAndRepaint();
@@ -692,7 +693,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     {
       get
       {
-        return null == _view ? GraphToolType.None : _view.CurrentGraphTool;
+        return _view is null ? GraphToolType.None : _view.CurrentGraphTool;
       }
       set
       {
@@ -748,7 +749,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       set
       {
         // negative values are only accepted if there is no layer
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException("CurrentLayerNumber");
 
         if (!_doc.RootLayer.IsValidIndex(value))
@@ -762,7 +763,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         if (isDifferent)
         {
           // reflect the change in layer number in the layer tool bar
-          if (_view != null)
+          if (_view is not null)
             _view.CurrentLayer = _currentLayerNumber.ToArray();
         }
       }
@@ -781,10 +782,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       {
         var layer = ActiveLayer as XYPlotLayer;
 
-        if (null != layer && 0 != layer.PlotItems.Flattened.Length && value < 0)
+        if (layer is not null && 0 != layer.PlotItems.Flattened.Length && value < 0)
           throw new ArgumentOutOfRangeException("CurrentPlotNumber", value, "CurrentPlotNumber has to be greater or equal than zero");
 
-        if (null != layer && value >= layer.PlotItems.Flattened.Length)
+        if (layer is not null && value >= layer.PlotItems.Flattened.Length)
           throw new ArgumentOutOfRangeException("CurrentPlotNumber", value, "CurrentPlotNumber has to  be lesser than actual count: " + layer.PlotItems.Flattened.Length.ToString());
 
         _currentPlotNumber = value < 0 ? -1 : value;
@@ -809,7 +810,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       var layer = EnsureValidityOfCurrentLayerNumber() as XYPlotLayer;
 
       // if XYPlotLayer don't exist anymore, correct CurrentLayerNumber and ActualPlotAssocitation
-      if (null != layer) // if the ActiveLayer exists
+      if (layer is not null) // if the ActiveLayer exists
       {
         // if the XYColumnPlotData don't exist anymore, correct it
         if (layer.PlotItems.Flattened.Length > 0) // if at least one plotitem exists
@@ -834,7 +835,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     public void RefreshGraph()
     {
-      if (null != _view)
+      if (_view is not null)
         _view.InvalidateCachedGraphBitmapAndRepaint();
     }
 
@@ -855,14 +856,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       {
         if (!object.ReferenceEquals(_view, value))
         {
-          if (null != _view)
+          if (_view is not null)
           {
             DetachView();
           }
 
           _view = value as IGraphView;
 
-          if (null != _view)
+          if (_view is not null)
           {
             Initialize(false);
             AttachView();
@@ -916,7 +917,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     protected void EhGraph_BoundsChanged_Unsynchronized()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         if (_isAutoZoomActive)
           RefreshAutoZoom(false);
@@ -947,7 +948,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
       // make sure the view knows about when the number of layers changed
       InitLayerStructure();
-      if (_view != null)
+      if (_view is not null)
       {
         _view.SetLayerStructure(_layerStructure, _currentLayerNumber.ToArray());
       }
@@ -955,7 +956,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     private void EhGraphDocumentNameChanged_Unsynchronized(INameOwner sender, string oldName)
     {
-      if (null != _view)
+      if (_view is not null)
         _view.GraphViewTitle = Doc.Name;
 
       Title = Doc.Name;
@@ -985,7 +986,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
       CurrentLayerNumber = new List<int>(currLayer);
 
-      if (null != ActiveLayer)
+      if (ActiveLayer is not null)
       {
         Current.Gui.ShowContextMenu(parent, parent, "/Altaxo/Views/Graph/LayerButton/ContextMenu", pt.X, pt.Y);
       }
@@ -993,7 +994,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     public virtual void EhView_CurrentGraphToolChanged()
     {
-      if (null != CurrentGraphToolChanged)
+      if (CurrentGraphToolChanged is not null)
         CurrentGraphToolChanged(this, EventArgs.Empty);
     }
 
@@ -1008,7 +1009,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       CurrentLayerNumber = new List<int>(currLayer);
 
       // if we have clicked the button already down then open the layer dialog
-      if (null != ActiveLayer && System.Linq.Enumerable.SequenceEqual(_currentLayerNumber, oldCurrLayer) && false == bAlternative)
+      if (ActiveLayer is not null && System.Linq.Enumerable.SequenceEqual(_currentLayerNumber, oldCurrLayer) && false == bAlternative)
       {
         var activeLayer = ActiveLayer;
         if (activeLayer is XYPlotLayer)
@@ -1029,7 +1030,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
       else
       {
-        if (null != _view && 0 != _view.ViewportSizeInPoints.X && 0 != _view.ViewportSizeInPoints.Y)
+        if (_view is not null && 0 != _view.ViewportSizeInPoints.X && 0 != _view.ViewportSizeInPoints.Y)
           SetViewsScrollbarParameter();
       }
     }
@@ -1073,7 +1074,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     {
       get
       {
-        if (null != _view)
+        if (_view is not null)
           return _view.SelectedObjects.Select(hitTestObject => hitTestObject.HittedObject);
         else
           return Enumerable.Empty<object>();
@@ -1368,7 +1369,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
       foreach (IHitTestObject o in SelectedObjects)
       {
-        if (o.Remove != null)
+        if (o.Remove is not null)
         {
           if (true == o.Remove(o))
             removedObjects.Add(o);
@@ -1481,7 +1482,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
           try
           {
             img = ImageProxy.FromFile(filename);
-            if (img != null)
+            if (img is not null)
             {
               var size = ActiveLayer.Size;
               size *= 0.5;
@@ -1508,7 +1509,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       if (dao.GetDataPresent(typeof(System.Drawing.Imaging.Metafile)))
       {
         var img = dao.GetData(typeof(System.Drawing.Imaging.Metafile)) as System.Drawing.Imaging.Metafile;
-        if (img != null)
+        if (img is not null)
         {
           var size = 0.5 * ActiveLayer.Size;
           var item = new EmbeddedImageGraphic(PointD2D.Empty, size, SystemDrawingImageProxyExtensions.GetImageProxyFromImage(img));
@@ -1519,7 +1520,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       if (dao.ContainsImage())
       {
         Image img = dao.GetImage();
-        if (img != null)
+        if (img is not null)
         {
           var size = 0.5 * ActiveLayer.Size;
           var item = new EmbeddedImageGraphic(PointD2D.Empty, size, SystemDrawingImageProxyExtensions.GetImageProxyFromImage(img));
@@ -1542,13 +1543,13 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         foreach (IHitTestObject o in SelectedObjects)
         {
           var graphObject = o.HittedObject as GraphicBase;
-          if (null == graphObject)
+          if (graphObject is null)
             continue;
           var layer = graphObject.ParentObject as HostLayer;
-          if (null == layer)
+          if (layer is null)
             continue;
 
-          if (null == currentLayer)
+          if (currentLayer is null)
           {
             currentLayer = layer;
             objectsToGroup.Add(o);
@@ -1600,10 +1601,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       foreach (IHitTestObject o in SelectedObjects)
       {
         var shapeGroup = o.HittedObject as Altaxo.Graph.Gdi.Shapes.ShapeGroup;
-        if (null != shapeGroup)
+        if (shapeGroup is not null)
         {
           var parentLayer = shapeGroup.ParentObject as HostLayer;
-          if (null != parentLayer)
+          if (parentLayer is not null)
           {
             int idx = parentLayer.GraphObjects.IndexOf(shapeGroup);
             parentLayer.GraphObjects.RemoveAt(idx);
@@ -1650,10 +1651,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       foreach (IHitTestObject o in SelectedObjects)
       {
         var layer = AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>((IDocumentLeafNode)o.HittedObject);
-        if (layer == null)
+        if (layer is null)
           continue;
 
-        if (layer4all == null)
+        if (layer4all is null)
           layer4all = layer;
         else if (!object.ReferenceEquals(layer, layer4all))
           return null;
@@ -1697,7 +1698,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
         MatrixD2D layer4allTransform = null;
         MatrixD2D layer4allBackTransform = null;
-        if (null != layer4all)
+        if (layer4all is not null)
         {
           // if there a layer where all selected objects belong to, use the size and transformation of that layer (instead of the root layer)
           absoluteSize = Math.Abs(directionNormed.DotProduct(layer4all.Size));
@@ -1732,7 +1733,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         double nextFrontByStepWidth = moveRightOrBottom ? Math.Ceiling(frontByStepWidth + 1E-3) : Math.Floor(frontByStepWidth - 1E-3);
         stepWidth = Math.Abs(frontByStepWidth - nextFrontByStepWidth) * (absoluteSize / stepsPerSpan);
         shift = directionNormed * stepWidth;
-        if (null != layer4allTransform)
+        if (layer4allTransform is not null)
           shift = layer4allTransform.TransformVector(shift);
       }
 
@@ -1881,9 +1882,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       if (Current.Gui.ShowDialog(ref tgoo, "Edit text", true))
       {
         tg = (TextGraphic)tgoo;
-        if (tg == null || tg.Empty)
+        if (tg is null || tg.Empty)
         {
-          if (null != hit.Remove)
+          if (hit.Remove is not null)
             shouldDeleted = hit.Remove(hit);
           else
             shouldDeleted = false;
@@ -1900,13 +1901,13 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     internal void CaptureMouse()
     {
-      if (null != _view)
+      if (_view is not null)
         _view.CaptureMouseOnCanvas();
     }
 
     internal void ReleaseMouseCapture()
     {
-      if (null != _view)
+      if (_view is not null)
         _view.ReleaseCaptureMouseOnCanvas();
     }
 
@@ -1954,7 +1955,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// </summary>
     public void RenderOverlay()
     {
-      if (_view == null || Doc == null || _view.ViewportSizeInPoints == PointD2D.Empty)
+      if (_view is null || Doc is null || _view.ViewportSizeInPoints == PointD2D.Empty)
         return;
 
       _view.EhRenderOverlayTriggered();
@@ -1964,6 +1965,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// Infrastructure: intended to be used by graph views to draw the overlay (the selection rectangles and handles of the currently selected tool) into a bitmap.
     /// </summary>
     /// <param name="g">The graphics contexts (ususally created from a bitmap).</param>
+    /// <param name="zoomFactor">The current zoom factor.</param>
+    /// <param name="positionOfViewportsUpperLeftCornerInGraphCoordinates">The position Of viewports upper left corner in graph coordinates.</param>
     public void DoPaintOverlay(Graphics g, double zoomFactor, PointD2D positionOfViewportsUpperLeftCornerInGraphCoordinates)
     {
       // g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -2047,7 +2050,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       var hitData = new HitTestPointData(mousePT, ZoomFactor);
 
       foundObject = RootLayer.HitTest(hitData, plotItemsOnly);
-      if (null != foundObject && null != foundObject.ParentLayer)
+      if (foundObject is not null && foundObject.ParentLayer is not null)
       {
         foundInLayerNumber = foundObject.ParentLayer.IndexOf().ToArray();
         return true;
@@ -2070,7 +2073,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     public override void Dispose()
     {
-      if (null != _triggerBasedUpdate)
+      if (_triggerBasedUpdate is not null)
       {
         _triggerBasedUpdate.Dispose();
         _triggerBasedUpdate = null;

@@ -59,7 +59,7 @@ namespace MathML
 			get
 			{
 				MathMLElement firstChild = FirstChild as MathMLElement;
-				return firstChild != null ? firstChild.EmbelishedOperator : null;
+				return firstChild is not null ? firstChild.EmbelishedOperator : null;
 			}
 		}
 	}

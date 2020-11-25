@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -72,8 +73,8 @@ namespace Altaxo.Graph.Plot.Groups
     /// Tests if the group style of the given type has a child group style and returns the type of the child group style (or null if no such child exists).
     /// </summary>
     /// <param name="groupStyleType">Type of the group style to test.</param>
-    /// <returns>Type of the child group style.</returns>
-    Type GetTypeOfChild(Type groupStyleType);
+    /// <returns>Type of the child group style, or null if no child exists.</returns>
+    Type? GetTypeOfChild(Type groupStyleType);
 
     /// <summary>
     /// Returns the group style instance of the type given.

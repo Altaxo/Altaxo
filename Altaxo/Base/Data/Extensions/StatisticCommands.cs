@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Collections;
 
@@ -89,15 +90,15 @@ namespace Altaxo.Data
     /// <param name="destinationTable">The table where the statistical results are written to.</param>
     public static void DoStatisticsOnColumns(
       this DataColumnCollection srctable,
-      IAscendingIntegerCollection selectedColumns,
-      IAscendingIntegerCollection selectedRows,
+      IAscendingIntegerCollection? selectedColumns,
+      IAscendingIntegerCollection? selectedRows,
       DataColumnCollection destinationTable
       )
     {
-      bool bUseSelectedColumns = (null != selectedColumns && 0 != selectedColumns.Count);
-      int numcols = bUseSelectedColumns ? selectedColumns.Count : srctable.ColumnCount;
+      var useSelectedColumns = selectedColumns?.Count > 0 ? selectedColumns : null;
+      int numcols = useSelectedColumns is null ? srctable.ColumnCount : useSelectedColumns.Count;
 
-      bool bUseSelectedRows = (null != selectedRows && 0 != selectedRows.Count);
+      var useSelectedRows = selectedRows?.Count > 0 ? selectedRows : null;
 
       if (numcols == 0)
         return; // nothing selected
@@ -136,11 +137,11 @@ namespace Altaxo.Data
       int currRow = 0;
       for (int si = 0; si < numcols; si++)
       {
-        Altaxo.Data.DataColumn col = bUseSelectedColumns ? srctable[selectedColumns[si]] : srctable[si];
+        Altaxo.Data.DataColumn col = useSelectedColumns is null ? srctable[si] : srctable[useSelectedColumns[si]];
         if (!(col is Altaxo.Data.INumericColumn))
           continue;
 
-        int rows = bUseSelectedRows ? selectedRows.Count : srctable.RowCount;
+        int rows = useSelectedRows is null ? srctable.RowCount : useSelectedRows.Count;
         if (rows == 0)
           continue;
 
@@ -154,7 +155,7 @@ namespace Altaxo.Data
 
         for (int i = 0; i < rows; i++)
         {
-          double val = bUseSelectedRows ? ncol[selectedRows[i]] : ncol[i];
+          double val = useSelectedRows is null ? ncol[i] : ncol[useSelectedRows[i]];
           if (double.IsNaN(val))
             continue;
 
@@ -181,7 +182,7 @@ namespace Altaxo.Data
 
         for (int i = 0; i < rows; i++)
         {
-          double val = bUseSelectedRows ? ncol[selectedRows[i]] : ncol[i];
+          double val = useSelectedRows is null ? ncol[i] : ncol[useSelectedRows[i]];
           if (double.IsNaN(val))
             continue;
 
@@ -263,18 +264,18 @@ namespace Altaxo.Data
     /// <param name="destinationTable">The table where the statistical results are written to.</param>
     public static void DoStatisticsOnRows(
       this DataColumnCollection srctable,
-      IAscendingIntegerCollection selectedColumns,
-      IAscendingIntegerCollection selectedRows,
+      IAscendingIntegerCollection? selectedColumns,
+      IAscendingIntegerCollection? selectedRows,
       DataColumnCollection destinationTable
       )
     {
-      bool bUseSelectedColumns = (null != selectedColumns && 0 != selectedColumns.Count);
-      int numcols = bUseSelectedColumns ? selectedColumns.Count : srctable.ColumnCount;
+      var useSelectedColumns = selectedColumns?.Count > 0 ? selectedColumns : null;
+      int numcols = useSelectedColumns is null ? srctable.ColumnCount : useSelectedColumns.Count;
       if (numcols == 0)
         return; // nothing selected
 
-      bool bUseSelectedRows = (null != selectedRows && 0 != selectedRows.Count);
-      int numrows = bUseSelectedRows ? selectedRows.Count : srctable.RowCount;
+      var useSelectedRows = selectedRows?.Count > 0 ? selectedRows : null;
+      int numrows = useSelectedRows is null ? srctable.RowCount : useSelectedRows.Count;
       if (numrows == 0)
         return;
 
@@ -314,7 +315,7 @@ namespace Altaxo.Data
 
       for (int si = 0; si < numcols; si++)
       {
-        Altaxo.Data.DataColumn col = bUseSelectedColumns ? srctable[selectedColumns[si]] : srctable[si];
+        Altaxo.Data.DataColumn col = useSelectedColumns is null ? srctable[si] : srctable[useSelectedColumns[si]];
         if (!(col is Altaxo.Data.INumericColumn))
           continue;
 
@@ -322,7 +323,7 @@ namespace Altaxo.Data
         var ncol = (Data.INumericColumn)col;
         for (int i = 0; i < numrows; i++)
         {
-          int row = bUseSelectedRows ? selectedRows[i] : i;
+          int row = useSelectedRows is null ? i : useSelectedRows[i];
           cRows[i] = row;
 
           double val = ncol[row];
@@ -368,7 +369,7 @@ namespace Altaxo.Data
 
       for (int i = 0; i < numrows; i++)
       {
-        int row = bUseSelectedRows ? selectedRows[i] : i;
+        int row = useSelectedRows is null ? i : useSelectedRows[i];
 
         double mean = colMean[i];
         double sd = colSD[i];
@@ -381,7 +382,7 @@ namespace Altaxo.Data
 
         for (int si = 0; si < numcols; si++)
         {
-          Altaxo.Data.DataColumn col = bUseSelectedColumns ? srctable[selectedColumns[si]] : srctable[si];
+          Altaxo.Data.DataColumn col = useSelectedColumns is null ? srctable[si] : srctable[useSelectedColumns[si]];
           if (!(col is Altaxo.Data.INumericColumn))
             continue;
 
@@ -485,8 +486,8 @@ namespace Altaxo.Data
 
     private static void AddSourcePropertyColumns(DataTable srctable, IAscendingIntegerCollection selectedColumns, DataTable destinationTable)
     {
-      bool bUseSelectedColumns = (null != selectedColumns && 0 != selectedColumns.Count);
-      int numcols = bUseSelectedColumns ? selectedColumns.Count : srctable.DataColumnCount;
+      var useSelectedColumns = selectedColumns?.Count > 0 ? selectedColumns : null;
+      int numcols = useSelectedColumns is null ? srctable.DataColumnCount : useSelectedColumns.Count;
 
       // new : add a copy of all property columns; can be usefull
       for (int i = 0; i < srctable.PropertyColumnCount; i++)
@@ -496,7 +497,7 @@ namespace Altaxo.Data
         clonedColumn.Clear();
         for (int si = 0; si < numcols; si++)
         {
-          int idx = bUseSelectedColumns ? selectedColumns[si] : si;
+          int idx = useSelectedColumns is null ? si : useSelectedColumns[si];
           clonedColumn[si] = originalColumn[idx];
         }
         destinationTable.DataColumns.Add(clonedColumn, srctable.PropertyColumns.GetColumnName(i), srctable.PropertyColumns.GetColumnKind(i), srctable.PropertyColumns.GetColumnGroup(i));

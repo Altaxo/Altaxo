@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace Altaxo.Units.Time
     {
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       return Second.Instance;
     }
@@ -50,7 +51,7 @@ namespace Altaxo.Units.Time
     {
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       return Minute.Instance;
     }
@@ -63,7 +64,7 @@ namespace Altaxo.Units.Time
     {
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       return Hour.Instance;
     }
@@ -76,7 +77,7 @@ namespace Altaxo.Units.Time
     {
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       return Day.Instance;
     }
@@ -89,7 +90,7 @@ namespace Altaxo.Units.Time
     {
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       return Week.Instance;
     }

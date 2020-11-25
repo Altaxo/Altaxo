@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <RootNamespace>AvalonDock</RootNamespace>
-    <TargetFrameworks>netcoreapp3.0;net4</TargetFrameworks>
+    <TargetFrameworks>net48;net5.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
@@ -19,10 +19,11 @@
     <Authors>https://github.com/Dirkster99/AvalonDock</Authors>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.0|AnyCPU'">
+  <PropertyGroup Condition="'$(TargetFramework)'=='net5.0-windows'">
+    <NoWarn>SYSLIB0003;SYSLIB0004</NoWarn>
     <DefineConstants />
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net4|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
     <DefineConstants />
   </PropertyGroup>
 

@@ -125,7 +125,7 @@ namespace Altaxo.Serialization.Xml
     /// <param name="surrogate">The surrogate used to serialize/deserialize the type.</param>
     public void AddSurrogate(XmlSerializationSurrogateForAttribute attr, IXmlSerializationSurrogate surrogate)
     {
-      if (null != attr.SerializationType)
+      if (attr.SerializationType is not null)
         AddSurrogate(attr.SerializationType, attr.Version, surrogate);
       else
         AddSurrogate(attr.AssemblyName, attr.TypeName, attr.Version, surrogate);
@@ -173,7 +173,7 @@ namespace Altaxo.Serialization.Xml
       {
         // test if the assembly supports Serialization
         var suppVersioning = Attribute.GetCustomAttribute(assembly, typeof(SupportsSerializationVersioningAttribute));
-        if (null == suppVersioning)
+        if (suppVersioning is null)
           continue; // this assembly don't support this, so skip it
 
         Type[] definedtypes = assembly.GetTypes();

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -64,7 +65,7 @@ namespace Altaxo.Gui.Serialization.Ascii
         _positions = new ObservableCollection<Boxed<int>>(Boxed<int>.ToBoxedItems(_doc.StartPositions));
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.StartPositions = _positions;
       }

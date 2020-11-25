@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing.Drawing2D;
@@ -68,7 +69,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         if (y.HasValue)
           destinationSizeRootCoord = destinationSizeRootCoord.WithY(y.Value);
 
-        if (null != hit)
+        if (hit is not null)
         {
           if (!hit.AutoSize)
           {
@@ -101,7 +102,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         return newLevel;
       }
 
-      public override IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel)
+      public override IGripManipulationHandle[]? GetGrips(double pageScale, int gripLevel)
       {
         if (((GraphicBase)_hitobject).AutoSize)
         {

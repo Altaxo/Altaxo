@@ -60,7 +60,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     public ComplexFloatQRDecomp(IROComplexFloatMatrix matrix)
     {
-      if (matrix == null)
+      if (matrix is null)
         throw new System.ArgumentNullException("matrix cannot be null.");
       this.matrix = matrix;
     }

@@ -201,7 +201,7 @@ namespace MathML.Rendering
 				BoundingBox box = a.BoundingBox;
 				yy -= box.Depth;
 				AreaRegion r = a.GetRegion(x, yy, pointX, pointY);
-				if(r != null) 
+				if(r is not null) 
 				{
 					return r;
 				}
@@ -219,7 +219,7 @@ namespace MathML.Rendering
 				BoundingBox box = a.BoundingBox;
 				yy -= box.Depth;
 				AreaRegion r = a.GetEditRegion(context, x, yy, index);
-				if(r != null) 
+				if(r is not null) 
 				{
 					return r;
 				}
@@ -237,7 +237,7 @@ namespace MathML.Rendering
 				BoundingBox box = a.BoundingBox;
 				yy -= box.Depth;
 				AreaRegion r = a.GetRegion(context, x, yy, element, index);
-				if(r != null) 
+				if(r is not null) 
 				{
 					return r;
 				}

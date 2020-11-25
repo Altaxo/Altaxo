@@ -22,11 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Gui
 {
@@ -48,7 +45,7 @@ namespace Altaxo.Gui
     /// <summary>
     /// Event fired when the user changed some data that will change the model.
     /// </summary>
-    public event Action<IMVCANDController> MadeDirty;
+    public event Action<IMVCANDController>? MadeDirty;
 
     /// <summary>
     /// Initialize the controller with the document. If successfull, the function has to return true.
@@ -59,7 +56,7 @@ namespace Altaxo.Gui
     /// </returns>
     public override bool InitializeDocument(params object[] args)
     {
-      if (null == args || 0 == args.Length || !(args[0] is TModel))
+      if (args is null || 0 == args.Length || !(args[0] is TModel))
         return false;
 
       _doc = _originalDoc = (TModel)args[0];
@@ -76,7 +73,7 @@ namespace Altaxo.Gui
     /// <summary>
     /// Returns the Gui element that shows the model to the user.
     /// </summary>
-    public override object ViewObject
+    public override object? ViewObject
     {
       get
       {
@@ -84,14 +81,14 @@ namespace Altaxo.Gui
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as TView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
           {
@@ -107,7 +104,7 @@ namespace Altaxo.Gui
     /// </summary>
     protected virtual void OnMadeDirty()
     {
-      if (!_suppressDirtyEvent.IsSuspended && null != MadeDirty)
+      if (!_suppressDirtyEvent.IsSuspended && MadeDirty is not null)
         MadeDirty(this);
     }
 
@@ -116,7 +113,12 @@ namespace Altaxo.Gui
     /// </summary>
     public object ProvisionalModelObject
     {
-      get { return _doc; }
+      get
+      {
+        if (_doc is null)
+          throw NoDocumentException;
+        return _doc;
+      }
     }
   }
 }

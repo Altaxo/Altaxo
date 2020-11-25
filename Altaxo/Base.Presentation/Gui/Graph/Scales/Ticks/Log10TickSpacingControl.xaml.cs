@@ -56,14 +56,14 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     private void _edTransfoOperation_Changed(object sender, SelectionChangedEventArgs e)
     {
       e.Handled = true;
-      if (null != TransfoOperationChanged)
+      if (TransfoOperationChanged is not null)
         TransfoOperationChanged(_cbTransfoOperation.SelectedIndex == 1);
     }
 
     private void _edDivideBy_Validating(object sender, ValidationEventArgs<string> e)
     {
       var c = new System.ComponentModel.CancelEventArgs();
-      if (null != DivideByValidating)
+      if (DivideByValidating is not null)
         DivideByValidating(_edDivideBy.Text, c);
       if (c.Cancel)
         e.AddError("The provided text can not be converted");
@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
       set
       {
-        if (null == value)
+        if (value is null)
         {
           _rbDecadesPerMajorTickAutomatic.IsChecked = true;
         }
@@ -109,7 +109,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
       set
       {
-        if (value == null)
+        if (value is null)
           _rbMinorTicksAutomatic.IsChecked = true;
         else if (value == -1)
           _rbMinorTicks147.IsChecked = true;
@@ -257,9 +257,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       }
     }
 
-    public event Action<string, System.ComponentModel.CancelEventArgs> DivideByValidating;
+    public event Action<string, System.ComponentModel.CancelEventArgs>? DivideByValidating;
 
-    public event Action<bool> TransfoOperationChanged;
+    public event Action<bool>? TransfoOperationChanged;
 
     #endregion ILinearTickSpacingView
 

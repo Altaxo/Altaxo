@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 
 namespace Altaxo.Data
@@ -35,8 +35,8 @@ namespace Altaxo.Data
   {
     public static void ShowExpandCyclingVariableColumnDialog(this DataTable srcTable, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns)
     {
-      DataTableMultipleColumnProxy proxy = null;
-      ExpandCyclingVariableColumnOptions options = null;
+      DataTableMultipleColumnProxy? proxy = null;
+      ExpandCyclingVariableColumnOptions? options = null;
 
       try
       {
@@ -61,7 +61,7 @@ namespace Altaxo.Data
         proxy = dataAndOptions.Data;
         options = dataAndOptions.Options;
 
-        string error = null;
+        string? error = null;
         try
         {
           error = ExpandCyclingVariableColumn(dataAndOptions.Data, dataAndOptions.Options, destTable);
@@ -70,7 +70,7 @@ namespace Altaxo.Data
         {
           error = ex.ToString();
         }
-        if (null != error)
+        if (error is not null)
           Current.Gui.ErrorMessageBox(error);
 
         destTable.Name = srcTable.Name + "_Expanded";
@@ -92,9 +92,11 @@ namespace Altaxo.Data
     /// <param name="options">The settings for expanding.</param>
     /// <param name="destTable">The destination table. Any data will be removed before filling with the new data.</param>
     /// <returns>Null if the method finishes successfully, or an error information.</returns>
-    public static string ExpandCyclingVariableColumn(DataTableMultipleColumnProxy inputData, ExpandCyclingVariableColumnOptions options, DataTable destTable)
+    public static string? ExpandCyclingVariableColumn(DataTableMultipleColumnProxy inputData, ExpandCyclingVariableColumnOptions options, DataTable destTable)
     {
       var srcTable = inputData.DataTable;
+      if (srcTable is null)
+        return "Source data table is null";
 
       try
       {
@@ -108,7 +110,10 @@ namespace Altaxo.Data
       destTable.DataColumns.RemoveColumnsAll();
       destTable.PropCols.RemoveColumnsAll();
 
-      DataColumn srcCycCol = inputData.GetDataColumnOrNull(ExpandCyclingVariableColumnDataAndOptions.ColumnWithCyclingVariableIdentifier);
+      var srcCycCol = inputData.GetDataColumnOrNull(ExpandCyclingVariableColumnDataAndOptions.ColumnWithCyclingVariableIdentifier);
+      if (srcCycCol is null)
+        return "Column with cycling variable is null";
+
       var repeatRanges = DecomposeIntoRepeatUnits(srcCycCol);
 
       // check if there is at least one averaged column

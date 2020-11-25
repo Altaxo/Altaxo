@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -47,13 +48,15 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     #region Cell edit
 
-    public event Action CellEdit_LostFocus;
+    public event Action? CellEdit_LostFocus;
 
-    public event Action<AltaxoKeyboardKey, HandledEventArgs> CellEdit_PreviewKeyPressed;
+    public event Action<AltaxoKeyboardKey, HandledEventArgs>? CellEdit_PreviewKeyPressed;
 
-    public event Action CellEdit_TextChanged;
+    public event Action? CellEdit_TextChanged;
 
+#pragma warning disable CS0414 // Remove unread private members
     private bool _cellEdit_IsArmed;
+#pragma warning restore CS0414 // Remove unread private members
 
     private void InitializeCellEditControl()
     {
@@ -191,7 +194,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public WorksheetViewWpf(Func<Altaxo.Gui.Worksheet.Viewing.IWorksheetController, WorksheetViewWpf, WorksheetController> createController)
     {
-      if (null == createController)
+      if (createController is null)
         throw new ArgumentNullException("createController");
 
       InitializeComponent();
@@ -350,7 +353,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void EhView_TableAreaPaint(DrawingContext unused)
     {
-      if (Canvas == null || _guiController == null || _guiController.DataTable == null)
+      if (Canvas is null || _guiController is null || _guiController.DataTable is null)
         return;
 
       using (var dc = _visualHost.OpenDrawingContext())
@@ -371,7 +374,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       _worksheetPanel.Focus();
 
-      if (_guiController != null)
+      if (_guiController is not null)
       {
         _guiController.EhView_TableAreaMouseDown(GuiHelper.ToAltaxo(GetPosition(e)));
       }
@@ -379,7 +382,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void EhWP_MouseUp(object sender, MouseButtonEventArgs e)
     {
-      if (_guiController != null)
+      if (_guiController is not null)
         _guiController.EhView_TableAreaMouseUp(GuiHelper.ToAltaxo(GetPosition(e)));
 
       if (e.ChangedButton == MouseButton.Left && e.ClickCount >= 2)
@@ -390,31 +393,31 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void EhWP_MouseMove(object sender, MouseEventArgs e)
     {
-      if (_guiController != null)
+      if (_guiController is not null)
         _guiController.EhView_TableAreaMouseMove(GuiHelper.ToAltaxo(GetPosition(e)));
     }
 
     private void EhWP_MouseWheel(object sender, MouseWheelEventArgs e)
     {
-      if (_guiController != null)
+      if (_guiController is not null)
         _guiController.EhView_TableAreaMouseWheel(GuiHelper.ToAltaxo(GetPosition(e)), e.Delta);
     }
 
     private void EhWP_KeyDown(object sender, KeyEventArgs e)
     {
-      if (_guiController != null)
+      if (_guiController is not null)
         _guiController.EhView_KeyDown(GuiHelper.ToAltaxo(e.Key));
     }
 
     private void EhWP_HorzScroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
     {
-      if (null != _guiController)
+      if (_guiController is not null)
         _guiController.EhView_HorzScrollBarScroll((int)e.NewValue);
     }
 
     private void EhWP_VertScroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
     {
-      if (null != _guiController)
+      if (_guiController is not null)
         _guiController.EhView_VertScrollBarScroll((int)e.NewValue);
     }
 
@@ -422,25 +425,25 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void EhWP_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-      if (null != _guiController)
+      if (_guiController is not null)
         _guiController.EhView_TableAreaSizeChanged(e);
     }
 
     private void EhEnableCmdCopy(object sender, CanExecuteRoutedEventArgs e)
     {
-      e.CanExecute = null != _guiController && _guiController.EnableCopy;
+      e.CanExecute = _guiController is not null && _guiController.EnableCopy;
       e.Handled = true;
     }
 
     private void EhEnableCmdPaste(object sender, CanExecuteRoutedEventArgs e)
     {
-      e.CanExecute = null != _guiController && _guiController.EnablePaste;
+      e.CanExecute = _guiController is not null && _guiController.EnablePaste;
       e.Handled = true;
     }
 
     private void EhCmdCopy(object sender, ExecutedRoutedEventArgs e)
     {
-      if (null != _guiController)
+      if (_guiController is not null)
       {
         _guiController.Copy();
         e.Handled = true;
@@ -449,7 +452,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void EhCmdPaste(object sender, ExecutedRoutedEventArgs e)
     {
-      if (null != _guiController)
+      if (_guiController is not null)
       {
         _guiController.Paste();
         e.Handled = true;
@@ -458,13 +461,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void EhEnableCmdCut(object sender, CanExecuteRoutedEventArgs e)
     {
-      e.CanExecute = null != _guiController && _guiController.EnableCut;
+      e.CanExecute = _guiController is not null && _guiController.EnableCut;
       e.Handled = true;
     }
 
     private void EhCmdCut(object sender, ExecutedRoutedEventArgs e)
     {
-      if (null != _guiController)
+      if (_guiController is not null)
       {
         _guiController.Cut();
         e.Handled = true;
@@ -473,13 +476,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void EhEnableCmdDelete(object sender, CanExecuteRoutedEventArgs e)
     {
-      e.CanExecute = null != _guiController && _guiController.EnableDelete;
+      e.CanExecute = _guiController is not null && _guiController.EnableDelete;
       e.Handled = true;
     }
 
     private void EhCmdDelete(object sender, ExecutedRoutedEventArgs e)
     {
-      if (null != _guiController)
+      if (_guiController is not null)
       {
         _guiController.Delete();
         e.Handled = true;
@@ -488,13 +491,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void EhEnableCmdSelectAll(object sender, CanExecuteRoutedEventArgs e)
     {
-      e.CanExecute = null != _guiController && _guiController.EnableSelectAll;
+      e.CanExecute = _guiController is not null && _guiController.EnableSelectAll;
       e.Handled = true;
     }
 
     private void EhCmdSelectAll(object sender, ExecutedRoutedEventArgs e)
     {
-      if (null != _guiController)
+      if (_guiController is not null)
       {
         _guiController.SelectAll();
         e.Handled = true;

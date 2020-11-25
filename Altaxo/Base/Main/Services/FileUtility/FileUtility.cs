@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -52,14 +53,14 @@ namespace Altaxo.Main.Services
   public static partial class FileUtility
   {
     private static readonly char[] separators = { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar };
-    private static string applicationRootPath = AppDomain.CurrentDomain.BaseDirectory;
+    private static string? applicationRootPath = AppDomain.CurrentDomain.BaseDirectory;
     private const string fileNameRegEx = @"^([a-zA-Z]:)?[^:]+$";
 
     public static string ApplicationRootPath
     {
       get
       {
-        return applicationRootPath;
+        return applicationRootPath ?? throw new InvalidOperationException("Application root path could not be retrieved.");
       }
       set
       {
@@ -69,7 +70,7 @@ namespace Altaxo.Main.Services
 
     public static bool IsUrl(string path)
     {
-      if (path == null)
+      if (path is null)
         throw new ArgumentNullException("path");
       return path.IndexOf("://", StringComparison.Ordinal) > 0;
     }
@@ -79,9 +80,9 @@ namespace Altaxo.Main.Services
       return fileName1 == fileName2;
     }
 
-    public static string GetCommonBaseDirectory(string dir1, string dir2)
+    public static string? GetCommonBaseDirectory(string dir1, string dir2)
     {
-      if (dir1 == null || dir2 == null)
+      if (dir1 is null || dir2 is null)
         return null;
       if (IsUrl(dir1) || IsUrl(dir2))
         return null;
@@ -218,10 +219,12 @@ namespace Altaxo.Main.Services
     {
       // If Directory.GetFiles() searches the 8.3 name as well as the full name so if the filemask is
       // "*.xpt" it will return "Template.xpt~"
-      bool isExtMatch = filemask != null && Regex.IsMatch(filemask, @"^\*\.[\w\d_]{3}$");
-      string ext = null;
+      bool isExtMatch = filemask is not null && Regex.IsMatch(filemask, @"^\*\.[\w\d_]{3}$");
+      string? ext = null;
       if (isExtMatch)
-        ext = filemask.Substring(1);
+        ext = filemask!.Substring(1);
+
+
       IEnumerable<string> dir = new[] { directory };
 
       if (searchSubdirectories)
@@ -245,7 +248,10 @@ namespace Altaxo.Main.Services
         IEnumerable<string> files;
         try
         {
-          files = Directory.EnumerateFiles(d, filemask);
+          if (string.IsNullOrEmpty(filemask))
+            files = Directory.EnumerateFiles(d);
+          else
+            files = Directory.EnumerateFiles(d, filemask);
         }
         catch (UnauthorizedAccessException)
         {
@@ -253,7 +259,7 @@ namespace Altaxo.Main.Services
         }
         foreach (string f in files)
         {
-          if (ext != null && !f.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
+          if (ext is not null && !f.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
             continue; // file extension didn't match
           if (!ignoreHidden || IsNotHidden(f))
             yield return new FileName(f);
@@ -280,12 +286,12 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// This method checks if a path (full or relative) is valid.
     /// </summary>
-    public static bool IsValidPath(string fileName)
+    public static bool IsValidPath(string? fileName)
     {
       // Fixme: 260 is the hardcoded maximal length for a path on my Windows XP system
       //        I can't find a .NET property or method for determining this variable.
 
-      if (fileName == null || fileName.Length == 0 || fileName.Length >= MaxPathLength)
+      if (fileName is null || fileName.Length == 0 || fileName.Length >= MaxPathLength)
       {
         return false;
       }
@@ -321,9 +327,13 @@ namespace Altaxo.Main.Services
       // CON, PRN, AUX, NUL, COM1-9 and LPT1-9
 
       string nameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-      if (nameWithoutExtension != null)
+      if (nameWithoutExtension is not null)
       {
         nameWithoutExtension = nameWithoutExtension.ToUpperInvariant();
+      }
+      else
+      {
+        nameWithoutExtension = string.Empty;
       }
 
       if (nameWithoutExtension == "CON" ||
@@ -366,7 +376,7 @@ namespace Altaxo.Main.Services
       if (!File.Exists(filename))
       {
         var messageService = Altaxo.Current.GetRequiredService<IMessageService>();
-        messageService.ShowWarning(StringParser.Parse("${res:Fileutility.CantFindFileError}", new StringTagPair("FILE", filename)));
+        messageService.ShowWarning(StringParser.Parse("${res:Fileutility.CantFindFileError}", new StringTagPair("FILE", filename)) ?? string.Empty);
         return false;
       }
       return true;
@@ -464,7 +474,7 @@ namespace Altaxo.Main.Services
       try
       {
         saveFile();
-        RaiseFileSaved(new FileNameEventArgs(fileName));
+        RaiseFileSaved(new PathNameEventArgs(fileName));
         return FileOperationResult.OK;
       }
       catch (IOException e)
@@ -503,10 +513,11 @@ namespace Altaxo.Main.Services
 
     public static FileOperationResult ObservedSave(FileOperationDelegate saveFile, FileName fileName, FileErrorPolicy policy = FileErrorPolicy.Inform)
     {
-      return ObservedSave(saveFile,
-                                              fileName,
-                                              Current.ResourceService.GetString("ICSharpCode.Services.FileUtilityService.CantSaveFileStandardText"),
-                                              policy);
+      return ObservedSave(
+        saveFile,
+        fileName,
+        Current.ResourceService.GetString("ICSharpCode.Services.FileUtilityService.CantSaveFileStandardText") ?? string.Empty,
+        policy);
     }
 
     public static FileOperationResult ObservedSave(NamedFileOrFolderOperationDelegate saveFileAs, PathName fileName, string message, FileErrorPolicy policy = FileErrorPolicy.Inform)
@@ -514,9 +525,11 @@ namespace Altaxo.Main.Services
       System.Diagnostics.Debug.Assert(IsValidPath(fileName));
       try
       {
-        Directory.CreateDirectory(fileName.GetParentDirectory());
+        if (fileName.GetParentDirectory() is { } parentDirectory)
+          Directory.CreateDirectory(parentDirectory.ToString());
+
         saveFileAs(fileName);
-        RaiseFileSaved(new FileNameEventArgs(fileName));
+        RaiseFileSaved(new PathNameEventArgs(fileName));
         return FileOperationResult.OK;
       }
       catch (IOException e)
@@ -550,7 +563,7 @@ namespace Altaxo.Main.Services
           {
             return FileOperationResult.Failed;
           }
-          else if (r.IsSaveAlternative)
+          else if (r.AlternativeFileName is not null)
           {
             return ObservedSave(saveFileAs, r.AlternativeFileName, message, policy);
           }
@@ -561,10 +574,11 @@ namespace Altaxo.Main.Services
 
     public static FileOperationResult ObservedSave(NamedFileOrFolderOperationDelegate saveFileAs, PathName fileName, FileErrorPolicy policy = FileErrorPolicy.Inform)
     {
-      return ObservedSave(saveFileAs,
-                                              fileName,
-                                              Current.ResourceService.GetString("ICSharpCode.Services.FileUtilityService.CantSaveFileStandardText"),
-                                              policy);
+      return ObservedSave(
+        saveFileAs,
+        fileName,
+        Current.ResourceService.GetString("ICSharpCode.Services.FileUtilityService.CantSaveFileStandardText") ?? string.Empty,
+        policy);
     }
 
     // Observe LOAD functions
@@ -573,7 +587,7 @@ namespace Altaxo.Main.Services
       try
       {
         loadFile();
-        OnFileLoaded(new FileNameEventArgs(fileName));
+        OnFileLoaded(new PathNameEventArgs(fileName));
         return FileOperationResult.OK;
       }
       catch (IOException e)
@@ -613,10 +627,11 @@ namespace Altaxo.Main.Services
 
     public static FileOperationResult ObservedLoad(FileOperationDelegate loadFile, FileName fileName, FileErrorPolicy policy = FileErrorPolicy.Inform)
     {
-      return ObservedLoad(loadFile,
-                                              fileName,
-                                              Current.ResourceService.GetString("ICSharpCode.Services.FileUtilityService.CantLoadFileStandardText"),
-                                              policy);
+      return ObservedLoad(
+        loadFile,
+        fileName,
+        Current.ResourceService.GetString("ICSharpCode.Services.FileUtilityService.CantLoadFileStandardText") ?? string.Empty,
+        policy);
     }
 
     public static FileOperationResult ObservedLoad(NamedFileOperationDelegate saveFileAs, FileName fileName, string message, FileErrorPolicy policy = FileErrorPolicy.Inform)
@@ -627,30 +642,25 @@ namespace Altaxo.Main.Services
 
     public static FileOperationResult ObservedLoad(NamedFileOperationDelegate saveFileAs, FileName fileName, FileErrorPolicy policy = FileErrorPolicy.Inform)
     {
-      return ObservedLoad(saveFileAs,
-                                              fileName,
-                                              Current.ResourceService.GetString("ICSharpCode.Services.FileUtilityService.CantLoadFileStandardText"),
-                                              policy);
+      return ObservedLoad(
+        saveFileAs,
+        fileName,
+        Current.ResourceService.GetString("ICSharpCode.Services.FileUtilityService.CantLoadFileStandardText") ?? string.Empty,
+        policy);
     }
 
-    private static void OnFileLoaded(FileNameEventArgs e)
+    private static void OnFileLoaded(PathNameEventArgs e)
     {
-      if (FileLoaded != null)
-      {
-        FileLoaded(null, e);
-      }
+      FileLoaded?.Invoke(null, e);
     }
 
-    public static void RaiseFileSaved(FileNameEventArgs e)
+    public static void RaiseFileSaved(PathNameEventArgs e)
     {
-      if (FileSaved != null)
-      {
-        FileSaved(null, e);
-      }
+      FileSaved?.Invoke(null, e);
     }
 
-    public static event EventHandler<FileNameEventArgs> FileLoaded;
+    public static event EventHandler<PathNameEventArgs>? FileLoaded;
 
-    public static event EventHandler<FileNameEventArgs> FileSaved;
+    public static event EventHandler<PathNameEventArgs>? FileSaved;
   }
 }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -89,7 +90,7 @@ namespace Altaxo.Gui.Graph.Graph3D
         };
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         // add all necessary Tabs
         _view.AddTab("GraphicItems", "GraphicItems");
@@ -149,7 +150,7 @@ namespace Altaxo.Gui.Graph.Graph3D
           {
             _view.SelectTab(_currentPageName);
           }
-          if (null == _layerGraphItemsController)
+          if (_layerGraphItemsController is null)
           {
             _layerGraphItemsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.GraphObjects }, typeof(IMVCANController), UseDocument.Directly);
           }
@@ -162,7 +163,7 @@ namespace Altaxo.Gui.Graph.Graph3D
           {
             _view.SelectTab(_currentPageName);
           }
-          if (null == _layerPositionController)
+          if (_layerPositionController is null)
           {
             _layerPositionController = new LayerPositionController() { UseDocumentCopy = UseDocument.Directly };
             _layerPositionController.InitializeDocument(_doc.Location, _doc);
@@ -177,7 +178,7 @@ namespace Altaxo.Gui.Graph.Graph3D
           {
             _view.SelectTab(_currentPageName);
           }
-          if (null == _layerGridController)
+          if (_layerGridController is null)
           {
             _layerGridController = new GridPartitioningController() { UseDocumentCopy = UseDocument.Directly };
             _layerGridController.InitializeDocument(_doc.Grid, _doc);
@@ -205,7 +206,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private bool ApplyCurrentController(bool force, bool disposeController)
     {
-      if (_currentController == null)
+      if (_currentController is null)
         return true;
 
       if (!force && object.ReferenceEquals(_currentController, _lastControllerApplied))
@@ -251,7 +252,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     public static bool EhLayerPositionEdit(IHitTestObject hit)
     {
       var layer = hit.HittedObject as XYZPlotLayer;
-      if (layer == null)
+      if (layer is null)
         return false;
 
       ShowDialog(layer, "Position");

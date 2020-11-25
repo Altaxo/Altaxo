@@ -26,7 +26,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Altaxo.Main.Services;
+using Altaxo.Main.Services.ExceptionHandling;
 
 namespace Altaxo.Main.Commands
 {
@@ -38,12 +40,19 @@ namespace Altaxo.Main.Commands
 
     public string ProtocolFileName { get; set; }
 
+    public TestAllProjectsInFolderOptions()
+    {
+      FolderPaths = @"C:\Temp";
+      TestSavingAndReopening = false;
+      ProtocolFileName = @"C:\Temp\AltaxoTestOpeningLog.txt";
+    }
+
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       var from = obj as TestAllProjectsInFolderOptions;
-      if (null != from)
+      if (from is not null)
       {
         FolderPaths = from.FolderPaths;
         TestSavingAndReopening = from.TestSavingAndReopening;
@@ -67,7 +76,7 @@ namespace Altaxo.Main.Commands
 
     public class Reporter : Altaxo.Main.Services.TextOutputServiceBase
     {
-      private System.IO.StreamWriter _wr;
+      private System.IO.StreamWriter? _wr;
       private Altaxo.Main.Services.ITextOutputService _previousOutputService;
 
       public Reporter(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ITextOutputService previousOutputService)
@@ -94,13 +103,43 @@ namespace Altaxo.Main.Commands
 
       protected override void InternalWrite(string text)
       {
-        if (null != _wr)
+        if (_wr is not null)
         {
           _wr.Write(text);
           _wr.Flush();
         }
 
         _previousOutputService.Write(text);
+      }
+    }
+
+    public class UnhandledExceptionHandler : IUnhandledExceptionHandler
+    {
+      private Reporter _reporter;
+
+      public int NumberOfExceptionsEncountered { get; private set; }
+
+      public UnhandledExceptionHandler(Reporter reporter)
+      {
+        _reporter = reporter;
+      }
+
+      public void EhCurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+      {
+        ++NumberOfExceptionsEncountered;
+        _reporter.WriteLine($"Unhandled exception in current domain. IsTerminating: {e.IsTerminating}, Exception: {e.ExceptionObject}");
+      }
+
+      public void EhWindowsFormsApplication_ThreadException(object sender, ThreadExceptionEventArgs e)
+      {
+        ++NumberOfExceptionsEncountered;
+        _reporter.WriteLine($"Unhandled exception in WindowsForms. Exception: {e.Exception}");
+      }
+
+      public void EhWpfDispatcher_UnhandledException(object sender, object dispatcher, Exception exception)
+      {
+        ++NumberOfExceptionsEncountered;
+        _reporter.WriteLine($"Unhandled exception in Wpf. Exception: {exception}");
       }
     }
 
@@ -192,19 +231,23 @@ namespace Altaxo.Main.Commands
     private static void InternalVerifyOpeningOfDocumentsWithoutExceptionStart(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor)
     {
       var reporter = new Reporter(testOptions, Current.Console);
-      var oldOutputService = Current.GetService<Services.ITextOutputService>();
+      var oldOutputService = Current.GetRequiredService<Services.ITextOutputService>();
       Current.RemoveService<Services.ITextOutputService>();
       Current.AddService<Services.ITextOutputService>(reporter);
       if (!object.ReferenceEquals(Current.Console, reporter))
         throw new InvalidProgramException("Current console now should be the reporter! Please debug.");
 
+
       var test = new TestAllProjectsInFolder(reporter, testOptions);
 
       Current.IProjectService.ProjectChanged += test.EhProjectChanged;
 
+      var unhandledExceptionHandler = new UnhandledExceptionHandler(reporter);
+      Current.GetRequiredService<IUnhandledExceptionHandlerService>().AddHandler(unhandledExceptionHandler, true);
+
       try
       {
-        test.InternalVerifyOpeningOfDocumentsWithoutException(testOptions, monitor);
+        test.InternalVerifyOpeningOfDocumentsWithoutException(testOptions, monitor, unhandledExceptionHandler, reporter);
       }
       catch (Exception ex)
       {
@@ -220,6 +263,7 @@ namespace Altaxo.Main.Commands
 
         Current.RemoveService<Services.ITextOutputService>();
         Current.AddService<Services.ITextOutputService>(oldOutputService);
+        Current.GetRequiredService<IUnhandledExceptionHandlerService>().RemoveHandler(unhandledExceptionHandler);
       }
     }
 
@@ -229,7 +273,7 @@ namespace Altaxo.Main.Commands
         _reporter.WriteLine("Project changed: Type: {0}; fileName: {1}", e.ProjectEventKind, e.NewName);
     }
 
-    private void InternalVerifyOpeningOfDocumentsWithoutException(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor)
+    private void InternalVerifyOpeningOfDocumentsWithoutException(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor, UnhandledExceptionHandler unhandledExceptionHandler, Reporter reporter)
     {
       monitor.ReportProgress("Searching Altaxo project files ...", 0);
       var path = testOptions.FolderPaths;
@@ -256,9 +300,12 @@ namespace Altaxo.Main.Commands
           monitor.ReportProgress(string.Format(
             "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
             "Currently opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
-
+          reporter.WriteLine($"---------- {filename} ----------");
           ++numberOfProjectsTested;
-          Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, new Services.FileName(filename), true);
+          var unhandledExceptionsBefore = unhandledExceptionHandler.NumberOfExceptionsEncountered;
+          Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, new Services.FileName(filename), false);
+          if (unhandledExceptionHandler.NumberOfExceptionsEncountered != unhandledExceptionsBefore)
+            ++numberOfProjectsFailedToLoad;
 
           monitor.ReportProgress(string.Format(
             "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
@@ -305,7 +352,10 @@ namespace Altaxo.Main.Commands
               "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
               "Currently saving: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
+            var unhandledExceptionsBefore = unhandledExceptionHandler.NumberOfExceptionsEncountered;
             Current.Dispatcher.InvokeIfRequired(Current.IProjectService.SaveProject, tempFileName);
+            if (unhandledExceptionHandler.NumberOfExceptionsEncountered != unhandledExceptionsBefore)
+              ++numberOfProjectsFailedToLoad;
 
             monitor.ReportProgress(string.Format(
               "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
@@ -340,7 +390,10 @@ namespace Altaxo.Main.Commands
               "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
               "Currently re-opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
-            Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, new Services.FileName(tempFileName), true);
+            var unhandledExceptionsBefore = unhandledExceptionHandler.NumberOfExceptionsEncountered;
+            Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, new Services.FileName(tempFileName), false);
+            if (unhandledExceptionHandler.NumberOfExceptionsEncountered != unhandledExceptionsBefore)
+              ++numberOfProjectsFailedToLoad;
 
             monitor.ReportProgress(string.Format(
               "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +

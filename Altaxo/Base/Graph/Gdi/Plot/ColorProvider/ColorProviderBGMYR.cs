@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -44,9 +45,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
         info.AddBaseValueEmbedded(s, typeof(ColorProviderBase));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ColorProviderBGMYR s = null != o ? (ColorProviderBGMYR)o : new ColorProviderBGMYR();
+        var s = (ColorProviderBGMYR?)o ?? new ColorProviderBGMYR();
         info.GetBaseValueEmbedded(s, typeof(ColorProviderBase), parent);
 
         return s;

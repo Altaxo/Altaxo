@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace Altaxo.Text
     /// <returns>The modified pipeline</returns>
     public static MarkdownPipelineBuilder UseSupportedExtensions(this MarkdownPipelineBuilder pipeline)
     {
-      if (pipeline == null)
+      if (pipeline is null)
         throw new ArgumentNullException(nameof(pipeline));
       return pipeline
           .UseEmphasisExtras()
@@ -66,10 +67,9 @@ namespace Altaxo.Text
     public static IEnumerable<Markdig.Syntax.MarkdownObject> EnumerateAllMarkdownObjectsRecursively(this Markdig.Syntax.MarkdownObject startElement)
     {
       yield return startElement;
-      var childList = GetChildList(startElement);
-      if (null != childList)
+      if (GetChildList(startElement) is { } childList)
       {
-        foreach (var child in GetChildList(startElement))
+        foreach (var child in childList)
         {
           foreach (var childAndSub in EnumerateAllMarkdownObjectsRecursively(child))
             yield return childAndSub;
@@ -82,7 +82,7 @@ namespace Altaxo.Text
     /// </summary>
     /// <param name="parent">The markdown object from which to get the childs.</param>
     /// <returns>The childs of the given markdown object, or null.</returns>
-    public static IEnumerable<Markdig.Syntax.MarkdownObject> GetChilds(this Markdig.Syntax.MarkdownObject parent)
+    public static IEnumerable<Markdig.Syntax.MarkdownObject>? GetChilds(this Markdig.Syntax.MarkdownObject parent)
     {
       if (parent is Markdig.Syntax.LeafBlock leafBlock)
         return leafBlock.Inline;
@@ -99,7 +99,7 @@ namespace Altaxo.Text
     /// </summary>
     /// <param name="parent">The markdown object from which to get the childs.</param>
     /// <returns>The childs of the given markdown object, or null.</returns>
-    public static IReadOnlyList<Markdig.Syntax.MarkdownObject> GetChildList(this Markdig.Syntax.MarkdownObject parent)
+    public static IReadOnlyList<Markdig.Syntax.MarkdownObject>? GetChildList(this Markdig.Syntax.MarkdownObject parent)
     {
       if (parent is Markdig.Syntax.LeafBlock leafBlock)
         return leafBlock.Inline?.ToArray<Markdig.Syntax.MarkdownObject>();
@@ -149,7 +149,7 @@ namespace Altaxo.Text
       foreach (var child in MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(element))
       {
         var attr = (Markdig.Renderers.Html.HtmlAttributes)child.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-        string uniqueAddress = attr?.Id; // this header has a user defined address
+        var uniqueAddress = attr?.Id; // this header has a user defined address
         if (uniqueAddress == url)
           return true;
       }

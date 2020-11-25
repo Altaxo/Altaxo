@@ -169,7 +169,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         ProcessForPrediction(xMatrix, xMean, xScale, regions);
 
         // 3. Compare the xMean with the xMean_before
-        if (xMeanBefore == null)
+        if (xMeanBefore is null)
         {
           xMeanBefore = VectorMath.CreateExtensibleVector<double>(xMean.Length);
           VectorMath.Copy(xMean, xMeanBefore);

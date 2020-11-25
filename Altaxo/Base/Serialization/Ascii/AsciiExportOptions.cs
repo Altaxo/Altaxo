@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Serialization.Ascii
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
 
   /// <summary>
@@ -73,11 +73,15 @@ namespace Altaxo.Serialization.Ascii
 
     public IFormatProvider FormatProvider
     {
-      get { return _formatProvider; }
+      get
+      {
+        return _formatProvider;
+      }
+      [MemberNotNull(nameof(_formatProvider))]
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("value");
+        if (value is null)
+          throw new ArgumentNullException(nameof(IFormatProvider));
         _formatProvider = value;
       }
     }
@@ -134,16 +138,16 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="stringConverter">The converter function, which converts an AltaxoVariant into a string.</param>
     public void SetConverter(System.Type columnType, Func<Altaxo.Data.AltaxoVariant, string> stringConverter)
     {
-      if (columnType == null)
+      if (columnType is null)
         throw new ArgumentNullException("columnType");
 
-      if (stringConverter != null)
+      if (stringConverter is not null)
         _typeConverters[columnType] = stringConverter;
       else // stringConverter is null, try to get the default converter
         _typeConverters[columnType] = GetDefaultConverter(columnType);
     }
 
-    public Func<Altaxo.Data.AltaxoVariant, string> GetConverter(System.Type columnType)
+    public Func<Altaxo.Data.AltaxoVariant, string>? GetConverter(System.Type columnType)
     {
       if (_typeConverters.TryGetValue(columnType, out var result))
         return result;

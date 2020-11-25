@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
@@ -70,7 +71,7 @@ namespace Altaxo.Gui.DataConnection
         ctl.SetValue(Grid.RowProperty, nRow);
         ctl.SetValue(Grid.ColumnProperty, 1);
         _grid.Children.Add(ctl);
-        if (_focus == null)
+        if (_focus is null)
         {
           _focus = ctl;
         }
@@ -82,22 +83,22 @@ namespace Altaxo.Gui.DataConnection
       foreach (Control ctl in _grid.Children)
       {
         var p = ctl.Tag as OleDbParameter;
-        if (p != null)
+        if (p is not null)
         {
           var chk = ctl as CheckBox;
-          if (chk != null)
+          if (chk is not null)
           {
             p.Value = chk.IsChecked.ToString();
             continue;
           }
           var dtp = ctl as DatePicker;
-          if (dtp != null)
+          if (dtp is not null)
           {
             p.Value = dtp.SelectedDate.Value.ToString(_invariant);
             continue;
           }
           var textBox = ctl as TextBox;
-          if (null != textBox)
+          if (textBox is not null)
           {
             p.Value = textBox.Text;
             continue;

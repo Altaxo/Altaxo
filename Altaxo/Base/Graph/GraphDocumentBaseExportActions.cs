@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -178,7 +179,7 @@ namespace Altaxo.Graph
         throw new ArgumentException("Path is not rooted!");
 
       var fileNamePart = System.IO.Path.GetFileName(fileName);
-      var pathPart = System.IO.Path.GetDirectoryName(fileName);
+      var pathPart = System.IO.Path.GetDirectoryName(fileName) ?? throw new InvalidOperationException($"Unable to get path of file name {fileName}");
       if (true && !System.IO.Directory.Exists(pathPart))
       {
         System.IO.Directory.CreateDirectory(pathPart);
@@ -186,7 +187,7 @@ namespace Altaxo.Graph
 
       var exporter = Current.ProjectService.GetProjectItemImageExporter(doc);
 
-      if (null == exporter)
+      if (exporter is null)
         throw new ArgumentException("Did not find exporter for document of type " + doc?.GetType().ToString() ?? string.Empty, nameof(doc));
 
       using (Stream myStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read))
@@ -267,7 +268,7 @@ namespace Altaxo.Graph
     /// <param name="renderingOptions">The embedded rendering export options.</param>
     /// <param name="pixelFormat">The pixel format for the bitmap. Default is PixelFormat.Format32bppArgb.</param>
     /// <returns>The rendered enhanced metafile.</returns>
-    public static System.Drawing.Bitmap RenderAsBitmap(GraphDocumentBase document, EmbeddedObjectRenderingOptions renderingOptions, PixelFormat pixelFormat)
+    public static System.Drawing.Bitmap? RenderAsBitmap(GraphDocumentBase document, EmbeddedObjectRenderingOptions renderingOptions, PixelFormat pixelFormat)
     {
       if (document is Gdi.GraphDocument)
         return Gdi.GraphDocumentExportActions.RenderAsBitmap((Gdi.GraphDocument)document, renderingOptions, pixelFormat);

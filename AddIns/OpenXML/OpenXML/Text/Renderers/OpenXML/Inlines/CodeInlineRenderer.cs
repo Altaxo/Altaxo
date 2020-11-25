@@ -39,7 +39,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
       {
         var run = renderer.PushNewRun();
         renderer.ApplyStyleToRun(StyleDictionary.IdToName[FormatStyle.CodeInline], run);
-        var runProp = run.ChildElements[0] as RunProperties;
+        var runProp = (RunProperties)run.ChildElements[0];
         runProp.AppendChild(new CharacterScale { Val = 25 });
         run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = "\u202F" });
         renderer.PopTo(run);
@@ -55,7 +55,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
       {
         var run = renderer.PushNewRun();
         renderer.ApplyStyleToRun(StyleDictionary.IdToName[FormatStyle.CodeInline], run);
-        var runProp = run.ChildElements[0] as RunProperties;
+        var runProp = (RunProperties)run.ChildElements[0];
         runProp.AppendChild(new CharacterScale { Val = 25 });
         run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = "\u202F" });
         renderer.PopTo(run);

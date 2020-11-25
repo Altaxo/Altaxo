@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -70,7 +71,7 @@ namespace Altaxo.Graph.Gdi
     /// <returns>True if user closed the dialog with OK, false if user cancelled the dialog.</returns>
     public static bool ShowPrintOptionsDialog(this GraphDocument doc)
     {
-      var options = doc.PrintOptions == null ? new SingleGraphPrintOptions() : (SingleGraphPrintOptions)doc.PrintOptions.Clone();
+      var options = doc.PrintOptions is null ? new SingleGraphPrintOptions() : (SingleGraphPrintOptions)doc.PrintOptions.Clone();
       object resultobj = options;
       if (Current.Gui.ShowDialog(ref resultobj, "Set print options"))
       {
@@ -89,7 +90,7 @@ namespace Altaxo.Graph.Gdi
     public static void Print(this GraphDocument doc)
     {
       var printTask = new GraphDocumentPrintTask(doc);
-      Exception ex = null;
+      Exception? ex = null;
       try
       {
         Current.PrintingService.PrintDocument.PrintPage += printTask.EhPrintPage;
@@ -108,7 +109,7 @@ namespace Altaxo.Graph.Gdi
         Current.PrintingService.PrintDocument.QueryPageSettings -= printTask.EhQueryPageSettings;
       }
 
-      if (null != ex)
+      if (ex is not null)
         throw ex;
     }
   }
@@ -134,15 +135,11 @@ namespace Altaxo.Graph.Gdi
     {
     }
 
-    public GraphDocumentPrintTask(HostLayer rootLayer, SingleGraphPrintOptions options)
+    public GraphDocumentPrintTask(HostLayer rootLayer, SingleGraphPrintOptions? options)
     {
       _layers = rootLayer;
-      _printOptions = options;
-
+      _printOptions = options ?? new SingleGraphPrintOptions();
       _page = 0;
-
-      if (null == _printOptions)
-        _printOptions = new SingleGraphPrintOptions();
     }
 
     /// <summary>

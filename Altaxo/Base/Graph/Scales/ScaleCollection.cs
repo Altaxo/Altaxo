@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -54,15 +55,9 @@ namespace Altaxo.Graph.Scales
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ScaleCollection s = SDeserialize(o, info, parent);
-        return s;
-      }
-
-      protected virtual ScaleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        ScaleCollection s = null != o ? (ScaleCollection)o : new ScaleCollection(info);
+        var s = (ScaleCollection?)o ?? new ScaleCollection(info);
 
         int count = info.OpenArray("Members");
         s._scales = new Scale[count];
@@ -80,6 +75,8 @@ namespace Altaxo.Graph.Scales
 
         return s;
       }
+
+
     }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleCollection), 1)]
@@ -95,15 +92,9 @@ namespace Altaxo.Graph.Scales
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ScaleCollection s = SDeserialize(o, info, parent);
-        return s;
-      }
-
-      protected virtual ScaleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        ScaleCollection s = null != o ? (ScaleCollection)o : new ScaleCollection(info);
+        var s = (ScaleCollection?)o ?? new ScaleCollection(info);
 
         int count = info.OpenArray("Members");
         s._scales = new Scale[count];
@@ -116,6 +107,8 @@ namespace Altaxo.Graph.Scales
 
         return s;
       }
+
+
     }
 
     #endregion Serialization
@@ -124,9 +117,11 @@ namespace Altaxo.Graph.Scales
     /// For deserialization only: Initializes a new instance of the <see cref="ScaleCollection"/> class.
     /// </summary>
     /// <param name="info">The deserialization information.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected ScaleCollection(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     public ScaleCollection()
       : this(2)
@@ -151,12 +146,12 @@ namespace Altaxo.Graph.Scales
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as ScaleCollection;
 
-      if (null == from)
+      if (from is null)
         return false;
 
       using (var suspendToken = SuspendGetToken())
@@ -175,11 +170,11 @@ namespace Altaxo.Graph.Scales
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _scales)
+      if (_scales is not null)
       {
         for (int i = _scales.Length - 1; i >= 0; --i)
         {
-          if (null != _scales[i])
+          if (_scales[i] is not null)
             yield return new Main.DocumentNodeAndName(_scales[i], "Scale" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
       }
@@ -190,12 +185,12 @@ namespace Altaxo.Graph.Scales
       if (isDisposing)
       {
         var scales = _scales;
-        _scales = null;
-        if (null != scales)
+        _scales = null!;
+        if (scales is not null)
         {
           for (int i = 0; i < scales.Length; ++i)
           {
-            if (null != scales[i])
+            if (scales[i] is not null)
               scales[i].Dispose();
           }
         }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,7 +95,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
         _insets.Insert(0, new SelectableListNode("None", null, true));
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view1 = _view as IScatterSymbolListView;
         _view1.ShapeChoices = _shapes;
@@ -152,7 +153,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
         if (node.IsSelected)
         {
           var item = (IScatterSymbol)node.Tag;
-          if (item.Inset != null)
+          if (item.Inset is not null)
             node.Tag = item.WithInset(item.Inset.WithColor(obj));
         }
       }
@@ -168,7 +169,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
         if (node.IsSelected)
         {
           var item = (IScatterSymbol)node.Tag;
-          if (item.Frame != null)
+          if (item.Frame is not null)
             node.Tag = item.WithFrame(item.Frame.WithColor(obj));
         }
       }
@@ -209,9 +210,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
     private void EhInsetForAllSelected(Type obj)
     {
-      var insetTemplate = obj == null ? null : (IScatterSymbolInset)Activator.CreateInstance(obj);
+      var insetTemplate = obj is null ? null : (IScatterSymbolInset)Activator.CreateInstance(obj);
 
-      if (null == insetTemplate)
+      if (insetTemplate is null)
       {
         foreach (var node in _currentItems)
         {
@@ -229,7 +230,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
           if (node.IsSelected)
           {
             var item = (IScatterSymbol)node.Tag;
-            node.Tag = item = item.WithInset(item.Inset == null ? insetTemplate : insetTemplate.WithColor(item.Inset.Color));
+            node.Tag = item = item.WithInset(item.Inset is null ? insetTemplate : insetTemplate.WithColor(item.Inset.Color));
           }
         }
       }
@@ -240,9 +241,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
     private void EhFrameForAllSelected(Type obj)
     {
-      var frameTemplate = obj == null ? null : (IScatterSymbolFrame)Activator.CreateInstance(obj);
+      var frameTemplate = obj is null ? null : (IScatterSymbolFrame)Activator.CreateInstance(obj);
 
-      if (null == frameTemplate)
+      if (frameTemplate is null)
       {
         foreach (var node in _currentItems)
         {
@@ -260,7 +261,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
           if (node.IsSelected)
           {
             var item = (IScatterSymbol)node.Tag;
-            node.Tag = item = item.WithFrame(item.Frame == null ? frameTemplate : frameTemplate.WithColor(item.Frame.Color));
+            node.Tag = item = item.WithFrame(item.Frame is null ? frameTemplate : frameTemplate.WithColor(item.Frame.Color));
           }
         }
       }
@@ -285,9 +286,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
             .WithPlotColorInfluence(item.PlotColorInfluence)
             .WithFillColor(item.FillColor);
 
-          if (item.Frame != null)
+          if (item.Frame is not null)
             newItem = newItem.WithFrame(item.Frame);
-          if (item.Inset != null)
+          if (item.Inset is not null)
             newItem = newItem.WithInset(item.Inset);
 
           node.Tag = newItem;

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Threading;
 
@@ -31,16 +32,20 @@ namespace Altaxo.Main.Services
   {
     private System.Timers.Timer _timer = new System.Timers.Timer(200);
     private bool _shouldReport;
+#pragma warning disable CS0649
     private CancellationToken _cancellationToken;
+#pragma warning restore CS0649
     private string _reportText;
     private double _progressFraction = double.NaN;
     private OperationStatus _operationStatus;
     private string _taskName;
 
-    public event System.Timers.ElapsedEventHandler Elapsed;
+    public event System.Timers.ElapsedEventHandler? Elapsed;
 
     public TimedBackgroundMonitor()
     {
+      _reportText = string.Empty;
+      _taskName = nameof(TimedBackgroundMonitor);
       _timer.Elapsed += new System.Timers.ElapsedEventHandler(EhTimerElapsed);
     }
 
@@ -173,7 +178,6 @@ namespace Altaxo.Main.Services
     public void Dispose()
     {
       _timer?.Dispose();
-      _timer = null;
     }
   }
 }

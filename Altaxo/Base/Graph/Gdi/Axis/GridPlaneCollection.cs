@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -40,7 +41,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     private void CopyFrom(GridPlaneCollection from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       Clear();
@@ -66,9 +67,9 @@ namespace Altaxo.Graph.Gdi.Axis
         info.CommitArray();
       }
 
-      protected virtual GridPlaneCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual GridPlaneCollection SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        GridPlaneCollection s = (o == null ? new GridPlaneCollection() : (GridPlaneCollection)o);
+        var s = (GridPlaneCollection?)o ?? new GridPlaneCollection();
 
         int count = info.OpenArray("GridPlanes");
         for (int i = 0; i < count; i++)
@@ -81,7 +82,7 @@ namespace Altaxo.Graph.Gdi.Axis
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         GridPlaneCollection s = SDeserialize(o, info, parent);
         return s;
@@ -107,7 +108,7 @@ namespace Altaxo.Graph.Gdi.Axis
       foreach (var plane in _innerList)
       {
         ++i;
-        if (null != plane)
+        if (plane is not null)
           yield return new Main.DocumentNodeAndName(plane, i.ToString(System.Globalization.CultureInfo.InvariantCulture));
       }
     }
@@ -132,7 +133,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    public GridPlane this[CSPlaneID planeid]
+    public GridPlane? this[CSPlaneID planeid]
     {
       get
       {
@@ -149,7 +150,7 @@ namespace Altaxo.Graph.Gdi.Axis
         {
           if (_innerList[i].PlaneID == planeid)
           {
-            if (value == null)
+            if (value is null)
               _innerList.RemoveAt(i);
             else
               _innerList[i] = value;
@@ -157,14 +158,14 @@ namespace Altaxo.Graph.Gdi.Axis
           }
         }
         // if not found, we add the value to the collection
-        if (null != value)
+        if (value is not null)
           Add(value);
       }
     }
 
     public void Add(GridPlane plane)
     {
-      if (null == plane)
+      if (plane is null)
         throw new ArgumentNullException("plane");
 
       plane.ParentObject = this;

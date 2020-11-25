@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -45,12 +46,13 @@ namespace Altaxo.Main.Services
     private double _storedNewProgressValue = -1;
     private OperationStatus _storedNewStatusValue;
 
-    public event EventHandler ProgressMonitorDisposed;
+    public event EventHandler? ProgressMonitorDisposed;
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public ProgressCollector(ISynchronizeInvoke eventThread, CancellationToken cancellationToken)
     {
+      _taskName = nameof(ProgressCollector);
       _eventThread = eventThread ?? throw new ArgumentNullException(nameof(eventThread));
       _rootReporter = new ReporterImpl(this, null, 1, cancellationToken);
     }
@@ -218,7 +220,7 @@ namespace Altaxo.Main.Services
             if (_rootReporterIsDisposed) // ignore double dispose
               return;
             _rootReporterIsDisposed = true;
-            if (ProgressMonitorDisposed != null)
+            if (ProgressMonitorDisposed is not null)
             {
               ProgressMonitorDisposed(this, EventArgs.Empty);
             }
@@ -257,7 +259,7 @@ namespace Altaxo.Main.Services
         // (which is not allowed according to IProgressMonitor thread-safety documentation)
         _namedReporters.Remove(nameEntry);
         if (wasFirst)
-          SetTaskName(_namedReporters.First != null ? _namedReporters.First.Value : null);
+          SetTaskName(_namedReporters.First is not null ? _namedReporters.First.Value : string.Empty);
       }
     }
 
@@ -274,15 +276,15 @@ namespace Altaxo.Main.Services
     private sealed class ReporterImpl : IProgressReporter
     {
       private readonly ProgressCollector _progressCollector;
-      private readonly ReporterImpl _parentReporter;
+      private readonly ReporterImpl? _parentReporter;
       private readonly double _scaleFactor;
       private readonly CancellationToken _cancellationToken;
-      private LinkedListNode<string> _nameEntry;
+      private LinkedListNode<string>? _nameEntry;
       private double _currentProgressValue;
       private OperationStatus _localStatusValue, _currentStatusValue;
       private int _numberOfChildrenWithWarnings, _numberOfChildrenWithErrors;
 
-      public ReporterImpl(ProgressCollector collector, ReporterImpl parent, double scaleFactor, CancellationToken cancellationToken)
+      public ReporterImpl(ProgressCollector collector, ReporterImpl? parent, double scaleFactor, CancellationToken cancellationToken)
       {
         _progressCollector = collector;
         _parentReporter = parent;
@@ -300,16 +302,16 @@ namespace Altaxo.Main.Services
       {
         get
         {
-          if (_nameEntry != null)
+          if (_nameEntry is not null)
             return _nameEntry.Value;
           else
-            return null;
+            return string.Empty;
         }
         set
         {
-          if (_nameEntry != null)
+          if (_nameEntry is not null)
           {
-            if (value == null)
+            if (string.IsNullOrEmpty(value))
             {
               _progressCollector.UnregisterNamedMonitor(_nameEntry);
               _nameEntry = null;
@@ -322,7 +324,7 @@ namespace Altaxo.Main.Services
           }
           else
           {
-            if (value != null)
+            if (value is not null)
               _nameEntry = _progressCollector.RegisterNamedMonitor(value);
           }
         }
@@ -352,7 +354,7 @@ namespace Altaxo.Main.Services
 
       private void UpdateProgress(double progress)
       {
-        if (_parentReporter != null)
+        if (_parentReporter is not null)
           _parentReporter.UpdateProgress(_parentReporter._currentProgressValue + (progress - _currentProgressValue) * _scaleFactor);
         else
           _progressCollector.SetProgress(progress);
@@ -396,7 +398,7 @@ namespace Altaxo.Main.Services
           _currentStatusValue = _localStatusValue;
         if (oldStatus != _currentStatusValue)
         {
-          if (_parentReporter != null)
+          if (_parentReporter is not null)
           {
             if (oldStatus == OperationStatus.Warning)
               _parentReporter._numberOfChildrenWithWarnings--;
@@ -429,8 +431,8 @@ namespace Altaxo.Main.Services
 
       public void Dispose()
       {
-        TaskName = null;
-        if (_parentReporter == null)
+        TaskName = string.Empty;
+        if (_parentReporter is null)
           _progressCollector.OnRootMonitorDisposed();
       }
 

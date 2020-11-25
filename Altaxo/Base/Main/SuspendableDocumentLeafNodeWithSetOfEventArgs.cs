@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Altaxo.Main
 {
@@ -38,8 +38,6 @@ namespace Altaxo.Main
   /// </summary>
   public abstract class SuspendableDocumentLeafNodeWithSetOfEventArgs : SuspendableDocumentLeafNode
   {
-    private static EventArgs[] _emptyData = new EventArgs[0];
-
     /// <summary>
     /// The accumulated event data.
     /// </summary>
@@ -55,7 +53,7 @@ namespace Altaxo.Main
     /// <returns>
     /// True if there is zero or one event arg accumulated, otherwise <c>false</c>.
     /// </returns>
-    protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg)
+    protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs? singleEventArg)
     {
       var count = _accumulatedEventData.Count;
       switch (count)
@@ -84,10 +82,7 @@ namespace Altaxo.Main
     {
       get
       {
-        if (null != _accumulatedEventData)
-          return _accumulatedEventData;
-        else
-          return _emptyData;
+        return _accumulatedEventData;
       }
     }
 
@@ -96,20 +91,19 @@ namespace Altaxo.Main
     /// </summary>
     protected override void AccumulatedEventData_Clear()
     {
-      if (null != _accumulatedEventData)
-        _accumulatedEventData.Clear();
+      _accumulatedEventData.Clear();
     }
 
     protected override void AccumulatedChangeData_SetBackAfterResumeAndSuspend(params EventArgs[] e)
     {
-      if (!(_accumulatedEventData == null || _accumulatedEventData.Count == 0))
+      if (!(_accumulatedEventData.Count == 0))
         throw new InvalidProgramException();
 
       foreach (var ev in e)
         _accumulatedEventData.Add(ev);
     }
 
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData.SetOrAccumulate(e);
     }

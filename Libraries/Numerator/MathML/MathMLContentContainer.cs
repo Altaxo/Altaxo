@@ -61,7 +61,7 @@ namespace MathML
 			get
 			{
 				int count = 0;
-				for(XmlNode n = FirstChild; n != null; n = n.NextSibling)
+				for(XmlNode n = FirstChild; n is not null; n = n.NextSibling)
 				{
 					if(n is MathMLBvarElement) 
 					{

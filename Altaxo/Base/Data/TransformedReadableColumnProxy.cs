@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Main;
 
 namespace Altaxo.Data
@@ -37,7 +35,7 @@ namespace Altaxo.Data
   /// <seealso cref="Altaxo.Data.IReadableColumnProxy" />
   internal class TransformedReadableColumnProxy : DocNodeProxy2ndLevel, IReadableColumnProxy
   {
-    private IVariantToVariantTransformation _transformation = null;
+    private IVariantToVariantTransformation _transformation;
 
     #region Serialization
 
@@ -55,9 +53,9 @@ namespace Altaxo.Data
         info.AddValue("Transformation", s._transformation);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (TransformedReadableColumnProxy)o ?? new TransformedReadableColumnProxy(info);
+        var s = (TransformedReadableColumnProxy?)o ?? new TransformedReadableColumnProxy(info);
         info.GetBaseValueEmbedded(s, typeof(DocNodeProxy), parent);         // deserialize the base class
         s._transformation = (IVariantToVariantTransformation)info.GetValue("Transformation", s);
         return s;
@@ -78,9 +76,9 @@ namespace Altaxo.Data
         info.AddValue("Transformation", s._transformation);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (TransformedReadableColumnProxy)o ?? new TransformedReadableColumnProxy(info);
+        var s = (TransformedReadableColumnProxy?)o ?? new TransformedReadableColumnProxy(info);
         info.GetBaseValueEmbedded(s, typeof(DocNodeProxy2ndLevel), parent);         // deserialize the base class
         s._transformation = (IVariantToVariantTransformation)info.GetValue("Transformation", s);
         return s;
@@ -91,10 +89,10 @@ namespace Altaxo.Data
 
     public static TransformedReadableColumnProxy FromColumn(ITransformedReadableColumn column)
     {
-      if (null == column)
+      if (column is null)
         throw new ArgumentNullException(nameof(column));
       var colAsDocumentNode = column.UnderlyingReadableColumn as IDocumentLeafNode;
-      if (null == colAsDocumentNode)
+      if (colAsDocumentNode is null)
         throw new ArgumentException(string.Format("column does not implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
 
       return new TransformedReadableColumnProxy(column);
@@ -109,10 +107,12 @@ namespace Altaxo.Data
     /// <summary>
     /// For deserialization purposes only.
     /// </summary>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected TransformedReadableColumnProxy(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>
     /// Cloning constructor.
@@ -126,13 +126,13 @@ namespace Altaxo.Data
 
     protected override bool IsValidDocument(object obj)
     {
-      return (obj is IReadableColumn) || obj == null;
+      return (obj is IReadableColumn) || obj is null;
     }
 
-    public IReadableColumn Document()
+    public IReadableColumn? Document()
     {
-      var originalColumn = (IReadableColumn)base.DocumentObject();
-      if (null == originalColumn)
+      var originalColumn = (IReadableColumn?)base.DocumentObject();
+      if (originalColumn is null)
         return null;
       else
         return new TransformedReadableColumn(originalColumn, _transformation);
@@ -146,7 +146,7 @@ namespace Altaxo.Data
     public string GetName(int level)
     {
       string trans = _transformation.RepresentationAsOperator ?? _transformation.RepresentationAsFunction;
-      return trans + " " + ReadableColumnProxy.GetName(level, (IReadableColumn)base.DocumentObject(), InternalDocumentPath);
+      return trans + " " + ReadableColumnProxy.GetName(level, (IReadableColumn?)base.DocumentObject(), InternalDocumentPath);
     }
   }
 }

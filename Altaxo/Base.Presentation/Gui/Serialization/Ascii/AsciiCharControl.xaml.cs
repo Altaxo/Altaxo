@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Serialization.Ascii
     private void EhTextChanged(object sender, TextChangedEventArgs e)
     {
       var tb = sender as TextBox;
-      if (null == tb)
+      if (tb is null)
         return;
 
       string asciiValue;

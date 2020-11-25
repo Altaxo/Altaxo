@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Workbench
     /// <value>
     /// The style for a tool window.
     /// </value>
-    public Style ToolStyle
+    public Style? ToolStyle
     {
       get;
       set;
@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Workbench
     /// <value>
     /// The style for a document window.
     /// </value>
-    public Style DocumentStyle
+    public Style? DocumentStyle
     {
       get;
       set;
@@ -73,7 +73,7 @@ namespace Altaxo.Gui.Workbench
     /// <returns>
     /// Returns an application-specific style to apply; otherwise, null.
     /// </returns>
-    public override System.Windows.Style SelectStyle(object item, System.Windows.DependencyObject container)
+    public override System.Windows.Style? SelectStyle(object item, System.Windows.DependencyObject container)
     {
       if (item is IPadContent) // IPadContent has precedence over IViewContent, because pads can be docked in the pad area as well as in the document area
         return ToolStyle;

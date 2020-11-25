@@ -42,41 +42,41 @@ namespace Altaxo.Gui.Workbench
 
     public static bool GetRememberFocusedChild(UIElement element)
     {
-      if (element == null)
+      if (element is null)
         throw new ArgumentNullException("element");
       return (bool)element.GetValue(RememberFocusedChildProperty);
     }
 
     public static void SetRememberFocusedChild(UIElement element, bool value)
     {
-      if (element == null)
+      if (element is null)
         throw new ArgumentNullException("element");
       element.SetValue(RememberFocusedChildProperty, value);
     }
 
-    public static IInputElement GetFocusedChild(UIElement element)
+    public static IInputElement? GetFocusedChild(UIElement element)
     {
-      if (element == null)
-        throw new ArgumentNullException("element");
+      if (element is null)
+        throw new ArgumentNullException(nameof(element));
       var r = (WeakReference)element.GetValue(FocusedChildProperty);
-      if (r != null)
-        return (IInputElement)r.Target;
+      if (r is not null)
+        return (IInputElement?)r.Target;
       else
         return null;
     }
 
     public static void SetFocusToRememberedChild(UIElement element)
     {
-      IInputElement focusedChild = GetFocusedChild(element);
+      var focusedChild = GetFocusedChild(element);
       Current.Log.Debug("Restoring focus for " + element + " to " + focusedChild);
-      if (focusedChild != null)
+      if (focusedChild is not null)
         Keyboard.Focus(focusedChild);
     }
 
     private static void OnRememberFocusedChildChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
       var element = d as UIElement;
-      if (element != null)
+      if (element is not null)
       {
         if ((bool)e.OldValue)
           element.RemoveHandler(UIElement.GotFocusEvent, onGotFocusEventHandler);
@@ -92,7 +92,7 @@ namespace Altaxo.Gui.Workbench
       var element = (UIElement)sender;
       var focusedElement = e.OriginalSource as IInputElement;
       var r = (WeakReference)element.GetValue(FocusedChildProperty);
-      if (r != null)
+      if (r is not null)
       {
         r.Target = focusedElement;
       }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D;
@@ -161,7 +162,7 @@ namespace Altaxo.Gui.Graph.Graph3D
         _zPositionEnvironment = new QuantityWithUnitGuiEnvironment(PositionEnvironment.Instance, new IUnit[] { _percentLayerZSizeUnit });
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.ShowSizeElements(!_doc.IsAutoSized, true);
 
@@ -302,7 +303,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     private void EhSizeXChanged()
     {
       var actn = SizeXChanged;
-      if (null != actn)
+      if (actn is not null)
       {
         RADouble result;
         var xSize = _view.XSize;
@@ -320,7 +321,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     private void EhSizeYChanged()
     {
       var actn = SizeYChanged;
-      if (null != actn)
+      if (actn is not null)
       {
         RADouble result;
         var ySize = _view.YSize;
@@ -338,7 +339,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     private void EhSizeZChanged()
     {
       var actn = SizeZChanged;
-      if (null != actn)
+      if (actn is not null)
       {
         RADouble result;
         var zSize = _view.ZSize;
@@ -356,7 +357,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     private void EhScaleXChanged()
     {
       var actn = ScaleXChanged;
-      if (null != actn)
+      if (actn is not null)
       {
         actn(_view.ScaleX);
       }
@@ -367,7 +368,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     private void EhScaleYChanged()
     {
       var actn = ScaleYChanged;
-      if (null != actn)
+      if (actn is not null)
       {
         actn(_view.ScaleY);
       }
@@ -378,7 +379,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     private void EhScaleZChanged()
     {
       var actn = ScaleZChanged;
-      if (null != actn)
+      if (actn is not null)
       {
         actn(_view.ScaleZ);
       }
@@ -388,7 +389,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       _showSizeElements_IsVisible = isVisible;
       _showSizeElements_Enabled = isEnabled;
-      if (null != _view)
+      if (_view is not null)
         _view.ShowSizeElements(isVisible, isEnabled);
     }
 
@@ -396,7 +397,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       _showScaleElements_IsVisible = isVisible;
       _showScaleElements_Enabled = isEnabled;
-      if (null != _view)
+      if (_view is not null)
         _view.ShowScaleElements(isVisible, isEnabled);
     }
 
@@ -404,7 +405,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       _showPositionElements_IsVisible = isVisible;
       _showPositionElements_Enabled = isEnabled;
-      if (null != _view)
+      if (_view is not null)
         _view.ShowPositionElements(isVisible, isEnabled);
     }
 
@@ -412,7 +413,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       _showAnchorElements_IsVisible = isVisible;
       _showAnchorElements_Enabled = isEnabled;
-      if (null != _view)
+      if (_view is not null)
         _view.ShowAnchorElements(isVisible, isEnabled);
     }
 

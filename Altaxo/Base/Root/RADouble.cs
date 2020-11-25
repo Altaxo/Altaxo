@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo
@@ -55,7 +56,7 @@ namespace Altaxo
         info.AddValue("Value", s._value);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         bool rel = info.GetBoolean("IsRelative");
         double val = info.GetDouble("Value");
@@ -151,17 +152,9 @@ namespace Altaxo
       return !(a == b);
     }
 
-    public override bool Equals(object o)
+    public override bool Equals(object? o)
     {
-      if (!(o is RADouble))
-      {
-        return false;
-      }
-      else
-      {
-        var other = (RADouble)o;
-        return _value == other._value && _isRelative == other._isRelative;
-      }
+      return o is RADouble other && _value == other._value && _isRelative == other._isRelative;
     }
 
     public override int GetHashCode()

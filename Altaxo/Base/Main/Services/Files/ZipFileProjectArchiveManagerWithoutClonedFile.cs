@@ -22,16 +22,12 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Altaxo.Main.Services.Files;
-using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Main.Services
 {
@@ -44,12 +40,12 @@ namespace Altaxo.Main.Services
   {
     private bool _isDisposed;
 
-    public event EventHandler<NameChangedEventArgs> FileOrFolderNameChanged;
+    public event EventHandler<NameChangedEventArgs>? FileOrFolderNameChanged;
 
     /// <summary>
     /// The stream of the original project file that is kept open in order to prevent modifications.
     /// </summary>
-    private FileStream _originalFileStream;
+    private FileStream? _originalFileStream;
 
 
     /// <summary>
@@ -58,7 +54,7 @@ namespace Altaxo.Main.Services
     /// <value>
     /// The name of the file or folder, if known. Otherwise, null is returned.
     /// </value>
-    public PathName FileOrFolderName => FileName.Create(_originalFileStream?.Name);
+    public PathName? FileOrFolderName => FileName.Create(_originalFileStream?.Name);
 
     /// <inheritdoc/>
     public bool IsDisposed => _isDisposed;
@@ -69,9 +65,9 @@ namespace Altaxo.Main.Services
       // Open the stream
 
       if (allowOverwriting)
-        result._originalFileStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+        result._originalFileStream = new FileStream(fileName.ToString(), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
       else
-        result._originalFileStream = new FileStream(fileName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
+        result._originalFileStream = new FileStream(fileName.ToString(), FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
 
       return result;
     }
@@ -94,7 +90,7 @@ namespace Altaxo.Main.Services
       try
       {
         // Open the stream for reading ...
-        _originalFileStream = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+        _originalFileStream = new FileStream(fileName.ToString(), FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
       }
       catch (Exception ex1)
       {
@@ -102,13 +98,15 @@ namespace Altaxo.Main.Services
         FileStream roFileStream;
         try
         {
-          roFileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+          roFileStream = new FileStream(fileName.ToString(), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         }
         catch (Exception)
         {
           // open as readonly has failed too, so we have to throw..
           _originalFileStream = null;
+#pragma warning disable CA2200 // Rethrow to preserve stack details
           throw ex1;
+#pragma warning restore CA2200 // Rethrow to preserve stack details
         }
         var shouldOpenReadonly = Current.Gui.YesNoMessageBox($"The file {fileName} seems to be read-only or currently in use.\r\n\r\nDo you want try to open it in read-only mode?", "Question", true);
 
@@ -160,7 +158,7 @@ namespace Altaxo.Main.Services
     {
       if (_isDisposed) throw new ObjectDisposedException(this.GetType().Name);
 
-      if (null == _originalFileStream)
+      if (_originalFileStream is null)
         throw new InvalidOperationException("Save is not possible because no file name was given up to now");
 
       SaveAs(FileName.Create(_originalFileStream.Name), saveProjectAndWindowsState);
@@ -177,29 +175,30 @@ namespace Altaxo.Main.Services
     {
       if (_isDisposed) throw new ObjectDisposedException(this.GetType().Name);
 
-      IDictionary<string, IProjectItem> dictionaryResult = null;
+      IDictionary<string, IProjectItem>? dictionaryResult = null;
 
       var originalFileName = _originalFileStream?.Name;
-      bool isNewDestinationFileName = originalFileName != (string)destinationFileName;
+      bool isNewDestinationFileName = originalFileName != destinationFileName.ToString();
 
 
       // Open the old archive, using the original stream
       _originalFileStream?.Seek(0, SeekOrigin.Begin);
 
       // Create a new archive, either with the name of the original file (if we have the cloned file), or with a temporary file name
-      FileStream newProjectArchiveFileStream = null;
+      FileStream? newProjectArchiveFileStream = null;
       if (isNewDestinationFileName)
       {
         // create a new file stream for writing to
-        newProjectArchiveFileStream = new FileStream(destinationFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
+        newProjectArchiveFileStream = new FileStream(destinationFileName.ToString(), FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
       }
 
       // now serialize the data
-      Exception savingException = null;
+      Exception? savingException = null;
 
       try
       {
-        using (var newProjectArchive = new Services.Files.ZipArchiveAsProjectArchive(newProjectArchiveFileStream ?? _originalFileStream, ZipArchiveMode.Create, leaveOpen: true, archiveManager: this))
+        var eitherStream = newProjectArchiveFileStream ?? _originalFileStream ?? throw new InvalidProgramException("Either of both streams should be not null!");
+        using (var newProjectArchive = new Services.Files.ZipArchiveAsProjectArchive(eitherStream, ZipArchiveMode.Create, leaveOpen: true, archiveManager: this))
         {
           dictionaryResult = saveProjectAndWindowsState(newProjectArchive, null);
         }
@@ -210,7 +209,7 @@ namespace Altaxo.Main.Services
       }
 
 
-      if (null == savingException)
+      if (savingException is null)
       {
         // if saving was successfull, we can now clone the data from the new project archive again....
         if (isNewDestinationFileName)
@@ -227,17 +226,17 @@ namespace Altaxo.Main.Services
           // there is nothing to do - except do close the new file stream
           // we leave it on disk for diagnosing purposes
           newProjectArchiveFileStream?.Close();
-          newProjectArchiveFileStream.Dispose();
+          newProjectArchiveFileStream?.Dispose();
         }
       }
 
-      if (null != savingException)
+      if (savingException is not null)
         throw savingException;
 
       if (isNewDestinationFileName)
         FileOrFolderNameChanged?.Invoke(this, new NameChangedEventArgs(this, originalFileName, _originalFileStream?.Name));
 
-      return dictionaryResult;
+      return dictionaryResult!;
     }
 
     #region Clone task
@@ -255,7 +254,7 @@ namespace Altaxo.Main.Services
     /// </returns>
     public IProjectArchive GetArchiveReadOnlyThreadSave(object claimer)
     {
-      var name = _originalFileStream?.Name;
+      var name = _originalFileStream?.Name ?? throw new InvalidOperationException("There is no file name just given for the project");
       var stream = new FileStream(name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
       var archive = new ZipArchiveAsProjectArchive(stream, ZipArchiveMode.Read, leaveOpen: false, archiveManager: this);
       return archive;
@@ -267,7 +266,7 @@ namespace Altaxo.Main.Services
     /// <param name="claimer">The claimer. This parameter should be identical to that used in the call to <see cref="GetArchiveReadOnlyThreadSave(object)" /></param>
     /// <param name="archive">The archive to release.</param>
     /// .
-    public void ReleaseArchiveThreadSave(object claimer, ref IProjectArchive archive)
+    public void ReleaseArchiveThreadSave(object claimer, ref IProjectArchive? archive)
     {
       archive?.Dispose();
       archive = null;

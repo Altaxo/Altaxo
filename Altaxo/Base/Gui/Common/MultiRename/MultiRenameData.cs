@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Common.MultiRename
 {
@@ -40,7 +39,7 @@ namespace Altaxo.Gui.Common.MultiRename
   /// <list type="bullet">
   /// <item><description>Add some objects that you want to process (rename etc.) with <see cref="AddObjectsToRename"/></description></item>
   /// <item><description>Add some shortcuts that can be used as variables for flexible renaming with <see cref="RegisterIntegerShortcut"/>, <see cref="RegisterStringShortcut"/>, <see cref="RegisterDateTimeShortcut"/> or <see cref="RegisterStringArrayShortcut"/>.</description></item>
-  /// <item><description>Add some columns for the list that should be shown in the rename dialog with <see cref="RegisterListColumn"/>. One of the calls to <see cref="RegisterListColumn"/> should designate the column with the new name of the objects, in this case the 2nd argument (the handler) should be null.</description></item>
+  /// <item><description>Add some columns for the list that should be shown in the rename dialog with <see cref="RegisterListColumn(string, Func{object, string})"/>. One of the calls to <see cref="RegisterListColumn(string, Func{object, string})"/> should designate the column with the new name of the objects, in this case the 2nd argument (the handler) should be null.</description></item>
   /// <item><description>Add a handler that will do the processing of the items (renaming, exporting etc). with <see cref="RegisterRenameActionHandler"/>.</description></item>
   /// <item><description>Set the value of <see cref="DefaultPatternString"/> to a value that should be initially shown as pattern when the rename dialog opens, for instance [N].</description></item>
   ///	</list>
@@ -69,9 +68,16 @@ namespace Altaxo.Gui.Common.MultiRename
 
     private class RenameInfo
     {
-      public object ObjectToRename;
-      public string OldName;
-      public string NewName;
+      public object ObjectToRename { get; }
+      public string? OldName;
+      public string? NewName;
+
+      public RenameInfo(object objectToRename, string? oldName = null, string? newName = null)
+      {
+        ObjectToRename = objectToRename;
+        OldName = oldName;
+        NewName = newName;
+      }
     }
 
     #endregion Inner classes
@@ -79,7 +85,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <summary>
     /// Pattern string that is initially shown when the multi rename dialog opens.
     /// </summary>
-    private string _defaultPatternString;
+    private string _defaultPatternString = string.Empty;
 
     /// <summary>
     /// Stores for every shortcut some information, for instance the type of shortcut, and a description, which can be shown in a Gui view.
@@ -119,7 +125,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// This handler is called when the items should be processed (renamed, exported or so). If the function succeeds, the return value should be zero or an empty list.
     /// If the function is partially unsuccessfull, for instance because some items could not be renamed, the function should return those unsuccessfully processed items in the list.
     /// </summary>
-    private Func<MultiRenameData, List<object>> _renameActionHandler;
+    private Func<MultiRenameData, List<object>>? _renameActionHandler;
 
     /// <summary>
     /// Stores columns of information for the objects to rename. Key is the column name, value is a function which retrieves a string for each object.
@@ -181,7 +187,7 @@ namespace Altaxo.Gui.Common.MultiRename
     {
       foreach (object o in list)
       {
-        _objectsToRename.Add(new RenameInfo() { ObjectToRename = o, OldName = null, NewName = null });
+        _objectsToRename.Add(new RenameInfo(o));
       }
     }
 
@@ -208,8 +214,21 @@ namespace Altaxo.Gui.Common.MultiRename
     /// <returns>The proposed new name of the object at index i.</returns>
     public string GetNewNameForObject(int i)
     {
+      return _objectsToRename[i].NewName ?? throw new InvalidOperationException($"New name was not set for object {_objectsToRename[i].NewName} (OldName: {_objectsToRename[i].OldName})");
+    }
+
+    /// <summary>
+    /// Gets the proposed new name for the object at position <paramref name="i"/>. If a new name was not already set,
+    /// the return value is null.
+    /// </summary>
+    /// <param name="i">Index of the object in the internal list.</param>
+    /// <returns>The proposed new name of the object at index i. If the new name is not already set, the return value is null.</returns>
+    public string? GetNewNameForObjectOrNull(int i)
+    {
       return _objectsToRename[i].NewName;
     }
+
+
 
     /// <summary>Gets the integer value of a integer shortcut.</summary>
     /// <param name="shortcut">The shortcut (has to be registered as integer shortcut before).</param>
@@ -384,11 +403,11 @@ namespace Altaxo.Gui.Common.MultiRename
     /// be closed, and the items which remain should be renamed in a second step then.</returns>
     public bool DoRename()
     {
-      if (null != _renameActionHandler)
+      if (_renameActionHandler is not null)
       {
         var list = _renameActionHandler(this);
 
-        if (list != null && list.Count != 0)
+        if (list is not null && list.Count != 0)
         {
           _objectsToRename.Clear();
           AddObjectsToRename(list);

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,7 +72,7 @@ namespace Altaxo.Text.GuiModels
     /// <summary>
     /// Indicates the highlighting style of the editor window. If null, the default global highlighting style of Altaxo is used.
     /// </summary>
-    public string HighlightingStyle { get; set; }
+    public string? HighlightingStyle { get; set; }
 
     /// <summary>
     /// The fraction of the width (when shown in left-right configuration) or height (when shown in top-bottom configuration) of the source editor window in relation to the available width/height.
@@ -101,8 +102,8 @@ namespace Altaxo.Text.GuiModels
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextDocumentViewOptions), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      private AbsoluteDocumentPath _pathToDocument;
-      private TextDocumentViewOptions _deserializedInstance;
+      private AbsoluteDocumentPath? _pathToDocument;
+      private TextDocumentViewOptions? _deserializedInstance;
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -120,9 +121,9 @@ namespace Altaxo.Text.GuiModels
         info.AddValue("OutlineWindowRelativeWidth", s.OutlineWindowRelativeWidth);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (TextDocumentViewOptions)o : new TextDocumentViewOptions(info);
+        var s =  (TextDocumentViewOptions?)o ?? new TextDocumentViewOptions(info);
 
         var pathToDocument = (AbsoluteDocumentPath)info.GetValue("Document", s);
         s.WindowConfiguration = (ViewerConfiguration)info.GetEnum("WindowConfiguration", typeof(ViewerConfiguration));
@@ -152,18 +153,23 @@ namespace Altaxo.Text.GuiModels
 
       private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
       {
-        object o = AbsoluteDocumentPath.GetObject(_pathToDocument, documentRoot);
-        if (o is TextDocument textDoc)
+        if (_pathToDocument is not null && _deserializedInstance is not null)
         {
-          _deserializedInstance.Document = textDoc;
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
+          var o = AbsoluteDocumentPath.GetObject(_pathToDocument, documentRoot);
+          if (o is TextDocument textDoc)
+          {
+            _deserializedInstance.Document = textDoc;
+            info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
+          }
         }
       }
     }
 
     #endregion Serialization
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected TextDocumentViewOptions(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 

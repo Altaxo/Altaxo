@@ -36,15 +36,15 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public partial class AscendingIntegerCollectionControl : UserControl, IAscendingIntegerCollectionView
   {
-    public event Action SwitchToAdvandedView;
+    public event Action? SwitchToAdvandedView;
 
-    public event Action<object> InitializingNewRangeItem;
+    public event Action<object>? InitializingNewRangeItem;
 
-    public event Action<int, int> AdvancedAddRange;
+    public event Action<int, int>? AdvancedAddRange;
 
-    public event Action<int, int> AdvancedRemoveRange;
+    public event Action<int, int>? AdvancedRemoveRange;
 
-    private IEnumerable<object> _ranges;
+    private IEnumerable<object>? _ranges;
 
     public AscendingIntegerCollectionControl()
     {
@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Common
     private void EhSwitchToAdvanced(object sender, RoutedEventArgs e)
     {
       var ev = SwitchToAdvandedView;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
@@ -108,7 +108,7 @@ namespace Altaxo.Gui.Common
     private void EhInitializingNewItem(object sender, InitializingNewItemEventArgs e)
     {
       var ev = InitializingNewRangeItem;
-      if (null != ev)
+      if (ev is not null)
         ev(e.NewItem);
     }
 
@@ -143,14 +143,14 @@ namespace Altaxo.Gui.Common
     private void EhAdvancedRangeAdd(object sender, RoutedEventArgs e)
     {
       var ev = AdvancedAddRange;
-      if (null != ev)
+      if (ev is not null)
         ev(_guiAddRemoveFrom.Value, _guiAddRemoveTo.Value);
     }
 
     private void EhAdvancedRangeRemove(object sender, RoutedEventArgs e)
     {
       var ev = AdvancedRemoveRange;
-      if (null != ev)
+      if (ev is not null)
         ev(_guiAddRemoveFrom.Value, _guiAddRemoveTo.Value);
     }
   }

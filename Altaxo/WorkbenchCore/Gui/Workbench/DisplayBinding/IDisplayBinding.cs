@@ -50,6 +50,6 @@ namespace Altaxo.Gui.Workbench
     /// <returns>
     /// A newly created IViewContent object.
     /// </returns>
-    IViewContent CreateContentForFile(OpenedFile file);
+    IViewContent? CreateContentForFile(OpenedFile file);
   }
 }

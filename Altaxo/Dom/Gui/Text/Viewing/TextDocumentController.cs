@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace Altaxo.Gui.Text.Viewing
 
     public bool InitializeDocument(params object[] args)
     {
-      if (null == args || args.Length == 0)
+      if (args is null || args.Length == 0)
         return false;
 
       TextDocumentViewOptions newOptions = null;
@@ -73,13 +74,13 @@ namespace Altaxo.Gui.Text.Viewing
         newOptions = new TextDocumentViewOptions(notesDoc);
       }
 
-      if (newOptions == null)
+      if (newOptions is null)
         return false; // not successfull
 
-      if (newOptions.Document == null)
+      if (newOptions.Document is null)
         throw new InvalidProgramException("The provided options do not contain any document");
 
-      if (_options?.Document != null && !object.ReferenceEquals(TextDocument, _options.Document))
+      if (_options?.Document is not null && !object.ReferenceEquals(TextDocument, _options.Document))
       {
         throw new InvalidProgramException("The already initialized document and the document in the option class are not identical");
       }
@@ -101,7 +102,7 @@ namespace Altaxo.Gui.Text.Viewing
 
     protected void InternalInitializeDocument(TextDocumentViewOptions options)
     {
-      if (null == options?.Document)
+      if (options?.Document is null)
         throw new ArgumentNullException("No document stored inside options");
 
       _options = options;
@@ -118,7 +119,7 @@ namespace Altaxo.Gui.Text.Viewing
 
     private void EhDocumentTunneledEvent(object sender, object originalSource, TunnelingEventArgs e)
     {
-      if (e is Altaxo.Main.DocumentPathChangedEventArgs && _view != null)
+      if (e is Altaxo.Main.DocumentPathChangedEventArgs && _view is not null)
       {
         _view.SetDocumentNameAndLocalImages(TextDocument.Name, TextDocument.Images);
         Title = GetTitleFromDocumentName(TextDocument);
@@ -143,7 +144,7 @@ namespace Altaxo.Gui.Text.Viewing
       if (initData)
       {
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.IsInInitializationMode = true;
         _view.SetDocumentNameAndLocalImages(TextDocument.Name, TextDocument.Images);
@@ -184,7 +185,7 @@ namespace Altaxo.Gui.Text.Viewing
 
     private void EhSourceTextChanged(object sender, EventArgs e)
     {
-      if (null != _view)
+      if (_view is not null)
       {
         TextDocument.SourceText = _view.SourceText;
       }
@@ -198,7 +199,7 @@ namespace Altaxo.Gui.Text.Viewing
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
           _view.IsOutlineWindowVisible = value;
       }
     }
@@ -231,7 +232,7 @@ namespace Altaxo.Gui.Text.Viewing
     /// <param name="text">The text to insert.</param>
     public void InsertSourceTextAtCaretPosition(string text)
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InsertSourceTextAtCaretPosition(text);
       }
@@ -340,7 +341,7 @@ namespace Altaxo.Gui.Text.Viewing
           {
             string url = InsertImageInDocumentAndGetUrl(fileName);
 
-            if (null != url)
+            if (url is not null)
             {
               InsertSourceTextAtCaretPosition(string.Format("![](local:{0})", url));
               return true;
@@ -351,12 +352,12 @@ namespace Altaxo.Gui.Text.Viewing
       else if (dao.ContainsImage())
       {
         var (stream, streamFileExtension) = dao.GetBitmapImageAsOptimizedMemoryStream();
-        if (null != stream)
+        if (stream is not null)
         {
           try
           {
             var url = InsertImageInDocumentAndGetUrl(stream, streamFileExtension);
-            if (null != url)
+            if (url is not null)
             {
               InsertSourceTextAtCaretPosition(string.Format("![](local:{0})", url));
               return true;
@@ -406,7 +407,7 @@ namespace Altaxo.Gui.Text.Viewing
     {
       var newSource = FigureRenumerator.RenumerateFigures(TextDocument.SourceText);
       TextDocument.SourceText = newSource;
-      if (null != _view)
+      if (_view is not null)
         _view.SourceText = newSource;
     }
 
@@ -418,14 +419,14 @@ namespace Altaxo.Gui.Text.Viewing
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as ITextDocumentView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           AttachView();
           Initialize(false);

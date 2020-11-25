@@ -199,7 +199,7 @@ namespace Altaxo.Collections
 
     protected virtual void OnReenableEvents()
     {
-      if (null != _pendingEvent)
+      if (_pendingEvent is not null)
       {
         var e = _pendingEvent;
         _pendingEvent = null;
@@ -211,14 +211,14 @@ namespace Altaxo.Collections
     {
       if (_eventState.IsDisabled)
       {
-        if (null == _pendingEvent)
+        if (_pendingEvent is null)
           _pendingEvent = e;
         else if (_pendingEvent.Action != NotifyCollectionChangedAction.Reset)
           _pendingEvent = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
       }
       else
       {
-        if (null == _pendingEvent)
+        if (_pendingEvent is null)
         {
           base.OnCollectionChanged(e);
         }
@@ -250,10 +250,10 @@ namespace Altaxo.Collections
     protected override void ClearItems()
     {
       var node = _partialViews.First;
-      while (null != node)
+      while (node is not null)
       {
         var pv = node.Value.Target as PartialViewBase;
-        if (null != pv)
+        if (pv is not null)
         {
           if (pv._itemIndex.Count > 0)
             _partialViewsToNotify.Add(pv);
@@ -278,10 +278,10 @@ namespace Altaxo.Collections
     {
       _actionBeforeInsertion?.Invoke(item);
 
-      for (var node = _partialViews.First; null != node; node = node.Next)
+      for (var node = _partialViews.First; node is not null; node = node.Next)
       {
         var pv = node.Value.Target as PartialViewBase;
-        if (null != pv)
+        if (pv is not null)
         {
           // Note: there is no need to notify the partial view if only the item indices were adjusted
           var itemIndex = pv._itemIndex;
@@ -311,7 +311,7 @@ namespace Altaxo.Collections
     {
       if (oldIndex != newIndex)
       {
-        for (var node = _partialViews.First; null != node; node = node.Next)
+        for (var node = _partialViews.First; node is not null; node = node.Next)
         {
           if (node.Value.Target is PartialViewBase pv)
           {
@@ -366,10 +366,10 @@ namespace Altaxo.Collections
 
     protected override void RemoveItem(int index)
     {
-      for (var node = _partialViews.First; null != node; node = node.Next)
+      for (var node = _partialViews.First; node is not null; node = node.Next)
       {
         var pv = node.Value.Target as PartialViewBase;
-        if (null != pv)
+        if (pv is not null)
         {
           // Note: there is no need to notify the partial view if only the item indices were adjusted
           var itemIndex = pv._itemIndex;
@@ -399,10 +399,10 @@ namespace Altaxo.Collections
     {
       _actionBeforeInsertion?.Invoke(item);
 
-      for (var node = _partialViews.First; null != node; node = node.Next)
+      for (var node = _partialViews.First; node is not null; node = node.Next)
       {
         var pv = node.Value.Target as PartialViewBase;
-        if (null != pv)
+        if (pv is not null)
         {
           bool partialViewChanged = false;
           bool isIncluded = pv._selectionCriterium(item);
@@ -525,7 +525,7 @@ namespace Altaxo.Collections
         public void ResumeSilently()
         {
           var parent = System.Threading.Interlocked.Exchange<TemporaryDisabler?>(ref _parent, null);
-          if (parent != null)
+          if (parent is not null)
           {
             int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
 
@@ -556,7 +556,7 @@ namespace Altaxo.Collections
         public void Dispose()
         {
           var parent = System.Threading.Interlocked.Exchange<TemporaryDisabler?>(ref _parent, null);
-          if (parent != null)
+          if (parent is not null)
           {
             int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
 

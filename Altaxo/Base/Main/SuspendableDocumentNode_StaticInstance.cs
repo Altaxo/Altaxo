@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -38,7 +40,7 @@ namespace Altaxo.Main
   {
     private class StaticInstanceClass : IDocumentNode
     {
-      public IDocumentNode ParentObject
+      public IDocumentNode? ParentObject
       {
         get
         {
@@ -55,7 +57,18 @@ namespace Altaxo.Main
         get { return "DocumentNodeStaticInstance"; }
       }
 
-      public event EventHandler Changed;
+      /// <summary>
+      /// Test if this item already has a name.
+      /// </summary>
+      /// <param name="name">On success, returns the name of the item.</param>
+      /// <returns>True if the item already has a name; otherwise false.</returns>
+      public virtual bool TryGetName([MaybeNullWhen(false)] out string name)
+      {
+        name = Name;
+        return name is not null;
+      }
+
+      public event EventHandler? Changed;
 
       public ISuspendToken SuspendGetToken()
       {
@@ -83,14 +96,14 @@ namespace Altaxo.Main
       {
       }
 
-      public IDocumentLeafNode GetChildObjectNamed(string name)
+      public IDocumentLeafNode? GetChildObjectNamed(string name)
       {
         return null;
       }
 
       public string GetNameOfChildObject(IDocumentLeafNode o)
       {
-        if (null != o)
+        if (o is not null)
           return "Infrastructure object of type " + o.GetType().FullName;
         else
           return "<<null>>";
@@ -101,7 +114,7 @@ namespace Altaxo.Main
         get { yield break; }
       }
 
-      public IDocumentLeafNode ParentNode
+      public IDocumentLeafNode? ParentNode
       {
         get { return null; }
       }
@@ -110,7 +123,7 @@ namespace Altaxo.Main
       {
       }
 
-      public event Action<object, object, TunnelingEventArgs> TunneledEvent;
+      public event Action<object, object, TunnelingEventArgs>? TunneledEvent;
 
       protected void OnTunneledEvent(object origin, TunnelingEventArgs e)
       {

@@ -22,12 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Collections
 {
@@ -42,16 +41,16 @@ namespace Altaxo.Collections
     public ObservableCollectionReversingWrapper(ObservableCollection<T> coll)
     {
       _coll = coll;
-      _coll.CollectionChanged += new WeakEventHandler<NotifyCollectionChangedEventArgs>(EhOrigjnalCollectionChanged, _coll, nameof(_coll.CollectionChanged)).EventSink;
+      _coll.CollectionChanged += new WeakEventHandler<NotifyCollectionChangedEventArgs>(EhOriginalCollectionChanged, _coll, nameof(_coll.CollectionChanged)).EventSink;
     }
 
-    private void EhOrigjnalCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void EhOriginalCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
       NotifyCollectionChangedEventArgs result;
 
-      int newStart = e.NewItems != null ? _coll.Count - e.NewStartingIndex - e.NewItems.Count : e.NewStartingIndex;
+      int newStart = e.NewItems is not null ? _coll.Count - e.NewStartingIndex - e.NewItems.Count : e.NewStartingIndex;
 
-      int oldStart = e.OldItems != null ? _coll.Count - e.OldStartingIndex - e.OldItems.Count : e.OldStartingIndex;
+      int oldStart = e.OldItems is not null ? _coll.Count - e.OldStartingIndex - e.OldItems.Count : e.OldStartingIndex;
 
       switch (e.Action)
       {
@@ -68,7 +67,7 @@ namespace Altaxo.Collections
           break;
 
         case NotifyCollectionChangedAction.Replace:
-          result = new NotifyCollectionChangedEventArgs(e.Action, e.NewItems, e.OldItems);
+          result = new NotifyCollectionChangedEventArgs(e.Action, e.NewItems!, e.OldItems!);
           break;
 
         case NotifyCollectionChangedAction.Reset:
@@ -79,11 +78,11 @@ namespace Altaxo.Collections
           throw new NotImplementedException(e.Action.ToString());
       }
 
-      if (null != CollectionChanged)
+      if (CollectionChanged is not null)
         CollectionChanged(this, result);
     }
 
-    public event NotifyCollectionChangedEventHandler CollectionChanged;
+    public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
     #region IList<T>
 

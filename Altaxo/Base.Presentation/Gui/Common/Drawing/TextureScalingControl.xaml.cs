@@ -47,37 +47,37 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhScalingModeChanged(object sender, RoutedEventArgs e)
     {
-      if (null != ScalingModeChanged)
+      if (ScalingModeChanged is not null)
         ScalingModeChanged();
     }
 
     private void EhKeepAspectChanged(object sender, RoutedEventArgs e)
     {
-      if (null != AspectPreservingChanged)
+      if (AspectPreservingChanged is not null)
         AspectPreservingChanged();
     }
 
     private void EhXSizeChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != XChanged)
+      if (XChanged is not null)
         XChanged();
     }
 
     private void EhYSizeChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != YChanged)
+      if (YChanged is not null)
         YChanged();
     }
 
     private void EhXScaleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != XChanged)
+      if (XChanged is not null)
         XChanged();
     }
 
     private void EhYScaleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != YChanged)
+      if (YChanged is not null)
         YChanged();
     }
 
@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    public event Action ScalingModeChanged;
+    public event Action? ScalingModeChanged;
 
     public AspectRatioPreservingMode AspectPreserving
     {
@@ -127,7 +127,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    public event Action AspectPreservingChanged;
+    public event Action? AspectPreservingChanged;
 
     public double XScale
     {
@@ -177,9 +177,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    public event Action XChanged;
+    public event Action? XChanged;
 
-    public event Action YChanged;
+    public event Action? YChanged;
 
     public bool ShowSizeNotScale
     {

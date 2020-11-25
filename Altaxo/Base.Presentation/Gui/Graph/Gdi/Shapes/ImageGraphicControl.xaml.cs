@@ -100,51 +100,51 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
-    public event Action AspectPreservingChanged;
+    public event Action? AspectPreservingChanged;
 
     private void EhKeepAspectChanged(object sender, RoutedEventArgs e)
     {
-      if (null != AspectPreservingChanged)
+      if (AspectPreservingChanged is not null)
         AspectPreservingChanged();
     }
 
-    public event Action ScalingModeChanged;
+    public event Action? ScalingModeChanged;
 
     private void EhScalingModeChanged(object sender, RoutedEventArgs e)
     {
-      if (null != ScalingModeChanged)
+      if (ScalingModeChanged is not null)
         ScalingModeChanged();
     }
 
-    public event Action ScaleXChanged;
+    public event Action? ScaleXChanged;
 
     private void EhScaleXChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != ScaleXChanged)
+      if (ScaleXChanged is not null)
         ScaleXChanged();
     }
 
-    public event Action ScaleYChanged;
+    public event Action? ScaleYChanged;
 
     private void EhScaleYChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != ScaleYChanged)
+      if (ScaleYChanged is not null)
         ScaleYChanged();
     }
 
-    public event Action SizeXChanged;
+    public event Action? SizeXChanged;
 
     private void EhSizeXChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != SizeXChanged)
+      if (SizeXChanged is not null)
         SizeXChanged();
     }
 
-    public event Action SizeYChanged;
+    public event Action? SizeYChanged;
 
     private void EhSizeYChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != SizeYChanged)
+      if (SizeYChanged is not null)
         SizeYChanged();
     }
   }

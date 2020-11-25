@@ -26,11 +26,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Collections;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Collections
 {
-  [TestFixture]
+
   public class Test_AscendingIntegerRangeCollection
   {
     private AscendingIntegerRangeCollection PrepareCollection_2_3()
@@ -88,246 +88,246 @@ namespace AltaxoTest.Collections
 
     #region Add to int.Max and int.Min
 
-    [Test]
+    [Fact]
     public void TestAddToMinValue_1()
     {
       var coll = PrepareCollection_Min_M1000();
       coll.AddRangeByFirstAndLastInclusive(-500, 0);
-      Assert.AreEqual(2, coll.RangeCount);
+      Assert.Equal(2, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(2, ranges.Length);
-      Assert.AreEqual(int.MinValue, ranges[0].First);
-      Assert.AreEqual(-1000, ranges[0].LastInclusive);
-      Assert.AreEqual(-500, ranges[1].First);
-      Assert.AreEqual(0, ranges[1].LastInclusive);
+      Assert.Equal(2, ranges.Length);
+      Assert.Equal(int.MinValue, ranges[0].First);
+      Assert.Equal(-1000, ranges[0].LastInclusive);
+      Assert.Equal(-500, ranges[1].First);
+      Assert.Equal(0, ranges[1].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestAddToMinValue_2()
     {
       var coll = PrepareCollection_Min_M1000();
       coll.AddRangeByFirstAndLastInclusive(int.MinValue, int.MinValue);
-      Assert.AreEqual(1, coll.RangeCount);
+      Assert.Equal(1, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(1, ranges.Length);
-      Assert.AreEqual(int.MinValue, ranges[0].First);
-      Assert.AreEqual(-1000, ranges[0].LastInclusive);
+      Assert.Single(ranges);
+      Assert.Equal(int.MinValue, ranges[0].First);
+      Assert.Equal(-1000, ranges[0].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestAddToMinValue_3()
     {
       var coll = new AscendingIntegerRangeCollection();
       coll.AddRangeByFirstAndLastInclusive(int.MinValue, int.MinValue);
       coll.AddRangeByFirstAndLastInclusive(int.MinValue, int.MinValue + 1);
-      Assert.AreEqual(1, coll.RangeCount);
+      Assert.Equal(1, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(1, ranges.Length);
-      Assert.AreEqual(int.MinValue, ranges[0].First);
-      Assert.AreEqual(int.MinValue + 1, ranges[0].LastInclusive);
+      Assert.Single(ranges);
+      Assert.Equal(int.MinValue, ranges[0].First);
+      Assert.Equal(int.MinValue + 1, ranges[0].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestAddToMinValue_4()
     {
       var coll = new AscendingIntegerRangeCollection();
       coll.AddRangeByFirstAndLastInclusive(int.MinValue, int.MinValue);
       coll.AddRangeByFirstAndLastInclusive(int.MinValue + 1, int.MinValue + 1);
-      Assert.AreEqual(1, coll.RangeCount);
+      Assert.Equal(1, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(1, ranges.Length);
-      Assert.AreEqual(int.MinValue, ranges[0].First);
-      Assert.AreEqual(int.MinValue + 1, ranges[0].LastInclusive);
+      Assert.Single(ranges);
+      Assert.Equal(int.MinValue, ranges[0].First);
+      Assert.Equal(int.MinValue + 1, ranges[0].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestAddToMinValue_5()
     {
       var coll = new AscendingIntegerRangeCollection();
       coll.AddRangeByFirstAndLastInclusive(int.MinValue, int.MinValue);
       coll.AddRangeByFirstAndLastInclusive(int.MinValue + 1, int.MinValue + 2);
-      Assert.AreEqual(1, coll.RangeCount);
+      Assert.Equal(1, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(1, ranges.Length);
-      Assert.AreEqual(int.MinValue, ranges[0].First);
-      Assert.AreEqual(int.MinValue + 2, ranges[0].LastInclusive);
+      Assert.Single(ranges);
+      Assert.Equal(int.MinValue, ranges[0].First);
+      Assert.Equal(int.MinValue + 2, ranges[0].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestAddToMinValue_51()
     {
       var coll = new AscendingIntegerRangeCollection();
       coll.AddRangeByFirstAndLastInclusive(int.MinValue + 1, int.MinValue + 2);
       coll.AddRangeByFirstAndLastInclusive(int.MinValue, int.MinValue);
-      Assert.AreEqual(1, coll.RangeCount);
+      Assert.Equal(1, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(1, ranges.Length);
-      Assert.AreEqual(int.MinValue, ranges[0].First);
-      Assert.AreEqual(int.MinValue + 2, ranges[0].LastInclusive);
+      Assert.Single(ranges);
+      Assert.Equal(int.MinValue, ranges[0].First);
+      Assert.Equal(int.MinValue + 2, ranges[0].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestAddToMinValue_6()
     {
       var coll = new AscendingIntegerRangeCollection();
       coll.AddRangeByFirstAndLastInclusive(int.MinValue, int.MinValue);
       coll.AddRangeByFirstAndLastInclusive(int.MinValue + 2, int.MinValue + 2);
-      Assert.AreEqual(2, coll.RangeCount);
+      Assert.Equal(2, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(2, ranges.Length);
-      Assert.AreEqual(int.MinValue, ranges[0].First);
-      Assert.AreEqual(int.MinValue, ranges[0].LastInclusive);
-      Assert.AreEqual(int.MinValue + 2, ranges[1].First);
-      Assert.AreEqual(int.MinValue + 2, ranges[1].LastInclusive);
+      Assert.Equal(2, ranges.Length);
+      Assert.Equal(int.MinValue, ranges[0].First);
+      Assert.Equal(int.MinValue, ranges[0].LastInclusive);
+      Assert.Equal(int.MinValue + 2, ranges[1].First);
+      Assert.Equal(int.MinValue + 2, ranges[1].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestAddToMinValue_61()
     {
       var coll = new AscendingIntegerRangeCollection();
       coll.AddRangeByFirstAndLastInclusive(int.MinValue + 2, int.MinValue + 2);
       coll.AddRangeByFirstAndLastInclusive(int.MinValue, int.MinValue);
-      Assert.AreEqual(2, coll.RangeCount);
+      Assert.Equal(2, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(2, ranges.Length);
-      Assert.AreEqual(int.MinValue, ranges[0].First);
-      Assert.AreEqual(int.MinValue, ranges[0].LastInclusive);
-      Assert.AreEqual(int.MinValue + 2, ranges[1].First);
-      Assert.AreEqual(int.MinValue + 2, ranges[1].LastInclusive);
+      Assert.Equal(2, ranges.Length);
+      Assert.Equal(int.MinValue, ranges[0].First);
+      Assert.Equal(int.MinValue, ranges[0].LastInclusive);
+      Assert.Equal(int.MinValue + 2, ranges[1].First);
+      Assert.Equal(int.MinValue + 2, ranges[1].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestAddToMaxValue_1()
     {
       var coll = PrepareCollection_1000_Max();
       coll.AddRangeByFirstAndLastInclusive(0, 500);
-      Assert.AreEqual(2, coll.RangeCount);
+      Assert.Equal(2, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(2, ranges.Length);
-      Assert.AreEqual(0, ranges[0].First);
-      Assert.AreEqual(500, ranges[0].LastInclusive);
-      Assert.AreEqual(1000, ranges[1].First);
-      Assert.AreEqual(int.MaxValue, ranges[1].LastInclusive);
+      Assert.Equal(2, ranges.Length);
+      Assert.Equal(0, ranges[0].First);
+      Assert.Equal(500, ranges[0].LastInclusive);
+      Assert.Equal(1000, ranges[1].First);
+      Assert.Equal(int.MaxValue, ranges[1].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestAddToMaxValue_2()
     {
       var coll = PrepareCollection_1000_Max();
       coll.AddRangeByFirstAndLastInclusive(int.MaxValue, int.MaxValue);
-      Assert.AreEqual(1, coll.RangeCount);
+      Assert.Equal(1, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(1, ranges.Length);
-      Assert.AreEqual(1000, ranges[0].First);
-      Assert.AreEqual(int.MaxValue, ranges[0].LastInclusive);
+      Assert.Single(ranges);
+      Assert.Equal(1000, ranges[0].First);
+      Assert.Equal(int.MaxValue, ranges[0].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestAddToMaxValue_3()
     {
       var coll = new AscendingIntegerRangeCollection();
       coll.AddRangeByFirstAndLastInclusive(int.MaxValue, int.MaxValue);
       coll.AddRangeByFirstAndLastInclusive(int.MaxValue - 1, int.MaxValue);
-      Assert.AreEqual(1, coll.RangeCount);
+      Assert.Equal(1, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(1, ranges.Length);
-      Assert.AreEqual(int.MaxValue - 1, ranges[0].First);
-      Assert.AreEqual(int.MaxValue, ranges[0].LastInclusive);
+      Assert.Single(ranges);
+      Assert.Equal(int.MaxValue - 1, ranges[0].First);
+      Assert.Equal(int.MaxValue, ranges[0].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestAddToMaxValue_4()
     {
       var coll = new AscendingIntegerRangeCollection();
       coll.AddRangeByFirstAndLastInclusive(int.MaxValue, int.MaxValue);
       coll.AddRangeByFirstAndLastInclusive(int.MaxValue - 1, int.MaxValue - 1);
-      Assert.AreEqual(1, coll.RangeCount);
+      Assert.Equal(1, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(1, ranges.Length);
-      Assert.AreEqual(int.MaxValue - 1, ranges[0].First);
-      Assert.AreEqual(int.MaxValue, ranges[0].LastInclusive);
+      Assert.Single(ranges);
+      Assert.Equal(int.MaxValue - 1, ranges[0].First);
+      Assert.Equal(int.MaxValue, ranges[0].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestAddToMaxValue_5()
     {
       var coll = new AscendingIntegerRangeCollection();
       coll.AddRangeByFirstAndLastInclusive(int.MaxValue, int.MaxValue);
       coll.AddRangeByFirstAndLastInclusive(int.MaxValue - 2, int.MaxValue - 1);
-      Assert.AreEqual(1, coll.RangeCount);
+      Assert.Equal(1, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(1, ranges.Length);
-      Assert.AreEqual(int.MaxValue - 2, ranges[0].First);
-      Assert.AreEqual(int.MaxValue, ranges[0].LastInclusive);
+      Assert.Single(ranges);
+      Assert.Equal(int.MaxValue - 2, ranges[0].First);
+      Assert.Equal(int.MaxValue, ranges[0].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestAddToMaxValue_6()
     {
       var coll = new AscendingIntegerRangeCollection();
       coll.AddRangeByFirstAndLastInclusive(int.MaxValue, int.MaxValue);
       coll.AddRangeByFirstAndLastInclusive(int.MaxValue - 2, int.MaxValue - 2);
-      Assert.AreEqual(2, coll.RangeCount);
+      Assert.Equal(2, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(2, ranges.Length);
-      Assert.AreEqual(int.MaxValue - 2, ranges[0].First);
-      Assert.AreEqual(int.MaxValue - 2, ranges[0].LastInclusive);
-      Assert.AreEqual(int.MaxValue, ranges[1].First);
-      Assert.AreEqual(int.MaxValue, ranges[1].LastInclusive);
+      Assert.Equal(2, ranges.Length);
+      Assert.Equal(int.MaxValue - 2, ranges[0].First);
+      Assert.Equal(int.MaxValue - 2, ranges[0].LastInclusive);
+      Assert.Equal(int.MaxValue, ranges[1].First);
+      Assert.Equal(int.MaxValue, ranges[1].LastInclusive);
     }
 
     #endregion Add to int.Max and int.Min
 
-    [Test]
+    [Fact]
     public void TestLowerNoCoalesce()
     {
       for (int i = -5; i <= 0; ++i)
       {
         var coll = PrepareCollection_2_3();
         coll.AddRangeByFirstAndLastInclusive(i, i);
-        Assert.AreEqual(2, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(2, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(2, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(i, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(i, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(2, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(3, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(2, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(i, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(i, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(2, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(3, ranges[1].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestMiddleWithCoalesce()
     {
       for (int i = 1; i <= 4; ++i)
       {
         var coll = PrepareCollection_2_3();
         coll.AddRangeByFirstAndLastInclusive(i, i);
-        Assert.AreEqual(1, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(1, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(1, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(Math.Min(i, 2), ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(Math.Max(i, 3), ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(1, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(Math.Min(i, 2), ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(Math.Max(i, 3), ranges[0].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestUpperNoCoalesce()
     {
       for (int i = 5; i <= 10; ++i)
       {
         var coll = PrepareCollection_2_3();
         coll.AddRangeByFirstAndLastInclusive(i, i);
-        Assert.AreEqual(2, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(2, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(2, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(2, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(3, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(i, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(i, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(2, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(2, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(3, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(i, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(i, ranges[1].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestLowerNoCoalesceTwo()
     {
       const int WIDTH = 9;
@@ -335,19 +335,19 @@ namespace AltaxoTest.Collections
       {
         var coll = PrepareCollection_10_20_30_40();
         coll.AddRangeByFirstAndLastInclusive(i - WIDTH, i);
-        Assert.AreEqual(3, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(3, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(3, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(i - WIDTH, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(i, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(20, ranges[1].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(30, ranges[2].First, "i=" + i.ToString());
-        Assert.AreEqual(40, ranges[2].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(3, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(i - WIDTH, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(i, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(20, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(30, ranges[2].First, "i=" + i.ToString());
+        AssertEx.Equal(40, ranges[2].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void Test1stRangeCoalesceTwo()
     {
       const int WIDTH = 9;
@@ -355,17 +355,17 @@ namespace AltaxoTest.Collections
       {
         var coll = PrepareCollection_10_20_30_40();
         coll.AddRangeByFirstAndLastInclusive(i - WIDTH, i);
-        Assert.AreEqual(2, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(2, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(2, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(Math.Min(i - WIDTH, 10), ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(Math.Max(i, 20), ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(30, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(40, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(2, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(Math.Min(i - WIDTH, 10), ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(Math.Max(i, 20), ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(30, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(40, ranges[1].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void Test1stAnd2ndRangeCoalesceTwo()
     {
       const int WIDTH = 9;
@@ -373,15 +373,15 @@ namespace AltaxoTest.Collections
       {
         var coll = PrepareCollection_10_20_30_40();
         coll.AddRangeByFirstAndLastInclusive(i - WIDTH, i);
-        Assert.AreEqual(1, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(1, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(1, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(40, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(1, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(40, ranges[0].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void Test2ndRangeCoalesceTwo()
     {
       const int WIDTH = 9;
@@ -389,17 +389,17 @@ namespace AltaxoTest.Collections
       {
         var coll = PrepareCollection_10_20_30_40();
         coll.AddRangeByFirstAndLastInclusive(i - WIDTH, i);
-        Assert.AreEqual(2, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(2, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(2, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(20, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(Math.Min(i - WIDTH, 30), ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(Math.Max(i, 40), ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(2, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(20, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(Math.Min(i - WIDTH, 30), ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(Math.Max(i, 40), ranges[1].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestUpperNoCoalesceTwo()
     {
       const int WIDTH = 9;
@@ -407,79 +407,79 @@ namespace AltaxoTest.Collections
       {
         var coll = PrepareCollection_10_20_30_40();
         coll.AddRangeByFirstAndLastInclusive(i - WIDTH, i);
-        Assert.AreEqual(3, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(3, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(3, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(20, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(30, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(40, ranges[1].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(i - WIDTH, ranges[2].First, "i=" + i.ToString());
-        Assert.AreEqual(i, ranges[2].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(3, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(20, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(30, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(40, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(i - WIDTH, ranges[2].First, "i=" + i.ToString());
+        AssertEx.Equal(i, ranges[2].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestCoalesceThreeRanges_1()
     {
       var coll = PrepareCollection_10_20_30_40_50_60();
       coll.AddRangeByFirstAndLastInclusive(21, 49);
-      Assert.AreEqual(1, coll.RangeCount);
+      Assert.Equal(1, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(1, ranges.Length);
-      Assert.AreEqual(10, ranges[0].First);
-      Assert.AreEqual(60, ranges[0].LastInclusive);
+      Assert.Single(ranges);
+      Assert.Equal(10, ranges[0].First);
+      Assert.Equal(60, ranges[0].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestCoalesceThreeRanges_2()
     {
       var coll = PrepareCollection_10_20_30_40_50_60();
       coll.AddRangeByFirstAndLastInclusive(20, 49);
-      Assert.AreEqual(1, coll.RangeCount);
+      Assert.Equal(1, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(1, ranges.Length);
-      Assert.AreEqual(10, ranges[0].First);
-      Assert.AreEqual(60, ranges[0].LastInclusive);
+      Assert.Single(ranges);
+      Assert.Equal(10, ranges[0].First);
+      Assert.Equal(60, ranges[0].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestCoalesceThreeRanges_3()
     {
       var coll = PrepareCollection_10_20_30_40_50_60();
       coll.AddRangeByFirstAndLastInclusive(21, 65);
-      Assert.AreEqual(1, coll.RangeCount);
+      Assert.Equal(1, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(1, ranges.Length);
-      Assert.AreEqual(10, ranges[0].First);
-      Assert.AreEqual(65, ranges[0].LastInclusive);
+      Assert.Single(ranges);
+      Assert.Equal(10, ranges[0].First);
+      Assert.Equal(65, ranges[0].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestCoalesceThreeRanges_4()
     {
       var coll = PrepareCollection_10_20_30_40_50_60();
       coll.AddRangeByFirstAndLastInclusive(5, 49);
-      Assert.AreEqual(1, coll.RangeCount);
+      Assert.Equal(1, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(1, ranges.Length);
-      Assert.AreEqual(5, ranges[0].First);
-      Assert.AreEqual(60, ranges[0].LastInclusive);
+      Assert.Single(ranges);
+      Assert.Equal(5, ranges[0].First);
+      Assert.Equal(60, ranges[0].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestCoalesceThreeRanges_5()
     {
       var coll = PrepareCollection_10_20_30_40_50_60();
       coll.AddRangeByFirstAndLastInclusive(5, 65);
-      Assert.AreEqual(1, coll.RangeCount);
+      Assert.Equal(1, coll.RangeCount);
       var ranges = coll.Ranges.ToArray();
-      Assert.AreEqual(1, ranges.Length);
-      Assert.AreEqual(5, ranges[0].First);
-      Assert.AreEqual(65, ranges[0].LastInclusive);
+      Assert.Single(ranges);
+      Assert.Equal(5, ranges[0].First);
+      Assert.Equal(65, ranges[0].LastInclusive);
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromOneRange_1() // removal range below present range
     {
       var coll = PrepareCollection_10_20();
@@ -487,77 +487,77 @@ namespace AltaxoTest.Collections
       for (int i = 0; i < 10; ++i)
       {
         coll.RemoveRangeByFirstAndLastInclusive(i - 4, i);
-        Assert.AreEqual(1, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(1, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(1, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(20, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(1, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(20, ranges[0].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromOneRange_2() // removal range above present range
     {
       for (int i = 21; i < 30; ++i)
       {
         var coll = PrepareCollection_10_20();
         coll.RemoveRangeByFirstAndLastInclusive(i, i + 4);
-        Assert.AreEqual(1, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(1, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(1, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(20, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(1, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(20, ranges[0].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromOneRange_3() // remove lower half of range
     {
       for (int i = 9; i < 20; ++i)
       {
         var coll = PrepareCollection_10_20();
         coll.RemoveRangeByFirstAndLastInclusive(i - 10, i);
-        Assert.AreEqual(1, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(1, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(1, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(i + 1, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(20, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(1, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(i + 1, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(20, ranges[0].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromOneRange_4() // remove upper half of range
     {
       for (int i = 11; i <= 21; ++i)
       {
         var coll = PrepareCollection_10_20();
         coll.RemoveRangeByFirstAndLastInclusive(i, i + 10);
-        Assert.AreEqual(1, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(1, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(1, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(i - 1, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(1, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(i - 1, ranges[0].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromOneRange_5() // split range into two ranges
     {
       for (int i = 11; i <= 19; ++i)
       {
         var coll = PrepareCollection_10_20();
         coll.RemoveRangeByFirstAndLastInclusive(i, i);
-        Assert.AreEqual(2, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(2, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(2, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(i - 1, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(i + 1, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(20, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(2, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(i - 1, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(i + 1, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(20, ranges[1].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromTwoRanges_1() // below first range
     {
       const int WIDTH = 20;
@@ -566,17 +566,17 @@ namespace AltaxoTest.Collections
       {
         var coll = PrepareCollection_10_50_60_100();
         coll.RemoveRangeByFirstAndLastInclusive(i - WIDTH, i);
-        Assert.AreEqual(2, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(2, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(2, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(50, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(60, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(100, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(2, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(50, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(60, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(100, ranges[1].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromTwoRanges_2() // in lower half of first range
     {
       const int WIDTH = 20;
@@ -585,17 +585,17 @@ namespace AltaxoTest.Collections
       {
         var coll = PrepareCollection_10_50_60_100();
         coll.RemoveRangeByFirstAndLastInclusive(i - WIDTH, i);
-        Assert.AreEqual(2, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(2, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(2, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(i + 1, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(50, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(60, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(100, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(2, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(i + 1, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(50, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(60, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(100, ranges[1].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromTwoRanges_3() // in middle of first range
     {
       const int WIDTH = 20;
@@ -604,19 +604,19 @@ namespace AltaxoTest.Collections
       {
         var coll = PrepareCollection_10_50_60_100();
         coll.RemoveRangeByFirstAndLastInclusive(i - WIDTH, i);
-        Assert.AreEqual(3, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(3, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(3, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(i - WIDTH - 1, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(i + 1, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(50, ranges[1].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(60, ranges[2].First, "i=" + i.ToString());
-        Assert.AreEqual(100, ranges[2].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(3, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(i - WIDTH - 1, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(i + 1, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(50, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(60, ranges[2].First, "i=" + i.ToString());
+        AssertEx.Equal(100, ranges[2].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromTwoRanges_4() // in upper half of first range
     {
       const int WIDTH = 20;
@@ -625,17 +625,17 @@ namespace AltaxoTest.Collections
       {
         var coll = PrepareCollection_10_50_60_100();
         coll.RemoveRangeByFirstAndLastInclusive(i - WIDTH, i);
-        Assert.AreEqual(2, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(2, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(2, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(i - WIDTH - 1, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(60, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(100, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(2, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(i - WIDTH - 1, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(60, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(100, ranges[1].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromTwoRanges_5() // in upper half of first range and lower half of second range
     {
       const int WIDTH = 20;
@@ -644,17 +644,17 @@ namespace AltaxoTest.Collections
       {
         var coll = PrepareCollection_10_50_60_100();
         coll.RemoveRangeByFirstAndLastInclusive(i - WIDTH, i);
-        Assert.AreEqual(2, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(2, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(2, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(i - WIDTH - 1, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(i + 1, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(100, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(2, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(i - WIDTH - 1, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(i + 1, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(100, ranges[1].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromTwoRanges_6() // in  lower half of second range
     {
       const int WIDTH = 20;
@@ -663,17 +663,17 @@ namespace AltaxoTest.Collections
       {
         var coll = PrepareCollection_10_50_60_100();
         coll.RemoveRangeByFirstAndLastInclusive(i - WIDTH, i);
-        Assert.AreEqual(2, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(2, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(2, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(50, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(i + 1, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(100, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(2, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(50, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(i + 1, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(100, ranges[1].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromTwoRanges_7() // in middle of second range
     {
       const int WIDTH = 20;
@@ -682,19 +682,19 @@ namespace AltaxoTest.Collections
       {
         var coll = PrepareCollection_10_50_60_100();
         coll.RemoveRangeByFirstAndLastInclusive(i - WIDTH, i);
-        Assert.AreEqual(3, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(3, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(3, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(50, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(60, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(i - WIDTH - 1, ranges[1].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(i + 1, ranges[2].First, "i=" + i.ToString());
-        Assert.AreEqual(100, ranges[2].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(3, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(50, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(60, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(i - WIDTH - 1, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(i + 1, ranges[2].First, "i=" + i.ToString());
+        AssertEx.Equal(100, ranges[2].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromTwoRanges_8() // in  upper half of second range
     {
       const int WIDTH = 20;
@@ -703,17 +703,17 @@ namespace AltaxoTest.Collections
       {
         var coll = PrepareCollection_10_50_60_100();
         coll.RemoveRangeByFirstAndLastInclusive(i - WIDTH, i);
-        Assert.AreEqual(2, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(2, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(2, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(50, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(60, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(i - WIDTH - 1, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(2, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(50, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(60, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(i - WIDTH - 1, ranges[1].LastInclusive, "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromTwoRanges_9() // above second range
     {
       const int WIDTH = 20;
@@ -722,85 +722,85 @@ namespace AltaxoTest.Collections
       {
         var coll = PrepareCollection_10_50_60_100();
         coll.RemoveRangeByFirstAndLastInclusive(i - WIDTH, i);
-        Assert.AreEqual(2, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(2, coll.RangeCount, "i=" + i.ToString());
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(2, ranges.Length, "i=" + i.ToString());
-        Assert.AreEqual(10, ranges[0].First, "i=" + i.ToString());
-        Assert.AreEqual(50, ranges[0].LastInclusive, "i=" + i.ToString());
-        Assert.AreEqual(60, ranges[1].First, "i=" + i.ToString());
-        Assert.AreEqual(100, ranges[1].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(2, ranges.Length, "i=" + i.ToString());
+        AssertEx.Equal(10, ranges[0].First, "i=" + i.ToString());
+        AssertEx.Equal(50, ranges[0].LastInclusive, "i=" + i.ToString());
+        AssertEx.Equal(60, ranges[1].First, "i=" + i.ToString());
+        AssertEx.Equal(100, ranges[1].LastInclusive, "i=" + i.ToString());
       }
     }
 
     #region Remove from int.Max and int.Min
 
-    [Test]
+    [Fact]
     public void TestRemoveFromMinValue_1()
     {
       for (int i = 0; i < 10; ++i)
       {
         var coll = PrepareCollection_Min_M1000();
         coll.RemoveRangeByFirstAndLastInclusive(int.MinValue, int.MinValue + i);
-        Assert.AreEqual(1, coll.RangeCount);
+        Assert.Equal(1, coll.RangeCount);
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(1, ranges.Length);
-        Assert.AreEqual(int.MinValue + i + 1, ranges[0].First);
-        Assert.AreEqual(-1000, ranges[0].LastInclusive);
+        Assert.Single(ranges);
+        Assert.Equal(int.MinValue + i + 1, ranges[0].First);
+        Assert.Equal(-1000, ranges[0].LastInclusive);
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromMaxValue_1()
     {
       for (int i = 0; i < 3; ++i)
       {
         var coll = PrepareCollection_1000_Max();
         coll.RemoveRangeByFirstAndLastInclusive(int.MaxValue - i, int.MaxValue);
-        Assert.AreEqual(1, coll.RangeCount);
+        Assert.Equal(1, coll.RangeCount);
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(1, ranges.Length);
-        Assert.AreEqual(1000, ranges[0].First);
-        Assert.AreEqual(int.MaxValue - i - 1, ranges[0].LastInclusive);
+        Assert.Single(ranges);
+        Assert.Equal(1000, ranges[0].First);
+        Assert.Equal(int.MaxValue - i - 1, ranges[0].LastInclusive);
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromMinValue_2()
     {
       for (int i = 1; i < 10; ++i)
       {
         var coll = PrepareCollection_Min_M1000();
         coll.RemoveRangeByFirstAndLastInclusive(int.MinValue + i, int.MinValue + 10);
-        Assert.AreEqual(2, coll.RangeCount);
+        Assert.Equal(2, coll.RangeCount);
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(2, ranges.Length);
-        Assert.AreEqual(int.MinValue, ranges[0].First);
-        Assert.AreEqual(int.MinValue + i - 1, ranges[0].LastInclusive);
-        Assert.AreEqual(int.MinValue + 11, ranges[1].First);
-        Assert.AreEqual(-1000, ranges[1].LastInclusive);
+        Assert.Equal(2, ranges.Length);
+        Assert.Equal(int.MinValue, ranges[0].First);
+        Assert.Equal(int.MinValue + i - 1, ranges[0].LastInclusive);
+        Assert.Equal(int.MinValue + 11, ranges[1].First);
+        Assert.Equal(-1000, ranges[1].LastInclusive);
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRemoveFromMaxValue_2()
     {
       for (int i = 1; i < 10; ++i)
       {
         var coll = PrepareCollection_1000_Max();
         coll.RemoveRangeByFirstAndLastInclusive(int.MaxValue - 10, int.MaxValue - i);
-        Assert.AreEqual(2, coll.RangeCount);
+        Assert.Equal(2, coll.RangeCount);
         var ranges = coll.Ranges.ToArray();
-        Assert.AreEqual(2, ranges.Length);
-        Assert.AreEqual(1000, ranges[0].First);
-        Assert.AreEqual(int.MaxValue - 11, ranges[0].LastInclusive);
-        Assert.AreEqual(int.MaxValue - i + 1, ranges[1].First);
-        Assert.AreEqual(int.MaxValue, ranges[1].LastInclusive);
+        Assert.Equal(2, ranges.Length);
+        Assert.Equal(1000, ranges[0].First);
+        Assert.Equal(int.MaxValue - 11, ranges[0].LastInclusive);
+        Assert.Equal(int.MaxValue - i + 1, ranges[1].First);
+        Assert.Equal(int.MaxValue, ranges[1].LastInclusive);
       }
     }
 
     #endregion Remove from int.Max and int.Min
 
-    [Test]
+    [Fact]
     public void TestRemoveCompleteRange_1()
     {
       for (int i = -2; i <= 2; ++i)
@@ -808,40 +808,40 @@ namespace AltaxoTest.Collections
         var coll = new AscendingIntegerRangeCollection();
         coll.AddRangeByFirstAndLastInclusive(10, 20);
         coll.RemoveRangeByFirstAndLastInclusive(i + 10 - 2, i + 20 + 2);
-        Assert.AreEqual(0, coll.RangeCount, "i=" + i.ToString());
+        AssertEx.Equal(0, coll.RangeCount, "i=" + i.ToString());
       }
     }
 
     #region Test indexing
 
-    [Test]
+    [Fact]
     public void TestIndexing_1()
     {
       var coll = new AscendingIntegerRangeCollection();
       coll.AddRangeByFirstAndLastInclusive(10, 19);
-      Assert.AreEqual(10, coll[0]);
-      Assert.AreEqual(19, coll[9]);
+      Assert.Equal(10, coll[0]);
+      Assert.Equal(19, coll[9]);
 
       coll.AddRangeByFirstAndLastInclusive(30, 39);
-      Assert.AreEqual(10, coll[0]);
-      Assert.AreEqual(19, coll[9]);
-      Assert.AreEqual(30, coll[10]);
-      Assert.AreEqual(39, coll[19]);
+      Assert.Equal(10, coll[0]);
+      Assert.Equal(19, coll[9]);
+      Assert.Equal(30, coll[10]);
+      Assert.Equal(39, coll[19]);
 
       coll.RemoveRangeByFirstAndLastInclusive(30, 35);
-      Assert.AreEqual(10, coll[0]);
-      Assert.AreEqual(19, coll[9]);
-      Assert.AreEqual(36, coll[10]);
-      Assert.AreEqual(39, coll[13]);
+      Assert.Equal(10, coll[0]);
+      Assert.Equal(19, coll[9]);
+      Assert.Equal(36, coll[10]);
+      Assert.Equal(39, coll[13]);
 
       coll.RemoveRangeByFirstAndLastInclusive(10, 14);
-      Assert.AreEqual(15, coll[0]);
-      Assert.AreEqual(19, coll[4]);
-      Assert.AreEqual(36, coll[5]);
-      Assert.AreEqual(39, coll[8]);
+      Assert.Equal(15, coll[0]);
+      Assert.Equal(19, coll[4]);
+      Assert.Equal(36, coll[5]);
+      Assert.Equal(39, coll[8]);
     }
 
-    [Test]
+    [Fact]
     public void TestIndexing_2()
     {
       var rnd = new System.Random();
@@ -859,20 +859,20 @@ namespace AltaxoTest.Collections
       var collSorted = coll.ToArray();
 
       // Auswertung
-      Assert.AreEqual(hashSorted.Length, collSorted.Length);
+      Assert.Equal(hashSorted.Length, collSorted.Length);
       for (int i = 0; i < hashSorted.Length; ++i)
       {
-        Assert.AreEqual(hashSorted[i], collSorted[i], "i=" + i.ToString());
+        AssertEx.Equal(hashSorted[i], collSorted[i], "i=" + i.ToString());
       }
 
-      Assert.AreEqual(hashSorted.Length, coll.Count);
+      Assert.Equal(hashSorted.Length, coll.Count);
       for (int i = 0; i < hashSorted.Length; ++i)
       {
-        Assert.AreEqual(hashSorted[i], coll[i], "i=" + i.ToString());
+        AssertEx.Equal(hashSorted[i], coll[i], "i=" + i.ToString());
       }
     }
 
-    [Test]
+    [Fact]
     public void TestIndexing_3()
     {
       var rnd = new System.Random();
@@ -897,17 +897,17 @@ namespace AltaxoTest.Collections
       var collSorted = coll.ToArray();
 
       // Evaluation of the sorted arrays
-      Assert.AreEqual(hashSorted.Length, collSorted.Length);
+      Assert.Equal(hashSorted.Length, collSorted.Length);
       for (int i = 0; i < hashSorted.Length; ++i)
       {
-        Assert.AreEqual(hashSorted[i], collSorted[i], "i=" + i.ToString());
+        AssertEx.Equal(hashSorted[i], collSorted[i], "i=" + i.ToString());
       }
 
       // Test of indexing
-      Assert.AreEqual(hashSorted.Length, coll.Count);
+      Assert.Equal(hashSorted.Length, coll.Count);
       for (int i = 0; i < hashSorted.Length; ++i)
       {
-        Assert.AreEqual(hashSorted[i], coll[i], "i=" + i.ToString());
+        AssertEx.Equal(hashSorted[i], coll[i], "i=" + i.ToString());
       }
 
       // Test of Contains
@@ -916,7 +916,7 @@ namespace AltaxoTest.Collections
 
       for (int ele = minElement - 5; ele < maxElement + 5; ++ele)
       {
-        Assert.AreEqual(hashSet.Contains(ele), coll.Contains(ele));
+        Assert.Equal(hashSet.Contains(ele), coll.Contains(ele));
       }
     }
 
@@ -946,7 +946,7 @@ namespace AltaxoTest.Collections
       return stb.Length == 0 ? null : stb.ToString();
     }
 
-    [Test]
+    [Fact]
     public void TestAddRemoveRandomly_1()
     {
       var rnd = new System.Random();
@@ -984,7 +984,7 @@ namespace AltaxoTest.Collections
         coll.RemoveRangeByFirstAndLastInclusive(r, r);
 
         error = AssertEqual(coll, hashSet);
-        if (null != error)
+        if (error is not null)
         {
           indexThatWentWrong = i;
           break;
@@ -1016,7 +1016,7 @@ namespace AltaxoTest.Collections
         coll.RemoveRangeByFirstAndLastInclusive(r, r);
 
         error = AssertEqual(coll, hashSet);
-        Assert.IsNull(error);
+        Assert.Null(error);
       }
     }
 

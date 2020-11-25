@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
     private FileSystemTreeController _treeController;
     private FileListController _listController;
 
-    private IFileBrowserView _view;
+    private IFileBrowserView? _view;
 
     public FileBrowserController()
     {
@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       _listController.ViewObject = null;
     }
 
-    public override object ViewObject
+    public override object? ViewObject
     {
       get
       {
@@ -72,14 +72,14 @@ namespace Altaxo.Gui.Pads.FileBrowser
       {
         if (!object.ReferenceEquals(_view, value))
         {
-          if (null != _view)
+          if (_view is not null)
           {
             DetachView();
           }
 
           _view = value as IFileBrowserView;
 
-          if (null != _view)
+          if (_view is not null)
           {
             AttachView();
           }
@@ -87,20 +87,21 @@ namespace Altaxo.Gui.Pads.FileBrowser
       }
     }
 
-    public override object InitiallyFocusedControl
+    public override object? InitiallyFocusedControl
     {
       get
       {
-        object result = null;
-        try
+        if(
+          (_view is { } view) &&
+          (view.GetType().GetProperty(nameof(InitiallyFocusedControl)) is { } prop) &&
+          (prop.GetGetMethod() is { } getter)
+          )
         {
-          dynamic d = _view;
-          result = d?.InitiallyFocusedControl;
+          return getter.Invoke(_view, null);
         }
-        catch (Exception)
-        {
-        }
-        return result;
+
+
+        return null;
       }
     }
 
@@ -114,7 +115,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
     {
       get
       {
-        return null;
+        return new object();
       }
     }
 

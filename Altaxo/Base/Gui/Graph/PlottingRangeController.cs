@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -78,7 +79,7 @@ namespace Altaxo.Gui.Graph
 
     public void Initialize()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.Initialize(_doc.Start, _doc.Last, _doc.IsInfinite);
       }
@@ -91,14 +92,14 @@ namespace Altaxo.Gui.Graph
       get { return _view; }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = null;
 
         _view = value as IPlottingRangeView;
 
         Initialize();
 
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = this;
       }
     }

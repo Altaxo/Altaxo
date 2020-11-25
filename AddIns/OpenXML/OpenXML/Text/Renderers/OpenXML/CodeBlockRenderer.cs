@@ -38,7 +38,7 @@ namespace Altaxo.Text.Renderers.OpenXML
     {
       renderer.PushParagraphFormat(FormatStyle.CodeBlock);
       var paragraph = renderer.PushNewParagraph();
-      if (obj.Inline != null)
+      if (obj.Inline is not null)
       {
         // there was a post-processor which has already processed the lines in this code block
         renderer.WriteChildren(obj.Inline);
@@ -47,7 +47,7 @@ namespace Altaxo.Text.Renderers.OpenXML
       {
         // original code: renderer.WriteLeafRawLines(obj); // Expand this call directly here in order to be able to include tags
         var lines = obj.Lines;
-        if (lines.Lines != null)
+        if (lines.Lines is not null)
         {
           var slices = lines.Lines;
           for (var i = 0; i < lines.Count; i++)

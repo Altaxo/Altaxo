@@ -22,11 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Gui
 {
@@ -36,18 +35,18 @@ namespace Altaxo.Gui
   /// </summary>
   /// <typeparam name="TModel">The type of the document to edit.</typeparam>
   /// <typeparam name="TView">The type of the view.</typeparam>
-  public abstract class MVCANControllerEditCopyOfDocBase<TModel, TView> : IMVCANController
+  public abstract class MVCANControllerEditCopyOfDocBase<TModel, TView> : ControllerBase, IMVCANController
     where TModel : class // for structs please use MVCANControllerEditImmutableDocBase
     where TView : class
   {
     /// <summary>The document to edit. If <see cref="_useDocumentCopy"/> is true, this is a copy of the original document; otherwise, it is the original document itself.</summary>
-    protected TModel _doc;
+    protected TModel? _doc;
 
     /// <summary>The original document. If <see cref="_useDocumentCopy"/> is false, it maybe has been edited by this controller.</summary>
-    protected TModel _originalDoc;
+    protected TModel? _originalDoc;
 
     /// <summary>The Gui view of this controller</summary>
-    protected TView _view;
+    protected TView? _view;
 
     /// <summary>If true, a copy of the document is made before editing; this copy can later be used to revert the state of the document to the original state.</summary>
     protected bool _useDocumentCopy;
@@ -74,12 +73,12 @@ namespace Altaxo.Gui
       if (IsDisposed)
         throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);
 
-      if (null == args || 0 == args.Length || !(args[0] is TModel))
+      if (args is null || 0 == args.Length || !(args[0] is TModel))
         return false;
 
       _doc = _originalDoc = (TModel)args[0];
-      if (_useDocumentCopy && _originalDoc is ICloneable)
-        _doc = (TModel)((ICloneable)_originalDoc).Clone();
+      if (_useDocumentCopy && _originalDoc is ICloneable cloneableDoc)
+        _doc = (TModel)cloneableDoc.Clone();
 
       Initialize(true);
       return true;
@@ -91,12 +90,24 @@ namespace Altaxo.Gui
     /// <param name="initData">If set to <c>true</c>, it indicates that the controller should initialize its model classes..</param>
     /// <exception cref="System.InvalidOperationException">This controller was not initialized with a document.</exception>
     /// <exception cref="System.ObjectDisposedException">The controller was already disposed.</exception>
+    [MemberNotNull(nameof(_doc))]
     protected virtual void Initialize(bool initData)
     {
       if (IsDisposed)
         throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);
-      if (null == _doc)
+      if (_doc is null)
         throw new InvalidOperationException("This controller was not initialized with a document.");
+    }
+
+
+
+    /// <summary>Throws an exception if the controller is not initialized with a document.</summary>
+    /// <exception cref="InvalidOperationException">Controller was not initialized with a document</exception>
+    [MemberNotNull(nameof(_originalDoc), nameof(_doc))]
+    protected void ThrowIfNotInitialized()
+    {
+      if (_originalDoc is null || _doc is null)
+        throw NoDocumentException;
     }
 
     /// <summary>
@@ -114,13 +125,15 @@ namespace Altaxo.Gui
 
     protected virtual bool ApplyEnd(bool applyResult, bool disposeController)
     {
+      ThrowIfNotInitialized();
+
       if (applyResult == true)
       {
         if (!object.ReferenceEquals(_doc, _originalDoc))
         {
-          if (_doc is ICloneable)
+          if (_originalDoc is ICloneable orgDoc)
           {
-            var orgDoc = (ICloneable)_originalDoc;
+
             CopyHelper.Copy(ref orgDoc, (ICloneable)_doc);
             _originalDoc = (TModel)orgDoc;
           }
@@ -182,7 +195,7 @@ namespace Altaxo.Gui
     /// <summary>
     /// Returns the Gui element that shows the model to the user.
     /// </summary>
-    public virtual object ViewObject
+    public virtual object? ViewObject
     {
       get
       {
@@ -190,14 +203,14 @@ namespace Altaxo.Gui
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as TView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           AttachView();
@@ -210,7 +223,11 @@ namespace Altaxo.Gui
     /// </summary>
     public virtual object ModelObject
     {
-      get { return _originalDoc; }
+      get
+      {
+        ThrowIfNotInitialized();
+        return _originalDoc;
+      }
     }
 
     /// <summary>
@@ -232,9 +249,9 @@ namespace Altaxo.Gui
       {
         foreach (var subControllerItem in GetSubControllers())
         {
-          if (null != subControllerItem.Controller)
+          if (subControllerItem.Controller is not null)
             subControllerItem.Controller.Dispose();
-          if (null != subControllerItem.SetMemberToNullAction)
+          if (subControllerItem.SetMemberToNullAction is not null)
             subControllerItem.SetMemberToNullAction();
         }
 

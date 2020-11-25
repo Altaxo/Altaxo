@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 
 namespace Altaxo.Main
@@ -37,7 +37,7 @@ namespace Altaxo.Main
     : SuspendableDocumentLeafNodeWithSetOfEventArgs
   {
     /// <summary>The parent document for which the folder structure is kept.</summary>
-    private AltaxoDocument AltaxoDocument { get { return (AltaxoDocument)_parent; } }
+    private AltaxoDocument AltaxoDocument { get { return (AltaxoDocument)_parent!; } }
 
     /// <summary>Directory dictionary. Key is the directoryname. Value is a list of objects contained in the directory.</summary>
     private Dictionary<string, HashSet<object>> _directories = new Dictionary<string, HashSet<object>>();
@@ -46,7 +46,7 @@ namespace Altaxo.Main
     /// Fired if a item or a directory is added or removed. Arguments are the type of change, the item, the old name and the new name.
     /// Note that for directories the item is of type string: it is the directory name.
     /// </summary>
-    public event EventHandler<Main.NamedObjectCollectionChangedEventArgs> CollectionChanged;
+    public event EventHandler<Main.NamedObjectCollectionChangedEventArgs>? CollectionChanged;
 
     /// <summary>
     /// Creates the instance of project folders, tracking the provided Altaxo project.
@@ -54,8 +54,8 @@ namespace Altaxo.Main
     /// <param name="doc">Altaxo project.</param>
     public ProjectFolders(AltaxoDocument doc)
     {
-      if (null == doc)
-        throw new ArgumentNullException();
+      if (doc is null)
+        throw new ArgumentNullException(nameof(doc));
 
       foreach (var coll in doc.ProjectItemCollections)
         coll.CollectionChanged += EhItemCollectionChanged;
@@ -67,11 +67,11 @@ namespace Altaxo.Main
     protected override void Dispose(bool isDisposing)
     {
       var doc = AltaxoDocument;
-      if (null != doc)
+      if (doc is not null)
       {
         foreach (var coll in doc.ProjectItemCollections)
         {
-          if (null != coll)
+          if (coll is not null)
           {
             coll.CollectionChanged += EhItemCollectionChanged;
           }
@@ -81,7 +81,7 @@ namespace Altaxo.Main
       base.Dispose(isDisposing);
     }
 
-    public override IDocumentNode ParentObject
+    public override IDocumentNode? ParentObject
     {
       get
       {
@@ -89,7 +89,7 @@ namespace Altaxo.Main
       }
       set
       {
-        if (value != null)
+        if (value is not null)
           throw new InvalidOperationException("The parent is set in the constructor only, thus can not be changed here.");
 
         base.ParentObject = value;
@@ -325,13 +325,13 @@ namespace Altaxo.Main
         item.Name = Guid.NewGuid().ToString() + "\\"; // this name should be new, the backslash is to allow also folder property documents to be renamed.
       }
 
-      int oldFolderNameLength = oldFolderName == null ? 0 : oldFolderName.Length;
+      int oldFolderNameLength = oldFolderName is null ? 0 : oldFolderName.Length;
       var itemsRenamed = new HashSet<IProjectItem>();
 
       foreach (var item in itemList)
       {
         string oldName = oldNameDictionary[item];
-        string newName = (newFolderName == null ? "" : newFolderName) + oldName.Substring(oldFolderNameLength);
+        string newName = (newFolderName is null ? "" : newFolderName) + oldName.Substring(oldFolderNameLength);
 
         if (item is Main.Properties.ProjectFolderPropertyDocument propDoc)
         {
@@ -412,7 +412,7 @@ namespace Altaxo.Main
       EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromMultipleChanges());
     }
 
-    private void EhItemCollectionChanged(object sender, Main.NamedObjectCollectionChangedEventArgs e)
+    private void EhItemCollectionChanged(object? sender, Main.NamedObjectCollectionChangedEventArgs e)
     {
       if (e.WasMultipleItemsChanged)
       {
@@ -421,7 +421,7 @@ namespace Altaxo.Main
       }
 
       var item = e.Item as IProjectItem;
-      if (null == item)
+      if (item is null)
         throw new InvalidProgramException(string.Format("Item should be a project item, since we bind to the CollectionChanged events. But current item is {0}", e.Item));
 
       if (e.WasItemAdded)
@@ -430,12 +430,12 @@ namespace Altaxo.Main
       }
       else if (e.WasItemRemoved)
       {
-        ItemRemoved(item, e.OldName, EventFiring.Enabled);
+        ItemRemoved(item, e.OldName ?? string.Empty, EventFiring.Enabled);
       }
 
       if (e.WasItemRenamed)
       {
-        ItemRenamed(item, e.OldName, e.NewName, EventFiring.Enabled);
+        ItemRenamed(item, e.OldName ?? string.Empty, e.NewName, EventFiring.Enabled);
       }
     }
 
@@ -467,7 +467,7 @@ namespace Altaxo.Main
       if (firing == EventFiring.Enabled)
         EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(item, itemName));
 
-      if (null != itemDir && 0 == remainingCount)
+      if (itemDir is not null && 0 == remainingCount)
         DirectoryRemoved(itemDir);
     }
 
@@ -508,7 +508,7 @@ namespace Altaxo.Main
 
     private void DirectoryRemoved(string dir)
     {
-      if (dir == null || dir == ProjectFolder.RootFolderName)
+      if (dir is null || dir == ProjectFolder.RootFolderName)
         return;
 
       _directories.Remove(dir);
@@ -517,14 +517,14 @@ namespace Altaxo.Main
       s.Remove(dir);
       EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(new ProjectFolder(dir)));
 
-      if (null != parDir && 0 == s.Count)
+      if (parDir is not null && 0 == s.Count)
         DirectoryRemoved(parDir);
     }
 
     protected override void OnChanged(EventArgs e)
     {
       var eAsNOCC = e as Main.NamedObjectCollectionChangedEventArgs;
-      if (null != eAsNOCC)
+      if (eAsNOCC is not null)
       {
         OnCollectionChanged(eAsNOCC);
       }
@@ -535,7 +535,7 @@ namespace Altaxo.Main
     protected void OnCollectionChanged(Main.NamedObjectCollectionChangedEventArgs args)
     {
       var ev = CollectionChanged;
-      if (null != ev)
+      if (ev is not null)
         ev(this, args);
     }
 
@@ -553,7 +553,7 @@ namespace Altaxo.Main
       var oldList = GetItemsInFolderAndSubfolders(oldFolderName);
       var itemHashSet = new HashSet<object>(oldList);
 
-      int oldFolderNameLength = oldFolderName == null ? 0 : oldFolderName.Length;
+      int oldFolderNameLength = oldFolderName is null ? 0 : oldFolderName.Length;
       foreach (var item in oldList)
       {
         if (item is IProjectItem projItem)
@@ -623,10 +623,10 @@ namespace Altaxo.Main
       {
       }
 
-      public override string Validate(string name)
+      public override string? Validate(string name)
       {
-        string err = base.Validate(name);
-        if (null != err)
+        string? err = base.Validate(name);
+        if (err is not null)
           return err;
 
         if (!name.EndsWith(ProjectFolder.DirectorySeparatorString))
@@ -673,12 +673,10 @@ namespace Altaxo.Main
 
     private void SortItemsByDependencyProxyReporter(IProxy proxy, object owner, string propertyName, HashSet<IProjectItem> dependenciesOfItem)
     {
-      var proxyDoc = proxy?.DocumentObject() as IDocumentLeafNode;
-
-      if (proxyDoc != null)
+      if (proxy?.DocumentObject() is IDocumentLeafNode proxyDoc)
       {
         var dependentOnItem = AbsoluteDocumentPath.GetRootNodeImplementing<IProjectItem>(proxyDoc);
-        if (null != dependentOnItem)
+        if (dependentOnItem is not null)
           dependenciesOfItem.Add(dependentOnItem);
       }
     }
@@ -793,7 +791,7 @@ namespace Altaxo.Main
     {
       ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(destinationFolderName);
 
-      if (item == null)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
       if (item is ProjectFolder projFolder)
@@ -815,8 +813,7 @@ namespace Altaxo.Main
 
         if (overwriteExistingItemsOfSameType)
         {
-          var existingItem = AltaxoDocument.TryGetExistingItemWithSameTypeAndName(clonedItem);
-          if (null != existingItem)
+          if (AltaxoDocument.TryGetExistingItemWithSameTypeAndName(clonedItem, out var existingItem))
           {
             Current.ProjectService.DeleteDocument(existingItem, true);
           }
@@ -824,7 +821,7 @@ namespace Altaxo.Main
 
         AltaxoDocument.AddItem(clonedItem);
 
-        if (null != ReportProxies)
+        if (ReportProxies is not null)
         {
           clonedItem.VisitDocumentReferences(ReportProxies);
         }

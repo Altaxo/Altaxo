@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Altaxo.Drawing;
 
@@ -45,17 +47,17 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ClosedPathShapeBase)obj;
-        info.AddBaseValueEmbedded(s, typeof(ClosedPathShapeBase).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(ClosedPathShapeBase).BaseType!);
 
         info.AddValue("LinePen", s._linePen);
         info.AddValue("Fill", s._fillBrush.IsVisible);
         info.AddValue("FillBrush", s._fillBrush);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ClosedPathShapeBase)o;
-        info.GetBaseValueEmbedded(s, typeof(ClosedPathShapeBase).BaseType, parent);
+        var s = (ClosedPathShapeBase)(o ?? throw new ArgumentNullException(nameof(o)));
+        info.GetBaseValueEmbedded(s, typeof(ClosedPathShapeBase).BaseType!, parent);
 
         s.Pen = (PenX)info.GetValue("LinePen", s);
         bool fill = info.GetBoolean("Fill");
@@ -66,7 +68,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion Serialization
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected ClosedPathShapeBase(ItemLocationDirect location, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(location)
     {
     }
@@ -74,34 +78,48 @@ namespace Altaxo.Graph.Gdi.Shapes
     public ClosedPathShapeBase(ItemLocationDirect location, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(location)
     {
-      if (null == context)
+      if (context is null)
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       var penWidth = GraphDocument.GetDefaultPenWidth(context);
       var foreColor = context.GetValue(GraphDocument.PropertyKeyDefaultForeColor);
-      Brush = new BrushX(NamedColors.Transparent);
-      Pen = new PenX(foreColor, penWidth);
+      _fillBrush = new BrushX(NamedColors.Transparent);
+      _linePen = new PenX(foreColor, penWidth);
     }
 
     public ClosedPathShapeBase(ClosedPathShapeBase from)
       : base(from)
     {
-      // all is done already, since CopyFrom is virtual
+      CopyFrom(from, false);
+    }
+
+    [MemberNotNull(nameof(_fillBrush), nameof(_linePen))]
+    protected void CopyFrom(ClosedPathShapeBase from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      _fillBrush = from._fillBrush;
+      _linePen = from._linePen;
     }
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (obj is ClosedPathShapeBase from)
       {
-        var from = obj as ClosedPathShapeBase;
-        if (null != from)
+        using (var suspendToken = SuspendGetToken())
         {
-          _fillBrush = from._fillBrush;
-          _linePen = from._linePen;
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
@@ -122,8 +140,8 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
-        if (value == null)
-          throw new ArgumentNullException("The line pen must not be null");
+        if (value is null)
+          throw new ArgumentNullException(nameof(Pen));
 
         if (!(_linePen == value))
         {
@@ -142,7 +160,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       set
       {
         if (value is null)
-          throw new ArgumentNullException("The fill brush must not be null");
+          throw new ArgumentNullException(nameof(Brush));
 
         if (!(_fillBrush == value))
         {
@@ -152,18 +170,18 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
-    public override IHitTestObject HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData htd)
     {
-      IHitTestObject result = base.HitTest(htd);
-      if (result != null)
+      var result = base.HitTest(htd);
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
       return result;
     }
 
-    public override IHitTestObject HitTest(HitTestRectangularData rect)
+    public override IHitTestObject? HitTest(HitTestRectangularData rect)
     {
-      IHitTestObject result = base.HitTest(rect);
-      if (result != null)
+      var result = base.HitTest(rect);
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
       return result;
     }
@@ -183,7 +201,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       switch (propertyName)
       {
         case "StrokeWidth":
-          if (null != _linePen)
+          if (_linePen is not null)
             yield return (propertyName, _linePen.Width, (w) => _linePen = _linePen.WithWidth((double)w));
           break;
       }

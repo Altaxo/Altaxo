@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,7 +93,7 @@ namespace Altaxo.Gui.Common
         var c = (NamedColor)value;
 
 
-        if (c.ParentColorSet != null && ColorSetManager.Instance.TryGetList(c.ParentColorSet.Name, out var colorSetEntry))
+        if (c.ParentColorSet is not null && ColorSetManager.Instance.TryGetList(c.ParentColorSet.Name, out var colorSetEntry))
           return string.Format("{0}/{1}", GetLevelString(colorSetEntry.Level), c.ParentColorSet.Name);
         else
           return "<<no color set>>";

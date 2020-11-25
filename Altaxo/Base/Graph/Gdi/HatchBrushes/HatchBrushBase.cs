@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -60,9 +61,9 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
         info.AddValue("StructureFactor", s._structureFactor);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (HatchBrushBase)o;
+        var s = (HatchBrushBase)(o ?? throw new ArgumentNullException(nameof(o)));
 
         s._repeatLengthPt = info.GetDouble("RepeatLength");
         s._structureFactor = info.GetDouble("StructureFactor");

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,7 +76,7 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
         _timeConversionChoices = new SelectableListNodeList(_doc.LabelTimeConversion);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _baseController.ViewObject = _view.MultiLineLabelFormattingBaseView;
         _view.InitializeTimeConversion(_timeConversionChoices);

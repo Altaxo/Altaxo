@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,12 +64,12 @@ namespace Altaxo.Gui.DataConnection
         _connectionMainController.InitializeDocument(_doc.DataQuery);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
-        if (null == _importOptionsController.ViewObject)
+        if (_importOptionsController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_importOptionsController);
 
-        if (null == _connectionMainController.ViewObject)
+        if (_connectionMainController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_connectionMainController);
 
         _view.SetImportOptionsView(_importOptionsController.ViewObject);

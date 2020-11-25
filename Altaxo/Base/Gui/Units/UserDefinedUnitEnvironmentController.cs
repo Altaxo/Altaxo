@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,15 +48,15 @@ namespace Altaxo.Gui.Units
   [ExpectedTypeOfView(typeof(IUserDefinedUnitEnvironmentView))]
   public class UserDefinedUnitEnvironmentController : MVCANControllerEditCopyOfDocBase<UserDefinedUnitEnvironment, IUserDefinedUnitEnvironmentView>, System.ComponentModel.INotifyPropertyChanged
   {
-    private UnitEnvironmentController _unitController;
+    private UnitEnvironmentController? _unitController;
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     private SelectableListNodeList _quantities = new SelectableListNodeList();
-    private SelectableListNode _selectedQuantity;
-    private string _environmentName;
+    private SelectableListNode? _selectedQuantity;
+    private string? _environmentName;
 
-    private UserDefinedUnitEnvironments _availableEnvironments;
+    private UserDefinedUnitEnvironments? _availableEnvironments;
 
     public override bool InitializeDocument(params object[] args)
     {
@@ -67,6 +68,8 @@ namespace Altaxo.Gui.Units
 
     protected override void Initialize(bool initData)
     {
+      CheckDocumentInitialized(ref _doc);
+
       base.Initialize(initData);
 
       if (initData)
@@ -103,28 +106,34 @@ namespace Altaxo.Gui.Units
     protected override void AttachView()
     {
       base.AttachView();
-      _view.DataContext = this;
+      _view!.DataContext = this;
     }
 
     protected override void DetachView()
     {
-      _view.DataContext = null;
+      _view!.DataContext = null;
       base.DetachView();
     }
 
     public override bool Apply(bool disposeController)
     {
+      if (_unitController is null)
+        throw new InvalidOperationException();
+
       if (!_unitController.Apply(disposeController))
         return ApplyEnd(false, disposeController);
 
-      string quantity = (string)_selectedQuantity.Tag;
+      var quantity = (string?)_selectedQuantity?.Tag;
+
+      if (string.IsNullOrEmpty(quantity))
+        return ApplyEnd(false, disposeController);
 
       if (string.IsNullOrEmpty(_environmentName))
       {
         Current.Gui.ErrorMessageBox("Please enter a name for the unit environment");
         return ApplyEnd(false, disposeController);
       }
-      else if (null != _availableEnvironments &&
+      else if (_availableEnvironments is not null &&
                   _availableEnvironments.TryGetValue(_environmentName, out var alreadyPresentEnvironment) &&
                   alreadyPresentEnvironment.Quantity != quantity)
       {
@@ -141,12 +150,13 @@ namespace Altaxo.Gui.Units
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_unitController, () => _unitController = null);
+      if (_unitController is not null)
+        yield return new ControllerAndSetNullMethod(_unitController, () => _unitController = null);
     }
 
     #region Binding properties
 
-    public object UnitControllerViewObject
+    public object? UnitControllerViewObject
     {
       get
       {
@@ -162,7 +172,7 @@ namespace Altaxo.Gui.Units
       }
     }
 
-    public SelectableListNode SelectedQuantity
+    public SelectableListNode? SelectedQuantity
     {
       get
       {
@@ -173,13 +183,15 @@ namespace Altaxo.Gui.Units
         if (!object.ReferenceEquals(_selectedQuantity, value))
         {
           _selectedQuantity = value;
-          _unitController.SetQuantity((string)_selectedQuantity.Tag);
+          if (_unitController is { } _ && _selectedQuantity is not null && !string.IsNullOrEmpty(_selectedQuantity.Tag as string))
+            _unitController.SetQuantity((string)_selectedQuantity.Tag);
+
           PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedQuantity)));
         }
       }
     }
 
-    public string EnvironmentName
+    public string? EnvironmentName
     {
       get
       {

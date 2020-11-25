@@ -43,13 +43,13 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private void EhEditText_Click(object sender, RoutedEventArgs e)
     {
-      if (EditText != null)
+      if (EditText is not null)
         EditText(this, e);
     }
 
     #region IFunctionPlotDataView Members
 
-    public event EventHandler EditText;
+    public event EventHandler? EditText;
 
     public void InitializeFunctionText(string text, bool editable)
     {

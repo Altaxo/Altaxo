@@ -26,14 +26,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  [TestFixture]
+  
   public class TikhonovRegularizedNonnegativeMatrixFactorizationTest
   {
-    [Test]
+    [Fact]
     public static void Test01()
     {
       var A = DoubleMatrix.Random(11, 7);

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,10 +42,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   /// </summary>
   public partial class ScatterPlotStyleControl : UserControl, IScatterPlotStyleView
   {
-    public event Action IndependentColorChanged;
-
-    private bool _enableDisableAll = false;
-    private int _suppressEvents = 0;
+    public event Action? IndependentColorChanged;
 
     public ScatterPlotStyleControl()
     {
@@ -130,7 +128,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
     {
-      if (null != IndependentColorChanged)
+      if (IndependentColorChanged is not null)
         IndependentColorChanged();
     }
 

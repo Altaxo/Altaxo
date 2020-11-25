@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable  enable
 using System;
 using System.Collections.Immutable;
 using Altaxo.Main.Services.ScriptCompilation;
@@ -58,9 +59,9 @@ namespace Altaxo.Scripting
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        FunctionEvaluationScript s = null != o ? (FunctionEvaluationScript)o : new FunctionEvaluationScript();
+        FunctionEvaluationScript s = (FunctionEvaluationScript?)o ?? new FunctionEvaluationScript();
 
         // deserialize the base class
         info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
@@ -191,10 +192,10 @@ namespace Altaxo.Scripting
     /// <returns></returns>
     public double Evaluate(double x)
     {
-      if (null == _scriptObject && !_wasTriedToCompile)
+      if (_scriptObject is null && !_wasTriedToCompile)
         Compile();
 
-      if (null == _scriptObject)
+      if (_scriptObject is null)
       {
         _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, "Script Object is null"));
         return double.NaN;

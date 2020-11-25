@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph.Scales
     private void EhScaleSelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_cbScales);
-      if (null != AxisTypeChanged)
+      if (AxisTypeChanged is not null)
         AxisTypeChanged();
     }
 
@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Graph.Scales
       _scaleViewHost.Child = guiobject as UIElement;
     }
 
-    public event Action AxisTypeChanged;
+    public event Action? AxisTypeChanged;
 
     #endregion IDensityScaleView Members
   }

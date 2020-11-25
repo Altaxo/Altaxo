@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -29,8 +30,6 @@ using System.Linq;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
 using Altaxo.Graph.Gdi.LineCaps;
-
-#nullable enable
 
 namespace Altaxo.Graph.Gdi
 {
@@ -141,7 +140,7 @@ namespace Altaxo.Graph.Gdi
           if (0 != gdiDashOffset)
             gdiPen.DashOffset = gdiDashOffset;
 
-          if (null != gdiDashPattern)
+          if (gdiDashPattern is not null)
             gdiPen.DashPattern = gdiDashPattern;
         }
 

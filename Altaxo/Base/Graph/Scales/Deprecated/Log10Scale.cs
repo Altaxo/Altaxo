@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using Altaxo.Graph.Scales.Boundaries;
@@ -67,9 +68,9 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("Bounds", s._dataBounds);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        Log10Scale s = null != o ? (Log10Scale)o : new Log10Scale();
+        var s = (Log10Scale?)o ?? new Log10Scale();
 
         s._log10Org = info.GetDouble("Log10Org");
         s._log10End = info.GetDouble("Log10End");
@@ -109,9 +110,9 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("Rescaling", s._rescaling);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        Log10Scale s = null != o ? (Log10Scale)o : new Log10Scale();
+        var s = (Log10Scale?)o ?? new Log10Scale();
 
         s._log10Org = info.GetDouble("Log10Org");
         s._log10End = info.GetDouble("Log10End");
@@ -151,23 +152,23 @@ namespace Altaxo.Graph.Scales.Deprecated
     {
       IsLinked = from.IsLinked;
 
-      _dataBounds = null == from._dataBounds ? new PositiveFiniteNumericalBoundaries() { ParentObject = this } : (NumericalBoundaries)from._dataBounds.Clone();
+      _dataBounds = from._dataBounds is null ? new PositiveFiniteNumericalBoundaries() { ParentObject = this } : (NumericalBoundaries)from._dataBounds.Clone();
       _dataBounds.ParentObject = this;
 
       _decadesPerMajorTick = from._decadesPerMajorTick;
       _log10End = from._log10End;
       _log10Org = from._log10Org;
 
-      _rescaling = null == from.Rescaling ? new LogarithmicScaleRescaleConditions() { ParentObject = this } : (LogarithmicScaleRescaleConditions)from.Rescaling.Clone();
+      _rescaling = from.Rescaling is null ? new LogarithmicScaleRescaleConditions() { ParentObject = this } : (LogarithmicScaleRescaleConditions)from.Rescaling.Clone();
       _rescaling.ParentObject = this;
     }
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataBounds)
+      if (_dataBounds is not null)
         yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
 
-      if (null != _rescaling)
+      if (_rescaling is not null)
         yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
     }
 
@@ -530,7 +531,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public override void ProcessDataBounds()
     {
-      if (null == _dataBounds || _dataBounds.IsEmpty)
+      if (_dataBounds is null || _dataBounds.IsEmpty)
         return;
 
       ProcessDataBounds(_dataBounds.LowerBound, _dataBounds.UpperBound, _rescaling);

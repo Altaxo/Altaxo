@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,7 +90,7 @@ namespace Altaxo.Gui.Settings
           AddTopic(item, _topics.Nodes);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeTopics(_topics.Nodes);
         EhTopicSelectionChanged(_topics);
@@ -102,7 +103,7 @@ namespace Altaxo.Gui.Settings
       {
         Tag = desc
       };
-      if (null != desc.ChildOptionPanelDescriptors)
+      if (desc.ChildOptionPanelDescriptors is not null)
       {
         foreach (var child in desc.ChildOptionPanelDescriptors)
           AddTopic(child, newNode.Nodes);
@@ -116,7 +117,7 @@ namespace Altaxo.Gui.Settings
       var node = GetFirstNodeWithControl(obj);
       string title = string.Empty;
       object view = null;
-      if (node != null)
+      if (node is not null)
       {
         var desc = (IOptionPanelDescriptor)node.Tag;
         var ctrl = desc.OptionPanel;
@@ -139,7 +140,7 @@ namespace Altaxo.Gui.Settings
     {
       // if this node has a own control, use it, otherwise use the next child
       var desc = (IOptionPanelDescriptor)obj.Tag;
-      if (desc != null && desc.OptionPanel != null)
+      if (desc is not null && desc.OptionPanel is not null)
         return obj;
 
       if (obj.HasChilds)
@@ -147,7 +148,7 @@ namespace Altaxo.Gui.Settings
         foreach (var child in obj.Nodes)
         {
           var result = GetFirstNodeWithControl(child);
-          if (null != result)
+          if (result is not null)
             return result;
         }
       }
@@ -167,7 +168,7 @@ namespace Altaxo.Gui.Settings
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.TopicSelectionChanged -= EhTopicSelectionChanged;
           _view.CurrentTopicViewMadeDirty -= EhCurrentTopicViewMadeDirty;
@@ -175,7 +176,7 @@ namespace Altaxo.Gui.Settings
 
         _view = value as ISettingsView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           _view.TopicSelectionChanged += EhTopicSelectionChanged;
@@ -201,7 +202,7 @@ namespace Altaxo.Gui.Settings
       {
         var desc = (IOptionPanelDescriptor)node.Tag;
         var ctrl = desc.OptionPanel;
-        if (null != ctrl && !ctrl.Apply())
+        if (ctrl is not null && !ctrl.Apply())
         {
           _currentNode = node;
           _view.SetSelectedNode(_currentNode);

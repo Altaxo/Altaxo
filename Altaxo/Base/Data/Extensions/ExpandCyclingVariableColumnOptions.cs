@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Data
@@ -94,9 +95,9 @@ namespace Altaxo.Data
         info.AddEnum("DestinationRowSorting", s._destinationRowSorting);
       }
 
-      protected virtual ExpandCyclingVariableColumnOptions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual ExpandCyclingVariableColumnOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new ExpandCyclingVariableColumnOptions() : (ExpandCyclingVariableColumnOptions)o);
+        var s = (o is null ? new ExpandCyclingVariableColumnOptions() : (ExpandCyclingVariableColumnOptions)o);
 
         s._destinationX = (DestinationXColumn)info.GetEnum("DestinationX", typeof(DestinationXColumn));
         s._destinationOutput = (OutputFormat)info.GetEnum("DestinationOutput", typeof(OutputFormat));
@@ -106,7 +107,7 @@ namespace Altaxo.Data
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -135,11 +136,11 @@ namespace Altaxo.Data
 
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as ExpandCyclingVariableColumnOptions;
-      if (null != from)
+      if (from is not null)
       {
         _destinationX = from._destinationX;
         _destinationOutput = from._destinationOutput;

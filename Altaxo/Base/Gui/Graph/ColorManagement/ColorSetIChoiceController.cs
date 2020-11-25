@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Drawing.ColorManagement;
@@ -55,7 +56,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
         ColorSetManager.Instance.TryGetList(_doc.Name, out var value);
         ColorControllerHelper.UpdateColorTreeViewTreeNodes(_treeRootNode, ShowPlotColorsOnly, value.List);
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.ColorSetTree = _treeRootNode;
       }
@@ -65,14 +66,14 @@ namespace Altaxo.Gui.Graph.ColorManagement
     {
       var selNode = _treeRootNode.AnyBetweenHereAndLeaves(node => node.IsSelected);
 
-      if (null == selNode)
+      if (selNode is null)
         return false;
 
       var tag = selNode.Tag as IColorSet;
 
-      if (null == tag)
+      if (tag is null)
       {
-        string insteadOf = selNode.Tag != null ? selNode.Tag.GetType().Name : "nothing";
+        string insteadOf = selNode.Tag is not null ? selNode.Tag.GetType().Name : "nothing";
         Current.Gui.ErrorMessageBox("Please select a color set instead of " + insteadOf, "Wrong selection");
         return false;
       }

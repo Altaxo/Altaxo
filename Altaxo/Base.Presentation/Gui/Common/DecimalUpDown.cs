@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Globalization;
 using System.Windows;
@@ -66,11 +67,11 @@ namespace Altaxo.Gui.Common
       {
         decimal val = (decimal)obj;
 
-        if (null != _parent)
+        if (_parent is not null)
         {
-          if (val == _parent.Minimum && null != _parent.MinimumReplacementText)
+          if (val == _parent.Minimum && _parent.MinimumReplacementText is not null)
             return _parent.MinimumReplacementText;
-          if (val == _parent.Maximum && null != _parent.MaximumReplacementText)
+          if (val == _parent.Maximum && _parent.MaximumReplacementText is not null)
             return _parent.MaximumReplacementText;
         }
 
@@ -94,7 +95,7 @@ namespace Altaxo.Gui.Common
 
         string s = (string)obj;
 
-        if (null != _parent)
+        if (_parent is not null)
         {
           _parent.SetValue(ValueStringPropertyKey, s);
           s = s.Trim();
@@ -103,7 +104,7 @@ namespace Altaxo.Gui.Common
             return _parent.Minimum;
           else if (!string.IsNullOrEmpty(_parent.MaximumReplacementText) && _parent.MaximumReplacementText.Trim() == s)
             return _parent.Maximum;
-          else if (string.IsNullOrEmpty(s) && null != _parent.ValueIfTextIsEmpty)
+          else if (string.IsNullOrEmpty(s) && _parent.ValueIfTextIsEmpty is not null)
             return _parent.ValueIfTextIsEmpty;
         }
 
@@ -111,7 +112,7 @@ namespace Altaxo.Gui.Common
           return result;
         else
         {
-          validationResult = new ValidationResult(false, string.Format("The provided string could not be converted to a numeric value, parent is {0}", _parent == null ? "Null" : "Set"));
+          validationResult = new ValidationResult(false, string.Format("The provided string could not be converted to a numeric value, parent is {0}", _parent is null ? "Null" : "Set"));
           return System.Windows.Data.Binding.DoNothing;
         }
       }
@@ -157,7 +158,7 @@ namespace Altaxo.Gui.Common
       #region Fire Automation events
 
       var peer = UIElementAutomationPeer.FromElement(control) as DecimalUpDownAutomationPeer;
-      if (peer != null)
+      if (peer is not null)
       {
         peer.RaiseValueChangedEvent(oldValue, newValue);
       }

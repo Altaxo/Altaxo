@@ -281,11 +281,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">Intepolated vector value at point <paramref name="t"/></param>
 		public static void Lerp(double t, double t0, double[] v0, double t1, double[] v1, double[] destinationVector)
 		{
-			if(null == v0)
+			if(v0 is null)
 				throw new ArgumentNullException(nameof(v0));
-			if(null == v1)
+			if(v1 is null)
 				throw new ArgumentNullException(nameof(v1));
-			if(null == destinationVector)
+			if(destinationVector is null)
 				throw new ArgumentNullException(nameof(destinationVector));
 			if (v0.Length != v1.Length)
         throw new ArgumentException("Length of vectors v0 and v1 unequal");
@@ -659,11 +659,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">Intepolated vector value at point <paramref name="t"/></param>
 		public static void Lerp(double t, double t0, float[] v0, double t1, float[] v1, float[] destinationVector)
 		{
-			if(null == v0)
+			if(v0 is null)
 				throw new ArgumentNullException(nameof(v0));
-			if(null == v1)
+			if(v1 is null)
 				throw new ArgumentNullException(nameof(v1));
-			if(null == destinationVector)
+			if(destinationVector is null)
 				throw new ArgumentNullException(nameof(destinationVector));
 			if (v0.Length != v1.Length)
         throw new ArgumentException("Length of vectors v0 and v1 unequal");
@@ -1037,11 +1037,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">Intepolated vector value at point <paramref name="t"/></param>
 		public static void Lerp(double t, double t0, int[] v0, double t1, int[] v1, int[] destinationVector)
 		{
-			if(null == v0)
+			if(v0 is null)
 				throw new ArgumentNullException(nameof(v0));
-			if(null == v1)
+			if(v1 is null)
 				throw new ArgumentNullException(nameof(v1));
-			if(null == destinationVector)
+			if(destinationVector is null)
 				throw new ArgumentNullException(nameof(destinationVector));
 			if (v0.Length != v1.Length)
         throw new ArgumentException("Length of vectors v0 and v1 unequal");
@@ -1415,11 +1415,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">Intepolated vector value at point <paramref name="t"/></param>
 		public static void Lerp(double t, double t0, IReadOnlyList<double> v0, double t1, IReadOnlyList<double> v1, IVector<double> destinationVector)
 		{
-			if(null == v0)
+			if(v0 is null)
 				throw new ArgumentNullException(nameof(v0));
-			if(null == v1)
+			if(v1 is null)
 				throw new ArgumentNullException(nameof(v1));
-			if(null == destinationVector)
+			if(destinationVector is null)
 				throw new ArgumentNullException(nameof(destinationVector));
 			if (v0.Count != v1.Count)
         throw new ArgumentException("Length of vectors v0 and v1 unequal");
@@ -1793,11 +1793,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">Intepolated vector value at point <paramref name="t"/></param>
 		public static void Lerp(double t, double t0, IReadOnlyList<float> v0, double t1, IReadOnlyList<float> v1, IVector<float> destinationVector)
 		{
-			if(null == v0)
+			if(v0 is null)
 				throw new ArgumentNullException(nameof(v0));
-			if(null == v1)
+			if(v1 is null)
 				throw new ArgumentNullException(nameof(v1));
-			if(null == destinationVector)
+			if(destinationVector is null)
 				throw new ArgumentNullException(nameof(destinationVector));
 			if (v0.Count != v1.Count)
         throw new ArgumentException("Length of vectors v0 and v1 unequal");

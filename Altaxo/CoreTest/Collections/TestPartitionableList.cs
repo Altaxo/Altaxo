@@ -26,14 +26,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Collections;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Collections
 {
-  [TestFixture]
+
   public class TestPartitionableList
   {
-    [Test]
+    [Fact]
     public void TestList()
     {
       const int max = 10;
@@ -42,39 +42,39 @@ namespace AltaxoTest.Collections
       for (int i = 0; i < max; ++i)
         list.Add(i);
 
-      Assert.AreEqual(list.Count, max, "Count of the list unexpected");
+      AssertEx.Equal(list.Count, max, "Count of the list unexpected");
 
       for (int i = 0; i < max; ++i)
-        Assert.AreEqual(i, list[i], string.Format("items unequal at index {0}", i));
+        AssertEx.Equal(i, list[i], string.Format("items unequal at index {0}", i));
     }
 
     /// <summary>
     /// Tests the creation of the partial view after the main list was created and already filled with values.
     /// </summary>
-    [Test]
+    [Fact]
     public void TestPartialViewDelayed()
     {
       const int max = 10;
       var list = new PartitionableList<int>();
       for (int i = 0; i < max; ++i)
         list.Add(i);
-      Assert.AreEqual(list.Count, max, "Count of the list unexpected");
+      AssertEx.Equal(list.Count, max, "Count of the list unexpected");
 
       var pw = list.CreatePartialView(x => x % 2 == 0);
 
-      Assert.AreEqual(pw.Count, max / 2, "Count of the partial view unexpected");
+      AssertEx.Equal(pw.Count, max / 2, "Count of the partial view unexpected");
 
       for (int i = 0; i < max / 2; ++i)
-        Assert.AreEqual(i * 2, pw[i], string.Format("items of partial view unequal at index {0}", i));
+        AssertEx.Equal(i * 2, pw[i], string.Format("items of partial view unequal at index {0}", i));
     }
 
-    [Test]
+    [Fact]
     public void TestPartitionCreation()
     {
       PartitionCreation(out var mainList, out var evenList, out var oddList);
     }
 
-    public void PartitionCreation(out IList<int> mainList, out IList<int> evenList, out IList<int> oddList)
+    private void PartitionCreation(out IList<int> mainList, out IList<int> evenList, out IList<int> oddList)
     {
       const int max = 10;
       var list = new PartitionableList<int>();
@@ -86,22 +86,22 @@ namespace AltaxoTest.Collections
       for (int i = 0; i < max; ++i)
         list.Add(i);
 
-      Assert.AreEqual(max, list.Count, "Count of the list unexpected");
+      AssertEx.Equal(max, list.Count, "Count of the list unexpected");
       for (int i = 0; i < max; ++i)
-        Assert.AreEqual(i, list[i], string.Format("items unequal at index {0}", i));
+        AssertEx.Equal(i, list[i], string.Format("items unequal at index {0}", i));
 
-      Assert.AreEqual(max / 2, evenList.Count, "Count of the even list unexpected");
-
-      for (int i = 0; i < max / 2; ++i)
-        Assert.AreEqual(i * 2, evenList[i], string.Format("items of even list unequal at index {0}", i));
-
-      Assert.AreEqual(max / 2, oddList.Count, "Count of the odd list unexpected");
+      AssertEx.Equal(max / 2, evenList.Count, "Count of the even list unexpected");
 
       for (int i = 0; i < max / 2; ++i)
-        Assert.AreEqual(i * 2 + 1, oddList[i], string.Format("items of odd list unequal at index {0}", i));
+        AssertEx.Equal(i * 2, evenList[i], string.Format("items of even list unequal at index {0}", i));
+
+      AssertEx.Equal(max / 2, oddList.Count, "Count of the odd list unexpected");
+
+      for (int i = 0; i < max / 2; ++i)
+        AssertEx.Equal(i * 2 + 1, oddList[i], string.Format("items of odd list unequal at index {0}", i));
     }
 
-    [Test]
+    [Fact]
     public void TestMainRemoval1() // Removal of the midst of the main list
     {
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 6, 7, 8, 9 };
@@ -114,7 +114,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestMainRemoval2() // Removal of the beginning of the main list
     {
       double[] r1 = new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -127,7 +127,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestMainRemoval3() // Removal of the end of the main list
     {
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -140,7 +140,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestMainRemoval4() // Removal of multiple items of the main list
     {
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 7, 8, 9 };
@@ -154,7 +154,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestPartialRemoval1() // Removal in the midst of the odd list
     {
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 6, 7, 8, 9 };
@@ -167,7 +167,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestPartialRemoval2() // Removal of the beginning of the odd list
     {
       double[] r1 = new double[] { 0, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -180,7 +180,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestPartialRemoval3() // Removal of the beginning of the even list
     {
       double[] r1 = new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -193,7 +193,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestPartialRemoval4() // Removal of the end of the odd list
     {
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -206,7 +206,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestPartialRemoval5() // Removal of the end of the even list
     {
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 9 };
@@ -219,7 +219,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestPartialRemoval6() // Complete removal of the odd list
     {
       double[] r1 = new double[] { 0, 2, 4, 6, 8 };
@@ -232,7 +232,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestPartialRemoval7() // Complete removal of the even list
     {
       double[] r1 = new double[] { 1, 3, 5, 7, 9 };
@@ -245,7 +245,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestMainInsertion1() // Insertion in the middle of the main list
     {
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 100, 5, 6, 7, 8, 9 };
@@ -258,7 +258,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestMainInsertion2() // Insertion at the beginning of the main list
     {
       double[] r1 = new double[] { 100, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -271,7 +271,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestMainInsertion3() // Insertion at the end of the main list
     {
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 100 };
@@ -284,7 +284,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestPartialInsertion1() // Insertion in the middle of the even list
     {
       double[] r1 = new double[] { 0, 1, 2, 3, 100, 4, 5, 6, 7, 8, 9 };
@@ -297,7 +297,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestPartialInsertion2() // Insertion at the beginning of the even list
     {
       double[] r1 = new double[] { 100, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -310,7 +310,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestPartialInsertion3() // Insertion at the end of the even list
     {
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 100, 9 };
@@ -323,7 +323,7 @@ namespace AltaxoTest.Collections
       CompareLists(r1, mainList, r2, evenList, r3, oddList);
     }
 
-    [Test]
+    [Fact]
     public void TestPartialInsertion4() // Insertion of an odd item in the even list should cause an exception
     {
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -334,7 +334,7 @@ namespace AltaxoTest.Collections
       try
       {
         evenList.Insert(2, 5);
-        Assert.Fail("Insertion of an odd item in the even list should cause an exception");
+        Assert.True(false, "Insertion of an odd item in the even list should cause an exception");
       }
       catch (Exception)
       {
@@ -345,17 +345,17 @@ namespace AltaxoTest.Collections
 
     private static void CompareLists(double[] r1, IList<int> mainList, double[] r2, IList<int> evenList, double[] r3, IList<int> oddList)
     {
-      Assert.AreEqual(r1.Length, mainList.Count, "Count of main list unexpected");
+      AssertEx.Equal(r1.Length, mainList.Count, "Count of main list unexpected");
       for (int i = 0; i < r1.Length; ++i)
-        Assert.AreEqual(r1[i], mainList[i], string.Format("items of main list unequal at index {0}", i));
+        AssertEx.Equal(r1[i], mainList[i], 0.0, string.Format("items of main list unequal at index {0}", i));
 
-      Assert.AreEqual(r2.Length, evenList.Count, "Count of even list unexpected");
+      AssertEx.Equal(r2.Length, evenList.Count, 0.0, "Count of even list unexpected");
       for (int i = 0; i < r2.Length; ++i)
-        Assert.AreEqual(r2[i], evenList[i], string.Format("items of even list unequal at index {0}", i));
+        AssertEx.Equal(r2[i], evenList[i], 0.0, string.Format("items of even list unequal at index {0}", i));
 
-      Assert.AreEqual(r3.Length, oddList.Count, "Count of odd list unexpected");
+      AssertEx.Equal(r3.Length, oddList.Count, 0.0, "Count of odd list unexpected");
       for (int i = 0; i < r3.Length; ++i)
-        Assert.AreEqual(r3[i], oddList[i], string.Format("items of odd list unequal at index {0}", i));
+        AssertEx.Equal(r3[i], oddList[i], 0.0, string.Format("items of odd list unequal at index {0}", i));
     }
 
     #region Mixing of different types
@@ -364,7 +364,7 @@ namespace AltaxoTest.Collections
 
     private class Bloo : Foo { }
 
-    [Test]
+    [Fact]
     public void TestAddDerivedType1()
     {
       var list = new PartitionableList<Foo>();
@@ -372,39 +372,39 @@ namespace AltaxoTest.Collections
 
       part.Add(new Bloo());
 
-      Assert.AreEqual(1, list.Count);
-      Assert.AreEqual(1, part.Count);
+      Assert.Single(list);
+      Assert.Equal(1, part.Count);
     }
 
-    [Test]
+    [Fact]
     public void TestSet1()
     {
       var list = new PartitionableList<int>();
       var part = list.CreatePartialView(x => 0 == x % 2);
 
       list.Add(33);
-      Assert.AreEqual(0, part.Count);
+      Assert.Equal(0, part.Count);
 
       list[0] = 44;
-      Assert.AreEqual(1, part.Count);
-      Assert.AreEqual(44, part[0]);
+      Assert.Equal(1, part.Count);
+      Assert.Equal(44, part[0]);
     }
 
-    [Test]
+    [Fact]
     public void TestSet2()
     {
       var list = new PartitionableList<int>();
       var part = list.CreatePartialView(x => 0 == x % 2);
 
       list.Add(44);
-      Assert.AreEqual(1, part.Count);
-      Assert.AreEqual(44, part[0]);
+      Assert.Equal(1, part.Count);
+      Assert.Equal(44, part[0]);
 
       list[0] = 33;
-      Assert.AreEqual(0, part.Count);
+      Assert.Equal(0, part.Count);
     }
 
-    [Test]
+    [Fact]
     public void TestSet3()
     {
       var list = new PartitionableList<int>();
@@ -412,14 +412,14 @@ namespace AltaxoTest.Collections
 
       list.Add(64);
       list.Add(66);
-      Assert.AreEqual(2, part.Count);
+      Assert.Equal(2, part.Count);
 
       list[0] = 51;
-      Assert.AreEqual(1, part.Count);
-      Assert.AreEqual(66, part[0]);
+      Assert.Equal(1, part.Count);
+      Assert.Equal(66, part[0]);
     }
 
-    [Test]
+    [Fact]
     public void TestSet4()
     {
       var list = new PartitionableList<int>();
@@ -429,16 +429,16 @@ namespace AltaxoTest.Collections
       list.Add(42);
       list.Add(30);
 
-      Assert.AreEqual(2, part.Count);
+      Assert.Equal(2, part.Count);
 
       list[0] = 15;
-      Assert.AreEqual(3, part.Count);
-      Assert.AreEqual(15, part[0]);
-      Assert.AreEqual(42, part[1]);
-      Assert.AreEqual(30, part[2]);
+      Assert.Equal(3, part.Count);
+      Assert.Equal(15, part[0]);
+      Assert.Equal(42, part[1]);
+      Assert.Equal(30, part[2]);
     }
 
-    [Test]
+    [Fact]
     public void TestMove1()
     {
       var list = new PartitionableList<int>();
@@ -449,14 +449,14 @@ namespace AltaxoTest.Collections
       list.Add(46);
       list.Add(49);
 
-      Assert.AreEqual(1, part.Count);
+      Assert.Equal(1, part.Count);
 
       list.Move(0, 2);
-      Assert.AreEqual(1, part.Count);
-      Assert.AreEqual(46, part[0]);
+      Assert.Equal(1, part.Count);
+      Assert.Equal(46, part[0]);
     }
 
-    [Test]
+    [Fact]
     public void TestMove2()
     {
       var list = new PartitionableList<int>();
@@ -466,13 +466,13 @@ namespace AltaxoTest.Collections
       list.Add(74);
       list.Add(84);
 
-      Assert.AreEqual(3, part.Count);
+      Assert.Equal(3, part.Count);
 
       list.Move(1, 2);
-      Assert.AreEqual(3, part.Count);
-      Assert.AreEqual(24, part[0]);
-      Assert.AreEqual(84, part[1]);
-      Assert.AreEqual(74, part[2]);
+      Assert.Equal(3, part.Count);
+      Assert.Equal(24, part[0]);
+      Assert.Equal(84, part[1]);
+      Assert.Equal(74, part[2]);
     }
 
     #endregion Mixing of different types
@@ -544,7 +544,7 @@ namespace AltaxoTest.Collections
       return 0 != (i % 3);
     }
 
-    [Test]
+    [Fact]
     public void TestRandomActions1()
     {
       var actionGenerator = new ActionGenerator();
@@ -579,7 +579,7 @@ namespace AltaxoTest.Collections
         {
           case ListAction.Clear:
             list.Clear();
-            Assert.AreEqual(0, list.Count);
+            Assert.Empty(list);
             break;
 
           case ListAction.RemoveAt:
@@ -589,7 +589,7 @@ namespace AltaxoTest.Collections
               idx = rndIndex.Next(list.Count);
               oldItem = list[idx];
               list.RemoveAt(idx);
-              Assert.AreEqual(oldCount - 1, list.Count);
+              Assert.Equal(oldCount - 1, list.Count);
             }
             break;
 
@@ -597,8 +597,8 @@ namespace AltaxoTest.Collections
             {
               var oldCount = list.Count;
               list.Add(newNumber = rndNewNumber.Next(100));
-              Assert.AreEqual(oldCount + 1, list.Count);
-              Assert.AreEqual(newNumber, list[list.Count - 1]);
+              Assert.Equal(oldCount + 1, list.Count);
+              Assert.Equal(newNumber, list[list.Count - 1]);
             }
             break;
 
@@ -607,8 +607,8 @@ namespace AltaxoTest.Collections
               var oldCount = list.Count;
               idx = rndIndex.Next(list.Count + 1);
               list.Insert(idx, newNumber = rndNewNumber.Next(100));
-              Assert.AreEqual(oldCount + 1, list.Count);
-              Assert.AreEqual(newNumber, list[idx]);
+              Assert.Equal(oldCount + 1, list.Count);
+              Assert.Equal(newNumber, list[idx]);
             }
             break;
 
@@ -619,8 +619,8 @@ namespace AltaxoTest.Collections
               idx = rndIndex.Next(list.Count);
               oldItem = list[idx];
               list[idx] = (newNumber = rndNewNumber.Next(100));
-              Assert.AreEqual(oldCount, list.Count);
-              Assert.AreEqual(newNumber, list[idx]);
+              Assert.Equal(oldCount, list.Count);
+              Assert.Equal(newNumber, list[idx]);
             }
             break;
 
@@ -632,8 +632,8 @@ namespace AltaxoTest.Collections
               idx2 = rndIndex.Next(list.Count);
               oldItem = list[idx];
               list.Move(idx, idx2);
-              Assert.AreEqual(oldCount, list.Count);
-              Assert.AreEqual(oldItem, list[idx2]);
+              Assert.Equal(oldCount, list.Count);
+              Assert.Equal(oldItem, list[idx2]);
             }
             break;
 
@@ -658,9 +658,9 @@ namespace AltaxoTest.Collections
         {
         }
 
-        Assert.IsTrue(succ1);
-        Assert.IsTrue(succ2);
-        Assert.IsTrue(succ3);
+        Assert.True(succ1);
+        Assert.True(succ2);
+        Assert.True(succ3);
       }
 
       double averageListCount = accumulatedListCount / numberOfActionsTested;
@@ -668,7 +668,7 @@ namespace AltaxoTest.Collections
       watch.Stop();
     }
 
-    [Test]
+    [Fact]
     public void TestRandomActions2()
     {
       var actionGenerator = new ActionGenerator();
@@ -701,7 +701,7 @@ namespace AltaxoTest.Collections
         {
           case ListAction.Clear:
             part1.Clear();
-            Assert.AreEqual(0, part1.Count);
+            Assert.Equal(0, part1.Count);
 
             idx = rndIndex.Next(5);
             if (idx == 0)
@@ -721,7 +721,7 @@ namespace AltaxoTest.Collections
               idx = rndIndex.Next(part1.Count);
               oldItem = part1[idx];
               part1.RemoveAt(idx);
-              Assert.AreEqual(oldCount - 1, part1.Count);
+              Assert.Equal(oldCount - 1, part1.Count);
             }
             break;
 
@@ -729,8 +729,8 @@ namespace AltaxoTest.Collections
             {
               var oldCount = part1.Count;
               part1.Add(newNumber = 3 * rndNewNumber.Next(100));
-              Assert.AreEqual(oldCount + 1, part1.Count);
-              Assert.AreEqual(newNumber, part1[part1.Count - 1]);
+              Assert.Equal(oldCount + 1, part1.Count);
+              Assert.Equal(newNumber, part1[part1.Count - 1]);
             }
             break;
 
@@ -739,8 +739,8 @@ namespace AltaxoTest.Collections
               var oldCount = part1.Count;
               idx = rndIndex.Next(part1.Count + 1);
               part1.Insert(idx, newNumber = 3 * rndNewNumber.Next(100));
-              Assert.AreEqual(oldCount + 1, part1.Count);
-              Assert.AreEqual(newNumber, part1[idx]);
+              Assert.Equal(oldCount + 1, part1.Count);
+              Assert.Equal(newNumber, part1[idx]);
             }
             break;
 
@@ -750,8 +750,8 @@ namespace AltaxoTest.Collections
               var oldCount = part1.Count;
               idx = rndIndex.Next(part1.Count);
               part1[idx] = (newNumber = 3 * rndNewNumber.Next(100));
-              Assert.AreEqual(oldCount, part1.Count);
-              Assert.AreEqual(newNumber, part1[idx]);
+              Assert.Equal(oldCount, part1.Count);
+              Assert.Equal(newNumber, part1[idx]);
             }
             break;
 
@@ -763,8 +763,8 @@ namespace AltaxoTest.Collections
               idx2 = rndIndex.Next(part1.Count);
               oldItem = part1[idx];
               part1.Move(idx, idx2);
-              Assert.AreEqual(oldCount, part1.Count);
-              Assert.AreEqual(oldItem, part1[idx2]);
+              Assert.Equal(oldCount, part1.Count);
+              Assert.Equal(oldItem, part1[idx2]);
             }
             break;
 
@@ -789,9 +789,9 @@ namespace AltaxoTest.Collections
         {
         }
 
-        Assert.IsTrue(succ1);
-        Assert.IsTrue(succ2);
-        Assert.IsTrue(succ3);
+        Assert.True(succ1);
+        Assert.True(succ2);
+        Assert.True(succ3);
       }
 
       double averageListCount = accumulatedListCount / numberOfActionsTested;

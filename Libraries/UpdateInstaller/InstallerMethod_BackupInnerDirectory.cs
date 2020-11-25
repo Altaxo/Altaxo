@@ -28,7 +28,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using ICSharpCode.SharpZipLib.Zip;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -38,26 +37,13 @@ namespace Altaxo.Serialization.AutoUpdates
   /// </summary>
   public class InstallerMethod_BackupInnerDirectory : InstallerMethodBase, IUpdateInstaller
   {
-    /// <summary>Full name of the zip file that contains the update files.</summary>
-    private string _packageName;
-
-    /// <summary>Full name of the Altaxo executable that should be updated.</summary>
-    private string _altaxoExecutableFullName;
-
     /// <summary>Initializes a new instance of the <see cref="Downloader"/> class.</summary>
     /// <param name="loadUnstable">If set to <c>true</c>, the <see cref="Downloader"/> take a look for the latest unstable version. If set to <c>false</c>, it
     /// looks for the latest stable version.</param>
     /// <param name="currentProgramVersion">The version of the currently installed Altaxo program.</param>
     public InstallerMethod_BackupInnerDirectory(string eventName, string packageFullFileName, string altaxoExecutableFullFileName)
+     : base(eventName, packageFullFileName, altaxoExecutableFullFileName)
     {
-      _eventName = eventName;
-      _packageName = packageFullFileName;
-      _altaxoExecutableFullName = altaxoExecutableFullFileName;
-
-      _pathToInstallation = Path.GetDirectoryName(_altaxoExecutableFullName);
-      if (!Path.IsPathRooted(_pathToInstallation))
-        throw new ArgumentException("Path to Altaxo executable is not an absolute path!");
-
       string subDirAltaxoShouldResideIn = "" + Path.DirectorySeparatorChar + "bin";
       if (_pathToInstallation.ToLowerInvariant().EndsWith(subDirAltaxoShouldResideIn))
       {
@@ -82,7 +68,7 @@ namespace Altaxo.Serialization.AutoUpdates
       // ----------------------------------------------------------------------------------------------------------------------
 
       var updateLockFileName = Path.Combine(_pathToInstallation, UpdateLockFileName);
-      FileStream updateLockFile = null;
+      FileStream? updateLockFile = null;
       try
       {
         updateLockFile = new FileStream(updateLockFileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
@@ -121,7 +107,7 @@ namespace Altaxo.Serialization.AutoUpdates
         {
           var file = allFilesHash.First();
           var newFileName = GetFileNameForNewDirectory(temporaryAppDataDirectory, _pathToInstallation, file.FullName);
-          var newPath = Path.GetDirectoryName(newFileName);
+          var newPath = Path.GetDirectoryName(newFileName) ?? throw new ArgumentException($"Can not get base directory of file: {newFileName}"); ;
 
           try
           {

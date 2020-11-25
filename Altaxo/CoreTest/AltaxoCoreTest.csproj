@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
+    <TargetFrameworks>net48;net5.0</TargetFrameworks>
+    <LangVersion>preview</LangVersion>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
@@ -11,15 +11,24 @@
   
   <ItemGroup>
     <ProjectReference Include="..\Core\AltaxoCore.csproj" />
+    <ProjectReference Include="..\..\Analyzer\NullComparisonAnalyzer\NullComparisonAnalyzer.csproj"
+                  PrivateAssets="all"
+                  ReferenceOutputAssembly="false"
+                  OutputItemType="Analyzer"
+                      />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NUnit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1">
-      <PrivateAssets>all</PrivateAssets>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+    <PackageReference Include="coverlet.collector" Version="1.3.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />

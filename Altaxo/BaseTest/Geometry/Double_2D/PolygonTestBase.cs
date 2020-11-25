@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Geometry.Double_2D
 {
@@ -42,15 +42,15 @@ namespace Altaxo.Geometry.Double_2D
     public void IncludenessTest(IReadOnlyList<PointD2DAnnotated> hull, IReadOnlyList<PointD2DAnnotated> allPoints)
     {
 
-      Assert.IsNotNull(hull);        // convex hull has to be != null
-      Assert.GreaterOrEqual(hull.Count, 3); // at least 3 points form the convex hull
+      Assert.NotNull(hull);        // convex hull has to be != null
+      Assert.True(hull.Count >= 3); // at least 3 points form the convex hull
 
 
       // Test that the convex hull does not contain doubled points
       var hash = new HashSet<(int, int)>();
       for (var i = 0; i < hull.Count; ++i)
       {
-        Assert.IsFalse(hash.Contains(((int)hull[i].X, (int)hull[i].Y)));
+        Assert.DoesNotContain(((int)hull[i].X, (int)hull[i].Y), hash);
         hash.Add(((int)hull[i].X, (int)hull[i].Y));
       }
 
@@ -59,19 +59,19 @@ namespace Altaxo.Geometry.Double_2D
       var clipperPoly = new List<ClipperLib.IntPoint>(hull.Select(dp => new ClipperLib.IntPoint(dp.X, dp.Y)));
 
       // The area should be != 0
-      Assert.Greater(Math.Abs(ClipperLib.Clipper.Area(clipperPoly)), 0); // Area should be != 0
+      Assert.True(Math.Abs(ClipperLib.Clipper.Area(clipperPoly)) > 0); // Area should be != 0
       //Assert.Greater(ClipperLib.Clipper.Area(clipperPoly), 0); // Polygon should be positive oriented
 
       // The polygon should be simple
       var clipperPolys = ClipperLib.Clipper.SimplifyPolygon(clipperPoly);
-      Assert.AreEqual(1, clipperPolys.Count); // if polygon is simple, it can not be transformed into two or more polygons
-      Assert.LessOrEqual(clipperPolys[0].Count, clipperPoly.Count); // the resulting polygon should have the same number of points than the original one
+      Assert.Single(clipperPolys); // if polygon is simple, it can not be transformed into two or more polygons
+      Assert.True(clipperPolys[0].Count <= clipperPoly.Count); // the resulting polygon should have the same number of points than the original one
 
 
       // Test whether all points are on the hull or inside the hull
       for (var i = 0; i < allPoints.Count; ++i)
       {
-        Assert.AreNotEqual(0, ClipperLib.Clipper.PointInPolygon(new ClipperLib.IntPoint(allPoints[i].X, allPoints[i].Y), clipperPoly));
+        Assert.NotEqual(0, ClipperLib.Clipper.PointInPolygon(new ClipperLib.IntPoint(allPoints[i].X, allPoints[i].Y), clipperPoly));
       }
     }
   }

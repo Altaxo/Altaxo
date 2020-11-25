@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,7 +73,7 @@ namespace Altaxo.Gui.Common.Drawing
       dpd.AddValueChanged(this, EhTextChanged);
     }
 
-    protected virtual void EhTextChanged(object sender, EventArgs e)
+    protected virtual void EhTextChanged(object? sender, EventArgs e)
     {
       SetImageFromContent();
     }
@@ -81,7 +82,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       base.OnRenderSizeChanged(sizeInfo);
 
-      if (null == _img.Parent)
+      if (_img.Parent is null)
       {
         ImplantImage(sizeInfo.NewSize.Height * _relativeImageWidth, sizeInfo.NewSize.Height);
         SetImageFromContent();

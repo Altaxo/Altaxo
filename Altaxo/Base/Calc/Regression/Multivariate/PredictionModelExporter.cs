@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
@@ -36,50 +38,46 @@ namespace Altaxo.Calc.Regression.Multivariate
   {
     private Altaxo.Data.DataTable _table;
     private MultivariateContentMemento _memento;
-
-    // IMultivariateCalibrationModel _calibrationModel;
-    private System.Xml.XmlWriter _writer;
-
     private int _numberOfFactors;
     private int _numberOfX;
     private int _numberOfY;
 
     public PredictionModelExporter(Altaxo.Data.DataTable table, int numberOfFactors)
     {
-      _table = table;
-      _memento = table.GetTableProperty("Content") as MultivariateContentMemento;
+      _table = table ?? throw new ArgumentNullException(nameof(table));
+      _memento = (table.GetTableProperty("Content") as MultivariateContentMemento) ?? throw new InvalidOperationException($"Data table {table.Name} does not contain a multivariate model.");
       _numberOfFactors = numberOfFactors;
     }
 
     public void Export(string filename)
     {
-      _writer = new System.Xml.XmlTextWriter(filename, System.Text.Encoding.UTF8);
-      _writer.WriteStartDocument();
-      _writer.WriteStartElement("LinearPredictionModel");
+      var writer = new System.Xml.XmlTextWriter(filename, System.Text.Encoding.UTF8);
+      writer.WriteStartDocument();
+      writer.WriteStartElement("LinearPredictionModel");
 
-      WriteProperties();
-      WriteSpectralPreprocessing();
-      WriteLinearPredictionData();
+      WriteProperties(writer);
+      WriteSpectralPreprocessing(writer);
+      WriteLinearPredictionData(writer);
 
-      _writer.WriteEndElement(); // PLSCalibrationModel
-      _writer.WriteEndDocument();
+      writer.WriteEndElement(); // PLSCalibrationModel
+      writer.WriteEndDocument();
 
-      _writer.Close();
+      writer.Close();
     }
 
-    private void WriteProperties()
+    private void WriteProperties(System.Xml.XmlWriter writer)
     {
-      _writer.WriteStartElement("Properties");
+      writer.WriteStartElement("Properties");
 
       _numberOfX = GetNumberOfX(_table);
       _numberOfY = GetNumberOfY(_table);
       _numberOfFactors = Math.Min(_numberOfFactors, _memento.NumberOfFactors);
 
-      _writer.WriteElementString("NumberOfX", System.Xml.XmlConvert.ToString(_numberOfX));
-      _writer.WriteElementString("NumberOfY", System.Xml.XmlConvert.ToString(_numberOfY));
-      _writer.WriteElementString("NumberOfFactors", System.Xml.XmlConvert.ToString(_numberOfFactors));
+      writer.WriteElementString("NumberOfX", System.Xml.XmlConvert.ToString(_numberOfX));
+      writer.WriteElementString("NumberOfY", System.Xml.XmlConvert.ToString(_numberOfY));
+      writer.WriteElementString("NumberOfFactors", System.Xml.XmlConvert.ToString(_numberOfFactors));
 
-      _writer.WriteEndElement(); // Properties
+      writer.WriteEndElement(); // Properties
     }
 
     private int GetNumberOfX(Altaxo.Data.DataTable table)
@@ -92,81 +90,81 @@ namespace Altaxo.Calc.Regression.Multivariate
       return _memento.NumberOfConcentrationData;
     }
 
-    private void WriteSpectralPreprocessing()
+    private void WriteSpectralPreprocessing(System.Xml.XmlWriter writer)
     {
-      _writer.WriteStartElement("SpectralPreprocessing");
+      writer.WriteStartElement("SpectralPreprocessing");
 
-      _memento.SpectralPreprocessing.Export(_writer);
+      _memento.SpectralPreprocessing.Export(writer);
 
-      _writer.WriteEndElement();
+      writer.WriteEndElement();
     }
 
-    private void WriteLinearPredictionData()
+    private void WriteLinearPredictionData(System.Xml.XmlWriter writer)
     {
-      _writer.WriteStartElement("Data");
+      writer.WriteStartElement("Data");
 
-      WriteBasicXData(true);
-      WriteBasicYData(true);
-      WritePredictionScores();
+      WriteBasicXData(writer, true);
+      WriteBasicYData(writer, true);
+      WritePredictionScores(writer);
 
-      _writer.WriteEndElement(); // Data
+      writer.WriteEndElement(); // Data
     }
 
-    private void WriteBasicXData(bool bWriteEndElement)
+    private void WriteBasicXData(System.Xml.XmlWriter writer, bool bWriteEndElement)
     {
-      Altaxo.Data.DoubleColumn col = null;
+      Altaxo.Data.DoubleColumn? col = null;
       string colname;
 
-      _writer.WriteStartElement("XData");
+      writer.WriteStartElement("XData");
 
       colname = WorksheetAnalysis.GetXOfX_ColumnName();
       col = _table.DataColumns.TryGetColumn(colname) as Altaxo.Data.DoubleColumn;
-      if (null == col)
+      if (col is null)
         NotFound(colname);
-      WriteVector("XOfX", col, _numberOfX);
+      WriteVector(writer, "XOfX", col, _numberOfX);
 
       colname = WorksheetAnalysis.GetXMean_ColumnName();
       col = _table.DataColumns.TryGetColumn(colname) as Altaxo.Data.DoubleColumn;
-      if (null == col)
+      if (col is null)
         NotFound(colname);
-      WriteVector("XMean", col, _numberOfX);
+      WriteVector(writer, "XMean", col, _numberOfX);
 
       colname = WorksheetAnalysis.GetXScale_ColumnName();
       col = _table.DataColumns.TryGetColumn(colname) as Altaxo.Data.DoubleColumn;
-      if (null == col)
+      if (col is null)
         NotFound(colname);
-      WriteVector("XScale", col, _numberOfX);
+      WriteVector(writer, "XScale", col, _numberOfX);
 
       if (bWriteEndElement)
-        _writer.WriteEndElement(); // XData
+        writer.WriteEndElement(); // XData
     }
 
-    private void WriteBasicYData(bool bWriteEndElement)
+    private void WriteBasicYData(System.Xml.XmlWriter writer, bool bWriteEndElement)
     {
-      Altaxo.Data.DoubleColumn col = null;
+      Altaxo.Data.DoubleColumn? col = null;
       string colname;
 
-      _writer.WriteStartElement("YData");
+      writer.WriteStartElement("YData");
 
       colname = WorksheetAnalysis.GetYMean_ColumnName();
       col = _table.DataColumns.TryGetColumn(colname) as Altaxo.Data.DoubleColumn;
-      if (null == col)
+      if (col is null)
         NotFound(colname);
-      WriteVector("YMean", col, _numberOfY);
+      WriteVector(writer, "YMean", col, _numberOfY);
 
       colname = WorksheetAnalysis.GetYScale_ColumnName();
       col = _table.DataColumns.TryGetColumn(colname) as Altaxo.Data.DoubleColumn;
-      if (null == col)
+      if (col is null)
         NotFound(colname);
-      WriteVector("YScale", col, _numberOfY);
+      WriteVector(writer, "YScale", col, _numberOfY);
 
       if (bWriteEndElement)
-        _writer.WriteEndElement(); // YData
+        writer.WriteEndElement(); // YData
     }
 
-    private void WritePredictionScores()
+    private void WritePredictionScores(System.Xml.XmlWriter writer)
     {
-      _writer.WriteStartElement("PredictionScores");
+      writer.WriteStartElement("PredictionScores");
 
       var predictionScores = _memento.Analysis.CalculatePredictionScores(
         _table,
@@ -174,35 +172,36 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       for (int i = 0; i < _numberOfY; i++)
       {
-        WriteVector("Score" + i.ToString(), MatrixMath.ColumnToROVector(predictionScores, i), _numberOfX);
+        WriteVector(writer, "Score" + i.ToString(), MatrixMath.ColumnToROVector(predictionScores, i), _numberOfX);
       }
-      _writer.WriteEndElement();
+      writer.WriteEndElement();
     }
 
-    private void WriteVector(string name, Altaxo.Data.DoubleColumn col, int numberOfData)
+    private void WriteVector(System.Xml.XmlWriter writer, string name, Altaxo.Data.DoubleColumn col, int numberOfData)
     {
-      _writer.WriteStartElement(name);
+      writer.WriteStartElement(name);
 
       for (int i = 0; i < numberOfData; i++)
       {
-        _writer.WriteElementString("e", System.Xml.XmlConvert.ToString(col[i]));
+        writer.WriteElementString("e", System.Xml.XmlConvert.ToString(col[i]));
       }
 
-      _writer.WriteEndElement(); // name
+      writer.WriteEndElement(); // name
     }
 
-    private void WriteVector(string name, IReadOnlyList<double> col, int numberOfData)
+    private void WriteVector(System.Xml.XmlWriter writer, string name, IReadOnlyList<double> col, int numberOfData)
     {
-      _writer.WriteStartElement(name);
+      writer.WriteStartElement(name);
 
       for (int i = 0; i < numberOfData; i++)
       {
-        _writer.WriteElementString("e", System.Xml.XmlConvert.ToString(col[i]));
+        writer.WriteElementString("e", System.Xml.XmlConvert.ToString(col[i]));
       }
 
-      _writer.WriteEndElement(); // name
+      writer.WriteEndElement(); // name
     }
 
+    [DoesNotReturn]
     private static void NotFound(string name)
     {
       throw new ArgumentException("Column " + name + " not found in the table.");

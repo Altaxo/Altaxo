@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,12 +40,12 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class EntireTableQueryControl : UserControl, IEntireTableQueryView
   {
-    public event Action ViewResults;
+    public event Action? ViewResults;
 
     /// <summary>
     /// Occurs when the selected tree node of the schema tree changed.
     /// </summary>
-    public event Action SelectedSchemaNodeChanged;
+    public event Action? SelectedSchemaNodeChanged;
 
     public EntireTableQueryControl()
     {
@@ -54,7 +55,7 @@ namespace Altaxo.Gui.DataConnection
     private void EhViewResults_Click(object sender, RoutedEventArgs e)
     {
       var ev = ViewResults;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }
@@ -63,21 +64,21 @@ namespace Altaxo.Gui.DataConnection
     private void _treeTables_DoubleClick(object sender, MouseButtonEventArgs e)
     {
       var ev = ViewResults;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
     private void EhTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
       var ev = SelectedSchemaNodeChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
     private void EhTreeViewItem_PreviewRightButtonDown(object sender, MouseButtonEventArgs e)
     {
       var twi = sender as TreeViewItem;
-      if (null != twi)
+      if (twi is not null)
         twi.IsSelected = true;
     }
 
@@ -87,7 +88,7 @@ namespace Altaxo.Gui.DataConnection
     {
       get
       {
-        if (null == _treeImageConverter)
+        if (_treeImageConverter is null)
         {
           _treeImageConverter = new IndexToImageConverter(
               new string[]{

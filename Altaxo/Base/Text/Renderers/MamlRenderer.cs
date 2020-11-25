@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -115,7 +116,7 @@ namespace Altaxo.Text.Renderers
     /// <summary>
     /// The parsed markdown file.
     /// </summary>
-    private MarkdownDocument _markdownDocument;
+    private MarkdownDocument? _markdownDocument;
 
     /// <summary>
     /// Helper to calculate MD5 hashes.
@@ -234,7 +235,7 @@ namespace Altaxo.Text.Renderers
       BodyTextFontSize = bodyTextFontSize;
       IsIntendedForHelp1File = isIntendedForHelp1File;
 
-      BasePathName = Path.GetDirectoryName(ProjectOrContentFileName);
+      BasePathName = Path.GetDirectoryName(ProjectOrContentFileName) ?? throw new InvalidOperationException($"Can not get directory name of file name {ProjectOrContentFileName}");
 
       // Find a base name for the aml files
       if (Path.GetExtension(ProjectOrContentFileName).ToLowerInvariant() == ".aml")
@@ -285,8 +286,11 @@ namespace Altaxo.Text.Renderers
 
     }
 
-    public (string fileGuid, string address) FindFragmentLink(string url)
+    public (string? fileGuid, string? address) FindFragmentLink(string url)
     {
+      if (_markdownDocument is null)
+        throw new InvalidOperationException("No markdown document yet present. Please parse it before!");
+
       if (url.StartsWith("#"))
         url = url.Substring(1);
 
@@ -296,7 +300,7 @@ namespace Altaxo.Text.Renderers
       foreach (var mdo in MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(_markdownDocument))
       {
         var attr = (Markdig.Renderers.Html.HtmlAttributes)mdo.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-        if (null != attr && attr.Id == url)
+        if (attr is not null && attr.Id == url)
         {
           // markdown element found, now we need to know in which file it is
           var prevFile = _amlFileList.First();
@@ -314,11 +318,11 @@ namespace Altaxo.Text.Renderers
       return (null, null);
     }
 
-    public override object Render(MarkdownObject markdownObject)
+    public override object? Render(MarkdownObject markdownObject)
     {
-      object result = null;
+      object? result = null;
 
-      if (null == markdownObject)
+      if (markdownObject is null)
         throw new ArgumentNullException(nameof(markdownObject));
 
       if (markdownObject is MarkdownDocument markdownDocument)
@@ -355,7 +359,7 @@ namespace Altaxo.Text.Renderers
       Push(mamlElement, null);
     }
 
-    public void Push(Maml.MamlElement mamlElement, IEnumerable<KeyValuePair<string, string>> attributes)
+    public void Push(Maml.MamlElement mamlElement, IEnumerable<KeyValuePair<string, string>>? attributes)
     {
       _currentElementStack.Add(mamlElement);
 
@@ -365,7 +369,7 @@ namespace Altaxo.Text.Renderers
       Write("<");
       Write(mamlElement.Name);
 
-      if (null != attributes)
+      if (attributes is not null)
       {
         foreach (var att in attributes)
         {
@@ -409,7 +413,7 @@ namespace Altaxo.Text.Renderers
 
     public void PopTo(Maml.MamlElement mamlElement)
     {
-      Maml.MamlElement ele = null;
+      Maml.MamlElement? ele = null;
       while (_currentElementStack.Count > 0)
       {
         ele = Pop();
@@ -561,10 +565,10 @@ namespace Altaxo.Text.Renderers
     /// <returns>This instance</returns>
     public void WriteLeafRawLines(LeafBlock leafBlock, bool writeEndOfLines, bool escape, bool softEscape = false)
     {
-      if (leafBlock == null)
+      if (leafBlock is null)
         throw new ArgumentNullException(nameof(leafBlock));
 
-      if (leafBlock.Lines.Lines != null)
+      if (leafBlock.Lines.Lines is not null)
       {
         var lines = leafBlock.Lines;
         var slices = lines.Lines;
@@ -594,7 +598,7 @@ namespace Altaxo.Text.Renderers
     {
       var result = string.Empty;
 
-      if (null == leafBlock.Inline)
+      if (leafBlock.Inline is null)
         return result;
 
       foreach (var il in leafBlock.Inline)

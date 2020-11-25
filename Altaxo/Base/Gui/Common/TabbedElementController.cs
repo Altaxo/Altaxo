@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Main;
@@ -95,7 +96,7 @@ namespace Altaxo.Gui.Common
   public class TabbedElementController : ITabbedElementViewEventSink, ITabbedElementController
   {
     protected int _frontTabIndex = 0;
-    private ITabbedElementView _view;
+    private ITabbedElementView? _view;
     private List<ControlViewElement> _tabs = new List<ControlViewElement>();
 
     /// <summary>
@@ -122,7 +123,7 @@ namespace Altaxo.Gui.Common
     public void BringTabToFront(int i)
     {
       _frontTabIndex = i;
-      if (_view != null)
+      if (_view is not null)
         _view.BringTabToFront(i);
     }
 
@@ -137,33 +138,33 @@ namespace Altaxo.Gui.Common
       SetElements(false);
     }
 
-    private object _lastActiveChildControl = null;
+    private object? _lastActiveChildControl = null;
 
-    private void EhView_ChildControlEntered(object sender, EventArgs e)
+    private void EhView_ChildControlEntered(object? sender, EventArgs e)
     {
       EhView_ActiveChildControlChanged(sender, new InstanceChangedEventArgs(_lastActiveChildControl, sender));
       _lastActiveChildControl = sender;
     }
 
-    private void EhView_ChildControlValidated(object sender, EventArgs e)
+    private void EhView_ChildControlValidated(object? sender, EventArgs e)
     {
       EhView_ActiveChildControlChanged(sender, new InstanceChangedEventArgs(sender, null));
       _lastActiveChildControl = null;
     }
 
-    protected virtual void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs e)
+    protected virtual void EhView_ActiveChildControlChanged(object? sender, InstanceChangedEventArgs e)
     {
     }
 
     /// <summary>
     /// Get / sets the view of this controller.
     /// </summary>
-    public ITabbedElementView View
+    public ITabbedElementView? View
     {
       get { return _view; }
       set
       {
-        if (_view != null)
+        if (_view is not null)
         {
           _view.ChildControl_Entered -= EhView_ChildControlEntered;
           _view.ChildControl_Validated -= EhView_ChildControlValidated;
@@ -173,7 +174,7 @@ namespace Altaxo.Gui.Common
 
         SetElements(false);
 
-        if (_view != null)
+        if (_view is not null)
         {
           _view.ChildControl_Entered += EhView_ChildControlEntered;
           _view.ChildControl_Validated += EhView_ChildControlValidated;
@@ -181,7 +182,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {
@@ -195,7 +196,7 @@ namespace Altaxo.Gui.Common
 
     protected void SetElements(bool bInit)
     {
-      if (null != View)
+      if (View is not null)
       {
         View.ClearTabs();
         for (int i = 0; i < _tabs.Count; i++)

@@ -22,10 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#nullable enable
 
 namespace Altaxo.Data
 {
@@ -60,17 +57,17 @@ namespace Altaxo.Data
         _table = table;
       }
 
-      public override string Validate(string wksname)
+      public override string? Validate(string wksname)
       {
-        string err = base.Validate(wksname);
-        if (null != err)
+        string? err = base.Validate(wksname);
+        if (err is not null)
           return err;
 
         if (_table.Name == wksname)
           return null;
-        else if (Data.DataTableCollection.GetParentDataTableCollectionOf(_table) == null)
+        else if (!(Data.DataTableCollection.GetParentDataTableCollectionOf(_table) is { } parentColl))
           return null; // if there is no parent data set we can enter anything
-        else if (Data.DataTableCollection.GetParentDataTableCollectionOf(_table).ContainsAnyName(wksname))
+        else if (parentColl.ContainsAnyName(wksname))
           return "This worksheet name already exists, please choose another name!";
         else
           return null;

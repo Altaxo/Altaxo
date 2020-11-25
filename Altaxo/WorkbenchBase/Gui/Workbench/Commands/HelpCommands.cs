@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Workbench.Commands
       this.site = site;
     }
 
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
       if (site.StartsWith("home://"))
       {

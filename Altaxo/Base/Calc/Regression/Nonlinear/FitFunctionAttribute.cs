@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Calc.Regression.Nonlinear
@@ -42,7 +43,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
   {
     private string _name;
     private string _category;
-    private string _descriptionResource;
+    private string? _descriptionResource;
     private int _numberOfIndependentVariables;
     private int _numberOfDependentVariables;
     private int _numberOfParameters;
@@ -63,7 +64,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       int numIndependentVariables,
       int numDependentVariables,
       int numParameters,
-      string descriptionResource)
+      string? descriptionResource)
     {
       _name = name;
       _category = category;
@@ -89,7 +90,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
-    public string DescriptionResource
+    public string? DescriptionResource
     {
       get
       {
@@ -121,9 +122,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
-    int IComparable.CompareTo(object obj)
+    int IComparable.CompareTo(object? obj)
     {
-      var other = (FitFunctionCreatorAttribute)obj;
+      if (!(obj is FitFunctionCreatorAttribute other))
+        throw new ArgumentException();
+
       int result = _category.CompareTo(other._category);
       if (result == 0)
         result = _name.CompareTo(other._name);

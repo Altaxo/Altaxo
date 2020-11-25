@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -39,7 +40,7 @@ namespace Altaxo.Gui.Settings
     /// <summary>
     /// The child dialog panels (e.g. for treeviews)
     /// </summary>
-    IEnumerable<IOptionPanelDescriptor> ChildOptionPanelDescriptors
+    IEnumerable<IOptionPanelDescriptor>? ChildOptionPanelDescriptors
     {
       get;
     }
@@ -47,7 +48,7 @@ namespace Altaxo.Gui.Settings
     /// <value>
     /// Returns the dialog panel object
     /// </value>
-    IOptionPanel OptionPanel
+    IOptionPanel? OptionPanel
     {
       get;
     }

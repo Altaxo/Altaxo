@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Graph;
@@ -82,7 +84,7 @@ namespace Altaxo.Drawing.ColorManagement
       _allLists.Add(_builtinDarkPlotColors.Name, new ColorSetManagerEntryValue(_builtinDarkPlotColors, Main.ItemDefinitionLevel.Builtin, true));
 
       Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedColorSets, out var userColorSets);
-      if (null != userColorSets)
+      if (userColorSets is not null)
       {
         foreach (var userColorSet in userColorSets.ColorSets)
         {
@@ -119,22 +121,19 @@ namespace Altaxo.Drawing.ColorManagement
       {
         return _instance;
       }
+      [MemberNotNull(nameof(_instance))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
-        if (null != _instance)
+        if (_instance is not null)
         {
           Current.IProjectService.ProjectClosed -= _instance.EhProjectClosed;
         }
 
         _instance = value;
-
-        if (null != _instance)
-        {
-          Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
-        }
+        Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
       }
     }
 
@@ -143,7 +142,7 @@ namespace Altaxo.Drawing.ColorManagement
       return new ColorSet(name, symbols);
     }
 
-    public override IColorSet GetParentList(NamedColor item)
+    public override IColorSet? GetParentList(NamedColor item)
     {
       return item.ParentColorSet;
     }
@@ -172,7 +171,7 @@ namespace Altaxo.Drawing.ColorManagement
 
     public bool IsPlotColorSet(IColorSet colorSet)
     {
-      if (null == colorSet)
+      if (colorSet is null)
         return false;
 
       if (_allLists.TryGetValue(colorSet.Name, out var value))
@@ -183,7 +182,7 @@ namespace Altaxo.Drawing.ColorManagement
 
     public void DeclareAsPlotColorList(IColorSet colorSet)
     {
-      if (null == colorSet)
+      if (colorSet is null)
         throw new ArgumentNullException(nameof(colorSet));
       if (!_allLists.ContainsKey(colorSet.Name))
         throw new ArgumentException("Provided ColorSet is not registered in ColorSetManager", nameof(colorSet));
@@ -218,7 +217,7 @@ namespace Altaxo.Drawing.ColorManagement
 
     #region Deserialization of colors
 
-    public bool TryFindColorSetContaining(AxoColor color, out IColorSet value)
+    public bool TryFindColorSetContaining(AxoColor color, [MaybeNullWhen(false)] out IColorSet value)
     {
 
       foreach (Main.ItemDefinitionLevel level in Enum.GetValues(typeof(Main.ItemDefinitionLevel)))
@@ -240,7 +239,7 @@ namespace Altaxo.Drawing.ColorManagement
       return false;
     }
 
-    public bool TryFindColorSetContaining(AxoColor colorValue, string colorName, out IColorSet value)
+    public bool TryFindColorSetContaining(AxoColor colorValue, string colorName, [MaybeNullWhen(false)] out IColorSet value)
     {
 
       foreach (Main.ItemDefinitionLevel level in Enum.GetValues(typeof(Main.ItemDefinitionLevel)))
@@ -285,7 +284,7 @@ namespace Altaxo.Drawing.ColorManagement
 
       // first have a look in the rename dictionary - maybe our color set has been renamed during deserialization
       var renameDictionary = deserializationInfo?.GetPropertyOrDefault<Dictionary<string, string>>(DeserializationRenameDictionaryKey);
-      if (null != renameDictionary && renameDictionary.ContainsKey(colorSetName))
+      if (renameDictionary is not null && renameDictionary.ContainsKey(colorSetName))
         colorSetName = renameDictionary[colorSetName];
 
       if (_allLists.TryGetValue(colorSetName, out var foundSet)) // if a set with the give name and level was found
@@ -312,7 +311,7 @@ namespace Altaxo.Drawing.ColorManagement
 
     #region User defined color sets
 
-    protected override void OnUserDefinedListAddedChangedRemoved(IColorSet list)
+    protected override void OnUserDefinedListAddedChangedRemoved(IColorSet? list)
     {
       var colorSetBag = new ColorSetBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => new Tuple<IColorSet, bool>(entry.List, entry.IsPlotColorSet)));
       Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedColorSets, colorSetBag);

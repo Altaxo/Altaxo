@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,10 +35,10 @@ namespace Altaxo.Gui.Workbench
   {
     bool IsStatusBarVisible { set; }
     object CursorStatusBarPanelContent { set; }
-    object SelectionStatusBarPanelContent { set; }
+    object? SelectionStatusBarPanelContent { set; }
     object ModeStatusBarPanelContent { set; }
 
-    void SetMessage(string message, bool highlighted, object icon);
+    void SetMessage(string message, bool highlighted, object? icon);
 
     void HideProgress();
 

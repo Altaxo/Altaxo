@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using Altaxo.AddInItems;
 
@@ -34,7 +35,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public bool IsValid(object caller, Condition condition)
     {
-      if (Current.Workbench.ActiveViewContent == null)
+      if (Current.Workbench.ActiveViewContent is null)
       {
         return false;
       }
@@ -44,7 +45,7 @@ namespace Altaxo.Worksheet.Commands
         return false;
       }
 
-      return ctrl.DataTable?.DataSource != null;
+      return ctrl.DataTable?.DataSource is not null;
     }
   }
 }

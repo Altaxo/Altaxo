@@ -28,7 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Altaxo.Science.Thermodynamics.Fluids;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
@@ -66,14 +66,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public virtual void CASNumberAttribute_Test()
     {
       var casNumber = _fluid.CASRegistryNumber;
-      Assert.IsFalse(string.IsNullOrEmpty(casNumber));
+      Assert.False(string.IsNullOrEmpty(casNumber));
 
       var type = _fluid.GetType();
       var attr = type.GetCustomAttributes(typeof(CASRegistryNumberAttribute), false);
-      Assert.AreEqual(1, attr.Length, "Exactly one CASAttribute must be assigned");
-      Assert.IsTrue(attr[0] is CASRegistryNumberAttribute);
+      AssertEx.Equal(1, attr.Length, "Exactly one CASAttribute must be assigned");
+      Assert.True(attr[0] is CASRegistryNumberAttribute);
       var casNumberAttribute = attr[0] as CASRegistryNumberAttribute;
-      Assert.AreEqual(casNumber, casNumberAttribute.CASRegistryNumber, "The CAS registry number as returned by the instance must be equal to that stored inside the CASRegistryNumberAttribute");
+      AssertEx.Equal(casNumber, casNumberAttribute.CASRegistryNumber, "The CAS registry number as returned by the instance must be equal to that stored inside the CASRegistryNumberAttribute");
     }
 
     public virtual void SaturatedVaporPressure_TestMonotony()
@@ -84,13 +84,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       if (_fluid.TriplePointTemperature >= _fluid.LowerTemperatureLimit)
       {
         pressure = _fluid.SaturatedVaporPressureEstimate_FromTemperature(_fluid.TriplePointTemperature);
-        Assert.AreEqual(_fluid.TriplePointPressure, pressure, GetAllowedError(_fluid.TriplePointPressure, relativePressureErrorAllowed, 1e-6), "Deviation of triple point pressure of {0}", _fluid.GetType().ToString());
+        AssertEx.Equal(_fluid.TriplePointPressure, pressure, GetAllowedError(_fluid.TriplePointPressure, relativePressureErrorAllowed, 1e-6), $"Deviation of triple point pressure of {_fluid.GetType().ToString()}");
       }
 
       if (_fluid.LowerTemperatureLimit <= _fluid.CriticalPointTemperature && _fluid.CriticalPointTemperature <= _fluid.UpperTemperatureLimit)
       {
         pressure = _fluid.SaturatedVaporPressureEstimate_FromTemperature(_fluid.CriticalPointTemperature);
-        Assert.AreEqual(_fluid.CriticalPointPressure, pressure, GetAllowedError(_fluid.CriticalPointPressure, relativePressureErrorAllowed, 0), "Deviation of critical point pressure of {0}", _fluid.GetType().ToString());
+        AssertEx.Equal(_fluid.CriticalPointPressure, pressure, GetAllowedError(_fluid.CriticalPointPressure, relativePressureErrorAllowed, 0), $"Deviation of critical point pressure of {_fluid.GetType().ToString()}");
       }
 
       // now test monotony
@@ -107,7 +107,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
         if (previousTemperature < temperature - 0.1)
         {
-          Assert.Greater(pressure, previousPressure, "Monotony of saturated vapor pressure curve not given for {0}", _fluid.GetType().ToString());
+          AssertEx.Greater(pressure, previousPressure, $"Monotony of saturated vapor pressure curve not given for {_fluid.GetType().ToString()}");
         }
 
         previousTemperature = temperature;
@@ -126,11 +126,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
         if ((temperature - previousTemperature) <= temperatureStep)
         {
-          Assert.Greater(pressure, previousPressure, "Monotony of saturated vapor pressure curve not given for {0}", _fluid.GetType().ToString());
+          AssertEx.Greater(pressure, previousPressure, $"Monotony of saturated vapor pressure curve not given for {_fluid.GetType()}");
 
           var derivEstimate = (pressure - previousPressure) / (temperature - previousTemperature);
 
-          Assert.Less(GetRelativeErrorBetween(derivEstimate, pressureDerivative), 1, "Great deviation between pressure derivative and difference estimation of derivative for fluid {0}", _fluid.GetType().ToString());
+          AssertEx.Less(GetRelativeErrorBetween(derivEstimate, pressureDerivative), 1, $"Great deviation between pressure derivative and difference estimation of derivative for fluid {_fluid.GetType()}");
         }
 
         previousTemperature = temperature;
@@ -154,7 +154,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
         var temperatureCalcBack = _fluid.SaturatedVaporTemperature_FromPressure(pressure, 1E-6);
 
-        Assert.AreEqual(temperature, temperatureCalcBack, GetAllowedError(temperature, relativeTemperatureErrorAllowed, 0), "Calculation of temperature from pressure p={1} Pa failed for fluid {0}", _fluid.GetType().ToString(), pressure);
+        AssertEx.Equal(temperature, temperatureCalcBack, GetAllowedError(temperature, relativeTemperatureErrorAllowed, 0), $"Calculation of temperature from pressure p={pressure} Pa failed for fluid {_fluid.GetType()}");
       }
     }
 
@@ -173,22 +173,22 @@ namespace Altaxo.Science.Thermodynamics.Fluids
         var satLiquidMoleDensityCalc = _fluid.SaturatedLiquidMoleDensityEstimate_FromTemperature(temperature);
         var satVaporMoleDensityCalc = _fluid.SaturatedVaporMoleDensityEstimate_FromTemperature(temperature);
 
-        Assert.AreEqual(pressure, pressureCalc, GetAllowedError(pressure, 5E-2, 1e-5));
-        Assert.AreEqual(satLiquidMoleDensity, satLiquidMoleDensityCalc, GetAllowedError(satLiquidMoleDensity, 5E-2, 0));
-        Assert.AreEqual(satVaporMoleDensity, satVaporMoleDensityCalc, GetAllowedError(satVaporMoleDensity, 5E-2, 0));
+        AssertEx.Equal(pressure, pressureCalc, GetAllowedError(pressure, 5E-2, 1e-5));
+        AssertEx.Equal(satLiquidMoleDensity, satLiquidMoleDensityCalc, GetAllowedError(satLiquidMoleDensity, 5E-2, 0));
+        AssertEx.Equal(satVaporMoleDensity, satVaporMoleDensityCalc, GetAllowedError(satVaporMoleDensity, 5E-2, 0));
       }
     }
 
     public virtual void SublimationPressure_TestImplemented()
     {
-      Assert.AreEqual(_testDataIsSublimationCurveImplemented, _fluid.IsSublimationPressureCurveImplemented);
+      Assert.Equal(_testDataIsSublimationCurveImplemented, _fluid.IsSublimationPressureCurveImplemented);
     }
 
     public virtual void SublimationLineData_Test()
     {
-      if (null == _testDataSublimationLine)
+      if (_testDataSublimationLine is null)
       {
-        Assert.IsFalse(_fluid.IsSublimationPressureCurveImplemented);
+        Assert.False(_fluid.IsSublimationPressureCurveImplemented);
         return;
       }
 
@@ -207,7 +207,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       double pressure;
 
       pressure = _fluid.SublimationPressureEstimate_FromTemperature(_fluid.TriplePointTemperature);
-      Assert.AreEqual(_fluid.TriplePointPressure, pressure, GetAllowedError(_fluid.TriplePointPressure, relativePressureErrorAllowed, 0), "Deviation of triple point pressure of {0}", _fluid.GetType().ToString());
+      AssertEx.Equal(_fluid.TriplePointPressure, pressure, GetAllowedError(_fluid.TriplePointPressure, relativePressureErrorAllowed, 0), $"Deviation of triple point pressure of {_fluid.GetType()}");
 
       // now test monotony
 
@@ -223,7 +223,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
         if (temperature < previousTemperature - 0.1)
         {
-          Assert.Less(pressure, previousPressure, "Monotony of sublimation pressure curve not given for {0} at temperature={1}, previous temperature={2}", _fluid.GetType().ToString(), temperature, previousTemperature);
+          AssertEx.Less(pressure, previousPressure, $"Monotony of sublimation pressure curve not given for {_fluid.GetType()} at temperature={ temperature}, previous temperature={previousTemperature}");
         }
 
         previousTemperature = temperature;
@@ -242,11 +242,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
         if ((temperature - previousTemperature) <= temperatureStep)
         {
-          Assert.Greater(pressure, previousPressure, "Monotony of saturated vapor pressure curve not given for {0}", _fluid.GetType().ToString());
+          AssertEx.Greater(pressure, previousPressure, $"Monotony of saturated vapor pressure curve not given for {_fluid.GetType()}");
 
           var derivEstimate = (pressure - previousPressure) / (temperature - previousTemperature);
 
-          Assert.AreEqual(derivEstimate, pressureDerivative, GetAllowedError(derivEstimate, 1, 0), "Great deviation between pressure derivative and difference estimation of derivative for fluid {0}", _fluid.GetType().ToString());
+          AssertEx.Equal(derivEstimate, pressureDerivative, GetAllowedError(derivEstimate, 1, 0), $"Great deviation between pressure derivative and difference estimation of derivative for fluid {_fluid.GetType()}");
         }
 
         previousTemperature = temperature;
@@ -277,7 +277,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
         {
           var derivEstimate = (pressure - previousPressure) / (temperature - previousTemperature);
 
-          Assert.AreEqual(derivEstimate, pressureDerivative, GetAllowedError(derivEstimate, relativeErrorAllowed, absErrorAllowed), "Great deviation between pressure derivative and difference estimation of derivative for fluid {0}", _fluid.GetType().ToString());
+          AssertEx.Equal(derivEstimate, pressureDerivative, GetAllowedError(derivEstimate, relativeErrorAllowed, absErrorAllowed), $"Great deviation between pressure derivative and difference estimation of derivative for fluid {_fluid.GetType().ToString()}");
 
           previousTemperature = temperature;
           previousPressure = pressure;
@@ -293,7 +293,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       foreach (var (temperature, pressureExpected) in _testDataSublimationLine.Reverse())
       {
         var pressureHere = _fluid.SublimationPressureEstimate_FromTemperature(temperature);
-        Assert.AreEqual(pressureExpected, pressureHere, GetAllowedError(pressureExpected, relativeDeviation, absoluteDeviation), "Temperature: {0}", temperature);
+        AssertEx.Equal(pressureExpected, pressureHere, GetAllowedError(pressureExpected, relativeDeviation, absoluteDeviation), $"Temperature: {temperature}");
       }
     }
 
@@ -308,7 +308,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
           absoluteDeviation = 2; // for very low temperatures, allow more deviation
 
         var temperatureHere = _fluid.SublimationTemperatureEstimate_FromPressure(pressure);
-        Assert.AreEqual(temperatureExpected, temperatureHere, GetAllowedError(temperatureExpected, relativeDeviation, absoluteDeviation), "At a pressure of {0} Pa:", pressure);
+        AssertEx.Equal(temperatureExpected, temperatureHere, GetAllowedError(temperatureExpected, relativeDeviation, absoluteDeviation), $"At a pressure of {pressure} Pa:");
       }
     }
 
@@ -322,7 +322,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     public virtual void MeltingPressure_TestImplemented()
     {
-      Assert.AreEqual(_testDataIsMeltingCurveImplemented, _fluid.IsMeltingPressureCurveImplemented);
+      Assert.Equal(_testDataIsMeltingCurveImplemented, _fluid.IsMeltingPressureCurveImplemented);
     }
 
     public virtual void MeltingPressure_TestMonotony()
@@ -335,7 +335,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 2018-07-21: Since some melting pressure models (e.g. for CO) are unable to model the steep increase of pressure
       // in the vicinity of the triple point, I commented-out the following test at the triple point temperature
       // var trpressure = _fluid.MeltingPressureEstimate_FromTemperature(_fluid.TriplePointTemperature);
-      // Assert.AreEqual(_fluid.TriplePointPressure, trpressure, GetAllowedError(_fluid.TriplePointPressure, relativePressureErrorAllowed, 0), "Deviation of triple point pressure of {0}", _fluid.GetType().ToString());
+      // Assert.Equal(_fluid.TriplePointPressure, trpressure, GetAllowedError(_fluid.TriplePointPressure, relativePressureErrorAllowed, 0), "Deviation of triple point pressure of {0}", _fluid.GetType().ToString());
 
       // now test monotony
       double startTemperature = Math.Ceiling(_fluid.TriplePointTemperature);
@@ -350,7 +350,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
         if (temperature > previousTemperature + 0.1)
         {
-          Assert.Greater(pressure, previousPressure, "Monotony of melting pressure curve not given for {0} at temperature={1}, previous temperature={2}", _fluid.GetType().ToString(), temperature, previousTemperature);
+          AssertEx.Greater(pressure, previousPressure, $"Monotony of melting pressure curve not given for {_fluid.GetType().ToString()} at temperature={temperature}, previous temperature={previousTemperature}");
         }
 
         previousTemperature = temperature;
@@ -383,7 +383,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
         {
           var derivEstimate = (pressure - previousPressure) / (temperature - previousTemperature);
 
-          Assert.AreEqual(derivEstimate, pressureDerivative, GetAllowedError(derivEstimate, relativeErrorAllowed, absErrorAllowed), "Great deviation between pressure derivative and difference estimation of derivative for fluid {0}", _fluid.GetType().ToString());
+          AssertEx.Equal(derivEstimate, pressureDerivative, GetAllowedError(derivEstimate, relativeErrorAllowed, absErrorAllowed), $"Great deviation between pressure derivative and difference estimation of derivative for fluid {_fluid.GetType().ToString()}");
 
           previousTemperature = temperature;
           previousPressure = pressure;
@@ -399,7 +399,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       foreach (var (temperature, pressureExpected) in _testDataMeltingLine)
       {
         var pressureHere = _fluid.MeltingPressureEstimate_FromTemperature(temperature);
-        Assert.AreEqual(pressureExpected, pressureHere, GetAllowedError(pressureExpected, relativeDeviation, absoluteDeviation), "Temperature: {0}", temperature);
+        AssertEx.Equal(pressureExpected, pressureHere, GetAllowedError(pressureExpected, relativeDeviation, absoluteDeviation), $"Temperature: {temperature}");
       }
     }
 
@@ -411,7 +411,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       foreach (var (temperatureExpected, pressure) in _testDataMeltingLine)
       {
         var temperatureHere = _fluid.MeltingTemperatureEstimate_FromPressure(pressure);
-        Assert.AreEqual(temperatureExpected, temperatureHere, GetAllowedError(temperatureExpected, relativeDeviation, absoluteDeviation), "Pressure: {0}", pressure);
+        AssertEx.Equal(temperatureExpected, temperatureHere, GetAllowedError(temperatureExpected, relativeDeviation, absoluteDeviation), $"Pressure: {pressure}");
       }
     }
 
@@ -438,15 +438,15 @@ namespace Altaxo.Science.Thermodynamics.Fluids
           var item = _testDataEquationOfState[i];
           var temperature = item.temperature;
           var moleDensity = item.moleDensity;
-          Assert.Greater(temperature, 0, "Temperature has to be positive");
-          Assert.LessOrEqual(temperature, _fluid.UpperTemperatureLimit, "Temperature has to be less than or equal to upper temperature limit");
-          Assert.Greater(moleDensity, 0, "MoleDensity has to be positive");
-          Assert.LessOrEqual(moleDensity, _fluid.UpperMoleDensityLimit, "MoleDensity has to be less than or equal to upper temperature limit");
+          AssertEx.Greater(temperature, 0, "Temperature has to be positive");
+          AssertEx.LessOrEqual(temperature, _fluid.UpperTemperatureLimit, "Temperature has to be less than or equal to upper temperature limit");
+          AssertEx.Greater(moleDensity, 0, "MoleDensity has to be positive");
+          AssertEx.LessOrEqual(moleDensity, _fluid.UpperMoleDensityLimit, "MoleDensity has to be less than or equal to upper temperature limit");
           var testValues = new[] { item.pressure, item.internalEnergy, item.enthalpy, item.entropy, item.isochoricHeatCapacity, item.isobaricHeatCapacity, item.speedOfSound };
           double valueStored = testValues[method.index];
           double valueCalculated = method.call(moleDensity, temperature);
-          Assert.IsFalse(double.IsNaN(valueStored), "Test value row[{0}] : {1} defect (contains NaN)", i, method.colName);
-          Assert.AreEqual(valueStored, valueCalculated, GetAllowedError(valueStored, method.relTol, method.absTol), "{3} in row[{0}], T={1} K, d={2} mol/m³", i, temperature, moleDensity, method.colName);
+          Assert.False(double.IsNaN(valueStored), $"Test value row[{i}] : {method.colName} defect (contains NaN)");
+          AssertEx.Equal(valueStored, valueCalculated, GetAllowedError(valueStored, method.relTol, method.absTol), $"{method.colName} in row[{i}], T={temperature} K, d={moleDensity} mol/m³");
         }
       }
     }
@@ -472,33 +472,33 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     public virtual void ConstantsAndCharacteristicPoints_Test()
     {
-      Assert.IsFalse(string.IsNullOrEmpty(_fluid.CASRegistryNumber));
-      Assert.IsFalse(string.IsNullOrEmpty(_fluid.ShortName));
-      Assert.IsFalse(string.IsNullOrEmpty(_fluid.FullName));
+      Assert.False(string.IsNullOrEmpty(_fluid.CASRegistryNumber));
+      Assert.False(string.IsNullOrEmpty(_fluid.ShortName));
+      Assert.False(string.IsNullOrEmpty(_fluid.FullName));
 
-      Assert.GreaterOrEqual(_fluid.LowerTemperatureLimit, 0);
-      Assert.Greater(_fluid.UpperTemperatureLimit, _fluid.LowerTemperatureLimit);
-      Assert.Greater(_fluid.UpperPressureLimit, 0);
-      Assert.Greater(_fluid.UpperMoleDensityLimit, 0);
+      AssertEx.GreaterOrEqual(_fluid.LowerTemperatureLimit, 0);
+      AssertEx.Greater(_fluid.UpperTemperatureLimit, _fluid.LowerTemperatureLimit);
+      AssertEx.Greater(_fluid.UpperPressureLimit, 0);
+      AssertEx.Greater(_fluid.UpperMoleDensityLimit, 0);
 
-      Assert.AreEqual(_testDataMolecularWeight, _fluid.MolecularWeight, GetAllowedError(_testDataMolecularWeight, 1E-14, 0), "MolecularWeight");
-      Assert.AreEqual(_testDataTriplePointTemperature, _fluid.TriplePointTemperature, GetAllowedError(_testDataTriplePointTemperature, 1E-4, 0.01), "TriplePointTemperature");
-      Assert.AreEqual(_testDataTriplePointPressure, _fluid.TriplePointPressure, GetAllowedError(_testDataTriplePointPressure, 1E-4, 0), "TriplePointPressure");
-      Assert.AreEqual(_testDataTriplePointLiquidMoleDensity, _fluid.TriplePointSaturatedLiquidMoleDensity, GetAllowedError(_testDataTriplePointLiquidMoleDensity, 1E-4, 0), "TriplePointSaturatedLiquidMoleDensity");
-      Assert.AreEqual(_testDataTriplePointVaporMoleDensity, _fluid.TriplePointSaturatedVaporMoleDensity, GetAllowedError(_testDataTriplePointVaporMoleDensity, 1E-4, 0), "TriplePointSaturatedVaporMoleDensity");
-      Assert.AreEqual(_testDataCriticalPointTemperature, _fluid.CriticalPointTemperature, GetAllowedError(_testDataCriticalPointTemperature, 1E-4, 0.01), "CriticalPointTemperature");
-      Assert.AreEqual(_testDataCriticalPointPressure, _fluid.CriticalPointPressure, GetAllowedError(_testDataCriticalPointPressure, 1E-2, 0), "CriticalPointPressure");
-      Assert.AreEqual(_testDataCriticalPointMoleDensity, _fluid.CriticalPointMoleDensity, GetAllowedError(_testDataCriticalPointMoleDensity, 1E-2, 0), "CriticalPointLiquidMoleDensity");
+      AssertEx.Equal(_testDataMolecularWeight, _fluid.MolecularWeight, GetAllowedError(_testDataMolecularWeight, 1E-14, 0), "MolecularWeight");
+      AssertEx.Equal(_testDataTriplePointTemperature, _fluid.TriplePointTemperature, GetAllowedError(_testDataTriplePointTemperature, 1E-4, 0.01), "TriplePointTemperature");
+      AssertEx.Equal(_testDataTriplePointPressure, _fluid.TriplePointPressure, GetAllowedError(_testDataTriplePointPressure, 1E-4, 0), "TriplePointPressure");
+      AssertEx.Equal(_testDataTriplePointLiquidMoleDensity, _fluid.TriplePointSaturatedLiquidMoleDensity, GetAllowedError(_testDataTriplePointLiquidMoleDensity, 1E-4, 0), "TriplePointSaturatedLiquidMoleDensity");
+      AssertEx.Equal(_testDataTriplePointVaporMoleDensity, _fluid.TriplePointSaturatedVaporMoleDensity, GetAllowedError(_testDataTriplePointVaporMoleDensity, 1E-4, 0), "TriplePointSaturatedVaporMoleDensity");
+      AssertEx.Equal(_testDataCriticalPointTemperature, _fluid.CriticalPointTemperature, GetAllowedError(_testDataCriticalPointTemperature, 1E-4, 0.01), "CriticalPointTemperature");
+      AssertEx.Equal(_testDataCriticalPointPressure, _fluid.CriticalPointPressure, GetAllowedError(_testDataCriticalPointPressure, 1E-2, 0), "CriticalPointPressure");
+      AssertEx.Equal(_testDataCriticalPointMoleDensity, _fluid.CriticalPointMoleDensity, GetAllowedError(_testDataCriticalPointMoleDensity, 1E-2, 0), "CriticalPointLiquidMoleDensity");
 
       if (_testDataNormalBoilingPointTemperature.HasValue)
-        Assert.AreEqual(_testDataNormalBoilingPointTemperature.Value, _fluid.NormalBoilingPointTemperature.Value, GetAllowedError(_testDataNormalBoilingPointTemperature.Value, 1E-4, 0.1), "NormalBoilingPointTemperature");
+        AssertEx.Equal(_testDataNormalBoilingPointTemperature.Value, _fluid.NormalBoilingPointTemperature.Value, GetAllowedError(_testDataNormalBoilingPointTemperature.Value, 1E-4, 0.1), "NormalBoilingPointTemperature");
       else
-        Assert.IsTrue(_fluid.NormalBoilingPointTemperature is null, "NormalBoilingPointTemperature");
+        Assert.True(_fluid.NormalBoilingPointTemperature is null, "NormalBoilingPointTemperature");
 
       if (_testDataNormalSublimationPointTemperature.HasValue)
-        Assert.AreEqual(_testDataNormalSublimationPointTemperature.Value, _fluid.NormalSublimationPointTemperature.Value, GetAllowedError(_testDataNormalSublimationPointTemperature.Value, 1E-4, 0.1), "NormalSublimationPointTemperature");
+        AssertEx.Equal(_testDataNormalSublimationPointTemperature.Value, _fluid.NormalSublimationPointTemperature.Value, GetAllowedError(_testDataNormalSublimationPointTemperature.Value, 1E-4, 0.1), "NormalSublimationPointTemperature");
       else
-        Assert.IsTrue(_fluid.NormalSublimationPointTemperature is null, "NormalSublimationPointTemperature");
+        Assert.True(_fluid.NormalSublimationPointTemperature is null, "NormalSublimationPointTemperature");
     }
 
     #endregion Fluid constants

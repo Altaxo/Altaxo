@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 /* created on 06.09.2011 14:00:27 from peg generator V1.0 using 'Altaxo_MultiRename_PEG.txt' as input*/
 
 /* The following PEG grammar was used to generate this file with the PEG grammar explorer
@@ -104,7 +105,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 using Altaxo.Main.PegParser;
 
 namespace Altaxo.Gui.Common.MultiRename

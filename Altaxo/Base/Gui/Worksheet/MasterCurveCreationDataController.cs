@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,7 +72,7 @@ namespace Altaxo.Gui.Worksheet
           }
         }
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeListData(_viewList);
       }
@@ -93,7 +94,7 @@ namespace Altaxo.Gui.Worksheet
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args == null || args.Length == 0 || !(args[0] is List<List<DoubleColumn>>))
+      if (args is null || args.Length == 0 || !(args[0] is List<List<DoubleColumn>>))
         return false;
 
       _docOriginal = args[0] as List<List<DoubleColumn>>;
@@ -120,7 +121,7 @@ namespace Altaxo.Gui.Worksheet
       {
         _view = value as IMasterCurveCreationDataView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
         }

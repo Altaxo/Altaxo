@@ -42,7 +42,7 @@ namespace Poly2Tri
     {
     }
 
-    public PolygonPoint Next { get; set; }
-    public PolygonPoint Previous { get; set; }
+    public PolygonPoint? Next { get; set; }
+    public PolygonPoint? Previous { get; set; }
   }
 }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -51,9 +52,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
         var s = (RelativeStackTransform)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        RelativeStackTransform s = null != o ? (RelativeStackTransform)o : new RelativeStackTransform();
+        RelativeStackTransform s = o is not null ? (RelativeStackTransform)o : new RelativeStackTransform();
         return s;
       }
     }
@@ -110,26 +111,30 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
         paintContext.AddValue(this, plotDataDict);
       }
 
-      AltaxoVariant[] vSumArray = null;
+      AltaxoVariant[]? vSumArray = null;
       foreach (IGPlotItem pi in coll)
       {
-        if (pi is G3DPlotItem)
+        if (pi is G3DPlotItem gpi)
         {
-          var gpi = pi as G3DPlotItem;
           var pdata = plotDataDict[gpi];
           vSumArray = AbsoluteStackTransform.AddUp(vSumArray, pdata);
         }
       }
 
+      if (vSumArray is null)
+        return;
+
       // now plot the data - the summed up y is in yArray
-      AltaxoVariant[] vArray = null;
-      Processed3DPlotData previousItemData = null;
+      AltaxoVariant[]? vArray = null;
+      Processed3DPlotData? previousItemData = null;
       foreach (IGPlotItem pi in coll)
       {
-        if (pi is G3DPlotItem)
+        if (pi is G3DPlotItem gpi)
         {
-          var gpi = pi as G3DPlotItem;
           var pdata = plotDataDict[gpi];
+          if (pdata is null || pdata.RangeList is null || pdata.PlotPointsInAbsoluteLayerCoordinates is null)
+            continue;
+
           vArray = AbsoluteStackTransform.AddUp(vArray, pdata);
           var localArray = new AltaxoVariant[vArray.Length];
 
@@ -164,24 +169,23 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     public void PaintChild(IGraphicsContext3D g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll, int indexOfChild)
     {
       var plotDataDict = paintContext.GetValueOrDefault<Dictionary<G3DPlotItem, Processed3DPlotData>>(this);
-      if (null == plotDataDict) // if initializing this dict was not successfull, then make a normal plot
+      if (plotDataDict is null) // if initializing this dict was not successfull, then make a normal plot
       {
         coll[indexOfChild].Paint(g, paintContext, layer, indexOfChild == coll.Count - 1 ? null : coll[indexOfChild + 1], indexOfChild == 0 ? null : coll[indexOfChild - 1]);
         return;
       }
 
-      Processed3DPlotData prevPlotData = null;
-      Processed3DPlotData nextPlotData = null;
+      Processed3DPlotData? prevPlotData = null;
+      Processed3DPlotData? nextPlotData = null;
 
-      if ((indexOfChild + 1) < coll.Count && (coll[indexOfChild + 1] is G3DPlotItem))
-        prevPlotData = plotDataDict[coll[indexOfChild + 1] as G3DPlotItem];
+      if ((indexOfChild + 1) < coll.Count && (coll[indexOfChild + 1] is G3DPlotItem keyP1))
+        prevPlotData = plotDataDict[keyP1];
 
-      if (indexOfChild > 0 && (coll[indexOfChild - 1] is G3DPlotItem))
-        nextPlotData = plotDataDict[coll[indexOfChild - 1] as G3DPlotItem];
+      if (indexOfChild > 0 && (coll[indexOfChild - 1] is G3DPlotItem keyM1))
+        nextPlotData = plotDataDict[keyM1];
 
-      if (coll[indexOfChild] is G3DPlotItem)
+      if (coll[indexOfChild] is G3DPlotItem gpi)
       {
-        var gpi = coll[indexOfChild] as G3DPlotItem;
         gpi.Paint(g, layer, plotDataDict[gpi], prevPlotData, nextPlotData);
       }
       else

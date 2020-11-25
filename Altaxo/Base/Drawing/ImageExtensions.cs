@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -78,7 +79,7 @@ namespace Altaxo.Drawing
         return ".tif";
       else if (imageFormat == ImageFormat.Wmf)
         return ".wmf";
-      else if (imageFormat == null)
+      else if (imageFormat is null)
         throw new ArgumentNullException(nameof(imageFormat));
       else
         throw new NotImplementedException("Unknown image format: " + imageFormat.ToString());

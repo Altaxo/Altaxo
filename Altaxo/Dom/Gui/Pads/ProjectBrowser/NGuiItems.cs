@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
     }
 
-    public ProjectBrowseItemImage Image;
+    public new ProjectBrowseItemImage Image;
 
     public override int ImageIndex
     {
@@ -113,7 +114,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       string newShortName = (string)obj;
 
       var oldFolderFullName = Tag as string; // Full name with trailing directory separator char
-      if (null == oldFolderFullName)
+      if (oldFolderFullName is null)
         return "Item renaming not supported!";
 
       return null;
@@ -258,9 +259,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         }
 
         // wenn die Sort-Kriterien nicht reichen, entscheiden wir anhand des Tags
-        if (null != x.Tag && null == y.Tag)
+        if (x.Tag is not null && y.Tag is null)
           return 1;
-        else if (null == x.Tag && null != y.Tag)
+        else if (x.Tag is null && y.Tag is not null)
           return -1;
 
         result = string.Compare(x.Tag.GetType().ToString(), y.Tag.GetType().ToString());
@@ -300,7 +301,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       string name = (string)obj;
 
       var item = Tag as Altaxo.Main.INamedObject;
-      if (null == item)
+      if (item is null)
         return "Item renaming not supported!";
 
       string fullName = GetResultingName(name, _nameIsFullName, item);
@@ -352,7 +353,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       // if the text has changed, test if this is because the item was renamed or has to be renamed
       var item = Tag as Altaxo.Main.INamedObject;
-      if (null != item)
+      if (item is not null)
       {
         string fullName = GetResultingName(name, _nameIsFullName, item);
         if (fullName == item.Name)

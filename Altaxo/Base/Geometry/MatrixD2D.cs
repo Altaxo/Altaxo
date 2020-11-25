@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -71,7 +72,7 @@ namespace Altaxo.Geometry
 
     public void CopyFrom(MatrixD2D from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       sx = from.sx;
@@ -95,11 +96,11 @@ namespace Altaxo.Geometry
 
     public bool CopyFrom(object o)
     {
-      if (object.ReferenceEquals(this, o))
+      if (ReferenceEquals(this, o))
         return true;
 
       var from = o as MatrixD2D;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from);
         return true;

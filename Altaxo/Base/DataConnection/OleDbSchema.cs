@@ -26,6 +26,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -90,7 +91,7 @@ namespace Altaxo.DataConnection
       {
         if (string.IsNullOrEmpty(value))
         {
-          _connString = null;
+          _connString = string.Empty;
           Reset();
           return;
         }
@@ -113,7 +114,7 @@ namespace Altaxo.DataConnection
     /// given <paramref name="connString"/> or null if the connection
     /// string is invalid.
     /// </returns>
-    public static OleDbSchema GetSchema(string connString)
+    public static OleDbSchema? GetSchema(string connString)
     {
       // trivial test
       connString = OleDbConnString.TranslateConnectionString(connString);
@@ -186,7 +187,7 @@ namespace Altaxo.DataConnection
 
       // get schema name
       var schema = table.ExtendedProperties[TABLE_SCHEMA] as string;
-      if (schema != null)
+      if (schema is not null)
       {
         sb.AppendFormat("{0}.", schema);
       }
@@ -242,7 +243,7 @@ namespace Altaxo.DataConnection
     /// </summary>
     /// <param name="table">DataTable that contains the schema for the stored procedure.</param>
     /// <returns>A list of <see cref="OleDbParameter"/> objects.</returns>
-    public static List<OleDbParameter> GetTableParameters(DataTable table)
+    public static List<OleDbParameter>? GetTableParameters(DataTable table)
     {
       return table.ExtendedProperties[PROCEDURE_PARAMETERS] as List<OleDbParameter>;
     }
@@ -278,10 +279,7 @@ namespace Altaxo.DataConnection
       }
 
       // handle nullable types
-      type = Nullable.GetUnderlyingType(type);
-      return type != null
-          ? IsNumeric(type)
-          : false;
+      return Nullable.GetUnderlyingType(type) is { } nntype && IsNumeric(nntype);
     }
 
     /// <summary>
@@ -299,10 +297,7 @@ namespace Altaxo.DataConnection
       }
 
       // handle nullable types
-      type = Nullable.GetUnderlyingType(type);
-      return type != null
-          ? IsDateTime(type)
-          : false;
+      return Nullable.GetUnderlyingType(type) is { } nntype && IsDateTime(nntype);
     }
 
     /// <summary>
@@ -412,7 +407,7 @@ namespace Altaxo.DataConnection
         }
         catch (OleDbException)
         {
-          _connString = null;
+          _connString = string.Empty;
         }
         finally
         {
@@ -465,7 +460,7 @@ namespace Altaxo.DataConnection
       {
         // get the procedure name, skip system stuff
         var name = dr[PROCEDURE_NAME] as string;
-        if (name.StartsWith("~") || name.StartsWith("dt_", StringComparison.OrdinalIgnoreCase))
+        if (name is null || name.StartsWith("~") || name.StartsWith("dt_", StringComparison.OrdinalIgnoreCase))
         {
           continue;
         }
@@ -497,7 +492,7 @@ namespace Altaxo.DataConnection
         }
         else
         {
-          var dtParms = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Procedure_Parameters, new object[] { null, null, name, null });
+          var dtParms = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Procedure_Parameters, new object?[] { null, null, name, null });
           var returnsValue = GetSqlServerParameters(dtParms, parmList);
           if (!returnsValue)
           {
@@ -526,7 +521,7 @@ namespace Altaxo.DataConnection
     private void GetAccessParameters(DataRow dr, List<OleDbParameter> list)
     {
       var procDef = dr[PROCEDURE_DEFINITION] as string;
-      if (procDef != null && procDef.StartsWith(PARAMETERS, StringComparison.OrdinalIgnoreCase))
+      if (procDef is not null && procDef.StartsWith(PARAMETERS, StringComparison.OrdinalIgnoreCase))
       {
         int pos = procDef.IndexOf(';');
         if (pos > -1)
@@ -568,7 +563,7 @@ namespace Altaxo.DataConnection
         {
           Value = parm[PARAMETER_DEFAULT] as string
         };
-        if (p.Value == null)
+        if (p.Value is null)
         {
           p.Value = string.Empty;
         }
@@ -578,6 +573,8 @@ namespace Altaxo.DataConnection
       // done
       return returnsValue;
     }
+
+#nullable disable
 
     // get relations from schema
     private void GetRelations(OleDbConnection conn)
@@ -621,8 +618,11 @@ namespace Altaxo.DataConnection
       foreach (DataRow dr in dt.Rows)
       {
         // get primary key info
-        string tableName = dr[TABLE_NAME].ToString();
-        string columnName = dr[COLUMN_NAME].ToString();
+        var tableName = dr[TABLE_NAME].ToString();
+        var columnName = dr[COLUMN_NAME].ToString();
+
+        if (tableName is null || columnName is null)
+          continue;
 
         // make sure this table is in our DataSet
         if (Tables.Contains(tableName))
@@ -672,7 +672,7 @@ namespace Altaxo.DataConnection
 
       // get Sql server type parameters
       var parms = table.ExtendedProperties[PROCEDURE_PARAMETERS] as List<OleDbParameter>;
-      if (parms != null)
+      if (parms is not null)
       {
         foreach (OleDbParameter parm in parms)
         {
@@ -680,8 +680,10 @@ namespace Altaxo.DataConnection
           {
             sb.Append(", ");
           }
-          var value = parm.Value as string;
-          sb.AppendFormat("'{0}'", value.Replace("'", "''"));
+          if (parm.Value is string value)
+          {
+            sb.AppendFormat("'{0}'", value.Replace("'", "''"));
+          }
         }
       }
       return sb.ToString();

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,7 @@ using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
+  using System.Diagnostics.CodeAnalysis;
   using Drawing.D3D;
   using GraphicsContext;
 
@@ -88,21 +90,21 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     protected RADouble _axisPosition2; // if relative, then relative to layer size, if absolute then in points
 
-    protected CSAxisInformation _cachedAxisStyleInfo;
+    protected CSAxisInformation? _cachedAxisStyleInfo;
 
     /// <summary>
     /// The line points that make out the main axis line (in parent layer coordinates). Used for hit testing
     /// </summary>
     [NonSerialized]
-    protected PointD3D[] _cachedMainLinePointsUsedForHitTesting;
+    protected PointD3D[]? _cachedMainLinePointsUsedForHitTesting;
 
     /// <summary>The major tick lines cached for hit testing</summary>
     [NonSerialized]
-    private LineD3D[] _cachedMajorTickLinesUsedForHitTesting;
+    private LineD3D[]? _cachedMajorTickLinesUsedForHitTesting;
 
     /// <summary>The minor tick lines cached for hit testing</summary>
     [NonSerialized]
-    private LineD3D[] _cachedMinorTickLinesUsedForHitTesting;
+    private LineD3D[]? _cachedMinorTickLinesUsedForHitTesting;
 
     #region Serialization
 
@@ -130,9 +132,9 @@ namespace Altaxo.Graph.Graph3D.Axis
         info.AddValue("Minor2Dw", s._showSecondDownMinorTicks);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle(info);
+        var s = (AxisLineStyle?)o ?? new AxisLineStyle(info);
 
         s._axisPen = (PenX3D)info.GetValue("AxisPen", s);
         s._majorTickPen = (PenX3D)info.GetValue("MajorPen", s);
@@ -161,9 +163,11 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// Initializes a new instance of the <see cref="AxisLineStyle"/> class for deserialization purposes only.
     /// </summary>
     /// <param name="info">The deserialization information.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected AxisLineStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>
     /// Creates a default axis style.
@@ -223,19 +227,9 @@ namespace Altaxo.Graph.Graph3D.Axis
       CopyFrom(from);
     }
 
-    /// <summary>
-    /// Copy operation.
-    /// </summary>
-    /// <param name="obj">The AxisStyle to copy from</param>
-    public bool CopyFrom(object obj)
-    {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-
-      var from = obj as AxisLineStyle;
-      if (null == from)
-        return false;
-
+    [MemberNotNull(nameof(_axisPen), nameof(_majorTickPen), nameof(_minorTickPen))]
+    void CopyFrom(AxisLineStyle from)
+      {
       using (var suspendToken = SuspendGetToken())
       {
         _axisPen = from._axisPen;
@@ -263,7 +257,24 @@ namespace Altaxo.Graph.Graph3D.Axis
 
         suspendToken.Resume();
       }
-      return true;
+    }
+
+    /// <summary>
+    /// Copy operation.
+    /// </summary>
+    /// <param name="obj">The AxisStyle to copy from</param>
+    public bool CopyFrom(object obj)
+    {
+      if (ReferenceEquals(this, obj))
+        return true;
+
+      if (obj is AxisLineStyle from)
+      {
+        CopyFrom(from);
+        return true;
+      }
+
+      return false;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -280,15 +291,16 @@ namespace Altaxo.Graph.Graph3D.Axis
       return new AxisLineStyle(this);
     }
 
-    public CSLineID AxisStyleID
+    public CSLineID? AxisStyleID
     {
       get
       {
-        return _cachedAxisStyleInfo == null ? null : _cachedAxisStyleInfo.Identifier;
+        return _cachedAxisStyleInfo?.Identifier;
       }
     }
 
-    public CSAxisInformation CachedAxisInformation
+  
+    public CSAxisInformation? CachedAxisInformation
     {
       get
       {
@@ -345,7 +357,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       get { return _axisPen; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         var oldValue = _axisPen;
@@ -363,7 +375,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       get { return _majorTickPen; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         var oldValue = _majorTickPen;
@@ -381,7 +393,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       get { return _minorTickPen; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         var oldValue = _minorTickPen;
@@ -641,13 +653,13 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <param name="layer">The layer the axis belongs to.</param>
     /// <param name="styleInfo">The axis information of the axis to paint.</param>
     /// <param name="customTickSpacing">If not <c>null</c>, this parameter provides a custom tick spacing that is used instead of the default tick spacing of the scale.</param>
-    public void Paint(IGraphicsContext3D g, IPlotArea layer, CSAxisInformation styleInfo, TickSpacing customTickSpacing)
+    public void Paint(IGraphicsContext3D g, IPlotArea layer, CSAxisInformation styleInfo, TickSpacing? customTickSpacing)
     {
       CSLineID styleID = styleInfo.Identifier;
       _cachedAxisStyleInfo = styleInfo;
       Scale axis = layer.Scales[styleID.ParallelAxisNumber];
 
-      TickSpacing ticking = null != customTickSpacing ? customTickSpacing : layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
+      TickSpacing ticking = customTickSpacing is not null ? customTickSpacing : layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
 
       Logical3D r0 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisOrg);
       Logical3D r1 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisEnd);
@@ -747,12 +759,12 @@ namespace Altaxo.Graph.Graph3D.Axis
       _cachedMinorTickLinesUsedForHitTesting = minorTickLinesUsedForHitTesting.ToArray();
     }
 
-    public IHitTestObject HitTest(HitTestPointData hitData, bool testTickLines)
+    public IHitTestObject? HitTest(HitTestPointData hitData, bool testTickLines)
     {
       if (!testTickLines)
       {
         var mainAxisPoints = _cachedMainLinePointsUsedForHitTesting;
-        if (null != mainAxisPoints)
+        if (mainAxisPoints is not null)
         {
           if (hitData.IsHit(mainAxisPoints, _axisPen.Thickness1, _axisPen.Thickness2))
             return new HitTestObject(
@@ -764,7 +776,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       else // Test Tick lines
       {
         // test major ticks for hit
-        if (null != _cachedMajorTickLinesUsedForHitTesting)
+        if (_cachedMajorTickLinesUsedForHitTesting is not null)
         {
           foreach (var line in _cachedMajorTickLinesUsedForHitTesting)
           {
@@ -776,7 +788,7 @@ namespace Altaxo.Graph.Graph3D.Axis
           }
         }
         // test minor ticks for hit
-        if (null != _cachedMinorTickLinesUsedForHitTesting)
+        if (_cachedMinorTickLinesUsedForHitTesting is not null)
         {
           foreach (var line in _cachedMinorTickLinesUsedForHitTesting)
           {

@@ -35,20 +35,23 @@ namespace Altaxo.Gui.Workbench
   {
     public void AddOptionPanels(IEnumerable<IOptionPanelDescriptor> dialogPanelDescriptors)
     {
-      if (dialogPanelDescriptors == null)
-        throw new ArgumentNullException("dialogPanelDescriptors");
+      if (dialogPanelDescriptors is null)
+        throw new ArgumentNullException(nameof(dialogPanelDescriptors));
       foreach (IOptionPanelDescriptor descriptor in dialogPanelDescriptors)
       {
-        if (descriptor != null)
+        if (descriptor is not null)
         {
           if (descriptor.HasOptionPanel)
           {
             Items.Add(new OptionTabPage(this, descriptor));
           }
-          AddOptionPanels(descriptor.ChildOptionPanelDescriptors);
+          if (descriptor.ChildOptionPanelDescriptors is { } childDescriptors)
+          {
+            AddOptionPanels(childDescriptors);
+          }
         }
       }
-      OnIsDirtyChanged(null, null);
+      OnIsDirtyChanged(null, EventArgs.Empty);
     }
 
     private bool oldIsDirty;
@@ -61,15 +64,15 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    public event EventHandler IsDirtyChanged;
+    public event EventHandler? IsDirtyChanged;
 
-    private void OnIsDirtyChanged(object sender, EventArgs e)
+    private void OnIsDirtyChanged(object? sender, EventArgs e)
     {
       bool isDirty = false;
       foreach (IOptionPanel op in OptionPanels)
       {
         var dirty = op as ICanBeDirty;
-        if (dirty != null && dirty.IsDirty)
+        if (dirty is not null && dirty.IsDirty)
         {
           isDirty = true;
           break;
@@ -78,7 +81,7 @@ namespace Altaxo.Gui.Workbench
       if (isDirty != oldIsDirty)
       {
         oldIsDirty = isDirty;
-        if (IsDirtyChanged != null)
+        if (IsDirtyChanged is not null)
           IsDirtyChanged(this, EventArgs.Empty);
       }
     }
@@ -89,7 +92,7 @@ namespace Altaxo.Gui.Workbench
       {
         return
           from tp in Items.OfType<OptionTabPage>()
-          where tp.optionPanel != null
+          where tp.optionPanel is not null
           select tp.optionPanel;
       }
     }
@@ -97,8 +100,8 @@ namespace Altaxo.Gui.Workbench
     private sealed class OptionTabPage : TabItem
     {
       private IOptionPanelDescriptor descriptor;
-      private TextBlock placeholder;
-      internal IOptionPanel optionPanel;
+      private TextBlock? placeholder;
+      internal IOptionPanel? optionPanel;
       private TabbedOptions options;
 
       public OptionTabPage(TabbedOptions options, IOptionPanelDescriptor descriptor)
@@ -119,20 +122,24 @@ namespace Altaxo.Gui.Workbench
 
       private void LoadPadContentIfRequired()
       {
-        if (placeholder != null && placeholder.IsVisible)
+        if (placeholder is not null && placeholder.IsVisible)
         {
           placeholder = null;
           optionPanel = descriptor.OptionPanel;
-          if (optionPanel != null)
+          if (optionPanel is not null)
           {
             // some panels initialize themselves on the first LoadOptions call,
             // so we need to load the options before attaching event handlers
             //optionPanel.LoadOptions(); // TODO LelliD 2017-11-20 reimplement this
 
-            var dirty = optionPanel as ICanBeDirty;
-            if (dirty != null)
+            if (optionPanel is ICanBeDirty dirty)
+            {
               dirty.IsDirtyChanged += options.OnIsDirtyChanged;
-            Altaxo.Current.GetRequiredService<IWinFormsService>().SetContent(this, optionPanel.ViewObject);
+            }
+            if (optionPanel.ViewObject is not null)
+            {
+              Altaxo.Current.GetRequiredService<IWinFormsService>().SetContent(this, optionPanel.ViewObject);
+            }
           }
         }
       }

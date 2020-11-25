@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,15 +74,15 @@ namespace Altaxo.Gui.Analysis.Fourier
         _creationOptions = new SelectableListNodeList();
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         var yColName = AbsoluteDocumentPath.GetPathString(_doc.ColumnToTransform, int.MaxValue);
         _view.SetColumnToTransform(yColName);
 
         string xInc = _doc.XIncrementValue.ToString();
-        if (_doc.XIncrementMessage != null)
+        if (_doc.XIncrementMessage is not null)
           xInc += string.Format(" ({0})", _doc.XIncrementMessage);
-        _view.SetXIncrement(xInc, _doc.XIncrementMessage != null);
+        _view.SetXIncrement(xInc, _doc.XIncrementMessage is not null);
 
         _outputQuantities.FillWithFlagEnumeration(_doc.Output);
         _view.SetOutputQuantities(_outputQuantities);

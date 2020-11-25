@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -132,7 +133,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args == null || args.Length == 0)
+      if (args is null || args.Length == 0)
         return false;
 
       if (!(args[0] is NonlinearFitDocument))
@@ -172,7 +173,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         _generationIntervalController = new Common.EquallySpacedIntervalController();
         _generationIntervalController.InitializeDocument(_generationInterval);
 
-        if (null != _activeLayer)
+        if (_activeLayer is not null)
         {
           var (hasConfidenceItems, confidenceLevel) = HasConfidencePlotItems(_activeLayer);
           _showConfidenceBands = hasConfidenceItems;
@@ -181,7 +182,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         }
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.SetParameterControl(_parameterController.ViewObject);
         _view.SetSelectFunctionControl(_funcselController.ViewObject);
@@ -239,7 +240,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       if (true == _parameterController.Apply(false))
       {
         // test if there are any parameters to vary
-        if (null == _doc.CurrentParameters.Where(x => x.Vary).FirstOrDefault())
+        if (_doc.CurrentParameters.Where(x => x.Vary).FirstOrDefault() is null)
         {
           Current.Gui.ErrorMessageBox("You should select at least one parameter to vary!");
           return;
@@ -294,36 +295,36 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         _reportTextDirty = true;
       }
 
-      public bool CancellationPending => _cancellationTokenSource.IsCancellationRequested;
+      public new bool CancellationPending => _cancellationTokenSource.IsCancellationRequested;
 
-      public bool HasReportText => _reportTextDirty;
+      public new bool HasReportText => _reportTextDirty;
 
-      public bool ShouldReportNow => _reportTextDirty;
+      public new bool ShouldReportNow => _reportTextDirty;
 
-      public double GetProgressFraction()
+      public new double GetProgressFraction()
       {
         return 0;
       }
 
-      public string GetReportText()
+      public new string GetReportText()
       {
         return _reportText;
       }
 
-      public void ReportProgress(string text)
+      public new void ReportProgress(string text)
       {
       }
 
-      public void ReportProgress(string text, double progressValue)
+      public new void ReportProgress(string text, double progressValue)
       {
       }
 
-      public void SetCancellationPending()
+      public new void SetCancellationPending()
       {
         _cancellationTokenSource.Cancel();
       }
 
-      public void SetShouldReportNow()
+      public new void SetShouldReportNow()
       {
         _reportTextDirty = true;
       }
@@ -334,7 +335,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       if (true == _parameterController.Apply(false))
       {
         // test if there are any parameters to vary
-        if (null == _doc.CurrentParameters.Where(x => x.Vary).FirstOrDefault())
+        if (_doc.CurrentParameters.Where(x => x.Vary).FirstOrDefault() is null)
         {
           Current.Gui.ErrorMessageBox("You should select at least one parameter to vary!");
           return;
@@ -399,15 +400,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       bool changed = false;
       if (_doc.FitEnsemble.Count == 0) // Fitting is fresh, we can add the function silently
       {
-        var newele = new FitElement
-        {
-          FitFunction = func
-        };
+        var newele = new FitElement(func);
         _doc.FitEnsemble.Add(newele);
         _doc.SetDefaultParametersForFitElement(0);
         changed = true;
       }
-      else if (_doc.FitEnsemble.Count > 0 && _doc.FitEnsemble[_doc.FitEnsemble.Count - 1].FitFunction == null)
+      else if (_doc.FitEnsemble.Count > 0 && _doc.FitEnsemble[_doc.FitEnsemble.Count - 1].FitFunction is null)
       {
         _doc.FitEnsemble[_doc.FitEnsemble.Count - 1].FitFunction = func;
         _doc.SetDefaultParametersForFitElement(_doc.FitEnsemble.Count - 1);
@@ -437,10 +435,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
             case SelectionChoice.SelectAsAdditional:
               {
-                var newele = new FitElement
-                {
-                  FitFunction = func
-                };
+                var newele = new FitElement(func);
                 _doc.FitEnsemble.Add(newele);
                 _doc.SetDefaultParametersForFitElement(_doc.FitEnsemble.Count - 1);
                 changed = true;
@@ -516,10 +511,10 @@ Label_EditScript:
     {
       _parameterController.InitializeDocument(_doc.CurrentParameters);
 
-      if (_view != null)
+      if (_view is not null)
         _view.SetChiSquare(_chiSquare);
 
-      if (null != _activeLayer)
+      if (_activeLayer is not null)
       {
         CreateOrReplaceFunctionPlotItems(_activeLayer);
       }
@@ -531,7 +526,7 @@ Label_EditScript:
           .OfType<XYFunctionPlotItem>()
           .Where((fpi) => fpi.Data is XYNonlinearFitFunctionConfidenceBandPlotData).FirstOrDefault();
 
-      if (cbdata != null)
+      if (cbdata is not null)
       {
         return (true, ((XYNonlinearFitFunctionConfidenceBandPlotData)cbdata.Data).ConfidenceLevel);
       }
@@ -641,7 +636,7 @@ Label_EditScript:
         {
           SplitInDataColumnAndTransformation(columnPlotItem.Data.XColumn, out var xdataColumn, out var xtransfo);
           SplitInDataColumnAndTransformation(columnPlotItem.Data.YColumn, out var ydataColumn, out var ytransfo);
-          if (null != xdataColumn && null != ydataColumn)
+          if (xdataColumn is not null && ydataColumn is not null)
             dataColumnsAndTheirTransformation[(xdataColumn, ydataColumn)] = (xtransfo, ytransfo);
         }
       }
@@ -659,9 +654,9 @@ Label_EditScript:
           oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, 0), out var oldPlotItem);
 
           // if unused variables should not be shown, we remove them from the plot item collection
-          if (!showUnusedDependentVariables && null == fitEle.DependentVariables(idxDependentVariable))
+          if (!showUnusedDependentVariables && fitEle.DependentVariables(idxDependentVariable) is null)
           {
-            if (null != oldPlotItem)
+            if (oldPlotItem is not null)
               oldPlotItem.ParentCollection.Remove(oldPlotItem);
             if (oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, -1), out var oldPlotItemLowerConfBand))
               oldPlotItemLowerConfBand.ParentCollection.Remove(oldPlotItemLowerConfBand);
@@ -682,19 +677,19 @@ Label_EditScript:
           SplitInDataColumnAndTransformation(indepVar, out var indepVarDataColumn, out var indepFitVarTransformation);
           SplitInDataColumnAndTransformation(depVar, out var depVarDataColumn, out var depFitVarTransformation);
 
-          if (null != indepVarDataColumn && null != depVarDataColumn && dataColumnsAndTheirTransformation.TryGetValue((indepVarDataColumn, depVarDataColumn), out var orgTransformations))
+          if (indepVarDataColumn is not null && depVarDataColumn is not null && dataColumnsAndTheirTransformation.TryGetValue((indepVarDataColumn, depVarDataColumn), out var orgTransformations))
           {
             functionIndepVarPlotItemTransformation = GetFitFunctionIndependentTransformation(orgTransformations.xDataTransformation, indepFitVarTransformation);
             functionDepVarPlotItemTransformation = GetFitFunctionDependentTransformation(orgTransformations.yDataTransformation, depFitVarTransformation);
           }
 
           // Plot items for confidence intervals
-          if (showConfidenceBands && covarianceMatrix != null)
+          if (showConfidenceBands && covarianceMatrix is not null)
           {
             { // generate new item for the lower confidence band
               oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, -1), out var oldPlotItemLowerConfBand);
               var newPlotStyleLowerConfBand = oldPlotItemLowerConfBand?.Style.Clone();
-              if (null == newPlotStyleLowerConfBand)
+              if (newPlotStyleLowerConfBand is null)
               {
                 newPlotStyleLowerConfBand = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext());
 
@@ -721,7 +716,7 @@ Label_EditScript:
                   );
               var newPlotItemLowerConfBand = new XYFunctionPlotItem(newPlotDataLowerConfBand, newPlotStyleLowerConfBand);
 
-              if (null != oldPlotItemLowerConfBand)
+              if (oldPlotItemLowerConfBand is not null)
                 oldPlotItemLowerConfBand.ParentCollection.Replace(oldPlotItemLowerConfBand, newPlotItemLowerConfBand);
               else
                 xylayer.PlotItems.Add(newPlotItemLowerConfBand);
@@ -730,7 +725,7 @@ Label_EditScript:
             { // generate new item for the upper confidence band
               oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, +1), out var oldPlotItemUpperConfBand);
               var newPlotStyleUpperConfBand = oldPlotItemUpperConfBand?.Style.Clone();
-              if (null == newPlotStyleUpperConfBand)
+              if (newPlotStyleUpperConfBand is null)
               {
                 newPlotStyleUpperConfBand = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext());
                 if (newPlotStyleUpperConfBand.Styles.OfType<LinePlotStyle>().First() is { } fstyle)
@@ -756,7 +751,7 @@ Label_EditScript:
                   );
               var newPlotItemUpperConf = new XYFunctionPlotItem(newPlotDataUpperConfBand, newPlotStyleUpperConfBand);
 
-              if (null != oldPlotItemUpperConfBand)
+              if (oldPlotItemUpperConfBand is not null)
                 oldPlotItemUpperConfBand.ParentCollection.Replace(oldPlotItemUpperConfBand, newPlotItemUpperConf);
               else
                 xylayer.PlotItems.Add(newPlotItemUpperConf);
@@ -767,16 +762,16 @@ Label_EditScript:
             oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, -1), out var oldPlotItemLowerConfBand);
             oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, +1), out var oldPlotItemUpperConfBand);
 
-            if (null != oldPlotItemLowerConfBand)
+            if (oldPlotItemLowerConfBand is not null)
               oldPlotItemLowerConfBand.ParentCollection.Remove(oldPlotItemLowerConfBand);
-            if (null != oldPlotItemUpperConfBand)
+            if (oldPlotItemUpperConfBand is not null)
               oldPlotItemUpperConfBand.ParentCollection.Remove(oldPlotItemUpperConfBand);
           }
 
           // New plot item for fit function
           var newPlotItem = new XYNonlinearFitFunctionPlotItem(newFitDocumentIdentifier, doc, idxFitEnsemble, idxDependentVariable, functionDepVarPlotItemTransformation, 0, functionIndepVarPlotItemTransformation, newPlotStyle);
 
-          if (null != oldPlotItem)
+          if (oldPlotItem is not null)
           {
             oldPlotItem.ParentCollection.Replace(oldPlotItem, newPlotItem);
           }
@@ -792,15 +787,15 @@ Label_EditScript:
 
     private static IVariantToVariantTransformation GetFitFunctionDependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitDependentVariable)
     {
-      if (null == transformationOfOriginalDataColumn && null == transformationOfFitDependentVariable)
+      if (transformationOfOriginalDataColumn is null && transformationOfFitDependentVariable is null)
       {
         return null;
       }
-      else if (null != transformationOfOriginalDataColumn && null == transformationOfFitDependentVariable)
+      else if (transformationOfOriginalDataColumn is not null && transformationOfFitDependentVariable is null)
       {
         return transformationOfOriginalDataColumn;
       }
-      else if (null == transformationOfOriginalDataColumn && null != transformationOfFitDependentVariable)
+      else if (transformationOfOriginalDataColumn is null && transformationOfFitDependentVariable is not null)
       {
         return transformationOfFitDependentVariable.BackTransformation;
       }
@@ -812,15 +807,15 @@ Label_EditScript:
 
     private static IVariantToVariantTransformation GetFitFunctionIndependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitIndependentVariable)
     {
-      if (null == transformationOfOriginalDataColumn && null == transformationOfFitIndependentVariable)
+      if (transformationOfOriginalDataColumn is null && transformationOfFitIndependentVariable is null)
       {
         return null;
       }
-      else if (null != transformationOfOriginalDataColumn && null == transformationOfFitIndependentVariable)
+      else if (transformationOfOriginalDataColumn is not null && transformationOfFitIndependentVariable is null)
       {
         return transformationOfOriginalDataColumn.BackTransformation;
       }
-      else if (null == transformationOfOriginalDataColumn && null != transformationOfFitIndependentVariable)
+      else if (transformationOfOriginalDataColumn is null && transformationOfFitIndependentVariable is not null)
       {
         return transformationOfFitIndependentVariable;
       }
@@ -838,7 +833,7 @@ Label_EditScript:
       if (ycolumn is ITransformedReadableColumn tyc)
       {
         var originalDataColumn = tyc.GetUnderlyingDataColumnOrDefault();
-        if (null != originalDataColumn)
+        if (originalDataColumn is not null)
         {
           dataColumn = originalDataColumn;
           transformation = tyc.Transformation;
@@ -882,7 +877,7 @@ Label_EditScript:
         nextStartOfDependentValues += validRows.Count * fitEle.NumberOfUsedDependentVariables;
 
         Altaxo.Data.DataTable parentTable = fitEle.DataTable;
-        if (parentTable == null)
+        if (parentTable is null)
           continue;
 
         if (calculateUnusedDependentVariablesAlso)
@@ -914,13 +909,13 @@ Label_EditScript:
             {
               var srcCol = (DataColumn)fitEle.DependentVariables(inUse[k]);
               var srcTable = DataColumnCollection.GetParentDataColumnCollectionOf(srcCol);
-              if (srcTable != null)
+              if (srcTable is not null)
               {
                 name = srcTable.GetColumnName(srcCol);
                 groupNumber = srcTable.GetColumnGroup(srcCol);
               }
             }
-            if (null == name)
+            if (name is null)
               fitEle.FitFunction.DependentVariableName(inUse[k]);
 
             parentTable.DataColumns.Add(col, name + ".Sim", ColumnKind.V, groupNumber);
@@ -940,7 +935,7 @@ Label_EditScript:
         FitElement fitEle = _doc.FitEnsemble[i];
 
         Altaxo.Data.DataTable parentTable = fitEle.DataTable;
-        if (parentTable == null)
+        if (parentTable is null)
           continue;
 
         double[] X = new double[fitEle.NumberOfIndependentVariables];
@@ -993,7 +988,7 @@ Label_EditScript:
     public void EhView_PasteParameterV()
     {
       Altaxo.Data.DataTable table = Altaxo.Worksheet.Commands.EditCommands.GetTableFromClipboard();
-      if (null == table)
+      if (table is null)
         return;
       Altaxo.Data.DoubleColumn col = null;
       // Find the first column that contains numeric values
@@ -1005,7 +1000,7 @@ Label_EditScript:
           break;
         }
       }
-      if (null == col)
+      if (col is null)
         return;
 
       int len = Math.Max(col.Count, _doc.CurrentParameters.Count);
@@ -1123,7 +1118,7 @@ Label_EditScript:
 
     public void EhView_CopyParameterNCM()
     {
-      if (null == _covarianceMatrix)
+      if (_covarianceMatrix is null)
       {
         Current.Gui.ErrorMessageBox("First, please do make a fit to get the covariances, then try again!");
         return;
@@ -1175,7 +1170,7 @@ Label_EditScript:
 
     public void EhView_CopyParameterNSVCVInOneRow()
     {
-      if (null == _covarianceMatrix)
+      if (_covarianceMatrix is null)
       {
         Current.Gui.ErrorMessageBox("First, please do make a fit to get the covariances, then try again!");
         return;
@@ -1224,12 +1219,12 @@ Label_EditScript:
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = null;
 
         _view = value as INonlinearFitView;
 
-        if (_view != null)
+        if (_view is not null)
         {
           _view.Controller = this;
           Initialize(false);

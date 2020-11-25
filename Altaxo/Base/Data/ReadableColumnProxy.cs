@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Main;
 
@@ -35,7 +36,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Returns the holded object. Null can be returned if the object is no longer available (e.g. disposed).
     /// </summary>
-    IReadableColumn Document();
+    IReadableColumn? Document();
 
     /// <summary>
     /// Gets the name of the column that is held by this proxy.
@@ -55,7 +56,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="column">The column.</param>
     /// <returns>An instance of <see cref="IReadableColumnProxy"/>. The type of instance returned depends on the type of the provided column (e.g. whether the column is part of the document or not).</returns>
-    public static IReadableColumnProxy FromColumn(IReadableColumn column)
+    public static IReadableColumnProxy FromColumn(IReadableColumn? column)
     {
       if (column is ITransformedReadableColumn)
       {
@@ -93,15 +94,17 @@ namespace Altaxo.Data
         info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy)); // serialize the base class
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ReadableColumnProxy)o ?? new ReadableColumnProxy(info);
+        var s = (ReadableColumnProxy?)o ?? new ReadableColumnProxy(info);
 
-        object baseobj = info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
+#pragma warning disable CS0618 // Type or member is obsolete
+        object? baseobj = info.GetBaseValueEmbeddedOrNull(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
+#pragma warning restore CS0618 // Type or member is obsolete
 
         if (!object.ReferenceEquals(s, baseobj))
         {
-          return ReadableColumnProxyForStandaloneColumns.FromColumn((IReadableColumn)baseobj);
+          return ReadableColumnProxyForStandaloneColumns.FromColumn((IReadableColumn?)baseobj);
         }
         else
         {
@@ -118,9 +121,9 @@ namespace Altaxo.Data
         info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy)); // serialize the base class
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ReadableColumnProxy)o ?? new ReadableColumnProxy(info);
+        var s = (ReadableColumnProxy?)o ?? new ReadableColumnProxy(info);
         info.GetBaseValueEmbedded(s, typeof(DocNodeProxy), parent);         // deserialize the base class
 
         return s;
@@ -135,9 +138,9 @@ namespace Altaxo.Data
         info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy2ndLevel)); // serialize the base class
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ReadableColumnProxy)o ?? new ReadableColumnProxy(info);
+        var s = (ReadableColumnProxy?)o ?? new ReadableColumnProxy(info);
         info.GetBaseValueEmbedded(s, typeof(DocNodeProxy2ndLevel), parent);         // deserialize the base class
 
         return s;
@@ -148,10 +151,10 @@ namespace Altaxo.Data
 
     public static ReadableColumnProxy FromColumn(IReadableColumn column)
     {
-      if (null == column)
+      if (column is null)
         throw new ArgumentNullException(nameof(column));
       var colAsDocumentNode = column as IDocumentLeafNode;
-      if (null == colAsDocumentNode)
+      if (colAsDocumentNode is null)
         throw new ArgumentException(string.Format("column does not implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
 
       return new ReadableColumnProxy(colAsDocumentNode);
@@ -181,12 +184,12 @@ namespace Altaxo.Data
 
     protected override bool IsValidDocument(object obj)
     {
-      return (obj is IReadableColumn) || obj == null;
+      return (obj is IReadableColumn) || obj is null;
     }
 
-    public IReadableColumn Document()
+    public IReadableColumn? Document()
     {
-      return (IReadableColumn)base.DocumentObject();
+      return (IReadableColumn?)base.DocumentObject();
     }
 
     public override object Clone()
@@ -199,20 +202,19 @@ namespace Altaxo.Data
       return GetName(level, Document(), InternalDocumentPath);
     }
 
-    public static string GetName(int level, IReadableColumn Document, AbsoluteDocumentPath InternalDocumentPath)
+    public static string GetName(int level, IReadableColumn? col, AbsoluteDocumentPath InternalDocumentPath)
     {
-      IReadableColumn col = Document; // this may have the side effect that the object is tried to resolve, is this o.k.?
-      if (col is Data.DataColumn)
+      if (col is Data.DataColumn datacol)
       {
-        var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
-        string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
+        var table = Altaxo.Data.DataTable.GetParentDataTableOf(datacol);
+        string tablename = table is null ? string.Empty : table.Name + "\\";
+        string collectionname = table is null ? string.Empty : (table.PropertyColumns.ContainsColumn(datacol) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
-          return ((DataColumn)col).Name;
+          return datacol.Name;
         else if (level == 1)
-          return tablename + ((DataColumn)col).Name;
+          return tablename + datacol.Name;
         else
-          return tablename + collectionname + ((DataColumn)col).Name;
+          return tablename + collectionname + datacol.Name;
       }
       else
       {

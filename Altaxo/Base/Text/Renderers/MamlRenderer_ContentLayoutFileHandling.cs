@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -65,7 +66,7 @@ namespace Altaxo.Text.Renderers
     /// </summary>
     public void WriteContentLayoutFile()
     {
-      if (null != Writer)
+      if (Writer is not null)
       {
         CloseCurrentMamlFile();
       }

@@ -22,11 +22,15 @@
 
 #endregion Copyright
 
-using System;
+#nullable enable
 using System.Threading;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Dummy implementation of <see cref="IProgressReporter"/>. Does nothing.
+  /// </summary>
+  /// <seealso cref="Altaxo.IProgressReporter" />
   public class DummyBackgroundMonitor : IProgressReporter
   {
     #region IBackgroundMonitor Members
@@ -103,7 +107,7 @@ namespace Altaxo.Main.Services
       }
     }
 
-    public string TaskName { get; set; }
+    public string TaskName { get; set; } = string.Empty;
 
     public CancellationToken CancellationToken { get; set; }
 

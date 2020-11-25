@@ -25,17 +25,17 @@
 using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
-  [TestFixture]
+
   public class ComplexFloatLUDecompTest
   {
-    private static ComplexFloatLUDecomp lu;
-    private const double TOLERENCE = 0.001;
+    private ComplexFloatLUDecomp lu;
+    private const double TOLERANCE = 0.001;
 
-    static ComplexFloatLUDecompTest()
+    public ComplexFloatLUDecompTest()
     {
       var a = new ComplexFloatMatrix(3)
       {
@@ -52,102 +52,102 @@ namespace AltaxoTest.Calc.LinearAlgebra
       lu = new ComplexFloatLUDecomp(a);
     }
 
-    [Test]
+    [Fact]
     public void LUWide()
     {
-      Assert.Throws(typeof(NotSquareMatrixException), () =>
+      Assert.Throws<NotSquareMatrixException>(() =>
       {
         var wm = new ComplexFloatMatrix(2, 3);
         var wlu = new ComplexFloatLUDecomp(wm);
       });
     }
 
-    [Test]
+    [Fact]
     public void LULong()
     {
-      Assert.Throws(typeof(NotSquareMatrixException), () =>
+      Assert.Throws<NotSquareMatrixException>(() =>
       {
         var lm = new ComplexFloatMatrix(3, 2);
         var llu = new ComplexFloatLUDecomp(lm);
       });
     }
 
-    [Test]
+    [Fact]
     public void LTest()
     {
-      Assert.AreEqual(lu.L[0, 0], ComplexFloat.One);
-      Assert.AreEqual(lu.L[0, 1], ComplexFloat.Zero);
-      Assert.AreEqual(lu.L[0, 2], ComplexFloat.Zero);
-      Assert.AreEqual(lu.L[1, 0].Real, .500, TOLERENCE);
-      Assert.AreEqual(lu.L[1, 1], ComplexFloat.One);
-      Assert.AreEqual(lu.L[1, 2], ComplexFloat.Zero);
-      Assert.AreEqual(lu.L[2, 0].Real, -.167, TOLERENCE);
-      Assert.AreEqual(lu.L[2, 1].Real, -.633, TOLERENCE);
-      Assert.AreEqual(lu.L[2, 0].Imag, .167, TOLERENCE);
-      Assert.AreEqual(lu.L[2, 1].Imag, .133, TOLERENCE);
-      Assert.AreEqual(lu.L[2, 2], ComplexFloat.One);
+      Assert.Equal(lu.L[0, 0], ComplexFloat.One);
+      Assert.Equal(lu.L[0, 1], ComplexFloat.Zero);
+      Assert.Equal(lu.L[0, 2], ComplexFloat.Zero);
+      AssertEx.Equal(lu.L[1, 0].Real, .500, TOLERANCE);
+      Assert.Equal(lu.L[1, 1], ComplexFloat.One);
+      Assert.Equal(lu.L[1, 2], ComplexFloat.Zero);
+      AssertEx.Equal(lu.L[2, 0].Real, -.167, TOLERANCE);
+      AssertEx.Equal(lu.L[2, 1].Real, -.633, TOLERANCE);
+      AssertEx.Equal(lu.L[2, 0].Imag, .167, TOLERANCE);
+      AssertEx.Equal(lu.L[2, 1].Imag, .133, TOLERANCE);
+      Assert.Equal(lu.L[2, 2], ComplexFloat.One);
     }
 
-    [Test]
+    [Fact]
     public void UTest()
     {
-      Assert.AreEqual(lu.U[0, 0].Real, 6.000, TOLERENCE);
-      Assert.AreEqual(lu.U[0, 1].Real, 8.000, TOLERENCE);
-      Assert.AreEqual(lu.U[0, 2].Real, 9.000, TOLERENCE);
-      Assert.AreEqual(lu.U[1, 0], ComplexFloat.Zero);
-      Assert.AreEqual(lu.U[1, 1].Real, -10.000, TOLERENCE);
-      Assert.AreEqual(lu.U[1, 2].Real, -3.500, TOLERENCE);
-      Assert.AreEqual(lu.U[2, 0], ComplexFloat.Zero);
-      Assert.AreEqual(lu.U[2, 1], ComplexFloat.Zero);
-      Assert.AreEqual(lu.U[2, 2].Real, 5.283, TOLERENCE);
-      Assert.AreEqual(lu.U[2, 2].Imag, -1.033, TOLERENCE);
+      AssertEx.Equal(lu.U[0, 0].Real, 6.000, TOLERANCE);
+      AssertEx.Equal(lu.U[0, 1].Real, 8.000, TOLERANCE);
+      AssertEx.Equal(lu.U[0, 2].Real, 9.000, TOLERANCE);
+      Assert.Equal(lu.U[1, 0], ComplexFloat.Zero);
+      AssertEx.Equal(lu.U[1, 1].Real, -10.000, TOLERANCE);
+      AssertEx.Equal(lu.U[1, 2].Real, -3.500, TOLERANCE);
+      Assert.Equal(lu.U[2, 0], ComplexFloat.Zero);
+      Assert.Equal(lu.U[2, 1], ComplexFloat.Zero);
+      AssertEx.Equal(lu.U[2, 2].Real, 5.283, TOLERANCE);
+      AssertEx.Equal(lu.U[2, 2].Imag, -1.033, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void GetDeterminantTest()
     {
       ComplexFloat det = lu.GetDeterminant();
-      Assert.AreEqual(det.Real, 317.000, TOLERENCE);
-      Assert.AreEqual(det.Imag, -62.000, TOLERENCE);
+      AssertEx.Equal(det.Real, 317.000, TOLERANCE);
+      AssertEx.Equal(det.Imag, -62.000, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void IsSingularTest()
     {
-      Assert.IsFalse(lu.IsSingular);
+      Assert.False(lu.IsSingular);
       var b = new ComplexFloatMatrix(3);
       var dlu = new ComplexFloatLUDecomp(b);
-      Assert.IsTrue(dlu.IsSingular);
+      Assert.True(dlu.IsSingular);
     }
 
-    [Test]
+    [Fact]
     public void GetInverseTest()
     {
       ComplexFloatMatrix inv = lu.GetInverse();
-      Assert.AreEqual(inv[0, 0].Real, -0.188378, TOLERENCE);
-      Assert.AreEqual(inv[0, 1].Real, 0.009115, TOLERENCE);
-      Assert.AreEqual(inv[0, 2].Real, 0.124572, TOLERENCE);
-      Assert.AreEqual(inv[1, 0].Real, -0.063805, TOLERENCE);
-      Assert.AreEqual(inv[1, 1].Real, -0.142074, TOLERENCE);
-      Assert.AreEqual(inv[1, 2].Real, 0.058323, TOLERENCE);
-      Assert.AreEqual(inv[2, 0].Real, 0.182301, TOLERENCE);
-      Assert.AreEqual(inv[2, 1].Real, 0.120211, TOLERENCE);
-      Assert.AreEqual(inv[2, 2].Real, -0.02378, TOLERENCE);
-      Assert.AreEqual(inv[0, 0].Imag, -0.036844, TOLERENCE);
-      Assert.AreEqual(inv[0, 1].Imag, 0.001783, TOLERENCE);
-      Assert.AreEqual(inv[0, 2].Imag, 0.024364, TOLERENCE);
-      Assert.AreEqual(inv[1, 0].Imag, -0.012479, TOLERENCE);
-      Assert.AreEqual(inv[1, 1].Imag, 0.000604, TOLERENCE);
-      Assert.AreEqual(inv[1, 2].Imag, 0.008252, TOLERENCE);
-      Assert.AreEqual(inv[2, 0].Imag, 0.035655, TOLERENCE);
-      Assert.AreEqual(inv[2, 1].Imag, -0.001725, TOLERENCE);
-      Assert.AreEqual(inv[2, 2].Imag, -0.023578, TOLERENCE);
+      AssertEx.Equal(inv[0, 0].Real, -0.188378, TOLERANCE);
+      AssertEx.Equal(inv[0, 1].Real, 0.009115, TOLERANCE);
+      AssertEx.Equal(inv[0, 2].Real, 0.124572, TOLERANCE);
+      AssertEx.Equal(inv[1, 0].Real, -0.063805, TOLERANCE);
+      AssertEx.Equal(inv[1, 1].Real, -0.142074, TOLERANCE);
+      AssertEx.Equal(inv[1, 2].Real, 0.058323, TOLERANCE);
+      AssertEx.Equal(inv[2, 0].Real, 0.182301, TOLERANCE);
+      AssertEx.Equal(inv[2, 1].Real, 0.120211, TOLERANCE);
+      AssertEx.Equal(inv[2, 2].Real, -0.02378, TOLERANCE);
+      AssertEx.Equal(inv[0, 0].Imag, -0.036844, TOLERANCE);
+      AssertEx.Equal(inv[0, 1].Imag, 0.001783, TOLERANCE);
+      AssertEx.Equal(inv[0, 2].Imag, 0.024364, TOLERANCE);
+      AssertEx.Equal(inv[1, 0].Imag, -0.012479, TOLERANCE);
+      AssertEx.Equal(inv[1, 1].Imag, 0.000604, TOLERANCE);
+      AssertEx.Equal(inv[1, 2].Imag, 0.008252, TOLERANCE);
+      AssertEx.Equal(inv[2, 0].Imag, 0.035655, TOLERANCE);
+      AssertEx.Equal(inv[2, 1].Imag, -0.001725, TOLERANCE);
+      AssertEx.Equal(inv[2, 2].Imag, -0.023578, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void GetInverseSingularTest()
     {
-      Assert.Throws(typeof(SingularMatrixException), () =>
+      Assert.Throws<SingularMatrixException>(() =>
       {
         var a = new ComplexFloatMatrix(3, 3);
         var dlu = new ComplexFloatLUDecomp(a);
@@ -155,7 +155,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       });
     }
 
-    [Test]
+    [Fact]
     public void SolveMatrix()
     {
       var b = new ComplexFloatMatrix(3)
@@ -171,24 +171,24 @@ namespace AltaxoTest.Calc.LinearAlgebra
         [2, 2] = 25
       };
       ComplexFloatMatrix x = lu.Solve(b);
-      Assert.AreEqual(x[0, 0].Real, 2.856, TOLERENCE);
-      Assert.AreEqual(x[0, 1].Real, 2.856, TOLERENCE);
-      Assert.AreEqual(x[0, 2].Real, 2.856, TOLERENCE);
-      Assert.AreEqual(x[1, 0].Real, -0.517, 0.01);
-      Assert.AreEqual(x[1, 1].Real, -0.517, 0.01);
-      Assert.AreEqual(x[1, 2].Real, -0.517, 0.01);
-      Assert.AreEqual(x[2, 0].Real, 1.333, TOLERENCE);
-      Assert.AreEqual(x[2, 1].Real, 1.333, TOLERENCE);
-      Assert.AreEqual(x[2, 2].Real, 1.333, TOLERENCE);
-      Assert.AreEqual(x[0, 0].Imag, 0.559, TOLERENCE);
-      Assert.AreEqual(x[0, 1].Imag, 0.559, TOLERENCE);
-      Assert.AreEqual(x[0, 2].Imag, 0.559, TOLERENCE);
-      Assert.AreEqual(x[1, 0].Imag, 0.189, TOLERENCE);
-      Assert.AreEqual(x[1, 1].Imag, 0.189, TOLERENCE);
-      Assert.AreEqual(x[1, 2].Imag, 0.189, TOLERENCE);
-      Assert.AreEqual(x[2, 0].Imag, -0.541, TOLERENCE);
-      Assert.AreEqual(x[2, 1].Imag, -0.541, TOLERENCE);
-      Assert.AreEqual(x[2, 2].Imag, -0.541, TOLERENCE);
+      AssertEx.Equal(x[0, 0].Real, 2.856, TOLERANCE);
+      AssertEx.Equal(x[0, 1].Real, 2.856, TOLERANCE);
+      AssertEx.Equal(x[0, 2].Real, 2.856, TOLERANCE);
+      AssertEx.Equal(x[1, 0].Real, -0.517, 0.01);
+      AssertEx.Equal(x[1, 1].Real, -0.517, 0.01);
+      AssertEx.Equal(x[1, 2].Real, -0.517, 0.01);
+      AssertEx.Equal(x[2, 0].Real, 1.333, TOLERANCE);
+      AssertEx.Equal(x[2, 1].Real, 1.333, TOLERANCE);
+      AssertEx.Equal(x[2, 2].Real, 1.333, TOLERANCE);
+      AssertEx.Equal(x[0, 0].Imag, 0.559, TOLERANCE);
+      AssertEx.Equal(x[0, 1].Imag, 0.559, TOLERANCE);
+      AssertEx.Equal(x[0, 2].Imag, 0.559, TOLERANCE);
+      AssertEx.Equal(x[1, 0].Imag, 0.189, TOLERANCE);
+      AssertEx.Equal(x[1, 1].Imag, 0.189, TOLERANCE);
+      AssertEx.Equal(x[1, 2].Imag, 0.189, TOLERANCE);
+      AssertEx.Equal(x[2, 0].Imag, -0.541, TOLERANCE);
+      AssertEx.Equal(x[2, 1].Imag, -0.541, TOLERANCE);
+      AssertEx.Equal(x[2, 2].Imag, -0.541, TOLERANCE);
 
       b = new ComplexFloatMatrix(3, 2)
       {
@@ -200,19 +200,19 @@ namespace AltaxoTest.Calc.LinearAlgebra
         [2, 1] = 25
       };
       x = lu.Solve(b);
-      Assert.AreEqual(x[0, 0].Real, 2.856, TOLERENCE);
-      Assert.AreEqual(x[0, 1].Real, 2.856, TOLERENCE);
-      Assert.AreEqual(x[1, 0].Real, -0.517, 0.01);
-      Assert.AreEqual(x[1, 1].Real, -0.517, 0.01);
+      AssertEx.Equal(x[0, 0].Real, 2.856, TOLERANCE);
+      AssertEx.Equal(x[0, 1].Real, 2.856, TOLERANCE);
+      AssertEx.Equal(x[1, 0].Real, -0.517, 0.01);
+      AssertEx.Equal(x[1, 1].Real, -0.517, 0.01);
       // Managed code on OSX returns -0.516
-      Assert.AreEqual(x[2, 0].Real, 1.333, TOLERENCE);
-      Assert.AreEqual(x[2, 1].Real, 1.333, TOLERENCE);
-      Assert.AreEqual(x[0, 0].Imag, 0.559, TOLERENCE);
-      Assert.AreEqual(x[0, 1].Imag, 0.559, TOLERENCE);
-      Assert.AreEqual(x[1, 0].Imag, 0.189, TOLERENCE);
-      Assert.AreEqual(x[1, 1].Imag, 0.189, TOLERENCE);
-      Assert.AreEqual(x[2, 0].Imag, -0.541, TOLERENCE);
-      Assert.AreEqual(x[2, 1].Imag, -0.541, TOLERENCE);
+      AssertEx.Equal(x[2, 0].Real, 1.333, TOLERANCE);
+      AssertEx.Equal(x[2, 1].Real, 1.333, TOLERANCE);
+      AssertEx.Equal(x[0, 0].Imag, 0.559, TOLERANCE);
+      AssertEx.Equal(x[0, 1].Imag, 0.559, TOLERANCE);
+      AssertEx.Equal(x[1, 0].Imag, 0.189, TOLERANCE);
+      AssertEx.Equal(x[1, 1].Imag, 0.189, TOLERANCE);
+      AssertEx.Equal(x[2, 0].Imag, -0.541, TOLERANCE);
+      AssertEx.Equal(x[2, 1].Imag, -0.541, TOLERANCE);
 
       b = new ComplexFloatMatrix(3, 4)
       {
@@ -230,33 +230,33 @@ namespace AltaxoTest.Calc.LinearAlgebra
         [2, 3] = 25
       };
       x = lu.Solve(b);
-      Assert.AreEqual(x[0, 0].Real, 2.856, TOLERENCE);
-      Assert.AreEqual(x[0, 1].Real, 2.856, TOLERENCE);
-      Assert.AreEqual(x[0, 2].Real, 2.856, TOLERENCE);
-      Assert.AreEqual(x[0, 3].Real, 2.856, TOLERENCE);
-      Assert.AreEqual(x[1, 0].Real, -0.517, 0.01);
-      Assert.AreEqual(x[1, 1].Real, -0.517, 0.01);
-      Assert.AreEqual(x[1, 2].Real, -0.517, 0.01);
-      Assert.AreEqual(x[1, 3].Real, -0.517, 0.01);
-      Assert.AreEqual(x[2, 0].Real, 1.333, TOLERENCE);
-      Assert.AreEqual(x[2, 1].Real, 1.333, TOLERENCE);
-      Assert.AreEqual(x[2, 2].Real, 1.333, TOLERENCE);
-      Assert.AreEqual(x[2, 3].Real, 1.333, TOLERENCE);
-      Assert.AreEqual(x[0, 0].Imag, 0.559, TOLERENCE);
-      Assert.AreEqual(x[0, 1].Imag, 0.559, TOLERENCE);
-      Assert.AreEqual(x[0, 2].Imag, 0.559, TOLERENCE);
-      Assert.AreEqual(x[0, 3].Imag, 0.559, TOLERENCE);
-      Assert.AreEqual(x[1, 0].Imag, 0.189, TOLERENCE);
-      Assert.AreEqual(x[1, 1].Imag, 0.189, TOLERENCE);
-      Assert.AreEqual(x[1, 2].Imag, 0.189, TOLERENCE);
-      Assert.AreEqual(x[1, 3].Imag, 0.189, TOLERENCE);
-      Assert.AreEqual(x[2, 0].Imag, -0.541, TOLERENCE);
-      Assert.AreEqual(x[2, 1].Imag, -0.541, TOLERENCE);
-      Assert.AreEqual(x[2, 2].Imag, -0.541, TOLERENCE);
-      Assert.AreEqual(x[2, 3].Imag, -0.541, TOLERENCE);
+      AssertEx.Equal(x[0, 0].Real, 2.856, TOLERANCE);
+      AssertEx.Equal(x[0, 1].Real, 2.856, TOLERANCE);
+      AssertEx.Equal(x[0, 2].Real, 2.856, TOLERANCE);
+      AssertEx.Equal(x[0, 3].Real, 2.856, TOLERANCE);
+      AssertEx.Equal(x[1, 0].Real, -0.517, 0.01);
+      AssertEx.Equal(x[1, 1].Real, -0.517, 0.01);
+      AssertEx.Equal(x[1, 2].Real, -0.517, 0.01);
+      AssertEx.Equal(x[1, 3].Real, -0.517, 0.01);
+      AssertEx.Equal(x[2, 0].Real, 1.333, TOLERANCE);
+      AssertEx.Equal(x[2, 1].Real, 1.333, TOLERANCE);
+      AssertEx.Equal(x[2, 2].Real, 1.333, TOLERANCE);
+      AssertEx.Equal(x[2, 3].Real, 1.333, TOLERANCE);
+      AssertEx.Equal(x[0, 0].Imag, 0.559, TOLERANCE);
+      AssertEx.Equal(x[0, 1].Imag, 0.559, TOLERANCE);
+      AssertEx.Equal(x[0, 2].Imag, 0.559, TOLERANCE);
+      AssertEx.Equal(x[0, 3].Imag, 0.559, TOLERANCE);
+      AssertEx.Equal(x[1, 0].Imag, 0.189, TOLERANCE);
+      AssertEx.Equal(x[1, 1].Imag, 0.189, TOLERANCE);
+      AssertEx.Equal(x[1, 2].Imag, 0.189, TOLERANCE);
+      AssertEx.Equal(x[1, 3].Imag, 0.189, TOLERANCE);
+      AssertEx.Equal(x[2, 0].Imag, -0.541, TOLERANCE);
+      AssertEx.Equal(x[2, 1].Imag, -0.541, TOLERANCE);
+      AssertEx.Equal(x[2, 2].Imag, -0.541, TOLERANCE);
+      AssertEx.Equal(x[2, 3].Imag, -0.541, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void SolveVector()
     {
       var b = new ComplexFloatVector(3)
@@ -266,12 +266,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
         [2] = 25
       };
       ComplexFloatVector x = lu.Solve(b);
-      Assert.AreEqual(x[0].Real, 2.856, TOLERENCE);
-      Assert.AreEqual(x[1].Real, -0.517, 0.01);
-      Assert.AreEqual(x[2].Real, 1.333, TOLERENCE);
-      Assert.AreEqual(x[0].Imag, 0.559, TOLERENCE);
-      Assert.AreEqual(x[1].Imag, 0.189, TOLERENCE);
-      Assert.AreEqual(x[2].Imag, -0.541, TOLERENCE);
+      AssertEx.Equal(x[0].Real, 2.856, TOLERANCE);
+      AssertEx.Equal(x[1].Real, -0.517, 0.01);
+      AssertEx.Equal(x[2].Real, 1.333, TOLERANCE);
+      AssertEx.Equal(x[0].Imag, 0.559, TOLERANCE);
+      AssertEx.Equal(x[1].Imag, 0.189, TOLERANCE);
+      AssertEx.Equal(x[2].Imag, -0.541, TOLERANCE);
     }
   }
 }

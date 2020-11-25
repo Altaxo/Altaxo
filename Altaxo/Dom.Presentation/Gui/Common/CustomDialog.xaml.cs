@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,9 +41,6 @@ namespace Altaxo.Gui.Common
   public partial class CustomDialog : Window
   {
     public int Result { get; private set; } = -1;
-
-    private string displayMessage;
-    private Exception exceptionGot;
 
     private int cancelButton;
     private int acceptButton;

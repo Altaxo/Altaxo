@@ -22,9 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,9 +71,9 @@ namespace Altaxo.Gui.Units
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (UserDefinedUnitEnvironments)o ?? new UserDefinedUnitEnvironments(info);
+        var s = (UserDefinedUnitEnvironments?)o ?? new UserDefinedUnitEnvironments(info);
 
         var count = info.OpenArray("Environments");
         for (int i = 0; i < count; ++i)
@@ -165,7 +167,7 @@ namespace Altaxo.Gui.Units
       return success;
     }
 
-    public bool TryGetValue(string key, out UserDefinedUnitEnvironment value)
+    public bool TryGetValue(string key, [MaybeNullWhen(false)] out UserDefinedUnitEnvironment value)
     {
       return _dictionary.TryGetValue(key, out value);
     }

@@ -92,9 +92,10 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    private static void OnFrameworkElementIsActiveChanged(object sender, EventArgs e)
+    private static void OnFrameworkElementIsActiveChanged(object? sender, EventArgs e)
     {
-      UpdateObservedValuesForFrameworkElement((Window)sender);
+      if(sender is Window window)
+        UpdateObservedValuesForFrameworkElement(window);
     }
 
     private static void UpdateObservedValuesForFrameworkElement(Window frameworkElement)

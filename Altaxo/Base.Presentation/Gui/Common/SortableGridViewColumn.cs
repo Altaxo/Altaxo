@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable disable warnings
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -76,10 +77,10 @@ namespace Altaxo.Gui.Common
     private static void OnSortDirectionChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
     {
       var grid = sender as ListView;
-      if (grid != null)
+      if (grid is not null)
       {
         SortableGridViewColumn col = GetCurrentSortColumn(grid);
-        if (col != null)
+        if (col is not null)
           col.SortDirection = (ColumnSortDirection)args.NewValue;
         Sort(grid);
       }
@@ -106,13 +107,13 @@ namespace Altaxo.Gui.Common
     private static void OnCurrentSortColumnChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
     {
       var grid = sender as ListView;
-      if (grid != null)
+      if (grid is not null)
       {
         var oldColumn = (SortableGridViewColumn)args.OldValue;
-        if (oldColumn != null)
+        if (oldColumn is not null)
           oldColumn.SortDirection = ColumnSortDirection.None;
         var newColumn = (SortableGridViewColumn)args.NewValue;
-        if (newColumn != null)
+        if (newColumn is not null)
         {
           newColumn.SortDirection = GetSortDirection(grid);
         }
@@ -141,7 +142,7 @@ namespace Altaxo.Gui.Common
     private static void OnSortModeChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
     {
       var grid = sender as ListView;
-      if (grid != null)
+      if (grid is not null)
       {
         if ((ListViewSortMode)args.NewValue != ListViewSortMode.None)
           grid.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(GridViewColumnHeaderClickHandler));
@@ -154,7 +155,7 @@ namespace Altaxo.Gui.Common
     {
       var grid = sender as ListView;
       var headerClicked = e.OriginalSource as GridViewColumnHeader;
-      if (grid != null && headerClicked != null && headerClicked.Role != GridViewColumnHeaderRole.Padding)
+      if (grid is not null && headerClicked is not null && headerClicked.Role != GridViewColumnHeaderRole.Padding)
       {
         if (headerClicked.Column == GetCurrentSortColumn(grid))
         {
@@ -177,22 +178,22 @@ namespace Altaxo.Gui.Common
     {
       ColumnSortDirection currentDirection = GetSortDirection(grid);
       SortableGridViewColumn column = GetCurrentSortColumn(grid);
-      if (column != null && GetSortMode(grid) == ListViewSortMode.Automatic && currentDirection != ColumnSortDirection.None)
+      if (column is not null && GetSortMode(grid) == ListViewSortMode.Automatic && currentDirection != ColumnSortDirection.None)
       {
         ICollectionView dataView = CollectionViewSource.GetDefaultView(grid.ItemsSource);
 
         string sortBy = column.SortBy;
-        if (sortBy == null)
+        if (sortBy is null)
         {
           var binding = column.DisplayMemberBinding as Binding;
-          if (binding != null && binding.Path != null)
+          if (binding is not null && binding.Path is not null)
           {
             sortBy = binding.Path.Path;
           }
         }
 
         dataView.SortDescriptions.Clear();
-        if (sortBy != null)
+        if (sortBy is not null)
         {
           ListSortDirection direction;
           if (currentDirection == ColumnSortDirection.Descending)

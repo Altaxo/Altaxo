@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.ComponentModel;
 using Altaxo.Calc.Regression.Nonlinear;
@@ -84,9 +85,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
         info.AddEnum("ParamT0Unit", s._temperatureUnitOfT0);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        VogelFulcherLaw s = o != null ? (VogelFulcherLaw)o : new VogelFulcherLaw();
+        VogelFulcherLaw s = (VogelFulcherLaw?)o ?? new VogelFulcherLaw();
 
         s._temperatureUnitOfX = (TemperatureRepresentation)info.GetEnum("IndependentVariableUnit", typeof(TemperatureRepresentation));
         s._dependentVariableTransform = (TransformedValueRepresentation)info.GetEnum("DependentVariableTransform", typeof(TransformedValueRepresentation));
@@ -185,7 +186,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       return 0;
     }
 
-    public IVarianceScaling DefaultVarianceScaling(int i)
+    public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
@@ -202,7 +203,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     /// <summary>
     /// Not used here since this fit function never changed.
     /// </summary>
-    public event EventHandler Changed;
+    public event EventHandler? Changed;
 
     protected virtual void OnChanged()
     {

@@ -43,56 +43,56 @@ namespace Altaxo.Gui.Graph
 
     private void EhPrintLocationChanged(object sender, SelectionChangedEventArgs e)
     {
-      if (null != PrintLocationChanged)
+      if (PrintLocationChanged is not null)
         PrintLocationChanged();
       e.Handled = true;
     }
 
     private void EhRotatePageAutomaticallyChanged(object sender, RoutedEventArgs e)
     {
-      if (null != RotatePageAutomaticallyChanged)
+      if (RotatePageAutomaticallyChanged is not null)
         RotatePageAutomaticallyChanged(_chkRotatePageAutomatically.IsChecked == true);
       e.Handled = true;
     }
 
     private void EhFitGraphToPrintIfSmallerChanged(object sender, RoutedEventArgs e)
     {
-      if (null != FitGraphToPrintIfSmallerChanged)
+      if (FitGraphToPrintIfSmallerChanged is not null)
         FitGraphToPrintIfSmallerChanged(_chkFitGraphToPrintIfSmaller.IsChecked == true);
       e.Handled = true;
     }
 
     private void EhFitGraphToPrintIfLargerChanged(object sender, RoutedEventArgs e)
     {
-      if (null != FitGraphToPrintIfLargerChanged)
+      if (FitGraphToPrintIfLargerChanged is not null)
         FitGraphToPrintIfLargerChanged(_chkFitGraphToPrintIfLarger.IsChecked == true);
       e.Handled = true;
     }
 
     private void EhPrintCropMarksChanged(object sender, RoutedEventArgs e)
     {
-      if (null != PrintCropMarksChanged)
+      if (PrintCropMarksChanged is not null)
         PrintCropMarksChanged(_chkPrintCropMarks.IsChecked == true);
       e.Handled = true;
     }
 
     private void EhTilePagesChanged(object sender, RoutedEventArgs e)
     {
-      if (null != TilePagesChanged)
+      if (TilePagesChanged is not null)
         TilePagesChanged(_chkTilePages.IsChecked == true);
       e.Handled = true;
     }
 
     private void EhUseFixedZoomFactorChanged(object sender, RoutedEventArgs e)
     {
-      if (null != UseFixedZoomFactorChanged)
+      if (UseFixedZoomFactorChanged is not null)
         UseFixedZoomFactorChanged(_chkUseFixedZoomFactor.IsChecked == true);
       e.Handled = true;
     }
 
     private void EhZoomFactorChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != ZoomFactorChanged)
+      if (ZoomFactorChanged is not null)
         ZoomFactorChanged(_edZoomFactor.SelectedQuantityInSIUnits);
     }
 
@@ -138,21 +138,21 @@ namespace Altaxo.Gui.Graph
       _edZoomFactor.SelectedQuantityInSIUnits = val;
     }
 
-    public event Action PrintLocationChanged;
+    public event Action? PrintLocationChanged;
 
-    public event Action<bool> FitGraphToPrintIfLargerChanged;
+    public event Action<bool>? FitGraphToPrintIfLargerChanged;
 
-    public event Action<bool> FitGraphToPrintIfSmallerChanged;
+    public event Action<bool>? FitGraphToPrintIfSmallerChanged;
 
-    public event Action<bool> PrintCropMarksChanged;
+    public event Action<bool>? PrintCropMarksChanged;
 
-    public event Action<bool> RotatePageAutomaticallyChanged;
+    public event Action<bool>? RotatePageAutomaticallyChanged;
 
-    public event Action<bool> TilePagesChanged;
+    public event Action<bool>? TilePagesChanged;
 
-    public event Action<bool> UseFixedZoomFactorChanged;
+    public event Action<bool>? UseFixedZoomFactorChanged;
 
-    public event Action<double> ZoomFactorChanged;
+    public event Action<double>? ZoomFactorChanged;
 
     #endregion ISingleGraphPrintOptionsView
   }

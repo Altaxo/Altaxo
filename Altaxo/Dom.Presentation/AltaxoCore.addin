@@ -205,6 +205,17 @@
 					class="Altaxo.Main.Commands.FileSave" />
         <MenuItem id="SaveProjectAs" label="${res:XML.MainMenu.FileMenu.SaveProjectAs}" icon="Icons.16x16.SaveAllIcon"
 					description="${res:XML.MainMenu.FileMenu.SaveProjectAs.Description}" class="Altaxo.Main.Commands.FileSaveAs" />
+        <MenuItem id="FileSpecial" label="${res:XML.MainMenu.FileMenuSpecial}" type="Menu">
+          <MenuItem id="OpenFromDir"
+                    label="${res:XML.MainMenu.FileMenu.OpenFromDirectory}"
+                    description="${res:XML.MainMenu.FileMenu.OpenFromDirectory.Description}"
+                    icon="Icons.16x16.OpenProjectIcon"
+                    class="Altaxo.Main.Commands.FileOpenFromDirectory" />
+          <MenuItem id="SaveProjectAsToDir" 
+                    label="${res:XML.MainMenu.FileMenu.SaveProjectAsToDirectory}" 
+                    icon="Icons.16x16.SaveAllIcon"
+            description="${res:XML.MainMenu.FileMenu.SaveProjectAsToDirectory.Description}" class="Altaxo.Main.Commands.FileSaveAsToDirectory" />
+        </MenuItem>
       </Condition>
       <Condition name="IsInEmbeddedObjectMode" value="true" action="Exclude">
         <MenuItem id="SaveCopyOfProjectAs" label="${res:XML.MainMenu.FileMenu.SaveCopyOfProjectAs}" icon="Icons.16x16.SaveAllIcon"

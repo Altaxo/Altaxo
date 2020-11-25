@@ -22,36 +22,38 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Main
 {
   public class InstanceChangedEventArgs : SelfAccumulateableEventArgs
   {
-    protected object _oldObject, _newObject;
+    protected object? _oldObject;
+    protected object? _newObject;
 
-    public InstanceChangedEventArgs(object oldObject, object newObject)
+    public InstanceChangedEventArgs(object? oldObject, object? newObject)
     {
       _oldObject = oldObject;
       _newObject = newObject;
     }
 
-    public object NewInstance
+    public object? NewInstance
     {
       get { return _newObject; }
     }
 
-    public object OldInstance
+    public object? OldInstance
     {
       get { return _oldObject; }
     }
 
     public override void Add(SelfAccumulateableEventArgs e)
     {
-      if (e == null)
+      if (e is null)
         throw new ArgumentNullException("e");
       var other = e as InstanceChangedEventArgs;
-      if (null == other)
+      if (other is null)
         throw new ArgumentException("e is not of type: " + GetType().Name);
       if (!object.ReferenceEquals(_newObject, other._oldObject))
         throw new ArgumentException("this.NewObject should be other.OldObject, but this is not the case. The overrides for GetHashCode and Equals should ensure this. Please debug.");
@@ -64,9 +66,9 @@ namespace Altaxo.Main
       return GetType().GetHashCode(); // unfortunately, we have to match all instances of the class, because in Equals we must compare the new Instance with the old Instance
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (null == obj || GetType() != obj.GetType())
+      if (obj is null || GetType() != obj.GetType())
         return false;
 
       var other = (InstanceChangedEventArgs)obj;

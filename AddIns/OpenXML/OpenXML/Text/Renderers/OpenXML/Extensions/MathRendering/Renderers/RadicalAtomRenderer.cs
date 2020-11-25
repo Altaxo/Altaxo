@@ -52,7 +52,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
           )
         );
 
-      if (null == item.DegreeAtom)
+      if (item.DegreeAtom is null)
       {
         radicalProperties.PrependChild(new HideDegree() { Val = BooleanValues.One });
       }
@@ -61,12 +61,12 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       // note we need a Degree element even if no degree text is present
       // (but note that in this case we have a HideDegree element in RadicalProperties)
       var degreeEle = renderer.Push(new Degree());
-      if (null != item.DegreeAtom)
+      if (item.DegreeAtom is not null)
         renderer.Write(item.DegreeAtom);
       renderer.PopTo(degreeEle);
 
 
-      if (null != item.BaseAtom)
+      if (item.BaseAtom is not null)
       {
         var baseEle = renderer.Push(new Base());
         renderer.Write(item.BaseAtom);

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -41,17 +42,17 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   /// </summary>
   public partial class CardinalSplinePointsControl : UserControl, ICardinalSplinePointsView
   {
-    public event Action CurvePointsCopyTriggered;
+    public event Action? CurvePointsCopyTriggered;
 
-    public event Action CurvePointsCopyAsPhysicalTriggered;
+    public event Action? CurvePointsCopyAsPhysicalTriggered;
 
-    public event Action CurvePointsCopyAsLogicalTriggered;
+    public event Action? CurvePointsCopyAsLogicalTriggered;
 
-    public event Action CurvePointsPasteTriggered;
+    public event Action? CurvePointsPasteTriggered;
 
-    public event Action CurvePointsPastePhysicalTriggered;
+    public event Action? CurvePointsPastePhysicalTriggered;
 
-    public event Action CurvePointsPasteLogicalTriggered;
+    public event Action? CurvePointsPasteLogicalTriggered;
 
     public CardinalSplinePointsControl()
     {
@@ -147,7 +148,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private void EhCopyCurvePoints(object sender, RoutedEventArgs e)
     {
-      if (null != CurvePointsCopyTriggered)
+      if (CurvePointsCopyTriggered is not null)
         CurvePointsCopyTriggered();
     }
 
@@ -163,7 +164,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private void EhPasteCurvePoints(object sender, RoutedEventArgs e)
     {
-      if (null != CurvePointsPasteTriggered)
+      if (CurvePointsPasteTriggered is not null)
         CurvePointsPasteTriggered();
     }
 

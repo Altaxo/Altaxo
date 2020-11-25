@@ -22,9 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -60,7 +62,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>The instance used by the static methods of this class. Is not neccessarily of type <see cref="GdiFontManager"/>, but could also be a derived type.</summary>
     protected static CachedService<GdiFontManager, GdiFontManager> _instanceCached = new CachedService<GdiFontManager, GdiFontManager>(true, null, null);
 
-    protected static GdiFontManager _instance { get { return _instanceCached; } }
+    protected static GdiFontManager _instance { get { return _instanceCached.Instance ?? throw new InvalidOperationException($"Service {nameof(GdiFontManager)} not available yet!"); } }
 
     /// <summary>Corresponds the font's invariant description string with the Gdi+ font instance.
     /// Key is the invariant description string, value is the Gdi font instance with the specific style and size.
@@ -80,7 +82,7 @@ namespace Altaxo.Graph.Gdi
     protected ConcurrentDictionary<string, FontFamily[]> _dictWin32FamilyNameToGdiFontFamilyAndPresence;
 
     /// <summary>Font family name of a generic sans family that is present on this computer.</summary>
-    private string _gdiGenericSansSerifFontFamilyName;
+    private string? _gdiGenericSansSerifFontFamilyName;
 
     #endregion Constants and members
 
@@ -165,7 +167,7 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        if (null == _instance._gdiGenericSansSerifFontFamilyName)
+        if (_instance._gdiGenericSansSerifFontFamilyName is null)
           _instance._gdiGenericSansSerifFontFamilyName = _instance.InternalGetFontFamilyNameGenericSansSerif();
 
         return _instance._gdiGenericSansSerifFontFamilyName;
@@ -218,6 +220,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Build the font dictionaries.
     /// </summary>
+    [MemberNotNull(nameof(_dictWin32FamilyNameToGdiFontFamilyAndPresence))]
     protected virtual void InternalBuildDictionaries()
     {
       var dict = new ConcurrentDictionary<string, FontFamily[]>();
@@ -278,13 +281,13 @@ namespace Altaxo.Graph.Gdi
     protected static FontStylePresence FontFamilyArrayToFontStylePresence(FontFamily[] fontFamilyArray)
     {
       FontStylePresence pres = FontStylePresence.NoStyleAvailable;
-      if (null != fontFamilyArray[IdxRegular])
+      if (fontFamilyArray[IdxRegular] is not null)
         pres |= FontStylePresence.RegularStyleAvailable;
-      if (null != fontFamilyArray[IdxBold])
+      if (fontFamilyArray[IdxBold] is not null)
         pres |= FontStylePresence.BoldStyleAvailable;
-      if (null != fontFamilyArray[IdxItalic])
+      if (fontFamilyArray[IdxItalic] is not null)
         pres |= FontStylePresence.ItalicStyleAvailable;
-      if (null != fontFamilyArray[IdxBoldItalic])
+      if (fontFamilyArray[IdxBoldItalic] is not null)
         pres |= FontStylePresence.BoldAndItalicStyleAvailable;
       return pres;
     }
@@ -501,7 +504,7 @@ namespace Altaxo.Graph.Gdi
       {
         if (_dictWin32FamilyNameToGdiFontFamilyAndPresence.TryGetValue(familyName, out var entryValue))
         {
-          if (null != entryValue[IdxRegular] && null != entryValue[IdxBold] && null != entryValue[IdxItalic] && null != entryValue[IdxBoldItalic])
+          if (entryValue[IdxRegular] is not null && entryValue[IdxBold] is not null && entryValue[IdxItalic] is not null && entryValue[IdxBoldItalic] is not null)
             return familyName;
         }
       }
@@ -510,7 +513,7 @@ namespace Altaxo.Graph.Gdi
 
       foreach (var entry in _dictWin32FamilyNameToGdiFontFamilyAndPresence)
       {
-        if (null != entry.Value[IdxRegular] && null != entry.Value[IdxBold] && null != entry.Value[IdxItalic] && null != entry.Value[IdxBoldItalic])
+        if (entry.Value[IdxRegular] is not null && entry.Value[IdxBold] is not null && entry.Value[IdxItalic] is not null && entry.Value[IdxBoldItalic] is not null)
           return entry.Key;
       }
 
@@ -545,7 +548,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-    protected virtual void EhInstalledFontsChanged(object sender, EventArgs e)
+    protected virtual void EhInstalledFontsChanged(object? sender, EventArgs e)
     {
       InternalBuildDictionaries();
     }

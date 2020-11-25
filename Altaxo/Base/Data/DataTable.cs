@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Collections;
 using Altaxo.Scripting;
 
@@ -53,7 +55,7 @@ namespace Altaxo.Data
     /// The name of this table, has to be unique if there is a parent data set, since the tables in the parent data set
     /// can only be accessed by name.
     /// </summary>
-    protected string _name = null; // the name of the table
+    protected string? _name; // the name of the table
 
     /// <summary>
     /// Collection of property columns, i.e. "horizontal" columns.
@@ -87,12 +89,12 @@ namespace Altaxo.Data
     /// <summary>
     /// The table script that belongs to this table.
     /// </summary>
-    protected TableScript _tableScript;
+    protected TableScript? _tableScript;
 
     /// <summary>
     /// Designates the source of the data the table was originally filled with.
     /// </summary>
-    protected IAltaxoTableDataSource _tableDataSource;
+    protected IAltaxoTableDataSource? _tableDataSource;
 
     /// <summary>
     /// The table properties, key is a string, value is a property you want to store here.
@@ -100,7 +102,7 @@ namespace Altaxo.Data
     /// <remarks>The properties are saved on disc (with exception of those who starts with "tmp/".
     /// If the property you want to store is only temporary, the properties name should therefore
     /// start with "tmp/".</remarks>
-    protected Main.Properties.PropertyBag _tableProperties;
+    protected Main.Properties.PropertyBag? _tableProperties;
 
     #endregion Members
 
@@ -123,9 +125,9 @@ namespace Altaxo.Data
         info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (Altaxo.Data.DataTable)o ?? new Altaxo.Data.DataTable(info);
+        var s = (Altaxo.Data.DataTable?)o ?? new Altaxo.Data.DataTable(info);
 
         s._name = info.GetString("Name");
         s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
@@ -133,6 +135,7 @@ namespace Altaxo.Data
         s._dataColumns.ColumnScripts.ParentObject = s;
 
         s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
+        s._propertyColumns.MarkAsPropertyCollection();
         s._propertyColumns.ParentObject = s;
         s._propertyColumns.ColumnScripts.ParentObject = s;
 
@@ -151,12 +154,12 @@ namespace Altaxo.Data
         info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
 
         // new in version 1
-        info.AddValue("TableScript", s._tableScript);
+        info.AddValueOrNull("TableScript", s._tableScript);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (Altaxo.Data.DataTable)o ?? new Altaxo.Data.DataTable(info);
+        var s = (Altaxo.Data.DataTable?)o ?? new Altaxo.Data.DataTable(info);
 
         s._name = info.GetString("Name");
         s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
@@ -164,13 +167,12 @@ namespace Altaxo.Data
         s._dataColumns.ColumnScripts.ParentObject = s;
 
         s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
+        s._propertyColumns.MarkAsPropertyCollection();
         s._propertyColumns.ParentObject = s;
         s._propertyColumns.ColumnScripts.ParentObject = s;
 
         // new in version 1
-        s._tableScript = (TableScript)info.GetValue("TableScript", s);
-        if (null != s._tableScript)
-          s._tableScript.ParentObject = s;
+        s.ChildSetMember(ref s._tableScript, info.GetValueOrNull<TableScript>("TableScript", s));
         return s;
       }
     }
@@ -210,14 +212,14 @@ namespace Altaxo.Data
                 */
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (Altaxo.Data.DataTable)o ?? new Altaxo.Data.DataTable(info);
+        var s = (Altaxo.Data.DataTable?)o ?? new Altaxo.Data.DataTable(info);
         Deserialize(s, info, parent);
         return s;
       }
 
-      public virtual void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s._name = info.GetString("Name");
         s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
@@ -225,13 +227,12 @@ namespace Altaxo.Data
         s._dataColumns.ColumnScripts.ParentObject = s;
 
         s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
+        s._propertyColumns.MarkAsPropertyCollection();
         s._propertyColumns.ParentObject = s;
         s._propertyColumns.ColumnScripts.ParentObject = s;
 
         // new in version 1
-        s._tableScript = (TableScript)info.GetValue("TableScript", s);
-        if (null != s._tableScript)
-          s._tableScript.ParentObject = s;
+        s.ChildSetMember(ref s._tableScript, info.GetValueOrNull<TableScript>("TableScript", s));
 
         // new in version 2 - Add table properties
         int numberproperties = info.OpenArray(); // "TableProperties"
@@ -239,7 +240,7 @@ namespace Altaxo.Data
         {
           info.OpenElement(); // "e"
           string propkey = info.GetString("Key");
-          object propval = info.GetValue("Value", s.PropertyBagNotNull);
+          var propval = info.GetValueOrNull("Value", s.PropertyBagNotNull);
           info.CloseElement(); // "e"
           s.SetTableProperty(propkey, propval);
         }
@@ -259,7 +260,7 @@ namespace Altaxo.Data
         info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
       }
 
-      public override void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public override void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         base.Deserialize(s, info, parent);
         s._notes.Text = info.GetString("Notes");
@@ -279,8 +280,8 @@ namespace Altaxo.Data
         var s = (Altaxo.Data.DataTable)obj;
         info.AddValue("Name", s._name); // name of the Table
 
-        string originalSaveAsTemplateOption = null;
-        bool saveDataAsTemplateRequired = null != s._tableDataSource && s._tableDataSource.ImportOptions.DoNotSaveCachedTableData;
+        string? originalSaveAsTemplateOption = null;
+        bool saveDataAsTemplateRequired = s._tableDataSource is not null && s._tableDataSource.ImportOptions.DoNotSaveCachedTableData;
         if (saveDataAsTemplateRequired)
         {
           originalSaveAsTemplateOption = info.GetProperty(SerializationInfoProperty_SaveAsTemplate);
@@ -295,16 +296,16 @@ namespace Altaxo.Data
         }
 
         info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
-        info.AddValue("TableScript", s._tableScript);
-        info.AddValue("Properties", s._tableProperties);
+        info.AddValueOrNull("TableScript", s._tableScript);
+        info.AddValueOrNull("Properties", s._tableProperties);
         info.AddValue("Notes", s._notes.Text);
         info.AddValue("CreationTime", s._creationTime.ToLocalTime());
         info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
-        if (null != s._tableDataSource)
+        if (s._tableDataSource is not null)
           info.AddValue("TableDataSource", s._tableDataSource);
       }
 
-      public virtual void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s._name = info.GetString("Name");
         s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
@@ -312,14 +313,13 @@ namespace Altaxo.Data
         s._dataColumns.ColumnScripts.ParentObject = s;
 
         s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
+        s._propertyColumns.MarkAsPropertyCollection();
         s._propertyColumns.ParentObject = s;
         s._propertyColumns.ColumnScripts.ParentObject = s;
 
-        s._tableScript = (TableScript)info.GetValue("TableScript", s);
-        if (null != s._tableScript)
-          s._tableScript.ParentObject = s;
+        s.ChildSetMember(ref s._tableScript, info.GetValueOrNull<TableScript>("TableScript", s));
 
-        s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
+        s.PropertyBag = info.GetValueOrNull<Main.Properties.PropertyBag>("Properties", s);
 
         s._notes.Text = info.GetString("Notes");
         s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
@@ -327,7 +327,7 @@ namespace Altaxo.Data
         if (info.CurrentElementName == "TableDataSource")
         {
           s._tableDataSource = (IAltaxoTableDataSource)info.GetValue("TableDataSource", s);
-          if (null != s._tableDataSource)
+          if (s._tableDataSource is not null)
           {
             s._tableDataSource.ParentObject = s;
             s._tableDataSource.OnAfterDeserialization();
@@ -335,9 +335,9 @@ namespace Altaxo.Data
         }
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (Altaxo.Data.DataTable)o ?? new Altaxo.Data.DataTable(info);
+        var s = (Altaxo.Data.DataTable?)o ?? new Altaxo.Data.DataTable(info);
         Deserialize(s, info, parent);
         return s;
       }
@@ -354,22 +354,22 @@ namespace Altaxo.Data
       {
         var s = (Altaxo.Data.DataTable)obj;
         info.AddValue("Name", s._name); // name of the Table
-        info.AddValue("TableScript", s._tableScript);
-        info.AddValue("Properties", s._tableProperties);
+        info.AddValueOrNull("TableScript", s._tableScript);
+        info.AddValueOrNull("Properties", s._tableProperties);
         info.AddValue("Notes", s._notes.Text);
         info.AddValue("CreationTime", s._creationTime.ToLocalTime());
         info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
-        if (null != s._tableDataSource)
+        if (s._tableDataSource is not null)
           info.AddValue("TableDataSource", s._tableDataSource);
 
         // Always save the properties
         info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
 
         // Now the data
-        string originalSaveAsTemplateOption = info.GetProperty(SerializationInfoProperty_SaveAsTemplate);
+        string? originalSaveAsTemplateOption = info.GetProperty(SerializationInfoProperty_SaveAsTemplate);
 
         bool saveDataAsTemplateRequired =
-          (null != s._tableDataSource && s._tableDataSource.ImportOptions.DoNotSaveCachedTableData) ||
+          (s._tableDataSource is not null && s._tableDataSource.ImportOptions.DoNotSaveCachedTableData) ||
           ("true" == info.GetProperty(SerializationInfoProperty_SupportsSeparatedData));
 
         if (saveDataAsTemplateRequired)
@@ -386,16 +386,13 @@ namespace Altaxo.Data
         info.SetProperty(SerializationInfoProperty_SaveAsTemplate, originalSaveAsTemplateOption);
       }
 
-      public virtual void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s._name = info.GetString("Name");
 
 
-        s._tableScript = (TableScript)info.GetValue("TableScript", s);
-        if (null != s._tableScript)
-          s._tableScript.ParentObject = s;
-
-        s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
+        s.ChildSetMember(ref s._tableScript, info.GetValueOrNull<TableScript>("TableScript", s));
+        s.PropertyBag = info.GetValueOrNull<Main.Properties.PropertyBag>("Properties", s);
 
         s._notes.Text = info.GetString("Notes");
         s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
@@ -403,7 +400,7 @@ namespace Altaxo.Data
         if (info.CurrentElementName == "TableDataSource")
         {
           s._tableDataSource = (IAltaxoTableDataSource)info.GetValue("TableDataSource", s);
-          if (null != s._tableDataSource)
+          if (s._tableDataSource is not null)
           {
             s._tableDataSource.ParentObject = s;
             s._tableDataSource.OnAfterDeserialization();
@@ -414,6 +411,7 @@ namespace Altaxo.Data
         object deferredDataObject = info.GetPropertyOrDefault<object>(Altaxo.Data.DataColumnCollection.DeserialiationInfoProperty_DeferredDataDeserialization);
         info.PropertyDictionary.Remove(Altaxo.Data.DataColumnCollection.DeserialiationInfoProperty_DeferredDataDeserialization);
         s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
+        s._propertyColumns.MarkAsPropertyCollection();
         s._propertyColumns.ParentObject = s;
         s._propertyColumns.ColumnScripts.ParentObject = s;
         info.PropertyDictionary[Altaxo.Data.DataColumnCollection.DeserialiationInfoProperty_DeferredDataDeserialization] = deferredDataObject;
@@ -423,9 +421,9 @@ namespace Altaxo.Data
         s._dataColumns.ColumnScripts.ParentObject = s;
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (Altaxo.Data.DataTable)o ?? new Altaxo.Data.DataTable(info);
+        var s = (Altaxo.Data.DataTable?)o ?? new Altaxo.Data.DataTable(info);
         Deserialize(s, info, parent);
         return s;
       }
@@ -492,9 +490,9 @@ namespace Altaxo.Data
           }
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = (Altaxo.Data.DataTable.ClipboardMemento)o ?? new Altaxo.Data.DataTable.ClipboardMemento(info);
+          var s = (Altaxo.Data.DataTable.ClipboardMemento?)o ?? new Altaxo.Data.DataTable.ClipboardMemento(info);
 
           var tableName = info.GetString("Name");
           var datacolMemento = (DataColumnCollection.ClipboardMemento)info.GetValue("DataColumns", typeof(DataColumnCollection.ClipboardMemento));
@@ -509,9 +507,11 @@ namespace Altaxo.Data
         }
       }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       private ClipboardMemento(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       {
       }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
       #endregion Serialization
 
@@ -537,7 +537,7 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Constructs an empty data table with the name provided by the argiment.
+    /// Constructs an empty data table with the name provided by the argument.
     /// </summary>
     /// <param name="name">The initial name of the table.</param>
     public DataTable(string name)
@@ -576,12 +576,12 @@ namespace Altaxo.Data
     {
       _parent = null; // do not clone the parent
       _name = from._name;
-      _tableScript = null == from._tableScript ? null : (TableScript)from._tableScript.Clone();
+      _tableScript = from._tableScript is null ? null : (TableScript)from._tableScript.Clone();
       _creationTime = _lastChangeTime = DateTime.UtcNow;
       ChildCopyToMember(ref _notes, from._notes);
 
       // Clone also the table properties (deep copy)
-      if (from._tableProperties != null && from._tableProperties.Count > 0)
+      if (from._tableProperties is not null && from._tableProperties.Count > 0)
       {
         PropertyBagNotNull.CopyFrom(from._tableProperties);
       }
@@ -604,7 +604,7 @@ namespace Altaxo.Data
       _dataColumns.ParentObject = this;
       _dataColumns.ColumnScripts.ParentObject = this;
 
-      _propertyColumns = propcoll;
+      _propertyColumns = propcoll.MarkAsPropertyCollection();
       _propertyColumns.ParentObject = this; // set the parent of the cloned PropertyColumns
       _propertyColumns.ColumnScripts.ParentObject = this;
 
@@ -616,10 +616,12 @@ namespace Altaxo.Data
     /// Initializes a new instance of the <see cref="DataTable"/> class for deserialization purposes only.
     /// </summary>
     /// <param name="info">The information.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected DataTable(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       _notes = new Main.TextBackedConsole() { ParentObject = this };
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>
     /// Clones the table.
@@ -648,7 +650,7 @@ namespace Altaxo.Data
         // Note: we update the data table here (and not in HandleLowPriorityChildChangeCases)
         // the reason is that we first want to see whether the parent is suspending us
         // if OnChange is called, the parent has not suspended us, thus we can update from the table data source
-        // Disadvantage: the parent sees to change events: (i) the event with TableDataSourceChangeEventArgs, and (ii) the change event that is caused by the updated table
+        // Disadvantage: the parent sees two change events: (i) the event with TableDataSourceChangeEventArgs, and (ii) the change event that is caused by the updated table
         UpdateTableFromTableDataSource();
       }
       else
@@ -671,7 +673,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Get / sets the parent object of this table.
     /// </summary>
-    public override Main.IDocumentNode ParentObject
+    public override Main.IDocumentNode? ParentObject
     {
       get
       {
@@ -679,54 +681,70 @@ namespace Altaxo.Data
       }
       set
       {
-        if (object.ReferenceEquals(_parent, value))
-          return;
+        if (!object.ReferenceEquals(_parent, value))
+        {
+          var oldParent = _parent;
+          base.ParentObject = value;
 
-        var oldParent = _parent;
-        base.ParentObject = value;
-
-        var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
-        if (null != parentAs)
-          parentAs.EhChild_ParentChanged(this, oldParent);
+          if (_parent is Main.IParentOfINameOwnerChildNodes parentAs)
+            parentAs.EhChild_ParentChanged(this, oldParent);
+        }
       }
     }
 
     /// <summary>
-    /// Get or sets the full name of the table.
+    /// Tests if this item already has a name.
     /// </summary>
+    /// <param name="name">On success, returns the name of the item.</param>
+    /// <returns>
+    /// True if the item already has a name; otherwise false.
+    /// </returns>
+    public override bool TryGetName([MaybeNullWhen(false)] out string name)
+    {
+      name = _name;
+      return name is not null;
+    }
+
+    /// <summary>
+    /// Get or sets the full name of the table.
+    /// At first (if the table is not added to a collection), the name of the table may be null.
+    /// </summary>
+
     public override string Name
     {
       get
       {
-        return _name;
+        return _name ?? throw new InvalidOperationException($"Name is not set yet. Use '{nameof(TryGetName)}' to test for this condition");
       }
+      [MemberNotNull(nameof(_name))]
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("New name is null");
-        if (_name == value)
-          return; // nothing changed
+        if (value is null)
+          throw new ArgumentNullException(nameof(Name));
 
-        var canBeRenamed = true;
-        var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
-        if (null != parentAs)
+        if (!(_name == value))
         {
-          canBeRenamed = parentAs.EhChild_CanBeRenamed(this, value);
-        }
+          var canBeRenamed = true;
+          var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
+          if (parentAs is not null)
+          {
+            canBeRenamed = parentAs.EhChild_CanBeRenamed(this, value);
+          }
 
-        if (canBeRenamed)
-        {
-          var oldName = _name;
-          _name = value;
+          if (canBeRenamed)
+          {
+            var oldName = _name;
+            _name = value;
 
-          if (null != parentAs)
-            parentAs.EhChild_HasBeenRenamed(this, oldName);
+            if (parentAs is not null)
+              parentAs.EhChild_HasBeenRenamed(this, oldName);
 
-          OnNameChanged(oldName);
-        }
-        else
-        {
-          throw new ApplicationException(string.Format("Renaming of table {0} into {1} not possible, because name exists already", _name, value));
+            OnNameChanged(oldName);
+          }
+          else
+          {
+            throw new ApplicationException(string.Format("Renaming of table {0} into {1} not possible, because name exists already", _name, value));
+          }
         }
       }
     }
@@ -737,7 +755,7 @@ namespace Altaxo.Data
     /// The event arg of the Tunneling event is an instance of <see cref="T:Altaxo.Main.DocumentPathChangedEventArgs"/>.
     /// </summary>
     /// <param name="oldName">The name of the table before it has changed the name.</param>
-    protected virtual void OnNameChanged(string oldName)
+    protected virtual void OnNameChanged(string? oldName)
     {
       EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty);
       EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(this, oldName));
@@ -822,7 +840,7 @@ namespace Altaxo.Data
     /// <value>
     /// The data source.
     /// </value>
-    public IAltaxoTableDataSource DataSource
+    public IAltaxoTableDataSource? DataSource
     {
       get
       {
@@ -840,7 +858,7 @@ namespace Altaxo.Data
     /// </summary>
     public void UpdateTableFromTableDataSource()
     {
-      if (null == _tableDataSource)
+      if (_tableDataSource is null)
         return;
 
       using (var suspendToken = SuspendGetToken())
@@ -851,8 +869,8 @@ namespace Altaxo.Data
 
           try
           {
-            if (_tableDataSource.ImportOptions.ExecuteTableScriptAfterImport && null != _tableScript)
-              _tableScript.ExecuteWithoutExceptionCatching(this, null);
+            if (_tableDataSource.ImportOptions.ExecuteTableScriptAfterImport && _tableScript is not null)
+              _tableScript.ExecuteWithoutExceptionCatching(this, new Main.Services.DummyBackgroundMonitor());
           }
           catch (Exception ex)
           {
@@ -934,7 +952,7 @@ namespace Altaxo.Data
       get { return _dataColumns.RowCount; }
     }
 
-    public TableScript TableScript
+    public TableScript? TableScript
     {
       get { return _tableScript; }
       set
@@ -1169,10 +1187,10 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="key">Name of the property.</param>
     /// <returns>The object, or null if no object under the provided name was stored here.</returns>
-    public object GetTableProperty(string key)
+    public object? GetTableProperty(string key)
     {
-      object result = null;
-      if (_tableProperties != null)
+      object? result = null;
+      if (_tableProperties is not null)
         _tableProperties.TryGetValue(key, out result);
 
       return result;
@@ -1184,7 +1202,7 @@ namespace Altaxo.Data
     /// <remarks>The properties are saved on disc (with exception of those who's name starts with "tmp/".
     /// If the property you want to store is only temporary, the property name should therefore
     /// start with "tmp/".</remarks>
-    public void SetTableProperty(string key, object val)
+    public void SetTableProperty(string key, object? val)
     {
       PropertyBagNotNull.SetValue(key, val);
     }
@@ -1198,33 +1216,33 @@ namespace Altaxo.Data
     /// start with "tmp/".</remarks>
     public bool RemoveTableProperty(string key)
     {
-      return null == _tableProperties ? false : _tableProperties.RemoveValue(key);
+      return _tableProperties is null ? false : _tableProperties.RemoveValue(key);
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataColumns)
-        yield return new Main.DocumentNodeAndName(_dataColumns, () => _dataColumns = null, "DataCols");
+      if (_dataColumns is not null)
+        yield return new Main.DocumentNodeAndName(_dataColumns, () => _dataColumns = null!, "DataCols");
 
-      if (null != _propertyColumns)
-        yield return new Main.DocumentNodeAndName(_propertyColumns, () => _propertyColumns = null, "PropCols");
+      if (_propertyColumns is not null)
+        yield return new Main.DocumentNodeAndName(_propertyColumns, () => _propertyColumns = null!, "PropCols");
 
-      if (null != DataSource)
-        yield return new Main.DocumentNodeAndName(_tableDataSource, () => _tableDataSource = null, "DataSource");
+      if (_tableDataSource is not null)
+        yield return new Main.DocumentNodeAndName(_tableDataSource, () => _tableDataSource = null!, "DataSource");
 
-      if (null != PropertyBag)
-        yield return new Main.DocumentNodeAndName(_tableProperties, () => _tableProperties = null, "PropertyBag");
+      if (_tableProperties is not null)
+        yield return new Main.DocumentNodeAndName(_tableProperties, () => _tableProperties = null!, "PropertyBag");
 
-      if (null != _tableScript)
-        yield return new Main.DocumentNodeAndName(_tableScript, () => _tableScript = null, "TableScript");
+      if (_tableScript is not null)
+        yield return new Main.DocumentNodeAndName(_tableScript, () => _tableScript = null!, "TableScript");
 
-      if (null != _notes)
-        yield return new Main.DocumentNodeAndName(_notes, () => _notes = null, "Notes");
+      if (_notes is not null)
+        yield return new Main.DocumentNodeAndName(_notes, () => _notes = null!, "Notes");
 
-      if (null != _dataColumns && null != _dataColumns.ColumnScripts)
+      if (_dataColumns is not null && _dataColumns.ColumnScripts is not null)
         yield return new Main.DocumentNodeAndName(_dataColumns.ColumnScripts, "DataColumnScripts");
 
-      if (null != _propertyColumns && null != _propertyColumns.ColumnScripts)
+      if (_propertyColumns is not null && _propertyColumns.ColumnScripts is not null)
         yield return new Main.DocumentNodeAndName(_propertyColumns.ColumnScripts, "PropertyColumnScripts");
     }
 
@@ -1245,15 +1263,15 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="colcol">The DataColumnCollection for which the parent table has to be found.</param>
     /// <returns>The parent data table of the DataColumnCollection, or null if it was not found.</returns>
-    public static Altaxo.Data.DataTable GetParentDataTableOf(DataColumnCollection colcol)
+    public static Altaxo.Data.DataTable? GetParentDataTableOf(DataColumnCollection? colcol)
     {
-      if (null == colcol)
+      if (colcol is null)
         return null;
 
-      if (colcol.ParentObject is DataTable)
-        return (DataTable)colcol.ParentObject;
+      if (colcol.ParentObject is DataTable parentTable)
+        return parentTable;
       else
-        return (DataTable)Main.AbsoluteDocumentPath.GetRootNodeImplementing(colcol, typeof(DataTable));
+        return (DataTable?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(colcol, typeof(DataTable));
     }
 
     /// <summary>
@@ -1261,32 +1279,32 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="column">The data column for wich the parent data table should be found.</param>
     /// <returns>The parent data table of this column, or null if it can not be found.</returns>
-    public static Altaxo.Data.DataTable GetParentDataTableOf(DataColumn column)
+    public static Altaxo.Data.DataTable? GetParentDataTableOf(DataColumn? column)
     {
-      if (null == column)
+      if (column is null)
         return null;
 
-      if (column.ParentObject is DataColumnCollection)
-        return GetParentDataTableOf((DataColumnCollection)column.ParentObject);
+      if (column.ParentObject is DataColumnCollection parentCollection)
+        return GetParentDataTableOf(parentCollection);
       else
-        return (DataTable)Main.AbsoluteDocumentPath.GetRootNodeImplementing(column, typeof(DataTable));
+        return (DataTable?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(column, typeof(DataTable));
     }
 
     /// <summary>
     /// Gets the parent data table of a child object.
     /// </summary>
     /// <param name="child">The child object for which the parent table should be found.</param>
-    public static Altaxo.Data.DataTable GetParentDataTableOf(Main.IDocumentLeafNode child)
+    public static Altaxo.Data.DataTable? GetParentDataTableOf(Main.IDocumentLeafNode? child)
     {
-      if (child == null)
+      if (child is null)
         return null;
       else
-        return (DataTable)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(DataTable));
+        return (DataTable?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(DataTable));
     }
 
     #region IPropertyBagOwner
 
-    public Main.Properties.PropertyBag PropertyBag
+    public Main.Properties.PropertyBag? PropertyBag
     {
       get { return _tableProperties; }
       protected set
@@ -1299,9 +1317,9 @@ namespace Altaxo.Data
     {
       get
       {
-        if (null == _tableProperties)
+        if (_tableProperties is null)
           PropertyBag = new Main.Properties.PropertyBag();
-        return _tableProperties;
+        return _tableProperties!;
       }
     }
 
@@ -1314,7 +1332,7 @@ namespace Altaxo.Data
     /// <param name="ProxyProcessing">Function that processes  the found <see cref="T:Altaxo.Main.DocNodeProxy" /> instances.</param>
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ProxyProcessing)
     {
-      if (_tableDataSource != null)
+      if (_tableDataSource is not null)
       {
         _tableDataSource.VisitDocumentReferences(ProxyProcessing);
       }

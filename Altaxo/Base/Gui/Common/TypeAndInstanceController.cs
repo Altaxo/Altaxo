@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Common
 {
@@ -41,7 +39,7 @@ namespace Altaxo.Gui.Common
 
     void SetInstanceControl(object instanceControl);
 
-    event EventHandler TypeChoiceChanged;
+    event EventHandler? TypeChoiceChanged;
   }
 
   #endregion Interfaces

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -136,7 +137,7 @@ namespace Altaxo.Gui.Graph.Gdi
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.EmbeddedRenderingOptionsView = _embeddedController.ViewObject;
 

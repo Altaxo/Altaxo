@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Altaxo.Graph.Plot.Data;
 using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
@@ -44,7 +44,7 @@ namespace Altaxo.Data.Selections
       {
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new AllRows();
       }
@@ -62,7 +62,7 @@ namespace Altaxo.Data.Selections
     }
 
     /// <inheritdoc/>
-    public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
+    public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection? table, int totalRowCount)
     {
       int endExclusive = Math.Min(maxIndexExclusive, totalRowCount);
 
@@ -75,18 +75,13 @@ namespace Altaxo.Data.Selections
       return GetType().GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return GetType() == obj?.GetType();
     }
 
     /// <inheritdoc/>
-    public IEnumerable<(
-      string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
-      )> GetAdditionallyUsedColumns()
+    public IEnumerable<ColumnInformationSimple> GetAdditionallyUsedColumns()
     {
       yield break;
     }

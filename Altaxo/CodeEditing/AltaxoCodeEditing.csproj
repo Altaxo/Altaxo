@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net48;net5.0-windows</TargetFrameworks>
     <AssemblyName>AltaxoCodeEditing</AssemblyName>
     <LangVersion>latest</LangVersion>
     <UseWPF>true</UseWPF>
@@ -14,6 +14,7 @@
     <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
     <OutputPath>..\..\rt$(TargetFramework)\bin</OutputPath>
     <DefineConstants></DefineConstants>
+    <NoWarn>CA1416</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
@@ -21,7 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj" />
   </ItemGroup>
-  
   <ItemGroup>
      <Reference Include="Microsoft.CodeAnalysis">
       <HintPath>LibrariesBin\Microsoft.CodeAnalysis.dll</HintPath>
@@ -55,7 +55,7 @@
     <PackageReference Include="System.Composition.AttributedModel" Version="1.4.1" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
   </ItemGroup>
   
      <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">

@@ -50,10 +50,10 @@ namespace Altaxo.Collections
 
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException(nameof(value), "It is not allowed to store null values in this partial dictionary.");
         var baseValue = value as TBaseValue;
-        if (baseValue == null)
+        if (baseValue is null)
           throw new ArgumentException(nameof(value) + " can not be converted to the base value.");
 
         _parent[key] = baseValue;
@@ -103,7 +103,7 @@ namespace Altaxo.Collections
         foreach (var entry in _parent)
         {
           var derivValue = entry.Value as TDerivValue;
-          if (null != derivValue)
+          if (derivValue is not null)
             l.Add(derivValue);
         }
         return l.AsReadOnly();
@@ -117,10 +117,10 @@ namespace Altaxo.Collections
 
     public void Add(TKey key, TDerivValue value)
     {
-      if (value == null)
+      if (value is null)
         throw new ArgumentNullException(nameof(value), "It is not allowed to store null values in this partial dictionary.");
       var baseValue = value as TBaseValue;
-      if (baseValue == null)
+      if (baseValue is null)
         throw new ArgumentException(nameof(value) + " can not be converted to the base value.");
 
       _parent.Add(key, baseValue);
@@ -156,7 +156,7 @@ namespace Altaxo.Collections
       foreach (var entry in _parent)
       {
         var d = entry.Value as TDerivValue;
-        if (null != d)
+        if (d is not null)
           array[i++] = new KeyValuePair<TKey, TDerivValue>(entry.Key, d);
       }
     }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -31,6 +32,7 @@ using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Graph;
   using Altaxo.Main;
   using Data;
@@ -57,9 +59,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       AbsoluteValue = 1
     }
 
-    private IReadableColumnProxy _columnX;
-    private IReadableColumnProxy _columnY;
-    private IReadableColumnProxy _columnZ;
+    private IReadableColumnProxy? _columnX;
+    private IReadableColumnProxy? _columnY;
+    private IReadableColumnProxy? _columnZ;
 
     private ValueInterpretation _meaningOfValues;
 
@@ -136,11 +138,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     /// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
     [field: NonSerialized]
-    protected Func<int, double> _cachedSymbolSizeForIndexFunction;
+    protected Func<int, double>? _cachedSymbolSizeForIndexFunction;
 
     /// <summary>If this function is set, the symbol color is determined by calling this function on the index into the data.</summary>
     [field: NonSerialized]
-    protected Func<int, System.Drawing.Color> _cachedColorForIndexFunction;
+    protected Func<int, System.Drawing.Color>? _cachedColorForIndexFunction;
 
     #region Serialization
 
@@ -152,9 +154,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         var s = (VectorCartesicPlotStyle)obj;
 
         info.AddEnum("MeaningOfValues", s._meaningOfValues);
-        info.AddValue("ColumnX", s._columnX);
-        info.AddValue("ColumnY", s._columnY);
-        info.AddValue("ColumnZ", s._columnZ);
+        info.AddValueOrNull("ColumnX", s._columnX);
+        info.AddValueOrNull("ColumnY", s._columnY);
+        info.AddValueOrNull("ColumnZ", s._columnZ);
         info.AddValue("IndependentSkipFreq", s._independentSkipFrequency);
         info.AddValue("SkipFreq", s._skipFrequency);
         info.AddValue("UseManualVectorLength", s._useManualVectorLength);
@@ -182,23 +184,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         info.AddValue("IndependentOnShiftingGroupStyles", s._independentOnShiftingGroupStyles);
       }
 
-      protected virtual VectorCartesicPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual VectorCartesicPlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        VectorCartesicPlotStyle s = null != o ? (VectorCartesicPlotStyle)o : new VectorCartesicPlotStyle(info);
+        var s = (VectorCartesicPlotStyle?)o ?? new VectorCartesicPlotStyle(info);
 
         s._meaningOfValues = (ValueInterpretation)info.GetEnum("MeaningOfValues", typeof(ValueInterpretation));
 
-        s._columnX = (IReadableColumnProxy)info.GetValue("ColumnX", s);
-        if (null != s._columnX)
-          s._columnX.ParentObject = s;
-
-        s._columnY = (IReadableColumnProxy)info.GetValue("ColumnY", s);
-        if (null != s._columnY)
-          s._columnY.ParentObject = s;
-
-        s._columnZ = (INumericColumnProxy)info.GetValue("ColumnZ", s);
-        if (null != s._columnZ)
-          s._columnZ.ParentObject = s;
+        s.ChildSetMember(ref s._columnX, info.GetValueOrNull<IReadableColumnProxy>("ColumnX", s));
+        s.ChildSetMember(ref s._columnY, info.GetValueOrNull<IReadableColumnProxy>("ColumnY", s));
+        s.ChildSetMember(ref s._columnZ, info.GetValueOrNull<IReadableColumnProxy>("ColumnZ", s));
 
         s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
         s._skipFrequency = info.GetInt32("SkipFreq");
@@ -231,7 +225,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         VectorCartesicPlotStyle s = SDeserialize(o, info, parent);
 
@@ -245,7 +239,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// Deserialization constructor
     /// </summary>
     /// <param name="info">The information.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected VectorCartesicPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
@@ -267,52 +263,56 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       CopyFrom(from, copyWithDataReferences);
     }
 
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    [MemberNotNull(nameof(_strokePen))]
+    protected void CopyFrom(VectorCartesicPlotStyle from, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-      var from = obj as VectorCartesicPlotStyle;
-      if (null != from)
+      _meaningOfValues = from._meaningOfValues;
+      _independentSkipFrequency = from._independentSkipFrequency;
+      _skipFrequency = from._skipFrequency;
+      _useManualVectorLength = from._useManualVectorLength;
+      _vectorLengthOffset = from._vectorLengthOffset;
+      _vectorLengthFactor = from._vectorLengthFactor;
+
+      _independentSymbolSize = from._independentSymbolSize;
+      _symbolSize = from._symbolSize;
+
+      _strokePen = from._strokePen;
+      _independentColor = from._independentColor;
+
+      _lineWidth1Offset = from._lineWidth1Offset;
+      _lineWidth1Factor = from._lineWidth1Factor;
+      _lineWidth2Offset = from._lineWidth2Offset;
+      _lineWidth2Factor = from._lineWidth2Factor;
+
+      _endCapSizeFactor = from._endCapSizeFactor;
+      _endCapSizeOffset = from._endCapSizeOffset;
+
+      _useSymbolGap = from._useSymbolGap;
+      _symbolGapFactor = from._symbolGapFactor;
+      _symbolGapOffset = from._symbolGapOffset;
+
+      _independentSkipFrequency = from._independentSkipFrequency;
+      _skipFrequency = from._skipFrequency;
+      _independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+
+      _cachedLogicalShiftX = from._cachedLogicalShiftX;
+      _cachedLogicalShiftY = from._cachedLogicalShiftY;
+
+      if (copyWithDataReferences)
       {
-        _meaningOfValues = from._meaningOfValues;
-        _independentSkipFrequency = from._independentSkipFrequency;
-        _skipFrequency = from._skipFrequency;
-        _useManualVectorLength = from._useManualVectorLength;
-        _vectorLengthOffset = from._vectorLengthOffset;
-        _vectorLengthFactor = from._vectorLengthFactor;
+        ChildCloneToMember(ref _columnX, from._columnX);
+        ChildCloneToMember(ref _columnY, from._columnY);
+        ChildCloneToMember(ref _columnZ, from._columnZ);
+      }
+    }
 
-        _independentSymbolSize = from._independentSymbolSize;
-        _symbolSize = from._symbolSize;
-
-        _strokePen = from._strokePen;
-        _independentColor = from._independentColor;
-
-        _lineWidth1Offset = from._lineWidth1Offset;
-        _lineWidth1Factor = from._lineWidth1Factor;
-        _lineWidth2Offset = from._lineWidth2Offset;
-        _lineWidth2Factor = from._lineWidth2Factor;
-
-        _endCapSizeFactor = from._endCapSizeFactor;
-        _endCapSizeOffset = from._endCapSizeOffset;
-
-        _useSymbolGap = from._useSymbolGap;
-        _symbolGapFactor = from._symbolGapFactor;
-        _symbolGapOffset = from._symbolGapOffset;
-
-        _independentSkipFrequency = from._independentSkipFrequency;
-        _skipFrequency = from._skipFrequency;
-        _independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
-
-        _cachedLogicalShiftX = from._cachedLogicalShiftX;
-        _cachedLogicalShiftY = from._cachedLogicalShiftY;
-
-        if (copyWithDataReferences)
-        {
-          ChildCloneToMember(ref _columnX, from._columnX);
-          ChildCloneToMember(ref _columnY, from._columnY);
-          ChildCloneToMember(ref _columnZ, from._columnZ);
-        }
-
+      public bool CopyFrom(object obj, bool copyWithDataReferences)
+    {
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (obj is VectorCartesicPlotStyle from)
+      {
+        CopyFrom(from, copyWithDataReferences);
         EhSelfChanged();
         return true;
       }
@@ -326,6 +326,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <returns>True if data was copied, otherwise false.</returns>
     public bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
+
       return CopyFrom(obj, true);
     }
 
@@ -343,13 +346,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _columnX)
+      if (_columnX is not null)
         yield return new Main.DocumentNodeAndName(_columnX, nameof(ColumnX));
 
-      if (null != _columnY)
+      if (_columnY is not null)
         yield return new Main.DocumentNodeAndName(_columnY, nameof(ColumnY));
 
-      if (null != _columnZ)
+      if (_columnZ is not null)
         yield return new Main.DocumentNodeAndName(_columnZ, nameof(ColumnZ));
     }
 
@@ -374,7 +377,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// Data that define the error in the positive direction.
     /// </summary>
-    public IReadableColumn ColumnX
+    public IReadableColumn? ColumnX
     {
       get
       {
@@ -385,7 +388,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         var oldValue = _columnX?.Document();
         if (!object.ReferenceEquals(value, oldValue))
         {
-          ChildSetMember(ref _columnX, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
+          ChildSetMember(ref _columnX, value is null ? null : ReadableColumnProxyBase.FromColumn(value));
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -397,7 +400,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <value>
     /// The name of the common error column if it is a data column. Otherwise, null.
     /// </value>
-    public string ColumnXDataColumnName
+    public string? ColumnXDataColumnName
     {
       get
       {
@@ -408,7 +411,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// Data that define the error in the positive direction.
     /// </summary>
-    public IReadableColumn ColumnY
+    public IReadableColumn? ColumnY
     {
       get
       {
@@ -419,7 +422,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         var oldValue = _columnY?.Document();
         if (!object.ReferenceEquals(value, oldValue))
         {
-          ChildSetMember(ref _columnY, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
+          ChildSetMember(ref _columnY, value is null ? null : ReadableColumnProxyBase.FromColumn(value));
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -431,7 +434,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <value>
     /// The name of the positive error column if it is a data column. Otherwise, null.
     /// </value>
-    public string ColumnYDataColumnName
+    public string? ColumnYDataColumnName
     {
       get
       {
@@ -442,7 +445,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// Data that define the error in the negative direction.
     /// </summary>
-    public IReadableColumn ColumnZ
+    public IReadableColumn? ColumnZ
     {
       get
       {
@@ -453,7 +456,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         var oldValue = _columnZ?.Document();
         if (!object.ReferenceEquals(value, oldValue))
         {
-          ChildSetMember(ref _columnZ, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
+          ChildSetMember(ref _columnZ, value is null ? null : ReadableColumnProxyBase.FromColumn(value));
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -465,7 +468,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <value>
     /// The name of the negative error column if it is a data column. Otherwise, null.
     /// </value>
-    public string ColumnZDataColumnName
+    public string? ColumnZDataColumnName
     {
       get
       {
@@ -850,26 +853,28 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       if (!_independentOnShiftingGroupStyles)
       {
         var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYZGroupStyle>(externalGroups, localGroups);
-        if (null != shiftStyle)
+        if (shiftStyle is not null)
         {
           shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY, out _cachedLogicalShiftZ);
         }
       }
     }
 
-    public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData prevItemData, Processed3DPlotData nextItemData)
+    public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
       const double logicalClampMinimum = -10;
       const double logicalClampMaximum = 11;
 
+      if (pdata is null || !(pdata.RangeList is { } rangeList))
+        return;
+
       // Plot error bars for the dependent variable (y)
-      PlotRangeList rangeList = pdata.RangeList;
       var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
       var columnX = ColumnX;
       var columnY = ColumnY;
       var columnZ = ColumnZ;
 
-      if (columnX == null || columnY == null || columnZ == null)
+      if (columnX is null || columnY is null || columnZ is null)
         return; // nothing to do if both error columns are null
 
       if (!typeof(double).IsAssignableFrom(columnX.ItemType) || !typeof(double).IsAssignableFrom(columnY.ItemType) || !typeof(double).IsAssignableFrom(columnZ.ItemType))
@@ -886,14 +891,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         for (int j = lower; j < upper; j += _skipFrequency)
         {
           int originalRow = j + offset;
-          double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalRow);
+          double symbolSize = _cachedSymbolSizeForIndexFunction is null ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalRow);
 
           strokePen = strokePen.WithThickness1(_lineWidth1Offset + _lineWidth1Factor * symbolSize);
           strokePen = strokePen.WithThickness2(_lineWidth2Offset + _lineWidth2Factor * symbolSize);
 
-          if (null != _cachedColorForIndexFunction)
+          if (_cachedColorForIndexFunction is not null)
             strokePen = strokePen.WithColor(GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(originalRow), "VariableColor"));
-          if (null != strokePen.LineEndCap)
+          if (strokePen.LineEndCap is not null)
             strokePen = strokePen.WithLineEndCap(strokePen.LineEndCap.WithMinimumAbsoluteAndRelativeSize(symbolSize * _endCapSizeFactor + _endCapSizeOffset, 1 + 1E-6));
 
           // Calculate target
@@ -948,7 +953,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
             continue;
 
           var isoLine = layer.CoordinateSystem.GetIsoline(logicalOrigin, logicalTarget);
-          if (null == isoLine)
+          if (isoLine is null)
             continue;
 
           if (_useManualVectorLength)
@@ -956,7 +961,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
             double length = _vectorLengthOffset + _vectorLengthFactor * symbolSize;
             double isoLineLength = isoLine.TotalLineLength;
             isoLine = isoLine.ShortenedBy(RADouble.NewAbs(0), RADouble.NewAbs(isoLineLength - length));
-            if (null == isoLine)
+            if (isoLine is null)
               continue;
           }
 
@@ -966,7 +971,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
             if (gap != 0)
             {
               isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
-              if (null == isoLine)
+              if (isoLine is null)
                 continue;
             }
           }
@@ -1008,11 +1013,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
     public void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
-      if (null != _columnX)
+      if (_columnX is not null)
         Report(_columnX, this, nameof(ColumnX));
-      if (null != _columnY)
+      if (_columnY is not null)
         Report(_columnY, this, nameof(ColumnY));
-      if (null != _columnZ)
+      if (_columnZ is not null)
         Report(_columnZ, this, nameof(ColumnZ));
     }
 
@@ -1023,9 +1028,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
     public IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      IReadableColumn? Column, // the column as it was at the time of this call
+      string? ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
       yield return (nameof(ColumnX), ColumnX, _columnX?.DocumentPath()?.LastPartOrDefault, (col) => ColumnX = col as INumericColumn);

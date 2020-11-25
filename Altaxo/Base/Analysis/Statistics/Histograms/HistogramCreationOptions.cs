@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Analysis.Statistics.Histograms
 {
@@ -92,13 +91,15 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <value>
     /// The user defined binning.
     /// </value>
+    [MaybeNull]
     public IBinning Binning
     {
       get { return _binning; }
       set
       {
-        if (null == value)
-          throw new ArgumentNullException();
+        if (value is null)
+          throw new ArgumentNullException(nameof(Binning));
+
         _binning = value;
       }
     }
@@ -107,7 +108,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
     public object Clone()
     {
       var result = (HistogramCreationOptions)MemberwiseClone();
-      result._binning = _binning == null ? null : (IBinning)_binning.Clone();
+      result._binning = (IBinning)_binning.Clone();
       return result;
     }
 

@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Main.Services
   /// </summary>
   public partial class OutputView : UserControl, IOutputView
   {
-    public event Action EnabledChanged;
+    public event Action? EnabledChanged;
 
     public OutputView()
     {
@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Main.Services
 
     private void EhMenuTextAppendEnabled1(object sender, RoutedEventArgs e)
     {
-      if (null != EnabledChanged)
+      if (EnabledChanged is not null)
         EnabledChanged();
     }
   }

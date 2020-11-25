@@ -40,7 +40,7 @@ namespace Altaxo.Gui.MenuCommands
       // search either as part of IFileService or directly as service IRecentOpen
       var recentOpen = Altaxo.Current.GetService<IFileService>()?.RecentOpen ?? Altaxo.Current.GetService<IRecentOpen>();
 
-      if (null != recentOpen && recentOpen.RecentFiles.Count > 0)
+      if (recentOpen is not null && recentOpen.RecentFiles.Count > 0)
       {
         var items = new System.Windows.Controls.MenuItem[recentOpen.RecentFiles.Count];
 

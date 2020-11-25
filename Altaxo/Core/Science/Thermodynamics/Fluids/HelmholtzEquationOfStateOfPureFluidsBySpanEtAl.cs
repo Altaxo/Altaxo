@@ -1503,7 +1503,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
                 }
               }
             }
-            if (null == pressureFromTemperature)
+            if (pressureFromTemperature is null)
               throw new NotImplementedException(string.Format("Could not find a melting pressure equation for water at a pressure of {0} Pa", pressure));
           }
 

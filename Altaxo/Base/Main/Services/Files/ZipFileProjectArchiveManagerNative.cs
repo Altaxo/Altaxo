@@ -22,19 +22,18 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Altaxo.Main.Services.Files;
-using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Main.Services
 {
+
   /// <summary>
   /// Manages the permanent storage of projects into Zip files, including cloning to, and maintaining a safety copy.
   /// This manager uses Zip files zipped with the framework provided Zip routines. As such, no progressive storage is supported (and no deferred loading).
@@ -56,7 +55,14 @@ namespace Altaxo.Main.Services
 
     private IProjectArchive InternalCreateProjectArchive(Stream stream, ZipArchiveMode zipArchiveMode, bool leaveOpen, IFileBasedProjectArchiveManager archiveManager)
     {
-      return new Services.Files.ZipArchiveAsProjectArchiveNative(stream, zipArchiveMode, leaveOpen: leaveOpen, archiveManager);
+      var result = new Services.Files.ZipArchiveAsProjectArchiveNative(stream, zipArchiveMode, leaveOpen: leaveOpen, archiveManager);
+
+      if (_storageSettings is { } ss)
+      {
+        result.CompressionLevel = ss.ZipCompressionLevel;
+      }
+
+      return result;
     }
   }
 }

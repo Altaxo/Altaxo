@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using Altaxo.Calc.Regression.Nonlinear;
@@ -62,7 +63,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       base.Initialize(initData);
 
-      if (_view != null)
+      if (_view is not null)
       {
         var list = new List<ParameterSetViewItem>();
 

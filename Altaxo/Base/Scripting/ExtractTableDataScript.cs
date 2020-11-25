@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Immutable;
 using Altaxo.Data;
@@ -62,9 +63,9 @@ namespace Altaxo.Scripting
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ExtractTableDataScript s = null != o ? (ExtractTableDataScript)o : new ExtractTableDataScript();
+        var s = (ExtractTableDataScript?)o ?? new ExtractTableDataScript();
 
         // deserialize the base class
         info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
@@ -201,7 +202,7 @@ namespace Altaxo.Scripting
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public bool Execute(Altaxo.Data.DataTable myTable)
     {
-      if (null == _scriptObject)
+      if (_scriptObject is null)
       {
         _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, "Script Object is null"));
         return false;

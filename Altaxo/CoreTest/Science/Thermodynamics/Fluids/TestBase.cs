@@ -28,7 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Altaxo.Science.Thermodynamics.Fluids;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {

@@ -60,7 +60,7 @@ namespace Altaxo.Gui
     [Obsolete("Use SD.ResourceService.GetImage() instead")]
     public ResourceServiceImage(string resourceName)
     {
-      if (resourceName == null)
+      if (resourceName is null)
         throw new ArgumentNullException("resourceName");
       this.resourceName = resourceName;
     }
@@ -79,12 +79,30 @@ namespace Altaxo.Gui
       }
     }
 
+    static Bitmap? _defaultErrorBitmap;
+
     /// <inheritdoc/>
     public Bitmap Bitmap
     {
       get
       {
-        return Altaxo.Current.ResourceService.GetBitmap(resourceName);
+        var result = Altaxo.Current.ResourceService.GetBitmap(resourceName);
+
+        if (result is not null)
+          return result;
+
+        if (_defaultErrorBitmap is not null)
+          return _defaultErrorBitmap;
+
+        var bmp = new Bitmap(16, 16);
+        using (var g = Graphics.FromImage(bmp))
+        {
+          g.DrawLine(Pens.Red, 0, 0, 16, 16);
+          g.DrawLine(Pens.Red, 0, 16, 16, 0);
+        }
+
+        System.Threading.Interlocked.Exchange(ref _defaultErrorBitmap, bmp);
+        return bmp;
       }
     }
 
@@ -97,12 +115,9 @@ namespace Altaxo.Gui
       }
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var other = obj as ResourceServiceImage;
-      if (other == null)
-        return false;
-      return resourceName == other.resourceName;
+      return obj is ResourceServiceImage other && resourceName == other.resourceName;
     }
 
     public override int GetHashCode()

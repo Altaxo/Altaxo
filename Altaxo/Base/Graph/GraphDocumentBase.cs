@@ -22,16 +22,12 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Altaxo.Drawing;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Geometry;
 //using Altaxo.Graph;
 using Altaxo.Main;
-using Altaxo.Main.Properties;
 
 namespace Altaxo.Graph
 {
@@ -55,7 +51,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// The name of the graph.
     /// </summary>
-    protected string _name;
+    protected string? _name;
 
     /// <summary>
     /// The date/time of creation of this graph.
@@ -75,7 +71,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// An identifier that can be shown on the graph and that is searchable.
     /// </summary>
-    protected string _graphIdentifier;
+    protected string? _graphIdentifier;
 
     /// <summary>
     /// The graph properties, key is a string, value is a property (arbitrary object) you want to store here.
@@ -83,15 +79,15 @@ namespace Altaxo.Graph
     /// <remarks>The properties are saved on disc (with exception of those that starts with "tmp/".
     /// If the property you want to store is only temporary, the properties name should therefore
     /// start with "tmp/".</remarks>
-    protected Main.Properties.PropertyBag _graphProperties;
+    protected Main.Properties.PropertyBag? _graphProperties;
 
     /// <summary>Events which are fired from this thread are not distributed.</summary>
     [NonSerialized]
-    protected volatile System.Threading.Thread _paintThread;
+    protected volatile System.Threading.Thread? _paintThread;
 
     /// <summary>Event fired if the size of this document (i.e. the size of the root layer) changed.</summary>
     [field: NonSerialized]
-    public event EventHandler SizeChanged;
+    public event EventHandler? SizeChanged;
 
     [NonSerialized]
     protected bool _isFixupInternalDataStructuresActive;
@@ -120,7 +116,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// Get / sets the parent object of this table.
     /// </summary>
-    public override Main.IDocumentNode ParentObject
+    public override Main.IDocumentNode? ParentObject
     {
       get
       {
@@ -135,24 +131,40 @@ namespace Altaxo.Graph
         base.ParentObject = value;
 
         var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
-        if (null != parentAs)
+        if (parentAs is not null)
           parentAs.EhChild_ParentChanged(this, oldParent);
       }
     }
 
+    /// <summary>
+    /// Tests if this item already has a name.
+    /// </summary>
+    /// <param name="name">On success, returns the name of the item.</param>
+    /// <returns>
+    /// True if the item already has a name; otherwise false.
+    /// </returns>
+    public override bool TryGetName([MaybeNullWhen(false)] out string name)
+    {
+      name = _name;
+      return !(name is null);
+    }
+
     public override string Name
     {
-      get { return _name; }
+      get
+      {
+        return _name ?? throw new InvalidOperationException($"Name is not set yet. Use '{nameof(TryGetName)}' to test for this condition");
+      }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("New name is null");
         if (_name == value)
           return; // nothing changed
 
         var canBeRenamed = true;
         var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
-        if (null != parentAs)
+        if (parentAs is not null)
         {
           canBeRenamed = parentAs.EhChild_CanBeRenamed(this, value);
         }
@@ -162,7 +174,7 @@ namespace Altaxo.Graph
           var oldName = _name;
           _name = value;
 
-          if (null != parentAs)
+          if (parentAs is not null)
             parentAs.EhChild_HasBeenRenamed(this, oldName);
 
           OnNameChanged(oldName);
@@ -180,7 +192,7 @@ namespace Altaxo.Graph
     /// The event arg of the Tunneling event is an instance of <see cref="T:Altaxo.Main.DocumentPathChangedEventArgs"/>.
     /// </summary>
     /// <param name="oldName">The name of the table before it has changed the name.</param>
-    protected virtual void OnNameChanged(string oldName)
+    protected virtual void OnNameChanged(string? oldName)
     {
       EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty);
       EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(this, oldName));
@@ -231,15 +243,17 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="key">Name of the property.</param>
     /// <returns>The object, or null if no object under the provided name was stored here.</returns>
-    public object GetGraphProperty(string key)
+    public object? GetGraphProperty(string key)
     {
-      object result = null;
-      if (_graphProperties != null)
+      object? result = null;
+      if (_graphProperties is not null)
         _graphProperties.TryGetValue(key, out result);
       return result;
     }
 
-    public T GetPropertyValue<T>(Altaxo.Main.Properties.PropertyKey<T> key, Func<T> resultCreationIfNotFound)
+    [return: NotNullIfNotNull("resultCreationIfNotFound")]
+    [return: MaybeNull]
+    public T GetPropertyValue<T>(Altaxo.Main.Properties.PropertyKey<T> key, Func<T>? resultCreationIfNotFound) where T: notnull
     {
       return PropertyExtensions.GetPropertyValue(this, key, resultCreationIfNotFound);
     }
@@ -270,13 +284,12 @@ namespace Altaxo.Graph
     /// </summary>
     protected void OnSizeChanged()
     {
-      if (SizeChanged != null)
-        SizeChanged(this, EventArgs.Empty);
+      SizeChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
-      if (null != _paintThread && object.ReferenceEquals(_paintThread, System.Threading.Thread.CurrentThread))
+      if (_paintThread is not null && object.ReferenceEquals(_paintThread, System.Threading.Thread.CurrentThread))
       {
         if (_isFixupInternalDataStructuresActive)
         {
@@ -292,16 +305,18 @@ namespace Altaxo.Graph
           for (int i = 1; i < len; ++i)
           {
             var frame = st.GetFrame(i);
-            var method = frame.GetMethod();
+            var method = frame?.GetMethod();
+            if (method is null)
+              break;
 
             if (i > 2)
               stb.Append("\r\n\tin ");
 
-            stb.Append(method.DeclaringType.FullName);
+            stb.Append(method.DeclaringType?.FullName);
             stb.Append("|");
             stb.Append(method.Name);
             stb.Append("(L");
-            stb.Append(frame.GetFileLineNumber());
+            stb.Append(frame?.GetFileLineNumber());
             stb.Append(")");
           }
 
@@ -313,9 +328,9 @@ namespace Altaxo.Graph
       return base.HandleHighPriorityChildChangeCases(sender, ref e);
     }
 
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
-      if (sender != null && _accumulatedEventData == null)
+      if (sender is not null && _accumulatedEventData is null)
         _accumulatedEventData = EventArgs.Empty;
     }
 
@@ -323,13 +338,13 @@ namespace Altaxo.Graph
 
     #region IPropertyBagOwner
 
-    public Main.Properties.PropertyBag PropertyBag
+    public Main.Properties.PropertyBag? PropertyBag
     {
       get { return _graphProperties; }
       protected set
       {
         _graphProperties = value;
-        if (null != _graphProperties)
+        if (_graphProperties is not null)
           _graphProperties.ParentObject = this;
       }
     }
@@ -338,8 +353,10 @@ namespace Altaxo.Graph
     {
       get
       {
-        if (null == _graphProperties)
-          PropertyBag = new Main.Properties.PropertyBag();
+        if (_graphProperties is null)
+        {
+          _graphProperties = new Main.Properties.PropertyBag() { ParentObject = this };
+        }
         return _graphProperties;
       }
     }

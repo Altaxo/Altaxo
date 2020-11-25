@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +49,7 @@ namespace Altaxo.Gui.Drawing.D3D
       {
         var oldValue = _fontDepth;
         _fontDepth = value;
-        if (_guiFontDepth != null && oldValue != value)
+        if (_guiFontDepth is not null && oldValue != value)
           _guiFontDepth.SelectedQuantityAsValueInPoints = value;
       }
     }
@@ -73,13 +74,13 @@ namespace Altaxo.Gui.Drawing.D3D
       get { return _guiFontDepth; }
       set
       {
-        if (null != _guiFontDepth)
+        if (_guiFontDepth is not null)
           _guiFontDepth.SelectedQuantityChanged -= EhSelectedFontDepthChanged;
 
         _guiFontDepth = value;
         _guiFontDepth.SelectedQuantityAsValueInPoints = _fontDepth;
 
-        if (null != _guiFontDepth)
+        if (_guiFontDepth is not null)
           _guiFontDepth.SelectedQuantityChanged += EhSelectedFontDepthChanged;
       }
     }

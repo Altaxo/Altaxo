@@ -26,17 +26,17 @@ using System;
 using System.Collections;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
-  [TestFixture]
+  
   public class ComplexDoubleVectorEnumeratorTest
   {
-    private const double TOLERENCE = 0.001;
+    private const double TOLERANCE = 0.001;
 
     //Test Current Method
-    [Test]
+    [Fact]
     public void Current()
     {
       var test = new ComplexDoubleVector(new Complex[2] { 1, 2 });
@@ -44,31 +44,31 @@ namespace AltaxoTest.Calc.LinearAlgebra
       bool movenextresult;
 
       movenextresult = enumerator.MoveNext();
-      Assert.IsTrue(movenextresult);
-      Assert.AreEqual(enumerator.Current, test[0]);
+      Assert.True(movenextresult);
+      Assert.Equal(enumerator.Current, test[0]);
 
       movenextresult = enumerator.MoveNext();
-      Assert.IsTrue(movenextresult);
-      Assert.AreEqual(enumerator.Current, test[1]);
+      Assert.True(movenextresult);
+      Assert.Equal(enumerator.Current, test[1]);
 
       movenextresult = enumerator.MoveNext();
-      Assert.IsFalse(movenextresult);
+      Assert.False(movenextresult);
     }
 
     //Test foreach
-    [Test]
+    [Fact]
     public void ForEach()
     {
       var test = new ComplexDoubleVector(new Complex[2] { 1, 2 });
       foreach (Complex f in test)
-        Assert.IsTrue(test.Contains(f));
+        Assert.True(test.Contains(f));
     }
 
     //Test Current Exception with index=-1.
-    [Test]
+    [Fact]
     public void CurrentException()
     {
-      Assert.Throws(typeof(InvalidOperationException), () =>
+      Assert.Throws<InvalidOperationException>(() =>
       {
         var test = new ComplexDoubleVector(new Complex[2] { 1, 2 });
         IEnumerator enumerator = test.GetEnumerator();
@@ -77,10 +77,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     }
 
     //Test Current Exception with index>length
-    [Test]
+    [Fact]
     public void CurrentException2()
     {
-      Assert.Throws(typeof(InvalidOperationException), () =>
+      Assert.Throws<InvalidOperationException>(() =>
       {
         var test = new ComplexDoubleVector(new Complex[2] { 1, 2 });
         IEnumerator enumerator = test.GetEnumerator();

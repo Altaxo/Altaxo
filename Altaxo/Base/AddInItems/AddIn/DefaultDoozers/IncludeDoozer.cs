@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -60,15 +61,18 @@ namespace Altaxo.AddInItems
       Codon codon = args.Codon;
       string item = codon.Properties["item"];
       string path = codon.Properties["path"];
-      if (item != null && item.Length > 0)
+      if (item is not null && item.Length > 0)
       {
         // include item
         return args.AddInTree.BuildItem(item, args.Parameter, args.Conditions);
       }
-      else if (path != null && path.Length > 0)
+      else if (path is not null && path.Length > 0)
       {
         // include path (=multiple items)
-        AddInTreeNode node = args.AddInTree.GetTreeNode(path);
+        AddInTreeNode? node = args.AddInTree.GetTreeNode(path);
+        if (node is null)
+          throw new TreePathNotFoundException(path);
+
         return new IncludeReturnItem(node, args.Parameter, args.Conditions);
       }
       else
@@ -79,20 +83,20 @@ namespace Altaxo.AddInItems
 
     private sealed class IncludeReturnItem : IBuildItemsModifier
     {
-      private readonly AddInTreeNode node;
-      private readonly object parameter;
-      private readonly IEnumerable<ICondition> additionalConditions;
+      private readonly AddInTreeNode _node;
+      private readonly object? _parameter;
+      private readonly IEnumerable<ICondition>? _additionalConditions;
 
-      public IncludeReturnItem(AddInTreeNode node, object parameter, IEnumerable<ICondition> additionalConditions)
+      public IncludeReturnItem(AddInTreeNode node, object? parameter, IEnumerable<ICondition>? additionalConditions)
       {
-        this.node = node;
-        this.parameter = parameter;
-        this.additionalConditions = additionalConditions;
+        this._node = node;
+        this._parameter = parameter;
+        this._additionalConditions = additionalConditions;
       }
 
       public void Apply(IList items)
       {
-        foreach (object o in node.BuildChildItems<object>(parameter, additionalConditions))
+        foreach (object o in _node.BuildChildItems<object>(_parameter, _additionalConditions))
         {
           items.Add(o);
         }

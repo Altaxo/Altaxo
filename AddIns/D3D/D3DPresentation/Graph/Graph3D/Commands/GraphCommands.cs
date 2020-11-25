@@ -50,11 +50,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     /// Determines the currently active worksheet and issues the command to that worksheet by calling
     /// Run with the worksheet as a parameter.
     /// </summary>
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
-      if (!(parameter is IViewContent activeViewContent))
-        activeViewContent = Current.Workbench.ActiveViewContent;
-
+      var activeViewContent = parameter as IViewContent ?? Current.Workbench.ActiveViewContent;
       if (activeViewContent is Graph3DController ctrl)
         Run(ctrl);
     }
@@ -249,7 +247,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
   public class SetCopyPageOptions : SimpleCommand
   {
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
       object resultobj = Gdi.ClipboardRenderingOptions.CopyPageOptions;
       if (Current.Gui.ShowDialog(ref resultobj, "Set copy page options"))
@@ -347,7 +345,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
       if (true == saveFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
       {
-        if ((myStream = saveFileDialog1.OpenFile()) != null)
+        if ((myStream = saveFileDialog1.OpenFile()) is not null)
         {
           var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
           info.BeginWriting(myStream);
@@ -421,23 +419,18 @@ namespace Altaxo.Graph.Graph3D.Commands
   /// </summary>
   public abstract class AbstractCheckableGraphControllerCommand : SimpleCheckableCommand, System.ComponentModel.INotifyPropertyChanged
   {
-    public Graph3DController Controller
+    public Graph3DController? Controller
     {
       get
       {
-        if (Current.Workbench.ActiveViewContent is Graph3DController ctrl)
-        {
-          return ctrl;
-        }
-        else
-          return null;
+        return Current.Workbench.ActiveViewContent as Graph3DController;
       }
     }
 
     /// <summary>
     /// This function is never be called, since this is a CheckableMenuCommand.
     /// </summary>
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
       base.Execute(parameter);
     }
@@ -458,11 +451,11 @@ namespace Altaxo.Graph.Graph3D.Commands
       }
     }
 
-    public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
     protected virtual void OnPropertyChanged(string propertyName)
     {
-      if (null != PropertyChanged)
+      if (PropertyChanged is not null)
         PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
     }
   }
@@ -473,47 +466,47 @@ namespace Altaxo.Graph.Graph3D.Commands
   /// </summary>
   public abstract class AbstractCameraCommand : AbstractCheckableGraphControllerCommand
   {
-    protected Graph3DController _currentGraphController;
+    protected Graph3DController? _currentGraphController;
     protected Type _cameraTypeForThisCommand;
 
     protected AbstractCameraCommand(Type cameraTypeForThisCommand)
     {
       _cameraTypeForThisCommand = cameraTypeForThisCommand;
-      if (null != Current.Workbench)
+      if (Current.Workbench is not null)
       {
         Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchContentChanged, Current.Workbench, nameof(Current.Workbench.ActiveViewContentChanged));
         EhWorkbenchContentChanged(this, EventArgs.Empty);
       }
     }
 
-    protected void EhWorkbenchContentChanged(object o, System.EventArgs e)
+    protected void EhWorkbenchContentChanged(object? o, System.EventArgs e)
     {
       if (!object.ReferenceEquals(Controller, _currentGraphController))
       {
-        if (null != _currentGraphController)
+        if (_currentGraphController is not null)
         {
           lock (this)
           {
-            _currentGraphController.Doc.Changed -= new EventHandler(EhDocumentChanged);
+            _currentGraphController.Doc.Changed -= EhDocumentChanged;
             _currentGraphController = null;
           }
         }
-        if (Controller != null)
+        if (Controller is not null)
         {
           lock (this)
           {
             _currentGraphController = Controller;
-            _currentGraphController.Doc.Changed += new EventHandler(EhDocumentChanged);
+            _currentGraphController.Doc.Changed += EhDocumentChanged;
           }
         }
         OnPropertyChanged("IsChecked");
       }
     }
 
-    protected void EhDocumentChanged(object o, EventArgs e)
+    protected void EhDocumentChanged(object? o, EventArgs e)
     {
       if (e is Altaxo.Graph.Graph3D.Camera.CameraChangedEventArgs)
-        OnPropertyChanged("IsChecked");
+        OnPropertyChanged(nameof(IsChecked));
     }
 
     protected abstract void InstallCamera();
@@ -522,15 +515,15 @@ namespace Altaxo.Graph.Graph3D.Commands
     {
       get
       {
-        return null == Controller ? false : _cameraTypeForThisCommand == Controller.Doc.Camera.GetType();
+        return Controller is null ? false : _cameraTypeForThisCommand == Controller.Doc.Camera.GetType();
       }
       set
       {
-        if (value == true && Controller != null && Controller.Doc.Camera.GetType() != _cameraTypeForThisCommand)
+        if (value == true && Controller is not null && Controller.Doc.Camera.GetType() != _cameraTypeForThisCommand)
         {
           InstallCamera();
         }
-        OnPropertyChanged("IsChecked");
+        OnPropertyChanged(nameof(IsChecked));
       }
     }
   }
@@ -544,11 +537,14 @@ namespace Altaxo.Graph.Graph3D.Commands
 
     protected override void InstallCamera()
     {
-      var oldCamera = _currentGraphController.Doc.Camera;
-      double newZNear = oldCamera.ZNear;
-      double newWidthAtZNear = oldCamera.WidthAtTargetDistance;
-      var newCamera = new Altaxo.Graph.Graph3D.Camera.OrthographicCamera(oldCamera.UpVector, oldCamera.EyePosition, oldCamera.TargetPosition, oldCamera.ZNear, oldCamera.ZFar, newWidthAtZNear);
-      _currentGraphController.Doc.Camera = _currentGraphController.AdjustZNearZFar(newCamera);
+      if (_currentGraphController is not null)
+      {
+        var oldCamera = _currentGraphController.Doc.Camera;
+        double newZNear = oldCamera.ZNear;
+        double newWidthAtZNear = oldCamera.WidthAtTargetDistance;
+        var newCamera = new Altaxo.Graph.Graph3D.Camera.OrthographicCamera(oldCamera.UpVector, oldCamera.EyePosition, oldCamera.TargetPosition, oldCamera.ZNear, oldCamera.ZFar, newWidthAtZNear);
+        _currentGraphController.Doc.Camera = _currentGraphController.AdjustZNearZFar(newCamera);
+      }
     }
   }
 
@@ -561,13 +557,15 @@ namespace Altaxo.Graph.Graph3D.Commands
 
     protected override void InstallCamera()
     {
-      var oldCamera = _currentGraphController.Doc.Camera;
-
-      double relViewWidth = 0.93; // 2*tan(viewAngle/2) mit viewAngle = 50 deg
-      double newDistance = oldCamera.WidthAtTargetDistance / relViewWidth;
-      var newEyePosition = oldCamera.TargetPosition + newDistance * oldCamera.TargetToEyeVectorNormalized;
-      var newCamera = new Altaxo.Graph.Graph3D.Camera.PerspectiveCamera(oldCamera.UpVector, newEyePosition, oldCamera.TargetPosition, oldCamera.ZNear, oldCamera.ZFar, relViewWidth * oldCamera.ZNear);
-      _currentGraphController.Doc.Camera = _currentGraphController.AdjustZNearZFar(newCamera);
+      if (_currentGraphController is not null)
+      {
+        var oldCamera = _currentGraphController.Doc.Camera;
+        double relViewWidth = 0.93; // 2*tan(viewAngle/2) mit viewAngle = 50 deg
+        double newDistance = oldCamera.WidthAtTargetDistance / relViewWidth;
+        var newEyePosition = oldCamera.TargetPosition + newDistance * oldCamera.TargetToEyeVectorNormalized;
+        var newCamera = new Altaxo.Graph.Graph3D.Camera.PerspectiveCamera(oldCamera.UpVector, newEyePosition, oldCamera.TargetPosition, oldCamera.ZNear, oldCamera.ZFar, relViewWidth * oldCamera.ZNear);
+        _currentGraphController.Doc.Camera = _currentGraphController.AdjustZNearZFar(newCamera);
+      }
     }
   }
 

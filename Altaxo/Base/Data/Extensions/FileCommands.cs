@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.IO;
 using Altaxo.Collections;
@@ -54,7 +55,7 @@ namespace Altaxo.Data
     [Obsolete]
     public static void ImportAsciiToMultipleWorksheets(string[] filenames, AsciiImportOptions importOptions)
     {
-      if (null != importOptions)
+      if (importOptions is not null)
         AsciiImporter.ImportFilesIntoSeparateNewTables(Main.ProjectFolder.RootFolder, filenames, true, importOptions);
       else
         AsciiImporter.ImportFilesIntoSeparateNewTables(Main.ProjectFolder.RootFolder, filenames, true, true);
@@ -69,10 +70,10 @@ namespace Altaxo.Data
     [Obsolete]
     public static void ImportAsciiToSingleWorksheetHorizontally(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
     {
-      if (null != importOptions)
-        AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, true, importOptions);
+      if (importOptions is not null)
+        AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, true, importOptions, out _);
       else
-        AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, true, true);
+        AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, true, true, out _);
     }
 
     /// <summary>
@@ -84,10 +85,10 @@ namespace Altaxo.Data
     [Obsolete]
     public static void ImportAsciiToSingleWorksheetVertically(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
     {
-      if (null != importOptions)
-        AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, filenames, true, importOptions);
+      if (importOptions is not null)
+        AsciiImporter.TryImportFromMultipleAsciiFilesVertically(dataTable, filenames, true, importOptions, out _);
       else
-        AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, filenames, true, true);
+        AsciiImporter.TryImportFromMultipleAsciiFilesVertically(dataTable, filenames, true, true, out _);
     }
 
     /// <summary>
@@ -127,7 +128,7 @@ namespace Altaxo.Data
       {
         if (toMultipleWorksheets)
         {
-          if (options.FileNames.Length == 1 && null != dataTable)
+          if (options.FileNames.Length == 1 && dataTable is not null)
           {
             AsciiImporter.ImportFromAsciiFile(dataTable, options.FileName);
           }
@@ -138,14 +139,19 @@ namespace Altaxo.Data
         }
         else
         {
+          bool success;
+          string? errors;
           if (vertically)
           {
-            AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, options.FileNames, true, false);
+            success = AsciiImporter.TryImportFromMultipleAsciiFilesVertically(dataTable, options.FileNames, true, false, out errors);
           }
           else
           {
-            AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, options.FileNames, true, false);
+            success = AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(dataTable, options.FileNames, true, false, out errors);
           }
+
+          if (!success && !string.IsNullOrEmpty(errors))
+            Current.Gui.ErrorMessageBox(errors);
         }
       }
     }
@@ -169,7 +175,7 @@ namespace Altaxo.Data
 
       if (Current.Gui.ShowOpenFileDialog(options) && options.FileNames.Length > 0)
       {
-        var analysisOptions = dataTable.GetPropertyValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, null);
+        var analysisOptions = dataTable.GetPropertyValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, null) ?? throw new InvalidProgramException(); ;
         if (!ShowAsciiImportOptionsDialog(options.FileName, analysisOptions, out var importOptions))
           return;
 
@@ -179,14 +185,18 @@ namespace Altaxo.Data
         }
         else
         {
+          bool success;
+          string? errors;
           if (vertically)
           {
-            AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, options.FileNames, true, importOptions);
+            success = AsciiImporter.TryImportFromMultipleAsciiFilesVertically(dataTable, options.FileNames, true, importOptions, out errors);
           }
           else
           {
-            AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, options.FileNames, true, importOptions);
+            success = AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(dataTable, options.FileNames, true, importOptions, out errors);
           }
+          if (!success && !string.IsNullOrEmpty(errors))
+            Current.Gui.ErrorMessageBox(errors);
         }
       }
     }
@@ -200,13 +210,18 @@ namespace Altaxo.Data
     /// <returns><c>True</c> if the user confirms this dialog (clicks OK). False if the user cancels this dialog.</returns>
     public static bool ShowAsciiImportOptionsDialog(string fileName, AsciiDocumentAnalysisOptions analysisOptions, out AsciiImportOptions importOptions)
     {
+      if (analysisOptions is null)
+        throw new ArgumentNullException(nameof(analysisOptions));
+
       importOptions = new AsciiImportOptions();
 
       using (FileStream str = AsciiImporter.GetAsciiInputFileStream(fileName))
       {
         importOptions = AsciiDocumentAnalysis.Analyze(new AsciiImportOptions(), str, analysisOptions);
         object[] args = new object[] { importOptions, str };
-        var controller = (Altaxo.Gui.IMVCAController)Current.Gui.GetControllerAndControl(args, typeof(Altaxo.Gui.IMVCAController), Gui.UseDocument.Directly);
+        var controller = (Altaxo.Gui.IMVCAController?)Current.Gui.GetControllerAndControl(args, typeof(Altaxo.Gui.IMVCAController), Gui.UseDocument.Directly);
+        if (controller is null)
+          throw new InvalidProgramException($"Controller not found for import options");
 
         if (!Current.Gui.ShowDialog(controller, "Choose Ascii import options"))
           return false;

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -30,10 +31,10 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Drawing;
   using Altaxo.Main;
-  using Drawing;
   using Drawing.ColorManagement;
   using Geometry;
   using Graph.Plot.Data;
@@ -64,7 +65,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected FillAreaRule _fillRule;
 
-    protected BrushX _fillBrush; // brush to fill the area under the line
+    protected BrushX? _fillBrush; // brush to fill the area under the line
 
     /// <summary>Designates if the fill color is independent or dependent.</summary>
     protected ColorLinkage _fillColorLinkage = ColorLinkage.PreserveAlpha;
@@ -99,16 +100,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         info.AddValue("FillDirection", s._fillDirection);
         info.AddEnum("FillRule", s._fillRule);
-        info.AddValue("FillBrush", s._fillBrush);
+        info.AddValueOrNull("FillBrush", s._fillBrush);
         info.AddEnum("FillColorLinkage", s._fillColorLinkage);
 
         info.AddValue("Frame", s._framePen);
         info.AddEnum("FrameColorLinkage", s._frameColorLinkage);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DropAreaPlotStyle s = (DropAreaPlotStyle)o ?? new DropAreaPlotStyle(info);
+        var s = (DropAreaPlotStyle?)o ?? new DropAreaPlotStyle(info);
 
         s._connectionStyle = (ILineConnectionStyle)info.GetValue("Connection", s);
         s._connectCircular = info.GetBoolean("ConnectCircular");
@@ -117,7 +118,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         s._fillDirection = (CSPlaneID)info.GetValue("FillDirection", s);
         s._fillRule = (FillAreaRule)info.GetEnum("FillRule", typeof(FillAreaRule));
-        s._fillBrush = (BrushX)info.GetValue("FillBrush", s);
+        s._fillBrush = info.GetValueOrNull<BrushX>("FillBrush", s);
         s._fillColorLinkage = (ColorLinkage)info.GetEnum("FillColorLinkage", typeof(ColorLinkage));
 
         s._framePen = (PenX)info.GetValue("Pen", s);
@@ -130,10 +131,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Construction and copying
 
+    [MemberNotNull(nameof(_connectionStyle), nameof(_fillDirection), nameof(_framePen))]
     public void CopyFrom(DropAreaPlotStyle from, Main.EventFiring eventFiring)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       using (var suspendToken = SuspendGetToken())
       {
@@ -158,10 +162,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <inheritdoc/>
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       var from = obj as DropAreaPlotStyle;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, Main.EventFiring.Enabled);
         return true;
@@ -172,7 +176,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
-      return CopyFrom(obj, true);
+      if (ReferenceEquals(this, obj))
+        return true;
+
+        return CopyFrom(obj, true);
     }
 
     /// <inheritdoc/>
@@ -187,7 +194,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return new DropAreaPlotStyle(this);
     }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected DropAreaPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
       _connectionStyle = LineConnectionStyles.StraightConnection.Instance;
     }
@@ -234,7 +243,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return _connectionStyle; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!(_connectionStyle.Equals(value)))
@@ -328,7 +337,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    public BrushX FillBrush
+    public BrushX? FillBrush
     {
       get { return _fillBrush; }
       set
@@ -365,7 +374,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return _framePen; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!(_framePen == value))
@@ -398,7 +407,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         return
           !(LineConnectionStyles.NoConnection.Instance.Equals(_connectionStyle)) &&
-          (_fillBrush.IsVisible || _framePen.IsVisible);
+          (_fillBrush?.IsVisible ?? false || _framePen.IsVisible);
       }
     }
 
@@ -411,12 +420,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return bounds;
     }
 
-    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
+    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       if (_connectionStyle is LineConnectionStyles.NoConnection)
         return;
 
-      PointF[] plotPositions = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      if (!(pdata.RangeList is { } rangeList) || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } plotPositions))
+        return;
 
       if (_independentOnShiftingGroupStyles)
       {
@@ -428,11 +438,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         plotPositions = Processed2DPlotData.GetPlotPointsInAbsoluteLayerCoordinatesWithShift(pdata, layer, _cachedLogicalShiftX, _cachedLogicalShiftY);
       }
 
+      if (plotPositions is null)
+        return;
+
       _fillDirection = layer.UpdateCSPlaneID(_fillDirection);
 
       var gp = new GraphicsPath();
 
-      PlotRangeList rangeList = pdata.RangeList;
       if (_ignoreMissingDataPoints)
       {
         // in case we ignore the missing points, all ranges can be plotted
@@ -449,7 +461,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
       }
 
-      if (null != _fillBrush)
+      if (_fillBrush is not null)
       {
         using (var fillBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_fillBrush, new RectangleD2D(PointD2D.Empty, layer.Size), g, 1))
         {
@@ -489,10 +501,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
-      if (_fillColorLinkage == ColorLinkage.Dependent && _fillBrush != null)
+      if (_fillColorLinkage == ColorLinkage.Dependent && _fillBrush is not null)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
         { return _fillBrush.Color; });
-      else if (_frameColorLinkage == ColorLinkage.Dependent && _framePen != null)
+      else if (_frameColorLinkage == ColorLinkage.Dependent && _framePen is not null)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
         { return _framePen.Color; });
 
@@ -537,7 +549,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!_independentOnShiftingGroupStyles)
       {
         var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYGroupStyle>(externalGroups, localGroups);
-        if (null != shiftStyle)
+        if (shiftStyle is not null)
         {
           shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY);
         }
@@ -560,12 +572,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <inheritdoc/>
     public IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      IReadableColumn? Column, // the column as it was at the time of this call
+      string? ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
-      return null; // no additionally used columns
+      yield break; // no additionally used columns
     }
 
     #endregion IDocumentNode Members

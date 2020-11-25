@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -39,17 +40,17 @@ namespace Altaxo.Graph.Gdi.Plot.Data
   public class Processed2DPlotData : I3DPhysicalVariantAccessor
   {
     /// <summary>List of plot ranges of the plot points. This is used to identify contiguous ranges of plot points, so that for instance it can be decided to connect them by a line or not.</summary>
-    public PlotRangeList RangeList;
+    public PlotRangeList? RangeList;
 
     /// <summary>Holds the final coordinates of the plot points in absolute layer coordinates.</summary>
-    public PointF[] PlotPointsInAbsoluteLayerCoordinates;
+    public PointF[]? PlotPointsInAbsoluteLayerCoordinates;
 
     private IndexedPhysicalValueAccessor _getXPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
     private IndexedPhysicalValueAccessor _getYPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
     private IndexedPhysicalValueAccessor _getZPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
 
     /// <summary>Data of the previous plot item for temporary purposes.</summary>
-    private Processed2DPlotData _previousItemData;
+    private Processed2DPlotData? _previousItemData;
 
     /// <summary>Gets the physical x value at a given original row index.</summary>
     /// <param name="originalRowIndex">Index of the original data row.</param>
@@ -107,7 +108,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       }
       set
       {
-        if (value != null)
+        if (value is not null)
           _getXPhysical = value;
         else
           _getXPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
@@ -124,7 +125,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       }
       set
       {
-        if (value != null)
+        if (value is not null)
           _getYPhysical = value;
         else
           _getYPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
@@ -141,7 +142,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       }
       set
       {
-        if (value != null)
+        if (value is not null)
           _getZPhysical = value;
         else
           _getZPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
@@ -151,7 +152,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <summary>
     /// Gets/sets the processed plot data of a previous plot item for temporary usage.
     /// </summary>
-    public Processed2DPlotData PreviousItemData
+    public Processed2DPlotData? PreviousItemData
     {
       get
       {
@@ -194,8 +195,11 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <param name="logicalShiftX">The logical shift in x-direction.</param>
     /// <param name="logicalShiftY">The logical shift in y-direction.</param>
     /// <returns>Array of plot point positions, but now shifted by logical values in x-direction (<paramref name="logicalShiftX"/>) and y-direction (<paramref name="logicalShiftY"/>).</returns>
-    public static PointF[] GetPlotPointsInAbsoluteLayerCoordinatesWithShift(Processed2DPlotData pdata, IPlotArea layer, double logicalShiftX, double logicalShiftY)
+    public static PointF[]? GetPlotPointsInAbsoluteLayerCoordinatesWithShift(Processed2DPlotData pdata, IPlotArea layer, double logicalShiftX, double logicalShiftY)
     {
+      if (pdata.RangeList is null || pdata.PlotPointsInAbsoluteLayerCoordinates is null)
+        return null;
+
       var result = new PointF[pdata.PlotPointsInAbsoluteLayerCoordinates.Length];
       foreach (PlotRange r in pdata.RangeList)
       {

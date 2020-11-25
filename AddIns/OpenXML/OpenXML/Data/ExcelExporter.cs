@@ -119,7 +119,7 @@ namespace Altaxo.Data
         try
         {
           // Create the directory, if not already present
-          var dir = System.IO.Path.GetDirectoryName(fileName);
+          var dir = System.IO.Path.GetDirectoryName(fileName) ?? throw new InvalidOperationException($"Can not get directory name from file name {fileName}");
           if (!System.IO.Directory.Exists(dir))
             System.IO.Directory.CreateDirectory(dir);
 

@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -48,7 +50,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
     /// <returns>True if successful; otherwise false (if it is already present).</returns>
     public bool TryAdd(IScriptCompilerResult result)
     {
-      if (null == result)
+      if (result is null)
         throw new ArgumentNullException(nameof(result));
 
       _lock.EnterUpgradeableReadLock();
@@ -88,7 +90,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
     /// <param name="scriptTextHash">The script text hash.</param>
     /// <param name="result">Returns the compilation result. This can be either a successful result or an unsuccessful result.</param>
     /// <returns>True if the compilation result corresponding to the script text hash could be found; otherwise, false.</returns>
-    public bool TryGetValue(string scriptTextHash, out IScriptCompilerResult result)
+    public bool TryGetValue(string scriptTextHash, [MaybeNullWhen(false)] out IScriptCompilerResult result)
     {
       if (string.IsNullOrEmpty(scriptTextHash))
         throw new ArgumentNullException(nameof(scriptTextHash));
@@ -110,9 +112,9 @@ namespace Altaxo.Main.Services.ScriptCompilation
     /// <param name="assembly">The compiled assembly.</param>
     /// <param name="result">Returns the compilation result corresponding to the assembly (always a successful compilation result).</param>
     /// <returns>True if the compulation result corresponding to this assembly could be found, otherwise, false.</returns>
-    public bool TryGetValue(Assembly assembly, out ScriptCompilerSuccessfulResult result)
+    public bool TryGetValue(Assembly assembly, [MaybeNullWhen(false)] out ScriptCompilerSuccessfulResult result)
     {
-      if (null == assembly)
+      if (assembly is null)
         throw new ArgumentNullException(nameof(assembly));
 
       _lock.EnterReadLock();

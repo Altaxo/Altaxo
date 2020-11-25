@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
     public EllipseDrawingMouseHandler(Graph3DController grac)
     {
       _grac = grac;
-      _grac?.View?.SetPanelCursor(Cursors.IBeam);
+      _grac.View?.SetPanelCursor(Cursors.IBeam);
     }
 
     public override GraphToolType GraphToolType

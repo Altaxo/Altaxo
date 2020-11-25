@@ -174,7 +174,7 @@ namespace Altaxo.Calc.Ode
     }
 
     // Vector l for Nordsieck algorithm (orders 1 to 5)
-    private static double[][] l = new double[6][] {
+    private static readonly double[][] l = new double[6][] {
             new double[] { 1, 1 },
             new double[] { 2 / 3d, 1, 1 / 3d },
             new double[] { 6 / 11d, 1, 6 / 11d, 1 / 11d },
@@ -185,7 +185,7 @@ namespace Altaxo.Calc.Ode
 
     // Vector Beta for Nordsieck algorithm (orders 1 to 5)
     //private static double[] b = new double[] { 720 / 1764d, 1, 1624 / 1764d, 735 / 1764d, 175 / 1764d, 21 / 1764d, 1/1764d };
-    private static double[] b = new double[] { 1.0d, 2.0d / 3.0d, 6.0d / 11.0d, 24.0d / 50.0d, 120.0d / 274.0d, 720.0 / 1764.0d };
+    private static readonly double[] b = new double[] { 1.0d, 2.0d / 3.0d, 6.0d / 11.0d, 24.0d / 50.0d, 120.0d / 274.0d, 720.0 / 1764.0d };
 
     /// <summary>
     /// Implementation of Gear's BDF method with dynamically changed step size and order. Order changes between 1 and 3.
@@ -367,7 +367,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>Sequence of infinite number of solution points.</returns>
     public static IEnumerable<SolutionPoint> GearBDF(double tstart, double tfinal, Vector x0, Func<double, Vector, Vector> f, Options opts)
     {
-      if (opts == null)
+      if (opts is null)
         throw new ArgumentNullException("opts");
       if (opts.MaxStep == double.MaxValue)
         opts.MaxStep = (tfinal - tstart) * 1e-2;
@@ -433,9 +433,9 @@ namespace Altaxo.Calc.Ode
       var deltaE = Vector.Zeros(n);
       var M = Matrix.Identity(n, qmax - 1);
 
-      if (opts.SparseJacobian == null)
+      if (opts.SparseJacobian is null)
       {
-        Matrix J = opts.Jacobian == null ? NordsieckState.Jacobian(f, xcurr, t + dt) : opts.Jacobian;
+        Matrix J = opts.Jacobian is null ? NordsieckState.Jacobian(f, xcurr, t + dt) : opts.Jacobian;
         Matrix P = Matrix.Identity(n, n) - J * dt * b[qcurr - 1];
 
         do

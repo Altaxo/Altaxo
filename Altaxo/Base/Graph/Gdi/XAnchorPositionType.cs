@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -41,10 +42,11 @@ namespace Altaxo.Graph.Gdi
   {
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      info.SetNodeContent(obj.ToString());
+      var s = (XAnchorPositionType)obj;
+      info.SetNodeContent(s.ToString());
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       string val = info.GetNodeContent();
       return System.Enum.Parse(typeof(XAnchorPositionType), val, true);

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -97,7 +98,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    protected virtual void EhTextChanged(object sender, EventArgs e)
+    protected virtual void EhTextChanged(object? sender, EventArgs e)
     {
       _isInitialTextModified = true;
     }
@@ -105,12 +106,12 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Is called when the content of the TextBox needs validation.
     /// </summary>
-    public event ValidatingStringEventHandler Validating;
+    public event ValidatingStringEventHandler? Validating;
 
     public string EhValidateText(object obj, System.Globalization.CultureInfo info)
     {
       var evt = Validating;
-      if (null != evt)
+      if (evt is not null)
       {
         var e = new ValidationEventArgs<string>((string)GetValue(TextBox.TextProperty), info);
         evt(this, e);

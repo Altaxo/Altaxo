@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using Altaxo.Collections;
@@ -149,7 +150,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         InitializeFillDirectionChoices();
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         // Line properties
         _view.InitializeLineConnect(_lineConnectChoices);
@@ -170,7 +171,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void InitializeLineConnectionChoices()
     {
-      if (null == _lineConnectChoices)
+      if (_lineConnectChoices is null)
         _lineConnectChoices = new SelectableListNodeList();
       else
         _lineConnectChoices.Clear();
@@ -205,7 +206,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
         // Line fill direction
         selNode = _areaFillDirectionChoices.FirstSelectedNode;
-        if (null != selNode)
+        if (selNode is not null)
           _doc.FillDirection = ((CSPlaneID)selNode.Tag);
         else
           _doc.FillDirection = null;
@@ -247,7 +248,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       _areaFillDirectionChoices = new SelectableListNodeList();
       var layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
-      if (layer != null)
+      if (layer is not null)
       {
         foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _doc.FillDirection }))
         {
@@ -281,7 +282,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhColorGroupStyleAddedOrRemoved()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.FillColorLinkage = (ColorLinkage)_fillColorLinkageChoices.FirstSelectedNode.Tag;
         _view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
@@ -291,7 +292,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhFillColorLinkageChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.FillColorLinkage = (ColorLinkage)_fillColorLinkageChoices.FirstSelectedNode.Tag;
         if (ColorLinkage.Dependent == _doc.FillColorLinkage)
@@ -305,7 +306,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhFrameColorLinkageChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.FrameColorLinkage = (ColorLinkage)_frameColorLinkageChoices.FirstSelectedNode.Tag;
         if (ColorLinkage.Dependent == _doc.FrameColorLinkage)
@@ -319,7 +320,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhFillBrushChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         if (ColorLinkage.Dependent == _doc.FrameColorLinkage)
         {
@@ -336,7 +337,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhFramePenChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         if (ColorLinkage.Dependent == _doc.FillColorLinkage)
         {

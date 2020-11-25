@@ -35,7 +35,7 @@ namespace Altaxo.Gui.Settings
   /// </summary>
   public partial class CultureSettingsControl : UserControl, ICultureSettingsView
   {
-    public event Action CultureChanged;
+    public event Action? CultureChanged;
 
     public CultureSettingsControl()
     {
@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Settings
     private void EhCultureChanged(object sender, SelectionChangedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiCultures);
-      if (null != CultureChanged)
+      if (CultureChanged is not null)
       {
         CultureChanged();
       }

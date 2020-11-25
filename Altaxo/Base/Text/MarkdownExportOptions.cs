@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -81,11 +82,15 @@ namespace Altaxo.Text
     /// <param name="fileName">Full name of the markdown file to export to.</param>
     public void Export(TextDocument document, string fileName)
     {
-      var path = Path.GetDirectoryName(fileName);
-
+      var path = Path.GetDirectoryName(fileName) ?? throw new ArgumentException($"Can not get directory from file name {fileName}");
       var imagePath = GetImagePath(path);
 
+      // Expand the document. This will also set the ReferencedImageUrls
+      document = ChildDocumentExpander.ExpandDocumentToNewDocument(document);
       var sourceDoc = new System.Text.StringBuilder(document.SourceText);
+
+      if (document.ReferencedImageUrls is null)
+        throw new InvalidProgramException("ReferencedImageUrls should be set before in ExpandDocumentToNewDocument");
 
       var list = new List<(string Url, int urlSpanStart, int urlSpanEnd)>(document.ReferencedImageUrls);
 

@@ -427,7 +427,7 @@ namespace Altaxo.Calc.Ode
         //with new method order q' = q, q + 1, q - 1, respectively
         double rSame, rUp, rDown;
 
-        if (null != denseJacobianEvaluation)
+        if (denseJacobianEvaluation is not null)
         {
           var J = denseJacobianEvaluation(t + dt, xcurr);
           if (J.GetType() != P?.GetType())
@@ -461,7 +461,7 @@ namespace Altaxo.Calc.Ode
             count++;
           } while (delta > 1.0d && count < opts.NumberOfIterations);
         }
-        else if (null != sparseJacobianEvaluation)
+        else if (sparseJacobianEvaluation is not null)
         {
           SparseDoubleMatrix J = sparseJacobianEvaluation(t + dt, xcurr);
           var P = new SparseDoubleMatrix(J.RowCount, J.ColumnCount);
@@ -613,7 +613,7 @@ namespace Altaxo.Calc.Ode
 
 #nullable disable
     // Vector l for Nordsieck algorithm (orders 1 to 5)
-    private static double[][] l = new double[6][] {
+    private static readonly double[][] l = new double[6][] {
                         new double[] { 1, 1 },
                         new double[] { 2 / 3d, 1, 1 / 3d },
                         new double[] { 6 / 11d, 1, 6 / 11d, 1 / 11d },
@@ -624,7 +624,7 @@ namespace Altaxo.Calc.Ode
 
     // Vector Beta for Nordsieck algorithm (orders 1 to 5)
     //private static double[] b = new double[] { 720 / 1764d, 1, 1624 / 1764d, 735 / 1764d, 175 / 1764d, 21 / 1764d, 1/1764d };
-    private static double[] b = new double[] { 1.0d, 2.0d / 3.0d, 6.0d / 11.0d, 24.0d / 50.0d, 120.0d / 274.0d, 720.0 / 1764.0d };
+    private static readonly double[] b = new double[] { 1.0d, 2.0d / 3.0d, 6.0d / 11.0d, 24.0d / 50.0d, 120.0d / 274.0d, 720.0 / 1764.0d };
 
     private NordsieckState currstate;
 
@@ -714,9 +714,9 @@ namespace Altaxo.Calc.Ode
     /// <param name="dydt">Evaluation function for the derivatives. First argument is the time, second argument are the current y values. The third argument is an array where the derivatives are expected to be placed into.</param>
     public void Initialize(double t0, double[] y0, Action<double, double[], double[]> dydt)
     {
-      if (null == y0)
+      if (y0 is null)
         throw new ArgumentNullException(nameof(y0));
-      if (null == dydt)
+      if (dydt is null)
         throw new ArgumentNullException(nameof(dydt));
 
       _denseJacobianEvaluation = new DenseJacobianEvaluator(y0.Length, dydt).Jacobian;
@@ -732,9 +732,9 @@ namespace Altaxo.Calc.Ode
     /// <param name="opts">Options for the ODE method (can be null).</param>
     public void Initialize(double t0, double[] y0, Action<double, double[], double[]> dydt, GearsBDFOptions opts)
     {
-      if (null == y0)
+      if (y0 is null)
         throw new ArgumentNullException(nameof(y0));
-      if (null == dydt)
+      if (dydt is null)
         throw new ArgumentNullException(nameof(dydt));
 
       _denseJacobianEvaluation = new DenseJacobianEvaluator(y0.Length, dydt).Jacobian;
@@ -751,9 +751,9 @@ namespace Altaxo.Calc.Ode
     /// <param name="opts">Options for the ODE method (can be null).</param>
     public void Initialize(double t0, double[] y0, Action<double, double[], double[]> dydt, Func<double, double[], IROMatrix<double>> denseJacobianEvaluator, GearsBDFOptions opts)
     {
-      if (null == y0)
+      if (y0 is null)
         throw new ArgumentNullException(nameof(y0));
-      if (null == dydt)
+      if (dydt is null)
         throw new ArgumentNullException(nameof(dydt));
 
       _denseJacobianEvaluation = denseJacobianEvaluator ?? new DenseJacobianEvaluator(y0.Length, dydt).Jacobian;
@@ -770,9 +770,9 @@ namespace Altaxo.Calc.Ode
     /// <param name="opts">Options for the ODE method (can be null).</param>
     public void InitializeSparse(double t0, double[] y0, Action<double, double[], double[]> dydt, Func<double, double[], SparseDoubleMatrix> sparseJacobianEvaluation, GearsBDFOptions opts)
     {
-      if (null == y0)
+      if (y0 is null)
         throw new ArgumentNullException(nameof(y0));
-      if (null == dydt)
+      if (dydt is null)
         throw new ArgumentNullException(nameof(dydt));
 
       _sparseJacobianEvaluation = sparseJacobianEvaluation ?? new SparseJacobianEvaluator(y0.Length, dydt).Jacobian;
@@ -797,7 +797,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>Sequence of infinite number of solution points.</returns>
     private void InternalInitialize(double t0, double[] x0, Action<double, double[], double[]> f, GearsBDFOptions opts)
     {
-      if (null == _denseJacobianEvaluation && null == _sparseJacobianEvaluation)
+      if (_denseJacobianEvaluation is null && _sparseJacobianEvaluation is null)
         throw new InvalidProgramException("Ooops, how could this happen?");
 
       double t = t0;
@@ -918,7 +918,7 @@ namespace Altaxo.Calc.Ode
       {
         _initializationState = InitializationState.InitialValueReturned;
 
-        if (null == tout)
+        if (tout is null)
         {
           last_tout = t_result = currstate._tn;
           currstate._zn.CopyColumn(0, result);

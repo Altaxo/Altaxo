@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,7 +65,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     /// Occurs when at least one of the hue values of the color circle has changed. Argument is the list of hue values of the circle, with the first item
     /// always representing the main hue value.
     /// </summary>
-    public event Action<IReadOnlyList<double>> HueValuesChanged;
+    public event Action<IReadOnlyList<double>>? HueValuesChanged;
 
     public ColorCircleSurfaceControl()
     {
@@ -84,7 +85,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
         if (_colorCircleModel.GetType() != value.GetType())
         {
@@ -140,7 +141,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       var numberOfButtons = _colorCircleModel.NumberOfHueValues;
 
-      var hueOfButton0 = null == _hueOfButtons ? 0 : _hueOfButtons[0];
+      var hueOfButton0 = _hueOfButtons is null ? 0 : _hueOfButtons[0];
 
       _hueOfButtons = new double[numberOfButtons];
       _posOfButtons = new Point[numberOfButtons];

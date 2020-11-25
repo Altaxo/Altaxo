@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace Altaxo.Main
     /// If this is set (not null), which happens after deserialization, then the parent node is tracked instead of the proxy's document node.
     /// Only when explicitly calling <see cref="DocumentObject"/>, then it is tried to resolve the proxy's document node. 
     /// </summary>
-    private string _childName;
+    private string? _childName;
 
     #region Serialization
 
@@ -65,25 +66,25 @@ namespace Altaxo.Main
         var s = (DocNodeProxy2ndLevel)obj;
 
         var node = s.InternalDocumentNode;
-        if (null != node && !node.IsDisposeInProgress)
+        if (node is not null && !node.IsDisposeInProgress)
           s.InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(node);
 
-        if (!(null != s._docNodePath))
+        if (s._docNodePath is null)
           throw new InvalidProgramException();
 
         info.AddValue("Path", (s._childName is null) ? s._docNodePath : s._docNodePath.Append(s._childName));
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (DocNodeProxy2ndLevel)o ?? new DocNodeProxy2ndLevel(info);
+        var s = (DocNodeProxy2ndLevel?)o ?? new DocNodeProxy2ndLevel(info);
 
         var nodePath = (Main.AbsoluteDocumentPath)info.GetValue("Path", s);
 
         s._childName = nodePath.LastPart;
         s.InternalDocumentPath = nodePath.ParentPath;
 
-        if (!(null != s._docNodePath))
+        if (s._docNodePath is null)
           throw new InvalidProgramException();
 
         // create a callback to resolve the instance as early as possible
@@ -149,7 +150,7 @@ namespace Altaxo.Main
     /// the document path is stored for this object in addition to the object itself.</param>
     public override void SetDocNode(IDocumentLeafNode value)
     {
-      if (null == value)
+      if (value is null)
         throw new ArgumentNullException(nameof(value));
 
       _childName = null;
@@ -178,7 +179,7 @@ namespace Altaxo.Main
     protected override bool OnDocNode_TunnelingEvent(object sender, object source, Main.TunnelingEventArgs e)
     {
       bool shouldFireChangedEvent = false;
-      if (e is NameChangedEventArgs ncea && null != _childName) // if we currently track the parent node (childName is not null), then we watch NameChanged events
+      if (e is NameChangedEventArgs ncea && _childName is not null) // if we currently track the parent node (childName is not null), then we watch NameChanged events
       {
         if (ncea.OldName == _childName)
         {
@@ -194,14 +195,14 @@ namespace Altaxo.Main
     /// Returns the document node. If the stored doc node is null, it is tried to resolve the stored document path.
     /// If that fails too, null is returned.
     /// </summary>
-    public override object DocumentObject()
+    public override object? DocumentObject()
     {
       var result = base.DocumentObject();
 
-      if (null != _childName && result is IDocumentNode parentNode)
+      if (_childName is not null && result is IDocumentNode parentNode)
       {
         var child = parentNode.GetChildObjectNamed(_childName);
-        if (null != child)
+        if (child is not null)
         {
           _childName = null;
           InternalSetDocNode(child, isCalledFromConstructor: false, doNotTriggerChangedEvent: true); // we are tracking the child now
@@ -219,7 +220,7 @@ namespace Altaxo.Main
     public override Main.AbsoluteDocumentPath DocumentPath()
     {
       var docNode = InternalDocumentNode;
-      if (null != docNode)
+      if (docNode is not null)
       {
         InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(docNode);
       }

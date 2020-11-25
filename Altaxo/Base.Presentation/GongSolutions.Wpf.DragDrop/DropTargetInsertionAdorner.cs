@@ -34,14 +34,14 @@ namespace GongSolutions.Wpf.DragDrop
     {
       var itemsControl = DropInfo.VisualTarget as ItemsControl;
 
-      if (itemsControl != null)
+      if (itemsControl is not null)
       {
         // Get the position of the item at the insertion index. If the insertion point is
         // to be after the last item, then get the position of the last item and add an
         // offset later to draw it at the end of the list.
         ItemsControl itemParent;
 
-        if (DropInfo.VisualTargetItem != null)
+        if (DropInfo.VisualTargetItem is not null)
         {
           itemParent = ItemsControl.ItemsControlFromItemContainer(DropInfo.VisualTargetItem);
         }
@@ -54,7 +54,7 @@ namespace GongSolutions.Wpf.DragDrop
 
         var lastItemInGroup = false;
         var targetGroup = DropInfo.TargetGroup;
-        if (targetGroup != null && targetGroup.IsBottomLevel && DropInfo.InsertPosition.HasFlag(RelativeInsertPosition.AfterTargetItem))
+        if (targetGroup is not null && targetGroup.IsBottomLevel && DropInfo.InsertPosition.HasFlag(RelativeInsertPosition.AfterTargetItem))
         {
           var indexOf = targetGroup.Items.IndexOf(DropInfo.TargetItem);
           lastItemInGroup = indexOf == targetGroup.ItemCount - 1;
@@ -66,7 +66,7 @@ namespace GongSolutions.Wpf.DragDrop
 
         var itemContainer = (UIElement)itemParent.ItemContainerGenerator.ContainerFromIndex(index);
 
-        if (itemContainer != null)
+        if (itemContainer is not null)
         {
           var itemRect = new Rect(itemContainer.TranslatePoint(new Point(), AdornedElement), itemContainer.RenderSize);
           Point point1, point2;

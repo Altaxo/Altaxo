@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,7 +72,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
     {
       get
       {
-        return GetType().FullName;
+        return GetType().FullName ?? GetType().Name;
       }
     }
 
@@ -92,16 +93,16 @@ namespace Altaxo.Drawing.D3D.LineCaps
       VectorD3D northVector,
       VectorD3D forwardVectorNormalized,
       ICrossSectionOfLine lineCrossSection,
-      PointD3D[] baseCrossSectionPositions,
-      VectorD3D[] baseCrossSectionNormals,
-      ref object temporaryStorageSpace)
+      PointD3D[]? baseCrossSectionPositions,
+      VectorD3D[]? baseCrossSectionNormals,
+      ref object? temporaryStorageSpace)
     {
       var crossSectionVertexCount = lineCrossSection.NumberOfVertices;
       var crossSectionNormalCount = lineCrossSection.NumberOfNormals;
 
-      var capCrossSectionPositions = baseCrossSectionPositions ?? (PointD3D[])temporaryStorageSpace ?? (PointD3D[])(temporaryStorageSpace = new PointD3D[crossSectionVertexCount]);
+      var capCrossSectionPositions = baseCrossSectionPositions ?? (PointD3D[]?)temporaryStorageSpace ?? (PointD3D[])(temporaryStorageSpace = new PointD3D[crossSectionVertexCount]);
 
-      if (null == baseCrossSectionPositions) // if null the positions were not provided
+      if (baseCrossSectionPositions is null) // if null the positions were not provided
       {
         var matrix = Math3D.Get2DProjectionToPlane(eastVector, northVector, basePoint);
         for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
@@ -132,7 +133,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       VectorD3D forwardVectorNormalized,
       PointD3D[] baseCrossSectionPositions)
     {
-      if (null == baseCrossSectionPositions)
+      if (baseCrossSectionPositions is null)
         throw new ArgumentNullException(nameof(baseCrossSectionPositions));
       // and now the cap
 
@@ -220,7 +221,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       return _instance;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return obj is Flat;
     }

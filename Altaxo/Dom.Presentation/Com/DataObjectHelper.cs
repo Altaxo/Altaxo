@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -320,7 +321,7 @@ namespace Altaxo.Com
     /// <returns>TYMED_GDI pointer to the Gdi bitmap.</returns>
     public static IntPtr RenderGdiBitmapToTYMED_GDI(Bitmap bitmap)
     {
-      if (null == bitmap)
+      if (bitmap is null)
         throw new ArgumentNullException("bitmap");
       if (bitmap.PixelFormat != PixelFormat.Format24bppRgb)
         throw new ArgumentException(string.Format("bitmap must have PixelFormat.Format24bppRgb, but it has {0}", bitmap.PixelFormat));
@@ -336,7 +337,7 @@ namespace Altaxo.Com
     /// <returns>HGLOBAL pointer to the DIB bitmap.</returns>
     public static IntPtr RenderDIBBitmapToHGLOBAL(Bitmap bitmap)
     {
-      if (null == bitmap)
+      if (bitmap is null)
         throw new ArgumentNullException("bitmap");
       if (bitmap.PixelFormat != PixelFormat.Format24bppRgb)
         throw new ArgumentException(string.Format("bitmap must have PixelFormat.Format24bppRgb, but it has {0}", bitmap.PixelFormat));
@@ -447,7 +448,7 @@ namespace Altaxo.Com
         // Determine the size of the buffer that will receive the converted records (first loop), and then fill the buffer (second loop).
         // EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault is neccessary for LibreOffice (when using EmfToWmfBitsFlags.EmfToWmfBitsFlagsEmbedEmf, LibreOffice shows graph too small)
         size = GdiPlusFunc.GdipEmfToWmfBits(hEmf, size, buffer, MappingMode.MM_ANISOTROPIC, EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
-        if (null == buffer)
+        if (buffer is null)
           buffer = new byte[size];
         else
           break;

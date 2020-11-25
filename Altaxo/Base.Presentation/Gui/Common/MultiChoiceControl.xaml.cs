@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Common
 
     public void InitializeColumnNames(string[] colNames)
     {
-      if (_lvItems.View == null)
+      if (_lvItems.View is null)
         _lvItems.View = new GridView();
 
       var gv = (GridView)_lvItems.View;

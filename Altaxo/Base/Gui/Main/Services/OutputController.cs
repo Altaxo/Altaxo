@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace Altaxo.Gui.Main.Services
   [ExpectedTypeOfView(typeof(IOutputView))]
   public class OutputController : IMVCController, ITextOutputService
   {
-    private IOutputView _view;
+    private IOutputView? _view;
     private bool _isLoggingEnabled = false; // always start with false, only the user can enable this service
     private StringBuilder _logText = new StringBuilder();
 
@@ -52,7 +53,7 @@ namespace Altaxo.Gui.Main.Services
       {
         _logText.Append(text);
 
-        if (null != _view)
+        if (_view is not null)
           _view.SetText(_logText.ToString());
       }
     }
@@ -94,7 +95,7 @@ namespace Altaxo.Gui.Main.Services
 
     private void Initialize(bool initData)
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.SetText(_logText.ToString());
       }
@@ -102,10 +103,11 @@ namespace Altaxo.Gui.Main.Services
 
     private void EhEnabledChanged()
     {
-      _isLoggingEnabled = _view.IsEnabled;
+      if (_view is { } view)
+        _isLoggingEnabled = view.IsEnabled;
     }
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {
@@ -113,14 +115,14 @@ namespace Altaxo.Gui.Main.Services
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.EnabledChanged -= EhEnabledChanged;
         }
 
-        _view = (IOutputView)value;
+        _view = (IOutputView?)value;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           _view.EnabledChanged += EhEnabledChanged;

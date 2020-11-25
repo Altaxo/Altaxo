@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,37 +60,37 @@ namespace Altaxo.Gui.Scripting
 
     private void _btRevert_Click(object sender, RoutedEventArgs e)
     {
-      if (null != Controller)
+      if (Controller is not null)
         Controller.EhView_RevertChanges();
     }
 
     private void _btCommit_Click(object sender, RoutedEventArgs e)
     {
-      if (null != Controller)
+      if (Controller is not null)
         Controller.EhView_CommitChanges();
     }
 
     private void _edParameterNames_TextChanged(object sender, TextChangedEventArgs e)
     {
-      if (null != Controller && 0 == _suppressEvents)
+      if (Controller is not null && 0 == _suppressEvents)
         Controller.EhView_UserDefinedParameterTextChanged(_edParameterNames.Text);
     }
 
     private void _edDependentVariables_TextChanged(object sender, TextChangedEventArgs e)
     {
-      if (null != Controller && 0 == _suppressEvents)
+      if (Controller is not null && 0 == _suppressEvents)
         Controller.EhView_DependentVariableTextChanged(_edDependentVariables.Text);
     }
 
     private void _edIndependentVariables_TextChanged(object sender, TextChangedEventArgs e)
     {
-      if (null != Controller && 0 == _suppressEvents)
+      if (Controller is not null && 0 == _suppressEvents)
         Controller.EhView_IndependentVariableTextChanged(_edIndependentVariables.Text);
     }
 
     private void _chkUserDefinedParameters_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (null != Controller && 0 == _suppressEvents)
+      if (Controller is not null && 0 == _suppressEvents)
         Controller.EhView_UserDefinedParameterCheckChanged(true == _chkUserDefinedParameters.IsChecked);
 
       _cbNumberOfParameters.IsEnabled = true != _chkUserDefinedParameters.IsChecked;
@@ -99,7 +100,7 @@ namespace Altaxo.Gui.Scripting
     private void _cbNumberOfParameters_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       e.Handled = true;
-      if (null != Controller && 0 == _suppressEvents)
+      if (Controller is not null && 0 == _suppressEvents)
         Controller.EhView_NumberOfParameterChanged(_cbNumberOfParameters.SelectedIndex);
     }
 
@@ -121,14 +122,14 @@ namespace Altaxo.Gui.Scripting
       if (object.ReferenceEquals(_scriptView, viewAsObject))
         return;
 
-      if (null != _scriptView)
+      if (_scriptView is not null)
       {
         _mainGrid.Children.Remove(_scriptView);
       }
 
       _scriptView = (UserControl)viewAsObject;
 
-      if (null != _scriptView)
+      if (_scriptView is not null)
       {
         _scriptView.SetValue(Grid.ColumnProperty, 0);
         _scriptView.SetValue(Grid.ColumnSpanProperty, 5);
@@ -181,7 +182,7 @@ namespace Altaxo.Gui.Scripting
     public void EnableScriptView(object view, bool enable)
     {
       var c = view as UserControl;
-      if (c != null)
+      if (c is not null)
         c.IsEnabled = enable;
     }
   }

@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Collections;
@@ -56,9 +58,9 @@ typeof(object),
     /// </summary>
     /// <param name="propertyContext">The property context. Can be retrieved for instance from the table the plot is initiated or the folder.</param>
     /// <returns>The created graph.</returns>
-    private static GraphDocument CreateBuiltinGraph(IReadOnlyPropertyBag propertyContext)
+    private static GraphDocument CreateBuiltinGraph(IReadOnlyPropertyBag? propertyContext)
     {
-      if (null == propertyContext)
+      if (propertyContext is null)
         propertyContext = PropertyExtensions.GetPropertyContextOfProject();
 
       var graph = new GraphDocument();
@@ -68,10 +70,10 @@ typeof(object),
       graph.RootLayer.Location.CopyFrom(propertyContext.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize));
       var layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer);
       layer.CreateDefaultAxes(propertyContext);
-      layer.AxisStyles[CSLineID.X0].AxisLineStyle.FirstUpMajorTicks = false;
-      layer.AxisStyles[CSLineID.X0].AxisLineStyle.FirstUpMinorTicks = false;
-      layer.AxisStyles[CSLineID.Y0].AxisLineStyle.FirstUpMajorTicks = false;
-      layer.AxisStyles[CSLineID.Y0].AxisLineStyle.FirstUpMinorTicks = false;
+      layer.AxisStyles[CSLineID.X0]!.AxisLineStyle!.FirstUpMajorTicks = false;
+      layer.AxisStyles[CSLineID.X0]!.AxisLineStyle!.FirstUpMinorTicks = false;
+      layer.AxisStyles[CSLineID.Y0]!.AxisLineStyle!.FirstUpMajorTicks = false;
+      layer.AxisStyles[CSLineID.Y0]!.AxisLineStyle!.FirstUpMinorTicks = false;
       graph.RootLayer.Layers.Add(layer);
 
       return graph;
@@ -85,15 +87,15 @@ typeof(object),
     /// <param name="anyNameInSameFolder">Any name of an item in the same folder. This name is used to determine the destination folder of the graph.</param>
     /// <param name="includeInProject">If true, the graph is included in the project.</param>
     /// <returns>The created graph. The graph is already part of the project. (But no view is created for the graph).</returns>
-    public static GraphDocument CreateGraph(IReadOnlyPropertyBag propertyContext, string preferredGraphName, string anyNameInSameFolder, bool includeInProject)
+    public static GraphDocument CreateGraph(IReadOnlyPropertyBag propertyContext, string? preferredGraphName, string anyNameInSameFolder, bool includeInProject)
     {
-      if (null == propertyContext)
+      if (propertyContext is null)
         propertyContext = PropertyExtensions.GetPropertyContextOfProject();
 
       GraphDocument graph;
       var graphTemplate = propertyContext.GetValue<GraphDocument>(PropertyKeyDefaultTemplate);
       var isBuiltinTemplate = object.ReferenceEquals(graphTemplate, Current.PropertyService.BuiltinSettings.GetValue<GraphDocument>(PropertyKeyDefaultTemplate));
-      if (null != graphTemplate && !isBuiltinTemplate)
+      if (graphTemplate is not null && !isBuiltinTemplate)
         graph = (GraphDocument)graphTemplate.Clone();
       else
         graph = CreateBuiltinGraph(propertyContext);
@@ -114,7 +116,7 @@ typeof(object),
       return graph;
     }
 
-    public static bool IsGraphTemplateSuitable(GraphDocument graphTemplate, out string problemDescription)
+    public static bool IsGraphTemplateSuitable(GraphDocument graphTemplate, [MaybeNullWhen(true)] out string problemDescription)
     {
       // Make sure that the graph contains an XYPlotLayer
 
@@ -124,9 +126,9 @@ typeof(object),
         return false;
       }
 
-      var xylayer = (XYPlotLayer)TreeNodeExtensions.AnyBetweenHereAndLeaves<HostLayer>(graphTemplate.RootLayer, x => x is XYPlotLayer);
+      var xylayer = (XYPlotLayer?)TreeNodeExtensions.AnyBetweenHereAndLeaves<HostLayer>(graphTemplate.RootLayer, x => x is XYPlotLayer);
 
-      if (null == xylayer)
+      if (xylayer is null)
       {
         problemDescription = "The graph does not contain any x-y plot layer.";
         return false;

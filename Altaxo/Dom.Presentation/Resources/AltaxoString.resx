@@ -2658,4 +2658,19 @@ Parameter:\par
   <data name="XML.MainMenu.EditMenu.CopyPage.Description" xml:space="preserve">
     <value>Copy the actual page to the clipboard</value>
   </data>
+  <data name="XML.MainMenu.FileMenu.OpenFromDirectory" xml:space="preserve">
+    <value>Open project from directory ...</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.OpenFromDirectory.Description" xml:space="preserve">
+    <value>Opens an Altaxo project from a directory of the file system.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveProjectAsToDirectory" xml:space="preserve">
+    <value>Save project into directory..</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.SaveProjectAsToDirectory.Description" xml:space="preserve">
+    <value>Saves the Altaxo project into a directory of the file system.</value>
+  </data>
+  <data name="XML.MainMenu.FileMenuSpecial" xml:space="preserve">
+    <value>Special open/save operations</value>
+  </data>
 </root>

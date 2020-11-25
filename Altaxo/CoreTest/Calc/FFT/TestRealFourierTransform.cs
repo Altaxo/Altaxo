@@ -24,11 +24,11 @@
 
 using System;
 using Altaxo.Calc.Fourier;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Fourier
 {
-  [TestFixture]
+  
   public class TestRealFourierTransformClass
   {
     private const int nLowerLimit = 5;
@@ -44,28 +44,28 @@ namespace AltaxoTest.Calc.Fourier
       new RealFourierTransform(x.Length).Transform(x, dir);
     }
 
-    [Test]
+    [Fact]
     public void Test01Zero()
     {
       foreach (int i in _testLengths)
         _test.TestZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test02ReOne_ZeroPos()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test03ReOne_OnePos()
     {
       foreach (int i in _testLengths)
         _test.TestReOne_OnePos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test04ReOne_RandomPos()
     {
       double oldTolerance = _test.SetTolerance(1E-14);
@@ -76,7 +76,7 @@ namespace AltaxoTest.Calc.Fourier
       _test.SetTolerance(oldTolerance);
     }
 
-    [Test]
+    [Fact]
     public void Test05ReRandomValues()
     {
       double oldTolerance = _test.SetTolerance(1E-14);

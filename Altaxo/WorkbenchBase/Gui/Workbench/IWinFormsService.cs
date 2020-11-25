@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Workbench
     /// When a WindowsFormsHost is replaced with another content, the host is disposed (but the control
     /// inside the host isn't)
     /// </summary>
-    void SetContent(System.Windows.Controls.ContentControl contentControl, object content, IServiceProvider serviceProvider = null);
+    void SetContent(System.Windows.Controls.ContentControl contentControl, object content, IServiceProvider? serviceProvider = null);
 
     /// <summary>
     /// Sets the Content property of the specified ContentPresenter to the specified content.
@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Workbench
     /// When a WindowsFormsHost is replaced with another content, the host is disposed (but the control
     /// inside the host isn't)
     /// </summary>
-    void SetContent(System.Windows.Controls.ContentPresenter contentControl, object content, IServiceProvider serviceProvider = null);
+    void SetContent(System.Windows.Controls.ContentPresenter contentControl, object content, IServiceProvider? serviceProvider = null);
 
     /// <summary>
     /// Provides access to <see cref="System.Windows.Input.CommandManager.RequerySuggested"/> from Windows Forms-based AddIns.

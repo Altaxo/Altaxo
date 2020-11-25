@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Runtime.Serialization;
 using Altaxo;
@@ -29,25 +30,26 @@ namespace Altaxo.Main.Services
   [Serializable()]
   public class ResourceNotFoundException : BaseException
   {
-    private string resourceName;
-    public string ResourceName { get { return resourceName; } }
+    public string ResourceName { get; private set; }
 
     public ResourceNotFoundException(string resourceName) : base("Resource not found : " + resourceName)
     {
-      this.resourceName = resourceName;
+      ResourceName = resourceName;
     }
 
     public ResourceNotFoundException() : base()
     {
+      ResourceName = string.Empty;
     }
 
     public ResourceNotFoundException(string resourceName, Exception innerException) : base("Resource not found : " + resourceName, innerException)
     {
-      this.resourceName = resourceName;
+      ResourceName = resourceName;
     }
 
     protected ResourceNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
+      ResourceName = string.Empty;
     }
   }
 }

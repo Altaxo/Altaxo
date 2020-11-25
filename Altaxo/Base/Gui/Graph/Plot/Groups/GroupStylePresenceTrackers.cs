@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +59,7 @@ namespace Altaxo.Gui.Graph.Plot.Groups
     /// <value>
     ///	<c>True</c> if a color group style is present; otherwise, <c>false</c>.
     /// </value>
-    public bool IsColorGroupStyleActive { get { return null != _colorGroupStyle; } }
+    public bool IsColorGroupStyleActive { get { return _colorGroupStyle is not null; } }
 
     /// <summary>
     /// Queries, if only plot colors should be shown in the Gui interface of the plot style.
@@ -67,7 +68,7 @@ namespace Altaxo.Gui.Graph.Plot.Groups
     /// <returns><c>True</c> if in the Gui interface of the plot style only plot colors are allowed to choose; otherwise, <c>false</c>.</returns>
     public bool MustUsePlotColorsOnly(bool isIndependentColorChosen)
     {
-      return null != _colorGroupStyle && !isIndependentColorChosen;
+      return _colorGroupStyle is not null && !isIndependentColorChosen;
     }
 
     /// <summary>
@@ -77,13 +78,13 @@ namespace Altaxo.Gui.Graph.Plot.Groups
     /// <returns><c>True</c> if in the Gui interface of the plot style only plot colors are allowed to choose; otherwise, <c>false</c>.</returns>
     public bool MustUsePlotColorsOnly(ColorLinkage colorLinkage)
     {
-      return null != _colorGroupStyle && colorLinkage == ColorLinkage.Dependent;
+      return _colorGroupStyle is not null && colorLinkage == ColorLinkage.Dependent;
     }
 
     public static Altaxo.Graph.Plot.Groups.ColorGroupStyle GetColorGroupStyle(Altaxo.Main.IDocumentLeafNode doc)
     {
       var plotItemCollection = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.Plot.PlotItemCollection>(doc);
-      if (null == plotItemCollection)
+      if (plotItemCollection is null)
         return null;
 
       if (plotItemCollection.GroupStyles.ContainsType(typeof(Altaxo.Graph.Plot.Groups.ColorGroupStyle)))

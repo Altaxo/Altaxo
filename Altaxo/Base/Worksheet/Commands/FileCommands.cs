@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System.IO;
 using Altaxo.Data;
 

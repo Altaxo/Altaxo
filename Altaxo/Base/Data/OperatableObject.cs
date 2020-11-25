@@ -22,7 +22,8 @@
 
 #endregion Copyright
 
-using System;
+#nullable enable
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Data
 {
@@ -31,7 +32,7 @@ namespace Altaxo.Data
   /// </summary>
   public abstract class OperatableObject
   {
-    public override bool Equals(object o)
+    public override bool Equals(object? o)
     {
       return base.Equals(o);
     }
@@ -46,64 +47,64 @@ namespace Altaxo.Data
     // names seems to be used by the compiler for the operators itself
     // so we use here vopAddition and so on (the v from virtual)
 
-    public virtual bool vop_Addition(object a, out OperatableObject b)
+    public virtual bool vop_Addition(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Addition_Rev(object a, out OperatableObject b)
+    public virtual bool vop_Addition_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Subtraction(object a, out OperatableObject b)
+    public virtual bool vop_Subtraction(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Subtraction_Rev(object a, out OperatableObject b)
+    public virtual bool vop_Subtraction_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Multiplication(object a, out OperatableObject b)
+    public virtual bool vop_Multiplication(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Multiplication_Rev(object a, out OperatableObject b)
+    public virtual bool vop_Multiplication_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Division(object a, out OperatableObject b)
+    public virtual bool vop_Division(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Division_Rev(object a, out OperatableObject b)
+    public virtual bool vop_Division_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Modulo(object a, out OperatableObject b)
+    public virtual bool vop_Modulo(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Modulo_Rev(object a, out OperatableObject b)
+    public virtual bool vop_Modulo_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_And(object a, out OperatableObject b)
+    public virtual bool vop_And(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_And_Rev(object a, out OperatableObject b)
+    public virtual bool vop_And_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Or(object a, out OperatableObject b)
+    public virtual bool vop_Or(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Or_Rev(object a, out OperatableObject b)
+    public virtual bool vop_Or_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Xor(object a, out OperatableObject b)
+    public virtual bool vop_Xor(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Xor_Rev(object a, out OperatableObject b)
+    public virtual bool vop_Xor_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_ShiftLeft(object a, out OperatableObject b)
+    public virtual bool vop_ShiftLeft(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_ShiftLeft_Rev(object a, out OperatableObject b)
+    public virtual bool vop_ShiftLeft_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_ShiftRight(object a, out OperatableObject b)
+    public virtual bool vop_ShiftRight(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_ShiftRight_Rev(object a, out OperatableObject b)
+    public virtual bool vop_ShiftRight_Rev(object a, [MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     public virtual bool vop_Equal(object a, out bool b)
@@ -144,22 +145,22 @@ namespace Altaxo.Data
 
     // Unary operators
 
-    public virtual bool vop_Plus(out OperatableObject b)
+    public virtual bool vop_Plus([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Minus(out OperatableObject b)
+    public virtual bool vop_Minus([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Not(out OperatableObject b)
+    public virtual bool vop_Not([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Complement(out OperatableObject b)
+    public virtual bool vop_Complement([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Increment(out OperatableObject b)
+    public virtual bool vop_Increment([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
-    public virtual bool vop_Decrement(out OperatableObject b)
+    public virtual bool vop_Decrement([MaybeNullWhen(false)] out OperatableObject b)
     { b = null; return false; }
 
     public virtual bool vop_True(out bool b)
@@ -173,7 +174,7 @@ namespace Altaxo.Data
 
       if (c1.vop_Addition(c2, out var c3))
         return c3;
-      if (c2 is OperatableObject && ((OperatableObject)c2).vop_Addition_Rev(c1, out c3))
+      if (c2 is OperatableObject c2o && c2o.vop_Addition_Rev(c1, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to add " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -184,7 +185,7 @@ namespace Altaxo.Data
 
       if (c2.vop_Addition_Rev(c1, out var c3))
         return c3;
-      if (c1 is OperatableObject && ((OperatableObject)c1).vop_Addition(c2, out c3))
+      if (c1 is OperatableObject c1o && c1o.vop_Addition(c2, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to add " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -195,7 +196,7 @@ namespace Altaxo.Data
 
       if (c1.vop_Subtraction(c2, out var c3))
         return c3;
-      if (c2 is OperatableObject && ((OperatableObject)c2).vop_Subtraction_Rev(c1, out c3))
+      if (c2 is OperatableObject c2o && c2o.vop_Subtraction_Rev(c1, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to subtract " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -206,7 +207,7 @@ namespace Altaxo.Data
 
       if (c1.vop_Multiplication(c2, out var c3))
         return c3;
-      if (c2 is OperatableObject && ((OperatableObject)c2).vop_Multiplication_Rev(c1, out c3))
+      if (c2 is OperatableObject c2o && c2o.vop_Multiplication_Rev(c1, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to multiply " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -217,7 +218,7 @@ namespace Altaxo.Data
 
       if (c1.vop_Division(c2, out var c3))
         return c3;
-      if (c2 is OperatableObject && ((OperatableObject)c2).vop_Division_Rev(c1, out c3))
+      if (c2 is OperatableObject c2o && c2o.vop_Division_Rev(c1, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to divide " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -228,7 +229,7 @@ namespace Altaxo.Data
 
       if (c1.vop_Modulo(c2, out var c3))
         return c3;
-      if (c2 is OperatableObject && ((OperatableObject)c2).vop_Modulo_Rev(c1, out c3))
+      if (c2 is OperatableObject c2o && c2o.vop_Modulo_Rev(c1, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to take modulus of " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -239,7 +240,7 @@ namespace Altaxo.Data
 
       if (c1.vop_And(c2, out var c3))
         return c3;
-      if (c2 is OperatableObject && ((OperatableObject)c2).vop_And_Rev(c1, out c3))
+      if (c2 is OperatableObject c2o && c2o.vop_And_Rev(c1, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply and operator to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -250,7 +251,7 @@ namespace Altaxo.Data
 
       if (c1.vop_Or(c2, out var c3))
         return c3;
-      if (c2 is OperatableObject && ((OperatableObject)c2).vop_Or_Rev(c1, out c3))
+      if (c2 is OperatableObject c2o && c2o.vop_Or_Rev(c1, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply or operator to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -261,7 +262,7 @@ namespace Altaxo.Data
 
       if (c1.vop_Xor(c2, out var c3))
         return c3;
-      if (c2 is OperatableObject && ((OperatableObject)c2).vop_Xor_Rev(c1, out c3))
+      if (c2 is OperatableObject c2o && c2o.vop_Xor_Rev(c1, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply xor operator to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -286,11 +287,13 @@ namespace Altaxo.Data
 
     public static bool operator ==(OperatableObject c1, object c2)
     {
-      if (null == ((object)c1) || null == c2)
-        return ((object)c1) == c2;
+      if (c1 is null && c2 is null)
+        return true;
+      if (c1 is null || c2 is null)
+        return false;
       if (c1.vop_Equal(c2, out var c3))
         return c3;
-      if (c2 is OperatableObject && ((OperatableObject)c2).vop_Equal_Rev(c1, out c3))
+      if (c2 is OperatableObject c2o && c2o.vop_Equal_Rev(c1, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator equal to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -299,11 +302,13 @@ namespace Altaxo.Data
     public static bool operator !=(OperatableObject c1, object c2)
     {
 
-      if (null == ((object)c1) || c2 == null)
-        return ((object)c1) != c2;
+      if (c1 is null && c2 is null)
+        return false;
+      if (c1 is null || c2 is null)
+        return true;
       if (c1.vop_NotEqual(c2, out var c3))
         return c3;
-      if (c2 is OperatableObject && ((OperatableObject)c2).vop_NotEqual_Rev(c1, out c3))
+      if (c2 is OperatableObject c2o && c2o.vop_NotEqual_Rev(c1, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator notequal to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -314,7 +319,7 @@ namespace Altaxo.Data
 
       if (c1.vop_Lesser(c2, out var c3))
         return c3;
-      if (c2 is OperatableObject && ((OperatableObject)c2).vop_Lesser_Rev(c1, out c3))
+      if (c2 is OperatableObject c2o && c2o.vop_Lesser_Rev(c1, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator lesser to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -325,7 +330,7 @@ namespace Altaxo.Data
 
       if (c1.vop_Greater(c2, out var c3))
         return c3;
-      if (c2 is OperatableObject && ((OperatableObject)c2).vop_Greater_Rev(c1, out c3))
+      if (c2 is OperatableObject c2o && c2o.vop_Greater_Rev(c1, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator greater to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -336,7 +341,7 @@ namespace Altaxo.Data
 
       if (c1.vop_LesserOrEqual(c2, out var c3))
         return c3;
-      if (c2 is OperatableObject && ((OperatableObject)c2).vop_LesserOrEqual_Rev(c1, out c3))
+      if (c2 is OperatableObject c2o && c2o.vop_LesserOrEqual_Rev(c1, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator LesserOrEqual to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -347,7 +352,7 @@ namespace Altaxo.Data
 
       if (c1.vop_GreaterOrEqual(c2, out var c3))
         return c3;
-      if (c2 is OperatableObject && ((OperatableObject)c2).vop_GreaterOrEqual_Rev(c1, out c3))
+      if (c2 is OperatableObject c2o && c2o.vop_GreaterOrEqual_Rev(c1, out c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator GreaterOrEqual to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");

@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using Altaxo.Main.Services;
 
@@ -62,9 +63,9 @@ namespace Altaxo.AddInItems
 
   public sealed class FileFilterDescriptor
   {
-    public string Name { get; set; }
-    public string Extensions { get; set; }
-    public string MimeType { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Extensions { get; set; } = string.Empty;
+    public string MimeType { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets whether this descriptor matches the specified file extension.

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -57,7 +58,7 @@ namespace Altaxo.Gui.Common
     private static void OnAutoTooltipPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
       var textBlock = d as TextBlock;
-      if (textBlock == null)
+      if (textBlock is null)
         return;
 
       if (e.NewValue.Equals(true))
@@ -81,7 +82,7 @@ namespace Altaxo.Gui.Common
       ComputeAutoTooltip(textBlock);
     }
 
-    private static void EhTextBlockTextChanged(object sender, EventArgs e)
+    private static void EhTextBlockTextChanged(object? sender, EventArgs e)
     {
       var textBlock = sender as TextBlock;
       ComputeAutoTooltip(textBlock);

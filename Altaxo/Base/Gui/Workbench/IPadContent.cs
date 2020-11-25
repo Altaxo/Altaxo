@@ -16,7 +16,9 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -28,17 +30,20 @@ namespace Altaxo.Gui.Workbench
     /// Returns the category (this is used for defining where the menu item to
     /// this pad goes)
     /// </summary>
+    [MaybeNull]
     string Category { get; set; }
 
     /// <summary>
     /// Returns the icon bitmap resource name of the pad. May be an empty string
     /// if the pad has no icon defined.
     /// </summary>
+    [MaybeNull]
     string IconSource { get; }
 
     /// <summary>
     /// Returns the menu shortcut for the view menu item.
     /// </summary>
+    [MaybeNull]
     string Shortcut { get; set; }
 
     /// <summary>
@@ -60,6 +65,7 @@ namespace Altaxo.Gui.Workbench
     /// <value>
     /// The pad descriptor.
     /// </value>
+    [MaybeNull]
     PadDescriptor PadDescriptor { get; set; }
   }
 }

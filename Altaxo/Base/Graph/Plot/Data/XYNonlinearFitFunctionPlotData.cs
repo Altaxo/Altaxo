@@ -22,11 +22,13 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 
 namespace Altaxo.Graph.Plot.Data
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Calc.Regression.Nonlinear;
   using Altaxo.Data;
   using Altaxo.Main;
@@ -70,9 +72,9 @@ namespace Altaxo.Graph.Plot.Data
         info.AddValue("DependentVariableIndex", s._dependentVariableIndex);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (XYNonlinearFitFunctionPlotData)o : new XYNonlinearFitFunctionPlotData();
+        var s = (XYNonlinearFitFunctionPlotData?)o ?? new XYNonlinearFitFunctionPlotData(info);
 
         s.Function = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("Function", s);
         s._fitDocumentIdentifier = info.GetString("FitDocumentIdentifier");
@@ -89,9 +91,11 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Only for deserialization purposes.
     /// </summary>
-    protected XYNonlinearFitFunctionPlotData()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    protected XYNonlinearFitFunctionPlotData(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>
     /// Initializes a new instance of the <see cref="XYNonlinearFitFunctionPlotData"/> class.
@@ -105,9 +109,9 @@ namespace Altaxo.Graph.Plot.Data
     /// <param name="independentVariableTransformation">Transformation, which is applied to the x value before it is applied to the fit function. Can be null.</param>
     public XYNonlinearFitFunctionPlotData(string fitDocumentIdentifier, NonlinearFitDocument fitDocument, int fitElementIndex, int dependentVariableIndex, IVariantToVariantTransformation dependentVariableTransformation, int independentVariableIndex, IVariantToVariantTransformation independentVariableTransformation)
     {
-      if (null == fitDocumentIdentifier)
+      if (fitDocumentIdentifier is null)
         throw new ArgumentNullException(nameof(fitDocumentIdentifier));
-      if (null == fitDocument)
+      if (fitDocument is null)
         throw new ArgumentNullException(nameof(fitDocument));
 
       ChildCloneToMember(ref _fitDocument, fitDocument); // clone here, because we want to have a local copy which can not change.
@@ -117,39 +121,51 @@ namespace Altaxo.Graph.Plot.Data
       Function = new FitFunctionToScalarFunctionDDWrapper(_fitDocument.FitEnsemble[fitElementIndex].FitFunction, dependentVariableIndex, dependentVariableTransformation, independentVariableIndex, independentVariableTransformation, _fitDocument.GetParametersForFitElement(fitElementIndex));
     }
 
-    public XYNonlinearFitFunctionPlotData(XYNonlinearFitFunctionPlotData from)
-      : base(from)
-    {
-    }
+
 
     public override object Clone()
     {
       return new XYNonlinearFitFunctionPlotData(this);
     }
 
+    public XYNonlinearFitFunctionPlotData(XYNonlinearFitFunctionPlotData from)
+    {
+      CopyFrom(from);
+    }
+
+    [MemberNotNull(nameof(_fitDocumentIdentifier), nameof(_fitDocument))]
+    protected void CopyFrom(XYNonlinearFitFunctionPlotData from)
+    {
+      base.CopyFrom(from);
+      _fitDocumentIdentifier = from._fitDocumentIdentifier;
+      ChildCopyToMember(ref _fitDocument, from._fitDocument);
+      _fitElementIndex = from._fitElementIndex;
+      _dependentVariableIndex = from._dependentVariableIndex;
+    }
+
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
-      var copied = base.CopyFrom(obj);
-      if (copied && obj is XYNonlinearFitFunctionPlotData from)
+      if (obj is XYFunctionPlotData from)
       {
-        _fitDocumentIdentifier = from._fitDocumentIdentifier;
-        ChildCopyToMember(ref _fitDocument, from._fitDocument);
-        _fitElementIndex = from._fitElementIndex;
-        _dependentVariableIndex = from._dependentVariableIndex;
+        CopyFrom(from);
+        return true;
       }
-      return copied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _function && Function is Main.IDocumentLeafNode)
-        yield return new Main.DocumentNodeAndName((Main.IDocumentLeafNode)_function, "Function");
+      if (_function is Main.IDocumentLeafNode fdln)
+        yield return new Main.DocumentNodeAndName(fdln, "Function");
 
-      if (null != _fitDocument)
-        yield return new Main.DocumentNodeAndName(_fitDocument, () => _fitDocument = null, "FitDocument");
+      if (_fitDocument is not null)
+        yield return new Main.DocumentNodeAndName(_fitDocument, () => _fitDocument = null!, "FitDocument");
     }
 
 
@@ -176,7 +192,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return (NonlinearFitDocument)_fitDocument?.Clone();
+        return (NonlinearFitDocument)_fitDocument.Clone();
       }
     }
 
@@ -208,7 +224,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <value>
     /// The dependent variable column.
     /// </value>
-    public IReadableColumn DependentVariableColumn
+    public IReadableColumn? DependentVariableColumn
     {
       get
       {

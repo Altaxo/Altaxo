@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,23 +43,14 @@ namespace Altaxo.Graph.Scales.Ticks
         var s = (AngularDegreeTickSpacing)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AngularDegreeTickSpacing s = SDeserialize(o, info, parent);
-        OnAfterDeserialization(s);
-        return s;
-      }
-
-      protected virtual void OnAfterDeserialization(AngularDegreeTickSpacing s)
-      {
-      }
-
-      protected virtual AngularDegreeTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        AngularDegreeTickSpacing s = null != o ? (AngularDegreeTickSpacing)o : new AngularDegreeTickSpacing();
+        var s = (AngularDegreeTickSpacing?)o ?? new AngularDegreeTickSpacing();
         info.GetBaseValueEmbedded(s, typeof(AngularTickSpacing), s);
         return s;
       }
+
+      
     }
 
     #endregion Serialization

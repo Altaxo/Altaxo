@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Settings
     private void EhEnableAutoUpdatesChanged(object sender, RoutedEventArgs e)
     {
       var content = _guiMainGroup.Content as FrameworkElement;
-      if (null != content)
+      if (content is not null)
         content.IsEnabled = true == _guiEnableAutoUpdates.IsChecked;
     }
 

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +36,7 @@ using Altaxo.Main.Properties;
 
 namespace Altaxo.Graph.Graph3D
 {
+  using System.Diagnostics.CodeAnalysis;
   using Camera;
   using Drawing.D3D;
   using GraphicsContext;
@@ -55,10 +57,10 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     private CameraBase _camera;
 
-    /// <summary>
-    /// The default camera. This value can be null. But when not null, this camera will be used for the Return-To-Default-Camera button as well as for mass export actions.
-    /// </summary>
-    private CameraBase _defaultCamera;
+    // <summary>
+    // The default camera. This value can be null. But when not null, this camera will be used for the Return-To-Default-Camera button as well as for mass export actions.
+    // </summary>
+    // private CameraBase _defaultCamera;
 
     /// <summary>
     /// The scene lighting.
@@ -85,12 +87,12 @@ namespace Altaxo.Graph.Graph3D
     {
       EditingControllerCreation = (doc) =>
       {
-      var ctrl = new ItemLocationDirectController() { UseDocumentCopy = Gui.UseDocument.Copy };
-      ctrl.ShowPositionElements(false, false);
-      ctrl.ShowAnchorElements(false, false);
-      ctrl.InitializeDocument(doc);
-      return ctrl;
-    }
+        var ctrl = new ItemLocationDirectController() { UseDocumentCopy = Gui.UseDocument.Copy };
+        ctrl.ShowPositionElements(false, false);
+        ctrl.ShowAnchorElements(false, false);
+        ctrl.InitializeDocument(doc);
+        return ctrl;
+      }
     };
 
     public static readonly Main.Properties.PropertyKey<FontX3D> PropertyKeyDefaultFont =
@@ -103,10 +105,10 @@ namespace Altaxo.Graph.Graph3D
       {
         EditingControllerCreation = (doc) =>
         {
-        var ctrl = new Gui.Common.Drawing.D3D.FontX3DController { UseDocumentCopy = Gui.UseDocument.Copy };
-        ctrl.InitializeDocument(doc);
-        return ctrl;
-      }
+          var ctrl = new Gui.Common.Drawing.D3D.FontX3DController { UseDocumentCopy = Gui.UseDocument.Copy };
+          ctrl.InitializeDocument(doc);
+          return ctrl;
+        }
       };
 
     public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultForeColor =
@@ -120,10 +122,10 @@ namespace Altaxo.Graph.Graph3D
       {
         EditingControllerCreation = (doc) =>
         {
-        var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
-        ctrl.InitializeDocument(doc);
-        return ctrl;
-      }
+          var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
+          ctrl.InitializeDocument(doc);
+          return ctrl;
+        }
       };
 
     public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultSceneBackColor =
@@ -137,10 +139,10 @@ namespace Altaxo.Graph.Graph3D
     {
       EditingControllerCreation = (doc) =>
       {
-      var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
-      ctrl.InitializeDocument(doc);
-      return ctrl;
-    }
+        var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
+        ctrl.InitializeDocument(doc);
+        return ctrl;
+      }
     };
 
     public static readonly Main.Properties.PropertyKey<GuiModels.RootLayerMarkersVisibility> PropertyKeyRootLayerMarkersVisibility =
@@ -153,15 +155,15 @@ namespace Altaxo.Graph.Graph3D
     {
       EditingControllerCreation = (doc) =>
       {
-      var ctrl = new Gui.Common.EnumFlagController() { UseDocumentCopy = Gui.UseDocument.Copy };
-      ctrl.InitializeDocument(doc);
-      return ctrl;
-    }
+        var ctrl = new Gui.Common.EnumFlagController() { UseDocumentCopy = Gui.UseDocument.Copy };
+        ctrl.InitializeDocument(doc);
+        return ctrl;
+      }
     };
 
     public static FontX3D GetDefaultFont(IReadOnlyPropertyBag context)
     {
-      if (null != context)
+      if (context is not null)
         return context.GetValue(PropertyKeyDefaultFont);
       else
         return new FontX3D(Gdi.GdiFontManager.GetFontXGenericSansSerif(12, FontXStyle.Regular), 12 * 0.0625);
@@ -176,7 +178,7 @@ namespace Altaxo.Graph.Graph3D
     {
       double result = 1;
 
-      if (null != context)
+      if (context is not null)
       {
         var font = context.GetValue(PropertyKeyDefaultFont);
         using (var path = new System.Drawing.Drawing2D.GraphicsPath())
@@ -202,7 +204,7 @@ namespace Altaxo.Graph.Graph3D
     {
       double result = 8;
 
-      if (null != context)
+      if (context is not null)
       {
         var font = context.GetValue(PropertyKeyDefaultFont);
         using (var path = new System.Drawing.Drawing2D.GraphicsPath())
@@ -228,7 +230,7 @@ namespace Altaxo.Graph.Graph3D
     {
       double result = 1;
 
-      if (null != context)
+      if (context is not null)
       {
         var font = context.GetValue(PropertyKeyDefaultFont);
         using (var path = new System.Drawing.Drawing2D.GraphicsPath())
@@ -247,7 +249,7 @@ namespace Altaxo.Graph.Graph3D
 
     public static NamedColor GetDefaultForeColor(IReadOnlyPropertyBag context)
     {
-      if (null == context)
+      if (context is null)
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       return context.GetValue<NamedColor>(PropertyKeyDefaultForeColor);
@@ -280,13 +282,13 @@ namespace Altaxo.Graph.Graph3D
         info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
         info.AddValue("Notes", s._notes.Text);
         info.AddValue("RootLayer", s._rootLayer);
-        info.AddValue("Properties", s._graphProperties);
+        info.AddValueOrNull("Properties", s._graphProperties);
         info.AddValue("Lighting", s._lighting);
         info.AddValue("Camera", s._camera);
         //info.AddValue("DefaultCamera", s._defaultCamera);
       }
 
-      public void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s._name = info.GetString("Name");
         s._graphIdentifier = info.GetString("GraphIdentifier");
@@ -294,15 +296,15 @@ namespace Altaxo.Graph.Graph3D
         s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
         s._notes.Text = info.GetString("Notes");
         s.RootLayer = (HostLayer)info.GetValue("RootLayer", s);
-        s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
+        s.PropertyBag = info.GetValueOrNull<Main.Properties.PropertyBag>("Properties", s);
         s.Lighting = (LightSettings)info.GetValue("Lighting", s);
         s.Camera = (CameraBase)info.GetValue("Camera", s);
         //s._defaultCamera = (CameraBase)info.GetValue("DefaultCamera", s);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (GraphDocument)o ?? new GraphDocument();
+        var s = (GraphDocument?)o ?? new GraphDocument();
         Deserialize(s, info, parent);
         return s;
       }
@@ -341,10 +343,13 @@ namespace Altaxo.Graph.Graph3D
       }
     }
 
+    [MemberNotNull(nameof(_camera), nameof(_lighting))]
     public void CopyFrom(GraphDocument from, Altaxo.Graph.Gdi.GraphCopyOptions options)
     {
-      if (object.ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+      if (ReferenceEquals(this, from))
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       using (var suspendToken = SuspendGetToken())
       {
@@ -359,7 +364,7 @@ namespace Altaxo.Graph.Graph3D
         if (0 != (options & Altaxo.Graph.Gdi.GraphCopyOptions.CloneProperties))
         {
           // Clone also the graph properties
-          if (from._graphProperties != null && from._graphProperties.Count > 0)
+          if (from._graphProperties is not null && from._graphProperties.Count > 0)
           {
             PropertyBagNotNull.CopyFrom(from._graphProperties);
           }
@@ -398,14 +403,14 @@ namespace Altaxo.Graph.Graph3D
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _rootLayer)
-        yield return new Main.DocumentNodeAndName(_rootLayer, () => _rootLayer = null, "RootLayer");
+      if (_rootLayer is not null)
+        yield return new Main.DocumentNodeAndName(_rootLayer, () => _rootLayer = null!, "RootLayer");
 
-      if (null != _graphProperties)
-        yield return new Main.DocumentNodeAndName(_graphProperties, () => _graphProperties = null, "GraphProperties");
+      if (_graphProperties is not null)
+        yield return new Main.DocumentNodeAndName(_graphProperties, () => _graphProperties = null!, "GraphProperties");
 
-      if (null != _notes)
-        yield return new Main.DocumentNodeAndName(_notes, () => _notes = null, "Notes");
+      if (_notes is not null)
+        yield return new Main.DocumentNodeAndName(_notes, () => _notes = null!, "Notes");
     }
 
     public CameraBase Camera
@@ -414,9 +419,10 @@ namespace Altaxo.Graph.Graph3D
       {
         return _camera;
       }
+      [MemberNotNull(nameof(_camera))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         var oldValue = _camera;
@@ -433,9 +439,10 @@ namespace Altaxo.Graph.Graph3D
       {
         return _lighting;
       }
+      [MemberNotNull(nameof(_lighting))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         var oldValue = _lighting;
@@ -486,6 +493,7 @@ namespace Altaxo.Graph.Graph3D
     public HostLayer RootLayer
     {
       get { return _rootLayer; }
+      [MemberNotNull(nameof(_rootLayer))]
       private set
       {
         _rootLayer = value;
@@ -640,7 +648,7 @@ namespace Altaxo.Graph.Graph3D
 
       var orthoCamera = newCamera as Camera.OrthographicCamera;
 
-      if (null != orthoCamera)
+      if (orthoCamera is not null)
       {
         orthoCamera = (Camera.OrthographicCamera)orthoCamera.WithWidthAtZNear(1);
 

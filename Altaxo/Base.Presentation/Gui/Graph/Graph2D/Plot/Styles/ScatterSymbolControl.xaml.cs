@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -143,21 +144,21 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
       }
     }
 
-    public event Action<NamedColor> FillColorChanged;
+    public event Action<NamedColor>? FillColorChanged;
 
-    public event Action<Type> FrameChanged;
+    public event Action<Type>? FrameChanged;
 
-    public event Action<NamedColor> FrameColorChanged;
+    public event Action<NamedColor>? FrameColorChanged;
 
-    public event Action<Type> InsetChanged;
+    public event Action<Type>? InsetChanged;
 
-    public event Action<NamedColor> InsetColorChanged;
+    public event Action<NamedColor>? InsetColorChanged;
 
-    public event Action<PlotColorInfluence> PlotColorInfluenceChanged;
+    public event Action<PlotColorInfluence>? PlotColorInfluenceChanged;
 
-    public event Action<double> RelativeStructureWidthChanged;
+    public event Action<double>? RelativeStructureWidthChanged;
 
-    public event Action<Type> ShapeChanged;
+    public event Action<Type>? ShapeChanged;
 
     private void EhShapeChanged(object sender, SelectionChangedEventArgs e)
     {
@@ -211,13 +212,13 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
       set
       {
         const double symbolSize = 32;
-        if (_converterBlack_White == null)
+        if (_converterBlack_White is null)
           _converterBlack_White = new ScatterSymbolToImageSourceConverter() { PlotColor = NamedColors.Black, SymbolSize = symbolSize };
 
-        if (_converterBlue_Golden == null)
+        if (_converterBlue_Golden is null)
           _converterBlue_Golden = new ScatterSymbolToImageSourceConverter() { PlotColor = NamedColors.Blue, SymbolSize = symbolSize };
 
-        if (_converterGolden_Blue == null)
+        if (_converterGolden_Blue is null)
           _converterGolden_Blue = new ScatterSymbolToImageSourceConverter() { PlotColor = NamedColors.Goldenrod, SymbolSize = symbolSize };
 
         _guiPreviewBlack_White.Source = (ImageSource)_converterBlack_White.Convert(value, typeof(ImageSource), null, GuiCulture.Instance);

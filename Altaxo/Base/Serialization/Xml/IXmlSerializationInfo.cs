@@ -33,7 +33,7 @@ namespace Altaxo.Serialization.Xml
   /// </summary>
   public interface IXmlSerializationInfo
   {
-    void SetProperty(string propertyname, string propertyvalue);
+    void SetProperty(string propertyname, string? propertyvalue);
 
     string? GetProperty(string propertyname);
 
@@ -92,7 +92,7 @@ namespace Altaxo.Serialization.Xml
 
     void AddArray(string name, DateTime[] val, int count);
 
-    void AddArray(string name, string[] val, int count);
+    void AddArray(string name, string?[] val, int count);
 
     /// <summary>
     /// Adds an array of nullable boolean values. The array <paramref name="val"/> contains the boolean values, whereas
@@ -105,6 +105,7 @@ namespace Altaxo.Serialization.Xml
     void AddArray(string name, System.Collections.BitArray val, System.Collections.BitArray cond, int count);
 
     void AddArray(string name, object[] val, int count);
+    void AddArrayOfNullableElements(string name, object?[] val, int count);
 
     void CreateElement(string name);
 
@@ -113,7 +114,7 @@ namespace Altaxo.Serialization.Xml
     void AddValue(string name, object o);
     void AddValueOrNull(string name, object? o);
 
-    bool IsSerializable(object o);
+    bool IsSerializable(object? o);
 
     void AddBaseValueEmbedded(object o, System.Type basetype);
 

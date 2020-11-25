@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Altaxo.Drawing;
 
@@ -36,7 +38,7 @@ namespace Altaxo.Graph.Gdi.Shapes
   public abstract class OpenPathShapeBase : GraphicBase, IRoutedPropertyReceiver
   {
     /// <summary>If not null, this pens draw the outline of the shape.</summary>
-    protected PenX _outlinePen;
+    protected PenX? _outlinePen;
 
     /// <summary>Pen to draw the shape.</summary>
     protected PenX _linePen;
@@ -49,60 +51,77 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (OpenPathShapeBase)obj;
-        info.AddBaseValueEmbedded(s, typeof(OpenPathShapeBase).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(OpenPathShapeBase).BaseType!);
 
         info.AddValue("LinePen", s._linePen);
-        info.AddValue("OutlinePen", s._outlinePen);
+        info.AddValueOrNull("OutlinePen", s._outlinePen);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (OpenPathShapeBase)o;
-        info.GetBaseValueEmbedded(s, typeof(OpenPathShapeBase).BaseType, parent);
+        var s = (OpenPathShapeBase)(o ?? throw new ArgumentNullException(nameof(o)));
+        info.GetBaseValueEmbedded(s, typeof(OpenPathShapeBase).BaseType!, parent);
 
         s.Pen = (PenX)info.GetValue("LinePen", s);
-        s.OutlinePen = (PenX)info.GetValue("OutlinePen", s);
+        s.OutlinePen = info.GetValueOrNull<PenX>("OutlinePen", s);
         return s;
       }
     }
 
     #endregion Serialization
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected OpenPathShapeBase(ItemLocationDirect location, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(location)
     {
     }
 
-    protected OpenPathShapeBase(ItemLocationDirect location, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    protected OpenPathShapeBase(ItemLocationDirect location, Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
       : base(location)
     {
-      if (null == context)
+      if (context is null)
         context = PropertyExtensions.GetPropertyContextOfProject();
 
       var penWidth = GraphDocument.GetDefaultPenWidth(context);
       var foreColor = context.GetValue(GraphDocument.PropertyKeyDefaultForeColor);
-      Pen = new PenX(foreColor, penWidth);
+      _linePen = new PenX(foreColor, penWidth);
     }
 
     public OpenPathShapeBase(OpenPathShapeBase from)
       :
-      base(from) // all is done here, since CopyFrom is virtual!
+      base(from)
     {
+      CopyFrom(from, false);
+    }
+
+    [MemberNotNull(nameof(_linePen))]
+    protected void CopyFrom(OpenPathShapeBase from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      _outlinePen = from._outlinePen;
+      _linePen = from._linePen;
     }
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (obj is OpenPathShapeBase from)
       {
-        var from = obj as OpenPathShapeBase;
-        if (from != null)
+        using (var suspendToken = SuspendGetToken())
         {
-          _outlinePen = from._outlinePen;
-          _linePen = from._linePen;
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
@@ -123,8 +142,8 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
-        if (value == null)
-          throw new ArgumentNullException("The line pen must not be null");
+        if (value is null)
+          throw new ArgumentNullException(nameof(Pen));
         if (!(_linePen == value))
         {
           _linePen = value;
@@ -133,7 +152,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
-    public virtual PenX OutlinePen
+    public virtual PenX? OutlinePen
     {
       get
       {
@@ -141,26 +160,25 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
-        if (!(_outlinePen == value))
-        {
-          _outlinePen = value;
-          EhSelfChanged(EventArgs.Empty);
-        }
+
+        _outlinePen = value;
+        EhSelfChanged(EventArgs.Empty);
+
       }
     }
 
-    public override IHitTestObject HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData htd)
     {
-      IHitTestObject result = base.HitTest(htd);
-      if (result != null)
+      var result = base.HitTest(htd);
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
       return result;
     }
 
-    public override IHitTestObject HitTest(HitTestRectangularData rect)
+    public override IHitTestObject? HitTest(HitTestRectangularData rect)
     {
-      IHitTestObject result = base.HitTest(rect);
-      if (result != null)
+      var result = base.HitTest(rect);
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
       return result;
     }
@@ -180,10 +198,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       switch (propertyName)
       {
         case "StrokeWidth":
-          if (null != _linePen)
+          if (_linePen is not null)
             yield return (propertyName, _linePen.Width, (w) => _linePen = _linePen.WithWidth((double)w));
 
-          if (null != _outlinePen)
+          if (_outlinePen is not null)
             yield return (propertyName, _outlinePen.Width, (w) => _outlinePen = _outlinePen.WithWidth((double)w));
           break;
       }

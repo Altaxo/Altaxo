@@ -70,7 +70,7 @@ namespace Altaxo.Main
 
       public Graph3DExportBindingDescriptor(Codon codon, Type projectItemType, Type graphicalExporterType)
       {
-        if (codon == null)
+        if (codon is null)
           throw new ArgumentNullException(nameof(codon));
 
         if (!Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(graphicalExporterType, typeof(Altaxo.Main.IProjectItemImageExporter)))

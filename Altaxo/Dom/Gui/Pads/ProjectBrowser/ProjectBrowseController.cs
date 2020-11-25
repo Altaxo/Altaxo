@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -141,7 +142,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         EhProjectChanged(this, new ProjectEventArgs(Current.Project, Current.Project.Name, ProjectEventKind.ProjectOpened));
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _allGraphsNode.ContextMenu = _view.TreeNodeContextMenu;
         _allTablesNode.ContextMenu = _view.TreeNodeContextMenu;
@@ -175,14 +176,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       if (object.ReferenceEquals(_doc, e.Project))
         return;
 
-      if (null != _doc && null != _doc.Folders)
+      if (_doc is not null && _doc.Folders is not null)
       {
         _doc.Folders.CollectionChanged -= EhProjectDirectoryItemChanged;
       }
 
       _doc = e.Project as AltaxoDocument;
 
-      if (null != _doc)
+      if (_doc is not null)
       {
         _doc.Folders.CollectionChanged += EhProjectDirectoryItemChanged;
       }
@@ -193,7 +194,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private void EhProjectClosing_Unsynchronized(object sender, ProjectEventArgs e)
     {
-      if (null != _doc)
+      if (_doc is not null)
       {
         _doc.Folders.CollectionChanged -= EhProjectDirectoryItemChanged;
         _doc = null;
@@ -232,7 +233,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         {
           Image = ProjectBrowseItemImage.OpenFolder,
           Tag = subfolder,
-          ContextMenu = null == _view ? null : _view.TreeNodeContextMenu,
+          ContextMenu = _view is null ? null : _view.TreeNodeContextMenu,
         };
         node.Nodes.Add(subnode);
         _directoryNodesByName.Add(subfolder, subnode);
@@ -282,7 +283,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
             {
               Image = ProjectBrowseItemImage.OpenFolder,
               Tag = dir,
-              ContextMenu = null == _view ? null : _view.TreeNodeContextMenu
+              ContextMenu = _view is null ? null : _view.TreeNodeContextMenu
             };
             _directoryNodesByName.Add(dir, curNode);
             parNode.Nodes.AddSorted(curNode, (x, y) => string.Compare(x.Text, y.Text));
@@ -344,19 +345,19 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <param name="itemHandler"></param>
     private void SetItemListHandler(AbstractItemHandler itemHandler)
     {
-      if (null != _listItemHandler)
+      if (_listItemHandler is not null)
       {
         _listItemHandler.ListChange -= EhListItemHandlerListChange;
       }
 
       _listItemHandler = itemHandler;
 
-      if (null != _listItemHandler)
+      if (_listItemHandler is not null)
       {
         _listItemHandler.ListChange += EhListItemHandlerListChange;
         StoreNavigationPoint();
 
-        if (null != _view)
+        if (_view is not null)
           _view.InitializeCurrentFolder(GetLocationStringFromCurrentState());
       }
     }
@@ -366,7 +367,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// </summary>
     private void RefreshItemListHandler()
     {
-      if (null != _currentSelectedTreeNode)
+      if (_currentSelectedTreeNode is not null)
       {
         if (object.ReferenceEquals(_currentSelectedTreeNode, _allItemsNode))
           SetItemListHandler(new ProjectAllItemHandler());
@@ -404,11 +405,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       {
         if (!_directoryNodesByName.TryGetValue(((SpecificProjectFolderHandler)_listItemHandler).CurrentProjectFolder, out _currentSelectedTreeNode))
           _currentSelectedTreeNode = _projectDirectoryRoot;
-        if (null != _view)
+        if (_view is not null)
           _view.SilentSelectTreeNode(_currentSelectedTreeNode);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeList(_listViewItems);
       }
@@ -453,7 +454,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <returns>Number of selected list items.</returns>
     public int GetNumberOfSelectedListItems()
     {
-      if (null == _view)
+      if (_view is null)
         return 0;
       _view.SynchronizeListSelection();
       int count = 0;
@@ -510,7 +511,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     public void EhListView_OneFolderUp()
     {
       var spfh = _listItemHandler as SpecificProjectFolderHandler;
-      if (null != spfh && !string.IsNullOrEmpty(spfh.CurrentProjectFolder))
+      if (spfh is not null && !string.IsNullOrEmpty(spfh.CurrentProjectFolder))
       {
         var parentFolder = ProjectFolder.GetFoldersParentFolder(spfh.CurrentProjectFolder);
         SetItemListHandler(new SpecificProjectFolderHandler(parentFolder));
@@ -689,13 +690,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       else
         comparer = new BrowserListItem.Comparer(_primaryListSortKind, _primaryListSortDescending);
 
-      if (null != comparer)
+      if (comparer is not null)
         BrowserListItem.Sort(list, comparer);
     }
 
     private void UpdateSortIndicatorsInView()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         bool isNameColSorted;
         bool isNameColDescending;
@@ -765,12 +766,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       {
         if (!object.ReferenceEquals(_view, value))
         {
-          if (null != _view)
+          if (_view is not null)
           {
             DetachView();
           }
           _view = value as IProjectBrowseView;
-          if (null != _view)
+          if (_view is not null)
           {
             Initialize(false);
             AttachView();
@@ -851,7 +852,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <returns><c>True</c> if a drag operation from the items list can be started; otherwise <c>false</c>.</returns>
     public bool FolderTree_CanStartDrag()
     {
-      if (_currentSelectedTreeNode == null)
+      if (_currentSelectedTreeNode is null)
         return false;
 
       if (_currentSelectedTreeNode.Tag is string)
@@ -913,7 +914,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       canCopy = canMove = false;
       dao = null;
 
-      if (_currentSelectedTreeNode == null)
+      if (_currentSelectedTreeNode is null)
         return;
 
       _listViewDataObject = new ListViewDragDropDataObject();
@@ -974,7 +975,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <param name="isMove">If set to <c>true</c>, the drag-drop was a move operation.</param>
     public void ItemList_DragEnded(bool isCopy, bool isMove)
     {
-      if (isMove && !isCopy && _listViewDataObject != null && _listViewDataObject.ItemListWasRendered) // ItemListWasRendered is true if the items are dropped in a foreign application. If it was dropped in the same app, we have used another rendering format (rendering references).
+      if (isMove && !isCopy && _listViewDataObject is not null && _listViewDataObject.ItemListWasRendered) // ItemListWasRendered is true if the items are dropped in a foreign application. If it was dropped in the same app, we have used another rendering format (rendering references).
       {
         var list = _listViewDataObject.ItemList.OfType<IProjectItem>();
         Altaxo.Main.ProjectFolders.DeleteDocuments(list, false);
@@ -990,7 +991,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <param name="isMove">If set to <c>true</c>, the drag-drop was a move operation.</param>
     public void FolderTree_DragEnded(bool isCopy, bool isMove)
     {
-      if (isMove && !isCopy && _listViewDataObject != null && _listViewDataObject.ItemListWasRendered) // ItemListWasRendered is true if the items are dropped in a foreign application. If it was dropped in the same app, we have used another rendering format (rendering references).
+      if (isMove && !isCopy && _listViewDataObject is not null && _listViewDataObject.ItemListWasRendered) // ItemListWasRendered is true if the items are dropped in a foreign application. If it was dropped in the same app, we have used another rendering format (rendering references).
       {
         var list = _listViewDataObject.ItemList.OfType<IProjectItem>();
         Altaxo.Main.ProjectFolders.DeleteDocuments(list, false);
@@ -1090,7 +1091,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
       var dao = data as Altaxo.Serialization.Clipboard.IDataObject;
 
-      if (null == dao)
+      if (dao is null)
         return;
 
       if (!dao.GetDataPresent(ListViewDragDropDataObject.Format_ItemList))
@@ -1111,7 +1112,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
         // drop is not allowed if (target and sourceFolder are null or empty) or (target folder and source folder exist but are the same)
         if ((string.IsNullOrEmpty(targetFolder) && string.IsNullOrEmpty(sourceFolder)) ||
-            (targetFolder != null && sourceFolder != null && targetFolder == sourceFolder))
+            (targetFolder is not null && sourceFolder is not null && targetFolder == sourceFolder))
         {
           isCopy = isMove = false;
           return;
@@ -1173,7 +1174,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       isCopy = isMove = false;
       var dao = data as Altaxo.Serialization.Clipboard.IDataObject;
 
-      if (dao != null)
+      if (dao is not null)
       {
         GetResultingEffect(dao, isCtrlPressed, isShiftPressed, out var isSameApp, out isCopy, out isMove);
 
@@ -1182,7 +1183,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
           // if we copy or move inside the same application, we deserialize only references to the items
           var str = (string)dao.GetData(ListViewDragDropDataObject.Format_ItemReferenceList);
           var items = Altaxo.Serialization.Clipboard.ClipboardSerialization.DeserializeObjectFromString<Altaxo.Main.Commands.ProjectItemCommands.ProjectItemReferenceClipboardList>(str);
-          var projectItems = new List<object>(items.ProjectItemReferences.Select(x => x.DocumentObject()).Where(x => x != null));
+          var projectItems = new List<object>(items.ProjectItemReferences.Select(x => x.DocumentObject()).Where(x => x is not null));
 
           if (isMove && !isCopy)
           {
@@ -1191,10 +1192,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
           else
           {
             DocNodePathReplacementOptions relocateOptions = null;
-            if (items.BaseFolder != null) // if items are from the same folder, the basefolder is set to a non-null value
+            if (items.BaseFolder is not null) // if items are from the same folder, the basefolder is set to a non-null value
             {
               var relocateData = Current.Gui.YesNoCancelMessageBox("Do you want to relocate the references in the copied plots so that they point to the destination folder?", "Question", null);
-              if (null == relocateData)
+              if (relocateData is null)
                 return;
 
               if (true == relocateData)
@@ -1204,7 +1205,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
               }
             }
 
-            Current.Project.Folders.CopyItemsToFolder(projectItems, targetFolder, null != relocateOptions ? relocateOptions.Visit : (DocNodeProxyReporter)null, false);
+            Current.Project.Folders.CopyItemsToFolder(projectItems, targetFolder, relocateOptions is not null ? relocateOptions.Visit : (DocNodeProxyReporter)null, false);
           }
         }
         else

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,7 +87,7 @@ namespace Altaxo.Gui.Analysis.Statistics
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      if (null != _binningController)
+      if (_binningController is not null)
         yield return new ControllerAndSetNullMethod(_binningController, () => _binningController = null);
     }
 
@@ -103,7 +104,7 @@ namespace Altaxo.Gui.Analysis.Statistics
         foreach (var type in binningTypes)
           _binningTypes.Add(new SelectableListNode(type.ToString(), type, type == _doc.CreationOptions.Binning.GetType()));
 
-        if (null != _binningController)
+        if (_binningController is not null)
         {
           _binningController.Dispose();
           _binningController = null;
@@ -111,7 +112,7 @@ namespace Altaxo.Gui.Analysis.Statistics
 
         _binningController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.CreationOptions.Binning }, typeof(IMVCANController), UseDocument.Directly);
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.Errors = _doc.Errors;
         _view.Warnings = _doc.Warnings;
@@ -223,7 +224,7 @@ namespace Altaxo.Gui.Analysis.Statistics
     private void EhBinningTypeChanged()
     {
       var selNode = _binningTypes.FirstSelectedNode;
-      if (null == selNode)
+      if (selNode is null)
         return;
       var bintype = (Type)selNode.Tag;
 

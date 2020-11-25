@@ -25,7 +25,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 *
 */
 
+#nullable enable
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Altaxo.Geometry.Double_2D
@@ -38,21 +40,29 @@ namespace Altaxo.Geometry.Double_2D
     private IReadOnlyList<LineD2DAnnotated> _hull_convex_edges;
 
 
+    /// <summary>
+    /// Gets the points that form the convex hull.
+    /// </summary>
+    private IReadOnlyList<PointD2DAnnotated> _convexHullPoints;
 
     /// <summary>
     /// Gets the points that form the convex hull.
     /// </summary>
-    public IReadOnlyList<PointD2DAnnotated> ConvexHullPoints { get; private set; }
+    public IReadOnlyList<PointD2DAnnotated> ConvexHullPoints
+    {
+      get => _convexHullPoints;
+    }
 
     /// <summary>
     /// Gets the points that are not part of the convex hull.
     /// </summary>
     public IReadOnlyList<PointD2DAnnotated> PointsNotOnConvexHull { get; private set; }
 
+    private IReadOnlyList<PointD2DAnnotated> _concaveHullPoints;
     /// <summary>
     /// Gets the points that form the concave hull.
     /// </summary>
-    public IReadOnlyList<PointD2DAnnotated> ConcaveHullPoints { get; private set; }
+    public IReadOnlyList<PointD2DAnnotated> ConcaveHullPoints => _concaveHullPoints;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConcaveHull"/> class.
@@ -83,10 +93,10 @@ namespace Altaxo.Geometry.Double_2D
 
 
 
-
+    [MemberNotNull(nameof(_convexHullPoints), nameof(_hull_convex_edges))]
     private void CalculateConvexHullAsLineList(IEnumerable<PointD2DAnnotated> nodes)
     {
-      ConvexHullPoints = GrahamScan.GetConvexHull(nodes);
+      _convexHullPoints = GrahamScan.GetConvexHull(nodes);
       var hull_convex_edges = new List<LineD2DAnnotated>();
 
       for (var i = 0; i < ConvexHullPoints.Count - 1; i++)
@@ -104,6 +114,7 @@ namespace Altaxo.Geometry.Double_2D
     /// <param name="concavity">The concavity.</param>
     /// <param name="scaleFactor">The scale factor.</param>
     /// <param name="isSquareGrid"></param>
+    [MemberNotNull(nameof(_concaveHullPoints))]
     public void SetConcaveHull(double concavity, int scaleFactor, bool isSquareGrid)
     {
 
@@ -161,7 +172,7 @@ namespace Altaxo.Geometry.Double_2D
       } while (listIsModified);
 
 
-      ConcaveHullPoints = GetHullPoints(hull_concave_edges);
+      _concaveHullPoints = GetHullPoints(hull_concave_edges);
 
       // free temporary allocations
       unused_nodes = null;

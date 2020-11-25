@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace Altaxo.Gui.Drawing.D3D
 
     public static readonly DependencyProperty IsNoMaterialAllowedProperty;
 
-    public event DependencyPropertyChangedEventHandler SelectedMaterialChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedMaterialChanged;
 
     private List<IMaterial> _lastLocalUsedItems = new List<IMaterial>();
 
@@ -182,7 +183,7 @@ namespace Altaxo.Gui.Drawing.D3D
 
     protected virtual IMaterial InternalSelectedMaterialCoerce(DependencyObject obj, IMaterial material)
     {
-      if (null == material)
+      if (material is null)
         material = MaterialInvisible.Instance;
 
       var coercedColor = material.Color.CoerceParentColorSetToNullIfNotMember();
@@ -191,7 +192,7 @@ namespace Altaxo.Gui.Drawing.D3D
         material = Materials.GetMaterialWithNewColor(material, coercedColor);
       }
 
-      if (ShowPlotColorsOnly && (material.Color.ParentColorSet == null || false == ColorSetManager.Instance.IsPlotColorSet(material.Color.ParentColorSet)))
+      if (ShowPlotColorsOnly && (material.Color.ParentColorSet is null || false == ColorSetManager.Instance.IsPlotColorSet(material.Color.ParentColorSet)))
       {
         material = Materials.GetMaterialWithNewColor(material, ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
       }
@@ -211,7 +212,7 @@ namespace Altaxo.Gui.Drawing.D3D
       var oldColor = oldMaterial.Color;
       var newColor = newMaterial.Color;
 
-      if (newMaterial.Color.ParentColorSet == null)
+      if (newMaterial.Color.ParentColorSet is null)
       {
         StoreAsLastUsedItem(_lastLocalUsedItems, newMaterial);
       }
@@ -227,7 +228,7 @@ namespace Altaxo.Gui.Drawing.D3D
       if (!object.ReferenceEquals(oldColor.ParentColorSet, newColor.ParentColorSet) && !object.ReferenceEquals(newColor.ParentColorSet, _treeView.SelectedValue))
         UpdateTreeViewSelection();
 
-      if (null != SelectedMaterialChanged)
+      if (SelectedMaterialChanged is not null)
         SelectedMaterialChanged(obj, args);
     }
 
@@ -273,7 +274,7 @@ namespace Altaxo.Gui.Drawing.D3D
         if (known.Count > 0)
         {
           (_comboBoxSeparator2[0] as Separator).Tag = colorSet.Name;
-          if (source == null)
+          if (source is null)
             source = _comboBoxSeparator2.Concat(known);
           else
             source = source.Concat(_comboBoxSeparator2).Concat(known);
@@ -304,7 +305,7 @@ namespace Altaxo.Gui.Drawing.D3D
       filterString = filterString.ToLowerInvariant();
       foreach (var item in originalList)
       {
-        if (showPlotColorsOnly && (item.Color.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(item.Color.ParentColorSet)))
+        if (showPlotColorsOnly && (item.Color.ParentColorSet is null || !ColorSetManager.Instance.IsPlotColorSet(item.Color.ParentColorSet)))
           continue;
 
         if (item.Color.Name.ToLowerInvariant().StartsWith(filterString))
@@ -336,7 +337,7 @@ namespace Altaxo.Gui.Drawing.D3D
         _guiComboBox.SelectedValue = selItem;
       }
 
-      if (_guiComboBox.SelectedValue == null)
+      if (_guiComboBox.SelectedValue is null)
       {
         _guiComboBox.SelectedValue = InternalSelectedMaterial;
       }

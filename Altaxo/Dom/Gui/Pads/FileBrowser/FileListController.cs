@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -152,7 +153,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
         }
         catch { }
 
-        if (watcher != null)
+        if (watcher is not null)
         {
           watcher.NotifyFilter = NotifyFilters.FileName;
           watcher.EnableRaisingEvents = false;
@@ -164,7 +165,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.Initialize_FileListColumnNames(_columnNames);
         _view.Initialize_FileList(_fileList);
@@ -247,7 +248,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
         if (Current.IProjectService.IsProjectFileExtension(fileExtension))
         {
-          Current.IProjectService.OpenProject(new FileName(item.FullName), false);
+          Current.IProjectService.OpenProject(new FileName(item.FullName), showUserInteraction: true);
           break;
         }
 
@@ -316,14 +317,14 @@ namespace Altaxo.Gui.Pads.FileBrowser
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.SelectedItemsActivated -= EhView_ActivateSelectedItems;
         }
 
         _view = value as IFileListView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           _view.SelectedItemsActivated += EhView_ActivateSelectedItems;

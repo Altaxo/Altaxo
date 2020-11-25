@@ -22,9 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Drawing;
@@ -67,7 +69,7 @@ namespace Altaxo.Drawing.DashPatternManagement
 
     {
       Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedDashPatternLists, out var userStyleLists);
-      if (null != userStyleLists)
+      if (userStyleLists is not null)
       {
         foreach (var list in userStyleLists.StyleLists)
         {
@@ -112,18 +114,18 @@ namespace Altaxo.Drawing.DashPatternManagement
       {
         return _instance;
       }
+      [MemberNotNull(nameof(_instance))]
       set
       {
-        if (null == value)
-          throw new ArgumentNullException(nameof(value));
+        if (value is null)
+          throw new ArgumentNullException(nameof(Instance));
 
-        if (null != _instance)
+        if (_instance is not null)
           Current.IProjectService.ProjectClosed -= _instance.EhProjectClosed;
 
         _instance = value;
 
-        if (null != _instance)
-          Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
+        Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
       }
     }
 
@@ -132,7 +134,7 @@ namespace Altaxo.Drawing.DashPatternManagement
       return new DashPatternList(name, symbols);
     }
 
-    protected override void OnUserDefinedListAddedChangedRemoved(DashPatternList list)
+    protected override void OnUserDefinedListAddedChangedRemoved(DashPatternList? list)
     {
       var listBag = new DashPatternListBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => entry.List));
       Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedDashPatternLists, listBag);

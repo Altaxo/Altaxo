@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using Altaxo.Data;
 using Altaxo.Gui;
@@ -171,7 +172,7 @@ namespace Altaxo.Worksheet.Commands
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       string msg = Altaxo.Worksheet.Commands.EditCommands.XYVToMatrix(ctrl);
-      if (msg != null)
+      if (msg is not null)
         Current.Gui.ErrorMessageBox(msg);
     }
   }
@@ -441,7 +442,7 @@ namespace Altaxo.Worksheet.Commands
       m_Table = ctrl.DataTable;
       var script = ctrl.DataTable.GetTableProperty(ExtractTableDataScriptPropertyName) as ExtractTableDataScript;
 
-      if (script == null)
+      if (script is null)
         script = new ExtractTableDataScript();
 
       object[] args = new object[] { script, new ScriptExecutionHandler(EhScriptExecution) };
@@ -550,7 +551,7 @@ namespace Altaxo.Worksheet.Commands
       m_Column = dataTable.DataColumns[ctrl.SelectedDataColumns[0]];
 
       dataTable.DataColumns.ColumnScripts.TryGetValue(m_Column, out var script);
-      if (script == null)
+      if (script is null)
         script = new DataColumnScript();
 
       object[] args = new object[] { script, new ScriptExecutionHandler(EhScriptExecution) };
@@ -579,7 +580,7 @@ namespace Altaxo.Worksheet.Commands
       m_Column = dataTable.PropertyColumns[ctrl.SelectedPropertyColumns[0]];
 
       dataTable.PropertyColumns.ColumnScripts.TryGetValue(m_Column, out var script);
-      if (script == null)
+      if (script is null)
         script = new PropertyColumnScript();
 
       object[] args = new object[] { script, new ScriptExecutionHandler(EhScriptExecution) };

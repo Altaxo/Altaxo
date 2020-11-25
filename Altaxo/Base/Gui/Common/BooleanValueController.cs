@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Gui.Common
@@ -51,7 +52,7 @@ namespace Altaxo.Gui.Common
   [ExpectedTypeOfView(typeof(IBooleanValueView))]
   public class BooleanValueController : IBooleanValueController
   {
-    protected IBooleanValueView _view;
+    protected IBooleanValueView? _view;
     protected bool _value1Bool;
     protected bool _value1BoolTemporary;
 
@@ -65,7 +66,7 @@ namespace Altaxo.Gui.Common
 
     protected virtual void Initialize()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeDescription(_descriptionText);
         _view.InitializeBool1(_value1BoolTemporary);
@@ -81,7 +82,7 @@ namespace Altaxo.Gui.Common
       set
       {
         _descriptionText = value;
-        if (null != _view)
+        if (_view is not null)
         {
           _view.InitializeDescription(_descriptionText);
         }
@@ -90,7 +91,7 @@ namespace Altaxo.Gui.Common
 
     #region IMVCController Members
 
-    public virtual object ViewObject
+    public virtual object? ViewObject
     {
       get
       {
@@ -98,14 +99,14 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
         {
           _view.Bool1Changed -= EhValidatingBool1;
         }
 
         _view = value as IBooleanValueView;
 
-        if (_view != null)
+        if (_view is not null)
         {
           _view.Bool1Changed += EhValidatingBool1;
           Initialize();

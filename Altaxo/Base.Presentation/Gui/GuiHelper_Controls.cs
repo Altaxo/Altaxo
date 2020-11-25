@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -85,7 +86,7 @@ namespace Altaxo.Gui
       foreach (ISelectableItem it in view.ItemsSource)
         it.IsSelected = false;
 
-      if (null != view.SelectedItem)
+      if (view.SelectedItem is not null)
         ((ISelectableItem)view.SelectedItem).IsSelected = true;
     }
 
@@ -122,7 +123,7 @@ namespace Altaxo.Gui
 
     public static void SynchronizeSelectionFromGui(ListBox view)
     {
-      if (view.ItemsSource != null)
+      if (view.ItemsSource is not null)
       {
         foreach (ISelectableItem it in view.ItemsSource)
           it.IsSelected = false;
@@ -147,7 +148,7 @@ namespace Altaxo.Gui
       }
       else
       {
-        if (data != null)
+        if (data is not null)
         {
           foreach (var n in data)
             if (n.IsSelected)
@@ -165,7 +166,7 @@ namespace Altaxo.Gui
 
     public static void SynchronizeSelectionFromGui(ListView listView)
     {
-      if (null != listView.ItemsSource)
+      if (listView.ItemsSource is not null)
       {
         foreach (ISelectableItem it in listView.ItemsSource)
           it.IsSelected = false;
@@ -202,7 +203,7 @@ namespace Altaxo.Gui
     /// <remarks>The first column is bind to the property "Text" of the items, the next columns to the property "Text1", "Text2", and so on.</remarks>
     public static void InitializeListViewColumnsAndBindToListNode(ListView listView, string[] columnHeaders)
     {
-      if (null == (listView.View as GridView))
+      if ((listView.View as GridView) is null)
         listView.View = new GridView();
 
       var grid = listView.View as GridView;
@@ -244,7 +245,7 @@ namespace Altaxo.Gui
       foreach (ISelectableItem it in view.ItemsSource)
         it.IsSelected = false;
 
-      if (null != view.SelectedItem)
+      if (view.SelectedItem is not null)
         ((ISelectableItem)view.SelectedItem).IsSelected = true;
     }
 
@@ -260,7 +261,7 @@ namespace Altaxo.Gui
     /// <returns>The object itself or the first recursive parent of the object which is of type T. If no such parent exist, <c>null</c> is returned.</returns>
     public static T GetLogicalParentOfType<T>(DependencyObject child) where T : DependencyObject
     {
-      if (null == child)
+      if (child is null)
         return null;
 
       if (child is T)

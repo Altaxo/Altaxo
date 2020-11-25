@@ -25,9 +25,9 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public class SimpleViewContent : AbstractViewContent
   {
-    private object _view;
+    private object? _view;
 
-    public override object ViewObject
+    public override object? ViewObject
     {
       get
       {
@@ -68,7 +68,7 @@ namespace Altaxo.Gui.Workbench
     {
       get
       {
-        return null;
+        return new object();
       }
     }
   }

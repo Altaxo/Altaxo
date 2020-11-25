@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Data
@@ -110,7 +111,7 @@ namespace Altaxo.Data
 
       }
 
-      protected virtual ConvertXYVToMatrixOptions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual ConvertXYVToMatrixOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o as ConvertXYVToMatrixOptions ?? new ConvertXYVToMatrixOptions();
 
@@ -131,7 +132,7 @@ namespace Altaxo.Data
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -160,11 +161,10 @@ namespace Altaxo.Data
 
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as ConvertXYVToMatrixOptions;
-      if (null != from)
+      if (obj is ConvertXYVToMatrixOptions from)
       {
         _outputAveraging = from._outputAveraging;
         _outputNaming = from._outputNaming;

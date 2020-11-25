@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common.MultiRename
@@ -51,7 +49,7 @@ namespace Altaxo.Gui.Common.MultiRename
     /// Initializes the list of available shortcuts. First column has to be the type of shortcut, then the shortcut itself, then the description text.
     /// </summary>
     /// <param name="list">Item list.</param>
-    void InitializeAvailableShortcuts(Collections.ListNodeList list);
+    void InitializeAvailableShortcuts(ListNodeList list);
 
     /// <summary>Returns the string template that is used to rename the items.</summary>
     string RenameStringTemplate { get; set; }
@@ -73,13 +71,13 @@ namespace Altaxo.Gui.Common.MultiRename
 
   [ExpectedTypeOfView(typeof(IMultiRenameView))]
   [UserControllerForObject(typeof(MultiRenameData))]
-  public class MultiRenameController : IMVCANController
+  public class MultiRenameController : ControllerBase, IMVCANController
   {
-    private MultiRenameData _doc;
-    private IMultiRenameView _view;
+    private MultiRenameData? _doc;
+    private IMultiRenameView? _view;
 
     private ListNodeList _itemsShown = new ListNodeList();
-    private string[] _columNames;
+    private string[] _columNames = new string[0];
     private ListNodeList _shortcutDescriptionList = new ListNodeList();
 
 
@@ -94,11 +92,11 @@ namespace Altaxo.Gui.Common.MultiRename
       {
         get
         {
-          return _data.GetNewNameForObject((int)_tag);
+          return _data.GetNewNameForObject((int)_tag!);
         }
         set
         {
-          var oldName = _data.GetNewNameForObject((int)_tag);
+          var oldName = _data.GetNewNameForObjectOrNull((int)_tag!);
           if (oldName != value)
           {
             _data.SetNewNameForObject((int)_tag, value);
@@ -115,7 +113,7 @@ namespace Altaxo.Gui.Common.MultiRename
         _data = data;
       }
 
-      public override string Text
+      public override string? Text
       {
         get
         {
@@ -133,9 +131,9 @@ namespace Altaxo.Gui.Common.MultiRename
       {
         var fkt = _data.ColumnsOfObjectInformation[i].Value;
 
-        var newName = _data.GetNewNameForObject((int)_tag);
+        var newName = _data.GetNewNameForObject((int)_tag!);
 
-        if (null != fkt)
+        if (fkt is not null)
           return fkt(_data.GetObjectToRename((int)_tag), newName);
         else
           return newName;
@@ -160,14 +158,14 @@ namespace Altaxo.Gui.Common.MultiRename
         _description = description;
       }
 
-      public override string SubItemText(int i)
+      public override string? SubItemText(int i)
       {
         switch (i)
         {
           case 0:
             return _text;
           case 1:
-            return (string)_tag;
+            return (string)_tag!;
           case 2:
             return _description;
           default:
@@ -180,7 +178,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args == null || args.Length == 0 || !(args[0] is MultiRenameData))
+      if (args is null || args.Length == 0 || !(args[0] is MultiRenameData))
         return false;
 
       _doc = (MultiRenameData)args[0];
@@ -191,6 +189,9 @@ namespace Altaxo.Gui.Common.MultiRename
 
     private void Initialize(bool initData)
     {
+      if (_doc is null)
+        throw NoDocumentException;
+
       if (initData)
       {
         _itemsShown.Clear();
@@ -220,7 +221,7 @@ namespace Altaxo.Gui.Common.MultiRename
           _shortcutDescriptionList.Add(new DescriptionNode("Array", s, _doc.GetShortcutDescription(s)));
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.IsBaseDirectoryButtonVisible = _doc.IsRenameOperationFileSystemBased;
         _view.RenameStringTemplate = _doc.DefaultPatternString;
@@ -235,7 +236,7 @@ namespace Altaxo.Gui.Common.MultiRename
       set { }
     }
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {
@@ -243,14 +244,14 @@ namespace Altaxo.Gui.Common.MultiRename
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.RenameStringTemplateChanged -= EhRenameStringTemplateChanged;
           _view.BaseDirectoryChosen -= EhBaseDirectoryChosen;
         }
         _view = value as IMultiRenameView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           _view.RenameStringTemplateChanged += EhRenameStringTemplateChanged;
           _view.BaseDirectoryChosen += EhBaseDirectoryChosen;
@@ -261,38 +262,52 @@ namespace Altaxo.Gui.Common.MultiRename
 
     private void EhBaseDirectoryChosen(string path)
     {
-      if (!path.EndsWith("\\"))
-        path += "\\";
+      if (_view is { } view)
+      {
+        if (!path.EndsWith("\\"))
+          path += "\\";
 
 
-      string template = _view.RenameStringTemplate;
-      var idx = template.IndexOf("[");
-      if (idx < 0)
-        idx = template.Length;
+        string template = view.RenameStringTemplate;
+        var idx = template.IndexOf("[");
+        if (idx < 0)
+          idx = template.Length;
 
-      template = path + template.Substring(idx, template.Length - idx);
+        template = path + template.Substring(idx, template.Length - idx);
 
-      _view.RenameStringTemplate = template;
+        view.RenameStringTemplate = template;
+      }
     }
 
     private void EhRenameStringTemplateChanged()
     {
-      string template = _view.RenameStringTemplate;
-      var walker = new MultiRenameTreeWalker(template, _doc);
-      var result = walker.VisitTree();
-
-      for (int i = 0; i < _itemsShown.Count; ++i)
+      if (_view is { } view)
       {
-        var item = (MyNode)_itemsShown[i];
-        int originalIndex = (int)item.Tag;
-        string newName = result.GetContent(originalIndex, i);
-        item.NewName = newName;
+        if (_doc is null)
+          throw NoDocumentException;
+
+        string template = view.RenameStringTemplate;
+        var walker = new MultiRenameTreeWalker(template, _doc);
+        var result = walker.VisitTree();
+
+        for (int i = 0; i < _itemsShown.Count; ++i)
+        {
+          var item = (MyNode)_itemsShown[i];
+          int originalIndex = (int)item.Tag!;
+          string newName = result.GetContent(originalIndex, i);
+          item.NewName = newName;
+        }
       }
     }
 
     public object ModelObject
     {
-      get { return _doc; }
+      get
+      {
+        if (_doc is null)
+          throw NoDocumentException;
+        return _doc;
+      }
     }
 
     public void Dispose()
@@ -301,6 +316,9 @@ namespace Altaxo.Gui.Common.MultiRename
 
     public bool Apply(bool disposeController)
     {
+      if (_doc is null)
+        throw NoDocumentException;
+
       bool success = _doc.DoRename();
 
       if (!success)

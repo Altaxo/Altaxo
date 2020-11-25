@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Calc.Regression.Nonlinear
@@ -66,9 +67,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.AddValue("ScalingFactor", s._scaling);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ConstantVarianceScaling s = o != null ? (ConstantVarianceScaling)o : new ConstantVarianceScaling();
+        ConstantVarianceScaling s = (ConstantVarianceScaling?)o ?? new ConstantVarianceScaling();
 
         s._scaling = info.GetDouble("ScalingFactor");
 
@@ -129,9 +130,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.AddValue("ScalingFactor", s._scaling);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        RelativeVarianceScaling s = o != null ? (RelativeVarianceScaling)o : new RelativeVarianceScaling();
+        RelativeVarianceScaling s = (RelativeVarianceScaling?)o ?? new RelativeVarianceScaling();
 
         s._scaling = info.GetDouble("ScalingFactor");
 

@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 
 namespace Altaxo.Data
@@ -44,7 +43,7 @@ namespace Altaxo.Data
       foreach (var rowIdx in selectedDataRows)
       {
         var propColType = GetTypeOfColumnForRowReplacement(table.DataColumns, rowIdx, selectedDataColumns);
-        var propCol = (DataColumn)Activator.CreateInstance(propColType);
+        var propCol = (DataColumn?)Activator.CreateInstance(propColType) ?? throw new InvalidOperationException($"Unable to instantiate column of type {propColType}");
         CopyRowToDataColumn(table.DataColumns, rowIdx, selectedDataColumns, propCol);
         table.PropCols.Add(propCol);
       }
@@ -63,7 +62,7 @@ namespace Altaxo.Data
     public static System.Type GetTypeOfColumnForRowReplacement(this DataColumnCollection table, int rowIdx, IAscendingIntegerCollection selectedColumns)
     {
       var typesToCount = new Dictionary<Type, int>();
-      if (null == selectedColumns || 0 == selectedColumns.Count)
+      if (selectedColumns is null || 0 == selectedColumns.Count)
         selectedColumns = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, table.ColumnCount);
 
       // count all non-empty cells according to the type
@@ -82,7 +81,7 @@ namespace Altaxo.Data
 
       // return the data column type with the topmost count
       int bestCount = 0;
-      System.Type bestType = null;
+      System.Type? bestType = null;
       foreach (var entry in typesToCount)
       {
         if (entry.Value > bestCount)
@@ -92,7 +91,7 @@ namespace Altaxo.Data
         }
       }
 
-      return bestType != null ? bestType : typeof(DoubleColumn);
+      return bestType ?? typeof(DoubleColumn);
     }
 
     /// <summary>
@@ -104,7 +103,7 @@ namespace Altaxo.Data
     /// <param name="destinationColumn">DataColumn to copy the data to.</param>
     public static void CopyRowToDataColumn(this DataColumnCollection table, int rowIdx, IAscendingIntegerCollection selectedDataColumns, DataColumn destinationColumn)
     {
-      if (null == selectedDataColumns || 0 == selectedDataColumns.Count)
+      if (selectedDataColumns is null || 0 == selectedDataColumns.Count)
         selectedDataColumns = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, table.ColumnCount);
 
       foreach (var colIdx in selectedDataColumns)
@@ -121,7 +120,7 @@ namespace Altaxo.Data
     /// <param name="destinationTable">The destination table.</param>
     public static void EnsureColumnsExistInDestinationCollection(this DataColumnCollection sourceTable, IAscendingIntegerCollection selectedSourceDataColumns, DataColumnCollection destinationTable)
     {
-      if (null == selectedSourceDataColumns || 0 == selectedSourceDataColumns.Count)
+      if (selectedSourceDataColumns is null || 0 == selectedSourceDataColumns.Count)
         selectedSourceDataColumns = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, sourceTable.ColumnCount);
 
       foreach (var colIdx in selectedSourceDataColumns)
@@ -148,7 +147,7 @@ namespace Altaxo.Data
     /// <param name="destinationRowIndex">Index of the destination row.</param>
     public static void CopyRowToRowByColumnName(this DataColumnCollection sourceTable, int sourceRowIndex, IAscendingIntegerCollection selectedSourceDataColumns, DataColumnCollection destinationTable, int destinationRowIndex)
     {
-      if (null == selectedSourceDataColumns || 0 == selectedSourceDataColumns.Count)
+      if (selectedSourceDataColumns is null || 0 == selectedSourceDataColumns.Count)
         selectedSourceDataColumns = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, sourceTable.ColumnCount);
 
       foreach (var colIdx in selectedSourceDataColumns)
@@ -174,7 +173,7 @@ namespace Altaxo.Data
     /// <param name="destinationColumnOffset">The destination column offset. A column i in the source collection is copied to column i + <paramref name="destinationColumnOffset"/> in the destination collection.</param>
     public static void CopyRowToRowByColumnIndex(this DataColumnCollection sourceTable, int sourceRowIndex, IAscendingIntegerCollection selectedSourceDataColumns, DataColumnCollection destinationTable, int destinationRowIndex, int destinationColumnOffset)
     {
-      if (null == selectedSourceDataColumns || 0 == selectedSourceDataColumns.Count)
+      if (selectedSourceDataColumns is null || 0 == selectedSourceDataColumns.Count)
         selectedSourceDataColumns = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, sourceTable.ColumnCount);
 
       foreach (var srcColIdx in selectedSourceDataColumns)

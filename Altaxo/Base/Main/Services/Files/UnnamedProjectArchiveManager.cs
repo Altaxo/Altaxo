@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,10 +39,10 @@ namespace Altaxo.Main.Services
   {
     private bool _isDisposed; // not really neccessary, but useful for debugging purposes
 
-    private PathName _fileOrFolderName;
+    private PathName? _fileOrFolderName;
 
     /// <inheritdoc/>
-    public event EventHandler<NameChangedEventArgs> FileOrFolderNameChanged // Never used, because name can not change
+    public event EventHandler<NameChangedEventArgs>? FileOrFolderNameChanged // Never used, because name can not change
     {
       add { }
       remove { }
@@ -63,9 +64,9 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// Returns null because a unnamed project does not have a file name yet.
+    /// Returns null because an unnamed project does not have a file name yet.
     /// </summary>
-    public PathName FileOrFolderName => _fileOrFolderName;
+    public PathName? FileOrFolderName => _fileOrFolderName;
 
     /// <inheritdoc/>
     public bool IsDisposed => _isDisposed;
@@ -83,7 +84,7 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
-    public void ReleaseArchiveThreadSave(object claimer, ref IProjectArchive archive)
+    public void ReleaseArchiveThreadSave(object claimer, ref IProjectArchive? archive)
     {
       throw new NotImplementedException();
     }

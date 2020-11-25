@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
@@ -49,9 +51,9 @@ namespace Altaxo.Graph.Gdi.Background
         var s = (BlackLine)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        BlackLine s = null != o ? (BlackLine)o : new BlackLine();
+        var s = (BlackLine?)o ?? new BlackLine();
 
         return s;
       }
@@ -70,7 +72,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public void CopyFrom(BlackLine from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
     }
 
@@ -98,6 +100,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public bool SupportsBrush { get { return false; } }
 
+    [MaybeNull]
     public BrushX Brush
     {
       get

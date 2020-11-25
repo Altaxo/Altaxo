@@ -23,11 +23,11 @@
 #endregion Copyright
 
 using System;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Collections.Operations
 {
-  [TestFixture]
+
   public class TestMinimumOnSlidingWindow
   {
     private System.Random _rnd = new System.Random(8542221);
@@ -56,9 +56,9 @@ namespace AltaxoTest.Collections.Operations
       return result;
     }
 
-    public void TestSingleAddsWithWindowWidth(int windowWidth)
+    private void TestSingleAddsWithWindowWidth(int windowWidth)
     {
-      if (null == vals)
+      if (vals is null)
         Initialize();
 
       var min = new Altaxo.Collections.Operations.MinimumOnSlidingWindow<double>(windowWidth, double.PositiveInfinity);
@@ -67,11 +67,11 @@ namespace AltaxoTest.Collections.Operations
         min.Add(vals[i]);
         double naiveResult = GetMinimumOnSlidingWindowNaiveVersion(1 + i - windowWidth, windowWidth, vals);
 
-        Assert.AreEqual(naiveResult, min.MinimumValue, string.Format("Difference between naive version and Altaxo's implementation at i={0}, windowWidth={1}", i, windowWidth));
+        AssertEx.Equal(naiveResult, min.MinimumValue, 0, string.Format("Difference between naive version and Altaxo's implementation at i={0}, windowWidth={1}", i, windowWidth));
       }
     }
 
-    [Test]
+    [Fact]
     public void TestSingleAdds()
     {
       TestSingleAddsWithWindowWidth(5);

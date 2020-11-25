@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Altaxo.Collections;
 
 namespace Altaxo.Data
@@ -143,9 +143,9 @@ namespace Altaxo.Data
     /// <param name="elementsToSort">The list of elements to sort. The list is not changed, thus it can be readonly.</param>
     /// <param name="destinationIndexArray">Can be null. If you provide an array here with a length greater or equal to the number of elements to sort, that array is used as return value and filled with the indices.</param>
     /// <returns>An array of indices, so that elementsToSort[indexArray[i]] (i = 0..Count-1) is sorted.</returns>
-    public static int[] HeapSortVirtually<T>(IList<T> elementsToSort, int[] destinationIndexArray) where T : IComparable
+    public static int[] HeapSortVirtually<T>(IList<T> elementsToSort, int[]? destinationIndexArray) where T : IComparable
     {
-      if (destinationIndexArray == null || destinationIndexArray.Length < elementsToSort.Count)
+      if (destinationIndexArray is null || destinationIndexArray.Length < elementsToSort.Count)
         destinationIndexArray = new int[elementsToSort.Count];
       for (int i = elementsToSort.Count - 1; i >= 0; i--)
         destinationIndexArray[i] = i;
@@ -418,7 +418,7 @@ namespace Altaxo.Data
     /// <param name="inAscendingOrder">If true, the table is sorted in ascending order. Otherwise, the table is sorted in descending order.</param>
     public static void SortRows(this DataColumnCollection table, DataColumn[] cols, bool inAscendingOrder)
     {
-      if (cols == null || cols.Length == 0)
+      if (cols is null || cols.Length == 0)
         throw new ArgumentException("cols is null or empty");
 
       using (var token = table.SuspendGetToken())

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -54,7 +55,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     private System.Drawing.Size _cachedGraphSize_Pixels;
 
     /// <summary>Used for debugging the number of updates to the graph.</summary>
+#pragma warning disable CS0169
     private int _updateCount;
+#pragma warning restore CS0169 
 
     private static Altaxo.Collections.CachedObjectManagerByMaximumNumberOfItems<System.Drawing.Size, GdiToWpfBitmap> _gdiWpfBitmapManager = new CachedObjectManagerByMaximumNumberOfItems<System.Drawing.Size, GdiToWpfBitmap>(16);
 
@@ -151,7 +154,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     {
       get
       {
-        return null == _mouseState ? GraphToolType.None : _mouseState.GraphToolType;
+        return _mouseState is null ? GraphToolType.None : _mouseState.GraphToolType;
       }
       set
       {
@@ -298,7 +301,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       var guiController = Controller;
       Keyboard.Focus(_guiCanvas);
       var pos = GetMousePosition(e);
-      if (null != guiController)
+      if (guiController is not null)
       {
         _mouseState.OnMouseDown(pos, e);
         if (e.ClickCount >= 2 && e.LeftButton == MouseButtonState.Pressed)
@@ -316,7 +319,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     private void EhGraphPanel_MouseWheel(object sender, MouseWheelEventArgs e)
     {
       var guiController = Controller;
-      if (null != guiController)
+      if (guiController is not null)
       {
         var eHand = new HandledEventArgs();
         guiController.EhView_GraphPanelMouseWheel(GuiHelper.ToAltaxo(e, _guiCanvas), GuiHelper.ToAltaxo(Keyboard.Modifiers), eHand);
@@ -338,7 +341,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       {
         // make sure that the returned element implements IInputElement
         var result = _graphImage;
-        if (!(null != (result as System.Windows.IInputElement)))
+        if ((result as System.Windows.IInputElement) is null)
           throw new InvalidOperationException(nameof(result) + " should be an IInputElement");
 
         return result;
@@ -352,7 +355,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         var oldcontroller = _controller;
         _controller = new WeakReference(value as GraphController);
 
-        if (null != value)
+        if (value is not null)
         {
           if (_isDisposed)
             throw new ObjectDisposedException(nameof(GraphViewWpf));
@@ -379,7 +382,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
       _guiCanvas.Clip = new RectangleGeometry(new Rect(0, 0, newSize.X, newSize.Y));
 
-      if (null == _graphImage.Source)
+      if (_graphImage.Source is null)
       {
         // invalidate the cached graph sizes in order to force a new rendering
         _cachedGraphSize_Pixels = new System.Drawing.Size(0, 0);
@@ -410,7 +413,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       if (_isGraphVisible)
       {
         var ctrl = Controller;
-        if (null != ctrl)
+        if (ctrl is not null)
           _guiCanvas.Background = new SolidColorBrush(GuiHelper.ToWpf(ctrl.NonPageAreaColor));
 
         if (_isGraphUpToDate && true == ShowCachedGraphImage())
@@ -434,10 +437,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     private bool ShowCachedGraphImage()
     {
       var controller = Controller;
-      if (null != _cachedGraphImage && null != controller)
+      if (_cachedGraphImage is not null && controller is not null)
       {
         var imgSrc = _cachedGraphImage.CachedGraphImageSource;
-        if (null != imgSrc)
+        if (imgSrc is not null)
         {
           var zoom1 = controller.ZoomFactor; // current zoom factor
           var vpulcgc1 = controller.PositionOfViewportsUpperLeftCornerInGraphCoordinates; // current position of viewports upper left corner
@@ -489,7 +492,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     private void StartCompleteRepaint()
     {
       var controller = Controller;
-      if (null == controller)
+      if (controller is null)
         return;
 
       // rendering in the background
@@ -564,9 +567,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       ImageSource overlay = null;
 
       if (
-        null != controller &&
+        controller is not null &&
         controller.IsOverlayPaintingRequired &&
-        null != cachedGraphImage &&
+        cachedGraphImage is not null &&
         cachedGraphImage.BitmapSize_Pixel.Width > 1 &&
         cachedGraphImage.BitmapSize_Pixel.Height > 1)
       {
@@ -584,7 +587,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
           _gdiWpfBitmapManager.Add(bmp.GdiSize, bmp);
         }
       }
-      if (null != _cachedGraphImage)
+      if (_cachedGraphImage is not null)
         _cachedGraphImage.CachedOverlayImageSource = overlay;
       _graphOverlay.Source = overlay;
     }
@@ -684,7 +687,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     private void EhLayerButton_Click(object sender, RoutedEventArgs e)
     {
       var gc = Controller;
-      if (null != gc)
+      if (gc is not null)
       {
         var pushedLayerNumber = (int[])((ButtonBase)sender).Tag;
 
@@ -695,7 +698,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     private void EhLayerButton_ContextMenuOpening(object sender, ContextMenuEventArgs e)
     {
       var gc = Controller;
-      if (null != gc)
+      if (gc is not null)
       {
         var i = (int[])((ToggleButton)sender).Tag;
         Controller.EhView_ShowDataContextMenu(i, this, new System.Drawing.Point((int)e.CursorLeft, (int)e.CursorTop));
@@ -732,7 +735,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     private void EhHorizontalScrollBar_Scroll(object sender, ScrollEventArgs e)
     {
       var gc = Controller;
-      if (null != gc)
+      if (gc is not null)
       {
         gc.EhView_Scroll();
         ShowCachedGraphImage();
@@ -742,7 +745,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     private void EhVerticalScrollBar_Scroll(object sender, ScrollEventArgs e)
     {
       var gc = Controller;
-      if (null != gc)
+      if (gc is not null)
       {
         gc.EhView_Scroll();
         ShowCachedGraphImage();
@@ -752,35 +755,35 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     private void EhEnableCmdCopy(object sender, CanExecuteRoutedEventArgs e)
     {
       var gc = Controller;
-      e.CanExecute = null != gc && gc.IsCmdCopyEnabled();
+      e.CanExecute = gc is not null && gc.IsCmdCopyEnabled();
       e.Handled = true;
     }
 
     private void EhEnableCmdCut(object sender, CanExecuteRoutedEventArgs e)
     {
       var gc = Controller;
-      e.CanExecute = null != gc && gc.IsCmdCutEnabled();
+      e.CanExecute = gc is not null && gc.IsCmdCutEnabled();
       e.Handled = true;
     }
 
     private void EhEnableCmdDelete(object sender, CanExecuteRoutedEventArgs e)
     {
       var gc = Controller;
-      e.CanExecute = null != gc && gc.IsCmdDeleteEnabled();
+      e.CanExecute = gc is not null && gc.IsCmdDeleteEnabled();
       e.Handled = true;
     }
 
     private void EhEnableCmdPaste(object sender, CanExecuteRoutedEventArgs e)
     {
       var gc = Controller;
-      e.CanExecute = null != gc && gc.IsCmdPasteEnabled();
+      e.CanExecute = gc is not null && gc.IsCmdPasteEnabled();
       e.Handled = true;
     }
 
     private void EhCmdCopy(object sender, ExecutedRoutedEventArgs e)
     {
       var gc = Controller;
-      if (null != gc)
+      if (gc is not null)
       {
         gc.CopySelectedObjectsToClipboard();
         e.Handled = true;
@@ -790,7 +793,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     private void EhCmdCut(object sender, ExecutedRoutedEventArgs e)
     {
       var gc = Controller;
-      if (null != gc)
+      if (gc is not null)
       {
         gc.CutSelectedObjectsToClipboard();
         e.Handled = true;
@@ -800,7 +803,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     private void EhCmdDelete(object sender, ExecutedRoutedEventArgs e)
     {
       var gc = Controller;
-      if (null != _controller)
+      if (_controller is not null)
       {
         gc.CmdDelete();
         e.Handled = true;
@@ -810,7 +813,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     private void EhCmdPaste(object sender, ExecutedRoutedEventArgs e)
     {
       var gc = Controller;
-      if (null != _controller)
+      if (_controller is not null)
       {
         gc.PasteObjectsFromClipboard();
         e.Handled = true;
@@ -825,7 +828,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       var font = new Typeface("Arial");
       if (font.TryGetGlyphTypeface(out var glyphFace))
       {
-        glyphs = new GlyphRun();
+        glyphs = new GlyphRun(1);
         System.ComponentModel.ISupportInitialize isi = glyphs;
         isi.BeginInit();
         glyphs.GlyphTypeface = glyphFace;

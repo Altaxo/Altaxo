@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Geometry;
 
@@ -40,9 +41,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="isTriggeringChangedEvent">If set to <c>true</c>, the Changed event is triggered if the size of the parent differs from the cached parent's size.</param>
     void SetParentSize(PointD2D parentSize, bool isTriggeringChangedEvent);
 
-    Altaxo.Graph.Gdi.IHitTestObject HitTest(Altaxo.Graph.Gdi.HitTestPointData hitData);
+    Altaxo.Graph.Gdi.IHitTestObject? HitTest(Altaxo.Graph.Gdi.HitTestPointData hitData);
 
-    Altaxo.Graph.Gdi.IHitTestObject HitTest(Altaxo.Graph.Gdi.HitTestRectangularData hitData);
+    Altaxo.Graph.Gdi.IHitTestObject? HitTest(Altaxo.Graph.Gdi.HitTestRectangularData hitData);
 
     /// <summary>
     /// Fixups the internal data structures of the object. The object is allowed to send change notifications during this call.

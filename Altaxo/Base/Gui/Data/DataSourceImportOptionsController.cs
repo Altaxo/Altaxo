@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,7 +69,7 @@ namespace Altaxo.Gui.Data
       {
         _triggerChoices = new Collections.SelectableListNodeList(_doc.ImportTriggerSource);
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeTriggerSource(_triggerChoices);
         _view.DoNotSaveTableData = _doc.DoNotSaveCachedTableData;

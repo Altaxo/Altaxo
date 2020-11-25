@@ -19,7 +19,7 @@ namespace WPG.TypeEditors
 
             var constructor = type.GetConstructor(Type.EmptyTypes);
 
-            if (constructor == null)
+            if (constructor is null)
                 return false;
 
             return true;
@@ -56,7 +56,7 @@ namespace WPG.TypeEditors
 
         private void cmdRemove_Click(object sender, RoutedEventArgs e)
         {
-            if (myLst.SelectedItem != null)
+            if (myLst.SelectedItem is not null)
             {
                 myLst.Items.Remove(myLst.SelectedItem);
             }

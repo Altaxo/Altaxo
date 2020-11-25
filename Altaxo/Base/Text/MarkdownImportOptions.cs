@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -60,12 +61,19 @@ namespace Altaxo.Text
       }
     }
 
-    public string Import(string fileName)
+    public string? Import(string fileName)
     {
       var errors = new System.Text.StringBuilder();
 
-      string markdownDirectory = System.IO.Path.GetDirectoryName(fileName);
-      string markdownText = null;
+      string? markdownDirectory = System.IO.Path.GetDirectoryName(fileName);
+
+      if (markdownDirectory is null)
+      {
+        errors.Append($"Unable to get directory from file name: {fileName}");
+        return errors.ToString();
+      }
+
+      string? markdownText = null;
 
       using (var stream = new StreamReader(fileName, Encoding.UTF8, true))
       {
@@ -94,7 +102,7 @@ namespace Altaxo.Text
 
           var uri = new Uri(url, UriKind.RelativeOrAbsolute);
 
-          string imgFileName = null;
+          string? imgFileName = null;
 
           if (uri.IsAbsoluteUri)
           {
@@ -125,8 +133,11 @@ namespace Altaxo.Text
       {
         var (link, proxy) = images[i];
 
-        text.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.End + 1 - link.UrlSpan.Value.Start);
-        text.Insert(link.UrlSpan.Value.Start, ImagePretext.LocalImagePretext + proxy.ContentHash);
+        if (link.UrlSpan is not null)
+        {
+          text.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.End + 1 - link.UrlSpan.Value.Start);
+          text.Insert(link.UrlSpan.Value.Start, ImagePretext.LocalImagePretext + proxy.ContentHash);
+        }
       }
 
       textDocument.SourceText = text.ToString();
@@ -145,7 +156,7 @@ namespace Altaxo.Text
     /// <returns>The modified pipeline</returns>
     public static MarkdownPipelineBuilder UseSupportedExtensions(MarkdownPipelineBuilder pipeline)
     {
-      if (pipeline == null)
+      if (pipeline is null)
         throw new ArgumentNullException(nameof(pipeline));
       return pipeline
           .UseEmphasisExtras()
@@ -167,10 +178,9 @@ namespace Altaxo.Text
     public static IEnumerable<Markdig.Syntax.MarkdownObject> EnumerateAllMarkdownObjectsRecursively(Markdig.Syntax.MarkdownObject startElement)
     {
       yield return startElement;
-      var childList = GetChildList(startElement);
-      if (null != childList)
+      if (GetChildList(startElement) is { } childList)
       {
-        foreach (var child in GetChildList(startElement))
+        foreach (var child in childList)
         {
           foreach (var childAndSub in EnumerateAllMarkdownObjectsRecursively(child))
             yield return childAndSub;
@@ -183,7 +193,7 @@ namespace Altaxo.Text
     /// </summary>
     /// <param name="parent">The markdown object from which to get the childs.</param>
     /// <returns>The childs of the given markdown object, or null.</returns>
-    public static IEnumerable<Markdig.Syntax.MarkdownObject> GetChilds(Markdig.Syntax.MarkdownObject parent)
+    public static IEnumerable<Markdig.Syntax.MarkdownObject>? GetChilds(Markdig.Syntax.MarkdownObject parent)
     {
       if (parent is Markdig.Syntax.LeafBlock leafBlock)
         return leafBlock.Inline;
@@ -200,7 +210,7 @@ namespace Altaxo.Text
     /// </summary>
     /// <param name="parent">The markdown object from which to get the childs.</param>
     /// <returns>The childs of the given markdown object, or null.</returns>
-    public static IReadOnlyList<Markdig.Syntax.MarkdownObject> GetChildList(Markdig.Syntax.MarkdownObject parent)
+    public static IReadOnlyList<Markdig.Syntax.MarkdownObject>? GetChildList(Markdig.Syntax.MarkdownObject parent)
     {
       if (parent is Markdig.Syntax.LeafBlock leafBlock)
         return leafBlock.Inline?.ToArray<Markdig.Syntax.MarkdownObject>();

@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 
 namespace Altaxo.AddInItems
@@ -52,6 +53,6 @@ namespace Altaxo.AddInItems
     /// <summary>
     /// Returns true, when the condition is valid otherwise false.
     /// </summary>
-    bool IsValid(object parameter);
+    bool IsValid(object? parameter);
   }
 }

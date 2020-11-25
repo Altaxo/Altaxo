@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,15 +30,15 @@ using System.Text;
 
 namespace Altaxo.Gui.Settings
 {
-  public abstract class OptionPanelBase<T> : IOptionPanel where T : IMVCANController
+  public abstract class OptionPanelBase<T> : IOptionPanel where T : class, IMVCANController
   {
-    protected T _controller;
+    protected T? _controller;
 
     /// <summary>
     /// Creates the controller and calls _controller.InitializeDocument.
     /// </summary>
     /// <param name="optionPanelOwner">The option panel owner.</param>
-    public abstract void Initialize(object optionPanelOwner);
+    public abstract void Initialize(object? optionPanelOwner);
 
     /// <summary>
     /// Is called after the Apply function of the controller returned true (success). Here the document has to be retrieved from the controller,
@@ -45,16 +46,16 @@ namespace Altaxo.Gui.Settings
     /// </summary>
     protected abstract void ProcessControllerResult();
 
-    public object Owner { get; set; }
+    public object? Owner { get; set; }
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {
-        if (null == _controller)
+        if (_controller is null)
           throw new InvalidOperationException("Option panel not initialized, controller is null!");
 
-        if (null == _controller.ViewObject)
+        if (_controller.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_controller);
 
         return _controller.ViewObject;
@@ -63,7 +64,7 @@ namespace Altaxo.Gui.Settings
 
     public bool Apply()
     {
-      if (null == _controller)
+      if (_controller is null)
         throw new InvalidOperationException("Option panel not initialized, controller is null!");
 
       var result = _controller.Apply(false);

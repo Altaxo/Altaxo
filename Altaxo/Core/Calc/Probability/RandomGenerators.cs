@@ -77,6 +77,7 @@
 #if true
 
 using System;
+using System.Threading;
 using Altaxo.Calc;
 
 namespace Altaxo.Calc.Probability.Old
@@ -95,13 +96,14 @@ namespace Altaxo.Calc.Probability.Old
     /// <summary>Uniform long int values within [0...max_val].</summary>
     protected uint max_val; //
 
+    private static readonly object _lockSeedGenerator = new object();
     /// <summary>Used to generate seed values.</summary>
-    protected static System.Security.Cryptography.RandomNumberGenerator seedGenerator =
+    private static readonly System.Security.Cryptography.RandomNumberGenerator _seedGenerator =
       new System.Security.Cryptography.RNGCryptoServiceProvider();
 
     /// <summary>This is the default state of the art random genenerator to produce random numbers.</summary>
-    protected static RandomGenerator defaultRandomGenerator =
-      new Ran002(UniqueSeed());
+    protected static readonly ThreadLocal<RandomGenerator> defaultRandomGenerator =
+      new ThreadLocal<RandomGenerator>(() => new Ran002(UniqueSeed()));
 
     #region Helper functions and constants
 
@@ -144,7 +146,10 @@ namespace Altaxo.Calc.Probability.Old
 
       do
       {
-        seedGenerator.GetBytes(bytes);
+        lock (_seedGenerator)
+        {
+          _seedGenerator.GetBytes(bytes);
+        }
 
         result = 0x7FFFFFFFU & System.BitConverter.ToUInt32(bytes, 0);
 
@@ -161,7 +166,7 @@ namespace Altaxo.Calc.Probability.Old
     /// <value>Default random generator.</value>
     public static RandomGenerator DefaultGenerator
     {
-      get { return defaultRandomGenerator; }
+      get { return defaultRandomGenerator.Value!; }
     }
 
     /// <summary>Constructs the random generator with a seed value of 0.</summary>

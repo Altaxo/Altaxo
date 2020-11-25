@@ -22,9 +22,8 @@
 
 #endregion Copyright
 
-using System;
+#nullable enable
 using System.Collections.Generic;
-using System.Text;
 using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Common.Drawing
@@ -45,9 +44,12 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected override void Initialize(bool initData)
     {
+      if (_doc is null)
+        throw NoDocumentException;
+
       base.Initialize(initData);
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.Brush = _doc;
       }
@@ -55,7 +57,12 @@ namespace Altaxo.Gui.Common.Drawing
 
     public override bool Apply(bool disposeController)
     {
-      if (_doc != null || _view.Brush.IsVisible)
+      if (_doc is null)
+        throw NoDocumentException;
+      if (_view is null)
+        throw NoViewException;
+
+      if (!(_doc is null) || _view.Brush.IsVisible)
         _doc = _view.Brush;
 
       return ApplyEnd(true, disposeController);

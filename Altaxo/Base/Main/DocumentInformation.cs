@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,8 +32,8 @@ namespace Altaxo.Main
 {
   public class DocumentInformation
   {
-    private string _documentIdentifier;
-    private string _documentNotes;
+    private string _documentIdentifier = string.Empty;
+    private string _documentNotes = string.Empty;
     private Version _versionCreatedWith = new Version(0, 0, 0, 0);
 
 
@@ -50,15 +51,15 @@ namespace Altaxo.Main
         info.AddValue("Notes", s.DocumentNotes);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         DocumentInformation s = SDeserialize(o, info, parent);
         return s;
       }
 
-      protected virtual DocumentInformation SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual DocumentInformation SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DocumentInformation s = null != o ? (DocumentInformation)o : new DocumentInformation();
+        DocumentInformation s = (DocumentInformation?)o ?? new DocumentInformation();
 
         s._documentIdentifier = info.GetString("Identifier");
         s._documentNotes = info.GetString("Notes");
@@ -82,15 +83,15 @@ namespace Altaxo.Main
         info.AddValue("AltaxoVersion", version.ToString());
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         DocumentInformation s = SDeserialize(o, info, parent);
         return s;
       }
 
-      protected virtual DocumentInformation SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual DocumentInformation SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DocumentInformation s = null != o ? (DocumentInformation)o : new DocumentInformation();
+        DocumentInformation s = (DocumentInformation?)o ?? new DocumentInformation();
 
         s._documentIdentifier = info.GetString("Identifier");
         s._documentNotes = info.GetString("Notes");
@@ -105,14 +106,14 @@ namespace Altaxo.Main
 
     public string DocumentIdentifier
     {
-      get { return null == _documentIdentifier ? string.Empty : _documentIdentifier; }
-      set { _documentIdentifier = value; }
+      get { return _documentIdentifier ?? string.Empty; }
+      set { _documentIdentifier = value ?? string.Empty; }
     }
 
     public string DocumentNotes
     {
       get { return _documentNotes; }
-      set { _documentNotes = value; }
+      set { _documentNotes = value ?? string.Empty; }
     }
 
     /// <summary>

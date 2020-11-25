@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Text;
 
 namespace Altaxo.Gui.Common
 {

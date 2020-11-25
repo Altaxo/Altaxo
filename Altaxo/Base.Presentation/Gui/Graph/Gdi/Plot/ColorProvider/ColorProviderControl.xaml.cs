@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     private void EhColorProviderChanged(object sender, SelectionChangedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_cbColorProvider);
-      if (null != ColorProviderChanged)
+      if (ColorProviderChanged is not null)
         ColorProviderChanged();
     }
 
@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
       _previewBitmap.EndGdiPainting();
     }
 
-    public event Action ColorProviderChanged;
+    public event Action? ColorProviderChanged;
 
     #endregion
   }

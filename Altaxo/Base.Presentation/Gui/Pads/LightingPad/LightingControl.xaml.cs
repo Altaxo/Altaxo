@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace Altaxo.Gui.Pads.LightingPad
   /// </summary>
   public partial class LightingControl : UserControl, ILightingView
   {
-    public event EventHandler LightingChanged;
+    public event EventHandler? LightingChanged;
 
     private Altaxo.Graph.Graph3D.LightSettings _lighting = new Altaxo.Graph.Graph3D.LightSettings();
 
@@ -47,7 +48,7 @@ namespace Altaxo.Gui.Pads.LightingPad
       }
       set
       {
-        if (null != value)
+        if (value is not null)
         {
           _lighting = value;
           _guiAmbientControl.SelectedValue = _lighting.AmbientLight;

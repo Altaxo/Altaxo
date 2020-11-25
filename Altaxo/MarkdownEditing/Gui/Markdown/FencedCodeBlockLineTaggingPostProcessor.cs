@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Markdown
 
           // original code: renderer.WriteLeafRawLines(obj); // Expand this call directly here in order to be able to include tags
           var lines = fcb.Lines;
-          if (lines.Lines != null)
+          if (lines.Lines is not null)
           {
             var slices = lines.Lines;
             for (var i = 0; i < lines.Count; i++)
@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Markdown
     /// <returns>The modified pipeline</returns>
     public static MarkdownPipelineBuilder UseFencedCodeBlockLineTaggingPostProcessor(this MarkdownPipelineBuilder pipeline)
     {
-      if (pipeline == null)
+      if (pipeline is null)
         throw new ArgumentNullException(nameof(pipeline));
       pipeline.DocumentProcessed += PostProcess;
       return pipeline;

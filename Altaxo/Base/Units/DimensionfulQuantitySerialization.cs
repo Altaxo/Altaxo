@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,16 +40,16 @@ namespace Altaxo.Units
 
       info.AddValue("Value", s.Value);
       info.AddValue("Prefix", s.Prefix);
-      info.AddValue("Unit", s.Unit);
+      info.AddValueOrNull("Unit", s.IsEmpty ? null : s.Unit);
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       var value = info.GetDouble("Value");
-      var prefix = (SIPrefix)info.GetValue("Prefix", parent);
-      var unit = (IUnit)info.GetValue("Unit", parent);
+      var prefix = info.GetValue<SIPrefix>("Prefix", parent);
+      var unit = info.GetValueOrNull<IUnit>("Unit", parent);
 
-      if (null == unit)
+      if (unit is null)
         return DimensionfulQuantity.Empty;
       else
         return new DimensionfulQuantity(value, prefix, unit);

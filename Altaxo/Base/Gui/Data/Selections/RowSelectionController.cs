@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -137,7 +138,7 @@ namespace Altaxo.Gui.Data.Selections
         AmendRSEntryListWithDetailControllers(_rsEntryList);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitRowSelections(_rsEntryList, _rowSelectionSimpleTypes, _rowSelectionCollectionTypes);
       }
@@ -160,7 +161,7 @@ namespace Altaxo.Gui.Data.Selections
           ConvertRowSelectionToListOfRSEntries(child, list, indentLevel + 1);
         }
       }
-      else if (null != document) // doc is single entity
+      else if (document is not null) // doc is single entity
       {
         list.Add(new RSEntry { IndentationLevel = indentLevel, RowSelection = document });
       }
@@ -174,13 +175,13 @@ namespace Altaxo.Gui.Data.Selections
     {
       foreach (var entry in list)
       {
-        if (entry.DetailsController == null)
+        if (entry.DetailsController is null)
         {
           var controller = (IMVCANController)Current.Gui.GetController(new object[] { entry.RowSelection, _supposedParentDataTable }, typeof(IMVCANController));
           if (controller is RowSelectionController)
             controller = null;
 
-          if (null != controller)
+          if (controller is not null)
             Current.Gui.FindAndAttachControlTo(controller);
 
           entry.DetailsController = controller;
@@ -192,19 +193,19 @@ namespace Altaxo.Gui.Data.Selections
     {
       var entry = list[idx];
       {
-        if (entry.DetailsController != null)
+        if (entry.DetailsController is not null)
         {
           entry.DetailsController.Dispose();
           entry.DetailsController = null;
         }
 
-        if (entry.DetailsController == null)
+        if (entry.DetailsController is null)
         {
           var controller = (IMVCANController)Current.Gui.GetController(new object[] { entry.RowSelection, _supposedParentDataTable }, typeof(IMVCANController));
           if (controller is RowSelectionController)
             controller = null;
 
-          if (null != controller)
+          if (controller is not null)
             Current.Gui.FindAndAttachControlTo(controller);
 
           entry.DetailsController = controller;
@@ -222,7 +223,7 @@ namespace Altaxo.Gui.Data.Selections
       for (int i = 0; i < _rsEntryList.Count; ++i)
       {
         var ctrl = _rsEntryList[i].DetailsController;
-        if (null == ctrl)
+        if (ctrl is null)
           continue;
 
         bool result = _rsEntryList[i].DetailsController.Apply(disposeController);

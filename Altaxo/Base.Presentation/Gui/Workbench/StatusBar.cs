@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable disable warnings
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -162,7 +163,7 @@ namespace Altaxo.Gui.Workbench
       }
 
       TaskbarItemInfo taskbar = ((Window)(Current.Gui.MainWindowObject)).TaskbarItemInfo;
-      if (taskbar != null)
+      if (taskbar is not null)
       {
         taskbar.ProgressState = taskbarProgressState;
         taskbar.ProgressValue = workDone;
@@ -170,10 +171,10 @@ namespace Altaxo.Gui.Workbench
 
       if (status != _currentProgressStatus)
       {
-        if (_progressForegroundBrush == null)
+        if (_progressForegroundBrush is null)
         {
           var defaultForeground = _statusProgressBar.Foreground as SolidColorBrush;
-          _progressForegroundBrush = new SolidColorBrush(defaultForeground != null ? defaultForeground.Color : Colors.Blue);
+          _progressForegroundBrush = new SolidColorBrush(defaultForeground is not null ? defaultForeground.Color : Colors.Blue);
         }
 
         if (status == OperationStatus.Error)
@@ -234,7 +235,7 @@ namespace Altaxo.Gui.Workbench
                 _statusProgressBarItem.Visibility = Visibility.Collapsed;
                 _jobNamePanel.Content = _currentTaskName = "";
                 var taskbar = ((Window)Current.Gui.MainWindowObject).TaskbarItemInfo;
-                if (taskbar != null)
+                if (taskbar is not null)
                   taskbar.ProgressState = TaskbarItemProgressState.None;
                 StopHideProgress();
               }

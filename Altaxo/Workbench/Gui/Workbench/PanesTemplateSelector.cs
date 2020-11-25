@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Workbench
     /// <value>
     /// The data template for the tool window.
     /// </value>
-    public DataTemplate ToolTemplate
+    public DataTemplate? ToolTemplate
     {
       get;
       set;
@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Workbench
     /// <value>
     /// The document template.
     /// </value>
-    public DataTemplate DocumentTemplate
+    public DataTemplate? DocumentTemplate
     {
       get;
       set;
@@ -73,7 +73,7 @@ namespace Altaxo.Gui.Workbench
     /// <returns>
     /// Returns a <see cref="T:System.Windows.DataTemplate" /> or null. The default value is null.
     /// </returns>
-    public override System.Windows.DataTemplate SelectTemplate(object item, System.Windows.DependencyObject container)
+    public override System.Windows.DataTemplate? SelectTemplate(object item, System.Windows.DependencyObject container)
     {
       if (item is IPadContent) // Pad has precedence over IViewContent
         return ToolTemplate;

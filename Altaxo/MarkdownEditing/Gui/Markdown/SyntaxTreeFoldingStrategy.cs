@@ -34,12 +34,12 @@ namespace Altaxo.Gui.Markdown
       const int maxLevel = 4;
       var newFoldMarkers = new List<NewFolding>();
 
-      if (markdownDocument != null)
+      if (markdownDocument is not null)
       {
         // since we fold only the h1, h2, h3, h3 tags, they all are top level blocks
         // thus there is no need to go down in the tree
 
-        var previousBlocks = new Markdig.Syntax.HeadingBlock[maxLevel + 1]; // +1 because heading.Level is one-based
+        var previousBlocks = new Markdig.Syntax.HeadingBlock?[maxLevel + 1]; // +1 because heading.Level is one-based
 
         for (int i = 0; i < markdownDocument.Count; ++i)
         {
@@ -48,9 +48,9 @@ namespace Altaxo.Gui.Markdown
             // A heading block will close all previous heading with the same level or any sublevel above
             for (int j = heading.Level; j <= maxLevel; ++j)
             {
-              if (null != previousBlocks[j])
+              if (previousBlocks[j] is { } prevBlock_j)
               {
-                newFoldMarkers.Add(new NewFolding(previousBlocks[j].Span.End + 1, markdownDocument[i - 1].Span.End + 1));
+                newFoldMarkers.Add(new NewFolding(prevBlock_j.Span.End + 1, markdownDocument[i - 1].Span.End + 1));
                 previousBlocks[j] = null; // the previous block is processed then
               }
             }
@@ -62,9 +62,9 @@ namespace Altaxo.Gui.Markdown
         var end = markdownDocument.Span.End;
         for (int i = 0; i < previousBlocks.Length; ++i)
         {
-          if (null != previousBlocks[i])
+          if (previousBlocks[i] is { } prevBlock_i)
           {
-            newFoldMarkers.Add(new NewFolding(previousBlocks[i].Span.End + 1, markdownDocument.Span.End + 1));
+            newFoldMarkers.Add(new NewFolding(prevBlock_i.Span.End + 1, markdownDocument.Span.End + 1));
           }
         }
       }

@@ -22,10 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#nullable enable
 
 namespace Altaxo.Data
 {
@@ -36,20 +33,20 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="c">The transformed column for which to search the underlying <see cref="DataColumn"/>.</param>
     /// <returns>The underlying data column (of type <see cref="DataColumn"/>) or the default value null.</returns>
-    public static DataColumn GetUnderlyingDataColumnOrDefault(this IReadableColumn c)
+    public static DataColumn? GetUnderlyingDataColumnOrDefault(this IReadableColumn c)
     {
-      if (c is DataColumn)
+      if (c is DataColumn dc)
       {
-        return (DataColumn)c;
+        return dc;
       }
       else if (c is ITransformedReadableColumn it)
       {
-        while (null != it)
+        while (it is not null)
         {
-          if (it.UnderlyingReadableColumn is DataColumn)
-            return (DataColumn)it.UnderlyingReadableColumn;
-          else if (it.UnderlyingReadableColumn is ITransformedReadableColumn)
-            it = (ITransformedReadableColumn)it.UnderlyingReadableColumn;
+          if (it.UnderlyingReadableColumn is DataColumn itdc)
+            return itdc;
+          else if (it.UnderlyingReadableColumn is ITransformedReadableColumn ittrc)
+            it = ittrc;
         }
       }
       return null;

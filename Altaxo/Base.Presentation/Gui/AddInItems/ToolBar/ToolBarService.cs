@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable disable warnings
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -59,7 +60,7 @@ namespace Altaxo.Gui.AddInItems
       {
         object item = CreateToolBarItemFromDescriptor(inputBindingOwner, descriptor);
         var submenuBuilder = item as IMenuItemBuilder;
-        if (submenuBuilder != null)
+        if (submenuBuilder is not null)
         {
           result.AddRange(submenuBuilder.BuildItems(descriptor.Codon, descriptor.Parameter));
         }
@@ -105,12 +106,12 @@ namespace Altaxo.Gui.AddInItems
 
         case "Custom":
           var resultType = codon.AddIn.FindType(codon.Properties["class"]);
-          if (null != resultType)
+          if (resultType is not null)
           {
             object result = null;
             var c1 = resultType.GetConstructor(new Type[] { typeof(Codon), typeof(object), typeof(IReadOnlyCollection<ICondition>) });
             result = c1?.Invoke(new object[] { codon, caller, descriptor.Conditions });
-            if (null == result)
+            if (result is null)
             {
               result = Activator.CreateInstance(resultType);
             }

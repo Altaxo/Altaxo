@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using Altaxo.Data;
@@ -98,7 +99,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       yield return new ControllerAndSetNullMethod(_dataController, () => _dataController = null);
       yield return new ControllerAndSetNullMethod(_styleCollectionController, () =>
       {
-        if (null != _styleCollectionController)
+        if (_styleCollectionController is not null)
         {
           _styleCollectionController.CollectionChangeCommit -= _styleCollectionController_CollectionChangeCommit;
           _styleCollectionController.StyleEditRequested -= _styleCollectionController_StyleEditRequested;
@@ -106,7 +107,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
         }
       });
 
-      if (null != _styleControllerList)
+      if (_styleControllerList is not null)
       {
         foreach (var ctrl in _styleControllerList)
           yield return new ControllerAndSetNullMethod(ctrl, null);
@@ -114,7 +115,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
         yield return new ControllerAndSetNullMethod(null, () => _styleControllerList = null);
       }
 
-      if (null != _styleControllerDictionary)
+      if (_styleControllerDictionary is not null)
       {
         foreach (var ctrl in _styleControllerDictionary.Values)
           yield return new ControllerAndSetNullMethod(ctrl, null);
@@ -132,9 +133,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     /// </returns>
     protected override ISuspendToken GetSuspendTokenForControllerDocument()
     {
-      if (null != _doc.ParentCollection)
+      if (_doc.ParentCollection is not null)
         return _doc.ParentCollection.SuspendGetToken();
-      else if (null != _doc)
+      else if (_doc is not null)
         return _doc.SuspendGetToken();
       else
         return null;
@@ -146,7 +147,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
       if (initData)
       {
-        if (null == _groupStyles && null != _doc.ParentCollection)
+        if (_groupStyles is null && _doc.ParentCollection is not null)
           _groupStyles = _doc.ParentCollection.GroupStyles;
 
         var plotGroupController = new PlotGroupCollectionController();
@@ -166,9 +167,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
         InitializeStyleControllerList();
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
-        if (null == _plotGroupController.ViewObject)
+        if (_plotGroupController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_plotGroupController);
         _view.SetPlotGroupCollectionView(_plotGroupController.ViewObject);
 
@@ -190,7 +191,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
       bool applyResult = false;
 
-      if (null != _dataController && !_dataController.Apply(disposeController))
+      if (_dataController is not null && !_dataController.Apply(disposeController))
         return false;
 
       if (!_styleCollectionController.Apply(disposeController))
@@ -234,7 +235,7 @@ end_of_function:
       _groupStyles.CopyFrom((PlotGroupStyleCollection)_plotGroupController.ModelObject);
 
       // now distribute the new style to the other plot items
-      if (_doc.ParentCollection != null)
+      if (_doc.ParentCollection is not null)
       {
         _doc.ParentCollection.GroupStyles.CopyFrom(_groupStyles);
         _doc.ParentCollection.DistributePlotStyleFromTemplate(_doc, _groupStyles.PlotGroupStrictness);
@@ -265,7 +266,7 @@ end_of_function:
     {
       for (int i = 0; i < _styleControllerList.Count; i++)
       {
-        if (_styleControllerList[i] != null && object.ReferenceEquals(_styleControllerList[i].ViewObject, _activeChildControl))
+        if (_styleControllerList[i] is not null && object.ReferenceEquals(_styleControllerList[i].ViewObject, _activeChildControl))
         {
           return i;
         }
@@ -280,7 +281,7 @@ end_of_function:
         _view.ClearTabs();
 
         // Add the data tab item
-        if (_dataController != null)
+        if (_dataController is not null)
           _view.AddTab("Data", _dataController.ViewObject);
 
         // set the plot style tab items
@@ -294,7 +295,7 @@ end_of_function:
 
     protected void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs e)
     {
-      if (e.NewInstance != null)
+      if (e.NewInstance is not null)
         _activeChildControl = e.NewInstance;
 
       if (_disablerOfActiveChildControlChanged.IsSuspended)
@@ -303,7 +304,7 @@ end_of_function:
       // test if it is the view of the normal styles
       for (int i = 0; i < _styleControllerList.Count; i++)
       {
-        if (_styleControllerList[i] != null && object.ReferenceEquals(_styleControllerList[i].ViewObject, e.OldInstance))
+        if (_styleControllerList[i] is not null && object.ReferenceEquals(_styleControllerList[i].ViewObject, e.OldInstance))
         {
           if (!_styleControllerList[i].Apply(false))
             return;
@@ -328,7 +329,7 @@ end_of_function:
 
       var ct = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { style }, typeof(IMVCANController), UseDocument.Directly);
 
-      if (ct != null)
+      if (ct is not null)
         _styleControllerDictionary.Add(style, ct);
 
       return ct;
@@ -355,12 +356,12 @@ end_of_function:
       for (int i = 0; i < _styleControllerList.Count; ++i)
       {
         var styleCtrl = _styleControllerList[i] as IColumnDataExternallyControlled;
-        if (null == styleCtrl)
+        if (styleCtrl is null)
           continue; // no data columns in this controller
 
         var additionalColumns = styleCtrl.GetDataColumnsExternallyControlled();
 
-        if (null != additionalColumns)
+        if (additionalColumns is not null)
         {
           yield return (
               string.Format("#{0}: {1}", i + 1, Current.Gui.GetUserFriendlyClassName(_doc.Style[i].GetType())),
@@ -386,7 +387,7 @@ end_of_function:
         // now all style controllers must be updated
         for (int i = 0; i < _styleControllerList.Count; i++)
         {
-          if (null != _styleControllerList[i])
+          if (_styleControllerList[i] is not null)
             _styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable, (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.GroupNumber ?? 0);
         }
       }
@@ -400,7 +401,7 @@ end_of_function:
     private void EhPlotGroupChanged()
     {
       var parColl = _doc.ParentCollection;
-      if (null != parColl)
+      if (parColl is not null)
       {
         parColl.DistributeChanges(parColl[0]);
       }
@@ -408,7 +409,7 @@ end_of_function:
       // now all style controllers must be updated
       for (int i = 0; i < _styleControllerList.Count; i++)
       {
-        if (null != _styleControllerList[i])
+        if (_styleControllerList[i] is not null)
           _styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable);
       }
     }
@@ -420,7 +421,7 @@ end_of_function:
     private int GetFirstStyleTabIndex()
     {
       int result = 0;
-      if (_dataController != null)
+      if (_dataController is not null)
         ++result;
 
       return result;
@@ -437,7 +438,7 @@ end_of_function:
 
     private void _styleCollectionController_StyleEditRequested(int styleIndex)
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _view.BringTabToFront(styleIndex + GetFirstStyleTabIndex());
       }

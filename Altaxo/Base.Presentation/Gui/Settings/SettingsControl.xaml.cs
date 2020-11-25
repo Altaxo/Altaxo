@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Settings
   public partial class SettingsControl : UserControl, ISettingsView
   {
     /// <summary>Occurs when the current topic view was entered.</summary>
-    public event Action CurrentTopicViewMadeDirty;
+    public event Action? CurrentTopicViewMadeDirty;
 
     public SettingsControl()
     {
@@ -49,17 +49,17 @@ namespace Altaxo.Gui.Settings
 
     private void EhHostControlKeyboardFocused(object sender, KeyboardFocusChangedEventArgs e)
     {
-      if (null != CurrentTopicViewMadeDirty)
+      if (CurrentTopicViewMadeDirty is not null)
         CurrentTopicViewMadeDirty();
     }
 
     private void EhTopicChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
-      if (TopicSelectionChanged != null)
+      if (TopicSelectionChanged is not null)
         TopicSelectionChanged((Collections.NGTreeNode)e.NewValue);
     }
 
-    public event Action<Collections.NGTreeNode> TopicSelectionChanged;
+    public event Action<Collections.NGTreeNode>? TopicSelectionChanged;
 
     public void InitializeTopics(Collections.NGTreeNodeCollection topics)
     {
@@ -94,7 +94,7 @@ namespace Altaxo.Gui.Settings
     {
       var item = _guiTopics.ItemContainerGenerator.ContainerFromItem(node) as TreeViewItem;
 
-      if (null != item)
+      if (item is not null)
       {
         item.Focus();
         item.IsSelected = true;

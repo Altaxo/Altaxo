@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
@@ -46,9 +47,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         info.AddValue("DecimalPlaces", s._decimalPlaces);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (NumericLabelFormattingBase)o;
+        var s = (NumericLabelFormattingBase)(o ?? throw new ArgumentNullException(nameof(o)));
         info.GetBaseValueEmbedded(s, typeof(LabelFormattingBase), parent);
         s._decimalPlaces = info.GetInt32("DecimalPlaces");
         return s;
@@ -68,16 +69,18 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+
+      if (base.CopyFrom(obj))
       {
-        var from = obj as NumericLabelFormattingBase;
-        if (null != from)
+        if (obj is NumericLabelFormattingBase from)
         {
           _decimalPlaces = from._decimalPlaces;
         }
+        return true;
       }
-      return isCopied;
+      return false;
     }
   }
 }

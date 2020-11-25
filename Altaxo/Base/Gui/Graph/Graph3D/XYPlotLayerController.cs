@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -147,7 +148,7 @@ namespace Altaxo.Gui.Graph.Graph3D
         };
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         // add all necessary Tabs
         _view.AddTab("Scale", "Scale");
@@ -198,7 +199,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       yield return new ControllerAndSetNullMethod(_layerPositionController, () => _layerPositionController = null);
       yield return new ControllerAndSetNullMethod(_layerContentsController, () => _layerContentsController = null);
 
-      if (null != _axisScaleController)
+      if (_axisScaleController is not null)
       {
         for (int i = 0; i < _axisScaleController.Length; ++i)
           yield return new ControllerAndSetNullMethod(_axisScaleController[i], () => _axisScaleController[i] = null);
@@ -206,7 +207,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       yield return new ControllerAndSetNullMethod(_layerGraphItemsController, () => _layerGraphItemsController = null);
 
-      if (null != _GridStyleController)
+      if (_GridStyleController is not null)
       {
         foreach (var entry in _GridStyleController)
         {
@@ -216,7 +217,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       yield return new ControllerAndSetNullMethod(null, () => _GridStyleController = null);
 
-      if (null != _axisControl)
+      if (_axisControl is not null)
       {
         foreach (var entry in _axisControl)
         {
@@ -292,7 +293,7 @@ namespace Altaxo.Gui.Graph.Graph3D
           {
             _view.SelectTab(_currentPageName);
           }
-          if (null == _layerGraphItemsController)
+          if (_layerGraphItemsController is null)
           {
             _layerGraphItemsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.GraphObjects }, typeof(IMVCANController), UseDocument.Directly);
           }
@@ -306,7 +307,7 @@ namespace Altaxo.Gui.Graph.Graph3D
             _view.SelectTab(_currentPageName);
             SetSecondaryChoiceToUnique();
           }
-          if (null == _layerContentsController)
+          if (_layerContentsController is null)
           {
             _layerContentsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.PlotItems }, typeof(IMVCANController), UseDocument.Directly);
           }
@@ -320,7 +321,7 @@ namespace Altaxo.Gui.Graph.Graph3D
             _view.SelectTab(_currentPageName);
             SetSecondaryChoiceToUnique();
           }
-          if (null == _layerPositionController)
+          if (_layerPositionController is null)
           {
             _layerPositionController = new LayerPositionController() { UseDocumentCopy = UseDocument.Directly };
             _layerPositionController.InitializeDocument(_doc.Location, _doc);
@@ -336,7 +337,7 @@ namespace Altaxo.Gui.Graph.Graph3D
             _view.SelectTab(_currentPageName);
             SetSecondaryChoiceToScales();
           }
-          if (_axisScaleController[_currentScale] == null)
+          if (_axisScaleController[_currentScale] is null)
           {
             var ctrl = new ScaleWithTicksController(scale => _doc.Scales[_currentScale] = scale, false);
             ctrl.InitializeDocument(_doc.Scales[_currentScale]);
@@ -353,7 +354,7 @@ namespace Altaxo.Gui.Graph.Graph3D
             _view.SelectTab(_currentPageName);
             SetSecondaryChoiceToUnique();
           }
-          if (null == _coordinateController)
+          if (_coordinateController is null)
           {
             _coordinateController = new CoordinateSystemController() { UseDocumentCopy = UseDocument.Directly };
             _coordinateController.InitializeDocument(_doc.CoordinateSystem);
@@ -562,7 +563,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     private bool ApplyCurrentController(bool force, bool disposeCurrentController)
     {
-      if (_currentController == null)
+      if (_currentController is null)
         return true;
 
       if (!force && object.ReferenceEquals(_currentController, _lastControllerApplied))
@@ -639,7 +640,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     public static bool EhLayerPositionEdit(IHitTestObject hit)
     {
       var layer = hit.HittedObject as XYZPlotLayer;
-      if (layer == null)
+      if (layer is null)
         return false;
 
       ShowDialog(layer, "Position");
@@ -650,11 +651,11 @@ namespace Altaxo.Gui.Graph.Graph3D
     public static bool EhAxisScaleEdit(IHitTestObject hit)
     {
       var style = hit.HittedObject as AxisLineStyle;
-      if (style == null || hit.ParentLayer == null)
+      if (style is null || hit.ParentLayer is null)
         return false;
 
       var xylayer = hit.ParentLayer as XYZPlotLayer;
-      if (null != xylayer)
+      if (xylayer is not null)
         ShowDialog(xylayer, "Scale", style.AxisStyleID);
 
       return false;
@@ -663,11 +664,11 @@ namespace Altaxo.Gui.Graph.Graph3D
     public static bool EhAxisStyleEdit(IHitTestObject hit)
     {
       var style = hit.HittedObject as AxisLineStyle;
-      if (style == null || hit.ParentLayer == null)
+      if (style is null || hit.ParentLayer is null)
         return false;
 
       var xylayer = hit.ParentLayer as XYZPlotLayer;
-      if (null != xylayer)
+      if (xylayer is not null)
         ShowDialog(xylayer, "TitleAndFormat", style.AxisStyleID);
 
       return false;
@@ -676,11 +677,11 @@ namespace Altaxo.Gui.Graph.Graph3D
     public static bool EhAxisLabelMajorStyleEdit(IHitTestObject hit)
     {
       var style = hit.HittedObject as AxisLabelStyle;
-      if (style == null || hit.ParentLayer == null)
+      if (style is null || hit.ParentLayer is null)
         return false;
 
       var xylayer = hit.ParentLayer as XYZPlotLayer;
-      if (null != xylayer)
+      if (xylayer is not null)
         ShowDialog(xylayer, "MajorLabels", style.AxisStyleID);
 
       return false;
@@ -689,11 +690,11 @@ namespace Altaxo.Gui.Graph.Graph3D
     public static bool EhAxisLabelMinorStyleEdit(IHitTestObject hit)
     {
       var style = hit.HittedObject as AxisLabelStyle;
-      if (style == null || hit.ParentLayer == null)
+      if (style is null || hit.ParentLayer is null)
         return false;
 
       var xylayer = hit.ParentLayer as XYZPlotLayer;
-      if (null != xylayer)
+      if (xylayer is not null)
         ShowDialog(xylayer, "MinorLabels", style.AxisStyleID);
 
       return false;

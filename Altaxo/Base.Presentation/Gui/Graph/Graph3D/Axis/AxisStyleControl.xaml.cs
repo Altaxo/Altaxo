@@ -91,15 +91,15 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       }
     }
 
-    public event Action ShowAxisLineChanged;
+    public event Action? ShowAxisLineChanged;
 
-    public event Action ShowMajorLabelsChanged;
+    public event Action? ShowMajorLabelsChanged;
 
-    public event Action ShowMinorLabelsChanged;
+    public event Action? ShowMinorLabelsChanged;
 
-    public event Action ShowCustomTickSpacingChanged;
+    public event Action? ShowCustomTickSpacingChanged;
 
-    public event Action EditTitle;
+    public event Action? EditTitle;
 
     public object LineStyleView
     {
@@ -110,7 +110,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
         var newControl = value as UIElement;
 
-        if (newControl == null)
+        if (newControl is null)
           newControl = new Label();
 
         newControl.IsEnabled = wasEnabled;
@@ -127,7 +127,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
         var newControl = value as UIElement;
 
-        if (newControl == null)
+        if (newControl is null)
           newControl = new Label();
 
         newControl.IsEnabled = wasEnabled;
@@ -151,25 +151,25 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     private void EhShowAxisLineChanged(object sender, RoutedEventArgs e)
     {
-      if (null != ShowAxisLineChanged)
+      if (ShowAxisLineChanged is not null)
         ShowAxisLineChanged();
     }
 
     private void EhShowMajorLabelsChanged(object sender, RoutedEventArgs e)
     {
-      if (null != ShowMajorLabelsChanged)
+      if (ShowMajorLabelsChanged is not null)
         ShowMajorLabelsChanged();
     }
 
     private void EhShowMinorLabelsChanged(object sender, RoutedEventArgs e)
     {
-      if (null != ShowMinorLabelsChanged)
+      if (ShowMinorLabelsChanged is not null)
         ShowMinorLabelsChanged();
     }
 
     private void EhCustomTickSpacingChanged(object sender, RoutedEventArgs e)
     {
-      if (null != ShowCustomTickSpacingChanged)
+      if (ShowCustomTickSpacingChanged is not null)
         ShowCustomTickSpacingChanged();
     }
 

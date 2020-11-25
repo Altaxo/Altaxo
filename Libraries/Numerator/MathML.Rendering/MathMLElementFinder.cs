@@ -71,7 +71,7 @@ namespace MathML.Rendering
 
 			MathMLElement e = (MathMLElement)element.Accept(this, element);
 
-			if(e != null)
+			if(e is not null)
 			{
 				result = new Selection();
 				result.Element = e;
@@ -92,7 +92,7 @@ namespace MathML.Rendering
 
 			MathMLElement e = (MathMLElement)element.Accept(this, element);
 
-			if(e != null)
+			if(e is not null)
 			{
 				result = new Selection();
 				result.Element = e;
@@ -115,7 +115,7 @@ namespace MathML.Rendering
 			{
 				case SelectionType.Prev:
 				{
-					if((elm = PreviousMathSibling(c)) != null)
+					if((elm = PreviousMathSibling(c)) is not null)
 					{
 						selection = SelectionType.End;
 						return elm.Accept(this, null);
@@ -123,16 +123,16 @@ namespace MathML.Rendering
 					else
 					{
 						MathMLElement p = e.ParentNode as MathMLElement;
-						return p != null ? p.Accept(this, e) : null;
+						return p is not null ? p.Accept(this, e) : null;
 					}
 				}
 				case SelectionType.Next:
 				{					
-					if(e == c && (elm = e.FirstChild as MathMLElement) != null)
+					if(e == c && (elm = e.FirstChild as MathMLElement) is not null)
 					{						
 						return elm.Accept(this, e);
 					}
-					else if((elm = NextMathSibling(c)) != null)
+					else if((elm = NextMathSibling(c)) is not null)
 					{
 						selection = SelectionType.Start;
 						return elm.Accept(this, null);
@@ -140,18 +140,18 @@ namespace MathML.Rendering
 					else
 					{
 						MathMLElement p = e.ParentNode as MathMLElement;
-						return p != null ? p.Accept(this, e) : null;
+						return p is not null ? p.Accept(this, e) : null;
 					}
 				}
 				case SelectionType.Start:
 				{
 					elm = e.FirstChild as MathMLElement;
-					return elm != null ? elm.Accept(this, null) : e;
+					return elm is not null ? elm.Accept(this, null) : e;
 				} 
 				case SelectionType.End:
 				{
 					elm = e.LastChild as MathMLElement;
-					return elm != null ? elm.Accept(this, null) : null;
+					return elm is not null ? elm.Accept(this, null) : null;
 				}
 				default:
 				{
@@ -185,7 +185,7 @@ namespace MathML.Rendering
 							return ((MathMLElement)e.ParentNode).Accept(this, e);
 						}
 					}
-					else if(e.ParentNode is MathMLPresentationContainer && (p = PreviousMathSibling(e) as MathMLPresentationToken) != null)
+					else if(e.ParentNode is MathMLPresentationContainer && (p = PreviousMathSibling(e) as MathMLPresentationToken) is not null)
 					{
 						selection = SelectionType.End;
 						return p.Accept(this, null);
@@ -203,7 +203,7 @@ namespace MathML.Rendering
 						return e;
 					}
 					else if((e.ParentNode is MathMLPresentationContainer || e.ParentNode is MathMLMathElement) 
-						&& (p = NextMathSibling(e) as MathMLPresentationToken) != null)
+						&& (p = NextMathSibling(e) as MathMLPresentationToken) is not null)
 					{
 						selection = SelectionType.Start;
 						index = 0;
@@ -262,27 +262,27 @@ namespace MathML.Rendering
 					else
 					{
 						MathMLElement p = e.ParentNode as MathMLElement;
-						return p != null ? p.Accept(this, e) : null;
+						return p is not null ? p.Accept(this, e) : null;
 					}                
 				} 
 				case SelectionType.Next:
 				{
 					if(c == e.Base)
 					{
-						MathMLElement next = e.OverScript != null ? e.OverScript : e.UnderScript;
+						MathMLElement next = e.OverScript is not null ? e.OverScript : e.UnderScript;
 						selection = SelectionType.Start;
-						return next != null ? next.Accept(this, null) : null;
+						return next is not null ? next.Accept(this, null) : null;
 					}
 					else
 					{
 						MathMLElement p = e.ParentNode as MathMLElement;
-						return p != null ? p.Accept(this, e) : null;
+						return p is not null ? p.Accept(this, e) : null;
 					}
 				}
 				case SelectionType.End:
 				{
-					MathMLElement end = e.OverScript != null ? e.OverScript : 
-						(e.UnderScript != null ? e.UnderScript : e.Base);
+					MathMLElement end = e.OverScript is not null ? e.OverScript : 
+						(e.UnderScript is not null ? e.UnderScript : e.Base);
 					return end.Accept(this, null);
 				}
 				case SelectionType.Start:
@@ -310,7 +310,7 @@ namespace MathML.Rendering
 			else
 			{
 				MathMLElement elm = e.FirstChild as MathMLElement;
-				return elm != null ? elm.Accept(this, args) : e;
+				return elm is not null ? elm.Accept(this, args) : e;
 			}
 		}
 
@@ -323,7 +323,7 @@ namespace MathML.Rendering
 			else
 			{
 				MathMLElement elm = e.FirstChild as MathMLElement;
-				return elm != null ? elm.Accept(this, args) : e;
+				return elm is not null ? elm.Accept(this, args) : e;
 			}
 		}
 
@@ -347,27 +347,27 @@ namespace MathML.Rendering
 					else
 					{
 						MathMLElement p = e.ParentNode as MathMLElement;
-						return p != null ? p.Accept(this, e) : null;
+						return p is not null ? p.Accept(this, e) : null;
 					}                
 				} 
 				case SelectionType.Next:
 				{
 					if(c == e.Base)
 					{
-						MathMLElement next = e.SuperScript != null ? e.SuperScript : e.SubScript;
+						MathMLElement next = e.SuperScript is not null ? e.SuperScript : e.SubScript;
 						selection = SelectionType.Start;
-						return next != null ? next.Accept(this, null) : null;
+						return next is not null ? next.Accept(this, null) : null;
 					}
 					else
 					{
 						MathMLElement p = e.ParentNode as MathMLElement;
-						return p != null ? p.Accept(this, e) : null;
+						return p is not null ? p.Accept(this, e) : null;
 					}
 				}
 				case SelectionType.End:
 				{
-					MathMLElement end = e.SuperScript != null ? e.SuperScript : 
-						(e.SubScript != null ? e.SubScript : e.Base);
+					MathMLElement end = e.SuperScript is not null ? e.SuperScript : 
+						(e.SubScript is not null ? e.SubScript : e.Base);
 					return end.Accept(this, null);
 				}
 				case SelectionType.Start:
@@ -387,7 +387,7 @@ namespace MathML.Rendering
 			{
 				case SelectionType.Prev:
 				{
-					if(args == e.Radicand && e.Index != null)
+					if(args == e.Radicand && e.Index is not null)
 					{
 						selection = SelectionType.End;
 						return e.Index.Accept(this, null);
@@ -395,7 +395,7 @@ namespace MathML.Rendering
 					else
 					{
 						MathMLElement p = e.ParentNode as MathMLElement;
-						return p != null ? p.Accept(this, e) : null;
+						return p is not null ? p.Accept(this, e) : null;
 					}
 				}
 				case SelectionType.Next:
@@ -404,25 +404,25 @@ namespace MathML.Rendering
 					{
 						index = 0;
 						selection = SelectionType.Start;
-						MathMLElement start = e.Index != null ? e.Index : e.Radicand;
-						return start != null ? start.Accept(this, null) : null;
+						MathMLElement start = e.Index is not null ? e.Index : e.Radicand;
+						return start is not null ? start.Accept(this, null) : null;
 					}
 					if(args == e.Index) 
 					{
 						MathMLElement next = e.Radicand;
 						selection = SelectionType.Start;
-						return next != null ? next.Accept(this, null) : null;
+						return next is not null ? next.Accept(this, null) : null;
 					}
 					else
 					{
 						MathMLElement p = e.ParentNode as MathMLElement;
-						return p != null ? p.Accept(this, e) : null;
+						return p is not null ? p.Accept(this, e) : null;
 					}
 				}
 				case SelectionType.End:
 				{
-					MathMLElement end = e.Radicand != null ? e.Radicand : e.Index;
-					return end != null ? end.Accept(this, null) : null;
+					MathMLElement end = e.Radicand is not null ? e.Radicand : e.Index;
+					return end is not null ? end.Accept(this, null) : null;
 				}
 				case SelectionType.Start:
 				{
@@ -462,7 +462,7 @@ namespace MathML.Rendering
 			{
 				case SelectionType.Prev:
 				{
-					if(args == e.Denominator && e.Numerator != null)
+					if(args == e.Denominator && e.Numerator is not null)
 					{
 						selection = SelectionType.End;
 						return e.Numerator.Accept(this, null);
@@ -470,7 +470,7 @@ namespace MathML.Rendering
 					else
 					{
 						MathMLElement p = e.ParentNode as MathMLElement;
-						return p != null ? p.Accept(this, e) : null;
+						return p is not null ? p.Accept(this, e) : null;
 					}
 				}
 				case SelectionType.Next:
@@ -479,9 +479,9 @@ namespace MathML.Rendering
 					{
 						index = 0;
 						selection = SelectionType.Start;
-                        return e.Numerator != null ? e.Numerator.Accept(this, e) : null;
+                        return e.Numerator is not null ? e.Numerator.Accept(this, e) : null;
 					}
-					else if(args == e.Numerator && e.Denominator != null) 
+					else if(args == e.Numerator && e.Denominator is not null) 
 					{
 						selection = SelectionType.Start;
 						return e.Denominator.Accept(this, null);
@@ -489,12 +489,12 @@ namespace MathML.Rendering
 					else
 					{
 						MathMLElement p = e.ParentNode as MathMLElement;
-						return p != null ? p.Accept(this, e) : null;
+						return p is not null ? p.Accept(this, e) : null;
 					}
 				}
 				case SelectionType.End:
 				{
-					return e.Denominator != null ? e.Denominator.Accept(this, null) : null;
+					return e.Denominator is not null ? e.Denominator.Accept(this, null) : null;
 				}
 				case SelectionType.Start:
 				{
@@ -622,7 +622,7 @@ namespace MathML.Rendering
 			else
 			{
 				MathMLElement elm = e.FirstChild as MathMLElement;
-				return elm != null ? elm.Accept(this, args) : e;
+				return elm is not null ? elm.Accept(this, args) : e;
 			}
 		}
 
@@ -635,7 +635,7 @@ namespace MathML.Rendering
 			{
 				case SelectionType.Prev:
 				{
-					if((n = PreviousMathSibling(c)) != null)
+					if((n = PreviousMathSibling(c)) is not null)
 					{
 						return n;
 					}
@@ -647,7 +647,7 @@ namespace MathML.Rendering
 				}
 				case SelectionType.Next:
 				{
-					if((n = NextMathSibling(c)) != null)
+					if((n = NextMathSibling(c)) is not null)
 					{
 						selection = SelectionType.Start;
 						index = 0;
@@ -662,12 +662,12 @@ namespace MathML.Rendering
 				case SelectionType.Start:
 				{
 					n = e.FirstChild as MathMLElement;
-					return n != null ? n.Accept(this, null) : null;
+					return n is not null ? n.Accept(this, null) : null;
 				} 
 				case SelectionType.End:
 				{
 					n = e.LastChild as MathMLElement;
-					return n != null ? n.Accept(this, null) : null;
+					return n is not null ? n.Accept(this, null) : null;
 				}
 				default:
 				{
@@ -734,7 +734,7 @@ namespace MathML.Rendering
 			for(int i = 0; i < list.Count; i++)
 			{
 				MathMLElement n = list.Item(i) as MathMLElement;
-				if(n != null) return n;
+				if(n is not null) return n;
 			}
 			return null;
 		}
@@ -745,7 +745,7 @@ namespace MathML.Rendering
 			for(int i = list.Count - 1; i >= 0; i--)
 			{
 				MathMLElement n = list.Item(i) as MathMLElement;
-				if(n != null) return n;
+				if(n is not null) return n;
 			}
 			return null;
 		}
@@ -753,7 +753,7 @@ namespace MathML.Rendering
 		private static MathMLElement PreviousMathSibling(MathMLElement e)
 		{
 			XmlNode s = e.PreviousSibling;
-			while(s != null && !(s is MathMLElement))
+			while(s is not null && !(s is MathMLElement))
 			{
 				s = s.PreviousSibling;
 			}
@@ -763,7 +763,7 @@ namespace MathML.Rendering
 		private static MathMLElement NextMathSibling(MathMLElement e)
 		{
 			XmlNode s = e.NextSibling;
-			while(s != null && !(s is MathMLElement))
+			while(s is not null && !(s is MathMLElement))
 			{
 				s = s.NextSibling;
 			}

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace Altaxo.Gui.Autostart
   /// <seealso cref="System.Windows.Input.ICommand" />
   public class StartTextureManager : ICommand
   {
-    public event EventHandler CanExecuteChanged;
+    public event EventHandler CanExecuteChanged { add { } remove { } }
 
     public bool CanExecute(object parameter)
     {

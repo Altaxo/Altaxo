@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -47,7 +48,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ClosedCardinalSpline)obj;
-        info.AddBaseValueEmbedded(s, typeof(ClosedCardinalSpline).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(ClosedCardinalSpline).BaseType!);
         info.AddValue("Tension", s._tension);
         info.CreateArray("Points", s._curvePoints.Count);
         for (int i = 0; i < s._curvePoints.Count; i++)
@@ -55,10 +56,10 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (ClosedCardinalSpline)o : new ClosedCardinalSpline(info);
-        info.GetBaseValueEmbedded(s, typeof(ClosedCardinalSpline).BaseType, parent);
+        var s = (ClosedCardinalSpline?)o ?? new ClosedCardinalSpline(info);
+        info.GetBaseValueEmbedded(s, typeof(ClosedCardinalSpline).BaseType!, parent);
         s._tension = info.GetDouble("Tension");
         s._curvePoints.Clear();
         int count = info.OpenArray("Points");
@@ -103,22 +104,36 @@ namespace Altaxo.Graph.Gdi.Shapes
     public ClosedCardinalSpline(ClosedCardinalSpline from)
       : base(from)  // all is done here, since CopyFrom is virtual!
     {
+      CopyFrom(from, false);
+    }
+
+    protected void CopyFrom(ClosedCardinalSpline from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      _tension = from._tension;
+      _curvePoints.Clear();
+      _curvePoints.AddRange(from._curvePoints);
     }
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (obj is ClosedCardinalSpline from)
       {
-        var from = obj as ClosedCardinalSpline;
-        if (null != from)
+        using (var suspendToken = SuspendGetToken())
         {
-          _tension = from._tension;
-          _curvePoints.Clear();
-          _curvePoints.AddRange(from._curvePoints);
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     #endregion Constructors
@@ -247,9 +262,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       return InternalGetPath(_location.AbsoluteVectorPivotToLeftUpper);
     }
 
-    public override IHitTestObject HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData htd)
     {
-      HitTestObjectBase result = null;
+      HitTestObjectBase? result = null;
       GraphicsPath gp = GetPath();
 
       using var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen);
@@ -270,7 +285,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
-      if (result != null)
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
 
       return result;
@@ -318,7 +333,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
       }
 
-      public override IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel)
+      public override IGripManipulationHandle[]? GetGrips(double pageScale, int gripLevel)
       {
         if (gripLevel <= 1)
         {
@@ -363,7 +378,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       private int _pointNumber;
       private PointD2D _offset;
-      private ISuspendToken _suspendToken;
+      private ISuspendToken? _suspendToken;
 
       public ClosedCardinalSplinePathNodeGripHandle(IHitTestObject parent, int pointNr, PointD2D gripCenter, double gripRadius)
         : base(parent, new PointD2D(0, 0), gripCenter, gripRadius)
@@ -378,7 +393,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         var obj = (ClosedCardinalSpline)GraphObject;
         newPosition = obj._transformation.InverseTransformPoint(newPosition);
 
-        if (null == _suspendToken)
+        if (_suspendToken is null)
           _suspendToken = obj.SuspendGetToken();
         obj.SetPoint(_pointNumber, newPosition - _offset);
       }

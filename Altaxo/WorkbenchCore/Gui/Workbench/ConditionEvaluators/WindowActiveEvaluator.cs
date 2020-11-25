@@ -39,33 +39,35 @@ namespace Altaxo.Gui.Workbench
   /// </example>
   public class WindowActiveConditionEvaluator : IConditionEvaluator
   {
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object? caller, Condition condition)
     {
-      var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
-      if (!(caller is IViewContent activeViewContent)) // active view content is coming from the data context of the menu
+      IViewContent? activeViewContent = caller as IViewContent;
+      if (activeViewContent is null && Altaxo.Current.GetService<Workbench.IWorkbenchEx>() is { } workbench) // active view content is probably coming from the data context of the menu
+      {
         activeViewContent = workbench.ActiveViewContent; // else active view content is retrieved from the workbench
+      }
 
       string activeWindow = condition.Properties["activewindow"];
       if (activeWindow == "*")
       {
-        return activeViewContent != null;
+        return activeViewContent is not null;
       }
 
-      Type activeWindowType = condition.AddIn.FindType(activeWindow);
-      if (activeWindowType == null)
+      var activeWindowType = condition.AddIn.FindType(activeWindow);
+      if (activeWindowType is null)
       {
         Current.Log.WarnFormatted("WindowActiveCondition: cannot find Type {0}", activeWindow);
         return false;
       }
 
       // ask the active view content, if it has a sub-content of the given window type
-      if (null != activeViewContent?.GetService(activeWindowType))
+      if (activeViewContent?.GetService(activeWindowType) is not null)
         return true;
 
-      if (activeViewContent == null)
+      if (activeViewContent is null)
         return false;
 
-      Type currentType = activeViewContent.GetType();
+      Type? currentType = activeViewContent.GetType();
       if (currentType.FullName == activeWindow)
         return true;
       foreach (Type interf in currentType.GetInterfaces())
@@ -73,8 +75,9 @@ namespace Altaxo.Gui.Workbench
         if (interf.FullName == activeWindow)
           return true;
       }
-      while ((currentType = currentType.BaseType) != null)
+      while (currentType.BaseType is { } currentBaseType)
       {
+        currentType = currentBaseType;
         if (currentType.FullName == activeWindow)
           return true;
       }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -31,6 +32,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
+  using System.Diagnostics.CodeAnalysis;
   using Data;
   using Geometry;
   using Graph.Plot.Data;
@@ -44,18 +46,53 @@ namespace Altaxo.Graph.Gdi.Plot
     protected G2DPlotStyleCollection _plotStyles;
 
     [NonSerialized]
-    private Processed2DPlotData _cachedPlotDataUsedForPainting;
+    private Processed2DPlotData? _cachedPlotDataUsedForPainting;
 
     [NonSerialized]
-    private PlotGroupStyleCollection _localGroups;
+    private PlotGroupStyleCollection? _localGroups;
+
+    protected G2DPlotItem(G2DPlotStyleCollection plotStyles)
+    {
+      ChildSetMember(ref _plotStyles, plotStyles);
+    }
+
+    protected G2DPlotItem(G2DPlotItem from)
+    {
+      CopyFrom(from, false);
+    }
+
+    [MemberNotNull(nameof(_plotStyles))]
+    protected void CopyFrom(G2DPlotItem from, bool withBaseMembers)
+    {
+      ChildCopyToMember(ref _plotStyles, from._plotStyles);
+    }
+
+    public override bool CopyFrom(object obj)
+    {
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (obj is G2DPlotItem from)
+      {
+        using (var suspendToken = SuspendGetToken())
+        {
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
+        }
+        return true;
+      }
+      else
+      {
+        return base.CopyFrom(obj);
+      }
+    }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _plotStyles)
-        yield return new Main.DocumentNodeAndName(_plotStyles, () => _plotStyles = null, "Style");
+      if (_plotStyles is not null)
+        yield return new Main.DocumentNodeAndName(_plotStyles, () => _plotStyles = null!, "Style");
 
-      if (null != _localGroups)
-        yield return new Main.DocumentNodeAndName(_localGroups, () => _localGroups = null, "LocalPlotGroupStyles");
+      if (_localGroups is not null)
+        yield return new Main.DocumentNodeAndName(_localGroups, () => _localGroups = null!, "LocalPlotGroupStyles");
     }
 
     public override Main.IDocumentLeafNode StyleObject
@@ -72,8 +109,8 @@ namespace Altaxo.Graph.Gdi.Plot
       }
       set
       {
-        if (null == value)
-          throw new System.ArgumentNullException();
+        if (value is null)
+          throw new System.ArgumentNullException(nameof(Style));
 
         if (ChildSetMember(ref _plotStyles, value))
         {
@@ -82,29 +119,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
-    public abstract Processed2DPlotData GetRangesAndPoints(IPlotArea layer);
-
-    public void CopyFrom(G2DPlotItem from)
-    {
-      CopyFrom((PlotItem)from);
-    }
-
-    public override bool CopyFrom(object obj)
-    {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-
-      var copied = base.CopyFrom(obj);
-      if (copied)
-      {
-        var from = obj as G2DPlotItem;
-        if (from != null)
-        {
-          Style = from.Style.Clone();
-        }
-      }
-      return copied;
-    }
+    public abstract Processed2DPlotData? GetRangesAndPoints(IPlotArea layer);
 
     #region IPlotItem Members
 
@@ -117,9 +132,8 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
     {
-      Processed2DPlotData pdata = GetRangesAndPoints(layer);
-      if (null == _localGroups)
-        _localGroups = new PlotGroupStyleCollection() { ParentObject = this };
+      var pdata = GetRangesAndPoints(layer);
+      _localGroups ??= new PlotGroupStyleCollection() { ParentObject = this };
 
       using (var suspendToken = _localGroups.SuspendGetToken())
       {
@@ -132,7 +146,8 @@ namespace Altaxo.Graph.Gdi.Plot
         _localGroups.BeginPrepare();
 
         // now prepare the groups
-        _plotStyles.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
+        if (pdata is not null)
+          _plotStyles.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
 
         // for the group styles in the local group, PrepareStep and EndPrepare must be called,
         _localGroups.PrepareStep();
@@ -144,6 +159,9 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
     {
+      if (_localGroups is null)
+        throw new InvalidProgramException($"{nameof(_localGroups)} is null. Call {nameof(PrepareGroupStyles)} before!");
+
       using (var suspendToken = _localGroups.SuspendGetToken())
       {
         // for externalGroups, BeginApply was called already in the PlotItemCollection, for localGroups it has to be called here
@@ -178,21 +196,21 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #endregion IPlotItem Members
 
-    public Processed2DPlotData GetPlotData(IPlotArea layer)
+    public Processed2DPlotData? GetPlotData(IPlotArea layer)
     {
-      if (_cachedPlotDataUsedForPainting == null)
+      if (_cachedPlotDataUsedForPainting is null)
         _cachedPlotDataUsedForPainting = GetRangesAndPoints(layer);
 
       return _cachedPlotDataUsedForPainting;
     }
 
-    public override void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem prevPlotItem, IGPlotItem nextPlotItem)
+    public override void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem? prevPlotItem, IGPlotItem? nextPlotItem)
     {
-      Processed2DPlotData pdata = GetRangesAndPoints(layer);
-      if (pdata != null)
+      var pdata = GetRangesAndPoints(layer);
+      if (pdata is not null)
         Paint(g, layer, pdata,
-            (prevPlotItem is G2DPlotItem) ? ((G2DPlotItem)prevPlotItem).GetPlotData(layer) : null,
-            (nextPlotItem is G2DPlotItem) ? ((G2DPlotItem)nextPlotItem).GetPlotData(layer) : null
+            (prevPlotItem is G2DPlotItem prevPI) ? prevPI.GetPlotData(layer) : null,
+            (nextPlotItem is G2DPlotItem nextPI) ? nextPI.GetPlotData(layer) : null
             );
     }
 
@@ -204,11 +222,11 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="plotdata">The plot data. Since the data are transformed, you should not rely that the physical values in this item correspond to the area coordinates.</param>
     /// <param name="prevPlotData">Plot data of the previous plot item.</param>
     /// <param name="nextPlotData">Plot data of the next plot item.</param>
-    public virtual void Paint(Graphics g, IPlotArea layer, Processed2DPlotData plotdata, Processed2DPlotData prevPlotData, Processed2DPlotData nextPlotData)
+    public virtual void Paint(Graphics g, IPlotArea layer, Processed2DPlotData plotdata, Processed2DPlotData? prevPlotData, Processed2DPlotData? nextPlotData)
     {
       _cachedPlotDataUsedForPainting = plotdata ?? throw new ArgumentNullException(nameof(plotdata));
 
-      if (null != _plotStyles)
+      if (_plotStyles is not null)
       {
         _plotStyles.Paint(g, layer, plotdata, prevPlotData, nextPlotData);
       }
@@ -220,16 +238,10 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
     /// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
-    public override IHitTestObject HitTest(IPlotArea layer, PointD2D hitpoint)
+    public override IHitTestObject? HitTest(IPlotArea layer, PointD2D hitpoint)
     {
-      Processed2DPlotData pdata = _cachedPlotDataUsedForPainting;
-      if (null == pdata)
-        return null;
-
-      PlotRangeList rangeList = pdata.RangeList;
-      PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-
-      if (ptArray.Length < 2)
+      var pdata = _cachedPlotDataUsedForPainting;
+      if (pdata is null || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray) || ptArray.Length < 2)
         return null;
 
       if (ptArray.Length < 2048)
@@ -272,13 +284,11 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
     /// <returns>The information about the point that is nearest to the location, or null if it can not be determined.</returns>
-    public XYScatterPointInformation GetNearestPlotPoint(IPlotArea layer, PointD2D hitpoint)
+    public XYScatterPointInformation? GetNearestPlotPoint(IPlotArea layer, PointD2D hitpoint)
     {
-      Processed2DPlotData pdata;
-      if (null != (pdata = _cachedPlotDataUsedForPainting))
+
+      if (_cachedPlotDataUsedForPainting is { } pdata && pdata.RangeList is { } rangeList && pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray && ptArray.Length > 1)
       {
-        PlotRangeList rangeList = pdata.RangeList;
-        PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
         double mindistance = double.MaxValue;
         int minindex = -1;
         for (int i = 1; i < ptArray.Length; i++)
@@ -308,15 +318,10 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="oldplotindex">Old plot index.</param>
     /// <param name="increment">Increment to the plot index.</param>
     /// <returns>Information about the new plot point find at position (oldplotindex+increment). Returns null if no such point exists.</returns>
-    public XYScatterPointInformation GetNextPlotPoint(IPlotArea layer, int oldplotindex, int increment)
+    public XYScatterPointInformation? GetNextPlotPoint(IPlotArea layer, int oldplotindex, int increment)
     {
-      Processed2DPlotData pdata;
-      if (null != (pdata = _cachedPlotDataUsedForPainting))
+      if (_cachedPlotDataUsedForPainting is { } pdata && pdata.RangeList is { } rangeList && pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray && ptArray.Length > 0)
       {
-        PlotRangeList rangeList = pdata.RangeList;
-        PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-        if (ptArray.Length == 0)
-          return null;
 
         int minindex = oldplotindex + increment;
         minindex = Math.Max(minindex, 0);

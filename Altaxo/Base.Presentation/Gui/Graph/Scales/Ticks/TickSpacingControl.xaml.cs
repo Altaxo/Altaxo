@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       InitializeComponent();
     }
 
-    public event Action TickSpacingTypeChanged;
+    public event Action? TickSpacingTypeChanged;
 
     public void InitializeTickSpacingType(Collections.SelectableListNodeList names)
     {
@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     private void EhTickSpacingType_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
     {
       e.Handled = true;
-      if (null != TickSpacingTypeChanged)
+      if (TickSpacingTypeChanged is not null)
       {
         var _cbTickSpacingType = (ComboBox)sender;
         GuiHelper.SynchronizeSelectionFromGui(_cbTickSpacingType);

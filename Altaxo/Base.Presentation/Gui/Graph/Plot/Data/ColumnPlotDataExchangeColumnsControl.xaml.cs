@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,59 +49,59 @@ namespace Altaxo.Gui.Graph.Plot.Data
   /// </summary>
   public partial class ColumnPlotDataExchangeColumnsControl : UserControl, IColumnPlotDataExchangeColumnsView
   {
-    public event Action SelectedTableChanged;
+    public event Action? SelectedTableChanged { add { } remove { } }
 
-    public event Action<PlotColumnTag> PlotItemColumn_AddTo;
+    public event Action<PlotColumnTag>? PlotItemColumn_AddTo;
 
-    public event Action<PlotColumnTag> PlotItemColumn_Edit;
+    public event Action<PlotColumnTag>? PlotItemColumn_Edit;
 
-    public event Action<PlotColumnTag> PlotItemColumn_Erase;
+    public event Action<PlotColumnTag>? PlotItemColumn_Erase;
 
-    public event Action<PlotColumnTag> OtherAvailableColumn_AddTo;
+    public event Action<PlotColumnTag>? OtherAvailableColumn_AddTo { add { } remove { } }
 
-    public event Action<PlotColumnTag> Transformation_AddTo;
+    public event Action<PlotColumnTag>? Transformation_AddTo { add { } remove { } }
 
-    public event Action<PlotColumnTag> Transformation_AddAsSingle;
+    public event Action<PlotColumnTag>? Transformation_AddAsSingle { add { } remove { } }
 
-    public event Action<PlotColumnTag> Transformation_AddAsPrepending;
+    public event Action<PlotColumnTag>? Transformation_AddAsPrepending { add { } remove { } }
 
-    public event Action<PlotColumnTag> Transformation_AddAsAppending;
+    public event Action<PlotColumnTag>? Transformation_AddAsAppending { add { } remove { } }
 
-    public event Action<PlotColumnTag> Transformation_Edit;
+    public event Action<PlotColumnTag>? Transformation_Edit { add { } remove { } }
 
-    public event Action<PlotColumnTag> Transformation_Erase;
+    public event Action<PlotColumnTag>? Transformation_Erase { add { } remove { } }
 
-    public event Action<int> SelectedGroupNumberChanged;
+    public event Action<int>? SelectedGroupNumberChanged;
 
-    public event Action SelectedMatchingTableChanged;
+    public event Action? SelectedMatchingTableChanged { add { } remove { } }
 
-    public event CanStartDragDelegate AvailableTableColumns_CanStartDrag;
+    public event CanStartDragDelegate? AvailableTableColumns_CanStartDrag;
 
-    public event StartDragDelegate AvailableTableColumns_StartDrag;
+    public event StartDragDelegate? AvailableTableColumns_StartDrag;
 
-    public event DragEndedDelegate AvailableTableColumns_DragEnded;
+    public event DragEndedDelegate? AvailableTableColumns_DragEnded;
 
-    public event DragCancelledDelegate AvailableTableColumns_DragCancelled;
+    public event DragCancelledDelegate? AvailableTableColumns_DragCancelled;
 
-    public event CanStartDragDelegate OtherAvailableItems_CanStartDrag;
+    public event CanStartDragDelegate? OtherAvailableItems_CanStartDrag { add { } remove { } }
 
-    public event StartDragDelegate OtherAvailableItems_StartDrag;
+    public event StartDragDelegate? OtherAvailableItems_StartDrag { add { } remove { } }
 
-    public event DragEndedDelegate OtherAvailableItems_DragEnded;
+    public event DragEndedDelegate? OtherAvailableItems_DragEnded { add { } remove { } }
 
-    public event DragCancelledDelegate OtherAvailableItems_DragCancelled;
+    public event DragCancelledDelegate? OtherAvailableItems_DragCancelled { add { } remove { } }
 
-    public event CanStartDragDelegate AvailableTransformations_CanStartDrag;
+    public event CanStartDragDelegate? AvailableTransformations_CanStartDrag { add { } remove { } }
 
-    public event StartDragDelegate AvailableTransformations_StartDrag;
+    public event StartDragDelegate? AvailableTransformations_StartDrag { add { } remove { } }
 
-    public event DragEndedDelegate AvailableTransformations_DragEnded;
+    public event DragEndedDelegate? AvailableTransformations_DragEnded { add { } remove { } }
 
-    public event DragCancelledDelegate AvailableTransformations_DragCancelled;
+    public event DragCancelledDelegate? AvailableTransformations_DragCancelled { add { } remove { } }
 
-    public event DropCanAcceptDataDelegate PlotItemColumn_DropCanAcceptData;
+    public event DropCanAcceptDataDelegate? PlotItemColumn_DropCanAcceptData;
 
-    public event DropDelegate PlotItemColumn_Drop;
+    public event DropDelegate? PlotItemColumn_Drop;
 
     private ItemsControl _guiAvailableTableColumnsCurrentlyActive;
 
@@ -221,7 +222,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (null == _availableDataColumnsDragSource)
+        if (_availableDataColumnsDragSource is null)
           _availableDataColumnsDragSource = new AvailableDataColumns_DragSource(this);
         return _availableDataColumnsDragSource;
       }
@@ -246,7 +247,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       {
         //GuiHelper.SynchronizeSelectionFromGui(_parentControl._guiAvailableTableColumns);
         var result = _parentControl.AvailableTableColumns_StartDrag?.Invoke(dragInfo.SourceItems);
-        if (null != result)
+        if (result is not null)
         {
           dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
           dragInfo.Data = result.Value.Data;
@@ -275,7 +276,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (null == _columTextBoxes_DropTarget)
+        if (_columTextBoxes_DropTarget is null)
           _columTextBoxes_DropTarget = new ColumTextBoxes_DropTarget(this);
         return _columTextBoxes_DropTarget;
       }
@@ -308,7 +309,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey));
 
-        if (null != result)
+        if (result is not null)
         {
           resultingEffect = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
           adornerType = result.Value.ItemIsSwallowingData ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
@@ -333,7 +334,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey)
           );
 
-        if (null != result)
+        if (result is not null)
         {
           dropInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.IsCopy, result.Value.IsMove); // it is important to get back the resulting effect to dropInfo, because dropInfo informs the drag handler about the resulting effect, which can e.g. delete the items after a move operation
         }
@@ -352,7 +353,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (_columnAddToCommand == null)
+        if (_columnAddToCommand is null)
           _columnAddToCommand = new RelayCommand(EhColumn_AddToCommand);
         return _columnAddToCommand;
       }
@@ -382,7 +383,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (_columnEditCommand == null)
+        if (_columnEditCommand is null)
           _columnEditCommand = new RelayCommand(EhColumn_EditCommand);
         return _columnEditCommand;
       }
@@ -403,7 +404,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (_columnEraseCommand == null)
+        if (_columnEraseCommand is null)
           _columnEraseCommand = new RelayCommand(EhColumn_EraseCommand);
         return _columnEraseCommand;
       }

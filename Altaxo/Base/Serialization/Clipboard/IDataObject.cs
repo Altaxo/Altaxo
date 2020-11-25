@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Serialization.Clipboard
 {
@@ -42,7 +40,7 @@ namespace Altaxo.Serialization.Clipboard
     /// <returns>
     /// A data object with the data in the specified format, or null if the data is not available in the specified format.
     /// </returns>
-    object GetData(string format, bool autoConvert);
+    object? GetData(string format, bool autoConvert);
 
     /// <summary>
     /// Retrieves a data object in a specified format; the data format is specified by a <see cref="T:System.Type" /> object.
@@ -51,7 +49,7 @@ namespace Altaxo.Serialization.Clipboard
     /// <returns>
     /// A data object with the data in the specified format, or null if the data is not available in the specified format.
     /// </returns>
-    object GetData(Type format);
+    object? GetData(Type format);
 
     /// <summary>
     /// Retrieves a data object in a specified format; the data format is specified by a string.
@@ -60,7 +58,7 @@ namespace Altaxo.Serialization.Clipboard
     /// <returns>
     /// A data object with the data in the specified format, or null if the data is not available in the specified format.
     /// </returns>
-    object GetData(string format);
+    object? GetData(string format);
 
     /// <summary>
     /// Checks to see whether the data is available in, or can be converted to, a specified format. A Boolean flag indicates whether to check if the data can be converted to the specified format, if it is not available in that format.

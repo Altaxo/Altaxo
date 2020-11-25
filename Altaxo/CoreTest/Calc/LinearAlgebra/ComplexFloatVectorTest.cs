@@ -26,88 +26,88 @@ using System;
 using System.Collections;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
-  [TestFixture]
+
   public class ComplexFloatVectorTest
   {
-    private const float TOLERENCE = 0.001f;
+    private const float TOLERANCE = 0.001f;
 
     //Test dimensions Constructor.
-    [Test]
+    [Fact]
     public void CtorDimensions()
     {
       var test = new ComplexFloatVector(2);
 
-      Assert.AreEqual(test.Length, 2);
-      Assert.AreEqual(test[0], (ComplexFloat)0);
-      Assert.AreEqual(test[1], (ComplexFloat)0);
+      Assert.Equal(2, test.Length);
+      Assert.Equal(test[0], (ComplexFloat)0);
+      Assert.Equal(test[1], (ComplexFloat)0);
     }
 
     //Test Copy Constructor.
-    [Test]
+    [Fact]
     public void CtorDimensionsZero()
     {
-      Assert.Throws(typeof(ArgumentException), () =>
+      Assert.Throws<ArgumentException>(() =>
       {
         var test = new ComplexFloatVector(0);
       });
     }
 
     //Test Copy Constructor.
-    [Test]
+    [Fact]
     public void CtorDimensionsNegative()
     {
-      Assert.Throws(typeof(ArgumentException), () =>
+      Assert.Throws<ArgumentException>(() =>
       {
         var test = new ComplexFloatVector(-1);
       });
     }
 
     //Test Intital Values Constructor.
-    [Test]
+    [Fact]
     public void CtorInitialValues()
     {
       var test = new ComplexFloatVector(2, 1);
 
-      Assert.AreEqual(test.Length, 2);
-      Assert.AreEqual(test[0], (ComplexFloat)1);
-      Assert.AreEqual(test[1], (ComplexFloat)1);
+      Assert.Equal(2, test.Length);
+      Assert.Equal(test[0], (ComplexFloat)1);
+      Assert.Equal(test[1], (ComplexFloat)1);
     }
 
     //Test Array Constructor
-    [Test]
+    [Fact]
     public void CtorArray()
     {
       float[] testvector = new float[2] { 0, 1 };
 
       var test = new ComplexFloatVector(testvector);
-      Assert.AreEqual(test.Length, testvector.Length);
-      Assert.AreEqual(test[0], (ComplexFloat)testvector[0]);
-      Assert.AreEqual(test[1], (ComplexFloat)testvector[1]);
+      Assert.Equal(test.Length, testvector.Length);
+      Assert.Equal(test[0], (ComplexFloat)testvector[0]);
+      Assert.Equal(test[1], (ComplexFloat)testvector[1]);
     }
 
     //*TODO IList Constructor
 
     //Test Copy Constructor.
-    [Test]
+    [Fact]
     public void CtorCopy()
     {
       var a = new ComplexFloatVector(new float[2] { 0, 1 });
       var b = new ComplexFloatVector(a);
 
-      Assert.AreEqual(b.Length, a.Length);
-      Assert.AreEqual(b[0], a[0]);
-      Assert.AreEqual(b[1], a[1]);
+      Assert.Equal(b.Length, a.Length);
+      Assert.Equal(b[0], a[0]);
+      Assert.Equal(b[1], a[1]);
     }
 
     //Test Copy Constructor.
-    [Test]
+    [Fact]
     public void CtorCopyNull()
     {
-      Assert.Throws(typeof(ArgumentNullException), () =>
+      Assert.Throws<ArgumentNullException>(() =>
       {
         ComplexFloatVector a = null;
         var b = new ComplexFloatVector(a);
@@ -115,10 +115,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     }
 
     //Test Index Access
-    [Test]
+    [Fact]
     public void IndexAccessGetNegative()
     {
-      Assert.Throws(typeof(IndexOutOfRangeException), () =>
+      Assert.Throws<IndexOutOfRangeException>(() =>
       {
         var a = new ComplexFloatVector(new float[2] { 0, 1 });
         ComplexFloat b = a[-1];
@@ -126,10 +126,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     }
 
     //Test Index Access
-    [Test]
+    [Fact]
     public void IndexAccessSetNegative()
     {
-      Assert.Throws(typeof(IndexOutOfRangeException), () =>
+      Assert.Throws<IndexOutOfRangeException>(() =>
       {
         var a = new ComplexFloatVector(2)
         {
@@ -139,10 +139,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     }
 
     //Test Index Access
-    [Test]
+    [Fact]
     public void IndexAccessGetOutOfRange()
     {
-      Assert.Throws(typeof(IndexOutOfRangeException), () =>
+      Assert.Throws<IndexOutOfRangeException>(() =>
       {
         var a = new ComplexFloatVector(new float[2] { 0, 1 });
         ComplexFloat b = a[2];
@@ -150,10 +150,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     }
 
     //Test Index Access
-    [Test]
+    [Fact]
     public void IndexAccessSetOutOfRange()
     {
-      Assert.Throws(typeof(IndexOutOfRangeException), () =>
+      Assert.Throws<IndexOutOfRangeException>(() =>
       {
         var a = new ComplexFloatVector(2)
         {
@@ -163,8 +163,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     }
 
     //Test Equals
-    [Test]
-    public void Equals()
+    [Fact]
+    public void TestEquals()
     {
       var a = new ComplexFloatVector(2, 4);
       var b = new ComplexFloatVector(2, 4);
@@ -176,19 +176,19 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
       var d = new ComplexFloatVector(2, 5);
       ComplexFloatVector e = null;
-      Assert.IsTrue(a.Equals(b));
-      Assert.IsTrue(b.Equals(a));
-      Assert.IsTrue(a.Equals(c));
-      Assert.IsTrue(b.Equals(c));
-      Assert.IsTrue(c.Equals(b));
-      Assert.IsTrue(c.Equals(a));
-      Assert.IsFalse(a.Equals(d));
-      Assert.IsFalse(d.Equals(b));
-      Assert.IsFalse(a.Equals(e));
+      Assert.True(a.Equals(b));
+      Assert.True(b.Equals(a));
+      Assert.True(a.Equals(c));
+      Assert.True(b.Equals(c));
+      Assert.True(c.Equals(b));
+      Assert.True(c.Equals(a));
+      Assert.False(a.Equals(d));
+      Assert.False(d.Equals(b));
+      Assert.False(a.Equals(e));
     }
 
     //Test get real and imaginary components
-    [Test]
+    [Fact]
     public void RealImag()
     {
       var a = new ComplexFloatVector(2)
@@ -200,16 +200,16 @@ namespace AltaxoTest.Calc.LinearAlgebra
       FloatVector a_real = a.Real;
       FloatVector a_imag = a.Imag;
 
-      Assert.AreEqual(a_real[0], a[0].Real);
-      Assert.AreEqual(a_imag[0], a[0].Imag);
-      Assert.AreEqual(a_real[1], a[1].Real);
-      Assert.AreEqual(a_imag[1], a[1].Imag);
-      Assert.AreEqual(a_real.Length, a.Length);
-      Assert.AreEqual(a_imag.Length, a.Length);
+      Assert.Equal(a_real[0], a[0].Real);
+      Assert.Equal(a_imag[0], a[0].Imag);
+      Assert.Equal(a_real[1], a[1].Real);
+      Assert.Equal(a_imag[1], a[1].Imag);
+      Assert.Equal(a_real.Length, a.Length);
+      Assert.Equal(a_imag.Length, a.Length);
     }
 
     //test GetHashCode
-    [Test]
+    [Fact]
     public void TestHashCode()
     {
       var a = new ComplexFloatVector(2)
@@ -219,49 +219,49 @@ namespace AltaxoTest.Calc.LinearAlgebra
       };
 
       int hash = a.GetHashCode();
-      Assert.AreEqual(hash, 1);
+      Assert.Equal(1, hash);
     }
 
     //Test GetInternalData
-    [Test]
+    [Fact]
     public void GetInternalData()
     {
       float[] testvector = new float[2] { 0, 1 };
       var test = new ComplexFloatVector(testvector);
       ComplexFloat[] internaldata = test.GetInternalData();
 
-      Assert.AreEqual(internaldata.Length, testvector.Length);
-      Assert.AreEqual(internaldata[0], (ComplexFloat)testvector[0]);
-      Assert.AreEqual(internaldata[1], (ComplexFloat)testvector[1]);
+      Assert.Equal(internaldata.Length, testvector.Length);
+      Assert.Equal(internaldata[0], (ComplexFloat)testvector[0]);
+      Assert.Equal(internaldata[1], (ComplexFloat)testvector[1]);
     }
 
     //Test ToArray
-    [Test]
+    [Fact]
     public void ToArray()
     {
       float[] testvector = new float[2] { 0, 1 };
       var test = new ComplexFloatVector(testvector);
       ComplexFloat[] internaldata = test.ToArray();
 
-      Assert.AreEqual(internaldata.Length, testvector.Length);
-      Assert.AreEqual(internaldata[0], (ComplexFloat)testvector[0]);
-      Assert.AreEqual(internaldata[1], (ComplexFloat)testvector[1]);
+      Assert.Equal(internaldata.Length, testvector.Length);
+      Assert.Equal(internaldata[0], (ComplexFloat)testvector[0]);
+      Assert.Equal(internaldata[1], (ComplexFloat)testvector[1]);
     }
 
     //Test GetSubVector
-    [Test]
+    [Fact]
     public void GetSubVector()
     {
       var test = new ComplexFloatVector(new float[4] { 0, 1, 2, 3 });
       ComplexFloatVector subvector = test.GetSubVector(1, 2);
 
-      Assert.AreEqual(subvector.Length, 2);
-      Assert.AreEqual(subvector[0], test[1]);
-      Assert.AreEqual(subvector[1], test[2]);
+      Assert.Equal(2, subvector.Length);
+      Assert.Equal(subvector[0], test[1]);
+      Assert.Equal(subvector[1], test[2]);
     }
 
     //Test Implicit cast conversion to ComplexFloatVector
-    [Test]
+    [Fact]
     public void ImplicitConversion()
     {
       float[] a = new float[4] { 0, 1, 2, 3 };
@@ -273,41 +273,41 @@ namespace AltaxoTest.Calc.LinearAlgebra
       e = b;
       f = c;
 
-      Assert.AreEqual(a.Length, d.Length);
-      Assert.AreEqual((ComplexFloat)a[0], d[0]);
-      Assert.AreEqual((ComplexFloat)a[1], d[1]);
-      Assert.AreEqual((ComplexFloat)a[2], d[2]);
-      Assert.AreEqual((ComplexFloat)a[3], d[3]);
+      Assert.Equal(a.Length, d.Length);
+      Assert.Equal((ComplexFloat)a[0], d[0]);
+      Assert.Equal((ComplexFloat)a[1], d[1]);
+      Assert.Equal((ComplexFloat)a[2], d[2]);
+      Assert.Equal((ComplexFloat)a[3], d[3]);
 
-      Assert.AreEqual(b.Length, e.Length);
-      Assert.AreEqual((ComplexFloat)b[0], e[0]);
-      Assert.AreEqual((ComplexFloat)b[1], e[1]);
-      Assert.AreEqual((ComplexFloat)b[2], e[2]);
-      Assert.AreEqual((ComplexFloat)b[3], e[3]);
+      Assert.Equal(b.Length, e.Length);
+      Assert.Equal((ComplexFloat)b[0], e[0]);
+      Assert.Equal((ComplexFloat)b[1], e[1]);
+      Assert.Equal((ComplexFloat)b[2], e[2]);
+      Assert.Equal((ComplexFloat)b[3], e[3]);
 
-      Assert.AreEqual(c.Length, f.Length);
-      Assert.AreEqual(c[0], f[0]);
-      Assert.AreEqual(c[1], f[1]);
-      Assert.AreEqual(c[2], f[2]);
-      Assert.AreEqual(c[3], f[3]);
+      Assert.Equal(c.Length, f.Length);
+      Assert.Equal(c[0], f[0]);
+      Assert.Equal(c[1], f[1]);
+      Assert.Equal(c[2], f[2]);
+      Assert.Equal(c[3], f[3]);
     }
 
     //Test Explicit cast convertion to ComplexFloatVector
-    [Test]
+    [Fact]
     public void ExplicitConversion()
     {
       var a = new ComplexDoubleVector(new double[4] { 0, 1, 2, 3 });
       var b = (ComplexFloatVector)a;
 
-      Assert.AreEqual(a.Length, b.Length);
-      Assert.AreEqual((ComplexFloat)a[0], b[0]);
-      Assert.AreEqual((ComplexFloat)a[1], b[1]);
-      Assert.AreEqual((ComplexFloat)a[2], b[2]);
-      Assert.AreEqual((ComplexFloat)a[3], b[3]);
+      Assert.Equal(a.Length, b.Length);
+      Assert.Equal((ComplexFloat)a[0], b[0]);
+      Assert.Equal((ComplexFloat)a[1], b[1]);
+      Assert.Equal((ComplexFloat)a[2], b[2]);
+      Assert.Equal((ComplexFloat)a[3], b[3]);
     }
 
     //Test GetIndex functions
-    [Test]
+    [Fact]
     public void GetIndex()
     {
       var a = new ComplexFloatVector(new float[4] { 1, 2, 3, 4 });
@@ -315,32 +315,32 @@ namespace AltaxoTest.Calc.LinearAlgebra
       var c = new ComplexFloatVector(new float[4] { 0, -1, -2, -3 });
       var d = new ComplexFloatVector(new float[4] { -3, -2, -1, 0 });
 
-      Assert.AreEqual(a.GetAbsMaximumIndex(), 3);
-      Assert.AreEqual(b.GetAbsMaximumIndex(), 0);
-      Assert.AreEqual(c.GetAbsMaximumIndex(), 3);
-      Assert.AreEqual(d.GetAbsMaximumIndex(), 0);
+      Assert.Equal(3, a.GetAbsMaximumIndex());
+      Assert.Equal(0, b.GetAbsMaximumIndex());
+      Assert.Equal(3, c.GetAbsMaximumIndex());
+      Assert.Equal(0, d.GetAbsMaximumIndex());
 
-      Assert.AreEqual(a.GetAbsMaximum(), (ComplexFloat)4);
-      Assert.AreEqual(b.GetAbsMaximum(), (ComplexFloat)3);
-      Assert.AreEqual(c.GetAbsMaximum(), (ComplexFloat)(-3));
-      Assert.AreEqual(d.GetAbsMaximum(), (ComplexFloat)(-3));
+      Assert.Equal(a.GetAbsMaximum(), (ComplexFloat)4);
+      Assert.Equal(b.GetAbsMaximum(), (ComplexFloat)3);
+      Assert.Equal(c.GetAbsMaximum(), (ComplexFloat)(-3));
+      Assert.Equal(d.GetAbsMaximum(), (ComplexFloat)(-3));
 
-      Assert.AreEqual(a.GetAbsMinimumIndex(), 0);
-      Assert.AreEqual(b.GetAbsMinimumIndex(), 3);
-      Assert.AreEqual(c.GetAbsMinimumIndex(), 0);
-      Assert.AreEqual(d.GetAbsMinimumIndex(), 3);
+      Assert.Equal(0, a.GetAbsMinimumIndex());
+      Assert.Equal(3, b.GetAbsMinimumIndex());
+      Assert.Equal(0, c.GetAbsMinimumIndex());
+      Assert.Equal(3, d.GetAbsMinimumIndex());
 
-      Assert.AreEqual(a.GetAbsMinimum(), (ComplexFloat)1);
-      Assert.AreEqual(b.GetAbsMinimum(), (ComplexFloat)0);
-      Assert.AreEqual(c.GetAbsMinimum(), (ComplexFloat)0);
-      Assert.AreEqual(d.GetAbsMinimum(), (ComplexFloat)0);
+      Assert.Equal(a.GetAbsMinimum(), (ComplexFloat)1);
+      Assert.Equal(b.GetAbsMinimum(), (ComplexFloat)0);
+      Assert.Equal(c.GetAbsMinimum(), (ComplexFloat)0);
+      Assert.Equal(d.GetAbsMinimum(), (ComplexFloat)0);
     }
 
     //Test invalid dimensions with copy
-    [Test]
+    [Fact]
     public void CopyException()
     {
-      Assert.Throws(typeof(ArgumentException), () =>
+      Assert.Throws<ArgumentException>(() =>
       {
         var a = new ComplexFloatVector(new float[4] { 0, 1, 2, 3 });
         var b = new ComplexFloatVector(5);
@@ -350,10 +350,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     }
 
     //Test invalid dimensions with swap
-    [Test]
+    [Fact]
     public void SwapException()
     {
-      Assert.Throws(typeof(ArgumentException), () =>
+      Assert.Throws<ArgumentException>(() =>
       {
         var a = new ComplexFloatVector(new float[4] { 0, 1, 2, 3 });
         var b = new ComplexFloatVector(new float[5] { 4, 5, 6, 7, 8 });
@@ -363,7 +363,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     }
 
     //Test Copy and Swap
-    [Test]
+    [Fact]
     public void CopySwap()
     {
       var a = new ComplexFloatVector(new float[4] { 0, 1, 2, 3 });
@@ -374,78 +374,78 @@ namespace AltaxoTest.Calc.LinearAlgebra
       a.Copy(c);
       b.Copy(d);
 
-      Assert.AreEqual(a.Length, c.Length);
-      Assert.AreEqual(a[0], c[0]);
-      Assert.AreEqual(a[1], c[1]);
-      Assert.AreEqual(a[2], c[2]);
-      Assert.AreEqual(a[3], c[3]);
+      Assert.Equal(a.Length, c.Length);
+      Assert.Equal(a[0], c[0]);
+      Assert.Equal(a[1], c[1]);
+      Assert.Equal(a[2], c[2]);
+      Assert.Equal(a[3], c[3]);
 
-      Assert.AreEqual(b.Length, d.Length);
-      Assert.AreEqual(b[0], d[0]);
-      Assert.AreEqual(b[1], d[1]);
-      Assert.AreEqual(b[2], d[2]);
-      Assert.AreEqual(b[3], d[3]);
+      Assert.Equal(b.Length, d.Length);
+      Assert.Equal(b[0], d[0]);
+      Assert.Equal(b[1], d[1]);
+      Assert.Equal(b[2], d[2]);
+      Assert.Equal(b[3], d[3]);
 
       a.Swap(b);
 
-      Assert.AreEqual(b.Length, c.Length);
-      Assert.AreEqual(b[0], c[0]);
-      Assert.AreEqual(b[1], c[1]);
-      Assert.AreEqual(b[2], c[2]);
-      Assert.AreEqual(b[3], c[3]);
+      Assert.Equal(b.Length, c.Length);
+      Assert.Equal(b[0], c[0]);
+      Assert.Equal(b[1], c[1]);
+      Assert.Equal(b[2], c[2]);
+      Assert.Equal(b[3], c[3]);
 
-      Assert.AreEqual(a.Length, d.Length);
-      Assert.AreEqual(a[0], d[0]);
-      Assert.AreEqual(a[1], d[1]);
-      Assert.AreEqual(a[2], d[2]);
-      Assert.AreEqual(a[3], d[3]);
+      Assert.Equal(a.Length, d.Length);
+      Assert.Equal(a[0], d[0]);
+      Assert.Equal(a[1], d[1]);
+      Assert.Equal(a[2], d[2]);
+      Assert.Equal(a[3], d[3]);
     }
 
     //Test GetDotProduct
-    [Test]
+    [Fact]
     public void GetDotProduct()
     {
       var a = new ComplexFloatVector(new float[4] { 0, 1, 2, 3 });
       var b = new ComplexFloatVector(new float[4] { 4, 5, 6, 7 });
 
-      Assert.AreEqual(a.GetDotProduct(), (ComplexFloat)14);
-      Assert.AreEqual(b.GetDotProduct(), (ComplexFloat)126);
-      Assert.AreEqual(a.GetDotProduct(b), (ComplexFloat)38);
-      Assert.AreEqual(a.GetDotProduct(b), b.GetDotProduct(a));
+      Assert.Equal(a.GetDotProduct(), (ComplexFloat)14);
+      Assert.Equal(b.GetDotProduct(), (ComplexFloat)126);
+      Assert.Equal(a.GetDotProduct(b), (ComplexFloat)38);
+      Assert.Equal(a.GetDotProduct(b), b.GetDotProduct(a));
     }
 
     //Test GetNorm
-    [Test]
+    [Fact]
     public void GetNorm()
     {
       var a = new ComplexFloatVector(new float[4] { 0, 1, 2, 3 });
       var b = new ComplexFloatVector(new float[4] { 4, 5, 6, 7 });
 
-      Assert.AreEqual(a.GetNorm(), System.Math.Sqrt(14), TOLERENCE);
-      Assert.AreEqual(a.GetNorm(), a.GetNorm(2));
-      Assert.AreEqual(a.GetNorm(0), 3);
+      AssertEx.Equal(a.GetNorm(), System.Math.Sqrt(14), TOLERANCE);
+      Assert.Equal(a.GetNorm(), a.GetNorm(2));
+      Assert.Equal(3, a.GetNorm(0));
 
-      Assert.AreEqual(b.GetNorm(), 3 * System.Math.Sqrt(14), TOLERENCE);
-      Assert.AreEqual(b.GetNorm(), b.GetNorm(2));
-      Assert.AreEqual(b.GetNorm(0), 7);
+      AssertEx.Equal(b.GetNorm(), 3 * System.Math.Sqrt(14), TOLERANCE);
+      Assert.Equal(b.GetNorm(), b.GetNorm(2));
+      Assert.Equal(7, b.GetNorm(0));
     }
 
     //Test GetSum
-    [Test]
+    [Fact]
     public void GetSum()
     {
       var a = new ComplexFloatVector(new float[4] { 0, 1, 2, 3 });
       var b = new ComplexFloatVector(new float[4] { 4, 5, 6, 7 });
 
-      Assert.AreEqual(a.GetSum(), (ComplexFloat)6);
-      Assert.AreEqual(6, a.GetSumMagnitudes());
+      Assert.Equal(a.GetSum(), (ComplexFloat)6);
+      Assert.Equal(6, a.GetSumMagnitudes());
 
-      Assert.AreEqual(b.GetSum(), (ComplexFloat)22);
-      Assert.AreEqual(22, b.GetSumMagnitudes());
+      Assert.Equal(b.GetSum(), (ComplexFloat)22);
+      Assert.Equal(22, b.GetSumMagnitudes());
     }
 
     //Test Axpy and Scale
-    [Test]
+    [Fact]
     public void Axpy()
     {
       var a = new ComplexFloatVector(new float[4] { 0, 1, 2, 3 });
@@ -455,14 +455,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
       b.Axpy(scal, a);
       a.Scale(scal);
 
-      Assert.AreEqual(a[0], b[0]);
-      Assert.AreEqual(a[1], b[1]);
-      Assert.AreEqual(a[2], b[2]);
-      Assert.AreEqual(a[3], b[3]);
+      Assert.Equal(a[0], b[0]);
+      Assert.Equal(a[1], b[1]);
+      Assert.Equal(a[2], b[2]);
+      Assert.Equal(a[3], b[3]);
     }
 
     //Test Negate
-    [Test]
+    [Fact]
     public void Negate()
     {
       float[] vec = new float[4] { 0, 1, 2, 3 };
@@ -471,19 +471,19 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
       a = ComplexFloatVector.Negate(a);
 
-      Assert.AreEqual(-(ComplexFloat)vec[0], a[0]);
-      Assert.AreEqual(-(ComplexFloat)vec[1], a[1]);
-      Assert.AreEqual(-(ComplexFloat)vec[2], a[2]);
-      Assert.AreEqual(-(ComplexFloat)vec[3], a[3]);
+      Assert.Equal(-(ComplexFloat)vec[0], a[0]);
+      Assert.Equal(-(ComplexFloat)vec[1], a[1]);
+      Assert.Equal(-(ComplexFloat)vec[2], a[2]);
+      Assert.Equal(-(ComplexFloat)vec[3], a[3]);
 
-      Assert.AreEqual(-(ComplexFloat)vec[0], b[0]);
-      Assert.AreEqual(-(ComplexFloat)vec[1], b[1]);
-      Assert.AreEqual(-(ComplexFloat)vec[2], b[2]);
-      Assert.AreEqual(-(ComplexFloat)vec[3], b[3]);
+      Assert.Equal(-(ComplexFloat)vec[0], b[0]);
+      Assert.Equal(-(ComplexFloat)vec[1], b[1]);
+      Assert.Equal(-(ComplexFloat)vec[2], b[2]);
+      Assert.Equal(-(ComplexFloat)vec[3], b[3]);
     }
 
     //Test Subtract
-    [Test]
+    [Fact]
     public void Subtract()
     {
       var a = new ComplexFloatVector(new float[4] { 0, 1, 2, 3 });
@@ -494,26 +494,26 @@ namespace AltaxoTest.Calc.LinearAlgebra
       c = a - b;
       d = ComplexFloatVector.Subtract(a, b);
 
-      Assert.AreEqual(c[0], a[0] - b[0]);
-      Assert.AreEqual(c[1], a[1] - b[1]);
-      Assert.AreEqual(c[2], a[2] - b[2]);
-      Assert.AreEqual(c[3], a[3] - b[3]);
+      Assert.Equal(c[0], a[0] - b[0]);
+      Assert.Equal(c[1], a[1] - b[1]);
+      Assert.Equal(c[2], a[2] - b[2]);
+      Assert.Equal(c[3], a[3] - b[3]);
 
-      Assert.AreEqual(d[0], c[0]);
-      Assert.AreEqual(d[1], c[1]);
-      Assert.AreEqual(d[2], c[2]);
-      Assert.AreEqual(d[3], c[3]);
+      Assert.Equal(d[0], c[0]);
+      Assert.Equal(d[1], c[1]);
+      Assert.Equal(d[2], c[2]);
+      Assert.Equal(d[3], c[3]);
 
       a.Subtract(b);
 
-      Assert.AreEqual(c[0], a[0]);
-      Assert.AreEqual(c[1], a[1]);
-      Assert.AreEqual(c[2], a[2]);
-      Assert.AreEqual(c[3], a[3]);
+      Assert.Equal(c[0], a[0]);
+      Assert.Equal(c[1], a[1]);
+      Assert.Equal(c[2], a[2]);
+      Assert.Equal(c[3], a[3]);
     }
 
     //Test Add
-    [Test]
+    [Fact]
     public void Add()
     {
       var a = new ComplexFloatVector(new float[4] { 0, 1, 2, 3 });
@@ -524,26 +524,26 @@ namespace AltaxoTest.Calc.LinearAlgebra
       c = a + b;
       d = ComplexFloatVector.Add(a, b);
 
-      Assert.AreEqual(c[0], a[0] + b[0]);
-      Assert.AreEqual(c[1], a[1] + b[1]);
-      Assert.AreEqual(c[2], a[2] + b[2]);
-      Assert.AreEqual(c[3], a[3] + b[3]);
+      Assert.Equal(c[0], a[0] + b[0]);
+      Assert.Equal(c[1], a[1] + b[1]);
+      Assert.Equal(c[2], a[2] + b[2]);
+      Assert.Equal(c[3], a[3] + b[3]);
 
-      Assert.AreEqual(d[0], c[0]);
-      Assert.AreEqual(d[1], c[1]);
-      Assert.AreEqual(d[2], c[2]);
-      Assert.AreEqual(d[3], c[3]);
+      Assert.Equal(d[0], c[0]);
+      Assert.Equal(d[1], c[1]);
+      Assert.Equal(d[2], c[2]);
+      Assert.Equal(d[3], c[3]);
 
       a.Add(b);
 
-      Assert.AreEqual(c[0], a[0]);
-      Assert.AreEqual(c[1], a[1]);
-      Assert.AreEqual(c[2], a[2]);
-      Assert.AreEqual(c[3], a[3]);
+      Assert.Equal(c[0], a[0]);
+      Assert.Equal(c[1], a[1]);
+      Assert.Equal(c[2], a[2]);
+      Assert.Equal(c[3], a[3]);
     }
 
     //Test Scale Mult and Divide
-    [Test]
+    [Fact]
     public void ScalarMultiplyAndDivide()
     {
       var a = new ComplexFloatVector(new float[4] { 0, 1, 2, 3 });
@@ -554,33 +554,33 @@ namespace AltaxoTest.Calc.LinearAlgebra
       c.Multiply(scal);
       d.Divide(scal);
 
-      Assert.AreEqual(c[0], a[0] * scal);
-      Assert.AreEqual(c[1], a[1] * scal);
-      Assert.AreEqual(c[2], a[2] * scal);
-      Assert.AreEqual(c[3], a[3] * scal);
+      Assert.Equal(c[0], a[0] * scal);
+      Assert.Equal(c[1], a[1] * scal);
+      Assert.Equal(c[2], a[2] * scal);
+      Assert.Equal(c[3], a[3] * scal);
 
-      Assert.AreEqual(d[0], a[0] / scal);
-      Assert.AreEqual(d[1], a[1] / scal);
-      Assert.AreEqual(d[2], a[2] / scal);
-      Assert.AreEqual(d[3], a[3] / scal);
+      Assert.Equal(d[0], a[0] / scal);
+      Assert.Equal(d[1], a[1] / scal);
+      Assert.Equal(d[2], a[2] / scal);
+      Assert.Equal(d[3], a[3] / scal);
 
       c = a * scal;
 
-      Assert.AreEqual(c[0], a[0] * scal);
-      Assert.AreEqual(c[1], a[1] * scal);
-      Assert.AreEqual(c[2], a[2] * scal);
-      Assert.AreEqual(c[3], a[3] * scal);
+      Assert.Equal(c[0], a[0] * scal);
+      Assert.Equal(c[1], a[1] * scal);
+      Assert.Equal(c[2], a[2] * scal);
+      Assert.Equal(c[3], a[3] * scal);
 
       c = scal * a;
 
-      Assert.AreEqual(c[0], a[0] * scal);
-      Assert.AreEqual(c[1], a[1] * scal);
-      Assert.AreEqual(c[2], a[2] * scal);
-      Assert.AreEqual(c[3], a[3] * scal);
+      Assert.Equal(c[0], a[0] * scal);
+      Assert.Equal(c[1], a[1] * scal);
+      Assert.Equal(c[2], a[2] * scal);
+      Assert.Equal(c[3], a[3] * scal);
     }
 
     //Test Multiply
-    [Test]
+    [Fact]
     public void Multiply()
     {
       var a = new ComplexFloatVector(new float[4] { 0, 1, 2, 3 });
@@ -591,43 +591,43 @@ namespace AltaxoTest.Calc.LinearAlgebra
       c = a * b;
       d = ComplexFloatVector.Multiply(a, b);
 
-      Assert.AreEqual(c[0, 0], a[0] * b[0]);
-      Assert.AreEqual(c[0, 1], a[0] * b[1]);
-      Assert.AreEqual(c[0, 2], a[0] * b[2]);
-      Assert.AreEqual(c[0, 3], a[0] * b[3]);
-      Assert.AreEqual(c[1, 0], a[1] * b[0]);
-      Assert.AreEqual(c[1, 1], a[1] * b[1]);
-      Assert.AreEqual(c[1, 2], a[1] * b[2]);
-      Assert.AreEqual(c[1, 3], a[1] * b[3]);
-      Assert.AreEqual(c[2, 0], a[2] * b[0]);
-      Assert.AreEqual(c[2, 1], a[2] * b[1]);
-      Assert.AreEqual(c[2, 2], a[2] * b[2]);
-      Assert.AreEqual(c[2, 3], a[2] * b[3]);
-      Assert.AreEqual(c[3, 0], a[3] * b[0]);
-      Assert.AreEqual(c[3, 1], a[3] * b[1]);
-      Assert.AreEqual(c[3, 2], a[3] * b[2]);
-      Assert.AreEqual(c[3, 3], a[3] * b[3]);
+      Assert.Equal(c[0, 0], a[0] * b[0]);
+      Assert.Equal(c[0, 1], a[0] * b[1]);
+      Assert.Equal(c[0, 2], a[0] * b[2]);
+      Assert.Equal(c[0, 3], a[0] * b[3]);
+      Assert.Equal(c[1, 0], a[1] * b[0]);
+      Assert.Equal(c[1, 1], a[1] * b[1]);
+      Assert.Equal(c[1, 2], a[1] * b[2]);
+      Assert.Equal(c[1, 3], a[1] * b[3]);
+      Assert.Equal(c[2, 0], a[2] * b[0]);
+      Assert.Equal(c[2, 1], a[2] * b[1]);
+      Assert.Equal(c[2, 2], a[2] * b[2]);
+      Assert.Equal(c[2, 3], a[2] * b[3]);
+      Assert.Equal(c[3, 0], a[3] * b[0]);
+      Assert.Equal(c[3, 1], a[3] * b[1]);
+      Assert.Equal(c[3, 2], a[3] * b[2]);
+      Assert.Equal(c[3, 3], a[3] * b[3]);
 
-      Assert.AreEqual(d[0, 0], a[0] * b[0]);
-      Assert.AreEqual(d[0, 1], a[0] * b[1]);
-      Assert.AreEqual(d[0, 2], a[0] * b[2]);
-      Assert.AreEqual(d[0, 3], a[0] * b[3]);
-      Assert.AreEqual(d[1, 0], a[1] * b[0]);
-      Assert.AreEqual(d[1, 1], a[1] * b[1]);
-      Assert.AreEqual(d[1, 2], a[1] * b[2]);
-      Assert.AreEqual(d[1, 3], a[1] * b[3]);
-      Assert.AreEqual(d[2, 0], a[2] * b[0]);
-      Assert.AreEqual(d[2, 1], a[2] * b[1]);
-      Assert.AreEqual(d[2, 2], a[2] * b[2]);
-      Assert.AreEqual(d[2, 3], a[2] * b[3]);
-      Assert.AreEqual(d[3, 0], a[3] * b[0]);
-      Assert.AreEqual(d[3, 1], a[3] * b[1]);
-      Assert.AreEqual(d[3, 2], a[3] * b[2]);
-      Assert.AreEqual(d[3, 3], a[3] * b[3]);
+      Assert.Equal(d[0, 0], a[0] * b[0]);
+      Assert.Equal(d[0, 1], a[0] * b[1]);
+      Assert.Equal(d[0, 2], a[0] * b[2]);
+      Assert.Equal(d[0, 3], a[0] * b[3]);
+      Assert.Equal(d[1, 0], a[1] * b[0]);
+      Assert.Equal(d[1, 1], a[1] * b[1]);
+      Assert.Equal(d[1, 2], a[1] * b[2]);
+      Assert.Equal(d[1, 3], a[1] * b[3]);
+      Assert.Equal(d[2, 0], a[2] * b[0]);
+      Assert.Equal(d[2, 1], a[2] * b[1]);
+      Assert.Equal(d[2, 2], a[2] * b[2]);
+      Assert.Equal(d[2, 3], a[2] * b[3]);
+      Assert.Equal(d[3, 0], a[3] * b[0]);
+      Assert.Equal(d[3, 1], a[3] * b[1]);
+      Assert.Equal(d[3, 2], a[3] * b[2]);
+      Assert.Equal(d[3, 3], a[3] * b[3]);
     }
 
     //Test Divide
-    [Test]
+    [Fact]
     public void Divide()
     {
       var a = new ComplexFloatVector(new float[4] { 0, 1, 2, 3 });
@@ -638,42 +638,42 @@ namespace AltaxoTest.Calc.LinearAlgebra
       c = a / scal;
       d = ComplexFloatVector.Divide(a, scal);
 
-      Assert.AreEqual(c[0], a[0] / scal);
-      Assert.AreEqual(c[1], a[1] / scal);
-      Assert.AreEqual(c[2], a[2] / scal);
-      Assert.AreEqual(c[3], a[3] / scal);
+      Assert.Equal(c[0], a[0] / scal);
+      Assert.Equal(c[1], a[1] / scal);
+      Assert.Equal(c[2], a[2] / scal);
+      Assert.Equal(c[3], a[3] / scal);
 
-      Assert.AreEqual(d[0], a[0] / scal);
-      Assert.AreEqual(d[1], a[1] / scal);
-      Assert.AreEqual(d[2], a[2] / scal);
-      Assert.AreEqual(d[3], a[3] / scal);
+      Assert.Equal(d[0], a[0] / scal);
+      Assert.Equal(d[1], a[1] / scal);
+      Assert.Equal(d[2], a[2] / scal);
+      Assert.Equal(d[3], a[3] / scal);
     }
 
     //Test Clone
-    [Test]
+    [Fact]
     public void Clone()
     {
       var a = new ComplexFloatVector(new float[4] { 0, 1, 2, 3 });
       ComplexFloatVector b = a.Clone();
 
-      Assert.AreEqual(a[0], b[0]);
-      Assert.AreEqual(a[1], b[1]);
-      Assert.AreEqual(a[2], b[2]);
-      Assert.AreEqual(a[3], b[3]);
+      Assert.Equal(a[0], b[0]);
+      Assert.Equal(a[1], b[1]);
+      Assert.Equal(a[2], b[2]);
+      Assert.Equal(a[3], b[3]);
 
       a = a * 2;
 
-      Assert.AreEqual(a[0], b[0] * 2);
-      Assert.AreEqual(a[1], b[1] * 2);
-      Assert.AreEqual(a[2], b[2] * 2);
-      Assert.AreEqual(a[3], b[3] * 2);
+      Assert.Equal(a[0], b[0] * 2);
+      Assert.Equal(a[1], b[1] * 2);
+      Assert.Equal(a[2], b[2] * 2);
+      Assert.Equal(a[3], b[3] * 2);
     }
 
     //Test IEnumerable and DoubleVectorEnumerator
-    [Test]
+    [Fact]
     public void GetEnumeratorException()
     {
-      Assert.Throws(typeof(InvalidOperationException), () =>
+      Assert.Throws<InvalidOperationException>(() =>
       {
         var a = new ComplexFloatVector(new ComplexFloat[4] { 0, 1, 2, 3 });
         IEnumerator dve = a.GetEnumerator();
@@ -683,7 +683,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     }
 
     //Test IEnumerable and DoubleVectorEnumerator
-    [Test]
+    [Fact]
     public void GetEnumerator()
     {
       var a = new ComplexFloatVector(new ComplexFloat[4] { 0, 1, 2, 3 });
@@ -693,85 +693,85 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
       c = dve.MoveNext();
       b = (ComplexFloat)dve.Current;
-      Assert.AreEqual(c, true);
-      Assert.AreEqual(b, (ComplexFloat)0);
+      Assert.True(c);
+      Assert.Equal(b, (ComplexFloat)0);
 
       c = dve.MoveNext();
       b = (ComplexFloat)dve.Current;
-      Assert.AreEqual(c, true);
-      Assert.AreEqual(b, (ComplexFloat)1);
+      Assert.True(c);
+      Assert.Equal(b, (ComplexFloat)1);
 
       c = dve.MoveNext();
       b = (ComplexFloat)dve.Current;
-      Assert.AreEqual(c, true);
-      Assert.AreEqual(b, (ComplexFloat)2);
+      Assert.True(c);
+      Assert.Equal(b, (ComplexFloat)2);
 
       c = dve.MoveNext();
       b = (ComplexFloat)dve.Current;
-      Assert.AreEqual(c, true);
-      Assert.AreEqual(b, (ComplexFloat)3);
+      Assert.True(c);
+      Assert.Equal(b, (ComplexFloat)3);
 
       c = dve.MoveNext();
-      Assert.AreEqual(c, false);
+      Assert.False(c);
     }
 
     //Partial ICollection tests
-    [Test]
+    [Fact]
     public void ICollection()
     {
       var a = new ComplexFloatVector(new ComplexFloat[4] { 0, 1, 2, 3 });
       var b = new ComplexFloat[5];
 
-      Assert.AreEqual(a.Count, a.Length);
+      Assert.Equal(a.Count, a.Length);
 
       a.CopyTo(b, 1);
-      Assert.AreEqual(b[0], (ComplexFloat)0);
-      Assert.AreEqual(b[1], (ComplexFloat)0);
-      Assert.AreEqual(b[2], (ComplexFloat)1);
-      Assert.AreEqual(b[3], (ComplexFloat)2);
-      Assert.AreEqual(b[4], (ComplexFloat)3);
+      Assert.Equal(b[0], (ComplexFloat)0);
+      Assert.Equal(b[1], (ComplexFloat)0);
+      Assert.Equal(b[2], (ComplexFloat)1);
+      Assert.Equal(b[3], (ComplexFloat)2);
+      Assert.Equal(b[4], (ComplexFloat)3);
     }
 
     // IList tests
-    [Test]
+    [Fact]
     public void IList()
     {
       var a = new ComplexFloatVector(new ComplexFloat[4] { 0, 1, 2, 3 });
 
-      Assert.AreEqual(a.IsFixedSize, false);
-      Assert.AreEqual(a.IsReadOnly, false);
+      Assert.False(a.IsFixedSize);
+      Assert.False(a.IsReadOnly);
 
       a.Add((ComplexFloat)4.0);
-      Assert.AreEqual(a.Length, 5);
-      Assert.AreEqual(a[4], (ComplexFloat)4);
-      Assert.AreEqual(a.Contains((ComplexFloat)4.0), true);
+      Assert.Equal(5, a.Length);
+      Assert.Equal(a[4], (ComplexFloat)4);
+      Assert.True(a.Contains((ComplexFloat)4.0));
 
       a.Insert(1, (ComplexFloat)5.0);
-      Assert.AreEqual(a.Length, 6);
-      Assert.AreEqual(a.Contains((ComplexFloat)5.0), true);
-      Assert.AreEqual(a[0], (ComplexFloat)0);
-      Assert.AreEqual(a[1], (ComplexFloat)5);
-      Assert.AreEqual(a[2], (ComplexFloat)1);
-      Assert.AreEqual(a[3], (ComplexFloat)2);
-      Assert.AreEqual(a[4], (ComplexFloat)3);
-      Assert.AreEqual(a[5], (ComplexFloat)4);
+      Assert.Equal(6, a.Length);
+      Assert.True(a.Contains((ComplexFloat)5.0));
+      Assert.Equal(a[0], (ComplexFloat)0);
+      Assert.Equal(a[1], (ComplexFloat)5);
+      Assert.Equal(a[2], (ComplexFloat)1);
+      Assert.Equal(a[3], (ComplexFloat)2);
+      Assert.Equal(a[4], (ComplexFloat)3);
+      Assert.Equal(a[5], (ComplexFloat)4);
 
       a.Remove((ComplexFloat)5.0);
-      Assert.AreEqual(a.Length, 5);
-      Assert.AreEqual(a.Contains((ComplexFloat)5.0), false);
-      Assert.AreEqual(a[0], (ComplexFloat)0);
-      Assert.AreEqual(a[1], (ComplexFloat)1);
-      Assert.AreEqual(a[2], (ComplexFloat)2);
-      Assert.AreEqual(a[3], (ComplexFloat)3);
-      Assert.AreEqual(a[4], (ComplexFloat)4);
+      Assert.Equal(5, a.Length);
+      Assert.False(a.Contains((ComplexFloat)5.0));
+      Assert.Equal(a[0], (ComplexFloat)0);
+      Assert.Equal(a[1], (ComplexFloat)1);
+      Assert.Equal(a[2], (ComplexFloat)2);
+      Assert.Equal(a[3], (ComplexFloat)3);
+      Assert.Equal(a[4], (ComplexFloat)4);
 
       a.RemoveAt(2);
-      Assert.AreEqual(a.Length, 4);
-      Assert.AreEqual(a.Contains((ComplexFloat)2.0), false);
-      Assert.AreEqual(a[0], (ComplexFloat)0);
-      Assert.AreEqual(a[1], (ComplexFloat)1);
-      Assert.AreEqual(a[2], (ComplexFloat)3);
-      Assert.AreEqual(a[3], (ComplexFloat)4);
+      Assert.Equal(4, a.Length);
+      Assert.False(a.Contains((ComplexFloat)2.0));
+      Assert.Equal(a[0], (ComplexFloat)0);
+      Assert.Equal(a[1], (ComplexFloat)1);
+      Assert.Equal(a[2], (ComplexFloat)3);
+      Assert.Equal(a[3], (ComplexFloat)4);
     }
   }
 }

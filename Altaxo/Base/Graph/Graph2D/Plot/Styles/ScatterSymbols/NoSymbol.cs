@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,9 +47,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
         SerializeSetV0((IScatterSymbol)obj, info);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (NoSymbol)o ?? new NoSymbol();
+        var s = (NoSymbol?)o ?? new NoSymbol();
         return DeserializeSetV0(s, info, parent);
       }
     }
@@ -77,7 +78,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       return this;
     }
 
-    public IScatterSymbolFrame Frame
+    public IScatterSymbolFrame? Frame
     {
       get
       {
@@ -85,12 +86,12 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
-    IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame frame)
+    IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame? frame)
     {
       return this;
     }
 
-    public IScatterSymbolInset Inset
+    public IScatterSymbolInset? Inset
     {
       get
       {
@@ -98,7 +99,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
-    IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset inset)
+    IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset? inset)
     {
       return this;
     }
@@ -116,7 +117,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       return this;
     }
 
-    public void CalculatePolygons(double? relativeStructureWidth, out List<List<IntPoint>> framePolygon, out List<List<IntPoint>> insetPolygon, out List<List<IntPoint>> fillPolygon)
+    public void CalculatePolygons(double? relativeStructureWidth, out List<List<IntPoint>>? framePolygon, out List<List<IntPoint>>? insetPolygon, out List<List<IntPoint>>? fillPolygon)
     {
       framePolygon = null;
       insetPolygon = null;

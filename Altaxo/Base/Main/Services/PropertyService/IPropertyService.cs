@@ -22,9 +22,11 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Altaxo.Main.Properties;
 
@@ -63,7 +65,7 @@ namespace Altaxo.Main.Services
     DirectoryName DataDirectory { get; }
 
     /// <summary>Occurs when a property has changed. Argument is the property key.</summary>
-    event PropertyChangedEventHandler PropertyChanged;
+    event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// Returns the property bag with user settings. These are typically stored in the user's application settings directory.
@@ -115,7 +117,9 @@ namespace Altaxo.Main.Services
     /// <param name="kind">Kind of search.</param>
     /// <param name="ValueCreationIfNotFound">Function used to create a default value if the property value was not found.</param>
     /// <returns></returns>
-    T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T> ValueCreationIfNotFound);
+    [return: NotNullIfNotNull("ValueCreationIfNotFound")]
+    [return: MaybeNull]
+    T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound) where T : notnull;
 
     /// <summary>
     /// Sets a value associated with a property key.

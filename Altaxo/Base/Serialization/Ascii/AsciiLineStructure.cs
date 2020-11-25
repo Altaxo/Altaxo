@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -191,7 +192,7 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     protected List<AsciiColumnInfo> _recognizedTypes = new List<AsciiColumnInfo>();
 
-    private CollectionWrapper _columnTypeCollectionWrapper;
+    private CollectionWrapper? _columnTypeCollectionWrapper;
 
     /// <summary>
     /// If true, the cached data in this class are invalid and needs to be recalculated.
@@ -219,9 +220,9 @@ namespace Altaxo.Serialization.Ascii
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new AsciiLineStructure() : (AsciiLineStructure)o);
+        var s = (AsciiLineStructure?)o ?? new AsciiLineStructure();
         var count = info.OpenArray("ColumnTypes");
         for (int i = 0; i < count; ++i)
         {
@@ -239,7 +240,7 @@ namespace Altaxo.Serialization.Ascii
     {
       get
       {
-        if (null == _columnTypeCollectionWrapper)
+        if (_columnTypeCollectionWrapper is null)
           _columnTypeCollectionWrapper = new CollectionWrapper(this);
         return _columnTypeCollectionWrapper;
       }

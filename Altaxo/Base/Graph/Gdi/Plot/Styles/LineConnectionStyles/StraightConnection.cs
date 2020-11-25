@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -53,7 +54,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       {
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Instance;
       }
@@ -80,7 +81,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       IPlotRange range,
       IPlotArea layer,
       PenCacheGdi.GdiPen linePen,
-      Func<int, double> symbolGap,
+      Func<int, double>? symbolGap,
       int skipFrequency,
       bool connectCircular,
       LinePlotStyle linePlotStyle)
@@ -104,7 +105,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
         indexBasePlotPoints = range.LowerBound;
       }
 
-      if (null != symbolGap)
+      if (symbolGap is not null)
       {
         foreach (var segmentRange in GetSegmentRanges(range, symbolGap, skipFrequency, connectCircular))
         {
@@ -141,7 +142,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
             int plotIndexAtEnd = segmentRange.IndexAtSubRangeEnd + indexBasePlotPoints;
             var shortenedPolyline = circularLinePoints.ShortenPartialPolylineByDistanceFromStartAndEnd(plotIndexAtStart, plotIndexAtEnd, segmentRange.GapAtSubRangeStart / 2, segmentRange.GapAtSubRangeEnd / 2);
 
-            if (null != shortenedPolyline)
+            if (shortenedPolyline is not null)
               g.DrawLines(linePen, shortenedPolyline);
           }
         } // end for

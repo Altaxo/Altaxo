@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -44,7 +45,7 @@ namespace Altaxo.Gui.AddInItems
       Command = CommandWrapper.CreateCommand(codon, conditions);
       CommandParameter = caller;
       var cmd = CommandWrapper.Unwrap(Command) as ICheckableMenuCommand;
-      if (cmd != null)
+      if (cmd is not null)
       {
         isCheckedBinding = SetBinding(IsCheckedProperty, new Binding("IsChecked") { Source = cmd, Mode = BindingMode.OneWay });
       }
@@ -77,7 +78,7 @@ namespace Altaxo.Gui.AddInItems
         Visibility = Visibility.Collapsed;
       else
         Visibility = Visibility.Visible;
-      if (isCheckedBinding != null)
+      if (isCheckedBinding is not null)
         isCheckedBinding.UpdateTarget();
     }
 
@@ -89,7 +90,7 @@ namespace Altaxo.Gui.AddInItems
         new Action(
           delegate
           {
-            if (isCheckedBinding != null)
+            if (isCheckedBinding is not null)
               isCheckedBinding.UpdateTarget();
           }));
     }

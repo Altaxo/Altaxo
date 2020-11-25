@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,7 +44,7 @@ namespace Altaxo.Gui.Main.Services
     /// <value>
     /// The data context.
     /// </value>
-    object DataContext { set; }
+    object? DataContext { set; }
 
     double[] ColumnWidths { get; set; }
   }
@@ -52,13 +53,13 @@ namespace Altaxo.Gui.Main.Services
   public class InfoWarningErrorMessageController : AbstractPadContent, IMementoCapable
   {
     private bool _viewDirectionRecentIsFirst = true;
-    private double[] _columnWidths;
-    private IInfoWarningErrorMessageView _view;
+    private double[]? _columnWidths;
+    private IInfoWarningErrorMessageView? _view;
     private ObservableCollection<InfoWarningErrorTextMessageItem> _unreversedDoc;
     private Altaxo.Collections.ObservableCollectionReversingWrapper<InfoWarningErrorTextMessageItem> _reversedDoc;
     private IReadOnlyList<InfoWarningErrorTextMessageItem> _currentDoc;
 
-    private IInfoWarningErrorTextMessageService _cachedService;
+    private IInfoWarningErrorTextMessageService? _cachedService;
 
     private ICommand _commandClearAllMessages;
     private ICommand _commandReverseMessages;
@@ -80,8 +81,8 @@ namespace Altaxo.Gui.Main.Services
         (shutdownService) => shutdownService.Closed -= EhApplicationClosed);
       _shutDownService.StartCaching();
 
-      var memento = Current.PropertyService.GetValue(PropertyKeyMessageControlState, RuntimePropertyKind.UserAndApplicationAndBuiltin, () => null);
-      if (null != memento)
+      var memento = Current.PropertyService.GetValue(PropertyKeyMessageControlState, RuntimePropertyKind.UserAndApplicationAndBuiltin, null);
+      if (memento is not null)
         SetMemento(memento);
 
 
@@ -115,7 +116,7 @@ namespace Altaxo.Gui.Main.Services
     {
       Current.ServiceChanged -= EhServiceChanged;
 
-      if (_cachedService != null)
+      if (_cachedService is not null)
       {
         _cachedService.MessageAdded -= EhMessageAdded;
         _cachedService = null;
@@ -126,14 +127,14 @@ namespace Altaxo.Gui.Main.Services
 
     private void EhServiceChanged()
     {
-      if (null != _cachedService)
+      if (_cachedService is not null)
       {
         _cachedService.MessageAdded -= EhMessageAdded;
       }
 
       _cachedService = Current.GetService<IInfoWarningErrorTextMessageService>();
 
-      if (null != _cachedService)
+      if (_cachedService is not null)
       {
         _cachedService.MessageAdded += EhMessageAdded;
       }
@@ -141,6 +142,9 @@ namespace Altaxo.Gui.Main.Services
 
     private void EhMessageAdded(InfoWarningErrorTextMessageItem msgItem)
     {
+      if (Current.Dispatcher.InvokeRequired)
+        Current.Dispatcher.InvokeAndForget(() => _unreversedDoc.Add(msgItem));
+      else
       _unreversedDoc.Add(msgItem);
     }
 
@@ -150,9 +154,9 @@ namespace Altaxo.Gui.Main.Services
       {
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
-        if (_columnWidths != null)
+        if (_columnWidths is not null)
         {
           _view.ColumnWidths = _columnWidths;
           _columnWidths = null;
@@ -196,25 +200,25 @@ namespace Altaxo.Gui.Main.Services
 
     protected void AttachView()
     {
-      _view.DataContext = this;
+      _view!.DataContext = this;
     }
 
     protected void DetachView()
     {
-      _view.DataContext = null;
+      _view!.DataContext = null;
     }
 
-    public override object ViewObject
+    public override object? ViewObject
     {
       get { return _view; }
       set
       {
-        if (null != _view)
+        if (_view is not null)
           DetachView();
 
         _view = value as IInfoWarningErrorMessageView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           AttachView();
@@ -233,14 +237,14 @@ namespace Altaxo.Gui.Main.Services
 
       _viewDirectionRecentIsFirst = tr.ReadElementContentAsBoolean("DirectionRecentFirst", string.Empty);
 
-      count = XmlConvert.ToInt32(tr.GetAttribute("Count"));
+      count = XmlConvert.ToInt32(tr.GetAttribute("Count") ?? throw new InvalidOperationException($"Attribute 'Count' is mandatory here!"));
       tr.ReadStartElement("ColumnWidths");
       _columnWidths = new double[count];
       for (int i = 0; i < count; i++)
         _columnWidths[i] = tr.ReadElementContentAsInt("Width", string.Empty);
       if (count > 0)
         tr.ReadEndElement(); // ColumnWidths
-      if (null != _view)
+      if (_view is not null)
       {
         _view.ColumnWidths = _columnWidths;
         _columnWidths = null;
@@ -257,7 +261,7 @@ namespace Altaxo.Gui.Main.Services
       tw.WriteElementString("DirectionRecentFirst", System.Xml.XmlConvert.ToString(_viewDirectionRecentIsFirst));
 
       tw.WriteStartElement("ColumnWidths");
-      var colWidths = null != _view ? _view.ColumnWidths : new double[0];
+      var colWidths = _view is not null ? _view.ColumnWidths : new double[0];
       tw.WriteAttributeString("Count", XmlConvert.ToString(colWidths.Length));
       for (int i = 0; i < colWidths.Length; i++)
         tw.WriteElementString("Width", XmlConvert.ToString(colWidths[i]));
@@ -266,12 +270,12 @@ namespace Altaxo.Gui.Main.Services
       tw.WriteEndElement(); // localName
     }
 
-    public void ShowException(Exception ex, string message = null)
+    public void ShowException(Exception ex, string? message = null)
     {
       throw new NotImplementedException();
     }
 
-    public void ShowHandledException(Exception ex, string message = null)
+    public void ShowHandledException(Exception ex, string? message = null)
     {
       throw new NotImplementedException();
     }
@@ -296,7 +300,7 @@ namespace Altaxo.Gui.Main.Services
       throw new NotImplementedException();
     }
 
-    public void ShowMessage(string message, string caption = null)
+    public void ShowMessage(string message, string? caption = null)
     {
       throw new NotImplementedException();
     }
@@ -306,7 +310,7 @@ namespace Altaxo.Gui.Main.Services
       throw new NotImplementedException();
     }
 
-    public bool AskQuestion(string question, string caption = null)
+    public bool AskQuestion(string question, string? caption = null)
     {
       throw new NotImplementedException();
     }
@@ -346,7 +350,7 @@ namespace Altaxo.Gui.Main.Services
 
     #region Memento
 
-    public override object GetService(Type serviceType)
+    public override object? GetService(Type serviceType)
     {
       // TODO make MementoService availabe if the user chooses to store the state of the online window with the document file
       // and make it unavailable if not ( but then store the state in the properties of the application)
@@ -355,7 +359,7 @@ namespace Altaxo.Gui.Main.Services
       return base.GetService(serviceType);
     }
 
-    private void EhApplicationClosed(object sender, EventArgs e)
+    private void EhApplicationClosed(object? sender, EventArgs e)
     {
       Current.PropertyService.SetValue(PropertyKeyMessageControlState, (StateMemento)CreateMemento());
     }
@@ -365,17 +369,17 @@ namespace Altaxo.Gui.Main.Services
 
     public object CreateMemento()
     {
-      if (null != _view)
+      if (_view is not null)
         _columnWidths = _view.ColumnWidths;
-      return new StateMemento(_columnWidths);
+      return new StateMemento(_columnWidths ?? new double[0]);
     }
 
     public void SetMemento(object memento)
     {
       if (memento is StateMemento m)
         _columnWidths = m.ColumnWidths;
-      if (null != _view)
-        _view.ColumnWidths = _columnWidths;
+      if (_view is not null && _columnWidths is { } cw && cw.Length > 0)
+        _view.ColumnWidths = cw;
     }
 
 
@@ -406,9 +410,9 @@ namespace Altaxo.Gui.Main.Services
           info.CommitArray();
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = (StateMemento)o ?? new StateMemento(new double[0]);
+          var s = (StateMemento?)o ?? new StateMemento(new double[0]);
 
           var count = info.OpenArray("ColumnWidths");
           s.ColumnWidths = new double[count];

@@ -71,7 +71,7 @@ namespace Altaxo.Serialization.Xml
         info.AddValue("e", s);
       }
 
-      public object Deserialize(object o, IXmlDeserializationInfo info, object parentobject)
+      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         return info.GetDouble("e");
       }
@@ -91,7 +91,7 @@ namespace Altaxo.Serialization.Xml
         info.AddValue("e", s);
       }
 
-      public object Deserialize(object o, IXmlDeserializationInfo info, object parentobject)
+      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         return info.GetInt32("e");
       }
@@ -111,7 +111,7 @@ namespace Altaxo.Serialization.Xml
         info.AddValue("e", s);
       }
 
-      public object Deserialize(object o, IXmlDeserializationInfo info, object parentobject)
+      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         return info.GetInt64("e");
       }
@@ -131,7 +131,7 @@ namespace Altaxo.Serialization.Xml
         info.AddValue("e", s);
       }
 
-      public object Deserialize(object o, IXmlDeserializationInfo info, object parentobject)
+      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         return info.GetDateTime("e");
       }
@@ -151,7 +151,7 @@ namespace Altaxo.Serialization.Xml
         info.AddValue("e", s);
       }
 
-      public object Deserialize(object o, IXmlDeserializationInfo info, object parentobject)
+      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         return info.GetBoolean("e");
       }

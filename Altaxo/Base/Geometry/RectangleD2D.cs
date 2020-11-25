@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Altaxo.Geometry
 {
@@ -77,9 +79,9 @@ namespace Altaxo.Geometry
         info.AddValue("Height", s.Height);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        RectangleD2D s = null != o ? (RectangleD2D)o : new RectangleD2D();
+        RectangleD2D s = o is not null ? (RectangleD2D)o : new RectangleD2D();
         s.X = info.GetDouble("X");
         s.Y = info.GetDouble("Y");
         s.Width = info.GetDouble("Width");
@@ -157,7 +159,7 @@ namespace Altaxo.Geometry
       }
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (obj is RectangleD2D)
       {
@@ -342,6 +344,25 @@ namespace Altaxo.Geometry
       ExpandToInclude(rect.RightTop);
       ExpandToInclude(rect.RightBottom);
     }
+
+    public static RectangleD2D? ExpandToInclude(RectangleD2D? first, RectangleD2D? other)
+    {
+      if (first.HasValue && other.HasValue)
+      {
+        var result = first.Value;
+        result.ExpandToInclude(other.Value);
+        return result;
+      }
+      else if (first is null && other is null)
+        return null;
+      else if (first.HasValue)
+        return first;
+      else if (other.HasValue)
+        return other;
+      else
+        throw new InvalidProgramException();
+    }
+
 
     /// <summary>Expands the rectangle by the specified margin.</summary>
     /// <param name="margin">The margin.</param>

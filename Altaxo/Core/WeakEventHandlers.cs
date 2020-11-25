@@ -92,7 +92,7 @@ namespace Altaxo
       if (string.IsNullOrEmpty(eventName))
         throw new ArgumentNullException(nameof(eventName));
 
-      if (handler.Target == null)
+      if (handler.Target is null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
       _eventInfo = eventSource.GetType().GetEvent(eventName) ??
@@ -123,7 +123,7 @@ namespace Altaxo
       if (string.IsNullOrEmpty(eventName))
         throw new ArgumentNullException(nameof(eventName));
 
-      if (handler.Target == null)
+      if (handler.Target is null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
       _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static) ??
@@ -245,7 +245,7 @@ namespace Altaxo
       if (string.IsNullOrEmpty(eventName))
         throw new ArgumentNullException(nameof(eventName));
 
-      if (handler.Target == null)
+      if (handler.Target is null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
       _eventInfo = eventSource.GetType().GetEvent(eventName) ??
@@ -276,7 +276,7 @@ namespace Altaxo
       if (string.IsNullOrEmpty(eventName))
         throw new ArgumentNullException(nameof(eventName));
 
-      if (handler.Target == null)
+      if (handler.Target is null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
       _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static) ??
@@ -397,7 +397,7 @@ namespace Altaxo
       if (string.IsNullOrEmpty(eventName))
         throw new ArgumentNullException(nameof(eventName));
 
-      if (handler.Target == null)
+      if (handler.Target is null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
       _eventInfo = eventSource.GetType().GetEvent(eventName) ??
@@ -428,7 +428,7 @@ namespace Altaxo
       if (string.IsNullOrEmpty(eventName))
         throw new ArgumentNullException(nameof(eventName));
 
-      if (handler.Target == null)
+      if (handler.Target is null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
       _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static) ??
@@ -548,7 +548,7 @@ namespace Altaxo
       if (string.IsNullOrEmpty(eventName))
         throw new ArgumentNullException(nameof(eventName));
 
-      if (handler.Target == null)
+      if (handler.Target is null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
       _eventInfo = eventSource.GetType().GetEvent(eventName) ??
@@ -579,7 +579,7 @@ namespace Altaxo
       if (string.IsNullOrEmpty(eventName))
         throw new ArgumentNullException(nameof(eventName));
 
-      if (handler.Target == null)
+      if (handler.Target is null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
       _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static) ??
@@ -698,7 +698,7 @@ namespace Altaxo
       if (string.IsNullOrEmpty(eventName))
         throw new ArgumentNullException(nameof(eventName));
 
-      if (handler.Target == null)
+      if (handler.Target is null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
       _eventInfo = eventSource.GetType().GetEvent(eventName) ??
@@ -729,7 +729,7 @@ namespace Altaxo
       if (string.IsNullOrEmpty(eventName))
         throw new ArgumentNullException(nameof(eventName));
 
-      if (handler.Target == null)
+      if (handler.Target is null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
       _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static) ??
@@ -852,7 +852,7 @@ namespace Altaxo
       if (string.IsNullOrEmpty(eventName))
         throw new ArgumentNullException(nameof(eventName));
 
-      if (handler.Target == null)
+      if (handler.Target is null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
       _eventInfo = eventSource.GetType().GetEvent(eventName) ??
@@ -883,7 +883,7 @@ namespace Altaxo
       if (string.IsNullOrEmpty(eventName))
         throw new ArgumentNullException(nameof(eventName));
 
-      if (handler.Target == null)
+      if (handler.Target is null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
       _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static) ??
@@ -1007,7 +1007,7 @@ namespace Altaxo
       if (string.IsNullOrEmpty(eventName))
         throw new ArgumentNullException(nameof(eventName));
 
-      if (handler.Target == null)
+      if (handler.Target is null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
       _eventInfo = eventSource.GetType().GetEvent(eventName) ??
@@ -1039,7 +1039,7 @@ namespace Altaxo
       if (string.IsNullOrEmpty(eventName))
         throw new ArgumentNullException(nameof(eventName));
 
-      if (handler.Target == null)
+      if (handler.Target is null)
         throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
 
       _eventInfo = eventSourceType.GetEvent(eventName, BindingFlags.Public | BindingFlags.Static) ??

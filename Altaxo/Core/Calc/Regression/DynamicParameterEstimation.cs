@@ -308,7 +308,7 @@ namespace Altaxo.Calc.Regression
     {
       // Fill the y - neccessary later for backsubstitution
       int numberOfData = _inputMatrix.RowCount;
-      if (_scaledY == null || _scaledY.Length != numberOfData)
+      if (_scaledY is null || _scaledY.Length != numberOfData)
         _scaledY = new double[numberOfData];
       for (int i = 0; i < numberOfData; i++)
         _scaledY[i] = y[i + _startingPoint];
@@ -343,7 +343,7 @@ namespace Altaxo.Calc.Regression
     /// <returns>The mean prediction error.i.e. Sqrt(Sum((y-yprediced)²)/N).</returns>
     public virtual double CalculatePredictionError(IVector<double>? predictedOutput)
     {
-      if (null == predictedOutput)
+      if (predictedOutput is null)
         predictedOutput = new DoubleVector(_inputMatrix.RowCount);
 
       MatrixMath.Multiply(_inputMatrix, VectorMath.ToROVector(_parameter), predictedOutput);
@@ -385,7 +385,7 @@ namespace Altaxo.Calc.Regression
         for (int i = _numX + _numY; i < nCols; i++)
           ypred += inputMatrix[yIdx, i] * _parameter[i];
 
-        if (predictedOutput != null)
+        if (predictedOutput is not null)
           predictedOutput[yIdx] = ypred;
 
         sumsquareddifferences += RMath.Pow2(ypred - yCompare[yIdx]);
@@ -694,7 +694,7 @@ namespace Altaxo.Calc.Regression
     protected override void CalculateStartingPoint()
     {
       base.CalculateStartingPoint();
-      if (_numX > 0 && _xcount != null)
+      if (_numX > 0 && _xcount is not null)
       {
         if (_xcount.Length != _numX)
           throw new ArgumentException("Length of xcount is not equal to _numX");
@@ -707,7 +707,7 @@ namespace Altaxo.Calc.Regression
         _startingPoint = Math.Max(_startingPoint, xsum - 1);
       }
 
-      if (_numY > 0 && _ycount != null)
+      if (_numY > 0 && _ycount is not null)
       {
         if (_ycount.Length != _numY)
           throw new ArgumentException("Length of ycount is not equal to _numY");
@@ -724,7 +724,7 @@ namespace Altaxo.Calc.Regression
     protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, JaggedArrayMatrix? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
-      if (M == null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
+      if (M is null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
         M = new JaggedArrayMatrix(numberOfData, _numberOfParameter);
 
       // Fill the matrix
@@ -735,7 +735,7 @@ namespace Altaxo.Calc.Regression
         // fill with x history samples
         for (int j = 0, k = 0; j < _numX; j++)
         {
-          if (_xcount == null || _xcount[j] == 1)
+          if (_xcount is null || _xcount[j] == 1)
           {
             M[i, j] = x![yIdx - k - _offsetX];
             k++;
@@ -752,7 +752,7 @@ namespace Altaxo.Calc.Regression
         // fill with y history samples
         for (int j = 0, k = 0; j < _numY; j++)
         {
-          if (_ycount == null || _ycount[j] == 1)
+          if (_ycount is null || _ycount[j] == 1)
           {
             M[i, j + _numX] = y[yIdx - 1 - k];
             k++;
@@ -1048,7 +1048,7 @@ namespace Altaxo.Calc.Regression
     /// <returns>A version of count suitable for use with the y history.</returns>
     public static int[] GetYCountFromXCount(int[] xcount)
     {
-      if (xcount == null)
+      if (xcount is null)
         throw new ArgumentNullException("xcount");
       if (xcount.Length == 0)
         throw new ArgumentException("Length of xcount is 0");
@@ -1122,7 +1122,7 @@ namespace Altaxo.Calc.Regression
     protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, JaggedArrayMatrix? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
-      if (M == null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
+      if (M is null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
         M = new JaggedArrayMatrix(numberOfData, _numberOfParameter);
 
       // Fill the matrix
@@ -1272,7 +1272,7 @@ namespace Altaxo.Calc.Regression
     protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, JaggedArrayMatrix? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
-      if (M == null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
+      if (M is null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
         M = new JaggedArrayMatrix(numberOfData, _numberOfParameter);
 
       // Fill the matrix

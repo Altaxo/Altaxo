@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
     private void EhRenameTextChanged(object sender, TextChangedEventArgs e)
     {
-      if (RenameStringTemplateChanged != null)
+      if (RenameStringTemplateChanged is not null)
         RenameStringTemplateChanged();
     }
 
@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Common.MultiRename
       }
     }
 
-    public event Action RenameStringTemplateChanged;
+    public event Action? RenameStringTemplateChanged;
 
     /// <summary>
     /// Sets a value indicating whether the button to choose the base directory should be visible.
@@ -91,7 +91,7 @@ namespace Altaxo.Gui.Common.MultiRename
       }
     }
 
-    public event Action<string> BaseDirectoryChosen;
+    public event Action<string>? BaseDirectoryChosen;
 
     private void EhChooseBaseDirectory(object sender, System.Windows.RoutedEventArgs e)
     {

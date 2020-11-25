@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace Altaxo.Gui.Serialization.Clipboard
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.RelocateReferences = _doc.RelocateReferences.HasValue ? _doc.RelocateReferences.Value : true;
         _view.TryToKeepInternalReferences = _doc.TryToKeepInternalReferences.HasValue ? _doc.TryToKeepInternalReferences.Value : true;

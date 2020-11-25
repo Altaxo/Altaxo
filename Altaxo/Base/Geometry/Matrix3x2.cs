@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -491,9 +492,9 @@ namespace Altaxo.Geometry
       return !(x == y);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      return obj is Matrix3x2 y ? Equals(y) : false;
+      return obj is Matrix3x2 y && Equals(y);
     }
 
     public override int GetHashCode()

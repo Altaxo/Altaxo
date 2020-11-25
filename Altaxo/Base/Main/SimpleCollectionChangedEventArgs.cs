@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,8 +51,8 @@ namespace Altaxo.Main
     /// <exception cref="System.ArgumentNullException">originator</exception>
     public SimpleCollectionChangedEventArgs(IDocumentLeafNode originator)
     {
-      if (null == originator)
-        throw new ArgumentNullException("originator");
+      if (originator is null)
+        throw new ArgumentNullException(nameof(originator));
 
       Originator = originator;
     }
@@ -74,13 +75,9 @@ namespace Altaxo.Main
     /// <returns>
     ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
     /// </returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var from = obj as SimpleCollectionChangedEventArgs;
-      if (null == from)
-        return false;
-
-      return object.ReferenceEquals(Originator, from.Originator);
+      return obj is SimpleCollectionChangedEventArgs from && object.ReferenceEquals(Originator, from.Originator);
     }
 
     /// <summary>
@@ -94,8 +91,7 @@ namespace Altaxo.Main
     /// </exception>
     public override void Add(SelfAccumulateableEventArgs e)
     {
-      var other = e as SimpleCollectionChangedEventArgs;
-      if (other == null)
+      if (!(e is SimpleCollectionChangedEventArgs other))
         throw new ArgumentOutOfRangeException("Argument e should be of type SimpleCollectionChangedEventArgs");
       if (!object.ReferenceEquals(Originator, other.Originator))
         throw new ArgumentOutOfRangeException("Argument e has an item which is not identical to this item. This should not happen since Equals and GetHashCode are overriden.");

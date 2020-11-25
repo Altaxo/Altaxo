@@ -22,16 +22,14 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui
 {
   public class ValidationEventArgs<T> : EventArgs
   {
-    private string _errors;
+    private string? _errors;
     private T _valueToValidate;
 
     public System.Globalization.CultureInfo CultureInfo { get; private set; }
@@ -39,6 +37,7 @@ namespace Altaxo.Gui
     public ValidationEventArgs(T valueToValidate)
     {
       _valueToValidate = valueToValidate;
+      CultureInfo = System.Globalization.CultureInfo.InvariantCulture;
     }
 
     public ValidationEventArgs(T valueToValidate, System.Globalization.CultureInfo info)
@@ -49,7 +48,7 @@ namespace Altaxo.Gui
 
     public void AddError(string format, params object[] args)
     {
-      if (_errors == null)
+      if (_errors is null)
         _errors = string.Format(format, args);
       else
         _errors += "\n" + string.Format(format, args);
@@ -67,7 +66,7 @@ namespace Altaxo.Gui
     {
       get
       {
-        return null != _errors;
+        return _errors is not null;
       }
     }
 
@@ -75,7 +74,7 @@ namespace Altaxo.Gui
     {
       get
       {
-        return null != _errors;
+        return _errors is not null;
       }
     }
 
@@ -83,7 +82,7 @@ namespace Altaxo.Gui
     {
       get
       {
-        return _errors;
+        return _errors ?? string.Empty;
       }
     }
   }

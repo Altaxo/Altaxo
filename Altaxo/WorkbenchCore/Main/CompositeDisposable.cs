@@ -29,8 +29,8 @@ namespace Altaxo.Main
 
     public CompositeDisposable(params IDisposable[] disposables)
     {
-      if (disposables == null)
-        throw new ArgumentNullException("disposables");
+      if (disposables is null)
+        throw new ArgumentNullException(nameof(disposables));
       this.disposables = disposables;
     }
 
@@ -38,8 +38,7 @@ namespace Altaxo.Main
     {
       foreach (var disposable in disposables)
       {
-        if (disposable != null)
-          disposable.Dispose();
+          disposable?.Dispose();
       }
     }
   }

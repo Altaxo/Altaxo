@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using Altaxo.AddInItems;
 
@@ -51,7 +52,7 @@ namespace Altaxo.Main.Commands
           throw new ArgumentException(string.Format("In {0}: property 'value' should be either 'false' or 'true', but is here: '{1}'", GetType().Name, expectedValueS));
       }
 
-      bool currentValue = Current.ComManager != null && Current.ComManager.IsInEmbeddedMode;
+      bool currentValue = Current.ComManager is not null && Current.ComManager.IsInEmbeddedMode;
 
       return currentValue == expectedValue;
     }

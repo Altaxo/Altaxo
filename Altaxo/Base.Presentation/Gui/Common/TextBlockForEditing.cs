@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -143,13 +144,13 @@ namespace Altaxo.Gui.Common
     /// </exception>
     public static void RegisterItemsControlType(Type itemsControlType, Type itemType, Func<FrameworkElement, bool> IsItemSelected, Func<ItemsControl, int> SelectionCount)
     {
-      if (null == itemsControlType)
+      if (itemsControlType is null)
         throw new ArgumentNullException("itemsControlType");
-      if (null == itemType)
+      if (itemType is null)
         throw new ArgumentNullException("itemType");
-      if (null == IsItemSelected)
+      if (IsItemSelected is null)
         throw new ArgumentNullException("IsItemSelected");
-      if (null == SelectionCount)
+      if (SelectionCount is null)
         throw new ArgumentNullException("SelectionCount");
 
       _itemsControlTypeToControlInfo[itemsControlType] = new ItemsControlInfo { TypeOfItem = itemType, IsItemSelected = IsItemSelected, SelectionCount = SelectionCount };
@@ -162,7 +163,7 @@ namespace Altaxo.Gui.Common
     /// <exception cref="System.ArgumentNullException">itemsControlType</exception>
     public static void RegisterItemsControlTypeToSkipOver(Type itemsControlType)
     {
-      if (null == itemsControlType)
+      if (itemsControlType is null)
         throw new ArgumentNullException("itemsControlType");
 
       _itemsControlTypesToSkipOver.Add(itemsControlType);
@@ -189,7 +190,7 @@ namespace Altaxo.Gui.Common
       for (; ; )
       {
         _itemsControl = GetDependencyObjectFromVisualTree(parent, typeof(ItemsControl)) as ItemsControl;
-        if (!(_itemsControl != null))
+        if (_itemsControl is null)
           throw new InvalidOperationException(nameof(_itemsControl) + " is null. Underlying ItemsControl not found");
 
         if (!_itemsControlTypesToSkipOver.Contains(_itemsControl.GetType()))
@@ -204,7 +205,7 @@ namespace Altaxo.Gui.Common
 
       Type typeOfItem = _itemsControlTypeToControlInfo[typeOfItemsControl].TypeOfItem;
       _listItem = GetDependencyObjectFromVisualTree(this, typeOfItem) as FrameworkElement;
-      if (!(_listItem != null))
+      if (_listItem is null)
         throw new InvalidOperationException(string.Format("Underlying item of type {0} was not found in the visual hierarchy.", typeOfItem));
     }
 
@@ -267,7 +268,7 @@ namespace Altaxo.Gui.Common
       _adorner.EditingFinished += EhEditingFinished;
     }
 
-    private void EhEditingFinished(object sender, EventArgs e)
+    private void EhEditingFinished(object? sender, EventArgs e)
     {
       if (e is KeyboardEventArgs)
         _earliestTimeItemIsEligibleForEditing = DateTime.MaxValue;
@@ -280,7 +281,7 @@ namespace Altaxo.Gui.Common
     /// </summary>
     private void EndEditing()
     {
-      if (null == _adorner)
+      if (_adorner is null)
         return;
       _adorner.EditingFinished -= EhEditingFinished;
 
@@ -292,7 +293,7 @@ namespace Altaxo.Gui.Common
       string textBoxText = _adorner.EditedText;
       var layer = AdornerLayer.GetAdornerLayer(this);
 
-      if (null != layer)
+      if (layer is not null)
         layer.Remove(_adorner);
       _adorner = null;
 
@@ -398,11 +399,11 @@ namespace Altaxo.Gui.Common
     private static void EhCurrentItemOpenForEditingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
       var itemsControl = d as ItemsControl;
-      if (null == itemsControl)
+      if (itemsControl is null)
         return;
 
       var instance = e.OldValue as TextBlockForEditing;
-      if (null != instance)
+      if (instance is not null)
       {
         // unwire events
         itemsControl.SizeChanged -= instance.EhItemsControl_SizeChanged;
@@ -412,7 +413,7 @@ namespace Altaxo.Gui.Common
       }
 
       instance = e.NewValue as TextBlockForEditing;
-      if (null != instance)
+      if (instance is not null)
       {
         // wire events
         itemsControl.SizeChanged += instance.EhItemsControl_SizeChanged;
@@ -500,7 +501,7 @@ namespace Altaxo.Gui.Common
     /// </summary>
     /// <param name="sender">The source of the event (the timer).</param>
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-    private void EhMouseWaitTimer_Elapsed(object sender, EventArgs e)
+    private void EhMouseWaitTimer_Elapsed(object? sender, EventArgs e)
     {
       var timer = (DispatcherTimer)sender;
       timer.Tick -= EhMouseWaitTimer_Elapsed;
@@ -546,16 +547,16 @@ namespace Altaxo.Gui.Common
 
     private bool EnsureValidParents(Point pt)
     {
-      if (_listItem == null || _itemsControl == null)
+      if (_listItem is null || _itemsControl is null)
       {
         HitTestResult result = VisualTreeHelper.HitTest(this, pt);
-        if (null != result)
+        if (result is not null)
         {
           _listItem = FindParent<ListBoxItem>(this);
           _itemsControl = FindParent<ItemsControl>(this);
         }
       }
-      return _listItem != null && _itemsControl != null;
+      return _listItem is not null && _itemsControl is not null;
     }
 
     /// <summary>
@@ -572,7 +573,7 @@ namespace Altaxo.Gui.Common
       var pt = e.GetPosition(this);
       HitTestResult result = VisualTreeHelper.HitTest(_listItem, pt);
 
-      if (null == result)
+      if (result is null)
       {
         IsEditing = false;
       }
@@ -589,7 +590,7 @@ namespace Altaxo.Gui.Common
     {
       get
       {
-        if (_listItem == null)
+        if (_listItem is null)
           return false;
         else
           return _itemsControlTypeToControlInfo[_itemsControl.GetType()].IsItemSelected(_listItem);
@@ -608,7 +609,7 @@ namespace Altaxo.Gui.Common
       //Walk the visual tree to get the parent(ItemsControl)
       //of this control
       DependencyObject parent = startObject;
-      while (parent != null)
+      while (parent is not null)
       {
         if (type.IsInstanceOfType(parent))
           break;
@@ -626,7 +627,7 @@ namespace Altaxo.Gui.Common
 
       if (parent is T)
         result = parent as T;
-      else if (parent != null)
+      else if (parent is not null)
         result = FindParent<T>(parent);
 
       return result;

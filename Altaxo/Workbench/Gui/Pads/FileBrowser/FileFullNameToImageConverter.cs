@@ -67,14 +67,14 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #endregion Interop
 
-    public ImageSource DefaultImageSource { get; set; }
+    public ImageSource? DefaultImageSource { get; set; }
 
-    public ImageSource GetSmallIcon(string fileName)
+    public ImageSource? GetSmallIcon(string fileName)
     {
       return GetIcon(fileName, SHGFI_SMALLICON);
     }
 
-    public ImageSource GetIcon(string fileName, uint flags)
+    public ImageSource? GetIcon(string fileName, uint flags)
     {
       var shinfo = new SHFILEINFO();
       SHGetFileInfo(fileName, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), SHGFI_ICON | flags);
@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       return img;
     }
 
-    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    public object? Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var s = value as string;
       if (string.IsNullOrEmpty(s))

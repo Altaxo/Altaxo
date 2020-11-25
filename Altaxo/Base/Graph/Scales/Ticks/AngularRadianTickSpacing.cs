@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,20 +43,9 @@ namespace Altaxo.Graph.Scales.Ticks
         var s = (AngularRadianTickSpacing)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AngularRadianTickSpacing s = SDeserialize(o, info, parent);
-        OnAfterDeserialization(s);
-        return s;
-      }
-
-      protected virtual void OnAfterDeserialization(AngularRadianTickSpacing s)
-      {
-      }
-
-      protected virtual AngularRadianTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        AngularRadianTickSpacing s = null != o ? (AngularRadianTickSpacing)o : new AngularRadianTickSpacing();
+       var s = (AngularRadianTickSpacing?)o ?? new AngularRadianTickSpacing();
         info.GetBaseValueEmbedded(s, typeof(AngularTickSpacing), s);
         return s;
       }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,13 +39,13 @@ namespace Altaxo.Gui.Graph.Gdi
   {
     private int _suppressEventCounter = 0;
 
-    public event Action<bool> CreateOrMoveAxis;
+    public event Action<bool>? CreateOrMoveAxis;
 
-    public event Action DeleteAxis;
+    public event Action? DeleteAxis;
 
-    public event Action SecondChoiceChanged;
+    public event Action? SecondChoiceChanged;
 
-    public event Action<string> PageChanged;
+    public event Action<string>? PageChanged;
 
     public XYPlotLayerControl()
     {
@@ -75,7 +76,7 @@ namespace Altaxo.Gui.Graph.Gdi
       {
         int sel = _tabCtrl.SelectedIndex;
         var tp = (TabItem)_tabCtrl.Items[sel];
-        if (tp.Content != null)
+        if (tp.Content is not null)
           tp.Content = null;
 
         tp.Content = (UIElement)value;
@@ -106,14 +107,14 @@ namespace Altaxo.Gui.Graph.Gdi
       --_suppressEventCounter;
     }
 
-    public event System.ComponentModel.CancelEventHandler TabValidating;
+    public event System.ComponentModel.CancelEventHandler? TabValidating;
 
     #endregion ILayerView Members
 
     private void EhSecondChoice_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       e.Handled = true;
-      if (_suppressEventCounter == 0 && null != SecondChoiceChanged)
+      if (_suppressEventCounter == 0 && SecondChoiceChanged is not null)
       {
         GuiHelper.SynchronizeSelectionFromGui(_lbEdges);
         SecondChoiceChanged();
@@ -133,7 +134,7 @@ namespace Altaxo.Gui.Graph.Gdi
         ++_tabControl_SelectionChanged_Calls;
         bool shouldBeCancelled = false;
 
-        if (e.RemovedItems.Count > 0 && null != TabValidating)
+        if (e.RemovedItems.Count > 0 && TabValidating is not null)
         {
           if (!(e.RemovedItems[0] is TabItem))
           {
@@ -144,7 +145,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
           var tp = (TabItem)e.RemovedItems[0];
           var cancelEventArgs = new System.ComponentModel.CancelEventArgs();
-          if (null != TabValidating)
+          if (TabValidating is not null)
             TabValidating(this, cancelEventArgs);
           shouldBeCancelled = cancelEventArgs.Cancel;
 
@@ -158,7 +159,7 @@ namespace Altaxo.Gui.Graph.Gdi
             if (it is TabItem)
               ((TabItem)it).Content = null;
 
-          if (null != PageChanged)
+          if (PageChanged is not null)
           {
             var tp = (TabItem)_tabCtrl.SelectedItem;
             PageChanged(tp.Name);
@@ -173,21 +174,21 @@ end_of_function:
     private void EhCreateNewAxis(object sender, RoutedEventArgs e)
     {
       e.Handled = true;
-      if (_suppressEventCounter == 0 && null != CreateOrMoveAxis)
+      if (_suppressEventCounter == 0 && CreateOrMoveAxis is not null)
         CreateOrMoveAxis(false);
     }
 
     private void EhMoveAxis(object sender, RoutedEventArgs e)
     {
       e.Handled = true;
-      if (_suppressEventCounter == 0 && null != CreateOrMoveAxis)
+      if (_suppressEventCounter == 0 && CreateOrMoveAxis is not null)
         CreateOrMoveAxis(true);
     }
 
     private void EhDeleteAxis(object sender, RoutedEventArgs e)
     {
       e.Handled = true;
-      if (_suppressEventCounter == 0 && null != DeleteAxis)
+      if (_suppressEventCounter == 0 && DeleteAxis is not null)
         DeleteAxis();
     }
   }

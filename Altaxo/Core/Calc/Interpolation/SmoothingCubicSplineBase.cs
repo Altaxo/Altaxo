@@ -197,9 +197,9 @@ namespace Altaxo.Calc.Interpolation
     public void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y, double variance, IReadOnlyList<double>? dy)
     {
       // check input parameters
-      if (null == x)
+      if (x is null)
         throw new ArgumentNullException(nameof(x));
-      if (null == y)
+      if (y is null)
         throw new ArgumentNullException(nameof(y));
       if (x.Count == 0)
         throw new ArgumentException($"Vector {nameof(x)} is empty");
@@ -207,9 +207,9 @@ namespace Altaxo.Calc.Interpolation
         throw new ArgumentException($"Vector {nameof(y)} is empty");
       if (!MatchingIndexRange(x, y))
         throw new ArgumentException($"Length mismatch between {nameof(y)} and {nameof(x)}");
-      if (dy != null && !MatchingIndexRange(x, dy))
+      if (dy is not null && !MatchingIndexRange(x, dy))
         throw new ArgumentException($"Length mismatch between {nameof(dy)} and {nameof(x)}");
-      if (dy != null && !(variance > 0))
+      if (dy is not null && !(variance > 0))
         throw new ArgumentException($"The parameter {nameof(variance)} must be greater than 0 if the array {nameof(dy)} is provided!");
 
 
@@ -221,7 +221,7 @@ namespace Altaxo.Calc.Interpolation
           ThrowIfIsNotStrictlyMonotonicallyIncreasing(x, nameof(x));
 
         ThrowIfContainsNaNOrInfiniteValues(y, nameof(y));
-        if (null != dy)
+        if (dy is not null)
         {
           ThrowIfContainsNegativeOrNaNOrInfiniteValues(dy, nameof(dy));
         }
@@ -326,7 +326,7 @@ namespace Altaxo.Calc.Interpolation
 
         _variance = variance;
 
-        if (dy != null) // if deviations of the points are known, copy them
+        if (dy is not null) // if deviations of the points are known, copy them
         {
           for (int i = 0; i < n; ++i)
             _df[i] = dy[i];

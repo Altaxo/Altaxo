@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Text;
 
 namespace Altaxo.Gui.Common
 {
@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Common
     }
 
     public ControlViewElement(string title, IMVCAController controller)
-      : base(title, controller.ViewObject)
+      : base(title, controller.ViewObject ?? throw new InvalidOperationException("The controller provided in the argument has no view yet!"))
     {
       Controller = controller;
     }

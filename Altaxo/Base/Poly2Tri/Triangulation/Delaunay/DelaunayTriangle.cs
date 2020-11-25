@@ -38,6 +38,7 @@
 //     Bundling everything into an AoS mess?
 //     Hardcode them all as ABC ?
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -179,7 +180,7 @@ namespace Poly2Tri
     public void MarkNeighborEdges()
     {
       for (int i = 0; i < 3; i++)
-        if (EdgeIsConstrained[i] && Neighbors[i] != null)
+        if (EdgeIsConstrained[i] && Neighbors[i] is not null)
         {
           Neighbors[i].MarkConstrainedEdge(Points[(i + 1) % 3], Points[(i + 2) % 3]);
         }

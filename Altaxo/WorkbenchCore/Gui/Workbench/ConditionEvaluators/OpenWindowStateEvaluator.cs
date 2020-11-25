@@ -32,7 +32,7 @@ namespace Altaxo.Gui.Workbench
 
     private bool IsStateOk(IFileViewContent viewContent)
     {
-      if (viewContent == null)
+      if (viewContent is null)
       {
         return false;
       }
@@ -81,17 +81,17 @@ namespace Altaxo.Gui.Workbench
     private static bool IsUntitled(IFileViewContent viewContent)
     {
       OpenedFile file = viewContent.PrimaryFile;
-      if (file == null)
+      if (file is null)
         return false;
       else
         return file.IsUntitled;
     }
 
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object? caller, Condition condition)
     {
       var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
 
-      if (workbench == null)
+      if (workbench is null)
       {
         return false;
       }

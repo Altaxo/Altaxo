@@ -28,13 +28,13 @@ using System.Linq;
 using System.Text;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Geometry
 {
   using TD = Tuple<PointD3D, VectorD3D, VectorD3D>;
 
-  [TestFixture]
+
   public class TestMath3D
   {
     // Straight line in y-direction
@@ -239,10 +239,10 @@ namespace Altaxo.Geometry
       new Tuple<PointD3D[], TD[]>(_input11, _output11),
     };
 
-    [Test]
+    [Fact]
     public static void Test_GetPolylinePointsWithWestAndNorth_01()
     {
-      const double maxDev = 1E-6;
+      const int maxDev = 6;
       for (int caseNo = 0; caseNo < _testCases.Length; ++caseNo)
       {
         var points = _testCases[caseNo].Item1;
@@ -251,29 +251,29 @@ namespace Altaxo.Geometry
         var result = PolylineMath3D.GetPolylinePointsWithWestAndNorth(points).ToArray();
 
         // Verify results
-        Assert.AreEqual(expectedOutput.Length, result.Length);
+        Assert.Equal(expectedOutput.Length, result.Length);
 
         for (int i = 0; i < expectedOutput.Length; ++i)
         {
           string comment = string.Format("In case no. {0}, i={1}", caseNo, i);
 
-          Assert.AreEqual(expectedOutput[i].Item1, result[i].Position, comment);
+          Assert.Equal(expectedOutput[i].Item1, result[i].Position);
 
-          Assert.AreEqual(expectedOutput[i].Item2.X, result[i].WestVector.X, maxDev, comment);
-          Assert.AreEqual(expectedOutput[i].Item2.Y, result[i].WestVector.Y, maxDev, comment);
-          Assert.AreEqual(expectedOutput[i].Item2.Z, result[i].WestVector.Z, maxDev, comment);
+          Assert.Equal(expectedOutput[i].Item2.X, result[i].WestVector.X, maxDev);
+          Assert.Equal(expectedOutput[i].Item2.Y, result[i].WestVector.Y, maxDev);
+          Assert.Equal(expectedOutput[i].Item2.Z, result[i].WestVector.Z, maxDev);
 
-          Assert.AreEqual(expectedOutput[i].Item3.X, result[i].NorthVector.X, maxDev, comment);
-          Assert.AreEqual(expectedOutput[i].Item3.Y, result[i].NorthVector.Y, maxDev, comment);
-          Assert.AreEqual(expectedOutput[i].Item3.Z, result[i].NorthVector.Z, maxDev, comment);
+          Assert.Equal(expectedOutput[i].Item3.X, result[i].NorthVector.X, maxDev);
+          Assert.Equal(expectedOutput[i].Item3.Y, result[i].NorthVector.Y, maxDev);
+          Assert.Equal(expectedOutput[i].Item3.Z, result[i].NorthVector.Z, maxDev);
         }
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test_GetPolylinePointsWithWestAndNorth_02()
     {
-      const double maxDev = 1E-6;
+      const int maxDev = 6;
       var rnd = new System.Random();
 
       var testPoints = new PointD3D[1024];
@@ -293,23 +293,23 @@ namespace Altaxo.Geometry
         var west = result[i].WestVector;
         var north = result[i].NorthVector;
 
-        Assert.AreNotEqual(forwardRaw.Length, 0); // GetPolylinePointsWithWestAndNorth should only deliver non-empty segments
+        Assert.NotEqual(0, forwardRaw.Length); // GetPolylinePointsWithWestAndNorth should only deliver non-empty segments
         var forward = forwardRaw.Normalized;
 
-        Assert.AreEqual(west.Length, 1, maxDev); // is west normalized
-        Assert.AreEqual(north.Length, 1, maxDev); // is north normalized
-        Assert.AreEqual(VectorD3D.DotProduct(west, forward), 0, maxDev); // is west perpendicular to forward
-        Assert.AreEqual(VectorD3D.DotProduct(north, forward), 0, maxDev); // is north perpendicular to forward
-        Assert.AreEqual(VectorD3D.DotProduct(west, north), 0, maxDev); // is west perpendicular to north
+        Assert.Equal(1, west.Length, maxDev); // is west normalized
+        Assert.Equal(1, north.Length, maxDev); // is north normalized
+        Assert.Equal(0, VectorD3D.DotProduct(west, forward), maxDev); // is west perpendicular to forward
+        Assert.Equal(0, VectorD3D.DotProduct(north, forward), maxDev); // is north perpendicular to forward
+        Assert.Equal(0, VectorD3D.DotProduct(west, north), maxDev); // is west perpendicular to north
         var matrix = Altaxo.Geometry.Matrix4x3.NewFromBasisVectorsAndLocation(west, north, forward, PointD3D.Empty);
-        Assert.AreEqual(matrix.Determinant, 1, maxDev); // west-north-forward are a right handed coordinate system
+        Assert.Equal(1, matrix.Determinant, maxDev); // west-north-forward are a right handed coordinate system
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test_GetWestNorthVectors_01()
     {
-      const double maxDev = 1E-6;
+      const int maxDev = 6;
 
       for (int iTheta = -89; iTheta < 90; ++iTheta)
       {
@@ -318,44 +318,44 @@ namespace Altaxo.Geometry
         {
           double phi = Math.PI * iPhi / 180.0;
           var v = new VectorD3D(Math.Cos(phi) * Math.Cos(theta), Math.Sin(phi) * Math.Cos(theta), Math.Sin(theta));
-          Assert.AreEqual(v.Length, 1, maxDev); // is forward normalized
+          Assert.Equal(1, v.Length, maxDev); // is forward normalized
 
           var rawNorth = PolylineMath3D.GetRawNorthVectorAtStart(v);
-          Assert.AreEqual(rawNorth.X, 0);
-          Assert.AreEqual(rawNorth.Y, 0);
-          Assert.AreEqual(rawNorth.Z, 1);
+          Assert.Equal(0, rawNorth.X);
+          Assert.Equal(0, rawNorth.Y);
+          Assert.Equal(1, rawNorth.Z);
 
           var westNorth = PolylineMath3D.GetWestNorthVectors(new LineD3D(PointD3D.Empty, (PointD3D)v));
 
           var west = westNorth.Item1;
           var north = westNorth.Item2;
 
-          Assert.AreEqual(west.Length, 1, maxDev); // is west normalized
-          Assert.AreEqual(north.Length, 1, maxDev); // is north normalized
-          Assert.AreEqual(VectorD3D.DotProduct(west, v), 0, maxDev); // is west perpendicular to forward
-          Assert.AreEqual(VectorD3D.DotProduct(north, v), 0, maxDev); // is north perpendicular to forward
-          Assert.AreEqual(VectorD3D.DotProduct(west, north), 0, maxDev); // is west perpendicular to north
+          Assert.Equal(1, west.Length, maxDev); // is west normalized
+          Assert.Equal(1, north.Length, maxDev); // is north normalized
+          Assert.Equal(0, VectorD3D.DotProduct(west, v), maxDev); // is west perpendicular to forward
+          Assert.Equal(0, VectorD3D.DotProduct(north, v), maxDev); // is north perpendicular to forward
+          Assert.Equal(0, VectorD3D.DotProduct(west, north), maxDev); // is west perpendicular to north
           var matrix = Altaxo.Geometry.Matrix4x3.NewFromBasisVectorsAndLocation(west, north, v, PointD3D.Empty);
-          Assert.AreEqual(matrix.Determinant, 1, maxDev);
+          Assert.Equal(1, matrix.Determinant, maxDev);
 
           var westExpected = new VectorD3D(-Math.Sin(phi), Math.Cos(phi), 0);
           var northExpected = new VectorD3D(-Math.Cos(phi) * Math.Sin(theta), -Math.Sin(phi) * Math.Sin(theta), Math.Cos(theta));
 
-          Assert.AreEqual(westExpected.X, west.X, maxDev);
-          Assert.AreEqual(westExpected.Y, west.Y, maxDev);
-          Assert.AreEqual(westExpected.Z, west.Z, maxDev);
+          Assert.Equal(westExpected.X, west.X, maxDev);
+          Assert.Equal(westExpected.Y, west.Y, maxDev);
+          Assert.Equal(westExpected.Z, west.Z, maxDev);
 
-          Assert.AreEqual(northExpected.X, north.X, maxDev);
-          Assert.AreEqual(northExpected.Y, north.Y, maxDev);
-          Assert.AreEqual(northExpected.Z, north.Z, maxDev);
+          Assert.Equal(northExpected.X, north.X, maxDev);
+          Assert.Equal(northExpected.Y, north.Y, maxDev);
+          Assert.Equal(northExpected.Z, north.Z, maxDev);
         }
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test_GetWestNorthVectors_02()
     {
-      const double maxDev = 1E-6;
+      const int maxDev = 6;
 
       for (int i = -1; i <= 1; i += 2)
       {
@@ -364,31 +364,31 @@ namespace Altaxo.Geometry
         var west = westNorth.Item1;
         var north = westNorth.Item2;
 
-        Assert.AreEqual(west.Length, 1, maxDev); // is west normalized
-        Assert.AreEqual(north.Length, 1, maxDev); // is north normalized
-        Assert.AreEqual(VectorD3D.DotProduct(west, v), 0, maxDev); // is west perpendicular to forward
-        Assert.AreEqual(VectorD3D.DotProduct(north, v), 0, maxDev); // is north perpendicular to forward
-        Assert.AreEqual(VectorD3D.DotProduct(west, north), 0, maxDev); // is west perpendicular to north
+        Assert.Equal(1, west.Length, maxDev); // is west normalized
+        Assert.Equal(1, north.Length, maxDev); // is north normalized
+        Assert.Equal(0, VectorD3D.DotProduct(west, v), maxDev); // is west perpendicular to forward
+        Assert.Equal(0, VectorD3D.DotProduct(north, v), maxDev); // is north perpendicular to forward
+        Assert.Equal(0, VectorD3D.DotProduct(west, north), maxDev); // is west perpendicular to north
         var matrix = Altaxo.Geometry.Matrix4x3.NewFromBasisVectorsAndLocation(west, north, v, PointD3D.Empty);
-        Assert.AreEqual(matrix.Determinant, 1, maxDev);
+        Assert.Equal(1, matrix.Determinant, maxDev);
 
         var westExpected = new VectorD3D(-1, 0, 0);
         var northExpected = new VectorD3D(0, -i, 0);
 
-        Assert.AreEqual(westExpected.X, west.X, maxDev);
-        Assert.AreEqual(westExpected.Y, west.Y, maxDev);
-        Assert.AreEqual(westExpected.Z, west.Z, maxDev);
+        Assert.Equal(westExpected.X, west.X, maxDev);
+        Assert.Equal(westExpected.Y, west.Y, maxDev);
+        Assert.Equal(westExpected.Z, west.Z, maxDev);
 
-        Assert.AreEqual(northExpected.X, north.X, maxDev);
-        Assert.AreEqual(northExpected.Y, north.Y, maxDev);
-        Assert.AreEqual(northExpected.Z, north.Z, maxDev);
+        Assert.Equal(northExpected.X, north.X, maxDev);
+        Assert.Equal(northExpected.Y, north.Y, maxDev);
+        Assert.Equal(northExpected.Z, north.Z, maxDev);
       }
     }
 
-    [Test]
+    [Fact]
     public static void Test_GetFractionalPolyline_01()
     {
-      const double maxDev = 1E-6;
+      const int maxDev = 6;
       string comment = string.Empty;
       for (int caseNo = 0; caseNo < _testCases.Length; ++caseNo)
       {
@@ -419,15 +419,15 @@ namespace Altaxo.Geometry
             {
               comment = string.Format("In case no. {0}, startIndex={1}, endIndex={2}, i={3}", caseNo, startIndex, endIndex, i);
 
-              Assert.AreEqual(expectedOutput[i].Item1, result[i - iShift].Position, comment);
+              Assert.Equal(expectedOutput[i].Item1, result[i - iShift].Position);
 
-              Assert.AreEqual(expectedOutput[i].Item2.X, result[i - iShift].WestVector.X, maxDev, comment);
-              Assert.AreEqual(expectedOutput[i].Item2.Y, result[i - iShift].WestVector.Y, maxDev, comment);
-              Assert.AreEqual(expectedOutput[i].Item2.Z, result[i - iShift].WestVector.Z, maxDev, comment);
+              Assert.Equal(expectedOutput[i].Item2.X, result[i - iShift].WestVector.X, maxDev);
+              Assert.Equal(expectedOutput[i].Item2.Y, result[i - iShift].WestVector.Y, maxDev);
+              Assert.Equal(expectedOutput[i].Item2.Z, result[i - iShift].WestVector.Z, maxDev);
 
-              Assert.AreEqual(expectedOutput[i].Item3.X, result[i - iShift].NorthVector.X, maxDev, comment);
-              Assert.AreEqual(expectedOutput[i].Item3.Y, result[i - iShift].NorthVector.Y, maxDev, comment);
-              Assert.AreEqual(expectedOutput[i].Item3.Z, result[i - iShift].NorthVector.Z, maxDev, comment);
+              Assert.Equal(expectedOutput[i].Item3.X, result[i - iShift].NorthVector.X, maxDev);
+              Assert.Equal(expectedOutput[i].Item3.Y, result[i - iShift].NorthVector.Y, maxDev);
+              Assert.Equal(expectedOutput[i].Item3.Z, result[i - iShift].NorthVector.Z, maxDev);
             }
 
             // start
@@ -438,15 +438,15 @@ namespace Altaxo.Geometry
 
             comment = string.Format("In case no. {0}, startIndex={1}, endIndex={2}", caseNo, startIndex, endIndex);
 
-            Assert.AreEqual(expectedStartPoint, result[0].Position, comment);
+            Assert.Equal(expectedStartPoint, result[0].Position);
 
-            Assert.AreEqual(expectedOutput[vecIndex].Item2.X, result[0].WestVector.X, maxDev, comment);
-            Assert.AreEqual(expectedOutput[vecIndex].Item2.Y, result[0].WestVector.Y, maxDev, comment);
-            Assert.AreEqual(expectedOutput[vecIndex].Item2.Z, result[0].WestVector.Z, maxDev, comment);
+            Assert.Equal(expectedOutput[vecIndex].Item2.X, result[0].WestVector.X, maxDev);
+            Assert.Equal(expectedOutput[vecIndex].Item2.Y, result[0].WestVector.Y, maxDev);
+            Assert.Equal(expectedOutput[vecIndex].Item2.Z, result[0].WestVector.Z, maxDev);
 
-            Assert.AreEqual(expectedOutput[vecIndex].Item3.X, result[0].NorthVector.X, maxDev, comment);
-            Assert.AreEqual(expectedOutput[vecIndex].Item3.Y, result[0].NorthVector.Y, maxDev, comment);
-            Assert.AreEqual(expectedOutput[vecIndex].Item3.Z, result[0].NorthVector.Z, maxDev, comment);
+            Assert.Equal(expectedOutput[vecIndex].Item3.X, result[0].NorthVector.X, maxDev);
+            Assert.Equal(expectedOutput[vecIndex].Item3.Y, result[0].NorthVector.Y, maxDev);
+            Assert.Equal(expectedOutput[vecIndex].Item3.Z, result[0].NorthVector.Z, maxDev);
 
             // end
             int endIndexInt = (int)Math.Floor(endIndex);
@@ -455,15 +455,15 @@ namespace Altaxo.Geometry
             vecIndex = endIndexFrac == 0 ? endIndexInt : endIndexInt + 1;
             var resultLast = result[result.Length - 1];
 
-            Assert.AreEqual(expectedEndPoint, resultLast.Position, comment);
+            Assert.Equal(expectedEndPoint, resultLast.Position);
 
-            Assert.AreEqual(expectedOutput[vecIndex].Item2.X, resultLast.WestVector.X, maxDev, comment);
-            Assert.AreEqual(expectedOutput[vecIndex].Item2.Y, resultLast.WestVector.Y, maxDev, comment);
-            Assert.AreEqual(expectedOutput[vecIndex].Item2.Z, resultLast.WestVector.Z, maxDev, comment);
+            Assert.Equal(expectedOutput[vecIndex].Item2.X, resultLast.WestVector.X, maxDev);
+            Assert.Equal(expectedOutput[vecIndex].Item2.Y, resultLast.WestVector.Y, maxDev);
+            Assert.Equal(expectedOutput[vecIndex].Item2.Z, resultLast.WestVector.Z, maxDev);
 
-            Assert.AreEqual(expectedOutput[vecIndex].Item3.X, resultLast.NorthVector.X, maxDev, comment);
-            Assert.AreEqual(expectedOutput[vecIndex].Item3.Y, resultLast.NorthVector.Y, maxDev, comment);
-            Assert.AreEqual(expectedOutput[vecIndex].Item3.Z, resultLast.NorthVector.Z, maxDev, comment);
+            Assert.Equal(expectedOutput[vecIndex].Item3.X, resultLast.NorthVector.X, maxDev);
+            Assert.Equal(expectedOutput[vecIndex].Item3.Y, resultLast.NorthVector.Y, maxDev);
+            Assert.Equal(expectedOutput[vecIndex].Item3.Z, resultLast.NorthVector.Z, maxDev);
 
             // test first returned
           }

@@ -97,7 +97,7 @@ namespace Altaxo.Calc.Ode
 
       for (int i = 0; i < m; i++)
       {
-        if (indices[i] != null)
+        if (indices[i] is not null)
         {
           C.indices[i] = new int[count[i]];
           C.items[i] = new double[count[i]];
@@ -137,7 +137,7 @@ namespace Altaxo.Calc.Ode
 
       for (int i = 0; i < m; i++)
       {
-        if (indices[i] != null)
+        if (indices[i] is not null)
         {
           C.indices[i] = new int[count[i]];
           C.items[i] = new double[count[i]];
@@ -176,7 +176,7 @@ namespace Altaxo.Calc.Ode
       unchecked // Turns off integral overflow checking: small speedup
       {
         for (int i = 0; i < m; i++)
-          if (indices[i] != null)
+          if (indices[i] is not null)
           {
             double s = 0;
             for (int k = 0; k < count[i]; k++)
@@ -210,7 +210,7 @@ namespace Altaxo.Calc.Ode
       unchecked // Turns off integral overflow checking: small speedup
       {
         for (int i = 0; i < n; i++)
-          if (indices[i] != null)
+          if (indices[i] is not null)
           {
             for (int k = 0; k < count[i]; k++)
               result[indices[i][k]] += vv[i] * items[i][k];
@@ -241,7 +241,7 @@ namespace Altaxo.Calc.Ode
 
       for (int i = 0; i < m; i++)
       {
-        if (indices[i] != null)
+        if (indices[i] is not null)
         {
           B.indices[i] = new int[count[i]];
           B.items[i] = new double[count[i]];
@@ -298,13 +298,13 @@ namespace Altaxo.Calc.Ode
       int idx, ii;
       for (int i = 0; i < m; i++)
       {
-        if (indices[i] != null)
+        if (indices[i] is not null)
           for (int j = 0; j < B.n; j++)
           {
             for (int jj = 0; jj < count[i]; jj++)
             {
               ii = indices[i][jj];
-              if (B.indices[ii] != null)
+              if (B.indices[ii] is not null)
               {
                 idx = Array.BinarySearch(B.indices[ii], 0, B.count[ii], j);
                 if (idx >= 0)

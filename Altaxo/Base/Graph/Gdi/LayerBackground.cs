@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -36,19 +37,19 @@ namespace Altaxo.Graph.Gdi
     Main.SuspendableDocumentNodeWithEventArgs,
     ICloneable
   {
-    private IBackgroundStyle _background;
+    private IBackgroundStyle? _background;
     private double _leftPadding;
     private double _rightPadding;
     private double _topPadding;
     private double _bottomPadding;
 
+    
     private void CopyFrom(LayerBackground from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
-      _background = null == from._background ? null : (IBackgroundStyle)from._background.Clone();
-      _background.ParentObject = this;
+      ChildCloneToMember(ref _background, from._background);
 
       _leftPadding = from._leftPadding;
       _rightPadding = from._rightPadding;
@@ -58,7 +59,7 @@ namespace Altaxo.Graph.Gdi
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _background)
+      if (_background is not null)
         yield return new Main.DocumentNodeAndName(_background, "Background");
     }
 
@@ -73,20 +74,18 @@ namespace Altaxo.Graph.Gdi
       {
         var s = (LayerBackground)obj;
 
-        info.AddValue("Background", s._background);
+        info.AddValueOrNull("Background", s._background);
         info.AddValue("LeftPadding", s._leftPadding);
         info.AddValue("TopPadding", s._topPadding);
         info.AddValue("RightPadding", s._rightPadding);
         info.AddValue("BottomPadding", s._bottomPadding);
       }
 
-      protected virtual LayerBackground SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual LayerBackground SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LayerBackground s = (o == null ? new LayerBackground() : (LayerBackground)o);
+        var s = (LayerBackground?)o ?? new LayerBackground();
 
-        s._background = (Background.IBackgroundStyle)info.GetValue("Background", s);
-        s._background.ParentObject = s;
-
+        s.ChildSetMember(ref s._background , info.GetValueOrNull<Background.IBackgroundStyle> ("Background", s));
         s._leftPadding = info.GetDouble("LeftPadding");
         s._topPadding = info.GetDouble("TopPadding");
         s._rightPadding = info.GetDouble("RightPadding");
@@ -95,7 +94,7 @@ namespace Altaxo.Graph.Gdi
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         LayerBackground s = SDeserialize(o, info, parent);
         return s;

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,14 +33,16 @@ using Altaxo.Data;
 namespace Altaxo.Graph.Plot.Data
 {
   /// <summary>
-  /// Base class for models that are used to exchange the underlying table or data columns of plot items
+  /// Base class for models that are used to exchange the underlying table or data columns of plot items.
   /// </summary>
   public abstract class ColumnPlotDataExchangeDataBase
   {
+    private static IGPlotItem[] _emptyPlotItems = new IGPlotItem[0];
+
     /// <summary>
     /// Gets or sets the plot items, for which either the underlying data table or data columns should be changed.
     /// </summary>
-    public IEnumerable<Altaxo.Graph.Plot.IGPlotItem> PlotItems { get; protected set; }
+    public IEnumerable<IGPlotItem> PlotItems { get; protected set; } = _emptyPlotItems;
 
     /// <summary>
     /// Enumerates all data columns used by an <see cref="Altaxo.Graph.Plot.IGPlotItem"/>
@@ -51,11 +54,13 @@ namespace Altaxo.Graph.Plot.Data
       (
       string ColumnGroup,
       string ColumnLabel,
-      IReadableColumn Column,
-      string ColumnName,
-      Action<IReadableColumn, DataTable, int> ColumnSetAction
-      )
-      > EnumerateAllDataColumnsOfPlotItem(Altaxo.Graph.Plot.IGPlotItem plotItem, Predicate<(DataColumn Column, string ColumnName)> predicate)
+      IReadableColumn? Column,
+      string? ColumnName,
+      Action<IReadableColumn?, DataTable, int> ColumnSetAction
+      )>
+      EnumerateAllDataColumnsOfPlotItem(
+        Altaxo.Graph.Plot.IGPlotItem plotItem,
+        Predicate<(DataColumn? Column, string? ColumnName)> predicate)
     {
       if (plotItem.DataObject is IColumnPlotData data)
       {
@@ -64,18 +69,18 @@ namespace Altaxo.Graph.Plot.Data
         {
           if ((columnInfo.Column is DataColumn dataColumn1 && predicate((dataColumn1, columnInfo.ColumnName))) || (columnInfo.Column is null && !string.IsNullOrEmpty(columnInfo.ColumnName)))
           {
-            yield return (nameof(data.DataRowSelection), columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.ColumnSetAction(col));
+            yield return (nameof(data.DataRowSelection), columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.SetColumnAction(col ?? new IndexerColumn()));
           }
           else if ((columnInfo.Column is TransformedReadableColumn transColumn && transColumn.UnderlyingReadableColumn is DataColumn dataColumn2 && predicate((dataColumn2, columnInfo.ColumnName))))
           {
-            yield return (nameof(data.DataRowSelection), columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.ColumnSetAction(transColumn.WithUnderlyingReadableColumn(col)));
+            yield return (nameof(data.DataRowSelection), columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.SetColumnAction(col is null ? (IReadableColumn)new IndexerColumn() : transColumn.WithUnderlyingReadableColumn(col)));
           }
         }
 
         // now the data itself
         foreach (var t in data.GetAdditionallyUsedColumns())
         {
-          foreach (var columnInfo in t.columnInfos)
+          foreach (var columnInfo in t.ColumnInfos)
           {
             if ((columnInfo.Column is DataColumn dataColumn1 && predicate((dataColumn1, columnInfo.ColumnName))) || (columnInfo.Column is null && !string.IsNullOrEmpty(columnInfo.ColumnName)))
             {
@@ -83,7 +88,7 @@ namespace Altaxo.Graph.Plot.Data
             }
             else if ((columnInfo.Column is TransformedReadableColumn transColumn && transColumn.UnderlyingReadableColumn is DataColumn dataColumn2 && predicate((dataColumn2, columnInfo.ColumnName))))
             {
-              yield return (t.NameOfColumnGroup, columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.SetColumnAction(transColumn.WithUnderlyingReadableColumn(col), tbl, grp));
+              yield return (t.NameOfColumnGroup, columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.SetColumnAction(col is null ? col : transColumn.WithUnderlyingReadableColumn(col), tbl, grp));
             }
           }
         }
@@ -101,7 +106,7 @@ namespace Altaxo.Graph.Plot.Data
               }
               else if ((columnInfo.Column is TransformedReadableColumn transColumn && transColumn.UnderlyingReadableColumn is DataColumn dataColumn2 && predicate((dataColumn2, columnInfo.ColumnName))))
               {
-                yield return (style.GetType().Name, columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.ColumnSetAction(transColumn.WithUnderlyingReadableColumn(col)));
+                yield return (style.GetType().Name, columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.ColumnSetAction(col is null ? col : transColumn.WithUnderlyingReadableColumn(col)));
               }
             }
           }
@@ -116,7 +121,7 @@ namespace Altaxo.Graph.Plot.Data
             }
             else if ((columnInfo.Column is TransformedReadableColumn transColumn && transColumn.UnderlyingReadableColumn is DataColumn dataColumn2 && predicate((dataColumn2, columnInfo.ColumnName))))
             {
-              yield return (style.GetType().Name, columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.ColumnSetAction(transColumn.WithUnderlyingReadableColumn(col)));
+              yield return (style.GetType().Name, columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.ColumnSetAction(col is null ? col : transColumn.WithUnderlyingReadableColumn(col)));
             }
             else if (columnInfo.Column is null)
             {
@@ -135,18 +140,18 @@ namespace Altaxo.Graph.Plot.Data
     /// </value>
     private static IEnumerable<(
         string ColumnLabel, // Column label
-        IReadableColumn Column, // the column as it was at the time of this call
-        string ColumnName, // the name of the column (last part of the column proxies document path)
-        Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+        IReadableColumn? Column, // the column as it was at the time of this call
+        string? ColumnName, // the name of the column (last part of the column proxies document path)
+        Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
         )> EmptyColumnInfoEnumeration
     {
       get
       {
         return Enumerable.Empty<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      IReadableColumn? Column, // the column as it was at the time of this call
+      string? ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
       )>();
       }
     }

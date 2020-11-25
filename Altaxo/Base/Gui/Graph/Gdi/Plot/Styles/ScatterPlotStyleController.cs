@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using Altaxo.Collections;
@@ -184,7 +185,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
           _symbolInsetChoices.Add(new SelectableListNode(ty.Name, ty, false));
         }
       }
-      if (_view != null)
+      if (_view is not null)
       {
         _view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
         _view.SkipFrequency = _doc.SkipFrequency;
@@ -232,7 +233,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public override bool Apply(bool disposeController)
     {
-      bool applyResult = true;
+      // bool applyResult = true;
       // don't trust user input, so all into a try statement
       try
       {
@@ -256,10 +257,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         _doc.SymbolSize = _view.SymbolSize;
 
         _doc.OverrideFrame = _view.OverrideFrame;
-        _doc.OverriddenFrame = _symbolFrameChoices.FirstSelectedNode?.Tag == null ? null : (IScatterSymbolFrame)Activator.CreateInstance((Type)_symbolFrameChoices.FirstSelectedNode.Tag);
+        _doc.OverriddenFrame = _symbolFrameChoices.FirstSelectedNode?.Tag is null ? null : (IScatterSymbolFrame)Activator.CreateInstance((Type)_symbolFrameChoices.FirstSelectedNode.Tag);
 
         _doc.OverrideInset = _view.OverrideInset;
-        _doc.OverriddenInset = _symbolInsetChoices.FirstSelectedNode?.Tag == null ? null : (IScatterSymbolInset)Activator.CreateInstance((Type)_symbolInsetChoices.FirstSelectedNode.Tag);
+        _doc.OverriddenInset = _symbolInsetChoices.FirstSelectedNode?.Tag is null ? null : (IScatterSymbolInset)Activator.CreateInstance((Type)_symbolInsetChoices.FirstSelectedNode.Tag);
 
         _doc.OverrideStructureWidthOffset = _view.OverrideAbsoluteStructureWidth ? _view.OverriddenAbsoluteStructureWidth : (double?)null;
         _doc.OverrideStructureWidthFactor = _view.OverrideRelativeStructureWidth ? _view.OverriddenRelativeStructureWidth : (double?)null;
@@ -304,7 +305,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhIndependentColorChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentColor = _view.IndependentColor;
         _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
@@ -342,16 +343,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         _view.OverriddenFillColor = symbol.FillColor;
 
       // FrameColor
-      if (!_view.OverrideFrameColor && symbol.Frame != null)
+      if (!_view.OverrideFrameColor && symbol.Frame is not null)
         _view.OverriddenFrameColor = symbol.Frame.Color;
 
       // InsetColor
-      if (!_view.OverrideInsetColor && symbol.Inset != null)
+      if (!_view.OverrideInsetColor && symbol.Inset is not null)
         _view.OverriddenInsetColor = symbol.Inset.Color;
 
       // Initialize the list of similar symbols
       Initialize_SimilarSymbolList();
-      if (null != _view)
+      if (_view is not null)
         _view.SimilarSymbols = _similarSymbolChoices;
     }
 
@@ -384,10 +385,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       if (symbol.FillColor == _view.OverriddenFillColor)
         _view.OverrideFillColor = false;
 
-      if (symbol.Frame == null || symbol.Frame.Color == _view.OverriddenFrameColor)
+      if (symbol.Frame is null || symbol.Frame.Color == _view.OverriddenFrameColor)
         _view.OverrideFrameColor = false;
 
-      if (symbol.Inset == null || symbol.Inset.Color == _view.OverriddenInsetColor)
+      if (symbol.Inset is null || symbol.Inset.Color == _view.OverriddenInsetColor)
         _view.OverrideInsetColor = false;
     }
 
@@ -415,7 +416,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
             "Question concerning absolute/relative structure width",
             true);
 
-          if (null == dlgResult)
+          if (dlgResult is null)
           {
             cancellationRequested = true;
             return symbol;
@@ -441,7 +442,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
             "Question concerning absolute/relative structure width",
             false);
 
-          if (null == dlgResult)
+          if (dlgResult is null)
           {
             cancellationRequested = true;
             return symbol;
@@ -471,7 +472,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       else
       {
         var parentList = ScatterSymbolListManager.Instance.GetParentList(symbol);
-        if (null != parentList)
+        if (parentList is not null)
         {
           scatterSymbolsToModify = parentList;
           originalItemIndex = parentList.IndexOf(symbol);
@@ -495,7 +496,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
           var newInsetType = (Type)_symbolInsetChoices.FirstSelectedNode?.Tag;
           if (newInsetType != newSymbol.Inset?.GetType())
           {
-            var newInset = null == newInsetType ? null : (IScatterSymbolInset)Activator.CreateInstance(newInsetType);
+            var newInset = newInsetType is null ? null : (IScatterSymbolInset)Activator.CreateInstance(newInsetType);
             newSymbol = newSymbol.WithInset(newInset);
           }
         }
@@ -505,7 +506,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
           var newFrameType = (Type)_symbolFrameChoices.FirstSelectedNode?.Tag;
           if (newFrameType != newSymbol.Frame?.GetType())
           {
-            var newFrame = null == newFrameType ? null : (IScatterSymbolFrame)Activator.CreateInstance(newFrameType);
+            var newFrame = newFrameType is null ? null : (IScatterSymbolFrame)Activator.CreateInstance(newFrameType);
             newSymbol = newSymbol.WithFrame(newFrame);
           }
         }
@@ -519,10 +520,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         if (_view.OverrideFillColor)
           newSymbol = newSymbol.WithFillColor(_view.OverriddenFillColor);
 
-        if (_view.OverrideFrameColor && newSymbol.Frame != null)
+        if (_view.OverrideFrameColor && newSymbol.Frame is not null)
           newSymbol = newSymbol.WithFrame(newSymbol.Frame.WithColor(_view.OverriddenFrameColor));
 
-        if (_view.OverrideInsetColor && newSymbol.Inset != null)
+        if (_view.OverrideInsetColor && newSymbol.Inset is not null)
           newSymbol = newSymbol.WithInset(newSymbol.Inset.WithColor(_view.OverriddenInsetColor));
 
         newSymbols.Add(newSymbol);
@@ -592,7 +593,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
       _similarSymbolChoices = new SelectableListNodeList();
       var currentList = ScatterSymbolListManager.Instance.GetParentList(currentSymbol);
-      if (null == currentList)
+      if (currentList is null)
         return; // return with an empty _similarSymbolChoices
 
       var currentIndex = currentList.IndexOf(currentSymbol); // index of the current symbol in the symbol set
@@ -620,7 +621,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     private void EhSimilarShapeChosen()
     {
       var node = _similarSymbolChoices.FirstSelectedNode;
-      if (node != null)
+      if (node is not null)
       {
         var newSymbol = (IScatterSymbol)node.Tag;
         _view.ScatterSymbol = newSymbol;

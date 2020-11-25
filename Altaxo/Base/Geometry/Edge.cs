@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 
@@ -42,10 +43,13 @@ namespace Altaxo.Geometry
   {
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      info.SetNodeContent(obj.ToString());
+      if (obj is null)
+        throw new ArgumentNullException(nameof(obj));
+
+      info.SetNodeContent(obj.ToString() ?? "Left");
     }
 
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       string val = info.GetNodeContent();
       return System.Enum.Parse(typeof(EdgeType), val, true);
@@ -59,7 +63,7 @@ namespace Altaxo.Geometry
   [Serializable]
   public struct Edge
   {
-    private EdgeType m_StyleType;
+    private EdgeType _styleType;
 
     #region Serialization
 
@@ -73,13 +77,14 @@ namespace Altaxo.Geometry
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Edge)obj;
-        info.AddValue("EdgeType", s.m_StyleType);
+        info.AddValue("EdgeType", s._styleType);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var type = (EdgeType)info.GetValue("EdgeType", null);
-        Edge s = null != o ? (Edge)o : new Edge(type);
+        Edge s = (Edge?)o ?? new Edge(type);
+        s._styleType = type;
         return s;
       }
     }
@@ -88,18 +93,18 @@ namespace Altaxo.Geometry
 
     public Edge(EdgeType st)
     {
-      m_StyleType = st;
+      _styleType = st;
     }
 
     public EdgeType TypeOfEdge
     {
-      get { return m_StyleType; }
-      set { m_StyleType = value; }
+      get { return _styleType; }
+      set { _styleType = value; }
     }
 
     public PointF GetOrg(SizeF layerSize)
     {
-      switch (m_StyleType)
+      switch (_styleType)
       {
         case EdgeType.Left:
           return new PointF(0, layerSize.Height);
@@ -118,7 +123,7 @@ namespace Altaxo.Geometry
 
     public PointF GetEnd(SizeF layerSize)
     {
-      switch (m_StyleType)
+      switch (_styleType)
       {
         case EdgeType.Left:
           return new PointF(0, 0);
@@ -142,7 +147,7 @@ namespace Altaxo.Geometry
 
     public PointF GetEdgePoint(SizeF layerSize, double rel)
     {
-      switch (m_StyleType)
+      switch (_styleType)
       {
         case EdgeType.Left:
           return new PointF(0, (float)((1 - rel) * layerSize.Height));
@@ -161,7 +166,7 @@ namespace Altaxo.Geometry
 
     public float GetEdgeLength(SizeF layerSize)
     {
-      switch (m_StyleType)
+      switch (_styleType)
       {
         case EdgeType.Left:
         case EdgeType.Right:
@@ -176,7 +181,7 @@ namespace Altaxo.Geometry
 
     public float GetOppositeEdgeLength(SizeF layerSize)
     {
-      switch (m_StyleType)
+      switch (_styleType)
       {
         case EdgeType.Left:
         case EdgeType.Right:
@@ -193,7 +198,7 @@ namespace Altaxo.Geometry
     {
       get
       {
-        switch (m_StyleType)
+        switch (_styleType)
         {
           case EdgeType.Left:
             return new PointF(-1, 0);
@@ -215,7 +220,7 @@ namespace Altaxo.Geometry
     {
       get
       {
-        switch (m_StyleType)
+        switch (_styleType)
         {
           case EdgeType.Left:
             return new PointF(1, 0);

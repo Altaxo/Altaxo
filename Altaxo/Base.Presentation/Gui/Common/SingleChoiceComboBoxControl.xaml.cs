@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace Altaxo.Gui.Common
 
     private void EhSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      if (null != _controller)
+      if (_controller is not null)
         _controller.EhChoiceChanged(_comboBox.SelectedIndex);
     }
 

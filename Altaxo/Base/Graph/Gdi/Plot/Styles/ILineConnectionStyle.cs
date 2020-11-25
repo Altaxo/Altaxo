@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -62,7 +63,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       IPlotRange range,
       IPlotArea layer,
       PenCacheGdi.GdiPen pen,
-      Func<int, double> symbolGap,
+      Func<int, double>? symbolGap,
       int skipFrequency,
       bool connectCircular,
       LinePlotStyle linePlotStyle);

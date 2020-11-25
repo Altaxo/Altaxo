@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -30,6 +31,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Main;
   using Drawing;
@@ -106,11 +108,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     // cached values:
     /// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
     [field: NonSerialized]
-    protected Func<int, double> _cachedSymbolSizeForIndexFunction;
+    protected Func<int, double>? _cachedSymbolSizeForIndexFunction;
 
     /// <summary>If this function is set, the symbol color is determined by calling this function on the index into the data.</summary>
     [field: NonSerialized]
-    protected Func<int, Color> _cachedColorForIndexFunction;
+    protected Func<int, Color>? _cachedColorForIndexFunction;
 
     #region Serialization
 
@@ -151,9 +153,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         info.AddValue("GapAtEndFactor", s._gapAtEndFactor);
       }
 
-      protected virtual DropLinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual DropLinePlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DropLinePlotStyle s = null != o ? (DropLinePlotStyle)o : new DropLinePlotStyle(info);
+        var s = (DropLinePlotStyle?)o ?? new DropLinePlotStyle(info);
 
         s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
         s._skipFreq = info.GetInt32("SkipFreq");
@@ -185,7 +187,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         DropLinePlotStyle s = SDeserialize(o, info, parent);
 
@@ -200,7 +202,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// Deserialization constructor.
     /// </summary>
     /// <param name="info">The deserialization information.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected DropLinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
@@ -208,10 +212,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
-      var from = obj as DropLinePlotStyle;
-      if (null != from)
+      if (obj is DropLinePlotStyle from)
       {
         CopyFrom(from, Main.EventFiring.Enabled);
         return true;
@@ -219,10 +222,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return false;
     }
 
+
+    [MemberNotNull(nameof(_dropTargets), nameof(_pen))]
     public void CopyFrom(DropLinePlotStyle from, Main.EventFiring eventFiring)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       using (var suspendToken = SuspendGetToken())
       {
@@ -263,6 +270,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <returns>True if data was copied, otherwise false.</returns>
     public bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
+
       return CopyFrom(obj, true);
     }
 
@@ -285,9 +295,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public DropLinePlotStyle(CSPlaneID planeID, PenX3D pen)
     {
-      if (null == pen)
+      if (pen is null)
         throw new ArgumentNullException(nameof(pen));
 
+
+      _pen = pen;
       _dropTargets = new CSPlaneIDList(new[] { planeID });
 
       // Cached values
@@ -326,7 +338,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       get { return _pen; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(_pen, value))
@@ -574,7 +586,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(value, _dropTargets))
@@ -683,10 +695,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #endregion I3DPlotItem Members
 
-    public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData prevItemData, Processed3DPlotData nextItemData)
+    public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
-      PlotRangeList rangeList = pdata.RangeList;
-      var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      if (pdata is null || !(pdata.RangeList is { } rangeList) || rangeList.Count == 0 || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray))
+        return;
 
       // adjust the skip frequency if it was not set appropriate
       if (_skipFreq <= 0)
@@ -711,7 +723,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       PointD3D pos = PointD3D.Empty;
 
-      if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size and constant color
+      if (_cachedSymbolSizeForIndexFunction is null && _cachedColorForIndexFunction is null) // using a constant symbol size and constant color
       {
         var pen = _pen;
         // update pen widths
@@ -737,7 +749,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
               if (gapStart != 0 || gapEnd != 0)
                 isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
 
-              if (null != isoLine)
+              if (isoLine is not null)
                 g.DrawLine(pen, isoLine);
             }
           }
@@ -754,22 +766,23 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
           for (int j = lower; j < upper; j += _skipFreq)
           {
             var pen = _pen;
-            if (null == _cachedColorForIndexFunction)
+            if (_cachedColorForIndexFunction is not null)
             {
-              _cachedSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
-              double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
-              double w2 = _lineWidth2Offset + _lineWidth2Factor * _cachedSymbolSize;
-              pen = _pen.WithThickness1(w1).WithThickness2(w2);
-            }
-            else
-            {
-              _cachedSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _cachedSymbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
+              _cachedSymbolSize = _cachedSymbolSizeForIndexFunction is null ? _cachedSymbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
               double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
               double w2 = _lineWidth2Offset + _lineWidth2Factor * _cachedSymbolSize;
 
               var customSymbolColor = _cachedColorForIndexFunction(j + offset);
               pen = _pen.WithThickness1(w1).WithThickness2(w2).WithColor(NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B));
             }
+            else if (_cachedSymbolSizeForIndexFunction is not null)
+            {
+              _cachedSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
+              double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
+              double w2 = _lineWidth2Offset + _lineWidth2Factor * _cachedSymbolSize;
+              pen = _pen.WithThickness1(w1).WithThickness2(w2);
+            }
+
 
             var gapStart = 0.5 * (_gapAtStartOffset + _gapAtStartFactor * _cachedSymbolSize);
             var gapEnd = 0.5 * (_gapAtEndOffset + _gapAtEndFactor * _cachedSymbolSize);
@@ -781,7 +794,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
               if (gapStart != 0 || gapEnd != 0)
                 isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
-              if (null != isoLine)
+              if (isoLine is not null)
                 g.DrawLine(pen, isoLine);
             }
           }
@@ -884,12 +897,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <inheritdoc/>
     public IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      IReadableColumn? Column, // the column as it was at the time of this call
+      string? ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
-      return null; // no additionally used columns
+      yield break; // no additionally used columns
     }
 
     #endregion IDocumentNode Members

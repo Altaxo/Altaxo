@@ -199,7 +199,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="regions">Starting indices of the regions. Must be ascending. You can provide null as an argument.</param>
     public void SetRegions(int[] regions)
     {
-      if (regions == null)
+      if (regions is null)
         _regions = new int[0];
       else
         _regions = (int[])regions.Clone();

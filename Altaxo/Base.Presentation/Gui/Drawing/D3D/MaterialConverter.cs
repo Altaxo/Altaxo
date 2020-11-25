@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -130,7 +131,7 @@ namespace Altaxo.Gui.Drawing.D3D
     public static string GetNameForMaterial(IMaterial material)
     {
       string name;
-      if (material == null)
+      if (material is null)
       {
         name = "<<null>>";
       }

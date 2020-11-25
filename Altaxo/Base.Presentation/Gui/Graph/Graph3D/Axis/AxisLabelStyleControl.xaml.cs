@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,13 +63,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       };
     }
 
-    public event Action LabelStyleChanged;
+    public event Action? LabelStyleChanged;
 
     private void m_cbLabelStyle_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
     {
       e.Handled = true;
       GuiHelper.SynchronizeSelectionFromGui(_guiLabelStyle);
-      if (null != LabelStyleChanged)
+      if (LabelStyleChanged is not null)
         LabelStyleChanged();
     }
 

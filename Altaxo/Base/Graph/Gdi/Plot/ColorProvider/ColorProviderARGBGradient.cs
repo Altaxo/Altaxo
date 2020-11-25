@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -65,9 +66,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
         info.AddValue("Blue1", s._blue1);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (ColorProviderARGBGradient)o : new ColorProviderARGBGradient();
+        var s = (ColorProviderARGBGradient?)o ?? new ColorProviderARGBGradient();
         info.GetBaseValueEmbedded(s, typeof(ColorProviderBase), parent);
         s._alpha0 = info.GetDouble("Alpha0");
         s._alpha1 = info.GetDouble("Alpha1");
@@ -84,7 +85,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
     #endregion Serialization
 
-    public override bool Equals(IColorProvider other)
+    public override bool Equals(IColorProvider? other)
     {
       if (!base.Equals(other))
         return false;

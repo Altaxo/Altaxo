@@ -101,7 +101,7 @@ namespace Altaxo.Serialization.AutoUpdates
           // from all parsed versions, choose that one that matches the requirements
           var parsedVersion = PackageInfo.GetHighestVersion(parsedVersions);
 
-          if (null != parsedVersion)
+          if (parsedVersion is not null)
           {
             Console.WriteLine("The remote package version is: {0}", parsedVersion.Version);
           }
@@ -242,7 +242,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>Called when the download of the package file is completed.</summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.ComponentModel.AsyncCompletedEventArgs"/> instance containing the event data.</param>
-    private void EhDownloadOfPackageFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+    private void EhDownloadOfPackageFileCompleted(object? sender, System.ComponentModel.AsyncCompletedEventArgs e)
     {
       _isDownloadOfPackageCompleted = true;
     }
@@ -250,7 +250,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>Outputs the download progress to the console.</summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.Net.DownloadProgressChangedEventArgs"/> instance containing the event data.</param>
-    private void EhDownloadOfPackageFileProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
+    private void EhDownloadOfPackageFileProgressChanged(object? sender, System.Net.DownloadProgressChangedEventArgs e)
     {
       Console.Write("{0}%\r", e.ProgressPercentage);
     }

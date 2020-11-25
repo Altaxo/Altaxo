@@ -306,7 +306,7 @@ namespace Altaxo.Calc.LinearAlgebra
       // Copy right hand side
       int nx = B.ColumnCount;
       double[][] X;
-      if (_solveMatrixWorkspace != null && _solveMatrixWorkspace.RowCount == B.RowCount && _solveMatrixWorkspace.ColumnCount == B.ColumnCount)
+      if (_solveMatrixWorkspace is not null && _solveMatrixWorkspace.RowCount == B.RowCount && _solveMatrixWorkspace.ColumnCount == B.ColumnCount)
       {
         X = _solveMatrixWorkspace.Array;
         MatrixMath.Copy(B, _solveMatrixWorkspace);
@@ -373,7 +373,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       // Copy right hand side
       double[] X;
-      if (_solveVectorWorkspace != null && _solveVectorWorkspace.Length == B.Count)
+      if (_solveVectorWorkspace is not null && _solveVectorWorkspace.Length == B.Count)
       {
         X = _solveVectorWorkspace;
       }

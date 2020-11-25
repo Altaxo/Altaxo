@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -57,9 +58,9 @@ namespace Altaxo.Graph.Plot.Groups
         var s = (IgnoreMissingDataPointsGroupStyle)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        IgnoreMissingDataPointsGroupStyle s = null != o ? (IgnoreMissingDataPointsGroupStyle)o : new IgnoreMissingDataPointsGroupStyle();
+        var s = (IgnoreMissingDataPointsGroupStyle?)o ?? new IgnoreMissingDataPointsGroupStyle();
         return s;
       }
     }
@@ -200,19 +201,19 @@ namespace Altaxo.Graph.Plot.Groups
       Func<bool> getter)
     {
       if (!externalGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle))
-        && null != localGroups
+        && localGroups is not null
         && !localGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
       {
         localGroups.Add(new IgnoreMissingDataPointsGroupStyle());
       }
 
-      IgnoreMissingDataPointsGroupStyle grpStyle = null;
+      IgnoreMissingDataPointsGroupStyle? grpStyle = null;
       if (externalGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
         grpStyle = (IgnoreMissingDataPointsGroupStyle)externalGroups.GetPlotGroupStyle(typeof(IgnoreMissingDataPointsGroupStyle));
-      else if (localGroups != null)
+      else if (localGroups is not null)
         grpStyle = (IgnoreMissingDataPointsGroupStyle)localGroups.GetPlotGroupStyle(typeof(IgnoreMissingDataPointsGroupStyle));
 
-      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+      if (grpStyle is not null && getter is not null && !grpStyle.IsInitialized)
         grpStyle.Initialize(getter());
     }
 
@@ -228,16 +229,15 @@ namespace Altaxo.Graph.Plot.Groups
       IPlotGroupStyleCollection localGroups,
       Action<bool> setter)
     {
-      IgnoreMissingDataPointsGroupStyle grpStyle = null;
-      IPlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection? grpColl = null;
       if (externalGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
         grpColl = externalGroups;
-      else if (localGroups != null && localGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
+      else if (localGroups is not null && localGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
         grpColl = localGroups;
 
-      if (null != grpColl)
+      if (grpColl is not null)
       {
-        grpStyle = (IgnoreMissingDataPointsGroupStyle)grpColl.GetPlotGroupStyle(typeof(IgnoreMissingDataPointsGroupStyle));
+        var grpStyle = (IgnoreMissingDataPointsGroupStyle)grpColl.GetPlotGroupStyle(typeof(IgnoreMissingDataPointsGroupStyle));
         grpColl.OnBeforeApplication(typeof(IgnoreMissingDataPointsGroupStyle));
         setter(grpStyle.IgnoreMissingDataPoints);
         return true;

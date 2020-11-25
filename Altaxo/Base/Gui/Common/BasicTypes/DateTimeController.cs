@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Common.BasicTypes
 {
@@ -42,7 +41,7 @@ namespace Altaxo.Gui.Common.BasicTypes
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SelectedValue = _doc;
       }
@@ -50,8 +49,10 @@ namespace Altaxo.Gui.Common.BasicTypes
 
     public override bool Apply(bool disposeController)
     {
-      _doc = _view.SelectedValue;
+      if (_view is null)
+        throw NoViewException;
 
+      _doc = _view.SelectedValue;
       return ApplyEnd(true, disposeController);
     }
 

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +59,7 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private void Initialize(bool initData)
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.ShowPlotColorsOnly = _showPlotColorsOnly;
         _view.Pen = _doc;
@@ -74,7 +75,7 @@ namespace Altaxo.Gui.Drawing.D3D
       set
       {
         _showPlotColorsOnly = value;
-        if (null != _view)
+        if (_view is not null)
           _view.ShowPlotColorsOnly = value;
       }
     }
@@ -91,7 +92,7 @@ namespace Altaxo.Gui.Drawing.D3D
       {
         _view = value as IPenAllPropertiesView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
         }

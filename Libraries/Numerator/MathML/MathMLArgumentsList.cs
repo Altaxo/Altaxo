@@ -77,7 +77,7 @@ namespace MathML
 				int count = 0;
 				XmlNode node = parent is MathMLApplyElement ? parent.FirstChild.NextSibling : parent.FirstChild;
 				
-				while(node != null)
+				while(node is not null)
 				{
 					if(!MathMLArgumentsEnumerator.InvalidType(node))
 					{
@@ -94,7 +94,7 @@ namespace MathML
 			int i = 0;
 			XmlNode node = parent is MathMLApplyElement ? parent.FirstChild.NextSibling : parent.FirstChild;
 
-			while(node != null && i < index)
+			while(node is not null && i < index)
 			{
 				if(!MathMLArgumentsEnumerator.InvalidType(node))
 				{

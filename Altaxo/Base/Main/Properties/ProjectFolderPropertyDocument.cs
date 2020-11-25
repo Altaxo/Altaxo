@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Main.Properties
 {
@@ -41,7 +41,7 @@ namespace Altaxo.Main.Properties
     Main.ICopyFrom
   {
     private string _name;
-    private PropertyBag _propertyBag;
+    private PropertyBag? _propertyBag;
     private DateTime _creationTimeUtc;
     private DateTime _changeTimeUtc;
 
@@ -60,20 +60,20 @@ namespace Altaxo.Main.Properties
         info.AddValue("Name", s._name);
         info.AddValue("CreationTimeUtc", s._creationTimeUtc);
         info.AddValue("ChangeTimeUtc", s._changeTimeUtc);
-        info.AddValue("Properties", s._propertyBag);
+        info.AddValueOrNull("Properties", s._propertyBag);
       }
 
-      public void Deserialize(ProjectFolderPropertyDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public void Deserialize(ProjectFolderPropertyDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s._name = info.GetString("Name");
         s._creationTimeUtc = info.GetDateTime("CreationTimeUtc");
         s._changeTimeUtc = info.GetDateTime("ChangeTimeUtc");
-        s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
+        s.PropertyBag = info.GetValueOrNull<Main.Properties.PropertyBag>("Properties", s);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (ProjectFolderPropertyDocument)o : new ProjectFolderPropertyDocument(string.Empty);
+        var s = o is not null ? (ProjectFolderPropertyDocument)o : new ProjectFolderPropertyDocument(string.Empty);
         Deserialize(s, info, parent);
         return s;
       }
@@ -87,6 +87,7 @@ namespace Altaxo.Main.Properties
     /// <param name="folderName">Name of the folder.</param>
     public ProjectFolderPropertyDocument(string folderName)
     {
+      _name = string.Empty;
       Name = folderName;
       _creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
       PropertyBag = new PropertyBag();
@@ -98,6 +99,7 @@ namespace Altaxo.Main.Properties
     /// <param name="from">Another instance to copy the name of the bag and the properties from.</param>
     public ProjectFolderPropertyDocument(ProjectFolderPropertyDocument from)
     {
+      _name = string.Empty;
       _creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
       CopyFrom(from);
     }
@@ -109,16 +111,16 @@ namespace Altaxo.Main.Properties
     /// <returns><c>True</c> if anything could be copyied.</returns>
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = (ProjectFolderPropertyDocument)obj;
-      if (null != from)
+      if (from is not null)
       {
         _name = from._name;
         _changeTimeUtc = from._changeTimeUtc;
         _propertyBag = null;
-        if (null != from._propertyBag)
+        if (from._propertyBag is not null)
         {
           _propertyBag = PropertyBagNotNull;
           _propertyBag.Clear();
@@ -144,6 +146,19 @@ namespace Altaxo.Main.Properties
     }
 
     /// <summary>
+    /// Tests if this item already has a name.
+    /// </summary>
+    /// <param name="name">On success, returns the name of the item.</param>
+    /// <returns>
+    /// True if the item already has a name; otherwise false.
+    /// </returns>
+    public override bool TryGetName([MaybeNullWhen(false)] out string name)
+    {
+      name = _name;
+      return !(name is null);
+    }
+
+    /// <summary>
     /// Gets or sets the name of the property bag. This has to be a valid project folder name.
     /// </summary>
     /// <value>
@@ -155,9 +170,10 @@ namespace Altaxo.Main.Properties
       {
         return _name;
       }
+      [MemberNotNull(nameof(_name))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("New name is null");
         if (_name == value)
           return; // nothing changed
@@ -166,17 +182,17 @@ namespace Altaxo.Main.Properties
 
         var canBeRenamed = true;
         var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
-        if (null != parentAs)
+        if (parentAs is not null)
         {
           canBeRenamed = parentAs.EhChild_CanBeRenamed(this, value);
         }
 
         if (canBeRenamed)
         {
-          var oldName = _name;
+          var oldName = _name!;
           _name = value;
 
-          if (null != parentAs)
+          if (parentAs is not null)
             parentAs.EhChild_HasBeenRenamed(this, oldName);
 
           OnNameChanged(oldName);
@@ -234,7 +250,7 @@ namespace Altaxo.Main.Properties
     /// <value>
     /// The property bag, or <c>null</c> if there is no property bag.
     /// </value>
-    public PropertyBag PropertyBag
+    public PropertyBag? PropertyBag
     {
       get
       {
@@ -256,15 +272,15 @@ namespace Altaxo.Main.Properties
     {
       get
       {
-        if (null == _propertyBag)
+        if (_propertyBag is null)
           PropertyBag = new PropertyBag();
-        return _propertyBag;
+        return _propertyBag!;
       }
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _propertyBag)
+      if (_propertyBag is not null)
         yield return new Main.DocumentNodeAndName(_propertyBag, () => _propertyBag = null, "PropertyBag");
     }
 
@@ -280,7 +296,7 @@ namespace Altaxo.Main.Properties
 
     #region Suspend
 
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = EventArgs.Empty;
     }

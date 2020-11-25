@@ -24,6 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 *
 */
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -160,7 +161,7 @@ namespace Altaxo.Geometry.Double_2D
         }
         count++;
       }
-      if (middle_point == null)
+      if (middle_point is null)
       {
         concave.Add(line);
       }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -139,7 +140,7 @@ namespace Altaxo.Gui.Graph.Gdi
         _destinationDpi = GetResolutions(_doc.DestinationDpiResolution);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetImageFormat(_imageFormat);
         _view.SetPixelFormat(_pixelFormat);

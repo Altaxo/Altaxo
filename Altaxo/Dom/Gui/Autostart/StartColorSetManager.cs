@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,7 @@ namespace Altaxo.Gui.Autostart
 {
   public class StartColorSetManager : ICommand
   {
-    public event EventHandler CanExecuteChanged;
+    public event EventHandler CanExecuteChanged { add { } remove { } }
 
     public bool CanExecute(object parameter)
     {

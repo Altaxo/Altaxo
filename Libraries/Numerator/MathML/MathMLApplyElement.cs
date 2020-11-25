@@ -72,7 +72,7 @@ namespace MathML
 			{
 				XmlNode node = SelectChildNode("domainofapplication");
 
-				if(node != null)
+				if(node is not null)
 				{
 					ReplaceChild(value, node);
 				}
@@ -100,7 +100,7 @@ namespace MathML
 			set
 			{
 				XmlNode node = SelectChildNode("lowlimit");
-				if(node != null)
+				if(node is not null)
 				{
 					ReplaceChild(value, node);
 				}
@@ -128,7 +128,7 @@ namespace MathML
 			set
 			{
 				XmlNode node = SelectChildNode("uplimit");
-				if(node != null)
+				if(node is not null)
 				{
 					ReplaceChild(value, node);
 				}

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using Altaxo.Collections;
 using Altaxo.Graph.Scales;
@@ -85,13 +86,13 @@ namespace Altaxo.Gui.Graph.Scales
 
     public override bool Apply(bool disposeController)
     {
-      if (null != _scaleController)
+      if (_scaleController is not null)
       {
         if (false == _scaleController.Apply(disposeController))
           return false;
       }
 
-      if (null != _rescalingController)
+      if (_rescalingController is not null)
       {
         if (false == _rescalingController.Apply(disposeController))
           return false;
@@ -127,7 +128,7 @@ namespace Altaxo.Gui.Graph.Scales
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
         _view.InitializeAxisType(_scaleTypes);
     }
 
@@ -138,9 +139,9 @@ namespace Altaxo.Gui.Graph.Scales
         object scaleObject = _doc;
         _scaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { scaleObject }, typeof(IMVCAController), UseDocument.Directly);
       }
-      if (null != _view)
+      if (_view is not null)
       {
-        _view.SetScaleView(null == _scaleController ? null : _scaleController.ViewObject);
+        _view.SetScaleView(_scaleController is null ? null : _scaleController.ViewObject);
       }
     }
 
@@ -149,14 +150,14 @@ namespace Altaxo.Gui.Graph.Scales
       if (bInit)
       {
         object rescalingObject = _doc.RescalingObject;
-        if (rescalingObject != null)
+        if (rescalingObject is not null)
           _rescalingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _doc }, typeof(IMVCAController), UseDocument.Directly);
         else
           _rescalingController = null;
       }
-      if (null != _view)
+      if (_view is not null)
       {
-        _view.SetRescalingView(null != _rescalingController ? _rescalingController.ViewObject : null);
+        _view.SetRescalingView(_rescalingController is not null ? _rescalingController.ViewObject : null);
       }
     }
 
@@ -190,7 +191,7 @@ namespace Altaxo.Gui.Graph.Scales
           OnDocumentInstanceChanged(oldScale, newScale);
           OnMadeDirty(); // chance for controllers up in hierarchy to catch new instance
 
-          if (null != _suspendToken)
+          if (_suspendToken is not null)
           {
             _suspendToken.Dispose();
             _suspendToken = _doc.SuspendGetToken();

@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using Altaxo.AddInItems;
 using Altaxo.Main.Services;
@@ -48,13 +49,13 @@ namespace Altaxo.Gui.Workbench
     private string category;
     private string shortcut;
 
-    private AddIn addIn;
-    private Type padType;
+    private AddIn? addIn;
+    private Type? padType;
 
-    private string serviceInterfaceName;
-    private Type serviceInterface;
+    private string? serviceInterfaceName;
+    private Type? serviceInterface;
 
-    private IPadContent padContent;
+    private IPadContent? padContent;
     private bool padContentCreated;
 
     /// <summary>
@@ -62,7 +63,7 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public PadDescriptor(Codon codon)
     {
-      if (codon == null)
+      if (codon is null)
         throw new ArgumentNullException("codon");
       addIn = codon.AddIn;
       shortcut = codon.Properties["shortcut"];
@@ -79,7 +80,7 @@ namespace Altaxo.Gui.Workbench
       // Begin: ModifiedForAltaxo
       // neccessary in order to load some pads on startup (such pads that are services, like the message output pad)
       string precreate = codon.Properties["precreated"];
-      if (precreate != null && precreate.ToLower() == "true")
+      if (precreate is not null && precreate.ToLower() == "true")
         CreatePad();
       // End: ModifiedForAltaxo
     }
@@ -90,7 +91,7 @@ namespace Altaxo.Gui.Workbench
     public PadDescriptor(Type padType, string title, string icon)
     {
       this.padType = padType ?? throw new ArgumentNullException(nameof(padType));
-      @class = padType.FullName;
+      @class = padType.FullName ?? throw new ArgumentException($"Type {padType} does not have a FullName", nameof(padType));
       this.title = title ?? throw new ArgumentNullException(nameof(title));
       this.icon = icon ?? throw new ArgumentNullException(nameof(icon));
       category = "none";
@@ -166,11 +167,11 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Gets the type of the service interface.
     /// </summary>
-    public Type ServiceInterface
+    public Type? ServiceInterface
     {
       get
       {
-        if (serviceInterface == null && addIn != null && !string.IsNullOrEmpty(serviceInterfaceName))
+        if (serviceInterface is null && addIn is not null && !string.IsNullOrEmpty(serviceInterfaceName))
         {
           serviceInterface = addIn.FindType(serviceInterfaceName);
         }
@@ -183,7 +184,7 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public DefaultPadPositions DefaultPosition { get; set; }
 
-    public IPadContent PadContent
+    public IPadContent? PadContent
     {
       get
       {
@@ -194,7 +195,7 @@ namespace Altaxo.Gui.Workbench
 
     public void Dispose()
     {
-      if (padContent != null)
+      if (padContent is not null)
       {
         padContent.Dispose();
         padContent = null;
@@ -212,18 +213,21 @@ namespace Altaxo.Gui.Workbench
         padContentCreated = true;
         try
         {
-          if (addIn != null)
+          if (addIn is not null)
           {
             Current.Log.Debug("Creating pad " + Class + "...");
-            padContent = (IPadContent)addIn.CreateObject(Class);
-            padContent.PadDescriptor = this;
+            padContent = (IPadContent?)addIn.CreateObject(Class);
+            if (padContent is not null)
+              padContent.PadDescriptor = this;
           }
-          else
+          else if (padType is not null)
           {
-            padContent = (IPadContent)Activator.CreateInstance(padType);
-            padContent.PadDescriptor = this;
+            padContent = (IPadContent?)Activator.CreateInstance(padType);
+            if (padContent is not null)
+              padContent.PadDescriptor = this;
           }
-          if (padContent is IMVCController mvcPadContent && padContent.ViewObject == null)
+
+          if (padContent is IMVCController mvcPadContent && padContent.ViewObject is null)
           {
             Current.Gui.FindAndAttachControlTo(mvcPadContent);
           }
@@ -238,7 +242,7 @@ namespace Altaxo.Gui.Workbench
     public void BringPadToFront()
     {
       CreatePad();
-      if (padContent != null)
+      if (padContent is not null)
       {
         padContent.IsVisible = true;
       }

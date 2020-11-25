@@ -37,19 +37,19 @@ namespace Altaxo.Gui.Pads.FileBrowser
   /// </summary>
   public partial class FileBrowserControl : UserControl, IFileBrowserView
   {
-    private FileBrowserController _controller;
+    private FileBrowserController? _controller;
 
     /// <summary>
     /// Occurs when the user activates the selected items (either by double-clicking on it, or by pressing Enter).
     /// </summary>
-    public event Action SelectedItemsActivated;
+    public event Action? SelectedItemsActivated;
 
     public FileBrowserControl()
     {
       InitializeComponent();
     }
 
-    public FileBrowserController Controller
+    public FileBrowserController? Controller
     {
       get
       {
@@ -80,7 +80,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       _treeView.ItemsSource = nodes;
     }
 
-    public event Action<Collections.NGTreeNode> FolderTreeNodeSelected;
+    public event Action<Collections.NGTreeNode>? FolderTreeNodeSelected;
 
     #endregion IFileTreeView
 

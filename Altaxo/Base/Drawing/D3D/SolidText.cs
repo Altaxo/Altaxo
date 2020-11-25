@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -43,13 +44,9 @@ namespace Altaxo.Drawing.D3D
     private FontX3D _font;
     private const double distanceCutThreshold = 0.0001;
 
-    public SolidText()
-    {
-    }
-
     public SolidText(string text, FontX3D font)
     {
-      _text = text;
+      _text = text ?? string.Empty;
       _fontSize = font.Size;
       _depth = font.Depth;
       _font = font;
@@ -68,7 +65,10 @@ namespace Altaxo.Drawing.D3D
         pt1 = pt2;
         lastPt = pt1;
       }
-      area += (((firstPt.X - lastPt.X) * (firstPt.Y + lastPt.Y)) / 2);
+      if (lastPt is not null)
+      {
+        area += (((firstPt.X - lastPt.X) * (firstPt.Y + lastPt.Y)) / 2);
+      }
       return area;
     }
 

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -108,7 +109,7 @@ namespace Altaxo.Graph
         }
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = new CSLineID
         {
@@ -441,7 +442,7 @@ namespace Altaxo.Graph
 
     public Logical3D End { get { return GetLogicalPoint(1); } }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (!(obj is CSLineID))
         return false;
@@ -499,20 +500,7 @@ namespace Altaxo.Graph
 
     public static bool operator ==(CSLineID a, CSLineID b)
     {
-      // If both are null, or both are same instance, return true.
-      if (System.Object.ReferenceEquals(a, b))
-      {
-        return true;
-      }
-
-      // If one is null, but not both, return false.
-      if (((object)a == null) || ((object)b == null))
-      {
-        return false;
-      }
-
-      // Return true if the fields match:
-      return a.Equals(b);
+      return ReferenceEquals(a, b) || (a is not null && b is not null && a.Equals(b));
     }
 
     public static bool operator !=(CSLineID x, CSLineID y)

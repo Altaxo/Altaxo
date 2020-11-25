@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
     public override bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
+
       return obj is NoTickSpacing;
     }
 
@@ -59,18 +63,14 @@ namespace Altaxo.Graph.Scales.Ticks
         var s = (NoTickSpacing)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        NoTickSpacing s = SDeserialize(o, info, parent);
-        return s;
-      }
-
-      protected virtual NoTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        NoTickSpacing s = null != o ? (NoTickSpacing)o : new NoTickSpacing();
+       var s = (NoTickSpacing?)o ?? new NoTickSpacing();
 
         return s;
       }
+
+     
     }
 
     #endregion Serialization

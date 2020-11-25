@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Data;
@@ -44,7 +46,7 @@ namespace Altaxo.Serialization.Ascii
 
     protected System.IO.FileSystemWatcher[] _fileSystemWatchers = new System.IO.FileSystemWatcher[0];
 
-    protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
+    protected Altaxo.Main.TriggerBasedUpdate? _triggerBasedUpdate;
 
     /// <summary>Indicates that serialization of the whole AltaxoDocument (!) is still in progress. Data sources should not be updated during serialization.</summary>
     [NonSerialized]
@@ -66,69 +68,83 @@ namespace Altaxo.Serialization.Ascii
 
         info.AddValue("ImportOptions", s._importOptions);
         info.AddValue("AsciiImportOptions", s._asciiImportOptions);
-
         info.AddArray("AsciiFiles", s._asciiFiles.ToArray(), s._asciiFiles.Count);
       }
 
-      protected virtual AsciiImportDataSource SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new AsciiImportDataSource() : (AsciiImportDataSource)o);
-        s._isDeserializationInProgress = true;
-        s.ChildSetMember(ref s._importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", s));
-        s.ChildSetMember(ref s._asciiImportOptions, (AsciiImportOptions)info.GetValue("AsciiImportOptions", s));
-        var count = info.OpenArray("AsciiFiles");
-        for (int i = 0; i < count; ++i)
-          s._asciiFiles.Add((AbsoluteAndRelativeFileName)info.GetValue("e", s));
-        info.CloseArray(count);
-
-        info.AfterDeserializationHasCompletelyFinished += s.EhAfterDeserializationHasCompletelyFinished;
-
-        return s;
-      }
-
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        var s = SDeserialize(o, info, parent);
+        if (o is AsciiImportDataSource s)
+          s.DeserializeSurrogate0(info);
+        else
+          s = new AsciiImportDataSource(info, 0);
         return s;
       }
     }
 
+    [MemberNotNull(nameof(_importOptions), nameof(_asciiImportOptions))]
+    void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      _isDeserializationInProgress = true;
+      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+      ChildSetMember(ref _asciiImportOptions, (AsciiImportOptions)info.GetValue("AsciiImportOptions", this));
+      var count = info.OpenArray("AsciiFiles");
+      for (int i = 0; i < count; ++i)
+        _asciiFiles.Add((AbsoluteAndRelativeFileName)info.GetValue("e", this));
+      info.CloseArray(count);
+
+      info.AfterDeserializationHasCompletelyFinished += EhAfterDeserializationHasCompletelyFinished;
+    }
+
     #endregion Version 0
+
+    /// <summary>
+    /// Deserialization constructor
+    /// </summary>
+    protected AsciiImportDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
+    {
+      switch (version)
+      {
+        case 0:
+          DeserializeSurrogate0(info);
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(version));
+      }
+    }
 
     #endregion Serialization
 
     #region Construction
 
+    [MemberNotNull(nameof(_asciiFiles), nameof(_importOptions), nameof(_asciiImportOptions))]
+    void CopyFrom(AsciiImportDataSource from)
+    {
+      using (var token = SuspendGetToken())
+      {
+        _asciiFiles = new List<AbsoluteAndRelativeFileName>(CopyHelper.GetEnumerationMembersNotNullCloned(from._asciiFiles));
+        ChildSetMember(ref _importOptions, from._importOptions);
+        ChildSetMember(ref _asciiImportOptions, from._asciiImportOptions);
+        EhSelfChanged(EventArgs.Empty);
+        token.Resume();
+      }
+    }
+
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as AsciiImportDataSource;
-      if (null != from)
+      if (from is not null)
       {
-        using (var token = SuspendGetToken())
-        {
-          _asciiFiles = new List<AbsoluteAndRelativeFileName>(CopyHelper.GetEnumerationMembersCloned(from._asciiFiles));
-          ChildSetMember(ref _importOptions, from._importOptions);
-          ChildSetMember(ref _asciiImportOptions, from._asciiImportOptions);
-          _asciiFiles = new List<AbsoluteAndRelativeFileName>(CopyHelper.GetEnumerationMembersCloned(from._asciiFiles));
-
-          EhSelfChanged(EventArgs.Empty);
-          token.Resume();
-        }
+        CopyFrom(from);
         return true;
       }
       return false;
     }
 
-    /// <summary>
-    /// Deserialization constructor
-    /// </summary>
-    protected AsciiImportDataSource()
-    {
-      _asciiFiles = new List<AbsoluteAndRelativeFileName>();
-    }
+
+
 
     public AsciiImportDataSource(string fileName, AsciiImportOptions options)
       : this(new string[] { fileName }, options)
@@ -158,11 +174,11 @@ namespace Altaxo.Serialization.Ascii
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _asciiImportOptions)
-        yield return new Main.DocumentNodeAndName(_asciiImportOptions, () => _asciiImportOptions = null, "AsciiImportOptions");
+      if (_asciiImportOptions is not null)
+        yield return new Main.DocumentNodeAndName(_asciiImportOptions, () => _asciiImportOptions = null!, "AsciiImportOptions");
 
-      if (null != _importOptions)
-        yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null, "ImportOptions");
+      if (_importOptions is not null)
+        yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null!, "ImportOptions");
     }
 
     #endregion Construction
@@ -173,13 +189,13 @@ namespace Altaxo.Serialization.Ascii
 
       // UpdateWatching should only be called if something concerning the watch (Times etc.) has changed during the suspend phase
       // Otherwise it will cause endless loops because UpdateWatching triggers immediatly an EhUpdateByTimerQueue event, which triggers an UpdateDataSource event, which leads to another Suspend and then Resume, which calls OnResume(). So the loop is closed.
-      if (null == _triggerBasedUpdate)
+      if (_triggerBasedUpdate is null)
         UpdateWatching(); // Compromise - we update only if the watch is off
     }
 
     public void FillData(DataTable destinationTable)
     {
-      var validFileNames = _asciiFiles.Select(x => x.GetResolvedFileNameOrNull()).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+      var validFileNames = _asciiFiles.Select(x => x.GetResolvedFileNameOrNull()).OfType<string>().Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
       if (validFileNames.Length > 0)
       {
@@ -192,10 +208,12 @@ namespace Altaxo.Serialization.Ascii
         }
         else
         {
+          bool success;
+          string? errors;
           if (_asciiImportOptions.ImportMultipleStreamsVertically)
-            AsciiImporter.ImportFromMultipleAsciiFilesVertically(destinationTable, validFileNames, false, _asciiImportOptions);
+            success = AsciiImporter.TryImportFromMultipleAsciiFilesVertically(destinationTable, validFileNames, false, _asciiImportOptions, out errors);
           else
-            AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(destinationTable, validFileNames, false, _asciiImportOptions);
+            success = AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(destinationTable, validFileNames, false, _asciiImportOptions, out errors);
         }
       }
 
@@ -227,7 +245,7 @@ namespace Altaxo.Serialization.Ascii
       }
       set
       {
-        string oldName = null;
+        string? oldName = null;
         if (_asciiFiles.Count == 1)
           oldName = SourceFileName;
 
@@ -273,7 +291,7 @@ namespace Altaxo.Serialization.Ascii
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("ImportOptions");
 
         var oldValue = _importOptions;
@@ -303,7 +321,7 @@ namespace Altaxo.Serialization.Ascii
 
     private void SetAbsoluteRelativeFilePath(AbsoluteAndRelativeFileName value)
     {
-      if (null == value)
+      if (value is null)
         throw new ArgumentNullException("value");
 
       var oldValue = _asciiFiles.Count == 1 ? _asciiFiles[0] : null;
@@ -335,13 +353,13 @@ namespace Altaxo.Serialization.Ascii
       if (IsSuspended)
         return; // in update operation - wait until finished
 
-      if (null == _parent)
+      if (_parent is null)
         return; // No listener - no need to watch
 
       if (_importOptions.ImportTriggerSource != ImportTriggerSource.DataSourceChanged)
         return; // DataSource is updated manually
 
-      var validFileNames = _asciiFiles.Select(x => x.GetResolvedFileNameOrNull()).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+      var validFileNames = _asciiFiles.Select(x => x.GetResolvedFileNameOrNull()).OfType<string>().Where(x => !string.IsNullOrEmpty(x)).ToArray();
       if (0 == validFileNames.Length)
         return;  // No file name set
 
@@ -363,7 +381,7 @@ namespace Altaxo.Serialization.Ascii
 
       _triggerBasedUpdate.UpdateAction += EhUpdateByTimerQueue;
 
-      var directories = new HashSet<string>(validFileNames.Select(x => System.IO.Path.GetDirectoryName(x)));
+      var directories = new HashSet<string>(validFileNames.Select(x => System.IO.Path.GetDirectoryName(x)).OfType<string>());
       var watchers = new List<System.IO.FileSystemWatcher>();
       foreach (var directory in directories)
       {
@@ -387,7 +405,7 @@ namespace Altaxo.Serialization.Ascii
 
     private void SwitchOffWatching()
     {
-      IDisposable disp = null;
+      IDisposable? disp = null;
 
       var watchers = _fileSystemWatchers;
       _fileSystemWatchers = new System.IO.FileSystemWatcher[0];
@@ -395,19 +413,19 @@ namespace Altaxo.Serialization.Ascii
       for (int i = 0; i < watchers.Length; ++i)
       {
         disp = watchers[i];
-        if (null != disp)
+        if (disp is not null)
           disp.Dispose();
       }
 
       disp = _triggerBasedUpdate;
       _triggerBasedUpdate = null;
-      if (null != disp)
+      if (disp is not null)
         disp.Dispose();
     }
 
     public void EhUpdateByTimerQueue()
     {
-      if (null != _parent)
+      if (_parent is not null)
       {
         if (!IsSuspended) // no events during the suspend phase
         {
@@ -423,7 +441,7 @@ namespace Altaxo.Serialization.Ascii
       if (!_resolvedAsciiFileNames.Contains(e.FullPath))
         return;
 
-      if (null != _triggerBasedUpdate)
+      if (_triggerBasedUpdate is not null)
       {
         _triggerBasedUpdate.Trigger();
       }

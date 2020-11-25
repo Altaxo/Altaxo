@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,6 +30,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Altaxo.Collections;
+using Altaxo.Main.Services;
 using Markdig;
 using Markdig.Extensions.Mathematics;
 using Markdig.Renderers;
@@ -61,12 +63,12 @@ namespace Altaxo.Text.Renderers.Html
     /// <summary>
     /// Name of the folder relative to the help file builder project, in which the content (.aml and .content) is stored.
     /// </summary>
-    public string ContentFolderName { get; }
+    public string ContentFolderName { get; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the base name of .aml files.
     /// </summary>
-    public string ContentFileNameBase { get; }
+    public string ContentFileNameBase { get; } = string.Empty;
 
     /// <summary>
     /// The list of .aml files, including full file name, guid, title, heading level, and where it starts in the document.
@@ -124,7 +126,7 @@ namespace Altaxo.Text.Renderers.Html
     /// <summary>
     /// The parsed markdown file.
     /// </summary>
-    private MarkdownDocument _markdownDocument;
+    private MarkdownDocument? _markdownDocument;
 
 
     /// <summary>
@@ -216,7 +218,7 @@ namespace Altaxo.Text.Renderers.Html
       OldToNewImageUris = oldToNewImageUris;
       BodyTextFontFamily = bodyTextFontFamily;
       BodyTextFontSize = bodyTextFontSize;
-      BasePathName = Path.GetDirectoryName(projectOrContentFileName);
+      BasePathName = FileName.GetDirectoryName(projectOrContentFileName);
 
       // Find a base name for the html files
       if (Path.GetExtension(projectOrContentFileName).ToLowerInvariant() == ".html")
@@ -498,7 +500,7 @@ namespace Altaxo.Text.Renderers.Html
       {
         var fileShortName = RendererExtensions.CreateFileNameFromHeaderTitlesAndGuid(headerTitles, guid, FirstHeadingBlockIsParentOfAll);
 
-        var fileName = string.Format("{0}.html", Path.Combine(Path.GetDirectoryName(HtmlBaseFileName), fileShortName));
+        var fileName = string.Format("{0}.html", Path.Combine(FileName.GetDirectoryName(HtmlBaseFileName), fileShortName));
         _htmlFileList.Add((fileName, guid, title, headingBlock.Level, headingBlock.Span.Start));
       }
     }
@@ -527,8 +529,11 @@ namespace Altaxo.Text.Renderers.Html
     }
 
 
-    public (string fileName, string address) FindFragmentLink(string url)
+    public (string? fileName, string? address) FindFragmentLink(string url)
     {
+      if (_markdownDocument is null)
+        throw new InvalidOperationException($"No parsed markdown document available. Please parse the text first.");
+
       if (url.StartsWith("#"))
       {
         url = url.Substring(1);
@@ -540,7 +545,7 @@ namespace Altaxo.Text.Renderers.Html
       foreach (var mdo in MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(_markdownDocument))
       {
         var attr = (Markdig.Renderers.Html.HtmlAttributes)mdo.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-        if (null != attr && attr.Id == url)
+        if (attr is not null && attr.Id == url)
         {
           // markdown element found, now we need to know in which file it is
           var prevFile = _htmlFileList.First();
@@ -579,7 +584,7 @@ namespace Altaxo.Text.Renderers.Html
         if (link.ContainsData(typeof(Markdig.Renderers.Html.HtmlAttributes)))
         {
           var htmlAttributes = (Markdig.Renderers.Html.HtmlAttributes)link.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-          if (null != htmlAttributes.Properties)
+          if (htmlAttributes.Properties is not null)
           {
             for (var i = 0; i < htmlAttributes.Properties.Count; ++i)
             {
@@ -588,11 +593,13 @@ namespace Altaxo.Text.Renderers.Html
               {
                 case "width":
                   width = GetLength(entry.Value);
+                  if(width.HasValue)
                   htmlAttributes.Properties[i] = new KeyValuePair<string, string>("width", Math.Round(width.Value, 0).ToString("F", System.Globalization.CultureInfo.InvariantCulture));
                   break;
 
                 case "height":
                   height = GetLength(entry.Value);
+                  if(height.HasValue)
                   htmlAttributes.Properties[i] = new KeyValuePair<string, string>("heigth", Math.Round(height.Value, 0).ToString("F", System.Globalization.CultureInfo.InvariantCulture));
                   break;
               }
@@ -706,7 +713,7 @@ namespace Altaxo.Text.Renderers.Html
           // the challenge here is to find out where (in which file) our target is.
           var (fileGuid, localUrl) = SplitRenderer.FindFragmentLink(url);
           var totalAddress = string.Empty;
-          if (null != fileGuid && null != localUrl)
+          if (fileGuid is not null && localUrl is not null)
           {
             fileGuid = System.IO.Path.GetFileName(fileGuid);
             url = "./" + fileGuid + "#" + localUrl;

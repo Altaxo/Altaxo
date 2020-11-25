@@ -71,7 +71,7 @@ namespace MathML
 				for(int i = 0; i < childNodes.Count; i++)
 				{
 					MathMLTableCellElement cell = childNodes[i] as  MathMLTableCellElement;
-					if(cell == null)
+					if(cell is null)
 					{
 						XmlNode oldChild = childNodes[i];
 						cell = (MathMLTableCellElement)OwnerDocument.CreateElement("mtd");

@@ -203,7 +203,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       int maxFactors = Math.Min(X.ColumnCount, X.RowCount);
       numFactors = numFactors <= 0 ? maxFactors : Math.Min(numFactors, maxFactors);
 
-      if (PRESS != null)
+      if (PRESS is not null)
       {
         PRESS.Append(new MatrixMath.ScalarAsMatrix<double>(MatrixMath.SumOfSquares(Y))); // Press value for not decomposed Y
       }
@@ -240,9 +240,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 
           // 6.1 Compare
           // Compare this with the previous one
-          if (u_prev != null && MatrixMath.IsEqual(u_prev, u, accuracy))
+          if (u_prev is not null && MatrixMath.IsEqual(u_prev, u, accuracy))
             break;
-          if (u_prev == null)
+          if (u_prev is null)
             u_prev = new MatrixMath.MatrixWithOneColumn<double>(X.RowCount);
           MatrixMath.Copy(u, u_prev); // stores the content of u in u_prev
         } // for all iterations
@@ -278,7 +278,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         W.AppendBottom(w);
         V.AppendRight(v);
 
-        if (PRESS != null)
+        if (PRESS is not null)
         {
           double pressValue = MatrixMath.SumOfSquares(Y);
           PRESS.Append(new MatrixMath.ScalarAsMatrix<double>(pressValue));
@@ -337,12 +337,12 @@ namespace Altaxo.Calc.Regression.Multivariate
         }
         // xu now contains the spectral residual,
         // Cu now contains the predicted y values
-        if (null != predictedY)
+        if (predictedY is not null)
         {
           MatrixMath.SetRow(Cu, 0, predictedY, nSpectrum);
         }
 
-        if (null != spectralResiduals)
+        if (spectralResiduals is not null)
         {
           spectralResiduals[nSpectrum, 0] = MatrixMath.SumOfSquares(xu);
         }

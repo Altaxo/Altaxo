@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,16 +41,16 @@ namespace Altaxo.Worksheet.Commands
     public static void ShowDataSourceEditor(WorksheetController ctrl)
     {
       var table = ctrl.DataTable;
-      if (null == table || null == table.DataSource)
+      if (table is null || table.DataSource is null)
         return;
 
       bool sourceIsChanged = false;
       var originalDataSource = table.DataSource;
       var dataSource = (Data.IAltaxoTableDataSource)table.DataSource.Clone();
 
-      var dataSourceController = (Altaxo.Gui.IMVCANController)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(Altaxo.Gui.IMVCANController), Gui.UseDocument.Directly);
+      var dataSourceController = (Altaxo.Gui.IMVCANController?)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(Altaxo.Gui.IMVCANController), Gui.UseDocument.Directly);
 
-      if (null == dataSourceController)
+      if (dataSourceController is null)
       {
         Current.Gui.ErrorMessageBox(string.Format("Sorry. There is no dialog available to edit the data source of type {0}", dataSource.GetType()), "No dialog available");
         return;
@@ -57,7 +58,7 @@ namespace Altaxo.Worksheet.Commands
 
       var controllerAsSupportApplyCallback = dataSourceController as Altaxo.Gui.IMVCSupportsApplyCallback;
 
-      if (null != controllerAsSupportApplyCallback)
+      if (controllerAsSupportApplyCallback is not null)
       {
         controllerAsSupportApplyCallback.SuccessfullyApplied += () => { sourceIsChanged = true; table.DataSource = dataSource; RequeryTableDataSource(ctrl); };
       }
@@ -96,7 +97,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="table">The table that holds the data source.</param>
     public static void RequeryTableDataSource(DataTable table)
     {
-      if (null == table || null == table.DataSource)
+      if (table is null || table.DataSource is null)
         return;
 
       using (var suspendToken = table.SuspendGetToken())
@@ -112,10 +113,10 @@ namespace Altaxo.Worksheet.Commands
           table.Notes.WriteLine(ex.ToString());
         }
 
-        if (!(null != table.DataSource))
+        if (table.DataSource is null)
           throw new InvalidProgramException("table.DataSource.FillData should never set the data source to zero!");
 
-        if (table.DataSource.ImportOptions.ExecuteTableScriptAfterImport && null != table.TableScript)
+        if (table.DataSource.ImportOptions.ExecuteTableScriptAfterImport && table.TableScript is not null)
         {
           try
           {

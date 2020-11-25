@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using Altaxo.Collections;
@@ -123,7 +124,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         InitializeLineConnectionChoices();
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.ConnectCircular = _doc.ConnectCircular;
         _view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
@@ -146,7 +147,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void InitializeLineConnectionChoices()
     {
-      if (null == _lineConnectChoices)
+      if (_lineConnectChoices is null)
         _lineConnectChoices = new SelectableListNodeList();
       else
         _lineConnectChoices.Clear();
@@ -236,7 +237,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhColorGroupStyleAddedOrRemoved()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentLineColor = _view.IndependentLineColor;
         if (IsLineUsed)
@@ -246,7 +247,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhIndependentLineColorChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentLineColor = _view.IndependentLineColor;
         _view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
@@ -259,7 +260,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
       if (true == newValue)
       {
-        if (null == _view.LinePen || _view.LinePen.IsInvisible)
+        if (_view.LinePen is null || _view.LinePen.IsInvisible)
         {
           _view.LinePen = new PenX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
         }

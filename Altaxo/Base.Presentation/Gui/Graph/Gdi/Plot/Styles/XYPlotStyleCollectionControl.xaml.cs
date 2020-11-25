@@ -38,17 +38,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   /// </summary>
   public partial class XYPlotStyleCollectionControl : UserControl, IXYPlotStyleCollectionView, Altaxo.Gui.Graph.Graph3D.Plot.Styles.IXYZPlotStyleCollectionView
   {
-    public event Action RequestAddStyle;
+    public event Action? RequestAddStyle;
 
-    public event Action RequestStyleUp;
+    public event Action? RequestStyleUp;
 
-    public event Action RequestStyleDown;
+    public event Action? RequestStyleDown;
 
-    public event Action RequestStyleEdit;
+    public event Action? RequestStyleEdit;
 
-    public event Action RequestStyleRemove;
+    public event Action? RequestStyleRemove;
 
-    public event Action PredefinedStyleSelected;
+    public event Action? PredefinedStyleSelected;
 
     public XYPlotStyleCollectionControl()
     {
@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhPredefinedSets_DoubleClick(object sender, MouseButtonEventArgs e)
     {
-      if (PredefinedStyleSelected != null && null != _predefinedSetsAvailable.SelectedItem)
+      if (PredefinedStyleSelected is not null && _predefinedSetsAvailable.SelectedItem is not null)
       {
         GuiHelper.SynchronizeSelectionFromGui(_predefinedSetsAvailable);
         PredefinedStyleSelected?.Invoke();
@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhSingleStylesAvailable_DoubleClick(object sender, MouseButtonEventArgs e)
     {
-      if (RequestAddStyle != null && _singleStylesAvailable.SelectedItem != null)
+      if (RequestAddStyle is not null && _singleStylesAvailable.SelectedItem is not null)
       {
         GuiHelper.SynchronizeSelectionFromGui(_singleStylesAvailable);
         RequestAddStyle?.Invoke();

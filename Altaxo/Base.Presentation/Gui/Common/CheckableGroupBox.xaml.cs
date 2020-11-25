@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,9 +49,9 @@ namespace Altaxo.Gui.Common
   typeof(CheckableGroupBox)
   );
 
-    public event RoutedEventHandler Checked;
+    public event RoutedEventHandler? Checked;
 
-    public event RoutedEventHandler Unchecked;
+    public event RoutedEventHandler? Unchecked;
 
     public CheckableGroupBox()
     {
@@ -89,7 +90,7 @@ namespace Altaxo.Gui.Common
       if (EnableContentWithCheck && Content is UIElement)
         (Content as UIElement).IsEnabled = true;
 
-      if (null != Checked)
+      if (Checked is not null)
         Checked(this, e);
     }
 
@@ -98,7 +99,7 @@ namespace Altaxo.Gui.Common
       if (EnableContentWithCheck && Content is UIElement)
         (Content as UIElement).IsEnabled = false;
 
-      if (null != Unchecked)
+      if (Unchecked is not null)
         Unchecked(this, e);
     }
 
@@ -109,7 +110,7 @@ namespace Altaxo.Gui.Common
       if (EnableContentWithCheck)
       {
         var uicontent = newContent as UIElement;
-        if (null != uicontent)
+        if (uicontent is not null)
           uicontent.IsEnabled = IsChecked == true;
       }
     }

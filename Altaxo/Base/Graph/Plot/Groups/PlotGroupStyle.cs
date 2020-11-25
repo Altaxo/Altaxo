@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -44,21 +46,21 @@ namespace Altaxo.Graph.Plot.Groups
       System.Type type)
     {
       bool found = false;
-      if (externalGroups != null && externalGroups.ContainsType(type))
+      if (externalGroups is not null && externalGroups.ContainsType(type))
         found = true;
-      if (!found && localGroups != null && localGroups.ContainsType(type))
+      if (!found && localGroups is not null && localGroups.ContainsType(type))
         found = true;
 
-      return (!found && localGroups != null);
+      return (!found && localGroups is not null);
     }
-
+    [return: MaybeNull]
     public static T GetStyleToInitialize<T>(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups
       ) where T : IPlotGroupStyle, new()
     {
       if (!externalGroups.ContainsType(typeof(T))
-        && null != localGroups
+        && localGroups is not null
         && !localGroups.ContainsType(typeof(T)))
       {
         localGroups.Add(new T());
@@ -67,10 +69,10 @@ namespace Altaxo.Graph.Plot.Groups
       var grpStyle = default(T);
       if (externalGroups.ContainsType(typeof(T)))
         grpStyle = (T)externalGroups.GetPlotGroupStyle(typeof(T));
-      else if (localGroups != null)
+      else if (localGroups is not null)
         grpStyle = (T)localGroups.GetPlotGroupStyle(typeof(T));
 
-      if (grpStyle != null && !grpStyle.IsInitialized)
+      if (grpStyle is not null && !grpStyle.IsInitialized)
         return grpStyle;
       else
         return default(T);
@@ -85,19 +87,20 @@ namespace Altaxo.Graph.Plot.Groups
     /// <param name="externalGroups">First collection to look for the group style.</param>
     /// <param name="localGroups">Second collection to look for the group style.</param>
     /// <returns>The instance of the plot group style (if found), or null otherwise.</returns>
+    [return: MaybeNull]
     public static T GetStyleToApply<T>(
      IPlotGroupStyleCollection externalGroups,
      IPlotGroupStyleCollection localGroups
      ) where T : IPlotGroupStyle
     {
       var grpStyle = default(T);
-      IPlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection? grpColl = null;
       if (externalGroups.ContainsType(typeof(T)))
         grpColl = externalGroups;
-      else if (localGroups != null && localGroups.ContainsType(typeof(T)))
+      else if (localGroups is not null && localGroups.ContainsType(typeof(T)))
         grpColl = localGroups;
 
-      if (null != grpColl)
+      if (grpColl is not null)
       {
         grpStyle = (T)grpColl.GetPlotGroupStyle(typeof(T));
         grpColl.OnBeforeApplication(typeof(T));
@@ -117,21 +120,22 @@ namespace Altaxo.Graph.Plot.Groups
     /// <param name="externalGroups">First collection to look for the group style.</param>
     /// <param name="localGroups">Second collection to look for the group style.</param>
     /// <returns>The instance of the plot group style that implements the interface (if found), or null otherwise.</returns>
+    [return: MaybeNull]
     public static T GetFirstStyleToApplyImplementingInterface<T>(
      IPlotGroupStyleCollection externalGroups,
      IPlotGroupStyleCollection localGroups
      )
     {
-      IPlotGroupStyle grpStyle = null;
+      IPlotGroupStyle? grpStyle = null;
       IPlotGroupStyleCollection grpColl = externalGroups;
       grpStyle = grpColl.FirstOrDefault(style => typeof(T).IsAssignableFrom(style.GetType()));
-      if (null == grpStyle)
+      if (grpStyle is null)
       {
         grpColl = localGroups;
         grpStyle = grpColl.FirstOrDefault(style => typeof(T).IsAssignableFrom(style.GetType()));
       }
 
-      if (null != grpStyle)
+      if (grpStyle is not null)
       {
         grpColl.OnBeforeApplication(grpStyle.GetType());
       }

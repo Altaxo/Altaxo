@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +47,7 @@ namespace Altaxo.Gui.Drawing.D3D
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.IndexOfRefraction = _doc.IndexOfRefraction;
         _view.Smoothness = _doc.Smoothness;

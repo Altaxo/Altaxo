@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -54,7 +55,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
       }
     }
 
-    public Assembly ScriptAssembly
+    public Assembly? ScriptAssembly
     {
       get
       {

@@ -1,16 +1,20 @@
 del /F /S /Q .\temp\*
+rem rmdir /S /Q .\.vs
 
 rmdir /S /Q .\AddIns\D3D\D3DPresentation\obj
 rmdir /S /Q .\AddIns\D3D\D3DPresentation\bin
 
-rmdir /S /Q .\AddIns\OriginConnector\obj
-rmdir /S /Q .\AddIns\OriginConnector\bin
+rmdir /S /Q .\AddIns\MLNet\MLNet\obj
+rmdir /S /Q .\AddIns\MLNet\MLNet\bin
 
 rmdir /S /Q .\AddIns\OpenXML\OpenXML\obj
 rmdir /S /Q .\AddIns\OpenXML\OpenXML\bin
 
 rmdir /S /Q .\AddIns\OpenXML\OpenXML.Presentation\obj
 rmdir /S /Q .\AddIns\OpenXML\OpenXML.Presentation\bin
+
+rmdir /S /Q .\AddIns\OriginConnector\obj
+rmdir /S /Q .\AddIns\OriginConnector\bin
 
 rmdir /S /Q .\Altaxo\Base\obj
 rmdir /S /Q .\Altaxo\Base\bin
@@ -60,6 +64,9 @@ rmdir /S /Q .\Altaxo\WorkbenchBase\bin
 rmdir /S /Q .\Altaxo\WorkbenchCore\obj
 rmdir /S /Q .\Altaxo\WorkbenchCore\bin
 
+rmdir /S /Q .\Analyzer\NullComparisonAnalyzer\obj
+rmdir /S /Q .\Analyzer\NullComparisonAnalyzer\bin
+
 rmdir /S /Q .\Content\obj
 rmdir /S /Q .\Content\bin
 
@@ -92,6 +99,12 @@ rmdir /S /Q .\Libraries\Markdig.Wpf\bin
 
 rmdir /S /Q .\Libraries\Numerator\obj
 rmdir /S /Q .\Libraries\Numerator\bin
+
+rmdir /S /Q .\Libraries\System.IO.Compression.Altaxo\obj
+rmdir /S /Q .\Libraries\System.IO.Compression.Altaxo\bin
+
+rmdir /S /Q .\Libraries\System.IO.Compression.Altaxo.Tests\obj
+rmdir /S /Q .\Libraries\System.IO.Compression.Altaxo.Tests\bin
 
 rmdir /S /Q .\Libraries\UpdateDownLoader\obj
 rmdir /S /Q .\Libraries\UpdateDownLoader\bin

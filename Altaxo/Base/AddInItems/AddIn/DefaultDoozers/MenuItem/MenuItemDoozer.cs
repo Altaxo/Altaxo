@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -92,17 +93,15 @@ namespace Altaxo.AddInItems
   /// </summary>
   public sealed class MenuItemDescriptor
   {
-    public readonly object Parameter;
+    public readonly object? Parameter;
     public readonly Codon Codon;
     public readonly IList SubItems;
     public readonly IReadOnlyCollection<ICondition> Conditions;
 
-    public MenuItemDescriptor(object parameter, Codon codon, IList subItems, IReadOnlyCollection<ICondition> conditions)
+    public MenuItemDescriptor(object? parameter, Codon codon, IList subItems, IReadOnlyCollection<ICondition> conditions)
     {
-      if (codon == null)
-        throw new ArgumentNullException("codon");
       Parameter = parameter;
-      Codon = codon;
+      Codon = codon ?? throw new ArgumentNullException(nameof(codon));
       SubItems = subItems;
       Conditions = conditions;
     }

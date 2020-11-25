@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -46,15 +47,15 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (EmbeddedImageGraphic)obj;
-        info.AddBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType);
-        info.AddValue("Image", s._imageProxy);
+        info.AddBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType!);
+        info.AddValueOrNull("Image", s._imageProxy);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        EmbeddedImageGraphic s = null != o ? (EmbeddedImageGraphic)o : new EmbeddedImageGraphic();
-        info.GetBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType, parent);
-        s.Image = (ImageProxy)info.GetValue("Image", s);
+        var s = (EmbeddedImageGraphic?)o ?? new EmbeddedImageGraphic();
+        info.GetBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType!, parent);
+        s.Image = info.GetValueOrNull<ImageProxy>("Image", s);
         return s;
       }
     }
@@ -138,20 +139,34 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       base(from) // all is done here, since CopyFrom is virtual!
     {
+      CopyFrom(from, false);
+    }
+
+    protected void CopyFrom(EmbeddedImageGraphic from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      Image = from._imageProxy;
     }
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (obj is ImageGraphic from)
       {
-        var from = obj as EmbeddedImageGraphic;
-        if (null != from)
+        using (var suspendToken = SuspendGetToken())
         {
-          Image = from._imageProxy;
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     #endregion Constructors

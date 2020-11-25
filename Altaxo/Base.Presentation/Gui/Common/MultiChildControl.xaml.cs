@@ -37,10 +37,10 @@ namespace Altaxo.Gui.Common
   public partial class MultiChildControl : UserControl, IMultiChildView
   {
     /// <summary>Event fired when one of the child controls is entered.</summary>
-    public event EventHandler ChildControlEntered;
+    public event EventHandler? ChildControlEntered;
 
     /// <summary>Event fired when one of the child controls is validated.</summary>
-    public event EventHandler ChildControlValidated;
+    public event EventHandler? ChildControlValidated;
 
     public MultiChildControl()
     {
@@ -101,13 +101,13 @@ namespace Altaxo.Gui.Common
 
     private void EhUIElement_LostFocus(object sender, RoutedEventArgs e)
     {
-      if (null != ChildControlValidated)
+      if (ChildControlValidated is not null)
         ChildControlValidated(this, EventArgs.Empty);
     }
 
     private void EhUIElement_GotFocus(object sender, RoutedEventArgs e)
     {
-      if (null != ChildControlEntered)
+      if (ChildControlEntered is not null)
         ChildControlEntered(this, EventArgs.Empty);
     }
   }

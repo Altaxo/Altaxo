@@ -28,16 +28,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ClipperLib;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Geometry.Int64_2D
 {
-  [TestFixture]
   public class GrahamScan_Test : PolygonTestBase
   {
     private Random _random = new Random(1);
 
-    [Test]
+    [Fact]
     public void Test1()
     {
       const int numberOfPoints = 4;
@@ -65,7 +64,7 @@ namespace Altaxo.Geometry.Int64_2D
       IncludenessTest(convexHull, arr);
     }
 
-    [Test]
+    [Fact]
     public void Test_Includeness()
     {
       var hash = new HashSet<(int, int)>();

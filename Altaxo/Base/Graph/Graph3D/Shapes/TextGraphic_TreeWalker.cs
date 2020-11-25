@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -114,21 +115,17 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
       public StructuralGlyph VisitTree(PegNode root, StyleContext context, double lineSpacingFactor, bool isFixedLineSpacing)
       {
-        var rootGlyph = new VerticalStack
+        var rootGlyph = new VerticalStack(context)
         {
-          Style = context,
           LineSpacingFactor = lineSpacingFactor,
           FixedLineSpacing = isFixedLineSpacing
         };
 
-        var line = new GlyphLine
-        {
-          Style = context
-        };
+        var line = new GlyphLine(context);
 
         rootGlyph.Add(line);
 
-        if (null != root && null != root.child_)
+        if (root is not null && root.child_ is not null)
           VisitNode(root.child_, context, line);
 
         return rootGlyph;
@@ -168,7 +165,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
             break;
         }
 
-        if (null != node.next_)
+        if (node.next_ is not null)
           nextparent = VisitNode(node.next_, context, nextparent);
 
         return nextparent;
@@ -181,7 +178,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         var childNode = node.child_;
 
         string str = string.Empty;
-        if (null == childNode) // no escape sequences
+        if (childNode is null) // no escape sequences
         {
           str = _sourceText.Substring(posBeg, posEnd - posBeg);
         }
@@ -189,13 +186,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
         {
           int beg = posBeg;
           int end = childNode.match_.posBeg_;
-          while (childNode != null)
+          while (childNode is not null)
           {
             str += _sourceText.Substring(beg, end - beg);
             str += _sourceText.Substring(childNode.match_.posBeg_ + 1, 1);
             beg = childNode.match_.posEnd_;
             childNode = childNode.next_;
-            end = null != childNode ? childNode.match_.posBeg_ : posEnd;
+            end = childNode is not null ? childNode.match_.posBeg_ : posEnd;
           }
           str += _sourceText.Substring(beg, end - beg);
         }
@@ -206,7 +203,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       {
         if (_sourceText[node.match_.posBeg_] == '\t')
         {
-          HandleTab(parent);
+          HandleTab(parent, context);
           return parent;
         }
         else // newline
@@ -215,9 +212,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
         }
       }
 
-      private void HandleTab(StructuralGlyph parent)
+      private void HandleTab(StructuralGlyph parent, StyleContext context)
       {
-        parent.Add(new TabGlpyh());
+        parent.Add(new TabGlpyh(context));
       }
 
       private StructuralGlyph HandleNewline(StructuralGlyph parent, StyleContext context)
@@ -228,22 +225,20 @@ namespace Altaxo.Graph.Graph3D.Shapes
         {
           if (parent.Parent is VerticalStack)
           {
-            newcontext = new GlyphLine
-            {
-              Style = context
-            };
+            newcontext = new GlyphLine(context);
             parent.Parent.Add(newcontext);
           }
-          else // parent.Parent is not a VerticalStack
+          else if (parent.Parent is not null) // parent.Parent is not a VerticalStack
           {
-            var vertStack = new VerticalStack();
+            var vertStack = new VerticalStack(context);
             parent.Parent.Exchange(parent, vertStack);
             vertStack.Add(parent);
-            newcontext = new GlyphLine
-            {
-              Style = context
-            };
+            newcontext = new GlyphLine(context);
             vertStack.Add(newcontext);
+          }
+          else
+          {
+            throw new InvalidProgramException();
           }
         }
         else
@@ -255,9 +250,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
       private void HandleSentence(PegNode node, StyleContext context, StructuralGlyph parent)
       {
-        var line = new GlyphLine();
+        var line = new GlyphLine(context);
         parent.Add(line);
-        if (node.child_ != null)
+        if (node.child_ is not null)
           VisitNode(node.child_, context, line);
       }
 
@@ -266,7 +261,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         int posBeg = node.match_.posBeg_;
         var childNode = node.child_;
 
-        if (childNode == null)
+        if (childNode is null)
           throw new ArgumentNullException("childNode");
 
         string escHeader = _sourceText.Substring(posBeg, childNode.match_.posBeg_ - posBeg);
@@ -342,10 +337,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
           case @"\+(":
             {
-              var newParent = new Superscript
-              {
-                Style = context
-              };
+              var newParent = new Superscript(context);
               parent.Add(newParent);
 
               var newContext = context.Clone();
@@ -356,10 +348,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
           case @"\-(":
             {
-              var newParent = new Subscript
-              {
-                Style = context
-              };
+              var newParent = new Subscript(context);
               parent.Add(newParent);
 
               var newContext = context.Clone();
@@ -390,10 +379,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
           case @"\ad(":
             {
-              var newParent = new DotOverGlyph
-              {
-                Style = context
-              };
+              var newParent = new DotOverGlyph(context);
               parent.Add(newParent);
               VisitNode(childNode, context, newParent);
             }
@@ -401,10 +387,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
           case @"\ab(":
             {
-              var newParent = new BarOverGlyph
-              {
-                Style = context
-              };
+              var newParent = new BarOverGlyph(context);
               parent.Add(newParent);
               VisitNode(childNode, context, newParent);
             }
@@ -417,7 +400,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         int posBeg = node.match_.posBeg_;
         var childNode = node.child_;
 
-        if (childNode == null)
+        if (childNode is null)
           throw new ArgumentNullException("childNode");
 
         string escHeader = _sourceText.Substring(posBeg, childNode.match_.posBeg_ - posBeg);
@@ -426,10 +409,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         {
           case @"\=(":
             {
-              var newParent = new SubSuperScript
-              {
-                Style = context
-              };
+              var newParent = new SubSuperScript(context);
               parent.Add(newParent);
 
               var newContext = context.Clone();
@@ -443,7 +423,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
               double val;
               string s1 = GetText(childNode).Trim();
               var newContext = context.Clone();
-              string numberString;
+              string? numberString;
 
               if (s1.EndsWith("%"))
               {
@@ -482,7 +462,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
               try
               {
                 object result = conv.ConvertFromInvariantString(s1);
-                newContext.brush = Materials.GetSolidMaterial((NamedColor)result);
+                newContext.Brush = Materials.GetSolidMaterial((NamedColor)result);
               }
               catch (Exception)
               {
@@ -527,7 +507,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         int posBeg = node.match_.posBeg_;
         var childNode = node.child_;
 
-        if (childNode == null)
+        if (childNode is null)
           throw new ArgumentNullException("childNode");
 
         string escHeader = _sourceText.Substring(posBeg, childNode.match_.posBeg_ - posBeg);

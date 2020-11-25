@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,7 +71,7 @@ namespace Altaxo.Gui.Settings
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.EnableAutoUpdates = _doc.EnableAutoUpdates;
         _view.DownloadUnstableVersion = _doc.DownloadUnstableVersion;

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using Altaxo.Scripting;
 
@@ -103,10 +104,10 @@ namespace Altaxo.Gui.Scripting
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args == null || args.Length == 0)
+      if (args is null || args.Length == 0)
         return false;
       var doc = args[0] as IFitFunctionScriptText;
-      if (doc == null)
+      if (doc is null)
         return false;
 
       m_Script = doc;
@@ -135,7 +136,7 @@ namespace Altaxo.Gui.Scripting
         //_scriptController.ScriptCursorLocation = m_TempScript.UserAreaScriptOffset;
       }
 
-      if (null != View)
+      if (View is not null)
       {
         View.SetScriptView(_scriptController.ViewObject);
 
@@ -161,12 +162,12 @@ namespace Altaxo.Gui.Scripting
       }
       set
       {
-        if (null != m_View)
+        if (m_View is not null)
           m_View.Controller = null;
 
         m_View = value;
 
-        if (null != m_View)
+        if (m_View is not null)
         {
           m_View.Controller = this;
           SetElements(false); // set only the view elements, dont't initialize the variables
@@ -182,7 +183,7 @@ namespace Altaxo.Gui.Scripting
 
     private bool IsValidVariableName(string name)
     {
-      if (name == null)
+      if (name is null)
         return false;
       if (name == string.Empty)
         return false;
@@ -267,10 +268,10 @@ namespace Altaxo.Gui.Scripting
       _scriptController.Update();
       _tempNumberOfParameters = numParameter;
 
-      if (null != View)
+      if (View is not null)
         View.EnableScriptView(_scriptController.ViewObject, false);
 
-      if (View != null && !_tempIsUsingUserDefinedParameters)
+      if (View is not null && !_tempIsUsingUserDefinedParameters)
         View.SetParameterText(GetDefaultParametersAsLine(_tempNumberOfParameters), _tempIsUsingUserDefinedParameters);
     }
 
@@ -278,10 +279,10 @@ namespace Altaxo.Gui.Scripting
     {
       _scriptController.Update();
       _tempIsUsingUserDefinedParameters = userDefinedParameters;
-      if (null != View)
+      if (View is not null)
         View.EnableScriptView(_scriptController.ViewObject, false);
 
-      if (View != null)
+      if (View is not null)
       {
         if (!_tempIsUsingUserDefinedParameters)
           View.SetParameterText(GetDefaultParametersAsLine(_tempNumberOfParameters), _tempIsUsingUserDefinedParameters);
@@ -292,7 +293,7 @@ namespace Altaxo.Gui.Scripting
     {
       _scriptController.Update();
       _tempUserDefinedParameters = parameterNames;
-      if (null != View)
+      if (View is not null)
         View.EnableScriptView(_scriptController.ViewObject, false);
     }
 
@@ -300,7 +301,7 @@ namespace Altaxo.Gui.Scripting
     {
       _scriptController.Update();
       _tempIndependentVariables = val;
-      if (null != View)
+      if (View is not null)
         View.EnableScriptView(_scriptController.ViewObject, false);
     }
 
@@ -308,7 +309,7 @@ namespace Altaxo.Gui.Scripting
     {
       _scriptController.Update();
       _tempDependentVariables = val;
-      if (null != View)
+      if (View is not null)
         View.EnableScriptView(_scriptController.ViewObject, false);
     }
 

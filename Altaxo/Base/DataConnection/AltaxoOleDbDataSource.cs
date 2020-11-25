@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -36,7 +38,7 @@ namespace Altaxo.DataConnection
     protected Data.IDataSourceImportOptions _importOptions;
     private OleDbDataQuery _dataQuery = OleDbDataQuery.Empty;
 
-    protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
+    protected Altaxo.Main.TriggerBasedUpdate? _triggerBasedUpdate;
 
     private int _updateReentrancyCount;
 
@@ -52,20 +54,37 @@ namespace Altaxo.DataConnection
       _dataQuery = new OleDbDataQuery(selectionStatement, connectionString);
     }
 
-    protected AltaxoOleDbDataSource()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    protected AltaxoOleDbDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
+    }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
+    protected AltaxoOleDbDataSource(AltaxoOleDbDataSource from)
+    {
+      CopyFrom(from);
+    }
+
+    [MemberNotNull(nameof(_dataQuery), nameof(_importOptions))]
+    public virtual void CopyFrom(AltaxoOleDbDataSource from)
+    {
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+        return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+
+      ChildCopyToMember(ref _importOptions, from._importOptions);
+      CopyHelper.CopyImmutable<OleDbDataQuery>(ref _dataQuery, from._dataQuery);
     }
 
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as AltaxoOleDbDataSource;
-      if (null != from)
+      if (obj is AltaxoOleDbDataSource from)
       {
-        ChildCopyToMember(ref _importOptions, from._importOptions);
-        CopyHelper.CopyImmutable(ref _dataQuery, from._dataQuery);
+        CopyFrom(from);
         EhSelfChanged(EventArgs.Empty);
         return true;
       }
@@ -78,15 +97,13 @@ namespace Altaxo.DataConnection
     /// <returns>A clone of this instance.</returns>
     public object Clone()
     {
-      var result = new AltaxoOleDbDataSource();
-      result.CopyFrom(this);
-      return result;
+      return new AltaxoOleDbDataSource(this);
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _importOptions)
-        yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null, "ImportOptions");
+      if (_importOptions is not null)
+        yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null!, "ImportOptions");
     }
 
     #endregion Construction
@@ -109,9 +126,9 @@ namespace Altaxo.DataConnection
         info.AddValue("ImportOptions", s._importOptions);
       }
 
-      protected virtual AltaxoOleDbDataSource SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AltaxoOleDbDataSource SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new AltaxoOleDbDataSource() : (AltaxoOleDbDataSource)o);
+        var s = (o is null ? new AltaxoOleDbDataSource(info) : (AltaxoOleDbDataSource)o);
 
         s._isDeserializationInProgress = true;
         s._dataQuery = (OleDbDataQuery)info.GetValue("DataQuery", s);
@@ -121,7 +138,7 @@ namespace Altaxo.DataConnection
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -134,7 +151,7 @@ namespace Altaxo.DataConnection
 
     #region Properties
 
-    public override Main.IDocumentNode ParentObject
+    public override Main.IDocumentNode? ParentObject
     {
       get
       {
@@ -155,8 +172,8 @@ namespace Altaxo.DataConnection
       }
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("DataQuery");
+        if (value is null)
+          throw new ArgumentNullException(nameof(DataQuery));
 
         var oldValue = _dataQuery;
         _dataQuery = value;
@@ -176,8 +193,8 @@ namespace Altaxo.DataConnection
       }
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("ImportOptions");
+        if (value is null)
+          throw new ArgumentNullException(nameof(ImportOptions));
 
         var oldValue = _importOptions;
 
@@ -198,7 +215,7 @@ namespace Altaxo.DataConnection
     /// <param name="destinationTable">The destination table.</param>
     public void FillData(Data.DataTable destinationTable)
     {
-      if (null == destinationTable)
+      if (destinationTable is null)
         throw new ArgumentNullException("destinationTable");
 
       int reentrancyCount = Interlocked.Increment(ref _updateReentrancyCount);
@@ -226,7 +243,7 @@ namespace Altaxo.DataConnection
 
     private void EhUpdateByTimerQueue()
     {
-      if (null != _parent)
+      if (_parent is not null)
       {
         if (!IsSuspended)
         {
@@ -243,7 +260,7 @@ namespace Altaxo.DataConnection
 
       // UpdateWatching should only be called if something concerning the watch (Times etc.) has changed during the suspend phase
       // Otherwise it will cause endless loops because UpdateWatching triggers immediatly an EhUpdateByTimerQueue event, which triggers an UpdateDataSource event, which leads to another Suspend and then Resume, which calls OnResume(). So the loop is closed.
-      if (null == _triggerBasedUpdate)
+      if (_triggerBasedUpdate is null)
         UpdateWatching(); // Compromise - we update only if the watch is off
     }
 
@@ -257,7 +274,7 @@ namespace Altaxo.DataConnection
       if (IsSuspended)
         return; // in update operation - wait until finished
 
-      if (null == _parent)
+      if (_parent is null)
         return; // No listener - no need to watch
 
       if (_importOptions.ImportTriggerSource != ImportTriggerSource.DataSourceChanged)
@@ -278,12 +295,9 @@ namespace Altaxo.DataConnection
 
     private void SwitchOffWatching()
     {
-      IDisposable disp;
-
-      disp = _triggerBasedUpdate;
+      var disp = _triggerBasedUpdate;
       _triggerBasedUpdate = null;
-      if (null != disp)
-        disp.Dispose();
+      disp?.Dispose();
     }
 
     protected override void Dispose(bool disposing)

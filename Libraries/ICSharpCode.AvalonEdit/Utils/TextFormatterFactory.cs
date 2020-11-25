@@ -78,7 +78,8 @@ namespace ICSharpCode.AvalonEdit.Utils
 				emSize.Value,
 				foreground,
 				null,
-				TextOptions.GetTextFormattingMode(element)
+				TextOptions.GetTextFormattingMode(element),
+        1.0
 			);
 		}
 	}

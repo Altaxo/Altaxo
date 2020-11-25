@@ -22,23 +22,21 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Altaxo.Main.Services
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Main.Properties;
 
   public class PropertyService : Altaxo.Main.Services.IPropertyService
   {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public DirectoryName DataDirectory { get; protected set; }
     public DirectoryName ConfigDirectory { get; protected set; }
@@ -103,7 +101,10 @@ namespace Altaxo.Main.Services
         throw new ArgumentOutOfRangeException(nameof(p), string.Format("No entry found for property key {0}", p));
     }
 
-    public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T> ValueCreationIfNotFound)
+
+    [return: NotNullIfNotNull("ValueCreationIfNotFound")]
+    [return: MaybeNull]
+    public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound) where T: notnull
     {
       if (kind == RuntimePropertyKind.UserAndApplicationAndBuiltin && UserSettings.TryGetValue<T>(p, out var result))
         return result;
@@ -111,10 +112,10 @@ namespace Altaxo.Main.Services
         return result;
       else if (BuiltinSettings.TryGetValue<T>(p, out result))
         return result;
-      else if (null != ValueCreationIfNotFound)
+      else if (ValueCreationIfNotFound is not null)
         return ValueCreationIfNotFound();
       else
-        throw new ArgumentOutOfRangeException(nameof(p), string.Format("No entry found for property key {0}", p));
+        return default;
     }
 
     #endregion Property getters
@@ -174,7 +175,7 @@ namespace Altaxo.Main.Services
         {
           using (var str = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo())
           {
-            str.BeginReading(new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read));
+            str.BeginReading(new FileStream(fileName.ToString(), FileMode.Open, FileAccess.Read, FileShare.Read));
             var result = (PropertyBagLazyLoaded)str.GetValue("UserSettings", null);
             result.ParentObject = SuspendableDocumentNode.StaticInstance;
             str.EndReading();
@@ -201,7 +202,7 @@ namespace Altaxo.Main.Services
     {
       var thisVersion = UserSettings.GetType().Assembly.GetName().Version;
 
-      if (null != _userSettings.AssemblyVersionLoadedFrom && thisVersion < _userSettings.AssemblyVersionLoadedFrom)
+      if (_userSettings.AssemblyVersionLoadedFrom is not null && thisVersion < _userSettings.AssemblyVersionLoadedFrom)
       {
         var answer = Current.Gui.YesNoMessageBox(
             string.Format(
@@ -215,14 +216,15 @@ namespace Altaxo.Main.Services
 
       using (LockPropertyFile())
       {
-        System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(PropertiesFileName));
+        if (PropertiesFileName.GetParentDirectory() is { } parentDirectory)
+          System.IO.Directory.CreateDirectory(parentDirectory.ToString());
 
-        System.IO.FileStream streamForWriting = null;
+        System.IO.FileStream? streamForWriting = null;
         for (int i = 500; i >= 0; --i) // Try to save the file, wait up to 10 seconds for getting the file (avoid exception if another instance is currently reading the properties file, especially with Com
         {
           try
           {
-            streamForWriting = new System.IO.FileStream(PropertiesFileName, System.IO.FileMode.Create, System.IO.FileAccess.Write, FileShare.None);
+            streamForWriting = new System.IO.FileStream(PropertiesFileName.ToString(), System.IO.FileMode.Create, System.IO.FileAccess.Write, FileShare.None);
             break;
           }
           catch (Exception)
@@ -234,7 +236,7 @@ namespace Altaxo.Main.Services
           System.Threading.Thread.Sleep(20);
         }
 
-        using (var stream = streamForWriting)
+        using (var stream = streamForWriting!)
         {
           var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
           info.BeginWriting(stream);

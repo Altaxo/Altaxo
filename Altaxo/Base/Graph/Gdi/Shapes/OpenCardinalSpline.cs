@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -46,7 +47,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (OpenCardinalSpline)obj;
-        info.AddBaseValueEmbedded(s, typeof(OpenCardinalSpline).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(OpenCardinalSpline).BaseType!);
         info.AddValue("Tension", s._tension);
         info.CreateArray("Points", s._curvePoints.Count);
         for (int i = 0; i < s._curvePoints.Count; i++)
@@ -54,10 +55,10 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (OpenCardinalSpline)o : new OpenCardinalSpline(info);
-        info.GetBaseValueEmbedded(s, typeof(OpenCardinalSpline).BaseType, parent);
+        var s = (OpenCardinalSpline?)o ?? new OpenCardinalSpline(info);
+        info.GetBaseValueEmbedded(s, typeof(OpenCardinalSpline).BaseType!, parent);
         s._tension = info.GetDouble("Tension");
         s._curvePoints.Clear();
         int count = info.OpenArray("Points");
@@ -102,23 +103,39 @@ namespace Altaxo.Graph.Gdi.Shapes
     public OpenCardinalSpline(OpenCardinalSpline from)
       : base(from) // all is done here, since CopyFrom is virtual!
     {
+      CopyFrom(from, false);
+    }
+
+    protected void CopyFrom(OpenCardinalSpline from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      _tension = from._tension;
+      _curvePoints.Clear();
+      _curvePoints.AddRange(from._curvePoints);
     }
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (obj is OpenCardinalSpline from)
       {
-        var from = obj as OpenCardinalSpline;
-        if (null != from)
+        using (var suspendToken = SuspendGetToken())
         {
-          _tension = from._tension;
-          _curvePoints.Clear();
-          _curvePoints.AddRange(from._curvePoints);
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
+
+
 
     #endregion Constructors
 
@@ -246,9 +263,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       return InternalGetPath(_location.AbsoluteVectorPivotToLeftUpper);
     }
 
-    public override IHitTestObject HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData htd)
     {
-      HitTestObjectBase result = null;
+      HitTestObjectBase? result = null;
       GraphicsPath gp = GetPath();
       using var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen);
       if (gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), linePenGdi))
@@ -264,7 +281,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
-      if (result != null)
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
 
       return result;
@@ -287,7 +304,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       using var penGdi = PenCacheGdi.Instance.BorrowPen(Pen, bounds, g, Math.Max(ScaleX, ScaleY));
       g.DrawPath(penGdi, path);
-      if (_outlinePen != null && _outlinePen.IsVisible)
+      if (_outlinePen is not null && _outlinePen.IsVisible)
       {
         path.Widen(penGdi);
         using var outlinePenGdi = PenCacheGdi.Instance.BorrowPen(_outlinePen, bounds, g, Math.Max(ScaleX, ScaleY));
@@ -304,7 +321,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
       }
 
-      public override IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel)
+      public override IGripManipulationHandle[]? GetGrips(double pageScale, int gripLevel)
       {
         if (gripLevel <= 1)
         {

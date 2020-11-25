@@ -24,27 +24,26 @@
 
 using System;
 using Altaxo.Data;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Data
 {
   /// <summary>
   /// Summary description for DoubleColumn_Test.
   /// </summary>
-  [TestFixture]
   public class DataColumnCollection_Test
   {
-    [Test]
+    [Fact]
     public void ZeroColumns()
     {
       var d = new DataColumnCollection();
-      Assert.AreEqual(0, d.ColumnCount);
-      Assert.AreEqual(0, d.RowCount);
-      Assert.AreEqual(false, d.IsDirty);
-      Assert.AreEqual(false, d.IsSuspended);
+      Assert.Equal(0, d.ColumnCount);
+      Assert.Equal(0, d.RowCount);
+      Assert.False(d.IsDirty);
+      Assert.False(d.IsSuspended);
     }
 
-    [Test]
+    [Fact]
     public void TenEmptyColumns()
     {
       var d = new DataColumnCollection();
@@ -56,31 +55,31 @@ namespace AltaxoTest.Data
         d.Add(cols[i]);
       }
 
-      Assert.AreEqual(10, d.ColumnCount);
-      Assert.AreEqual(0, d.RowCount);
-      Assert.AreEqual(false, d.IsDirty);
-      Assert.AreEqual(false, d.IsSuspended);
+      Assert.Equal(10, d.ColumnCount);
+      Assert.Equal(0, d.RowCount);
+      Assert.False(d.IsDirty);
+      Assert.False(d.IsSuspended);
 
-      Assert.AreEqual("A", d.GetColumnName(0));
-      Assert.AreEqual("A", d[0].Name);
+      Assert.Equal("A", d.GetColumnName(0));
+      Assert.Equal("A", d[0].Name);
 
-      Assert.AreEqual("J", d.GetColumnName(9));
-      Assert.AreEqual("J", d[9].Name);
+      Assert.Equal("J", d.GetColumnName(9));
+      Assert.Equal("J", d[9].Name);
 
       // Test index to column resolution
       for (int i = 0; i < 10; i++)
-        Assert.AreEqual(cols[i], d[i]);
+        Assert.Equal(cols[i], d[i]);
 
       // test name to column resolution
 
       for (int i = 0; i < 10; i++)
       {
         char name = (char)('A' + i);
-        Assert.AreEqual(cols[i], d[name.ToString()], "Column to name resolution of col " + name.ToString());
+        Assert.True(cols[i] == d[name.ToString()], "Column to name resolution of col " + name.ToString());
       }
       // test column to number resolution
       for (int i = 0; i < 10; i++)
-        Assert.AreEqual(i, d.GetColumnNumber(cols[i]));
+        Assert.Equal(i, d.GetColumnNumber(cols[i]));
     }
   }
 }

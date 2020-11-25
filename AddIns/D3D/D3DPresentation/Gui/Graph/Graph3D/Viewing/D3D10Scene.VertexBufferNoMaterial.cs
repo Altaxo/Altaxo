@@ -32,8 +32,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   {
     internal class VertexBufferNoMaterial : IDisposable
     {
-      Buffer _vertexBuffer;
-      int _vertexCount;
+      private Buffer _vertexBuffer;
+      private int _vertexCount;
 
       public Buffer VertexBuffer => _vertexBuffer;
       public int VertexCount => _vertexCount;
@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       {
         if (!_isDisposed)
         {
-          Disposer.RemoveAndDispose(ref _vertexBuffer);
+          Disposer.RemoveAndDispose(ref _vertexBuffer!);
           _vertexCount = 0;
 
           _isDisposed = true;

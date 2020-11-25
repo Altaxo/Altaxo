@@ -26,11 +26,11 @@ using System;
 using System.Collections.Generic;
 using Altaxo.Calc;
 using Altaxo.Calc.RootFinding;
-using NUnit.Framework;
+using Xunit;
 
 namespace Calc.RootFinding
 {
-  [TestFixture]
+
   public class PolynomialRootFindingTest
   {
     /// <summary>Coefficients of the real polynomial (x-0)*(x-1)*(x-2)*...*(x-9). Lowest order coefficient comes first.</summary>
@@ -44,25 +44,25 @@ namespace Calc.RootFinding
     /// <summary>
     /// Polynomial (x-0)*(x-1)*(x-2)*... *(x-9) should return the real roots 0, 1, 2, ... 9.
     /// </summary>
-    [Test]
+    [Fact]
     public void Test10DegreeRealPolynomial()
     {
       var roots = RealPolynomialRootFinder_JenkinsTraub.FindRoots(realCoefficients1);
 
-      Assert.AreEqual(10, roots.Count);
+      Assert.Equal(10, roots.Count);
       for (int i = 0; i < roots.Count; ++i)
-        Assert.AreEqual(0, roots[i].Im);
+        Assert.Equal(0, roots[i].Im);
 
       roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Re, y.Re));
 
       for (int i = 0; i < roots.Count; ++i)
-        Assert.AreEqual(i, roots[i].Re, 1E-7);
+        AssertEx.Equal(i, roots[i].Re, 1E-7);
     }
 
     /// <summary>
     /// Polynomial (x-0)*(x-1)*(x-2)*... *(x-9) should return the real roots 0, 1, 2, ... 9.
     /// </summary>
-    [Test]
+    [Fact]
     public void Test10DegreeComplexPolynomial()
     {
       var ccoeffs = new Complex[realCoefficients1.Length];
@@ -71,35 +71,35 @@ namespace Calc.RootFinding
 
       var roots = ComplexPolynomialRootFinder_JenkinsTraub.FindRoots(ccoeffs);
 
-      Assert.AreEqual(10, roots.Count);
+      Assert.Equal(10, roots.Count);
       for (int i = 0; i < roots.Count; ++i)
-        Assert.AreEqual(0, roots[i].Im, 1E-11);
+        AssertEx.Equal(0, roots[i].Im, 1E-11);
 
       roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Re, y.Re));
 
       for (int i = 0; i < roots.Count; ++i)
-        Assert.AreEqual(i, roots[i].Re, 1E-7);
+        AssertEx.Equal(i, roots[i].Re, 1E-7);
     }
 
     /// <summary>
     /// Polynomial (x-4-4i)*(x-3-3i)*... *(x+3+3i)*(x+4+4i) should return the complex roots -4-4i, -3-3i, ... 4+4i
     /// </summary>
-    [Test]
+    [Fact]
     public void Test9DegreeComplexPolynomial()
     {
       var roots = ComplexPolynomialRootFinder_JenkinsTraub.FindRoots(complexCoefficients1);
-      Assert.AreEqual(9, roots.Count);
+      Assert.Equal(9, roots.Count);
 
       roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Re, y.Re));
 
       for (int i = 0; i < roots.Count; ++i)
       {
-        Assert.AreEqual(i - 4, roots[i].Im, 1E-12);
-        Assert.AreEqual(i - 4, roots[i].Re, 1E-12);
+        AssertEx.Equal(i - 4, roots[i].Im, 1E-12);
+        AssertEx.Equal(i - 4, roots[i].Re, 1E-12);
       }
     }
 
-    [Test]
+    [Fact]
     public void TestRootsToCoefficientsReal()
     {
       var r = new double[10];
@@ -107,12 +107,12 @@ namespace Calc.RootFinding
         r[i] = i;
 
       var c = CoefficientsFromRoots(r);
-      Assert.AreEqual(realCoefficients1.Length, c.Length);
+      Assert.Equal(realCoefficients1.Length, c.Length);
       for (int i = 0; i < c.Length; ++i)
-        Assert.AreEqual(realCoefficients1[i], c[i]);
+        Assert.Equal(realCoefficients1[i], c[i]);
     }
 
-    [Test]
+    [Fact]
     public void TestRootsToCoefficientsComplex()
     {
       var r = new Complex[9];
@@ -120,11 +120,11 @@ namespace Calc.RootFinding
         r[i] = new Complex(i - 4, i - 4);
 
       var c = CoefficientsFromRoots(r);
-      Assert.AreEqual(complexCoefficients1.Length, c.Length);
+      Assert.Equal(complexCoefficients1.Length, c.Length);
       for (int i = 0; i < c.Length; ++i)
       {
-        Assert.AreEqual(complexCoefficients1[i].Re, c[i].Re);
-        Assert.AreEqual(complexCoefficients1[i].Im, c[i].Im);
+        Assert.Equal(complexCoefficients1[i].Re, c[i].Re);
+        Assert.Equal(complexCoefficients1[i].Im, c[i].Im);
       }
     }
 

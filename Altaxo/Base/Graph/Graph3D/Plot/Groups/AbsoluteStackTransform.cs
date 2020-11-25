@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,6 +31,7 @@ using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
+  using Altaxo.Graph.Plot.Data;
   using Geometry;
   using GraphicsContext;
   using Plot.Data;
@@ -54,9 +56,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
         var s = (AbsoluteStackTransform)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AbsoluteStackTransform s = null != o ? (AbsoluteStackTransform)o : new AbsoluteStackTransform();
+        var s = (AbsoluteStackTransform?)o ?? new AbsoluteStackTransform();
         return s;
       }
     }
@@ -96,23 +98,24 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       // we put zero into the y-Boundaries, since the addition starts with that value
       pb.Add(new AltaxoVariant(0.0));
 
-      AltaxoVariant[] vSumArray = null;
+      AltaxoVariant[]? vSumArray = null;
 
       int idx = -1;
       foreach (IGPlotItem pi in coll)
       {
-        if (pi is G3DPlotItem)
+        if (pi is G3DPlotItem gpi)
         {
           idx++;
-
-          var gpi = (G3DPlotItem)pi;
           Processed3DPlotData pdata = plotDataList[gpi];
+
+          if (pdata is null || pdata.RangeList is null)
+            continue;
 
           // Note: we can not use AddUp function here, since
           // when we have positive/negative items, the intermediate bounds
           // might be wider than the bounds of the end result
 
-          if (vSumArray == null)
+          if (vSumArray is null)
           {
             vSumArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
 
@@ -150,20 +153,23 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     {
       plotDataList = new Dictionary<G3DPlotItem, Processed3DPlotData>();
 
-      AltaxoVariant[] xArray = null;
-      AltaxoVariant[] yArray = null;
+      AltaxoVariant[]? xArray = null;
+      AltaxoVariant[]? yArray = null;
 
       int idx = -1;
       foreach (IGPlotItem pi in coll)
       {
-        if (pi is G3DPlotItem)
+        if (pi is G3DPlotItem gpi)
         {
           idx++;
-          var gpi = (G3DPlotItem)pi;
-          Processed3DPlotData pdata = gpi.GetRangesAndPoints(layer);
+          var pdata = gpi.GetRangesAndPoints(layer);
+
+          if (pdata is null || pdata.RangeList is null)
+            continue;
+
           plotDataList.Add(gpi, pdata);
 
-          if (xArray == null)
+          if (xArray is null || yArray is null)
           {
             xArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
             yArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
@@ -203,17 +209,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     /// <param name="vArray">The y array to be added to. If null, a new array will be allocated (and filled with the y-values of the plot item).</param>
     /// <param name="pdata">The pdata.</param>
     /// <returns>If the parameter <paramref name="vArray"/> was not null, then that <paramref name="vArray"/> is returned. Otherwise the newly allocated array is returned.</returns>
-    public static AltaxoVariant[] AddUp(AltaxoVariant[] vArray, Processed3DPlotData pdata)
+    public static AltaxoVariant[] AddUp(AltaxoVariant[]? vArray, Processed3DPlotData pdata)
     {
-      if (null == pdata)
+      if (pdata is null)
         throw new ArgumentNullException(nameof(pdata));
+      if (!(pdata.RangeList is { } rangeList))
+        throw new ArgumentNullException(nameof(pdata.RangeList));
 
-      if (vArray == null)
+      if (vArray is null)
       {
-        vArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
+        vArray = new AltaxoVariant[rangeList.PlotPointCount];
 
         int j = -1;
-        foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+        foreach (int originalIndex in rangeList.OriginalRowIndices())
         {
           j++;
           vArray[j] = pdata.GetZPhysical(originalIndex);
@@ -222,7 +230,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       else // this is not the first item
       {
         int j = -1;
-        foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+        foreach (int originalIndex in rangeList.OriginalRowIndices())
         {
           j++;
           vArray[j] += pdata.GetZPhysical(originalIndex);
@@ -242,19 +250,18 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
         paintContext.AddValue(this, plotDataDict);
       }
 
-      AltaxoVariant[] vArray = null;
+      AltaxoVariant[]? vArray = null;
       // First, add up all items since we start always with the last item
       int idx = -1;
-      Processed3DPlotData previousItemData = null;
+      Processed3DPlotData? previousItemData = null;
       foreach (IGPlotItem pi in coll)
       {
-        if (pi is G3DPlotItem)
+        if (pi is G3DPlotItem gpi)
         {
           idx++;
 
-          var gpi = pi as G3DPlotItem;
           Processed3DPlotData pdata = plotDataDict[gpi];
-          if (null == pdata)
+          if (pdata is null || pdata.RangeList is null || pdata.PlotPointsInAbsoluteLayerCoordinates is null)
             continue;
 
           vArray = AddUp(vArray, pdata);
@@ -277,7 +284,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
           // we have also to exchange the accessor for the physical y value and replace it by our own one
           var localArray = (AltaxoVariant[])vArray.Clone();
-          var localArrayHolder = new LocalArrayHolder(localArray, pdata);
+          var localArrayHolder = new LocalArrayHolder(localArray, pdata.RangeList);
           pdata.ZPhysicalAccessor = localArrayHolder.GetPhysical;
           pdata.PreviousItemData = previousItemData;
           previousItemData = pdata;
@@ -293,28 +300,28 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     {
       var plotDataDict = paintContext.GetValueOrDefault<Dictionary<G3DPlotItem, Processed3DPlotData>>(this);
 
-      if (null == plotDataDict) // if initializing this dict was not successfull, then make a normal plot
+      if (plotDataDict is null) // if initializing this dict was not successfull, then make a normal plot
       {
         coll[indexOfChild].Paint(g, paintContext, layer, indexOfChild == coll.Count - 1 ? null : coll[indexOfChild + 1], indexOfChild == 0 ? null : coll[indexOfChild - 1]);
         return;
       }
 
-      Processed3DPlotData prevPlotData = null;
-      Processed3DPlotData nextPlotData = null;
+      Processed3DPlotData? prevPlotData = null;
+      Processed3DPlotData? nextPlotData = null;
 
-      if ((indexOfChild + 1) < coll.Count && (coll[indexOfChild + 1] is G3DPlotItem))
-        prevPlotData = plotDataDict[coll[indexOfChild + 1] as G3DPlotItem];
+      if ((indexOfChild + 1) < coll.Count && (coll[indexOfChild + 1] is G3DPlotItem key1))
+        prevPlotData = plotDataDict[key1];
 
-      if (indexOfChild > 0 && (coll[indexOfChild - 1] is G3DPlotItem))
-        nextPlotData = plotDataDict[coll[indexOfChild - 1] as G3DPlotItem];
+      if (indexOfChild > 0 && (coll[indexOfChild - 1] is G3DPlotItem keyM1))
+        nextPlotData = plotDataDict[keyM1];
 
-      if (coll[indexOfChild] is G3DPlotItem)
+      if (coll[indexOfChild] is G3DPlotItem gpi)
       {
-        var gpi = coll[indexOfChild] as G3DPlotItem;
         var pdata = plotDataDict[gpi];
-        if (null != pdata)
-
+        if (pdata is not null)
+        {
           gpi.Paint(g, layer, pdata, prevPlotData, nextPlotData);
+        }
       }
       else
       {
@@ -333,11 +340,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
       /// <summary>Initializes a new instance of the <see cref="LocalArrayHolder"/> class.</summary>
       /// <param name="localArray">The local array of transformed y values. The array length is equal to the number of plot points.</param>
-      /// <param name="pdata">The processed plot data. The plot range member of this instance is used to build a dictionary which associates the original row indices to the indices of the <paramref name="localArray"/>.</param>
-      public LocalArrayHolder(AltaxoVariant[] localArray, Processed3DPlotData pdata)
+      /// <param name="rangeList">The range list of the processed plot data. This instance is used to build a dictionary which associates the original row indices to the indices of the <paramref name="localArray"/>.</param>
+      public LocalArrayHolder(AltaxoVariant[] localArray, PlotRangeList rangeList)
       {
         _localArray = localArray;
-        _originalRowIndexToPlotIndex = pdata.RangeList.GetDictionaryOfOriginalRowIndicesToPlotIndices();
+        _originalRowIndexToPlotIndex = rangeList.GetDictionaryOfOriginalRowIndicesToPlotIndices();
       }
 
       /// <summary>Gets the physical y value for a given original row index.</summary>

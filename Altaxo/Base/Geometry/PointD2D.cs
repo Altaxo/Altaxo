@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -66,10 +67,9 @@ namespace Altaxo.Geometry
         info.AddValue("Y", s.Y);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new PointD2D(info.GetDouble("X"), info.GetDouble("Y"));
-        ;
       }
     }
 
@@ -235,11 +235,10 @@ namespace Altaxo.Geometry
       return X.GetHashCode() + 7 * Y.GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (obj is PointD2D)
+      if (obj is PointD2D q)
       {
-        var q = (PointD2D)obj;
         return X == q.X && Y == q.Y;
       }
       else

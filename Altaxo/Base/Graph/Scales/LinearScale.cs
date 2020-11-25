@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
 
@@ -72,9 +74,9 @@ namespace Altaxo.Graph.Scales
                  */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinearScale s = (LinearScale)o ?? new LinearScale(info);
+        var s = (LinearScale?)o ?? new LinearScale(info);
 
         s._cachedAxisOrg = info.GetDouble("Org");
         s._cachedAxisEnd = info.GetDouble("End");
@@ -109,9 +111,9 @@ namespace Altaxo.Graph.Scales
         info.AddValue("TickSpacing", s._tickSpacing);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinearScale s = (LinearScale)o ?? new LinearScale(info);
+        var s = (LinearScale?)o ?? new LinearScale(info);
 
         s._cachedAxisOrg = info.GetDouble("Org");
         s._cachedAxisEnd = info.GetDouble("End");
@@ -135,9 +137,11 @@ namespace Altaxo.Graph.Scales
     /// <summary>
     /// Constructor for deserialization only.
     /// </summary>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected LinearScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     /// <summary>
     /// Creates a default linear axis with org=0 and end=1.
@@ -159,13 +163,10 @@ namespace Altaxo.Graph.Scales
       CopyFrom(from);
     }
 
-    public override bool CopyFrom(object obj)
+    [MemberNotNull(nameof(_dataBounds), nameof(_rescaling), nameof(_tickSpacing))]
+    protected void CopyFrom(LinearScale from)
     {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-
-      var from = obj as LinearScale;
-      if (null != from)
+      using (var suspendToken = SuspendGetToken())
       {
         _cachedAxisEnd = from._cachedAxisEnd;
         _cachedAxisOrg = from._cachedAxisOrg;
@@ -175,6 +176,20 @@ namespace Altaxo.Graph.Scales
         ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
         ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new LinearScaleRescaleConditions());
         ChildCopyToMemberOrCreateNew(ref _tickSpacing, from._tickSpacing, () => new Ticks.LinearTickSpacing());
+
+        EhSelfChanged(EventArgs.Empty);
+        suspendToken.Resume();
+      }
+    }
+
+    public override bool CopyFrom(object obj)
+    {
+      if (ReferenceEquals(this, obj))
+        return true;
+
+      if (obj is LinearScale from)
+      {
+        CopyFrom(from);
         return true;
       }
       return false;
@@ -182,14 +197,14 @@ namespace Altaxo.Graph.Scales
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataBounds)
-        yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null, "DataBounds");
+      if (_dataBounds is not null)
+        yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null!, "DataBounds");
 
-      if (null != _rescaling)
-        yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null, "Rescaling");
+      if (_rescaling is not null)
+        yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null!, "Rescaling");
 
-      if (null != _tickSpacing)
-        yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null, "TickSpacing");
+      if (_tickSpacing is not null)
+        yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null!, "TickSpacing");
     }
 
     public override object Clone()
@@ -240,7 +255,7 @@ namespace Altaxo.Graph.Scales
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         if (ChildSetMember(ref _tickSpacing, value))
@@ -301,7 +316,7 @@ namespace Altaxo.Graph.Scales
       end = 1;
     }
 
-    protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+    protected override string? SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
     {
       double o = org.ToDouble();
       double e = end.ToDouble();

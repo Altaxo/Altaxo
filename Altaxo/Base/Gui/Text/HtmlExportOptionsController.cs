@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -69,7 +70,7 @@ namespace Altaxo.Gui.Text
           }
         }
       }
-      if (null != _view)
+      if (_view is not null)
       {
       }
     }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -51,9 +52,9 @@ namespace Altaxo.Graph.Plot.Groups
         var s = (SkipFrequencyGroupStyle)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        SkipFrequencyGroupStyle s = null != o ? (SkipFrequencyGroupStyle)o : new SkipFrequencyGroupStyle();
+        var s = (SkipFrequencyGroupStyle?)o ?? new SkipFrequencyGroupStyle();
         return s;
       }
     }
@@ -196,19 +197,19 @@ namespace Altaxo.Graph.Plot.Groups
       Int32FunctionValueGetter getter)
     {
       if (!externalGroups.ContainsType(typeof(SkipFrequencyGroupStyle))
-        && null != localGroups
+        && localGroups is not null
         && !localGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
       {
         localGroups.Add(new SkipFrequencyGroupStyle());
       }
 
-      SkipFrequencyGroupStyle grpStyle = null;
+      SkipFrequencyGroupStyle? grpStyle = null;
       if (externalGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
         grpStyle = (SkipFrequencyGroupStyle)externalGroups.GetPlotGroupStyle(typeof(SkipFrequencyGroupStyle));
-      else if (localGroups != null)
+      else if (localGroups is not null)
         grpStyle = (SkipFrequencyGroupStyle)localGroups.GetPlotGroupStyle(typeof(SkipFrequencyGroupStyle));
 
-      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+      if (grpStyle is not null && getter is not null && !grpStyle.IsInitialized)
         grpStyle.Initialize(getter());
     }
 
@@ -226,16 +227,15 @@ namespace Altaxo.Graph.Plot.Groups
       IPlotGroupStyleCollection localGroups,
       Int32ValueSetter setter)
     {
-      SkipFrequencyGroupStyle grpStyle = null;
-      IPlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection? grpColl = null;
       if (externalGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
         grpColl = externalGroups;
-      else if (localGroups != null && localGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
+      else if (localGroups is not null && localGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
         grpColl = localGroups;
 
-      if (null != grpColl)
+      if (grpColl is not null)
       {
-        grpStyle = (SkipFrequencyGroupStyle)grpColl.GetPlotGroupStyle(typeof(SkipFrequencyGroupStyle));
+        var grpStyle = (SkipFrequencyGroupStyle)grpColl.GetPlotGroupStyle(typeof(SkipFrequencyGroupStyle));
         grpColl.OnBeforeApplication(typeof(SkipFrequencyGroupStyle));
         setter(grpStyle.SkipFrequency);
         return true;

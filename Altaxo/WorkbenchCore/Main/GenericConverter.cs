@@ -52,23 +52,25 @@ namespace Altaxo.Main
     /// <summary>
     /// Converts the value to string.
     /// </summary>
-    public static string ToString<T>(T val)
+    public static string? ToString<T>(T val)
     {
       if (typeof(T) == typeof(string))
       {
-        string s = (string)(object)val;
-        return string.IsNullOrEmpty(s) ? null : s;
+        return val as string;
       }
-      try
+      else
       {
-        TypeConverter c = TypeDescriptor.GetConverter(typeof(T));
-        string s = c.ConvertToInvariantString(val);
-        return string.IsNullOrEmpty(s) ? null : s;
-      }
-      catch (Exception ex)
-      {
-        Current.Log.Info(ex);
-        return null;
+        try
+        {
+          TypeConverter c = TypeDescriptor.GetConverter(typeof(T));
+          string s = c.ConvertToInvariantString(val);
+          return string.IsNullOrEmpty(s) ? null : s;
+        }
+        catch (Exception ex)
+        {
+          Current.Log.Info(ex);
+          return null;
+        }
       }
     }
   }

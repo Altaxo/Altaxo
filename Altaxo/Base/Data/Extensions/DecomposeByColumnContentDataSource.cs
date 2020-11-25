@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Data
 {
@@ -35,7 +35,7 @@ namespace Altaxo.Data
     private DataTableMultipleColumnProxy _processData;
     private IDataSourceImportOptions _importOptions;
 
-    public Action<IAltaxoTableDataSource> _dataSourceChanged;
+    public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
 
@@ -56,32 +56,39 @@ namespace Altaxo.Data
         info.AddValue("ImportOptions", s._importOptions);
       }
 
-      protected virtual DecomposeByColumnContentDataSource SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new DecomposeByColumnContentDataSource() : (DecomposeByColumnContentDataSource)o);
-
-        s.ChildSetMember(ref s._processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", s));
-        s.ChildSetMember(ref s._processOptions, (DecomposeByColumnContentOptions)info.GetValue("ProcessOptions", s));
-        s.ChildSetMember(ref s._importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", s));
-
-        s.InputData = s._processData;
-
+        if (o is DecomposeByColumnContentDataSource s)
+          s.DeserializeSurrogate0(info);
+        else
+          s = new DecomposeByColumnContentDataSource(info, 0);
         return s;
       }
+    }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        var s = SDeserialize(o, info, parent);
-        return s;
-      }
+    [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
+    void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      ChildSetMember(ref _processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this));
+      ChildSetMember(ref _processOptions, (DecomposeByColumnContentOptions)info.GetValue("ProcessOptions", this));
+      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+      InputData = _processData;
     }
 
     #endregion Version 0
 
     #endregion Serialization
 
-    protected DecomposeByColumnContentDataSource()
+    protected DecomposeByColumnContentDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
+      switch (version)
+      {
+        case 0:
+          DeserializeSurrogate0(info);
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(version));
+      }
     }
 
     /// <summary>
@@ -99,12 +106,12 @@ namespace Altaxo.Data
     /// </exception>
     public DecomposeByColumnContentDataSource(DataTableMultipleColumnProxy inputData, DecomposeByColumnContentOptions dataSourceOptions, IDataSourceImportOptions importOptions)
     {
-      if (null == inputData)
-        throw new ArgumentNullException("inputData");
-      if (null == dataSourceOptions)
-        throw new ArgumentNullException("dataSourceOptions");
-      if (null == importOptions)
-        throw new ArgumentNullException("importOptions");
+      if (inputData is null)
+        throw new ArgumentNullException(nameof(inputData));
+      if (dataSourceOptions is null)
+        throw new ArgumentNullException(nameof(dataSourceOptions));
+      if (importOptions is null)
+        throw new ArgumentNullException(nameof(importOptions));
 
       using (var token = SuspendGetToken())
       {
@@ -123,6 +130,25 @@ namespace Altaxo.Data
       CopyFrom(from);
     }
 
+    [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
+    void CopyFrom(DecomposeByColumnContentDataSource from)
+    {
+      using (var token = SuspendGetToken())
+      {
+        DecomposeByColumnContentOptions? dataSourceOptions = null;
+        DataTableMultipleColumnProxy? inputData = null;
+        IDataSourceImportOptions? importOptions = null;
+
+        CopyHelper.Copy(ref importOptions, from._importOptions);
+        CopyHelper.Copy(ref dataSourceOptions, from._processOptions);
+        CopyHelper.Copy(ref inputData, from._processData);
+
+        DecomposeByColumnContentOptions = dataSourceOptions;
+        ImportOptions = importOptions;
+        InputData = inputData;
+      }
+    }
+
     /// <summary>
     /// Copies from another instance.
     /// </summary>
@@ -130,28 +156,13 @@ namespace Altaxo.Data
     /// <returns><c>True</c> if anything could be copied from the object, otherwise <c>false</c>.</returns>
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as DecomposeByColumnContentDataSource;
-      if (null != from)
+      if (obj is DecomposeByColumnContentDataSource from)
       {
-        using (var token = SuspendGetToken())
-        {
-          DecomposeByColumnContentOptions dataSourceOptions = null;
-          DataTableMultipleColumnProxy inputData = null;
-          IDataSourceImportOptions importOptions = null;
-
-          CopyHelper.Copy(ref importOptions, from._importOptions);
-          CopyHelper.Copy(ref dataSourceOptions, from._processOptions);
-          CopyHelper.Copy(ref inputData, from._processData);
-
-          DecomposeByColumnContentOptions = dataSourceOptions;
-          ImportOptions = importOptions;
-          InputData = inputData;
-
-          return true;
-        }
+        CopyFrom(from);
+        return true;
       }
       return false;
     }
@@ -192,7 +203,7 @@ namespace Altaxo.Data
     {
       add
       {
-        bool isFirst = null == _dataSourceChanged;
+        bool isFirst = _dataSourceChanged is null;
         _dataSourceChanged += value;
         if (isFirst)
         {
@@ -202,7 +213,7 @@ namespace Altaxo.Data
       remove
       {
         _dataSourceChanged -= value;
-        bool isLast = null == _dataSourceChanged;
+        bool isLast = _dataSourceChanged is null;
         if (isLast)
         {
         }
@@ -221,6 +232,7 @@ namespace Altaxo.Data
       {
         return _processData;
       }
+      [MemberNotNull(nameof(_processData))]
       set
       {
         if (ChildSetMember(ref _processData, value ?? throw new ArgumentNullException(nameof(value))))
@@ -243,6 +255,7 @@ namespace Altaxo.Data
       {
         return _importOptions;
       }
+      [MemberNotNull(nameof(_importOptions))]
       set
       {
         if (ChildSetMember(ref _importOptions, value ?? throw new ArgumentNullException(nameof(value))))
@@ -265,6 +278,7 @@ namespace Altaxo.Data
       {
         return _processOptions;
       }
+      [MemberNotNull(nameof(_processOptions))]
       set
       {
         if (ChildSetMember(ref _processOptions, value ?? throw new ArgumentNullException(nameof(value))))
@@ -276,7 +290,7 @@ namespace Altaxo.Data
 
     #region Change event handling
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
       {
@@ -299,11 +313,11 @@ namespace Altaxo.Data
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _processData)
+      if (_processData is not null)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
-      if (null != _processOptions)
+      if (_processOptions is not null)
         yield return new Main.DocumentNodeAndName(_processOptions, "ProcessOptions");
-      if (null != _importOptions)
+      if (_importOptions is not null)
         yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
 
     }
@@ -323,7 +337,7 @@ namespace Altaxo.Data
     /// <param name="ReportProxies">The report proxies.</param>
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
-      if (_processData != null)
+      if (_processData is not null)
         _processData.VisitDocumentReferences(ReportProxies);
     }
 

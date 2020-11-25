@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Worksheet
@@ -47,9 +48,9 @@ namespace Altaxo.Worksheet
         info.AddValue("Layout", s._layout);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        TablePlusLayout s = null != o ? (TablePlusLayout)o : new TablePlusLayout();
+        TablePlusLayout s = (TablePlusLayout?)o ?? new TablePlusLayout(info);
 
         s._table = (Altaxo.Data.DataTable)info.GetValue("Table", s);
         s._layout = (Altaxo.Worksheet.WorksheetLayout)info.GetValue("Layout", s);
@@ -73,9 +74,12 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Empty constructor only for deserialization purposes.
     /// </summary>
-    protected TablePlusLayout()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    protected TablePlusLayout(Altaxo.Serialization.Xml.IXmlDeserializationInfo _)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
 
     /// <summary>
     /// Gets the table.

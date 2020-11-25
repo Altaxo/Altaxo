@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -112,7 +113,7 @@ namespace Altaxo.Com
         if (object.ReferenceEquals(_document, value))
           return;
 
-        if (null != _document)
+        if (_document is not null)
         {
           _document.Changed -= EhDocumentChanged;
         }
@@ -120,7 +121,7 @@ namespace Altaxo.Com
         var oldValue = _document;
         _document = value;
 
-        if (null != _document)
+        if (_document is not null)
         {
           _document.Changed += EhDocumentChanged;
         }
@@ -356,7 +357,7 @@ namespace Altaxo.Com
             if ((int)OLEIVERB.OLEIVERB_OPEN == iVerb)
               ComDebug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_OPEN", GetType().Name);
             _comManager.ApplicationAdapter.ShowMainWindow();
-            if (pActiveSite != null)
+            if (pActiveSite is not null)
             {
               ComDebug.ReportInfo("{0}.IOleObject.DoVerb -> calling ClientSite.ShowObject()", GetType().Name);
               try
@@ -464,7 +465,7 @@ namespace Altaxo.Com
 
     public int Load(IStorage pstg)
     {
-      if (!(null == _document))
+      if (_document is not null)
         throw new InvalidOperationException(nameof(_document) + " should be null");
 
       string documentName = null;
@@ -533,10 +534,10 @@ namespace Altaxo.Com
             }
           });
         }
-        if (null != closeErrors)
+        if (closeErrors is not null)
           throw closeErrors;
 
-        if (null != loadErrors)
+        if (loadErrors is not null)
           ComDebug.ReportInfo("{0}.IPersistStorage.Load Project loaded with errors: {1}", GetType().Name, loadErrors);
         else
           ComDebug.ReportInfo("{0}.IPersistStorage.Load Project loaded successfully", GetType().Name);
@@ -550,7 +551,7 @@ namespace Altaxo.Com
 
       Altaxo.Graph.GraphDocumentBase newDocument = null;
 
-      if (null != documentName)
+      if (documentName is not null)
       {
 
         if (Current.Project.GraphDocumentCollection.TryGetValue(documentName, out var newDocGdi))
@@ -559,22 +560,22 @@ namespace Altaxo.Com
           newDocument = newDoc3D;
       }
 
-      if (null == newDocument)
+      if (newDocument is null)
       {
-        if (null != Current.Project.GraphDocumentCollection.FirstOrDefault())
+        if (Current.Project.GraphDocumentCollection.FirstOrDefault() is not null)
           newDocument = Current.Project.GraphDocumentCollection.First();
-        else if (null != Current.Project.Graph3DDocumentCollection.FirstOrDefault())
+        else if (Current.Project.Graph3DDocumentCollection.FirstOrDefault() is not null)
           newDocument = Current.Project.Graph3DDocumentCollection.First();
       }
 
-      if (null != newDocument)
+      if (newDocument is not null)
       {
         Document = newDocument;
         _comManager.InvokeGuiThread(() => Current.IProjectService.ShowDocumentView(Document));
         ComDebug.ReportInfo("{0}.IPersistStorage.Load ShowDocumentView for {1}", GetType().Name, Document.Name);
       }
 
-      if (null == Document)
+      if (Document is null)
       {
         ComDebug.ReportError("{0}.IPersistStorage.Load Document is null, have to throw an exception now!!", GetType().Name);
         throw new InvalidOperationException();
@@ -635,7 +636,7 @@ namespace Altaxo.Com
 
         _isDocumentDirty = false;
 
-        if (null != saveErrors)
+        if (saveErrors is not null)
           throw saveErrors;
       }
       catch (Exception ex)

@@ -46,12 +46,13 @@ namespace Altaxo.Main.Services
       DefaultMessageBoxTitle = ProductName = "Altaxo";
     }
 
-    public virtual void ShowException(Exception ex, string message)
+    public virtual void ShowException(Exception ex, string? message)
     {
+      message ??= string.Empty;
       Current.Log.Error(message, ex);
       Current.Log.Warn("Stack trace of last exception log:\n" + Environment.StackTrace);
       message = StringParser.Parse(message);
-      if (ex != null)
+      if (ex is not null)
       {
         message += "\n\nException occurred: " + ex.ToString();
       }
@@ -60,17 +61,24 @@ namespace Altaxo.Main.Services
 
     private void DoShowMessage(string message, string caption, MessageBoxImage icon)
     {
-      var mainWindow = Application.Current?.MainWindow;
 
-      if (null != mainWindow)
+      if (Current.Dispatcher.InvokeRequired)
       {
         Current.Dispatcher.InvokeAndForget(
             () =>
             {
+              var mainWindow = Application.Current?.MainWindow;
+              if (mainWindow is not null)
               MessageBox.Show(mainWindow,
                                                       message, caption ?? DefaultMessageBoxTitle,
                                                       MessageBoxButton.OK, MessageBoxImage.Warning,
-                                                      MessageBoxResult.OK, GetOptions(message, caption));
+                                                      MessageBoxResult.OK, GetOptions(message));
+              else
+                MessageBox.Show(
+                                                       message, caption ?? DefaultMessageBoxTitle,
+                                                       MessageBoxButton.OK, MessageBoxImage.Warning,
+                                                       MessageBoxResult.OK, GetOptions(message));
+
             });
       }
       else
@@ -79,7 +87,7 @@ namespace Altaxo.Main.Services
         MessageBox.Show(
                                                 message, caption ?? DefaultMessageBoxTitle,
                                                 MessageBoxButton.OK, MessageBoxImage.Warning,
-                                                MessageBoxResult.OK, GetOptions(message, caption));
+                                                MessageBoxResult.OK, GetOptions(message));
       }
     }
 
@@ -95,8 +103,9 @@ namespace Altaxo.Main.Services
       DoShowMessage(StringParser.Parse(message), StringParser.Parse("${res:Global.WarningText}"), MessageBoxImage.Warning);
     }
 
-    public void ShowMessage(string message, string caption)
+    public void ShowMessage(string message, string? caption)
     {
+      caption ??= string.Empty;
       Current.Log.Info(message);
       DoShowMessage(StringParser.Parse(message), StringParser.Parse(caption), MessageBoxImage.Information);
     }
@@ -113,14 +122,16 @@ namespace Altaxo.Main.Services
       DoShowMessage(StringParser.Format(formatstring, formatitems), StringParser.Parse("${res:Global.WarningText}"), MessageBoxImage.Warning);
     }
 
-    public void ShowMessageFormatted(string formatstring, string caption, params object[] formatitems)
+    public void ShowMessageFormatted(string formatstring, string? caption, params object[] formatitems)
     {
+      caption ??= string.Empty;
       Current.Log.Info(formatstring);
       DoShowMessage(StringParser.Format(formatstring, formatitems), StringParser.Parse(caption), MessageBoxImage.Information);
     }
 
-    public bool AskQuestion(string question, string caption)
+    public bool AskQuestion(string question, string? caption)
     {
+      caption ??= string.Empty;
       var mainWindow = ((GuiFactoryServiceWpfWin)Current.Gui).MainWindowWpf;
 
       var result = Current.Dispatcher.InvokeIfRequired(
@@ -130,12 +141,12 @@ namespace Altaxo.Main.Services
                                                                MessageBoxButton.YesNo,
                                                                MessageBoxImage.Question,
                                                                MessageBoxResult.Yes,
-                                                               GetOptions(question, caption))
+                                                               GetOptions(question))
           );
       return result == MessageBoxResult.Yes;
     }
 
-    private static MessageBoxOptions GetOptions(string text, string caption)
+    private static MessageBoxOptions GetOptions(string text)
     {
       return IsRtlText(text) ? MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0;
     }
@@ -234,11 +245,12 @@ restartlabel:
       throw new NotImplementedException();
     }
 
-    public void ShowHandledException(Exception ex, string message = null)
+    public void ShowHandledException(Exception ex, string? message = null)
     {
+      message ??= string.Empty;
       Current.Log.Error(message, ex);
       Current.Log.Warn("Stack trace of last exception log:\n" + Environment.StackTrace);
-      if (message == null)
+      if (message is null)
       {
         message = ex.Message;
       }

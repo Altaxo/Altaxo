@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -109,7 +110,7 @@ namespace Altaxo.Text
         info.AddValue("RenumerateFigures", s.RenumerateFigures);
       }
 
-      public void Deserialize(MamlExportOptions s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public void Deserialize(MamlExportOptions s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         s.SplitLevel = info.GetInt32("SplitLevel");
         s.ImageFolderName = info.GetString("ImageFolderName");
@@ -133,9 +134,9 @@ namespace Altaxo.Text
           s.RenumerateFigures = info.GetBoolean("RenumerateFigures");
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (MamlExportOptions)o ?? new MamlExportOptions();
+        var s = (MamlExportOptions?)o ?? new MamlExportOptions();
         Deserialize(s, info, parent);
         return s;
       }
@@ -153,13 +154,13 @@ namespace Altaxo.Text
     /// <summary>
     /// Gets or sets the output file. This is preferably a Sandcastle help file builder project file, but can also be a layout content file (.content) or a Maml file (.aml).
     /// </summary>
-    public string OutputFileName { get; set; }
+    public string OutputFileName { get; set; } = string.Empty;
 
     /// <summary>
     /// Name of the folder relative to the help file builder project, in which the content (.aml and .content) is stored.
     /// This property is ignored when the <see cref="OutputFileName"/> is not a Sandcastle help file builder project file.
     /// </summary>
-    public string ContentFolderName { get; set; }
+    public string ContentFolderName { get; set; } = string.Empty;
 
     /// <summary>
     /// If set to true, all .aml files and all .content files residing in the content folder are deleted before exporting the new image files.
@@ -169,7 +170,7 @@ namespace Altaxo.Text
     /// <summary>
     /// Gets or sets the base name of .aml files. This property is ignored if the <see cref="OutputFileName"/> itself is a .aml file.
     /// </summary>
-    public string ContentFileNameBase { get; set; }
+    public string ContentFileNameBase { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the font family of the body text that later on is rendered out of the Maml file.
@@ -357,13 +358,13 @@ namespace Altaxo.Text
     /// <param name="fileName">Full name of the Maml file to export to. Note that if exporting to multiple Maml files,
     /// this is the base file name only; the file names will be derived from this name.</param>
     /// <param name="errors">A list that collects error messages.</param>
-    public void Export(TextDocument document, string fileName, List<MarkdownError> errors = null)
+    public void Export(TextDocument document, string fileName, List<MarkdownError>? errors = null)
     {
-      if (null == document)
+      if (document is null)
         throw new ArgumentNullException(nameof(document));
       if (string.IsNullOrEmpty(fileName))
         throw new ArgumentNullException(nameof(fileName));
-      var basePathName = Path.GetDirectoryName(fileName);
+      var basePathName = Path.GetDirectoryName(fileName) ?? throw new InvalidOperationException($"Unable to get directory of file name {fileName}");
 
 
       if (ExpandChildDocuments)
@@ -379,6 +380,7 @@ namespace Altaxo.Text
       // remove the old content
       if (EnableRemoveOldContentsOfContentFolder)
       {
+
         var fullContentFolderName = Path.Combine(basePathName, ContentFolderName);
         MamlRenderer.RemoveOldContentsOfContentFolder(fullContentFolderName);
       }
@@ -436,7 +438,11 @@ namespace Altaxo.Text
     private (Dictionary<string, string> oldToNewImageUrl, HashSet<string> listOfReferencedImageFileNames)
           ExportImages(TextDocument document, string basePathName)
     {
+      if (document.ReferencedImageUrls is null)
+        throw new InvalidProgramException("document.ReferencedImageUrls must be evaluated before this call");
+
       var imagePath = GetImagePath(basePathName);
+
 
       var list = new List<(string Url, int urlSpanStart, int urlSpanEnd)>(document.ReferencedImageUrls);
 

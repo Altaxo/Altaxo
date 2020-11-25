@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,9 +63,9 @@ namespace Altaxo.Units
     /// </summary>
     /// <param name="allDefinedUnits">Dictionary with all defined units. If you provide null, all defined units will be searched in the assemblies, which may take some time.</param>
     /// <returns>Enumeration of all defined quantities in alphabetical order.</returns>
-    public static IEnumerable<string> GetAllDefinedQuantities(IReadOnlyDictionary<Type, UnitDescriptionAttribute> allDefinedUnits = null)
+    public static IEnumerable<string> GetAllDefinedQuantities(IReadOnlyDictionary<Type, UnitDescriptionAttribute>? allDefinedUnits = null)
     {
-      if (null == allDefinedUnits)
+      if (allDefinedUnits is null)
       {
         allDefinedUnits = GetAllDefinedUnits();
       }
@@ -88,16 +89,16 @@ namespace Altaxo.Units
         throw new ArgumentException("Given type is not derived from " + nameof(IUnit), nameof(type));
 
       var propInfo = type.GetProperty("Instance");
-      var propMethod = propInfo.GetGetMethod();
-      if (null != propMethod)
+      var propMethod = propInfo?.GetGetMethod();
+      if (!(propMethod is null))
       {
-        var instance = (IUnit)propMethod.Invoke(null, null);
+        var instance = (IUnit?)propMethod.Invoke(null, null) ?? throw new InvalidProgramException("Instance property does not return a valid value");
         return instance;
       }
       else
       {
         // try to construct this type
-        return (IUnit)Activator.CreateInstance(type);
+        return (IUnit)(Activator.CreateInstance(type) ?? throw new InvalidProgramException("Instance property does not return a valid value"));
       }
     }
 
@@ -107,9 +108,9 @@ namespace Altaxo.Units
     /// <param name="quantity">The quantity (e.g. 'Length', 'Time' etc).</param>
     /// <param name="allDefinedUnits">Dictionary with all defined units. If you provide null, all defined units will be searched in the assemblies, which may take some time.</param>
     /// <returns>All unit instances of the given quantity.</returns>
-    public static IEnumerable<IUnit> GetAvailableUnitsForQuantity(string quantity, IReadOnlyDictionary<Type, UnitDescriptionAttribute> allDefinedUnits = null)
+    public static IEnumerable<IUnit> GetAvailableUnitsForQuantity(string quantity, IReadOnlyDictionary<Type, UnitDescriptionAttribute>? allDefinedUnits = null)
     {
-      if (null == allDefinedUnits)
+      if (allDefinedUnits is null)
       {
         allDefinedUnits = GetAllDefinedUnits();
       }

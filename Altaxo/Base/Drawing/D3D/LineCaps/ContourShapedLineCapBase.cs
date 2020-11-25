@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
     {
       get
       {
-        return GetType().FullName;
+        return GetType().FullName ?? GetType().Name;
       }
     }
 
@@ -96,9 +97,9 @@ namespace Altaxo.Drawing.D3D.LineCaps
       VectorD3D northVector,
       VectorD3D forwardVectorNormalized,
       ICrossSectionOfLine lineCrossSection,
-      PointD3D[] baseCrossSectionPositions,
-      VectorD3D[] baseCrossSectionNormals,
-      ref object temporaryStorageSpace);
+      PointD3D[]? baseCrossSectionPositions,
+      VectorD3D[]? baseCrossSectionNormals,
+      ref object? temporaryStorageSpace);
 
     private static readonly PointD2D _pointD2D_0_1 = new PointD2D(0, 1);
     private static readonly VectorD2D _vectorD2D_M1_0 = new VectorD2D(-1, 0);
@@ -113,9 +114,9 @@ namespace Altaxo.Drawing.D3D.LineCaps
       VectorD3D northVector,
       VectorD3D forwardVectorNormalized,
       ICrossSectionOfLine lineCrossSection,
-      PointD3D[] crossSectionPositions,
-      VectorD3D[] crossSectionNormals,
-      ref object temporaryStorageSpace,
+      PointD3D[]? crossSectionPositions,
+      VectorD3D[]? crossSectionNormals,
+      ref object? temporaryStorageSpace,
       ILineCapContour capContour
       )
     {
@@ -124,7 +125,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       var contourZScale = 0.5 * Math.Max(lineCrossSection.Size1, lineCrossSection.Size2);
 
       // do we need a flat end at the beginning of the cap?
-      if (null == crossSectionPositions && // if lineCrossSectionPositions are null, it means that our cap is not connected to the line and needs a flat end
+      if (crossSectionPositions is null && // if lineCrossSectionPositions are null, it means that our cap is not connected to the line and needs a flat end
             capContour.Vertices(0) == _pointD2D_0_1) // furthermore the cap assumes to be started at the cross section
       {
         // the parameter isStartCap must be negated, because this flat cap is the "counterpart" of our cap to draw
@@ -469,10 +470,12 @@ namespace Altaxo.Drawing.D3D.LineCaps
         );
     }
 
+    /*
     protected class PositionAndNormalStorageSpace
     {
       public PointD3D[] Positions;
       public VectorD3D[] Normals;
     }
+    */
   }
 }

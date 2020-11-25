@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -41,13 +42,13 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DiamondHatchBrush)obj;
-        info.AddBaseValueEmbedded(s, typeof(DiamondHatchBrush).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(DiamondHatchBrush).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (DiamondHatchBrush)o : new DiamondHatchBrush();
-        info.GetBaseValueEmbedded(s, typeof(DiamondHatchBrush).BaseType, parent);
+        var s =  (DiamondHatchBrush?)o ?? new DiamondHatchBrush();
+        info.GetBaseValueEmbedded(s, typeof(DiamondHatchBrush).BaseType!, parent);
         return s;
       }
     }

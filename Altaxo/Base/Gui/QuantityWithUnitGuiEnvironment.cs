@@ -22,11 +22,12 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using Altaxo.Units;
 
 namespace Altaxo.Gui
@@ -57,19 +58,19 @@ namespace Altaxo.Gui
     /// </summary>
     private List<IUnit> _unitsSortedByLengthDescending;
 
-    private IPrefixedUnit _defaultUnit;
+    private IPrefixedUnit? _defaultUnit;
 
     private int _numberOfDisplayedDigits = 5;
 
     /// <summary>
     /// Triggered when the number of digits that should be displayed (in Gui boxes) changed.
     /// </summary>
-    public event EventHandler NumberOfDisplayedDigitsChanged;
+    public event EventHandler? NumberOfDisplayedDigitsChanged;
 
     /// <summary>
     /// Triggered when the default unit that is displayed in Gui boxes changed.
     /// </summary>
-    public event EventHandler DefaultUnitChanged;
+    public event EventHandler? DefaultUnitChanged;
 
     #region Serialization
 
@@ -97,12 +98,12 @@ namespace Altaxo.Gui
           info.CommitArray();
         }
 
-        info.AddValue("DefaultUnit", s._defaultUnit);
+        info.AddValue("DefaultUnit", s.DefaultUnit);
 
         info.AddValue("NumberOfDisplayedDigits", s._numberOfDisplayedDigits);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         IUnit[] fixedUnits;
         IUnit[] additionalUnits;
@@ -146,29 +147,29 @@ namespace Altaxo.Gui
     {
     }
 
-    public QuantityWithUnitGuiEnvironment(IEnumerable<IUnit> fixedUnits)
+    public QuantityWithUnitGuiEnvironment(IEnumerable<IUnit>? fixedUnits)
         : this(fixedUnits, new IUnit[] { })
     {
     }
 
-    public QuantityWithUnitGuiEnvironment(IEnumerable<IUnit> fixedUnits, IUnit additionalUnit)
+    public QuantityWithUnitGuiEnvironment(IEnumerable<IUnit>? fixedUnits, IUnit additionalUnit)
         : this(fixedUnits, new IUnit[] { additionalUnit })
     {
     }
 
-    public QuantityWithUnitGuiEnvironment(IEnumerable<IUnit> fixedUnits, IEnumerable<IUnit> additionalUnits)
+    public QuantityWithUnitGuiEnvironment(IEnumerable<IUnit>? fixedUnits, IEnumerable<IUnit>? additionalUnits)
     {
-      if (null != fixedUnits)
+      if (fixedUnits is not null)
         _fixedUnits = fixedUnits.ToArray();
       else
         _fixedUnits = _emptyUnitList;
 
-      _additionalUnits = new ObservableCollection<IUnit>(additionalUnits);
+      _additionalUnits = new ObservableCollection<IUnit>(additionalUnits ?? _emptyUnitList);
       CreateUnitListSortedByShortcutLengthDescending();
       _additionalUnits.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(EhAdditionalUnits_CollectionChanged);
 
-      if (null != fixedUnits?.FirstOrDefault())
-        DefaultUnit = new PrefixedUnit(SIPrefix.None, fixedUnits.FirstOrDefault());
+      if (fixedUnits?.FirstOrDefault() is { } firstFixedUnit)
+        DefaultUnit = new PrefixedUnit(SIPrefix.None, firstFixedUnit);
       else if (0 < _additionalUnits.Count)
         DefaultUnit = new PrefixedUnit(SIPrefix.None, _additionalUnits[0]);
     }
@@ -182,11 +183,11 @@ namespace Altaxo.Gui
       _additionalUnits.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(EhAdditionalUnits_CollectionChanged);
     }
 
-    private void EhAdditionalUnits_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private void EhAdditionalUnits_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
       CreateUnitListSortedByShortcutLengthDescending();
     }
-
+    [MemberNotNull(nameof(_unitsSortedByLengthDescending))]
     private void CreateUnitListSortedByShortcutLengthDescending()
     {
       var list = new List<IUnit>();
@@ -235,8 +236,9 @@ namespace Altaxo.Gui
     {
       get
       {
-        return _defaultUnit;
+        return _defaultUnit ?? throw new InvalidOperationException("This unit environment is in the stage of creation. In this stage it should be used only by the controller that creates it.");
       }
+      [MemberNotNull(nameof(_defaultUnit))]
       set
       {
         var oldValue = _defaultUnit;
@@ -251,8 +253,7 @@ namespace Altaxo.Gui
 
     protected virtual void OnDefaultUnitChanged()
     {
-      if (null != DefaultUnitChanged)
-        DefaultUnitChanged(this, EventArgs.Empty);
+      DefaultUnitChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public int NumberOfDisplayedDigits
@@ -274,8 +275,7 @@ namespace Altaxo.Gui
 
     protected virtual void OnNumberOfDisplayedDigitsChanged()
     {
-      if (null != NumberOfDisplayedDigitsChanged)
-        NumberOfDisplayedDigitsChanged(this, EventArgs.Empty);
+      NumberOfDisplayedDigitsChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public static void RegisterEnvironment(string name, QuantityWithUnitGuiEnvironment env)
@@ -283,7 +283,7 @@ namespace Altaxo.Gui
       _registry[name] = env;
     }
 
-    public static QuantityWithUnitGuiEnvironment TryGetEnvironment(string name)
+    public static QuantityWithUnitGuiEnvironment? TryGetEnvironment(string name)
     {
       if (_registry.TryGetValue(name, out var result))
         return result;
@@ -300,9 +300,9 @@ namespace Altaxo.Gui
     /// <param name="result">If successfully, the resulting prefixed unit.</param>
     /// <returns>True if the conversion was successful; false otherwise.</returns>
     /// <exception cref="ArgumentNullException">s</exception>
-    public bool TryGetPrefixedUnitFromShortcut(string shortCut, out IPrefixedUnit result)
+    public bool TryGetPrefixedUnitFromShortcut(string shortCut, [MaybeNullWhen(false)] out IPrefixedUnit result)
     {
-      if (null == shortCut)
+      if (shortCut is null)
         throw new ArgumentNullException(nameof(shortCut));
 
       shortCut = shortCut.Trim();
@@ -313,7 +313,6 @@ namespace Altaxo.Gui
         return true;
       }
 
-      SIPrefix prefix = null;
       foreach (IUnit u in UnitsSortedByShortcutLengthDescending) // for each unit
       {
         if (string.IsNullOrEmpty(u.ShortCut) || (!shortCut.EndsWith(u.ShortCut)))
@@ -327,9 +326,9 @@ namespace Altaxo.Gui
           return true;
         }
 
-        prefix = SIPrefix.TryGetPrefixFromShortcut(prefixString);
+        var prefix = SIPrefix.TryGetPrefixFromShortcut(prefixString);
 
-        if (null != prefix) // we found a prefix, thus we can return prefix + unit
+        if (prefix is not null) // we found a prefix, thus we can return prefix + unit
         {
           result = new PrefixedUnit(prefix, u);
           return true;

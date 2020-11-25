@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,18 +34,21 @@ using System.Threading.Tasks;
 namespace Altaxo.Main.Services.Files
 {
   /// <summary>
-  /// Wraps a <see cref="ZipArchive"/> to implement <see cref="IProjectArchive"/>
+  /// Wraps a <see cref="ZipArchive"/> to implement <see cref="IProjectArchive"/>.
+  /// With this class, the Altaxo provided Zip-Routines are used. Thus,
+  /// this type of archive supports deferred loading.
   /// </summary>
   /// <seealso cref="IProjectArchive" />
   public class ZipArchiveAsProjectArchive : IProjectArchive
   {
     private bool _isDisposed;
-    private Stream _stream;
+    private Stream? _stream;
     private ZipArchiveAxo _zipArchive;
     private bool _leaveOpen;
+    public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Fastest;
 
     /// <inheritdoc/>
-    public PathName FileName
+    public PathName? FileName
     {
       get
       {
@@ -59,7 +63,7 @@ namespace Altaxo.Main.Services.Files
     public bool IsDisposed => _isDisposed;
 
     /// <inheritdoc/>
-    public IProjectArchiveManager ArchiveManager { get; set; }
+    public IProjectArchiveManager? ArchiveManager { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ZipArchiveAsProjectArchive"/> class.
@@ -84,7 +88,7 @@ namespace Altaxo.Main.Services.Files
     /// <param name="leaveOpen">If true, the stream will be left open, even if this instance is disposed.</param>
     /// <param name="archiveManager">The archive manager managing this archive.</param>
     /// <exception cref="ArgumentNullException">zipArchive</exception>
-    public ZipArchiveAsProjectArchive(Stream stream, ZipArchiveMode mode, bool leaveOpen, IProjectArchiveManager archiveManager)
+    public ZipArchiveAsProjectArchive(Stream stream, ZipArchiveMode mode, bool leaveOpen, IProjectArchiveManager? archiveManager)
     {
       _stream = stream ?? throw new ArgumentNullException(nameof(stream));
       _zipArchive = new ZipArchiveAxo(stream, mode, leaveOpen);
@@ -113,27 +117,43 @@ namespace Altaxo.Main.Services.Files
       _zipArchive = new ZipArchiveAxo(_stream, mode, _leaveOpen);
     }
 
+    private void ThrowOnDisposed()
+    {
+      if (IsDisposed)
+        throw new ObjectDisposedException($"{this} already disposed");
+    }
+
     /// <inheritdoc/>
     public bool SupportsDeferredLoading
     {
       get
       {
+        ThrowOnDisposed();
         return _stream is FileStream;
       }
     }
 
     /// <inheritdoc/>
-    public IEnumerable<IProjectArchiveEntry> Entries => _zipArchive.Entries.Select(entry => new ZipEntryAsProjectArchiveEntry(entry));
+    public IEnumerable<IProjectArchiveEntry> Entries
+    {
+      get
+      {
+        ThrowOnDisposed();
+        return _zipArchive.Entries.Select(entry => new ZipEntryAsProjectArchiveEntry(entry));
+      }
+    }
 
     /// <inheritdoc/>
     public IProjectArchiveEntry CreateEntry(string name)
     {
-      return new ZipEntryAsProjectArchiveEntry(_zipArchive.CreateEntry(name));
+      ThrowOnDisposed();
+      return new ZipEntryAsProjectArchiveEntry(_zipArchive.CreateEntry(name, CompressionLevel));
     }
 
     /// <inheritdoc/>
-    public IProjectArchiveEntry GetEntry(string entryName)
+    public IProjectArchiveEntry? GetEntry(string entryName)
     {
+      ThrowOnDisposed();
       var e = _zipArchive.GetEntry(entryName);
       return e is null ? null : new ZipEntryAsProjectArchiveEntry(e);
     }
@@ -141,6 +161,7 @@ namespace Altaxo.Main.Services.Files
     /// <inheritdoc/>
     public bool ContainsEntry(string entryName)
     {
+      ThrowOnDisposed();
       return !(_zipArchive.GetEntry(entryName) is null);
     }
 
@@ -152,7 +173,7 @@ namespace Altaxo.Main.Services.Files
       if (!_isDisposed)
       {
         _zipArchive?.Dispose(); // dispose the zip archive __before__ flushing the stream!
-        _zipArchive = null;
+
         if (!_leaveOpen)
         {
           _stream?.Close();
@@ -170,7 +191,7 @@ namespace Altaxo.Main.Services.Files
 
 
     /// <inheritdoc/>
-    public IProjectArchiveEntryMemento GetEntryMemento(string entryName)
+    public IProjectArchiveEntryMemento? GetEntryMemento(string entryName)
     {
       if (_stream is FileStream fs)
       {

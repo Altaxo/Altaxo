@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -48,18 +49,11 @@ namespace Altaxo.Main.Services.PropertyReflection
 
     public Property(object instance, PropertyDescriptor property)
     {
-      if (instance is ICustomTypeDescriptor)
-      {
-        _instance = ((ICustomTypeDescriptor)instance).GetPropertyOwner(property);
-      }
-      else
-      {
-        _instance = instance;
-      }
+      _instance = instance is ICustomTypeDescriptor descriptor ? descriptor.GetPropertyOwner(property) : instance;
 
       _property = property;
 
-      _property.AddValueChanged(_instance, instance_PropertyChanged);
+      _property.AddValueChanged(_instance, EhInstance_PropertyChanged);
 
       NotifyPropertyChanged("PropertyType");
     }
@@ -80,14 +74,14 @@ namespace Altaxo.Main.Services.PropertyReflection
       set
       {
         object currentValue = _property.GetValue(_instance);
-        if (value != null && value.Equals(currentValue))
+        if (value is not null && value.Equals(currentValue))
         {
           return;
         }
         Type propertyType = _property.PropertyType;
         if (propertyType == typeof(object) ||
-          value == null && propertyType.IsClass ||
-          value != null && propertyType.IsAssignableFrom(value.GetType()))
+                    value is null && propertyType.IsClass ||
+                    value is not null && propertyType.IsAssignableFrom(value.GetType()))
         {
           _property.SetValue(_instance, value);
         }
@@ -145,7 +139,7 @@ namespace Altaxo.Main.Services.PropertyReflection
 
     #region Event Handlers
 
-    private void instance_PropertyChanged(object sender, EventArgs e)
+    private void EhInstance_PropertyChanged(object? sender, EventArgs e)
     {
       NotifyPropertyChanged("Value");
     }
@@ -162,7 +156,7 @@ namespace Altaxo.Main.Services.PropertyReflection
       }
       if (disposing)
       {
-        _property.RemoveValueChanged(_instance, instance_PropertyChanged);
+        _property.RemoveValueChanged(_instance, EhInstance_PropertyChanged);
       }
       base.Dispose(disposing);
     }
@@ -173,28 +167,22 @@ namespace Altaxo.Main.Services.PropertyReflection
 
     private class ByCategoryThenByNameComparer : IComparer<Property>
     {
-      public int Compare(Property x, Property y)
+      public int Compare(Property? x, Property? y)
       {
-        if (ReferenceEquals(x, null) || ReferenceEquals(y, null))
+        if (x is null || y is null)
           return 0;
         if (ReferenceEquals(x, y))
           return 0;
         int val = x.Category.CompareTo(y.Category);
-        if (val == 0)
-          return x.Name.CompareTo(y.Name);
-        return val;
+        return val == 0 ? x.Name.CompareTo(y.Name) : val;
       }
     }
 
     private class ByNameComparer : IComparer<Property>
     {
-      public int Compare(Property x, Property y)
+      public int Compare(Property? x, Property? y)
       {
-        if (ReferenceEquals(x, null) || ReferenceEquals(y, null))
-          return 0;
-        if (ReferenceEquals(x, y))
-          return 0;
-        return x.Name.CompareTo(y.Name);
+        return x is null || y is null ? 0 : ReferenceEquals(x, y) ? 0 : x.Name.CompareTo(y.Name);
       }
     }
 

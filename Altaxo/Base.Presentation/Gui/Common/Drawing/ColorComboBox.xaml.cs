@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,9 +44,9 @@ namespace Altaxo.Gui.Common.Drawing
   {
     private List<NamedColor> _lastLocalUsedItems = new List<NamedColor>();
 
-    public event DependencyPropertyChangedEventHandler SelectedColorChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedColorChanged;
 
-    private event Action ViewEvent_SelectedColorChanged;
+    private event Action? ViewEvent_SelectedColorChanged;
 
     event Action Altaxo.Gui.Common.Drawing.INamedColorView.SelectedItemChanged
     {
@@ -129,7 +130,7 @@ namespace Altaxo.Gui.Common.Drawing
       var newColor = (NamedColor)args.NewValue;
 
       // make sure, that the item is part of the data items of the ComboBox
-      if (newColor.ParentColorSet == null)
+      if (newColor.ParentColorSet is null)
       {
         StoreAsLastUsedItem(_lastLocalUsedItems, newColor);
       }
@@ -140,9 +141,9 @@ namespace Altaxo.Gui.Common.Drawing
       if (!object.ReferenceEquals(oldColor.ParentColorSet, newColor.ParentColorSet) && !object.ReferenceEquals(newColor.ParentColorSet, _treeView.SelectedValue))
         UpdateTreeViewSelection();
 
-      if (null != SelectedColorChanged)
+      if (SelectedColorChanged is not null)
         SelectedColorChanged(obj, args);
-      if (null != ViewEvent_SelectedColorChanged)
+      if (ViewEvent_SelectedColorChanged is not null)
         ViewEvent_SelectedColorChanged();
     }
 
@@ -165,7 +166,7 @@ namespace Altaxo.Gui.Common.Drawing
     protected override IColorSet GetColorSetForComboBox()
     {
       NamedColor selColor = SelectedColor;
-      if (selColor.ParentColorSet != null)
+      if (selColor.ParentColorSet is not null)
         return selColor.ParentColorSet;
       else
         return NamedColors.Instance;
@@ -196,7 +197,7 @@ namespace Altaxo.Gui.Common.Drawing
         if (known.Count > 0)
         {
           (_comboBoxSeparator2[0] as Separator).Tag = colorSet.Name;
-          if (source == null)
+          if (source is null)
             source = _comboBoxSeparator2.Concat(known);
           else
             source = source.Concat(_comboBoxSeparator2).Concat(known);
@@ -214,7 +215,7 @@ namespace Altaxo.Gui.Common.Drawing
       filterString = filterString.ToLowerInvariant();
       foreach (var item in originalList)
       {
-        if (showPlotColorsOnly && (item.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(item.ParentColorSet)))
+        if (showPlotColorsOnly && (item.ParentColorSet is null || !ColorSetManager.Instance.IsPlotColorSet(item.ParentColorSet)))
           continue;
         if (item.Name.ToLowerInvariant().StartsWith(filterString))
           result.Add(item);
@@ -236,7 +237,7 @@ namespace Altaxo.Gui.Common.Drawing
         _guiComboBox.SelectedValue = selItem;
       }
 
-      if (_guiComboBox.SelectedValue == null)
+      if (_guiComboBox.SelectedValue is null)
         _guiComboBox.SelectedValue = SelectedColor;
       else
         SelectedColor = (NamedColor)_guiComboBox.SelectedValue;

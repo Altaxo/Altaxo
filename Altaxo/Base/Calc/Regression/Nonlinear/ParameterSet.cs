@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -36,7 +37,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// Event is fired if the main initialization is finished. This event can be fired
     /// multiple times (every time the set has changed basically.
     /// </summary>
-    public event EventHandler InitializationFinished;
+    public event EventHandler? InitializationFinished;
 
     #region Serialization
 
@@ -53,9 +54,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.CommitArray();
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ParameterSet s = o != null ? (ParameterSet)o : new ParameterSet();
+        ParameterSet s = o is not null ? (ParameterSet)o : new ParameterSet();
 
         int arraycount = info.OpenArray();
         for (int i = 0; i < arraycount; ++i)
@@ -81,7 +82,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       get
       {
-        return (ParameterSetElement)InnerList[i];
+        return (ParameterSetElement)InnerList[i]!;
       }
     }
 
@@ -104,7 +105,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     IEnumerator<ParameterSetElement> IEnumerable<ParameterSetElement>.GetEnumerator()
     {
       foreach (var e in InnerList)
-        yield return (ParameterSetElement)e;
+        yield return (ParameterSetElement)e!;
     }
 
     #endregion ICloneable Members

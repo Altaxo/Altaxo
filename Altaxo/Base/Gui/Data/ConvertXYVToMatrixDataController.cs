@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,7 +94,7 @@ namespace Altaxo.Gui.Data
 
         // Initialize tables
         string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
-        string dataTableName = _doc.DataTable == null ? string.Empty : _doc.DataTable.Name;
+        string dataTableName = _doc.DataTable is null ? string.Empty : _doc.DataTable.Name;
 
         _availableTables.Clear();
         foreach (var tableName in tables)
@@ -104,7 +105,7 @@ namespace Altaxo.Gui.Data
         // Initialize columns
         FillAvailableColumnList();
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeXColumn(_choicesXColumn);
         _view.InitializeYColumn(_choicesYColumn);
@@ -156,10 +157,10 @@ namespace Altaxo.Gui.Data
       var columnProxies = _doc.GetDataColumnProxies(ConvertXYVToMatrixDataAndOptions.ColumnV);
       foreach (var colProxy in columnProxies)
       {
-        _valueColumns.Add(new SelectableListNode(colProxy.Document() != null ? colProxy.Document().FullName : "Unresolved column", colProxy.Clone(), false)); // clone of colProxy is important for apply later on
+        _valueColumns.Add(new SelectableListNode(colProxy.Document() is not null ? colProxy.Document().FullName : "Unresolved column", colProxy.Clone(), false)); // clone of colProxy is important for apply later on
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeParticipatingColumns(_valueColumns);
       }
@@ -190,7 +191,7 @@ namespace Altaxo.Gui.Data
         _choicesYColumn.Add(new SelectableListNode(srcData.GetColumnName(col), col, object.ReferenceEquals(columnY, col)));
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeXColumn(_choicesXColumn);
         _view.InitializeYColumn(_choicesYColumn);
@@ -203,7 +204,7 @@ namespace Altaxo.Gui.Data
 
       DataTable tg = _doc.DataTable;
 
-      if (null != tg)
+      if (tg is not null)
       {
         for (int i = 0; i < tg.DataColumnCount; ++i)
         {
@@ -212,7 +213,7 @@ namespace Altaxo.Gui.Data
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeAvailableColumns(_availableColumns);
       }
@@ -222,7 +223,7 @@ namespace Altaxo.Gui.Data
     {
       var oldColumn = (DataColumn)proxyTemplate.Document();
 
-      if (null != oldColumn)
+      if (oldColumn is not null)
       {
         // first by name, then by position
 
@@ -236,7 +237,7 @@ namespace Altaxo.Gui.Data
         else if (oldPos < table.DataColumns.ColumnCount)
           newCol = table.DataColumns[oldPos];
 
-        if (null != newCol && table.DataColumns.GetColumnGroup(newCol) == groupNumber)
+        if (newCol is not null && table.DataColumns.GetColumnGroup(newCol) == groupNumber)
           return newCol;
       }
       else // no document available, try it with the path name
@@ -248,7 +249,7 @@ namespace Altaxo.Gui.Data
         if (table.DataColumns.ContainsColumn(oldName))
           newCol = table.DataColumns[oldName];
 
-        if (null != newCol && table.DataColumns.GetColumnGroup(newCol) == groupNumber)
+        if (newCol is not null && table.DataColumns.GetColumnGroup(newCol) == groupNumber)
           return newCol;
       }
 
@@ -266,7 +267,7 @@ namespace Altaxo.Gui.Data
         newDoc.EnsureExistenceOfIdentifier(identifier);
         var columns = _doc.GetDataColumnProxies(identifier)
                       .Select(proxy => GetColumnInOtherTable(table, groupNumber, proxy)) // look up column in other table
-                      .Where(col => col != null);                                       // select all columns that are not null
+                      .Where(col => col is not null);                                       // select all columns that are not null
 
         newDoc.SetDataColumns(identifier, columns);
       }
@@ -276,7 +277,7 @@ namespace Altaxo.Gui.Data
       FillAvailableColumnList();
 
       // if after the change there is no column participating, add all columns of the group
-      if (null == _doc.GetDataColumns(ConvertXYVToMatrixDataAndOptions.ColumnV).FirstOrDefault())
+      if (_doc.GetDataColumns(ConvertXYVToMatrixDataAndOptions.ColumnV).FirstOrDefault() is null)
         AddAllColumnsOfGroupToParticipatingColumns();
 
       InitParticipatingColumns();
@@ -287,7 +288,7 @@ namespace Altaxo.Gui.Data
     private void EhSelectedTableChanged()
     {
       var node = _availableTables.FirstSelectedNode;
-      if (node == null)
+      if (node is null)
         return;
 
       var table = (DataTable)node.Tag;
@@ -308,7 +309,7 @@ namespace Altaxo.Gui.Data
       foreach (var node in _availableColumns.Where(n => n.IsSelected))
       {
         var colToAdd = node.Tag as IReadableColumn;
-        if (colToAdd == null)
+        if (colToAdd is null)
           continue;
 
         // before adding this node, check that it is not already present
@@ -322,7 +323,7 @@ namespace Altaxo.Gui.Data
 
     private void EhClearVColumns()
     {
-      if (null != _valueColumns.FirstSelectedNode) // if anything selected, clear only the selected nodes
+      if (_valueColumns.FirstSelectedNode is not null) // if anything selected, clear only the selected nodes
       {
         _valueColumns.RemoveSelectedItems();
       }

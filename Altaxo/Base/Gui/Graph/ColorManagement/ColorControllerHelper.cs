@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,7 +126,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
           if (isCurrentlySelected)
             newNode.IsExpanded = true;
         }
-        else if (parentColorSetOfColor != null && object.ReferenceEquals(set, parentColorSetOfColor))
+        else if (parentColorSetOfColor is not null && object.ReferenceEquals(set, parentColorSetOfColor))
         {
           newNode.IsExpanded = true;
 

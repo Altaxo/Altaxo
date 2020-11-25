@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,18 +80,18 @@ namespace Altaxo.Gui.Main
 
       if (initData)
       {
-        if (null == _propertyTypes)
+        if (_propertyTypes is null)
           _propertyTypes = new SelectableListNodeList();
         else
           _propertyTypes.Clear();
 
-        _propertyTypes.Add(new SelectableListNode("String", typeof(string), (_doc.PropertyValue is string) || (null == _doc.PropertyValue)));
+        _propertyTypes.Add(new SelectableListNode("String", typeof(string), (_doc.PropertyValue is string) || (_doc.PropertyValue is null)));
         _propertyTypes.Add(new SelectableListNode("Double", typeof(double), _doc.PropertyValue is double));
         _propertyTypes.Add(new SelectableListNode("Integer", typeof(int), _doc.PropertyValue is int));
         _propertyTypes.Add(new SelectableListNode("DateTime", typeof(DateTime), _doc.PropertyValue is DateTime));
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.PropertyName = _doc.PropertyName;
         _view.PropertyTypes = _propertyTypes;
@@ -100,7 +101,7 @@ namespace Altaxo.Gui.Main
 
     private void ShowPropertyValue()
     {
-      if ((_doc.PropertyValue is string) || (null == _doc.PropertyValue))
+      if ((_doc.PropertyValue is string) || (_doc.PropertyValue is null))
       {
         _view.ShowValueAsString = true;
         _view.ValueAsString = (string)_doc.PropertyValue;
@@ -174,7 +175,7 @@ namespace Altaxo.Gui.Main
     private void EhPropertyTypeChanged()
     {
       var selnode = _propertyTypes.FirstSelectedNode;
-      if (null == selnode)
+      if (selnode is null)
         return;
 
       var proptype = (Type)selnode.Tag;

@@ -1,10 +1,10 @@
 rmdir /S /Q .\rtnet48
-rmdir /S /Q .\rtnetcoreapp3.1
+rmdir /S /Q .\rtnet5.0
 
 @IF exist .\rtnet48 GOTO err
-@IF exist .\rtnetcoreapp3.1 GOTO err
+@IF exist .\rtnet5.0 GOTO err
 mkdir rtnet48
-mkdir rtnetcoreapp3.1
+mkdir rtnet5.0
 
 "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\msbuild.exe" /m Altaxo.sln /t:Restore;Build /p:Configuration=Debug "/p:Platform=Any CPU"
 IF %ERRORLEVEL% NEQ 0 GOTO err

@@ -122,7 +122,7 @@ namespace MathML
 		{
 			XmlNode node = arguments.Item(index);
 
-			if(node != null)
+			if(node is not null)
 			{
 				node = ReplaceChild(newArgument, node);
 			}

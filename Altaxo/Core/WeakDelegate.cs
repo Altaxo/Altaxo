@@ -47,7 +47,7 @@ namespace Altaxo
         throw new InvalidOperationException("TDelegate must be a delegate type");
     }
 
-    public void Combine(TDelegate target)
+    public void Combine(TDelegate? target)
     {
       if (target is Delegate targetDelegate)
       {
@@ -56,7 +56,7 @@ namespace Altaxo
       }
     }
 
-    public void Remove(TDelegate target)
+    public void Remove(TDelegate? target)
     {
       if (target is Delegate targetDelegate)
       {
@@ -87,7 +87,7 @@ namespace Altaxo
         {
           var weakReference = methodTarget.Reference;
           //     Static target      ||    alive instance target
-          if (null == weakReference || null != weakReference.Target)
+          if (weakReference is null || weakReference.Target is not null)
           {
             var newDelegate = Delegate.CreateDelegate(typeof(TDelegate), weakReference?.Target, methodTarget.Method);
 

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,19 +45,19 @@ namespace Altaxo.Gui.Worksheet
 
     private void _edNumberOfPoints_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
     {
-      if (null != Controller)
+      if (Controller is not null)
         Controller.EhValidatingNumberOfPoints(_edNumberOfPoints.Value);
     }
 
     private void _edPolynomialOrder_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
     {
-      if (null != Controller)
+      if (Controller is not null)
         Controller.EhValidatingPolynomialOrder(_edPolynomialOrder.Value);
     }
 
     private void _edDerivativeOrder_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
     {
-      if (null != Controller)
+      if (Controller is not null)
         Controller.EhValidatingDerivativeOrder(_edDerivativeOrder.Value);
     }
 

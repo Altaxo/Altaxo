@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -77,7 +78,7 @@ namespace Altaxo.Main.Services
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o as List<FileName> ?? new List<FileName>();
         s.Clear();
@@ -85,7 +86,9 @@ namespace Altaxo.Main.Services
 
         for (int i = 0; i < count; ++i)
         {
-          s.Add(FileName.Create(info.GetString("e")));
+          var fn = FileName.Create(info.GetString("e"));
+          if (!(fn is null))
+            s.Add(fn);
         }
         info.CloseArray(count);
         return s;
@@ -183,7 +186,8 @@ namespace Altaxo.Main.Services
         if (e.SourceFile == file)
         {
           _recentFiles.RemoveAt(i);
-          _recentFiles.Insert(i, FileName.Create(e.TargetFile));
+          if (FileName.Create(e.TargetFile) is { } fn)
+            _recentFiles.Insert(i, fn);
           break;
         }
       }

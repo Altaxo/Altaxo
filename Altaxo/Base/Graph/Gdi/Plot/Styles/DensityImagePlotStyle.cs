@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -34,6 +35,7 @@ using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Graph.Scales.Ticks;
   using ColorProvider;
   using Drawing;
@@ -69,7 +71,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// The image which is shown during paint.
     /// </summary>
     [NonSerialized]
-    private System.Drawing.Bitmap _cachedImage;
+    private System.Drawing.Bitmap? _cachedImage;
 
     /// <summary>If true, the image is clipped to the layer boundaries.</summary>
     private bool _clipToLayer = true;
@@ -97,7 +99,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// Stores the conditions under which the image is valid. Depends on the type of image.
     /// </summary>
     [NonSerialized]
-    private object _imageConditionMemento;
+    private object? _imageConditionMemento;
 
     #region Serialization
 
@@ -111,9 +113,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         // nothing to save up to now
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DensityImagePlotStyle s = null != o ? (DensityImagePlotStyle)o : new DensityImagePlotStyle();
+        var s = (DensityImagePlotStyle?)o ?? new DensityImagePlotStyle();
 
         // Nothing to deserialize in the moment
 
@@ -141,9 +143,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DensityImagePlotStyle s = null != o ? (DensityImagePlotStyle)o : new DensityImagePlotStyle();
+        var s = (DensityImagePlotStyle?)o ?? new DensityImagePlotStyle();
 
         var scalingStyle = (ScalingStyle)info.GetEnum("ScalingStyle", typeof(ScalingStyle));
         var vRangeFrom = info.GetDouble("RangeFrom");
@@ -156,7 +158,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         var colorProvider = ColorProviderBGMYR.NewFromColorBelowAboveInvalidAndTransparency(colorBelow, colorAbove, colorInvalid, 0);
         var scale = scalingStyle == ScalingStyle.Logarithmic ? new Log10Scale() : (NumericalScale)new LinearScale();
 
-        scale.Rescaling.SetUserParameters(
+        scale.Rescaling?.SetUserParameters(
           double.IsNaN(vRangeFrom) ? Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Auto : Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed,
           vRangeFrom,
           double.IsNaN(vRangeTo) ? Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Auto : Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed,
@@ -181,9 +183,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("Colorization", s._colorProvider);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DensityImagePlotStyle s = null != o ? (DensityImagePlotStyle)o : new DensityImagePlotStyle();
+        var s = (DensityImagePlotStyle?)o ?? new DensityImagePlotStyle();
 
         s._clipToLayer = info.GetBoolean("ClipToLayer");
         s.Scale = (NumericalScale)info.GetValue("Scale", s);
@@ -223,31 +225,38 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       CopyFrom(from);
     }
 
+    [MemberNotNull(nameof(_colorProvider), nameof(_scale))]
+    protected void CopyFrom(DensityImagePlotStyle from)
+    {
+      _clipToLayer = from._clipToLayer;
+      ColorProvider = from._colorProvider;
+      Scale = (NumericalScale)from._scale.Clone();
+      _imageType = CachedImageType.None;
+    }
+
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as DensityImagePlotStyle;
-      if (null == from)
-        return false;
-
-      using (var suspendToken = SuspendGetToken())
+      if (obj is DensityImagePlotStyle from)
       {
-        _clipToLayer = from._clipToLayer;
-        ColorProvider = from._colorProvider;
-        Scale = (NumericalScale)from._scale.Clone();
-        _imageType = CachedImageType.None;
+        using (var suspendToken = SuspendGetToken())
+        {
+          CopyFrom(from);
 
-        EhSelfChanged();
-        suspendToken.Resume();
+          EhSelfChanged();
+          suspendToken.Resume();
+        }
+        return true;
       }
-      return true;
+
+      return false;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _scale)
+      if (_scale is not null)
         yield return new Main.DocumentNodeAndName(_scale, "Scale");
     }
 
@@ -262,20 +271,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         return _scale;
       }
+      [MemberNotNull(nameof(_scale))]
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("value");
+        if (value is null)
+          throw new ArgumentNullException(nameof(_scale));
 
         if (ChildSetMember(ref _scale, value))
         {
           if (!(_scale.TickSpacing is NoTickSpacing))
             _scale.TickSpacing = new NoTickSpacing(); // strip the old tickspacing, use NoTickspacing, since Ticks are not needed in the density image plot style
 
-          if (null != _scale)
-            EhChildChanged(_scale, EventArgs.Empty);
-          else
-            EhSelfChanged(EventArgs.Empty);
+          EhChildChanged(_scale, EventArgs.Empty);
         }
       }
     }
@@ -283,9 +290,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public IColorProvider ColorProvider
     {
       get { return _colorProvider; }
+      [MemberNotNull(nameof(_colorProvider))]
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         if (!object.ReferenceEquals(value, _colorProvider))
@@ -400,7 +408,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       // now build the image
       // note that the image type can change during the call of BuildImage
-      if (_imageType == CachedImageType.None || _cachedImage == null)
+      if (_imageType == CachedImageType.None || _cachedImage is null)
       {
         BuildImage(gfrx, gl, myPlotAssociation, matrix, logicalRowHeaderValues, logicalColumnHeaderValues);
         switch (_imageType)
@@ -470,16 +478,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         cstype = gl.CoordinateSystem.GetType();
       }
 
-      public override bool Equals(object obj)
+      public override bool Equals(object? obj)
       {
-        var from = obj as ImageTypeEquiLinearMemento;
-        if (from == null)
-          return false;
-        else
-          return
+        return obj is ImageTypeEquiLinearMemento from &&
             xtype == from.xtype &&
             ytype == from.ytype &&
-            cstype == from.cstype;
+            cstype == from.cstype
+          ;
       }
 
       public override int GetHashCode()
@@ -515,10 +520,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(0.3, 0.2), out x32, out y32);
       }
 
-      public override bool Equals(object obj)
+      public override bool Equals(object? obj)
       {
         var from = obj as ImageTypeOtherMemento;
-        if (from == null)
+        if (from is null)
           return false;
         else
           return
@@ -546,6 +551,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    [MemberNotNull(nameof(_cachedImage))]
     private void BuildImage(Graphics gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix<double> matrix, IReadOnlyList<double> logicalRowHeaderValues, IReadOnlyList<double> logicalColumnHeaderValues)
     {
       // ---------------- prepare the color scaling -------------------------------------
@@ -623,6 +629,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     // CoordinateSystem is not affine, or scales are non-linear
+    [MemberNotNull(nameof(_cachedImage))]
     private void BuildImageV3(Graphics gfrx, IPlotArea gl,
       IReadOnlyList<double> lx,
       IReadOnlyList<double> ly,
@@ -638,9 +645,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       dimY = Math.Min(2048, dimY);
 
       // look if the image has the right dimensions
-      if (null == _cachedImage || _cachedImage.Width != dimX || _cachedImage.Height != dimY)
+      if (_cachedImage is null || _cachedImage.Width != dimX || _cachedImage.Height != dimY)
       {
-        if (null != _cachedImage)
+        if (_cachedImage is not null)
           _cachedImage.Dispose();
 
         // please notice: the horizontal direction of the image is related to the row index!!! (this will turn the image in relation to the table)
@@ -742,11 +749,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _cachedImage.UnlockBits(bmpData);
     }
 
+    [MemberNotNull(nameof(_cachedImage))]
     private void BuildImageV1(IROMatrix<double> matrix)
     {
       _imageType = CachedImageType.LinearEquidistant;
       // look if the image has the right dimensions
-      if (null != _cachedImage && (_cachedImage.Width != matrix.ColumnCount || _cachedImage.Height != matrix.RowCount))
+      if (_cachedImage is not null && (_cachedImage.Width != matrix.ColumnCount || _cachedImage.Height != matrix.RowCount))
       {
         _cachedImage.Dispose();
         _cachedImage = null;
@@ -761,17 +769,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="matrix">The matrix data.</param>
     /// <param name="image">Bitmap to fill with the pixelwise image. If null, a new image is created.</param>
     /// <exception cref="ArgumentException">An exception will be thrown if the provided image is smaller than the required dimensions.</exception>
-    public void GetPixelwiseImage(IROMatrix<double> matrix, ref System.Drawing.Bitmap image)
+    public void GetPixelwiseImage(IROMatrix<double> matrix, [AllowNull] ref System.Drawing.Bitmap image)
     {
       // look if the image has the right dimensions
 
       int numberOfRows = matrix.RowCount;
       int numberOfColumns = matrix.ColumnCount;
 
-      if (null != image && (image.Width < matrix.ColumnCount || image.Height < matrix.RowCount))
+      if (image is not null && (image.Width < matrix.ColumnCount || image.Height < matrix.RowCount))
         throw new ArgumentException("The provided image is smaller than required");
 
-      if (null == image)
+      if (image is null)
       {
         // please notice: the horizontal direction of the image is related to the row index!!! (this will turn the image in relation to the table)
         // and the vertical direction of the image is related to the column index
@@ -790,7 +798,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Changed event handling
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _scale))
       {

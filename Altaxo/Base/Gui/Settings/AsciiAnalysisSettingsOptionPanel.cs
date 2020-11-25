@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace Altaxo.Gui.Settings
 
       Current.PropertyService.UserSettings.TryGetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, out var userDoc);
       sysDoc = Current.PropertyService.GetValue<AsciiDocumentAnalysisOptions>(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, Altaxo.Main.Services.RuntimePropertyKind.ApplicationAndBuiltin);
-      if (null == sysDoc)
+      if (sysDoc is null)
         throw new ApplicationException("AsciiDocumentAnalysisOptions not properly registered with builtin settings!");
 
       _controller = new Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<AsciiDocumentAnalysisOptions>(() => sysDoc.Clone(), () => sysDoc)
@@ -50,7 +51,7 @@ namespace Altaxo.Gui.Settings
 
     protected override void ProcessControllerResult()
     {
-      if (null != _controller.ModelObject)
+      if (_controller.ModelObject is not null)
       {
         var userDoc = (AsciiDocumentAnalysisOptions)_controller.ModelObject;
         Current.PropertyService.UserSettings.SetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, userDoc);

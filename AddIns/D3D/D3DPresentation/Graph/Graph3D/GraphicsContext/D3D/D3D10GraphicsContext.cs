@@ -199,7 +199,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
     public override void RestoreGraphicsState(object graphicsState)
     {
       var gs = graphicsState as GraphicState;
-      if (null != gs)
+      if (gs is not null)
       {
         _transformation = gs.Transformation;
         _transposedInverseTransformation = gs.TransposedInverseTransformation;
@@ -272,7 +272,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
     private PositionNormalColorIndexedTriangleBuffer InternalGetPositionNormalColorIndexedTriangleBuffer(IMaterial material)
     {
-      var key = new MaterialPlusClippingKey(material, null);
+      var key = new MaterialPlusClippingKey(material, clipPlanes: null);
       if (!_positionNormalColorIndexedTriangleBuffers.TryGetValue(key, out var result))
       {
         result = new PositionNormalColorIndexedTriangleBuffer(this);
@@ -387,11 +387,11 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return result;
     }
 
-    public override IPositionNormalUIndexedTriangleBuffer GetPositionNormalUIndexedTriangleBuffer(IMaterial material, PlaneD3D[] clipPlanes, Gdi.Plot.IColorProvider colorProvider)
+    public override IPositionNormalUIndexedTriangleBuffer GetPositionNormalUIndexedTriangleBuffer(IMaterial material, PlaneD3D[]? clipPlanes, Gdi.Plot.IColorProvider colorProvider)
     {
       // Transform the clip planes to our coordinate system
 
-      var clipPlanesTransformed = clipPlanes.Select(plane => _transformation.Transform(plane)).ToArray();
+      var clipPlanesTransformed = clipPlanes is null ? null : clipPlanes.Select(plane => _transformation.Transform(plane)).ToArray();
 
       var key = new MaterialPlusClippingPlusColorProviderKey(material, clipPlanesTransformed, colorProvider);
       if (!_positionNormalUIndexedTriangleBuffers.TryGetValue(key, out var result))

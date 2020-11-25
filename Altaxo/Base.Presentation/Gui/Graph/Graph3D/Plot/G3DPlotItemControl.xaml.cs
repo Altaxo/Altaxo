@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,10 +54,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
         if (e.RemovedItems.Count > 0)
           oldItem = (TabItem)e.RemovedItems[0];
 
-        object newContent = null == newItem ? null : newItem.Content;
-        object oldContent = null == oldItem ? null : oldItem.Content;
+        object newContent = newItem is null ? null : newItem.Content;
+        object oldContent = oldItem is null ? null : oldItem.Content;
 
-        if (null != SelectedPage_Changed)
+        if (SelectedPage_Changed is not null)
           SelectedPage_Changed(this, new Altaxo.Main.InstanceChangedEventArgs(oldContent, newContent));
       }
     }
@@ -82,7 +83,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
       _tabControl.SelectedIndex = index;
     }
 
-    public event EventHandler<Altaxo.Main.InstanceChangedEventArgs> SelectedPage_Changed;
+    public event EventHandler<Altaxo.Main.InstanceChangedEventArgs>? SelectedPage_Changed;
 
     public void SetPlotStyleView(object view)
     {

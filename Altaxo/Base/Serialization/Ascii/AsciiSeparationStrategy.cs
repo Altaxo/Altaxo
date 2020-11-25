@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -58,9 +58,9 @@ namespace Altaxo.Serialization.Ascii
       {
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new SingleLineSeparationStrategy() : (SingleLineSeparationStrategy)o);
+        var s = (SingleLineSeparationStrategy?)o ?? new SingleLineSeparationStrategy();
         return s;
       }
     }
@@ -78,10 +78,9 @@ namespace Altaxo.Serialization.Ascii
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
-      var from = obj as SingleLineSeparationStrategy;
-      if (null != from)
+      if (obj is SingleLineSeparationStrategy)
       {
         return true;
       }
@@ -114,9 +113,9 @@ namespace Altaxo.Serialization.Ascii
         info.AddValue("SeparatorChar", s._separatorChar);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new SingleCharSeparationStrategy() : (SingleCharSeparationStrategy)o);
+        var s = (SingleCharSeparationStrategy?)o ?? new SingleCharSeparationStrategy();
         s._separatorChar = info.GetChar("SeparatorChar");
         return s;
       }
@@ -160,10 +159,9 @@ namespace Altaxo.Serialization.Ascii
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
-      var from = obj as SingleCharSeparationStrategy;
-      if (null != from)
+      if (obj is SingleCharSeparationStrategy from)
       {
         _separatorChar = from._separatorChar;
         return true;
@@ -197,9 +195,9 @@ namespace Altaxo.Serialization.Ascii
         info.AddArray("StartPositions", s._startPositions, s._startPositions.Length);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new FixedColumnWidthWithoutTabSeparationStrategy() : (FixedColumnWidthWithoutTabSeparationStrategy)o);
+        var s = (FixedColumnWidthWithoutTabSeparationStrategy?)o ?? new FixedColumnWidthWithoutTabSeparationStrategy();
         info.GetArray("StartPositions", out s._startPositions);
         return s;
       }
@@ -263,10 +261,9 @@ namespace Altaxo.Serialization.Ascii
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
-      var from = obj as FixedColumnWidthWithoutTabSeparationStrategy;
-      if (null != from)
+      if (obj is FixedColumnWidthWithoutTabSeparationStrategy from)
       {
         _startPositions = (int[])from._startPositions.Clone();
         return true;
@@ -305,9 +302,9 @@ namespace Altaxo.Serialization.Ascii
         info.AddValue("TabSize", s._tabSize);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new FixedColumnWidthWithTabSeparationStrategy() : (FixedColumnWidthWithTabSeparationStrategy)o);
+        var s = (FixedColumnWidthWithTabSeparationStrategy?)o ?? new FixedColumnWidthWithTabSeparationStrategy();
         info.GetArray("StartPositions", out s._startPositions);
         s._tabSize = info.GetInt32("TabSize");
         return s;
@@ -392,10 +389,9 @@ namespace Altaxo.Serialization.Ascii
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
-      var from = obj as FixedColumnWidthWithTabSeparationStrategy;
-      if (null != from)
+      if (obj is FixedColumnWidthWithTabSeparationStrategy from)
       {
         _startPositions = (int[])from._startPositions.Clone();
         _tabSize = from._tabSize;
@@ -428,9 +424,9 @@ namespace Altaxo.Serialization.Ascii
         var s = (SkipWhiteSpaceSeparationStrategy)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new SkipWhiteSpaceSeparationStrategy() : (SkipWhiteSpaceSeparationStrategy)o);
+        var s = (SkipWhiteSpaceSeparationStrategy?)o ?? new SkipWhiteSpaceSeparationStrategy();
         return s;
       }
     }
@@ -451,10 +447,9 @@ namespace Altaxo.Serialization.Ascii
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
-      var from = obj as SkipWhiteSpaceSeparationStrategy;
-      if (null != from)
+      if (obj is SkipWhiteSpaceSeparationStrategy from)
       {
         return true;
       }

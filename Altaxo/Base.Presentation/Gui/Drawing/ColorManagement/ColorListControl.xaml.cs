@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -347,17 +348,17 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     #region New Interface
 
-    public event Action UserRequest_AddCustomColorToList;
+    public event Action? UserRequest_AddCustomColorToList;
 
-    public event Action<double> UserRequest_ForAllSelectedItemsSetOpacity;
+    public event Action<double>? UserRequest_ForAllSelectedItemsSetOpacity;
 
-    public event Action<double> UserRequest_ForAllSelectedItemsShiftHue;
+    public event Action<double>? UserRequest_ForAllSelectedItemsShiftHue;
 
-    public event Action<double> UserRequest_ForAllSelectedItemsSetSaturation;
+    public event Action<double>? UserRequest_ForAllSelectedItemsSetSaturation;
 
-    public event Action<double> UserRequest_ForAllSelectedItemsSetBrightness;
+    public event Action<double>? UserRequest_ForAllSelectedItemsSetBrightness;
 
-    public event Action<string> UserRequest_ForAllSelectedItemsSetColorName;
+    public event Action<string>? UserRequest_ForAllSelectedItemsSetColorName;
 
     #endregion New Interface
 

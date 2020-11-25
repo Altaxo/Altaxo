@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
+    <TargetFrameworks>net48;net5.0</TargetFrameworks>
+    <LangVersion>preview</LangVersion>
+    <nullable>enable</nullable>
     <OutputType>WinExe</OutputType>
     <AssemblyName>AltaxoUpdateDownloader</AssemblyName>
     <RootNamespace>Altaxo.Serialization.AutoUpdates</RootNamespace>
@@ -10,6 +11,12 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
     <OutputPath>..\..\rt$(TargetFramework)\bin</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <OutputPath>..\..\rt$(TargetFramework)\bin</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' != 'net48' ">
+    <OutputPath>..\..\rtnet5.0-windows\bin</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
@@ -29,7 +36,7 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
     <PackageReference Include="System.Security.Principal" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.7.0" />

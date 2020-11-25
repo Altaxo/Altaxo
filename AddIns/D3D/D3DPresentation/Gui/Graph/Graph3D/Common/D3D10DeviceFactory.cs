@@ -23,8 +23,8 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// Bag that stores devices. Note that we do not use WeakReference here, because it seems that a WeakReference
     /// becomes released, despite the fact that the device is not released!
     /// </summary>
-    ConcurrentBag<Device> _devices = new ConcurrentBag<Device>();
+    private ConcurrentBag<Device> _devices = new ConcurrentBag<Device>();
 
     private D3D10DeviceFactory() { }
 
@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// <returns>A D3D10 device.</returns>
     public Device BorrowDevice()
     {
-      Device dev;
+      Device? dev;
       while (_devices.TryTake(out dev) && dev.IsDisposed)
       {
       }
@@ -80,7 +80,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// </summary>
     /// <param name="device">Reference to the device to give back. After calling the function, the reference is set to null to signal that the device
     /// was given back to the device factory.</param>
-    public void PassbackDevice(ref Device device)
+    public void PassbackDevice(ref Device? device)
     {
       if (device is null)
         return;

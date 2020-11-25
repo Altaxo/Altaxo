@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,13 +29,13 @@ namespace Altaxo.Main.Services
   /// </summary>
   public class InfoWarningErrorTextMessageService : IInfoWarningErrorTextMessageService
   {
-    private Action<InfoWarningErrorTextMessageItem> _messageAdded;
+    private Action<InfoWarningErrorTextMessageItem>? _messageAdded;
 
     /// <summary>
     /// Temporary cache for the items as long as nobody has subscribed to this service. If this member is null,
     /// there was already a subscriber how has acquired the cached items.
     /// </summary>
-    private List<InfoWarningErrorTextMessageItem> _startupListOfItems = new List<InfoWarningErrorTextMessageItem>();
+    private List<InfoWarningErrorTextMessageItem>? _startupListOfItems = new List<InfoWarningErrorTextMessageItem>();
 
     /// <summary>
     /// Occurs when a message is available. The first subscriber how subscribe to this event will receive all messages
@@ -44,12 +45,12 @@ namespace Altaxo.Main.Services
     {
       add
       {
-        bool wasEmptyBefore = null == _messageAdded;
+        bool wasEmptyBefore = _messageAdded is null;
 
         _messageAdded += value;
 
         var list = _startupListOfItems;
-        if (wasEmptyBefore && null != _messageAdded && null != list)
+        if (wasEmptyBefore && _messageAdded is not null && list is not null)
         {
           _startupListOfItems = null;
           foreach (var item in list)
@@ -72,11 +73,11 @@ namespace Altaxo.Main.Services
 
       var act = _messageAdded;
 
-      if (null != act)
+      if (act is not null)
       {
         _messageAdded?.Invoke(msg);
       }
-      else if (_startupListOfItems != null)
+      else if (_startupListOfItems is not null)
       {
         _startupListOfItems.Add(msg);
       }

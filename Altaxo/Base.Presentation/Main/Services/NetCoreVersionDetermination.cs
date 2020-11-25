@@ -49,8 +49,10 @@ namespace Altaxo.Main.Services
         using (var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
            RegistryView.Registry32).OpenSubKey(@"SOFTWARE\dotnet\Setup\InstalledVersions\x64\SharedHost\"))
         {
-          var versionString = (string)baseKey.GetValue("Version");
-          return Version.Parse(versionString);
+          if (baseKey is null)
+            return null;
+          var versionString = (string?)baseKey.GetValue("Version");
+          return versionString is null ? null : Version.Parse(versionString);
         }
       }
       catch (Exception)

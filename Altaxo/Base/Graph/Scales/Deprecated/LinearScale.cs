@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
@@ -93,9 +94,9 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("Bounds", s._dataBounds);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinearScale s = null != o ? (LinearScale)o : new LinearScale();
+        var s = (LinearScale?)o ?? new LinearScale();
 
         s._baseOrg = info.GetDouble("BaseOrg");
         s._baseEnd = info.GetDouble("BaseEnd");
@@ -146,9 +147,9 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("Rescaling", s._rescaling);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinearScale s = null != o ? (LinearScale)o : new LinearScale();
+        var s = (LinearScale?)o ?? new LinearScale();
 
         s._baseOrg = info.GetDouble("BaseOrg");
         s._baseEnd = info.GetDouble("BaseEnd");
@@ -204,19 +205,19 @@ namespace Altaxo.Graph.Scales.Deprecated
       _cachedAxisSpan = from._cachedAxisSpan;
       _baseEnd = from._baseEnd;
       _baseOrg = from._baseOrg;
-      _dataBounds = null == from._dataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
+      _dataBounds = from._dataBounds is null ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
       _dataBounds.ParentObject = this;
       _majorSpan = from._majorSpan;
       _minorTicks = from._minorTicks;
       _cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
-      _rescaling = null == from.Rescaling ? new LinearScaleRescaleConditions() : (LinearScaleRescaleConditions)from.Rescaling.Clone();
+      _rescaling = from.Rescaling is null ? new LinearScaleRescaleConditions() : (LinearScaleRescaleConditions)from.Rescaling.Clone();
       _rescaling.ParentObject = this;
     }
 
     public virtual void CopyFrom(LinearScale from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       _cachedAxisEnd = from._cachedAxisEnd;
@@ -237,10 +238,10 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataBounds)
+      if (_dataBounds is not null)
         yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
 
-      if (null != _rescaling)
+      if (_rescaling is not null)
         yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
     }
 
@@ -399,7 +400,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public override void ProcessDataBounds()
     {
-      if (null == _dataBounds || _dataBounds.IsEmpty)
+      if (_dataBounds is null || _dataBounds.IsEmpty)
         return;
 
       ProcessDataBounds(_dataBounds.LowerBound, _dataBounds.UpperBound, _rescaling);

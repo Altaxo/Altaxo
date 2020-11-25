@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 namespace Altaxo.Serialization.Xml
 {
   /// <summary>

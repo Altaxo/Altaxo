@@ -112,7 +112,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public static string MatrixToString(string name, IROMatrix<float> a)
     {
-      if (null == name)
+      if (name is null)
         name = "";
 
       if (a.RowCount == 0 || a.ColumnCount == 0)
@@ -137,7 +137,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public static string MatrixToString(string name, IROComplexDoubleMatrix a)
     {
-      if (null == name)
+      if (name is null)
         name = "";
 
       if (a.Rows == 0 || a.Columns == 0)
@@ -162,7 +162,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public static string MatrixToString(string name, IROComplexFloatMatrix a)
     {
-      if (null == name)
+      if (name is null)
         name = "";
 
       if (a.Rows == 0 || a.Columns == 0)
@@ -1019,9 +1019,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
     private static void MapIndexed_DefaultImpl<T, T1>(this IROMatrix<T> src1, T1 parameter1, Func<int, int, T, T1, T> function, IMatrix<T> result) where T : struct
     {
-      if (null == src1)
+      if (src1 is null)
         throw new ArgumentNullException(nameof(src1));
-      if (null == result)
+      if (result is null)
         throw new ArgumentNullException(nameof(result));
 
       if (src1.RowCount != result.RowCount || src1.ColumnCount != result.ColumnCount)
@@ -1314,7 +1314,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// centered matrix. The original matrix data are lost.</remarks>
     public static void ColumnsToZeroMean(IMatrix<double> a, IVector<double> mean)
     {
-      if (null != mean && mean.Length != a.ColumnCount)
+      if (mean is not null && mean.Length != a.ColumnCount)
         throw new ArithmeticException(string.Format("The provided resultant vector (actual length({0}) has not the expected dimension ({1})", mean.Length, a.ColumnCount));
 
       for (int col = 0; col < a.ColumnCount; col++)
@@ -1326,7 +1326,7 @@ namespace Altaxo.Calc.LinearAlgebra
         for (int row = 0; row < a.RowCount; row++)
           a[row, col] -= sum; // subtract the mean from every element in the column
 
-        if (null != mean)
+        if (mean is not null)
           mean[col] = sum;
       }
     }
@@ -1341,9 +1341,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// centered matrix. The original matrix data are lost.</remarks>
     public static void ColumnsToZeroMeanAndUnitVariance(IMatrix<double> a, IVector<double>? meanvec, IVector<double>? scalevec)
     {
-      if (null != meanvec && (meanvec.Length != a.ColumnCount))
+      if (meanvec is not null && (meanvec.Length != a.ColumnCount))
         throw new ArithmeticException(string.Format("The provided resultant mean vector (actual dim({0})has not the expected length ({1})", meanvec.Length, a.ColumnCount));
-      if (null != scalevec && (scalevec.Length != a.ColumnCount))
+      if (scalevec is not null && (scalevec.Length != a.ColumnCount))
         throw new ArithmeticException(string.Format("The provided resultant scale vector (actual dim({0})has not the expected length ({1})", scalevec.Length, a.ColumnCount));
 
       for (int col = 0; col < a.ColumnCount; col++)
@@ -1364,9 +1364,9 @@ namespace Altaxo.Calc.LinearAlgebra
         for (int row = 0; row < a.RowCount; row++)
           a[row, col] = (a[row, col] - mean) * scor; // subtract the mean from every element in the column
 
-        if (null != meanvec)
+        if (meanvec is not null)
           meanvec[col] = mean;
-        if (null != scalevec)
+        if (scalevec is not null)
           scalevec[col] = scor;
       }
     }
@@ -1753,7 +1753,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       double originalVariance = Math.Sqrt(MatrixMath.SumOfSquares(X));
 
-      if (null != residualVarianceVector)
+      if (residualVarianceVector is not null)
         residualVarianceVector.AppendBottom(new MatrixMath.ScalarAsMatrix<double>(originalVariance));
 
       IMatrix<double> l = new MatrixWithOneRow<double>(X.ColumnCount);
@@ -1779,7 +1779,7 @@ namespace Altaxo.Calc.LinearAlgebra
           MultiplySecondTransposed(X, l, t); // t = X*l_t (t is  a vertical vector)
 
           // Compare this with the previous one
-          if (t_prev != null && IsEqual(t_prev, t, 1E-9))
+          if (t_prev is not null && IsEqual(t_prev, t, 1E-9))
             break;
 
           // 3. Calculate the new loads
@@ -1789,7 +1789,7 @@ namespace Altaxo.Calc.LinearAlgebra
           NormalizeRows(l); // normalize the eigenvector spectrum
 
           // 4. Goto step 2 or break after a number of iterations
-          if (t_prev == null)
+          if (t_prev is null)
             t_prev = new MatrixWithOneColumn<double>(X.RowCount);
           Copy(t, t_prev); // stores the content of t in t_prev
         }
@@ -1933,7 +1933,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public static double Norm(this IROMatrix<double> a, MatrixNorm ntype)
     {
-      if (null == a)
+      if (a is null)
         throw new ArgumentNullException(nameof(a));
 
       double result = 0;

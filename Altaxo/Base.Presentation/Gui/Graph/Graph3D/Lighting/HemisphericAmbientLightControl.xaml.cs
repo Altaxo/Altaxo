@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
   /// </summary>
   public partial class HemisphericAmbientLightControl : UserControl
   {
-    public event EventHandler ValueChanged;
+    public event EventHandler? ValueChanged;
 
     private double _lightAmplitude;
 
@@ -79,7 +79,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         _lock.ExecuteLocked(

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Geometry;
 
@@ -42,7 +43,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <param name="isTriggeringChangedEvent">If set to <c>true</c>, the Changed event is triggered if the size of the parent differs from the cached parent's size.</param>
     void SetParentSize(VectorD3D parentSize, bool isTriggeringChangedEvent);
 
-    IHitTestObject HitTest(HitTestPointData hitData);
+    IHitTestObject? HitTest(HitTestPointData hitData);
 
     //Altaxo.Graph.Gdi.IHitTestObject HitTest(Altaxo.Graph.Gdi.HitTestRectangularData hitData);
 

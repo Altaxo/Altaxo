@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.IO;
 
@@ -30,7 +31,7 @@ namespace Altaxo.Main.Services
 
     public TextWriterLoggingService(TextWriter writer)
     {
-      if (writer == null)
+      if (writer is null)
         throw new ArgumentNullException("writer");
       this.writer = writer;
       IsFatalEnabled = true;
@@ -40,13 +41,13 @@ namespace Altaxo.Main.Services
       IsDebugEnabled = true;
     }
 
-    private void Write(object message, Exception exception)
+    private void Write(object message, Exception? exception)
     {
-      if (message != null)
+      if (message is not null)
       {
         writer.WriteLine(message.ToString());
       }
-      if (exception != null)
+      if (exception is not null)
       {
         writer.WriteLine(exception.ToString());
       }
@@ -89,7 +90,7 @@ namespace Altaxo.Main.Services
       Warn(message, null);
     }
 
-    public void Warn(object message, Exception exception)
+    public void Warn(object message, Exception? exception)
     {
       if (IsWarnEnabled)
       {
@@ -107,7 +108,7 @@ namespace Altaxo.Main.Services
       Error(message, null);
     }
 
-    public void Error(object message, Exception exception)
+    public void Error(object message, Exception? exception)
     {
       if (IsErrorEnabled)
       {
@@ -125,7 +126,7 @@ namespace Altaxo.Main.Services
       Fatal(message, null);
     }
 
-    public void Fatal(object message, Exception exception)
+    public void Fatal(object message, Exception? exception)
     {
       if (IsFatalEnabled)
       {

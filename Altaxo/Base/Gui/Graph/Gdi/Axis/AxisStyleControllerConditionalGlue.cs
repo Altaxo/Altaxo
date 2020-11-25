@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,16 +58,16 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     {
       get
       {
-        if (AxisStyleCondController == null)
+        if (AxisStyleCondController is null)
           throw new InvalidOperationException("Instance is not initialized!");
 
-        if (null == AxisStyleCondController.ViewObject)
+        if (AxisStyleCondController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(AxisStyleCondController);
         return (IConditionalDocumentView)AxisStyleCondController.ViewObject;
       }
       set
       {
-        if (AxisStyleCondController == null)
+        if (AxisStyleCondController is null)
           throw new InvalidOperationException("Instance is not initialized!");
         AxisStyleCondController.ViewObject = value;
       }
@@ -76,16 +77,16 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     {
       get
       {
-        if (MajorLabelCondController == null)
+        if (MajorLabelCondController is null)
           throw new InvalidOperationException("Instance is not initialized!");
 
-        if (null == MajorLabelCondController.ViewObject)
+        if (MajorLabelCondController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(MajorLabelCondController);
         return (IConditionalDocumentView)MajorLabelCondController.ViewObject;
       }
       set
       {
-        if (MajorLabelCondController == null)
+        if (MajorLabelCondController is null)
           throw new InvalidOperationException("Instance is not initialized!");
         MajorLabelCondController.ViewObject = value;
       }
@@ -95,16 +96,16 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     {
       get
       {
-        if (MinorLabelCondController == null)
+        if (MinorLabelCondController is null)
           throw new InvalidOperationException("Instance is not initialized!");
 
-        if (null == MinorLabelCondController.ViewObject)
+        if (MinorLabelCondController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(MinorLabelCondController);
         return (IConditionalDocumentView)MinorLabelCondController.ViewObject;
       }
       set
       {
-        if (MinorLabelCondController == null)
+        if (MinorLabelCondController is null)
           throw new InvalidOperationException("Instance is not initialized!");
         MinorLabelCondController.ViewObject = value;
       }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -59,7 +60,7 @@ namespace Altaxo.Graph.Gdi.CS
     /// <param name="fromb">The coordinate system to copy from.</param>
     public override void CopyFrom(G2DCoordinateSystem fromb)
     {
-      if (object.ReferenceEquals(this, fromb))
+      if (ReferenceEquals(this, fromb))
         return;
 
       base.CopyFrom(fromb);
@@ -93,9 +94,9 @@ namespace Altaxo.Graph.Gdi.CS
         info.AddValue("YReverse", s._isYreverse);
       }
 
-      protected virtual G2DPolarCoordinateSystem SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual G2DPolarCoordinateSystem SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        G2DPolarCoordinateSystem s = (o == null ? new G2DPolarCoordinateSystem() : (G2DPolarCoordinateSystem)o);
+        var s = (G2DPolarCoordinateSystem?)o ?? new G2DPolarCoordinateSystem();
 
         double rotation = info.GetDouble("Rotation");
         s._isXYInterchanged = info.GetBoolean("XYInterchanged");
@@ -105,7 +106,7 @@ namespace Altaxo.Graph.Gdi.CS
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         G2DPolarCoordinateSystem s = SDeserialize(o, info, parent);
         return s;
@@ -209,7 +210,7 @@ namespace Altaxo.Graph.Gdi.CS
         horzRev = _isXreverse;
       }
 
-      if (null != _axisStyleInformation)
+      if (_axisStyleInformation is not null)
         _axisStyleInformation.Clear();
       else
         _axisStyleInformation = new List<CSAxisInformation>();

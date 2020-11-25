@@ -61,11 +61,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </remarks>
     public static void Execution(IROMatrix<double> XtX, IROMatrix<double> Xty, Func<int, bool> isRestrictedToPositiveValues, double? tolerance, out IMatrix<double> x, out IMatrix<double> w)
     {
-      if (null == XtX)
+      if (XtX is null)
         throw new ArgumentNullException(nameof(XtX));
-      if (null == Xty)
+      if (Xty is null)
         throw new ArgumentNullException(nameof(Xty));
-      if (null == isRestrictedToPositiveValues)
+      if (isRestrictedToPositiveValues is null)
         throw new ArgumentNullException(nameof(isRestrictedToPositiveValues));
 
       if (XtX.RowCount != XtX.ColumnCount)

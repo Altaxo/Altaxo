@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace Altaxo.Geometry
     /// <value>
     /// The parent.
     /// </value>
-    public PolygonClosedD2D Parent { get; set; }
+    public PolygonClosedD2D? Parent { get; set; }
 
     public PolygonClosedD2D(PointD2D[] points, HashSet<PointD2D> sharpPoints)
     {

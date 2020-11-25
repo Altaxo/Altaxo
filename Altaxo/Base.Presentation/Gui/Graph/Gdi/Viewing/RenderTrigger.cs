@@ -40,14 +40,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <summary>
     /// Event fired when the Gui calls OnRender. The two arguments are the actual x and y size of the RenderTrigger area.
     /// </summary>
-    public event Action<double, double> RenderTriggered;
+    public event Action<double, double>? RenderTriggered;
 
     protected override void OnRender(DrawingContext drawingContext)
     {
       base.OnRender(drawingContext);
       // Trigger the rendering
       var action = RenderTriggered;
-      if (null != action)
+      if (action is not null)
       {
         //System.Diagnostics.Debug.WriteLine("Before firing event RenderTriggered");
         action(ActualWidth, ActualHeight);

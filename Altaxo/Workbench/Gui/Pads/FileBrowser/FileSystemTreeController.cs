@@ -90,8 +90,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
             return (string)_tag;
           }
           else
-
-            return null;
+          {
+            return string.Empty;
+          }
         }
       }
 
@@ -160,11 +161,11 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #endregion TreeNode
 
-    private IFileTreeView _view;
+    private IFileTreeView? _view;
     private NGTreeNode _rootNode;
     private NGTreeNodeCollection Nodes;
 
-    public event Action<string> SelectedPathChanged;
+    public event Action<string>? SelectedPathChanged;
 
     public FileSystemTreeController()
     {
@@ -291,13 +292,13 @@ namespace Altaxo.Gui.Pads.FileBrowser
         computerNode.IsExpanded = true;
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.Initialize_FolderTree(Nodes);
       }
     }
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {
@@ -305,14 +306,14 @@ namespace Altaxo.Gui.Pads.FileBrowser
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.FolderTreeNodeSelected -= EhView_FolderTreeNodeSelected;
         }
 
         _view = value as IFileTreeView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           _view.FolderTreeNodeSelected += EhView_FolderTreeNodeSelected;
@@ -323,9 +324,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
     private void EhView_FolderTreeNodeSelected(NGTreeNode obj)
     {
       var node = obj as TreeNode;
-      string path = node == null ? null : node.FullPath;
+      string? path = node?.FullPath;
 
-      if (null != SelectedPathChanged && path != null)
+      if (SelectedPathChanged is not null && path is not null)
         SelectedPathChanged(path);
     }
   }

@@ -29,6 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#nullable disable
 using System.Collections.Generic;
 
 namespace Poly2Tri
@@ -67,7 +68,7 @@ namespace Poly2Tri
     public virtual void Clear()
     {
       Points.Clear();
-      if (DebugContext != null)
+      if (DebugContext is not null)
         DebugContext.Clear();
       StepCount = 0;
     }

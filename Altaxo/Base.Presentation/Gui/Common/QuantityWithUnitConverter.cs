@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -146,10 +147,10 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
-        if (null != _unitEnvironment)
+        if (_unitEnvironment is not null)
         {
           _defaultUnitChangedHandler.Remove();
           _numberOfDisplayedDigitsChangedHandler.Remove();
@@ -157,7 +158,7 @@ namespace Altaxo.Gui.Common
 
         _unitEnvironment = value;
 
-        if (null != _unitEnvironment)
+        if (_unitEnvironment is not null)
         {
           var unitEnvironment = _unitEnvironment;
           unitEnvironment.DefaultUnitChanged += _defaultUnitChangedHandler = new WeakEventHandler(EhDefaultUnitChanged, unitEnvironment, nameof(unitEnvironment.DefaultUnitChanged));
@@ -182,9 +183,9 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    private void EhDefaultUnitChanged(object sender, EventArgs e)
+    private void EhDefaultUnitChanged(object? sender, EventArgs e)
     {
-      if (null != _parent && null != _quantityGetSetProperty && null != _unitEnvironment)
+      if (_parent is not null && _quantityGetSetProperty is not null && _unitEnvironment is not null)
       {
         var selectedQuantity = SelectedQuantity;
         if (!selectedQuantity.IsEmpty)
@@ -192,7 +193,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    private void EhNumberOfDisplayedDigitsChanged(object sender, EventArgs e)
+    private void EhNumberOfDisplayedDigitsChanged(object? sender, EventArgs e)
     {
       EhNumberOfDisplayedDigitsChanged();
     }
@@ -218,7 +219,7 @@ namespace Altaxo.Gui.Common
       if (q.IsEmpty)
         return string.Empty;
 
-      if (null != _lastConvertedQuantity && q.IsEqualInValuePrefixUnit(((DimensionfulQuantity)_lastConvertedQuantity)))
+      if (_lastConvertedQuantity is not null && q.IsEqualInValuePrefixUnit(((DimensionfulQuantity)_lastConvertedQuantity)))
       {
         return _lastConvertedString;
       }
@@ -226,13 +227,13 @@ namespace Altaxo.Gui.Common
       {
         string result;
 
-        if (double.IsNaN(q.Value) && null != _representationOfNaN) // is a NaN for which we have a representation
+        if (double.IsNaN(q.Value) && _representationOfNaN is not null) // is a NaN for which we have a representation
         {
           result = _representationOfNaN;
         }
         else // Not a NaN with a representation
         {
-          if (null != _unitEnvironment)
+          if (_unitEnvironment is not null)
             result = q.Value.ToString("G" + _unitEnvironment.NumberOfDisplayedDigits.ToString(), _conversionCulture); // bug: do not use culture parameter here, it is sometimes different from CurrentUICulture
           else
             result = q.Value.ToString(_conversionCulture);
@@ -276,19 +277,25 @@ namespace Altaxo.Gui.Common
     /// <returns>A validation result depending on the result of the validation.</returns>
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
-      string s = (string)value;
-      var result = ConvertValidate(s, out var q);
-      if (result.IsValid)
+      if (value is string s)
       {
-        _lastConvertedString = s;
-        _lastConvertedQuantity = q;
+        var result = ConvertValidate(s, out var q);
+        if (result.IsValid)
+        {
+          _lastConvertedString = s;
+          _lastConvertedQuantity = q;
+        }
+        return result;
       }
-      return result;
+      else
+      {
+        return new ValidationResult(false, "Provided value is not a string!");
+      }
     }
 
     private ValidationResult ConvertValidate(string s, out DimensionfulQuantity result)
     {
-      if (null != _lastConvertedQuantity && s == _lastConvertedString)
+      if (_lastConvertedQuantity is not null && s == _lastConvertedString)
       {
         result = (DimensionfulQuantity)_lastConvertedQuantity;
         return ValidateSuccessfullyConvertedQuantity(result);
@@ -299,7 +306,7 @@ namespace Altaxo.Gui.Common
       SIPrefix prefix = null;
       s = s.Trim();
 
-      if (_allowNaN && null != _representationOfNaN && s.Trim() == _representationOfNaN.Trim())
+      if (_allowNaN && _representationOfNaN is not null && s.Trim() == _representationOfNaN.Trim())
       {
         result = new DimensionfulQuantity(double.NaN, SIPrefix.None, _lastConvertedQuantity.HasValue ? _lastConvertedQuantity.Value.Unit : _unitEnvironment.DefaultUnit.Unit);
         return ValidateSuccessfullyConvertedQuantity(result);
@@ -325,7 +332,7 @@ namespace Altaxo.Gui.Common
             if (s.Length < pl)
               continue;
             prefix = SIPrefix.TryGetPrefixFromShortcut(s.Substring(s.Length - pl));
-            if (null != prefix)
+            if (prefix is not null)
             {
               s = s.Substring(0, s.Length - prefix.ShortCut.Length);
               break;
@@ -341,7 +348,7 @@ namespace Altaxo.Gui.Common
         else
         {
           string firstPart;
-          if (null != prefix)
+          if (prefix is not null)
             firstPart = string.Format("The last part \"{0}\" of your entered text is recognized as prefixed unit, ", prefix.ShortCut + u.ShortCut);
           else
             firstPart = string.Format("The last part \"{0}\" of your entered text is recognized as unit, ", u.ShortCut);
@@ -367,12 +374,12 @@ namespace Altaxo.Gui.Common
 
       if (string.IsNullOrEmpty(unitString))
       {
-        if (null != _lastConvertedQuantity)
+        if (_lastConvertedQuantity is not null)
         {
           result = new DimensionfulQuantity(parsedValue, ((DimensionfulQuantity)_lastConvertedQuantity).Prefix, ((DimensionfulQuantity)_lastConvertedQuantity).Unit);
           return ValidateSuccessfullyConvertedQuantity(result);
         }
-        else if (null != _unitEnvironment && null != _unitEnvironment.DefaultUnit)
+        else if (_unitEnvironment is not null && _unitEnvironment.DefaultUnit is not null)
         {
           result = new DimensionfulQuantity(parsedValue, _unitEnvironment.DefaultUnit.Prefix, _unitEnvironment.DefaultUnit.Unit);
           return ValidateSuccessfullyConvertedQuantity(result);
@@ -404,7 +411,7 @@ namespace Altaxo.Gui.Common
     /// <returns>The result of the validation</returns>
     private ValidationResult ValidateSuccessfullyConvertedQuantity(DimensionfulQuantity value)
     {
-      if (null != _validationAfterSuccessfulConversion)
+      if (_validationAfterSuccessfulConversion is not null)
       {
         return _validationAfterSuccessfulConversion(value);
       }
@@ -454,10 +461,10 @@ namespace Altaxo.Gui.Common
       MenuItem menuItem_ConvertTo = null;
       MenuItem menuItem_ChangeUnitTo = null;
       MenuItem menuItem_SetNumberOfDigitsDisplayed = null;
-      if (null == _parent)
+      if (_parent is null)
         return;
 
-      if (_parent.ContextMenu != null)
+      if (_parent.ContextMenu is not null)
       {
         foreach (var item in _parent.ContextMenu.Items)
         {
@@ -475,11 +482,11 @@ namespace Altaxo.Gui.Common
       }
 
       // Clear all previous menu items
-      if (null != menuItem_ConvertTo)
+      if (menuItem_ConvertTo is not null)
         menuItem_ConvertTo.Items.Clear();
-      if (null != menuItem_ChangeUnitTo)
+      if (menuItem_ChangeUnitTo is not null)
         menuItem_ChangeUnitTo.Items.Clear();
-      if (null != menuItem_SetNumberOfDigitsDisplayed)
+      if (menuItem_SetNumberOfDigitsDisplayed is not null)
         menuItem_SetNumberOfDigitsDisplayed.Items.Clear();
 
       // make menues only when there is no validation error
@@ -492,13 +499,13 @@ namespace Altaxo.Gui.Common
 
         bool makeSubMenusForEachUnit = count > 10;
 
-        if (null != menuItem_ConvertTo)
+        if (menuItem_ConvertTo is not null)
           CreateSubmenuItems_ConvertTo(menuItem_ConvertTo, makeSubMenusForEachUnit);
 
-        if (null != menuItem_ChangeUnitTo)
+        if (menuItem_ChangeUnitTo is not null)
           CreateSubmenuItems_ChangeUnitTo(menuItem_ChangeUnitTo, makeSubMenusForEachUnit);
 
-        if (null != menuItem_SetNumberOfDigitsDisplayed)
+        if (menuItem_SetNumberOfDigitsDisplayed is not null)
           CreateSubmenuItems_SetNumberOfDigitsDisplayed(menuItem_SetNumberOfDigitsDisplayed);
       }
     }
@@ -599,7 +606,7 @@ namespace Altaxo.Gui.Common
       for (int i = 3; i <= 15; i++)
       {
         string header = string.Format("{0}", i);
-        var mi = new MenuItem() { Header = header, Tag = i, IsCheckable = true, IsChecked = (null != _unitEnvironment && i == _unitEnvironment.NumberOfDisplayedDigits) };
+        var mi = new MenuItem() { Header = header, Tag = i, IsCheckable = true, IsChecked = (_unitEnvironment is not null && i == _unitEnvironment.NumberOfDisplayedDigits) };
         mi.Click += EhSetDigitsTo_Click;
         rootMenuItem.Items.Add(mi);
       }
@@ -608,12 +615,12 @@ namespace Altaxo.Gui.Common
     private void EhConvertTo_Click(object sender, RoutedEventArgs e)
     {
       var mnu = sender as MenuItem;
-      if (null != mnu && mnu.Tag is PrefixedUnit)
+      if (mnu is not null && mnu.Tag is PrefixedUnit)
       {
         var prefixedUnit = (PrefixedUnit)mnu.Tag;
         var newQuantity = SelectedQuantity.AsQuantityIn(prefixedUnit);
         SelectedQuantity = newQuantity;
-        if (null != _unitEnvironment)
+        if (_unitEnvironment is not null)
           _unitEnvironment.DefaultUnit = prefixedUnit;
       }
     }
@@ -621,12 +628,12 @@ namespace Altaxo.Gui.Common
     private void EhChangeUnitTo_Click(object sender, RoutedEventArgs e)
     {
       var mnu = sender as MenuItem;
-      if (null != mnu && mnu.Tag is PrefixedUnit)
+      if (mnu is not null && mnu.Tag is PrefixedUnit)
       {
         var prefixedUnit = (PrefixedUnit)mnu.Tag;
         var newQuantity = new DimensionfulQuantity(SelectedQuantity.Value, prefixedUnit.Prefix, prefixedUnit.Unit);
         SelectedQuantity = newQuantity;
-        if (null != _unitEnvironment)
+        if (_unitEnvironment is not null)
           _unitEnvironment.DefaultUnit = prefixedUnit;
       }
     }
@@ -634,10 +641,10 @@ namespace Altaxo.Gui.Common
     private void EhSetDigitsTo_Click(object sender, RoutedEventArgs e)
     {
       var mnu = sender as MenuItem;
-      if (null != mnu && mnu.Tag is int)
+      if (mnu is not null && mnu.Tag is int)
       {
         int digits = (int)mnu.Tag;
-        if (null != _unitEnvironment)
+        if (_unitEnvironment is not null)
           _unitEnvironment.NumberOfDisplayedDigits = digits;
 
         EhNumberOfDisplayedDigitsChanged();
@@ -646,7 +653,7 @@ namespace Altaxo.Gui.Common
 
     private void EhNumberOfDisplayedDigitsChanged()
     {
-      if (null != _lastConvertedQuantity && null != _binding && !_binding.HasError)
+      if (_lastConvertedQuantity is not null && _binding is not null && !_binding.HasError)
       {
         var quant = (DimensionfulQuantity)_lastConvertedQuantity; // save the current quantity
         _lastConvertedQuantity = null; // set the temporarily stored values to null in order to force a full conversion

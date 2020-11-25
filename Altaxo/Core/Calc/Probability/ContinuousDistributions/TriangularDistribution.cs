@@ -50,64 +50,62 @@ namespace Altaxo.Calc.Probability
   /// Provides generation of triangular distributed random numbers.
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="TriangularDistribution"/> type bases upon information presented on
-  ///   <a href="http://en.wikipedia.org/wiki/Triangular_distribution">Wikipedia - Triangular distribution</a>
-  ///   and the implementation in the <a href="http://www.boost.org/libs/random/index.html">Boost Random Number Library</a>.
+  /// The parametrization is equal to the parametrization in Mathematica.
   /// </remarks>
   public class TriangularDistribution : ContinuousDistribution
   {
     #region instance fields
 
     /// <summary>
-    /// Gets or sets the parameter alpha which is used for generation of triangular distributed random numbers.
+    /// Gets or sets the parameter Min (the left boundary of the PDF), which is used for generation of triangular distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
-    public double Alpha
+    /// <remarks>Call <see cref="IsValidMin"/> to determine whether a value is valid and therefor assignable.</remarks>
+    public double Min
     {
       get
       {
-        return alpha;
+        return _min;
       }
     }
 
     /// <summary>
     /// Stores the parameter alpha which is used for generation of triangular distributed random numbers.
     /// </summary>
-    private double alpha;
+    private double _min;
 
     /// <summary>
-    /// Gets or sets the parameter beta which is used for generation of triangular distributed random numbers.
+    /// Gets or sets the parameter Max (the right boundary of the PDF), which is used for generation of triangular distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefor assignable.</remarks>
-    public double Beta
+    /// <remarks>Call <see cref="IsValidMax"/> to determine whether a value is valid and therefor assignable.</remarks>
+    public double Max
     {
       get
       {
-        return beta;
+        return _max;
       }
     }
 
     /// <summary>
     /// Stores the parameter beta which is used for generation of triangular distributed random numbers.
     /// </summary>
-    private double beta;
+    private double _max;
 
     /// <summary>
-    /// Gets or sets the parameter gamma which is used for generation of triangular distributed random numbers.
+    /// Gets or sets the parameter C (the location of the maximum of the PDF), which is used for generation of triangular distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidGamma"/> to determine whether a value is valid and therefor assignable.</remarks>
-    public double Gamma
+    /// <remarks>Call <see cref="IsValidC"/> to determine whether a value is valid and therefor assignable.</remarks>
+    public double C
     {
       get
       {
-        return gamma;
+        return _c;
       }
     }
 
     /// <summary>
     /// Stores the parameter gamma which is used for generation of triangular distributed random numbers.
     /// </summary>
-    private double gamma;
+    private double _c;
 
     /// <summary>
     /// Stores an intermediate result for generation of triangular distributed random numbers.
@@ -116,7 +114,7 @@ namespace Altaxo.Calc.Probability
     /// Speeds up random number generation cause this value only depends on distribution parameters
     ///   and therefor doesn't need to be recalculated in successive executions of <see cref="NextDouble"/>.
     /// </remarks>
-    private double helper1;
+    private double _c_min;
 
     /// <summary>
     /// Stores an intermediate result for generation of triangular distributed random numbers.
@@ -125,7 +123,7 @@ namespace Altaxo.Calc.Probability
     /// Speeds up random number generation cause this value only depends on distribution parameters
     ///   and therefor doesn't need to be recalculated in successive executions of <see cref="NextDouble"/>.
     /// </remarks>
-    private double helper2;
+    private double _max_min;
 
     /// <summary>
     /// Stores an intermediate result for generation of triangular distributed random numbers.
@@ -134,7 +132,7 @@ namespace Altaxo.Calc.Probability
     /// Speeds up random number generation cause this value only depends on distribution parameters
     ///   and therefor doesn't need to be recalculated in successive executions of <see cref="NextDouble"/>.
     /// </remarks>
-    private double helper3;
+    private double _sqrt_cmin_maxmin;
 
     /// <summary>
     /// Stores an intermediate result for generation of triangular distributed random numbers.
@@ -143,7 +141,7 @@ namespace Altaxo.Calc.Probability
     /// Speeds up random number generation cause this value only depends on distribution parameters
     ///   and therefor doesn't need to be recalculated in successive executions of <see cref="NextDouble"/>.
     /// </remarks>
-    private double helper4;
+    private double _sqrt_maxc;
 
     #endregion instance fields
 
@@ -167,78 +165,97 @@ namespace Altaxo.Calc.Probability
     /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
     /// </exception>
     public TriangularDistribution(Generator generator)
-      : this(0, 0.5, 1, generator)
-    {
+      : this(0, 1, 0.5, generator)
+        {
     }
 
-    public TriangularDistribution(double alpha, double gamma, double beta)
-      : this(alpha, gamma, beta, DefaultGenerator)
-    {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TriangularDistribution"/> class.
+    /// </summary>
+    /// <param name="min">The left boundary of the PDF.</param>
+    /// <param name="max">The right boundary of the PDF.</param>
+    /// <param name="c">The location of the maximum of the PDF (has to be inbetween (min, max).</param>
+    public TriangularDistribution(double min, double max, double c)
+      : this(min, max, c, DefaultGenerator)
+        {
     }
 
-    public TriangularDistribution(double alpha, double gamma, double beta, Generator generator)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TriangularDistribution"/> class.
+    /// </summary>
+    /// <param name="min">The left boundary of the PDF.</param>
+    /// <param name="max">The right boundary of the PDF.</param>
+    /// <param name="c">The location of the maximum of the PDF (has to be inbetween (min, max).</param>
+    /// <param name="generator">The generator.</param>
+    public TriangularDistribution(double min, double max, double c, Generator generator)
       : base(generator)
     {
-      Initialize(alpha, gamma, beta);
+      Initialize(min, max, c);
     }
 
     #endregion construction
 
     #region instance methods
 
-    public void Initialize(double alpha, double gamma, double beta)
-    {
-      if (!(alpha < beta && alpha <= gamma))
+    /// <summary>
+    /// Initializes the distribution.
+    /// </summary>
+    /// <param name="min">The left boundary of the PDF.</param>
+    /// <param name="max">The right boundary of the PDF.</param>
+    /// <param name="c">The location of the maximum of the PDF (has to be inbetween (min, max).</param>
+    public void Initialize(double min, double max, double c)
+        {
+      if (!(min < max && min <= c))
         throw new ArgumentOutOfRangeException("Alpha out of range (must be < beta and <= gamma)");
-      if (!(beta > alpha && beta >= gamma))
+      if (!(max > min && max >= c))
         throw new ArgumentOutOfRangeException("Beta out of range (have to be > alpha and >= gamma)");
-      if (!(gamma >= alpha && gamma <= beta))
+      if (!(c >= min && c <= max))
         throw new ArgumentOutOfRangeException("Gamma out of range (have to be >= alpha and <= beta)");
 
-      this.alpha = alpha;
-      this.beta = beta;
-      this.gamma = gamma;
+      this._min = min;
+      this._max = max;
+      this._c = c;
 
       UpdateHelpers();
     }
 
     /// <summary>
-    /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
+    /// Determines whether the specified value is valid for parameter <see cref="Min"/>.
     /// </summary>
     /// <param name="value">The value to check.</param>
     /// <returns>
-    /// <see langword="true"/> if value is less than <see cref="Beta"/>, and less than or equal to
-    ///   <see cref="Gamma"/>; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if value is less than <see cref="Max"/>, and less than or equal to
+    ///   <see cref="C"/>; otherwise, <see langword="false"/>.
     /// </returns>
-    public bool IsValidAlpha(double value)
+    public bool IsValidMin(double value)
     {
-      return (value < beta && value <= gamma);
+      return (value < _max && value <= _c);
     }
 
     /// <summary>
-    /// Determines whether the specified value is valid for parameter <see cref="Beta"/>.
+    /// Determines whether the specified value is valid for parameter <see cref="Max"/>.
     /// </summary>
     /// <param name="value">The value to check.</param>
     /// <returns>
-    /// <see langword="true"/> if value is greater than <see cref="Alpha"/>, and greater than or equal to
-    ///   <see cref="Gamma"/>; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if value is greater than <see cref="Min"/>, and greater than or equal to
+    ///   <see cref="C"/>; otherwise, <see langword="false"/>.
     /// </returns>
-    public bool IsValidBeta(double value)
+    public bool IsValidMax(double value)
     {
-      return (value > alpha && value >= gamma);
+      return (value > _min && value >= _c);
     }
 
     /// <summary>
-    /// Determines whether the specified value is valid for parameter <see cref="Gamma"/>.
+    /// Determines whether the specified value is valid for parameter <see cref="C"/>.
     /// </summary>
     /// <param name="value">The value to check.</param>
     /// <returns>
-    /// <see langword="true"/> if value is greater than or equal to <see cref="Alpha"/>, and greater than or equal
-    ///   to <see cref="Beta"/>; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if value is greater than or equal to <see cref="Min"/>, and greater than or equal
+    ///   to <see cref="Max"/>; otherwise, <see langword="false"/>.
     /// </returns>
-    public bool IsValidGamma(double value)
+    public bool IsValidC(double value)
     {
-      return (value >= alpha && value <= beta);
+      return (value >= _min && value <= _max);
     }
 
     /// <summary>
@@ -247,10 +264,10 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     private void UpdateHelpers()
     {
-      helper1 = gamma - alpha;
-      helper2 = beta - alpha;
-      helper3 = Math.Sqrt(helper1 * helper2);
-      helper4 = Math.Sqrt(beta - gamma);
+      _c_min = _c - _min;
+      _max_min = _max - _min;
+      _sqrt_cmin_maxmin = Math.Sqrt(_c_min * _max_min);
+      _sqrt_maxc = Math.Sqrt(_max - _c);
     }
 
     #endregion instance methods
@@ -264,7 +281,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return alpha;
+        return _min;
       }
     }
 
@@ -275,7 +292,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return beta;
+        return _max;
       }
     }
 
@@ -286,7 +303,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return alpha / 3.0 + beta / 3.0 + gamma / 3.0;
+        return _min / 3.0 + _max / 3.0 + _c / 3.0;
       }
     }
 
@@ -297,15 +314,15 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (gamma >= (beta - alpha) / 2.0)
+        if (_c >= (_max - _min) / 2.0)
         {
-          return alpha +
-              (Math.Sqrt((beta - alpha) * (gamma - alpha)) / Math.Sqrt(2.0));
+          return _min +
+              (Math.Sqrt((_max - _min) * (_c - _min)) / Math.Sqrt(2.0));
         }
         else
         {
-          return beta -
-              (Math.Sqrt((beta - alpha) * (beta - gamma)) / Math.Sqrt(2.0));
+          return _max -
+              (Math.Sqrt((_max - _min) * (_max - _c)) / Math.Sqrt(2.0));
         }
       }
     }
@@ -317,8 +334,8 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return (Math.Pow(alpha, 2.0) + Math.Pow(beta, 2.0) + Math.Pow(gamma, 2.0) -
-          alpha * beta - alpha * gamma - beta * gamma) / 18.0;
+        return (Math.Pow(_min, 2.0) + Math.Pow(_max, 2.0) + Math.Pow(_c, 2.0) -
+          _min * _max - _min * _c - _max * _c) / 18.0;
       }
     }
 
@@ -329,7 +346,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return new double[] { gamma };
+        return new double[] { _c };
       }
     }
 
@@ -340,13 +357,13 @@ namespace Altaxo.Calc.Probability
     public override double NextDouble()
     {
       double genNum = Generator.NextDouble();
-      if (genNum <= helper1 / helper2)
+      if (genNum <= _c_min / _max_min)
       {
-        return alpha + Math.Sqrt(genNum) * helper3;
+        return _min + Math.Sqrt(genNum) * _sqrt_cmin_maxmin;
       }
       else
       {
-        return beta - Math.Sqrt(genNum * helper2 - helper1) * helper4;
+        return _max - Math.Sqrt(genNum * _max_min - _c_min) * _sqrt_maxc;
       }
     }
 
@@ -354,61 +371,106 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdfQuantile
 
+    /// <summary>
+    /// Calculates the cumulative distribution function.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <returns>
+    /// The probability that the random variable of this probability distribution will be found at a value less than or equal to <paramref name="x" />.
+    /// </returns>
     public override double CDF(double x)
     {
-      return CDF(x, Alpha, Beta, Gamma);
+      return CDF(x, _min, _max, _c);
     }
 
-    public static double CDF(double x, double A, double B, double C)
+    /// <summary>
+    /// Calculates the cumulative distribution function at the specified x.
+    /// </summary>
+    /// <param name="x">The x.</param>
+    /// <param name="min">The left boundary of the PDF.</param>
+    /// <param name="max">The right boundary of the PDF.</param>
+    /// <param name="c">The location of the maximum of the PDF (has to be inbetween (min, max).</param>
+    /// <returns>The cumulative distribution function at x.</returns>
+    public static double CDF(double x, double min, double max, double c)
     {
-      if (x <= A)
+      if (x <= min)
         return 0;
-      if (x >= B)
+      if (x >= max)
         return 1;
-      if (x <= C)
-        return (x - A) * (x - A) / ((B - A) * (C - A));
+      if (x <= c)
+        return (x - min) * (x - min) / ((max - min) * (c - min));
       else
-        return 1 - (B - x) * (B - x) / ((B - A) * (B - C));
+        return 1 - (max - x) * (max - x) / ((max - min) * (max - c));
     }
 
+    /// <summary>
+    /// Calculates the probability density function.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <returns>
+    /// The relative likelihood for the random variable to occur at the point <paramref name="x" />.
+    /// </returns>
     public override double PDF(double x)
     {
-      return PDF(x, Alpha, Beta, Gamma);
+      return PDF(x, _min, _max, _c);
     }
 
-    public static double PDF(double x, double A, double B, double C)
+    /// <summary>
+    /// Calculates the probability density at the specified x.
+    /// </summary>
+    /// <param name="x">The x.</param>
+    /// <param name="min">The left boundary of the PDF.</param>
+    /// <param name="max">The right boundary of the PDF.</param>
+    /// <param name="c">The location of the maximum of the PDF (has to be inbetween (min, max).</param>
+    /// <returns>The probability density at x.</returns>
+    public static double PDF(double x, double min, double max, double c)
     {
-      if (x <= A)
+      if (x <= min)
         return 0;
-      if (x >= B)
+      if (x >= max)
         return 0;
-      if (x <= C)
-        return 2 * (x - A) / ((B - A) * (C - A));
+      if (x <= c)
+        return 2 * (x - min) / ((max - min) * (c - min));
       else
-        return 2 * (B - x) / ((B - A) * (B - C));
+        return 2 * (max - x) / ((max - min) * (max - c));
     }
 
+    /// <summary>
+    /// Calculates the quantile of the distribution function.
+    /// </summary>
+    /// <param name="p">The probability p.</param>
+    /// <returns>
+    /// The point x at which the cumulative distribution function <see cref="CDF(double)" /> of argument x is equal to <paramref name="p" />.
+    /// </returns>
     public override double Quantile(double p)
     {
-      return Quantile(p, Alpha, Beta, Gamma);
+      return Quantile(p, _min, _max, _c);
     }
 
-    public static double Quantile(double p, double A, double B, double C)
+    /// <summary>
+    /// Calculates the quantile at the specified probability p.
+    /// </summary>
+    /// <param name="p">The p.</param>
+    /// <param name="min">The left boundary of the PDF.</param>
+    /// <param name="max">The right boundary of the PDF.</param>
+    /// <param name="c">The location of the maximum of the PDF (has to be inbetween (min, max).</param>
+    /// <returns>The quantile at the probability p.</returns>
+    public static double Quantile(double p, double min, double max, double c)
     {
       double x;
       if (!(p >= 0 && p <= 1))
         throw new ArgumentOutOfRangeException("p must be inbetween [0,1]");
-      if (!(A < B))
+      if (!(min < max))
         throw new ArgumentOutOfRangeException("A must be < B");
-      if (!(C >= A))
+      if (!(c >= min))
         throw new ArgumentOutOfRangeException("C must be >= A");
-      if (!(C <= B))
+      if (!(c <= max))
         throw new ArgumentOutOfRangeException("C must be <= B");
 
-      x = A + Math.Sqrt(p * (A - B) * (A - C));
+      x = min + Math.Sqrt(p * (min - max) * (min - c));
 
-      if (x > C)
-        x = B - Math.Sqrt((1 - p) * (B - A) * (B - C));
+      if (x > c)
+        x = max - Math.Sqrt((1 - p) * (max - min) * (max - c));
 
       return x;
     }

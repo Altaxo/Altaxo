@@ -11,14 +11,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Calc.Ode
 {
-  [TestFixture]
+  
   public class GaussianEliminationTest
   {
-    [Test]
+    [Fact]
     public void SolverCoreTest3d()
     {
       var a = new double[][] {
@@ -29,10 +29,10 @@ namespace Altaxo.Calc.Ode
       var b = new Vector(8, -11, -3);
       var x = Gauss.SolveCore(a, b);
       var answer = new Vector(2, 3, -1);
-      Assert.IsTrue(Vector.GetLInfinityNorm(x, answer) < 1e-10);
+      Assert.True(Vector.GetLInfinityNorm(x, answer) < 1e-10);
     }
 
-    [Test]
+    [Fact]
     public void SolverCoreTest2d()
     {
       var a = new double[][] {
@@ -42,10 +42,10 @@ namespace Altaxo.Calc.Ode
       var b = new Vector(1, -2);
       var x = Gauss.SolveCore(a, b);
       var answer = new Vector(1, -1);
-      Assert.IsTrue(Vector.GetLInfinityNorm(x, answer) < 1e-10);
+      Assert.True(Vector.GetLInfinityNorm(x, answer) < 1e-10);
     }
 
-    [Test]
+    [Fact]
     public void SolverCoreTestMatrixNd()
     {
       const int N = 50;
@@ -92,10 +92,10 @@ namespace Altaxo.Calc.Ode
       Vector b2 = a * x;
 
       // Verify result is the same
-      Assert.IsTrue(Vector.GetLInfinityNorm(b, b2) < 1e-6);
+      Assert.True(Vector.GetLInfinityNorm(b, b2) < 1e-6);
     }
 
-    [Test]
+    [Fact]
     public void SolverCoreTestSparseMatrixNd()
     {
       const int N = 50;
@@ -135,7 +135,7 @@ namespace Altaxo.Calc.Ode
       Vector b2 = ainit * x;
 
       // Verify result is the same
-      Assert.IsTrue(Vector.GetLInfinityNorm(binit, b2) < 1e-6);
+      Assert.True(Vector.GetLInfinityNorm(binit, b2) < 1e-6);
     }
   }
 }

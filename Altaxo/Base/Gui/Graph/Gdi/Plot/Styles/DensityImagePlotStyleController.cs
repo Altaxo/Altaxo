@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,7 +82,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         _colorProviderController.InitializeDocument(_doc.ColorProvider);
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _scaleController.ViewObject = _view.DensityScaleView;
         _colorProviderController.ViewObject = _view.ColorProviderView;

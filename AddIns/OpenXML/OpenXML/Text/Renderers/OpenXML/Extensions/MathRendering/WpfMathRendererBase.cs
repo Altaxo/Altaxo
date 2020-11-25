@@ -43,19 +43,19 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
   internal abstract class WpfMathRendererBase : IWpfMathRenderer
   {
     private readonly Dictionary<Type, IWpfMathAtomRenderer> renderersPerType = new Dictionary<Type, IWpfMathAtomRenderer>();
-    private IWpfMathAtomRenderer previousRenderer;
-    private Type previousObjectType;
+    private IWpfMathAtomRenderer? previousRenderer;
+    private Type? previousObjectType;
     public ObjectRendererCollection ObjectRenderers { get; } = new ObjectRendererCollection();
 
     /// <summary>
     /// Occurs when before writing an object.
     /// </summary>
-    public event Action<IWpfMathRenderer, Atom> ObjectWriteBefore;
+    public event Action<IWpfMathRenderer, Atom>? ObjectWriteBefore;
 
     /// <summary>
     /// Occurs when after writing an object.
     /// </summary>
-    public event Action<IWpfMathRenderer, Atom> ObjectWriteAfter;
+    public event Action<IWpfMathRenderer, Atom>? ObjectWriteAfter;
 
     public abstract object Render(Atom atom);
 
@@ -66,7 +66,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
     /// <param name="obj">The Markdown object to write to this renderer.</param>
     public void Write<T>(T obj) where T : Atom
     {
-      if (obj == null)
+      if (obj is null)
       {
         return;
       }
@@ -77,8 +77,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
       ObjectWriteBefore?.Invoke(this, obj);
 
       // Handle regular renderers
-      IWpfMathAtomRenderer renderer = previousObjectType == objectType ? previousRenderer : null;
-      if (renderer == null && !renderersPerType.TryGetValue(objectType, out renderer))
+      IWpfMathAtomRenderer? renderer = previousObjectType == objectType ? previousRenderer : null;
+      if (renderer is null && !renderersPerType.TryGetValue(objectType, out renderer))
       {
         for (int i = 0; i < ObjectRenderers.Count; i++)
         {
@@ -92,7 +92,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
       }
 
       var writeResult = WriteResult.Completed;
-      if (renderer != null)
+      if (renderer is not null)
       {
         writeResult = renderer.Write(this, obj);
       }

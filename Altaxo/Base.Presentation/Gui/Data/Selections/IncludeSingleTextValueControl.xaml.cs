@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Data.Selections
 
     public void Init_ColumnTransformation(string boxText, string toolTip)
     {
-      if (null == boxText)
+      if (boxText is null)
       {
         _guiColumnTransformation.Visibility = Visibility.Collapsed;
       }

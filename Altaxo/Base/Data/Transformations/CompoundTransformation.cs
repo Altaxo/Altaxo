@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Altaxo.Data.Transformations
 {
@@ -54,7 +54,7 @@ namespace Altaxo.Data.Transformations
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         int count = info.OpenArray("Transformations");
         var arr = new List<IVariantToVariantTransformation>(count);
@@ -108,9 +108,9 @@ namespace Altaxo.Data.Transformations
     /// <returns>If the enumeration is null or empty, the return value is null. If the enumeration contains only one
     /// element, the return value is that element. If the enumeration contains multiple elements, the return value is a compound transformation
     /// with all elements.</returns>
-    public static IVariantToVariantTransformation TryGetCompoundTransformation(IEnumerable<IVariantToVariantTransformation> transformations)
+    public static IVariantToVariantTransformation? TryGetCompoundTransformation(IEnumerable<IVariantToVariantTransformation> transformations)
     {
-      if (null == transformations)
+      if (transformations is null)
         return null;
 
       var transformationList = new List<IVariantToVariantTransformation>(transformations);
@@ -123,9 +123,9 @@ namespace Altaxo.Data.Transformations
         return new CompoundTransformation(transformationList);
     }
 
-    public static IVariantToVariantTransformation TryGetCompoundTransformationWithSimplification(IEnumerable<IVariantToVariantTransformation> transformations)
+    public static IVariantToVariantTransformation? TryGetCompoundTransformationWithSimplification(IEnumerable<IVariantToVariantTransformation> transformations)
     {
-      if (null == transformations)
+      if (transformations is null)
         return null;
 
       var transformationList = new List<IVariantToVariantTransformation>();
@@ -163,7 +163,7 @@ namespace Altaxo.Data.Transformations
         foreach (var trans in ct._transformations)
           AddTransformationToFlattenedList(trans, list);
       }
-      else if (transformation != null)
+      else if (transformation is not null)
       {
         list.Add(transformation);
       }
@@ -230,7 +230,7 @@ namespace Altaxo.Data.Transformations
 
     public CompoundTransformation WithPrependedTransformation(IVariantToVariantTransformation transformation)
     {
-      if (null == transformation)
+      if (transformation is null)
         throw new ArgumentNullException(nameof(transformation));
 
       var result = new CompoundTransformation
@@ -250,7 +250,7 @@ namespace Altaxo.Data.Transformations
 
     public CompoundTransformation WithAppendedTransformation(IVariantToVariantTransformation transformation)
     {
-      if (null == transformation)
+      if (transformation is null)
         throw new ArgumentNullException(nameof(transformation));
 
       var result = new CompoundTransformation
@@ -276,10 +276,9 @@ namespace Altaxo.Data.Transformations
         yield return _transformations[i];
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var from = obj as CompoundTransformation;
-      if (null == from)
+      if (!(obj is CompoundTransformation from))
         return false;
 
       if (_transformations.Count != from._transformations.Count)

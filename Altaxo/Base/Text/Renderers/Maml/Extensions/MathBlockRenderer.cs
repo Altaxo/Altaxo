@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System.Collections.Generic;
 using System.IO;
 using Altaxo;
@@ -52,7 +53,7 @@ namespace Altaxo.Text.Renderers.Maml.Extensions
 
       var (stream, placement, offset, width, height) = formulaService.Parse(formulaText, renderer.BodyTextFontFamily, renderer.BodyTextFontSize, 192, renderer.IsIntendedForHelp1File);
 
-      if (null == stream)
+      if (stream is null)
         return;
 
       stream.Seek(0, SeekOrigin.Begin);

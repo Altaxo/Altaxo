@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -31,6 +32,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Graph;
   using Altaxo.Graph.Gdi.Axis;
   using Altaxo.Graph.Gdi.Plot;
@@ -54,7 +56,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     protected AxisStyleCollection _axisStyles;
 
     // Cached members
-    private Bitmap _bitmap;
+    private Bitmap? _bitmap;
 
     private DensityLegendArea _cachedArea;
 
@@ -66,7 +68,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DensityImageLegend)obj;
-        info.AddBaseValueEmbedded(s, typeof(DensityImageLegend).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(DensityImageLegend).BaseType!);
 
         info.AddValue("PlotItem", s._plotItemProxy);
         info.AddValue("IsOrientationVertical", s.IsOrientationVertical);
@@ -76,10 +78,10 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.AddValue("AxisStyles", s._axisStyles);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DensityImageLegend s = null != o ? (DensityImageLegend)o : new DensityImageLegend();
-        info.GetBaseValueEmbedded(s, typeof(DensityImageLegend).BaseType, parent);
+        var s = (DensityImageLegend?)o ?? new DensityImageLegend(info);
+        info.GetBaseValueEmbedded(s, typeof(DensityImageLegend).BaseType!, parent);
 
         s._plotItemProxy = (Main.RelDocNodeProxy)info.GetValue("PlotItem", s);
         bool isOrientationVertical = info.GetBoolean("IsOrientationVertical");
@@ -99,7 +101,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
-    private DensityImageLegend()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    private DensityImageLegend(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(new ItemLocationDirect())
     {
     }
@@ -109,14 +113,14 @@ namespace Altaxo.Graph.Gdi.Shapes
     public DensityImageLegend(DensityImagePlotItem plotItem, Main.IDocumentNode futureParentObject, PointD2D initialLocation, PointD2D graphicSize, Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirect())
     {
-      if (null == plotItem)
+      if (plotItem is null)
         throw new ArgumentNullException("plotItem");
-      if (null == futureParentObject)
+      if (futureParentObject is null)
         throw new ArgumentNullException("futureParentObject");
 
       ParentObject = futureParentObject;
       PlotItem = plotItem;
-      if (null == _plotItemProxy.DocumentPath)
+      if (_plotItemProxy.DocumentPath is null)
         throw new ArgumentException("No path could be found between plotItem and futureParentObject. This is an indication that one of the objects is not rooted.");
 
       SetSize(graphicSize.X, graphicSize.Y, Main.EventFiring.Suppressed);
@@ -135,16 +139,16 @@ namespace Altaxo.Graph.Gdi.Shapes
       // _axisStyles.ParentObject = this; --> see below
 
       var sx0 = new AxisStyle(CSLineID.X0, true, true, false, "Z values", context);
-      sx0.AxisLineStyle.FirstDownMajorTicks = true;
-      sx0.AxisLineStyle.FirstUpMajorTicks = false;
-      sx0.AxisLineStyle.FirstDownMinorTicks = true;
-      sx0.AxisLineStyle.FirstUpMinorTicks = false;
+      sx0.AxisLineStyle!.FirstDownMajorTicks = true;
+      sx0.AxisLineStyle!.FirstUpMajorTicks = false;
+      sx0.AxisLineStyle!.FirstDownMinorTicks = true;
+      sx0.AxisLineStyle!.FirstUpMinorTicks = false;
 
       var sx1 = new AxisStyle(CSLineID.X1, true, false, false, null, context);
-      sx1.AxisLineStyle.FirstDownMajorTicks = false;
-      sx1.AxisLineStyle.FirstUpMajorTicks = false;
-      sx1.AxisLineStyle.FirstDownMinorTicks = false;
-      sx1.AxisLineStyle.FirstUpMinorTicks = false;
+      sx1.AxisLineStyle!.FirstDownMajorTicks = false;
+      sx1.AxisLineStyle!.FirstUpMajorTicks = false;
+      sx1.AxisLineStyle!.FirstDownMinorTicks = false;
+      sx1.AxisLineStyle!.FirstUpMinorTicks = false;
 
       var sy0 = new AxisStyle(CSLineID.Y0, true, false, false, "Color map", context);
       var sy1 = new AxisStyle(CSLineID.Y1, true, false, false, null, context);
@@ -153,20 +157,20 @@ namespace Altaxo.Graph.Gdi.Shapes
       _axisStyles.Add(sy0);
       _axisStyles.Add(sy1);
 
-      sx0.Title.Rotation = 90;
-      sx0.Title.Location.ParentAnchorX = RADouble.NewRel(0); // Left
-      sx0.Title.Location.ParentAnchorY = RADouble.NewRel(0.5); // Center
-      sx0.Title.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
-      sx0.Title.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
-      sx0.Title.X = -Width / 3;
-      sx0.Title.Y = 0;
+      sx0.Title!.Rotation = 90;
+      sx0.Title!.Location.ParentAnchorX = RADouble.NewRel(0); // Left
+      sx0.Title!.Location.ParentAnchorY = RADouble.NewRel(0.5); // Center
+      sx0.Title!.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+      sx0.Title!.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
+      sx0.Title!.X = -Width / 3;
+      sx0.Title!.Y = 0;
 
-      sy0.Title.Location.ParentAnchorX = RADouble.NewRel(0.5); // Center
-      sy0.Title.Location.ParentAnchorY = RADouble.NewRel(0); // Top
-      sy0.Title.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
-      sy0.Title.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
-      sy0.Title.X = 0;
-      sy0.Title.Y = sy0.Title.Height / 2;
+      sy0.Title!.Location.ParentAnchorX = RADouble.NewRel(0.5); // Center
+      sy0.Title!.Location.ParentAnchorY = RADouble.NewRel(0); // Top
+      sy0.Title!.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+      sy0.Title!.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
+      sy0.Title!.X = 0;
+      sy0.Title!.Y = sy0.Title.Height / 2;
 
       // set the parent objects
       _axisStyles.ParentObject = this;
@@ -177,39 +181,56 @@ namespace Altaxo.Graph.Gdi.Shapes
     public DensityImageLegend(DensityImageLegend from)
       : base(from)  // all is done here, since CopyFrom is virtual!
     {
+      CopyFrom(from, false);
+    }
+
+    [MemberNotNull(nameof(_cachedArea), nameof(_axisStyles), nameof(_plotItemProxy))]
+    protected void CopyFrom(DensityImageLegend from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      _cachedArea = new DensityLegendArea(from._cachedArea) { ParentObject = this };
+
+      ChildCloneToMember(ref _axisStyles, from._axisStyles);
+      _axisStyles.UpdateCoordinateSystem(_cachedArea.CoordinateSystem);
+      _axisStyles.ParentObject = this;
+
+      _bitmap = from._bitmap is not null ? (Bitmap)from._bitmap.Clone() : null;
+
+      _plotItemProxy = new Main.RelDocNodeProxy(from._plotItemProxy, true, this);
     }
 
     public override bool CopyFrom(object obj)
     {
-      var isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (obj is DensityImageLegend from)
       {
-        var from = obj as DensityImageLegend;
-        if (null != from)
+        using (var suspendToken = SuspendGetToken())
         {
-          _cachedArea = new DensityLegendArea(from._cachedArea) { ParentObject = this };
-
-          ChildCloneToMember(ref _axisStyles, from._axisStyles);
-          _axisStyles.UpdateCoordinateSystem(_cachedArea.CoordinateSystem);
-          _axisStyles.ParentObject = this;
-
-          _bitmap = null != from._bitmap ? (Bitmap)from._bitmap.Clone() : null;
-
-          _plotItemProxy = new Main.RelDocNodeProxy(from._plotItemProxy, true, this);
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
+
+
 
     private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
     {
-      if (null != _axisStyles)
+      if (_axisStyles is not null)
         yield return new Main.DocumentNodeAndName(_axisStyles, "AxisStyles");
 
-      if (null != _cachedArea)
+      if (_cachedArea is not null)
         yield return new Main.DocumentNodeAndName(_cachedArea, "LegendArea");
 
-      if (null != _plotItemProxy)
+      if (_plotItemProxy is not null)
         yield return new Main.DocumentNodeAndName(_plotItemProxy, "PlotItem");
     }
 
@@ -223,20 +244,24 @@ namespace Altaxo.Graph.Gdi.Shapes
       return new DensityImageLegend(this);
     }
 
-    private DensityImagePlotItem PlotItem
+    private DensityImagePlotItem? PlotItem
     {
       get
       {
-        return null == _plotItemProxy ? null : _plotItemProxy.Document as DensityImagePlotItem;
+        return _plotItemProxy is null ? null : _plotItemProxy.Document as DensityImagePlotItem;
       }
+      [MemberNotNull(nameof(_plotItemProxy))]
       set
       {
         if (object.ReferenceEquals(PlotItem, value))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
           return;
-        if (null == value)
-          throw new ArgumentNullException("value");
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
-        if (null != _plotItemProxy)
+        if (value is null)
+          throw new ArgumentNullException(nameof(PlotItem));
+
+        if (_plotItemProxy is not null)
         {
           _plotItemProxy.Document = value;
         }
@@ -338,14 +363,14 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       base.FixupInternalDataStructures();
 
-      if (null == _cachedArea)
+      if (_cachedArea is null)
         return;
 
-      if (null == PlotItem)
+      if (PlotItem is null)
       {
         // search for the first density plot item in the layer
         var layer = Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
-        if (null != layer)
+        if (layer is not null)
         {
           foreach (var item in layer.PlotItems)
           {
@@ -372,7 +397,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public override void Paint(System.Drawing.Graphics g, IPaintContext paintContext)
     {
-      if (null == _cachedArea)
+      if (_cachedArea is null)
         return;
 
       bool orientationIsVertical = IsOrientationVertical;
@@ -381,9 +406,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       int pixelH = orientationIsVertical ? _bitmapPixelsAcross : _bitmapPixelsAlong;
       int pixelV = orientationIsVertical ? _bitmapPixelsAlong : _bitmapPixelsAcross;
 
-      if (null == _bitmap || _bitmap.Width != pixelH || _bitmap.Height != pixelV)
+      if (_bitmap is null || _bitmap.Width != pixelH || _bitmap.Height != pixelV)
       {
-        if (null != _bitmap)
+        if (_bitmap is not null)
           _bitmap.Dispose();
 
         _bitmap = new Bitmap(pixelH, pixelV, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
@@ -394,7 +419,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       NumericalScale originalZScale;
       Plot.IColorProvider colorProvider;
 
-      if (null != PlotItem)
+      if (PlotItem is not null)
       {
         porg = PlotItem.Style.Scale.OrgAsVariant;
         pend = PlotItem.Style.Scale.EndAsVariant;
@@ -465,14 +490,14 @@ namespace Altaxo.Graph.Gdi.Shapes
       return false;
     }
 
-    public override IHitTestObject HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData htd)
     {
       var myHitTestData = htd.NewFromAdditionalTransformation(_transformation);
 
-      IHitTestObject result = null;
+      IHitTestObject? result = null;
       foreach (var axstyle in _axisStyles)
       {
-        if (null != axstyle.Title && null != (result = axstyle.Title.HitTest(myHitTestData)))
+        if (axstyle.Title is not null && (result = axstyle.Title.HitTest(myHitTestData)) is not null)
         {
           result.Remove = EhAxisTitleRemove;
           result.Transform(_transformation);
@@ -481,7 +506,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
 
       result = base.HitTest(htd);
-      if (result != null)
+      if (result is not null)
         result.DoubleClick = EhDoubleClick;
 
       return result;
@@ -497,7 +522,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private void UpdateIfPlotItemChanged()
     {
-      if (null == PlotItem)
+      if (PlotItem is null)
         return;
 
       // Test whether the scale type is still the same than the scale of the plot item
@@ -524,7 +549,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, _plotItemProxy))
       {
@@ -571,10 +596,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
       {
-        if (null != _scales)
+        if (_scales is not null)
           yield return new Main.DocumentNodeAndName(_scales, "Scales");
 
-        if (null != _coordinateSystem)
+        if (_coordinateSystem is not null)
           yield return new Main.DocumentNodeAndName(_coordinateSystem, "CoordinateSystem");
       }
 

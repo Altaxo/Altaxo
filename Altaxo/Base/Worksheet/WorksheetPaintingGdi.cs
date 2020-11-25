@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -81,12 +82,12 @@ namespace Altaxo.Worksheet
       int firstPropertyColumnToDraw = WA.GetFirstVisiblePropertyColumn(clipRectangle.Top, layout, vertScrollPos);
       int numberOfPropertyColumnsToDraw = WA.GetVisiblePropertyColumns(clipRectangle.Top, clipRectangle.Bottom, layout, vertScrollPos);
 
-      bool bAreColumnsSelected = selectedDataColumns.Count > 0;
+      bool areColumnsSelected = selectedDataColumns.Count > 0;
       bool bAreRowsSelected = selectedDataRows.Count > 0;
-      bool bAreCellsSelected = bAreRowsSelected || bAreColumnsSelected;
+      bool bAreCellsSelected = bAreRowsSelected || areColumnsSelected;
 
       bool bArePropertyColsSelected = selectedPropertyColumns.Count > 0;
-      bool bArePropertyRowsSelected = selectedPropertyRows.Count > 0;
+      bool arePropertyRowsSelected = selectedPropertyRows.Count > 0;
       bool bArePropertyCellsSelected = ArePropertyCellsSelected(dataTable, selectedPropertyColumns, selectedPropertyRows);
 
       int yShift = 0;
@@ -161,8 +162,8 @@ namespace Altaxo.Worksheet
               cellRectangle.Width = layout.DataColumnStyles[dataTable.DataColumns[nCol]].WidthD;
             }
 
-            bool bPropRowSelected = bArePropertyRowsSelected && selectedPropertyRows.Contains(nCol);
-            bool bPropRowIncluded = bArePropertyRowsSelected ? bPropRowSelected : true;
+            bool bPropRowSelected = arePropertyRowsSelected && selectedPropertyRows.Contains(nCol);
+            bool bPropRowIncluded = arePropertyRowsSelected ? bPropRowSelected : true;
 
             cs.Paint(dc, (Rectangle)cellRectangle, nCol, dataTable.PropCols[nPropCol], bArePropertyCellsSelected && bPropColIncluded && bPropRowIncluded);
           }
@@ -184,15 +185,15 @@ namespace Altaxo.Worksheet
             cellRectangle.Width = cs.WidthD;
           }
 
-          bool bColumnSelected = bAreColumnsSelected && selectedDataColumns.Contains(nCol);
-          bool bDataColumnIncluded = bAreColumnsSelected ? bColumnSelected : true;
-          bool bPropertyRowSelected = bArePropertyRowsSelected && selectedPropertyRows.Contains(nCol);
+          bool isColumnSelected = areColumnsSelected && selectedDataColumns.Contains(nCol);
+          bool isDataColumnIncluded = areColumnsSelected ? isColumnSelected : true;
+          bool isPropertyRowSelected = arePropertyRowsSelected && selectedPropertyRows.Contains(nCol);
 
           if (bDrawColumnHeader) // must the column Header been drawn?
           {
             cellRectangle.Height = layout.ColumnHeaderStyle.Height;
             cellRectangle.Y = 0;
-            layout.ColumnHeaderStyle.Paint(dc, (Rectangle)cellRectangle, 0, dataTable[nCol], bColumnSelected || bPropertyRowSelected);
+            layout.ColumnHeaderStyle.Paint(dc, (Rectangle)cellRectangle, 0, dataTable[nCol], isColumnSelected || isPropertyRowSelected);
           }
 
           yShift = WA.GetTopCoordinateOfTableRow(firstTableRowToDraw, layout, vertScrollPos);
@@ -202,7 +203,7 @@ namespace Altaxo.Worksheet
             bool bRowSelected = bAreRowsSelected && selectedDataRows.Contains(nRow);
             bool bDataRowIncluded = bAreRowsSelected ? bRowSelected : true;
             cellRectangle.Y = yShift + nIncRow * layout.RowHeaderStyle.Height;
-            cs.Paint(dc, (Rectangle)cellRectangle, nRow, dataTable[nCol], bAreCellsSelected && bDataColumnIncluded && bDataRowIncluded);
+            cs.Paint(dc, (Rectangle)cellRectangle, nRow, dataTable[nCol], bAreCellsSelected && isDataColumnIncluded && bDataRowIncluded);
           }
         }
       }

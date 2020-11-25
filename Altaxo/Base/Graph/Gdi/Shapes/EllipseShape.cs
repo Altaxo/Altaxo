@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -40,13 +41,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (EllipseShape)obj;
-        info.AddBaseValueEmbedded(s, typeof(EllipseShape).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(EllipseShape).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        EllipseShape s = null != o ? (EllipseShape)o : new EllipseShape(info);
-        info.GetBaseValueEmbedded(s, typeof(EllipseShape).BaseType, parent);
+        var s = (EllipseShape?)o ?? new EllipseShape(info);
+        info.GetBaseValueEmbedded(s, typeof(EllipseShape).BaseType!, parent);
 
         return s;
       }
@@ -68,8 +69,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public EllipseShape(EllipseShape from)
       :
-      base(from) // all is done here, since CopyFrom is virtual!
+      base(from)
     {
+      // No extra members to copy here!
     }
 
     #endregion Constructors

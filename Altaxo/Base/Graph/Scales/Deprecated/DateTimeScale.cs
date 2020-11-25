@@ -22,11 +22,13 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Deprecated
 {
+  using System.Diagnostics.CodeAnalysis;
   using Boundaries;
   using Rescaling;
 
@@ -70,20 +72,9 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.AddValue("Rescaling", s._rescaling);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        DateTimeScale s = SDeserialize(o, info, parent);
-        OnAfterDeserialization(s);
-        return s;
-      }
-
-      public virtual void OnAfterDeserialization(DateTimeScale s)
-      {
-      }
-
-      protected virtual DateTimeScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        DateTimeScale s = null != o ? (DateTimeScale)o : new DateTimeScale();
+        var s = (DateTimeScale?)o ?? new DateTimeScale();
 
         s._axisOrg = info.GetDateTime("Org");
         s._axisEnd = info.GetDateTime("End");
@@ -91,8 +82,8 @@ namespace Altaxo.Graph.Scales.Deprecated
         TimeSpan span = info.GetTimeSpan("MajorSpanValue");
         s._majorSpan = new SpanCompound(spanUnit, span);
         s._minorTicks = info.GetInt32("MinorTicks");
-        s.InternalSetDataBounds((FiniteDateTimeBoundaries)info.GetValue("Bounds", s));
-        s.InternalSetRescaling((DateTimeScaleRescaleConditions)info.GetValue("Rescaling", s));
+        s.ChildSetMember(ref s._dataBounds, (FiniteDateTimeBoundaries)info.GetValue("Bounds", s));
+        s.ChildSetMember(ref s._rescaling, (DateTimeScaleRescaleConditions)info.GetValue("Rescaling", s));
 
         return s;
       }
@@ -102,21 +93,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     #region ICloneable Members
 
-    public void CopyFrom(DateTimeScale from)
-    {
-      if (object.ReferenceEquals(this, from))
-        return;
 
-      IsLinked = from.IsLinked;
-
-      _axisOrg = from._axisOrg;
-      _axisEnd = from._axisEnd;
-      _majorSpan = from._majorSpan;
-      _minorTicks = from._minorTicks;
-
-      InternalSetDataBounds((FiniteDateTimeBoundaries)from._dataBounds.Clone());
-      InternalSetRescaling((DateTimeScaleRescaleConditions)from._rescaling.Clone());
-    }
 
     public DateTimeScale(DateTimeScale from)
     {
@@ -125,8 +102,27 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public DateTimeScale()
     {
-      InternalSetDataBounds(new FiniteDateTimeBoundaries());
-      InternalSetRescaling(new DateTimeScaleRescaleConditions());
+      ChildSetMember(ref _dataBounds, new FiniteDateTimeBoundaries());
+      ChildSetMember(ref _rescaling, new DateTimeScaleRescaleConditions());
+    }
+
+    [MemberNotNull(nameof(_dataBounds), nameof(_rescaling))]
+    public void CopyFrom(DateTimeScale from)
+    {
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+        return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+
+      IsLinked = from.IsLinked;
+
+      _axisOrg = from._axisOrg;
+      _axisEnd = from._axisEnd;
+      _majorSpan = from._majorSpan;
+      _minorTicks = from._minorTicks;
+
+      ChildCloneToMember(ref _dataBounds, from._dataBounds);
+      ChildCloneToMember(ref _rescaling, from._rescaling);
     }
 
     /// <summary>
@@ -142,25 +138,10 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataBounds)
+      if (_dataBounds is not null)
         yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
-      if (null != _rescaling)
+      if (_rescaling is not null)
         yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
-    }
-
-    protected void InternalSetDataBounds(FiniteDateTimeBoundaries bounds)
-    {
-      if (_dataBounds != null)
-      {
-        _dataBounds = null;
-      }
-      _dataBounds = bounds;
-      _dataBounds.ParentObject = this;
-    }
-
-    protected void InternalSetRescaling(DateTimeScaleRescaleConditions rescaling)
-    {
-      _rescaling = rescaling;
     }
 
     /// <summary>
@@ -477,7 +458,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public override void ProcessDataBounds()
     {
-      if (null == _dataBounds || _dataBounds.IsEmpty)
+      if (_dataBounds is null || _dataBounds.IsEmpty)
         SetDefaultAxisValues();
       else
         ProcessDataBounds(_dataBounds.LowerBound, _dataBounds.UpperBound, _rescaling);

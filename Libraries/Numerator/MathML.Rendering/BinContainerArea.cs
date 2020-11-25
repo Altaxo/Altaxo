@@ -90,7 +90,7 @@ namespace MathML.Rendering
 		public override Area Fit(BoundingBox box)
 		{
 			BinContainerArea area = (BinContainerArea)Clone();
-			Debug.Assert(area != null, "result of Clone() is null in BinContainerArea.Fit");
+			Debug.Assert(area is not null, "result of Clone() is null in BinContainerArea.Fit");
 			area.child = child.Fit(box);
 			area.source = this;
 			return area;

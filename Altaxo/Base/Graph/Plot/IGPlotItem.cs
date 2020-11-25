@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,9 +60,9 @@ namespace Altaxo.Graph.Plot
     /// Gets an object that holds the data used for plotting. If not applicable for this kind of plot item, null is returned.
     /// </summary>
     /// <value>
-    /// The object that holds the data used for plotting.
+    /// The object that holds the data used for plotting; or null if not applicable.
     /// </value>
-    IDocumentLeafNode DataObject { get; }
+    IDocumentLeafNode? DataObject { get; }
 
     /// <summary>
     /// Gets an object that holds the style(s) used for plotting. If not applicable for this kind of plot item, null is returned.
@@ -69,6 +70,6 @@ namespace Altaxo.Graph.Plot
     /// <value>
     /// The object that holds the style(s) used for plotting.
     /// </value>
-    IDocumentLeafNode StyleObject { get; }
+    IDocumentLeafNode? StyleObject { get; }
   }
 }

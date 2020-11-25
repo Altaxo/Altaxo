@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,9 +55,9 @@ namespace Altaxo.Geometry
         info.AddValue("SizeZ", s._sizeZ);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        RectangleD3D s = null != o ? (RectangleD3D)o : new RectangleD3D();
+        var s = (RectangleD3D?)o ?? new RectangleD3D();
         s._x = info.GetDouble("X");
         s._y = info.GetDouble("Y");
         s._z = info.GetDouble("Z");
@@ -289,17 +290,9 @@ namespace Altaxo.Geometry
       return _x.GetHashCode() + _y.GetHashCode() + _z.GetHashCode() + _sizeX.GetHashCode() + _sizeY.GetHashCode() + _sizeZ.GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (obj is RectangleD3D)
-      {
-        var q = (RectangleD3D)obj;
-        return _x == q._x && _y == q._y && _z == q._z && _sizeX == q._sizeX && _sizeY == q._sizeY && _sizeZ == q._sizeZ;
-      }
-      else
-      {
-        return false;
-      }
+      return obj is RectangleD3D q && _x == q._x && _y == q._y && _z == q._z && _sizeX == q._sizeX && _sizeY == q._sizeY && _sizeZ == q._sizeZ;
     }
 
     public override string ToString()

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,9 +78,9 @@ namespace Altaxo.Graph.Graph3D.CS
         info.AddValue("XYInterchanged", s._isXYInterchanged);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (G3DCartesicCoordinateSystem)o ?? new G3DCartesicCoordinateSystem();
+        var s = (G3DCartesicCoordinateSystem?)o ?? new G3DCartesicCoordinateSystem();
 
         s._isXreversed = info.GetBoolean("XReverse");
         s._isYreversed = info.GetBoolean("YReverse");
@@ -98,13 +99,16 @@ namespace Altaxo.Graph.Graph3D.CS
 
     private class ComparerForStaticDictionary : IEqualityComparer<G3DCartesicCoordinateSystem>
     {
-      public bool Equals(G3DCartesicCoordinateSystem x, G3DCartesicCoordinateSystem y)
+      public bool Equals(G3DCartesicCoordinateSystem? x, G3DCartesicCoordinateSystem? y)
       {
-        return
+        return (x is null && y is null) ||
+          (
+          x is not null && y is not null &&
           x._isXYInterchanged == y._isXYInterchanged &&
           x._isXreversed == y._isXreversed &&
           x._isYreversed == y._isYreversed &&
-          x._isZreversed == y._isZreversed;
+          x._isZreversed == y._isZreversed
+          );
       }
 
       public int GetHashCode(G3DCartesicCoordinateSystem obj)
@@ -871,7 +875,7 @@ namespace Altaxo.Graph.Graph3D.CS
     /// <param name="newCoordinateSystem">The new coordinate system.</param>
     /// <returns>The new line identifier, that refers to the same location in the new coordinate systems as the old line identifer referes in the old coordinate system. If no such
     /// identifer could be found, null is returned.</returns>
-    public static CSLineID FindCorrespondingCSLineIDWhenChangingCoordinateSystem(G3DCartesicCoordinateSystem oldCoordinateSystem, CSLineID oldLineID, G3DCartesicCoordinateSystem newCoordinateSystem)
+    public static CSLineID? FindCorrespondingCSLineIDWhenChangingCoordinateSystem(G3DCartesicCoordinateSystem oldCoordinateSystem, CSLineID oldLineID, G3DCartesicCoordinateSystem newCoordinateSystem)
     {
       var oldAxisLineVector = oldCoordinateSystem.GetTransformedAxisLineVector(oldLineID);
 

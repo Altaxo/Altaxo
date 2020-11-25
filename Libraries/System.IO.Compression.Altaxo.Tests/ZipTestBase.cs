@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 
 namespace System.IO.Compression
 {
@@ -22,13 +22,13 @@ namespace System.IO.Compression
             var entry1 = zip1Archive.GetEntry(TestEntryName(i));
             var entry2 = zip2Archive.GetEntry(TestEntryName(i));
 
-            Assert.AreEqual(entry1.CompressedLength, entry2.CompressedLength);
-            Assert.AreEqual(entry1.Length, entry2.Length);
-            Assert.AreEqual(entry1.ExternalAttributes, entry2.ExternalAttributes);
+            Assert.Equal(entry1.CompressedLength, entry2.CompressedLength);
+            Assert.Equal(entry1.Length, entry2.Length);
+            Assert.Equal(entry1.ExternalAttributes, entry2.ExternalAttributes);
 
-            Assert.AreEqual(entry1.LastWriteTime, entry2.LastWriteTime);
-            Assert.AreEqual(entry1.Name, entry2.Name);
-            Assert.AreEqual(entry1.FullName, entry2.FullName);
+            Assert.Equal(entry1.LastWriteTime, entry2.LastWriteTime);
+            Assert.Equal(entry1.Name, entry2.Name);
+            Assert.Equal(entry1.FullName, entry2.FullName);
 
             var buffer1 = new byte[4096];
             var buffer2 = new byte[4096];
@@ -41,10 +41,10 @@ namespace System.IO.Compression
                   var rd1 = s1.Read(buffer1, 0, buffer1.Length);
                   var rd2 = s2.Read(buffer2, 0, buffer2.Length);
 
-                  Assert.AreEqual(rd1, rd2);
+                  Assert.Equal(rd1, rd2);
 
                   for (int k = 0; k < rd1; ++k)
-                    Assert.AreEqual(buffer1[k], buffer2[k]);
+                    Assert.Equal(buffer1[k], buffer2[k]);
 
 
                   if (0 == rd1)
@@ -117,13 +117,13 @@ namespace System.IO.Compression
             var entry1 = zip1Archive.GetEntry(TestEntryName(i));
             var entry2 = zip2Archive.GetEntry(TestEntryName(i));
 
-            Assert.AreEqual(entry1.CompressedLength, entry2.CompressedLength);
-            Assert.AreEqual(entry1.Length, entry2.Length);
-            Assert.AreEqual(entry1.ExternalAttributes, entry2.ExternalAttributes);
+            Assert.Equal(entry1.CompressedLength, entry2.CompressedLength);
+            Assert.Equal(entry1.Length, entry2.Length);
+            Assert.Equal(entry1.ExternalAttributes, entry2.ExternalAttributes);
 
-            Assert.AreEqual(entry1.LastWriteTime, entry2.LastWriteTime);
-            Assert.AreEqual(entry1.Name, entry2.Name);
-            Assert.AreEqual(entry1.FullName, entry2.FullName);
+            Assert.Equal(entry1.LastWriteTime, entry2.LastWriteTime);
+            Assert.Equal(entry1.Name, entry2.Name);
+            Assert.Equal(entry1.FullName, entry2.FullName);
 
 
             var buffer1 = new byte[4096];
@@ -137,10 +137,10 @@ namespace System.IO.Compression
                   var rd1 = s1.Read(buffer1, 0, buffer1.Length);
                   var rd2 = s2.Read(buffer2, 0, buffer2.Length);
 
-                  Assert.AreEqual(rd1, rd2);
+                  Assert.Equal(rd1, rd2);
 
                   for (int k = 0; k < rd1; ++k)
-                    Assert.AreEqual(buffer1[k], buffer2[k]);
+                    Assert.Equal(buffer1[k], buffer2[k]);
 
 
                   if (0 == rd1)
@@ -149,7 +149,7 @@ namespace System.IO.Compression
               }
             }
 
-            Assert.AreEqual(entry1.Crc32, entry2.Crc32);
+            Assert.Equal(entry1.Crc32, entry2.Crc32);
 
 
 
@@ -165,7 +165,7 @@ namespace System.IO.Compression
     {
       var length1 = new FileInfo(zipFile1Name).Length;
       var length2 = new FileInfo(zipFile2Name).Length;
-      Assert.AreEqual(length2, length1);
+      Assert.Equal(length2, length1);
 
       var content1 = new byte[length1];
       var content2 = new byte[length2];
@@ -180,7 +180,7 @@ namespace System.IO.Compression
       }
       for (int i = 0; i < length1; ++i)
       {
-        Assert.AreEqual(content2[i], content1[i], $"Content differs at {i}");
+        Assert.True(content2[i] == content1[i], $"Content differs at {i}");
       }
     }
   }

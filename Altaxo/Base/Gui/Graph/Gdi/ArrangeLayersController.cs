@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using Altaxo.Graph.Gdi;
 using Altaxo.Serialization;
@@ -90,7 +91,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private void Initialize()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.InitializeRowsColumns(_tempDoc.NumberOfRows, _tempDoc.NumberOfColumns);
         _view.InitializeSpacing(_tempDoc.RowSpacing * 100, _tempDoc.ColumnSpacing * 100);
@@ -102,7 +103,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private void SetEnableConditions()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         // Note: the concept was not acceptable since the user can not hopp with the mouse
         // into the ColumnSpacing or RowSpacing edit boxes because they are disabled
@@ -233,14 +234,14 @@ namespace Altaxo.Gui.Graph.Gdi
       get { return _view; }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = null;
 
         _view = value as IArrangeLayersView;
 
         Initialize();
 
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = this;
       }
     }

@@ -194,7 +194,7 @@ namespace Altaxo.CodeEditing.QuickInfo
           return linkedToken;
         }
       }
-      catch (Exception e)
+      catch (Exception)
       {
         // We are seeing linked files with different spans cause FindToken to crash.
         // Capturing more information for https://devdiv.visualstudio.com/DevDiv/_workitems?id=209299

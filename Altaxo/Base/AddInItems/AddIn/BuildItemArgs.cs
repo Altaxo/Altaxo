@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,27 +28,27 @@ namespace Altaxo.AddInItems
   /// </summary>
   public class BuildItemArgs
   {
-    private object parameter;
-    private Codon codon;
-    private IReadOnlyCollection<ICondition> conditions;
-    private AddInTreeNode subItemNode;
+    private object? _parameter;
+    private Codon _codon;
+    private IReadOnlyCollection<ICondition> _conditions;
+    private AddInTreeNode? _subItemNode;
 
-    public BuildItemArgs(object parameter, Codon codon, IReadOnlyCollection<ICondition> conditions, AddInTreeNode subItemNode)
+    public BuildItemArgs(object? parameter, Codon codon, IReadOnlyCollection<ICondition> conditions, AddInTreeNode? subItemNode)
     {
-      if (codon == null)
-        throw new ArgumentNullException("codon");
-      this.parameter = parameter;
-      this.codon = codon;
-      this.conditions = conditions;
-      this.subItemNode = subItemNode;
+      if (codon is null)
+        throw new ArgumentNullException(nameof(codon));
+      this._parameter = parameter;
+      this._codon = codon;
+      this._conditions = conditions;
+      this._subItemNode = subItemNode;
     }
 
     /// <summary>
     /// The parameter passed to <see cref="IAddInTree.BuildItem(string,object)"/>.
     /// </summary>
-    public object Parameter
+    public object? Parameter
     {
-      get { return parameter; }
+      get { return _parameter; }
     }
 
     /// <summary>
@@ -55,7 +56,7 @@ namespace Altaxo.AddInItems
     /// </summary>
     public Codon Codon
     {
-      get { return codon; }
+      get { return _codon; }
     }
 
     /// <summary>
@@ -63,7 +64,7 @@ namespace Altaxo.AddInItems
     /// </summary>
     public AddIn AddIn
     {
-      get { return codon.AddIn; }
+      get { return _codon.AddIn; }
     }
 
     /// <summary>
@@ -71,7 +72,7 @@ namespace Altaxo.AddInItems
     /// </summary>
     public IAddInTree AddInTree
     {
-      get { return codon.AddIn.AddInTree; }
+      get { return _codon.AddIn.AddInTree; }
     }
 
     /// <summary>
@@ -79,16 +80,16 @@ namespace Altaxo.AddInItems
     /// </summary>
     public IReadOnlyCollection<ICondition> Conditions
     {
-      get { return conditions; }
+      get { return _conditions; }
     }
 
     /// <summary>
     /// The addin tree node containing the sub-items.
     /// Returns null if no sub-items exist.
     /// </summary>
-    public AddInTreeNode SubItemNode
+    public AddInTreeNode? SubItemNode
     {
-      get { return subItemNode; }
+      get { return _subItemNode; }
     }
 
     /// <summary>
@@ -97,10 +98,10 @@ namespace Altaxo.AddInItems
     /// </summary>
     public List<T> BuildSubItems<T>()
     {
-      if (subItemNode == null)
+      if (_subItemNode is null)
         return new List<T>();
       else
-        return subItemNode.BuildChildItems<T>(parameter, conditions);
+        return _subItemNode.BuildChildItems<T>(_parameter, _conditions);
     }
   }
 }

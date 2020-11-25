@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -55,7 +56,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
         SerializeV0((IScatterSymbol)obj, info);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return DeserializeV0(Instance, info, parent);
       }
@@ -68,7 +69,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
       var radius = symbolSize / 2;
       var buffers = g.GetPositionNormalIndexedTriangleBuffer(material);
 
-      if (null != buffers.PositionNormalIndexedTriangleBuffer)
+      if (buffers.PositionNormalIndexedTriangleBuffer is not null)
       {
         var buffer = buffers.PositionNormalIndexedTriangleBuffer;
         var offs = buffer.VertexCount;

@@ -330,7 +330,7 @@ namespace Altaxo.CodeEditing
           {
             syntaxTree = document.GetSyntaxTreeAsync(token).Result;
           }
-          catch (Exception ex)
+          catch (Exception)
           {
             return;
           }
@@ -349,7 +349,7 @@ namespace Altaxo.CodeEditing
           {
             semanticModel = document.GetSemanticModelAsync(token).Result;
           }
-          catch (Exception ex)
+          catch (Exception)
           {
             return;
           }

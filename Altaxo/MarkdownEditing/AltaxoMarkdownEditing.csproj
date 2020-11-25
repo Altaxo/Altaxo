@@ -1,10 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net48;net5.0-windows</TargetFrameworks>
+    <LangVersion>preview</LangVersion>
+    <nullable>enable</nullable>
     <UseWPF>true</UseWPF>
-    <LangVersion>latest</LangVersion>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <NoWarn>CA1416</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
@@ -13,6 +15,7 @@
     <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj" />
     <ProjectReference Include="..\..\Libraries\Markdig\Markdig.csproj" />
     <ProjectReference Include="..\..\Libraries\Markdig.Wpf\Markdig.Wpf.csproj" />
+    <ProjectReference Include="..\Core\AltaxoCore.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">

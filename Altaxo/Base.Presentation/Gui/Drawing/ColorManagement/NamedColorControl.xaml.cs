@@ -45,7 +45,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
   /// </summary>
   public partial class NamedColorControl : UserControl, INamedColorView
   {
-    public event Action<object> SubViewChanged;
+    public event Action<object>? SubViewChanged;
 
     public NamedColorControl()
     {

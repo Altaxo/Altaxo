@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -53,9 +54,9 @@ namespace Altaxo.Worksheet
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        WorksheetLayoutCollection s = null != o ? (WorksheetLayoutCollection)o : new WorksheetLayoutCollection();
+        WorksheetLayoutCollection s = (WorksheetLayoutCollection?)o ?? new WorksheetLayoutCollection();
 
         int count;
         count = info.OpenArray(); // TableLayouts
@@ -94,7 +95,7 @@ namespace Altaxo.Worksheet
       get { return _items[guidAsString]; }
     }
 
-    private void EhChildNodeTunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
+    private void EhChildNodeTunneledEvent(object? sender, object source, Main.TunnelingEventArgs e)
     {
       if (e is Main.DisposeEventArgs && source is WorksheetLayout)
       {
@@ -105,7 +106,7 @@ namespace Altaxo.Worksheet
 
     #region IDocumentNode Members
 
-    public override Main.IDocumentNode ParentObject
+    public override Main.IDocumentNode? ParentObject
     {
       get
       {
@@ -113,7 +114,7 @@ namespace Altaxo.Worksheet
       }
       set
       {
-        if (null != value)
+        if (value is not null)
           throw new InvalidOperationException("ParentObject of this instance is fixed and cannot be set");
 
         base.ParentObject = value; // allow set to null because Dispose requires it
@@ -129,12 +130,12 @@ namespace Altaxo.Worksheet
       return this[name];
     }
 
-    public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
+    public override string? GetNameOfChildObject(Main.IDocumentLeafNode o)
     {
       var layout = o as WorksheetLayout;
-      if (layout == null)
+      if (layout is null)
         return null;
-      if (null == this[layout.Guid])
+      if (this[layout.Guid] is null)
         return null; // is not contained in this collection
       return layout.Guid.ToString();
     }
@@ -150,12 +151,12 @@ namespace Altaxo.Worksheet
       if (isDisposing)
       {
         var items = _items;
-        if (null != items)
+        if (items is not null)
         {
           _items = new Dictionary<string, WorksheetLayout>();
           foreach (var entry in items)
           {
-            if (null != entry.Value)
+            if (entry.Value is not null)
               entry.Value.Dispose();
           }
         }
@@ -172,12 +173,12 @@ namespace Altaxo.Worksheet
 
     public void Add(WorksheetLayout layout)
     {
-      if (null == layout)
+      if (layout is null)
         throw new ArgumentNullException("layout");
 
       // Test if this Guid is already present
       _items.TryGetValue(layout.Guid.ToString(), out var o);
-      if (o != null)
+      if (o is not null)
       {
         if (object.ReferenceEquals(o, layout))
           return;

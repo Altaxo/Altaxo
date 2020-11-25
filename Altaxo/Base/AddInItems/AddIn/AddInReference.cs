@@ -16,9 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Altaxo.Main.Services;
 
@@ -29,16 +31,19 @@ namespace Altaxo.AddInItems
   /// </summary>
   public class AddInReference : ICloneable
   {
-    private string name;
-    private Version minimumVersion;
-    private Version maximumVersion;
-    private bool requirePreload;
+    private string _name;
+    private Version _minimumVersion;
+    private Version _maximumVersion;
+    private bool _requirePreload;
+
+    private static Version? _entryVersion;
+
 
     public Version MinimumVersion
     {
       get
       {
-        return minimumVersion;
+        return _minimumVersion;
       }
     }
 
@@ -46,38 +51,39 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return maximumVersion;
+        return _maximumVersion;
       }
     }
 
     public bool RequirePreload
     {
-      get { return requirePreload; }
+      get { return _requirePreload; }
     }
 
     public string Name
     {
       get
       {
-        return name;
+        return _name;
       }
+      [MemberNotNull(nameof(_name))]
       set
       {
-        if (value == null)
+        if (value is null)
           throw new ArgumentNullException("name");
         if (value.Length == 0)
           throw new ArgumentException("name cannot be an empty string", "name");
-        name = value;
+        _name = value;
       }
     }
 
     /// <returns>Returns true when the reference is valid.</returns>
-    public bool Check(Dictionary<string, Version> addIns, out Version versionFound)
+    public bool Check(Dictionary<string, Version> addIns, out Version? versionFound)
     {
-      if (addIns.TryGetValue(name, out versionFound))
+      if (addIns.TryGetValue(_name, out versionFound))
       {
-        return CompareVersion(versionFound, minimumVersion) >= 0
-          && CompareVersion(versionFound, maximumVersion) <= 0;
+        return CompareVersion(versionFound, _minimumVersion) >= 0
+          && CompareVersion(versionFound, _maximumVersion) <= 0;
       }
       else
       {
@@ -114,21 +120,21 @@ namespace Altaxo.AddInItems
       return 0;
     }
 
-    public static AddInReference Create(Properties properties, string hintPath)
+    public static AddInReference Create(Properties properties, string? hintPath)
     {
       var reference = new AddInReference(properties["addin"]);
       string version = properties["version"];
-      if (version != null && version.Length > 0)
+      if (version is not null && version.Length > 0)
       {
         int pos = version.IndexOf('-');
         if (pos > 0)
         {
-          reference.minimumVersion = ParseVersion(version.Substring(0, pos), hintPath);
-          reference.maximumVersion = ParseVersion(version.Substring(pos + 1), hintPath);
+          reference._minimumVersion = ParseVersion(version.Substring(0, pos), hintPath);
+          reference._maximumVersion = ParseVersion(version.Substring(pos + 1), hintPath);
         }
         else
         {
-          reference.maximumVersion = reference.minimumVersion = ParseVersion(version, hintPath);
+          reference._maximumVersion = reference._minimumVersion = ParseVersion(version, hintPath);
         }
 
         if (reference.Name == "SharpDevelop")
@@ -136,31 +142,30 @@ namespace Altaxo.AddInItems
           // HACK: SD 4.1/4.2/4.3 AddIns work with SharpDevelop 4.4
           // Because some 4.1 AddIns restrict themselves to SD 4.1, we extend the
           // supported SD range.
-          if (reference.maximumVersion == new Version("4.1") || reference.maximumVersion == new Version("4.2") || reference.maximumVersion == new Version("4.3"))
+          if (reference._maximumVersion == new Version("4.1") || reference._maximumVersion == new Version("4.2") || reference._maximumVersion == new Version("4.3"))
           {
-            reference.maximumVersion = new Version("4.4");
+            reference._maximumVersion = new Version("4.4");
           }
         }
       }
-      reference.requirePreload = string.Equals(properties["requirePreload"], "true", StringComparison.OrdinalIgnoreCase);
+      reference._requirePreload = string.Equals(properties["requirePreload"], "true", StringComparison.OrdinalIgnoreCase);
       return reference;
     }
 
-    private static Version entryVersion;
 
-    internal static Version ParseVersion(string version, string hintPath)
+    internal static Version ParseVersion(string version, string? hintPath)
     {
-      if (version == null || version.Length == 0)
+      if (version is null || version.Length == 0)
         return new Version(0, 0, 0, 0);
       if (version.StartsWith("@"))
       {
         if (version == "@SharpDevelopCoreVersion")
         {
-          if (entryVersion == null)
-            entryVersion = new Version(RevisionClass.Major + "." + RevisionClass.Minor + "." + RevisionClass.Build + "." + RevisionClass.Revision);
-          return entryVersion;
+          if (_entryVersion is null)
+            _entryVersion = new Version(RevisionClass.Major + "." + RevisionClass.Minor + "." + RevisionClass.Build + "." + RevisionClass.Revision);
+          return _entryVersion;
         }
-        if (hintPath != null)
+        if (hintPath is not null)
         {
           string fileName = Path.Combine(hintPath, version.Substring(1));
           try
@@ -192,61 +197,61 @@ namespace Altaxo.AddInItems
     public AddInReference(string name, Version minimumVersion, Version maximumVersion)
     {
       Name = name;
-      if (minimumVersion == null)
+      if (minimumVersion is null)
         throw new ArgumentNullException("minimumVersion");
-      if (maximumVersion == null)
+      if (maximumVersion is null)
         throw new ArgumentNullException("maximumVersion");
 
-      this.minimumVersion = minimumVersion;
-      this.maximumVersion = maximumVersion;
+      this._minimumVersion = minimumVersion;
+      this._maximumVersion = maximumVersion;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (!(obj is AddInReference))
         return false;
       var b = (AddInReference)obj;
-      return name == b.name && minimumVersion == b.minimumVersion && maximumVersion == b.maximumVersion;
+      return _name == b._name && _minimumVersion == b._minimumVersion && _maximumVersion == b._maximumVersion;
     }
 
     public override int GetHashCode()
     {
-      return name.GetHashCode() ^ minimumVersion.GetHashCode() ^ maximumVersion.GetHashCode();
+      return _name.GetHashCode() ^ _minimumVersion.GetHashCode() ^ _maximumVersion.GetHashCode();
     }
 
     public override string ToString()
     {
-      if (minimumVersion.ToString() == "0.0.0.0")
+      if (_minimumVersion.ToString() == "0.0.0.0")
       {
-        if (maximumVersion.Major == int.MaxValue)
+        if (_maximumVersion.Major == int.MaxValue)
         {
-          return name;
+          return _name;
         }
         else
         {
-          return name + ", version <" + maximumVersion.ToString();
+          return _name + ", version <" + _maximumVersion.ToString();
         }
       }
       else
       {
-        if (maximumVersion.Major == int.MaxValue)
+        if (_maximumVersion.Major == int.MaxValue)
         {
-          return name + ", version >" + minimumVersion.ToString();
+          return _name + ", version >" + _minimumVersion.ToString();
         }
-        else if (minimumVersion == maximumVersion)
+        else if (_minimumVersion == _maximumVersion)
         {
-          return name + ", version " + minimumVersion.ToString();
+          return _name + ", version " + _minimumVersion.ToString();
         }
         else
         {
-          return name + ", version " + minimumVersion.ToString() + "-" + maximumVersion.ToString();
+          return _name + ", version " + _minimumVersion.ToString() + "-" + _maximumVersion.ToString();
         }
       }
     }
 
     public AddInReference Clone()
     {
-      return new AddInReference(name, minimumVersion, maximumVersion);
+      return new AddInReference(_name, _minimumVersion, _maximumVersion);
     }
 
     object ICloneable.Clone()

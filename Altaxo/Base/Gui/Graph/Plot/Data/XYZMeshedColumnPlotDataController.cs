@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,7 +55,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       {
         _dataProxyController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataTableMatrix }, typeof(IMVCANController), UseDocument.Directly);
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SetDataView(_dataProxyController.ViewObject);
       }

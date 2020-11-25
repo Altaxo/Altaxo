@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Name of the x column to use for the plot. If this member is null, the current X column of each y column to plot is used.
     /// </summary>
-    public string XCommonColumnNameForPlot { get; set; }
+    public string? XCommonColumnNameForPlot { get; set; }
 
     /// <summary>Names of the y columns to plot. For each name, the columns in all the tables where used to build a plot group of plot items, resulting in n plot groups containing m
     /// plot items, where n is the number of selected column names, and m is the number of tables.</summary>

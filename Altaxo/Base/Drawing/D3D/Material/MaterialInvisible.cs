@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace Altaxo.Drawing.D3D.Material
       {
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return MaterialInvisible.Instance;
       }
@@ -137,7 +138,7 @@ namespace Altaxo.Drawing.D3D.Material
       }
     }
 
-    public bool Equals(IMaterial other)
+    public bool Equals(IMaterial? other)
     {
       return (other is MaterialInvisible);
     }
@@ -147,7 +148,7 @@ namespace Altaxo.Drawing.D3D.Material
       return this;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       return obj is MaterialInvisible;
     }

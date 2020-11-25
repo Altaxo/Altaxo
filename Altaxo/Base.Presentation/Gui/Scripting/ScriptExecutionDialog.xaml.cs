@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +49,7 @@ namespace Altaxo.Gui.Scripting
       _controller = controller;
       InitializeComponent();
 
-      if (_controller != null && _controller.ViewObject != null)
+      if (_controller is not null && _controller.ViewObject is not null)
       {
         _gridHost.Children.Insert(0, (Control)_controller.ViewObject); // Important to insert it as first position, otherwise BackgroundCancelControl would never be visible
       }
@@ -59,7 +60,7 @@ namespace Altaxo.Gui.Scripting
       if (_backgroundCancelControl.ExecutionInProgress)
         return;
 
-      if (_controller != null)
+      if (_controller is not null)
       {
         if (_controller.Apply(true))
         {
@@ -73,7 +74,7 @@ namespace Altaxo.Gui.Scripting
       if (_backgroundCancelControl.ExecutionInProgress)
         return;
 
-      if (_controller != null)
+      if (_controller is not null)
         _controller.Compile();
     }
 
@@ -82,7 +83,7 @@ namespace Altaxo.Gui.Scripting
       if (_backgroundCancelControl.ExecutionInProgress)
         return;
 
-      if (_controller != null)
+      if (_controller is not null)
         _controller.Update();
 
       DialogResult = true;

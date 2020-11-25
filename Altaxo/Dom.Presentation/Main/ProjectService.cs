@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -46,13 +47,24 @@ namespace Altaxo.Main
   public class ProjectService : Altaxo.Dom.ProjectServiceBase, IAltaxoProjectService
   {
     /// <summary>
-    /// The currently open Altaxo project.
+    /// The currently open Altaxo project. If the application is in a transition state between two projects, an <see cref="InvalidOperationException"/> is thrown.
     /// </summary>
     public Altaxo.AltaxoDocument CurrentOpenProject
     {
       get
       {
-        return (Altaxo.AltaxoDocument)_currentProject;
+        return (Altaxo.AltaxoDocument)(_currentProject ?? throw new InvalidOperationException("No project currently available (can happen during transitions from one to another project)."));
+      }
+    }
+
+    /// <summary>
+    /// The currently open Altaxo project. If the application is in a transition state between two projects, null is returned.
+    /// </summary>
+    public Altaxo.AltaxoDocument? CurrentOpenProjectOrNull
+    {
+      get
+      {
+        return (Altaxo.AltaxoDocument?)_currentProject;
       }
     }
 
@@ -83,9 +95,13 @@ namespace Altaxo.Main
     #region Project saving
 
     /// <inheritdoc/>
-    public override IDictionary<string, IProjectItem> SaveProjectAndWindowsState(IProjectArchive archiveToSaveTo, IProjectArchive archiveToCopyFrom)
+    public override IDictionary<string, IProjectItem> SaveProjectAndWindowsState(IProjectArchive archiveToSaveTo, IProjectArchive? archiveToCopyFrom)
     {
       var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+
+      if (archiveToSaveTo is FileSystemFolderAsProjectArchive)
+        info.SetProperty(Altaxo.Serialization.Xml.XmlStreamSerializationInfo.UseXmlIndentation, "Yes");
+
       var result = CurrentOpenProject.SaveToArchive(archiveToSaveTo, info, archiveToCopyFrom);
 
       if (!Current.Dispatcher.InvokeRequired)
@@ -175,12 +191,10 @@ namespace Altaxo.Main
 
     #region Project opening
 
-
-    protected override IFileBasedProjectArchiveManager InternalCreateProjectArchiveManagerFromFileOrFolderLocation(PathName fileOrFolderName)
+    protected override IProjectArchiveManager InternalCreateProjectArchiveManagerFromFileOrFolderLocation(PathName fileOrFolderName)
     {
       var context = Current.Project.GetPropertyContext();
-
-      var storageSettings = context.GetValue(Altaxo.Serialization.StorageSettings.PropertyKeyStorageSettings);
+      var storageSettings = context.GetValue(Altaxo.Serialization.StorageSettings.PropertyKeyStorageSettings, new Serialization.StorageSettings());
 
       if (fileOrFolderName is FileName)
       {
@@ -189,8 +203,14 @@ namespace Altaxo.Main
         else
           return new ZipFileProjectArchiveManagerNative();
       }
-
-      return null;
+      else if (fileOrFolderName is DirectoryName)
+      {
+        return new FileSystemFolderProjectArchiveManager();
+      }
+      else
+      {
+        throw new NotImplementedException();
+      }
     }
 
     protected override void InternalLoadProjectAndWindowsStateFromArchive(IProjectArchive projectArchive)
@@ -199,7 +219,7 @@ namespace Altaxo.Main
 
       var oldProject = CurrentOpenProject;
 
-      if (null != oldProject)
+      if (oldProject is not null)
         OnProjectChanged(new ProjectEventArgs(oldProject, oldProject.Name, ProjectEventKind.ProjectClosing));
 
       try
@@ -213,7 +233,7 @@ namespace Altaxo.Main
 
       try
       {
-        SetCurrentProject(null, asUnnamedProject: false);
+        SetCurrentProject(new AltaxoDocument(), asUnnamedProject: false);
       }
       catch (Exception exc)
       {
@@ -221,7 +241,7 @@ namespace Altaxo.Main
       }
 
       // Old project is now closed
-      if (null != oldProject)
+      if (oldProject is not null)
         OnProjectChanged(new ProjectEventArgs(oldProject, oldProject.Name, ProjectEventKind.ProjectClosed));
 
       // Now open new project
@@ -234,7 +254,10 @@ namespace Altaxo.Main
       try
       {
         newdocument = new AltaxoDocument();
+        SetCurrentProject(newdocument, asUnnamedProject: false);
         info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
+        if (projectArchive is FileSystemFolderAsProjectArchive)
+          info.PropertyDictionary.Add(Altaxo.Serialization.Xml.XmlStreamSerializationInfo.UseXmlIndentation, new object());
       }
       catch (Exception exc)
       {
@@ -256,8 +279,6 @@ namespace Altaxo.Main
 
       try
       {
-        SetCurrentProject(newdocument, asUnnamedProject: false);
-
         RestoreWindowStateFromZippedFile(projectArchive, info, newdocument);
         info.AnnounceDeserializationEnd(newdocument, true); // Final call to deserialization end
 
@@ -286,7 +307,7 @@ namespace Altaxo.Main
     {
       var restoredDocModels = new List<(object Document, string ZipEntryName)>();
       var restoredPadModels = new List<object>();
-      Altaxo.Gui.Workbench.ViewStatesMemento selectedViewsMemento = null;
+      Altaxo.Gui.Workbench.ViewStatesMemento? selectedViewsMemento = null;
 
       foreach (var zipEntry in zipFile.Entries)
       {
@@ -308,7 +329,7 @@ namespace Altaxo.Main
             {
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("Model", null);
-              if (readedobject != null)
+              if (readedobject is not null)
               {
                 restoredPadModels.Add(readedobject);
               }
@@ -347,8 +368,8 @@ namespace Altaxo.Main
 
       foreach (var o in restoredPadModels)
       {
-        var content = (IPadContent)Current.Gui.GetControllerAndControl(new object[] { o }, typeof(IPadContent));
-        if (null != content)
+        var content = (IPadContent?)Current.Gui.GetControllerAndControl(new object[] { o }, typeof(IPadContent));
+        if (content is not null)
           Current.Workbench.ShowPad(content, false);
       }
     }
@@ -379,7 +400,7 @@ namespace Altaxo.Main
     {
       if (Current.Project.DataTableCollection.TryGetValue(tableName, out var table))
       {
-        if (null != table.TableScript)
+        if (table.TableScript is not null)
         {
           table.TableScript.Execute(table, new DummyBackgroundMonitor());
         }
@@ -399,7 +420,7 @@ namespace Altaxo.Main
     /// <inheritdoc/>
     public override bool TryOpenProjectItemFile(FileName fileName, bool forceTrialRegardlessOfExtension)
     {
-      if (null == fileName)
+      if (fileName is null)
         throw new ArgumentNullException(nameof(fileName));
 
       if (!forceTrialRegardlessOfExtension)
@@ -423,7 +444,7 @@ namespace Altaxo.Main
             info.EndReading();
             myStream.Close();
           }
-          catch (Exception ex)
+          catch (Exception)
           {
             return false;
           }
@@ -439,14 +460,18 @@ namespace Altaxo.Main
             var table = tableAndLayout.Table;
             Current.Project.AddItemWithThisOrModifiedName(table);
 
-            if (tableAndLayout.Layout != null)
+            if (tableAndLayout.Layout is not null)
+            {
               Current.Project.TableLayouts.Add(tableAndLayout.Layout);
-
-            tableAndLayout.Layout.DataTable = table; // this is the table for the layout now
+              tableAndLayout.Layout.DataTable = table; // this is the table for the layout now
+            }
 
             info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references
 
-            Current.ProjectService.CreateNewWorksheet(table, tableAndLayout.Layout);
+            if (tableAndLayout.Layout is not null)
+            {
+              Current.ProjectService.CreateNewWorksheet(table, tableAndLayout.Layout);
+            }
           }
           else
           {
@@ -482,7 +507,7 @@ namespace Altaxo.Main
       }
       else
       {
-        var projectItem = (T)System.Activator.CreateInstance(typeof(T));
+        var projectItem = (T)System.Activator.CreateInstance(typeof(T)) ?? throw new InvalidOperationException($"Unable to create type {typeof(T)} via parameterless constructor!");
         projectItem.Name = itemName;
         collection.Add(projectItem);
         return projectItem;
@@ -497,7 +522,7 @@ namespace Altaxo.Main
     /// if false, the user is ask before the document is deleted.</param>
     public override void DeleteDocument(Main.IProjectItem document, bool force)
     {
-      if (null == document)
+      if (document is null)
         throw new ArgumentNullException(nameof(document));
 
       Current.Dispatcher.InvokeIfRequired(DeleteDocument_Unsynchronized, document, force);
@@ -541,7 +566,7 @@ namespace Altaxo.Main
     /// <returns>The view content for the provided document.</returns>
     public object OpenOrCreateViewContentForDocument(IProjectItem document)
     {
-      if (null == document)
+      if (document is null)
         throw new ArgumentNullException(nameof(document));
 
       return Current.Dispatcher.InvokeIfRequired(OpenOrCreateViewContentForDocument_Unsynchronized, document);
@@ -555,7 +580,7 @@ namespace Altaxo.Main
 
       // if a content exist that show that graph, activate that content
       var foundContent = GetViewContentsForDocument(document).FirstOrDefault();
-      if (foundContent != null)
+      if (foundContent is not null)
       {
         foundContent.IsActive = true;
         foundContent.IsSelected = true;
@@ -569,7 +594,7 @@ namespace Altaxo.Main
 
     private IMVCController CreateNewViewContent_Unsynchronized(IProjectItem document)
     {
-      if (document == null)
+      if (document is null)
         throw new ArgumentNullException(nameof(document));
 
       // make sure that the item is already contained in the project
@@ -577,11 +602,11 @@ namespace Altaxo.Main
         Current.Project.AddItemWithThisOrModifiedName(document);
 
       var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(AbstractViewContent));
-      System.Reflection.ConstructorInfo cinfo = null;
-      object viewContent = null;
+      System.Reflection.ConstructorInfo? cinfo = null;
+      object? viewContent = null;
       foreach (Type type in types)
       {
-        if (null != (cinfo = type.GetConstructor(new Type[] { document.GetType() })))
+        if ((cinfo = type.GetConstructor(new Type[] { document.GetType() })) is not null)
         {
           var par = cinfo.GetParameters()[0];
           if (par.ParameterType != typeof(object)) // ignore view content which takes the most generic type
@@ -592,13 +617,13 @@ namespace Altaxo.Main
         }
       }
 
-      if (null == viewContent)
+      if (viewContent is null)
       {
         foreach (IProjectItemDisplayBindingDescriptor descriptor in AddInTree.BuildItems<IProjectItemDisplayBindingDescriptor>("/Altaxo/Workbench/ProjectItemDisplayBindings", this, false))
         {
           if (descriptor.ProjectItemType == document.GetType())
           {
-            if (null != (cinfo = descriptor.ViewContentType.GetConstructor(new Type[] { document.GetType() })))
+            if ((cinfo = descriptor.ViewContentType.GetConstructor(new Type[] { document.GetType() })) is not null)
             {
               var par = cinfo.GetParameters()[0];
               if (par.ParameterType != typeof(object)) // ignore view content which takes the most generic type
@@ -612,16 +637,15 @@ namespace Altaxo.Main
       }
 
       var controller = viewContent as IMVCController;
-
-      if (null != controller && controller.ViewObject == null)
+      if (controller is not null && controller.ViewObject is null)
       {
         Current.Gui.FindAndAttachControlTo(controller);
       }
 
-      if (null != Current.Workbench && null != viewContent)
-        Current.Workbench.ShowView(viewContent, true);
+      if (Current.Workbench is { } wb && viewContent is { } vc)
+        wb.ShowView(vc, true);
 
-      return controller;
+      return controller ?? throw new InvalidOperationException($"No controller found for project item of type {document.GetType()}");
     }
 
     #endregion IProjectItem functions
@@ -680,7 +704,7 @@ namespace Altaxo.Main
 
     private Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet_Unsynchronized(Altaxo.Data.DataTable table)
     {
-      if (table.ParentObject == null)
+      if (table.ParentObject is null)
         CurrentOpenProject.DataTableCollection.Add(table);
 
       return CreateNewWorksheet(table, CurrentOpenProject.CreateNewTableLayout(table));
@@ -710,7 +734,7 @@ namespace Altaxo.Main
       var view = new Altaxo.Gui.Worksheet.Viewing.WorksheetViewWpf();
       ctrl.ViewObject = view;
 
-      if (null != Current.Workbench)
+      if (Current.Workbench is not null)
         Current.Workbench.ShowView(ctrl, true);
 
       return ctrl;
@@ -737,7 +761,7 @@ namespace Altaxo.Main
     {
       // if a content exist that show that table, activate that content
       var foundContent = GetViewContentsForDocument(table).FirstOrDefault();
-      if (foundContent != null)
+      if (foundContent is not null)
       {
         foundContent.IsVisible = true;
         foundContent.IsActive = true;
@@ -802,19 +826,19 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="item">The item to export, for instance an item of type <see cref="Altaxo.Graph.Gdi.GraphDocument"/> or <see cref="Altaxo.Graph.Graph3D.GraphDocument"/>.</param>
     /// <returns>The image exporter class that can be used to export the item in graphical form, or null if no exporter could be found.</returns>
-    public IProjectItemImageExporter GetProjectItemImageExporter(IProjectItem item)
+    public IProjectItemImageExporter? GetProjectItemImageExporter(IProjectItem item)
     {
-      IProjectItemImageExporter result = null;
+      IProjectItemImageExporter? result = null;
 
       foreach (IProjectItemExportBindingDescriptor descriptor in AddInTree.BuildItems<IProjectItemExportBindingDescriptor>("/Altaxo/Workbench/ProjectItemExportBindings", this, false))
       {
         if (descriptor.ProjectItemType == item.GetType())
         {
-          System.Reflection.ConstructorInfo cinfo;
-          if (null != (cinfo = descriptor.GraphicalExporterType.GetConstructor(new Type[0])))
+          System.Reflection.ConstructorInfo? cinfo;
+          if ((cinfo = descriptor.GraphicalExporterType.GetConstructor(new Type[0])) is not null)
           {
             result = cinfo.Invoke(new object[0]) as IProjectItemImageExporter;
-            if (null != result)
+            if (result is not null)
               break;
           }
         }
@@ -891,7 +915,7 @@ namespace Altaxo.Main
 
     private IGraphController CreateNewGraph_Unsynchronized(Altaxo.Graph.Gdi.GraphDocument graph)
     {
-      if (graph == null)
+      if (graph is null)
         graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
           PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName), null, ProjectFolder.RootFolderName, false);
 
@@ -913,7 +937,7 @@ namespace Altaxo.Main
     {
       // if a content exist that show that graph, activate that content
       var foundContent = GetViewContentsForDocument(graph).FirstOrDefault();
-      if (foundContent != null)
+      if (foundContent is not null)
       {
         foundContent.IsActive = true;
         foundContent.IsSelected = true;
@@ -993,7 +1017,7 @@ namespace Altaxo.Main
     /// <returns>The view content for the newly created graph.</returns>
     public Altaxo.Gui.Graph.Graph3D.Viewing.IGraphController CreateNewGraph3D(Altaxo.Graph.Graph3D.GraphDocument doc)
     {
-      if (null == doc)
+      if (doc is null)
       {
         doc = Altaxo.Graph.Graph3D.Templates.TemplateWithXYZPlotLayerWithG3DCartesicCoordinateSystem.CreateGraph(
             PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName), "GRAPH", ProjectFolder.RootFolderName, false);
@@ -1015,7 +1039,7 @@ namespace Altaxo.Main
     {
       var content = Current.Workbench.ViewContentCollection.FirstOrDefault();
 
-      if (null != content)
+      if (content is not null)
       {
         content.IsActive = true;
         content.IsSelected = true;

@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace System.Diagnostics.CodeAnalysis
 {
@@ -56,6 +51,27 @@ namespace System.Diagnostics.CodeAnalysis
   {
   }
 
+  /// <summary>
+  /// Fake DisallowNull Attribute that avoids compile errors when using the .NET framework.
+  /// </summary>
+  public class DisallowNull : Attribute
+  {
+  }
+
+  /// <summary>
+  /// Fake DoesNotReturn Attribute that avoids compile errors when using the .NET framework.
+  /// </summary>
+  public class DoesNotReturn : Attribute
+  {
+  }
+
+  /// <summary>
+  /// Fake NotNull Attribute that avoids compile errors when using the .NET framework.
+  /// </summary>
+  public class NotNull : Attribute
+  {
+  }
+
   //
   [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
   public sealed class NotNullIfNotNullAttribute : Attribute
@@ -76,7 +92,10 @@ namespace System.Diagnostics.CodeAnalysis
   }
 #endif
 
-#if NETFRAMEWORK || NETCOREAPP3_1
+
+
+#if !NET5_0
+
 
   [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
   public sealed class MemberNotNullAttribute : Attribute
@@ -86,6 +105,19 @@ namespace System.Diagnostics.CodeAnalysis
     }
 
     public MemberNotNullAttribute(params string[] _)
+    {
+    }
+  }
+
+
+  [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+  public sealed class MemberNotNullWhenAttribute : Attribute
+  {
+    public MemberNotNullWhenAttribute(bool cond, string _)
+    {
+    }
+
+    public MemberNotNullWhenAttribute(bool cond, params string[] _)
     {
     }
   }

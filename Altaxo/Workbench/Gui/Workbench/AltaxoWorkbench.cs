@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Altaxo.AddInItems;
 using Altaxo.Gui.AddInItems;
@@ -86,7 +87,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// The Gui component of the status bar.
     /// </summary>
-    private object _statusBarView;
+    private object? _statusBarView;
 
     /// <summary>
     /// The pad descriptor collection. Each pad descriptor corresponds to a toolbar window in the Gui.
@@ -109,7 +110,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Deserialized layout of the docking manager.
     /// </summary>
-    private string _dockingLayoutAsString;
+    private string _dockingLayoutAsString = string.Empty;
 
     /// <summary>
     /// True if the main window is in full screen mode
@@ -121,12 +122,12 @@ namespace Altaxo.Gui.Workbench
     /// If a document is currently active, this will be equal to ActiveViewContent,
     /// if a pad has the focus, this property will return the IPadContent instance.
     /// </summary>
-    protected IWorkbenchContent _activeContent;
+    protected IWorkbenchContent? _activeContent;
 
     /// <summary>
     /// The active view content inside the active workbench window.
     /// </summary>
-    protected IViewContent _activeViewContent;
+    protected IViewContent? _activeViewContent;
 
     /// <summary>
     /// Gets whether this application is the active application in Windows.
@@ -136,18 +137,18 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// The last state of the workbench (size, position, maximized or normal) that was not a minimized state;
     /// </summary>
-    private WorkbenchState _workbenchState;
+    private WorkbenchState? _workbenchState;
 
     /// <summary>
     /// The chosen theme for the dock manager.
     /// </summary>
-    private string _dockManagerTheme;
+    private string _dockManagerTheme = string.Empty;
 
-    public event EventHandler ActiveViewContentChanged;
+    public event EventHandler? ActiveViewContentChanged;
 
-    public event EventHandler ActiveContentChanged;
+    public event EventHandler? ActiveContentChanged;
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     #region "Serialization"
 
@@ -193,10 +194,10 @@ namespace Altaxo.Gui.Workbench
         {
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = o as WorkbenchLayoutMemento ?? new WorkbenchLayoutMemento(null);
-          return o;
+          var s = (WorkbenchLayoutMemento?)o ?? new WorkbenchLayoutMemento(string.Empty);
+          return s;
         }
       }
 
@@ -214,9 +215,9 @@ namespace Altaxo.Gui.Workbench
           info.AddValue("CurrentLayoutConfiguration", s.LayoutAsString);
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
         {
-          var s = o as WorkbenchLayoutMemento ?? new WorkbenchLayoutMemento(string.Empty);
+          var s = (WorkbenchLayoutMemento?)o ?? new WorkbenchLayoutMemento(string.Empty);
           s.LayoutAsString = info.GetString("CurrentLayoutConfiguration");
           return s;
         }
@@ -248,10 +249,20 @@ namespace Altaxo.Gui.Workbench
         IsCollapsed = true;
         IsShownInTaskbar = false;
       }
+
+      Initialize(null!); // dummy call merely to see in nullability analysis if all variables are initialized
     }
 
+    [MemberNotNull(nameof(_mainWindow), nameof(_mainWindowTitle), nameof(_mainWindowIconResource), nameof(_mainMenuItemsSource),
+      nameof(_toolBarTrayItemsSource), nameof(_documentContextMenuItemsSource))]
     public void Initialize(object mainWindow)
     {
+      if (mainWindow is null)
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+        return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+
+
       var startupSettings = Current.GetRequiredService<StartupSettings>();
       string appNamePrefix = "/" + startupSettings.ApplicationName;
 
@@ -268,13 +279,13 @@ namespace Altaxo.Gui.Workbench
 
       // Initialize pads (tool windows)
       var padDescriptors = AddInTree.BuildItems<PadDescriptor>(appNamePrefix + padContentPathPostFix, this, false);
-      _padContentCollection.AddRange(padDescriptors.Select(x => x.PadContent).Where(padContent => !(padContent is null)));
+      _padContentCollection.AddRange(padDescriptors.Select(x => x.PadContent).OfType<IPadContent>());
 
       // Initialize status bar
       var statusBarService = Current.GetService<IStatusBarService>();
       if (statusBarService is IMVCController statusBarController)
       {
-        if (statusBarController.ViewObject == null)
+        if (statusBarController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(statusBarController);
         _statusBarView = statusBarController.ViewObject;
       }
@@ -326,6 +337,7 @@ namespace Altaxo.Gui.Workbench
       {
         return _mainMenuItemsSource;
       }
+      [MemberNotNull(nameof(_mainMenuItemsSource))]
       set
       {
         _mainMenuItemsSource = value;
@@ -345,6 +357,7 @@ namespace Altaxo.Gui.Workbench
       {
         return _toolBarTrayItemsSource;
       }
+      [MemberNotNull(nameof(_toolBarTrayItemsSource))]
       set
       {
         _toolBarTrayItemsSource = value;
@@ -376,6 +389,7 @@ namespace Altaxo.Gui.Workbench
       {
         return _documentContextMenuItemsSource;
       }
+      [MemberNotNull(nameof(_documentContextMenuItemsSource))]
       set
       {
         _documentContextMenuItemsSource = value;
@@ -389,7 +403,7 @@ namespace Altaxo.Gui.Workbench
     /// <value>
     /// The status bar view.
     /// </value>
-    public object StatusBarView
+    public object? StatusBarView
     {
       get
       {
@@ -411,6 +425,7 @@ namespace Altaxo.Gui.Workbench
       {
         return _mainWindowTitle;
       }
+      [MemberNotNull(nameof(_mainWindowTitle))]
       set
       {
         if (!(_mainWindowTitle == value))
@@ -427,6 +442,7 @@ namespace Altaxo.Gui.Workbench
       {
         return _mainWindowIconResource;
       }
+      [MemberNotNull(nameof(_mainWindowIconResource))]
       set
       {
         if (!(_mainWindowIconResource == value))
@@ -490,7 +506,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 
     public void RestoreWorkbenchDockingThemeFromPropertyService()
     {
-      DockManagerTheme = Current.PropertyService.GetValue(PropertyKeyWorkbenchDockingTheme, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => null);
+      DockManagerTheme = Current.PropertyService.GetValue(PropertyKeyWorkbenchDockingTheme, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
     }
 
     public string DockManagerTheme
@@ -526,6 +542,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       {
         return _dockingLayoutAsString;
       }
+      [MemberNotNull(nameof(_dockingLayoutAsString))]
       set
       {
         if (!(_dockingLayoutAsString == value))
@@ -547,9 +564,10 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       Current.PropertyService.SetValue(PropertyKeyWorkbenchDockingLayout, CurrentLayoutConfiguration);
     }
 
+    [MemberNotNull(nameof(_dockingLayoutAsString))]
     public void RestoreWorkbenchDockingLayoutFromPropertyService()
     {
-      CurrentLayoutConfiguration = Current.PropertyService.GetValue(PropertyKeyWorkbenchDockingLayout, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => null);
+      CurrentLayoutConfiguration = Current.PropertyService.GetValue(PropertyKeyWorkbenchDockingLayout, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
     }
 
     #endregion Layout configuration
@@ -581,10 +599,13 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     /// The last state of the workbench that was not a minimized state. Setting this property will update the size and state of the main
     /// workbench window via binding.
     /// </summary>
+    [MaybeNull]
     public WorkbenchState WorkbenchState
     {
-      get { return _workbenchState; }
-
+      get
+      {
+        return _workbenchState;
+      }
       set
       {
         if (!object.ReferenceEquals(_workbenchState, value))
@@ -603,12 +624,13 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 
     public void StoreWorkbenchStateInPropertyService()
     {
-      Current.PropertyService.SetValue(PropertyKeyWorkbenchState, WorkbenchState);
+      if (WorkbenchState is not null)
+        Current.PropertyService.SetValue(PropertyKeyWorkbenchState, WorkbenchState);
     }
 
     public void RestoreWorkbenchStateFromPropertyService()
     {
-      WorkbenchState = Current.PropertyService.GetValue(PropertyKeyWorkbenchState, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => null);
+      WorkbenchState = Current.PropertyService.GetValue(PropertyKeyWorkbenchState, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
     }
 
     #endregion WorkbenchState
@@ -634,7 +656,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     /// If a document is currently active, this will be equal to ActiveViewContent,
     /// if a pad has the focus, this property will return the IPadContent instance.
     /// </summary>
-    public IWorkbenchContent ActiveContent
+    public IWorkbenchContent? ActiveContent
     {
       get
       {
@@ -657,7 +679,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     /// <summary>
     /// The active view content inside the active workbench window.
     /// </summary>
-    public IViewContent ActiveViewContent
+    public IViewContent? ActiveViewContent
     {
       get
       {
@@ -671,7 +693,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
           OnPropertyChanged(nameof(ActiveViewContent));
           ActiveViewContentChanged?.Invoke(this, EventArgs.Empty);
         }
-        if (null != value)
+        if (value is not null)
           ActiveContent = value;
       }
     }
@@ -687,7 +709,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       if (_documentCollection.Count == 0)
         return;
 
-      if (ActiveViewContent != null)
+      if (ActiveViewContent is not null)
       {
         var storeActiveViewContent = ActiveViewContent;
         ActiveViewContent = null;
@@ -730,7 +752,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
-    private void EhDocumentCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void EhDocumentCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
       if (_documentCollection.Count == 0)
         ActiveViewContent = null;
@@ -791,6 +813,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     /// <returns>
     /// The content (either a <see cref="T:Altaxo.Gui.Workbench.IPadContent" /> or a <see cref="T:Altaxo.Gui.Workbench.IViewContent" /> whose <see cref="P:Altaxo.Gui.IMVCController.ModelObject" /> is the provided document.
     /// </returns>
+    [return: MaybeNull]
     public T GetViewModel<T>(object document) where T : IMVCController
     {
       return GetViewModels<T>(document).FirstOrDefault();
@@ -843,13 +866,13 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 
     public void ShowPad(IPadContent content, bool switchToPad)
     {
-      if (null == content)
+      if (content is null)
         throw new ArgumentNullException(nameof(content));
 
       if (!_padContentCollection.Contains(content))
         _padContentCollection.Add(content);
 
-      if (content.ViewObject == null)
+      if (content.ViewObject is null)
         Current.Gui.FindAndAttachControlTo(content);
 
       content.IsVisible = true;
@@ -867,7 +890,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     /// <exception cref="ArgumentNullException">content</exception>
     public void ClosePad(IPadContent content)
     {
-      if (null == content)
+      if (content is null)
         throw new ArgumentNullException(nameof(content));
 
       if (content.PadDescriptor is null) // this is a document in the pad area
@@ -893,7 +916,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 
       LoadViewContentMemento(content);
 
-      if (content.ViewObject == null)
+      if (content.ViewObject is null)
         Current.Gui.FindAndAttachControlTo(content);
 
       if (switchToOpenedView)
@@ -911,10 +934,10 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       {
         ShowView(viewContent, selectView);
       }
-      else if (content is IProjectItemPresentationModel pm && pm.Document != null)
+      else if (content is IProjectItemPresentationModel pm && pm.Document is not null)
       {
-        var ctrl = (IViewContent)Current.Gui.GetController(new object[] { content }, typeof(IViewContent));
-        if (null != ctrl)
+        var ctrl = (IViewContent?)Current.Gui.GetController(new object[] { content }, typeof(IViewContent));
+        if (ctrl is not null)
           ShowView(ctrl, selectView);
       }
     }
@@ -935,9 +958,9 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     /// <param name="type">The type of pad to search for.</param>
     /// <returns>The pad descriptor of this pad if found; otherwise, null.</returns>
     /// <exception cref="ArgumentNullException">type</exception>
-    public PadDescriptor GetPad(Type type)
+    public PadDescriptor? GetPad(Type type)
     {
-      if (type == null)
+      if (type is null)
         throw new ArgumentNullException(nameof(type));
 
       foreach (PadDescriptor pad in PadContentCollection)
@@ -956,10 +979,11 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     /// <param name="content"></param>
     public void ActivatePad(PadDescriptor content)
     {
-      if (null == content.PadContent)
+      if (content.PadContent is null)
         content.CreatePad();
 
-      content.PadContent.IsVisible = true;
+      if (content.PadContent is { } padContent)
+        padContent.IsVisible = true;
     }
 
     #endregion ToolPads

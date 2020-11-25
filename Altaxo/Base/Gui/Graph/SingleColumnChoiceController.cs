@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using Altaxo.Collections;
@@ -177,25 +178,25 @@ namespace Altaxo.Gui.Graph
         AddAllTableNodes(tableCollectionNode);
 
         DataTable selectedTable = null;
-        if (_doc.SelectedColumn != null)
+        if (_doc.SelectedColumn is not null)
           selectedTable = DataTable.GetParentDataTableOf(_doc.SelectedColumn);
 
-        if (null != selectedTable)
+        if (selectedTable is not null)
         {
           var selTableNode = FindTableNode(tableCollectionNode, selectedTable);
-          if (selTableNode != null)
+          if (selTableNode is not null)
             selTableNode.IsExpanded = true;
 
-          if (null != selTableNode && null != _doc.SelectedColumn)
+          if (selTableNode is not null && _doc.SelectedColumn is not null)
           {
             var selColumnNode = FindColumnNode(selTableNode, _doc.SelectedColumn);
-            if (null != selColumnNode)
+            if (selColumnNode is not null)
               selColumnNode.IsSelected = true;
           }
         }
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.Initialize(_rootNode.Nodes);
       }
@@ -232,7 +233,7 @@ namespace Altaxo.Gui.Graph
       foreach (NGTreeNode node in tableCollectionNode.Nodes)
       {
         result = FindTableNode(node, table);
-        if (null != result)
+        if (result is not null)
           return result;
       }
 
@@ -251,7 +252,7 @@ namespace Altaxo.Gui.Graph
         else if (node.HasChilds)
         {
           result = FindColumnNode(node, column);
-          if (null != result)
+          if (result is not null)
             return result;
         }
       }
@@ -278,14 +279,14 @@ namespace Altaxo.Gui.Graph
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = null;
 
         _view = value as ISingleColumnChoiceView;
 
         Initialize(false);
 
-        if (_view != null)
+        if (_view is not null)
           _view.Controller = this;
       }
     }
@@ -308,7 +309,7 @@ namespace Altaxo.Gui.Graph
 
     public bool Apply(bool disposeController)
     {
-      if (_selectedColumn != null)
+      if (_selectedColumn is not null)
       {
         _doc.SelectedColumn = _selectedColumn;
         return true;
@@ -335,7 +336,7 @@ namespace Altaxo.Gui.Graph
 
     protected NGTreeNode GetRootNode(NGTreeNode node)
     {
-      while (node.ParentNode != null)
+      while (node.ParentNode is not null)
         node = node.ParentNode;
 
       return node;

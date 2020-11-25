@@ -25,10 +25,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using Altaxo.Calc.Regression.Nonlinear;
 
+#nullable enable
 namespace Altaxo.Main.Services
 {
   /// <summary>
@@ -42,10 +44,15 @@ namespace Altaxo.Main.Services
 
     public FitFunctionService()
     {
-      string userFitFunctionDirectory = System.IO.Path.Combine(Current.PropertyService.ConfigDirectory, "FitFunctionScripts");
+      string userFitFunctionDirectory = System.IO.Path.Combine(Current.PropertyService.ConfigDirectory.ToString(), "FitFunctionScripts");
       _userFunctionService = new FileBasedFitFunctionService(userFitFunctionDirectory);
 
-      string appdir = System.Configuration.ConfigurationManager.AppSettings.Get("ApplicationFitFunctionDirectory");
+      string? appdir = System.Configuration.ConfigurationManager.AppSettings.Get("ApplicationFitFunctionDirectory");
+
+      if (string.IsNullOrEmpty(appdir))
+      {
+        appdir = System.IO.Path.Combine(Current.PropertyService.DataDirectory.ToString(), "FitFunctionScripts");
+      }
 
       _applicationFunctionService = new FileBasedFitFunctionService(appdir, true);
 
@@ -110,7 +117,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="info">The fit function information (only the file name is used from it).</param>
     /// <returns>The fit function, or null if the fit function could not be read.</returns>
-    public static IFitFunction ReadUserDefinedFitFunction(Main.Services.FileBasedFitFunctionInformation info)
+    public static IFitFunction? ReadUserDefinedFitFunction(Main.Services.FileBasedFitFunctionInformation info)
     {
       return FileBasedFitFunctionService.ReadFileBasedFitFunction(info);
     }
@@ -128,8 +135,9 @@ namespace Altaxo.Main.Services
 
     private class BuiltinFitFunctionService
     {
-      private BuiltinFitFunctionInformation[] _fitFunctions;
+      private BuiltinFitFunctionInformation[]? _fitFunctions;
 
+      [MemberNotNull(nameof(_fitFunctions))]
       private void Initialize()
       {
         IEnumerable<Type> classentries = Altaxo.Main.Services.ReflectionService.GetUnsortedClassTypesHavingAttribute(typeof(FitFunctionClassAttribute), true);
@@ -164,7 +172,7 @@ namespace Altaxo.Main.Services
       /// <returns></returns>
       public BuiltinFitFunctionInformation[] GetFitFunctions()
       {
-        if (_fitFunctions == null)
+        if (_fitFunctions is null)
           Initialize();
 
         return _fitFunctions;
@@ -186,7 +194,7 @@ namespace Altaxo.Main.Services
       /// </summary>
       private string _fitFunctionDirectory;
 
-      private System.IO.FileSystemWatcher _fitFunctionDirectoryWatcher;
+      private System.IO.FileSystemWatcher? _fitFunctionDirectoryWatcher;
       private Queue<string> _filesToProcess = new Queue<string>();
       private volatile bool _threadIsWorking;
 
@@ -214,7 +222,7 @@ namespace Altaxo.Main.Services
 
         if (Directory.Exists(_fitFunctionDirectory))
         {
-          _fitFunctionDirectoryWatcher = new FileSystemWatcher(_fitFunctionDirectory, "*,xml");
+          _fitFunctionDirectoryWatcher = new FileSystemWatcher(_fitFunctionDirectory, "*.xml");
 
           _fitFunctionDirectoryWatcher.Changed += new FileSystemEventHandler(EhChanged);
           _fitFunctionDirectoryWatcher.Created += new FileSystemEventHandler(EhChanged);
@@ -282,17 +290,17 @@ namespace Altaxo.Main.Services
       /// This is the worker thread.
       /// </summary>
       /// <param name="stateInfo">Not used.</param>
-      private void ProcessFiles(object stateInfo)
+      private void ProcessFiles(object? stateInfo)
       {
-        System.Text.StringBuilder stb = null;
+        System.Text.StringBuilder? stb = null;
 
         while (_filesToProcess.Count > 0)
         {
           string fullfilename = _filesToProcess.Dequeue();
           try
           {
-            string category = null;
-            string name = null;
+            string? category = null;
+            string? name = null;
             DateTime creationTime = DateTime.MinValue;
             string description = string.Empty;
 
@@ -312,18 +320,19 @@ namespace Altaxo.Main.Services
             }
             xmlReader.Close();
 
-            AddFitFunctionEntry(category, name, creationTime, description, fullfilename);
+            if (!(category is null || name is null))
+              AddFitFunctionEntry(category, name, creationTime, description, fullfilename);
           }
           catch (Exception ex)
           {
-            if (stb == null)
+            if (stb is null)
               stb = new StringBuilder();
 
             stb.AppendLine(ex.ToString());
           }
         }
 
-        if (stb != null)
+        if (stb is not null)
         {
           Current.Console.WriteLine("Exception(s) thrown in " + GetType().ToString() + " during parsing of fit functions, details will follow:");
           Current.Console.WriteLine(stb.ToString());
@@ -337,7 +346,7 @@ namespace Altaxo.Main.Services
       /// <returns></returns>
       public FileBasedFitFunctionInformation[] GetFitFunctions()
       {
-        if (null == _userDefinedFunctions)
+        if (_userDefinedFunctions is null)
           return new FileBasedFitFunctionInformation[] { };
 
         while (_threadIsWorking)
@@ -360,7 +369,7 @@ namespace Altaxo.Main.Services
       /// <returns>True if the function is saved, otherwise (error or user action) returns false.</returns>
       public bool SaveFitFunction(Altaxo.Scripting.FitFunctionScript doc)
       {
-        if (doc.ScriptObject == null)
+        if (doc.ScriptObject is null)
         {
           Current.Gui.ErrorMessageBox("Only a successfully compiled fit function can be saved in the user fit function directory!");
           return false;
@@ -392,15 +401,15 @@ namespace Altaxo.Main.Services
       /// </summary>
       /// <param name="info">The fit function information (only the file name is used from it).</param>
       /// <returns>The fit function, or null if the fit function could not be read.</returns>
-      public static IFitFunction ReadFileBasedFitFunction(Main.Services.FileBasedFitFunctionInformation info)
+      public static IFitFunction? ReadFileBasedFitFunction(Main.Services.FileBasedFitFunctionInformation info)
       {
-        IFitFunction func = null;
+        IFitFunction? func = null;
         try
         {
           using (var str = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo())
           {
             str.BeginReading(new FileStream(info.FileName, FileMode.Open, FileAccess.Read, FileShare.Read));
-            func = (IFitFunction)str.GetValue(null, null);
+            func = (IFitFunction)str.GetValue(string.Empty, null);
             str.EndReading();
           }
           return func;

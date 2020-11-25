@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing;
 
@@ -51,7 +52,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public XYFunctionPlotDataBase(XYFunctionPlotDataBase from)
     {
-      if (null == from)
+      if (from is null)
         throw new ArgumentNullException(nameof(from));
 
       CopyFrom(from);
@@ -59,7 +60,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is XYFunctionPlotDataBase from)
@@ -79,7 +80,7 @@ namespace Altaxo.Graph.Plot.Data
 
     #region Changed event handling
 
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = PlotItemDataChangedEventArgs.Empty;
     }
@@ -90,6 +91,12 @@ namespace Altaxo.Graph.Plot.Data
     {
       public double[] _xPhysical;
       public double[] _yPhysical;
+
+      public MyPlotData(double[] xPhysical, double[] yPhysical)
+      {
+        _xPhysical = xPhysical;
+        _yPhysical = yPhysical;
+      }
 
       public Altaxo.Data.AltaxoVariant GetXPhysical(int originalRowIndex)
       {
@@ -109,7 +116,7 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     /// <param name="layer">The plot layer.</param>
     /// <returns>An array of plot points in layer coordinates.</returns>
-    public Processed2DPlotData GetRangesAndPoints(
+    public Processed2DPlotData? GetRangesAndPoints(
         Gdi.IPlotArea layer)
     {
       const int functionPoints = 1000;
@@ -118,12 +125,11 @@ namespace Altaxo.Graph.Plot.Data
       // allocate an array PointF to hold the line points
       var ptArray = new PointF[functionPoints];
       var result = new Processed2DPlotData();
-      var pdata = new MyPlotData();
+
       result.PlotPointsInAbsoluteLayerCoordinates = ptArray;
       double[] xPhysArray = new double[functionPoints];
       double[] yPhysArray = new double[functionPoints];
-      pdata._xPhysical = xPhysArray;
-      pdata._yPhysical = yPhysArray;
+      var pdata = new MyPlotData(xPhysArray, yPhysArray);
       result.XPhysicalAccessor = new IndexedPhysicalValueAccessor(pdata.GetXPhysical);
       result.YPhysicalAccessor = new IndexedPhysicalValueAccessor(pdata.GetYPhysical);
 
@@ -142,7 +148,7 @@ namespace Altaxo.Graph.Plot.Data
 
       var xaxis = layer.XAxis;
       var yaxis = layer.YAxis;
-      if (xaxis == null || yaxis == null)
+      if (xaxis is null || yaxis is null)
         return null;
 
       for (i = 0, j = 0; i < functionPoints; i++)

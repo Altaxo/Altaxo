@@ -22,11 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Gdi;
@@ -86,7 +85,7 @@ namespace Altaxo.Worksheet.Commands
     /// labels, yerr, and so on.</param>
     /// <param name="context">Property context used to determine default values, e.g. for the pen width or symbol size.</param>
     /// <returns>List of plot items created.</returns>
-    public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, string xColumnName, G2DPlotStyleCollection templatePlotStyle, HashSet<DataColumn> processedColumns, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, string? xColumnName, G2DPlotStyleCollection templatePlotStyle, HashSet<DataColumn> processedColumns, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var result = new List<IGPlotItem>();
       foreach (DataColumn ycol in selectedColumns)
@@ -97,28 +96,30 @@ namespace Altaxo.Worksheet.Commands
           processedColumns.Add(ycol);
 
         var table = DataColumnCollection.GetParentDataColumnCollectionOf(ycol);
-        Altaxo.Data.DataColumn xcol;
-        if (!string.IsNullOrEmpty(xColumnName) && null != table && table.ContainsColumn(xColumnName))
+        Altaxo.Data.DataColumn? xcol;
+        if (!string.IsNullOrEmpty(xColumnName) && table is not null && table.ContainsColumn(xColumnName))
           xcol = table[xColumnName];
         else
-          xcol = null == table ? null : table.FindXColumnOf(ycol);
+          xcol = table?.FindXColumnOf(ycol);
 
-        int groupNumber = table.GetColumnGroup(ycol);
+        int groupNumber = table?.GetColumnGroup(ycol) ?? 0;
         var parentTable = DataTable.GetParentDataTableOf(table);
 
         XYColumnPlotData pa;
-        if (null != xcol)
+        if (xcol is not null && parentTable is not null)
           pa = new XYColumnPlotData(parentTable, groupNumber, xcol, ycol);
-        else
+        else if (parentTable is not null)
           pa = new XYColumnPlotData(parentTable, groupNumber, new Altaxo.Data.IndexerColumn(), ycol);
+        else
+          throw new InvalidOperationException($"Could not find a parent data table for this plot operation.");
 
-        G2DPlotStyleCollection ps = templatePlotStyle != null ? templatePlotStyle.Clone() : new G2DPlotStyleCollection();
+        G2DPlotStyleCollection ps = templatePlotStyle is not null ? templatePlotStyle.Clone() : new G2DPlotStyleCollection();
 
-        if (null == table)
+        if (table is null)
           continue;
 
-        ErrorBarPlotStyle unpairedPositiveError = null;
-        ErrorBarPlotStyle unpairedNegativeError = null;
+        ErrorBarPlotStyle? unpairedPositiveError = null;
+        ErrorBarPlotStyle? unpairedNegativeError = null;
 
         bool foundMoreColumns = true;
         for (int idx = 1 + table.GetColumnNumber(ycol); foundMoreColumns && idx < table.ColumnCount; idx++)
@@ -140,7 +141,7 @@ namespace Altaxo.Worksheet.Commands
               break;
 
             case ColumnKind.pErr:
-              if (null != unpairedNegativeError)
+              if (unpairedNegativeError is not null)
               {
                 unpairedNegativeError.PositiveErrorColumn = col as INumericColumn;
                 ;
@@ -155,7 +156,7 @@ namespace Altaxo.Worksheet.Commands
               break;
 
             case ColumnKind.mErr:
-              if (null != unpairedPositiveError)
+              if (unpairedPositiveError is not null)
               {
                 unpairedPositiveError.NegativeErrorColumn = col as INumericColumn;
                 unpairedPositiveError = null;
@@ -396,7 +397,7 @@ namespace Altaxo.Worksheet.Commands
       {
         newPlotGroup.Add(pi);
       }
-      if (groupStyles != null)
+      if (groupStyles is not null)
         newPlotGroup.GroupStyles = groupStyles;
       else
         newPlotGroup.CollectStyles(newPlotGroup.GroupStyles);
@@ -425,7 +426,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bLine">If true, the line style is activated (the points are connected by lines).</param>
     /// <param name="bScatter">If true, the scatter style is activated (the points are plotted as symbols).</param>
     /// <param name="preferredGraphName">Preferred name of the graph. Can be null if you have no preference.</param>
-    public static void PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter, string preferredGraphName)
+    public static void PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter, string? preferredGraphName)
     {
       var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(table.GetPropertyContext(), preferredGraphName, table.Name, true);
       var context = graph.GetPropertyContext();
@@ -582,9 +583,9 @@ namespace Altaxo.Worksheet.Commands
       var plotStyle = new DensityImagePlotStyle();
 
       var assoc = new XYZMeshedColumnPlotData(dg.DataTable, dg.SelectedDataRows, dg.SelectedDataColumns, dg.SelectedPropertyColumns);
-      if (assoc.DataTableMatrix.RowHeaderColumn == null)
+      if (assoc.DataTableMatrix.RowHeaderColumn is null)
         assoc.DataTableMatrix.RowHeaderColumn = new IndexerColumn();
-      if (assoc.DataTableMatrix.ColumnHeaderColumn == null)
+      if (assoc.DataTableMatrix.ColumnHeaderColumn is null)
         assoc.DataTableMatrix.ColumnHeaderColumn = new IndexerColumn();
 
       IGPlotItem pi = new DensityImagePlotItem(assoc, plotStyle);

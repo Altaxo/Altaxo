@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       _lastKnownValue = ViewOnSelect.Off;
       Ctrl.ViewOnSelectTreeNode = _lastKnownValue;
-      if (null != IsCheckedChanged)
+      if (IsCheckedChanged is not null)
         IsCheckedChanged(this, EventArgs.Empty);
     }
 
@@ -59,7 +60,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       get
       {
-        if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && null != IsCheckedChanged)
+        if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && IsCheckedChanged is not null)
         {
           IsCheckedChanged(this, EventArgs.Empty);
           _lastKnownValue = Ctrl.ViewOnSelectTreeNode;
@@ -103,7 +104,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       get
       {
-        if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && null != IsCheckedChanged)
+        if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && IsCheckedChanged is not null)
         {
           IsCheckedChanged(this, EventArgs.Empty);
           _lastKnownValue = Ctrl.ViewOnSelectTreeNode;
@@ -147,7 +148,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       get
       {
-        if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && null != IsCheckedChanged)
+        if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && IsCheckedChanged is not null)
         {
           IsCheckedChanged(this, EventArgs.Empty);
           _lastKnownValue = Ctrl.ViewOnSelectTreeNode;

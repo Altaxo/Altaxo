@@ -219,13 +219,13 @@ namespace Altaxo.Calc.Regression.Multivariate
       )
     {
       // check the dimensions of the matrices
-      if (predictedY != null)
+      if (predictedY is not null)
       {
         if (predictedY.RowCount != XU.RowCount || predictedY.ColumnCount != InternalCalibrationModel.NumberOfY)
           predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, InternalCalibrationModel.NumberOfY);
       }
 
-      if (spectralResiduals != null)
+      if (spectralResiduals is not null)
       {
         if (spectralResiduals.RowCount != XU.RowCount || spectralResiduals.ColumnCount != NumberOfSpectralResiduals)
           spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, NumberOfSpectralResiduals);

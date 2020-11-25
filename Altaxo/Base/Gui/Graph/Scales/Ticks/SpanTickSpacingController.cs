@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +59,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       base.Initialize(initData);
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.RelativePositionOfTick = _doc.RelativeTickPosition;
         _view.ShowEndOrgRatio = _doc.ShowEndOrgRatioInsteadOfDifference;

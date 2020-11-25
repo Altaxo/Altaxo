@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Drawing;
@@ -73,7 +75,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>Axis shift position, either provide as absolute values in point units, or as relative value relative to the layer size.</summary>
     protected RADouble _axisPosition; // if relative, then relative to layer size, if absolute then in points
 
-    protected CSAxisInformation _cachedAxisStyleInfo;
+    protected CSAxisInformation? _cachedAxisStyleInfo;
 
     #region Serialization
 
@@ -99,9 +101,9 @@ namespace Altaxo.Graph.Gdi.Axis
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle(info);
+        var s = (AxisLineStyle?)o ?? new AxisLineStyle(info);
 
         var edge = (Edge)info.GetValue("Edge", s);
         s._axisPen = (PenX)info.GetValue("AxisPen", s);
@@ -154,9 +156,9 @@ namespace Altaxo.Graph.Gdi.Axis
         info.AddValue("Minor1Dw", s._showFirstDownMinorTicks);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle(info);
+        var s = (AxisLineStyle?)o ?? new AxisLineStyle(info);
 
         s._axisPen = (PenX)info.GetValue("AxisPen", s);
         s._majorTickPen = (PenX)info.GetValue("MajorPen", s);
@@ -180,7 +182,9 @@ namespace Altaxo.Graph.Gdi.Axis
     /// Initializes a new instance of the <see cref="AxisLineStyle"/> class for deserialization purposes only.
     /// </summary>
     /// <param name="info">The deserialization information.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected AxisLineStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
@@ -213,19 +217,11 @@ namespace Altaxo.Graph.Gdi.Axis
       CopyFrom(from);
     }
 
-    /// <summary>
-    /// Copy operation.
-    /// </summary>
-    /// <param name="obj">The AxisStyle to copy from</param>
-    public bool CopyFrom(object obj)
+
+    [MemberNotNull(nameof(_axisPen), nameof(_majorTickPen), nameof(_minorTickPen))]
+    void CopyFrom(AxisLineStyle from)
     {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-
-      var from = obj as AxisLineStyle;
-      if (null == from)
-        return false;
-
+      
       using (var suspendToken = SuspendGetToken())
       {
         _axisPen = from._axisPen;
@@ -245,7 +241,24 @@ namespace Altaxo.Graph.Gdi.Axis
 
         suspendToken.Resume();
       }
-      return true;
+    }
+
+      /// <summary>
+      /// Copy operation.
+      /// </summary>
+      /// <param name="obj">The AxisStyle to copy from</param>
+      public bool CopyFrom(object obj)
+    {
+      if (ReferenceEquals(this, obj))
+        return true;
+
+      if (obj is AxisLineStyle from)
+      {
+        CopyFrom(from);
+        return true;
+      }
+
+      return false;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -262,15 +275,15 @@ namespace Altaxo.Graph.Gdi.Axis
       return new AxisLineStyle(this);
     }
 
-    public CSLineID AxisStyleID
+    public CSLineID? AxisStyleID
     {
       get
       {
-        return _cachedAxisStyleInfo == null ? null : _cachedAxisStyleInfo.Identifier;
+        return _cachedAxisStyleInfo?.Identifier;
       }
     }
 
-    public CSAxisInformation CachedAxisInformation
+    public CSAxisInformation? CachedAxisInformation
     {
       get
       {
@@ -282,13 +295,13 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    public virtual IHitTestObject HitTest(IPlotArea layer, PointD2D pt, bool withTicks)
+    public virtual IHitTestObject? HitTest(IPlotArea layer, PointD2D pt, bool withTicks)
     {
       GraphicsPath selectionPath = GetSelectionPath(layer, withTicks);
       return selectionPath.IsVisible((PointF)pt) ? new HitTestObject(GetObjectPath(layer, withTicks), this) : null;
     }
 
-    public virtual IHitTestObject HitTest(IPlotArea layer, HitTestRectangularData hitData, bool withTicks)
+    public virtual IHitTestObject? HitTest(IPlotArea layer, HitTestRectangularData hitData, bool withTicks)
     {
       GraphicsPath selectionPath = GetSelectionPath(layer, withTicks);
       return hitData.IsCovering(selectionPath.PathPoints) ? new HitTestObject(GetObjectPath(layer, withTicks), this) : null;
@@ -337,8 +350,8 @@ namespace Altaxo.Graph.Gdi.Axis
       get { return _axisPen; }
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("value");
+        if (value is null)
+          throw new ArgumentNullException(nameof(AxisPen));
 
         if (!(_axisPen == value))
         {
@@ -353,8 +366,8 @@ namespace Altaxo.Graph.Gdi.Axis
       get { return _majorTickPen; }
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("value");
+        if (value is null)
+          throw new ArgumentNullException(nameof(MajorPen));
         if (!(_majorTickPen == value))
         {
           _majorTickPen = value;
@@ -368,8 +381,8 @@ namespace Altaxo.Graph.Gdi.Axis
       get { return _minorTickPen; }
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("value");
+        if (value is null)
+          throw new ArgumentNullException(nameof(MinorPen));
 
         if (!(_minorTickPen == value))
         {
@@ -557,6 +570,9 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <returns>The graphics path of the selection rectangle.</returns>
     protected GraphicsPath GetPath(IPlotArea layer, bool withTicks, double inflateby)
     {
+      if (_cachedAxisStyleInfo is null)
+        throw new InvalidProgramException($"{nameof(_cachedAxisStyleInfo)} is null!");
+
       Logical3D r0 = _cachedAxisStyleInfo.Identifier.GetLogicalPoint(_cachedAxisStyleInfo.LogicalValueAxisOrg);
       Logical3D r1 = _cachedAxisStyleInfo.Identifier.GetLogicalPoint(_cachedAxisStyleInfo.LogicalValueAxisEnd);
       var gp = new GraphicsPath();
@@ -584,13 +600,13 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <param name="layer">The layer the axis belongs to.</param>
     /// <param name="styleInfo">The axis information of the axis to paint.</param>
     /// <param name="customTickSpacing">If not <c>null</c>, this parameter provides a custom tick spacing that is used instead of the default tick spacing of the scale.</param>
-    public void Paint(Graphics g, IPlotArea layer, CSAxisInformation styleInfo, TickSpacing customTickSpacing)
+    public void Paint(Graphics g, IPlotArea layer, CSAxisInformation styleInfo, TickSpacing? customTickSpacing)
     {
       CSLineID styleID = styleInfo.Identifier;
       _cachedAxisStyleInfo = styleInfo;
       Scale axis = layer.Scales[styleID.ParallelAxisNumber];
 
-      TickSpacing ticking = null != customTickSpacing ? customTickSpacing : layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
+      TickSpacing ticking = customTickSpacing is not null ? customTickSpacing : layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
 
       Logical3D r0 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisOrg);
       Logical3D r1 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisEnd);

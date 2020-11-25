@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -77,7 +78,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <param name="pdata">The preprocessed plot data used for plotting.</param>
     /// <param name="prevItemData">Plot data of the previous plot item.</param>
     /// <param name="nextItemData">Plot data of the next plot item.</param>
-    void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData prevItemData, Processed3DPlotData nextItemData);
+    void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData);
 
     /// <summary>
     /// Paints a appropriate symbol in the given rectangle. The width of the rectangle is mandatory, but if the heigth is too small,

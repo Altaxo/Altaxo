@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,13 +39,25 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles
   /// <seealso cref="Altaxo.Main.IImmutable" />
   public interface IScatterSymbol : Main.IImmutable, ICloneable
   {
-    ScatterSymbols.IScatterSymbolFrame Frame { get; }
+    /// <summary>
+    /// Gets the frame of the symbol, or null if the symbol does not have a frame.
+    /// </summary>
+    /// <value>
+    /// The frame of the symbol.
+    /// </value>
+    ScatterSymbols.IScatterSymbolFrame? Frame { get; }
 
-    IScatterSymbol WithFrame(ScatterSymbols.IScatterSymbolFrame frame);
+    IScatterSymbol WithFrame(ScatterSymbols.IScatterSymbolFrame? frame);
 
-    ScatterSymbols.IScatterSymbolInset Inset { get; }
+    /// <summary>
+    /// Gets the inset of this symbol, or null if the symbol does not have an inset.
+    /// </summary>
+    /// <value>
+    /// The inset of the symbol.
+    /// </value>
+    ScatterSymbols.IScatterSymbolInset? Inset { get; }
 
-    IScatterSymbol WithInset(ScatterSymbols.IScatterSymbolInset inset);
+    IScatterSymbol WithInset(ScatterSymbols.IScatterSymbolInset? inset);
 
     NamedColor FillColor { get; }
 
@@ -78,13 +91,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles
     /// </summary>
     /// <param name="relativeStructureWidth">The relative width of the internal structures, e.g. the frame, relative to the symbol size.
     /// If this argument is null, the value of this instance (<see cref="RelativeStructureWidth"/>) will be used.</param>
-    /// <param name="framePolygon">On return: the frame polygon.</param>
-    /// <param name="insetPolygon">On return: the inset polygon.</param>
-    /// <param name="fillPolygon">On return: the fill polygon.</param>
+    /// <param name="framePolygon">On return: the frame polygon (null if no frame present).</param>
+    /// <param name="insetPolygon">On return: the inset polygon (null if no inset present).</param>
+    /// <param name="fillPolygon">On return: the fill polygon (null if no fill shape present).</param>
     void CalculatePolygons(
       double? relativeStructureWidth,
-      out List<List<ClipperLib.IntPoint>> framePolygon,
-      out List<List<ClipperLib.IntPoint>> insetPolygon,
-      out List<List<ClipperLib.IntPoint>> fillPolygon);
+      out List<List<ClipperLib.IntPoint>>? framePolygon,
+      out List<List<ClipperLib.IntPoint>>? insetPolygon,
+      out List<List<ClipperLib.IntPoint>>? fillPolygon);
   }
 }

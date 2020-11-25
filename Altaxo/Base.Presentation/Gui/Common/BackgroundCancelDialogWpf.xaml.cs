@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,8 +59,8 @@ namespace Altaxo.Gui.Common
       //
       InitializeComponent();
 
-      _btCancel.Visibility = monitor != null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-      _btInterrupt.Visibility = monitor == null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+      _btCancel.Visibility = monitor is not null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+      _btInterrupt.Visibility = monitor is null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
       _btAbort.Visibility = System.Windows.Visibility.Collapsed;
       _timerCounter = 0;
     }
@@ -78,8 +79,8 @@ namespace Altaxo.Gui.Common
       //
       InitializeComponent();
 
-      _btCancel.Visibility = monitor != null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-      _btInterrupt.Visibility = monitor == null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+      _btCancel.Visibility = monitor is not null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+      _btInterrupt.Visibility = monitor is null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
       _btAbort.Visibility = System.Windows.Visibility.Collapsed;
     }
 
@@ -111,14 +112,14 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    private void EhTimer(object sender, EventArgs e)
+    private void EhTimer(object? sender, EventArgs e)
     {
       _timerCounter++;
 
       if (_timerCounter == 50)
         Visibility = System.Windows.Visibility.Visible;
 
-      if (_monitor != null)
+      if (_monitor is not null)
       {
         if (_monitor.HasReportText)
         {
@@ -153,7 +154,7 @@ namespace Altaxo.Gui.Common
     private void EhCancelClicked(object sender, RoutedEventArgs e)
     {
       _wasCancelledByUser = true;
-      if (_monitor != null)
+      if (_monitor is not null)
       {
         _monitor.SetCancellationPending();
         _btCancel.Visibility = System.Windows.Visibility.Collapsed;

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using Altaxo.Collections;
@@ -63,7 +64,7 @@ namespace Altaxo.Gui.Main
 
     public bool InitializeDocument(params object[] args)
     {
-      if (null == args || 0 == args.Length || !(args[0] is SingleFolderChoice))
+      if (args is null || 0 == args.Length || !(args[0] is SingleFolderChoice))
         return false;
 
       _doc = (SingleFolderChoice)args[0];
@@ -89,17 +90,17 @@ namespace Altaxo.Gui.Main
 
         //tableCollectionNode.IsExpanded = true;
 
-        if (null != _doc.SelectedFolder)
+        if (_doc.SelectedFolder is not null)
         {
           var selTableNode = FindFolderNode(_rootNode, _doc.SelectedFolder);
-          if (selTableNode != null)
+          if (selTableNode is not null)
           {
             selTableNode.IsSelected = true;
           }
         }
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.Initialize(_rootNode.Nodes);
       }
@@ -134,7 +135,7 @@ namespace Altaxo.Gui.Main
       foreach (NGTreeNode node in tableCollectionNode.Nodes)
       {
         result = FindFolderNode(node, table);
-        if (null != result)
+        if (result is not null)
           return result;
       }
 
@@ -170,14 +171,14 @@ namespace Altaxo.Gui.Main
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
         {
           _view.SelectionChanged -= EhSelectionChanged;
         }
 
         _view = value as ISingleTreeViewItemChoiceView;
 
-        if (_view != null)
+        if (_view is not null)
         {
           Initialize(false);
 
@@ -204,7 +205,7 @@ namespace Altaxo.Gui.Main
 
     public bool Apply(bool disposeController)
     {
-      if (_selectedFolder != null)
+      if (_selectedFolder is not null)
       {
         _doc.SelectedFolder = _selectedFolder;
         return true;

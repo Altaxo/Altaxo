@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -169,7 +170,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
         _meaningOfValues = new SelectableListNodeList(_doc.MeaningOfValues);
       }
-      if (_view != null)
+      if (_view is not null)
       {
         _view.UseManualVectorLength = _doc.UseManualVectorLength;
         _view.VectorLengthOffset = _doc.VectorLengthOffset;
@@ -337,7 +338,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhIndependentColorChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentColor = _view.IndependentColor;
         _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);

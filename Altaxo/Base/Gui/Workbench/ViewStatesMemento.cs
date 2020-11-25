@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Gets or sets the name of the zip entry of the view that was selected during storing the project.
     /// </summary>
-    public string SelectedView_EntryName { get; set; }
+    public string SelectedView_EntryName { get; set; } = string.Empty;
 
     #region "Serialization"
 
@@ -52,9 +53,9 @@ namespace Altaxo.Gui.Workbench
         info.AddValue("SelectedView", s.SelectedView_EntryName);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ViewStatesMemento)o ?? new ViewStatesMemento();
+        var s = (ViewStatesMemento?)o ?? new ViewStatesMemento();
 
         s.SelectedView_EntryName = info.GetString("SelectedView");
 

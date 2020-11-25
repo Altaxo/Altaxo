@@ -303,9 +303,9 @@ namespace MathML
 		/// </summary>
 		private void GetAttributes()
 		{
-			if(PreviousSibling != null)
+			if(PreviousSibling is not null)
 			{
-				if(NextSibling != null)
+				if(NextSibling is not null)
 				{
 					form = Form.Infix;
 				}
@@ -316,7 +316,7 @@ namespace MathML
 			}
 			else
 			{
-				if(NextSibling != null)
+				if(NextSibling is not null)
 				{
 					form = Form.Prefix;
 				}
@@ -326,14 +326,14 @@ namespace MathML
 				}
 			}
 
-			if(FirstChild != null)
+			if(FirstChild is not null)
 			{
 				MathMLGlyphElement glyph = null;
 				if(FirstChild.NodeType == XmlNodeType.Text)
 				{
 					op = OperatorDictionary.GetValue(FirstChild.Value, form);
 				}
-				else if((glyph = FirstChild as MathMLGlyphElement) != null)
+				else if((glyph = FirstChild as MathMLGlyphElement) is not null)
 				{
 					string s = new string((char)glyph.Index, 1);
 					op = OperatorDictionary.GetValue(s, form);

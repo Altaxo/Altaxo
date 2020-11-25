@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -104,7 +105,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
         _barShiftStrategy = new SelectableListNodeList(_doc.BarShiftStrategy);
       }
-      if (_view != null)
+      if (_view is not null)
       {
         _view.IndependentColor = _doc.IndependentColor;
         _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
@@ -173,7 +174,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhColorGroupStyleAddedOrRemoved()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentColor = _view.IndependentColor;
         _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
@@ -182,7 +183,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhBarShiftStrategyChanged()
     {
-      if (null == _barShiftStrategy.FirstSelectedNode)
+      if (_barShiftStrategy.FirstSelectedNode is null)
         return;
 
       _doc.BarShiftStrategy = (BarShiftStrategy3D)_barShiftStrategy.FirstSelectedNode.Tag;
@@ -191,7 +192,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhIndependentColorChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentColor = _view.IndependentColor;
         _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);

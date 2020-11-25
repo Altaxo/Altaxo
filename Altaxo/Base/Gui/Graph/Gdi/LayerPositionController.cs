@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using Altaxo.Graph;
@@ -94,13 +95,13 @@ namespace Altaxo.Gui.Graph.Gdi
           { _doc.GetType(), _doc }
         };
 
-        if (_layer.ParentLayer == null && !(_doc is ItemLocationDirect))
+        if (_layer.ParentLayer is null && !(_doc is ItemLocationDirect))
           _doc = new ItemLocationDirect();
 
         CreateSubController();
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.UseDirectPositioning = _doc is ItemLocationDirect;
         _view.SubPositionView = _subController.ViewObject;
@@ -144,7 +145,7 @@ namespace Altaxo.Gui.Graph.Gdi
       }
       else if (_doc is ItemLocationByGrid)
       {
-        if (null == _layer.ParentLayer)
+        if (_layer.ParentLayer is null)
           throw new InvalidOperationException("This should not be happen; the calling routine must ensure that ItemLocationDirect is used when no parent layer is present");
         _layer.ParentLayer.CreateGridIfNullOrEmpty();
         _subController = new ItemLocationByGridController() { UseDocumentCopy = UseDocument.Directly };
@@ -158,7 +159,7 @@ namespace Altaxo.Gui.Graph.Gdi
       if (_subController.Apply(false))
         _instances[_subController.ModelObject.GetType()] = (IItemLocation)_subController.ModelObject;
 
-      bool useDirectPositioning = _view.UseDirectPositioning || _layer.ParentLayer == null; // if this is the root layer, then choice of grid positioning is not available
+      bool useDirectPositioning = _view.UseDirectPositioning || _layer.ParentLayer is null; // if this is the root layer, then choice of grid positioning is not available
 
       IItemLocation oldDoc = _doc;
       IItemLocation newDoc = null;
@@ -183,7 +184,7 @@ namespace Altaxo.Gui.Graph.Gdi
         _doc = newDoc;
         OnMadeDirty(); // change for super-controller to pick up new instance
 
-        if (null != _suspendToken)
+        if (_suspendToken is not null)
         {
           _suspendToken.Dispose();
           _suspendToken = _doc.SuspendGetToken();
@@ -200,7 +201,7 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       get
       {
-        return (null != _layer) && (_layer.ParentObject is GraphDocument);
+        return (_layer is not null) && (_layer.ParentObject is GraphDocument);
       }
     }
   }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -55,9 +56,9 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
         info.AddValue("RepeatLength", s._repeatLengthPt);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (SyntheticBrushBase)o;
+        var s = (SyntheticBrushBase)(o ?? throw new ArgumentNullException(nameof(o)));
 
         s._repeatLengthPt = info.GetDouble("RepeatLength");
         return s;

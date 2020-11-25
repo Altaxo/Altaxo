@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,7 @@ using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
+  using System.Diagnostics.CodeAnalysis;
   using Data;
   using Graph.Plot.Data;
   using Styles;
@@ -54,8 +56,8 @@ namespace Altaxo.Graph.Gdi.Plot
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotItem", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      private XYColumnPlotData _item;
-      private LabelPlotStyle _label;
+      private XYColumnPlotData? _item;
+      private LabelPlotStyle? _label;
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -64,15 +66,15 @@ namespace Altaxo.Graph.Gdi.Plot
         info.AddValue("Style", s._plotStyles);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var pa = (XYColumnPlotData)info.GetValue("Data", null);
         var lsps = (XYLineScatterPlotStyle)info.GetValue("Style", null);
-        if (lsps.XYPlotLineStyle != null)
+        if (lsps.XYPlotLineStyle is not null)
           lsps.XYPlotLineStyle.UseSymbolGap = lsps.LineSymbolGap; // this has changed and is now hosted in the LineStyle itself
 
-        var ps = new G2DPlotStyleCollection(new IG2DPlotStyle[] { lsps.XYPlotLineStyle, lsps.ScatterStyle, lsps.XYPlotLabelStyle });
-        if (lsps.XYPlotLabelStyle != null)
+        var ps = new G2DPlotStyleCollection(new IG2DPlotStyle?[] { lsps.XYPlotLineStyle, lsps.ScatterStyle, lsps.XYPlotLabelStyle });
+        if (lsps.XYPlotLabelStyle is not null)
         {
           var surr = new XmlSerializationSurrogate0
           {
@@ -82,7 +84,7 @@ namespace Altaxo.Graph.Gdi.Plot
           info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
         }
 
-        if (null == o)
+        if (o is null)
         {
           return new XYColumnPlotItem(pa, ps);
         }
@@ -97,7 +99,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
       private void info_DeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
       {
-        if (_item.LabelColumn != null)
+        if (_label is not null && _item?.LabelColumn is not null)
         {
           _label.LabelColumn = _item.LabelColumn;
           info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(info_DeserializationFinished);
@@ -116,12 +118,12 @@ namespace Altaxo.Graph.Gdi.Plot
         info.AddValue("Style", s._plotStyles);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var pa = (XYColumnPlotData)info.GetValue("Data", null);
         var ps = (G2DPlotStyleCollection)info.GetValue("Style", null);
 
-        if (null == o)
+        if (o is null)
         {
           return new XYColumnPlotItem(pa, ps);
         }
@@ -139,8 +141,8 @@ namespace Altaxo.Graph.Gdi.Plot
 
     private System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetLocalDocumentNodeChildrenWithName()
     {
-      if (null != _plotData)
-        yield return new DocumentNodeAndName(_plotData, () => _plotData = null, "Data");
+      if (_plotData is not null)
+        yield return new DocumentNodeAndName(_plotData, () => _plotData = null!, "Data");
     }
 
     protected override System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -148,40 +150,47 @@ namespace Altaxo.Graph.Gdi.Plot
       return GetLocalDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
     }
 
-    public XYColumnPlotItem(XYColumnPlotData pa, G2DPlotStyleCollection ps)
+    public XYColumnPlotItem(XYColumnPlotData pa, G2DPlotStyleCollection ps) : base(ps)
     {
-      Data = pa;
-      Style = ps;
+      ChildSetMember(ref _plotData, pa);
     }
 
-    public XYColumnPlotItem(XYColumnPlotItem from)
+    public XYColumnPlotItem(XYColumnPlotItem from) : base(from)
     {
-      CopyFrom(from);
+      CopyFrom(from, false);
     }
 
-    public void CopyFrom(XYColumnPlotItem from)
+    [MemberNotNull(nameof(_plotData))]
+    public void CopyFrom(XYColumnPlotItem from, bool withBaseMembers)
     {
-      CopyFrom((PlotItem)from);
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+        return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      ChildCopyToMember(ref _plotData, from._plotData);
     }
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
-      if (IsDisposed)
-        throw new ObjectDisposedException(GetType().FullName);
-
-      var copied = base.CopyFrom(obj);
-
-      if (copied)
+      if (obj is XYColumnPlotItem from)
       {
-        var from = obj as XYColumnPlotItem;
-        if (null != from)
+        using (var suspendToken = SuspendGetToken())
         {
-          Data = (XYColumnPlotData)from.Data.Clone(); // also wires the event
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return copied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     public override object Clone()
@@ -207,7 +216,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new System.ArgumentNullException();
 
         if (ChildSetMember(ref _plotData, value))
@@ -276,8 +285,8 @@ namespace Altaxo.Graph.Gdi.Plot
       if (col is Altaxo.Data.DataColumn)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
-        string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
+        string tablename = table is null ? string.Empty : table.Name + "\\";
+        string collectionname = table is null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
           return ((DataColumn)col).Name;
         else if (level == 1)
@@ -285,7 +294,7 @@ namespace Altaxo.Graph.Gdi.Plot
         else
           return tablename + collectionname + ((DataColumn)col).Name;
       }
-      else if (col != null)
+      else if (col is not null)
         return col.FullName;
       else
         return string.Empty;
@@ -296,7 +305,7 @@ namespace Altaxo.Graph.Gdi.Plot
       return GetName(int.MaxValue);
     }
 
-    public override Processed2DPlotData GetRangesAndPoints(IPlotArea layer)
+    public override Processed2DPlotData? GetRangesAndPoints(IPlotArea layer)
     {
       return _plotData.GetRangesAndPoints(layer);
     }
@@ -320,7 +329,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="layer">The plot layer.</param>
     public override void PrepareScales(IPlotArea layer)
     {
-      if (null != _plotData)
+      if (_plotData is not null)
         _plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject);
 
       _plotStyles?.PrepareScales(layer);

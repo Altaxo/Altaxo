@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,14 +57,22 @@ namespace Altaxo.Graph.Gdi.Plot
         info.AddValue("Style", s._plotStyles);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (XYNonlinearFitFunctionPlotItem)o ?? new XYNonlinearFitFunctionPlotItem(info);
+        var pa = (XYNonlinearFitFunctionPlotData)info.GetValue("Data", null);
+        var ps = (G2DPlotStyleCollection)info.GetValue("Style", null);
 
-        s.ChildSetMember(ref s._plotData, (XYNonlinearFitFunctionPlotData)info.GetValue("Data", null));
-        s.Style = (G2DPlotStyleCollection)info.GetValue("Style", null);
-
-        return s;
+        if (o is null)
+        {
+          return new XYNonlinearFitFunctionPlotItem(pa, ps);
+        }
+        else
+        {
+          var s = (XYNonlinearFitFunctionPlotItem)o;
+          s.Data = pa;
+          s.Style = ps;
+          return s;
+        }
       }
     }
 
@@ -72,14 +81,15 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <summary>
     /// Deserialization constructor.
     /// </summary>
-    /// <param name="info">The information.</param>
-    protected XYNonlinearFitFunctionPlotItem(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    protected XYNonlinearFitFunctionPlotItem(XYNonlinearFitFunctionPlotData pa, G2DPlotStyleCollection ps)
+      : base(pa, ps)
     {
     }
 
     public XYNonlinearFitFunctionPlotItem(XYNonlinearFitFunctionPlotItem from)
         : base(from)
     {
+      CopyFrom(from, false);
     }
 
     /// <summary>
@@ -90,19 +100,21 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="fitElementIndex">Index of the fit element.</param>
     /// <param name="dependentVariableIndex">Index of the dependent variable of the fit element.</param>
     /// <param name="dependentVariableTransformation">Transformation, which is applied to the result of the fit function to be then shown in the plot. Can be null.</param>
+    /// <param name="independentVariableIndex"></param>
+    /// <param name="independentVariableTransformation"></param>
     /// <param name="ps">The ps.</param>
     public XYNonlinearFitFunctionPlotItem(string fitDocumentIdentifier, NonlinearFitDocument fitDocument, int fitElementIndex, int dependentVariableIndex, IVariantToVariantTransformation dependentVariableTransformation, int independentVariableIndex, IVariantToVariantTransformation independentVariableTransformation, G2DPlotStyleCollection ps)
-        : base()
+        : base(
+            new XYNonlinearFitFunctionPlotData(fitDocumentIdentifier, fitDocument, fitElementIndex, dependentVariableIndex, dependentVariableTransformation, independentVariableIndex, independentVariableTransformation),
+            ps
+            )
     {
-      if (null == fitDocumentIdentifier)
+      if (fitDocumentIdentifier is null)
         throw new ArgumentNullException(nameof(fitDocumentIdentifier));
-      if (null == fitDocument)
+      if (fitDocument is null)
         throw new ArgumentNullException(nameof(fitDocument));
-      if (null == ps)
+      if (ps is null)
         throw new ArgumentNullException(nameof(ps));
-
-      ChildSetMember(ref _plotData, new XYNonlinearFitFunctionPlotData(fitDocumentIdentifier, fitDocument, fitElementIndex, dependentVariableIndex, dependentVariableTransformation, independentVariableIndex, independentVariableTransformation));
-      Style = ps;
     }
 
     public override object Clone()
@@ -152,7 +164,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <value>
     /// The dependent variable column.
     /// </value>
-    public IReadableColumn DependentVariableColumn
+    public IReadableColumn? DependentVariableColumn
     {
       get
       {

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -779,7 +780,7 @@ namespace Altaxo.Geometry
       bool endCapNeedsJoiningSegment,
       PolylinePointD3DAsClass endCapCOS)
     {
-      if (null == dashPattern || dashPattern.Count == 0)
+      if (dashPattern is null || dashPattern.Count == 0)
         throw new ArgumentOutOfRangeException(nameof(dashPattern) + " is null or empty");
       if (!(dashPatternScale > 0))
         throw new ArgumentOutOfRangeException(nameof(dashPatternScale) + " should be > 0");

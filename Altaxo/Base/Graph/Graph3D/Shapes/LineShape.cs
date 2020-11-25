@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,13 +47,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (LineShape)obj;
-        info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (LineShape)o : new LineShape(info);
-        info.GetBaseValueEmbedded(s, typeof(LineShape).BaseType, parent);
+        var s = (LineShape?)o ?? new LineShape(info);
+        info.GetBaseValueEmbedded(s, typeof(LineShape).BaseType!, parent);
 
         return s;
       }
@@ -73,11 +74,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
     }
 
     public LineShape(LineShape from)
-      : base(from) // all is done here, since CopyFrom is virtual!
+      : base(from)
     {
     }
 
-    public LineShape(PointD3D startPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    public LineShape(PointD3D startPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
       : base(new ItemLocationDirect(), context)
     {
       Position = startPosition;
@@ -126,16 +127,16 @@ namespace Altaxo.Graph.Graph3D.Shapes
       return new LineShapeObjectOutline(_transformation.WithAppendedTransformation(localToWorldTransformation), Bounds);
     }
 
-    public override IHitTestObject HitTest(HitTestPointData parentHitData)
+    public override IHitTestObject? HitTest(HitTestPointData parentHitData)
     {
-      IHitTestObject result = null;
+      IHitTestObject? result = null;
       var localHitData = parentHitData.NewFromAdditionalTransformation(_transformation);
       if (localHitData.IsHit(new LineD3D(Bounds.Location, Bounds.LocationPlusSize), _linePen.Thickness1, _linePen.Thickness2))
       {
         result = GetNewHitTestObject(parentHitData.WorldTransformation);
       }
 
-      if (result != null)
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
 
       return result;
@@ -269,7 +270,7 @@ const double gripNominalSize = 10; // 10 Points nominal size on the screen
       {
       }
 
-      public override IGripManipulationHandle[] GetGrips(int gripLevel)
+      public override IGripManipulationHandle[]? GetGrips(int gripLevel)
       {
         if (gripLevel <= 1)
         {

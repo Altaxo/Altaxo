@@ -36,11 +36,11 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   /// </summary>
   public partial class GraphicItemsControl : UserControl, IGraphicItemsView
   {
-    public event Action SelectedItemsUp;
+    public event Action? SelectedItemsUp;
 
-    public event Action SelectedItemsDown;
+    public event Action? SelectedItemsDown;
 
-    public event Action SelectedItemsRemove;
+    public event Action? SelectedItemsRemove;
 
     public GraphicItemsControl()
     {
@@ -62,19 +62,19 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private void EhSelectedItemsUp_Click(object sender, RoutedEventArgs e)
     {
-      if (null != SelectedItemsUp)
+      if (SelectedItemsUp is not null)
         SelectedItemsUp();
     }
 
     private void EhSelectedItemsDown_Click(object sender, RoutedEventArgs e)
     {
-      if (null != SelectedItemsDown)
+      if (SelectedItemsDown is not null)
         SelectedItemsDown();
     }
 
     private void EhSelectedItemsRemove_Click(object sender, RoutedEventArgs e)
     {
-      if (null != SelectedItemsRemove)
+      if (SelectedItemsRemove is not null)
         SelectedItemsRemove();
     }
   }

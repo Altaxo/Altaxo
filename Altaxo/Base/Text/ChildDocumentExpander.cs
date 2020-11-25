@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,7 +53,7 @@ namespace Altaxo.Text
     /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text. In addition, all Altaxo graphs are converted to local images.</returns>
     /// <remarks>Since finding Altaxo graphs embedded in the markdown is depended on the context (location of the TextDocument and location of the graph),
     /// and we somewhat loose this context during the expansion, we convert the graphs to local images before we insert the document into the master document.</remarks>
-    public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, int recursionLevel = 0, List<MarkdownError> errors = null)
+    public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, int recursionLevel = 0, List<MarkdownError>? errors = null)
     {
       return ExpandDocumentToNewDocument(textDocument, true, string.Empty, recursionLevel, errors);
     }
@@ -68,7 +70,7 @@ namespace Altaxo.Text
     /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text. In addition, all Altaxo graphs are converted to local images.</returns>
     /// <remarks>Since finding Altaxo graphs embedded in the markdown is depended on the context (location of the TextDocument and location of the graph),
     /// and we somewhat loose this context during the expansion, we convert the graphs to local images before we insert the document into the master document.</remarks>
-    public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, string targetDocumentFolder, int recursionLevel = 0, List<MarkdownError> errors = null)
+    public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, string targetDocumentFolder, int recursionLevel = 0, List<MarkdownError>? errors = null)
     {
       return ExpandDocumentToNewDocument(textDocument, false, targetDocumentFolder, recursionLevel);
     }
@@ -85,7 +87,7 @@ namespace Altaxo.Text
     /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text. In addition, all Altaxo graphs are converted to local images.</returns>
     /// <remarks>Since finding Altaxo graphs embedded in the markdown is depended on the context (location of the TextDocument and location of the graph),
     /// and we somewhat loose this context during the expansion, we convert the graphs to local images before we insert the document into the master document.</remarks>
-    private static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, bool convertGraphsToImages, string newPath, int recursionLevel = 0, List<MarkdownError> errors = null)
+    private static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, bool convertGraphsToImages, string newPath, int recursionLevel = 0, List<MarkdownError>? errors = null)
     {
       var resultDocument = new TextDocument();
       resultDocument.AddImagesFrom(textDocument);
@@ -109,10 +111,10 @@ namespace Altaxo.Text
         else if (mdo is CodeBlock blk)
         {
           var attr = (Markdig.Renderers.Html.HtmlAttributes)mdo.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-          if (attr != null && attr.Properties != null && attr.Properties.Count >= 2 && attr.Properties[0].Key == "Altaxo" && attr.Properties[1].Key == "child")
+          if (attr is not null && attr.Properties is not null && attr.Properties.Count >= 2 && attr.Properties[0].Key == "Altaxo" && attr.Properties[1].Key == "child")
           {
             var childDoc = attr.Properties[1].Value;
-            if (null != childDoc)
+            if (childDoc is not null)
             {
               markdownToProcess.Add(mdo);
             }
@@ -135,20 +137,23 @@ namespace Altaxo.Text
             using (var stream = new System.IO.MemoryStream())
             {
               var streamResult = imageStreamProvider.GetImageStream(stream, link.Url, 300, Altaxo.Main.ProjectFolder.GetFolderPart(textDocument.Name), textDocument.Images);
-              if (null == streamResult.ErrorMessage)
+              if (streamResult.ErrorMessage is null)
               {
                 stream.Seek(0, System.IO.SeekOrigin.Begin);
                 var proxy = MemoryStreamImageProxy.FromStream(stream, streamResult.Extension);
                 resultDocument.AddImage(proxy);
-                documentAsStringBuilder.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.Length);
-                documentAsStringBuilder.Insert(link.UrlSpan.Value.Start, "local:" + proxy.ContentHash);
+                if (link.UrlSpan is not null)
+                {
+                  documentAsStringBuilder.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.Length);
+                  documentAsStringBuilder.Insert(link.UrlSpan.Value.Start, "local:" + proxy.ContentHash);
+                }
               }
             }
           }
           else // keep link to graphs, but change their path
           {
             var newUrl = ConvertGraphUrl(link.Url, textDocument.Name, newPath);
-            if (newUrl != link.Url)
+            if (newUrl != link.Url && link.UrlSpan is not null)
             {
               documentAsStringBuilder.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.Length);
               documentAsStringBuilder.Insert(link.UrlSpan.Value.Start, newUrl);
@@ -169,14 +174,14 @@ namespace Altaxo.Text
 
           if (success)
           {
-            var expandedChild = ExpandDocumentToNewDocument(childTextDocument, convertGraphsToImages, newPath, recursionLevel + 1, errors);
+            var expandedChild = ExpandDocumentToNewDocument(childTextDocument!, convertGraphsToImages, newPath, recursionLevel + 1, errors);
             // exchange the source text
             documentAsStringBuilder.Remove(mdo.Span.Start, mdo.Span.Length);
             documentAsStringBuilder.Insert(mdo.Span.Start, expandedChild.SourceText);
             // insert images
             resultDocument.AddImagesFrom(expandedChild);
           }
-          else if (null != errors) // report an error
+          else if (errors is not null) // report an error
           {
             var error = new MarkdownError()
             {
@@ -221,7 +226,7 @@ namespace Altaxo.Text
       {
         // the graphs reference is a path relative to the text document
         var graph = ImageStreamProvider.FindGraphWithUrl(url, originalTextDocumentPath);
-        if (null == graph)
+        if (graph is null)
         {
           // can't resolve the graph
           /* Commented out because it makes no sense to try to convert Urls that can not be resolved, and the repeated conversion would give nonsense results

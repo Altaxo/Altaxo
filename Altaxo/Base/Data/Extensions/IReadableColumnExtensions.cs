@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
-using System;
+#nullable enable
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Data
 {
@@ -39,7 +37,7 @@ namespace Altaxo.Data
     /// <param name="commonDataTable">If the previous parameter results in false, this is the common data table of all columns. If the previous parameter is true, this is the first underlying data table that could be deduced from the columns. The result is null if no underlying table could be deduced from the columns.</param>
     /// <param name="groupNumberIsNotUniform">If the columns gives different result for their group number, the result here will be true.</param>
     /// <param name="commonGroupNumber">If the previous parameter results in false, this is the common group number of all columns. If the previous parameter results in true, this is the first group number that could be deduced from the columns. The result is null if no group number could be deduced from the columns.</param>
-    public static void GetCommonDataTableAndGroupNumberFromColumns(this IEnumerable<IReadableColumn> columns, out bool dataTableIsNotUniform, out DataTable commonDataTable, out bool groupNumberIsNotUniform, out int? commonGroupNumber)
+    public static void GetCommonDataTableAndGroupNumberFromColumns(this IEnumerable<IReadableColumn> columns, out bool dataTableIsNotUniform, out DataTable? commonDataTable, out bool groupNumberIsNotUniform, out int? commonGroupNumber)
     {
       dataTableIsNotUniform = false;
       groupNumberIsNotUniform = false;
@@ -50,28 +48,28 @@ namespace Altaxo.Data
       {
         IReadableColumn underlyingColumn = col;
 
-        while (underlyingColumn is ITransformedReadableColumn)
+        while (underlyingColumn is ITransformedReadableColumn ucTRC)
         {
-          underlyingColumn = (underlyingColumn as ITransformedReadableColumn).UnderlyingReadableColumn;
+          underlyingColumn = ucTRC.UnderlyingReadableColumn;
         }
 
-        if (underlyingColumn is DataColumn)
+        if (underlyingColumn is DataColumn ucDC)
         {
-          var colColl = DataColumnCollection.GetParentDataColumnCollectionOf((DataColumn)underlyingColumn);
+          var colColl = DataColumnCollection.GetParentDataColumnCollectionOf(ucDC);
           var dataTable = DataTable.GetParentDataTableOf(colColl);
-          int? groupNumber = colColl?.GetColumnGroup((DataColumn)underlyingColumn);
+          int? groupNumber = colColl?.GetColumnGroup(ucDC);
 
-          if (null != dataTable)
+          if (dataTable is not null)
           {
-            if (null == commonDataTable)
+            if (commonDataTable is null)
               commonDataTable = dataTable;
             else if (!object.ReferenceEquals(commonDataTable, dataTable))
               dataTableIsNotUniform = true;
           }
 
-          if (null != groupNumber)
+          if (groupNumber is not null)
           {
-            if (null == commonGroupNumber)
+            if (commonGroupNumber is null)
               commonGroupNumber = groupNumber;
             else if (!(commonGroupNumber == groupNumber))
               groupNumberIsNotUniform = true;

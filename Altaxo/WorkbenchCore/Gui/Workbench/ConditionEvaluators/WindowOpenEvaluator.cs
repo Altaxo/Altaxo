@@ -39,28 +39,31 @@ namespace Altaxo.Gui.Workbench
   /// </example>
   public class WindowOpenConditionEvaluator : IConditionEvaluator
   {
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object? caller, Condition condition)
     {
-      var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
-      if (!(caller is IViewContent activeViewContent)) // active view content is coming from the data context of the menu
+      var workbench = Altaxo.Current.GetRequiredService<Workbench.IWorkbenchEx>();
+      IViewContent? activeViewContent = caller as IViewContent;
+      if (activeViewContent is null) // active view content is probably coming from the data context of the menu
+      {
         activeViewContent = workbench.ActiveViewContent; // else active view content is retrieved from the workbench
+      }
 
       string openWindow = condition.Properties["openwindow"];
 
-      Type openWindowType = condition.AddIn.FindType(openWindow);
-      if (openWindowType == null)
+      var openWindowType = condition.AddIn.FindType(openWindow);
+      if (openWindowType is null)
       {
         Current.Log.WarnFormatted("WindowOpenCondition: cannot find Type {0}", openWindow);
         return false;
       }
 
       // ask the active view content, if it has a sub-content of the given window type
-      if (null != activeViewContent?.GetService(openWindowType))
+      if (activeViewContent?.GetService(openWindowType) is not null)
         return true;
 
       if (openWindow == "*")
       {
-        return activeViewContent != null;
+        return activeViewContent is not null;
       }
 
       foreach (IViewContent view in workbench.ViewContentCollection)

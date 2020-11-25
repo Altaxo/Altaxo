@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -49,6 +51,7 @@ namespace Altaxo.Graph.Gdi
     }
 
     ///<inheritdoc/>
+    [return: MaybeNull]
     public T GetValueOrDefault<T>(object key)
     {
       if (_dictionary.TryGetValue(key, out var o))
@@ -70,7 +73,7 @@ namespace Altaxo.Graph.Gdi
       if (_hierarchicalData.TryGetValue(name, out var existing))
       {
         var existingStack = existing as Stack<T>;
-        if (null != existingStack)
+        if (existingStack is not null)
           existingStack.Push(value);
         else
           throw new InvalidOperationException(string.Format("Expected stored type: {0}, but was {1}", typeof(Stack<T>), existing.GetType()));
@@ -88,7 +91,7 @@ namespace Altaxo.Graph.Gdi
       if (_hierarchicalData.TryGetValue(name, out var existing))
       {
         var existingStack = existing as Stack<T>;
-        if (null != existingStack)
+        if (existingStack is not null)
         {
           return existingStack.Pop();
         }
@@ -108,7 +111,7 @@ namespace Altaxo.Graph.Gdi
       if (_hierarchicalData.TryGetValue(name, out var existing))
       {
         var existingStack = existing as Stack<T>;
-        if (null != existingStack)
+        if (existingStack is not null)
           return existingStack.Peek();
         else
           throw new InvalidOperationException(string.Format("Expected stored type: {0}, but was {1}", typeof(Stack<T>), existing.GetType()));

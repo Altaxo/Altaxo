@@ -22,9 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Altaxo.Serialization.Clipboard
@@ -40,8 +41,10 @@ namespace Altaxo.Serialization.Clipboard
     /// <param name="dataObject">The data object to put the data into.</param>
     public static void PutObjectToDataObject(string clipBoardFormat, object toSerialize, Altaxo.Gui.IClipboardSetDataObject dataObject)
     {
-      if (null == dataObject)
-        throw new ArgumentNullException("dataObject");
+      if (dataObject is null)
+      {
+        throw new ArgumentNullException(nameof(dataObject));
+      }
 
       var stb = SerializeToStringBuilder(toSerialize);
       dataObject.SetData(clipBoardFormat, stb.ToString());
@@ -53,7 +56,7 @@ namespace Altaxo.Serialization.Clipboard
     /// <param name="dataObject">The data object to put the data into.</param>
     public static void PutObjectToDataObject(IEnumerable<string> clipBoardFormats, object toSerialize, Altaxo.Gui.IClipboardSetDataObject dataObject)
     {
-      if (null == dataObject)
+      if (dataObject is null)
         throw new ArgumentNullException(nameof(dataObject));
 
       var stb = SerializeToStringBuilder(toSerialize).ToString();
@@ -66,6 +69,9 @@ namespace Altaxo.Serialization.Clipboard
     /// <param name="toSerialize">Data to put on the clipboard.</param>
     public static void PutObjectToClipboard(string clipBoardFormat, object toSerialize)
     {
+      if (toSerialize is null)
+        throw new ArgumentNullException(nameof(toSerialize));
+
       var dao = Current.Gui.GetNewClipboardDataObject();
       PutObjectToDataObject(clipBoardFormat, toSerialize, dao);
       Current.Gui.SetClipboardDataObject(dao, true);
@@ -76,6 +82,9 @@ namespace Altaxo.Serialization.Clipboard
     /// <param name="toSerialize">Data to put on the clipboard.</param>
     public static void PutObjectToClipboard(IEnumerable<string> clipBoardFormats, object toSerialize)
     {
+      if (toSerialize is null)
+        throw new ArgumentNullException(nameof(toSerialize));
+
       var dao = Current.Gui.GetNewClipboardDataObject();
       PutObjectToDataObject(clipBoardFormats, toSerialize, dao);
       Current.Gui.SetClipboardDataObject(dao, true);
@@ -89,6 +98,9 @@ namespace Altaxo.Serialization.Clipboard
     /// <remarks>The object is serialized into a root node named 'Object'.</remarks>
     public static StringBuilder SerializeToStringBuilder(object toSerialize)
     {
+      if (toSerialize is null)
+        throw new ArgumentNullException(nameof(toSerialize));
+
       var stb = new System.Text.StringBuilder();
       var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
       info.BeginWriting(stb);
@@ -111,7 +123,7 @@ namespace Altaxo.Serialization.Clipboard
     /// <summary>Gets an object from the clipboard.</summary>
     /// <param name="clipBoardFormat">The clip board format string.</param>
     /// <returns>The deserialized object that was on the clipboard, or <c>null</c> otherwise.</returns>
-    public static object GetObjectFromClipboard(string clipBoardFormat)
+    public static object? GetObjectFromClipboard(string clipBoardFormat)
     {
       return GetObjectFromClipboard<object>(clipBoardFormat);
     }
@@ -120,17 +132,18 @@ namespace Altaxo.Serialization.Clipboard
     /// <typeparam name="T">The type of object to deserialize.</typeparam>
     /// <param name="clipBoardFormat">The clip board format string.</param>
     /// <returns>The deserialized object. If deserialization was not possible, or the deserialized data was not of the expected type, the default object for type T is returned (default(T)).</returns>
+    [return: MaybeNull]
     public static T GetObjectFromClipboard<T>(string clipBoardFormat)
     {
       var dao = Current.Gui.OpenClipboardDataObject();
-      string s = (string)dao.GetData(clipBoardFormat);
+      string? s = (string?)dao.GetData(clipBoardFormat);
       if (!string.IsNullOrEmpty(s))
       {
         return DeserializeObjectFromString<T>(s);
       }
       else
       {
-        return default(T);
+        return default;
       }
     }
 
@@ -140,9 +153,10 @@ namespace Altaxo.Serialization.Clipboard
     /// <typeparam name="T">Type of the object that is expected to be deserialized.</typeparam>
     /// <param name="s">The string containing Altaxo's XML format. Is is expected that the root node is named 'Object'.</param>
     /// <returns>The deserialized object, or default(T) if either the object was null or had a type that was not the expected type.</returns>
+    [return: MaybeNull]
     public static T DeserializeObjectFromString<T>(string s)
     {
-      object readObject = null;
+      object? readObject = null;
       using (var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo())
       {
         info.BeginReading(s);
@@ -153,13 +167,13 @@ namespace Altaxo.Serialization.Clipboard
         info.EndReading();
       }
 
-      if ((null != readObject) && (readObject is T))
+      if (readObject is T robj)
       {
-        return (T)readObject;
+        return robj;
       }
       else
       {
-        return default(T);
+        return default;
       }
     }
   }

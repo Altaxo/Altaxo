@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Markdig.Syntax.Inlines;
@@ -40,17 +41,18 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
       if (obj.Content.IsEmpty)
         return;
 
-      if (renderer.CurrentFigureCaptionListIndex.HasValue &&
-          Includes(obj.Span, renderer.FigureCaptionList[renderer.CurrentFigureCaptionListIndex.Value].Number.Position, renderer.FigureCaptionList[renderer.CurrentFigureCaptionListIndex.Value].Number.Count)
+      if (renderer.FigureCaptionList is { } figureCaptionList &&
+          renderer.CurrentFigureCaptionListIndex is { } currentFigureCaptionListIndex &&
+          Includes(obj.Span, figureCaptionList[currentFigureCaptionListIndex].Number.Position, figureCaptionList[currentFigureCaptionListIndex].Number.Count)
         )
       {
         // we are inside a figure caption, and the use of automatic figure numbering was chosen
         WriteFigureCaptionLiteralInline(renderer, obj);
       }
-
       else if (
-        renderer.CurrentFigureLinkListIndex.HasValue &&
-        Includes(obj.Span, renderer.FigureLinkList[renderer.CurrentFigureLinkListIndex.Value].Number.Position, renderer.FigureLinkList[renderer.CurrentFigureLinkListIndex.Value].Number.Count)
+        renderer.FigureLinkList is { } figureLinkList &&
+        renderer.CurrentFigureLinkListIndex is { } currentFigureLinkListIndex &&
+        Includes(obj.Span, figureLinkList[currentFigureLinkListIndex].Number.Position, figureLinkList[currentFigureLinkListIndex].Number.Count)
         )
       {
         // we are inside a link to a figure, and the use of automatic figure numbering was chosen
@@ -68,15 +70,18 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
 
     private static void WriteFigureCaptionLiteralInline(OpenXMLRenderer renderer, LiteralInline obj)
     {
+      if (!(renderer.CurrentFigureCaptionListIndex is { } currentFigureCaptionListIndex))
+        throw new InvalidProgramException("Current figure caption list index must be set in the renderer!");
+
       // This is probably a figure caption, and maybe the category identifier and the number needs to be replaced by special elements
 
       // Split the text in text before the number, and after the number
 
       var text = obj.Content.ToString();
 
-      var numberPosition = renderer.FigureCaptionList[renderer.CurrentFigureCaptionListIndex.Value].Number.Position;
-      var numberLength = renderer.FigureCaptionList[renderer.CurrentFigureCaptionListIndex.Value].Number.Count;
-      var categoryName = renderer.FigureCaptionList[renderer.CurrentFigureCaptionListIndex.Value].Category.Name;
+      var numberPosition = renderer.FigureCaptionList![currentFigureCaptionListIndex].Number.Position;
+      var numberLength = renderer.FigureCaptionList[currentFigureCaptionListIndex].Number.Count;
+      var categoryName = renderer.FigureCaptionList[currentFigureCaptionListIndex].Category.Name;
 
       var textBeforeNumber = text.Substring(0, numberPosition - obj.Span.Start);
       var textAfterNumber = text.Substring(numberPosition + numberLength - obj.Span.Start);
@@ -104,7 +109,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         var field = renderer.Push(new SimpleField { Instruction = $" SEQ {categoryName} \\* ARABIC " });
 
         // include the number
-        var captionNumber = renderer.FigureCaptionIndices[renderer.CurrentFigureCaptionListIndex.Value];
+        var captionNumber = renderer.FigureCaptionIndices![renderer.CurrentFigureCaptionListIndex.Value];
         var run = renderer.PushNewRun();
         run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = captionNumber.ToString() });
         renderer.PopTo(field);
@@ -124,14 +129,16 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
 
     private static void WriteFigureLinkLiteralInline(OpenXMLRenderer renderer, LiteralInline obj)
     {
-      var text = obj.Content.ToString();
+      if (!(renderer.CurrentFigureCaptionListIndex is { } currentFigureCaptionListIndex))
+        throw new InvalidProgramException("Current figure caption list index must be set in the renderer!");
 
-      var numberPosition = renderer.FigureLinkList[renderer.CurrentFigureLinkListIndex.Value].Number.Position;
-      var numberLength = renderer.FigureLinkList[renderer.CurrentFigureLinkListIndex.Value].Number.Count;
+      var text = obj.Content.ToString();
+      var numberPosition = renderer.FigureLinkList![currentFigureCaptionListIndex].Number.Position;
+      var numberLength = renderer.FigureLinkList[currentFigureCaptionListIndex].Number.Count;
       var textBeforeNumber = text.Substring(0, numberPosition - obj.Span.Start);
       var textAfterNumber = text.Substring(numberPosition + numberLength - obj.Span.Start);
 
-      var figureCaptionIndex = renderer.FigureLinkList[renderer.CurrentFigureLinkListIndex.Value].CaptionListIndex;
+      var figureCaptionIndex = renderer.FigureLinkList[currentFigureCaptionListIndex].CaptionListIndex;
       var bookmarkId = GetBookmarkId(renderer, figureCaptionIndex);
 
       if (!string.IsNullOrEmpty(textBeforeNumber))
@@ -145,7 +152,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         var bookmarkRef = "_REF" + bookmarkId.ToString(System.Globalization.CultureInfo.InvariantCulture);
         var field = renderer.Push(new SimpleField { Instruction = $" REF {bookmarkRef} \\h " });
 
-        var captionNumber = renderer.FigureCaptionIndices[figureCaptionIndex];
+        var captionNumber = renderer.FigureCaptionIndices![figureCaptionIndex];
         // include the number
         var run = renderer.PushNewRun();
         run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = captionNumber.ToString() });

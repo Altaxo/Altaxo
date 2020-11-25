@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       e.Handled = true;
       GuiHelper.SynchronizeSelectionFromGui(_cbMajorTicks);
-      if (null != MajorTicksChanged)
+      if (MajorTicksChanged is not null)
         MajorTicksChanged(sender, e);
     }
 
@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       set { GuiHelper.Initialize(_cbMinorTicks, value); }
     }
 
-    public event EventHandler MajorTicksChanged;
+    public event EventHandler? MajorTicksChanged;
   }
 
   #endregion IAngularTickSpacingView

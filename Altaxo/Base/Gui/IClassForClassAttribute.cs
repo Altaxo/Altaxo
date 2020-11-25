@@ -22,7 +22,7 @@
 
 #endregion Copyright
 
-using System;
+#nullable enable
 
 namespace Altaxo.Gui
 {

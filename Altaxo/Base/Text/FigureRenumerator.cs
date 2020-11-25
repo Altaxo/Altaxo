@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -213,10 +214,10 @@ namespace Altaxo.Text
       {
         var figureCaptions = MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(figure).OfType<Markdig.Extensions.Figures.FigureCaption>().ToArray();
 
-        if (null == figureCaptions || 0 == figureCaptions.Length)
+        if (figureCaptions is null || 0 == figureCaptions.Length)
           continue;
 
-        Markdig.Extensions.Figures.FigureCaption figureCaption = null;
+        Markdig.Extensions.Figures.FigureCaption? figureCaption = null;
         if (figureCaptions.Length == 1)
         {
           figureCaption = figureCaptions[0];
@@ -230,7 +231,7 @@ namespace Altaxo.Text
             ExtractTextContentFrom(figCaption, words);
             if (words.Count > 0)
             {
-              if (null == figureCaption)
+              if (figureCaption is null)
               {
                 figureCaption = figCaption;
                 break;
@@ -239,7 +240,7 @@ namespace Altaxo.Text
           }
         }
 
-        if (null == figureCaption)
+        if (figureCaption is null)
           continue;
 
         var (category, digits) = ExtractCategoryAndNumber(figureCaption);
@@ -269,9 +270,9 @@ namespace Altaxo.Text
       // we consider the first letters, up to the first occurence of a space or a digit, as the figure name
 
       if (words.Count == 0)
-        return ((null, -1, 0), (-1, 0));
+        return ((string.Empty, -1, 0), (-1, 0));
 
-      string figureName = null;
+      string? figureName = null;
 
 
       int i;
@@ -300,7 +301,7 @@ namespace Altaxo.Text
       }
       if (string.IsNullOrEmpty(figureName))
       {
-        return ((null, -1, 0), (-1, 0));
+        return ((string.Empty, -1, 0), (-1, 0));
       }
 
       int namePosition = textPos;
@@ -424,7 +425,7 @@ namespace Altaxo.Text
 
 
     /// <summary>
-    /// Helper function that works like <see cref="string.TrimStart"/> but additionally tracks the position.
+    /// Helper function that works like TrimStart but additionally tracks the position.
     /// </summary>
     /// <param name="text">The text tuple, consisting of the text and the position of that text in the source text.</param>
     /// <returns>The text trimmed at the start, and the position of the trimmed text in the source text.</returns>
@@ -461,7 +462,7 @@ namespace Altaxo.Text
     /// </summary>
     /// <param name="parent">The markdown object from which to get the childs.</param>
     /// <returns>The childs of the given markdown object, or null.</returns>
-    public static IReadOnlyList<MarkdownObject> GetChilds(MarkdownObject parent)
+    public static IReadOnlyList<MarkdownObject>? GetChilds(MarkdownObject parent)
     {
       if (parent is LeafBlock leafBlock)
         return leafBlock.Inline?.ToArray<MarkdownObject>();
@@ -481,7 +482,7 @@ namespace Altaxo.Text
     /// <exception cref="NotImplementedException"></exception>
     public static void ExtractTextContentFrom(Markdig.Syntax.LeafBlock leafBlock, List<(string Text, int Position)> result)
     {
-      if (null == leafBlock.Inline)
+      if (leafBlock.Inline is null)
         return;
 
       foreach (var il in leafBlock.Inline)
@@ -496,6 +497,9 @@ namespace Altaxo.Text
             break;
           case Markdig.Syntax.Inlines.LiteralInline literalInline:
             result.Add((literalInline.Content.ToString(), literalInline.Span.Start));
+            break;
+          case Markdig.Extensions.Mathematics.MathInline mathInline:
+            result.Add((mathInline.Content.ToString(), mathInline.Span.Start));
             break;
           default:
             throw new NotImplementedException();

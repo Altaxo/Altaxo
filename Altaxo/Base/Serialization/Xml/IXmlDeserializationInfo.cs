@@ -79,6 +79,8 @@ namespace Altaxo.Serialization.Xml
 
     int GetInt32Attribute(string name);
 
+    string? GetStringAttributeOrNull(string name);
+
     string GetStringAttribute(string name);
 
     int OpenArray(); // get Number of Array elements
@@ -109,7 +111,7 @@ namespace Altaxo.Serialization.Xml
 
     void GetArray(string name, out string[] val);
 
-    void GetArray(string[] val, int count);
+    void GetArray(string?[] val, int count);
 
     /// <summary>
     /// Gets an array of nullable booleans.
@@ -132,18 +134,24 @@ namespace Altaxo.Serialization.Xml
 
     object? GetValueOrNull(string name, object? parent);
 
-    T GetValue<T>(string name, object? parentObject);
+    T GetValue<T>(string name, object? parentObject) where T : notnull;
 
     T? GetValueOrNull<T>(string name, object? parentObject) where T : class;
 
+    T? GetNullableStruct<T>(string name, object? parentObject) where T : struct;
 
     object? GetValueOrOuterXml(string name, object parent, out bool returnValueIsOuterXml);
 
-    void GetBaseValueEmbedded(object instance, System.Type basetype, object parent);
+    void GetBaseValueEmbedded(object instance, System.Type basetype, object? parent);
 
-    object GetBaseValueEmbedded(object instance, string fullyQualifiedBasetypeName, object parent);
+    /// <summary>Deserializes the embedded base type.</summary>
+    /// <param name="instance">The instance of the object to deserialize.</param>
+    /// <param name="fullyQualifiedBaseTypeName">Fully qualified base type name. It is the short name of the assembly, comma, the full type name, comma, and the version. The string must not contain whitespaces. Example: 'AltaxoBase,SampleFileRenamer.Main.DocumentPath,0'.</param>
+    /// <param name="parent">The parent object of the current object to deserialize.</param>
+    [Obsolete("For backward compatibility only (if base type has changed). Use 'void GetBaseValueEmbedded(object instance, System.Type basetype, object? parent)' instead!")]
+    object? GetBaseValueEmbeddedOrNull(object instance, string fullyQualifiedBaseTypeName, object? parent);
 
-    void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent);
+    void GetBaseValueStandalone(string name, object instance, System.Type basetype, object? parent);
 
     string GetElementAsOuterXml(string name);
 
@@ -153,7 +161,7 @@ namespace Altaxo.Serialization.Xml
     /// <value>
     /// The property dictionary.
     /// </value>
-    IDictionary<string, object> PropertyDictionary { get; }
+    IDictionary<string, object?> PropertyDictionary { get; }
 
     /// <summary>
     /// Gets a property value from the property dictionary identified by the provided key string. If the property does not exist in the dictionary, the default value is returned.

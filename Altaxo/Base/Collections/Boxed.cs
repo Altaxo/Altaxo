@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -40,10 +42,11 @@ namespace Altaxo.Collections
     private static readonly System.ComponentModel.PropertyChangedEventArgs _valueChangedEventArg = new System.ComponentModel.PropertyChangedEventArgs("Value");
 
     /// <summary>The boxed value.</summary>
+
     protected T _value;
 
     /// <summary>Occurs when the boxed value changed.</summary>
-    public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// Gets or sets the value.
@@ -58,17 +61,12 @@ namespace Altaxo.Collections
       {
         T oldValue = _value;
         _value = value;
-        if (null != PropertyChanged && !object.Equals(_value, oldValue))
+        if (PropertyChanged is not null && !object.Equals(_value, oldValue))
           PropertyChanged(this, _valueChangedEventArg);
       }
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Boxed&lt;T&gt;"/> class with the value set to the default value of  <see cref="T:T"/>.
-    /// </summary>
-    public Boxed()
-    {
-    }
+
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Boxed&lt;T&gt;"/> class.

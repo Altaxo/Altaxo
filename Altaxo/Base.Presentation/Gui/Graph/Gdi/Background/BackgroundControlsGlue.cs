@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -61,11 +62,11 @@ namespace Altaxo.Gui.Graph.Gdi.Background
     /// <summary>
     /// Occurs when the background style instance changed to another instance. This event is <b>not</b> fired when only members of the background style changed (e.g. the brush).
     /// </summary>
-    public event EventHandler BackgroundStyleChanged;
+    public event EventHandler? BackgroundStyleChanged;
 
     protected virtual void OnBackgroundStyleChanged()
     {
-      if (BackgroundStyleChanged != null)
+      if (BackgroundStyleChanged is not null)
         BackgroundStyleChanged(this, EventArgs.Empty);
     }
 
@@ -81,12 +82,12 @@ namespace Altaxo.Gui.Graph.Gdi.Background
       get { return _cbStyle; }
       set
       {
-        if (_cbStyle != null)
+        if (_cbStyle is not null)
           _cbStyle.SelectionChanged -= EhStyle_SelectionChangeCommitted;
 
         _cbStyle = value;
 
-        if (_cbStyle != null)
+        if (_cbStyle is not null)
         {
           InitializeBackgroundStyle();
           _cbStyle.SelectionChanged += EhStyle_SelectionChangeCommitted;
@@ -102,7 +103,7 @@ namespace Altaxo.Gui.Graph.Gdi.Background
         _doc = null;
 
       // Apply the currently selected brush to the newly created instance
-      if (_doc != null && _cbBrush != null)
+      if (_doc is not null && _cbBrush is not null)
         _doc.Brush = _cbBrush.SelectedBrush;
 
       OnBackgroundStyleChanged();
@@ -111,7 +112,7 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
     private void InitializeBackgroundStyle()
     {
-      int sel = Array.IndexOf(_backgroundStyles, _doc == null ? null : _doc.GetType());
+      int sel = Array.IndexOf(_backgroundStyles, _doc is null ? null : _doc.GetType());
       string[] names = Current.Gui.GetUserFriendlyClassName(_backgroundStyles, true);
       _cbStyle.Items.Clear();
       //_cbStyle.Items.Add("<none>");
@@ -128,11 +129,11 @@ namespace Altaxo.Gui.Graph.Gdi.Background
     /// <summary>
     /// Occurs when the background brush changed.
     /// </summary>
-    public event EventHandler BackgroundBrushChanged;
+    public event EventHandler? BackgroundBrushChanged;
 
     protected virtual void OnBackgroundBrushChanged()
     {
-      if (BackgroundBrushChanged != null)
+      if (BackgroundBrushChanged is not null)
         BackgroundBrushChanged(this, EventArgs.Empty);
     }
 
@@ -143,7 +144,7 @@ namespace Altaxo.Gui.Graph.Gdi.Background
       get { return _cbBrush; }
       set
       {
-        if (_cbBrush != null)
+        if (_cbBrush is not null)
         {
           _cbBrush.SelectedBrushChanged -= EhBrush_SelectionChangeCommitted;
         }
@@ -152,10 +153,10 @@ namespace Altaxo.Gui.Graph.Gdi.Background
         _cbBrush.ShowPlotColorsOnly = _showPlotColorsOnly;
         _cbBrush.SelectedBrush = new BrushX(NamedColors.Aqua);
 
-        if (_doc != null && _cbBrush != null && _doc.Brush != null)
+        if (_doc is not null && _cbBrush is not null && _doc.Brush is not null)
           _cbBrush.SelectedBrush = _doc.Brush;
 
-        if (_cbBrush != null)
+        if (_cbBrush is not null)
         {
           _cbBrush.SelectedBrushChanged += EhBrush_SelectionChangeCommitted;
         }
@@ -166,7 +167,7 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
     private void EhBrush_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (_doc != null)
+      if (_doc is not null)
       {
         _doc.Brush = _cbBrush.SelectedBrush;
         OnBackgroundBrushChanged();
@@ -190,11 +191,11 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
     private void UpdateBrushState()
     {
-      bool vis = _doc != null && _doc.SupportsBrush;
+      bool vis = _doc is not null && _doc.SupportsBrush;
 
-      if (_cbBrush != null)
+      if (_cbBrush is not null)
         _cbBrush.IsEnabled = vis;
-      if (_lblBrush != null)
+      if (_lblBrush is not null)
         _lblBrush.IsEnabled = vis;
     }
 
@@ -210,7 +211,7 @@ namespace Altaxo.Gui.Graph.Gdi.Background
       set
       {
         _showPlotColorsOnly = value;
-        if (null != _cbBrush)
+        if (_cbBrush is not null)
           _cbBrush.ShowPlotColorsOnly = value;
       }
     }

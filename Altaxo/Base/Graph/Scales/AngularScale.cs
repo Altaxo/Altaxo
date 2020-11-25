@@ -22,12 +22,14 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Altaxo.Graph.Scales
 {
+  using System.Diagnostics.CodeAnalysis;
   using Boundaries;
   using Rescaling;
   using Ticks;
@@ -63,9 +65,9 @@ namespace Altaxo.Graph.Scales
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (AngularScale)o;
+        var s = (AngularScale)(o ?? throw new ArgumentNullException(nameof(o)));
 
         s._rescaling = (Rescaling.AngularRescaleConditions)info.GetValue("Rescaling", s);
         s._rescaling.ParentObject = s;
@@ -93,9 +95,9 @@ namespace Altaxo.Graph.Scales
         info.AddValue("TickSpacing", s._tickSpacing);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (AngularScale)o;
+        var s = (AngularScale)(o ?? throw new ArgumentNullException(nameof(o)));
 
         s._cachedAxisOrg = info.GetDouble("Org");
         s._cachedOneByAxisSpan = info.GetDouble("OneBySpan");
@@ -121,13 +123,15 @@ namespace Altaxo.Graph.Scales
     /// <summary>
     /// Constructor for deserialization only.
     /// </summary>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected AngularScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     protected AngularScale(AngularTickSpacing tickSpacing)
     {
-      if (null == tickSpacing)
+      if (tickSpacing is null)
         throw new ArgumentNullException("tickSpacing");
 
       _cachedAxisSpan = 2 * Math.PI;
@@ -144,15 +148,9 @@ namespace Altaxo.Graph.Scales
       CopyFrom(from);
     }
 
-    public override bool CopyFrom(object obj)
+    [MemberNotNull(nameof(_dataBounds), nameof(_tickSpacing), nameof(_rescaling))]
+    protected void CopyFrom(AngularScale from)
     {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-
-      var from = obj as AngularScale;
-      if (null == from)
-        return false;
-
       using (var suspendToken = SuspendGetToken())
       {
         _cachedAxisOrg = from._cachedAxisOrg;
@@ -166,17 +164,32 @@ namespace Altaxo.Graph.Scales
         EhSelfChanged(EventArgs.Empty);
         suspendToken.Resume();
       }
-      return true;
+    }
+
+    public override bool CopyFrom(object obj)
+    {
+      if (ReferenceEquals(this, obj))
+        return true;
+
+      if (obj is AngularScale from)
+      {
+        CopyFrom(from);
+        return true;
+      }
+      else
+      {
+        return false;
+      }
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataBounds)
-        yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null, "DataBounds");
-      if (null != _rescaling)
-        yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null, "Rescaling");
-      if (null != _tickSpacing)
-        yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null, "TickSpacing");
+      if (_dataBounds is not null)
+        yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null!, "DataBounds");
+      if (_rescaling is not null)
+        yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null!, "Rescaling");
+      if (_tickSpacing is not null)
+        yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null!, "TickSpacing");
     }
 
     private void SetCachedValues()
@@ -252,7 +265,7 @@ namespace Altaxo.Graph.Scales
       return _rescaling.ScaleOrigin % 360;
     }
 
-    public override Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions Rescaling
+    public override Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions? Rescaling
     {
       get
       {
@@ -292,7 +305,7 @@ namespace Altaxo.Graph.Scales
       }
     }
 
-    protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+    protected override string? SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
     {
       // ignore all this stuff, org and end are fixed here!
       /*
@@ -334,7 +347,7 @@ namespace Altaxo.Graph.Scales
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         if (ChildSetMember(ref _tickSpacing, (Ticks.NumericTickSpacing)value))
@@ -354,7 +367,7 @@ namespace Altaxo.Graph.Scales
       // Do nothing - rescaling is not supported
     }
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(sender, DataBounds)) // Data bounds have changed
       {
@@ -374,7 +387,7 @@ namespace Altaxo.Graph.Scales
 
     protected override void UpdateTicksAndOrgEndUsingRescalingObject()
     {
-      if (null == TickSpacing)
+      if (TickSpacing is null)
       {
         InternalSetOrgEndFromRescalingObject();
       }

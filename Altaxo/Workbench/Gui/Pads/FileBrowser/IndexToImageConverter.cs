@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows.Data;
@@ -33,8 +34,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 {
   public class IndexToImageConverter : IValueConverter
   {
-    private static List<ImageSource> _imageList;
+    private static List<ImageSource>? _imageList;
 
+    [MemberNotNull(nameof(_imageList))]
     private static void Initialize()
     {
       _imageList = new List<ImageSource>
@@ -51,9 +53,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
       };
     }
 
-    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    public object? Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
-      if (null == _imageList)
+      if (_imageList is null)
         Initialize(); // this late initialization is done here to avoid errors during xaml browsing
 
       if (value is int)

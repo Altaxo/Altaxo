@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace Altaxo.Gui.Common.Drawing
   {
     public static readonly DependencyProperty SelectedBrushProperty;
 
-    public event DependencyPropertyChangedEventHandler SelectedBrushChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedBrushChanged;
 
     private List<BrushX> _lastLocalUsedItems = new List<BrushX>();
 
@@ -80,7 +81,7 @@ namespace Altaxo.Gui.Common.Drawing
       set
       {
         var selBrush = InternalSelectedBrush;
-        if (null != selBrush)
+        if (selBrush is not null)
         {
           selBrush = selBrush.WithColor(value);
           InternalSelectedBrush = selBrush;
@@ -152,7 +153,7 @@ namespace Altaxo.Gui.Common.Drawing
         brush = brush.WithColor(coercedColor);
       }
 
-      if (ShowPlotColorsOnly && (brush.Color.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(brush.Color.ParentColorSet)))
+      if (ShowPlotColorsOnly && (brush.Color.ParentColorSet is null || !ColorSetManager.Instance.IsPlotColorSet(brush.Color.ParentColorSet)))
       {
         brush = brush.WithColor(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
       }
@@ -172,7 +173,7 @@ namespace Altaxo.Gui.Common.Drawing
       var oldColor = oldBrush.Color;
       var newColor = newBrush.Color;
 
-      if (newBrush.BrushType != BrushType.SolidBrush || newBrush.Color.ParentColorSet == null)
+      if (newBrush.BrushType != BrushType.SolidBrush || newBrush.Color.ParentColorSet is null)
       {
         StoreAsLastUsedItem(_lastLocalUsedItems, newBrush);
       }
@@ -183,7 +184,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (!object.ReferenceEquals(oldColor.ParentColorSet, newColor.ParentColorSet) && !object.ReferenceEquals(newColor.ParentColorSet, _treeView.SelectedValue))
         UpdateTreeViewSelection();
 
-      if (null != SelectedBrushChanged)
+      if (SelectedBrushChanged is not null)
         SelectedBrushChanged(obj, args);
     }
 
@@ -226,7 +227,7 @@ namespace Altaxo.Gui.Common.Drawing
         if (known.Count > 0)
         {
           (_comboBoxSeparator2[0] as Separator).Tag = colorSet.Name;
-          if (source == null)
+          if (source is null)
             source = _comboBoxSeparator2.Concat(known);
           else
             source = source.Concat(_comboBoxSeparator2).Concat(known);
@@ -257,7 +258,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       foreach (var item in originalList)
       {
-        if (showPlotColorsOnly && (item.Color.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(item.Color.ParentColorSet)))
+        if (showPlotColorsOnly && (item.Color.ParentColorSet is null || !ColorSetManager.Instance.IsPlotColorSet(item.Color.ParentColorSet)))
           continue;
 
         if (item.Color.Name.ToLowerInvariant().StartsWith(filterString))
@@ -288,7 +289,7 @@ namespace Altaxo.Gui.Common.Drawing
         _guiComboBox.SelectedValue = selItem;
       }
 
-      if (_guiComboBox.SelectedValue == null)
+      if (_guiComboBox.SelectedValue is null)
       {
         _guiComboBox.SelectedValue = InternalSelectedBrush;
       }

@@ -24,6 +24,7 @@
 
 /* created on 9.9.2009 20:57:49 from peg generator V1.0 using 'Altaxo_LabelV1_PEG.txt' as input*/
 
+#nullable enable
 using System;
 using System.IO;
 using System.Text;

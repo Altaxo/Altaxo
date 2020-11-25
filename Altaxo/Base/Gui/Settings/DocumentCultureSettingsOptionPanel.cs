@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace Altaxo.Gui.Settings
 
     protected override void ProcessControllerResult()
     {
-      if (null != _controller.ModelObject)
+      if (_controller.ModelObject is not null)
       {
         var docCulture = (CultureSettings)_controller.ModelObject;
         Current.PropertyService.UserSettings.SetValue(CultureSettings.PropertyKeyDocumentCulture, docCulture);

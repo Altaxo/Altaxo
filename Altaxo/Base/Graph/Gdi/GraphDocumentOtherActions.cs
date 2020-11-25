@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,17 +55,15 @@ namespace Altaxo.Graph.Gdi
         _doc = graphdoc;
       }
 
-      public override string Validate(string graphname)
+      public override string? Validate(string graphname)
       {
-        string err = base.Validate(graphname);
-        if (null != err)
+        var err = base.Validate(graphname);
+        if (!string.IsNullOrEmpty(err))
           return err;
 
         if (_doc.Name == graphname)
           return null;
-        else if (GraphDocumentCollection.GetParentGraphDocumentCollectionOf(_doc) == null)
-          return null; // if there is no parent data set we can enter anything
-        else if (GraphDocumentCollection.GetParentGraphDocumentCollectionOf(_doc).ContainsAnyName(graphname))
+        else if (GraphDocumentCollection.GetParentGraphDocumentCollectionOf(_doc) is { } pc && pc.ContainsAnyName(graphname))
           return "This graph name already exists, please choose another name!";
         else
           return null;
@@ -80,7 +79,7 @@ namespace Altaxo.Graph.Gdi
         (layer) =>
         {
           var xylayer = layer as XYPlotLayer;
-          if (null != xylayer)
+          if (xylayer is not null)
           {
             xylayer.OnUserRescaledAxes();
           }
@@ -124,7 +123,7 @@ namespace Altaxo.Graph.Gdi
       if (withGui && false == Current.Gui.YesNoMessageBox("This will delete the active layer. Are you sure?", "Attention", false))
         return;
 
-      layer.SiblingLayers.Remove(layer);
+      layer.SiblingLayers!.Remove(layer);
     }
 
     /// <summary>
@@ -170,7 +169,7 @@ namespace Altaxo.Graph.Gdi
 
       newposition = ivictrl.EnteredContents;
 
-      MoveLayerToPosition(doc, layer.ParentLayer, layerNumber[layerNumber.Count - 1], newposition);
+      MoveLayerToPosition(doc, layer.ParentLayer!, layerNumber[layerNumber.Count - 1], newposition);
     }
 
     #endregion Layer manipulation

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -29,6 +30,7 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Main;
   using Geometry;
   using Graph.Plot.Groups;
@@ -101,16 +103,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("AppliesToBackground", s._appliesToBackground);
       }
 
-      protected virtual ColumnDrivenColorPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual ColumnDrivenColorPlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ColumnDrivenColorPlotStyle)o ?? new ColumnDrivenColorPlotStyle();
+        var s = (ColumnDrivenColorPlotStyle?)o ?? new ColumnDrivenColorPlotStyle();
 
         s._dataColumnProxy = (IReadableColumnProxy)info.GetValue("DataColumn", s);
-        if (null != s._dataColumnProxy)
+        if (s._dataColumnProxy is not null)
           s._dataColumnProxy.ParentObject = s;
 
         s._scale = (NumericalScale)info.GetValue("Scale", s);
-        if (null != s._scale)
+        if (s._scale is not null)
           s._scale.ParentObject = s;
 
         s._colorProvider = (IColorProvider)info.GetValue("ColorProvider", s);
@@ -122,7 +124,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return SDeserialize(o, info, parent);
       }
@@ -147,32 +149,35 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="copyWithDataReferences">If true, data references are copyied from the template style to this style. If false, the data references of this style are left as they are.</param>
     public ColumnDrivenColorPlotStyle(ColumnDrivenColorPlotStyle from, bool copyWithDataReferences)
     {
+      InternalSetDataColumnProxy(NumericColumnProxyBase.FromColumn(new Altaxo.Data.EquallySpacedColumn(0, 0.25)));
       CopyFrom(from, copyWithDataReferences);
+    }
+
+    [MemberNotNull(nameof(_scale), nameof(_colorProvider))]
+    protected void CopyFrom(ColumnDrivenColorPlotStyle from, bool copyWithDataReferences)
+    {
+      _appliesToFill = from._appliesToFill;
+      _appliesToStroke = from._appliesToStroke;
+      _appliesToBackground = from._appliesToBackground;
+      InternalSetScale((NumericalScale)from._scale.Clone());
+      _colorProvider = from._colorProvider;
+
+      if (copyWithDataReferences)
+      {
+        InternalSetDataColumnProxy((IReadableColumnProxy)from._dataColumnProxy.Clone());
+      }
     }
 
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as ColumnDrivenColorPlotStyle;
-      if (null != from)
+      if (obj is ColumnDrivenColorPlotStyle from)
       {
         using (var suspendToken = SuspendGetToken())
         {
-          _appliesToFill = from._appliesToFill;
-          _appliesToStroke = from._appliesToStroke;
-          _appliesToBackground = from._appliesToBackground;
-          InternalSetScale(null == from._scale ? null : (NumericalScale)from._scale.Clone());
-          _colorProvider = from._colorProvider;
-
-          if (copyWithDataReferences)
-          {
-            InternalSetDataColumnProxy(null == from._dataColumnProxy ? null : (IReadableColumnProxy)from._dataColumnProxy.Clone());
-          }
-
-          //_parent = from._parent;
-
+          CopyFrom(from, copyWithDataReferences);
           suspendToken.ResumeSilently();
         }
         EhSelfChanged(EventArgs.Empty);
@@ -188,6 +193,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <returns>True if data was copied, otherwise false.</returns>
     public bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
+
       return CopyFrom(obj, true);
     }
 
@@ -205,9 +213,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataColumnProxy)
+      if (_dataColumnProxy is not null)
         yield return new DocumentNodeAndName(_dataColumnProxy, "Data");
-      if (null != _scale)
+      if (_scale is not null)
         yield return new DocumentNodeAndName(_scale, "Scale");
     }
 
@@ -217,6 +225,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// Sets the data column proxy and creates the necessary event links.
     /// </summary>
     /// <param name="proxy"></param>
+    [MemberNotNull(nameof(_dataColumnProxy))]
     protected void InternalSetDataColumnProxy(IReadableColumnProxy proxy)
     {
       ChildSetMember(ref _dataColumnProxy, proxy);
@@ -224,7 +233,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Changed event handling
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(_dataColumnProxy, sender))
       {
@@ -251,9 +260,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // - be set (not null)
       // - have a defined count.
 
-      var dataColumn = _dataColumnProxy.Document();
-
-      if (dataColumn.Count.HasValue)
+      if (_dataColumnProxy.Document() is { } dataColumn && dataColumn.Count.HasValue)
       {
         int len = dataColumn.Count.Value;
 
@@ -273,11 +280,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Gets/sets the data column that provides the data that is used to calculate the symbol size.
     /// </summary>
-    public Altaxo.Data.IReadableColumn DataColumn
+    public Altaxo.Data.IReadableColumn? DataColumn
     {
       get
       {
-        return null == _dataColumnProxy ? null : _dataColumnProxy.Document();
+        return _dataColumnProxy.Document();
       }
       set
       {
@@ -292,7 +299,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <value>
     /// The name of the label column if it is a data column. Otherwise, null.
     /// </value>
-    public string DataColumnName
+    public string? DataColumnName
     {
       get
       {
@@ -308,6 +315,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// Sets the scale and create the necessary event links.
     /// </summary>
     /// <param name="scale"></param>
+    [MemberNotNull(nameof(_scale))]
     protected void InternalSetScale(NumericalScale scale)
     {
       if (ChildSetMember(ref _scale, scale))
@@ -331,7 +339,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("Scale");
 
         InternalSetScale(value);
@@ -344,7 +352,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return _colorProvider; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(value, _colorProvider))
@@ -365,7 +373,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private Color GetColor(int idx)
     {
       var dataColumn = DataColumn;
-      if (null != dataColumn)
+      if (dataColumn is not null)
       {
         return _colorProvider.GetColor(_scale.PhysicalToNormal(dataColumn[idx]));
       }
@@ -415,12 +423,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // there is nothing to apply here, because it is only a provider
     }
 
-    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
+    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       // this is not a visible style, thus doing nothing
     }
 
-    public void Paint(IGraphicsContext3D g, Graph3D.IPlotArea layer, Graph3D.Plot.Data.Processed3DPlotData pdata, Graph3D.Plot.Data.Processed3DPlotData prevItemData, Graph3D.Plot.Data.Processed3DPlotData nextItemData)
+    public void Paint(IGraphicsContext3D g, Graph3D.IPlotArea layer, Graph3D.Plot.Data.Processed3DPlotData pdata, Graph3D.Plot.Data.Processed3DPlotData? prevItemData, Graph3D.Plot.Data.Processed3DPlotData? nextItemData)
     {
       // this is not a visible style, thus doing nothing
     }
@@ -444,7 +452,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void PrepareScales(IPlotArea layer)
     {
       var dataColumn = DataColumn;
-      if (null != dataColumn)
+      if (dataColumn is not null)
       {
         if (_doesScaleNeedsDataUpdate)
           InternalUpdateScaleWithNewData();
@@ -458,7 +466,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void PrepareScales(Graph3D.IPlotArea layer)
     {
       var dataColumn = DataColumn;
-      if (null != dataColumn)
+      if (dataColumn is not null)
       {
         if (_doesScaleNeedsDataUpdate)
           InternalUpdateScaleWithNewData();
@@ -478,9 +486,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <inheritdoc/>
     public IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      IReadableColumn? Column, // the column as it was at the time of this call
+      string? ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
       yield return (nameof(DataColumn), DataColumn, _dataColumnProxy?.DocumentPath()?.LastPartOrDefault, (col) => DataColumn = col as IReadableColumn);

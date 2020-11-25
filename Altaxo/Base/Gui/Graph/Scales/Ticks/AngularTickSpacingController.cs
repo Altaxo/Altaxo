@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -76,7 +77,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         BuildMinorTickList();
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.UsePositiveNegativeValues = _doc.UseSignedValues;
         _view.MajorTicks = _majorTickList;

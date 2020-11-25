@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   {
     private BackgroundControlsGlue _backgroundGlue;
 
-    public event Action TickSpacingTypeChanged;
+    public event Action? TickSpacingTypeChanged;
 
     public FloatingScaleControl()
     {
@@ -181,7 +181,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     private void EhTickSpacingType_SelectionChange(object sender, SelectionChangedEventArgs e)
     {
       e.Handled = true;
-      if (null != TickSpacingTypeChanged)
+      if (TickSpacingTypeChanged is not null)
       {
         var _cbTickSpacingType = (ComboBox)sender;
         GuiHelper.SynchronizeSelectionFromGui(_cbTickSpacingType);

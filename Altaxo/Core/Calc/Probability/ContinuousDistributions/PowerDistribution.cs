@@ -32,8 +32,8 @@ namespace Altaxo.Calc.Probability
   /// Provides generation of power distributed random numbers.
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="PowerDistribution"/> type bases upon information presented on
-  ///   <a href="http://www.xycoon.com/power.htm">Xycoon - Power Distribution</a>.
+  /// The implementation of the <see cref="PowerDistribution"/> and the order of parameters is based on
+  /// the implementation in Mathematica.
   /// </remarks>
   public class PowerDistribution : ContinuousDistribution
   {
@@ -43,43 +43,43 @@ namespace Altaxo.Calc.Probability
     /// Gets or sets the parameter alpha which is used for generation of power distributed random numbers.
     /// </summary>
     /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
-    public double Alpha
+    public double A
     {
       get
       {
-        return alpha;
+        return _a;
       }
       set
       {
-        Initialize(value, beta);
+        Initialize(_k, value);
       }
     }
 
     /// <summary>
-    /// Stores the parameter alpha which is used for generation of power distributed random numbers.
+    /// Stores the shape parameter a which is used for generation of power distributed random numbers.
     /// </summary>
-    private double alpha;
+    private double _a;
 
     /// <summary>
-    /// Gets or sets the parameter beta which is used for generation of power distributed random numbers.
+    /// Gets or sets the domain parameter k which is used for generation of power distributed random numbers.
     /// </summary>
     /// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefor assignable.</remarks>
-    public double Beta
+    public double K
     {
       get
       {
-        return beta;
+        return _k;
       }
       set
       {
-        Initialize(alpha, value);
+        Initialize(value, _a);
       }
     }
 
     /// <summary>
-    /// Stores the parameter beta which is used for generation of power distributed random numbers.
+    /// Stores the domain parameter which is used for generation of power distributed random numbers.
     /// </summary>
-    private double beta;
+    private double _k;
 
     /// <summary>
     /// Stores an intermediate result for generation of power distributed random numbers.
@@ -113,18 +113,32 @@ namespace Altaxo.Calc.Probability
     /// </exception>
     public PowerDistribution(Generator generator)
       : this(1, 1, generator)
-    {
+        {
     }
 
-    public PowerDistribution(double alpha, double beta)
-      : this(alpha, beta, DefaultGenerator)
-    {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PowerDistribution"/> class with
+    /// domain parameter <paramref name="k"/> and shape parameter <paramref name="a"/>.
+    /// </summary>
+    /// <param name="k">The domain parameter k.</param>
+    /// <param name="a">The shape parameter a.</param>
+    public PowerDistribution(double k, double a)
+      : this(k, a, DefaultGenerator)
+        {
     }
 
-    public PowerDistribution(double alpha, double beta, Generator generator)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PowerDistribution"/> class with
+    /// domain parameter <paramref name="k"/> and shape parameter <paramref name="a"/> using the specified
+    /// random number generator.
+    /// </summary>
+    /// <param name="k">The domain parameter k.</param>
+    /// <param name="a">The shape parameter a.</param>
+    /// <param name="generator">The random number generator.</param>
+    public PowerDistribution(double k, double a, Generator generator)
       : base(generator)
     {
-      Initialize(alpha, beta);
+      Initialize(k, a);
     }
 
     #endregion construction
@@ -132,7 +146,7 @@ namespace Altaxo.Calc.Probability
     #region instance methods
 
     /// <summary>
-    /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
+    /// Determines whether the specified value is valid for parameter <see cref="A"/>.
     /// </summary>
     /// <param name="value">The value to check.</param>
     /// <returns>
@@ -144,7 +158,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Determines whether the specified value is valid for parameter <see cref="Beta"/>.
+    /// Determines whether the specified value is valid for parameter <see cref="K"/>.
     /// </summary>
     /// <param name="value">The value to check.</param>
     /// <returns>
@@ -159,16 +173,17 @@ namespace Altaxo.Calc.Probability
     /// Updates the helper variables that store intermediate results for generation of power distributed random
     ///   numbers.
     /// </summary>
-    public void Initialize(double alpha, double beta)
-    {
-      if (!IsValidAlpha(alpha))
-        throw new ArgumentOutOfRangeException("Alpha out of range (must be positive)");
-      if (!IsValidBeta(beta))
-        throw new ArgumentOutOfRangeException("Beta out of range (must be positive)");
+    
+    public void Initialize(double k, double a)
+        {
+      if (!IsValidAlpha(a))
+        throw new ArgumentOutOfRangeException($"Parameter {nameof(a)} out of range (must be positive)");
+      if (!IsValidBeta(k))
+        throw new ArgumentOutOfRangeException($"Parameter {nameof(k)} out of range (must be positive)");
 
-      this.alpha = alpha;
-      this.beta = beta;
-      helper1 = 1.0 / this.alpha;
+      this._a = a;
+      this._k = k;
+      helper1 = 1.0 / this._a;
     }
 
     #endregion instance methods
@@ -193,7 +208,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return 1.0 / beta;
+        return 1.0 / _k;
       }
     }
 
@@ -204,7 +219,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return alpha / beta / (alpha + 1.0);
+        return _a / _k / (_a + 1.0);
       }
     }
 
@@ -226,7 +241,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return alpha / Math.Pow(beta, 2.0) / Math.Pow(alpha + 1.0, 2.0) / (alpha + 2.0);
+        return _a / Math.Pow(_k, 2.0) / Math.Pow(_a + 1.0, 2.0) / (_a + 2.0);
       }
     }
 
@@ -237,11 +252,11 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (alpha > 1.0)
+        if (_a > 1.0)
         {
-          return new double[] { 1.0 / beta };
+          return new double[] { 1.0 / _k };
         }
-        else if (alpha < 1.0)
+        else if (_a < 1.0)
         {
           return new double[] { 0.0 };
         }
@@ -258,53 +273,113 @@ namespace Altaxo.Calc.Probability
     /// <returns>A power distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      return Math.Pow(Generator.NextDouble(), helper1) / beta;
+      return Math.Pow(Generator.NextDouble(), helper1) / _k;
     }
 
     #endregion overridden Distribution members
 
     #region CdfPdfQuantile
 
+    /// <summary>
+    /// Calculates the cumulative distribution function.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <returns>
+    /// The probability that the random variable of this probability distribution will be found at a value less than or equal to <paramref name="x" />.
+    /// </returns>
     public override double CDF(double x)
     {
-      return CDF(x, alpha, beta);
+      return CDF(x, _k, _a);
     }
 
-    public static double CDF(double x, double A, double B)
+    /// <summary>
+    /// Calculates the cumulative distribution function at the specified x.
+    /// </summary>
+    /// <param name="x">The x.</param>
+    /// <param name="k">The domain parameter k.</param>
+    /// <param name="a">The shape parameter a.</param>
+    /// <returns></returns>
+    public static double CDF(double x, double k, double a)
     {
-      if (x <= 0)
+      if (0 < x && x <= 1 / k)
+      {
+        return Math.Pow(k * x, a);
+      }
+      else if (x <= 0)
+      {
         return 0;
-      if (x >= 1 / B)
-        return 1;
+      }
       else
-        return Math.Pow(B * x, A);
+      {
+        return 1;
+      }
     }
 
+    /// <summary>
+    /// Calculates the probability density function.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <returns>
+    /// The relative likelihood for the random variable to occur at the point <paramref name="x" />.
+    /// </returns>
     public override double PDF(double x)
     {
-      return PDF(x, alpha, beta);
+      return PDF(x, _k, _a);
     }
 
-    public static double PDF(double x, double A, double B)
+    /// <summary>
+    /// Calculates the probability dennsity at the specified <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">The x.</param>
+    /// <param name="k">The domain parameter k.</param>
+    /// <param name="a">The shape parameter a.</param>
+    /// <returns></returns>
+    public static double PDF(double x, double k, double a)
     {
-      if (x <= 0 || x >= 1 / B)
+      if (0 < x && x <= 1 / k)
+      {
+        return a * Math.Pow(k * x, a) / x;
+      }
+      else
+      {
+        return 0;
+      }
+    }
+
+    /// <summary>
+    /// Calculates the quantile of the distribution function.
+    /// </summary>
+    /// <param name="p">The probability p.</param>
+    /// <returns>
+    /// The point x at which the cumulative distribution function <see cref="CDF(double)"/> of argument x is equal to <paramref name="p" />.
+    /// </returns>
+    public override double Quantile(double p)
+    {
+      return Quantile(p, _k, _a);
+    }
+
+    /// <summary>
+    /// Calculates the quantile at the specified probability p.
+    /// </summary>
+    /// <param name="p">The probability.</param>
+    /// <param name="k">The domain parameter k.</param>
+    /// <param name="a">The shape parameter a.</param>
+    /// <returns>The quantile at the specified probability p.</returns>
+    public static double Quantile(double p, double k, double a)
+        {
+      if (0 < p && p <= 1)
+      {
+        return Math.Pow(p, 1 / a) / k;
+      }
+      else if(p<=0)
       {
         return 0;
       }
       else
       {
-        return A * Math.Pow(B * x, A) / x;
+        return 1 / k;
       }
-    }
 
-    public override double Quantile(double p)
-    {
-      return Quantile(p, alpha, beta);
-    }
-
-    public static double Quantile(double p, double A, double B)
-    {
-      return Math.Pow(p, 1 / A) / B;
     }
 
     #endregion CdfPdfQuantile

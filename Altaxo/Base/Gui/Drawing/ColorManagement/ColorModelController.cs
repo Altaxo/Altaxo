@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,7 +92,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
           _availableTextOnlyColorModels.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(modelType), modelType, modelType == _currentTextOnlyColorModel.GetType()));
         }
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeAvailableColorModels(_availableColorModels);
         _view.InitializeAvailableTextOnlyColorModels(_availableTextOnlyColorModels);
@@ -128,7 +129,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       var node = _availableColorModels.FirstSelectedNode;
 
-      if (null != node && (Type)node.Tag != _currentColorModel.GetType())
+      if (node is not null && (Type)node.Tag != _currentColorModel.GetType())
       {
         var newColorModel = (IColorModel)Activator.CreateInstance((Type)node.Tag);
         _currentColorModel = newColorModel;
@@ -140,7 +141,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       var node = _availableTextOnlyColorModels.FirstSelectedNode;
 
-      if (null != node && (Type)node.Tag != _currentTextOnlyColorModel.GetType())
+      if (node is not null && (Type)node.Tag != _currentTextOnlyColorModel.GetType())
       {
         var newTextOnlyColorModel = (ITextOnlyColorModel)Activator.CreateInstance((Type)node.Tag);
         _currentTextOnlyColorModel = newTextOnlyColorModel;

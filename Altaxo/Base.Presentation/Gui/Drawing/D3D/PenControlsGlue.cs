@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,7 +90,7 @@ namespace Altaxo.Gui.Drawing.D3D
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new NotImplementedException("Pen is null");
         InternalSelectedPen = value; // Pen is not immutable. Before changing it here in this control, make a copy, so an external program can change the old pen without interference
       }
@@ -109,7 +110,7 @@ namespace Altaxo.Gui.Drawing.D3D
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new NotImplementedException("Pen is null");
 
         _pen = value;
@@ -120,50 +121,50 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private void InitControlProperties()
     {
-      if (null != CbBrush)
+      if (CbBrush is not null)
         CbBrush.SelectedMaterial = _pen.Material;
-      if (null != CbLineThickness1)
+      if (CbLineThickness1 is not null)
         CbLineThickness1.SelectedQuantityAsValueInPoints = _pen.Thickness1;
-      if (null != CbLineThickness2)
+      if (CbLineThickness2 is not null)
         CbLineThickness2.SelectedQuantityAsValueInPoints = _pen.Thickness2;
 
-      if (null != CbCrossSection)
+      if (CbCrossSection is not null)
         InitializeCrossSectionCombobox();
 
-      if (null != CbDashPattern)
+      if (CbDashPattern is not null)
         CbDashPattern.SelectedItem = _pen.DashPattern;
 
-      if (null != CbLineStartCap)
+      if (CbLineStartCap is not null)
         CbLineStartCap.SelectedLineCap = _pen.LineStartCap;
-      if (null != CbLineStartCapAbsSize)
-        CbLineStartCapAbsSize.SelectedQuantityAsValueInPoints = null != _pen.LineStartCap ? _pen.LineStartCap.MinimumAbsoluteSizePt : 0;
-      if (null != CbLineStartCapRelSize)
-        CbLineStartCapRelSize.SelectedQuantityAsValueInSIUnits = null != _pen.LineStartCap ? _pen.LineStartCap.MinimumRelativeSize : 0;
+      if (CbLineStartCapAbsSize is not null)
+        CbLineStartCapAbsSize.SelectedQuantityAsValueInPoints = _pen.LineStartCap is not null ? _pen.LineStartCap.MinimumAbsoluteSizePt : 0;
+      if (CbLineStartCapRelSize is not null)
+        CbLineStartCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.LineStartCap is not null ? _pen.LineStartCap.MinimumRelativeSize : 0;
 
-      if (null != CbLineEndCap)
+      if (CbLineEndCap is not null)
         CbLineEndCap.SelectedLineCap = _pen.LineEndCap;
-      if (null != CbLineEndCapAbsSize)
-        CbLineEndCapAbsSize.SelectedQuantityAsValueInPoints = null != _pen.LineEndCap ? _pen.LineEndCap.MinimumAbsoluteSizePt : 0;
-      if (null != CbLineEndCapRelSize)
-        CbLineEndCapRelSize.SelectedQuantityAsValueInSIUnits = null != _pen.LineEndCap ? _pen.LineEndCap.MinimumRelativeSize : 0;
+      if (CbLineEndCapAbsSize is not null)
+        CbLineEndCapAbsSize.SelectedQuantityAsValueInPoints = _pen.LineEndCap is not null ? _pen.LineEndCap.MinimumAbsoluteSizePt : 0;
+      if (CbLineEndCapRelSize is not null)
+        CbLineEndCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.LineEndCap is not null ? _pen.LineEndCap.MinimumRelativeSize : 0;
 
-      if (null != CbDashStartCap)
+      if (CbDashStartCap is not null)
         CbDashStartCap.SelectedLineCap = _pen.DashStartCap;
-      if (null != CbDashStartCapAbsSize)
-        CbDashStartCapAbsSize.SelectedQuantityAsValueInPoints = null != _pen.DashStartCap ? _pen.DashStartCap.MinimumAbsoluteSizePt : 0;
-      if (null != CbDashStartCapRelSize)
-        CbDashStartCapRelSize.SelectedQuantityAsValueInSIUnits = null != _pen.DashStartCap ? _pen.DashStartCap.MinimumRelativeSize : 0;
+      if (CbDashStartCapAbsSize is not null)
+        CbDashStartCapAbsSize.SelectedQuantityAsValueInPoints = _pen.DashStartCap is not null ? _pen.DashStartCap.MinimumAbsoluteSizePt : 0;
+      if (CbDashStartCapRelSize is not null)
+        CbDashStartCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.DashStartCap is not null ? _pen.DashStartCap.MinimumRelativeSize : 0;
 
-      if (null != CbDashEndCap)
+      if (CbDashEndCap is not null)
         CbDashEndCap.SelectedLineCap = _pen.DashEndCap;
-      if (null != CbDashEndCapAbsSize)
-        CbDashEndCapAbsSize.SelectedQuantityAsValueInPoints = null != _pen.DashEndCap ? _pen.DashEndCap.MinimumAbsoluteSizePt : 0;
-      if (null != CbDashEndCapRelSize)
-        CbDashEndCapRelSize.SelectedQuantityAsValueInSIUnits = null != _pen.DashEndCap ? _pen.DashEndCap.MinimumRelativeSize : 0;
+      if (CbDashEndCapAbsSize is not null)
+        CbDashEndCapAbsSize.SelectedQuantityAsValueInPoints = _pen.DashEndCap is not null ? _pen.DashEndCap.MinimumAbsoluteSizePt : 0;
+      if (CbDashEndCapRelSize is not null)
+        CbDashEndCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.DashEndCap is not null ? _pen.DashEndCap.MinimumRelativeSize : 0;
 
-      if (null != CbLineJoin)
+      if (CbLineJoin is not null)
         CbLineJoin.SelectedLineJoin = _pen.LineJoin;
-      if (null != CbMiterLimit)
+      if (CbMiterLimit is not null)
         CbMiterLimit.SelectedQuantityInSIUnits = _pen.MiterLimit;
 
       _userChangedAbsLineStartCapSize = false;
@@ -173,17 +174,17 @@ namespace Altaxo.Gui.Drawing.D3D
       _userChangedRelLineEndCapSize = false;
     }
 
-    public event EventHandler PenChanged;
+    public event EventHandler? PenChanged;
 
     protected virtual void OnPenChanged()
     {
-      if (PenChanged != null)
+      if (PenChanged is not null)
         PenChanged(this, EventArgs.Empty);
 
       UpdatePreviewPanel();
     }
 
-    private WeakEventHandler _weakPenChangedHandler;
+    // private WeakEventHandler _weakPenChangedHandler;
 
     private void EhPenChanged(object sender, EventArgs e)
     {
@@ -204,17 +205,17 @@ namespace Altaxo.Gui.Drawing.D3D
       {
         var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(MaterialComboBox.SelectedMaterialProperty, typeof(MaterialComboBox));
 
-        if (_cbBrush != null)
+        if (_cbBrush is not null)
           dpd.RemoveValueChanged(_cbBrush, EhBrush_SelectionChangeCommitted);
 
         _cbBrush = value;
-        if (_cbBrush != null && null != _pen)
+        if (_cbBrush is not null && _pen is not null)
         {
           _cbBrush.ShowPlotColorsOnly = _showPlotColorsOnly;
           _cbBrush.SelectedMaterial = _pen.Material;
         }
 
-        if (_cbBrush != null)
+        if (_cbBrush is not null)
         {
           dpd.AddValueChanged(_cbBrush, EhBrush_SelectionChangeCommitted);
           if (!_isAllPropertiesGlue)
@@ -239,14 +240,14 @@ namespace Altaxo.Gui.Drawing.D3D
       set
       {
         _showPlotColorsOnly = value;
-        if (null != _cbBrush)
+        if (_cbBrush is not null)
           _cbBrush.ShowPlotColorsOnly = _showPlotColorsOnly;
       }
     }
 
-    private void EhBrush_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhBrush_SelectionChangeCommitted(object? sender, EventArgs e)
     {
-      if (_pen != null)
+      if (_pen is not null)
       {
         var oldPen = _pen;
         _pen = _pen.WithMaterial(_cbBrush.SelectedMaterial);
@@ -269,14 +270,14 @@ namespace Altaxo.Gui.Drawing.D3D
       {
         var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ComboBox.SelectedValueProperty, typeof(ComboBox));
 
-        if (_cbCrossSection != null)
+        if (_cbCrossSection is not null)
           dpd.RemoveValueChanged(_cbCrossSection, EhCrossSection_SelectionChangeCommitted);
 
         _cbCrossSection = value;
-        if (_pen != null && _cbCrossSection != null)
+        if (_pen is not null && _cbCrossSection is not null)
           InitializeCrossSectionCombobox();
 
-        if (_cbCrossSection != null)
+        if (_cbCrossSection is not null)
           dpd.AddValueChanged(_cbCrossSection, EhCrossSection_SelectionChangeCommitted);
       }
     }
@@ -294,12 +295,12 @@ namespace Altaxo.Gui.Drawing.D3D
       GuiHelper.Initialize(_cbCrossSection, _crossSectionChoices);
     }
 
-    private void EhCrossSection_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhCrossSection_SelectionChangeCommitted(object? sender, EventArgs e)
     {
-      if (_pen != null)
+      if (_pen is not null)
       {
         var node = (SelectableListNode)_cbCrossSection.SelectedValue;
-        if (null != node)
+        if (node is not null)
         {
           var type = (Type)node.Tag;
           var crossSection = (ICrossSectionOfLine)Activator.CreateInstance(type);
@@ -325,21 +326,21 @@ namespace Altaxo.Gui.Drawing.D3D
       {
         var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(DashPatternComboBox.SelectedItemProperty, typeof(DashPatternComboBox));
 
-        if (_cbDashPattern != null)
+        if (_cbDashPattern is not null)
           dpd.RemoveValueChanged(_cbDashPattern, EhDashPattern_SelectionChangeCommitted);
 
         _cbDashPattern = value;
-        if (_pen != null && _cbDashPattern != null)
+        if (_pen is not null && _cbDashPattern is not null)
           _cbDashPattern.SelectedItem = _pen.DashPattern;
 
-        if (_cbDashPattern != null)
+        if (_cbDashPattern is not null)
           dpd.AddValueChanged(_cbDashPattern, EhDashPattern_SelectionChangeCommitted);
       }
     }
 
-    private void EhDashPattern_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhDashPattern_SelectionChangeCommitted(object? sender, EventArgs e)
     {
-      if (_pen != null)
+      if (_pen is not null)
       {
         var oldPen = _pen;
         _pen = _pen.WithDashPattern(_cbDashPattern.SelectedItem);
@@ -395,25 +396,25 @@ namespace Altaxo.Gui.Drawing.D3D
       get { return _cbThickness1; }
       set
       {
-        if (_cbThickness1 != null)
+        if (_cbThickness1 is not null)
           _cbThickness1.SelectedQuantityChanged -= EhThickness1_ChoiceChanged;
 
         _cbThickness1 = value;
-        if (_pen != null && _cbThickness1 != null)
+        if (_pen is not null && _cbThickness1 is not null)
           _cbThickness1.SelectedQuantityAsValueInPoints = _pen.Thickness1;
 
-        if (_cbThickness1 != null)
+        if (_cbThickness1 is not null)
           _cbThickness1.SelectedQuantityChanged += EhThickness1_ChoiceChanged;
       }
     }
 
     private void EhThickness1_ChoiceChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (_pen != null)
+      if (_pen is not null)
       {
         var oldPen = _pen;
 
-        if (null != _cbThickness2)
+        if (_cbThickness2 is not null)
           _pen = _pen.WithThickness1(_cbThickness1.SelectedQuantityAsValueInPoints);
         else
           _pen = _pen.WithUniformThickness(_cbThickness1.SelectedQuantityAsValueInPoints);
@@ -434,21 +435,21 @@ namespace Altaxo.Gui.Drawing.D3D
       get { return _cbThickness2; }
       set
       {
-        if (_cbThickness2 != null)
+        if (_cbThickness2 is not null)
           _cbThickness2.SelectedQuantityChanged -= EhThickness2_ChoiceChanged;
 
         _cbThickness2 = value;
-        if (_pen != null && _cbThickness2 != null)
+        if (_pen is not null && _cbThickness2 is not null)
           _cbThickness2.SelectedQuantityAsValueInPoints = _pen.Thickness1;
 
-        if (_cbThickness2 != null)
+        if (_cbThickness2 is not null)
           _cbThickness2.SelectedQuantityChanged += EhThickness2_ChoiceChanged;
       }
     }
 
     private void EhThickness2_ChoiceChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (_pen != null)
+      if (_pen is not null)
       {
         var oldPen = _pen;
         _pen = _pen.WithThickness2(_cbThickness2.SelectedQuantityAsValueInPoints);
@@ -471,39 +472,39 @@ namespace Altaxo.Gui.Drawing.D3D
       {
         var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(LineCapComboBox.SelectedLineCapProperty, typeof(LineCapComboBox));
 
-        if (_cbLineStartCap != null)
+        if (_cbLineStartCap is not null)
           dpd.RemoveValueChanged(_cbLineStartCap, EhLineStartCap_SelectionChangeCommitted);
 
         _cbLineStartCap = value;
-        if (_pen != null && _cbLineStartCap != null)
+        if (_pen is not null && _cbLineStartCap is not null)
           _cbLineStartCap.SelectedLineCap = _pen.LineStartCap;
 
-        if (_cbLineStartCap != null)
+        if (_cbLineStartCap is not null)
           dpd.AddValueChanged(_cbLineStartCap, EhLineStartCap_SelectionChangeCommitted);
       }
     }
 
-    private void EhLineStartCap_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhLineStartCap_SelectionChangeCommitted(object? sender, EventArgs e)
     {
-      if (_pen != null)
+      if (_pen is not null)
       {
         var cap = _cbLineStartCap.SelectedLineCap;
-        if (null != cap)
+        if (cap is not null)
         {
-          if (_userChangedAbsLineStartCapSize && _cbLineStartCapAbsSize != null)
+          if (_userChangedAbsLineStartCapSize && _cbLineStartCapAbsSize is not null)
             cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbLineStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
-          if (_userChangedRelLineStartCapSize && _cbLineStartCapRelSize != null)
+          if (_userChangedRelLineStartCapSize && _cbLineStartCapRelSize is not null)
             cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbLineStartCapRelSize.SelectedQuantityAsValueInSIUnits);
         }
         _pen = _pen.WithLineStartCap(cap);
 
-        if (_cbLineStartCapAbsSize != null && cap != null)
+        if (_cbLineStartCapAbsSize is not null && cap is not null)
         {
           var oldValue = _userChangedAbsLineStartCapSize;
           _cbLineStartCapAbsSize.SelectedQuantityAsValueInPoints = cap.MinimumAbsoluteSizePt;
           _userChangedAbsLineStartCapSize = oldValue;
         }
-        if (_cbLineStartCapRelSize != null && cap != null)
+        if (_cbLineStartCapRelSize is not null && cap is not null)
         {
           var oldValue = _userChangedRelLineStartCapSize;
           _cbLineStartCapRelSize.SelectedQuantityAsValueInSIUnits = cap.MinimumRelativeSize;
@@ -521,14 +522,14 @@ namespace Altaxo.Gui.Drawing.D3D
       get { return _cbLineStartCapAbsSize; }
       set
       {
-        if (_cbLineStartCapAbsSize != null)
+        if (_cbLineStartCapAbsSize is not null)
           _cbLineStartCapAbsSize.SelectedQuantityChanged -= EhLineStartCapAbsSize_SelectionChangeCommitted;
 
         _cbLineStartCapAbsSize = value;
-        if (_pen != null && _cbLineStartCapAbsSize != null)
-          _cbLineStartCapAbsSize.SelectedQuantityAsValueInPoints = null == _pen.LineStartCap ? 0 : _pen.LineStartCap.MinimumAbsoluteSizePt;
+        if (_pen is not null && _cbLineStartCapAbsSize is not null)
+          _cbLineStartCapAbsSize.SelectedQuantityAsValueInPoints = _pen.LineStartCap is null ? 0 : _pen.LineStartCap.MinimumAbsoluteSizePt;
 
-        if (_cbLineStartCapAbsSize != null)
+        if (_cbLineStartCapAbsSize is not null)
           _cbLineStartCapAbsSize.SelectedQuantityChanged += EhLineStartCapAbsSize_SelectionChangeCommitted;
       }
     }
@@ -537,11 +538,11 @@ namespace Altaxo.Gui.Drawing.D3D
     {
       _userChangedAbsLineStartCapSize = true;
 
-      if (_pen != null)
+      if (_pen is not null)
       {
         var cap = _pen.LineStartCap;
 
-        if (null != cap)
+        if (cap is not null)
         {
           cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbLineStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
         }
@@ -559,14 +560,14 @@ namespace Altaxo.Gui.Drawing.D3D
       get { return _cbLineStartCapRelSize; }
       set
       {
-        if (_cbLineStartCapRelSize != null)
+        if (_cbLineStartCapRelSize is not null)
           _cbLineStartCapRelSize.SelectedQuantityChanged -= EhLineStartCapRelSize_SelectionChangeCommitted;
 
         _cbLineStartCapRelSize = value;
-        if (_pen != null && _cbLineStartCapRelSize != null)
-          _cbLineStartCapRelSize.SelectedQuantityAsValueInSIUnits = null == _pen.LineStartCap ? 0 : _pen.LineStartCap.MinimumRelativeSize;
+        if (_pen is not null && _cbLineStartCapRelSize is not null)
+          _cbLineStartCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.LineStartCap is null ? 0 : _pen.LineStartCap.MinimumRelativeSize;
 
-        if (_cbLineStartCapRelSize != null)
+        if (_cbLineStartCapRelSize is not null)
           _cbLineStartCapRelSize.SelectedQuantityChanged += EhLineStartCapRelSize_SelectionChangeCommitted;
       }
     }
@@ -575,10 +576,10 @@ namespace Altaxo.Gui.Drawing.D3D
     {
       _userChangedRelLineStartCapSize = true;
 
-      if (_pen != null)
+      if (_pen is not null)
       {
         var cap = _pen.LineStartCap;
-        if (null != cap)
+        if (cap is not null)
         {
           cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbLineStartCapRelSize.SelectedQuantityAsValueInSIUnits);
         }
@@ -601,37 +602,37 @@ namespace Altaxo.Gui.Drawing.D3D
       {
         var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(LineCapComboBox.SelectedLineCapProperty, typeof(LineCapComboBox));
 
-        if (_cbLineEndCap != null)
+        if (_cbLineEndCap is not null)
           dpd.RemoveValueChanged(_cbLineEndCap, EhLineEndCap_SelectionChangeCommitted);
 
         _cbLineEndCap = value;
-        if (_pen != null && _cbLineEndCap != null)
+        if (_pen is not null && _cbLineEndCap is not null)
           _cbLineEndCap.SelectedLineCap = _pen.LineEndCap;
 
-        if (_cbLineEndCap != null)
+        if (_cbLineEndCap is not null)
           dpd.AddValueChanged(_cbLineEndCap, EhLineEndCap_SelectionChangeCommitted);
       }
     }
 
-    private void EhLineEndCap_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhLineEndCap_SelectionChangeCommitted(object? sender, EventArgs e)
     {
-      if (_pen != null)
+      if (_pen is not null)
       {
         var cap = _cbLineEndCap.SelectedLineCap;
-        if (_userChangedAbsLineEndCapSize && _cbLineEndCapAbsSize != null)
+        if (_userChangedAbsLineEndCapSize && _cbLineEndCapAbsSize is not null)
           cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbLineEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
-        if (_userChangedRelLineEndCapSize && _cbLineEndCapRelSize != null)
+        if (_userChangedRelLineEndCapSize && _cbLineEndCapRelSize is not null)
           cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbLineEndCapRelSize.SelectedQuantityAsValueInSIUnits);
 
         _pen = _pen.WithLineEndCap(cap);
 
-        if (_cbLineEndCapAbsSize != null)
+        if (_cbLineEndCapAbsSize is not null)
         {
           var oldValue = _userChangedAbsLineEndCapSize;
           _cbLineEndCapAbsSize.SelectedQuantityAsValueInPoints = cap.MinimumAbsoluteSizePt;
           _userChangedAbsLineEndCapSize = oldValue;
         }
-        if (_cbLineEndCapRelSize != null)
+        if (_cbLineEndCapRelSize is not null)
         {
           var oldValue = _userChangedRelLineEndCapSize;
           _cbLineEndCapRelSize.SelectedQuantityAsValueInSIUnits = cap.MinimumRelativeSize;
@@ -649,14 +650,14 @@ namespace Altaxo.Gui.Drawing.D3D
       get { return _cbLineEndCapAbsSize; }
       set
       {
-        if (_cbLineEndCapAbsSize != null)
+        if (_cbLineEndCapAbsSize is not null)
           _cbLineEndCapAbsSize.SelectedQuantityChanged -= EhLineEndCapAbsSize_SelectionChangeCommitted;
 
         _cbLineEndCapAbsSize = value;
-        if (_pen != null && _cbLineEndCapAbsSize != null)
-          _cbLineEndCapAbsSize.SelectedQuantityAsValueInPoints = null == _pen.LineEndCap ? 0 : _pen.LineEndCap.MinimumAbsoluteSizePt;
+        if (_pen is not null && _cbLineEndCapAbsSize is not null)
+          _cbLineEndCapAbsSize.SelectedQuantityAsValueInPoints = _pen.LineEndCap is null ? 0 : _pen.LineEndCap.MinimumAbsoluteSizePt;
 
-        if (_cbLineEndCapAbsSize != null)
+        if (_cbLineEndCapAbsSize is not null)
           _cbLineEndCapAbsSize.SelectedQuantityChanged += EhLineEndCapAbsSize_SelectionChangeCommitted;
       }
     }
@@ -665,10 +666,10 @@ namespace Altaxo.Gui.Drawing.D3D
     {
       _userChangedAbsLineEndCapSize = true;
 
-      if (_pen != null)
+      if (_pen is not null)
       {
         var cap = _pen.LineEndCap;
-        if (null != cap)
+        if (cap is not null)
         {
           cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbLineEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
         }
@@ -685,14 +686,14 @@ namespace Altaxo.Gui.Drawing.D3D
       get { return _cbLineEndCapRelSize; }
       set
       {
-        if (_cbLineEndCapRelSize != null)
+        if (_cbLineEndCapRelSize is not null)
           _cbLineEndCapRelSize.SelectedQuantityChanged -= EhLineEndCapRelSize_SelectionChangeCommitted;
 
         _cbLineEndCapRelSize = value;
-        if (_pen != null && _cbLineEndCapRelSize != null)
-          _cbLineEndCapRelSize.SelectedQuantityAsValueInSIUnits = null == _pen.LineEndCap ? 0 : _pen.LineEndCap.MinimumRelativeSize;
+        if (_pen is not null && _cbLineEndCapRelSize is not null)
+          _cbLineEndCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.LineEndCap is null ? 0 : _pen.LineEndCap.MinimumRelativeSize;
 
-        if (_cbLineEndCapRelSize != null)
+        if (_cbLineEndCapRelSize is not null)
           _cbLineEndCapRelSize.SelectedQuantityChanged += EhLineEndCapRelSize_SelectionChangeCommitted;
       }
     }
@@ -701,10 +702,10 @@ namespace Altaxo.Gui.Drawing.D3D
     {
       _userChangedRelLineEndCapSize = true;
 
-      if (_pen != null)
+      if (_pen is not null)
       {
         var cap = _pen.LineEndCap;
-        if (null != cap)
+        if (cap is not null)
         {
           cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbLineEndCapRelSize.SelectedQuantityAsValueInSIUnits);
         }
@@ -727,39 +728,39 @@ namespace Altaxo.Gui.Drawing.D3D
       {
         var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(LineCapComboBox.SelectedLineCapProperty, typeof(LineCapComboBox));
 
-        if (_cbDashStartCap != null)
+        if (_cbDashStartCap is not null)
           dpd.RemoveValueChanged(_cbDashStartCap, EhDashStartCap_SelectionChangeCommitted);
 
         _cbDashStartCap = value;
-        if (_pen != null && _cbDashStartCap != null)
+        if (_pen is not null && _cbDashStartCap is not null)
           _cbDashStartCap.SelectedLineCap = _pen.DashStartCap;
 
-        if (_cbDashStartCap != null)
+        if (_cbDashStartCap is not null)
           dpd.AddValueChanged(_cbDashStartCap, EhDashStartCap_SelectionChangeCommitted);
       }
     }
 
-    private void EhDashStartCap_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhDashStartCap_SelectionChangeCommitted(object? sender, EventArgs e)
     {
-      if (_pen != null)
+      if (_pen is not null)
       {
         var cap = _cbDashStartCap.SelectedLineCap;
-        if (null != cap)
+        if (cap is not null)
         {
-          if (_userChangedAbsDashStartCapSize && _cbDashStartCapAbsSize != null)
+          if (_userChangedAbsDashStartCapSize && _cbDashStartCapAbsSize is not null)
             cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbDashStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
-          if (_userChangedRelDashStartCapSize && _cbDashStartCapRelSize != null)
+          if (_userChangedRelDashStartCapSize && _cbDashStartCapRelSize is not null)
             cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbDashStartCapRelSize.SelectedQuantityAsValueInSIUnits);
         }
         _pen = _pen.WithDashStartCap(cap);
 
-        if (_cbDashStartCapAbsSize != null && cap != null)
+        if (_cbDashStartCapAbsSize is not null && cap is not null)
         {
           var oldValue = _userChangedAbsDashStartCapSize;
           _cbDashStartCapAbsSize.SelectedQuantityAsValueInPoints = cap.MinimumAbsoluteSizePt;
           _userChangedAbsDashStartCapSize = oldValue;
         }
-        if (_cbDashStartCapRelSize != null && cap != null)
+        if (_cbDashStartCapRelSize is not null && cap is not null)
         {
           var oldValue = _userChangedRelDashStartCapSize;
           _cbDashStartCapRelSize.SelectedQuantityAsValueInSIUnits = cap.MinimumRelativeSize;
@@ -777,14 +778,14 @@ namespace Altaxo.Gui.Drawing.D3D
       get { return _cbDashStartCapAbsSize; }
       set
       {
-        if (_cbDashStartCapAbsSize != null)
+        if (_cbDashStartCapAbsSize is not null)
           _cbDashStartCapAbsSize.SelectedQuantityChanged -= EhDashStartCapAbsSize_SelectionChangeCommitted;
 
         _cbDashStartCapAbsSize = value;
-        if (_pen != null && _cbDashStartCapAbsSize != null)
-          _cbDashStartCapAbsSize.SelectedQuantityAsValueInPoints = null == _pen.DashStartCap ? 0 : _pen.DashStartCap.MinimumAbsoluteSizePt;
+        if (_pen is not null && _cbDashStartCapAbsSize is not null)
+          _cbDashStartCapAbsSize.SelectedQuantityAsValueInPoints = _pen.DashStartCap is null ? 0 : _pen.DashStartCap.MinimumAbsoluteSizePt;
 
-        if (_cbDashStartCapAbsSize != null)
+        if (_cbDashStartCapAbsSize is not null)
           _cbDashStartCapAbsSize.SelectedQuantityChanged += EhDashStartCapAbsSize_SelectionChangeCommitted;
       }
     }
@@ -793,11 +794,11 @@ namespace Altaxo.Gui.Drawing.D3D
     {
       _userChangedAbsDashStartCapSize = true;
 
-      if (_pen != null)
+      if (_pen is not null)
       {
         var cap = _pen.DashStartCap;
 
-        if (null != cap)
+        if (cap is not null)
         {
           cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbDashStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
         }
@@ -815,14 +816,14 @@ namespace Altaxo.Gui.Drawing.D3D
       get { return _cbDashStartCapRelSize; }
       set
       {
-        if (_cbDashStartCapRelSize != null)
+        if (_cbDashStartCapRelSize is not null)
           _cbDashStartCapRelSize.SelectedQuantityChanged -= EhDashStartCapRelSize_SelectionChangeCommitted;
 
         _cbDashStartCapRelSize = value;
-        if (_pen != null && _cbDashStartCapRelSize != null)
-          _cbDashStartCapRelSize.SelectedQuantityAsValueInSIUnits = null == _pen.DashStartCap ? 0 : _pen.DashStartCap.MinimumRelativeSize;
+        if (_pen is not null && _cbDashStartCapRelSize is not null)
+          _cbDashStartCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.DashStartCap is null ? 0 : _pen.DashStartCap.MinimumRelativeSize;
 
-        if (_cbDashStartCapRelSize != null)
+        if (_cbDashStartCapRelSize is not null)
           _cbDashStartCapRelSize.SelectedQuantityChanged += EhDashStartCapRelSize_SelectionChangeCommitted;
       }
     }
@@ -831,10 +832,10 @@ namespace Altaxo.Gui.Drawing.D3D
     {
       _userChangedRelDashStartCapSize = true;
 
-      if (_pen != null)
+      if (_pen is not null)
       {
         var cap = _pen.DashStartCap;
-        if (null != cap)
+        if (cap is not null)
         {
           cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbDashStartCapRelSize.SelectedQuantityAsValueInSIUnits);
         }
@@ -857,37 +858,37 @@ namespace Altaxo.Gui.Drawing.D3D
       {
         var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(LineCapComboBox.SelectedLineCapProperty, typeof(LineCapComboBox));
 
-        if (_cbDashEndCap != null)
+        if (_cbDashEndCap is not null)
           dpd.RemoveValueChanged(_cbDashEndCap, EhDashEndCap_SelectionChangeCommitted);
 
         _cbDashEndCap = value;
-        if (_pen != null && _cbDashEndCap != null)
+        if (_pen is not null && _cbDashEndCap is not null)
           _cbDashEndCap.SelectedLineCap = _pen.DashEndCap;
 
-        if (_cbDashEndCap != null)
+        if (_cbDashEndCap is not null)
           dpd.AddValueChanged(_cbDashEndCap, EhDashEndCap_SelectionChangeCommitted);
       }
     }
 
-    private void EhDashEndCap_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhDashEndCap_SelectionChangeCommitted(object? sender, EventArgs e)
     {
-      if (_pen != null)
+      if (_pen is not null)
       {
         var cap = _cbDashEndCap.SelectedLineCap;
-        if (_userChangedAbsDashEndCapSize && _cbDashEndCapAbsSize != null)
+        if (_userChangedAbsDashEndCapSize && _cbDashEndCapAbsSize is not null)
           cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbDashEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
-        if (_userChangedRelDashEndCapSize && _cbDashEndCapRelSize != null)
+        if (_userChangedRelDashEndCapSize && _cbDashEndCapRelSize is not null)
           cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbDashEndCapRelSize.SelectedQuantityAsValueInSIUnits);
 
         _pen = _pen.WithDashEndCap(cap);
 
-        if (_cbDashEndCapAbsSize != null)
+        if (_cbDashEndCapAbsSize is not null)
         {
           var oldValue = _userChangedAbsDashEndCapSize;
           _cbDashEndCapAbsSize.SelectedQuantityAsValueInPoints = cap.MinimumAbsoluteSizePt;
           _userChangedAbsDashEndCapSize = oldValue;
         }
-        if (_cbDashEndCapRelSize != null)
+        if (_cbDashEndCapRelSize is not null)
         {
           var oldValue = _userChangedRelDashEndCapSize;
           _cbDashEndCapRelSize.SelectedQuantityAsValueInSIUnits = cap.MinimumRelativeSize;
@@ -905,14 +906,14 @@ namespace Altaxo.Gui.Drawing.D3D
       get { return _cbDashEndCapAbsSize; }
       set
       {
-        if (_cbDashEndCapAbsSize != null)
+        if (_cbDashEndCapAbsSize is not null)
           _cbDashEndCapAbsSize.SelectedQuantityChanged -= EhDashEndCapAbsSize_SelectionChangeCommitted;
 
         _cbDashEndCapAbsSize = value;
-        if (_pen != null && _cbDashEndCapAbsSize != null)
-          _cbDashEndCapAbsSize.SelectedQuantityAsValueInPoints = null == _pen.DashEndCap ? 0 : _pen.DashEndCap.MinimumAbsoluteSizePt;
+        if (_pen is not null && _cbDashEndCapAbsSize is not null)
+          _cbDashEndCapAbsSize.SelectedQuantityAsValueInPoints = _pen.DashEndCap is null ? 0 : _pen.DashEndCap.MinimumAbsoluteSizePt;
 
-        if (_cbDashEndCapAbsSize != null)
+        if (_cbDashEndCapAbsSize is not null)
           _cbDashEndCapAbsSize.SelectedQuantityChanged += EhDashEndCapAbsSize_SelectionChangeCommitted;
       }
     }
@@ -921,10 +922,10 @@ namespace Altaxo.Gui.Drawing.D3D
     {
       _userChangedAbsDashEndCapSize = true;
 
-      if (_pen != null)
+      if (_pen is not null)
       {
         var cap = _pen.DashEndCap;
-        if (null != cap)
+        if (cap is not null)
         {
           cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbDashEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
         }
@@ -941,14 +942,14 @@ namespace Altaxo.Gui.Drawing.D3D
       get { return _cbDashEndCapRelSize; }
       set
       {
-        if (_cbDashEndCapRelSize != null)
+        if (_cbDashEndCapRelSize is not null)
           _cbDashEndCapRelSize.SelectedQuantityChanged -= EhDashEndCapRelSize_SelectionChangeCommitted;
 
         _cbDashEndCapRelSize = value;
-        if (_pen != null && _cbDashEndCapRelSize != null)
-          _cbDashEndCapRelSize.SelectedQuantityAsValueInSIUnits = null == _pen.DashEndCap ? 0 : _pen.DashEndCap.MinimumRelativeSize;
+        if (_pen is not null && _cbDashEndCapRelSize is not null)
+          _cbDashEndCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.DashEndCap is null ? 0 : _pen.DashEndCap.MinimumRelativeSize;
 
-        if (_cbDashEndCapRelSize != null)
+        if (_cbDashEndCapRelSize is not null)
           _cbDashEndCapRelSize.SelectedQuantityChanged += EhDashEndCapRelSize_SelectionChangeCommitted;
       }
     }
@@ -957,10 +958,10 @@ namespace Altaxo.Gui.Drawing.D3D
     {
       _userChangedRelDashEndCapSize = true;
 
-      if (_pen != null)
+      if (_pen is not null)
       {
         var cap = _pen.DashEndCap;
-        if (null != cap)
+        if (cap is not null)
         {
           cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbDashEndCapRelSize.SelectedQuantityAsValueInSIUnits);
         }
@@ -983,21 +984,21 @@ namespace Altaxo.Gui.Drawing.D3D
       {
         var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(LineJoinComboBox.SelectedLineJoinProperty, typeof(LineJoinComboBox));
 
-        if (_cbLineJoin != null)
+        if (_cbLineJoin is not null)
           dpd.RemoveValueChanged(_cbLineJoin, EhLineJoin_SelectionChangeCommitted);
 
         _cbLineJoin = value;
-        if (_pen != null && _cbLineJoin != null)
+        if (_pen is not null && _cbLineJoin is not null)
           _cbLineJoin.SelectedLineJoin = _pen.LineJoin;
 
-        if (_cbLineJoin != null)
+        if (_cbLineJoin is not null)
           dpd.AddValueChanged(_cbLineJoin, EhLineJoin_SelectionChangeCommitted);
       }
     }
 
-    private void EhLineJoin_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhLineJoin_SelectionChangeCommitted(object? sender, EventArgs e)
     {
-      if (_pen != null)
+      if (_pen is not null)
       {
         _pen = _pen.WithLineJoin(_cbLineJoin.SelectedLineJoin);
 
@@ -1016,21 +1017,21 @@ namespace Altaxo.Gui.Drawing.D3D
       get { return _cbMiterLimit; }
       set
       {
-        if (_cbMiterLimit != null)
+        if (_cbMiterLimit is not null)
           _cbMiterLimit.SelectedQuantityChanged -= EhMiterLimit_SelectionChangeCommitted;
 
         _cbMiterLimit = value;
-        if (_pen != null && _cbMiterLimit != null)
+        if (_pen is not null && _cbMiterLimit is not null)
           _cbMiterLimit.SelectedQuantityInSIUnits = _pen.MiterLimit;
 
-        if (_cbLineJoin != null)
+        if (_cbLineJoin is not null)
           _cbMiterLimit.SelectedQuantityChanged += EhMiterLimit_SelectionChangeCommitted;
       }
     }
 
     private void EhMiterLimit_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (_pen != null)
+      if (_pen is not null)
       {
         _pen = _pen.WithMiterLimit(_cbMiterLimit.SelectedQuantityInSIUnits);
 
@@ -1060,7 +1061,6 @@ namespace Altaxo.Gui.Drawing.D3D
     #region Preview
 
     private Image _previewPanel;
-    private GdiToWpfBitmap _previewBitmap;
 
     public Image PreviewPanel
     {
@@ -1070,14 +1070,14 @@ namespace Altaxo.Gui.Drawing.D3D
       }
       set
       {
-        if (null != _previewPanel)
+        if (_previewPanel is not null)
         {
           _previewPanel.SizeChanged -= EhPreviewPanel_SizeChanged;
         }
 
         _previewPanel = value;
 
-        if (null != _previewPanel)
+        if (_previewPanel is not null)
         {
           _previewPanel.SizeChanged += EhPreviewPanel_SizeChanged;
           UpdatePreviewPanel();

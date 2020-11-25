@@ -42,11 +42,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   {
     private PenControlsGlue _strokePenGlue;
 
-    public event Action IndependentColorChanged;
+    public event Action? IndependentColorChanged;
 
-    public event Action IndependentDashPatternChanged;
+    public event Action? IndependentDashPatternChanged;
 
-    public event Action<bool> UseCommonErrorColumnChanged;
+    public event Action<bool>? UseCommonErrorColumnChanged;
 
     public ErrorBarPlotStyleControl()
     {
@@ -328,7 +328,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public void Initialize_CommonErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
     {
-      if (null == transformationTextToShow)
+      if (transformationTextToShow is null)
       {
         _guiCommonErrorColumnTransformation.Visibility = Visibility.Collapsed;
       }
@@ -349,7 +349,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public void Initialize_PositiveErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
     {
-      if (null == transformationTextToShow)
+      if (transformationTextToShow is null)
       {
         _guiPositiveErrorColumnTransformation.Visibility = Visibility.Collapsed;
       }
@@ -370,7 +370,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public void Initialize_NegativeErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
     {
-      if (null == transformationTextToShow)
+      if (transformationTextToShow is null)
       {
         _guiNegativeErrorColumnTransformation.Visibility = Visibility.Collapsed;
       }

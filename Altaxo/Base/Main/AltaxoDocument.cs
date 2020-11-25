@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Main;
 using Altaxo.Main.Services;
 using Altaxo.Main.Services.Files;
@@ -40,16 +42,16 @@ namespace Altaxo
     Main.IProject
   {
     /// <summary>Collection of all data tables in this document.</summary>
-    protected Altaxo.Data.DataTableCollection _dataTables = null; // The root of all the data
+    protected Altaxo.Data.DataTableCollection _dataTables; // The root of all the data
 
     /// <summary>Collection of all graphs in this document.</summary>
-    protected Altaxo.Graph.Gdi.GraphDocumentCollection _graphs = null; // all graphs are stored here
+    protected Altaxo.Graph.Gdi.GraphDocumentCollection _graphs; // all graphs are stored here
 
     /// <summary>Collection of all graphs in this document.</summary>
-    protected Altaxo.Graph.Graph3D.GraphDocumentCollection _graphs3D = null; // all graphs are stored here
+    protected Altaxo.Graph.Graph3D.GraphDocumentCollection _graphs3D; // all graphs are stored here
 
     /// <summary>Collection of all notes documents in this document.</summary>
-    protected Altaxo.Text.TextDocumentCollection _textDocuments = null;
+    protected Altaxo.Text.TextDocumentCollection _textDocuments;
 
     /// <summary>
     /// The properties associated with the project folders. Please note that the properties of the project are also stored inside this collection, with the name being an empty string (root folder node).
@@ -57,7 +59,7 @@ namespace Altaxo
     protected Altaxo.Main.Properties.ProjectFolderPropertyDocumentCollection _projectFolderProperties;
 
     /// <summary>Collection of all data tables layouts in this document.</summary>
-    protected Altaxo.Worksheet.WorksheetLayoutCollection _tableLayouts = null;
+    protected Altaxo.Worksheet.WorksheetLayoutCollection _tableLayouts;
 
     /// <summary>Collection of all fit function scripts in this document.</summary>
     private Altaxo.Scripting.FitFunctionScriptCollection _fitFunctionScripts;
@@ -71,7 +73,7 @@ namespace Altaxo
     [NonSerialized]
     protected bool _isDirty = false;
 
-    public event EventHandler IsDirtyChanged;
+    public event EventHandler? IsDirtyChanged;
 
     public AltaxoDocument()
     {
@@ -100,7 +102,7 @@ namespace Altaxo
     /// <param name="projectArchiveManager">The project archive manager that manages the archive.</param>
     /// <returns>A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</returns>
     /// <exception cref="ApplicationException"></exception>
-    public Dictionary<string, IProjectItem> SaveToArchive(IProjectArchive archiveToSaveTo, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info, IProjectArchive originalArchive = null, IProjectArchiveManager projectArchiveManager = null)
+    public Dictionary<string, IProjectItem> SaveToArchive(IProjectArchive archiveToSaveTo, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info, IProjectArchive? originalArchive = null, IProjectArchiveManager? projectArchiveManager = null)
     {
       var errorText = new System.Text.StringBuilder();
       var dictionary = new Dictionary<string, IProjectItem>();
@@ -110,8 +112,52 @@ namespace Altaxo
       bool supportsSeparateDataStorage = archiveToSaveTo.SupportsDeferredLoading;
 
       // If true, archive entries (of items that have not changed) are copied directly from the original archive to the new archive
-      bool supportsStreamRecycling = originalArchive?.GetType() == archiveToSaveTo.GetType() && archiveToSaveTo.SupportsCopyEntryFrom(originalArchive);
+      bool supportsStreamRecycling = !(originalArchive is null) &&
+                                      originalArchive.GetType() == archiveToSaveTo.GetType() &&
+                                      archiveToSaveTo.SupportsCopyEntryFrom(originalArchive);
 
+
+      // -------------------------------------------------------------------------------------------------
+      // Save the Document identifier
+      // -------------------------------------------------------------------------------------------------
+      {
+        var zipEntry = archiveToSaveTo.CreateEntry("DocumentInformation.xml");
+        using (var zs = zipEntry.OpenForWriting())
+        {
+          info.BeginWriting(zs);
+          info.AddValue("DocumentInformation", _documentInformation);
+          info.EndWriting();
+        }
+      }
+
+
+      // -------------------------------------------------------------------------------------------------
+      // Save all folder properties, because during deserialization we may need them for tables, graphs etc.
+      // -----------------------------------------------------------------------------------------------------------
+      foreach (var folderProperty in _projectFolderProperties)
+      {
+        try
+        {
+          var zipEntry = archiveToSaveTo.CreateEntry("FolderProperties/" + folderProperty.Name + ".xml");
+          //ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
+          //zippedStream.PutNextEntry(ZipEntry);
+          //zippedStream.SetLevel(0);
+          using (var zs = zipEntry.OpenForWriting())
+          {
+            info.BeginWriting(zs);
+            info.AddValue("FolderProperty", folderProperty);
+            info.EndWriting();
+          }
+        }
+        catch (Exception exc)
+        {
+          errorText.Append(exc.ToString());
+        }
+      }
+
+      // -------------------------------------------------------------------------------------------------
+      // Save all tables into the tables subdirectory
+      // ---------------------------------------------------------------------------------------------------
       if (supportsSeparateDataStorage)
       {
         info.SetProperty(Altaxo.Data.DataTable.SerializationInfoProperty_SupportsSeparatedData, "true");
@@ -155,7 +201,7 @@ namespace Altaxo
             if (supportsStreamRecycling &&
                 !table.DataColumns.IsDataDirty &&
                 table.DataColumns.DeferredDataMemento is IProjectArchiveEntryMemento entryMemento &&
-                originalArchive.ContainsEntry(entryMemento.EntryName))
+                originalArchive!.ContainsEntry(entryMemento.EntryName))
             {
               archiveToSaveTo.CopyEntryFrom(originalArchive, sourceEntryName: entryMemento.EntryName, destinationEntryName: entryName);
 
@@ -184,7 +230,9 @@ namespace Altaxo
         info.SetProperty(Altaxo.Data.DataColumnCollection.SerialiationInfoProperty_StoreDataOnly, orginalValue_StoreDataOnly);
       }
 
-      // second, we save all graphs into the Graphs subdirectory
+      // -------------------------------------------------------------------------------------------------
+      // Save all 2D graphs into the Graphs subdirectory
+      // -------------------------------------------------------------------------------------------------
       foreach (Graph.Gdi.GraphDocument graph in _graphs)
       {
         try
@@ -206,7 +254,9 @@ namespace Altaxo
         }
       }
 
-      // second, we save all graphs into the Graphs3D subdirectory
+      // -------------------------------------------------------------------------------------------------
+      // Save all 3D graphs into the Graphs3D subdirectory
+      // -------------------------------------------------------------------------------------------------
       foreach (Graph.Graph3D.GraphDocument graph in _graphs3D)
       {
         try
@@ -228,7 +278,9 @@ namespace Altaxo
         }
       }
 
-      // next, we save all notes documents
+      // -------------------------------------------------------------------------------------------------
+      // Save all notes (markdown) documents
+      // -------------------------------------------------------------------------------------------------
       foreach (var item in _textDocuments)
       {
         try
@@ -247,10 +299,12 @@ namespace Altaxo
         }
       }
 
-      // third, we save all TableLayouts into the TableLayouts subdirectory
+      // -------------------------------------------------------------------------------------------------
+      // Save all TableLayouts into the TableLayouts subdirectory
+      // -------------------------------------------------------------------------------------------------
       foreach (Altaxo.Worksheet.WorksheetLayout layout in _tableLayouts)
       {
-        if (layout.DataTable == null)
+        if (layout.DataTable is null)
           continue; // dont save orphaned layouts
 
         try
@@ -272,15 +326,16 @@ namespace Altaxo
         }
       }
 
-      // 4th, we save all FitFunctions into the FitFunctions subdirectory
-      foreach (Altaxo.Scripting.FitFunctionScript fit in _fitFunctionScripts)
+      // -------------------------------------------------------------------------------------------------
+      // Save all FitFunctions into the FitFunctions subdirectory
+      // -------------------------------------------------------------------------------------------------
+      int index = 0;
+      foreach (var fit in _fitFunctionScripts)
       {
         try
         {
-          var zipEntry = archiveToSaveTo.CreateEntry("FitFunctionScripts/" + fit.CreationTime.ToString() + ".xml");
-          //ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
-          //zippedStream.PutNextEntry(ZipEntry);
-          //zippedStream.SetLevel(0);
+          var zipEntry = archiveToSaveTo.CreateEntry($"FitFunctionScripts/Script{index}.xml");
+          ++index;
           using (var zs = zipEntry.OpenForWriting())
           {
             info.BeginWriting(zs);
@@ -293,40 +348,7 @@ namespace Altaxo
           errorText.Append(exc.ToString());
         }
       }
-      {
-        // 5th, we save all folder properties
-        foreach (var folderProperty in _projectFolderProperties)
-        {
-          try
-          {
-            var zipEntry = archiveToSaveTo.CreateEntry("FolderProperties/" + folderProperty.Name + ".xml");
-            //ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
-            //zippedStream.PutNextEntry(ZipEntry);
-            //zippedStream.SetLevel(0);
-            using (var zs = zipEntry.OpenForWriting())
-            {
-              info.BeginWriting(zs);
-              info.AddValue("FolderProperty", folderProperty);
-              info.EndWriting();
-            }
-          }
-          catch (Exception exc)
-          {
-            errorText.Append(exc.ToString());
-          }
-        }
-      }
 
-      {
-        // nun noch den DocumentIdentifier abspeichern
-        var zipEntry = archiveToSaveTo.CreateEntry("DocumentInformation.xml");
-        using (var zs = zipEntry.OpenForWriting())
-        {
-          info.BeginWriting(zs);
-          info.AddValue("DocumentInformation", _documentInformation);
-          info.EndWriting();
-        }
-      }
       //  Current.Console.WriteLine("Saving took {0} sec.", (DateTime.UtcNow - time1).TotalSeconds);
 
       if (errorText.Length != 0)
@@ -535,7 +557,7 @@ namespace Altaxo
 
     protected virtual void OnDirtyChanged()
     {
-      if (null != IsDirtyChanged)
+      if (IsDirtyChanged is not null)
         IsDirtyChanged(this, EventArgs.Empty);
     }
 
@@ -561,9 +583,9 @@ namespace Altaxo
     /// </summary>
     /// <param name="archiveManager">The archive manager that currently manages the archive in which the project is stored.</param>
     /// <param name="entryNameToItemDictionary">A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</param>
-    public void ClearIsDirty(IProjectArchiveManager archiveManager, IDictionary<string, IProjectItem> entryNameToItemDictionary)
+    public void ClearIsDirty(IProjectArchiveManager archiveManager, IDictionary<string, IProjectItem>? entryNameToItemDictionary)
     {
-      if (null != archiveManager && null != entryNameToItemDictionary)
+      if (archiveManager is not null && entryNameToItemDictionary is not null)
       {
         foreach (var entry in entryNameToItemDictionary)
         {
@@ -576,18 +598,18 @@ namespace Altaxo
       IsDirty = false;
     }
 
-    protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleLowPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       IsDirty = true;
       return base.HandleLowPriorityChildChangeCases(sender, ref e);
     }
 
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       _accumulatedEventData = e ?? EventArgs.Empty;
     }
 
-    public override Main.IDocumentNode ParentObject
+    public override Main.IDocumentNode? ParentObject
     {
       get
       {
@@ -595,7 +617,7 @@ namespace Altaxo
       }
       set
       {
-        if (null != value)
+        if (value is not null)
           throw new InvalidOperationException("The parent object of AltaxoDocument can not be set and is always null");
       }
     }
@@ -612,11 +634,17 @@ namespace Altaxo
       }
     }
 
-    public Altaxo.Data.DataTable CreateNewTable(string worksheetName, bool bCreateDefaultColumns)
+    /// <summary>
+    /// Creates the new data table and adds it to the project.
+    /// </summary>
+    /// <param name="proposedTableName">Proposed table name. Can be null.</param>
+    /// <param name="createDefaultColumns">If set to <c>true</c>, the table is created with default columns.</param>
+    /// <returns>The newly created table. The returned table has certainly a name, but the name might be different from the proposed name.</returns>
+    public Altaxo.Data.DataTable CreateNewTable(string? proposedTableName, bool createDefaultColumns)
     {
-      var dt1 = new Altaxo.Data.DataTable(worksheetName);
+      var dt1 = proposedTableName is null ? new Data.DataTable() : new Data.DataTable(proposedTableName);
 
-      if (bCreateDefaultColumns)
+      if (createDefaultColumns)
       {
         dt1.DataColumns.Add(new Altaxo.Data.DoubleColumn(), "A", Altaxo.Data.ColumnKind.X);
         dt1.DataColumns.Add(new Altaxo.Data.DoubleColumn(), "B");
@@ -637,7 +665,7 @@ namespace Altaxo
       return layout;
     }
 
-    public override IDocumentLeafNode GetChildObjectNamed(string name)
+    public override IDocumentLeafNode? GetChildObjectNamed(string name)
     {
       switch (name)
       {
@@ -670,8 +698,8 @@ namespace Altaxo
 
     public override string GetNameOfChildObject(IDocumentLeafNode o)
     {
-      if (null == o)
-        return null;
+      if (o is null)
+        throw new ArgumentNullException(nameof(o));
       else if (object.ReferenceEquals(o, _dataTables))
         return "Tables";
       else if (object.ReferenceEquals(o, _graphs))
@@ -689,34 +717,34 @@ namespace Altaxo
       else if (object.ReferenceEquals(o, _projectFolders))
         return "ProjectFolders";
       else
-        return null;
+        return string.Empty;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _dataTables)
-        yield return new Main.DocumentNodeAndName(_dataTables, () => _dataTables = null, "Tables");
+      if (_dataTables is not null)
+        yield return new Main.DocumentNodeAndName(_dataTables, () => _dataTables = null!, "Tables");
 
-      if (null != _graphs)
-        yield return new Main.DocumentNodeAndName(_graphs, () => _graphs = null, "Graphs");
+      if (_graphs is not null)
+        yield return new Main.DocumentNodeAndName(_graphs, () => _graphs = null!, "Graphs");
 
-      if (null != _graphs3D)
-        yield return new Main.DocumentNodeAndName(_graphs3D, () => _graphs3D = null, "Graphs3D");
+      if (_graphs3D is not null)
+        yield return new Main.DocumentNodeAndName(_graphs3D, () => _graphs3D = null!, "Graphs3D");
 
-      if (null != _textDocuments)
-        yield return new Main.DocumentNodeAndName(_textDocuments, () => _textDocuments = null, "Text");
+      if (_textDocuments is not null)
+        yield return new Main.DocumentNodeAndName(_textDocuments, () => _textDocuments = null!, "Text");
 
-      if (null != _tableLayouts)
-        yield return new Main.DocumentNodeAndName(_tableLayouts, () => _tableLayouts = null, "TableLayouts");
+      if (_tableLayouts is not null)
+        yield return new Main.DocumentNodeAndName(_tableLayouts, () => _tableLayouts = null!, "TableLayouts");
 
-      if (null != _fitFunctionScripts)
-        yield return new Main.DocumentNodeAndName(_fitFunctionScripts, () => _fitFunctionScripts = null, "FitFunctionScripts");
+      if (_fitFunctionScripts is not null)
+        yield return new Main.DocumentNodeAndName(_fitFunctionScripts, () => _fitFunctionScripts = null!, "FitFunctionScripts");
 
-      if (null != _projectFolderProperties)
-        yield return new Main.DocumentNodeAndName(_projectFolderProperties, () => _projectFolderProperties = null, "FolderProperties");
+      if (_projectFolderProperties is not null)
+        yield return new Main.DocumentNodeAndName(_projectFolderProperties, () => _projectFolderProperties = null!, "FolderProperties");
 
-      if (null != _projectFolders)
-        yield return new Main.DocumentNodeAndName(_projectFolders, () => _projectFolders = null, "ProjectFolders");
+      if (_projectFolders is not null)
+        yield return new Main.DocumentNodeAndName(_projectFolders, () => _projectFolders = null!, "ProjectFolders");
     }
 
     #region Static functions
@@ -791,7 +819,7 @@ namespace Altaxo
     /// <exception cref="System.ArgumentNullException">item</exception>
     public AbsoluteDocumentPath GetDocumentPathForProjectItem(IProjectItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException("item");
 
       return GetRootPathForProjectItemType(item.GetType()).Append(item.Name);
@@ -806,7 +834,7 @@ namespace Altaxo
     /// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
     public bool ContainsItem(IProjectItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
       var coll = GetCollectionForProjectItemType(item.GetType());
@@ -823,7 +851,7 @@ namespace Altaxo
     /// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
     public void AddItem(IProjectItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
       if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument propDoc)
@@ -854,7 +882,7 @@ namespace Altaxo
     /// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
     public void AddItemWithThisOrModifiedName(IProjectItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
       if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument propertyDoc)
@@ -872,7 +900,7 @@ namespace Altaxo
       {
         var coll = GetCollectionForProjectItemType(item.GetType());
 
-        if (item.Name == null || item.Name == string.Empty)
+        if (item.Name is null || item.Name == string.Empty)
           item.Name = coll.FindNewItemName();
         else if (coll.ContainsAnyName(item.Name))
           item.Name = coll.FindNewItemName(item.Name);
@@ -882,22 +910,29 @@ namespace Altaxo
     }
 
     /// <summary>
-    /// Tries to get an existring project item with the same type and name as the provided item.
+    /// Tries to get an existing project item with the same type and name as the provided item.
     /// </summary>
     /// <param name="item">The item to test for.</param>
-    /// <returns>True an item with the same type and name as the provided item exists in the project, that existing item is returned; otherwise, the return value is null.</returns>
+    /// <param name="existingItem">If an item with the same type and name as the provided item exists in the project, that existing item is returned.</param>
+    /// <returns>True if an item with the same type and name as the provided item exists in the project; otherwise, false.</returns>
     /// <exception cref="System.ArgumentNullException">item</exception>
     /// <exception cref="System.ArgumentOutOfRangeException"></exception>
-    public IProjectItem TryGetExistingItemWithSameTypeAndName(IProjectItem item)
+    public bool TryGetExistingItemWithSameTypeAndName(IProjectItem item, [MaybeNullWhen(false)] out IProjectItem existingItem)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
 
       var coll = GetCollectionForProjectItemType(item.GetType());
       if (coll.Contains(item.Name))
-        return coll[item.Name];
-
-      return null;
+      {
+        existingItem = coll[item.Name];
+        return true;
+      }
+      else
+      {
+        existingItem = default;
+        return false;
+      }
     }
 
     /// <summary>
@@ -909,7 +944,7 @@ namespace Altaxo
     /// <exception cref="System.ArgumentOutOfRangeException"></exception>
     public bool ExistsItemWithSameTypeAndName(IProjectItem item)
     {
-      return null != TryGetExistingItemWithSameTypeAndName(item);
+      return TryGetExistingItemWithSameTypeAndName(item, out _);
     }
 
     /// <summary>
@@ -920,8 +955,9 @@ namespace Altaxo
     /// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
     public bool RemoveItem(IProjectItem item)
     {
-      if (null == item)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
+
       var coll = GetCollectionForProjectItemType(item.GetType());
       return coll.Remove(item);
     }

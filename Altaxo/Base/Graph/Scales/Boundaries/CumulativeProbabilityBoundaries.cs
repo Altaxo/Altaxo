@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Data;
 
@@ -42,13 +43,13 @@ namespace Altaxo.Graph.Scales.Boundaries
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (CumulativeProbabilityBoundaries)obj;
-        info.AddBaseValueEmbedded(s, s.GetType().BaseType);
+        info.AddBaseValueEmbedded(s, s.GetType().BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (CumulativeProbabilityBoundaries)o ?? new CumulativeProbabilityBoundaries();
-        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        var s = (CumulativeProbabilityBoundaries?)o ?? new CumulativeProbabilityBoundaries();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType!, parent);
         return s;
       }
     }

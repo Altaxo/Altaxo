@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -79,7 +80,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     public ReadPlotItemDataMouseHandler(GraphController grac)
     {
       _grac = grac;
-      if (_grac != null)
+      if (_grac is not null)
         _grac.SetPanelCursor(Cursors.Cross);
     }
 
@@ -99,7 +100,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       var graphXY = _grac.ConvertMouseToRootLayerCoordinates(position);
       _grac.FindGraphObjectAtPixelPosition(position, true, out var clickedObject, out var clickedLayerNumber);
-      if (null != clickedObject && clickedObject.HittedObject is XYColumnPlotItem)
+      if (clickedObject is not null && clickedObject.HittedObject is XYColumnPlotItem)
       {
         _PlotItem = (XYColumnPlotItem)clickedObject.HittedObject;
         var transXY = clickedObject.Transformation.InverseTransformPoint(graphXY);
@@ -108,7 +109,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         XYScatterPointInformation scatterPoint = _PlotItem.GetNearestPlotPoint(_layer, transXY);
         _PlotItemNumber = GetPlotItemNumber(_layer, _PlotItem);
 
-        if (null != scatterPoint)
+        if (scatterPoint is not null)
         {
           _PlotIndex = scatterPoint.PlotIndex;
           _RowIndex = scatterPoint.RowIndex;
@@ -175,11 +176,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <returns>True if the cross can be moved, false if one of the presumtions does not hold.</returns>
     private bool TestMovementPresumtions()
     {
-      if (_PlotItem == null)
+      if (_PlotItem is null)
         return false;
-      if (_grac == null || _grac.Doc == null || _grac.Doc.RootLayer == null)
+      if (_grac is null || _grac.Doc is null || _grac.Doc.RootLayer is null)
         return false;
-      if (null == _layer)
+      if (_layer is null)
         return false;
 
       return true;
@@ -196,7 +197,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       XYScatterPointInformation scatterPoint = _PlotItem.GetNextPlotPoint(_layer, _PlotIndex, increment);
 
-      if (null != scatterPoint)
+      if (scatterPoint is not null)
         ShowCross(scatterPoint);
     }
 
@@ -224,7 +225,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         {
           --indexOfNextLayer;
           nextlayer = indexOfNextLayer >= 0 ? layerList[indexOfNextLayer] as XYPlotLayer : null;
-          nextplotitemnumber = nextlayer == null ? int.MaxValue : nextlayer.PlotItems.Flattened.Length - 1;
+          nextplotitemnumber = nextlayer is null ? int.MaxValue : nextlayer.PlotItems.Flattened.Length - 1;
         }
         else if (nextplotitemnumber >= nextlayer.PlotItems.Flattened.Length)
         {
@@ -236,20 +237,20 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         if (indexOfNextLayer < 0 || indexOfNextLayer >= numlayers)
           break; // no more layers available
 
-        if (nextlayer == null)
+        if (nextlayer is null)
           continue; // this is not an XYPlotLayer
 
         if (nextplotitemnumber < 0 || nextplotitemnumber >= nextlayer.PlotItems.Flattened.Length)
           continue;
 
         plotitem = nextlayer.PlotItems.Flattened[nextplotitemnumber] as XYColumnPlotItem;
-        if (null == plotitem)
+        if (plotitem is null)
           continue;
 
         scatterPoint = plotitem.GetNextPlotPoint(nextlayer, _PlotIndex, 0);
-      } while (scatterPoint == null);
+      } while (scatterPoint is null);
 
-      if (null != scatterPoint)
+      if (scatterPoint is not null)
       {
         _PlotItem = plotitem;
         _layer = nextlayer;
@@ -326,7 +327,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <returns></returns>
     private int GetPlotItemNumber(XYPlotLayer layer, XYColumnPlotItem plotitem)
     {
-      if (null != layer)
+      if (layer is not null)
       {
         for (int i = 0; i < layer.PlotItems.Flattened.Length; i++)
           if (object.ReferenceEquals(layer.PlotItems.Flattened[i], plotitem))

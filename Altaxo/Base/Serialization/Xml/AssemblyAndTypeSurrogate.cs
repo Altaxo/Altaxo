@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Serialization.Xml
 {
@@ -37,6 +39,8 @@ namespace Altaxo.Serialization.Xml
 
     #region Serialization
 
+    #region Version 0
+
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AssemblyAndTypeSurrogate), 0)]
     public class XmlSerializationSurrogate : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
@@ -48,32 +52,50 @@ namespace Altaxo.Serialization.Xml
         info.AddValue("TypeName", s._typeName);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AssemblyAndTypeSurrogate s = o == null ? new AssemblyAndTypeSurrogate() : (AssemblyAndTypeSurrogate)o;
-
-        s._assemblyName = info.GetString("AssemblyName");
-        s._typeName = info.GetString("TypeName");
-
+        if (o is AssemblyAndTypeSurrogate s)
+          s.DeserializeSurrogate0(info);
+        else
+          s = new AssemblyAndTypeSurrogate(info, 0);
         return s;
+      }
+    }
+
+    [MemberNotNull(nameof(_assemblyName), nameof(_typeName))]
+    private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      _assemblyName = info.GetString("AssemblyName");
+      _typeName = info.GetString("TypeName");
+    }
+
+    #endregion Version 0
+
+    protected AssemblyAndTypeSurrogate(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
+    {
+      switch (version)
+      {
+        case 0:
+          DeserializeSurrogate0(info);
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(version));
       }
     }
 
     #endregion Serialization
 
-    protected AssemblyAndTypeSurrogate()
-    {
-    }
+
 
     public AssemblyAndTypeSurrogate(object o)
     {
-      if (o == null)
+      if (o is null)
         throw new ArgumentNullException("To determine the type, the argument must not be null");
-      _assemblyName = o.GetType().Assembly.FullName;
-      _typeName = o.GetType().FullName;
+      _assemblyName = o.GetType().Assembly.FullName ?? throw new InvalidOperationException($"Unable to determine full name of assembly of type {o.GetType()}");
+      _typeName = o.GetType().FullName ?? throw new InvalidOperationException($"Unable to determine full name of type {o.GetType()}");
     }
 
-    public object CreateInstance()
+    public object? CreateInstance()
     {
       try
       {

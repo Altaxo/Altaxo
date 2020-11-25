@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Graph.Gdi
   /// </summary>
   public partial class DefaultLineScatterGraphDocumentControl : UserControl, IDefaultLineScatterGraphDocumentView, Altaxo.Gui.Graph.Graph3D.Templates.IDefaultCartesicPlotTemplateView
   {
-    public event Action GraphFromProjectSelected;
+    public event Action? GraphFromProjectSelected;
 
     public DefaultLineScatterGraphDocumentControl()
     {
@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiGraphsInProject);
       var ev = GraphFromProjectSelected;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       _guiPreviewTitle.Content = title;
 
-      if (null != bmp)
+      if (bmp is not null)
         _guiPreview.Source = GuiHelper.ToWpf(bmp);
       else
         _guiPreview.Source = null;

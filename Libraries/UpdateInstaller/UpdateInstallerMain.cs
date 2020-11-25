@@ -35,9 +35,9 @@ namespace Altaxo.Serialization.AutoUpdates
   /// </summary>
   internal class UpdateInstallerMain
   {
-    private static System.Windows.Application app;
-    private static InstallerMainWindow mainWindow;
-    private static Mutex _updaterMutex;
+    private static System.Windows.Application? app;
+    private static InstallerMainWindow? mainWindow;
+    private static Mutex? _updaterMutex;
 
     /// <summary>
     /// A text that should occur prior to the error message.
@@ -84,13 +84,15 @@ namespace Altaxo.Serialization.AutoUpdates
         }
         catch (Exception ex)
         {
+          System.Diagnostics.Debug.WriteLine($"Exception creating mutex: {ex.Message}");
           return; // another instance of the updater is already running
         }
 
+        var entryAssembly = System.Reflection.Assembly.GetEntryAssembly() ?? throw new InvalidOperationException("Unable to get entry assembly");
         try
         {
           // try to set the current directory to this of the entry assembly in order to not block the removing of the Altaxo directories
-          System.Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+          System.Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(entryAssembly.Location) ?? throw new InvalidOperationException($"Can not get directory name of file name {entryAssembly.Location}");
         }
         catch (Exception)
         {
@@ -128,7 +130,7 @@ namespace Altaxo.Serialization.AutoUpdates
               // Start a new process with elevated privileges and wait for exit
               var proc = new System.Diagnostics.ProcessStartInfo
               {
-                FileName = System.Reflection.Assembly.GetEntryAssembly().Location
+                FileName = entryAssembly.Location
               };
               args[4] = "2";
               var stb = new StringBuilder();
@@ -146,7 +148,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
               if (restartAltaxo)
               {
-                runProcWithElevated.WaitForExit();
+                runProcWithElevated?.WaitForExit();
               }
             }
           } // else package file is not writeable
@@ -177,11 +179,11 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="installer">The installer program to run..</param>
     private static void StartVisualApp(IUpdateInstaller installer, bool showInstallationWindow, int timeoutAfterSuccessfullInstallation)
     {
-      if (null == app)
+      if (app is null)
       {
         app = new System.Windows.Application();
       }
-      if (null == mainWindow)
+      if (mainWindow is null)
       {
         mainWindow = new InstallerMainWindow(showInstallationWindow, timeoutAfterSuccessfullInstallation)
         {
@@ -194,16 +196,16 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>Starts the window of the application, and then presents the provided error message message.</summary>
     /// <param name="eventName">Name of the event that is used to signal to Altaxo that Altaxo should be stopped.</param>
     /// <param name="message">The error message to present.</param>
-    private static void StartVisualAppWithErrorMessage(string eventName, string message)
+    private static void StartVisualAppWithErrorMessage(string? eventName, string message)
     {
-      if (null != eventName)
+      if (eventName is not null)
         InstallerMethod_BackupInnerDirectory.SetEvent(eventName); // Altaxo is waiting for this event to finish itself
 
-      if (null == app)
+      if (app is null)
       {
         app = new System.Windows.Application();
       }
-      if (null == mainWindow)
+      if (mainWindow is null)
       {
         mainWindow = new InstallerMainWindow(true, int.MaxValue);
         mainWindow.SetErrorMessage(message);

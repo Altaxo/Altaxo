@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 
 namespace Altaxo.Main.Commands
@@ -129,7 +130,7 @@ namespace Altaxo.Main.Commands
 
       if (true == openFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
       {
-        Current.IProjectService.OpenProject(FileName.Create(openFileDialog1.FileName), false);
+        Current.IProjectService.OpenProject(FileName.Create(openFileDialog1.FileName), showUserInteraction: true);
         Current.GetService<IRecentOpen>().AddRecentProject(FileName.Create(openFileDialog1.FileName));
       }
       else // in case the user cancels the open file dialog
@@ -151,7 +152,7 @@ namespace Altaxo.Main.Commands
   {
     public override void Execute(object parameter)
     {
-      if (Current.IProjectService.CurrentProjectFileName != null)
+      if (Current.IProjectService.CurrentProjectFileName is not null)
         Current.IProjectService.SaveProject();
       else
         Current.IProjectService.SaveProjectAs();
@@ -169,6 +170,63 @@ namespace Altaxo.Main.Commands
       Current.IProjectService.SaveProjectCopyAs();
     }
   }
+
+  /// <summary>
+  /// This commands open an Altaxo project from a directory, in which the files must have the
+  /// same structure as in the Zip-File which is usually used for project storage.
+  /// </summary>
+  /// <seealso cref="Altaxo.Gui.SimpleCommand" />
+  public class FileOpenFromDirectory : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      if (Current.Project.IsDirty)
+      {
+        var cancelargs = new System.ComponentModel.CancelEventArgs();
+        Current.IProjectService.AskForSavingOfProject(cancelargs);
+        if (cancelargs.Cancel)
+          return;
+      }
+
+      bool saveDirtyState = Current.Project.IsDirty; // save the dirty state of the project in case the user cancels the open file dialog
+      Current.Project.IsDirty = false; // set document to non-dirty
+
+      var dlg = new System.Windows.Forms.FolderBrowserDialog()
+      {
+        ShowNewFolderButton = false,
+        Description = "Choose folder in which the project is located",
+      };
+      if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+      {
+        Current.IProjectService.OpenProject(DirectoryName.Create(dlg.SelectedPath), showUserInteraction: true);
+        // Can not add this to recent open because it is no file name
+        // Current.GetService<IRecentOpen>().AddRecentProject(FileName.Create(openFileDialog1.FileName));
+      }
+      else // in case the user cancels the open file dialog
+      {
+        Current.Project.IsDirty = saveDirtyState; // restore the dirty state of the current project
+      }
+    }
+  }
+
+  public class FileSaveAsToDirectory : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var dlg = new System.Windows.Forms.FolderBrowserDialog()
+      {
+        ShowNewFolderButton = true,
+        Description = "Choose folder in which the project should be stored",
+      };
+
+
+      if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+      {
+        Current.IProjectService.SaveProject(new DirectoryName(dlg.SelectedPath));
+      }
+    }
+  }
+
 
   public class FileImportAscii : SimpleCommand
   {
@@ -235,7 +293,7 @@ namespace Altaxo.Main.Commands
       {
         var viewModel = viewContent.ModelObject as IProjectItemPresentationModel;
         var doc = viewModel?.Document ?? viewContent.ModelObject as IProjectItem;
-        if (null != doc)
+        if (doc is not null)
         {
           var oldName = doc.Name;
           var newDoc = (IProjectItem)doc.Clone();
@@ -289,7 +347,7 @@ namespace Altaxo.Main.Commands
         if (true == openFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject) && openFileDialog1.FileName.Length > 0)
         {
           string result = Altaxo.Serialization.Origin.Importer.Import(openFileDialog1.FileName);
-          if (result != null)
+          if (result is not null)
             Current.Gui.ErrorMessageBox(result);
         }
       }
@@ -302,7 +360,7 @@ namespace Altaxo.Main.Commands
     {
       Altaxo.Scripting.IScriptText script = null; // or load it from somewhere
 
-      if (script == null)
+      if (script is null)
         script = new Altaxo.Scripting.ProgramInstanceScript();
       var options = new Altaxo.Gui.OpenFileOptions
       {
@@ -314,7 +372,7 @@ namespace Altaxo.Main.Commands
       if (Current.Gui.ShowOpenFileDialog(options))
       {
         string err = OpenScriptText(options.FileName, out var scripttext);
-        if (null != err)
+        if (err is not null)
           Current.Gui.ErrorMessageBox(err);
         else
           script.ScriptText = scripttext;
@@ -338,10 +396,10 @@ namespace Altaxo.Main.Commands
           if (Current.Gui.ShowSaveFileDialog(saveOptions))
           {
             errors = SaveScriptText(saveOptions.FileName, script.ScriptText);
-            if (null != errors)
+            if (errors is not null)
               Current.Gui.ErrorMessageBox(errors);
           }
-        } while (null != errors);
+        } while (errors is not null);
       }
     }
 

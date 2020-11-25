@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace Altaxo.Geometry
     {
       var mypoints = new List<PointD3D>();
 
-      if (null != points)
+      if (points is not null)
       {
         PointD3D prevPoint = PointD3D.Empty;
 
@@ -108,7 +109,15 @@ namespace Altaxo.Geometry
       }
     }
 
-    public IPolylineD3D ShortenedBy(RADouble marginAtStart, RADouble marginAtEnd)
+    /// <summary>
+    /// Returns a new, shortened polyline. If the shortened line would have zero or negative length, <c>null</c> is returned.
+    /// </summary>
+    /// <param name="marginAtStart">The margin at start. Either an absolute value, or relative to the total length of the polyline.</param>
+    /// <param name="marginAtEnd">The margin at end. Either an absolute value, or relative to the total length of the polyline.</param>
+    /// <returns>
+    /// A new, shortened polyline. If the shortened line would have zero or negative length, <c>null</c> is returned.
+    /// </returns>
+    public IPolylineD3D? ShortenedBy(RADouble marginAtStart, RADouble marginAtEnd)
     {
       if (_points.Length < 2)
         return null;

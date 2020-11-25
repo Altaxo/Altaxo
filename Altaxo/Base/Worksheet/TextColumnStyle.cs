@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -41,13 +42,13 @@ namespace Altaxo.Worksheet
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TextColumnStyle)obj;
-        info.AddBaseValueEmbedded(s, typeof(TextColumnStyle).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(TextColumnStyle).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        TextColumnStyle s = null != o ? (TextColumnStyle)o : new TextColumnStyle();
-        info.GetBaseValueEmbedded(s, typeof(TextColumnStyle).BaseType, parent);
+        TextColumnStyle s = o is not null ? (TextColumnStyle)o : new TextColumnStyle();
+        info.GetBaseValueEmbedded(s, typeof(TextColumnStyle).BaseType!, parent);
         return s;
       }
     }
@@ -73,8 +74,8 @@ namespace Altaxo.Worksheet
 
     public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
     {
-      string val = ((Altaxo.Data.TextColumn)data)[nRow];
-      return val == Altaxo.Data.TextColumn.NullValue ? "" : val;
+      string? val = ((Altaxo.Data.TextColumn)data)[nRow];
+      return val ?? string.Empty;
     }
 
     public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
@@ -100,13 +101,16 @@ namespace Altaxo.Worksheet
     {
       PaintBackground(dc, cellRectangle, bSelected);
 
-      string myString = ((Altaxo.Data.TextColumn)data)[nRow];
+      string? myString = ((Altaxo.Data.TextColumn)data)[nRow];
 
-      var brush = bSelected ? _defaultSelectedTextBrush : TextBrush;
-
-      using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, cellRectangle, dc, 1))
+      if (!string.IsNullOrEmpty(myString))
       {
-        dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), brushGdi, cellRectangle, _textFormat);
+        var brush = bSelected ? _defaultSelectedTextBrush : TextBrush;
+
+        using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, cellRectangle, dc, 1))
+        {
+          dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), brushGdi, cellRectangle, _textFormat);
+        }
       }
     }
   } // end of class Altaxo.Worksheet.DateTimeColumnStyle

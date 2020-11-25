@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -40,14 +41,14 @@ namespace Altaxo.Graph.Gdi.Shapes
       private GraphicsPath _gripPath;
 
       /// <summary>Path that is shown on the display.</summary>
-      private GraphicsPath _displayedPath;
+      private GraphicsPath? _displayedPath;
 
       private bool _hasMoved;
       private bool _wasActivatedUponCreation;
       private PointD2D _initialMousePosition;
       private PointD2D _initialObjectPosition;
 
-      public MovementGripHandle(IHitTestObject parent, GraphicsPath gripPath, GraphicsPath objectPath)
+      public MovementGripHandle(IHitTestObject parent, GraphicsPath gripPath, GraphicsPath? objectPath)
       {
         _parent = parent;
         _gripPath = gripPath;
@@ -80,7 +81,7 @@ namespace Altaxo.Graph.Gdi.Shapes
           ((GraphicBase)_parent.HittedObject).EhSelfChanged(EventArgs.Empty);
 
         var ht = _parent as GraphicBaseHitTestObject;
-        if (null != ht && !_hasMoved && !_wasActivatedUponCreation)
+        if (ht is not null && !_hasMoved && !_wasActivatedUponCreation)
           return true;
         else
           return false;

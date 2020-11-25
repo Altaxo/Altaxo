@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -34,12 +35,21 @@ namespace Altaxo.Collections
   /// </summary>
   public class ListNode : System.ComponentModel.INotifyPropertyChanged
   {
-    public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+    /// <summary>
+    /// Occurs when a property value changes.
+    /// </summary>
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
-    protected string _text;
-    protected object _tag;
+    protected string? _text;
+    protected object? _tag;
 
-    public virtual string Text
+    /// <summary>
+    /// Gets or sets the text that is displayed (for simple Gui items).
+    /// </summary>
+    /// <value>
+    /// The text to display.
+    /// </value>
+    public virtual string? Text
     {
       get
       {
@@ -47,16 +57,21 @@ namespace Altaxo.Collections
       }
       set
       {
-        var oldValue = _text;
-        _text = value;
-        if (value != oldValue)
+        if (!(_text == value))
         {
-          OnPropertyChanged("Text");
+          _text = value;
+          OnPropertyChanged(nameof(Text));
         }
       }
     }
 
-    public object Tag
+    /// <summary>
+    /// Gets or sets a tag associated with the item.
+    /// </summary>
+    /// <value>
+    /// The tag.
+    /// </value>
+    public object? Tag
     {
       get
       {
@@ -64,10 +79,12 @@ namespace Altaxo.Collections
       }
       set
       {
-        var oldValue = _tag;
-        _tag = value;
-        if (value != oldValue)
-          OnPropertyChanged("Tag");
+
+        if (!object.Equals(_tag, value))
+        {
+          _tag = value;
+          OnPropertyChanged(nameof(Tag));
+        }
       }
     }
 
@@ -75,58 +92,131 @@ namespace Altaxo.Collections
     {
     }
 
-    public ListNode(string text, object tag)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ListNode"/> class.
+    /// </summary>
+    /// <param name="text">The text to display.</param>
+    /// <param name="tag">The tag associated with the item.</param>
+    public ListNode(string text, object? tag)
     {
       _text = text;
       _tag = tag;
     }
 
-    public virtual string Text0 { get { return SubItemText(0); } }
+    /// <summary>
+    /// Gets additional text to display for the item.
+    /// </summary>
+    public virtual string? Text0 { get { return SubItemText(0); } }
 
-    public virtual string Text1 { get { return SubItemText(1); } }
+    /// <summary>
+    /// Gets additional text to display for the item.
+    /// </summary>
+    public virtual string? Text1 { get { return SubItemText(1); } }
 
-    public virtual string Text2 { get { return SubItemText(2); } }
+    /// <summary>
+    /// Gets additional text to display for the item.
+    /// </summary>
+    public virtual string? Text2 { get { return SubItemText(2); } }
 
-    public virtual string Text3 { get { return SubItemText(3); } }
+    /// <summary>
+    /// Gets additional text to display for the item.
+    /// </summary>
+    public virtual string? Text3 { get { return SubItemText(3); } }
 
-    public virtual string Text4 { get { return SubItemText(4); } }
+    /// <summary>
+    /// Gets additional text to display for the item.
+    /// </summary>
+    public virtual string? Text4 { get { return SubItemText(4); } }
 
-    public virtual string Text5 { get { return SubItemText(5); } }
+    /// <summary>
+    /// Gets additional text to display for the item.
+    /// </summary>
+    public virtual string? Text5 { get { return SubItemText(5); } }
 
-    public virtual string Text6 { get { return SubItemText(6); } }
+    /// <summary>
+    /// Gets additional text to display for the item.
+    /// </summary>
+    public virtual string? Text6 { get { return SubItemText(6); } }
 
-    public virtual string Text7 { get { return SubItemText(7); } }
+    /// <summary>
+    /// Gets additional text to display for the item.
+    /// </summary>
+    public virtual string? Text7 { get { return SubItemText(7); } }
 
-    public virtual string Text8 { get { return SubItemText(8); } }
+    /// <summary>
+    /// Gets additional text to display for the item.
+    /// </summary>
+    public virtual string? Text8 { get { return SubItemText(8); } }
 
-    public virtual string Text9 { get { return SubItemText(9); } }
+    /// <summary>
+    /// Gets additional text to display for the item.
+    /// </summary>
+    public virtual string? Text9 { get { return SubItemText(9); } }
 
-    public virtual object Image { get { return null; } }
+    /// <summary>
+    /// Gets an image to display for the item. The type depends on the Gui that is currently used.
+    /// </summary>
+    public virtual object? Image { get { return null; } }
 
-    public override string ToString()
+    /// <summary>
+    /// Converts to string.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="System.String" /> that represents this instance.
+    /// </returns>
+    public override string? ToString()
     {
       if (!string.IsNullOrEmpty(Text))
         return Text;
-      else if (Tag != null)
-        return Tag.ToString();
+      else if (Tag is { } tag)
+        return tag.ToString();
       else
         return base.ToString();
     }
 
+    /// <summary>
+    /// Gets the number of subitems to display (Text0, Text1, etc.).
+    /// </summary>
+    /// <value>
+    /// The sub item count.
+    /// </value>
     public virtual int SubItemCount { get { return 0; } }
 
-    public virtual string SubItemText(int i)
+    /// <summary>
+    /// Get the sub item text at index <paramref name="i"/>.
+    /// Implementer should be aware of, that when changing a subitem text, the corresponding property (e.g. Text0) is changed. Thus, <see cref="OnPropertyChanged(string)" /> must be called for all properties that have changed.
+    /// </summary>
+    /// <param name="i">The i.</param>
+    /// <returns></returns>
+    public virtual string? SubItemText(int i)
     {
       return null;
     }
 
-    public virtual string Description { get { return null; } }
+    /// <summary>
+    /// Gets the description string. Can be used e.g. to show a tool tip.
+    /// </summary>
+    /// <value>
+    /// The description.
+    /// </value>
+    public virtual string? Description { get { return null; } }
 
+    /// <summary>
+    ///  Gets the color of the sub items.
+    /// </summary>
+    /// <param name="i">The i.</param>
+    /// <returns></returns>
     public virtual System.Drawing.Color? SubItemBackColor(int i)
     {
       return null;
     }
 
+    /// <summary>
+    /// Can be overridden to get an image index, that can be used to retrieve an image from a resource.
+    /// </summary>
+    /// <value>
+    /// The index of the image.
+    /// </value>
     public virtual int ImageIndex
     {
       get
@@ -139,24 +229,42 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Called when a property has changed.
+    /// </summary>
+    /// <param name="propertyName">Name of the property.</param>
     protected virtual void OnPropertyChanged(string propertyName)
     {
-      if (null != PropertyChanged)
-        PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+      PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
     }
   }
 
+  /// <summary>
+  /// Observable collection of <see cref="ListNode"/>s.
+  /// </summary>
   public class ListNodeList : System.Collections.ObjectModel.ObservableCollection<ListNode>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ListNodeList" /> class.
+    /// </summary>
     public ListNodeList()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ListNodeList" /> class.
+    /// </summary>
+    /// <param name="from">Items to initially fill the list with.</param>
     public ListNodeList(IEnumerable<ListNode> from)
-        : base(from)
+            : base(from)
     {
     }
 
+    /// <summary>
+    /// Get the index of the provided object.
+    /// </summary>
+    /// <param name="o">The object to search for.</param>
+    /// <returns>The index of the object in this collection if found; otherwise, -1.</returns>
     public int IndexOfObject(object o)
     {
       int i = -1;
@@ -169,6 +277,11 @@ namespace Altaxo.Collections
       return -1;
     }
 
+    /// <summary>
+    /// Exchanges item at index i with item at index j.
+    /// </summary>
+    /// <param name="i">The first index.</param>
+    /// <param name="j">The second index.</param>
     public void Exchange(int i, int j)
     {
       if (i == j)
@@ -188,24 +301,49 @@ namespace Altaxo.Collections
     }
   }
 
+  /// <summary>
+  /// Interface of an item that can be either selected or unselected.
+  /// </summary>
   public interface ISelectableItem
   {
+    /// <summary>
+    /// Gets or sets a value indicating whether this instance is selected.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this item is selected; otherwise, <c>false</c>.
+    /// </value>
     bool IsSelected { get; set; }
   }
 
+  /// <summary>
+  /// Represents a <see cref="ListNode"/> that can be either selected or unselected.
+  /// </summary>
+  /// <seealso cref="Altaxo.Collections.ListNode" />
+  /// <seealso cref="Altaxo.Collections.ISelectableItem" />
   public class SelectableListNode : ListNode, ISelectableItem
   {
+    /// <summary>
+    /// Indicating whether this item is selected
+    /// </summary>
     protected bool _isSelected;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether this item is selected.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this item is selected; otherwise, <c>false</c>.
+    /// </value>
     public virtual bool IsSelected
     {
       get { return _isSelected; }
       set
       {
-        var oldValue = _isSelected;
-        _isSelected = value;
-        if (oldValue != value)
-          OnPropertyChanged("IsSelected");
+
+        if (!(_isSelected == value))
+        {
+          _isSelected = value;
+          OnPropertyChanged(nameof(IsSelected));
+        }
       }
     }
 
@@ -213,21 +351,31 @@ namespace Altaxo.Collections
     {
     }
 
-    public SelectableListNode(string text, object tag, bool isSelected)
+    public SelectableListNode(string text, object? tag, bool isSelected)
         : base(text, tag)
     {
       _isSelected = isSelected;
     }
   }
 
+  /// <summary>
+  /// Collection of <see cref="SelectableListNode"/>s.
+  /// </summary>
   public class SelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<SelectableListNode>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectableListNodeList" /> class.
+    /// </summary>
     public SelectableListNodeList()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectableListNodeList" /> class.
+    /// </summary>
+    /// <param name="from">Items used to initially fill the list.</param>
     public SelectableListNodeList(IEnumerable<SelectableListNode> from)
-        : base(from)
+            : base(from)
     {
     }
 
@@ -254,7 +402,10 @@ namespace Altaxo.Collections
         var values = System.Enum.GetValues(selectedItem.GetType());
         foreach (var val in values)
         {
-          var node = new SelectableListNode(System.Enum.GetName(selectedItem.GetType(), val), val, IsChecked(val, Convert.ToInt64(selectedItem)));
+          if (val is null)
+            continue;
+
+          var node = new SelectableListNode(System.Enum.GetName(selectedItem.GetType(), val)!, val, IsChecked(val, Convert.ToInt64(selectedItem)));
           Add(node);
         }
       }
@@ -263,7 +414,12 @@ namespace Altaxo.Collections
         // enumeration without flags attribute
         var values = System.Enum.GetValues(selectedItem.GetType());
         foreach (var value in values)
-          Add(new SelectableListNode(value.ToString(), value, value.ToString() == selectedItem.ToString()));
+        {
+          if (!(value is null))
+          {
+            Add(new SelectableListNode(value.ToString() ?? string.Empty, value, value.ToString() == selectedItem.ToString()));
+          }
+        }
       }
     }
 
@@ -337,7 +493,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Gets the first selected node, or null if no node is currently selected.
     /// </summary>
-    public SelectableListNode FirstSelectedNode
+    public SelectableListNode? FirstSelectedNode
     {
       get
       {
@@ -390,7 +546,7 @@ namespace Altaxo.Collections
     /// <value>
     /// The unique selected item.
     /// </value>
-    public SelectableListNode UniqueSelectedItem
+    public SelectableListNode? UniqueSelectedItem
     {
       get
       {
@@ -444,7 +600,7 @@ namespace Altaxo.Collections
     /// Move the selected items one place up (i.e. to lower index).
     /// </summary>
     /// <param name="docExchangeAction">You can provide an action here which will simultanously change also the corresponding document nodes. 1st arg is the first index of the doc to exchange, 2nd arg the second index.</param>
-    public void MoveSelectedItemsUp(Action<int, int> docExchangeAction)
+    public void MoveSelectedItemsUp(Action<int, int>? docExchangeAction)
     {
       if (Count == 0 || this[0].IsSelected)
         return;
@@ -463,8 +619,7 @@ namespace Altaxo.Collections
         if (this[i].IsSelected)
         {
           Exchange(i, i - 1);
-          if (null != docExchangeAction)
-            docExchangeAction(i, i - 1);
+          docExchangeAction?.Invoke(i, i - 1);
         }
       }
 
@@ -487,7 +642,7 @@ namespace Altaxo.Collections
     /// Move the selected items one place down (i.e. to higher index).
     /// </summary>
     /// <param name="docExchangeAction">You can provide an action here which will simultanously change the corresponding document nodes. 1st arg is the first index of the doc to exchange, 2nd arg the second index.</param>
-    public void MoveSelectedItemsDown(Action<int, int> docExchangeAction)
+    public void MoveSelectedItemsDown(Action<int, int>? docExchangeAction)
     {
       if (Count == 0 || this[Count - 1].IsSelected)
         return;
@@ -505,8 +660,7 @@ namespace Altaxo.Collections
         if (this[i].IsSelected)
         {
           Exchange(i, i + 1);
-          if (null != docExchangeAction)
-            docExchangeAction(i, i + 1);
+          docExchangeAction?.Invoke(i, i + 1);
         }
       }
 
@@ -535,15 +689,14 @@ namespace Altaxo.Collections
     /// 2nd argument is the content of the <see cref="P:ListNode.Tag"/> member of the list node which is removed.
     /// When multiple nodes are selected, the nodes with the higher index are removed first.
     /// </param>
-    public void RemoveSelectedItems(Action<int, object> docRemoveAction)
+    public void RemoveSelectedItems(Action<int, object?>? docRemoveAction)
     {
       for (int i = Count - 1; i >= 0; i--)
         if (this[i].IsSelected)
         {
           var node = this[i];
           RemoveAt(i);
-          if (null != docRemoveAction)
-            docRemoveAction(i, node.Tag);
+          docRemoveAction?.Invoke(i, node.Tag);
         }
     }
 
@@ -551,11 +704,10 @@ namespace Altaxo.Collections
     /// Clears this collection, and clears the corresponding document too.
     /// </summary>
     /// <param name="docClearAction">You can provide an action here which simultaneously clears the corresponding document collection.</param>
-    public void Clear(Action docClearAction)
+    public void Clear(Action? docClearAction)
     {
       base.Clear();
-      if (null != docClearAction)
-        docClearAction();
+      docClearAction?.Invoke();
     }
 
     /// <summary>
@@ -564,18 +716,32 @@ namespace Altaxo.Collections
     /// <typeparam name="T">Type of document node.</typeparam>
     /// <param name="node">The list node to add. The <see cref="P:ListNode.Tag"/> property should contain the corresponding document node.</param>
     /// <param name="docAddAction">The action to add a document node to the document collection. The document node will be retrieved from the <see cref="P:ListNode.Tag"/> property of the list node.</param>
-    public void Add<T>(SelectableListNode node, Action<T> docAddAction)
+    public void Add<T>(SelectableListNode node, Action<T>? docAddAction)
     {
       base.Add(node);
-      if (null != docAddAction)
-        docAddAction((T)node.Tag);
+#pragma warning disable CS8604 // Possible null reference argument.
+      docAddAction?.Invoke((T)node.Tag);
+#pragma warning restore CS8604 // Possible null reference argument.
     }
   }
 
+  /// <summary>
+  /// A <see cref="SelectableListNode"/> that can additionally either in the checked or unchecked state.
+  /// </summary>
+  /// <seealso cref="Altaxo.Collections.SelectableListNode" />
   public class CheckableSelectableListNode : SelectableListNode
   {
+    /// <summary>
+    /// Indicates whether this instance is checked.
+    /// </summary>
     protected bool _isChecked;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether this instance is checked.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this instance is checked; otherwise, <c>false</c>.
+    /// </value>
     public bool IsChecked
     {
       get
@@ -584,31 +750,51 @@ namespace Altaxo.Collections
       }
       set
       {
-        var oldValue = _isChecked;
-        _isChecked = value;
-        if (value != oldValue)
+        if (!(_isChecked == value))
+        {
+          _isChecked = value;
           OnPropertyChanged("IsChecked");
+        }
       }
     }
 
-    public CheckableSelectableListNode(string text, object tag, bool isSelected, bool isChecked)
-        : base(text, tag, isSelected)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CheckableSelectableListNode" /> class.
+    /// </summary>
+    /// <param name="text">The text to display</param>
+    /// <param name="tag">The tag associated with the item.</param>
+    /// <param name="isSelected">if set to <c>true</c> , the item is selected.</param>
+    /// <param name="isChecked">if set to <c>true</c>, the item is checked.</param>
+    public CheckableSelectableListNode(string text, object? tag, bool isSelected, bool isChecked)
+            : base(text, tag, isSelected)
     {
       _isChecked = isChecked;
     }
   }
 
+  /// <summary>
+  /// Collection of <see cref="CheckableSelectableListNode"/>s.
+  /// </summary>
   public class CheckableSelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<CheckableSelectableListNode>
   {
     public CheckableSelectableListNodeList()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CheckableSelectableListNodeList" /> class.
+    /// </summary>
+    /// <param name="from">Items used to initially fill the collection.</param>
     public CheckableSelectableListNodeList(IEnumerable<CheckableSelectableListNode> from)
-        : base(from)
+            : base(from)
     {
     }
 
+    /// <summary>
+    /// Gets the indexes of the provided object.
+    /// </summary>
+    /// <param name="o">The object to search for.</param>
+    /// <returns>Index of the object in the collection if found; otherwise, -1.</returns>
     public int IndexOfObject(object o)
     {
       int i = -1;
@@ -621,6 +807,11 @@ namespace Altaxo.Collections
       return -1;
     }
 
+    /// <summary>
+    /// Exchanges the items at index i and j.
+    /// </summary>
+    /// <param name="i">The i.</param>
+    /// <param name="j">The j.</param>
     public void Exchange(int i, int j)
     {
       if (i == j)
@@ -640,30 +831,55 @@ namespace Altaxo.Collections
     }
   }
 
+  /// <summary>
+  /// Extension methods for <see cref="SelectableListNodeList"/>.
+  /// </summary>
   public static class SelectableListNodeListHelper
   {
+    /// <summary>
+    /// Fills a <see cref="SelectableListNodeList"/> with enumeration values. (For flag enumerations, please use <see cref="FillWithFlagEnumeration(SelectableListNodeList, Enum)"/>).
+    /// </summary>
+    /// <param name="list">The list to fill.</param>
+    /// <param name="enumerationValue">The enumeration value that is the initially selected value.</param>
     public static void FillWithEnumeration(this SelectableListNodeList list, System.Enum enumerationValue)
     {
       list.Clear();
-      foreach (System.Enum e in System.Enum.GetValues(enumerationValue.GetType()))
+      foreach (var obj in System.Enum.GetValues(enumerationValue.GetType()))
       {
-        string baseName = e.ToString();
-        bool isSelected = 0 == e.CompareTo(enumerationValue);
-        list.Add(new SelectableListNode(baseName, e, isSelected));
+        if (obj is System.Enum e)
+        {
+          string baseName = e.ToString();
+          bool isSelected = 0 == e.CompareTo(enumerationValue);
+          list.Add(new SelectableListNode(baseName, e, isSelected));
+        }
       }
     }
 
+    /// <summary>
+    /// Fills the list with possible values from a flag enumeration.
+    /// </summary>
+    /// <param name="list">The list to fill.</param>
+    /// <param name="enumerationValue">The enumeration value. The value determines with flag values are initially selected.</param>
     public static void FillWithFlagEnumeration(this SelectableListNodeList list, System.Enum enumerationValue)
     {
       list.Clear();
-      foreach (System.Enum e in System.Enum.GetValues(enumerationValue.GetType()))
+      foreach (var obj in System.Enum.GetValues(enumerationValue.GetType()))
       {
-        string baseName = e.ToString();
-        bool isSelected = enumerationValue.HasFlag(e);
-        list.Add(new SelectableListNode(baseName, e, isSelected));
+        if (obj is System.Enum e)
+        {
+          string baseName = e.ToString();
+          bool isSelected = enumerationValue.HasFlag(e);
+          list.Add(new SelectableListNode(baseName, e, isSelected));
+        }
       }
     }
 
+    /// <summary>
+    /// Gets the selected flag enum value from a <see cref="SelectableListNodeList"/>. The <see cref="SelectableListNodeList"/> instance should have been
+    /// initialized with <see cref="FillWithFlagEnumeration(SelectableListNodeList, Enum)"/> (the tags of the items must be integers, representing the flag values).
+    /// </summary>
+    /// <param name="list">The list.</param>
+    /// <returns></returns>
     public static int GetFlagEnumValueAsInt32(this SelectableListNodeList list)
     {
       int result = 0;
@@ -671,7 +887,13 @@ namespace Altaxo.Collections
       {
         if (item.IsSelected)
         {
-          result |= (int)item.Tag;
+          if (item.Tag is int itag)
+          {
+            result |= itag;
+          }
+          else
+            throw new InvalidProgramException($"Tag of item {item?.Text} is {item?.Tag}, but Tag of type int was expected!");
+
         }
       }
       return result;

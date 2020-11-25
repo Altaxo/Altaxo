@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Data
@@ -58,7 +59,7 @@ namespace Altaxo.Data
       }
     }
 
-    public override System.Type GetColumnStyleType()
+    public override System.Type? GetColumnStyleType()
     {
       return null;
     }
@@ -69,7 +70,7 @@ namespace Altaxo.Data
 
     public override AltaxoVariant GetVariantAt(int i)
     {
-      return null;
+      return new AltaxoVariant((object?)null);
     }
 
     public override bool IsElementEmpty(int i)

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,7 +107,7 @@ namespace Altaxo.Main
     private TimeSpan _timeOfLastTrigger;
     private TimeSpan _timeOfNextUpdate;
 
-    public Action _updateAction;
+    public Action? _updateAction;
 
     /// <summary>Reference to the timer queue.</summary>
     private readonly ITimerQueue _timerQueue;
@@ -129,10 +130,7 @@ namespace Altaxo.Main
     /// <exception cref="System.ArgumentNullException">queue</exception>
     public TriggerBasedUpdate(ITimerQueue queue)
     {
-      if (null == queue)
-        throw new ArgumentNullException("queue");
-
-      _timerQueue = queue;
+      _timerQueue = queue ?? throw new ArgumentNullException(nameof(queue));
     }
 
     #region Properties
@@ -146,7 +144,7 @@ namespace Altaxo.Main
 
         var oldValue = _updateAction;
         _updateAction += value;
-        if (null == oldValue)
+        if (oldValue is null)
           EnsureUpdatedDueTime();
       }
       remove
@@ -297,7 +295,7 @@ namespace Altaxo.Main
 
     private void EnsureUpdatedDueTime()
     {
-      if (null == _updateAction)
+      if (_updateAction is null)
         return;
 
       if (_updateLock.TryEnterWriteLock(0)) // calculate a new due time only if no update is currently in progress. If update is in progress, the timer queue is updated at the end of the update anyway
@@ -313,10 +311,10 @@ namespace Altaxo.Main
     protected virtual void OnUpdate(object timerQueueToken, TimeSpan dueTime)
     {
       var updateAction = _updateAction;
-      if (null == updateAction)
+      if (updateAction is null)
         return;
 
-      Exception exception = null;
+      Exception? exception = null;
 
       _updateLock.EnterWriteLock();
 
@@ -344,7 +342,7 @@ namespace Altaxo.Main
         _updateLock.ExitWriteLock(); // Note that the UpdateLock must be released __before__ the NotificationLock. If the other way around, a notification taking place inbetween the release of NotificationLock and UpdateLock could cause TryEnter(UpdateLock) in (see function Notification) to fail, and the TimerQueue is not updated in this case
       } // ----- Notification time can be changed again -----------------
 
-      if (null != exception)
+      if (exception is not null)
         throw new Exception("Exception during execution of the trigger based update action", exception);
     }
 

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Text.RegularExpressions;
 using Altaxo.Data;
@@ -78,7 +79,8 @@ namespace Altaxo.Worksheet.Commands
     /// Moves the selected column to a new position. The new position must be entered by the user.
     /// </summary>
     /// <param name="ctrl">The worksheet controller for the table.</param>
-    public static string SetSelectedColumnPosition(IWorksheetController ctrl)
+    /// <returns>Null if successful; otherwise, an error message.</returns>
+    public static string? SetSelectedColumnPosition(IWorksheetController ctrl)
     {
       // check condition - either DataColumns or propertycolumns can be selected - but not both
       if (ctrl.SelectedDataColumns.Count > 0 && ctrl.SelectedPropertyColumns.Count > 0)

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Collections;
@@ -574,7 +575,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="selectedRowIndices">The selected data row indices.</param>
     /// <param name="rowCount">The minimum row count of all the selected columns.</param>
     /// <returns>A boolean array. If an element of the array is true at a given index, that row contains valid numeric values in all columns.</returns>
-    public static bool[] GetValidNumericRows(IReadableColumn[] table, IAscendingIntegerCollection selectedCols, IEnumerable<int> selectedRowIndices, int rowCount)
+    public static bool[] GetValidNumericRows(IReadableColumn?[] table, IAscendingIntegerCollection selectedCols, IEnumerable<int> selectedRowIndices, int rowCount)
     {
       // determine the number of valid rows
       bool[] rowValid = new bool[rowCount];

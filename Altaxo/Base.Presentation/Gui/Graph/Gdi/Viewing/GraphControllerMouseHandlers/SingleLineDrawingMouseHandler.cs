@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -51,7 +52,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     {
       _grac = view;
 
-      if (_grac != null)
+      if (_grac is not null)
         _grac.SetPanelCursor(Cursors.Pen);
     }
 

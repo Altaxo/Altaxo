@@ -190,6 +190,49 @@ namespace Altaxo.Collections
     /// to the minimum key value item, must return true. 
     /// </summary>
     /// <returns>True if the item was dequeued; otherwise, false.</returns>
+    public bool TryDequeueIf(Func<TKey, bool> predicate, [MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value)
+    {
+      if (predicate is null)
+        throw new ArgumentNullException(nameof(predicate));
+
+      _syncLock.EnterUpgradeableReadLock();
+      try
+      {
+        if (_count > 0 && predicate(_heap[0].Key))
+        {
+          _syncLock.EnterWriteLock();
+          try
+          {
+            (key, value) = _heap[0];
+            _heap[0] = _heap[--_count];
+            if (_count > 0)
+              DownHeap(0);
+
+            return true;
+          }
+          finally
+          {
+            _syncLock.ExitWriteLock();
+          }
+        }
+      }
+      finally
+      {
+        _syncLock.ExitUpgradeableReadLock();
+      }
+
+      key = default;
+      value = default;
+
+      return false;
+    }
+
+    /// <summary>
+    /// Dequeues the minimum key value. Two conditions are neccessary in order to dequeue an item:
+    /// i) at least one item needs to be in the queue, and ii) the predicate given in the argument, applied
+    /// to the minimum key value item, must return true. 
+    /// </summary>
+    /// <returns>True if the item was dequeued; otherwise, false.</returns>
     public bool TryDequeueIf(Func<TKey, TValue, bool> predicate, [MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value)
     {
       if (predicate is null)

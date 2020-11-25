@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace Altaxo.Drawing.D3D.Material
         info.AddValue("Color", s._color);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         double smoothness = info.GetDouble("Smoothness");
         double metalness = info.GetDouble("Metalness");
@@ -165,11 +166,11 @@ namespace Altaxo.Drawing.D3D.Material
     }
 
     ///<inheritdoc/>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       // this material is considered to be equal to another material, if this material has exactly
       var other = obj as MaterialWithUniformColor;
-      if (null != other)
+      if (other is not null)
       {
         return
           _color == other._color &&
@@ -182,11 +183,11 @@ namespace Altaxo.Drawing.D3D.Material
     }
 
     ///<inheritdoc/>
-    public override bool Equals(IMaterial obj)
+    public override bool Equals(IMaterial? obj)
     {
       // this material is considered to be equal to another material, if this material has exactly
       var other = obj as MaterialWithUniformColor;
-      if (null != other)
+      if (other is not null)
       {
         return
           _color == other._color &&

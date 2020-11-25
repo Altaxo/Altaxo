@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
   /// </summary>
   public partial class DirectionalLightControl : UserControl, IDiscreteLightControl
   {
-    public event EventHandler SelectedValueChanged;
+    public event EventHandler? SelectedValueChanged;
 
     private double _lightAmplitude;
 
@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         _lock.ExecuteLocked(

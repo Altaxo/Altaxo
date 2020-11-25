@@ -70,7 +70,7 @@ namespace Altaxo.Gui.AddInItems
 
     public void UpdateText()
     {
-      if (_codon != null)
+      if (_codon is not null)
       {
         Header = MenuService.ConvertLabel(StringParser.Parse(_codon.Properties["label"]));
       }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,10 @@ using System.Text;
 
 namespace Altaxo.DataConnection
 {
+  /// <summary>
+  /// Login credentials, i.e. user name and password.
+  /// </summary>
+  /// <seealso cref="System.ICloneable" />
   public class LoginCredentials : ICloneable
   {
     public string UserName { get; private set; }

@@ -28,14 +28,14 @@ namespace Altaxo.Main
   {
     public static readonly ICommand Instance = new NotAvailableCommand();
 
-    public event EventHandler CanExecuteChanged { add { } remove { } }
+    public event EventHandler? CanExecuteChanged { add { } remove { } }
 
-    public bool CanExecute(object parameter)
+    public bool CanExecute(object? parameter)
     {
       return false;
     }
 
-    public void Execute(object parameter)
+    public void Execute(object? parameter)
     {
       throw new NotSupportedException();
     }

@@ -83,7 +83,7 @@ namespace MathML.Rendering
 			if(box.Contains(x + cellShift.X, y + cellShift.Y, pointX, pointY))
 			{
 				AreaRegion region = child.GetRegion(x + areaShift.X, y + areaShift.Y, pointX, pointY);
-				if(region == null || (region != null && region.Element == null))
+				if(region is null || (region is not null && region.Element is null))
 				{
 					region = new AreaRegion(this, element, x + cellShift.X, y + cellShift.Y);
 				}

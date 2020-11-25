@@ -198,7 +198,7 @@ namespace Altaxo.Calc.Probability
       )
     {
       double wsum;
-      if (null == weights)
+      if (weights is null)
       {
         weights = VectorMath.GetConstantVector(1.0 / x.Count, x.Count);
         wsum = 1;
@@ -215,7 +215,7 @@ namespace Altaxo.Calc.Probability
       if (n > 512)
         n = BinaryMath.NextPowerOfTwoGreaterOrEqualThan(n);
 
-      if (bw.IsNaN() && !(width.IsNaN() && null == widthSel))
+      if (bw.IsNaN() && !(width.IsNaN() && widthSel is null))
       {
         if (!width.IsNaN())
         {
@@ -264,7 +264,7 @@ namespace Altaxo.Calc.Probability
         }
       }
 
-      if (null != bwSel)
+      if (bwSel is not null)
       {
         if (x.Count < 2)
           throw new ArgumentException("need at least 2 points to select a bandwidth automatically");

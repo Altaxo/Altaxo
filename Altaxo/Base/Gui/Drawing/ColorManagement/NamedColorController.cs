@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,7 +86,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         _subControllerColorPicker.InitializeDocument(_doc.Color);
         _subControllerColorPicker.MadeDirty += EhController_Dirty;
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeSubViews(GetTabNamesAndViews());
         _view.SetOldColor(_initialColor);
@@ -96,27 +97,27 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private IEnumerable<Tuple<string, object>> GetTabNamesAndViews()
     {
-      if (null != _subControllerColorModel)
+      if (_subControllerColorModel is not null)
       {
-        if (_subControllerColorModel.ViewObject == null)
+        if (_subControllerColorModel.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_subControllerColorModel);
-        if (_subControllerColorModel.ViewObject != null)
+        if (_subControllerColorModel.ViewObject is not null)
           yield return new Tuple<string, object>("Models", _subControllerColorModel.ViewObject);
       }
 
-      if (null != _subControllerColorCircle)
+      if (_subControllerColorCircle is not null)
       {
-        if (_subControllerColorCircle.ViewObject == null)
+        if (_subControllerColorCircle.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_subControllerColorCircle);
-        if (_subControllerColorCircle.ViewObject != null)
+        if (_subControllerColorCircle.ViewObject is not null)
           yield return new Tuple<string, object>("Circle", _subControllerColorCircle.ViewObject);
       }
 
-      if (null != _subControllerColorPicker)
+      if (_subControllerColorPicker is not null)
       {
-        if (_subControllerColorPicker.ViewObject == null)
+        if (_subControllerColorPicker.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_subControllerColorPicker);
-        if (_subControllerColorPicker.ViewObject != null)
+        if (_subControllerColorPicker.ViewObject is not null)
           yield return new Tuple<string, object>("Picker", _subControllerColorPicker.ViewObject);
       }
     }

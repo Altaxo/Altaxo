@@ -7,16 +7,16 @@
 #endregion Copyright
 
 using System;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Calc.Ode
 {
-  [TestFixture]
+
   public class SparseVectorTests
   {
     private const double Eps = 1e-10;
 
-    [Test]
+    [Fact]
     public void ElementAccessorTest()
     {
       var sv = new SparseVector(1000);
@@ -26,8 +26,8 @@ namespace Altaxo.Calc.Ode
         sv[sv.Length - i - 1] = sv.Length - i - 1;
         for (var j = 0; j <= i; j++)
         {
-          Assert.AreEqual(sv[i], i * i, Eps);
-          Assert.AreEqual(sv[sv.Length - i - 1], sv.Length - i - 1);
+          AssertEx.Equal(sv[i], i * i, Eps);
+          Assert.Equal(sv[sv.Length - i - 1], sv.Length - i - 1);
         }
       }
     }

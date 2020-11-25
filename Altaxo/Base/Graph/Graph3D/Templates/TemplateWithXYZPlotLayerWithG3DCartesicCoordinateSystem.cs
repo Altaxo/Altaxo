@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Collections;
@@ -57,11 +59,11 @@ typeof(object),
     /// <param name="propertyContext">The property context. Can be retrieved for instance from the table the plot is initiated or the folder.</param>
     /// <param name="folderName">Name of the folder.</param>
     /// <returns>The created graph.</returns>
-    private static GraphDocument CreateBuiltinGraph(IReadOnlyPropertyBag propertyContext, string folderName)
+    private static GraphDocument CreateBuiltinGraph(IReadOnlyPropertyBag? propertyContext, string? folderName)
     {
-      if (null == propertyContext)
+      if (propertyContext is null)
       {
-        if (null != folderName)
+        if (folderName is not null)
           propertyContext = Altaxo.PropertyExtensions.GetPropertyContextOfProjectFolder(folderName);
         else
           propertyContext = PropertyExtensions.GetPropertyContextOfProject();
@@ -88,14 +90,14 @@ typeof(object),
     /// <param name="anyNameInSameFolder">Any name of an item in the same folder. This name is used to determine the destination folder of the graph.</param>
     /// <param name="includeInProject">If true, the graph is included in the project.</param>
     /// <returns>The created graph. The graph is already part of the project. (But no view is created for the graph).</returns>
-    public static GraphDocument CreateGraph(IReadOnlyPropertyBag propertyContext, string preferredGraphName, string anyNameInSameFolder, bool includeInProject)
+    public static GraphDocument CreateGraph(IReadOnlyPropertyBag propertyContext, string? preferredGraphName, string? anyNameInSameFolder, bool includeInProject)
     {
-      string folderName = null == anyNameInSameFolder ? null : Altaxo.Main.ProjectFolder.GetFolderPart(anyNameInSameFolder);
+      var folderName = anyNameInSameFolder is null ? null : Altaxo.Main.ProjectFolder.GetFolderPart(anyNameInSameFolder);
 
-      if (null == propertyContext)
+      if (propertyContext is null)
       {
-        if (null != anyNameInSameFolder)
-          Altaxo.PropertyExtensions.GetPropertyContextOfProjectFolder(folderName);
+        if (folderName is not null)
+          propertyContext = Altaxo.PropertyExtensions.GetPropertyContextOfProjectFolder(folderName);
         else
           propertyContext = PropertyExtensions.GetPropertyContextOfProject();
       }
@@ -103,14 +105,14 @@ typeof(object),
       GraphDocument graph;
       var graphTemplate = propertyContext.GetValue<GraphDocument>(PropertyKeyDefaultTemplate);
       var isBuiltinTemplate = object.ReferenceEquals(graphTemplate, Current.PropertyService.BuiltinSettings.GetValue<GraphDocument>(PropertyKeyDefaultTemplate));
-      if (null != graphTemplate && !isBuiltinTemplate)
+      if (graphTemplate is not null && !isBuiltinTemplate)
         graph = (GraphDocument)graphTemplate.Clone();
       else
         graph = CreateBuiltinGraph(propertyContext, folderName);
 
       if (string.IsNullOrEmpty(preferredGraphName))
       {
-        string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(anyNameInSameFolder, "GRAPH");
+        string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(anyNameInSameFolder ?? string.Empty, "GRAPH");
         graph.Name = Current.Project.GraphDocumentCollection.FindNewItemName(newnamebase);
       }
       else
@@ -124,7 +126,7 @@ typeof(object),
       return graph;
     }
 
-    public static bool IsGraphTemplateSuitable(GraphDocument graphTemplate, out string problemDescription)
+    public static bool IsGraphTemplateSuitable(GraphDocument graphTemplate, [MaybeNullWhen(true)] out string problemDescription)
     {
       // Make sure that the graph contains an XYPlotLayer
 
@@ -134,9 +136,9 @@ typeof(object),
         return false;
       }
 
-      var xyzlayer = (XYZPlotLayer)TreeNodeExtensions.AnyBetweenHereAndLeaves<HostLayer>(graphTemplate.RootLayer, x => x is XYZPlotLayer);
+      var xyzlayer = (XYZPlotLayer?)TreeNodeExtensions.AnyBetweenHereAndLeaves<HostLayer>(graphTemplate.RootLayer, x => x is XYZPlotLayer);
 
-      if (null == xyzlayer)
+      if (xyzlayer is null)
       {
         problemDescription = "The graph does not contain any x-y-z plot layer.";
         return false;

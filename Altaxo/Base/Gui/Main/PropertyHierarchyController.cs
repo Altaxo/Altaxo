@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -131,7 +132,7 @@ namespace Altaxo.Gui.Main
 
     public override bool InitializeDocument(params object[] args)
     {
-      if (null == args || 0 == args.Length || !(args[0] is PropertyHierarchy))
+      if (args is null || 0 == args.Length || !(args[0] is PropertyHierarchy))
         return false;
 
       _doc = _originalDoc = (PropertyHierarchy)args[0];
@@ -152,7 +153,7 @@ namespace Altaxo.Gui.Main
         InitializeAvailablePropertyList();
         InitializeExistingPropertyValuesList();
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.AvailablePropertyKeyList = _availablePropertyKeys;
         _view.PropertyValueList = _propertyList;
@@ -193,7 +194,7 @@ namespace Altaxo.Gui.Main
       foreach (var key in _doc.Keys)
       {
         string keyName = PropertyKeyBase.GetPropertyName(key);
-        if (null == keyName)
+        if (keyName is null)
           keyName = key;
         sortedNames.Add(new KeyValuePair<string, string>(key, keyName));
       }
@@ -208,8 +209,8 @@ namespace Altaxo.Gui.Main
         {
           var node = new MyListNode(entry.Value, new Tuple<string, string, IPropertyBag>(entry.Key, entry.Value, bag))
           {
-            Text1S = value == null ? "n.a." : value.GetType().Name,
-            Text2S = value == null ? "null" : value.ToString().Replace('\n', '_').Replace('\r', '_'),
+            Text1S = value is null ? "n.a." : value.GetType().Name,
+            Text2S = value is null ? "null" : value.ToString().Replace('\n', '_').Replace('\r', '_'),
             Text3S = bagInfo.Name
           };
 
@@ -252,7 +253,7 @@ namespace Altaxo.Gui.Main
     private void EhItemEditing()
     {
       var node = _propertyList.FirstSelectedNode;
-      if (null == node)
+      if (node is null)
         return;
 
       var nodeTag = (Tuple<string, string, IPropertyBag>)node.Tag;
@@ -267,7 +268,7 @@ namespace Altaxo.Gui.Main
     private void EhItemRemoving()
     {
       var node = _propertyList.FirstSelectedNode;
-      if (null == node)
+      if (node is null)
         return;
 
       var nodeTag = (Tuple<string, string, IPropertyBag>)node.Tag;
@@ -276,14 +277,14 @@ namespace Altaxo.Gui.Main
 
       // update list and view
       InitializeExistingPropertyValuesList();
-      if (null != _view)
+      if (_view is not null)
         _view.PropertyValueList = _propertyList;
     }
 
     private void EhCreateNewProperty()
     {
       var node = _availablePropertyKeys.FirstSelectedNode;
-      if (null == node)
+      if (node is null)
         return;
 
       var propertyKey = (PropertyKeyBase)node.Tag;
@@ -314,7 +315,7 @@ namespace Altaxo.Gui.Main
 
         // update list and view
         InitializeExistingPropertyValuesList();
-        if (null != _view)
+        if (_view is not null)
           _view.PropertyValueList = _propertyList;
       }
     }
@@ -328,7 +329,7 @@ namespace Altaxo.Gui.Main
       {
         // update list and view
         InitializeExistingPropertyValuesList();
-        if (null != _view)
+        if (_view is not null)
           _view.PropertyValueList = _propertyList;
       }
     }
@@ -337,15 +338,15 @@ namespace Altaxo.Gui.Main
     {
       IMVCAController controller = null;
       var pk = PropertyKeyBase.GetPropertyKey(propertyKey);
-      if (null != pk && pk.CanCreateEditingController)
+      if (pk is not null && pk.CanCreateEditingController)
       {
         controller = pk.CreateEditingController(propertyValue);
       }
 
-      if (null == controller)
+      if (controller is null)
         controller = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { propertyValue }, typeof(IMVCAController), UseDocument.Copy);
 
-      if (null == controller)
+      if (controller is null)
       {
         Current.Gui.ErrorMessageBox("Sorry! Didn't find a Gui controller to edit this property value!");
         ;
@@ -357,7 +358,7 @@ namespace Altaxo.Gui.Main
         var newValue = controller.ModelObject;
         _doc.TopmostBag.SetValue(propertyKey, newValue);
         InitializeExistingPropertyValuesList();
-        if (null != _view)
+        if (_view is not null)
           _view.PropertyValueList = _propertyList;
       }
     }

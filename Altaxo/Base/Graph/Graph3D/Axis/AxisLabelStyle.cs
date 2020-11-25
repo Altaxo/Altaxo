@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Data;
@@ -30,11 +31,14 @@ using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
+  using System.Diagnostics.CodeAnalysis;
+  using Altaxo.Main;
   using Drawing;
   using Drawing.D3D;
   using Geometry;
   using GraphicsContext;
   using LabelFormatting;
+  using Markdig.Extensions.Yaml;
 
   /// <summary>
   /// Responsible for setting position, rotation, font, color etc. of axis labels.
@@ -71,7 +75,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     protected double _rotationZ;
 
     /// <summary>The style for the background.</summary>
-    protected Background.IBackgroundStyle _backgroundStyle;
+    protected Background.IBackgroundStyle? _backgroundStyle;
 
     protected bool _automaticRotationShift;
 
@@ -84,16 +88,16 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// </summary>
     private CSAxisSide? _labelSide;
 
-    private string _prefixText;
+    private string? _prefixText;
 
-    private string _postfixText;
+    private string? _postfixText;
 
-    private CSAxisInformation _cachedAxisStyleInfo;
+    private CSAxisInformation? _cachedAxisStyleInfo;
 
     /// <summary>
     /// The cached label outlines used for hit testing
     /// </summary>
-    private RectangularObjectOutline[] _cachedLabelOutlines;
+    private RectangularObjectOutline[]? _cachedLabelOutlines;
 
     #region Serialization
 
@@ -108,7 +112,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         var s = (AxisLabelStyle)obj;
         info.AddValue("Font", s._font);
         info.AddValue("Brush", s._brush);
-        info.AddValue("Background", s._backgroundStyle);
+        info.AddValueOrNull("Background", s._backgroundStyle);
 
         info.AddValue("AutoAlignment", s._automaticRotationShift);
         info.AddEnum("AlignmentX", s._alignmentX);
@@ -124,7 +128,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         info.AddValue("OffsetZ", s._offsetZ);
 
         if (s._suppressedLabels.IsEmpty)
-          info.AddValue("SuppressedLabels", (object)null);
+          info.AddValueOrNull("SuppressedLabels", (object?)null);
         else
           info.AddValue("SuppressedLabels", s._suppressedLabels);
 
@@ -133,14 +137,14 @@ namespace Altaxo.Graph.Graph3D.Axis
         info.AddNullableEnum("LabelSide", s._labelSide);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle(info);
+        AxisLabelStyle s = o is not null ? (AxisLabelStyle)o : new AxisLabelStyle(info);
 
         s._font = (FontX3D)info.GetValue("Font", s);
         s._brush = (IMaterial)info.GetValue("Brush", s);
 
-        s.BackgroundStyle = (Background.IBackgroundStyle)info.GetValue("Background", s);
+        s.ChildSetMember(ref s._backgroundStyle, info.GetValueOrNull<Background.IBackgroundStyle>("Background", s));
 
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._alignmentX = (Alignment)info.GetEnum("AlignmentX", typeof(Alignment));
@@ -153,14 +157,8 @@ namespace Altaxo.Graph.Graph3D.Axis
         s._offsetY = info.GetDouble("OffsetY");
         s._offsetZ = info.GetDouble("OffsetZ");
 
-        s._suppressedLabels = (SuppressedTicks)info.GetValue("SuppressedLabels", s);
-        if (s._suppressedLabels != null)
-          s._suppressedLabels.ParentObject = s;
-        else
-          s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
-
-        s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
-        s._labelFormatting.ParentObject = s;
+        s.ChildSetMember(ref s._suppressedLabels, info.GetValueOrNull<SuppressedTicks>("SuppressedLabels", s) ?? new SuppressedTicks());
+        s.ChildSetMember(ref s._labelFormatting, (ILabelFormatting)info.GetValue("LabelFormat", s));
 
         s._labelSide = info.GetNullableEnum<CSAxisSide>("LabelSide");
 
@@ -176,21 +174,24 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
     }
 
-    #endregion Serialization
-
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected AxisLabelStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
+
+    #endregion Serialization
+
 
     public AxisLabelStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : this(null, context)
     {
     }
 
-    public AxisLabelStyle(CSAxisSide? labelSide, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    public AxisLabelStyle(CSAxisSide? labelSide, Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
     {
-      if (null == context)
-        context = PropertyExtensions.GetPropertyContextOfProject();
+      context ??= PropertyExtensions.GetPropertyContextOfProject();
 
       _labelSide = labelSide;
 
@@ -210,13 +211,13 @@ namespace Altaxo.Graph.Graph3D.Axis
       CopyFrom(from);
     }
 
-    public virtual bool CopyFrom(object obj)
+    [MemberNotNull(nameof(_font), nameof(_brush), nameof(_suppressedLabels), nameof(_labelFormatting))]
+    public void CopyFrom(AxisLabelStyle from)
     {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-      var from = obj as AxisLabelStyle;
-      if (null == from)
-        return false;
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+        return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       using (var suspendToken = SuspendGetToken())
       {
@@ -246,8 +247,19 @@ namespace Altaxo.Graph.Graph3D.Axis
 
         suspendToken.Resume();
       }
+    }
 
-      return true;
+    public virtual bool CopyFrom(object obj)
+    {
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (obj is AxisLabelStyle from)
+      {
+        CopyFrom(from);
+        return true;
+      }
+
+      return false;
     }
 
     public virtual object Clone()
@@ -257,13 +269,13 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _labelFormatting)
+      if (_labelFormatting is not null)
         yield return new Main.DocumentNodeAndName(_labelFormatting, "LabelFormatting");
 
-      if (null != _backgroundStyle)
+      if (_backgroundStyle is not null)
         yield return new Main.DocumentNodeAndName(_backgroundStyle, "BackgroundStyle");
 
-      if (null != _suppressedLabels)
+      if (_suppressedLabels is not null)
         yield return new Main.DocumentNodeAndName(_suppressedLabels, "SuppressedLabels");
     }
 
@@ -275,7 +287,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       get { return _font; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         var oldValue = _font;
@@ -337,8 +349,8 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
     }
 
-    /// <summary>The background style.</summary>
-    public Background.IBackgroundStyle BackgroundStyle
+    /// <summary>The background style. Null if no background is shown.</summary>
+    public Background.IBackgroundStyle? BackgroundStyle
     {
       get
       {
@@ -369,7 +381,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         if (object.ReferenceEquals(_labelFormatting, value))
@@ -590,11 +602,13 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       get
       {
+        if (_cachedAxisStyleInfo is null)
+          throw new InvalidOperationException($"{nameof(_cachedAxisStyleInfo)} is null");
         return _cachedAxisStyleInfo.Identifier;
       }
     }
 
-    public CSAxisInformation CachedAxisInformation
+    public CSAxisInformation? CachedAxisInformation
     {
       get
       {
@@ -660,7 +674,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <returns>The side of the axis where the label will be shown.</returns>
     public virtual CSAxisSide PredictLabelSide(CSAxisInformation axisInformation)
     {
-      return null != _labelSide ? _labelSide.Value : axisInformation.PreferredLabelSide;
+      return _labelSide is not null ? _labelSide.Value : axisInformation.PreferredLabelSide;
     }
 
     /// <summary>
@@ -724,7 +738,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, ticks);
 
       double emSize = _font.Size;
-      CSAxisSide labelSide = null != _labelSide ? _labelSide.Value : styleInfo.PreferredLabelSide;
+      CSAxisSide labelSide = _labelSide is not null ? _labelSide.Value : styleInfo.PreferredLabelSide;
       var labelOutlines = new RectangularObjectOutline[ticks.Length];
       for (int i = 0; i < ticks.Length; i++)
       {
@@ -791,7 +805,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         var gs = g.SaveGraphicsState();
         g.PrependTransform(math);
 
-        if (_backgroundStyle != null)
+        if (_backgroundStyle is not null)
         {
           var itemRectangle = new RectangleD3D(PointD3D.Empty, msize);
           _backgroundStyle.Measure(itemRectangle);
@@ -806,11 +820,11 @@ namespace Altaxo.Graph.Graph3D.Axis
       _cachedLabelOutlines = labelOutlines;
     }
 
-    public IHitTestObject HitTest(HitTestPointData hitData)
+    public IHitTestObject? HitTest(HitTestPointData hitData)
     {
       var labelOutlines = _cachedLabelOutlines;
 
-      if (null == labelOutlines)
+      if (labelOutlines is null)
         return null;
 
       foreach (var outline in labelOutlines)

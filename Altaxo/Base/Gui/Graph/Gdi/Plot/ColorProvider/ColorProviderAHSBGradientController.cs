@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,7 +75,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
         _baseController.InitializeDocument(_doc);
         _baseController.MadeDirty += EhBaseControllerChanged;
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _baseController.ViewObject = _view.BaseView;
 

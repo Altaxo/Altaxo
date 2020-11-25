@@ -16,8 +16,10 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Input;
 using Altaxo.Main.Services;
@@ -48,7 +50,7 @@ namespace Altaxo.AddInItems
     private List<string> _addInFiles = new List<string>();
     private List<string> _disabledAddIns = new List<string>();
     private bool _externalAddInsConfigured;
-    private AddInTreeImpl _addInTree;
+    private AddInTreeImpl? _addInTree;
     private string _applicationName;
 
     /// <summary>
@@ -72,7 +74,7 @@ namespace Altaxo.AddInItems
     /// </summary>
     public void AddAddInsFromDirectory(string addInDir)
     {
-      if (addInDir == null)
+      if (addInDir is null)
         throw new ArgumentNullException(nameof(addInDir));
 
       if (Directory.Exists(addInDir))
@@ -86,7 +88,7 @@ namespace Altaxo.AddInItems
     /// </summary>
     public void AddAddInFile(string addInFile)
     {
-      if (addInFile == null)
+      if (addInFile is null)
         throw new ArgumentNullException(nameof(addInFile));
       _addInFiles.Add(addInFile);
     }
@@ -147,18 +149,21 @@ namespace Altaxo.AddInItems
     /// </summary>
     public void RunInitialization()
     {
+      if (_addInTree is null)
+        throw new InvalidProgramException($"Before this call, the method {nameof(StartCoreServices)} has to be called!");
+
       _addInTree.Load(_addInFiles, _disabledAddIns);
 
       // perform service registration
       var container = Altaxo.Current.GetService<System.ComponentModel.Design.IServiceContainer>();
-      if (container != null)
+      if (container is not null)
       {
         _addInTree.BuildItems<object>(string.Format("/{0}/Services", _applicationName), container, false);
       }
 
       // run workspace autostart commands
       Current.Log.Info("Running autostart commands...");
-      foreach (ICommand command in _addInTree.BuildItems<ICommand>(string.Format("/{0}/Autostart", _applicationName), null, false))
+      foreach (ICommand command in _addInTree.BuildItems<ICommand>(string.Format("/{0}/Autostart", _applicationName), this, false))
       {
         try
         {
@@ -179,6 +184,7 @@ namespace Altaxo.AddInItems
     /// Starts the core services.
     /// This initializes the PropertyService and ResourceService.
     /// </summary>
+    [MemberNotNull(nameof(_addInTree))]
     public void StartCoreServices(IPropertyService propertyService, Altaxo.Gui.Workbench.StartupSettings startupSettings)
     {
       var container = Altaxo.Current.GetRequiredService<System.ComponentModel.Design.IServiceContainer>();
@@ -192,10 +198,10 @@ namespace Altaxo.AddInItems
       container.AddService(typeof(IPropertyService), propertyService);
       SetCultureSettingsFromProperties(startupSettings); // set the document culture and the UI culture as early as possible (when PropertyService is functional)
 
-      container.AddService(typeof(IResourceService), new ResourceServiceImpl(Path.Combine(propertyService.DataDirectory, "resources"), propertyService));
+      container.AddService(typeof(IResourceService), new ResourceServiceImpl(Path.Combine(propertyService.DataDirectory.ToString(), "resources"), propertyService));
       container.AddService(typeof(IAddInTree), _addInTree);
       container.AddService(typeof(ApplicationStateInfoService), applicationStateInfoService);
-      StringParser.RegisterStringTagProvider(new ApplicationNameProvider { appName = _applicationName });
+      StringParser.RegisterStringTagProvider(new ApplicationNameProvider(_applicationName));
     }
 
     /// <summary>
@@ -211,12 +217,17 @@ namespace Altaxo.AddInItems
 
     private sealed class ApplicationNameProvider : IStringTagProvider
     {
-      internal string appName;
+      private string _appName;
 
-      public string ProvideString(string tag, StringTagPair[] customTags)
+      public ApplicationNameProvider(string applicationName)
+      {
+        _appName = applicationName;
+      }
+
+      public string? ProvideString(string tag, StringTagPair[]? customTags)
       {
         if (string.Equals(tag, "AppName", StringComparison.OrdinalIgnoreCase))
-          return appName;
+          return _appName;
         else
           return null;
       }

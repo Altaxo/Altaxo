@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Altaxo.Main;
 
 namespace Altaxo.Calc.Regression.Nonlinear
@@ -68,9 +68,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.CommitArray();
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        FitEnsemble s = o != null ? (FitEnsemble)o : new FitEnsemble();
+        FitEnsemble s = o is not null ? (FitEnsemble)o : new FitEnsemble();
 
         int arraycount = info.OpenArray();
         for (int i = 0; i < arraycount; ++i)
@@ -95,13 +95,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
       for (int i = 0; i < _fitElements.Count; ++i)
       {
         FitElement ele = this[i];
-        if (null != ele.FitFunction)
+        if (ele.FitFunction is not null)
         {
           for (int k = 0; k < ele.NumberOfParameters; ++k)
           {
             var parameterName = ele.ParameterName(k);
 
-            if (!(_parametersSortedByName.ContainsKey(parameterName)))
+            if (!string.IsNullOrEmpty(parameterName) && !(_parametersSortedByName.ContainsKey(parameterName)))
             {
               _parametersSortedByName.Add(parameterName, nameposition++);
             }
@@ -271,7 +271,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region Changed handling
 
-    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       CollectParameterNames();
 
@@ -284,11 +284,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _fitElements)
+      if (_fitElements is not null)
       {
         for (int i = 0; i < _fitElements.Count; ++i)
         {
-          if (null != _fitElements[i])
+          if (_fitElements[i] is not null)
             yield return new Main.DocumentNodeAndName(_fitElements[i], "FitElement" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
       }

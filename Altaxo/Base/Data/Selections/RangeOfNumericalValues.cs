@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Altaxo.Graph.Plot.Data;
 using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
@@ -38,7 +38,7 @@ namespace Altaxo.Data.Selections
     private AltaxoVariant _upperValue;
     private bool _isUpperInclusive;
 
-    private IReadableColumnProxy _columnProxy;
+    private IReadableColumnProxy? _columnProxy;
 
     #region Serialization
 
@@ -58,10 +58,10 @@ namespace Altaxo.Data.Selections
         info.AddValue("UpperValue", (object)s._upperValue);
         info.AddValue("UpperIsInclusive", s._isUpperInclusive);
 
-        info.AddValue("Column", s._columnProxy);
+        info.AddValueOrNull("Column", s._columnProxy);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var lower = (AltaxoVariant)info.GetValue("LowerValue", parent);
         var isLowerInclusive = info.GetBoolean("LowerIsInclusive");
@@ -69,7 +69,7 @@ namespace Altaxo.Data.Selections
         var upper = (AltaxoVariant)info.GetValue("UpperValue", parent);
         var isUpperInclusive = info.GetBoolean("UppperIsInclusive");
 
-        var columnProxy = (IReadableColumnProxy)info.GetValue("Column", parent);
+        var columnProxy = (IReadableColumnProxy?)info.GetValueOrNull("Column", parent);
 
         return new RangeOfNumericalValues(info, lower, isLowerInclusive, upper, isUpperInclusive, columnProxy);
       }
@@ -115,7 +115,7 @@ namespace Altaxo.Data.Selections
     /// <param name="upper">The upper.</param>
     /// <param name="isUpperInclusive">if set to <c>true</c> [is upper inclusive].</param>
     /// <param name="columnProxy">The column.</param>
-    protected RangeOfNumericalValues(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, double lower, bool isLowerInclusive, double upper, bool isUpperInclusive, IReadableColumnProxy columnProxy)
+    protected RangeOfNumericalValues(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, double lower, bool isLowerInclusive, double upper, bool isUpperInclusive, IReadableColumnProxy? columnProxy)
     {
       _lowerValue = lower;
       _isLowerInclusive = isLowerInclusive;
@@ -134,11 +134,11 @@ namespace Altaxo.Data.Selections
     }
 
     /// <inheritdoc/>
-    public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
+    public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection? table, int totalRowCount)
     {
       var column = _columnProxy?.Document();
 
-      if (null == column)
+      if (column is null)
         yield break;
 
       int endExclusive = Math.Min(maxIndexExclusive, totalRowCount);
@@ -187,14 +187,14 @@ namespace Altaxo.Data.Selections
 
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _columnProxy)
+      if (_columnProxy is not null)
         yield return new DocumentNodeAndName(_columnProxy, () => _columnProxy = null, "Column");
     }
 
     /// <summary>
     /// Data that define the error in the negative direction.
     /// </summary>
-    public IReadableColumn Column
+    public IReadableColumn? Column
     {
       get
       {
@@ -205,23 +205,23 @@ namespace Altaxo.Data.Selections
         var oldValue = _columnProxy?.Document();
         if (!object.ReferenceEquals(value, oldValue))
         {
-          ChildSetMember(ref _columnProxy, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
+          ChildSetMember(ref _columnProxy, value is null ? null : ReadableColumnProxyBase.FromColumn(value));
           EhSelfChanged(EventArgs.Empty);
         }
       }
     }
 
     /// <summary>
-    /// Gets the name of the column, if it is a data column. Otherwise, null is returned.
+    /// Gets the name of the column, if it is a data column. Otherwise, <see cref="string.Empty"/> is returned.
     /// </summary>
     /// <value>
-    /// The name of the column if it is a data column. Otherwise, null.
+    /// The name of the column if it is a data column. Otherwise, <see cref="string.Empty"/>.
     /// </value>
     public string ColumnName
     {
       get
       {
-        return _columnProxy?.DocumentPath()?.LastPartOrDefault;
+        return _columnProxy?.DocumentPath()?.LastPartOrDefault ?? string.Empty;
       }
     }
 
@@ -296,14 +296,9 @@ namespace Altaxo.Data.Selections
     }
 
     /// <inheritdoc/>
-    public IEnumerable<(
-      string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
-      )> GetAdditionallyUsedColumns()
+    public IEnumerable<ColumnInformationSimple> GetAdditionallyUsedColumns()
     {
-      yield return (GetType().Name, Column, ColumnName, (c) => Column = c);
+      yield return new ColumnInformationSimple(GetType().Name, Column, ColumnName, (c) => Column = c);
     }
 
     /// <summary>
@@ -313,7 +308,8 @@ namespace Altaxo.Data.Selections
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
     public void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
-      Report(_columnProxy, this, nameof(Column));
+      if (!(_columnProxy is null))
+        Report(_columnProxy, this, nameof(Column));
     }
   }
 }

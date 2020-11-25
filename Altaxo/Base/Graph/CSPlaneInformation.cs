@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Altaxo.Graph
@@ -36,22 +38,25 @@ namespace Altaxo.Graph
     public CSPlaneInformation(CSPlaneID identifier)
     {
       _identifier = identifier;
+      _name = string.Empty;
     }
 
     public CSPlaneInformation(CSPlaneInformation from)
     {
-      CopyFrom(from);
+      _identifier = from._identifier;
+      CopyWithoutIdentifierFrom(from);
     }
 
     public void CopyFrom(CSPlaneInformation from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       _identifier = from._identifier;
       CopyWithoutIdentifierFrom(from);
     }
 
+    [MemberNotNull(nameof(_name))]
     public void CopyWithoutIdentifierFrom(CSPlaneInformation from)
     {
       _name = from._name;

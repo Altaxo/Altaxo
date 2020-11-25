@@ -166,8 +166,8 @@ namespace Altaxo.Graph.Graph3D.Commands
       if (Current.Workbench.ActiveViewContent is Graph3DController ctrl)
       {
         var activeLayer = ctrl.ActiveLayer as XYZPlotLayer;
-        if (null == activeLayer)
-          return null;
+        if (activeLayer is null)
+          return Enumerable.Empty<object>();
 
         int actPA = ctrl.CurrentPlotNumber;
         int len = activeLayer.PlotItems.Flattened.Length;
@@ -184,7 +184,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
         return items;
       }
-      return null;
+      return Enumerable.Empty<object>();
     }
 
     private void EhWpfMenuItem_Clicked(object sender, System.Windows.RoutedEventArgs e)
@@ -199,7 +199,7 @@ namespace Altaxo.Graph.Graph3D.Commands
           // if the menu item was not checked before, check it now
           // by making the plot association shown by the menu item
           // the actual plot association
-          if (null != activeLayer && plotItemNumber < activeLayer.PlotItems.Flattened.Length)
+          if (activeLayer is not null && plotItemNumber < activeLayer.PlotItems.Flattened.Length)
           {
             dmi.IsChecked = true;
             ctrl.CurrentPlotNumber = plotItemNumber;

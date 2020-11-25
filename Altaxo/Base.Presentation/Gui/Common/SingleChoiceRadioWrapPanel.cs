@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace Altaxo.Gui.Common
 {
   public class SingleChoiceRadioWrapPanel : WrapPanel
   {
-    public event Action SelectionChanged;
+    public event Action? SelectionChanged;
 
     private SelectableListNodeList _choices;
 
@@ -60,13 +61,13 @@ namespace Altaxo.Gui.Common
     {
       var rb = (RadioButton)sender;
       var node = rb.Tag as SelectableListNode;
-      if (node != null)
+      if (node is not null)
       {
         _choices.ClearSelectionsAll();
         node.IsSelected = true == rb.IsChecked;
       }
 
-      if (null != SelectionChanged)
+      if (SelectionChanged is not null)
         SelectionChanged();
     }
   }

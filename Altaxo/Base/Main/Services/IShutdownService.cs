@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,7 +61,7 @@ namespace Altaxo.Main.Services
     /// Occurs when the project was already closed and the rest of the shutdown procedure starts to happen. This should be implemented
     /// as weak event in order to prevent garbage collection of item that subscribe to this event.
     /// </summary>
-    event EventHandler Closed;
+    event EventHandler? Closed;
 
     /// <summary>
     /// Prevents shutdown with the following reason.
@@ -77,7 +78,7 @@ namespace Altaxo.Main.Services
     /// If there are multiple reasons, only one of them is returned.
     /// </summary>
     /// <remarks>This property is thread-safe.</remarks>
-    string CurrentReasonPreventingShutdown { get; }
+    string? CurrentReasonPreventingShutdown { get; }
 
     /// <summary>
     /// Gets a cancellation token that gets signalled when the application is shutting down.

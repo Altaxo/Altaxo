@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -43,7 +44,7 @@ namespace Altaxo.Gui.Workbench
     /// This is a weak event in order to prevent garbage collection of item that subscribe to this event.
     /// The event is raised during stage 3 <see cref="OnClosingStage3_SignalShutdownToken"/>.
     /// </summary>
-    public event EventHandler Closed
+    public event EventHandler? Closed
     {
       add
       {
@@ -74,7 +75,7 @@ namespace Altaxo.Gui.Workbench
     public bool Shutdown()
     {
       Current.Workbench.Close();
-      return Current.Workbench == null;
+      return Current.Workbench is null;
     }
 
     #region PreventShutdown
@@ -95,7 +96,15 @@ namespace Altaxo.Gui.Workbench
           });
     }
 
-    public string CurrentReasonPreventingShutdown
+    /// <summary>
+    /// Gets the current reason that prevents shutdown.
+    /// If there isn't any reason, returns null.
+    /// If there are multiple reasons, only one of them is returned.
+    /// </summary>
+    /// <remarks>
+    /// This property is thread-safe.
+    /// </remarks>
+    public string? CurrentReasonPreventingShutdown
     {
       get
       {
@@ -172,7 +181,7 @@ namespace Altaxo.Gui.Workbench
 
     protected virtual void OnClosingStage1_ReasonsPreventingShutdown(CancelEventArgs e)
     {
-      if (CurrentReasonPreventingShutdown != null)
+      if (CurrentReasonPreventingShutdown is not null)
       {
         Current.MessageService.ShowMessage(CurrentReasonPreventingShutdown);
         e.Cancel = true;
@@ -184,7 +193,7 @@ namespace Altaxo.Gui.Workbench
       Current.Workbench.SaveCompleteWorkbenchStateAndLayoutInPropertyService();
 
       var projectService = Altaxo.Current.IProjectService;
-      if (null != projectService && (false == (Current.ComManager?.IsInEmbeddedMode ?? false)))
+      if (projectService is not null && (false == (Current.ComManager?.IsInEmbeddedMode ?? false)))
       {
         if (projectService.CurrentProject?.IsDirty == true)
           projectService.AskForSavingOfProject(e); // Save the project, but leave it open

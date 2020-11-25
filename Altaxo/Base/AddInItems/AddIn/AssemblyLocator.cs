@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -27,34 +28,37 @@ namespace Altaxo.AddInItems
   // in the Load context.
   internal static class AssemblyLocator
   {
-    private static Dictionary<string, Assembly> assemblies = new Dictionary<string, Assembly>();
-    private static bool initialized;
+    private static Dictionary<string, Assembly> _assemblies = new Dictionary<string, Assembly>();
+    private static bool _isInitialized;
 
     public static void Init()
     {
-      lock (assemblies)
+      lock (_assemblies)
       {
-        if (initialized)
+        if (_isInitialized)
           return;
-        initialized = true;
+        _isInitialized = true;
         AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
         AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
       }
     }
 
-    private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+    private static Assembly? CurrentDomain_AssemblyResolve(object? sender, ResolveEventArgs args)
     {
-      lock (assemblies)
+      if (args.Name is null)
+        return null;
+
+      lock (_assemblies)
       {
-        if (assemblies.TryGetValue(args.Name, out var assembly))
+        if (_assemblies.TryGetValue(args.Name, out var assembly))
           return assembly;
       }
 
 
       // try to load the assembly by the name, from the same directory as the calling assembly
-      if (null != args.RequestingAssembly)
+      if (!(args.RequestingAssembly is null))
       {
-        var path = System.IO.Path.GetDirectoryName(args.RequestingAssembly.Location);
+        var path = System.IO.Path.GetDirectoryName(args.RequestingAssembly.Location) ?? string.Empty;
         var fileNameParts = args.Name.Split(new char[] { ',' });
         if (fileNameParts.Length > 0)
         {
@@ -64,7 +68,7 @@ namespace Altaxo.AddInItems
             if (System.IO.File.Exists(fileName))
             {
               var assembly = Assembly.LoadFile(fileName);
-              if (null != assembly)
+              if (assembly is not null)
                 return assembly;
             }
           }
@@ -78,12 +82,16 @@ namespace Altaxo.AddInItems
       return null;
     }
 
-    private static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
+    private static void CurrentDomain_AssemblyLoad(object? sender, AssemblyLoadEventArgs args)
     {
       Assembly assembly = args.LoadedAssembly;
-      lock (assemblies)
+
+      if (!(assembly.FullName is null))
       {
-        assemblies[assembly.FullName] = assembly;
+        lock (_assemblies)
+        {
+          _assemblies[assembly.FullName] = assembly;
+        }
       }
     }
   }

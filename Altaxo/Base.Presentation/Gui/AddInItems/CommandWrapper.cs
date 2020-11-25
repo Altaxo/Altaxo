@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,7 +81,7 @@ namespace Altaxo.Gui.AddInItems
     public static ICommand CreateCommand(Codon codon, IReadOnlyCollection<ICondition> conditions)
     {
       ICommand command = CreateCommand(codon);
-      if (command != null && conditions.Count == 0)
+      if (command is not null && conditions.Count == 0)
         return command;
       else
         return new CommandWrapper(command, conditions);
@@ -105,22 +106,22 @@ namespace Altaxo.Gui.AddInItems
       if (codon.Properties.Contains("command"))
       {
         string commandName = codon.Properties["command"];
-        if (WellKnownCommandCreator != null)
+        if (WellKnownCommandCreator is not null)
         {
           command = WellKnownCommandCreator(commandName);
         }
-        if (command == null)
+        if (command is null)
         {
           command = GetCommandFromStaticProperty(codon.AddIn, commandName);
         }
-        if (command == null)
+        if (command is null)
         {
           Current.MessageService.ShowError("Could not find command '" + commandName + "'.");
         }
       }
       else if (codon.Properties.Contains("link"))
       {
-        if (LinkCommandCreator == null)
+        if (LinkCommandCreator is null)
           throw new NotSupportedException("MenuCommand.LinkCommandCreator is not set, cannot create LinkCommands.");
         command = LinkCommandCreator(codon.Properties["link"]);
       }
@@ -139,13 +140,13 @@ namespace Altaxo.Gui.AddInItems
         string className = commandName.Substring(0, pos);
         string propertyName = commandName.Substring(pos + 1);
         Type classType = addIn.FindType(className);
-        if (classType != null)
+        if (classType is not null)
         {
           PropertyInfo p = classType.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Static);
-          if (p != null)
+          if (p is not null)
             return (ICommand)p.GetValue(null, null);
           FieldInfo f = classType.GetField(propertyName, BindingFlags.Public | BindingFlags.Static);
-          if (f != null)
+          if (f is not null)
             return (ICommand)f.GetValue(null);
         }
       }
@@ -172,14 +173,14 @@ namespace Altaxo.Gui.AddInItems
       {
         _commandCreated = true;
         _addInCommand = CreateCommand(_codon);
-        if (_canExecuteChangedHandlersToRegisterOnCommand != null)
+        if (_canExecuteChangedHandlersToRegisterOnCommand is not null)
         {
           var handlers = _canExecuteChangedHandlersToRegisterOnCommand.ToArray();
           _canExecuteChangedHandlersToRegisterOnCommand = null;
 
           foreach (var handler in handlers)
           {
-            if (_addInCommand != null)
+            if (_addInCommand is not null)
               _addInCommand.CanExecuteChanged += handler;
             // Creating the command potentially changes the CanExecute state, so we should raise the event handlers once:
             handler(this, EventArgs.Empty);
@@ -192,26 +193,26 @@ namespace Altaxo.Gui.AddInItems
     {
       add
       {
-        if (value == null)
+        if (value is null)
           return;
-        if (_conditions.Count > 0 && RegisterConditionRequerySuggestedHandler != null)
+        if (_conditions.Count > 0 && RegisterConditionRequerySuggestedHandler is not null)
           RegisterConditionRequerySuggestedHandler(value);
 
-        if (_addInCommand != null)
+        if (_addInCommand is not null)
           _addInCommand.CanExecuteChanged += value;
-        else if (_canExecuteChangedHandlersToRegisterOnCommand != null)
+        else if (_canExecuteChangedHandlersToRegisterOnCommand is not null)
           _canExecuteChangedHandlersToRegisterOnCommand.Add(value);
       }
       remove
       {
-        if (value == null)
+        if (value is null)
           return;
-        if (_conditions.Count > 0 && UnregisterConditionRequerySuggestedHandler != null)
+        if (_conditions.Count > 0 && UnregisterConditionRequerySuggestedHandler is not null)
           UnregisterConditionRequerySuggestedHandler(value);
 
-        if (_addInCommand != null)
+        if (_addInCommand is not null)
           _addInCommand.CanExecuteChanged -= value;
-        else if (_canExecuteChangedHandlersToRegisterOnCommand != null)
+        else if (_canExecuteChangedHandlersToRegisterOnCommand is not null)
           _canExecuteChangedHandlersToRegisterOnCommand.Remove(value);
       }
     }
@@ -231,7 +232,7 @@ namespace Altaxo.Gui.AddInItems
         return false;
       if (!_commandCreated)
         return true;
-      return _addInCommand != null && _addInCommand.CanExecute(parameter);
+      return _addInCommand is not null && _addInCommand.CanExecute(parameter);
     }
   }
 }

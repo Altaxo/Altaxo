@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -143,7 +144,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="pageScale"></param>
     /// <param name="gripLevel">The grip level. For 0, only the translation grip is shown.</param>
     /// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
-    public abstract IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel);
+    public abstract IGripManipulationHandle[]? GetGrips(double pageScale, int gripLevel);
 
     public virtual int GetNextGripLevel(int currentGripLevel)
     {
@@ -164,9 +165,9 @@ namespace Altaxo.Graph.Gdi
     /// <param name="y">If not null, this is the new y size of the hitted object.</param>
     public abstract void ChangeSize(double? x, double? y);
 
-    private DoubleClickHandler _DoubleClick;
+    private DoubleClickHandler? _DoubleClick;
 
-    public DoubleClickHandler DoubleClick
+    public DoubleClickHandler? DoubleClick
     {
       get { return _DoubleClick; }
       set { _DoubleClick = value; }
@@ -175,12 +176,12 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Handler to remove the hitted object. Should return true if the object is removed, otherwise false.
     /// </summary>
-    private DoubleClickHandler _Remove;
+    private DoubleClickHandler? _Remove;
 
     /// <summary>
     /// Handler to remove the hitted object. Should return true if the object is removed, otherwise false.
     /// </summary>
-    public DoubleClickHandler Remove
+    public DoubleClickHandler? Remove
     {
       get { return _Remove; }
       set { _Remove = value; }
@@ -192,15 +193,12 @@ namespace Altaxo.Graph.Gdi
     /// <returns>False normally, true if the HitTestObject should be removed from the list of selected objects (i.e. because the object was deleted).</returns>
     public virtual bool OnDoubleClick()
     {
-      if (DoubleClick != null)
-        return DoubleClick(this);
-      else
-        return false;
+      return DoubleClick?.Invoke(this) ?? false;
     }
 
-    private HostLayer _parentLayer;
+    private HostLayer? _parentLayer;
 
-    public HostLayer ParentLayer
+    public HostLayer? ParentLayer
     {
       get { return _parentLayer; }
       set { _parentLayer = value; }

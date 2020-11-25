@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -65,17 +66,17 @@ namespace Altaxo.Gui.Graph.Graph3D
       if (initData)
       {
         // look for coordinate system types
-        if (null == _cosSubTypes)
+        if (_cosSubTypes is null)
           _cosSubTypes = ReflectionService.GetNonAbstractSubclassesOf(typeof(G3DCoordinateSystem));
 
-        if (null == _choiceList)
+        if (_choiceList is null)
           _choiceList = new SelectableListNodeList();
         _choiceList.Clear();
         foreach (Type t in _cosSubTypes)
           _choiceList.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, t == _doc.GetType()));
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         // look for a controller-control
         _view.TypeLabel = "Type:";
@@ -83,10 +84,10 @@ namespace Altaxo.Gui.Graph.Graph3D
 
         // To avoid looping when a dedicated controller is unavailable, we first instantiate the controller alone and compare the types
         _instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
-        if (_instanceController != null && (_instanceController.GetType() != GetType()))
+        if (_instanceController is not null && (_instanceController.GetType() != GetType()))
         {
           Current.Gui.FindAndAttachControlTo(_instanceController);
-          if (_instanceController.ViewObject != null)
+          if (_instanceController.ViewObject is not null)
             _view.SetInstanceControl(_instanceController.ViewObject);
         }
         else
@@ -99,8 +100,8 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     public override bool Apply(bool disposeController)
     {
-      bool result = _instanceController == null || _instanceController.Apply(disposeController);
-      if (result == true && null != _instanceController)
+      bool result = _instanceController is null || _instanceController.Apply(disposeController);
+      if (result == true && _instanceController is not null)
         _doc = (G3DCoordinateSystem)_instanceController.ModelObject;
 
       return ApplyEnd(result, disposeController);
@@ -122,7 +123,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       var sel = _choiceList.FirstSelectedNode;
 
-      if (sel != null)
+      if (sel is not null)
       {
         var t = (System.Type)sel.Tag;
         if (_doc.GetType() != t)

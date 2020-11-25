@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net48;net5.0-windows</TargetFrameworks>
     <AssemblyName>MLNETAddin</AssemblyName>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
+    <nullable>enable</nullable>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -12,8 +13,8 @@
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.ML" Version="1.5.0" />
-    <PackageReference Include="Microsoft.ML.TimeSeries" Version="1.5.0" />
+    <PackageReference Include="Microsoft.ML" Version="1.5.2" />
+    <PackageReference Include="Microsoft.ML.TimeSeries" Version="1.5.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Altaxo\Base\AltaxoBase.csproj" />

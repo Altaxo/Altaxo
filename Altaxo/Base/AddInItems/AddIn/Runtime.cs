@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,48 +30,48 @@ namespace Altaxo.AddInItems
 {
   public class Runtime
   {
-    private string hintPath;
-    private string assembly;
-    private Assembly loadedAssembly = null;
+    private string? _hintPath;
+    private string _assembly;
+    private Assembly? _loadedAssembly = null;
 
-    private List<LazyLoadDoozer> definedDoozers = new List<LazyLoadDoozer>();
-    private List<LazyConditionEvaluator> definedConditionEvaluators = new List<LazyConditionEvaluator>();
-    private ICondition[] conditions;
-    private IAddInTree addInTree;
-    private bool isActive = true;
-    private bool isAssemblyLoaded;
-    private readonly object lockObj = new object(); // used to protect mutable parts of runtime
+    private List<LazyLoadDoozer> _definedDoozers = new List<LazyLoadDoozer>();
+    private List<LazyConditionEvaluator> _definedConditionEvaluators = new List<LazyConditionEvaluator>();
+    private ICondition[]? _conditions;
+    private IAddInTree _addInTree;
+    private bool _isActive = true;
+    private bool _isAssemblyLoaded;
+    private readonly object _lockObj = new object(); // used to protect mutable parts of runtime
 
     public bool IsActive
     {
       get
       {
-        lock (lockObj)
+        lock (_lockObj)
         {
-          if (conditions != null)
+          if (_conditions is not null)
           {
-            isActive = Condition.GetFailedAction(conditions, this) == ConditionFailedAction.Nothing;
-            conditions = null;
+            _isActive = Condition.GetFailedAction(_conditions, this) == ConditionFailedAction.Nothing;
+            _conditions = null;
           }
-          return isActive;
+          return _isActive;
         }
       }
     }
 
-    public Runtime(IAddInTree addInTree, string assembly, string hintPath)
+    public Runtime(IAddInTree addInTree, string assembly, string? hintPath)
     {
-      if (addInTree == null)
-        throw new ArgumentNullException("addInTree");
-      if (assembly == null)
-        throw new ArgumentNullException("assembly");
-      this.addInTree = addInTree;
-      this.assembly = assembly;
-      this.hintPath = hintPath;
+      if (addInTree is null)
+        throw new ArgumentNullException(nameof(addInTree));
+      if (assembly is null)
+        throw new ArgumentNullException(nameof(assembly));
+      _addInTree = addInTree;
+      _assembly = assembly;
+      _hintPath = hintPath;
     }
 
     public string Assembly
     {
-      get { return assembly; }
+      get { return _assembly; }
     }
 
     /// <summary>
@@ -78,7 +79,7 @@ namespace Altaxo.AddInItems
     /// </summary>
     public bool IsHostApplicationAssembly
     {
-      get { return !string.IsNullOrEmpty(assembly) && assembly[0] == ':'; }
+      get { return !string.IsNullOrEmpty(_assembly) && _assembly[0] == ':'; }
     }
 
     /// <summary>
@@ -86,75 +87,75 @@ namespace Altaxo.AddInItems
     /// </summary>
     public void Load()
     {
-      lock (lockObj)
+      lock (_lockObj)
       {
-        if (!isAssemblyLoaded)
+        if (!_isAssemblyLoaded)
         {
           if (!IsActive)
             throw new InvalidOperationException("Cannot load inactive AddIn runtime");
 
-          isAssemblyLoaded = true;
+          _isAssemblyLoaded = true;
 
           try
           {
-            if (assembly[0] == ':')
+            if (_assembly[0] == ':')
             {
-              loadedAssembly = LoadAssembly(assembly.Substring(1));
+              _loadedAssembly = LoadAssembly(_assembly.Substring(1));
             }
-            else if (assembly[0] == '$')
+            else if (_assembly[0] == '$')
             {
-              int pos = assembly.IndexOf('/');
+              int pos = _assembly.IndexOf('/');
               if (pos < 0)
                 throw new BaseException("Expected '/' in path beginning with '$'!");
-              string referencedAddIn = assembly.Substring(1, pos - 1);
-              foreach (var addIn in addInTree.AddIns)
+              string referencedAddIn = _assembly.Substring(1, pos - 1);
+              foreach (var addIn in _addInTree.AddIns)
               {
                 if (addIn.Enabled && addIn.Manifest.Identities.ContainsKey(referencedAddIn))
                 {
-                  string assemblyFile = Path.Combine(Path.GetDirectoryName(addIn.FileName),
-                                                     assembly.Substring(pos + 1));
-                  loadedAssembly = LoadAssemblyFrom(assemblyFile);
+                  string assemblyFile = Path.Combine(Path.GetDirectoryName(addIn.FileName) ?? string.Empty,
+                                                     _assembly.Substring(pos + 1));
+                  _loadedAssembly = LoadAssemblyFrom(assemblyFile);
                   break;
                 }
               }
-              if (loadedAssembly == null)
+              if (_loadedAssembly is null)
               {
                 throw new FileNotFoundException("Could not find referenced AddIn " + referencedAddIn);
               }
             }
             else
             {
-              loadedAssembly = LoadAssemblyFrom(Path.Combine(hintPath, assembly));
+              _loadedAssembly = LoadAssemblyFrom(Path.Combine(_hintPath ?? string.Empty, _assembly));
             }
 
             // register all resources that are directly included into the assembly
-            Current.GetRequiredService<IResourceService>().RegisterAssemblyResources(loadedAssembly);
+            Current.GetRequiredService<IResourceService>().RegisterAssemblyResources(_loadedAssembly);
 
 #if DEBUG
             // preload assembly to provoke FileLoadException if dependencies are missing
-            loadedAssembly.GetExportedTypes();
+            _loadedAssembly.GetExportedTypes();
 #endif
           }
           catch (FileNotFoundException ex)
           {
-            ShowError("The addin '" + assembly + "' could not be loaded:\n" + ex.ToString());
+            ShowError("The addin '" + _assembly + "' could not be loaded:\n" + ex.ToString());
           }
           catch (FileLoadException ex)
           {
-            ShowError("The addin '" + assembly + "' could not be loaded:\n" + ex.ToString());
+            ShowError("The addin '" + _assembly + "' could not be loaded:\n" + ex.ToString());
           }
         }
       }
     }
 
-    public Assembly LoadedAssembly
+    public Assembly? LoadedAssembly
     {
       get
       {
         if (IsActive)
         {
           Load(); // load the assembly, if not already done
-          return loadedAssembly;
+          return _loadedAssembly;
         }
         else
         {
@@ -167,7 +168,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return definedDoozers.Select(d => new KeyValuePair<string, IDoozer>(d.Name, d));
+        return _definedDoozers.Select(d => new KeyValuePair<string, IDoozer>(d.Name, d));
       }
     }
 
@@ -175,19 +176,16 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        return definedConditionEvaluators.Select(c => new KeyValuePair<string, IConditionEvaluator>(c.Name, c));
+        return _definedConditionEvaluators.Select(c => new KeyValuePair<string, IConditionEvaluator>(c.Name, c));
       }
     }
 
-    public Type FindType(string className)
+    public Type? FindType(string className)
     {
-      Assembly asm = LoadedAssembly;
-      if (asm == null)
-        return null;
-      return asm.GetType(className);
+      return LoadedAssembly is { } asm ? asm.GetType(className) : null;
     }
 
-    internal static List<Runtime> ReadSection(XmlReader reader, AddIn addIn, string hintPath)
+    internal static List<Runtime> ReadSection(XmlReader reader, AddIn addIn, string? hintPath)
     {
       var runtimes = new List<Runtime>();
       var conditionStack = new Stack<ICondition>();
@@ -214,7 +212,9 @@ namespace Altaxo.AddInItems
                 break;
 
               case "ComplexCondition":
-                conditionStack.Push(Condition.ReadComplexCondition(reader, addIn));
+                var cc = Condition.ReadComplexCondition(reader, addIn);
+                if (!(cc is null))
+                  conditionStack.Push(cc);
                 break;
 
               case "Import":
@@ -238,7 +238,7 @@ namespace Altaxo.AddInItems
       return runtimes;
     }
 
-    internal static Runtime Read(AddIn addIn, XmlReader reader, string hintPath, Stack<ICondition> conditionStack)
+    internal static Runtime Read(AddIn addIn, XmlReader reader, string? hintPath, Stack<ICondition> conditionStack)
     {
       if (reader.AttributeCount != 1)
       {
@@ -247,7 +247,7 @@ namespace Altaxo.AddInItems
       var runtime = new Runtime(addIn.AddInTree, reader.GetAttribute(0), hintPath);
       if (conditionStack.Count > 0)
       {
-        runtime.conditions = conditionStack.ToArray();
+        runtime._conditions = conditionStack.ToArray();
       }
       if (!reader.IsEmptyElement)
       {
@@ -272,7 +272,7 @@ namespace Altaxo.AddInItems
                   {
                     throw new AddInLoadException("Doozer nodes must be empty!");
                   }
-                  runtime.definedDoozers.Add(new LazyLoadDoozer(addIn, properties));
+                  runtime._definedDoozers.Add(new LazyLoadDoozer(addIn, properties));
                   break;
 
                 case "ConditionEvaluator":
@@ -280,7 +280,7 @@ namespace Altaxo.AddInItems
                   {
                     throw new AddInLoadException("ConditionEvaluator nodes must be empty!");
                   }
-                  runtime.definedConditionEvaluators.Add(new LazyConditionEvaluator(addIn, properties));
+                  runtime._definedConditionEvaluators.Add(new LazyConditionEvaluator(addIn, properties));
                   break;
 
                 default:
@@ -296,18 +296,19 @@ namespace Altaxo.AddInItems
     protected virtual Assembly LoadAssembly(string assemblyString)
     {
 #if NETFRAMEWORK
-      return System.Reflection.Assembly.Load(assemblyString);
+      var assembly = System.Reflection.Assembly.Load(assemblyString);
 #else
-      var assembly = AssemblyLoaderService.Instance.LoadAssemblyFromPartialName(assemblyString, this.hintPath);
+      var assembly = AssemblyLoaderService.Instance.LoadAssemblyFromPartialName(assemblyString, this._hintPath ?? string.Empty);
+#endif
 
 #if VerboseInfo_AssemblyLoading
       System.Diagnostics.Debug.WriteLine($"AssemblyLoader called with assemblyString={assemblyString}, result is {assembly.Location}");
 #endif
 
+      if (assembly is null)
+        throw new ApplicationException($"Can not load assembly {assemblyString}!");
+
       return assembly;
-
-#endif
-
     }
 
     protected virtual Assembly LoadAssemblyFrom(string assemblyFile)

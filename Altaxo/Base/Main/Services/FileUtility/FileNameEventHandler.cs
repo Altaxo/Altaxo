@@ -16,10 +16,36 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
+#nullable enable
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// EventArgs with a path name.
+  /// </summary>
+  public class PathNameEventArgs : System.EventArgs
+  {
+    private PathName _pathName;
+
+    /// <summary>Gets the name of the path.</summary>
+    /// <value>The name of the path.</value>
+    public PathName PathName
+    {
+      get
+      {
+        return _pathName;
+      }
+    }
+
+    public PathNameEventArgs(PathName pathName)
+    {
+      this._pathName = pathName;
+    }
+
+
+  }
+
+
   /// <summary>
   /// EventArgs with a file name.
   /// </summary>

@@ -16,34 +16,36 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Gui.Workbench
 {
   public abstract class AbstractPadContent : IPadContent, INotifyPropertyChanged
   {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     protected bool _isVisible = true;
     protected bool _isSelected;
     protected bool _isActive;
 
-    protected string _category;
-    protected string _iconSource;
-    protected string _title;
-    protected string _shortCut;
-    protected string _contentId;
-    protected PadDescriptor _padDescriptor;
+    protected string? _category;
+    protected string? _iconSource;
+    protected string? _title;
+    protected string? _shortCut;
+    protected string? _contentId;
+    protected PadDescriptor? _padDescriptor;
 
     /// <inheritdoc/>
-    public abstract object ViewObject { get; set; }
+    public abstract object? ViewObject { get; set; }
 
     /// <inheritdoc/>
     public abstract object ModelObject { get; }
 
     /// <inheritdoc/>
-    public virtual object InitiallyFocusedControl
+    public virtual object? InitiallyFocusedControl
     {
       get
       {
@@ -136,6 +138,7 @@ namespace Altaxo.Gui.Workbench
       IsSelected = true;
     }
 
+    [MaybeNull]
     public virtual PadDescriptor PadDescriptor
     {
       get
@@ -148,6 +151,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    [MaybeNull]
     public string Category
     {
       get
@@ -158,7 +162,7 @@ namespace Altaxo.Gui.Workbench
       {
         if (!(Category == value))
         {
-          if (null != _padDescriptor)
+          if (_padDescriptor is not null)
             _padDescriptor.Category = value;
           else
             _category = value;
@@ -168,7 +172,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    public string IconSource
+    public string? IconSource
     {
       get
       {
@@ -176,7 +180,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    public string Title
+    public string? Title
     {
       get
       {
@@ -184,6 +188,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    [MaybeNull]
     public string Shortcut
     {
       get
@@ -194,7 +199,7 @@ namespace Altaxo.Gui.Workbench
       {
         if (!(Shortcut == value))
         {
-          if (null != _padDescriptor)
+          if (_padDescriptor is not null)
             _padDescriptor.Shortcut = value;
           else
             _shortCut = value;
@@ -220,7 +225,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    public virtual object GetService(Type serviceType)
+    public virtual object? GetService(Type serviceType)
     {
       if (serviceType.IsInstanceOfType(this))
         return this;

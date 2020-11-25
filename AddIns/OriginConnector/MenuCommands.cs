@@ -28,7 +28,6 @@ using System.Linq;
 using System.Text;
 using Altaxo.Addins.OriginConnector;
 using Altaxo.Gui;
-using Altaxo.Gui.AddInItems;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -39,7 +38,7 @@ namespace Altaxo.Worksheet.Commands
       var comm = new OriginConnection();
       comm.Connect(true);
       comm.PutTable(ctrl.DataTable, false);
-      comm.Disconnect(false, null, false);
+      comm.Disconnect(false, string.Empty, false);
     }
   }
 
@@ -52,10 +51,10 @@ namespace Altaxo.Worksheet.Commands
       if (!comm.IsConnected())
         return;
 
-      string err = comm.GetTable(ctrl.DataTable.Name, ctrl.DataTable);
-      comm.Disconnect(false, null, false);
+      var err = comm.GetTable(ctrl.DataTable.Name, ctrl.DataTable);
+      comm.Disconnect(false, string.Empty, false);
 
-      if (err != null)
+      if (!string.IsNullOrEmpty(err))
       {
         Current.Gui.ErrorMessageBox(err);
         return;
@@ -65,7 +64,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class GetAllTablesFromOrigin : SimpleCommand
   {
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
       var conn = new OriginConnection();
       conn.Connect(true);
@@ -87,8 +86,8 @@ namespace Altaxo.Worksheet.Commands
         {
           Name = path + (string.IsNullOrEmpty(lname) ? name : lname)
         };
-        string err = WorksheetActions.GetTable(page, newTable);
-        if (null == err)
+        var err = WorksheetActions.GetTable(page, newTable);
+        if (string.IsNullOrEmpty(err))
         {
           Current.ProjectService.CreateNewWorksheet(newTable);
         }
@@ -98,7 +97,7 @@ namespace Altaxo.Worksheet.Commands
         }
       }
 
-      conn.Disconnect(false, null, false);
+      conn.Disconnect(false, string.Empty, false);
     }
 
     /// <summary>
@@ -113,7 +112,7 @@ namespace Altaxo.Worksheet.Commands
       {
         var page = folder.PageBases[i];
         if (page.Type == (int)Origin.PAGETYPES.OPT_WORKSHEET)
-          list.Add(new Tuple<string, Origin.WorksheetPage>(path, page as Origin.WorksheetPage));
+          list.Add(new Tuple<string, Origin.WorksheetPage>(path, (Origin.WorksheetPage)page));
       }
 
       for (int i = 0; i < folder.Folders.Count; ++i)
@@ -126,7 +125,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class PushAllTablesToOrigin : SimpleCommand
   {
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
       var conn = new OriginConnection();
       conn.Connect(true);
@@ -138,7 +137,7 @@ namespace Altaxo.Worksheet.Commands
         conn.PutTable(table, false);
       }
 
-      conn.Disconnect(false, null, false);
+      conn.Disconnect(false, string.Empty, false);
     }
   }
 }

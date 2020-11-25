@@ -99,12 +99,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     {
       if (_guiUseCustomColorScale.IsChecked == true)
       {
-        if (null != _guiColorScale)
+        if (_guiColorScale is not null)
           _guiColorScale.Visibility = System.Windows.Visibility.Visible;
       }
       else
       {
-        if (null != _guiColorScale)
+        if (_guiColorScale is not null)
           _guiColorScale.Visibility = System.Windows.Visibility.Collapsed;
       }
     }

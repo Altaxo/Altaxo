@@ -16,7 +16,9 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Altaxo.Main.Services
@@ -30,7 +32,7 @@ namespace Altaxo.Main.Services
 
     protected PathName(string path)
     {
-      if (path == null)
+      if (path is null)
         throw new ArgumentNullException(nameof(path));
       if (path.Length == 0)
         throw new ArgumentException("The empty string is not a valid path");
@@ -39,12 +41,29 @@ namespace Altaxo.Main.Services
 
     protected PathName(PathName path)
     {
-      if (path == null)
+      if (path is null)
         throw new ArgumentNullException("path");
       _normalizedPath = path._normalizedPath;
     }
+    /*
+    [return: NotNullIfNotNull("path")]
+    public static explicit operator string?(PathName? path)
+    {
+      return path?._normalizedPath;
+    }
+    */
 
-    public static implicit operator string(PathName path)
+    [return: MaybeNull]
+    [return: NotNullIfNotNull("path")]
+    public static implicit operator string(PathName? path)
+    {
+      return path?._normalizedPath;
+    }
+
+
+    [return: MaybeNull]
+    [return: NotNullIfNotNull("path")]
+    public static string ToStringPath(PathName? path)
     {
       return path?._normalizedPath;
     }
@@ -70,10 +89,16 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public DirectoryName GetParentDirectory()
     {
+      DirectoryName? result;
       if (_normalizedPath.Length < 2 || _normalizedPath[1] != ':')
-        return DirectoryName.Create(Path.Combine(_normalizedPath, ".."));
+        result = DirectoryName.Create(Path.Combine(_normalizedPath, ".."));
       else
-        return DirectoryName.Create(Path.GetDirectoryName(_normalizedPath));
+        result = DirectoryName.Create(Path.GetDirectoryName(_normalizedPath) ?? string.Empty);
+
+      if (result is null)
+        throw new InvalidOperationException($"Can not get parent directory of {_normalizedPath}");
+
+      return result;
     }
 
     /// <summary>
@@ -90,7 +115,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="fileOrFolderName">Name of the file or folder.</param>
     /// <returns>Either a <see cref="FileName"/>, a <see cref="DirectoryName"/>, or null if neither a file nor folder with this name exists.</returns>
-    public static PathName CreateFromExisting(string fileOrFolderName)
+    public static PathName? CreateFromExisting(string fileOrFolderName)
     {
       try
       {

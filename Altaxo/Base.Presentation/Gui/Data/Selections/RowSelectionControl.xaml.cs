@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,15 +47,15 @@ namespace Altaxo.Gui.Data.Selections
   /// </summary>
   public partial class RowSelectionControl : UserControl, IRowSelectionView
   {
-    public event Action<int, Type> SelectionTypeChanged;
+    public event Action<int, Type>? SelectionTypeChanged;
 
-    public event Action<int> CmdAddNewSelection;
+    public event Action<int>? CmdAddNewSelection;
 
-    public event Action<int> CmdRemoveSelection;
+    public event Action<int>? CmdRemoveSelection;
 
-    public event Action<int> CmdIndentSelection;
+    public event Action<int>? CmdIndentSelection;
 
-    public event Action<int> CmdUnindentSelection;
+    public event Action<int>? CmdUnindentSelection;
 
     private List<RSEntry> _rowSelections;
 
@@ -75,7 +76,7 @@ namespace Altaxo.Gui.Data.Selections
 
         var rsGuiItem = rsItem.GuiItem as RowSelectionItemControl;
 
-        if (null == rsGuiItem)
+        if (rsGuiItem is null)
         {
           var selTypes = new SelectableListNodeList();
 
@@ -110,7 +111,7 @@ namespace Altaxo.Gui.Data.Selections
       var rsItem = _rowSelections[idx];
       var rsGuiItem = rsItem.GuiItem as RowSelectionItemControl;
 
-      if (null == rsGuiItem)
+      if (rsGuiItem is null)
       {
         var selTypes = new SelectableListNodeList();
         foreach (var item in rowSelectionTypes)
@@ -138,7 +139,7 @@ namespace Altaxo.Gui.Data.Selections
     {
       get
       {
-        if (_addNewSelectionCommand == null)
+        if (_addNewSelectionCommand is null)
           _addNewSelectionCommand = new RelayCommand<int>(EhAddNewSelectionCommand);
         return _addNewSelectionCommand;
       }
@@ -159,7 +160,7 @@ namespace Altaxo.Gui.Data.Selections
     {
       get
       {
-        if (_removeSelectionCommand == null)
+        if (_removeSelectionCommand is null)
           _removeSelectionCommand = new RelayCommand<int>(EhRemoveSelectionCommand);
         return _removeSelectionCommand;
       }
@@ -180,7 +181,7 @@ namespace Altaxo.Gui.Data.Selections
     {
       get
       {
-        if (_indentSelectionCommand == null)
+        if (_indentSelectionCommand is null)
           _indentSelectionCommand = new RelayCommand<int>(EhIndentSelectionCommand);
         return _indentSelectionCommand;
       }
@@ -201,7 +202,7 @@ namespace Altaxo.Gui.Data.Selections
     {
       get
       {
-        if (_unindentSelectionCommand == null)
+        if (_unindentSelectionCommand is null)
           _unindentSelectionCommand = new RelayCommand<int>(EhUnindentSelectionCommand);
         return _unindentSelectionCommand;
       }
@@ -222,7 +223,7 @@ namespace Altaxo.Gui.Data.Selections
     {
       get
       {
-        if (_selectionChangedCommand == null)
+        if (_selectionChangedCommand is null)
           _selectionChangedCommand = new RelayCommand<int>(EhSelectionChanged);
         return _selectionChangedCommand;
       }
@@ -236,7 +237,7 @@ namespace Altaxo.Gui.Data.Selections
 
       var node = (SelectableListNode)control.SelectedSelection;
 
-      if (node != null)
+      if (node is not null)
       {
         SelectionTypeChanged?.Invoke(idx, (Type)node.Tag);
       }

@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       // SharpDX.Configuration.EnableObjectTracking = true;
       // var listOfActiveObjects = SharpDX.Diagnostics.ObjectTracker.FindActiveObjects();
 
-      if (item == null)
+      if (item is null)
         throw new ArgumentNullException(nameof(item));
       if (!(item is Altaxo.Graph.Graph3D.GraphDocument))
         throw new ArgumentException(string.Format("Expected item of type {0}, but it is of type {1}", typeof(Altaxo.Graph.Graph3D.GraphDocument), item.GetType()));
@@ -56,8 +56,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       double sourceDpi = options.SourceDpiResolution;
 
-      Viewing.D3D10Scene scene = null;
-      D3D10GraphicsContext g = null;
+      Viewing.D3D10Scene? scene = null;
+      D3D10GraphicsContext? g = null;
       try
       {
         scene = new Viewing.D3D10Scene();
@@ -128,12 +128,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
     public void Export(int sizeX, int sizeY, ID3D10Scene scene, Altaxo.Graph.Gdi.GraphExportOptions options, System.IO.Stream toStream)
     {
-      Device device = null;
-      Texture2D renderTarget = null;
-      Texture2D renderTarget2 = null;
-      Texture2D depthStencil = null;
-      RenderTargetView renderTargetView = null;
-      DepthStencilView depthStencilView = null;
+      Device? device = null;
+      Texture2D? renderTarget = null;
+      Texture2D? renderTarget2 = null;
+      Texture2D? depthStencil = null;
+      RenderTargetView? renderTargetView = null;
+      DepthStencilView? depthStencilView = null;
 
       try
       {
@@ -187,7 +187,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         device.OutputMerger.SetTargets(depthStencilView, renderTargetView);
         device.Rasterizer.SetViewports(new Viewport(0, 0, sizeX, sizeY, 0.0f, 1.0f));
         var clearColor = new Color4(1, 1, 1, 0); // Transparent
-        if (options.BackgroundBrush != null)
+        if (options.BackgroundBrush is not null)
         {
           var axoColor = options.BackgroundBrush.Color.Color;
           clearColor = new Color4(axoColor.ScR, axoColor.ScG, axoColor.ScB, axoColor.ScA);
@@ -236,7 +236,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         Disposer.RemoveAndDispose(ref renderTarget);
         Disposer.RemoveAndDispose(ref depthStencil);
 
-        device.ClearState();
+        device?.ClearState();
         D3D10DeviceFactory.Instance.PassbackDevice(ref device);
         //device.QueryInterface<DeviceDebug>().ReportLiveDeviceObjects(ReportingLevel.Summary)
         // Disposer.RemoveAndDispose(ref device);

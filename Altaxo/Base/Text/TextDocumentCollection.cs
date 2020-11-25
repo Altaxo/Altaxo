@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace Altaxo.Text
     }
 
     /// <inheritdoc/>
-    public override Main.IDocumentNode ParentObject
+    public override Main.IDocumentNode? ParentObject
     {
       get
       {
@@ -50,7 +51,7 @@ namespace Altaxo.Text
       }
       set
       {
-        if (null != value)
+        if (value is not null)
           throw new InvalidOperationException("ParentObject of TextDocumentCollection is fixed and cannot be set");
         base.ParentObject = value; // allow setting to null
       }
@@ -64,9 +65,9 @@ namespace Altaxo.Text
     /// </summary>
     /// <param name="child">A NotesDocument for which the parent collection is searched.</param>
     /// <returns>The parent NotesDocumentCollection, if it exists, or null otherwise.</returns>
-    public static TextDocumentCollection GetParentTextDocumentCollectionOf(Main.IDocumentLeafNode child)
+    public static TextDocumentCollection? GetParentTextDocumentCollectionOf(Main.IDocumentLeafNode child)
     {
-      return (TextDocumentCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(TextDocumentCollection));
+      return (TextDocumentCollection?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(TextDocumentCollection));
     }
   }
 }

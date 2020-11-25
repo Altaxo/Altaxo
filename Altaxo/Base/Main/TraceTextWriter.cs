@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -46,7 +47,7 @@ namespace Altaxo.Main.Services.Implementation
       Trace.Write(new string(buffer, index, count));
     }
 
-    public override void Write(string value)
+    public override void Write(string? value)
     {
       Trace.Write(value);
     }
@@ -56,7 +57,7 @@ namespace Altaxo.Main.Services.Implementation
       Trace.WriteLine(string.Empty);
     }
 
-    public override void WriteLine(string value)
+    public override void WriteLine(string? value)
     {
       Trace.WriteLine(value);
     }

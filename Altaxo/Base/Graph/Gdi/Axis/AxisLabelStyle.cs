@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -33,8 +34,9 @@ using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Drawing;
-  using Drawing;
+  using Altaxo.Main;
   using Gdi.LabelFormatting;
   using Geometry;
 
@@ -64,7 +66,7 @@ namespace Altaxo.Graph.Gdi.Axis
     protected double _rotation;
 
     /// <summary>The style for the background.</summary>
-    protected Gdi.Background.IBackgroundStyle _backgroundStyle;
+    protected Gdi.Background.IBackgroundStyle? _backgroundStyle;
 
     protected bool _automaticRotationShift;
 
@@ -77,11 +79,11 @@ namespace Altaxo.Graph.Gdi.Axis
     /// </summary>
     private CSAxisSide? _labelSide;
 
-    private string _prefixText;
+    private string? _prefixText;
 
-    private string _postfixText;
+    private string? _postfixText;
 
-    private CSAxisInformation _cachedAxisStyleInfo;
+    private CSAxisInformation? _cachedAxisStyleInfo;
 
     #region Serialization
 
@@ -98,9 +100,9 @@ namespace Altaxo.Graph.Gdi.Axis
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle(info);
+        var s = (AxisLabelStyle?)o ?? new AxisLabelStyle(info);
 
         var edge = (Edge)info.GetValue("Edge", s);
         s._font = (FontX)info.GetValue("Font", s);
@@ -108,7 +110,7 @@ namespace Altaxo.Graph.Gdi.Axis
         s._brush = new BrushX(NamedColors.Black);
         s._automaticRotationShift = true;
         s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
-        s._labelFormatting = new Gdi.LabelFormatting.NumericLabelFormattingAuto() { ParentObject = s };
+        s.ChildSetMember(ref s._labelFormatting, new Gdi.LabelFormatting.NumericLabelFormattingAuto());
         s.SetStringFormat();
         return s;
       }
@@ -139,16 +141,14 @@ namespace Altaxo.Graph.Gdi.Axis
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle(info);
+        var s = (AxisLabelStyle?)o ?? new AxisLabelStyle(info);
 
         var edge = (Edge)info.GetValue("Edge", s);
         s._font = (FontX)info.GetValue("Font", s);
         s._brush = (BrushX)info.GetValue("Brush", s);
-        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
-        if (null != s._backgroundStyle)
-          s._backgroundStyle.ParentObject = s;
+        s.ChildSetMember(ref s._backgroundStyle, info.GetValueOrNull<IBackgroundStyle>("Background", s));
 
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
@@ -157,8 +157,7 @@ namespace Altaxo.Graph.Gdi.Axis
         s._xOffset = info.GetDouble("XOffset");
         s._yOffset = info.GetDouble("YOffset");
 
-        s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
-        s._labelFormatting.ParentObject = s;
+        s.ChildSetMember(ref s._labelFormatting, (ILabelFormatting)info.GetValue("LabelFormat", s));
 
         s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
 
@@ -180,7 +179,7 @@ namespace Altaxo.Graph.Gdi.Axis
         var s = (AxisLabelStyle)obj;
         info.AddValue("Font", s._font);
         info.AddValue("Brush", s._brush);
-        info.AddValue("Background", s._backgroundStyle);
+        info.AddValueOrNull("Background", s._backgroundStyle);
 
         info.AddValue("AutoAlignment", s._automaticRotationShift);
         info.AddEnum("HorzAlignment", s._horizontalAlignment);
@@ -193,13 +192,13 @@ namespace Altaxo.Graph.Gdi.Axis
         info.AddValue("LabelFormat", s._labelFormatting);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle(info);
+        var s = (AxisLabelStyle?)o ?? new AxisLabelStyle(info);
 
         s._font = (FontX)info.GetValue("Font", s);
         s._brush = (BrushX)info.GetValue("Brush", s);
-        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
+        s.ChildSetMember(ref s._backgroundStyle, info.GetValueOrNull<IBackgroundStyle>("Background", s));
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
         s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
@@ -207,8 +206,7 @@ namespace Altaxo.Graph.Gdi.Axis
         s._xOffset = info.GetDouble("XOffset");
         s._yOffset = info.GetDouble("YOffset");
 
-        s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
-        s._labelFormatting.ParentObject = s;
+        s.ChildSetMember(ref s._labelFormatting, (ILabelFormatting)info.GetValue("LabelFormat", s));
 
         s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
 
@@ -250,13 +248,13 @@ namespace Altaxo.Graph.Gdi.Axis
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle(info);
+        var s = (AxisLabelStyle?)o ?? new AxisLabelStyle(info);
 
         s._font = (FontX)info.GetValue("Font", s);
         s._brush = (BrushX)info.GetValue("Brush", s);
-        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
+        s.ChildSetMember(ref s._backgroundStyle, info.GetValueOrNull<IBackgroundStyle>("Background", s));
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
         s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
@@ -264,14 +262,8 @@ namespace Altaxo.Graph.Gdi.Axis
         s._xOffset = info.GetDouble("XOffset");
         s._yOffset = info.GetDouble("YOffset");
 
-        s._suppressedLabels = (SuppressedTicks)info.GetValue("SuppressedLabels", s);
-        if (s._suppressedLabels != null)
-          s._suppressedLabels.ParentObject = s;
-        else
-          s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
-
-        s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
-        s._labelFormatting.ParentObject = s;
+        s.ChildSetMember(ref s._suppressedLabels, info.GetValueOrNull<SuppressedTicks>("SuppressedLabels", s) ?? new SuppressedTicks());
+        s.ChildSetMember(ref s._labelFormatting, (ILabelFormatting)info.GetValue("LabelFormat", s));
 
         // Modification of StringFormat is necessary to avoid
         // too big spaces between successive words
@@ -317,13 +309,13 @@ namespace Altaxo.Graph.Gdi.Axis
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle(info);
+        var s = (AxisLabelStyle?)o ?? new AxisLabelStyle(info);
 
         s._font = (FontX)info.GetValue("Font", s);
         s._brush = (BrushX)info.GetValue("Brush", s);
-        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
+        s.ChildSetMember(ref s._backgroundStyle, (IBackgroundStyle)info.GetValue("Background", s));
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
         s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
@@ -331,14 +323,8 @@ namespace Altaxo.Graph.Gdi.Axis
         s._xOffset = info.GetDouble("XOffset");
         s._yOffset = info.GetDouble("YOffset");
 
-        s._suppressedLabels = (SuppressedTicks)info.GetValue("SuppressedLabels", s);
-        if (s._suppressedLabels != null)
-          s._suppressedLabels.ParentObject = s;
-        else
-          s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
-
-        s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
-        s._labelFormatting.ParentObject = s;
+        s.ChildSetMember(ref s._suppressedLabels, info.GetValueOrNull<SuppressedTicks>("SuppressedLabels", s) ?? new SuppressedTicks());
+        s.ChildSetMember(ref s._labelFormatting, (ILabelFormatting)info.GetValue("LabelFormat", s));
 
         s._labelSide = info.GetNullableEnum<CSAxisSide>("LabelSide");
         s._labelFormatting.PrefixText = info.GetString("PrefixText");
@@ -363,7 +349,7 @@ namespace Altaxo.Graph.Gdi.Axis
         var s = (AxisLabelStyle)obj;
         info.AddValue("Font", s._font);
         info.AddValue("Brush", s._brush);
-        info.AddValue("Background", s._backgroundStyle);
+        info.AddValueOrNull("Background", s._backgroundStyle);
 
         info.AddValue("AutoAlignment", s._automaticRotationShift);
         info.AddEnum("HorzAlignment", s._horizontalAlignment);
@@ -374,7 +360,7 @@ namespace Altaxo.Graph.Gdi.Axis
         info.AddValue("YOffset", s._yOffset);
 
         if (s._suppressedLabels.IsEmpty)
-          info.AddValue("SuppressedLabels", (object)null);
+          info.AddValueOrNull("SuppressedLabels", (object?)null);
         else
           info.AddValue("SuppressedLabels", s._suppressedLabels);
 
@@ -383,14 +369,14 @@ namespace Altaxo.Graph.Gdi.Axis
         info.AddNullableEnum("LabelSide", s._labelSide);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle(info);
+        var s = (AxisLabelStyle?)o ?? new AxisLabelStyle(info);
 
         s._font = (FontX)info.GetValue("Font", s);
         s._brush = (BrushX)info.GetValue("Brush", s);
 
-        s.BackgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
+        s.ChildSetMember(ref s._backgroundStyle, info.GetValueOrNull<IBackgroundStyle>("Background", s));
 
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
@@ -399,14 +385,8 @@ namespace Altaxo.Graph.Gdi.Axis
         s._xOffset = info.GetDouble("XOffset");
         s._yOffset = info.GetDouble("YOffset");
 
-        s._suppressedLabels = (SuppressedTicks)info.GetValue("SuppressedLabels", s);
-        if (s._suppressedLabels != null)
-          s._suppressedLabels.ParentObject = s;
-        else
-          s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
-
-        s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
-        s._labelFormatting.ParentObject = s;
+        s.ChildSetMember(ref s._suppressedLabels, info.GetValueOrNull<SuppressedTicks>("SuppressedLabels", s) ?? new SuppressedTicks());
+        s.ChildSetMember(ref s._labelFormatting, (ILabelFormatting)info.GetValue("LabelFormat", s));
 
         s._labelSide = info.GetNullableEnum<CSAxisSide>("LabelSide");
 
@@ -429,14 +409,15 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #endregion Serialization
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected AxisLabelStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
-    public AxisLabelStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    public AxisLabelStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag? context)
     {
-      if (null == context)
-        context = PropertyExtensions.GetPropertyContextOfProject();
+      context ??= PropertyExtensions.GetPropertyContextOfProject();
 
       _font = context.GetValue(GraphDocument.PropertyKeyDefaultFont);
       var foreColor = context.GetValue(GraphDocument.PropertyKeyDefaultForeColor);
@@ -453,14 +434,9 @@ namespace Altaxo.Graph.Gdi.Axis
       CopyFrom(from);
     }
 
-    public virtual bool CopyFrom(object obj)
+    [MemberNotNull(nameof(_font), nameof(_stringFormat), nameof(_brush), nameof(_suppressedLabels), nameof(_labelFormatting))]
+    protected void CopyFrom(AxisLabelStyle from)
     {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-      var from = obj as AxisLabelStyle;
-      if (null == from)
-        return false;
-
       using (var suspendToken = SuspendGetToken())
       {
         _cachedAxisStyleInfo = from._cachedAxisStyleInfo;
@@ -487,7 +463,19 @@ namespace Altaxo.Graph.Gdi.Axis
         suspendToken.Resume();
       }
 
-      return true;
+    }
+
+    public virtual bool CopyFrom(object obj)
+    {
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (obj is AxisLabelStyle from)
+      {
+        CopyFrom(from);
+        return true;
+      }
+
+      return false;
     }
 
     public virtual object Clone()
@@ -497,16 +485,17 @@ namespace Altaxo.Graph.Gdi.Axis
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _labelFormatting)
+      if (_labelFormatting is not null)
         yield return new Main.DocumentNodeAndName(_labelFormatting, "LabelFormatting");
 
-      if (null != _backgroundStyle)
+      if (_backgroundStyle is not null)
         yield return new Main.DocumentNodeAndName(_backgroundStyle, "BackgroundStyle");
 
-      if (null != _suppressedLabels)
+      if (_suppressedLabels is not null)
         yield return new Main.DocumentNodeAndName(_suppressedLabels, "SuppressedLabels");
     }
 
+    [MemberNotNull(nameof(_stringFormat))]
     private void SetStringFormat()
     {
       // Modification of StringFormat is necessary to avoid
@@ -549,7 +538,7 @@ namespace Altaxo.Graph.Gdi.Axis
       get { return _font; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         var oldValue = _font;
@@ -611,7 +600,7 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
     /// <summary>The background style.</summary>
-    public Gdi.Background.IBackgroundStyle BackgroundStyle
+    public Gdi.Background.IBackgroundStyle? BackgroundStyle
     {
       get
       {
@@ -642,7 +631,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException("value");
 
         if (object.ReferenceEquals(_labelFormatting, value))
@@ -800,11 +789,13 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       get
       {
+        if (_cachedAxisStyleInfo is null)
+          throw new InvalidOperationException($"{nameof(_cachedAxisStyleInfo)} is null");
         return _cachedAxisStyleInfo.Identifier;
       }
     }
 
-    public CSAxisInformation CachedAxisInformation
+    public CSAxisInformation? CachedAxisInformation
     {
       get
       {
@@ -816,7 +807,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    public virtual IHitTestObject HitTest(IPlotArea layer, PointD2D pt)
+    public virtual IHitTestObject? HitTest(IPlotArea layer, PointD2D pt)
     {
       GraphicsPath gp = GetSelectionPath();
       if (gp.IsVisible((PointF)pt))
@@ -825,7 +816,7 @@ namespace Altaxo.Graph.Gdi.Axis
         return null;
     }
 
-    public virtual IHitTestObject HitTest(IPlotArea layer, HitTestRectangularData parentHitData)
+    public virtual IHitTestObject? HitTest(IPlotArea layer, HitTestRectangularData parentHitData)
     {
       GraphicsPath gp = GetSelectionPath();
       if (gp.PointCount > 0 && parentHitData.IsCovering(gp.PathPoints))
@@ -880,7 +871,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <returns>The side of the axis where the label will be shown.</returns>
     public virtual CSAxisSide PredictLabelSide(CSAxisInformation axisInformation)
     {
-      return null != _labelSide ? _labelSide.Value : axisInformation.PreferredLabelSide;
+      return _labelSide is not null ? _labelSide.Value : axisInformation.PreferredLabelSide;
     }
 
     /// <summary>
@@ -957,7 +948,7 @@ namespace Altaxo.Graph.Gdi.Axis
       IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, _stringFormat, ticks);
 
       double emSize = _font.Size;
-      CSAxisSide labelSide = null != _labelSide ? _labelSide.Value : styleInfo.PreferredLabelSide;
+      CSAxisSide labelSide = _labelSide is not null ? _labelSide.Value : styleInfo.PreferredLabelSide;
       for (int i = 0; i < ticks.Length; i++)
       {
         double r = relpositions[i];
@@ -1000,7 +991,7 @@ namespace Altaxo.Graph.Gdi.Axis
         System.Drawing.Drawing2D.GraphicsState gs = g.Save();
         g.MultiplyTransform(math);
 
-        if (_backgroundStyle != null)
+        if (_backgroundStyle is not null)
           _backgroundStyle.Draw(g, new RectangleD2D(PointD2D.Empty, msize));
 
         var envbrush = new BrushXEnv(_brush, new RectangleD2D(PointD2D.Empty, msize), BrushCacheGdi.GetEffectiveMaximumResolution(g, 1));

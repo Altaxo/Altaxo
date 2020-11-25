@@ -66,7 +66,7 @@ namespace MathML.Rendering.GlyphMapper
 		
 		public void CacheGlyphArea(char c, Area area)
 		{
-			if(cachedAreas == null) cachedAreas = new SortedList();
+			if(cachedAreas is null) cachedAreas = new SortedList();
 			cachedAreas.Add(c, new WeakReference(area));
 		}
 
@@ -79,9 +79,9 @@ namespace MathML.Rendering.GlyphMapper
 			Area result = null;
 			WeakReference reference = null;
 
-			if(cachedAreas != null)
+			if(cachedAreas is not null)
 			{
-				if((reference = (WeakReference)cachedAreas[c]) != null)
+				if((reference = (WeakReference)cachedAreas[c]) is not null)
 				{
 					if(reference.IsAlive)
 					{

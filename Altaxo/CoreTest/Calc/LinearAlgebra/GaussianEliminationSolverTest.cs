@@ -11,16 +11,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  [TestFixture]
+
   public class GaussianEliminationSolverTest
   {
     private GaussianEliminationSolver solver = new GaussianEliminationSolver();
 
-    [Test]
+    [Fact]
     public void SolverCoreTest3d()
     {
       var a = new double[][] {
@@ -33,10 +33,10 @@ namespace Altaxo.Calc.LinearAlgebra
       var x = new double[3];
       solver.SolveDestructive(new MatrixWrapperStructForLeftSpineJaggedArray<double>(a, 3, 3), b, x);
       var answer = new DoubleVector(3) { [0] = 2, [1] = 3, [2] = -1 };
-      Assert.IsTrue(VectorMath.LInfinityNorm(x, answer) < 1e-10);
+      Assert.True(VectorMath.LInfinityNorm(x, answer) < 1e-10);
     }
 
-    [Test]
+    [Fact]
     public void SolverCoreTest2d()
     {
       var a = new double[][] {
@@ -47,10 +47,10 @@ namespace Altaxo.Calc.LinearAlgebra
       var x = new double[2];
       solver.SolveDestructive(new MatrixWrapperStructForLeftSpineJaggedArray<double>(a, 2, 2), b, x);
       var answer = new double[] { 1, -1 };
-      Assert.IsTrue(VectorMath.LInfinityNorm(x, answer) < 1e-10);
+      Assert.True(VectorMath.LInfinityNorm(x, answer) < 1e-10);
     }
 
-    [Test]
+    [Fact]
     public void SolverCoreTestMatrixNd()
     {
       const int N = 50;
@@ -97,12 +97,12 @@ namespace Altaxo.Calc.LinearAlgebra
       var b2 = a * x;
 
       // Verify result is the same
-      Assert.IsTrue(VectorMath.LInfinityNorm(b, b2) < 1e-6);
+      Assert.True(VectorMath.LInfinityNorm(b, b2) < 1e-6);
     }
 
     #region Banded matrix
 
-    [Test]
+    [Fact]
     public void TextBanded01()
     {
       var rnd = new Random(642332);
@@ -143,7 +143,7 @@ namespace Altaxo.Calc.LinearAlgebra
               // compare result
               for (int i = 0; i < N; ++i)
               {
-                Assert.AreEqual(x[i], xr[i], 1E-6);
+                AssertEx.Equal(x[i], xr[i], 1E-6);
               }
             }
           }

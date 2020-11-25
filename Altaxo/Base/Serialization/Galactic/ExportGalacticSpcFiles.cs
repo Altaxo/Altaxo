@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Collections;
 
@@ -79,7 +80,7 @@ namespace Altaxo.Serialization.Galactic
     /// <param name="yvalues">The y values of the spectrum.</param>
     /// <param name="filename">The filename where to export to.</param>
     /// <returns>Null if successful, otherwise an error description.</returns>
-    public static string FromArrays(double[] xvalues, double[] yvalues, string filename)
+    public static string? FromArrays(double[] xvalues, double[] yvalues, string filename)
     {
       int len = xvalues.Length < yvalues.Length ? xvalues.Length : yvalues.Length;
 
@@ -88,7 +89,7 @@ namespace Altaxo.Serialization.Galactic
         return "Nothing to export - either x-value or y-value array is empty!";
       }
 
-      System.IO.Stream stream = null;
+      System.IO.Stream? stream = null;
 
       try
       {
@@ -150,7 +151,7 @@ namespace Altaxo.Serialization.Galactic
       }
       finally
       {
-        if (null != stream)
+        if (stream is not null)
           stream.Close();
       }
 
@@ -167,7 +168,7 @@ namespace Altaxo.Serialization.Galactic
     /// <param name="selectedColumns">The columns that where selected in the table, i.e. the columns which are exported. If this parameter is null
     /// or no columns are selected, then all data of a row will be exported.</param>
     /// <returns>Null if export was successfull, error description otherwise.</returns>
-    public static string FromRow(
+    public static string? FromRow(
       string filename,
       Altaxo.Data.DataTable table,
       int rownumber,
@@ -175,23 +176,23 @@ namespace Altaxo.Serialization.Galactic
       IAscendingIntegerCollection selectedColumns)
     {
       // test that all x and y cells have numeric values
-      bool bUseSel = null != selectedColumns && selectedColumns.Count > 0;
-      int spectrumlen = (bUseSel) ? selectedColumns.Count : table.DataColumns.ColumnCount;
+      var useSel = selectedColumns is not null && selectedColumns.Count > 0 ? selectedColumns : null;
+      int spectrumlen = useSel is null ? table.DataColumns.ColumnCount : useSel.Count;
 
       int i, j;
 
       for (j = 0; j < spectrumlen; j++)
       {
-        i = bUseSel ? selectedColumns[j] : j;
+        i = useSel is null ? j : useSel[j];
 
         if (xcolumn[i] == double.NaN)
-          return string.Format("X column at index {i} has no numeric value!", i);
+          return $"X column at index {i} has no numeric value!";
 
         if (!(table[i] is Altaxo.Data.INumericColumn))
-          return string.Format("Table column[{0}] ({1}) is not a numeric column!", i, table[i].FullName);
+          return $"Table column[{i}] ({table[i].FullName}) is not a numeric column!";
 
         if (double.IsNaN(((Altaxo.Data.INumericColumn)table[i])[rownumber]))
-          return string.Format("Table cell [{0},{1}] (column {2}) has no numeric value!", i, rownumber, table[i].FullName);
+          return $"Table cell [{i},{rownumber}] (column {table[i].FullName}) has no numeric value!";
       }
 
       // this first test was successfull, so start exporting now
@@ -201,7 +202,7 @@ namespace Altaxo.Serialization.Galactic
 
       for (j = 0; j < spectrumlen; j++)
       {
-        i = bUseSel ? selectedColumns[j] : j;
+        i = useSel is null ? j : useSel[j];
         xvalues[j] = xcolumn[i];
         yvalues[j] = ((Altaxo.Data.INumericColumn)table[i])[rownumber];
       }
@@ -218,7 +219,7 @@ namespace Altaxo.Serialization.Galactic
     /// <param name="selectedRows">The rows that where selected in the table, i.e. the rows which are exported. If this parameter is null
     /// or no rows are selected, then all data of a column will be exported.</param>
     /// <returns>Null if export was successfull, error description otherwise.</returns>
-    public static string FromColumn(
+    public static string? FromColumn(
       string filename,
       Altaxo.Data.DataTable table,
       int columnnumber,
@@ -229,20 +230,20 @@ namespace Altaxo.Serialization.Galactic
         return string.Format("Table column[{0}] ({1}) is not a numeric column!", columnnumber, table.DataColumns[columnnumber].FullName);
 
       // test that all x and y cells have numeric values
-      bool bUseSel = null != selectedRows && selectedRows.Count > 0;
-      int spectrumlen = (bUseSel) ? selectedRows.Count : table.DataColumns[columnnumber].Count;
+      var useSel = selectedRows is not null && selectedRows.Count > 0 ? selectedRows : null;
+      int spectrumlen = useSel is null ? table.DataColumns[columnnumber].Count : useSel.Count;
 
       int i, j;
 
       for (j = 0; j < spectrumlen; j++)
       {
-        i = bUseSel ? selectedRows[j] : j;
+        i = useSel is null ? j : useSel[j];
 
         if (double.IsNaN(xcolumn[i]))
-          return string.Format("X column at index {i} has no numeric value!", i);
+          return $"X column at index {i} has no numeric value!";
 
         if (((Altaxo.Data.INumericColumn)table.DataColumns[columnnumber])[i] == double.NaN)
-          return string.Format("Table cell [{0},{1}] (column {2}) has no numeric value!", columnnumber, i, table.DataColumns[columnnumber].FullName);
+          return $"Table cell [{columnnumber},{i}] (column {table.DataColumns[columnnumber].FullName}) has no numeric value!";
       }
 
       // this first test was successfull, so start exporting now
@@ -252,7 +253,7 @@ namespace Altaxo.Serialization.Galactic
 
       for (j = 0; j < spectrumlen; j++)
       {
-        i = bUseSel ? selectedRows[j] : j;
+        i = useSel is null ? j : useSel[j];
         xvalues[j] = xcolumn[i];
         yvalues[j] = ((Altaxo.Data.INumericColumn)table.DataColumns[columnnumber])[i];
       }

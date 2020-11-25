@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,15 +46,15 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// </summary>
   public partial class FitFunctionSelectionControl : UserControl, IFitFunctionSelectionView
   {
-    public event Action<IFitFunctionInformation> SelectionChanged;
+    public event Action<IFitFunctionInformation>? SelectionChanged;
 
-    public event Action<IFitFunctionInformation> ItemDoubleClicked;
+    public event Action<IFitFunctionInformation>? ItemDoubleClicked;
 
-    public event Action<IFitFunctionInformation> EditItem;
+    public event Action<IFitFunctionInformation>? EditItem;
 
-    public event Action<IFitFunctionInformation> EditCopyOfItem;
+    public event Action<IFitFunctionInformation>? EditCopyOfItem;
 
-    public event Action<IFitFunctionInformation> RemoveItem;
+    public event Action<IFitFunctionInformation>? RemoveItem;
 
     #region Node classes
 
@@ -176,18 +177,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       InitializeComponent();
     }
 
-    private System.Drawing.Graphics _rtfGraphics;
-
     private void EhFitFunctions_AfterSelect(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
       var node = e.NewValue as NGTreeNode;
-      if (node == null)
+      if (node is null)
         return;
       var fitInfo = node.Tag as IFitFunctionInformation;
 
       SelectionChanged?.Invoke(fitInfo);
 
-      if (fitInfo != null)
+      if (fitInfo is not null)
       {
         var text = fitInfo.Description;
         var flowDoc = RenderDocument(text, System.Globalization.CultureInfo.InvariantCulture);
@@ -250,28 +249,28 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       var node = ((FrameworkElement)sender).Tag as NGTreeNode;
 
-      if (node != null)
+      if (node is not null)
         RemoveItem?.Invoke(node.Tag as IFitFunctionInformation);
     }
 
     private void EhEditItem(object sender, RoutedEventArgs e)
     {
       var node = ((FrameworkElement)sender).Tag as NGTreeNode;
-      if (node != null)
+      if (node is not null)
         EditItem?.Invoke(node.Tag as IFitFunctionInformation);
     }
 
     private void EhEditCopyOfThisItem(object sender, RoutedEventArgs e)
     {
       var node = ((FrameworkElement)sender).Tag as NGTreeNode;
-      if (node != null)
+      if (node is not null)
         EditCopyOfItem?.Invoke(node.Tag as IFitFunctionInformation);
     }
 
     private void EhMouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
       var source = e.OriginalSource as DependencyObject;
-      while (null != source && !(source is TreeView))
+      while (source is not null && !(source is TreeView))
       {
         if (source is FrameworkElement fwe && fwe.Tag is NGTreeNode ngtn && ngtn.Tag is IFitFunctionInformation ffinfo)
         {

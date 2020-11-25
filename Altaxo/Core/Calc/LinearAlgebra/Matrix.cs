@@ -360,7 +360,7 @@ namespace Altaxo.Calc.LinearAlgebra
           t.Transpose(); // t is now horizontal
 
           // Compare this with the previous one
-          if (t_prev != null && t_prev.IsEqualTo(t, 1E-6))
+          if (t_prev is not null && t_prev.IsEqualTo(t, 1E-6))
             break;
 
           // 3. Calculate the new loads

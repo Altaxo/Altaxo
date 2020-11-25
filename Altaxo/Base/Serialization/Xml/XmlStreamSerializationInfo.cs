@@ -25,6 +25,7 @@
 #nullable enable
 
 using System;
+using System.Text;
 using System.Xml;
 
 namespace Altaxo.Serialization.Xml
@@ -34,6 +35,7 @@ namespace Altaxo.Serialization.Xml
   /// </summary>
   public class XmlStreamSerializationInfo : IXmlSerializationInfo
   {
+    public const string UseXmlIndentation = "UseXmlIndentation";
     private static readonly XmlWriter _nullWriter = new XmlTextWriter(System.IO.Stream.Null, System.Text.Encoding.UTF8);
 
     private XmlWriter _writer;
@@ -49,7 +51,7 @@ namespace Altaxo.Serialization.Xml
 
     private XmlArrayEncoding m_DefaultArrayEncoding = XmlArrayEncoding.Xml;
 
-    private System.Collections.Specialized.StringDictionary m_Properties = new System.Collections.Specialized.StringDictionary();
+    private System.Collections.Specialized.StringDictionary _properties = new System.Collections.Specialized.StringDictionary();
 
     private const int _size_of_int = 4;
     private const int _size_of_float = 4;
@@ -67,7 +69,21 @@ namespace Altaxo.Serialization.Xml
 
     public void BeginWriting(System.IO.Stream stream)
     {
-      _writer = new XmlTextWriter(stream, System.Text.Encoding.UTF8);
+      if (string.IsNullOrEmpty(_properties[Altaxo.Serialization.Xml.XmlStreamSerializationInfo.UseXmlIndentation]))
+      {
+        _writer = new XmlTextWriter(stream, System.Text.Encoding.UTF8);
+      }
+      else
+      {
+        var settings = new XmlWriterSettings
+        {
+          Encoding = Encoding.UTF8,
+          NewLineOnAttributes = false,
+          Indent = true
+        };
+        _writer = XmlWriter.Create(stream, settings);
+      }
+
       _isWriterCreatedHere = true;
       _writer.WriteStartDocument();
     }
@@ -103,22 +119,22 @@ namespace Altaxo.Serialization.Xml
       }
     }
 
-    public void SetProperty(string propertyname, string propertyvalue)
+    public void SetProperty(string propertyname, string? propertyvalue)
     {
-      if (m_Properties.ContainsKey(propertyname))
-        m_Properties[propertyname] = propertyvalue;
+      if (_properties.ContainsKey(propertyname))
+        _properties[propertyname] = propertyvalue;
       else
-        m_Properties.Add(propertyname, propertyvalue);
+        _properties.Add(propertyname, propertyvalue);
     }
 
-    public string GetProperty(string propertyname)
+    public string? GetProperty(string propertyname)
     {
-      return m_Properties[propertyname];
+      return _properties[propertyname];
     }
 
-    public string SaveAndSetProperty(string propertyName, string propertyValue)
+    public string? SaveAndSetProperty(string propertyName, string? propertyValue)
     {
-      var result = m_Properties[propertyName];
+      var result = _properties[propertyName];
       SetProperty(propertyName, propertyValue);
       return result;
     }
@@ -130,7 +146,7 @@ namespace Altaxo.Serialization.Xml
     /// </summary>
     public void ClearProperties()
     {
-      m_Properties.Clear();
+      _properties.Clear();
     }
 
     #region IXmlSerializationInfo Members
@@ -148,7 +164,7 @@ namespace Altaxo.Serialization.Xml
 
     public void AddValue(string name, bool? val)
     {
-      if (null == val)
+      if (val is null)
         _writer.WriteElementString(name, string.Empty);
       else
         _writer.WriteElementString(name, XmlConvert.ToString(val.Value));
@@ -166,7 +182,7 @@ namespace Altaxo.Serialization.Xml
 
     public void AddValue(string name, int? val)
     {
-      if (null == val)
+      if (val is null)
         _writer.WriteElementString(name, string.Empty);
       else
         _writer.WriteElementString(name, XmlConvert.ToString((int)val));
@@ -205,7 +221,7 @@ namespace Altaxo.Serialization.Xml
 
     public void AddValue(string name, double? val)
     {
-      if (null == val)
+      if (val is null)
         _writer.WriteElementString(name, string.Empty);
       else
         _writer.WriteElementString(name, XmlConvert.ToString((double)val));
@@ -224,7 +240,7 @@ namespace Altaxo.Serialization.Xml
     public void AddValue(string name, System.IO.MemoryStream stream)
     {
       _writer.WriteStartElement(name);
-      if (stream == null)
+      if (stream is null)
         _writer.WriteAttributeString("Length", XmlConvert.ToString(0));
       else
       {
@@ -242,7 +258,7 @@ namespace Altaxo.Serialization.Xml
 
     public void AddNullableEnum<T>(string name, T? val) where T : struct
     {
-      if (null == val)
+      if (val is null)
         _writer.WriteElementString(name, string.Empty);
       else
         _writer.WriteElementString(name, val.Value.ToString());
@@ -371,7 +387,7 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
-    public void AddArray(string name, string[] val, int count)
+    public void AddArray(string name, string?[] val, int count)
     {
       CreateArray(name, count);
 
@@ -472,6 +488,20 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
+    public void AddArrayOfNullableElements(string name, object?[] val, int count)
+    {
+      CreateArray(name, count);
+
+      if (count > 0)
+      {
+        for (int i = 0; i < count; i++)
+        {
+          AddValueOrNull("e", val[i]);
+        }
+      } // count>0
+      CommitArray();
+    }
+
     public void CreateElement(string name)
     {
       _writer.WriteStartElement(name);
@@ -482,14 +512,14 @@ namespace Altaxo.Serialization.Xml
       _writer.WriteEndElement();
     }
 
-    public bool IsSerializable(object o)
+    public bool IsSerializable(object? o)
     {
-      return null == o || null != _surrogateSelector.GetSurrogate(o.GetType());
+      return o is null || _surrogateSelector.GetSurrogate(o.GetType()) is not null;
     }
 
     public bool IsSerializableType(System.Type type)
     {
-      return null != _surrogateSelector.GetSurrogate(type);
+      return _surrogateSelector.GetSurrogate(type) is not null;
     }
 
     public void AddValue(string name, object o)
@@ -504,7 +534,7 @@ namespace Altaxo.Serialization.Xml
 
     public void AddValueOrNull(string name, object? o)
     {
-      if (null != o)
+      if (o is not null)
       {
         if (_surrogateSelector.GetSurrogate(o.GetType()) is { } ss)
         {

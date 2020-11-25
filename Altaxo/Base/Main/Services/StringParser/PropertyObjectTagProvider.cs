@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Reflection;
 
@@ -33,18 +34,16 @@ namespace Altaxo.Main.Services
       this.obj = obj ?? throw new ArgumentNullException(nameof(obj));
     }
 
-    public string ProvideString(string tag, StringTagPair[] customTags)
+    public string? ProvideString(string tag, StringTagPair[]? customTags)
     {
       Type type = obj.GetType();
-      PropertyInfo prop = type.GetProperty(tag);
-      if (prop != null)
+      if (type.GetProperty(tag) is PropertyInfo prop)
       {
-        return prop.GetValue(obj, null).ToString();
+        return prop.GetValue(obj, null)?.ToString();
       }
-      FieldInfo field = type.GetField(tag);
-      if (field != null)
+      if (type.GetField(tag) is FieldInfo field)
       {
-        return field.GetValue(obj).ToString();
+        return field.GetValue(obj)?.ToString();
       }
       return null;
     }

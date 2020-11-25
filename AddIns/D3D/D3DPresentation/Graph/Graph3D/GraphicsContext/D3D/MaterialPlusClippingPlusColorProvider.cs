@@ -39,22 +39,19 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
   {
     public Gdi.Plot.IColorProvider ColorProvider { get; private set; }
 
-    public MaterialPlusClippingPlusColorProviderKey(IMaterial material, PlaneD3D[] clipPlanes, Gdi.Plot.IColorProvider colorProvider)
+    public MaterialPlusClippingPlusColorProviderKey(IMaterial material, PlaneD3D[]? clipPlanes, Gdi.Plot.IColorProvider colorProvider)
       : base(material, clipPlanes)
     {
-      if (null == colorProvider)
+      if (colorProvider is null)
         throw new ArgumentNullException(nameof(colorProvider));
 
       ColorProvider = colorProvider;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var from = obj as MaterialPlusClippingPlusColorProviderKey;
-      if (null == from)
-        return false;
-
-      return base.Equals(from) && ColorProvider.Equals(from.ColorProvider);
+      return obj is MaterialPlusClippingPlusColorProviderKey from
+             && base.Equals(from) && ColorProvider.Equals(from.ColorProvider);
     }
 
     public override int GetHashCode()

@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 
 namespace Altaxo.AddInItems
@@ -48,18 +49,18 @@ namespace Altaxo.AddInItems
       }
     }
 
-    public object BuildItem(BuildItemArgs args)
+    public object? BuildItem(BuildItemArgs args)
     {
       Codon codon = args.Codon;
-      Type type = codon.AddIn.FindType(codon.Properties["class"]);
-      if (type == null)
+      Type? type = codon.AddIn.FindType(codon.Properties["class"]);
+      if (type is null)
         return null;
       var memberName = codon.Properties["member"];
       var field = type.GetField(memberName);
-      if (field != null)
+      if (field is not null)
         return field.GetValue(null);
       var property = type.GetProperty(memberName);
-      if (property != null)
+      if (property is not null)
         return property.GetValue(null);
       throw new MissingFieldException("Field or property '" + memberName + "' not found in type " + type.FullName);
     }

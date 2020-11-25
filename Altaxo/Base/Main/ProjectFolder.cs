@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -49,6 +51,17 @@ namespace Altaxo.Main
     /// <summary>Gets the full folder name. The root folder is represented by an empty string. All other returned names end with an <see cref="DirectorySeparatorChar"/>.</summary>
     public string Name { get; private set; }
 
+    /// <summary>
+    /// Test if this item already has a name.
+    /// </summary>
+    /// <param name="name">On success, returns the name of the item.</param>
+    /// <returns>True if the item already has a name; otherwise false.</returns>
+    public virtual bool TryGetName([MaybeNullWhen(false)] out string name)
+    {
+      name = Name;
+      return name is not null;
+    }
+
     /// <summary>Returns true if the folder name is the root folder (empty string).</summary>
     public bool IsRootFolder
     {
@@ -65,14 +78,12 @@ namespace Altaxo.Main
       return Name.GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var a = obj as ProjectFolder;
-      if (null != a)
+      if (obj is ProjectFolder a)
         return a.Name == Name;
 
-      var b = obj as string;
-      if (null != b)
+      if (obj is string b)
         return b == Name;
 
       return false;
@@ -113,7 +124,7 @@ namespace Altaxo.Main
 
     public static bool IsValidFolderName(string folder)
     {
-      return (folder != null) && (folder == string.Empty || folder.EndsWith(DirectorySeparatorString));
+      return (folder is not null) && (folder == string.Empty || folder.EndsWith(DirectorySeparatorString));
     }
 
     #endregion Static ProjectFolder
@@ -133,7 +144,7 @@ namespace Altaxo.Main
     /// <param name="folderName">Folder name to test.</param>
     public static void ThrowExceptionOnInvalidSingleFolderName(string folderName)
     {
-      if (null == folderName)
+      if (folderName is null)
       {
         throw new ArgumentNullException("folderName is null");
       }
@@ -152,7 +163,7 @@ namespace Altaxo.Main
     /// <param name="folderPath">Folder path to test.</param>
     public static void ThrowExceptionOnInvalidFullFolderPath(string folderPath)
     {
-      if (null == folderPath)
+      if (folderPath is null)
         throw new ArgumentNullException("folderPath is null");
       if (folderPath.Length > 0 && folderPath[folderPath.Length - 1] != DirectorySeparatorChar)
         throw new ArgumentException(string.Format("folderPath has to end with a directory separator char! The provided folderPath is: {0}", folderPath));
@@ -167,7 +178,7 @@ namespace Altaxo.Main
     /// <returns></returns>
     public static string GetFolderPart(string fullName)
     {
-      if (null == fullName)
+      if (fullName is null)
         throw new ArgumentNullException("fullName");
 
       if (IsRootFolderName(fullName))
@@ -213,7 +224,7 @@ namespace Altaxo.Main
     /// <returns></returns>
     public static string GetNamePart(string fullName)
     {
-      if (null == fullName)
+      if (fullName is null)
         throw new ArgumentNullException("fullName");
       if (IsRootFolderName(fullName))
         return string.Empty;
@@ -243,7 +254,7 @@ namespace Altaxo.Main
     /// </param>
     public static void SplitIntoFolderAndNamePart(string fullName, out string directoryPart, out string namePart)
     {
-      if (null == fullName)
+      if (fullName is null)
         throw new ArgumentNullException("fullName");
 
       if (IsRootFolderName(fullName) || fullName[fullName.Length - 1] == DirectorySeparatorChar)
@@ -278,7 +289,7 @@ namespace Altaxo.Main
     /// <returns>The full name of the item. (directoryPart + <see cref="DirectorySeparatorChar"/> + namePart.</returns>
     public static string Combine(string directoryPart, string namePart)
     {
-      if (null != directoryPart && directoryPart.Length > 0 && directoryPart[directoryPart.Length - 1] != DirectorySeparatorChar)
+      if (directoryPart is not null && directoryPart.Length > 0 && directoryPart[directoryPart.Length - 1] != DirectorySeparatorChar)
         directoryPart += DirectorySeparatorChar;
 
       return (directoryPart ?? string.Empty) + namePart;
@@ -444,8 +455,8 @@ namespace Altaxo.Main
     /// <exception cref="System.ArgumentException">itemNames enumeration was empty</exception>
     public static string GetCommonFolderOfNames(IEnumerable<string> itemNames)
     {
-      if (null == itemNames)
-        throw new ArgumentNullException("itemNames");
+      if (itemNames is null)
+        throw new ArgumentNullException(nameof(itemNames));
 
       IList<string> nameList;
 

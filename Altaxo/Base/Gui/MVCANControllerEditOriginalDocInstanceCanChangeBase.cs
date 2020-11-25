@@ -22,11 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Gui
 {
@@ -52,7 +49,7 @@ namespace Altaxo.Gui
     /// <exception cref="System.ArgumentNullException">SetInstanceInParentNode</exception>
     public MVCANControllerEditOriginalDocInstanceCanChangeBase(Action<TModel> SetInstanceInParentNode)
     {
-      if (null == SetInstanceInParentNode)
+      if (SetInstanceInParentNode is null)
         throw new ArgumentNullException("SetInstanceInParentNode");
 
       _setInstanceInParentNode = SetInstanceInParentNode;
@@ -65,20 +62,20 @@ namespace Altaxo.Gui
     /// <param name="newInstance">The new instance.</param>
     protected void OnDocumentInstanceChanged(TModel oldInstance, TModel newInstance)
     {
-      Altaxo.Main.ISuspendToken newSuspendToken = null;
+      Altaxo.Main.ISuspendToken? newSuspendToken = null;
 
-      if (null != _suspendToken)
+      if (_suspendToken is not null)
       {
-        if (newInstance is Altaxo.Main.ISuspendableByToken)
-          newSuspendToken = ((Altaxo.Main.ISuspendableByToken)newInstance).SuspendGetToken();
+        if (newInstance is Altaxo.Main.ISuspendableByToken suspendable)
+          newSuspendToken = suspendable.SuspendGetToken();
       }
 
       // Set the instance
-      if (null != _setInstanceInParentNode)
+      if (_setInstanceInParentNode is not null)
         _setInstanceInParentNode(newInstance);
 
       // Release old suspend token and store instead the new suspend token
-      if (null != _suspendToken)
+      if (_suspendToken is not null)
         _suspendToken.Dispose();
 
       _suspendToken = newSuspendToken;

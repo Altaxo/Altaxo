@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -38,9 +39,9 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class QuantityWithUnitTextBox : TextBox, IDimensionfulQuantityView
   {
-    public event DependencyPropertyChangedEventHandler SelectedQuantityChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedQuantityChanged;
 
-    public event DependencyPropertyChangedEventHandler SelectedQuantityWithUnitEnvironmentChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedQuantityWithUnitEnvironmentChanged;
 
     private QuantityWithUnitConverter _converter;
 
@@ -57,6 +58,8 @@ namespace Altaxo.Gui.Common
     /// </summary>
     public QuantityWithUnitTextBox()
     {
+      _converter = new QuantityWithUnitConverter(this, SelectedQuantityProperty);
+
       var binding = new Binding
       {
         Source = this,
@@ -64,7 +67,6 @@ namespace Altaxo.Gui.Common
         Mode = BindingMode.TwoWay,
         UpdateSourceTrigger = UpdateSourceTrigger.LostFocus
       };
-      _converter = new QuantityWithUnitConverter(this, SelectedQuantityProperty);
       binding.Converter = _converter;
       binding.ValidationRules.Add(_converter);
       _converter.BindingExpression = SetBinding(TextBox.TextProperty, binding);
@@ -193,11 +195,11 @@ namespace Altaxo.Gui.Common
     /// <param name="args">Property changed event arguments.</param>
     protected void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      if (null != SelectedQuantityChanged)
+      if (SelectedQuantityChanged is not null)
         SelectedQuantityChanged(obj, args);
-      if (null != DimensionfulQuantityView_QuantityChanged)
+      if (DimensionfulQuantityView_QuantityChanged is not null)
         DimensionfulQuantityView_QuantityChanged();
-      if (null != SelectedQuantityWithUnitEnvironmentChanged)
+      if (SelectedQuantityWithUnitEnvironmentChanged is not null)
         SelectedQuantityWithUnitEnvironmentChanged(obj, args);
     }
 
@@ -236,7 +238,7 @@ namespace Altaxo.Gui.Common
     private static void EhUnitEnvironmentChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       var thiss = (QuantityWithUnitTextBox)obj;
-      if (null != args.NewValue)
+      if (args.NewValue is not null)
         thiss._converter.UnitEnvironment = (QuantityWithUnitGuiEnvironment)args.NewValue;
     }
 
@@ -244,9 +246,9 @@ namespace Altaxo.Gui.Common
 
     #region IDimensionfulQuantityView
 
-    private event Action DimensionfulQuantityView_QuantityChanged;
+    private event Action? DimensionfulQuantityView_QuantityChanged;
 
-    event Action IDimensionfulQuantityView.SelectedQuantityChanged
+    event Action? IDimensionfulQuantityView.SelectedQuantityChanged
     {
       add { DimensionfulQuantityView_QuantityChanged += value; }
       remove { DimensionfulQuantityView_QuantityChanged -= value; }

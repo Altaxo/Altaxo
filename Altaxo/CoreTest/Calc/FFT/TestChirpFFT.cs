@@ -24,55 +24,60 @@
 
 using System;
 using Altaxo.Calc.Fourier;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Fourier
 {
-  [TestFixture]
+
   public class TestChirpFFT
   {
     private const int nLowerLimit = 5;
     private const int nUpperLimit = 100;
     private const double maxTolerableEpsPerN = 1E-15;
 
-    private SplittedComplexFFTTests _test = new SplittedComplexFFTTests(new SplittedComplexFFTTests.FFTRoutine(ChirpFFT.FFT));
+    private SplittedComplexFFTTests _test;
 
-    [Test]
+    public TestChirpFFT()
+    {
+      _test = new SplittedComplexFFTTests(new SplittedComplexFFTTests.FFTRoutine(ChirpFFT.FFT));
+    }
+
+    [Fact]
     public void Test01Zero()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestZero(i);
     }
 
-    [Test]
+    [Fact]
     public void Test02ReOne_ZeroPos()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestReOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test03ImOne_ZeroPos()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestImOne_ZeroPos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test04ReOne_OnePos()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestReOne_OnePos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test05ImOne_OnePos()
     {
       for (int i = nLowerLimit; i <= nUpperLimit; i++)
         _test.TestImOne_OnePos(i);
     }
 
-    [Test]
+    [Fact]
     public void Test06ReImOne_RandomPos()
     {
       double oldTolerance = _test.SetTolerance(1E-14);
@@ -83,7 +88,7 @@ namespace AltaxoTest.Calc.Fourier
       _test.SetTolerance(oldTolerance);
     }
 
-    [Test]
+    [Fact]
     public void Test07ReImRandomValues()
     {
       double oldTolerance = _test.SetTolerance(1E-14);

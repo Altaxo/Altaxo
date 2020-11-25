@@ -32,6 +32,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Altaxo.Main.Services;
+using Altaxo.Main.Services.ExceptionHandling;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -40,8 +41,8 @@ namespace Altaxo.Gui.Workbench
   /// </summary>
   public partial class ExceptionBox : Window
   {
-    private Exception exceptionThrown;
-    private string message;
+    private Exception? _exceptionThrown;
+    private string _message = string.Empty;
 
     public ExceptionBox()
     {
@@ -58,8 +59,8 @@ namespace Altaxo.Gui.Workbench
     [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
     public ExceptionBox(Exception exception, string message, bool mustTerminate)
     {
-      exceptionThrown = exception;
-      this.message = message;
+      _exceptionThrown = exception;
+      this._message = message;
       InitializeComponent();
       if (mustTerminate)
       {
@@ -77,33 +78,49 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    public static void RegisterExceptionBoxForUnhandledExceptions()
+    public class UnhandledHandler : IUnhandledExceptionHandler
     {
-      System.Windows.Forms.Application.ThreadException += ShowErrorBox;
-      AppDomain.CurrentDomain.UnhandledException += ShowErrorBox;
-      System.Windows.Threading.Dispatcher.CurrentDispatcher.UnhandledException += Dispatcher_UnhandledException;
+      public UnhandledHandler()
+      {
+      }
+
+      public void EhCurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+      {
+        ExceptionBox.EhCurrentDomain_UnhandledException(sender, e);
+      }
+
+      public void EhWindowsFormsApplication_ThreadException(object sender, ThreadExceptionEventArgs e)
+      {
+        ExceptionBox.EhFormsApplication_ThreadException(sender, e);
+      }
+
+      public void EhWpfDispatcher_UnhandledException(object sender, object dispatcher, Exception exception)
+      {
+        ExceptionBox.EhDispatcher_UnhandledException(sender, dispatcher, exception);
+      }
     }
 
-    private static void Dispatcher_UnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+    private static void EhDispatcher_UnhandledException(object sender, object dispatcher, Exception exception)
     {
-      Current.Log.Error("Unhandled WPF exception", e.Exception);
-      ShowErrorBox(e.Exception, "Unhandled WPF exception", false);
-      e.Handled = true;
+      Current.Log.Error("Unhandled WPF exception", exception);
+      ShowErrorBox(exception, "Unhandled WPF exception", false);
     }
 
-    private static void ShowErrorBox(object sender, ThreadExceptionEventArgs e)
+    private static void EhFormsApplication_ThreadException(object sender, ThreadExceptionEventArgs e)
     {
       Current.Log.Error("ThreadException caught", e.Exception);
-      ShowErrorBox(e.Exception, null);
+      ShowErrorBox(e.Exception, string.Empty);
     }
 
     [SuppressMessage("Microsoft.Globalization", "CA1303:DoNotPassLiteralsAsLocalizedParameters")]
-    private static void ShowErrorBox(object sender, UnhandledExceptionEventArgs e)
+    private static void EhCurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
       var ex = e.ExceptionObject as Exception;
       Current.Log.Fatal("UnhandledException caught", ex);
       if (e.IsTerminating)
         Current.Log.Fatal("Runtime is terminating because of unhandled exception.");
+      if (ex is null)
+        ex = new Exception($"{e.ExceptionObject}");
       ShowErrorBox(ex, "Unhandled exception", e.IsTerminating);
     }
 
@@ -115,20 +132,21 @@ namespace Altaxo.Gui.Workbench
       ShowErrorBox(exception, message, false);
     }
 
+    /// <summary>
+    /// Variable to avoid reentrant calls. Is true if the ExceptionBox is currently displayed.
+    /// </summary>
     [ThreadStatic]
-    private static bool showingBox;
+    private static bool _isCurrentlyShowingBox;
 
     [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
     private static void ShowErrorBox(Exception exception, string message, bool mustTerminate)
     {
       // ignore reentrant calls (e.g. when there's an exception in OnRender)
-      if (showingBox)
+      if (_isCurrentlyShowingBox)
         return;
-      showingBox = true;
+      _isCurrentlyShowingBox = true;
       try
       {
-        if (exception != null)
-        {
           try
           {
           }
@@ -136,7 +154,7 @@ namespace Altaxo.Gui.Workbench
           {
             Current.Log.Warn("Error tracking exception", ex);
           }
-        }
+        
         var box = new ExceptionBox(exception, message, mustTerminate);
         {
           box.ShowDialog();
@@ -146,14 +164,14 @@ namespace Altaxo.Gui.Workbench
       {
         Current.Log.Warn("Error showing ExceptionBox", ex);
         MessageBox.Show(
-            exception != null ? exception.ToString() : "Error",
+                        exception is not null ? exception.ToString() : "Error",
             message,
             MessageBoxButton.OK,
             MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
       }
       finally
       {
-        showingBox = false;
+        _isCurrentlyShowingBox = false;
       }
     }
 
@@ -227,21 +245,21 @@ namespace Altaxo.Gui.Workbench
     {
       var sb = new StringBuilder();
 
-      Version version = Assembly.GetEntryAssembly().GetName().Version;
+      var version = Assembly.GetEntryAssembly()?.GetName()?.Version ?? new Version(0,0,0,0);
       string versionText = string.Format("Altaxo {0}.{1} build {2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
 
       sb.Append(versionText);
 
       sb.AppendLine();
 
-      if (message != null)
+      if (_message is not null)
       {
-        sb.AppendLine(message);
+        sb.AppendLine(_message);
       }
-      if (exceptionThrown != null)
+      if (_exceptionThrown is not null)
       {
         sb.AppendLine("Exception thrown:");
-        sb.AppendLine(exceptionThrown.ToString());
+        sb.AppendLine(_exceptionThrown.ToString());
       }
       sb.AppendLine();
       sb.AppendLine("---- Recent log messages:");

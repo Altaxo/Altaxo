@@ -35,7 +35,7 @@ namespace Altaxo.Gui.MenuCommands
 {
   public class OpenSettingsDirectory : SimpleCommand
   {
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
       var appName = StringParser.Parse("${AppName}");
 
@@ -61,10 +61,16 @@ namespace Altaxo.Gui.MenuCommands
 
   public class OpenProgramDirectory : SimpleCommand
   {
-    public override void Execute(object parameter)
+    public override void Execute(object? parameter)
     {
-      var entryAssemblyPath = Assembly.GetEntryAssembly().Location;
-      string dir = Path.GetDirectoryName(entryAssemblyPath);
+      var entryAssemblyPath = Assembly.GetEntryAssembly()?.Location;
+      if(entryAssemblyPath is null || !System.IO.Path.IsPathRooted(entryAssemblyPath))
+      {
+        Current.Gui.ErrorMessageBox("Unable to evaluate path of the entry assembly!", "Error");
+        return;
+      }
+
+      string dir = FileName.GetDirectoryName(entryAssemblyPath);
 
       string args = "/e," + dir;
 

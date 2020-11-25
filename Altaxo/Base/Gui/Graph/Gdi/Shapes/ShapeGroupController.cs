@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,7 +80,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         Current.Gui.FindAndAttachControlTo(_locationController);
       }
 
-      if (_view != null)
+      if (_view is not null)
       {
         _view.InitializeItemList(_itemList);
 
@@ -113,7 +114,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       _locationController.Apply(false);
 
       var node = _itemList.FirstSelectedNode;
-      if (node == null)
+      if (node is null)
         return;
       var item = (GraphicBase)node.Tag;
       if (Current.Gui.ShowDialog(ref item, "Edit shape group item " + node.Text, true))

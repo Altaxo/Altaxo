@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
 
       var result = Altaxo.CodeEditing.CompilationHandling.CompilationServiceStatic.GetCompilation(scriptTextsWithHash, scriptTextsWithHash.Hash, Altaxo.Settings.Scripting.ReferencedAssemblies.All);
 
-      if (result.CompiledAssembly != null)
+      if (result.CompiledAssembly is not null)
       {
         return new ScriptCompilerSuccessfulResult(scriptTextsWithHash, result.CompiledAssembly);
       }
@@ -52,7 +53,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
       }
     }
 
-    public IScriptCompilerSuccessfulResult GetCompilerResult(Assembly ass)
+    public IScriptCompilerSuccessfulResult? GetCompilerResult(Assembly ass)
     {
       if (_compilerResults.TryGetValue(ass, out var result))
         return result;

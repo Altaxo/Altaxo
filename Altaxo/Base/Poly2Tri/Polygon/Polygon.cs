@@ -38,6 +38,7 @@
 //   We have a lot of Add/Clear methods -- we may prefer to just expose the container
 //   Some self-explanitory methods may deserve commenting anyways
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,21 +86,21 @@ namespace Poly2Tri
 
     public void AddSteinerPoint(TriangulationPoint point)
     {
-      if (_steinerPoints == null)
+      if (_steinerPoints is null)
         _steinerPoints = new List<TriangulationPoint>();
       _steinerPoints.Add(point);
     }
 
     public void AddSteinerPoints(List<TriangulationPoint> points)
     {
-      if (_steinerPoints == null)
+      if (_steinerPoints is null)
         _steinerPoints = new List<TriangulationPoint>();
       _steinerPoints.AddRange(points);
     }
 
     public void ClearSteinerPoints()
     {
-      if (_steinerPoints != null)
+      if (_steinerPoints is not null)
         _steinerPoints.Clear();
     }
 
@@ -109,7 +110,7 @@ namespace Poly2Tri
     /// <param name="poly">A subtraction polygon fully contained inside this polygon.</param>
     public void AddHole(Polygon poly)
     {
-      if (_holes == null)
+      if (_holes is null)
         _holes = new List<Polygon>();
       _holes.Add(poly);
       // XXX: tests could be made here to be sure it is fully inside
@@ -144,7 +145,7 @@ namespace Poly2Tri
       foreach (PolygonPoint p in list)
       {
         p.Previous = _last;
-        if (_last != null)
+        if (_last is not null)
         {
           p.Next = _last.Next;
           _last.Next = p;
@@ -200,7 +201,7 @@ namespace Poly2Tri
 
     public void ClearTriangles()
     {
-      if (_triangles != null)
+      if (_triangles is not null)
         _triangles.Clear();
     }
 
@@ -210,7 +211,7 @@ namespace Poly2Tri
     /// <param name="tcx">The context</param>
     public void Prepare(TriangulationContext tcx)
     {
-      if (_triangles == null)
+      if (_triangles is null)
       {
         _triangles = new List<DelaunayTriangle>(_points.Count);
       }
@@ -226,7 +227,7 @@ namespace Poly2Tri
       tcx.Points.AddRange(_points);
 
       // Hole constraints
-      if (_holes != null)
+      if (_holes is not null)
       {
         foreach (Polygon p in _holes)
         {
@@ -237,7 +238,7 @@ namespace Poly2Tri
         }
       }
 
-      if (_steinerPoints != null)
+      if (_steinerPoints is not null)
       {
         tcx.Points.AddRange(_steinerPoints);
       }

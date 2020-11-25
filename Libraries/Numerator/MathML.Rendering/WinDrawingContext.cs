@@ -516,7 +516,7 @@ namespace MathML.Rendering
 		 */
 		private Pen SetupSolidPen()
 		{
-      if ((currentColor != currentPenColor) || (null == currentPen) || (currentPen != solidPen))
+      if ((currentColor != currentPenColor) || (currentPen is null) || (currentPen != solidPen))
       {
         solidPen = currentPen = new Pen(currentColor);
         currentPenColor = currentColor;
@@ -549,7 +549,7 @@ namespace MathML.Rendering
 
 		private Brush SetupSolidBrush()
 		{
-			if ((currentColor != currentBrushColor) || (null == currentBrush))
+			if ((currentColor != currentBrushColor) || (currentBrush is null))
 			{
 				Brush tbrush = solidBrushCache.GetSolidBrush(this, currentColor);
  
@@ -595,9 +595,9 @@ namespace MathML.Rendering
         Brush result = null;
    
 				// See if it's already in the cache
-				for (i = 0; (i < BRUSH_CACHE_SIZE) && mCache[i].mBrush != null; i++) 
+				for (i = 0; (i < BRUSH_CACHE_SIZE) && mCache[i].mBrush is not null; i++) 
 				{
-					if (mCache[i].mBrush != null && (mCache[i].mBrushColor == aColor)) 
+					if (mCache[i].mBrush is not null && (mCache[i].mBrushColor == aColor)) 
 					{
 						// Found an existing brush
 						result = mCache[i].mBrush;
@@ -606,7 +606,7 @@ namespace MathML.Rendering
 					}
 				}
  
-				if (result == null) 
+				if (result is null) 
 				{
 					// We didn't find it in the set of existing brushes, so create a
 					// new brush

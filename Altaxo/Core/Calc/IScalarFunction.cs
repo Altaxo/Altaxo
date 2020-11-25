@@ -40,6 +40,30 @@ namespace Altaxo.Calc
   }
 
   /// <summary>
+  /// Example of a <see cref="IScalarFunctionDD"/> which always returns 0 (zero).
+  /// </summary>
+  /// <seealso cref="Altaxo.Calc.IScalarFunctionDD" />
+  public class NullFunction : IScalarFunctionDD
+  {
+    /// <summary>
+    /// Gets the instance of <see cref="NullFunction"/>.
+    /// </summary>
+    public static NullFunction Instance { get; } = new NullFunction();
+    private NullFunction() { }
+    /// <summary>
+    /// The function evaluation.
+    /// </summary>
+    /// <param name="x">The argument of the function.</param>
+    /// <returns>
+    /// The resulting value that the function evaluates.
+    /// </returns>
+    public double Evaluate(double x)
+    {
+      return 0;
+    }
+  }
+
+  /// <summary>
   /// Provides the interface to a function with one double argument, and one resulting double value.
   /// The evaluation is parametrized by one or more parameters.
   /// </summary>

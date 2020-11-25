@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,8 +37,7 @@ namespace Altaxo.Graph.Gdi
 
     private static XYPlotLayer CreateNewLayerAtSamePosition(this GraphDocument doc, IEnumerable<int> linklayernumber)
     {
-      var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out var oldLayer);
-      if (!isValidIndex)
+      if(!(doc.RootLayer.IsValidIndex(linklayernumber, out var oldLayer)))
         throw new ArgumentOutOfRangeException("index was not valid");
 
       IItemLocation location;
@@ -45,12 +45,12 @@ namespace Altaxo.Graph.Gdi
       {
         location = (IItemLocation)oldLayer.Location.Clone();
       }
-      else if (oldLayer.Location is ItemLocationDirect)
+      else if (oldLayer.Location is ItemLocationDirect itemLocationDirect)
       {
         // 1. check if it is possible to create a grid in the parent layer of the old layer
-        if (null != oldLayer.ParentLayer && oldLayer.ParentLayer.CanCreateGridForLocation((ItemLocationDirect)oldLayer.Location))
+        if (oldLayer.ParentLayer is not null && oldLayer.ParentLayer.CanCreateGridForLocation(itemLocationDirect))
         {
-          ItemLocationByGrid gridCell = oldLayer.ParentLayer.CreateGridForLocation((ItemLocationDirect)oldLayer.Location);
+          var gridCell = oldLayer.ParentLayer.CreateGridForLocation(itemLocationDirect) ?? throw new InvalidProgramException();
           oldLayer.Location = gridCell.Clone();
           location = gridCell.Clone();
         }
@@ -64,7 +64,7 @@ namespace Altaxo.Graph.Gdi
         throw new NotImplementedException("Location type not implemented");
       }
 
-      var newLayer = new XYPlotLayer(oldLayer.ParentLayer, location);
+      var newLayer = new XYPlotLayer(oldLayer.ParentLayer!, location);
       doc.RootLayer.InsertLast(linklayernumber, newLayer);
 
       return newLayer;
@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Gdi
       var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out var oldLayer);
       var linkedLayerAsXYPlotLayer = oldLayer as XYPlotLayer;
 
-      if (null != linkedLayerAsXYPlotLayer)
+      if (linkedLayerAsXYPlotLayer is not null)
       {
         // create a linked x axis of the same type than in the linked layer
         var scaleLinkedTo = linkedLayerAsXYPlotLayer.Scales.X;

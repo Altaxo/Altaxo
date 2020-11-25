@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using Altaxo.Geometry;
 using Altaxo.Graph;
@@ -130,7 +131,7 @@ namespace Altaxo.Gui.Graph.Gdi
         _xPositionEnvironment = new QuantityWithUnitGuiEnvironment(PositionEnvironment.Instance, new IUnit[] { _percentLayerXSizeUnit });
         _yPositionEnvironment = new QuantityWithUnitGuiEnvironment(PositionEnvironment.Instance, new IUnit[] { _percentLayerYSizeUnit });
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.ShowSizeElements(!_doc.IsAutoSized, true);
 
@@ -238,7 +239,7 @@ namespace Altaxo.Gui.Graph.Gdi
     private void EhSizeXChanged()
     {
       var actn = SizeXChanged;
-      if (null != actn)
+      if (actn is not null)
       {
         RADouble result;
         var xSize = _view.XSize;
@@ -256,7 +257,7 @@ namespace Altaxo.Gui.Graph.Gdi
     private void EhSizeYChanged()
     {
       var actn = SizeYChanged;
-      if (null != actn)
+      if (actn is not null)
       {
         RADouble result;
         var ySize = _view.YSize;
@@ -274,7 +275,7 @@ namespace Altaxo.Gui.Graph.Gdi
     private void EhScaleXChanged()
     {
       var actn = ScaleXChanged;
-      if (null != actn)
+      if (actn is not null)
       {
         actn(_view.ScaleX);
       }
@@ -285,7 +286,7 @@ namespace Altaxo.Gui.Graph.Gdi
     private void EhScaleYChanged()
     {
       var actn = ScaleYChanged;
-      if (null != actn)
+      if (actn is not null)
       {
         actn(_view.ScaleY);
       }
@@ -295,7 +296,7 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       _showSizeElements_IsVisible = isVisible;
       _showSizeElements_Enabled = isEnabled;
-      if (null != _view)
+      if (_view is not null)
         _view.ShowSizeElements(isVisible, isEnabled);
     }
 
@@ -303,7 +304,7 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       _showScaleElements_IsVisible = isVisible;
       _showScaleElements_Enabled = isEnabled;
-      if (null != _view)
+      if (_view is not null)
         _view.ShowScaleElements(isVisible, isEnabled);
     }
 
@@ -311,7 +312,7 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       _showPositionElements_IsVisible = isVisible;
       _showPositionElements_Enabled = isEnabled;
-      if (null != _view)
+      if (_view is not null)
         _view.ShowPositionElements(isVisible, isEnabled);
     }
 
@@ -319,7 +320,7 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       _showAnchorElements_IsVisible = isVisible;
       _showAnchorElements_Enabled = isEnabled;
-      if (null != _view)
+      if (_view is not null)
         _view.ShowAnchorElements(isVisible, isEnabled);
     }
 

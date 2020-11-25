@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,9 +62,9 @@ namespace Altaxo.Main
     /// <returns>
     ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
     /// </returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (null == obj)
+      if (obj is null)
         return false;
       if (GetType() != obj.GetType())
         return false;

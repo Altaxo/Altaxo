@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Main
 {
@@ -41,7 +40,7 @@ namespace Altaxo.Main
     /// Holds the accumulated change data.
     /// </summary>
     [NonSerialized]
-    protected T _accumulatedEventData;
+    protected T? _accumulatedEventData;
 
     /// <summary>
     /// Determines whether there is no or only one single event arg accumulated. If this is the case, the return value is <c>true</c>. If there is one event arg accumulated, it is returned in the argument <paramref name="singleEventArg" />.
@@ -52,7 +51,7 @@ namespace Altaxo.Main
     /// <returns>
     /// True if there is zero or one event arg accumulated, otherwise <c>false</c>.
     /// </returns>
-    protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg)
+    protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs? singleEventArg)
     {
       singleEventArg = _accumulatedEventData;
       return true;
@@ -68,7 +67,7 @@ namespace Altaxo.Main
     {
       get
       {
-        if (null != _accumulatedEventData)
+        if (_accumulatedEventData is not null)
           yield return _accumulatedEventData;
       }
     }
@@ -88,7 +87,7 @@ namespace Altaxo.Main
     /// <exception cref="System.ArgumentOutOfRangeException">Not possible to set more than one event arg here.</exception>
     protected override void AccumulatedChangeData_SetBackAfterResumeAndSuspend(params EventArgs[] e)
     {
-      if (!(_accumulatedEventData == null))
+      if (_accumulatedEventData is not null)
         throw new InvalidProgramException();
 
       if (e.Length > 1)
@@ -104,21 +103,21 @@ namespace Altaxo.Main
     /// <param name="e">The change event args can provide details of the change (currently unused).</param>
     /// <exception cref="System.ArgumentNullException">Argument e is null</exception>
     /// <exception cref="System.ArgumentException"></exception>
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
-      if (null == e)
+      if (e is null)
         throw new ArgumentNullException("Argument e is null");
       if (!(e is T))
         throw new ArgumentException(string.Format("Argument e has the wrong type. Type expected: {0}, actual type of e: {1}", typeof(T), e.GetType()));
 
-      if (null == _accumulatedEventData)
+      if (_accumulatedEventData is null)
       {
         _accumulatedEventData = (T)e;
       }
       else // there is already an event arg present
       {
         var aedAsSelf = _accumulatedEventData as SelfAccumulateableEventArgs;
-        if (null != aedAsSelf && aedAsSelf.Equals(e)) // Equals is here (mis)used to ensure compatibility between the two event args
+        if (aedAsSelf is not null && aedAsSelf.Equals(e)) // Equals is here (mis)used to ensure compatibility between the two event args
         {
           aedAsSelf.Add((SelfAccumulateableEventArgs)e);
         }

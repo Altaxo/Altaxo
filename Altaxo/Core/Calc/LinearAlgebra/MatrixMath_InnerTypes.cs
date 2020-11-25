@@ -455,7 +455,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <param name="length">Length of the vector.</param>
       public MatrixRowROVector(IROMatrix<T> matrix, int row, int columnOffset, int length)
       {
-        if (matrix == null)
+        if (matrix is null)
           throw new ArgumentNullException("IROMatrix m is null");
         if (row < 0 || row >= matrix.RowCount)
           throw new ArgumentOutOfRangeException("The parameter row is either <0 or greater than the rows of the matrix");
@@ -543,7 +543,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <param name="length">Length of the vector.</param>
       public MatrixRowVector(IMatrix<T> matrix, int row, int columnOffset, int length)
       {
-        if (matrix == null)
+        if (matrix is null)
           throw new ArgumentNullException("IMatrix m is null");
         if (row < 0 || row >= matrix.RowCount)
           throw new ArgumentOutOfRangeException("The parameter row is either <0 or greater than the rows of the matrix");
@@ -630,7 +630,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <param name="column">The column number of the matrix that is wrapped to a vector.</param>
       public MatrixColumnROVector(IROMatrix<T> matrix, int column)
       {
-        if (matrix == null)
+        if (matrix is null)
           throw new ArgumentNullException("IMatrix m is null");
         if (column < 0 || column >= matrix.ColumnCount)
           throw new ArgumentOutOfRangeException("The parameter row is either <0 or greater than the rows of the matrix");
@@ -705,7 +705,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <param name="column">The column number of the matrix that is wrapped to a vector.</param>
       public MatrixColumnVector(IMatrix<T> matrix, int column)
       {
-        if (matrix == null)
+        if (matrix is null)
           throw new ArgumentNullException("IMatrix m is null");
         if (column < 0 || column >= matrix.ColumnCount)
           throw new ArgumentOutOfRangeException("The parameter row is either <0 or greater than the rows of the matrix");
@@ -1090,7 +1090,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     public class LeftSpineJaggedArrayMatrix<T> : IMatrix<T>, IBottomExtensibleMatrix<T> where T : struct
     {
-      private static T[][] _emptyArray = new T[0][];
+      private static readonly T[][] _emptyArray = new T[0][];
       /// <summary>The rows of the matrix = number of double[] arrays in it.</summary>
       private int _rows;
 

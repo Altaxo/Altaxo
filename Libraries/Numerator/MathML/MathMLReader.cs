@@ -76,7 +76,7 @@ namespace MathML
 		public override bool Read()
 		{
 			bool ret;
-			if(entity != null)
+			if(entity is not null)
 			{
 				// we allready called a 'Read()' in the NodeType property, so if we
 				// had a entity, it has allready been read, and the next node is
@@ -96,7 +96,7 @@ namespace MathML
         /// </summary>
 		public override void Skip()
 		{
-			if(entity != null)
+			if(entity is not null)
 			{
 				Debug.WriteLine("skipping mathml entity");
 				entity = null;
@@ -117,7 +117,7 @@ namespace MathML
 				// get the real node type
 				XmlNodeType type = base.NodeType;
 
-				if(entity == null)
+				if(entity is null)
 				{
 					// only perform special action if we really do have
 					// an entity reference, otherwise leave node type allone
@@ -158,7 +158,7 @@ namespace MathML
 		{
 			get
 			{
-				return entity != null ? entity : base.Value;
+				return entity is not null ? entity : base.Value;
 			}
 		}
 
@@ -170,7 +170,7 @@ namespace MathML
 		{
 			get
 			{
-				return entity != null ? String.Empty : base.Name;
+				return entity is not null ? String.Empty : base.Name;
 			}
 		}
 
@@ -181,7 +181,7 @@ namespace MathML
 		{
 			get
 			{
-				return entity != null ? String.Empty : base.Name;
+				return entity is not null ? String.Empty : base.Name;
 			}
 		}
 	}

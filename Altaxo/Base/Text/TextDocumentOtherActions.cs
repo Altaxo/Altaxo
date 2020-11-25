@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,17 +56,17 @@ namespace Altaxo.Text
         _doc = doc;
       }
 
-      public override string Validate(string name)
+      public override string? Validate(string name)
       {
-        string err = base.Validate(name);
-        if (null != err)
+        var err = base.Validate(name);
+        if (err is not null)
           return err;
 
         if (_doc.Name == name)
           return null;
-        else if (TextDocumentCollection.GetParentTextDocumentCollectionOf(_doc) == null)
+        else if (TextDocumentCollection.GetParentTextDocumentCollectionOf(_doc) is null)
           return null; // if there is no parent data set we can enter anything
-        else if (TextDocumentCollection.GetParentTextDocumentCollectionOf(_doc).ContainsAnyName(name))
+        else if (TextDocumentCollection.GetParentTextDocumentCollectionOf(_doc)?.ContainsAnyName(name) ?? false)
           return "This text document name already exists, please choose another name!";
         else
           return null;

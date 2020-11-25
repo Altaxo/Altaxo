@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using Altaxo.Scripting;
 
@@ -92,10 +93,10 @@ namespace Altaxo.Gui.Scripting
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args == null || args.Length == 0)
+      if (args is null || args.Length == 0)
         return false;
       var doc = args[0] as IPureScriptText;
-      if (doc == null)
+      if (doc is null)
         return false;
 
       _doc = doc;
@@ -112,13 +113,13 @@ namespace Altaxo.Gui.Scripting
 
     public void SetText(string text)
     {
-      if (_view != null)
+      if (_view is not null)
         _view.ScriptText = text;
     }
 
     public void Initialize()
     {
-      if (_view != null)
+      if (_view is not null)
         _view.ScriptText = _doc.ScriptText;
     }
 
@@ -148,14 +149,14 @@ namespace Altaxo.Gui.Scripting
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           DetachView();
         }
 
         _view = value as IPureScriptView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize();
           AttachView();
@@ -173,7 +174,7 @@ namespace Altaxo.Gui.Scripting
 
     public bool Apply(bool disposeController)
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _doc.ScriptText = _view.ScriptText;
         return true;
@@ -207,19 +208,19 @@ namespace Altaxo.Gui.Scripting
     /// <param name="column">Script column (1-based).</param>
     public void SetScriptCursorLocation(int line, int column)
     {
-      if (_view != null)
+      if (_view is not null)
         _view.SetScriptCursorLocation(line, column);
     }
 
     public void SetScriptCursorLocation(int offset)
     {
-      if (_view != null)
+      if (_view is not null)
         _view.ScriptCursorLocation = offset;
     }
 
     public void SetInitialScriptCursorLocation(int offset)
     {
-      if (_view != null)
+      if (_view is not null)
         _view.InitialScriptCursorLocation = offset;
     }
 
@@ -229,7 +230,7 @@ namespace Altaxo.Gui.Scripting
     /// <returns></returns>
     public string GetCurrentScriptText()
     {
-      if (_view != null)
+      if (_view is not null)
         return _view.ScriptText;
       else
         return _doc.ScriptText;

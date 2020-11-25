@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
@@ -97,7 +98,7 @@ namespace Altaxo.Gui.Graph
       if (initData)
       {
         _documentPrintOptionsController = new SingleGraphPrintOptionsController() { UseDocumentCopy = UseDocument.Directly };
-        if (null == _doc.PrintOptions)
+        if (_doc.PrintOptions is null)
           _doc.PrintOptions = new SingleGraphPrintOptions();
         _documentPrintOptionsController.InitializeDocument(_doc.PrintOptions);
         Current.Gui.FindAndAttachControlTo(_documentPrintOptionsController);
@@ -107,7 +108,7 @@ namespace Altaxo.Gui.Graph
         InitAvailablePaperSources(true);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         var currentPrinterSettings = Current.PrintingService.PrintDocument.PrinterSettings;
         _installedPrinters = new SelectableListNodeList();
@@ -132,7 +133,7 @@ namespace Altaxo.Gui.Graph
 
     private void EhSelectedPrinterChanged()
     {
-      if (null != _installedPrinters.FirstSelectedNode)
+      if (_installedPrinters.FirstSelectedNode is not null)
         Current.PrintingService.PrintDocument.PrinterSettings.PrinterName = (string)_installedPrinters.FirstSelectedNode.Tag;
 
       InitAvailablePaperSizes(true);
@@ -170,14 +171,14 @@ namespace Altaxo.Gui.Graph
     private void EhPaperSourceChanged()
     {
       var sel = _currentPaperSources.FirstSelectedNode;
-      if (null != sel)
+      if (sel is not null)
         Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSource = (PaperSource)(sel.Tag);
     }
 
     private void EhPaperSizeChanged()
     {
       var sel = _currentPaperSizes.FirstSelectedNode;
-      if (null != sel)
+      if (sel is not null)
       {
         Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSize = (PaperSize)(sel.Tag);
         RequestPreview();
@@ -232,7 +233,7 @@ namespace Altaxo.Gui.Graph
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeAvailablePaperSources(_currentPaperSources);
       }
@@ -252,7 +253,7 @@ namespace Altaxo.Gui.Graph
         }
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeAvailablePaperSizes(_currentPaperSizes);
       }
@@ -260,13 +261,13 @@ namespace Altaxo.Gui.Graph
 
     private void InitPaperOrientation()
     {
-      if (null != _view)
+      if (_view is not null)
         _view.InitializePaperOrientationLandscape(Current.PrintingService.PrintDocument.DefaultPageSettings.Landscape);
     }
 
     private void InitPaperMargins()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         var m = Current.PrintingService.PrintDocument.DefaultPageSettings.Margins;
         _view.InitializePaperMarginsInHundrethInch(m.Left, m.Right, m.Top, m.Bottom);
@@ -315,7 +316,7 @@ namespace Altaxo.Gui.Graph
     public void RequestPreview()
     {
       _previewRequested = true;
-      if (null == _previewTask)
+      if (_previewTask is null)
       {
         _previewRequested = false;
         InitiatePreview();
@@ -366,7 +367,7 @@ namespace Altaxo.Gui.Graph
 
     private void EhSetPrintPreview(Task<PreviewPageInfo[]> t)
     {
-      if (null != _view)
+      if (_view is not null)
         _view.InitializePrintPreview(t.Result);
 
       if (_previewRequested)
@@ -389,7 +390,7 @@ namespace Altaxo.Gui.Graph
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args == null || args.Length == 0 || !(args[0] is Altaxo.Graph.Gdi.GraphDocument))
+      if (args is null || args.Length == 0 || !(args[0] is Altaxo.Graph.Gdi.GraphDocument))
         return false;
 
       _doc = (Altaxo.Graph.Gdi.GraphDocument)args[0];
@@ -412,7 +413,7 @@ namespace Altaxo.Gui.Graph
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.SelectedPrinterChanged -= EhSelectedPrinterChanged;
           _view.EditPrinterProperties -= EhEditPrinterProperties;
@@ -429,7 +430,7 @@ namespace Altaxo.Gui.Graph
 
         _view = value as IPrintingView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           _view.SelectedPrinterChanged += EhSelectedPrinterChanged;
@@ -459,7 +460,7 @@ namespace Altaxo.Gui.Graph
     public bool Apply(bool disposeController)
     {
       var previewTask = _previewTask;
-      if (null != previewTask)
+      if (previewTask is not null)
         previewTask.Wait();
 
       Current.PrintingService.PrintDocument.DocumentName = _doc.Name;

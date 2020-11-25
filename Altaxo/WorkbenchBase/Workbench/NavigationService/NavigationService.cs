@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Input;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main.Services;
@@ -54,7 +55,7 @@ namespace Altaxo.Workbench
     #region Private members
 
     private static LinkedList<INavigationPoint> _history = new LinkedList<INavigationPoint>();
-    private static LinkedListNode<INavigationPoint> _currentNode;
+    private static LinkedListNode<INavigationPoint>? _currentNode;
     private static int _loggingSuspendedCount;
     private static bool _serviceInitialized;
 
@@ -78,7 +79,7 @@ namespace Altaxo.Workbench
 
       if (!_serviceInitialized)
       {
-        if (workbench == null)
+        if (workbench is null)
         {
           throw new InvalidOperationException("Initializing the NavigationService requires that the WorkbenchSingleton has already created a Workbench.");
         }
@@ -109,7 +110,7 @@ namespace Altaxo.Workbench
     /// </summary>
     public static bool CanNavigateBack
     {
-      get { return _currentNode != _history.First && _currentNode != null; }
+      get { return _currentNode != _history.First && _currentNode is not null; }
     }
 
     /// <summary>
@@ -119,7 +120,7 @@ namespace Altaxo.Workbench
     /// </summary>
     public static bool CanNavigateForwards
     {
-      get { return _currentNode != _history.Last && _currentNode != null; }
+      get { return _currentNode != _history.Last && _currentNode is not null; }
     }
 
     /// <summary>
@@ -137,11 +138,12 @@ namespace Altaxo.Workbench
     /// <summary>
     /// Gets or sets the "current" position as tracked by the service.
     /// </summary>
-    public static INavigationPoint CurrentPosition
+    [MaybeNull]
+    public static INavigationPoint? CurrentPosition
     {
       get
       {
-        return _currentNode == null ? null : _currentNode.Value;
+        return _currentNode?.Value;
       }
       set
       {
@@ -187,7 +189,7 @@ namespace Altaxo.Workbench
     /// <param name="vc"></param>
     public static void Log(IViewContent vc)
     {
-      if (vc == null)
+      if (vc is null)
         return;
       Log(vc.BuildNavPoint());
     }
@@ -196,7 +198,7 @@ namespace Altaxo.Workbench
     /// Adds an <see cref="INavigationPoint"/> to the history.
     /// </summary>
     /// <param name="pointToLog">The point to store.</param>
-    public static void Log(INavigationPoint pointToLog)
+    public static void Log(INavigationPoint? pointToLog)
     {
       if (_loggingSuspendedCount > 0)
       {
@@ -217,15 +219,15 @@ namespace Altaxo.Workbench
     /// the current position after clearing the
     /// history.
     /// </remarks>
-    private static void LogInternal(INavigationPoint p)
+    private static void LogInternal(INavigationPoint? p)
     {
-      if (p == null
+      if (p is null
               || string.IsNullOrEmpty(p.FileName)
            )
       {
         return;
       }
-      if (_currentNode == null)
+      if (_currentNode is null)
       {
         _currentNode = _history.AddFirst(p);
       }
@@ -275,7 +277,7 @@ namespace Altaxo.Workbench
     /// </remarks>
     public static void ClearHistory(bool clearCurrentPosition)
     {
-      INavigationPoint currentPosition = CurrentPosition;
+      var currentPosition = CurrentPosition;
       _history.Clear();
       _currentNode = null;
       if (!clearCurrentPosition)
@@ -301,7 +303,7 @@ namespace Altaxo.Workbench
       else if (0 > delta)
       {
         // move backwards
-        while (0 > delta && _currentNode != _history.First)
+        while (0 > delta && _currentNode != _history.First && _currentNode is not null)
         {
           _currentNode = _currentNode.Previous;
           delta++;
@@ -310,7 +312,7 @@ namespace Altaxo.Workbench
       else
       {
         // move forwards
-        while (0 < delta && _currentNode != _history.Last)
+        while (0 < delta && _currentNode != _history.Last && _currentNode is not null)
         {
           _currentNode = _currentNode.Next;
           delta--;
@@ -326,16 +328,15 @@ namespace Altaxo.Workbench
     /// of whether logging is currently suspended or not.
     /// </summary>
     /// <param name="target">The <see cref="INavigationPoint"/> to jump</param>
-    public static void Go(INavigationPoint target)
+    public static void Go(INavigationPoint? target)
     {
-      if (target == null)
+      if (target is null)
       {
         return;
       }
 
-      LinkedListNode<INavigationPoint> targetNode;
-      targetNode = _history.Find(target);
-      if (targetNode != null)
+      var targetNode = _history.Find(target);
+      if (targetNode is not null)
       {
         _currentNode = targetNode;
       }
@@ -360,7 +361,7 @@ namespace Altaxo.Workbench
     private static void SyncViewWithModel()
     {
       SuspendLogging();
-      if (CurrentPosition != null)
+      if (CurrentPosition is not null)
       {
         CurrentPosition.JumpTo();
       }
@@ -406,14 +407,12 @@ namespace Altaxo.Workbench
     /// Respond to changes in the <see cref="IWorkbench.ActiveViewContent">
     /// ActiveViewContent</see> by logging the new <see cref="IViewContent"/>.
     /// </summary>
-    private static void ActiveViewContentChanged(object sender, EventArgs e)
+    private static void ActiveViewContentChanged(object? sender, EventArgs e)
     {
-      IViewContent vc = Altaxo.Current.GetRequiredService<IWorkbench>().ActiveViewContent;
-      if (vc == null)
+      var vc = Altaxo.Current.GetRequiredService<IWorkbench>().ActiveViewContent;
+      if (vc is null)
         return;
-      Current.Log.DebugFormatted("NavigationService\n\tActiveViewContent: {0}\n\t          Subview: {1}",
-                                                                  vc.Title,
-                                                                  vc.Title);
+      Current.Log.Debug($"NavigationService\n\tActiveViewContent: {vc.Title}\n\t          Subview: {vc.Title}");
       Log(vc);
     }
 
@@ -424,7 +423,7 @@ namespace Altaxo.Workbench
     /// <param name="sender"/>
     /// <param name="e"><see cref="FileRenameEventArgs"/> describing
     /// the file rename.</param>
-    private static void FileService_FileRenamed(object sender, FileRenameEventArgs e)
+    private static void FileService_FileRenamed(object? sender, FileRenameEventArgs e)
     {
       foreach (INavigationPoint p in _history)
       {
@@ -450,7 +449,7 @@ namespace Altaxo.Workbench
     /// <summary>
     /// Fires whenever the navigation history has changed.
     /// </summary>
-    public static event System.EventHandler HistoryChanged;
+    public static event System.EventHandler? HistoryChanged;
 
     /// <summary>
     /// Used internally to call the <see cref="HistoryChanged"/> event delegates.

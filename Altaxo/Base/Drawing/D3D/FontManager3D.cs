@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,7 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Drawing.D3D
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Geometry;
   using Drawing;
   using Drawing.D3D;
@@ -43,8 +45,8 @@ namespace Altaxo.Drawing.D3D
     /// </summary>
     protected Dictionary<string, Dictionary<char, CharacterGeometry>> _cachedCharacterOutlines = new Dictionary<string, Dictionary<char, CharacterGeometry>>();
 
-    protected System.Drawing.Bitmap _bmp;
-    protected System.Drawing.Graphics _graphics;
+    protected System.Drawing.Bitmap? _bmp;
+    protected System.Drawing.Graphics? _graphics;
     private System.Drawing.StringFormat _stringFormat;
 
     public static FontManager3D Instance
@@ -55,7 +57,7 @@ namespace Altaxo.Drawing.D3D
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         _instance = value;
@@ -73,9 +75,10 @@ namespace Altaxo.Drawing.D3D
       _stringFormat.FormatFlags |= System.Drawing.StringFormatFlags.MeasureTrailingSpaces;
     }
 
+    [MemberNotNull(nameof(_graphics))]
     private void EnsureGraphicsCreated()
     {
-      if (null == _graphics)
+      if (_graphics is null)
       {
         _bmp = new System.Drawing.Bitmap(16, 16);
         _graphics = System.Drawing.Graphics.FromImage(_bmp);
@@ -244,7 +247,7 @@ namespace Altaxo.Drawing.D3D
 
     private static void ClipperPolyTreeToPolygonListRecursively(ClipperLib.PolyNode node, HashSet<ClipperLib.IntPoint> sharpPoints, HashSet<ClipperLib.IntPoint> allPoints, List<PolygonClosedD2D> polygonList, IDictionary<ClipperLib.PolyNode, PolygonClosedD2D> dictClipperNodeToNode)
     {
-      if (node.Contour != null && node.Contour.Count != 0)
+      if (node.Contour is not null && node.Contour.Count != 0)
       {
         var pointsInThisPolygon = node.Contour.Select(clipperPt => new PointD2D(clipperPt.X / 65536.0, clipperPt.Y / 65536.0));
         var sharpPointsInThisPolygon = node.Contour.Where(clipperPt => sharpPoints.Contains(clipperPt)).Select(clipperPt => new PointD2D(clipperPt.X / 65536.0, clipperPt.Y / 65536.0));

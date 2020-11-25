@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -139,11 +140,11 @@ namespace Altaxo.Gui.Common.Drawing
         _textureScalingController = new TextureScalingController() { UseDocumentCopy = UseDocument.Directly };
         _textureScalingController.MadeDirty += EhTextureScalingChanged;
         _textureScalingController.InitializeDocument(_doc.TextureScale);
-        if (null != _doc.TextureImage)
+        if (_doc.TextureImage is not null)
           _textureScalingController.SourceTextureSize = GetSizeOfImageProxy(_doc.TextureImage);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.RestrictBrushColorToPlotColorsOnly = _restrictBrushColorToPlotColorsOnly;
 
@@ -209,7 +210,7 @@ namespace Altaxo.Gui.Common.Drawing
       {
         var oldValue = _restrictBrushColorToPlotColorsOnly;
         _restrictBrushColorToPlotColorsOnly = value;
-        if (value != oldValue && null != _view)
+        if (value != oldValue && _view is not null)
         {
           _view.RestrictBrushColorToPlotColorsOnly = _restrictBrushColorToPlotColorsOnly;
         }
@@ -237,7 +238,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       base.OnMadeDirty();
 
-      if (!_suppressDirtyEvent.IsSuspended && null != _view)
+      if (!_suppressDirtyEvent.IsSuspended && _view is not null)
         _view.UpdatePreview(_doc);
     }
 
@@ -408,7 +409,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       _doc = _doc.WithTextureImage(newTexture);
       _imageProxyController.InitializeDocument(_doc.TextureImage);
-      if (null != _doc.TextureImage)
+      if (_doc.TextureImage is not null)
         _textureScalingController.SourceTextureSize = GetSizeOfImageProxy(_doc.TextureImage);
       OnMadeDirty();
     }

@@ -25,15 +25,15 @@
 using System;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Optimization;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.Optimization
 {
-  [TestFixture]
+
   public class ConjugateGradientTest
   {
     //Test Rosenbrock
-    [Test]
+    [Fact]
     public void TestRosenbrock()
     {
       var cf = new Rosenbrock();
@@ -45,12 +45,12 @@ namespace AltaxoTest.Calc.Optimization
 
       optim.Minimize(x0);
 
-      Assert.AreEqual(optim.SolutionValue, 0.0, 0.1);
-      Assert.AreEqual(optim.SolutionVector[0], 1.0, 0.1);
-      Assert.AreEqual(optim.SolutionVector[1], 1.0, 0.1);
-      Assert.AreEqual(optim.SolutionVector[2], 1.0, 0.1);
-      Assert.AreEqual(optim.SolutionVector[3], 1.0, 0.2);
-      Assert.AreEqual(optim.SolutionVector[4], 1.0, 0.4);
+      AssertEx.Equal(optim.SolutionValue, 0.0, 0.1);
+      AssertEx.Equal(optim.SolutionVector[0], 1.0, 0.1);
+      AssertEx.Equal(optim.SolutionVector[1], 1.0, 0.1);
+      AssertEx.Equal(optim.SolutionVector[2], 1.0, 0.1);
+      AssertEx.Equal(optim.SolutionVector[3], 1.0, 0.2);
+      AssertEx.Equal(optim.SolutionVector[4], 1.0, 0.4);
     }
   }
 }

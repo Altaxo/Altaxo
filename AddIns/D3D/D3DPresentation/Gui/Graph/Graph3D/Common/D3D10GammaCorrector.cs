@@ -40,10 +40,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
   public class D3D10GammaCorrector : IDisposable
   {
     private bool _isDisposed;
-    private InputLayout _vertexLayout;
-    private Buffer _vertices;
-    private Effect _effect;
-    private Device _cachedDevice;
+    private InputLayout? _vertexLayout;
+    private Buffer? _vertices;
+    private Effect? _effect;
+    private Device? _cachedDevice;
 
     public D3D10GammaCorrector(Device device, string gammaCorrectorResourcePath)
     {
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(gammaCorrectorResourcePath))
       {
-        if (null == stream)
+        if (stream is null)
           throw new InvalidOperationException(string.Format("Compiled shader resource not found: {0}", gammaCorrectorResourcePath));
 
         using (var shaderBytes = ShaderBytecode.FromStream(stream))
@@ -116,7 +116,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       if (_isDisposed)
         throw new ObjectDisposedException(GetType().Name);
 
-      if (device == null)
+      if (device is null)
         return;
 
       if (!object.ReferenceEquals(device, _cachedDevice))
@@ -127,13 +127,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(_vertices, 24, 0));
 
 
-      EffectTechnique technique = null;
-      EffectPass pass = null;
-      EffectVariable shaderResourceObj = null;
-      EffectShaderResourceVariable shaderResource = null;
+      EffectTechnique? technique = null;
+      EffectPass? pass = null;
+      EffectVariable? shaderResourceObj = null;
+      EffectShaderResourceVariable? shaderResource = null;
       try
       {
-        technique = _effect.GetTechniqueByIndex(0);
+        technique = _effect!.GetTechniqueByIndex(0);
         pass = technique.GetPassByIndex(0);
         shaderResourceObj = _effect.GetVariableByName("ShaderTexture");
         shaderResource = shaderResourceObj.AsShaderResource();

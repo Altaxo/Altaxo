@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -83,7 +85,7 @@ namespace Altaxo.Main
     /// <param name="projectItemName">Name of the project item.</param>
     /// <param name="projectItem">The project item.</param>
     /// <returns>True if the project item was found; false otherwise.</returns>
-    bool TryGetValue(string projectItemName, out IProjectItem projectItem);
+    bool TryGetValue(string projectItemName, [MaybeNullWhen(false)] out IProjectItem projectItem);
 
     /// <summary>
     /// Adds the specified project item to the collection.
@@ -115,7 +117,7 @@ namespace Altaxo.Main
     /// Arguments are the type of change, the item that changed, the old name (if renamed), and the new name (if renamed).
     /// This event can not be suspended.
     /// </summary>
-    event EventHandler<Main.NamedObjectCollectionChangedEventArgs> CollectionChanged;
+    event EventHandler<Main.NamedObjectCollectionChangedEventArgs>? CollectionChanged;
 
     /// <summary>
     /// Enumerates all project items in the collection.

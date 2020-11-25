@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Main
 {
@@ -34,9 +32,9 @@ namespace Altaxo.Main
   /// </summary>
   public class SuspendableDocumentLeafNodeWithEventArgs : SuspendableDocumentLeafNodeWithSingleAccumulatedData<EventArgs>
   {
-    protected override void AccumulateChangeData(object sender, EventArgs e)
+    protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
-      if (null != e)
+      if (e is not null)
         _accumulatedEventData = e;
       else
         _accumulatedEventData = EventArgs.Empty;

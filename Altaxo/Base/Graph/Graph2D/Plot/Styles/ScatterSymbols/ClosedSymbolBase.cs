@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,8 +39,8 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     protected NamedColor _fillColor = NamedColors.Black;
 
     protected double _relativeStructureWidth = 0.09375;
-    protected IScatterSymbolFrame _frame;
-    protected IScatterSymbolInset _inset;
+    protected IScatterSymbolFrame? _frame;
+    protected IScatterSymbolInset? _inset;
 
     #region Serialization
 
@@ -55,18 +56,18 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
         info.AddEnum("PlotColorInfluence", s._plotColorInfluence);
         info.AddValue("StructureScale", s._relativeStructureWidth);
         info.AddValue("Fill", s._fillColor);
-        info.AddValue("Frame", s._frame);
-        info.AddValue("Inset", s._inset);
+        info.AddValueOrNull("Frame", s._frame);
+        info.AddValueOrNull("Inset", s._inset);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ClosedSymbolBase)o;
+        var s = (ClosedSymbolBase)(o ?? throw new ArgumentNullException(nameof(o)));
         s._plotColorInfluence = (PlotColorInfluence)info.GetEnum("PlotColorInfluence", typeof(PlotColorInfluence));
         s._relativeStructureWidth = info.GetDouble("StructureScale");
         s._fillColor = (NamedColor)info.GetValue("Fill", null);
-        s._frame = (IScatterSymbolFrame)info.GetValue("Frame", null);
-        s._inset = (IScatterSymbolInset)info.GetValue("Inset", null);
+        s._frame = info.GetValueOrNull<IScatterSymbolFrame>("Frame", null);
+        s._inset = info.GetValueOrNull<IScatterSymbolInset>("Inset", null);
 
         return s;
       }
@@ -165,22 +166,22 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       return WithRelativeStructureWidth(relativeStructureWidth);
     }
 
-    public IScatterSymbolFrame Frame
+    public IScatterSymbolFrame? Frame
     {
       get { return _frame; }
     }
 
-    public ClosedSymbolBase WithFrame(IScatterSymbolFrame frame)
+    public ClosedSymbolBase WithFrame(IScatterSymbolFrame? frame)
     {
       return WithFrame(frame, null);
     }
 
-    IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame frame)
+    IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame? frame)
     {
       return WithFrame(frame, null);
     }
 
-    public ClosedSymbolBase WithFrame(IScatterSymbolFrame frame, bool? isInfluencedByPlotColor)
+    public ClosedSymbolBase WithFrame(IScatterSymbolFrame? frame, bool? isInfluencedByPlotColor)
     {
       if (object.ReferenceEquals(_frame, frame) && (!isInfluencedByPlotColor.HasValue || _plotColorInfluence.HasFlag(PlotColorInfluence.FrameColorFull) == isInfluencedByPlotColor.Value))
       {
@@ -196,19 +197,19 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
-    public IScatterSymbolInset Inset { get { return _inset; } }
+    public IScatterSymbolInset? Inset { get { return _inset; } }
 
-    public ClosedSymbolBase WithInset(IScatterSymbolInset inset)
+    public ClosedSymbolBase WithInset(IScatterSymbolInset? inset)
     {
       return WithInset(inset, null);
     }
 
-    IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset inset)
+    IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset? inset)
     {
       return WithInset(inset, null);
     }
 
-    public ClosedSymbolBase WithInset(IScatterSymbolInset inset, bool? isInfluencedByPlotColor)
+    public ClosedSymbolBase WithInset(IScatterSymbolInset? inset, bool? isInfluencedByPlotColor)
     {
       if (object.ReferenceEquals(_inset, inset) && (!isInfluencedByPlotColor.HasValue || _plotColorInfluence.HasFlag(PlotColorInfluence.InsetColorFull) == isInfluencedByPlotColor.Value))
       {
@@ -227,9 +228,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     public void CalculatePolygons(
       double? overrideRelativeStructureWidth,
-      out List<List<ClipperLib.IntPoint>> framePolygon,
-      out List<List<ClipperLib.IntPoint>> insetPolygon,
-      out List<List<ClipperLib.IntPoint>> fillPolygon)
+      out List<List<ClipperLib.IntPoint>>? framePolygon,
+      out List<List<ClipperLib.IntPoint>>? insetPolygon,
+      out List<List<ClipperLib.IntPoint>>? fillPolygon)
 
     {
       insetPolygon = null;
@@ -239,15 +240,15 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       // get outer polygon
       var outerPolygon = GetCopyOfOuterPolygon();
 
-      List<List<ClipperLib.IntPoint>> innerFramePolygon = null;
+      List<List<ClipperLib.IntPoint>>? innerFramePolygon = null;
       double relativeStructureWidth = overrideRelativeStructureWidth ?? _relativeStructureWidth;
-      if (null != _frame && relativeStructureWidth > 0)
+      if (_frame is not null && relativeStructureWidth > 0)
       {
         // get frame polygon
         innerFramePolygon = _frame.GetCopyOfClipperPolygon(relativeStructureWidth, outerPolygon);
       }
 
-      if (null != _inset)
+      if (_inset is not null)
       {
         // get inset polygon
         insetPolygon = _inset.GetCopyOfClipperPolygon(relativeStructureWidth);
@@ -256,7 +257,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       // if null != insetPolygon
       // clip with innerPolygon ?? outerPolygon;
       // store clipped inset polygon / draw it with inset color
-      if (null != insetPolygon)
+      if (insetPolygon is not null)
       {
         var clipper = new ClipperLib.Clipper();
         var solution = new List<List<ClipperLib.IntPoint>>();
@@ -269,7 +270,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       // if null != framePolygon
       // clip with outer polygon ????
       // draw combined path of outer polygon and frame polygon as a hole with frame color
-      if (null != innerFramePolygon)
+      if (innerFramePolygon is not null)
       {
         var clipper = new ClipperLib.Clipper();
         clipper.AddPaths(outerPolygon, ClipperLib.PolyType.ptSubject, true);
@@ -284,7 +285,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       // or else use (framePolygon ?? outerPolygon ) directly
       // draw result with fillColor
 
-      if (null != insetPolygon)
+      if (insetPolygon is not null)
       {
         var clipper = new ClipperLib.Clipper();
         clipper.AddPaths(innerFramePolygon ?? outerPolygon, ClipperLib.PolyType.ptSubject, true);
@@ -298,7 +299,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (!(GetType() == obj?.GetType()))
         return false;

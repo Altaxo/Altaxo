@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Serialization.Ascii
@@ -87,16 +88,16 @@ namespace Altaxo.Serialization.Ascii
     protected int? _indexOfCaptionLine;
 
     /// <summary>Method to separate the tokens in each line of ascii text.</summary>
-    protected IAsciiSeparationStrategy _separationStrategy;
+    protected IAsciiSeparationStrategy? _separationStrategy;
 
     /// <summary>Gets or sets the culture that formats numbers.</summary>
-    protected System.Globalization.CultureInfo _numberFormatCulture;
+    protected System.Globalization.CultureInfo? _numberFormatCulture;
 
     /// <summary>Gets or sets the culture that formats date/time values.</summary>
-    protected System.Globalization.CultureInfo _dateTimeFormatCulture;
+    protected System.Globalization.CultureInfo? _dateTimeFormatCulture;
 
     /// <summary>Structur of the main part of the file (which data type is placed in which column).</summary>
-    protected AsciiLineStructure _recognizedStructure;
+    protected AsciiLineStructure? _recognizedStructure;
 
     #region Serialization
 
@@ -117,31 +118,33 @@ namespace Altaxo.Serialization.Ascii
         info.AddValue("IndexOfCaptionLine", s.IndexOfCaptionLine);
         info.AddValue("NumberOfMainHeaderLines", s.NumberOfMainHeaderLines);
         info.AddEnum("HeaderLinesDestination", s.HeaderLinesDestination);
-        info.AddValue("SeparationStrategy", s.SeparationStrategy);
-        info.AddValue("NumberFormatCultureLCID", s.NumberFormatCulture.LCID);
-        info.AddValue("DateTimeFormatCultureLCID", s.DateTimeFormatCulture.LCID);
-        info.AddValue("RecognizedStructure", s.RecognizedStructure);
+        info.AddValueOrNull("SeparationStrategy", s.SeparationStrategy);
+        info.AddValue("NumberFormatCultureLCID", s.NumberFormatCulture?.LCID ?? -1);
+        info.AddValue("DateTimeFormatCultureLCID", s.DateTimeFormatCulture?.LCID ?? -1);
+        info.AddValueOrNull("RecognizedStructure", s.RecognizedStructure);
         info.AddValue("ImportMultipleStreamsVertically", s.ImportMultipleStreamsVertically);
       }
 
-      protected virtual AsciiImportOptions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AsciiImportOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new AsciiImportOptions() : (AsciiImportOptions)o);
+        var s = (o is null ? new AsciiImportOptions() : (AsciiImportOptions)o);
 
         s.RenameWorksheet = info.GetBoolean("RenameWorksheet");
         s.RenameColumns = info.GetBoolean("RenameColumns");
         s.IndexOfCaptionLine = info.GetNullableInt32("IndexOfCaptionLine");
         s.NumberOfMainHeaderLines = info.GetNullableInt32("NumberOfMainHeaderLines");
         s.HeaderLinesDestination = (AsciiHeaderLinesDestination)info.GetEnum("HeaderLinesDestination", typeof(AsciiHeaderLinesDestination));
-        s.SeparationStrategy = (IAsciiSeparationStrategy)info.GetValue("SeparationStrategy", s);
-        s.NumberFormatCulture = System.Globalization.CultureInfo.GetCultureInfo(info.GetInt32("NumberFormatCultureLCID"));
-        s.DateTimeFormatCulture = System.Globalization.CultureInfo.GetCultureInfo(info.GetInt32("DateTimeFormatCultureLCID"));
-        s.RecognizedStructure = (AsciiLineStructure)info.GetValue("AsciiLineStructure", s);
+        s.SeparationStrategy = (IAsciiSeparationStrategy?)info.GetValueOrNull("SeparationStrategy", s);
+        var numberLCID = info.GetInt32("NumberFormatCultureLCID");
+        s.NumberFormatCulture = -1 == numberLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(numberLCID);
+        var dateLCID = info.GetInt32("DateTimeFormatCultureLCID");
+        s.DateTimeFormatCulture = -1 == dateLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(dateLCID);
+        s.RecognizedStructure = (AsciiLineStructure?)info.GetValueOrNull("AsciiLineStructure", s);
         s.ImportMultipleStreamsVertically = info.GetBoolean("ImportMultipleStreamsVertically");
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -178,16 +181,23 @@ namespace Altaxo.Serialization.Ascii
     public int? IndexOfCaptionLine { get { return _indexOfCaptionLine; } set { SetMemberAndRaiseSelfChanged(ref _indexOfCaptionLine, value); } }
 
     /// <summary>Method to separate the tokens in each line of ascii text.</summary>
-    public IAsciiSeparationStrategy SeparationStrategy { get { return _separationStrategy; } set { if (!object.ReferenceEquals(_separationStrategy, value)) { _separationStrategy = value; EhSelfChanged(); } } }
+    public IAsciiSeparationStrategy? SeparationStrategy { get { return _separationStrategy; } set { if (!object.ReferenceEquals(_separationStrategy, value)) { _separationStrategy = value; EhSelfChanged(); } } }
 
     /// <summary>Gets or sets the culture that formats numbers.</summary>
-    public System.Globalization.CultureInfo NumberFormatCulture { get { return _numberFormatCulture; } set { if (!object.ReferenceEquals(_numberFormatCulture, value)) { _numberFormatCulture = value; EhSelfChanged(); } } }
+    public System.Globalization.CultureInfo? NumberFormatCulture
+    {
+      get
+      {
+        return _numberFormatCulture;
+      }
+      set { if (!object.ReferenceEquals(_numberFormatCulture, value)) { _numberFormatCulture = value; EhSelfChanged(); } }
+    }
 
     /// <summary>Gets or sets the culture that formats date/time values.</summary>
-    public System.Globalization.CultureInfo DateTimeFormatCulture { get { return _dateTimeFormatCulture; } set { if (!object.ReferenceEquals(_dateTimeFormatCulture, value)) { _dateTimeFormatCulture = value; EhSelfChanged(); } } }
+    public System.Globalization.CultureInfo? DateTimeFormatCulture { get { return _dateTimeFormatCulture; } set { if (!object.ReferenceEquals(_dateTimeFormatCulture, value)) { _dateTimeFormatCulture = value; EhSelfChanged(); } } }
 
     /// <summary>Structur of the main part of the file (which data type is placed in which column).</summary>
-    public AsciiLineStructure RecognizedStructure { get { return _recognizedStructure; } set { if (!object.ReferenceEquals(_recognizedStructure, value)) { _recognizedStructure = value; EhSelfChanged(); } } }
+    public AsciiLineStructure? RecognizedStructure { get { return _recognizedStructure; } set { if (!object.ReferenceEquals(_recognizedStructure, value)) { _recognizedStructure = value; EhSelfChanged(); } } }
 
     #endregion Properties
 
@@ -200,22 +210,22 @@ namespace Altaxo.Serialization.Ascii
       get
       {
         return
-          null != _numberOfMainHeaderLines &&
-          null != _indexOfCaptionLine &&
-          null != _separationStrategy &&
-          null != _recognizedStructure &&
-          null != _numberFormatCulture &&
-          null != _dateTimeFormatCulture;
+          _numberOfMainHeaderLines is not null &&
+          _indexOfCaptionLine is not null &&
+          _separationStrategy is not null &&
+          _recognizedStructure is not null &&
+          _numberFormatCulture is not null &&
+          _dateTimeFormatCulture is not null;
       }
     }
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as AsciiImportOptions;
-      if (null != from)
+      if (from is not null)
       {
         using (var suspendToken = SuspendGetToken())
         {
@@ -227,13 +237,13 @@ namespace Altaxo.Serialization.Ascii
 
           IndexOfCaptionLine = from.IndexOfCaptionLine;
 
-          SeparationStrategy = null == from.SeparationStrategy ? null : (IAsciiSeparationStrategy)from.SeparationStrategy.Clone();
+          SeparationStrategy = from.SeparationStrategy is null ? null : (IAsciiSeparationStrategy)from.SeparationStrategy.Clone();
 
-          NumberFormatCulture = null == from.NumberFormatCulture ? null : (System.Globalization.CultureInfo)from.NumberFormatCulture.Clone();
+          NumberFormatCulture = from.NumberFormatCulture is null ? null : (System.Globalization.CultureInfo)from.NumberFormatCulture.Clone();
 
-          DateTimeFormatCulture = null == from.DateTimeFormatCulture ? null : (System.Globalization.CultureInfo)from.DateTimeFormatCulture.Clone();
+          DateTimeFormatCulture = from.DateTimeFormatCulture is null ? null : (System.Globalization.CultureInfo)from.DateTimeFormatCulture.Clone();
 
-          RecognizedStructure = from.RecognizedStructure == null ? null : from.RecognizedStructure;
+          RecognizedStructure = from.RecognizedStructure is null ? null : from.RecognizedStructure;
 
           ImportMultipleStreamsVertically = from.ImportMultipleStreamsVertically;
 

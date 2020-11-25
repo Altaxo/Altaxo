@@ -28,7 +28,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using ICSharpCode.SharpZipLib.Zip;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -40,7 +39,13 @@ namespace Altaxo.Serialization.AutoUpdates
     protected const string PackListRelativePath = "doc\\PackList.txt";
     protected const string UpdateLockFileName = "~AltaxoIsCurrentlyUpdated.txt";
 
-    private static System.Threading.EventWaitHandle _eventWaitHandle;
+    private static System.Threading.EventWaitHandle? _eventWaitHandle;
+
+    /// <summary>Full name of the zip file that contains the update files.</summary>
+    protected string _packageName;
+
+    /// <summary>Full name of the Altaxo executable that should be updated.</summary>
+    protected string _altaxoExecutableFullName;
 
     /// <summary>Full path to the installation directory (the directory in which the subdirs 'bin', 'doc', 'Addins' and 'data' resides).</summary>
     protected string _pathToInstallation;
@@ -52,7 +57,16 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>If true, this indicates that the waiting for the end of Altaxo was already done successfully. Thus in a possible second installation attempt we can skip this waiting.</summary>
     protected bool _isWaitingForAltaxosEndDone;
 
+    protected InstallerMethodBase(string eventName, string packageFullFileName, string altaxoExecutableFullFileName)
+    {
+      _eventName = eventName;
+      _packageName = packageFullFileName;
+      _altaxoExecutableFullName = altaxoExecutableFullFileName;
 
+      _pathToInstallation = Path.GetDirectoryName(_altaxoExecutableFullName) ?? throw new ArgumentException($"Can not get directory name from Altaxo's executable file name: {_altaxoExecutableFullName}");
+      if (!Path.IsPathRooted(_pathToInstallation))
+        throw new ArgumentException("Path to Altaxo executable is not an absolute path!");
+    }
 
     /// <summary>Tests whether the pack list file exists in the installation directory (this is the file PackList.txt in the doc folder of the Altaxo installation).</summary>
     /// <returns>Returns <c>true</c> if the pack list file exists.</returns>
@@ -242,7 +256,7 @@ namespace Altaxo.Serialization.AutoUpdates
             ReportProgress(0, string.Format("Failed to delete orphaned directory '{0}' ({1}. try), Message: {2}. Please close all explorer windows or other programs that currently access this directory.", dir.FullName, i, ex.Message));
             System.Threading.Thread.Sleep(1000);
             if (j == 0)
-              throw ex;
+              throw;
           }
         }
       }
@@ -252,7 +266,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
     public static string GetBaseDirectory(string directoryName)
     {
-      return Path.GetDirectoryName(directoryName);
+      return Path.GetDirectoryName(directoryName) ?? throw new ArgumentException($"Can not base directory of directory: {directoryName}");
     }
 
     public static string GetLastPathPart(string fullFileName, string baseDirectory)
@@ -324,7 +338,7 @@ namespace Altaxo.Serialization.AutoUpdates
     {
       var dictionary = new Dictionary<string, long>();
 
-      byte[] buff = null;
+      byte[]? buff = null;
       using (var fso = new FileStream(Path.Combine(pathToInstallation, PackListRelativePath), FileMode.Open, FileAccess.Read, FileShare.Read))
       {
         buff = new byte[fso.Length];
@@ -334,8 +348,8 @@ namespace Altaxo.Serialization.AutoUpdates
       // thus we ensured that PackList.txt is closed, so that it can be deleted now
 
       var str = new StreamReader(new MemoryStream(buff));
-      string line;
-      while (null != (line = str.ReadLine()))
+      string? line;
+      while ((line = str.ReadLine()) is not null)
       {
         line = line.Trim();
         if (line.Length == 0)
@@ -399,7 +413,7 @@ namespace Altaxo.Serialization.AutoUpdates
       }
 
       // Ok, it failed, so we try to create the destination directory first...
-      var destinationDirectory = Path.GetDirectoryName(destFileName);
+      var destinationDirectory = Path.GetDirectoryName(destFileName) ?? throw new ArgumentException($"Can not get base directory of destination file name: {destFileName}");
       Directory.CreateDirectory(destinationDirectory);
       File.Copy(sourceFileName, destFileName, overwrite);
     }
@@ -408,25 +422,25 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="fs">File stream of the package file (this is a zip file).</param>
     /// <param name="ReportProgress">Used to report the installation progress. Arguments are the progress in percent and a progress message. If this function returns true, the program must thow an <see cref="System.Threading.ThreadInterruptedException"/>.</param>
     /// <param name="cleanupAction">Clean up actions that should be called before you throw an exception.</param>
-    protected static void ExtractPackageFiles(FileStream fs, string pathToInstallation, Func<double, string, MessageKind, bool> ReportProgress, Action cleanupAction = null)
+    protected static void ExtractPackageFiles(FileStream fs, string pathToInstallation, Func<double, string, MessageKind, bool> ReportProgress, Action? cleanupAction = null)
     {
-      var zipFile = new ZipFile(fs);
+      var zipFile = new System.IO.Compression.ZipArchive(fs, System.IO.Compression.ZipArchiveMode.Read);
       byte[] buffer = new byte[1024 * 1024];
 
-      double totalNumberOfFiles = zipFile.Count;
+      double totalNumberOfFiles = zipFile.Entries.Count;
       int currentProcessedFile = -1;
-      foreach (ZipEntry entry in zipFile)
+      foreach (var entry in zipFile.Entries)
       {
         ++currentProcessedFile;
         var destinationFileName = Path.Combine(pathToInstallation, entry.Name);
-        var destinationPath = Path.GetDirectoryName(destinationFileName);
+        var destinationPath = Path.GetDirectoryName(destinationFileName) ?? throw new ArgumentException($"Can not get base directory of file: {destinationFileName}");
 
         try
         {
           if (!Directory.Exists(destinationPath))
             Directory.CreateDirectory(destinationPath);
 
-          using (var entryStream = zipFile.GetInputStream(entry))
+          using (var entryStream = entry.Open())
           {
             using (var destStream = new FileStream(destinationFileName, FileMode.Create, FileAccess.Write, FileShare.None))
             {
@@ -437,7 +451,7 @@ namespace Altaxo.Serialization.AutoUpdates
               }
             }
           }
-          File.SetLastWriteTime(destinationFileName, entry.DateTime);
+          File.SetLastWriteTime(destinationFileName, entry.LastWriteTime.DateTime);
 
           if (ReportProgress(100 * currentProcessedFile / totalNumberOfFiles, string.Format("Updating file {0}", destinationFileName), MessageKind.Info))
           {
@@ -447,7 +461,7 @@ namespace Altaxo.Serialization.AutoUpdates
         }
         catch (Exception)
         {
-          cleanupAction();
+          cleanupAction?.Invoke();
           throw;
         }
       }
@@ -467,7 +481,7 @@ namespace Altaxo.Serialization.AutoUpdates
       var exeFiles = allFiles.Where(fi => (Path.GetExtension(fi.FullName).ToLowerInvariant() == ".exe")).ToArray();
       var othFiles = allFiles.Where(fi => !(Path.GetExtension(fi.FullName).ToLowerInvariant() == ".exe")).ToArray();
 
-      var exeFileStreams = new FileStream[exeFiles.Length];
+      var exeFileStreams = new FileStream?[exeFiles.Length];
 
       // signal Altaxo, that we have the stream now
       if (!_isWaitingForAltaxosEndDone)
@@ -489,7 +503,7 @@ namespace Altaxo.Serialization.AutoUpdates
           {
             for (int j = i - 1; j >= 0; --j)
             {
-              exeFileStreams[j].Dispose();
+              exeFileStreams[j]?.Dispose();
               exeFileStreams[j] = null;
             }
             success = false;
@@ -559,7 +573,7 @@ namespace Altaxo.Serialization.AutoUpdates
       // now release the handles to the exe-files
       for (int i = exeFileStreams.Length - 1; i >= 0; --i)
       {
-        exeFileStreams[i].Dispose();
+        exeFileStreams[i]?.Dispose();
         exeFileStreams[i] = null;
       }
 

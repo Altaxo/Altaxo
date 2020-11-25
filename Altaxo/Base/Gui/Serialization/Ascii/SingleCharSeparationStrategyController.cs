@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       {
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.SeparatorChar = _doc.SeparatorChar;
       }

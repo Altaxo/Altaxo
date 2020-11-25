@@ -45,6 +45,7 @@
 // Future possibilities
 //   Comments!
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -505,7 +506,7 @@ namespace Poly2Tri
         return false;
       triangle.MarkConstrainedEdge(index);
       triangle = triangle.Neighbors[index];
-      if (triangle != null)
+      if (triangle is not null)
         triangle.MarkConstrainedEdge(ep, eq);
       return true;
     }
@@ -595,7 +596,7 @@ namespace Poly2Tri
       DelaunayTriangle ot = t.NeighborAcrossFrom(p);
       TriangulationPoint op = ot.OppositePoint(t, p);
 
-      if (ot == null)
+      if (ot is null)
       {
         // If we want to integrate the fillEdgeEvent do it here
         // With current implementation we should never get here
@@ -726,7 +727,7 @@ namespace Poly2Tri
       ot = t.NeighborAcrossFrom(p);
       op = ot.OppositePoint(t, p);
 
-      if (ot == null)
+      if (ot is null)
       {
         // If we want to integrate the fillEdgeEvent do it here
         // With current implementation we should never get here
@@ -976,7 +977,7 @@ namespace Poly2Tri
           continue;
 
         DelaunayTriangle ot = t.Neighbors[i];
-        if (ot == null)
+        if (ot is null)
           continue;
 
         TriangulationPoint p = t.Points[i];
@@ -1077,13 +1078,13 @@ namespace Poly2Tri
       //      the right side.
       t.Neighbors.Clear();
       ot.Neighbors.Clear();
-      if (n1 != null)
+      if (n1 is not null)
         ot.MarkNeighbor(n1);
-      if (n2 != null)
+      if (n2 is not null)
         t.MarkNeighbor(n2);
-      if (n3 != null)
+      if (n3 is not null)
         t.MarkNeighbor(n3);
-      if (n4 != null)
+      if (n4 is not null)
         ot.MarkNeighbor(n4);
       t.MarkNeighbor(ot);
     }

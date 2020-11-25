@@ -22,8 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Threading;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Input;
 using Altaxo.Geometry;
 using Altaxo.Gui;
@@ -58,19 +59,28 @@ namespace Altaxo.Main.Services
 
     void FindAndAttachControlTo(IMVCController controller);
 
-    object FindAndAttachControlTo(IMVCController controller, Type expectedType);
+    object? FindAndAttachControlTo(IMVCController controller, Type expectedType);
 
-    IMVCController GetController(object[] args, Type expectedControllerType);
+    IMVCController? GetController(object[] args, Type expectedControllerType);
 
-    IMVCController GetController(object[] args, Type expectedControllerType, UseDocument copyDocument);
+    IMVCController? GetController(object[] args, Type expectedControllerType, UseDocument copyDocument);
 
-    IMVCController GetController(object[] creationArgs, Type overrideArg0Type, Type expectedControllerType, UseDocument copyDocument);
+    IMVCController? GetController(object[] creationArgs, Type overrideArg0Type, Type expectedControllerType, UseDocument copyDocument);
 
-    IMVCController GetControllerAndControl(object[] args, Type expectedControllerType);
+    IMVCController? GetControllerAndControl(object[] args, Type expectedControllerType);
 
-    IMVCController GetControllerAndControl(object[] args, Type expectedControllerType, UseDocument copyDocument);
+    /// <summary>
+    /// Gets the required controller and control. Throws an exception if either controller or control could not be retrieved.
+    /// </summary>
+    /// <typeparam name="T">The type of expected controller.</typeparam>
+    /// <param name="arg">The first argument. Always required.</param>
+    /// <param name="args">Additional arguments.</param>
+    /// <returns>The controller for the provided arguments. A control is already set.</returns>
+    T GetRequiredControllerAndControl<T>(object arg, params object?[]? args) where T : class, IMVCController;
 
-    IMVCController GetControllerAndControl(object[] args, Type overrideArg0Type, Type expectedControllerType, UseDocument copyDocument);
+    IMVCController? GetControllerAndControl(object[] args, Type expectedControllerType, UseDocument copyDocument);
+
+    IMVCController? GetControllerAndControl(object[] args, Type overrideArg0Type, Type expectedControllerType, UseDocument copyDocument);
 
     string GetUserFriendlyClassName(Type definedtype);
 
@@ -130,7 +140,7 @@ namespace Altaxo.Main.Services
     /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
     /// </list>
     /// </remarks>
-    bool ShowDialog<T>(ref T arg, string title, bool showApplyButton);
+    bool ShowDialog<T>([DisallowNull][NotNull] ref T arg, string title, bool showApplyButton);
 
     bool ShowDialog(IMVCAController controller, string title, bool showApplyButton);
 
@@ -204,7 +214,7 @@ namespace Altaxo.Main.Services
     /// <param name="execute">The execute action.</param>
     /// <param name="canExecute">The canExecute function that evaluates if the execute action can be executed under the current conditions. May be null (in this case, it is considered to return true).</param>
     /// <returns>A command that can be used, e.g. for binding to the Gui.</returns>
-    ICommand NewRelayCommand(Action execute, Func<bool> canExecute = null);
+    ICommand NewRelayCommand(Action execute, Func<bool>? canExecute = null);
 
     /// <summary>
     /// Gets a command that executes an action and evaluates the <paramref name="canExecute"/> condition every time when
@@ -213,7 +223,7 @@ namespace Altaxo.Main.Services
     /// <param name="execute">The execute action.</param>
     /// <param name="canExecute">The canExecute function that evaluates if the execute action can be executed under the current conditions. May be null (in this case, it is considered to return true).</param>
     /// <returns>A command that can be used, e.g. for binding to the Gui.</returns>
-    ICommand NewRelayCommand(Action<object> execute, Predicate<object> canExecute = null);
+    ICommand NewRelayCommand(Action<object> execute, Predicate<object>? canExecute = null);
 
     /// <summary>
     /// Registers a handler that will be called back if something in the Gui has changed so that

@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Geometry
     private double _polarAngleDegrees;
     private double _elevationAngleDegrees;
 
-    public event EventHandler SelectedValueChanged;
+    public event EventHandler? SelectedValueChanged;
 
     private GuiChangeLocker _lock;
 

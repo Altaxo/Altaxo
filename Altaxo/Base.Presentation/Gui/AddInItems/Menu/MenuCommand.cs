@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -62,7 +63,7 @@ namespace Altaxo.Gui.AddInItems
 
     internal static void AddGestureToInputBindingOwner(UIElement inputBindingOwner, KeyGesture kg, System.Windows.Input.ICommand shortcutCommand, string featureName)
     {
-      if (inputBindingOwner != null && kg != null && shortcutCommand != null)
+      if (inputBindingOwner is not null && kg is not null && shortcutCommand is not null)
       {
         // wrap the shortcut command so that it can report to UDC with
         // different activation method
@@ -72,12 +73,12 @@ namespace Altaxo.Gui.AddInItems
         var existingInputBinding =
           (from InputBinding b in inputBindingOwner.InputBindings
            let gesture = b.Gesture as KeyGesture
-           where gesture != null
+           where gesture is not null
            && gesture.Key == kg.Key
            && gesture.Modifiers == kg.Modifiers
            select b
           ).FirstOrDefault();
-        if (existingInputBinding != null)
+        if (existingInputBinding is not null)
         {
           // modify the existing input binding to allow calling both commands
           existingInputBinding.Command = new AmbiguousCommandWrapper(existingInputBinding.Command, shortcutCommand);
@@ -109,8 +110,8 @@ namespace Altaxo.Gui.AddInItems
 
       public ShortcutCommandWrapper(System.Windows.Input.ICommand baseCommand, string featureName)
       {
-        Debug.Assert(baseCommand != null);
-        Debug.Assert(featureName != null);
+        Debug.Assert(baseCommand is not null);
+        Debug.Assert(featureName is not null);
         this.baseCommand = baseCommand;
         this.featureName = featureName;
       }

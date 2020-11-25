@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 
 namespace Altaxo.Data
@@ -44,7 +45,7 @@ namespace Altaxo.Data
         info.AddValue("Value", s._constantValue);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         double value = info.GetDouble("Value");
         return new ConstantDoubleColumn(value);

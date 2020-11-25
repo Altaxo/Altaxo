@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -43,7 +44,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       protected PointD2D _fixrPosition;
       protected PointD2D _fixaPosition;
 
-      private Action<PointD2D> _moveAction;
+      private Action<PointD2D>? _moveAction;
       private bool _hasMoved;
 
       public static Pen PathOutlinePen = new Pen(Color.Blue, 0);
@@ -94,7 +95,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public virtual void MoveGrip(PointD2D newPosition)
       {
-        if (_moveAction != null)
+        if (_moveAction is not null)
         {
           _moveAction(newPosition);
         }

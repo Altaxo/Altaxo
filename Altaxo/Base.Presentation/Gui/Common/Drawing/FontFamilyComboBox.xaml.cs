@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
       {
-        if (value == null)
+        if (value is null)
           return Binding.DoNothing;
         if (value is string fontFamilyName)
         {
@@ -99,7 +100,7 @@ namespace Altaxo.Gui.Common.Drawing
       {
         get
         {
-          if (null == _imgSource)
+          if (_imgSource is null)
             _imgSource = GetImage((string)Value);
           return _imgSource;
         }
@@ -149,9 +150,9 @@ namespace Altaxo.Gui.Common.Drawing
         if (!typeface.TryGetGlyphTypeface(out var glyphTypeFace))
           glyphTypeFace = null;
 
-        if (null != glyphTypeFace)
+        if (glyphTypeFace is not null)
         {
-          var glyphRun = new GlyphRun();
+          var glyphRun = new GlyphRun(1);
           ((System.ComponentModel.ISupportInitialize)glyphRun).BeginInit();
           glyphRun.GlyphTypeface = glyphTypeFace;
           glyphRun.FontRenderingEmSize = fontSize;
@@ -197,7 +198,7 @@ namespace Altaxo.Gui.Common.Drawing
     private static List<FontComboBoxItem> _allItems = new List<FontComboBoxItem>();
     private static Dictionary<string, FontComboBoxItem> _cachedItems = new Dictionary<string, FontComboBoxItem>();
 
-    public event DependencyPropertyChangedEventHandler SelectedFontFamilyNameChanged;
+    public event DependencyPropertyChangedEventHandler? SelectedFontFamilyNameChanged;
 
     static FontFamilyComboBox()
     {

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -35,12 +36,12 @@ namespace Altaxo.Main.Properties
     {
     }
 
-    public override Main.IDocumentNode ParentObject
+    public override Main.IDocumentNode? ParentObject
     {
       get { return _parent; }
       set
       {
-        if (null != value)
+        if (value is not null)
           throw new InvalidOperationException("ParentObject of ProjectFolderPropertyDocumentCollection is fixed and cannot be set");
 
         base.ParentObject = value; // allow setting Parent to null (required for dispose)
@@ -79,9 +80,9 @@ namespace Altaxo.Main.Properties
     /// </summary>
     /// <param name="child">A graph for which the parent collection is searched.</param>
     /// <returns>The parent ProjectFolderPropertyBagCollection, if it exists, or null otherwise.</returns>
-    public static ProjectFolderPropertyDocumentCollection GetParentProjectFolderPropertyBagCollectionOf(Main.IDocumentLeafNode child)
+    public static ProjectFolderPropertyDocumentCollection? GetParentProjectFolderPropertyBagCollectionOf(Main.IDocumentLeafNode child)
     {
-      return (ProjectFolderPropertyDocumentCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(ProjectFolderPropertyDocumentCollection));
+      return (ProjectFolderPropertyDocumentCollection?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(ProjectFolderPropertyDocumentCollection));
     }
   }
 }

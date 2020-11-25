@@ -26,6 +26,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -55,13 +56,18 @@ namespace Altaxo.DataConnection
       try
       {
         // create objects we'll need
-        var type = Type.GetTypeFromProgID("DataLinks");
-        dynamic dlinks = Activator.CreateInstance(type);
+        dynamic? dlinks = null, conn = null;
 
-        dynamic conn = Activator.CreateInstance(Type.GetTypeFromProgID("ADODB.Connection")); // new ADODB.ConnectionClass();
+        var type = Type.GetTypeFromProgID("DataLinks");
+        if (!(type is null))
+          dlinks = Activator.CreateInstance(type);
+
+        var connType = Type.GetTypeFromProgID("ADODB.Connection");
+        if (!(connType is null))
+          conn = Activator.CreateInstance(connType); // new ADODB.ConnectionClass();
 
         // sanity
-        if (dlinks == null || conn == null)
+        if (dlinks is null || conn is null)
         {
           Warning(@"Failed to create DataLinks.\r\nPlease check that oledb32.dll is properly installed and registered.\r\n(the usual location is c:\Program Files\Common Files\System\Ole DB\oledb32.dll).");
           return connString;
@@ -122,16 +128,16 @@ namespace Altaxo.DataConnection
     public static string TranslateConnectionString(string connString)
     {
       // we are only interested in the MSDASQL provider (ODBC data sources)
-      if (connString == null ||
+      if (connString is null ||
           connString.IndexOf("provider=msdasql", StringComparison.OrdinalIgnoreCase) < 0)
       {
-        return connString;
+        return connString ?? string.Empty;
       }
 
       // get name of ODBC data source
       var match = Regex.Match(connString, "Data Source=(?<ds>[^;]+)", RegexOptions.IgnoreCase);
       string ds = match.Groups["ds"].Value;
-      if (ds == null || ds.Length == 0)
+      if (ds is null || ds.Length == 0)
       {
         return connString;
       }
@@ -140,14 +146,14 @@ namespace Altaxo.DataConnection
       string keyName = @"software\odbc\odbc.ini\" + ds;
       using (var key = Registry.LocalMachine.OpenSubKey(keyName))
       {
-        if (key != null)
+        if (key is not null)
         {
           return TranslateConnectionString(connString, key);
         }
       }
       using (var key = Registry.CurrentUser.OpenSubKey(keyName))
       {
-        if (key != null)
+        if (key is not null)
         {
           return TranslateConnectionString(connString, key);
         }
@@ -160,24 +166,24 @@ namespace Altaxo.DataConnection
     private static string TranslateConnectionString(string connString, RegistryKey key)
     {
       // get driver
-      string driver = key.GetValue("driver") as string;
+      string? driver = key.GetValue("driver") as string;
 
       // translate Access (jet) data sources
-      if (driver != null && driver.ToLower().IndexOf("odbcjt") > -1)
+      if (driver is not null && driver.ToLower().IndexOf("odbcjt") > -1)
       {
-        string mdb = key.GetValue("dbq") as string;
-        if (mdb != null && mdb.ToLower().EndsWith(".mdb"))
+        string? mdb = key.GetValue("dbq") as string;
+        if (mdb is not null && mdb.ToLower().EndsWith(".mdb"))
         {
           return "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + mdb + ";";
         }
       }
 
       // translate SqlServer data sources
-      if (driver != null && driver.ToLower().IndexOf("sqlsrv") > -1)
+      if (driver is not null && driver.ToLower().IndexOf("sqlsrv") > -1)
       {
-        string server = key.GetValue("server") as string;
-        string dbase = key.GetValue("database") as string;
-        if (server != null && server.Length > 0 && dbase != null && dbase.Length > 0)
+        string? server = key.GetValue("server") as string;
+        string? dbase = key.GetValue("database") as string;
+        if (server is not null && server.Length > 0 && dbase is not null && dbase.Length > 0)
         {
           string fmt =
               "Provider=SQLOLEDB.1;Integrated Security=SSPI;" +

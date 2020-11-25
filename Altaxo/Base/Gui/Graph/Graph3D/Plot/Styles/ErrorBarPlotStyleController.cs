@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -83,6 +84,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// Initializes the common error column.
     /// </summary>
     /// <param name="columnAsText">Column's name.</param>
+    /// <param name="toolTip"></param>
+    /// <param name="status"></param>
     void Initialize_CommonErrorColumn(string columnAsText, string toolTip, int status);
 
     void Initialize_CommonErrorColumnTransformation(string transformationTextToShow, string transformationToolTip);
@@ -91,6 +94,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// Initializes the positive error column.
     /// </summary>
     /// <param name="positiveErrorColumnAsText">Column's name.</param>
+    /// <param name="positiveErrorColumnToolTip"></param>
+    /// <param name="positiveErrorColumnStatus"></param>
     void Initialize_PositiveErrorColumn(string positiveErrorColumnAsText, string positiveErrorColumnToolTip, int positiveErrorColumnStatus);
 
     void Initialize_PositiveErrorColumnTransformation(string transformationTextToShow, string transformationToolTip);
@@ -99,6 +104,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// Initializes the positive error column.
     /// </summary>
     /// <param name="negativeErrorColumnAsText">Column's name.</param>
+    /// <param name="negativeErrorColumnToolTip"></param>
+    /// <param name="negativeErrorColumnStatus"></param>
     void Initialize_NegativeErrorColumn(string negativeErrorColumnAsText, string negativeErrorColumnToolTip, int negativeErrorColumnStatus);
 
     void Initialize_NegativeErrorColumnTransformation(string transformationTextToShow, string transformationToolTip);
@@ -170,7 +177,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
         _meaningOfValues = new SelectableListNodeList(_doc.MeaningOfValues);
       }
-      if (_view != null)
+      if (_view is not null)
       {
         _view.IndependentColor = _doc.IndependentColor;
         _view.IndependentDashPattern = _doc.IndependentDashPattern;
@@ -372,7 +379,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhIndependentColorChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentColor = _view.IndependentColor;
         _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
@@ -381,7 +388,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhIndependentDashPatternChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentDashPattern = _view.IndependentDashPattern;
       }

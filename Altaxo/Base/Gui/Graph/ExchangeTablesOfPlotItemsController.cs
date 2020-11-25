@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -110,7 +111,7 @@ namespace Altaxo.Gui.Graph
       else if (proxy.DocumentObject() is Altaxo.Data.DataColumn dataColumn)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataColumn);
-        if (table != null)
+        if (table is not null)
         {
           var tablePath = AbsoluteDocumentPath.GetAbsolutePath(table);
           if (!_tablesToChange.ContainsKey(tablePath))
@@ -120,7 +121,7 @@ namespace Altaxo.Gui.Graph
       else if (proxy.DocumentObject() is Altaxo.Data.DataColumnCollection dataColumnCollection)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataColumnCollection);
-        if (table != null)
+        if (table is not null)
         {
           var tablePath = AbsoluteDocumentPath.GetAbsolutePath(table);
           if (!_tablesToChange.ContainsKey(tablePath))
@@ -169,10 +170,10 @@ namespace Altaxo.Gui.Graph
       else if (proxy.DocumentObject() is Altaxo.Data.DataColumn dataColumn)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataColumn);
-        if (table != null)
+        if (table is not null)
         {
           var tablePath = AbsoluteDocumentPath.GetAbsolutePath(table);
-          if (_tablesToChange.TryGetValue(tablePath, out substituteTable) && null != substituteTable)
+          if (_tablesToChange.TryGetValue(tablePath, out substituteTable) && substituteTable is not null)
           {
             proxy.ReplacePathParts(tablePath, AbsoluteDocumentPath.GetAbsolutePath(substituteTable), (IDocumentLeafNode)owner);
           }
@@ -193,7 +194,7 @@ namespace Altaxo.Gui.Graph
         if (path.Count >= 2 && path[0] == tableCollectionPath[0])
         {
           var tablePath = path.SubPath(0, 2);
-          if (_tablesToChange.TryGetValue(tablePath, out substituteTable) && null != substituteTable)
+          if (_tablesToChange.TryGetValue(tablePath, out substituteTable) && substituteTable is not null)
           {
             proxy.ReplacePathParts(tablePath, AbsoluteDocumentPath.GetAbsolutePath(substituteTable), (IDocumentLeafNode)owner);
           }
@@ -314,9 +315,9 @@ namespace Altaxo.Gui.Graph
       {
         get
         {
-          if (null != _previewTableName)
+          if (_previewTableName is not null)
             return _previewTableName;
-          else if (null != _newTable)
+          else if (_newTable is not null)
             return _newTable.Name;
           else
             return "";
@@ -327,14 +328,14 @@ namespace Altaxo.Gui.Graph
       {
         get
         {
-          if (null != _previewTableName)
+          if (_previewTableName is not null)
           {
             if (Current.Project.DataTableCollection.Contains(_previewTableName))
               return "preview: OK";
             else
               return "preview: missing!";
           }
-          else if (null != _newTable)
+          else if (_newTable is not null)
           {
             return "changed";
           }
@@ -373,7 +374,7 @@ namespace Altaxo.Gui.Graph
     /// <returns>Returns <see langword="true"/> if successfull; otherwise <see langword="false"/>.</returns>
     public bool InitializeDocument(params object[] args)
     {
-      if (null == args || 0 == args.Length || !(args[0] is ExchangeTablesOfPlotItemsDocument))
+      if (args is null || 0 == args.Length || !(args[0] is ExchangeTablesOfPlotItemsDocument))
         return false;
 
       _doc = args[0] as ExchangeTablesOfPlotItemsDocument;
@@ -395,7 +396,7 @@ namespace Altaxo.Gui.Graph
         _substringReplacementCandidatesList = new SelectableListNodeList();
         _commonSubstringsList = new SelectableListNodeList();
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeExchangeTableList(_tableList);
       }
@@ -451,7 +452,7 @@ namespace Altaxo.Gui.Graph
     {
       foreach (MyXTableListNode node in _tableList)
       {
-        if (node.PreviewTableName != null && Current.Project.DataTableCollection.Contains(node.PreviewTableName))
+        if (node.PreviewTableName is not null && Current.Project.DataTableCollection.Contains(node.PreviewTableName))
         {
           node.NewTable = Current.Project.DataTableCollection[node.PreviewTableName];
           node.PreviewTableName = null;
@@ -503,7 +504,7 @@ namespace Altaxo.Gui.Graph
             UpdateListOfCommonSubstringsSubfolderWise();
 
           _view.InitializeListOfCommonSubstrings(_commonSubstringsList);
-          if (null != _commonSubstringsList.FirstSelectedNode)
+          if (_commonSubstringsList.FirstSelectedNode is not null)
           {
             _userModifiedCommonSubstring = _commonSubstringsList.FirstSelectedNode.Text;
             _view.CommonSubstringText = _userModifiedCommonSubstring;
@@ -518,7 +519,7 @@ namespace Altaxo.Gui.Graph
     /// <summary>Called when the selection in the list of common substrings has changed.</summary>
     private void EhListOfCommonSubstringsSelectionChanged()
     {
-      if (null != _commonSubstringsList.FirstSelectedNode)
+      if (_commonSubstringsList.FirstSelectedNode is not null)
       {
         _userModifiedCommonSubstring = _commonSubstringsList.FirstSelectedNode.Text;
         _view.CommonSubstringText = _userModifiedCommonSubstring;
@@ -535,7 +536,7 @@ namespace Altaxo.Gui.Graph
       bool isModified = false;
       if (string.IsNullOrEmpty(substring))
       {
-        if (null != _commonSubstringsList.FirstSelectedNode)
+        if (_commonSubstringsList.FirstSelectedNode is not null)
         {
           _userModifiedCommonSubstring = _commonSubstringsList.FirstSelectedNode.Text;
           _view.CommonSubstringText = _userModifiedCommonSubstring;
@@ -559,7 +560,7 @@ namespace Altaxo.Gui.Graph
     private void EhListOfSubstringReplacementCandidatesSelectionChanged()
     {
       var commonSubstringNode = _commonSubstringsList.FirstSelectedNode;
-      if (null == commonSubstringNode || string.IsNullOrEmpty(_userModifiedCommonSubstring))
+      if (commonSubstringNode is null || string.IsNullOrEmpty(_userModifiedCommonSubstring))
         return;
       var commonSubstring = (IEnumerable<Collections.Text.SubstringPosition>)(commonSubstringNode.Tag);
       string fullCommonSubstring = commonSubstring.First().GetCommonSubstring(_listOfSelectedTableNames);
@@ -574,8 +575,8 @@ namespace Altaxo.Gui.Graph
       else // maybeshortendstring is not part of the selected common substring
         return;
 
-      string replacementString = _substringReplacementCandidatesList.FirstSelectedNode == null ? null : _substringReplacementCandidatesList.FirstSelectedNode.Tag as string;
-      if (null == replacementString)
+      string replacementString = _substringReplacementCandidatesList.FirstSelectedNode is null ? null : _substringReplacementCandidatesList.FirstSelectedNode.Tag as string;
+      if (replacementString is null)
         return;
 
       var tableNodesSelected = new List<SelectableListNode>(_tableList.Where(x => x.IsSelected));
@@ -707,7 +708,7 @@ namespace Altaxo.Gui.Graph
         return;
 
       // now find all substrings, that, when replacing the common substring of the selected tables, will give new valid table names for all (!) selected tables
-      if (null == _namesOfAllTables)
+      if (_namesOfAllTables is null)
         _namesOfAllTables = Current.Project.DataTableCollection.GetSortedTableNames();
       var commonSubstringPositions = (IEnumerable<Collections.Text.SubstringPosition>)(commonSubstringNode.Tag);
       string fullCommonSubstring = commonSubstringPositions.First().GetCommonSubstring(_listOfSelectedTableNames);
@@ -746,7 +747,7 @@ namespace Altaxo.Gui.Graph
           if (name.StartsWith(first) && name.EndsWith(last) && remainingLength >= 0)
             allReplacementStringsForThisTable.Add(name.Substring(first.Length, remainingLength));
         }
-        if (allReplacementStrings == null)
+        if (allReplacementStrings is null)
         {
           allReplacementStrings = allReplacementStringsForThisTable;
           allReplacementStrings.ExceptWith(new string[] { maybeShortendedSubstring }); // the own substring we have found we could exclude, it makes no sense to replace it by its own
@@ -788,7 +789,7 @@ namespace Altaxo.Gui.Graph
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.ChooseTableForSelectedItems -= EhChooseTableForSelectedItems;
           _view.ChooseFolderForSelectedItems -= EhChooseFolderForSelectedItems;
@@ -803,7 +804,7 @@ namespace Altaxo.Gui.Graph
 
         _view = value as IExchangeTablesOfPlotItemsView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
 
@@ -837,7 +838,7 @@ namespace Altaxo.Gui.Graph
       _doc.TablesToChange.Clear();
       foreach (MyXTableListNode entry in _tableList)
       {
-        if (null != entry.NewTable)
+        if (entry.NewTable is not null)
         {
           var tableToChange = (AbsoluteDocumentPath)entry.Tag;
           _doc.TablesToChange[tableToChange] = entry.NewTable;

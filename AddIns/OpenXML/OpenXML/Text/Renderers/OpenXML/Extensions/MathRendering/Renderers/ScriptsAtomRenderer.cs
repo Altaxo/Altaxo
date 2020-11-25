@@ -41,7 +41,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
     protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, ScriptsAtom item)
     {
 
-      if (item.SubscriptAtom != null && item.SuperscriptAtom != null)
+      if (item.SubscriptAtom is not null && item.SuperscriptAtom is not null)
       {
         var subscript = renderer.Push(new SubSuperscript());
 
@@ -65,7 +65,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 
         renderer.PopTo(subscript);
       }
-      else if (item.SubscriptAtom != null)
+      else if (item.SubscriptAtom is not null)
       {
         var subscript = renderer.Push(new Subscript());
 
@@ -83,7 +83,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 
         renderer.PopTo(subscript);
       }
-      else if (item.SuperscriptAtom != null)
+      else if (item.SuperscriptAtom is not null)
       {
         var subscript = renderer.Push(new Superscript());
 

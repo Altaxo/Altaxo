@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -38,7 +39,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// Fired if one of the scale has changed (or its boundaries).
     /// </summary>
     [field: NonSerialized]
-    public event EventHandler ScalesChanged;
+    public event EventHandler? ScalesChanged;
 
     #region Serialization
 
@@ -56,15 +57,9 @@ namespace Altaxo.Graph.Scales.Deprecated
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        LinkedScaleCollection s = SDeserialize(o, info, parent);
-        return s;
-      }
-
-      protected virtual LinkedScaleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        LinkedScaleCollection s = null != o ? (LinkedScaleCollection)o : new LinkedScaleCollection();
+        var s = (LinkedScaleCollection?)o ?? new LinkedScaleCollection();
 
         int count = info.OpenArray("Properties");
         s._linkedScales = new LinkedScale[count];
@@ -74,6 +69,8 @@ namespace Altaxo.Graph.Scales.Deprecated
 
         return s;
       }
+
+
     }
 
     #endregion Serialization
@@ -92,17 +89,13 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public void CopyFrom(LinkedScaleCollection from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
-      if (_linkedScales != null)
+      for (int i = 0; i < _linkedScales.Length; ++i)
       {
-        for (int i = 0; i < _linkedScales.Length; ++i)
-        {
-          if (_linkedScales[i] != null)
-            _linkedScales[i].LinkPropertiesChanged -= new EventHandler(EhLinkPropertiesChanged);
-          _linkedScales[i] = null;
-        }
+        if (_linkedScales[i] is { } ls)
+          ls.LinkPropertiesChanged -= new EventHandler(EhLinkPropertiesChanged);
       }
 
       _linkedScales = new LinkedScale[from._linkedScales.Length];
@@ -122,12 +115,12 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _linkedScales)
+      if (_linkedScales is not null)
       {
         for (int i = 0; i < _linkedScales.Length; ++i)
         {
-          if (null != _linkedScales[i])
-            yield return new Main.DocumentNodeAndName(_linkedScales[i], "LinkedScale" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+          if (_linkedScales[i] is { } ls)
+            yield return new Main.DocumentNodeAndName(ls, "LinkedScale" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
       }
     }
@@ -171,22 +164,21 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     protected void SetLinkedScale(LinkedScale newvalue, int i)
     {
-      LinkedScale oldvalue = _linkedScales[i];
+      var oldvalue = _linkedScales[i];
       _linkedScales[i] = newvalue;
 
       if (!object.ReferenceEquals(oldvalue, newvalue))
       {
-        if (null != oldvalue)
+        if (oldvalue is not null)
           oldvalue.LinkPropertiesChanged -= new EventHandler(EhLinkPropertiesChanged);
-        if (null != newvalue)
+        if (newvalue is not null)
           newvalue.LinkPropertiesChanged += new EventHandler(EhLinkPropertiesChanged);
       }
     }
 
-    private void EhLinkPropertiesChanged(object sender, EventArgs e)
+    private void EhLinkPropertiesChanged(object? sender, EventArgs e)
     {
-      if (ScalesChanged != null)
-        ScalesChanged(this, EventArgs.Empty);
+      ScalesChanged?.Invoke(this, EventArgs.Empty);
 
       EhSelfChanged(EventArgs.Empty);
     }

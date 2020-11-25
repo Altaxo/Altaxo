@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
@@ -85,7 +86,7 @@ namespace Altaxo.Gui.Graph.Gdi
       if (initData)
       {
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.GridColumn = DocToUserPosition(_doc.GridColumn);
         _view.GridRow = DocToUserPosition(_doc.GridRow);

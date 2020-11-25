@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO.Compression;
@@ -44,7 +45,7 @@ namespace Altaxo.Main.Services
   /// <param name="newArchive">The archive to save the project and windows state to.</param>
   /// <param name="oldArchive">The old project archive. Can be null. If not null, this archive represents the state of the project at the last saving.</param>
   /// <returns>A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</returns>
-  public delegate IDictionary<string, IProjectItem> SaveProjectAndWindowsStateDelegate(IProjectArchive newArchive, IProjectArchive oldArchive);
+  public delegate IDictionary<string, IProjectItem> SaveProjectAndWindowsStateDelegate(IProjectArchive newArchive, IProjectArchive? oldArchive);
 
 
   /// <summary>
@@ -59,12 +60,12 @@ namespace Altaxo.Main.Services
     /// <value>
     /// The name of the file or folder, if known. Otherwise, null is returned.
     /// </value>
-    PathName FileOrFolderName { get; }
+    PathName? FileOrFolderName { get; }
 
     /// <summary>
     /// Occurs when the property <see cref="FileOrFolderName"/> has changed.
     /// </summary>
-    event EventHandler<NameChangedEventArgs> FileOrFolderNameChanged;
+    event EventHandler<NameChangedEventArgs>? FileOrFolderNameChanged;
 
     /// <summary>
     /// Gets a value indicating whether this instance is disposed.
@@ -94,7 +95,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="claimer">The claimer. This parameter should be identical to that used in the call to <see cref="GetArchiveReadOnlyThreadSave(object)"/></param>.
     /// <param name="archive">The archive to release.</param>
-    void ReleaseArchiveThreadSave(object claimer, ref IProjectArchive archive);
+    void ReleaseArchiveThreadSave(object claimer, ref IProjectArchive? archive);
   }
 
   /// <summary>

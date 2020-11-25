@@ -209,7 +209,7 @@ namespace Markdig.Renderers.Wpf.Extensions
         {
             if (inline is System.Windows.Documents.Run run)
             {
-                var ft = new FormattedText(run.Text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface(run.FontFamily, run.FontStyle, run.FontWeight, run.FontStretch), run.FontSize, Brushes.Black);
+                var ft = new FormattedText(run.Text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface(run.FontFamily, run.FontStyle, run.FontWeight, run.FontStretch), run.FontSize, Brushes.Black, 1.0);
                 return ft.Width;
             }
             else if (inline is System.Windows.Documents.Span span)

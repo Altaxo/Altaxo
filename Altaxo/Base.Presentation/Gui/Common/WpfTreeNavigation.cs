@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable disable warnings
 using System;
 using System.Windows;
 using System.Windows.Media;
@@ -35,7 +36,7 @@ namespace Altaxo.Gui.Common
       for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
       {
         var foundChild = TryFindChild<T>(VisualTreeHelper.GetChild(root, i));
-        if (foundChild != null)
+        if (foundChild is not null)
           return foundChild;
       }
       return null;
@@ -53,11 +54,11 @@ namespace Altaxo.Gui.Common
         return child as T;
 
       DependencyObject parentObject = GetParentObject(child);
-      if (parentObject == null)
+      if (parentObject is null)
         return null;
 
       var parent = parentObject as T;
-      if (parent != null && parent is T)
+      if (parent is not null && parent is T)
       {
         return parent;
       }
@@ -69,25 +70,25 @@ namespace Altaxo.Gui.Common
 
     private static DependencyObject GetParentObject(DependencyObject child)
     {
-      if (child == null)
+      if (child is null)
         return null;
 
       var contentElement = child as ContentElement;
-      if (contentElement != null)
+      if (contentElement is not null)
       {
         DependencyObject parent = ContentOperations.GetParent(contentElement);
-        if (parent != null)
+        if (parent is not null)
           return parent;
 
         var fce = contentElement as FrameworkContentElement;
-        return fce != null ? fce.Parent : null;
+        return fce is not null ? fce.Parent : null;
       }
 
       var frameworkElement = child as FrameworkElement;
-      if (frameworkElement != null)
+      if (frameworkElement is not null)
       {
         DependencyObject parent = frameworkElement.Parent;
-        if (parent != null)
+        if (parent is not null)
           return parent;
       }
 

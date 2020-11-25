@@ -550,7 +550,7 @@ namespace MathML.Rendering
 
 				for(int j = 0; j < cells[i].Length; j++)
 				{
-					if(cells[i][j] != null)
+					if(cells[i][j] is not null)
 					{
 						Debug.Assert(remainderCols[j] == 0, "remainder columns value should be zero if we have a current cell");
 						remainderCols[j] = cells[i][j].RowSpan - 1;
@@ -668,7 +668,7 @@ namespace MathML.Rendering
 				// inner loop - columns
 				for(int j = 0, colIndex = 1; j < cells[i].Length; j++, colIndex += 2)
 				{
-					if(cells[i][j] != null)
+					if(cells[i][j] is not null)
 					{
 						int rowSpan = cells[i][j].RowSpan;
 						if(rowSpan > 1)
@@ -742,7 +742,7 @@ namespace MathML.Rendering
 				// inner loop - columns
 				for(int j = 0; j < cells[i].Length; j++)
 				{
-					if(cells[i][j] != null)
+					if(cells[i][j] is not null)
 					{
 						BoundingBox box = BoundingBox.New();
 	
@@ -872,7 +872,7 @@ namespace MathML.Rendering
 						}					
 
 						// do the vertical line at end of cell
-						if((j + 1 < cells[i].Length && cells[i][j + 1] != null) ||
+						if((j + 1 < cells[i].Length && cells[i][j + 1] is not null) ||
 							(j == cells[i].Length - 1 && cells[i].Length < maxColCount))
 						{
 							if(columnLines[j] == LineStyle.Solid)
@@ -896,7 +896,7 @@ namespace MathML.Rendering
 							// we used up that cell
 							if(rowSpan[j] == 0)
 							{
-								rowSpan[j] = j < cells[i].Length && cells[i][j] != null ? cells[i][j].RowSpan - 1 : 0;
+								rowSpan[j] = j < cells[i].Length && cells[i][j] is not null ? cells[i][j].RowSpan - 1 : 0;
 							}
 							else
 							{
@@ -1195,7 +1195,7 @@ namespace MathML.Rendering
 				for(int i = 0; i < minCellSizes.Length; i++)
 				{
 					// do not count spanning rows, these are adjusted later
-					if(cells[i] != null)
+					if(cells[i] is not null)
 					{			
 						float h =  minCellSizes[i].Height / (float)cells[i].RowSpan;
 						float d =  minCellSizes[i].Depth / (float)cells[i].RowSpan;

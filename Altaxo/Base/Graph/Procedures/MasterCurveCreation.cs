@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,9 +39,8 @@ namespace Altaxo.Graph.Procedures
   {
     public static void ShowMasterCurveCreationDialog(GraphDocument doc)
     {
-      string error;
       var opt = new Data.MasterCurveCreation.Options();
-      if (null != (error = FillDataListFromGraphDocument(doc, opt.ColumnGroups)))
+      if (FillDataListFromGraphDocument(doc, opt.ColumnGroups) is { } error)
       {
         Current.Gui.ErrorMessageBox(error);
         return;
@@ -55,7 +55,7 @@ namespace Altaxo.Graph.Procedures
     /// <param name="doc"></param>
     /// <param name="groupList"></param>
     /// <returns></returns>
-    private static string FillDataListFromGraphDocument(GraphDocument doc, List<List<DoubleColumn>> groupList)
+    private static string? FillDataListFromGraphDocument(GraphDocument doc, List<List<DoubleColumn>> groupList)
     {
       if (doc.RootLayer.Layers.Count == 0)
         return "Plot contains no layers and therefore no plot items";
@@ -63,7 +63,7 @@ namespace Altaxo.Graph.Procedures
       for (int i = 0; i < doc.RootLayer.Layers.Count; i++)
       {
         var xylayer = doc.RootLayer.Layers[i] as XYPlotLayer;
-        if (null != xylayer)
+        if (xylayer is not null)
           FillDataListFromLayer(xylayer, groupList);
       }
 

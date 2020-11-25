@@ -24,19 +24,19 @@
 
 using System;
 using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
+using Xunit;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
-  [TestFixture]
+
   public class DoubleQRDecompTest
   {
-    private static DoubleQRDecomp qr;
-    private static DoubleQRDecomp wqr;
-    private static DoubleQRDecomp lqr;
-    private const double TOLERENCE = 0.001;
+    private DoubleQRDecomp qr;
+    private DoubleQRDecomp wqr;
+    private DoubleQRDecomp lqr;
+    private const double TOLERANCE = 0.001;
 
-    static DoubleQRDecompTest()
+    public DoubleQRDecompTest()
     {
       var a = new DoubleMatrix(3)
       {
@@ -75,95 +75,95 @@ namespace AltaxoTest.Calc.LinearAlgebra
       lqr = new DoubleQRDecomp(a);
     }
 
-    [Test]
+    [Fact]
     public void NullTest()
     {
-      Assert.Throws(typeof(ArgumentNullException), () =>
+      Assert.Throws<ArgumentNullException>(() =>
       {
         var test = new DoubleQRDecomp(null);
       });
     }
 
-    [Test]
+    [Fact]
     public void QTest()
     {
       DoubleMatrix Q = qr.Q;
-      Assert.AreEqual(System.Math.Abs(Q[0, 0]), 0.147, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[0, 1]), 0.525, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[0, 2]), 0.838, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[1, 0]), 0.442, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[1, 1]), 0.723, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[1, 2]), 0.531, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[2, 0]), 0.885, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[2, 1]), 0.449, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[2, 2]), 0.126, TOLERENCE);
+      AssertEx.Equal(System.Math.Abs(Q[0, 0]), 0.147, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[0, 1]), 0.525, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[0, 2]), 0.838, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[1, 0]), 0.442, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[1, 1]), 0.723, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[1, 2]), 0.531, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[2, 0]), 0.885, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[2, 1]), 0.449, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[2, 2]), 0.126, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void RTest()
     {
       DoubleMatrix R = qr.R;
-      Assert.AreEqual(System.Math.Abs(R[0, 0]), 6.782, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[0, 1]), 3.686, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[0, 2]), 7.520, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[1, 0]), 0.000, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[1, 1]), 10.555, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[1, 2]), 6.469, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[2, 0]), 0.000, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[2, 1]), 0.000, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[2, 2]), 4.428, TOLERENCE);
+      AssertEx.Equal(System.Math.Abs(R[0, 0]), 6.782, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[0, 1]), 3.686, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[0, 2]), 7.520, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[1, 0]), 0.000, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[1, 1]), 10.555, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[1, 2]), 6.469, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[2, 0]), 0.000, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[2, 1]), 0.000, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[2, 2]), 4.428, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void WideQTest()
     {
       DoubleMatrix Q = wqr.Q;
-      Assert.AreEqual(System.Math.Abs(Q[0, 0]), 0.316, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[0, 1]), 0.949, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[1, 0]), 0.949, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[1, 1]), 0.316, TOLERENCE);
+      AssertEx.Equal(System.Math.Abs(Q[0, 0]), 0.316, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[0, 1]), 0.949, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[1, 0]), 0.949, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[1, 1]), 0.316, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void WideRTest()
     {
       DoubleMatrix R = wqr.R;
-      Assert.AreEqual(System.Math.Abs(R[0, 0]), 3.162, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[0, 1]), 7.273, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[0, 2]), 0.949, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[1, 0]), 0.000, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[1, 1]), 2.846, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[1, 2]), 6.008, TOLERENCE);
+      AssertEx.Equal(System.Math.Abs(R[0, 0]), 3.162, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[0, 1]), 7.273, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[0, 2]), 0.949, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[1, 0]), 0.000, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[1, 1]), 2.846, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[1, 2]), 6.008, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void LongQTest()
     {
       DoubleMatrix Q = lqr.Q;
-      Assert.AreEqual(System.Math.Abs(Q[0, 0]), 0.147, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[0, 1]), 0.525, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[0, 2]), 0.838, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[1, 0]), 0.442, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[1, 1]), 0.723, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[1, 2]), 0.531, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[2, 0]), 0.885, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[2, 1]), 0.449, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(Q[2, 2]), 0.126, TOLERENCE);
+      AssertEx.Equal(System.Math.Abs(Q[0, 0]), 0.147, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[0, 1]), 0.525, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[0, 2]), 0.838, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[1, 0]), 0.442, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[1, 1]), 0.723, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[1, 2]), 0.531, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[2, 0]), 0.885, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[2, 1]), 0.449, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(Q[2, 2]), 0.126, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void LongRTest()
     {
       DoubleMatrix R = lqr.R;
-      Assert.AreEqual(System.Math.Abs(R[0, 0]), 6.782, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[0, 1]), 3.686, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[1, 0]), 0.000, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[1, 1]), 10.555, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[2, 0]), 0.000, TOLERENCE);
-      Assert.AreEqual(System.Math.Abs(R[2, 1]), 0.000, TOLERENCE);
+      AssertEx.Equal(System.Math.Abs(R[0, 0]), 6.782, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[0, 1]), 3.686, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[1, 0]), 0.000, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[1, 1]), 10.555, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[2, 0]), 0.000, TOLERANCE);
+      AssertEx.Equal(System.Math.Abs(R[2, 1]), 0.000, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void SolveMatrix()
     {
       var b = new DoubleMatrix(3)
@@ -179,15 +179,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
         [2, 2] = 25
       };
       DoubleMatrix x = qr.Solve(b);
-      Assert.AreEqual(x[0, 0], 2.965, TOLERENCE);
-      Assert.AreEqual(x[0, 1], 2.965, TOLERENCE);
-      Assert.AreEqual(x[0, 2], 2.965, TOLERENCE);
-      Assert.AreEqual(x[1, 0], -0.479, TOLERENCE);
-      Assert.AreEqual(x[1, 1], -0.479, TOLERENCE);
-      Assert.AreEqual(x[1, 2], -0.479, TOLERENCE);
-      Assert.AreEqual(x[2, 0], 1.227, TOLERENCE);
-      Assert.AreEqual(x[2, 1], 1.227, TOLERENCE);
-      Assert.AreEqual(x[2, 2], 1.227, TOLERENCE);
+      AssertEx.Equal(x[0, 0], 2.965, TOLERANCE);
+      AssertEx.Equal(x[0, 1], 2.965, TOLERANCE);
+      AssertEx.Equal(x[0, 2], 2.965, TOLERANCE);
+      AssertEx.Equal(x[1, 0], -0.479, TOLERANCE);
+      AssertEx.Equal(x[1, 1], -0.479, TOLERANCE);
+      AssertEx.Equal(x[1, 2], -0.479, TOLERANCE);
+      AssertEx.Equal(x[2, 0], 1.227, TOLERANCE);
+      AssertEx.Equal(x[2, 1], 1.227, TOLERANCE);
+      AssertEx.Equal(x[2, 2], 1.227, TOLERANCE);
 
       b = new DoubleMatrix(3, 2)
       {
@@ -199,12 +199,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
         [2, 1] = 25
       };
       x = qr.Solve(b);
-      Assert.AreEqual(x[0, 0], 2.965, TOLERENCE);
-      Assert.AreEqual(x[0, 1], 2.965, TOLERENCE);
-      Assert.AreEqual(x[1, 0], -0.479, TOLERENCE);
-      Assert.AreEqual(x[1, 1], -0.479, TOLERENCE);
-      Assert.AreEqual(x[2, 0], 1.227, TOLERENCE);
-      Assert.AreEqual(x[2, 1], 1.227, TOLERENCE);
+      AssertEx.Equal(x[0, 0], 2.965, TOLERANCE);
+      AssertEx.Equal(x[0, 1], 2.965, TOLERANCE);
+      AssertEx.Equal(x[1, 0], -0.479, TOLERANCE);
+      AssertEx.Equal(x[1, 1], -0.479, TOLERANCE);
+      AssertEx.Equal(x[2, 0], 1.227, TOLERANCE);
+      AssertEx.Equal(x[2, 1], 1.227, TOLERANCE);
 
       b = new DoubleMatrix(3, 4)
       {
@@ -222,18 +222,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
         [2, 3] = 25
       };
       x = qr.Solve(b);
-      Assert.AreEqual(x[0, 0], 2.965, TOLERENCE);
-      Assert.AreEqual(x[0, 1], 2.965, TOLERENCE);
-      Assert.AreEqual(x[0, 2], 2.965, TOLERENCE);
-      Assert.AreEqual(x[0, 3], 2.965, TOLERENCE);
-      Assert.AreEqual(x[1, 0], -0.479, TOLERENCE);
-      Assert.AreEqual(x[1, 1], -0.479, TOLERENCE);
-      Assert.AreEqual(x[1, 2], -0.479, TOLERENCE);
-      Assert.AreEqual(x[1, 3], -0.479, TOLERENCE);
-      Assert.AreEqual(x[2, 0], 1.227, TOLERENCE);
-      Assert.AreEqual(x[2, 1], 1.227, TOLERENCE);
-      Assert.AreEqual(x[2, 2], 1.227, TOLERENCE);
-      Assert.AreEqual(x[2, 3], 1.227, TOLERENCE);
+      AssertEx.Equal(x[0, 0], 2.965, TOLERANCE);
+      AssertEx.Equal(x[0, 1], 2.965, TOLERANCE);
+      AssertEx.Equal(x[0, 2], 2.965, TOLERANCE);
+      AssertEx.Equal(x[0, 3], 2.965, TOLERANCE);
+      AssertEx.Equal(x[1, 0], -0.479, TOLERANCE);
+      AssertEx.Equal(x[1, 1], -0.479, TOLERANCE);
+      AssertEx.Equal(x[1, 2], -0.479, TOLERANCE);
+      AssertEx.Equal(x[1, 3], -0.479, TOLERANCE);
+      AssertEx.Equal(x[2, 0], 1.227, TOLERANCE);
+      AssertEx.Equal(x[2, 1], 1.227, TOLERANCE);
+      AssertEx.Equal(x[2, 2], 1.227, TOLERANCE);
+      AssertEx.Equal(x[2, 3], 1.227, TOLERANCE);
 
       var A = new DoubleMatrix(4, 3)
       {
@@ -261,9 +261,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
       };
 
       x = qrd.Solve(B);
-      Assert.AreEqual(x[0, 0], 2.73529, TOLERENCE);
-      Assert.AreEqual(x[1, 0], -2.15822, TOLERENCE);
-      Assert.AreEqual(x[2, 0], 0.0998564, TOLERENCE);
+      AssertEx.Equal(x[0, 0], 2.73529, TOLERANCE);
+      AssertEx.Equal(x[1, 0], -2.15822, TOLERANCE);
+      AssertEx.Equal(x[2, 0], 0.0998564, TOLERANCE);
 
       B = new DoubleMatrix(4, 3)
       {
@@ -282,37 +282,37 @@ namespace AltaxoTest.Calc.LinearAlgebra
       };
 
       x = qrd.Solve(B);
-      Assert.AreEqual(x[0, 0], 2.73529, TOLERENCE);
-      Assert.AreEqual(x[1, 0], -2.15822, TOLERENCE);
-      Assert.AreEqual(x[2, 0], 0.0998564, TOLERENCE);
-      Assert.AreEqual(x[0, 1], 2.73529, TOLERENCE);
-      Assert.AreEqual(x[1, 1], -2.15822, TOLERENCE);
-      Assert.AreEqual(x[2, 1], 0.0998564, TOLERENCE);
-      Assert.AreEqual(x[0, 2], 2.73529, TOLERENCE);
-      Assert.AreEqual(x[1, 2], -2.15822, TOLERENCE);
-      Assert.AreEqual(x[2, 2], 0.0998564, TOLERENCE);
+      AssertEx.Equal(x[0, 0], 2.73529, TOLERANCE);
+      AssertEx.Equal(x[1, 0], -2.15822, TOLERANCE);
+      AssertEx.Equal(x[2, 0], 0.0998564, TOLERANCE);
+      AssertEx.Equal(x[0, 1], 2.73529, TOLERANCE);
+      AssertEx.Equal(x[1, 1], -2.15822, TOLERANCE);
+      AssertEx.Equal(x[2, 1], 0.0998564, TOLERANCE);
+      AssertEx.Equal(x[0, 2], 2.73529, TOLERANCE);
+      AssertEx.Equal(x[1, 2], -2.15822, TOLERANCE);
+      AssertEx.Equal(x[2, 2], 0.0998564, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void GetDeterminantTest()
     {
       double det = qr.GetDeterminant();
-      Assert.AreEqual(det, 317.000, TOLERENCE);
+      AssertEx.Equal(det, 317.000, TOLERANCE);
     }
 
-    [Test]
+    [Fact]
     public void GetWideDeterminantTest()
     {
-      Assert.Throws(typeof(NotSquareMatrixException), () =>
+      Assert.Throws<NotSquareMatrixException>(() =>
       {
         double det = wqr.GetDeterminant();
       });
     }
 
-    [Test]
+    [Fact]
     public void GetLongDeterminantTest()
     {
-      Assert.Throws(typeof(NotSquareMatrixException), () =>
+      Assert.Throws<NotSquareMatrixException>(() =>
       {
         double det = lqr.GetDeterminant();
       });

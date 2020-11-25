@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,17 +48,13 @@ namespace Altaxo.Graph.Scales.Ticks
         var s = (TextTickSpacing)obj;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        TextTickSpacing s = SDeserialize(o, info, parent);
+        var s = (TextTickSpacing?)o ?? new TextTickSpacing();
         return s;
       }
 
-      protected virtual TextTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        TextTickSpacing s = null != o ? (TextTickSpacing)o : new TextTickSpacing();
-        return s;
-      }
+      
     }
 
     #endregion Serialization
@@ -69,20 +66,15 @@ namespace Altaxo.Graph.Scales.Ticks
       _majorTextTicks = new List<AltaxoVariant>();
     }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public TextTickSpacing(TextTickSpacing from)
       : base(from)// everything is done here, since CopyFrom is virtual!
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
-    public override bool CopyFrom(object obj)
+    protected void CopyFrom(TextTickSpacing from)
     {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-
-      var from = obj as TextTickSpacing;
-      if (null == from)
-        return false;
-
       using (var suspendToken = SuspendGetToken())
       {
         _majorTicks = new List<AltaxoVariant>(from._majorTicks);
@@ -92,7 +84,20 @@ namespace Altaxo.Graph.Scales.Ticks
         EhSelfChanged();
         suspendToken.Resume();
       }
-      return true;
+    }
+
+    public override bool CopyFrom(object obj)
+    {
+      if (ReferenceEquals(this, obj))
+        return true;
+
+      if (obj is TextTickSpacing from)
+      {
+        CopyFrom(from);
+        return true;
+      }
+
+      return false;
     }
 
     public override object Clone()
@@ -148,7 +153,7 @@ namespace Altaxo.Graph.Scales.Ticks
         {
           _majorTicks.Add(majortick);
           int item = (int)(majortick - 1);
-          if (textBounds != null && item >= 0 && item < textBounds.NumberOfItems)
+          if (textBounds is not null && item >= 0 && item < textBounds.NumberOfItems)
             _majorTextTicks.Add(textBounds.GetItem(item));
           else
             _majorTextTicks.Add(majortick);

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,13 +40,13 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class OleDbDataQueryControl : UserControl, IOleDbDataQueryView
   {
-    public event Action SelectedTabChanged;
+    public event Action? SelectedTabChanged;
 
-    public event Action CmdChooseConnectionStringFromDialog;
+    public event Action? CmdChooseConnectionStringFromDialog;
 
-    public event Action ConnectionStringSelectedFromList;
+    public event Action? ConnectionStringSelectedFromList;
 
-    public event Action<string> ConnectionStringChangedByUser;
+    public event Action<string>? ConnectionStringChangedByUser;
 
     public OleDbDataQueryControl()
     {
@@ -58,7 +59,7 @@ namespace Altaxo.Gui.DataConnection
     {
       get
       {
-        if (null == _treeImageConverter)
+        if (_treeImageConverter is null)
         {
           _treeImageConverter = new IndexToImageConverter(
               new string[]{
@@ -82,7 +83,7 @@ namespace Altaxo.Gui.DataConnection
     {
       GuiHelper.SynchronizeSelectionFromGui(_cmbConnString);
       var ev = ConnectionStringSelectedFromList;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }
@@ -93,7 +94,7 @@ namespace Altaxo.Gui.DataConnection
       if (e.Key == Key.Enter)
       {
         var ev = ConnectionStringChangedByUser;
-        if (null != ev)
+        if (ev is not null)
         {
           e.Handled = true;
           ev(_cmbConnString.Text);
@@ -116,7 +117,7 @@ namespace Altaxo.Gui.DataConnection
       GuiHelper.SynchronizeSelectionFromGui(_tab);
 
       var ev = SelectedTabChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 
@@ -124,7 +125,7 @@ namespace Altaxo.Gui.DataConnection
     private void _btnConnPicker_Click(object sender, RoutedEventArgs e)
     {
       var ev = CmdChooseConnectionStringFromDialog;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 

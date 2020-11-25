@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,9 +76,9 @@ namespace Altaxo.Graph.Graph3D.Background
         info.AddValue("CustomThickness", s._customThickness);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (RectangularBackground)o ?? new RectangularBackground();
+        var s = (RectangularBackground?)o ?? new RectangularBackground();
         s._material = (IMaterial)info.GetValue("Material", s);
         s._padding = (Margin2D)info.GetValue("Padding", s);
         s._customDistance = info.GetNullableDouble("CustomDistance");
@@ -126,10 +127,10 @@ namespace Altaxo.Graph.Graph3D.Background
     /// </returns>
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       var from = obj as RectangularBackground;
-      if (null != from)
+      if (from is not null)
       {
         _material = from._material;
         _customDistance = from._customDistance;
@@ -155,7 +156,7 @@ namespace Altaxo.Graph.Graph3D.Background
       }
       set
       {
-        if (null == _material)
+        if (_material is null)
           throw new ArgumentNullException(nameof(value));
 
         var oldValue = _material;
@@ -271,7 +272,7 @@ namespace Altaxo.Graph.Graph3D.Background
     }
 
     /// <summary>
-    /// Gets the rectangle for the background to draw. Used both by <see cref="Measure"/> as well as <see cref="Draw"/>.
+    /// Gets the rectangle for the background to draw. Used both by <see cref="Measure"/> as well as <see cref="Draw(IGraphicsContext3D, RectangleD3D)"/>.
     /// </summary>
     /// <param name="itemRectangle">The item rectangle.</param>
     /// <returns></returns>
@@ -313,7 +314,7 @@ namespace Altaxo.Graph.Graph3D.Background
 
       var buffers = g.GetPositionNormalIndexedTriangleBuffer(material);
 
-      if (null != buffers.PositionNormalColorIndexedTriangleBuffer)
+      if (buffers.PositionNormalColorIndexedTriangleBuffer is not null)
       {
         var c = material.Color.Color;
         var voffs = buffers.PositionNormalColorIndexedTriangleBuffer.VertexCount;
@@ -323,7 +324,7 @@ namespace Altaxo.Graph.Graph3D.Background
           (i1, i2, i3) => buffers.IndexedTriangleBuffer.AddTriangleIndices(i1 + voffs, i2 + voffs, i3 + voffs),
           ref voffs);
       }
-      else if (null != buffers.PositionNormalIndexedTriangleBuffer)
+      else if (buffers.PositionNormalIndexedTriangleBuffer is not null)
       {
         var voffs = buffers.PositionNormalIndexedTriangleBuffer.VertexCount;
         Altaxo.Drawing.D3D.SolidCube.Add(

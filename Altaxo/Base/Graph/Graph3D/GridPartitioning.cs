@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,26 +60,26 @@ namespace Altaxo.Graph.Graph3D
         info.AddValue("ZPartitioning", s._zPartitioning);
       }
 
-      protected virtual GridPartitioning SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual GridPartitioning SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new GridPartitioning() : (GridPartitioning)o);
+        var s = (GridPartitioning?)o ?? new GridPartitioning();
 
         s._xPartitioning = (LinearPartitioning)info.GetValue("XPartitioning", s);
-        if (null != s._xPartitioning)
+        if (s._xPartitioning is not null)
           s._xPartitioning.ParentObject = s;
 
         s._yPartitioning = (LinearPartitioning)info.GetValue("YPartitioning", s);
-        if (null != s._yPartitioning)
+        if (s._yPartitioning is not null)
           s._yPartitioning.ParentObject = s;
 
         s._zPartitioning = (LinearPartitioning)info.GetValue("ZPartitioning", s);
-        if (null != s._zPartitioning)
+        if (s._zPartitioning is not null)
           s._zPartitioning.ParentObject = s;
 
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -106,11 +107,11 @@ namespace Altaxo.Graph.Graph3D
 
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as GridPartitioning;
-      if (null != from)
+      if (from is not null)
       {
         using (var suspendToken = SuspendGetToken())
         {
@@ -132,12 +133,12 @@ namespace Altaxo.Graph.Graph3D
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _xPartitioning)
-        yield return new Main.DocumentNodeAndName(_xPartitioning, () => _xPartitioning = null, "XPartitioning");
-      if (null != _yPartitioning)
-        yield return new Main.DocumentNodeAndName(_yPartitioning, () => _yPartitioning = null, "YPartitioning");
-      if (null != _zPartitioning)
-        yield return new Main.DocumentNodeAndName(_zPartitioning, () => _zPartitioning = null, "ZPartitioning");
+      if (_xPartitioning is not null)
+        yield return new Main.DocumentNodeAndName(_xPartitioning, () => _xPartitioning = null!, "XPartitioning");
+      if (_yPartitioning is not null)
+        yield return new Main.DocumentNodeAndName(_yPartitioning, () => _yPartitioning = null!, "YPartitioning");
+      if (_zPartitioning is not null)
+        yield return new Main.DocumentNodeAndName(_zPartitioning, () => _zPartitioning = null!, "ZPartitioning");
     }
 
     public LinearPartitioning XPartitioning { get { return _xPartitioning; } }

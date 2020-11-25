@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -30,8 +31,6 @@ using Altaxo.Drawing.DashPatterns;
 using Altaxo.Drawing.LineCaps;
 using Altaxo.Geometry;
 using Altaxo.Main;
-
-#nullable enable
 
 namespace Altaxo.Drawing
 {
@@ -199,9 +198,9 @@ if (0 != (cp & PenHolder.Configured.Width))
  */
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (PenX)o : new PenX();
+        var s = o is not null ? (PenX)o : new PenX();
 
         var cp = (Configured)info.GetInt32("Configured");
 
@@ -244,7 +243,7 @@ if (0 != (cp & PenHolder.Configured.Width))
         if (0 != (cp & Configured.EndCap))
         {
           var cap = (LineCap)info.GetEnum("EndCap", typeof(LineCap));
-          s._endCap = LineCapBase.FromName(Enum.GetName(typeof(LineCap), cap));
+          s._endCap = LineCapBase.FromName(Enum.GetName(typeof(LineCap), cap)!);
         }
 
         if (0 != (cp & Configured.LineJoin))
@@ -256,7 +255,7 @@ if (0 != (cp & PenHolder.Configured.Width))
         if (0 != (cp & Configured.StartCap))
         {
           var cap = (LineCap)info.GetEnum("StartCap", typeof(LineCap));
-          s._startCap = LineCapBase.FromName(Enum.GetName(typeof(LineCap), cap));
+          s._startCap = LineCapBase.FromName(Enum.GetName(typeof(LineCap), cap)!);
         }
 
         if (0 != (cp & Configured.Transform))
@@ -329,9 +328,9 @@ if (0 != (cp & PenX.Configured.Width))
 */
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (PenX)o : new PenX();
+        var s = o is not null ? (PenX)o : new PenX();
 
         var cp = (Configured)info.GetInt32("Configured");
 
@@ -464,9 +463,9 @@ if (0 != (cp & PenX.Configured.Width))
 */
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (PenX)o : new PenX();
+        var s = o is not null ? (PenX)o : new PenX();
 
         var cp = (Configured)info.GetInt32("Configured");
 
@@ -610,9 +609,9 @@ if (0 != (cp & PenX.Configured.Width))
           */
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (PenX)o : new PenX();
+        var s = o is not null ? (PenX)o : new PenX();
 
         var cp = (Configured)info.GetInt32("Configured");
 
@@ -720,7 +719,7 @@ if (0 != (cp & PenX.Configured.Width))
 
         // Note: we must even save the solid pattern if it belongs to another list than the BuiltinDefault list,
         // otherwise when deserializing we wouldn't know to which list the solid dash pattern belongs to.
-        if (null != s._dashPattern && (!Solid.Instance.Equals(s._dashPattern) || !ReferenceEquals(DashPatternListManager.Instance.BuiltinDefault, DashPatternListManager.Instance.GetParentList(s._dashPattern))))
+        if (s._dashPattern is not null && (!Solid.Instance.Equals(s._dashPattern) || !ReferenceEquals(DashPatternListManager.Instance.BuiltinDefault, DashPatternListManager.Instance.GetParentList(s._dashPattern))))
         {
           info.AddValue("DashPattern", s._dashPattern);
 
@@ -744,13 +743,13 @@ if (0 != (cp & PenX.Configured.Width))
         }
 
         if (0 != (cp & Configured.Transform))
-          info.AddValue("Transformation", s.Transformation);
+          info.AddValue("Transformation", s.Transformation!);
 
         if (0 != (cp & Configured.CompoundArray))
-          info.AddArray("CompoundArray", s.CompoundArray, s.CompoundArray?.Length ?? 0);
+          info.AddArray("CompoundArray", s.CompoundArray!, s.CompoundArray?.Length ?? 0);
       }
 
-      public object Deserialize(object o, Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = new PenX();
         var cp = (Configured)info.GetInt32("Configured");
@@ -1037,7 +1036,7 @@ if (0 != (cp & PenX.Configured.Width))
 
     public PenX WithDashPattern(IDashPattern value)
     {
-      if (null == value)
+      if (value is null)
         throw new ArgumentNullException();
 
       if (!ReferenceEquals(_dashPattern, value)) // use ReferenceEquals because the reference determines to which DashPatternList the DashPattern belongs
@@ -1191,18 +1190,18 @@ if (0 != (cp & PenX.Configured.Width))
       return Equals(obj as PenX, true);
     }
 
-    public static bool operator ==(PenX x, PenX y)
+    public static bool operator ==(PenX? x, PenX? y)
     {
-      return x is { } _ ? x.Equals(y, true) : y is { } _ ? y.Equals(x, true) : true;
+      return object.ReferenceEquals(x, y) || (x is not null && y is not null && x.Equals(y, true));
     }
-    public static bool operator !=(PenX x, PenX y)
+    public static bool operator !=(PenX? x, PenX? y)
     {
       return !(x == y);
     }
 
     public static bool AreEqualUnlessWidth(PenX x, PenX y)
     {
-      return x is { } _ ? x.Equals(y, false) : y is { } _ ? y.Equals(x, false) : true;
+      return object.ReferenceEquals(x, y) || (x is not null && y is not null && x.Equals(y, false));
     }
 
     protected int CalculateHash()
@@ -1251,9 +1250,9 @@ if (0 != (cp & PenX.Configured.Width))
 
     private static bool AreEqual(double[]? x1, double[]? x2)
     {
-      if (x1 == null && x2 == null)
+      if (x1 is null && x2 is null)
         return true;
-      if (x1 == null || x2 == null)
+      if (x1 is null || x2 is null)
         return false;
       if (x1.Length != x2.Length)
         return false;
@@ -1301,7 +1300,7 @@ if (0 != (cp & PenX.Configured.Width))
           DashStyle.Dot => DashPatternListManager.Instance.BuiltinDefaultDot,
           DashStyle.DashDot => DashPatternListManager.Instance.BuiltinDefaultDashDot,
           DashStyle.DashDotDot => DashPatternListManager.Instance.BuiltinDefaultDashDotDot,
-          DashStyle.Custom => new Custom(cachedDashPattern.Select(x => (double)x), cachedDashOffset),
+          DashStyle.Custom => new Custom(cachedDashPattern!.Select(x => (double)x), cachedDashOffset),
           _ => throw new NotImplementedException(),
         });
     }

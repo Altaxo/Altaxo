@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -207,7 +208,7 @@ namespace Altaxo.Graph.Commands
 
       if (true == saveFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
       {
-        if ((myStream = saveFileDialog1.OpenFile()) != null)
+        if ((myStream = saveFileDialog1.OpenFile()) is not null)
         {
           var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
           info.BeginWriting(myStream);
@@ -606,7 +607,7 @@ namespace Altaxo.Graph.Commands
     public override void Run(GraphController ctrl)
     {
       var layer = ctrl.ActiveLayer as XYPlotLayer;
-      if (null == layer || ctrl.CurrentPlotNumber < 0 || !(layer.PlotItems[ctrl.CurrentPlotNumber] is DensityImagePlotItem))
+      if (layer is null || ctrl.CurrentPlotNumber < 0 || !(layer.PlotItems[ctrl.CurrentPlotNumber] is DensityImagePlotItem))
       {
         Current.Gui.ErrorMessageBox("Current plot item should be a density image plot!");
         return;
@@ -639,13 +640,13 @@ namespace Altaxo.Graph.Commands
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
       var t1 = ctrl.ActiveLayer as XYPlotLayer;
-      if (null != t1)
+      if (t1 is not null)
       {
         XYPlotLayerController.ShowDialog(t1);
         return;
       }
       var t2 = ctrl.ActiveLayer;
-      if (null != t2)
+      if (t2 is not null)
       {
         HostLayerController.ShowDialog(t2);
         return;
@@ -659,7 +660,7 @@ namespace Altaxo.Graph.Commands
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
       var xylayer = ctrl.Doc.RootLayer.ElementAt(ctrl.CurrentLayerNumber) as XYPlotLayer;
-      if (null != xylayer)
+      if (xylayer is not null)
         xylayer.PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(new PolynomialFunction(new double[] { 0, 0, 1 })), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext())));
     }
   }
@@ -724,7 +725,7 @@ namespace Altaxo.Graph.Commands
     public override void Run(GraphController ctrl)
     {
       string result = Altaxo.Graph.Procedures.NonlinearFitting.ShowFitDialog(ctrl);
-      if (null != result)
+      if (result is not null)
         Current.Gui.ErrorMessageBox(result);
     }
   }
@@ -748,7 +749,7 @@ namespace Altaxo.Graph.Commands
 
       FunctionEvaluationScript script = null; //
 
-      if (script == null)
+      if (script is null)
         script = new FunctionEvaluationScript();
 
       object[] args = new object[] { script, new ScriptExecutionHandler(EhScriptExecution) };
@@ -775,8 +776,7 @@ namespace Altaxo.Graph.Commands
   {
     public static void Run(Altaxo.Graph.GraphDocumentBase doc)
     {
-      var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
-      var newDocument = miniProjectBuilder.GetMiniProject(doc, false);
+      var newDocument = Altaxo.Graph.Procedures.MiniProjectBuilder.CreateMiniProject(doc, false);
       SaveProjectAs(newDocument);
     }
 
@@ -848,8 +848,7 @@ namespace Altaxo.Graph.Commands
 
     public override void Run(GraphController ctrl)
     {
-      var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
-      var newDocument = miniProjectBuilder.GetMiniProject(ctrl.Doc, false);
+      var newDocument = Altaxo.Graph.Procedures.MiniProjectBuilder.CreateMiniProject(ctrl.Doc, false);
 
       var items = new HashSet<IProjectItem>();
       foreach (var coll in newDocument.ProjectItemCollections)
@@ -950,7 +949,7 @@ namespace Altaxo.Graph.Commands
 
     protected virtual void OnPropertyChanged(string propertyName)
     {
-      if (null != PropertyChanged)
+      if (PropertyChanged is not null)
         PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
     }
   }
@@ -977,7 +976,7 @@ namespace Altaxo.Graph.Commands
 
       var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.Graph.Gdi.Viewing.GraphController;
 
-      if (null == ctrl)
+      if (ctrl is null)
         return;
 
       Altaxo.Serialization.LengthUnit unit = Altaxo.Serialization.LengthUnit.Point;
@@ -985,7 +984,7 @@ namespace Altaxo.Graph.Commands
         (Altaxo.Serialization.LengthUnit.TryParse(Text, out unit, out var number) &&
           Altaxo.Serialization.GUIConversion.IsDouble(number, out value)))
       {
-        if (unit != null)
+        if (unit is not null)
           unit = Altaxo.Serialization.LengthUnit.Point;
         string normalizedEntry = Altaxo.Serialization.GUIConversion.ToString(value) + " " + unit.Shortcut;
         value *= (double)(unit.UnitInMeter / Altaxo.Serialization.LengthUnit.Point.UnitInMeter);
@@ -1021,7 +1020,7 @@ namespace Altaxo.Graph.Commands
 
       var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.Graph.Gdi.Viewing.GraphController;
 
-      if (null == ctrl)
+      if (ctrl is null)
         return;
 
       Altaxo.Serialization.LengthUnit unit = Altaxo.Serialization.LengthUnit.Point;
@@ -1029,7 +1028,7 @@ namespace Altaxo.Graph.Commands
         (Altaxo.Serialization.LengthUnit.TryParse(Text, out unit, out var number) &&
           Altaxo.Serialization.GUIConversion.IsDouble(number, out value)))
       {
-        if (unit != null)
+        if (unit is not null)
           unit = Altaxo.Serialization.LengthUnit.Point;
         string normalizedEntry = Altaxo.Serialization.GUIConversion.ToString(value) + " " + unit.Shortcut;
         value *= (double)(unit.UnitInMeter / Altaxo.Serialization.LengthUnit.Point.UnitInMeter);
@@ -1061,7 +1060,7 @@ namespace Altaxo.Graph.Commands
         return;
 
       var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.Graph.Gdi.Viewing.GraphController;
-      if (null == ctrl)
+      if (ctrl is null)
         return;
 
       ctrl.SetSelectedObjectsProperty(new RoutedSetterProperty<string>("FontFamily", Text));

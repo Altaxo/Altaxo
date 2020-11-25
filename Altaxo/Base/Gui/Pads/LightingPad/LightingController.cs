@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.ComponentModel;
 using Altaxo.Graph.Graph3D;
@@ -58,7 +59,7 @@ namespace Altaxo.Gui.Pads.LightingPad
       if (_currentActiveViewContent.IsAlive && object.ReferenceEquals(_currentActiveViewContent.Target, Current.Workbench.ActiveViewContent))
       {
         var ctrl = ActiveViewContentAsGraph3DController;
-        if (null != ctrl)
+        if (ctrl is not null)
         {
           ctrl.Doc.Lighting = _view.Lighting;
         }
@@ -79,7 +80,7 @@ namespace Altaxo.Gui.Pads.LightingPad
 
     private void EhWorkbenchActiveViewContentChanged(object sender, EventArgs e)
     {
-      if (null == _view)
+      if (_view is null)
         return; // happens during shutdown or during creation
 
       _currentActiveViewContent = new WeakReference(Current.Workbench.ActiveViewContent);
@@ -88,7 +89,7 @@ namespace Altaxo.Gui.Pads.LightingPad
 
       var ctrl = ActiveViewContentAsGraph3DController;
 
-      if (null != ctrl)
+      if (ctrl is not null)
       {
         _view.Lighting = ctrl.Doc.Lighting;
         enable = true;
@@ -145,12 +146,12 @@ namespace Altaxo.Gui.Pads.LightingPad
       {
         if (!object.ReferenceEquals(value, _view))
         {
-          if (null != _view)
+          if (_view is not null)
             DetachView();
 
           _view = value as ILightingView;
 
-          if (null != _view)
+          if (_view is not null)
             AttachView();
         }
       }

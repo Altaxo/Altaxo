@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -186,10 +187,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
         // Label sides
         _labelSides = new Collections.SelectableListNodeList
         {
-          new Collections.SelectableListNode("Automatic", null, null == _doc.LabelSide)
+          new Collections.SelectableListNode("Automatic", null, _doc.LabelSide is null)
         };
         var list = new List<Collections.SelectableListNode>();
-        if (_doc.CachedAxisInformation != null)
+        if (_doc.CachedAxisInformation is not null)
         {
           list.Add(new Collections.SelectableListNode(_doc.CachedAxisInformation.NameOfFirstDownSide, CSAxisSide.FirstDown, _doc.LabelSide == CSAxisSide.FirstDown));
           list.Add(new Collections.SelectableListNode(_doc.CachedAxisInformation.NameOfFirstUpSide, CSAxisSide.FirstUp, _doc.LabelSide == CSAxisSide.FirstUp));
@@ -213,7 +214,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
         _labelFormattingSpecificController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.LabelFormat }, typeof(IMVCANController), UseDocument.Directly);
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.LabelFont = _doc.Font;
         _view.LabelMaterial = _doc.Brush;
@@ -234,7 +235,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
         _view.PostfixText = _doc.SuffixText;
         _view.LabelSides = _labelSides;
         _view.LabelStyle_Initialize(_labelStyles);
-        _view.LabelFormattingSpecificGuiControl = null == _labelFormattingSpecificController ? null : _labelFormattingSpecificController.ViewObject;
+        _view.LabelFormattingSpecificGuiControl = _labelFormattingSpecificController is null ? null : _labelFormattingSpecificController.ViewObject;
       }
     }
 
@@ -276,10 +277,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       _doc.SuffixText = _view.PostfixText;
 
       var labelSideNode = _labelSides.FirstSelectedNode;
-      if (null != labelSideNode)
+      if (labelSideNode is not null)
         _doc.LabelSide = (CSAxisSide?)labelSideNode.Tag;
 
-      if (null != _labelFormattingSpecificController && !_labelFormattingSpecificController.Apply(disposeController))
+      if (_labelFormattingSpecificController is not null && !_labelFormattingSpecificController.Apply(disposeController))
         return false;
 
       return ApplyEnd(true, disposeController);
@@ -302,8 +303,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       {
         _doc.LabelFormat = (Altaxo.Graph.Graph3D.LabelFormatting.ILabelFormatting)Activator.CreateInstance(type);
         _labelFormattingSpecificController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.LabelFormat }, typeof(IMVCANController), UseDocument.Directly);
-        if (null != _view)
-          _view.LabelFormattingSpecificGuiControl = null == _labelFormattingSpecificController ? null : _labelFormattingSpecificController.ViewObject;
+        if (_view is not null)
+          _view.LabelFormattingSpecificGuiControl = _labelFormattingSpecificController is null ? null : _labelFormattingSpecificController.ViewObject;
       }
     }
   }

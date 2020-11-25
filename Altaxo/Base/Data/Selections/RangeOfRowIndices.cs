@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Altaxo.Graph.Plot.Data;
 using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
@@ -73,7 +73,7 @@ namespace Altaxo.Data.Selections
                 */
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var start = info.GetInt32("Start");
         var count = info.GetInt32("Count");
@@ -95,7 +95,7 @@ namespace Altaxo.Data.Selections
         info.AddValue("Last", s._lastRowIndexInclusive);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var first = info.GetInt32("First");
         var last = info.GetInt32("Last");
@@ -140,7 +140,7 @@ namespace Altaxo.Data.Selections
     }
 
     /// <inheritdoc/>
-    public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndex, DataColumnCollection table, int totalRowCount)
+    public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndex, DataColumnCollection? table, int totalRowCount)
     {
       int start = Math.Max(startIndex, _firstRowIndexInclusive >= 0 ? _firstRowIndexInclusive : _firstRowIndexInclusive + totalRowCount);
       int endInclusive = Math.Min(Math.Min(maxIndex - 1, totalRowCount - 1), _lastRowIndexInclusive >= 0 ? _lastRowIndexInclusive : _lastRowIndexInclusive + totalRowCount);
@@ -162,22 +162,17 @@ namespace Altaxo.Data.Selections
       return 13 * _firstRowIndexInclusive.GetHashCode() + 31 * _lastRowIndexInclusive.GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       var from = obj as RangeOfRowIndices;
-      if (null != from)
+      if (from is not null)
         return _firstRowIndexInclusive == from._firstRowIndexInclusive && _lastRowIndexInclusive == from._lastRowIndexInclusive;
       else
         return false;
     }
 
     /// <inheritdoc/>
-    public IEnumerable<(
-      string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
-      )> GetAdditionallyUsedColumns()
+    public IEnumerable<ColumnInformationSimple> GetAdditionallyUsedColumns()
     {
       yield break;
     }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,10 +36,11 @@ namespace Altaxo.Data
     :
     Altaxo.Data.DataColumn
   {
-    private string[] _data;
+    static readonly string?[] _emptyStringArray = new string?[0];
+    private string?[] _data = _emptyStringArray;
     private int _capacity; // shortcout to m_Array.Length;
     private int _count;
-    public static readonly string NullValue = null;
+    public static readonly string? NullValue = null;
 
     public TextColumn()
     {
@@ -55,7 +57,7 @@ namespace Altaxo.Data
     {
       _count = from._count;
       _capacity = from._capacity;
-      _data = null == from._data ? null : (string[])from._data.Clone();
+      _data = from._data.Length == 0 ? _emptyStringArray : (string?[])from._data.Clone();
     }
 
     public override object Clone()
@@ -80,9 +82,9 @@ namespace Altaxo.Data
           info.AddArray("Data", s._data, s._count);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        Altaxo.Data.TextColumn s = null != o ? (Altaxo.Data.TextColumn)o : new Altaxo.Data.TextColumn();
+        Altaxo.Data.TextColumn s = o is not null ? (Altaxo.Data.TextColumn)o : new Altaxo.Data.TextColumn();
 
         // deserialize the base class
         info.GetBaseValueEmbedded(s, typeof(Altaxo.Data.DataColumn), parent);
@@ -90,7 +92,7 @@ namespace Altaxo.Data
         int count = info.GetInt32Attribute("Count");
         s._data = new string[count];
         info.GetArray(s._data, count);
-        s._capacity = null == s._data ? 0 : s._data.Length;
+        s._capacity = s._data is null ? 0 : s._data.Length;
         s._count = s._capacity;
 
         return s;
@@ -134,7 +136,7 @@ namespace Altaxo.Data
       }
     }
 
-    protected internal string GetValueDirect(int idx)
+    protected internal string? GetValueDirect(int idx)
     {
       return _data[idx];
     }
@@ -149,44 +151,43 @@ namespace Altaxo.Data
       var oldCount = _count;
       _count = 0;
 
-      if (o is TextColumn)
+      if (o is TextColumn tcol)
       {
-        var src = (TextColumn)o;
-        _data = null == src._data ? null : (string[])src._data.Clone();
+
+        _data = tcol._data.Length == 0 ? _emptyStringArray : (string?[])tcol._data.Clone();
         _capacity = _data?.Length ?? 0;
-        _count = src._count;
+        _count = tcol._count;
       }
       else
       {
-        if (o is ICollection)
-          Realloc((o as ICollection).Count); // Prealloc the array if count of the collection is known beforehand
+        if (o is ICollection ocoll)
+          Realloc(ocoll.Count); // Prealloc the array if count of the collection is known beforehand
 
-        if (o is IEnumerable<string>)
+        if (o is IEnumerable<string> srcs)
         {
-          var src = (IEnumerable<string>)o;
           _count = 0;
-          foreach (var it in src)
+          foreach (var it in srcs)
           {
             if (_count >= _capacity)
               Realloc(_count);
             _data[_count++] = it;
           }
         }
-        else if (o is IEnumerable)
+        else if (o is IEnumerable srce)
         {
-          var src = (IEnumerable)o;
+
           _count = 0;
-          foreach (var it in src)
+          foreach (var it in srce)
           {
             if (_count >= _capacity)
               Realloc(_count);
-            _data[_count++] = it.ToString();
+            _data[_count++] = it?.ToString();
           }
         }
         else
         {
           _count = 0;
-          if (o == null)
+          if (o is null)
             throw new ArgumentNullException("o");
           else
             throw new ArgumentException("Try to copy " + o.GetType() + " to " + GetType(), "o"); // throw exception
@@ -201,7 +202,7 @@ namespace Altaxo.Data
 
     private void TrimEmptyElementsAtEnd()
     {
-      for (; _count > 0 && _data[_count - 1] != null; _count--)
+      for (; _count > 0 && _data[_count - 1] is not null; _count--)
         ;
     }
 
@@ -238,7 +239,7 @@ namespace Altaxo.Data
 
     public override bool IsElementEmpty(int i)
     {
-      return i < _count ? (null == _data[i]) : true;
+      return i < _count ? (_data[i] is null) : true;
     }
 
     public override void SetElementEmpty(int i)
@@ -247,7 +248,7 @@ namespace Altaxo.Data
         this[i] = NullValue;
     }
 
-    public new string this[int i]
+    public new string? this[int i]
     {
       get
       {
@@ -262,7 +263,7 @@ namespace Altaxo.Data
         if (i < 0)
           throw new ArgumentOutOfRangeException(string.Format("Index<0 (i={0}) while trying to set element of column {1} ({2})", i, Name, FullName));
 
-        if (value == null)
+        if (value is null)
         {
           if (i < _count - 1) // i is inside the used range
           {
@@ -270,7 +271,7 @@ namespace Altaxo.Data
           }
           else if (i == (_count - 1)) // m_Count is then decreasing
           {
-            for (_count = i; _count > 0 && (null == _data[_count - 1]); --_count)
+            for (_count = i; _count > 0 && (_data[_count - 1] is null); --_count)
               ;
             bCountDecreased = true;
             ;

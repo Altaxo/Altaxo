@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo
 {
@@ -38,7 +38,7 @@ namespace Altaxo
     /// <typeparam name="T">The type of the instance to copy.</typeparam>
     /// <param name="to">The variable to copy to.</param>
     /// <param name="from">The instance that was copied.</param>
-    public static void CopyImmutable<T>(ref T to, T from) where T : Main.IImmutable
+    public static void CopyImmutable<T>([AllowNull][MaybeNull][NotNullIfNotNull("from")] ref T to, [AllowNull] T from) where T : Main.IImmutable
     {
       to = from;
     }
@@ -50,7 +50,7 @@ namespace Altaxo
     /// <param name="to">Reference where to copy to.</param>
     /// <param name="from">Object to copy from.</param>
     /// <returns></returns>
-    public static bool TryCopy<T>(ref T to, T from)
+    public static bool TryCopy<T>([MaybeNull] ref T to, [MaybeNull] T from)
     {
       var fromC = from as ICloneable;
 
@@ -63,12 +63,12 @@ namespace Altaxo
         to = from;
         return true;
       }
-      else if (from == null)
+      else if (from is null)
       {
-        to = default(T);
+        to = default;
         return true;
       }
-      else if (to == null && fromC != null)
+      else if (to is null && fromC is { } _)
       {
         to = (T)fromC.Clone();
         return true;
@@ -78,7 +78,7 @@ namespace Altaxo
         toc.CopyFrom(from);
         return true;
       }
-      else if (fromC != null)
+      else if (fromC is { } _)
       {
         to = (T)fromC.Clone();
         return true;
@@ -93,24 +93,24 @@ namespace Altaxo
     /// <typeparam name="T">The type of the instance to copy.</typeparam>
     /// <param name="to">The variable to copy to.</param>
     /// <param name="from">The instance that was copied.</param>
-    public static void Copy<T>(ref T to, T from) where T : ICloneable
+    public static void Copy<T>([NotNullIfNotNull("from")][AllowNull] ref T to, [MaybeNull] T from) where T : ICloneable?
     {
-      Main.ICopyFrom toc;
-
       if (object.ReferenceEquals(to, from))
       {
       }
-      else if (from == null)
+      else if (from is null)
       {
-        to = default(T);
+#pragma warning disable CS8601 // Possible null reference assignment.
+        to = default;
+#pragma warning restore CS8601 // Possible null reference assignment.
       }
-      else if (to == null)
+      else if (to is null)
       {
         to = (T)from.Clone();
       }
-      else if (null != (toc = (to as Main.ICopyFrom)) && to.GetType() == from.GetType())
+      else if (to is Main.ICopyFrom tocf && to.GetType() == from.GetType())
       {
-        toc.CopyFrom(from);
+        tocf.CopyFrom(from);
       }
       else
       {
@@ -118,13 +118,44 @@ namespace Altaxo
       }
     }
 
+    /// <summary>Copies an instance.</summary>
+    /// <typeparam name="T">The type of the instance to copy.</typeparam>
+    /// <param name="to">The variable to copy to.</param>
+    /// <param name="from">The instance that was copied.</param>
+    public static void CopyN<T>([NotNullIfNotNull("from")] ref T to, [MaybeNull] T from) where T : ICloneable
+    {
+      if (object.ReferenceEquals(to, from))
+      {
+      }
+      else if (from is null)
+      {
+#pragma warning disable CS8601 // Possible null reference assignment.
+        to = default;
+#pragma warning restore CS8601 // Possible null reference assignment.
+      }
+      else if (to is null)
+      {
+        to = (T)from.Clone();
+      }
+      else if (to is Main.ICopyFrom tocf && to.GetType() == from.GetType())
+      {
+        tocf.CopyFrom(from);
+      }
+      else
+      {
+        to = (T)from.Clone();
+      }
+    }
+
+
     /// <summary>Gets a copy of an instance, either by using <see cref="Altaxo.Main.ICopyFrom"/> or <see cref="ICloneable"/> interface.</summary>
     /// <typeparam name="T">The type of the instance to copy.</typeparam>
     /// <param name="to">The value of the variable to copy to.</param>
     /// <param name="from">The instance to copy from.</param>
     /// <returns>The copied instance. It might be the same instance as provided in <paramref name="to"/>, if the interface <see cref="Altaxo.Main.ICopyFrom"/> was used for copying.
     /// If the <see cref="ICloneable"/> interface was used for copying, the returned instance is different from <paramref name="to"/>.</returns>
-    public static T GetCopy<T>(T to, T from) where T : ICloneable
+    [return: NotNullIfNotNull("from")]
+    public static T GetCopy<T>(T to, [MaybeNull] T from) where T : ICloneable
     {
       Copy(ref to, from);
       return to;
@@ -136,13 +167,30 @@ namespace Altaxo
     /// <typeparam name="T">Type of the enumeration members.</typeparam>
     /// <param name="toClone">Input enumeration.</param>
     /// <returns>Output enumeration with cloned members of the input enumeration.</returns>
-    public static IEnumerable<T> GetEnumerationMembersCloned<T>(IEnumerable<T> toClone) where T : ICloneable
+    public static IEnumerable<T?> GetEnumerationMembersCloned<T>(IEnumerable<T?> toClone) where T : class, ICloneable
     {
       foreach (var e in toClone)
       {
-        if (null == e)
-          yield return default(T);
+        if (e is null)
+          yield return default;
         else
+          yield return (T)e.Clone();
+      }
+    }
+
+    /// <summary>
+    /// Gets the members of the input enumeration cloned as output enumeration.
+    /// Here, only those entries of the input enumeration, which are not null, are cloned and returned in the output enumeration.
+    /// </summary>
+    /// <typeparam name="T">Type of the enumeration members.</typeparam>
+    /// <param name="toClone">Input enumeration.</param>
+    /// <returns>Output enumeration with cloned members of the input enumeration.</returns>
+    public static IEnumerable<T> GetEnumerationMembersNotNullCloned<T>(IEnumerable<T?> toClone) where T : class, ICloneable
+    {
+      foreach (var e in toClone)
+      {
+        if (!(e is null))
+
           yield return (T)e.Clone();
       }
     }

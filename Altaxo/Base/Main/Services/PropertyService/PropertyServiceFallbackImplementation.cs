@@ -1,6 +1,8 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +32,7 @@ namespace Altaxo.Main.Services
     public IPropertyBag BuiltinSettings { get; } = new PropertyBag() { ParentObject = SuspendableDocumentNode.StaticInstance };
 
     /// <inheritdoc/>
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PropertyServiceFallbackImplementation"/> class.
@@ -61,7 +63,9 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
-    public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T> ValueCreationIfNotFound)
+    [return: NotNullIfNotNull("ValueCreationIfNotFound")]
+    [return: MaybeNull]
+    public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound) where T: notnull
     {
       if (kind == RuntimePropertyKind.UserAndApplicationAndBuiltin && UserSettings.TryGetValue<T>(p, out var result))
         return result;
@@ -69,10 +73,10 @@ namespace Altaxo.Main.Services
         return result;
       else if (BuiltinSettings.TryGetValue<T>(p, out result))
         return result;
-      else if (null != ValueCreationIfNotFound)
+      else if (ValueCreationIfNotFound is not null)
         return ValueCreationIfNotFound();
       else
-        throw new ArgumentOutOfRangeException(nameof(p), string.Format("No entry found for property key {0}", p));
+        return default;
 
     }
 

@@ -97,7 +97,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 
         var nary = renderer.Push(new Nary());
         var naryProps = nary.AppendChild(new NaryProperties());
-        if (accentString != null)
+        if (accentString is not null)
           naryProps.AppendChild(new AccentChar { Val = accentString });
         if (limitLocation.HasValue)
           naryProps.AppendChild(new LimitLocation { Val = limitLocation.Value });
@@ -110,13 +110,13 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
           );
         naryProps.AppendChild(controlProperties);
 
-        if (item.LowerLimitAtom != null)
+        if (item.LowerLimitAtom is not null)
         {
           var sub = renderer.Push(new SubArgument());
           renderer.Write(item.LowerLimitAtom);
           renderer.PopTo(sub);
         }
-        if (item.UpperLimitAtom != null)
+        if (item.UpperLimitAtom is not null)
         {
           var super = renderer.Push(new SuperArgument());
           renderer.Write(item.UpperLimitAtom);
@@ -191,7 +191,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
     {
       private OpenXMLWpfMathRenderer _renderer;
       private Atom _atom; // The original atom that this BigOperatorAtom is rendering, for example the integral \int
-      private Atom _atomToPopAfter; // the inner atom, for example, all the parts the belong to the integral
+      private Atom? _atomToPopAfter; // the inner atom, for example, all the parts the belong to the integral
       private OpenXmlCompositeElement _elementToPopTo;
 
       public CallbackPopAfterNextElement(OpenXMLWpfMathRenderer renderer, Atom atom, OpenXmlCompositeElement elementToPopTo)

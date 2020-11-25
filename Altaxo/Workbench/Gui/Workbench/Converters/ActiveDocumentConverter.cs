@@ -39,25 +39,25 @@ namespace Altaxo.Gui.Workbench
   /// <seealso cref="IValueConverter" />
   internal class ActiveDocumentConverter : IValueConverter
   {
-    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    public object? Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       if (value is IViewContent)
         return value;
       else if (value is IPadContent padContent)
         return padContent.PadDescriptor;
-      else if (value == null)
+      else if (value is null)
         return null;
 
       return Binding.DoNothing;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    public object? ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       if (value is IViewContent)
         return value;
       else if (value is PadDescriptor padDescriptor)
         return padDescriptor.PadContent;
-      else if (value == null)
+      else if (value is null)
         return null;
       else
         return Binding.DoNothing;

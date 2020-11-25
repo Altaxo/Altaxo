@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,7 +81,7 @@ namespace Altaxo.Com
     {
       ComDebug.ReportInfo("{0}.Dispose", GetType().Name);
 
-      if (null != _currentProject && null != _currentProject.GraphDocumentCollection)
+      if (_currentProject is not null && _currentProject.GraphDocumentCollection is not null)
       {
         _currentProject.GraphDocumentCollection.CollectionChanged -= EhGraphDocumentRenamed;
         _currentProject = null;
@@ -95,19 +96,19 @@ namespace Altaxo.Com
       if (e?.ProjectEventKind == Main.ProjectEventKind.ProjectRenamed)
         EhCurrentProjectFileNameChanged(e.NewName);
 
-      if (object.ReferenceEquals(Current.Project, _currentProject))
+      if (object.ReferenceEquals(Current.ProjectOrNull, _currentProject))
         return;
 
       ComDebug.ReportInfo("{0}.EhCurrentProjectInstanceChanged", GetType().Name);
 
-      if (null != _currentProject && null != _currentProject.GraphDocumentCollection)
+      if (_currentProject is not null && _currentProject.GraphDocumentCollection is not null)
       {
         _currentProject.GraphDocumentCollection.CollectionChanged -= EhGraphDocumentRenamed;
       }
 
-      _currentProject = Current.Project;
+      _currentProject = Current.ProjectOrNull;
 
-      if (null != _currentProject)
+      if (_currentProject is not null)
       {
         _currentProject.GraphDocumentCollection.CollectionChanged += EhGraphDocumentRenamed;
         EhCurrentProjectFileNameChanged(Current.IProjectService.CurrentProjectFileName);
@@ -147,17 +148,17 @@ namespace Altaxo.Com
       if (!string.IsNullOrEmpty(fileName))
       {
         Ole32Func.CreateFileMoniker(fileName, out _fileMoniker);
-        if (null != _fileMoniker)
+        if (_fileMoniker is not null)
         {
           RunningObjectTableHelper.ROTRegisterAsRunning(_fileMoniker, this, ref _fileMonikerRotCookie, typeof(IPersistFile));
 
           // Notify all other item Com objects of the new _fileMoniker
-          if (null != FileMonikerChanged)
+          if (FileMonikerChanged is not null)
             FileMonikerChanged(_fileMoniker);
 
           // now register also a file moniker with a wild card item, that handles all items that are not open in the moment
           Ole32Func.CreateItemMoniker("!", "\\", out var wildCardItemMoniker);
-          if (null != wildCardItemMoniker)
+          if (wildCardItemMoniker is not null)
           {
             _fileMoniker.ComposeWith(wildCardItemMoniker, false, out _fileWithWildCardItemMoniker);
             RunningObjectTableHelper.ROTRegisterAsRunning(_fileWithWildCardItemMoniker, this, ref _fileWithWildCardItemMonikerRotCookie, typeof(IOleItemContainer));
@@ -192,7 +193,7 @@ namespace Altaxo.Com
     {
       ComDebug.ReportInfo("{0}.Load filename: {1}", GetType().Name, pszFileName);
 
-      Current.IProjectService.OpenProject(new FileName(pszFileName), false);
+      Current.IProjectService.OpenProject(new FileName(pszFileName), showUserInteraction: true);
     }
 
     public void Save(string pszFileName, bool fRemember)
@@ -244,7 +245,7 @@ namespace Altaxo.Com
       if (((int)BINDSPEED.BINDSPEED_IMMEDIATE == dwSpeedNeeded || (int)BINDSPEED.BINDSPEED_MODERATE == dwSpeedNeeded) && !isRunning)
         throw Marshal.GetExceptionForHR(ComReturnValue.MK_E_EXCEEDEDDEADLINE);
 
-      if (null == doc) // in this application we can do nothing but to return intptr.Zero
+      if (doc is null) // in this application we can do nothing but to return intptr.Zero
         return IntPtr.Zero;
 
       if (riid == Marshal.GenerateGuidForType(typeof(System.Runtime.InteropServices.ComTypes.IDataObject)) ||

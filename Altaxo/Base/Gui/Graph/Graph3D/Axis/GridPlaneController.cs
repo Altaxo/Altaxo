@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -87,7 +88,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       _doc.GridStyleFirst = (GridStyle)_grid1.ModelObject;
       _doc.GridStyleSecond = (GridStyle)_grid2.ModelObject;
       var backBrush = (IMaterial)_background.ModelObject;
-      if (null != backBrush && !backBrush.IsVisible)
+      if (backBrush is not null && !backBrush.IsVisible)
         backBrush = null;
       _doc.Background = backBrush;
 
@@ -97,7 +98,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     protected override void AttachView()
     {
       base.AttachView();
-      if (null != _innerController)
+      if (_innerController is not null)
       {
         _innerController.ViewObject = _view;
       }
@@ -105,7 +106,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     protected override void DetachView()
     {
-      if (null != _innerController)
+      if (_innerController is not null)
       {
         _innerController.ViewObject = null;
       }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -29,6 +30,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Main;
   using Drawing;
@@ -74,11 +76,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     // cached values:
     /// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
     [field: NonSerialized]
-    protected Func<int, double> _cachedSymbolSizeForIndexFunction;
+    protected Func<int, double>? _cachedSymbolSizeForIndexFunction;
 
     /// <summary>If this function is set, the symbol color is determined by calling this function on the index into the data.</summary>
     [field: NonSerialized]
-    protected Func<int, Color> _cachedColorForIndexFunction;
+    protected Func<int, Color>? _cachedColorForIndexFunction;
 
     #region Serialization
 
@@ -104,9 +106,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         info.AddValue("IndependentColor", s._independentColor);
       }
 
-      protected virtual ScatterPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual ScatterPlotStyle SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        ScatterPlotStyle s = null != o ? (ScatterPlotStyle)o : new ScatterPlotStyle(info);
+        var s = (ScatterPlotStyle?)o ?? new ScatterPlotStyle(info);
 
         s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
         s._skipFreq = info.GetInt32("SkipFreq");
@@ -120,7 +122,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ScatterPlotStyle s = SDeserialize(o, info, parent);
 
@@ -135,7 +137,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// Deserialization constructor.
     /// </summary>
     /// <param name="info">The deserialization information.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected ScatterPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
     }
 
@@ -143,10 +147,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public bool CopyFrom(object obj, bool copyWithDataReferences)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       var from = obj as ScatterPlotStyle;
-      if (null != from)
+      if (from is not null)
       {
         CopyFrom(from, Main.EventFiring.Enabled);
         return true;
@@ -154,10 +158,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return false;
     }
 
+    [MemberNotNull(nameof(_symbolShape), nameof(_material))]
     public void CopyFrom(ScatterPlotStyle from, Main.EventFiring eventFiring)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       using (var suspendToken = SuspendGetToken())
       {
@@ -183,6 +190,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <returns>True if data was copied, otherwise false.</returns>
     public bool CopyFrom(object obj)
     {
+      if (ReferenceEquals(this, obj))
+        return true;
+
       return CopyFrom(obj, true);
     }
 
@@ -205,7 +215,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public ScatterPlotStyle(IScatterSymbol symbol, double size, double penWidth, NamedColor penColor)
     {
-      if (null == symbol)
+      if (symbol is null)
         throw new ArgumentNullException(nameof(symbol));
 
       _symbolShape = symbol;
@@ -244,7 +254,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       get { return _symbolShape; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(_symbolShape, value))
@@ -271,7 +281,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       get { return _material; }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException(nameof(value));
 
         if (!object.ReferenceEquals(_material, value))
@@ -400,10 +410,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #endregion I3DPlotItem Members
 
-    public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData prevItemData, Processed3DPlotData nextItemData)
+    public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData? prevItemData, Processed3DPlotData? nextItemData)
     {
-      PlotRangeList rangeList = pdata.RangeList;
-      var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      if (pdata is null || !(pdata.RangeList is { } rangeList) || rangeList.Count == 0 || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray))
+        return;
 
       // adjust the skip frequency if it was not set appropriate
       if (_skipFreq <= 0)
@@ -414,7 +424,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       {
         PointD3D pos = PointD3D.Empty;
 
-        if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size
+        if (_cachedSymbolSizeForIndexFunction is null && _cachedColorForIndexFunction is null) // using a constant symbol size
         {
           for (int r = 0; r < rangeList.Count; r++)
           {
@@ -436,16 +446,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
             int offset = rangeList[r].OffsetToOriginal;
             for (int j = lower; j < upper; j += _skipFreq)
             {
-              if (null == _cachedColorForIndexFunction)
+              if (_cachedColorForIndexFunction is not null)
+              {
+                double customSymbolSize = _cachedSymbolSizeForIndexFunction is null ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
+                var customSymbolColor = _cachedColorForIndexFunction(j + offset);
+                _symbolShape.Paint(g, _material.WithColor(NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B)), ptArray[j], customSymbolSize);
+              }
+              else if (_cachedSymbolSizeForIndexFunction is not null)
               {
                 double customSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
                 _symbolShape.Paint(g, _material, ptArray[j], customSymbolSize);
-              }
-              else
-              {
-                double customSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
-                var customSymbolColor = _cachedColorForIndexFunction(j + offset);
-                _symbolShape.Paint(g, _material.WithColor(NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B)), ptArray[j], customSymbolSize);
               }
             }
           }
@@ -562,12 +572,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <inheritdoc/>
     public IEnumerable<(
       string ColumnLabel, // Column label
-      IReadableColumn Column, // the column as it was at the time of this call
-      string ColumnName, // the name of the column (last part of the column proxies document path)
-      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      IReadableColumn? Column, // the column as it was at the time of this call
+      string? ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn?> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
-      return null; // no additionally used columns
+      yield break; // no additionally used columns
     }
 
     #endregion IDocumentNode Members

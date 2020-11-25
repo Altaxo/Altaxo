@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,15 +42,15 @@ namespace Altaxo.Drawing.D3D
 
     private IDashPattern _dashPattern;
 
-    private ILineCap _lineStartCap;
+    private ILineCap? _lineStartCap;
 
-    private ILineCap _lineEndCap;
+    private ILineCap? _lineEndCap;
 
-    private ILineCap _dashStartCap;
+    private ILineCap? _dashStartCap;
 
     private bool _dashStartCapSuppressionIfSpaceInsufficient;
 
-    private ILineCap _dashEndCap;
+    private ILineCap? _dashEndCap;
 
     private bool _dashEndCapSuppressionIfSpaceInsufficient;
 
@@ -77,24 +78,24 @@ namespace Altaxo.Drawing.D3D
         info.AddEnum("LineJoin", s._lineJoin);
         info.AddValue("MiterLimit", s._miterLimit);
 
-        if (null != s._lineStartCap)
+        if (s._lineStartCap is not null)
           info.AddValue("LineStartCap", s._lineStartCap);
 
-        if (null != s._lineEndCap)
+        if (s._lineEndCap is not null)
           info.AddValue("LineEndCap", s._lineEndCap);
 
         // Note: we must even save the solid pattern if it belongs to another list than the BuiltinDefault list,
         // otherwise when deserializing we wouldn't know to which list the solid dash pattern belongs to.
-        if (null != s._dashPattern && (!Drawing.DashPatterns.Solid.Instance.Equals(s._dashPattern) || !object.ReferenceEquals(DashPatternListManager.Instance.BuiltinDefault, DashPatternListManager.Instance.GetParentList(s._dashPattern))))
+        if (s._dashPattern is not null && (!Drawing.DashPatterns.Solid.Instance.Equals(s._dashPattern) || !object.ReferenceEquals(DashPatternListManager.Instance.BuiltinDefault, DashPatternListManager.Instance.GetParentList(s._dashPattern))))
         {
           info.AddValue("DashPattern", s._dashPattern);
 
-          if (null != s._dashStartCap)
+          if (s._dashStartCap is not null)
           {
             info.AddValue("DashStartCap", s._dashStartCap);
             info.AddValue("DashStartCapSuppression", s._dashStartCapSuppressionIfSpaceInsufficient);
           }
-          if (null != s._dashEndCap)
+          if (s._dashEndCap is not null)
           {
             info.AddValue("DashEndCap", s._dashEndCap);
             info.AddValue("DashEndCapSuppression", s._dashEndCapSuppressionIfSpaceInsufficient);
@@ -102,7 +103,7 @@ namespace Altaxo.Drawing.D3D
         }
       }
 
-      protected virtual PenX3D SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual PenX3D SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var material = (IMaterial)info.GetValue("Material", null);
         var crossSection = (ICrossSectionOfLine)info.GetValue("CrossSection", null);
@@ -114,7 +115,7 @@ namespace Altaxo.Drawing.D3D
         var lineEndCap = ("LineEndCap" == info.CurrentElementName) ? (ILineCap)info.GetValue("LineEndCap", null) : null;
         var dashPattern = ("DashPattern" == info.CurrentElementName) ? (IDashPattern)info.GetValue("DashPattern", null) : null;
         dashPattern = dashPattern ?? DashPatterns.Solid.Instance;
-        ILineCap dashStartCap = null, dashEndCap = null;
+        ILineCap? dashStartCap = null, dashEndCap = null;
         bool dashStartCapSuppression = false, dashEndCapSuppression = false;
         if (!DashPatterns.Solid.Instance.Equals(dashPattern))
         {
@@ -134,7 +135,7 @@ namespace Altaxo.Drawing.D3D
         return new PenX3D(material, crossSection, lineJoin, miterLimit, lineStartCap, lineEndCap, dashPattern, dashStartCap, dashStartCapSuppression, dashEndCap, dashEndCapSuppression);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -162,11 +163,11 @@ namespace Altaxo.Drawing.D3D
         ICrossSectionOfLine crossSection,
         PenLineJoin lineJoin,
         double miterLimit,
-        ILineCap lineStartCap, ILineCap lineEndCap, IDashPattern dashPattern, ILineCap dashStartCap, bool dashStartCapSuppressionIfSpaceInsufficient, ILineCap dashEndCap, bool dashEndCapSuppressionIfSpaceInsufficient)
+        ILineCap? lineStartCap, ILineCap? lineEndCap, IDashPattern dashPattern, ILineCap? dashStartCap, bool dashStartCapSuppressionIfSpaceInsufficient, ILineCap? dashEndCap, bool dashEndCapSuppressionIfSpaceInsufficient)
     {
       if (!(miterLimit >= 1))
         throw new ArgumentOutOfRangeException(nameof(miterLimit), "must be >= 1");
-      if (null == dashPattern)
+      if (dashPattern is null)
         throw new ArgumentNullException(nameof(dashPattern));
 
       _material = material;
@@ -253,7 +254,7 @@ namespace Altaxo.Drawing.D3D
 
     public PenX3D WithMaterial(IMaterial material)
     {
-      if (null == material)
+      if (material is null)
         throw new ArgumentNullException(nameof(material));
 
       var result = (PenX3D)MemberwiseClone();
@@ -363,7 +364,7 @@ namespace Altaxo.Drawing.D3D
     {
       get
       {
-        if (null == _dashPattern)
+        if (_dashPattern is null)
           throw new InvalidProgramException("_dashPattern member should always be != null.");
 
         return _dashPattern;
@@ -377,7 +378,7 @@ namespace Altaxo.Drawing.D3D
     /// <returns>A new instance of this pen, with the dash pattern provided in the argument.</returns>
     public PenX3D WithDashPattern(IDashPattern dashPattern)
     {
-      if (null == dashPattern)
+      if (dashPattern is null)
         throw new ArgumentNullException(nameof(dashPattern));
 
       if (object.ReferenceEquals(_dashPattern, dashPattern)) // Reference equality is important, since the parent DashPatternList is determined by reference equality
@@ -396,7 +397,7 @@ namespace Altaxo.Drawing.D3D
 
     #region Line Start cap
 
-    public ILineCap LineStartCap
+    public ILineCap? LineStartCap
     {
       get
       {
@@ -404,7 +405,7 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
-    public PenX3D WithLineStartCap(ILineCap cap)
+    public PenX3D WithLineStartCap(ILineCap? cap)
     {
       if (cap is LineCaps.Flat)
         cap = null;
@@ -421,7 +422,7 @@ namespace Altaxo.Drawing.D3D
 
     #region Line end cap
 
-    public ILineCap LineEndCap
+    public ILineCap? LineEndCap
     {
       get
       {
@@ -429,7 +430,7 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
-    public PenX3D WithLineEndCap(ILineCap cap)
+    public PenX3D WithLineEndCap(ILineCap? cap)
     {
       if (cap is LineCaps.Flat)
         cap = null;
@@ -446,7 +447,7 @@ namespace Altaxo.Drawing.D3D
 
     #region Dash start cap
 
-    public ILineCap DashStartCap
+    public ILineCap? DashStartCap
     {
       get
       {
@@ -454,7 +455,7 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
-    public PenX3D WithDashStartCap(ILineCap cap)
+    public PenX3D WithDashStartCap(ILineCap? cap)
     {
       if (cap is LineCaps.Flat)
         cap = null;
@@ -471,7 +472,7 @@ namespace Altaxo.Drawing.D3D
 
     #region Dash end cap
 
-    public ILineCap DashEndCap
+    public ILineCap? DashEndCap
     {
       get
       {
@@ -479,7 +480,7 @@ namespace Altaxo.Drawing.D3D
       }
     }
 
-    public PenX3D WithDashEndCap(ILineCap cap)
+    public PenX3D WithDashEndCap(ILineCap? cap)
     {
       if (cap is LineCaps.Flat)
         cap = null;

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +50,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     protected double? _replacementValueForNaNMatrixElements;
     protected double? _replacementValueForInfiniteMatrixElements;
     protected int? _dataPretreatmentCorrectionOrder;
-    protected Altaxo.Calc.Fourier.Windows.IWindows2D _fourierWindow;
+    protected Altaxo.Calc.Fourier.Windows.IWindows2D? _fourierWindow;
 
     // Output options
     protected RealFourierTransformationOutputKind _kindOfOutputResult = RealFourierTransformationOutputKind.Amplitude;
@@ -58,18 +59,18 @@ namespace Altaxo.Worksheet.Commands.Analysis
     protected double _resultFractionOfRows = 1;
     protected double _resultFractionOfColumns = 1;
     protected bool _outputFrequencyHeaderColumns = true;
-    protected string _frequencyRowHeaderColumnName;
-    protected string _frequencyColumnHeaderColumnName;
+    protected string _frequencyRowHeaderColumnName = string.Empty;
+    protected string _frequencyColumnHeaderColumnName = string.Empty;
     protected bool _outputPeriodHeaderColumns = false;
-    protected string _periodRowHeaderColumnName;
-    protected string _periodColumnHeaderColumnName;
+    protected string _periodRowHeaderColumnName = string.Empty;
+    protected string _periodColumnHeaderColumnName = string.Empty;
 
     // Helper members - not serialized
     [NonSerialized]
-    protected string _rowIncrementMessage;
+    protected string? _rowIncrementMessage;
 
     [NonSerialized]
-    protected string _columnIncrementMessage;
+    protected string? _columnIncrementMessage;
 
     public object Clone()
     {
@@ -95,7 +96,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         info.AddValue("ReplacementValueForNaNMatrixElements", s._replacementValueForNaNMatrixElements);
         info.AddValue("ReplacementValueForInfiniteMatrixElements", s._replacementValueForInfiniteMatrixElements);
         info.AddValue("DataPretreatmentCorrectionOrder", s._dataPretreatmentCorrectionOrder);
-        info.AddValue("FourierWindow", s._fourierWindow);
+        info.AddValueOrNull("FourierWindow", s._fourierWindow);
 
         info.AddEnum("KindOfOutputResult", s._kindOfOutputResult);
         info.AddValue("CenterResult", s._centerResult);
@@ -111,16 +112,16 @@ namespace Altaxo.Worksheet.Commands.Analysis
         info.AddValue("PeriodColumnHeaderColumnName", s._periodColumnHeaderColumnName);
       }
 
-      protected virtual RealFourierTransformation2DOptions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual RealFourierTransformation2DOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new RealFourierTransformation2DOptions() : (RealFourierTransformation2DOptions)o);
+        var s = (RealFourierTransformation2DOptions?)o ?? new RealFourierTransformation2DOptions();
 
         s._rowIncrementValue = info.GetDouble("RowIncrementValue");
         s._columnIncrementValue = info.GetDouble("ColumnIncrementValue");
         s._replacementValueForNaNMatrixElements = info.GetNullableDouble("ReplacementValueForNaNMatrixElements");
         s._replacementValueForInfiniteMatrixElements = info.GetNullableDouble("ReplacementValueForInfiniteMatrixElements");
         s._dataPretreatmentCorrectionOrder = info.GetNullableInt32("DataPretreatmentCorrectionOrder");
-        s._fourierWindow = (Altaxo.Calc.Fourier.Windows.IWindows2D)info.GetValue("FourierWindow", s);
+        s._fourierWindow = (Altaxo.Calc.Fourier.Windows.IWindows2D?)info.GetValueOrNull("FourierWindow", s);
 
         s._kindOfOutputResult = (RealFourierTransformationOutputKind)info.GetEnum("KindOfOutputResult", typeof(RealFourierTransformationOutputKind));
         s._centerResult = info.GetBoolean("CenterResult");
@@ -138,7 +139,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -166,7 +167,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         info.AddValue("ReplacementValueForNaNMatrixElements", s._replacementValueForNaNMatrixElements);
         info.AddValue("ReplacementValueForInfiniteMatrixElements", s._replacementValueForInfiniteMatrixElements);
         info.AddValue("DataPretreatmentCorrectionOrder", s._dataPretreatmentCorrectionOrder);
-        info.AddValue("FourierWindow", s._fourierWindow);
+        info.AddValueOrNull("FourierWindow", s._fourierWindow);
 
         info.AddEnum("KindOfOutputResult", s._kindOfOutputResult);
         info.AddValue("CenterResult", s._centerResult);
@@ -182,9 +183,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
         info.AddValue("PeriodColumnHeaderColumnName", s._periodColumnHeaderColumnName);
       }
 
-      protected virtual RealFourierTransformation2DOptions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual RealFourierTransformation2DOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o == null ? new RealFourierTransformation2DOptions() : (RealFourierTransformation2DOptions)o);
+        var s = (o is null ? new RealFourierTransformation2DOptions() : (RealFourierTransformation2DOptions)o);
 
         s._isUserDefinedRowIncrementValue = info.GetBoolean("IsUserDefinedRowIncrementValue");
         s._rowIncrementValue = info.GetDouble("RowIncrementValue");
@@ -193,7 +194,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         s._replacementValueForNaNMatrixElements = info.GetNullableDouble("ReplacementValueForNaNMatrixElements");
         s._replacementValueForInfiniteMatrixElements = info.GetNullableDouble("ReplacementValueForInfiniteMatrixElements");
         s._dataPretreatmentCorrectionOrder = info.GetNullableInt32("DataPretreatmentCorrectionOrder");
-        s._fourierWindow = (Altaxo.Calc.Fourier.Windows.IWindows2D)info.GetValue("FourierWindow", s);
+        s._fourierWindow = (Altaxo.Calc.Fourier.Windows.IWindows2D?)info.GetValueOrNull("FourierWindow", s);
 
         s._kindOfOutputResult = (RealFourierTransformationOutputKind)info.GetEnum("KindOfOutputResult", typeof(RealFourierTransformationOutputKind));
         s._centerResult = info.GetBoolean("CenterResult");
@@ -211,7 +212,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);
         return s;
@@ -236,7 +237,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public int? DataPretreatmentCorrectionOrder { get { return _dataPretreatmentCorrectionOrder; } set { SetMemberAndRaiseSelfChanged(ref _dataPretreatmentCorrectionOrder, value); } }
 
-    public Altaxo.Calc.Fourier.Windows.IWindows2D FourierWindow
+    public Altaxo.Calc.Fourier.Windows.IWindows2D? FourierWindow
     {
       get { return _fourierWindow; }
       set
@@ -289,8 +290,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public string PeriodColumnHeaderColumnName { get { return _periodColumnHeaderColumnName; } set { SetMemberAndRaiseSelfChanged(ref _periodColumnHeaderColumnName, value); } }
 
-    public string RowIncrementMessage { get { return _rowIncrementMessage; } set { SetMemberAndRaiseSelfChanged(ref _rowIncrementMessage, value); } }
+    public string? RowIncrementMessage { get { return _rowIncrementMessage; } set { SetMemberAndRaiseSelfChanged(ref _rowIncrementMessage, value); } }
 
-    public string ColumnIncrementMessage { get { return _columnIncrementMessage; } set { SetMemberAndRaiseSelfChanged(ref _columnIncrementMessage, value); } }
+    public string? ColumnIncrementMessage { get { return _columnIncrementMessage; } set { SetMemberAndRaiseSelfChanged(ref _columnIncrementMessage, value); } }
   }
 }

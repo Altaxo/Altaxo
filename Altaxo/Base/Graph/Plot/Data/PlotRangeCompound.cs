@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public PlotRangeCompound(IEnumerable<IPlotRange> ranges)
     {
-      if (null == ranges)
+      if (ranges is null)
         throw new ArgumentNullException(nameof(ranges));
 
       _ranges = ranges.ToArray();

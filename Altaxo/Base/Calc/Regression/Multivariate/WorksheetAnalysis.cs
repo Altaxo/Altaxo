@@ -22,11 +22,14 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
 using Altaxo.Data;
+using Markdig.Extensions.Tables;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -273,9 +276,10 @@ namespace Altaxo.Calc.Regression.Multivariate
       return string.Format("{0}{1}.{2}", _XLeverage_ColumnName, whichY, numberOfFactors);
     }
 
+    [DoesNotReturn]
     protected static void NotFound(string name)
     {
-      throw new ArgumentException("Column " + name + " not found in the table.");
+      throw new ArgumentException($"Column {name} not found in the table.");
     }
 
     #endregion Column Naming
@@ -467,7 +471,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>Instance of the calibration model (in more handy format).</returns>
     public abstract IMultivariateCalibrationModel GetCalibrationModel(DataTable calibTable);
 
-    public static MultivariateContentMemento GetContentAsMultivariateContentMemento(DataTable table)
+    public static MultivariateContentMemento? GetContentAsMultivariateContentMemento(DataTable table)
     {
       var result = table.GetTableProperty("Content") as MultivariateContentMemento;
       return result;
@@ -483,7 +487,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       var plsMemo = GetContentAsMultivariateContentMemento(table);
 
-      if (plsMemo == null)
+      if (plsMemo is null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
 
       IMultivariateCalibrationModel calib = GetCalibrationModel(table);
@@ -537,7 +541,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix<double> matrixX,
       int numberOfFactors,
       MatrixMath.LeftSpineJaggedArrayMatrix<double> predictedY,
-      IMatrix<double> spectralResiduals)
+      IMatrix<double>? spectralResiduals)
     {
       MultivariateRegression.PreprocessSpectraForPrediction(mcalib, preprocessOptions, matrixX);
 
@@ -580,8 +584,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 
         case CrossPRESSCalculationType.ExcludeHalfEnsemblyOfMeasurements:
           return new ExcludeHalfObservationsGroupingStrategy();
+
+        default:
+          throw new InvalidOperationException($"Can not get grouping strategy for {nameof(CrossPRESSCalculationType)} {crossValidationType}");
       }
-      return null;
     }
 
     /// <summary>
@@ -591,19 +597,17 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>The matrix of the original spectra.</returns>
     public static IMatrix<double> GetRawSpectra(MultivariateContentMemento plsMemo)
     {
-      string tablename = plsMemo.OriginalDataTableName;
-      if (!Current.Project.DataTableCollection.Contains(tablename))
-        throw new OriginalDataTableNotFoundException(string.Format("The original data table <<{0}>> does not exist, was it renamed?", tablename));
+      string? tablename = plsMemo.OriginalDataTableName;
+      if (tablename is null || !Current.Project.DataTableCollection.Contains(tablename))
+        throw new OriginalDataTableNotFoundException($"The original data table {tablename} does not exist, was it renamed?");
 
-      Altaxo.Data.DataTable srctable = Current.Project.DataTableCollection[tablename];
+      if (!Current.Project.DataTableCollection.TryGetValue(tablename, out var srctable))
+        throw new ApplicationException($"Table[{tablename}] containing original spectral data not found!");
 
-      if (srctable == null)
-        throw new ApplicationException(string.Format("Table[{0}] containing original spectral data not found!", tablename));
+      var spectralIndices = plsMemo.SpectralIndices ?? throw new InvalidOperationException("Stored memento of multivariate analysis seems corrupt (does not contain SpectralIndices)");
+      var measurementIndices = plsMemo.MeasurementIndices ?? throw new InvalidOperationException("Stored memento of multivariate analysis seems corrupt (does not contain MeasurementIndices)");
 
-      Altaxo.Collections.IAscendingIntegerCollection spectralIndices = plsMemo.SpectralIndices;
-      Altaxo.Collections.IAscendingIntegerCollection measurementIndices = plsMemo.MeasurementIndices;
-
-      var matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(measurementIndices.Count, spectralIndices.Count);
+      // var matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(measurementIndices.Count, spectralIndices.Count);
 
       return GetRawSpectra(srctable, plsMemo.SpectrumIsRow, spectralIndices, measurementIndices);
     }
@@ -618,7 +622,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>The matrix of spectra. In this matrix the spectra are horizonally organized (each row is one spectrum).</returns>
     public static IMatrix<double> GetRawSpectra(Altaxo.Data.DataTable srctable, bool spectrumIsRow, Altaxo.Collections.IAscendingIntegerCollection spectralIndices, Altaxo.Collections.IAscendingIntegerCollection measurementIndices)
     {
-      if (srctable == null)
+      if (srctable is null)
         throw new ArgumentException("Argument srctable may not be null");
 
       var matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(measurementIndices.Count, spectralIndices.Count);
@@ -628,7 +632,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         for (int i = 0; i < spectralIndices.Count; i++)
         {
           // labelColumnOfX[i] = spectralIndices[i];
-          var col = srctable[spectralIndices[i]] as Altaxo.Data.INumericColumn;
+          var col = (srctable[spectralIndices[i]] as Altaxo.Data.INumericColumn) ?? throw new InvalidOperationException($"Column {spectralIndices[i]} (at spectral index {i}) is not numeric!");
           for (int j = 0; j < measurementIndices.Count; j++)
           {
             matrixX[j, i] = col[measurementIndices[j]];
@@ -643,7 +647,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         }
         for (int i = 0; i < measurementIndices.Count; i++)
         {
-          var col = srctable[measurementIndices[i]] as Altaxo.Data.INumericColumn;
+          var col = (srctable[measurementIndices[i]] as Altaxo.Data.INumericColumn) ?? throw new InvalidOperationException($"Column {measurementIndices[i]} (at measurement index {i}) is not numeric!");
           for (int j = 0; j < spectralIndices.Count; j++)
           {
             matrixX[i, j] = col[spectralIndices[j]];
@@ -664,11 +668,11 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>The x-values corresponding to the first spectrum.</returns>
     public static double[] GetXOfSpectra(Altaxo.Data.DataTable srctable, bool spectrumIsRow, Altaxo.Collections.IAscendingIntegerCollection spectralIndices, Altaxo.Collections.IAscendingIntegerCollection measurementIndices)
     {
-      if (srctable == null)
+      if (srctable is null)
         throw new ArgumentException("Argument srctable may not be null");
 
       int group;
-      Altaxo.Data.INumericColumn col;
+      Altaxo.Data.INumericColumn? col;
 
       if (spectrumIsRow)
       {
@@ -683,7 +687,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         col = srctable.DataColumns.FindXColumnOfGroup(group) as Altaxo.Data.INumericColumn;
       }
 
-      if (col == null)
+      if (col is null)
         col = new IndexerColumn();
 
       double[] result = new double[spectralIndices.Count];
@@ -701,22 +705,22 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>Matrix of orignal Y (concentration) data.</returns>
     public static IMatrix<double> GetOriginalY(MultivariateContentMemento plsMemo)
     {
-      string tablename = plsMemo.OriginalDataTableName;
+      string tablename = plsMemo.OriginalDataTableName ?? throw new InvalidOperationException($"Stored memento of multivariate analysis seems corrupt (does not contain {nameof(plsMemo.OriginalDataTableName)})");
 
       Altaxo.Data.DataTable srctable = Current.Project.DataTableCollection[tablename];
 
-      if (srctable == null)
+      if (srctable is null)
         throw new ApplicationException(string.Format("Table[{0}] containing original spectral data not found!", tablename));
 
       Altaxo.Data.DataColumnCollection concentration = plsMemo.SpectrumIsRow ? srctable.DataColumns : srctable.PropertyColumns;
-      Altaxo.Collections.IAscendingIntegerCollection concentrationIndices = plsMemo.ConcentrationIndices;
-      Altaxo.Collections.IAscendingIntegerCollection measurementIndices = plsMemo.MeasurementIndices;
+      Altaxo.Collections.IAscendingIntegerCollection concentrationIndices = plsMemo.ConcentrationIndices ?? throw new InvalidOperationException($"Stored memento of multivariate analysis seems corrupt (does not contain {nameof(plsMemo.ConcentrationIndices)})");
+      Altaxo.Collections.IAscendingIntegerCollection measurementIndices = plsMemo.MeasurementIndices ?? throw new InvalidOperationException($"Stored memento of multivariate analysis seems corrupt (does not contain {nameof(plsMemo.MeasurementIndices)})");
 
       // fill in the y-values
       var matrixY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(measurementIndices.Count, concentrationIndices.Count);
       for (int i = 0; i < concentrationIndices.Count; i++)
       {
-        var col = concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn;
+        var col = (concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn) ?? throw new InvalidOperationException($"Column {concentrationIndices[i]} (at concentration index {i}) is not numeric!");
         for (int j = 0; j < measurementIndices.Count; j++)
         {
           matrixY[j, i] = col[measurementIndices[j]];
@@ -738,17 +742,17 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="matrixY">On return, gives the matrix of y-values (each measurement is a row in the matrix).</param>
     /// <param name="plsContent">Holds information about the analysis results.</param>
     /// <param name="xOfX">On return, this is the vector of values corresponding to each spectral bin, i.e. wavelength values, frequencies etc.</param>
-    /// <returns></returns>
-    public static string GetXYMatrices(
+    /// <returns>Null if successfull; otherwise, and error message.</returns>
+    public static string? GetXYMatrices(
       Altaxo.Data.DataTable srctable,
       IAscendingIntegerCollection selectedColumns,
       IAscendingIntegerCollection selectedRows,
       IAscendingIntegerCollection selectedPropertyColumns,
       bool bHorizontalOrientedSpectrum,
       MultivariateContentMemento plsContent,
-      out IMatrix<double> matrixX,
-      out IMatrix<double> matrixY,
-      out IROVector<double> xOfX
+      out IMatrix<double>? matrixX,
+      out IMatrix<double>? matrixY,
+      out IROVector<double>? xOfX
       )
     {
       matrixX = null;
@@ -756,7 +760,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       xOfX = null;
       plsContent.SpectrumIsRow = bHorizontalOrientedSpectrum;
 
-      Altaxo.Data.DataColumn xColumnOfX = null;
+      Altaxo.Data.DataColumn? xColumnOfX = null;
       Altaxo.Data.DataColumn labelColumnOfX = new Altaxo.Data.DoubleColumn();
 
       Altaxo.Data.DataColumnCollection concentration = bHorizontalOrientedSpectrum ? srctable.DataColumns : srctable.PropertyColumns;
@@ -777,15 +781,15 @@ namespace Altaxo.Calc.Regression.Multivariate
       plsContent.SpectrumIsRow = bHorizontalOrientedSpectrum;
       plsContent.OriginalDataTableName = srctable.Name;
 
-      bool bUseSelectedColumns = (null != selectedColumns && 0 != selectedColumns.Count);
+      var usedSelectedColumns = selectedColumns is null || 0 == selectedColumns.Count ? null : selectedColumns;
       // this is the number of columns (for now), but it can be less than this in case
       // not all columns are numeric
-      int prenumcols = bUseSelectedColumns ? selectedColumns.Count : srctable.DataColumns.ColumnCount;
+      int prenumcols = usedSelectedColumns is null ? srctable.DataColumns.ColumnCount : usedSelectedColumns.Count;
       // check for the number of numeric columns
       int numcols = 0;
       for (int i = 0; i < prenumcols; i++)
       {
-        int idx = bUseSelectedColumns ? selectedColumns[i] : i;
+        int idx = usedSelectedColumns is null ? i : usedSelectedColumns[i];
         if (srctable[idx] is Altaxo.Data.INumericColumn)
         {
           numericDataCols.Add(idx);
@@ -794,19 +798,19 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
 
       // check the number of rows
-      bool bUseSelectedRows = (null != selectedRows && 0 != selectedRows.Count);
+      var usedSelectedRows = selectedRows is null || selectedRows.Count == 0 ? null : selectedRows;
       int numrows;
-      if (bUseSelectedRows)
+      if (!(usedSelectedRows is null))
       {
-        numrows = selectedRows.Count;
-        numericDataRows.Add(selectedRows);
+        numrows = usedSelectedRows.Count;
+        numericDataRows.Add(usedSelectedRows);
       }
       else
       {
         numrows = 0;
         for (int i = 0; i < numcols; i++)
         {
-          int idx = bUseSelectedColumns ? selectedColumns[i] : i;
+          int idx = usedSelectedColumns is null ? i : usedSelectedColumns[i];
           numrows = Math.Max(numrows, srctable[idx].Count);
         }
         numericDataRows.Add(ContiguousIntegerRange.FromStartAndCount(0, numrows));
@@ -896,14 +900,14 @@ namespace Altaxo.Calc.Regression.Multivariate
         // that designates the y-values
         // so count all property columns
 
-        bool bUseSelectedPropCols = (null != selectedPropertyColumns && 0 != selectedPropertyColumns.Count);
+        var usedSelectedPropertyColumns = selectedPropertyColumns is null || 0 == selectedPropertyColumns.Count ? null : selectedPropertyColumns;
         // this is the number of property columns (for now), but it can be less than this in case
         // not all columns are numeric
-        int prenumpropcols = bUseSelectedPropCols ? selectedPropertyColumns.Count : srctable.PropCols.ColumnCount;
+        int prenumpropcols = usedSelectedPropertyColumns is null ? srctable.PropCols.ColumnCount : usedSelectedPropertyColumns.Count;
         // check for the number of numeric property columns
         for (int i = 0; i < prenumpropcols; i++)
         {
-          int idx = bUseSelectedPropCols ? selectedPropertyColumns[i] : i;
+          int idx = usedSelectedPropertyColumns is null ? i : usedSelectedPropertyColumns[i];
           if (srctable.PropCols[idx] is Altaxo.Data.INumericColumn)
           {
             concentrationIndices.Add(idx);
@@ -937,7 +941,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       matrixY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(measurementIndices.Count, concentrationIndices.Count);
       for (int i = 0; i < concentrationIndices.Count; i++)
       {
-        var col = concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn;
+        var col = (concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn) ?? throw new InvalidOperationException($"Column {concentrationIndices[i]} (at concentration index {i}) is not numeric!"); ;
         for (int j = 0; j < measurementIndices.Count; j++)
         {
           matrixY[j, i] = col[measurementIndices[j]];
@@ -950,7 +954,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         for (int i = 0; i < spectralIndices.Count; i++)
         {
           labelColumnOfX[i] = spectralIndices[i];
-          var col = srctable[spectralIndices[i]] as Altaxo.Data.INumericColumn;
+          var col = (srctable[spectralIndices[i]] as Altaxo.Data.INumericColumn) ?? throw new InvalidOperationException($"Column {spectralIndices[i]} (at spectral index {i}) is not numeric!");
           for (int j = 0; j < measurementIndices.Count; j++)
           {
             matrixX[j, i] = col[measurementIndices[j]];
@@ -965,7 +969,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         }
         for (int i = 0; i < measurementIndices.Count; i++)
         {
-          var col = srctable[measurementIndices[i]] as Altaxo.Data.INumericColumn;
+          var col = (srctable[measurementIndices[i]] as Altaxo.Data.INumericColumn) ?? throw new InvalidOperationException($"Column {measurementIndices[i]} (at measurement index {i}) is not numeric!");
           for (int j = 0; j < spectralIndices.Count; j++)
           {
             matrixX[i, j] = col[spectralIndices[j]];
@@ -983,9 +987,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="xtomap">The column to map containing x-values, for instance the spectral wavelength of an unknown spectra to predict.</param>
     /// <param name="failureMessage">In case of a mapping error, contains detailed information about the error.</param>
     /// <returns>The indices of the mapping column that matches those of the master column. Contains as many indices as items in xmaster. In case of mapping error, returns null.</returns>
-    public static Altaxo.Collections.AscendingIntegerCollection MapSpectralX(
+    public static Altaxo.Collections.AscendingIntegerCollection? MapSpectralX(
       IReadOnlyList<double> xmaster,
-      IReadOnlyList<double> xtomap, out string failureMessage)
+      IReadOnlyList<double> xtomap, [MaybeNull] out string failureMessage)
     {
       failureMessage = null;
       int mastercount = xmaster.Count;
@@ -1143,11 +1147,11 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       // add a NumberOfFactors columm
 
-      DoubleColumn xNumFactor = null;
+      DoubleColumn? xNumFactor = null;
       if (table.DataColumns.Contains(_NumberOfFactors_ColumnName))
         xNumFactor = table[_NumberOfFactors_ColumnName] as DoubleColumn;
 
-      if (null == xNumFactor)
+      if (xNumFactor is null)
       {
         xNumFactor = new Altaxo.Data.DoubleColumn();
         table.DataColumns.Add(xNumFactor, _NumberOfFactors_ColumnName, Altaxo.Data.ColumnKind.X, _NumberOfFactors_ColumnGroup);
@@ -1179,8 +1183,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       DataTable table,
       MultivariateContentMemento plsContent)
     {
-      DoubleColumn pressColumn = null;
-      DoubleColumn crossPRESSColumn = null;
+      DoubleColumn? pressColumn = null;
+      DoubleColumn? crossPRESSColumn = null;
       if (table.DataColumns.Contains(GetPRESSValue_ColumnName()))
         pressColumn = table[GetPRESSValue_ColumnName()] as DoubleColumn;
       if (table.DataColumns.Contains(GetCrossPRESSValue_ColumnName()))
@@ -1189,12 +1193,12 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROVector<double> press;
       double meanNumberOfIncludedSpectra = plsContent.NumberOfMeasurements;
 
-      if (crossPRESSColumn != null && crossPRESSColumn.Count > 0)
+      if (crossPRESSColumn is not null && crossPRESSColumn.Count > 0)
       {
         press = DataColumnWrapper.ToROVector(crossPRESSColumn);
         meanNumberOfIncludedSpectra = plsContent.MeanNumberOfMeasurementsInCrossPRESSCalculation;
       }
-      else if (pressColumn != null && pressColumn.Count > 0)
+      else if (pressColumn is not null && pressColumn.Count > 0)
       {
         press = DataColumnWrapper.ToROVector(pressColumn);
         meanNumberOfIncludedSpectra = plsContent.NumberOfMeasurements;
@@ -1230,6 +1234,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       IMatrix<double> matrixY = GetOriginalY(plsContent);
       IMultivariateCalibrationModel calib = GetCalibrationModel(table);
+      var measurementIndices = plsContent.MeasurementIndices ?? throw new InvalidOperationException($"Stored memento of multivariate analysis seems corrupt (does not contain {nameof(plsContent.MeasurementIndices)})");
 
       // add a label column for the measurement number
       var measurementLabel = new Altaxo.Data.DoubleColumn();
@@ -1288,7 +1293,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       var plsMemo = GetContentAsMultivariateContentMemento(table);
 
-      if (plsMemo == null)
+      if (plsMemo is null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
 
       IMultivariateCalibrationModel calib = GetCalibrationModel(table);
@@ -1299,7 +1304,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.RowCount, calib.NumberOfY);
       var spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.RowCount, 1);
-      CalculateCrossPredictedY(calib,
+      CalculateCrossPredictedY(
+        calib,
         GetGroupingStrategy(plsMemo.CrossValidationType),
         plsMemo.SpectralPreprocessing,
         calib.PreprocessingModel.XOfX,
@@ -1361,7 +1367,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       var plsMemo = GetContentAsMultivariateContentMemento(table);
 
-      if (plsMemo == null)
+      if (plsMemo is null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
 
       IMultivariateCalibrationModel calib = GetCalibrationModel(table);
@@ -1451,6 +1457,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMultivariateCalibrationModel calibModel = GetCalibrationModel(modelTable);
       //      Export(modelTable, out calibModel);
       var memento = GetContentAsMultivariateContentMemento(modelTable);
+      if (memento is null)
+        throw new InvalidOperationException($"Provided table {modelTable?.Name} does not contain a multivariate model.");
 
       // Fill matrixX with spectra
       Altaxo.Collections.AscendingIntegerCollection spectralIndices;
@@ -1474,8 +1482,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         double[] xofx = GetXOfSpectra(srctable, spectrumIsRow, spectralIndices, measurementIndices);
 
-        AscendingIntegerCollection map = MapSpectralX(calibModel.PreprocessingModel.XOfX, VectorMath.ToROVector(xofx), out var errormsg);
-        if (map == null)
+        var map = MapSpectralX(calibModel.PreprocessingModel.XOfX, VectorMath.ToROVector(xofx), out var errormsg);
+        if (map is null)
           throw new ApplicationException("Can not map spectral data: " + errormsg);
         else
         {
@@ -1523,7 +1531,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       var plsMemo = GetContentAsMultivariateContentMemento(calibtable);
 
-      if (plsMemo == null)
+      if (plsMemo is null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
 
       IMatrix<double> matrixX = GetRawSpectra(plsMemo);
@@ -1562,7 +1570,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="plsOptions">Provides information about the max number of factors and the calculation of cross PRESS value.</param>
     /// <param name="preprocessOptions">Provides information about how to preprocess the spectra.</param>
     /// <returns></returns>
-    public virtual string ExecuteAnalysis(
+    public virtual string? ExecuteAnalysis(
       Altaxo.AltaxoDocument mainDocument,
       Altaxo.Data.DataTable srctable,
       IAscendingIntegerCollection selectedColumns,
@@ -1591,7 +1599,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         plsContent.OriginalDataTableName = srctable.Name;
 
         // Get matrices
-        GetXYMatrices(
+        var error = GetXYMatrices(
           srctable,
           selectedColumns,
           selectedRows,
@@ -1599,6 +1607,11 @@ namespace Altaxo.Calc.Regression.Multivariate
           bHorizontalOrientedSpectrum,
           plsContent,
           out var matrixX, out var matrixY, out var xOfX);
+
+        if (matrixX is null || matrixY is null || xOfX is null)
+        {
+          return error ?? "Error getting matrixX, matrixY and xOfX";
+        }
 
         StoreXOfX(xOfX, table);
 

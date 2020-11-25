@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Main.Properties;
@@ -43,7 +44,7 @@ namespace Altaxo.Graph.Graph3D.Axis
   {
     private List<AxisStyle> _axisStyles;
 
-    private G3DCoordinateSystem _cachedCoordinateSystem;
+    private G3DCoordinateSystem? _cachedCoordinateSystem;
 
     #region Serialization
 
@@ -63,9 +64,9 @@ namespace Altaxo.Graph.Graph3D.Axis
         info.CommitArray();
       }
 
-      protected virtual AxisStyleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AxisStyleCollection SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        AxisStyleCollection s = null != o ? (AxisStyleCollection)o : new AxisStyleCollection();
+        var s = (AxisStyleCollection?)o ?? new AxisStyleCollection();
 
         int count = info.OpenArray();
         for (int i = 0; i < count; ++i)
@@ -79,7 +80,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         AxisStyleCollection s = SDeserialize(o, info, parent);
         return s;
@@ -98,7 +99,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     private void CopyFrom(AxisStyleCollection from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       _axisStyles.Clear();
@@ -113,11 +114,11 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _axisStyles)
+      if (_axisStyles is not null)
       {
         for (int i = 0; i < _axisStyles.Count; ++i)
         {
-          if (null != _axisStyles[i])
+          if (_axisStyles[i] is not null)
             yield return new Main.DocumentNodeAndName(_axisStyles[i], "Style" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
       }
@@ -133,7 +134,7 @@ namespace Altaxo.Graph.Graph3D.Axis
       get { return _axisStyles.Count; }
     }
 
-    public AxisStyle this[CSLineID id]
+    public AxisStyle? this[CSLineID id]
     {
       get
       {
@@ -147,10 +148,10 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public void Add(AxisStyle value)
     {
-      if (value != null)
+      if (value is not null)
       {
         value.ParentObject = this;
-        if (_cachedCoordinateSystem != null)
+        if (_cachedCoordinateSystem is not null)
           value.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(value.StyleID);
 
         _axisStyles.Add(value);
@@ -191,10 +192,13 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public AxisStyle AxisStyleEnsured(CSLineID id)
     {
-      AxisStyle prop = this[id];
-      if (prop == null)
+      if (_cachedCoordinateSystem is null)
+        throw new InvalidProgramException($"{nameof(_cachedCoordinateSystem)} is null. Call {nameof(UpdateCoordinateSystem)} first!");
+
+      var prop = this[id];
+      if (prop is null)
       {
-        prop = new AxisStyle(id, false, false, false, null, null)
+        prop = new AxisStyle(id, false, false, false, null, PropertyExtensions.GetPropertyContext(this))
         {
           CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(id)
         };
@@ -211,8 +215,11 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <returns>The newly created axis style, if it was not in the collection before. Returns the unchanged axis style, if it was present already in the collection.</returns>
     public AxisStyle CreateDefault(CSLineID id, IReadOnlyPropertyBag context)
     {
-      AxisStyle prop = this[id];
-      if (prop == null)
+      if (_cachedCoordinateSystem is null)
+        throw new InvalidProgramException($"{nameof(_cachedCoordinateSystem)} is null. Call {nameof(UpdateCoordinateSystem)} first!");
+
+      var prop = this[id];
+      if (prop is null)
       {
         prop = new AxisStyle(id, true, true, false, null, context)
         {
@@ -231,8 +238,11 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <returns>The newly created axis style, if it was not in the collection before. Returns the unchanged axis style, if it was present already in the collection.</returns>
     public AxisStyle CreateDefault(CSAxisInformation info, IReadOnlyPropertyBag context)
     {
-      AxisStyle prop = this[info.Identifier];
-      if (prop == null)
+      if (_cachedCoordinateSystem is null)
+        throw new InvalidProgramException($"{nameof(_cachedCoordinateSystem)} is null. Call {nameof(UpdateCoordinateSystem)} first!");
+
+      var prop = this[info.Identifier];
+      if (prop is null)
       {
         prop = new AxisStyle(info, true, info.HasTicksByDefault, false, null, context)
         {
@@ -245,7 +255,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public bool Contains(CSLineID id)
     {
-      return null != this[id];
+      return this[id] is not null;
     }
 
     public IEnumerable<CSLineID> AxisStyleIDs
@@ -279,16 +289,16 @@ namespace Altaxo.Graph.Graph3D.Axis
       Func<CSLineID, CSLineID> GetNewAxisLineIDFromOldAxisLineID,
       Func<CSLineID, CSAxisSide, CSLineID, CSAxisSide?> GetNewAxisSideFromOldAxisSide)
     {
-      if (null == newSystem)
+      if (newSystem is null)
         throw new ArgumentNullException(nameof(newSystem));
-      if (null == GetNewAxisLineIDFromOldAxisLineID)
+      if (GetNewAxisLineIDFromOldAxisLineID is null)
         throw new ArgumentNullException(nameof(GetNewAxisLineIDFromOldAxisLineID));
 
       foreach (var axisStyle in _axisStyles)
       {
         var oldAxisLineID = axisStyle.StyleID;
         var newAxisLineID = GetNewAxisLineIDFromOldAxisLineID(oldAxisLineID);
-        if (null != newAxisLineID)
+        if (newAxisLineID is not null)
         {
           axisStyle.CachedAxisInformation = newSystem.GetAxisStyleInformation(newAxisLineID);
           axisStyle.ChangeStyleIdentifier(newAxisLineID, oldAxisSide => GetNewAxisSideFromOldAxisSide(oldAxisLineID, oldAxisSide, newAxisLineID));
@@ -301,7 +311,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     public bool Remove(IGraphicBase go)
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
-        if (_axisStyles[i] != null && _axisStyles[i].Remove(go))
+        if (_axisStyles[i] is not null && _axisStyles[i].Remove(go))
           return true;
 
       return false;
@@ -358,12 +368,12 @@ namespace Altaxo.Graph.Graph3D.Axis
       return _axisStyles.GetEnumerator();
     }
 
-    internal IHitTestObject HitTest(HitTestPointData parentCoord, DoubleClickHandler AxisScaleEditorMethod, DoubleClickHandler AxisStyleEditorMethod, DoubleClickHandler AxisLabelMajorStyleEditorMethod, DoubleClickHandler AxisLabelMinorStyleEditorMethod)
+    internal IHitTestObject? HitTest(HitTestPointData parentCoord, DoubleClickHandler? AxisScaleEditorMethod, DoubleClickHandler? AxisStyleEditorMethod, DoubleClickHandler? AxisLabelMajorStyleEditorMethod, DoubleClickHandler? AxisLabelMinorStyleEditorMethod)
     {
       foreach (var axisStyle in _axisStyles)
       {
         var hit = axisStyle.HitTest(parentCoord, AxisScaleEditorMethod, AxisStyleEditorMethod, AxisLabelMajorStyleEditorMethod, AxisLabelMinorStyleEditorMethod);
-        if (null != hit)
+        if (hit is not null)
           return hit;
       }
       return null;

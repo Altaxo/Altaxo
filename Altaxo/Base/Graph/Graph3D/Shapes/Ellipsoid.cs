@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,14 +59,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Ellipsoid)obj;
-        info.AddBaseValueEmbedded(s, typeof(Ellipsoid).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(Ellipsoid).BaseType!);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (Ellipsoid)o ?? new Ellipsoid(info);
+        var s = (Ellipsoid?)o ?? new Ellipsoid(info);
 
-        info.GetBaseValueEmbedded(s, typeof(Ellipsoid).BaseType, parent);
+        info.GetBaseValueEmbedded(s, typeof(Ellipsoid).BaseType!, parent);
 
         return s;
       }
@@ -92,7 +93,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     {
       var buffers = g.GetPositionNormalIndexedTriangleBuffer(_material);
 
-      if (null != buffers.PositionNormalIndexedTriangleBuffer)
+      if (buffers.PositionNormalIndexedTriangleBuffer is not null)
       {
         var buffer = buffers.PositionNormalIndexedTriangleBuffer;
 

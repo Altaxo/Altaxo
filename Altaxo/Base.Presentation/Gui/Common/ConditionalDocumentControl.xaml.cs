@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace Altaxo.Gui.Common
 
     private void EhEnabledChanged(object sender, RoutedEventArgs e)
     {
-      if (null != ConditionalViewEnabledChanged)
+      if (ConditionalViewEnabledChanged is not null)
         ConditionalViewEnabledChanged();
     }
 
@@ -60,7 +61,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    public event Action ConditionalViewEnabledChanged;
+    public event Action? ConditionalViewEnabledChanged;
 
     public object ConditionalView
     {

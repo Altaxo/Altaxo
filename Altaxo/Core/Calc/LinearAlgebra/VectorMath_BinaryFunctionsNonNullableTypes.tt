@@ -277,11 +277,11 @@
 		/// <param name="destinationVector">Intepolated vector value at point <paramref name="t"/></param>
 		public static void Lerp(double t, double t0, <#= arrT #> v0, double t1, <#= arrT #> v1, <#= rwArrT #> destinationVector)
 		{
-			if(null == v0)
+			if(v0 is null)
 				throw new ArgumentNullException(nameof(v0));
-			if(null == v1)
+			if(v1 is null)
 				throw new ArgumentNullException(nameof(v1));
-			if(null == destinationVector)
+			if(destinationVector is null)
 				throw new ArgumentNullException(nameof(destinationVector));
 			if (v0.<#= length #> != v1.<#= length #>)
         throw new ArgumentException("Length of vectors v0 and v1 unequal");

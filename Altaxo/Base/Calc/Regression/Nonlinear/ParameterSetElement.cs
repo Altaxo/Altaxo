@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -42,7 +41,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <value>
     /// The parameter's name.
     /// </value>
-    public string Name { get; set; }
+    public string Name { get => _name; [MemberNotNull(nameof(_name))]set => _name = value; }
+    private string _name;
 
     /// <summary>
     /// Gets or sets the parameter's value.
@@ -83,7 +83,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.AddValue("Vary", s.Vary);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var name = info.GetString("Name");
         var parameter = info.GetDouble("Value");
@@ -98,8 +98,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// For deserialization purposes only.
     /// </summary>
-    protected ParameterSetElement()
+    protected ParameterSetElement(Altaxo.Serialization.Xml.IXmlDeserializationInfo _)
     {
+      Name = string.Empty;
     }
 
     public ParameterSetElement(string name)
@@ -128,10 +129,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
       CopyFrom(from);
     }
 
+    [MemberNotNull(nameof(_name))]
     public void CopyFrom(ParameterSetElement from)
     {
-      if (object.ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+      if (ReferenceEquals(this, from))
         return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+
 
       Name = from.Name;
       Parameter = from.Parameter;

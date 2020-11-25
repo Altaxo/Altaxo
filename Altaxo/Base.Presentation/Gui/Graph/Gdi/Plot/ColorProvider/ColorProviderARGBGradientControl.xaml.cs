@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
   /// </summary>
   public partial class ColorProviderARGBGradientControl : UserControl, IColorProviderARGBGradientView
   {
-    public event Action ChoiceChanged;
+    public event Action? ChoiceChanged;
 
     public ColorProviderARGBGradientControl()
     {
@@ -146,7 +146,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private void EhDoubleUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
     {
-      if (null != ChoiceChanged)
+      if (ChoiceChanged is not null)
         ChoiceChanged();
     }
   }

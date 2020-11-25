@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -55,7 +56,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       {
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Instance;
       }
@@ -82,7 +83,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       IPlotRange range,
       IPlotArea layer,
       PenCacheGdi.GdiPen linePen,
-      Func<int, double> symbolGap,
+      Func<int, double>? symbolGap,
       int skipFrequency,
       bool connectCircular,
       LinePlotStyle linePlotStyle)
@@ -128,7 +129,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
         }
       }
 
-      if (null != symbolGap) // circular with symbol gap
+      if (symbolGap is not null) // circular with symbol gap
       {
         var realSkipFrequency = skipFrequency % 3 == 0 ? skipFrequency : skipFrequency * 3; // least common multiple of skipFrequency and 3
         var skipLinePoints = new PointF[0];
@@ -146,7 +147,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
               skipLinePoints = new PointF[skipLinePointsLength];
             Array.Copy(circularLinePoints, segmentRange.IndexAtSubRangeStart, skipLinePoints, 0, skipLinePointsLength);
 
-            PointF[] shortenedLinePoints;
+            PointF[]? shortenedLinePoints;
             if (segmentRange.GapAtSubRangeStart != 0 || segmentRange.GapAtSubRangeEnd != 0)
             {
               shortenedLinePoints = GdiExtensionMethods.ShortenBezierCurve(skipLinePoints, segmentRange.GapAtSubRangeStart / 2, segmentRange.GapAtSubRangeEnd / 2);
@@ -156,7 +157,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
               shortenedLinePoints = skipLinePoints;
             }
 
-            if (null != shortenedLinePoints)
+            if (shortenedLinePoints is not null)
             {
               g.DrawBeziers(linePen, shortenedLinePoints);
             }
@@ -225,6 +226,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     /// <param name="fillDirection">Designates a bound to fill to.</param>
     /// <param name="linePoints">The points that mark the line.</param>
     /// <param name="connectCircular">If true, a circular connection is drawn.</param>
+    /// <param name="logicalShiftX">Logical shift in x-direction.</param>
+    /// <param name="logicalShiftY">Logical shift in y-direction.</param>
     private void FillOneRange_PreprocessedPoints(
     GraphicsPath gp,
       Processed2DPlotData pdata,

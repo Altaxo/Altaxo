@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using Altaxo.Calc;
@@ -94,9 +95,9 @@ namespace Altaxo.Gui.Worksheet
       IMVCAController oldController = _interpolationDetailController;
       _interpolationDetailController = ctrl;
 
-      if (_view != null)
+      if (_view is not null)
       {
-        _view.SetDetailControl(ctrl == null ? null : ctrl.ViewObject);
+        _view.SetDetailControl(ctrl is null ? null : ctrl.ViewObject);
       }
     }
 
@@ -104,7 +105,7 @@ namespace Altaxo.Gui.Worksheet
 
     private void Initialize()
     {
-      if (_view != null)
+      if (_view is not null)
       {
         _view.InitializeNumberOfPoints(Altaxo.Serialization.GUIConversion.ToString(_numberOfPoints));
         _view.InitializeXOrg(Altaxo.Serialization.GUIConversion.ToString(_xOrg));
@@ -112,7 +113,7 @@ namespace Altaxo.Gui.Worksheet
 
         RetrieveClassList();
 
-        if (null == _classListA.FirstSelectedNode)
+        if (_classListA.FirstSelectedNode is null)
           _classListA[0].IsSelected = true;
 
         _view.InitializeClassList(_classListA);
@@ -127,22 +128,22 @@ namespace Altaxo.Gui.Worksheet
       var list = new List<System.Type>();
       foreach (System.Type type in rawTypes)
       {
-        if (type.IsClass && type.IsPublic && !type.IsAbstract && null != type.GetConstructor(new System.Type[] { }))
+        if (type.IsClass && type.IsPublic && !type.IsAbstract && type.GetConstructor(new System.Type[] { }) is not null)
           list.Add(type);
       }
 
       foreach (var clsType in list)
-        _classListA.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(clsType), clsType, _interpolationInstance != null && clsType == _interpolationInstance.GetType()));
+        _classListA.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(clsType), clsType, _interpolationInstance is not null && clsType == _interpolationInstance.GetType()));
     }
 
     public bool Apply(bool disposeController)
     {
-      if (null != _interpolationDetailController && false == _interpolationDetailController.Apply(disposeController))
+      if (_interpolationDetailController is not null && false == _interpolationDetailController.Apply(disposeController))
       {
         return false;
       }
 
-      if (null == _interpolationInstance || null == _numberOfPoints || null == _xOrg || null == _xEnd)
+      if (_interpolationInstance is null || _numberOfPoints is null || _xOrg is null || _xEnd is null)
         return false;
 
       _doc.NumberOfPoints = (int)_numberOfPoints;
@@ -177,7 +178,7 @@ namespace Altaxo.Gui.Worksheet
       }
       set
       {
-        if (_view != null)
+        if (_view is not null)
         {
           _view.ChangedInterpolationMethod -= EhInterpolationClassChanged;
           _view.ValidatingFrom -= EhValidatingXOrg;
@@ -187,7 +188,7 @@ namespace Altaxo.Gui.Worksheet
 
         _view = value as IInterpolationParameterView;
 
-        if (_view != null)
+        if (_view is not null)
         {
           _view.ChangedInterpolationMethod += EhInterpolationClassChanged;
           _view.ValidatingFrom += EhValidatingXOrg;

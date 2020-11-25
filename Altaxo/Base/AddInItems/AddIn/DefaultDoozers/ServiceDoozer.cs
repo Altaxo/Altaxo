@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.ComponentModel.Design;
 
@@ -41,13 +42,13 @@ namespace Altaxo.AddInItems
       get { return false; }
     }
 
-    public object BuildItem(BuildItemArgs args)
+    public object? BuildItem(BuildItemArgs args)
     {
-      var container = (IServiceContainer)args.Parameter;
-      if (container == null)
+      if(!(args.Parameter is IServiceContainer container))
         throw new InvalidOperationException("Expected the parameter to be a service container");
-      Type interfaceType = args.AddIn.FindType(args.Codon.Id);
-      if (interfaceType != null)
+
+      Type? interfaceType = args.AddIn.FindType(args.Codon.Id);
+      if (interfaceType is not null)
       {
         string className = args.Codon.Properties["class"];
         bool serviceLoading = false;
@@ -63,6 +64,9 @@ namespace Altaxo.AddInItems
           });
       }
 
+      if (interfaceType is null)
+        throw new InvalidOperationException($"No interface type was given or could be resolved from: {args.Codon.Id}");
+
       // look for more interface types as given as parameters interface1, interface2, ..., interface9
       // note that when using the other interface types, the
       // ServiceContainer try to load the original service type
@@ -71,8 +75,8 @@ namespace Altaxo.AddInItems
         string otherInterface = args.Codon.Properties["interface" + i.ToString(System.Globalization.CultureInfo.InvariantCulture)];
         if (string.IsNullOrEmpty(otherInterface))
           break;
-        Type otherInterfaceType = args.AddIn.FindType(otherInterface);
-        if (null != otherInterfaceType)
+        Type? otherInterfaceType = args.AddIn.FindType(otherInterface);
+        if (otherInterfaceType is not null)
         {
           bool service1Loading = false;
           // Use ServiceCreatorCallback to lazily create the service

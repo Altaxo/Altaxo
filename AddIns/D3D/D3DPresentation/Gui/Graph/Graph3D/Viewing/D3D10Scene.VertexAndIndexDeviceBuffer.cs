@@ -35,14 +35,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     internal class VertexAndIndexDeviceBuffer
     {
       private bool _isDisposed;
-
-      IMaterial _material;
-      Buffer _vertexBuffer;
-      int _vertexCount;
-      Buffer _indexBuffer;
-      int _indexCount;
-      Plane[] _clipPlanes;
-      byte[] _uColors;
+      private IMaterial _material;
+      private Buffer _vertexBuffer;
+      private int _vertexCount;
+      private Buffer _indexBuffer;
+      private int _indexCount;
+      private Plane[] _clipPlanes;
+      private byte[] _uColors;
 
 
       public IMaterial Material => _material;
@@ -86,14 +85,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       {
         if (!_isDisposed)
         {
-          Disposer.RemoveAndDispose(ref _material);
-          Disposer.RemoveAndDispose(ref _vertexBuffer);
-          Disposer.RemoveAndDispose(ref _indexBuffer);
+          Disposer.RemoveAndDispose(ref _material!);
+          Disposer.RemoveAndDispose(ref _vertexBuffer!);
+          Disposer.RemoveAndDispose(ref _indexBuffer!);
           _vertexCount = 0;
           _indexCount = 0;
-          _clipPlanes = null;
-          _uColors = null;
-
+          _clipPlanes = null!;
+          _uColors = null!;
           _isDisposed = true;
         }
       }

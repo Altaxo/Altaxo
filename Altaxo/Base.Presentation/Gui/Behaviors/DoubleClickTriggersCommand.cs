@@ -70,14 +70,14 @@ namespace Altaxo.Gui.Behaviors
     {
       if (d is Control control)
       {
-        if (e.NewValue != null)
+        if (e.NewValue is not null)
           control.AddHandler(Control.MouseDoubleClickEvent, new RoutedEventHandler(EhDoubleClickEventHandler));
         else
           control.RemoveHandler(Control.MouseDoubleClickEvent, new RoutedEventHandler(EhDoubleClickEventHandler));
       }
       else if (d is UIElement fre)
       {
-        if (e.NewValue != null)
+        if (e.NewValue is not null)
           fre.AddHandler(UIElement.PreviewMouseLeftButtonDownEvent, new RoutedEventHandler(EhPreviewMouseLeftButtonDownEventHandler));
         else
           fre.RemoveHandler(Control.PreviewMouseLeftButtonDownEvent, new RoutedEventHandler(EhPreviewMouseLeftButtonDownEventHandler));
@@ -123,7 +123,7 @@ namespace Altaxo.Gui.Behaviors
       var command = GetCommand((FrameworkElement)sender);
       var commandParameter = GetCommandParameter((FrameworkElement)sender);
 
-      if (null != command)
+      if (command is not null)
       {
         if (command.CanExecute(commandParameter))
           command.Execute(commandParameter);
@@ -141,7 +141,7 @@ namespace Altaxo.Gui.Behaviors
           var command = GetCommand((FrameworkElement)sender);
           var commandParameter = GetCommandParameter((FrameworkElement)sender);
 
-          if (null != command)
+          if (command is not null)
           {
             if (command.CanExecute(commandParameter))
               command.Execute(commandParameter);

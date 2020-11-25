@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -55,7 +56,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (initData)
       {
       }
-      if (null != _view)
+      if (_view is not null)
       {
         // fill the font name combobox with all fonts
         _view.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(_doc);

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,7 +72,7 @@ namespace Altaxo.Gui.Data
         _choicesDestinationColSort = new SelectableListNodeList();
         _choicesDestinationColSort.FillWithEnumeration(_doc.DestinationColumnSorting);
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeDestinationOutputFormat(_choicesDestinationOutputFormat);
         _view.InitializeDestinationColumnSorting(_choicesDestinationColSort);

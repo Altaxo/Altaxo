@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Collections;
 using Altaxo.Main;
@@ -45,7 +46,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Retrieves the parent object.
     /// </summary>
-    IDocumentNode ParentObject { get; set; }
+    IDocumentNode? ParentObject { get; set; }
 
     void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e);
 

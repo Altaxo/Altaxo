@@ -80,8 +80,8 @@ namespace MathML
 				else
 				{
 					MathMLElement u = UnderScript;
-					MathMLOperatorElement op = u != null ? u.EmbelishedOperator : null;
-					result = op != null ? op.Accent : false;
+					MathMLOperatorElement op = u is not null ? u.EmbelishedOperator : null;
+					result = op is not null ? op.Accent : false;
 				}
 				return result;
 			}
@@ -125,8 +125,8 @@ namespace MathML
 				else
 				{
 					MathMLElement o = OverScript;
-					MathMLOperatorElement op = o != null ? o.EmbelishedOperator : null;
-					result = op != null ? op.Accent : false;
+					MathMLOperatorElement op = o is not null ? o.EmbelishedOperator : null;
+					result = op is not null ? op.Accent : false;
 				}
 				return result;
 			}
@@ -141,12 +141,12 @@ namespace MathML
 			get 
 			{ 
 				XmlNode firstChild = FirstChild;
-				return firstChild != null ? (MathMLElement)firstChild : null;	
+				return firstChild is not null ? (MathMLElement)firstChild : null;	
 			}
 			set 
 			{ 
 				XmlNode firstChild = FirstChild;
-				if(firstChild != null) ReplaceChild(value, firstChild);
+				if(firstChild is not null) ReplaceChild(value, firstChild);
 				else AppendChild(value);
 			}
 		}
@@ -201,7 +201,7 @@ namespace MathML
 			get
 			{
 				MathMLElement firstChild = FirstChild as MathMLElement;
-				return firstChild != null ? firstChild.EmbelishedOperator : null;
+				return firstChild is not null ? firstChild.EmbelishedOperator : null;
 			}
 		}
 	}

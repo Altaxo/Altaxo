@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,7 @@ using Altaxo.Data;
 namespace Altaxo.Graph.Scales.Ticks
 {
   using System.Collections;
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Graph.Scales.Rescaling;
 
   /// <summary>
@@ -196,7 +198,7 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
-    private CachedMajorMinor _cachedMajorMinor;
+    private CachedMajorMinor? _cachedMajorMinor;
 
     #region Serialization
 
@@ -219,35 +221,35 @@ namespace Altaxo.Graph.Scales.Ticks
         info.AddValue("TransformationIsMultiply", s._transformationOperationIsMultiply);
 
         if (s._suppressedMajorTicks.IsEmpty)
-          info.AddValue("SuppressedMajorTicks", (object)null);
+          info.AddValueOrNull("SuppressedMajorTicks", (object?)null);
         else
-          info.AddValue("SuppressedMajorTicks", s._suppressedMajorTicks);
+          info.AddValueOrNull("SuppressedMajorTicks", s._suppressedMajorTicks);
 
         if (s._suppressedMinorTicks.IsEmpty)
-          info.AddValue("SuppressedMinorTicks", (object)null);
+          info.AddValueOrNull("SuppressedMinorTicks", (object?)null);
         else
-          info.AddValue("SuppressedMinorTicks", s._suppressedMinorTicks);
+          info.AddValueOrNull("SuppressedMinorTicks", s._suppressedMinorTicks);
 
         if (s._additionalMajorTicks.IsEmpty)
-          info.AddValue("AdditionalMajorTicks", (object)null);
+          info.AddValueOrNull("AdditionalMajorTicks", (object?)null);
         else
-          info.AddValue("AdditionalMajorTicks", s._additionalMajorTicks);
+          info.AddValueOrNull("AdditionalMajorTicks", s._additionalMajorTicks);
 
         if (s._additionalMinorTicks.IsEmpty)
-          info.AddValue("AdditionalMinorTicks", (object)null);
+          info.AddValueOrNull("AdditionalMinorTicks", (object?)null);
         else
-          info.AddValue("AdditionalMinorTicks", s._additionalMinorTicks);
+          info.AddValueOrNull("AdditionalMinorTicks", s._additionalMinorTicks);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         CumulativeProbabilityTickSpacing s = SDeserialize(o, info, parent);
         return s;
       }
 
-      protected virtual CumulativeProbabilityTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual CumulativeProbabilityTickSpacing SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        CumulativeProbabilityTickSpacing s = null != o ? (CumulativeProbabilityTickSpacing)o : new CumulativeProbabilityTickSpacing();
+        var s = (CumulativeProbabilityTickSpacing?)o ?? new CumulativeProbabilityTickSpacing();
         s._orgGrace = info.GetDouble("MinGrace");
         s._endGrace = info.GetDouble("MaxGrace");
         s._snapOrgToTick = (BoundaryTickSnapping)info.GetEnum("SnapOrgToTick", typeof(BoundaryTickSnapping));
@@ -259,10 +261,10 @@ namespace Altaxo.Graph.Scales.Ticks
         s._transformationDivider = info.GetDouble("TransformationDivider");
         s._transformationOperationIsMultiply = info.GetBoolean("TransformationIsMultiply");
 
-        s.SuppressedMajorTicks = (SuppressedTicks)info.GetValue("SuppressedMajorTicks", s);
-        s.SuppressedMinorTicks = (SuppressedTicks)info.GetValue("SuppressedMinorTicks", s);
-        s.AdditionalMajorTicks = (AdditionalTicks)info.GetValue("AdditionalMajorTicks", s);
-        s.AdditionalMinorTicks = (AdditionalTicks)info.GetValue("AdditionalMinorTicks", s);
+        s.SuppressedMajorTicks = (SuppressedTicks?)info.GetValueOrNull("SuppressedMajorTicks", s);
+        s.SuppressedMinorTicks = (SuppressedTicks?)info.GetValueOrNull("SuppressedMinorTicks", s);
+        s.AdditionalMajorTicks = (AdditionalTicks?)info.GetValueOrNull("AdditionalMajorTicks", s);
+        s.AdditionalMinorTicks = (AdditionalTicks?)info.GetValueOrNull("AdditionalMinorTicks", s);
 
         return s;
       }
@@ -280,18 +282,20 @@ namespace Altaxo.Graph.Scales.Ticks
       _additionalMinorTicks = new AdditionalTicks() { ParentObject = this };
     }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public CumulativeProbabilityTickSpacing(CumulativeProbabilityTickSpacing from)
       : base(from) // everything is done here, since CopyFrom is virtual!
     {
     }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as CumulativeProbabilityTickSpacing;
-      if (null == from)
+      if (from is null)
         return false;
 
       using (var suspendToken = SuspendGetToken())
@@ -327,14 +331,14 @@ namespace Altaxo.Graph.Scales.Ticks
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _suppressedMajorTicks)
+      if (_suppressedMajorTicks is not null)
         yield return new Main.DocumentNodeAndName(_suppressedMajorTicks, "SuppressedMajorTicks");
-      if (null != _suppressedMinorTicks)
+      if (_suppressedMinorTicks is not null)
         yield return new Main.DocumentNodeAndName(_suppressedMinorTicks, "SuppressedMinorTicks");
 
-      if (null != _additionalMajorTicks)
+      if (_additionalMajorTicks is not null)
         yield return new Main.DocumentNodeAndName(_additionalMajorTicks, "AdditionalMajorTicks");
-      if (null != _additionalMinorTicks)
+      if (_additionalMinorTicks is not null)
         yield return new Main.DocumentNodeAndName(_additionalMinorTicks, "AdditionalMinorTicks");
     }
 
@@ -343,9 +347,9 @@ namespace Altaxo.Graph.Scales.Ticks
       return new CumulativeProbabilityTickSpacing(this);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
       else if (!(obj is CumulativeProbabilityTickSpacing))
         return false;
@@ -529,7 +533,7 @@ namespace Altaxo.Graph.Scales.Ticks
           EhSelfChanged();
       }
     }
-
+    [AllowNull]
     public SuppressedTicks SuppressedMajorTicks
     {
       get
@@ -543,6 +547,7 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    [AllowNull]
     public SuppressedTicks SuppressedMinorTicks
     {
       get
@@ -556,6 +561,7 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    [AllowNull]
     public AdditionalTicks AdditionalMajorTicks
     {
       get
@@ -569,6 +575,7 @@ namespace Altaxo.Graph.Scales.Ticks
       }
     }
 
+    [AllowNull]
     public AdditionalTicks AdditionalMinorTicks
     {
       get
@@ -706,12 +713,12 @@ namespace Altaxo.Graph.Scales.Ticks
       double dorg = org;
       double dend = end;
 
-      if (_cachedMajorMinor == null || _cachedMajorMinor.Org != dorg || _cachedMajorMinor.End != dend)
+      if (_cachedMajorMinor is null || _cachedMajorMinor.Org != dorg || _cachedMajorMinor.End != dend)
       {
         InternalPreProcessScaleBoundaries(ref dorg, ref dend, false, false); // make sure that _cachedMajorMinor is valid now
       }
 
-      if (!(null != _cachedMajorMinor))
+      if (_cachedMajorMinor is null)
         throw new InvalidProgramException();
 
       _majorTicks.Clear();
@@ -1010,7 +1017,7 @@ namespace Altaxo.Graph.Scales.Ticks
         rawMajorTicksPlusMinorTicks1stGen.AddRange(rawMinorTicks1stGen);
 
         int prevCount = rawMinorTicks1stGen.NumberOfEntriesWithinBounds;
-        ProbabilityList rawMinorTicks2ndGen = null;
+        ProbabilityList? rawMinorTicks2ndGen = null;
 
         foreach (var func in new Action<ProbabilityList, ProbabilityList, double, double>[] { AddMajorTicks2ndGen, AddMajorTicks3rdGen, AddMajorTicks4thGen })
         {
@@ -1040,7 +1047,7 @@ namespace Altaxo.Graph.Scales.Ticks
           rawMinorTicks2ndGen = currList;
           prevCount = currCount;
         }
-        if (null != rawMinorTicks2ndGen)
+        if (rawMinorTicks2ndGen is not null)
           rawMinorTicks1stGen.AddRange(rawMinorTicks2ndGen);
       }
       return rawMinorTicks1stGen;
@@ -1334,8 +1341,8 @@ namespace Altaxo.Graph.Scales.Ticks
       propOrg = scaleOrg;
       propEnd = scaleEnd;
 
-      ProbabilityListMajor rawMajorTicks = null;
-      ProbabilityList rawMinorTicks = null;
+      ProbabilityListMajor? rawMajorTicks = null;
+      ProbabilityList? rawMinorTicks = null;
 
       if ((isOrgExtendable && _snapOrgToTick != BoundaryTickSnapping.SnapToNothing) || (isEndExtendable && _snapEndToTick != BoundaryTickSnapping.SnapToNothing))
       {
@@ -1345,6 +1352,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
       if (isOrgExtendable && _snapOrgToTick != BoundaryTickSnapping.SnapToNothing)
       {
+        if (rawMajorTicks is null || rawMinorTicks is null)
+          throw new InvalidProgramException();
+
         var list = new List<double>();
 
         switch (_snapOrgToTick)
@@ -1380,19 +1390,22 @@ namespace Altaxo.Graph.Scales.Ticks
 
       if (isEndExtendable && _snapEndToTick != BoundaryTickSnapping.SnapToNothing)
       {
+        if (rawMajorTicks is null || rawMinorTicks is null)
+          throw new InvalidProgramException();
+
         var list = new List<double>();
         switch (_snapEndToTick)
         {
           case BoundaryTickSnapping.SnapToMajorOnly:
-            list.AddRange(rawMajorTicks);
+            list.AddRange(rawMajorTicks!);
             break;
 
           case BoundaryTickSnapping.SnapToMinorOnly:
-            list.AddRange(rawMinorTicks);
+            list.AddRange(rawMinorTicks!);
             break;
 
           case BoundaryTickSnapping.SnapToMinorOrMajor:
-            list.AddRange(rawMajorTicks);
+            list.AddRange(rawMajorTicks!);
             list.AddRange(rawMinorTicks);
             break;
 

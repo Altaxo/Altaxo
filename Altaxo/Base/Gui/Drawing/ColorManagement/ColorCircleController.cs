@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -145,7 +146,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
           _availableColorVariationModels.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(type), type, type == _currentColorVariationModel.GetType()));
         }
       }
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeAvailableColorModels(_availableColorModels);
         _view.InitializeAvailableTextOnlyColorModels(_availableTextOnlyColorModels);
@@ -214,10 +215,10 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private void UpdateColorShades()
     {
-      if (null == _hueValues)
+      if (_hueValues is null)
         return; // not initialized yet
 
-      if (null == _colorShades || _colorShades.Length != _hueValues.Count || _colorShades[0].Length != _numberOfColorShades)
+      if (_colorShades is null || _colorShades.Length != _hueValues.Count || _colorShades[0].Length != _numberOfColorShades)
       {
         _colorShades = new AxoColor[_hueValues.Count][];
         for (int i = 0; i < _hueValues.Count; ++i)
@@ -237,7 +238,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       var node = _availableColorModels.FirstSelectedNode;
 
-      if (null != node && (Type)node.Tag != _currentColorModel.GetType())
+      if (node is not null && (Type)node.Tag != _currentColorModel.GetType())
       {
         var newColorModel = (IColorModel)Activator.CreateInstance((Type)node.Tag);
         _currentColorModel = newColorModel;
@@ -249,7 +250,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       var node = _availableTextOnlyColorModels.FirstSelectedNode;
 
-      if (null != node && (Type)node.Tag != _currentTextOnlyColorModel.GetType())
+      if (node is not null && (Type)node.Tag != _currentTextOnlyColorModel.GetType())
       {
         var newTextOnlyColorModel = (ITextOnlyColorModel)Activator.CreateInstance((Type)node.Tag);
         _currentTextOnlyColorModel = newTextOnlyColorModel;
@@ -261,7 +262,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       var node = _availableColorCircleModels.FirstSelectedNode;
 
-      if (null != node && (Type)node.Tag != _currentColorCircleModel.GetType())
+      if (node is not null && (Type)node.Tag != _currentColorCircleModel.GetType())
       {
         var newColorModel = (IColorCircleModel)Activator.CreateInstance((Type)node.Tag);
         _currentColorCircleModel = newColorModel;
@@ -273,7 +274,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       var node = _availableColorVariationModels.FirstSelectedNode;
 
-      if (null != node && (Type)node.Tag != _currentColorVariationModel.GetType())
+      if (node is not null && (Type)node.Tag != _currentColorVariationModel.GetType())
       {
         var newColorModel = (IColorVariationModel)Activator.CreateInstance((Type)node.Tag);
         _currentColorVariationModel = newColorModel;

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,11 +45,10 @@ namespace Altaxo.Drawing.D3D
     private List<TriangleIndices> _geometry_TriangleIndices;
 
     private int _index;
-    private Dictionary<long, int> _middlePointIndexCache;
 
     public SolidIcoSphere(int recursionLevel)
     {
-      _middlePointIndexCache = new Dictionary<long, int>();
+      var middlePointIndexCache = new Dictionary<long, int>();
       _index = 0;
       _geometry_Positions = new List<PointD3D>();
 
@@ -110,9 +110,9 @@ namespace Altaxo.Drawing.D3D
         foreach (var tri in faces)
         {
           // replace triangle by 4 triangles
-          int a = GetMiddlePoint(tri.Item1, tri.Item2);
-          int b = GetMiddlePoint(tri.Item2, tri.Item3);
-          int c = GetMiddlePoint(tri.Item3, tri.Item1);
+          int a = GetMiddlePoint(tri.Item1, tri.Item2, middlePointIndexCache);
+          int b = GetMiddlePoint(tri.Item2, tri.Item3, middlePointIndexCache);
+          int c = GetMiddlePoint(tri.Item3, tri.Item1, middlePointIndexCache);
 
           faces2.Add(new TriangleIndices(tri.Item1, a, c));
           faces2.Add(new TriangleIndices(tri.Item2, b, a));
@@ -123,7 +123,6 @@ namespace Altaxo.Drawing.D3D
       }
 
       _geometry_TriangleIndices = faces;
-      _middlePointIndexCache = null; // not needed any more
     }
 
     public IEnumerable<PointD3D> VerticesForSphere
@@ -192,7 +191,7 @@ namespace Altaxo.Drawing.D3D
     }
 
     // return index of point in the middle of p1 and p2
-    private int GetMiddlePoint(int p1, int p2)
+    private int GetMiddlePoint(int p1, int p2, Dictionary<long, int> middlePointIndexCache)
     {
       // first check if we have it already
       bool firstIsSmaller = p1 < p2;
@@ -200,7 +199,7 @@ namespace Altaxo.Drawing.D3D
       long greaterIndex = firstIsSmaller ? p2 : p1;
       Int64 key = (smallerIndex << 32) + greaterIndex;
 
-      if (_middlePointIndexCache.TryGetValue(key, out var ret))
+      if (middlePointIndexCache.TryGetValue(key, out var ret))
       {
         return ret;
       }
@@ -217,7 +216,7 @@ namespace Altaxo.Drawing.D3D
       int i = AddVertex(middle);
 
       // store it, return index
-      _middlePointIndexCache.Add(key, i);
+      middlePointIndexCache.Add(key, i);
       return i;
     }
   }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -256,12 +257,9 @@ namespace Altaxo.Drawing
           _scR == from._scR;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      if (obj is AxoColor)
-        return Equals((AxoColor)obj);
-      else
-        return false;
+      return obj is AxoColor color ? Equals(color) : false;
     }
 
     public static bool operator ==(AxoColor x, AxoColor y)

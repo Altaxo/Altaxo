@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,18 +39,18 @@ namespace Altaxo.Gui.Scripting
   /// </summary>
   public partial class ScriptControl : UserControl, IScriptView
   {
-    public event Action<string> CompilerMessageClicked;
+    public event Action<string>? CompilerMessageClicked;
 
     private IPureScriptView _scriptView;
 
     public string ScriptText
     {
       get { return _scriptView?.ScriptText; }
-      set { if (null != _scriptView) _scriptView.ScriptText = value; }
+      set { if (_scriptView is not null) _scriptView.ScriptText = value; }
     }
 
-    public int ScriptCursorLocation { set { if (null != _scriptView) _scriptView.ScriptCursorLocation = value; } }
-    public int InitialScriptCursorLocation { set { if (null != _scriptView) _scriptView.InitialScriptCursorLocation = value; } }
+    public int ScriptCursorLocation { set { if (_scriptView is not null) _scriptView.ScriptCursorLocation = value; } }
+    public int InitialScriptCursorLocation { set { if (_scriptView is not null) _scriptView.InitialScriptCursorLocation = value; } }
 
     public ScriptControl()
     {
@@ -63,11 +64,11 @@ namespace Altaxo.Gui.Scripting
         return;
       }
 
-      if (null != _scriptView)
+      if (_scriptView is not null)
         this._grid.Children.Remove((UIElement)_scriptView);
 
       _scriptView = scriptView;
-      if (null != _scriptView)
+      if (_scriptView is not null)
       {
         ((UIElement)_scriptView).SetValue(Grid.RowProperty, 0);
         _grid.Children.Add((UIElement)_scriptView);
@@ -82,7 +83,7 @@ namespace Altaxo.Gui.Scripting
 
     public void SetCompilerErrors(IEnumerable<ICompilerDiagnostic> errors)
     {
-      if (null != errors)
+      if (errors is not null)
         lbCompilerErrors.ItemsSource = new List<ICompilerDiagnostic>(errors);
       else
         lbCompilerErrors.ItemsSource = null;
@@ -96,13 +97,13 @@ namespace Altaxo.Gui.Scripting
 
     public void SetScriptCursorLocation(int line, int column)
     {
-      if (null != _scriptView)
+      if (_scriptView is not null)
         _scriptView.SetScriptCursorLocation(line, column);
     }
 
     public void MarkText(int pos1, int pos2)
     {
-      if (null != _scriptView)
+      if (_scriptView is not null)
         _scriptView.MarkText(pos1, pos2);
     }
   }

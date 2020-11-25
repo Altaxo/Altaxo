@@ -29,6 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#nullable disable
 using System.Collections.Generic;
 
 namespace Poly2Tri
@@ -63,7 +64,7 @@ namespace Poly2Tri
 
     public virtual void Prepare(TriangulationContext tcx)
     {
-      if (Triangles == null)
+      if (Triangles is null)
       {
         Triangles = new List<DelaunayTriangle>(Points.Count);
       }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +59,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
         _locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
         Current.Gui.FindAndAttachControlTo(_locationController);
       }
-      if (_view != null)
+      if (_view is not null)
       {
         _view.Material = _doc.Material;
         _view.LocationView = _locationController.ViewObject;

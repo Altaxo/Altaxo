@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace Altaxo.Gui.Common
 
     public bool CanExecute(object parameter)
     {
-      return canExecute == null || canExecute(parameter);
+      return canExecute is null || canExecute(parameter);
     }
 
     public void Execute(object parameter)
@@ -85,7 +86,7 @@ namespace Altaxo.Gui.Common
 
     public bool CanExecute(TArg parameter)
     {
-      return canExecute == null || canExecute(parameter);
+      return canExecute is null || canExecute(parameter);
     }
 
     public void Execute(TArg parameter)

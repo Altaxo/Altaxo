@@ -28,11 +28,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ClipperLib;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Geometry.Int64_2D
 {
-  [TestFixture]
   public class Intersect_Test : PolygonTestBase
   {
     private readonly (Int64LineSegment l1, Int64LineSegment l2)[] _intersectingLines = new (Int64LineSegment l1, Int64LineSegment l2)[]
@@ -101,7 +100,7 @@ namespace Altaxo.Geometry.Int64_2D
 };
 
 
-    [Test]
+    [Fact]
     public void Test_Intersection()
     {
       foreach (var linePair in _intersectingLines)
@@ -124,7 +123,7 @@ namespace Altaxo.Geometry.Int64_2D
       }
     }
 
-    [Test]
+    [Fact]
     public void Test_NonIntersection()
     {
       foreach (var linePair in _nonintersectingLines)

@@ -124,10 +124,10 @@ namespace MathML.Rendering
 					// if we find a region, it will allready have a element from
 					// the table cell area
 					result = a.GetRegion(x, y - box.Height, pointX, pointY);
-					if(result != null) 
+					if(result is not null) 
 					{
-						Debug.Assert(result.Element != null, "Invalid element type for TableArea cell area");
-						Debug.Assert(result.Area != null, "Invalid area type for TableArea cell area");
+						Debug.Assert(result.Element is not null, "Invalid element type for TableArea cell area");
+						Debug.Assert(result.Area is not null, "Invalid area type for TableArea cell area");
 						return result;
 					}
 				}
@@ -150,10 +150,10 @@ namespace MathML.Rendering
 				foreach(Area a in content)
 				{
 					result = a.GetRegion(context, x, y - box.Height, element, index);
-					if(result != null) 
+					if(result is not null) 
 					{
-						Debug.Assert(result.Element != null, "Invalid element type for TableArea cell area");
-						Debug.Assert(result.Area != null, "Invalid area type for TableArea cell area");
+						Debug.Assert(result.Element is not null, "Invalid element type for TableArea cell area");
+						Debug.Assert(result.Area is not null, "Invalid area type for TableArea cell area");
 						return result;
 					}
 				}

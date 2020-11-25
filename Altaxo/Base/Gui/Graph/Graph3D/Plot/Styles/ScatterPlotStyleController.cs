@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using Altaxo.Collections;
@@ -123,7 +124,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
           _symbolShapeChoices.Add(new SelectableListNode(ty.Name, ty, ty == _doc.Shape.GetType()));
         }
       }
-      if (_view != null)
+      if (_view is not null)
       {
         // now we have to set all dialog elements to the right values
         _view.IndependentColor = _doc.IndependentColor;
@@ -186,7 +187,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhIndependentColorChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentColor = _view.IndependentColor;
         _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);

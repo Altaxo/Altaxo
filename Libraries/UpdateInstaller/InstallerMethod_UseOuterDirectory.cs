@@ -28,7 +28,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using ICSharpCode.SharpZipLib.Zip;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -39,14 +38,6 @@ namespace Altaxo.Serialization.AutoUpdates
   /// </summary>
   public class InstallerMethod_UseOuterDirectory : InstallerMethodBase, IUpdateInstaller
   {
-
-
-    /// <summary>Full name of the zip file that contains the update files.</summary>
-    private string _packageName;
-
-    /// <summary>Full name of the Altaxo executable that should be updated.</summary>
-    private string _altaxoExecutableFullName;
-
     /// <summary>Full path to the base installation directory (e.g. if AltaxoStartup.exe resides in C:\Altaxo\bin, the base directory is C:\.</summary>
     private string _pathToInstallationBaseDirectory;
 
@@ -55,14 +46,8 @@ namespace Altaxo.Serialization.AutoUpdates
     /// looks for the latest stable version.</param>
     /// <param name="currentProgramVersion">The version of the currently installed Altaxo program.</param>
     public InstallerMethod_UseOuterDirectory(string eventName, string packageFullFileName, string altaxoExecutableFullFileName)
+      : base(eventName, packageFullFileName, altaxoExecutableFullFileName)
     {
-      _eventName = eventName;
-      _packageName = packageFullFileName;
-      _altaxoExecutableFullName = altaxoExecutableFullFileName;
-
-      _pathToInstallation = Path.GetDirectoryName(_altaxoExecutableFullName);
-      if (!Path.IsPathRooted(_pathToInstallation))
-        throw new ArgumentException("Path to Altaxo executable is not an absolute path!");
 
       string subDirAltaxoShouldResideIn = "" + Path.DirectorySeparatorChar + "bin";
       if (_pathToInstallation.ToLowerInvariant().EndsWith(subDirAltaxoShouldResideIn))
@@ -97,8 +82,8 @@ namespace Altaxo.Serialization.AutoUpdates
       var updateLockFileName = Path.Combine(_pathToInstallation, UpdateLockFileName);
       var updateLockFileName_NewInstallation = Path.Combine(pathToNewInstallation, UpdateLockFileName);
 
-      FileStream updateLockFile = null;
-      FileStream updateLockFile_NewInstallation = null;
+      FileStream? updateLockFile = null;
+      FileStream? updateLockFile_NewInstallation = null;
 
       try
       {

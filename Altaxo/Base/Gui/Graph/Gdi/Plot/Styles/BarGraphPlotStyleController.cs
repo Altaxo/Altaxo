@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -106,17 +107,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       {
         _colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
       }
-      if (_view != null)
+      if (_view is not null)
       {
-        _view.UseFill = _doc.FillBrush != null && _doc.FillBrush.IsVisible;
+        _view.UseFill = _doc.FillBrush is not null && _doc.FillBrush.IsVisible;
         _view.IndependentFillColor = _doc.IndependentFillColor;
         _view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
         _view.FillBrush = _doc.FillBrush ?? new BrushX(NamedColors.Transparent);
 
-        _view.UseFrame = _doc.FramePen != null && _doc.FramePen.IsVisible;
+        _view.UseFrame = _doc.FramePen is not null && _doc.FramePen.IsVisible;
         _view.IndependentFrameColor = _doc.IndependentFrameColor;
         _view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
-        _view.FramePen = null != _doc.FramePen ? _doc.FramePen : new PenX(NamedColors.Transparent);
+        _view.FramePen = _doc.FramePen is not null ? _doc.FramePen : new PenX(NamedColors.Transparent);
 
         _view.InnerGap = _doc.InnerGap;
         _view.OuterGap = _doc.OuterGap;
@@ -199,7 +200,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhColorGroupStyleAddedOrRemoved()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentFillColor = _view.IndependentFillColor;
         _doc.IndependentFrameColor = _view.IndependentFrameColor;
@@ -212,7 +213,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhIndependentFillColorChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentFillColor = _view.IndependentFillColor;
         if (false == _view.IndependentFillColor && _view.UseFrame && false == _view.IndependentFrameColor)
@@ -223,7 +224,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhIndependentFrameColorChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _doc.IndependentFrameColor = _view.IndependentFrameColor;
         if (false == _view.IndependentFrameColor && _view.UseFill && false == _view.IndependentFillColor)
@@ -234,7 +235,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhFillBrushChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         if (_view.UseFill && false == _view.IndependentFillColor && _view.UseFrame && false == _view.IndependentFrameColor)
         {
@@ -246,7 +247,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhFramePenChanged()
     {
-      if (null != _view)
+      if (_view is not null)
       {
         if (_view.UseFill && false == _view.IndependentFillColor && _view.UseFrame && false == _view.IndependentFrameColor)
         {
@@ -294,7 +295,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         {
           InternalSetFrameColorToFillColor();
         }
-        else if (null == _view.FramePen || _view.FramePen.IsInvisible)
+        else if (_view.FramePen is null || _view.FramePen.IsInvisible)
         {
           _view.FramePen = new PenX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
         }

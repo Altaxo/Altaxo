@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace Altaxo.Gui.Graph
 
     private static void SetPositionText(TextBox t, double value)
     {
-      if (t != null)
+      if (t is not null)
         t.Text = GUIConversion.GetLengthMeasureText(value);
     }
 
@@ -73,7 +74,7 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        if (null != _edPositionX)
+        if (_edPositionX is not null)
           return _edPositionX.SelectedQuantity.AsValueIn(AUL.Point.Instance);
         else
           return _positionX;
@@ -81,7 +82,7 @@ namespace Altaxo.Gui.Graph
       set
       {
         _positionX = value;
-        if (null != _edPositionX)
+        if (_edPositionX is not null)
           _edPositionX.SelectedQuantity = new DimensionfulQuantity(value, AUL.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
       }
     }
@@ -93,7 +94,7 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        if (null != _edPositionY)
+        if (_edPositionY is not null)
           return _edPositionY.SelectedQuantity.AsValueIn(AUL.Point.Instance);
         else
           return _positionY;
@@ -101,7 +102,7 @@ namespace Altaxo.Gui.Graph
       set
       {
         _positionY = value;
-        if (null != _edPositionY)
+        if (_edPositionY is not null)
           _edPositionY.SelectedQuantity = new DimensionfulQuantity(value, AUL.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
       }
     }
@@ -129,7 +130,7 @@ namespace Altaxo.Gui.Graph
       {
         _edPositionX = value;
 
-        if (_edPositionX != null)
+        if (_edPositionX is not null)
         {
           _edPositionX.UnitEnvironment = PositionEnvironment.Instance;
           _edPositionX.SelectedQuantity = new DimensionfulQuantity(_positionX, AUL.Point.Instance);
@@ -146,7 +147,7 @@ namespace Altaxo.Gui.Graph
       {
         _edPositionY = value;
 
-        if (_edPositionY != null)
+        if (_edPositionY is not null)
         {
           _edPositionY.UnitEnvironment = PositionEnvironment.Instance;
           _edPositionY.SelectedQuantity = new DimensionfulQuantity(_positionY, AUL.Point.Instance);
@@ -166,7 +167,7 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        if (null != _edSizeX)
+        if (_edSizeX is not null)
           return _edSizeX.SelectedQuantity.AsValueIn(AUL.Point.Instance);
         else
           return _sizeX;
@@ -174,7 +175,7 @@ namespace Altaxo.Gui.Graph
       set
       {
         _sizeX = value;
-        if (null != _edSizeX)
+        if (_edSizeX is not null)
           _edSizeX.SelectedQuantity = new DimensionfulQuantity(value, AUL.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
       }
     }
@@ -185,7 +186,7 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        if (null != _edSizeY)
+        if (_edSizeY is not null)
           return _edSizeY.SelectedQuantity.AsValueIn(AUL.Point.Instance);
         else
           return _sizeY;
@@ -193,7 +194,7 @@ namespace Altaxo.Gui.Graph
       set
       {
         _sizeY = value;
-        if (null != _edSizeY)
+        if (_edSizeY is not null)
           _edSizeY.SelectedQuantity = new DimensionfulQuantity(value, AUL.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
       }
     }
@@ -221,7 +222,7 @@ namespace Altaxo.Gui.Graph
       {
         _edSizeX = value;
 
-        if (_edSizeX != null)
+        if (_edSizeX is not null)
         {
           _edSizeX.UnitEnvironment = PositionEnvironment.Instance;
           _edSizeX.SelectedQuantity = new DimensionfulQuantity(_sizeX, AUL.Point.Instance);
@@ -236,7 +237,7 @@ namespace Altaxo.Gui.Graph
       {
         _edSizeY = value;
 
-        if (_edSizeY != null)
+        if (_edSizeY is not null)
         {
           _edSizeY.UnitEnvironment = PositionEnvironment.Instance;
           _edSizeY.SelectedQuantity = new DimensionfulQuantity(_sizeY, AUL.Point.Instance);
@@ -254,7 +255,7 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        if (null != _cbRotation)
+        if (_cbRotation is not null)
           return _cbRotation.SelectedQuantityAsValueInDegrees;
         else
           return _rotation;
@@ -262,7 +263,7 @@ namespace Altaxo.Gui.Graph
       set
       {
         _rotation = value;
-        if (_cbRotation != null)
+        if (_cbRotation is not null)
           _cbRotation.SelectedQuantityAsValueInDegrees = value;
       }
     }
@@ -275,7 +276,7 @@ namespace Altaxo.Gui.Graph
       set
       {
         _cbRotation = value;
-        if (_cbRotation != null)
+        if (_cbRotation is not null)
         {
           _cbRotation.SelectedQuantityAsValueInDegrees = _rotation;
         }
@@ -292,7 +293,7 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        if (null != _edShear)
+        if (_edShear is not null)
           return _edShear.SelectedQuantityInSIUnits;
         else
           return _shear;
@@ -300,7 +301,7 @@ namespace Altaxo.Gui.Graph
       set
       {
         _shear = value;
-        if (_edShear != null)
+        if (_edShear is not null)
           _edShear.SelectedQuantityInSIUnits = value;
       }
     }
@@ -314,7 +315,7 @@ namespace Altaxo.Gui.Graph
       {
         _edShear = value;
 
-        if (_edShear != null)
+        if (_edShear is not null)
         {
           _edShear.SelectedQuantityInSIUnits = _shear;
         }
@@ -349,7 +350,7 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        if (_edScaleX != null)
+        if (_edScaleX is not null)
           return _edScaleX.SelectedQuantityInSIUnits;
         else
           return _scaleX;
@@ -357,7 +358,7 @@ namespace Altaxo.Gui.Graph
       set
       {
         _scaleX = value;
-        if (_edScaleX != null)
+        if (_edScaleX is not null)
           _edScaleX.SelectedQuantityInSIUnits = value;
       }
     }
@@ -371,7 +372,7 @@ namespace Altaxo.Gui.Graph
       {
         _edScaleX = value;
 
-        if (_edScaleX != null)
+        if (_edScaleX is not null)
         {
           _edScaleX.SelectedQuantityInSIUnits = _scaleX;
         }
@@ -388,7 +389,7 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        if (_edScaleY != null)
+        if (_edScaleY is not null)
           return _edScaleY.SelectedQuantityInSIUnits;
         else
           return _scaleY;
@@ -396,7 +397,7 @@ namespace Altaxo.Gui.Graph
       set
       {
         _scaleY = value;
-        if (_edScaleY != null)
+        if (_edScaleY is not null)
           _edScaleY.SelectedQuantityInSIUnits = value;
       }
     }
@@ -409,7 +410,7 @@ namespace Altaxo.Gui.Graph
       set
       {
         _edScaleY = value;
-        if (_edScaleY != null)
+        if (_edScaleY is not null)
         {
           _edScaleY.SelectedQuantityInSIUnits = _scaleY;
         }

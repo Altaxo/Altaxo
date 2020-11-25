@@ -22,26 +22,48 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
 namespace Altaxo.Collections
 {
+  /// <summary>
+  /// Interface to an items that has a name associated with it.
+  /// </summary>
   public interface INamedItem
   {
     string Name { get; }
   }
 
+  /// <summary>
+  /// Interface to an item that has a name, and whose name can be changed.
+  /// </summary>
+  /// <seealso cref="Altaxo.Collections.INamedItem" />
   public interface IRenameableItem : INamedItem
   {
-    event Func<IRenameableItem, string, bool> BeforeRename; // sender, newName, return true if ok, false if the action should be cancelled.
+    /// <summary>
+    /// Occurs before an item is renamed. First argument is the <see cref="IRenameableItem"/> instance, 2nd argument is the proposed new name.
+    /// The function must return true if renaming the item is OK.
+    /// </summary>
+    event Func<IRenameableItem, string, bool>? BeforeRename; // sender, newName, return true if ok, false if the action should be cancelled.
 
+    /// <summary>
+    /// Occurs after renaming the item. First argument is the item, already with the new name, 2nd argument is the old name of the item.
+    /// </summary>
     event Action<IRenameableItem, string> AfterRename; // sender, oldName
   }
 
+  /// <summary>
+  /// List of <see cref="INamedItem"/> instances, with support for <see cref="System.Collections.Specialized.INotifyCollectionChanged"/>
+  /// </summary>
+  /// <typeparam name="T"></typeparam>
+  /// <seealso cref="System.Collections.Generic.IEnumerable{T}" />
+  /// <seealso cref="System.Collections.Specialized.INotifyCollectionChanged" />
   public class NamedItemList<T> : IEnumerable<T>, System.Collections.Specialized.INotifyCollectionChanged where T : INamedItem
   {
     protected List<T> _list = new List<T>();
@@ -50,7 +72,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Occurs when the collection changes.
     /// </summary>
-    public event NotifyCollectionChangedEventHandler CollectionChanged;
+    public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
     public NamedItemList()
     {
@@ -63,6 +85,10 @@ namespace Altaxo.Collections
       return _list.GetEnumerator();
     }
 
+    /// <summary>
+    /// Raises the <see cref="E:CollectionChanged" /> event.
+    /// </summary>
+    /// <param name="e">The <see cref="NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
     public virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
     {
       CollectionChanged?.Invoke(this, e);
@@ -76,7 +102,7 @@ namespace Altaxo.Collections
       _list.Add(item);
       _nameToIndex.Add(item.Name, _list.Count - 1);
 
-      if (null != CollectionChanged)
+      if (CollectionChanged is not null)
       {
         OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
       }
@@ -105,7 +131,7 @@ namespace Altaxo.Collections
         _nameToIndex.Add(item.Name, i);
       }
 
-      if (null != CollectionChanged)
+      if (!(CollectionChanged is null)) // Optimization to avoid instancing
       {
         OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, item, oldItem));
       }
@@ -123,7 +149,8 @@ namespace Altaxo.Collections
       }
     }
 
-    public bool TryGetValue(string name, out T item)
+
+    public bool TryGetValue(string name, [MaybeNullWhen(false)] out T item)
     {
       if (_nameToIndex.TryGetValue(name, out var index))
       {
@@ -132,7 +159,7 @@ namespace Altaxo.Collections
       }
       else
       {
-        item = default(T);
+        item = default;
         return false;
       }
     }
@@ -178,7 +205,7 @@ namespace Altaxo.Collections
       for (int j = i; j < _list.Count; j++)
         _nameToIndex[_list[j].Name] = j;
 
-      if (null != CollectionChanged)
+      if (!(CollectionChanged is null))
       {
         OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
       }
@@ -189,7 +216,7 @@ namespace Altaxo.Collections
     {
       _nameToIndex.Clear();
       _list.Clear();
-      if (null != CollectionChanged)
+      if (!(CollectionChanged is null))
       {
         OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
       }

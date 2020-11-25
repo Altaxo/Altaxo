@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -30,6 +31,7 @@ using System.Text;
 
 namespace Altaxo.Serialization.Ascii
 {
+  using System.Diagnostics.CodeAnalysis;
   using Altaxo.Main.Properties;
 
   /// <summary>
@@ -83,9 +85,9 @@ namespace Altaxo.Serialization.Ascii
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (AsciiDocumentAnalysisOptions)o : new AsciiDocumentAnalysisOptions();
+        var s = (AsciiDocumentAnalysisOptions?)o ?? new AsciiDocumentAnalysisOptions();
 
         //  info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
         s._numberOfLinesToAnalyze = info.GetInt32("NumberOfLinesToAnalyze");
@@ -120,7 +122,7 @@ namespace Altaxo.Serialization.Ascii
       bool delOneAtEnd = false;
       stb.AppendFormat("#Lines: {0} ", _numberOfLinesToAnalyze);
 
-      if (null != _numberFormatsToTest)
+      if (_numberFormatsToTest is not null)
       {
         stb.Append("| ");
         var cu = new SortedSet<string>(_numberFormatsToTest.Select(x => x.ThreeLetterISOLanguageName));
@@ -161,6 +163,14 @@ namespace Altaxo.Serialization.Ascii
       CopyFrom(from);
     }
 
+    [MemberNotNull(nameof(_numberFormatsToTest), nameof(_dateTimeFormatsToTest))]
+    void CopyFrom(AsciiDocumentAnalysisOptions from)
+    {
+      _numberOfLinesToAnalyze = from._numberOfLinesToAnalyze;
+      _numberFormatsToTest = new HashSet<CultureInfo>(from._numberFormatsToTest);
+      _dateTimeFormatsToTest = new HashSet<CultureInfo>(from._dateTimeFormatsToTest);
+    }
+
     /// <summary>
     /// Copies from another object.
     /// </summary>
@@ -168,17 +178,12 @@ namespace Altaxo.Serialization.Ascii
     /// <returns>True if anything has been copied. Otherwise, the return value is false.</returns>
     public bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
-      var from = obj as AsciiDocumentAnalysisOptions;
-      if (null != from)
+      if (obj is AsciiDocumentAnalysisOptions from)
       {
-        _numberOfLinesToAnalyze = from._numberOfLinesToAnalyze;
-        _numberFormatsToTest = new HashSet<CultureInfo>(from._numberFormatsToTest);
-        _dateTimeFormatsToTest = new HashSet<CultureInfo>(from._dateTimeFormatsToTest);
-
+        CopyFrom(from);
         EhSelfChanged(EventArgs.Empty);
-
         return true;
       }
       return false;

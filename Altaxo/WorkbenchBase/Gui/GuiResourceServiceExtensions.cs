@@ -38,9 +38,9 @@ namespace Altaxo.Gui
     /// <exception cref="ResourceNotFoundException">The resource with the specified name does not exist</exception>
     public static IImage GetImage(this IResourceService resourceService, string resourceName)
     {
-      if (resourceService == null)
+      if (resourceService is null)
         throw new ArgumentNullException("resourceService");
-      if (resourceName == null)
+      if (resourceName is null)
         throw new ArgumentNullException("resourceName");
       return new ResourceServiceImage(resourceService, resourceName);
     }
@@ -51,9 +51,9 @@ namespace Altaxo.Gui
     /// <exception cref="ResourceNotFoundException">The resource with the specified name does not exist</exception>
     public static ImageSource GetImageSource(this IResourceService resourceService, string resourceName)
     {
-      if (resourceService == null)
+      if (resourceService is null)
         throw new ArgumentNullException("resourceService");
-      if (resourceName == null)
+      if (resourceName is null)
         throw new ArgumentNullException("resourceName");
       return PresentationResourceService.GetBitmapSource(resourceName);
     }
@@ -63,7 +63,7 @@ namespace Altaxo.Gui
     /// </summary>
     public static Image CreateImage(this IImage image)
     {
-      if (image == null)
+      if (image is null)
         throw new ArgumentNullException("image");
       return new Image { Source = image.ImageSource };
     }

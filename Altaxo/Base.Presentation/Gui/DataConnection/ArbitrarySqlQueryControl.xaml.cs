@@ -36,13 +36,13 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class ArbitrarySqlQueryControl : UserControl, IArbitrarySqlQueryView
   {
-    public event Action CheckSql;
+    public event Action? CheckSql;
 
-    public event Action ViewResults;
+    public event Action? ViewResults;
 
-    public event Action ClearQuery;
+    public event Action? ClearQuery;
 
-    public event Action SqlTextChanged;
+    public event Action? SqlTextChanged;
 
     public ArbitrarySqlQueryControl()
     {
@@ -52,7 +52,7 @@ namespace Altaxo.Gui.DataConnection
     private void EhCheckSql_Click(object sender, RoutedEventArgs e)
     {
       var ev = CheckSql;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }
@@ -61,7 +61,7 @@ namespace Altaxo.Gui.DataConnection
     private void EhViewResults_Click(object sender, RoutedEventArgs e)
     {
       var ev = ViewResults;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }
@@ -70,7 +70,7 @@ namespace Altaxo.Gui.DataConnection
     private void EhClearQuery_Click(object sender, RoutedEventArgs e)
     {
       var ev = ClearQuery;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }
@@ -98,7 +98,7 @@ namespace Altaxo.Gui.DataConnection
     private void EhSqlTextChanged(object sender, TextChangedEventArgs e)
     {
       var ev = SqlTextChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
   }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,7 +62,7 @@ namespace Altaxo.Main
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         int numberOfLevelsDown = info.GetInt32("LevelsDown");
 
@@ -146,10 +147,9 @@ namespace Altaxo.Main
       return stringBuilder.ToString();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-      var o = obj as RelativeDocumentPath;
-      if (null == o)
+      if (!(obj is RelativeDocumentPath o))
         return false;
       if (_numberOfLevelsDown != o._numberOfLevelsDown)
         return false;
@@ -179,7 +179,7 @@ namespace Altaxo.Main
     /// <param name="endnode">The node where the path ends.</param>
     /// <returns>If the two nodes share a common root, the function returns the relative path from <code>startnode</code> to <code>endnode</code>.
     /// If the nodes have no common root, then the function returns the absolute path of the endnode.</returns>
-    public static RelativeDocumentPath GetRelativePathFromTo(IDocumentLeafNode startnode, IDocumentLeafNode endnode)
+    public static RelativeDocumentPath? GetRelativePathFromTo(IDocumentLeafNode startnode, IDocumentLeafNode endnode)
     {
       return GetRelativePathFromTo(startnode, endnode, null);
     }
@@ -196,11 +196,11 @@ namespace Altaxo.Main
     /// <returns>If the two nodes share a common root, the function returns the relative path from <code>startnode</code> to <code>endnode</code>.
     /// If the nodes have no common root, then the function returns the absolute path of the endnode.
     /// <para>If either startnode or endnode is null, then null is returned.</para></returns>
-    public static RelativeDocumentPath GetRelativePathFromTo(IDocumentLeafNode startnode, IDocumentLeafNode endnode, IDocumentNode stoppernode)
+    public static RelativeDocumentPath? GetRelativePathFromTo(IDocumentLeafNode startnode, IDocumentLeafNode endnode, IDocumentNode? stoppernode)
     {
-      if (startnode == null)
+      if (startnode is null)
         throw new ArgumentNullException(nameof(startnode));
-      if (endnode == null)
+      if (endnode is null)
         throw new ArgumentNullException(nameof(endnode));
 
       if (object.ReferenceEquals(startnode, endnode))
@@ -219,7 +219,7 @@ namespace Altaxo.Main
         return null; // happens if either startnode or endnode are not rooted (this can happen temporarily during instance creation)
 
       int numberOfNodesDown = 0;
-      IDocumentLeafNode commonNode = null;
+      IDocumentLeafNode? commonNode = null;
       for (int i = 0; i < startNodesList.Count; ++i)
       {
         if (commonNodes.Contains(startNodesList[i]))
@@ -233,7 +233,7 @@ namespace Altaxo.Main
         }
       }
 
-      if (null == commonNodes)
+      if (commonNode is null)
         throw new InvalidOperationException(nameof(commonNode) + " should always be != null");
 
       var idx = endNodesList.IndexOf(commonNode);
@@ -243,30 +243,34 @@ namespace Altaxo.Main
       else if (idx == 0)
         throw new InvalidOperationException(nameof(idx) + "=0 should not happen because this means identical startnode and endnode");
 
-      return new RelativeDocumentPath(numberOfNodesDown, endNodesList.TakeFromUpperIndexExclusiveDownToLowerIndexInclusive(idx, 0).Select(x => x.ParentObject.GetNameOfChildObject(x)));
+      return new RelativeDocumentPath(
+        numberOfNodesDown,
+        endNodesList
+          .TakeFromUpperIndexExclusiveDownToLowerIndexInclusive(idx, 0)
+          .Select(x => x.ParentObject?.GetNameOfChildObject(x) ?? throw new InvalidOperationException($"Can not get name of object {x} (parent is {x.ParentObject})")));
     }
 
-    public static IDocumentLeafNode GetObject(RelativeDocumentPath path, IDocumentLeafNode startnode)
+    public static IDocumentLeafNode? GetObject(RelativeDocumentPath path, IDocumentLeafNode startnode)
     {
-      if (null == path)
+      if (path is null)
         throw new ArgumentNullException(nameof(path));
-      if (null == startnode)
+      if (startnode is null)
         throw new ArgumentNullException(nameof(startnode));
 
       var node = startnode;
 
-      for (int i = 0; i < path._numberOfLevelsDown && null != node; ++i)
+      for (int i = 0; i < path._numberOfLevelsDown && node is not null; ++i)
       {
         node = node.ParentNode;
       }
 
-      if (null == node)
+      if (node is null)
         return null; // Path not resolveable
 
       for (int i = 0; i < path._pathParts.Length; i++)
       {
-        if (node is Main.IDocumentNode)
-          node = ((Main.IDocumentNode)node).GetChildObjectNamed(path._pathParts[i]);
+        if (node is Main.IDocumentNode docnode)
+          node = docnode.GetChildObjectNamed(path._pathParts[i]);
         else
           return null;
       } // end for
@@ -288,38 +292,37 @@ namespace Altaxo.Main
     /// </exception>
     public static IDocumentLeafNode GetNodeOrLeastResolveableNode(RelativeDocumentPath path, IDocumentLeafNode startnode, out bool pathWasCompletelyResolved)
     {
-      if (null == path)
+      if (path is null)
         throw new ArgumentNullException(nameof(path));
-      if (null == startnode)
+      if (startnode is null)
         throw new ArgumentNullException(nameof(startnode));
 
       var node = startnode;
       var prevNode = startnode;
 
-      for (int i = 0; i < path._numberOfLevelsDown && null != node; ++i)
+      for (int i = 0; i < path._numberOfLevelsDown && node is not null; ++i)
       {
         prevNode = node;
         node = node.ParentNode;
       }
 
-      if (null == node)
+      if (node is null)
       {
         pathWasCompletelyResolved = false;
         return prevNode;
       }
 
-      pathWasCompletelyResolved = true;
-      for (int i = 0; i < path._pathParts.Length && null != node; i++)
+      for (int i = 0; i < path._pathParts.Length && node is not null; i++)
       {
         prevNode = node;
 
-        if (node is Main.IDocumentNode)
-          node = ((Main.IDocumentNode)node).GetChildObjectNamed(path._pathParts[i]);
+        if (node is Main.IDocumentNode docnode)
+          node = docnode.GetChildObjectNamed(path._pathParts[i]);
         else
           node = null;
       } // end for
 
-      pathWasCompletelyResolved = null != node;
+      pathWasCompletelyResolved = node is not null;
       return node ?? prevNode;
     }
 
@@ -341,7 +344,7 @@ namespace Altaxo.Main
 
     public static RelativeDocumentPath FromOldDeprecated(AbsoluteDocumentPath absPath)
     {
-      if (null == absPath)
+      if (absPath is null)
         throw new ArgumentNullException(nameof(absPath));
 
       int numberOfLevelsDown = 0;

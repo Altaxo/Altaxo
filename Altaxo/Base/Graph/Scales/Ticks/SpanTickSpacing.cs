@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,15 +63,9 @@ namespace Altaxo.Graph.Scales.Ticks
         info.AddValue("TransformationIsMultiply", s._transformationOperationIsMultiply);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = SDeserialize(o, info, parent);
-        return s;
-      }
-
-      protected virtual SpanTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        var s = null != o ? (SpanTickSpacing)o : new SpanTickSpacing();
+        var s = (SpanTickSpacing?)o ?? new SpanTickSpacing();
 
         s._showRatioEndOrg = info.GetBoolean("ShowRatioEndOrg");
         s._relTickPosition = info.GetDouble("RelTickPosition");
@@ -80,6 +75,8 @@ namespace Altaxo.Graph.Scales.Ticks
 
         return s;
       }
+
+      
     }
 
     #endregion Serialization
@@ -96,11 +93,11 @@ namespace Altaxo.Graph.Scales.Ticks
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       var from = obj as SpanTickSpacing;
-      if (null == from)
+      if (from is null)
         return false;
 
       using (var suspendToken = SuspendGetToken())

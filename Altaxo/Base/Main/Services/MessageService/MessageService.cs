@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using System.Text;
 
@@ -55,7 +56,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows an exception.
     /// </summary>
-    public static void ShowException(Exception ex, string message = null)
+    public static void ShowException(Exception ex, string? message = null)
     {
       Service.ShowException(ex, message);
     }
@@ -83,7 +84,7 @@ namespace Altaxo.Main.Services
     /// Asks the user a Yes/No question, using "Yes" as the default button.
     /// Returns <c>true</c> if yes was clicked, <c>false</c> if no was clicked.
     /// </summary>
-    public static bool AskQuestion(string question, string caption = null)
+    public static bool AskQuestion(string question, string? caption = null)
     {
       return Service.AskQuestion(question, caption);
     }
@@ -163,12 +164,12 @@ namespace Altaxo.Main.Services
       Service.ShowMessageFormatted(formatstring, caption, formatitems);
     }
 
-    public static void ShowMessage(string message, string caption = null)
+    public static void ShowMessage(string message, string? caption = null)
     {
       Service.ShowMessage(message, caption);
     }
 
-    public static void ShowHandledException(Exception ex, string message = null)
+    public static void ShowHandledException(Exception ex, string? message = null)
     {
       Service.ShowHandledException(ex, message);
     }

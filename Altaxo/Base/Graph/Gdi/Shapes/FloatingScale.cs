@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Data;
@@ -76,21 +78,21 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private Margin2D _backgroundPadding;
 
-    private IBackgroundStyle _background;
+    private IBackgroundStyle? _background;
 
     // Cached members
     /// <summary>Cached path of the isoline.</summary>
-    private GraphicsPath _cachedPath;
+    private GraphicsPath? _cachedPath;
 
     /// <summary>
     /// A segment of the underlying X-X layer, that has the position and the size of the floating scale we want to draw.
     /// </summary>
-    private LayerSegment _cachedLayerSegment;
+    private LayerSegment? _cachedLayerSegment;
 
     /// <summary>
     /// A scale of the same type as the scale of the underlying X-Y layer, which is used for drawing this floating scale.
     /// </summary>
-    private ScaleSegment _cachedScale;
+    private ScaleSegment? _cachedScale;
 
     #region Serialization
 
@@ -100,7 +102,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FloatingScale)obj;
-        info.AddBaseValueEmbedded(s, typeof(FloatingScale).BaseType);
+        info.AddBaseValueEmbedded(s, typeof(FloatingScale).BaseType!);
 
         info.AddValue("ScaleNumber", s._scaleNumber);
         info.AddEnum("ScaleSpanType", s._scaleSpanType);
@@ -109,33 +111,26 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.AddValue("TickSpacing", s._tickSpacing);
         info.AddValue("AxisStyle", s._axisStyle);
 
-        info.AddValue("Background", s._background);
-        if (null != s._background)
+        info.AddValueOrNull("Background", s._background);
+        if (s._background is not null)
           info.AddValue("BackgroundPadding", s._backgroundPadding);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        FloatingScale s = null != o ? (FloatingScale)o : new FloatingScale(info);
-        info.GetBaseValueEmbedded(s, typeof(FloatingScale).BaseType, parent);
+        var s = (FloatingScale?)o ?? new FloatingScale(info);
+        info.GetBaseValueEmbedded(s, typeof(FloatingScale).BaseType!, parent);
 
         s._scaleNumber = info.GetInt32("ScaleNumber");
         s._scaleSpanType = (FloatingScaleSpanType)info.GetEnum("ScaleSpanType", typeof(FloatingScaleSpanType));
         s._scaleSpanValue = info.GetDouble("ScaleSpanValue");
         s._scaleSegmentType = (ScaleSegmentType)info.GetEnum("ScaleType", typeof(ScaleSegmentType));
 
-        s._tickSpacing = (TickSpacing)info.GetValue("TickSpacing", s);
-        if (null != s._tickSpacing)
-          s._tickSpacing.ParentObject = s;
-
-        s._axisStyle = (AxisStyle)info.GetValue("AxisStyle", s);
-        if (null != s._axisStyle)
-          s._axisStyle.ParentObject = s;
-
-        s._background = (IBackgroundStyle)info.GetValue("Background", s);
-        if (null != s._background)
+        s.ChildSetMember(ref s._tickSpacing, (TickSpacing)info.GetValue("TickSpacing", s));
+        s.ChildSetMember(ref s._axisStyle, (AxisStyle)info.GetValue("AxisStyle", s));
+        s.ChildSetMember(ref s._background, info.GetValueOrNull<IBackgroundStyle>("Background", s));
+        if (s._background is not null)
         {
-          s._background.ParentObject = s;
           s._backgroundPadding = (Margin2D)info.GetValue("BackgroundPadding", s);
         }
 
@@ -149,7 +144,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     /// <summary>Constructor only for deserialization purposes.</summary>
     /// <param name="info">Not used here.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     private FloatingScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(new ItemLocationDirectAutoSize())
     {
     }
@@ -163,33 +160,48 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     public FloatingScale(FloatingScale from)
-      : base(from) // all is done here, since CopyFrom is virtual!
+      : base(from)
     {
+      CopyFrom(from, false);
+    }
+
+    [MemberNotNull(nameof(_scaleSpanValue), nameof(_tickSpacing), nameof(_axisStyle))]
+    protected void CopyFrom(FloatingScale from, bool withBaseMembers)
+    {
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      _cachedPath = null;
+
+      _scaleSpanValue = from._scaleSpanValue;
+      _scaleSpanType = from._scaleSpanType;
+      _scaleNumber = from._scaleNumber;
+      _scaleSegmentType = from._scaleSegmentType;
+
+      CopyHelper.Copy(ref _tickSpacing, from._tickSpacing);
+      CopyHelper.Copy(ref _axisStyle, from._axisStyle);
+
+      _backgroundPadding = from._backgroundPadding;
+      CopyHelper.Copy(ref _background, from._background);
     }
 
     public override bool CopyFrom(object obj)
     {
-      bool isCopied = base.CopyFrom(obj);
-      if (isCopied && !object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
+        return true;
+      if (obj is FloatingScale from)
       {
-        var from = obj as FloatingScale;
-        if (null != from)
+        using (var suspendToken = SuspendGetToken())
         {
-          _cachedPath = null;
-
-          _scaleSpanValue = from._scaleSpanValue;
-          _scaleSpanType = from._scaleSpanType;
-          _scaleNumber = from._scaleNumber;
-          _scaleSegmentType = from._scaleSegmentType;
-
-          CopyHelper.Copy(ref _tickSpacing, from._tickSpacing);
-          CopyHelper.Copy(ref _axisStyle, from._axisStyle);
-
-          _backgroundPadding = from._backgroundPadding;
-          CopyHelper.Copy(ref _background, from._background);
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return isCopied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     public override object Clone()
@@ -199,11 +211,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (null != _tickSpacing)
+      if (_tickSpacing is not null)
         yield return new Main.DocumentNodeAndName(_tickSpacing, "TickSpacing");
-      if (null != _axisStyle)
+      if (_axisStyle is not null)
         yield return new Main.DocumentNodeAndName(_axisStyle, "AxisStyle");
-      if (null != _background)
+      if (_background is not null)
         yield return new Main.DocumentNodeAndName(_background, "Background");
     }
 
@@ -214,7 +226,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       base.FixupInternalDataStructures();
 
       var layer = Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
-      if (null == layer)
+      if (layer is null)
       {
         _cachedLayerSegment = null;
 
@@ -308,7 +320,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new ArgumentNullException();
 
         _tickSpacing = (TickSpacing)value.Clone();
@@ -368,7 +380,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
-    public IBackgroundStyle Background
+    public IBackgroundStyle? Background
     {
       get
       {
@@ -404,7 +416,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       var oldPosition = GetPosition();
       base.SetPosition(value, eventFiring);
 
-      if (_axisStyle.Title != null)
+      if (_axisStyle.Title is not null)
       {
         var oldTitlePos = _axisStyle.Title.Position;
         _axisStyle.Title.SilentSetPosition(oldTitlePos + (GetPosition() - oldPosition));
@@ -415,7 +427,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       var oldPosition = GetPosition();
       base.SilentSetPosition(newPosition);
-      if (_axisStyle.Title != null)
+      if (_axisStyle.Title is not null)
       {
         var oldTitlePos = _axisStyle.Title.Position;
         _axisStyle.Title.SilentSetPosition(oldTitlePos + (GetPosition() - oldPosition));
@@ -424,27 +436,25 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public GraphicsPath GetSelectionPath()
     {
-      return (GraphicsPath)_cachedPath.Clone();
+      return (GraphicsPath?)_cachedPath?.Clone() ?? throw new InvalidOperationException("Path not set yet!");
     }
 
     public override GraphicsPath GetObjectOutlineForArrangements()
     {
-      return (GraphicsPath)_cachedPath.Clone();
+      return (GraphicsPath?)_cachedPath?.Clone() ?? throw new InvalidOperationException("Path not set yet!");
     }
 
-    protected GraphicsPath GetPath(double minWidth)
+    protected GraphicsPath? GetPath(double minWidth)
     {
-      var gp = (GraphicsPath)_cachedPath.Clone();
-
-      return gp;
+      return (GraphicsPath?)_cachedPath?.Clone() ?? throw new InvalidOperationException("Path not set yet!");
     }
 
-    public override IHitTestObject HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData htd)
     {
-      if (_axisStyle.Title != null)
+      if (_axisStyle.Title is not null)
       {
         var titleResult = _axisStyle.Title.HitTest(htd);
-        if (null != titleResult)
+        if (titleResult is not null)
         {
           titleResult.Remove = EhTitleRemove;
           return titleResult;
@@ -452,14 +462,14 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
 
       var pt = htd.GetHittedPointInWorldCoord();
-      HitTestObjectBase result = null;
+      HitTestObjectBase? result = null;
       GraphicsPath gp = GetSelectionPath();
       if (gp.IsVisible((PointF)pt))
       {
         result = new MyHitTestObject(this);
       }
 
-      if (result != null)
+      if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
 
       return result;
@@ -476,20 +486,20 @@ namespace Altaxo.Graph.Gdi.Shapes
     private static bool EhTitleRemove(IHitTestObject o)
     {
       object hitted = o.HittedObject;
-      var axStyle = ((TextGraphic)hitted).ParentObject as AxisStyle;
-      axStyle.Title = null;
+      if (((TextGraphic)hitted).ParentObject is AxisStyle axStyle)
+        axStyle.Title = null;
       return true;
     }
 
     public override void Paint(Graphics g, IPaintContext paintContext)
     {
-      if (null == _cachedLayerSegment) // _privLayer should be set before in FixupInternalDataStructures
+      if (_cachedLayerSegment is null) // _privLayer should be set before in FixupInternalDataStructures
       {
         PaintErrorInvalidLayerType(g, paintContext);
         return;
       }
 
-      if (_background == null)
+      if (_background is null)
       {
         _axisStyle.Paint(g, paintContext, _cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation);
       }
@@ -506,39 +516,42 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
-      _cachedPath = _axisStyle.AxisLineStyle.GetObjectPath(_cachedLayerSegment, true);
+      _cachedPath = _axisStyle.AxisLineStyle?.GetObjectPath(_cachedLayerSegment, true) ?? new GraphicsPath();
 
       // calculate size information
-      RectangleD2D bounds1 = _cachedPath.GetBounds();
+      RectangleD2D? bounds1 = _cachedPath.PointCount > 0 ? _cachedPath.GetBounds() : (RectangleD2D?)null;
 
       if (_axisStyle.AreMinorLabelsEnabled)
       {
-        var path = _axisStyle.MinorLabelStyle.GetSelectionPath();
-        if (path.PointCount > 0)
+        var path = _axisStyle.MinorLabelStyle?.GetSelectionPath();
+        if (path is not null && path.PointCount > 0)
         {
           _cachedPath.AddPath(path, false);
           RectangleD2D bounds2 = path.GetBounds();
-          bounds1.ExpandToInclude(bounds2);
+          bounds1 = RectangleD2D.ExpandToInclude(bounds1, bounds2);
         }
       }
       if (_axisStyle.AreMajorLabelsEnabled)
       {
-        var path = _axisStyle.MajorLabelStyle.GetSelectionPath();
-        if (path.PointCount > 0)
+        var path = _axisStyle.MajorLabelStyle?.GetSelectionPath();
+        if (path is not null && path.PointCount > 0)
         {
           _cachedPath.AddPath(path, false);
           RectangleD2D bounds2 = path.GetBounds();
-          bounds1.ExpandToInclude(bounds2);
+          bounds1 = RectangleD2D.ExpandToInclude(bounds1, bounds2);
         }
       }
 
-      ((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds1.Size, false); // size here is important only for selection, thus we set size silently
-
-      if (_background != null)
+      if (bounds1.HasValue)
       {
-        bounds1.Expand(_backgroundPadding);
-        _background.Draw(g, bounds1);
-        _axisStyle.Paint(g, paintContext, _cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation);
+        ((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds1.Value.Size, false); // size here is important only for selection, thus we set size silently
+
+        if (_background is not null)
+        {
+          bounds1.Value.Expand(_backgroundPadding);
+          _background.Draw(g, bounds1.Value);
+          _axisStyle.Paint(g, paintContext, _cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation);
+        }
       }
     }
 
@@ -672,11 +685,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       private double _relEnd;
       private Scale _underlyingScale;
       private ScaleSegmentType _segmentScaling;
-      private TickSpacing _tickSpacing;
+      private TickSpacing? _tickSpacing;
 
       public ScaleSegment(Scale underlyingScale, double relOrg, double relEnd, ScaleSegmentType scaling)
       {
-        if (null == underlyingScale)
+        if (underlyingScale is null)
           throw new ArgumentNullException("underlyingScale");
 
         _underlyingScale = underlyingScale;
@@ -687,12 +700,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public override bool CopyFrom(object obj)
       {
-        if (object.ReferenceEquals(this, obj))
+        if (ReferenceEquals(this, obj))
           return true;
 
         var from = obj as ScaleSegment;
 
-        if (null == from)
+        if (from is null)
           return false;
 
         using (var suspendToken = SuspendGetToken())
@@ -753,7 +766,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         return y;
       }
 
-      public override IScaleRescaleConditions RescalingObject
+      public override IScaleRescaleConditions? RescalingObject
       {
         get { return _underlyingScale.RescalingObject; }
       }
@@ -779,7 +792,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
-      protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+      protected override string? SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
       {
         _relOrg = _underlyingScale.PhysicalVariantToNormal(org);
         _relEnd = _underlyingScale.PhysicalVariantToNormal(end);
@@ -798,11 +811,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         get
         {
-          return _tickSpacing;
+          return _tickSpacing ?? throw new InvalidOperationException();
         }
         set
         {
-          _tickSpacing = value;
+
+          ChildSetMember(ref _tickSpacing, value ?? throw new ArgumentNullException(nameof(TickSpacing)));
         }
       }
     }

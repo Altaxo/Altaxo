@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,7 +62,7 @@ namespace Altaxo.Drawing.DashPatterns
         SerializeV0(s, info);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         double offset = info.GetDouble("DashOffset");
         int count = info.OpenArray("Pattern");
@@ -78,7 +79,7 @@ namespace Altaxo.Drawing.DashPatterns
 
     public Custom(IEnumerable<double> dashPattern)
     {
-      if (null == dashPattern)
+      if (dashPattern is null)
         throw new ArgumentNullException(nameof(dashPattern));
 
       _customDashPattern = dashPattern.ToArray();
@@ -89,7 +90,7 @@ namespace Altaxo.Drawing.DashPatterns
 
     public Custom(IEnumerable<double> dashPattern, double dashOffset)
     {
-      if (null == dashPattern)
+      if (dashPattern is null)
         throw new ArgumentNullException(nameof(dashPattern));
 
       _customDashPattern = dashPattern.ToArray();
@@ -134,7 +135,7 @@ namespace Altaxo.Drawing.DashPatterns
       }
     }
 
-    public override bool Equals(IDashPattern obj)
+    public override bool Equals(IDashPattern? obj)
     {
       if (!(obj is Custom other))
         return false;

@@ -78,7 +78,7 @@ namespace Altaxo.Calc.Regression
         throw new ArgumentException("Argument polynomialorder must not be smaller than total number of points");
       if (derivativeorder > polynomialorder)
         throw new ArgumentException("Argument derivativeorder must not be greater than polynomialorder!");
-      if (coefficients == null || coefficients.Length < totalpoints)
+      if (coefficients is null || coefficients.Length < totalpoints)
         throw new ArgumentException("Vector of coefficients is either null or too short");
       // totalpoints must be greater than 1
 

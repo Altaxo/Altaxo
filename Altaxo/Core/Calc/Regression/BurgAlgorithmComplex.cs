@@ -303,7 +303,7 @@ namespace Altaxo.Calc.Regression
 
       _numberOfCoefficients = coeffLength;
 
-      if (null == _Ak || _Ak.Length < coeffLength + 1)
+      if (_Ak is null || _Ak.Length < coeffLength + 1)
       {
         _Ak = new Complex[coeffLength + 1];
         _AkWrapper = new ComplexVectorWrapper(_Ak, 1, _numberOfCoefficients);
@@ -312,10 +312,10 @@ namespace Altaxo.Calc.Regression
       if (_numberOfCoefficients != _AkWrapper.Length)
         _AkWrapper = new ComplexVectorWrapper(_Ak, 1, _numberOfCoefficients);
 
-      if (null == _b || _b.Length < xLength)
+      if (_b is null || _b.Length < xLength)
         _b = new Complex[xLength];
 
-      if (null == _f || _f.Length < xLength)
+      if (_f is null || _f.Length < xLength)
         _f = new Complex[xLength];
     }
 
@@ -385,7 +385,7 @@ namespace Altaxo.Calc.Regression
       Complex[] b; // backward prediction errors
       Complex[] f; // forward prediction errors
 
-      if (null != tempStorage)
+      if (tempStorage is not null)
       {
         tempStorage.EnsureAllocation(x.Length, coefficients.Length);
         Ak = tempStorage._Ak;
@@ -434,7 +434,7 @@ namespace Altaxo.Calc.Regression
           Ak[n] = t1;
           Ak[k + 1 - n] = t2;
         }
-        if (null != reflectionCoefficients)
+        if (reflectionCoefficients is not null)
           reflectionCoefficients[k] = Ak[k + 1];
 
         // update forward and backward predition error with simultaneous total error calculation
@@ -447,7 +447,7 @@ namespace Altaxo.Calc.Regression
           b[n] = t2;
           sumE += t1.GetModulusSquared() + t2.GetModulusSquared();
         }
-        if (null != errors)
+        if (errors is not null)
           errors[k] = sumE / (2 * (N - k));
         // Update Dk
         // Note that it is possible to update Dk without total error calculation because sumE = Dk*(1-mu.GetModulusSquared())
@@ -463,9 +463,9 @@ namespace Altaxo.Calc.Regression
       // if not all stages could be calculated because Dk was zero or because of rounding effects smaller than zero
       for (int i = k + 1; i < m; i++)
       {
-        if (null != reflectionCoefficients)
+        if (reflectionCoefficients is not null)
           reflectionCoefficients[i] = 0;
-        if (null != errors)
+        if (errors is not null)
           errors[i] = 0;
       }
 

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -113,9 +114,9 @@ namespace Altaxo.Calc.LinearAlgebra
       #region IROVector Members
 
       /// <summary>The number of elements of this vector.</summary>
-      public int Length { get {; return _rows == null ? 0 : _rows.Count; } }
+      public int Length { get {; return _rows is null ? 0 : _rows.Count; } }
 
-      public int Count { get {; return _rows == null ? 0 : _rows.Count; } }
+      public int Count { get {; return _rows is null ? 0 : _rows.Count; } }
 
       /// <summary>
       /// Element accessor.
@@ -232,9 +233,9 @@ namespace Altaxo.Calc.LinearAlgebra
       #region IROVector Members
 
       /// <summary>The number of elements of this vector.</summary>
-      public int Length { get {; return _rows == null ? 0 : _rows.Count; } }
+      public int Length { get {; return _rows is null ? 0 : _rows.Count; } }
 
-      public int Count { get {; return _rows == null ? 0 : _rows.Count; } }
+      public int Count { get {; return _rows is null ? 0 : _rows.Count; } }
 
       /// <summary>
       /// Element accessor.
@@ -655,10 +656,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>A read-only vector which contains data copied from the numeric column.</returns>
     public static IROVector<double> ToROVectorCopy(this DataColumn col)
     {
-      if (!(col is INumericColumn))
+      if (!(col is INumericColumn ncol))
         throw new ArgumentException("Argument col can not be wrapped to a vector because it is not a numeric column");
-
-      var ncol = col as INumericColumn;
 
       double[] vec = new double[col.Count];
       for (int i = col.Count - 1; i >= 0; i--)

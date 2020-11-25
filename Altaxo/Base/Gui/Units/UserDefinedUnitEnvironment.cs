@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,7 +56,7 @@ namespace Altaxo.Gui.Units
         info.AddValue("Environment", s.Environment);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var name = info.GetString("Name");
         var quantity = info.GetString("Quantity");
@@ -78,6 +79,14 @@ namespace Altaxo.Gui.Units
       _name = environmentName;
       _quantity = quantityName;
       _environment = environment;
+    }
+
+    public static UserDefinedUnitEnvironment Empty
+    {
+      get
+      {
+        return new UserDefinedUnitEnvironment(string.Empty, string.Empty, null!);
+      }
     }
   }
 }

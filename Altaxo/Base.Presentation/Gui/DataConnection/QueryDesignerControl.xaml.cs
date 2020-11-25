@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,27 +41,27 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class QueryDesignerControl : UserControl, IQueryDesignerView
   {
-    public event Action ChooseConnectionString;
+    public event Action? ChooseConnectionString;
 
-    public event Action<bool> GroupByChanged;
+    public event Action<bool>? GroupByChanged;
 
-    public event Action ChooseProperties;
+    public event Action? ChooseProperties;
 
-    public event Action CheckSql;
+    public event Action? CheckSql;
 
-    public event Action ViewResults;
+    public event Action? ViewResults;
 
-    public event Action ClearQuery;
+    public event Action? ClearQuery;
 
-    public event Action<NGTreeNode> TreeNodeMouseDoubleClick;
+    public event Action<NGTreeNode>? TreeNodeMouseDoubleClick;
 
-    public event Action<NGTreeNode, List<string>> RelatedTablesRequired;
+    public event Action<NGTreeNode, List<string>>? RelatedTablesRequired;
 
-    public event Action<NGTreeNode> HideTableChosen;
+    public event Action<NGTreeNode>? HideTableChosen;
 
-    public event Action ShowTablesAllChosen;
+    public event Action? ShowTablesAllChosen;
 
-    public event Action<string> RelatedTableNameChosen;
+    public event Action<string>? RelatedTableNameChosen;
 
     public QueryDesignerControl()
     {
@@ -74,7 +75,7 @@ namespace Altaxo.Gui.DataConnection
     {
       get
       {
-        if (null == _treeImageConverter)
+        if (_treeImageConverter is null)
         {
           _treeImageConverter = new IndexToImageConverter(
               new string[]{
@@ -88,7 +89,7 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
-    private void EhGrid_Loading_Row(object sender, DataGridRowEventArgs e)
+    private void EhGrid_Loading_Row(object? sender, DataGridRowEventArgs e)
     {
       UpdateGridColumns(_btnGroupBy.IsChecked == true);
     }
@@ -123,7 +124,7 @@ namespace Altaxo.Gui.DataConnection
     {
       // freeze the first column so that it is visible even when horizontally scrolling
       var frozenCol = GetGridColumnByName("Column");
-      if (null != frozenCol && !frozenCol.IsFrozen)
+      if (frozenCol is not null && !frozenCol.IsFrozen)
       {
         frozenCol.DisplayIndex = _grid.FrozenColumnCount;
         _grid.FrozenColumnCount += 1;
@@ -131,7 +132,7 @@ namespace Altaxo.Gui.DataConnection
 
       // make GroupBy column visible or invisible
       var groupByCol = GetGridColumnByName("GroupBy");
-      if (null != groupByCol)
+      if (groupByCol is not null)
         groupByCol.Visibility = isGrouped ? Visibility.Visible : Visibility.Collapsed;
 
       _btnGroupBy.IsChecked = isGrouped;
@@ -182,7 +183,7 @@ namespace Altaxo.Gui.DataConnection
     private void _btnConnString_Click(object sender, RoutedEventArgs e)
     {
       var ev = ChooseConnectionString;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }
@@ -191,7 +192,7 @@ namespace Altaxo.Gui.DataConnection
     private void _btnGroupBy_Click(object sender, RoutedEventArgs e)
     {
       var ev = GroupByChanged;
-      if (null != ev)
+      if (ev is not null)
       {
         ev(_btnGroupBy.IsChecked == true);
       }
@@ -200,7 +201,7 @@ namespace Altaxo.Gui.DataConnection
     private void _btnProperties_Click(object sender, RoutedEventArgs e)
     {
       var ev = ChooseProperties;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }
@@ -209,7 +210,7 @@ namespace Altaxo.Gui.DataConnection
     private void _btnCheckSql_Click(object sender, RoutedEventArgs e)
     {
       var ev = CheckSql;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }
@@ -218,7 +219,7 @@ namespace Altaxo.Gui.DataConnection
     private void _btnViewResults_Click(object sender, RoutedEventArgs e)
     {
       var ev = ViewResults;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }
@@ -227,7 +228,7 @@ namespace Altaxo.Gui.DataConnection
     private void _btnClearQuery_Click(object sender, RoutedEventArgs e)
     {
       var ev = ClearQuery;
-      if (null != ev)
+      if (ev is not null)
       {
         ev();
       }
@@ -236,11 +237,11 @@ namespace Altaxo.Gui.DataConnection
     private void EhTreeMouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
       var node = _treeTables.SelectedItem as Collections.NGTreeNode;
-      if (null == node)
+      if (node is null)
         return;
 
       var ev = TreeNodeMouseDoubleClick;
-      if (null != ev)
+      if (ev is not null)
         ev(node);
     }
 
@@ -278,7 +279,7 @@ namespace Altaxo.Gui.DataConnection
     private void EhTreeViewItem_PreviewRightButtonDown(object sender, MouseButtonEventArgs e)
     {
       var twi = sender as TreeViewItem;
-      if (null != twi)
+      if (twi is not null)
         twi.IsSelected = true;
     }
 
@@ -287,7 +288,7 @@ namespace Altaxo.Gui.DataConnection
       if (e.OriginalSource is DependencyObject)
       {
         var twi = GuiHelper.GetLogicalParentOfType<TreeViewItem>((DependencyObject)e.OriginalSource);
-        if (null != twi)
+        if (twi is not null)
         {
           twi.IsSelected = true;
         }
@@ -295,22 +296,22 @@ namespace Altaxo.Gui.DataConnection
 
       // get node that was clicked
       var nd = _treeTables.SelectedItem as Collections.NGTreeNode;
-      System.Data.DataTable dt = nd == null ? null : nd.Tag as System.Data.DataTable;
+      System.Data.DataTable dt = nd is null ? null : nd.Tag as System.Data.DataTable;
 
       // make sure this is a table node
-      if (dt == null)
+      if (dt is null)
       {
         return;
       }
 
       // populate related tables menu
       _contextMenuRelatedTables.Items.Clear();
-      if (null != dt)
+      if (dt is not null)
       {
         var list = new List<string>();
 
         var ev = RelatedTablesRequired;
-        if (null != ev)
+        if (ev is not null)
           ev(nd, list);
 
         foreach (string tableName in list)
@@ -327,7 +328,7 @@ namespace Altaxo.Gui.DataConnection
     private void EhMenuRelatedTablesClicked(object sender, RoutedEventArgs e)
     {
       var ev = RelatedTableNameChosen;
-      if (null != ev)
+      if (ev is not null)
       {
         string tableName = ((MenuItem)sender).Tag as string;
         ev(tableName);
@@ -337,14 +338,14 @@ namespace Altaxo.Gui.DataConnection
     private void EhTreeMenu_HideThisTable(object sender, RoutedEventArgs e)
     {
       var ev = HideTableChosen;
-      if (null != ev)
+      if (ev is not null)
         ev(_treeTables.SelectedItem as Collections.NGTreeNode);
     }
 
     private void EhTreeMenu_ShowAllTables(object sender, RoutedEventArgs e)
     {
       var ev = ShowTablesAllChosen;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 

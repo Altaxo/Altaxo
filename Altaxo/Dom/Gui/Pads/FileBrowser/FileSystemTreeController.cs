@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -291,7 +292,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
         computerNode.IsExpanded = true;
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.Initialize_FolderTree(Nodes);
       }
@@ -305,14 +306,14 @@ namespace Altaxo.Gui.Pads.FileBrowser
       }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.FolderTreeNodeSelected -= EhView_FolderTreeNodeSelected;
         }
 
         _view = value as IFileTreeView;
 
-        if (null != _view)
+        if (_view is not null)
         {
           Initialize(false);
           _view.FolderTreeNodeSelected += EhView_FolderTreeNodeSelected;
@@ -323,9 +324,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
     private void EhView_FolderTreeNodeSelected(NGTreeNode obj)
     {
       var node = obj as TreeNode;
-      string path = node == null ? null : node.FullPath;
+      string path = node is null ? null : node.FullPath;
 
-      if (null != SelectedPathChanged && path != null)
+      if (SelectedPathChanged is not null && path is not null)
         SelectedPathChanged(path);
     }
   }

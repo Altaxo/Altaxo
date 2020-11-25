@@ -27,18 +27,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
-  [TestFixture]
+
   public class FluidConsistencyTests
   {
     /// <summary>
     /// Tests the consistence between the presence/absence of a departure function
     /// and the value of F of the binary mixture.
     /// </summary>
-    [Test]
+    [Fact]
     public void TestLowerTemperatureLimit()
     {
       return; // Test not active currently
@@ -58,9 +58,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
           double middleTemperature = (minTemperature + maxTemperature) / 2;
 
           var (liquidMoleDensity, vaporMoleDensity, pressure) = fluid.SaturatedLiquidAndVaporMoleDensitiesAndPressure_FromTemperature(middleTemperature, 1E-12);
-          Assert.Greater(liquidMoleDensity, 0);
-          Assert.Greater(vaporMoleDensity, 0);
-          Assert.Greater(pressure, 0);
+          AssertEx.Greater(liquidMoleDensity, 0);
+          AssertEx.Greater(vaporMoleDensity, 0);
+          AssertEx.Greater(pressure, 0);
 
           // Try to go down to triple point temperature
 
@@ -70,13 +70,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
             (liquidMoleDensity, vaporMoleDensity, pressure) = fluid.SaturatedLiquidAndVaporMoleDensitiesAndPressure_FromTemperature(temperature, liquidMoleDensity, vaporMoleDensity, 1E-12);
 
-            Assert.Greater(liquidMoleDensity, 0);
-            Assert.Greater(vaporMoleDensity, 0);
-            Assert.Greater(pressure, 0);
+            AssertEx.Greater(liquidMoleDensity, 0);
+            AssertEx.Greater(vaporMoleDensity, 0);
+            AssertEx.Greater(pressure, 0);
 
             if (temperature == fluid.TriplePointTemperature)
             {
-              Assert.AreEqual(fluid.TriplePointPressure, pressure, fluid.TriplePointPressure * 1E-2);
+              AssertEx.Equal(fluid.TriplePointPressure, pressure, fluid.TriplePointPressure * 1E-2);
               break;
             }
 

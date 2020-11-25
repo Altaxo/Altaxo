@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using Altaxo.Calc.Regression.Nonlinear;
 
@@ -46,9 +47,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         var s = (KohlrauschDecay)obj;
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        KohlrauschDecay s = o != null ? (KohlrauschDecay)o : new KohlrauschDecay();
+        var s = (KohlrauschDecay?)o ?? new KohlrauschDecay();
         return s;
       }
     }
@@ -66,9 +67,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         info.AddValue("LogarithmizeResult", s._logarithmizeResult);
       }
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        KohlrauschDecay s = o != null ? (KohlrauschDecay)o : new KohlrauschDecay();
+        var s = (KohlrauschDecay?)o ?? new KohlrauschDecay();
         s.NumberOfRelaxations = info.GetInt32("NumberOfRelaxations");
         s._logarithmizeResult = info.GetBoolean("LogarithmizeResult");
         return s;
@@ -200,7 +201,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return 0; // 0 for all amplitudes
     }
 
-    public IVarianceScaling DefaultVarianceScaling(int i)
+    public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
@@ -220,14 +221,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     /// </summary>
     protected virtual void OnChanged()
     {
-      if (null != Changed)
-        Changed(this, EventArgs.Empty);
+      Changed?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
     /// Fired when the fit function changed.
     /// </summary>
-    public event EventHandler Changed;
+    public event EventHandler? Changed;
 
     #endregion IFitFunction Members
   }

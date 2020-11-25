@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,11 +52,11 @@ namespace Altaxo.Gui.Common.Drawing
       set { _cbBrushType.BrushType = value; }
     }
 
-    public event Action BrushTypeChanged;
+    public event Action? BrushTypeChanged;
 
     private void EhBrushTypeChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != BrushTypeChanged)
+      if (BrushTypeChanged is not null)
         BrushTypeChanged();
     }
 
@@ -69,11 +70,11 @@ namespace Altaxo.Gui.Common.Drawing
       set { _cbColor.SelectedColor = value; }
     }
 
-    public event Action ForeColorChanged;
+    public event Action? ForeColorChanged;
 
     private void EhForeColorChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != ForeColorChanged)
+      if (ForeColorChanged is not null)
         ForeColorChanged();
     }
 
@@ -94,11 +95,11 @@ namespace Altaxo.Gui.Common.Drawing
       set { _cbBackColor.SelectedColor = value; }
     }
 
-    public event Action BackColorChanged;
+    public event Action? BackColorChanged;
 
     private void EhBackColorChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != BackColorChanged)
+      if (BackColorChanged is not null)
         BackColorChanged();
     }
 
@@ -119,11 +120,11 @@ namespace Altaxo.Gui.Common.Drawing
       set { _chkExchangeColors.IsChecked = value; }
     }
 
-    public event Action ExchangeColorsChanged;
+    public event Action? ExchangeColorsChanged;
 
     private void EhExchangeColorsChanged(object sender, RoutedEventArgs e)
     {
-      if (null != ExchangeColorsChanged)
+      if (ExchangeColorsChanged is not null)
         ExchangeColorsChanged();
     }
 
@@ -156,11 +157,11 @@ namespace Altaxo.Gui.Common.Drawing
       set { _cbWrapMode.WrapMode = value; }
     }
 
-    public event Action WrapModeChanged;
+    public event Action? WrapModeChanged;
 
     private void EhWrapModeChanged(object sender, SelectionChangedEventArgs e)
     {
-      if (null != WrapModeChanged)
+      if (WrapModeChanged is not null)
         WrapModeChanged();
     }
 
@@ -181,11 +182,11 @@ namespace Altaxo.Gui.Common.Drawing
       set { _cbGradientFocus.SelectedQuantityInSIUnits = value; }
     }
 
-    public event Action GradientFocusChanged;
+    public event Action? GradientFocusChanged;
 
     private void EhGradientFocusChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != GradientFocusChanged)
+      if (GradientFocusChanged is not null)
         GradientFocusChanged();
     }
 
@@ -206,11 +207,11 @@ namespace Altaxo.Gui.Common.Drawing
       set { _cbColorScale.SelectedQuantityInSIUnits = value; }
     }
 
-    public event Action GradientColorScaleChanged;
+    public event Action? GradientColorScaleChanged;
 
     private void EhColorScaleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != GradientColorScaleChanged)
+      if (GradientColorScaleChanged is not null)
         GradientColorScaleChanged();
     }
 
@@ -231,11 +232,11 @@ namespace Altaxo.Gui.Common.Drawing
       set { _cbGradientAngle.SelectedQuantityAsValueInDegrees = value; }
     }
 
-    public event Action GradientAngleChanged;
+    public event Action? GradientAngleChanged;
 
     private void EhGradientAngleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != GradientAngleChanged)
+      if (GradientAngleChanged is not null)
         GradientAngleChanged();
     }
 
@@ -256,11 +257,11 @@ namespace Altaxo.Gui.Common.Drawing
       set { _guiTextureOffsetX.SelectedQuantityAsValueInSIUnits = value; }
     }
 
-    public event Action TextureOffsetXChanged;
+    public event Action? TextureOffsetXChanged;
 
     private void EhTextureOffsetXChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != TextureOffsetXChanged)
+      if (TextureOffsetXChanged is not null)
         TextureOffsetXChanged();
     }
 
@@ -281,11 +282,11 @@ namespace Altaxo.Gui.Common.Drawing
       set { _guiTextureOffsetY.SelectedQuantityAsValueInSIUnits = value; }
     }
 
-    public event Action TextureOffsetYChanged;
+    public event Action? TextureOffsetYChanged;
 
     private void EhTextureOffsetYChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (null != TextureOffsetYChanged)
+      if (TextureOffsetYChanged is not null)
         TextureOffsetYChanged();
     }
 
@@ -311,11 +312,11 @@ namespace Altaxo.Gui.Common.Drawing
       get { return _cbTextureImage.TextureImage; }
     }
 
-    public event Action TextureImageChanged;
+    public event Action? TextureImageChanged;
 
     private void EhTextureImageChanged(object sender, SelectionChangedEventArgs e)
     {
-      if (null != TextureImageChanged)
+      if (TextureImageChanged is not null)
         TextureImageChanged();
     }
 
@@ -368,7 +369,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (width <= 0)
         width = 64;
 
-      if (null == _previewBitmap)
+      if (_previewBitmap is null)
       {
         _previewBitmap = new GdiToWpfBitmap(width, height);
         _previewPanel.Source = _previewBitmap.WpfBitmap;
@@ -401,7 +402,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    public event Action PreviewPanelSizeChanged;
+    public event Action? PreviewPanelSizeChanged;
 
     private void EhPreviewPanelSizeChanged(object sender, SizeChangedEventArgs e)
     {

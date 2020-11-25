@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using Altaxo.Calc.Regression.Multivariate;
 
@@ -66,7 +67,7 @@ namespace Altaxo.Gui.Worksheet
 
     private void SetElements(bool bInit)
     {
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializeMethod(_doc.Method);
         _view.InitializeDetrending(_doc.DetrendingOrder);
@@ -82,7 +83,7 @@ namespace Altaxo.Gui.Worksheet
       get { return _view; }
       set
       {
-        if (null != _view)
+        if (_view is not null)
         {
           _view.MethodChanged -= EhView_MethodChanged;
           _view.DetrendingChanged -= EhView_DetrendingChanged;
@@ -91,7 +92,7 @@ namespace Altaxo.Gui.Worksheet
 
         _view = value;
 
-        if (null != _view)
+        if (_view is not null)
         {
           SetElements(false); // set only the view elements, dont't initialize the variables
 

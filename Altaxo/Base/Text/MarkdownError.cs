@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace Altaxo.Text
     /// <summary>
     /// Gets or sets the error message.
     /// </summary>
-    public string ErrorMessage { get; set; }
+    public string? ErrorMessage { get; set; }
 
     /// <summary>
     /// Gets or sets the line number.
@@ -50,7 +51,7 @@ namespace Altaxo.Text
     /// <summary>
     /// Gets or sets the (text) document name in which the error occured.
     /// </summary>
-    public string AltaxoDocumentName { get; set; }
+    public string? AltaxoDocumentName { get; set; }
 
     public override string ToString()
     {

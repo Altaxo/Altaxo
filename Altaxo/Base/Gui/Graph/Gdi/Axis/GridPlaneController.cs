@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -92,7 +93,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     protected override void AttachView()
     {
       base.AttachView();
-      if (null != _innerController)
+      if (_innerController is not null)
       {
         _innerController.ViewObject = _view;
       }
@@ -100,7 +101,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     protected override void DetachView()
     {
-      if (null != _innerController)
+      if (_innerController is not null)
       {
         _innerController.ViewObject = null;
       }

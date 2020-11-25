@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -64,12 +66,12 @@ namespace Altaxo.Graph.Graph3D.Plot
         info.AddValue("Style", s._plotStyles);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var pa = (XYZColumnPlotData)info.GetValue("Data", null);
         var ps = (G3DPlotStyleCollection)info.GetValue("Style", null);
 
-        if (null == o)
+        if (o is null)
         {
           return new XYZColumnPlotItem(pa, ps);
         }
@@ -87,8 +89,8 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     private System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetLocalDocumentNodeChildrenWithName()
     {
-      if (null != _plotData)
-        yield return new DocumentNodeAndName(_plotData, () => _plotData = null, "Data");
+      if (_plotData is not null)
+        yield return new DocumentNodeAndName(_plotData, () => _plotData = null!, "Data");
     }
 
     protected override System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -96,40 +98,47 @@ namespace Altaxo.Graph.Graph3D.Plot
       return GetLocalDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
     }
 
-    public XYZColumnPlotItem(XYZColumnPlotData pa, G3DPlotStyleCollection ps)
+    public XYZColumnPlotItem(XYZColumnPlotData pa, G3DPlotStyleCollection ps) : base(ps)
     {
-      Data = pa;
-      Style = ps;
+      ChildSetMember(ref _plotData, pa);
     }
 
-    public XYZColumnPlotItem(XYZColumnPlotItem from)
+    public XYZColumnPlotItem(XYZColumnPlotItem from) : base(from)
     {
-      CopyFrom(from);
+      CopyFrom(from, false);
     }
 
-    public void CopyFrom(XYZColumnPlotItem from)
+    [MemberNotNull(nameof(_plotData))]
+    public void CopyFrom(XYZColumnPlotItem from, bool withBaseMembers)
     {
-      CopyFrom((PlotItem)from);
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+        return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+
+      if (withBaseMembers)
+        base.CopyFrom(from, withBaseMembers);
+
+      ChildCopyToMember(ref _plotData, from._plotData);
     }
 
     public override bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
-      if (IsDisposed)
-        throw new ObjectDisposedException(GetType().FullName);
-
-      var copied = base.CopyFrom(obj);
-
-      if (copied)
+      if (obj is XYZColumnPlotItem from)
       {
-        var from = obj as XYZColumnPlotItem;
-        if (null != from)
+        using (var suspendToken = SuspendGetToken())
         {
-          Data = (XYZColumnPlotData)from.Data.Clone(); // also wires the event
+          CopyFrom(from, true);
+          EhSelfChanged(EventArgs.Empty);
         }
+        return true;
       }
-      return copied;
+      else
+      {
+        return base.CopyFrom(obj);
+      }
     }
 
     public override object Clone()
@@ -155,7 +164,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       }
       set
       {
-        if (null == value)
+        if (value is null)
           throw new System.ArgumentNullException();
 
         if (ChildSetMember(ref _plotData, value))
@@ -218,8 +227,8 @@ namespace Altaxo.Graph.Graph3D.Plot
       if (col is Altaxo.Data.DataColumn)
       {
         var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
-        string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
+        string tablename = table is null ? string.Empty : table.Name + "\\";
+        string collectionname = table is null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
           return ((DataColumn)col).Name;
         else if (level == 1)
@@ -227,7 +236,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         else
           return tablename + collectionname + ((DataColumn)col).Name;
       }
-      else if (col != null)
+      else if (col is not null)
         return col.FullName;
       else
         return string.Empty;
@@ -238,7 +247,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       return GetName(int.MaxValue);
     }
 
-    public override Processed3DPlotData GetRangesAndPoints(IPlotArea layer)
+    public override Processed3DPlotData? GetRangesAndPoints(IPlotArea layer)
     {
       return _plotData.GetRangesAndPoints(layer);
     }
@@ -262,7 +271,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <param name="layer">The plot layer.</param>
     public override void PrepareScales(IPlotArea layer)
     {
-      if (null != _plotData)
+      if (_plotData is not null)
         _plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject, layer.ZAxis.DataBoundsObject);
 
       _plotStyles.PrepareScales(layer);

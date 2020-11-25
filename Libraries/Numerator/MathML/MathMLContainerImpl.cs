@@ -94,7 +94,7 @@ namespace MathML
 		{
 			XmlNode node = arguments.Item(index);
 
-			if(node != null)
+			if(node is not null)
 			{
 				node = element.ReplaceChild(newArgument, node);
 			}
@@ -165,7 +165,7 @@ namespace MathML
 		{
 			XmlNode node = declarations.Item(index);
 
-			if(node != null)
+			if(node is not null)
 			{
 				node = element.ReplaceChild(newDeclaration, node);
 			}

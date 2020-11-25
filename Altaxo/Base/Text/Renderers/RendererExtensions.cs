@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace Altaxo.Text.Renderers
     {
       var result = string.Empty;
 
-      if (null == leafBlock.Inline)
+      if (leafBlock.Inline is null)
         return result;
 
       foreach (var il in leafBlock.Inline)
@@ -85,6 +86,7 @@ namespace Altaxo.Text.Renderers
     /// </summary>
     /// <param name="headerTitles">The header titles.</param>
     /// <param name="guid">The unique identifier.</param>
+    /// <param name="firstHeadingBlockIsParentOfAll">Set this to true, if there is only one header of level1, which is the parent of all other text.</param>
     /// <returns>A file name (without path, without extension) that should be unique and easily identifyable.</returns>
     /// <remarks>
     /// <para>Background:</para>

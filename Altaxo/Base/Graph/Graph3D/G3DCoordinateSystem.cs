@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Altaxo.Geometry;
@@ -359,7 +360,7 @@ namespace Altaxo.Graph.Graph3D
     {
       // search for the same axis first, then for the style with the nearest logical value
       double minDistance = double.MaxValue;
-      CSAxisInformation nearestInfo = null;
+      CSAxisInformation? nearestInfo = null;
 
       if (!styleID.UsePhysicalValueOtherFirst)
       {
@@ -390,7 +391,7 @@ namespace Altaxo.Graph.Graph3D
       }
 
       CSAxisInformation result;
-      if (nearestInfo == null)
+      if (nearestInfo is null)
       {
         result = CSAxisInformation.NewWithDefaultValues(styleID);
       }
@@ -430,7 +431,7 @@ namespace Altaxo.Graph.Graph3D
 
     public IEnumerable<CSLineID> GetJoinedAxisStyleIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSLineID> list2)
     {
-      var dict = new Dictionary<CSLineID, object>();
+      var dict = new Dictionary<CSLineID, object?>();
 
       foreach (CSAxisInformation info in AxisStyles)
       {
@@ -438,7 +439,7 @@ namespace Altaxo.Graph.Graph3D
         yield return info.Identifier;
       }
 
-      if (list1 != null)
+      if (list1 is not null)
       {
         foreach (CSLineID id in list1)
         {
@@ -450,11 +451,11 @@ namespace Altaxo.Graph.Graph3D
         }
       }
 
-      if (list2 != null)
+      if (list2 is not null)
       {
         foreach (CSLineID id in list2)
         {
-          if (null != id && !dict.ContainsKey(id))
+          if (id is not null && !dict.ContainsKey(id))
           {
             dict.Add(id, null);
             yield return id;
@@ -479,7 +480,7 @@ namespace Altaxo.Graph.Graph3D
         }
       }
 
-      if (list1 != null)
+      if (list1 is not null)
       {
         foreach (CSLineID lineID in list1)
         {
@@ -494,11 +495,11 @@ namespace Altaxo.Graph.Graph3D
         }
       }
 
-      if (list2 != null)
+      if (list2 is not null)
       {
         foreach (CSPlaneID planeID in list2)
         {
-          if (null != planeID && !set.Contains(planeID))
+          if (planeID is not null && !set.Contains(planeID))
           {
             set.Add(planeID);
             yield return planeID;

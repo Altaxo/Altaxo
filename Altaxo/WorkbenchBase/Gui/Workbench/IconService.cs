@@ -78,11 +78,11 @@ namespace Altaxo.Gui.Workbench
 
     public static Bitmap GetBitmap(string name)
     {
-      Bitmap bmp = null;
+      Bitmap? bmp = null;
       try
       {
         bmp = FileIconService.GetBitmap(name);
-        if (bmp == null)
+        if (bmp is null)
         {
           bmp = Altaxo.Current.ResourceService.GetBitmap(name);
         }
@@ -95,16 +95,36 @@ namespace Altaxo.Gui.Workbench
       {
         Current.Log.Warn(ex);
       }
-      if (bmp != null)
+      if (bmp is not null)
       {
         return bmp;
       }
-      return Altaxo.Current.ResourceService.GetBitmap("Icons.16x16.MiscFiles");
+      return Altaxo.Current.ResourceService.GetBitmap("Icons.16x16.MiscFiles") ?? GetDefaultBitmap();
+    }
+
+    private static Bitmap? _defaultBitmap;
+    public static Bitmap GetDefaultBitmap()
+    {
+      if (_defaultBitmap is { } defBmp)
+      {
+        return defBmp;
+      }
+      else
+      {
+        var bmp = new Bitmap(16, 16);
+        using (var g = Graphics.FromImage(bmp))
+        {
+          g.DrawLine(Pens.Red, 0, 0, 16, 16);
+          g.DrawLine(Pens.Red, 0, 16, 16, 0);
+        }
+        System.Threading.Interlocked.Exchange(ref _defaultBitmap, bmp);
+        return bmp;
+      }
     }
 
     public static System.Windows.Media.ImageSource GetImageSource(string name)
     {
-      System.Windows.Media.ImageSource img;
+      System.Windows.Media.ImageSource? img;
       try
       {
         img = Altaxo.Current.ResourceService.GetImageSource(name);
@@ -114,7 +134,7 @@ namespace Altaxo.Gui.Workbench
         Current.Log.Warn(ex);
         img = null;
       }
-      if (img != null)
+      if (img is not null)
       {
         return img;
       }
@@ -158,9 +178,9 @@ namespace Altaxo.Gui.Workbench
 
       foreach (IconDescriptor iconCodon in treeNode.BuildChildItems<IconDescriptor>(null))
       {
-        string imageName = iconCodon.Resource != null ? iconCodon.Resource : iconCodon.Id;
+        string imageName = iconCodon.Resource is not null ? iconCodon.Resource : iconCodon.Id;
 
-        if (iconCodon.Extensions != null)
+        if (iconCodon.Extensions is not null)
         {
           foreach (string ext in iconCodon.Extensions)
           {
@@ -168,7 +188,7 @@ namespace Altaxo.Gui.Workbench
           }
         }
 
-        if (iconCodon.Language != null)
+        if (iconCodon.Language is not null)
         {
           projectFileHashtable[iconCodon.Language] = imageName;
         }

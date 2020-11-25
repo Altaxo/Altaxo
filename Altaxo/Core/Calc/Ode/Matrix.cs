@@ -63,7 +63,7 @@ namespace Altaxo.Calc.Ode
     /// <remarks>Array is not copied</remarks>
     public Matrix(double[][] A)
     {
-      if (A == null)
+      if (A is null)
         throw new ArgumentNullException("A");
       m = A.Length;
       n = A[0].Length;
@@ -81,7 +81,7 @@ namespace Altaxo.Calc.Ode
     /// <param name="arr">Two-dimensional array of doubles. First index is row, second is column</param>
     public Matrix(double[,] arr)
     {
-      if (arr == null)
+      if (arr is null)
         throw new ArgumentNullException(nameof(arr));
       m = arr.GetLength(0);
       n = arr.GetLength(1);
@@ -136,7 +136,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>2D array</returns>
     public static explicit operator double[,](Matrix a)
     {
-      if (a == null)
+      if (a is null)
         throw new ArgumentNullException("A");
       double[,] X = new double[a.m, a.n];
       for (int i = 0; i < a.m; i++)
@@ -154,7 +154,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>Jagged array</returns>
     public static explicit operator double[][](Matrix a)
     {
-      if (a == null)
+      if (a is null)
         throw new ArgumentNullException("A");
       return a.a;
     }
@@ -245,9 +245,9 @@ namespace Altaxo.Calc.Ode
     /// <exception cref="IndexOutOfRangeException">Submatrix indices</exception>
     public Matrix Submatrix(int[] r, int[] c)
     {
-      if (r == null)
+      if (r is null)
         throw new ArgumentNullException("r");
-      if (c == null)
+      if (c is null)
         throw new ArgumentNullException("c");
       var X = new Matrix(r.Length, c.Length);
       double[][] B = X.a;
@@ -276,7 +276,7 @@ namespace Altaxo.Calc.Ode
     /// <exception cref="IndexOutOfRangeException">Submatrix indices</exception>
     public Matrix Submatrix(int i0, int i1, int[] c)
     {
-      if (c == null)
+      if (c is null)
         throw new ArgumentNullException("c");
       var X = new Matrix(i1 - i0 + 1, c.Length);
       double[][] B = X.a;
@@ -305,7 +305,7 @@ namespace Altaxo.Calc.Ode
     /// <exception cref="IndexOutOfRangeException">Submatrix indices</exception>
     public Matrix Submatrix(int[] r, int j0, int j1)
     {
-      if (r == null)
+      if (r is null)
         throw new ArgumentNullException("r");
       var X = new Matrix(r.Length, j1 - j0 + 1);
       double[][] B = X.a;
@@ -332,9 +332,9 @@ namespace Altaxo.Calc.Ode
 
     public static Matrix operator +(Matrix A, Matrix B)
     {
-      if (A == null)
+      if (A is null)
         throw new ArgumentNullException("A");
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException("B");
       A.CheckMatrixDimensions(B);
       var X = new Matrix(A.m, A.n);
@@ -351,9 +351,9 @@ namespace Altaxo.Calc.Ode
 
     public static Matrix operator -(Matrix A, Matrix B)
     {
-      if (A == null)
+      if (A is null)
         throw new ArgumentNullException("A");
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException("B");
       A.CheckMatrixDimensions(B);
       var X = new Matrix(A.m, A.n);
@@ -387,7 +387,7 @@ namespace Altaxo.Calc.Ode
 
     public static Matrix operator *(Matrix A, double s)
     {
-      if (A == null)
+      if (A is null)
         throw new ArgumentNullException("A");
       var X = new Matrix(A.m, A.n);
       double[][] C = X.a;
@@ -423,7 +423,7 @@ namespace Altaxo.Calc.Ode
 
     public static Matrix operator *(Matrix A, Matrix B)
     {
-      if (B == null)
+      if (B is null)
         throw new ArgumentNullException("B");
       if (B.m != A.n)
       {

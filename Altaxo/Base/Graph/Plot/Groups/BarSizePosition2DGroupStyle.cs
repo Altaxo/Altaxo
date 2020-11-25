@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -89,9 +90,9 @@ namespace Altaxo.Graph.Plot.Groups
         info.AddValue("StepEnabled", s._isStepEnabled);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (BarSizePosition2DGroupStyle)o ?? new BarSizePosition2DGroupStyle();
+        var s = (BarSizePosition2DGroupStyle?)o ?? new BarSizePosition2DGroupStyle();
         s._isStepEnabled = info.GetBoolean("StepEnabled");
         return s;
       }
@@ -101,7 +102,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     private void CopyFrom(BarSizePosition2DGroupStyle from)
     {
-      if (object.ReferenceEquals(this, from))
+      if (ReferenceEquals(this, from))
         return;
 
       _isStepEnabled = from._isStepEnabled;
@@ -352,11 +353,11 @@ namespace Altaxo.Graph.Plot.Groups
       double maximumLogicalXValue
       )
     {
-      if (externalGroups != null && externalGroups.ContainsType(typeof(BarSizePosition2DGroupStyle)))
+      if (externalGroups is not null && externalGroups.ContainsType(typeof(BarSizePosition2DGroupStyle)))
       {
         ((BarSizePosition2DGroupStyle)externalGroups.GetPlotGroupStyle(typeof(BarSizePosition2DGroupStyle))).IntendToApply(numberOfItems, minimumLogicalXValue, maximumLogicalXValue);
       }
-      else if (localGroups != null && localGroups.ContainsType(typeof(BarSizePosition2DGroupStyle)))
+      else if (localGroups is not null && localGroups.ContainsType(typeof(BarSizePosition2DGroupStyle)))
       {
         ((BarSizePosition2DGroupStyle)localGroups.GetPlotGroupStyle(typeof(BarSizePosition2DGroupStyle))).IntendToApply(numberOfItems, minimumLogicalXValue, maximumLogicalXValue);
       }

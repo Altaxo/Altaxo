@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,9 +53,9 @@ namespace Altaxo.Graph.Graph3D.Camera
         info.AddValue("Width", s._widthAtZNear);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (OrthographicCamera)o ?? new OrthographicCamera();
+        var s = (OrthographicCamera?)o ?? new OrthographicCamera();
         s._upVector = (VectorD3D)info.GetValue("UpVector", s);
         s._eyePosition = (PointD3D)info.GetValue("EyePosition", s);
         s._targetPosition = (PointD3D)info.GetValue("TargetPosition", s);

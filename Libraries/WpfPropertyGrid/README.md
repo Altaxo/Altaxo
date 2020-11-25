@@ -1,4 +1,4 @@
-# Wpf property grid
+﻿# Wpf property grid
 
 This project originates from [CodePlex](https://archive.codeplex.com/?p=wpg).
 

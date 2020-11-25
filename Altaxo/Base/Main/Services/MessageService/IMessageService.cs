@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable enable
 using System;
 using Altaxo.Main.Services.Implementation;
 
@@ -37,12 +38,12 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows an exception.
     /// </summary>
-    void ShowException(Exception ex, string message = null);
+    void ShowException(Exception ex, string? message = null);
 
     /// <summary>
     /// Shows an exception.
     /// </summary>
-    void ShowHandledException(Exception ex, string message = null);
+    void ShowHandledException(Exception ex, string? message = null);
 
     void WriteLine(MessageLevel level, string source, string message);
 
@@ -76,15 +77,15 @@ namespace Altaxo.Main.Services
     /// </summary>
     void ShowWarningFormatted(string formatstring, params object[] formatitems);
 
-    void ShowMessage(string message, string caption = null);
+    void ShowMessage(string message, string? caption = null);
 
-    void ShowMessageFormatted(string formatstring, string caption, params object[] formatitems);
+    void ShowMessageFormatted(string formatstring, string? caption, params object[] formatitems);
 
     /// <summary>
     /// Asks the user a Yes/No question, using "Yes" as the default button.
     /// Returns <c>true</c> if yes was clicked, <c>false</c> if no was clicked.
     /// </summary>
-    bool AskQuestion(string question, string caption = null);
+    bool AskQuestion(string question, string? caption = null);
 
     /// <summary>
     /// Shows a custom dialog.
@@ -145,8 +146,8 @@ namespace Altaxo.Main.Services
   {
     public bool IsRetry { get; private set; }
     public bool IsIgnore { get; private set; }
-    public bool IsSaveAlternative { get { return AlternativeFileName != null; } }
-    public PathName AlternativeFileName { get; private set; }
+    public bool IsSaveAlternative { get { return AlternativeFileName is not null; } }
+    public PathName? AlternativeFileName { get; private set; }
 
     private ChooseSaveErrorResult()
     {
@@ -160,7 +161,7 @@ namespace Altaxo.Main.Services
 
     public static ChooseSaveErrorResult SaveAlternative(PathName alternativeFileName)
     {
-      if (alternativeFileName == null)
+      if (alternativeFileName is null)
         throw new ArgumentNullException("alternativeFileName");
       return new ChooseSaveErrorResult { AlternativeFileName = alternativeFileName };
     }

@@ -38,13 +38,13 @@ namespace Altaxo.Gui.Data
   /// </summary>
   public partial class ExpandCyclingVariableDataControl : UserControl, IExpandCyclingVariableDataView
   {
-    public event Action SelectedTableChanged;
+    public event Action? SelectedTableChanged;
 
-    public event Action SelectedGroupNumberChanged;
+    public event Action? SelectedGroupNumberChanged;
 
-    public event Action UseSelectedAvailableColumnsAsParticipatingColumns;
+    public event Action? UseSelectedAvailableColumnsAsParticipatingColumns;
 
-    public event Action DeleteSelectedParticipatingColumn;
+    public event Action? DeleteSelectedParticipatingColumn;
 
     public ExpandCyclingVariableDataControl()
     {
@@ -69,21 +69,21 @@ namespace Altaxo.Gui.Data
     private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiAvailableTables);
-      if (null != SelectedTableChanged)
+      if (SelectedTableChanged is not null)
         SelectedTableChanged();
     }
 
     private void EhUseSelectedAvailableColumnsAsParticipatingColumns(object sender, RoutedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiAvailableColumnNames);
-      if (null != UseSelectedAvailableColumnsAsParticipatingColumns)
+      if (UseSelectedAvailableColumnsAsParticipatingColumns is not null)
         UseSelectedAvailableColumnsAsParticipatingColumns();
     }
 
     private void EhDeleteSelectedParticipatingColumn(object sender, RoutedEventArgs e)
     {
       GuiHelper.SynchronizeSelectionFromGui(_guiColumnsParticipating);
-      if (null != DeleteSelectedParticipatingColumn)
+      if (DeleteSelectedParticipatingColumn is not null)
         DeleteSelectedParticipatingColumn();
     }
 
@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Data
     private void EhGroupNumberChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
     {
       var ev = SelectedGroupNumberChanged;
-      if (null != ev)
+      if (ev is not null)
         ev();
     }
 

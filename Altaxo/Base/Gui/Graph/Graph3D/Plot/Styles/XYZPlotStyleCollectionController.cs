@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -128,7 +129,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         BuildCurrentStyleListNodeList();
       }
 
-      if (null != _view)
+      if (_view is not null)
       {
         _view.InitializePredefinedStyles(_predefinedStyleSetsAvailable);
         _view.InitializeAvailableStyleList(_singleStylesAvailable);
@@ -178,7 +179,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     public virtual void EhView_AddStyle()
     {
       var sel = _singleStylesAvailable.FirstSelectedNode;
-      if (null == sel)
+      if (sel is null)
         return;
 
       var propertyContext = Altaxo.PropertyExtensions.GetPropertyContext(_doc);
@@ -191,12 +192,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       {
       }
 
-      if (null == style) // if style was not constructed
+      if (style is null) // if style was not constructed
         style = (IG3DPlotStyle)Activator.CreateInstance((Type)sel.Tag); // try with parameterless constructor
 
       var layer = AbsoluteDocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
       var plotitem = AbsoluteDocumentPath.GetRootNodeImplementing<G3DPlotItem>(_doc);
-      if (layer != null && plotitem != null)
+      if (layer is not null && plotitem is not null)
         _doc.PrepareNewSubStyle(style, layer, plotitem.GetRangesAndPoints(layer));
 
       _currentItems.Add<IG3DPlotStyle>(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(style.GetType()), style, true), (docNodeToAdd) => _doc.Add(docNodeToAdd));
@@ -219,7 +220,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     public virtual void EhView_StyleEdit()
     {
       var idx = _currentItems.FirstSelectedNodeIndex;
-      if (idx >= 0 && null != StyleEditRequested)
+      if (idx >= 0 && StyleEditRequested is not null)
         StyleEditRequested(idx);
     }
 
@@ -232,7 +233,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     public void EhView_PredefinedStyleSelected()
     {
       var sel = _predefinedStyleSetsAvailable.FirstSelectedNode;
-      if (null == sel)
+      if (sel is null)
         return;
 
       var template = G3DPlotStyleCollectionTemplates.GetTemplate((int)sel.Tag, _doc.GetPropertyContext());

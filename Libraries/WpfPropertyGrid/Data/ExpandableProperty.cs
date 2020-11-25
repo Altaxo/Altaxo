@@ -25,7 +25,7 @@ namespace WPG.Data
             get
             {
 
-                if (_propertyCollection == null)
+                if (_propertyCollection is null)
                 {
                     //Lazy initialisation prevent from deep search and looping
                     _propertyCollection = new PropertyCollection(_property.GetValue(_instance), true, _automaticlyExpandObjects, _filter);

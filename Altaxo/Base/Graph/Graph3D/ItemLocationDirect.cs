@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -131,9 +132,9 @@ namespace Altaxo.Graph.Graph3D
         info.AddValue("ScaleZ", s._scaleZ);
       }
 
-      protected virtual ItemLocationDirect SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual ItemLocationDirect SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = null != o ? (ItemLocationDirect)o : new ItemLocationDirect();
+        var s = (ItemLocationDirect?)o ?? new ItemLocationDirect();
 
         s._parentSize = (VectorD3D)info.GetValue("ParentSize", s);
 
@@ -168,7 +169,7 @@ namespace Altaxo.Graph.Graph3D
         return s;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ItemLocationDirect s = SDeserialize(o, info, parent);
         return s;
@@ -204,7 +205,7 @@ namespace Altaxo.Graph.Graph3D
 
     public virtual bool CopyFrom(object obj)
     {
-      if (object.ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj))
         return true;
 
       if (obj is ItemLocationDirect)

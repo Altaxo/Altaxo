@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -116,7 +117,7 @@ namespace Altaxo.Text.Renderers
     {
       if (_indexOfAmlFile < 0 || (_indexOfAmlFile + 1 < _amlFileList.Count && _amlFileList[_indexOfAmlFile + 1].spanStart == headingBlock.Span.Start))
       {
-        if (null != Writer)
+        if (Writer is not null)
         {
           CloseCurrentMamlFile();
         }
@@ -125,7 +126,7 @@ namespace Altaxo.Text.Renderers
 
         var mamlFile = _amlFileList[_indexOfAmlFile];
 
-        System.IO.Directory.CreateDirectory(Path.GetDirectoryName(mamlFile.fileName));
+        System.IO.Directory.CreateDirectory(Path.GetDirectoryName(mamlFile.fileName) ?? throw new InvalidOperationException($"Can not get directory of file name {mamlFile.fileName}"));
         var tw = new System.IO.StreamWriter(mamlFile.fileName, false, Encoding.UTF8, 1024);
         Writer = tw;
 
@@ -172,7 +173,7 @@ namespace Altaxo.Text.Renderers
 
     public void CloseCurrentMamlFile()
     {
-      if (null != Writer && _currentElementStack.Count > 0)
+      if (Writer is not null && _currentElementStack.Count > 0)
       {
         if (EnableLinkToNextSection && (_indexOfAmlFile + 1) < _amlFileList.Count)
         {

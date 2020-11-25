@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,20 +67,20 @@ namespace Altaxo.Gui.Drawing
       {
         FontX = value;
 
-        if (null != CbFontFamily)
+        if (CbFontFamily is not null)
           CbFontFamily.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(FontX);
-        if (null != _cbFontStyle)
+        if (_cbFontStyle is not null)
           CbFontStyle.SelectedFontStyle = FontX.Style;
-        if (null != CbFontSize)
+        if (CbFontSize is not null)
           CbFontSize.SelectedQuantityAsValueInPoints = FontX.Size;
       }
     }
 
-    public event EventHandler SelectedFontChanged;
+    public event EventHandler? SelectedFontChanged;
 
     protected virtual void OnSelectedFontChanged()
     {
-      if (SelectedFontChanged != null)
+      if (SelectedFontChanged is not null)
         SelectedFontChanged(this, EventArgs.Empty);
     }
 
@@ -95,24 +96,24 @@ namespace Altaxo.Gui.Drawing
       set
       {
         var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(FontFamilyComboBox.SelectedFontFamilyNameProperty, typeof(FontFamilyComboBox));
-        if (null == dpd)
+        if (dpd is null)
           throw new InvalidOperationException("DependencePropertyDescriptor is null! Please check the corresponding DependencyProperty");
 
-        if (_cbFontFamily != null)
+        if (_cbFontFamily is not null)
           dpd.RemoveValueChanged(_cbFontFamily, EhFontFamily_SelectionChangeCommitted);
 
         _cbFontFamily = value;
-        if (FontX != null && _cbFontFamily != null)
+        if (FontX is not null && _cbFontFamily is not null)
           _cbFontFamily.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(FontX);
 
-        if (_cbFontFamily != null)
+        if (_cbFontFamily is not null)
           dpd.AddValueChanged(_cbFontFamily, EhFontFamily_SelectionChangeCommitted);
       }
     }
 
-    private void EhFontFamily_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhFontFamily_SelectionChangeCommitted(object? sender, EventArgs e)
     {
-      if (FontX != null)
+      if (FontX is not null)
       {
         FontX = FontX.WithFamily(_cbFontFamily.SelectedFontFamilyName);
         OnSelectedFontChanged();
@@ -132,25 +133,25 @@ namespace Altaxo.Gui.Drawing
       {
         var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(FontStyleComboBox.SelectedFontStyleProperty, typeof(FontStyleComboBox));
 
-        if (_cbFontStyle != null)
+        if (_cbFontStyle is not null)
         {
           dpd.RemoveValueChanged(_cbFontStyle, EhFontStyle_SelectionChangeCommitted);
         }
 
         _cbFontStyle = value;
-        if (FontX != null && _cbFontStyle != null)
+        if (FontX is not null && _cbFontStyle is not null)
           _cbFontStyle.SelectedFontStyle = FontX.Style;
 
-        if (_cbFontStyle != null)
+        if (_cbFontStyle is not null)
         {
           dpd.AddValueChanged(_cbFontStyle, EhFontStyle_SelectionChangeCommitted);
         }
       }
     }
 
-    private void EhFontStyle_SelectionChangeCommitted(object sender, EventArgs e)
+    private void EhFontStyle_SelectionChangeCommitted(object? sender, EventArgs e)
     {
-      if (FontX != null)
+      if (FontX is not null)
       {
         FontX = FontX.WithStyle(_cbFontStyle.SelectedFontStyle);
         OnSelectedFontChanged();
@@ -168,16 +169,16 @@ namespace Altaxo.Gui.Drawing
       get { return _cbFontSize; }
       set
       {
-        if (_cbFontSize != null)
+        if (_cbFontSize is not null)
         {
           _cbFontSize.SelectedQuantityChanged -= EhFontSize_SelectionChangeCommitted;
         }
 
         _cbFontSize = value;
-        if (FontX != null && _cbFontSize != null)
+        if (FontX is not null && _cbFontSize is not null)
           _cbFontSize.SelectedQuantityAsValueInPoints = FontX.Size;
 
-        if (_cbFontSize != null)
+        if (_cbFontSize is not null)
         {
           _cbFontSize.SelectedQuantityChanged += EhFontSize_SelectionChangeCommitted;
         }
@@ -186,7 +187,7 @@ namespace Altaxo.Gui.Drawing
 
     private void EhFontSize_SelectionChangeCommitted(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
     {
-      if (FontX != null)
+      if (FontX is not null)
       {
         FontX = FontX.WithSize(_cbFontSize.SelectedQuantityAsValueInPoints);
         OnSelectedFontChanged();
@@ -234,13 +235,13 @@ namespace Altaxo.Gui.Drawing
       {
         _fontX3D = value;
 
-        if (null != CbFontFamily)
+        if (CbFontFamily is not null)
           CbFontFamily.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(FontX);
-        if (null != CbFontStyle)
+        if (CbFontStyle is not null)
           CbFontStyle.SelectedFontStyle = FontX.Style;
-        if (null != CbFontSize)
+        if (CbFontSize is not null)
           CbFontSize.SelectedQuantityAsValueInPoints = FontX.Size;
-        if (null != CbFontDepth)
+        if (CbFontDepth is not null)
           CbFontDepth.SelectedQuantityAsValueInPoints = FontX3D.Depth;
       }
     }
@@ -254,16 +255,16 @@ namespace Altaxo.Gui.Drawing
       get { return _cbFontDepth; }
       set
       {
-        if (_cbFontDepth != null)
+        if (_cbFontDepth is not null)
         {
           _cbFontDepth.SelectedQuantityChanged -= EhFontDepth_SelectionChangeCommitted;
         }
 
         _cbFontDepth = value;
-        if (FontX3D != null && _cbFontDepth != null)
+        if (FontX3D is not null && _cbFontDepth is not null)
           _cbFontDepth.SelectedQuantityAsValueInPoints = FontX3D.Depth;
 
-        if (_cbFontDepth != null)
+        if (_cbFontDepth is not null)
         {
           _cbFontDepth.SelectedQuantityChanged += EhFontDepth_SelectionChangeCommitted;
         }
@@ -272,7 +273,7 @@ namespace Altaxo.Gui.Drawing
 
     private void EhFontDepth_SelectionChangeCommitted(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
     {
-      if (FontX != null)
+      if (FontX is not null)
       {
         FontX3D = FontX3D.WithDepth(_cbFontDepth.SelectedQuantityAsValueInPoints);
         OnSelectedFontChanged();

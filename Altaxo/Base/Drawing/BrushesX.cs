@@ -21,12 +21,12 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #endregion Copyrightusing System;
+
+#nullable enable
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-#nullable enable
 
 namespace Altaxo.Drawing
 {
@@ -39,5 +39,13 @@ namespace Altaxo.Drawing
     /// Gets a black solid brush.
     /// </summary>
     public static BrushX Black { get; } = new BrushX(NamedColors.Black);
+
+    /// <summary>
+    /// Gets a transparent brush (a brush that is not visible).
+    /// </summary>
+    /// <value>
+    /// The transparent.
+    /// </value>
+    public static BrushX Transparent { get; } = new BrushX(NamedColors.Transparent);
   }
 }

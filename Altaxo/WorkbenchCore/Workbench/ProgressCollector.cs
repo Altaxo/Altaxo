@@ -30,32 +30,32 @@ namespace Altaxo.Workbench
   /// </summary>
   public sealed class ProgressCollector : INotifyPropertyChanged
   {
-    private readonly ISynchronizeInvoke eventThread;
-    private readonly MonitorImpl root;
-    private readonly LinkedList<string> namedMonitors = new LinkedList<string>();
-    private readonly object updateLock = new object();
+    private readonly ISynchronizeInvoke _eventThread;
+    private readonly MonitorImpl _root;
+    private readonly LinkedList<string> _namedMonitors = new LinkedList<string>();
+    private readonly object _updateLock = new object();
 
-    private string taskName;
-    private double progress;
-    private OperationStatus status;
-    private bool showingDialog;
-    private bool rootMonitorIsDisposed;
+    private string? _taskName;
+    private double _progress;
+    private OperationStatus _status;
+    private bool _showingDialog;
+    private bool _rootMonitorIsDisposed;
 
     public ProgressCollector(ISynchronizeInvoke eventThread, CancellationToken cancellationToken)
     {
-      if (eventThread == null)
-        throw new ArgumentNullException("eventThread");
-      this.eventThread = eventThread;
-      root = new MonitorImpl(this, null, 1, cancellationToken);
+      if (eventThread is null)
+        throw new ArgumentNullException(nameof(eventThread));
+      this._eventThread = eventThread;
+      _root = new MonitorImpl(this, null, 1, cancellationToken);
     }
 
-    public event EventHandler ProgressMonitorDisposed;
+    public event EventHandler? ProgressMonitorDisposed;
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     private void OnPropertyChanged(string propertyName)
     {
-      if (PropertyChanged != null)
+      if (PropertyChanged is not null)
       {
         PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
       }
@@ -63,18 +63,18 @@ namespace Altaxo.Workbench
 
     public double Progress
     {
-      get { return progress; }
+      get { return _progress; }
       private set
       {
-        Debug.Assert(!eventThread.InvokeRequired);
-        if (progress != value)
+        Debug.Assert(!_eventThread.InvokeRequired);
+        if (_progress != value)
         {
-          progress = value;
+          _progress = value;
           // Defensive programming: parallel processes like the build could change properites even
           // after the monitor is disposed (they shouldn't do that, but it could happen),
           // and we don't want to confuse consumers like the status bar by
           // raising events from disposed monitors.
-          if (!rootMonitorIsDisposed)
+          if (!_rootMonitorIsDisposed)
             OnPropertyChanged("Progress");
         }
       }
@@ -82,29 +82,29 @@ namespace Altaxo.Workbench
 
     public bool ShowingDialog
     {
-      get { return showingDialog; }
+      get { return _showingDialog; }
       set
       {
-        Debug.Assert(!eventThread.InvokeRequired);
-        if (showingDialog != value)
+        Debug.Assert(!_eventThread.InvokeRequired);
+        if (_showingDialog != value)
         {
-          showingDialog = value;
-          if (!rootMonitorIsDisposed)
+          _showingDialog = value;
+          if (!_rootMonitorIsDisposed)
             OnPropertyChanged("ShowingDialog");
         }
       }
     }
 
-    public string TaskName
+    public string? TaskName
     {
-      get { return taskName; }
+      get { return _taskName; }
       private set
       {
-        Debug.Assert(!eventThread.InvokeRequired);
-        if (taskName != value)
+        Debug.Assert(!_eventThread.InvokeRequired);
+        if (_taskName != value)
         {
-          taskName = value;
-          if (!rootMonitorIsDisposed)
+          _taskName = value;
+          if (!_rootMonitorIsDisposed)
             OnPropertyChanged("TaskName");
         }
       }
@@ -112,14 +112,14 @@ namespace Altaxo.Workbench
 
     public OperationStatus Status
     {
-      get { return status; }
+      get { return _status; }
       private set
       {
-        Debug.Assert(!eventThread.InvokeRequired);
-        if (status != value)
+        Debug.Assert(!_eventThread.InvokeRequired);
+        if (_status != value)
         {
-          status = value;
-          if (!rootMonitorIsDisposed)
+          _status = value;
+          if (!_rootMonitorIsDisposed)
             OnPropertyChanged("Status");
         }
       }
@@ -127,7 +127,7 @@ namespace Altaxo.Workbench
 
     public IProgressMonitor ProgressMonitor
     {
-      get { return root; }
+      get { return _root; }
     }
 
     /// <summary>
@@ -135,7 +135,7 @@ namespace Altaxo.Workbench
     /// </summary>
     public bool ProgressMonitorIsDisposed
     {
-      get { return rootMonitorIsDisposed; }
+      get { return _rootMonitorIsDisposed; }
     }
 
     private bool hasUpdateScheduled;
@@ -158,10 +158,10 @@ namespace Altaxo.Workbench
       if (!hasUpdateScheduled)
       {
         hasUpdateScheduled = true;
-        eventThread.BeginInvoke(
+        _eventThread.BeginInvoke(
           (Action)delegate
           {
-            lock (updateLock)
+            lock (_updateLock)
             {
               Progress = storedNewProgress;
               Status = storedNewStatus;
@@ -184,7 +184,7 @@ namespace Altaxo.Workbench
 
     private void SetShowingDialog(bool newValue)
     {
-      eventThread.BeginInvoke(
+      _eventThread.BeginInvoke(
         (Action)delegate
         { ShowingDialog = newValue; },
         null
@@ -193,13 +193,13 @@ namespace Altaxo.Workbench
 
     private void OnRootMonitorDisposed()
     {
-      eventThread.BeginInvoke(
+      _eventThread.BeginInvoke(
         (Action)delegate
         {
-          if (rootMonitorIsDisposed) // ignore double dispose
+          if (_rootMonitorIsDisposed) // ignore double dispose
             return;
-          rootMonitorIsDisposed = true;
-          if (ProgressMonitorDisposed != null)
+          _rootMonitorIsDisposed = true;
+          if (ProgressMonitorDisposed is not null)
           {
             ProgressMonitorDisposed(this, EventArgs.Empty);
           }
@@ -207,9 +207,9 @@ namespace Altaxo.Workbench
         null);
     }
 
-    private void SetTaskName(string newName)
+    private void SetTaskName(string? newName)
     {
-      eventThread.BeginInvoke(
+      _eventThread.BeginInvoke(
         (Action)delegate
         { TaskName = newName; },
         null);
@@ -217,10 +217,10 @@ namespace Altaxo.Workbench
 
     private LinkedListNode<string> RegisterNamedMonitor(string name)
     {
-      lock (namedMonitors)
+      lock (_namedMonitors)
       {
-        LinkedListNode<string> newEntry = namedMonitors.AddLast(name);
-        if (namedMonitors.First == newEntry)
+        LinkedListNode<string> newEntry = _namedMonitors.AddLast(name);
+        if (_namedMonitors.First == newEntry)
         {
           SetTaskName(name);
         }
@@ -230,23 +230,23 @@ namespace Altaxo.Workbench
 
     private void UnregisterNamedMonitor(LinkedListNode<string> nameEntry)
     {
-      lock (namedMonitors)
+      lock (_namedMonitors)
       {
-        bool wasFirst = namedMonitors.First == nameEntry;
+        bool wasFirst = _namedMonitors.First == nameEntry;
         // Note: if Remove() crashes with "InvalidOperationException: The LinkedList node does not belong to current LinkedList.",
         // that's an indication that the progress monitor is being disposed multiple times concurrently.
         // (which is not allowed according to IProgressMonitor thread-safety documentation)
-        namedMonitors.Remove(nameEntry);
+        _namedMonitors.Remove(nameEntry);
         if (wasFirst)
-          SetTaskName(namedMonitors.First != null ? namedMonitors.First.Value : null);
+          SetTaskName(_namedMonitors.First is not null ? _namedMonitors.First.Value : null);
       }
     }
 
     private void ChangeName(LinkedListNode<string> nameEntry, string newName)
     {
-      lock (namedMonitors)
+      lock (_namedMonitors)
       {
-        if (namedMonitors.First == nameEntry)
+        if (_namedMonitors.First == nameEntry)
           SetTaskName(newName);
         nameEntry.Value = newName;
       }
@@ -254,64 +254,64 @@ namespace Altaxo.Workbench
 
     private sealed class MonitorImpl : IProgressMonitor
     {
-      private readonly ProgressCollector collector;
-      private readonly MonitorImpl parent;
-      private readonly double scaleFactor;
-      private readonly CancellationToken cancellationToken;
-      private LinkedListNode<string> nameEntry;
+      private readonly ProgressCollector _collector;
+      private readonly MonitorImpl? _parent;
+      private readonly double _scaleFactor;
+      private readonly CancellationToken _cancellationToken;
+      private LinkedListNode<string>? _nameEntry;
       private double currentProgress;
       private OperationStatus localStatus, currentStatus;
       private int childrenWithWarnings, childrenWithErrors;
 
-      public MonitorImpl(ProgressCollector collector, MonitorImpl parent, double scaleFactor, CancellationToken cancellationToken)
+      public MonitorImpl(ProgressCollector collector, MonitorImpl? parent, double scaleFactor, CancellationToken cancellationToken)
       {
-        this.collector = collector;
-        this.parent = parent;
-        this.scaleFactor = scaleFactor;
-        this.cancellationToken = cancellationToken;
+        this._collector = collector;
+        this._parent = parent;
+        this._scaleFactor = scaleFactor;
+        this._cancellationToken = cancellationToken;
       }
 
       public bool ShowingDialog
       {
-        get { return collector.ShowingDialog; }
-        set { collector.SetShowingDialog(value); }
+        get { return _collector.ShowingDialog; }
+        set { _collector.SetShowingDialog(value); }
       }
 
-      public string TaskName
+      public string? TaskName
       {
         get
         {
-          if (nameEntry != null)
-            return nameEntry.Value;
+          if (_nameEntry is not null)
+            return _nameEntry.Value;
           else
             return null;
         }
         set
         {
-          if (nameEntry != null)
+          if (_nameEntry is not null)
           {
-            if (value == null)
+            if (value is null)
             {
-              collector.UnregisterNamedMonitor(nameEntry);
-              nameEntry = null;
+              _collector.UnregisterNamedMonitor(_nameEntry);
+              _nameEntry = null;
             }
             else
             {
-              if (nameEntry.Value != value)
-                collector.ChangeName(nameEntry, value);
+              if (_nameEntry.Value != value)
+                _collector.ChangeName(_nameEntry, value);
             }
           }
           else
           {
-            if (value != null)
-              nameEntry = collector.RegisterNamedMonitor(value);
+            if (value is not null)
+              _nameEntry = _collector.RegisterNamedMonitor(value);
           }
         }
       }
 
       public CancellationToken CancellationToken
       {
-        get { return cancellationToken; }
+        get { return _cancellationToken; }
       }
 
       public double Progress
@@ -319,7 +319,7 @@ namespace Altaxo.Workbench
         get { return currentProgress; }
         set
         {
-          lock (collector.updateLock)
+          lock (_collector._updateLock)
           {
             UpdateProgress(value);
           }
@@ -333,10 +333,10 @@ namespace Altaxo.Workbench
 
       private void UpdateProgress(double progress)
       {
-        if (parent != null)
-          parent.UpdateProgress(parent.currentProgress + (progress - currentProgress) * scaleFactor);
+        if (_parent is not null)
+          _parent.UpdateProgress(_parent.currentProgress + (progress - currentProgress) * _scaleFactor);
         else
-          collector.SetProgress(progress);
+          _collector.SetProgress(progress);
         currentProgress = progress;
       }
 
@@ -348,7 +348,7 @@ namespace Altaxo.Workbench
           if (localStatus != value)
           {
             localStatus = value;
-            lock (collector.updateLock)
+            lock (_collector._updateLock)
             {
               UpdateStatus();
             }
@@ -367,42 +367,42 @@ namespace Altaxo.Workbench
           currentStatus = localStatus;
         if (oldStatus != currentStatus)
         {
-          if (parent != null)
+          if (_parent is not null)
           {
             if (oldStatus == OperationStatus.Warning)
-              parent.childrenWithWarnings--;
+              _parent.childrenWithWarnings--;
             else if (oldStatus == OperationStatus.Error)
-              parent.childrenWithErrors--;
+              _parent.childrenWithErrors--;
 
             if (currentStatus == OperationStatus.Warning)
-              parent.childrenWithWarnings++;
+              _parent.childrenWithWarnings++;
             else if (currentStatus == OperationStatus.Error)
-              parent.childrenWithErrors++;
+              _parent.childrenWithErrors++;
 
-            parent.UpdateStatus();
+            _parent.UpdateStatus();
           }
           else
           {
-            collector.SetStatus(currentStatus);
+            _collector.SetStatus(currentStatus);
           }
         }
       }
 
       public IProgressMonitor CreateSubTask(double workAmount)
       {
-        return new MonitorImpl(collector, this, workAmount, cancellationToken);
+        return new MonitorImpl(_collector, this, workAmount, _cancellationToken);
       }
 
       public IProgressMonitor CreateSubTask(double workAmount, CancellationToken cancellationToken)
       {
-        return new MonitorImpl(collector, this, workAmount, cancellationToken);
+        return new MonitorImpl(_collector, this, workAmount, cancellationToken);
       }
 
       public void Dispose()
       {
         TaskName = null;
-        if (parent == null)
-          collector.OnRootMonitorDisposed();
+        if (_parent is null)
+          _collector.OnRootMonitorDisposed();
       }
     }
   }
