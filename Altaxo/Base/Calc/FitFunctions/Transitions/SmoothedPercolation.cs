@@ -58,7 +58,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     [FitFunctionCreator("SmoothedPercolation", "Transitions", 1, 1, 5)]
-    [System.ComponentModel.Description("FitFunctions.Transitions.SmoothedPercolation")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.SmoothedPercolation}")]
     public static IFitFunction CreateSmoothedPercolation()
     {
       return new SmoothedPercolation();

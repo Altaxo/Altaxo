@@ -128,7 +128,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("KohlrauschDecay", "Relaxation", 1, 1, 4)]
-    [System.ComponentModel.Description("Altaxo.Calc.FitFunctions.Relaxation.KohlrauschDecay")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschDecay}")]
     public static IFitFunction CreateDefault()
     {
       return new KohlrauschDecay();

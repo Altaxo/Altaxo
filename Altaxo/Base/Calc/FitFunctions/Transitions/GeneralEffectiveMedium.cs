@@ -58,7 +58,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     [FitFunctionCreator("GeneralEffectiveMedium", "Transitions", 1, 1, 5)]
-    [System.ComponentModel.Description("FitFunctions.Transitions.GeneralEffectiveMedium")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.GeneralEffectiveMedium}")]
     public static IFitFunction CreateGeneralEffectiveMedium()
     {
       return new GeneralEffectiveMedium();
@@ -344,7 +344,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     [FitFunctionCreator("GeneralEffectiveMediumLog10", "Transitions", 1, 1, 5)]
-    [System.ComponentModel.Description("FitFunctions.Transitions.GeneralEffectiveMediumLog10")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.GeneralEffectiveMediumLog10}")]
     public static IFitFunction CreateGeneralEffectiveMediumLog10()
     {
       return new GeneralEffectiveMediumLog10();

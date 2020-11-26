@@ -205,7 +205,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     [FitFunctionCreator("LinearFermiDiracTransition", "Transitions", 1, 1, 4)]
-    [System.ComponentModel.Description("FitFunctions.Transitions.LinearFermiDiracTransition")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.LinearFermiDiracTransition}")]
     public static IFitFunction CreateLinearFermiDiracTransition()
     {
       return new LinearFermiDiracTransition();
@@ -249,7 +249,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     [FitFunctionCreator("LogarithmicFermiDiracTransition", "Transitions", 1, 1, 4)]
-    [System.ComponentModel.Description("FitFunctions.Transitions.LogarithmicFermiDiracTransition")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.LogarithmicFermiDiracTransition}")]
     public static IFitFunction CreateLogarithmicFermiDiracTransition()
     {
       return new LogarithmicFermiDiracTransition();

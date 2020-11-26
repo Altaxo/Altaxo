@@ -198,38 +198,8 @@ namespace Altaxo.Main.Services
       get
       {
         object[] attribs = _method.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
-        return GetDocumentationTextFromResource(attribs.Length == 0 ? string.Empty : ((System.ComponentModel.DescriptionAttribute)attribs[0]).Description);
+        return (attribs.Length == 0) ? string.Empty : StringParser.Parse(((System.ComponentModel.DescriptionAttribute)attribs[0]).Description);
       }
-    }
-
-    private string GetDocumentationTextFromResource(string resource)
-    {
-      string[] resources = resource.Split(new char[] { ';', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-      var stb = new StringBuilder();
-
-      foreach (string res in resources)
-      {
-        if (res.StartsWith("p:"))
-        {
-          // TODO : Load from a bitmap resource here and add the bitmap to the rtf text
-        }
-        else
-        {
-          string? rawtext = null;
-          try
-          {
-            rawtext = Current.ResourceService.GetString(res);
-          }
-          catch (Exception)
-          {
-          }
-          if (rawtext is not null && rawtext.Length > 0)
-            stb.Append(rawtext);
-        }
-      }
-
-      return stb.ToString();
     }
 
     public Altaxo.Calc.Regression.Nonlinear.IFitFunction CreateFitFunction()

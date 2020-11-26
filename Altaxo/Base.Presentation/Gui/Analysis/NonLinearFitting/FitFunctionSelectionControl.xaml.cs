@@ -236,9 +236,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public NamedColor GetRtfBackgroundColor()
     {
-      var brush = _rtfDescription.Background;
-      if (brush is SolidColorBrush)
-        return new NamedColor(GuiHelper.ToAxo(((SolidColorBrush)brush).Color));
+      if (_rtfDescription.Background is SolidColorBrush brush1)
+        return new NamedColor(GuiHelper.ToAxo(brush1.Color));
       else
         return NamedColors.Transparent;
     }

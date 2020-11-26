@@ -242,12 +242,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/General", 1, 2, 4)]
     [Description(
-      "Altaxo.Calc.FitFunctions.Relaxation.Susceptibility.Introduction;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.General.Formula;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula;" +
-      "Altaxo.Calc.FitFunctions.IndependentVariable.Omega;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part3")]
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.Susceptibility.Introduction}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.General.Formula}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.Omega}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part3}")]
     public static IFitFunction CreateGeneralFunctionOfOmega()
     {
       var result = new KohlrauschSusceptibility
@@ -261,12 +261,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     [FitFunctionCreator("Kohlrausch Complex (Freq)", "Retardation/General", 1, 2, 4)]
     [Description(
-      "Altaxo.Calc.FitFunctions.Relaxation.Susceptibility.Introduction;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.General.Formula;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula;" +
-      "Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part3")]
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.Susceptibility.Introduction}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.General.Formula}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part3}")]
     public static IFitFunction CreateGeneralFunctionOfFrequency()
     {
       var result = new KohlrauschSusceptibility
@@ -280,12 +280,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Dielectrics", 1, 2, 4)]
     [Description(
-      "Altaxo.Calc.FitFunctions.Relaxation.DielectricSusceptibility.Introduction;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.Susceptibility.Dielectrics.Formula;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula;" +
-      "Altaxo.Calc.FitFunctions.IndependentVariable.Omega;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Quantities")]
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.DielectricSusceptibility.Introduction}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.Susceptibility.Dielectrics.Formula}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.Omega}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Quantities}")]
     public static IFitFunction CreateDielectricFunctionOfOmega()
     {
       var result = new KohlrauschSusceptibility
@@ -299,12 +299,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     [FitFunctionCreator("Kohlrausch Complex (Freq)", "Retardation/Dielectrics", 1, 2, 4)]
     [Description(
-      "Altaxo.Calc.FitFunctions.Relaxation.DielectricSusceptibility.Introduction;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.Susceptibility.Dielectrics.Formula;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula;" +
-      "Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega;" +
-      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Quantities")]
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.DielectricSusceptibility.Introduction}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.Susceptibility.Dielectrics.Formula}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega}\r\n" +
+      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Quantities}")]
     public static IFitFunction CreateDielectricFunctionOfFrequency()
     {
       var result = new KohlrauschSusceptibility
