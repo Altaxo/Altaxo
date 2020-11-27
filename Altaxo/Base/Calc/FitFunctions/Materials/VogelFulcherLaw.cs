@@ -110,6 +110,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     }
 
     [FitFunctionCreator("VogelFulcherLaw", "Materials", 1, 1, 3)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLaw}")]
     public static IFitFunction CreateDefault()
     {
       return new VogelFulcherLaw();

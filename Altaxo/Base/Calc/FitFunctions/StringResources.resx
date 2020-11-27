@@ -131,7 +131,52 @@ in which x is the independent variable, y is the dependent variable, and $ a_0 .
     <value>with the circular frequency $\omega$  being the independent variable, </value>
   </data>
   <data name="Materials.ArrheniusLaw.Description" xml:space="preserve">
-    <value>The Arrhenius law describes the dependence of (chemical) reaction rates on the temperature.  
+    <value># Arrhenius law
+
+The Arrhenius law describes the dependence of (chemical) reaction rates on the temperature.  
+The function is defined as:
+$$
+y(T) = y_0 \exp\left(\frac{-E_a}{k T})
+$$
+in which $y$ is the reaction rate (dependent variable), $T$ is the absolute (!) temperature (independent variable), and $k$ is a constant, usually the Boltzmann constant, but it depends on the options you choose for the fit (see below).
+
+The parameters are: 
+- $y_0$ is the reaction rate in the limit $T\rightarrow\infty$
+- $E_a$ is the activation energy.
+
+Please note that for large temperature intervals, the reaction rate can vary over some orders of magnitude. This will lead to a poor fit, because the data points with small values of the reaction rate then contribute too little to the fit. 
+
+In order to get a good fit nevertheless, it is neccessary  that you logarithmize your data points before they get fitted, and choose the `DecadicLogarithm` dependent variable option on this fit.
+
+*Options for the independent variable x*:
+- Kelvin: x is $T$ in Kelvin
+- AsInverseKelvin: x is $\frac{1}{T}$
+- DegreeCelsius: x is in °C
+- DegreeFahrenheit: x is in °F
+
+
+*Options for the dependent variable y*:
+- Original: the original value of $y$ (the rate)
+- Inverse:  the inverse of the rate, i.e. $\frac{1}{y}$
+- Negative: the negative rate $-y$
+- DecadicLogarithm: $\log_{10}(y)$
+- NegativeDecadicLogarithm: $-\log_{10}(y)$
+- NaturalLogarithm: $\ln(y)$
+- NegativeNaturalLogarithm: $-\ln(y)$
+
+
+
+*Option for parameters*:
+- ParameterEnergyRepresentation
+  - Joule: $E_a$ is in Joule
+  - JoulePerMole: $E_a$ is in Joule per mole
+  - ElectronVolt: $E_a$ is in eV (electron volt)
+  - kWh, calorie, calorie per mole and more..</value>
+  </data>
+  <data name="Materials.VogelFulcherLaw" xml:space="preserve">
+    <value># Arrhenius law
+
+The Arrhenius law describes the dependence of (chemical) reaction rates on the temperature.  
 The function is defined as:
 $$
 y(T) = y_0 \exp\left(\frac{-E_a}{k T})
@@ -340,5 +385,132 @@ M' + i M'' = \frac{1}{\frac{1}{M_{\infty}}+(\frac{1}{M_{0}}-\frac{1}{M_{\infty}}
 
 $$
 </value>
+  </data>
+  <data name="Transitions.FermiDiracTransition.Core" xml:space="preserve">
+    <value># Fermi-Dirac transition
+
+The core of the Fermi-Dirac transition is the following function, defined in the interval [0, 1], which assumes the value of 1 for $p=0$ and 0 for $p=1$:
+
+$$
+  f(p) = \frac{\exp((1-p_c)/w)) - \exp((p-p_c)/w)}{\exp((1-p_c)/w) - \exp((0-p_c)/w)} \times
+  \frac{1 + \exp((0-p_c)/w)}{1 + \exp((p-p_c)/w)}
+$$
+
+in which:
+
+- $p_c$ : location of the transition (0..1)
+- $w$ : width parameter
+
+It is used e.g. to model the percolation behavior of electrical resistivity in dependence on the concentration $p$ and the critical concentration $p_c$.</value>
+  </data>
+  <data name="Transitions.FermiDiracTransition.Linear" xml:space="preserve">
+    <value>## Linearly scaled transition
+
+The core function is used to model the linearly scaled transition:
+
+$$
+g(p) = y_1 + (y_0 -y_1) \times f(p)
+$$
+
+which assumes a value of $y_0$ for $p=0$ and $y_1$ for $p=1$.</value>
+  </data>
+  <data name="Transitions.FermiDiracTransition.Logarithmic" xml:space="preserve">
+    <value>## Logarithmically scaled transition
+
+The core function is used to model the logarithmically scaled transition:
+
+$$
+g(p) = y_0^{f(p)} \times y_1^{1-f(p)}
+$$
+
+which assumes a value of $y_0$ for $p=0$ and $y_1$ for $p=1$.</value>
+  </data>
+  <data name="Transitions.GeneralEffectiveMedium.Core" xml:space="preserve">
+    <value># General effective medium transition
+
+This transition models e.g. the electrical conductivity of conductive particles embedded in a matrix, but is valid for general percolation problems.
+
+The function, which evaluates the property $y$ of the resulting compound is given implicitly by the following equation:
+
+$$
+  (1-p) \frac{y_{0}^{1/s} - y^{1/s}}{y_{0}^{1/s} + A y^{1/s}} +
+  p \frac{y_{1}^{1/t} - y^{1/t}}{y_{1}^{1/t} + A y^{1/t}} = 0
+$$
+
+in which:
+- $A = (1-p_c)/p_c)$
+- $p_c$ : critical percolation threshold (location of the transition (0..1))
+- $p$ : volume concentration of the filler particles (0..1)
+- $s, t$ : exponents
+- $y_{0}$ : property of the matrix (e.g. electrical conductivity of the matrix)
+- $y_{1}$ : property of the filler particles (e.g. electrical conductivity of the filler)
+- $y$ : resulting property of the compound (e.g. electrical conductivity of the matrix with filler particles)
+
+The equation has the following properties, which match the percolation theory for concentrations below and above the percolation threshold:
+
+- $y = y_0$ for $p=0$ 
+- $y \approx y_0 \left ( \frac{p_c-p}{p_c} \right )^{-s}$ for $p &lt; p_c$
+- $y = y_1$ for $p=1$
+- $y \approx y_1 \left ( \frac{p-p_c}{1-p_c} \right )^{t}$ for $p &gt; p_c$
+
+In contrast to the separate percolation equations below and above the percolation threshold, the general effective medium transition avoids the divergence near the percolation threshold, and provides a smooth transition between the two equations.</value>
+  </data>
+  <data name="Transitions.GeneralEffectiveMedium.Log10" xml:space="preserve">
+    <value>## Logarithmically scaled transition
+
+Instead of returning $y$ as described above, the function will return $\log_{10}(y)$.</value>
+  </data>
+  <data name="Transitions.SmoothedPercolation.Core" xml:space="preserve">
+    <value># Smoothed percolation
+
+The base of this function are the two percolation equations valid below and above the percolation threshold $p_c$ :
+
+- $y \approx y_0 \left ( \frac{p_c-p}{p_c} \right )^{-s}$ for $p &lt; p_c$ (left side equation)
+
+- $y \approx y_1 \left ( \frac{p-p_c}{1-p_c} \right )^{t}$ for $p &gt; p_c$ (right side equation)
+
+in which:
+- $p_c$ : critical percolation threshold (location of the transition (0..1))
+- $p$ : volume concentration of the filler particles (0..1)
+- $s, t$ : exponents ($s&gt;0$, $t&gt;0$)
+- $y_{0}$ : property of the matrix (e.g. electrical conductivity of the matrix, $y_0&gt;0)$)
+- $y_{1}$ : property of the filler particles (e.g. electrical conductivity of the filler, $y_1&gt;0$)
+- $y$ : resulting property of the compound (e.g. electrical conductivity of the matrix with filler particles)
+
+
+Because both equations diverge at $p=p_c$, we need to smooth that location.
+For this we use somewhat stricter boundaries:
+
+- Calculate the approximate logarithmic step height of the transition by
+$$
+\ln(y_h/y_l) = \ln(y_1/y_0) - s - t
+$$
+
+- Find a $p_1 &lt; p_c$ such that the quotient of the function values of right side and left side approximately match this step height:
+
+$$
+ \ln \left ( \frac{ y_1 \left ( \frac{p_2-p_c}{1-p_c} \right )^{t} }{ y_0 \left ( \frac{p_c-p_1}{p_c} \right )^{-s}} \right ) \approx \ln(y_h/y_l)
+$$
+
+in which $p_2 = p_c + (p_c-p_1)\frac{t}{s}$ (obviously: $p_2&gt;p_c$).
+
+
+The value of $p_1$ is then used as the upper boundary of the left side percolation equation:
+
+$y \approx y_0 \left ( \frac{p_c-p}{p_c} \right )^{-s}$ for $p &lt; p_1$
+
+
+and the value of $p_2$ is used as the lower boundary of the right side percolation equation:
+
+$y \approx y_1 \left ( \frac{p-p_c}{1-p_c} \right )^{t}$ for $p &gt; p_2$
+
+In the interval between $p_1$ and $p_2$, the function values are approximated by a logarithmic function:
+
+$\ln(y) = \ln(y_1) + (\ln(y_2)-\ln(y_1))\frac{p-p_1}{p_2-p_1}$
+
+in which 
+
+- $y_1$ value of $y$ as evaluated by the left side equation at $p=p_1$
+- $y_2$ value of $y$ as evaluated by the right side equation at $p=p_2$</value>
   </data>
 </root>

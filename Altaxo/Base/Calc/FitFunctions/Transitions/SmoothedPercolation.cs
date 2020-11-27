@@ -58,7 +58,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     [FitFunctionCreator("SmoothedPercolation", "Transitions", 1, 1, 5)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.SmoothedPercolation}")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.SmoothedPercolation.Core}")]
     public static IFitFunction CreateSmoothedPercolation()
     {
       return new SmoothedPercolation();
@@ -137,7 +137,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       Y[0] = Evaluate(X[0], P[0], P[1], P[2], P[3], P[4]);
     }
 
-    public static double Evaluate(double phi, double y0, double y1, double phi_c, double s, double t)
+    public double Evaluate(double phi, double y0, double y1, double phi_c, double s, double t)
     {
       if (!(y0 > 0))
         return double.NaN;
@@ -188,7 +188,10 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       }
     }
 
-    private static System.Collections.Generic.Dictionary<P1Var, double> _sp1Hash = new System.Collections.Generic.Dictionary<P1Var, double>();
+    /// <summary>
+    /// Stores, dependent on t, s, sigmam, sigmat and so on, the lower boundary p1, because it is cost intensive to calculate.
+    /// </summary>
+    private System.Collections.Generic.Dictionary<P1Var, double> _sp1Hash = new System.Collections.Generic.Dictionary<P1Var, double>();
 
     private static double CalculateP1(double sigmam, double sigmat, double pc, double s, double t)
     {
@@ -224,7 +227,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       return Math.Log10(sigmat * Math.Pow((p - pc) / (1 - pc), t));
     }
 
-    private static double CalculateLgSigma(double p, double sigmam, double sigmat, double pc, double s, double t)
+    private double CalculateLgSigma(double p, double sigmam, double sigmat, double pc, double s, double t)
     {
       var var = new P1Var(sigmam, sigmat, pc, s, t);
       if (!_sp1Hash.TryGetValue(var, out var p1))
