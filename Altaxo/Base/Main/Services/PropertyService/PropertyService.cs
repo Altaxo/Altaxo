@@ -101,6 +101,19 @@ namespace Altaxo.Main.Services
         throw new ArgumentOutOfRangeException(nameof(p), string.Format("No entry found for property key {0}", p));
     }
 
+    [return: MaybeNull]
+    public T GetValueOrNull<T>(PropertyKey<T> p, RuntimePropertyKind kind)
+    {
+      if (kind == RuntimePropertyKind.UserAndApplicationAndBuiltin && UserSettings.TryGetValue<T>(p, out var result))
+        return result;
+      else if (kind == RuntimePropertyKind.ApplicationAndBuiltin && ApplicationSettings.TryGetValue<T>(p, out result))
+        return result;
+      else if (BuiltinSettings.TryGetValue<T>(p, out result))
+        return result;
+      else
+        return default;
+    }
+
 
     [return: NotNullIfNotNull("ValueCreationIfNotFound")]
     [return: MaybeNull]

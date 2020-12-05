@@ -63,6 +63,21 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
+    [return: MaybeNull]
+    public T GetValueOrNull<T>(PropertyKey<T> p, RuntimePropertyKind kind)
+    {
+      if (kind == RuntimePropertyKind.UserAndApplicationAndBuiltin && UserSettings.TryGetValue<T>(p, out var result))
+        return result;
+      else if (kind == RuntimePropertyKind.ApplicationAndBuiltin && ApplicationSettings.TryGetValue<T>(p, out result))
+        return result;
+      else if (BuiltinSettings.TryGetValue<T>(p, out result))
+        return result;
+      else
+        return default;
+
+    }
+
+    /// <inheritdoc/>
     [return: NotNullIfNotNull("ValueCreationIfNotFound")]
     [return: MaybeNull]
     public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound) where T: notnull

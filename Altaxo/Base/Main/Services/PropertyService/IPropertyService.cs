@@ -114,6 +114,16 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <typeparam name="T">Type of the property value.</typeparam>
     /// <param name="p">The property key.</param>
+    /// <param name="kind">Designates the kind of property to search.</param>
+    /// <returns>The property value (if the property was found), or the default value defined by the property key (if not found).</returns>
+    [return: MaybeNull]
+    T GetValueOrNull<T>(PropertyKey<T> p, RuntimePropertyKind kind);
+
+    /// <summary>
+    /// Gets the property value from UserSettings, then ApplicationSettings, then BuiltinSettings.
+    /// </summary>
+    /// <typeparam name="T">Type of the property value.</typeparam>
+    /// <param name="p">The property key.</param>
     /// <param name="kind">Kind of search.</param>
     /// <param name="ValueCreationIfNotFound">Function used to create a default value if the property value was not found.</param>
     /// <returns></returns>

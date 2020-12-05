@@ -506,7 +506,9 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 
     public void RestoreWorkbenchDockingThemeFromPropertyService()
     {
-      DockManagerTheme = Current.PropertyService.GetValue(PropertyKeyWorkbenchDockingTheme, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
+      var restored = Current.PropertyService.GetValueOrNull(PropertyKeyWorkbenchDockingTheme, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
+      if (restored is not null)
+        DockManagerTheme = restored;
     }
 
     public string DockManagerTheme
@@ -567,7 +569,9 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     [MemberNotNull(nameof(_dockingLayoutAsString))]
     public void RestoreWorkbenchDockingLayoutFromPropertyService()
     {
-      CurrentLayoutConfiguration = Current.PropertyService.GetValue(PropertyKeyWorkbenchDockingLayout, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
+      var restored = Current.PropertyService.GetValueOrNull(PropertyKeyWorkbenchDockingLayout, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
+      if (restored is not null)
+        CurrentLayoutConfiguration = restored;
     }
 
     #endregion Layout configuration
@@ -630,7 +634,9 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 
     public void RestoreWorkbenchStateFromPropertyService()
     {
-      WorkbenchState = Current.PropertyService.GetValue(PropertyKeyWorkbenchState, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
+      var restored = Current.PropertyService.GetValueOrNull(PropertyKeyWorkbenchState, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
+      if (restored is not null)
+        WorkbenchState = restored;
     }
 
     #endregion WorkbenchState
