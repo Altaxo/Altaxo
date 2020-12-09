@@ -235,59 +235,76 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-    public static string? OutputFitResults(LinearFitBySvd fit, string[] paramNames)
+    public static string GetFitResultsDescription(LinearFitBySvd fit, string[] paramNames)
     {
+      var stb = new System.Text.StringBuilder();
       // Output of results
 
-      Current.Console.WriteLine("");
-      Current.Console.WriteLine("---- " + DateTime.Now.ToString() + " -----------------------");
-      Current.Console.WriteLine("Multivariate regression of order {0}", fit.NumberOfParameter);
+      stb.AppendLine("");
+      stb.AppendLine($"---- {DateTime.Now} -----------------------");
+      stb.AppendLine($"Multivariate regression of order {fit.NumberOfParameter}");
 
-      Current.Console.WriteLine("{0,-15} {1,20} {2,20} {3,20} {4,20}",
+      stb.AppendFormat("{0,-15} {1,20} {2,20} {3,20} {4,20}",
         "Name", "Value", "Error", "F-Value", "Prob>F");
+      stb.AppendLine();
 
       for (int i = 0; i < fit.Parameter.Length; i++)
-        Current.Console.WriteLine("{0,-15} {1,20} {2,20} {3,20} {4,20}",
+      {
+        stb.AppendFormat("{0,-15} {1,20} {2,20} {3,20} {4,20}",
                     paramNames is null ? string.Format("A{0}", i) : paramNames[i],
           fit.Parameter[i],
           fit.StandardErrorOfParameter(i),
           fit.TofParameter(i),
           1 - FDistribution.CDF(fit.TofParameter(i), fit.NumberOfParameter, fit.NumberOfData - 1)
           );
+        stb.AppendLine();
+      }
 
-      Current.Console.WriteLine("R²: {0}, Adjusted R²: {1}",
-        fit.RSquared,
-        fit.AdjustedRSquared);
+      stb.AppendLine($"R²: {fit.RSquared}, Adjusted R²: {fit.AdjustedRSquared}");
 
-      Current.Console.WriteLine("------------------------------------------------------------");
-      Current.Console.WriteLine("Source of  Degrees of");
-      Current.Console.WriteLine("variation  freedom          Sum of Squares          Mean Square          F0                   P value");
+      stb.AppendLine("------------------------------------------------------------");
+      stb.AppendFormat("{0,-12} {1,10}", "Source of", "degrees of");
+      stb.AppendLine();
+      stb.AppendFormat("{0,-12} {1,10} {2,20} {3,20} {4,20} {5,20}", "variation", "freedom",  "Sum of Squares", "Mean Square", "F0", "P value");
+        stb.AppendLine();
 
       double regressionmeansquare = fit.RegressionCorrectedSumOfSquares / fit.NumberOfParameter;
       double residualmeansquare = fit.ResidualSumOfSquares / (fit.NumberOfData - fit.NumberOfParameter - 1);
 
-      Current.Console.WriteLine("Regression {0,10} {1,20} {2,20} {3,20} {4,20}",
+      stb.AppendFormat("{0,-12} {1,10} {2,20} {3,20} {4,20} {5,20}",
+        "Regression",
         fit.NumberOfParameter,
         fit.RegressionCorrectedSumOfSquares,
         fit.RegressionCorrectedSumOfSquares / fit.NumberOfParameter,
         regressionmeansquare / residualmeansquare,
         1 - FDistribution.CDF(regressionmeansquare / residualmeansquare, fit.NumberOfParameter, fit.NumberOfData - 1)
         );
+      stb.AppendLine();
 
-      Current.Console.WriteLine("Residual   {0,10} {1,20} {2,20}",
+      stb.AppendFormat("{0,-12} {1,10} {2,20} {3,20}",
+        "Residual",
         fit.NumberOfData - 1 - fit.NumberOfParameter,
         fit.ResidualSumOfSquares,
         residualmeansquare
         );
+      stb.AppendLine();
 
-      Current.Console.WriteLine("Total      {0,10} {1,20}",
+      stb.AppendFormat("{0,-12} {1,10} {2,20}",
+        "Total",
         fit.NumberOfData - 1,
         fit.TotalCorrectedSumOfSquares
-
         );
+      stb.AppendLine();
 
-      Current.Console.WriteLine("------------------------------------------------------------");
+      stb.AppendLine("------------------------------------------------------------");
 
+      return stb.ToString();
+    }
+
+    public static string? OutputFitResults(LinearFitBySvd fit, string[] paramNames)
+    {
+      // Output of results
+      Current.Console.Write(GetFitResultsDescription(fit, paramNames));
       return null;
     }
   }

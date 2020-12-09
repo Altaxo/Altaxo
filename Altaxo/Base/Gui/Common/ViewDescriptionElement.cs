@@ -30,7 +30,7 @@ namespace Altaxo.Gui.Common
   public class ViewDescriptionElement : ICloneable
   {
     public string Title;
-    public object View;
+    public object View { get; }
 
     public ViewDescriptionElement(ViewDescriptionElement from)
     {

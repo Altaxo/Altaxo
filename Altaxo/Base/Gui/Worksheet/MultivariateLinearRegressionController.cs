@@ -71,15 +71,11 @@ namespace Altaxo.Gui.Worksheet
         _ctrl2.DescriptionText = "Generate prediction values";
         _ctrl3.DescriptionText = "Generate residual values";
 
-        _elements[0] = new ControlViewElement(null, _ctrl0);
-        _elements[1] = new ControlViewElement(null, _ctrl1);
-        _elements[2] = new ControlViewElement(null, _ctrl2);
-        _elements[3] = new ControlViewElement(null, _ctrl3);
-
-        for (int i = 0; i < _elements.Length; i++)
+        int k = 0;
+        foreach(var ctrl in new IMVCAController[] { _ctrl0, _ctrl1, _ctrl2, _ctrl3})
         {
-          Current.Gui.FindAndAttachControlTo((IMVCController)_elements[i].Controller);
-          _elements[i].View = ((IMVCController)_elements[i].Controller).ViewObject;
+          Current.Gui.FindAndAttachControlTo(ctrl);
+          _elements[k++] = new ControlViewElement(null, ctrl);
         }
 
         _innerController = new MultiChildController(_elements, false);

@@ -813,7 +813,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           int idx = usedSelectedColumns is null ? i : usedSelectedColumns[i];
           numrows = Math.Max(numrows, srctable[idx].Count);
         }
-        numericDataRows.Add(ContiguousIntegerRange.FromStartAndCount(0, numrows));
+        numericDataRows.Add(Collections.ContiguousIntegerRange.FromStartAndCount(0, numrows));
       }
 
       if (bHorizontalOrientedSpectrum)
@@ -1092,7 +1092,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           int idx = selectedColumns[i];
           numrows = Math.Max(numrows, srctable[idx].Count);
         }
-        selectedRows.Add(ContiguousIntegerRange.FromStartAndCount(0, numrows));
+        selectedRows.Add(Collections.ContiguousIntegerRange.FromStartAndCount(0, numrows));
       }
     }
 
