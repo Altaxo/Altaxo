@@ -119,7 +119,7 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
-    public abstract Processed2DPlotData? GetRangesAndPoints(IPlotArea layer);
+    public abstract Processed2DPlotData GetRangesAndPoints(IPlotArea layer);
 
     #region IPlotItem Members
 
@@ -146,8 +146,7 @@ namespace Altaxo.Graph.Gdi.Plot
         _localGroups.BeginPrepare();
 
         // now prepare the groups
-        if (pdata is not null)
-          _plotStyles.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
+        _plotStyles.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
 
         // for the group styles in the local group, PrepareStep and EndPrepare must be called,
         _localGroups.PrepareStep();

@@ -979,16 +979,14 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     /// <param name="layer">The plot layer.</param>
     /// <returns>An array of plot points in layer coordinates.</returns>
-    public Processed2DPlotData? GetRangesAndPoints(
+    public Processed2DPlotData GetRangesAndPoints(
       Gdi.IPlotArea layer)
     {
       const double MaxRelativeValue = 1E2;
 
-      var xColumn = XColumn;
-      var yColumn = YColumn;
+      var xColumn = XColumn ?? EmptyDoubleColumn.Instance;
+      var yColumn = YColumn ?? EmptyDoubleColumn.Instance;
 
-      if (xColumn is null || yColumn is null)
-        return null; // this plotitem is only for x and y double columns
 
       var result = new Processed2DPlotData();
       var myPlotData = new MyPlotData(xColumn, yColumn);

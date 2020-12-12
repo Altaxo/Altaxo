@@ -206,7 +206,7 @@ namespace Altaxo.Graph.Gdi.Plot
       return GetName(int.MaxValue);
     }
 
-    public override Processed2DPlotData? GetRangesAndPoints(IPlotArea layer)
+    public override Processed2DPlotData GetRangesAndPoints(IPlotArea layer)
     {
       return _plotData.GetRangesAndPoints(layer);
     }

@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     /// <param name="layer">The layer.</param>
     /// <returns>The plot data, or null of no data are currently available.</returns>
-    Processed2DPlotData? GetRangesAndPoints(Gdi.IPlotArea layer);
+    Processed2DPlotData GetRangesAndPoints(Gdi.IPlotArea layer);
 
     /// <summary>
     /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible

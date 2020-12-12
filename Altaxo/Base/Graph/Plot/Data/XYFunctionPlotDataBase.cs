@@ -116,7 +116,7 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     /// <param name="layer">The plot layer.</param>
     /// <returns>An array of plot points in layer coordinates.</returns>
-    public Processed2DPlotData? GetRangesAndPoints(
+    public Processed2DPlotData GetRangesAndPoints(
         Gdi.IPlotArea layer)
     {
       const int functionPoints = 1000;
@@ -148,8 +148,6 @@ namespace Altaxo.Graph.Plot.Data
 
       var xaxis = layer.XAxis;
       var yaxis = layer.YAxis;
-      if (xaxis is null || yaxis is null)
-        return null;
 
       for (i = 0, j = 0; i < functionPoints; i++)
       {

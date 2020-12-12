@@ -1012,7 +1012,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => _ignoreMissingDataPoints = ignoreMissingDataPoints);
 
       // LineConnectionStyle is the same for all sub plot styles
-      LineConnection2DGroupStyle.ApplyStyle(externalGroups, localGroups, (lineConnection, connectCircular) => { _connectionStyle = lineConnection; _connectCircular = connectCircular; });
+      LineConnection2DGroupStyle.ApplyStyle(externalGroups, localGroups, (lineConnection, connectCircular) =>
+      {
+        _connectionStyle = lineConnection;
+        _connectCircular = connectCircular;
+      }
+      );
 
       // SkipFrequency should be the same for all sub plot styles
       if (!_independentSkipFrequency)
