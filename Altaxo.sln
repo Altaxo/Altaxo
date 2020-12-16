@@ -12,10 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AltaxoBase", "Altaxo\Base\AltaxoBase.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AltaxoCoreTest", "Altaxo\CoreTest\AltaxoCoreTest.csproj", "{95A2BF58-8568-4512-BD82-F0240FFC7558}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AltaxoStartup", "Altaxo\Startup\AltaxoStartup.csproj", "{63420446-3D85-4D00-BA9E-9EA7680B87E0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{012F4935-9036-4F02-8C03-060EC9514A1D} = {012F4935-9036-4F02-8C03-060EC9514A1D}
@@ -25,6 +21,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AltaxoStartup", "Altaxo\Sta
 		{7045C197-9DA8-4FA4-886C-992ACADD838F} = {7045C197-9DA8-4FA4-886C-992ACADD838F}
 		{D08538DC-E8A8-473D-90E0-0436F551DFD4} = {D08538DC-E8A8-473D-90E0-0436F551DFD4}
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AltaxoBase", "Altaxo\Base\AltaxoBase.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AltaxoCoreTest", "Altaxo\CoreTest\AltaxoCoreTest.csproj", "{95A2BF58-8568-4512-BD82-F0240FFC7558}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Content", "Content\Content.csproj", "{012F4935-9036-4F02-8C03-060EC9514A1D}"
 EndProject
