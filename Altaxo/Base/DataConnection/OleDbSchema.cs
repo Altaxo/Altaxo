@@ -340,6 +340,8 @@ namespace Altaxo.DataConnection
         case 135: return typeof(DateTime);
         case 138: return typeof(object);
         case 139: return typeof(decimal);
+        case 145: return typeof(DateTime);
+        case 146: return typeof(DateTimeOffset);
         case 200: return typeof(string);
         case 201: return typeof(string);
         case 202: return typeof(string);

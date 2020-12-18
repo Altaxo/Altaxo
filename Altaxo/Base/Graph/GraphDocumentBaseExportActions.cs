@@ -275,5 +275,98 @@ namespace Altaxo.Graph
       else
         return Graph3D.GraphDocumentExportActions.RenderAsBitmap((Graph3D.GraphDocument)document, renderingOptions, pixelFormat);
     }
+
+    #region Export multiple graphs as Miniproject
+
+    /// <summary>Shows the multi file export dialog and exports the graphs as mini projects.</summary>
+    /// <param name="documents">List with graph documents to export.</param>
+    public static void ShowExportMultipleGraphsAsMiniProjectDialog(IEnumerable<Graph.GraphDocumentBase> documents)
+    {
+      var mrData = new MultiRenameData() { IsRenameOperationFileSystemBased = true };
+      MultiRenameDocuments.RegisterCommonDocumentShortcutsForFileOperations(mrData);
+      mrData.RegisterStringShortcut("E", (o, i) => ".axoprj", "Mini project files");
+
+      mrData.RegisterRenameActionHandler(DoExportGraphsAsMiniProjects);
+
+      mrData.AddObjectsToRename(documents);
+
+      mrData.RegisterListColumn("FullName", MultiRenameDocuments.GetFullNameWithAugmentingProjectFolderItems);
+      mrData.RegisterListColumn("File name", (obj, newName) => newName);
+      mrData.RegisterListColumn("Creation date", MultiRenameDocuments.GetCreationDateString);
+
+      mrData.DefaultPatternString = "[SN][E]";
+      mrData.IsRenameOperationFileSystemBased = true;
+
+      var mrController = new MultiRenameController();
+      mrController.InitializeDocument(mrData);
+      Current.Gui.ShowDialog(mrController, "Export multiple graphs as mini projects");
+    }
+
+    private static List<object> DoExportGraphsAsMiniProjects(MultiRenameData mrData)
+    {
+      var failedItems = new List<object>();
+      var errors = new StringBuilder();
+
+      bool allPathsRooted = true;
+      for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
+      {
+        var fileName = mrData.GetNewNameForObject(i);
+        if (!System.IO.Path.IsPathRooted(fileName))
+        {
+          allPathsRooted = false;
+          break;
+        }
+      }
+
+      if (!allPathsRooted)
+      {
+        //Current.Gui.ShowFolderDialog();
+        // http://wpfdialogs.codeplex.com/
+      }
+
+      for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
+      {
+        var graph = (GraphDocumentBase)mrData.GetObjectToRename(i);
+        var fileName = mrData.GetNewNameForObject(i);
+        try
+        {
+          var newDocument = Altaxo.Graph.Procedures.MiniProjectBuilder.CreateMiniProject(graph, false);
+          SaveMiniProject(newDocument, fileName);
+        }
+        catch (Exception ex)
+        {
+          failedItems.Add(graph);
+          errors.AppendFormat("Graph {0} -> file name {1}: export failed, {2}\n", graph.Name, fileName, ex.Message);
+        }
+      }
+
+      if (errors.Length != 0)
+        Current.Gui.ErrorMessageBox(errors.ToString(), "Export failed for some items");
+      else
+        Current.Gui.InfoMessageBox(string.Format("{0} graphs successfully exported.", mrData.ObjectsToRenameCount));
+
+      return failedItems;
+    }
+
+    /// <summary>
+    /// Internal routine to save a mini project under a given name.
+    /// </summary>
+    /// <param name="projectToSave">The project to save.</param>
+    /// <param name="filename"></param>
+    public static void SaveMiniProject(Altaxo.AltaxoDocument projectToSave, string filename)
+    {
+      using (var myStream = new System.IO.FileStream(filename, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.None))
+      {
+        using (var archive = new Main.Services.Files.ZipArchiveAsProjectArchive(myStream, System.IO.Compression.ZipArchiveMode.Create, false))
+        {
+          var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+          projectToSave.SaveToArchive(archive, info);
+        }
+        myStream.Close();
+      }
+    }
+
+
+    #endregion
   }
 }

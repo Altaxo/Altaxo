@@ -254,6 +254,22 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
   }
 
+  public class CmdMultiExportGraphsAsMiniProject : ProjectBrowseControllerCommand
+  {
+    protected override void Run(ProjectBrowseController ctrl)
+    {
+      var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.GraphDocumentBase>();
+      int count = list.Count();
+
+      if (count == 0)
+        return;
+      else if(count == 1)
+        Altaxo.Graph.Commands.SaveAsMiniProjectBase.Run(list.First());
+      else
+        Altaxo.Graph.GraphDocumentBaseExportActions.ShowExportMultipleGraphsAsMiniProjectDialog(list);
+    }
+  }
+
   public class CmdMultiImportTables : ProjectBrowseControllerCommand
   {
     protected override void Run(ProjectBrowseController ctrl)

@@ -1331,6 +1331,8 @@
     <Condition name="ProjbrowserListItemSelection" selcount=">0" selitems="Altaxo.Graph.GraphDocumentBase, AltaxoBase" action="Disable">
       <MenuItem id="MultiExportGraphs" label="${res:XML.ProjectBrowserMenu.MultiExportGraphs}" description="${res:XML.ProjectBrowserMenu.MultiExportGraphs.Description}"
 				class="Altaxo.Gui.Pads.ProjectBrowser.CmdMultiExportGraphs" />
+      <MenuItem id="MultiExportGraphsAsMiniProject" label="${res:XML.ProjectBrowserMenu.MultiExportGraphsAsMiniProject}" description="${res:XML.ProjectBrowserMenu.MultiExportGraphsAsMiniProject.Description}"
+				class="Altaxo.Gui.Pads.ProjectBrowser.CmdMultiExportGraphsAsMiniProject" />
       <MenuItem id="MultiRescaleGraphs" label="${res:XML.ProjectBrowserMenu.MultiRescaleGraphs}" description="${res:XML.ProjectBrowserMenu.MultiRescaleGraphs.Description}"
 				class="Altaxo.Gui.Pads.ProjectBrowser.CmdMultiRescaleGraphs" />
     </Condition>

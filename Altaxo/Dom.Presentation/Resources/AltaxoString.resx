@@ -2673,4 +2673,10 @@ Parameter:\par
   <data name="XML.MainMenu.FileMenuSpecial" xml:space="preserve">
     <value>Special open/save operations</value>
   </data>
+  <data name="XML.ProjectBrowserMenu.MultiExportGraphsAsMiniProject" xml:space="preserve">
+    <value>Export multiple graphs to mini projects</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.MultiExportGraphsAsMiniProject.Description" xml:space="preserve">
+    <value>Exports one or multiple graphs to separate mini projects</value>
+  </data>
 </root>
