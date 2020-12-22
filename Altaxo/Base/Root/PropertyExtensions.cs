@@ -52,6 +52,7 @@ namespace Altaxo
         yield return new PropertyBagWithInformation(bagInfo, owner.PropertyBagNotNull);
       }
 
+#if !WORKBENCH4ALL
       var namedOwner = owner as Main.INameOwner;
       var proj = owner is IDocumentLeafNode leafNode && AbsoluteDocumentPath.GetRootNode(leafNode) is AltaxoDocument doc ? doc : Current.Project;
       ProjectFolderPropertyDocument? bag;
@@ -74,7 +75,7 @@ namespace Altaxo
         var bagInfo = new PropertyBagInformation("Project (RootFolder)", PropertyLevel.Project);
         yield return new PropertyBagWithInformation(bagInfo, bag.PropertyBag);
       }
-
+#endif
       // and now the user's settings
       {
         var bagInfo = new PropertyBagInformation("UserSettings", PropertyLevel.Application);
@@ -102,6 +103,7 @@ namespace Altaxo
     /// <returns>Enumeration of the property bags in the project hierarchy.</returns>
     public static IEnumerable<PropertyBagWithInformation> GetPropertyBagsStartingFromFolder(string folder)
     {
+#if !WORKBENCH4ALL
       var proj = Current.Project;
       ProjectFolderPropertyDocument? bag;
       while (!string.IsNullOrEmpty(folder))
@@ -120,7 +122,7 @@ namespace Altaxo
         var bagInfo = new PropertyBagInformation("Project (RootFolder)", PropertyLevel.Project);
         yield return new PropertyBagWithInformation(bagInfo, bag.PropertyBag);
       }
-
+#endif
       // and now the user's settings
       {
         var bagInfo = new PropertyBagInformation("UserSettings", PropertyLevel.Application);
@@ -245,6 +247,7 @@ namespace Altaxo
       return new PropertyHierarchy(GetPropertyBagsStartingFromApplicationSettings());
     }
 
+#if !WORKBENCH4ALL
     /// <summary>
     /// Gets the project folder property documents down the project folder hierarchie.
     /// </summary>
@@ -274,6 +277,7 @@ namespace Altaxo
         }
       }
     }
+#endif
 
     /// <summary>
     /// Gets the property value either from the application settings or from the builtin settings.
@@ -286,7 +290,7 @@ namespace Altaxo
     /// Otherwise, if <paramref name="resultCreationIfNotFound"/> is not null, the result of this procedure is returned. Else the default value of the type of property value is returned.</returns>
     [return: NotNullIfNotNull("resultCreationIfNotFound")]
     [return: MaybeNull]
-    public static T GetPropertyValueStartingFromApplicationSettings<T>(PropertyKey<T> p, Func<T>? resultCreationIfNotFound) where T: notnull
+    public static T GetPropertyValueStartingFromApplicationSettings<T>(PropertyKey<T> p, Func<T>? resultCreationIfNotFound) where T : notnull
     {
       foreach (var bagTuple in GetPropertyBagsStartingFromApplicationSettings())
       {
@@ -316,7 +320,7 @@ namespace Altaxo
     /// Otherwise, if <paramref name="resultCreationIfNotFound"/> is not null, the result of this procedure is returned. Else the default value of the type of property value is returned.</returns>
     [return: NotNullIfNotNull("resultCreationIfNotFound")]
     [return: MaybeNull]
-    public static T GetPropertyValue<T>(this IPropertyBagOwner owner, PropertyKey<T> p, Func<T>? resultCreationIfNotFound) where T: notnull
+    public static T GetPropertyValue<T>(this IPropertyBagOwner owner, PropertyKey<T> p, Func<T>? resultCreationIfNotFound) where T : notnull
     {
       ;
       foreach (var bagTuple in GetPropertyBags(owner))
@@ -343,7 +347,7 @@ namespace Altaxo
     /// Otherwise, if <paramref name="resultCreationIfNotFound"/> is not null, the result of this procedure is returned. Else the default value of the type of property value is returned.</returns>
     [return: NotNullIfNotNull("resultCreationIfNotFound")]
     [return: MaybeNull]
-    public static T GetPropertyValue<T>(this IPropertyBagOwner owner, string propertyKeyString, Func<T>? resultCreationIfNotFound = null) where T: notnull
+    public static T GetPropertyValue<T>(this IPropertyBagOwner owner, string propertyKeyString, Func<T>? resultCreationIfNotFound = null) where T : notnull
     {
       ;
       foreach (var bagTuple in GetPropertyBags(owner))

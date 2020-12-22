@@ -88,7 +88,7 @@ namespace Altaxo.Worksheet
           _unresolvedColumns = new Dictionary<Main.AbsoluteDocumentPath, ColumnStyle>(),
           _deserializedInstance = s
         };
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+        info.DeserializationFinished += surr.EhDeserializationFinished;
 
         int count;
 
@@ -125,12 +125,12 @@ namespace Altaxo.Worksheet
         info.CloseArray(count);
       }
 
-      public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+      public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
       {
         var resolvedStyles = new List<Main.AbsoluteDocumentPath>();
         foreach (var entry in _unresolvedColumns!)
         {
-          object? resolvedobj = Main.AbsoluteDocumentPath.GetObject(entry.Key, _deserializedInstance!, documentRoot);
+          object? resolvedobj = Main.AbsoluteDocumentPath.GetObject(entry.Key, _deserializedInstance!, (Main.IDocumentNode)documentRoot);
           if (!(resolvedobj is null))
           {
             _deserializedInstance!._columnStyles.Add((DataColumn)resolvedobj, entry.Value);

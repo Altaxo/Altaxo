@@ -42,6 +42,33 @@ namespace Altaxo.Units
     private SIPrefix? _prefix;
     private IUnit? _unit;
 
+    #region Serialization
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionfulQuantity), 0)]
+  public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      var s = (DimensionfulQuantity)obj;
+
+      info.AddValue("Value", s.Value);
+      info.AddValue("Prefix", s.Prefix);
+      info.AddValueOrNull("Unit", s.IsEmpty ? null : s.Unit);
+    }
+
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+    {
+      var value = info.GetDouble("Value");
+      var prefix = info.GetValue<SIPrefix>("Prefix", parent);
+      var unit = info.GetValueOrNull<IUnit>("Unit", parent);
+
+      if (unit is null)
+        return DimensionfulQuantity.Empty;
+      else
+        return new DimensionfulQuantity(value, prefix, unit);
+    }
+  }
+    #endregion
+
     /// <summary>Creates a dimensionless quantity with the provided value.</summary>
     /// <param name="value">Value.</param>
     public DimensionfulQuantity(double value)

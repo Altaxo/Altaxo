@@ -38,6 +38,22 @@ namespace Altaxo.Units.VolumetricMassDensity
 
     public static KilogramPerCubicMeter Instance { get { return _instance; } }
 
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KilogramPerCubicMeter), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return KilogramPerCubicMeter.Instance;
+      }
+    }
+    #endregion
+
     private KilogramPerCubicMeter()
         : base(-3, 1, 0, 0, 0, 0, 0)
     {

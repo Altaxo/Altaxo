@@ -39,6 +39,39 @@ namespace Altaxo.Units
     private SIPrefixList _prefixes;
     private IUnit _unit;
 
+    #region Serialization
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(UnitWithLimitedPrefixes), 0)]
+  public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      var s = (UnitWithLimitedPrefixes)obj;
+
+      info.AddValue("Unit", s.Unit);
+
+      info.CreateArray("PrefixList", s.Prefixes.Count);
+      foreach (var prefix in s.Prefixes)
+        info.AddValue("e", prefix);
+      info.CommitArray();
+    }
+
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+    {
+      var unit = (IUnit)info.GetValue("Unit", parent);
+
+      int count = info.OpenArray("PrefixList");
+
+      var list = new SIPrefix[count];
+      for (int i = 0; i < count; ++i)
+        list[i] = (SIPrefix)info.GetValue("e", parent);
+      info.CloseArray(count);
+
+      return new UnitWithLimitedPrefixes(unit, list);
+    }
+  }
+
+    #endregion
+
     public UnitWithLimitedPrefixes(IUnit unit, IEnumerable<SIPrefix> allowedPrefixes)
     {
       if (allowedPrefixes is null)

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,35 +24,15 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
-namespace Altaxo.Units
+namespace Altaxo.Serialization
 {
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SIPrefix), 0)]
-  public class SerializationSurrogate0_SIPrefix : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+  public class SupportsSerializationVersioningAttribute : Attribute
   {
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    public SupportsSerializationVersioningAttribute()
     {
-      var s = (SIPrefix)obj;
-
-      info.AddValue("Exponent", s.Exponent);
-      info.AddValue("Name", s.Name);
-      info.AddValue("Shortcut", s.ShortCut);
-    }
-
-    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-    {
-      var exponent = info.GetInt32("Exponent");
-      var name = info.GetString("Name");
-      var shortcut = info.GetString("Shortcut");
-
-      if (SIPrefix.TryGetPrefixFromExponent(exponent, out var prefix))
-        return prefix;
-      else
-        return new SIPrefix(name, shortcut, exponent);
     }
   }
 }

@@ -38,6 +38,24 @@ namespace Altaxo.Units.Angle
 
     public static Pi Instance { get { return _instance; } }
 
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Pi), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return Pi.Instance;
+      }
+    }
+    #endregion
+
+
+
     protected Pi()
     {
     }

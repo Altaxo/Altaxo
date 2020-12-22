@@ -40,6 +40,24 @@ namespace Altaxo.Units.Angle
 
     private const double DegreeToRad = Math.PI / 180;
 
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Degree), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return Degree.Instance;
+      }
+    }
+    #endregion
+
+
+
     protected Degree()
     {
     }

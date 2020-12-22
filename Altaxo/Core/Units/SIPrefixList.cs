@@ -32,21 +32,50 @@ using Altaxo.Calc;
 
 namespace Altaxo.Units
 {
-  public interface ISIPrefixList : IEnumerable<SIPrefix>
-  {
-    int Count { get; }
-
-    SIPrefix? TryGetPrefixFromShortCut(string shortCut);
-
-    bool ContainsNonePrefixOnly { get; }
-  }
-
+  /// <summary>
+  /// Represents a list of known <see cref="SIPrefix"/>es.
+  /// </summary>
+  /// <seealso cref="Altaxo.Units.ISIPrefixList" />
   public class SIPrefixList : ISIPrefixList
   {
     private Dictionary<string, SIPrefix> _shortCutDictionary;
     private Dictionary<int, SIPrefix> _exponentDictionary;
     private int[] _allExponentsSorted;
 
+    #region Serialization
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SIPrefixList), 0)]
+  public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      var s = (SIPrefixList)obj;
+
+      info.CreateArray("PrefixList", s.Count);
+      foreach (var prefix in s)
+        info.AddValue("e", prefix);
+      info.CommitArray();
+    }
+
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+    {
+      int count = info.OpenArray("PrefixList");
+
+      var list = new SIPrefix[count];
+      for (int i = 0; i < count; ++i)
+        list[i] = (SIPrefix)info.GetValue("e", parent);
+      info.CloseArray(count);
+
+      return new SIPrefixList(list);
+    }
+  }
+
+    #endregion
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SIPrefixList"/> class.
+    /// </summary>
+    /// <param name="from">An enumeration of prefixes that should be the content of this list.</param>
+    /// <exception cref="ArgumentNullException">from</exception>
     public SIPrefixList(IEnumerable<SIPrefix> from)
     {
       if (from is null)
@@ -65,6 +94,12 @@ namespace Altaxo.Units
       }
     }
 
+    /// <summary>
+    /// Gets the number of prefixes in this list.
+    /// </summary>
+    /// <value>
+    /// Number of prefixes in this list.
+    /// </value>
     public int Count
     {
       get { return _shortCutDictionary.Count; }
@@ -81,6 +116,14 @@ namespace Altaxo.Units
       }
     }
 
+    /// <summary>
+    /// Try the get a prefix, given its shortcut. Example: given the string 'n', this function will return the prefix <see cref="SIPrefix.Nano" />.
+    /// </summary>
+    /// <param name="shortCut">The short cut.</param>
+    /// <returns>
+    /// The prefix with the given shortcut. If no such prefix exist, the function will return null.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">shortCut</exception>
     public SIPrefix? TryGetPrefixFromShortCut(string shortCut)
     {
       if (string.IsNullOrEmpty(shortCut))
@@ -89,6 +132,12 @@ namespace Altaxo.Units
       return _shortCutDictionary.TryGetValue(shortCut, out var result) ? result : null;
     }
 
+    /// <summary>
+    /// Gets the prefix from the given exponent. Example: given an exponent of 9, this call will return the <see cref="SIPrefix.Giga"/> with a remaining factor of 1.
+    /// </summary>
+    /// <param name="exponent">The exponent.</param>
+    /// <returns>The prefix, and a remaining factor. If the exponent is greater than or equal to the exponent of the smallest Prefix (<see cref="SIPrefix.SmallestPrefix"/>), the
+    /// remaining factor is greater then or equal to 1.</returns>
     public (SIPrefix prefix, double remainingFactor) GetPrefixFromExponent(int exponent)
     {
       if (_exponentDictionary.TryGetValue(exponent, out SIPrefix? result))
@@ -111,11 +160,23 @@ namespace Altaxo.Units
       return (result, RMath.Pow(10, exponent - result.Exponent));
     }
 
+    /// <summary>
+    /// Returns an enumerator that iterates through all known prefixes.
+    /// </summary>
+    /// <returns>
+    /// An enumerator that iterates through all known prefixes.
+    /// </returns>
     public IEnumerator<SIPrefix> GetEnumerator()
     {
       return _shortCutDictionary.Values.GetEnumerator();
     }
 
+    /// <summary>
+    /// Returns an enumerator that iterates through all known prefixes.
+    /// </summary>
+    /// <returns>
+    /// An enumerator that iterates through all known prefixes.
+    /// </returns>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return _shortCutDictionary.Values.GetEnumerator();

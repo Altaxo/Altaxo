@@ -40,6 +40,22 @@ namespace Altaxo.Units.Time
 
     public static Minute Instance { get { return _instance; } }
 
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Minute), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return Minute.Instance;
+      }
+    }
+    #endregion
+
     protected Minute()
     {
     }

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2020 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,22 +23,27 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Altaxo.Units.ElectricPotential
+namespace Altaxo.Serialization.Xml
 {
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Volt), 0)]
-  public class SerializationSurrogate0_Volt : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  /// <summary>
+  /// Defines the encoding used to store Arrays of primitive types
+  /// </summary>
+  public enum XmlArrayEncoding
   {
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-    {
-    }
+    /// <summary>
+    /// Use a xml element for every array element.
+    /// </summary>
+    Xml,
 
-    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-    {
-      return Volt.Instance;
-    }
+    /// <summary>
+    /// Store the array data in binary form using Base64 encoding.
+    /// </summary>
+    Base64,
+
+    /// <summary>
+    /// Store th array data in binary form using BinHex encoding.
+    /// </summary>
+    BinHex
   }
 }

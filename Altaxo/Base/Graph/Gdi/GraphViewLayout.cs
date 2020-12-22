@@ -99,18 +99,18 @@ namespace Altaxo.Graph.Gdi
           _GraphController = s,
           _PathToGraph = (AbsoluteDocumentPath)info.GetValue("Graph", s)
         };
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+        info.DeserializationFinished += surr.EhDeserializationFinished;
 
         return s;
       }
 
-      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
       {
-        var o = AbsoluteDocumentPath.GetObject(_PathToGraph!, documentRoot);
+        var o = AbsoluteDocumentPath.GetObject(_PathToGraph!, (Main.IDocumentNode)documentRoot);
         if (o is GraphDocument gd && _GraphController is not null)
         {
           _GraphController._graphDocument = gd;
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
+          info.DeserializationFinished -= EhDeserializationFinished;
         }
       }
     }
@@ -147,7 +147,7 @@ namespace Altaxo.Graph.Gdi
           _GraphController = s,
           _PathToGraph = (AbsoluteDocumentPath)info.GetValue("Graph", s)
         };
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+        info.DeserializationFinished += surr.EhDeserializationFinished;
 
         s._isAutoZoomActive = info.GetBoolean("AutoZoom");
         if (false == s._isAutoZoomActive)
@@ -159,13 +159,13 @@ namespace Altaxo.Graph.Gdi
         return s;
       }
 
-      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
       {
-        var o = AbsoluteDocumentPath.GetObject(_PathToGraph!, documentRoot);
+        var o = AbsoluteDocumentPath.GetObject(_PathToGraph!, (Main.IDocumentNode)documentRoot);
         if (o is GraphDocument gd && _GraphController is not null)
         {
           _GraphController._graphDocument = (GraphDocument)o;
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
+          info.DeserializationFinished -= EhDeserializationFinished;
         }
       }
     }

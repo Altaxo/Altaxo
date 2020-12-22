@@ -154,12 +154,12 @@ namespace Altaxo.Graph.Plot.Data
             _plotAssociation = s
           };
 
-          info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+          info.DeserializationFinished += surr.EhDeserializationFinished;
         }
         return s;
       }
 
-      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
       {
         bool bAllResolved = true;
 
@@ -167,7 +167,7 @@ namespace Altaxo.Graph.Plot.Data
         {
           if (_xColumn is not null)
           {
-            var xColumn = Main.AbsoluteDocumentPath.GetObject(_xColumn, _plotAssociation, documentRoot);
+            var xColumn = Main.AbsoluteDocumentPath.GetObject(_xColumn, _plotAssociation, (Main.IDocumentNode)documentRoot);
             bAllResolved &= (xColumn is not null);
             if (xColumn is Altaxo.Data.IReadableColumn readableColum)
               _plotAssociation.XColumn = readableColum;
@@ -175,7 +175,7 @@ namespace Altaxo.Graph.Plot.Data
 
           if (_yColumn is not null)
           {
-            var yColumn = Main.AbsoluteDocumentPath.GetObject(_yColumn, _plotAssociation, documentRoot);
+            var yColumn = Main.AbsoluteDocumentPath.GetObject(_yColumn, _plotAssociation, (Main.IDocumentNode)documentRoot);
             bAllResolved &= (yColumn is not null);
             if (yColumn is Altaxo.Data.IReadableColumn readableColum)
               _plotAssociation.YColumn = readableColum;
@@ -192,7 +192,7 @@ namespace Altaxo.Graph.Plot.Data
         }
 
         if (bAllResolved)
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
+          info.DeserializationFinished -= EhDeserializationFinished;
       }
     }
 
@@ -260,7 +260,7 @@ namespace Altaxo.Graph.Plot.Data
             _plotAssociation = s
           };
 
-          info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished2);
+          info.DeserializationFinished += surr.EhDeserializationFinished2;
         }
 
         return s;
@@ -268,7 +268,7 @@ namespace Altaxo.Graph.Plot.Data
 
       private Main.AbsoluteDocumentPath? _labelColumn;
 
-      private void EhDeserializationFinished2(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+      private void EhDeserializationFinished2(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
       {
         bool bAllResolved = true;
 
@@ -276,7 +276,7 @@ namespace Altaxo.Graph.Plot.Data
         {
           if (_labelColumn is not null)
           {
-            var labelColumn = Main.AbsoluteDocumentPath.GetObject(_labelColumn, _plotAssociation, documentRoot);
+            var labelColumn = Main.AbsoluteDocumentPath.GetObject(_labelColumn, _plotAssociation, (Main.IDocumentNode)documentRoot);
             bAllResolved &= (labelColumn is not null);
             if (labelColumn is Altaxo.Data.IReadableColumn)
               _plotAssociation._deprecatedLabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
@@ -293,7 +293,7 @@ namespace Altaxo.Graph.Plot.Data
         }
 
         if (bAllResolved)
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished2);
+          info.DeserializationFinished -= EhDeserializationFinished2;
       }
     }
 

@@ -38,6 +38,22 @@ namespace Altaxo.Units.Temperature
 
     public static Kelvin Instance { get { return _instance; } }
 
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Kelvin), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return Kelvin.Instance;
+      }
+    }
+    #endregion
+
     private Kelvin()
         : base(0, 0, 0, 0, 1, 0, 0)
     {

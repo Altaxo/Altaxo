@@ -192,13 +192,13 @@ namespace Altaxo.Graph.Plot.Data
         if (bSurrogateUsed)
         {
           surr._plotAssociation = s;
-          info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+          info.DeserializationFinished += surr.EhDeserializationFinished;
         }
 
         return s;
       }
 
-      public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+      public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
       {
         bool bAllResolved = true;
 
@@ -206,7 +206,7 @@ namespace Altaxo.Graph.Plot.Data
         {
           if (_xColumnPath is not null)
           {
-            var xColumn = Main.AbsoluteDocumentPath.GetObject(_xColumnPath, _plotAssociation, documentRoot);
+            var xColumn = Main.AbsoluteDocumentPath.GetObject(_xColumnPath, _plotAssociation, (Main.IDocumentNode)documentRoot);
             bAllResolved &= (xColumn is not null);
             if (xColumn is Altaxo.Data.INumericColumn xn)
             {
@@ -217,7 +217,7 @@ namespace Altaxo.Graph.Plot.Data
 
           if (_yColumnPath is not null)
           {
-            var yColumn = Main.AbsoluteDocumentPath.GetObject(_yColumnPath, _plotAssociation, documentRoot);
+            var yColumn = Main.AbsoluteDocumentPath.GetObject(_yColumnPath, _plotAssociation, (Main.IDocumentNode)documentRoot);
             bAllResolved &= (yColumn is not null);
             if (yColumn is Altaxo.Data.INumericColumn yn)
             {
@@ -232,7 +232,7 @@ namespace Altaxo.Graph.Plot.Data
             {
               if (_vColumnPaths[i] is { } vpath)
               {
-                var vColumn = Main.AbsoluteDocumentPath.GetObject(vpath, _plotAssociation, documentRoot);
+                var vColumn = Main.AbsoluteDocumentPath.GetObject(vpath, _plotAssociation, (Main.IDocumentNode)documentRoot);
                 bAllResolved &= (vColumn is not null);
                 if (vColumn is Altaxo.Data.IReadableColumn vn)
                 {
@@ -246,7 +246,7 @@ namespace Altaxo.Graph.Plot.Data
 
           if (bAllResolved || isFinallyCall)
           {
-            info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
+            info.DeserializationFinished -= EhDeserializationFinished;
 #pragma warning disable 618
             _plotAssociation._matrixProxy = new DataTableMatrixProxy(_xColumnProxy!, _yColumnProxy!, _vColumnProxies!) { ParentObject = _plotAssociation };
 #pragma warning restore 618

@@ -82,16 +82,16 @@ namespace Altaxo.Worksheet
           surr._pathToLayout = (AbsoluteDocumentPath)info.GetValue("Layout", s);
         }
 
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+        info.DeserializationFinished += surr.EhDeserializationFinished;
 
         return s;
       }
 
-      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info,  object documentRoot, bool isFinallyCall)
       {
         if (_pathToLayout is not null)
         {
-          var o = AbsoluteDocumentPath.GetObject(_pathToLayout, documentRoot);
+          var o = AbsoluteDocumentPath.GetObject(_pathToLayout, (Main.IDocumentNode)documentRoot);
           if (o is Altaxo.Worksheet.WorksheetLayout layout)
           {
             _tableController!._worksheetLayout = layout;
@@ -101,7 +101,7 @@ namespace Altaxo.Worksheet
 
         if (_pathToLayout is null)
         {
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
+          info.DeserializationFinished -= EhDeserializationFinished;
         }
       }
     }

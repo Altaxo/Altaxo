@@ -156,7 +156,7 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="info">The deserialization information.</param>
     /// <param name="documentRoot">The document root of the current document.</param>
     /// <param name="isFinallyCall">If set to <c>true</c> this is the last callback before the dirty flag is cleared for the document.</param>
-    protected virtual void EhDeserializationFinished(Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+    protected virtual void EhDeserializationFinished(Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
     {
       if (isFinallyCall)
       {

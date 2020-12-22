@@ -100,7 +100,7 @@ namespace Altaxo.Main
         {
           var s = (DocNodeProxy?)o ?? new DocNodeProxy((AbsoluteDocumentPath)node);
           s.InternalDocumentPath = (AbsoluteDocumentPath)node;
-          info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
+          info.DeserializationFinished += s.EhXmlDeserializationFinished;
           return s;
         }
         else
@@ -143,7 +143,7 @@ namespace Altaxo.Main
           throw new InvalidProgramException();
 
         // create a callback to resolve the instance as early as possible
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
+        info.DeserializationFinished += s.EhXmlDeserializationFinished;
 
         return s;
       }
@@ -826,10 +826,10 @@ namespace Altaxo.Main
       }
     }
 
-    protected void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+    protected void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
     {
-      if (ResolveDocumentObject(documentRoot) is not null || isFinallyCall)
-        info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhXmlDeserializationFinished);
+      if (ResolveDocumentObject((Main.IDocumentNode)documentRoot) is not null || isFinallyCall)
+        info.DeserializationFinished -= EhXmlDeserializationFinished;
     }
 
     #region ICloneable Members

@@ -198,7 +198,7 @@
 									shortcut="Control|O"
 									class="Altaxo.Main.Commands.FileOpen" />
         <MenuItem id="Close" label="${res:XML.MainMenu.FileMenu.Close}" icon="Icons.16x16.CloseAllDocuments"
-					description="${res:XML.MainMenu.FileMenu.Close.Desription}" class="Altaxo.Main.Commands.CloseProject" />
+					description="${res:XML.MainMenu.FileMenu.Close.Description}" class="Altaxo.Main.Commands.CloseProject" />
         <MenuItem id="CloseSeparator" type = "Separator" />
         <MenuItem id="SaveProject" label="${res:XML.MainMenu.FileMenu.SaveProject}" icon="Icons.16x16.SaveAllIcon"
 					description="${res:XML.MainMenu.FileMenu.SaveProject.Description}" shortcut="Control|S"
@@ -330,11 +330,11 @@
       </Condition>
       <MenuItem id="ExitSeparator" type = "Separator" />
       <Condition name="IsInEmbeddedObjectMode" value="false" action="Exclude">
-        <MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.Exit}" description="${res:XML.MainMenu.FileMenu.Exit.Desription}"
+        <MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.Exit}" description="${res:XML.MainMenu.FileMenu.Exit.Description}"
 				class="Altaxo.Main.Commands.FileExit" />
       </Condition>
       <Condition name="IsInEmbeddedObjectMode" value="true" action="Exclude">
-        <MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.ExitAndReturn}" description="${res:XML.MainMenu.FileMenu.ExitAndReturn.Desription}"
+        <MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.ExitAndReturn}" description="${res:XML.MainMenu.FileMenu.ExitAndReturn.Description}"
 			class="Altaxo.Main.Commands.FileExit" />
       </Condition>
     </MenuItem>

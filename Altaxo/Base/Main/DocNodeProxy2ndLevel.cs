@@ -88,7 +88,7 @@ namespace Altaxo.Main
           throw new InvalidProgramException();
 
         // create a callback to resolve the instance as early as possible
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
+        info.DeserializationFinished += s.EhXmlDeserializationFinished;
 
         return s;
       }

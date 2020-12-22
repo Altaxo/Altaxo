@@ -544,7 +544,6 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       {
         return _dockingLayoutAsString;
       }
-      [MemberNotNull(nameof(_dockingLayoutAsString))]
       set
       {
         if (!(_dockingLayoutAsString == value))
@@ -566,7 +565,6 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       Current.PropertyService.SetValue(PropertyKeyWorkbenchDockingLayout, CurrentLayoutConfiguration);
     }
 
-    [MemberNotNull(nameof(_dockingLayoutAsString))]
     public void RestoreWorkbenchDockingLayoutFromPropertyService()
     {
       var restored = Current.PropertyService.GetValueOrNull(PropertyKeyWorkbenchDockingLayout, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);

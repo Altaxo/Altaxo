@@ -39,6 +39,22 @@ namespace Altaxo.Units.ElectricPotential
 
     public static Volt Instance { get { return _instance; } }
 
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Volt), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return Volt.Instance;
+      }
+    }
+    #endregion
+
     private Volt()
         : base(2, 1, -3, -1, 0, 0, 0)
     {

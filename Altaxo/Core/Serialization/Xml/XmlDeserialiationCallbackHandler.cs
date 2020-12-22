@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,31 +23,13 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Altaxo.Units
+namespace Altaxo.Serialization.Xml
 {
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PrefixedUnit), 0)]
-  public class SerializationSurrogate0_PrefixUnit : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-  {
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-    {
-      var s = (PrefixedUnit)obj;
-
-      info.AddValue("Prefix", s.Prefix);
-      info.AddValue("Unit", s.Unit);
-    }
-
-    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-    {
-      var prefix = (SIPrefix)info.GetValue("Prefix", parent);
-      var unit = (IUnit)info.GetValue("Unit", parent);
-
-      return new PrefixedUnit(prefix, unit);
-    }
-  }
+  /// <summary>
+  /// This function is used to call back Deserialization surrogates after finishing deserialization
+  /// </summary>
+  /// <param name="info">The deserialization info from which this call is initiated.</param>
+  /// <param name="documentRoot">The first element (the root element) in the hierarchy of deserialized elements.</param>
+  /// <param name="isFinalCall">If true, this is the last call of this kind.</param>
+  public delegate void XmlDeserializationCallbackEventHandler(IXmlDeserializationInfo info, object documentRoot, bool isFinalCall);
 }

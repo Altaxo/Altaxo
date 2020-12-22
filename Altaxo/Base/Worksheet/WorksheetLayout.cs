@@ -190,11 +190,11 @@ namespace Altaxo.Worksheet
         info.CloseArray(count);
       }
 
-      public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+      public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
       {
         if (_pathToTable is not null && _worksheetLayout!.DataTable is null)
         {
-          object? tableObj = Main.AbsoluteDocumentPath.GetObject(_pathToTable, _worksheetLayout, documentRoot);
+          object? tableObj = Main.AbsoluteDocumentPath.GetObject(_pathToTable, _worksheetLayout, (Main.IDocumentNode)documentRoot);
           if (tableObj is Altaxo.Data.DataTable table)
           {
             _worksheetLayout.DataTable = table;
@@ -205,7 +205,7 @@ namespace Altaxo.Worksheet
         var resolvedStyles = new HashSet<AbsoluteDocumentPath>();
         foreach (var entry in _colStyles!)
         {
-          object? resolvedobj = Main.AbsoluteDocumentPath.GetObject((Main.AbsoluteDocumentPath)entry.Key, _worksheetLayout!, documentRoot);
+          object? resolvedobj = Main.AbsoluteDocumentPath.GetObject((Main.AbsoluteDocumentPath)entry.Key, _worksheetLayout!, (Main.IDocumentNode)documentRoot);
           if (!(resolvedobj is null))
           {
             _worksheetLayout!.DataColumnStyles.Add((DataColumn)resolvedobj, (ColumnStyle)entry.Value);
@@ -218,7 +218,7 @@ namespace Altaxo.Worksheet
 
         // if all columns have resolved, we can close the event link
         if (_colStyles.Count == 0 && _pathToTable is null)
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
+          info.DeserializationFinished -= EhDeserializationFinished;
       }
     }
 

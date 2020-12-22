@@ -217,7 +217,7 @@ namespace Altaxo.Main.Services
 #nullable disable
       if (_isDisposed) throw new ObjectDisposedException(this.GetType().Name);
 
-      var context = Current.Project.GetPropertyContext();
+      var context = Current.IProjectService.CurrentProject.GetPropertyContext();
       var storageSettings = context.GetValue(Altaxo.Serialization.StorageSettings.PropertyKeyStorageSettings, new Serialization.StorageSettings());
 
       IDictionary<string, IProjectItem> dictionaryResult = null;

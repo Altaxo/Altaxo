@@ -31,18 +31,42 @@ using System.Text;
 
 namespace Altaxo.Units
 {
-  public interface IPrefixedUnit
-  {
-    SIPrefix Prefix { get; }
-
-    IUnit Unit { get; }
-  }
-
+  /// <summary>
+  /// Represents a prefixed unit, i.e. a unit together with an SI prefix.
+  /// </summary>
+  /// <seealso cref="Altaxo.Units.IPrefixedUnit" />
   public struct PrefixedUnit : IPrefixedUnit
   {
     private IUnit _unit;
     private SIPrefix _prefix;
 
+    #region Serialization
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PrefixedUnit), 0)]
+  public class SerializationSurrogate0_PrefixUnit : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      var s = (PrefixedUnit)obj;
+
+      info.AddValue("Prefix", s.Prefix);
+      info.AddValue("Unit", s.Unit);
+    }
+
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+    {
+      var prefix = (SIPrefix)info.GetValue("Prefix", parent);
+      var unit = (IUnit)info.GetValue("Unit", parent);
+
+      return new PrefixedUnit(prefix, unit);
+    }
+  }
+    #endregion
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PrefixedUnit"/> struct.
+    /// </summary>
+    /// <param name="prefix">The SI prefix.</param>
+    /// <param name="unit">The unit.</param>
     public PrefixedUnit(SIPrefix prefix, IUnit unit)
     {
       prefix ??= SIPrefix.None;
@@ -67,10 +91,28 @@ namespace Altaxo.Units
       }
     }
 
+    /// <summary>
+    /// Gets the unit.
+    /// </summary>
+    /// <value>
+    /// The unit.
+    /// </value>
     public IUnit Unit { get { return _unit ?? Units.Dimensionless.Unity.Instance; } }
 
+    /// <summary>
+    /// Gets the prefix.
+    /// </summary>
+    /// <value>
+    /// The prefix.
+    /// </value>
     public SIPrefix Prefix { get { return _prefix ?? SIPrefix.None; } }
 
+    /// <summary>
+    /// Converts to a string consisting of prefix and unit.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="System.String" /> that represents this instance.
+    /// </returns>
     public override string ToString()
     {
       return Prefix.ShortCut + Unit.ShortCut;

@@ -146,20 +146,20 @@ namespace Altaxo.Text.GuiModels
           _pathToDocument = pathToDocument,
         };
 
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+        info.DeserializationFinished += surr.EhDeserializationFinished;
 
         return s;
       }
 
-      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
       {
         if (_pathToDocument is not null && _deserializedInstance is not null)
         {
-          var o = AbsoluteDocumentPath.GetObject(_pathToDocument, documentRoot);
+          var o = AbsoluteDocumentPath.GetObject(_pathToDocument, (Main.IDocumentNode)documentRoot);
           if (o is TextDocument textDoc)
           {
             _deserializedInstance.Document = textDoc;
-            info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
+            info.DeserializationFinished -= EhDeserializationFinished;
           }
         }
       }

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,22 +26,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 #nullable enable
 
-namespace Altaxo.Units.ElectricCurrent
+namespace Altaxo.Units.Force
 {
-  [UnitDescription("Electric current", 0, 0, 0, 1, 0, 0, 0)]
-  public class Ampere : SIUnit
+  [UnitDescription("Force", 1, 1, -2, 0, 0, 0, 0)]
+  public class GramForce : UnitBase, IUnit
   {
-    private static readonly Ampere _instance = new Ampere();
+    private static readonly GramForce _instance = new GramForce();
 
-    public static Ampere Instance { get { return _instance; } }
+    public static GramForce Instance { get { return _instance; } }
+
+    private const double _factorToSI = Science.SIConstants.GRAV_ACCEL / 1000d;
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Ampere), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GramForce), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -50,29 +51,43 @@ namespace Altaxo.Units.ElectricCurrent
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        return Ampere.Instance;
+        return GramForce.Instance;
       }
     }
     #endregion
 
-    private Ampere()
-        : base(0, 0, 0, 1, 0, 0, 0)
+    protected GramForce()
     {
     }
 
-    public override string Name
+    public string Name
     {
-      get { return "Ampere"; }
+      get { return "GramForce"; }
     }
 
-    public override string ShortCut
+    public string ShortCut
     {
-      get { return "A"; }
+      get { return "gf"; }
     }
 
-    public override ISIPrefixList Prefixes
+    public double ToSIUnit(double x)
     {
-      get { return SIPrefix.ListWithAllKnownPrefixes; }
+      return x * _factorToSI;
+    }
+
+    public double FromSIUnit(double x)
+    {
+      return x / _factorToSI;
+    }
+
+    public ISIPrefixList Prefixes
+    {
+      get { return SIPrefix.ListWithNonePrefixOnly; }
+    }
+
+    public SIUnit SIUnit
+    {
+      get { return Newton.Instance; }
     }
   }
 }

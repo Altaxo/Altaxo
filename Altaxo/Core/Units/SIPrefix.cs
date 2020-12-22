@@ -32,6 +32,9 @@ using System.Text;
 
 namespace Altaxo.Units
 {
+  /// <summary>
+  /// Represents an SI prefix, such as nano, micro, Mega, Giga etc.
+  /// </summary>
   public class SIPrefix : IUnit, IEquatable<SIPrefix>, IComparable<SIPrefix>
   {
     private string _name;
@@ -77,6 +80,34 @@ namespace Altaxo.Units
     private static SIPrefix _prefix_zetta;
     private static SIPrefix _prefix_yotta;
 
+    #region Serialization
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SIPrefix), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (SIPrefix)obj;
+
+        info.AddValue("Exponent", s.Exponent);
+        info.AddValue("Name", s.Name);
+        info.AddValue("Shortcut", s.ShortCut);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var exponent = info.GetInt32("Exponent");
+        var name = info.GetString("Name");
+        var shortcut = info.GetString("Shortcut");
+
+        if (SIPrefix.TryGetPrefixFromExponent(exponent, out var prefix))
+          return prefix;
+        else
+          return new SIPrefix(name, shortcut, exponent);
+      }
+    }
+
+    #endregion
+
     public static SIPrefix Yocto { get { return _prefix_yocto; } }
 
     public static SIPrefix Zepto { get { return _prefix_zepto; } }
@@ -119,8 +150,20 @@ namespace Altaxo.Units
 
     public static SIPrefix Yotta { get { return _prefix_yotta; } }
 
+    /// <summary>
+    /// Gets the maximum length of the shortcuts of any of the known prefixes.
+    /// </summary>
+    /// <value>
+    /// The maximum length of of the shortcuts of any of the known prefixes.
+    /// </value>
     public static int MaxShortCutLength { get { return 2; } }
 
+    /// <summary>
+    /// Gets the minimum length of the shortcuts of any of the known prefixes.
+    /// </summary>
+    /// <value>
+    /// The minimum length of of the shortcuts of any of the known prefixes.
+    /// </value>
     public static int MinShortCutLength { get { return 1; } }
 
     public static SIPrefix SmallestPrefix { get { return _prefix_yocto; } }
@@ -199,7 +242,7 @@ namespace Altaxo.Units
     {
       get
       {
-        return _allPrefixes;
+        return _multipleOf3Prefixes;
       }
     }
 
@@ -214,6 +257,12 @@ namespace Altaxo.Units
       }
     }
 
+    /// <summary>
+    /// Try the get a prefix given the prefix'es shortcut.
+    /// </summary>
+    /// <param name="shortcut">The shortcut of the prefix.</param>
+    /// <returns>The prefix to which the given shortcut belongs. Null if no such prefix could be found.</returns>
+    /// <exception cref="ArgumentNullException">shortcut</exception>
     public static SIPrefix? TryGetPrefixFromShortcut(string shortcut)
     {
       if (string.IsNullOrEmpty(shortcut))

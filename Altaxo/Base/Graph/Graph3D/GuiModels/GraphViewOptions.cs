@@ -87,14 +87,14 @@ namespace Altaxo.Graph.Graph3D.GuiModels
         s._rootLayerMarkersVisibility = info.GetNullableEnum<RootLayerMarkersVisibility>("RootLayerMarkersVisibility");
 
         var surr = new XmlSerializationSurrogate0() { _deserializedObject = s, _pathToGraphDocument = pathToGraph };
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+        info.DeserializationFinished += surr.EhDeserializationFinished;
 
         return s;
       }
 
-      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IDocumentNode documentRoot, bool isFinallyCall)
+      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
       {
-        var o = AbsoluteDocumentPath.GetObject(_pathToGraphDocument!, documentRoot);
+        var o = AbsoluteDocumentPath.GetObject(_pathToGraphDocument!, (Main.IDocumentNode)documentRoot);
         if (o is GraphDocument gd && _deserializedObject is not null)
         {
           _deserializedObject._graphDocument = gd;
