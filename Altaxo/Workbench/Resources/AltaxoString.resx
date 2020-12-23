@@ -1,64 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -112,10 +53,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=5.0.1.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.1.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="XML.MainMenu.ColumnMenu.SetColumnAsNegError" xml:space="preserve">
     <value>Set column as &amp;-Error</value>
@@ -146,38 +87,6 @@
   </data>
   <data name="XML.MainMenu.WorksheetMenu.ClearDataOnly.Description" xml:space="preserve">
     <value>Clears the data columns only</value>
-  </data>
-  <data name="XML.MML.KohlrauschTimeDomain" xml:space="preserve">
-    <value>&lt;math&gt;
-  &lt;mi&gt;&amp;Phi;&lt;/mi&gt;
-  &lt;mo&gt;&amp;af;&lt;/mo&gt;
-  &lt;mrow&gt;
-    &lt;mo&gt;(&lt;/mo&gt;
-    &lt;mi&gt;t&lt;/mi&gt;
-    &lt;mo&gt;)&lt;/mo&gt;
-  &lt;/mrow&gt;
-  &lt;mo&gt;=&lt;/mo&gt;
-  &lt;mrow&gt;
-    &lt;mi&gt;exp&lt;/mi&gt;
-    &lt;mo&gt;&amp;af;&lt;/mo&gt;
-    &lt;mrow&gt;
-      &lt;mo&gt;(&lt;/mo&gt;
-      &lt;msup&gt;
-        &lt;mrow&gt;
-          &lt;mi&gt;-&lt;/mi&gt;
-          &lt;mo&gt;(&lt;/mo&gt;
-          &lt;mfrac&gt;
-            &lt;mi&gt;t&lt;/mi&gt;
-            &lt;mi&gt;&amp;tau;&lt;/mi&gt;
-          &lt;/mfrac&gt;
-          &lt;mo&gt;)&lt;/mo&gt;
-        &lt;/mrow&gt;
-        &lt;mi&gt;&amp;beta;&lt;/mi&gt;
-      &lt;/msup&gt;
-      &lt;mo&gt;)&lt;/mo&gt;
-    &lt;/mrow&gt;
-  &lt;/mrow&gt;
-&lt;/math&gt;</value>
   </data>
   <data name="XML.MainMenu.LayerMenu.PasteInActiveLayer.Description" xml:space="preserve">
     <value>Paste the layer as a template in the active layer.</value>
@@ -345,65 +254,6 @@ Parameter:\par
   </data>
   <data name="XML.MainMenu.PlotMenu.PlotDensityImage.Description" xml:space="preserve">
     <value>Creates a linear density image of the selected column range</value>
-  </data>
-  <data name="XML.MML.HavriliakNegamiSusceptibility.Dielectrics" xml:space="preserve">
-    <value>&lt;math&gt;
-  &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
-  &lt;mo&gt;&amp;DiacriticalAcute;&lt;/mo&gt;
-  &lt;mo&gt;-&lt;/mo&gt;
-  &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-  &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
-  &lt;mo&gt;&amp;DiacriticalDoubleAcute;&lt;/mo&gt;
-  &lt;mo&gt;=&lt;/mo&gt;
-  &lt;msub&gt;
-    &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
-    &lt;mo&gt;&amp;infin;&lt;/mo&gt;
-  &lt;/msub&gt;
-  &lt;mo&gt;+&lt;/mo&gt;
-  &lt;mfrac&gt;
-    &lt;mrow&gt;
-      &lt;mi&gt;&amp;Delta;&lt;/mi&gt;
-      &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
-    &lt;/mrow&gt;
-    &lt;msup&gt;
-      &lt;mrow&gt;
-        &lt;mo&gt;(&lt;/mo&gt;
-        &lt;mrow&gt;
-          &lt;msup&gt;
-            &lt;mrow&gt;
-              &lt;mn&gt;1&lt;/mn&gt;
-              &lt;mo&gt;+&lt;/mo&gt;
-              &lt;mo&gt;(&lt;/mo&gt;
-              &lt;mrow&gt;
-                &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-                &lt;mi&gt;&amp;tau;&lt;/mi&gt;
-                &lt;mi&gt;&amp;omega;&lt;/mi&gt;
-              &lt;/mrow&gt;
-              &lt;mo&gt;)&lt;/mo&gt;
-            &lt;/mrow&gt;
-            &lt;mi&gt;&amp;alpha;&lt;/mi&gt;
-          &lt;/msup&gt;
-        &lt;/mrow&gt;
-        &lt;mo&gt;)&lt;/mo&gt;
-      &lt;/mrow&gt;
-      &lt;mrow&gt;
-        &lt;mi&gt;&amp;gamma;&lt;/mi&gt;
-      &lt;/mrow&gt;
-    &lt;/msup&gt;
-  &lt;/mfrac&gt;
-  &lt;mo&gt;-&lt;/mo&gt;
-  &lt;mfrac&gt;
-    &lt;mrow&gt;
-      &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-            &lt;mi&gt;&amp;sigma;&lt;/mi&gt;
-    &lt;/mrow&gt;
-    &lt;mrow&gt; &lt;mi&gt;&amp;omega;&lt;/mi&gt;
- &lt;msub&gt;
-      &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
-      &lt;mn&gt;0&lt;/mn&gt;
-    &lt;/msub&gt;
-  &lt;/mrow&gt; &lt;/mfrac&gt;
-&lt;/math&gt;</value>
   </data>
   <data name="XML.ProjectBrowserMenu.ViewOnSelect" xml:space="preserve">
     <value>View on select:</value>
@@ -754,96 +604,6 @@ in the path ${Path}.
   <data name="XML.ProjectBrowserMenu.ShowAllWindowsRecursively.Description" xml:space="preserve">
     <value>Show all windows in this folder and in its subfolders.</value>
   </data>
-  <data name="XML.MML.GenericRetardationModulus" xml:space="preserve">
-    <value>&lt;math&gt;
-  &lt;mi&gt;M&lt;/mi&gt;
-  &lt;mo&gt;&amp;DiacriticalAcute;&lt;/mo&gt;
-  &lt;mo&gt;+&lt;/mo&gt;
-  &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-  &lt;mi&gt;M&lt;/mi&gt;
-  &lt;mo&gt;&amp;DiacriticalDoubleAcute;&lt;/mo&gt;
-  &lt;mo&gt;=&lt;/mo&gt;
-  &lt;mfrac&gt;
-    &lt;mn&gt;1&lt;/mn&gt;
-    &lt;mrow&gt;
-      &lt;mfrac&gt;
-        &lt;mn&gt;1&lt;/mn&gt;
-        &lt;msub&gt;
-          &lt;mi&gt;M&lt;/mi&gt;
-          &lt;mi&gt;&amp;infin;&lt;/mi&gt;
-        &lt;/msub&gt;
-      &lt;/mfrac&gt;
-      &lt;mo&gt;+&lt;/mo&gt;
-      &lt;mrow&gt;
-        &lt;mo&gt;(&lt;/mo&gt;
-        &lt;mfrac&gt;
-          &lt;mn&gt;1&lt;/mn&gt;
-          &lt;msub&gt;
-            &lt;mi&gt;M&lt;/mi&gt;
-            &lt;mn&gt;0&lt;/mn&gt;
-          &lt;/msub&gt;
-        &lt;/mfrac&gt;
-        &lt;mo&gt;-&lt;/mo&gt;
-        &lt;mfrac&gt;
-          &lt;mn&gt;1&lt;/mn&gt;
-          &lt;msub&gt;
-            &lt;mi&gt;M&lt;/mi&gt;
-            &lt;mi&gt;&amp;infin;&lt;/mi&gt;
-          &lt;/msub&gt;
-        &lt;/mfrac&gt;
-        &lt;mo&gt;)&lt;/mo&gt;
-      &lt;/mrow&gt;
-      &lt;mo&gt;&amp;InvisibleTimes;&lt;/mo&gt;
-      &lt;mo&gt;&amp;it;&lt;/mo&gt;
-      &lt;mrow&gt;
-        &lt;munderover&gt;
-          &lt;mi&gt;&amp;Integral;&lt;/mi&gt;
-          &lt;mn&gt;0&lt;/mn&gt;
-          &lt;mi&gt;&amp;infin;&lt;/mi&gt;
-        &lt;/munderover&gt;
-        &lt;mo&gt;&amp;it;&lt;/mo&gt;
-        &lt;mrow&gt;
-          &lt;mrow&gt;
-            &lt;mi&gt;exp&lt;/mi&gt;
-            &lt;mo&gt;&amp;af;&lt;/mo&gt;
-            &lt;mrow&gt;
-              &lt;mo&gt;(&lt;/mo&gt;
-              &lt;mrow&gt;
-                &lt;mi&gt;-&lt;/mi&gt;
-                &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-                &lt;mi&gt;&amp;omega;&lt;/mi&gt;
-                &lt;mi&gt;t&lt;/mi&gt;
-              &lt;/mrow&gt;
-              &lt;mo&gt;)&lt;/mo&gt;
-            &lt;/mrow&gt;
-          &lt;/mrow&gt;
-          &lt;mover&gt;
-            &lt;mi&gt;&amp;Phi;&lt;/mi&gt;
-            &lt;mi&gt;.&lt;/mi&gt;
-          &lt;/mover&gt;
-          &lt;mo&gt;&amp;af;&lt;/mo&gt;
-          &lt;mrow&gt;
-            &lt;mo&gt;(&lt;/mo&gt;
-            &lt;mi&gt;t&lt;/mi&gt;
-            &lt;mo&gt;)&lt;/mo&gt;
-          &lt;/mrow&gt;
-          &lt;mi&gt;&amp;dd;&lt;/mi&gt;
-          &lt;mi&gt;t&lt;/mi&gt;
-        &lt;/mrow&gt;
-      &lt;/mrow&gt;
-      &lt;mo&gt;-&lt;/mo&gt;
-      &lt;mfrac&gt;
-        &lt;mrow&gt;
-          &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-          &lt;mi&gt;&amp;eta;&lt;/mi&gt;
-        &lt;/mrow&gt;
-        &lt;mi&gt;&amp;omega;&lt;/mi&gt;
-      &lt;/mfrac&gt;
-    &lt;/mrow&gt;
-  &lt;/mfrac&gt;
-&lt;/math&gt;
-</value>
-  </data>
   <data name="XML.MainMenu.FileMenu.SaveProjectAs" xml:space="preserve">
     <value>Save Project As ..</value>
   </data>
@@ -903,44 +663,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.GraphMenu.Rename" xml:space="preserve">
     <value>Rename graph</value>
-  </data>
-  <data name="FitFunctions.Relaxation.Kohlrausch.Decay" xml:space="preserve">
-    <value>This implements the Kohlrausch decay function in the time domain: \par 
-&lt;math&gt;
-  &lt;mrow&gt;
-    &lt;mrow&gt;
-    &lt;mi&gt;y&lt;/mi&gt;
-      &lt;mrow&gt;
-  &lt;mo&gt;(&lt;/mo&gt;
-  &lt;mi&gt;x&lt;/mi&gt;
-  &lt;mo&gt;)&lt;/mo&gt;
-      &lt;/mrow&gt;
-    &lt;/mrow&gt;
-  &lt;mo&gt;=&lt;/mo&gt;
-  &lt;mrow&gt;
-    &lt;mi&gt;o&lt;/mi&gt;
-    &lt;mo&gt;+&lt;/mo&gt;
-    &lt;mi&gt;a&lt;/mi&gt;
-    &lt;mo&gt;&amp;times;&lt;/mo&gt;
-    &lt;mi&gt;exp&lt;/mi&gt;
-    &lt;mo&gt;(&lt;/mo&gt;
-    &lt;mi&gt;-&lt;/mi&gt;
-    &lt;msup&gt;
-      &lt;mrow&gt;
-        &lt;mo&gt;(&lt;/mo&gt;
-        &lt;mfrac&gt;
-          &lt;mi&gt;x&lt;/mi&gt;
-          &lt;mi&gt;&amp;tau;&lt;/mi&gt;
-        &lt;/mfrac&gt;
-        &lt;mo&gt;)&lt;/mo&gt;
-      &lt;/mrow&gt;
-      &lt;mi&gt;&amp;beta;&lt;/mi&gt;
-    &lt;/msup&gt;
-    &lt;mo&gt;)&lt;/mo&gt;
-  &lt;/mrow&gt;
-  &lt;/mrow&gt;
-&lt;/math&gt;
- \par where o is the offset, a is the amplitude, \f2 t\f0  is the decay time and \f2 b\f0  is the form parameter.</value>
   </data>
   <data name="XML.MainMenu.ColumnMenu.SetColumnAsY" xml:space="preserve">
     <value>Set column as Y</value>
@@ -1205,59 +927,6 @@ in the path ${Path}.
   </data>
   <data name="ClassNames.Altaxo.Graph.Scales.LinearScale" xml:space="preserve">
     <value>Linear scale</value>
-  </data>
-  <data name="XML.MML.HavriliakNegamiSusceptibility.General" xml:space="preserve">
-    <value>&lt;math&gt;
-  &lt;mi&gt;&amp;chi;&lt;/mi&gt;
-  &lt;mo&gt;&amp;DiacriticalAcute;&lt;/mo&gt;
-  &lt;mo&gt;-&lt;/mo&gt;
-  &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-  &lt;mi&gt;&amp;chi;&lt;/mi&gt;
-  &lt;mo&gt;&amp;DiacriticalDoubleAcute;&lt;/mo&gt;
-  &lt;mo&gt;=&lt;/mo&gt;
-  &lt;msub&gt;
-    &lt;mi&gt;&amp;chi;&lt;/mi&gt;
-    &lt;mo&gt;&amp;infin;&lt;/mo&gt;
-  &lt;/msub&gt;
-  &lt;mo&gt;+&lt;/mo&gt;
-  &lt;mfrac&gt;
-    &lt;mrow&gt;
-      &lt;mi&gt;&amp;Delta;&lt;/mi&gt;
-      &lt;mi&gt;&amp;chi;&lt;/mi&gt;
-    &lt;/mrow&gt;
-    &lt;msup&gt;
-      &lt;mrow&gt;
-        &lt;mo&gt;(&lt;/mo&gt;
-        &lt;mrow&gt;
-          &lt;msup&gt;
-            &lt;mrow&gt;
-              &lt;mn&gt;1&lt;/mn&gt;
-              &lt;mo&gt;+&lt;/mo&gt;
-              &lt;mo&gt;(&lt;/mo&gt;
-              &lt;mrow&gt;
-                &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-                &lt;mi&gt;&amp;tau;&lt;/mi&gt;
-                &lt;mi&gt;&amp;omega;&lt;/mi&gt;
-              &lt;/mrow&gt;
-              &lt;mo&gt;)&lt;/mo&gt;
-            &lt;/mrow&gt;
-            &lt;mi&gt;&amp;alpha;&lt;/mi&gt;
-          &lt;/msup&gt;
-        &lt;/mrow&gt;
-        &lt;mo&gt;)&lt;/mo&gt;
-      &lt;/mrow&gt;
-      &lt;mrow&gt;
-        &lt;mi&gt;&amp;gamma;&lt;/mi&gt;
-      &lt;/mrow&gt;
-    &lt;/msup&gt;
-  &lt;/mfrac&gt;
-  &lt;mo&gt;-&lt;/mo&gt;
-  &lt;mfrac&gt; &lt;mrow&gt;
-    &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-      &lt;mi&gt;&amp;eta;&lt;/mi&gt;
-  &lt;/mrow&gt;
- &lt;mi&gt;&amp;omega;&lt;/mi&gt;
-  &lt;/mfrac&gt; &lt;/math&gt;</value>
   </data>
   <data name="XML.MainMenu.WorksheetMenu.Transpose.Description" xml:space="preserve">
     <value>Transposes the current worksheet</value>
@@ -1530,70 +1199,6 @@ M\sub\u8734?\nosupersub  :\tab high frequency modulus limit\par
   </data>
   <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.VectorCartesicPlotStyle" xml:space="preserve">
     <value>CartesicVector</value>
-  </data>
-  <data name="XML.MML.GenericSusceptibility" xml:space="preserve">
-    <value>&lt;math&gt;
-  &lt;mi&gt;&amp;chi;&lt;/mi&gt;
-  &lt;mo&gt;&amp;DiacriticalAcute;&lt;/mo&gt;
-  &lt;mo&gt;-&lt;/mo&gt;
-  &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-  &lt;mi&gt;&amp;chi;&lt;/mi&gt;
-  &lt;mo&gt;&amp;DiacriticalDoubleAcute;&lt;/mo&gt;
-  &lt;mo&gt;=&lt;/mo&gt;
-  &lt;msub&gt;
-    &lt;mi&gt;&amp;chi;&lt;/mi&gt;
-    &lt;mi&gt;&amp;infin;&lt;/mi&gt;
-  &lt;/msub&gt;
-  &lt;mo&gt;+&lt;/mo&gt;
-  &lt;mi&gt;&amp;Delta;&lt;/mi&gt;
-  &lt;mi&gt;&amp;chi;&lt;/mi&gt;
-  &lt;mo&gt;&amp;InvisibleTimes;&lt;/mo&gt;
-  &lt;mo&gt;&amp;it;&lt;/mo&gt;
-  &lt;mrow&gt;
-    &lt;munderover&gt;
-      &lt;mi&gt;&amp;Integral;&lt;/mi&gt;
-      &lt;mn&gt;0&lt;/mn&gt;
-      &lt;mi&gt;&amp;infin;&lt;/mi&gt;
-    &lt;/munderover&gt;
-    &lt;mo&gt;&amp;it;&lt;/mo&gt;
-    &lt;mrow&gt;
-      &lt;mrow&gt;
-        &lt;mi&gt;exp&lt;/mi&gt;
-        &lt;mo&gt;&amp;af;&lt;/mo&gt;
-        &lt;mrow&gt;
-          &lt;mo&gt;(&lt;/mo&gt;
-          &lt;mrow&gt;
-            &lt;mi&gt;-&lt;/mi&gt;
-            &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-            &lt;mi&gt;&amp;omega;&lt;/mi&gt;
-            &lt;mi&gt;t&lt;/mi&gt;
-          &lt;/mrow&gt;
-          &lt;mo&gt;)&lt;/mo&gt;
-        &lt;/mrow&gt;
-      &lt;/mrow&gt;
-      &lt;mover&gt;
-        &lt;mi&gt;&amp;Phi;&lt;/mi&gt;
-        &lt;mi&gt;.&lt;/mi&gt;
-      &lt;/mover&gt;
-      &lt;mo&gt;&amp;af;&lt;/mo&gt;
-      &lt;mrow&gt;
-        &lt;mo&gt;(&lt;/mo&gt;
-        &lt;mi&gt;t&lt;/mi&gt;
-        &lt;mo&gt;)&lt;/mo&gt;
-      &lt;/mrow&gt;
-      &lt;mi&gt;&amp;dd;&lt;/mi&gt;
-      &lt;mi&gt;t&lt;/mi&gt;
-    &lt;/mrow&gt;
-  &lt;/mrow&gt;
-  &lt;mo&gt;-&lt;/mo&gt;
-  &lt;mfrac&gt;
-  &lt;mrow&gt;
-    &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-    &lt;mi&gt;&amp;eta;&lt;/mi&gt;
-  &lt;/mrow&gt;
-  &lt;mi&gt;&amp;omega;&lt;/mi&gt;
-  &lt;/mfrac&gt;
-&lt;/math&gt;</value>
   </data>
   <data name="XML.MainMenu.GraphMenu.Refresh.Description" xml:space="preserve">
     <value>Refreshes the graph. Draws the graph completely new.</value>
@@ -2227,76 +1832,6 @@ Parameter:\par
   </data>
   <data name="ClassNames.Altaxo.Graph.Scales.AngularRadianScale" xml:space="preserve">
     <value>Angular radian scale</value>
-  </data>
-  <data name="XML.MML.GenericDielectricSusceptibility" xml:space="preserve">
-    <value>&lt;math&gt;
-  &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
-  &lt;mo&gt;&amp;DiacriticalAcute;&lt;/mo&gt;
-  &lt;mo&gt;-&lt;/mo&gt;
-  &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-  &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
-  &lt;mo&gt;&amp;DiacriticalDoubleAcute;&lt;/mo&gt;
-  &lt;mo&gt;=&lt;/mo&gt;
-  &lt;msub&gt;
-    &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
-    &lt;mi&gt;&amp;infin;&lt;/mi&gt;
-  &lt;/msub&gt;
-  &lt;mo&gt;+&lt;/mo&gt;
-  &lt;mi&gt;&amp;Delta;&lt;/mi&gt;
-  &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
-  &lt;mo&gt;&amp;InvisibleTimes;&lt;/mo&gt;
-  &lt;mo&gt;&amp;it;&lt;/mo&gt;
-  &lt;mrow&gt;
-    &lt;munderover&gt;
-      &lt;mi&gt;&amp;int;&lt;/mi&gt;
-      &lt;mn&gt;0&lt;/mn&gt;
-      &lt;mi&gt;&amp;infin;&lt;/mi&gt;
-    &lt;/munderover&gt;
-    &lt;mo&gt;&amp;it;&lt;/mo&gt;
-    &lt;mrow&gt;
-      &lt;mi&gt;exp&lt;/mi&gt;
-      &lt;mo&gt;&amp;af;&lt;/mo&gt;
-      &lt;mrow&gt;
-        &lt;mo&gt;(&lt;/mo&gt;
-        &lt;mrow&gt;
-          &lt;mi&gt;-&lt;/mi&gt;
-          &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-          &lt;mi&gt;&amp;omega;&lt;/mi&gt;
-          &lt;mi&gt;t&lt;/mi&gt;
-        &lt;/mrow&gt;
-        &lt;mo&gt;)&lt;/mo&gt;
-      &lt;/mrow&gt;
-    &lt;/mrow&gt;
-    &lt;mover&gt;
-      &lt;mi&gt;&amp;Phi;&lt;/mi&gt;
-      &lt;mi&gt;.&lt;/mi&gt;
-    &lt;/mover&gt;
-    &lt;mo&gt;&amp;af;&lt;/mo&gt;
-    &lt;mrow&gt;
-      &lt;mo&gt;(&lt;/mo&gt;
-      &lt;mi&gt;t&lt;/mi&gt;
-      &lt;mo&gt;)&lt;/mo&gt;
-    &lt;/mrow&gt;
-    &lt;mi&gt;&amp;dd;&lt;/mi&gt;
-    &lt;mi&gt;t&lt;/mi&gt;
-  &lt;/mrow&gt;
-  &lt;mo&gt;-&lt;/mo&gt;
-  &lt;mfrac&gt;
-    &lt;mrow&gt;
-      &lt;mi&gt;&amp;ii;&lt;/mi&gt;
-      &lt;mi&gt;&amp;sigma;&lt;/mi&gt;
-    &lt;/mrow&gt;
-      &lt;mrow&gt;
-      &lt;mi&gt;&amp;omega;&lt;/mi&gt;
-        &lt;msub&gt;
-        &lt;mi&gt;&amp;epsilon;&lt;/mi&gt;
-        &lt;mn&gt;0&lt;/mn&gt;
-        &lt;/msub&gt;
-    &lt;/mrow&gt;
-  &lt;/mfrac&gt;
-&lt;/math&gt;
-
-</value>
   </data>
   <data name="XML.MainMenu.ColumnMenu.SetColumnAsNegError.Description" xml:space="preserve">
     <value>Sets the currently selected column to a negative error column</value>

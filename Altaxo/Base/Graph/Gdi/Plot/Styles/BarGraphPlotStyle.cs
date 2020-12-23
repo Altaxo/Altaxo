@@ -31,6 +31,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.ComponentModel;
   using Altaxo.Data;
   using Altaxo.Drawing;
   using Altaxo.Main;
@@ -42,6 +43,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   /// <summary>
   ///
   /// </summary>
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.BarGraphPlotStyle}")]
   public class BarGraphPlotStyle
     :
     Main.SuspendableDocumentNodeWithEventArgs,

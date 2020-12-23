@@ -32,6 +32,7 @@ using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Graph;
   using Altaxo.Main;
@@ -43,6 +44,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   using GraphicsContext;
   using Groups;
 
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.VectorCartesicPlotStyle}")]
   public class VectorCartesicPlotStyle
     :
     Main.SuspendableDocumentNodeWithEventArgs, IG3DPlotStyle

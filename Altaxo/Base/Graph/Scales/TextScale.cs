@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Altaxo.Data;
 using Altaxo.Graph.Scales.Boundaries;
@@ -32,6 +33,7 @@ using Altaxo.Graph.Scales.Rescaling;
 namespace Altaxo.Graph.Scales
 {
   [Serializable]
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.TextScale}")]
   public class TextScale : Scale
   {
     /// <summary>Holds the <see cref="TextBoundaries"/> for that axis.</summary>

@@ -30,6 +30,7 @@ using System.Drawing.Drawing2D;
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using System.Collections.Generic;
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Drawing;
@@ -38,6 +39,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Graph.Plot.Data;
   using Plot.Data;
 
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.FillToCurvePlotStyle}")]
   public class FillToCurvePlotStyle
     :
     Main.SuspendableDocumentNodeWithEventArgs,

@@ -35,6 +35,7 @@ using Altaxo.Graph.Scales.Rescaling;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
+  using System.ComponentModel;
   using Geometry;
   using Plot.Data;
 
@@ -601,6 +602,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
       #region Helper Scale Wrapper
 
+      [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Groups.WaterfallTransform+TransformedLayerWrapper+TransformedScale}")]
       private class TransformedScale : Scale
       {
         private Scale _originalScale;

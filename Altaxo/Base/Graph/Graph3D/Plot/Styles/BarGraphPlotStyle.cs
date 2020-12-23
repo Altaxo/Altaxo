@@ -29,6 +29,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Main;
@@ -45,6 +46,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   /// <summary>
   ///
   /// </summary>
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.BarGraphPlotStyle}")]
   public class BarGraphPlotStyle
     :
     Main.SuspendableDocumentNodeWithEventArgs,

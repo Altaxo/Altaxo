@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Altaxo.Drawing.D3D;
@@ -40,6 +41,7 @@ namespace Altaxo.Graph.Graph3D.Background
   /// <seealso cref="Altaxo.Main.SuspendableDocumentNodeWithSetOfEventArgs" />
   /// <seealso cref="Altaxo.Main.ICopyFrom" />
   /// <seealso cref="Altaxo.Graph.Graph3D.Background.IBackgroundStyle" />
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Background.RectangularBackground}")]
   public class RectangularBackground : Main.SuspendableDocumentNodeWithSetOfEventArgs, Main.ICopyFrom, IBackgroundStyle
   {
     private IMaterial _material = Materials.GetSolidMaterial(Drawing.NamedColors.AliceBlue);

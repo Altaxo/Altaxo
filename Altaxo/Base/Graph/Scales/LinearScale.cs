@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
@@ -35,6 +36,7 @@ namespace Altaxo.Graph.Scales
   /// </summary>
 
   [Serializable]
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.LinearScale}")]
   public class LinearScale : NumericalScale
   {
     /// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>

@@ -25,6 +25,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,7 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelRGB}")]
   public class TextOnlyColorModelRGB : ITextOnlyColorModel
   {
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
@@ -45,6 +47,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelLinearRGB}")]
   public class TextOnlyColorModelLinearRGB : ITextOnlyColorModel
   {
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
@@ -62,6 +65,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelCMY}")]
   public class TextOnlyColorModelCMY : ITextOnlyColorModel
   {
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
@@ -75,6 +79,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelLinearCMY}")]
   public class TextOnlyColorModelLinearCMY : ITextOnlyColorModel
   {
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
@@ -92,6 +97,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelCMYK}")]
   public class TextOnlyColorModelCMYK : ITextOnlyColorModel
   {
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
@@ -113,6 +119,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelHSB}")]
   public class TextOnlyColorModelHSB : ITextOnlyColorModel
   {
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
@@ -131,6 +138,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelRGBHex}")]
   public class TextOnlyColorModelRGBHex : ITextOnlyColorModel
   {
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
@@ -144,6 +152,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelARGBHex}")]
   public class TextOnlyColorModelARGBHex : ITextOnlyColorModel
   {
     public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)

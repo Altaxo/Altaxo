@@ -48,18 +48,21 @@ namespace Altaxo.Graph.Gdi
       /// <summary>
       ///  the value is a absolute value (not relative) in points (1/72 inch).
       /// </summary>
+      [Description("${res:ClassNames.Altaxo.Graph.Gdi.XYPlotLayerSizeType.AbsoluteValue}")]
       AbsoluteValue,
 
       /// <summary>
       /// The value is relative to the graph document. This means that for instance the width of the layer
       /// is relative to the width of the graph document.
       /// </summary>
+      [Description("${res:ClassNames.Altaxo.Graph.Gdi.XYPlotLayerSizeType.RelativeToGraphDocument}")]
       RelativeToGraphDocument,
 
       /// <summary>
       /// The value is relative to the linked layer. This means that for instance the width of the layer
       /// is relative to the width of the linked layer.
       /// </summary>
+      [Description("${res:ClassNames.Altaxo.Graph.Gdi.XYPlotLayerSizeType.RelativeToLinkedLayer}")]
       RelativeToLinkedLayer
     }
 
@@ -94,7 +97,7 @@ namespace Altaxo.Graph.Gdi
       /// <summary>
       /// The value is a absolute value (not relative) in points (1/72 inch).
       /// </summary>
-      [Description("Absolute value (points)")]
+      [Description("${res:ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.AbsoluteValue}")]
       AbsoluteValue,
 
       /// <summary>
@@ -102,7 +105,7 @@ namespace Altaxo.Graph.Gdi
       /// is relative to the width of the graph document. A x value of 0 would position the layer at the left edge of the
       /// graph document, a value of 1 on the right edge of the graph.
       /// </summary>
-      [Description("Relative to graph size (0..1)")]
+      [Description("${res:ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeToGraphDocument}")]
       RelativeToGraphDocument,
 
       /// <summary>
@@ -112,6 +115,7 @@ namespace Altaxo.Graph.Gdi
       /// This means that for instance for a x position value of 0 the left edges of both layers are on the same position, for a value of 1
       /// this means that the left edge of this layer is on the right edge of the linked layer.
       /// </remarks>
+      [Description("${res:ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear}")]
       RelativeThisNearToLinkedLayerNear,
 
       /// <summary>
@@ -122,6 +126,7 @@ namespace Altaxo.Graph.Gdi
       /// for a value of 1
       /// this means that the left edge of this layer is one width away from the right edge of the linked layer.
       /// </remarks>
+      [Description("${res:ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisNearToLinkedLayerFar}")]
       RelativeThisNearToLinkedLayerFar,
 
       /// <summary>
@@ -132,6 +137,7 @@ namespace Altaxo.Graph.Gdi
       /// for a value of 1
       /// this means that the right edge of this layer is one width away (to the right) from the leftt edge of the linked layer.
       /// </remarks>
+      [Description("${res:ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisFarToLinkedLayerNear}")]
       RelativeThisFarToLinkedLayerNear,
 
       /// <summary>
@@ -144,6 +150,7 @@ namespace Altaxo.Graph.Gdi
       /// means that the right edge of this layer is one width away to the left from the right edge of the linked layer and this falls together
       /// with the left edge of the linked layer.
       /// </remarks>
+      [Description("${res:ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisFarToLinkedLayerFar}")]
       RelativeThisFarToLinkedLayerFar
     }
 

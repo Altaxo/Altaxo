@@ -25,6 +25,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelHSB}")]
   public class ColorModelHSB : IColorModel
   {
     public AxoColor GetColorFor1DColorSurfaceFromRelativePosition(double relativePosition)

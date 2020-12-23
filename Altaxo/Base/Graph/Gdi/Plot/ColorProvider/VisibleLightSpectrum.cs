@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -35,6 +36,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
   /// This color provider provides the colors of the visible light spectrum in the wavelength
   /// range between 350 nm and 780 nm.
   /// </summary>
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.VisibleLightSpectrum}")]
   public class VisibleLightSpectrum : ColorProviderBase
   {
     /// <summary>Minimum wavelength of the light in nm which can be shown as color.</summary>

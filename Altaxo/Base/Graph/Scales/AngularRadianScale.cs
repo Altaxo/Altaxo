@@ -25,11 +25,13 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
 namespace Altaxo.Graph.Scales
 {
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.AngularRadianScale}")]
   public class AngularRadianScale : AngularScale
   {
     #region Serialization

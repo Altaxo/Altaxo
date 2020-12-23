@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -32,6 +33,7 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 {
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderBGMYR}")]
   public class ColorProviderBGMYR : ColorProviderBase
   {
     #region Serialization

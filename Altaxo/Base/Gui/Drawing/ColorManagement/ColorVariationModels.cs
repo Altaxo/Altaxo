@@ -25,6 +25,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,6 +46,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     void GetColorVariations(AxoColor baseColor, AxoColor[] variations);
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDesaturate}")]
   public class ColorVariationModelDesaturate : IColorVariationModel
   {
     public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
@@ -64,6 +66,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDesaturateAndDarker}")]
   public class ColorVariationModelDesaturateAndDarker : IColorVariationModel
   {
     public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
@@ -84,6 +87,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDarker}")]
   public class ColorVariationModelDarker : IColorVariationModel
   {
     public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
@@ -103,6 +107,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelWarmer}")]
   public class ColorVariationModelWarmer : IColorVariationModel
   {
     public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
@@ -124,6 +129,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelColder}")]
   public class ColorVariationModelColder : IColorVariationModel
   {
     public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)

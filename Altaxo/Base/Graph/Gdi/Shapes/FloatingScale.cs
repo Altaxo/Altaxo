@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -679,6 +680,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       RatioToOrg
     }
 
+    [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Shapes.FloatingScale+ScaleSegment}")]
     private class ScaleSegment : Scale
     {
       private double _relOrg;

@@ -34,6 +34,7 @@ using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Graph;
   using Altaxo.Graph.Gdi.Plot;
@@ -50,6 +51,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   /// on linear axes.
   /// </summary>
   [Serializable]
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.DataMeshPlotStyle}")]
   public class DataMeshPlotStyle
       :
       Main.SuspendableDocumentNodeWithEventArgs,

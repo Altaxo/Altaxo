@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
@@ -41,6 +42,7 @@ namespace Altaxo.Graph.Scales
   /// <example>
   /// If the axis origin is 10 and the axis end is 1, then x=10 is mapped to the logical value l=0 (axis origin), x=1 is mapped to the logical value l=1 (axis end), and x=11/20 is mapped to l=0.5.
   /// </example>
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.InverseScale}")]
   public class InverseScale : NumericalScale
   {
     /// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>

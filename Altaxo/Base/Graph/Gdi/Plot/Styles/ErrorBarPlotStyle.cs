@@ -33,6 +33,7 @@ using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Drawing;
   using Altaxo.Graph;
@@ -41,6 +42,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
   #region Error bar (abstract, for implementations see below)
 
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarPlotStyle}")]
   public abstract class ErrorBarPlotStyle
     :
     Main.SuspendableDocumentNodeWithEventArgs,
@@ -1326,6 +1328,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
   #region Error bar x
 
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarXPlotStyle}")]
   public class ErrorBarXPlotStyle : ErrorBarPlotStyle
   {
     public override int AxisNumber { get { return 0; } }
@@ -1393,6 +1396,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
   #region Error bar y
 
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarYPlotStyle}")]
   public class ErrorBarYPlotStyle : ErrorBarPlotStyle
   {
     public override int AxisNumber { get { return 1; } }

@@ -28,6 +28,7 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales
 {
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using Boundaries;
   using Rescaling;
@@ -36,6 +37,7 @@ namespace Altaxo.Graph.Scales
   /// Summary description for DateTimeAxis.
   /// </summary>
   [Serializable]
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.DateTimeScale}")]
   public class DateTimeScale : Scale
   {
     // cached values

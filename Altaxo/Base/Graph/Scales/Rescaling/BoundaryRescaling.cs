@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.ComponentModel;
 
 namespace Altaxo.Graph.Scales.Rescaling
 {
@@ -35,36 +36,43 @@ namespace Altaxo.Graph.Scales.Rescaling
     /// <summary>
     /// Scale this boundary so that the data fits.
     /// </summary>
+    [Description("${res:ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Auto.Description}")]
     Auto = 0,
 
     /// <summary>
     /// This axis boundary is set to a fixed value.
     /// </summary>
+    [Description("${res:ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed.Description}")]
     Fixed = 1,
 
     /// <summary>
     /// The axis boundary is set to fit the data, but is set not greater than a certain value.
     /// </summary>
+    [Description("${res:ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.LessOrEqual.Description}")]
     LessOrEqual = 2,
 
     /// <summary>
     /// The axis boundary is set to fit the data, but is set not lesser than a certain value.
     /// </summary>
+    [Description("${res:ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.GreaterOrEqual.Description}")]
     GreaterOrEqual = 3,
 
     /// <summary>
     /// Use boundary values provided by the user, but only till the next zoom or data change.
     /// </summary>
+    [Description("${res:ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.AutoTempFixed.Description}")]
     AutoTempFixed = 4,
 
     /// <summary>
     /// Use boundary values provided by the user, and when zooming, use the new values as if they were user provided. Ignore any data driven boundary changes.
     /// </summary>
+    [Description("${res:ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.FixedManually.Description}")]
     FixedManually = 5,
 
     /// <summary>
     /// Use boundary values provided by the user. When zooming, keep the user provided values, and when rescaling, set the boundaries back to the user provided values. Ignore any data driven boundary changes.
     /// </summary>
+    [Description("${res:ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.FixedZoomable.Description}")]
     FixedZoomable = 6
   }
 }

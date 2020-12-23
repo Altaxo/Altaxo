@@ -30,6 +30,7 @@ using Altaxo.Graph.Gdi.Background;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Drawing;
@@ -40,6 +41,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Plot.Data;
   using Plot.Groups;
 
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.LabelPlotStyle}")]
   public class LabelPlotStyle
     :
     Main.SuspendableDocumentNodeWithEventArgs,

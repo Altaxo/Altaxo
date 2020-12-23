@@ -35,6 +35,7 @@ using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Graph.Scales.Ticks;
   using ColorProvider;
@@ -47,6 +48,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   /// on linear axes.
   /// </summary>
   [Serializable]
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.DensityImagePlotStyle}")]
   public class DensityImagePlotStyle
     :
     Main.SuspendableDocumentNodeWithEventArgs,

@@ -25,6 +25,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -116,6 +117,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelPrimary}")]
   public class ColorCircleModelPrimary : ColorCircleModelHelperBase, IColorCircleModel
   {
     public int NumberOfHueValues { get { return 1; } }
@@ -131,6 +133,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelComplementary}")]
   public class ColorCircleModelComplementary : ColorCircleModelHelperBase, IColorCircleModel
   {
     public int NumberOfHueValues { get { return 2; } }
@@ -156,6 +159,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelTriangleComplementary}")]
   public class ColorCircleModelTriangleComplementary : ColorCircleModelHelperBase, IColorCircleModel
   {
     public int NumberOfHueValues { get { return 3; } }
@@ -186,6 +190,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelTriangleSymmetrically}")]
   public class ColorCircleModelTriangleSymmetrically : ColorCircleModelHelperBase, IColorCircleModel
   {
     public int NumberOfHueValues { get { return 3; } }
@@ -240,6 +245,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelRectangle}")]
   public class ColorCircleModelRectangle : ColorCircleModelHelperBase, IColorCircleModel
   {
     private double[] _hueTransformed = new double[4];
@@ -308,6 +314,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
   }
 
+  [DisplayName("${res:ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelPentagonSymmetrically}")]
   public class ColorCircleModelPentagonSymmetrically : ColorCircleModelHelperBase, IColorCircleModel
   {
     private double[] _hueTransformed = new double[5];

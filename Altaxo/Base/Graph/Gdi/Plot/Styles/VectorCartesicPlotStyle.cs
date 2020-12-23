@@ -32,6 +32,7 @@ using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using System.Drawing;
   using System.Drawing.Drawing2D;
@@ -42,6 +43,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Geometry;
   using Groups;
 
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.VectorCartesicPlotStyle}")]
   public class VectorCartesicPlotStyle
     :
     Main.SuspendableDocumentNodeWithEventArgs,

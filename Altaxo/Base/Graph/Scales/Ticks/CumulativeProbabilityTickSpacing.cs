@@ -33,12 +33,14 @@ using Altaxo.Data;
 namespace Altaxo.Graph.Scales.Ticks
 {
   using System.Collections;
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Graph.Scales.Rescaling;
 
   /// <summary>
   /// Tick settings for a Probability scale.
   /// </summary>
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.CumulativeProbabilityTickSpacing}")]
   public class CumulativeProbabilityTickSpacing : NumericTickSpacing
   {
     #region Inner list classes

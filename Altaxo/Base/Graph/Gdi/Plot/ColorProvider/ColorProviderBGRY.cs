@@ -25,12 +25,14 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 {
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderBGRY}")]
   public class ColorProviderBGRY : ColorProviderBase
   {
     #region Serialization

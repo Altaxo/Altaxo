@@ -31,6 +31,7 @@ using System.Linq;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Main;
@@ -44,6 +45,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Plot.Data;
   using Plot.Groups;
 
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ScatterPlotStyle}")]
   public partial class ScatterPlotStyle
     :
     Main.SuspendableDocumentNodeWithEventArgs,

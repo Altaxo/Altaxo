@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Altaxo.Calc;
@@ -32,6 +33,7 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.TextTickSpacing}")]
   public class TextTickSpacing : TickSpacing
   {
     private List<AltaxoVariant> _majorTicks;

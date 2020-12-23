@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
@@ -36,6 +37,7 @@ namespace Altaxo.Graph.Scales
   /// </summary>
   /// <remarks>This scale is used to create a normal probability plot <see href="http://en.wikipedia.org/wiki/Normal_probability_plot"/>.
   /// If the data are consistent with a sample from a normal distribution, the points should approximately form a straight line.</remarks>
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.CumulativeProbabilityScale}")]
   public class CumulativeProbabilityScale : NumericalScale
   {
     private static readonly double SquareRootOf2 = Math.Sqrt(2);

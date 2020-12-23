@@ -28,6 +28,7 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Main;
@@ -42,6 +43,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   using Plot.Data;
   using Plot.Groups;
 
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.LabelPlotStyle}")]
   public class LabelPlotStyle
     :
     Main.SuspendableDocumentNodeWithEventArgs,

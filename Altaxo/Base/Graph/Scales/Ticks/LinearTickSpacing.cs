@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -36,6 +37,7 @@ namespace Altaxo.Graph.Scales.Ticks
   /// <summary>
   /// Tick settings for a linear scale.
   /// </summary>
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.LinearTickSpacing}")]
   public class LinearTickSpacing : NumericTickSpacing
   {
     #region Inner classes

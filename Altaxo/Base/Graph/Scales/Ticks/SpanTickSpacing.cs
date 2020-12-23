@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -33,6 +34,7 @@ namespace Altaxo.Graph.Scales.Ticks
   /// <summary>
   ///
   /// </summary>
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.SpanTickSpacing}")]
   public class SpanTickSpacing : Altaxo.Graph.Scales.Ticks.TickSpacing
   {
     /// <summary>Relative tick position (0 at org, 1 at end).</summary>

@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -34,6 +35,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
   /// <summary>
   /// Interpolates linearly between two colors by linearly interpolate the A, the R, the G and the B value of the two colors.
   /// </summary>
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderAHSBGradient}")]
   public class ColorProviderAHSBGradient : ColorProviderBase
   {
     private double _alpha0 = 1;

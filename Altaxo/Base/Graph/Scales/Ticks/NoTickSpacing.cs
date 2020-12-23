@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -33,6 +34,7 @@ namespace Altaxo.Graph.Scales.Ticks
   /// <summary>
   /// Class that return no ticks at all.
   /// </summary>
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.NoTickSpacing}")]
   public class NoTickSpacing : TickSpacing
   {
     public override object Clone()

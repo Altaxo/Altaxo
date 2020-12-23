@@ -31,6 +31,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Drawing;
@@ -124,6 +125,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   /// <summary>
   /// Summary description for XYPlotLineStyle.
   /// </summary>
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.LinePlotStyle}")]
   public class LinePlotStyle
     :
     Main.SuspendableDocumentNodeWithEventArgs,

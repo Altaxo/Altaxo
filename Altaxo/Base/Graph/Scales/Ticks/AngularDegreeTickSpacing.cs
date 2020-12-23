@@ -25,11 +25,13 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.AngularDegreeTickSpacing}")]
   public class AngularDegreeTickSpacing : AngularTickSpacing
   {
     #region Serialization

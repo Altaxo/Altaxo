@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -36,6 +37,7 @@ namespace Altaxo.Graph.Scales.Ticks
   /// <summary>
   /// Tick settings for a linear scale.
   /// </summary>
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.InverseTickSpacing}")]
   public class InverseTickSpacing : NumericTickSpacing
   {
     private static readonly double[] _majorSpanValues = new double[] { 1, 1.5, 2, 2.5, 3, 4, 5, 10 };

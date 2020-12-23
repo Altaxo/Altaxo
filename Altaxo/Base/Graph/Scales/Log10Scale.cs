@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
@@ -35,6 +36,7 @@ namespace Altaxo.Graph.Scales
   /// Represents a logarithmic axis, i.e. the physical values v correspond to logical values l by v=a*10^(b*l).
   /// </summary>
   [Serializable]
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Log10Scale}")]
   public class Log10Scale : NumericalScale
   {
     /// <summary>Decimal logarithm of axis org. Should always been set together with <see cref="_cachedOrg"/>.</summary>

@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -32,9 +33,16 @@ namespace Altaxo.Graph.Scales.Ticks
 {
   public enum BoundaryTickSnapping
   {
+    [Description("${res:ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToNothing}")]
     SnapToNothing,
+
+    [Description("${res:ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMinorOrMajor}")]
     SnapToMinorOrMajor,
+
+    [Description("${res:ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMajorOnly}")]
     SnapToMajorOnly,
+
+    [Description("${res:ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMinorOnly}")]
     SnapToMinorOnly,
   }
 }

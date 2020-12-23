@@ -28,6 +28,7 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Main;
@@ -44,6 +45,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   /// <summary>
   /// Style to show 3D data as lines.
   /// </summary>
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.LinePlotStyle}")]
   public class LinePlotStyle
     :
     Main.SuspendableDocumentNodeWithEventArgs,

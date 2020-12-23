@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -33,6 +34,7 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.DateTimeTickSpacing}")]
   public class DateTimeTickSpacing : TickSpacing
   {
     #region Inner classes

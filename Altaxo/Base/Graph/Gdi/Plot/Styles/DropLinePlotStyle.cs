@@ -31,6 +31,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using System.Drawing.Drawing2D;
   using Altaxo.Data;
@@ -42,6 +43,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Plot.Data;
   using Plot.Groups;
 
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Gdi.Plot.Styles.DropLinePlotStyle}")]
   public class DropLinePlotStyle
     :
     Main.SuspendableDocumentNodeWithEventArgs,

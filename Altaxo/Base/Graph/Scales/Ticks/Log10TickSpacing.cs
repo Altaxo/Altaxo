@@ -30,10 +30,12 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
+  using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Calc;
   using Altaxo.Data;
 
+  [DisplayName("${res:ClassNames.Altaxo.Graph.Scales.Ticks.Log10TickSpacing}")]
   public class Log10TickSpacing : NumericTickSpacing
   {
     private static readonly int[] minorTickMantissa9 = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
