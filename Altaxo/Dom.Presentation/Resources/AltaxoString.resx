@@ -156,9 +156,6 @@
   <data name="XML.MainMenu.LayerMenu.PasteInActiveLayer.Description" xml:space="preserve">
     <value>Paste the layer as a template in the active layer.</value>
   </data>
-  <data name="XML.MainMenu.AnalysisMenu.2DCenteredFFT" xml:space="preserve">
-    <value>2D Centered FFT</value>
-  </data>
   <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarZPlotStyle" xml:space="preserve">
     <value>ErrorBar(Z)</value>
   </data>
@@ -167,17 +164,6 @@
   </data>
   <data name="XML.ProjectBrowserMenu.Delete.Description" xml:space="preserve">
     <value>Deletes the selected items.</value>
-  </data>
-  <data name="FitFunctions.Relaxation.KohlrauschDielectricSusceptibility.Part3" xml:space="preserve">
-    <value> and \f2 e\f0 ' and \f2 e\f0 '' being the dependent variables, namely the real and negative imaginary part of the dielectric function.\par
-\par
-Parameter:\par
-\par
-\f2 e\f0\sub\u8734?\nosupersub  :\tab high frequency permittivity limit\par
-\f2 De\f0  :\tab step height of the permittivity\par
-\f2 t\f0  :\tab retardation time\par
-\f2 b\f0  :\tab shape exponent (0&lt;\f2 b\f0 &lt;=1) \par
-\f2 s\f0  :\tab electrical conductivity [S/m]\par\par</value>
   </data>
   <data name="XML.MainMenu.WorksheetMenu.ExtractTableData" xml:space="preserve">
     <value>Extract worksheet data..</value>
@@ -223,12 +209,6 @@ Parameter:\par
   </data>
   <data name="XML.ProjectBrowserMenu.ViewOnSelectOn" xml:space="preserve">
     <value>On</value>
-  </data>
-  <data name="XML.StartupTips.Tip2" xml:space="preserve">
-    <value>That you can open a Worksheet Script Window (Menu: "Worksheet" -&gt; "Worksheet Script") and write cool C# scripts into it, even with syntax highlighting and code completion?</value>
-  </data>
-  <data name="XML.StartupTips.Tip1" xml:space="preserve">
-    <value>That you should look out for new Altaxo versions and tell all your friends how good Altaxo is and what cool graphs you can create with it!</value>
   </data>
   <data name="XML.MainMenu.GraphMenu.ArrangeHorizontal.Description" xml:space="preserve">
     <value>Horizontal alignment of the selected elements.</value>
@@ -311,9 +291,6 @@ Parameter:\par
   <data name="XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description" xml:space="preserve">
     <value>Adds one or more property columns to the worksheet</value>
   </data>
-  <data name="XML.MainMenu.FileMenu.Import.Database" xml:space="preserve">
-    <value>Import data from database ..</value>
-  </data>
   <data name="XML.MainMenu.WorksheetChangeStructureMenu" xml:space="preserve">
     <value>Restructure worksheet data</value>
   </data>
@@ -352,13 +329,6 @@ Parameter:\par
   </data>
   <data name="XML.MainMenu.EditMenu.RequeryTableDataSource.Description" xml:space="preserve">
     <value>Requery the table data source immediately.</value>
-  </data>
-  <data name="FitFunctions.General.PolynomialFit" xml:space="preserve">
-    <value>This implements a polynomial fit. Please use the polynomial fit from the analysis menu instead this one unless you need to set some parameters fixed. The fit function is defined as:
-$$
-y(x) = a_0 + a_1 x + a_2 x^2 + ... + a_n x^n
-$$
-in which x is the independent variable, y is the dependent variable, and $ a_0 ... a_n $ are the parameters.</value>
   </data>
   <data name="XML.MainMenu.EditMenu.PasteAsNewLayer" xml:space="preserve">
     <value>As new layer</value>
@@ -420,9 +390,6 @@ in which x is the independent variable, y is the dependent variable, and $ a_0 .
   <data name="XML.MainMenu.GraphMenu.Refresh" xml:space="preserve">
     <value>Refresh graph</value>
   </data>
-  <data name="XML.MainMenu.EditMenu.EditTableDataSource" xml:space="preserve">
-    <value>Edit table data source ..</value>
-  </data>
   <data name="XML.MainMenu.ViewMenu.Margin50Percent" xml:space="preserve">
     <value>50% View margin</value>
   </data>
@@ -437,9 +404,6 @@ in which x is the independent variable, y is the dependent variable, and $ a_0 .
   </data>
   <data name="XML.MainMenu.ColumnMenu.ExtractPropertyValues.Description" xml:space="preserve">
     <value>Extract values from property strings of the type "key=value"</value>
-  </data>
-  <data name="XML.MainMenu.ToolsMenu.RegistryMenu.Description" xml:space="preserve">
-    <value>Contains menu items concerning the registration / unregistration of the application.</value>
   </data>
   <data name="XML.MainMenu.TextMenu.Subscript.Description" xml:space="preserve">
     <value>Formats selected text as subscript text</value>
@@ -519,9 +483,6 @@ in which x is the independent variable, y is the dependent variable, and $ a_0 .
   <data name="XML.MainMenu.FileMenu.SaveWorksheetAsTemplate.Description" xml:space="preserve">
     <value>Saves a worksheet with layout and scripts, but without the table data</value>
   </data>
-  <data name="XML.MainMenu.EditMenu.RequeryTableDataSource" xml:space="preserve">
-    <value>Requery table data source</value>
-  </data>
   <data name="XML.MainMenu.LayerMenu.PasteNewLayer.Description" xml:space="preserve">
     <value>Paste as new layer at the end.</value>
   </data>
@@ -533,12 +494,6 @@ in which x is the independent variable, y is the dependent variable, and $ a_0 .
   </data>
   <data name="XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet.Description" xml:space="preserve">
     <value>This imports all selected ascii data files into a single worksheet.</value>
-  </data>
-  <data name="MainWindow.Windows.AltaxoOutputWindowLabel" xml:space="preserve">
-    <value>Output</value>
-  </data>
-  <data name="XML.MainMenu.FileMenu.PageSetup" xml:space="preserve">
-    <value>Page Setup ..</value>
   </data>
   <data name="XML.MainMenu.EditMenu.CopyTextWithImages.Description" xml:space="preserve">
     <value>Copies the source text along with the local images to the clipboard in order to be pasted into another text document.</value>
@@ -576,9 +531,6 @@ in which x is the independent variable, y is the dependent variable, and $ a_0 .
   <data name="XML.MainMenu.FileMenu.Export.GalacticSPC.Description" xml:space="preserve">
     <value>Exports worksheet data into one or more Galactic SPC files</value>
   </data>
-  <data name="XML.MainMenu.FileMenu.Append.Description" xml:space="preserve">
-    <value>Merges the objects from a project into the current project</value>
-  </data>
   <data name="XML.ProjectBrowserMenu.ViewFolderAndSubfolderItemsOnSelectTN.Description" xml:space="preserve">
     <value>When a tree node is selected, shows the items in that folder and in the subfolders in the document area.</value>
   </data>
@@ -611,20 +563,6 @@ in which x is the independent variable, y is the dependent variable, and $ a_0 .
   </data>
   <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiARGB.Description" xml:space="preserve">
     <value>Copy the page to clipboard as bitmap format 150 dpi - ARGB</value>
-  </data>
-  <data name="FitFunctions.Relaxation.KohlrauschSusceptibility.Part2" xml:space="preserve">
-    <value>\par\pard based on the Fourier transform of the (derivative of the) Kohlrausch function:\par\pard\qc</value>
-  </data>
-  <data name="FitFunctions.Relaxation.KohlrauschSusceptibility.Part3" xml:space="preserve">
-    <value> and \f2 c\f0 ' and \f2 c\f0 '' being the dependent variables, namely the real and negative imaginary part of the dynamic susceptibility.\par
-\par
-Parameter:\par
-\par
-\f2 c\f0\sub\u8734?\nosupersub\f0  :\tab high frequency susceptibility limit\par
-\f2 Dc\f0  :\tab step height of the susceptibility function\par
-\f2 t\f0  :\tab retardation time\par
-\f2 b\f0  :\tab shape exponent (0&lt;\f2 b\f0 &lt;=1) \par
-\f2 h\f0  :\tab generalized flow term, for instance viscosity\par\par</value>
   </data>
   <data name="XML.MainMenu.FileMenu.New.StandardWorksheet.Description" xml:space="preserve">
     <value>Creates a new worksheet with a X column "A" and a V column "B"</value>
@@ -662,9 +600,6 @@ Parameter:\par
   <data name="XML.MainMenu.FileMenu.Print" xml:space="preserve">
     <value>Print ..</value>
   </data>
-  <data name="MainWindow.DialogName" xml:space="preserve">
-    <value>Altaxo</value>
-  </data>
   <data name="XML.MainMenu.FileMenu.ExportMarkdown.Description" xml:space="preserve">
     <value>Exports the text document to an external markdown file.</value>
   </data>
@@ -695,17 +630,11 @@ Parameter:\par
   <data name="XML.MainMenu.WorksheetMenu.Rename.Description" xml:space="preserve">
     <value>Renames the current worksheet</value>
   </data>
-  <data name="XML.MainMenu.FilesMenu.SaveProjectWithoutWorksheetScripts.Description" xml:space="preserve">
-    <value>Saves the current project under a new name without worksheet scripts, then restores the current project.</value>
-  </data>
   <data name="XML.MainMenu.FileMenu.Export.WindowsMetaFile" xml:space="preserve">
     <value>WMF (Windows Meta File)</value>
   </data>
   <data name="XML.MainMenu.EditMenu.XYVToMatrix.Description" xml:space="preserve">
     <value>Converts 3 selected columns (X-Y-V) to a matrix.</value>
-  </data>
-  <data name="XML.MainMenu.AnalysisMenu.2DCenteredFFT.Description" xml:space="preserve">
-    <value>Performs a 2 dimensional FFT with frequency 0 centered in the middle of the worksheet</value>
   </data>
   <data name="Altaxo.Project.CantSaveProjectErrorText" xml:space="preserve">
     <value>Can't save Altaxo project file ${FileNameWithoutPath}
@@ -843,9 +772,6 @@ in the path ${Path}.
   <data name="XML.MainMenu.TextMenu.StrikeThrough.Description" xml:space="preserve">
     <value>Formats selected text as strikethrough text</value>
   </data>
-  <data name="XML.MainMenu.FileMenu.PrintPreview" xml:space="preserve">
-    <value>Print Preview ..</value>
-  </data>
   <data name="XML.MainMenu.WorksheetMenu" xml:space="preserve">
     <value>&amp;Worksheet</value>
   </data>
@@ -860,9 +786,6 @@ in the path ${Path}.
   </data>
   <data name="XML.ProjectBrowserMenu.MoveToFolder.Description" xml:space="preserve">
     <value>Asks for a folder name and moves the selected items to that folder.</value>
-  </data>
-  <data name="ClassName.Altaxo.Gui.Drawing.ColorManagement.ColorModelLinearRGB" xml:space="preserve">
-    <value>LinRGB</value>
   </data>
   <data name="XML.MainMenu.ViewMenu.Zoom200Percent" xml:space="preserve">
     <value>200% Zoom</value>
@@ -924,9 +847,6 @@ in the path ${Path}.
   <data name="XML.ProjectBrowserMenu.Rename.Description" xml:space="preserve">
     <value>Shows the rename dialog for this item.</value>
   </data>
-  <data name="Dialog.Options.Graph.EmbeddedObjectRenderingOptions" xml:space="preserve">
-    <value>Rendering options for embedded graphs</value>
-  </data>
   <data name="XML.MainMenu.FileMenu.Import.Ascii.Description" xml:space="preserve">
     <value>Imports Ascii data file(s)</value>
   </data>
@@ -971,9 +891,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.Graph3DMenu.ViewBottom.Description" xml:space="preserve">
     <value>View graph from bottom side</value>
-  </data>
-  <data name="XML.MainMenu.GraphMenu.ArrangeSameVerticalSize" xml:space="preserve">
-    <value>Same vertical size</value>
   </data>
   <data name="XML.MainMenu.ViewMenu.Zoom50Percent" xml:space="preserve">
     <value>50% Zoom</value>
@@ -1092,9 +1009,6 @@ in the path ${Path}.
   <data name="XML.ProjectBrowserMenu.DeleteFolder" xml:space="preserve">
     <value>Delete folder</value>
   </data>
-  <data name="XML.MainMenu.FileMenu.PrintableSizeSetup" xml:space="preserve">
-    <value>Setup printable size ..</value>
-  </data>
   <data name="XML.MainMenu.TextMenu.EditorLeftViewerRight" xml:space="preserve">
     <value>Editor left, viewer right</value>
   </data>
@@ -1118,9 +1032,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.AnalysisMenu.StatisticsOnRows.Description" xml:space="preserve">
     <value>Calculates a statistic of each selected row</value>
-  </data>
-  <data name="FitFunctions.Relaxation.DielectricSusceptibility.Introduction" xml:space="preserve">
-    <value>This implements the dielectric susceptibility function\par\pard\qc</value>
   </data>
   <data name="XML.MainMenu.FileMenu.SaveProject.Description" xml:space="preserve">
     <value>Saves the current project to disk</value>
@@ -1188,14 +1099,8 @@ in the path ${Path}.
   <data name="XML.MainMenu.FileMenu.ExitAndReturn" xml:space="preserve">
     <value>Exit and return to container application</value>
   </data>
-  <data name="FitFunctions.Relaxation.Susceptibility.Introduction" xml:space="preserve">
-    <value>This implements the susceptibility function:\par\pard\qc</value>
-  </data>
   <data name="XML.MainMenu.FileMenu.Export" xml:space="preserve">
     <value>Export</value>
-  </data>
-  <data name="FitFunctions.IndependentVariable.Omega" xml:space="preserve">
-    <value>\par\pard with the circular frequency \f2 w\f0  being the independent variable,</value>
   </data>
   <data name="XML.MainMenu.TextMenu.Superscript.Description" xml:space="preserve">
     <value>Formats selected text as superscript text</value>
@@ -1260,22 +1165,8 @@ in the path ${Path}.
   <data name="XML.MainMenu.NewLayerMenu" xml:space="preserve">
     <value>New layer (axes)</value>
   </data>
-  <data name="FitFunctions.Relaxation.ModulusRetardation.Part3" xml:space="preserve">
-    <value> and M' and M'' being the dependent variables, namely the real and imaginary part of the dynamic modulus.\par
-\par
-Parameter:\par
-\par
-M\sub 0\nosupersub  :\tab low frequency modulus limit\par
-M\sub\u8734?\nosupersub  :\tab high frequency modulus limit\par
-\f2 t\f0  :\tab retardation time (not relaxation time!)\par
-\f2 b\f0  :\tab shape exponent (0&lt;\f2 b\f0 &lt;=1) \par
-\f2 h\f0  :\tab generalized flow term, for instance viscosity\par\par</value>
-  </data>
   <data name="XML.MainMenu.Analysis.ChemometricsMenu" xml:space="preserve">
     <value>Chemometrics</value>
-  </data>
-  <data name="XML.MainMenu.FileMenu.PageSetup.Description" xml:space="preserve">
-    <value>Setup the page format for the current window</value>
   </data>
   <data name="XML.MainMenu.FileMenu.SaveCopyOfProjectAs.Description" xml:space="preserve">
     <value>Saves a copy of this project into a file.</value>
@@ -1283,14 +1174,8 @@ M\sub\u8734?\nosupersub  :\tab high frequency modulus limit\par
   <data name="XML.MainMenu.WorksheetMenu.MoveSelectedRows.Description" xml:space="preserve">
     <value>Moves the selected rows to a new position.</value>
   </data>
-  <data name="MainWindow.Windows.AltaxoDataDisplayWindowLabel" xml:space="preserve">
-    <value>Data Reader</value>
-  </data>
   <data name="XML.MainMenu.PlotMenu.PLS.PlotXLeverage.Description" xml:space="preserve">
     <value>Adds a plot for the spectral leverage.</value>
-  </data>
-  <data name="XML.MainMenu.FileMenu.Append" xml:space="preserve">
-    <value>&amp;Append</value>
   </data>
   <data name="XML.MainMenu.FileMenu.New.InstanceScript" xml:space="preserve">
     <value>Instance script</value>
@@ -1312,9 +1197,6 @@ M\sub\u8734?\nosupersub  :\tab high frequency modulus limit\par
   </data>
   <data name="XML.MainMenu.PlotMenu.PlotScatter" xml:space="preserve">
     <value>&amp;Scatter</value>
-  </data>
-  <data name="XML.MainMenu.FileMenu.PrintPreview.Description" xml:space="preserve">
-    <value>Shows the print preview of the current window</value>
   </data>
   <data name="XML.MainMenu.GraphMenu.Tools.ClosedCardinalSpline.Description" xml:space="preserve">
     <value>Draws a closed cardinal spline curve with user defined control points.</value>
@@ -1448,12 +1330,6 @@ M\sub\u8734?\nosupersub  :\tab high frequency modulus limit\par
   <data name="XML.MainMenu.WorksheetMenu.InsertDataRows.Description" xml:space="preserve">
     <value>Inserts a user defined number of rows before the first selected row.</value>
   </data>
-  <data name="XML.MainMenu.EditMenu.Duplicate" xml:space="preserve">
-    <value>Duplicate</value>
-  </data>
-  <data name="XML.MainMenu.FileMenu.PrintableSizeSetup.Description" xml:space="preserve">
-    <value>Setup the size of the graph or table.</value>
-  </data>
   <data name="XML.MainMenu.TextMenu.RenumerateFigures.Description" xml:space="preserve">
     <value>Renumerates the figure captions and the links to the figures.</value>
   </data>
@@ -1466,17 +1342,11 @@ M\sub\u8734?\nosupersub  :\tab high frequency modulus limit\par
   <data name="XML.MainMenu.EditMenu.Clean.Description" xml:space="preserve">
     <value>Clears the content of all selected cells in the worksheet.</value>
   </data>
-  <data name="MainWindow.Windows.AltaxoProjectScoutLabel" xml:space="preserve">
-    <value>Project</value>
-  </data>
   <data name="XML.MainMenu.FileMenu.Export.WindowsMetaFile.Description" xml:space="preserve">
     <value>Exports the current graph as Windows Meta File</value>
   </data>
   <data name="XML.MainMenu.TextMenu.ShowOutline.Description" xml:space="preserve">
     <value>Toggles the visibility of the outline window.</value>
-  </data>
-  <data name="FitFunctions.Relaxation.ModulusRetardation.Introduction" xml:space="preserve">
-    <value>This implements the moduls function as the scaled inverse of the generic susceptibility:\par\pard\qc</value>
   </data>
   <data name="XML.MainMenu.PlotMenu.PLS.PlotActualVersusCrossPredictedY.Description" xml:space="preserve">
     <value>Plots the cross predicted Y value versus the acual one.</value>
@@ -1522,12 +1392,6 @@ M\sub\u8734?\nosupersub  :\tab high frequency modulus limit\par
   </data>
   <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerSizeType.RelativeToLinkedLayer" xml:space="preserve">
     <value>Rel.LinkLayer</value>
-  </data>
-  <data name="XML.ProjectBrowserMenu.HideAllWindowsRecursively.Description" xml:space="preserve">
-    <value>Hides all windows in this folder and its subfolders.</value>
-  </data>
-  <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap.Description" xml:space="preserve">
-    <value>Copy the actual page to the clipboard as a bitmap.</value>
   </data>
   <data name="XML.MainMenu.PlotMenu.PlotLineStack" xml:space="preserve">
     <value>Line stack</value>
@@ -1604,9 +1468,6 @@ M\sub\u8734?\nosupersub  :\tab high frequency modulus limit\par
   <data name="XML.MainMenu.PlotMenu.PlotColumnChartNormal" xml:space="preserve">
     <value>Column</value>
   </data>
-  <data name="XML.MainMenu.ViewMenu.ZoomUserPercent.Description" xml:space="preserve">
-    <value>Enter a zoom value manually.</value>
-  </data>
   <data name="XML.MainMenu.FileMenu.SaveGraphAsMiniProject" xml:space="preserve">
     <value>Save Graph as MiniProject (with data)</value>
   </data>
@@ -1633,18 +1494,6 @@ M\sub\u8734?\nosupersub  :\tab high frequency modulus limit\par
   </data>
   <data name="XML.MainMenu.AnalysisMenu.PLSPredictOnColumns.Description" xml:space="preserve">
     <value>PLS prediction of vertically oriented spectra</value>
-  </data>
-  <data name="FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics" xml:space="preserve">
-    <value> and \f2 e\f0 ' and \f2 e\f0 '' being the dependent variables, namely the real and negative imaginary part of the dielectric function.\par
-\par
-Parameter:\par
-\par
-\f2 e\sub\'a5\nosupersub\f0  :\tab high frequency dielectric constant\par
-\f2 De\f0  :\tab step height of dielectric function\par
-\f2 t\f0  :\tab retardation time\par
-\f2 a\f0 , \f2 g\f0  :\tab shape exponents\par
-\f2 s\f0  :\tab conductivity [S/m]\par\par
-</value>
   </data>
   <data name="XML.MainMenu.ColumnMenu.SetColumnAsPosError" xml:space="preserve">
     <value>Set column as &amp;+Error</value>
@@ -1684,9 +1533,6 @@ Parameter:\par
   </data>
   <data name="XML.ProjectBrowserMenu.MultiRescaleGraphs" xml:space="preserve">
     <value>Rescale selected graphs</value>
-  </data>
-  <data name="XML.MainMenu.GraphMenu.ArrangeSameHorizontalSize" xml:space="preserve">
-    <value>Same horizontal size</value>
   </data>
   <data name="XML.MainMenu.ToolsMenu.RegistryMenu" xml:space="preserve">
     <value>Registry</value>
@@ -1808,9 +1654,6 @@ Parameter:\par
   <data name="XML.MainMenu.PlotMenu.PLS.SetNumberOfFactors" xml:space="preserve">
     <value>Set preferred number of factors ...</value>
   </data>
-  <data name="FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction" xml:space="preserve">
-    <value>This implements the Havriliak-Negami function\par\pard\qc</value>
-  </data>
   <data name="XML.MainMenu.AnalysisMenu.ExportPLSCalibration.Description" xml:space="preserve">
     <value>Exports the current table into a PLS calibration model.</value>
   </data>
@@ -1885,9 +1728,6 @@ Parameter:\par
   </data>
   <data name="XML.MainMenu.NewLayerMenu.LinkedTopX" xml:space="preserve">
     <value>(Linked): Top X</value>
-  </data>
-  <data name="XML.MainMenu.Graph3DMenu.AddSphere.Description" xml:space="preserve">
-    <value>Add a 3D sphere</value>
   </data>
   <data name="MainWindow.Windows.AltaxoLightingWindowLabel" xml:space="preserve">
     <value>Lighting</value>
@@ -1999,9 +1839,6 @@ Parameter:\par
   </data>
   <data name="XML.MainMenu.FileMenu.ExportGraph3D.Description" xml:space="preserve">
     <value>Exports a 3D graph to an image using a format specified by the user.</value>
-  </data>
-  <data name="FitFunctions.IndependentVariable.FrequencyAsOmega" xml:space="preserve">
-    <value>\par\pard with the frequency f being the independent variable (\f2 w\f0 = 2\f2 p\f0 f is calculated from f),</value>
   </data>
   <data name="XML.MainMenu.FileMenu.SaveCopyOfProjectAs" xml:space="preserve">
     <value>Save Copy of Project as ...</value>
@@ -2123,17 +1960,6 @@ Parameter:\par
   <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed.Description" xml:space="preserve">
     <value>Fixed by the user value. Rescaling or zooming by the user will be ignored.</value>
   </data>
-  <data name="FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General" xml:space="preserve">
-    <value> and \f2 c\f0 ' and \f2 c\f0 '' being the dependent variables, namely the real and negative imaginary part of the dynamic susceptibility.\par
-\par
-Parameter:\par
-\par
-\f2 c\f0\sub\u8734?\nosupersub  :\tab high frequency susceptibility limit\par
-\f2 De\f0  :\tab step height of the susceptibility function\par
-\f2 t\f0  :\tab retardation time\par
-\f2 a\f0 , \f2 g\f0  :\tab shape exponents\par
-\f2 h\f0  :\tab generalized flow term, for instance viscosity\par\par</value>
-  </data>
   <data name="Altaxo.Gui.ExceptionBox.ExitAltaxo" xml:space="preserve">
     <value>Exit Altaxo</value>
   </data>
@@ -2233,9 +2059,6 @@ Parameter:\par
   </data>
   <data name="XML.MainMenu.GraphMenu.Tools.TextTool.Description" xml:space="preserve">
     <value>Creates a text box.</value>
-  </data>
-  <data name="XML.MainMenu.AnalysisMenu.DifferentiateSmooth.Description" xml:space="preserve">
-    <value>Differentiate/smoth using Savitzky-Golay filtering.</value>
   </data>
   <data name="XML.MainMenu.FileMenu.ImportMarkdown" xml:space="preserve">
     <value>Markdown file ..</value>
