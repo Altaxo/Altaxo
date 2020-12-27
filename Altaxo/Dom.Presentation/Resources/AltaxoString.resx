@@ -513,9 +513,6 @@
   <data name="XML.MainMenu.EditMenu.DeleteAllButSelected" xml:space="preserve">
     <value>Delete all but selected</value>
   </data>
-  <data name="Altaxo.Gui.ExceptionBox.CopyToClipboard" xml:space="preserve">
-    <value>Copy error message to clipboard</value>
-  </data>
   <data name="ClassNames.Altaxo.Graph.Scales.Ticks.CumulativeProbabilityTickSpacing" xml:space="preserve">
     <value>Cumulative probability tick spacing</value>
   </data>
@@ -566,9 +563,6 @@
   </data>
   <data name="XML.MainMenu.FileMenu.New.StandardWorksheet.Description" xml:space="preserve">
     <value>Creates a new worksheet with a X column "A" and a V column "B"</value>
-  </data>
-  <data name="Altaxo.Gui.ExceptionBox.ThankYouMsg" xml:space="preserve">
-    <value>Thank you for helping make Altaxo a better program for everyone!</value>
   </data>
   <data name="XML.MainMenu.WindowMenu.SortByTypeAndCreation" xml:space="preserve">
     <value>Type and Creation time</value>
@@ -852,9 +846,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.Plot3DMenu" xml:space="preserve">
     <value>3D-Plots</value>
-  </data>
-  <data name="Altaxo.Gui.ExceptionBox.ReportError" xml:space="preserve">
-    <value>Report error to the Altaxo team</value>
   </data>
   <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisFarToLinkedLayerNear" xml:space="preserve">
     <value>Rel.Far-Near.LinkLayer</value>
@@ -1741,9 +1732,6 @@ in the path ${Path}.
   <data name="XML.MainMenu.GraphMenu.Tools.CurlyBrace.Description" xml:space="preserve">
     <value>Draws a curly brace.</value>
   </data>
-  <data name="Altaxo.Gui.ExceptionBox.Title" xml:space="preserve">
-    <value>Unhandled exception has occured</value>
-  </data>
   <data name="XML.MainMenu.TextMenu.EditorBottomViewerTop.Description" xml:space="preserve">
     <value>Editor on the bottom, viewer on top</value>
   </data>
@@ -1867,15 +1855,6 @@ in the path ${Path}.
   <data name="XML.MainMenu.FileMenu.Import.AsciiSingleWorksheetVert" xml:space="preserve">
     <value>Import ASCII vertically</value>
   </data>
-  <data name="Altaxo.Gui.ExceptionBox.HelpText1" xml:space="preserve">
-    <value>An unhandled exception has occurred in Altaxo. This is unexpected and we'd ask you to help us improve Altaxo by reporting this error to the Altaxo team.</value>
-  </data>
-  <data name="Altaxo.Gui.ExceptionBox.HelpText2" xml:space="preserve">
-    <value>How to report errors efficiently: We have set up a Web-based forum to report and track errors that are reported by users of Altaxo. To minimize necessary questions by the team members, in addition to providing the error message that is copied to the clipboard for easier pasting in the error report, we ask that you provide us with an as detailed as possible step-by-step procedure to reproduce this bug.</value>
-  </data>
-  <data name="Altaxo.Gui.ExceptionBox.Continue" xml:space="preserve">
-    <value>Continue</value>
-  </data>
   <data name="XML.MainMenu.WorksheetMenu.MoveToFolder.Description" xml:space="preserve">
     <value>Moves the current worksheet to another project folder.</value>
   </data>
@@ -1959,9 +1938,6 @@ in the path ${Path}.
   </data>
   <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed.Description" xml:space="preserve">
     <value>Fixed by the user value. Rescaling or zooming by the user will be ignored.</value>
-  </data>
-  <data name="Altaxo.Gui.ExceptionBox.ExitAltaxo" xml:space="preserve">
-    <value>Exit Altaxo</value>
   </data>
   <data name="XML.MainMenu.LayerMenu.PasteLayerContentsExclusively" xml:space="preserve">
     <value>Paste plot contents exclusively</value>

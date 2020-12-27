@@ -175,12 +175,6 @@ Check the file permission and the existence of that file.</value>
   <data name="XML.MainMenu.ViewMenu" xml:space="preserve">
     <value>&amp;View</value>
   </data>
-  <data name="XML.MainMenu.FileMenu.Print" xml:space="preserve">
-    <value>P&amp;rint</value>
-  </data>
-  <data name="XML.MainMenu.FileMenu.Close" xml:space="preserve">
-    <value>&amp;Close</value>
-  </data>
   <data name="XML.MainMenu.EditMenu.Cut.Description" xml:space="preserve">
     <value>Cut selection to clipboard</value>
   </data>
@@ -225,9 +219,6 @@ you have write permission in that path and file. (maybe a write protection probl
   </data>
   <data name="Global.Shortcuts.Shift" xml:space="preserve">
     <value>Shift</value>
-  </data>
-  <data name="XML.MainMenu.FileMenu.Open.Project.Description" xml:space="preserve">
-    <value>Open Project/Solution</value>
   </data>
   <data name="OpenFileTabEventHandler.ContextMenu.CloseAllButThis" xml:space="preserve">
     <value>Close all &amp;but this</value>
@@ -300,12 +291,6 @@ you have write permission in that path and file. (maybe a write protection probl
   </data>
   <data name="Global.WarningText" xml:space="preserve">
     <value>Warning</value>
-  </data>
-  <data name="XML.MainMenu.FileMenu.Open" xml:space="preserve">
-    <value>&amp;Open</value>
-  </data>
-  <data name="XML.MainMenu.FileMenu.Exit" xml:space="preserve">
-    <value>E&amp;xit</value>
   </data>
   <data name="XML.MainMenu.WindowMenu.PrvWindow" xml:space="preserve">
     <value>&amp;Prev Window</value>
