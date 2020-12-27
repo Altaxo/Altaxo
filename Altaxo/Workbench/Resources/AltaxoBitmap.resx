@@ -1024,24 +1024,6 @@
         rkJggg==
 </value>
   </data>
-  <data name="Icons.16x16.OpenSplineCurve" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAAAd0SU1FB9oJEQ0FEPLcsBAAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41
-        LjVJivzgAAAAa0lEQVQ4T2OgJvgNxP/R8C8gngbEZAOYQf/APBIAB5SGAbIMQQcgQygCFBkACwt0rxEF
-        YJoDwTwigACUBgGQRlDgkWQzSAPM1n0gAVIBSCNFgGID/gAxxYbAwoEicBWIQYZgw9VATA3AwAAAirIk
-        65RBHh8AAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="Icons.16x16.ArrangeRightToLeft" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAb0lE
-        QVQ4T8WOUQqAMAxDd/+T7dMP76OjXUYImUxFLLzC0teysm/1FTYErQ6XM9maqCBn2ZGtiVrIWXZkmxxY
-        IdtXP7h1QEHOssOGCo4qMVOZGVJfQOEdM15QhvTbAfD4wJD6ghIzXlAgXWHDdWo5AauaRg48rrBXAAAA
-        AElFTkSuQmCC
-</value>
-  </data>
   <data name="Textures.Marble.RedMarble2" type="System.Byte[], mscorlib">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAIAAABMXPacAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
@@ -1801,31 +1783,6 @@
         rAAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="Icons.16x16.EmptyWorksheet" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAYElE
-        QVQ4T82QSwoAIAhEvf/JWrboPqV9QDLKiRYNPBykHhRxsocUA62Q5FN2EregHzaSujxFX9T9StAvaaH/
-        DzSQYM5SIBPFCHhRAToPLkOAYgQyWvX19wKUj55wS4qBCn3yPSYGkv+HAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="Icons.16x16.PropertyBag" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAAAh0RVh0Q29tbWVudAD2zJa/AAAAGnRFWHRTb2Z0d2FyZQBQYWludC5ORVQgdjMu
-        NS4xMDD0cqEAAAB4SURBVDhPY7hy4QRFGMFQ+78DiP/jwe+AeBoQ65NrAAyDDFKixAAQnkaMATug4sJA
-        DHI6stwdog2Aytmgyf2HyyEpwu4CpWeiQPYKNLnTxBiAD7dSYsBpIBYmx4A7QNwKxHDNhAyAByI+jGAM
-        qAFgMKAuIB+fYAAAN1U2UMXGy4gAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="Icons.16x16.StraightArrow" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAX0lE
-        QVQ4T8WMQQ6AIAwE+f/LOHrwP+oehBaHpMUDJJN0t0zLedRfYJkBy5fnXYT7YwMxysLtbZix94CV7Nz2
-        NoygED1AMsFlUBbfIiELH5Ky6MOCLPqwIAssM2AZp5Ybg0A3Xmte1rMAAAAASUVORK5CYII=
-</value>
-  </data>
   <data name="Textures.Paper.YellowPaper" type="System.Byte[], mscorlib">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAIAAABMXPacAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -2262,43 +2219,6 @@
         YII=
 </value>
   </data>
-  <data name="Icons.16x16.CleanWorksheetIcon" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAABGklE
-        QVQ4T6WQ20oCURSGfSl7h3yNehu7i7qI6MKMEMHAoNBwjCzICkR0wE7IYCk6nm0cD+P8rT2wh7E9bYb6
-        4Odf7M36LlYIwL/iDumbGn4mpVSRyJQQPy+yRL2LPO7AFn7jMHmNjci2r8QdzvIqlT978Qyyd1Uu2aEn
-        UZC8KlP5sxu7dJZ5CFFwevFE5c/SWjkSLiJEwXH6nkrEtm0Y5gLtnuEIwptb7FkUHKUKVCLzhYX+yITW
-        GskFBwmFah1rZWNszNHUv/Ci9eWC/ZMs1TrmbAl9MEX9c4jKqy4XsE8v7HDDyQyN9hi1eg+Paiu4wHu4
-        t8YA5ecObksfwQXew6nvXRQrTeQetGAC1rJIBewzSPgOizv8LQh9A0WnLh4mw7/HAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="Icons.16x16.ReadLayer" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAXUlE
-        QVQ4T92NQQrAMAgE8/+X5dhD/9O6kCW2DEHoqREGZVi1nUf/BEoTdZHPoDQ/PqDFN5QTLGNBlTvlxBzG
-        pwp44CEj5M/ulBMsx6cM5QRKs1o0KM0GByqgrNPbDffAQHhUN1JfAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="Icons.16x16.RescaleAxes" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAiklE
-        QVQ4T6WRQQ6AIAwEgf8/jKMHP+OpFnBpSxpANRnYtN2lieE8coU/gn5DO9gMxoEV1fwIc8/gEYqR2rwU
-        918v5pR+BGhELAL02qbexUYA1jb1LpyAEC7XpBHhBhD/2kUAjOO9SzvYBMaBFSIG8yxM9/zixiaYMYVP
-        IEBTGl5dgxm3WZiFSC+HG6nqKbT47M4XAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="Icons.16x16.PlotLine" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAfUlE
-        QVQ4T52QSw6AIAxE5/4nc+nCy6gLpR+wkkJoTd6QIPNoQPke4tg3ZJAICoC7nedyRACcv7O6uSawN397
-        ixMAl3tGf84F/dgWLs8E3tgWiYFgdnOFy55gpUxIdILRg3lw2QoiZUJCBWUJlQkuV0EGCZVEaYIqSa0U
-        eTa8PrEsvRZyg18AAAAASUVORK5CYII=
-</value>
-  </data>
   <data name="Icons.16x16.CameraPerspective" type="System.Byte[], mscorlib">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
@@ -2310,14 +2230,6 @@
         AAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="Icons.16x16.ArrangeTopToBottom" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAYUlE
-        QVQ4T82NUQqAMAxDd/+T7dMP76MTaRfCY0wHYuGNrknTsm91CRwqrQ4idTUTvhikrmbiMnt9H0CkrmbC
-        F4PU1fyG+7Hk2X8GrNCblugVV0b05hcBhJoJHD4Bh/PUcgJljEKo8AhQKwAAAABJRU5ErkJggg==
-</value>
-  </data>
   <data name="Icons.16x16.ViewTop" type="System.Byte[], mscorlib">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
@@ -2325,14 +2237,6 @@
         gCAMRAk/7OMmLuEULuIGjtHNKhCLLVI9TJ6hd70LIRCRIX88RR9eVoZ4FcyGc+YpKIdtZwgJS67+jpMh
         dNgUoOiwKdCiGKjmGqjmGqjmGqj2ZaDYgnv+vYHsGUNEmTXeXjO0OMLbq0IvjvD2QoxRHqNS5pRSO2u/
         DxNRuAB3vPBf3mQ3sAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="Icons.16x16.GroupShapes" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAATklE
-        QVQ4T2O4cuEERRirIAwDwX9cGK4GWQM6BinEBoarASBBXBgdgMSwGoAOqGYANkyUASCArBgbRjCGhwG4
-        MLIGdIxVkBSMVZB4fIIBAB5zfFXOQBIEAAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="Icons.16x16.ViewIso60" type="System.Byte[], mscorlib">
@@ -2398,32 +2302,6 @@
         DQCJntHT6YBJDz1dIWrSQ08XYoz4GQW5Tynpnee1WUTCF42c4I30zElSAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="Icons.16x16.ImportAscii" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAi0lE
-        QVQ4T7WQVw6AMAxDjRj3PxaffHAZhggNEHChZQokN87oSwXqqvyk+QBkLThvOfsEg+RopUAjGTqe34ao
-        6AG5p1KI+cPQ3nOum10qKfrpNfqqU0AoV4gBlv68xQZjnuX9A2680bGwbL2tEIDjlV8vesUnCgEsuk+P
-        U/8P4JFCAIu8Keb/AdwXZAQWh+rE9Z9bvAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="Icons.16x16.MoveToBottom" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuODc7gF0AAABXSURBVDhPY0AD
-        /6E0CnBwcPiPC0OVwAFtDCAFjHqBXAMaGhpADDiG8kkDMEOwacZmMwxDlUAALpuxaYRhqBIKADZTScFg
-        A/7fYCALww2gBEM9Qi5gYAAA6CfdShVfpiAAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="Icons.16x16.ClosedSplineCurve" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAAAd0SU1FB9oJEQ0FK0PXWTQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41
-        LjVJivzgAAAAkUlEQVQ4T7WTyw2AIBBEacgiPFiL1dmGHViGiTf14GdG2AQQWC68ZJJlmZ01JJpWdNAG
-        XdDtdEAjpELz4+QjPYb2bKSQ4RIStHynCG3YJ+mtDZCv+MGH0kLUJSeUM6nDAh8zRVXADpWMxZAZ0rbw
-        PuvRhgX6VluGpAJko3/HerBliG+Mh4j0co9sJij3L7TAmBcDODbnMedcTQAAAABJRU5ErkJggg==
-</value>
-  </data>
   <data name="Icons.16x16.DataConnection.CheckSQL" type="System.Byte[], mscorlib">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
@@ -2431,15 +2309,6 @@
         KXf4+Gg4PHT3h9aQ6gDPaHvs2/zgLgK2ruVZpnMQG57Qy2HWAWwAT1jLU37ZTuw7QmRxdU1o0rPt5l44
         4HK2xzDOemYpFdTY3DRDyODfI9sv6qYZQISAmUO4ufu7IUxZ1LDnHad7pCT/zQRDSvpCCCtJg8ZJZjIh
         zwAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="Icons.16x16.PlotScatter" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAaUlE
-        QVQ4T6WOQQ6AMAgE+f/LevTgf5RdijHGYGWbzDalMK35OsC+DVvBW70/4DmKggAVSRDFdcETDleCfA28
-        3jMUATokAaMQfMFhScCYAnwzuTdVcFgSMBQBplLQIWJK/nIJUtLaEX2GnSlTJhCiaRTtAAAAAElFTkSu
-        QmCC
 </value>
   </data>
   <data name="Icons.16x16.ReadData" type="System.Byte[], mscorlib">
@@ -2450,47 +2319,12 @@
         cHMyUCcDdVughAMvhDJDKDnFOj9BLSMO0ph1AAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="Icons.16x16.Duplicate" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAgklE
-        QVQ4T6WRCQrAIAwE8/939RB6aI//WKMkSIwUdcOIbeIILbzODJEWAN+DEPhGhOAv4YpYlCaBPIwpBFWo
-        lB4LaoSxWFqP4KFaaYdyxgW43OcCj13B7RODzyTB/XXMjN3SDAvoo6hQKT0hwF9TgSX5eyH4C0kozQKZ
-        QtADC/ox8AHuWjrj4nic4AAAAABJRU5ErkJggg==
-</value>
-  </data>
   <data name="Icons.16x16.DataConnection.GroupBy" type="System.Byte[], mscorlib">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wwAADsMBx2+oZAAAAH1JREFUOE/NkdENgCAMRNmpO3Wn7uRO6BVioFxMMX74kppCuLsi5TPUjqpmVdVq
         38rj4iDEWkRzZkiWwYCI0bNqRAHM0umAGVyf0QA9qwZL9H+SnWJ75IjImrb1Cn5wOOxincToWTWoQTYd
         xCu8eoUg6FPJtPfILdgR/YBSTqz9eCLPtZJHAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="Icons.16x16.UngroupShapes" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAZElE
-        QVQ4T+WNOw7AIAxDuf/JGBl6n/KJXAXLEak6NtILEDumXK1+Qg49o+6IpfMCM42q/hYQsXReeIs1kT7Z
-        jNEcIhcb4eP5I3DBGJ0gFYC7wloiAG/mGHDCmvvFw2aFHOappQN4T1laMjNXWAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="Icons.16x16.CurlyBrace" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAA60lEQVQ4T31TWw7CMAwbQ2i8JITED5dA
-        HHGH2s12gGKHOKRrhSWTxEncqWzDP5RSdoqiNXpAc98b2mrKQ0vC3YQNoNPYzF0KmMZmFAmqEc/gGxyp
-        gVcbECBMnlbgsEc7QHCT32EoLp4aVGsIcWQUqmUCwpFhnufidXdRYJ/0+aKFbNDcybIs9alAGCSYSabr
-        hk4PZ5RnPNJ3zByDMtFCpu+9mN0gVI+ckE9r+qbh5+F1gA1Ql4i0f6ENuOhpwM1Cp1lvroIG1nWtljMa
-        nQIYfyGoV5c8gVPSqrfTwKanYQZyid8C48Hz9GENwwceHzrkRS4VOQAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="Icons.16x16.ArrangeBottomToTop" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAXklE
-        QVQ4T9XNUQrAIAwD0N7/ZH7uw/tsjtEYQn6qMFB4ojat0a+2xT5WzEPE7XDYmYcR1nXYgFXfNn5KlTsG
-        7LCPLH9TqHPY0caEOoedN6zr/wEO6hx2tDGhzuG6Fg9ac0KoRLr6BQAAAABJRU5ErkJggg==
 </value>
   </data>
   <data name="Icons.16x16.ViewBottom" type="System.Byte[], mscorlib">
@@ -2501,31 +2335,6 @@
         8LJbTDKGA4JM/hY7GabmEej8nuFtv5A8TAXetCDqLYOotwyi3jKIer+CqLgA7/0seroqCf74LvdcgH0G
         G+B3wI35FmBebqLHQ6dCbtPgXgDdn6Kvty5ldx6uBSmlHkJ455z77vMRFpHtA8tO5VW7rmjTAAAAAElF
         TkSuQmCC
-</value>
-  </data>
-  <data name="Icons.16x16.ArrangeVerticalTable" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAASElE
-        QVQ4T7XNMQoAMAhD0dz/ZI4dvE87OhjEWAw8cPrCj32JA7gKGuhuL6BIgak4yJcKDXS3F1CkwFQc5EuF
-        BrrbCyhSYMbwAOH4UhvyHK52AAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="Icons.16x16.ArrangeVertical" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAZElE
-        QVQ4T7WNUQqAMAxDd/+T7dMP76OlUCxpMjrUwIPxSLNxHvMVVAaWi/lMFXakwK73i7BiBN/Y9X4RXw7k
-        bA0osOt9JgN1lHke8NsKOYBRrj3AsjWg3H8DXegAA8sMKvvMcQMx7GFNFY3NoQAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="Icons.16x16.Printer" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAg0lE
-        QVQ4T6WMXRKAIAiEvf+5avKp/85TgkJgllTMfO6wLuvW0f+ibDq31+CsPEQjfNbGVACaQ77KqyWFnsZU
-        AJpT8lUBGLXhI6F8bOFyHImGBcpKpecVshAfMnKWoUOd+6gA5YXeF2xTE2gDuoBI+2lYoSJUudTgI5FX
-        n1boRhV8w7sDp5AJQePua0wAAAAASUVORK5CYII=
 </value>
   </data>
   <data name="Textures.Metal.ScratchedSilver" type="System.Byte[], mscorlib">
@@ -2705,14 +2514,6 @@
         EommSSgzBYszwkgWnFO/3MgLURM79g/JUGp2VBup7RSfItNesjkrnQJySnweD2ptdkUVpI7aFTUN6MUP
         dBiPXngDUGv3O+Trk/dlA/s5wineFSLOcpODvHu9X5GYtFqc5Y+OJD/60f8FDFrQ7xyfKHQAAAAASUVO
         RK5CYII=
-</value>
-  </data>
-  <data name="Icons.16x16.Rectangle" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAOUlE
-        QVQ4T2O4cuEERRirICkYqyApGMFgYPhPCsZqQENDA1F41IDhbQApGMMAcjFWQVIwVkHi8QkGABLQOQcM
-        EBl+AAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="Textures.Marble.DarkMarble1" type="System.Byte[], mscorlib">
@@ -3079,54 +2880,6 @@
         /0yETTHkganR6K+J4ERgQNn9sxLmxRVY4PxgLMkF5VIKGBgAYKLRnUSqwm4AAAAASUVORK5CYII=
 </value>
   </data>
-  <data name="Icons.16x16.MoveDown" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuODc7gF0AAABsSURBVDhPtY9R
-        CoAwDEPrzXq0HtPbTB1JQczGrPjgfahJiraCu7eRiMxRRYpIZ21twm1AXVMi3qkNRMRVTPH8Do6Myuoy
-        RSRHJKpIEXlyftwoXmm4VLUPtN1K5sAX8SM/oy5TROaoIkWkitkBmN/lDBNRb+UAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="Icons.16x16.ArrangeLeftToRight" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAZklE
-        QVQ4T82OUQqAMAxDd/+T7dMP7zPt2kgI3RQmYuC1kC5hZd/qEqnJnGqZD1KTQYFtpfv8OAMPm+hxAYjc
-        pe9+8FqBbaX7o6OBkhk+IgBxAfYIH78uuMNHBBTcOKCkJrNcMKeWA4aBRg5IU7GuAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="Icons.16x16.ArrangeHorizontalTable" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAN0lE
-        QVQ4T2O4cuEERRirICkYQjAw/EfGJInBJGAALkGs2KgBowZQ1QBkTJIYiKAEYxUkHp9gAADh+FIbY+z5
-        WwAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="Icons.16x16.TextTool" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAATElE
-        QVQ4T2O4cuEERRirICkYwWBg+E8KxmpAYrQnXAImhqwYhEFqkMXgEtgwNgPQMVZBGB41YMgbANNMyBCs
-        gqRgrIKkYKyCxOMTDADFdzf7tzLW9AAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="Icons.16x16.ArrangeTop" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAASUlE
-        QVQ4T2O4cuEERRhCMDD8h2FS+HADKMEQAskGZExIDsUAdABThE9u1AASDMCGiTaAEIYQg8IAbBhdMTaM
-        VZAUjFWQeHyCAQBuW2nMq1/EbwAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="Icons.16x16.ArrangeHorizontal" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAX0lE
-        QVQ4T62MMQ7AMAwC8/+XZezQ/zRlsIUQVevUSLcciHEe8xdWVrCygpXMncuRPY8dGGvsAaRSPuDESD0S
-        Xd8BBBOjN5cHccLJgXgkuv4DpXTwRMuBI3se72Dld+ZYoH5hTSnHhSsAAAAASUVORK5CYII=
-</value>
-  </data>
   <data name="Icons.16x16.Notepad" type="System.Byte[], mscorlib">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
@@ -3134,50 +2887,6 @@
         QVQ4T6WSCw7AIAhDPbpH82aMOjCiIGZ7CSl+Wlyy4lIrpRWCQyKqrK21UOMQHHBAv+To6N2AxAyNzUAC
         ZGUwYbo2qHmZuKlMDwNOZjXN/cuFGarTufUDPJNRZl1/+nbQ9zq3z2fQm/0BQrJiYFJswAXz9P0FC/jf
         M9IAnXgquf6HUh4Hg+KurqgfywAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="Icons.16x16.MoveToTop" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuODc7gF0AAABcSURBVDhP7Y9B
-        CgAxCAN9mk/z5xaKEWxTKHWPOzAXSbJdUVXvOAfE/ckc6Cht2CqMSMHM6p0VYUSSKPs2cgPKMEfYl+EM
-        7NQ7K8KIrJzu13z8AlaEEVn5f6EgMgBWzN9sIeuPIwAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="Icons.16x16.ZoomAxes" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAo0lE
-        QVQ4T6VTSxKFIAzD3/2v5dKF5xFJaplaKb4PY8KQppFhIO3b+heEUs5VKAsL1SOQlvmgsdXwFkIax9z9
-        W7dG+mSrgacWy8fhDYrXAMwS0Q75KgDDmqznoYOGQQ7Rj2oKmgESArhoGKEpfI11EAJmcxd8k19bkLS5
-        hyiEhItkxQitEJINmKZ7mN+dD6GIt4BGzEW/Qa65QH0ScB28Jv+GNZ0qdjlVt7tpaQAAAABJRU5ErkJg
-        gg==
-</value>
-  </data>
-  <data name="Icons.16x16.NewLegend" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAkElE
-        QVQ4T72P0Q5AMAxFm8X/f5dHD35mmGpVzaqCSUgOW9eeO0APfgSw71qo4bEgUs9IJNPrCuamQQyhqE2H
-        HprY14VAEzhNE/mrZ8OGDp8ECifYG6jIrl2BByfrzaoEV/wrABipWcg1R0BbKqKpRTeEm9eXbGTQImfz
-        vSAX82CupeeCK+T/YyF/JfDYBfUALvNRA60atHP9AAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="Icons.16x16.ArrangeLeft" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAVElE
-        QVQ4T2O4cuEERRhCMDD8h9H4MLJGGMYwABegrQFwzoC5ANkAfBhZIwyjGEAORuWg2UgIww2Ac4A0sWCQ
-        GQDDZBsA5wBpUjCGAeRgrILE4xMMAB30cJgQiOIrAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="Icons.16x16.PlotLineScatter" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAbklE
-        QVQ4T6WMUQ6AMAhDuf/J9unH7qMUhpnJtiA1eTVW+kSfG/SrSQY91XvHvr0kBGgogZc5QYy+nbYnAUbB
-        8r8FI8AFJbDYCHajGRuvBJkx8BgCjIL56ISNKYEFI8AqBBU8huQvryAkpTeiTpMHBfskxulGcgsAAAAA
-        SUVORK5CYII=
 </value>
   </data>
   <data name="Icons.16x16.Lighting" type="System.Byte[], mscorlib">
@@ -3776,23 +3485,6 @@
         qgAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="Icons.16x16.LineTool" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAZElE
-        QVQ4T6XLQQ6AIAxEUe5/MpYuvA8yNWKBsbRo8gx8Muk88i80RtBoqV+BdtePK+NYmr5Y2Fj6GJivsbyx
-        qFljoPGxGgON4BkDj84xzCEwhv4SHMN72BjD/dscA40RNPrldAHjjknn/zXXPQAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="Icons.16x16.GraphPointerTool" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAeklE
-        QVQ4T5WMUQ7AIAhDvf/J/NzH7rPRZCy0ImqTJj6Q1+6r/7U8aJytymDHyImE4RMguxKGIEB2JAwiQFYS
-        hkSAVBKGiQCZSRgKAZJJGBIBZlq6IbClx996oGWQI+WsDPYxfsb7WBDZZ5VkGGStJASz4tA77HRw1t5e
-        FkhwKnRggzMAAAAASUVORK5CYII=
-</value>
-  </data>
   <data name="Textures.Caustics.BlueCaustics" type="System.Byte[], mscorlib">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAIAAABMXPacAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
@@ -4133,47 +3825,6 @@
         K3318lxEdxb9TPUL+AiBAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="Icons.16x16.ArrangeBottom" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAARklE
-        QVQ4T2O4cuEERRhCMDD8x4bRFWPDEAKoGB0MHgNANDZMkgHoACY3agC1DcCGCcnBDaAEgwCKqSTzQQQl
-        GKsg8fgEAwDOOGvFFu7TmgAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="Icons.16x16.Triangle" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuNUmK/OAAAABRSURBVDhPtY1B
-        DgAgCMP4/6fVAyQGnEOITTiIo5PfDJ0yLcF++Czxzf5NOYXTAtSG9oFbiApYC/vnDQuYoXYF5jLHRshC
-        KyDkX46NIKhMF5EJ6n8xz+1j+AEAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="Icons.16x16.ArrangeRight" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAXUlE
-        QVQ4T9WOSw4AEAxEe/+TWVq4j18yVVQQFjR5STMdL8hZc4QeEvkRuHMXiyQVtHlHUHXbIIc3fjACd+5i
-        2UEVpHAF9PkdL/E4Gwik6FOBpBKsgG4n2OFYUDAUAJCXZmazxJn5AAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="Icons.16x16.StandardWorksheet" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAkElE
-        QVQ4T52QSw6AMAhEe1qt3sjPgbp04X2Q6cegGFtKMmFa4JHWcVCLziO4LyGoFn+QZkBuVpB4WQs5KH0X
-        IA9JYPsfSJkA7/gEIFulAHwRZfCc2BSAVQrgN6KJBY/s1+RRTi1PrwDDQjTvyWO4wFBOLRWAVQow8lY8
-        Ax7bcc71e6v0+g94QD6hGdCr8wjuAo33PWKbImpAAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="Icons.16x16.MoveUp" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuODc7gF0AAABsSURBVDhPtY9R
-        DoAgDEPnzTjabj6VtCJQDWh4yfuYdEUspRRP2ghqkSKyGHXzjLnAIj55FfwRD9EcgY3iUw+blIh0uHs5
-        U4sUkQosR1UyCpdpntXNyrPgRplVWIk4aedpxv4AkXfUIkVkJWY7iCrnLgMVUbkAAAAASUVORK5CYII=
-</value>
-  </data>
   <data name="Icons.16x16.CameraOrtho" type="System.Byte[], mscorlib">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
@@ -4181,14 +3832,6 @@
         gCAMRJnGORnCgdiscsUilBYwJn68Bg7uiYGIBsJRFrKfYYZgV2KGwo7EDFtWEjPUzCR82AYenqQ84YPk
         GS8k3b5bLCQpJQJ4d6W9wMOQoBRjZLh05hBoAeChJGbZEwAet0S+PpRnAsAjS+o/6/JKILhl8J/AJdAF
         JOW1s6VAVyoAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="Icons.16x16.Ellipse" type="System.Byte[], mscorlib">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
-        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAXUlE
-        QVQ4T92MMQrAMAwD/XQ/L2OH/icNhoDjHiGiW4cbdEiy+2qfQKmAUoGlWSew+xKj6O4InaxhM57UE2k8
-        ySd/Ojg9yePY5BBic1LH0a8i5CgS2CWpgFIB5TnNHj+LST9lL5xPAAAAAElFTkSuQmCC
 </value>
   </data>
 </root>
