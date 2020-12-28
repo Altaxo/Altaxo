@@ -304,9 +304,6 @@ in the path ${Path}.
   <data name="Gui.DataConnection.StoredProcedures" xml:space="preserve">
     <value>Stored Procedures</value>
   </data>
-  <data name="XML.MainMenu.FileMenu.Import.UsingFileImportScript" xml:space="preserve">
-    <value>Using file import script ..</value>
-  </data>
   <data name="Altaxo.Project.AskForSavingOfProjectDialog.Caption" xml:space="preserve">
     <value>Question</value>
   </data>
@@ -342,9 +339,6 @@ in the path ${Path}.
   </data>
   <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDesaturate" xml:space="preserve">
     <value>Brighter</value>
-  </data>
-  <data name="XML.MainMenu.FileMenu.Import.UsingFileImportScript.Description" xml:space="preserve">
-    <value>Imports from one or more files using an import script</value>
   </data>
   <data name="XML.MainMenu.Graph3DMenu.ViewIso30.Description" xml:space="preserve">
     <value>View graph isometrically 30 degrees</value>

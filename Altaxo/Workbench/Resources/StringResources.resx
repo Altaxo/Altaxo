@@ -124,9 +124,6 @@ Check the file permission and the existence of that file.</value>
   <data name="MainWindow.Windows.FileScout.Size" xml:space="preserve">
     <value>Size</value>
   </data>
-  <data name="XML.MainMenu.EditMenu.SelectAll" xml:space="preserve">
-    <value>Select &amp;All</value>
-  </data>
   <data name="ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton" xml:space="preserve">
     <value>Show Exception</value>
   </data>
@@ -148,38 +145,14 @@ Check the file permission and the existence of that file.</value>
   <data name="Dialog.Componnents.RichMenuItem.NoRecentFilesString" xml:space="preserve">
     <value>recent files</value>
   </data>
-  <data name="XML.MainMenu.EditMenu.Cut" xml:space="preserve">
-    <value>Cu&amp;t</value>
-  </data>
-  <data name="XML.MainMenu.FileMenu.ClearRecentProjects" xml:space="preserve">
-    <value>Clear recent projects list</value>
-  </data>
   <data name="MainWindow.Windows.FileScout.DriveType.CD" xml:space="preserve">
     <value>CD</value>
-  </data>
-  <data name="XML.MainMenu.EditMenu.Delete.Description" xml:space="preserve">
-    <value>Delete</value>
   </data>
   <data name="Global.OKButtonText" xml:space="preserve">
     <value>OK</value>
   </data>
-  <data name="XML.MainMenu.HelpMenu.About" xml:space="preserve">
-    <value>&amp;About…</value>
-  </data>
-  <data name="XML.MainMenu.EditMenu.Copy.Description" xml:space="preserve">
-    <value>Copy selection to clipboard</value>
-  </data>
   <data name="ICSharpCode.Core.Services.ErrorDialogs.ExceptionGotDescription" xml:space="preserve">
     <value>Exception got</value>
-  </data>
-  <data name="XML.MainMenu.ViewMenu" xml:space="preserve">
-    <value>&amp;View</value>
-  </data>
-  <data name="XML.MainMenu.EditMenu.Cut.Description" xml:space="preserve">
-    <value>Cut selection to clipboard</value>
-  </data>
-  <data name="XML.MainMenu.EditMenu.Paste" xml:space="preserve">
-    <value>&amp;Paste</value>
   </data>
   <data name="FileUtilityService.ErrorWhileLoading" xml:space="preserve">
     <value>Error while loading</value>
@@ -190,17 +163,11 @@ Choose another file name or check if the directory exists and that
 you have write permission in that path and file. (maybe a write protection problem?)
 </value>
   </data>
-  <data name="XML.MainMenu.FileMenu.RecentProjects" xml:space="preserve">
-    <value>Recent Pro&amp;jects</value>
-  </data>
   <data name="ICSharpCode.SharpDevelop.ExceptionBox.QuitWarning" xml:space="preserve">
     <value>Do you really want to quit SharpDevelop? Unsaved changes will be lost!</value>
   </data>
   <data name="Gui.ProjectBrowser.FileInUseError" xml:space="preserve">
     <value>File or directory name is already in use, choose a different one.</value>
-  </data>
-  <data name="XML.MainMenu.FileMenu" xml:space="preserve">
-    <value>&amp;File</value>
   </data>
   <data name="Global.Shortcuts.Alt" xml:space="preserve">
     <value>Alt</value>
@@ -229,18 +196,6 @@ you have write permission in that path and file. (maybe a write protection probl
   <data name="CompilerResultView.FileText" xml:space="preserve">
     <value>File</value>
   </data>
-  <data name="XML.MainMenu.FileMenu.New" xml:space="preserve">
-    <value>&amp;New</value>
-  </data>
-  <data name="XML.MainMenu.EditMenu.Copy" xml:space="preserve">
-    <value>&amp;Copy</value>
-  </data>
-  <data name="XML.MainMenu.HelpMenu" xml:space="preserve">
-    <value>&amp;Help</value>
-  </data>
-  <data name="XML.MainMenu.HelpMenu.WebMenu" xml:space="preserve">
-    <value>Web</value>
-  </data>
   <data name="XML.MainMenu.Navigation.ClearHistory" xml:space="preserve">
     <value>Clear Navigation History</value>
   </data>
@@ -255,9 +210,6 @@ you have write permission in that path and file. (maybe a write protection probl
   </data>
   <data name="MainWindow.Windows.FileScout.MyDocuments" xml:space="preserve">
     <value>My Documents</value>
-  </data>
-  <data name="XML.MainMenu.WindowMenu" xml:space="preserve">
-    <value>&amp;Window</value>
   </data>
   <data name="ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel" xml:space="preserve">
     <value>Description</value>
@@ -283,29 +235,17 @@ you have write permission in that path and file. (maybe a write protection probl
   <data name="MainWindow.StatusBar.ReadyMessage" xml:space="preserve">
     <value>Ready</value>
   </data>
-  <data name="XML.MainMenu.ViewMenu.FullScreen" xml:space="preserve">
-    <value>&amp;Fullscreen</value>
-  </data>
-  <data name="SharpDevelop.FileFilter.AllFiles" xml:space="preserve">
-    <value>All files (*.*)</value>
-  </data>
   <data name="Global.WarningText" xml:space="preserve">
     <value>Warning</value>
   </data>
   <data name="XML.MainMenu.WindowMenu.PrvWindow" xml:space="preserve">
     <value>&amp;Prev Window</value>
   </data>
-  <data name="XML.MainMenu.EditMenu.Paste.Description" xml:space="preserve">
-    <value>Paste text from clipboard</value>
-  </data>
   <data name="StatusBarService.CaretModes.Insert" xml:space="preserve">
     <value>INS</value>
   </data>
   <data name="MainWindow.Windows.FileScout.DriveType.Remote" xml:space="preserve">
     <value>Remote</value>
-  </data>
-  <data name="XML.MainMenu.EditMenu" xml:space="preserve">
-    <value>&amp;Edit</value>
   </data>
   <data name="MainWindow.Windows.FileScout.MyComputer" xml:space="preserve">
     <value>My Computer</value>
