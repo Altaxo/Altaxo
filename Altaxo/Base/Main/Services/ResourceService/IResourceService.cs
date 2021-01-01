@@ -84,7 +84,7 @@ namespace Altaxo.Main.Services
     /// <example><c>ResourceService.RegisterStrings("TestAddin.Resources.StringResources", GetType().Assembly);</c></example>
     void RegisterStrings(string baseResourceName, Assembly assembly);
 
-    void RegisterNeutralStrings(ResourceManager stringManager);
+    void RegisterNeutralStrings(ResourceManager stringManager, string debugInfo);
 
     /// <summary>
     /// Registers image resources in the resource service.
@@ -94,7 +94,7 @@ namespace Altaxo.Main.Services
     /// <example><c>ResourceService.RegisterImages("TestAddin.Resources.BitmapResources", GetType().Assembly);</c></example>
     void RegisterImages(string baseResourceName, Assembly assembly);
 
-    void RegisterNeutralImages(ResourceManager imageManager);
+    void RegisterNeutralImages(ResourceManager imageManager, string debugInfo);
 
     /// <summary>
     /// Registers all resources that are directly included into the assembly given in the argument. See remarks for how the string resources are registered.
@@ -106,73 +106,5 @@ namespace Altaxo.Main.Services
     /// Image files directly included in the assembly have the name they are included with, but without extension.
     /// </remarks>
     void RegisterAssemblyResources(Assembly assembly);
-  }
-
-  internal sealed class FallbackResourceService : IResourceService
-  {
-    event EventHandler IResourceService.LanguageChanged { add { } remove { } }
-
-    string IResourceService.Language
-    {
-      get { return "en"; }
-      set
-      {
-        throw new NotImplementedException();
-      }
-    }
-
-    string IResourceService.GetString(string name)
-    {
-      return name;
-    }
-
-    object? IResourceService.GetImageResource(string name)
-    {
-      return null;
-    }
-
-    System.IO.Stream? IResourceService.GetResourceStream(string name)
-    {
-      return null;
-    }
-
-    void IResourceService.RegisterStrings(string baseResourceName, Assembly assembly)
-    {
-      throw new NotImplementedException();
-    }
-
-    void IResourceService.RegisterNeutralStrings(ResourceManager stringManager)
-    {
-      throw new NotImplementedException();
-    }
-
-    void IResourceService.RegisterImages(string baseResourceName, Assembly assembly)
-    {
-      throw new NotImplementedException();
-    }
-
-    void IResourceService.RegisterNeutralImages(ResourceManager imageManager)
-    {
-      throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// Registers all resources that are directly included into the assembly given in the argument. See remarks for how the string resources are registered.
-    /// </summary>
-    /// <param name="assembly">The assembly for which to register the resources.</param>
-    /// <remarks>
-    /// The name of a string resource is constructed from the namespace where the .resx file is located in, a dot, and the name of the resource in the .resx file.
-    /// Example: the .resx file is located namespace Altaxo.Main.Services. The string resource's key is Foo. Then this string resource is registered with the name Altaxo.Main.Services.Foo.
-    /// Image files directly included in the assembly have the name they are included with, but without extension.
-    /// </remarks>
-    void IResourceService.RegisterAssemblyResources(Assembly assembly)
-    {
-      throw new NotImplementedException();
-    }
-
-    public Bitmap GetBitmap(string name)
-    {
-      throw new NotImplementedException();
-    }
   }
 }

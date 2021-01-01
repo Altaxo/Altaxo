@@ -9,9 +9,11 @@
     <Identity name = "Altaxo" version = "1.0.0.0" />
   </Manifest>
 
+  <!--
   <StringResources file="..\data\resources\AltaxoString.resources" />
   <BitmapResources file="..\data\resources\AltaxoBitmap.resources" />
-
+  -->
+  
   <Runtime>
     <Import assembly=":WorkbenchCore">
       <Doozer name="OptionPanel" class="Altaxo.Gui.Workbench.OptionPanelDoozer" />

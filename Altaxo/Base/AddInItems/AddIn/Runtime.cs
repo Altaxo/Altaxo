@@ -34,6 +34,11 @@ namespace Altaxo.AddInItems
     private string _assembly;
     private Assembly? _loadedAssembly = null;
 
+    /// <summary>Gets a value indicating whether this <see cref="Runtime"/> is preloaded, i.e. is loaded immedeately after reading the .addin file.
+    /// This can be useful e.g. for resource assemblies of the addin, in which the menu strings and resources required for the addin are defined.</summary>
+    public bool IsPreloaded { get; }
+
+
     private List<LazyLoadDoozer> _definedDoozers = new List<LazyLoadDoozer>();
     private List<LazyConditionEvaluator> _definedConditionEvaluators = new List<LazyConditionEvaluator>();
     private ICondition[]? _conditions;
@@ -58,7 +63,7 @@ namespace Altaxo.AddInItems
       }
     }
 
-    public Runtime(IAddInTree addInTree, string assembly, string? hintPath)
+    public Runtime(IAddInTree addInTree, string assembly, string? hintPath, bool preloaded)
     {
       if (addInTree is null)
         throw new ArgumentNullException(nameof(addInTree));
@@ -67,6 +72,7 @@ namespace Altaxo.AddInItems
       _addInTree = addInTree;
       _assembly = assembly;
       _hintPath = hintPath;
+      IsPreloaded = preloaded;
     }
 
     public string Assembly
@@ -240,11 +246,18 @@ namespace Altaxo.AddInItems
 
     internal static Runtime Read(AddIn addIn, XmlReader reader, string? hintPath, Stack<ICondition> conditionStack)
     {
-      if (reader.AttributeCount != 1)
+      if (reader.AttributeCount < 1)
       {
-        throw new AddInLoadException("Import node requires ONE attribute.");
+        throw new AddInLoadException("Import node requires ONE or more attributes.");
       }
-      var runtime = new Runtime(addIn.AddInTree, reader.GetAttribute(0), hintPath);
+
+      bool preloaded = false;
+      if(!string.IsNullOrEmpty(reader.GetAttribute("preloaded")))
+      {
+        preloaded = System.Xml.XmlConvert.ToBoolean(reader.GetAttribute("preloaded"));
+      }
+
+      var runtime = new Runtime(addIn.AddInTree, reader.GetAttribute("assembly"), hintPath, preloaded);
       if (conditionStack.Count > 0)
       {
         runtime._conditions = conditionStack.ToArray();

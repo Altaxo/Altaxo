@@ -159,14 +159,14 @@
   <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiRGB" xml:space="preserve">
     <value>300 dpi - RGB</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Graph3D.Background.RectangularBackground" xml:space="preserve">
-    <value>Rectangular</value>
-  </data>
   <data name="XML.MainMenu.EditMenu.Cut" xml:space="preserve">
     <value>Cu&amp;t</value>
   </data>
   <data name="XML.MainMenu.EditMenu.Cut.Description" xml:space="preserve">
     <value>Cut selection to clipboard</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.Delete" xml:space="preserve">
+    <value>&amp;Delete</value>
   </data>
   <data name="XML.MainMenu.EditMenu.Delete.Description" xml:space="preserve">
     <value>Delete</value>
@@ -210,9 +210,6 @@
   <data name="XML.MainMenu.LayerMenu.PasteNewLayerBefore.Description" xml:space="preserve">
     <value>Paste as new layer before the active layer position.</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarXPlotStyle" xml:space="preserve">
-    <value>Error bar (x)</value>
-  </data>
   <data name="XML.MainMenu.AnalysisMenu" xml:space="preserve">
     <value>&amp;Analysis</value>
   </data>
@@ -246,9 +243,6 @@
   <data name="XML.MainMenu.LayerMenu.PasteInActiveLayer.Description" xml:space="preserve">
     <value>Paste the layer as a template in the active layer.</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarZPlotStyle" xml:space="preserve">
-    <value>ErrorBar(Z)</value>
-  </data>
   <data name="XML.MainMenu.FileMenu.New.FolderTextDocument.Description" xml:space="preserve">
     <value>Add a new folder text document, i.e. a text document named like the folder it resides into</value>
   </data>
@@ -267,9 +261,6 @@
   <data name="XML.MainMenu.WorksheetMenu.Duplicate.Description" xml:space="preserve">
     <value>Duplicates the current worksheet</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarPlotStyle" xml:space="preserve">
-    <value>ErrorBar</value>
-  </data>
   <data name="XML.MainMenu.WorksheetMenu.DecomposeCyclingVariable" xml:space="preserve">
     <value>Decompose table with cycling indep. var.</value>
   </data>
@@ -282,14 +273,8 @@
   <data name="XML.MainMenu.TextMenu.Rename" xml:space="preserve">
     <value>Rename ..</value>
   </data>
-  <data name="Altaxo.FileFilter.AllFiles" xml:space="preserve">
-    <value>All files</value>
-  </data>
   <data name="XML.MainMenu.ToolsMenu.TestProjectLoading" xml:space="preserve">
     <value>Test all projects in folder...</value>
-  </data>
-  <data name="XML.MainMenu.Graph3DMenu.CameraPerspective.Description" xml:space="preserve">
-    <value>View graph through perspective camera</value>
   </data>
   <data name="XML.MainMenu.AnalysisMenu.Correlate" xml:space="preserve">
     <value>Correlate columns</value>
@@ -309,29 +294,17 @@
   <data name="XML.MainMenu.FileMenu.EditTextDocumentProperties" xml:space="preserve">
     <value>Edit properties ..</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.VisibleLightSpectrum" xml:space="preserve">
-    <value>Visible light spectrum</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.BarGraphPlotStyle" xml:space="preserve">
-    <value>BarGraph</value>
-  </data>
   <data name="XML.MainMenu.PlotMenu.PlotBarChartStack" xml:space="preserve">
     <value>Stacked Bar</value>
   </data>
   <data name="XML.MainMenu.FileMenu.SaveGraphAsMiniProject.Description" xml:space="preserve">
     <value>Saves the current graph as MiniProject along with all neccessary data.</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear" xml:space="preserve">
-    <value>Rel.Near-Near.LinkLayer</value>
-  </data>
   <data name="XML.MainMenu.GraphMenu.LayerControl" xml:space="preserve">
     <value>Layer &amp;control</value>
   </data>
   <data name="XML.MainMenu.PlotMenu.PlotColumnChartStack.Description" xml:space="preserve">
     <value>Plots a vertical stacked column chart.</value>
-  </data>
-  <data name="XML.MainMenu.Graph3DMenu.ViewRight.Description" xml:space="preserve">
-    <value>View graph from right side</value>
   </data>
   <data name="XML.MainMenu.TextMenu.Figure.Description" xml:space="preserve">
     <value>Formats selected text as figure block</value>
@@ -351,12 +324,6 @@
   <data name="XML.ProjectBrowserMenu.ShowAllWindows.Description" xml:space="preserve">
     <value>Show all items in this folder.</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderAHSBGradient" xml:space="preserve">
-    <value>Alpha-Hue-Saturation-Brightness Gradient</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelTriangleSymmetrically" xml:space="preserve">
-    <value>Triangle2</value>
-  </data>
   <data name="XML.MainMenu.ToolsMenu.ShowUserSettings" xml:space="preserve">
     <value>Show all user settings...</value>
   </data>
@@ -368,12 +335,6 @@
   </data>
   <data name="XML.MainMenu.FileMenu.Export.SpecificFile" xml:space="preserve">
     <value>To specific format ..</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.CumulativeProbabilityScale" xml:space="preserve">
-    <value>Cumulative probability scale</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Graph3D.CS.G3DCartesicCoordinateSystem" xml:space="preserve">
-    <value>Cartesic coordinate system</value>
   </data>
   <data name="XML.MainMenu.AnalysisMenu.FFT" xml:space="preserve">
     <value>FFT</value>
@@ -405,9 +366,6 @@
   <data name="XML.ProjectBrowserMenu.ViewOnSelect" xml:space="preserve">
     <value>View on select:</value>
   </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelCMYK" xml:space="preserve">
-    <value>CMYK</value>
-  </data>
   <data name="XML.MainMenu.EditMenu.Duplicate.Description" xml:space="preserve">
     <value>Duplicates the current worksheet or graph (and the corresponding table or graph document)</value>
   </data>
@@ -426,12 +384,6 @@
   <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiARGB.Description" xml:space="preserve">
     <value>Copy the page to clipboard as bitmap format 300 dpi - ARGB</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.FixedManually.Description" xml:space="preserve">
-    <value>Fixed by the user value. Rescaling by the user is ignored. If zoomed, the new zoom value is used as new user provided value.</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMinorOrMajor" xml:space="preserve">
-    <value>Snap to major or minor</value>
-  </data>
   <data name="XML.MainMenu.PlotMenu.PLS.PlotActualVersusPredictedY.Description" xml:space="preserve">
     <value>Plots the predicted Y value versus the acual one.</value>
   </data>
@@ -447,20 +399,11 @@
   <data name="XML.MainMenu.PlotMenu.PlotLineAndScatter" xml:space="preserve">
     <value>Line&amp;&amp;Sc&amp;atter</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.BarGraphPlotStyle" xml:space="preserve">
-    <value>Bar</value>
-  </data>
   <data name="XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiARGB" xml:space="preserve">
     <value>300 dpi - ARGB</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.SpanTickSpacing" xml:space="preserve">
-    <value>Span tick spacing</value>
-  </data>
   <data name="XML.MainMenu.EditMenu.PasteGraphAsMiniProject.Description" xml:space="preserve">
     <value>Pastes the clipboard content as a miniproject into a new user defined folder.</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelComplementary" xml:space="preserve">
-    <value>Complementary</value>
   </data>
   <data name="XML.MainMenu.PlotMenu.PLS.PlotPreprocessedSpectra.Description" xml:space="preserve">
     <value>Plots the preprocessed spectra.</value>
@@ -470,9 +413,6 @@
   </data>
   <data name="XML.ProjectBrowserMenu.Hide.Description" xml:space="preserve">
     <value>Hide selected items from the document area.</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.TextTickSpacing" xml:space="preserve">
-    <value>Text tick spacing</value>
   </data>
   <data name="XML.MainMenu.ViewMenu.Zoom100Percent" xml:space="preserve">
     <value>100% Zoom</value>
@@ -497,9 +437,6 @@
   </data>
   <data name="XML.MainMenu.TextMenu.Subscript.Description" xml:space="preserve">
     <value>Formats selected text as subscript text</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarYPlotStyle" xml:space="preserve">
-    <value>ErrorBar(Y)</value>
   </data>
   <data name="XML.ProjectBrowserMenu.CopyToMultipleFolders.Description" xml:space="preserve">
     <value>Copies the selected items to multiple folders.</value>
@@ -527,9 +464,6 @@
   </data>
   <data name="XML.MainMenu.WindowMenu.OpenAllWorksheets" xml:space="preserve">
     <value>Worksheets</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.LabelPlotStyle" xml:space="preserve">
-    <value>Label</value>
   </data>
   <data name="XML.MainMenu.TextViewConfigurationMenu" xml:space="preserve">
     <value>View configuration ...</value>
@@ -567,9 +501,6 @@
   <data name="XML.MainMenu.FileMenu.New.PropertyBag" xml:space="preserve">
     <value>Property bag</value>
   </data>
-  <data name="XML.MainMenu.Graph3DMenu.ViewBack.Description" xml:space="preserve">
-    <value>View graph from back side</value>
-  </data>
   <data name="XML.MainMenu.FileMenu.SaveWorksheetAsTemplate.Description" xml:space="preserve">
     <value>Saves a worksheet with layout and scripts, but without the table data</value>
   </data>
@@ -588,26 +519,14 @@
   <data name="XML.MainMenu.EditMenu.CopyTextWithImages.Description" xml:space="preserve">
     <value>Copies the source text along with the local images to the clipboard in order to be pasted into another text document.</value>
   </data>
-  <data name="Gui.DataConnection.Views" xml:space="preserve">
-    <value>Views</value>
-  </data>
   <data name="XML.MainMenu.ToolsMenu.ShowOptions.Description" xml:space="preserve">
     <value>Opens the options dialog.</value>
   </data>
   <data name="XML.MainMenu.PlotMenu.PLS.PlotYResiduals.Description" xml:space="preserve">
     <value>Plot all Y residuals individually in a graph.</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ScatterPlotStyle" xml:space="preserve">
-    <value>Scatter</value>
-  </data>
   <data name="XML.MainMenu.EditMenu.DeleteAllButSelected" xml:space="preserve">
     <value>Delete all but selected</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.CumulativeProbabilityTickSpacing" xml:space="preserve">
-    <value>Cumulative probability tick spacing</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.InverseScale" xml:space="preserve">
-    <value>Inverse scale</value>
   </data>
   <data name="XML.MainMenu.FileMenu.New.InstanceScript.Description" xml:space="preserve">
     <value>Creates a new instance script for one-time execution.</value>
@@ -669,15 +588,6 @@
   <data name="XML.MainMenu.AnalysisMenu.StatisticsOnRows" xml:space="preserve">
     <value>Statistic on rows</value>
   </data>
-  <data name="XML.MainMenu.Graph3DMenu.ViewTop.Description" xml:space="preserve">
-    <value>View graph from top side</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.AngularDegreeScale" xml:space="preserve">
-    <value>Angular degree scale</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Auto.Description" xml:space="preserve">
-    <value>Org or End automatically set according to the data bounds. If zoomed by the user, switched to AutoTempFixed. If rescaled, sets the scale bound back according to the data bound.</value>
-  </data>
   <data name="XML.MainMenu.GraphMenu.LayerControl.Description" xml:space="preserve">
     <value>Opens the layer control dialog</value>
   </data>
@@ -690,9 +600,6 @@
   <data name="XML.MainMenu.FileMenu.Import.OriginOpj" xml:space="preserve">
     <value>Origin project file (.opj) ..</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ScatterPlotStyle" xml:space="preserve">
-    <value>Symbol</value>
-  </data>
   <data name="XML.MainMenu.FileMenu.Import.Database.Description" xml:space="preserve">
     <value>Imports data from a local or remote database.</value>
   </data>
@@ -701,12 +608,6 @@
   </data>
   <data name="XML.MainMenu.FileMenu.Close" xml:space="preserve">
     <value>&amp;Close</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelLinearCMY" xml:space="preserve">
-    <value>LinCMY</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelLinearRGB" xml:space="preserve">
-    <value>LinRGB</value>
   </data>
   <data name="XML.MainMenu.NewLayerMenu.LinkedRightY" xml:space="preserve">
     <value>(Linked): Right Y</value>
@@ -720,24 +621,11 @@
   <data name="XML.MainMenu.EditMenu.XYVToMatrix.Description" xml:space="preserve">
     <value>Converts 3 selected columns (X-Y-V) to a matrix.</value>
   </data>
-  <data name="Altaxo.Project.CantSaveProjectErrorText" xml:space="preserve">
-    <value>Can't save Altaxo project file ${FileNameWithoutPath}
-in the path ${Path}.
- Possible reasons are:
- + Path permission denied or it doesn't exists
- + File permission denied or write protected, or serialization error.</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.AngularRadianTickSpacing" xml:space="preserve">
-    <value>Angular radian tick spacing</value>
-  </data>
   <data name="XML.MainMenu.PlotMenu.PLS.PlotPRESSValue.Description" xml:space="preserve">
     <value>Plots the Predicted Error Sum of Squares value.</value>
   </data>
   <data name="XML.MainMenu.EditMenu.CopyTextWithImages" xml:space="preserve">
     <value>Copy text and images</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelARGBHex" xml:space="preserve">
-    <value>ARGB (hex)</value>
   </data>
   <data name="XML.ProjectBrowserMenu.ShowAllWindowsRecursively.Description" xml:space="preserve">
     <value>Show all windows in this folder and in its subfolders.</value>
@@ -748,17 +636,11 @@ in the path ${Path}.
   <data name="XML.MainMenu.ToolsMenu.ShowUserSettings.Description" xml:space="preserve">
     <value>Shows all properties in the user settings.</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.LinePlotStyle" xml:space="preserve">
-    <value>Line</value>
-  </data>
   <data name="Altaxo.FileFilter.ProjectFiles" xml:space="preserve">
     <value>Altaxo project files</value>
   </data>
   <data name="XML.MainMenu.FileMenu.EditGraphProperties.Description" xml:space="preserve">
     <value>Edit the properties of this graph.</value>
-  </data>
-  <data name="XML.MainMenu.Graph3DMenu.CameraOrtho.Description" xml:space="preserve">
-    <value>View graph through orthographic camera</value>
   </data>
   <data name="XML.MainMenu.FileMenu.Import.AsciiWithOptions.Description" xml:space="preserve">
     <value>Imports one or multiple ASCII files. The user can choose the import options that should be applied.</value>
@@ -787,15 +669,6 @@ in the path ${Path}.
   <data name="XML.MainMenu.AnalysisMenu.PLSOnColumns.Description" xml:space="preserve">
     <value>Performs a PLS analysis of the selected columns (spectra) </value>
   </data>
-  <data name="Dialog.Options.AsciiAnalysis" xml:space="preserve">
-    <value>Ascii file analysis</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.DateTimeScale" xml:space="preserve">
-    <value>Date-time scale</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.TextScale" xml:space="preserve">
-    <value>Text scale</value>
-  </data>
   <data name="XML.MainMenu.GraphMenu.NewLayerLegend.Description" xml:space="preserve">
     <value>Creates a new layer legend for the currently selected layer</value>
   </data>
@@ -817,17 +690,11 @@ in the path ${Path}.
   <data name="XML.MainMenu.PlotMenu.PlotColumnChartRelStack" xml:space="preserve">
     <value>Relative stack column</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMajorOnly" xml:space="preserve">
-    <value>Snap to major only</value>
-  </data>
   <data name="XML.MainMenu.PlotMenu.PlotLineWaterfall" xml:space="preserve">
     <value>Waterfall</value>
   </data>
   <data name="XML.MainMenu.WorksheetMenu.MoveToFolder" xml:space="preserve">
     <value>Move Worksheet to folder..</value>
-  </data>
-  <data name="Gui.DataConnection.Tables" xml:space="preserve">
-    <value>Tables</value>
   </data>
   <data name="XML.MainMenu.PlotMenu.PLS.PlotActualVersusPredictedY" xml:space="preserve">
     <value>Plot actual versus predicted Y</value>
@@ -837,15 +704,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.EditMenu.Clean" xml:space="preserve">
     <value>Clean</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelRGB" xml:space="preserve">
-    <value>RGB</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelCMY" xml:space="preserve">
-    <value>CMY</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelHSB" xml:space="preserve">
-    <value>HSB</value>
   </data>
   <data name="XML.MainMenu.TextMenu.EditorRightViewerLeft.Description" xml:space="preserve">
     <value>Editor on the right side, viewer on the left side</value>
@@ -861,9 +719,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.GraphMenu" xml:space="preserve">
     <value>&amp;Graph</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelPrimary" xml:space="preserve">
-    <value>Primary</value>
   </data>
   <data name="XML.MainMenu.PlotMenu.PLS.PlotXCrossResiduals.Description" xml:space="preserve">
     <value>Plots the spectral residuals (from cross prediction).</value>
@@ -922,9 +777,6 @@ in the path ${Path}.
   <data name="XML.ProjectBrowserMenu.HideAllWindows.Description" xml:space="preserve">
     <value>Hides all windows in this folder.</value>
   </data>
-  <data name="XML.MainMenu.Graph3DMenu.ViewIso60.Description" xml:space="preserve">
-    <value>View graph isometrically 60 degrees</value>
-  </data>
   <data name="XML.MainMenu.FileMenu.New.WksGraphFromFile.Description" xml:space="preserve">
     <value>Loads a worksheet or a graph from file</value>
   </data>
@@ -933,12 +785,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.FileMenu.Import.Ascii.Description" xml:space="preserve">
     <value>Imports Ascii data file(s)</value>
-  </data>
-  <data name="XML.MainMenu.Plot3DMenu" xml:space="preserve">
-    <value>3D-Plots</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisFarToLinkedLayerNear" xml:space="preserve">
-    <value>Rel.Far-Near.LinkLayer</value>
   </data>
   <data name="XML.MainMenu.ToolsMenu.RegisterApplicationForCom.Description" xml:space="preserve">
     <value>Registers Altaxo for OLE/COM functionality, i.e. for embedding or linking Altaxo graphs in other documents.</value>
@@ -949,29 +795,17 @@ in the path ${Path}.
   <data name="XML.MainMenu.ToolsMenu.AddTempUserAssembly" xml:space="preserve">
     <value>Add temporary user assembly ..</value>
   </data>
-  <data name="Altaxo.Project.ProjectSavedMessage" xml:space="preserve">
-    <value>Project successfully saved.</value>
-  </data>
   <data name="XML.MainMenu.LayerMenu.PasteLayerContentsAdditionally.Description" xml:space="preserve">
     <value>Paste the plot content into the active layer, keeping the old contents.</value>
   </data>
   <data name="XML.MainMenu.FileMenu.EditTableProperties" xml:space="preserve">
     <value>Edit table properties</value>
   </data>
-  <data name="XML.MainMenu.Graph3DMenu.ViewFront.Description" xml:space="preserve">
-    <value>View graph from front side</value>
-  </data>
   <data name="XML.ProjectBrowserMenu.ViewOnSelectTNOff.Description" xml:space="preserve">
     <value>Switches off the 'view on select' function.</value>
   </data>
   <data name="XML.MainMenu.AnalysisMenu.FitPolynomial.Description" xml:space="preserve">
     <value>Fits a polynomial to the currently active plot</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.NoTickSpacing" xml:space="preserve">
-    <value>No tick spacing</value>
-  </data>
-  <data name="XML.MainMenu.Graph3DMenu.ViewBottom.Description" xml:space="preserve">
-    <value>View graph from bottom side</value>
   </data>
   <data name="XML.MainMenu.ViewMenu.Zoom50Percent" xml:space="preserve">
     <value>50% Zoom</value>
@@ -1012,14 +846,8 @@ in the path ${Path}.
   <data name="XML.MainMenu.WindowMenu.OpenAll" xml:space="preserve">
     <value>Open All Worksheets and Graphs</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisNearToLinkedLayerFar" xml:space="preserve">
-    <value>Rel.Near-Far.LinkLayer</value>
-  </data>
   <data name="XML.MainMenu.GraphMenu.Tools.Pointer.Description" xml:space="preserve">
     <value>Click objects and move them around or double click objects to edit them.</value>
-  </data>
-  <data name="Gui.DataConnection.StoredProcedures" xml:space="preserve">
-    <value>Stored Procedures</value>
   </data>
   <data name="XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet" xml:space="preserve">
     <value>Ascii (all into a single worksheet) ..</value>
@@ -1038,9 +866,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.ColumnMenu.SetColumnAsValue.Description" xml:space="preserve">
     <value>Sets the currently selected column to a value column, i.e. to the dependent variable</value>
-  </data>
-  <data name="Altaxo.Project.AskForSavingOfProjectDialog.Caption" xml:space="preserve">
-    <value>Question</value>
   </data>
   <data name="XML.MainMenu.WindowMenu.OpenAllWorksheets.Description" xml:space="preserve">
     <value>Opens all Worksheets that are currently not open.</value>
@@ -1077,9 +902,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.ViewMenu.AutoZoom" xml:space="preserve">
     <value>AutoZoom</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.LinearScale" xml:space="preserve">
-    <value>Linear scale</value>
   </data>
   <data name="XML.MainMenu.WorksheetMenu.Transpose.Description" xml:space="preserve">
     <value>Transposes the current worksheet</value>
@@ -1135,9 +957,6 @@ in the path ${Path}.
   <data name="XML.MainMenu.FileMenu.Import.GalacticSPC.Description" xml:space="preserve">
     <value>Imports one or more Galactic SPC files</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderBGRY" xml:space="preserve">
-    <value>Blue-Green-Red-Yellow</value>
-  </data>
   <data name="XML.MainMenu.ColumnMenu.SetColumnAsLabel" xml:space="preserve">
     <value>Set column as &amp;Label</value>
   </data>
@@ -1147,23 +966,11 @@ in the path ${Path}.
   <data name="XML.MainMenu.ColumnMenu.SetColumnAsError" xml:space="preserve">
     <value>Set column as &amp;Error</value>
   </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelCMYK" xml:space="preserve">
-    <value>CMYK</value>
-  </data>
-  <data name="Dialog.Options.DocumentLanguage" xml:space="preserve">
-    <value>Document culture</value>
-  </data>
   <data name="XML.MainMenu.ColumnMenu.SetColumnAsValue" xml:space="preserve">
     <value>Set column As &amp;Value</value>
   </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelRGBHex" xml:space="preserve">
-    <value>RGB (hex)</value>
-  </data>
   <data name="XML.MainMenu.NewLayerMenu.LinkedTopXRightY.Description" xml:space="preserve">
     <value>Adds a linked layer with top X axis and right Y axis (but no axes links)</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.AutoTempFixed.Description" xml:space="preserve">
-    <value>Temporarily fixed by the user value. If rescaled, falls back to Auto mode. If zoomed, the zoom value is used as new user provided value.</value>
   </data>
   <data name="XML.MainMenu.FileMenu.New.WksGraphFromFile" xml:space="preserve">
     <value>Worksheet/Graph from File ..</value>
@@ -1185,12 +992,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.TextMenu.Superscript.Description" xml:space="preserve">
     <value>Formats selected text as superscript text</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Groups.WaterfallTransform+TransformedLayerWrapper+TransformedScale" xml:space="preserve">
-    <value>Transformed scale</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarYPlotStyle" xml:space="preserve">
-    <value>Error bar (y)</value>
   </data>
   <data name="XML.MainMenu.WindowMenu.SortByTypeAndCreation.Description" xml:space="preserve">
     <value>Sort windows by type and creation time.</value>
@@ -1231,17 +1032,11 @@ in the path ${Path}.
   <data name="XML.MainMenu.GraphMenu.Duplicate.Description" xml:space="preserve">
     <value>Duplicates the current graph</value>
   </data>
-  <data name="XML.MainMenu.FileMenu.ExportGraph3D" xml:space="preserve">
-    <value>Export 3D graph image ..</value>
-  </data>
   <data name="XML.MainMenu.WorksheetMenu.Transpose" xml:space="preserve">
     <value>&amp;Transpose</value>
   </data>
   <data name="XML.MainMenu.AnalysisMenu.ExportPLSCalibration" xml:space="preserve">
     <value>Export PLS calibration ...</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDesaturate" xml:space="preserve">
-    <value>Brighter</value>
   </data>
   <data name="XML.MainMenu.NewLayerMenu" xml:space="preserve">
     <value>New layer (axes)</value>
@@ -1263,9 +1058,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.TextMenu.ExpandText.Description" xml:space="preserve">
     <value>Expands the current text document into a new text document</value>
-  </data>
-  <data name="XML.MainMenu.Graph3DMenu.ViewIso30.Description" xml:space="preserve">
-    <value>View graph isometrically 30 degrees</value>
   </data>
   <data name="XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix.Description" xml:space="preserve">
     <value>Multiplies the first half of selected columns with the second half to a matrix </value>
@@ -1297,9 +1089,6 @@ in the path ${Path}.
   <data name="XML.ProjectBrowserMenu.DeleteFolder.Description" xml:space="preserve">
     <value>Deletes the folder by deleting all items in it.</value>
   </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelLinearRGB" xml:space="preserve">
-    <value>LinRGB</value>
-  </data>
   <data name="XML.ProjectBrowserMenu.ViewOnSelectOff.Description" xml:space="preserve">
     <value>Switches off the 'view on select' function.</value>
   </data>
@@ -1311,9 +1100,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.TextMenu.EditorBottomViewerTop" xml:space="preserve">
     <value>Editor bottom, viewer top</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.DensityImagePlotStyle" xml:space="preserve">
-    <value>Density</value>
   </data>
   <data name="XML.MainMenu.TextMenu.EditorLeftViewerRight.Description" xml:space="preserve">
     <value>Editor on the left side, viewer on the right side</value>
@@ -1336,9 +1122,6 @@ in the path ${Path}.
   <data name="XML.MainToolBar.FontSizeChooser.ToolTip" xml:space="preserve">
     <value>Font size of all selected objects</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.VectorCartesicPlotStyle" xml:space="preserve">
-    <value>CartesicVector</value>
-  </data>
   <data name="XML.MainMenu.GraphMenu.Refresh.Description" xml:space="preserve">
     <value>Refreshes the graph. Draws the graph completely new.</value>
   </data>
@@ -1350,9 +1133,6 @@ in the path ${Path}.
   </data>
   <data name="XML.ProjectBrowserMenu.RenameFolder.Description" xml:space="preserve">
     <value>Renames the folder.</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.DropLinePlotStyle" xml:space="preserve">
-    <value>DropLine</value>
   </data>
   <data name="XML.MainMenu.AnalysisMenu.PLSOnRows" xml:space="preserve">
     <value>PLS on rows</value>
@@ -1372,14 +1152,8 @@ in the path ${Path}.
   <data name="XML.MainMenu.FileMenu.NewDocumentIdentifier" xml:space="preserve">
     <value>New document identifier ..</value>
   </data>
-  <data name="MainWindow.Windows.DataDisplayWindow" xml:space="preserve">
-    <value>Data reader</value>
-  </data>
   <data name="XML.MainMenu.GraphMenu.ArrangeTopToBottom.Description" xml:space="preserve">
     <value>Top alignment of the selected elements to the bottom side of the master element.</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Log10Scale" xml:space="preserve">
-    <value>Logarithmic (decadic) scale</value>
   </data>
   <data name="XML.MainMenu.TextMenu.Header1.Description" xml:space="preserve">
     <value>Formats selected text as 1st level header text </value>
@@ -1389,9 +1163,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.WorksheetMenu.ClearDataAll" xml:space="preserve">
     <value>Clear data+props</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.LinearTickSpacing" xml:space="preserve">
-    <value>Linear tick spacing</value>
   </data>
   <data name="XML.MainMenu.PlotMenu.PLS.PlotPredictionScores" xml:space="preserve">
     <value>Prediction scores</value>
@@ -1413,9 +1184,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.TextMenu.RenumerateFigures.Description" xml:space="preserve">
     <value>Renumerates the figure captions and the links to the figures.</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.LessOrEqual.Description" xml:space="preserve">
-    <value>Fixed by the user value or the data bound value, whichever is less. Rescaling is working, using the user provided value and the data bound value, whichever is less. Zooming is working, while the user provided value is kept as is.</value>
   </data>
   <data name="XML.MainMenu.LayerMenu.DeleteActiveLayer.Description" xml:space="preserve">
     <value>Delete the active layer.</value>
@@ -1444,9 +1212,6 @@ in the path ${Path}.
   <data name="XML.MainMenu.TextMenu.EditorTopViewerBottom" xml:space="preserve">
     <value>Editor top, viewer bottom</value>
   </data>
-  <data name="Dialog.Options.Graph.ClipboardExport" xml:space="preserve">
-    <value>Clipboard export</value>
-  </data>
   <data name="XML.MainMenu.PlotMenu.PlotLine" xml:space="preserve">
     <value>&amp;Line</value>
   </data>
@@ -1465,23 +1230,11 @@ in the path ${Path}.
   <data name="XML.MainMenu.PlotMenu.PlotBarChartRelStack.Description" xml:space="preserve">
     <value>Plots a horizontal relative stack bar chart.</value>
   </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDarker" xml:space="preserve">
-    <value>Darker</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.LabelPlotStyle" xml:space="preserve">
-    <value>Label</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerSizeType.RelativeToLinkedLayer" xml:space="preserve">
-    <value>Rel.LinkLayer</value>
-  </data>
   <data name="XML.MainMenu.PlotMenu.PlotLineStack" xml:space="preserve">
     <value>Line stack</value>
   </data>
   <data name="XML.MainMenu.GraphMenu.RescaleAxes.Description" xml:space="preserve">
     <value>Rescales the x and y axes to show all data.</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelColder" xml:space="preserve">
-    <value>Colder</value>
   </data>
   <data name="XML.MainMenu.FileMenu.EditTableProperties.Description" xml:space="preserve">
     <value>Edit the properties of this table.</value>
@@ -1522,9 +1275,6 @@ in the path ${Path}.
   <data name="XML.MainMenu.EditMenu.XYVToMatrix" xml:space="preserve">
     <value>Convert X-Y-V to matrix</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ColumnDrivenSymbolSizePlotStyle" xml:space="preserve">
-    <value>Data column driven symbol size</value>
-  </data>
   <data name="XML.MainMenu.PlotMenu" xml:space="preserve">
     <value>&amp;Plot</value>
   </data>
@@ -1533,9 +1283,6 @@ in the path ${Path}.
   </data>
   <data name="XML.ProjectBrowserMenu.Hide" xml:space="preserve">
     <value>Hide</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.FixedZoomable.Description" xml:space="preserve">
-    <value>Fixed by the user value. Rescaling by the user is ignored. If zoomed, the new zoom value is used, while the user provided value is kept as is.</value>
   </data>
   <data name="XML.MainMenu.EditMenu.PasteAsNewLayer.Description" xml:space="preserve">
     <value>Pastes the clipboard content as a new layer into the current graph.</value>
@@ -1551,9 +1298,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.FileMenu.SaveGraphAsMiniProject" xml:space="preserve">
     <value>Save Graph as MiniProject (with data)</value>
-  </data>
-  <data name="MainWindow.Windows.ProjectScoutLabel" xml:space="preserve">
-    <value>Project</value>
   </data>
   <data name="XML.ProjectBrowserMenu.ViewFolderItemsOnSelectTN" xml:space="preserve">
     <value>View on select: View folder items</value>
@@ -1618,9 +1362,6 @@ in the path ${Path}.
   <data name="XML.MainMenu.ToolsMenu.RegistryMenu" xml:space="preserve">
     <value>Registry</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.InverseTickSpacing" xml:space="preserve">
-    <value>Inverse tick spacing</value>
-  </data>
   <data name="XML.MainMenu.FileMenu.New.StandardWorksheet" xml:space="preserve">
     <value>Standard worksheet</value>
   </data>
@@ -1636,29 +1377,14 @@ in the path ${Path}.
   <data name="XML.MainMenu.HelpMenu.ForceException.Description" xml:space="preserve">
     <value>This throws an exception to test the exception handling.</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToNothing" xml:space="preserve">
-    <value>Snap to nothing</value>
-  </data>
   <data name="XML.MainMenu.AnalysisMenu.Convolute" xml:space="preserve">
     <value>Convolute columns</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMinorOnly" xml:space="preserve">
-    <value>Snap to minor only</value>
   </data>
   <data name="XML.MainMenu.WindowMenu.OpenAllWorksheetsAndGraphs.Description" xml:space="preserve">
     <value>Opens all Worksheets and Graphs that are currently not open.</value>
   </data>
   <data name="XML.MainMenu.WorksheetMenu.ClearDataOnly" xml:space="preserve">
     <value>Clear data only</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelRGB" xml:space="preserve">
-    <value>RGB</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelHSB" xml:space="preserve">
-    <value>HSB</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelCMY" xml:space="preserve">
-    <value>CMY</value>
   </data>
   <data name="XML.MainMenu.ToolsMenu.TestProjectLoading.Description" xml:space="preserve">
     <value>Tests all projects in a given directory for correct loading.</value>
@@ -1669,17 +1395,11 @@ in the path ${Path}.
   <data name="XML.MainMenu.ColumnMenu.SetColumnAsX.Description" xml:space="preserve">
     <value>Sets the currently selected column as X column</value>
   </data>
-  <data name="MainWindow.Windows.OutputWindow" xml:space="preserve">
-    <value>Output</value>
-  </data>
   <data name="XML.ProjectBrowserMenu.CmdExchangeTablesForPlotItems" xml:space="preserve">
     <value>Exchange plot items table...</value>
   </data>
   <data name="XML.MainMenu.AnalysisMenu.PCAOnRows" xml:space="preserve">
     <value>PCA on rows</value>
-  </data>
-  <data name="Altaxo.Project.AskForSavingOfProjectDialog.Text" xml:space="preserve">
-    <value>Your project was modified. Do you want to save your project?</value>
   </data>
   <data name="XML.MainMenu.PlotMenu.PLS.PlotXResiduals" xml:space="preserve">
     <value>Plot spectral residuals</value>
@@ -1693,17 +1413,11 @@ in the path ${Path}.
   <data name="XML.MainMenu.FileMenu.SaveProject" xml:space="preserve">
     <value>&amp;Save Project</value>
   </data>
-  <data name="Dialog.Options.AutoUpdates" xml:space="preserve">
-    <value>Auto updates</value>
-  </data>
   <data name="XML.MainMenu.WindowMenu.SortByCreation.Description" xml:space="preserve">
     <value>Sort windows by the creation time.</value>
   </data>
   <data name="XML.MainMenu.AnalysisMenu.FFT.Description" xml:space="preserve">
     <value>Calculates a one dimensional Fourier transform of the selected column</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelPentagonSymmetrically" xml:space="preserve">
-    <value>Pentagon</value>
   </data>
   <data name="XML.MainMenu.GraphMenu.ArrangeLeft.Description" xml:space="preserve">
     <value>Left alignment of the selected elements.</value>
@@ -1741,18 +1455,6 @@ in the path ${Path}.
   <data name="XML.MainMenu.GraphMenu.ArrangeHorizontalTable.Description" xml:space="preserve">
     <value>Horizontal uniform spacing of the selected elements.</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ColumnDrivenColorPlotStyle" xml:space="preserve">
-    <value>Data column driven color</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDesaturateAndDarker" xml:space="preserve">
-    <value>Desaturate</value>
-  </data>
-  <data name="Dialog.Options.UILanguage" xml:space="preserve">
-    <value>User interface language</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerSizeType.RelativeToGraphDocument" xml:space="preserve">
-    <value>Rel.Graph</value>
-  </data>
   <data name="XML.MainMenu.AnalysisMenu.DifferentiateSmooth" xml:space="preserve">
     <value>Diff/Smooth..</value>
   </data>
@@ -1783,17 +1485,11 @@ in the path ${Path}.
   <data name="XML.MainMenu.FileMenu.New.TextDocument.Description" xml:space="preserve">
     <value>Add a new text document (Markdown annotated text)</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.DropAreaPlotStyle" xml:space="preserve">
-    <value>Drop area</value>
-  </data>
   <data name="XML.MainMenu.PlotMenu.PlotLineWaterfall.Description" xml:space="preserve">
     <value>Plot the selected columns as waterfall plot.</value>
   </data>
   <data name="XML.MainMenu.Plot.ColumnChartMenu" xml:space="preserve">
     <value>Column charts</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.AbsoluteValue" xml:space="preserve">
-    <value>Absolute</value>
   </data>
   <data name="XML.MainMenu.WorksheetMenu.ChangeRowsToPropertyColumns" xml:space="preserve">
     <value>Change rows to prop.columns</value>
@@ -1801,17 +1497,11 @@ in the path ${Path}.
   <data name="XML.MainMenu.HelpMenu.ProgramHelp" xml:space="preserve">
     <value>Help topics</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderARGBGradient" xml:space="preserve">
-    <value>Alpha-Red-Green-Blue Gradient</value>
-  </data>
   <data name="XML.MainMenu.WindowMenu.SortByTypeAndName.Description" xml:space="preserve">
     <value>Sort windows by Type and Name.</value>
   </data>
   <data name="XML.MainMenu.NewLayerMenu.LinkedTopX" xml:space="preserve">
     <value>(Linked): Top X</value>
-  </data>
-  <data name="MainWindow.Windows.AltaxoLightingWindowLabel" xml:space="preserve">
-    <value>Lighting</value>
   </data>
   <data name="XML.MainToolBar.StrokeWidthChooser.ToolTip" xml:space="preserve">
     <value>Stroke width of all selected lines / pens</value>
@@ -1825,20 +1515,11 @@ in the path ${Path}.
   <data name="XML.MainMenu.TextMenu.EditorBottomViewerTop.Description" xml:space="preserve">
     <value>Editor on the bottom, viewer on top</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeToGraphDocument" xml:space="preserve">
-    <value>Rel.Graph</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Shapes.FloatingScale+ScaleSegment" xml:space="preserve">
-    <value>Floating scale segment</value>
-  </data>
   <data name="XML.MainMenu.PlotMenu.PlotBarChartNormal.Description" xml:space="preserve">
     <value>Plots a horizontal bar chart.</value>
   </data>
   <data name="XML.MainMenu.AnalysisMenu.PLSOnColumns" xml:space="preserve">
     <value>PLS on columns</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelWarmer" xml:space="preserve">
-    <value>Warmer</value>
   </data>
   <data name="XML.MainMenu.ColumnMenu.SortTableAscending" xml:space="preserve">
     <value>Sort table ascending</value>
@@ -1861,12 +1542,6 @@ in the path ${Path}.
   <data name="XML.MainMenu.PlotMenu.PLS.PlotCrossPRESSValue.Description" xml:space="preserve">
     <value>Plots the Cross validated PRedicted  Error Sum of Squares.</value>
   </data>
-  <data name="MainWindow.Windows.AltaxoNotesWindowLabel" xml:space="preserve">
-    <value>Notes</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderBGMYR" xml:space="preserve">
-    <value>Blue-Green-Magenta-Yellow-Red</value>
-  </data>
   <data name="XML.MainMenu.WorksheetMenu.DecomposeByColumnContent" xml:space="preserve">
     <value>Decompose table by content of one column</value>
   </data>
@@ -1878,12 +1553,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.WorksheetMenu.RemoveDataColumnsOnly.Description" xml:space="preserve">
     <value>Remove all data columns in the current table</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.FillToCurvePlotStyle" xml:space="preserve">
-    <value>Fill to curve</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.AngularDegreeTickSpacing" xml:space="preserve">
-    <value>Angular degree tick spacing</value>
   </data>
   <data name="XML.MainMenu.FileMenu.Import.ImageData" xml:space="preserve">
     <value>Image data ..</value>
@@ -1909,14 +1578,8 @@ in the path ${Path}.
   <data name="XML.MainMenu.EditMenu.CopyGraphAsMiniProject.Description" xml:space="preserve">
     <value>Copies the currently selected graph as mini project.</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.VectorCartesicPlotStyle" xml:space="preserve">
-    <value>Vector (cartesic)</value>
-  </data>
   <data name="XML.MainMenu.FileMenu.ImportMarkdown.Description" xml:space="preserve">
     <value>Imports a markdown file into a new TextDocument.</value>
-  </data>
-  <data name="XML.MainMenu.FileMenu.ExportGraph3D.Description" xml:space="preserve">
-    <value>Exports a 3D graph to an image using a format specified by the user.</value>
   </data>
   <data name="XML.MainMenu.FileMenu.SaveCopyOfProjectAs" xml:space="preserve">
     <value>Save Copy of Project as ...</value>
@@ -1963,9 +1626,6 @@ in the path ${Path}.
   <data name="XML.MainMenu.PlotMenu.PlotLineRelStack" xml:space="preserve">
     <value>Relative line stack</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.AngularRadianScale" xml:space="preserve">
-    <value>Angular radian scale</value>
-  </data>
   <data name="XML.MainMenu.ColumnMenu.SetColumnAsNegError.Description" xml:space="preserve">
     <value>Sets the currently selected column to a negative error column</value>
   </data>
@@ -1996,12 +1656,6 @@ in the path ${Path}.
   <data name="XML.MainMenu.GraphMenu.ZoomAxes.Description" xml:space="preserve">
     <value>Zooms the x and y axes</value>
   </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelRectangle" xml:space="preserve">
-    <value>Rectangle</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.Log10TickSpacing" xml:space="preserve">
-    <value>Decadic logarithm tick spacing</value>
-  </data>
   <data name="XML.MainMenu.WindowMenu.SortByTypeAndName" xml:space="preserve">
     <value>Type and Name</value>
   </data>
@@ -2026,9 +1680,6 @@ in the path ${Path}.
   <data name="XML.MainMenu.TextMenu.TabbedEditorAndViewer.Description" xml:space="preserve">
     <value>Editor and viewer in a tab control</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed.Description" xml:space="preserve">
-    <value>Fixed by the user value. Rescaling or zooming by the user will be ignored.</value>
-  </data>
   <data name="XML.MainMenu.LayerMenu.PasteLayerContentsExclusively" xml:space="preserve">
     <value>Paste plot contents exclusively</value>
   </data>
@@ -2041,23 +1692,8 @@ in the path ${Path}.
   <data name="XML.MainMenu.WorksheetMenu.ExtractTableData.Description" xml:space="preserve">
     <value>Opens the extract worksheet data script window.</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.DropLinePlotStyle" xml:space="preserve">
-    <value>Drop line</value>
-  </data>
-  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelTriangleComplementary" xml:space="preserve">
-    <value>Triangle1</value>
-  </data>
   <data name="XML.MainMenu.TextMenu.RenumerateFigures" xml:space="preserve">
     <value>Renumerate figures</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.LinePlotStyle" xml:space="preserve">
-    <value>Line</value>
-  </data>
-  <data name="XML.MainMenu.Graph3DMenu.ViewLeft.Description" xml:space="preserve">
-    <value>View graph from left side</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarXPlotStyle" xml:space="preserve">
-    <value>ErrorBar(X)</value>
   </data>
   <data name="XML.MainMenu.WorksheetMenu.CreatePropertyColumnOfColumnNames" xml:space="preserve">
     <value>Create property column with column names</value>
@@ -2072,9 +1708,6 @@ in the path ${Path}.
   <data name="XML.MainMenu.WorksheetMenu.InsertDataRows" xml:space="preserve">
     <value>Insert rows before ..</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerSizeType.AbsoluteValue" xml:space="preserve">
-    <value>Absolute</value>
-  </data>
   <data name="XML.ProjectBrowserMenu.CopyToFolder.Description" xml:space="preserve">
     <value>Copies the selected items to another folder (duplicating them).</value>
   </data>
@@ -2083,9 +1716,6 @@ in the path ${Path}.
   </data>
   <data name="XML.MainMenu.FileMenu.Close.Description" xml:space="preserve">
     <value>Closes the current project</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.GreaterOrEqual.Description" xml:space="preserve">
-    <value>Fixed by the user value or the data bound value, whichever is greater. Rescaling is working, using the user provided value and the data bound value, whichever is greater. Zooming is working, while the user provided value is kept as is.</value>
   </data>
   <data name="XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix" xml:space="preserve">
     <value>Multiply columns to matrix</value>
@@ -2099,17 +1729,11 @@ in the path ${Path}.
   <data name="XML.MainMenu.TextMenu.EditorRightViewerLeft" xml:space="preserve">
     <value>Editor right, viewer left</value>
   </data>
-  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.DateTimeTickSpacing" xml:space="preserve">
-    <value>Date-time tick spacing</value>
-  </data>
   <data name="XML.ProjectBrowserMenu.CopyToMultipleFolders" xml:space="preserve">
     <value>Copy items to multiple folders..</value>
   </data>
   <data name="XML.MainMenu.GraphMenu.ArrangeVertical.Description" xml:space="preserve">
     <value>Vertical alignment of the selected elements.</value>
-  </data>
-  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisFarToLinkedLayerFar" xml:space="preserve">
-    <value>Rel.Far-Far.LinkLayer</value>
   </data>
   <data name="XML.MainMenu.PlotMenu.PlotLineAndScatter.Description" xml:space="preserve">
     <value>Creates a line+scatter plot of the selected data</value>

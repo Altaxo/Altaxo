@@ -25,6 +25,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Threading;
@@ -48,10 +49,14 @@ namespace Altaxo.Main.Services
     private readonly object _loadLock = new object();
 
     /// <summary>English strings (list of resource managers)</summary>
-    private List<(string Prefix, ResourceManager Manager)> _neutralStringsResMgrs = new List<(string Prefix, ResourceManager Manager)>();
+    private List<(string Prefix, ResourceManager Manager, string DebugInfo)> _neutralStringsResMgrs = new List<(string Prefix, ResourceManager Manager, string DebugInfo)>();
 
     /// <summary>Neutral/English images (list of resource managers)</summary>
-    private List<(string Prefix, ResourceManager Manager)> _neutralIconsResMgrs = new List<(string Prefix, ResourceManager Manager)>();
+    private List<(string Prefix, ResourceManager Manager, string DebugInfo)> _neutralIconsResMgrs = new List<(string Prefix, ResourceManager Manager, string DebugInfo)>();
+
+    private Dictionary<string, string> _neutralStrings = new Dictionary<string, string>();
+
+    private Dictionary<string, object> _neutralImages = new Dictionary<string, object>();
 
     /// <summary>Stores images that are directly included into assemblies (compiled as embedded resource).
     /// Key is the resource name, value is the assembly where the resource is to find.
@@ -109,20 +114,20 @@ namespace Altaxo.Main.Services
     public void RegisterStrings(string baseResourceName, Assembly assembly)
     {
       var prefix = GetPrefixFromBaseResourceName(baseResourceName);
-      RegisterNeutralStrings(prefix, new ResourceManager(baseResourceName, assembly));
+      RegisterNeutralStrings(prefix, new ResourceManager(baseResourceName, assembly), assembly.FullName + "/" + baseResourceName);
       var ra = new ResourceAssembly(this, assembly, baseResourceName, false);
       _resourceAssemblies.Add(ra);
       ra.Load();
     }
 
-    public void RegisterNeutralStrings(ResourceManager stringManager)
+    public void RegisterNeutralStrings(ResourceManager stringManager, string debugInfo)
     {
-      RegisterNeutralStrings(string.Empty, stringManager);
+      RegisterNeutralStrings(string.Empty, stringManager, debugInfo);
     }
 
-    public void RegisterNeutralStrings(string prefix, ResourceManager stringManager)
+    public void RegisterNeutralStrings(string prefix, ResourceManager stringManager, string debugInfo)
     {
-      _neutralStringsResMgrs.Add((prefix, stringManager));
+      _neutralStringsResMgrs.Add((prefix, stringManager, debugInfo));
     }
 
     /// <summary>
@@ -134,7 +139,7 @@ namespace Altaxo.Main.Services
     public void RegisterImages(string baseResourceName, Assembly assembly)
     {
       var prefix = GetPrefixFromBaseResourceName(baseResourceName);
-      RegisterNeutralImages(prefix, new ResourceManager(baseResourceName, assembly));
+      RegisterNeutralImages(prefix, new ResourceManager(baseResourceName, assembly), $"{assembly.FullName} / {baseResourceName}");
       var ra = new ResourceAssembly(this, assembly, baseResourceName, true);
       _resourceAssemblies.Add(ra);
       ra.Load();
@@ -159,19 +164,19 @@ namespace Altaxo.Main.Services
       return prefix;
     }
 
-    public void RegisterNeutralImages(ResourceManager imageManager)
+    public void RegisterNeutralImages(ResourceManager imageManager, string debugInfo)
     {
-      RegisterNeutralImages(string.Empty, imageManager);
+      RegisterNeutralImages(string.Empty, imageManager, debugInfo);
     }
 
-    public void RegisterNeutralImages(string baseResourceName, ResourceManager imageManager)
+    public void RegisterNeutralImages(string baseResourceName, ResourceManager imageManager, string debugInfo)
     {
-      _neutralIconsResMgrs.Add((baseResourceName, imageManager));
+      _neutralIconsResMgrs.Add((baseResourceName, imageManager, debugInfo));
     }
 
     public void RegisterAssemblyResources(Assembly assembly)
     {
-
+      System.Diagnostics.Debug.WriteLine($"Register resources for assembly {assembly}");
       // Get all resources in an assembly
       string[] resourceNames = assembly.GetManifestResourceNames();
 
@@ -312,7 +317,10 @@ namespace Altaxo.Main.Services
             {
               s = resourceManger.GetString(name);
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+
+            }
 
             if (s is not null)
             {
@@ -322,28 +330,40 @@ namespace Altaxo.Main.Services
 
           if (s is null)
           {
-            // search all unlocalized resource managers
-            foreach ((string prefix, ResourceManager resourceManger) in _neutralStringsResMgrs)
+            if (!_neutralStrings.TryGetValue(name, out s))
             {
-              if (prefix.Length == 0 || name.StartsWith(prefix))
-              {
-                try
-                {
-                  s = resourceManger.GetString(prefix.Length == 0 ? name : name.Substring(prefix.Length));
-                }
-                catch (Exception) { }
 
-                if (s is not null)
+              // search all unlocalized resource managers
+              foreach ((string prefix, ResourceManager resourceManger, string debugInfo) in _neutralStringsResMgrs)
+              {
+                if (prefix.Length == 0 || name.StartsWith(prefix))
                 {
-                  break;
+                  try
+                  {
+                    s = resourceManger.GetString(prefix.Length == 0 ? name : name.Substring(prefix.Length));
+                  }
+                  catch (Exception ex)
+                  {
+                    System.Diagnostics.Debug.WriteLine($"Resource {debugInfo} caused exception in GetString(), Message: {ex.Message}");
+                  }
+
+                  if (s is not null)
+                  {
+                    break;
+                  }
                 }
               }
+
+              if (s is null)
+              {
+                // throw an exception if not found
+                throw new ResourceNotFoundException("string >" + name + "<");
+              }
+              else
+              {
+                _neutralStrings.Add(name, s);
+              }
             }
-          }
-          if (s is null)
-          {
-            // throw an exception if not found
-            throw new ResourceNotFoundException("string >" + name + "<");
           }
         }
 
@@ -381,20 +401,27 @@ namespace Altaxo.Main.Services
 
           if (iconobj is null)
           {
-            foreach ((string prefix, ResourceManager resourceManger) in _neutralIconsResMgrs)
+            if (!_neutralImages.TryGetValue(name, out iconobj))
             {
-              try
+              foreach ((string prefix, ResourceManager resourceManger, string debugInfo) in _neutralIconsResMgrs)
               {
-                iconobj = resourceManger.GetObject(name);
-              }
-              catch (Exception ex)
-              {
-                System.Diagnostics.Debug.WriteLine($"Exception in GetImageResource, Message: {ex.Message}");
-              }
+                try
+                {
+                  iconobj = resourceManger.GetObject(name);
+                }
+                catch (Exception ex)
+                {
+                  System.Diagnostics.Debug.WriteLine($"Exception in {debugInfo} GetObject(), Message: {ex.Message}");
+                }
 
-              if (iconobj is not null)
+                if (iconobj is not null)
+                {
+                  break;
+                }
+              }
+              if(iconobj is not null)
               {
-                break;
+                _neutralImages.Add(name, iconobj);
               }
             }
           }
@@ -431,13 +458,16 @@ namespace Altaxo.Main.Services
 
         if (resourceStream is null)
         {
-          foreach ((string prefix, ResourceManager resourceManger) in _neutralIconsResMgrs)
+          foreach ((string prefix, ResourceManager resourceManger, string debugInfo) in _neutralIconsResMgrs)
           {
             try
             {
               resourceStream = resourceManger.GetStream(name);
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+              System.Diagnostics.Debug.WriteLine($"Exception in {debugInfo} GetStream, Message: {ex.Message}");
+            }
 
             if (resourceStream is not null)
             {

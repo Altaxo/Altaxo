@@ -1,0 +1,488 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Fileutility.CantFindFileError" xml:space="preserve">
+    <value>Can't load ${File}.File not found.</value>
+  </data>
+  <data name="FileUtilityService.ErrorWhileLoading" xml:space="preserve">
+    <value>Error while loading</value>
+  </data>
+  <data name="FileUtilityService.ErrorWhileSaving" xml:space="preserve">
+    <value>Error while saving</value>
+  </data>
+  <data name="ICSharpCode.Services.FileUtilityService.CantLoadFileStandardText" xml:space="preserve">
+    <value>Can't load file ${FileNameWithoutPath} under ${Path}.
+Check the file permission and the existence of that file.</value>
+  </data>
+  <data name="ICSharpCode.Services.FileUtilityService.CantSaveFileStandardText" xml:space="preserve">
+    <value>Can't save file ${FileNameWithoutPath} under ${Path}.
+Choose another file name or check if the directory exists and that
+you have write permission in that path and file. (maybe a write protection problem?)
+</value>
+  </data>
+  <data name="MainWindow.StatusBar.ReadyMessage" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="StatusBarService.CaretModes.Insert" xml:space="preserve">
+    <value>INS</value>
+  </data>
+  <data name="StatusBarService.CaretModes.Overwrite" xml:space="preserve">
+    <value>OVR</value>
+  </data>
+  <data name="StatusBarService.CursorStatusBarPanelText" xml:space="preserve">
+    <value>ln ${Line} col ${Column} ch ${Character}</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Background.RectangularBackground" xml:space="preserve">
+    <value>Rectangular</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarXPlotStyle" xml:space="preserve">
+    <value>Error bar (x)</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarZPlotStyle" xml:space="preserve">
+    <value>ErrorBar(Z)</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarPlotStyle" xml:space="preserve">
+    <value>ErrorBar</value>
+  </data>
+  <data name="Altaxo.FileFilter.AllFiles" xml:space="preserve">
+    <value>All files</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.VisibleLightSpectrum" xml:space="preserve">
+    <value>Visible light spectrum</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.BarGraphPlotStyle" xml:space="preserve">
+    <value>BarGraph</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear" xml:space="preserve">
+    <value>Rel.Near-Near.LinkLayer</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderAHSBGradient" xml:space="preserve">
+    <value>Alpha-Hue-Saturation-Brightness Gradient</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelTriangleSymmetrically" xml:space="preserve">
+    <value>Triangle2</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.CumulativeProbabilityScale" xml:space="preserve">
+    <value>Cumulative probability scale</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.CS.G3DCartesicCoordinateSystem" xml:space="preserve">
+    <value>Cartesic coordinate system</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelCMYK" xml:space="preserve">
+    <value>CMYK</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.FixedManually.Description" xml:space="preserve">
+    <value>Fixed by the user value. Rescaling by the user is ignored. If zoomed, the new zoom value is used as new user provided value.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMinorOrMajor" xml:space="preserve">
+    <value>Snap to major or minor</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.BarGraphPlotStyle" xml:space="preserve">
+    <value>Bar</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.SpanTickSpacing" xml:space="preserve">
+    <value>Span tick spacing</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelComplementary" xml:space="preserve">
+    <value>Complementary</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.TextTickSpacing" xml:space="preserve">
+    <value>Text tick spacing</value>
+  </data>
+  <data name="Altaxo.TestString" xml:space="preserve">
+    <value>String to test if string resource loading works.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarYPlotStyle" xml:space="preserve">
+    <value>ErrorBar(Y)</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.LabelPlotStyle" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="Gui.DataConnection.Views" xml:space="preserve">
+    <value>Views</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ScatterPlotStyle" xml:space="preserve">
+    <value>Scatter</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.CumulativeProbabilityTickSpacing" xml:space="preserve">
+    <value>Cumulative probability tick spacing</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.InverseScale" xml:space="preserve">
+    <value>Inverse scale</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.AngularDegreeScale" xml:space="preserve">
+    <value>Angular degree scale</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Auto.Description" xml:space="preserve">
+    <value>Org or End automatically set according to the data bounds. If zoomed by the user, switched to AutoTempFixed. If rescaled, sets the scale bound back according to the data bound.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ScatterPlotStyle" xml:space="preserve">
+    <value>Symbol</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelLinearCMY" xml:space="preserve">
+    <value>LinCMY</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelLinearRGB" xml:space="preserve">
+    <value>LinRGB</value>
+  </data>
+  <data name="Altaxo.Project.CantSaveProjectErrorText" xml:space="preserve">
+    <value>Can't save Altaxo project file ${FileNameWithoutPath}
+in the path ${Path}.
+ Possible reasons are:
+ + Path permission denied or it doesn't exists
+ + File permission denied or write protected, or serialization error.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.AngularRadianTickSpacing" xml:space="preserve">
+    <value>Angular radian tick spacing</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelARGBHex" xml:space="preserve">
+    <value>ARGB (hex)</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.LinePlotStyle" xml:space="preserve">
+    <value>Line</value>
+  </data>
+  <data name="Dialog.Options.AsciiAnalysis" xml:space="preserve">
+    <value>Ascii file analysis</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.DateTimeScale" xml:space="preserve">
+    <value>Date-time scale</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.TextScale" xml:space="preserve">
+    <value>Text scale</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMajorOnly" xml:space="preserve">
+    <value>Snap to major only</value>
+  </data>
+  <data name="Gui.DataConnection.Tables" xml:space="preserve">
+    <value>Tables</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelRGB" xml:space="preserve">
+    <value>RGB</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelCMY" xml:space="preserve">
+    <value>CMY</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelHSB" xml:space="preserve">
+    <value>HSB</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelPrimary" xml:space="preserve">
+    <value>Primary</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisFarToLinkedLayerNear" xml:space="preserve">
+    <value>Rel.Far-Near.LinkLayer</value>
+  </data>
+  <data name="Altaxo.Project.ProjectSavedMessage" xml:space="preserve">
+    <value>Project successfully saved.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.NoTickSpacing" xml:space="preserve">
+    <value>No tick spacing</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisNearToLinkedLayerFar" xml:space="preserve">
+    <value>Rel.Near-Far.LinkLayer</value>
+  </data>
+  <data name="Gui.DataConnection.StoredProcedures" xml:space="preserve">
+    <value>Stored Procedures</value>
+  </data>
+  <data name="Altaxo.Project.AskForSavingOfProjectDialog.Caption" xml:space="preserve">
+    <value>Question</value>
+  </data>
+  <data name="Altaxo.Project.UntitledName" xml:space="preserve">
+    <value>Untitled</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.LinearScale" xml:space="preserve">
+    <value>Linear scale</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderBGRY" xml:space="preserve">
+    <value>Blue-Green-Red-Yellow</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelCMYK" xml:space="preserve">
+    <value>CMYK</value>
+  </data>
+  <data name="Dialog.Options.DocumentLanguage" xml:space="preserve">
+    <value>Document culture</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.TextOnlyColorModelRGBHex" xml:space="preserve">
+    <value>RGB (hex)</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.AutoTempFixed.Description" xml:space="preserve">
+    <value>Temporarily fixed by the user value. If rescaled, falls back to Auto mode. If zoomed, the zoom value is used as new user provided value.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Groups.WaterfallTransform+TransformedLayerWrapper+TransformedScale" xml:space="preserve">
+    <value>Transformed scale</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ErrorBarYPlotStyle" xml:space="preserve">
+    <value>Error bar (y)</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDesaturate" xml:space="preserve">
+    <value>Brighter</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelLinearRGB" xml:space="preserve">
+    <value>LinRGB</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.DensityImagePlotStyle" xml:space="preserve">
+    <value>Density</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.VectorCartesicPlotStyle" xml:space="preserve">
+    <value>CartesicVector</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.DropLinePlotStyle" xml:space="preserve">
+    <value>DropLine</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Log10Scale" xml:space="preserve">
+    <value>Logarithmic (decadic) scale</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.LinearTickSpacing" xml:space="preserve">
+    <value>Linear tick spacing</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.LessOrEqual.Description" xml:space="preserve">
+    <value>Fixed by the user value or the data bound value, whichever is less. Rescaling is working, using the user provided value and the data bound value, whichever is less. Zooming is working, while the user provided value is kept as is.</value>
+  </data>
+  <data name="Dialog.Options.Graph.ClipboardExport" xml:space="preserve">
+    <value>Clipboard export</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDarker" xml:space="preserve">
+    <value>Darker</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.LabelPlotStyle" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerSizeType.RelativeToLinkedLayer" xml:space="preserve">
+    <value>Rel.LinkLayer</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelColder" xml:space="preserve">
+    <value>Colder</value>
+  </data>
+  <data name="Altaxo.Gui.ExceptionBox.QuitWarning" xml:space="preserve">
+    <value>Do you really want to quit Altaxo? Unsaved changes will be lost!</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ColumnDrivenSymbolSizePlotStyle" xml:space="preserve">
+    <value>Data column driven symbol size</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.FixedZoomable.Description" xml:space="preserve">
+    <value>Fixed by the user value. Rescaling by the user is ignored. If zoomed, the new zoom value is used, while the user provided value is kept as is.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.InverseTickSpacing" xml:space="preserve">
+    <value>Inverse tick spacing</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToNothing" xml:space="preserve">
+    <value>Snap to nothing</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.BoundaryTickSnapping.SnapToMinorOnly" xml:space="preserve">
+    <value>Snap to minor only</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelRGB" xml:space="preserve">
+    <value>RGB</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelHSB" xml:space="preserve">
+    <value>HSB</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorModelCMY" xml:space="preserve">
+    <value>CMY</value>
+  </data>
+  <data name="Altaxo.Project.AskForSavingOfProjectDialog.Text" xml:space="preserve">
+    <value>Your project was modified. Do you want to save your project?</value>
+  </data>
+  <data name="Dialog.Options.AutoUpdates" xml:space="preserve">
+    <value>Auto updates</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelPentagonSymmetrically" xml:space="preserve">
+    <value>Pentagon</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.ColumnDrivenColorPlotStyle" xml:space="preserve">
+    <value>Data column driven color</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelDesaturateAndDarker" xml:space="preserve">
+    <value>Desaturate</value>
+  </data>
+  <data name="Dialog.Options.UILanguage" xml:space="preserve">
+    <value>User interface language</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerSizeType.RelativeToGraphDocument" xml:space="preserve">
+    <value>Rel.Graph</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.DropAreaPlotStyle" xml:space="preserve">
+    <value>Drop area</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.AbsoluteValue" xml:space="preserve">
+    <value>Absolute</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderARGBGradient" xml:space="preserve">
+    <value>Alpha-Red-Green-Blue Gradient</value>
+  </data>
+  <data name="MainWindow.Windows.AltaxoLightingWindowLabel" xml:space="preserve">
+    <value>Lighting</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeToGraphDocument" xml:space="preserve">
+    <value>Rel.Graph</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Shapes.FloatingScale+ScaleSegment" xml:space="preserve">
+    <value>Floating scale segment</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorVariationModelWarmer" xml:space="preserve">
+    <value>Warmer</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderBGMYR" xml:space="preserve">
+    <value>Blue-Green-Magenta-Yellow-Red</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.FillToCurvePlotStyle" xml:space="preserve">
+    <value>Fill to curve</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.AngularDegreeTickSpacing" xml:space="preserve">
+    <value>Angular degree tick spacing</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.VectorCartesicPlotStyle" xml:space="preserve">
+    <value>Vector (cartesic)</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.AngularRadianScale" xml:space="preserve">
+    <value>Angular radian scale</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelRectangle" xml:space="preserve">
+    <value>Rectangle</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.Log10TickSpacing" xml:space="preserve">
+    <value>Decadic logarithm tick spacing</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed.Description" xml:space="preserve">
+    <value>Fixed by the user value. Rescaling or zooming by the user will be ignored.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.Plot.Styles.DropLinePlotStyle" xml:space="preserve">
+    <value>Drop line</value>
+  </data>
+  <data name="ClassNames.Altaxo.Gui.Drawing.ColorManagement.ColorCircleModelTriangleComplementary" xml:space="preserve">
+    <value>Triangle1</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.LinePlotStyle" xml:space="preserve">
+    <value>Line</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarXPlotStyle" xml:space="preserve">
+    <value>ErrorBar(X)</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerSizeType.AbsoluteValue" xml:space="preserve">
+    <value>Absolute</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.GreaterOrEqual.Description" xml:space="preserve">
+    <value>Fixed by the user value or the data bound value, whichever is greater. Rescaling is working, using the user provided value and the data bound value, whichever is greater. Zooming is working, while the user provided value is kept as is.</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Scales.Ticks.DateTimeTickSpacing" xml:space="preserve">
+    <value>Date-time tick spacing</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisFarToLinkedLayerFar" xml:space="preserve">
+    <value>Rel.Far-Far.LinkLayer</value>
+  </data>
+</root>

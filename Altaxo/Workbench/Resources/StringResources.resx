@@ -117,10 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ICSharpCode.Services.FileUtilityService.CantLoadFileStandardText" xml:space="preserve">
-    <value>Can't load file ${FileNameWithoutPath} under ${Path}.
-Check the file permission and the existence of that file.</value>
-  </data>
   <data name="MainWindow.Windows.FileScout.Size" xml:space="preserve">
     <value>Size</value>
   </data>
@@ -135,9 +131,6 @@ Check the file permission and the existence of that file.</value>
   </data>
   <data name="MainWindow.Windows.FileScout.LastModified" xml:space="preserve">
     <value>Last modified</value>
-  </data>
-  <data name="OpenFileTabEventHandler.ContextMenu.Close" xml:space="preserve">
-    <value>C&amp;lose</value>
   </data>
   <data name="Global.RetryButtonText" xml:space="preserve">
     <value>Retry</value>
@@ -154,56 +147,17 @@ Check the file permission and the existence of that file.</value>
   <data name="ICSharpCode.Core.Services.ErrorDialogs.ExceptionGotDescription" xml:space="preserve">
     <value>Exception got</value>
   </data>
-  <data name="FileUtilityService.ErrorWhileLoading" xml:space="preserve">
-    <value>Error while loading</value>
-  </data>
-  <data name="ICSharpCode.Services.FileUtilityService.CantSaveFileStandardText" xml:space="preserve">
-    <value>Can't save file ${FileNameWithoutPath} under ${Path}.
-Choose another file name or check if the directory exists and that
-you have write permission in that path and file. (maybe a write protection problem?)
-</value>
-  </data>
   <data name="ICSharpCode.SharpDevelop.ExceptionBox.QuitWarning" xml:space="preserve">
     <value>Do you really want to quit SharpDevelop? Unsaved changes will be lost!</value>
   </data>
   <data name="Gui.ProjectBrowser.FileInUseError" xml:space="preserve">
     <value>File or directory name is already in use, choose a different one.</value>
   </data>
-  <data name="Global.Shortcuts.Alt" xml:space="preserve">
-    <value>Alt</value>
-  </data>
-  <data name="Global.Shortcuts.Win" xml:space="preserve">
-    <value>Win</value>
-  </data>
-  <data name="FileUtilityService.ErrorWhileSaving" xml:space="preserve">
-    <value>Error while saving</value>
-  </data>
-  <data name="XML.MainMenu.EditMenu.Delete" xml:space="preserve">
-    <value>&amp;Delete</value>
-  </data>
   <data name="Global.QuestionText" xml:space="preserve">
     <value>Question</value>
   </data>
-  <data name="Global.Shortcuts.Shift" xml:space="preserve">
-    <value>Shift</value>
-  </data>
-  <data name="OpenFileTabEventHandler.ContextMenu.CloseAllButThis" xml:space="preserve">
-    <value>Close all &amp;but this</value>
-  </data>
-  <data name="StatusBarService.CaretModes.Overwrite" xml:space="preserve">
-    <value>OVR</value>
-  </data>
   <data name="CompilerResultView.FileText" xml:space="preserve">
     <value>File</value>
-  </data>
-  <data name="XML.MainMenu.Navigation.ClearHistory" xml:space="preserve">
-    <value>Clear Navigation History</value>
-  </data>
-  <data name="StatusBarService.CursorStatusBarPanelText" xml:space="preserve">
-    <value>ln ${Line} col ${Column} ch ${Character}</value>
-  </data>
-  <data name="Fileutility.CantFindFileError" xml:space="preserve">
-    <value>Can't load ${File}.File not found.</value>
   </data>
   <data name="Global.ErrorText" xml:space="preserve">
     <value>Error</value>
@@ -220,43 +174,16 @@ you have write permission in that path and file. (maybe a write protection probl
   <data name="Global.IgnoreButtonText" xml:space="preserve">
     <value>Ignore</value>
   </data>
-  <data name="MainWindow.Windows.ProjectScoutLabel" xml:space="preserve">
-    <value>Projects</value>
-  </data>
-  <data name="Global.Shortcuts.Ctrl" xml:space="preserve">
-    <value>Ctrl</value>
-  </data>
   <data name="Global.ChooseLocationButtonText" xml:space="preserve">
     <value>Choose location</value>
   </data>
-  <data name="MainWindow.Windows.OutputWindow" xml:space="preserve">
-    <value>Output</value>
-  </data>
-  <data name="MainWindow.StatusBar.ReadyMessage" xml:space="preserve">
-    <value>Ready</value>
-  </data>
   <data name="Global.WarningText" xml:space="preserve">
     <value>Warning</value>
-  </data>
-  <data name="XML.MainMenu.WindowMenu.PrvWindow" xml:space="preserve">
-    <value>&amp;Prev Window</value>
-  </data>
-  <data name="StatusBarService.CaretModes.Insert" xml:space="preserve">
-    <value>INS</value>
   </data>
   <data name="MainWindow.Windows.FileScout.DriveType.Remote" xml:space="preserve">
     <value>Remote</value>
   </data>
   <data name="MainWindow.Windows.FileScout.MyComputer" xml:space="preserve">
     <value>My Computer</value>
-  </data>
-  <data name="XML.MainMenu.WindowMenu.NxtWindow" xml:space="preserve">
-    <value>&amp;Next Window</value>
-  </data>
-  <data name="MainWindow.Windows.FileScoutLabel" xml:space="preserve">
-    <value>Files</value>
-  </data>
-  <data name="XML.MainMenu.FileMenu.CloseAll" xml:space="preserve">
-    <value>C&amp;lose All Documents</value>
   </data>
 </root>

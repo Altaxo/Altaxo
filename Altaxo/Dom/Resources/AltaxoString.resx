@@ -117,37 +117,55 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CompilerResultView.FileText" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.DriveType.CD" xml:space="preserve">
+    <value>CD</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.DriveType.Fixed" xml:space="preserve">
+    <value>Fixed</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.DriveType.Remote" xml:space="preserve">
+    <value>Remote</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.DriveType.Removeable" xml:space="preserve">
+    <value>Removeable</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.LastModified" xml:space="preserve">
+    <value>Last modified</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.MyComputer" xml:space="preserve">
+    <value>My Computer</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.MyDocuments" xml:space="preserve">
+    <value>My Documents</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="MainWindow.Windows.FileScoutLabel" xml:space="preserve">
+    <value>Files</value>
+  </data>
   <data name="Altaxo.TestString" xml:space="preserve">
     <value>String to test if string resource loading works.</value>
-  </data>
-  <data name="Altaxo.Gui.ExceptionBox.CopyToClipboard" xml:space="preserve">
-    <value>Copy error message to clipboard</value>
-  </data>
-  <data name="Altaxo.Gui.ExceptionBox.ThankYouMsg" xml:space="preserve">
-    <value>Thank you for helping make Altaxo a better program for everyone!</value>
-  </data>
-  <data name="Altaxo.Gui.ExceptionBox.ReportError" xml:space="preserve">
-    <value>Report error to the Altaxo team</value>
   </data>
   <data name="Altaxo.Project.UntitledName" xml:space="preserve">
     <value>Untitled</value>
   </data>
+  <data name="MainWindow.Windows.DataDisplayWindow" xml:space="preserve">
+    <value>Data reader</value>
+  </data>
   <data name="Altaxo.Gui.ExceptionBox.QuitWarning" xml:space="preserve">
     <value>Do you really want to quit Altaxo? Unsaved changes will be lost!</value>
   </data>
-  <data name="Altaxo.Gui.ExceptionBox.Title" xml:space="preserve">
-    <value>Unhandled exception has occured</value>
+  <data name="MainWindow.Windows.ProjectScoutLabel" xml:space="preserve">
+    <value>Project</value>
   </data>
-  <data name="Altaxo.Gui.ExceptionBox.HelpText1" xml:space="preserve">
-    <value>An unhandled exception has occurred in Altaxo. This is unexpected and we'd ask you to help us improve Altaxo by reporting this error to the Altaxo team.</value>
+  <data name="MainWindow.Windows.OutputWindow" xml:space="preserve">
+    <value>Output</value>
   </data>
-  <data name="Altaxo.Gui.ExceptionBox.HelpText2" xml:space="preserve">
-    <value>How to report errors efficiently: We have set up a Web-based forum to report and track errors that are reported by users of Altaxo. To minimize necessary questions by the team members, in addition to providing the error message that is copied to the clipboard for easier pasting in the error report, we ask that you provide us with an as detailed as possible step-by-step procedure to reproduce this bug.</value>
-  </data>
-  <data name="Altaxo.Gui.ExceptionBox.Continue" xml:space="preserve">
-    <value>Continue</value>
-  </data>
-  <data name="Altaxo.Gui.ExceptionBox.ExitAltaxo" xml:space="preserve">
-    <value>Exit Altaxo</value>
+  <data name="MainWindow.Windows.AltaxoNotesWindowLabel" xml:space="preserve">
+    <value>Notes</value>
   </data>
 </root>

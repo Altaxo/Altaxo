@@ -294,14 +294,14 @@ namespace Altaxo.AddInItems
         {
           var path = Path.Combine(addInRoot, bitmapResource);
           var resourceManager = ResourceManager.CreateFileBasedResourceManager(Path.GetFileNameWithoutExtension(path), Path.GetDirectoryName(path) ?? string.Empty, null);
-          Altaxo.Current.GetRequiredService<IResourceService>().RegisterNeutralImages(resourceManager);
+          Altaxo.Current.GetRequiredService<IResourceService>().RegisterNeutralImages(resourceManager, $"FileBasedResourceManager: {path}");
         }
 
         foreach (string stringResource in addIn.StringResources)
         {
           string path = Path.Combine(addInRoot, stringResource);
           var resourceManager = ResourceManager.CreateFileBasedResourceManager(Path.GetFileNameWithoutExtension(path), Path.GetDirectoryName(path) ?? string.Empty, null);
-          Altaxo.Current.GetRequiredService<IResourceService>().RegisterNeutralStrings(resourceManager);
+          Altaxo.Current.GetRequiredService<IResourceService>().RegisterNeutralStrings(resourceManager, $"FileBasedResourceManager: {path}");
         }
       }
       addIns.Add(addIn);
@@ -464,6 +464,22 @@ checkDependencies:
           Current.Log.Error(ex);
           MessageService.ShowError("Error loading AddIn " + addIn.FileName + ":\n"
                                                            + ex.Message);
+        }
+      }
+
+      // if the addIn is active, then try to load the runtimes that have the Preload attribute set to true
+      foreach(var addIn in AddIns.Where(a => a.Enabled))
+      {
+        foreach (var rt in addIn.Runtimes.Where(r => r.IsPreloaded))
+        {
+          try
+          {
+            rt.Load();
+          }
+          catch (Exception ex)
+          {
+            MessageService.ShowError($"Error pre-loading runtime {rt.Assembly}. Message:\r\n{ex.Message}");
+          }
         }
       }
     }

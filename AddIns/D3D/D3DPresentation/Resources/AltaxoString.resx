@@ -117,37 +117,52 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="XML.MainMenu.Graph3DMenu.CameraPerspective.Description" xml:space="preserve">
+    <value>View graph through perspective camera</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.ViewRight.Description" xml:space="preserve">
+    <value>View graph from right side</value>
+  </data>
   <data name="Altaxo.TestString" xml:space="preserve">
     <value>String to test if string resource loading works.</value>
   </data>
-  <data name="Altaxo.Gui.ExceptionBox.CopyToClipboard" xml:space="preserve">
-    <value>Copy error message to clipboard</value>
+  <data name="XML.MainMenu.Graph3DMenu.ViewBack.Description" xml:space="preserve">
+    <value>View graph from back side</value>
   </data>
-  <data name="Altaxo.Gui.ExceptionBox.ThankYouMsg" xml:space="preserve">
-    <value>Thank you for helping make Altaxo a better program for everyone!</value>
+  <data name="XML.MainMenu.Graph3DMenu.ViewTop.Description" xml:space="preserve">
+    <value>View graph from top side</value>
   </data>
-  <data name="Altaxo.Gui.ExceptionBox.ReportError" xml:space="preserve">
-    <value>Report error to the Altaxo team</value>
+  <data name="XML.MainMenu.Graph3DMenu.CameraOrtho.Description" xml:space="preserve">
+    <value>View graph through orthographic camera</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.ViewIso60.Description" xml:space="preserve">
+    <value>View graph isometrically 60 degrees</value>
+  </data>
+  <data name="XML.MainMenu.Plot3DMenu" xml:space="preserve">
+    <value>3D-Plots</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.ViewFront.Description" xml:space="preserve">
+    <value>View graph from front side</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.ViewBottom.Description" xml:space="preserve">
+    <value>View graph from bottom side</value>
   </data>
   <data name="Altaxo.Project.UntitledName" xml:space="preserve">
     <value>Untitled</value>
   </data>
+  <data name="XML.MainMenu.FileMenu.ExportGraph3D" xml:space="preserve">
+    <value>Export 3D graph image ..</value>
+  </data>
+  <data name="XML.MainMenu.Graph3DMenu.ViewIso30.Description" xml:space="preserve">
+    <value>View graph isometrically 30 degrees</value>
+  </data>
   <data name="Altaxo.Gui.ExceptionBox.QuitWarning" xml:space="preserve">
     <value>Do you really want to quit Altaxo? Unsaved changes will be lost!</value>
   </data>
-  <data name="Altaxo.Gui.ExceptionBox.Title" xml:space="preserve">
-    <value>Unhandled exception has occured</value>
+  <data name="XML.MainMenu.FileMenu.ExportGraph3D.Description" xml:space="preserve">
+    <value>Exports a 3D graph to an image using a format specified by the user.</value>
   </data>
-  <data name="Altaxo.Gui.ExceptionBox.HelpText1" xml:space="preserve">
-    <value>An unhandled exception has occurred in Altaxo. This is unexpected and we'd ask you to help us improve Altaxo by reporting this error to the Altaxo team.</value>
-  </data>
-  <data name="Altaxo.Gui.ExceptionBox.HelpText2" xml:space="preserve">
-    <value>How to report errors efficiently: We have set up a Web-based forum to report and track errors that are reported by users of Altaxo. To minimize necessary questions by the team members, in addition to providing the error message that is copied to the clipboard for easier pasting in the error report, we ask that you provide us with an as detailed as possible step-by-step procedure to reproduce this bug.</value>
-  </data>
-  <data name="Altaxo.Gui.ExceptionBox.Continue" xml:space="preserve">
-    <value>Continue</value>
-  </data>
-  <data name="Altaxo.Gui.ExceptionBox.ExitAltaxo" xml:space="preserve">
-    <value>Exit Altaxo</value>
+  <data name="XML.MainMenu.Graph3DMenu.ViewLeft.Description" xml:space="preserve">
+    <value>View graph from left side</value>
   </data>
 </root>
