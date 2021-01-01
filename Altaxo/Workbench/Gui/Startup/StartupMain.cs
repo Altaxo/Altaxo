@@ -361,10 +361,8 @@ namespace Altaxo.Gui.Startup
       startup.StartCoreServices(propertyService, startupSettings);
 
       var exe = Assembly.Load(startupSettings.ResourceAssemblyName);
-      Current.ResourceService.RegisterNeutralStrings(new ResourceManager("Altaxo.Resources.StringResources", exe), $"{exe.FullName} /  Altaxo.Resources.StringResources");
-      Current.ResourceService.RegisterNeutralImages(new ResourceManager("Altaxo.Resources.BitmapResources", exe), $"{exe.FullName} /  Altaxo.Resources.BitmapResources");
-      Current.ResourceService.RegisterNeutralStrings(new ResourceManager("Altaxo.Resources.AltaxoString", exe), $"{exe.FullName} /  Altaxo.Resources.AltaxoString");
-      Current.ResourceService.RegisterNeutralImages(new ResourceManager("Altaxo.Resources.AltaxoBitmap", exe), $"{exe.FullName} /  Altaxo.Resources.AltaxoBitmap");
+      Current.ResourceService.RegisterNeutralStrings(new ResourceManager("Altaxo.Resources.UnprefixedStrings", exe), $"{exe.FullName} /  Altaxo.Resources.UnprefixedStrings");
+      Current.ResourceService.RegisterNeutralImages(new ResourceManager("Altaxo.Resources.UnprefixedImages", exe), $"{exe.FullName} /  Altaxo.Resources.UnprefixedImages");
 
       CommandWrapper.LinkCommandCreator = (link => new LinkCommand(link)); // creation of command for opening web sites
       CommandWrapper.WellKnownCommandCreator = MenuService.GetKnownCommand; // creation of all other commands

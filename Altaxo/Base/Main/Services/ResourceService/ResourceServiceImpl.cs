@@ -148,15 +148,15 @@ namespace Altaxo.Main.Services
     private string GetPrefixFromBaseResourceName(string baseResourceName)
     {
       // we make an exception for backward compatibility here:
-      // if the resources file is in a subdirectory named "Resources", then
-      // we do not assume a base name
+      // if the baseResourceName contains anywhere in its name the substring 'unprefixed', then
+      // we do not have a base name (prefix is string.Empty)
       // this ensures that old resources will be accessible with their original name
 
 
       var splitText = baseResourceName.Split(new char[] { '.' });
       string prefix;
 
-      if (splitText.Length >= 2 && splitText[1].ToLowerInvariant() == "resources")
+      if (baseResourceName.ToLowerInvariant().Contains("unprefixed"))
         prefix = string.Empty;
       else
         prefix = string.Join(".", splitText, 0, splitText.Length - 1) + ".";

@@ -150,4 +150,73 @@
   <data name="Altaxo.Gui.ExceptionBox.ExitAltaxo" xml:space="preserve">
     <value>Exit Altaxo</value>
   </data>
+  <data name="MainWindow.Windows.FileScout.Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton" xml:space="preserve">
+    <value>Show Exception</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.DriveType.Removeable" xml:space="preserve">
+    <value>Removeable</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Commands.SaveFile.InvalidFileNameError" xml:space="preserve">
+    <value>File name '${FileName}' is invalid.</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.LastModified" xml:space="preserve">
+    <value>Last modified</value>
+  </data>
+  <data name="Global.RetryButtonText" xml:space="preserve">
+    <value>Retry</value>
+  </data>
+  <data name="Dialog.Componnents.RichMenuItem.NoRecentFilesString" xml:space="preserve">
+    <value>recent files</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.DriveType.CD" xml:space="preserve">
+    <value>CD</value>
+  </data>
+  <data name="Global.OKButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="ICSharpCode.Core.Services.ErrorDialogs.ExceptionGotDescription" xml:space="preserve">
+    <value>Exception got</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.ExceptionBox.QuitWarning" xml:space="preserve">
+    <value>Do you really want to quit SharpDevelop? Unsaved changes will be lost!</value>
+  </data>
+  <data name="Gui.ProjectBrowser.FileInUseError" xml:space="preserve">
+    <value>File or directory name is already in use, choose a different one.</value>
+  </data>
+  <data name="Global.QuestionText" xml:space="preserve">
+    <value>Question</value>
+  </data>
+  <data name="CompilerResultView.FileText" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Global.ErrorText" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.MyDocuments" xml:space="preserve">
+    <value>My Documents</value>
+  </data>
+  <data name="ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.DriveType.Fixed" xml:space="preserve">
+    <value>Fixed</value>
+  </data>
+  <data name="Global.IgnoreButtonText" xml:space="preserve">
+    <value>Ignore</value>
+  </data>
+  <data name="Global.ChooseLocationButtonText" xml:space="preserve">
+    <value>Choose location</value>
+  </data>
+  <data name="Global.WarningText" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.DriveType.Remote" xml:space="preserve">
+    <value>Remote</value>
+  </data>
+  <data name="MainWindow.Windows.FileScout.MyComputer" xml:space="preserve">
+    <value>My Computer</value>
+  </data>
 </root>

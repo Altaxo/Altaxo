@@ -51,5 +51,10 @@ namespace Altaxo.Main.Services
     {
       ResourceName = string.Empty;
     }
+
+    public override string ToString()
+    {
+      return $"{base.ToString()} {ResourceName}";
+    }
   }
 }
