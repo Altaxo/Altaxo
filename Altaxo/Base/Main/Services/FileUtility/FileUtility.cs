@@ -516,7 +516,7 @@ namespace Altaxo.Main.Services
       return ObservedSave(
         saveFile,
         fileName,
-        Current.ResourceService.GetString("ICSharpCode.Services.FileUtilityService.CantSaveFileStandardText") ?? string.Empty,
+        Current.ResourceService.GetString("Services.FileUtilityService.CantSaveFileStandardText") ?? string.Empty,
         policy);
     }
 
@@ -577,7 +577,7 @@ namespace Altaxo.Main.Services
       return ObservedSave(
         saveFileAs,
         fileName,
-        Current.ResourceService.GetString("ICSharpCode.Services.FileUtilityService.CantSaveFileStandardText") ?? string.Empty,
+        Current.ResourceService.GetString("Services.FileUtilityService.CantSaveFileStandardText") ?? string.Empty,
         policy);
     }
 
@@ -630,7 +630,7 @@ namespace Altaxo.Main.Services
       return ObservedLoad(
         loadFile,
         fileName,
-        Current.ResourceService.GetString("ICSharpCode.Services.FileUtilityService.CantLoadFileStandardText") ?? string.Empty,
+        Current.ResourceService.GetString("Services.FileUtilityService.CantLoadFileStandardText") ?? string.Empty,
         policy);
     }
 
@@ -645,7 +645,7 @@ namespace Altaxo.Main.Services
       return ObservedLoad(
         saveFileAs,
         fileName,
-        Current.ResourceService.GetString("ICSharpCode.Services.FileUtilityService.CantLoadFileStandardText") ?? string.Empty,
+        Current.ResourceService.GetString("Services.FileUtilityService.CantLoadFileStandardText") ?? string.Empty,
         policy);
     }
 

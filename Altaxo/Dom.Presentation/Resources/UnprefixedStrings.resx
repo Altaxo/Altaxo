@@ -132,16 +132,16 @@
   <data name="Global.RetryButtonText" xml:space="preserve">
     <value>Retry</value>
   </data>
-  <data name="ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel" xml:space="preserve">
+  <data name="Altaxo.Gui.Common.ErrorDialogs.DescriptionLabel" xml:space="preserve">
     <value>Description</value>
   </data>
-  <data name="ICSharpCode.Core.Services.ErrorDialogs.ExceptionGotDescription" xml:space="preserve">
+  <data name="Altaxo.Gui.Common.ErrorDialogs.ExceptionGotDescription" xml:space="preserve">
     <value>Exception got</value>
   </data>
-  <data name="ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton" xml:space="preserve">
+  <data name="Altaxo.Gui.Common.ErrorDialogs.ShowExceptionButton" xml:space="preserve">
     <value>Show Exception</value>
   </data>
-  <data name="SharpDevelop.FileFilter.AllFiles" xml:space="preserve">
+  <data name="FileFilter.AllFiles" xml:space="preserve">
     <value>All files (*.*)</value>
   </data>
   <data name="XML.MainMenu.ColumnMenu.SetColumnAsNegError" xml:space="preserve">

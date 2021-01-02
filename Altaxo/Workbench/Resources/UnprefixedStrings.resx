@@ -117,6 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Altaxo.Gui.Common.ErrorDialogs.DescriptionLabel" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Altaxo.Gui.Common.ErrorDialogs.ExceptionGotDescription" xml:space="preserve">
+    <value>Exception got</value>
+  </data>
+  <data name="Altaxo.Gui.Common.ErrorDialogs.ShowExceptionButton" xml:space="preserve">
+    <value>Show Exception</value>
+  </data>
   <data name="Altaxo.TestString" xml:space="preserve">
     <value>String to test if string resource loading works.</value>
   </data>
@@ -153,13 +162,10 @@
   <data name="MainWindow.Windows.FileScout.Size" xml:space="preserve">
     <value>Size</value>
   </data>
-  <data name="ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton" xml:space="preserve">
-    <value>Show Exception</value>
-  </data>
   <data name="MainWindow.Windows.FileScout.DriveType.Removeable" xml:space="preserve">
     <value>Removeable</value>
   </data>
-  <data name="ICSharpCode.SharpDevelop.Commands.SaveFile.InvalidFileNameError" xml:space="preserve">
+  <data name="Services.FileService.SaveFile.InvalidFileNameError" xml:space="preserve">
     <value>File name '${FileName}' is invalid.</value>
   </data>
   <data name="MainWindow.Windows.FileScout.LastModified" xml:space="preserve">
@@ -177,10 +183,7 @@
   <data name="Global.OKButtonText" xml:space="preserve">
     <value>OK</value>
   </data>
-  <data name="ICSharpCode.Core.Services.ErrorDialogs.ExceptionGotDescription" xml:space="preserve">
-    <value>Exception got</value>
-  </data>
-  <data name="ICSharpCode.SharpDevelop.ExceptionBox.QuitWarning" xml:space="preserve">
+  <data name="Gui.Workbench.ExceptionBox.QuitWarning" xml:space="preserve">
     <value>Do you really want to quit SharpDevelop? Unsaved changes will be lost!</value>
   </data>
   <data name="Gui.ProjectBrowser.FileInUseError" xml:space="preserve">
@@ -197,9 +200,6 @@
   </data>
   <data name="MainWindow.Windows.FileScout.MyDocuments" xml:space="preserve">
     <value>My Documents</value>
-  </data>
-  <data name="ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel" xml:space="preserve">
-    <value>Description</value>
   </data>
   <data name="MainWindow.Windows.FileScout.DriveType.Fixed" xml:space="preserve">
     <value>Fixed</value>

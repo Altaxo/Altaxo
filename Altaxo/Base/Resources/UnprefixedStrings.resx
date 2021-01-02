@@ -126,11 +126,11 @@
   <data name="FileUtilityService.ErrorWhileSaving" xml:space="preserve">
     <value>Error while saving</value>
   </data>
-  <data name="ICSharpCode.Services.FileUtilityService.CantLoadFileStandardText" xml:space="preserve">
+  <data name="Services.FileUtilityService.CantLoadFileStandardText" xml:space="preserve">
     <value>Can't load file ${FileNameWithoutPath} under ${Path}.
 Check the file permission and the existence of that file.</value>
   </data>
-  <data name="ICSharpCode.Services.FileUtilityService.CantSaveFileStandardText" xml:space="preserve">
+  <data name="Services.FileUtilityService.CantSaveFileStandardText" xml:space="preserve">
     <value>Can't save file ${FileNameWithoutPath} under ${Path}.
 Choose another file name or check if the directory exists and that
 you have write permission in that path and file. (maybe a write protection problem?)

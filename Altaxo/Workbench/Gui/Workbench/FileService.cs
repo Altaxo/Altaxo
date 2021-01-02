@@ -255,7 +255,7 @@ namespace Altaxo.Gui.Workbench
     {
       if (FileUtility.IsValidPath(path))
         return true;
-      MessageService.ShowMessage(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.SaveFile.InvalidFileNameError}", new StringTagPair("FileName", path)));
+      MessageService.ShowMessage(StringParser.Parse("${res:Services.FileService.SaveFile.InvalidFileNameError}", new StringTagPair("FileName", path)));
       return false;
     }
 
@@ -264,7 +264,7 @@ namespace Altaxo.Gui.Workbench
     {
       if (FileUtility.IsValidDirectoryEntryName(name))
         return true;
-      MessageService.ShowMessage(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.SaveFile.InvalidFileNameError}", new StringTagPair("FileName", name)));
+      MessageService.ShowMessage(StringParser.Parse("${res:Services.FileService.SaveFile.InvalidFileNameError}", new StringTagPair("FileName", name)));
       return false;
     }
 

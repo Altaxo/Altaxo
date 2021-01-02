@@ -192,7 +192,7 @@ namespace Altaxo.Gui.Workbench
     private void EhCloseButton_Click(object sender, RoutedEventArgs e)
     {
       if (MessageBoxResult.Yes == MessageBox.Show(
-          StringParser.Parse("${res:ICSharpCode.SharpDevelop.ExceptionBox.QuitWarning}"),
+          StringParser.Parse("${res:Gui.Workbench.ExceptionBox.QuitWarning}"),
           MessageService.ProductName,
           MessageBoxButton.YesNo,
           MessageBoxImage.Question,

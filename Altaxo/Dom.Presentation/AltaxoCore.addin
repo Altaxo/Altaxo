@@ -1402,13 +1402,13 @@
   </Path>
 
   <Path name = "/Altaxo/BuiltinTextures">
-    <Texture id="Caustics/BlueCaustic" resource = "Textures.Caustics.BlueCaustics" />
-    <Texture id="Marbel/DarkMarble1" resource = "Textures.Marble.DarkMarble1" />
-    <Texture id="Marbel/RedMarble1" resource = "Textures.Marble.RedMarble1" />
-    <Texture id="Marbel/RedMarble2" resource = "Textures.Marble.RedMarble2" />
-    <Texture id="Metal/ScratchedSilver" resource = "Textures.Metal.ScratchedSilver" />
-    <Texture id="Paper/BrownPaper" resource = "Textures.Paper.BrownPaper" />
-    <Texture id="Paper/YellowPaper" resource = "Textures.Paper.YellowPaper" />
+    <Texture id="Caustics/BlueCaustic" icon = "Textures.Caustics.BlueCaustics" class="Altaxo.Graph.TextureManager" />
+    <Texture id="Marbel/DarkMarble1" icon = "Textures.Marble.DarkMarble1" class="Altaxo.Graph.TextureManager" />
+    <Texture id="Marbel/RedMarble1" icon = "Textures.Marble.RedMarble1" class="Altaxo.Graph.TextureManager" />
+    <Texture id="Marbel/RedMarble2" icon = "Textures.Marble.RedMarble2" class="Altaxo.Graph.TextureManager" />
+    <Texture id="Metal/ScratchedSilver" icon = "Textures.Metal.ScratchedSilver" class="Altaxo.Graph.TextureManager" />
+    <Texture id="Paper/BrownPaper" icon = "Textures.Paper.BrownPaper" class="Altaxo.Graph.TextureManager" />
+    <Texture id="Paper/YellowPaper" icon = "Textures.Paper.YellowPaper" class="Altaxo.Graph.TextureManager" />
   </Path>
 
   <Path name = "/Altaxo/Dialogs/SettingsDialog">
@@ -1462,7 +1462,7 @@
 							extensions = "*.axogrp" />
 
     <FileFilter id         = "AllFiles"
-								name       = "${res:SharpDevelop.FileFilter.AllFiles}"
+								name       = "${res:FileFilter.AllFiles}"
 								extensions = "*.*" />
   </Path>
 

@@ -53,10 +53,10 @@ namespace Altaxo.Gui.Common
     {
       InitializeComponent();
 
-      descriptionLabel.Content = StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel}");
+      descriptionLabel.Content = StringParser.Parse("${res:Altaxo.Gui.Common.ErrorDialogs.DescriptionLabel}");
       retryButton.Content = StringParser.Parse("${res:Global.RetryButtonText}");
       ignoreButton.Content = StringParser.Parse("${res:Global.IgnoreButtonText}");
-      exceptionButton.Content = Current.ResourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton");
+      exceptionButton.Content = Current.ResourceService.GetString("Altaxo.Gui.Common.ErrorDialogs.ShowExceptionButton");
       chooseLocationButton.Content = Current.ResourceService.GetString("Global.ChooseLocationButtonText");
     }
 
@@ -64,10 +64,10 @@ namespace Altaxo.Gui.Common
     {
       InitializeComponent();
 
-      descriptionLabel.Content = StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel}");
+      descriptionLabel.Content = StringParser.Parse("${res:Altaxo.Gui.Common.ErrorDialogs.DescriptionLabel}");
       retryButton.Content = StringParser.Parse("${res:Global.RetryButtonText}");
       ignoreButton.Content = StringParser.Parse("${res:Global.IgnoreButtonText}");
-      exceptionButton.Content = Current.ResourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton");
+      exceptionButton.Content = Current.ResourceService.GetString("Altaxo.Gui.Common.ErrorDialogs.ShowExceptionButton");
       chooseLocationButton.Content = Current.ResourceService.GetString("Global.ChooseLocationButtonText");
 
       Title = StringParser.Parse(dialogName);
@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Common
 
     private void EhShowException(object sender, RoutedEventArgs e)
     {
-      MessageService.ShowMessage(exceptionGot?.ToString() ?? string.Empty, StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.ExceptionGotDescription}"));
+      MessageService.ShowMessage(exceptionGot?.ToString() ?? string.Empty, StringParser.Parse("${res:Altaxo.Gui.Common.ErrorDialogs.ExceptionGotDescription}"));
     }
 
     private void EhRetryButton_Clicked(object sender, RoutedEventArgs e)

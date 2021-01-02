@@ -44,8 +44,8 @@ namespace Altaxo.Gui.Common
     {
       InitializeComponent();
 
-      descriptionLabel.Content = StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel}");
-      exceptionButton.Content = Current.ResourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton");
+      descriptionLabel.Content = StringParser.Parse("${res:Altaxo.Gui.Common.ErrorDialogs.DescriptionLabel}");
+      exceptionButton.Content = Current.ResourceService.GetString("Altaxo.Gui.Common.ErrorDialogs.ShowExceptionButton");
       okButton.Content = StringParser.Parse("${res:Global.OKButtonText}");
     }
 
@@ -54,8 +54,8 @@ namespace Altaxo.Gui.Common
       //  Must be called for initialization
       InitializeComponent();
 
-      descriptionLabel.Content = StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel}");
-      exceptionButton.Content = Current.ResourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton");
+      descriptionLabel.Content = StringParser.Parse("${res:Altaxo.Gui.Common.ErrorDialogs.DescriptionLabel}");
+      exceptionButton.Content = Current.ResourceService.GetString("Altaxo.Gui.Common.ErrorDialogs.ShowExceptionButton");
       okButton.Content = StringParser.Parse("${res:Global.OKButtonText}");
       Title = StringParser.Parse(dialogName);
 
