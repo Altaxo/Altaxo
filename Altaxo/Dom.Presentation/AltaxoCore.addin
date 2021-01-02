@@ -422,13 +422,13 @@
 					description="${res:XML.MainMenu.FileMenu.AutoZoom.Description}" class="Altaxo.Graph.Commands.ZoomAutomatic" />
         <MenuItem id="ManualZoomMenu" label="${res:XML.MainMenu.ViewMenu.ManualZoom}" type="Menu">
           <MenuItem id="ZoomUserPercent" label="${res:XML.MainMenu.ViewMenu.ZoomUserPercent}"
-						description="${res:XML.MainMenu.FileMenu.ZoomUserPercent.Description}" class="Altaxo.Graph.Commands.ZoomUserPercent" />
+						description="${res:XML.MainMenu.ViewMenu.ZoomUserPercent.Description}" class="Altaxo.Graph.Commands.ZoomUserPercent" />
           <MenuItem id="Zoom50Percent" label="${res:XML.MainMenu.ViewMenu.Zoom50Percent}"
 						description="${res:XML.MainMenu.ViewMenu.Zoom50Percent.Description}" class="Altaxo.Graph.Commands.Zoom50Percent" />
           <MenuItem id="Zoom100Percent" label="${res:XML.MainMenu.ViewMenu.Zoom100Percent}"
 						description="${res:XML.MainMenu.ViewMenu.Zoom100Percent.Description}" class="Altaxo.Graph.Commands.Zoom100Percent" />
           <MenuItem id="Zoom200Percent" label="${res:XML.MainMenu.ViewMenu.Zoom200Percent}"
-						description="${res:XML.MainMenu.FileMenu.Zoom200Percent.Description}" class="Altaxo.Graph.Commands.Zoom200Percent" />
+						description="${res:XML.MainMenu.ViewMenu.Zoom200Percent.Description}" class="Altaxo.Graph.Commands.Zoom200Percent" />
         </MenuItem>
         <MenuItem id="ManualMarginMenu" label="${res:XML.MainMenu.ViewMenu.ManualMargin}" type="Menu">
           <MenuItem id="MarginUserPercent" label="${res:XML.MainMenu.ViewMenu.MarginUserPercent}"

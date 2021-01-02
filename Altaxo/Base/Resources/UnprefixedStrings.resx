@@ -485,4 +485,19 @@ in the path ${Path}.
   <data name="ClassNames.Altaxo.Graph.Gdi.XYPlotLayerPositionType.RelativeThisFarToLinkedLayerFar" xml:space="preserve">
     <value>Rel.Far-Far.LinkLayer</value>
   </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.DataMeshPlotStyle" xml:space="preserve">
+    <value>Data mesh</value>
+  </data>
+  <data name="ClassNames.Altaxo.Graph.Graph3D.Plot.Styles.ErrorBarPlotStyle" xml:space="preserve">
+    <value>Error bar</value>
+  </data>
+  <data name="MainWindow.StatusBar.OpeningCombineMessage" xml:space="preserve">
+    <value>?</value>
+  </data>
+  <data name="StatusBarService.SelectionStatusBarPanelTextMulti" xml:space="preserve">
+    <value>?</value>
+  </data>
+  <data name="StatusBarService.SelectionStatusBarPanelTextSingle" xml:space="preserve">
+    <value>?</value>
+  </data>
 </root>

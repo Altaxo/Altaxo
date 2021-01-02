@@ -129,11 +129,17 @@
   <data name="XML.MainMenu.FileMenu.CloseAll" xml:space="preserve">
     <value>C&amp;lose All Documents</value>
   </data>
+  <data name="XML.MainMenu.FileMenu.CloseAll.Description" xml:space="preserve">
+    <value>Closes all open windows, projects etc.</value>
+  </data>
   <data name="XML.MainMenu.Navigation.ClearHistory" xml:space="preserve">
     <value>Clear Navigation History</value>
   </data>
   <data name="XML.MainMenu.WindowMenu.NxtWindow" xml:space="preserve">
     <value>&amp;Next Window</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.NxtWindow.Description" xml:space="preserve">
+    <value>Switches to the next window</value>
   </data>
   <data name="XML.MainMenu.WindowMenu.PrvWindow" xml:space="preserve">
     <value>&amp;Prev Window</value>
@@ -146,5 +152,8 @@
   </data>
   <data name="Altaxo.Gui.ExceptionBox.QuitWarning" xml:space="preserve">
     <value>Do you really want to quit Altaxo? Unsaved changes will be lost!</value>
+  </data>
+  <data name="XML.MainMenu.WindowMenu.PrvWindow.Description" xml:space="preserve">
+    <value>Switches to the previous window</value>
   </data>
 </root>

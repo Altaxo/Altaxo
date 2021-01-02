@@ -1786,4 +1786,70 @@
   <data name="XML.ProjectBrowserMenu.MultiExportGraphsAsMiniProject.Description" xml:space="preserve">
     <value>Exports one or multiple graphs to separate mini projects</value>
   </data>
+  <data name="XML.MainMenu.ViewMenu.Zoom200Percent.Description" xml:space="preserve">
+    <value>Zoom to 200 Percent</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.ZoomUserPercent.Description" xml:space="preserve">
+    <value>Zoom to a user defined zoom level</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.Convolute.Description" xml:space="preserve">
+    <value>Convolute two vectors (columns)</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.Correlate.Description" xml:space="preserve">
+    <value>Make a correlation of two vectors (columns)</value>
+  </data>
+  <data name="XML.MainMenu.AnalysisMenu.DiffSmooth.Description" xml:space="preserve">
+    <value>Smooth or differentiate using Savitzky-Golay algorithm</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.SelectAll.Description" xml:space="preserve">
+    <value>Select all items</value>
+  </data>
+  <data name="XML.MainMenu.EditMenu.SetCopyPageOptions.Description" xml:space="preserve">
+    <value>Set image format for the CopyPage command</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.AutoZoom.Description" xml:space="preserve">
+    <value>Auto zoom to fit graph into available screen space</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.NotesDocument" xml:space="preserve">
+    <value>New Markdown text document...</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.NotesDocument.Description" xml:space="preserve">
+    <value>Creates a new Markdown text document</value>
+  </data>
+  <data name="XML.MainMenu.HelpMenu.About.Description" xml:space="preserve">
+    <value>Shows the About dialog</value>
+  </data>
+  <data name="XML.MainMenu.ToolsMenu.SaveProjectWithoutWorksheetScripts.Description" xml:space="preserve">
+    <value>Saves the entire project, but without the worksheet scripts.</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.FullScreen.Description" xml:space="preserve">
+    <value>Switches to full screen mode</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.Margin0Percent.Description" xml:space="preserve">
+    <value>Shows no margin around the graph</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.Margin10Percent.Description" xml:space="preserve">
+    <value>Shows a 10% margin around the graph</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.Margin50Percent.Description" xml:space="preserve">
+    <value>Shows a 50% margin around the graph</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.Zoom100Percent.Description" xml:space="preserve">
+    <value>Sets the zoom level to 100% (scale 1:1)</value>
+  </data>
+  <data name="XML.MainMenu.ViewMenu.Zoom50Percent.Description" xml:space="preserve">
+    <value>Sets the zoom level to 50% (scale 1:2)</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.SortPropColAscending" xml:space="preserve">
+    <value>Sort ascending</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.SortPropColAscending.Description" xml:space="preserve">
+    <value>Sorts the property column(s) in ascending order</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.SortPropColDescending" xml:space="preserve">
+    <value>Sort descending</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.SortPropColDescending.Description" xml:space="preserve">
+    <value>Sorts the property column(s) in descending order</value>
+  </data>
 </root>
