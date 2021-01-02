@@ -246,18 +246,20 @@ namespace Altaxo.AddInItems
 
     internal static Runtime Read(AddIn addIn, XmlReader reader, string? hintPath, Stack<ICondition> conditionStack)
     {
-      if (reader.AttributeCount < 1)
+      var assemblyAttr = reader.GetAttribute("assembly");
+      if(string.IsNullOrEmpty(assemblyAttr))
       {
-        throw new AddInLoadException("Import node requires ONE or more attributes.");
+        throw new AddInLoadException("Import node requires at least the 'assembly' attribute.");
       }
 
+      var preloadedAttr = reader.GetAttribute("preloaded");
       bool preloaded = false;
-      if(!string.IsNullOrEmpty(reader.GetAttribute("preloaded")))
+      if (!string.IsNullOrEmpty(preloadedAttr))
       {
-        preloaded = System.Xml.XmlConvert.ToBoolean(reader.GetAttribute("preloaded"));
+        preloaded = System.Xml.XmlConvert.ToBoolean(preloadedAttr);
       }
 
-      var runtime = new Runtime(addIn.AddInTree, reader.GetAttribute("assembly"), hintPath, preloaded);
+      var runtime = new Runtime(addIn.AddInTree, assemblyAttr, hintPath, preloaded);
       if (conditionStack.Count > 0)
       {
         runtime._conditions = conditionStack.ToArray();

@@ -176,7 +176,7 @@ namespace Altaxo.Main.Services
 
     public void RegisterAssemblyResources(Assembly assembly)
     {
-      System.Diagnostics.Debug.WriteLine($"Register resources for assembly {assembly}");
+      // System.Diagnostics.Debug.WriteLine($"Register resources for assembly {assembly}");
       // Get all resources in an assembly
       string[] resourceNames = assembly.GetManifestResourceNames();
 
