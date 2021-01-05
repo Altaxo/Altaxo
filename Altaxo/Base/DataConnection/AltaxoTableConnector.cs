@@ -64,11 +64,17 @@ namespace Altaxo.DataConnection
 
     private struct AltaxoColumnMapping
     {
-      public Altaxo.Data.DataColumn AltaxoColumn;
+      public Altaxo.Data.DataColumn AltaxoColumn { get; }
 
       /// <summary>Sets an item in an Altaxo column. 1st arg is the Altaxo data column, 2nd arg is the index in this column, and 3rd arg is the object to set.
       /// The action should set the item at index to the object.</summary>
-      public Action<Altaxo.Data.DataColumn, int, object> AltaxoColumnItemSetter;
+      public Action<Altaxo.Data.DataColumn, int, object> AltaxoColumnItemSetter { get; }
+
+      public AltaxoColumnMapping(Altaxo.Data.DataColumn altaxoColumn, Action<Altaxo.Data.DataColumn, int, object> altaxoColumnItemSetter)
+      {
+        AltaxoColumn = altaxoColumn;
+        AltaxoColumnItemSetter = altaxoColumnItemSetter;
+      }
     }
 
     private void CreateColumns(System.Data.Common.DbDataReader reader, List<AltaxoColumnMapping> mapping)
@@ -89,9 +95,24 @@ namespace Altaxo.DataConnection
           var axoColType = GetAltaxoColumnType(ct);
           var axoColName = (string)row["ColumnName"];
 
-          var axoColumn = _table.DataColumns.EnsureExistence(axoColName, axoColType, Data.ColumnKind.V, 0);
+          Altaxo.Data.DataColumn axoColumn;
+          if (ct == typeof(object)) // Type is not known to OleDb, could be for instance a DateTimeOffset type
+          {
+            if (_table.DataColumns.Contains(axoColName)) // if there exist already a column with that name, we assume that the user has chosen the right column type - we use that colum
+            {
+              axoColumn = _table.DataColumns[axoColName];
+            }
+            else // otherwise, we use a text column
+            {
+              axoColumn = _table.DataColumns.EnsureExistence(axoColName, axoColType, Data.ColumnKind.V, 0); 
+            }
+          }
+          else
+          {
+            axoColumn = _table.DataColumns.EnsureExistence(axoColName, axoColType, Data.ColumnKind.V, 0);
+          }
 
-          mapping.Add(new AltaxoColumnMapping() { AltaxoColumn = axoColumn, AltaxoColumnItemSetter = GetColumnItemSetter(ct) });
+          mapping.Add(new AltaxoColumnMapping(axoColumn, GetColumnItemSetter(ct, axoColumn.GetType())));
         }
       }
       // clear all mapped columns
@@ -109,14 +130,27 @@ namespace Altaxo.DataConnection
         return typeof(Altaxo.Data.TextColumn);
     }
 
-    public static Action<Altaxo.Data.DataColumn, int, object> GetColumnItemSetter(Type oledbType)
+    public static Action<Altaxo.Data.DataColumn, int, object> GetColumnItemSetter(Type oledbType, Type destinationColumnType)
     {
       return (col, idx, obj) =>
         {
           if (obj is null || obj == System.DBNull.Value)
             col.SetElementEmpty(idx);
           else
-            col[idx] = new Data.AltaxoVariant(obj);
+          {
+            if (oledbType == typeof(object) && destinationColumnType == typeof(Altaxo.Data.DateTimeColumn))
+            {
+              var destCol = (Altaxo.Data.DateTimeColumn)col;
+              if (obj is DateTime dt)
+                destCol[idx] = dt;
+              else if (obj is string sobj && DateTime.TryParse(sobj, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var dt1))
+                destCol[idx] = dt1;
+            }
+            else
+            {
+              col[idx] = new Data.AltaxoVariant(obj);
+            }
+          }
         };
     }
   }

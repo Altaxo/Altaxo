@@ -84,6 +84,11 @@ namespace Altaxo.Gui.DataConnection
 
     private static IndexToImageConverter _treeImageConverter;
 
+    [IconResource] private const string IconResource_Table = "Icons.16x16.DataConnection.Table";
+    [IconResource] private const string IconResource_View = "Icons.16x16.DataConnection.View";
+    [IconResource] private const string IconResource_Procedure = "Icons.16x16.DataConnection.Procedure";
+    [IconResource] private const string IconResource_Column = "Icons.16x16.DataConnection.Column";
+
     public static IValueConverter TreeImageConverter
     {
       get
@@ -91,12 +96,13 @@ namespace Altaxo.Gui.DataConnection
         if (_treeImageConverter is null)
         {
           _treeImageConverter = new IndexToImageConverter(
-              new string[]{
-                            "Icons.16x16.DataConnection.Table",
-                            "Icons.16x16.DataConnection.View",
-                            "Icons.16x16.DataConnection.Procedure",
-                            "Icons.16x16.DataConnection.Column",
-                          });
+            new string[]{
+              IconResource_Table,
+              IconResource_View,
+              IconResource_Procedure,
+              IconResource_Column
+              }
+            );
         }
         return _treeImageConverter;
       }

@@ -244,4 +244,34 @@
         K3318lxEdxb9TPUL+AiBAAAAAElFTkSuQmCC
 </value>
   </data>
+  <data name="Icons.16x16.DataConnection.Column" type="System.Byte[], mscorlib">
+    <value>
+      iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+      wwAADsMBx2+oZAAAAEdJREFUOE/VzjEKACAMQ9Gerfe/i7p0jXRRwVI7BRzemE8EwGJmqDg3V0BVU5xA
+      byP0USDDeRCNHS+Q4TyIxo4XyDwDFXsDmdBFDYoPn6NGAAAAAElFTkSuQmCC
+    </value>
+  </data>
+  <data name="Icons.16x16.DataConnection.Procedure" type="System.Byte[], mscorlib">
+    <value>
+      iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+      wwAADsMBx2+oZAAAAGFJREFUOE/NzkEKwCAMRNGcLfepV7fdZDtiIaUGIzFQ6OKhoP5IAEhEkPUEmHnb
+      DwNnvcLcgNaVfaj62Tc/KEcZ6GU7wA1EuYHVD95D3ECUG+ir3VvLQNQ0sGsIZN2BPFADjrT8A4VKipIA
+      AAAASUVORK5CYII=
+    </value>
+  </data>
+  <data name="Icons.16x16.DataConnection.Table" type="System.Byte[], mscorlib">
+    <value>
+      iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+      wwAADsMBx2+oZAAAAE1JREFUOE9j+P//P8O3b9/+k4vhBjg5OZGMB6EBH95/hGNi+NQ3gFRMfRegKyDE
+      xzCAVEx9F6ArIMTHMIBUjGIAuRhsACUYqyDx+D8DAGWb3TPY4bxVAAAAAElFTkSuQmCC
+    </value>
+  </data>
+  <data name="Icons.16x16.DataConnection.View" type="System.Byte[], mscorlib">
+    <value>
+      iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+      wwAADsMBx2+oZAAAAF9JREFUOE+9ztEKgCAMheE9295+T1Pd7DaZdiAxYxuZ8CmI+5GwVPXMuMZbgJlD
+      vgnYBna5b4dLF7hXPdYEcIkvzvwTsPOJO/BmfSBiCHjYWxGp0oE6iIVAxBDIaNNEBZg0ymfOr3ioAAAA
+      AElFTkSuQmCC
+    </value>
+  </data>
 </root>
