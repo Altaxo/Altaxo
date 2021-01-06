@@ -900,10 +900,10 @@ namespace Altaxo
       {
         var coll = GetCollectionForProjectItemType(item.GetType());
 
-        if (item.Name is null || item.Name == string.Empty)
+        if(!item.TryGetName(out var itemName) || string.IsNullOrEmpty(itemName))
           item.Name = coll.FindNewItemName();
-        else if (coll.ContainsAnyName(item.Name))
-          item.Name = coll.FindNewItemName(item.Name);
+        else if (coll.ContainsAnyName(itemName))
+          item.Name = coll.FindNewItemName(itemName);
 
         coll.Add(item);
       }

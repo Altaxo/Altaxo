@@ -217,7 +217,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return Name is null ? GetType().ToString() : GetType().ToString() + "(\"" + Name + "\")";
+        return TryGetName(out var name)  ? GetType().ToString() + "(\"" + name + "\")" : GetType().ToString() ;
       }
     }
 

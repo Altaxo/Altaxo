@@ -26,8 +26,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
+using System.Threading;
 using Altaxo.Gui;
 
 namespace Altaxo.Main.Services
@@ -39,18 +42,17 @@ namespace Altaxo.Main.Services
   {
     #region Construction
 
-    private static List<Assembly> _loadedAssemblies;
+    private static ImmutableList<Assembly> _loadedAssemblies;
     private static SubClassTypeListCollection _subClassTypeListCollection;
     private static ClassesHavingAttributeListCollection _classesHavingAttributeCollection;
 
     static ReflectionService()
     {
       AppDomain currentDomain = AppDomain.CurrentDomain;
-      _loadedAssemblies = new List<Assembly>();
-      _loadedAssemblies.AddRange(currentDomain.GetAssemblies());
-      currentDomain.AssemblyLoad += new AssemblyLoadEventHandler(EhAssemblyLoaded);
+      _loadedAssemblies = ImmutableList<Assembly>.Empty.AddRange(currentDomain.GetAssemblies().OfType<Assembly>());  // OfType<Assembly> to select entries that are not null
       _subClassTypeListCollection = new SubClassTypeListCollection();
       _classesHavingAttributeCollection = new ClassesHavingAttributeListCollection();
+      currentDomain.AssemblyLoad += new AssemblyLoadEventHandler(EhAssemblyLoaded);
     }
 
     /// <summary>
@@ -60,7 +62,10 @@ namespace Altaxo.Main.Services
     /// <param name="e"></param>
     private static void EhAssemblyLoaded(object? sender, AssemblyLoadEventArgs e)
     {
-      _loadedAssemblies.Add(e.LoadedAssembly);
+      if (e.LoadedAssembly is { } loadedAssembly) // do include only non-null values for assembly
+      {
+        ImmutableInterlocked.Update(ref _loadedAssemblies, (coll) => coll.Add(loadedAssembly));
+      }
     }
 
     #endregion Construction
@@ -220,14 +225,15 @@ namespace Altaxo.Main.Services
         if (_listOfAssemblies is null)
           throw new InvalidProgramException("For one base type, the list should have been initialized");
 
-        int loadedAssemblyCount = _loadedAssemblies.Count;
+        var loadedAssemblies = Volatile.Read(ref _loadedAssemblies);
+        int loadedAssemblyCount = loadedAssemblies.Count;
         if (_currentAssemblyCount == loadedAssemblyCount)
           return;
 
         Assembly baseassembly = _baseType.Assembly;
         for (int i = _currentAssemblyCount; i < loadedAssemblyCount; i++)
         {
-          Assembly assembly = _loadedAssemblies[i];
+          Assembly assembly = loadedAssemblies[i];
           if (!IsDependentAssembly(baseassembly, assembly))
             continue;
 
@@ -249,7 +255,8 @@ namespace Altaxo.Main.Services
         if (_moreTypes is null)
           throw new InvalidProgramException($"{nameof(_moreTypes)} should not be null here!");
 
-        int loadedAssemblyCount = _loadedAssemblies.Count;
+        var loadedAssemblies = Volatile.Read(ref _loadedAssemblies);
+        int loadedAssemblyCount = loadedAssemblies.Count;
         if (_currentAssemblyCount == loadedAssemblyCount)
           return;
 
@@ -395,7 +402,8 @@ namespace Altaxo.Main.Services
     /// <returns>All assemblies, that are currently loaded and that references the given base assembly. The base assembly is also in the returned list.</returns>
     public static System.Reflection.Assembly[] GetDependendAssemblies(Assembly baseAssembly, int start)
     {
-      if (start >= _loadedAssemblies.Count)
+      var loadedAssemblies = Volatile.Read(ref _loadedAssemblies);
+      if (start >= loadedAssemblies.Count)
       {
         return new Assembly[0];
       }
@@ -405,9 +413,9 @@ namespace Altaxo.Main.Services
 
         AssemblyName baseAssemblyName = baseAssembly.GetName();
 
-        for (int i = start; i < _loadedAssemblies.Count; i++)
+        for (int i = start; i < loadedAssemblies.Count; i++)
         {
-          Assembly assembly = _loadedAssemblies[i];
+          Assembly assembly = loadedAssemblies[i];
           if (Contains(assembly.GetReferencedAssemblies(), baseAssemblyName))
             list.Add(assembly);
           else if (assembly == baseAssembly)
@@ -448,7 +456,8 @@ namespace Altaxo.Main.Services
     /// <returns>All assemblies, that are currently loaded and that references the given base assembly. The base assembly is also in the returned list.</returns>
     public static System.Reflection.Assembly[] GetDependendAssemblies(System.Type[] types, int start)
     {
-      if (start >= _loadedAssemblies.Count)
+      var loadedAssemblies = Volatile.Read(ref _loadedAssemblies);
+      if (start >= loadedAssemblies.Count)
       {
         return new Assembly[0];
       }
@@ -464,9 +473,9 @@ namespace Altaxo.Main.Services
           if (!nameList.Contains(name))
             nameList.Add(name);
         }
-        for (int i = start; i < _loadedAssemblies.Count; i++)
+        for (int i = start; i < loadedAssemblies.Count; i++)
         {
-          Assembly testassembly = _loadedAssemblies[i];
+          Assembly testassembly = loadedAssemblies[i];
           AssemblyName testassemblyname = testassembly.GetName();
           foreach (AssemblyName name in nameList)
           {
@@ -788,9 +797,10 @@ namespace Altaxo.Main.Services
 
       public void Update()
       {
-        for (int i = _classesWithMyAttribute.Count; i < _loadedAssemblies.Count; i++)
+        var loadedAssemblies = Volatile.Read(ref _loadedAssemblies);
+        for (int i = _classesWithMyAttribute.Count; i < loadedAssemblies.Count; i++)
         {
-          Assembly assembly = _loadedAssemblies[i];
+          Assembly assembly = loadedAssemblies[i];
           var typesWithMyAttribute = new List<Type>();
           if (IsDependentAssembly(_attributeType.Assembly, assembly))
           {
@@ -804,7 +814,7 @@ namespace Altaxo.Main.Services
           }
           _classesWithMyAttribute.Add(typesWithMyAttribute);
         }
-        if (!(_loadedAssemblies.Count == _classesWithMyAttribute.Count))
+        if (!(loadedAssemblies.Count == _classesWithMyAttribute.Count))
           throw new InvalidProgramException();
       }
     }
@@ -1061,12 +1071,13 @@ namespace Altaxo.Main.Services
 
       public static void ForceRegisteringOfAllPropertyKeys()
       {
-        var loadedAssemblyCount = _loadedAssemblies.Count;
-        ;
+        var loadedAssemblies = Volatile.Read(ref _loadedAssemblies);
+        var loadedAssemblyCount = loadedAssemblies.Count;
+        
         Assembly baseassembly = typeof(Altaxo.Main.Properties.PropertyKeyBase).Assembly;
         for (int i = _currentAssemblyCount; i < loadedAssemblyCount; i++)
         {
-          Assembly assembly = _loadedAssemblies[i];
+          Assembly assembly = loadedAssemblies[i];
           if (!IsDependentAssembly(baseassembly, assembly))
             continue;
 

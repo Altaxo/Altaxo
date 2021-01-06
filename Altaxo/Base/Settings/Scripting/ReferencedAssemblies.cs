@@ -25,9 +25,11 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using Altaxo.AddInItems;
 
 namespace Altaxo.Settings.Scripting
@@ -40,7 +42,7 @@ namespace Altaxo.Settings.Scripting
   /// </summary>
   public static class ReferencedAssemblies
   {
-    private static List<Assembly> _startupAssemblies = new List<Assembly>();
+    private static ImmutableQueue<Assembly> _startupAssemblies = ImmutableQueue<Assembly>.Empty;
     private static readonly List<Assembly> _userAssemblies = new List<Assembly>();
     private static List<Assembly> _userTemporaryAssemblies = new List<Assembly>();
     private static readonly List<Assembly> _additionalReferencedAssemblies = new List<Assembly>();
@@ -77,10 +79,7 @@ namespace Altaxo.Settings.Scripting
         }
 
         // now we can add the assemblies to the startup assembly list. Those assemblies that are added are not dynamic, and should have an external file location
-        lock (_startupAssemblies)
-        {
-          _startupAssemblies.Add(asm);
-        }
+        ImmutableInterlocked.Enqueue(ref _startupAssemblies, asm);
       }
 
       // try to load some assemblies given in the .addin file(s)
@@ -181,10 +180,7 @@ namespace Altaxo.Settings.Scripting
       }
 
       // now our assembly is not a dynamic assembly, and has an an external file location
-      lock (_startupAssemblies)
-      {
-        _startupAssemblies.Add(asm);
-      }
+      ImmutableInterlocked.Enqueue(ref _startupAssemblies, asm);
     }
 
     public static void Initialize()
@@ -206,24 +202,19 @@ namespace Altaxo.Settings.Scripting
     {
       get
       {
-        // use a dummy Linq question here to make sure Linq gets loaded
-        // before we use _startupAssemblies
-        var selection = _userAssemblies.Where(x => x.FullName == "dummydummy");
-
         var list = new List<Assembly>();
-
-        {
           // Do not include System.ValueTuple.dll in the list of referenced assemblies if .NetFrameworkVersion is > 4.7, because it is intrinsically there
           // list.AddRange(_startupAssemblies.Where(ass => !(ass.GetName().Name.ToUpperInvariant().StartsWith("SYSTEM.VALUETUPLE"))));
           // Do not use Linq here, as in the line above, since Linq gets loaded sometimes in exactly the same moment than this statement is executed,
           // and thus altering the content of _startupAssemblies
-          foreach (var ass in _startupAssemblies)
+
+          var startupAssemblies = Volatile.Read(ref _startupAssemblies); // Make a thread safe local copy
+          foreach (var ass in startupAssemblies)
           {
             var assName = ass.GetName().Name;
             if (assName is null || !(assName.ToUpperInvariant().StartsWith("SYSTEM.VALUETUPLE")))
               list.Add(ass);
           }
-        }
 
         list.AddRange(_userTemporaryAssemblies);
 

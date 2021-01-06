@@ -256,10 +256,10 @@ namespace Altaxo.Main
       if (item is null)
         throw new ArgumentNullException(nameof(item));
 
-      if (item.Name is null) // if no name provided (an empty string is a valid name)
+      if(!item.TryGetName(out var itemName)) // if no name provided (an empty string is a valid name)
         item.Name = FindNewItemName();                 // find a new one
-      else if (_itemsByName.ContainsKey(item.Name)) // else if this name is already in use
-        item.Name = FindNewItemName(item.Name); // find a new  name based on the original name
+      else if (_itemsByName.ContainsKey(itemName)) // else if this name is already in use
+        item.Name = FindNewItemName(itemName); // find a new  name based on the original name
 
       // now the project item has a unique name in any case
       InternalAdd(item);
