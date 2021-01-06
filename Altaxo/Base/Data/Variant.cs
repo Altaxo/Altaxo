@@ -127,7 +127,7 @@ namespace Altaxo.Data
   /// </summary>
   public struct AltaxoVariant : IComparable, IFormattable
   {
-    public enum Content { VNull, VDouble, VDateTime, VString, VOperatable, VObject }
+    public enum Content { VNull, VDouble, VDateTime, VString, VOperatable, VObject, VDateTimeOffset }
 
     private Content _typeOfContent;
     private double _double;
@@ -230,6 +230,13 @@ namespace Altaxo.Data
       _double = 0;
     }
 
+    public AltaxoVariant(DateTimeOffset f)
+    {
+      _typeOfContent = Content.VDateTimeOffset;
+      _object = f;
+      _double = 0;
+    }
+
     public AltaxoVariant(string? s)
     {
       _typeOfContent = Content.VString;
@@ -239,47 +246,48 @@ namespace Altaxo.Data
 
     public AltaxoVariant(object? k)
     {
-      if (k is null)
+      switch(k)
       {
-        _typeOfContent = Content.VNull;
-        _double = 0;
-        _object = null;
-      }
-      else if (k is double)
-      {
-        _typeOfContent = Content.VDouble;
-        _double = (double)k;
-        _object = null;
-      }
-      else if (k is DateTime)
-      {
-        _typeOfContent = Content.VDateTime;
-        _double = 0;
-        _object = k;
-      }
-      else if (k is string)
-      {
-        _typeOfContent = Content.VString;
-        _double = 0;
-        _object = k;
-      }
-      else if (k is IOperatable)
-      {
-        _typeOfContent = Content.VOperatable;
-        _double = 0;
-        _object = k;
-      }
-      else if (k is AltaxoVariant)
-      {
-        _typeOfContent = ((AltaxoVariant)k)._typeOfContent;
-        _double = ((AltaxoVariant)k)._double;
-        _object = ((AltaxoVariant)k)._object; // is critical, because the object is not cloned, so be warned for the first time
-      }
-      else
-      {
-        _typeOfContent = Content.VObject;
-        _double = 0;
-        _object = k;
+        case null:
+          _typeOfContent = Content.VNull;
+          _double = 0;
+          _object = null;
+          break;
+        case double dd:
+          _typeOfContent = Content.VDouble;
+          _double = dd;
+          _object = null;
+          break;
+        case DateTime:
+          _typeOfContent = Content.VDateTime;
+          _double = 0;
+          _object = k;
+          break;
+        case string:
+          _typeOfContent = Content.VString;
+          _double = 0;
+          _object = k;
+          break;
+        case IOperatable:
+          _typeOfContent = Content.VOperatable;
+          _double = 0;
+          _object = k;
+          break;
+        case AltaxoVariant av:
+          _typeOfContent = av._typeOfContent;
+          _double = av._double;
+          _object = av._object; // is critical, because the object is not cloned, so be warned for the first time
+          break;
+        case DateTimeOffset:
+          _typeOfContent = Content.VDateTime;
+          _double = 0;
+          _object = k;
+          break;
+        default:
+          _typeOfContent = Content.VObject;
+          _double = 0;
+          _object = k;
+          break;
       }
     }
 
@@ -297,7 +305,7 @@ namespace Altaxo.Data
     {
       get
       {
-        if (_typeOfContent == Content.VDouble || _typeOfContent == Content.VDateTime)
+        if (_typeOfContent == Content.VDouble || _typeOfContent == Content.VDateTime || _typeOfContent==Content.VDateTimeOffset)
           return true; // we can create a double from a double (trivial) and from DateTime
         if (_typeOfContent == Content.VString) // if the content is a string, we have to look if it is possible to convert
           return Altaxo.Serialization.NumberConversion.IsNumeric((string?)_object);
@@ -319,7 +327,7 @@ namespace Altaxo.Data
     {
       get
       {
-        if (_typeOfContent == Content.VDouble || _typeOfContent == Content.VDateTime)
+        if (_typeOfContent == Content.VDouble || _typeOfContent == Content.VDateTime || _typeOfContent == Content.VDateTimeOffset)
           return true; // we can create a double from a double (trivial) and from DateTime
         else
           return false; // it is not possible to convert the contents to a double
@@ -333,16 +341,14 @@ namespace Altaxo.Data
     /// <remarks>An exception is thrown if the conversion fails. You have to use <see cref="CanConvertedToDouble"/> for testing if the contents can be converted to a double.</remarks>
     public double ToDouble()
     {
-      if (_typeOfContent == Content.VDouble)
-        return _double;
-      else if (_typeOfContent == Content.VDateTime)
-        return ((DateTime)_object!).Ticks / 10000000.0;
-      else if (_typeOfContent == Content.VString)
-        return System.Convert.ToDouble((string?)_object);
-      else if (_object is not null)
-        return System.Convert.ToDouble(_object.ToString());
-      else
-        throw new ApplicationException("Unable to convert the contents of this variant to a number, the contents is: " + ToString());
+      return _typeOfContent switch
+      {
+        Content.VDouble => _double,
+        Content.VDateTime => ((DateTime)_object!).Ticks / 10000000.0,
+        Content.VDateTimeOffset => ((DateTimeOffset)_object!).Ticks / 10000000.0,
+        Content.VString => System.Convert.ToDouble((string?)_object),
+        _ => _object is not null ? System.Convert.ToDouble(_object.ToString()) : throw new ApplicationException("Unable to convert the contents of this variant to a number, the contents is: " + ToString())
+      };
     }
 
     /// <summary>
@@ -420,6 +426,29 @@ namespace Altaxo.Data
         throw new ApplicationException("Unable to convert the contents of this variant to a DateTime, the contents is: " + ToString());
     }
 
+    /// <summary>
+    /// Converts the content to a DateTime if possible. The structure remains unchanged.
+    /// </summary>
+    /// <returns>The contents converted to a DateTime.</returns>
+    /// <remarks>An exception is thrown if the conversion fails. </remarks>
+    public DateTimeOffset ToDateTimeOffset()
+    {
+      if (_typeOfContent == Content.VDouble)
+        return new DateTimeOffset((long)(_double * 10000000.0), TimeSpan.Zero);
+      else if (_typeOfContent == Content.VDateTime)
+        return new DateTimeOffset((DateTime)_object!);
+      else if (_typeOfContent == Content.VDateTimeOffset)
+        return (DateTimeOffset)_object!;
+      else
+      {
+        var s = _typeOfContent == Content.VString ? (string?)_object : _object?.ToString();
+        if (s is not null && DateTime.TryParse(s, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var dto))
+          return dto;
+        else
+          throw new ApplicationException($"Unable to convert the contents of this variant to a DateTimeOffset, the contents is: {ToString()}");
+      }
+    }
+
     public override string ToString()
     {
       if (_typeOfContent == Content.VNull)
@@ -442,6 +471,8 @@ namespace Altaxo.Data
           return _double.ToString(formatString, provider);
         else if (_typeOfContent == Content.VDateTime)
           return ((DateTime)_object!).ToString(formatString, provider);
+        else if (_typeOfContent == Content.VDateTimeOffset)
+          return ((DateTimeOffset)_object!).ToString(formatString, provider);
         else if (_typeOfContent == Content.VString)
           return ((string?)_object)?.ToString(provider) ?? string.Empty;
         else if (_object is not null)
@@ -514,7 +545,19 @@ namespace Altaxo.Data
       throw new ApplicationException("Variant contains " + f._typeOfContent.ToString() + ", but expecting type DateTime");
     }
 
+    public static implicit operator DateTimeOffset(AltaxoVariant f)
+    {
+      if (f._typeOfContent == Content.VDateTimeOffset)
+        return (DateTimeOffset)f._object!;
+      throw new ApplicationException("Variant contains " + f._typeOfContent.ToString() + ", but expecting type DateTimeOffset");
+    }
+
     public static implicit operator AltaxoVariant(DateTime f)
+    {
+      return new AltaxoVariant(f);
+    }
+
+    public static implicit operator AltaxoVariant(DateTimeOffset f)
     {
       return new AltaxoVariant(f);
     }
@@ -540,8 +583,12 @@ namespace Altaxo.Data
         return new AltaxoVariant(((string?)a._object) + ((string?)b._object));
       else if (a._typeOfContent == Content.VDateTime && b._typeOfContent == Content.VDouble)
         return new AltaxoVariant(((DateTime)a._object!).AddSeconds(b._double));
+      else if (a._typeOfContent == Content.VDateTimeOffset && b._typeOfContent == Content.VDouble)
+        return new AltaxoVariant(((DateTimeOffset)a._object!).AddSeconds(b._double));
       else if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDateTime)
         return new AltaxoVariant(((DateTime)b._object!).AddSeconds(a._double));
+      else if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDateTimeOffset)
+        return new AltaxoVariant(((DateTimeOffset)b._object!).AddSeconds(a._double));
       else if (a._typeOfContent == Content.VString && b._typeOfContent == Content.VDouble)
         return new AltaxoVariant(((string?)a._object) + b._double.ToString());
       else if (a._typeOfContent == Content.VString && b._typeOfContent == Content.VDateTime)
@@ -563,8 +610,12 @@ namespace Altaxo.Data
         return new AltaxoVariant(a._double - b._double);
       else if (a._typeOfContent == Content.VDateTime && a._typeOfContent == Content.VDouble)
         return new AltaxoVariant(((DateTime)a._object!).AddSeconds(-b._double));
+      else if (a._typeOfContent == Content.VDateTimeOffset && a._typeOfContent == Content.VDouble)
+        return new AltaxoVariant(((DateTimeOffset)a._object!).AddSeconds(-b._double));
       else if (a._typeOfContent == Content.VDateTime && b._typeOfContent == Content.VDateTime)
         return new AltaxoVariant((((DateTime)a._object!) - ((DateTime)b._object!)).TotalSeconds);
+      else if (a._typeOfContent == Content.VDateTimeOffset && b._typeOfContent == Content.VDateTimeOffset)
+        return new AltaxoVariant((((DateTimeOffset)a._object!) - ((DateTimeOffset)b._object!)).TotalSeconds);
       else if (a._typeOfContent == Content.VNull && b._typeOfContent == Content.VNull)
         return new AltaxoVariant();
       else if (a._typeOfContent == Content.VOperatable && ((IOperatable)a._object!).vop_Subtraction(b._typeOfContent == Content.VDouble ? b._double : b._object!, out var result))
@@ -697,6 +748,8 @@ namespace Altaxo.Data
         return (a._double == b._double);
       else if (a._typeOfContent == Content.VDateTime)
         return (((System.DateTime)a._object!) == ((System.DateTime)b._object!));
+      else if (a._typeOfContent == Content.VDateTimeOffset)
+        return (((System.DateTimeOffset)a._object!) == ((System.DateTimeOffset)b._object!));
       else if (a._typeOfContent == Content.VString)
         return 0 == string.Compare((string?)a._object, (string?)b._object);
       else if (a._typeOfContent == Content.VNull)
@@ -726,6 +779,8 @@ namespace Altaxo.Data
         return (a._double < b._double);
       else if (a._typeOfContent == Content.VDateTime)
         return (((System.DateTime)a._object!) < ((System.DateTime)b._object!));
+      else if (a._typeOfContent == Content.VDateTimeOffset)
+        return (((System.DateTimeOffset)a._object!) < ((System.DateTimeOffset)b._object!));
       else if (a._typeOfContent == Content.VString)
         return 0 > string.Compare((string?)a._object, (string?)b._object);
       else if (a._typeOfContent == Content.VOperatable && ((IOperatable)b._object!).vop_Lesser(a._typeOfContent == Content.VDouble ? a._double : a._object!, out var result))
@@ -748,6 +803,8 @@ namespace Altaxo.Data
         return (a._double > b._double);
       else if (a._typeOfContent == Content.VDateTime)
         return (((System.DateTime)a._object!) > ((System.DateTime)b._object!));
+      else if (a._typeOfContent == Content.VDateTimeOffset)
+        return (((System.DateTimeOffset)a._object!) > ((System.DateTimeOffset)b._object!));
       else if (a._typeOfContent == Content.VString)
         return 0 < string.Compare((string?)a._object, (string?)b._object);
       else if (a._typeOfContent == Content.VOperatable && ((IOperatable)b._object!).vop_Greater(a._typeOfContent == Content.VDouble ? a._double : a._object!, out var result))
@@ -770,6 +827,8 @@ namespace Altaxo.Data
         return (a._double <= b._double);
       else if (a._typeOfContent == Content.VDateTime)
         return (((System.DateTime)a._object!) <= ((System.DateTime)b._object!));
+      else if (a._typeOfContent == Content.VDateTimeOffset)
+        return (((System.DateTimeOffset)a._object!) <= ((System.DateTimeOffset)b._object!));
       else if (a._typeOfContent == Content.VString)
         return 0 >= string.Compare((string?)a._object, (string?)b._object);
       else if (a._typeOfContent == Content.VOperatable && ((IOperatable)b._object!).vop_LesserOrEqual(a._typeOfContent == Content.VDouble ? a._double : a._object!, out var result))
@@ -792,6 +851,8 @@ namespace Altaxo.Data
         return (a._double >= b._double);
       else if (a._typeOfContent == Content.VDateTime)
         return (((System.DateTime)a._object!) >= ((System.DateTime)b._object!));
+      else if (a._typeOfContent == Content.VDateTimeOffset)
+        return (((System.DateTimeOffset)a._object!) >= ((System.DateTimeOffset)b._object!));
       else if (a._typeOfContent == Content.VString)
         return 0 >= string.Compare((string?)a._object, (string?)b._object);
       else if (a._typeOfContent == Content.VOperatable && ((IOperatable)b._object!).vop_GreaterOrEqual(a._typeOfContent == Content.VDouble ? a._double : a._object!, out var result))
@@ -811,6 +872,7 @@ namespace Altaxo.Data
         case Content.VNull:
         case Content.VDouble:
         case Content.VDateTime:
+        case Content.VDateTimeOffset:
           return new AltaxoVariant(a);
 
         case Content.VOperatable:
@@ -968,6 +1030,9 @@ namespace Altaxo.Data
 
         case Content.VDateTime:
           return ((DateTime)_object!).CompareTo(from._object);
+
+        case Content.VDateTimeOffset:
+          return ((IComparable)_object!).CompareTo(from._object);
 
         case Content.VString:
           return string.Compare((string?)_object, (string?)from._object);
