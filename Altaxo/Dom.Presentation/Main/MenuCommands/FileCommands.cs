@@ -298,6 +298,12 @@ namespace Altaxo.Main.Commands
           var oldName = doc.Name;
           var newDoc = (IProjectItem)doc.Clone();
 
+          if (doc.ParentObject is IProjectItemCollection coll)
+          {
+            var newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(doc.Name, coll.ItemBaseName);
+            newDoc.Name = coll.FindNewItemName(newnamebase);
+          }
+
           Current.Project.AddItem(newDoc);
           Current.IProjectService.ShowDocumentView(newDoc);
         }

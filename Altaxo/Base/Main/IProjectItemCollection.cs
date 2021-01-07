@@ -113,6 +113,15 @@ namespace Altaxo.Main
     string FindNewItemName();
 
     /// <summary>
+    /// Gets the base name of a project item. The base name will be combined with a number to find a unique name.
+    /// </summary>
+    /// <value>
+    /// The base name of a project item in this collection.
+    /// </value>
+    string ItemBaseName { get; }
+
+
+    /// <summary>
     /// Fired when one or more project items are added, deleted or renamed. Not fired when content in the project item has changed.
     /// Arguments are the type of change, the item that changed, the old name (if renamed), and the new name (if renamed).
     /// This event can not be suspended.

@@ -381,7 +381,7 @@ namespace Altaxo.Graph.Graph3D.Commands
     public override void Run(Graph3DController ctrl)
     {
       var newDoc = new GraphDocument(ctrl.Doc);
-      string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.Doc.Name, "GRAPH");
+      string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.Doc.Name, Current.Project.Graph3DDocumentCollection.ItemBaseName);
       newDoc.Name = Current.Project.GraphDocumentCollection.FindNewItemName(newnamebase);
       Current.Project.Graph3DDocumentCollection.Add(newDoc);
       Current.ProjectService.CreateNewGraph3D(newDoc);

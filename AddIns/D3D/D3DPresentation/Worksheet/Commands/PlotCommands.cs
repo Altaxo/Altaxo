@@ -65,7 +65,7 @@ namespace Altaxo.Worksheet.Commands
       PresentationCoreLoader.EnsurePresentationCoreLoaded();
 
       var graph = Altaxo.Graph.Graph3D.Templates.TemplateWithXYZPlotLayerWithG3DCartesicCoordinateSystem.CreateGraph(
-          PropertyExtensions.GetPropertyContextOfProjectFolder(ctrl.DataTable.Folder), "GRAPH", ctrl.DataTable.Folder, false);
+          PropertyExtensions.GetPropertyContextOfProjectFolder(ctrl.DataTable.Folder), Current.Project.Graph3DDocumentCollection.ItemBaseName, ctrl.DataTable.Folder, false);
 
       Current.ProjectService.OpenOrCreateViewContentForDocument(graph);
     }

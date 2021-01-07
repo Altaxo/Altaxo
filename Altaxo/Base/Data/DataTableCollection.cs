@@ -23,6 +23,7 @@
 #endregion Copyright
 
 #nullable enable
+using System;
 using System.Collections.Generic;
 
 namespace Altaxo.Data
@@ -78,12 +79,26 @@ namespace Altaxo.Data
 
     public override string? GetNameOfChildObject(Main.IDocumentLeafNode o)
     {
-      if (o is DataTable)
+      if (o is DataTable table)
       {
-        var gr = (DataTable)o;
-        if (_itemsByName.ContainsKey(gr.Name))
-          return gr.Name;
+        if (_itemsByName.TryGetValue(table.Name, out var item))
+        {
+          if(object.ReferenceEquals(o, item))
+            return table.Name;
+          else
+            throw new InvalidProgramException($"Names out of sync: the entry with key {table.Name} contains a table with the name {item.Name}");
+        }
+
+        // just make sure that the item is out of sync with the name
+        foreach (var entry in _itemsByName)
+        {
+          if (object.ReferenceEquals(entry.Value, o))
+          {
+            throw new InvalidProgramException($"Names out of sync: in collection the name is {entry.Key}, but in item the name is {table.Name}");
+          }
+        }
       }
+
       return null;
     }
 

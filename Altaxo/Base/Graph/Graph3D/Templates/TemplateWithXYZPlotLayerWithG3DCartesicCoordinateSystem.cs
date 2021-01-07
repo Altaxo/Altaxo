@@ -112,7 +112,7 @@ typeof(object),
 
       if (string.IsNullOrEmpty(preferredGraphName))
       {
-        string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(anyNameInSameFolder ?? string.Empty, "GRAPH");
+        var newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(anyNameInSameFolder ?? string.Empty, Current.Project.Graph3DDocumentCollection.ItemBaseName);
         graph.Name = Current.Project.GraphDocumentCollection.FindNewItemName(newnamebase);
       }
       else
