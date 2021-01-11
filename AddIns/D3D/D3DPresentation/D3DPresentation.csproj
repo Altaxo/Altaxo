@@ -20,18 +20,12 @@
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
+  <!-- We have to compile the shaders in the pre-built event in order to be ready for embedding as resource - see below
   <ItemGroup>
     <Fx40File Include="Shaders\Lighting.fx" />
     <Fx40File Include="Shaders\GammaCorrector.fx" />
   </ItemGroup>
-  <ItemGroup>
-    <None Remove="CompiledShaders\Effects\GammaCorrector.cso" />
-    <None Remove="CompiledShaders\Effects\Lighting.cso" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="CompiledShaders\Effects\GammaCorrector.cso" />
-    <EmbeddedResource Include="CompiledShaders\Effects\Lighting.cso" />
-  </ItemGroup>
+  -->
   <ItemGroup>
     <ProjectReference Include="..\..\..\Altaxo\Base.Presentation\AltaxoBase.Presentation.csproj" />
     <ProjectReference Include="..\..\..\Altaxo\Base\AltaxoBase.csproj" />
@@ -48,6 +42,9 @@
     <PackageReference Include="SharpDX.DXGI" Version="4.2.0" />
     <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CompiledShaders\Effects\" />
+  </ItemGroup>
   <UsingTask TaskName="Shader" AssemblyFile="ShaderCompilerBuildTask.dll" />
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\..\MSBuildVersioning.dll" />
   <Target Name="DoCompileShaders">
@@ -60,5 +57,9 @@
   </Target>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="IF NOT EXIST $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\ mkdir $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\&#xD;&#xA;copy $(ProjectDir)D3D.addin $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\&#xD;&#xA;copy $(TargetDir)D3DPresentation.??l $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\&#xD;&#xA;copy $(TargetDir)SharpDX*.??l $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\" />
+  </Target>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Shader InputFiles="$(ProjectDir)\Shaders\GammaCorrector.fx" OutputPath="$(ProjectDir)\CompiledShaders\Effects" Profile="fx_4_0" />
+    <Shader InputFiles="$(ProjectDir)\Shaders\Lighting.fx" OutputPath="$(ProjectDir)\CompiledShaders\Effects" Profile="fx_4_0" />
   </Target>
 </Project>
