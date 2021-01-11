@@ -26,7 +26,7 @@
 namespace Altaxo.Calc.Ode
 {
   /// <summary>
-  /// 'Classical' Runge-Kutta method of order 4. Not that at the moment neither error control (and therefore, no step size control) nor dense output is implemented.
+  /// 'Classical' Runge-Kutta method of order 4. Note that at the moment neither error control (and therefore, no step size control) nor dense output is implemented.
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Ode.RungeKuttaExplicitBase" />
   public class RungeKutta4 : RungeKuttaExplicitBase
