@@ -432,7 +432,7 @@ namespace Altaxo.Serialization.AutoUpdates
       foreach (var entry in zipFile.Entries)
       {
         ++currentProcessedFile;
-        var destinationFileName = Path.Combine(pathToInstallation, entry.Name);
+        var destinationFileName = Path.Combine(pathToInstallation, entry.FullName);
         var destinationPath = Path.GetDirectoryName(destinationFileName) ?? throw new ArgumentException($"Can not get base directory of file: {destinationFileName}");
 
         try
