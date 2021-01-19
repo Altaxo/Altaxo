@@ -164,54 +164,54 @@ namespace Altaxo.Calc.Ode
     private const double a1514 = -9.15095847217987001081870187138E0;
 
     // Coefficients for dense output
-    private const double d41  = -0.84289382761090128651353491142E+01;
-    private const double d46  =  0.56671495351937776962531783590E+00;
-    private const double d47  = -0.30689499459498916912797304727E+01;
-    private const double d48  =  0.23846676565120698287728149680E+01;
-    private const double d49  =  0.21170345824450282767155149946E+01;
-    private const double d410 = -0.87139158377797299206789907490E+00;
-    private const double d411 =  0.22404374302607882758541771650E+01;
-    private const double d412 =  0.63157877876946881815570249290E+00;
-    private const double d413 = -0.88990336451333310820698117400E-01;
-    private const double d414 =  0.18148505520854727256656404962E+02;
-    private const double d415 = -0.91946323924783554000451984436E+01;
-    private const double d416 = -0.44360363875948939664310572000E+01;
-    private const double d51  =  0.10427508642579134603413151009E+02;
-    private const double d56  =  0.24228349177525818288430175319E+03;
-    private const double d57  =  0.16520045171727028198505394887E+03;
-    private const double d58  = -0.37454675472269020279518312152E+03;
-    private const double d59  = -0.22113666853125306036270938578E+02;
-    private const double d510 =  0.77334326684722638389603898808E+01;
-    private const double d511 = -0.30674084731089398182061213626E+02;
-    private const double d512 = -0.93321305264302278729567221706E+01;
-    private const double d513 =  0.15697238121770843886131091075E+02;
-    private const double d514 = -0.31139403219565177677282850411E+02;
-    private const double d515 = -0.93529243588444783865713862664E+01;
-    private const double d516 =  0.35816841486394083752465898540E+02;
-    private const double d61 =  0.19985053242002433820987653617E+02;
-    private const double d66 = -0.38703730874935176555105901742E+03;
-    private const double d67 = -0.18917813819516756882830838328E+03;
-    private const double d68 =  0.52780815920542364900561016686E+03;
-    private const double d69 = -0.11573902539959630126141871134E+02;
-    private const double d610 =  0.68812326946963000169666922661E+01;
-    private const double d611 = -0.10006050966910838403183860980E+01;
-    private const double d612 =  0.77771377980534432092869265740E+00;
-    private const double d613 = -0.27782057523535084065932004339E+01;
-    private const double d614 = -0.60196695231264120758267380846E+02;
-    private const double d615 =  0.84320405506677161018159903784E+02;
-    private const double d616 =  0.11992291136182789328035130030E+02;
-    private const double d71  = -0.25693933462703749003312586129E+02;
-    private const double d76  = -0.15418974869023643374053993627E+03;
-    private const double d77  = -0.23152937917604549567536039109E+03;
-    private const double d78  =  0.35763911791061412378285349910E+03;
-    private const double d79  =  0.93405324183624310003907691704E+02;
-    private const double d710 = -0.37458323136451633156875139351E+02;
-    private const double d711 =  0.10409964950896230045147246184E+03;
-    private const double d712 =  0.29840293426660503123344363579E+02;
-    private const double d713 = -0.43533456590011143754432175058E+02;
-    private const double d714 =  0.96324553959188282948394950600E+02;
-    private const double d715 = -0.39177261675615439165231486172E+02;
-    private const double d716 = -0.14972683625798562581422125276E+03;
+    private const double d40  = -0.84289382761090128651353491142E+01;
+    private const double d45  =  0.56671495351937776962531783590E+00;
+    private const double d46  = -0.30689499459498916912797304727E+01;
+    private const double d47  =  0.23846676565120698287728149680E+01;
+    private const double d48  =  0.21170345824450282767155149946E+01;
+    private const double d49 = -0.87139158377797299206789907490E+00;
+    private const double d410 =  0.22404374302607882758541771650E+01;
+    private const double d411 =  0.63157877876946881815570249290E+00;
+    private const double d412 = -0.88990336451333310820698117400E-01;
+    private const double d413 =  0.18148505520854727256656404962E+02;
+    private const double d414 = -0.91946323924783554000451984436E+01;
+    private const double d415 = -0.44360363875948939664310572000E+01;
+    private const double d50  =  0.10427508642579134603413151009E+02;
+    private const double d55  =  0.24228349177525818288430175319E+03;
+    private const double d56  =  0.16520045171727028198505394887E+03;
+    private const double d57  = -0.37454675472269020279518312152E+03;
+    private const double d58  = -0.22113666853125306036270938578E+02;
+    private const double d59 =  0.77334326684722638389603898808E+01;
+    private const double d510 = -0.30674084731089398182061213626E+02;
+    private const double d511 = -0.93321305264302278729567221706E+01;
+    private const double d512 =  0.15697238121770843886131091075E+02;
+    private const double d513 = -0.31139403219565177677282850411E+02;
+    private const double d514 = -0.93529243588444783865713862664E+01;
+    private const double d515 =  0.35816841486394083752465898540E+02;
+    private const double d60 =  0.19985053242002433820987653617E+02;
+    private const double d65 = -0.38703730874935176555105901742E+03;
+    private const double d66 = -0.18917813819516756882830838328E+03;
+    private const double d67 =  0.52780815920542364900561016686E+03;
+    private const double d68 = -0.11573902539959630126141871134E+02;
+    private const double d69 =  0.68812326946963000169666922661E+01;
+    private const double d610 = -0.10006050966910838403183860980E+01;
+    private const double d611 =  0.77771377980534432092869265740E+00;
+    private const double d612 = -0.27782057523535084065932004339E+01;
+    private const double d613 = -0.60196695231264120758267380846E+02;
+    private const double d614 =  0.84320405506677161018159903784E+02;
+    private const double d615 =  0.11992291136182789328035130030E+02;
+    private const double d70  = -0.25693933462703749003312586129E+02;
+    private const double d75  = -0.15418974869023643374053993627E+03;
+    private const double d76  = -0.23152937917604549567536039109E+03;
+    private const double d77  =  0.35763911791061412378285349910E+03;
+    private const double d78  =  0.93405324183624310003907691704E+02;
+    private const double d79 = -0.37458323136451633156875139351E+02;
+    private const double d710 =  0.10409964950896230045147246184E+03;
+    private const double d711 =  0.29840293426660503123344363579E+02;
+    private const double d712 = -0.43533456590011143754432175058E+02;
+    private const double d713 =  0.96324553959188282948394950600E+02;
+    private const double d714 = -0.39177261675615439165231486172E+02;
+    private const double d715 = -0.14972683625798562581422125276E+03;
 
     #endregion
 
@@ -584,26 +584,22 @@ namespace Altaxo.Calc.Ode
             var bspl = h * k0[i] - ydiff;
             rcont2[i] = bspl;
             rcont3[i] = ydiff - h * k12[i] - bspl; 
-            rcont4[i] = d41 * k0[i] + d46 * k5[i] + d47 * k6[i] + d48 * k7[i] +
-                d49 * k8[i] + d410 * k9[i] + d411 * k10[i] + d412 * k11[i];
-            rcont5[i] = d51 * k0[i] + d56 * k5[i] + d57 * k6[i] + d58 * k7[i] +
-                d59 * k8[i] + d510 * k9[i] + d511 * k10[i] + d512 * k11[i];
-            rcont6[i] = d61 * k0[i] + d66 * k5[i] + d67 * k6[i] + d68 * k7[i] +
-                d69 * k8[i] + d610 * k9[i] + d611 * k10[i] + d612 * k11[i];
-            rcont7[i] = d71 * k0[i] + d76 * k5[i] + d77 * k6[i] + d78 * k7[i] +
-                d79 * k8[i] + d710 * k9[i] + d711 * k10[i] + d712 * k11[i];
+            rcont4[i] = d40 * k0[i] + d45 * k5[i] + d46 * k6[i] + d47 * k7[i] + d48 * k8[i] + d49 * k9[i] + d410 * k10[i] + d411 * k11[i];
+            rcont5[i] = d50 * k0[i] + d55 * k5[i] + d56 * k6[i] + d57 * k7[i] + d58 * k8[i] + d59 * k9[i] + d510 * k10[i] + d511 * k11[i];
+            rcont6[i] = d60 * k0[i] + d65 * k5[i] + d66 * k6[i] + d67 * k7[i] + d68 * k8[i] + d69 * k9[i] + d610 * k10[i] + d611 * k11[i];
+            rcont7[i] = d70 * k0[i] + d75 * k5[i] + d76 * k6[i] + d77 * k7[i] + d78 * k8[i] + d79 * k9[i] + d710 * k10[i] + d711 * k11[i];
           }
           // TODO append upstairs
           for (int i = 0; i < n; i++)
           {
-            rcont4[i] = h * (rcont4[i] + d413 * k12[i] + d414 * k13[i] +
-                d415 * k14[i] + d416 * k15[i]);
-            rcont5[i] = h * (rcont5[i] + d513 * k12[i] + d514 * k13[i] +
-                d515 * k14[i] + d516 * k15[i]);
-            rcont6[i] = h * (rcont6[i] + d613 * k12[i] + d614 * k13[i] +
-                d615 * k14[i] + d616 * k15[i]);
-            rcont7[i] = h * (rcont7[i] + d713 * k12[i] + d714 * k13[i] +
-                d715 * k14[i] + d716 * k15[i]);
+            rcont4[i] = h * (rcont4[i] + d412 * k12[i] + d413 * k13[i] +
+                d414 * k14[i] + d415 * k15[i]);
+            rcont5[i] = h * (rcont5[i] + d512 * k12[i] + d513 * k13[i] +
+                d514 * k14[i] + d515 * k15[i]);
+            rcont6[i] = h * (rcont6[i] + d612 * k12[i] + d613 * k13[i] +
+                d614 * k14[i] + d615 * k15[i]);
+            rcont7[i] = h * (rcont7[i] + d712 * k12[i] + d713 * k13[i] +
+                d714 * k14[i] + d715 * k15[i]);
           }
         }
 
