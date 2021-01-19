@@ -60,5 +60,43 @@ namespace Altaxo.Main.Services
         return null;
       }
     }
+
+    /// <summary>
+    /// Determines whether a specific version of the .NET Core runtime is installed.
+    /// You have to specify major and minor version, e.g. for .NET core 5.0: 5 and 0.
+    /// The function then will return true if any 5.0 version is installed, e.g. 5.0.2 etc.
+    /// </summary>
+    /// <param name="major">The major version to look for.</param>
+    /// <param name="minor">The minor version to look for.</param>
+    /// <returns>
+    ///   <c>true</c> if [is version installed] [the specified major]; otherwise, <c>false</c>.
+    /// </returns>
+    /// <remarks>See <seehcref="https://stackoverflow.com/questions/62875409/how-to-programmatically-check-the-net-core-runtime-version-installed-on-my-mach"/> for details.</remarks>
+    public static bool IsVersionInstalled(int major, int minor)
+    {
+      if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+      {
+        var searchString = FormattableString.Invariant($"{major}.{minor}.");
+        using (var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+          RegistryView.Registry32).OpenSubKey(@"SOFTWARE\WOW6432Node\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.NETCore.App\"))
+        {
+          foreach (var subKeyName in baseKey.GetSubKeyNames())
+          {
+            if (subKeyName.StartsWith(searchString) && baseKey.GetValue(subKeyName) is int value && value != 0)
+              return true;
+          }
+        }
+      }
+      else if(Environment.OSVersion.Platform == PlatformID.Unix)
+      {
+        // refer to the reference above for a method to determine .NET core version on Linux
+        throw new NotImplementedException();
+      }
+      else
+      {
+        throw new NotImplementedException();
+      }
+      return false;
+    }
   }
 }
