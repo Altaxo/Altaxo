@@ -29,6 +29,7 @@ namespace Altaxo.Calc.Ode
   /// <summary>
   /// Runge-Kutta method of 8th order of Dormand and Prince.
   /// Please note: this method <b>can only provide dense output of order 1 (linear interpolation)!</b>
+  /// If accurate dense output or stiffness detection is needed, please use <see cref="DOP853"/>.
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
