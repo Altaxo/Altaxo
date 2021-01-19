@@ -243,7 +243,7 @@ namespace Altaxo.Calc.Ode
     private static readonly double[] _sbl = new double[] { er0, 0, 0, 0, 0, er5, er6, er7, er8, er9, er10, er11 };  
 
 #if true
-    protected class Core1 : RungeKuttaExplicitBase.Core
+    protected class CoreDOP853 : RungeKuttaExplicitBase.Core
     {
       /// <summary>True if the _k[12] (13th stage) was evaluated</summary>
       private bool _isK12Evaluated;
@@ -252,11 +252,11 @@ namespace Altaxo.Calc.Ode
       private bool _isDenseOutputPrepared;
 
       /// <summary>Contains the precalcuated polynomial coefficients for dense output.</summary>
-      private double[][] _rcont;
+      private double[][]? _rcont;
 
 
 
-      public Core1(int order, int numberOfStages, double[][] a, double[] b, double[]? bl, double[] c, double x0, double[] y, Action<double, double[], double[]> f)
+      public CoreDOP853(int order, int numberOfStages, double[][] a, double[] b, double[]? bl, double[] c, double x0, double[] y, Action<double, double[], double[]> f)
         : base(order, numberOfStages, a, b, bl, c, x0, y, f)
       {
       }
@@ -299,100 +299,102 @@ namespace Altaxo.Calc.Ode
 
         // Note: due to many zeros in the _a array it is preferrable to multiply directly
         var ysi = _ytemp;
+        var k0 = _k[0];
+        var k1 = _k[1];
+        var k2 = _k[2];
+        var k3 = _k[3];
+        var k4 = _k[4];
+        var k5 = _k[5];
+        var k6 = _k[6];
+        var k7 = _k[7];
+        var k8 = _k[8];
+        var k9 = _k[9];
+        var k10 = _k[10];
+        var k11 = _k[11];
         for (int ni = 0; ni < n; ++ni) // for all n
         {
-          ysi[ni] = y_previous[ni] + h * a10 * k[0][ni];
+          ysi[ni] = y_previous[ni] + h * a10 * k0[ni];
         }
-        _f(x_previous + h * c[1], ysi, k[1]); // calculate derivative k
+        _f(x_previous + h * c[1], ysi, k1); // calculate derivative k1
 
         for (int ni = 0; ni < n; ++ni) // for all n
         {
-          ysi[ni] = y_previous[ni] + h * (a20 * k[0][ni] + a21 * k[1][ni]);
+          ysi[ni] = y_previous[ni] + h * (a20 * k0[ni] + a21 * k1[ni]);
         }
-        _f(x_previous + h * c[1], ysi, k[2]); // calculate derivative k
+        _f(x_previous + h * c[1], ysi, k2); // calculate derivative k2
 
         for (int ni = 0; ni < n; ++ni) // for all n
         {
-          ysi[ni] = y_previous[ni] + h * (a30 * k[0][ni] + a32 * k[2][ni]);
+          ysi[ni] = y_previous[ni] + h * (a30 * k0[ni] + a32 * k2[ni]);
         }
-        _f(x_previous + h * c[2], ysi, k[3]); // calculate derivative k
+        _f(x_previous + h * c[2], ysi, k3); // calculate derivative k3
 
         for (int ni = 0; ni < n; ++ni) // for all n
         {
-          ysi[ni] = y_previous[ni] + h * (a40 * k[0][ni] + a42 * k[2][ni] + a43 * k[3][ni]);
+          ysi[ni] = y_previous[ni] + h * (a40 * k0[ni] + a42 * k2[ni] + a43 * k3[ni]);
         }
-        _f(x_previous + h * c[3], ysi, k[4]); // calculate derivative k
+        _f(x_previous + h * c[3], ysi, k4); // calculate derivative k4
 
         for (int ni = 0; ni < n; ++ni) // for all n
         {
-          ysi[ni] = y_previous[ni] + h * (a50 * k[0][ni] + a53 * k[3][ni] + a54 * k[4][ni]);
+          ysi[ni] = y_previous[ni] + h * (a50 * k0[ni] + a53 * k3[ni] + a54 * k4[ni]);
         }
-        _f(x_previous + h * c[4], ysi, k[5]); // calculate derivative k
+        _f(x_previous + h * c[4], ysi, k5); // calculate derivative k5
 
         for (int ni = 0; ni < n; ++ni) // for all n
         {
-          ysi[ni] = y_previous[ni] + h * (a60 * k[0][ni] + a63 * k[3][ni] + a64 * k[4][ni] + a65 * k[5][ni]);
+          ysi[ni] = y_previous[ni] + h * (a60 * k0[ni] + a63 * k3[ni] + a64 * k4[ni] + a65 * k5[ni]);
         }
-        _f(x_previous + h * c[5], ysi, k[6]); // calculate derivative k
+        _f(x_previous + h * c[5], ysi, k6); // calculate derivative k6
 
         for (int ni = 0; ni < n; ++ni) // for all n
         {
-          ysi[ni] = y_previous[ni] + h * (a70 * k[0][ni] + a73 * k[3][ni] + a74 * k[4][ni] + a75 * k[5][ni] + a76 * k[6][ni]);
+          ysi[ni] = y_previous[ni] + h * (a70 * k0[ni] + a73 * k3[ni] + a74 * k4[ni] + a75 * k5[ni] + a76 * k6[ni]);
         }
-        _f(x_previous + h * c[6], ysi, k[7]); // calculate derivative k
+        _f(x_previous + h * c[6], ysi, k7); // calculate derivative k7
 
         for (int ni = 0; ni < n; ++ni) // for all n
         {
-          ysi[ni] = y_previous[ni] + h * (a80 * k[0][ni] + a83 * k[3][ni] + a84 * k[4][ni] + a85 * k[5][ni] + a86 * k[6][ni] + a87 * k[7][ni]);
+          ysi[ni] = y_previous[ni] + h * (a80 * k0[ni] + a83 * k3[ni] + a84 * k4[ni] + a85 * k5[ni] + a86 * k6[ni] + a87 * k7[ni]);
         }
-        _f(x_previous + h * c[7], ysi, k[8]); // calculate derivative k
+        _f(x_previous + h * c[7], ysi, k8); // calculate derivative k8
 
         for (int ni = 0; ni < n; ++ni) // for all n
         {
-          ysi[ni] = y_previous[ni] + h * (a90 * k[0][ni] + a93 * k[3][ni] + a94 * k[4][ni] + a95 * k[5][ni] + a96 * k[6][ni] + a97 * k[7][ni] + a98 * k[8][ni]);
+          ysi[ni] = y_previous[ni] + h * (a90 * k0[ni] + a93 * k3[ni] + a94 * k4[ni] + a95 * k5[ni] + a96 * k6[ni] + a97 * k7[ni] + a98 * k8[ni]);
         }
-        _f(x_previous + h * c[8], ysi, k[9]); // calculate derivative k
+        _f(x_previous + h * c[8], ysi, k9); // calculate derivative k9
 
         for (int ni = 0; ni < n; ++ni) // for all n
         {
-          ysi[ni] = y_previous[ni] + h * (a101 * k[0][ni] + a103 * k[3][ni] + a104 * k[4][ni] + a105 * k[5][ni] + a106 * k[6][ni] + a107 * k[7][ni] + a108 * k[8][ni] + a109 * k[9][ni]);
+          ysi[ni] = y_previous[ni] + h * (a101 * k0[ni] + a103 * k3[ni] + a104 * k4[ni] + a105 * k5[ni] + a106 * k6[ni] + a107 * k7[ni] + a108 * k8[ni] + a109 * k9[ni]);
         }
-        _f(x_previous + h * c[9], ysi, k[10]); // calculate derivative k
+        _f(x_previous + h * c[9], ysi, k10); // calculate derivative k10
 
         for (int ni = 0; ni < n; ++ni) // for all n
         {
-          ysi[ni] = y_previous[ni] + h * (a110 * k[0][ni] + a113 * k[3][ni] + a114 * k[4][ni] + a115 * k[5][ni] + a116 * k[6][ni] + a117 * k[7][ni] + a118 * k[8][ni] + a119 * k[9][ni] + a1110 * k[10][ni]);
+          ysi[ni] = y_previous[ni] + h * (a110 * k0[ni] + a113 * k3[ni] + a114 * k4[ni] + a115 * k5[ni] + a116 * k6[ni] + a117 * k7[ni] + a118 * k8[ni] + a119 * k9[ni] + a1110 * k10[ni]);
         }
-        _f(x_previous + h * c[10], ysi, k[11]); // calculate derivative k
+        _f(x_previous + h * c[10], ysi, k11); // calculate derivative k11
 
         // end calculation of k0 .. k[s-1]
 
         // Calculate y (high order)
         var y_current = _y_current;
-        for (int ni = 0; ni < n; ++ni) // TODO Test if exchanging the order of sums is faster in calculation
+        for (int ni = 0; ni < n; ++ni) 
         {
-          double sum = 0;
-          for (int si = 0; si < s; ++si)
-          {
-            sum += b[si] * k[si][ni];
-          }
-          y_current[ni] = y_previous[ni] + h * sum;
+          y_current[ni] = y_previous[ni] + h * (b0 * k0[ni] + b5 * k5[ni] + b6 * k6[ni] + b7 * k7[ni] + b8 * k8[ni] + b9 * k9[ni] + b10 * k10[ni] + b11 * k11[ni]);
         }
 
        
         {
-          // Attention: here we calculate not yl, but because the _bl contains only the
-          // differences between high and low order coefficient, we calculate the (local) error
+          // Attention: here we calculate not y (low order), but because the _bl contains only the
+          // _differences_ between high and low order coefficient, we calculate the (local) error instead
           var bl = _bl!;
           var yl = _y_current_lowPrecision;
-          for (int ni = 0; ni < n; ++ni) // TODO Test if exchanging the order of sums is faster in calculation
+          for (int ni = 0; ni < n; ++ni) 
           {
-            double sum = 0;
-            for (int si = 0; si < s; ++si)
-            {
-              sum += bl[si] * k[si][ni];
-            }
-            yl[ni] = h * sum; // yl contains now local error
+            yl[ni] = h * (er0 * k0[ni] + er5 * k5[ni] + er6 * k6[ni] + er7 * k7[ni] + er8 * k8[ni] + er9 * k9[ni] + er10 * k10[ni] + er11 * k11[ni]); // yl contains now local error
           }
         }
 
@@ -471,7 +473,7 @@ namespace Altaxo.Calc.Ode
           double sumSquaredValueDifferences = 0;
           double q;
           double h = _stepSize_current;
-          for (int ni = 0; ni < n; ni++)
+          for (int ni = 0; ni < n; ++ni)
           {
             q = _k[12][ni] - _k[11][ni]; // difference between slope k[12] and the slope k[11]
             sumSquaredSlopeDifferences += q * q;
@@ -555,61 +557,44 @@ namespace Altaxo.Calc.Ode
         {
           _isDenseOutputPrepared = true;
 
-          for (int i = 0; i < n; i++)
+          // at first, calculate the stages 13..15 needed for dense output
+          for (int ni = 0; ni < n; ++ni)
           {
-            ys[i] = y[i] + h * (a130 * k0[i] + a136 * k6[i] + a137 * k7[i] + a138 * k8[i] + a139 * k9[i] + a1310 * k10[i] + a1311 * k11[i] + a1312 * k12[i]);
+            ys[ni] = y[ni] + h * (a130 * k0[ni] + a136 * k6[ni] + a137 * k7[ni] + a138 * k8[ni] + a139 * k9[ni] + a1310 * k10[ni] + a1311 * k11[ni] + a1312 * k12[ni]);
           }
           _f(_x_previous + c12 * h, ys, k13);
 
-          for (int i = 0; i < n; i++)
+          for (int ni = 0; ni < n; ++ni)
           {
-            ys[i] = y[i] + h * (a140 * k0[i] + a145 * k5[i] + a146 * k6[i] + a147 * k7[i] + a1410 * k10[i] + a1411 * k11[i] + a1412 * k12[i] + a1413 * k13[i]);
+            ys[ni] = y[ni] + h * (a140 * k0[ni] + a145 * k5[ni] + a146 * k6[ni] + a147 * k7[ni] + a1410 * k10[ni] + a1411 * k11[ni] + a1412 * k12[ni] + a1413 * k13[ni]);
           }
           _f(_x_previous + c13 * h, ys, k14);
 
-          for (int i = 0; i < n; i++)
+          for (int ni = 0; ni < n; ++ni)
           {
-            ys[i] = y[i] + h * (a150 * k0[i] + a155 * k5[i] + a156 * k6[i] + a157 * k7[i] + a158 * k8[i] + a1512 * k12[i] + a1513 * k13[i] + a1514 * k14[i]);
+            ys[ni] = y[ni] + h * (a150 * k0[ni] + a155 * k5[ni] + a156 * k6[ni] + a157 * k7[ni] + a158 * k8[ni] + a1512 * k12[ni] + a1513 * k13[ni] + a1514 * k14[ni]);
           }
           _f(_x_previous + c14 * h, ys, k15);
 
-          
-
-         
-          for (int i = 0; i < n; i++)
+          // now calculate the polynomial coefficients
+          double ydiff, bspl;
+          for (int ni = 0; ni < n; ++ni)
           {
-            rcont0[i] = y[i]; // values at begin of step
-            var ydiff = _y_current[i] - y[i]; // values at end of step minus values at begin of step
-            rcont1[i] = ydiff;
-            var bspl = h * k0[i] - ydiff;
-            rcont2[i] = bspl;
-            rcont3[i] = ydiff - h * k12[i] - bspl; 
-            rcont4[i] = d40 * k0[i] + d45 * k5[i] + d46 * k6[i] + d47 * k7[i] + d48 * k8[i] + d49 * k9[i] + d410 * k10[i] + d411 * k11[i];
-            rcont5[i] = d50 * k0[i] + d55 * k5[i] + d56 * k6[i] + d57 * k7[i] + d58 * k8[i] + d59 * k9[i] + d510 * k10[i] + d511 * k11[i];
-            rcont6[i] = d60 * k0[i] + d65 * k5[i] + d66 * k6[i] + d67 * k7[i] + d68 * k8[i] + d69 * k9[i] + d610 * k10[i] + d611 * k11[i];
-            rcont7[i] = d70 * k0[i] + d75 * k5[i] + d76 * k6[i] + d77 * k7[i] + d78 * k8[i] + d79 * k9[i] + d710 * k10[i] + d711 * k11[i];
-          }
-          // TODO append upstairs
-          for (int i = 0; i < n; i++)
-          {
-            rcont4[i] = h * (rcont4[i] + d412 * k12[i] + d413 * k13[i] +
-                d414 * k14[i] + d415 * k15[i]);
-            rcont5[i] = h * (rcont5[i] + d512 * k12[i] + d513 * k13[i] +
-                d514 * k14[i] + d515 * k15[i]);
-            rcont6[i] = h * (rcont6[i] + d612 * k12[i] + d613 * k13[i] +
-                d614 * k14[i] + d615 * k15[i]);
-            rcont7[i] = h * (rcont7[i] + d712 * k12[i] + d713 * k13[i] +
-                d714 * k14[i] + d715 * k15[i]);
+            rcont0[ni] = y[ni]; // values at begin of step
+            rcont1[ni] = ydiff = _y_current[ni] - y[ni]; // values at end of step minus values at begin of step
+            rcont2[ni] = bspl = h * k0[ni] - ydiff;
+            rcont3[ni] = ydiff - h * k12[ni] - bspl;
+            rcont4[ni] = h * (d40 * k0[ni] + d45 * k5[ni] + d46 * k6[ni] + d47 * k7[ni] + d48 * k8[ni] + d49 * k9[ni] + d410 * k10[ni] + d411 * k11[ni] + d412 * k12[ni] + d413 * k13[ni] + d414 * k14[ni] + d415 * k15[ni]);
+            rcont5[ni] = h * (d50 * k0[ni] + d55 * k5[ni] + d56 * k6[ni] + d57 * k7[ni] + d58 * k8[ni] + d59 * k9[ni] + d510 * k10[ni] + d511 * k11[ni] + d512 * k12[ni] + d513 * k13[ni] + d514 * k14[ni] + d515 * k15[ni]);
+            rcont6[ni] = h * (d60 * k0[ni] + d65 * k5[ni] + d66 * k6[ni] + d67 * k7[ni] + d68 * k8[ni] + d69 * k9[ni] + d610 * k10[ni] + d611 * k11[ni] + d612 * k12[ni] + d613 * k13[ni] + d614 * k14[ni] + d615 * k15[ni]);
+            rcont7[ni] = h * (d70 * k0[ni] + d75 * k5[ni] + d76 * k6[ni] + d77 * k7[ni] + d78 * k8[ni] + d79 * k9[ni] + d710 * k10[ni] + d711 * k11[ni] + d712 * k12[ni] + d713 * k13[ni] + d714 * k14[ni] + d715 * k15[ni]);
           }
         }
 
-        var s = theta;
-        var s1 = 1 - theta;
-
-
-        for (int i = 0; i < n; i++)
+        var theta1 = 1 - theta;
+        for (int ni = 0; ni < n; ++ni)
         {
-          ys[i] = rcont0[i] + s * (rcont1[i] + s1 * (rcont2[i] + s * (rcont3[i] + s1 * (rcont4[i] + s * (rcont5[i] + s1 * (rcont6[i] + s * rcont7[i]))))));
+          ys[ni] = rcont0[ni] + theta * (rcont1[ni] + theta1 * (rcont2[ni] + theta * (rcont3[ni] + theta1 * (rcont4[ni] + theta * (rcont5[ni] + theta1 * (rcont6[ni] + theta * rcont7[ni]))))));
         }
 
         return ys;
@@ -626,7 +611,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>This instance (for a convenient way to chain this method with sequence creation).</returns>
     public override RungeKuttaExplicitBase Initialize(double x, double[] y, Action<double, double[], double[]> f)
     {
-      _core = new Core1(Order, NumberOfStages, A, BH, BL, C, x, y, f);
+      _core = new CoreDOP853(Order, NumberOfStages, A, BH, BL, C, x, y, f);
       if (InterpolationCoefficients is not null)
         _core.InterpolationCoefficients = InterpolationCoefficients;
 
