@@ -22,55 +22,59 @@
 
 #endregion Copyright
 
-
 namespace Altaxo.Calc.Ode
 {
-
   /// <summary>
-  /// Runge-Kutta methods of 5th order of Dormand and Prince.
+  /// Runge-Kutta method of 5th order of Dormand and Prince with 6 stages.
+  /// Attention: This method can only provide dense output of order 1 (linear interpolation between evaluation points).
+  /// Use <see cref="RK547M"/> if dense output of high accuracy is needed.
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
   /// <para>[1] Hairer, Ordinary differential equations I, 2nd edition, 1993.</para>
   /// <para>[2] Jimenez et al., Locally Linearized Runge Kutta method of Dormand and Prince, arXiv:1209.1415v2, 22 Dec 2013</para>
+  /// <para>[3] Engeln-Müllges et al., Numerik-Algorithmen, Springer, 2011 (in German)</para>
   /// </remarks>
-  public class Dopri5 : RungeKuttaExplicitBase
+  public class RK546M : RungeKuttaExplicitBase
   {
+    /// <summary>Scheme coefficients, see [3] p.688</summary>
     private static readonly double[][] _sa = new double[][]
         {
           new double[]{                },
           new double[] { 1 / 5d },
           new double[] { 3 / 40d, 9 / 40d },
-          new double[] { 44 / 45d, -56 / 15d, 32 / 9d },
-          new double[] { 19372 / 6561d, -25360 / 2187d, 64448 / 6561d, -212 / 729d },
-          new double[] { 9017 / 3168d, -355 / 33d, 46732 / 5247d, 49 / 176d, -5103 / 18656d },
-          new double[] { 35 / 384d, 0, 500 / 1113d, 125 / 192d, -2187 / 6784d, 11 / 84d }
+          new double[] { 3 / 10d, -9 / 10d, 6 / 5d },
+          new double[] { 226 / 729d, -25 / 27d, 880 / 729d, 55 / 729d },
+          new double[] { -181 / 270d, 5 / 2d, -266 / 297d, -91 / 27d, 189 / 55d },
          };
-    private static readonly double[] _sbh = new double[] { 35 / 384d, 0, 500 / 1113d, 125 / 192d, -2187 / 6784d, 11 / 84d, 0 };
-    private static readonly double[] _sbl = new double[] { 5179 / 57600d, 0, 7571 / 16695d, 393 / 640d, -92097 / 339200d, 187 / 2100d, 1 / 40d };
-    private static readonly double[] _sc = new double[] { 0, 1 / 5d, 3 / 10d, 4 / 5d, 8 / 9d, 1, 1 };
+    /// <summary>Scheme coefficients 5th order, see [3] p.688 (attention: there is an error in this reference in the denominator of the third element, it must be 2079 instead of 2075)</summary>
+    private static readonly double[] _sbh = new double[] { 19 / 216d, 0, 1000 / 2079d, -125 / 216d, 81 / 88d, 5 / 56d };
+
+    /// <summary>Scheme coefficients 4th order, see [3] p.688</summary>
+    private static readonly double[] _sbl = new double[] { 31 / 540d, 0, 190 / 297d, -145 / 108d, 351 / 220d, 1 / 20d};
+
+    /// <summary>Scheme coefficients, see [3] p.688</summary>
+    private static readonly double[] _sc = new double[] { 0, 1 / 5d, 3 / 10d, 3 / 5d, 2 / 3d, 1 };
+
+    /// <inheritdoc/>
+    public override int Order => 5;
+
+    public override int NumberOfStages => 6;
 
 
-    /// <summary>
-    /// Interpolation coefficients, see [2], Table 2
-    /// </summary>
-    private static readonly double[][] _sInterpolationAij = new double[][]
-        {
-       new double[] { 1, -183 / 64d, 37 / 12d, -145 / 128d },
-       new double[] { 0, 0, 0, 0 },
-       new double[] { 0, 1500 / 371d, -1000 / 159d, 1000 / 371d },
-       new double[] { 0, -125 / 32d, 125 / 12d, -375 / 64d },
-       new double[] { 0, 9477 / 3392d, -729 / 106d, 25515 / 6784d },
-       new double[] { 0, -11 / 7d, 11 / 3d, -55 / 28d },
-       new double[] { 0, 3 / 2d, -4, 5 / 2d },
-        };
-
-
+    /// <inheritdoc/>
     protected override double[][] A => _sa;
+
+    /// <inheritdoc/>
     protected override double[] BH => _sbh;
+
+    /// <inheritdoc/>
     protected override double[] BL => _sbl;
+
+    /// <inheritdoc/>
     protected override double[] C => _sc;
 
-    protected override double[][]? InterpolationCoefficients => _sInterpolationAij;
+    /// <inheritdoc/>
+    protected override double[][]? InterpolationCoefficients => null;
   }
 }

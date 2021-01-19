@@ -28,53 +28,98 @@ namespace Altaxo.Calc.Ode
 {
   public abstract partial class RungeKuttaExplicitBase
   {
+    protected interface ICore
+    {
+      double AbsoluteTolerance { get; set; }
+      double[]? BL { set; }
+      double[][]? InterpolationCoefficients { get; set; }
+      bool IsInitialized { get; }
+      double RelativeTolerance { get; set; }
+      double X { get; }
+      double X_previous { get; }
+      double[] Y_volatile { get; }
+
+      void EvaluateNextSolutionPoint(double stepSize);
+      double GetInitialStepSize();
+      double[] GetInterpolatedY_volatile(double theta);
+      double GetRecommendedStepSize(double error_current, double error_previous);
+      double GetRelativeError();
+      void Revert();
+
+      void ThrowIfStiffnessDetected();
+    }
+
     /// <summary>
     /// The core implements functionality common to all Runge-Kutta methods, like stepping, error evaluation, interpolation and initial step finding.
     /// </summary>
-    protected struct Core
+    protected class Core : ICore
     {
-      private const double StepSize_SafetyFactor = 0.8;
-      private const double StepSize_MaxFactor = 5; // Maximum possible step increase
-      private const double StepSize_MinFactor = 0.2; // Maximum possible step decrease
+      protected const double StepSize_SafetyFactor = 0.8;
+      protected const double StepSize_MaxFactor = 5; // Maximum possible step increase
+      protected const double StepSize_MinFactor = 0.2; // Maximum possible step decrease
+
+      protected readonly int _order;
 
       /// <summary>Central coefficients of the Runge-Kutta scheme. See [1], page 135.</summary>
-      private double[][] _a;
+      protected double[][] _a;
 
       /// <summary>High order coefficients (lower side of the Runge-Kutta scheme).</summary>
-      private double[] _b;
+      protected double[] _b;
 
       /// <summary>Low order coefficients (for error estimation).</summary>
-      private double[]? _bl;
+      protected double[]? _bl;
 
-      /// <summary>Left side coefficients of the Runge-Kutta scheme.</summary>
-      private double[] _c;
+      /// <summary>Left side coefficients of the Runge-Kutta scheme (partitions of the step).</summary>
+      protected double[] _c;
+
+      /// <summary>
+      /// Number of (successfull) steps between calls to stiffness detection. If this is null, then stiffness detection is disabled.
+      /// </summary>
+      protected int _stiffnessDetectionEveryNumberOfSteps;
 
       // State variables
 
       /// <summary>True if at least one solution point was evaluated.</summary>
-      private bool _wasSolutionPointEvaluated;
+      protected bool _wasSolutionPointEvaluated;
 
       /// <summary>True if the last point is the same as first point (FSAL property). This is for instance true for the Dormand-Prince (DOPRI) method.</summary>
-      private bool _isFirstSameAtLastMethod;
+      protected bool _isFirstSameAtLastMethod;
 
-      private double _x_previous;
-      private double _x_current;
-      private double _stepSize;
-      private double[] _y_previous;
-      private double[] _y_current;
-      private double[] _y_current_lowPrecision;
+      protected double _x_previous;
+      protected double _x_current;
+      protected double _stepSize_previous;
+      protected double _stepSize_current;
+      protected double[] _y_previous;
+      protected double[] _y_current;
+      protected double[] _y_current_lowPrecision;
       public double _absoluteTolerance;
       public double _relativeTolerance;
 
-      private Action<double, double[], double[]> _f;
+      protected Action<double, double[], double[]> _f;
+
+      /// <summary>The number of evaluation results in <see cref="ThrowIfStiffnessDetected()"/>, for which the result was false (non-stiff).
+      /// This counter is re-set to zero if a stiff condition is detected.
+      /// </summary>
+      protected int _numberOfNonstiffEvaluationResults;
+
+      /// <summary>The number of evaluation results in <see cref="ThrowIfStiffnessDetected()"/>, for which the result was true (stiff).
+      /// This counter is re-set to zero if a non-stiff condition is detected.
+      /// </summary>
+      protected int _numberOfStiffEvaluationResults;
+
+      /// <summary>
+      /// The number of rejected stiffness detection calls after the last stiffness evaluation.
+      /// </summary>
+      protected int _numberOfRejectedStiffnessDetectionCalls;
+
 
       // Helper variables
 
       /// <summary>Array of derivatives at the different stages.</summary>
-      private double[][] _k;
+      protected double[][] _k;
 
       /// <summary>Temporary helper array.</summary>
-      private double[] _ytemp;
+      protected double[] _ytemp;
 
       #region Properties
 
@@ -183,15 +228,18 @@ namespace Altaxo.Calc.Ode
       /// <summary>
       /// Initializes a new instance of the <see cref="Core" />.
       /// </summary>
-      /// <param name="a">.</param>
-      /// <param name="b">The b.</param>
-      /// <param name="bl">The bl.</param>
-      /// <param name="c">The c.</param>
+      /// <param name="order">Order of the Runge-Kutta method (the highest order of the embedded pair).</param>
+      /// <param name="stages">Number of stages including the stages needed for dense output</param>
+      /// <param name="a">The lower diagonal matrix of coefficients.</param>
+      /// <param name="b">The high order coefficients used to calculate the next function values.</param>
+      /// <param name="bl">The low order coefficents, or (preferablely) the difference between high and low order coefficients.</param>
+      /// <param name="c">The left side coefficients of the Runge-Kutta coefficient scheme.</param>
       /// <param name="x0">The initial x value.</param>
       /// <param name="y">The initial y values.</param>
       /// <param name="f">Evaluation function to calculate the derivatives. 1st arg: x, 2nd arg: y, 3rd arg: array to hold the resulting derivatives.</param>
-      public Core(double[][] a, double[] b, double[]? bl, double[] c, double x0, double[] y, Action<double, double[], double[]> f)
+      public Core(int order, int stages, double[][] a, double[] b, double[]? bl, double[] c, double x0, double[] y, Action<double, double[], double[]> f)
       {
+        _order = order;
         _a = a;
         _b = b;
         _bl = bl;
@@ -205,14 +253,14 @@ namespace Altaxo.Calc.Ode
 
         _x_previous = x0;
         _x_current = x0;
-        _stepSize = 0;
+        _stepSize_current = 0;
         _y_previous = Clone(y);
         _y_current = Clone(y);
         _y_current_lowPrecision = Clone(y);
         _f = f;
 
-        _k = new double[_a.Length][]; // Storage for derivatives at the interval points
-        for (int i = 0; i < _a.Length; ++i)
+        _k = new double[stages][]; // Storage for derivatives at the interval points
+        for (int i = 0; i < _k.Length; ++i)
           _k[i] = new double[y.Length];
 
         _ytemp = new double[y.Length];
@@ -260,7 +308,7 @@ namespace Altaxo.Calc.Ode
       /// Evaluates the next solution point in one step. To get the results, see <see cref="X"/> and <see cref="Y_volatile"/>.
       /// </summary>
       /// <param name="stepSize">Size of the step.</param>
-      public void EvaluateNextSolutionPoint(double stepSize)
+      public virtual void EvaluateNextSolutionPoint(double stepSize)
       {
         var a = _a;
         var b = _b;
@@ -271,7 +319,8 @@ namespace Altaxo.Calc.Ode
         int s = a.Length; // number of stages
 
         var h = stepSize;
-        _stepSize = stepSize;
+        _stepSize_previous = _stepSize_current;
+        _stepSize_current = stepSize;
         _x_previous = _x_current;
         Exchange(ref _y_previous, ref _y_current); // swap the two arrays => what was current is now previous
 
@@ -342,13 +391,26 @@ namespace Altaxo.Calc.Ode
         _wasSolutionPointEvaluated = true;
       }
 
+      #region Stiffness detection
+      /// <summary>
+      /// Function that is been called after every <b>successfull</b> step.
+      /// Detects a stiffness condition. If it founds one, an exception will be thrown.
+      /// </summary>
+      /// <returns></returns>
+      public virtual void ThrowIfStiffnessDetected()
+      {
+
+      }
+
+      #endregion
+
       #region Error and step size evaluation
 
       /// <summary>
       /// Gets the relative error, which should be in the order of 1, if the step size is optimally chosen.
       /// </summary>
       /// <returns>The relative error (relative to the absolute and relative tolerance).</returns>
-      public double GetRelativeError()
+      public virtual double GetRelativeError()
       {
         // Compute error (see [1], page 168
         // error computation in L2 or L-infinity norm is possible
@@ -378,12 +440,12 @@ namespace Altaxo.Calc.Ode
       /// <param name="error_current">The relative error of the current step.</param>
       /// <param name="error_previous">The relative error of the previous step.</param>
       /// <returns>The recommended step size in the context of the absolute and relative tolerances.</returns>
-      public double GetRecommendedStepSize(double error_current, double error_previous)
+      public virtual double GetRecommendedStepSize(double error_current, double error_previous)
       {
         // PI-filter. Beta = 0.08
         return error_current == 0 ?
-          _stepSize :
-          _stepSize * Math.Min(StepSize_MaxFactor, Math.Max(StepSize_MinFactor, StepSize_SafetyFactor * Math.Pow(1 / error_current, 1 / 5d) * Math.Pow(error_previous, 0.08d)));
+          _stepSize_current * StepSize_MaxFactor :
+          _stepSize_current * Math.Min(StepSize_MaxFactor, Math.Max(StepSize_MinFactor, StepSize_SafetyFactor * Math.Pow(1 / error_current, 1.0 / _order) * (error_previous == 0 ? 1 : Math.Pow(error_previous, 0.08d))));
       }
 
       /// <summary>
@@ -391,7 +453,7 @@ namespace Altaxo.Calc.Ode
       /// </summary>
       /// <returns>The initial step size in the context of the absolute and relative tolerances.</returns>
       /// <exception cref="InvalidOperationException">Either absolute tolerance or relative tolerance is required to be &gt; 0</exception>
-      public double GetInitialStepSize()
+      public virtual double GetInitialStepSize()
       {
         if (!((_absoluteTolerance > 0 && _relativeTolerance >= 0) || (_absoluteTolerance >= 0 && _relativeTolerance > 0)))
           throw new InvalidOperationException($"Either absolute tolerance or relative tolerance is required to be >0");
@@ -430,7 +492,7 @@ namespace Altaxo.Calc.Ode
         {
           d2 = Math.Max(d2, Math.Abs(f0[i] - f1[i]) / delta[i] / h0);
         }
-        return Math.Min(100 * h0, Math.Max(d1, d2) <= 1e-15 ? Math.Max(1e-6, h0 * 1e-3) : Math.Pow(1e-2 / Math.Max(d1, d2), 1 / 5d));
+        return Math.Min(100 * h0, Math.Max(d1, d2) <= 1e-15 ? Math.Max(1e-6, h0 * 1e-3) : Math.Pow(1e-2 / Math.Max(d1, d2), 1.0 / _order));
       }
 
       #endregion
@@ -440,15 +502,15 @@ namespace Altaxo.Calc.Ode
       // For explanation of the coefficients, see reference [2]
 
       /// <summary>Temporary array of size 4 intented for interpolation. Contains the theta^i (i=1,2,3,4) from [2], eq.11.</summary>
-      private double[]? _interpolation_thetai;
+      protected double[]? _interpolation_thetai;
 
       /// <summary>Temporary array of size N intented for interpolation. Contains the b_j from [2], eq.11.</summary>
-      private double[]? _interpolation_bj;
+      protected double[]? _interpolation_bj;
 
       /// <summary>
       /// The interpolation coefficients aij from [2], eq.11 and unnumbered equation shortly below eq. 12. Values from [2], table 2.
       /// </summary>
-      private double[][]? _interpolation_aij;
+      protected double[][]? _interpolation_aij;
 
       /// <summary>Get an interpolated point in the last evaluated interval.
       /// Please use the result immediately, or else make a copy of the result, since a internal array
@@ -456,7 +518,7 @@ namespace Altaxo.Calc.Ode
       /// <param name="theta">Relative location (0..1) in the last evaluated interval.</param>
       /// <returns>Interpolated y values at the relative point of the last evaluated interval <paramref name="theta"/>.</returns>
       /// <remarks>See ref. [2] section 3.3.</remarks>
-      public double[] GetInterpolatedY_volatile(double theta)
+      public virtual double[] GetInterpolatedY_volatile(double theta)
       {
         var k = _k;
         var y = _y_previous;
@@ -495,7 +557,7 @@ namespace Altaxo.Calc.Ode
           {
             slope += bj[j] * k[j][ni];
           }
-          ys[ni] = y[ni] + _stepSize * slope;
+          ys[ni] = y[ni] + _stepSize_current * slope;
         }
 
         return ys;

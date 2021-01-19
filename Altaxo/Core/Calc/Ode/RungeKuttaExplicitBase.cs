@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,6 +44,15 @@ namespace Altaxo.Calc.Ode
   /// </remarks>
   public abstract partial class RungeKuttaExplicitBase
   {
+    /// <summary>
+    /// Gets the order of the method (the highest of the pair).
+    /// </summary>
+    public abstract int Order { get; }
+
+    /// <summary>
+    /// Gets the number of stages, including the stages needed for dense output.
+    /// </summary>
+    public abstract int NumberOfStages { get; }
 
     /// <summary>Central coefficients of the Runge-Kutta scheme. See [1], page 135.</summary>
     protected abstract double[][] A { get; }
@@ -61,7 +71,7 @@ namespace Altaxo.Calc.Ode
     /// </summary>
     protected abstract double[][]? InterpolationCoefficients { get; }
 
-    private Core _core;
+    protected ICore? _core;
 
     /// <summary>
     /// Initializes the Runge-Kutta method.
@@ -70,11 +80,10 @@ namespace Altaxo.Calc.Ode
     /// <param name="y">The initial y values.</param>
     /// <param name="f">Calculation of the derivatives. First argument is x value, 2nd argument are the current y values. The 3rd argument is an array that store the derivatives.</param>
     /// <returns>This instance (for a convenient way to chain this method with sequence creation).</returns>
-    public RungeKuttaExplicitBase Initialize(double x, double[] y, Action<double, double[], double[]> f)
+    [MemberNotNull(nameof(_core))]
+    public virtual RungeKuttaExplicitBase Initialize(double x, double[] y, Action<double, double[], double[]> f)
     {
-      _core = new Core(A, BH, BL, C, x, y, f);
-      if (BL is not null)
-        _core.BL = BL;
+      _core = new Core(Order, NumberOfStages, A, BH, BL, C, x, y, f);
       if (InterpolationCoefficients is not null)
         _core.InterpolationCoefficients = InterpolationCoefficients;
 
@@ -96,6 +105,7 @@ namespace Altaxo.Calc.Ode
       for (; ; )
       {
         _core.EvaluateNextSolutionPoint(stepSize);
+        _core.ThrowIfStiffnessDetected();
         yield return (_core.X, _core.Y_volatile);
       }
     }
@@ -108,12 +118,13 @@ namespace Altaxo.Calc.Ode
     public virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatileForStepSize(
           double stepSize)
     {
-      if (!_core.IsInitialized)
+      if (_core is null || !_core.IsInitialized)
         throw NewCoreNotInitializeException;
 
       for (; ; )
       {
         _core.EvaluateNextSolutionPoint(stepSize);
+        _core.ThrowIfStiffnessDetected();
         yield return (_core.X, _core.Y_volatile);
       }
     }
@@ -155,7 +166,7 @@ namespace Altaxo.Calc.Ode
     /// evaluation.</returns>
     public virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatile(RungeKuttaOptions options)
     {
-      if (!_core.IsInitialized)
+      if (_core is null || !_core.IsInitialized)
         throw NewCoreNotInitializeException;
 
       options.CheckConsistency();
@@ -196,7 +207,7 @@ namespace Altaxo.Calc.Ode
     /// <exception cref="InvalidOperationException">Either absolute tolerance or relative tolerance is required to be &gt; 0</exception>
     public double GetInitialStepSize()
     {
-      if (!_core.IsInitialized)
+      if (_core is null || !_core.IsInitialized)
         throw NewCoreNotInitializeException;
 
       return _core.GetInitialStepSize();
@@ -213,14 +224,14 @@ namespace Altaxo.Calc.Ode
     {
       get
       {
-        if (!_core.IsInitialized)
+        if (_core is null || !_core.IsInitialized)
           throw NewCoreNotInitializeException;
 
         return _core.AbsoluteTolerance;
       }
       set
       {
-        if (!_core.IsInitialized)
+        if (_core is null || !_core.IsInitialized)
           throw NewCoreNotInitializeException;
         if (!(value >= 0))
           throw new ArgumentException("Must be >= 0", nameof(AbsoluteTolerance));
@@ -240,14 +251,14 @@ namespace Altaxo.Calc.Ode
     {
       get
       {
-        if (!_core.IsInitialized)
+        if (_core is null || !_core.IsInitialized)
           throw NewCoreNotInitializeException;
 
         return _core.RelativeTolerance;
       }
       set
       {
-        if (!_core.IsInitialized)
+        if (_core is null || !_core.IsInitialized)
           throw NewCoreNotInitializeException;
         if (!(value >= 0))
           throw new ArgumentException("Must be >= 0", nameof(RelativeTolerance));
@@ -346,6 +357,7 @@ namespace Altaxo.Calc.Ode
 
           // Make the step with the effective step size.
           _core.EvaluateNextSolutionPoint(effectiveStepSize);
+          
           error_current = _core.GetRelativeError();
           if (double.IsNaN(error_current) || double.IsInfinity(error_current))
             error_current = 10; // if error is NaN then probably the step size is too big, we force to reduce step size by setting error to 10
@@ -355,6 +367,7 @@ namespace Altaxo.Calc.Ode
 
           if (error_current > 1)
           {
+            error_previous = error_current;
             _core.Revert();
           }
 
@@ -363,6 +376,8 @@ namespace Altaxo.Calc.Ode
 
         } while (error_current > 1);
         error_previous = error_current;
+
+        _core.ThrowIfStiffnessDetected();
 
         bool includeTrueSolutionPointInOutput = (isStepToMandatorySolutionPoint && options.IncludeMandatorySolutionPointsInOutput) || options.IncludeAutomaticStepsInOutput;
 
@@ -421,6 +436,7 @@ namespace Altaxo.Calc.Ode
       while (TryGetNextValue(ref itFixedStep, ref itMandatory, out x_next))
       {
         _core.EvaluateNextSolutionPoint(x_next - _core.X);
+        _core.ThrowIfStiffnessDetected();
 
         // if needed, output the optional interpolated points
         while (itOptional is not null && itOptional.Current <= _core.X) // move it3 until its greater than this step
